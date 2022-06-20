@@ -83,9 +83,8 @@ void MainWindow::setupUi()
     auto* settings = Settings::instance();
 
     if(objectName().isEmpty())
-    {
         setObjectName(QString::fromUtf8("MainWindow"));
-    }
+
     resize(1280, 720);
     setMinimumSize(410, 320);
     setWindowIcon(QIcon("://images/fooyin.png"));
@@ -138,11 +137,9 @@ void MainWindow::setupUi()
     p->menuLibrary->addAction(p->openSettings);
     p->menuView->addAction(p->layoutEditing);
 
-    connect(p->openSettings, &QAction::triggered, this, [=] {
-        p->settingsDialog->show();
-    });
-    connect(p->layoutEditing, &QAction::triggered, this, [=] {
-        settings->set(Settings::Setting::LayoutEditing, !settings->value(Settings::Setting::LayoutEditing).toBool());
+    connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
+    connect(p->layoutEditing, &QAction::triggered, this, [=](bool checked) {
+        settings->set(Settings::Setting::LayoutEditing, checked);
     });
 }
 
