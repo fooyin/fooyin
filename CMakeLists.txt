@@ -23,8 +23,6 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 endif()
 
-configure_file(version.h.in "${CMAKE_CURRENT_BINARY_DIR}/src/utils/version.h" @ONLY)
-
 find_package(Qt6Core)
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 

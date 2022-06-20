@@ -1,3 +1,6 @@
+
+configure_file(version.h.in "utils/version.h" @ONLY)
+
 set(HEADERS
     app/application.h
 
