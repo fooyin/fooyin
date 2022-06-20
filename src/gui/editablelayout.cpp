@@ -70,15 +70,20 @@ void addParentContext(Widget* widget, QMenu* menu)
 EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
     : QWidget(parent)
     , m_box(new QHBoxLayout(this))
+    , m_settings(Settings::instance())
+    , m_layoutEditing(false)
     , m_overlay(new Overlay(this))
     , m_menu(new QMenu(this))
     , m_widgetProvider(widgetProvider)
 {
     setObjectName("EditableLayout");
+
     m_box->setContentsMargins(5, 5, 5, 5);
     setLayout(m_box);
-    connect(m_menu, &QMenu::aboutToHide, this, [=]() {
-        hideOverlay();
+
+    connect(m_menu, &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
+    connect(m_settings, &Settings::layoutEditingChanged, this, [=] {
+        m_layoutEditing = !m_layoutEditing;
     });
 
     bool loaded = loadLayout();
@@ -97,26 +102,19 @@ Widget* EditableLayout::splitterChild(QWidget* widget)
     QWidget* child = widget;
 
     while(!qobject_cast<Widget*>(child) || qobject_cast<Dummy*>(child))
-    {
         child = child->parentWidget();
-    }
 
     if(child)
-    {
         return qobject_cast<Widget*>(child);
-    }
 
     return {};
 }
 
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 {
-    auto* settings = Settings::instance();
-    bool layoutEditing = settings->value(Settings::Setting::LayoutEditing).toBool();
-    if(!layoutEditing)
-    {
+    if(!m_layoutEditing)
         return QWidget::eventFilter(watched, event);
-    }
+
     if(event->type() == QEvent::MouseButtonPress)
     {
         auto* mouseEvent = static_cast<QMouseEvent*>(event);
@@ -183,9 +181,7 @@ void EditableLayout::iterateSplitter(QJsonObject& splitterObject, QJsonArray& Sp
     {
         auto* childSplitter = qobject_cast<SplitterWidget*>(widget);
         if(childSplitter)
-        {
             iterateSplitter(splitterObject, array, childSplitter, false);
-        }
         else
         {
             QJsonObject widgetObject;
@@ -198,9 +194,7 @@ void EditableLayout::iterateSplitter(QJsonObject& splitterObject, QJsonArray& Sp
                 array.append(widgetObject);
             }
             else
-            {
                 array.append(EnumHelper::toString(type));
-            }
         }
     }
     QString state = QString::fromUtf8(splitter->saveState().toBase64());
@@ -211,9 +205,7 @@ void EditableLayout::iterateSplitter(QJsonObject& splitterObject, QJsonArray& Sp
     children["Children"] = array;
 
     if(isRoot)
-    {
         splitterObject["Splitter"] = children;
-    }
     else
     {
         QJsonObject object;
@@ -282,7 +274,6 @@ bool EditableLayout::loadLayout()
     if(!jsonDoc.isNull() && !jsonDoc.isEmpty())
     {
         QJsonObject json = jsonDoc.object();
-
         if(json.contains("Layout") && json["Layout"].isObject())
         {
             QJsonObject object = json["Layout"].toObject();

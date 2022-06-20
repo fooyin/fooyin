@@ -29,6 +29,7 @@ class Overlay;
 class SplitterWidget;
 class WidgetProvider;
 class Widget;
+class Settings;
 
 class EditableLayout : public QWidget
 {
@@ -53,6 +54,8 @@ public:
 
 private:
     QHBoxLayout* m_box;
+    Settings* m_settings;
+    bool m_layoutEditing;
     Overlay* m_overlay;
     SplitterWidget* m_splitter;
     QMenu* m_menu;
