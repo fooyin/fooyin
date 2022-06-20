@@ -1,0 +1,53 @@
+---
+DisableFormat:   false
+
+BasedOnStyle:    WebKit
+TabWidth:        4
+IndentWidth:     4
+UseTab:          Never
+ColumnLimit:     120
+Language:        Cpp
+Standard:        Cpp11
+
+AlignAfterOpenBracket:                          true
+AlignOperands:                                  AlignAfterOperator
+AlignTrailingComments:                          true
+AllowAllParametersOfDeclarationOnNextLine:      false
+AllowShortBlocksOnASingleLine:                  Empty
+AllowShortFunctionsOnASingleLine:               Empty
+AllowShortIfStatementsOnASingleLine:            Never
+AlwaysBreakTemplateDeclarations:                Yes
+
+BreakBeforeBraces:                              Custom
+BraceWrapping:
+    AfterClass:                                 true
+    AfterControlStatement:                      true
+    AfterEnum:                                  true
+    AfterFunction:                              true
+    AfterNamespace:                             false
+    AfterStruct:                                true
+    AfterUnion:                                 true
+    BeforeCatch:                                true
+    BeforeElse:                                 true
+    IndentBraces:                               false
+    AfterExternBlock:                           true
+    BeforeLambdaBody                            false
+    SplitEmptyFunction:                         false
+    SplitEmptyRecord:                           false
+    SplitEmptyNamespace:                        true
+
+BreakInheritanceList:                           AfterComma
+BreakStringLiterals:                            true
+
+AllowAllConstructorInitializersOnNextLine:      false
+AllowShortLambdasOnASingleLine                  Empty
+Cpp11BracedListStyle:                           true
+SpaceBeforeCpp11BracedList:                     false
+IndentCaseLabels:                               true
+FixNamespaceComments:                           true
+KeepEmptyLinesAtTheStartOfBlocks:               false
+
+SpaceBeforeParens:                              Never
+
+IncludeBlocks:                                  Regroup
+---

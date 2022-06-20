@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fonts/Guifx v2 Transports.ttf</file>
+    </qresource>
+</RCC>

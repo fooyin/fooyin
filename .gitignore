@@ -1,0 +1,9 @@
+# QtCreator
+*.autosave
+CMakeLists.txt.user*
+
+#clion
+.idea/
+
+#Dolphin
+.directory

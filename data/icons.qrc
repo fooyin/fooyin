@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/nocover.png</file>
+        <file>images/fooyin.png</file>
+        <file>images/fooyin-small.png</file>
+    </qresource>
+</RCC>
