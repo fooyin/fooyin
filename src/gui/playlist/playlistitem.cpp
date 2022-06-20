@@ -44,9 +44,8 @@ void PlaylistItem::setIndex(int idx)
 PlaylistItem* PlaylistItem::child(int number)
 {
     if(number < 0 || number >= m_children.size())
-    {
         return nullptr;
-    }
+
     return m_children.at(number);
 }
 
@@ -78,9 +77,7 @@ int PlaylistItem::index() const
 int PlaylistItem::row() const
 {
     if(parent())
-    {
-        return int(parent()->m_children.indexOf(const_cast<PlaylistItem*>(this))); // NOLINT
-    }
+        return static_cast<int>(parent()->m_children.indexOf(const_cast<PlaylistItem*>(this))); // NOLINT
 
     return 0;
 }
