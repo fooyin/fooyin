@@ -76,8 +76,8 @@ int PlaylistItem::index() const
 
 int PlaylistItem::row() const
 {
-    if(parent())
-        return static_cast<int>(parent()->m_children.indexOf(const_cast<PlaylistItem*>(this))); // NOLINT
+    if(m_parent)
+        return static_cast<int>(m_parent->m_children.indexOf(const_cast<PlaylistItem*>(this))); // NOLINT
 
     return 0;
 }
