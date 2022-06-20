@@ -17,10 +17,7 @@
  *
  */
 
-#ifndef VERSION_H
-#define VERSION_H
+#pragma once
 
 #define VERSION "@FOOYIN_VERSION@"
 #define DATABASE_VERSION "@FOOYIN_DATABASE_VERSION@"
-
-#endif
