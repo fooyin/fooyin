@@ -283,9 +283,7 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
     Q_UNUSED(deselected)
     QModelIndexList indexes = m_filter->selectionModel()->selectedIndexes();
 
-    if(indexes.isEmpty())
-        return;
-    if(!m_model)
+    if(!m_model || indexes.isEmpty())
         return;
 
     IdSet ids;

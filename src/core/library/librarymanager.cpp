@@ -76,14 +76,10 @@ MusicLibrary* LibraryManager::musicLibrary() const
 int LibraryManager::addLibrary(const QString& path, QString& name)
 {
     if(!checkNewPath(path, m_libraries))
-    {
         return -1;
-    }
 
     if(name.isEmpty())
-    {
         name = QString("Library %1").arg(m_libraries.size());
-    }
 
     const auto id = static_cast<int>(m_libraries.size());
 
@@ -105,9 +101,8 @@ int LibraryManager::addLibrary(const QString& path, QString& name)
 void LibraryManager::removeLibrary(int id)
 {
     if(!m_libraries.contains(id))
-    {
         return;
-    }
+
     m_database->deleteLibraryDatabase(id);
     m_libraryConnector->removeLibrary(id);
     m_libraries.remove(id);

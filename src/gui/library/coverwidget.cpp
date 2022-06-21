@@ -81,9 +81,8 @@ void CoverWidget::setupUi()
 void CoverWidget::resizeEvent(QResizeEvent* e)
 {
     if(p->hasCover)
-    {
         p->coverLabel->setPixmap(p->cover.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    }
+
     QWidget::resizeEvent(e);
 }
 

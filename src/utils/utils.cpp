@@ -46,17 +46,13 @@ namespace File {
     bool isSubdir(const QString& dir, const QString& parentDir)
     {
         if(isSamePath(dir, parentDir))
-        {
             return false;
-        }
 
         const auto cleanedDir = cleanPath(dir);
         const auto cleanedParentDir = cleanPath(parentDir);
 
         if(cleanedDir.isEmpty() || cleanedParentDir.isEmpty())
-        {
             return false;
-        }
 
         const QFileInfo info(cleanedDir);
 
@@ -65,9 +61,7 @@ namespace File {
         {
             const auto d1String = getParentDirectory(cleanedDir);
             if(isSamePath(d1String, parentDir))
-            {
                 return true;
-            }
 
             d1 = QDir(d1String);
         }
@@ -78,9 +72,7 @@ namespace File {
         {
             d1 = QDir(getParentDirectory(d1.absolutePath()));
             if(isSamePath(d1.absolutePath(), d2.absolutePath()))
-            {
                 return true;
-            }
         }
 
         return false;
@@ -123,6 +115,7 @@ int randomNumber(int min, int max)
 {
     if(min == max)
         return max;
+
     return QRandomGenerator::global()->bounded(min, max + 1);
 }
 

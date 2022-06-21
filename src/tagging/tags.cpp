@@ -66,9 +66,7 @@ bool readMetaData(Track& track, Quality quality)
     track.setMTime(md.isValid() ? md.toMSecsSinceEpoch() : 0);
 
     if(fileInfo.size() <= 0)
-    {
         return false;
-    }
 
     const auto readingProperties = getReadingProperties(quality);
     auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties,
@@ -82,10 +80,9 @@ bool readMetaData(Track& track, Quality quality)
 
     auto parsedTag = tagsFromFile(fileRef);
     parsedTag.map = fileRef.file()->properties();
+
     if(!parsedTag.tag)
-    {
         return false;
-    }
 
     const QStringList baseTags{"TITLE", "ARTIST",     "ALBUMARTIST", "GENRE",   "TRACKNUMBER",
                                "ALBUM", "DISCNUMBER", "DATE",        "COMMENT", "LYRICS"};

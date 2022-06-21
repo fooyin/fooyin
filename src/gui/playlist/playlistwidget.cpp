@@ -137,9 +137,7 @@ void PlaylistWidget::layoutEditingMenu(QMenu* menu)
 void PlaylistWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
     if(!deselected.isEmpty())
-    {
         return;
-    }
 
     QModelIndexList indexes = selected.indexes();
     QSet<Track*> tracks;

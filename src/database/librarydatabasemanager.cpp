@@ -35,9 +35,7 @@ void LibraryDatabaseManager::getAllTracks()
     TrackList tracks;
     bool success = m_libraryDatabase->getAllTracks(tracks);
     if(success)
-    {
         emit gotTracks(tracks);
-    }
 }
 
 void LibraryDatabaseManager::getAllItems(Filters::FilterType type, ::Library::SortOrder order)
@@ -45,9 +43,7 @@ void LibraryDatabaseManager::getAllItems(Filters::FilterType type, ::Library::So
     FilterList items;
     bool success = m_libraryDatabase->getAllItems(type, order, items);
     if(success)
-    {
         emit gotItems(type, items);
-    }
 }
 
 void LibraryDatabaseManager::getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters,
@@ -56,9 +52,7 @@ void LibraryDatabaseManager::getItemsByFilter(Filters::FilterType type, const Ac
     FilterList items;
     bool success = m_libraryDatabase->getItemsByFilter(type, filters, search, order, items);
     if(success)
-    {
         emit gotItems(type, items);
-    }
 }
 
 void LibraryDatabaseManager::filterTracks(const TrackPtrList& tracks, const ActiveFilters& filters,

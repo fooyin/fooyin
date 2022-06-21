@@ -39,9 +39,7 @@ QMap<int, ::Library::LibraryInfo> Library::getAllLibraries()
     bool success = q.exec();
 
     if(!success)
-    {
         q.error("Cannot fetch all libraries");
-    }
 
     while(q.next())
     {
@@ -59,7 +57,6 @@ bool Library::insertLibrary(int id, const QString& path, const QString& name)
 {
     if(name.isEmpty() || path.isEmpty())
     {
-        //        mLog(Log::Warning, this) << "Cannot insert library: Invalid parameters";
         return false;
     }
 
@@ -78,9 +75,7 @@ bool Library::insertLibrary(int id, const QString& path, const QString& name)
     bool success = q.exec();
 
     if(!success)
-    {
         q.error(QString("Cannot insert library (name: %1, path: %2)").arg(name, path));
-    }
 
     return success;
 }
@@ -97,9 +92,7 @@ bool Library::removeLibrary(int id)
     bool success = q.exec();
 
     if(!success)
-    {
         q.error(QString("Cannot remove library %1").arg(id));
-    }
 
     return success;
 }

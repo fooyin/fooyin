@@ -51,9 +51,7 @@ void LibraryScanner::stop()
 void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
 {
     if(m_isRunning)
-    {
         return;
-    }
 
     auto* db = DB::Database::instance();
     DB::LibraryDatabase* libraryDatabase = db->libraryDatabase();
@@ -86,9 +84,8 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
         emit tracksDeleted(tracksToDelete);
 
     if(!m_mayRun)
-    {
         return;
-    }
+
     getAndSaveAllFiles(info.id(), info.path(), trackMap);
 
     m_isRunning = false;
@@ -107,9 +104,7 @@ void LibraryScanner::scanAll(TrackPtrList& tracks)
 void LibraryScanner::storeTracks(TrackList& tracks) const
 {
     if(!m_mayRun)
-    {
         return;
-    }
 
     auto* db = DB::Database::instance();
     DB::LibraryDatabase* libraryDatabase = db->libraryDatabase();
@@ -117,9 +112,7 @@ void LibraryScanner::storeTracks(TrackList& tracks) const
     libraryDatabase->storeTracks(tracks);
 
     if(!m_mayRun)
-    {
         return;
-    }
 
     db->transaction();
 
@@ -148,9 +141,7 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
 bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, const TrackPathMap& tracks)
 {
     if(path.isEmpty() || !Util::File::exists(path))
-    {
         return false;
-    }
 
     QDir dir(path);
 
@@ -162,9 +153,7 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
     for(const QString& filepath : files)
     {
         if(!m_mayRun)
-        {
             return false;
-        }
 
         QFileInfo info{filepath};
 

@@ -205,7 +205,9 @@ void EditableLayout::iterateSplitter(QJsonObject& splitterObject, QJsonArray& Sp
     children["Children"] = array;
 
     if(isRoot)
+    {
         splitterObject["Splitter"] = children;
+    }
     else
     {
         QJsonObject object;
