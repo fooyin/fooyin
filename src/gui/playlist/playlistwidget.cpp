@@ -136,11 +136,10 @@ void PlaylistWidget::layoutEditingMenu(QMenu* menu)
 
 void PlaylistWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-    if(!deselected.isEmpty()) {
-        return;
-    }
+    Q_UNUSED(selected)
+    Q_UNUSED(deselected)
 
-    QModelIndexList indexes = selected.indexes();
+    QModelIndexList indexes = m_playlist.selectionModel()->selectedIndexes();
     QSet<Track*> tracks;
     for(const auto& index : indexes) {
         if(index.isValid()) {
@@ -151,7 +150,6 @@ void PlaylistWidget::selectionChanged(const QItemSelection& selected, const QIte
             }
         }
     }
-
     m_library->trackSelectionChanged(tracks);
 }
 
