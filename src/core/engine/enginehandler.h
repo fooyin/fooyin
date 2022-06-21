@@ -17,8 +17,7 @@
  *
  */
 
-#ifndef ENGINE_HANDLER_H
-#define ENGINE_HANDLER_H
+#pragma once
 
 #include "enginempv.h"
 
@@ -46,5 +45,3 @@ protected:
 private:
     EngineMpv m_engine;
 };
-
-#endif // ENGINE_HANDLER_H
