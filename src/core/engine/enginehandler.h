@@ -44,4 +44,5 @@ protected:
 
 private:
     EngineMpv m_engine;
+    QThread m_engineThread;
 };
