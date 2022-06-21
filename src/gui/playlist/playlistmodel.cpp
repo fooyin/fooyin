@@ -47,12 +47,7 @@ PlaylistModel::PlaylistModel(PlayerManager* playerManager, Library::MusicLibrary
     connect(m_library, &Library::MusicLibrary::filteredTracks, this, &PlaylistModel::reset);
 }
 
-PlaylistModel::~PlaylistModel()
-{
-    resetContainers();
-    m_root.reset();
-    m_nodes.clear();
-}
+PlaylistModel::~PlaylistModel() = default;
 
 void PlaylistModel::setupModelData()
 {
