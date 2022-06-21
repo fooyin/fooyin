@@ -108,9 +108,9 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
 
     QPen linePen = painter->pen();
     linePen.setWidth(1);
-    QColor lineColor = option.palette.color(QPalette::BrightText);
-    lineColor.setAlpha(40);
-    linePen.setColor(lineColor);
+    QColor lineColour = option.palette.color(QPalette::BrightText);
+    lineColour.setAlpha(40);
+    linePen.setColor(lineColour);
 
     const QString albumTitle = index.data(Qt::DisplayRole).toString();
     const QString albumArtist = index.data(ItemRole::Artist).toString();
@@ -218,7 +218,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
         option.widget->style()->drawItemText(painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
                                              albumYear);
 
-        painter->setPen(lineColor);
+        painter->setPen(lineColour);
         const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
                               (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
         //        const QLineF artistTitleLine((artistBound.x() + artistBound.width() + 10),
@@ -250,11 +250,11 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     const bool isPlaying = index.data(ItemRole::Playing).toBool();
     const QString state = index.data(ItemRole::State).toString();
 
-    QColor selectCol = option.palette.highlight().color();
-    QColor hoverCol = QColor(selectCol.red(), selectCol.green(), selectCol.blue(), 70);
+    QColor selectColour = option.palette.highlight().color();
+    QColor hoverColour = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
 
     QFont playFont = QFont("Guifx v2 Transports", 12);
-    QColor playCol = QColor(selectCol.red(), selectCol.green(), selectCol.blue(), 45);
+    QColor playColour = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 45);
 
     int offset = 0;
 
@@ -275,14 +275,14 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     const QRect titleBound
         = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, trackTitle);
 
-    painter->fillRect(option.rect, isPlaying ? playCol : option.palette.color(background));
+    painter->fillRect(option.rect, isPlaying ? playColour : option.palette.color(background));
 
     if((option.state & QStyle::State_Selected)) {
         painter->fillRect(option.rect, option.palette.highlight());
     }
 
     if((option.state & QStyle::State_MouseOver)) {
-        painter->fillRect(option.rect, hoverCol);
+        painter->fillRect(option.rect, hoverColour);
     }
 
     option.widget->style()->drawItemText(painter, numRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
@@ -322,8 +322,8 @@ void PlaylistDelegate::paintDisc(QPainter* painter, const QStyleOptionViewItem& 
     const int height = option.rect.height();
     const int right = x + width;
 
-    QColor lineColor = option.palette.color(QPalette::Shadow);
-    lineColor.setAlpha(50);
+    QColor lineColour = option.palette.color(QPalette::Shadow);
+    lineColour.setAlpha(50);
 
     QString discNumber = index.data(Qt::DisplayRole).toString();
     QString discDuration = index.data(ItemRole::Duration).toString();
@@ -343,7 +343,7 @@ void PlaylistDelegate::paintDisc(QPainter* painter, const QStyleOptionViewItem& 
     option.widget->style()->drawItemText(painter, durationRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
                                          discDuration);
 
-    painter->setPen(lineColor);
+    painter->setPen(lineColour);
     QLineF discLine((discBound.x() + discBound.width() + 5), (discBound.y() + (discBound.height() / 2)),
                     (durationBound.x() - 5), (durationBound.y()) + (durationBound.height() / 2));
     painter->drawLine(discLine);

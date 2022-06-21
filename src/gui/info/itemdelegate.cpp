@@ -76,9 +76,9 @@ void ItemDelegate::paintHeader(QPainter* painter, const QStyleOptionViewItem& op
 
     QPen linePen = painter->pen();
     linePen.setWidth(1);
-    QColor lineColor = option.palette.color(QPalette::BrightText);
-    lineColor.setAlpha(40);
-    linePen.setColor(lineColor);
+    QColor lineColour = option.palette.color(QPalette::BrightText);
+    lineColour.setAlpha(40);
+    linePen.setColor(lineColour);
 
     const QString title = index.data(Qt::DisplayRole).toString();
 

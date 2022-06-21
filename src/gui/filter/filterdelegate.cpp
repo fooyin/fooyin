@@ -59,8 +59,8 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     }
 
     if((opt.state & QStyle::State_MouseOver)) {
-        QColor selectCol = opt.palette.highlight().color();
-        QColor hoverCol = QColor(selectCol.red(), selectCol.green(), selectCol.blue(), 70);
+        QColor selectColour = opt.palette.highlight().color();
+        QColor hoverCol = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
         painter->fillRect(rect, hoverCol);
     }
 
