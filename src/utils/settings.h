@@ -42,6 +42,9 @@ public:
         FilterAltColours,
         FilterHeader,
         FilterScrollBar,
+        InfoAltColours,
+        InfoHeader,
+        InfoScrollBar,
         PlaylistAltColours,
         PlaylistHeader,
         PlaylistScrollBar,
@@ -72,6 +75,9 @@ signals:
     void filterAltColorsChanged();
     void filterHeaderChanged();
     void filterScrollBarChanged();
+    void infoAltColorsChanged();
+    void infoHeaderChanged();
+    void infoScrollBarChanged();
     void playlistAltColorsChanged();
     void playlistHeaderChanged();
     void playlistScrollBarChanged();

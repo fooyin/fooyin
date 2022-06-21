@@ -42,6 +42,9 @@ Settings::Settings()
     m_values[Setting::FilterAltColours] = defaults(Setting::FilterAltColours);
     m_values[Setting::FilterHeader] = defaults(Setting::FilterHeader);
     m_values[Setting::FilterScrollBar] = defaults(Setting::FilterScrollBar);
+    m_values[Setting::InfoAltColours] = defaults(Setting::InfoAltColours);
+    m_values[Setting::InfoHeader] = defaults(Setting::InfoHeader);
+    m_values[Setting::InfoScrollBar] = defaults(Setting::InfoScrollBar);
     m_values[Setting::PlaylistAltColours] = defaults(Setting::PlaylistAltColours);
     m_values[Setting::PlaylistHeader] = defaults(Setting::PlaylistHeader);
     m_values[Setting::PlaylistScrollBar] = defaults(Setting::PlaylistScrollBar);
@@ -123,6 +126,12 @@ void Settings::set(Setting key, const QVariant& value)
             return emit filterHeaderChanged();
         case(Setting::FilterScrollBar):
             return emit filterScrollBarChanged();
+        case(Setting::InfoAltColours):
+            return emit infoAltColorsChanged();
+        case(Setting::InfoHeader):
+            return emit infoHeaderChanged();
+        case(Setting::InfoScrollBar):
+            return emit infoScrollBarChanged();
         case(Setting::PlaylistAltColours):
             return emit playlistAltColorsChanged();
         case(Setting::PlaylistHeader):
@@ -151,8 +160,11 @@ QVariant Settings::defaults(Setting key)
         case(Setting::LayoutEditing):
         case(Setting::ElapsedTotal):
         case(Setting::FilterAltColours):
+        case(Setting::InfoHeader):
             return false;
         case(Setting::DiscHeaders):
+        case(Setting::InfoAltColours):
+        case(Setting::InfoScrollBar):
         case(Setting::FilterHeader):
         case(Setting::FilterScrollBar):
         case(Setting::PlaylistAltColours):
@@ -187,6 +199,11 @@ QString Settings::getKeyString(Setting key)
         case(Setting::FilterHeader):
         case(Setting::FilterScrollBar):
             keyString = "Filter";
+            break;
+        case(Setting::InfoAltColours):
+        case(Setting::InfoHeader):
+        case(Setting::InfoScrollBar):
+            keyString = "Info";
             break;
         case(Setting::PlayMode):
         case(Setting::ElapsedTotal):

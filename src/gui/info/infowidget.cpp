@@ -5,12 +5,15 @@
 #include "gui/info/infoitem.h"
 #include "gui/info/itemdelegate.h"
 #include "models/track.h"
+#include "utils/settings.h"
 
 #include <QHeaderView>
+#include <QMenu>
 #include <QTableWidget>
 
 InfoWidget::InfoWidget(PlayerManager* playerManager, Library::MusicLibrary* library, QWidget* parent)
     : Widget(parent)
+    , m_settings(Settings::instance())
     , m_playerManager(playerManager)
     , m_library(library)
     , m_layout(new QHBoxLayout(this))
@@ -18,8 +21,22 @@ InfoWidget::InfoWidget(PlayerManager* playerManager, Library::MusicLibrary* libr
     setObjectName("Info");
     setupUi();
 
+    setHeaderHidden(!m_settings->value(Settings::Setting::InfoHeader).toBool());
+    setScrollbarHidden(!m_settings->value(Settings::Setting::InfoScrollBar).toBool());
+    setAltRowColors(m_settings->value(Settings::Setting::InfoAltColours).toBool());
+
     connect(m_playerManager, &PlayerManager::currentTrackChanged, this, &InfoWidget::refreshTrack);
     connect(m_playerManager, &PlayerManager::currentTrackChanged, &m_model, &InfoModel::reset);
+
+    connect(m_settings, &Settings::infoAltColorsChanged, this, [=] {
+        setAltRowColors(!altRowColors());
+    });
+    connect(m_settings, &Settings::infoHeaderChanged, this, [=] {
+        setHeaderHidden(!isHeaderHidden());
+    });
+    connect(m_settings, &Settings::infoScrollBarChanged, this, [=] {
+        setScrollbarHidden(!isScrollbarHidden());
+    });
 
     spanHeaders();
 }
@@ -58,7 +75,61 @@ void InfoWidget::refreshTrack(Track* track)
     }
 }
 
+bool InfoWidget::isHeaderHidden()
+{
+    return m_view.isHeaderHidden();
+}
+
+void InfoWidget::setHeaderHidden(bool b)
+{
+    m_view.setHeaderHidden(b);
+}
+
+bool InfoWidget::isScrollbarHidden()
+{
+    return m_view.verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
+}
+
+void InfoWidget::setScrollbarHidden(bool b)
+{
+    m_view.setVerticalScrollBarPolicy(b ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+}
+
+bool InfoWidget::altRowColors()
+{
+    return m_view.alternatingRowColors();
+}
+
+void InfoWidget::setAltRowColors(bool b)
+{
+    m_view.setAlternatingRowColors(b);
+}
+
 void InfoWidget::layoutEditingMenu(QMenu* menu)
 {
-    Q_UNUSED(menu)
+    auto* showHeaders = new QAction("Show Header", this);
+    showHeaders->setCheckable(true);
+    showHeaders->setChecked(!isHeaderHidden());
+    QAction::connect(showHeaders, &QAction::triggered, this, [=] {
+        m_settings->set(Settings::Setting::InfoHeader, isHeaderHidden());
+    });
+
+    auto* showScrollBar = new QAction("Show Scrollbar", menu);
+    showScrollBar->setCheckable(true);
+    showScrollBar->setChecked(!isScrollbarHidden());
+    QAction::connect(showScrollBar, &QAction::triggered, this, [=] {
+        m_settings->set(Settings::Setting::InfoScrollBar, isScrollbarHidden());
+    });
+    menu->addAction(showScrollBar);
+
+    auto* altColours = new QAction("Alternate Row Colours", this);
+    altColours->setCheckable(true);
+    altColours->setChecked(altRowColors());
+    QAction::connect(altColours, &QAction::triggered, this, [=] {
+        m_settings->set(Settings::Setting::InfoAltColours, !altRowColors());
+    });
+
+    menu->addAction(showHeaders);
+    menu->addAction(showScrollBar);
+    menu->addAction(altColours);
 }

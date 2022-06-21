@@ -13,12 +13,22 @@ class MusicLibrary;
 
 class PlayerManager;
 class Track;
+class Settings;
 
 class InfoWidget : public Widget
 {
 public:
     InfoWidget(PlayerManager* playerManager, Library::MusicLibrary* library, QWidget* parent = nullptr);
     ~InfoWidget() override;
+
+    bool isHeaderHidden();
+    void setHeaderHidden(bool b);
+
+    bool isScrollbarHidden();
+    void setScrollbarHidden(bool b);
+
+    bool altRowColors();
+    void setAltRowColors(bool b);
 
     void layoutEditingMenu(QMenu* menu) override;
 
@@ -28,6 +38,7 @@ protected:
     static void refreshTrack(Track* track);
 
 private:
+    Settings* m_settings;
     PlayerManager* m_playerManager;
     Library::MusicLibrary* m_library;
 
