@@ -100,7 +100,7 @@ bool readMetaData(Track& track, Quality quality)
     const auto trackNumber = parsedTag.tag->track();
     const auto discData = convertString(parsedTag.map["DISCNUMBER"].toString());
     const auto disc = discData.contains("/") ? discData.split("/")[0].toInt() : discData.toInt();
-    const auto bitrate = fileRef.audioProperties()->bitrate() * 1000;
+    const auto bitrate = fileRef.audioProperties()->bitrate();
     const auto sampleRate = fileRef.audioProperties()->sampleRate();
     const auto lyrics = convertString(parsedTag.map["LYRICS"].toString());
 
