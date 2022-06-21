@@ -179,7 +179,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
         painter->setPen(linePen);
         const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
                               (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
-        const QLineF headerLine(x + 80, (y + h) - 8, (r)-10, (y + h) - 8);
+        const QLineF headerLine(x + 77, (y + h) - 8, (r)-10, (y + h) - 8);
         if(!albumTitle.isEmpty() && w > 160)
         {
             painter->drawLine(yearLine);
