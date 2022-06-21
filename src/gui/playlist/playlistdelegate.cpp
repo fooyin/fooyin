@@ -108,8 +108,11 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
     const int h = option.rect.height();
     const int r = x + w;
 
-    QColor lineColor = option.palette.color(QPalette::Shadow);
-    lineColor.setAlpha(50);
+    QPen linePen = painter->pen();
+    linePen.setWidth(1);
+    QColor lineColor = option.palette.color(QPalette::BrightText);
+    lineColor.setAlpha(40);
+    linePen.setColor(lineColor);
 
     const QString albumTitle = index.data(Qt::DisplayRole).toString();
     const QString albumArtist = index.data(ItemRole::Artist).toString();
@@ -173,7 +176,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
             painter, subRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
             painter->fontMetrics().elidedText(albumDuration, Qt::ElideRight, subRect.width()));
 
-        painter->setPen(lineColor);
+        painter->setPen(linePen);
         const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
                               (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
         const QLineF headerLine(x + 80, (y + h) - 8, (r)-10, (y + h) - 8);
