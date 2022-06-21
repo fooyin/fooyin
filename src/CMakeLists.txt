@@ -41,6 +41,12 @@ set(HEADERS
     gui/filter/filterview.h
     gui/filter/filterwidget.h
 
+    gui/info/itemdelegate.h
+    gui/info/infomodel.h
+    gui/info/infoitem.h
+    gui/info/infowidget.h
+    gui/info/infoview.h
+
     gui/library/coverwidget.h
     gui/library/searchwidget.h
     gui/library/statuswidget.h
@@ -129,6 +135,12 @@ set(SOURCES
     gui/filter/filtermodel.cpp
     gui/filter/filterview.cpp
     gui/filter/filterwidget.cpp
+
+    gui/info/itemdelegate.cpp
+    gui/info/infomodel.cpp
+    gui/info/infoitem.cpp
+    gui/info/infowidget.cpp
+    gui/info/infoview.cpp
 
     gui/library/coverwidget.cpp
     gui/library/searchwidget.cpp

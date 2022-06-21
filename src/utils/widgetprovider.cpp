@@ -21,6 +21,7 @@
 
 #include "gui/controls/controlwidget.h"
 #include "gui/filter/filterwidget.h"
+#include "gui/info/infowidget.h"
 #include "gui/library/coverwidget.h"
 #include "gui/library/searchwidget.h"
 #include "gui/library/statuswidget.h"
@@ -72,6 +73,11 @@ Widget* WidgetProvider::createWidget(Widgets::WidgetType type, SplitterWidget* s
             auto* status = new StatusWidget(p->playerManager);
             splitter->addToSplitter(Widgets::WidgetType::Status, status);
             return status;
+        }
+        case(Widgets::WidgetType::Info): {
+            auto* info = new InfoWidget(p->playerManager, p->library);
+            splitter->addToSplitter(Widgets::WidgetType::Info, info);
+            return info;
         }
         case(Widgets::WidgetType::Controls): {
             auto* controls = new ControlWidget(p->playerManager);
@@ -155,6 +161,11 @@ void WidgetProvider::addWidgetMenu(QMenu* menu, SplitterWidget* splitter)
         createWidget(Widgets::WidgetType::Artwork, splitter);
     });
     widgetMenu->addAction(addArtwork);
+    auto* addInfo = new QAction("Info", menu);
+    QAction::connect(addInfo, &QAction::triggered, splitter, [=] {
+        createWidget(Widgets::WidgetType::Info, splitter);
+    });
+    widgetMenu->addAction(addInfo);
     auto* addControls = new QAction("Controls", menu);
     QAction::connect(addControls, &QAction::triggered, splitter, [=] {
         createWidget(Widgets::WidgetType::Controls, splitter);

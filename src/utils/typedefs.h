@@ -44,6 +44,22 @@ const int Index = Qt::UserRole + 21;
 const int Data = Qt::UserRole + 22;
 } // namespace ItemRole
 
+namespace InfoRole {
+// These correspond to row numbers of the infomodel
+// Do not change!
+const int Title = 1;
+const int Artist = 2;
+const int Album = 3;
+const int Year = 4;
+const int Genre = 5;
+const int TrackNumber = 6;
+const int Filename = 8;
+const int Path = 9;
+const int Duration = 10;
+const int Bitrate = 11;
+const int SampleRate = 12;
+} // namespace InfoRole
+
 namespace FilterRole {
 const int Id = Qt::UserRole + 40;
 const int Name = Qt::UserRole + 41;
@@ -71,6 +87,7 @@ enum class WidgetType
     Filter,
     Playlist,
     Status,
+    Info,
     Controls,
     Artwork,
     Search,
