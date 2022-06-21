@@ -55,6 +55,8 @@ CoverWidget::CoverWidget(PlayerManager* playerManager, Library::MusicLibrary* li
     connect(p->playerManager, &PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
     connect(p->library, &Library::MusicLibrary::filteredTracks, this, &CoverWidget::reloadCover);
     connect(p->library, &Library::MusicLibrary::tracksSelChanged, this, &CoverWidget::reloadCover);
+
+    reloadCover();
 }
 
 void CoverWidget::layoutEditingMenu(QMenu* menu)
@@ -88,19 +90,26 @@ void CoverWidget::resizeEvent(QResizeEvent* e)
 
 void CoverWidget::reloadCover()
 {
-    const Player::PlayState state = p->playerManager->playState();
     QString coverPath = "";
-    if(state == Player::PlayState::Playing || state == Player::PlayState::Paused) {
-        coverPath = p->playerManager->currentTrack()->coverPath();
-    }
-    else if(p->library->selectedTracks().isEmpty()) {
-        Track* track = p->library->tracks().constFirst();
-        coverPath = track->coverPath();
-    }
-    else {
-        auto* track = p->library->selectedTracks().values().constFirst();
-        if(track) {
-            coverPath = track->coverPath();
+    if(!p->library->tracks().isEmpty()) {
+        const Player::PlayState state = p->playerManager->playState();
+        if(state == Player::PlayState::Playing || state == Player::PlayState::Paused) {
+            Track* track = p->playerManager->currentTrack();
+            if(track) {
+                coverPath = track->coverPath();
+            }
+        }
+        else if(p->library->selectedTracks().isEmpty()) {
+            Track* track = p->library->tracks().constFirst();
+            if(track) {
+                coverPath = track->coverPath();
+            }
+        }
+        else {
+            Track* track = p->library->selectedTracks().values().constFirst();
+            if(track) {
+                coverPath = track->coverPath();
+            }
         }
     }
 
