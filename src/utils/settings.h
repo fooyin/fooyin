@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <QReadWriteLock>
 #include <QSettings>
 
 class Settings : public QObject
@@ -80,4 +81,5 @@ protected:
 private:
     QSettings* m_settings;
     QMap<Setting, QVariant> m_values;
+    QReadWriteLock m_lock;
 };

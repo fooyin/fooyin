@@ -99,12 +99,17 @@ void Settings::storeSettings()
 
 QVariant Settings::value(Setting key)
 {
-    return m_values.value(key);
+    m_lock.lockForRead();
+    auto value = m_values.value(key);
+    m_lock.unlock();
+    return value;
 }
 
 void Settings::set(Setting key, const QVariant& value)
 {
+    m_lock.lockForWrite();
     m_values.insert(key, value);
+    m_lock.unlock();
 
     switch(key)
     {
@@ -130,7 +135,7 @@ void Settings::set(Setting key, const QVariant& value)
         case(Setting::SplitDiscs):
             return emit playlistSettingChanged();
         default:
-            return;
+            break;
     }
 }
 
