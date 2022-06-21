@@ -20,6 +20,13 @@ void FirstRunDialog::setupList()
 {
     m_layoutList.setSelectionMode(QAbstractItemView::SingleSelection);
 
+    auto* quickLayout = new QListWidgetItem("Quick", &m_layoutList);
+    auto quick = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIiwiUGxheWxpc3QiLCJDb250c"
+                         "m9scyJdLCJTdGF0ZSI6IkFBQUEvd0FBQUFFQUFBQUVBQUFBR1FBQUFCNEFBQU9oQUFBQUVnRC8vLy8vQVFBQUFBSUEiLC"
+                         "JUeXBlIjoiVmVydGljYWwifX19")
+                     .toUtf8();
+    quickLayout->setData(LayoutRole::Type, quick);
+
     auto* stoneLayout = new QListWidgetItem("Stone", &m_layoutList);
     auto stone = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIix7IlNwbGl0dGVyIjp7IkN"
                          "oaWxkcmVuIjpbeyJGaWx0ZXIiOnsiVHlwZSI6IkFsYnVtQXJ0aXN0In19LCJQbGF5bGlzdCJdLCJTdGF0ZSI6IkFBQU"
@@ -28,6 +35,14 @@ void FirstRunDialog::setupList()
                          "QSIsIlR5cGUiOiJWZXJ0aWNhbCJ9fX0=")
                      .toUtf8();
     stoneLayout->setData(LayoutRole::Type, stone);
+
+    auto* visionLayout = new QListWidgetItem("Vision", &m_layoutList);
+    auto vision = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIix7IlNwbGl0dGVyIjp7IkNo"
+                          "aWxkcmVuIjpbIkFydHdvcmsiLCJQbGF5bGlzdCJdLCJTdGF0ZSI6IkFBQUEvd0FBQUFFQUFBQUNBQUFDY1FBQUFvRUEv"
+                          "Ly8vL3dFQUFBQUJBQT09IiwiVHlwZSI6Ikhvcml6b250YWwifX0sIkNvbnRyb2xzIl0sIlN0YXRlIjoiQUFBQS93QUFB"
+                          "QUVBQUFBRUFBQUFHUUFBQUI0QUFBT2hBQUFBRWdELy8vLy9BUUFBQUFJQSIsIlR5cGUiOiJWZXJ0aWNhbCJ9fX0=")
+                      .toUtf8();
+    visionLayout->setData(LayoutRole::Type, vision);
 
     auto* emberLayout = new QListWidgetItem("Ember", &m_layoutList);
     auto ember
