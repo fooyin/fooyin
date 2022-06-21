@@ -92,6 +92,12 @@ EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
     qApp->installEventFilter(this);
 }
 
+void EditableLayout::changeLayout(const QByteArray& layout)
+{
+    delete m_splitter;
+    loadLayout(layout);
+}
+
 EditableLayout::~EditableLayout() = default;
 
 Widget* EditableLayout::splitterChild(QWidget* widget)
@@ -256,10 +262,8 @@ void EditableLayout::iterateInsertSplitter(const QJsonArray& array, SplitterWidg
     }
 }
 
-bool EditableLayout::loadLayout()
+bool EditableLayout::loadLayout(const QByteArray& layout)
 {
-    Settings* settings = Settings::instance();
-    auto layout = QByteArray::fromBase64(settings->value(Settings::Setting::Layout).toByteArray());
     QJsonDocument jsonDoc = QJsonDocument::fromJson(layout);
     if(!jsonDoc.isNull() && !jsonDoc.isEmpty()) {
         QJsonObject json = jsonDoc.object();
@@ -282,4 +286,10 @@ bool EditableLayout::loadLayout()
         }
     }
     return false;
+}
+
+bool EditableLayout::loadLayout()
+{
+    auto layout = QByteArray::fromBase64(m_settings->value(Settings::Setting::Layout).toByteArray());
+    return loadLayout(layout);
 }

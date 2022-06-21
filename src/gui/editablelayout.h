@@ -39,6 +39,8 @@ public:
     explicit EditableLayout(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~EditableLayout() override;
 
+    void changeLayout(const QByteArray& layout);
+
     static Widget* splitterChild(QWidget* widget);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
@@ -46,6 +48,7 @@ public:
     void iterateSplitter(QJsonObject& object, QJsonArray& array, SplitterWidget* splitter, bool isRoot);
     void saveLayout();
     void iterateInsertSplitter(const QJsonArray& array, SplitterWidget* splitter);
+    bool loadLayout(const QByteArray& layout);
     bool loadLayout();
 
     static QRect widgetGeometry(Widget* widget);
