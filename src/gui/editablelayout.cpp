@@ -171,7 +171,7 @@ void EditableLayout::hideOverlay()
     m_overlay->hide();
 }
 
-// TODO: move to splitter widget to remove recursion.
+// TODO: Move to splitter widget to remove recursion.
 void EditableLayout::iterateSplitter(QJsonObject& splitterObject, QJsonArray& SplitterWidgetArray,
                                      SplitterWidget* splitter, bool isRoot)
 {
@@ -230,7 +230,7 @@ void EditableLayout::saveLayout()
     settings->set(Settings::Setting::Layout, json);
 }
 
-// TODO: move to splitter widget to remove recursion.
+// TODO: Move to splitter widget to remove recursion.
 void EditableLayout::iterateInsertSplitter(const QJsonArray& array, SplitterWidget* splitter)
 {
     for(const auto widget : array)

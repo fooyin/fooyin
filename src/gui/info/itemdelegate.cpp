@@ -17,7 +17,7 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
     auto height = option.fontMetrics.height();
 
     QFont textFont = option.font;
-    // set font slightly larger than actual to eliminate clipping when resizing
+    // Set font slightly larger than actual to eliminate clipping when resizing
     textFont.setPixelSize(15);
 
     QFontMetrics fm{textFont};

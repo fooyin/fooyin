@@ -94,10 +94,10 @@ void PlayerController::stop()
 void PlayerController::setCurrentPosition(quint64 ms)
 {
     m_position = ms;
-    // TODO: only increment playCount based on total time listened excluding seeking.
+    // TODO: Only increment playCount based on total time listened excluding seeking.
     if(!m_counted && ms >= m_totalDuration / 2)
     {
-        // TODO: save playCounts to db.
+        // TODO: Save playCounts to db.
         quint16 playCount = m_currentTrack->playCount();
         m_currentTrack->setPlayCount(++playCount);
         m_counted = true;

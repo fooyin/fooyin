@@ -108,7 +108,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         return {};
     }
 
-    // gather all albums in a map
+    // Gather all albums
     QHash<QString, Album> albumMap;
     {
         AlbumList dbAlbums;
@@ -121,7 +121,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         }
     }
 
-    // gather all artists in a map
+    // Gather all artists
     QHash<QString, Artist> artistMap;
     {
         ArtistHash dbArtists;
@@ -133,7 +133,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         }
     }
 
-    // gather all genres in a map
+    // Gather all genres
     QHash<QString, int> genreMap;
     {
         GenreHash dbGenres;
@@ -145,7 +145,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         }
     }
 
-    // gather all tracks in a map
+    // Gather all tracks
     QHash<QString, Track> trackMap;
     {
         TrackList dbTracks;
@@ -167,6 +167,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         }
 
         {
+            // Check artists
             for(const auto& trackArtist : track.artists())
             {
                 if(!artistMap.contains(trackArtist))
@@ -180,7 +181,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
                 track.addArtistId(artist.id());
             }
 
-            // check album artist ...
+            // Check album artist
             if(!artistMap.contains(track.albumArtist()))
             {
                 Artist albumArtist{track.albumArtist()};
@@ -191,7 +192,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             auto albumArtist = artistMap.value(track.albumArtist());
             track.setAlbumArtistId(albumArtist.id());
 
-            // check genres ...
+            // Check genres
             for(const auto& genre : track.genres())
             {
                 if(!genreMap.contains(genre))
@@ -203,7 +204,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
                 track.addGenreId(trackGenre);
             }
 
-            // check album id
+            // Check album id
             QString hash = Util::calcAlbumHash(track.album(), track.albumArtist(), track.year());
             if(!albumMap.contains(hash))
             {
@@ -253,7 +254,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             track.setCoverPath(album.coverPath());
         }
 
-        { // check track id
+        { // Check track id
             int id = -1;
             if(trackMap.contains(track.filepath()))
                 id = trackMap.value(track.filepath()).id();

@@ -152,6 +152,6 @@ QModelIndex InfoModel::index(int row, int column, const QModelIndex& parent) con
 QModelIndex InfoModel::parent(const QModelIndex& child) const
 {
     Q_UNUSED(child)
-    // all rows are parents of root
+    // All rows are parents of root
     return {};
 }

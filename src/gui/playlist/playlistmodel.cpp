@@ -64,7 +64,7 @@ void PlaylistModel::setupModelData()
         const TrackPtrList& tracks = m_library->tracks();
         if(!tracks.isEmpty())
         {
-            // create albums before model to ensure discs (based on discCount) are properly created
+            // Create albums before model to ensure discs (based on discCount) are properly created
             createAlbums(tracks);
             for(int i = 0; i < tracks.size(); ++i)
             {
@@ -167,7 +167,7 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
     return QString("%1 Tracks").arg(m_library->tracks().size());
 }
 
-// TODO : split into separate functions for each type
+// TODO : Split into separate functions for each type
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 {
     if(!index.isValid())

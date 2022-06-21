@@ -43,7 +43,7 @@ EngineMpv::EngineMpv(QObject* parent)
 {
     p = std::make_unique<Private>();
 
-    // not thread safe
+    // Not thread safe
     setlocale(LC_NUMERIC, "C"); // NOLINT
 
     p->mpv = mpv_create();

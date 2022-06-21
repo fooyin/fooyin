@@ -103,7 +103,7 @@ namespace File {
     {
         QDir baseDirectory = QDir(directory);
         QStringList fileExtensions{"*.jpg", "*.jpeg", "*.png", "*.gif", "*.tiff", "*.bmp"};
-        // use first image found as album cover
+        // Use first image found as album cover
         QStringList fileList = baseDirectory.entryList(fileExtensions, QDir::Files);
         if(!fileList.isEmpty())
         {

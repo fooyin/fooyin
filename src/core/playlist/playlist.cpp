@@ -182,7 +182,7 @@ int Playlist::Playlist::nextIndex()
     {
         index = currentTrackIndex();
     }
-    // TODO: implement full shuffle functionality
+    // TODO: Implement full shuffle functionality
     else if(mode == Player::PlayMode::Shuffle)
     {
         index = Util::randomNumber(0, static_cast<int>(m_tracks.size()) - 1);

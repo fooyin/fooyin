@@ -139,7 +139,7 @@ void MusicLibrary::resetFilter(Filters::FilterType type)
 void MusicLibrary::registerFilter(Filters::FilterType type, int index)
 {
     m_filterIndexes.insert(index, type);
-    // TODO: properly handle different sort orders
+    // TODO: Properly handle different sort orders
     m_filterSortOrders.insert(type, SortOrder::TitleAsc);
 }
 
