@@ -50,13 +50,16 @@ struct MainWindow::Private
     QAction* openSettings;
     QAction* layoutEditing;
 
+    Settings* settings;
+
     Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
 
     WidgetProvider* widgetProvider;
 
     Private(Library::LibraryManager* libraryManager, Library::MusicLibrary* library, WidgetProvider* widgetProvider)
-        : libraryManager(libraryManager)
+        : settings(Settings::instance())
+        , libraryManager(libraryManager)
         , library(library)
         , widgetProvider(widgetProvider)
     { }
@@ -73,15 +76,12 @@ MainWindow::MainWindow(Library::LibraryManager* libraryManager, Library::MusicLi
 
 MainWindow::~MainWindow()
 {
-    auto* settings = Settings::instance();
-    settings->set(Settings::Setting::Geometry, QString::fromUtf8(saveGeometry().toBase64()));
+    p->settings->set(Settings::Setting::Geometry, QString::fromUtf8(saveGeometry().toBase64()));
     p->mainLayout->saveLayout();
 }
 
 void MainWindow::setupUi()
 {
-    auto* settings = Settings::instance();
-
     if(objectName().isEmpty()) {
         setObjectName(QString::fromUtf8("MainWindow"));
     }
@@ -90,7 +90,7 @@ void MainWindow::setupUi()
     setMinimumSize(410, 320);
     setWindowIcon(QIcon("://images/fooyin.png"));
 
-    QByteArray geometryArray = settings->value(Settings::Setting::Geometry).toString().toUtf8();
+    QByteArray geometryArray = p->settings->value(Settings::Setting::Geometry).toString().toUtf8();
     QByteArray geometry = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
@@ -116,7 +116,7 @@ void MainWindow::setupUi()
     p->layoutEditing = new QAction(this);
 
     p->layoutEditing->setCheckable(true);
-    p->layoutEditing->setChecked(settings->value(Settings::Setting::LayoutEditing).toBool());
+    p->layoutEditing->setChecked(p->settings->value(Settings::Setting::LayoutEditing).toBool());
 
     p->menuBar->addAction(p->menuFile->menuAction());
     p->menuBar->addAction(p->menuEdit->menuAction());
@@ -140,7 +140,7 @@ void MainWindow::setupUi()
 
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
     connect(p->layoutEditing, &QAction::triggered, this, [=](bool checked) {
-        settings->set(Settings::Setting::LayoutEditing, checked);
+        p->settings->set(Settings::Setting::LayoutEditing, checked);
     });
 }
 
