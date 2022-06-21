@@ -31,6 +31,7 @@ public:
     {
         Version = 0,
         DatabaseVersion,
+        FirstRun,
         LayoutEditing,
         DiscHeaders,
         SplitDiscs,

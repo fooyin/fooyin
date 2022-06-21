@@ -50,9 +50,11 @@ Settings::Settings()
     m_settings = new QSettings(Util::settingsPath(), QSettings::IniFormat);
     if(Util::File::exists(Util::settingsPath())) {
         loadSettings();
+        m_values[Setting::FirstRun] = false;
     }
     else {
         storeSettings();
+        m_values[Setting::FirstRun] = true;
     }
 }
 
@@ -194,11 +196,13 @@ QString Settings::getKeyString(Setting key)
         case(Setting::Geometry):
             keyString = "Layout";
             break;
-        case(Setting::LayoutEditing):
-            return {};
         case(Setting::Version):
         case(Setting::DatabaseVersion):
             break;
+        case(Setting::LayoutEditing):
+        case(Setting::FirstRun):
+            // Don't save to disk
+            return {};
     }
     keyString += "/" + EnumHelper::toString(key);
     return keyString;
