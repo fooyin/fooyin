@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "gui/playlist/playlistmodel.h"
+#include "gui/playlist/playlistview.h"
 #include "gui/widgets/widget.h"
 #include "utils/typedefs.h"
 
@@ -26,12 +28,12 @@
 
 class PlayerManager;
 class QHBoxLayout;
-class PlaylistModel;
+// class PlaylistModel;
 class Settings;
 
 namespace Library {
 class MusicLibrary;
-class PlaylistView;
+// class PlaylistView;
 
 class PlaylistWidget : public Widget
 {
@@ -71,8 +73,8 @@ private:
     QHBoxLayout* m_layout;
     MusicLibrary* m_library;
     PlayerManager* m_playerManager;
-    PlaylistModel* m_model;
-    Library::PlaylistView* m_playlist;
+    PlaylistModel m_model;
+    Library::PlaylistView m_playlist;
     Settings* m_settings;
     bool m_altRowColours;
 };
