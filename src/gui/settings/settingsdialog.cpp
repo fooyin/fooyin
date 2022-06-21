@@ -107,7 +107,9 @@ void SettingsDialog::setupUi()
 void SettingsDialog::changePage(QListWidgetItem* current, QListWidgetItem* previous)
 {
     if(!current)
+    {
         current = previous;
+    }
 
     p->pagesWidget->setCurrentIndex(p->contentsWidget->row(current));
 }

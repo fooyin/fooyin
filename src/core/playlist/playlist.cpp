@@ -52,7 +52,9 @@ int Playlist::Playlist::currentTrackIndex() const
     });
 
     if(it == m_tracks.end())
+    {
         return -1;
+    }
 
     return static_cast<int>(std::distance(m_tracks.constBegin(), it));
 }
@@ -61,7 +63,9 @@ Track* Playlist::Playlist::currentTrack() const
 {
     const auto trackIndex = currentTrackIndex();
     if(trackIndex >= m_tracks.size() || trackIndex < 0)
+    {
         return {};
+    }
 
     return m_tracks.at(trackIndex);
 }
@@ -89,7 +93,9 @@ void Playlist::Playlist::clear()
 void Playlist::Playlist::setCurrentTrack(int index)
 {
     if(index < 0 || index >= m_tracks.size())
+    {
         stop();
+    }
 
     else
     {
@@ -127,7 +133,9 @@ bool Playlist::Playlist::changeTrack(int index)
 void Playlist::Playlist::play()
 {
     if(currentTrackIndex() < 0)
+    {
         next();
+    }
 }
 
 void Playlist::Playlist::stop()
@@ -169,19 +177,22 @@ int Playlist::Playlist::nextIndex()
     {
         index = 0;
     }
+
     else if(mode == Player::PlayMode::Repeat)
     {
         index = currentTrackIndex();
     }
+    // TODO: Implement full shuffle functionality
     else if(mode == Player::PlayMode::Shuffle)
     {
-        // TODO: Implement full shuffle functionality
         index = Util::randomNumber(0, static_cast<int>(m_tracks.size()) - 1);
     }
+
     else if(isLastTrack)
     {
         index = mode == Player::PlayMode::RepeatAll ? 0 : -1;
     }
+
     else
     {
         index = currentTrackIndex() + 1;

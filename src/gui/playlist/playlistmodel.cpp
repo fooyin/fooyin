@@ -144,7 +144,9 @@ PlaylistItem* PlaylistModel::iterateTrack(Track* track, bool discHeaders, bool s
 Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid())
+    {
         return Qt::NoItemFlags;
+    }
 
     return QAbstractItemModel::flags(index);
 }
@@ -152,12 +154,15 @@ Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
 QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     Q_UNUSED(section)
-
     if(role == Qt::TextAlignmentRole)
+    {
         return (Qt::AlignHCenter);
+    }
 
     if(!m_library || role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical)
+    {
         return {};
+    }
 
     return QString("%1 Tracks").arg(m_library->tracks().size());
 }
@@ -352,7 +357,9 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 QModelIndex PlaylistModel::index(int row, int column, const QModelIndex& parent) const
 {
     if(!hasIndex(row, column, parent))
+    {
         return {};
+    }
 
     PlaylistItem* parentItem;
 
@@ -368,30 +375,34 @@ QModelIndex PlaylistModel::index(int row, int column, const QModelIndex& parent)
     PlaylistItem* childItem = parentItem->child(row);
     if(childItem)
         return createIndex(row, column, childItem);
-
     return {};
 }
 
 QModelIndex PlaylistModel::parent(const QModelIndex& index) const
 {
     if(!index.isValid())
+    {
         return {};
+    }
 
     auto* childItem = static_cast<PlaylistItem*>(index.internalPointer());
     PlaylistItem* parentItem = childItem->parent();
 
     if(parentItem == m_root.get())
+    {
         return {};
+    }
 
     return createIndex(parentItem->row(), 0, parentItem);
 }
 
 int PlaylistModel::rowCount(const QModelIndex& parent) const
 {
-    if(parent.column() > 0)
-        return 0;
-
     PlaylistItem* parentItem;
+    if(parent.column() > 0)
+    {
+        return 0;
+    }
 
     if(!parent.isValid())
     {
@@ -408,8 +419,9 @@ int PlaylistModel::rowCount(const QModelIndex& parent) const
 int PlaylistModel::columnCount(const QModelIndex& parent) const
 {
     if(parent.isValid())
+    {
         return static_cast<PlaylistItem*>(parent.internalPointer())->columnCount();
-
+    }
     return m_root->columnCount();
 }
 
@@ -457,7 +469,9 @@ QModelIndexList PlaylistModel::match(const QModelIndex& start, int role, const Q
                                      Qt::MatchFlags flags) const
 {
     if(role != ItemRole::Id)
+    {
         return QAbstractItemModel::match(start, role, value, hits, flags);
+    }
 
     QModelIndexList matches;
     QModelIndexList list;
@@ -568,7 +582,8 @@ QModelIndex PlaylistModel::indexOfItem(const PlaylistItem* item)
 {
     QModelIndex index;
     if(item)
+    {
         index = createIndex(item->row(), 0, item);
-
+    }
     return index;
 }

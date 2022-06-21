@@ -108,8 +108,9 @@ void PlayerController::setCurrentPosition(quint64 ms)
 void PlayerController::changePosition(quint64 ms)
 {
     if(ms >= m_totalDuration - 100)
+    {
         return next();
-
+    }
     m_position = ms;
     emit positionMoved(ms);
 }
@@ -147,10 +148,13 @@ void PlayerController::setRepeat()
 void PlayerController::setShuffle()
 {
     if(m_playMode == Player::PlayMode::Shuffle)
+    {
         m_playMode = Player::PlayMode::Default;
+    }
     else
+    {
         m_playMode = Player::PlayMode::Shuffle;
-
+    }
     emit playModeChanged(m_playMode);
 }
 

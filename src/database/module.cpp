@@ -46,7 +46,9 @@ static void execPragma(const QSqlDatabase& db, const QString& key, const QString
 QSqlDatabase Module::db() const
 {
     if(!QSqlDatabase::isDriverAvailable("QSQLITE"))
+    {
         return {};
+    }
 
     QThread* t = QThread::currentThread();
 
@@ -106,7 +108,9 @@ DB::Query Module::runQuery(const QString& query, const QMap<QString, QVariant>& 
     }
 
     if(!q.execQuery())
+    {
         q.error(errorText);
+    }
 
     return q;
 }
@@ -131,7 +135,9 @@ DB::Query Module::insert(const QString& tableName, const QMap<QString, QVariant>
     }
 
     if(!q.execQuery())
+    {
         q.error(errorMessage);
+    }
 
     return q;
 }

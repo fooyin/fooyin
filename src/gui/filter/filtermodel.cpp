@@ -54,7 +54,9 @@ void FilterModel::setIndex(int index)
 QVariant FilterModel::data(const QModelIndex& index, int role) const
 {
     if(!index.isValid() && !checkIndex(index))
+    {
         return {};
+    }
 
     auto* item = static_cast<FilterItem*>(index.internalPointer());
 
@@ -120,7 +122,9 @@ QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int r
 QModelIndex FilterModel::index(int row, int column, const QModelIndex& parent) const
 {
     if(!hasIndex(row, column, parent))
+    {
         return {};
+    }
 
     FilterItem* parentItem = m_root.get();
 
@@ -168,7 +172,9 @@ QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVa
                                    Qt::MatchFlags flags) const
 {
     if(role != FilterRole::Id)
+    {
         return QAbstractItemModel::match(start, role, value, hits, flags);
+    }
 
     QModelIndexList indexes{};
     for(int i = 0; i < rowCount(start); ++i)

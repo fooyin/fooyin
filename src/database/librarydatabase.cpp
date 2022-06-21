@@ -166,96 +166,100 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             track.setLibraryId(m_libraryId);
         }
 
-        // Check artists
-        for(const auto& trackArtist : track.artists())
         {
-            if(!artistMap.contains(trackArtist))
+            // Check artists
+            for(const auto& trackArtist : track.artists())
             {
-                Artist artist{trackArtist};
-                int id = insertArtist(artist);
-                artist.setId(id);
-                artistMap.insert(trackArtist, artist);
-            }
-            auto artist = artistMap.value(trackArtist);
-            track.addArtistId(artist.id());
-        }
-
-        // Check album artist
-        if(!artistMap.contains(track.albumArtist()))
-        {
-            Artist albumArtist{track.albumArtist()};
-            int id = insertArtist(albumArtist);
-            albumArtist.setId(id);
-            artistMap.insert(track.albumArtist(), albumArtist);
-        }
-        auto albumArtist = artistMap.value(track.albumArtist());
-        track.setAlbumArtistId(albumArtist.id());
-
-        // Check genres
-        for(const auto& genre : track.genres())
-        {
-            if(!genreMap.contains(genre))
-            {
-                int id = insertGenre(genre);
-                genreMap.insert(genre, id);
-            }
-            int trackGenre = genreMap.value(genre);
-            track.addGenreId(trackGenre);
-        }
-
-        // Check album id
-        QString hash = Util::calcAlbumHash(track.album(), track.albumArtist(), track.year());
-        if(!albumMap.contains(hash))
-        {
-            Album album{track.album()};
-            album.setYear(track.year());
-            album.setGenres(track.genres());
-            album.setArtistId(albumArtist.id());
-            album.setArtist(track.albumArtist());
-
-            QString coverHash = Util::calcCoverHash(track.album(), track.albumArtist());
-
-            const QString cacheCover = Util::coverPath() + coverHash + ".jpg";
-            const QString folderCover = Util::File::coverInDirectory(Util::File::getParentDirectory(track.filepath()));
-
-            if(Util::File::exists(cacheCover))
-            {
-                track.setCoverPath(cacheCover);
-                album.setCoverPath(cacheCover);
-            }
-            else if(!folderCover.isEmpty())
-            {
-                track.setCoverPath(folderCover);
-                album.setCoverPath(folderCover);
-            }
-            else
-            {
-                QPixmap cover = Tagging::readCover(track.filepath());
-                if(!cover.isNull())
+                if(!artistMap.contains(trackArtist))
                 {
-                    bool saved = Util::saveCover(cover, coverHash);
-                    if(saved)
+                    Artist artist{trackArtist};
+                    int id = insertArtist(artist);
+                    artist.setId(id);
+                    artistMap.insert(trackArtist, artist);
+                }
+                auto artist = artistMap.value(trackArtist);
+                track.addArtistId(artist.id());
+            }
+
+            // Check album artist
+            if(!artistMap.contains(track.albumArtist()))
+            {
+                Artist albumArtist{track.albumArtist()};
+                int id = insertArtist(albumArtist);
+                albumArtist.setId(id);
+                artistMap.insert(track.albumArtist(), albumArtist);
+            }
+            auto albumArtist = artistMap.value(track.albumArtist());
+            track.setAlbumArtistId(albumArtist.id());
+
+            // Check genres
+            for(const auto& genre : track.genres())
+            {
+                if(!genreMap.contains(genre))
+                {
+                    int id = insertGenre(genre);
+                    genreMap.insert(genre, id);
+                }
+                int trackGenre = genreMap.value(genre);
+                track.addGenreId(trackGenre);
+            }
+
+            // Check album id
+            QString hash = Util::calcAlbumHash(track.album(), track.albumArtist(), track.year());
+            if(!albumMap.contains(hash))
+            {
+                Album album{track.album()};
+                album.setYear(track.year());
+                album.setGenres(track.genres());
+                album.setArtistId(albumArtist.id());
+                album.setArtist(track.albumArtist());
+
+                QString coverHash = Util::calcCoverHash(track.album(), track.albumArtist());
+
+                const QString cacheCover = Util::coverPath() + coverHash + ".jpg";
+                const QString folderCover
+                    = Util::File::coverInDirectory(Util::File::getParentDirectory(track.filepath()));
+
+                if(Util::File::exists(cacheCover))
+                {
+                    track.setCoverPath(cacheCover);
+                    album.setCoverPath(cacheCover);
+                }
+                else if(!folderCover.isEmpty())
+                {
+                    track.setCoverPath(folderCover);
+                    album.setCoverPath(folderCover);
+                }
+                else
+                {
+                    QPixmap cover = Tagging::readCover(track.filepath());
+                    if(!cover.isNull())
                     {
-                        track.setCoverPath(cacheCover);
-                        album.setCoverPath(cacheCover);
+                        bool saved = Util::saveCover(cover, coverHash);
+                        if(saved)
+                        {
+                            track.setCoverPath(cacheCover);
+                            album.setCoverPath(cacheCover);
+                        }
                     }
                 }
+
+                int id = insertAlbum(album);
+                album.setId(id);
+                albumMap.insert(hash, album);
             }
 
-            int id = insertAlbum(album);
-            album.setId(id);
-            albumMap.insert(hash, album);
+            auto album = albumMap.value(hash);
+            track.setAlbumId(album.id());
+            track.setCoverPath(album.coverPath());
         }
 
-        auto album = albumMap.value(hash);
-        track.setAlbumId(album.id());
-        track.setCoverPath(album.coverPath());
-
-        // Check track id
-        int id = -1;
-        if(trackMap.contains(track.filepath()))
-            id = trackMap.value(track.filepath()).id();
-        track.setId(id);
+        { // Check track id
+            int id = -1;
+            if(trackMap.contains(track.filepath()))
+                id = trackMap.value(track.filepath()).id();
+            track.setId(id);
+        }
     }
 
     db().commit();
@@ -266,7 +270,9 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
 bool LibraryDatabase::storeTracks(TrackList& tracks)
 {
     if(tracks.isEmpty())
+    {
         return true;
+    }
 
     insertArtistsAlbums(tracks);
 
@@ -818,7 +824,9 @@ bool LibraryDatabase::deleteTrack(int id)
 bool LibraryDatabase::deleteTracks(const IdSet& tracks)
 {
     if(tracks.empty())
+    {
         return true;
+    }
 
     module()->db().transaction();
 
@@ -834,7 +842,9 @@ bool LibraryDatabase::deleteTracks(const IdSet& tracks)
 bool LibraryDatabase::deleteLibraryTracks(int id)
 {
     if(id < 0)
+    {
         return false;
+    }
 
     const auto query = QStringLiteral("DELETE FROM Tracks WHERE LibraryID=:libraryId;");
     const auto q = module()->runQuery(query, {":libraryId", id}, "Cannot delete library tracks");

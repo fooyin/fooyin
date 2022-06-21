@@ -49,7 +49,9 @@ EngineMpv::EngineMpv(QObject* parent)
     p->mpv = mpv_create();
 
     if(!p->mpv)
+    {
         return;
+    }
 
     engineSetup();
 }
@@ -83,7 +85,9 @@ void EngineMpv::engineSetup()
     mpv_set_wakeup_callback(p->mpv, wakeup, this);
 
     if(mpv_initialize(p->mpv) < 0)
+    {
         return;
+    }
 }
 
 void EngineMpv::processEvents()
@@ -93,7 +97,9 @@ void EngineMpv::processEvents()
     {
         mpv_event* event = mpv_wait_event(p->mpv, 0);
         if(event->event_id == MPV_EVENT_NONE)
+        {
             break;
+        }
         handleEvent(event);
     }
 }
@@ -143,7 +149,9 @@ void EngineMpv::setVolume(float value)
 void EngineMpv::handleEvent(mpv_event* event)
 {
     if(!event || event->event_id == MPV_EVENT_NONE)
+    {
         return;
+    }
 
     if(event->error < 0)
     {
@@ -167,7 +175,9 @@ void EngineMpv::handleEvent(mpv_event* event)
         case(MPV_EVENT_END_FILE): {
             auto* eof_event = static_cast<mpv_event_end_file*>(event->data);
             if(eof_event->reason == MPV_END_FILE_REASON_EOF)
+            {
                 emit trackFinished();
+            }
             break;
         }
         default:

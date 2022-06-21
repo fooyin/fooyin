@@ -53,7 +53,9 @@ struct Database::Private
         connectionName = directory + "/" + filename;
 
         if(!Util::File::exists(directory))
+        {
             Util::File::createDirectories(directory);
+        }
     }
 };
 
@@ -65,7 +67,9 @@ Database::Database(const QString& directory, const QString& filename)
     bool success = Util::File::exists(p->connectionName);
 
     if(!success)
+    {
         success = createDatabase();
+    }
 
     p->initialized = success && db().isOpen();
 
@@ -73,6 +77,7 @@ Database::Database(const QString& directory, const QString& filename)
     {
         qDebug() << "Database could not be initialised";
     }
+
     else
     {
         p->libraryDatabase = std::make_unique<LibraryDatabase>(connectionName(), -1);
@@ -105,7 +110,9 @@ void Database::deleteLibraryDatabase(int id)
 Library* Database::libraryConnector()
 {
     if(!p->libraryConnector)
+    {
         p->libraryConnector = std::make_unique<Library>(connectionName());
+    }
 
     return p->libraryConnector.get();
 }
@@ -125,7 +132,9 @@ bool Database::createDatabase()
 {
     p->initialized = db().isOpen();
     if(!p->initialized)
+    {
         return false;
+    }
 
     checkInsertTable("Artists", "CREATE TABLE Artists ("
                                 "    ArtistID INTEGER PRIMARY KEY AUTOINCREMENT,"
