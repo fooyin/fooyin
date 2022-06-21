@@ -42,8 +42,7 @@ void addParentContext(Widget* widget, QMenu* menu)
 {
     auto* parent = qobject_cast<SplitterWidget*>(widget->findParent());
 
-    if(parent)
-    {
+    if(parent) {
         auto* remove = new QAction("Remove", menu);
         QAction::connect(remove, &QAction::triggered, widget, [=] {
             parent->removeWidget(widget);
@@ -55,8 +54,7 @@ void addParentContext(Widget* widget, QMenu* menu)
 
         auto* parentOfParent = qobject_cast<SplitterWidget*>(parent->findParent());
         // Only splitters with a splitter parent are removable.
-        if(parentOfParent)
-        {
+        if(parentOfParent) {
             auto* removeParent = new QAction("Remove", menu);
             QAction::connect(removeParent, &QAction::triggered, parent, [=] {
                 parentOfParent->removeWidget(parent);
@@ -87,8 +85,7 @@ EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
     });
 
     bool loaded = loadLayout();
-    if(!loaded)
-    {
+    if(!loaded) {
         m_splitter = m_widgetProvider->createSplitter(Qt::Vertical, this);
         m_box->addWidget(m_splitter);
     }
@@ -101,38 +98,37 @@ Widget* EditableLayout::splitterChild(QWidget* widget)
 {
     QWidget* child = widget;
 
-    while(!qobject_cast<Widget*>(child) || qobject_cast<Dummy*>(child))
+    while(!qobject_cast<Widget*>(child) || qobject_cast<Dummy*>(child)) {
         child = child->parentWidget();
+    }
 
-    if(child)
+    if(child) {
         return qobject_cast<Widget*>(child);
+    }
 
     return {};
 }
 
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 {
-    if(!m_layoutEditing)
+    if(!m_layoutEditing) {
         return QWidget::eventFilter(watched, event);
+    }
 
-    if(event->type() == QEvent::MouseButtonPress)
-    {
-        auto* mouseEvent = static_cast<QMouseEvent*>(event);
-        if(mouseEvent->button() == Qt::RightButton && m_menu->isHidden())
-        {
+    if(event->type() == QEvent::MouseButtonPress) {
+        auto* mouseEvent = dynamic_cast<QMouseEvent*>(event);
+        if(mouseEvent->button() == Qt::RightButton && m_menu->isHidden()) {
             m_menu->clear();
 
             QWidget* widget = childAt(mouseEvent->pos());
             Widget* child = splitterChild(widget);
 
-            if(child)
-            {
+            if(child) {
                 m_menu->addAction(new MenuHeaderAction(child->name(), m_menu));
                 child->layoutEditingMenu(m_menu);
                 addParentContext(child, m_menu);
             }
-            if(child && !m_menu->isEmpty())
-            {
+            if(child && !m_menu->isEmpty()) {
                 showOverlay(child);
                 m_menu->exec(mapToGlobal(mouseEvent->pos()));
             }
@@ -150,8 +146,7 @@ QRect EditableLayout::widgetGeometry(Widget* widget)
     int x = widget->x();
     int y = widget->y();
 
-    while(widget->findParent())
-    {
+    while(widget->findParent()) {
         widget = widget->findParent();
         x += widget->x();
         y += widget->y();
@@ -177,24 +172,23 @@ void EditableLayout::iterateSplitter(QJsonObject& splitterObject, QJsonArray& Sp
 {
     QJsonArray array;
 
-    for(auto& [type, widget] : splitter->children())
-    {
+    for(auto& [type, widget] : splitter->children()) {
         auto* childSplitter = qobject_cast<SplitterWidget*>(widget);
-        if(childSplitter)
+        if(childSplitter) {
             iterateSplitter(splitterObject, array, childSplitter, false);
-        else
-        {
+        }
+        else {
             QJsonObject widgetObject;
-            if(type == Widgets::WidgetType::Filter)
-            {
+            if(type == Widgets::WidgetType::Filter) {
                 auto* filter = qobject_cast<Library::FilterWidget*>(widget);
                 QJsonObject filterObject;
                 filterObject["Type"] = EnumHelper::toString(filter->type());
                 widgetObject[EnumHelper::toString(type)] = filterObject;
                 array.append(widgetObject);
             }
-            else
+            else {
                 array.append(EnumHelper::toString(type));
+            }
         }
     }
     QString state = QString::fromUtf8(splitter->saveState().toBase64());
@@ -204,10 +198,10 @@ void EditableLayout::iterateSplitter(QJsonObject& splitterObject, QJsonArray& Sp
     children["State"] = state;
     children["Children"] = array;
 
-    if(isRoot)
+    if(isRoot) {
         splitterObject["Splitter"] = children;
-    else
-    {
+    }
+    else {
         QJsonObject object;
         object["Splitter"] = children;
         SplitterWidgetArray.append(object);
@@ -233,11 +227,9 @@ void EditableLayout::saveLayout()
 // TODO: Move to splitter widget to remove recursion.
 void EditableLayout::iterateInsertSplitter(const QJsonArray& array, SplitterWidget* splitter)
 {
-    for(const auto widget : array)
-    {
+    for(const auto widget : array) {
         QJsonObject object = widget.toObject();
-        if(object.contains("Splitter"))
-        {
+        if(object.contains("Splitter")) {
             QJsonObject SplitterWidgetSubObject = object["Splitter"].toObject();
             auto type = EnumHelper::fromString<Qt::Orientation>(SplitterWidgetSubObject["Type"].toString());
             auto widgetType = type == Qt::Vertical ? Widgets::WidgetType::VerticalSplitter
@@ -252,14 +244,12 @@ void EditableLayout::iterateInsertSplitter(const QJsonArray& array, SplitterWidg
             iterateInsertSplitter(SplitterWidgetArray, childSplitterWidget);
             childSplitterWidget->restoreState(SplitterWidgetState);
         }
-        else if(object.contains("Filter"))
-        {
+        else if(object.contains("Filter")) {
             const QJsonObject filterObject = object["Filter"].toObject();
             auto filterType = EnumHelper::fromString<Filters::FilterType>(filterObject["Type"].toString());
             m_widgetProvider->createFilter(filterType, splitter);
         }
-        else
-        {
+        else {
             auto type = EnumHelper::fromString<Widgets::WidgetType>(widget.toString());
             m_widgetProvider->createWidget(type, splitter);
         }
@@ -271,14 +261,11 @@ bool EditableLayout::loadLayout()
     Settings* settings = Settings::instance();
     auto layout = QByteArray::fromBase64(settings->value(Settings::Setting::Layout).toByteArray());
     QJsonDocument jsonDoc = QJsonDocument::fromJson(layout);
-    if(!jsonDoc.isNull() && !jsonDoc.isEmpty())
-    {
+    if(!jsonDoc.isNull() && !jsonDoc.isEmpty()) {
         QJsonObject json = jsonDoc.object();
-        if(json.contains("Layout") && json["Layout"].isObject())
-        {
+        if(json.contains("Layout") && json["Layout"].isObject()) {
             QJsonObject object = json["Layout"].toObject();
-            if(object.contains("Splitter") && object["Splitter"].isObject())
-            {
+            if(object.contains("Splitter") && object["Splitter"].isObject()) {
                 QJsonObject SplitterWidgetObject = object["Splitter"].toObject();
 
                 auto type = EnumHelper::fromString<Qt::Orientation>(SplitterWidgetObject["Type"].toString());

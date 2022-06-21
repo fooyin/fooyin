@@ -31,7 +31,7 @@ public:
 
     FilterItem* child(int number);
     [[nodiscard]] int childCount() const;
-    int columnCount();
+    static int columnCount();
     [[nodiscard]] QVariant data(int role = 0) const;
     [[nodiscard]] int row() const;
     [[nodiscard]] FilterItem* parentItem() const;

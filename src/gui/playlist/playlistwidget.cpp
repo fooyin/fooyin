@@ -136,20 +136,16 @@ void PlaylistWidget::layoutEditingMenu(QMenu* menu)
 
 void PlaylistWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-    if(!deselected.isEmpty())
-    {
+    if(!deselected.isEmpty()) {
         return;
     }
 
     QModelIndexList indexes = selected.indexes();
     QSet<Track*> tracks;
-    for(const auto& index : indexes)
-    {
-        if(index.isValid())
-        {
+    for(const auto& index : indexes) {
+        if(index.isValid()) {
             const auto type = index.data(Role::Type).value<PlaylistItem::Type>();
-            if(type == PlaylistItem::Type::Track)
-            {
+            if(type == PlaylistItem::Type::Track) {
                 auto* data = index.data(ItemRole::Data).value<Track*>();
                 tracks.insert(data);
             }
@@ -163,13 +159,11 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
 {
     const auto key = e->key();
 
-    if(key == Qt::Key_Enter || key == Qt::Key_Return)
-    {
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
         const QModelIndex index = m_playlist.selectionModel()->selectedIndexes().constFirst();
         const auto type = index.data(Role::Type).value<PlaylistItem::Type>();
 
-        if(type != PlaylistItem::Type::Track)
-        {
+        if(type != PlaylistItem::Type::Track) {
             return;
         }
 
@@ -230,8 +224,7 @@ void PlaylistWidget::changeOrder(QAction* action)
 void PlaylistWidget::switchOrder()
 {
     const auto order = m_library->sortOrder();
-    switch(order)
-    {
+    switch(order) {
         case(Library::SortOrder::TitleAsc):
             return m_library->changeOrder(Library::SortOrder::TitleDesc);
         case(Library::SortOrder::TitleDesc):
@@ -247,8 +240,7 @@ void PlaylistWidget::switchOrder()
 
 void PlaylistWidget::changeState(Player::PlayState state)
 {
-    switch(state)
-    {
+    switch(state) {
         case(Player::PlayState::Playing):
             m_model.changeTrackState();
             return findCurrent();
@@ -261,8 +253,7 @@ void PlaylistWidget::changeState(Player::PlayState state)
 void PlaylistWidget::playTrack(const QModelIndex& index)
 {
     const auto type = index.data(Role::Type).value<PlaylistItem::Type>();
-    if(type != PlaylistItem::Type::Track)
-    {
+    if(type != PlaylistItem::Type::Track) {
         return;
     }
 
@@ -282,15 +273,15 @@ void PlaylistWidget::findCurrent()
 {
     const auto* track = m_playerManager->currentTrack();
 
-    if(!track)
+    if(!track) {
         return;
+    }
 
     QModelIndex index;
     //    index = m_>model->match({}, ItemRole::Id, track->id(), 1, {});
     index = m_model.indexOfItem(track->id());
 
-    if(index.isValid())
-    {
+    if(index.isValid()) {
         m_playlist.scrollTo(index);
         //        setCurrentIndex(index.constFirst());
     }

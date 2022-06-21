@@ -48,8 +48,7 @@ EngineMpv::EngineMpv(QObject* parent)
 
     p->mpv = mpv_create();
 
-    if(!p->mpv)
-    {
+    if(!p->mpv) {
         return;
     }
 
@@ -84,8 +83,7 @@ void EngineMpv::engineSetup()
 
     mpv_set_wakeup_callback(p->mpv, wakeup, this);
 
-    if(mpv_initialize(p->mpv) < 0)
-    {
+    if(mpv_initialize(p->mpv) < 0) {
         return;
     }
 }
@@ -93,11 +91,9 @@ void EngineMpv::engineSetup()
 void EngineMpv::processEvents()
 {
     // Process all events, until the event queue is empty.
-    while(p->mpv)
-    {
+    while(p->mpv) {
         mpv_event* event = mpv_wait_event(p->mpv, 0);
-        if(event->event_id == MPV_EVENT_NONE)
-        {
+        if(event->event_id == MPV_EVENT_NONE) {
             break;
         }
         handleEvent(event);
@@ -148,19 +144,16 @@ void EngineMpv::setVolume(float value)
 
 void EngineMpv::handleEvent(mpv_event* event)
 {
-    if(!event || event->event_id == MPV_EVENT_NONE)
-    {
+    if(!event || event->event_id == MPV_EVENT_NONE) {
         return;
     }
 
-    if(event->error < 0)
-    {
+    if(event->error < 0) {
         qDebug() << mpv_error_string(event->error);
         return;
     }
 
-    switch(event->event_id)
-    {
+    switch(event->event_id) {
         case(MPV_EVENT_PROPERTY_CHANGE): {
             return handlePropertyChange(event);
         }
@@ -174,8 +167,7 @@ void EngineMpv::handleEvent(mpv_event* event)
         }
         case(MPV_EVENT_END_FILE): {
             auto* eof_event = static_cast<mpv_event_end_file*>(event->data);
-            if(eof_event->reason == MPV_END_FILE_REASON_EOF)
-            {
+            if(eof_event->reason == MPV_END_FILE_REASON_EOF) {
                 emit trackFinished();
             }
             break;
@@ -189,16 +181,12 @@ void EngineMpv::handlePropertyChange(mpv_event* event)
 {
     auto* prop = static_cast<mpv_event_property*>(event->data);
 
-    if(QString(prop->name) == "audio-pts")
-    {
-        if(prop->format == MPV_FORMAT_DOUBLE)
-        {
+    if(QString(prop->name) == "audio-pts") {
+        if(prop->format == MPV_FORMAT_DOUBLE) {
             auto time = static_cast<quint64>((*static_cast<double*>(prop->data) * p->ms));
 
-            if(time != p->lastTick && time > 0)
-            {
-                if(time + p->posInterval >= p->lastTick || time - p->posInterval <= p->lastTick)
-                {
+            if(time != p->lastTick && time > 0) {
+                if(time + p->posInterval >= p->lastTick || time - p->posInterval <= p->lastTick) {
                     p->lastTick = time;
                     emit currentPositionChanged(time);
                 }

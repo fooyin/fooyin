@@ -19,8 +19,9 @@ InfoItem::~InfoItem()
 
 InfoItem* InfoItem::child(int number)
 {
-    if(number < 0 || number >= m_children.size())
+    if(number < 0 || number >= m_children.size()) {
         return nullptr;
+    }
 
     return m_children.at(number);
 }
@@ -47,8 +48,9 @@ InfoItem::Type InfoItem::type()
 
 int InfoItem::row() const
 {
-    if(m_parent)
+    if(m_parent) {
         return static_cast<int>(m_parent->m_children.indexOf(const_cast<InfoItem*>(this))); // NOLINT
+    }
 
     return 0;
 }

@@ -85,18 +85,15 @@ void Query::error(const QString& error) const
 
     QSqlError e = this->lastError();
 
-    if(!e.text().isEmpty())
-    {
+    if(!e.text().isEmpty()) {
         qDebug() << e.text();
     }
 
-    if(!e.driverText().isEmpty())
-    {
+    if(!e.driverText().isEmpty()) {
         qDebug() << e.driverText();
     }
 
-    if(!e.databaseText().isEmpty())
-    {
+    if(!e.databaseText().isEmpty()) {
         qDebug() << e.databaseText();
     }
 

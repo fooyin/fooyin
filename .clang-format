@@ -21,7 +21,7 @@ AlwaysBreakTemplateDeclarations:                Yes
 BreakBeforeBraces:                              Custom
 BraceWrapping:
     AfterClass:                                 true
-    AfterControlStatement:                      true
+    AfterControlStatement:                      false
     AfterEnum:                                  true
     AfterFunction:                              true
     AfterNamespace:                             false

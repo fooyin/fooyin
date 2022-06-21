@@ -40,8 +40,7 @@ PlaylistHandler::~PlaylistHandler()
 
 Playlist* PlaylistHandler::playlist(int id)
 {
-    if(m_playlists.contains(id))
-    {
+    if(m_playlists.contains(id)) {
         return m_playlists.value(id);
     }
     return {};
@@ -82,8 +81,7 @@ int PlaylistHandler::currentIndex() const
 
 void PlaylistHandler::setCurrentIndex(int playlistIndex)
 {
-    if(m_currentPlaylistIndex != playlistIndex)
-    {
+    if(m_currentPlaylistIndex != playlistIndex) {
         m_currentPlaylistIndex = playlistIndex;
     }
 }
@@ -95,16 +93,14 @@ int PlaylistHandler::count() const
 
 int PlaylistHandler::exists(const QString& name) const
 {
-    if(name.isEmpty() && m_currentPlaylistIndex >= 0 && m_currentPlaylistIndex < m_playlists.size())
-    {
+    if(name.isEmpty() && m_currentPlaylistIndex >= 0 && m_currentPlaylistIndex < m_playlists.size()) {
         return m_currentPlaylistIndex;
     }
 
     auto it = std::find_if(m_playlists.constBegin(), m_playlists.constEnd(), [&](const auto& playlist) {
         return (playlist->name().compare(name, Qt::CaseInsensitive) == 0);
     });
-    if(it == m_playlists.end())
-    {
+    if(it == m_playlists.end()) {
         return -1;
     }
     return static_cast<int>(std::distance(m_playlists.constBegin(), it));
@@ -113,8 +109,7 @@ int PlaylistHandler::exists(const QString& name) const
 int PlaylistHandler::addNewPlaylist(const QString& name)
 {
     const auto index = exists(name);
-    if(index >= 0)
-    {
+    if(index >= 0) {
         m_playlists.value(index)->clear();
         return index;
     }
@@ -130,8 +125,7 @@ void PlaylistHandler::next()
 {
     auto* playlist = activePlaylist();
     playlist->next();
-    if(playlist->currentTrackIndex() < 0)
-    {
+    if(playlist->currentTrackIndex() < 0) {
         m_playerManager->stop();
     }
 }

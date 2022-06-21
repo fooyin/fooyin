@@ -82,8 +82,9 @@ void MainWindow::setupUi()
 {
     auto* settings = Settings::instance();
 
-    if(objectName().isEmpty())
+    if(objectName().isEmpty()) {
         setObjectName(QString::fromUtf8("MainWindow"));
+    }
 
     resize(1280, 720);
     setMinimumSize(410, 320);

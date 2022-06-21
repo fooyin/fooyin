@@ -48,12 +48,10 @@ Settings::Settings()
     m_values[Setting::Layout] = defaults(Setting::Layout);
 
     m_settings = new QSettings(Util::settingsPath(), QSettings::IniFormat);
-    if(Util::File::exists(Util::settingsPath()))
-    {
+    if(Util::File::exists(Util::settingsPath())) {
         loadSettings();
     }
-    else
-    {
+    else {
         storeSettings();
     }
 }
@@ -73,25 +71,24 @@ QMap<Settings::Setting, QVariant>& Settings::settings()
 
 void Settings::loadSettings()
 {
-    for(const auto& [key, value] : asRange(m_values))
-    {
+    for(const auto& [key, value] : asRange(m_values)) {
         const auto keyString = getKeyString(key);
-        if(!keyString.isEmpty())
-        {
+        if(!keyString.isEmpty()) {
             const auto diskValue = m_settings->value(keyString);
-            if(!diskValue.isNull() && diskValue != value)
+            if(!diskValue.isNull() && diskValue != value) {
                 set(key, diskValue);
+            }
         }
     }
 }
 
 void Settings::storeSettings()
 {
-    for(const auto& [key, value] : asRange(m_values))
-    {
+    for(const auto& [key, value] : asRange(m_values)) {
         const auto keyString = getKeyString(key);
-        if(!keyString.isEmpty())
+        if(!keyString.isEmpty()) {
             m_settings->setValue(keyString, value);
+        }
     }
 
     m_settings->sync();
@@ -111,8 +108,7 @@ void Settings::set(Setting key, const QVariant& value)
     m_values.insert(key, value);
     m_lock.unlock();
 
-    switch(key)
-    {
+    switch(key) {
         case(Setting::LayoutEditing):
             return emit layoutEditingChanged();
         case(Setting::SimplePlaylist):
@@ -141,8 +137,7 @@ void Settings::set(Setting key, const QVariant& value)
 
 QVariant Settings::defaults(Setting key)
 {
-    switch(key)
-    {
+    switch(key) {
         case(Setting::Version):
             return VERSION;
         case(Setting::DatabaseVersion):
@@ -177,8 +172,7 @@ QVariant Settings::defaults(Setting key)
 QString Settings::getKeyString(Setting key)
 {
     QString keyString = "";
-    switch(key)
-    {
+    switch(key) {
         case(Setting::DiscHeaders):
         case(Setting::SplitDiscs):
         case(Setting::SimplePlaylist):

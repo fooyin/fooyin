@@ -40,26 +40,21 @@ void scaleImage(QPixmap& image)
     static const int maximumSize = 400;
     const int width = image.size().width();
     const int height = image.size().height();
-    if(width > maximumSize || height > maximumSize)
-    {
+    if(width > maximumSize || height > maximumSize) {
         image = image.scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 }
 
 QByteArray getCoverFromMpeg(TagLib::MPEG::File* file)
 {
-    if(file && file->ID3v2Tag())
-    {
+    if(file && file->ID3v2Tag()) {
         TagLib::ID3v2::FrameList frames = file->ID3v2Tag()->frameListMap()["APIC"];
-        if(!frames.isEmpty())
-        {
+        if(!frames.isEmpty()) {
             using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
-            for(const auto& frame : std::as_const(frames))
-            {
-                auto* coverFrame = static_cast<PictureFrame*>(frame);
+            for(const auto& frame : std::as_const(frames)) {
+                auto* coverFrame = dynamic_cast<PictureFrame*>(frame);
                 const auto type = coverFrame->type();
-                if((frame && type == PictureFrame::FrontCover) || type == PictureFrame::Other)
-                {
+                if((frame && type == PictureFrame::FrontCover) || type == PictureFrame::Other) {
                     return {coverFrame->picture().data(), coverFrame->picture().size()};
                 }
             }
@@ -72,13 +67,10 @@ QByteArray getCoverFromFlac(TagLib::FLAC::File* file)
 {
     const TagLib::List<TagLib::FLAC::Picture*> pictureList = file->pictureList();
 
-    if(!pictureList.isEmpty())
-    {
-        for(const auto& picture : std::as_const(pictureList))
-        {
+    if(!pictureList.isEmpty()) {
+        for(const auto& picture : std::as_const(pictureList)) {
             if((picture->type() == TagLib::FLAC::Picture::FrontCover
-                || picture->type() == TagLib::FLAC::Picture::Other))
-            {
+                || picture->type() == TagLib::FLAC::Picture::Other)) {
                 return {picture->data().data(), picture->data().size()};
             }
         }
@@ -90,8 +82,7 @@ QByteArray getCoverFromMp4(TagLib::MP4::File* file)
 {
     const TagLib::MP4::Item coverItem = file->tag()->item("covr");
     const TagLib::MP4::CoverArtList coverArtList = coverItem.toCoverArtList();
-    if(!coverArtList.isEmpty())
-    {
+    if(!coverArtList.isEmpty()) {
         const TagLib::MP4::CoverArt& coverArt = coverArtList.front();
         return {coverArt.data().data(), coverArt.data().size()};
     }
@@ -100,17 +91,21 @@ QByteArray getCoverFromMp4(TagLib::MP4::File* file)
 
 Tagging::TagType getTagTypeFromTag(TagLib::Tag* tag)
 {
-    if(dynamic_cast<TagLib::ID3v2::Tag*>(tag) != nullptr)
+    if(dynamic_cast<TagLib::ID3v2::Tag*>(tag) != nullptr) {
         return Tagging::TagType::ID3v2;
+    }
 
-    if(dynamic_cast<TagLib::ID3v1::Tag*>(tag) != nullptr)
+    if(dynamic_cast<TagLib::ID3v1::Tag*>(tag) != nullptr) {
         return Tagging::TagType::ID3v1;
+    }
 
-    if(dynamic_cast<TagLib::Ogg::XiphComment*>(tag) != nullptr)
+    if(dynamic_cast<TagLib::Ogg::XiphComment*>(tag) != nullptr) {
         return Tagging::TagType::Xiph;
+    }
 
-    if(dynamic_cast<TagLib::MP4::Tag*>(tag) != nullptr)
+    if(dynamic_cast<TagLib::MP4::Tag*>(tag) != nullptr) {
         return Tagging::TagType::MP4;
+    }
 
     return Tagging::TagType::Unsupported;
 }
@@ -119,20 +114,17 @@ FileTags tagsFromMpeg(TagLib::MPEG::File* file)
 {
     FileTags parsedTag;
 
-    if(file && file->hasID3v2Tag())
-    {
+    if(file && file->hasID3v2Tag()) {
         parsedTag.tag = file->ID3v2Tag();
         parsedTag.type = Tagging::TagType::ID3v2;
     }
 
-    else if(file && file->hasID3v1Tag())
-    {
+    else if(file && file->hasID3v1Tag()) {
         parsedTag.tag = file->ID3v1Tag();
         parsedTag.type = Tagging::TagType::ID3v1;
     }
 
-    else if(file)
-    {
+    else if(file) {
         parsedTag.tag = file->ID3v2Tag(true);
         parsedTag.type = Tagging::TagType::ID3v2;
     }
@@ -144,32 +136,27 @@ FileTags tagsFromFlac(TagLib::FLAC::File* file)
 {
     FileTags parsedTag;
 
-    if(file && file->hasXiphComment())
-    {
+    if(file && file->hasXiphComment()) {
         parsedTag.tag = file->xiphComment();
         parsedTag.type = Tagging::TagType::Xiph;
     }
 
-    else if(file && file->hasID3v2Tag())
-    {
+    else if(file && file->hasID3v2Tag()) {
         parsedTag.tag = file->ID3v2Tag();
         parsedTag.type = Tagging::TagType::ID3v2;
     }
 
-    else if(file && file->hasID3v1Tag())
-    {
+    else if(file && file->hasID3v1Tag()) {
         parsedTag.tag = file->ID3v1Tag();
         parsedTag.type = Tagging::TagType::ID3v1;
     }
 
-    else if(file && file->tag())
-    {
+    else if(file && file->tag()) {
         parsedTag.tag = file->tag();
         parsedTag.type = Tagging::TagType::Unknown;
     }
 
-    else if(file && !file->tag())
-    {
+    else if(file && !file->tag()) {
         parsedTag.tag = file->ID3v2Tag(true);
         parsedTag.type = Tagging::TagType::ID3v2;
     }
@@ -181,8 +168,7 @@ FileTags tagsFromMP4(TagLib::MP4::File* file)
 {
     FileTags parsedTag;
 
-    if(file && file->hasMP4Tag())
-    {
+    if(file && file->hasMP4Tag()) {
         parsedTag.tag = file->tag();
         parsedTag.type = Tagging::TagType::MP4;
     }
@@ -204,8 +190,9 @@ QStringList convertStringList(const TagLib::StringList& str)
 {
     QStringList list;
 
-    for(const auto& string : str)
+    for(const auto& string : str) {
         list += TStringToQString(string);
+    }
 
     list.sort();
 
@@ -219,30 +206,25 @@ FileTags tagsFromFile(const TagLib::FileRef& fileRef)
     parsedTag.tag = nullptr;
     parsedTag.type = TagType::Unsupported;
 
-    if(auto* mpg = dynamic_cast<TagLib::MPEG::File*>(fileRef.file()); mpg)
-    {
+    if(auto* mpg = dynamic_cast<TagLib::MPEG::File*>(fileRef.file()); mpg) {
         parsedTag = tagsFromMpeg(mpg);
     }
 
-    else if(auto* flac = dynamic_cast<TagLib::FLAC::File*>(fileRef.file()); flac)
-    {
+    else if(auto* flac = dynamic_cast<TagLib::FLAC::File*>(fileRef.file()); flac) {
         parsedTag = tagsFromFlac(flac);
     }
 
-    else if(auto* mp4 = dynamic_cast<TagLib::MP4::File*>(fileRef.file()); mp4)
-    {
+    else if(auto* mp4 = dynamic_cast<TagLib::MP4::File*>(fileRef.file()); mp4) {
         parsedTag = tagsFromMP4(mp4);
     }
 
-    else if(fileRef.file())
-    {
+    else if(fileRef.file()) {
         parsedTag.tag = fileRef.tag();
         parsedTag.type = TagType::Unknown;
     }
 
     const auto tagType = getTagTypeFromTag(fileRef.tag());
-    if(tagType != Tagging::TagType::Unsupported)
-    {
+    if(tagType != Tagging::TagType::Unsupported) {
         parsedTag.type = tagType;
     }
 
@@ -253,18 +235,15 @@ QPixmap coverFromFile(const TagLib::FileRef& fileRef)
 {
     QByteArray data;
 
-    if(auto* mpg = dynamic_cast<TagLib::MPEG::File*>(fileRef.file()); mpg)
-    {
+    if(auto* mpg = dynamic_cast<TagLib::MPEG::File*>(fileRef.file()); mpg) {
         data = getCoverFromMpeg(mpg);
     }
 
-    else if(auto* flac = dynamic_cast<TagLib::FLAC::File*>(fileRef.file()); flac)
-    {
+    else if(auto* flac = dynamic_cast<TagLib::FLAC::File*>(fileRef.file()); flac) {
         data = getCoverFromFlac(flac);
     }
 
-    else if(auto* mp4 = dynamic_cast<TagLib::MP4::File*>(fileRef.file()); mp4)
-    {
+    else if(auto* mp4 = dynamic_cast<TagLib::MP4::File*>(fileRef.file()); mp4) {
         data = getCoverFromMp4(mp4);
     }
 

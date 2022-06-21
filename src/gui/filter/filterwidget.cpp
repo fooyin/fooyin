@@ -117,8 +117,7 @@ void FilterWidget::setIndex(int index)
 void FilterWidget::switchOrder()
 {
     const auto order = m_library->filterOrder(m_type);
-    switch(order)
-    {
+    switch(order) {
         case(Library::SortOrder::TitleAsc):
             return m_library->changeFilterOrder(m_type, Library::SortOrder::TitleDesc);
         case(Library::SortOrder::TitleDesc):
@@ -283,16 +282,17 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
     Q_UNUSED(deselected)
     QModelIndexList indexes = m_filter->selectionModel()->selectedIndexes();
 
-    if(indexes.isEmpty())
+    if(indexes.isEmpty()) {
         return;
-    if(!m_model)
+    }
+
+    if(!m_model) {
         return;
+    }
 
     IdSet ids;
-    for(const auto& index : indexes)
-    {
-        if(index.isValid())
-        {
+    for(const auto& index : indexes) {
+        if(index.isValid()) {
             const int id = index.data(FilterRole::Id).toInt();
             ids.insert(id);
         }
@@ -314,23 +314,22 @@ void FilterWidget::changeOrder(QAction* action)
 
 void FilterWidget::dataLoaded(Filters::FilterType type, const FilterList& result)
 {
-    if(type != m_type)
+    if(type != m_type) {
         return;
+    }
     m_model->reload(result);
 }
 
 void FilterWidget::resetByIndex(int idx)
 {
-    if(idx < index())
-    {
+    if(idx < index()) {
         m_library->items(m_type);
     }
 }
 
 void FilterWidget::resetByType(Filters::FilterType type)
 {
-    if(type == m_type)
-    {
+    if(type == m_type) {
         m_library->items(m_type);
     }
 }

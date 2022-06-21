@@ -55,8 +55,7 @@ LibraryPage::LibraryPage(Library::LibraryManager* libraryManager, QWidget* paren
     m_libraryList.horizontalHeader()->setStretchLastSection(true);
     m_libraryList.setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    for(const auto& lib : libraries)
-    {
+    for(const auto& lib : libraries) {
         addLibraryRow(lib);
     }
     m_libraryList.hideColumn(0);
@@ -82,16 +81,14 @@ LibraryPage::LibraryPage(Library::LibraryManager* libraryManager, QWidget* paren
         QString name = "";
         QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"), tr("Library Name:"),
                                              QLineEdit::Normal, QDir::home().dirName(), &ok);
-        if(ok && !text.isEmpty())
-        {
+        if(ok && !text.isEmpty()) {
             name = text;
         }
 
         QString newDir
             = QFileDialog::getExistingDirectory(this, "Directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
 
-        if(newDir.isEmpty())
-        {
+        if(newDir.isEmpty()) {
             return;
         }
 
@@ -101,8 +98,7 @@ LibraryPage::LibraryPage(Library::LibraryManager* libraryManager, QWidget* paren
     });
     connect(removeLibrary, &QPushButton::clicked, this, [=] {
         const auto selItems = m_libraryList.selectionModel()->selectedRows();
-        for(const auto& item : selItems)
-        {
+        for(const auto& item : selItems) {
             const int row = item.row();
             const int id = m_libraryList.item(row, 0)->text().toInt();
             m_libraryManager->removeLibrary(id);
@@ -155,12 +151,10 @@ PlaylistPage::PlaylistPage(QWidget* parent)
 
     connect(groupHeaders, &QCheckBox::clicked, this, [=](bool checked) {
         settings->set(Settings::Setting::DiscHeaders, checked);
-        if(checked)
-        {
+        if(checked) {
             splitDiscs->setEnabled(checked);
         }
-        else
-        {
+        else {
             splitDiscs->setChecked(checked);
             splitDiscs->setEnabled(checked);
         }

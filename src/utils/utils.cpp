@@ -45,27 +45,23 @@ namespace File {
 
     bool isSubdir(const QString& dir, const QString& parentDir)
     {
-        if(isSamePath(dir, parentDir))
-        {
+        if(isSamePath(dir, parentDir)) {
             return false;
         }
 
         const auto cleanedDir = cleanPath(dir);
         const auto cleanedParentDir = cleanPath(parentDir);
 
-        if(cleanedDir.isEmpty() || cleanedParentDir.isEmpty())
-        {
+        if(cleanedDir.isEmpty() || cleanedParentDir.isEmpty()) {
             return false;
         }
 
         const QFileInfo info(cleanedDir);
 
         QDir d1(cleanedDir);
-        if(info.exists() && info.isFile())
-        {
+        if(info.exists() && info.isFile()) {
             const auto d1String = getParentDirectory(cleanedDir);
-            if(isSamePath(d1String, parentDir))
-            {
+            if(isSamePath(d1String, parentDir)) {
                 return true;
             }
 
@@ -74,11 +70,9 @@ namespace File {
 
         const QDir d2(cleanedParentDir);
 
-        while(!d1.isRoot())
-        {
+        while(!d1.isRoot()) {
             d1 = QDir(getParentDirectory(d1.absolutePath()));
-            if(isSamePath(d1.absolutePath(), d2.absolutePath()))
-            {
+            if(isSamePath(d1.absolutePath(), d2.absolutePath())) {
                 return true;
             }
         }
@@ -105,8 +99,7 @@ namespace File {
         QStringList fileExtensions{"*.jpg", "*.jpeg", "*.png", "*.gif", "*.tiff", "*.bmp"};
         // Use first image found as album cover
         QStringList fileList = baseDirectory.entryList(fileExtensions, QDir::Files);
-        if(!fileList.isEmpty())
-        {
+        if(!fileList.isEmpty()) {
             QString cover = baseDirectory.absolutePath() + "/" + fileList.constFirst();
             return cover;
         }
@@ -121,8 +114,9 @@ namespace File {
 
 int randomNumber(int min, int max)
 {
-    if(min == max)
+    if(min == max) {
         return max;
+    }
     return QRandomGenerator::global()->bounded(min, max + 1);
 }
 
@@ -164,17 +158,14 @@ QString calcCoverHash(const QString& albumName, const QString& albumArtist)
 
 QPixmap getCover(const QString& path, int size)
 {
-    if(File::exists(path))
-    {
+    if(File::exists(path)) {
         QPixmap cover;
         cover.load(path);
-        if(!cover.isNull())
-        {
+        if(!cover.isNull()) {
             static const int maximumSize = size;
             const int width = cover.size().width();
             const int height = cover.size().height();
-            if(width > maximumSize || height > maximumSize)
-            {
+            if(width > maximumSize || height > maximumSize) {
                 cover = cover.scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
             return cover;
@@ -206,8 +197,9 @@ QString capitalise(const QString& s)
 {
     QStringList parts = s.split(' ', Qt::SkipEmptyParts);
 
-    for(QString& part : parts)
+    for(QString& part : parts) {
         part.replace(0, 1, part[0].toUpper());
+    }
 
     return parts.join(" ");
 }

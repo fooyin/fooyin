@@ -25,7 +25,7 @@ public:
 protected:
     void setupUi();
     void spanHeaders();
-    void refreshTrack(Track* track);
+    static void refreshTrack(Track* track);
 
 private:
     PlayerManager* m_playerManager;

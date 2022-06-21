@@ -54,14 +54,15 @@ void InfoModel::reset(Track* track)
 
 QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if(role == Qt::TextAlignmentRole)
+    if(role == Qt::TextAlignmentRole) {
         return (Qt::AlignHCenter);
+    }
 
-    if(role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical)
+    if(role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical) {
         return {};
+    }
 
-    switch(section)
-    {
+    switch(section) {
         case(0):
             return "Name";
         case(1):
@@ -86,8 +87,9 @@ int InfoModel::columnCount(const QModelIndex& parent) const
 
 QVariant InfoModel::data(const QModelIndex& index, int role) const
 {
-    if(!index.isValid())
+    if(!index.isValid()) {
         return {};
+    }
 
     auto* item = static_cast<InfoItem*>(index.internalPointer());
     const InfoItem::Type type = item->type();
@@ -95,19 +97,20 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
     const int row = index.row();
     const int column = index.column();
 
-    if(role == Role::Type)
+    if(role == Role::Type) {
         return QVariant::fromValue<InfoItem::Type>(type);
+    }
 
-    if(role != Qt::DisplayRole)
+    if(role != Qt::DisplayRole) {
         return {};
+    }
 
-    if(column == 0)
+    if(column == 0) {
         return m_root->child(row)->data();
+    }
 
-    if(m_currentTrack)
-    {
-        switch(row)
-        {
+    if(m_currentTrack) {
+        switch(row) {
             case(InfoRole::Title):
                 return m_currentTrack->title();
             case(InfoRole::Artist):
@@ -137,15 +140,17 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
 
 QModelIndex InfoModel::index(int row, int column, const QModelIndex& parent) const
 {
-    if(!hasIndex(row, column, parent))
+    if(!hasIndex(row, column, parent)) {
         return {};
+    }
 
     InfoItem* parentItem = m_root.get();
 
     InfoItem* childItem = parentItem->child(row);
 
-    if(childItem)
+    if(childItem) {
         return createIndex(row, column, childItem);
+    }
     return {};
 }
 

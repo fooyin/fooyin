@@ -80,8 +80,7 @@ void CoverWidget::setupUi()
 
 void CoverWidget::resizeEvent(QResizeEvent* e)
 {
-    if(p->hasCover)
-    {
+    if(p->hasCover) {
         p->coverLabel->setPixmap(p->cover.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
     QWidget::resizeEvent(e);
@@ -91,26 +90,21 @@ void CoverWidget::reloadCover()
 {
     const Player::PlayState state = p->playerManager->playState();
     QString coverPath = "";
-    if(state == Player::PlayState::Playing || state == Player::PlayState::Paused)
-    {
+    if(state == Player::PlayState::Playing || state == Player::PlayState::Paused) {
         coverPath = p->playerManager->currentTrack()->coverPath();
     }
-    else if(p->library->selectedTracks().isEmpty())
-    {
+    else if(p->library->selectedTracks().isEmpty()) {
         Track* track = p->library->tracks().constFirst();
         coverPath = track->coverPath();
     }
-    else
-    {
+    else {
         auto* track = p->library->selectedTracks().values().constFirst();
-        if(track)
-        {
+        if(track) {
             coverPath = track->coverPath();
         }
     }
 
-    if(coverPath.isEmpty())
-    {
+    if(coverPath.isEmpty()) {
         coverPath = "://images/nocover.png";
         //        setAutoFillBackground(true);
         //        QPalette palette = p->coverLabel->palette();
@@ -118,12 +112,10 @@ void CoverWidget::reloadCover()
         //        p->coverLabel->setPalette(palette);
     }
 
-    if(coverPath != p->coverPath)
-    {
+    if(coverPath != p->coverPath) {
         p->coverPath = coverPath;
         p->cover.load(coverPath);
-        if(!p->cover.isNull())
-        {
+        if(!p->cover.isNull()) {
             p->coverLabel->setPixmap(p->cover.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
             p->hasCover = true;
         }

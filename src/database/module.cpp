@@ -45,32 +45,28 @@ static void execPragma(const QSqlDatabase& db, const QString& key, const QString
 
 QSqlDatabase Module::db() const
 {
-    if(!QSqlDatabase::isDriverAvailable("QSQLITE"))
-    {
+    if(!QSqlDatabase::isDriverAvailable("QSQLITE")) {
         return {};
     }
 
     QThread* t = QThread::currentThread();
 
     auto id = quint64(t);
-    if(QApplication::instance() && (t == QApplication::instance()->thread()))
-    {
+    if(QApplication::instance() && (t == QApplication::instance()->thread())) {
         id = 0;
     }
 
     QString threadConnectionName = QString("%1-%2").arg(m_connectionName).arg(id);
 
     const QStringList connections = QSqlDatabase::connectionNames();
-    if(connections.contains(threadConnectionName))
-    {
+    if(connections.contains(threadConnectionName)) {
         return QSqlDatabase::database(threadConnectionName);
     }
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", threadConnectionName);
     db.setDatabaseName(m_connectionName);
 
-    if(!db.open())
-    {
+    if(!db.open()) {
         QSqlError er = db.lastError();
 
         qDebug() << "Database cannot be opened! " << m_connectionName;
@@ -102,13 +98,11 @@ DB::Query Module::runQuery(const QString& query, const QMap<QString, QVariant>& 
     q.prepareQuery(query);
 
     const QList<QString> keys = bindings.keys();
-    for(const QString& k : keys)
-    {
+    for(const QString& k : keys) {
         q.bindQueryValue(k, bindings[k]);
     }
 
-    if(!q.execQuery())
-    {
+    if(!q.execQuery()) {
         q.error(errorText);
     }
 
@@ -129,13 +123,11 @@ DB::Query Module::insert(const QString& tableName, const QMap<QString, QVariant>
     DB::Query q(this);
     q.prepareQuery(query);
 
-    for(const QString& field : fieldNames)
-    {
+    for(const QString& field : fieldNames) {
         q.bindQueryValue(":" + field, fieldBindings[field]);
     }
 
-    if(!q.execQuery())
-    {
+    if(!q.execQuery()) {
         q.error(errorMessage);
     }
 
@@ -148,8 +140,7 @@ DB::Query Module::update(const QString& tableName, const QMap<QString, QVariant>
     const QStringList fieldNames = fieldBindings.keys();
 
     QStringList updateCommands;
-    for(const QString& field : fieldNames)
-    {
+    for(const QString& field : fieldNames) {
         updateCommands << field + " = :" + field;
     }
 
@@ -161,15 +152,13 @@ DB::Query Module::update(const QString& tableName, const QMap<QString, QVariant>
     DB::Query q(this);
     q.prepareQuery(query);
 
-    for(const QString& field : fieldNames)
-    {
+    for(const QString& field : fieldNames) {
         q.bindQueryValue(":" + field, fieldBindings.value(field));
     }
 
     q.bindQueryValue(":W" + whereBinding.first, whereBinding.second);
 
-    if(!q.execQuery() || q.numRowsAffected() == 0)
-    {
+    if(!q.execQuery() || q.numRowsAffected() == 0) {
         q.setError(true);
         q.error(errorMessage);
     }
@@ -183,8 +172,7 @@ Query Module::remove(const QString& tableName, const QList<QPair<QString, QVaria
     QString query = "DELETE FROM " + tableName;
     query += " WHERE (";
     int i = static_cast<int>(whereBinding.size());
-    for(const auto& binding : whereBinding)
-    {
+    for(const auto& binding : whereBinding) {
         --i;
         query += binding.first + " = " + binding.second.toString();
         query += i != 0 ? " AND " : "";
@@ -194,8 +182,7 @@ Query Module::remove(const QString& tableName, const QList<QPair<QString, QVaria
     DB::Query q(this);
     q.prepareQuery(query);
 
-    if(!q.execQuery() || q.numRowsAffected() == 0)
-    {
+    if(!q.execQuery() || q.numRowsAffected() == 0) {
         q.setError(true);
         q.error(errorMessage);
     }

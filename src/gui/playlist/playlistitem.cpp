@@ -32,8 +32,9 @@ PlaylistItem::~PlaylistItem() = default;
 
 void PlaylistItem::appendChild(PlaylistItem* child)
 {
-    if(!m_children.contains(child))
+    if(!m_children.contains(child)) {
         m_children.append(child);
+    }
 }
 
 void PlaylistItem::setIndex(int idx)
@@ -43,8 +44,9 @@ void PlaylistItem::setIndex(int idx)
 
 PlaylistItem* PlaylistItem::child(int number)
 {
-    if(number < 0 || number >= m_children.size())
+    if(number < 0 || number >= m_children.size()) {
         return nullptr;
+    }
 
     return m_children.at(number);
 }
@@ -76,8 +78,9 @@ int PlaylistItem::index() const
 
 int PlaylistItem::row() const
 {
-    if(m_parent)
+    if(m_parent) {
         return static_cast<int>(m_parent->m_children.indexOf(const_cast<PlaylistItem*>(this))); // NOLINT
+    }
 
     return 0;
 }

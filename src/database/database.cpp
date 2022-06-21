@@ -52,8 +52,7 @@ struct Database::Private
     {
         connectionName = directory + "/" + filename;
 
-        if(!Util::File::exists(directory))
-        {
+        if(!Util::File::exists(directory)) {
             Util::File::createDirectories(directory);
         }
     }
@@ -66,20 +65,17 @@ Database::Database(const QString& directory, const QString& filename)
 
     bool success = Util::File::exists(p->connectionName);
 
-    if(!success)
-    {
+    if(!success) {
         success = createDatabase();
     }
 
     p->initialized = success && db().isOpen();
 
-    if(!Database::isInitialized())
-    {
+    if(!Database::isInitialized()) {
         qDebug() << "Database could not be initialised";
     }
 
-    else
-    {
+    else {
         p->libraryDatabase = std::make_unique<LibraryDatabase>(connectionName(), -1);
     }
 
@@ -109,8 +105,7 @@ void Database::deleteLibraryDatabase(int id)
 
 Library* Database::libraryConnector()
 {
-    if(!p->libraryConnector)
-    {
+    if(!p->libraryConnector) {
         p->libraryConnector = std::make_unique<Library>(connectionName());
     }
 
@@ -120,8 +115,7 @@ Library* Database::libraryConnector()
 bool Database::update()
 {
     auto* settings = ::Settings::instance();
-    if(settings->value(::Settings::Setting::DatabaseVersion).toString() < DATABASE_VERSION)
-    {
+    if(settings->value(::Settings::Setting::DatabaseVersion).toString() < DATABASE_VERSION) {
         settings->set(::Settings::Setting::DatabaseVersion, DATABASE_VERSION);
         return true;
     }
@@ -131,8 +125,7 @@ bool Database::update()
 bool Database::createDatabase()
 {
     p->initialized = db().isOpen();
-    if(!p->initialized)
-    {
+    if(!p->initialized) {
         return false;
     }
 
@@ -268,8 +261,7 @@ bool Database::cleanup()
                         "   (SELECT DISTINCT AlbumID FROM Tracks);";
     q.prepareQuery(queryText);
 
-    if(q.execQuery())
-    {
+    if(q.execQuery()) {
         Query q2(this);
         queryText = "DELETE FROM Artists "
                     "WHERE ArtistID NOT IN "
@@ -278,8 +270,7 @@ bool Database::cleanup()
                     "   (SELECT DISTINCT ArtistID FROM Albums);";
         q2.prepareQuery(queryText);
 
-        if(q2.execQuery())
-        {
+        if(q2.execQuery()) {
             Query q3(this);
             queryText = "DELETE FROM Genres "
                         "WHERE GenreID NOT IN "
@@ -300,8 +291,7 @@ bool Database::isInitialized()
 
 bool Database::closeDatabase()
 {
-    if(!QSqlDatabase::isDriverAvailable("QSQLITE"))
-    {
+    if(!QSqlDatabase::isDriverAvailable("QSQLITE")) {
         return false;
     }
 
@@ -310,13 +300,11 @@ bool Database::closeDatabase()
         QSqlDatabase database = db();
         connectionName = database.connectionName();
         QStringList connectionNames = QSqlDatabase::connectionNames();
-        if(!connectionNames.contains(connectionName))
-        {
+        if(!connectionNames.contains(connectionName)) {
             return false;
         }
 
-        if(database.isOpen())
-        {
+        if(database.isOpen()) {
             database.close();
         }
     }
@@ -347,13 +335,11 @@ bool Database::checkInsertTable(const QString& tableName, const QString& createS
     QString queryText = "SELECT * FROM " + tableName + ";";
     q.prepareQuery(queryText);
 
-    if(!q.execQuery())
-    {
+    if(!q.execQuery()) {
         Query q2(this);
         q2.prepareQuery(createString);
 
-        if(!q2.exec())
-        {
+        if(!q2.exec()) {
             q.error("Cannot create table " + tableName);
             return false;
         }
@@ -366,8 +352,7 @@ bool Database::checkInsertIndex(const QString& indexName, const QString& createS
     Query q(this);
     q.prepareQuery(createString);
 
-    if(!q.exec())
-    {
+    if(!q.exec()) {
         q.error("Cannot create index " + indexName);
         return false;
     }

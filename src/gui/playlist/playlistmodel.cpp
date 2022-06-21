@@ -59,25 +59,19 @@ void PlaylistModel::setupModelData()
     const bool discHeaders = m_settings->value(Settings::Setting::DiscHeaders).toBool();
     const bool splitDiscs = m_settings->value(Settings::Setting::SplitDiscs).toBool();
 
-    if(m_library)
-    {
+    if(m_library) {
         const TrackPtrList& tracks = m_library->tracks();
-        if(!tracks.isEmpty())
-        {
+        if(!tracks.isEmpty()) {
             // Create albums before model to ensure discs (based on discCount) are properly created
             createAlbums(tracks);
-            for(int i = 0; i < tracks.size(); ++i)
-            {
+            for(int i = 0; i < tracks.size(); ++i) {
                 Track* track = tracks.at(i);
-                if(track && track->isEnabled())
-                {
+                if(track && track->isEnabled()) {
                     const QString trackKey = QString::number(track->id()) + track->title();
                     PlaylistItem* parent = iterateTrack(track, discHeaders, splitDiscs);
 
-                    if(parent)
-                    {
-                        if(!m_nodes.count(trackKey))
-                        {
+                    if(parent) {
+                        if(!m_nodes.count(trackKey)) {
                             auto trackItem = std::make_unique<PlaylistItem>(PlaylistItem::Type::Track, track, parent);
                             m_nodes.emplace(trackKey, std::move(trackItem));
                         }
@@ -98,20 +92,16 @@ PlaylistItem* PlaylistModel::iterateTrack(Track* track, bool discHeaders, bool s
     const QString albumKey = QString::number(track->albumId()) + track->album();
     const QString discKey = albumKey + QString::number(track->discNumber());
 
-    if(m_containers.count(albumKey) == 1)
-    {
-        auto* album = static_cast<Album*>(m_containers.at(albumKey).get());
+    if(m_containers.count(albumKey) == 1) {
+        auto* album = dynamic_cast<Album*>(m_containers.at(albumKey).get());
         const bool singleDisk = album->isSingleDiscAlbum() || (!splitDiscs && !discHeaders);
 
-        if(singleDisk)
-        {
+        if(singleDisk) {
             parent = checkInsertKey(albumKey, PlaylistItem::Type::Album, album, m_root.get());
         }
 
-        else if(splitDiscs)
-        {
-            if(!m_containers.count(discKey))
-            {
+        else if(splitDiscs) {
+            if(!m_containers.count(discKey)) {
                 auto discAlbum = std::make_unique<Album>(*album);
                 const QString discTitle = "Disc #" + QString::number(track->discNumber());
                 discAlbum->setSubTitle(discTitle);
@@ -124,10 +114,8 @@ PlaylistItem* PlaylistModel::iterateTrack(Track* track, bool discHeaders, bool s
             parent = m_nodes.at(discKey).get();
         }
 
-        else
-        {
-            if(!m_containers.count(discKey))
-            {
+        else {
+            if(!m_containers.count(discKey)) {
                 auto disc = std::make_unique<Disc>(track->discNumber());
                 PlaylistItem* parentNode = checkInsertKey(albumKey, PlaylistItem::Type::Album, album, m_root.get());
                 checkInsertKey(discKey, PlaylistItem::Type::Disc, disc.get(), parentNode);
@@ -143,8 +131,7 @@ PlaylistItem* PlaylistModel::iterateTrack(Track* track, bool discHeaders, bool s
 
 Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
 {
-    if(!index.isValid())
-    {
+    if(!index.isValid()) {
         return Qt::NoItemFlags;
     }
 
@@ -154,13 +141,11 @@ Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
 QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     Q_UNUSED(section)
-    if(role == Qt::TextAlignmentRole)
-    {
+    if(role == Qt::TextAlignmentRole) {
         return (Qt::AlignHCenter);
     }
 
-    if(!m_library || role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical)
-    {
+    if(!m_library || role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical) {
         return {};
     }
 
@@ -170,38 +155,36 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
 // TODO : Split into separate functions for each type
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 {
-    if(!index.isValid())
+    if(!index.isValid()) {
         return {};
+    }
 
     auto* item = static_cast<PlaylistItem*>(index.internalPointer());
 
     const PlaylistItem::Type type = item->type();
 
-    if(role == Role::PlaylistType)
+    if(role == Role::PlaylistType) {
         return m_settings->value(Settings::Setting::SimplePlaylist);
+    }
 
-    if(role == Role::Type)
+    if(role == Role::Type) {
         return QVariant::fromValue<PlaylistItem::Type>(type);
+    }
 
-    switch(type)
-    {
+    switch(type) {
         case(PlaylistItem::Type::Album): {
-            auto* album = static_cast<Album*>(item->data());
-            if(album)
-            {
-                switch(role)
-                {
+            auto* album = dynamic_cast<Album*>(item->data());
+            if(album) {
+                switch(role) {
                     case(ItemRole::Id): {
                         return album->id();
                     }
                     case(Qt::DisplayRole): {
                         QString title = !album->title().isEmpty() ? album->title() : "Unknown Title";
-                        if(!album->subTitle().isEmpty())
-                        {
+                        if(!album->subTitle().isEmpty()) {
                             title += " \u25AA ";
                             title += album->subTitle();
                         }
-
                         return title;
                     }
                     case(ItemRole::Cover): {
@@ -216,8 +199,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
                         const auto duration = album->duration();
 
                         QString dur = genre;
-                        if(!genre.isEmpty())
-                        {
+                        if(!genre.isEmpty()) {
                             dur += " | ";
                         }
                         dur += QString(QString::number(count) + (count > 1 ? " Tracks" : " Track") + " | "
@@ -236,11 +218,9 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
         }
 
         case(PlaylistItem::Type::Track): {
-            auto* track = static_cast<Track*>(item->data());
-            if(track)
-            {
-                switch(role)
-                {
+            auto* track = dynamic_cast<Track*>(item->data());
+            if(track) {
+                switch(role) {
                     case(ItemRole::Id): {
                         return track->id();
                     }
@@ -252,16 +232,12 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
                     }
                     case(ItemRole::Artist): {
                         QString artistString;
-                        for(const auto& artist : track->artists())
-                        {
-                            if(artist != track->albumArtist())
-                            {
-                                if(artistString.isEmpty())
-                                {
+                        for(const auto& artist : track->artists()) {
+                            if(artist != track->albumArtist()) {
+                                if(artistString.isEmpty()) {
                                     artistString += "  \u2022  ";
                                 }
-                                else
-                                {
+                                else {
                                     artistString += ", ";
                                 }
                                 artistString += artist;
@@ -271,8 +247,9 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
                     }
                     case(ItemRole::PlayCount): {
                         const int count = track->playCount();
-                        if(count > 0)
+                        if(count > 0) {
                             return QString::number(count) + QString("|");
+                        }
                         return {};
                     }
                     case(ItemRole::Duration): {
@@ -281,8 +258,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
                     case(ItemRole::MultiDisk): {
                         if(item->parent()->type() == PlaylistItem::Type::Disc
                            && m_settings->value(Settings::Setting::DiscHeaders).toBool()
-                           && !m_settings->value(Settings::Setting::SplitDiscs).toBool())
-                        {
+                           && !m_settings->value(Settings::Setting::SplitDiscs).toBool()) {
                             return true;
                         }
                         return false;
@@ -291,8 +267,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
                         return m_playerManager->currentTrack() && m_playerManager->currentTrack()->id() == track->id();
                     }
                     case(ItemRole::State): {
-                        switch(m_playerManager->playState())
-                        {
+                        switch(m_playerManager->playState()) {
                             case(Player::PlayState::Playing):
                                 return "1";
                             case(Player::PlayState::Paused):
@@ -325,11 +300,9 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
         }
 
         case(PlaylistItem::Type::Disc): {
-            auto* disc = static_cast<Disc*>(item->data());
-            if(disc)
-            {
-                switch(role)
-                {
+            auto* disc = dynamic_cast<Disc*>(item->data());
+            if(disc) {
+                switch(role) {
                         //                    case (ItemRole::Id): {
                         //                        return disc->id();
                         //                    }
@@ -356,40 +329,36 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 
 QModelIndex PlaylistModel::index(int row, int column, const QModelIndex& parent) const
 {
-    if(!hasIndex(row, column, parent))
-    {
+    if(!hasIndex(row, column, parent)) {
         return {};
     }
 
     PlaylistItem* parentItem;
 
-    if(!parent.isValid())
-    {
+    if(!parent.isValid()) {
         parentItem = m_root.get();
     }
-    else
-    {
+    else {
         parentItem = static_cast<PlaylistItem*>(parent.internalPointer());
     }
 
     PlaylistItem* childItem = parentItem->child(row);
-    if(childItem)
+    if(childItem) {
         return createIndex(row, column, childItem);
+    }
     return {};
 }
 
 QModelIndex PlaylistModel::parent(const QModelIndex& index) const
 {
-    if(!index.isValid())
-    {
+    if(!index.isValid()) {
         return {};
     }
 
     auto* childItem = static_cast<PlaylistItem*>(index.internalPointer());
     PlaylistItem* parentItem = childItem->parent();
 
-    if(parentItem == m_root.get())
-    {
+    if(parentItem == m_root.get()) {
         return {};
     }
 
@@ -399,17 +368,14 @@ QModelIndex PlaylistModel::parent(const QModelIndex& index) const
 int PlaylistModel::rowCount(const QModelIndex& parent) const
 {
     PlaylistItem* parentItem;
-    if(parent.column() > 0)
-    {
+    if(parent.column() > 0) {
         return 0;
     }
 
-    if(!parent.isValid())
-    {
+    if(!parent.isValid()) {
         parentItem = m_root.get();
     }
-    else
-    {
+    else {
         parentItem = static_cast<PlaylistItem*>(parent.internalPointer());
     }
 
@@ -418,8 +384,7 @@ int PlaylistModel::rowCount(const QModelIndex& parent) const
 
 int PlaylistModel::columnCount(const QModelIndex& parent) const
 {
-    if(parent.isValid())
-    {
+    if(parent.isValid()) {
         return static_cast<PlaylistItem*>(parent.internalPointer())->columnCount();
     }
     return m_root->columnCount();
@@ -468,8 +433,7 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
 QModelIndexList PlaylistModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                      Qt::MatchFlags flags) const
 {
-    if(role != ItemRole::Id)
-    {
+    if(role != ItemRole::Id) {
         return QAbstractItemModel::match(start, role, value, hits, flags);
     }
 
@@ -478,15 +442,14 @@ QModelIndexList PlaylistModel::match(const QModelIndex& start, int role, const Q
 
     traverseIndex(start, list);
 
-    for(const auto& index : list)
-    {
+    for(const auto& index : list) {
         const auto* item = static_cast<PlaylistItem*>(index.internalPointer());
-        const auto* track = static_cast<Track*>(item->data());
-        if(track->id() == value.toInt())
-        {
+        const auto* track = dynamic_cast<Track*>(item->data());
+        if(track->id() == value.toInt()) {
             matches.append(index);
-            if(matches.size() == hits)
+            if(matches.size() == hits) {
                 break;
+            }
         }
     }
     return matches;
@@ -495,18 +458,14 @@ QModelIndexList PlaylistModel::match(const QModelIndex& start, int role, const Q
 void PlaylistModel::traverseIndex(const QModelIndex& start, QModelIndexList& list) const
 {
     QModelIndexList stack{start};
-    while(!stack.isEmpty())
-    {
+    while(!stack.isEmpty()) {
         const QModelIndex parent = stack.takeFirst();
-        for(int i = 0; i < rowCount(parent); ++i)
-        {
+        for(int i = 0; i < rowCount(parent); ++i) {
             const QModelIndex child = index(i, 0, parent);
-            if(rowCount(child) > 0)
-            {
+            if(rowCount(child) > 0) {
                 stack.append(child);
             }
-            else
-            {
+            else {
                 list.append(child);
             }
         }
@@ -533,8 +492,7 @@ void PlaylistModel::beginReset()
 PlaylistItem* PlaylistModel::checkInsertKey(const QString& key, PlaylistItem::Type type, LibraryItem* item,
                                             PlaylistItem* parent)
 {
-    if(!m_nodes.count(key))
-    {
+    if(!m_nodes.count(key)) {
         auto childItem = std::make_unique<PlaylistItem>(type, item, parent);
         parent->appendChild(childItem.get());
         m_nodes.emplace(key, std::move(childItem));
@@ -545,13 +503,10 @@ PlaylistItem* PlaylistModel::checkInsertKey(const QString& key, PlaylistItem::Ty
 
 void PlaylistModel::createAlbums(const TrackPtrList& tracks)
 {
-    for(const auto& track : tracks)
-    {
-        if(track->isEnabled())
-        {
+    for(const auto& track : tracks) {
+        if(track->isEnabled()) {
             const QString albumKey = QString::number(track->albumId()) + track->album();
-            if(!m_containers.count(albumKey))
-            {
+            if(!m_containers.count(albumKey)) {
                 auto album = std::make_unique<Album>(track->album());
                 album->setId(track->albumId());
                 album->setYear(track->year());
@@ -570,8 +525,7 @@ QModelIndex PlaylistModel::indexOfItem(int id)
 {
     QModelIndex index;
     const auto key = QString("track%1").arg(id);
-    if(m_nodes.count(key))
-    {
+    if(m_nodes.count(key)) {
         const auto* item = m_nodes.at(key).get();
         index = createIndex(item->row(), 0, item);
     }
@@ -581,8 +535,7 @@ QModelIndex PlaylistModel::indexOfItem(int id)
 QModelIndex PlaylistModel::indexOfItem(const PlaylistItem* item)
 {
     QModelIndex index;
-    if(item)
-    {
+    if(item) {
         index = createIndex(item->row(), 0, item);
     }
     return index;

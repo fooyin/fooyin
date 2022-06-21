@@ -79,10 +79,8 @@ void SearchWidget::setupUi()
 void SearchWidget::keyPressEvent(QKeyEvent* e)
 {
     const auto key = e->key();
-    if(key == Qt::Key_Enter || key == Qt::Key_Return)
-    {
-        if(p->library->tracksHaveFiltered())
-        {
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+        if(p->library->tracksHaveFiltered()) {
             return p->library->prepareTracks();
         }
     }
@@ -101,12 +99,10 @@ void SearchWidget::searchBoxContextMenu()
 {
     bool editing = p->settings->value(Settings::Setting::LayoutEditing).toBool();
 
-    if(!editing)
-    {
+    if(!editing) {
         p->searchBox->setContextMenuPolicy(Qt::DefaultContextMenu);
     }
-    else
-    {
+    else {
         p->searchBox->setContextMenuPolicy(Qt::NoContextMenu);
     }
 }

@@ -54,8 +54,7 @@ WidgetProvider::~WidgetProvider() = default;
 
 Widget* WidgetProvider::createWidget(Widgets::WidgetType type, SplitterWidget* splitter)
 {
-    switch(type)
-    {
+    switch(type) {
         case(Widgets::WidgetType::Dummy): {
             auto* dummy = new Dummy(splitter);
             splitter->addToSplitter(Widgets::WidgetType::Dummy, dummy);

@@ -91,8 +91,7 @@ void ProgressWidget::changeTrack(Track* track)
 
 void ProgressWidget::setCurrentPosition(int ms)
 {
-    if(!p->slider->isSliderDown())
-    {
+    if(!p->slider->isSliderDown()) {
         p->slider->setValue(ms);
         updateTime(ms);
     }
@@ -106,15 +105,12 @@ void ProgressWidget::updateTime(int elapsed)
 
     p->elapsed->setText(Util::secsToString(secs));
 
-    if(settings->value(Settings::Setting::ElapsedTotal).toBool())
-    {
+    if(settings->value(Settings::Setting::ElapsedTotal).toBool()) {
         int remaining = max - secs;
         p->total->setText("-" + Util::secsToString(remaining));
     }
-    else
-    {
-        if(!p->slider->isEnabled())
-        {
+    else {
+        if(!p->slider->isEnabled()) {
             p->total->setText(Util::msToString(max));
         }
     }
@@ -132,8 +128,7 @@ void ProgressWidget::reset()
 
 void ProgressWidget::stateChanged(Player::PlayState state)
 {
-    switch(state)
-    {
+    switch(state) {
         case(Player::PlayState::Stopped):
             reset();
             return setEnabled(false);
@@ -147,13 +142,11 @@ void ProgressWidget::stateChanged(Player::PlayState state)
 void ProgressWidget::toggleRemaining()
 {
     auto* settings = Settings::instance();
-    if(settings->value(Settings::Setting::ElapsedTotal).toBool())
-    {
+    if(settings->value(Settings::Setting::ElapsedTotal).toBool()) {
         settings->set(Settings::Setting::ElapsedTotal, false);
         p->total->setText(Util::msToString(p->max));
     }
-    else
-    {
+    else {
         settings->set(Settings::Setting::ElapsedTotal, true);
     }
 }

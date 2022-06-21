@@ -85,8 +85,7 @@ void PlayerControl::setupUi()
 
 void PlayerControl::stateChanged(Player::PlayState state)
 {
-    switch(state)
-    {
+    switch(state) {
         case(Player::PlayState::Stopped):
             setEnabled(false);
             return p->play->setText("1");

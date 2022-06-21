@@ -35,8 +35,7 @@ void FilterItem::appendChild(FilterItem* child)
 
 FilterItem* FilterItem::child(int number)
 {
-    if(number < 0 || number >= m_childItems.size())
-    {
+    if(number < 0 || number >= m_childItems.size()) {
         return nullptr;
     }
     return m_childItems.at(number);
@@ -59,8 +58,7 @@ int FilterItem::columnCount()
 
 QVariant FilterItem::data(int role) const
 {
-    switch(role)
-    {
+    switch(role) {
         case(FilterRole::Id):
             return m_id;
         case(FilterRole::Name):
@@ -72,8 +70,7 @@ QVariant FilterItem::data(int role) const
 
 int FilterItem::row() const
 {
-    if(parentItem())
-    {
+    if(parentItem()) {
         return static_cast<int>(parentItem()->m_childItems.indexOf(const_cast<FilterItem*>(this)));
     }
 

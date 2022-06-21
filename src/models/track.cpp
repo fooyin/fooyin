@@ -322,10 +322,8 @@ ExtraTags Track::extra() const
 
 void Track::addExtra(const QString& tag, const QString& value)
 {
-    if(!tag.isEmpty() && !value.isEmpty())
-    {
-        if(m_extraTags.contains(tag))
-        {
+    if(!tag.isEmpty() && !value.isEmpty()) {
+        if(m_extraTags.contains(tag)) {
             auto entry = m_extraTags.value(tag);
             entry.append(value);
             m_extraTags.insert(tag, entry);
@@ -338,8 +336,7 @@ QByteArray Track::extraTagsToJson() const
 {
     QJsonObject extra;
     QJsonArray extraArray;
-    for(const auto& [tag, values] : asRange(m_extraTags))
-    {
+    for(const auto& [tag, values] : asRange(m_extraTags)) {
         QJsonObject tagObject;
         const auto tagArray = QJsonArray::fromStringList(values);
         tagObject[tag] = tagArray;
@@ -355,26 +352,20 @@ void Track::jsonToExtraTags(const QByteArray& ba)
 {
     QJsonDocument jsonDoc = QJsonDocument::fromJson(ba);
 
-    if(!jsonDoc.isNull())
-    {
+    if(!jsonDoc.isNull()) {
         QJsonObject json = jsonDoc.object();
 
-        if(json.contains("tags") && json["tags"].isArray())
-        {
+        if(json.contains("tags") && json["tags"].isArray()) {
             QJsonArray extraArray = json["tags"].toArray();
 
-            for(QJsonArray::const_iterator i = extraArray.constBegin(); i != extraArray.constEnd(); i++)
-            {
+            for(QJsonArray::const_iterator i = extraArray.constBegin(); i != extraArray.constEnd(); i++) {
                 QJsonObject tagObject = i->toObject();
-                for(QJsonObject::const_iterator j = tagObject.constBegin(); j != tagObject.constEnd(); j++)
-                {
+                for(QJsonObject::const_iterator j = tagObject.constBegin(); j != tagObject.constEnd(); j++) {
                     QString tag = j.key();
-                    if(tagObject[tag].isArray())
-                    {
+                    if(tagObject[tag].isArray()) {
                         QJsonArray tagArray = j.value().toArray();
                         QList<QString> values;
-                        for(const auto& value : tagArray)
-                        {
+                        for(const auto& value : tagArray) {
                             values.append(value.toString());
                         }
                         m_extraTags.insert(tag, values);

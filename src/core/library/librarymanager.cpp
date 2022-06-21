@@ -29,8 +29,7 @@
 namespace Library {
 bool checkNewPath(const QString& path, const QMap<int, LibraryInfo>& libraries, qint8 libraryId = -1)
 {
-    if(path.isEmpty())
-    {
+    if(path.isEmpty()) {
         return false;
     }
 
@@ -75,13 +74,11 @@ MusicLibrary* LibraryManager::musicLibrary() const
 
 int LibraryManager::addLibrary(const QString& path, QString& name)
 {
-    if(!checkNewPath(path, m_libraries))
-    {
+    if(!checkNewPath(path, m_libraries)) {
         return -1;
     }
 
-    if(name.isEmpty())
-    {
+    if(name.isEmpty()) {
         name = QString("Library %1").arg(m_libraries.size());
     }
 
@@ -93,8 +90,7 @@ int LibraryManager::addLibrary(const QString& path, QString& name)
 
     bool success = m_libraryConnector->insertLibrary(id, path, name);
 
-    if(success)
-    {
+    if(success) {
         emit libraryAdded(libraryInfo(id));
         return id;
     }
@@ -104,10 +100,10 @@ int LibraryManager::addLibrary(const QString& path, QString& name)
 
 void LibraryManager::removeLibrary(int id)
 {
-    if(!m_libraries.contains(id))
-    {
+    if(!m_libraries.contains(id)) {
         return;
     }
+
     m_database->deleteLibraryDatabase(id);
     m_libraryConnector->removeLibrary(id);
     m_libraries.remove(id);

@@ -95,18 +95,15 @@ void MusicLibrary::libraryAdded()
 
 void MusicLibrary::prepareTracks(int idx)
 {
-    if(!m_filteredTracks.isEmpty())
-    {
+    if(!m_filteredTracks.isEmpty()) {
         m_playlistInteractor->createPlaylist(m_filteredTracks, idx);
     }
 
-    else if(m_selectedTracks.isEmpty())
-    {
+    else if(m_selectedTracks.isEmpty()) {
         m_playlistInteractor->createPlaylist(m_tracks, 0);
     }
 
-    else
-    {
+    else {
         m_playlistInteractor->createPlaylist(m_tracks, idx);
     }
 }
@@ -118,12 +115,9 @@ QSet<Track*> MusicLibrary::selectedTracks()
 
 void MusicLibrary::changeFilter(int index)
 {
-    if(!m_activeFilters.isEmpty())
-    {
-        for(const auto& [filterIndex, filter] : asRange(m_filterIndexes))
-        {
-            if(index <= filterIndex)
-            {
+    if(!m_activeFilters.isEmpty()) {
+        for(const auto& [filterIndex, filter] : asRange(m_filterIndexes)) {
+            if(index <= filterIndex) {
                 m_activeFilters.remove(filter);
             }
         }
@@ -163,8 +157,7 @@ void MusicLibrary::filteredTracksLoaded(TrackPtrList tracks)
 
 void MusicLibrary::newTracksAdded(const TrackList& tracks)
 {
-    for(const Track& track : tracks)
-    {
+    for(const Track& track : tracks) {
         auto* trackPtr = new Track(track);
         m_tracks.append(trackPtr);
         m_trackMap.insert(trackPtr->id(), trackPtr);
@@ -176,11 +169,9 @@ void MusicLibrary::newTracksAdded(const TrackList& tracks)
 
 void MusicLibrary::tracksUpdated(const TrackList& tracks)
 {
-    for(const Track& track : tracks)
-    {
+    for(const Track& track : tracks) {
         Track* libraryTrack = m_trackMap.value(track.id(), nullptr);
-        if(libraryTrack)
-        {
+        if(libraryTrack) {
             *libraryTrack = track;
         }
     }
@@ -190,8 +181,7 @@ void MusicLibrary::tracksUpdated(const TrackList& tracks)
 
 void MusicLibrary::tracksDeleted(const IdSet& tracks)
 {
-    for(int trackId : tracks)
-    {
+    for(int trackId : tracks) {
         Track* libTrack = m_trackMap.value(trackId);
         libTrack->setIsEnabled(false);
     }
@@ -220,8 +210,7 @@ void MusicLibrary::refreshTracks(const TrackList& result)
     m_tracks.clear();
     m_trackMap.clear();
     m_filteredTracks.clear();
-    for(const Track& track : result)
-    {
+    for(const Track& track : result) {
         auto* trackPtr = new Track(track);
         m_tracks.append(trackPtr);
         m_trackMap.insert(trackPtr->id(), trackPtr);
@@ -231,20 +220,17 @@ void MusicLibrary::refreshTracks(const TrackList& result)
 
 void MusicLibrary::items(Filters::FilterType type)
 {
-    if(!m_activeFilters.isEmpty() || !m_searchFilter.isEmpty())
-    {
+    if(!m_activeFilters.isEmpty() || !m_searchFilter.isEmpty()) {
         getItemsByFilter(type, m_filterSortOrders.value(type));
     }
-    else
-    {
+    else {
         getAllItems(type, m_filterSortOrders.value(type));
     }
 }
 
 TrackPtrList MusicLibrary::tracks()
 {
-    if(!m_filteredTracks.isEmpty() || !m_searchFilter.isEmpty())
-    {
+    if(!m_filteredTracks.isEmpty() || !m_searchFilter.isEmpty()) {
         return m_filteredTracks;
     }
     return m_tracks;
@@ -269,8 +255,7 @@ void MusicLibrary::changeOrder(SortOrder order)
 {
     m_order = order;
     Sorting::sortTracks(m_tracks, m_order);
-    if(!m_filteredTracks.isEmpty())
-    {
+    if(!m_filteredTracks.isEmpty()) {
         Sorting::sortTracks(m_filteredTracks, m_order);
     }
     emit filteredTracks();
@@ -289,25 +274,20 @@ bool MusicLibrary::tracksHaveFiltered()
 
 void MusicLibrary::changeSelection(const IdSet& indexes, Filters::FilterType type, int index)
 {
-    if(m_activeFilters.isEmpty() && indexes.contains(-1))
-    {
+    if(m_activeFilters.isEmpty() && indexes.contains(-1)) {
         return;
     }
 
-    for(const auto& [filterIndex, filter] : asRange(m_filterIndexes))
-    {
-        if(index < filterIndex)
-        {
+    for(const auto& [filterIndex, filter] : asRange(m_filterIndexes)) {
+        if(index < filterIndex) {
             m_activeFilters.remove(filter);
         }
     }
 
-    if(indexes.contains(-1))
-    {
+    if(indexes.contains(-1)) {
         m_activeFilters.remove(type);
     }
-    else
-    {
+    else {
         m_activeFilters.insert(type, indexes);
     }
 
@@ -316,21 +296,18 @@ void MusicLibrary::changeSelection(const IdSet& indexes, Filters::FilterType typ
 
     const IdSet& filterIds = m_activeFilters.value(type);
 
-    if((!m_activeFilters.isEmpty() && !filterIds.contains(-1)) || !m_searchFilter.isEmpty())
-    {
+    if((!m_activeFilters.isEmpty() && !filterIds.contains(-1)) || !m_searchFilter.isEmpty()) {
         getFilteredTracks();
     }
 
-    else
-    {
+    else {
         emit filteredTracks();
     }
 }
 
 void MusicLibrary::selectionChanged(const IdSet& indexes, Filters::FilterType type, int index)
 {
-    if(indexes.empty())
-    {
+    if(indexes.empty()) {
         return;
     }
 
@@ -342,13 +319,11 @@ void MusicLibrary::selectionChanged(const IdSet& indexes, Filters::FilterType ty
 void MusicLibrary::changeTrackSelection(const QSet<Track*>& tracks)
 {
     QSet<Track*> newSelectedTracks;
-    for(auto* track : tracks)
-    {
+    for(auto* track : tracks) {
         newSelectedTracks.insert(track);
     }
 
-    if(m_selectedTracks == newSelectedTracks)
-    {
+    if(m_selectedTracks == newSelectedTracks) {
         return;
     }
 
@@ -357,8 +332,7 @@ void MusicLibrary::changeTrackSelection(const QSet<Track*>& tracks)
 
 void MusicLibrary::trackSelectionChanged(const QSet<Track*>& tracks)
 {
-    if(tracks.isEmpty())
-    {
+    if(tracks.isEmpty()) {
         return;
     }
 
@@ -370,20 +344,16 @@ void MusicLibrary::changeSearch(const QString& search)
 {
     m_searchFilter = search;
     m_filteredTracks.clear();
-    if(search.isEmpty())
-    {
-        if(!m_activeFilters.isEmpty())
-        {
+    if(search.isEmpty()) {
+        if(!m_activeFilters.isEmpty()) {
             getFilteredTracks();
         }
-        else
-        {
+        else {
             emit filteredTracks();
         }
         emit filteredItems(-1);
     }
-    else
-    {
+    else {
         getFilteredTracks();
         emit filteredItems(-1);
     }

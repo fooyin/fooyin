@@ -25,8 +25,7 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
 
     const auto type = index.data(Role::Type).value<InfoItem::Type>();
 
-    switch(type)
-    {
+    switch(type) {
         case(InfoItem::Type::Header): {
             height += 13;
             break;
@@ -53,8 +52,7 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     font.setPixelSize(12);
     painter->setFont(font);
 
-    switch(type)
-    {
+    switch(type) {
         case(InfoItem::Type::Header): {
             paintHeader(painter, option, index);
             break;
@@ -93,8 +91,7 @@ void ItemDelegate::paintHeader(QPainter* painter, const QStyleOptionViewItem& op
     option.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
                                          painter->fontMetrics().elidedText(title, Qt::ElideRight, titleRect.width()));
 
-    if(!title.isEmpty())
-    {
+    if(!title.isEmpty()) {
         painter->setPen(linePen);
         const QRect titleBound = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter, title);
         const QLineF headerLine((titleBound.right() + 10), centreY, (right - 10), centreY);

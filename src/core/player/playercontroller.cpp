@@ -58,8 +58,7 @@ void PlayerController::wakeUp()
 
 void PlayerController::playPause()
 {
-    switch(m_playStatus)
-    {
+    switch(m_playStatus) {
         case(Player::PlayState::Playing):
             return pause();
         case(Player::PlayState::Stopped):
@@ -95,8 +94,7 @@ void PlayerController::setCurrentPosition(quint64 ms)
 {
     m_position = ms;
     // TODO: Only increment playCount based on total time listened excluding seeking.
-    if(!m_counted && ms >= m_totalDuration / 2)
-    {
+    if(!m_counted && ms >= m_totalDuration / 2) {
         // TODO: Save playCounts to db.
         quint16 playCount = m_currentTrack->playCount();
         m_currentTrack->setPlayCount(++playCount);
@@ -107,8 +105,7 @@ void PlayerController::setCurrentPosition(quint64 ms)
 
 void PlayerController::changePosition(quint64 ms)
 {
-    if(ms >= m_totalDuration - 100)
-    {
+    if(ms >= m_totalDuration - 100) {
         return next();
     }
     m_position = ms;
@@ -128,8 +125,7 @@ void PlayerController::changeCurrentTrack(Track* track)
 
 void PlayerController::setRepeat()
 {
-    switch(m_playMode)
-    {
+    switch(m_playMode) {
         case Player::PlayMode::Default:
             m_playMode = Player::PlayMode::RepeatAll;
             break;
@@ -147,12 +143,10 @@ void PlayerController::setRepeat()
 
 void PlayerController::setShuffle()
 {
-    if(m_playMode == Player::PlayMode::Shuffle)
-    {
+    if(m_playMode == Player::PlayMode::Shuffle) {
         m_playMode = Player::PlayMode::Default;
     }
-    else
-    {
+    else {
         m_playMode = Player::PlayMode::Shuffle;
     }
     emit playModeChanged(m_playMode);

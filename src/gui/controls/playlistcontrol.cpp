@@ -39,8 +39,7 @@ struct PlaylistControl::Private
     {
         QPalette palette = repeat->palette();
 
-        switch(mode)
-        {
+        switch(mode) {
             case(Player::PlayMode::Repeat): {
                 palette.setColor(repeat->foregroundRole(), palette.highlight().color());
                 repeat->setPalette(palette);

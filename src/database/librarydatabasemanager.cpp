@@ -34,8 +34,7 @@ void LibraryDatabaseManager::getAllTracks()
 {
     TrackList tracks;
     bool success = m_libraryDatabase->getAllTracks(tracks);
-    if(success)
-    {
+    if(success) {
         emit gotTracks(tracks);
     }
 }
@@ -44,8 +43,7 @@ void LibraryDatabaseManager::getAllItems(Filters::FilterType type, ::Library::So
 {
     FilterList items;
     bool success = m_libraryDatabase->getAllItems(type, order, items);
-    if(success)
-    {
+    if(success) {
         emit gotItems(type, items);
     }
 }
@@ -55,8 +53,7 @@ void LibraryDatabaseManager::getItemsByFilter(Filters::FilterType type, const Ac
 {
     FilterList items;
     bool success = m_libraryDatabase->getItemsByFilter(type, filters, search, order, items);
-    if(success)
-    {
+    if(success) {
         emit gotItems(type, items);
     }
 }
@@ -66,55 +63,44 @@ void LibraryDatabaseManager::filterTracks(const TrackPtrList& tracks, const Acti
 {
     TrackPtrList filteredTracks;
 
-    for(Track* track : tracks)
-    {
+    for(Track* track : tracks) {
         int matches = 0;
         int total = static_cast<int>(filters.size()) + (search.isEmpty() ? 0 : 1);
 
-        if(!filters.isEmpty())
-        {
-            for(const auto& [filter, ids] : asRange(filters))
-            {
-                switch(filter)
-                {
+        if(!filters.isEmpty()) {
+            for(const auto& [filter, ids] : asRange(filters)) {
+                switch(filter) {
                     case(Filters::FilterType::AlbumArtist): {
-                        if(ids.contains(track->albumArtistId()))
-                        {
+                        if(ids.contains(track->albumArtistId())) {
                             ++matches;
                         }
                         break;
                     }
                     case(Filters::FilterType::Artist): {
                         const IdSet artistIds{track->artistIds()};
-                        for(const auto artistId : artistIds)
-                        {
-                            if(ids.contains(artistId))
-                            {
+                        for(const auto artistId : artistIds) {
+                            if(ids.contains(artistId)) {
                                 ++matches;
                             }
                         }
                         break;
                     }
                     case(Filters::FilterType::Album): {
-                        if(ids.contains(track->albumId()))
-                        {
+                        if(ids.contains(track->albumId())) {
                             ++matches;
                         }
                         break;
                     }
                     case(Filters::FilterType::Year): {
-                        if(ids.contains(track->year()))
-                        {
+                        if(ids.contains(track->year())) {
                             ++matches;
                         }
                         break;
                     }
                     case(Filters::FilterType::Genre): {
                         const IdSet genreIds{track->genreIds()};
-                        for(const int& genreId : genreIds)
-                        {
-                            if(ids.contains(genreId))
-                            {
+                        for(const int& genreId : genreIds) {
+                            if(ids.contains(genreId)) {
                                 ++matches;
                             }
                         }
@@ -124,26 +110,21 @@ void LibraryDatabaseManager::filterTracks(const TrackPtrList& tracks, const Acti
             }
         }
 
-        if(!search.isEmpty())
-        {
+        if(!search.isEmpty()) {
             bool hasArtistMatch = false;
-            for(const auto& artist : track->artists())
-            {
-                if(artist.contains(search, Qt::CaseInsensitive))
-                {
+            for(const auto& artist : track->artists()) {
+                if(artist.contains(search, Qt::CaseInsensitive)) {
                     hasArtistMatch = true;
                 }
             };
 
             if(track->title().contains(search, Qt::CaseInsensitive)
                || track->album().contains(search, Qt::CaseInsensitive)
-               || track->albumArtist().contains(search, Qt::CaseInsensitive) || hasArtistMatch)
-            {
+               || track->albumArtist().contains(search, Qt::CaseInsensitive) || hasArtistMatch) {
                 ++matches;
             }
         }
-        if(matches == total)
-        {
+        if(matches == total) {
             filteredTracks.append(track);
         }
     }

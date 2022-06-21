@@ -38,8 +38,7 @@ ReadingProperties getReadingProperties(Quality quality)
 {
     ReadingProperties readingProperties;
 
-    switch(quality)
-    {
+    switch(quality) {
         case Quality::Quality:
             readingProperties.readStyle = TagLib::AudioProperties::Accurate;
             break;
@@ -65,8 +64,7 @@ bool readMetaData(Track& track, Quality quality)
     track.setAddedTime(timeNow);
     track.setMTime(md.isValid() ? md.toMSecsSinceEpoch() : 0);
 
-    if(fileInfo.size() <= 0)
-    {
+    if(fileInfo.size() <= 0) {
         return false;
     }
 
@@ -74,16 +72,14 @@ bool readMetaData(Track& track, Quality quality)
     auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties,
                                    readingProperties.readStyle);
 
-    if(!isValidFile(fileRef))
-    {
+    if(!isValidFile(fileRef)) {
         qDebug() << "Cannot open tags for " << filepath << ": Err 1";
         return false;
     }
 
     auto parsedTag = tagsFromFile(fileRef);
     parsedTag.map = fileRef.file()->properties();
-    if(!parsedTag.tag)
-    {
+    if(!parsedTag.tag) {
         return false;
     }
 
@@ -106,13 +102,10 @@ bool readMetaData(Track& track, Quality quality)
 
     const auto length = fileRef.audioProperties()->lengthInMilliseconds();
 
-    for(const auto& [tag, values] : parsedTag.map)
-    {
-        for(const auto& value : values)
-        {
+    for(const auto& [tag, values] : parsedTag.map) {
+        for(const auto& value : values) {
             const auto tagEntry = QString::fromStdString(tag.to8Bit(true));
-            if(!baseTags.contains(tagEntry))
-            {
+            if(!baseTags.contains(tagEntry)) {
                 track.addExtra(tagEntry, QString::fromStdString(value.to8Bit(true)));
             }
         }

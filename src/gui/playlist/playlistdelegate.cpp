@@ -38,8 +38,7 @@ QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
     const auto type = index.data(Role::Type).value<PlaylistItem::Type>();
     const auto simple = index.data(Role::PlaylistType).toBool();
 
-    switch(type)
-    {
+    switch(type) {
         case(PlaylistItem::Type::Album): {
             height += !simple ? 60 : 10;
             break;
@@ -77,8 +76,7 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 
     //    painter->setRenderHint(QPainter::Antialiasing);
 
-    switch(type)
-    {
+    switch(type) {
         case(PlaylistItem::Type::Album): {
             paintAlbum(painter, option, index);
             break;
@@ -129,8 +127,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
     QFont totalFont = painter->font();
     totalFont.setPixelSize(10);
 
-    if(!simple)
-    {
+    if(!simple) {
         const auto coverFrameWidth = 2;
         const auto coverFrameOffset = coverFrameWidth / 2;
 
@@ -165,8 +162,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
 
         painter->setFont(yearFont);
         const QRect yearBound = painter->boundingRect(yearRect, Qt::AlignRight | Qt::AlignVCenter, albumYear);
-        if(width > 160)
-        {
+        if(width > 160) {
             option.widget->style()->drawItemText(painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette,
                                                  true, albumYear);
         }
@@ -180,8 +176,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
         const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
                               (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
         const QLineF headerLine(x + 77, (y + height) - 8, (right)-10, (y + height) - 8);
-        if(!albumTitle.isEmpty() && width > 160)
-        {
+        if(!albumTitle.isEmpty() && width > 160) {
             painter->drawLine(yearLine);
         }
         painter->drawLine(headerLine);
@@ -190,8 +185,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
         painter->setRenderHint(QPainter::Antialiasing);
         painter->drawRect(coverFrameRect);
     }
-    else
-    {
+    else {
         artistFont.setPixelSize(13);
         titleFont.setPixelSize(12);
         yearFont.setPixelSize(12);
@@ -230,8 +224,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
         //        const QLineF artistTitleLine((artistBound.x() + artistBound.width() + 10),
         //                                     (artistBound.y() + (artistBound.height() / 2)), (titleBound.x() - 10),
         //                                     (titleBound.y()) + (titleBound.height() / 2));
-        if(!albumTitle.isEmpty())
-        {
+        if(!albumTitle.isEmpty()) {
             painter->drawLine(yearLine);
             //            if (!albumArtist.isEmpty())
             //                painter->drawLine(artistTitleLine);
@@ -265,13 +258,11 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
 
     int offset = 0;
 
-    if(multiDiscs)
-    {
+    if(multiDiscs) {
         offset += 20;
     }
 
-    if(isPlaying)
-    {
+    if(isPlaying) {
         offset += 20;
     }
 
@@ -286,13 +277,11 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
 
     painter->fillRect(option.rect, isPlaying ? playCol : option.palette.color(background));
 
-    if((option.state & QStyle::State_Selected))
-    {
+    if((option.state & QStyle::State_Selected)) {
         painter->fillRect(option.rect, option.palette.highlight());
     }
 
-    if((option.state & QStyle::State_MouseOver))
-    {
+    if((option.state & QStyle::State_MouseOver)) {
         painter->fillRect(option.rect, hoverCol);
     }
 
@@ -318,8 +307,7 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     option.widget->style()->drawItemText(painter, durRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
                                          trackDuration);
 
-    if(isPlaying)
-    {
+    if(isPlaying) {
         painter->setFont(playFont);
         option.widget->style()->drawItemText(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
                                              state);

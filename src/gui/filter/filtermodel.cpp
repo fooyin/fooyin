@@ -53,15 +53,13 @@ void FilterModel::setIndex(int index)
 
 QVariant FilterModel::data(const QModelIndex& index, int role) const
 {
-    if(!index.isValid() && !checkIndex(index))
-    {
+    if(!index.isValid() && !checkIndex(index)) {
         return {};
     }
 
     auto* item = static_cast<FilterItem*>(index.internalPointer());
 
-    switch(role)
-    {
+    switch(role) {
         case(Qt::DisplayRole): {
             return item->data(FilterRole::Name).toString();
         }
@@ -76,8 +74,7 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
 
 Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
 {
-    if(!index.isValid())
-    {
+    if(!index.isValid()) {
         return Qt::NoItemFlags;
     }
 
@@ -87,23 +84,19 @@ Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
 QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     Q_UNUSED(section)
-    if(orientation == Qt::Orientation::Vertical)
-    {
+    if(orientation == Qt::Orientation::Vertical) {
         return {};
     }
 
-    if(role == Qt::TextAlignmentRole)
-    {
+    if(role == Qt::TextAlignmentRole) {
         return (Qt::AlignHCenter);
     }
 
-    if(role != Qt::DisplayRole)
-    {
+    if(role != Qt::DisplayRole) {
         return {};
     }
 
-    switch(m_type)
-    {
+    switch(m_type) {
         case(Filters::FilterType::Genre):
             return "Genre";
         case(Filters::FilterType::Year):
@@ -121,16 +114,14 @@ QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int r
 
 QModelIndex FilterModel::index(int row, int column, const QModelIndex& parent) const
 {
-    if(!hasIndex(row, column, parent))
-    {
+    if(!hasIndex(row, column, parent)) {
         return {};
     }
 
     FilterItem* parentItem = m_root.get();
 
     FilterItem* childItem = parentItem->child(row);
-    if(childItem)
-    {
+    if(childItem) {
         return createIndex(row, column, childItem);
     }
     return {};
@@ -171,18 +162,15 @@ QHash<int, QByteArray> FilterModel::roleNames() const
 QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                    Qt::MatchFlags flags) const
 {
-    if(role != FilterRole::Id)
-    {
+    if(role != FilterRole::Id) {
         return QAbstractItemModel::match(start, role, value, hits, flags);
     }
 
     QModelIndexList indexes{};
-    for(int i = 0; i < rowCount(start); ++i)
-    {
+    for(int i = 0; i < rowCount(start); ++i) {
         const auto child = index(i, 0, start);
         const auto data = child.data(role);
-        if(data.toInt() == value.toInt())
-        {
+        if(data.toInt() == value.toInt()) {
             indexes.append(child);
         }
     }
@@ -206,10 +194,8 @@ void FilterModel::beginReset()
 void FilterModel::setupModelData(const FilterList& items)
 {
     m_root->appendChild(new FilterItem(-1, QString("All (%1)").arg(items.size()), m_root.get()));
-    if(!items.isEmpty())
-    {
-        for(const auto& item : items)
-        {
+    if(!items.isEmpty()) {
+        for(const auto& item : items) {
             auto* filterItem = new FilterItem(item.id, item.name, m_root.get());
             m_root->appendChild(filterItem);
         }

@@ -29,8 +29,7 @@ QPixmap albumCover(Album* album)
 {
     const auto id = QString::number(album->hasCover() ? album->id() : 0);
     QPixmap cover;
-    if(!QPixmapCache::find(id, &cover))
-    {
+    if(!QPixmapCache::find(id, &cover)) {
         cover = Util::getCover(album->hasCover() ? album->coverPath() : "://images/nocover.png", 60);
         QPixmapCache::insert(id, cover);
     }

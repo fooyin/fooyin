@@ -65,8 +65,7 @@ void FilterView::mousePressEvent(QMouseEvent* e)
 {
     auto pressedKey = e->modifiers();
 
-    if(e->button() == Qt::LeftButton && pressedKey == Qt::NoModifier)
-    {
+    if(e->button() == Qt::LeftButton && pressedKey == Qt::NoModifier) {
         selectionModel()->clear();
     }
 
@@ -77,8 +76,7 @@ void FilterView::keyPressEvent(QKeyEvent* e)
 {
     const auto key = e->key();
 
-    if(key == Qt::Key_Enter || key == Qt::Key_Return)
-    {
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
         m_library->prepareTracks();
     }
     QTreeView::keyPressEvent(e);

@@ -106,8 +106,7 @@ void SettingsDialog::setupUi()
 
 void SettingsDialog::changePage(QListWidgetItem* current, QListWidgetItem* previous)
 {
-    if(!current)
-    {
+    if(!current) {
         current = previous;
     }
 

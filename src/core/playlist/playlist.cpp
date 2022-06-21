@@ -51,8 +51,7 @@ int Playlist::Playlist::currentTrackIndex() const
         return (track->id() == m_playingTrack->id());
     });
 
-    if(it == m_tracks.end())
-    {
+    if(it == m_tracks.end()) {
         return -1;
     }
 
@@ -62,8 +61,7 @@ int Playlist::Playlist::currentTrackIndex() const
 Track* Playlist::Playlist::currentTrack() const
 {
     const auto trackIndex = currentTrackIndex();
-    if(trackIndex >= m_tracks.size() || trackIndex < 0)
-    {
+    if(trackIndex >= m_tracks.size() || trackIndex < 0) {
         return {};
     }
 
@@ -92,13 +90,11 @@ void Playlist::Playlist::clear()
 
 void Playlist::Playlist::setCurrentTrack(int index)
 {
-    if(index < 0 || index >= m_tracks.size())
-    {
+    if(index < 0 || index >= m_tracks.size()) {
         stop();
     }
 
-    else
-    {
+    else {
         Track* track = m_tracks[index];
         m_playingTrack = track;
         m_playerManager->changeCurrentTrack(track);
@@ -109,14 +105,12 @@ bool Playlist::Playlist::changeTrack(int index)
 {
     setCurrentTrack(index);
 
-    if(index < 0 || index >= m_tracks.size())
-    {
+    if(index < 0 || index >= m_tracks.size()) {
         stop();
         return false;
     }
 
-    while(!Util::File::exists(m_tracks[index]->filepath()))
-    {
+    while(!Util::File::exists(m_tracks[index]->filepath())) {
         QMessageBox message;
         message.setText(QString("Track %1 cannot be found.").arg(index));
         message.setInformativeText(m_tracks[index]->filepath());
@@ -132,8 +126,7 @@ bool Playlist::Playlist::changeTrack(int index)
 
 void Playlist::Playlist::play()
 {
-    if(currentTrackIndex() < 0)
-    {
+    if(currentTrackIndex() < 0) {
         next();
     }
 }
@@ -145,8 +138,7 @@ void Playlist::Playlist::stop()
 
 void Playlist::Playlist::next()
 {
-    if(m_tracks.isEmpty())
-    {
+    if(m_tracks.isEmpty()) {
         stop();
         return;
     }
@@ -158,8 +150,7 @@ void Playlist::Playlist::next()
 
 void Playlist::Playlist::previous()
 {
-    if(m_playerManager->currentPosition() > 5000)
-    {
+    if(m_playerManager->currentPosition() > 5000) {
         m_playerManager->changePosition(0);
         return;
     }
@@ -173,28 +164,23 @@ int Playlist::Playlist::nextIndex()
     const auto isLastTrack = (currentTrackIndex() == m_tracks.count() - 1);
     int index;
 
-    if((currentTrackIndex() == -1) && mode != Player::PlayMode::Shuffle)
-    {
+    if((currentTrackIndex() == -1) && mode != Player::PlayMode::Shuffle) {
         index = 0;
     }
 
-    else if(mode == Player::PlayMode::Repeat)
-    {
+    else if(mode == Player::PlayMode::Repeat) {
         index = currentTrackIndex();
     }
     // TODO: Implement full shuffle functionality
-    else if(mode == Player::PlayMode::Shuffle)
-    {
+    else if(mode == Player::PlayMode::Shuffle) {
         index = Util::randomNumber(0, static_cast<int>(m_tracks.size()) - 1);
     }
 
-    else if(isLastTrack)
-    {
+    else if(isLastTrack) {
         index = mode == Player::PlayMode::RepeatAll ? 0 : -1;
     }
 
-    else
-    {
+    else {
         index = currentTrackIndex() + 1;
     }
 

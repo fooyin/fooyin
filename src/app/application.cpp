@@ -68,8 +68,7 @@ Application::Application(int& argc, char** argv)
 Application::~Application()
 {
     p->settings->storeSettings();
-    if(p->db)
-    {
+    if(p->db) {
         p->db->cleanup();
         p->db->closeDatabase();
         p->db = nullptr;

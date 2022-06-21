@@ -48,7 +48,7 @@ public:
 
     Library* libraryConnector();
 
-    bool update();
+    static bool update();
     bool cleanup();
 
 protected:

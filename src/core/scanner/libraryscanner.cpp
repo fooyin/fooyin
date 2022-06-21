@@ -50,8 +50,7 @@ void LibraryScanner::stop()
 
 void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
 {
-    if(m_isRunning)
-    {
+    if(m_isRunning) {
         return;
     }
 
@@ -64,31 +63,28 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
     TrackPathMap trackMap{};
     IdSet tracksToDelete{};
 
-    for(Track* track : tracks)
-    {
-        if(!Util::File::exists(track->filepath()))
-        {
+    for(Track* track : tracks) {
+        if(!Util::File::exists(track->filepath())) {
             tracksToDelete.insert(track->id());
         }
-        else
-        {
+        else {
             trackMap.insert(track->filepath(), track);
         }
-        if(!m_mayRun)
-        {
+        if(!m_mayRun) {
             return;
         }
     }
 
     bool deletedSuccess = libraryDatabase->deleteTracks(tracksToDelete);
 
-    if(deletedSuccess && !tracksToDelete.empty())
+    if(deletedSuccess && !tracksToDelete.empty()) {
         emit tracksDeleted(tracksToDelete);
+    }
 
-    if(!m_mayRun)
-    {
+    if(!m_mayRun) {
         return;
     }
+
     getAndSaveAllFiles(info.id(), info.path(), trackMap);
 
     m_isRunning = false;
@@ -98,16 +94,14 @@ void LibraryScanner::scanAll(TrackPtrList& tracks)
 {
     const auto libraries = m_libraryManager->allLibraries();
 
-    for(const LibraryInfo& info : libraries)
-    {
+    for(const LibraryInfo& info : libraries) {
         scanLibrary(tracks, info);
     }
 }
 
 void LibraryScanner::storeTracks(TrackList& tracks) const
 {
-    if(!m_mayRun)
-    {
+    if(!m_mayRun) {
         return;
     }
 
@@ -116,8 +110,7 @@ void LibraryScanner::storeTracks(TrackList& tracks) const
 
     libraryDatabase->storeTracks(tracks);
 
-    if(!m_mayRun)
-    {
+    if(!m_mayRun) {
         return;
     }
 
@@ -137,8 +130,7 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
     baseDirectory.setFilter(QDir::Files);
 
     QDirIterator it(baseDirectory, QDirIterator::Subdirectories);
-    while(it.hasNext())
-    {
+    while(it.hasNext()) {
         ret.append(it.next());
     }
 
@@ -147,8 +139,7 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
 
 bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, const TrackPathMap& tracks)
 {
-    if(path.isEmpty() || !Util::File::exists(path))
-    {
+    if(path.isEmpty() || !Util::File::exists(path)) {
         return false;
     }
 
@@ -159,10 +150,8 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
 
     QStringList files = getFiles(dir);
 
-    for(const QString& filepath : files)
-    {
-        if(!m_mayRun)
-        {
+    for(const QString& filepath : files) {
+        if(!m_mayRun) {
             return false;
         }
 
@@ -174,15 +163,13 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
 
         Track* libraryTrack = tracks.value(filepath, nullptr);
 
-        if(libraryTrack && libraryTrack->id() >= 0)
-        {
+        if(libraryTrack && libraryTrack->id() >= 0) {
             if(libraryTrack->mTime() == modified)
                 continue;
 
             Track changedTrack{filepath};
             fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
-            if(fileWasRead)
-            {
+            if(fileWasRead) {
                 tracksToUpdate << changedTrack;
                 continue;
             }
@@ -192,11 +179,9 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
         track.setLibraryId(libraryId);
 
         fileWasRead = Tagging::readMetaData(track, Tagging::Quality::Quality);
-        if(fileWasRead)
-        {
+        if(fileWasRead) {
             tracksToStore << track;
-            if(tracksToStore.size() >= 500)
-            {
+            if(tracksToStore.size() >= 500) {
                 storeTracks(tracksToStore);
                 emit addedTracks(tracksToStore);
                 tracksToStore.clear();

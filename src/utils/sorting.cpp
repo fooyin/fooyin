@@ -26,47 +26,53 @@
 namespace Sorting {
 bool tracksBase(Track* tr1, Track* tr2)
 {
-    if(tr1->discNumber() != tr2->discNumber())
+    if(tr1->discNumber() != tr2->discNumber()) {
         return tr1->discNumber() < tr2->discNumber();
+    }
     return tr1->trackNumber() < tr2->trackNumber();
 }
 
 bool tracksByTitleAsc(Track* tr1, Track* tr2)
 {
-    if(tr1->album() != tr2->album())
+    if(tr1->album() != tr2->album()) {
         return tr1->album() < tr2->album();
+    }
     return tracksBase(tr1, tr2);
 }
 
 bool tracksByTitleDesc(Track* tr1, Track* tr2)
 {
-    if(tr1->album() != tr2->album())
+    if(tr1->album() != tr2->album()) {
         return tr1->album() < tr2->album();
+    }
     return tracksBase(tr1, tr2);
 }
 
 bool tracksByYearAsc(Track* tr1, Track* tr2)
 {
-    if(tr1->albumArtist() != tr2->albumArtist())
+    if(tr1->albumArtist() != tr2->albumArtist()) {
         return tr1->albumArtist() < tr2->albumArtist();
-    if(tr1->year() != tr2->year())
+    }
+    if(tr1->year() != tr2->year()) {
         return tr1->year() < tr2->year();
+    }
     return tracksByTitleDesc(tr1, tr2);
 }
 
 bool tracksByYearDesc(Track* tr1, Track* tr2)
 {
-    if(tr1->albumArtist() != tr2->albumArtist())
+    if(tr1->albumArtist() != tr2->albumArtist()) {
         return tr1->albumArtist() < tr2->albumArtist();
-    if(tr1->year() != tr2->year())
+    }
+    if(tr1->year() != tr2->year()) {
         return tr1->year() > tr2->year();
+    }
     return tracksByTitleDesc(tr1, tr2);
 }
 
 void sortTracks(TrackPtrList& tracks, Library::SortOrder sortOrder)
 {
-    switch(sortOrder)
-    {
+    switch(sortOrder) {
         case(Library::SortOrder::YearDesc):
             return std::sort(tracks.begin(), tracks.end(), tracksByYearDesc);
         case(Library::SortOrder::YearAsc):

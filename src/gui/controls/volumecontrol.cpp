@@ -81,20 +81,16 @@ void VolumeControl::updateVolume(double value)
     double vol = value;
     emit volumeChanged(vol);
 
-    if(vol <= 100 && vol >= 66)
-    {
+    if(vol <= 100 && vol >= 66) {
         p->mute->setText("$");
     }
-    else if(vol < 66 && vol >= 33)
-    {
+    else if(vol < 66 && vol >= 33) {
         p->mute->setText("#");
     }
-    else if(vol < 33 && vol > 0)
-    {
+    else if(vol < 33 && vol > 0) {
         p->mute->setText("@");
     }
-    else
-    {
+    else {
         p->mute->setText("!");
     }
 }

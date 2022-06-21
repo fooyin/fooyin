@@ -49,8 +49,7 @@ EngineHandler::~EngineHandler()
 
 void EngineHandler::playStateChanged(Player::PlayState state)
 {
-    switch(state)
-    {
+    switch(state) {
         case Player::PlayState::Playing:
             return emit play();
         case Player::PlayState::Paused:

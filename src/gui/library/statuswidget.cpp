@@ -103,8 +103,7 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
 void StatusWidget::labelClicked()
 {
     const Player::PlayState ps = p->playerManager->playState();
-    if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused)
-    {
+    if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused) {
         emit clicked();
     }
 }
@@ -117,8 +116,7 @@ void StatusWidget::reloadStatus()
 
 void StatusWidget::stateChanged(Player::PlayState state)
 {
-    switch(state)
-    {
+    switch(state) {
         case(Player::PlayState::Stopped):
             p->playing->setText("Waiting for track...");
             break;
