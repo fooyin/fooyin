@@ -22,6 +22,7 @@
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "gui/editablelayout.h"
+#include "gui/firstrundialog.h"
 #include "gui/settings/settingsdialog.h"
 #include "utils/settings.h"
 
@@ -51,6 +52,8 @@ struct MainWindow::Private
     QAction* layoutEditing;
 
     Settings* settings;
+
+    FirstRunDialog firstRunDialog;
 
     Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
@@ -142,6 +145,11 @@ void MainWindow::setupUi()
     connect(p->layoutEditing, &QAction::triggered, this, [=](bool checked) {
         p->settings->set(Settings::Setting::LayoutEditing, checked);
     });
+    connect(&p->firstRunDialog, &FirstRunDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
+
+    if(p->settings->value(Settings::Setting::FirstRun).toBool()) {
+        p->firstRunDialog.show();
+    }
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
