@@ -50,6 +50,7 @@ struct MainWindow::Private
 
     QAction* openSettings;
     QAction* layoutEditing;
+    QAction* openFirstRun;
 
     Settings* settings;
 
@@ -117,6 +118,7 @@ void MainWindow::setupUi()
 
     p->openSettings = new QAction(this);
     p->layoutEditing = new QAction(this);
+    p->openFirstRun = new QAction(this);
 
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value(Settings::Setting::LayoutEditing).toBool());
@@ -137,14 +139,17 @@ void MainWindow::setupUi()
 
     p->openSettings->setText("Settings");
     p->layoutEditing->setText("Layout Editing Mode");
+    p->openFirstRun->setText("Run Initial Setup");
 
     p->menuLibrary->addAction(p->openSettings);
     p->menuView->addAction(p->layoutEditing);
+    p->menuView->addAction(p->openFirstRun);
 
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
     connect(p->layoutEditing, &QAction::triggered, this, [=](bool checked) {
         p->settings->set(Settings::Setting::LayoutEditing, checked);
     });
+    connect(p->openFirstRun, &QAction::triggered, &p->firstRunDialog, &FirstRunDialog::show);
     connect(&p->firstRunDialog, &FirstRunDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
 
     if(p->settings->value(Settings::Setting::FirstRun).toBool()) {
