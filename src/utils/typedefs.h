@@ -63,8 +63,11 @@ const int SampleRate = 12;
 namespace FilterRole {
 const int Id = Qt::UserRole + 40;
 const int Name = Qt::UserRole + 41;
-
 } // namespace FilterRole
+
+namespace LayoutRole {
+const int Type = Qt::UserRole + 50;
+} // namespace LayoutRole
 
 namespace Filters {
 Q_NAMESPACE
