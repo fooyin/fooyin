@@ -4,13 +4,13 @@
 #include <QHBoxLayout>
 #include <QListWidget>
 
-class FirstRunDialog : public QDialog
+class QuickSeupDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit FirstRunDialog(QWidget* parent = nullptr);
-    ~FirstRunDialog() override;
+    explicit QuickSeupDialog(QWidget* parent = nullptr);
+    ~QuickSeupDialog() override;
 
 signals:
     void layoutChanged(const QByteArray& layout);

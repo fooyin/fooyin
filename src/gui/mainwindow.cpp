@@ -22,7 +22,7 @@
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "gui/editablelayout.h"
-#include "gui/firstrundialog.h"
+#include "gui/quicksetupdialog.h"
 #include "gui/settings/settingsdialog.h"
 #include "utils/settings.h"
 
@@ -50,11 +50,11 @@ struct MainWindow::Private
 
     QAction* openSettings;
     QAction* layoutEditing;
-    QAction* openFirstRun;
+    QAction* openQuickSetup;
 
     Settings* settings;
 
-    FirstRunDialog firstRunDialog;
+    QuickSeupDialog firstRunDialog;
 
     Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
@@ -118,7 +118,7 @@ void MainWindow::setupUi()
 
     p->openSettings = new QAction(this);
     p->layoutEditing = new QAction(this);
-    p->openFirstRun = new QAction(this);
+    p->openQuickSetup = new QAction(this);
 
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value(Settings::Setting::LayoutEditing).toBool());
@@ -139,18 +139,18 @@ void MainWindow::setupUi()
 
     p->openSettings->setText("Settings");
     p->layoutEditing->setText("Layout Editing Mode");
-    p->openFirstRun->setText("Run Initial Setup");
+    p->openQuickSetup->setText("Quick Setup");
 
     p->menuLibrary->addAction(p->openSettings);
     p->menuView->addAction(p->layoutEditing);
-    p->menuView->addAction(p->openFirstRun);
+    p->menuView->addAction(p->openQuickSetup);
 
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
     connect(p->layoutEditing, &QAction::triggered, this, [=](bool checked) {
         p->settings->set(Settings::Setting::LayoutEditing, checked);
     });
-    connect(p->openFirstRun, &QAction::triggered, &p->firstRunDialog, &FirstRunDialog::show);
-    connect(&p->firstRunDialog, &FirstRunDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
+    connect(p->openQuickSetup, &QAction::triggered, &p->firstRunDialog, &QuickSeupDialog::show);
+    connect(&p->firstRunDialog, &QuickSeupDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
 
     if(p->settings->value(Settings::Setting::FirstRun).toBool()) {
         p->firstRunDialog.show();

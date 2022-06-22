@@ -1,31 +1,32 @@
-#include "firstrundialog.h"
+#include "quicksetupdialog.h"
 
 #include "utils/typedefs.h"
 
-FirstRunDialog::FirstRunDialog(QWidget* parent)
+QuickSeupDialog::QuickSeupDialog(QWidget* parent)
     : QDialog{parent}
     , m_layout{this}
 {
-    setObjectName("Setup");
-    setWindowTitle("Setup");
+    setObjectName("Quick Setup");
+    setWindowTitle("Quick Setup");
     setupList();
-    connect(&m_layoutList, &QListWidget::itemSelectionChanged, this, &FirstRunDialog::changeLayout);
+    connect(&m_layoutList, &QListWidget::itemSelectionChanged, this, &QuickSeupDialog::changeLayout);
     m_layout.addWidget(&m_layoutList);
 }
 
-FirstRunDialog::~FirstRunDialog() = default;
+QuickSeupDialog::~QuickSeupDialog() = default;
 
 // Not the best way to handle layouts. Maybe save to (readable) files?
-void FirstRunDialog::setupList()
+void QuickSeupDialog::setupList()
 {
     m_layoutList.setSelectionMode(QAbstractItemView::SingleSelection);
 
-    auto* quickLayout = new QListWidgetItem("Quick", &m_layoutList);
-    auto quick = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIiwiUGxheWxpc3QiLCJDb250c"
-                         "m9scyJdLCJTdGF0ZSI6IkFBQUEvd0FBQUFFQUFBQUVBQUFBR1FBQUFCNEFBQU9oQUFBQUVnRC8vLy8vQVFBQUFBSUEiLC"
-                         "JUeXBlIjoiVmVydGljYWwifX19")
-                     .toUtf8();
-    quickLayout->setData(LayoutRole::Type, quick);
+    auto* simpleLayout = new QListWidgetItem("Simple", &m_layoutList);
+    auto simple
+        = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIiwiUGxheWxpc3QiLCJDb250c"
+                  "m9scyJdLCJTdGF0ZSI6IkFBQUEvd0FBQUFFQUFBQUVBQUFBR1FBQUFCNEFBQU9oQUFBQUVnRC8vLy8vQVFBQUFBSUEiLC"
+                  "JUeXBlIjoiVmVydGljYWwifX19")
+              .toUtf8();
+    simpleLayout->setData(LayoutRole::Type, simple);
 
     auto* stoneLayout = new QListWidgetItem("Stone", &m_layoutList);
     auto stone = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIix7IlNwbGl0dGVyIjp7IkN"
@@ -69,7 +70,7 @@ void FirstRunDialog::setupList()
     m_layoutList.addItem(customLayout);
 }
 
-void FirstRunDialog::changeLayout()
+void QuickSeupDialog::changeLayout()
 {
     const auto selectedItem = m_layoutList.selectionModel()->selectedRows().constFirst();
     const auto layout = QByteArray::fromBase64(selectedItem.data(LayoutRole::Type).toByteArray());

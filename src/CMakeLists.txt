@@ -28,7 +28,7 @@ set(HEADERS
 
     gui/mainwindow.h
     gui/editablelayout.h
-    gui/firstrundialog.h
+    gui/quicksetupdialog.h
 
     gui/controls/controlwidget.h
     gui/controls/playercontrol.h
@@ -124,7 +124,7 @@ set(SOURCES
 
     gui/mainwindow.cpp
     gui/editablelayout.cpp
-    gui/firstrundialog.cpp
+    gui/quicksetupdialog.cpp
 
     gui/controls/controlwidget.cpp
     gui/controls/playercontrol.cpp
