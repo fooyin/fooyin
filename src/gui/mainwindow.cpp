@@ -54,7 +54,7 @@ struct MainWindow::Private
 
     Settings* settings;
 
-    QuickSeupDialog firstRunDialog;
+    QuickSeupDialog quickSetupDialog;
 
     Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
@@ -149,11 +149,11 @@ void MainWindow::setupUi()
     connect(p->layoutEditing, &QAction::triggered, this, [=](bool checked) {
         p->settings->set(Settings::Setting::LayoutEditing, checked);
     });
-    connect(p->openQuickSetup, &QAction::triggered, &p->firstRunDialog, &QuickSeupDialog::show);
-    connect(&p->firstRunDialog, &QuickSeupDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
+    connect(p->openQuickSetup, &QAction::triggered, &p->quickSetupDialog, &QuickSeupDialog::show);
+    connect(&p->quickSetupDialog, &QuickSeupDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
 
     if(p->settings->value(Settings::Setting::FirstRun).toBool()) {
-        p->firstRunDialog.show();
+        p->quickSetupDialog.show();
     }
 }
 
