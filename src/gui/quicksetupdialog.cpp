@@ -30,6 +30,12 @@ void QuickSeupDialog::setupList()
 {
     m_layoutList.setSelectionMode(QAbstractItemView::SingleSelection);
 
+    auto* emptyLayout = new QListWidgetItem("Empty", &m_layoutList);
+    auto empty = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiRHVtbXkiXSwiU3RhdGUiOiJBQUFBL3dBQUFBRUFBQUFCQ"
+                         "UFBQUZBRC8vLy8vQVFBQUFBSUEiLCJUeXBlIjoiVmVydGljYWwifX19")
+                     .toUtf8();
+    emptyLayout->setData(LayoutRole::Type, empty);
+
     auto* simpleLayout = new QListWidgetItem("Simple", &m_layoutList);
     auto simple
         = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIiwiUGxheWxpc3QiLCJDb250c"
@@ -69,15 +75,7 @@ void QuickSeupDialog::setupList()
               .toUtf8();
     emberLayout->setData(LayoutRole::Type, ember);
 
-    auto* customLayout = new QListWidgetItem("Custom", &m_layoutList);
-    auto custom
-        = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiRHVtbXkiXSwiU3RhdGUiOiJBQUFBL3dBQUFBRUFBQUFCQ"
-                  "UFBQUZBRC8vLy8vQVFBQUFBSUEiLCJUeXBlIjoiVmVydGljYWwifX19")
-              .toUtf8();
-    customLayout->setData(LayoutRole::Type, custom);
-
-    m_layoutList.addItem(emberLayout);
-    m_layoutList.addItem(customLayout);
+    m_layoutList.setCurrentRow(0);
 }
 
 void QuickSeupDialog::changeLayout()
