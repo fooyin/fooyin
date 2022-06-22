@@ -88,6 +88,7 @@ public:
     void changeFilter(int index);
     void resetFilter(Filters::FilterType type);
     void registerFilter(Filters::FilterType type, int index);
+    void unregisterFilter(int index);
 
 signals:
     void runLibraryScan(TrackPtrList& tracks, Library::LibraryInfo info);

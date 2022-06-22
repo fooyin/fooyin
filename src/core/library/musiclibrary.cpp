@@ -137,6 +137,14 @@ void MusicLibrary::registerFilter(Filters::FilterType type, int index)
     m_filterSortOrders.insert(type, SortOrder::TitleAsc);
 }
 
+void MusicLibrary::unregisterFilter(int index)
+{
+    Filters::FilterType type = m_filterIndexes.take(index);
+    m_activeFilters.remove(type);
+    emit filteredItems(-1);
+    getFilteredTracks();
+}
+
 void MusicLibrary::tracksLoaded(const TrackList& tracks)
 {
     qDeleteAll(m_tracks);

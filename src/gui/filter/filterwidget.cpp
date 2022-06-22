@@ -58,7 +58,10 @@ FilterWidget::FilterWidget(Filters::FilterType type, int index, PlayerManager* p
     resetByIndex(-1);
 }
 
-FilterWidget::~FilterWidget() = default;
+FilterWidget::~FilterWidget()
+{
+    m_library->unregisterFilter(m_index);
+}
 
 void FilterWidget::setupConnections()
 {
