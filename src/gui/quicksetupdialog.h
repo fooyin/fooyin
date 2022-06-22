@@ -1,8 +1,9 @@
 #pragma once
 
 #include <QDialog>
-#include <QHBoxLayout>
 #include <QListWidget>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 class QuickSeupDialog : public QDialog
 {
@@ -16,10 +17,12 @@ signals:
     void layoutChanged(const QByteArray& layout);
 
 protected:
+    void setupUi();
     void setupList();
     void changeLayout();
 
 private:
-    QHBoxLayout m_layout;
+    QVBoxLayout m_layout;
     QListWidget m_layoutList;
+    QPushButton m_accept;
 };

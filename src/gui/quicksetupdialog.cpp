@@ -5,12 +5,22 @@
 QuickSeupDialog::QuickSeupDialog(QWidget* parent)
     : QDialog{parent}
     , m_layout{this}
+    , m_accept{"OK", this}
 {
     setObjectName("Quick Setup");
     setWindowTitle("Quick Setup");
+
+    setupUi();
     setupList();
+
     connect(&m_layoutList, &QListWidget::itemSelectionChanged, this, &QuickSeupDialog::changeLayout);
+    connect(&m_accept, &QPushButton::pressed, this, &QuickSeupDialog::close);
+}
+
+void QuickSeupDialog::setupUi()
+{
     m_layout.addWidget(&m_layoutList);
+    m_layout.addWidget(&m_accept);
 }
 
 QuickSeupDialog::~QuickSeupDialog() = default;
