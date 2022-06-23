@@ -5,8 +5,6 @@
 
 class HoverMenu : public QDialog
 {
-    Q_OBJECT
-
 public:
     explicit HoverMenu(QWidget* parent = nullptr);
     ~HoverMenu() override;
