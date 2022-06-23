@@ -1,9 +1,6 @@
 #pragma once
 
 #include <QDialog>
-#include <QListWidget>
-#include <QPushButton>
-#include <QVBoxLayout>
 
 class QuickSeupDialog : public QDialog
 {

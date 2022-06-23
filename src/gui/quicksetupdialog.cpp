@@ -2,6 +2,10 @@
 
 #include "utils/typedefs.h"
 
+#include <QListWidget>
+#include <QPushButton>
+#include <QVBoxLayout>
+
 QuickSeupDialog::QuickSeupDialog(QWidget* parent)
     : QDialog{parent}
     , m_layout{new QVBoxLayout(this)}
