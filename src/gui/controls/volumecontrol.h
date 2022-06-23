@@ -39,6 +39,9 @@ signals:
     void volumeDown();
     void volumeChanged(double value);
 
+protected:
+    void showVolumeMenu();
+
 private:
     struct Private;
     std::unique_ptr<VolumeControl::Private> p;

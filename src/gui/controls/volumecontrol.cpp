@@ -20,16 +20,24 @@
 #include "volumecontrol.h"
 
 #include "gui/widgets/clickablelabel.h"
+#include "gui/widgets/hovermenu.h"
+#include "gui/widgets/slider.h"
 #include "utils/utils.h"
 
+#include <QDialog>
+#include <QEvent>
 #include <QHBoxLayout>
+#include <QMouseEvent>
 #include <QSlider>
+#include <QWidgetAction>
 
 struct VolumeControl::Private
 {
     QHBoxLayout* layout;
     ClickableLabel* mute;
-    //    QSlider* volumeSlider;
+    Slider* volumeSlider;
+    QHBoxLayout* volumeLayout;
+    HoverMenu* volumeMenu;
 
     int prevValue{0};
 };
@@ -41,32 +49,36 @@ VolumeControl::VolumeControl(QWidget* parent)
 
     setupUi();
 
-    //    connect(p->volumeSlider, &QSlider::valueChanged, this,
-    //            &VolumeControl::updateVolume);
+    connect(p->volumeSlider, &QSlider::valueChanged, this, &VolumeControl::updateVolume);
+    connect(p->mute, &ClickableLabel::entered, this, &VolumeControl::showVolumeMenu);
     connect(p->mute, &ClickableLabel::clicked, this, &VolumeControl::mute);
+    connect(p->volumeMenu, &HoverMenu::mouseLeft, p->volumeMenu, &HoverMenu::close);
 }
 
-VolumeControl::~VolumeControl() = default;
+VolumeControl::~VolumeControl()
+{
+    delete p->volumeMenu;
+};
 
 void VolumeControl::setupUi()
 {
     p->layout = new QHBoxLayout(this);
-    setLayout(p->layout);
     p->layout->setContentsMargins(0, 0, 5, 0);
     p->layout->setSizeConstraint(QLayout::SetFixedSize);
 
     p->layout->setSpacing(10);
 
+    p->volumeMenu = new HoverMenu(this);
+    p->volumeLayout = new QHBoxLayout(p->volumeMenu);
+
     p->mute = new ClickableLabel(this);
-    //    p->volumeSlider = new QSlider(Qt::Horizontal, this);
+    p->volumeSlider = new Slider(Qt::Vertical, this);
+    p->volumeLayout->addWidget(p->volumeSlider);
 
-    //    p->volumeSlider->setFocusPolicy(Qt::NoFocus);
-
-    //    p->layout->addWidget(p->volumeSlider, 0, Qt::AlignRight | Qt::AlignVCenter);
     p->layout->addWidget(p->mute, 0, Qt::AlignRight | Qt::AlignVCenter);
 
-    //    p->volumeSlider->setMaximum(100);
-    //    p->volumeSlider->setValue(100);
+    p->volumeSlider->setMaximum(100);
+    p->volumeSlider->setValue(100);
 
     QFont font = QFont("Guifx v2 Transports", 12);
     setFont(font);
@@ -97,13 +109,29 @@ void VolumeControl::updateVolume(double value)
 
 void VolumeControl::mute()
 {
-    //    if (p->volumeSlider->value() != 0)
-    //    {
-    //        p->prevValue = p->volumeSlider->value();
-    //        p->volumeSlider->setValue(0);
-    //        return updateVolume(0);
-    //    }
-    //    p->volumeSlider->setValue(p->prevValue);
-    p->prevValue = 100;
+    if(p->volumeSlider->value() != 0) {
+        p->prevValue = p->volumeSlider->value();
+        p->volumeSlider->setValue(0);
+        return updateVolume(0);
+    }
+    p->volumeSlider->setValue(p->prevValue);
     return updateVolume(p->prevValue);
+}
+
+void VolumeControl::showVolumeMenu()
+{
+    const int menuWidth = p->volumeMenu->sizeHint().width();
+    const int menuHeight = p->volumeMenu->sizeHint().height();
+
+    const int yPosToWindow = this->parentWidget()->mapToParent(QPoint(0, 0)).y();
+
+    //     Only display volume slider above icon if it won't clip above the main window.
+    const bool displayAbove = (yPosToWindow - menuHeight) > 0;
+
+    const int x = !menuWidth - 15;
+    const int y = displayAbove ? (!this->height() - menuHeight - 10) : (this->height() + 10);
+
+    const QPoint pos(mapToGlobal(QPoint(x, y)));
+    p->volumeMenu->move(pos);
+    p->volumeMenu->show();
 }
