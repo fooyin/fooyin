@@ -11,9 +11,6 @@ public:
     explicit HoverMenu(QWidget* parent = nullptr);
     ~HoverMenu() override;
 
-signals:
-    void mouseLeft();
-
 protected:
     void leaveEvent(QEvent* event) override;
     void showEvent(QShowEvent* event) override;

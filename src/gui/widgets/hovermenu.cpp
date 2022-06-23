@@ -12,7 +12,7 @@ HoverMenu::~HoverMenu() = default;
 
 void HoverMenu::leaveEvent(QEvent* event)
 {
-    emit mouseLeft();
+    accept();
     QWidget::leaveEvent(event);
 }
 

@@ -52,7 +52,6 @@ VolumeControl::VolumeControl(QWidget* parent)
     connect(p->volumeSlider, &QSlider::valueChanged, this, &VolumeControl::updateVolume);
     connect(p->mute, &ClickableLabel::entered, this, &VolumeControl::showVolumeMenu);
     connect(p->mute, &ClickableLabel::clicked, this, &VolumeControl::mute);
-    connect(p->volumeMenu, &HoverMenu::mouseLeft, p->volumeMenu, &HoverMenu::close);
 }
 
 VolumeControl::~VolumeControl()
