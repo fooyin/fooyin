@@ -24,12 +24,7 @@
 #include "gui/widgets/slider.h"
 #include "utils/utils.h"
 
-#include <QDialog>
-#include <QEvent>
 #include <QHBoxLayout>
-#include <QMouseEvent>
-#include <QSlider>
-#include <QWidgetAction>
 
 struct VolumeControl::Private
 {
