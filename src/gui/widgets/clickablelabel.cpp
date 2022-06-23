@@ -27,8 +27,14 @@ ClickableLabel::ClickableLabel(QWidget* parent)
 
 ClickableLabel::~ClickableLabel() = default;
 
-void ClickableLabel::mousePressEvent(QMouseEvent* e)
+void ClickableLabel::mousePressEvent(QMouseEvent* event)
 {
     emit clicked();
-    QLabel::mousePressEvent(e);
+    QLabel::mousePressEvent(event);
+}
+
+void ClickableLabel::enterEvent(QEnterEvent* event)
+{
+    emit entered();
+    QLabel::enterEvent(event);
 }
