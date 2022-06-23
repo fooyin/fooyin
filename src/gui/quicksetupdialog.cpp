@@ -74,8 +74,6 @@ void QuickSeupDialog::setupList()
               "QUdRQUFBS0FBQUFIdkFBQUFFZ0QvLy8vL0FRQUFBQUlBIiwiVHlwZSI6IlZlcnRpY2FsIn19fQ==")
               .toUtf8();
     emberLayout->setData(LayoutRole::Type, ember);
-
-    m_layoutList.setCurrentRow(0);
 }
 
 void QuickSeupDialog::changeLayout()
