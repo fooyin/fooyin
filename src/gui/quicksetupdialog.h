@@ -2,6 +2,10 @@
 
 #include <QDialog>
 
+class QVBoxLayout;
+class QListWidget;
+class QPushButton;
+
 class QuickSeupDialog : public QDialog
 {
     Q_OBJECT
