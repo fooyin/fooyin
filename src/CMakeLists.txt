@@ -63,6 +63,7 @@ set(HEADERS
 
     gui/widgets/clickablelabel.h
     gui/widgets/dummy.h
+    gui/widgets/hovermenu.h
     gui/widgets/overlay.h
     gui/widgets/menuheader.h
     gui/widgets/slider.h
@@ -159,6 +160,7 @@ set(SOURCES
 
     gui/widgets/clickablelabel.cpp
     gui/widgets/dummy.cpp
+    gui/widgets/hovermenu.cpp
     gui/widgets/overlay.cpp
     gui/widgets/menuheader.cpp
     gui/widgets/slider.cpp
