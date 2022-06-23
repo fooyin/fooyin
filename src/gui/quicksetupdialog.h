@@ -22,7 +22,7 @@ protected:
     void changeLayout();
 
 private:
-    QVBoxLayout m_layout;
-    QListWidget m_layoutList;
-    QPushButton m_accept;
+    QVBoxLayout* m_layout;
+    QListWidget* m_layoutList;
+    QPushButton* m_accept;
 };

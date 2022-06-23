@@ -4,8 +4,9 @@
 
 QuickSeupDialog::QuickSeupDialog(QWidget* parent)
     : QDialog{parent}
-    , m_layout{this}
-    , m_accept{"OK", this}
+    , m_layout{new QVBoxLayout(this)}
+    , m_layoutList{new QListWidget(this)}
+    , m_accept{new QPushButton("OK", this)}
 {
     setObjectName("Quick Setup");
     setWindowTitle("Quick Setup");
@@ -13,14 +14,14 @@ QuickSeupDialog::QuickSeupDialog(QWidget* parent)
     setupUi();
     setupList();
 
-    connect(&m_layoutList, &QListWidget::itemSelectionChanged, this, &QuickSeupDialog::changeLayout);
-    connect(&m_accept, &QPushButton::pressed, this, &QuickSeupDialog::close);
+    connect(m_layoutList, &QListWidget::itemSelectionChanged, this, &QuickSeupDialog::changeLayout);
+    connect(m_accept, &QPushButton::pressed, this, &QuickSeupDialog::close);
 }
 
 void QuickSeupDialog::setupUi()
 {
-    m_layout.addWidget(&m_layoutList);
-    m_layout.addWidget(&m_accept);
+    m_layout->addWidget(m_layoutList);
+    m_layout->addWidget(m_accept);
 }
 
 QuickSeupDialog::~QuickSeupDialog() = default;
@@ -28,15 +29,15 @@ QuickSeupDialog::~QuickSeupDialog() = default;
 // Not the best way to handle layouts. Maybe save to (readable) files?
 void QuickSeupDialog::setupList()
 {
-    m_layoutList.setSelectionMode(QAbstractItemView::SingleSelection);
+    m_layoutList->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    auto* emptyLayout = new QListWidgetItem("Empty", &m_layoutList);
+    auto* emptyLayout = new QListWidgetItem("Empty", m_layoutList);
     auto empty = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiRHVtbXkiXSwiU3RhdGUiOiJBQUFBL3dBQUFBRUFBQUFCQ"
                          "UFBQUZBRC8vLy8vQVFBQUFBSUEiLCJUeXBlIjoiVmVydGljYWwifX19")
                      .toUtf8();
     emptyLayout->setData(LayoutRole::Type, empty);
 
-    auto* simpleLayout = new QListWidgetItem("Simple", &m_layoutList);
+    auto* simpleLayout = new QListWidgetItem("Simple", m_layoutList);
     auto simple
         = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIiwiUGxheWxpc3QiLCJDb250c"
                   "m9scyJdLCJTdGF0ZSI6IkFBQUEvd0FBQUFFQUFBQUVBQUFBR1FBQUFCNEFBQU9oQUFBQUVnRC8vLy8vQVFBQUFBSUEiLC"
@@ -44,7 +45,7 @@ void QuickSeupDialog::setupList()
               .toUtf8();
     simpleLayout->setData(LayoutRole::Type, simple);
 
-    auto* stoneLayout = new QListWidgetItem("Stone", &m_layoutList);
+    auto* stoneLayout = new QListWidgetItem("Stone", m_layoutList);
     auto stone = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIix7IlNwbGl0dGVyIjp7IkN"
                          "oaWxkcmVuIjpbeyJGaWx0ZXIiOnsiVHlwZSI6IkFsYnVtQXJ0aXN0In19LCJQbGF5bGlzdCJdLCJTdGF0ZSI6IkFBQU"
                          "Evd0FBQUFFQUFBQUNBQUFCUXdBQUJoOEEvLy8vL3dFQUFBQUJBQT09IiwiVHlwZSI6Ikhvcml6b250YWwifX0sIkNvb"
@@ -53,7 +54,7 @@ void QuickSeupDialog::setupList()
                      .toUtf8();
     stoneLayout->setData(LayoutRole::Type, stone);
 
-    auto* visionLayout = new QListWidgetItem("Vision", &m_layoutList);
+    auto* visionLayout = new QListWidgetItem("Vision", m_layoutList);
     auto vision = QString("eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIiwiU2VhcmNoIix7IlNwbGl0dGVyIjp7IkNo"
                           "aWxkcmVuIjpbIkFydHdvcmsiLCJQbGF5bGlzdCJdLCJTdGF0ZSI6IkFBQUEvd0FBQUFFQUFBQUNBQUFDY1FBQUFvRUEv"
                           "Ly8vL3dFQUFBQUJBQT09IiwiVHlwZSI6Ikhvcml6b250YWwifX0sIkNvbnRyb2xzIl0sIlN0YXRlIjoiQUFBQS93QUFB"
@@ -61,7 +62,7 @@ void QuickSeupDialog::setupList()
                       .toUtf8();
     visionLayout->setData(LayoutRole::Type, vision);
 
-    auto* emberLayout = new QListWidgetItem("Ember", &m_layoutList);
+    auto* emberLayout = new QListWidgetItem("Ember", m_layoutList);
     auto ember
         = QString(
               "eyJMYXlvdXQiOnsiU3BsaXR0ZXIiOnsiQ2hpbGRyZW4iOlsiU3RhdHVzIix7IlNwbGl0dGVyIjp7IkNoaWxkcmVuIjpbeyJGaWx0ZXIi"
@@ -78,7 +79,7 @@ void QuickSeupDialog::setupList()
 
 void QuickSeupDialog::changeLayout()
 {
-    const auto selectedItem = m_layoutList.selectionModel()->selectedRows().constFirst();
+    const auto selectedItem = m_layoutList->selectionModel()->selectedRows().constFirst();
     const auto layout = QByteArray::fromBase64(selectedItem.data(LayoutRole::Type).toByteArray());
 
     emit layoutChanged(layout);
