@@ -19,6 +19,7 @@
 
 #include "widgetprovider.h"
 
+#include "core/library/librarymanager.h"
 #include "gui/controls/controlwidget.h"
 #include "gui/filter/filterwidget.h"
 #include "gui/info/infowidget.h"
@@ -35,19 +36,21 @@
 struct WidgetProvider::Private
 {
     PlayerManager* playerManager;
+    Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
     QList<Library::FilterWidget*> filters;
 
-    Private(PlayerManager* playerManager, Library::MusicLibrary* library)
+    Private(PlayerManager* playerManager, Library::LibraryManager* libraryManager)
         : playerManager(playerManager)
-        , library(library)
+        , libraryManager(libraryManager)
+        , library(libraryManager->musicLibrary())
     { }
 };
 
-WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::MusicLibrary* library, QObject* parent)
+WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager, QObject* parent)
     : QObject(parent)
 {
-    p = std::make_unique<Private>(playerManager, library);
+    p = std::make_unique<Private>(playerManager, libraryManager);
 }
 
 WidgetProvider::~WidgetProvider() = default;
@@ -64,7 +67,7 @@ Widget* WidgetProvider::createWidget(Widgets::WidgetType type, SplitterWidget* s
             return createFilter(Filters::FilterType::AlbumArtist, splitter);
         }
         case(Widgets::WidgetType::Playlist): {
-            auto* playlist = new Library::PlaylistWidget(p->playerManager, p->library);
+            auto* playlist = new Library::PlaylistWidget(p->playerManager, p->libraryManager);
             splitter->addToSplitter(Widgets::WidgetType::Playlist, playlist);
             return playlist;
         }

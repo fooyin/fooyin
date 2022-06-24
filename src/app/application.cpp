@@ -56,7 +56,7 @@ Application::Application(int& argc, char** argv)
     p->playlistHandler = new Playlist::PlaylistHandler(p->playerManager, this);
     p->playlistInterface = std::make_unique<LibraryPlaylistManager>(p->playlistHandler);
     p->libraryManager = new Library::LibraryManager(p->playlistInterface.get(), this);
-    p->widgetProvider = new WidgetProvider(p->playerManager, p->libraryManager->musicLibrary(), this);
+    p->widgetProvider = new WidgetProvider(p->playerManager, p->libraryManager, this);
 
     p->mainWindow = new MainWindow(p->libraryManager, p->libraryManager->musicLibrary(), p->widgetProvider);
     p->mainWindow->setupUi();

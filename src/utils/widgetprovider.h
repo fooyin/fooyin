@@ -24,7 +24,7 @@
 #include <QObject>
 
 namespace Library {
-class MusicLibrary;
+class LibraryManager;
 } // namespace Library
 
 class PlayerManager;
@@ -37,7 +37,7 @@ class WidgetProvider : public QObject
     Q_OBJECT
 
 public:
-    WidgetProvider(PlayerManager* playerManager, Library::MusicLibrary* library, QObject* parent = nullptr);
+    WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager, QObject* parent = nullptr);
     ~WidgetProvider() override;
 
     Widget* createWidget(Widgets::WidgetType type, SplitterWidget* splitter);
