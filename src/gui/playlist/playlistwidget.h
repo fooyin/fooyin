@@ -28,19 +28,17 @@
 
 class PlayerManager;
 class QHBoxLayout;
-// class PlaylistModel;
 class Settings;
 
 namespace Library {
-class MusicLibrary;
-// class PlaylistView;
+class LibraryManager;
 
 class PlaylistWidget : public Widget
 {
     Q_OBJECT
 
 public:
-    PlaylistWidget(PlayerManager* playerManager, Library::MusicLibrary* library, QWidget* parent = nullptr);
+    PlaylistWidget(PlayerManager* playerManager, LibraryManager* library, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     void reset();
@@ -71,10 +69,11 @@ protected:
 
 private:
     QHBoxLayout* m_layout;
+    LibraryManager* m_libraryManager;
     MusicLibrary* m_library;
     PlayerManager* m_playerManager;
     PlaylistModel m_model;
-    Library::PlaylistView m_playlist;
+    PlaylistView m_playlist;
     Settings* m_settings;
     bool m_altRowColours;
 };

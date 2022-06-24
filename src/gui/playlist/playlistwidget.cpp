@@ -19,6 +19,7 @@
 
 #include "playlistwidget.h"
 
+#include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
 #include "playlistdelegate.h"
@@ -33,12 +34,13 @@
 #include <QScrollBar>
 
 namespace Library {
-PlaylistWidget::PlaylistWidget(PlayerManager* playerManager, MusicLibrary* library, QWidget* parent)
+PlaylistWidget::PlaylistWidget(PlayerManager* playerManager, LibraryManager* libraryManager, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
-    , m_library(library)
+    , m_libraryManager(libraryManager)
+    , m_library(m_libraryManager->musicLibrary())
     , m_playerManager(playerManager)
-    , m_model(playerManager, library, this)
+    , m_model(playerManager, m_library, this)
     , m_settings(Settings::instance())
     , m_altRowColours(m_settings->value(Settings::Setting::PlaylistAltColours).toBool())
 {
@@ -80,7 +82,7 @@ void PlaylistWidget::setupConnections()
     connect(&m_model, &PlaylistModel::modelReset, this, &PlaylistWidget::reset);
     connect(&m_playlist, &PlaylistView::doubleClicked, this, &PlaylistWidget::playTrack);
     connect(this, &PlaylistWidget::clickedTrack, m_playerManager, &PlayerManager::reset);
-    connect(this, &PlaylistWidget::clickedTrack, m_library, &Library::MusicLibrary::prepareTracks);
+    connect(this, &PlaylistWidget::clickedTrack, m_library, &MusicLibrary::prepareTracks);
     connect(m_playerManager, &PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
     connect(m_playerManager, &PlayerManager::nextTrack, this, &PlaylistWidget::nextTrack);
     connect(m_playlist.selectionModel(), &QItemSelectionModel::selectionChanged, this,
