@@ -46,6 +46,8 @@ public:
 
 private:
     void addLibraryRow(const Library::LibraryInfo& info);
+    void addLibrary();
+    void removeLibrary();
 
     Library::LibraryManager* m_libraryManager;
     QTableWidget m_libraryList;

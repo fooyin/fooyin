@@ -76,35 +76,8 @@ LibraryPage::LibraryPage(Library::LibraryManager* libraryManager, QWidget* paren
     // mainLayout->addStretch();
     setLayout(mainLayout);
 
-    connect(addLibrary, &QPushButton::clicked, this, [=] {
-        bool ok = false;
-        QString name = "";
-        QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"), tr("Library Name:"),
-                                             QLineEdit::Normal, QDir::home().dirName(), &ok);
-        if(ok && !text.isEmpty()) {
-            name = text;
-        }
-
-        QString newDir
-            = QFileDialog::getExistingDirectory(this, "Directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
-
-        if(newDir.isEmpty()) {
-            return;
-        }
-
-        const auto id = m_libraryManager->addLibrary(newDir, name);
-        const auto lib = m_libraryManager->libraryInfo(id);
-        addLibraryRow(lib);
-    });
-    connect(removeLibrary, &QPushButton::clicked, this, [=] {
-        const auto selItems = m_libraryList.selectionModel()->selectedRows();
-        for(const auto& item : selItems) {
-            const int row = item.row();
-            const int id = m_libraryList.item(row, 0)->text().toInt();
-            m_libraryManager->removeLibrary(id);
-            m_libraryList.removeRow(row);
-        }
-    });
+    connect(addLibrary, &QPushButton::clicked, this, &LibraryPage::addLibrary);
+    connect(removeLibrary, &QPushButton::clicked, this, &LibraryPage::removeLibrary);
 }
 
 LibraryPage::~LibraryPage() = default;
@@ -121,6 +94,38 @@ void LibraryPage::addLibraryRow(const Library::LibraryInfo& info)
     m_libraryList.setItem(row, 0, libId);
     m_libraryList.setItem(row, 1, libName);
     m_libraryList.setItem(row, 2, libPath);
+}
+
+void LibraryPage::addLibrary()
+{
+    bool success = false;
+    QString name = "";
+    QString text = QInputDialog::getText(this, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal,
+                                         QDir::home().dirName(), &success);
+    if(success && !text.isEmpty()) {
+        name = text;
+    }
+
+    QString newDir = QFileDialog::getExistingDirectory(this, "Directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
+
+    if(newDir.isEmpty()) {
+        return;
+    }
+
+    const auto id = m_libraryManager->addLibrary(newDir, name);
+    const auto lib = m_libraryManager->libraryInfo(id);
+    addLibraryRow(lib);
+}
+
+void LibraryPage::removeLibrary()
+{
+    const auto selItems = m_libraryList.selectionModel()->selectedRows();
+    for(const auto& item : selItems) {
+        const int row = item.row();
+        const int id = m_libraryList.item(row, 0)->text().toInt();
+        m_libraryManager->removeLibrary(id);
+        m_libraryList.removeRow(row);
+    }
 }
 
 PlaylistPage::PlaylistPage(QWidget* parent)
