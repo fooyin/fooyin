@@ -36,6 +36,8 @@ NoLibraryOverlay::NoLibraryOverlay(QWidget* parent)
     m_layout->addWidget(m_text);
     m_layout->addWidget(m_addLibrary);
 
+    connect(m_addLibrary, &QPushButton::pressed, this, &NoLibraryOverlay::settingsClicked);
+
     hide();
 }
 

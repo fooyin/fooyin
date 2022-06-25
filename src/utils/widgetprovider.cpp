@@ -27,6 +27,7 @@
 #include "gui/library/searchwidget.h"
 #include "gui/library/statuswidget.h"
 #include "gui/playlist/playlistwidget.h"
+#include "gui/settings/settingsdialog.h"
 #include "gui/widgets/dummy.h"
 #include "gui/widgets/spacer.h"
 #include "gui/widgets/splitterwidget.h"
@@ -38,19 +39,23 @@ struct WidgetProvider::Private
     PlayerManager* playerManager;
     Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
+    SettingsDialog* settingsDialog;
+
     QList<Library::FilterWidget*> filters;
 
-    Private(PlayerManager* playerManager, Library::LibraryManager* libraryManager)
+    Private(PlayerManager* playerManager, Library::LibraryManager* libraryManager, SettingsDialog* settingsDialog)
         : playerManager(playerManager)
         , libraryManager(libraryManager)
         , library(libraryManager->musicLibrary())
+        , settingsDialog(settingsDialog)
     { }
 };
 
-WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager, QObject* parent)
+WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager,
+                               SettingsDialog* settingsDialog, QObject* parent)
     : QObject(parent)
 {
-    p = std::make_unique<Private>(playerManager, libraryManager);
+    p = std::make_unique<Private>(playerManager, libraryManager, settingsDialog);
 }
 
 WidgetProvider::~WidgetProvider() = default;
@@ -68,6 +73,7 @@ Widget* WidgetProvider::createWidget(Widgets::WidgetType type, SplitterWidget* s
         }
         case(Widgets::WidgetType::Playlist): {
             auto* playlist = new Library::PlaylistWidget(p->playerManager, p->libraryManager);
+            connect(playlist, &Library::PlaylistWidget::openSettings, p->settingsDialog, &SettingsDialog::exec);
             splitter->addToSplitter(Widgets::WidgetType::Playlist, playlist);
             return playlist;
         }

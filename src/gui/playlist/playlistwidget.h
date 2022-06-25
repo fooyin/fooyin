@@ -58,6 +58,7 @@ public:
     void layoutEditingMenu(QMenu* menu) override;
 
 signals:
+    void openSettings();
     void clickedTrack(int idx, bool createNewPlaylist);
 
 protected:

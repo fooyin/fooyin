@@ -61,8 +61,10 @@ struct MainWindow::Private
 
     WidgetProvider* widgetProvider;
 
-    Private(Library::LibraryManager* libraryManager, Library::MusicLibrary* library, WidgetProvider* widgetProvider)
-        : settings(Settings::instance())
+    Private(Library::LibraryManager* libraryManager, Library::MusicLibrary* library, WidgetProvider* widgetProvider,
+            SettingsDialog* settingsDialog)
+        : settingsDialog(settingsDialog)
+        , settings(Settings::instance())
         , libraryManager(libraryManager)
         , library(library)
         , widgetProvider(widgetProvider)
@@ -70,10 +72,10 @@ struct MainWindow::Private
 };
 
 MainWindow::MainWindow(Library::LibraryManager* libraryManager, Library::MusicLibrary* library,
-                       WidgetProvider* widgetProvider, QWidget* parent)
+                       WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, QWidget* parent)
     : QMainWindow(parent)
 {
-    p = std::make_unique<Private>(libraryManager, library, widgetProvider);
+    p = std::make_unique<Private>(libraryManager, library, widgetProvider, settingsDialog);
 
     QFontDatabase::addApplicationFont("://fonts/Guifx v2 Transports.ttf");
 }
@@ -97,8 +99,6 @@ void MainWindow::setupUi()
     QByteArray geometryArray = p->settings->value(Settings::Setting::Geometry).toString().toUtf8();
     QByteArray geometry = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
-
-    p->settingsDialog = new SettingsDialog(p->libraryManager, this);
 
     p->mainLayout = new EditableLayout(p->widgetProvider, this);
 

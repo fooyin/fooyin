@@ -27,6 +27,7 @@ class MusicLibrary;
 } // namespace Library
 
 class WidgetProvider;
+class SettingsDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -34,7 +35,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(Library::LibraryManager* libraryManager, Library::MusicLibrary* library,
-                        WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+                        WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, QWidget* parent = nullptr);
     ~MainWindow() override;
 
     void setupUi();

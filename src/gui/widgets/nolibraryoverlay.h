@@ -27,9 +27,14 @@ class QPushButton;
 
 class NoLibraryOverlay : public QWidget
 {
+    Q_OBJECT
+
 public:
     NoLibraryOverlay(QWidget* parent = nullptr);
     ~NoLibraryOverlay() override;
+
+signals:
+    void settingsClicked();
 
 private:
     QVBoxLayout* m_layout;

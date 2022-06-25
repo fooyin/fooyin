@@ -88,6 +88,7 @@ void PlaylistWidget::reset()
 
 void PlaylistWidget::setupConnections()
 {
+    connect(m_noLibrary, &NoLibraryOverlay::settingsClicked, this, &PlaylistWidget::openSettings);
     connect(m_libraryManager, &LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
     connect(m_libraryManager, &LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
     connect(m_settings, &Settings::playlistAltColorsChanged, this, [=] {

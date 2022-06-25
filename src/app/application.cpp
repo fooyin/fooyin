@@ -27,6 +27,7 @@
 #include "core/playlist/playlisthandler.h"
 #include "database/database.h"
 #include "gui/mainwindow.h"
+#include "gui/settings/settingsdialog.h"
 #include "utils/paths.h"
 #include "utils/settings.h"
 #include "utils/widgetprovider.h"
@@ -42,6 +43,7 @@ struct Application::Private
     MainWindow* mainWindow;
     std::unique_ptr<LibraryPlaylistInterface> playlistInterface;
     Library::LibraryManager* libraryManager;
+    std::unique_ptr<SettingsDialog> settingsDialog;
 };
 
 Application::Application(int& argc, char** argv)
@@ -56,9 +58,11 @@ Application::Application(int& argc, char** argv)
     p->playlistHandler = new Playlist::PlaylistHandler(p->playerManager, this);
     p->playlistInterface = std::make_unique<LibraryPlaylistManager>(p->playlistHandler);
     p->libraryManager = new Library::LibraryManager(p->playlistInterface.get(), this);
-    p->widgetProvider = new WidgetProvider(p->playerManager, p->libraryManager, this);
+    p->settingsDialog = std::make_unique<SettingsDialog>(p->libraryManager);
+    p->widgetProvider = new WidgetProvider(p->playerManager, p->libraryManager, p->settingsDialog.get(), this);
 
-    p->mainWindow = new MainWindow(p->libraryManager, p->libraryManager->musicLibrary(), p->widgetProvider);
+    p->mainWindow = new MainWindow(p->libraryManager, p->libraryManager->musicLibrary(), p->widgetProvider,
+                                   p->settingsDialog.get());
     p->mainWindow->setupUi();
     p->mainWindow->setAttribute(Qt::WA_DeleteOnClose);
 

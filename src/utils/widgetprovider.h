@@ -28,6 +28,7 @@ class LibraryManager;
 } // namespace Library
 
 class PlayerManager;
+class SettingsDialog;
 class SplitterWidget;
 class Widget;
 class QMenu;
@@ -37,7 +38,8 @@ class WidgetProvider : public QObject
     Q_OBJECT
 
 public:
-    WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager, QObject* parent = nullptr);
+    WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager,
+                   SettingsDialog* settingsDialog, QObject* parent = nullptr);
     ~WidgetProvider() override;
 
     Widget* createWidget(Widgets::WidgetType type, SplitterWidget* splitter);
