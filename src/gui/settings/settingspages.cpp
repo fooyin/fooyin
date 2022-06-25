@@ -22,6 +22,7 @@
 #include "core/library/libraryinfo.h"
 #include "core/library/librarymanager.h"
 #include "utils/settings.h"
+#include "utils/utils.h"
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -153,7 +154,9 @@ PlaylistPage::PlaylistPage(QWidget* parent)
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(groupHeaders);
-    mainLayout->addWidget(splitDiscs);
+
+    auto* indentWidget = Util::Widget::indentWidget(splitDiscs, this);
+    mainLayout->addWidget(indentWidget);
     mainLayout->addWidget(simpleList);
     mainLayout->addWidget(altColours);
     mainLayout->addStretch();

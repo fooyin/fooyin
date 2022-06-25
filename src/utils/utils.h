@@ -20,6 +20,8 @@
 #pragma once
 
 #include <QPixmap>
+#include <QVBoxLayout>
+#include <QWidget>
 #include <QtGlobal>
 
 class QString;
@@ -35,6 +37,10 @@ namespace File {
     QString coverInDirectory(const QString& directory);
     bool createDirectories(const QString& path);
 } // namespace File
+
+namespace Widget {
+    QWidget* indentWidget(QWidget* widget, QWidget* parent);
+} // namespace Widget
 
 int randomNumber(int min, int max);
 QString msToString(quint64 ms);
