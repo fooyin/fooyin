@@ -19,19 +19,22 @@
 
 #pragma once
 
-#include "gui/playlist/playlistmodel.h"
-#include "gui/playlist/playlistview.h"
 #include "gui/widgets/widget.h"
 #include "utils/typedefs.h"
 
 #include <QItemSelection>
 
-class PlayerManager;
 class QHBoxLayout;
+class QPushButton;
+class PlayerManager;
 class Settings;
+class NoLibraryOverlay;
 
 namespace Library {
+class PlaylistModel;
+class PlaylistView;
 class LibraryManager;
+class MusicLibrary;
 
 class PlaylistWidget : public Widget
 {
@@ -41,6 +44,7 @@ public:
     PlaylistWidget(PlayerManager* playerManager, LibraryManager* library, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
+    void setup();
     void reset();
 
     void setupConnections();
@@ -72,9 +76,10 @@ private:
     LibraryManager* m_libraryManager;
     MusicLibrary* m_library;
     PlayerManager* m_playerManager;
-    PlaylistModel m_model;
-    PlaylistView m_playlist;
+    PlaylistModel* m_model;
+    PlaylistView* m_playlist;
     Settings* m_settings;
     bool m_altRowColours;
+    NoLibraryOverlay* m_noLibrary;
 };
 }; // namespace Library

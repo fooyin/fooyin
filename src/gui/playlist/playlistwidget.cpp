@@ -22,6 +22,9 @@
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
+#include "gui/playlist/playlistmodel.h"
+#include "gui/playlist/playlistview.h"
+#include "gui/widgets/nolibraryoverlay.h"
 #include "playlistdelegate.h"
 #include "utils/settings.h"
 
@@ -40,33 +43,53 @@ PlaylistWidget::PlaylistWidget(PlayerManager* playerManager, LibraryManager* lib
     , m_libraryManager(libraryManager)
     , m_library(m_libraryManager->musicLibrary())
     , m_playerManager(playerManager)
-    , m_model(playerManager, m_library, this)
+    , m_model(new PlaylistModel(playerManager, m_library, this))
+    , m_playlist(new PlaylistView(this))
     , m_settings(Settings::instance())
     , m_altRowColours(m_settings->value(Settings::Setting::PlaylistAltColours).toBool())
+    , m_noLibrary(new NoLibraryOverlay(this))
 {
     setObjectName("Playlist");
     m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->addWidget(&m_playlist);
 
-    m_playlist.setModel(&m_model);
-    m_playlist.setItemDelegate(new PlaylistDelegate(this));
+    m_playlist->setModel(m_model);
+    m_playlist->setItemDelegate(new PlaylistDelegate(this));
     setupConnections();
     reset();
 
     setHeaderHidden(!m_settings->value(Settings::Setting::PlaylistHeader).toBool());
     setScrollbarHidden(!m_settings->value(Settings::Setting::PlaylistScrollBar).toBool());
+
+    setup();
+}
+
+void PlaylistWidget::setup()
+{
+    if(!m_libraryManager->hasLibrary()) {
+        m_playlist->hide();
+        m_layout->addWidget(m_noLibrary);
+        m_noLibrary->show();
+        m_noLibrary->raise();
+    }
+    else {
+        m_noLibrary->hide();
+        m_layout->addWidget(m_playlist);
+        m_playlist->show();
+    }
 }
 
 PlaylistWidget::~PlaylistWidget() = default;
 
 void PlaylistWidget::reset()
 {
-    m_playlist.expandAll();
-    m_playlist.scrollToTop();
+    m_playlist->expandAll();
+    m_playlist->scrollToTop();
 }
 
 void PlaylistWidget::setupConnections()
 {
+    connect(m_libraryManager, &LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
+    connect(m_libraryManager, &LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
     connect(m_settings, &Settings::playlistAltColorsChanged, this, [=] {
         m_altRowColours = !m_altRowColours;
     });
@@ -76,37 +99,37 @@ void PlaylistWidget::setupConnections()
     connect(m_settings, &Settings::playlistScrollBarChanged, this, [=] {
         setScrollbarHidden(!isScrollbarHidden());
     });
-    connect(m_playlist.header(), &QHeaderView::sectionClicked, this, &PlaylistWidget::switchOrder);
-    connect(m_playlist.header(), &QHeaderView::customContextMenuRequested, this,
+    connect(m_playlist->header(), &QHeaderView::sectionClicked, this, &PlaylistWidget::switchOrder);
+    connect(m_playlist->header(), &QHeaderView::customContextMenuRequested, this,
             &PlaylistWidget::customHeaderMenuRequested);
-    connect(&m_model, &PlaylistModel::modelReset, this, &PlaylistWidget::reset);
-    connect(&m_playlist, &PlaylistView::doubleClicked, this, &PlaylistWidget::playTrack);
+    connect(m_model, &PlaylistModel::modelReset, this, &PlaylistWidget::reset);
+    connect(m_playlist, &PlaylistView::doubleClicked, this, &PlaylistWidget::playTrack);
     connect(this, &PlaylistWidget::clickedTrack, m_playerManager, &PlayerManager::reset);
     connect(this, &PlaylistWidget::clickedTrack, m_library, &MusicLibrary::prepareTracks);
     connect(m_playerManager, &PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
     connect(m_playerManager, &PlayerManager::nextTrack, this, &PlaylistWidget::nextTrack);
-    connect(m_playlist.selectionModel(), &QItemSelectionModel::selectionChanged, this,
+    connect(m_playlist->selectionModel(), &QItemSelectionModel::selectionChanged, this,
             &PlaylistWidget::selectionChanged);
 }
 
 bool PlaylistWidget::isHeaderHidden()
 {
-    return m_playlist.isHeaderHidden();
+    return m_playlist->isHeaderHidden();
 }
 
 void PlaylistWidget::setHeaderHidden(bool b)
 {
-    m_playlist.setHeaderHidden(b);
+    m_playlist->setHeaderHidden(b);
 }
 
 bool PlaylistWidget::isScrollbarHidden()
 {
-    return m_playlist.verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
+    return m_playlist->verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
 }
 
 void PlaylistWidget::setScrollbarHidden(bool b)
 {
-    m_playlist.setVerticalScrollBarPolicy(b ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+    m_playlist->setVerticalScrollBarPolicy(b ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 }
 
 void PlaylistWidget::layoutEditingMenu(QMenu* menu)
@@ -141,7 +164,7 @@ void PlaylistWidget::selectionChanged(const QItemSelection& selected, const QIte
     Q_UNUSED(selected)
     Q_UNUSED(deselected)
 
-    QModelIndexList indexes = m_playlist.selectionModel()->selectedIndexes();
+    QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
     QSet<Track*> tracks;
     for(const auto& index : indexes) {
         if(index.isValid()) {
@@ -160,7 +183,7 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
     const auto key = e->key();
 
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        const QModelIndex index = m_playlist.selectionModel()->selectedIndexes().constFirst();
+        const QModelIndex index = m_playlist->selectionModel()->selectedIndexes().constFirst();
         const auto type = index.data(Role::Type).value<PlaylistItem::Type>();
 
         if(type != PlaylistItem::Type::Track) {
@@ -170,8 +193,8 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
         auto idx = index.data(ItemRole::Index).toInt();
 
         emit clickedTrack(idx, false);
-        m_model.changeTrackState();
-        m_playlist.clearSelection();
+        m_model->changeTrackState();
+        m_playlist->clearSelection();
     }
     QWidget::keyPressEvent(e);
 }
@@ -242,11 +265,11 @@ void PlaylistWidget::changeState(Player::PlayState state)
 {
     switch(state) {
         case(Player::PlayState::Playing):
-            m_model.changeTrackState();
+            m_model->changeTrackState();
             return findCurrent();
         case(Player::PlayState::Stopped):
         case(Player::PlayState::Paused):
-            return m_model.changeTrackState();
+            return m_model->changeTrackState();
     }
 }
 
@@ -260,13 +283,13 @@ void PlaylistWidget::playTrack(const QModelIndex& index)
     auto idx = index.data(ItemRole::Index).toInt();
 
     emit clickedTrack(idx, false);
-    m_model.changeTrackState();
-    m_playlist.clearSelection();
+    m_model->changeTrackState();
+    m_playlist->clearSelection();
 }
 
 void PlaylistWidget::nextTrack()
 {
-    m_model.changeTrackState();
+    m_model->changeTrackState();
 }
 
 void PlaylistWidget::findCurrent()
@@ -279,10 +302,10 @@ void PlaylistWidget::findCurrent()
 
     QModelIndex index;
     //    index = m_>model->match({}, ItemRole::Id, track->id(), 1, {});
-    index = m_model.indexOfItem(track->id());
+    index = m_model->indexOfItem(track->id());
 
     if(index.isValid()) {
-        m_playlist.scrollTo(index);
+        m_playlist->scrollTo(index);
         //        setCurrentIndex(index.constFirst());
     }
 }
