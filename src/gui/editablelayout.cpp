@@ -226,8 +226,7 @@ void EditableLayout::saveLayout()
 
     QString json = QString::fromUtf8(QJsonDocument(root).toJson(QJsonDocument::Compact).toBase64());
 
-    Settings* settings = Settings::instance();
-    settings->set(Settings::Setting::Layout, json);
+    m_settings->set(Settings::Setting::Layout, json);
 }
 
 // TODO: Move to splitter widget to remove recursion.
