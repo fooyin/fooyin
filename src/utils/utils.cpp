@@ -27,6 +27,8 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QRandomGenerator>
+#include <QVBoxLayout>
+#include <QWidget>
 
 namespace Util {
 namespace File {

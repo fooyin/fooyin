@@ -20,12 +20,11 @@
 #pragma once
 
 #include <QPixmap>
-#include <QVBoxLayout>
-#include <QWidget>
 #include <QtGlobal>
 
 class QString;
 class QLabel;
+class QWidget;
 
 namespace Util {
 namespace File {
