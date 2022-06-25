@@ -98,23 +98,27 @@ void LibraryPage::addLibraryRow(const Library::LibraryInfo& info)
 
 void LibraryPage::addLibrary()
 {
-    bool success = false;
-    QString name = "";
-    QString text = QInputDialog::getText(this, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal,
-                                         QDir::home().dirName(), &success);
-    if(success && !text.isEmpty()) {
-        name = text;
-    }
-
-    QString newDir = QFileDialog::getExistingDirectory(this, "Directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
+    QString newDir
+        = QFileDialog::getExistingDirectory(this, tr("Directory"), QDir::homePath(), QFileDialog::ShowDirsOnly);
 
     if(newDir.isEmpty()) {
         return;
     }
 
-    const auto id = m_libraryManager->addLibrary(newDir, name);
-    const auto lib = m_libraryManager->libraryInfo(id);
-    addLibraryRow(lib);
+    QFileInfo info{newDir};
+    QString name = info.fileName();
+
+    bool success = false;
+    QString text
+        = QInputDialog::getText(this, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal, name, &success);
+    if(success) {
+        if(!text.isEmpty()) {
+            name = text;
+        }
+        const auto id = m_libraryManager->addLibrary(newDir, name);
+        const auto lib = m_libraryManager->libraryInfo(id);
+        addLibraryRow(lib);
+    }
 }
 
 void LibraryPage::removeLibrary()
