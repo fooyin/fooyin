@@ -66,6 +66,7 @@ set(HEADERS
     gui/widgets/hovermenu.h
     gui/widgets/overlay.h
     gui/widgets/menuheader.h
+    gui/widgets/nolibraryoverlay.h
     gui/widgets/slider.h
     gui/widgets/spacer.h
     gui/widgets/splitter.h
@@ -163,6 +164,7 @@ set(SOURCES
     gui/widgets/hovermenu.cpp
     gui/widgets/overlay.cpp
     gui/widgets/menuheader.cpp
+    gui/widgets/nolibraryoverlay.cpp
     gui/widgets/slider.cpp
     gui/widgets/spacer.cpp
     gui/widgets/splitter.cpp
