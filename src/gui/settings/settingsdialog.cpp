@@ -47,9 +47,9 @@ struct SettingsDialog::Private
         libraryButton->setText(tr("Library"));
         libraryButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-        //        auto* playlistButton = new QListWidgetItem(contentsWidget);
-        //        playlistButton->setText(tr("Playlist"));
-        //        playlistButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        auto* playlistButton = new QListWidgetItem(contentsWidget);
+        playlistButton->setText(tr("Playlist"));
+        playlistButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
 };
 
@@ -77,12 +77,11 @@ void SettingsDialog::setupUi()
     p->pagesWidget = new QStackedWidget(this);
     // p->pagesWidget->addWidget(new GeneralPage(this));
     p->pagesWidget->addWidget(new LibraryPage(p->libManager, this));
-    // p->pagesWidget->addWidget(new PlaylistPage(this));
+    p->pagesWidget->addWidget(new PlaylistPage(this));
 
     auto* closeButton = new QPushButton("Close", this);
 
-    // createIcons();
-    p->contentsWidget->setCurrentRow(0);
+    // p->contentsWidget->setCurrentRow(0);
 
     connect(closeButton, &QAbstractButton::clicked, this, &QWidget::close);
 

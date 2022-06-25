@@ -111,6 +111,7 @@ void LibraryPage::addLibrary()
     bool success = false;
     QString text
         = QInputDialog::getText(this, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal, name, &success);
+
     if(success) {
         if(!text.isEmpty()) {
             name = text;
