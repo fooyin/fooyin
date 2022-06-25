@@ -27,13 +27,13 @@
 
 using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
-namespace Library {
-class MusicLibrary;
-}
-
 class Container;
 class Settings;
 class PlayerManager;
+
+namespace Library {
+class MusicLibrary;
+
 class PlaylistModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -80,3 +80,4 @@ private:
     Library::MusicLibrary* m_library;
     Settings* m_settings;
 };
+} // namespace Library

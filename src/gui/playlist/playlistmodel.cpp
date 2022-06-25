@@ -33,6 +33,7 @@
 
 #include <QPalette>
 
+namespace Library {
 PlaylistModel::PlaylistModel(PlayerManager* playerManager, Library::MusicLibrary* library, QObject* parent)
     : QAbstractItemModel(parent)
     , m_root(std::make_unique<PlaylistItem>())
@@ -535,3 +536,4 @@ QModelIndex PlaylistModel::indexOfItem(const PlaylistItem* item)
     }
     return index;
 }
+} // namespace Library
