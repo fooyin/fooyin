@@ -164,8 +164,9 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
         Track* libraryTrack = tracks.value(filepath, nullptr);
 
         if(libraryTrack && libraryTrack->id() >= 0) {
-            if(libraryTrack->mTime() == modified)
+            if(libraryTrack->mTime() == modified) {
                 continue;
+            }
 
             Track changedTrack{filepath};
             fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
@@ -192,10 +193,12 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
     storeTracks(tracksToStore);
     storeTracks(tracksToUpdate);
 
-    if(!tracksToStore.isEmpty())
+    if(!tracksToStore.isEmpty()) {
         emit addedTracks(tracksToStore);
-    if(!tracksToUpdate.isEmpty())
+    }
+    if(!tracksToUpdate.isEmpty()) {
         emit updatedTracks(tracksToUpdate);
+    }
 
     tracksToStore.clear();
 
