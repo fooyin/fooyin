@@ -76,7 +76,6 @@ ControlWidget::~ControlWidget() = default;
 void ControlWidget::setupUi()
 {
     p->layout = new QHBoxLayout(this);
-    setLayout(p->layout);
 
     //    setEnabled(false);
 

@@ -39,7 +39,6 @@ GeneralPage::GeneralPage(QWidget* parent)
     auto* mainLayout = new QVBoxLayout(this);
     //    mainLayout->addStretch();
     mainLayout->setAlignment(Qt::AlignTop);
-    setLayout(mainLayout);
 }
 
 GeneralPage::~GeneralPage() = default;
@@ -62,12 +61,11 @@ LibraryPage::LibraryPage(Library::LibraryManager* libraryManager, QWidget* paren
     m_libraryList.hideColumn(0);
 
     auto* libraryButtons = new QWidget(this);
-    auto* libraryButtonLayout = new QVBoxLayout(this);
+    auto* libraryButtonLayout = new QVBoxLayout(libraryButtons);
     auto* addLibrary = new QPushButton("+", this);
     auto* removeLibrary = new QPushButton("-", this);
 
     libraryButtonLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    libraryButtons->setLayout(libraryButtonLayout);
     libraryButtonLayout->addWidget(addLibrary);
     libraryButtonLayout->addWidget(removeLibrary);
 
@@ -75,7 +73,6 @@ LibraryPage::LibraryPage(Library::LibraryManager* libraryManager, QWidget* paren
     mainLayout->addWidget(&m_libraryList);
     mainLayout->addWidget(libraryButtons);
     // mainLayout->addStretch();
-    setLayout(mainLayout);
 
     connect(addLibrary, &QPushButton::clicked, this, &LibraryPage::addLibrary);
     connect(removeLibrary, &QPushButton::clicked, this, &LibraryPage::removeLibrary);
@@ -160,7 +157,6 @@ PlaylistPage::PlaylistPage(QWidget* parent)
     mainLayout->addWidget(simpleList);
     mainLayout->addWidget(altColours);
     mainLayout->addStretch();
-    setLayout(mainLayout);
 
     connect(groupHeaders, &QCheckBox::clicked, this, [=](bool checked) {
         settings->set(Settings::Setting::DiscHeaders, checked);

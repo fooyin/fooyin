@@ -65,7 +65,6 @@ SearchWidget::~SearchWidget() = default;
 void SearchWidget::setupUi()
 {
     p->layout = new QHBoxLayout(this);
-    setLayout(p->layout);
     p->layout->setContentsMargins(0, 0, 0, 0);
 
     p->searchBox = new QLineEdit(this);

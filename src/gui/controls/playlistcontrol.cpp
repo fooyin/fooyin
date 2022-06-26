@@ -90,8 +90,6 @@ void PlaylistControl::setupUi()
 {
     p->layout = new QHBoxLayout(this);
 
-    setLayout(p->layout);
-
     p->layout->setSizeConstraint(QLayout::SetFixedSize);
     p->layout->setSpacing(10);
     p->layout->setContentsMargins(0, 0, 0, 0);

@@ -56,7 +56,6 @@ ProgressWidget::~ProgressWidget() = default;
 void ProgressWidget::setupUi()
 {
     p->layout = new QHBoxLayout(this);
-    setLayout(p->layout);
 
     p->layout->setContentsMargins(0, 0, 0, 0);
 

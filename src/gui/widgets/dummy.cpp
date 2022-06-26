@@ -34,7 +34,6 @@ Dummy::Dummy(QWidget* parent)
     m_label->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     m_label->setAlignment(Qt::AlignCenter);
     m_layout->addWidget(m_label);
-    setLayout(m_layout);
 }
 
 Dummy::~Dummy() = default;

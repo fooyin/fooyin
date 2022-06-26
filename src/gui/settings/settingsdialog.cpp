@@ -92,12 +92,11 @@ void SettingsDialog::setupUi()
     buttonsLayout->addStretch(1);
     buttonsLayout->addWidget(closeButton);
 
-    auto* mainLayout = new QVBoxLayout();
+    auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(horizontalLayout);
     mainLayout->addStretch(1);
     mainLayout->addSpacing(12);
     mainLayout->addLayout(buttonsLayout);
-    setLayout(mainLayout);
 
     setWindowTitle("Settings");
 }

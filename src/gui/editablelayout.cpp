@@ -77,7 +77,6 @@ EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
     setObjectName("EditableLayout");
 
     m_box->setContentsMargins(5, 5, 5, 5);
-    setLayout(m_box);
 
     connect(m_menu, &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
     connect(m_settings, &Settings::layoutEditingChanged, this, [=] {
