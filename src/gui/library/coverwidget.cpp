@@ -68,13 +68,15 @@ CoverWidget::~CoverWidget() = default;
 void CoverWidget::setupUi()
 {
     p->layout = new QHBoxLayout(this);
-    setLayout(p->layout);
+    p->layout->setAlignment(Qt::AlignCenter);
+
+    setAutoFillBackground(true);
 
     p->coverLabel = new QLabel(this);
 
     p->coverLabel->setMinimumSize(100, 100);
 
-    p->layout->addWidget(p->coverLabel, 1, Qt::AlignTop);
+    p->layout->addWidget(p->coverLabel);
 
     p->layout->setContentsMargins(0, 0, 0, 0);
 }
