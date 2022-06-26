@@ -43,7 +43,7 @@ public:
 
     PlaylistItem* child(int number);
     [[nodiscard]] int childCount() const;
-    [[nodiscard]] static int columnCount();
+    [[nodiscard]] int columnCount();
     [[nodiscard]] LibraryItem* data() const;
     [[nodiscard]] Type type();
     [[nodiscard]] int index() const;
