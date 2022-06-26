@@ -31,7 +31,6 @@ public:
     LibraryDatabase(const QString& connectionName, int libraryId);
     ~LibraryDatabase() override;
 
-    bool insertArtistsAlbums(TrackList& tracks);
     bool storeTracks(TrackList& tracksToStore);
 
     bool getAllTracks(TrackList& result) const;
@@ -65,6 +64,7 @@ protected:
     Module* module();
     [[nodiscard]] const Module* module() const;
 
+    bool insertArtistsAlbums(TrackList& tracks);
     int insertArtist(const Artist& artist);
     int insertAlbum(const Album& album);
     bool insertTrackArtists(int id, const IdSet& artists);

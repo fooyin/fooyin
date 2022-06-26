@@ -181,74 +181,70 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             track.setLibraryId(m_libraryId);
         }
 
-        {
-            // Check artists
-            for(const auto& trackArtist : track.artists()) {
-                if(!artistMap.contains(trackArtist)) {
-                    Artist artist{trackArtist};
-                    int id = insertArtist(artist);
-                    artist.setId(id);
-                    artistMap.insert(trackArtist, artist);
-                }
-                auto artist = artistMap.value(trackArtist);
-                track.addArtistId(artist.id());
+        // Check artists
+        for(const auto& trackArtist : track.artists()) {
+            if(!artistMap.contains(trackArtist)) {
+                Artist artist{trackArtist};
+                int id = insertArtist(artist);
+                artist.setId(id);
+                artistMap.insert(trackArtist, artist);
             }
-
-            // Check album artist
-            if(!artistMap.contains(track.albumArtist())) {
-                Artist albumArtist{track.albumArtist()};
-                int id = insertArtist(albumArtist);
-                albumArtist.setId(id);
-                artistMap.insert(track.albumArtist(), albumArtist);
-            }
-            auto albumArtist = artistMap.value(track.albumArtist());
-            track.setAlbumArtistId(albumArtist.id());
-
-            // Check genres
-            for(const auto& genre : track.genres()) {
-                if(!genreMap.contains(genre)) {
-                    int id = insertGenre(genre);
-                    genreMap.insert(genre, id);
-                }
-                int trackGenre = genreMap.value(genre);
-                track.addGenreId(trackGenre);
-            }
-
-            // Check album id
-            QString hash = Util::calcAlbumHash(track.album(), track.albumArtist(), track.year());
-            if(!albumMap.contains(hash)) {
-                Album album{track.album()};
-                album.setYear(track.year());
-                album.setGenres(track.genres());
-                album.setArtistId(albumArtist.id());
-                album.setArtist(track.albumArtist());
-
-                storeCover(track, album);
-
-                int id = insertAlbum(album);
-                album.setId(id);
-                albumMap.insert(hash, album);
-            }
-
-            auto album = albumMap.value(hash);
-            track.setAlbumId(album.id());
-            if(!album.hasCover()) {
-                storeCover(track, album);
-            }
-            track.setCoverPath(album.coverPath());
+            auto artist = artistMap.value(trackArtist);
+            track.addArtistId(artist.id());
         }
 
-        { // Check track id
-            int id = -1;
-            if(trackMap.contains(track.filepath())) {
-                id = trackMap.value(track.filepath()).id();
-            }
-            track.setId(id);
+        // Check album artist
+        if(!artistMap.contains(track.albumArtist())) {
+            Artist albumArtist{track.albumArtist()};
+            int id = insertArtist(albumArtist);
+            albumArtist.setId(id);
+            artistMap.insert(track.albumArtist(), albumArtist);
         }
+        auto albumArtist = artistMap.value(track.albumArtist());
+        track.setAlbumArtistId(albumArtist.id());
+
+        // Check genres
+        for(const auto& genre : track.genres()) {
+            if(!genreMap.contains(genre)) {
+                int id = insertGenre(genre);
+                genreMap.insert(genre, id);
+            }
+            int trackGenre = genreMap.value(genre);
+            track.addGenreId(trackGenre);
+        }
+
+        // Check album id
+        QString hash = Util::calcAlbumHash(track.album(), track.albumArtist(), track.year());
+        if(!albumMap.contains(hash)) {
+            Album album{track.album()};
+            album.setYear(track.year());
+            album.setGenres(track.genres());
+            album.setArtistId(albumArtist.id());
+            album.setArtist(track.albumArtist());
+
+            storeCover(track, album);
+
+            int id = insertAlbum(album);
+            album.setId(id);
+            albumMap.insert(hash, album);
+        }
+
+        auto album = albumMap.value(hash);
+        track.setAlbumId(album.id());
+        if(!album.hasCover()) {
+            storeCover(track, album);
+        }
+        track.setCoverPath(album.coverPath());
+
+        // Check track id
+        int id = -1;
+        if(trackMap.contains(track.filepath())) {
+            id = trackMap.value(track.filepath()).id();
+        }
+        track.setId(id);
+
+        db().commit();
     }
-
-    db().commit();
-
     return true;
 }
 
