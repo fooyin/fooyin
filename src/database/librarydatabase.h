@@ -33,7 +33,6 @@ public:
 
     bool insertArtistsAlbums(TrackList& tracks);
     bool storeTracks(TrackList& tracksToStore);
-    static bool storeCover(const Track& track, Album& album);
 
     bool getAllTracks(TrackList& result) const;
     bool getAllAlbums(AlbumList& result) const;

@@ -28,7 +28,7 @@
 #include <QBuffer>
 #include <QPixmap>
 
-namespace DB {
+namespace {
 QMap<QString, QVariant> getTrackBindings(const Track& track)
 {
     return QMap<QString, QVariant>{
@@ -89,7 +89,30 @@ QString getSearchJoins()
 
     return joins;
 }
-} // namespace DB
+void storeCover(const Track& track, Album& album)
+{
+    QString coverHash = Util::calcCoverHash(track.album(), track.albumArtist());
+
+    const QString cacheCover = Util::coverPath() + coverHash + ".jpg";
+    const QString folderCover = Util::File::coverInDirectory(Util::File::getParentDirectory(track.filepath()));
+
+    if(Util::File::exists(cacheCover)) {
+        album.setCoverPath(cacheCover);
+    }
+    else if(!folderCover.isEmpty()) {
+        album.setCoverPath(folderCover);
+    }
+    else {
+        QPixmap cover = Tagging::readCover(track.filepath());
+        if(!cover.isNull()) {
+            bool saved = Util::saveCover(cover, coverHash);
+            if(saved) {
+                album.setCoverPath(cacheCover);
+            }
+        }
+    }
+}
+} // namespace
 
 namespace DB {
 LibraryDatabase::LibraryDatabase(const QString& connectionName, int libraryId)
@@ -254,31 +277,6 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
     }
 
     return db().commit();
-}
-
-bool LibraryDatabase::storeCover(const Track& track, Album& album)
-{
-    QString coverHash = Util::calcCoverHash(track.album(), track.albumArtist());
-
-    const QString cacheCover = Util::coverPath() + coverHash + ".jpg";
-    const QString folderCover = Util::File::coverInDirectory(Util::File::getParentDirectory(track.filepath()));
-
-    if(Util::File::exists(cacheCover)) {
-        album.setCoverPath(cacheCover);
-    }
-    else if(!folderCover.isEmpty()) {
-        album.setCoverPath(folderCover);
-    }
-    else {
-        QPixmap cover = Tagging::readCover(track.filepath());
-        if(!cover.isNull()) {
-            bool saved = Util::saveCover(cover, coverHash);
-            if(saved) {
-                album.setCoverPath(cacheCover);
-            }
-        }
-    }
-    return album.hasCover();
 }
 
 bool LibraryDatabase::getAllTracks(TrackList& result) const
