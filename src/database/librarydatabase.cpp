@@ -200,30 +200,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
                 album.setArtistId(albumArtist.id());
                 album.setArtist(track.albumArtist());
 
-                QString coverHash = Util::calcCoverHash(track.album(), track.albumArtist());
-
-                const QString cacheCover = Util::coverPath() + coverHash + ".jpg";
-                const QString folderCover
-                    = Util::File::coverInDirectory(Util::File::getParentDirectory(track.filepath()));
-
-                if(Util::File::exists(cacheCover)) {
-                    track.setCoverPath(cacheCover);
-                    album.setCoverPath(cacheCover);
-                }
-                else if(!folderCover.isEmpty()) {
-                    track.setCoverPath(folderCover);
-                    album.setCoverPath(folderCover);
-                }
-                else {
-                    QPixmap cover = Tagging::readCover(track.filepath());
-                    if(!cover.isNull()) {
-                        bool saved = Util::saveCover(cover, coverHash);
-                        if(saved) {
-                            track.setCoverPath(cacheCover);
-                            album.setCoverPath(cacheCover);
-                        }
-                    }
-                }
+                storeCover(track, album);
 
                 int id = insertAlbum(album);
                 album.setId(id);
@@ -232,6 +209,9 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
 
             auto album = albumMap.value(hash);
             track.setAlbumId(album.id());
+            if(!album.hasCover()) {
+                storeCover(track, album);
+            }
             track.setCoverPath(album.coverPath());
         }
 
@@ -274,6 +254,31 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
     }
 
     return db().commit();
+}
+
+bool LibraryDatabase::storeCover(const Track& track, Album& album)
+{
+    QString coverHash = Util::calcCoverHash(track.album(), track.albumArtist());
+
+    const QString cacheCover = Util::coverPath() + coverHash + ".jpg";
+    const QString folderCover = Util::File::coverInDirectory(Util::File::getParentDirectory(track.filepath()));
+
+    if(Util::File::exists(cacheCover)) {
+        album.setCoverPath(cacheCover);
+    }
+    else if(!folderCover.isEmpty()) {
+        album.setCoverPath(folderCover);
+    }
+    else {
+        QPixmap cover = Tagging::readCover(track.filepath());
+        if(!cover.isNull()) {
+            bool saved = Util::saveCover(cover, coverHash);
+            if(saved) {
+                album.setCoverPath(cacheCover);
+            }
+        }
+    }
+    return album.hasCover();
 }
 
 bool LibraryDatabase::getAllTracks(TrackList& result) const
