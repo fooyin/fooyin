@@ -237,11 +237,10 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         track.setCoverPath(album.coverPath());
 
         // Check track id
-        int id = -1;
         if(trackMap.contains(track.filepath())) {
-            id = trackMap.value(track.filepath()).id();
+            int id = trackMap.value(track.filepath()).id();
+            track.setId(id);
         }
-        track.setId(id);
 
         db().commit();
     }
