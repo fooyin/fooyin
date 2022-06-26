@@ -51,7 +51,7 @@ QByteArray getCoverFromMpeg(TagLib::MPEG::File* file)
         TagLib::ID3v2::FrameList frames = file->ID3v2Tag()->frameListMap()["APIC"];
         if(!frames.isEmpty()) {
             using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
-            for(const auto& frame : std::as_const(frames)) {
+            for(const auto& frame : qAsConst(frames)) {
                 auto* coverFrame = dynamic_cast<PictureFrame*>(frame);
                 const auto type = coverFrame->type();
                 if((frame && type == PictureFrame::FrontCover) || type == PictureFrame::Other) {
@@ -68,7 +68,7 @@ QByteArray getCoverFromFlac(TagLib::FLAC::File* file)
     const TagLib::List<TagLib::FLAC::Picture*> pictureList = file->pictureList();
 
     if(!pictureList.isEmpty()) {
-        for(const auto& picture : std::as_const(pictureList)) {
+        for(const auto& picture : qAsConst(pictureList)) {
             if((picture->type() == TagLib::FLAC::Picture::FrontCover
                 || picture->type() == TagLib::FLAC::Picture::Other)) {
                 return {picture->data().data(), picture->data().size()};
