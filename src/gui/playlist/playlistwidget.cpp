@@ -57,8 +57,8 @@ PlaylistWidget::PlaylistWidget(PlayerManager* playerManager, LibraryManager* lib
     setupConnections();
     reset();
 
-    setHeaderHidden(!m_settings->value(Settings::Setting::PlaylistHeader).toBool());
-    setScrollbarHidden(!m_settings->value(Settings::Setting::PlaylistScrollBar).toBool());
+    setHeaderHidden(m_settings->value(Settings::Setting::PlaylistHeader).toBool());
+    setScrollbarHidden(m_settings->value(Settings::Setting::PlaylistScrollBar).toBool());
 
     setup();
 }
@@ -89,28 +89,33 @@ void PlaylistWidget::reset()
 void PlaylistWidget::setupConnections()
 {
     connect(m_noLibrary, &NoLibraryOverlay::settingsClicked, this, &PlaylistWidget::openSettings);
+
     connect(m_libraryManager, &LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
     connect(m_libraryManager, &LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
-    connect(m_settings, &Settings::playlistAltColorsChanged, this, [this] {
-        m_altRowColours = !m_altRowColours;
-    });
-    connect(m_settings, &Settings::playlistHeaderChanged, this, [this] {
-        setHeaderHidden(!isHeaderHidden());
-    });
-    connect(m_settings, &Settings::playlistScrollBarChanged, this, [this] {
-        setScrollbarHidden(!isScrollbarHidden());
-    });
+
+    connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistWidget::setAltRowColours);
+    connect(m_settings, &Settings::playlistHeaderChanged, this, &PlaylistWidget::setHeaderHidden);
+    connect(m_settings, &Settings::playlistScrollBarChanged, this, &PlaylistWidget::setScrollbarHidden);
     connect(m_playlist->header(), &QHeaderView::sectionClicked, this, &PlaylistWidget::switchOrder);
+
+    connect(m_model, &PlaylistModel::modelReset, this, &PlaylistWidget::reset);
+
     connect(m_playlist->header(), &QHeaderView::customContextMenuRequested, this,
             &PlaylistWidget::customHeaderMenuRequested);
-    connect(m_model, &PlaylistModel::modelReset, this, &PlaylistWidget::reset);
-    connect(m_playlist, &PlaylistView::doubleClicked, this, &PlaylistWidget::playTrack);
-    connect(this, &PlaylistWidget::clickedTrack, m_playerManager, &PlayerManager::reset);
-    connect(this, &PlaylistWidget::clickedTrack, m_library, &MusicLibrary::prepareTracks);
-    connect(m_playerManager, &PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
-    connect(m_playerManager, &PlayerManager::nextTrack, this, &PlaylistWidget::nextTrack);
     connect(m_playlist->selectionModel(), &QItemSelectionModel::selectionChanged, this,
             &PlaylistWidget::selectionChanged);
+    connect(m_playlist, &PlaylistView::doubleClicked, this, &PlaylistWidget::playTrack);
+
+    connect(m_playerManager, &PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
+    connect(m_playerManager, &PlayerManager::nextTrack, this, &PlaylistWidget::nextTrack);
+
+    connect(this, &PlaylistWidget::clickedTrack, m_playerManager, &PlayerManager::reset);
+    connect(this, &PlaylistWidget::clickedTrack, m_library, &MusicLibrary::prepareTracks);
+}
+
+void PlaylistWidget::setAltRowColours(bool altColours)
+{
+    m_altRowColours = altColours;
 }
 
 bool PlaylistWidget::isHeaderHidden()
@@ -118,9 +123,9 @@ bool PlaylistWidget::isHeaderHidden()
     return m_playlist->isHeaderHidden();
 }
 
-void PlaylistWidget::setHeaderHidden(bool b)
+void PlaylistWidget::setHeaderHidden(bool showHeader)
 {
-    m_playlist->setHeaderHidden(b);
+    m_playlist->setHeaderHidden(!showHeader);
 }
 
 bool PlaylistWidget::isScrollbarHidden()
@@ -128,9 +133,9 @@ bool PlaylistWidget::isScrollbarHidden()
     return m_playlist->verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
 }
 
-void PlaylistWidget::setScrollbarHidden(bool b)
+void PlaylistWidget::setScrollbarHidden(bool showScrollBar)
 {
-    m_playlist->setVerticalScrollBarPolicy(b ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+    m_playlist->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 }
 
 void PlaylistWidget::layoutEditingMenu(QMenu* menu)

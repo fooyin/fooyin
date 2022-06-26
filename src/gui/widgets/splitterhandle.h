@@ -35,8 +35,9 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void showHandle(bool show);
 
 private:
     Settings* m_settings;
-    bool m_showHandles;
+    bool m_showHandle;
 };

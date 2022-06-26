@@ -24,19 +24,22 @@
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)
     , m_settings(Settings::instance())
-    , m_showHandles(m_settings->value(Settings::Setting::SplitterHandles).toBool())
+    , m_showHandle(m_settings->value(Settings::Setting::SplitterHandles).toBool())
 {
-    connect(m_settings, &Settings::splitterHandlesChanged, this, [this]() {
-        m_showHandles = !m_showHandles;
-        update();
-    });
+    connect(m_settings, &Settings::splitterHandlesChanged, this, &SplitterHandle::showHandle);
 }
 
 SplitterHandle::~SplitterHandle() = default;
 
 void SplitterHandle::paintEvent(QPaintEvent* e)
 {
-    if(m_showHandles) {
+    if(m_showHandle) {
         return QSplitterHandle::paintEvent(e);
     }
+}
+
+void SplitterHandle::showHandle(bool show)
+{
+    m_showHandle = show;
+    update();
 }

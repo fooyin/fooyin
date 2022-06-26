@@ -72,17 +72,17 @@ public:
 signals:
     void layoutEditingChanged();
     void playlistSettingChanged();
-    void elapsedTotalChanged();
-    void filterAltColorsChanged();
-    void filterHeaderChanged();
-    void filterScrollBarChanged();
-    void infoAltColorsChanged();
-    void infoHeaderChanged();
-    void infoScrollBarChanged();
-    void playlistAltColorsChanged();
-    void playlistHeaderChanged();
-    void playlistScrollBarChanged();
-    void splitterHandlesChanged();
+    void elapsedTotalChanged(bool checked);
+    void filterAltColorsChanged(bool checked);
+    void filterHeaderChanged(bool checked);
+    void filterScrollBarChanged(bool checked);
+    void infoAltColorsChanged(bool checked);
+    void infoHeaderChanged(bool checked);
+    void infoScrollBarChanged(bool checked);
+    void playlistAltColorsChanged(bool checked);
+    void playlistHeaderChanged(bool checked);
+    void playlistScrollBarChanged(bool checked);
+    void splitterHandlesChanged(bool checked);
 
 protected:
     Settings();

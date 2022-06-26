@@ -114,36 +114,38 @@ void Settings::set(Setting key, const QVariant& value)
     m_values.insert(key, value);
     m_lock.unlock();
 
+    bool checked = value.toBool();
+
     switch(key) {
         case(Setting::LayoutEditing):
             return emit layoutEditingChanged();
         case(Setting::SimplePlaylist):
             return emit playlistSettingChanged();
         case(Setting::ElapsedTotal):
-            return emit elapsedTotalChanged();
+            return emit elapsedTotalChanged(checked);
         case(Setting::FilterAltColours):
-            return emit filterAltColorsChanged();
+            return emit filterAltColorsChanged(checked);
         case(Setting::FilterHeader):
-            return emit filterHeaderChanged();
+            return emit filterHeaderChanged(checked);
         case(Setting::FilterScrollBar):
-            return emit filterScrollBarChanged();
+            return emit filterScrollBarChanged(checked);
         case(Setting::InfoAltColours):
-            return emit infoAltColorsChanged();
+            return emit infoAltColorsChanged(checked);
         case(Setting::InfoHeader):
-            return emit infoHeaderChanged();
+            return emit infoHeaderChanged(checked);
         case(Setting::InfoScrollBar):
-            return emit infoScrollBarChanged();
+            return emit infoScrollBarChanged(checked);
         case(Setting::PlaylistAltColours):
-            return emit playlistAltColorsChanged();
+            return emit playlistAltColorsChanged(checked);
         case(Setting::PlaylistHeader):
-            return emit playlistHeaderChanged();
+            return emit playlistHeaderChanged(checked);
         case(Setting::PlaylistScrollBar):
-            return emit playlistScrollBarChanged();
+            return emit playlistScrollBarChanged(checked);
         case(Setting::DiscHeaders):
         case(Setting::SplitDiscs):
             return emit playlistSettingChanged();
         case(Setting::SplitterHandles):
-            return emit splitterHandlesChanged();
+            return emit splitterHandlesChanged(checked);
         default:
             break;
     }

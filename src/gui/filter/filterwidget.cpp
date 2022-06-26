@@ -51,8 +51,8 @@ FilterWidget::FilterWidget(Filters::FilterType type, int index, PlayerManager* p
     m_filter->setItemDelegate(new FilterDelegate(this));
     m_library->registerFilter(m_type, m_index);
     setupConnections();
-    setHeaderHidden(!m_settings->value(Settings::Setting::FilterHeader).toBool());
-    setScrollbarHidden(!m_settings->value(Settings::Setting::FilterScrollBar).toBool());
+    setHeaderHidden(m_settings->value(Settings::Setting::FilterHeader).toBool());
+    setScrollbarHidden(m_settings->value(Settings::Setting::FilterScrollBar).toBool());
     setAltRowColors(m_settings->value(Settings::Setting::FilterAltColours).toBool());
 
     resetByIndex(-1);
@@ -65,15 +65,10 @@ FilterWidget::~FilterWidget()
 
 void FilterWidget::setupConnections()
 {
-    connect(m_settings, &Settings::filterAltColorsChanged, this, [this] {
-        setAltRowColors(!altRowColors());
-    });
-    connect(m_settings, &Settings::filterHeaderChanged, this, [this] {
-        setHeaderHidden(!isHeaderHidden());
-    });
-    connect(m_settings, &Settings::filterScrollBarChanged, this, [this] {
-        setScrollbarHidden(!isScrollbarHidden());
-    });
+    connect(m_settings, &Settings::filterAltColorsChanged, this, &FilterWidget::setAltRowColors);
+    connect(m_settings, &Settings::filterHeaderChanged, this, &FilterWidget::setHeaderHidden);
+    connect(m_settings, &Settings::filterScrollBarChanged, this, &FilterWidget::setScrollbarHidden);
+
     connect(m_filter->header(), &FilterView::customContextMenuRequested, this,
             &FilterWidget::customHeaderMenuRequested);
     connect(m_filter, &QTreeView::doubleClicked, this, [this] {
@@ -139,9 +134,9 @@ bool FilterWidget::isHeaderHidden()
     return m_filter->isHeaderHidden();
 }
 
-void FilterWidget::setHeaderHidden(bool b)
+void FilterWidget::setHeaderHidden(bool showHeader)
 {
-    m_filter->setHeaderHidden(b);
+    m_filter->setHeaderHidden(!showHeader);
 }
 
 bool FilterWidget::isScrollbarHidden()
@@ -149,9 +144,9 @@ bool FilterWidget::isScrollbarHidden()
     return m_filter->verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
 }
 
-void FilterWidget::setScrollbarHidden(bool b)
+void FilterWidget::setScrollbarHidden(bool showScrollBar)
 {
-    m_filter->setVerticalScrollBarPolicy(b ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+    m_filter->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 }
 
 bool FilterWidget::altRowColors()
@@ -159,9 +154,9 @@ bool FilterWidget::altRowColors()
     return m_filter->alternatingRowColors();
 }
 
-void FilterWidget::setAltRowColors(bool b)
+void FilterWidget::setAltRowColors(bool altColours)
 {
-    m_filter->setAlternatingRowColors(b);
+    m_filter->setAlternatingRowColors(altColours);
 }
 
 void FilterWidget::layoutEditingMenu(QMenu* menu)
@@ -169,23 +164,23 @@ void FilterWidget::layoutEditingMenu(QMenu* menu)
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
-    QAction::connect(showHeaders, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::Setting::FilterHeader, isHeaderHidden());
+    QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
+        m_settings->set(Settings::Setting::FilterHeader, checked);
     });
 
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
-    QAction::connect(showScrollBar, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::Setting::FilterScrollBar, isScrollbarHidden());
+    QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
+        m_settings->set(Settings::Setting::FilterScrollBar, checked);
     });
     menu->addAction(showScrollBar);
 
     auto* altColours = new QAction("Alternate Row Colours", this);
     altColours->setCheckable(true);
     altColours->setChecked(altRowColors());
-    QAction::connect(altColours, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::Setting::FilterAltColours, !altRowColors());
+    QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
+        m_settings->set(Settings::Setting::FilterAltColours, checked);
     });
 
     menu->addAction(showHeaders);

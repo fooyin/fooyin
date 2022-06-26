@@ -22,13 +22,13 @@ public:
     ~InfoWidget() override;
 
     bool isHeaderHidden();
-    void setHeaderHidden(bool b);
+    void setHeaderHidden(bool showHeader);
 
     bool isScrollbarHidden();
-    void setScrollbarHidden(bool b);
+    void setScrollbarHidden(bool showScrollBar);
 
     bool altRowColors();
-    void setAltRowColors(bool b);
+    void setAltRowColors(bool altColours);
 
     void layoutEditingMenu(QMenu* menu) override;
 

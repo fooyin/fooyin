@@ -21,22 +21,16 @@ InfoWidget::InfoWidget(PlayerManager* playerManager, Library::MusicLibrary* libr
     setObjectName("Info");
     setupUi();
 
-    setHeaderHidden(!m_settings->value(Settings::Setting::InfoHeader).toBool());
-    setScrollbarHidden(!m_settings->value(Settings::Setting::InfoScrollBar).toBool());
+    setHeaderHidden(m_settings->value(Settings::Setting::InfoHeader).toBool());
+    setScrollbarHidden(m_settings->value(Settings::Setting::InfoScrollBar).toBool());
     setAltRowColors(m_settings->value(Settings::Setting::InfoAltColours).toBool());
 
     connect(m_playerManager, &PlayerManager::currentTrackChanged, this, &InfoWidget::refreshTrack);
     connect(m_playerManager, &PlayerManager::currentTrackChanged, &m_model, &InfoModel::reset);
 
-    connect(m_settings, &Settings::infoAltColorsChanged, this, [this] {
-        setAltRowColors(!altRowColors());
-    });
-    connect(m_settings, &Settings::infoHeaderChanged, this, [this] {
-        setHeaderHidden(!isHeaderHidden());
-    });
-    connect(m_settings, &Settings::infoScrollBarChanged, this, [this] {
-        setScrollbarHidden(!isScrollbarHidden());
-    });
+    connect(m_settings, &Settings::infoAltColorsChanged, this, &InfoWidget::setAltRowColors);
+    connect(m_settings, &Settings::infoHeaderChanged, this, &InfoWidget::setHeaderHidden);
+    connect(m_settings, &Settings::infoScrollBarChanged, this, &InfoWidget::setScrollbarHidden);
 
     spanHeaders();
 }
@@ -80,9 +74,9 @@ bool InfoWidget::isHeaderHidden()
     return m_view.isHeaderHidden();
 }
 
-void InfoWidget::setHeaderHidden(bool b)
+void InfoWidget::setHeaderHidden(bool showHeader)
 {
-    m_view.setHeaderHidden(b);
+    m_view.setHeaderHidden(!showHeader);
 }
 
 bool InfoWidget::isScrollbarHidden()
@@ -90,9 +84,9 @@ bool InfoWidget::isScrollbarHidden()
     return m_view.verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
 }
 
-void InfoWidget::setScrollbarHidden(bool b)
+void InfoWidget::setScrollbarHidden(bool showScrollBar)
 {
-    m_view.setVerticalScrollBarPolicy(b ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+    m_view.setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 }
 
 bool InfoWidget::altRowColors()
@@ -100,9 +94,9 @@ bool InfoWidget::altRowColors()
     return m_view.alternatingRowColors();
 }
 
-void InfoWidget::setAltRowColors(bool b)
+void InfoWidget::setAltRowColors(bool altColours)
 {
-    m_view.setAlternatingRowColors(b);
+    m_view.setAlternatingRowColors(altColours);
 }
 
 void InfoWidget::layoutEditingMenu(QMenu* menu)
@@ -110,23 +104,23 @@ void InfoWidget::layoutEditingMenu(QMenu* menu)
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
-    QAction::connect(showHeaders, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::Setting::InfoHeader, isHeaderHidden());
+    QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
+        m_settings->set(Settings::Setting::InfoHeader, checked);
     });
 
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
-    QAction::connect(showScrollBar, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::Setting::InfoScrollBar, isScrollbarHidden());
+    QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
+        m_settings->set(Settings::Setting::InfoScrollBar, checked);
     });
     menu->addAction(showScrollBar);
 
     auto* altColours = new QAction("Alternate Row Colours", this);
     altColours->setCheckable(true);
     altColours->setChecked(altRowColors());
-    QAction::connect(altColours, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::Setting::InfoAltColours, !altRowColors());
+    QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
+        m_settings->set(Settings::Setting::InfoAltColours, checked);
     });
 
     menu->addAction(showHeaders);

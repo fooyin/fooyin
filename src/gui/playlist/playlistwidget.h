@@ -49,11 +49,13 @@ public:
 
     void setupConnections();
 
+    void setAltRowColours(bool altColours);
+
     bool isHeaderHidden();
-    void setHeaderHidden(bool b);
+    void setHeaderHidden(bool showHeader);
 
     bool isScrollbarHidden();
-    void setScrollbarHidden(bool b);
+    void setScrollbarHidden(bool showScrollBar);
 
     void layoutEditingMenu(QMenu* menu) override;
 
