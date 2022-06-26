@@ -127,7 +127,7 @@ void SplitterWidget::layoutEditingMenu(QMenu* menu)
     auto* addMenu = new QMenu("Add", this);
     auto* changeSplitter = new QAction("Change Splitter", this);
 
-    QAction::connect(changeSplitter, &QAction::triggered, this, [=] {
+    QAction::connect(changeSplitter, &QAction::triggered, this, [this] {
         setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
         setObjectName(QString("%1 Splitter").arg(EnumHelper::toString(m_splitter->orientation())));
     });

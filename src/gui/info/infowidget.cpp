@@ -28,13 +28,13 @@ InfoWidget::InfoWidget(PlayerManager* playerManager, Library::MusicLibrary* libr
     connect(m_playerManager, &PlayerManager::currentTrackChanged, this, &InfoWidget::refreshTrack);
     connect(m_playerManager, &PlayerManager::currentTrackChanged, &m_model, &InfoModel::reset);
 
-    connect(m_settings, &Settings::infoAltColorsChanged, this, [=] {
+    connect(m_settings, &Settings::infoAltColorsChanged, this, [this] {
         setAltRowColors(!altRowColors());
     });
-    connect(m_settings, &Settings::infoHeaderChanged, this, [=] {
+    connect(m_settings, &Settings::infoHeaderChanged, this, [this] {
         setHeaderHidden(!isHeaderHidden());
     });
-    connect(m_settings, &Settings::infoScrollBarChanged, this, [=] {
+    connect(m_settings, &Settings::infoScrollBarChanged, this, [this] {
         setScrollbarHidden(!isScrollbarHidden());
     });
 
@@ -110,14 +110,14 @@ void InfoWidget::layoutEditingMenu(QMenu* menu)
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
-    QAction::connect(showHeaders, &QAction::triggered, this, [=] {
+    QAction::connect(showHeaders, &QAction::triggered, this, [this] {
         m_settings->set(Settings::Setting::InfoHeader, isHeaderHidden());
     });
 
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
-    QAction::connect(showScrollBar, &QAction::triggered, this, [=] {
+    QAction::connect(showScrollBar, &QAction::triggered, this, [this] {
         m_settings->set(Settings::Setting::InfoScrollBar, isScrollbarHidden());
     });
     menu->addAction(showScrollBar);
@@ -125,7 +125,7 @@ void InfoWidget::layoutEditingMenu(QMenu* menu)
     auto* altColours = new QAction("Alternate Row Colours", this);
     altColours->setCheckable(true);
     altColours->setChecked(altRowColors());
-    QAction::connect(altColours, &QAction::triggered, this, [=] {
+    QAction::connect(altColours, &QAction::triggered, this, [this] {
         m_settings->set(Settings::Setting::InfoAltColours, !altRowColors());
     });
 

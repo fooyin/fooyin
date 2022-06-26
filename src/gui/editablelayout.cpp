@@ -44,7 +44,7 @@ void addParentContext(Widget* widget, QMenu* menu)
 
     if(parent) {
         auto* remove = new QAction("Remove", menu);
-        QAction::connect(remove, &QAction::triggered, widget, [=] {
+        QAction::connect(remove, &QAction::triggered, [parent, widget] {
             parent->removeWidget(widget);
         });
         menu->addAction(remove);
@@ -56,7 +56,7 @@ void addParentContext(Widget* widget, QMenu* menu)
         // Only splitters with a splitter parent are removable.
         if(parentOfParent) {
             auto* removeParent = new QAction("Remove", menu);
-            QAction::connect(removeParent, &QAction::triggered, parent, [=] {
+            QAction::connect(removeParent, &QAction::triggered, [parentOfParent, parent] {
                 parentOfParent->removeWidget(parent);
             });
             menu->addAction(removeParent);
@@ -79,7 +79,7 @@ EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
     m_box->setContentsMargins(5, 5, 5, 5);
 
     connect(m_menu, &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
-    connect(m_settings, &Settings::layoutEditingChanged, this, [=] {
+    connect(m_settings, &Settings::layoutEditingChanged, [this] {
         m_layoutEditing = !m_layoutEditing;
     });
 

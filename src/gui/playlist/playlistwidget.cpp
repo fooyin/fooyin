@@ -91,13 +91,13 @@ void PlaylistWidget::setupConnections()
     connect(m_noLibrary, &NoLibraryOverlay::settingsClicked, this, &PlaylistWidget::openSettings);
     connect(m_libraryManager, &LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
     connect(m_libraryManager, &LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
-    connect(m_settings, &Settings::playlistAltColorsChanged, this, [=] {
+    connect(m_settings, &Settings::playlistAltColorsChanged, this, [this] {
         m_altRowColours = !m_altRowColours;
     });
-    connect(m_settings, &Settings::playlistHeaderChanged, this, [=] {
+    connect(m_settings, &Settings::playlistHeaderChanged, this, [this] {
         setHeaderHidden(!isHeaderHidden());
     });
-    connect(m_settings, &Settings::playlistScrollBarChanged, this, [=] {
+    connect(m_settings, &Settings::playlistScrollBarChanged, this, [this] {
         setScrollbarHidden(!isScrollbarHidden());
     });
     connect(m_playlist->header(), &QHeaderView::sectionClicked, this, &PlaylistWidget::switchOrder);
@@ -138,7 +138,7 @@ void PlaylistWidget::layoutEditingMenu(QMenu* menu)
     auto* showHeaders = new QAction("Show Header", menu);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
-    QAction::connect(showHeaders, &QAction::triggered, this, [=] {
+    QAction::connect(showHeaders, &QAction::triggered, this, [this] {
         m_settings->set(Settings::Setting::PlaylistHeader, isHeaderHidden());
     });
     menu->addAction(showHeaders);
@@ -146,7 +146,7 @@ void PlaylistWidget::layoutEditingMenu(QMenu* menu)
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
-    QAction::connect(showScrollBar, &QAction::triggered, this, [=] {
+    QAction::connect(showScrollBar, &QAction::triggered, this, [this] {
         m_settings->set(Settings::Setting::PlaylistScrollBar, isScrollbarHidden());
     });
     menu->addAction(showScrollBar);
@@ -154,7 +154,7 @@ void PlaylistWidget::layoutEditingMenu(QMenu* menu)
     auto* altRowColours = new QAction("Alternative Row Colours", menu);
     altRowColours->setCheckable(true);
     altRowColours->setChecked(m_altRowColours);
-    QAction::connect(altRowColours, &QAction::triggered, this, [=] {
+    QAction::connect(altRowColours, &QAction::triggered, this, [this] {
         m_settings->set(Settings::Setting::PlaylistAltColours, !m_altRowColours);
     });
     menu->addAction(altRowColours);

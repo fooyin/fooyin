@@ -145,7 +145,7 @@ void MainWindow::setupUi()
     p->menuView->addAction(p->openQuickSetup);
 
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
-    connect(p->layoutEditing, &QAction::triggered, this, [=](bool checked) {
+    connect(p->layoutEditing, &QAction::triggered, [this](bool checked) {
         p->settings->set(Settings::Setting::LayoutEditing, checked);
     });
     connect(p->openQuickSetup, &QAction::triggered, &p->quickSetupDialog, &QuickSeupDialog::show);

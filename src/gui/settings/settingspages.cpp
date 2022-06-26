@@ -158,7 +158,7 @@ PlaylistPage::PlaylistPage(QWidget* parent)
     mainLayout->addWidget(altColours);
     mainLayout->addStretch();
 
-    connect(groupHeaders, &QCheckBox::clicked, this, [=](bool checked) {
+    connect(groupHeaders, &QCheckBox::clicked, this, [settings, splitDiscs](bool checked) {
         settings->set(Settings::Setting::DiscHeaders, checked);
         if(checked) {
             splitDiscs->setEnabled(checked);
@@ -168,13 +168,13 @@ PlaylistPage::PlaylistPage(QWidget* parent)
             splitDiscs->setEnabled(checked);
         }
     });
-    connect(splitDiscs, &QCheckBox::clicked, this, [=](bool checked) {
+    connect(splitDiscs, &QCheckBox::clicked, this, [settings](bool checked) {
         settings->set(Settings::Setting::SplitDiscs, checked);
     });
-    connect(simpleList, &QCheckBox::clicked, this, [=](bool checked) {
+    connect(simpleList, &QCheckBox::clicked, this, [settings](bool checked) {
         settings->set(Settings::Setting::SimplePlaylist, checked);
     });
-    connect(altColours, &QCheckBox::clicked, this, [=](bool checked) {
+    connect(altColours, &QCheckBox::clicked, this, [settings](bool checked) {
         settings->set(Settings::Setting::PlaylistAltColours, checked);
     });
 }

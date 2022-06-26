@@ -140,18 +140,18 @@ SplitterWidget* WidgetProvider::createSplitter(Qt::Orientation type, QWidget* pa
 void WidgetProvider::addMenuActions(QMenu* menu, SplitterWidget* splitter)
 {
     auto* addHSplitterWidget = new QAction("Horizontal Splitter", menu);
-    QAction::connect(addHSplitterWidget, &QAction::triggered, splitter, [=] {
+    QAction::connect(addHSplitterWidget, &QAction::triggered, this, [this, splitter] {
         createWidget(Widgets::WidgetType::HorizontalSplitter, splitter);
     });
     menu->addAction(addHSplitterWidget);
     auto* addVSplitterWidget = new QAction("Vertical Splitter", menu);
-    QAction::connect(addVSplitterWidget, &QAction::triggered, splitter, [=] {
+    QAction::connect(addVSplitterWidget, &QAction::triggered, this, [this, splitter] {
         createWidget(Widgets::WidgetType::VerticalSplitter, splitter);
     });
     menu->addAction(addVSplitterWidget);
 
     auto* addSpacer = new QAction("Spacer", menu);
-    QAction::connect(addSpacer, &QAction::triggered, splitter, [=] {
+    QAction::connect(addSpacer, &QAction::triggered, this, [this, splitter] {
         createWidget(Widgets::WidgetType::Spacer, splitter);
     });
     menu->addAction(addSpacer);
@@ -164,17 +164,17 @@ void WidgetProvider::addWidgetMenu(QMenu* menu, SplitterWidget* splitter)
     auto* widgetMenu = new QMenu("Widget", menu);
 
     auto* addArtwork = new QAction("Artwork", menu);
-    QAction::connect(addArtwork, &QAction::triggered, splitter, [=] {
+    QAction::connect(addArtwork, &QAction::triggered, this, [this, splitter] {
         createWidget(Widgets::WidgetType::Artwork, splitter);
     });
     widgetMenu->addAction(addArtwork);
     auto* addInfo = new QAction("Info", menu);
-    QAction::connect(addInfo, &QAction::triggered, splitter, [=] {
+    QAction::connect(addInfo, &QAction::triggered, this, [this, splitter] {
         createWidget(Widgets::WidgetType::Info, splitter);
     });
     widgetMenu->addAction(addInfo);
     auto* addControls = new QAction("Controls", menu);
-    QAction::connect(addControls, &QAction::triggered, splitter, [=] {
+    QAction::connect(addControls, &QAction::triggered, this, [this, splitter] {
         createWidget(Widgets::WidgetType::Controls, splitter);
     });
     widgetMenu->addAction(addControls);
@@ -182,17 +182,17 @@ void WidgetProvider::addWidgetMenu(QMenu* menu, SplitterWidget* splitter)
     addFilterMenu(widgetMenu, splitter);
 
     auto* addPlayList = new QAction("Playlist", menu);
-    QAction::connect(addPlayList, &QAction::triggered, splitter, [=] {
+    QAction::connect(addPlayList, &QAction::triggered, this, [this, splitter] {
         createWidget(Widgets::WidgetType::Playlist, splitter);
     });
     widgetMenu->addAction(addPlayList);
     auto* addSearch = new QAction("Search", menu);
-    QAction::connect(addSearch, &QAction::triggered, splitter, [=] {
+    QAction::connect(addSearch, &QAction::triggered, this, [this, splitter] {
         createWidget(Widgets::WidgetType::Search, splitter);
     });
     widgetMenu->addAction(addSearch);
     auto* addStatus = new QAction("Status Bar", menu);
-    QAction::connect(addStatus, &QAction::triggered, splitter, [=] {
+    QAction::connect(addStatus, &QAction::triggered, this, [this, splitter] {
         createWidget(Widgets::WidgetType::Status, splitter);
     });
     widgetMenu->addAction(addStatus);
@@ -205,27 +205,27 @@ void WidgetProvider::addFilterMenu(QMenu* menu, SplitterWidget* splitter)
     auto* filterMenu = new QMenu("Filter", menu);
 
     auto* addFilterAlbumArtist = new QAction("Album Artist", menu);
-    QAction::connect(addFilterAlbumArtist, &QAction::triggered, splitter, [=] {
+    QAction::connect(addFilterAlbumArtist, &QAction::triggered, this, [this, splitter] {
         createFilter(Filters::FilterType::AlbumArtist, splitter);
     });
     filterMenu->addAction(addFilterAlbumArtist);
     auto* addFilterAlbum = new QAction("Album", menu);
-    QAction::connect(addFilterAlbum, &QAction::triggered, splitter, [=] {
+    QAction::connect(addFilterAlbum, &QAction::triggered, this, [this, splitter] {
         createFilter(Filters::FilterType::Album, splitter);
     });
     filterMenu->addAction(addFilterAlbum);
     auto* addFilterArtist = new QAction("Artist", menu);
-    QAction::connect(addFilterArtist, &QAction::triggered, splitter, [=] {
+    QAction::connect(addFilterArtist, &QAction::triggered, this, [this, splitter] {
         createFilter(Filters::FilterType::Artist, splitter);
     });
     filterMenu->addAction(addFilterArtist);
     auto* addFilterGenre = new QAction("Genre", menu);
-    QAction::connect(addFilterGenre, &QAction::triggered, splitter, [=] {
+    QAction::connect(addFilterGenre, &QAction::triggered, this, [this, splitter] {
         createFilter(Filters::FilterType::Genre, splitter);
     });
     filterMenu->addAction(addFilterGenre);
     auto* addFilterYear = new QAction("Year", menu);
-    QAction::connect(addFilterYear, &QAction::triggered, splitter, [=] {
+    QAction::connect(addFilterYear, &QAction::triggered, this, [this, splitter] {
         createFilter(Filters::FilterType::Year, splitter);
     });
     filterMenu->addAction(addFilterYear);

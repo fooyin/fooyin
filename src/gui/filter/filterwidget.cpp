@@ -65,23 +65,23 @@ FilterWidget::~FilterWidget()
 
 void FilterWidget::setupConnections()
 {
-    connect(m_settings, &Settings::filterAltColorsChanged, this, [=] {
+    connect(m_settings, &Settings::filterAltColorsChanged, this, [this] {
         setAltRowColors(!altRowColors());
     });
-    connect(m_settings, &Settings::filterHeaderChanged, this, [=] {
+    connect(m_settings, &Settings::filterHeaderChanged, this, [this] {
         setHeaderHidden(!isHeaderHidden());
     });
-    connect(m_settings, &Settings::filterScrollBarChanged, this, [=] {
+    connect(m_settings, &Settings::filterScrollBarChanged, this, [this] {
         setScrollbarHidden(!isScrollbarHidden());
     });
     connect(m_filter->header(), &FilterView::customContextMenuRequested, this,
             &FilterWidget::customHeaderMenuRequested);
-    connect(m_filter, &QTreeView::doubleClicked, this, [=] {
+    connect(m_filter, &QTreeView::doubleClicked, this, [this] {
         m_library->prepareTracks();
     });
     connect(m_filter->header(), &QHeaderView::sectionClicked, this, &FilterWidget::switchOrder);
     connect(this, &FilterWidget::typeChanged, m_library, &Library::MusicLibrary::changeFilter);
-    connect(m_model, &FilterModel::modelReset, this, [=] {
+    connect(m_model, &FilterModel::modelReset, this, [this] {
         m_library->resetFilter(m_type);
     });
     connect(m_filter->selectionModel(), &QItemSelectionModel::selectionChanged, this, &FilterWidget::selectionChanged);
@@ -169,14 +169,14 @@ void FilterWidget::layoutEditingMenu(QMenu* menu)
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
-    QAction::connect(showHeaders, &QAction::triggered, this, [=] {
+    QAction::connect(showHeaders, &QAction::triggered, this, [this] {
         m_settings->set(Settings::Setting::FilterHeader, isHeaderHidden());
     });
 
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
-    QAction::connect(showScrollBar, &QAction::triggered, this, [=] {
+    QAction::connect(showScrollBar, &QAction::triggered, this, [this] {
         m_settings->set(Settings::Setting::FilterScrollBar, isScrollbarHidden());
     });
     menu->addAction(showScrollBar);
@@ -184,7 +184,7 @@ void FilterWidget::layoutEditingMenu(QMenu* menu)
     auto* altColours = new QAction("Alternate Row Colours", this);
     altColours->setCheckable(true);
     altColours->setChecked(altRowColors());
-    QAction::connect(altColours, &QAction::triggered, this, [=] {
+    QAction::connect(altColours, &QAction::triggered, this, [this] {
         m_settings->set(Settings::Setting::FilterAltColours, !altRowColors());
     });
 
