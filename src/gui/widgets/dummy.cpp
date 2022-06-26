@@ -32,7 +32,7 @@ Dummy::Dummy(QWidget* parent)
     palette.setColor(m_label->backgroundRole(), palette.base().color());
     m_label->setPalette(palette);
     m_label->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    m_label->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+    m_label->setAlignment(Qt::AlignCenter);
     m_layout->addWidget(m_label);
     setLayout(m_layout);
 }
