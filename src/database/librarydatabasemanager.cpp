@@ -28,7 +28,10 @@ LibraryDatabaseManager::LibraryDatabaseManager(QObject* parent)
     , m_libraryDatabase(DB::Database::instance()->libraryDatabase())
 { }
 
-LibraryDatabaseManager::~LibraryDatabaseManager() = default;
+LibraryDatabaseManager::~LibraryDatabaseManager()
+{
+    DB::Database::instance()->closeDatabase();
+}
 
 void LibraryDatabaseManager::getAllTracks()
 {

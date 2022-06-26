@@ -41,6 +41,7 @@ LibraryScanner::LibraryScanner(LibraryManager* libraryManager, QObject* parent)
 LibraryScanner::~LibraryScanner()
 {
     stop();
+    DB::Database::instance()->closeDatabase();
 }
 
 void LibraryScanner::stop()
