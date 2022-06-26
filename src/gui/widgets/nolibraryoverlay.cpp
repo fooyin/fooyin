@@ -32,7 +32,7 @@ NoLibraryOverlay::NoLibraryOverlay(QWidget* parent)
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
     setAutoFillBackground(true);
-    m_layout->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+    m_layout->setAlignment(Qt::AlignCenter);
     m_layout->addWidget(m_text);
     m_layout->addWidget(m_addLibrary);
 
