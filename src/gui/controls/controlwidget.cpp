@@ -47,9 +47,8 @@ struct ControlWidget::Private
 
 ControlWidget::ControlWidget(PlayerManager* playerManager, QWidget* parent)
     : Widget(parent)
+    , p(std::make_unique<Private>(playerManager))
 {
-    p = std::make_unique<Private>(playerManager);
-
     setObjectName("Control Bar");
 
     setupUi();

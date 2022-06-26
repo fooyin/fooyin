@@ -37,9 +37,8 @@ struct PlayerControl::Private
 
 PlayerControl::PlayerControl(QWidget* parent)
     : QWidget(parent)
+    , p(std::make_unique<Private>())
 {
-    p = std::make_unique<Private>();
-
     setupUi();
 
     connect(p->stop, &ClickableLabel::clicked, this, &PlayerControl::stopClicked);

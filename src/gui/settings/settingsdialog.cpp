@@ -29,12 +29,12 @@
 
 struct SettingsDialog::Private
 {
-    Library::LibraryManager* libManager;
+    Library::LibraryManager* libraryManager;
     QListWidget* contentsWidget;
     QStackedWidget* pagesWidget;
 
     Private(Library::LibraryManager* libManager)
-        : libManager(libManager)
+        : libraryManager(libManager)
     { }
 
     void createIcons() const
@@ -55,9 +55,8 @@ struct SettingsDialog::Private
 
 SettingsDialog::SettingsDialog(Library::LibraryManager* libManager, QWidget* parent)
     : QDialog(parent)
+    , p(std::make_unique<Private>(libManager))
 {
-    p = std::make_unique<Private>(libManager);
-
     setupUi();
     p->createIcons();
     connect(p->contentsWidget, &QListWidget::currentItemChanged, this, &SettingsDialog::changePage);
@@ -76,7 +75,7 @@ void SettingsDialog::setupUi()
 
     p->pagesWidget = new QStackedWidget(this);
     // p->pagesWidget->addWidget(new GeneralPage(this));
-    p->pagesWidget->addWidget(new LibraryPage(p->libManager, this));
+    p->pagesWidget->addWidget(new LibraryPage(p->libraryManager, this));
     p->pagesWidget->addWidget(new PlaylistPage(this));
 
     auto* closeButton = new QPushButton("Close", this);

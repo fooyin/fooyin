@@ -44,8 +44,8 @@ struct SearchWidget::Private
 
 SearchWidget::SearchWidget(Library::MusicLibrary* library, QWidget* parent)
     : Widget(parent)
+    , p(std::make_unique<Private>(library))
 {
-    p = std::make_unique<Private>(library);
     setObjectName("Search");
 
     setupUi();

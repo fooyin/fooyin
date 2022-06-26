@@ -74,9 +74,8 @@ struct MainWindow::Private
 MainWindow::MainWindow(Library::LibraryManager* libraryManager, Library::MusicLibrary* library,
                        WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, QWidget* parent)
     : QMainWindow(parent)
+    , p(std::make_unique<Private>(libraryManager, library, widgetProvider, settingsDialog))
 {
-    p = std::make_unique<Private>(libraryManager, library, widgetProvider, settingsDialog);
-
     QFontDatabase::addApplicationFont("://fonts/Guifx v2 Transports.ttf");
 }
 

@@ -60,9 +60,8 @@ struct Database::Private
 
 Database::Database(const QString& directory, const QString& filename)
     : Module(directory + "/" + filename)
+    , p(std::make_unique<Private>(directory, filename))
 {
-    p = std::make_unique<Private>(directory, filename);
-
     bool success = Util::File::exists(p->connectionName);
 
     if(!success) {

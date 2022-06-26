@@ -74,9 +74,8 @@ struct PlaylistControl::Private
 
 PlaylistControl::PlaylistControl(QWidget* parent)
     : QWidget(parent)
+    , p(std::make_unique<Private>())
 {
-    p = std::make_unique<Private>();
-
     setupUi();
 
     p->def = palette();

@@ -39,9 +39,8 @@ struct VolumeControl::Private
 
 VolumeControl::VolumeControl(QWidget* parent)
     : QWidget(parent)
+    , p(std::make_unique<Private>())
 {
-    p = std::make_unique<Private>();
-
     setupUi();
 
     connect(p->volumeSlider, &QSlider::valueChanged, this, &VolumeControl::updateVolume);

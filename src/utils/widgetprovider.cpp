@@ -54,9 +54,8 @@ struct WidgetProvider::Private
 WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager,
                                SettingsDialog* settingsDialog, QObject* parent)
     : QObject(parent)
-{
-    p = std::make_unique<Private>(playerManager, libraryManager, settingsDialog);
-}
+    , p(std::make_unique<Private>(playerManager, libraryManager, settingsDialog))
+{ }
 
 WidgetProvider::~WidgetProvider() = default;
 

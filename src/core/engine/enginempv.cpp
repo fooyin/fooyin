@@ -40,9 +40,8 @@ static void wakeup(void* ctx)
 
 EngineMpv::EngineMpv(QObject* parent)
     : Engine(parent)
+    , p(std::make_unique<Private>())
 {
-    p = std::make_unique<Private>();
-
     // Not thread safe
     setlocale(LC_NUMERIC, "C"); // NOLINT
 

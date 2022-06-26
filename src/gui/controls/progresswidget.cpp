@@ -43,8 +43,8 @@ struct ProgressWidget::Private
 
 ProgressWidget::ProgressWidget(QWidget* parent)
     : QWidget(parent)
+    , p(std::make_unique<Private>())
 {
-    p = std::make_unique<Private>();
     setupUi();
 
     connect(p->total, &ClickableLabel::clicked, this, &ProgressWidget::toggleRemaining);

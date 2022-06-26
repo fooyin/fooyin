@@ -48,9 +48,8 @@ struct Application::Private
 
 Application::Application(int& argc, char** argv)
     : QApplication(argc, argv)
+    , p(std::make_unique<Private>())
 {
-    p = std::make_unique<Private>();
-
     p->db = DB::Database::instance();
     p->settings = Settings::instance();
     p->playerManager = new PlayerController(this);

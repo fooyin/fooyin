@@ -46,9 +46,8 @@ struct CoverWidget::Private
 
 CoverWidget::CoverWidget(PlayerManager* playerManager, Library::MusicLibrary* library, QWidget* parent)
     : Widget(parent)
+    , p(std::make_unique<Private>(playerManager, library))
 {
-    p = std::make_unique<Private>(playerManager, library);
-
     setObjectName("Artwork");
     setupUi();
 

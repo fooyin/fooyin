@@ -46,8 +46,8 @@ struct StatusWidget::Private
 
 StatusWidget::StatusWidget(PlayerManager* playerManager, QWidget* parent)
     : Widget(parent)
+    , p(std::make_unique<Private>(playerManager))
 {
-    p = std::make_unique<Private>(playerManager);
     setObjectName("Status Widget");
 
     setupUi();
