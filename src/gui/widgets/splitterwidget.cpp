@@ -72,8 +72,7 @@ void SplitterWidget::addToSplitter(Widgets::WidgetType type, QWidget* newWidget)
 {
     int index = static_cast<int>(m_children.count());
     int dumIndex = findIndex(Widgets::WidgetType::Dummy);
-    if(m_children.size() == 1 && dumIndex != -1)
-    {
+    if(m_children.size() == 1 && dumIndex != -1) {
         index = placeholderIndex();
         m_splitter->widget(index)->deleteLater();
         m_children.remove(dumIndex);
@@ -85,13 +84,11 @@ void SplitterWidget::addToSplitter(Widgets::WidgetType type, QWidget* newWidget)
 void SplitterWidget::removeWidget(QWidget* widget)
 {
     int index = findIndex(widget);
-    if(index != -1)
-    {
+    if(index != -1) {
         widget->deleteLater();
         m_children.remove(index);
     }
-    if(m_children.isEmpty())
-    {
+    if(m_children.isEmpty()) {
         auto* dummy = new Dummy(this);
         m_splitter->addWidget(dummy);
         m_children.append(SplitterEntry{Widgets::WidgetType::Dummy, dummy});
@@ -100,11 +97,9 @@ void SplitterWidget::removeWidget(QWidget* widget)
 
 int SplitterWidget::findIndex(QWidget* widgetToFind)
 {
-    for(int i = 0; i < m_children.size(); ++i)
-    {
+    for(int i = 0; i < m_children.size(); ++i) {
         QWidget* widget = m_children.value(i).widget;
-        if(widget == widgetToFind)
-        {
+        if(widget == widgetToFind) {
             return i;
         }
     }
@@ -113,11 +108,9 @@ int SplitterWidget::findIndex(QWidget* widgetToFind)
 
 int SplitterWidget::findIndex(Widgets::WidgetType typeToFind)
 {
-    for(int i = 0; i < m_children.size(); ++i)
-    {
+    for(int i = 0; i < m_children.size(); ++i) {
         Widgets::WidgetType type = m_children.value(i).type;
-        if(type == typeToFind)
-        {
+        if(type == typeToFind) {
             return i;
         }
     }
@@ -147,11 +140,9 @@ void SplitterWidget::layoutEditingMenu(QMenu* menu)
 
 int SplitterWidget::placeholderIndex() const
 {
-    for(int i = 0; i < m_splitter->count(); ++i)
-    {
+    for(int i = 0; i < m_splitter->count(); ++i) {
         auto* dummy = qobject_cast<Dummy*>(m_splitter->widget(i));
-        if(dummy)
-        {
+        if(dummy) {
             return i;
         }
     }
