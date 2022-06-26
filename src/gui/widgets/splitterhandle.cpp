@@ -23,17 +23,20 @@
 
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)
-{ }
+    , m_settings(Settings::instance())
+    , m_showHandles(m_settings->value(Settings::Setting::SplitterHandles).toBool())
+{
+    connect(m_settings, &Settings::splitterHandlesChanged, this, [this]() {
+        m_showHandles = !m_showHandles;
+        update();
+    });
+}
 
 SplitterHandle::~SplitterHandle() = default;
 
 void SplitterHandle::paintEvent(QPaintEvent* e)
 {
-    auto* settings = Settings::instance();
-    bool editing = settings->value(Settings::Setting::LayoutEditing).toBool();
-
-    if(editing)
-    {
+    if(m_showHandles) {
         return QSplitterHandle::paintEvent(e);
     }
 }

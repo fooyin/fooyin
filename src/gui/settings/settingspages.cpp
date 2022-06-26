@@ -39,6 +39,17 @@ GeneralPage::GeneralPage(QWidget* parent)
     auto* mainLayout = new QVBoxLayout(this);
     //    mainLayout->addStretch();
     mainLayout->setAlignment(Qt::AlignTop);
+
+    auto* settings = Settings::instance();
+
+    auto* splitterHandles = new QCheckBox("Show Splitter Handles", this);
+    splitterHandles->setChecked(settings->value(Settings::Setting::SplitterHandles).toBool());
+
+    mainLayout->addWidget(splitterHandles);
+
+    connect(splitterHandles, &QCheckBox::clicked, this, [settings](bool checked) {
+        settings->set(Settings::Setting::SplitterHandles, checked);
+    });
 }
 
 GeneralPage::~GeneralPage() = default;

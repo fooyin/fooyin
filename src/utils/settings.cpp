@@ -48,6 +48,7 @@ Settings::Settings()
     m_values[Setting::PlaylistAltColours] = defaults(Setting::PlaylistAltColours);
     m_values[Setting::PlaylistHeader] = defaults(Setting::PlaylistHeader);
     m_values[Setting::PlaylistScrollBar] = defaults(Setting::PlaylistScrollBar);
+    m_values[Setting::SplitterHandles] = defaults(Setting::SplitterHandles);
     m_values[Setting::Layout] = defaults(Setting::Layout);
 
     m_settings = new QSettings(Util::settingsPath(), QSettings::IniFormat);
@@ -141,6 +142,8 @@ void Settings::set(Setting key, const QVariant& value)
         case(Setting::DiscHeaders):
         case(Setting::SplitDiscs):
             return emit playlistSettingChanged();
+        case(Setting::SplitterHandles):
+            return emit splitterHandlesChanged();
         default:
             break;
     }
@@ -170,6 +173,7 @@ QVariant Settings::defaults(Setting key)
         case(Setting::PlaylistAltColours):
         case(Setting::PlaylistHeader):
         case(Setting::PlaylistScrollBar):
+        case(Setting::SplitterHandles):
             return true;
         case(Setting::Layout):
             return "";
@@ -207,6 +211,9 @@ QString Settings::getKeyString(Setting key)
         case(Setting::Layout):
         case(Setting::Geometry):
             keyString = "Layout";
+            break;
+        case(Setting::SplitterHandles):
+            keyString = "Splitter";
             break;
         case(Setting::Version):
         case(Setting::DatabaseVersion):

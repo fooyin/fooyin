@@ -33,6 +33,7 @@ public:
         DatabaseVersion,
         FirstRun,
         LayoutEditing,
+        SplitterHandles,
         DiscHeaders,
         SplitDiscs,
         SimplePlaylist,
@@ -81,6 +82,7 @@ signals:
     void playlistAltColorsChanged();
     void playlistHeaderChanged();
     void playlistScrollBarChanged();
+    void splitterHandlesChanged();
 
 protected:
     Settings();

@@ -23,6 +23,8 @@
 
 #include <QSplitterHandle>
 
+class Settings;
+
 class SplitterHandle : public QSplitterHandle
 {
     Q_OBJECT
@@ -33,4 +35,8 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
+
+private:
+    Settings* m_settings;
+    bool m_showHandles;
 };

@@ -39,9 +39,9 @@ struct SettingsDialog::Private
 
     void createIcons() const
     {
-        //        auto* generalButton = new QListWidgetItem(contentsWidget);
-        //        generalButton->setText(tr("General"));
-        //        generalButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        auto* generalButton = new QListWidgetItem(contentsWidget);
+        generalButton->setText(tr("General"));
+        generalButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
         auto* libraryButton = new QListWidgetItem(contentsWidget);
         libraryButton->setText(tr("Library"));
@@ -74,7 +74,7 @@ void SettingsDialog::setupUi()
     //    p->contentsWidget->setSpacing(10);
 
     p->pagesWidget = new QStackedWidget(this);
-    // p->pagesWidget->addWidget(new GeneralPage(this));
+    p->pagesWidget->addWidget(new GeneralPage(this));
     p->pagesWidget->addWidget(new LibraryPage(p->libraryManager, this));
     p->pagesWidget->addWidget(new PlaylistPage(this));
 
