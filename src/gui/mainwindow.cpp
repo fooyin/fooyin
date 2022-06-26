@@ -19,8 +19,6 @@
 
 #include "mainwindow.h"
 
-#include "core/library/librarymanager.h"
-#include "core/library/musiclibrary.h"
 #include "gui/editablelayout.h"
 #include "gui/quicksetupdialog.h"
 #include "gui/settings/settingsdialog.h"
@@ -56,25 +54,18 @@ struct MainWindow::Private
 
     QuickSeupDialog quickSetupDialog;
 
-    Library::LibraryManager* libraryManager;
-    Library::MusicLibrary* library;
-
     WidgetProvider* widgetProvider;
 
-    Private(Library::LibraryManager* libraryManager, Library::MusicLibrary* library, WidgetProvider* widgetProvider,
-            SettingsDialog* settingsDialog)
+    Private(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog)
         : settingsDialog(settingsDialog)
         , settings(Settings::instance())
-        , libraryManager(libraryManager)
-        , library(library)
         , widgetProvider(widgetProvider)
     { }
 };
 
-MainWindow::MainWindow(Library::LibraryManager* libraryManager, Library::MusicLibrary* library,
-                       WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, QWidget* parent)
+MainWindow::MainWindow(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, QWidget* parent)
     : QMainWindow(parent)
-    , p(std::make_unique<Private>(libraryManager, library, widgetProvider, settingsDialog))
+    , p(std::make_unique<Private>(widgetProvider, settingsDialog))
 {
     QFontDatabase::addApplicationFont("://fonts/Guifx v2 Transports.ttf");
 }

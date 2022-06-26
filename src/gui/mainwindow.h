@@ -21,11 +21,6 @@
 
 #include <QMainWindow>
 
-namespace Library {
-class LibraryManager;
-class MusicLibrary;
-} // namespace Library
-
 class WidgetProvider;
 class SettingsDialog;
 
@@ -34,8 +29,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(Library::LibraryManager* libraryManager, Library::MusicLibrary* library,
-                        WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, QWidget* parent = nullptr);
+    explicit MainWindow(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, QWidget* parent = nullptr);
     ~MainWindow() override;
 
     void setupUi();

@@ -60,8 +60,7 @@ Application::Application(int& argc, char** argv)
     p->settingsDialog = std::make_unique<SettingsDialog>(p->libraryManager);
     p->widgetProvider = new WidgetProvider(p->playerManager, p->libraryManager, p->settingsDialog.get(), this);
 
-    p->mainWindow = new MainWindow(p->libraryManager, p->libraryManager->musicLibrary(), p->widgetProvider,
-                                   p->settingsDialog.get());
+    p->mainWindow = new MainWindow(p->widgetProvider, p->settingsDialog.get());
     p->mainWindow->setupUi();
     p->mainWindow->setAttribute(Qt::WA_DeleteOnClose);
 
