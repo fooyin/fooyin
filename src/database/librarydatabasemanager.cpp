@@ -24,7 +24,7 @@
 #include "utils/helpers.h"
 
 LibraryDatabaseManager::LibraryDatabaseManager(QObject* parent)
-    : QObject(parent)
+    : Worker(parent)
     , m_libraryDatabase(DB::Database::instance()->libraryDatabase())
 { }
 
@@ -133,3 +133,5 @@ void LibraryDatabaseManager::filterTracks(const TrackPtrList& tracks, const Acti
     }
     emit tracksFiltered(filteredTracks);
 }
+
+void LibraryDatabaseManager::stopThread() { }

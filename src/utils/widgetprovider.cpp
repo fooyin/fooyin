@@ -43,18 +43,19 @@ struct WidgetProvider::Private
 
     QList<Library::FilterWidget*> filters;
 
-    Private(PlayerManager* playerManager, Library::LibraryManager* libraryManager, SettingsDialog* settingsDialog)
+    Private(PlayerManager* playerManager, Library::LibraryManager* libraryManager, Library::MusicLibrary* library,
+            SettingsDialog* settingsDialog)
         : playerManager(playerManager)
         , libraryManager(libraryManager)
-        , library(libraryManager->musicLibrary())
+        , library(library)
         , settingsDialog(settingsDialog)
     { }
 };
 
 WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager,
-                               SettingsDialog* settingsDialog, QObject* parent)
+                               Library::MusicLibrary* library, SettingsDialog* settingsDialog, QObject* parent)
     : QObject(parent)
-    , p(std::make_unique<Private>(playerManager, libraryManager, settingsDialog))
+    , p(std::make_unique<Private>(playerManager, libraryManager, library, settingsDialog))
 { }
 
 WidgetProvider::~WidgetProvider() = default;
@@ -71,7 +72,7 @@ Widget* WidgetProvider::createWidget(Widgets::WidgetType type, SplitterWidget* s
             return createFilter(Filters::FilterType::AlbumArtist, splitter);
         }
         case(Widgets::WidgetType::Playlist): {
-            auto* playlist = new Library::PlaylistWidget(p->playerManager, p->libraryManager);
+            auto* playlist = new Library::PlaylistWidget(p->playerManager, p->libraryManager, p->library);
             connect(playlist, &Library::PlaylistWidget::openSettings, p->settingsDialog, &SettingsDialog::exec);
             splitter->addToSplitter(Widgets::WidgetType::Playlist, playlist);
             return playlist;

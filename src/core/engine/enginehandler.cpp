@@ -23,10 +23,8 @@
 #include "models/track.h"
 
 EngineHandler::EngineHandler(PlayerManager* playerManager, QObject* parent)
-    : QObject(parent)
+    : Worker(parent)
 {
-    m_engine.moveToThread(&m_engineThread);
-
     connect(playerManager, &PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
     connect(playerManager, &PlayerManager::volumeChanged, &m_engine, &Engine::setVolume);
     connect(playerManager, &PlayerManager::currentTrackChanged, &m_engine, &Engine::changeTrack);
@@ -37,15 +35,11 @@ EngineHandler::EngineHandler(PlayerManager* playerManager, QObject* parent)
     connect(this, &EngineHandler::play, &m_engine, &Engine::play);
     connect(this, &EngineHandler::pause, &m_engine, &Engine::pause);
     connect(this, &EngineHandler::stop, &m_engine, &Engine::stop);
-
-    m_engineThread.start();
 }
 
-EngineHandler::~EngineHandler()
-{
-    m_engineThread.quit();
-    m_engineThread.wait();
-};
+void EngineHandler::stopThread() { }
+
+EngineHandler::~EngineHandler() = default;
 
 void EngineHandler::playStateChanged(Player::PlayState state)
 {

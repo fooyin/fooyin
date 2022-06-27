@@ -39,23 +39,18 @@ bool checkNewPath(const QString& path, const QMap<int, LibraryInfo>& libraries, 
     });
 }
 
-LibraryManager::LibraryManager(LibraryPlaylistInterface* playlistManager, QObject* parent)
+LibraryManager::LibraryManager(QObject* parent)
     : QObject(parent)
-    , m_scanner(new LibraryScanner(this))
-    , m_library(new Library::MusicLibrary(playlistManager, m_scanner, this))
     , m_database(DB::Database::instance())
     , m_libraryConnector(m_database->libraryConnector())
 {
     reset();
 
-    connect(this, &Library::LibraryManager::libraryAdded, m_library, &Library::MusicLibrary::reload);
-    connect(this, &Library::LibraryManager::libraryRemoved, m_library, &Library::MusicLibrary::refresh);
+    //    connect(this, &Library::LibraryManager::libraryAdded, m_library, &Library::MusicLibrary::reload);
+    //    connect(this, &Library::LibraryManager::libraryRemoved, m_library, &Library::MusicLibrary::refresh);
 }
 
-LibraryManager::~LibraryManager()
-{
-    delete m_scanner;
-}
+LibraryManager::~LibraryManager() = default;
 
 void LibraryManager::reset()
 {
@@ -65,11 +60,6 @@ void LibraryManager::reset()
 QMap<int, LibraryInfo> LibraryManager::allLibraries() const
 {
     return m_libraries;
-}
-
-MusicLibrary* LibraryManager::musicLibrary() const
-{
-    return m_library;
 }
 
 int LibraryManager::addLibrary(const QString& path, QString& name)

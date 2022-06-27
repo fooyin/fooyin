@@ -32,7 +32,7 @@
 
 namespace Library {
 LibraryScanner::LibraryScanner(LibraryManager* libraryManager, QObject* parent)
-    : QObject(parent)
+    : Worker(parent)
     , m_libraryManager(libraryManager)
     , m_mayRun(true)
     , m_isRunning(false)
@@ -40,11 +40,10 @@ LibraryScanner::LibraryScanner(LibraryManager* libraryManager, QObject* parent)
 
 LibraryScanner::~LibraryScanner()
 {
-    stop();
     DB::Database::instance()->closeDatabase();
 }
 
-void LibraryScanner::stop()
+void LibraryScanner::stopThread()
 {
     m_mayRun = false;
 }

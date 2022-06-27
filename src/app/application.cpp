@@ -28,47 +28,62 @@
 #include "database/database.h"
 #include "gui/mainwindow.h"
 #include "gui/settings/settingsdialog.h"
+#include "threadmanager.h"
 #include "utils/paths.h"
 #include "utils/settings.h"
 #include "utils/widgetprovider.h"
 
 struct Application::Private
 {
+    ThreadManager* threadManager;
     DB::Database* db;
     Settings* settings;
     PlayerManager* playerManager;
-    EngineHandler* engine;
+    EngineHandler engine;
     Playlist::PlaylistHandler* playlistHandler;
-    WidgetProvider* widgetProvider;
-    MainWindow* mainWindow;
     std::unique_ptr<LibraryPlaylistInterface> playlistInterface;
     Library::LibraryManager* libraryManager;
+    Library::MusicLibrary* library;
     std::unique_ptr<SettingsDialog> settingsDialog;
+    WidgetProvider* widgetProvider;
+    MainWindow* mainWindow;
+
+    Private(QObject* parent)
+        : threadManager(new ThreadManager(parent))
+        , db(DB::Database::instance())
+        , settings(Settings::instance())
+        , playerManager(new PlayerController(parent))
+        , engine(playerManager)
+        , playlistHandler(new Playlist::PlaylistHandler(playerManager, parent))
+        , playlistInterface(std::make_unique<LibraryPlaylistManager>(playlistHandler))
+        , libraryManager(new Library::LibraryManager(parent))
+        , library(new Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, parent))
+        , settingsDialog(std::make_unique<SettingsDialog>(libraryManager))
+        , widgetProvider(new WidgetProvider(playerManager, libraryManager, library, settingsDialog.get(), parent))
+        , mainWindow(new MainWindow(widgetProvider, settingsDialog.get()))
+    {
+        threadManager->moveToNewThread(&engine);
+
+        setupConnections();
+        mainWindow->setAttribute(Qt::WA_DeleteOnClose);
+        mainWindow->show();
+    }
+
+    void setupConnections() const
+    {
+        connect(libraryManager, &Library::LibraryManager::libraryAdded, library, &Library::MusicLibrary::reload);
+        connect(libraryManager, &Library::LibraryManager::libraryRemoved, library, &Library::MusicLibrary::refresh);
+    }
 };
 
 Application::Application(int& argc, char** argv)
     : QApplication(argc, argv)
-    , p(std::make_unique<Private>())
-{
-    p->db = DB::Database::instance();
-    p->settings = Settings::instance();
-    p->playerManager = new PlayerController(this);
-    p->engine = new EngineHandler(p->playerManager, this);
-    p->playlistHandler = new Playlist::PlaylistHandler(p->playerManager, this);
-    p->playlistInterface = std::make_unique<LibraryPlaylistManager>(p->playlistHandler);
-    p->libraryManager = new Library::LibraryManager(p->playlistInterface.get(), this);
-    p->settingsDialog = std::make_unique<SettingsDialog>(p->libraryManager);
-    p->widgetProvider = new WidgetProvider(p->playerManager, p->libraryManager, p->settingsDialog.get(), this);
-
-    p->mainWindow = new MainWindow(p->widgetProvider, p->settingsDialog.get());
-    p->mainWindow->setupUi();
-    p->mainWindow->setAttribute(Qt::WA_DeleteOnClose);
-
-    p->mainWindow->show();
-}
+    , p(std::make_unique<Private>(this))
+{ }
 
 Application::~Application()
 {
+    p->threadManager->close();
     p->settings->storeSettings();
     if(p->db) {
         p->db->cleanup();

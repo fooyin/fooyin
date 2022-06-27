@@ -30,6 +30,7 @@
 
 class LibraryPlaylistInterface;
 class LibraryDatabaseManager;
+class ThreadManager;
 
 namespace DB {
 class LibraryDatabase;
@@ -43,7 +44,8 @@ class MusicLibrary : public QObject
     Q_OBJECT
 
 public:
-    MusicLibrary(LibraryPlaylistInterface* playlistInteractor, LibraryScanner* scanner, QObject* parent = nullptr);
+    MusicLibrary(LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
+                 ThreadManager* threadManager, QObject* parent = nullptr);
     ~MusicLibrary() override;
 
     void load();
@@ -116,11 +118,10 @@ protected:
 
 private:
     LibraryPlaylistInterface* m_playlistInteractor;
-    LibraryScanner* m_scanner;
+    LibraryManager* m_libraryManager;
+    ThreadManager* m_threadManager;
+    LibraryScanner m_scanner;
     LibraryDatabaseManager m_libraryDatabaseManager;
-
-    QThread m_libraryThread;
-    QThread m_scannerThread;
 
     TrackPtrList m_tracks;
     TrackHash m_trackMap;

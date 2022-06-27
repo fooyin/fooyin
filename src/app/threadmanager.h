@@ -19,32 +19,21 @@
 
 #pragma once
 
-#include "enginempv.h"
-#include "utils/worker.h"
-
 #include <QObject>
-#include <QThread>
 
-class PlayerManager;
+class Worker;
 
-class EngineHandler : public Worker
+class ThreadManager : public QObject
 {
-    Q_OBJECT
-
 public:
-    explicit EngineHandler(PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+    ThreadManager(QObject* parent = nullptr);
+    ~ThreadManager() override;
 
-    void stopThread() override;
+    void close();
 
-signals:
-    void play();
-    void pause();
-    void stop();
-
-protected:
-    void playStateChanged(Player::PlayState state);
+    void moveToNewThread(Worker* worker);
 
 private:
-    EngineMpv m_engine;
+    struct Private;
+    std::unique_ptr<ThreadManager::Private> p;
 };

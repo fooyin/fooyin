@@ -41,7 +41,8 @@ class PlaylistWidget : public Widget
     Q_OBJECT
 
 public:
-    PlaylistWidget(PlayerManager* playerManager, LibraryManager* library, QWidget* parent = nullptr);
+    PlaylistWidget(PlayerManager* playerManager, LibraryManager* libraryManager, Library::MusicLibrary* library,
+                   QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     void setup();

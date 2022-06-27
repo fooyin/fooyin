@@ -38,13 +38,12 @@ class LibraryManager : public QObject
     Q_OBJECT
 
 public:
-    explicit LibraryManager(LibraryPlaylistInterface* playlistManager, QObject* parent = nullptr);
+    explicit LibraryManager(QObject* parent = nullptr);
     ~LibraryManager() override;
 
     void reset();
 
     [[nodiscard]] QMap<int, LibraryInfo> allLibraries() const;
-    [[nodiscard]] MusicLibrary* musicLibrary() const;
     int addLibrary(const QString& path, QString& name);
     void removeLibrary(int id);
     [[nodiscard]] bool hasLibrary() const;
@@ -56,8 +55,6 @@ signals:
 
 private:
     QMap<int, LibraryInfo> m_libraries;
-    LibraryScanner* m_scanner;
-    MusicLibrary* m_library;
     DB::Database* m_database;
     DB::Library* m_libraryConnector;
 };

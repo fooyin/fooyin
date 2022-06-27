@@ -37,11 +37,12 @@
 #include <QScrollBar>
 
 namespace Library {
-PlaylistWidget::PlaylistWidget(PlayerManager* playerManager, LibraryManager* libraryManager, QWidget* parent)
+PlaylistWidget::PlaylistWidget(PlayerManager* playerManager, LibraryManager* libraryManager,
+                               Library::MusicLibrary* library, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_libraryManager(libraryManager)
-    , m_library(m_libraryManager->musicLibrary())
+    , m_library(library)
     , m_playerManager(playerManager)
     , m_model(new PlaylistModel(playerManager, m_library, this))
     , m_playlist(new PlaylistView(this))

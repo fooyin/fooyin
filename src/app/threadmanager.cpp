@@ -17,34 +17,43 @@
  *
  */
 
-#pragma once
+#include "threadmanager.h"
 
-#include "enginempv.h"
 #include "utils/worker.h"
 
-#include <QObject>
 #include <QThread>
 
-class PlayerManager;
-
-class EngineHandler : public Worker
+struct ThreadManager::Private
 {
-    Q_OBJECT
-
-public:
-    explicit EngineHandler(PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
-
-    void stopThread() override;
-
-signals:
-    void play();
-    void pause();
-    void stop();
-
-protected:
-    void playStateChanged(Player::PlayState state);
-
-private:
-    EngineMpv m_engine;
+    QList<QThread*> threads;
+    QList<Worker*> workers;
 };
+
+ThreadManager::ThreadManager(QObject* parent)
+    : QObject{parent}
+    , p(std::make_unique<Private>())
+{ }
+
+ThreadManager::~ThreadManager() = default;
+
+void ThreadManager::close()
+{
+    for(Worker* worker : p->workers) {
+        worker->stopThread();
+    }
+
+    for(const auto& thread : p->threads) {
+        thread->quit();
+        thread->wait();
+    }
+}
+
+void ThreadManager::moveToNewThread(Worker* worker)
+{
+    auto* thread = new QThread(this);
+    p->threads.append(thread);
+    thread->start();
+
+    worker->moveToThread(thread);
+    p->workers.append(worker);
+}

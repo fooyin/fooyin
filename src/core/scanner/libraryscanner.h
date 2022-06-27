@@ -20,13 +20,14 @@
 #pragma once
 
 #include "core/library/libraryinfo.h"
+#include "utils/worker.h"
 #include "utils/trackfwd.h"
 
 class QDir;
 
 namespace Library {
 class LibraryManager;
-class LibraryScanner : public QObject
+class LibraryScanner : public Worker
 {
     Q_OBJECT
 
@@ -34,7 +35,7 @@ public:
     explicit LibraryScanner(LibraryManager* libraryManager, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
-    void stop();
+    void stopThread() override;
 
     void scanLibrary(TrackPtrList& tracks, const LibraryInfo& info);
     void scanAll(TrackPtrList& tracks);

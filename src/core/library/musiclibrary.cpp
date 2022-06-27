@@ -19,6 +19,7 @@
 
 #include "musiclibrary.h"
 
+#include "app/threadmanager.h"
 #include "core/playlist/libraryplaylistinterface.h"
 #include "core/scanner/libraryscanner.h"
 #include "database/database.h"
@@ -37,21 +38,24 @@
 #include <utility>
 
 namespace Library {
-MusicLibrary::MusicLibrary(LibraryPlaylistInterface* playlistInteractor, LibraryScanner* scanner, QObject* parent)
+MusicLibrary::MusicLibrary(LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
+                           ThreadManager* threadManager, QObject* parent)
     : QObject(parent)
     , m_playlistInteractor(playlistInteractor)
-    , m_scanner(scanner)
+    , m_libraryManager(libraryManager)
+    , m_threadManager(threadManager)
+    , m_scanner(m_libraryManager)
     , m_order(Library::SortOrder::YearDesc)
 {
-    m_scanner->moveToThread(&m_scannerThread);
-    m_libraryDatabaseManager.moveToThread(&m_libraryThread);
+    m_threadManager->moveToNewThread(&m_scanner);
+    m_threadManager->moveToNewThread(&m_libraryDatabaseManager);
 
-    connect(this, &MusicLibrary::runLibraryScan, m_scanner, &LibraryScanner::scanLibrary);
-    connect(this, &MusicLibrary::runAllLibrariesScan, m_scanner, &LibraryScanner::scanAll);
-    connect(m_scanner, &LibraryScanner::libraryAdded, this, &MusicLibrary::libraryAdded);
-    connect(m_scanner, &LibraryScanner::addedTracks, this, &MusicLibrary::newTracksAdded);
-    connect(m_scanner, &LibraryScanner::updatedTracks, this, &MusicLibrary::tracksUpdated);
-    connect(m_scanner, &LibraryScanner::tracksDeleted, this, &MusicLibrary::tracksDeleted);
+    connect(this, &MusicLibrary::runLibraryScan, &m_scanner, &LibraryScanner::scanLibrary);
+    connect(this, &MusicLibrary::runAllLibrariesScan, &m_scanner, &LibraryScanner::scanAll);
+    connect(&m_scanner, &LibraryScanner::libraryAdded, this, &MusicLibrary::libraryAdded);
+    connect(&m_scanner, &LibraryScanner::addedTracks, this, &MusicLibrary::newTracksAdded);
+    connect(&m_scanner, &LibraryScanner::updatedTracks, this, &MusicLibrary::tracksUpdated);
+    connect(&m_scanner, &LibraryScanner::tracksDeleted, this, &MusicLibrary::tracksDeleted);
 
     connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &MusicLibrary::tracksLoaded);
     connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotItems, this, &MusicLibrary::itemsHaveLoaded);
@@ -64,21 +68,12 @@ MusicLibrary::MusicLibrary(LibraryPlaylistInterface* playlistInteractor, Library
     connect(this, &MusicLibrary::loadAllTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
     connect(this, &MusicLibrary::loadFilteredTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::filterTracks);
 
-    m_libraryThread.start();
-    m_scannerThread.start();
-
     load();
 }
 
 MusicLibrary::~MusicLibrary()
 {
     qDeleteAll(m_tracks);
-
-    m_libraryThread.quit();
-    m_libraryThread.wait();
-
-    m_scannerThread.quit();
-    m_scannerThread.wait();
 }
 
 void MusicLibrary::load()

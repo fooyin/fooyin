@@ -21,13 +21,14 @@
 
 #include "utils/filterfwd.h"
 #include "utils/sortorder.h"
+#include "utils/worker.h"
 #include "utils/trackfwd.h"
 
 namespace DB {
 class LibraryDatabase;
 }
 
-class LibraryDatabaseManager : public QObject
+class LibraryDatabaseManager : public Worker
 {
     Q_OBJECT
 
@@ -40,6 +41,8 @@ public:
     void getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
                           ::Library::SortOrder order);
     void filterTracks(const TrackPtrList& tracks, const ActiveFilters& filters, const QString& search);
+
+    void stopThread() override;
 
 signals:
     void gotTracks(const TrackList& result);

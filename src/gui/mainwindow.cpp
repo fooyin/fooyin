@@ -68,6 +68,8 @@ MainWindow::MainWindow(WidgetProvider* widgetProvider, SettingsDialog* settingsD
     , p(std::make_unique<Private>(widgetProvider, settingsDialog))
 {
     QFontDatabase::addApplicationFont("://fonts/Guifx v2 Transports.ttf");
+
+    setupUi();
 }
 
 MainWindow::~MainWindow()

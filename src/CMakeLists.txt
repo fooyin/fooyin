@@ -3,6 +3,7 @@ configure_file(version.h.in "utils/version.h" @ONLY)
 
 set(HEADERS
     app/application.h
+    app/threadmanager.h
 
     core/engine/engine.h
     core/engine/enginempv.h
@@ -96,6 +97,7 @@ set(HEADERS
     utils/utils.h
     utils/settings.h
     utils/widgetprovider.h
+    utils/worker.h
     utils/version.h
 )
 
@@ -103,6 +105,7 @@ set(SOURCES
     main.cpp
 
     app/application.cpp
+    app/threadmanager.cpp
 
     core/engine/enginempv.cpp
     core/engine/enginehandler.cpp
