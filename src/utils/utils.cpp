@@ -210,7 +210,7 @@ QString capitalise(const QString& s)
 {
     QStringList parts = s.split(' ', Qt::SkipEmptyParts);
 
-    for(QString& part : parts) {
+    for(auto& part : parts) {
         part.replace(0, 1, part[0].toUpper());
     }
 

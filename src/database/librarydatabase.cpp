@@ -135,7 +135,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         AlbumList dbAlbums;
         getAllAlbums(dbAlbums);
 
-        for(const Album& album : qAsConst(dbAlbums)) {
+        for(const auto& album : qAsConst(dbAlbums)) {
             QString hash = Util::calcAlbumHash(album.title(), album.artist(), album.year());
             albumMap.insert(hash, album);
         }
@@ -147,7 +147,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         ArtistHash dbArtists;
         getAllArtists(dbArtists);
 
-        for(const Artist& artist : qAsConst(dbArtists)) {
+        for(const auto& artist : qAsConst(dbArtists)) {
             artistMap.insert(artist.name(), artist);
         }
     }
@@ -176,7 +176,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
 
     db().transaction();
 
-    for(Track& track : tracks) {
+    for(auto& track : tracks) {
         if(track.libraryId() < 0) {
             track.setLibraryId(m_libraryId);
         }
@@ -257,7 +257,7 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
 
     db().transaction();
 
-    for(Track& track : tracks) {
+    for(auto& track : tracks) {
         if(track.id() >= 0) {
             updateTrack(track);
             updateTrackArtists(track.id(), track.artistIds());
@@ -866,20 +866,20 @@ bool LibraryDatabase::updateTrackArtists(int id, const IdSet& artists)
         }
     }
 
-    for(const auto& artistId : databaseArtists) {
+    for(auto artistId : databaseArtists) {
         if(artists.contains(artistId)) {
             artistsToDelete.insert(artistId);
         }
     }
 
-    for(const auto& artistId : artists) {
+    for(auto artistId : artists) {
         if(databaseArtists.contains(artistId)) {
             artistsToInsert.insert(artistId);
         }
     }
 
     if(!artistsToDelete.empty()) {
-        for(const auto& artistId : artistsToDelete) {
+        for(auto artistId : artistsToDelete) {
             const auto bindings = QList<QPair<QString, QVariant>>{{"TrackID", id}, {"ArtistID", artistId}};
 
             const auto q2
@@ -891,7 +891,7 @@ bool LibraryDatabase::updateTrackArtists(int id, const IdSet& artists)
         }
     }
 
-    for(const auto& artist : artistsToInsert) {
+    for(auto artist : artistsToInsert) {
         const auto bindings = QMap<QString, QVariant>{{"TrackID", id}, {"ArtistID", artist}};
 
         const auto q2
@@ -927,20 +927,20 @@ bool LibraryDatabase::updateTrackGenres(int id, const IdSet& genres)
         }
     }
 
-    for(const auto& genreId : databaseGenres) {
+    for(auto genreId : databaseGenres) {
         if(genres.contains(genreId)) {
             genresToDelete.insert(genreId);
         }
     }
 
-    for(const auto& genreId : genres) {
+    for(auto genreId : genres) {
         if(databaseGenres.contains(genreId)) {
             genresToInsert.insert(genreId);
         }
     }
 
     if(!genresToDelete.empty()) {
-        for(const auto& genreId : genresToDelete) {
+        for(auto genreId : genresToDelete) {
             const auto bindings = QList<QPair<QString, QVariant>>{{"TrackID", id}, {"GenreID", genreId}};
 
             const auto q2
@@ -952,7 +952,7 @@ bool LibraryDatabase::updateTrackGenres(int id, const IdSet& genres)
         }
     }
 
-    for(const auto& genre : genresToInsert) {
+    for(auto genre : genresToInsert) {
         const auto bindings = QMap<QString, QVariant>{{"TrackID", id}, {"GenreID", genre}};
 
         const auto q3 = module()->insert("TrackGenres", bindings, QString("Cannot insert track genre %1").arg(genre));

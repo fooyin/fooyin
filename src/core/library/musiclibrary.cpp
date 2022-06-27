@@ -160,7 +160,7 @@ void MusicLibrary::filteredTracksLoaded(TrackPtrList tracks)
 
 void MusicLibrary::newTracksAdded(const TrackList& tracks)
 {
-    for(const Track& track : tracks) {
+    for(const auto& track : tracks) {
         auto* trackPtr = new Track(track);
         m_tracks.append(trackPtr);
         m_trackMap.insert(trackPtr->id(), trackPtr);
@@ -172,7 +172,7 @@ void MusicLibrary::newTracksAdded(const TrackList& tracks)
 
 void MusicLibrary::tracksUpdated(const TrackList& tracks)
 {
-    for(const Track& track : tracks) {
+    for(const auto& track : tracks) {
         Track* libraryTrack = m_trackMap.value(track.id(), nullptr);
         if(libraryTrack) {
             *libraryTrack = track;
@@ -184,7 +184,7 @@ void MusicLibrary::tracksUpdated(const TrackList& tracks)
 
 void MusicLibrary::tracksDeleted(const IdSet& tracks)
 {
-    for(int trackId : tracks) {
+    for(auto trackId : tracks) {
         Track* libTrack = m_trackMap.value(trackId);
         libTrack->setIsEnabled(false);
     }
@@ -213,7 +213,7 @@ void MusicLibrary::refreshTracks(const TrackList& result)
     m_tracks.clear();
     m_trackMap.clear();
     m_filteredTracks.clear();
-    for(const Track& track : result) {
+    for(const auto& track : result) {
         auto* trackPtr = new Track(track);
         m_tracks.append(trackPtr);
         m_trackMap.insert(trackPtr->id(), trackPtr);
@@ -322,7 +322,7 @@ void MusicLibrary::selectionChanged(const IdSet& indexes, Filters::FilterType ty
 void MusicLibrary::changeTrackSelection(const QSet<Track*>& tracks)
 {
     QSet<Track*> newSelectedTracks;
-    for(auto* track : tracks) {
+    for(const auto& track : tracks) {
         newSelectedTracks.insert(track);
     }
 

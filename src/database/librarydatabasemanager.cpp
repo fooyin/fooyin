@@ -66,7 +66,7 @@ void LibraryDatabaseManager::filterTracks(const TrackPtrList& tracks, const Acti
 {
     TrackPtrList filteredTracks;
 
-    for(Track* track : tracks) {
+    for(const auto& track : tracks) {
         int matches = 0;
         int total = static_cast<int>(filters.size()) + (search.isEmpty() ? 0 : 1);
 

@@ -38,7 +38,7 @@ ThreadManager::~ThreadManager() = default;
 
 void ThreadManager::close()
 {
-    for(Worker* worker : p->workers) {
+    for(const auto& worker : p->workers) {
         worker->stopThread();
     }
 

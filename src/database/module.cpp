@@ -98,7 +98,7 @@ DB::Query Module::runQuery(const QString& query, const QMap<QString, QVariant>& 
     q.prepareQuery(query);
 
     const QList<QString> keys = bindings.keys();
-    for(const QString& k : keys) {
+    for(const auto& k : keys) {
         q.bindQueryValue(k, bindings[k]);
     }
 
@@ -123,7 +123,7 @@ DB::Query Module::insert(const QString& tableName, const QMap<QString, QVariant>
     DB::Query q(this);
     q.prepareQuery(query);
 
-    for(const QString& field : fieldNames) {
+    for(const auto& field : fieldNames) {
         q.bindQueryValue(":" + field, fieldBindings[field]);
     }
 
@@ -140,7 +140,7 @@ DB::Query Module::update(const QString& tableName, const QMap<QString, QVariant>
     const QStringList fieldNames = fieldBindings.keys();
 
     QStringList updateCommands;
-    for(const QString& field : fieldNames) {
+    for(const auto& field : fieldNames) {
         updateCommands << field + " = :" + field;
     }
 
@@ -152,7 +152,7 @@ DB::Query Module::update(const QString& tableName, const QMap<QString, QVariant>
     DB::Query q(this);
     q.prepareQuery(query);
 
-    for(const QString& field : fieldNames) {
+    for(const auto& field : fieldNames) {
         q.bindQueryValue(":" + field, fieldBindings.value(field));
     }
 

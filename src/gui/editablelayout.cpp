@@ -177,7 +177,7 @@ void EditableLayout::iterateSplitter(QJsonObject& splitterObject, QJsonArray& Sp
 {
     QJsonArray array;
 
-    for(auto& [type, widget] : splitter->children()) {
+    for(const auto& [type, widget] : splitter->children()) {
         auto* childSplitter = qobject_cast<SplitterWidget*>(widget);
         if(childSplitter) {
             iterateSplitter(splitterObject, array, childSplitter, false);
@@ -231,7 +231,7 @@ void EditableLayout::saveLayout()
 // TODO: Move to splitter widget to remove recursion.
 void EditableLayout::iterateInsertSplitter(const QJsonArray& array, SplitterWidget* splitter)
 {
-    for(const auto widget : array) {
+    for(const auto& widget : array) {
         QJsonObject object = widget.toObject();
         if(object.contains("Splitter")) {
             QJsonObject SplitterWidgetSubObject = object["Splitter"].toObject();

@@ -63,7 +63,7 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
     TrackPathMap trackMap{};
     IdSet tracksToDelete{};
 
-    for(Track* track : tracks) {
+    for(const auto& track : tracks) {
         if(!Util::File::exists(track->filepath())) {
             tracksToDelete.insert(track->id());
         }
@@ -94,7 +94,7 @@ void LibraryScanner::scanAll(TrackPtrList& tracks)
 {
     const auto libraries = m_libraryManager->allLibraries();
 
-    for(const LibraryInfo& info : libraries) {
+    for(const auto& info : libraries) {
         scanLibrary(tracks, info);
     }
 }
@@ -150,7 +150,7 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
 
     QStringList files = getFiles(dir);
 
-    for(const QString& filepath : files) {
+    for(const auto& filepath : files) {
         if(!m_mayRun) {
             return false;
         }
