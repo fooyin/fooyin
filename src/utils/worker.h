@@ -24,9 +24,33 @@
 class Worker : public QObject
 {
 public:
+    enum State
+    {
+        IDLE,
+        RUNNING
+    };
+
     Worker(QObject* parent = nullptr)
         : QObject(parent){};
     ~Worker() override = default;
 
     virtual void stopThread() = 0;
+
+    [[nodiscard]] State state() const
+    {
+        return m_state;
+    };
+
+    void setState(State state)
+    {
+        m_state = state;
+    };
+
+    [[nodiscard]] bool isRunning()
+    {
+        return m_state == State::RUNNING;
+    };
+
+private:
+    State m_state{IDLE};
 };

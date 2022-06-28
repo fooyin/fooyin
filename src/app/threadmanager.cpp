@@ -38,9 +38,7 @@ ThreadManager::~ThreadManager() = default;
 
 void ThreadManager::close()
 {
-    for(const auto& worker : p->workers) {
-        worker->stopThread();
-    }
+    emit stop();
 
     for(const auto& thread : p->threads) {
         thread->quit();
@@ -55,5 +53,6 @@ void ThreadManager::moveToNewThread(Worker* worker)
     thread->start();
 
     worker->moveToThread(thread);
+    connect(this, &ThreadManager::stop, worker, &Worker::stopThread);
     p->workers.append(worker);
 }

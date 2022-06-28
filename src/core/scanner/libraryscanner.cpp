@@ -27,15 +27,15 @@
 #include "tagging/tags.h"
 #include "utils/utils.h"
 
+#include <QAbstractEventDispatcher>
 #include <QDir>
 #include <QDirIterator>
+#include <QThread>
 
 namespace Library {
 LibraryScanner::LibraryScanner(LibraryManager* libraryManager, QObject* parent)
     : Worker(parent)
     , m_libraryManager(libraryManager)
-    , m_mayRun(true)
-    , m_isRunning(false)
 { }
 
 LibraryScanner::~LibraryScanner()
@@ -45,20 +45,30 @@ LibraryScanner::~LibraryScanner()
 
 void LibraryScanner::stopThread()
 {
-    m_mayRun = false;
+    setState(State::IDLE);
+}
+
+bool LibraryScanner::mayRun() const
+{
+    // Process event queue to check for stop signals
+    auto* dispatcher = QThread::currentThread()->eventDispatcher();
+    if(!dispatcher) {
+        return false;
+    }
+    dispatcher->processEvents(QEventLoop::AllEvents);
+    return state() == State::RUNNING;
 }
 
 void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
 {
-    if(m_isRunning) {
+    if(isRunning()) {
         return;
     }
 
     auto* db = DB::Database::instance();
     DB::LibraryDatabase* libraryDatabase = db->libraryDatabase();
 
-    m_mayRun = true;
-    m_isRunning = true;
+    setState(State::RUNNING);
 
     TrackPathMap trackMap{};
     IdSet tracksToDelete{};
@@ -70,7 +80,7 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
         else {
             trackMap.insert(track->filepath(), track);
         }
-        if(!m_mayRun) {
+        if(!mayRun()) {
             return;
         }
     }
@@ -81,13 +91,13 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
         emit tracksDeleted(tracksToDelete);
     }
 
-    if(!m_mayRun) {
+    if(!mayRun()) {
         return;
     }
 
     getAndSaveAllFiles(info.id(), info.path(), trackMap);
 
-    m_isRunning = false;
+    setState(State::IDLE);
 }
 
 void LibraryScanner::scanAll(TrackPtrList& tracks)
@@ -101,7 +111,7 @@ void LibraryScanner::scanAll(TrackPtrList& tracks)
 
 void LibraryScanner::storeTracks(TrackList& tracks) const
 {
-    if(!m_mayRun) {
+    if(!mayRun()) {
         return;
     }
 
@@ -110,7 +120,7 @@ void LibraryScanner::storeTracks(TrackList& tracks) const
 
     libraryDatabase->storeTracks(tracks);
 
-    if(!m_mayRun) {
+    if(!mayRun()) {
         return;
     }
 
@@ -151,7 +161,7 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
     QStringList files = getFiles(dir);
 
     for(const auto& filepath : files) {
-        if(!m_mayRun) {
+        if(!mayRun()) {
             return false;
         }
 

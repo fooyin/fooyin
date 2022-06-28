@@ -25,6 +25,8 @@ class Worker;
 
 class ThreadManager : public QObject
 {
+    Q_OBJECT
+
 public:
     ThreadManager(QObject* parent = nullptr);
     ~ThreadManager() override;
@@ -32,6 +34,9 @@ public:
     void close();
 
     void moveToNewThread(Worker* worker);
+
+signals:
+    void stop();
 
 private:
     struct Private;

@@ -45,9 +45,6 @@ LibraryManager::LibraryManager(QObject* parent)
     , m_libraryConnector(m_database->libraryConnector())
 {
     reset();
-
-    //    connect(this, &Library::LibraryManager::libraryAdded, m_library, &Library::MusicLibrary::reload);
-    //    connect(this, &Library::LibraryManager::libraryRemoved, m_library, &Library::MusicLibrary::refresh);
 }
 
 LibraryManager::~LibraryManager() = default;

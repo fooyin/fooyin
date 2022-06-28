@@ -20,8 +20,8 @@
 #pragma once
 
 #include "core/library/libraryinfo.h"
-#include "utils/worker.h"
 #include "utils/trackfwd.h"
+#include "utils/worker.h"
 
 class QDir;
 
@@ -36,6 +36,7 @@ public:
     ~LibraryScanner() override;
 
     void stopThread() override;
+    bool mayRun() const;
 
     void scanLibrary(TrackPtrList& tracks, const LibraryInfo& info);
     void scanAll(TrackPtrList& tracks);
@@ -53,8 +54,5 @@ protected:
 
 private:
     LibraryManager* m_libraryManager;
-
-    bool m_mayRun;
-    bool m_isRunning;
 };
 } // namespace Library

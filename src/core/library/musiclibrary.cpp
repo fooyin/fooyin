@@ -50,6 +50,8 @@ MusicLibrary::MusicLibrary(LibraryPlaylistInterface* playlistInteractor, Library
     m_threadManager->moveToNewThread(&m_scanner);
     m_threadManager->moveToNewThread(&m_libraryDatabaseManager);
 
+    connect(libraryManager, &Library::LibraryManager::libraryRemoved, &m_scanner, &LibraryScanner::stopThread);
+
     connect(this, &MusicLibrary::runLibraryScan, &m_scanner, &LibraryScanner::scanLibrary);
     connect(this, &MusicLibrary::runAllLibrariesScan, &m_scanner, &LibraryScanner::scanAll);
     connect(&m_scanner, &LibraryScanner::libraryAdded, this, &MusicLibrary::libraryAdded);
