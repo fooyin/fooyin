@@ -30,8 +30,7 @@ public:
         RUNNING
     };
 
-    Worker(QObject* parent = nullptr);
-    ;
+    explicit Worker(QObject* parent = nullptr);
     ~Worker() override = default;
 
     virtual void stopThread() = 0;

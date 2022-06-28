@@ -33,7 +33,7 @@ struct SettingsDialog::Private
     QListWidget* contentsWidget;
     QStackedWidget* pagesWidget;
 
-    Private(Library::LibraryManager* libManager)
+    explicit Private(Library::LibraryManager* libManager)
         : libraryManager(libManager)
     { }
 

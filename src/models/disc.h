@@ -28,7 +28,7 @@ class Album;
 class Disc : public Container
 {
 public:
-    Disc(int number);
+    explicit Disc(int number);
     ~Disc() override;
 
     [[nodiscard]] int number() const;

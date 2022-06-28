@@ -25,7 +25,7 @@ namespace DB {
 class Playlist : private Module
 {
 public:
-    Playlist(const QString& connectionName);
+    explicit Playlist(const QString& connectionName);
     ~Playlist() override;
 };
 } // namespace DB

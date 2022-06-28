@@ -30,7 +30,7 @@ class NoLibraryOverlay : public QWidget
     Q_OBJECT
 
 public:
-    NoLibraryOverlay(QWidget* parent = nullptr);
+    explicit NoLibraryOverlay(QWidget* parent = nullptr);
     ~NoLibraryOverlay() override;
 
 signals:

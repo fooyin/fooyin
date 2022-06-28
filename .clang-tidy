@@ -6,6 +6,7 @@ Checks: >
   performance-*,
   portability-*,
   readability-*,
+  google-explicit-constructor,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-init-variables,
   -cppcoreguidelines-non-private-member-variables-in-classes,

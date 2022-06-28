@@ -27,7 +27,7 @@ class Query;
 class Module
 {
 public:
-    Module(QString connectionName);
+    explicit Module(QString connectionName);
     virtual ~Module();
 
     [[nodiscard]] QSqlDatabase db() const;

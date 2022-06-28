@@ -48,7 +48,7 @@ struct Application::Private
     WidgetProvider* widgetProvider;
     MainWindow* mainWindow;
 
-    Private(QObject* parent)
+    explicit Private(QObject* parent)
         : threadManager(new ThreadManager(parent))
         , db(DB::Database::instance())
         , settings(Settings::instance())

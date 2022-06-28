@@ -8,7 +8,7 @@ class InfoItem;
 class InfoModel : public QAbstractItemModel
 {
 public:
-    InfoModel(QObject* parent = nullptr);
+    explicit InfoModel(QObject* parent = nullptr);
     ~InfoModel() override;
 
     void setupModel();

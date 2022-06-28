@@ -28,7 +28,7 @@ class ThreadManager : public QObject
     Q_OBJECT
 
 public:
-    ThreadManager(QObject* parent = nullptr);
+    explicit ThreadManager(QObject* parent = nullptr);
     ~ThreadManager() override;
 
     void close();

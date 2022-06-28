@@ -5,6 +5,6 @@
 class InfoView : public QTreeView
 {
 public:
-    InfoView(QWidget* parent = nullptr);
+    explicit InfoView(QWidget* parent = nullptr);
     ~InfoView() override;
 };
