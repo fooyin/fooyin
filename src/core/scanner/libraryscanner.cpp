@@ -123,10 +123,6 @@ void LibraryScanner::storeTracks(TrackList& tracks) const
     if(!mayRun()) {
         return;
     }
-
-    db->transaction();
-
-    db->commit();
 }
 
 QStringList LibraryScanner::getFiles(QDir& baseDirectory)
