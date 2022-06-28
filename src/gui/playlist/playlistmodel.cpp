@@ -148,7 +148,6 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
     return QString("%1 Tracks").arg(m_library->tracks().size());
 }
 
-// TODO : Split into separate functions for each type
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 {
     if(!index.isValid()) {
@@ -168,159 +167,178 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     }
 
     switch(type) {
-        case(PlaylistItem::Type::Album): {
-            auto* album = dynamic_cast<Album*>(item->data());
-            if(album) {
-                switch(role) {
-                    case(ItemRole::Id): {
-                        return album->id();
-                    }
-                    case(Qt::DisplayRole): {
-                        QString title = !album->title().isEmpty() ? album->title() : "Unknown Title";
-                        if(!album->subTitle().isEmpty()) {
-                            title += " \u25AA ";
-                            title += album->subTitle();
-                        }
-                        return title;
-                    }
-                    case(ItemRole::Cover): {
-                        return Covers::albumCover(album);
-                    }
-                    case(ItemRole::Artist): {
-                        return !album->artist().isEmpty() ? album->artist() : "Unknown Artist";
-                    }
-                    case(ItemRole::Duration): {
-                        const auto genre = album->genres().join(" / ");
-                        const auto count = album->trackCount();
-                        const auto duration = album->duration();
+        case(PlaylistItem::Type::Album):
+            return albumData(item, role);
+        case(PlaylistItem::Type::Track):
+            return trackData(item, role);
+        case(PlaylistItem::Type::Disc):
+            return discData(item, role);
+        default:
+            return {};
+    }
+    return {};
+}
 
-                        QString dur = genre;
-                        if(!genre.isEmpty()) {
-                            dur += " | ";
-                        }
-                        dur += QString(QString::number(count) + (count > 1 ? " Tracks" : " Track") + " | "
-                                       + Util::msToString(duration));
-                        return dur;
-                    }
-                    case(ItemRole::Year): {
-                        return album->year();
-                    }
-                    default: {
-                        return {};
-                    }
-                }
+QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
+{
+    auto* track = static_cast<Track*>(item->data());
+
+    if(!track) {
+        return {};
+    }
+
+    switch(role) {
+        case(ItemRole::Id): {
+            return track->id();
+        }
+        case(ItemRole::Number): {
+            return QStringLiteral("%1").arg(track->trackNumber(), 2, 10, QLatin1Char('0'));
+        }
+        case(Qt::DisplayRole): {
+            return !track->title().isEmpty() ? track->title() : "Unknown Title";
+        }
+        case(ItemRole::Artist): {
+            return trackArtistString(track);
+        }
+        case(ItemRole::PlayCount): {
+            const int count = track->playCount();
+            if(count > 0) {
+                return QString::number(count) + QString("|");
+            }
+            return {};
+        }
+        case(ItemRole::Duration): {
+            return Util::msToString(track->duration());
+        }
+        case(ItemRole::MultiDisk): {
+            if(item->parent()->type() == PlaylistItem::Type::Disc
+               && m_settings->value(Settings::Setting::DiscHeaders).toBool()
+               && !m_settings->value(Settings::Setting::SplitDiscs).toBool()) {
+                return true;
+            }
+            return false;
+        }
+        case(ItemRole::Playing): {
+            return m_playerManager->currentTrack() && m_playerManager->currentTrack()->id() == track->id();
+        }
+        case(ItemRole::State): {
+            switch(m_playerManager->playState()) {
+                case(Player::PlayState::Playing):
+                    return "1";
+                case(Player::PlayState::Paused):
+                    return "2";
+                default:
+                    break;
             }
             break;
         }
-
-        case(PlaylistItem::Type::Track): {
-            auto* track = dynamic_cast<Track*>(item->data());
-            if(track) {
-                switch(role) {
-                    case(ItemRole::Id): {
-                        return track->id();
-                    }
-                    case(ItemRole::Number): {
-                        return QStringLiteral("%1").arg(track->trackNumber(), 2, 10, QLatin1Char('0'));
-                    }
-                    case(Qt::DisplayRole): {
-                        return !track->title().isEmpty() ? track->title() : "Unknown Title";
-                    }
-                    case(ItemRole::Artist): {
-                        QString artistString;
-                        for(const auto& artist : track->artists()) {
-                            if(artist != track->albumArtist()) {
-                                if(artistString.isEmpty()) {
-                                    artistString += "  \u2022  ";
-                                }
-                                else {
-                                    artistString += ", ";
-                                }
-                                artistString += artist;
-                            }
-                        }
-                        return artistString;
-                    }
-                    case(ItemRole::PlayCount): {
-                        const int count = track->playCount();
-                        if(count > 0) {
-                            return QString::number(count) + QString("|");
-                        }
-                        return {};
-                    }
-                    case(ItemRole::Duration): {
-                        return Util::msToString(track->duration());
-                    }
-                    case(ItemRole::MultiDisk): {
-                        if(item->parent()->type() == PlaylistItem::Type::Disc
-                           && m_settings->value(Settings::Setting::DiscHeaders).toBool()
-                           && !m_settings->value(Settings::Setting::SplitDiscs).toBool()) {
-                            return true;
-                        }
-                        return false;
-                    }
-                    case(ItemRole::Playing): {
-                        return m_playerManager->currentTrack() && m_playerManager->currentTrack()->id() == track->id();
-                    }
-                    case(ItemRole::State): {
-                        switch(m_playerManager->playState()) {
-                            case(Player::PlayState::Playing):
-                                return "1";
-                            case(Player::PlayState::Paused):
-                                return "2";
-                            default:
-                                break;
-                        }
-                        break;
-                    }
-                    case(ItemRole::Path): {
-                        return track->filepath();
-                    }
-                    case(ItemRole::Index): {
-                        return item->index();
-                    }
-                    case(ItemRole::Data): {
-                        return QVariant::fromValue<Track*>(track);
-                    }
-                    case(Qt::BackgroundRole): {
-                        return m_settings->value(Settings::Setting::PlaylistAltColours).toBool()
-                                 ? index.row() & 1 ? QPalette::Base : QPalette::AlternateBase
-                                 : QPalette::Base;
-                    }
-                    default: {
-                        return {};
-                    }
-                }
-            }
-            break;
+        case(ItemRole::Path): {
+            return track->filepath();
         }
-
-        case(PlaylistItem::Type::Disc): {
-            auto* disc = dynamic_cast<Disc*>(item->data());
-            if(disc) {
-                switch(role) {
-                        //                    case (ItemRole::Id): {
-                        //                        return disc->id();
-                        //                    }
-                    case(Qt::DisplayRole): {
-                        return "Disc #" + QString::number(disc->number());
-                    }
-                    case(ItemRole::Duration): {
-                        auto duration = static_cast<int>(disc->duration());
-                        return QString(Util::msToString(duration));
-                    }
-                    default: {
-                        return {};
-                    }
-                }
-            }
-            break;
+        case(ItemRole::Index): {
+            return item->index();
+        }
+        case(ItemRole::Data): {
+            return QVariant::fromValue<Track*>(track);
+        }
+        case(Qt::BackgroundRole): {
+            return m_settings->value(Settings::Setting::PlaylistAltColours).toBool()
+                     ? item->row() & 1 ? QPalette::Base : QPalette::AlternateBase
+                     : QPalette::Base;
         }
         default: {
             return {};
         }
     }
     return {};
+}
+
+QVariant PlaylistModel::albumData(PlaylistItem* item, int role) const
+{
+    auto* album = static_cast<Album*>(item->data());
+
+    if(!album) {
+        return {};
+    }
+
+    switch(role) {
+        case(ItemRole::Id): {
+            return album->id();
+        }
+        case(Qt::DisplayRole): {
+            QString title = !album->title().isEmpty() ? album->title() : "Unknown Title";
+            if(!album->subTitle().isEmpty()) {
+                title += " \u25AA ";
+                title += album->subTitle();
+            }
+            return title;
+        }
+        case(ItemRole::Cover): {
+            return Covers::albumCover(album);
+        }
+        case(ItemRole::Artist): {
+            return !album->artist().isEmpty() ? album->artist() : "Unknown Artist";
+        }
+        case(ItemRole::Duration): {
+            const auto genre = album->genres().join(" / ");
+            const auto count = album->trackCount();
+            const auto duration = album->duration();
+
+            QString dur = genre;
+            if(!genre.isEmpty()) {
+                dur += " | ";
+            }
+            dur += QString(QString::number(count) + (count > 1 ? " Tracks" : " Track") + " | "
+                           + Util::msToString(duration));
+            return dur;
+        }
+        case(ItemRole::Year): {
+            return album->year();
+        }
+        default: {
+            return {};
+        }
+    }
+    return {};
+}
+
+QVariant PlaylistModel::discData(PlaylistItem* item, int role) const
+{
+    auto* disc = static_cast<Disc*>(item->data());
+
+    if(!disc) {
+        return {};
+    }
+
+    switch(role) {
+        case(Qt::DisplayRole): {
+            return "Disc #" + QString::number(disc->number());
+        }
+        case(ItemRole::Duration): {
+            auto duration = static_cast<int>(disc->duration());
+            return QString(Util::msToString(duration));
+        }
+        default: {
+            return {};
+        }
+    }
+}
+
+QString PlaylistModel::trackArtistString(Track* track) const
+{
+    QString artistString;
+    for(const auto& artist : track->artists()) {
+        if(artist != track->albumArtist()) {
+            if(artistString.isEmpty()) {
+                artistString += "  \u2022  ";
+            }
+            else {
+                artistString += ", ";
+            }
+            artistString += artist;
+        }
+    }
+    return artistString;
 }
 
 QModelIndex PlaylistModel::index(int row, int column, const QModelIndex& parent) const

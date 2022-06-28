@@ -46,6 +46,12 @@ public:
     PlaylistItem* iterateTrack(Track* track, bool discHeaders, bool splitDiscs);
 
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] QVariant trackData(PlaylistItem* item, int role) const;
+    [[nodiscard]] QVariant albumData(PlaylistItem* item, int role) const;
+    [[nodiscard]] QVariant discData(PlaylistItem* item, int role) const;
+
+    [[nodiscard]] QString trackArtistString(Track* track) const;
+
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
