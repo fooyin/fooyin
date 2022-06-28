@@ -18,6 +18,8 @@ set(HEADERS
     core/playlist/playlisthandler.h
     core/player/playermanager.h
     core/scanner/libraryscanner.h
+    core/tagging/tags.h
+    core/tagging/tagutils.h
 
     database/database.h
     database/library.h
@@ -82,9 +84,6 @@ set(HEADERS
     models/disc.h
     models/track.h
 
-    tagging/tags.h
-    tagging/tagutils.h
-
     utils/coverprovider.h
     utils/enumhelper.h
     utils/filterfwd.h
@@ -118,6 +117,8 @@ set(SOURCES
     core/playlist/playlisthandler.cpp
     core/playlist/playlistmanager.h
     core/scanner/libraryscanner.cpp
+    core/tagging/tags.cpp
+    core/tagging/tagutils.cpp
 
     database/database.cpp
     database/library.cpp
@@ -181,9 +182,6 @@ set(SOURCES
     models/artist.cpp
     models/disc.cpp
     models/track.cpp
-
-    tagging/tags.cpp
-    tagging/tagutils.cpp
 
     utils/coverprovider.cpp
     utils/settings.cpp

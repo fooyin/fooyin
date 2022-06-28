@@ -20,11 +20,11 @@
 #include "libraryscanner.h"
 
 #include "core/library/librarymanager.h"
+#include "core/tagging/tags.h"
 #include "database/database.h"
 #include "database/librarydatabase.h"
 #include "models/album.h"
 #include "models/track.h"
-#include "tagging/tags.h"
 #include "utils/utils.h"
 
 #include <QAbstractEventDispatcher>
@@ -129,8 +129,8 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
 {
     QStringList ret = {};
 
-    QStringList soundFileExtensions = {"*.mp3", "*.ogg", "*.opus", "*.oga",  "*.m4a", "*.wav",  "*.flac",
-                                       "*.aac", "*.wma", "*.mpc",  "*.aiff", "*.ape", "*.webm", "*.mp4"};
+    QStringList soundFileExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga",  "*.m4a", "*.wav",  "*.flac",
+                                    "*.aac", "*.wma", "*.mpc",  "*.aiff", "*.ape", "*.webm", "*.mp4"};
 
     baseDirectory.setNameFilters(soundFileExtensions);
     baseDirectory.setFilter(QDir::Files);
