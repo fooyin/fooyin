@@ -17,31 +17,37 @@
  *
  */
 
-#pragma once
+#include "worker.h"
 
-#include <QObject>
+#include <QAbstractEventDispatcher>
+#include <QThread>
 
-class Worker : public QObject
+Worker::Worker(QObject* parent)
+    : QObject(parent)
+{ }
+
+Worker::State Worker::state() const
 {
-public:
-    enum State
-    {
-        IDLE = 0,
-        RUNNING
-    };
+    return m_state;
+}
 
-    Worker(QObject* parent = nullptr);
-    ;
-    ~Worker() override = default;
+void Worker::setState(State state)
+{
+    m_state = state;
+}
 
-    virtual void stopThread() = 0;
+bool Worker::isRunning()
+{
+    return m_state == State::RUNNING;
+}
 
-    [[nodiscard]] State state() const;
-    void setState(State state);
-
-    [[nodiscard]] bool isRunning();
-    [[nodiscard]] bool mayRun() const;
-
-private:
-    State m_state;
-};
+bool Worker::mayRun() const
+{
+    // Process event queue to check for stop signals
+    auto* dispatcher = QThread::currentThread()->eventDispatcher();
+    if(!dispatcher) {
+        return false;
+    }
+    dispatcher->processEvents(QEventLoop::AllEvents);
+    return m_state == State::RUNNING;
+}

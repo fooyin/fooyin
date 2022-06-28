@@ -191,6 +191,7 @@ set(SOURCES
     utils/paths.cpp
     utils/utils.cpp
     utils/widgetprovider.cpp
+    utils/worker.cpp
 )
 
 set(RESOURCES
