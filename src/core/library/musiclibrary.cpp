@@ -20,11 +20,11 @@
 #include "musiclibrary.h"
 
 #include "app/threadmanager.h"
+#include "core/library/librarydatabasemanager.h"
 #include "core/playlist/libraryplaylistinterface.h"
 #include "core/scanner/libraryscanner.h"
 #include "database/database.h"
 #include "database/librarydatabase.h"
-#include "database/librarydatabasemanager.h"
 #include "libraryinfo.h"
 #include "librarymanager.h"
 #include "models/album.h"

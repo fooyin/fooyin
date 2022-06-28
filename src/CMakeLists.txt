@@ -10,6 +10,7 @@ set(HEADERS
     core/engine/enginehandler.h
     core/library/libraryinfo.h
     core/library/librarymanager.h
+    core/library/librarydatabasemanager.h
     core/library/musiclibrary.h
     core/player/playercontroller.h
     core/playlist/libraryplaylistinterface.h
@@ -24,7 +25,6 @@ set(HEADERS
     database/database.h
     database/library.h
     database/librarydatabase.h
-    database/librarydatabasemanager.h
     database/module.h
     database/playlistdatabase.h
     database/query.h
@@ -111,6 +111,7 @@ set(SOURCES
     core/library/libraryinfo.cpp
     core/library/librarymanager.cpp
     core/library/musiclibrary.cpp
+    core/library/librarydatabasemanager.cpp
     core/player/playercontroller.cpp
     core/playlist/libraryplaylistmanager.cpp
     core/playlist/playlist.cpp
@@ -123,7 +124,6 @@ set(SOURCES
     database/database.cpp
     database/library.cpp
     database/librarydatabase.cpp
-    database/librarydatabasemanager.cpp
     database/module.cpp
     database/playlistdatabase.cpp
     database/query.cpp

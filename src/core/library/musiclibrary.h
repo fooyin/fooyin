@@ -19,8 +19,8 @@
 
 #pragma once
 
+#include "core/library/librarydatabasemanager.h"
 #include "core/scanner/libraryscanner.h"
-#include "database/librarydatabasemanager.h"
 #include "libraryinfo.h"
 #include "utils/filterfwd.h"
 #include "utils/sortorder.h"

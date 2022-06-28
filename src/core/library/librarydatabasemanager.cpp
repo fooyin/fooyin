@@ -19,8 +19,8 @@
 
 #include "librarydatabasemanager.h"
 
-#include "database.h"
-#include "librarydatabase.h"
+#include "database/database.h"
+#include "database/librarydatabase.h"
 #include "utils/helpers.h"
 
 LibraryDatabaseManager::LibraryDatabaseManager(QObject* parent)
