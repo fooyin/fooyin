@@ -60,7 +60,7 @@ struct Application::Private
         , library(new Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, parent))
         , settingsDialog(std::make_unique<SettingsDialog>(libraryManager))
         , widgetProvider(new WidgetProvider(playerManager, libraryManager, library, settingsDialog.get(), parent))
-        , mainWindow(new MainWindow(widgetProvider, settingsDialog.get()))
+        , mainWindow(new MainWindow(widgetProvider, settingsDialog.get(), library))
     {
         threadManager->moveToNewThread(&engine);
 

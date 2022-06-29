@@ -19,6 +19,7 @@
 
 #include "mainwindow.h"
 
+#include "core/library/musiclibrary.h"
 #include "gui/editablelayout.h"
 #include "gui/quicksetupdialog.h"
 #include "gui/settings/settingsdialog.h"
@@ -36,6 +37,7 @@ struct MainWindow::Private
 {
     EditableLayout* mainLayout;
     SettingsDialog* settingsDialog;
+    Library::MusicLibrary* library;
 
     QMenuBar* menuBar;
 
@@ -49,6 +51,7 @@ struct MainWindow::Private
     QAction* openSettings;
     QAction* layoutEditing;
     QAction* openQuickSetup;
+    QAction* rescan;
 
     Settings* settings;
 
@@ -56,16 +59,18 @@ struct MainWindow::Private
 
     WidgetProvider* widgetProvider;
 
-    Private(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog)
+    Private(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, Library::MusicLibrary* library)
         : settingsDialog(settingsDialog)
+        , library(library)
         , settings(Settings::instance())
         , widgetProvider(widgetProvider)
     { }
 };
 
-MainWindow::MainWindow(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, QWidget* parent)
+MainWindow::MainWindow(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, Library::MusicLibrary* library,
+                       QWidget* parent)
     : QMainWindow(parent)
-    , p(std::make_unique<Private>(widgetProvider, settingsDialog))
+    , p(std::make_unique<Private>(widgetProvider, settingsDialog, library))
 {
     QFontDatabase::addApplicationFont("://fonts/Guifx v2 Transports.ttf");
 
@@ -111,6 +116,7 @@ void MainWindow::setupUi()
     p->openSettings = new QAction(this);
     p->layoutEditing = new QAction(this);
     p->openQuickSetup = new QAction(this);
+    p->rescan = new QAction(this);
 
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value(Settings::Setting::LayoutEditing).toBool());
@@ -132,11 +138,14 @@ void MainWindow::setupUi()
     p->openSettings->setText("Settings");
     p->layoutEditing->setText("Layout Editing Mode");
     p->openQuickSetup->setText("Quick Setup");
+    p->rescan->setText("Rescan Library");
 
+    p->menuLibrary->addAction(p->rescan);
     p->menuLibrary->addAction(p->openSettings);
     p->menuView->addAction(p->layoutEditing);
     p->menuView->addAction(p->openQuickSetup);
 
+    connect(p->rescan, &QAction::triggered, p->library, &Library::MusicLibrary::reloadAll);
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
     connect(p->layoutEditing, &QAction::triggered, this, [this](bool checked) {
         p->settings->set(Settings::Setting::LayoutEditing, checked);
