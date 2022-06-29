@@ -26,13 +26,14 @@ class MusicLibrary;
 }
 
 class Splitter;
+class WidgetProvider;
 
 class SearchWidget : public Widget
 {
     Q_OBJECT
 
 public:
-    explicit SearchWidget(Library::MusicLibrary* library, QWidget* parent = nullptr);
+    explicit SearchWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~SearchWidget() override;
 
     void layoutEditingMenu(QMenu* menu) override;

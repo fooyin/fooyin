@@ -21,6 +21,7 @@
 
 #include "core/library/musiclibrary.h"
 #include "utils/settings.h"
+#include "utils/widgetprovider.h"
 
 #include <QHBoxLayout>
 #include <QKeyEvent>
@@ -36,15 +37,15 @@ struct SearchWidget::Private
 
     Library::MusicLibrary* library;
 
-    explicit Private(Library::MusicLibrary* library)
+    explicit Private(WidgetProvider* widgetProvider)
         : settings(Settings::instance())
-        , library(library)
+        , library(widgetProvider->library())
     { }
 };
 
-SearchWidget::SearchWidget(Library::MusicLibrary* library, QWidget* parent)
+SearchWidget::SearchWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
-    , p(std::make_unique<Private>(library))
+    , p(std::make_unique<Private>(widgetProvider))
 {
     setObjectName("Search");
 

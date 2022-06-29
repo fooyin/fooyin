@@ -24,6 +24,7 @@
 #include "playercontrol.h"
 #include "playlistcontrol.h"
 #include "progresswidget.h"
+#include "utils/widgetprovider.h"
 #include "volumecontrol.h"
 
 #include <QContextMenuEvent>
@@ -40,14 +41,14 @@ struct ControlWidget::Private
 
     PlayerManager* playerManager;
 
-    explicit Private(PlayerManager* playerManager)
-        : playerManager(playerManager)
+    explicit Private(WidgetProvider* widgetProvider)
+        : playerManager(widgetProvider->playerManager())
     { }
 };
 
-ControlWidget::ControlWidget(PlayerManager* playerManager, QWidget* parent)
+ControlWidget::ControlWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
-    , p(std::make_unique<Private>(playerManager))
+    , p(std::make_unique<Private>(widgetProvider))
 {
     setObjectName("Control Bar");
 

@@ -24,6 +24,7 @@
 #include "filtermodel.h"
 #include "filterview.h"
 #include "utils/settings.h"
+#include "utils/widgetprovider.h"
 
 #include <QAction>
 #include <QActionGroup>
@@ -33,14 +34,13 @@
 
 namespace Library {
 
-FilterWidget::FilterWidget(Filters::FilterType type, int index, PlayerManager* playerManager,
-                           Library::MusicLibrary* library, QWidget* parent)
+FilterWidget::FilterWidget(Filters::FilterType type, int index, WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_index(index)
     , m_type(type)
-    , m_library(library)
-    , m_filter(new Library::FilterView{playerManager, library, this})
+    , m_library(widgetProvider->library())
+    , m_filter(new Library::FilterView{widgetProvider->playerManager(), m_library, this})
     , m_model(new FilterModel(m_type, m_index, m_library, m_filter))
     , m_settings(Settings::instance())
 {

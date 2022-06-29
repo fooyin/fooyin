@@ -58,6 +58,26 @@ WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::LibraryMan
     , p(std::make_unique<Private>(playerManager, libraryManager, library, settingsDialog))
 { }
 
+PlayerManager* WidgetProvider::playerManager() const
+{
+    return p->playerManager;
+}
+
+Library::LibraryManager* WidgetProvider::libraryManager() const
+{
+    return p->libraryManager;
+}
+
+Library::MusicLibrary* WidgetProvider::library() const
+{
+    return p->library;
+}
+
+SettingsDialog* WidgetProvider::settingsDialog() const
+{
+    return p->settingsDialog;
+}
+
 WidgetProvider::~WidgetProvider() = default;
 
 Widget* WidgetProvider::createWidget(Widgets::WidgetType type, SplitterWidget* splitter)
@@ -72,33 +92,33 @@ Widget* WidgetProvider::createWidget(Widgets::WidgetType type, SplitterWidget* s
             return createFilter(Filters::FilterType::AlbumArtist, splitter);
         }
         case(Widgets::WidgetType::Playlist): {
-            auto* playlist = new Library::PlaylistWidget(p->playerManager, p->libraryManager, p->library);
+            auto* playlist = new Library::PlaylistWidget(this);
             connect(playlist, &Library::PlaylistWidget::openSettings, p->settingsDialog, &SettingsDialog::exec);
             splitter->addToSplitter(Widgets::WidgetType::Playlist, playlist);
             return playlist;
         }
         case(Widgets::WidgetType::Status): {
-            auto* status = new StatusWidget(p->playerManager);
+            auto* status = new StatusWidget(this);
             splitter->addToSplitter(Widgets::WidgetType::Status, status);
             return status;
         }
         case(Widgets::WidgetType::Info): {
-            auto* info = new InfoWidget(p->playerManager, p->library);
+            auto* info = new InfoWidget(this);
             splitter->addToSplitter(Widgets::WidgetType::Info, info);
             return info;
         }
         case(Widgets::WidgetType::Controls): {
-            auto* controls = new ControlWidget(p->playerManager);
+            auto* controls = new ControlWidget(this);
             splitter->addToSplitter(Widgets::WidgetType::Controls, controls);
             return controls;
         }
         case(Widgets::WidgetType::Artwork): {
-            auto* artwork = new CoverWidget(p->playerManager, p->library);
+            auto* artwork = new CoverWidget(this);
             splitter->addToSplitter(Widgets::WidgetType::Artwork, artwork);
             return artwork;
         }
         case(Widgets::WidgetType::Search): {
-            auto* search = new SearchWidget(p->library);
+            auto* search = new SearchWidget(this);
             splitter->addToSplitter(Widgets::WidgetType::Search, search);
             search->setFocus();
             return search;
@@ -126,7 +146,7 @@ Widget* WidgetProvider::createWidget(Widgets::WidgetType type, SplitterWidget* s
 Widget* WidgetProvider::createFilter(Filters::FilterType filterType, SplitterWidget* splitter)
 {
     const int index = static_cast<int>(p->filters.size());
-    auto* filter = new Library::FilterWidget(filterType, index, p->playerManager, p->library);
+    auto* filter = new Library::FilterWidget(filterType, index, this);
     splitter->addToSplitter(Widgets::WidgetType::Filter, filter);
     p->filters.append(filter);
     return filter;

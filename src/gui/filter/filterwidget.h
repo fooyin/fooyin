@@ -28,6 +28,7 @@
 class Settings;
 class PlayerManager;
 class QHBoxLayout;
+class WidgetProvider;
 
 namespace Library {
 class FilterView;
@@ -38,8 +39,7 @@ class FilterWidget : public Widget
     Q_OBJECT
 
 public:
-    FilterWidget(Filters::FilterType type, int index, PlayerManager* playerManager, MusicLibrary* library,
-                 QWidget* parent = nullptr);
+    FilterWidget(Filters::FilterType type, int index, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();

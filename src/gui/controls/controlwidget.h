@@ -25,13 +25,14 @@
 
 class PlayerManager;
 class Track;
+class WidgetProvider;
 
 class ControlWidget : public Widget
 {
     Q_OBJECT
 
 public:
-    explicit ControlWidget(PlayerManager* playerManager, QWidget* parent = nullptr);
+    explicit ControlWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~ControlWidget() override;
 
     void setupUi();

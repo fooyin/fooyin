@@ -29,6 +29,7 @@ class QPushButton;
 class PlayerManager;
 class Settings;
 class NoLibraryOverlay;
+class WidgetProvider;
 
 namespace Library {
 class PlaylistModel;
@@ -41,8 +42,7 @@ class PlaylistWidget : public Widget
     Q_OBJECT
 
 public:
-    PlaylistWidget(PlayerManager* playerManager, LibraryManager* libraryManager, Library::MusicLibrary* library,
-                   QWidget* parent = nullptr);
+    explicit PlaylistWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     void setup();

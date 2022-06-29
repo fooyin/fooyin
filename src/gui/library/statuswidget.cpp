@@ -23,6 +23,7 @@
 #include "gui/widgets/clickablelabel.h"
 #include "models/track.h"
 #include "utils/utils.h"
+#include "utils/widgetprovider.h"
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
@@ -39,14 +40,14 @@ struct StatusWidget::Private
 
     ClickableLabel* playing;
 
-    explicit Private(PlayerManager* playerManager)
-        : playerManager(playerManager)
+    explicit Private(WidgetProvider* widgetProvider)
+        : playerManager(widgetProvider->playerManager())
     { }
 };
 
-StatusWidget::StatusWidget(PlayerManager* playerManager, QWidget* parent)
+StatusWidget::StatusWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
-    , p(std::make_unique<Private>(playerManager))
+    , p(std::make_unique<Private>(widgetProvider))
 {
     setObjectName("Status Widget");
 

@@ -43,6 +43,11 @@ public:
                    Library::MusicLibrary* library, SettingsDialog* settingsDialog, QObject* parent = nullptr);
     ~WidgetProvider() override;
 
+    PlayerManager* playerManager() const;
+    Library::LibraryManager* libraryManager() const;
+    Library::MusicLibrary* library() const;
+    SettingsDialog* settingsDialog() const;
+
     Widget* createWidget(Widgets::WidgetType type, SplitterWidget* splitter);
     Widget* createFilter(Filters::FilterType filterType, SplitterWidget* splitter);
     SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);

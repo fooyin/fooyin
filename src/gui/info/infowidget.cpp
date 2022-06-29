@@ -6,16 +6,17 @@
 #include "gui/info/itemdelegate.h"
 #include "models/track.h"
 #include "utils/settings.h"
+#include "utils/widgetprovider.h"
 
 #include <QHeaderView>
 #include <QMenu>
 #include <QTableWidget>
 
-InfoWidget::InfoWidget(PlayerManager* playerManager, Library::MusicLibrary* library, QWidget* parent)
+InfoWidget::InfoWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_settings(Settings::instance())
-    , m_playerManager(playerManager)
-    , m_library(library)
+    , m_playerManager(widgetProvider->playerManager())
+    , m_library(widgetProvider->library())
     , m_layout(new QHBoxLayout(this))
 {
     setObjectName("Info");

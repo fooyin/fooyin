@@ -21,18 +21,14 @@
 
 #include "gui/widgets/widget.h"
 
-namespace Library {
-class MusicLibrary;
-}
-
-class PlayerManager;
+class WidgetProvider;
 
 class CoverWidget : public Widget
 {
     Q_OBJECT
 
 public:
-    explicit CoverWidget(PlayerManager* playerManager, Library::MusicLibrary* library, QWidget* parent = nullptr);
+    explicit CoverWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~CoverWidget() override;
 
     void layoutEditingMenu(QMenu* menu) override;
