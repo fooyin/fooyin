@@ -38,7 +38,7 @@ void Worker::setState(State state)
 
 bool Worker::isRunning()
 {
-    return m_state == State::RUNNING;
+    return m_state == State::Running;
 }
 
 bool Worker::mayRun() const
@@ -49,5 +49,5 @@ bool Worker::mayRun() const
         return false;
     }
     dispatcher->processEvents(QEventLoop::AllEvents);
-    return m_state == State::RUNNING;
+    return m_state == State::Running;
 }

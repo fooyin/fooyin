@@ -26,8 +26,8 @@ class Worker : public QObject
 public:
     enum State
     {
-        IDLE = 0,
-        RUNNING
+        Idle = 0,
+        Running
     };
 
     explicit Worker(QObject* parent = nullptr);

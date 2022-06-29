@@ -45,7 +45,7 @@ LibraryScanner::~LibraryScanner()
 
 void LibraryScanner::stopThread()
 {
-    setState(State::IDLE);
+    setState(State::Idle);
 }
 
 bool LibraryScanner::mayRun() const
@@ -56,7 +56,7 @@ bool LibraryScanner::mayRun() const
         return false;
     }
     dispatcher->processEvents(QEventLoop::AllEvents);
-    return state() == State::RUNNING;
+    return state() == State::Running;
 }
 
 void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
@@ -68,7 +68,7 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
     auto* db = DB::Database::instance();
     DB::LibraryDatabase* libraryDatabase = db->libraryDatabase();
 
-    setState(State::RUNNING);
+    setState(State::Running);
 
     TrackPathMap trackMap{};
     IdSet tracksToDelete{};
@@ -97,7 +97,7 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
 
     getAndSaveAllFiles(info.id(), info.path(), trackMap);
 
-    setState(State::IDLE);
+    setState(Idle);
 }
 
 void LibraryScanner::scanAll(TrackPtrList& tracks)
