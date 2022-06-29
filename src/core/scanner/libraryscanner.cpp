@@ -97,7 +97,7 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
 
     getAndSaveAllFiles(info.id(), info.path(), trackMap);
 
-    setState(Idle);
+    setState(State::Idle);
 }
 
 void LibraryScanner::scanAll(TrackPtrList& tracks)
