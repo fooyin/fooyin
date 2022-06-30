@@ -16,6 +16,7 @@ Checks: >
   -cppcoreguidelines-special-member-functions,
   -cppcoreguidelines-pro-type-static-cast-downcast,
   -misc-non-private-member-variables-in-classes,
+  -misc-no-recursion,
   -modernize-use-trailing-return-type,
   -readability-implicit-bool-conversion,
   -readability-magic-numbers,

@@ -171,16 +171,16 @@ void EditableLayout::hideOverlay()
     m_overlay->hide();
 }
 
-// TODO: Move to splitter widget to remove recursion.
-void EditableLayout::iterateSplitter(QJsonObject& splitterObject, QJsonArray& splitterArray, SplitterWidget* splitter,
-                                     bool isRoot)
+// TODO: Implement layout saving in each widget
+void EditableLayout::saveSplitter(QJsonObject& splitterObject, QJsonArray& splitterArray, SplitterWidget* splitter,
+                                  bool isRoot)
 {
     QJsonArray array;
 
     for(const auto& [type, widget] : splitter->children()) {
         auto* childSplitter = qobject_cast<SplitterWidget*>(widget);
         if(childSplitter) {
-            iterateSplitter(splitterObject, array, childSplitter, false);
+            saveSplitter(splitterObject, array, childSplitter, false);
         }
         else {
             QJsonObject widgetObject;
@@ -219,7 +219,7 @@ void EditableLayout::saveLayout()
     QJsonObject object;
     QJsonArray array;
 
-    iterateSplitter(object, array, m_splitter, true);
+    saveSplitter(object, array, m_splitter, true);
 
     root["Layout"] = object;
 
@@ -228,8 +228,8 @@ void EditableLayout::saveLayout()
     m_settings->set(Settings::Setting::Layout, json);
 }
 
-// TODO: Move to splitter widget to remove recursion.
-void EditableLayout::iterateInsertSplitter(const QJsonArray& array, SplitterWidget* splitter)
+// TODO: Implement layout loading in each widget
+void EditableLayout::loadSplitter(const QJsonArray& array, SplitterWidget* splitter)
 {
     for(const auto& widget : array) {
         QJsonObject object = widget.toObject();
@@ -245,7 +245,7 @@ void EditableLayout::iterateInsertSplitter(const QJsonArray& array, SplitterWidg
 
             auto* childSplitterWidget = m_widgetProvider->createSplitter(type, this);
             splitter->addToSplitter(widgetType, childSplitterWidget);
-            iterateInsertSplitter(SplitterWidgetArray, childSplitterWidget);
+            loadSplitter(SplitterWidgetArray, childSplitterWidget);
             childSplitterWidget->restoreState(SplitterWidgetState);
         }
         else if(object.contains("Filter")) {
@@ -277,7 +277,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
                 m_splitter = m_widgetProvider->createSplitter(type, this);
                 m_box->addWidget(m_splitter);
 
-                iterateInsertSplitter(SplitterWidgetArray, m_splitter);
+                loadSplitter(SplitterWidgetArray, m_splitter);
                 m_splitter->restoreState(state);
             }
             return true;
