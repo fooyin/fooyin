@@ -1,10 +1,6 @@
 # Fooyin
 Fooyin is a customisable music player for linux. It has not yet reached a stable release so bugs and breaking changes should be expected.
 
-<p align="center">
-<img src="data/images/fooyinlayouts.gif" width="750" style="vertical-align:middle">
-</p>
-
 ## Features
 * Fully customisable layout
 * Play local music library
