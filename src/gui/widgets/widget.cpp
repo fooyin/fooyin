@@ -19,23 +19,29 @@
 
 #include "widget.h"
 
+#include <QJsonArray>
+
 Widget::Widget(QWidget* parent)
     : QWidget(parent)
 { }
 
 Widget::~Widget() = default;
 
-QString Widget::name() const
-{
-    return QWidget::objectName();
-}
-
 Widget* Widget::findParent()
 {
     QWidget* parent = parentWidget();
-    while(parent && !qobject_cast<Widget*>(parent))
-    {
+    while(parent && !qobject_cast<Widget*>(parent)) {
         parent = parent->parentWidget();
     }
     return qobject_cast<Widget*>(parent);
+}
+
+void Widget::layoutEditingMenu(QMenu* menu)
+{
+    Q_UNUSED(menu)
+}
+
+void Widget::saveLayout(QJsonArray& array)
+{
+    array.append(name());
 }

@@ -95,6 +95,8 @@ set(HEADERS
     utils/typedefs.h
     utils/utils.h
     utils/settings.h
+    utils/widgetfactory.h
+    utils/factoryhelper.h
     utils/widgetprovider.h
     utils/worker.h
     utils/version.h

@@ -23,11 +23,7 @@
 
 #include <QSplitter>
 
-struct SplitterEntry
-{
-    Widgets::WidgetType type;
-    QWidget* widget;
-};
+class Widget;
 
 class Splitter : public QSplitter
 {
@@ -37,7 +33,4 @@ public:
 
 protected:
     QSplitterHandle* createHandle() override;
-
-private:
-    QList<SplitterEntry> m_children;
 };

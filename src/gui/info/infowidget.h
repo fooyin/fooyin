@@ -16,7 +16,8 @@ class Track;
 class Settings;
 class WidgetProvider;
 
-class InfoWidget : public Widget
+class InfoWidget : public Widget,
+                   public FactoryRegister<InfoWidget>
 {
 public:
     InfoWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
@@ -31,6 +32,8 @@ public:
     bool altRowColors();
     void setAltRowColors(bool altColours);
 
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
 
 protected:

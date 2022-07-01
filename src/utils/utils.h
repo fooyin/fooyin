@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "utils/widgetprovider.h"
+
 #include <QPixmap>
 #include <QtGlobal>
 
@@ -37,9 +39,11 @@ namespace File {
     bool createDirectories(const QString& path);
 } // namespace File
 
-namespace Widget {
+Util::WidgetFactory<QString, Widget, WidgetProvider*>* factory();
+
+namespace Widgets {
     QWidget* indentWidget(QWidget* widget, QWidget* parent);
-} // namespace Widget
+} // namespace Widgets
 
 int randomNumber(int min, int max);
 QString msToString(quint64 ms);

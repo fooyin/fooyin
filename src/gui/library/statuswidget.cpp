@@ -49,13 +49,27 @@ StatusWidget::StatusWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , p(std::make_unique<Private>(widgetProvider))
 {
-    setObjectName("Status Widget");
+    setObjectName("Status Bar");
 
     setupUi();
 
     connect(p->playing, &ClickableLabel::clicked, this, &StatusWidget::labelClicked);
     connect(p->playerManager, &PlayerManager::currentTrackChanged, this, &StatusWidget::reloadStatus);
     connect(p->playerManager, &PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
+
+    if(!m_isRegistered) {
+        qDebug() << StatusWidget::name() << " not registered";
+    }
+}
+
+QString StatusWidget::name() const
+{
+    return StatusWidget::widgetName();
+}
+
+QString StatusWidget::widgetName()
+{
+    return "Status";
 }
 
 void StatusWidget::layoutEditingMenu(QMenu* menu)

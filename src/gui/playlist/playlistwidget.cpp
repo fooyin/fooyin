@@ -27,6 +27,7 @@
 #include "gui/widgets/nolibraryoverlay.h"
 #include "playlistdelegate.h"
 #include "utils/settings.h"
+#include "utils/utils.h"
 #include "utils/widgetprovider.h"
 
 #include <QAction>
@@ -62,6 +63,10 @@ PlaylistWidget::PlaylistWidget(WidgetProvider* widgetProvider, QWidget* parent)
     setScrollbarHidden(m_settings->value(Settings::Setting::PlaylistScrollBar).toBool());
 
     setup();
+
+    if(!m_isRegistered) {
+        qDebug() << PlaylistWidget::name() << " not registered";
+    }
 }
 
 void PlaylistWidget::setup()
@@ -137,6 +142,16 @@ bool PlaylistWidget::isScrollbarHidden()
 void PlaylistWidget::setScrollbarHidden(bool showScrollBar)
 {
     m_playlist->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+}
+
+QString PlaylistWidget::name() const
+{
+    return PlaylistWidget::widgetName();
+}
+
+QString PlaylistWidget::widgetName()
+{
+    return "Playlist";
 }
 
 void PlaylistWidget::layoutEditingMenu(QMenu* menu)

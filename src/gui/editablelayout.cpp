@@ -19,11 +19,9 @@
 
 #include "editablelayout.h"
 
-#include "gui/filter/filterwidget.h"
 #include "gui/widgets/dummy.h"
 #include "gui/widgets/menuheader.h"
 #include "gui/widgets/overlay.h"
-#include "gui/widgets/spacer.h"
 #include "gui/widgets/splitterwidget.h"
 #include "utils/enumhelper.h"
 #include "utils/settings.h"
@@ -129,7 +127,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
             Widget* child = splitterChild(widget);
 
             if(child) {
-                m_menu->addAction(new MenuHeaderAction(child->name(), m_menu));
+                m_menu->addAction(new MenuHeaderAction(child->objectName(), m_menu));
                 child->layoutEditingMenu(m_menu);
                 addParentContext(child, m_menu);
             }
@@ -171,93 +169,19 @@ void EditableLayout::hideOverlay()
     m_overlay->hide();
 }
 
-// TODO: Implement layout saving in each widget
-void EditableLayout::saveSplitter(QJsonObject& splitterObject, QJsonArray& splitterArray, SplitterWidget* splitter,
-                                  bool isRoot)
-{
-    QJsonArray array;
-
-    for(const auto& [type, widget] : splitter->children()) {
-        auto* childSplitter = qobject_cast<SplitterWidget*>(widget);
-        if(childSplitter) {
-            saveSplitter(splitterObject, array, childSplitter, false);
-        }
-        else {
-            QJsonObject widgetObject;
-            if(type == Widgets::WidgetType::Filter) {
-                auto* filter = qobject_cast<Library::FilterWidget*>(widget);
-                QJsonObject filterObject;
-                filterObject["Type"] = EnumHelper::toString(filter->type());
-                widgetObject[EnumHelper::toString(type)] = filterObject;
-                array.append(widgetObject);
-            }
-            else {
-                array.append(EnumHelper::toString(type));
-            }
-        }
-    }
-    QString state = QString::fromUtf8(splitter->saveState().toBase64());
-
-    QJsonObject children;
-    children["Type"] = EnumHelper::toString(splitter->orientation());
-    children["State"] = state;
-    children["Children"] = array;
-
-    if(isRoot) {
-        splitterObject["Splitter"] = children;
-    }
-    else {
-        QJsonObject object;
-        object["Splitter"] = children;
-        splitterArray.append(object);
-    }
-}
-
 void EditableLayout::saveLayout()
 {
     QJsonObject root;
     QJsonObject object;
     QJsonArray array;
 
-    saveSplitter(object, array, m_splitter, true);
+    m_splitter->saveSplitter(object, array);
 
     root["Layout"] = object;
 
     QString json = QString::fromUtf8(QJsonDocument(root).toJson(QJsonDocument::Compact).toBase64());
 
     m_settings->set(Settings::Setting::Layout, json);
-}
-
-// TODO: Implement layout loading in each widget
-void EditableLayout::loadSplitter(const QJsonArray& array, SplitterWidget* splitter)
-{
-    for(const auto& widget : array) {
-        QJsonObject object = widget.toObject();
-        if(object.contains("Splitter")) {
-            QJsonObject SplitterWidgetSubObject = object["Splitter"].toObject();
-            auto type = EnumHelper::fromString<Qt::Orientation>(SplitterWidgetSubObject["Type"].toString());
-            auto widgetType = type == Qt::Vertical ? Widgets::WidgetType::VerticalSplitter
-                                                   : Widgets::WidgetType::HorizontalSplitter;
-
-            QJsonArray SplitterWidgetArray = SplitterWidgetSubObject["Children"].toArray();
-            QByteArray SplitterWidgetState
-                = QByteArray::fromBase64(SplitterWidgetSubObject["State"].toString().toUtf8());
-
-            auto* childSplitterWidget = m_widgetProvider->createSplitter(type, this);
-            splitter->addToSplitter(widgetType, childSplitterWidget);
-            loadSplitter(SplitterWidgetArray, childSplitterWidget);
-            childSplitterWidget->restoreState(SplitterWidgetState);
-        }
-        else if(object.contains("Filter")) {
-            const QJsonObject filterObject = object["Filter"].toObject();
-            auto filterType = EnumHelper::fromString<Filters::FilterType>(filterObject["Type"].toString());
-            m_widgetProvider->createFilter(filterType, splitter);
-        }
-        else {
-            auto type = EnumHelper::fromString<Widgets::WidgetType>(widget.toString());
-            m_widgetProvider->createWidget(type, splitter);
-        }
-    }
 }
 
 bool EditableLayout::loadLayout(const QByteArray& layout)
@@ -268,16 +192,16 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
         if(json.contains("Layout") && json["Layout"].isObject()) {
             QJsonObject object = json["Layout"].toObject();
             if(object.contains("Splitter") && object["Splitter"].isObject()) {
-                QJsonObject SplitterWidgetObject = object["Splitter"].toObject();
+                QJsonObject splitterObject = object["Splitter"].toObject();
 
-                auto type = EnumHelper::fromString<Qt::Orientation>(SplitterWidgetObject["Type"].toString());
-                QJsonArray SplitterWidgetArray = SplitterWidgetObject["Children"].toArray();
-                auto state = QByteArray::fromBase64(SplitterWidgetObject["State"].toString().toUtf8());
+                auto type = EnumHelper::fromString<Qt::Orientation>(splitterObject["Type"].toString());
+                QJsonArray splitterChildren = splitterObject["Children"].toArray();
+                auto state = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
 
                 m_splitter = m_widgetProvider->createSplitter(type, this);
                 m_box->addWidget(m_splitter);
 
-                loadSplitter(SplitterWidgetArray, m_splitter);
+                m_splitter->loadSplitter(splitterChildren, m_splitter);
                 m_splitter->restoreState(state);
             }
             return true;

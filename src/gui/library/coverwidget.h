@@ -23,7 +23,8 @@
 
 class WidgetProvider;
 
-class CoverWidget : public Widget
+class CoverWidget : public Widget,
+                    public FactoryRegister<CoverWidget>
 {
     Q_OBJECT
 
@@ -31,6 +32,8 @@ public:
     explicit CoverWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~CoverWidget() override;
 
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
 
 protected:

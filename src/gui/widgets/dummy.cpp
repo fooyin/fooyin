@@ -19,11 +19,14 @@
 
 #include "dummy.h"
 
-Dummy::Dummy(QWidget* parent)
+#include "utils/utils.h"
+
+Dummy::Dummy(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_label(new QLabel(this))
 {
+    Q_UNUSED(widgetProvider)
     setObjectName(QString("Dummy"));
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_label->setText("Right-Click to add a new widget.");
@@ -36,9 +39,14 @@ Dummy::Dummy(QWidget* parent)
     m_layout->addWidget(m_label);
 }
 
+QString Dummy::name() const
+{
+    return Dummy::widgetName();
+}
+
 Dummy::~Dummy() = default;
 
-void Dummy::layoutEditingMenu(QMenu* menu)
+QString Dummy::widgetName()
 {
-    Q_UNUSED(menu)
+    return "Dummy";
 }

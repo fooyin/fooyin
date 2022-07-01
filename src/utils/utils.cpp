@@ -114,7 +114,7 @@ namespace File {
     }
 }; // namespace File
 
-namespace Widget {
+namespace Widgets {
     QWidget* indentWidget(QWidget* widget, QWidget* parent)
     {
         auto* indentWidget = new QWidget(parent);
@@ -123,7 +123,7 @@ namespace Widget {
         indentWidget->layout()->setContentsMargins(25, 0, 0, 0);
         return indentWidget;
     }
-} // namespace Widget
+} // namespace Widgets
 
 int randomNumber(int min, int max)
 {
@@ -216,4 +216,11 @@ QString capitalise(const QString& s)
 
     return parts.join(" ");
 }
+
+Util::WidgetFactory<QString, Widget, WidgetProvider*>* factory()
+{
+    static Util::WidgetFactory<QString, Widget, WidgetProvider*> factory;
+    return &factory;
+}
+
 }; // namespace Util

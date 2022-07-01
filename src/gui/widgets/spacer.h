@@ -21,11 +21,17 @@
 
 #include "widget.h"
 
-class Spacer : public Widget
+class WidgetProvider;
+
+namespace Widgets {
+class Spacer : public Widget,
+               public FactoryRegister<Spacer>
 {
 public:
-    explicit Spacer(QWidget* parent = nullptr);
+    explicit Spacer(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~Spacer() override;
 
-    void layoutEditingMenu(QMenu* menu) override;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] static QString widgetName();
 };
+} // namespace Widgets

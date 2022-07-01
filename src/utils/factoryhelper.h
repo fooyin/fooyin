@@ -19,26 +19,16 @@
 
 #pragma once
 
-#include "widget.h"
+#include "utils/utils.h"
 
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QWidget>
-
-class WidgetProvider;
-
-class Dummy : public Widget
+template <typename T>
+class FactoryRegister
 {
-    Q_OBJECT
-
-public:
-    explicit Dummy(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
-    ~Dummy() override;
-
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] static QString widgetName();
-
-private:
-    QHBoxLayout* m_layout;
-    QLabel* m_label;
+protected:
+    static const bool m_isRegistered;
 };
+
+// Automatically registers widget subclass
+// The subclass must check/use m_isRegistered due to template constraints
+template <typename T>
+const bool FactoryRegister<T>::m_isRegistered = Util::factory()->registerClass<T>(T::widgetName());

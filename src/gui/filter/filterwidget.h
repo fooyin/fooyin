@@ -34,12 +34,13 @@ namespace Library {
 class FilterView;
 class MusicLibrary;
 
-class FilterWidget : public Widget
+class FilterWidget : public Widget,
+                     public FactoryRegister<FilterWidget>
 {
     Q_OBJECT
 
 public:
-    FilterWidget(Filters::FilterType type, int index, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    FilterWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();
@@ -61,7 +62,11 @@ public:
     bool altRowColors();
     void setAltRowColors(bool altColours);
 
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
+    void saveLayout(QJsonArray& array) override;
+
     void customHeaderMenuRequested(QPoint pos);
 
 signals:

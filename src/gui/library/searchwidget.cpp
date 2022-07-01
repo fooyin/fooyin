@@ -21,6 +21,7 @@
 
 #include "core/library/musiclibrary.h"
 #include "utils/settings.h"
+#include "utils/utils.h"
 #include "utils/widgetprovider.h"
 
 #include <QHBoxLayout>
@@ -47,13 +48,27 @@ SearchWidget::SearchWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , p(std::make_unique<Private>(widgetProvider))
 {
-    setObjectName("Search");
+    setObjectName("Search Bar");
 
     setupUi();
 
     connect(p->settings, &Settings::layoutEditingChanged, this, &SearchWidget::searchBoxContextMenu);
     connect(p->searchBox, &QLineEdit::textChanged, this, &SearchWidget::textChanged);
     connect(this, &SearchWidget::searchChanged, p->library, &Library::MusicLibrary::searchChanged);
+
+    if(!m_isRegistered) {
+        qDebug() << SearchWidget::name() << " not registered";
+    }
+}
+
+QString SearchWidget::name() const
+{
+    return SearchWidget::widgetName();
+}
+
+QString SearchWidget::widgetName()
+{
+    return "Search";
 }
 
 void SearchWidget::layoutEditingMenu(QMenu* menu)

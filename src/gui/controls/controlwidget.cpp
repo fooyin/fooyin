@@ -24,6 +24,7 @@
 #include "playercontrol.h"
 #include "playlistcontrol.h"
 #include "progresswidget.h"
+#include "utils/utils.h"
 #include "utils/widgetprovider.h"
 #include "volumecontrol.h"
 
@@ -53,23 +54,11 @@ ControlWidget::ControlWidget(WidgetProvider* widgetProvider, QWidget* parent)
     setObjectName("Control Bar");
 
     setupUi();
+    setupConnections();
 
-    connect(p->playerManager, &PlayerManager::currentTrackChanged, this, &ControlWidget::currentTrackChanged);
-    connect(p->playerManager, &PlayerManager::positionChanged, this, &ControlWidget::currentPositionChanged);
-    connect(p->playerManager, &PlayerManager::playStateChanged, p->playControls, &PlayerControl::stateChanged);
-    connect(p->playerManager, &PlayerManager::playStateChanged, p->progress, &ProgressWidget::stateChanged);
-    connect(p->playControls, &PlayerControl::stopClicked, p->playerManager, &PlayerManager::stop);
-    connect(p->playControls, &PlayerControl::nextClicked, p->playerManager, &PlayerManager::next);
-    connect(p->playControls, &PlayerControl::prevClicked, p->playerManager, &PlayerManager::previous);
-    connect(p->playControls, &PlayerControl::stopClicked, p->progress, &ProgressWidget::reset);
-    connect(p->playControls, &PlayerControl::pauseClicked, p->playerManager, &PlayerManager::playPause);
-    connect(p->volumeControls, &VolumeControl::volumeUp, p->playerManager, &PlayerManager::volumeUp);
-    connect(p->volumeControls, &VolumeControl::volumeDown, p->playerManager, &PlayerManager::volumeDown);
-    connect(p->volumeControls, &VolumeControl::volumeChanged, p->playerManager, &PlayerManager::setVolume);
-    connect(p->progress, &ProgressWidget::movedSlider, p->playerManager, &PlayerManager::changePosition);
-    connect(p->playlistControls, &PlaylistControl::repeatClicked, p->playerManager, &PlayerManager::setRepeat);
-    connect(p->playlistControls, &PlaylistControl::shuffleClicked, p->playerManager, &PlayerManager::setShuffle);
-    connect(p->playerManager, &PlayerManager::playModeChanged, p->playlistControls, &PlaylistControl::playModeChanged);
+    if(!m_isRegistered) {
+        qDebug() << ControlWidget::name() << " not registered";
+    }
 }
 
 ControlWidget::~ControlWidget() = default;
@@ -92,6 +81,36 @@ void ControlWidget::setupUi()
 
     p->layout->setContentsMargins(0, 0, 0, 0);
     p->layout->setSpacing(15);
+}
+
+void ControlWidget::setupConnections()
+{
+    connect(p->playerManager, &PlayerManager::currentTrackChanged, this, &ControlWidget::currentTrackChanged);
+    connect(p->playerManager, &PlayerManager::positionChanged, this, &ControlWidget::currentPositionChanged);
+    connect(p->playerManager, &PlayerManager::playStateChanged, p->playControls, &PlayerControl::stateChanged);
+    connect(p->playerManager, &PlayerManager::playStateChanged, p->progress, &ProgressWidget::stateChanged);
+    connect(p->playControls, &PlayerControl::stopClicked, p->playerManager, &PlayerManager::stop);
+    connect(p->playControls, &PlayerControl::nextClicked, p->playerManager, &PlayerManager::next);
+    connect(p->playControls, &PlayerControl::prevClicked, p->playerManager, &PlayerManager::previous);
+    connect(p->playControls, &PlayerControl::stopClicked, p->progress, &ProgressWidget::reset);
+    connect(p->playControls, &PlayerControl::pauseClicked, p->playerManager, &PlayerManager::playPause);
+    connect(p->volumeControls, &VolumeControl::volumeUp, p->playerManager, &PlayerManager::volumeUp);
+    connect(p->volumeControls, &VolumeControl::volumeDown, p->playerManager, &PlayerManager::volumeDown);
+    connect(p->volumeControls, &VolumeControl::volumeChanged, p->playerManager, &PlayerManager::setVolume);
+    connect(p->progress, &ProgressWidget::movedSlider, p->playerManager, &PlayerManager::changePosition);
+    connect(p->playlistControls, &PlaylistControl::repeatClicked, p->playerManager, &PlayerManager::setRepeat);
+    connect(p->playlistControls, &PlaylistControl::shuffleClicked, p->playerManager, &PlayerManager::setShuffle);
+    connect(p->playerManager, &PlayerManager::playModeChanged, p->playlistControls, &PlaylistControl::playModeChanged);
+}
+
+QString ControlWidget::name() const
+{
+    return ControlWidget::widgetName();
+}
+
+QString ControlWidget::widgetName()
+{
+    return "Controls";
 }
 
 void ControlWidget::layoutEditingMenu(QMenu* menu)

@@ -24,13 +24,15 @@
 
 class WidgetProvider;
 class QHBoxLayout;
+class Dummy;
 
-class SplitterWidget : public Widget
+class SplitterWidget : public Widget,
+                       public FactoryRegister<SplitterWidget>
 {
     Q_OBJECT
 
 public:
-    SplitterWidget(Qt::Orientation type, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit SplitterWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~SplitterWidget() override;
 
     [[nodiscard]] Qt::Orientation orientation() const;
@@ -41,14 +43,19 @@ public:
 
     [[nodiscard]] QWidget* widget(int index) const;
 
+    void addToSplitter(QWidget* widget);
     void addToSplitter(Widgets::WidgetType type, QWidget* widget);
     void removeWidget(QWidget* widget);
 
     int findIndex(QWidget* widgetToFind);
-    int findIndex(Widgets::WidgetType typeToFind);
-    QList<SplitterEntry> children();
+    QList<Widget*> children();
 
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
+
+    void saveSplitter(QJsonObject& object, QJsonArray& splitterArray);
+    void loadSplitter(const QJsonArray& array, SplitterWidget* splitter);
 
 protected:
     [[nodiscard]] int placeholderIndex() const;
@@ -56,6 +63,7 @@ protected:
 private:
     QHBoxLayout* m_layout;
     Splitter* m_splitter;
-    QList<SplitterEntry> m_children;
+    QList<Widget*> m_children;
     WidgetProvider* m_widgetProvider;
+    Dummy* m_dummy;
 };

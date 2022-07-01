@@ -22,23 +22,29 @@
 #include "dummy.h"
 #include "splitter.h"
 #include "utils/enumhelper.h"
+#include "utils/utils.h"
 #include "utils/widgetprovider.h"
 
+#include <QJsonObject>
 #include <QMenu>
 
-SplitterWidget::SplitterWidget(Qt::Orientation type, WidgetProvider* widgetProvider, QWidget* parent)
+SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
-    , m_splitter(new Splitter(type))
+    , m_splitter(new Splitter(Qt::Vertical))
     , m_widgetProvider(widgetProvider)
+    , m_dummy(new Dummy(m_widgetProvider, this))
 {
-    setObjectName(QString("%1 Splitter").arg(type == Qt::Horizontal ? "Horizontal" : "Vertical"));
+    setObjectName(QString("%1 Splitter").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical"));
 
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->addWidget(m_splitter);
 
-    auto* dummy = new Dummy(this);
-    addToSplitter(Widgets::WidgetType::Dummy, dummy);
+    addToSplitter(Widgets::WidgetType::Dummy, m_dummy);
+
+    if(!m_isRegistered) {
+        qDebug() << SplitterWidget::name() << " not registered";
+    }
 }
 
 SplitterWidget::~SplitterWidget() = default;
@@ -68,17 +74,39 @@ QWidget* SplitterWidget::widget(int index) const
     return m_splitter->widget(index);
 }
 
-void SplitterWidget::addToSplitter(Widgets::WidgetType type, QWidget* newWidget)
+void SplitterWidget::addToSplitter(QWidget* newWidget)
 {
+    auto* w = qobject_cast<Widget*>(newWidget);
+    if(!w) {
+        return;
+    }
     int index = static_cast<int>(m_children.count());
-    int dumIndex = findIndex(Widgets::WidgetType::Dummy);
+    int dumIndex = findIndex(m_dummy);
     if(m_children.size() == 1 && dumIndex != -1) {
         index = placeholderIndex();
         m_splitter->widget(index)->deleteLater();
         m_children.remove(dumIndex);
     }
-    m_children.append(SplitterEntry{type, newWidget});
-    return m_splitter->insertWidget(index, newWidget);
+    m_children.append(w);
+    return m_splitter->insertWidget(index, w);
+}
+
+void SplitterWidget::addToSplitter(Widgets::WidgetType type, QWidget* newWidget)
+{
+    Q_UNUSED(type)
+    auto* w = qobject_cast<Widget*>(newWidget);
+    if(!w) {
+        return;
+    }
+    int index = static_cast<int>(m_children.count());
+    int dumIndex = findIndex(m_dummy);
+    if(m_children.size() == 1 && dumIndex != -1) {
+        index = placeholderIndex();
+        m_splitter->widget(index)->deleteLater();
+        m_children.remove(dumIndex);
+    }
+    m_children.append(w);
+    return m_splitter->insertWidget(index, w);
 }
 
 void SplitterWidget::removeWidget(QWidget* widget)
@@ -89,16 +117,16 @@ void SplitterWidget::removeWidget(QWidget* widget)
         m_children.remove(index);
     }
     if(m_children.isEmpty()) {
-        auto* dummy = new Dummy(this);
+        auto* dummy = new Dummy(m_widgetProvider, this);
         m_splitter->addWidget(dummy);
-        m_children.append(SplitterEntry{Widgets::WidgetType::Dummy, dummy});
+        m_children.append(dummy);
     }
 }
 
 int SplitterWidget::findIndex(QWidget* widgetToFind)
 {
     for(int i = 0; i < m_children.size(); ++i) {
-        QWidget* widget = m_children.value(i).widget;
+        QWidget* widget = m_children.value(i);
         if(widget == widgetToFind) {
             return i;
         }
@@ -106,20 +134,19 @@ int SplitterWidget::findIndex(QWidget* widgetToFind)
     return -1;
 }
 
-int SplitterWidget::findIndex(Widgets::WidgetType typeToFind)
-{
-    for(int i = 0; i < m_children.size(); ++i) {
-        Widgets::WidgetType type = m_children.value(i).type;
-        if(type == typeToFind) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-QList<SplitterEntry> SplitterWidget::children()
+QList<Widget*> SplitterWidget::children()
 {
     return m_children;
+}
+
+QString SplitterWidget::name() const
+{
+    return SplitterWidget::widgetName();
+}
+
+QString SplitterWidget::widgetName()
+{
+    return "Splitter";
 }
 
 void SplitterWidget::layoutEditingMenu(QMenu* menu)
@@ -136,6 +163,65 @@ void SplitterWidget::layoutEditingMenu(QMenu* menu)
 
     menu->addAction(changeSplitter);
     menu->addMenu(addMenu);
+}
+
+void SplitterWidget::saveSplitter(QJsonObject& object, QJsonArray& splitterArray)
+{
+    QJsonArray array;
+
+    for(const auto& widget : children()) {
+        auto* childSplitter = qobject_cast<SplitterWidget*>(widget);
+        if(childSplitter) {
+            childSplitter->saveSplitter(object, array);
+        }
+        else {
+            widget->saveLayout(array);
+        }
+    }
+    QString state = QString::fromUtf8(saveState().toBase64());
+
+    QJsonObject children;
+    children["Type"] = EnumHelper::toString(orientation());
+    children["State"] = state;
+    children["Children"] = array;
+
+    if(!findParent()) {
+        object["Splitter"] = children;
+    }
+    else {
+        QJsonObject object;
+        object["Splitter"] = children;
+        splitterArray.append(object);
+    }
+}
+
+void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* splitter)
+{
+    for(const auto& widget : array) {
+        QJsonObject object = widget.toObject();
+        if(object.contains("Splitter")) {
+            QJsonObject childSplitterObject = object["Splitter"].toObject();
+            auto type = EnumHelper::fromString<Qt::Orientation>(childSplitterObject["Type"].toString());
+            auto widgetType = type == Qt::Vertical ? Widgets::WidgetType::VerticalSplitter
+                                                   : Widgets::WidgetType::HorizontalSplitter;
+
+            QJsonArray splitterArray = childSplitterObject["Children"].toArray();
+            QByteArray splitterState = QByteArray::fromBase64(childSplitterObject["State"].toString().toUtf8());
+
+            auto* childSplitter = m_widgetProvider->createSplitter(type, this);
+            splitter->addToSplitter(widgetType, childSplitter);
+            loadSplitter(splitterArray, childSplitter);
+            childSplitter->restoreState(splitterState);
+        }
+        else if(object.contains("Filter")) {
+            const QJsonObject filterObject = object["Filter"].toObject();
+            auto filterType = EnumHelper::fromString<Filters::FilterType>(filterObject["Type"].toString());
+            m_widgetProvider->createFilter(filterType, splitter);
+        }
+        else {
+            m_widgetProvider->createWidget(widget.toString(), splitter);
+        }
+    }
 }
 
 int SplitterWidget::placeholderIndex() const

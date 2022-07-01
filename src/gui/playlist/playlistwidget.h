@@ -37,7 +37,8 @@ class PlaylistView;
 class LibraryManager;
 class MusicLibrary;
 
-class PlaylistWidget : public Widget
+class PlaylistWidget : public Widget,
+                       public FactoryRegister<PlaylistWidget>
 {
     Q_OBJECT
 
@@ -58,6 +59,8 @@ public:
     bool isScrollbarHidden();
     void setScrollbarHidden(bool showScrollBar);
 
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
 
 signals:

@@ -163,7 +163,7 @@ PlaylistPage::PlaylistPage(QWidget* parent)
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(groupHeaders);
 
-    auto* indentWidget = Util::Widget::indentWidget(splitDiscs, this);
+    auto* indentWidget = Util::Widgets::indentWidget(splitDiscs, this);
     mainLayout->addWidget(indentWidget);
     mainLayout->addWidget(simpleList);
     mainLayout->addWidget(altColours);

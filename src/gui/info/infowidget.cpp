@@ -6,6 +6,7 @@
 #include "gui/info/itemdelegate.h"
 #include "models/track.h"
 #include "utils/settings.h"
+#include "utils/utils.h"
 #include "utils/widgetprovider.h"
 
 #include <QHeaderView>
@@ -19,7 +20,7 @@ InfoWidget::InfoWidget(WidgetProvider* widgetProvider, QWidget* parent)
     , m_library(widgetProvider->library())
     , m_layout(new QHBoxLayout(this))
 {
-    setObjectName("Info");
+    setObjectName("Info Panel");
     setupUi();
 
     setHeaderHidden(m_settings->value(Settings::Setting::InfoHeader).toBool());
@@ -34,6 +35,10 @@ InfoWidget::InfoWidget(WidgetProvider* widgetProvider, QWidget* parent)
     connect(m_settings, &Settings::infoScrollBarChanged, this, &InfoWidget::setScrollbarHidden);
 
     spanHeaders();
+
+    if(!m_isRegistered) {
+        qDebug() << InfoWidget::name() << " not registered";
+    }
 }
 
 InfoWidget::~InfoWidget() = default;
@@ -98,6 +103,16 @@ bool InfoWidget::altRowColors()
 void InfoWidget::setAltRowColors(bool altColours)
 {
     m_view.setAlternatingRowColors(altColours);
+}
+
+QString InfoWidget::name() const
+{
+    return InfoWidget::widgetName();
+}
+
+QString InfoWidget::widgetName()
+{
+    return "Info";
 }
 
 void InfoWidget::layoutEditingMenu(QMenu* menu)

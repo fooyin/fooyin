@@ -22,6 +22,7 @@
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
 #include "models/track.h"
+#include "utils/utils.h"
 #include "utils/widgetprovider.h"
 
 #include <QHBoxLayout>
@@ -57,6 +58,20 @@ CoverWidget::CoverWidget(WidgetProvider* widgetProvider, QWidget* parent)
     connect(p->library, &Library::MusicLibrary::tracksSelChanged, this, &CoverWidget::reloadCover);
 
     reloadCover();
+
+    if(!m_isRegistered) {
+        qDebug() << CoverWidget::name() << " not registered";
+    }
+}
+
+QString CoverWidget::name() const
+{
+    return CoverWidget::widgetName();
+}
+
+QString CoverWidget::widgetName()
+{
+    return "Artwork";
 }
 
 void CoverWidget::layoutEditingMenu(QMenu* menu)

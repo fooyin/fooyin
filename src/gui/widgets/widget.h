@@ -19,10 +19,14 @@
 
 #pragma once
 
+#include "utils/factoryhelper.h"
+
+#include <QJsonArray>
 #include <QWidget>
 
 class QMenu;
 
+// Subclassing requires the inheritence of FactoryRegister<T> so widget is detected
 class Widget : public QWidget
 {
     Q_OBJECT
@@ -31,8 +35,9 @@ public:
     explicit Widget(QWidget* parent);
     ~Widget() override;
 
-    [[nodiscard]] QString name() const;
     Widget* findParent();
 
-    virtual void layoutEditingMenu(QMenu* menu) = 0;
+    [[nodiscard]] virtual QString name() const = 0;
+    virtual void layoutEditingMenu(QMenu* menu);
+    virtual void saveLayout(QJsonArray& array);
 };

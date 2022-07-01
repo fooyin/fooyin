@@ -19,16 +19,30 @@
 
 #include "spacer.h"
 
-Spacer::Spacer(QWidget* parent)
+#include "utils/utils.h"
+
+namespace Widgets {
+Spacer::Spacer(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
 {
+    Q_UNUSED(widgetProvider)
     setObjectName("Spacer");
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+    if(!m_isRegistered) {
+        qDebug() << Spacer::name() << " not registered";
+    }
 }
 
 Spacer::~Spacer() = default;
 
-void Spacer::layoutEditingMenu(QMenu* menu)
+QString Spacer::name() const
 {
-    Q_UNUSED(menu)
+    return Spacer::widgetName();
 }
+
+QString Spacer::widgetName()
+{
+    return "Spacer";
+}
+} // namespace Widgets

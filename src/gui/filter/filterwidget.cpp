@@ -23,22 +23,24 @@
 #include "filterdelegate.h"
 #include "filtermodel.h"
 #include "filterview.h"
+#include "utils/enumhelper.h"
 #include "utils/settings.h"
+#include "utils/utils.h"
 #include "utils/widgetprovider.h"
 
 #include <QAction>
 #include <QActionGroup>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QJsonObject>
 #include <QMenu>
 
 namespace Library {
-
-FilterWidget::FilterWidget(Filters::FilterType type, int index, WidgetProvider* widgetProvider, QWidget* parent)
+FilterWidget::FilterWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
-    , m_index(index)
-    , m_type(type)
+    , m_index(0)
+    , m_type(Filters::FilterType::AlbumArtist)
     , m_library(widgetProvider->library())
     , m_filter(new Library::FilterView{widgetProvider->playerManager(), m_library, this})
     , m_model(new FilterModel(m_type, m_index, m_library, m_filter))
@@ -56,6 +58,10 @@ FilterWidget::FilterWidget(Filters::FilterType type, int index, WidgetProvider* 
     setAltRowColors(m_settings->value(Settings::Setting::FilterAltColours).toBool());
 
     resetByIndex(-1);
+
+    if(!m_isRegistered) {
+        qDebug() << FilterWidget::name() << " not registered";
+    }
 }
 
 FilterWidget::~FilterWidget()
@@ -159,6 +165,16 @@ void FilterWidget::setAltRowColors(bool altColours)
     m_filter->setAlternatingRowColors(altColours);
 }
 
+QString FilterWidget::name() const
+{
+    return FilterWidget::widgetName();
+}
+
+QString FilterWidget::widgetName()
+{
+    return "Filter";
+}
+
 void FilterWidget::layoutEditingMenu(QMenu* menu)
 {
     auto* showHeaders = new QAction("Show Header", this);
@@ -186,6 +202,15 @@ void FilterWidget::layoutEditingMenu(QMenu* menu)
     menu->addAction(showHeaders);
     menu->addAction(showScrollBar);
     menu->addAction(altColours);
+}
+
+void FilterWidget::saveLayout(QJsonArray& array)
+{
+    QJsonObject object;
+    QJsonObject filterOptions;
+    filterOptions["Type"] = EnumHelper::toString<Filters::FilterType>(type());
+    object[name()] = filterOptions;
+    array.append(object);
 }
 
 void FilterWidget::customHeaderMenuRequested(QPoint pos)
