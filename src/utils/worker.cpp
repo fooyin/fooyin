@@ -24,6 +24,7 @@
 
 Worker::Worker(QObject* parent)
     : QObject(parent)
+    , m_state(State::Idle)
 { }
 
 Worker::State Worker::state() const
