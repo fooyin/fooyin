@@ -24,6 +24,7 @@
 #include "core/player/playermanager.h"
 #include "gui/playlist/playlistmodel.h"
 #include "gui/playlist/playlistview.h"
+#include "gui/settings/settingsdialog.h"
 #include "gui/widgets/nolibraryoverlay.h"
 #include "playlistdelegate.h"
 #include "utils/settings.h"
@@ -56,12 +57,13 @@ PlaylistWidget::PlaylistWidget(WidgetProvider* widgetProvider, QWidget* parent)
 
     m_playlist->setModel(m_model);
     m_playlist->setItemDelegate(new PlaylistDelegate(this));
-    setupConnections();
-    reset();
 
+    setupConnections();
+    connect(this, &PlaylistWidget::openSettings, widgetProvider->settingsDialog(), &SettingsDialog::open);
+
+    reset();
     setHeaderHidden(m_settings->value(Settings::Setting::PlaylistHeader).toBool());
     setScrollbarHidden(m_settings->value(Settings::Setting::PlaylistScrollBar).toBool());
-
     setup();
 
     if(!m_isRegistered) {
