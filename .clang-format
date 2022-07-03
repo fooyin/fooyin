@@ -31,7 +31,7 @@ BraceWrapping:
     BeforeElse:                                 true
     IndentBraces:                               false
     AfterExternBlock:                           true
-    BeforeLambdaBody                            false
+    BeforeLambdaBody:                           false
     SplitEmptyFunction:                         false
     SplitEmptyRecord:                           false
     SplitEmptyNamespace:                        true
@@ -40,7 +40,7 @@ BreakInheritanceList:                           AfterComma
 BreakStringLiterals:                            true
 
 AllowAllConstructorInitializersOnNextLine:      false
-AllowShortLambdasOnASingleLine                  Empty
+AllowShortLambdasOnASingleLine:                 Empty
 Cpp11BracedListStyle:                           true
 SpaceBeforeCpp11BracedList:                     false
 IndentCaseLabels:                               true
