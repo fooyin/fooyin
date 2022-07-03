@@ -85,14 +85,19 @@ EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
     if(!loaded) {
         m_splitter = m_widgetProvider->createSplitter(Qt::Vertical, this);
         m_box->addWidget(m_splitter);
+        m_settings->set(Settings::Setting::LayoutEditing, true);
     }
     qApp->installEventFilter(this);
 }
 
 void EditableLayout::changeLayout(const QByteArray& layout)
 {
+    // Delete all current widgets
     delete m_splitter;
-    loadLayout(layout);
+    bool success = loadLayout(layout);
+    if(success) {
+        m_settings->set(Settings::Setting::LayoutEditing, false);
+    }
 }
 
 EditableLayout::~EditableLayout() = default;
