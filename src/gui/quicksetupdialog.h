@@ -22,6 +22,8 @@ protected:
     void setupList();
     void changeLayout();
 
+    void showEvent(QShowEvent *event) override;
+
 private:
     QVBoxLayout* m_layout;
     QListWidget* m_layoutList;

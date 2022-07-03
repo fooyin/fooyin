@@ -88,3 +88,12 @@ void QuickSeupDialog::changeLayout()
 
     emit layoutChanged(layout);
 }
+
+void QuickSeupDialog::showEvent(QShowEvent* event)
+{
+    // Centre to parent widget
+    QRect parentRect{parentWidget()->mapToGlobal(QPoint(0, 0)), parentWidget()->size()};
+    move(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), parentRect).topLeft());
+
+    QDialog::showEvent(event);
+}

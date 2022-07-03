@@ -155,8 +155,8 @@ void MainWindow::setupUi()
     connect(p->quickSetupDialog, &QuickSeupDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
 
     if(p->settings->value(Settings::Setting::FirstRun).toBool()) {
-        p->quickSetupDialog->raise();
-        p->quickSetupDialog->show();
+        // Delay showing until size of parent widget (this) is set.
+        QTimer::singleShot(1000, p->quickSetupDialog, &QuickSeupDialog::show);
     }
 }
 
