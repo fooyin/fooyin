@@ -73,8 +73,6 @@ int LibraryManager::addLibrary(const QString& path, QString& name)
 
     m_libraries.insert(id, LibraryInfo(path, name, id));
 
-    m_database->libraryDatabase();
-
     bool success = m_libraryConnector->insertLibrary(id, path, name);
 
     if(success) {
