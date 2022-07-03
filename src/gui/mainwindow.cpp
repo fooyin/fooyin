@@ -55,7 +55,7 @@ struct MainWindow::Private
 
     Settings* settings;
 
-    QuickSeupDialog quickSetupDialog;
+    QuickSeupDialog* quickSetupDialog;
 
     WidgetProvider* widgetProvider;
 
@@ -98,6 +98,7 @@ void MainWindow::setupUi()
     restoreGeometry(geometry);
 
     p->mainLayout = new EditableLayout(p->widgetProvider, this);
+    p->quickSetupDialog = new QuickSeupDialog(this);
 
     setCentralWidget(p->mainLayout);
 
@@ -150,11 +151,12 @@ void MainWindow::setupUi()
     connect(p->layoutEditing, &QAction::triggered, this, [this](bool checked) {
         p->settings->set(Settings::Setting::LayoutEditing, checked);
     });
-    connect(p->openQuickSetup, &QAction::triggered, &p->quickSetupDialog, &QuickSeupDialog::show);
-    connect(&p->quickSetupDialog, &QuickSeupDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
+    connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSeupDialog::show);
+    connect(p->quickSetupDialog, &QuickSeupDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
 
     if(p->settings->value(Settings::Setting::FirstRun).toBool()) {
-        p->quickSetupDialog.show();
+        p->quickSetupDialog->raise();
+        p->quickSetupDialog->show();
     }
 }
 
