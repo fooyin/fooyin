@@ -85,7 +85,7 @@ SettingsDialog* WidgetProvider::settingsDialog() const
 Widget* WidgetProvider::createWidget(const QString& widget, SplitterWidget* splitter)
 {
     auto* createdWidget = Util::factory()->make(widget, this);
-    splitter->addToSplitter(createdWidget);
+    splitter->addWidget(createdWidget);
     return createdWidget;
 }
 
@@ -95,7 +95,7 @@ Widget* WidgetProvider::createFilter(Filters::FilterType filterType, SplitterWid
     auto* filter = new Library::FilterWidget(this);
     filter->setType(filterType);
     filter->setIndex(index);
-    splitter->addToSplitter(Widgets::WidgetType::Filter, filter);
+    splitter->addWidget(filter);
     p->filters.append(filter);
     return filter;
 }

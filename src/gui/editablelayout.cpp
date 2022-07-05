@@ -77,14 +77,16 @@ EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
     m_box->setContentsMargins(5, 5, 5, 5);
 
     connect(m_menu, &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
-    connect(m_settings, &Settings::layoutEditingChanged, this, [this] {
-        m_layoutEditing = !m_layoutEditing;
+    connect(m_settings, &Settings::layoutEditingChanged, this, [this](bool enabled) {
+        m_layoutEditing = enabled;
     });
 
     bool loaded = loadLayout();
     if(!loaded) {
         m_splitter = m_widgetProvider->createSplitter(Qt::Vertical, this);
         m_box->addWidget(m_splitter);
+    }
+    if(!m_splitter->hasChildren()) {
         m_settings->set(Settings::Setting::LayoutEditing, true);
     }
     qApp->installEventFilter(this);
@@ -93,10 +95,14 @@ EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
 void EditableLayout::changeLayout(const QByteArray& layout)
 {
     // Delete all current widgets
-    delete m_splitter;
+    // TODO: Look into caching previous layout widgets
+    m_splitter->deleteLater();
     bool success = loadLayout(layout);
-    if(success) {
+    if(success && m_splitter->hasChildren()) {
         m_settings->set(Settings::Setting::LayoutEditing, false);
+    }
+    else {
+        m_settings->set(Settings::Setting::LayoutEditing, true);
     }
 }
 

@@ -40,7 +40,7 @@ SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, QWidget* parent)
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->addWidget(m_splitter);
 
-    addToSplitter(Widgets::WidgetType::Dummy, m_dummy);
+    m_splitter->insertWidget(static_cast<int>(m_splitter->children().count()), new Dummy(m_widgetProvider, this));
 
     if(!m_isRegistered) {
         qDebug() << SplitterWidget::name() << " not registered";
@@ -74,39 +74,24 @@ QWidget* SplitterWidget::widget(int index) const
     return m_splitter->widget(index);
 }
 
-void SplitterWidget::addToSplitter(QWidget* newWidget)
+bool SplitterWidget::hasChildren()
 {
-    auto* w = qobject_cast<Widget*>(newWidget);
-    if(!w) {
-        return;
-    }
-    int index = static_cast<int>(m_children.count());
-    int dumIndex = findIndex(m_dummy);
-    if(m_children.size() == 1 && dumIndex != -1) {
-        index = placeholderIndex();
-        m_splitter->widget(index)->deleteLater();
-        m_children.remove(dumIndex);
-    }
-    m_children.append(w);
-    return m_splitter->insertWidget(index, w);
+    return !m_children.isEmpty();
 }
 
-void SplitterWidget::addToSplitter(Widgets::WidgetType type, QWidget* newWidget)
+void SplitterWidget::addWidget(QWidget* newWidget)
 {
-    Q_UNUSED(type)
-    auto* w = qobject_cast<Widget*>(newWidget);
-    if(!w) {
+    auto* widget = qobject_cast<Widget*>(newWidget);
+    if(!widget) {
         return;
     }
-    int index = static_cast<int>(m_children.count());
-    int dumIndex = findIndex(m_dummy);
-    if(m_children.size() == 1 && dumIndex != -1) {
-        index = placeholderIndex();
-        m_splitter->widget(index)->deleteLater();
-        m_children.remove(dumIndex);
+    if(m_children.isEmpty()) {
+        int placeIndex = placeholderIndex();
+        m_splitter->widget(placeIndex)->deleteLater();
     }
-    m_children.append(w);
-    return m_splitter->insertWidget(index, w);
+    int index = static_cast<int>(m_children.count());
+    m_children.append(widget);
+    return m_splitter->insertWidget(index, widget);
 }
 
 void SplitterWidget::removeWidget(QWidget* widget)
@@ -119,7 +104,6 @@ void SplitterWidget::removeWidget(QWidget* widget)
     if(m_children.isEmpty()) {
         auto* dummy = new Dummy(m_widgetProvider, this);
         m_splitter->addWidget(dummy);
-        m_children.append(dummy);
     }
 }
 
@@ -202,14 +186,14 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
         if(object.contains("Splitter")) {
             QJsonObject childSplitterObject = object["Splitter"].toObject();
             auto type = EnumHelper::fromString<Qt::Orientation>(childSplitterObject["Type"].toString());
-            auto widgetType = type == Qt::Vertical ? Widgets::WidgetType::VerticalSplitter
-                                                   : Widgets::WidgetType::HorizontalSplitter;
+            //            auto widgetType = type == Qt::Vertical ? Widgets::WidgetType::VerticalSplitter
+            //                                                   : Widgets::WidgetType::HorizontalSplitter;
 
             QJsonArray splitterArray = childSplitterObject["Children"].toArray();
             QByteArray splitterState = QByteArray::fromBase64(childSplitterObject["State"].toString().toUtf8());
 
             auto* childSplitter = m_widgetProvider->createSplitter(type, this);
-            splitter->addToSplitter(widgetType, childSplitter);
+            splitter->addWidget(childSplitter);
             loadSplitter(splitterArray, childSplitter);
             childSplitter->restoreState(splitterState);
         }

@@ -70,19 +70,19 @@ public:
     static QString getKeyString(Setting key);
 
 signals:
-    void layoutEditingChanged();
+    void layoutEditingChanged(bool enabled);
     void playlistSettingChanged();
-    void elapsedTotalChanged(bool checked);
-    void filterAltColorsChanged(bool checked);
-    void filterHeaderChanged(bool checked);
-    void filterScrollBarChanged(bool checked);
-    void infoAltColorsChanged(bool checked);
-    void infoHeaderChanged(bool checked);
-    void infoScrollBarChanged(bool checked);
-    void playlistAltColorsChanged(bool checked);
-    void playlistHeaderChanged(bool checked);
-    void playlistScrollBarChanged(bool checked);
-    void splitterHandlesChanged(bool checked);
+    void elapsedTotalChanged(bool enabled);
+    void filterAltColorsChanged(bool enabled);
+    void filterHeaderChanged(bool enabled);
+    void filterScrollBarChanged(bool enabled);
+    void infoAltColorsChanged(bool enabled);
+    void infoHeaderChanged(bool enabled);
+    void infoScrollBarChanged(bool enabled);
+    void playlistAltColorsChanged(bool enabled);
+    void playlistHeaderChanged(bool enabled);
+    void playlistScrollBarChanged(bool enabled);
+    void splitterHandlesChanged(bool enabled);
 
 protected:
     Settings();

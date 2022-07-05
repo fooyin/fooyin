@@ -42,9 +42,9 @@ public:
     bool restoreState(const QByteArray& state);
 
     [[nodiscard]] QWidget* widget(int index) const;
+    [[nodiscard]] bool hasChildren();
 
-    void addToSplitter(QWidget* widget);
-    void addToSplitter(Widgets::WidgetType type, QWidget* widget);
+    void addWidget(QWidget* widget);
     void removeWidget(QWidget* widget);
 
     int findIndex(QWidget* widgetToFind);

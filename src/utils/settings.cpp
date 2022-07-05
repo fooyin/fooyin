@@ -118,7 +118,7 @@ void Settings::set(Setting key, const QVariant& value)
 
     switch(key) {
         case(Setting::LayoutEditing):
-            return emit layoutEditingChanged();
+            return emit layoutEditingChanged(checked);
         case(Setting::SimplePlaylist):
             return emit playlistSettingChanged();
         case(Setting::ElapsedTotal):

@@ -148,6 +148,9 @@ void MainWindow::setupUi()
 
     connect(p->rescan, &QAction::triggered, p->library, &Library::MusicLibrary::reloadAll);
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
+    connect(p->settings, &Settings::layoutEditingChanged, this, [this](bool enabled) {
+        p->layoutEditing->setChecked(enabled);
+    });
     connect(p->layoutEditing, &QAction::triggered, this, [this](bool checked) {
         p->settings->set(Settings::Setting::LayoutEditing, checked);
     });

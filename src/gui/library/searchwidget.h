@@ -49,7 +49,7 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
-    void searchBoxContextMenu();
+    void searchBoxContextMenu(bool editing);
 
 private:
     struct Private;

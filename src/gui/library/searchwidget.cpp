@@ -86,7 +86,7 @@ void SearchWidget::setupUi()
     p->searchBox = new QLineEdit(this);
     p->searchBox->setPlaceholderText(p->defaultText);
     p->searchBox->setClearButtonEnabled(true);
-    searchBoxContextMenu();
+    searchBoxContextMenu(p->settings->value(Settings::Setting::LayoutEditing).toBool());
 
     p->layout->addWidget(p->searchBox);
 }
@@ -110,10 +110,8 @@ void SearchWidget::contextMenuEvent(QContextMenuEvent* event)
     Q_UNUSED(event)
 }
 
-void SearchWidget::searchBoxContextMenu()
+void SearchWidget::searchBoxContextMenu(bool editing)
 {
-    bool editing = p->settings->value(Settings::Setting::LayoutEditing).toBool();
-
     if(!editing) {
         p->searchBox->setContextMenuPolicy(Qt::DefaultContextMenu);
     }
