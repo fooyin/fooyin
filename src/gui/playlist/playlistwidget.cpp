@@ -59,7 +59,9 @@ PlaylistWidget::PlaylistWidget(WidgetProvider* widgetProvider, QWidget* parent)
     m_playlist->setItemDelegate(new PlaylistDelegate(this));
 
     setupConnections();
-    connect(this, &PlaylistWidget::openSettings, widgetProvider->settingsDialog(), &SettingsDialog::open);
+    connect(m_noLibrary, &NoLibraryOverlay::settingsClicked, this, [widgetProvider] {
+        widgetProvider->settingsDialog()->openPage(SettingsDialog::Page::Library);
+    });
 
     reset();
     setHeaderHidden(m_settings->value(Settings::Setting::PlaylistHeader).toBool());
@@ -96,8 +98,6 @@ void PlaylistWidget::reset()
 
 void PlaylistWidget::setupConnections()
 {
-    connect(m_noLibrary, &NoLibraryOverlay::settingsClicked, this, &PlaylistWidget::openSettings);
-
     connect(m_libraryManager, &LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
     connect(m_libraryManager, &LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
 

@@ -32,12 +32,22 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
+    // Order of pages in settings
+    // Do not change!
+    enum class Page
+    {
+        General = 0,
+        Library,
+        Playlist
+    };
+
     explicit SettingsDialog(Library::LibraryManager* libManager, QWidget* parent = nullptr);
     ~SettingsDialog() override;
 
     void setupUi();
 
     void changePage(QListWidgetItem* current, QListWidgetItem* previous);
+    void openPage(Page page);
 
 private:
     struct Private;

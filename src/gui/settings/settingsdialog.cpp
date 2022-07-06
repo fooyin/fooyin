@@ -109,3 +109,10 @@ void SettingsDialog::changePage(QListWidgetItem* current, QListWidgetItem* previ
 
     p->pagesWidget->setCurrentIndex(p->contentsWidget->row(current));
 }
+
+void SettingsDialog::openPage(Page page)
+{
+    auto index = static_cast<int>(page);
+    p->contentsWidget->setCurrentRow(index);
+    show();
+}
