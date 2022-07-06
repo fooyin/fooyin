@@ -57,9 +57,6 @@ public:
     void saveSplitter(QJsonObject& object, QJsonArray& splitterArray);
     void loadSplitter(const QJsonArray& array, SplitterWidget* splitter);
 
-protected:
-    [[nodiscard]] int placeholderIndex() const;
-
 private:
     QHBoxLayout* m_layout;
     Splitter* m_splitter;
