@@ -241,6 +241,11 @@ void Track::setCoverPath(const QString& path)
     m_coverPath = path;
 }
 
+bool Track::hasCover() const
+{
+    return !m_coverPath.isEmpty();
+}
+
 quint16 Track::bitrate() const
 {
     return m_bitrate;

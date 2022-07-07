@@ -92,6 +92,8 @@ public:
     [[nodiscard]] QString coverPath() const;
     void setCoverPath(const QString& path);
 
+    [[nodiscard]] bool hasCover() const;
+
     [[nodiscard]] quint16 bitrate() const;
     void setBitrate(quint16 rate);
 

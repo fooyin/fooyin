@@ -19,6 +19,7 @@
 
 #include "utils.h"
 
+#include "core/tagging/tags.h"
 #include "paths.h"
 
 #include <QCryptographicHash>
@@ -193,6 +194,32 @@ bool saveCover(const QPixmap& cover, const QString& hash)
     QFile file(QString(path + hash).append(".jpg"));
     file.open(QIODevice::WriteOnly);
     return cover.save(&file, "JPG", 100);
+}
+
+QString storeCover(const Track& track)
+{
+    QString coverPath = "";
+    QString coverHash = Util::calcCoverHash(track.album(), track.albumArtist());
+
+    const QString cacheCover = Util::coverPath() + coverHash + ".jpg";
+    const QString folderCover = Util::File::coverInDirectory(Util::File::getParentDirectory(track.filepath()));
+
+    if(Util::File::exists(cacheCover)) {
+        coverPath = cacheCover;
+    }
+    else if(!folderCover.isEmpty()) {
+        coverPath = folderCover;
+    }
+    else {
+        QPixmap cover = Tagging::readCover(track.filepath());
+        if(!cover.isNull()) {
+            bool saved = Util::saveCover(cover, coverHash);
+            if(saved) {
+                coverPath = cacheCover;
+            }
+        }
+    }
+    return coverPath;
 }
 
 void setMinimumWidth(QLabel* label, const QString& text)

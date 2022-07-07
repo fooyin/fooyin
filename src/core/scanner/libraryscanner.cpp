@@ -80,6 +80,9 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
         else {
             trackMap.insert(track->filepath(), track);
         }
+        if(track->hasCover() && !Util::File::exists(track->coverPath())) {
+            Util::storeCover(*track);
+        }
         if(!mayRun()) {
             return;
         }

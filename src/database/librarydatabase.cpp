@@ -89,29 +89,6 @@ QString getSearchJoins()
 
     return joins;
 }
-void storeCover(const Track& track, Album& album)
-{
-    QString coverHash = Util::calcCoverHash(track.album(), track.albumArtist());
-
-    const QString cacheCover = Util::coverPath() + coverHash + ".jpg";
-    const QString folderCover = Util::File::coverInDirectory(Util::File::getParentDirectory(track.filepath()));
-
-    if(Util::File::exists(cacheCover)) {
-        album.setCoverPath(cacheCover);
-    }
-    else if(!folderCover.isEmpty()) {
-        album.setCoverPath(folderCover);
-    }
-    else {
-        QPixmap cover = Tagging::readCover(track.filepath());
-        if(!cover.isNull()) {
-            bool saved = Util::saveCover(cover, coverHash);
-            if(saved) {
-                album.setCoverPath(cacheCover);
-            }
-        }
-    }
-}
 } // namespace
 
 namespace DB {
@@ -222,17 +199,15 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             album.setArtistId(albumArtist.id());
             album.setArtist(track.albumArtist());
 
-            storeCover(track, album);
-
             int id = insertAlbum(album);
             album.setId(id);
             albumMap.insert(hash, album);
         }
-
         auto album = albumMap.value(hash);
         track.setAlbumId(album.id());
         if(!album.hasCover()) {
-            storeCover(track, album);
+            QString coverPath = Util::storeCover(track);
+            album.setCoverPath(coverPath);
         }
         track.setCoverPath(album.coverPath());
 

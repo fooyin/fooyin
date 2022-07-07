@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "models/track.h"
 #include "utils/widgetprovider.h"
 
 #include <QPixmap>
@@ -56,5 +57,6 @@ QString calcAlbumHash(const QString& albumName, const QString& albumArtist, int 
 QString calcCoverHash(const QString& albumName, const QString& albumArtist);
 QPixmap getCover(const QString& path, int size);
 bool saveCover(const QPixmap& cover, const QString& hash);
+QString storeCover(const Track& track);
 QString capitalise(const QString& s);
 } // namespace Util
