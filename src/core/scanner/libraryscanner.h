@@ -36,7 +36,6 @@ public:
     ~LibraryScanner() override;
 
     void stopThread() override;
-    [[nodiscard]] bool mayRun() const;
 
     void scanLibrary(TrackPtrList& tracks, const LibraryInfo& info);
     void scanAll(TrackPtrList& tracks);

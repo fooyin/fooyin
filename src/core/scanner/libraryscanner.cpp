@@ -27,10 +27,7 @@
 #include "models/track.h"
 #include "utils/utils.h"
 
-#include <QAbstractEventDispatcher>
 #include <QDir>
-#include <QDirIterator>
-#include <QThread>
 
 namespace Library {
 LibraryScanner::LibraryScanner(LibraryManager* libraryManager, QObject* parent)
@@ -46,17 +43,6 @@ LibraryScanner::~LibraryScanner()
 void LibraryScanner::stopThread()
 {
     setState(State::Idle);
-}
-
-bool LibraryScanner::mayRun() const
-{
-    // Process event queue to check for stop signals
-    auto* dispatcher = QThread::currentThread()->eventDispatcher();
-    if(!dispatcher) {
-        return false;
-    }
-    dispatcher->processEvents(QEventLoop::AllEvents);
-    return state() == State::Running;
 }
 
 void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
@@ -130,19 +116,21 @@ void LibraryScanner::storeTracks(TrackList& tracks) const
 
 QStringList LibraryScanner::getFiles(QDir& baseDirectory)
 {
-    QStringList ret = {};
+    QStringList ret;
+    QList<QDir> stack{baseDirectory};
 
     QStringList soundFileExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga",  "*.m4a", "*.wav",  "*.flac",
                                     "*.aac", "*.wma", "*.mpc",  "*.aiff", "*.ape", "*.webm", "*.mp4"};
 
-    baseDirectory.setNameFilters(soundFileExtensions);
-    baseDirectory.setFilter(QDir::Files);
-
-    QDirIterator it(baseDirectory, QDirIterator::Subdirectories);
-    while(it.hasNext()) {
-        ret.append(it.next());
+    while(!stack.isEmpty()) {
+        QDir dir = stack.takeFirst();
+        for(const auto& subDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+            stack.append(QDir{subDir.absoluteFilePath()});
+        }
+        for(const auto& file : dir.entryInfoList(soundFileExtensions, QDir::Files)) {
+            ret.append(file.absoluteFilePath());
+        }
     }
-
     return ret;
 }
 
