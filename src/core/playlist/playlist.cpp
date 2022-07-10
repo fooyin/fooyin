@@ -47,7 +47,11 @@ int Playlist::Playlist::createPlaylist(const TrackPtrList& tracks)
 
 int Playlist::Playlist::currentTrackIndex() const
 {
-    auto it = std::find_if(m_tracks.constBegin(), m_tracks.constEnd(), [&](Track* track) {
+    if(!m_playingTrack) {
+        return -1;
+    }
+
+    auto it = std::find_if(m_tracks.constBegin(), m_tracks.constEnd(), [this](Track* track) {
         return (track->id() == m_playingTrack->id());
     });
 
@@ -136,40 +140,38 @@ void Playlist::Playlist::stop()
     m_playingTrack = nullptr;
 }
 
-void Playlist::Playlist::next()
+int Playlist::Playlist::next()
 {
     if(m_tracks.isEmpty()) {
         stop();
-        return;
+        return -1;
     }
-
     int index = nextIndex();
-
     changeTrack(index);
+    return index;
 }
 
-void Playlist::Playlist::previous()
+int Playlist::Playlist::previous()
 {
+    int index = currentTrackIndex();
     if(m_playerManager->currentPosition() > 5000) {
         m_playerManager->changePosition(0);
-        return;
+        return index;
     }
-
-    changeTrack(currentTrackIndex() - 1);
+    --index;
+    changeTrack(index);
+    return index;
 }
 
 int Playlist::Playlist::nextIndex()
 {
+    const int currentIndex = currentTrackIndex();
+    const bool isLastTrack = (currentIndex >= m_tracks.count() - 1);
     const auto mode = m_playerManager->playMode();
-    const auto isLastTrack = (currentTrackIndex() == m_tracks.count() - 1);
-    int index;
+    int index = currentIndex + 1;
 
-    if((currentTrackIndex() == -1) && mode != Player::PlayMode::Shuffle) {
-        index = 0;
-    }
-
-    else if(mode == Player::PlayMode::Repeat) {
-        index = currentTrackIndex();
+    if(mode == Player::PlayMode::Repeat) {
+        index = currentIndex;
     }
     // TODO: Implement full shuffle functionality
     else if(mode == Player::PlayMode::Shuffle) {
@@ -178,10 +180,6 @@ int Playlist::Playlist::nextIndex()
 
     else if(isLastTrack) {
         index = mode == Player::PlayMode::RepeatAll ? 0 : -1;
-    }
-
-    else {
-        index = currentTrackIndex() + 1;
     }
 
     return index;

@@ -124,9 +124,11 @@ int PlaylistHandler::addNewPlaylist(const QString& name)
 void PlaylistHandler::next()
 {
     auto* playlist = activePlaylist();
-    playlist->next();
-    if(playlist->currentTrackIndex() < 0) {
-        m_playerManager->stop();
+    if(playlist) {
+        int index = playlist->next();
+        if(index < 0) {
+            m_playerManager->stop();
+        }
     }
 }
 

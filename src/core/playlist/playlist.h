@@ -53,8 +53,8 @@ public:
 
     void play();
     void stop();
-    void next();
-    void previous();
+    int next();
+    int previous();
 
 protected:
     int nextIndex();
