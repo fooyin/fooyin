@@ -207,18 +207,21 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
     const auto key = e->key();
 
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        const QModelIndex index = m_playlist->selectionModel()->selectedIndexes().constFirst();
-        const auto type = index.data(Role::Type).value<PlaylistItem::Type>();
+        QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
+        if(!indexes.isEmpty()) {
+            const QModelIndex index = indexes.constFirst();
+            const auto type = index.data(Role::Type).value<PlaylistItem::Type>();
 
-        if(type != PlaylistItem::Type::Track) {
-            return;
+            if(type != PlaylistItem::Type::Track) {
+                return;
+            }
+
+            auto idx = index.data(ItemRole::Index).toInt();
+
+            emit clickedTrack(idx, false);
+            m_model->changeTrackState();
+            m_playlist->clearSelection();
         }
-
-        auto idx = index.data(ItemRole::Index).toInt();
-
-        emit clickedTrack(idx, false);
-        m_model->changeTrackState();
-        m_playlist->clearSelection();
     }
     QWidget::keyPressEvent(e);
 }
