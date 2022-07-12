@@ -45,7 +45,7 @@ void PlaylistView::setupView()
 {
     setRootIsDecorated(false);
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::SingleSelection);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
     setMouseTracking(true);
     setItemsExpandable(false);
     setIndentation(0);

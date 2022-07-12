@@ -183,11 +183,8 @@ void PlaylistWidget::layoutEditingMenu(QMenu* menu)
     menu->addAction(altRowColours);
 }
 
-void PlaylistWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void PlaylistWidget::selectionChanged()
 {
-    Q_UNUSED(selected)
-    Q_UNUSED(deselected)
-
     QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
     QSet<Track*> tracks;
     for(const auto& index : indexes) {
@@ -196,6 +193,12 @@ void PlaylistWidget::selectionChanged(const QItemSelection& selected, const QIte
             if(type == PlaylistItem::Type::Track) {
                 auto* data = index.data(ItemRole::Data).value<Track*>();
                 tracks.insert(data);
+            }
+            else {
+                QItemSelection selection{m_model->index(0, 0, index),
+                                         m_model->index(m_model->rowCount(index) - 1, 0, index)};
+                selection.select(index, index);
+                m_playlist->selectionModel()->select(selection, QItemSelectionModel::Select);
             }
         }
     }

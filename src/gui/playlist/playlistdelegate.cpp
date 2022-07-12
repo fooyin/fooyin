@@ -96,6 +96,20 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     painter->restore();
 }
 
+void PlaylistDelegate::paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option)
+{
+    QColor selectColour = option.palette.highlight().color();
+    QColor hoverColour = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
+
+    if((option.state & QStyle::State_Selected)) {
+        painter->fillRect(option.rect, option.palette.highlight());
+    }
+
+    if((option.state & QStyle::State_MouseOver)) {
+        painter->fillRect(option.rect, hoverColour);
+    }
+}
+
 void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
     const auto simple = index.data(Role::PlaylistType).toBool();
@@ -126,6 +140,8 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
     yearFont.setPixelSize(14);
     QFont totalFont = painter->font();
     totalFont.setPixelSize(10);
+
+    paintSelectionBackground(painter, option);
 
     if(!simple) {
         const auto coverFrameWidth = 2;
@@ -250,10 +266,8 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     const bool isPlaying = index.data(ItemRole::Playing).toBool();
     const QString state = index.data(ItemRole::State).toString();
 
-    QColor selectColour = option.palette.highlight().color();
-    QColor hoverColour = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
-
     QFont playFont = QFont("Guifx v2 Transports", 12);
+    QColor selectColour = option.palette.highlight().color();
     QColor playColour = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 45);
 
     int offset = 0;
@@ -276,14 +290,7 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
         = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, trackTitle);
 
     painter->fillRect(option.rect, isPlaying ? playColour : option.palette.color(background));
-
-    if((option.state & QStyle::State_Selected)) {
-        painter->fillRect(option.rect, option.palette.highlight());
-    }
-
-    if((option.state & QStyle::State_MouseOver)) {
-        painter->fillRect(option.rect, hoverColour);
-    }
+    paintSelectionBackground(painter, option);
 
     option.widget->style()->drawItemText(painter, numRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
                                          trackNumber);
@@ -322,14 +329,16 @@ void PlaylistDelegate::paintDisc(QPainter* painter, const QStyleOptionViewItem& 
     const int height = option.rect.height();
     const int right = x + width;
 
-    QColor lineColour = option.palette.color(QPalette::Shadow);
-    lineColour.setAlpha(50);
-
     QString discNumber = index.data(Qt::DisplayRole).toString();
     QString discDuration = index.data(ItemRole::Duration).toString();
 
+    paintSelectionBackground(painter, option);
+
     QRect discRect = QRect(x + 10, y, 50, height);
     QRect durationRect = QRect(right - 60, y, 50, height);
+
+    QColor lineColour = option.palette.color(QPalette::Shadow);
+    lineColour.setAlpha(50);
 
     QRect discBound
         = painter->boundingRect(discRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, discNumber);

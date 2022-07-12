@@ -32,6 +32,7 @@ public:
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+    static void paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option);
 
     static void paintAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);

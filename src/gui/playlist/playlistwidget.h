@@ -67,7 +67,7 @@ signals:
     void clickedTrack(int idx, bool createNewPlaylist);
 
 protected:
-    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+    void selectionChanged();
     void keyPressEvent(QKeyEvent* event) override;
     void customHeaderMenuRequested(QPoint pos);
     void changeOrder(QAction* action);
