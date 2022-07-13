@@ -15,6 +15,7 @@ In addition to being a music player, Fooyin also includes a *Layout Editing Mode
 - [x] Fully customisable layout
 - [x] Add/Remove music libraries
 - [x] Filter and search collection
+- [ ] Plugin system
 - [ ] Full playlist support
 - [ ] Tag editing
 - [ ] FFmpeg backend
