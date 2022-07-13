@@ -27,7 +27,7 @@ Dummy::Dummy(WidgetProvider* widgetProvider, QWidget* parent)
     , m_label(new QLabel(this))
 {
     Q_UNUSED(widgetProvider)
-    setObjectName(QString("Dummy"));
+    setObjectName(name());
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_label->setText("Right-Click to add a new widget.");
     m_label->setAutoFillBackground(true);
@@ -41,12 +41,7 @@ Dummy::Dummy(WidgetProvider* widgetProvider, QWidget* parent)
 
 QString Dummy::name() const
 {
-    return Dummy::widgetName();
+    return "Dummy";
 }
 
 Dummy::~Dummy() = default;
-
-QString Dummy::widgetName()
-{
-    return "Dummy";
-}

@@ -24,14 +24,12 @@
 class WidgetProvider;
 
 namespace Widgets {
-class Spacer : public Widget,
-               public FactoryRegister<Spacer>
+class Spacer : public Widget
 {
 public:
     explicit Spacer(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~Spacer() override;
 
     [[nodiscard]] QString name() const override;
-    [[nodiscard]] static QString widgetName();
 };
 } // namespace Widgets

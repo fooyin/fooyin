@@ -29,6 +29,8 @@
 #include <QLineEdit>
 #include <QMenu>
 
+static const bool m_isRegistered = Util::factory()->registerClass<SearchWidget>("Search");
+
 struct SearchWidget::Private
 {
     Settings* settings;
@@ -62,11 +64,6 @@ SearchWidget::SearchWidget(WidgetProvider* widgetProvider, QWidget* parent)
 }
 
 QString SearchWidget::name() const
-{
-    return SearchWidget::widgetName();
-}
-
-QString SearchWidget::widgetName()
 {
     return "Search";
 }

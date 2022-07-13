@@ -26,8 +26,7 @@ class WidgetProvider;
 class QHBoxLayout;
 class Dummy;
 
-class SplitterWidget : public Widget,
-                       public FactoryRegister<SplitterWidget>
+class SplitterWidget : public Widget
 {
     Q_OBJECT
 
@@ -51,7 +50,6 @@ public:
     QList<Widget*> children();
 
     [[nodiscard]] QString name() const override;
-    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
 
     void saveSplitter(QJsonObject& object, QJsonArray& splitterArray);

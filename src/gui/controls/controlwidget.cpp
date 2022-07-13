@@ -32,6 +32,8 @@
 #include <QHBoxLayout>
 #include <QMenu>
 
+static const bool m_isRegistered = Util::factory()->registerClass<ControlWidget>("Controls");
+
 struct ControlWidget::Private
 {
     QHBoxLayout* layout;
@@ -57,7 +59,7 @@ ControlWidget::ControlWidget(WidgetProvider* widgetProvider, QWidget* parent)
     setupConnections();
 
     if(!m_isRegistered) {
-        qDebug() << ControlWidget::name() << " not registered";
+        qDebug() << name() << " not registered";
     }
 }
 
@@ -104,11 +106,6 @@ void ControlWidget::setupConnections()
 }
 
 QString ControlWidget::name() const
-{
-    return ControlWidget::widgetName();
-}
-
-QString ControlWidget::widgetName()
 {
     return "Controls";
 }

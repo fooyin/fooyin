@@ -35,6 +35,8 @@
 #include <QJsonObject>
 #include <QMenu>
 
+static const bool m_isRegistered = Util::factory()->registerClass<Library::FilterWidget>("Filter", {"Filter"});
+
 namespace Library {
 FilterWidget::FilterWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
@@ -60,7 +62,7 @@ FilterWidget::FilterWidget(WidgetProvider* widgetProvider, QWidget* parent)
     resetByIndex(-1);
 
     if(!m_isRegistered) {
-        qDebug() << FilterWidget::name() << " not registered";
+        qDebug() << name() << " not registered";
     }
 }
 
@@ -166,11 +168,6 @@ void FilterWidget::setAltRowColors(bool altColours)
 }
 
 QString FilterWidget::name() const
-{
-    return FilterWidget::widgetName();
-}
-
-QString FilterWidget::widgetName()
 {
     return "Filter";
 }

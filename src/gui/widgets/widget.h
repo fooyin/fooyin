@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "utils/factoryhelper.h"
-
 #include <QJsonArray>
 #include <QWidget>
 
@@ -38,6 +36,7 @@ public:
     Widget* findParent();
 
     [[nodiscard]] virtual QString name() const = 0;
+    virtual void addWidgetMenu(QMenu* menu, QAction* action);
     virtual void layoutEditingMenu(QMenu* menu);
     virtual void saveLayout(QJsonArray& array);
 };

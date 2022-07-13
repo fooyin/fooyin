@@ -21,12 +21,14 @@
 
 #include "utils/utils.h"
 
+static const bool m_isRegistered = Util::factory()->registerClass<Widgets::Spacer>("Spacer");
+
 namespace Widgets {
 Spacer::Spacer(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
 {
     Q_UNUSED(widgetProvider)
-    setObjectName("Spacer");
+    setObjectName(name());
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     if(!m_isRegistered) {
@@ -37,11 +39,6 @@ Spacer::Spacer(WidgetProvider* widgetProvider, QWidget* parent)
 Spacer::~Spacer() = default;
 
 QString Spacer::name() const
-{
-    return Spacer::widgetName();
-}
-
-QString Spacer::widgetName()
 {
     return "Spacer";
 }

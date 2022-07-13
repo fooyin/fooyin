@@ -39,6 +39,8 @@
 #include <QMenu>
 #include <QScrollBar>
 
+static const bool m_isRegistered = Util::factory()->registerClass<Library::PlaylistWidget>("Playlist");
+
 namespace Library {
 PlaylistWidget::PlaylistWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
@@ -147,11 +149,6 @@ void PlaylistWidget::setScrollbarHidden(bool showScrollBar)
 }
 
 QString PlaylistWidget::name() const
-{
-    return PlaylistWidget::widgetName();
-}
-
-QString PlaylistWidget::widgetName()
 {
     return "Playlist";
 }

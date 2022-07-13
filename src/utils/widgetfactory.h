@@ -35,13 +35,15 @@ protected:
     {
         return new U(std::forward<Args>(args)...);
     }
-    using Instantiators = QHash<Key, Instantiator>;
+    using Instantiators = QMap<Key, Instantiator>;
+    using SubMenus = QMap<Key, QStringList>;
 
     Instantiators instantiators;
+    SubMenus subMenus;
 
 public:
     template <typename U>
-    bool registerClass(const Key& key)
+    bool registerClass(const Key& key, const QStringList& subMenu = {})
     {
         static_assert(std::is_base_of<T, U>::value, "Class must derive from the factory's base class");
         if(instantiators.contains(key)) {
@@ -49,6 +51,9 @@ public:
             return false;
         }
         instantiators.insert(key, &createInstance<U>);
+        if(!subMenu.isEmpty()) {
+            subMenus.insert(key, subMenu);
+        }
         return true;
     }
 
@@ -64,6 +69,11 @@ public:
     QList<Key> widgetNames() const
     {
         return instantiators.keys();
+    }
+
+    SubMenus menus() const
+    {
+        return subMenus;
     }
 };
 } // namespace Util

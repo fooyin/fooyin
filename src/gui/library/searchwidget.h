@@ -28,8 +28,7 @@ class MusicLibrary;
 class Splitter;
 class WidgetProvider;
 
-class SearchWidget : public Widget,
-                     public FactoryRegister<SearchWidget>
+class SearchWidget : public Widget
 {
     Q_OBJECT
 
@@ -38,7 +37,6 @@ public:
     ~SearchWidget() override;
 
     [[nodiscard]] QString name() const override;
-    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
 
 signals:

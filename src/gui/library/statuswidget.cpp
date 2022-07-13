@@ -29,6 +29,8 @@
 #include <QHBoxLayout>
 #include <QMenu>
 
+static const bool m_isRegistered = Util::factory()->registerClass<StatusWidget>("Status");
+
 struct StatusWidget::Private
 {
     PlayerManager* playerManager;
@@ -63,11 +65,6 @@ StatusWidget::StatusWidget(WidgetProvider* widgetProvider, QWidget* parent)
 }
 
 QString StatusWidget::name() const
-{
-    return StatusWidget::widgetName();
-}
-
-QString StatusWidget::widgetName()
 {
     return "Status";
 }

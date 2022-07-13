@@ -43,6 +43,8 @@ struct WidgetProvider::Private
     Library::MusicLibrary* library;
     SettingsDialog* settingsDialog;
 
+    QMap<QString, QMenu*> menus;
+
     QList<Library::FilterWidget*> filters;
 
     Private(PlayerManager* playerManager, Library::LibraryManager* libraryManager, Library::MusicLibrary* library,
@@ -120,13 +122,26 @@ void WidgetProvider::addMenuActions(QMenu* menu, SplitterWidget* splitter)
     //    });
     //    menu->addAction(addVSplitterWidget);
 
+    p->menus.clear();
     auto widgets = Util::factory()->widgetNames();
+    auto widgetSubMenus = Util::factory()->menus();
     for(const auto& widget : widgets) {
-        auto* addWidget = new QAction(widget, menu);
+        const QStringList subMenus = widgetSubMenus.value(widget);
+        auto* parentMenu = menu;
+        for(const auto& subMenu : subMenus) {
+            if(!p->menus.contains(subMenu)) {
+                auto* childMenu = new QMenu(subMenu, parentMenu);
+                p->menus.insert(subMenu, childMenu);
+            }
+            auto* childMenu = p->menus.value(subMenu);
+            parentMenu->addMenu(childMenu);
+            parentMenu = childMenu;
+        }
+        auto* addWidget = new QAction(widget, parentMenu);
         QAction::connect(addWidget, &QAction::triggered, this, [this, widget, splitter] {
             createWidget(widget, splitter);
         });
-        menu->addAction(addWidget);
+        parentMenu->addAction(addWidget);
     }
 
     //    addWidgetMenu(menu, splitter);

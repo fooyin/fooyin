@@ -28,6 +28,8 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
+static const bool m_isRegistered = Util::factory()->registerClass<CoverWidget>("Artwork");
+
 struct CoverWidget::Private
 {
     PlayerManager* playerManager;
@@ -65,11 +67,6 @@ CoverWidget::CoverWidget(WidgetProvider* widgetProvider, QWidget* parent)
 }
 
 QString CoverWidget::name() const
-{
-    return CoverWidget::widgetName();
-}
-
-QString CoverWidget::widgetName()
 {
     return "Artwork";
 }

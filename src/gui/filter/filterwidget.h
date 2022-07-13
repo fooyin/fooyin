@@ -34,8 +34,7 @@ namespace Library {
 class FilterView;
 class MusicLibrary;
 
-class FilterWidget : public Widget,
-                     public FactoryRegister<FilterWidget>
+class FilterWidget : public Widget
 {
     Q_OBJECT
 
@@ -63,7 +62,6 @@ public:
     void setAltRowColors(bool altColours);
 
     [[nodiscard]] QString name() const override;
-    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
     void saveLayout(QJsonArray& array) override;
 

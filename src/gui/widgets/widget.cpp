@@ -36,6 +36,12 @@ Widget* Widget::findParent()
     return qobject_cast<Widget*>(parent);
 }
 
+void Widget::addWidgetMenu(QMenu* menu, QAction* action)
+{
+    Q_UNUSED(menu)
+    Q_UNUSED(action)
+}
+
 void Widget::layoutEditingMenu(QMenu* menu)
 {
     Q_UNUSED(menu)

@@ -13,6 +13,8 @@
 #include <QMenu>
 #include <QTableWidget>
 
+static const bool m_isRegistered = Util::factory()->registerClass<InfoWidget>("Info");
+
 InfoWidget::InfoWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_settings(Settings::instance())
@@ -106,11 +108,6 @@ void InfoWidget::setAltRowColors(bool altColours)
 }
 
 QString InfoWidget::name() const
-{
-    return InfoWidget::widgetName();
-}
-
-QString InfoWidget::widgetName()
 {
     return "Info";
 }

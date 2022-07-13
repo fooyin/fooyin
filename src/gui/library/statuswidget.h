@@ -27,8 +27,7 @@
 class PlayerManager;
 class WidgetProvider;
 
-class StatusWidget : public Widget,
-                     public FactoryRegister<StatusWidget>
+class StatusWidget : public Widget
 {
     Q_OBJECT
 
@@ -37,7 +36,6 @@ public:
     ~StatusWidget() override;
 
     [[nodiscard]] QString name() const override;
-    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
 
 signals:

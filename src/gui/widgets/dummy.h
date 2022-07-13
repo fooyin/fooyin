@@ -36,7 +36,6 @@ public:
     ~Dummy() override;
 
     [[nodiscard]] QString name() const override;
-    [[nodiscard]] static QString widgetName();
 
 private:
     QHBoxLayout* m_layout;

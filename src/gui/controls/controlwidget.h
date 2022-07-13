@@ -27,8 +27,7 @@ class PlayerManager;
 class Track;
 class WidgetProvider;
 
-class ControlWidget : public Widget,
-                      public FactoryRegister<ControlWidget>
+class ControlWidget : public Widget
 {
     Q_OBJECT
 
@@ -40,7 +39,6 @@ public:
     void setupConnections();
 
     [[nodiscard]] QString name() const override;
-    [[nodiscard]] static QString widgetName();
     void layoutEditingMenu(QMenu* menu) override;
 
 signals:

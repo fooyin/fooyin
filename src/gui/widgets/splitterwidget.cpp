@@ -28,6 +28,8 @@
 #include <QJsonObject>
 #include <QMenu>
 
+static const bool m_isRegistered = Util::factory()->registerClass<SplitterWidget>("Splitter", {"Splitters"});
+
 SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
@@ -122,11 +124,6 @@ QList<Widget*> SplitterWidget::children()
 }
 
 QString SplitterWidget::name() const
-{
-    return SplitterWidget::widgetName();
-}
-
-QString SplitterWidget::widgetName()
 {
     return "Splitter";
 }
