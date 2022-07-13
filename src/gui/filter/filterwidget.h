@@ -22,6 +22,7 @@
 #include "filtermodel.h"
 #include "gui/widgets/widget.h"
 #include "utils/typedefs.h"
+#include "utils/utils.h"
 
 #include <QItemSelection>
 
@@ -39,7 +40,7 @@ class FilterWidget : public Widget
     Q_OBJECT
 
 public:
-    FilterWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    FilterWidget(Filters::FilterType type, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();
@@ -80,11 +81,57 @@ protected:
 
 private:
     QHBoxLayout* m_layout;
-    int m_index;
     Filters::FilterType m_type;
+    int m_index;
     MusicLibrary* m_library;
     Library::FilterView* m_filter;
     FilterModel* m_model;
     Settings* m_settings;
 };
+
+class GenreFilter : public FilterWidget
+{
+public:
+    explicit GenreFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::Genre, widgetProvider, parent)
+    { }
+    ~GenreFilter() override = default;
+};
+
+class YearFilter : public FilterWidget
+{
+public:
+    explicit YearFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::Year, widgetProvider, parent)
+    { }
+    ~YearFilter() override = default;
+};
+
+class AlbmArtistFilter : public FilterWidget
+{
+public:
+    explicit AlbmArtistFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::AlbumArtist, widgetProvider, parent)
+    { }
+    ~AlbmArtistFilter() override = default;
+};
+
+class ArtistFilter : public FilterWidget
+{
+public:
+    explicit ArtistFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::Artist, widgetProvider, parent)
+    { }
+    ~ArtistFilter() override = default;
+};
+
+class AlbumFilter : public FilterWidget
+{
+public:
+    explicit AlbumFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::Album, widgetProvider, parent)
+    { }
+    ~AlbumFilter() override = default;
+};
+
 }; // namespace Library

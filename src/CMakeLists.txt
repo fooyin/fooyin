@@ -41,6 +41,7 @@ set(HEADERS
 
     gui/filter/filterdelegate.h
     gui/filter/filteritem.h
+    gui/filter/filtermanager.h
     gui/filter/filtermodel.h
     gui/filter/filterview.h
     gui/filter/filterwidget.h
@@ -141,6 +142,7 @@ set(SOURCES
 
     gui/filter/filterdelegate.cpp
     gui/filter/filteritem.cpp
+    gui/filter/filtermanager.cpp
     gui/filter/filtermodel.cpp
     gui/filter/filterview.cpp
     gui/filter/filterwidget.cpp

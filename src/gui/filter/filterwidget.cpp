@@ -25,7 +25,6 @@
 #include "filterview.h"
 #include "utils/enumhelper.h"
 #include "utils/settings.h"
-#include "utils/utils.h"
 #include "utils/widgetprovider.h"
 
 #include <QAction>
@@ -35,20 +34,25 @@
 #include <QJsonObject>
 #include <QMenu>
 
-static const bool m_isRegistered = Util::factory()->registerClass<Library::FilterWidget>("Filter", {"Filter"});
-
 namespace Library {
-FilterWidget::FilterWidget(WidgetProvider* widgetProvider, QWidget* parent)
+static const bool m_genreIsRegistered = Util::factory()->registerClass<GenreFilter>("Genre", {"Filter"});
+static const bool m_yearIsRegistered = Util::factory()->registerClass<YearFilter>("Year", {"Filter"});
+static const bool m_albumArtistIsRegistered
+    = Util::factory()->registerClass<AlbmArtistFilter>("AlbumArtist", {"Filter"});
+static const bool m_artistIsRegistered = Util::factory()->registerClass<ArtistFilter>("Artist", {"Filter"});
+static const bool m_albumIsRegistered = Util::factory()->registerClass<AlbumFilter>("Album", {"Filter"});
+
+FilterWidget::FilterWidget(Filters::FilterType type, WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
+    , m_type(type)
     , m_index(0)
-    , m_type(Filters::FilterType::AlbumArtist)
     , m_library(widgetProvider->library())
     , m_filter(new Library::FilterView{widgetProvider->playerManager(), m_library, this})
     , m_model(new FilterModel(m_type, m_index, m_library, m_filter))
     , m_settings(Settings::instance())
 {
-    setObjectName("Filter");
+    setObjectName(FilterWidget::name());
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->addWidget(m_filter);
     m_filter->setModel(m_model);
@@ -60,10 +64,6 @@ FilterWidget::FilterWidget(WidgetProvider* widgetProvider, QWidget* parent)
     setAltRowColors(m_settings->value(Settings::Setting::FilterAltColours).toBool());
 
     resetByIndex(-1);
-
-    if(!m_isRegistered) {
-        qDebug() << name() << " not registered";
-    }
 }
 
 FilterWidget::~FilterWidget()
@@ -353,4 +353,5 @@ void FilterWidget::resetByType(Filters::FilterType type)
         m_library->items(m_type);
     }
 }
+
 } // namespace Library

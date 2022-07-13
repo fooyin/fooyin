@@ -31,6 +31,7 @@
 #include "gui/widgets/dummy.h"
 #include "gui/widgets/spacer.h"
 #include "gui/widgets/splitterwidget.h"
+#include "utils/enumhelper.h"
 #include "utils/utils.h"
 #include "utils/widgetfactory.h"
 
@@ -94,10 +95,8 @@ Widget* WidgetProvider::createWidget(const QString& widget, SplitterWidget* spli
 Widget* WidgetProvider::createFilter(Filters::FilterType filterType, SplitterWidget* splitter)
 {
     const int index = static_cast<int>(p->filters.size());
-    auto* filter = new Library::FilterWidget(this);
-    filter->setType(filterType);
+    auto* filter = qobject_cast<Library::FilterWidget*>(createWidget(EnumHelper::toString(filterType), splitter));
     filter->setIndex(index);
-    splitter->addWidget(filter);
     p->filters.append(filter);
     return filter;
 }
