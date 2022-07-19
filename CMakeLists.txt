@@ -7,6 +7,7 @@ set(FOOYIN_DATABASE_VERSION "0.8.0")
 include(CheckIncludeFiles)
 include(CheckIncludeFileCXX)
 include(FeatureSummary)
+include(GNUInstallDirs)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
