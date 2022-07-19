@@ -20,7 +20,7 @@
 #include "coverprovider.h"
 
 #include "models/album.h"
-#include "utils.h"
+#include "utils/utils.h"
 
 #include <QPixmapCache>
 

@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include "core/models/album.h"
-#include "core/models/artist.h"
-#include "core/models/track.h"
-#include "typedefs.h"
+#include "album.h"
+#include "artist.h"
+#include "track.h"
+#include "utils/typedefs.h"
 
 using TrackPtrList = QList<Track*>;
 using TrackHash = QHash<int, Track*>;

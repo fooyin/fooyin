@@ -20,7 +20,7 @@
 #include "playlistview.h"
 
 #include "core/library/musiclibrary.h"
-#include "models/track.h"
+#include "library/models/track.h"
 #include "playlistitem.h"
 
 #include <QActionGroup>

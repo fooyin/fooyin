@@ -19,10 +19,10 @@
 
 #pragma once
 
+#include "gui/filter/filterfwd.h"
+#include "library/models/trackfwd.h"
+#include "library/sorting/sortorder.h"
 #include "module.h"
-#include "utils/filterfwd.h"
-#include "utils/sortorder.h"
-#include "utils/trackfwd.h"
 
 namespace DB {
 class LibraryDatabase : public DB::Module

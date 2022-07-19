@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include "utils/filterfwd.h"
-#include "utils/sortorder.h"
-#include "utils/worker.h"
-#include "utils/trackfwd.h"
+#include "app/worker.h"
+#include "gui/filter/filterfwd.h"
+#include "library/models/trackfwd.h"
+#include "library/sorting/sortorder.h"
 
 namespace DB {
 class LibraryDatabase;

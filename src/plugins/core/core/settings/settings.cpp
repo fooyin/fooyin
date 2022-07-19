@@ -19,11 +19,11 @@
 
 #include "settings.h"
 
-#include "enumhelper.h"
-#include "helpers.h"
-#include "paths.h"
-#include "typedefs.h"
-#include "utils.h"
+#include "utils/enumhelper.h"
+#include "utils/helpers.h"
+#include "utils/paths.h"
+#include "utils/typedefs.h"
+#include "utils/utils.h"
 #include "version.h"
 
 #include <QSettings>

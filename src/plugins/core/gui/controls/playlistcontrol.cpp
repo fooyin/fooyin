@@ -19,9 +19,9 @@
 
 #include "playlistcontrol.h"
 
+#include "core/settings/settings.h"
 #include "gui/widgets/clickablelabel.h"
 #include "utils/enumhelper.h"
-#include "utils/settings.h"
 #include "utils/utils.h"
 
 #include <QHBoxLayout>

@@ -19,11 +19,11 @@
 
 #include "coverwidget.h"
 
+#include "core/library/models/track.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
-#include "models/track.h"
+#include "core/widgets/widgetprovider.h"
 #include "utils/utils.h"
-#include "utils/widgetprovider.h"
 
 #include <QHBoxLayout>
 #include <QLabel>

@@ -19,13 +19,13 @@
 
 #include "editablelayout.h"
 
-#include "gui/widgets/dummy.h"
-#include "gui/widgets/menuheader.h"
-#include "gui/widgets/overlay.h"
-#include "gui/widgets/splitterwidget.h"
+#include "core/settings/settings.h"
+#include "core/widgets/widgetprovider.h"
 #include "utils/enumhelper.h"
-#include "utils/settings.h"
-#include "utils/widgetprovider.h"
+#include "widgets/dummy.h"
+#include "widgets/menuheader.h"
+#include "widgets/overlay.h"
+#include "widgets/splitterwidget.h"
 
 #include <QCoreApplication>
 #include <QHBoxLayout>

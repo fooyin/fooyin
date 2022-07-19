@@ -28,10 +28,10 @@
 #include "player/playercontroller.h"
 #include "playlist/libraryplaylistmanager.h"
 #include "playlist/playlisthandler.h"
+#include "settings/settings.h"
 #include "threadmanager.h"
 #include "utils/paths.h"
-#include "utils/settings.h"
-#include "utils/widgetprovider.h"
+#include "widgets/widgetprovider.h"
 
 struct Application::Private
 {

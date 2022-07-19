@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "core/library/librarydatabasemanager.h"
-#include "core/scanner/libraryscanner.h"
+#include "gui/filter/filterfwd.h"
+#include "library/librarydatabasemanager.h"
 #include "libraryinfo.h"
-#include "utils/filterfwd.h"
-#include "utils/sortorder.h"
-#include "utils/trackfwd.h"
+#include "models/trackfwd.h"
+#include "scanner/libraryscanner.h"
+#include "sorting/sortorder.h"
 
 #include <QThread>
 

@@ -20,10 +20,10 @@
 #include "mainwindow.h"
 
 #include "core/library/musiclibrary.h"
+#include "core/settings/settings.h"
 #include "gui/editablelayout.h"
 #include "gui/quicksetupdialog.h"
 #include "gui/settings/settingsdialog.h"
-#include "utils/settings.h"
 
 #include <QActionGroup>
 #include <QContextMenuEvent>

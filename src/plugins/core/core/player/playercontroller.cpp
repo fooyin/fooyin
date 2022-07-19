@@ -19,9 +19,9 @@
 
 #include "playercontroller.h"
 
-#include "models/track.h"
+#include "library/models/track.h"
+#include "settings/settings.h"
 #include "utils/enumhelper.h"
-#include "utils/settings.h"
 
 PlayerController::PlayerController(QObject* parent)
     : PlayerManager(parent)

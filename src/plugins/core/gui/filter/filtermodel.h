@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "utils/filterfwd.h"
+#include "filterfwd.h"
 #include "utils/typedefs.h"
 
 #include <QAbstractListModel>

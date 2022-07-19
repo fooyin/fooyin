@@ -20,12 +20,12 @@
 #include "filterwidget.h"
 
 #include "core/library/musiclibrary.h"
+#include "core/settings/settings.h"
+#include "core/widgets/widgetprovider.h"
 #include "filterdelegate.h"
 #include "filtermodel.h"
 #include "filterview.h"
 #include "utils/enumhelper.h"
-#include "utils/settings.h"
-#include "utils/widgetprovider.h"
 
 #include <QAction>
 #include <QActionGroup>

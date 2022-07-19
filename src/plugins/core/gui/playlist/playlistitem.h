@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "models/libraryitem.h"
+#include "library/models/libraryitem.h"
 
 #include <QList>
 

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "utils/trackfwd.h"
+#include "library/models/trackfwd.h"
 
 #include <QObject>
 

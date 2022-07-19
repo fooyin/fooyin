@@ -20,12 +20,12 @@
 #include "controlwidget.h"
 
 #include "core/player/playermanager.h"
-#include "models/track.h"
+#include "core/widgets/widgetprovider.h"
+#include "library/models/track.h"
 #include "playercontrol.h"
 #include "playlistcontrol.h"
 #include "progresswidget.h"
 #include "utils/utils.h"
-#include "utils/widgetprovider.h"
 #include "volumecontrol.h"
 
 #include <QContextMenuEvent>

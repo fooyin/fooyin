@@ -23,8 +23,8 @@
 #include "librarydatabase.h"
 #include "playlistdatabase.h"
 #include "query.h"
+#include "settings/settings.h"
 #include "utils/paths.h"
-#include "utils/settings.h"
 #include "utils/utils.h"
 #include "version.h"
 

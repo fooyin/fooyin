@@ -19,9 +19,9 @@
 
 #pragma once
 
+#include "library/models/trackfwd.h"
 #include "sortorder.h"
-#include "trackfwd.h"
-#include "typedefs.h"
+#include "utils/typedefs.h"
 
 namespace Sorting {
 void sortTracks(TrackPtrList& tracks, Library::SortOrder sortOrder);

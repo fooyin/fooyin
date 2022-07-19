@@ -23,8 +23,8 @@
 #include "core/tagging/tags.h"
 #include "database/database.h"
 #include "database/librarydatabase.h"
-#include "models/album.h"
-#include "models/track.h"
+#include "library/models/album.h"
+#include "library/models/track.h"
 #include "utils/utils.h"
 
 #include <QDir>

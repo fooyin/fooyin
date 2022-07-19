@@ -20,7 +20,7 @@
 #pragma once
 
 #include "utils/typedefs.h"
-#include "utils/widgetfactory.h"
+#include "widgetfactory.h"
 
 #include <QObject>
 

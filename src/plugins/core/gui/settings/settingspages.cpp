@@ -21,7 +21,7 @@
 
 #include "core/library/libraryinfo.h"
 #include "core/library/librarymanager.h"
-#include "utils/settings.h"
+#include "core/settings/settings.h"
 #include "utils/utils.h"
 
 #include <QCheckBox>

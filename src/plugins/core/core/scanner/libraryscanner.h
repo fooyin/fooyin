@@ -19,9 +19,9 @@
 
 #pragma once
 
+#include "app/worker.h"
 #include "core/library/libraryinfo.h"
-#include "utils/trackfwd.h"
-#include "utils/worker.h"
+#include "library/models/trackfwd.h"
 
 class QDir;
 

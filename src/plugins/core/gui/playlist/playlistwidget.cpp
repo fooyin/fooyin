@@ -22,14 +22,14 @@
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
-#include "gui/playlist/playlistmodel.h"
-#include "gui/playlist/playlistview.h"
+#include "core/settings/settings.h"
+#include "core/widgets/widgetprovider.h"
 #include "gui/settings/settingsdialog.h"
 #include "gui/widgets/nolibraryoverlay.h"
 #include "playlistdelegate.h"
-#include "utils/settings.h"
+#include "playlistmodel.h"
+#include "playlistview.h"
 #include "utils/utils.h"
-#include "utils/widgetprovider.h"
 
 #include <QAction>
 #include <QActionGroup>

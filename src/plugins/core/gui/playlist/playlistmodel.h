@@ -19,8 +19,8 @@
 
 #pragma once
 
+#include "core/library/models/trackfwd.h"
 #include "playlistitem.h"
-#include "utils/trackfwd.h"
 #include "utils/typedefs.h"
 
 #include <QAbstractItemModel>

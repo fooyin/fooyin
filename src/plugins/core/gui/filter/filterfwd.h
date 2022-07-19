@@ -20,8 +20,8 @@
 #ifndef FILTER_FWD_H
 #define FILTER_FWD_H
 
-#include "sortorder.h"
-#include "typedefs.h"
+#include "core/library/sorting/sortorder.h"
+#include "utils/typedefs.h"
 
 struct FilterEntry
 {

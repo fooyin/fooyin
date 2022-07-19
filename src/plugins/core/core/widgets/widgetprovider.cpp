@@ -33,7 +33,7 @@
 #include "gui/widgets/splitterwidget.h"
 #include "utils/enumhelper.h"
 #include "utils/utils.h"
-#include "utils/widgetfactory.h"
+#include "widgetfactory.h"
 
 #include <QMenu>
 

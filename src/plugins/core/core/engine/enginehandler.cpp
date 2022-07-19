@@ -20,7 +20,7 @@
 #include "enginehandler.h"
 
 #include "core/player/playermanager.h"
-#include "models/track.h"
+#include "library/models/track.h"
 
 EngineHandler::EngineHandler(PlayerManager* playerManager, QObject* parent)
     : Worker(parent)

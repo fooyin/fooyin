@@ -30,8 +30,8 @@
 #include "models/album.h"
 #include "models/artist.h"
 #include "models/track.h"
+#include "sorting/sorting.h"
 #include "utils/helpers.h"
-#include "utils/sorting.h"
 #include "utils/utils.h"
 
 #include <QTimer>

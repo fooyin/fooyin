@@ -19,32 +19,18 @@
 
 #pragma once
 
-#include "enginempv.h"
-#include "app/worker.h"
+#include "widgetfactory.h"
 
-#include <QObject>
-#include <QThread>
+class QString;
+class Widget;
+class Key;
 
-class PlayerManager;
-
-class EngineHandler : public Worker
-{
-    Q_OBJECT
-
-public:
-    explicit EngineHandler(PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
-
-    void stopThread() override;
-
-signals:
-    void play();
-    void pause();
-    void stop();
-
-protected:
-    void playStateChanged(Player::PlayState state);
-
-private:
-    EngineMpv m_engine;
-};
+namespace Util {
+namespace Widgets {
+    inline WidgetFactory<QString, Widget>* factory()
+    {
+        static Util::WidgetFactory<QString, Widget> factory;
+        return &factory;
+    }
+}; // namespace Widgets
+}; // namespace Util
