@@ -1,0 +1,91 @@
+target_sources(${PROJECT_NAME} PRIVATE
+    mainwindow.h
+    mainwindow.cpp
+    editablelayout.h
+    editablelayout.cpp
+    quicksetupdialog.h
+    quicksetupdialog.cpp
+
+    controls/controlwidget.h
+    controls/controlwidget.cpp
+    controls/playercontrol.h
+    controls/playercontrol.cpp
+    controls/playlistcontrol.h
+    controls/playlistcontrol.cpp
+    controls/progresswidget.h
+    controls/progresswidget.cpp
+    controls/volumecontrol.h
+    controls/volumecontrol.cpp
+
+    filter/filterdelegate.h
+    filter/filterdelegate.cpp
+    filter/filteritem.h
+    filter/filteritem.cpp
+    filter/filtermanager.h
+    filter/filtermanager.cpp
+    filter/filtermodel.h
+    filter/filtermodel.cpp
+    filter/filterview.h
+    filter/filterview.cpp
+    filter/filterwidget.h
+    filter/filterwidget.cpp
+
+    info/itemdelegate.h
+    info/itemdelegate.cpp
+    info/infomodel.h
+    info/infomodel.cpp
+    info/infoitem.h
+    info/infoitem.cpp
+    info/infowidget.h
+    info/infowidget.cpp
+    info/infoview.h
+    info/infoview.cpp
+
+    library/coverwidget.h
+    library/coverwidget.cpp
+    library/searchwidget.h
+    library/searchwidget.cpp
+    library/statuswidget.h
+    library/statuswidget.cpp
+
+    playlist/playlistview.h
+    playlist/playlistview.cpp
+    playlist/playlistmodel.h
+    playlist/playlistmodel.cpp
+    playlist/playlistitem.h
+    playlist/playlistitem.cpp
+    playlist/playlistdelegate.h
+    playlist/playlistdelegate.cpp
+    playlist/playlistwidget.h
+    playlist/playlistwidget.cpp
+
+    settings/settingsdialog.h
+    settings/settingsdialog.cpp
+    settings/settingspages.h
+    settings/settingspages.cpp
+
+    widgets/clickablelabel.h
+    widgets/clickablelabel.cpp
+    widgets/dummy.h
+    widgets/dummy.cpp
+    widgets/hovermenu.h
+    widgets/hovermenu.cpp
+    widgets/overlay.h
+    widgets/overlay.cpp
+    widgets/menuheader.h
+    widgets/menuheader.cpp
+    widgets/nolibraryoverlay.h
+    widgets/nolibraryoverlay.cpp
+    widgets/slider.h
+    widgets/slider.cpp
+    widgets/spacer.h
+    widgets/spacer.cpp
+    widgets/splitter.h
+    widgets/splitter.cpp
+    widgets/splitterhandle.h
+    widgets/splitterhandle.cpp
+    widgets/splitterwidget.h
+    widgets/splitterwidget.cpp
+    widgets/widget.h
+    widgets/widget.cpp
+)
