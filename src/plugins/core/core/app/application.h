@@ -19,14 +19,14 @@
 
 #pragma once
 
-#include <QApplication>
+#include <QObject>
 
-class Application : public QApplication
+class Application : public QObject
 {
     Q_OBJECT
 
 public:
-    Application(int& argc, char** argv);
+    Application(QObject* parent = nullptr);
     ~Application() override;
 
 private:

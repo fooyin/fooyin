@@ -26,7 +26,7 @@
 #include "utils/paths.h"
 #include "utils/settings.h"
 #include "utils/utils.h"
-#include "utils/version.h"
+#include "version.h"
 
 #include <QFile>
 #include <QSqlQuery>

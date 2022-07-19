@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "core/player/playermanager.h"
 #include "engine.h"
+#include "player/playermanager.h"
 
 class Track;
 class mpv_event;

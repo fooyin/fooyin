@@ -17,8 +17,8 @@
  *
  */
 
-#include "app/application.h"
-#include "utils/version.h"
+#include "core/app/application.h"
+#include "version.h"
 
 #include <QApplication>
 
@@ -27,9 +27,16 @@ int main(int argc, char* argv[])
     Q_INIT_RESOURCE(icons);
     Q_INIT_RESOURCE(fonts);
 
-    Application app = Application(argc, argv);
-    Application::setApplicationName("fooyin");
-    Application::setApplicationVersion(VERSION);
+    qApp->setApplicationName("fooyin");
+    qApp->setApplicationVersion(VERSION);
 
-    return Application::exec();
+    auto* app = new QApplication(argc, argv);
+    auto* coreApp = new Application();
+
+    int result = QApplication::exec();
+
+    delete coreApp;
+    delete app;
+
+    return result;
 }

@@ -19,15 +19,15 @@
 
 #include "application.h"
 
-#include "core/engine/enginehandler.h"
-#include "core/library/librarymanager.h"
-#include "core/library/musiclibrary.h"
-#include "core/player/playercontroller.h"
-#include "core/playlist/libraryplaylistmanager.h"
-#include "core/playlist/playlisthandler.h"
 #include "database/database.h"
+#include "engine/enginehandler.h"
 #include "gui/mainwindow.h"
 #include "gui/settings/settingsdialog.h"
+#include "library/librarymanager.h"
+#include "library/musiclibrary.h"
+#include "player/playercontroller.h"
+#include "playlist/libraryplaylistmanager.h"
+#include "playlist/playlisthandler.h"
 #include "threadmanager.h"
 #include "utils/paths.h"
 #include "utils/settings.h"
@@ -76,8 +76,8 @@ struct Application::Private
     }
 };
 
-Application::Application(int& argc, char** argv)
-    : QApplication(argc, argv)
+Application::Application(QObject* parent)
+    : QObject(parent)
     , p(std::make_unique<Private>(this))
 { }
 

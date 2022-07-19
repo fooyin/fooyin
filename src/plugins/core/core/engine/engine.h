@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/player/playermanager.h"
+#include "player/playermanager.h"
 
 class Engine : public QObject
 {

@@ -66,4 +66,4 @@ target_sources(${PROJECT_NAME} PRIVATE
     tagging/tagutils.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE .)

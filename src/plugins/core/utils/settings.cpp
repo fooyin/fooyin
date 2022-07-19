@@ -24,7 +24,7 @@
 #include "paths.h"
 #include "typedefs.h"
 #include "utils.h"
-#include "utils/version.h"
+#include "version.h"
 
 #include <QSettings>
 

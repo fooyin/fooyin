@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "models/track.h"
+#include "core/models/track.h"
 #include "utils/widgetprovider.h"
 
 #include <QPixmap>
