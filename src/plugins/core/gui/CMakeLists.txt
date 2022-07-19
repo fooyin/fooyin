@@ -29,6 +29,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     filter/filterview.cpp
     filter/filterwidget.h
     filter/filterwidget.cpp
+    filter/filterfwd.h
 
     info/itemdelegate.h
     info/itemdelegate.cpp

@@ -1,23 +1,9 @@
 target_sources(${PROJECT_NAME} PRIVATE
-    coverprovider.h
-    coverprovider.cpp
     enumhelper.h
-    filterfwd.h
     helpers.h
     paths.h
     paths.cpp
-    settings.h
-    settings.cpp
-    sorting.h
-    sorting.cpp
-    sortorder.h
-    trackfwd.h
     typedefs.h
     utils.h
     utils.cpp
-    widgetfactory.h
-    widgetprovider.h
-    widgetprovider.cpp
-    worker.h
-    worker.cpp
 )

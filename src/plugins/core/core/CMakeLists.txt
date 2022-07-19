@@ -3,6 +3,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     app/application.cpp
     app/threadmanager.h
     app/threadmanager.cpp
+    app/worker.h
+    app/worker.cpp
 
     database/database.h
     database/database.cpp
@@ -23,6 +25,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     engine/enginehandler.h
     engine/enginehandler.cpp
 
+    library/coverprovider.h
+    library/coverprovider.cpp
     library/libraryinfo.h
     library/libraryinfo.cpp
     library/librarymanager.h
@@ -32,18 +36,23 @@ target_sources(${PROJECT_NAME} PRIVATE
     library/musiclibrary.h
     library/musiclibrary.cpp
 
-    models/container.h
-    models/container.cpp
-    models/libraryitem.h
-    models/libraryitem.cpp
-    models/album.h
-    models/album.cpp
-    models/artist.h
-    models/artist.cpp
-    models/disc.h
-    models/disc.cpp
-    models/track.h
-    models/track.cpp
+    library/models/container.h
+    library/models/container.cpp
+    library/models/libraryitem.h
+    library/models/libraryitem.cpp
+    library/models/album.h
+    library/models/album.cpp
+    library/models/artist.h
+    library/models/artist.cpp
+    library/models/disc.h
+    library/models/disc.cpp
+    library/models/track.h
+    library/models/track.cpp
+    library/models/trackfwd.h
+
+    library/sorting/sorting.h
+    library/sorting/sorting.cpp
+    library/sorting/sortorder.h
 
     playlist/libraryplaylistinterface.h
     playlist/libraryplaylistmanager.h
@@ -60,10 +69,17 @@ target_sources(${PROJECT_NAME} PRIVATE
     scanner/libraryscanner.h
     scanner/libraryscanner.cpp
 
+    settings/settings.h
+    settings/settings.cpp
+
     tagging/tags.h
     tagging/tags.cpp
     tagging/tagutils.h
     tagging/tagutils.cpp
+
+    widgets/widgetfactory.h
+    widgets/widgetprovider.h
+    widgets/widgetprovider.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE .)
