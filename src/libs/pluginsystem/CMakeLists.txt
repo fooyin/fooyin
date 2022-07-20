@@ -22,14 +22,12 @@ set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 set(HEADERS
     pluginsystem/plugin.h
     pluginsystem/plugininfo.h
-    pluginsystem/pluginloader.h
     pluginsystem/pluginmanager.h
     pluginsystem/pluginsystem_global.h
 )
 
 set(SOURCES
     pluginsystem/plugininfo.cpp
-    pluginsystem/pluginloader.cpp
     pluginsystem/pluginmanager.cpp
 )
 
