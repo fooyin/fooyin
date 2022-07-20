@@ -47,6 +47,9 @@ public:
     static PluginManager* instance();
     QReadWriteLock* objectLock();
 
+    void findPlugins(const QString& pluginDir);
+    void addPlugins();
+
 private:
     PluginManager();
     ~PluginManager();

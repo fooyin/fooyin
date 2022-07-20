@@ -19,6 +19,13 @@
 
 #include "pluginmanager.h"
 
+#include "plugin.h"
+#include "plugininfo.h"
+
+#include <QDir>
+#include <QLibrary>
+#include <QPluginLoader>
+
 namespace PluginSystem {
 void PluginManager::addObject(QObject* object)
 {
@@ -46,6 +53,79 @@ PluginManager* PluginManager::instance()
 QReadWriteLock* PluginManager::objectLock()
 {
     return &m_objectLock;
+}
+
+void PluginManager::findPlugins(const QString& pluginDir)
+{
+    QDir dir{pluginDir};
+    if(!dir.exists()) {
+        return;
+    }
+
+    QFileInfoList fileList{dir.entryInfoList()};
+
+    for(const auto& file : fileList) {
+        auto pluginFilename = file.absoluteFilePath();
+
+        if(!QLibrary::isLibrary(pluginFilename)) {
+            continue;
+        }
+
+        auto pluginLoader = std::make_unique<QPluginLoader>(pluginFilename);
+        auto metaData = pluginLoader->metaData();
+
+        if(metaData.isEmpty()) {
+            continue;
+        }
+
+        auto pluginMetadata = metaData.value("MetaData");
+        auto version = metaData.value("version");
+
+        auto name = pluginMetadata.toObject().value("Name");
+
+        if(name.isNull()) {
+            continue;
+        }
+
+        auto* plugin = new PluginInfo(name.toString(), pluginFilename, metaData);
+
+        m_plugins.insert(name.toString(), plugin);
+    }
+}
+
+void PluginManager::addPlugins()
+{
+    for(const auto& plugin : qAsConst(m_plugins)) {
+        auto metadata = plugin->metadata().value("MetaData").toObject();
+
+        auto pluginLoader = new QPluginLoader(plugin->filename());
+
+        if(!pluginLoader->load()) {
+            qDebug() << QString("Plugin %1 couldn't be loaded (%2)").arg(plugin->name(), pluginLoader->errorString());
+            continue;
+        }
+
+        auto* pluginInterface = qobject_cast<Plugin*>(pluginLoader->instance());
+
+        if(!pluginInterface) {
+            qDebug() << QString("Plugin %1 couldn't be loaded").arg(plugin->name());
+            continue;
+        }
+
+        m_loadOrder.append({pluginLoader, plugin});
+        plugin->m_isLoaded = true;
+
+        for(auto loadPlugin : m_loadOrder) {
+            auto* loaderPlugin = qobject_cast<Plugin*>(loadPlugin.loader->instance());
+            loaderPlugin->initialise();
+        }
+
+        int i = static_cast<int>(m_loadOrder.size() - 1);
+        for(; i >= 0; --i) {
+            auto* loaderPlugin = qobject_cast<Plugin*>(m_loadOrder.at(i).loader->instance());
+            loaderPlugin->pluginsInitialised();
+        }
+    }
 }
 
 PluginManager::PluginManager() = default;
