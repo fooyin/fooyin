@@ -17,30 +17,26 @@
  *
  */
 
-#include "version.h"
+#pragma once
 
-#include <QApplication>
-#include <pluginsystem/pluginmanager.h>
+#include "pluginsystem/plugin.h"
 
-int main(int argc, char* argv[])
+class Application;
+
+class CorePlugin : public QObject,
+                   public PluginSystem::Plugin
 {
-    Q_INIT_RESOURCE(icons);
-    Q_INIT_RESOURCE(fonts);
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
+    Q_INTERFACES(PluginSystem::Plugin)
 
-    qApp->setApplicationName("fooyin");
-    qApp->setApplicationVersion(VERSION);
+public:
+    CorePlugin();
+    ~CorePlugin() override;
 
-    auto* app = new QApplication(argc, argv);
-    auto* pluginManager = PluginSystem::PluginManager::instance();
+    void initialise() override;
+    void pluginsInitialised() override;
 
-    // TODO: Pass down CMake vars
-    QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
-    pluginManager->findPlugins(pluginsPath);
-    pluginManager->addPlugins();
-
-    int result = QApplication::exec();
-
-    delete app;
-
-    return result;
-}
+private:
+    Application* m_app;
+};
