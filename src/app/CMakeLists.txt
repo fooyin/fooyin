@@ -38,6 +38,11 @@ target_link_libraries(${PROJECT_NAME}
    #${FFMPEG_LIBRARIES}
 )
 
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
+)
+
 qt_finalize_executable(${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BIN})
