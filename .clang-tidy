@@ -20,3 +20,4 @@ Checks: >
   -modernize-use-trailing-return-type,
   -readability-implicit-bool-conversion,
   -readability-magic-numbers,
+  -readability-identifier-length,
