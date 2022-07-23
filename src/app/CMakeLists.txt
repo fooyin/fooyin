@@ -25,7 +25,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Werror -Wall -Wextra)
 
 target_link_libraries(${PROJECT_NAME}
    PRIVATE
-   FooyinVersion
    Qt${MAJOR_QT_VERSION}::Core
    Qt${MAJOR_QT_VERSION}::Widgets
    Qt${MAJOR_QT_VERSION}::Gui
@@ -33,6 +32,8 @@ target_link_libraries(${PROJECT_NAME}
    ${TAGLIB_LIBRARIES}
    ${ZLIB_LIBRARIES}
    ${LIBMPV_LIBRARIES}
+   FooyinVersion
+   PluginSystem
    #${SDL2_LIBRARIES}
    #${FFMPEG_LIBRARIES}
 )
