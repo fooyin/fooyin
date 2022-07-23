@@ -19,7 +19,6 @@
 
 #include "widgetprovider.h"
 
-#include "core/library/librarymanager.h"
 #include "gui/controls/controlwidget.h"
 #include "gui/filter/filterwidget.h"
 #include "gui/info/infowidget.h"
@@ -31,6 +30,7 @@
 #include "gui/widgets/dummy.h"
 #include "gui/widgets/spacer.h"
 #include "gui/widgets/splitterwidget.h"
+#include "library/librarymanager.h"
 #include "utils/enumhelper.h"
 #include "utils/utils.h"
 #include "widgetfactory.h"

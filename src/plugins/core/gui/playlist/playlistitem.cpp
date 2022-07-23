@@ -19,7 +19,7 @@
 
 #include "playlistitem.h"
 
-#include "core/library/models/libraryitem.h"
+#include "library/models/libraryitem.h"
 
 PlaylistItem::PlaylistItem(Type type, LibraryItem* data, PlaylistItem* parent)
     : m_data(data)

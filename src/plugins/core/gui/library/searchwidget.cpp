@@ -19,10 +19,10 @@
 
 #include "searchwidget.h"
 
-#include "core/library/musiclibrary.h"
-#include "core/settings/settings.h"
-#include "core/widgets/widgetprovider.h"
+#include "library/musiclibrary.h"
+#include "settings/settings.h"
 #include "utils/utils.h"
+#include "widgets/widgetprovider.h"
 
 #include <QHBoxLayout>
 #include <QKeyEvent>

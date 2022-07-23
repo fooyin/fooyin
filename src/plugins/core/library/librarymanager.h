@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "core/library/libraryinfo.h"
-#include "core/scanner/libraryscanner.h"
+#include "library/libraryinfo.h"
+#include "scanner/libraryscanner.h"
 
 class LibraryPlaylistInterface;
 

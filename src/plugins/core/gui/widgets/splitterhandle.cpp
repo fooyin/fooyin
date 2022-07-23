@@ -19,7 +19,7 @@
 
 #include "splitterhandle.h"
 
-#include "core/settings/settings.h"
+#include "settings/settings.h"
 
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)

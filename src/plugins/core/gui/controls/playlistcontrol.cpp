@@ -19,8 +19,8 @@
 
 #include "playlistcontrol.h"
 
-#include "core/settings/settings.h"
 #include "gui/widgets/clickablelabel.h"
+#include "settings/settings.h"
 #include "utils/enumhelper.h"
 #include "utils/utils.h"
 

@@ -19,14 +19,14 @@
 
 #include "controlwidget.h"
 
-#include "core/player/playermanager.h"
-#include "core/widgets/widgetprovider.h"
 #include "library/models/track.h"
+#include "player/playermanager.h"
 #include "playercontrol.h"
 #include "playlistcontrol.h"
 #include "progresswidget.h"
 #include "utils/utils.h"
 #include "volumecontrol.h"
+#include "widgets/widgetprovider.h"
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>

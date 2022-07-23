@@ -19,8 +19,8 @@
 
 #include "filtermodel.h"
 
-#include "core/library/musiclibrary.h"
 #include "filteritem.h"
+#include "library/musiclibrary.h"
 
 #include <QSize>
 

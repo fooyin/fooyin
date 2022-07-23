@@ -19,8 +19,8 @@
 
 #include "utils.h"
 
-#include "core/tagging/tags.h"
 #include "paths.h"
+#include "tagging/tags.h"
 
 #include <QCryptographicHash>
 #include <QDir>

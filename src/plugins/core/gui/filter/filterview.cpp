@@ -19,8 +19,8 @@
 
 #include "filterview.h"
 
-#include "core/library/musiclibrary.h"
-#include "core/player/playermanager.h"
+#include "library/musiclibrary.h"
+#include "player/playermanager.h"
 
 #include <QActionGroup>
 #include <QHeaderView>

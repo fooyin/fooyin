@@ -19,7 +19,7 @@
 
 #include "playlisthandler.h"
 
-#include "core/player/playermanager.h"
+#include "player/playermanager.h"
 #include "playlist.h"
 
 namespace Playlist {

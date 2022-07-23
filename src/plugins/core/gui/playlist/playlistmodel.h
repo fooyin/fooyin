@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/library/models/trackfwd.h"
+#include "library/models/trackfwd.h"
 #include "playlistitem.h"
 #include "utils/typedefs.h"
 

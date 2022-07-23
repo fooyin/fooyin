@@ -19,12 +19,12 @@
 
 #include "libraryscanner.h"
 
-#include "core/library/librarymanager.h"
-#include "core/tagging/tags.h"
 #include "database/database.h"
 #include "database/librarydatabase.h"
+#include "library/librarymanager.h"
 #include "library/models/album.h"
 #include "library/models/track.h"
+#include "tagging/tags.h"
 #include "utils/utils.h"
 
 #include <QDir>

@@ -19,11 +19,11 @@
 
 #include "statuswidget.h"
 
-#include "core/player/playermanager.h"
-#include "core/widgets/widgetprovider.h"
 #include "gui/widgets/clickablelabel.h"
 #include "library/models/track.h"
+#include "player/playermanager.h"
 #include "utils/utils.h"
+#include "widgets/widgetprovider.h"
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>

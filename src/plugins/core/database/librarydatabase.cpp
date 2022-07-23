@@ -19,8 +19,8 @@
 
 #include "librarydatabase.h"
 
-#include "core/tagging/tags.h"
 #include "query.h"
+#include "tagging/tags.h"
 #include "utils/helpers.h"
 #include "utils/paths.h"
 #include "utils/utils.h"

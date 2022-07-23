@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "core/library/models/track.h"
-#include "core/widgets/widgetprovider.h"
+#include "library/models/track.h"
+#include "widgets/widgetprovider.h"
 
 #include <QPixmap>
 #include <QtGlobal>

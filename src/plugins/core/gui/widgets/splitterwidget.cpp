@@ -19,11 +19,11 @@
 
 #include "splitterwidget.h"
 
-#include "core/widgets/widgetprovider.h"
 #include "dummy.h"
 #include "splitter.h"
 #include "utils/enumhelper.h"
 #include "utils/utils.h"
+#include "widgets/widgetprovider.h"
 
 #include <QJsonObject>
 #include <QMenu>

@@ -1,13 +1,13 @@
 #include "infowidget.h"
 
-#include "core/library/models/track.h"
-#include "core/library/musiclibrary.h"
-#include "core/player/playermanager.h"
-#include "core/settings/settings.h"
-#include "core/widgets/widgetprovider.h"
 #include "gui/info/infoitem.h"
 #include "gui/info/itemdelegate.h"
+#include "library/models/track.h"
+#include "library/musiclibrary.h"
+#include "player/playermanager.h"
+#include "settings/settings.h"
 #include "utils/utils.h"
+#include "widgets/widgetprovider.h"
 
 #include <QHeaderView>
 #include <QMenu>
