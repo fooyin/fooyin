@@ -24,15 +24,12 @@
 
 #include <QWidget>
 
-class PlayerManager;
-class WidgetProvider;
-
 class StatusWidget : public Widget
 {
     Q_OBJECT
 
 public:
-    explicit StatusWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit StatusWidget(QWidget* parent = nullptr);
     ~StatusWidget() override;
 
     [[nodiscard]] QString name() const override;

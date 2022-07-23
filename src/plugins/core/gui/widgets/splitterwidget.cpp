@@ -22,17 +22,17 @@
 #include "dummy.h"
 #include "splitter.h"
 #include "utils/enumhelper.h"
-#include "utils/utils.h"
 #include "widgets/widgetprovider.h"
 
+#include <PluginManager>
 #include <QJsonObject>
 #include <QMenu>
 
-SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, QWidget* parent)
+SplitterWidget::SplitterWidget(QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_splitter(new Splitter(Qt::Vertical))
-    , m_widgetProvider(widgetProvider)
+    , m_widgetProvider(PluginSystem::object<WidgetProvider>())
     , m_dummy(new Dummy(m_widgetProvider, this))
 {
     setObjectName(QString("%1 Splitter").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical"));

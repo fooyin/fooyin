@@ -23,16 +23,14 @@
 
 #include <QWidget>
 
-class PlayerManager;
 class Track;
-class WidgetProvider;
 
 class ControlWidget : public Widget
 {
     Q_OBJECT
 
 public:
-    explicit ControlWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit ControlWidget(QWidget* parent = nullptr);
     ~ControlWidget() override;
 
     void setupUi();

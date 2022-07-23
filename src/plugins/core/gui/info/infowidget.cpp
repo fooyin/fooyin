@@ -6,18 +6,17 @@
 #include "library/musiclibrary.h"
 #include "player/playermanager.h"
 #include "settings/settings.h"
-#include "utils/utils.h"
-#include "widgets/widgetprovider.h"
 
+#include <PluginManager>
 #include <QHeaderView>
 #include <QMenu>
 #include <QTableWidget>
 
-InfoWidget::InfoWidget(WidgetProvider* widgetProvider, QWidget* parent)
+InfoWidget::InfoWidget(QWidget* parent)
     : Widget(parent)
     , m_settings(Settings::instance())
-    , m_playerManager(widgetProvider->playerManager())
-    , m_library(widgetProvider->library())
+    , m_playerManager(PluginSystem::object<PlayerManager>())
+    , m_library(PluginSystem::object<Library::MusicLibrary>())
     , m_layout(new QHBoxLayout(this))
 {
     setObjectName("Info Panel");

@@ -40,7 +40,7 @@ class FilterWidget : public Widget
     Q_OBJECT
 
 public:
-    FilterWidget(Filters::FilterType type, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    FilterWidget(Filters::FilterType type, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();
@@ -92,8 +92,8 @@ private:
 class GenreFilter : public FilterWidget
 {
 public:
-    explicit GenreFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::Genre, widgetProvider, parent)
+    explicit GenreFilter(QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::Genre, parent)
     { }
     ~GenreFilter() override = default;
 };
@@ -101,8 +101,8 @@ public:
 class YearFilter : public FilterWidget
 {
 public:
-    explicit YearFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::Year, widgetProvider, parent)
+    explicit YearFilter(QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::Year, parent)
     { }
     ~YearFilter() override = default;
 };
@@ -110,8 +110,8 @@ public:
 class AlbmArtistFilter : public FilterWidget
 {
 public:
-    explicit AlbmArtistFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::AlbumArtist, widgetProvider, parent)
+    explicit AlbmArtistFilter(QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::AlbumArtist, parent)
     { }
     ~AlbmArtistFilter() override = default;
 };
@@ -119,8 +119,8 @@ public:
 class ArtistFilter : public FilterWidget
 {
 public:
-    explicit ArtistFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::Artist, widgetProvider, parent)
+    explicit ArtistFilter(QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::Artist, parent)
     { }
     ~ArtistFilter() override = default;
 };
@@ -128,8 +128,8 @@ public:
 class AlbumFilter : public FilterWidget
 {
 public:
-    explicit AlbumFilter(WidgetProvider* widgetProvider, QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::Album, widgetProvider, parent)
+    explicit AlbumFilter(QWidget* parent = nullptr)
+        : FilterWidget(Filters::FilterType::Album, parent)
     { }
     ~AlbumFilter() override = default;
 };

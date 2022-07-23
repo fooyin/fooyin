@@ -21,14 +21,12 @@
 
 #include "gui/widgets/widget.h"
 
-class WidgetProvider;
-
 class CoverWidget : public Widget
 {
     Q_OBJECT
 
 public:
-    explicit CoverWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit CoverWidget(QWidget* parent = nullptr);
     ~CoverWidget() override;
 
     [[nodiscard]] QString name() const override;

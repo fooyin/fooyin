@@ -19,38 +19,21 @@
 #include "coreplugin.h"
 
 #include "app/application.h"
-#include "gui/controls/controlwidget.h"
-#include "gui/filter/filterwidget.h"
-#include "gui/info/infowidget.h"
-#include "gui/library/coverwidget.h"
-#include "gui/library/searchwidget.h"
-#include "gui/library/statuswidget.h"
-#include "gui/playlist/playlistwidget.h"
-#include "gui/widgets/spacer.h"
-#include "gui/widgets/splitterwidget.h"
-#include "utils/utils.h"
+#include "widgets/widgetfactory.h"
+
+#include <PluginManager>
 
 CorePlugin::CorePlugin() = default;
 
-CorePlugin::~CorePlugin() = default;
+CorePlugin::~CorePlugin()
+{
+    delete m_factory;
+}
 
 void CorePlugin::initialise()
 {
-    Util::factory()->registerClass<ControlWidget>("Controls");
-
-    Util::factory()->registerClass<Library::GenreFilter>("Genre", {"Filter"});
-    Util::factory()->registerClass<Library::YearFilter>("Year", {"Filter"});
-    Util::factory()->registerClass<Library::AlbmArtistFilter>("AlbumArtist", {"Filter"});
-    Util::factory()->registerClass<Library::ArtistFilter>("Artist", {"Filter"});
-    Util::factory()->registerClass<Library::AlbumFilter>("Album", {"Filter"});
-
-    Util::factory()->registerClass<InfoWidget>("Info");
-    Util::factory()->registerClass<CoverWidget>("Artwork");
-    Util::factory()->registerClass<SearchWidget>("Search");
-    Util::factory()->registerClass<Library::PlaylistWidget>("Playlist");
-    Util::factory()->registerClass<Widgets::Spacer>("Spacer");
-    Util::factory()->registerClass<SplitterWidget>("Splitter");
-    Util::factory()->registerClass<StatusWidget>("Status");
+    m_factory = new Widgets::WidgetFactory();
+    PluginSystem::addObject(m_factory);
 }
 
 void CorePlugin::pluginsInitialised()

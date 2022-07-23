@@ -21,9 +21,8 @@
 
 #include "library/musiclibrary.h"
 #include "settings/settings.h"
-#include "utils/utils.h"
-#include "widgets/widgetprovider.h"
 
+#include <PluginManager>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLineEdit>
@@ -38,15 +37,15 @@ struct SearchWidget::Private
 
     Library::MusicLibrary* library;
 
-    explicit Private(WidgetProvider* widgetProvider)
+    explicit Private()
         : settings(Settings::instance())
-        , library(widgetProvider->library())
+        , library(PluginSystem::object<Library::MusicLibrary>())
     { }
 };
 
-SearchWidget::SearchWidget(WidgetProvider* widgetProvider, QWidget* parent)
+SearchWidget::SearchWidget(QWidget* parent)
     : Widget(parent)
-    , p(std::make_unique<Private>(widgetProvider))
+    , p(std::make_unique<Private>())
 {
     setObjectName("Search Bar");
 

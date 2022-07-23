@@ -19,13 +19,10 @@
 
 #include "spacer.h"
 
-#include "utils/utils.h"
-
 namespace Widgets {
-Spacer::Spacer(WidgetProvider* widgetProvider, QWidget* parent)
+Spacer::Spacer(QWidget* parent)
     : Widget(parent)
 {
-    Q_UNUSED(widgetProvider)
     setObjectName(name());
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 }

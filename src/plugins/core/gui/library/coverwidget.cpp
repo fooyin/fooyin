@@ -22,9 +22,9 @@
 #include "library/models/track.h"
 #include "library/musiclibrary.h"
 #include "player/playermanager.h"
-#include "utils/utils.h"
 #include "widgets/widgetprovider.h"
 
+#include <PluginManager>
 #include <QHBoxLayout>
 #include <QLabel>
 
@@ -39,16 +39,16 @@ struct CoverWidget::Private
     QPixmap cover;
     bool hasCover;
 
-    explicit Private(WidgetProvider* widgetProvider)
-        : playerManager(widgetProvider->playerManager())
-        , library(widgetProvider->library())
+    explicit Private()
+        : playerManager(PluginSystem::object<PlayerManager>())
+        , library(PluginSystem::object<Library::MusicLibrary>())
         , hasCover(false)
     { }
 };
 
-CoverWidget::CoverWidget(WidgetProvider* widgetProvider, QWidget* parent)
+CoverWidget::CoverWidget(QWidget* parent)
     : Widget(parent)
-    , p(std::make_unique<Private>(widgetProvider))
+    , p(std::make_unique<Private>())
 {
     setObjectName("Artwork");
     setupUi();

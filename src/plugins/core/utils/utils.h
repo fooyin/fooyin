@@ -40,8 +40,6 @@ namespace File {
     bool createDirectories(const QString& path);
 } // namespace File
 
-Util::WidgetFactory<QString, Widget, WidgetProvider*>* factory();
-
 namespace Widgets {
     QWidget* indentWidget(QWidget* widget, QWidget* parent);
 } // namespace Widgets

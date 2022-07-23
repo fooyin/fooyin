@@ -31,7 +31,7 @@ class SplitterWidget : public Widget
     Q_OBJECT
 
 public:
-    explicit SplitterWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit SplitterWidget(QWidget* parent = nullptr);
     ~SplitterWidget() override;
 
     [[nodiscard]] Qt::Orientation orientation() const;

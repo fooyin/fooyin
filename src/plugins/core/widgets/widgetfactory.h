@@ -19,33 +19,36 @@
 
 #pragma once
 
+#include "gui/widgets/widget.h"
+
 #include <QDebug>
 #include <QHash>
 
-namespace Util {
-template <typename Key, typename T, typename... Args>
-class WidgetFactory
+namespace Widgets {
+class WidgetFactory : public QObject
 {
+    Q_OBJECT
+
 public:
-    using Instantiator = T* (*)(Args...);
+    using Instantiator = Widget* (*)();
 
 protected:
     template <typename U>
-    static T* createInstance(Args... args)
+    static Widget* createInstance()
     {
-        return new U(std::forward<Args>(args)...);
+        return new U();
     }
-    using Instantiators = QMap<Key, Instantiator>;
-    using SubMenus = QMap<Key, QStringList>;
+    using Instantiators = QMap<QString, Instantiator>;
+    using SubMenus = QMap<QString, QStringList>;
 
     Instantiators instantiators;
     SubMenus subMenus;
 
 public:
     template <typename U>
-    bool registerClass(const Key& key, const QStringList& subMenu = {})
+    bool registerClass(const QString& key, const QStringList& subMenu = {})
     {
-        static_assert(std::is_base_of<T, U>::value, "Class must derive from the factory's base class");
+        static_assert(std::is_base_of<Widget, U>::value, "Class must derive from the factory's base class");
         if(instantiators.contains(key)) {
             qDebug() << ("Subclass already registered");
             return false;
@@ -57,16 +60,16 @@ public:
         return true;
     }
 
-    T* make(const Key& key, Args... args) const
+    Widget* make(const QString& key) const
     {
         auto it = instantiators.value(key, nullptr);
         if(!it) {
             return nullptr;
         }
-        return it(std::forward<Args>(args)...);
+        return it();
     }
 
-    QList<Key> widgetNames() const
+    QList<QString> widgetNames() const
     {
         return instantiators.keys();
     }
@@ -76,4 +79,4 @@ public:
         return subMenus;
     }
 };
-} // namespace Util
+} // namespace Widgets

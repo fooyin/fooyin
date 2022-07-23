@@ -21,8 +21,16 @@
 
 #include "database/database.h"
 #include "engine/enginehandler.h"
+#include "gui/controls/controlwidget.h"
+#include "gui/filter/filterwidget.h"
+#include "gui/info/infowidget.h"
+#include "gui/library/coverwidget.h"
+#include "gui/library/searchwidget.h"
+#include "gui/library/statuswidget.h"
 #include "gui/mainwindow.h"
+#include "gui/playlist/playlistwidget.h"
 #include "gui/settings/settingsdialog.h"
+#include "gui/widgets/spacer.h"
 #include "library/librarymanager.h"
 #include "library/musiclibrary.h"
 #include "player/playercontroller.h"
@@ -30,8 +38,9 @@
 #include "playlist/playlisthandler.h"
 #include "settings/settings.h"
 #include "threadmanager.h"
-#include "utils/paths.h"
 #include "widgets/widgetprovider.h"
+
+#include <PluginManager>
 
 struct Application::Private
 {
@@ -64,8 +73,15 @@ struct Application::Private
     {
         threadManager->moveToNewThread(&engine);
 
+        PluginSystem::addObject(playerManager);
+        PluginSystem::addObject(libraryManager);
+        PluginSystem::addObject(library);
+        PluginSystem::addObject(settingsDialog.get());
+        PluginSystem::addObject(widgetProvider);
+
         setupConnections();
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
+        mainWindow->setupUi();
         mainWindow->show();
     }
 

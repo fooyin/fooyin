@@ -21,6 +21,10 @@
 
 #include <Plugin>
 
+namespace Widgets {
+class WidgetFactory;
+}
+
 class Application;
 
 class CorePlugin : public QObject,
@@ -39,4 +43,5 @@ public:
 
 private:
     Application* m_app;
+    Widgets::WidgetFactory* m_factory;
 };

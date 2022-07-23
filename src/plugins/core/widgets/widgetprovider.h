@@ -44,11 +44,6 @@ public:
                    Library::MusicLibrary* library, SettingsDialog* settingsDialog, QObject* parent = nullptr);
     ~WidgetProvider() override;
 
-    [[nodiscard]] PlayerManager* playerManager() const;
-    [[nodiscard]] Library::LibraryManager* libraryManager() const;
-    [[nodiscard]] Library::MusicLibrary* library() const;
-    [[nodiscard]] SettingsDialog* settingsDialog() const;
-
     Widget* createWidget(const QString& widget, SplitterWidget* splitter);
     //    Widget* createWidget(Widgets::WidgetType type, SplitterWidget* splitter);
     Widget* createFilter(Filters::FilterType filterType, SplitterWidget* splitter);
@@ -57,6 +52,9 @@ public:
     void addMenuActions(QMenu* menu, SplitterWidget* splitter);
     //    void addWidgetMenu(QMenu* menu, SplitterWidget* splitter);
     //    void addFilterMenu(QMenu* menu, SplitterWidget* splitter);
+
+protected:
+    void registerWidgets();
 
 private:
     struct Private;

@@ -243,11 +243,4 @@ QString capitalise(const QString& s)
 
     return parts.join(" ");
 }
-
-Util::WidgetFactory<QString, Widget, WidgetProvider*>* factory()
-{
-    static Util::WidgetFactory<QString, Widget, WidgetProvider*> factory;
-    return &factory;
-}
-
 }; // namespace Util

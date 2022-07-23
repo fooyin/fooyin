@@ -14,12 +14,11 @@ class MusicLibrary;
 class PlayerManager;
 class Track;
 class Settings;
-class WidgetProvider;
 
 class InfoWidget : public Widget
 {
 public:
-    InfoWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    InfoWidget(QWidget* parent = nullptr);
     ~InfoWidget() override;
 
     bool isHeaderHidden();

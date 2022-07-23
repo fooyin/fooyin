@@ -28,9 +28,8 @@
 #include "playlistmodel.h"
 #include "playlistview.h"
 #include "settings/settings.h"
-#include "utils/utils.h"
-#include "widgets/widgetprovider.h"
 
+#include <PluginManager>
 #include <QAction>
 #include <QActionGroup>
 #include <QHBoxLayout>
@@ -40,12 +39,12 @@
 #include <QScrollBar>
 
 namespace Library {
-PlaylistWidget::PlaylistWidget(WidgetProvider* widgetProvider, QWidget* parent)
+PlaylistWidget::PlaylistWidget(QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
-    , m_libraryManager(widgetProvider->libraryManager())
-    , m_library(widgetProvider->library())
-    , m_playerManager(widgetProvider->playerManager())
+    , m_libraryManager(PluginSystem::object<Library::LibraryManager>())
+    , m_library(PluginSystem::object<Library::MusicLibrary>())
+    , m_playerManager(PluginSystem::object<PlayerManager>())
     , m_model(new PlaylistModel(m_playerManager, m_library, this))
     , m_playlist(new PlaylistView(this))
     , m_settings(Settings::instance())
@@ -59,8 +58,8 @@ PlaylistWidget::PlaylistWidget(WidgetProvider* widgetProvider, QWidget* parent)
     m_playlist->setItemDelegate(new PlaylistDelegate(this));
 
     setupConnections();
-    connect(m_noLibrary, &NoLibraryOverlay::settingsClicked, this, [widgetProvider] {
-        widgetProvider->settingsDialog()->openPage(SettingsDialog::Page::Library);
+    connect(m_noLibrary, &NoLibraryOverlay::settingsClicked, this, [this] {
+        PluginSystem::object<SettingsDialog>()->openPage(SettingsDialog::Page::Library);
     });
 
     reset();

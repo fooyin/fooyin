@@ -21,19 +21,14 @@
 
 #include "gui/widgets/widget.h"
 
-namespace Library {
-class MusicLibrary;
-}
-
 class Splitter;
-class WidgetProvider;
 
 class SearchWidget : public Widget
 {
     Q_OBJECT
 
 public:
-    explicit SearchWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit SearchWidget(QWidget* parent = nullptr);
     ~SearchWidget() override;
 
     [[nodiscard]] QString name() const override;

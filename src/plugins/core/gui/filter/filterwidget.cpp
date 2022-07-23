@@ -23,10 +23,11 @@
 #include "filtermodel.h"
 #include "filterview.h"
 #include "library/musiclibrary.h"
+#include "player/playermanager.h"
 #include "settings/settings.h"
 #include "utils/enumhelper.h"
-#include "widgets/widgetprovider.h"
 
+#include <PluginManager>
 #include <QAction>
 #include <QActionGroup>
 #include <QHBoxLayout>
@@ -35,13 +36,13 @@
 #include <QMenu>
 
 namespace Library {
-FilterWidget::FilterWidget(Filters::FilterType type, WidgetProvider* widgetProvider, QWidget* parent)
+FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_type(type)
     , m_index(0)
-    , m_library(widgetProvider->library())
-    , m_filter(new Library::FilterView{widgetProvider->playerManager(), m_library, this})
+    , m_library(PluginSystem::object<Library::MusicLibrary>())
+    , m_filter(new Library::FilterView(PluginSystem::object<PlayerManager>(), m_library, this))
     , m_model(new FilterModel(m_type, m_index, m_library, m_filter))
     , m_settings(Settings::instance())
 {

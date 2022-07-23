@@ -23,8 +23,8 @@
 #include "library/models/track.h"
 #include "player/playermanager.h"
 #include "utils/utils.h"
-#include "widgets/widgetprovider.h"
 
+#include <PluginManager>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
@@ -40,14 +40,14 @@ struct StatusWidget::Private
 
     ClickableLabel* playing;
 
-    explicit Private(WidgetProvider* widgetProvider)
-        : playerManager(widgetProvider->playerManager())
+    explicit Private()
+        : playerManager(PluginSystem::object<PlayerManager>())
     { }
 };
 
-StatusWidget::StatusWidget(WidgetProvider* widgetProvider, QWidget* parent)
+StatusWidget::StatusWidget(QWidget* parent)
     : Widget(parent)
-    , p(std::make_unique<Private>(widgetProvider))
+    , p(std::make_unique<Private>())
 {
     setObjectName("Status Bar");
 

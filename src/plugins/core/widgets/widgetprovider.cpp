@@ -27,14 +27,13 @@
 #include "gui/library/statuswidget.h"
 #include "gui/playlist/playlistwidget.h"
 #include "gui/settings/settingsdialog.h"
-#include "gui/widgets/dummy.h"
 #include "gui/widgets/spacer.h"
 #include "gui/widgets/splitterwidget.h"
 #include "library/librarymanager.h"
 #include "utils/enumhelper.h"
-#include "utils/utils.h"
 #include "widgetfactory.h"
 
+#include <PluginManager>
 #include <QMenu>
 
 struct WidgetProvider::Private
@@ -43,6 +42,7 @@ struct WidgetProvider::Private
     Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
     SettingsDialog* settingsDialog;
+    Widgets::WidgetFactory* widgetFactory;
 
     QMap<QString, QMenu*> menus;
 
@@ -54,6 +54,7 @@ struct WidgetProvider::Private
         , libraryManager(libraryManager)
         , library(library)
         , settingsDialog(settingsDialog)
+        , widgetFactory(PluginSystem::object<Widgets::WidgetFactory>())
     { }
 };
 
@@ -61,33 +62,15 @@ WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::LibraryMan
                                Library::MusicLibrary* library, SettingsDialog* settingsDialog, QObject* parent)
     : QObject(parent)
     , p(std::make_unique<Private>(playerManager, libraryManager, library, settingsDialog))
-{ }
+{
+    registerWidgets();
+}
 
 WidgetProvider::~WidgetProvider() = default;
 
-PlayerManager* WidgetProvider::playerManager() const
-{
-    return p->playerManager;
-}
-
-Library::LibraryManager* WidgetProvider::libraryManager() const
-{
-    return p->libraryManager;
-}
-
-Library::MusicLibrary* WidgetProvider::library() const
-{
-    return p->library;
-}
-
-SettingsDialog* WidgetProvider::settingsDialog() const
-{
-    return p->settingsDialog;
-}
-
 Widget* WidgetProvider::createWidget(const QString& widget, SplitterWidget* splitter)
 {
-    auto* createdWidget = Util::factory()->make(widget, this);
+    auto* createdWidget = p->widgetFactory->make(widget);
     splitter->addWidget(createdWidget);
     return createdWidget;
 }
@@ -103,7 +86,7 @@ Widget* WidgetProvider::createFilter(Filters::FilterType filterType, SplitterWid
 
 SplitterWidget* WidgetProvider::createSplitter(Qt::Orientation type, QWidget* parent)
 {
-    auto* splitter = new SplitterWidget(this, parent);
+    auto* splitter = new SplitterWidget(parent);
     splitter->setOrientation(type);
     return splitter;
 }
@@ -122,8 +105,8 @@ void WidgetProvider::addMenuActions(QMenu* menu, SplitterWidget* splitter)
     //    menu->addAction(addVSplitterWidget);
 
     p->menus.clear();
-    auto widgets = Util::factory()->widgetNames();
-    auto widgetSubMenus = Util::factory()->menus();
+    auto widgets = p->widgetFactory->widgetNames();
+    auto widgetSubMenus = p->widgetFactory->menus();
     for(const auto& widget : widgets) {
         const QStringList subMenus = widgetSubMenus.value(widget);
         auto* parentMenu = menu;
@@ -144,6 +127,27 @@ void WidgetProvider::addMenuActions(QMenu* menu, SplitterWidget* splitter)
     }
 
     //    addWidgetMenu(menu, splitter);
+}
+
+void WidgetProvider::registerWidgets()
+{
+    auto* factory = PluginSystem::object<Widgets::WidgetFactory>();
+
+    factory->registerClass<ControlWidget>("Controls");
+
+    factory->registerClass<Library::GenreFilter>("Genre", {"Filter"});
+    factory->registerClass<Library::YearFilter>("Year", {"Filter"});
+    factory->registerClass<Library::AlbmArtistFilter>("AlbumArtist", {"Filter"});
+    factory->registerClass<Library::ArtistFilter>("Artist", {"Filter"});
+    factory->registerClass<Library::AlbumFilter>("Album", {"Filter"});
+
+    factory->registerClass<InfoWidget>("Info");
+    factory->registerClass<CoverWidget>("Artwork");
+    factory->registerClass<SearchWidget>("Search");
+    factory->registerClass<Library::PlaylistWidget>("Playlist");
+    factory->registerClass<Widgets::Spacer>("Spacer");
+    factory->registerClass<SplitterWidget>("Splitter");
+    factory->registerClass<StatusWidget>("Status");
 }
 
 // void WidgetProvider::addWidgetMenu(QMenu* menu, SplitterWidget* splitter)
