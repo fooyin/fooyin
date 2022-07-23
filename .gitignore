@@ -1,9 +1,60 @@
-# QtCreator
+*.*#
+*.a
+*.app
 *.autosave
+*.core
+*.debug
+*.embed.manifest
+*.moc
+*.o
+*.obj
+*.orig
+*.prl
+*.qm
+*.rc
+*.rej
+*.res
+*.so
+*.so.*
+*_pch.h.cpp
+*_resource.rc
+*_wrapper.bat
+*_wrapper.sh
+*~
+.#*
+.DS_Store
+.qmake.cache
+.qmake.stash
+.vscode
+Makefile*
+Thumbs.db
+moc_*.cpp
+qrc_*.cpp
+tags
+ui_*.h
+wrapper.bat
+wrapper.sh
+debug_toolchain.cmake
+
+# generated files
 CMakeLists.txt.user*
+fooyin_version.h
 
-#clion
-.idea/
+# Vim temporary files
+.*.swp
 
-#Dolphin
-.directory
+# Directories
+# ---------------------
+
+.moc/
+.obj/
+.pch/
+.rcc/
+.uic/
+/*-debug/
+/*-release/
+/build*/
+/lib/
+debug/
+release/
+tmp/
