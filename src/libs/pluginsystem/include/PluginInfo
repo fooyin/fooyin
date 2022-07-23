@@ -17,30 +17,6 @@
  *
  */
 
-#include "version.h"
+#pragma once
 
-#include <PluginManager>
-#include <QApplication>
-
-int main(int argc, char* argv[])
-{
-    Q_INIT_RESOURCE(icons);
-    Q_INIT_RESOURCE(fonts);
-
-    qApp->setApplicationName("fooyin");
-    qApp->setApplicationVersion(VERSION);
-
-    auto* app = new QApplication(argc, argv);
-    auto* pluginManager = PluginSystem::PluginManager::instance();
-
-    // TODO: Pass down CMake vars
-    QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
-    pluginManager->findPlugins(pluginsPath);
-    pluginManager->addPlugins();
-
-    int result = QApplication::exec();
-
-    delete app;
-
-    return result;
-}
+#include "../src/plugininfo.h"

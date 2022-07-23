@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "pluginsystem/plugin.h"
+#include <Plugin>
 
 class Application;
 
