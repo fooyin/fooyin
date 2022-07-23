@@ -26,9 +26,9 @@ PluginInfo::PluginInfo()
     : m_isLoaded{false}
 { }
 
-PluginInfo::PluginInfo(QString name, const QString& filename, const QJsonObject& metadata)
+PluginInfo::PluginInfo(QString name, QString  filename, const QJsonObject& metadata)
     : m_name{std::move(name)}
-    , m_filename{filename}
+    , m_filename{std::move(filename)}
     , m_metadata{metadata}
     , m_isLoaded{false}
 { }

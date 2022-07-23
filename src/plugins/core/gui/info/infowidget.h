@@ -18,7 +18,7 @@ class Settings;
 class InfoWidget : public Widget
 {
 public:
-    InfoWidget(QWidget* parent = nullptr);
+    explicit InfoWidget(QWidget* parent = nullptr);
     ~InfoWidget() override;
 
     bool isHeaderHidden();

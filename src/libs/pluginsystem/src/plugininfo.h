@@ -30,7 +30,7 @@ class PLUGINSYSTEM_EXPORT PluginInfo
 public:
     PluginInfo();
 
-    PluginInfo(QString  name, const QString& filename, const QJsonObject& metadata);
+    PluginInfo(QString  name, QString  filename, const QJsonObject& metadata);
 
     void addDependency(PluginInfo* dependency);
 

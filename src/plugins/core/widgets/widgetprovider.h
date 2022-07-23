@@ -47,14 +47,14 @@ public:
     Widget* createWidget(const QString& widget, SplitterWidget* splitter);
     //    Widget* createWidget(Widgets::WidgetType type, SplitterWidget* splitter);
     Widget* createFilter(Filters::FilterType filterType, SplitterWidget* splitter);
-    SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);
+    static SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);
 
     void addMenuActions(QMenu* menu, SplitterWidget* splitter);
     //    void addWidgetMenu(QMenu* menu, SplitterWidget* splitter);
     //    void addFilterMenu(QMenu* menu, SplitterWidget* splitter);
 
 protected:
-    void registerWidgets();
+    static void registerWidgets();
 
 private:
     struct Private;

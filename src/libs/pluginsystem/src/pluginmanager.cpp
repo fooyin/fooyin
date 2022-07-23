@@ -98,7 +98,7 @@ void PluginManager::addPlugins()
     for(const auto& plugin : qAsConst(m_plugins)) {
         auto metadata = plugin->metadata().value("MetaData").toObject();
 
-        auto pluginLoader = new QPluginLoader(plugin->filename());
+        auto* pluginLoader = new QPluginLoader(plugin->filename());
 
         if(!pluginLoader->load()) {
             qDebug() << QString("Plugin %1 couldn't be loaded (%2)").arg(plugin->name(), pluginLoader->errorString());

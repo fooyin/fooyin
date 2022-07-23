@@ -26,7 +26,7 @@ class Application : public QObject
     Q_OBJECT
 
 public:
-    Application(QObject* parent = nullptr);
+    explicit Application(QObject* parent = nullptr);
     ~Application() override;
 
 private:

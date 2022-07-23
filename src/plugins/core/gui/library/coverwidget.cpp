@@ -37,12 +37,11 @@ struct CoverWidget::Private
     QLabel* coverLabel;
     QString coverPath;
     QPixmap cover;
-    bool hasCover;
+    bool hasCover{false};
 
     explicit Private()
         : playerManager(PluginSystem::object<PlayerManager>())
         , library(PluginSystem::object<Library::MusicLibrary>())
-        , hasCover(false)
     { }
 };
 

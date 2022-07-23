@@ -37,7 +37,7 @@ struct Database::Private
     QString directory;
     QString filename;
     QString connectionName;
-    bool initialized;
+    bool initialized{false};
 
     std::unique_ptr<Library> libraryConnector;
     std::unique_ptr<Playlist> playlistConnector;
@@ -47,7 +47,6 @@ struct Database::Private
     Private(const QString& directory, const QString& filename)
         : directory(directory)
         , filename(filename)
-        , initialized(false)
 
     {
         connectionName = directory + "/" + filename;

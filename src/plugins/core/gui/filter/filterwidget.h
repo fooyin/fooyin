@@ -40,7 +40,7 @@ class FilterWidget : public Widget
     Q_OBJECT
 
 public:
-    FilterWidget(Filters::FilterType type, QWidget* parent = nullptr);
+    explicit FilterWidget(Filters::FilterType type, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();

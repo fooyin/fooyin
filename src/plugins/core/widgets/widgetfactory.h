@@ -60,7 +60,7 @@ public:
         return true;
     }
 
-    Widget* make(const QString& key) const
+    [[nodiscard]] Widget* make(const QString& key) const
     {
         auto it = instantiators.value(key, nullptr);
         if(!it) {
@@ -69,12 +69,12 @@ public:
         return it();
     }
 
-    QList<QString> widgetNames() const
+    [[nodiscard]] QList<QString> widgetNames() const
     {
         return instantiators.keys();
     }
 
-    SubMenus menus() const
+    [[nodiscard]] SubMenus menus() const
     {
         return subMenus;
     }
