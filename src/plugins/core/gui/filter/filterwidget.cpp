@@ -35,13 +35,6 @@
 #include <QMenu>
 
 namespace Library {
-static const bool m_genreIsRegistered = Util::factory()->registerClass<GenreFilter>("Genre", {"Filter"});
-static const bool m_yearIsRegistered = Util::factory()->registerClass<YearFilter>("Year", {"Filter"});
-static const bool m_albumArtistIsRegistered
-    = Util::factory()->registerClass<AlbmArtistFilter>("AlbumArtist", {"Filter"});
-static const bool m_artistIsRegistered = Util::factory()->registerClass<ArtistFilter>("Artist", {"Filter"});
-static const bool m_albumIsRegistered = Util::factory()->registerClass<AlbumFilter>("Album", {"Filter"});
-
 FilterWidget::FilterWidget(Filters::FilterType type, WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))

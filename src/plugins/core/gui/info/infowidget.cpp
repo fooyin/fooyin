@@ -13,8 +13,6 @@
 #include <QMenu>
 #include <QTableWidget>
 
-static const bool m_isRegistered = Util::factory()->registerClass<InfoWidget>("Info");
-
 InfoWidget::InfoWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_settings(Settings::instance())
@@ -37,10 +35,6 @@ InfoWidget::InfoWidget(WidgetProvider* widgetProvider, QWidget* parent)
     connect(m_settings, &Settings::infoScrollBarChanged, this, &InfoWidget::setScrollbarHidden);
 
     spanHeaders();
-
-    if(!m_isRegistered) {
-        qDebug() << InfoWidget::name() << " not registered";
-    }
 }
 
 InfoWidget::~InfoWidget() = default;

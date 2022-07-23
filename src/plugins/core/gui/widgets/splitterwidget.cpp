@@ -28,8 +28,6 @@
 #include <QJsonObject>
 #include <QMenu>
 
-static const bool m_isRegistered = Util::factory()->registerClass<SplitterWidget>("Splitter", {"Splitters"});
-
 SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))
@@ -43,10 +41,6 @@ SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, QWidget* parent)
     m_layout->addWidget(m_splitter);
 
     m_splitter->addWidget(m_dummy);
-
-    if(!m_isRegistered) {
-        qDebug() << SplitterWidget::name() << " not registered";
-    }
 }
 
 SplitterWidget::~SplitterWidget() = default;

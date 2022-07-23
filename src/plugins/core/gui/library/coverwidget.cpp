@@ -28,8 +28,6 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-static const bool m_isRegistered = Util::factory()->registerClass<CoverWidget>("Artwork");
-
 struct CoverWidget::Private
 {
     PlayerManager* playerManager;
@@ -60,10 +58,6 @@ CoverWidget::CoverWidget(WidgetProvider* widgetProvider, QWidget* parent)
     connect(p->library, &Library::MusicLibrary::tracksSelChanged, this, &CoverWidget::reloadCover);
 
     reloadCover();
-
-    if(!m_isRegistered) {
-        qDebug() << CoverWidget::name() << " not registered";
-    }
 }
 
 QString CoverWidget::name() const

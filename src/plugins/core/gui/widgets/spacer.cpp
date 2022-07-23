@@ -21,8 +21,6 @@
 
 #include "utils/utils.h"
 
-static const bool m_isRegistered = Util::factory()->registerClass<Widgets::Spacer>("Spacer");
-
 namespace Widgets {
 Spacer::Spacer(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
@@ -30,10 +28,6 @@ Spacer::Spacer(WidgetProvider* widgetProvider, QWidget* parent)
     Q_UNUSED(widgetProvider)
     setObjectName(name());
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-    if(!m_isRegistered) {
-        qDebug() << Spacer::name() << " not registered";
-    }
 }
 
 Spacer::~Spacer() = default;

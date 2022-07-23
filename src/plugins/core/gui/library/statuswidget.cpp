@@ -29,8 +29,6 @@
 #include <QHBoxLayout>
 #include <QMenu>
 
-static const bool m_isRegistered = Util::factory()->registerClass<StatusWidget>("Status");
-
 struct StatusWidget::Private
 {
     PlayerManager* playerManager;
@@ -58,10 +56,6 @@ StatusWidget::StatusWidget(WidgetProvider* widgetProvider, QWidget* parent)
     connect(p->playing, &ClickableLabel::clicked, this, &StatusWidget::labelClicked);
     connect(p->playerManager, &PlayerManager::currentTrackChanged, this, &StatusWidget::reloadStatus);
     connect(p->playerManager, &PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
-
-    if(!m_isRegistered) {
-        qDebug() << StatusWidget::name() << " not registered";
-    }
 }
 
 QString StatusWidget::name() const

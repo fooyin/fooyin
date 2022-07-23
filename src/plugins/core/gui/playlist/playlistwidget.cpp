@@ -39,8 +39,6 @@
 #include <QMenu>
 #include <QScrollBar>
 
-static const bool m_isRegistered = Util::factory()->registerClass<Library::PlaylistWidget>("Playlist");
-
 namespace Library {
 PlaylistWidget::PlaylistWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
@@ -69,10 +67,6 @@ PlaylistWidget::PlaylistWidget(WidgetProvider* widgetProvider, QWidget* parent)
     setHeaderHidden(m_settings->value(Settings::Setting::PlaylistHeader).toBool());
     setScrollbarHidden(m_settings->value(Settings::Setting::PlaylistScrollBar).toBool());
     setup();
-
-    if(!m_isRegistered) {
-        qDebug() << PlaylistWidget::name() << " not registered";
-    }
 }
 
 void PlaylistWidget::setup()

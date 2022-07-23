@@ -29,8 +29,6 @@
 #include <QLineEdit>
 #include <QMenu>
 
-static const bool m_isRegistered = Util::factory()->registerClass<SearchWidget>("Search");
-
 struct SearchWidget::Private
 {
     Settings* settings;
@@ -57,10 +55,6 @@ SearchWidget::SearchWidget(WidgetProvider* widgetProvider, QWidget* parent)
     connect(p->settings, &Settings::layoutEditingChanged, this, &SearchWidget::searchBoxContextMenu);
     connect(p->searchBox, &QLineEdit::textChanged, this, &SearchWidget::textChanged);
     connect(this, &SearchWidget::searchChanged, p->library, &Library::MusicLibrary::searchChanged);
-
-    if(!m_isRegistered) {
-        qDebug() << SearchWidget::name() << " not registered";
-    }
 }
 
 QString SearchWidget::name() const
