@@ -426,7 +426,6 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
 {
     auto roles = QAbstractItemModel::roleNames();
 
-    roles.insert(+Role::Type, "Type");
     roles.insert(+ItemRole::Id, "ID");
     roles.insert(+ItemRole::Artist, "Artist");
     roles.insert(+ItemRole::Year, "Year");
