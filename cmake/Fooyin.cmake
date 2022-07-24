@@ -35,6 +35,7 @@ macro(fooyin_add_plugin plugin_name)
        PREFIX "fooyin_"
        OUTPUT_NAME ${output_name}
        LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
+       INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FOOYIN_PLUGIN_DIR}"
    )
 
    target_include_directories(${plugin_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/..)
