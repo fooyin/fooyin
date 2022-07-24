@@ -12,6 +12,8 @@ set(RESOURCES
     ${CMAKE_SOURCE_DIR}/data/fonts.qrc
 )
 
+string(TOLOWER ${PROJECT_NAME} output_name)
+
 qt6_add_resources(SOURCES ${RESOURCES})
 
 qt_add_executable(${PROJECT_NAME}
@@ -40,6 +42,7 @@ target_link_libraries(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
+    OUTPUT_NAME ${output_name}
     RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
     INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FOOYIN_LIBRARY_DIR}"
 )

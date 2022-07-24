@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(fooyin LANGUAGES CXX C)
+project(Fooyin LANGUAGES CXX C)
 
 set(FOOYIN_VERSION "0.1.0")
 set(FOOYIN_DATABASE_VERSION "0.8.0")
