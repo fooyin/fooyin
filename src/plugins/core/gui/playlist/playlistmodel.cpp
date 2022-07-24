@@ -28,7 +28,6 @@
 #include "player/playermanager.h"
 #include "playlistitem.h"
 #include "settings/settings.h"
-#include "utils/paths.h"
 #include "utils/utils.h"
 
 #include <QPalette>

@@ -19,10 +19,6 @@
 
 #include "playlistview.h"
 
-#include "library/models/track.h"
-#include "library/musiclibrary.h"
-#include "playlistitem.h"
-
 #include <QActionGroup>
 #include <QHeaderView>
 #include <QKeyEvent>

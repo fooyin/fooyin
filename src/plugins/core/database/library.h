@@ -20,7 +20,6 @@
 #pragma once
 
 #include "module.h"
-#include "utils/typedefs.h"
 
 namespace Library {
 class LibraryInfo;

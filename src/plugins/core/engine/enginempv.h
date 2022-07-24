@@ -20,7 +20,6 @@
 #pragma once
 
 #include "engine.h"
-#include "player/playermanager.h"
 
 class Track;
 class mpv_event;

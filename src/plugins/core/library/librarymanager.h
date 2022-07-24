@@ -21,7 +21,8 @@
 
 #include "library/libraryinfo.h"
 
-class LibraryPlaylistInterface;
+#include <QMap>
+#include <QObject>
 
 namespace DB {
 class Database;
@@ -29,9 +30,6 @@ class Library;
 } // namespace DB
 
 namespace Library {
-class MusicLibrary;
-class LibraryScanner;
-
 class LibraryManager : public QObject
 {
     Q_OBJECT

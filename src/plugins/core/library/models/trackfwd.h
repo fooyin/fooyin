@@ -22,7 +22,6 @@
 #include "album.h"
 #include "artist.h"
 #include "track.h"
-#include "utils/typedefs.h"
 
 using TrackPtrList = QList<Track*>;
 using TrackHash = QHash<int, Track*>;

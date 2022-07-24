@@ -22,8 +22,6 @@
 #include "database/database.h"
 #include "database/library.h"
 #include "libraryinfo.h"
-#include "musiclibrary.h"
-#include "playlist/libraryplaylistmanager.h"
 #include "utils/utils.h"
 
 namespace Library {

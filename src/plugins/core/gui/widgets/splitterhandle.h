@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "splitter.h"
-
 #include <QSplitterHandle>
 
 class Settings;

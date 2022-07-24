@@ -19,8 +19,6 @@
 
 #include "dummy.h"
 
-#include "utils/utils.h"
-
 Dummy::Dummy(WidgetProvider* widgetProvider, QWidget* parent)
     : Widget(parent)
     , m_layout(new QHBoxLayout(this))

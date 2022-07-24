@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "utils/typedefs.h"
-
 #include <QMainWindow>
 #include <QWidget>
 

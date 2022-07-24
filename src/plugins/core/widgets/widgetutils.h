@@ -19,18 +19,7 @@
 
 #pragma once
 
-#include "widgetfactory.h"
-
-class QString;
-class Widget;
-class Key;
-
 namespace Util {
 namespace Widgets {
-    inline WidgetFactory<QString, Widget>* factory()
-    {
-        static Util::WidgetFactory<QString, Widget> factory;
-        return &factory;
-    }
 }; // namespace Widgets
 }; // namespace Util

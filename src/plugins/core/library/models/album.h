@@ -20,7 +20,6 @@
 #pragma once
 
 #include "container.h"
-#include "utils/typedefs.h"
 
 #include <QString>
 

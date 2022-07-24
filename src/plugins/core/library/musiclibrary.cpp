@@ -20,19 +20,14 @@
 #include "musiclibrary.h"
 
 #include "app/threadmanager.h"
-#include "database/database.h"
-#include "database/librarydatabase.h"
 #include "library/librarydatabasemanager.h"
 #include "library/libraryscanner.h"
 #include "libraryinfo.h"
 #include "librarymanager.h"
-#include "models/album.h"
-#include "models/artist.h"
 #include "models/track.h"
 #include "playlist/libraryplaylistinterface.h"
 #include "sorting/sorting.h"
 #include "utils/helpers.h"
-#include "utils/utils.h"
 
 #include <QTimer>
 #include <utility>

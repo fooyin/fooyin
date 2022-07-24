@@ -1,7 +1,5 @@
 #include "infoitem.h"
 
-#include "utils/typedefs.h"
-
 InfoItem::InfoItem(Type type, QString title)
     : m_type(type)
     , m_title(std::move(title))

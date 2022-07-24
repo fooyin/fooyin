@@ -22,7 +22,6 @@
 #include "filtermodel.h"
 #include "gui/widgets/widget.h"
 #include "utils/typedefs.h"
-#include "utils/utils.h"
 
 #include <QItemSelection>
 

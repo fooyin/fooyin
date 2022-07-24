@@ -32,10 +32,6 @@ class LibraryPlaylistInterface;
 class LibraryDatabaseManager;
 class ThreadManager;
 
-namespace DB {
-class LibraryDatabase;
-}
-
 namespace Library {
 class LibraryScanner;
 

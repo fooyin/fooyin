@@ -20,7 +20,6 @@
 #pragma once
 
 #include "library/models/trackfwd.h"
-#include "utils/typedefs.h"
 
 namespace Playlist {
 class Playlist;

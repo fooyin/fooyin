@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "utils/typedefs.h"
-
 #include <QListView>
 #include <QTreeView>
 

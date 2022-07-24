@@ -24,7 +24,6 @@
 
 class QMenu;
 
-// Subclassing requires the inheritence of FactoryRegister<T> so widget is detected
 class Widget : public QWidget
 {
     Q_OBJECT
