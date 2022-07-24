@@ -42,6 +42,8 @@ fooyin_add_plugin(Core
         library/librarydatabasemanager.cpp
         library/musiclibrary.h
         library/musiclibrary.cpp
+        library/libraryscanner.h
+        library/libraryscanner.cpp
         library/libraryutils.h
         library/libraryutils.cpp
 
@@ -74,9 +76,6 @@ fooyin_add_plugin(Core
         player/playercontroller.h
         player/playercontroller.cpp
         player/playermanager.h
-
-        scanner/libraryscanner.h
-        scanner/libraryscanner.cpp
 
         settings/settings.h
         settings/settings.cpp

@@ -21,9 +21,9 @@
 
 #include "gui/filter/filterfwd.h"
 #include "library/librarydatabasemanager.h"
+#include "library/libraryscanner.h"
 #include "libraryinfo.h"
 #include "models/trackfwd.h"
-#include "scanner/libraryscanner.h"
 #include "sorting/sortorder.h"
 
 #include <QThread>

@@ -20,7 +20,6 @@
 #pragma once
 
 #include "library/libraryinfo.h"
-#include "scanner/libraryscanner.h"
 
 class LibraryPlaylistInterface;
 
