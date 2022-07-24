@@ -1,6 +1,6 @@
-fooyin_add_plugin(fooyin_core
+fooyin_add_plugin(Core
     TYPE SHARED
-    PLUGIN_DEPENDS FooyinVersion PluginSystem
+    PLUGIN_DEPENDS FooyinVersion PluginSystem Utils
     DEPENDS Qt6::Core Qt6::Widgets Qt6::Sql
     SOURCES
         coreplugin.h
@@ -42,6 +42,8 @@ fooyin_add_plugin(fooyin_core
         library/librarydatabasemanager.cpp
         library/musiclibrary.h
         library/musiclibrary.cpp
+        library/libraryutils.h
+        library/libraryutils.cpp
 
         library/models/container.h
         library/models/container.cpp
@@ -178,12 +180,4 @@ fooyin_add_plugin(fooyin_core
         gui/widgets/splitterwidget.cpp
         gui/widgets/widget.h
         gui/widgets/widget.cpp
-
-        utils/enumhelper.h
-        utils/helpers.h
-        utils/paths.h
-        utils/paths.cpp
-        utils/typedefs.h
-        utils/utils.h
-        utils/utils.cpp
 )

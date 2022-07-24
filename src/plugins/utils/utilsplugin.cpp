@@ -16,23 +16,16 @@
  * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "utilsplugin.h"
 
-#include "coverprovider.h"
+UtilsPlugin::UtilsPlugin() = default;
 
-#include "library/libraryutils.h"
-#include "models/album.h"
+UtilsPlugin::~UtilsPlugin() = default;
 
-#include <QPixmapCache>
-
-namespace Library::Covers {
-QPixmap albumCover(Album* album)
+void UtilsPlugin::initialise()
 {
-    const auto id = QString::number(album->hasCover() ? album->id() : 0);
-    QPixmap cover;
-    if(!QPixmapCache::find(id, &cover)) {
-        cover = Util::getCover(album->hasCover() ? album->coverPath() : "://images/nocover.png", 60);
-        QPixmapCache::insert(id, cover);
-    }
-    return cover;
 }
-}; // namespace Library::Covers
+
+void UtilsPlugin::pluginsInitialised()
+{
+}

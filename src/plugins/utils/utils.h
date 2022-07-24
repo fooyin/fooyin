@@ -19,9 +19,6 @@
 
 #pragma once
 
-#include "library/models/track.h"
-#include "widgets/widgetprovider.h"
-
 #include <QPixmap>
 #include <QtGlobal>
 
@@ -36,7 +33,6 @@ namespace File {
     bool isSubdir(const QString& dir, const QString& parentDir);
     bool exists(const QString& filename);
     QString getParentDirectory(const QString& filename);
-    QString coverInDirectory(const QString& directory);
     bool createDirectories(const QString& path);
 } // namespace File
 
@@ -50,11 +46,5 @@ QString secsToString(quint64 secs);
 void setMinimumWidth(QLabel* label, const QString& text);
 
 quint64 currentDateToInt();
-
-QString calcAlbumHash(const QString& albumName, const QString& albumArtist, int year);
-QString calcCoverHash(const QString& albumName, const QString& albumArtist);
-QPixmap getCover(const QString& path, int size);
-bool saveCover(const QPixmap& cover, const QString& hash);
-QString storeCover(const Track& track);
 QString capitalise(const QString& s);
 } // namespace Util

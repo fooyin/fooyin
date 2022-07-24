@@ -17,22 +17,21 @@
  *
  */
 
-#include "coverprovider.h"
+#pragma once
 
-#include "library/libraryutils.h"
-#include "models/album.h"
+#include <Plugin>
 
-#include <QPixmapCache>
-
-namespace Library::Covers {
-QPixmap albumCover(Album* album)
+class UtilsPlugin : public QObject,
+                   public PluginSystem::Plugin
 {
-    const auto id = QString::number(album->hasCover() ? album->id() : 0);
-    QPixmap cover;
-    if(!QPixmapCache::find(id, &cover)) {
-        cover = Util::getCover(album->hasCover() ? album->coverPath() : "://images/nocover.png", 60);
-        QPixmapCache::insert(id, cover);
-    }
-    return cover;
-}
-}; // namespace Library::Covers
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
+    Q_INTERFACES(PluginSystem::Plugin)
+
+public:
+    UtilsPlugin();
+    ~UtilsPlugin() override;
+
+    void initialise() override;
+    void pluginsInitialised() override;
+};

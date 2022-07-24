@@ -22,6 +22,6 @@
 class QPixmap;
 class Album;
 
-namespace Covers {
-QPixmap albumCover(Album* album);
-}
+namespace Library::Covers {
+    QPixmap albumCover(Album* album);
+} // namespace Library

@@ -19,10 +19,6 @@
 
 #include "utils.h"
 
-#include "paths.h"
-#include "tagging/tags.h"
-
-#include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
 #include <QLabel>
@@ -96,19 +92,6 @@ namespace File {
         return (index > 0) ? cleanPath(cleaned.left(index)) : QDir::rootPath();
     }
 
-    QString coverInDirectory(const QString& directory)
-    {
-        QDir baseDirectory = QDir(directory);
-        QStringList fileExtensions{"*.jpg", "*.jpeg", "*.png", "*.gif", "*.tiff", "*.bmp"};
-        // Use first image found as album cover
-        QStringList fileList = baseDirectory.entryList(fileExtensions, QDir::Files);
-        if(!fileList.isEmpty()) {
-            QString cover = baseDirectory.absolutePath() + "/" + fileList.constFirst();
-            return cover;
-        }
-        return {};
-    }
-
     bool createDirectories(const QString& path)
     {
         return QDir().mkpath(path);
@@ -154,72 +137,6 @@ quint64 currentDateToInt()
 {
     const auto str = QDateTime::currentDateTimeUtc().toString("yyyyMMddHHmmss");
     return str.toULongLong();
-}
-
-QString calcAlbumHash(const QString& albumName, const QString& albumArtist, int year)
-{
-    const QString albumId = albumName.toLower() + albumArtist.toLower() + QString::number(year);
-    QString albumKey = QCryptographicHash::hash(albumId.toUtf8(), QCryptographicHash::Sha1).toHex();
-    return albumKey;
-}
-
-QString calcCoverHash(const QString& albumName, const QString& albumArtist)
-{
-    const QString albumId = albumName.toLower() + albumArtist.toLower();
-    QString albumKey = QCryptographicHash::hash(albumId.toUtf8(), QCryptographicHash::Sha1).toHex();
-    return albumKey;
-}
-
-QPixmap getCover(const QString& path, int size)
-{
-    if(File::exists(path)) {
-        QPixmap cover;
-        cover.load(path);
-        if(!cover.isNull()) {
-            static const int maximumSize = size;
-            const int width = cover.size().width();
-            const int height = cover.size().height();
-            if(width > maximumSize || height > maximumSize) {
-                cover = cover.scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            }
-            return cover;
-        }
-    }
-    return {};
-}
-
-bool saveCover(const QPixmap& cover, const QString& hash)
-{
-    auto path = coverPath();
-    QFile file(QString(path + hash).append(".jpg"));
-    file.open(QIODevice::WriteOnly);
-    return cover.save(&file, "JPG", 100);
-}
-
-QString storeCover(const Track& track)
-{
-    QString coverPath = "";
-    QString coverHash = Util::calcCoverHash(track.album(), track.albumArtist());
-
-    const QString cacheCover = Util::coverPath() + coverHash + ".jpg";
-    const QString folderCover = Util::File::coverInDirectory(Util::File::getParentDirectory(track.filepath()));
-
-    if(Util::File::exists(cacheCover)) {
-        coverPath = cacheCover;
-    }
-    else if(!folderCover.isEmpty()) {
-        coverPath = folderCover;
-    }
-    else {
-        QPixmap cover = Tagging::readCover(track.filepath());
-        if(!cover.isNull()) {
-            bool saved = Util::saveCover(cover, coverHash);
-            if(saved) {
-                coverPath = cacheCover;
-            }
-        }
-    }
-    return coverPath;
 }
 
 void setMinimumWidth(QLabel* label, const QString& text)

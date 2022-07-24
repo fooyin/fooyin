@@ -17,22 +17,19 @@
  *
  */
 
-#include "coverprovider.h"
+#pragma once
 
-#include "library/libraryutils.h"
-#include "models/album.h"
+#include "models/track.h"
 
-#include <QPixmapCache>
+class QString;
 
-namespace Library::Covers {
-QPixmap albumCover(Album* album)
-{
-    const auto id = QString::number(album->hasCover() ? album->id() : 0);
-    QPixmap cover;
-    if(!QPixmapCache::find(id, &cover)) {
-        cover = Util::getCover(album->hasCover() ? album->coverPath() : "://images/nocover.png", 60);
-        QPixmapCache::insert(id, cover);
-    }
-    return cover;
-}
-}; // namespace Library::Covers
+namespace Library {
+namespace Util {
+    QString coverInDirectory(const QString& directory);
+    QString calcAlbumHash(const QString& albumName, const QString& albumArtist, int year);
+    QString calcCoverHash(const QString& albumName, const QString& albumArtist);
+    QPixmap getCover(const QString& path, int size);
+    bool saveCover(const QPixmap& cover, const QString& hash);
+    QString storeCover(const Track& track);
+}; // namespace Util
+}; // namespace Library

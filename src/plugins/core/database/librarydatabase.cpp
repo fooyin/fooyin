@@ -19,10 +19,9 @@
 
 #include "librarydatabase.h"
 
+#include "library/libraryutils.h"
 #include "query.h"
-#include "tagging/tags.h"
 #include "utils/helpers.h"
-#include "utils/paths.h"
 #include "utils/utils.h"
 
 #include <QBuffer>
@@ -113,7 +112,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         getAllAlbums(dbAlbums);
 
         for(const auto& album : qAsConst(dbAlbums)) {
-            QString hash = Util::calcAlbumHash(album.title(), album.artist(), album.year());
+            QString hash = Library::Util::calcAlbumHash(album.title(), album.artist(), album.year());
             albumMap.insert(hash, album);
         }
     }
@@ -191,7 +190,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         }
 
         // Check album id
-        QString hash = Util::calcAlbumHash(track.album(), track.albumArtist(), track.year());
+        QString hash = Library::Util::calcAlbumHash(track.album(), track.albumArtist(), track.year());
         if(!albumMap.contains(hash)) {
             Album album{track.album()};
             album.setYear(track.year());
@@ -206,7 +205,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         auto album = albumMap.value(hash);
         track.setAlbumId(album.id());
         if(!album.hasCover()) {
-            QString coverPath = Util::storeCover(track);
+            QString coverPath = Library::Util::storeCover(track);
             album.setCoverPath(coverPath);
         }
         track.setCoverPath(album.coverPath());

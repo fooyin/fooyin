@@ -24,18 +24,20 @@ macro(fooyin_add_plugin plugin_name)
     )
 
    add_library(${plugin_name} ${plugin_TYPE} ${plugin_SOURCES})
-   target_link_libraries(${plugin_name} PRIVATE ${plugin_PLUGIN_DEPENDS})
-   target_link_libraries(${plugin_name} PRIVATE ${plugin_DEPENDS})
+   target_link_libraries(${plugin_name} PRIVATE ${plugin_DEPENDS} ${plugin_PLUGIN_DEPENDS})
+
+   string(TOLOWER ${plugin_name} output_name)
 
    set_target_properties(${plugin_name} PROPERTIES
        ARCHIVE_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_DIR}"
        LIBRARY_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_DIR}"
        RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_BINARY_DIR}"
-       PREFIX ""
+       PREFIX "fooyin_"
+       OUTPUT_NAME ${output_name}
        LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
    )
 
-   target_include_directories(${plugin_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+   target_include_directories(${plugin_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
    install(TARGETS ${plugin_name} DESTINATION ${FOOYIN_PLUGIN_DIR})
 endmacro(fooyin_add_plugin)

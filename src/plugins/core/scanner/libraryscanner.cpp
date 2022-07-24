@@ -22,7 +22,7 @@
 #include "database/database.h"
 #include "database/librarydatabase.h"
 #include "library/librarymanager.h"
-#include "library/models/album.h"
+#include "library/libraryutils.h"
 #include "library/models/track.h"
 #include "tagging/tags.h"
 #include "utils/utils.h"
@@ -60,13 +60,13 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
     IdSet tracksToDelete{};
 
     for(const auto& track : tracks) {
-        if(!Util::File::exists(track->filepath())) {
+        if(!::Util::File::exists(track->filepath())) {
             tracksToDelete.insert(track->id());
         }
         else {
             trackMap.insert(track->filepath(), track);
         }
-        if(track->hasCover() && !Util::File::exists(track->coverPath())) {
+        if(track->hasCover() && !::Util::File::exists(track->coverPath())) {
             Util::storeCover(*track);
         }
         if(!mayRun()) {
@@ -136,7 +136,7 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
 
 bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, const TrackPathMap& tracks)
 {
-    if(path.isEmpty() || !Util::File::exists(path)) {
+    if(path.isEmpty() || !::Util::File::exists(path)) {
         return false;
     }
 
