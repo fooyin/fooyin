@@ -49,6 +49,9 @@ public:
 
     void findPlugins(const QString& pluginDir);
     void addPlugins();
+    void unloadPlugins();
+
+    void shutdown();
 
 private:
     PluginManager();

@@ -26,7 +26,6 @@ class QSqlDatabase;
 namespace DB {
 class LibraryDatabase;
 class Library;
-
 class Database : public DB::Module
 {
 public:

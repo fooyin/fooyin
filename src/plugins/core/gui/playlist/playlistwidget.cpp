@@ -47,7 +47,7 @@ PlaylistWidget::PlaylistWidget(QWidget* parent)
     , m_playerManager(PluginSystem::object<PlayerManager>())
     , m_model(new PlaylistModel(m_playerManager, m_library, this))
     , m_playlist(new PlaylistView(this))
-    , m_settings(Settings::instance())
+    , m_settings(PluginSystem::object<Settings>())
     , m_altRowColours(m_settings->value(Settings::Setting::PlaylistAltColours).toBool())
     , m_noLibrary(new NoLibraryOverlay(this))
 {

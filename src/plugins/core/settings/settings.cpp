@@ -26,9 +26,11 @@
 #include "utils/utils.h"
 #include "version.h"
 
+#include <PluginManager>
 #include <QSettings>
 
-Settings::Settings()
+Settings::Settings(QObject* parent)
+    : QObject(parent)
 {
     m_values[Setting::Version] = defaults(Setting::Version);
     m_values[Setting::DatabaseVersion] = defaults(Setting::DatabaseVersion);
@@ -51,7 +53,7 @@ Settings::Settings()
     m_values[Setting::SplitterHandles] = defaults(Setting::SplitterHandles);
     m_values[Setting::Layout] = defaults(Setting::Layout);
 
-    m_settings = new QSettings(Util::settingsPath(), QSettings::IniFormat);
+    m_settings = new QSettings(Util::settingsPath(), QSettings::IniFormat, this);
     if(Util::File::exists(Util::settingsPath())) {
         loadSettings();
         m_values[Setting::FirstRun] = false;
@@ -60,12 +62,8 @@ Settings::Settings()
         storeSettings();
         m_values[Setting::FirstRun] = true;
     }
-}
 
-Settings* Settings::instance()
-{
-    static Settings instance;
-    return &instance;
+    PluginSystem::addObject(this);
 }
 
 Settings::~Settings() = default;

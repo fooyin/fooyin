@@ -29,6 +29,8 @@ public:
     explicit Application(QObject* parent = nullptr);
     ~Application() override;
 
+    void shutdown();
+
 private:
     struct Private;
     std::unique_ptr<Application::Private> p;

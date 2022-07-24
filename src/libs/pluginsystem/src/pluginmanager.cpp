@@ -128,7 +128,38 @@ void PluginManager::addPlugins()
     }
 }
 
+void PluginManager::unloadPlugins()
+{
+    int i = static_cast<int>(m_loadOrder.size() - 1);
+    for(; i >= 0; --i) {
+        auto* pluginLoader = m_loadOrder.at(i).loader;
+        if(!pluginLoader) {
+            continue;
+        }
+        auto* pluginInterface = qobject_cast<Plugin*>(pluginLoader->instance());
+
+        if(!pluginInterface) {
+            continue;
+        }
+        pluginInterface->shutdown();
+
+        pluginLoader->unload();
+        delete pluginLoader;
+    }
+
+    m_loadOrder.clear();
+}
+
+void PluginManager::shutdown()
+{
+    unloadPlugins();
+}
+
 PluginManager::PluginManager() = default;
 
-PluginManager::~PluginManager() = default;
+PluginManager::~PluginManager()
+{
+    qDeleteAll(m_plugins);
+    m_objectList.clear();
+}
 }; // namespace PluginSystem

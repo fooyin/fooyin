@@ -25,10 +25,7 @@
 
 CorePlugin::CorePlugin() = default;
 
-CorePlugin::~CorePlugin()
-{
-    delete m_factory;
-}
+CorePlugin::~CorePlugin() = default;
 
 void CorePlugin::initialise()
 {
@@ -38,5 +35,12 @@ void CorePlugin::initialise()
 
 void CorePlugin::pluginsInitialised()
 {
-    m_app = new Application(this);
+    m_app = new Application();
+}
+
+void CorePlugin::shutdown()
+{
+    m_app->shutdown();
+    delete m_app;
+    delete m_factory;
 }

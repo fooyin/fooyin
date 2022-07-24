@@ -38,6 +38,10 @@ int main(int argc, char* argv[])
     pluginManager->findPlugins(pluginsPath);
     pluginManager->addPlugins();
 
+    // Shutdown plugins on exit
+    // Required to ensure plugins are unloaded before main event loop quits
+    QObject::connect(app, &QCoreApplication::aboutToQuit, pluginManager, &PluginSystem::PluginManager::shutdown);
+
     int result = QApplication::exec();
 
     delete app;

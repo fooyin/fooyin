@@ -23,6 +23,8 @@
 #include "settings/settings.h"
 #include "utils/enumhelper.h"
 
+#include <PluginManager>
+
 PlayerController::PlayerController(QObject* parent)
     : PlayerManager(parent)
     , m_currentTrack(nullptr)
@@ -33,8 +35,8 @@ PlayerController::PlayerController(QObject* parent)
     , m_volume(1.0F)
     , m_counted(false)
 {
-    m_playMode
-        = EnumHelper::fromString<Player::PlayMode>(Settings::instance()->value(Settings::Setting::PlayMode).toString());
+    m_playMode = EnumHelper::fromString<Player::PlayMode>(
+        PluginSystem::object<Settings>()->value(Settings::Setting::PlayMode).toString());
 }
 
 PlayerController::~PlayerController() = default;

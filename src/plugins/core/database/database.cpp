@@ -28,6 +28,7 @@
 #include "utils/utils.h"
 #include "version.h"
 
+#include <PluginManager>
 #include <QFile>
 #include <QSqlQuery>
 
@@ -112,7 +113,7 @@ Library* Database::libraryConnector()
 
 bool Database::update()
 {
-    auto* settings = ::Settings::instance();
+    auto* settings = PluginSystem::object<Settings>();
     if(settings->value(::Settings::Setting::DatabaseVersion).toString() < DATABASE_VERSION) {
         settings->set(::Settings::Setting::DatabaseVersion, DATABASE_VERSION);
         return true;

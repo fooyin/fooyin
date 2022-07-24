@@ -38,7 +38,7 @@ struct SearchWidget::Private
     Library::MusicLibrary* library;
 
     explicit Private()
-        : settings(Settings::instance())
+        : settings(PluginSystem::object<Settings>())
         , library(PluginSystem::object<Library::MusicLibrary>())
     { }
 };

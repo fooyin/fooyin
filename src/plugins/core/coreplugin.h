@@ -40,6 +40,7 @@ public:
 
     void initialise() override;
     void pluginsInitialised() override;
+    void shutdown() override;
 
 private:
     Application* m_app;

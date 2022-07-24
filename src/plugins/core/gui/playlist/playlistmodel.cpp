@@ -30,6 +30,7 @@
 #include "settings/settings.h"
 #include "utils/utils.h"
 
+#include <PluginManager>
 #include <QPalette>
 
 namespace Library {
@@ -38,7 +39,7 @@ PlaylistModel::PlaylistModel(PlayerManager* playerManager, Library::MusicLibrary
     , m_root(std::make_unique<PlaylistItem>())
     , m_playerManager(playerManager)
     , m_library(library)
-    , m_settings(Settings::instance())
+    , m_settings(PluginSystem::object<Settings>())
 {
     setupModelData();
 

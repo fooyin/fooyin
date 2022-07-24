@@ -53,7 +53,7 @@ public:
     };
     Q_ENUM(Setting);
 
-    static Settings* instance();
+    Settings(QObject* parent = nullptr);
     ~Settings() override;
     Settings(const Settings& other) = delete;
     Settings& operator=(const Settings& other) = delete;
@@ -83,9 +83,6 @@ signals:
     void playlistHeaderChanged(bool enabled);
     void playlistScrollBarChanged(bool enabled);
     void splitterHandlesChanged(bool enabled);
-
-protected:
-    Settings();
 
 private:
     QSettings* m_settings;

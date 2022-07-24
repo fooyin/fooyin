@@ -27,6 +27,7 @@
 #include "widgets/splitterwidget.h"
 #include "widgets/widgetprovider.h"
 
+#include <PluginManager>
 #include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QJsonArray>
@@ -66,7 +67,7 @@ void addParentContext(Widget* widget, QMenu* menu)
 EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
     : QWidget(parent)
     , m_box(new QHBoxLayout(this))
-    , m_settings(Settings::instance())
+    , m_settings(PluginSystem::object<Settings>())
     , m_layoutEditing(false)
     , m_overlay(new Overlay(this))
     , m_menu(new QMenu(this))

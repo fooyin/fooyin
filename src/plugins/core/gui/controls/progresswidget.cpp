@@ -25,6 +25,7 @@
 #include "settings/settings.h"
 #include "utils/utils.h"
 
+#include <PluginManager>
 #include <QHBoxLayout>
 #include <QSlider>
 
@@ -38,7 +39,7 @@ struct ProgressWidget::Private
 
     int max{0};
 
-    Settings* settings{Settings::instance()};
+    Settings* settings{PluginSystem::object<Settings>()};
 };
 
 ProgressWidget::ProgressWidget(QWidget* parent)
@@ -98,13 +99,12 @@ void ProgressWidget::setCurrentPosition(int ms)
 
 void ProgressWidget::updateTime(int elapsed)
 {
-    auto* settings = Settings::instance();
     int secs = elapsed / 1000;
     int max = p->max / 1000;
 
     p->elapsed->setText(Util::secsToString(secs));
 
-    if(settings->value(Settings::Setting::ElapsedTotal).toBool()) {
+    if(p->settings->value(Settings::Setting::ElapsedTotal).toBool()) {
         int remaining = max - secs;
         p->total->setText("-" + Util::secsToString(remaining));
     }
@@ -117,8 +117,7 @@ void ProgressWidget::updateTime(int elapsed)
 
 void ProgressWidget::reset()
 {
-    auto* settings = Settings::instance();
-    auto elapsed = settings->value(Settings::Setting::ElapsedTotal).toBool();
+    auto elapsed = p->settings->value(Settings::Setting::ElapsedTotal).toBool();
     p->elapsed->setText("00:00");
     p->total->setText(elapsed ? "-00:00" : "00:00");
     p->slider->setValue(0);
@@ -140,13 +139,12 @@ void ProgressWidget::stateChanged(Player::PlayState state)
 
 void ProgressWidget::toggleRemaining()
 {
-    auto* settings = Settings::instance();
-    if(settings->value(Settings::Setting::ElapsedTotal).toBool()) {
-        settings->set(Settings::Setting::ElapsedTotal, false);
+    if(p->settings->value(Settings::Setting::ElapsedTotal).toBool()) {
+        p->settings->set(Settings::Setting::ElapsedTotal, false);
         p->total->setText(Util::msToString(p->max));
     }
     else {
-        settings->set(Settings::Setting::ElapsedTotal, true);
+        p->settings->set(Settings::Setting::ElapsedTotal, true);
     }
 }
 

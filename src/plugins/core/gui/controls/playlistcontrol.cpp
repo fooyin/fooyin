@@ -24,16 +24,23 @@
 #include "utils/enumhelper.h"
 #include "utils/utils.h"
 
+#include <PluginManager>
 #include <QHBoxLayout>
 
 struct PlaylistControl::Private
 {
+    Settings* settings;
+
     QHBoxLayout* layout;
 
     ClickableLabel* repeat;
     ClickableLabel* shuffle;
 
     QPalette def;
+
+    Private()
+        : settings(PluginSystem::object<Settings>())
+    { }
 
     void setMode(Player::PlayMode mode) const
     {
@@ -108,15 +115,14 @@ void PlaylistControl::setupUi()
 
     Util::setMinimumWidth(p->repeat, "(");
 
-    auto* settings = Settings::instance();
-    const auto mode = EnumHelper::fromString<Player::PlayMode>(settings->value(Settings::Setting::PlayMode).toString());
+    const auto mode
+        = EnumHelper::fromString<Player::PlayMode>(p->settings->value(Settings::Setting::PlayMode).toString());
     p->setMode(mode);
 }
 
 void PlaylistControl::playModeChanged(Player::PlayMode mode)
 {
-    auto* settings = Settings::instance();
-    settings->set(Settings::Setting::PlayMode, EnumHelper::toString(mode));
+    p->settings->set(Settings::Setting::PlayMode, EnumHelper::toString(mode));
 
     p->setMode(mode);
 }

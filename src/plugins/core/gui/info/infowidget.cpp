@@ -14,7 +14,7 @@
 
 InfoWidget::InfoWidget(QWidget* parent)
     : Widget(parent)
-    , m_settings(Settings::instance())
+    , m_settings(PluginSystem::object<Settings>())
     , m_playerManager(PluginSystem::object<PlayerManager>())
     , m_library(PluginSystem::object<Library::MusicLibrary>())
     , m_layout(new QHBoxLayout(this))

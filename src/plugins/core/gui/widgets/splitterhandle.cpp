@@ -21,9 +21,11 @@
 
 #include "settings/settings.h"
 
+#include <PluginManager>
+
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)
-    , m_settings(Settings::instance())
+    , m_settings(PluginSystem::object<Settings>())
     , m_showHandle(m_settings->value(Settings::Setting::SplitterHandles).toBool())
 {
     connect(m_settings, &Settings::splitterHandlesChanged, this, &SplitterHandle::showHandle);

@@ -44,7 +44,7 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     , m_library(PluginSystem::object<Library::MusicLibrary>())
     , m_filter(new Library::FilterView(PluginSystem::object<PlayerManager>(), m_library, this))
     , m_model(new FilterModel(m_type, m_index, m_library, m_filter))
-    , m_settings(Settings::instance())
+    , m_settings(PluginSystem::object<Settings>())
 {
     setObjectName(FilterWidget::name());
     m_layout->setContentsMargins(0, 0, 0, 0);
@@ -62,7 +62,7 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
 
 FilterWidget::~FilterWidget()
 {
-    m_library->unregisterFilter(m_index);
+    // m_library->unregisterFilter(m_index);
 }
 
 void FilterWidget::setupConnections()

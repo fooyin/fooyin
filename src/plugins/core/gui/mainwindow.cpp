@@ -25,6 +25,7 @@
 #include "library/musiclibrary.h"
 #include "settings/settings.h"
 
+#include <PluginManager>
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QDir>
@@ -62,7 +63,7 @@ struct MainWindow::Private
     Private(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, Library::MusicLibrary* library)
         : settingsDialog(settingsDialog)
         , library(library)
-        , settings(Settings::instance())
+        , settings(PluginSystem::object<Settings>())
         , widgetProvider(widgetProvider)
     { }
 };

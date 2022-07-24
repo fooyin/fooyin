@@ -125,9 +125,15 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
     while(!stack.isEmpty()) {
         QDir dir = stack.takeFirst();
         for(const auto& subDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+            if(!mayRun()) {
+                return {};
+            }
             stack.append(QDir{subDir.absoluteFilePath()});
         }
         for(const auto& file : dir.entryInfoList(soundFileExtensions, QDir::Files)) {
+            if(!mayRun()) {
+                return {};
+            }
             ret.append(file.absoluteFilePath());
         }
     }

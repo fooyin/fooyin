@@ -36,9 +36,9 @@
 
 struct Application::Private
 {
+    Settings* settings;
     ThreadManager* threadManager;
     DB::Database* db;
-    Settings* settings;
     PlayerManager* playerManager;
     EngineHandler engine;
     Playlist::PlaylistHandler* playlistHandler;
@@ -50,9 +50,9 @@ struct Application::Private
     MainWindow* mainWindow;
 
     explicit Private(QObject* parent)
-        : threadManager(new ThreadManager(parent))
+        : settings(new Settings(parent))
+        , threadManager(new ThreadManager(parent))
         , db(DB::Database::instance())
-        , settings(Settings::instance())
         , playerManager(new PlayerController(parent))
         , engine(playerManager)
         , playlistHandler(new Playlist::PlaylistHandler(playerManager, parent))
@@ -89,10 +89,16 @@ Application::Application(QObject* parent)
     , p(std::make_unique<Private>(this))
 { }
 
-Application::~Application()
+Application::~Application() = default;
+
+void Application::shutdown()
 {
-    p->threadManager->close();
-    p->settings->storeSettings();
+    if(p->threadManager) {
+        p->threadManager->close();
+    }
+    if(p->settings) {
+        p->settings->storeSettings();
+    }
     if(p->db) {
         p->db->cleanup();
         p->db->closeDatabase();

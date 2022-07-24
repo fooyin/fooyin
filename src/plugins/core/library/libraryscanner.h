@@ -48,7 +48,7 @@ signals:
 
 protected:
     void storeTracks(TrackList& tracks) const;
-    static QStringList getFiles(QDir& baseDirectory);
+    QStringList getFiles(QDir& baseDirectory);
     bool getAndSaveAllFiles(int libraryId, const QString& path, const TrackPathMap& tracks);
 
 private:

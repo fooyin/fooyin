@@ -24,6 +24,7 @@
 #include "settings/settings.h"
 #include "utils/utils.h"
 
+#include <PluginManager>
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -40,7 +41,7 @@ GeneralPage::GeneralPage(QWidget* parent)
     //    mainLayout->addStretch();
     mainLayout->setAlignment(Qt::AlignTop);
 
-    auto* settings = Settings::instance();
+    auto* settings = PluginSystem::object<Settings>();
 
     auto* splitterHandles = new QCheckBox("Show Splitter Handles", this);
     splitterHandles->setChecked(settings->value(Settings::Setting::SplitterHandles).toBool());
@@ -145,7 +146,7 @@ void LibraryPage::removeLibrary()
 PlaylistPage::PlaylistPage(QWidget* parent)
     : QWidget(parent)
 {
-    auto* settings = Settings::instance();
+    auto* settings = PluginSystem::object<Settings>();
 
     auto* groupHeaders = new QCheckBox("Enable Disc Headers", this);
     groupHeaders->setChecked(settings->value(Settings::Setting::DiscHeaders).toBool());
