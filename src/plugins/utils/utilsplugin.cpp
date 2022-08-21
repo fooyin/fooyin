@@ -21,11 +21,3 @@
 UtilsPlugin::UtilsPlugin() = default;
 
 UtilsPlugin::~UtilsPlugin() = default;
-
-void UtilsPlugin::initialise()
-{
-}
-
-void UtilsPlugin::pluginsInitialised()
-{
-}

@@ -38,7 +38,7 @@ public:
     virtual ~Plugin() = default;
 
     virtual void initialise(){};
-    virtual void pluginsInitialised(){};
+    virtual void finalise(){};
     virtual void shutdown(){};
 };
 }; // namespace PluginSystem

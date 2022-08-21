@@ -31,7 +31,4 @@ class UtilsPlugin : public QObject,
 public:
     UtilsPlugin();
     ~UtilsPlugin() override;
-
-    void initialise() override;
-    void pluginsInitialised() override;
 };

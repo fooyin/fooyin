@@ -33,7 +33,7 @@ void CorePlugin::initialise()
     PluginSystem::addObject(m_factory);
 }
 
-void CorePlugin::pluginsInitialised()
+void CorePlugin::finalise()
 {
     m_app = new Application();
 }

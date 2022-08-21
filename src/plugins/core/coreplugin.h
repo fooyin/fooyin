@@ -39,7 +39,7 @@ public:
     ~CorePlugin() override;
 
     void initialise() override;
-    void pluginsInitialised() override;
+    void finalise() override;
     void shutdown() override;
 
 private:
