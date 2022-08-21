@@ -171,7 +171,7 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
                 continue;
             }
 
-            Track changedTrack{filepath};
+            Track changedTrack{*libraryTrack};
             fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
             if(fileWasRead) {
                 tracksToUpdate << changedTrack;
