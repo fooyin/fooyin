@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "plugininfo.h"
 #include "pluginsystem_global.h"
 
 #include <QMap>
@@ -29,18 +30,11 @@ class QPluginLoader;
 
 namespace PluginSystem {
 class Plugin;
-class PluginInfo;
 class PLUGINSYSTEM_EXPORT PluginManager : public QObject
 {
     Q_OBJECT
 
 public:
-    struct LoadOrderEntry
-    {
-        QPluginLoader* loader;
-        PluginInfo* plugin;
-    };
-
     void addObject(QObject* object);
     void removeObject(QObject* object);
     QList<QObject*> allObjects();
@@ -48,7 +42,11 @@ public:
     QReadWriteLock* objectLock();
 
     void findPlugins(const QString& pluginDir);
-    void addPlugins();
+    QList<PluginInfo*> loadOrder();
+    bool loadOrder(PluginInfo* plugin, QList<PluginInfo*>& queue);
+    void loadPlugins();
+    static void loadPlugin(PluginInfo* plugin);
+    static void initialisePlugin(PluginInfo* plugin);
     void unloadPlugins();
 
     void shutdown();
@@ -57,10 +55,8 @@ private:
     PluginManager();
     ~PluginManager();
 
-    mutable QReadWriteLock m_objectLock;
-    QList<QObject*> m_objectList;
-    QList<LoadOrderEntry> m_loadOrder;
-    QMap<QString, PluginInfo*> m_plugins;
+    struct Private;
+    std::unique_ptr<PluginManager::Private> p;
 };
 
 inline void addObject(QObject* object)

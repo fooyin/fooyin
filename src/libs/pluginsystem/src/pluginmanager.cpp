@@ -19,29 +19,35 @@
 
 #include "pluginmanager.h"
 
-#include "plugin.h"
-#include "plugininfo.h"
-
 #include <QDir>
+#include <QJsonArray>
 #include <QLibrary>
 #include <QPluginLoader>
 
 namespace PluginSystem {
+struct PluginManager::Private
+{
+    mutable QReadWriteLock objectLock;
+    QList<QObject*> objectList;
+    QList<PluginInfo*> loadOrder;
+    QMap<QString, PluginInfo*> plugins;
+};
+
 void PluginManager::addObject(QObject* object)
 {
-    QWriteLocker lock(&m_objectLock);
-    m_objectList.append(object);
+    QWriteLocker lock(&p->objectLock);
+    p->objectList.append(object);
 }
 
 void PluginManager::removeObject(QObject* object)
 {
-    QWriteLocker lock(&m_objectLock);
-    m_objectList.removeAll(object);
+    QWriteLocker lock(&p->objectLock);
+    p->objectList.removeAll(object);
 }
 
 QList<QObject*> PluginManager::allObjects()
 {
-    return m_objectList;
+    return p->objectList;
 }
 
 PluginManager* PluginManager::instance()
@@ -52,7 +58,7 @@ PluginManager* PluginManager::instance()
 
 QReadWriteLock* PluginManager::objectLock()
 {
-    return &m_objectLock;
+    return &p->objectLock;
 }
 
 void PluginManager::findPlugins(const QString& pluginDir)
@@ -89,65 +95,111 @@ void PluginManager::findPlugins(const QString& pluginDir)
 
         auto* plugin = new PluginInfo(name.toString(), pluginFilename, metaData);
 
-        m_plugins.insert(name.toString(), plugin);
+        p->plugins.insert(name.toString(), plugin);
     }
 }
 
-void PluginManager::addPlugins()
+QList<PluginInfo*> PluginManager::loadOrder()
 {
-    for(const auto& plugin : qAsConst(m_plugins)) {
-        auto metadata = plugin->metadata().value("MetaData").toObject();
+    QList<PluginInfo*> queue;
+    for(auto* plugin : qAsConst(p->plugins)) {
+        loadOrder(plugin, queue);
+    }
+    p->loadOrder = queue;
+    return queue;
+}
 
-        auto* pluginLoader = new QPluginLoader(plugin->filename());
+bool PluginManager::loadOrder(PluginInfo* plugin, QList<PluginInfo*>& queue)
+{
+    if(queue.contains(plugin)) {
+        return true;
+    }
 
-        if(!pluginLoader->load()) {
-            qDebug() << QString("Plugin %1 couldn't be loaded (%2)").arg(plugin->name(), pluginLoader->errorString());
-            continue;
-        }
+    if(plugin->status() == PluginInfo::Invalid || plugin->status() == PluginInfo::Read) {
+        queue.append(plugin);
+        return false;
+    }
 
-        auto* pluginInterface = qobject_cast<Plugin*>(pluginLoader->instance());
-
-        if(!pluginInterface) {
-            qDebug() << QString("Plugin %1 couldn't be loaded").arg(plugin->name());
-            continue;
-        }
-
-        m_loadOrder.append({pluginLoader, plugin});
-        plugin->m_isLoaded = true;
-
-        for(auto loadPlugin : m_loadOrder) {
-            auto* loaderPlugin = qobject_cast<Plugin*>(loadPlugin.loader->instance());
-            loaderPlugin->initialise();
-        }
-
-        int i = static_cast<int>(m_loadOrder.size() - 1);
-        for(; i >= 0; --i) {
-            auto* loaderPlugin = qobject_cast<Plugin*>(m_loadOrder.at(i).loader->instance());
-            loaderPlugin->pluginsInitialised();
+    const QList<PluginInfo*> deps = plugin->dependencies();
+    for(auto* dep : deps) {
+        if(!loadOrder(dep, queue)) {
+            plugin->setError(QString("Cannot load plugin because dependency failed to load: %1 (%2)\nReason: %3")
+                                 .arg(dep->name(), dep->version(), dep->error()));
+            return false;
         }
     }
+    queue.append(plugin);
+    return true;
+}
+
+void PluginManager::loadPlugins()
+{
+    const QList<PluginInfo*> queue = loadOrder();
+    for(PluginInfo* plugin : queue) {
+        auto metadata = plugin->metadata();
+        auto dependencies = metadata.value("Dependencies").toArray();
+        for(auto dependency : dependencies) {
+            auto dependencyName = dependency.toObject().value("Name").toString();
+            if(p->plugins.contains(dependencyName)) {
+                plugin->addDependency(p->plugins.value(dependencyName));
+            }
+        }
+        loadPlugin(plugin);
+    }
+
+    for(PluginInfo* plugin : queue) {
+        initialisePlugin(plugin);
+    }
+
+    int i = static_cast<int>(queue.size() - 1);
+    for(; i >= 0; --i) {
+        queue.at(i)->finalise();
+    }
+}
+
+void PluginManager::loadPlugin(PluginInfo* plugin)
+{
+    if(plugin->hasError()) {
+        return;
+    }
+
+    if(plugin->isDisabled()) {
+        return;
+    }
+
+    const QList<PluginInfo*> dependencies = plugin->dependencies();
+    for(const auto& dependency : dependencies) {
+        if(!dependency->isRequired()) {
+            continue;
+        }
+
+        if(dependency->status() != PluginInfo::Loaded) {
+            plugin->setError(
+                PluginManager::tr("Cannot load plugin because dependency failed to load: %1(%2)\nReason: %3")
+                    .arg(plugin->name(), plugin->version(), plugin->error()));
+            return;
+        }
+    }
+    plugin->load();
+}
+
+void PluginManager::initialisePlugin(PluginInfo* plugin)
+{
+    if(!plugin->isLoaded()) {
+        return;
+    }
+    plugin->initialise();
 }
 
 void PluginManager::unloadPlugins()
 {
-    int i = static_cast<int>(m_loadOrder.size() - 1);
+    int i = static_cast<int>(p->loadOrder.size() - 1);
     for(; i >= 0; --i) {
-        auto* pluginLoader = m_loadOrder.at(i).loader;
-        if(!pluginLoader) {
-            continue;
-        }
-        auto* pluginInterface = qobject_cast<Plugin*>(pluginLoader->instance());
-
-        if(!pluginInterface) {
-            continue;
-        }
-        pluginInterface->shutdown();
-
-        pluginLoader->unload();
-        delete pluginLoader;
+        auto* plugin = p->loadOrder.at(i);
+        plugin->unload();
+        delete plugin;
     }
-
-    m_loadOrder.clear();
+    p->loadOrder.clear();
 }
 
 void PluginManager::shutdown()
@@ -155,11 +207,10 @@ void PluginManager::shutdown()
     unloadPlugins();
 }
 
-PluginManager::PluginManager() = default;
+PluginManager::PluginManager()
+    : p(std::make_unique<Private>())
+{ }
 
-PluginManager::~PluginManager()
-{
-    qDeleteAll(m_plugins);
-    m_objectList.clear();
-}
+PluginManager::~PluginManager() = default;
+
 }; // namespace PluginSystem

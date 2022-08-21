@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     // TODO: Pass down CMake vars
     QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
     pluginManager->findPlugins(pluginsPath);
-    pluginManager->addPlugins();
+    pluginManager->loadPlugins();
 
     // Shutdown plugins on exit
     // Required to ensure plugins are unloaded before main event loop quits
