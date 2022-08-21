@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(fooyin LANGUAGES CXX C)
+project(Fooyin LANGUAGES CXX C)
 
 set(FOOYIN_VERSION "0.1.0")
 set(FOOYIN_DATABASE_VERSION "0.8.0")
@@ -7,6 +7,7 @@ set(FOOYIN_DATABASE_VERSION "0.8.0")
 include(CheckIncludeFiles)
 include(CheckIncludeFileCXX)
 include(FeatureSummary)
+include(GNUInstallDirs)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -18,6 +19,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Fooyin.cmake)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)

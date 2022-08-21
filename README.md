@@ -2,13 +2,13 @@
 Fooyin is a customisable music player for linux. It has not yet reached a stable release so bugs and breaking changes should be expected.
 
 <p align="center">
-<img src="data/images/layouts.gif" width="750" style="vertical-align:middle">
+<img src="data/images/layouts.gif" width="70%" style="vertical-align:middle">
 </p>
 
 In addition to being a music player, Fooyin also includes a *Layout Editing Mode*, which allows every aspect of the UI to be changed or removed.
 
 <p align="center">
-<img src="data/images/editing.png" width="750" style="vertical-align:middle">
+<img src="data/images/editing.png" width="70%" style="vertical-align:middle">
 </p>
 
 ## Features
@@ -40,6 +40,6 @@ cd fooyin
 mkdir build
 cd build
 cmake ..
-make
+make -j4
 sudo make install
 ```
