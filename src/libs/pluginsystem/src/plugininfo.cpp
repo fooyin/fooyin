@@ -19,82 +19,185 @@
 
 #include "plugininfo.h"
 
+#include "plugin.h"
+
+#include <QPluginLoader>
 #include <utility>
 
 namespace PluginSystem {
-PluginInfo::PluginInfo()
-    : m_isLoaded{false}
-{ }
+struct PluginInfo::Private
+{
+    QString name;
+    QString filename;
+    QString version;
+    QString vendor;
+    QString copyright;
+    QString category;
+    QString description;
+    QList<PluginInfo*> dependencies;
+    QString url;
+    QJsonObject metadata;
+    bool isRequired{false};
+    bool isLoaded{false};
+    bool isDisabled{false};
+    Status status{Invalid};
+    QString error;
 
-PluginInfo::PluginInfo(QString name, QString  filename, const QJsonObject& metadata)
-    : m_name{std::move(name)}
-    , m_filename{std::move(filename)}
-    , m_metadata{metadata}
-    , m_isLoaded{false}
-{ }
+    Plugin* plugin{nullptr};
+    QPluginLoader loader;
+
+    Private(QString name, QString filename, QJsonObject metadata)
+        : name{std::move(name)}
+        , filename{std::move(filename)}
+        , metadata{metadata.value("MetaData").toObject()}
+    { }
+};
+
+PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata)
+    : p(std::make_unique<Private>(name, filename, metadata))
+{
+    p->loader.setFileName(filename);
+}
+
+PluginInfo::~PluginInfo() = default;
 
 void PluginInfo::addDependency(PluginInfo* dependency)
 {
-    m_dependencies.append(dependency);
+    p->dependencies.append(dependency);
+}
+
+void PluginInfo::load()
+{
+    if(p->loader.fileName().isEmpty()) {
+        return;
+    }
+
+    if(!p->loader.load()) {
+        p->error = QString("Plugin %1 couldn't be loaded (%2)").arg(p->name, p->error);
+        return;
+    }
+
+    p->plugin = qobject_cast<Plugin*>(p->loader.instance());
+
+    if(!p->plugin) {
+        p->error = QString("Plugin %1 couldn't be loaded").arg(p->name);
+        return;
+    }
+
+    p->status = Loaded;
+    p->isLoaded = true;
+}
+
+void PluginInfo::unload()
+{
+    if(!p->plugin) {
+        return;
+    }
+    p->plugin->shutdown();
+    bool deleted = p->loader.unload();
+    if(!deleted) {
+        delete p->plugin;
+    }
+}
+
+void PluginInfo::initialise()
+{
+    p->plugin->initialise();
+    p->status = Initialised;
+}
+
+void PluginInfo::finalise()
+{
+    p->plugin->finalise();
+}
+
+Plugin* PluginInfo::plugin() const
+{
+    return p->plugin;
 }
 
 QString PluginInfo::name() const
 {
-    return m_name;
+    return p->name;
 }
 
 QString PluginInfo::filename() const
 {
-    return m_filename;
+    return p->filename;
 }
 
 QJsonObject PluginInfo::metadata() const
 {
-    return m_metadata;
+    return p->metadata;
 }
 
 bool PluginInfo::isLoaded() const
 {
-    return m_isLoaded;
+    return p->isLoaded;
+}
+
+bool PluginInfo::isDisabled() const
+{
+    return p->isDisabled;
+}
+
+PluginInfo::Status PluginInfo::status() const
+{
+    return p->status;
+}
+
+QString PluginInfo::error() const
+{
+    return p->error;
+}
+
+bool PluginInfo::hasError() const
+{
+    return !p->error.isEmpty();
+}
+
+void PluginInfo::setError(const QString& error)
+{
+    p->error = error;
 }
 
 bool PluginInfo::isRequired() const
 {
-    return m_isRequired;
+    return p->isRequired;
 }
 
 QString PluginInfo::version() const
 {
-    return m_version;
+    return p->version;
 }
 
 QString PluginInfo::identifier() const
 {
-    return (m_vendor + "." + m_name).toLower();
+    return (p->vendor + "." + p->name).toLower();
 }
 
 QString PluginInfo::category() const
 {
-    return m_category;
+    return p->category;
 }
 
 QString PluginInfo::copyright() const
 {
-    return m_copyright;
+    return p->copyright;
 }
 
 QString PluginInfo::description() const
 {
-    return m_description;
+    return p->description;
 }
 
 QString PluginInfo::url() const
 {
-    return m_url;
+    return p->url;
 }
 
 QList<PluginInfo*> PluginInfo::dependencies() const
 {
-    return m_dependencies;
+    return p->dependencies;
 }
 }; // namespace PluginSystem

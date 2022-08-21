@@ -24,15 +24,25 @@
 #include <QJsonObject>
 #include <QString>
 
+
 namespace PluginSystem {
+class Plugin;
 class PLUGINSYSTEM_EXPORT PluginInfo
 {
 public:
-    PluginInfo();
+    enum Status { Invalid, Read, Resolved, Loaded, Initialised, Running, Stopped, Deleted};
 
-    PluginInfo(QString  name, QString  filename, const QJsonObject& metadata);
+    PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata);
+    ~PluginInfo();
 
     void addDependency(PluginInfo* dependency);
+
+    void load();
+    void unload();
+    void initialise();
+    void finalise();
+
+    Plugin* plugin() const;
 
     [[nodiscard]] QString name() const;
     [[nodiscard]] QString filename() const;
@@ -46,22 +56,16 @@ public:
     [[nodiscard]] QList<PluginInfo*> dependencies() const;
     [[nodiscard]] bool isRequired() const;
     [[nodiscard]] bool isLoaded() const;
+    [[nodiscard]] bool isDisabled() const;
+    [[nodiscard]] Status status() const;
+    [[nodiscard]] QString error() const;
+    [[nodiscard]] bool hasError() const;
 
-    friend class PluginManager;
+    void setError(const QString& error);
 
 private:
-    QString m_name;
-    QString m_filename;
-    QString m_version;
-    QString m_vendor;
-    QString m_copyright;
-    QString m_category;
-    QString m_description;
-    QList<PluginInfo*> m_dependencies;
-    QString m_url;
-    QJsonObject m_metadata;
-    bool m_isRequired;
-    bool m_isLoaded;
+    struct Private;
+    std::unique_ptr<PluginInfo::Private> p;
 };
 }; // namespace PluginSystem
 
