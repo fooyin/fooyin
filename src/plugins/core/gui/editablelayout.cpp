@@ -209,7 +209,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
                 QJsonArray splitterChildren = splitterObject["Children"].toArray();
                 auto state = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
 
-                m_splitter = m_widgetProvider->createSplitter(type, this);
+                m_splitter = WidgetProvider::createSplitter(type, this);
                 m_box->addWidget(m_splitter);
 
                 m_splitter->loadSplitter(splitterChildren, m_splitter);

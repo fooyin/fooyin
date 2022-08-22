@@ -46,7 +46,7 @@ struct PluginInfo::Private
     Plugin* plugin{nullptr};
     QPluginLoader loader;
 
-    Private(QString name, QString filename, QJsonObject metadata)
+    Private(QString name, QString filename, const QJsonObject& metadata)
         : name{std::move(name)}
         , filename{std::move(filename)}
         , metadata{metadata.value("MetaData").toObject()}

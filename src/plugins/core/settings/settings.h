@@ -53,7 +53,7 @@ public:
     };
     Q_ENUM(Setting);
 
-    Settings(QObject* parent = nullptr);
+    explicit Settings(QObject* parent = nullptr);
     ~Settings() override;
     Settings(const Settings& other) = delete;
     Settings& operator=(const Settings& other) = delete;
