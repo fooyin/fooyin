@@ -161,8 +161,7 @@ QRect EditableLayout::widgetGeometry(Widget* widget)
     int x = widget->x();
     int y = widget->y();
 
-    while(widget->findParent()) {
-        widget = widget->findParent();
+    while((widget = widget->findParent())) {
         x += widget->x();
         y += widget->y();
     }
