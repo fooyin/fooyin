@@ -43,9 +43,7 @@ public:
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
-    //    void saveSplitter(QJsonObject& object, QJsonArray& array, SplitterWidget* splitter, bool isRoot);
     void saveLayout();
-    //    void loadSplitter(const QJsonArray& array, SplitterWidget* splitter);
     bool loadLayout(const QByteArray& layout);
     bool loadLayout();
 

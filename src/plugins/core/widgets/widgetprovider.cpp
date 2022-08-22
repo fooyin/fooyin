@@ -146,7 +146,8 @@ void WidgetProvider::registerWidgets()
     factory->registerClass<SearchWidget>("Search");
     factory->registerClass<Library::PlaylistWidget>("Playlist");
     factory->registerClass<Widgets::Spacer>("Spacer");
-    factory->registerClass<SplitterWidget>("Splitter");
+    factory->registerClass<VerticalSplitterWidget>("Vertical", {"Splitter"});
+    factory->registerClass<HoriztonalSplitterWidget>("Horiztonal", {"Splitter"});
     factory->registerClass<StatusWidget>("Status");
 }
 

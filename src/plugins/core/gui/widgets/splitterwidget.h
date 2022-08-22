@@ -62,3 +62,25 @@ private:
     WidgetProvider* m_widgetProvider;
     Dummy* m_dummy;
 };
+
+class VerticalSplitterWidget : public SplitterWidget
+{
+public:
+    explicit VerticalSplitterWidget(QWidget* parent = nullptr)
+        : SplitterWidget(parent)
+    {
+        setOrientation(Qt::Vertical);
+    }
+    ~VerticalSplitterWidget() override = default;
+};
+
+class HoriztonalSplitterWidget : public SplitterWidget
+{
+public:
+    explicit HoriztonalSplitterWidget(QWidget* parent = nullptr)
+        : SplitterWidget(parent)
+    {
+        setOrientation(Qt::Horizontal);
+    }
+    ~HoriztonalSplitterWidget() override = default;
+};

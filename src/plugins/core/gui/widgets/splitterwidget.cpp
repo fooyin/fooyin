@@ -35,7 +35,7 @@ SplitterWidget::SplitterWidget(QWidget* parent)
     , m_widgetProvider(PluginSystem::object<WidgetProvider>())
     , m_dummy(new Dummy(m_widgetProvider, this))
 {
-    setObjectName(QString("%1 Splitter").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical"));
+    setObjectName(SplitterWidget::name());
 
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->addWidget(m_splitter);
@@ -119,7 +119,7 @@ QList<Widget*> SplitterWidget::children()
 
 QString SplitterWidget::name() const
 {
-    return "Splitter";
+    return QString("%1 Splitter").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical");
 }
 
 void SplitterWidget::layoutEditingMenu(QMenu* menu)
