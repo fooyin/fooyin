@@ -23,7 +23,7 @@
 
 #include <algorithm>
 
-namespace Sorting {
+namespace Library {
 bool tracksBase(Track* tr1, Track* tr2)
 {
     if(tr1->discNumber() != tr2->discNumber()) {
@@ -70,19 +70,19 @@ bool tracksByYearDesc(Track* tr1, Track* tr2)
     return tracksByTitleDesc(tr1, tr2);
 }
 
-void sortTracks(TrackPtrList& tracks, Library::SortOrder sortOrder)
+void sortTracks(TrackPtrList& tracks, SortOrder sortOrder)
 {
     switch(sortOrder) {
-        case(Library::SortOrder::YearDesc):
+        case(SortOrder::YearDesc):
             return std::sort(tracks.begin(), tracks.end(), tracksByYearDesc);
-        case(Library::SortOrder::YearAsc):
+        case(SortOrder::YearAsc):
             return std::sort(tracks.begin(), tracks.end(), tracksByYearAsc);
-        case(Library::SortOrder::TitleDesc):
+        case(SortOrder::TitleDesc):
             return std::sort(tracks.begin(), tracks.end(), tracksByTitleDesc);
-        case(Library::SortOrder::TitleAsc):
+        case(SortOrder::TitleAsc):
             return std::sort(tracks.begin(), tracks.end(), tracksByTitleAsc);
-        case(Library::SortOrder::NoSorting):
+        case(SortOrder::NoSorting):
             return std::sort(tracks.begin(), tracks.end(), tracksBase);
     }
 }
-} // namespace Sorting
+} // namespace Library

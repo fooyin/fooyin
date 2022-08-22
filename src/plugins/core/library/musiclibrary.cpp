@@ -162,7 +162,7 @@ void MusicLibrary::newTracksAdded(const TrackList& tracks)
         m_tracks.append(trackPtr);
         m_trackMap.insert(trackPtr->id(), trackPtr);
     }
-    Sorting::sortTracks(m_tracks, m_order);
+    Library::sortTracks(m_tracks, m_order);
     emit filteredItems();
     getFilteredTracks();
 }
@@ -215,7 +215,7 @@ void MusicLibrary::refreshTracks(const TrackList& result)
         m_tracks.append(trackPtr);
         m_trackMap.insert(trackPtr->id(), trackPtr);
     }
-    Sorting::sortTracks(m_tracks, m_order);
+    Library::sortTracks(m_tracks, m_order);
 }
 
 void MusicLibrary::items(Filters::FilterType type)
@@ -254,9 +254,9 @@ SortOrder MusicLibrary::filterOrder(Filters::FilterType type)
 void MusicLibrary::changeOrder(SortOrder order)
 {
     m_order = order;
-    Sorting::sortTracks(m_tracks, m_order);
+    Library::sortTracks(m_tracks, m_order);
     if(!m_filteredTracks.isEmpty()) {
-        Sorting::sortTracks(m_filteredTracks, m_order);
+        Library::sortTracks(m_filteredTracks, m_order);
     }
     emit filteredTracks();
 }

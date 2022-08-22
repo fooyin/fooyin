@@ -22,6 +22,6 @@
 #include "library/models/trackfwd.h"
 #include "sortorder.h"
 
-namespace Sorting {
-void sortTracks(TrackPtrList& tracks, Library::SortOrder sortOrder);
-} // namespace Sorting
+namespace Library {
+void sortTracks(TrackPtrList& tracks, SortOrder sortOrder);
+} // namespace Library
