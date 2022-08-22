@@ -28,10 +28,10 @@
 #include "player/playermanager.h"
 #include "playlistitem.h"
 #include "settings/settings.h"
-#include "utils/utils.h"
 
 #include <PluginManager>
 #include <QPalette>
+#include <utils/utils.h>
 
 namespace Library {
 PlaylistModel::PlaylistModel(PlayerManager* playerManager, Library::MusicLibrary* library, QObject* parent)

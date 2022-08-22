@@ -23,11 +23,11 @@
 #include "gui/widgets/slider.h"
 #include "library/models/track.h"
 #include "settings/settings.h"
-#include "utils/utils.h"
 
 #include <PluginManager>
 #include <QHBoxLayout>
 #include <QSlider>
+#include <utils/utils.h>
 
 struct ProgressWidget::Private
 {

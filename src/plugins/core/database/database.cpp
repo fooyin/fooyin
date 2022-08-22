@@ -24,13 +24,13 @@
 #include "playlistdatabase.h"
 #include "query.h"
 #include "settings/settings.h"
-#include "utils/paths.h"
-#include "utils/utils.h"
 #include "version.h"
 
 #include <PluginManager>
 #include <QFile>
 #include <QSqlQuery>
+#include <utils/paths.h>
+#include <utils/utils.h>
 
 namespace DB {
 struct Database::Private

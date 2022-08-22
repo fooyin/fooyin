@@ -21,12 +21,12 @@
 
 #include "dummy.h"
 #include "splitter.h"
-#include "utils/enumhelper.h"
 #include "widgets/widgetprovider.h"
 
 #include <PluginManager>
 #include <QJsonObject>
 #include <QMenu>
+#include <utils/enumhelper.h>
 
 SplitterWidget::SplitterWidget(QWidget* parent)
     : Widget(parent)

@@ -21,7 +21,8 @@
 #define FILTER_FWD_H
 
 #include "library/sorting/sortorder.h"
-#include "utils/typedefs.h"
+
+#include <utils/typedefs.h>
 
 struct FilterEntry
 {

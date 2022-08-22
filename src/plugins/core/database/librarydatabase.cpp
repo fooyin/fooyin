@@ -21,11 +21,11 @@
 
 #include "library/libraryutils.h"
 #include "query.h"
-#include "utils/helpers.h"
-#include "utils/utils.h"
 
 #include <QBuffer>
 #include <QPixmap>
+#include <utils/helpers.h>
+#include <utils/utils.h>
 
 namespace {
 QMap<QString, QVariant> getTrackBindings(const Track& track)

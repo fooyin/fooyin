@@ -21,7 +21,8 @@
 
 #include "database/database.h"
 #include "database/librarydatabase.h"
-#include "utils/helpers.h"
+
+#include <utils/helpers.h>
 
 LibraryDatabaseManager::LibraryDatabaseManager(QObject* parent)
     : Worker(parent)

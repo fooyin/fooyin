@@ -19,7 +19,7 @@
 
 #include "filteritem.h"
 
-#include "utils/typedefs.h"
+#include <utils/typedefs.h>
 
 FilterItem::FilterItem(int id, QString name, FilterItem* parent)
     : m_id(id)

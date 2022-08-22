@@ -22,7 +22,8 @@
 #include "database/database.h"
 #include "database/library.h"
 #include "libraryinfo.h"
-#include "utils/utils.h"
+
+#include <utils/utils.h>
 
 namespace Library {
 bool checkNewPath(const QString& path, const QMap<int, LibraryInfo>& libraries, qint8 libraryId = -1)

@@ -20,9 +20,9 @@
 #pragma once
 
 #include "filterfwd.h"
-#include "utils/typedefs.h"
 
 #include <QAbstractListModel>
+#include <utils/typedefs.h>
 
 class FilterItem;
 

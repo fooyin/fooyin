@@ -20,10 +20,10 @@
 #include "playercontrol.h"
 
 #include "gui/widgets/clickablelabel.h"
-#include "utils/utils.h"
 
 #include <QHBoxLayout>
 #include <QPainter>
+#include <utils/utils.h>
 
 struct PlayerControl::Private
 {

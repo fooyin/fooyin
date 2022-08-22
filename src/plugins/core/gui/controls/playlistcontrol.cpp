@@ -21,11 +21,11 @@
 
 #include "gui/widgets/clickablelabel.h"
 #include "settings/settings.h"
-#include "utils/enumhelper.h"
-#include "utils/utils.h"
 
 #include <PluginManager>
 #include <QHBoxLayout>
+#include <utils/enumhelper.h>
+#include <utils/utils.h>
 
 struct PlaylistControl::Private
 {

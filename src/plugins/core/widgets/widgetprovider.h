@@ -19,9 +19,8 @@
 
 #pragma once
 
-#include "utils/typedefs.h"
-
 #include <QObject>
+#include <utils/typedefs.h>
 
 namespace Library {
 class LibraryManager;

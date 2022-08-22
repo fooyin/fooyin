@@ -25,7 +25,6 @@
 #include "library/musiclibrary.h"
 #include "player/playermanager.h"
 #include "settings/settings.h"
-#include "utils/enumhelper.h"
 
 #include <PluginManager>
 #include <QAction>
@@ -34,6 +33,7 @@
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QMenu>
+#include <utils/enumhelper.h>
 
 namespace Library {
 FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)

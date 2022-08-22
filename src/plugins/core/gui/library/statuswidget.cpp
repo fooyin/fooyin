@@ -22,12 +22,12 @@
 #include "gui/widgets/clickablelabel.h"
 #include "library/models/track.h"
 #include "player/playermanager.h"
-#include "utils/utils.h"
 
 #include <PluginManager>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
+#include <utils/utils.h>
 
 struct StatusWidget::Private
 {

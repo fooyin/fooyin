@@ -20,10 +20,10 @@
 #pragma once
 
 #include "libraryitem.h"
-#include "utils/typedefs.h"
 
 #include <QDateTime>
 #include <QSet>
+#include <utils/typedefs.h>
 
 using ExtraTags = QMap<QString, QList<QString>>;
 

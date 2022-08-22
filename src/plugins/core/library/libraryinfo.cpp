@@ -19,7 +19,7 @@
 
 #include "libraryinfo.h"
 
-#include "utils/utils.h"
+#include <utils/utils.h>
 
 namespace Library {
 LibraryInfo::LibraryInfo(const QString& path, QString name, int id)

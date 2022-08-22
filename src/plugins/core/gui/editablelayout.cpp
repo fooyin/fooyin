@@ -20,7 +20,6 @@
 #include "editablelayout.h"
 
 #include "settings/settings.h"
-#include "utils/enumhelper.h"
 #include "widgets/dummy.h"
 #include "widgets/menuheader.h"
 #include "widgets/overlay.h"
@@ -35,6 +34,7 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QMouseEvent>
+#include <utils/enumhelper.h>
 
 namespace {
 void addParentContext(Widget* widget, QMenu* menu)

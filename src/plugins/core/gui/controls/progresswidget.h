@@ -19,9 +19,8 @@
 
 #pragma once
 
-#include "utils/typedefs.h"
-
 #include <QWidget>
+#include <utils/typedefs.h>
 
 class Track;
 

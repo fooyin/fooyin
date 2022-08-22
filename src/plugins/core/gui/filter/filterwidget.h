@@ -21,9 +21,9 @@
 
 #include "filtermodel.h"
 #include "gui/widgets/widget.h"
-#include "utils/typedefs.h"
 
 #include <QItemSelection>
+#include <utils/typedefs.h>
 
 class Settings;
 class PlayerManager;

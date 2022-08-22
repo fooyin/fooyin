@@ -22,9 +22,9 @@
 #include "gui/widgets/clickablelabel.h"
 #include "gui/widgets/hovermenu.h"
 #include "gui/widgets/slider.h"
-#include "utils/utils.h"
 
 #include <QHBoxLayout>
+#include <utils/utils.h>
 
 struct VolumeControl::Private
 {

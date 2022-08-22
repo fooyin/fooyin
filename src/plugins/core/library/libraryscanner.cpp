@@ -25,9 +25,9 @@
 #include "library/libraryutils.h"
 #include "library/models/track.h"
 #include "tagging/tags.h"
-#include "utils/utils.h"
 
 #include <QDir>
+#include <utils/utils.h>
 
 namespace Library {
 LibraryScanner::LibraryScanner(LibraryManager* libraryManager, QObject* parent)

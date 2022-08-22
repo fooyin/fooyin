@@ -30,11 +30,11 @@
 #include "gui/widgets/spacer.h"
 #include "gui/widgets/splitterwidget.h"
 #include "library/librarymanager.h"
-#include "utils/enumhelper.h"
 #include "widgetfactory.h"
 
 #include <PluginManager>
 #include <QMenu>
+#include <utils/enumhelper.h>
 
 struct WidgetProvider::Private
 {

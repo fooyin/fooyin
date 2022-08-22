@@ -21,9 +21,9 @@
 
 #include "library/models/track.h"
 #include "player/playermanager.h"
-#include "utils/utils.h"
 
 #include <QMessageBox>
+#include <utils/utils.h>
 
 Playlist::Playlist::Playlist(int idx, QString name, PlayerManager* playerManager)
     : m_name(std::move(name))

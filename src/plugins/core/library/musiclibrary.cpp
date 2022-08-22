@@ -27,10 +27,10 @@
 #include "models/track.h"
 #include "playlist/libraryplaylistinterface.h"
 #include "sorting/sorting.h"
-#include "utils/helpers.h"
 
 #include <QTimer>
 #include <utility>
+#include <utils/helpers.h>
 
 namespace Library {
 MusicLibrary::MusicLibrary(LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,

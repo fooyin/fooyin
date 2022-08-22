@@ -2,8 +2,9 @@
 
 #include "infoitem.h"
 #include "library/models/track.h"
-#include "utils/typedefs.h"
-#include "utils/utils.h"
+
+#include <utils/typedefs.h>
+#include <utils/utils.h>
 
 InfoModel::InfoModel(QObject* parent)
     : QAbstractItemModel(parent)

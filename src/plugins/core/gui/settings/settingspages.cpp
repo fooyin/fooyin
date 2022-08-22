@@ -22,7 +22,6 @@
 #include "library/libraryinfo.h"
 #include "library/librarymanager.h"
 #include "settings/settings.h"
-#include "utils/utils.h"
 
 #include <PluginManager>
 #include <QCheckBox>
@@ -33,6 +32,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTableWidget>
+#include <utils/utils.h>
 
 GeneralPage::GeneralPage(QWidget* parent)
     : QWidget(parent)

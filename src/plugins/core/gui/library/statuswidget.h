@@ -20,9 +20,9 @@
 #pragma once
 
 #include "gui/widgets/widget.h"
-#include "utils/typedefs.h"
 
 #include <QWidget>
+#include <utils/typedefs.h>
 
 class StatusWidget : public Widget
 {
