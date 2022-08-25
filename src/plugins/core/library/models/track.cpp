@@ -379,3 +379,9 @@ void Track::jsonToExtraTags(const QByteArray& ba)
         }
     }
 }
+
+void Track::resetIds()
+{
+    m_artistIds.clear();
+    m_genreIds.clear();
+}

@@ -124,6 +124,8 @@ public:
     [[nodiscard]] QByteArray extraTagsToJson() const;
     void jsonToExtraTags(const QByteArray& ba);
 
+    void resetIds();
+
 private:
     bool m_enabled;
     int m_id;

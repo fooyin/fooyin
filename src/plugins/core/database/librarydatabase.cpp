@@ -157,6 +157,8 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             track.setLibraryId(m_libraryId);
         }
 
+        track.resetIds();
+
         // Check artists
         for(const auto& trackArtist : track.artists()) {
             if(!artistMap.contains(trackArtist)) {
@@ -833,6 +835,7 @@ bool LibraryDatabase::updateTrackArtists(int id, const IdSet& artists)
     IdSet artistsToDelete;
     IdSet artistsToInsert;
 
+    // Gather track artists in database
     if(!q.hasError()) {
         while(q.next()) {
             int artistId = q.value(0).toInt();
@@ -840,14 +843,16 @@ bool LibraryDatabase::updateTrackArtists(int id, const IdSet& artists)
         }
     }
 
+    // Remove artists not in track
     for(auto artistId : databaseArtists) {
-        if(artists.contains(artistId)) {
+        if(!artists.contains(artistId)) {
             artistsToDelete.insert(artistId);
         }
     }
 
+    // Insert new artists
     for(auto artistId : artists) {
-        if(databaseArtists.contains(artistId)) {
+        if(!databaseArtists.contains(artistId)) {
             artistsToInsert.insert(artistId);
         }
     }
@@ -902,13 +907,13 @@ bool LibraryDatabase::updateTrackGenres(int id, const IdSet& genres)
     }
 
     for(auto genreId : databaseGenres) {
-        if(genres.contains(genreId)) {
+        if(!genres.contains(genreId)) {
             genresToDelete.insert(genreId);
         }
     }
 
     for(auto genreId : genres) {
-        if(databaseGenres.contains(genreId)) {
+        if(!databaseGenres.contains(genreId)) {
             genresToInsert.insert(genreId);
         }
     }
