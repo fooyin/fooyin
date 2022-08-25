@@ -157,8 +157,6 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             track.setLibraryId(m_libraryId);
         }
 
-        track.resetIds();
-
         // Check artists
         for(const auto& trackArtist : track.artists()) {
             if(!artistMap.contains(trackArtist)) {
