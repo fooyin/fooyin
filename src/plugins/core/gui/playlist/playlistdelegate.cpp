@@ -337,7 +337,7 @@ void PlaylistDelegate::paintDisc(QPainter* painter, const QStyleOptionViewItem& 
     QRect discRect = QRect(x + 10, y, 50, height);
     QRect durationRect = QRect(right - 60, y, 50, height);
 
-    QColor lineColour = option.palette.color(QPalette::Shadow);
+    QColor lineColour = option.palette.color(QPalette::BrightText);
     lineColour.setAlpha(50);
 
     QRect discBound
