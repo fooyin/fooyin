@@ -283,8 +283,8 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     const QRect playRect = QRect((offset / 2), y, 15, height);
     QRect titleRect = QRect((x + 45 + offset), y, ((right - 80) - (x + 45 + offset)), height);
     const QRect numRect = QRect((x + 10 + offset), y, 15, height);
-    const QRect countRect = QRect((right - 90), y, 35, height);
-    const QRect durRect = QRect((right - 50), y, 35, height);
+    const QRect countRect = QRect((right - 110), y, 35, height);
+    const QRect durRect = QRect((right - 60), y, 50, height);
 
     const QRect titleBound
         = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, trackTitle);
