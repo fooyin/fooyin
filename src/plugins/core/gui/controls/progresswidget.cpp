@@ -66,9 +66,6 @@ void ProgressWidget::setupUi()
 
     p->slider->setFocusPolicy(Qt::NoFocus);
 
-    p->total->setMaximumWidth(35);
-    p->total->setMinimumWidth(35);
-
     p->elapsed->setText("00:00");
     p->total->setText("00:00");
 
