@@ -89,8 +89,8 @@ public:
     void unregisterFilter(int index);
 
 signals:
-    void runLibraryScan(TrackPtrList& tracks, Library::LibraryInfo info);
-    void runAllLibrariesScan(TrackPtrList& tracks);
+    void runLibraryScan(TrackPtrList tracks, Library::LibraryInfo info);
+    void runAllLibrariesScan(TrackPtrList tracks);
     void filteredTracks();
     void filteredItems(int index = -1);
     void orderedFilter(Filters::FilterType type);

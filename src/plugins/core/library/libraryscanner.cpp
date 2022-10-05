@@ -45,7 +45,7 @@ void LibraryScanner::stopThread()
     setState(State::Idle);
 }
 
-void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
+void LibraryScanner::scanLibrary(const TrackPtrList& tracks, const LibraryInfo& info)
 {
     if(isRunning()) {
         return;
@@ -89,7 +89,7 @@ void LibraryScanner::scanLibrary(TrackPtrList& tracks, const LibraryInfo& info)
     setState(State::Idle);
 }
 
-void LibraryScanner::scanAll(TrackPtrList& tracks)
+void LibraryScanner::scanAll(const TrackPtrList& tracks)
 {
     const auto libraries = m_libraryManager->allLibraries();
 
