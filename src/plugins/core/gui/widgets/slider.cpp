@@ -32,23 +32,19 @@ Slider::Slider(Qt::Orientation type, QWidget* parent)
 void Slider::mousePressEvent(QMouseEvent* e)
 {
     Qt::MouseButton button = e->button();
-    if(button == Qt::LeftButton)
-    {
+    if(button == Qt::LeftButton) {
         int absolute = style()->styleHint(QStyle::SH_Slider_AbsoluteSetButtons);
-        if(Qt::LeftButton & absolute)
-        {
+        if(Qt::LeftButton & absolute) {
             button = Qt::LeftButton;
         }
-        else if(Qt::MiddleButton & absolute)
-        {
+        else if(Qt::MiddleButton & absolute) {
             button = Qt::MiddleButton;
         }
-        else if(Qt::RightButton & absolute)
-        {
+        else if(Qt::RightButton & absolute) {
             button = Qt::RightButton;
         }
     }
 
-    QMouseEvent event(e->type(), e->pos(), button, button, e->modifiers());
+    QMouseEvent event(e->type(), e->position(), e->globalPosition(), button, button, e->modifiers());
     QSlider::mousePressEvent(&event);
 }
