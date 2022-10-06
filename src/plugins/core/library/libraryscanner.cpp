@@ -59,15 +59,17 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks, const LibraryInfo& 
     TrackPathMap trackMap{};
     IdSet tracksToDelete{};
 
+    // TODO: Don't delete if disk/top level is inaccessible
+    //       and ask for confirmation.
     for(const auto& track : tracks) {
         if(!::Util::File::exists(track->filepath())) {
             tracksToDelete.insert(track->id());
         }
         else {
             trackMap.insert(track->filepath(), track);
-        }
-        if(track->hasCover() && !::Util::File::exists(track->coverPath())) {
-            Util::storeCover(*track);
+            if(track->hasCover() && !::Util::File::exists(track->coverPath())) {
+                Util::storeCover(*track);
+            }
         }
         if(!mayRun()) {
             return;
