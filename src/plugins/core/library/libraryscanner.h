@@ -42,8 +42,8 @@ public:
 
 signals:
     void libraryAdded();
-    void updatedTracks(TrackList& tracks);
-    void addedTracks(TrackList& tracks);
+    void updatedTracks(TrackList tracks);
+    void addedTracks(TrackList tracks);
     void tracksDeleted(const IdSet& tracks);
 
 protected:
