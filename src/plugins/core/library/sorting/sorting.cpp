@@ -19,7 +19,7 @@
 
 #include "sorting.h"
 
-#include "library/models/track.h"
+#include "core/library/models/track.h"
 
 #include <algorithm>
 

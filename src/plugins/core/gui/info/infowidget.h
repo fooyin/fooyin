@@ -1,8 +1,8 @@
 #pragma once
 
-#include "gui/info/infomodel.h"
-#include "gui/info/infoview.h"
-#include "gui/widgets/widget.h"
+#include "core/gui/info/infomodel.h"
+#include "core/gui/info/infoview.h"
+#include "core/gui/widgets/widget.h"
 
 #include <QHBoxLayout>
 #include <QWidget>

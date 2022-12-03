@@ -19,8 +19,8 @@
 
 #include "controlwidget.h"
 
-#include "library/models/track.h"
-#include "player/playermanager.h"
+#include "core/library/models/track.h"
+#include "core/player/playermanager.h"
 #include "playercontrol.h"
 #include "playlistcontrol.h"
 #include "progresswidget.h"

@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include "gui/filter/filterfwd.h"
-#include "library/models/trackfwd.h"
-#include "library/sorting/sortorder.h"
+#include "core/gui/filter/filterfwd.h"
+#include "core/library/models/trackfwd.h"
+#include "core/library/sorting/sortorder.h"
 #include "module.h"
 
 namespace DB {

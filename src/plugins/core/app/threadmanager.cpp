@@ -19,7 +19,7 @@
 
 #include "threadmanager.h"
 
-#include "app/worker.h"
+#include "worker.h"
 
 #include <QThread>
 

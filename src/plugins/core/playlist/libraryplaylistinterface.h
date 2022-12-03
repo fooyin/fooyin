@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "library/models/trackfwd.h"
+#include "core/library/models/trackfwd.h"
 
 class LibraryPlaylistInterface
 {

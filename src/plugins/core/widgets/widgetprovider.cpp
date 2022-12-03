@@ -19,17 +19,17 @@
 
 #include "widgetprovider.h"
 
-#include "gui/controls/controlwidget.h"
-#include "gui/filter/filterwidget.h"
-#include "gui/info/infowidget.h"
-#include "gui/library/coverwidget.h"
-#include "gui/library/searchwidget.h"
-#include "gui/library/statuswidget.h"
-#include "gui/playlist/playlistwidget.h"
-#include "gui/settings/settingsdialog.h"
-#include "gui/widgets/spacer.h"
-#include "gui/widgets/splitterwidget.h"
-#include "library/librarymanager.h"
+#include "core/gui/controls/controlwidget.h"
+#include "core/gui/filter/filterwidget.h"
+#include "core/gui/info/infowidget.h"
+#include "core/gui/library/coverwidget.h"
+#include "core/gui/library/searchwidget.h"
+#include "core/gui/library/statuswidget.h"
+#include "core/gui/playlist/playlistwidget.h"
+#include "core/gui/settings/settingsdialog.h"
+#include "core/gui/widgets/spacer.h"
+#include "core/gui/widgets/splitterwidget.h"
+#include "core/library/librarymanager.h"
 #include "widgetfactory.h"
 
 #include <PluginManager>

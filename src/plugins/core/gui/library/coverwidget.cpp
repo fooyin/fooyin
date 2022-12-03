@@ -19,10 +19,10 @@
 
 #include "coverwidget.h"
 
-#include "library/models/track.h"
-#include "library/musiclibrary.h"
-#include "player/playermanager.h"
-#include "widgets/widgetprovider.h"
+#include "core/library/models/track.h"
+#include "core/library/musiclibrary.h"
+#include "core/player/playermanager.h"
+#include "core/widgets/widgetprovider.h"
 
 #include <PluginManager>
 #include <QHBoxLayout>

@@ -1,6 +1,6 @@
 #include "itemdelegate.h"
 
-#include "gui/info/infoitem.h"
+#include "core/gui/info/infoitem.h"
 
 #include <QPainter>
 #include <utils/typedefs.h>

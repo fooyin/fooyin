@@ -19,7 +19,7 @@
 
 #include "enginempv.h"
 
-#include "library/models/track.h"
+#include "core/library/models/track.h"
 
 #include <mpv/client.h>
 

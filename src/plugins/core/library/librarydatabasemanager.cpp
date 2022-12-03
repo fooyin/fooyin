@@ -19,8 +19,8 @@
 
 #include "librarydatabasemanager.h"
 
-#include "database/database.h"
-#include "database/librarydatabase.h"
+#include "core/database/database.h"
+#include "core/database/librarydatabase.h"
 
 #include <utils/helpers.h>
 

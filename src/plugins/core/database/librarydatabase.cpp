@@ -19,7 +19,7 @@
 
 #include "librarydatabase.h"
 
-#include "library/libraryutils.h"
+#include "core/library/libraryutils.h"
 #include "query.h"
 
 #include <QBuffer>

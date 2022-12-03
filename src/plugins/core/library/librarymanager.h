@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "library/libraryinfo.h"
+#include "core/library/libraryinfo.h"
 
 #include <QMap>
 #include <QObject>

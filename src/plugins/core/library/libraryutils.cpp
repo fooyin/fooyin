@@ -19,7 +19,7 @@
 
 #include "libraryutils.h"
 
-#include "tagging/tags.h"
+#include "core/tagging/tags.h"
 
 #include <QCryptographicHash>
 #include <QDir>

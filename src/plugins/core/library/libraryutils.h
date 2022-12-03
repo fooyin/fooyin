@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "models/track.h"
+#include "core/library/models/track.h"
 
 class QString;
 

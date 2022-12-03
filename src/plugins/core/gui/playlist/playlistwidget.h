@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "gui/widgets/widget.h"
+#include "core/gui/widgets/widget.h"
 
 #include <QItemSelection>
 #include <utils/typedefs.h>

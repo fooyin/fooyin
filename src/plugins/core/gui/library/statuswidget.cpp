@@ -19,9 +19,9 @@
 
 #include "statuswidget.h"
 
-#include "gui/widgets/clickablelabel.h"
-#include "library/models/track.h"
-#include "player/playermanager.h"
+#include "core/gui/widgets/clickablelabel.h"
+#include "core/library/models/track.h"
+#include "core/player/playermanager.h"
 
 #include <PluginManager>
 #include <QContextMenuEvent>

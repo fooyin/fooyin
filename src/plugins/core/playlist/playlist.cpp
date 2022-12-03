@@ -19,8 +19,8 @@
 
 #include "playlist.h"
 
-#include "library/models/track.h"
-#include "player/playermanager.h"
+#include "core/library/models/track.h"
+#include "core/player/playermanager.h"
 
 #include <QMessageBox>
 #include <utils/utils.h>

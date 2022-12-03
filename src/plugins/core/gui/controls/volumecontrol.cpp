@@ -19,9 +19,9 @@
 
 #include "volumecontrol.h"
 
-#include "gui/widgets/clickablelabel.h"
-#include "gui/widgets/hovermenu.h"
-#include "gui/widgets/slider.h"
+#include "core/gui/widgets/clickablelabel.h"
+#include "core/gui/widgets/hovermenu.h"
+#include "core/gui/widgets/slider.h"
 
 #include <QHBoxLayout>
 #include <utils/utils.h>

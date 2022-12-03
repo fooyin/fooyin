@@ -19,10 +19,10 @@
 
 #include "progresswidget.h"
 
-#include "gui/widgets/clickablelabel.h"
-#include "gui/widgets/slider.h"
-#include "library/models/track.h"
-#include "settings/settings.h"
+#include "core/gui/widgets/clickablelabel.h"
+#include "core/gui/widgets/slider.h"
+#include "core/library/models/track.h"
+#include "core/settings/settings.h"
 
 #include <PluginManager>
 #include <QHBoxLayout>

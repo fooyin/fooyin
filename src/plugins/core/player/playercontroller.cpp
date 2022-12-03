@@ -19,8 +19,8 @@
 
 #include "playercontroller.h"
 
-#include "library/models/track.h"
-#include "settings/settings.h"
+#include "core/library/models/track.h"
+#include "core/settings/settings.h"
 
 #include <PluginManager>
 #include <utils/enumhelper.h>

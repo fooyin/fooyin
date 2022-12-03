@@ -19,7 +19,7 @@
 
 #include "library.h"
 
-#include "library/libraryinfo.h"
+#include "core/library/libraryinfo.h"
 #include "query.h"
 
 namespace DB {

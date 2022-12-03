@@ -19,7 +19,7 @@
 
 #include "playercontrol.h"
 
-#include "gui/widgets/clickablelabel.h"
+#include "core/gui/widgets/clickablelabel.h"
 
 #include <QHBoxLayout>
 #include <QPainter>

@@ -19,15 +19,15 @@
 
 #include "playlistmodel.h"
 
-#include "library/coverprovider.h"
-#include "library/models/album.h"
-#include "library/models/disc.h"
-#include "library/models/libraryitem.h"
-#include "library/models/track.h"
-#include "library/musiclibrary.h"
-#include "player/playermanager.h"
+#include "core/library/coverprovider.h"
+#include "core/library/models/album.h"
+#include "core/library/models/disc.h"
+#include "core/library/models/libraryitem.h"
+#include "core/library/models/track.h"
+#include "core/library/musiclibrary.h"
+#include "core/player/playermanager.h"
 #include "playlistitem.h"
-#include "settings/settings.h"
+#include "core/settings/settings.h"
 
 #include <PluginManager>
 #include <QPalette>

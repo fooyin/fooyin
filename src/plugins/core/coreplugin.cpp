@@ -18,8 +18,8 @@
  */
 #include "coreplugin.h"
 
-#include "app/application.h"
-#include "widgets/widgetfactory.h"
+#include "core/app/application.h"
+#include "core/widgets/widgetfactory.h"
 
 #include <PluginManager>
 

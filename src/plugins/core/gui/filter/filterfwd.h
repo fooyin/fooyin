@@ -20,7 +20,7 @@
 #ifndef FILTER_FWD_H
 #define FILTER_FWD_H
 
-#include "library/sorting/sortorder.h"
+#include "core/library/sorting/sortorder.h"
 
 #include <utils/typedefs.h>
 

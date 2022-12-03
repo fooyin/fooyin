@@ -19,15 +19,15 @@
 
 #include "playlistwidget.h"
 
-#include "gui/settings/settingsdialog.h"
-#include "gui/widgets/nolibraryoverlay.h"
-#include "library/librarymanager.h"
-#include "library/musiclibrary.h"
-#include "player/playermanager.h"
+#include "core/gui/settings/settingsdialog.h"
+#include "core/gui/widgets/nolibraryoverlay.h"
+#include "core/library/librarymanager.h"
+#include "core/library/musiclibrary.h"
+#include "core/player/playermanager.h"
 #include "playlistdelegate.h"
 #include "playlistmodel.h"
 #include "playlistview.h"
-#include "settings/settings.h"
+#include "core/settings/settings.h"
 
 #include <PluginManager>
 #include <QAction>

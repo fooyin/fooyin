@@ -19,8 +19,8 @@
 
 #include "playlistcontrol.h"
 
-#include "gui/widgets/clickablelabel.h"
-#include "settings/settings.h"
+#include "core/gui/widgets/clickablelabel.h"
+#include "core/settings/settings.h"
 
 #include <PluginManager>
 #include <QHBoxLayout>

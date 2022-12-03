@@ -19,9 +19,9 @@
 
 #include "settingspages.h"
 
-#include "library/libraryinfo.h"
-#include "library/librarymanager.h"
-#include "settings/settings.h"
+#include "core/library/libraryinfo.h"
+#include "core/library/librarymanager.h"
+#include "core/settings/settings.h"
 
 #include <PluginManager>
 #include <QCheckBox>

@@ -1,7 +1,7 @@
 #include "infomodel.h"
 
 #include "infoitem.h"
-#include "library/models/track.h"
+#include "core/library/models/track.h"
 
 #include <utils/typedefs.h>
 #include <utils/utils.h>

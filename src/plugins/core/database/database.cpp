@@ -23,7 +23,7 @@
 #include "librarydatabase.h"
 #include "playlistdatabase.h"
 #include "query.h"
-#include "settings/settings.h"
+#include "core/settings/settings.h"
 #include "version.h"
 
 #include <PluginManager>

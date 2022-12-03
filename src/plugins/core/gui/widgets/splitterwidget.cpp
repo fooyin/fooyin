@@ -21,7 +21,7 @@
 
 #include "dummy.h"
 #include "splitter.h"
-#include "widgets/widgetprovider.h"
+#include "core/widgets/widgetprovider.h"
 
 #include <PluginManager>
 #include <QJsonObject>

@@ -19,12 +19,12 @@
 
 #include "editablelayout.h"
 
-#include "settings/settings.h"
-#include "widgets/dummy.h"
-#include "widgets/menuheader.h"
-#include "widgets/overlay.h"
-#include "widgets/splitterwidget.h"
-#include "widgets/widgetprovider.h"
+#include "core/gui/widgets/dummy.h"
+#include "core/gui/widgets/menuheader.h"
+#include "core/gui/widgets/overlay.h"
+#include "core/gui/widgets/splitterwidget.h"
+#include "core/settings/settings.h"
+#include "core/widgets/widgetprovider.h"
 
 #include <PluginManager>
 #include <QCoreApplication>

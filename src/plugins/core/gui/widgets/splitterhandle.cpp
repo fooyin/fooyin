@@ -19,7 +19,7 @@
 
 #include "splitterhandle.h"
 
-#include "settings/settings.h"
+#include "core/settings/settings.h"
 
 #include <PluginManager>
 

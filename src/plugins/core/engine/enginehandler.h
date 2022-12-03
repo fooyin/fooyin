@@ -19,8 +19,8 @@
 
 #pragma once
 
+#include "core/app/worker.h"
 #include "enginempv.h"
-#include "app/worker.h"
 
 #include <QObject>
 #include <QThread>

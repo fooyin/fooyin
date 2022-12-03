@@ -19,7 +19,7 @@
 
 #include "playlistdelegate.h"
 
-#include "gui/playlist/playlistitem.h"
+#include "core/gui/playlist/playlistitem.h"
 
 #include <QPainter>
 #include <utils/typedefs.h>

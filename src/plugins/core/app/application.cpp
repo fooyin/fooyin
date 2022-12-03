@@ -19,18 +19,18 @@
 
 #include "application.h"
 
-#include "database/database.h"
-#include "engine/enginehandler.h"
-#include "gui/mainwindow.h"
-#include "gui/settings/settingsdialog.h"
-#include "library/librarymanager.h"
-#include "library/musiclibrary.h"
-#include "player/playercontroller.h"
-#include "playlist/libraryplaylistmanager.h"
-#include "playlist/playlisthandler.h"
-#include "settings/settings.h"
+#include "core/database/database.h"
+#include "core/engine/enginehandler.h"
+#include "core/gui/mainwindow.h"
+#include "core/gui/settings/settingsdialog.h"
+#include "core/library/librarymanager.h"
+#include "core/library/musiclibrary.h"
+#include "core/player/playercontroller.h"
+#include "core/playlist/libraryplaylistmanager.h"
+#include "core/playlist/playlisthandler.h"
+#include "core/settings/settings.h"
+#include "core/widgets/widgetprovider.h"
 #include "threadmanager.h"
-#include "widgets/widgetprovider.h"
 
 #include <PluginManager>
 

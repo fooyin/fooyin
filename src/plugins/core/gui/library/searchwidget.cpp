@@ -19,8 +19,8 @@
 
 #include "searchwidget.h"
 
-#include "library/musiclibrary.h"
-#include "settings/settings.h"
+#include "core/library/musiclibrary.h"
+#include "core/settings/settings.h"
 
 #include <PluginManager>
 #include <QHBoxLayout>
