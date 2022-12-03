@@ -23,7 +23,7 @@
 #include "core/library/librarymanager.h"
 #include "core/settings/settings.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QHBoxLayout>

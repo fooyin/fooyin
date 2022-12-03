@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <Plugin>
+#include <pluginsystem/plugin.h>
 
 namespace Widgets {
 class WidgetFactory;

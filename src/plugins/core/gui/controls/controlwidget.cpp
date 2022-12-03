@@ -26,7 +26,7 @@
 #include "progresswidget.h"
 #include "volumecontrol.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>

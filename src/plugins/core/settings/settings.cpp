@@ -21,7 +21,7 @@
 
 #include "version.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QSettings>
 #include <utils/enumhelper.h>
 #include <utils/helpers.h>

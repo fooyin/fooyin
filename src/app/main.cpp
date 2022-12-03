@@ -19,8 +19,8 @@
 
 #include "version.h"
 
-#include <PluginManager>
 #include <QApplication>
+#include <pluginsystem/pluginmanager.h>
 
 int main(int argc, char* argv[])
 {

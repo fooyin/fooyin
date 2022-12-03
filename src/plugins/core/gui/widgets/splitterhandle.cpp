@@ -21,7 +21,7 @@
 
 #include "core/settings/settings.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)

@@ -24,7 +24,7 @@
 #include "core/player/playermanager.h"
 #include "core/widgets/widgetprovider.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QHBoxLayout>
 #include <QLabel>
 

@@ -26,7 +26,7 @@
 #include "core/player/playermanager.h"
 #include "core/settings/settings.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QAction>
 #include <QActionGroup>
 #include <QHBoxLayout>

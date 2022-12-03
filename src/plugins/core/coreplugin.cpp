@@ -21,7 +21,7 @@
 #include "core/app/application.h"
 #include "core/widgets/widgetfactory.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 
 CorePlugin::CorePlugin() = default;
 

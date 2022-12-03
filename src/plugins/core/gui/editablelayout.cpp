@@ -26,7 +26,7 @@
 #include "core/settings/settings.h"
 #include "core/widgets/widgetprovider.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QJsonArray>

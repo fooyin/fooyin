@@ -22,7 +22,7 @@
 #include "core/library/musiclibrary.h"
 #include "core/settings/settings.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLineEdit>

@@ -22,7 +22,7 @@
 #include "core/gui/widgets/clickablelabel.h"
 #include "core/settings/settings.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QHBoxLayout>
 #include <utils/enumhelper.h>
 #include <utils/utils.h>

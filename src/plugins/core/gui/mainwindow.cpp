@@ -25,7 +25,7 @@
 #include "core/library/musiclibrary.h"
 #include "core/settings/settings.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QDir>

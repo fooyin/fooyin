@@ -32,7 +32,7 @@
 #include "core/widgets/widgetprovider.h"
 #include "threadmanager.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 
 struct Application::Private
 {

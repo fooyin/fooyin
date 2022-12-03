@@ -26,7 +26,7 @@
 #include "core/settings/settings.h"
 #include "version.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QFile>
 #include <QSqlQuery>
 #include <utils/paths.h>

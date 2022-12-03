@@ -24,7 +24,7 @@
 #include "core/library/models/track.h"
 #include "core/settings/settings.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QHBoxLayout>
 #include <QSlider>
 #include <utils/utils.h>

@@ -29,7 +29,7 @@
 #include "playlistitem.h"
 #include "core/settings/settings.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QPalette>
 #include <utils/utils.h>
 

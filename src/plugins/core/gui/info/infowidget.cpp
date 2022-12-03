@@ -7,7 +7,7 @@
 #include "core/player/playermanager.h"
 #include "core/settings/settings.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QHeaderView>
 #include <QMenu>
 #include <QTableWidget>

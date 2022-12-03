@@ -32,7 +32,7 @@
 #include "core/library/librarymanager.h"
 #include "widgetfactory.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QMenu>
 #include <utils/enumhelper.h>
 

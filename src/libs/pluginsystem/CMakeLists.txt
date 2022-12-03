@@ -2,15 +2,15 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(HEADERS
-    src/plugin.h
-    src/plugininfo.h
-    src/pluginmanager.h
-    src/pluginsystem_global.h
+    plugin.h
+    plugininfo.h
+    pluginmanager.h
+    pluginsystem_global.h
 )
 
 set(SOURCES
-    src/plugininfo.cpp
-    src/pluginmanager.cpp
+    plugininfo.cpp
+    pluginmanager.cpp
 )
 
 add_library(PluginSystem SHARED ${SOURCES})
@@ -19,6 +19,17 @@ target_link_libraries(PluginSystem
     PRIVATE
     Qt6::Core
 )
+
+cmake_path(SET public_build_interface "${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+target_include_directories(PluginSystem
+  PRIVATE
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "${CMAKE_BINARY_DIR}/src"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+  PUBLIC
+    "$<BUILD_INTERFACE:${public_build_interface}>"
+ )
 
 target_include_directories(PluginSystem INTERFACE include)
 

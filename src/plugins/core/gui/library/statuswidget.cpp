@@ -23,7 +23,7 @@
 #include "core/library/models/track.h"
 #include "core/player/playermanager.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>

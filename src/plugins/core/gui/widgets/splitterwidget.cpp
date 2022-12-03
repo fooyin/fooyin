@@ -23,7 +23,7 @@
 #include "splitter.h"
 #include "core/widgets/widgetprovider.h"
 
-#include <PluginManager>
+#include <pluginsystem/pluginmanager.h>
 #include <QJsonObject>
 #include <QMenu>
 #include <utils/enumhelper.h>
