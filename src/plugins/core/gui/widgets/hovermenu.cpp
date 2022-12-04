@@ -22,7 +22,7 @@
 HoverMenu::HoverMenu(QWidget* parent)
     : QDialog(parent)
 {
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::Popup);
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::ToolTip);
 
     connect(&m_timer, &QTimer::timeout, this, &HoverMenu::closeMenu);
 }
