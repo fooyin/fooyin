@@ -20,13 +20,13 @@
 #include "musiclibrary.h"
 
 #include "core/app/threadmanager.h"
-#include "core/library/librarydatabasemanager.h"
-#include "core/library/libraryscanner.h"
+#include "core/library/models/track.h"
+#include "core/library/sorting/sorting.h"
+#include "core/playlist/libraryplaylistinterface.h"
+#include "librarydatabasemanager.h"
 #include "libraryinfo.h"
 #include "librarymanager.h"
-#include "core/library/models/track.h"
-#include "core/playlist/libraryplaylistinterface.h"
-#include "core/library/sorting/sorting.h"
+#include "libraryscanner.h"
 
 #include <QTimer>
 #include <utility>
@@ -87,11 +87,11 @@ void MusicLibrary::libraryAdded()
 
 void MusicLibrary::prepareTracks(int idx)
 {
-    if(!m_filteredTracks.isEmpty()) {
+    if(!m_filteredTracks.empty()) {
         m_playlistInteractor->createPlaylist(m_filteredTracks, idx);
     }
 
-    else if(m_selectedTracks.isEmpty()) {
+    else if(m_selectedTracks.empty()) {
         m_playlistInteractor->createPlaylist(m_tracks, 0);
     }
 
@@ -100,7 +100,7 @@ void MusicLibrary::prepareTracks(int idx)
     }
 }
 
-QSet<Track*> MusicLibrary::selectedTracks()
+TrackPtrList MusicLibrary::selectedTracks()
 {
     return m_selectedTracks;
 }
@@ -159,8 +159,8 @@ void MusicLibrary::newTracksAdded(const TrackList& tracks)
 {
     for(const auto& track : tracks) {
         auto* trackPtr = new Track(track);
-        m_tracks.append(trackPtr);
-        m_trackMap.insert(trackPtr->id(), trackPtr);
+        m_tracks.emplace_back(trackPtr);
+        m_trackMap.emplace(trackPtr->id(), trackPtr);
     }
     Library::sortTracks(m_tracks, m_order);
     emit filteredItems();
@@ -170,9 +170,11 @@ void MusicLibrary::newTracksAdded(const TrackList& tracks)
 void MusicLibrary::tracksUpdated(const TrackList& tracks)
 {
     for(const auto& track : tracks) {
-        Track* libraryTrack = m_trackMap.value(track.id(), nullptr);
-        if(libraryTrack) {
-            *libraryTrack = track;
+        if(m_trackMap.count(track.id())) {
+            Track* libraryTrack = m_trackMap.at(track.id());
+            if(libraryTrack) {
+                *libraryTrack = track;
+            }
         }
     }
     emit filteredItems();
@@ -182,8 +184,12 @@ void MusicLibrary::tracksUpdated(const TrackList& tracks)
 void MusicLibrary::tracksDeleted(const IdSet& tracks)
 {
     for(auto trackId : tracks) {
-        Track* libTrack = m_trackMap.value(trackId);
-        libTrack->setIsEnabled(false);
+        if(m_trackMap.count(trackId)) {
+            {
+                Track* libraryTrack = m_trackMap.at(trackId);
+                libraryTrack->setIsEnabled(false);
+            }
+        }
     }
     emit filteredItems();
     getFilteredTracks();
@@ -212,8 +218,8 @@ void MusicLibrary::refreshTracks(const TrackList& result)
     m_filteredTracks.clear();
     for(const auto& track : result) {
         auto* trackPtr = new Track(track);
-        m_tracks.append(trackPtr);
-        m_trackMap.insert(trackPtr->id(), trackPtr);
+        m_tracks.emplace_back(trackPtr);
+        m_trackMap.emplace(trackPtr->id(), trackPtr);
     }
     Library::sortTracks(m_tracks, m_order);
 }
@@ -230,7 +236,7 @@ void MusicLibrary::items(Filters::FilterType type)
 
 TrackPtrList MusicLibrary::tracks()
 {
-    if(!m_filteredTracks.isEmpty() || !m_searchFilter.isEmpty()) {
+    if(!m_filteredTracks.empty() || !m_searchFilter.isEmpty()) {
         return m_filteredTracks;
     }
     return m_tracks;
@@ -255,7 +261,7 @@ void MusicLibrary::changeOrder(SortOrder order)
 {
     m_order = order;
     Library::sortTracks(m_tracks, m_order);
-    if(!m_filteredTracks.isEmpty()) {
+    if(!m_filteredTracks.empty()) {
         Library::sortTracks(m_filteredTracks, m_order);
     }
     emit filteredTracks();
@@ -269,7 +275,7 @@ void MusicLibrary::changeFilterOrder(Filters::FilterType type, SortOrder order)
 
 bool MusicLibrary::tracksHaveFiltered()
 {
-    return !m_filteredTracks.isEmpty();
+    return !m_filteredTracks.empty();
 }
 
 void MusicLibrary::changeSelection(const IdSet& indexes, Filters::FilterType type, int index)
@@ -318,9 +324,9 @@ void MusicLibrary::selectionChanged(const IdSet& indexes, Filters::FilterType ty
 
 void MusicLibrary::changeTrackSelection(const QSet<Track*>& tracks)
 {
-    QSet<Track*> newSelectedTracks;
+    std::vector<Track*> newSelectedTracks;
     for(const auto& track : tracks) {
-        newSelectedTracks.insert(track);
+        newSelectedTracks.emplace_back(track);
     }
 
     if(m_selectedTracks == newSelectedTracks) {

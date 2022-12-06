@@ -20,11 +20,11 @@
 #pragma once
 
 #include "core/gui/filter/filterfwd.h"
+#include "core/library/models/trackfwd.h"
+#include "core/library/sorting/sortorder.h"
 #include "librarydatabasemanager.h"
 #include "libraryinfo.h"
 #include "libraryscanner.h"
-#include "core/library/models/trackfwd.h"
-#include "core/library/sorting/sortorder.h"
 
 #include <QThread>
 
@@ -76,7 +76,7 @@ public:
 
     void prepareTracks(int idx = 0);
 
-    QSet<Track*> selectedTracks();
+    TrackPtrList selectedTracks();
 
     void getAllItems(Filters::FilterType type, SortOrder order);
     void getItemsByFilter(Filters::FilterType type, SortOrder order);
@@ -101,7 +101,6 @@ signals:
     void loadAllTracks();
     void loadAllItems(Filters::FilterType type, Library::SortOrder order);
     void loadItemsByFilter(Filters::FilterType type, ActiveFilters filters, QString search, Library::SortOrder order);
-
     void loadFilteredTracks(TrackPtrList tracks, ActiveFilters filters, QString search);
 
 protected:
@@ -123,7 +122,7 @@ private:
     TrackHash m_trackMap;
     TrackPtrList m_filteredTracks;
 
-    QSet<Track*> m_selectedTracks;
+    std::vector<Track*> m_selectedTracks;
 
     QMap<int, Filters::FilterType> m_filterIndexes;
     ActiveFilters m_activeFilters;
