@@ -19,7 +19,9 @@
 
 #pragma once
 
+#include <algorithm>
 #include <type_traits>
+#include <vector>
 
 template <typename T>
 class asRange
@@ -47,4 +49,22 @@ template <typename E>
 constexpr auto toUnderlying(E e) noexcept
 {
     return static_cast<std::underlying_type_t<E>>(e);
+}
+
+template <typename C, typename F>
+constexpr int getIndex(C c, F f)
+{
+    int index = -1;
+    auto it = std::find(c.begin(), c.end(), f);
+    if(it != c.end()) {
+        index = it - c.begin();
+    }
+    return index;
+}
+
+template <typename C, typename F>
+constexpr bool contains(C c, F f)
+{
+    auto it = std::find(c.begin(), c.end(), f);
+    return static_cast<bool>(it != c.end());
 }
