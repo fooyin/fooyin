@@ -383,10 +383,6 @@ int PlaylistModel::rowCount(const QModelIndex& parent) const
 {
     PlaylistItem* parentItem;
 
-    if(parent.column() > 0) {
-        return 0;
-    }
-
     if(!parent.isValid()) {
         parentItem = m_root.get();
     }
