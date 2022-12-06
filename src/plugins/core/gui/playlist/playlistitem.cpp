@@ -21,6 +21,8 @@
 
 #include "core/library/models/libraryitem.h"
 
+#include <utils/helpers.h>
+
 PlaylistItem::PlaylistItem(Type type, LibraryItem* data, PlaylistItem* parent)
     : m_data(data)
     , m_type(type)
@@ -32,8 +34,8 @@ PlaylistItem::~PlaylistItem() = default;
 
 void PlaylistItem::appendChild(PlaylistItem* child)
 {
-    if(!m_children.contains(child)) {
-        m_children.append(child);
+    if(!contains(m_children, child)) {
+        m_children.emplace_back(child);
     }
 }
 
@@ -79,9 +81,8 @@ int PlaylistItem::index() const
 int PlaylistItem::row() const
 {
     if(m_parent) {
-        return static_cast<int>(m_parent->m_children.indexOf(const_cast<PlaylistItem*>(this))); // NOLINT
+        return static_cast<int>(getIndex(m_parent->m_children, const_cast<PlaylistItem*>(this))); // NOLINT
     }
-
     return 0;
 }
 

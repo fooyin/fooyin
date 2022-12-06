@@ -101,7 +101,7 @@ LibraryDatabase::~LibraryDatabase() = default;
 
 bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
 {
-    if(tracks.isEmpty()) {
+    if(tracks.empty()) {
         return {};
     }
 
@@ -123,8 +123,8 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         ArtistHash dbArtists;
         getAllArtists(dbArtists);
 
-        for(const auto& artist : qAsConst(dbArtists)) {
-            artistMap.insert(artist.name(), artist);
+        for(const auto& [id, artist] : dbArtists) {
+            artistMap.emplace(artist.name(), artist);
         }
     }
 
@@ -134,7 +134,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         GenreHash dbGenres;
         getAllGenres(dbGenres);
 
-        for(const auto& [id, name] : asRange(dbGenres)) {
+        for(const auto& [id, name] : dbGenres) {
             genreMap.insert(name, id);
         }
     }
@@ -223,7 +223,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
 
 bool LibraryDatabase::storeTracks(TrackList& tracks)
 {
-    if(tracks.isEmpty()) {
+    if(tracks.empty()) {
         return true;
     }
 
@@ -613,7 +613,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
             track.addGenreId(id.toInt());
         }
 
-        result.append(track);
+        result.emplace_back(track);
     }
 
     return true;
@@ -641,7 +641,7 @@ bool LibraryDatabase::dbFetchAlbums(Query& q, AlbumList& result)
         album.setDuration(q.value(8).value<quint64>());
         album.setCoverPath(q.value(9).toString());
 
-        result.append(album);
+        result.emplace_back(album);
     }
 
     return true;
@@ -660,7 +660,7 @@ bool LibraryDatabase::dbFetchArtists(Query& q, ArtistHash& result)
         Artist artist{q.value(1).toString()};
         artist.setId(q.value(0).toInt());
 
-        result.insert(artist.id(), artist);
+        result.emplace(artist.id(), artist);
     }
 
     return true;
@@ -679,7 +679,7 @@ bool LibraryDatabase::dbFetchGenres(Query& q, GenreHash& result)
         auto id = q.value(0).toInt();
         auto genre = q.value(1).toString();
 
-        result.insert(id, genre);
+        result.emplace(id, genre);
     }
 
     return true;

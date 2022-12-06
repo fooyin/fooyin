@@ -51,7 +51,7 @@ public:
     [[nodiscard]] PlaylistItem* parent() const;
 
 private:
-    QList<PlaylistItem*> m_children;
+    std::vector<PlaylistItem*> m_children;
     LibraryItem* m_data;
     Type m_type;
     int m_index;

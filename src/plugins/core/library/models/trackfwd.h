@@ -23,13 +23,13 @@
 #include "artist.h"
 #include "track.h"
 
-using TrackPtrList = QList<Track*>;
-using TrackHash = QHash<int, Track*>;
-using TrackPathMap = QHash<QString, Track*>;
-using TrackList = QList<Track>;
+using TrackPtrList = std::vector<Track*>;
+using TrackHash = std::unordered_map<int, Track*>;
+using TrackPathMap = std::unordered_map<QString, Track*>;
+using TrackList = std::vector<Track>;
 
-using AlbumList = QList<Album>;
-using ArtistHash = QHash<int, Artist>;
-using GenreHash = QHash<int, QString>;
+using AlbumList = std::vector<Album>;
+using ArtistHash = std::unordered_map<int, Artist>;
+using GenreHash = std::unordered_map<int, QString>;
 
 using ContainerHash = std::unordered_map<QString, std::unique_ptr<Container>>;

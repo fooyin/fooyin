@@ -24,9 +24,9 @@
 #include "core/player/playermanager.h"
 #include "core/widgets/widgetprovider.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <pluginsystem/pluginmanager.h>
 
 struct CoverWidget::Private
 {
@@ -98,7 +98,7 @@ void CoverWidget::resizeEvent(QResizeEvent* e)
 void CoverWidget::reloadCover()
 {
     QString coverPath = "";
-    if(!p->library->tracks().isEmpty()) {
+    if(!p->library->tracks().empty()) {
         const Player::PlayState state = p->playerManager->playState();
         if(state == Player::PlayState::Playing || state == Player::PlayState::Paused) {
             Track* track = p->playerManager->currentTrack();
@@ -106,14 +106,14 @@ void CoverWidget::reloadCover()
                 coverPath = track->coverPath();
             }
         }
-        else if(p->library->selectedTracks().isEmpty()) {
-            Track* track = p->library->tracks().constFirst();
+        else if(p->library->selectedTracks().empty()) {
+            Track* track = p->library->tracks().front();
             if(track) {
                 coverPath = track->coverPath();
             }
         }
         else {
-            Track* track = p->library->selectedTracks().values().constFirst();
+            Track* track = p->library->selectedTracks().front();
             if(track) {
                 coverPath = track->coverPath();
             }

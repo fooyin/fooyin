@@ -66,7 +66,7 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks, const LibraryInfo& 
             tracksToDelete.insert(track->id());
         }
         else {
-            trackMap.insert(track->filepath(), track);
+            trackMap.emplace(track->filepath(), track);
             if(track->hasCover() && !::Util::File::exists(track->coverPath())) {
                 Util::storeCover(*track);
             }
@@ -166,7 +166,7 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
 
         bool fileWasRead;
 
-        Track* libraryTrack = tracks.value(filepath, nullptr);
+        Track* libraryTrack = tracks.count(filepath) ? tracks.at(filepath) : nullptr;
 
         if(libraryTrack && libraryTrack->id() >= 0) {
             if(libraryTrack->mTime() == modified) {
@@ -177,7 +177,7 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
             changedTrack.resetIds();
             fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
             if(fileWasRead) {
-                tracksToUpdate << changedTrack;
+                tracksToUpdate.emplace_back(changedTrack);
                 continue;
             }
         }
@@ -187,7 +187,7 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
 
         fileWasRead = Tagging::readMetaData(track, Tagging::Quality::Quality);
         if(fileWasRead) {
-            tracksToStore << track;
+            tracksToStore.emplace_back(track);
             if(tracksToStore.size() >= 500) {
                 storeTracks(tracksToStore);
                 emit addedTracks(tracksToStore);
@@ -199,10 +199,10 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
     storeTracks(tracksToStore);
     storeTracks(tracksToUpdate);
 
-    if(!tracksToStore.isEmpty()) {
+    if(!tracksToStore.empty()) {
         emit addedTracks(tracksToStore);
     }
-    if(!tracksToUpdate.isEmpty()) {
+    if(!tracksToUpdate.empty()) {
         emit updatedTracks(tracksToUpdate);
     }
 

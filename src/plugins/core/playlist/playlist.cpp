@@ -41,8 +41,8 @@ Playlist::Playlist::~Playlist() = default;
 
 int Playlist::Playlist::createPlaylist(const TrackPtrList& tracks)
 {
-    m_tracks << tracks;
-    return static_cast<int>(m_tracks.count());
+    m_tracks.insert(m_tracks.end(), tracks.begin(), tracks.end());
+    return static_cast<int>(m_tracks.size());
 }
 
 int Playlist::Playlist::currentTrackIndex() const
@@ -51,7 +51,7 @@ int Playlist::Playlist::currentTrackIndex() const
         return -1;
     }
 
-    auto it = std::find_if(m_tracks.constBegin(), m_tracks.constEnd(), [this](Track* track) {
+    auto it = std::find_if(m_tracks.cbegin(), m_tracks.cend(), [this](Track* track) {
         return (track->id() == m_playingTrack->id());
     });
 
@@ -59,7 +59,7 @@ int Playlist::Playlist::currentTrackIndex() const
         return -1;
     }
 
-    return static_cast<int>(std::distance(m_tracks.constBegin(), it));
+    return static_cast<int>(std::distance(m_tracks.cbegin(), it));
 }
 
 Track* Playlist::Playlist::currentTrack() const
@@ -84,7 +84,7 @@ void Playlist::Playlist::insertTracks(const TrackPtrList& tracks)
 
 void Playlist::Playlist::appendTracks(const TrackPtrList& tracks)
 {
-    m_tracks.append(tracks);
+    m_tracks.insert(m_tracks.end(), tracks.begin(), tracks.end());
 }
 
 void Playlist::Playlist::clear()
@@ -142,7 +142,7 @@ void Playlist::Playlist::stop()
 
 int Playlist::Playlist::next()
 {
-    if(m_tracks.isEmpty()) {
+    if(m_tracks.empty()) {
         stop();
         return -1;
     }
@@ -166,7 +166,7 @@ int Playlist::Playlist::previous()
 int Playlist::Playlist::nextIndex()
 {
     const int currentIndex = currentTrackIndex();
-    const bool isLastTrack = (currentIndex >= m_tracks.count() - 1);
+    const bool isLastTrack = (currentIndex >= m_tracks.size() - 1);
     const auto mode = m_playerManager->playMode();
     int index = currentIndex + 1;
 
