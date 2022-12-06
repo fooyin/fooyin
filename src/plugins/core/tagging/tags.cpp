@@ -137,4 +137,43 @@ QPixmap readCover(const QString& filepath)
 
     return coverFromFile(fileRef);
 }
+
+bool writeMetaData(const Track& track)
+{
+    const auto filepath = track.filepath();
+    const auto fileInfo = QFileInfo(filepath);
+    if(fileInfo.size() <= 0) {
+        return false;
+    }
+
+    auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()));
+
+    const auto album = convertString(track.album());
+    const auto artist = convertStringList(track.artists());
+    const auto albumArtist = convertString(track.albumArtist());
+    const auto title = convertString(track.title());
+    const auto genre = convertStringList(track.genres());
+    const auto year = track.year();
+    const auto trackNumber = track.trackNumber();
+    const auto comment = convertString(track.comment());
+
+    auto parsedTag = tagsFromFile(fileRef);
+    parsedTag.map = fileRef.file()->properties();
+    if(!parsedTag.tag) {
+        return false;
+    }
+
+    parsedTag.tag->setAlbum(album);
+    parsedTag.map.replace("ARTIST", artist);
+    parsedTag.map.replace("ALBUMARTIST", albumArtist);
+    parsedTag.tag->setTitle(title);
+    parsedTag.map.replace("GENRE", genre);
+    parsedTag.tag->setYear(year);
+    parsedTag.tag->setTrack(trackNumber);
+    parsedTag.tag->setComment(comment);
+
+    fileRef.file()->setProperties(parsedTag.map);
+    return fileRef.save();
+}
+
 } // namespace Tagging
