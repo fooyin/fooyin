@@ -583,7 +583,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setTitle(q.value(2).toString());
         track.setTrackNumber(q.value(3).toInt());
         const QStringList artistIds = q.value(4).toString().split("|");
-        track.setArtists(q.value(5).toString().split("|"));
+        track.setArtists(q.value(5).toString().split("|", Qt::SkipEmptyParts));
         track.setAlbumArtistId(q.value(6).toInt());
         track.setAlbumArtist(q.value(7).toString());
         track.setAlbumId(q.value(8).toInt());
@@ -592,7 +592,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setDiscNumber(q.value(11).toInt());
         track.setYear(q.value(12).toInt());
         const QStringList genreIds = q.value(13).toString().split("|");
-        track.setGenres(q.value(14).toString().split("|"));
+        track.setGenres(q.value(14).toString().split("|", Qt::SkipEmptyParts));
         track.setLyrics(q.value(15).toString());
         track.setComment(q.value(16).toString());
         track.setDuration(q.value(17).value<quint64>());
