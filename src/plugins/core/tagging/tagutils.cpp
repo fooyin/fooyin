@@ -186,6 +186,17 @@ QString convertString(const TagLib::String& str)
     return QString::fromStdString(str.to8Bit(true));
 }
 
+TagLib::StringList convertStringList(const QStringList& str)
+{
+    TagLib::StringList list;
+
+    for(const auto& string : str) {
+        list.append(TagLib::String(string.toUtf8(), TagLib::String::Type::UTF8));
+    }
+
+    return list;
+}
+
 QStringList convertStringList(const TagLib::StringList& str)
 {
     QStringList list;
