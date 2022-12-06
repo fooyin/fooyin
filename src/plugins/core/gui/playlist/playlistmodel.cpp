@@ -57,7 +57,7 @@ void PlaylistModel::setupModelData()
 
     if(m_library) {
         const TrackPtrList& tracks = m_library->tracks();
-        if(!tracks.isEmpty()) {
+        if(!tracks.empty()) {
             // Create albums before model to ensure discs (based on discCount) are properly created
             createAlbums(tracks);
             for(int i = 0; i < tracks.size(); ++i) {
