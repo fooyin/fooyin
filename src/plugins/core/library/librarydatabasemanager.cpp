@@ -129,7 +129,7 @@ void LibraryDatabaseManager::filterTracks(const TrackPtrList& tracks, const Acti
             }
         }
         if(matches == total) {
-            filteredTracks.append(track);
+            filteredTracks.emplace_back(track);
         }
     }
     emit tracksFiltered(filteredTracks);
