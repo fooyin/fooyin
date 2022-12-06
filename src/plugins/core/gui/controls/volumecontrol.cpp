@@ -118,7 +118,7 @@ void VolumeControl::showVolumeMenu()
 
     const int yPosToWindow = this->parentWidget()->mapToParent(QPoint(0, 0)).y();
 
-    //     Only display volume slider above icon if it won't clip above the main window.
+    // Only display volume slider above icon if it won't clip above the main window.
     const bool displayAbove = (yPosToWindow - menuHeight) > 0;
 
     const int x = !menuWidth - 15;
