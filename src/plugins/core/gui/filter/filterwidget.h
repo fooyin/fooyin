@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "filtermodel.h"
 #include "core/gui/widgets/widget.h"
+#include "gui/filter/filterfwd.h"
 
 #include <QItemSelection>
 #include <utils/typedefs.h>
@@ -32,6 +32,7 @@ class WidgetProvider;
 
 namespace Library {
 class FilterView;
+class FilterModel;
 class MusicLibrary;
 
 class FilterWidget : public Widget
