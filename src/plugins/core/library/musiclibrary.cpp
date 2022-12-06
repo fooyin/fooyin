@@ -64,6 +64,7 @@ MusicLibrary::MusicLibrary(LibraryPlaylistInterface* playlistInteractor, Library
             &LibraryDatabaseManager::getItemsByFilter);
     connect(this, &MusicLibrary::loadAllTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
     connect(this, &MusicLibrary::loadFilteredTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::filterTracks);
+    connect(this, &MusicLibrary::updateSaveTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::updateTracks);
 
     load();
 }
@@ -135,6 +136,11 @@ void MusicLibrary::unregisterFilter(int index)
     m_activeFilters.remove(type);
     emit filteredItems(-1);
     getFilteredTracks();
+}
+
+void MusicLibrary::updateTracks(const TrackPtrList& tracks)
+{
+    emit updateSaveTracks(tracks);
 }
 
 void MusicLibrary::tracksLoaded(const TrackList& tracks)

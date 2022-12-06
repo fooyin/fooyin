@@ -82,6 +82,7 @@ public:
     void getItemsByFilter(Filters::FilterType type, SortOrder order);
     void getAllTracks();
     void getFilteredTracks();
+    void updateTracks(const TrackPtrList& tracks);
 
     void changeFilter(int index);
     void resetFilter(Filters::FilterType type);
@@ -102,6 +103,7 @@ signals:
     void loadAllItems(Filters::FilterType type, Library::SortOrder order);
     void loadItemsByFilter(Filters::FilterType type, ActiveFilters filters, QString search, Library::SortOrder order);
     void loadFilteredTracks(TrackPtrList tracks, ActiveFilters filters, QString search);
+    void updateSaveTracks(TrackPtrList tracks);
 
 protected:
     void tracksLoaded(const TrackList& tracks);
