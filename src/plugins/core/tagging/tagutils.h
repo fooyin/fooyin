@@ -68,6 +68,7 @@ FileTags tagsFromFile(const TagLib::FileRef& fileRef);
 QPixmap coverFromFile(const TagLib::FileRef& fileRef);
 
 QString convertString(const TagLib::String& str);
+TagLib::String convertString(const QString& string);
 TagLib::StringList convertStringList(const QStringList& str);
 QStringList convertStringList(const TagLib::StringList& str);
 }; // namespace Tagging
