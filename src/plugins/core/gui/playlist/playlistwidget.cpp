@@ -24,12 +24,11 @@
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
+#include "core/settings/settings.h"
 #include "playlistdelegate.h"
 #include "playlistmodel.h"
 #include "playlistview.h"
-#include "core/settings/settings.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QAction>
 #include <QActionGroup>
 #include <QHBoxLayout>
@@ -37,6 +36,7 @@
 #include <QKeyEvent>
 #include <QMenu>
 #include <QScrollBar>
+#include <pluginsystem/pluginmanager.h>
 
 namespace Library {
 PlaylistWidget::PlaylistWidget(QWidget* parent)
@@ -78,8 +78,8 @@ void PlaylistWidget::setup()
     }
     else {
         m_noLibrary->hide();
-        m_layout->addWidget(m_playlist);
-        m_playlist->show();
+    m_layout->addWidget(m_playlist);
+    m_playlist->show();
     }
 }
 
