@@ -234,8 +234,8 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
     for(auto& track : tracks) {
         if(track.id() >= 0) {
             updateTrack(track);
-            updateTrackArtists(track.id(), track.artistIds());
-            updateTrackGenres(track.id(), track.genreIds());
+            //            updateTrackArtists(track.id(), track.artistIds());
+            //            updateTrackGenres(track.id(), track.genreIds());
         }
         else {
             int id = insertTrack(track);
@@ -720,7 +720,10 @@ bool LibraryDatabase::updateTrack(const Track& track)
     const auto q = module()->update("Tracks", bindings, {"TrackID", track.id()},
                                     QString("Cannot update track %1").arg(track.filepath()));
 
-    return (!q.hasError());
+    if(!q.hasError()) {
+        return (updateTrackArtists(track.id(), track.artistIds()) && updateTrackGenres(track.id(), track.genreIds()));
+    }
+    return false;
 }
 
 bool LibraryDatabase::deleteTrack(int id)
