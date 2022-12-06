@@ -21,6 +21,7 @@
 
 #include "core/database/database.h"
 #include "core/database/librarydatabase.h"
+#include "core/tagging/tags.h"
 
 #include <utils/helpers.h>
 
@@ -133,6 +134,16 @@ void LibraryDatabaseManager::filterTracks(const TrackPtrList& tracks, const Acti
         }
     }
     emit tracksFiltered(filteredTracks);
+}
+
+void LibraryDatabaseManager::updateTracks(const TrackPtrList& tracks)
+{
+    for(const auto& track : tracks) {
+        bool saved = Tagging::writeMetaData(*track);
+        if(saved) {
+            m_libraryDatabase->updateTrack(*track);
+        }
+    }
 }
 
 void LibraryDatabaseManager::stopThread() { }

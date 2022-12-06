@@ -41,6 +41,7 @@ public:
     void getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
                           ::Library::SortOrder order);
     void filterTracks(const TrackPtrList& tracks, const ActiveFilters& filters, const QString& search);
+    void updateTracks(const TrackPtrList& tracks);
 
     void stopThread() override;
 
