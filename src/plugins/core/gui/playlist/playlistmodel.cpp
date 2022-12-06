@@ -26,11 +26,11 @@
 #include "core/library/models/track.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
-#include "playlistitem.h"
 #include "core/settings/settings.h"
+#include "playlistitem.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QPalette>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 
 namespace Library {
@@ -63,7 +63,7 @@ void PlaylistModel::setupModelData()
             for(int i = 0; i < tracks.size(); ++i) {
                 Track* track = tracks.at(i);
                 if(track && track->isEnabled()) {
-                    const QString trackKey = QString::number(track->id()) + track->title();
+                    const QString trackKey = track->album() + QString::number(track->id()) + track->title();
                     PlaylistItem* parent = iterateTrack(track, discHeaders, splitDiscs);
 
                     if(parent) {
@@ -382,6 +382,7 @@ QModelIndex PlaylistModel::parent(const QModelIndex& index) const
 int PlaylistModel::rowCount(const QModelIndex& parent) const
 {
     PlaylistItem* parentItem;
+
     if(parent.column() > 0) {
         return 0;
     }
