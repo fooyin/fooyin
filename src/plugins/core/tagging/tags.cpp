@@ -86,20 +86,41 @@ bool readMetaData(Track& track, Quality quality)
     const QStringList baseTags{"TITLE", "ARTIST",     "ALBUMARTIST", "GENRE",   "TRACKNUMBER",
                                "ALBUM", "DISCNUMBER", "DATE",        "COMMENT", "LYRICS"};
 
-    const auto artists = convertStringList(parsedTag.map["ARTIST"]);
-    const auto album = convertString(parsedTag.tag->album());
-    const auto albumArtist = convertString(parsedTag.map["ALBUMARTIST"].toString());
-    const auto title = convertString(parsedTag.tag->title());
-    const auto genres = convertStringList(parsedTag.map["GENRE"]);
-    const auto comment = convertString(parsedTag.tag->comment());
-    const auto year = parsedTag.tag->year();
-    const auto trackNumber = parsedTag.tag->track();
-    const auto discData = convertString(parsedTag.map["DISCNUMBER"].toString());
-    const auto disc = discData.contains("/") ? discData.split("/")[0].toInt() : discData.toInt();
+    const auto artists = convertStringList(parsedTag.map.value("ARTIST"));
+    const auto album = convertString(parsedTag.map.value("ALBUM").toString());
+    const auto albumArtist = convertString(parsedTag.map.value("ALBUMARTIST").toString());
+    const auto title = convertString(parsedTag.map.value("TITLE").toString());
+    const auto genres = convertStringList(parsedTag.map.value("GENRE").toString());
+    const auto comment = convertString(parsedTag.map.value("COMMENT").toString());
+    const auto year = convertNumber(parsedTag.map.value("DATE").toString());
+    const auto lyrics = convertString(parsedTag.map.value("LYRICS").toString());
+
+    auto trackNum = 0;
+    auto trackTotal = 0;
+    const auto trackNumData = convertString(parsedTag.map.value("TRACKNUMBER").toString());
+
+    if(trackNumData.contains("/")) {
+        trackNum = trackNumData.split("/")[0].toInt();
+        trackTotal = trackNumData.split("/")[1].toInt();
+    }
+    else {
+        trackNum = trackNumData.toInt();
+    }
+
+    auto disc = 0;
+    auto discTotal = 0;
+    const auto discData = convertString(parsedTag.map.value("DISCNUMBER").toString());
+
+    if(discData.contains("/")) {
+        disc = discData.split("/")[0].toInt();
+        discTotal = discData.split("/")[1].toInt();
+    }
+    else {
+        disc = discData.toInt();
+    }
+
     const auto bitrate = fileRef.audioProperties()->bitrate();
     const auto sampleRate = fileRef.audioProperties()->sampleRate();
-    const auto lyrics = convertString(parsedTag.map["LYRICS"].toString());
-
     const auto length = fileRef.audioProperties()->lengthInMilliseconds();
 
     for(const auto& [tag, values] : parsedTag.map) {
@@ -118,8 +139,10 @@ bool readMetaData(Track& track, Quality quality)
     track.setDuration(length);
     track.setYear(year);
     track.setGenres(genres);
-    track.setTrackNumber(trackNumber);
+    track.setTrackNumber(trackNum);
+    track.setTrackTotal(trackTotal);
     track.setDiscNumber(disc);
+    track.setDiscTotal(discTotal);
     track.setBitrate(bitrate);
     track.setSampleRate(sampleRate);
     track.setFileSize(fileInfo.size());
@@ -152,9 +175,11 @@ bool writeMetaData(const Track& track)
     const auto artist = convertStringList(track.artists());
     const auto albumArtist = convertString(track.albumArtist());
     const auto title = convertString(track.title());
+    const auto composer = convertString(track.composer());
+    const auto performer = convertString(track.performer());
     const auto genre = convertStringList(track.genres());
-    const auto year = track.year();
-    const auto trackNumber = track.trackNumber();
+    const auto year = convertString(track.year());
+    const auto trackNumber = convertString(track.trackNumber());
     const auto comment = convertString(track.comment());
 
     auto parsedTag = tagsFromFile(fileRef);
@@ -163,14 +188,16 @@ bool writeMetaData(const Track& track)
         return false;
     }
 
-    parsedTag.tag->setAlbum(album);
+    parsedTag.map.replace("ALBUM", album);
     parsedTag.map.replace("ARTIST", artist);
     parsedTag.map.replace("ALBUMARTIST", albumArtist);
-    parsedTag.tag->setTitle(title);
+    parsedTag.map.replace("TITLE", title);
     parsedTag.map.replace("GENRE", genre);
-    parsedTag.tag->setYear(year);
-    parsedTag.tag->setTrack(trackNumber);
-    parsedTag.tag->setComment(comment);
+    parsedTag.map.replace("DATE", year);
+    parsedTag.map.replace("TRACKNUMBER", trackNumber);
+    parsedTag.map.replace("COMPOSER", composer);
+    parsedTag.map.replace("PERFORMER", performer);
+    parsedTag.map.replace("COMMENT", comment);
 
     fileRef.file()->setProperties(parsedTag.map);
     return fileRef.save();
