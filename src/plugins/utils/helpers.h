@@ -73,14 +73,14 @@ template <typename C, typename S, typename D>
 constexpr void joinSkipEmpty(C c, S& s, D d)
 {
     int j{0};
-    for(int i = 0; i < c.size(); ++i) {
-        if(c.at(i).isEmpty()) {
+    for(const auto& str : c) {
+        if(str.isEmpty()) {
             continue;
         }
         if(j) {
             s.append(d);
         }
-        s.append(c.at(i));
+        s.append(str);
         ++j;
     }
 }
