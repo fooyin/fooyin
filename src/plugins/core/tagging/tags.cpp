@@ -95,6 +95,7 @@ bool readMetaData(Track& track, Quality quality)
     const auto year = convertNumber(parsedTag.map.value("DATE").toString());
     const auto lyrics = convertString(parsedTag.map.value("LYRICS").toString());
 
+    // TODO: Check for TRACKTOTAL and DISCTOTAL tags when X/Y not standard i.e. FLAC
     auto trackNum = 0;
     auto trackTotal = 0;
     const auto trackNumData = convertString(parsedTag.map.value("TRACKNUMBER").toString());
@@ -179,8 +180,22 @@ bool writeMetaData(const Track& track)
     const auto performer = convertString(track.performer());
     const auto genre = convertStringList(track.genres());
     const auto year = convertString(track.year());
-    const auto trackNumber = convertString(track.trackNumber());
     const auto comment = convertString(track.comment());
+
+    // TODO: Add option for saving to TRACKTOTAL and DISCTOTAL tags when X/Y not standard i.e. FLAC
+    auto trackNumber = convertString(track.trackNumber());
+    auto disc = convertString(track.discNumber());
+
+    const auto trackTotal = track.trackTotal();
+    const auto discTotal = track.discTotal();
+
+    if(trackTotal > 0) {
+        trackNumber += "/" + convertString(trackTotal);
+    }
+
+    if(discTotal > 0) {
+        disc += "/" + convertString(discTotal);
+    }
 
     auto parsedTag = tagsFromFile(fileRef);
     parsedTag.map = fileRef.file()->properties();
@@ -195,6 +210,7 @@ bool writeMetaData(const Track& track)
     parsedTag.map.replace("GENRE", genre);
     parsedTag.map.replace("DATE", year);
     parsedTag.map.replace("TRACKNUMBER", trackNumber);
+    parsedTag.map.replace("DISCNUMBER", disc);
     parsedTag.map.replace("COMPOSER", composer);
     parsedTag.map.replace("PERFORMER", performer);
     parsedTag.map.replace("COMMENT", comment);
