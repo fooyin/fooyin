@@ -69,8 +69,8 @@ constexpr bool contains(C c, F f)
     return static_cast<bool>(it != c.end());
 }
 
-template <typename C, typename S>
-constexpr void joinSkipEmpty(C c, S& s)
+template <typename C, typename S, typename D>
+constexpr void joinSkipEmpty(C c, S& s, D d)
 {
     int j{0};
     for(int i = 0; i < c.size(); ++i) {
@@ -78,7 +78,7 @@ constexpr void joinSkipEmpty(C c, S& s)
             continue;
         }
         if(j) {
-            s.append("; ");
+            s.append(d);
         }
         s.append(c.at(i));
         ++j;
