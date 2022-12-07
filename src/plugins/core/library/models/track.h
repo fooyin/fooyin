@@ -67,8 +67,14 @@ public:
     [[nodiscard]] quint16 trackNumber() const;
     void setTrackNumber(quint16 num);
 
+    [[nodiscard]] quint16 trackTotal() const;
+    void setTrackTotal(quint16 num);
+
     [[nodiscard]] quint8 discNumber() const;
     void setDiscNumber(quint8 num);
+
+    [[nodiscard]] quint8 discTotal() const;
+    void setDiscTotal(quint8 num);
 
     [[nodiscard]] IdSet genreIds() const;
     void setGenreIds(const IdSet& ids);
@@ -76,6 +82,12 @@ public:
 
     [[nodiscard]] QStringList genres() const;
     void setGenres(const QStringList& genre);
+
+    [[nodiscard]] QString composer() const;
+    void setComposer(const QString& composer);
+
+    [[nodiscard]] QString performer() const;
+    void setPerformer(const QString& performer);
 
     [[nodiscard]] quint64 duration() const;
     void setDuration(quint64 duration);
@@ -138,9 +150,13 @@ private:
     QString m_albumArtist;
     int m_albumArtistId;
     quint16 m_trackNumber;
+    quint16 m_trackTotal;
     quint8 m_discNumber;
+    quint8 m_discTotal;
     IdSet m_genreIds;
     QStringList m_genres;
+    QString m_composer;
+    QString m_performer;
     quint64 m_duration;
     QString m_lyrics;
     QString m_comment;

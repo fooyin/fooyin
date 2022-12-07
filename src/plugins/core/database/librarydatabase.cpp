@@ -34,11 +34,15 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("FilePath"), Util::File::cleanPath(track.filepath())},
         {QStringLiteral("Title"), track.title()},
         {QStringLiteral("TrackNumber"), track.trackNumber()},
+        {QStringLiteral("TrackTotal"), track.trackTotal()},
         {QStringLiteral("AlbumArtistID"), track.albumArtistId()},
         {QStringLiteral("AlbumID"), track.albumId()},
         {QStringLiteral("CoverPath"), track.coverPath()},
         {QStringLiteral("DiscNumber"), track.discNumber()},
+        {QStringLiteral("DiscTotal"), track.discTotal()},
         {QStringLiteral("Year"), track.year()},
+        {QStringLiteral("Composer"), track.composer()},
+        {QStringLiteral("Performer"), track.performer()},
         {QStringLiteral("Lyrics"), track.lyrics()},
         {QStringLiteral("Comment"), track.comment()},
         {QStringLiteral("Duration"), track.duration()},
@@ -413,28 +417,32 @@ QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& j
         QStringLiteral("FilePath"),      // 1
         QStringLiteral("Title"),         // 2
         QStringLiteral("TrackNumber"),   // 3
-        QStringLiteral("ArtistIDs"),     // 4
-        QStringLiteral("Artists"),       // 5
-        QStringLiteral("AlbumArtistID"), // 6
-        QStringLiteral("AlbumArtist"),   // 7
-        QStringLiteral("AlbumID"),       // 8
-        QStringLiteral("Album"),         // 9
-        QStringLiteral("CoverPath"),     // 10
-        QStringLiteral("DiscNumber"),    // 11
-        QStringLiteral("Year"),          // 12
-        QStringLiteral("GenreIDs"),      // 13
-        QStringLiteral("Genres"),        // 14
-        QStringLiteral("Lyrics"),        // 15
-        QStringLiteral("Comment"),       // 16
-        QStringLiteral("Duration"),      // 17
-        QStringLiteral("PlayCount"),     // 18
-        QStringLiteral("FileSize"),      // 19
-        QStringLiteral("BitRate"),       // 20
-        QStringLiteral("SampleRate"),    // 21
-        QStringLiteral("ExtraTags"),     // 22
-        QStringLiteral("AddedDate"),     // 23
-        QStringLiteral("ModifiedDate"),  // 24
-        QStringLiteral("LibraryID"),     // 25
+        QStringLiteral("TrackTotal"),    // 4
+        QStringLiteral("ArtistIDs"),     // 5
+        QStringLiteral("Artists"),       // 6
+        QStringLiteral("AlbumArtistID"), // 7
+        QStringLiteral("AlbumArtist"),   // 8
+        QStringLiteral("AlbumID"),       // 9
+        QStringLiteral("Album"),         // 10
+        QStringLiteral("CoverPath"),     // 11
+        QStringLiteral("DiscNumber"),    // 12
+        QStringLiteral("DiscTotal"),     // 13
+        QStringLiteral("Year"),          // 14
+        QStringLiteral("Composer"),      // 15
+        QStringLiteral("Performer"),     // 16
+        QStringLiteral("GenreIDs"),      // 17
+        QStringLiteral("Genres"),        // 18
+        QStringLiteral("Lyrics"),        // 19
+        QStringLiteral("Comment"),       // 20
+        QStringLiteral("Duration"),      // 21
+        QStringLiteral("PlayCount"),     // 22
+        QStringLiteral("FileSize"),      // 23
+        QStringLiteral("BitRate"),       // 24
+        QStringLiteral("SampleRate"),    // 25
+        QStringLiteral("ExtraTags"),     // 26
+        QStringLiteral("AddedDate"),     // 27
+        QStringLiteral("ModifiedDate"),  // 28
+        QStringLiteral("LibraryID"),     // 29
     };
 
     const auto joinedFields = fields.join(", ");
@@ -582,28 +590,32 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setId(q.value(0).toInt());
         track.setTitle(q.value(2).toString());
         track.setTrackNumber(q.value(3).toInt());
-        const QStringList artistIds = q.value(4).toString().split("|");
-        track.setArtists(q.value(5).toString().split("|", Qt::SkipEmptyParts));
-        track.setAlbumArtistId(q.value(6).toInt());
-        track.setAlbumArtist(q.value(7).toString());
-        track.setAlbumId(q.value(8).toInt());
-        track.setAlbum(q.value(9).toString());
-        track.setCoverPath(q.value(10).toString());
-        track.setDiscNumber(q.value(11).toInt());
-        track.setYear(q.value(12).toInt());
-        const QStringList genreIds = q.value(13).toString().split("|");
-        track.setGenres(q.value(14).toString().split("|", Qt::SkipEmptyParts));
-        track.setLyrics(q.value(15).toString());
-        track.setComment(q.value(16).toString());
-        track.setDuration(q.value(17).value<quint64>());
-        track.setPlayCount(q.value(18).toInt());
-        track.setFileSize(q.value(19).toInt());
-        track.setBitrate(q.value(20).toInt());
-        track.setSampleRate(q.value(21).toInt());
-        track.jsonToExtraTags(q.value(22).toByteArray());
-        track.setAddedTime(static_cast<qint64>(q.value(23).toULongLong()));
-        track.setMTime(static_cast<qint64>(q.value(24).toULongLong()));
-        track.setLibraryId(q.value(25).toInt());
+        track.setTrackTotal(q.value(4).toInt());
+        const QStringList artistIds = q.value(5).toString().split("|");
+        track.setArtists(q.value(6).toString().split("|", Qt::SkipEmptyParts));
+        track.setAlbumArtistId(q.value(7).toInt());
+        track.setAlbumArtist(q.value(8).toString());
+        track.setAlbumId(q.value(9).toInt());
+        track.setAlbum(q.value(10).toString());
+        track.setCoverPath(q.value(11).toString());
+        track.setDiscNumber(q.value(12).toInt());
+        track.setDiscTotal(q.value(13).toInt());
+        track.setYear(q.value(14).toInt());
+        track.setComposer(q.value(15).toString());
+        track.setPerformer(q.value(16).toString());
+        const QStringList genreIds = q.value(17).toString().split("|");
+        track.setGenres(q.value(18).toString().split("|", Qt::SkipEmptyParts));
+        track.setLyrics(q.value(19).toString());
+        track.setComment(q.value(20).toString());
+        track.setDuration(q.value(21).value<quint64>());
+        track.setPlayCount(q.value(22).toInt());
+        track.setFileSize(q.value(23).toInt());
+        track.setBitrate(q.value(24).toInt());
+        track.setSampleRate(q.value(25).toInt());
+        track.jsonToExtraTags(q.value(26).toByteArray());
+        track.setAddedTime(static_cast<qint64>(q.value(27).toULongLong()));
+        track.setMTime(static_cast<qint64>(q.value(28).toULongLong()));
+        track.setLibraryId(q.value(29).toInt());
 
         for(const auto& id : artistIds) {
             track.addArtistId(id.toInt());

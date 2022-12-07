@@ -19,16 +19,16 @@
 
 #include "database.h"
 
+#include "core/settings/settings.h"
 #include "library.h"
 #include "librarydatabase.h"
 #include "playlistdatabase.h"
 #include "query.h"
-#include "core/settings/settings.h"
 #include "version.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QFile>
 #include <QSqlQuery>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/paths.h>
 #include <utils/utils.h>
 
@@ -153,11 +153,15 @@ bool Database::createDatabase()
                                "    FilePath TEXT UNIQUE NOT NULL,"
                                "    Title TEXT,"
                                "    TrackNumber INTEGER,"
+                               "    TrackTotal INTEGER,"
                                "    AlbumArtistID INTEGER REFERENCES Artists,"
                                "    AlbumID INTEGER REFERENCES Albums,"
                                "    CoverPath TEXT,"
                                "    DiscNumber INTEGER,"
+                               "    DiscTotal INTEGER,"
                                "    Year INTEGER,"
+                               "    Composer TEXT,"
+                               "    Performer TEXT,"
                                "    Lyrics TEXT,"
                                "    Comment TEXT,"
                                "    Duration INTEGER DEFAULT 0,"
@@ -176,6 +180,7 @@ bool Database::createDatabase()
                                   "           Tracks.FilePath,"
                                   "           Tracks.Title,"
                                   "           Tracks.TrackNumber,"
+                                  "           Tracks.TrackTotal,"
                                   "           TrackArtists.ArtistIDs AS ArtistIDs,"
                                   "           TrackArtists.Artists AS Artists,"
                                   "           Tracks.AlbumArtistID,"
@@ -184,7 +189,10 @@ bool Database::createDatabase()
                                   "           Albums.Title AS Album,"
                                   "           Tracks.CoverPath,"
                                   "           Tracks.DiscNumber,"
+                                  "           Tracks.DiscTotal,"
                                   "           Tracks.Year,"
+                                  "           Tracks.Composer,"
+                                  "           Tracks.Performer,"
                                   "           TrackGenres.GenreIDs AS GenreIDs,"
                                   "           TrackGenres.Genres AS Genres,"
                                   "           Tracks.Lyrics,"

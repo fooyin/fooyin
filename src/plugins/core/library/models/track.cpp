@@ -33,7 +33,9 @@ Track::Track(QString filepath)
     , m_albumId()
     , m_albumArtistId()
     , m_trackNumber(0)
+    , m_trackTotal(0)
     , m_discNumber(0)
+    , m_discTotal(0)
     , m_duration(0)
     , m_bitrate(0)
     , m_sampleRate(0)
@@ -155,6 +157,16 @@ void Track::setTrackNumber(quint16 num)
     m_trackNumber = num;
 }
 
+quint16 Track::trackTotal() const
+{
+    return m_trackTotal;
+}
+
+void Track::setTrackTotal(quint16 num)
+{
+    m_trackTotal = num;
+}
+
 quint8 Track::discNumber() const
 {
     return m_discNumber;
@@ -163,6 +175,16 @@ quint8 Track::discNumber() const
 void Track::setDiscNumber(quint8 num)
 {
     m_discNumber = num;
+}
+
+quint8 Track::discTotal() const
+{
+    return m_discTotal;
+}
+
+void Track::setDiscTotal(quint8 num)
+{
+    m_discTotal = num;
 }
 
 IdSet Track::genreIds() const
@@ -188,6 +210,26 @@ QStringList Track::genres() const
 void Track::setGenres(const QStringList& genre)
 {
     m_genres = genre;
+}
+
+QString Track::composer() const
+{
+    return m_composer;
+}
+
+void Track::setComposer(const QString& composer)
+{
+    m_composer = composer;
+}
+
+QString Track::performer() const
+{
+    return m_performer;
+}
+
+void Track::setPerformer(const QString& performer)
+{
+    m_performer = performer;
 }
 
 quint64 Track::duration() const
