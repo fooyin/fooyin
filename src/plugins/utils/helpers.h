@@ -68,3 +68,19 @@ constexpr bool contains(C c, F f)
     auto it = std::find(c.begin(), c.end(), f);
     return static_cast<bool>(it != c.end());
 }
+
+template <typename C, typename S>
+constexpr void joinSkipEmpty(C c, S& s)
+{
+    int j{0};
+    for(int i = 0; i < c.size(); ++i) {
+        if(c.at(i).isEmpty()) {
+            continue;
+        }
+        if(j) {
+            s.append("; ");
+        }
+        s.append(c.at(i));
+        ++j;
+    }
+}
