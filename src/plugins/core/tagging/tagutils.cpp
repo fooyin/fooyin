@@ -186,6 +186,17 @@ QString convertString(const TagLib::String& str)
     return QString::fromStdString(str.to8Bit(true));
 }
 
+TagLib::String convertString(int num)
+{
+    auto str = QString::number(num);
+    return convertString(str);
+}
+
+int convertNumber(const TagLib::String& num)
+{
+    return convertString(num).toInt();
+}
+
 TagLib::StringList convertStringList(const QStringList& str)
 {
     TagLib::StringList list;
