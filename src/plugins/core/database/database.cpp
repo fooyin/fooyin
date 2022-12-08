@@ -247,14 +247,25 @@ bool Database::createDatabase()
                                   "    Name TEXT NOT NULL UNIQUE,"
                                   "    Path TEXT NOT NULL UNIQUE);");
 
+    checkInsertTable("Playlists", "CREATE TABLE Playlists ("
+                                  "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                  "    Name TEXT NOT NULL UNIQUE);");
+
+    checkInsertTable("PlaylistTracks", "CREATE TABLE PlaylistTracks ("
+                                       "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
+                                       "    TrackID  INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
+                                       "    PRIMARY KEY (PlaylistID, TrackID));");
+
     checkInsertIndex("AlbumIndex", "CREATE INDEX AlbumIndex ON Albums(AlbumID, Title, Year, ArtistID);");
     checkInsertIndex("GenreIndex", "CREATE INDEX GenreIndex ON Genres(GenreID,Name);");
     checkInsertIndex("TrackIndex", "CREATE INDEX TrackIndex ON Tracks(Year,AlbumArtistID,AlbumID,TrackID);");
+    checkInsertIndex("PlaylistIndex", "CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);");
     checkInsertIndex("TrackViewIndex", "CREATE INDEX TrackViewIndex ON Tracks(TrackID,AlbumID,AlbumArtistID);");
     checkInsertIndex("TrackAlbumIndex", "CREATE INDEX TrackAlbumIndex ON Tracks(AlbumID,DiscNumber,Duration);");
     checkInsertIndex("TrackGenresIndex", "CREATE INDEX TrackGenresIndex ON TrackGenres(TrackID,GenreID);");
     checkInsertIndex("GenresTrackIndex", "CREATE INDEX GenresTrackIndex ON TrackGenres(GenreID,TrackID);");
     checkInsertIndex("TrackArtistsIndex", "CREATE INDEX TrackArtistsIndex ON TrackArtists(TrackID,ArtistID);");
+    checkInsertIndex("PlaylistTracksIndex", "CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackID);");
     checkInsertIndex("ArtistsTrackIndex", "CREATE INDEX ArtistsTrackIndex ON TrackArtists(ArtistID,TrackID);");
 
     return true;
