@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <QListView>
 #include <QTreeView>
 
 namespace Library {
