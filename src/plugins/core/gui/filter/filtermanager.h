@@ -19,8 +19,9 @@
 
 #pragma once
 
+#include "core/typedefs.h"
+
 #include <QList>
-#include <utils/typedefs.h>
 
 namespace Library {
 class FilterWidget;

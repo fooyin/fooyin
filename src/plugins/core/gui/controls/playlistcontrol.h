@@ -19,8 +19,9 @@
 
 #pragma once
 
+#include "core/typedefs.h"
+
 #include <QWidget>
-#include <utils/typedefs.h>
 
 class PlaylistControl : public QWidget
 {

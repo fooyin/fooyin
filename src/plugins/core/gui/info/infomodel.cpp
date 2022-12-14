@@ -20,9 +20,9 @@
 #include "infomodel.h"
 
 #include "core/library/models/track.h"
+#include "core/typedefs.h"
 #include "infoitem.h"
 
-#include <utils/typedefs.h>
 #include <utils/utils.h>
 
 InfoModel::InfoModel(QObject* parent)

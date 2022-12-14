@@ -19,11 +19,11 @@
 
 #pragma once
 
+#include "core/typedefs.h"
 #include "libraryitem.h"
 
 #include <QDateTime>
 #include <QSet>
-#include <utils/typedefs.h>
 
 using ExtraTags = QMap<QString, QList<QString>>;
 

@@ -20,9 +20,9 @@
 #include "itemdelegate.h"
 
 #include "core/gui/info/infoitem.h"
+#include "core/typedefs.h"
 
 #include <QPainter>
-#include <utils/typedefs.h>
 
 ItemDelegate::ItemDelegate(QObject* parent)
     : QStyledItemDelegate(parent)

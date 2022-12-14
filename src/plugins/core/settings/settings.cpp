@@ -19,14 +19,14 @@
 
 #include "settings.h"
 
+#include "core/typedefs.h"
 #include "version.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QSettings>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 #include <utils/helpers.h>
 #include <utils/paths.h>
-#include <utils/typedefs.h>
 #include <utils/utils.h>
 
 Settings::Settings(QObject* parent)

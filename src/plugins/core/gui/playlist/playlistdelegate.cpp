@@ -20,9 +20,9 @@
 #include "playlistdelegate.h"
 
 #include "core/gui/playlist/playlistitem.h"
+#include "core/typedefs.h"
 
 #include <QPainter>
-#include <utils/typedefs.h>
 
 PlaylistDelegate::PlaylistDelegate(QObject* parent)
     : QStyledItemDelegate(parent)

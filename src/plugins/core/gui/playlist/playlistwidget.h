@@ -20,9 +20,9 @@
 #pragma once
 
 #include "core/gui/widgets/widget.h"
+#include "core/typedefs.h"
 
 #include <QItemSelection>
-#include <utils/typedefs.h>
 
 class QHBoxLayout;
 class QPushButton;

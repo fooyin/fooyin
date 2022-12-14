@@ -20,10 +20,10 @@
 #pragma once
 
 #include "core/gui/widgets/widget.h"
+#include "core/typedefs.h"
 #include "gui/filter/filterfwd.h"
 
 #include <QItemSelection>
-#include <utils/typedefs.h>
 
 class Settings;
 class PlayerManager;

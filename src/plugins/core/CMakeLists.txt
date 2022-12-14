@@ -5,6 +5,7 @@ fooyin_add_plugin(Core
     SOURCES
         coreplugin.h
         coreplugin.cpp
+        typedefs.h
 
         app/application.h
         app/application.cpp

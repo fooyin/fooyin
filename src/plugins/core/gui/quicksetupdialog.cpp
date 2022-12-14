@@ -1,9 +1,10 @@
 #include "quicksetupdialog.h"
 
+#include "core/typedefs.h"
+
 #include <QListWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <utils/typedefs.h>
 
 QuickSeupDialog::QuickSeupDialog(QWidget* parent)
     : QDialog{parent}
