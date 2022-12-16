@@ -7,7 +7,6 @@ fooyin_add_plugin(Utils
         helpers.h
         paths.h
         paths.cpp
-        typedefs.h
         utils.h
         utils.cpp
 )
