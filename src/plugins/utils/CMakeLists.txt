@@ -5,6 +5,8 @@ fooyin_add_plugin(Utils
     SOURCES
         enumhelper.h
         helpers.h
+        id.h
+        id.cpp
         paths.h
         paths.cpp
         utils.h
