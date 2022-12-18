@@ -46,6 +46,7 @@ fooyin_version.h
 # Directories
 # ---------------------
 
+.cache/
 .moc/
 .obj/
 .pch/
