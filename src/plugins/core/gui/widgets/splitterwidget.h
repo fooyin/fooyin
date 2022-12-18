@@ -19,8 +19,8 @@
 
 #pragma once
 
+#include "core/gui/fywidget.h"
 #include "splitter.h"
-#include "widget.h"
 
 class WidgetProvider;
 class QHBoxLayout;

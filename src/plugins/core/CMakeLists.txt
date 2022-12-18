@@ -90,6 +90,8 @@ fooyin_add_plugin(Core
         widgets/widgetprovider.h
         widgets/widgetprovider.cpp
 
+        gui/fywidget.h
+        gui/fywidget.cpp
         gui/mainwindow.h
         gui/mainwindow.cpp
         gui/editablelayout.h
@@ -178,6 +180,4 @@ fooyin_add_plugin(Core
         gui/widgets/splitterhandle.cpp
         gui/widgets/splitterwidget.h
         gui/widgets/splitterwidget.cpp
-        gui/widgets/widget.h
-        gui/widgets/widget.cpp
 )

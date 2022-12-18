@@ -17,7 +17,7 @@
  *
  */
 
-#include "widget.h"
+#include "fywidget.h"
 
 #include <QJsonArray>
 

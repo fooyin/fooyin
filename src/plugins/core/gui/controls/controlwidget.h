@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/gui/widgets/widget.h"
+#include "core/gui/fywidget.h"
 
 #include <QWidget>
 

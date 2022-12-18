@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "widget.h"
+#include "core/gui/fywidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>

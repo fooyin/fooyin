@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "widget.h"
+#include "core/gui/fywidget.h"
 
 namespace Widgets {
 class Spacer : public Widget
