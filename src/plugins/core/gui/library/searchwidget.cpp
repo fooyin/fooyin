@@ -44,7 +44,7 @@ struct SearchWidget::Private
 };
 
 SearchWidget::SearchWidget(QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
     , p(std::make_unique<Private>())
 {
     setObjectName("Search Bar");

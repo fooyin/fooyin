@@ -24,15 +24,15 @@
 
 class QMenu;
 
-class Widget : public QWidget
+class FyWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Widget(QWidget* parent);
-    ~Widget() override;
+    explicit FyWidget(QWidget* parent);
+    ~FyWidget() override;
 
-    Widget* findParent();
+    FyWidget* findParent();
 
     [[nodiscard]] virtual QString name() const = 0;
     virtual void addWidgetMenu(QMenu* menu, QAction* action);

@@ -27,7 +27,7 @@
 
 class WidgetProvider;
 
-class Dummy : public Widget
+class Dummy : public FyWidget
 {
     Q_OBJECT
 

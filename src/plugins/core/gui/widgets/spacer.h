@@ -22,7 +22,7 @@
 #include "core/gui/fywidget.h"
 
 namespace Widgets {
-class Spacer : public Widget
+class Spacer : public FyWidget
 {
 public:
     explicit Spacer(QWidget* parent = nullptr);

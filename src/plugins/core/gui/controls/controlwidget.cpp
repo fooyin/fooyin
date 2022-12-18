@@ -47,7 +47,7 @@ struct ControlWidget::Private
 };
 
 ControlWidget::ControlWidget(QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
     , p(std::make_unique<Private>())
 {
     setObjectName("Control Bar");

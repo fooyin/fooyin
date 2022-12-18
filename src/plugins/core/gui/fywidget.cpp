@@ -21,33 +21,33 @@
 
 #include <QJsonArray>
 
-Widget::Widget(QWidget* parent)
+FyWidget::FyWidget(QWidget* parent)
     : QWidget(parent)
 { }
 
-Widget::~Widget() = default;
+FyWidget::~FyWidget() = default;
 
-Widget* Widget::findParent()
+FyWidget* FyWidget::findParent()
 {
     QWidget* parent = parentWidget();
-    while(parent && !qobject_cast<Widget*>(parent)) {
+    while(parent && !qobject_cast<FyWidget*>(parent)) {
         parent = parent->parentWidget();
     }
-    return qobject_cast<Widget*>(parent);
+    return qobject_cast<FyWidget*>(parent);
 }
 
-void Widget::addWidgetMenu(QMenu* menu, QAction* action)
+void FyWidget::addWidgetMenu(QMenu* menu, QAction* action)
 {
     Q_UNUSED(menu)
     Q_UNUSED(action)
 }
 
-void Widget::layoutEditingMenu(QMenu* menu)
+void FyWidget::layoutEditingMenu(QMenu* menu)
 {
     Q_UNUSED(menu)
 }
 
-void Widget::saveLayout(QJsonArray& array)
+void FyWidget::saveLayout(QJsonArray& array)
 {
     array.append(name());
 }

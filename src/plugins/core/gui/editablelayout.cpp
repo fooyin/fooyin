@@ -37,7 +37,7 @@
 #include <utils/enumhelper.h>
 
 namespace {
-void addParentContext(Widget* widget, QMenu* menu)
+void addParentContext(FyWidget* widget, QMenu* menu)
 {
     auto* parent = qobject_cast<SplitterWidget*>(widget->findParent());
 
@@ -109,16 +109,16 @@ void EditableLayout::changeLayout(const QByteArray& layout)
 
 EditableLayout::~EditableLayout() = default;
 
-Widget* EditableLayout::splitterChild(QWidget* widget)
+FyWidget* EditableLayout::splitterChild(QWidget* widget)
 {
     QWidget* child = widget;
 
-    while(!qobject_cast<Widget*>(child) || qobject_cast<Dummy*>(child)) {
+    while(!qobject_cast<FyWidget*>(child) || qobject_cast<Dummy*>(child)) {
         child = child->parentWidget();
     }
 
     if(child) {
-        return qobject_cast<Widget*>(child);
+        return qobject_cast<FyWidget*>(child);
     }
 
     return {};
@@ -136,7 +136,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
             m_menu->clear();
 
             QWidget* widget = childAt(mouseEvent->pos());
-            Widget* child = splitterChild(widget);
+            FyWidget* child = splitterChild(widget);
 
             if(child) {
                 m_menu->addAction(new MenuHeaderAction(child->objectName(), m_menu));
@@ -153,7 +153,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
     return QWidget::eventFilter(watched, event);
 }
 
-QRect EditableLayout::widgetGeometry(Widget* widget)
+QRect EditableLayout::widgetGeometry(FyWidget* widget)
 {
     const int w = widget->width();
     const int h = widget->height();
@@ -168,7 +168,7 @@ QRect EditableLayout::widgetGeometry(Widget* widget)
     return {x, y, w, h};
 }
 
-void EditableLayout::showOverlay(Widget* widget)
+void EditableLayout::showOverlay(FyWidget* widget)
 {
     m_overlay->setGeometry(widgetGeometry(widget));
     m_overlay->raise();

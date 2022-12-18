@@ -40,7 +40,7 @@
 
 namespace Library {
 PlaylistWidget::PlaylistWidget(QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_libraryManager(PluginSystem::object<Library::LibraryManager>())
     , m_library(PluginSystem::object<Library::MusicLibrary>())

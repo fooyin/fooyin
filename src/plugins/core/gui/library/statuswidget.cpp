@@ -46,7 +46,7 @@ struct StatusWidget::Private
 };
 
 StatusWidget::StatusWidget(QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
     , p(std::make_unique<Private>())
 {
     setObjectName("Status Bar");

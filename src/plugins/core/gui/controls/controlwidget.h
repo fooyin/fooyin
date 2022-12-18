@@ -25,7 +25,7 @@
 
 class Track;
 
-class ControlWidget : public Widget
+class ControlWidget : public FyWidget
 {
     Q_OBJECT
 

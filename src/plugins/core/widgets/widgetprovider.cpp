@@ -68,14 +68,14 @@ WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::LibraryMan
 
 WidgetProvider::~WidgetProvider() = default;
 
-Widget* WidgetProvider::createWidget(const QString& widget, SplitterWidget* splitter)
+FyWidget* WidgetProvider::createWidget(const QString& widget, SplitterWidget* splitter)
 {
     auto* createdWidget = p->widgetFactory->make(widget);
     splitter->addWidget(createdWidget);
     return createdWidget;
 }
 
-Widget* WidgetProvider::createFilter(Filters::FilterType filterType, SplitterWidget* splitter)
+FyWidget* WidgetProvider::createFilter(Filters::FilterType filterType, SplitterWidget* splitter)
 {
     const int index = static_cast<int>(p->filters.size());
     auto* filter = qobject_cast<Library::FilterWidget*>(createWidget(EnumHelper::toString(filterType), splitter));
@@ -153,7 +153,7 @@ void WidgetProvider::registerWidgets()
 
 // void WidgetProvider::addWidgetMenu(QMenu* menu, SplitterWidget* splitter)
 //{
-//     auto* widgetMenu = new QMenu("Widget", menu);
+//     auto* widgetMenu = new QMenu("FyWidget", menu);
 
 //    //    addFilterMenu(widgetMenu, splitter);
 

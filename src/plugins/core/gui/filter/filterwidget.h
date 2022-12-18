@@ -35,7 +35,7 @@ class FilterView;
 class FilterModel;
 class MusicLibrary;
 
-class FilterWidget : public Widget
+class FilterWidget : public FyWidget
 {
     Q_OBJECT
 

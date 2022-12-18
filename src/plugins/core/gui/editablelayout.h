@@ -26,7 +26,7 @@ class QHBoxLayout;
 class Overlay;
 class SplitterWidget;
 class WidgetProvider;
-class Widget;
+class FyWidget;
 class Settings;
 
 class EditableLayout : public QWidget
@@ -39,7 +39,7 @@ public:
 
     void changeLayout(const QByteArray& layout);
 
-    static Widget* splitterChild(QWidget* widget);
+    static FyWidget* splitterChild(QWidget* widget);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
@@ -47,8 +47,8 @@ public:
     bool loadLayout(const QByteArray& layout);
     bool loadLayout();
 
-    static QRect widgetGeometry(Widget* widget);
-    void showOverlay(Widget* widget);
+    static QRect widgetGeometry(FyWidget* widget);
+    void showOverlay(FyWidget* widget);
     void hideOverlay();
 
 private:

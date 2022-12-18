@@ -37,7 +37,7 @@
 
 namespace Library {
 FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_type(type)
     , m_index(0)

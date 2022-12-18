@@ -32,7 +32,7 @@
 #include <pluginsystem/pluginmanager.h>
 
 InfoWidget::InfoWidget(QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
     , m_settings(PluginSystem::object<Settings>())
     , m_playerManager(PluginSystem::object<PlayerManager>())
     , m_library(PluginSystem::object<Library::MusicLibrary>())

@@ -24,7 +24,7 @@
 
 #include <QWidget>
 
-class StatusWidget : public Widget
+class StatusWidget : public FyWidget
 {
     Q_OBJECT
 

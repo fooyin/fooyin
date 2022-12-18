@@ -21,7 +21,7 @@
 
 #include <QSplitter>
 
-class Widget;
+class FyWidget;
 
 class Splitter : public QSplitter
 {

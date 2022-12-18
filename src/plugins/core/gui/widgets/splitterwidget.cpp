@@ -29,7 +29,7 @@
 #include <utils/enumhelper.h>
 
 SplitterWidget::SplitterWidget(QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_splitter(new Splitter(Qt::Vertical))
     , m_widgetProvider(PluginSystem::object<WidgetProvider>())
@@ -77,7 +77,7 @@ bool SplitterWidget::hasChildren()
 
 void SplitterWidget::addWidget(QWidget* newWidget)
 {
-    auto* widget = qobject_cast<Widget*>(newWidget);
+    auto* widget = qobject_cast<FyWidget*>(newWidget);
     if(!widget) {
         return;
     }
@@ -112,7 +112,7 @@ int SplitterWidget::findIndex(QWidget* widgetToFind)
     return -1;
 }
 
-QList<Widget*> SplitterWidget::children()
+QList<FyWidget*> SplitterWidget::children()
 {
     return m_children;
 }

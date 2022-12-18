@@ -26,7 +26,7 @@ class WidgetProvider;
 class QHBoxLayout;
 class Dummy;
 
-class SplitterWidget : public Widget
+class SplitterWidget : public FyWidget
 {
     Q_OBJECT
 
@@ -47,7 +47,7 @@ public:
     void removeWidget(QWidget* widget);
 
     int findIndex(QWidget* widgetToFind);
-    QList<Widget*> children();
+    QList<FyWidget*> children();
 
     [[nodiscard]] QString name() const override;
     void layoutEditingMenu(QMenu* menu) override;
@@ -58,7 +58,7 @@ public:
 private:
     QHBoxLayout* m_layout;
     Splitter* m_splitter;
-    QList<Widget*> m_children;
+    QList<FyWidget*> m_children;
     WidgetProvider* m_widgetProvider;
     Dummy* m_dummy;
 };

@@ -21,7 +21,7 @@
 
 namespace Widgets {
 Spacer::Spacer(QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
 {
     setObjectName(Spacer::name());
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);

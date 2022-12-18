@@ -36,7 +36,7 @@ class PlaylistView;
 class LibraryManager;
 class MusicLibrary;
 
-class PlaylistWidget : public Widget
+class PlaylistWidget : public FyWidget
 {
     Q_OBJECT
 

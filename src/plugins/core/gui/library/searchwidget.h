@@ -23,7 +23,7 @@
 
 class Splitter;
 
-class SearchWidget : public Widget
+class SearchWidget : public FyWidget
 {
     Q_OBJECT
 

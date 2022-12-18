@@ -20,7 +20,7 @@
 #include "dummy.h"
 
 Dummy::Dummy(WidgetProvider* widgetProvider, QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_label(new QLabel(this))
 {

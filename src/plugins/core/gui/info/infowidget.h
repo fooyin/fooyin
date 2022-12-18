@@ -34,7 +34,7 @@ class PlayerManager;
 class Track;
 class Settings;
 
-class InfoWidget : public Widget
+class InfoWidget : public FyWidget
 {
 public:
     explicit InfoWidget(QWidget* parent = nullptr);

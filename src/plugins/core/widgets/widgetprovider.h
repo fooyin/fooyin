@@ -31,7 +31,7 @@ class MusicLibrary;
 class PlayerManager;
 class SettingsDialog;
 class SplitterWidget;
-class Widget;
+class FyWidget;
 class QMenu;
 
 class WidgetProvider : public QObject
@@ -43,9 +43,9 @@ public:
                    Library::MusicLibrary* library, SettingsDialog* settingsDialog, QObject* parent = nullptr);
     ~WidgetProvider() override;
 
-    Widget* createWidget(const QString& widget, SplitterWidget* splitter);
-    //    Widget* createWidget(Widgets::WidgetType type, SplitterWidget* splitter);
-    Widget* createFilter(Filters::FilterType filterType, SplitterWidget* splitter);
+    FyWidget* createWidget(const QString& widget, SplitterWidget* splitter);
+    //    FyWidget* createWidget(Widgets::WidgetType type, SplitterWidget* splitter);
+    FyWidget* createFilter(Filters::FilterType filterType, SplitterWidget* splitter);
     static SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);
 
     void addMenuActions(QMenu* menu, SplitterWidget* splitter);

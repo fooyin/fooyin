@@ -21,7 +21,7 @@
 
 #include "core/gui/fywidget.h"
 
-class CoverWidget : public Widget
+class CoverWidget : public FyWidget
 {
     Q_OBJECT
 

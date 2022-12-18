@@ -46,7 +46,7 @@ struct CoverWidget::Private
 };
 
 CoverWidget::CoverWidget(QWidget* parent)
-    : Widget(parent)
+    : FyWidget(parent)
     , p(std::make_unique<Private>())
 {
     setObjectName("Artwork");
