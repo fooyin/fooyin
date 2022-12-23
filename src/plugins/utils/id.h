@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <QList>
 #include <QMetaType>
 #include <QString>
 
@@ -27,12 +28,18 @@ class Id
 {
 public:
     Id() = default;
-    Id(const QString& name);
+    explicit Id(const QString& name);
+    Id(const char* name);
+    ~Id() = default;
 
     [[nodiscard]] bool isValid() const;
 
     [[nodiscard]] unsigned int id() const;
     [[nodiscard]] QString name() const;
+
+    Id append(const QString& str);
+    Id append(const char* str);
+    Id append(int num);
 
     bool operator==(const Id& id) const;
     bool operator!=(const Id& id) const;
