@@ -19,6 +19,7 @@
 
 #include "playercontrol.h"
 
+#include "core/constants.h"
 #include "core/gui/widgets/clickablelabel.h"
 
 #include <QHBoxLayout>
@@ -67,15 +68,15 @@ void PlayerControl::setupUi()
     p->layout->addWidget(p->play, 0, Qt::AlignVCenter);
     p->layout->addWidget(p->next, 0, Qt::AlignVCenter);
 
-    QFont font = QFont("Guifx v2 Transports", 12);
+    QFont font = QFont(Core::Constants::IconFont, 12);
     setFont(font);
 
-    p->stop->setText("3");
-    p->prev->setText("7");
-    p->play->setText("1");
-    p->next->setText("8");
+    p->stop->setText(Core::Constants::Icons::Stop);
+    p->prev->setText(Core::Constants::Icons::Prev);
+    p->play->setText(Core::Constants::Icons::Play);
+    p->next->setText(Core::Constants::Icons::Next);
 
-    Util::setMinimumWidth(p->play, "2");
+    Util::setMinimumWidth(p->play, Core::Constants::Icons::Play);
 
     setEnabled(false);
 }
@@ -85,11 +86,11 @@ void PlayerControl::stateChanged(Player::PlayState state)
     switch(state) {
         case(Player::PlayState::Stopped):
             setEnabled(false);
-            return p->play->setText("1");
+            return p->play->setText(Core::Constants::Icons::Play);
         case(Player::PlayState::Playing):
             setEnabled(true);
-            return p->play->setText("2");
+            return p->play->setText(Core::Constants::Icons::Pause);
         case(Player::PlayState::Paused):
-            return p->play->setText("1");
+            return p->play->setText(Core::Constants::Icons::Play);
     }
 }

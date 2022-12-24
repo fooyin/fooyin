@@ -87,7 +87,7 @@ void MainWindow::setupUi()
 
     resize(1280, 720);
     setMinimumSize(410, 320);
-    setWindowIcon(QIcon(Core::Constants::FooyinIcon));
+    setWindowIcon(QIcon(Core::Constants::Icons::Fooyin));
 
     QByteArray geometryArray = p->settings->value(Settings::Setting::Geometry).toString().toUtf8();
     QByteArray geometry = QByteArray::fromBase64(geometryArray);

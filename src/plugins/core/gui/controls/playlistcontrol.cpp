@@ -19,11 +19,12 @@
 
 #include "playlistcontrol.h"
 
+#include "core/constants.h"
 #include "core/gui/widgets/clickablelabel.h"
 #include "core/settings/settings.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QHBoxLayout>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 #include <utils/utils.h>
 
@@ -50,27 +51,27 @@ struct PlaylistControl::Private
             case(Player::PlayMode::Repeat): {
                 palette.setColor(repeat->foregroundRole(), palette.highlight().color());
                 repeat->setPalette(palette);
-                repeat->setText("(");
+                repeat->setText(Core::Constants::Icons::Repeat);
                 break;
             }
             case(Player::PlayMode::RepeatAll): {
                 shuffle->setPalette(def);
                 palette.setColor(repeat->foregroundRole(), palette.highlight().color());
                 repeat->setPalette(palette);
-                repeat->setText("*");
+                repeat->setText(Core::Constants::Icons::RepeatAll);
                 break;
             }
             case(Player::PlayMode::Shuffle): {
                 palette.setColor(shuffle->foregroundRole(), palette.highlight().color());
                 shuffle->setPalette(palette);
                 repeat->setPalette(def);
-                repeat->setText("*");
+                repeat->setText(Core::Constants::Icons::RepeatAll);
                 break;
             }
             case(Player::PlayMode::Default): {
                 repeat->setPalette(def);
                 shuffle->setPalette(def);
-                repeat->setText("*");
+                repeat->setText(Core::Constants::Icons::RepeatAll);
                 break;
             }
             default:
@@ -107,13 +108,13 @@ void PlaylistControl::setupUi()
     p->layout->addWidget(p->repeat, 0, Qt::AlignVCenter);
     p->layout->addWidget(p->shuffle, 0, Qt::AlignVCenter);
 
-    QFont font = QFont("Guifx v2 Transports", 12);
+    QFont font = QFont(Core::Constants::IconFont, 12);
     setFont(font);
 
-    p->repeat->setText("*");
-    p->shuffle->setText("&");
+    p->repeat->setText(Core::Constants::Icons::RepeatAll);
+    p->shuffle->setText(Core::Constants::Icons::Shuffle);
 
-    Util::setMinimumWidth(p->repeat, "(");
+    Util::setMinimumWidth(p->repeat, Core::Constants::Icons::Repeat);
 
     const auto mode
         = EnumHelper::fromString<Player::PlayMode>(p->settings->value(Settings::Setting::PlayMode).toString());

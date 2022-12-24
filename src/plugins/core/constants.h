@@ -21,7 +21,23 @@
 
 namespace Core::Constants {
 
-constexpr auto FooyinIcon = "://images/fooyin.png";
+constexpr auto IconFont = "Guifx v2 Transports";
+
+namespace Icons {
+    constexpr auto Fooyin = "://images/fooyin.png";
+    constexpr auto Play = "1";
+    constexpr auto Pause = "2";
+    constexpr auto Stop = "3";
+    constexpr auto Prev = "7";
+    constexpr auto Next = "8";
+    constexpr auto Repeat = "(";
+    constexpr auto RepeatAll = "*";
+    constexpr auto Shuffle = "&";
+    constexpr auto VolumeMax = "$";
+    constexpr auto VolumeMid = "#";
+    constexpr auto VolumeMin = "@";
+    constexpr auto VolumeMute = "!";
+}; // namespace Icons
 
 constexpr auto MenuBar = "Fooyin.MenuBar";
 

@@ -19,6 +19,7 @@
 
 #include "volumecontrol.h"
 
+#include "core/constants.h"
 #include "core/gui/widgets/clickablelabel.h"
 #include "core/gui/widgets/hovermenu.h"
 #include "core/gui/widgets/slider.h"
@@ -73,12 +74,12 @@ void VolumeControl::setupUi()
     p->volumeSlider->setMaximum(100);
     p->volumeSlider->setValue(100);
 
-    QFont font = QFont("Guifx v2 Transports", 12);
+    QFont font = QFont(Core::Constants::IconFont, 12);
     setFont(font);
 
-    p->mute->setText("$");
+    p->mute->setText(Core::Constants::Icons::VolumeMax);
 
-    Util::setMinimumWidth(p->mute, "$");
+    Util::setMinimumWidth(p->mute, Core::Constants::Icons::VolumeMax);
 }
 
 void VolumeControl::updateVolume(double value)
@@ -87,16 +88,16 @@ void VolumeControl::updateVolume(double value)
     emit volumeChanged(vol);
 
     if(vol <= 100 && vol >= 66) {
-        p->mute->setText("$");
+        p->mute->setText(Core::Constants::Icons::VolumeMax);
     }
     else if(vol < 66 && vol >= 33) {
-        p->mute->setText("#");
+        p->mute->setText(Core::Constants::Icons::VolumeMid);
     }
     else if(vol < 33 && vol > 0) {
-        p->mute->setText("@");
+        p->mute->setText(Core::Constants::Icons::VolumeMin);
     }
     else {
-        p->mute->setText("!");
+        p->mute->setText(Core::Constants::Icons::VolumeMute);
     }
 }
 

@@ -19,6 +19,7 @@
 
 #include "playlistmodel.h"
 
+#include "core/constants.h"
 #include "core/library/coverprovider.h"
 #include "core/library/models/album.h"
 #include "core/library/models/disc.h"
@@ -224,9 +225,9 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
         case(ItemRole::State): {
             switch(m_playerManager->playState()) {
                 case(Player::PlayState::Playing):
-                    return "1";
+                    return Core::Constants::Icons::Play;
                 case(Player::PlayState::Paused):
-                    return "2";
+                    return Core::Constants::Icons::Pause;
                 default:
                     break;
             }
