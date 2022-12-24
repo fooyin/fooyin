@@ -21,6 +21,8 @@
 
 namespace Core::Constants {
 
+constexpr auto FooyinIcon = "://images/fooyin.png";
+
 constexpr auto MenuBar = "Fooyin.MenuBar";
 
 namespace Menus {
