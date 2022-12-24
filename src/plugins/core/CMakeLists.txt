@@ -8,6 +8,12 @@ fooyin_add_plugin(Core
         constants.h
         typedefs.h
 
+        actions/actioncontainer.h
+        actions/actioncontainer.cpp
+        actions/actionmanager.h
+        actions/actionmanager.cpp
+
+
         app/application.h
         app/application.cpp
         app/threadmanager.h
