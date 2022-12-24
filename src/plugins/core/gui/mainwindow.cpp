@@ -31,7 +31,6 @@
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QDir>
-#include <QFontDatabase>
 #include <QMenuBar>
 #include <QTextEdit>
 #include <QTimer>
@@ -69,9 +68,7 @@ MainWindow::MainWindow(WidgetProvider* widgetProvider, SettingsDialog* settingsD
                        QWidget* parent)
     : QMainWindow(parent)
     , p(std::make_unique<Private>(widgetProvider, settingsDialog, library))
-{
-    QFontDatabase::addApplicationFont("://fonts/Guifx v2 Transports.ttf");
-}
+{ }
 
 MainWindow::~MainWindow()
 {

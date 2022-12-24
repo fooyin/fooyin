@@ -33,6 +33,7 @@
 #include "core/widgets/widgetprovider.h"
 #include "threadmanager.h"
 
+#include <QFontDatabase>
 #include <pluginsystem/pluginmanager.h>
 
 struct Application::Private
@@ -73,6 +74,8 @@ struct Application::Private
         PluginSystem::addObject(settingsDialog.get());
         PluginSystem::addObject(widgetProvider);
         PluginSystem::addObject(actionManager);
+
+        QFontDatabase::addApplicationFont("://fonts/Guifx v2 Transports.ttf");
 
         mainWindow = new MainWindow(widgetProvider, settingsDialog.get(), library);
         PluginSystem::addObject(mainWindow);
