@@ -31,12 +31,10 @@ void CorePlugin::initialise()
 {
     m_factory = new Widgets::WidgetFactory();
     PluginSystem::addObject(m_factory);
-}
-
-void CorePlugin::finalise()
-{
     m_app = new Application();
 }
+
+void CorePlugin::finalise() { }
 
 void CorePlugin::shutdown()
 {
