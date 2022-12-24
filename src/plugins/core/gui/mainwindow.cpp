@@ -19,13 +19,15 @@
 
 #include "mainwindow.h"
 
+#include "actions/actioncontainer.h"
+#include "actions/actionmanager.h"
+#include "core/constants.h"
 #include "core/gui/editablelayout.h"
 #include "core/gui/quicksetupdialog.h"
 #include "core/gui/settings/settingsdialog.h"
 #include "core/library/musiclibrary.h"
 #include "core/settings/settings.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QDir>
@@ -33,6 +35,7 @@
 #include <QMenuBar>
 #include <QTextEdit>
 #include <QTimer>
+#include <pluginsystem/pluginmanager.h>
 
 struct MainWindow::Private
 {
@@ -40,31 +43,25 @@ struct MainWindow::Private
     SettingsDialog* settingsDialog;
     Library::MusicLibrary* library;
 
-    QMenuBar* menuBar;
-
-    QMenu* menuFile;
-    QMenu* menuEdit;
-    QMenu* menuView;
-    QMenu* menuPlayback;
-    QMenu* menuLibrary;
-    QMenu* menuHelp;
-
     QAction* openSettings;
     QAction* layoutEditing;
     QAction* openQuickSetup;
     QAction* rescan;
+    QAction* quitAction;
 
     Settings* settings;
 
     QuickSeupDialog* quickSetupDialog;
 
     WidgetProvider* widgetProvider;
+    ActionManager* actionManager;
 
     Private(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, Library::MusicLibrary* library)
         : settingsDialog(settingsDialog)
         , library(library)
         , settings(PluginSystem::object<Settings>())
         , widgetProvider(widgetProvider)
+        , actionManager(PluginSystem::object<ActionManager>())
     { }
 };
 
@@ -101,60 +98,75 @@ void MainWindow::setupUi()
 
     setCentralWidget(p->mainLayout);
 
-    p->menuBar = new QMenuBar(this);
+    ActionContainer* menubar = p->actionManager->createMenuBar(Core::Constants::MenuBar);
+    setMenuBar(menubar->menuBar());
 
-    p->menuFile = new QMenu(p->menuBar);
-    p->menuEdit = new QMenu(p->menuBar);
-    p->menuView = new QMenu(p->menuBar);
-    p->menuPlayback = new QMenu(p->menuBar);
-    p->menuLibrary = new QMenu(p->menuBar);
-    p->menuHelp = new QMenu(p->menuBar);
+    menubar->appendGroup(Core::Constants::Groups::File);
+    menubar->appendGroup(Core::Constants::Groups::Edit);
+    menubar->appendGroup(Core::Constants::Groups::View);
+    menubar->appendGroup(Core::Constants::Groups::Playback);
+    menubar->appendGroup(Core::Constants::Groups::Library);
+    menubar->appendGroup(Core::Constants::Groups::Help);
 
-    p->menuBar->setGeometry(QRect(0, 0, 1290, 20));
-    setMenuBar(p->menuBar);
+    ActionContainer* fileMenu = p->actionManager->createMenu(Core::Constants::Menus::File);
+    menubar->addMenu(fileMenu, Core::Constants::Groups::File);
+    fileMenu->menu()->setTitle(tr("&File"));
+    fileMenu->appendGroup(Core::Constants::Groups::Three);
 
-    p->openSettings = new QAction(this);
-    p->layoutEditing = new QAction(this);
-    p->openQuickSetup = new QAction(this);
-    p->rescan = new QAction(this);
+    ActionContainer* editMenu = p->actionManager->createMenu(Core::Constants::Menus::Edit);
+    menubar->addMenu(editMenu, Core::Constants::Groups::Edit);
+    editMenu->menu()->setTitle(tr("&Edit"));
 
+    ActionContainer* viewMenu = p->actionManager->createMenu(Core::Constants::Menus::View);
+    menubar->addMenu(viewMenu, Core::Constants::Groups::View);
+    viewMenu->menu()->setTitle(tr("&View"));
+    viewMenu->appendGroup(Core::Constants::Groups::Three);
+
+    ActionContainer* playbackMenu = p->actionManager->createMenu(Core::Constants::Menus::Playback);
+    menubar->addMenu(playbackMenu, Core::Constants::Groups::Playback);
+    playbackMenu->menu()->setTitle(tr("&Playback"));
+
+    ActionContainer* libraryMenu = p->actionManager->createMenu(Core::Constants::Menus::Library);
+    menubar->addMenu(libraryMenu, Core::Constants::Groups::Library);
+    libraryMenu->menu()->setTitle(tr("&Library"));
+    libraryMenu->appendGroup(Core::Constants::Groups::Two);
+    libraryMenu->appendGroup(Core::Constants::Groups::Three);
+
+    ActionContainer* helpMenu = p->actionManager->createMenu(Core::Constants::Menus::Help);
+    menubar->addMenu(helpMenu, Core::Constants::Groups::Help);
+    helpMenu->menu()->setTitle(tr("&Help"));
+
+    QIcon quitIcon = QIcon::fromTheme(QLatin1String("application-exit"));
+    p->quitAction = new QAction(quitIcon, tr("E&xit"), this);
+    p->actionManager->registerAction(p->quitAction, Core::Constants::Actions::Exit);
+    fileMenu->addAction(p->quitAction, Core::Constants::Groups::Three);
+    connect(p->quitAction, &QAction::triggered, this, &MainWindow::close);
+
+    p->layoutEditing = new QAction(tr("Layout &Editing Mode"), this);
+    p->actionManager->registerAction(p->layoutEditing, Core::Constants::Actions::LayoutEditing);
+    viewMenu->addAction(p->layoutEditing, Core::Constants::Groups::Three);
+    connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
+    connect(p->settings, &Settings::layoutEditingChanged, p->layoutEditing, &QAction::setChecked);
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value(Settings::Setting::LayoutEditing).toBool());
 
-    p->menuBar->addAction(p->menuFile->menuAction());
-    p->menuBar->addAction(p->menuEdit->menuAction());
-    p->menuBar->addAction(p->menuView->menuAction());
-    p->menuBar->addAction(p->menuPlayback->menuAction());
-    p->menuBar->addAction(p->menuLibrary->menuAction());
-    p->menuBar->addAction(p->menuHelp->menuAction());
-
-    p->menuFile->setTitle("File");
-    p->menuEdit->setTitle("Edit");
-    p->menuView->setTitle("View");
-    p->menuPlayback->setTitle("Playback");
-    p->menuLibrary->setTitle("Library");
-    p->menuHelp->setTitle("Help");
-
-    p->openSettings->setText("Settings");
-    p->layoutEditing->setText("Layout Editing Mode");
-    p->openQuickSetup->setText("Quick Setup");
-    p->rescan->setText("Rescan Library");
-
-    p->menuLibrary->addAction(p->rescan);
-    p->menuLibrary->addAction(p->openSettings);
-    p->menuView->addAction(p->layoutEditing);
-    p->menuView->addAction(p->openQuickSetup);
-
-    connect(p->rescan, &QAction::triggered, p->library, &Library::MusicLibrary::reloadAll);
-    connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
-    connect(p->settings, &Settings::layoutEditingChanged, this, [this](bool enabled) {
-        p->layoutEditing->setChecked(enabled);
-    });
-    connect(p->layoutEditing, &QAction::triggered, this, [this](bool checked) {
-        p->settings->set(Settings::Setting::LayoutEditing, checked);
-    });
+    p->openQuickSetup = new QAction(tr("&Quick Setup"), this);
+    p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
+    viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
     connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSeupDialog::show);
     connect(p->quickSetupDialog, &QuickSeupDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
+
+    QIcon rescanIcon = QIcon::fromTheme(QLatin1String("view-refresh"));
+    p->rescan = new QAction(rescanIcon, tr("&Rescan Library"), this);
+    p->actionManager->registerAction(p->rescan, Core::Constants::Actions::Rescan);
+    libraryMenu->addAction(p->rescan, Core::Constants::Groups::Two);
+    connect(p->rescan, &QAction::triggered, p->library, &Library::MusicLibrary::reloadAll);
+
+    QIcon settingsIcon = QIcon::fromTheme(QLatin1String("preferences-system"));
+    p->openSettings = new QAction(settingsIcon, tr("&Settings"), this);
+    p->actionManager->registerAction(p->openSettings, Core::Constants::Actions::Settings);
+    libraryMenu->addAction(p->openSettings, Core::Constants::Groups::Three);
+    connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
 
     if(p->settings->value(Settings::Setting::FirstRun).toBool()) {
         // Delay showing until size of parent widget (this) is set.
@@ -170,4 +182,9 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 void MainWindow::contextMenuEvent(QContextMenuEvent* e)
 {
     QMainWindow::contextMenuEvent(e);
+}
+
+void MainWindow::enableLayoutEditing(bool enable)
+{
+    p->settings->set(Settings::Setting::LayoutEditing, enable);
 }

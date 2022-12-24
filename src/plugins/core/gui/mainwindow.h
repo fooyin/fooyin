@@ -43,6 +43,8 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
+    void enableLayoutEditing(bool enable);
+
 private:
     struct Private;
     std::unique_ptr<MainWindow::Private> p;
