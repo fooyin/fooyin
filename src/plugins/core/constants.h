@@ -43,11 +43,13 @@ namespace Groups {
     constexpr auto Playback = "Fooyin.Group.Playback";
     constexpr auto Library = "Fooyin.Group.Library";
     constexpr auto Help = "Fooyin.Group.Help";
-
 }; // namespace Groups
 
 namespace Actions {
     constexpr auto Exit = "Fooyin.Action.Exit";
+    constexpr auto Settings = "Fooyin.Action.Settings";
+    constexpr auto LayoutEditing = "Fooyin.Action.LayoutEditing";
+    constexpr auto Rescan = "Fooyin.Action.Rescan";
     constexpr auto PlaylistCreate = "Fooyin.Action.Playlist.Create";
 }; // namespace Actions
 
