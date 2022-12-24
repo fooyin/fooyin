@@ -19,6 +19,7 @@
 
 #include "application.h"
 
+#include "actions/actionmanager.h"
 #include "core/database/database.h"
 #include "core/engine/enginehandler.h"
 #include "core/gui/mainwindow.h"
@@ -47,6 +48,7 @@ struct Application::Private
     Library::MusicLibrary* library;
     std::unique_ptr<SettingsDialog> settingsDialog;
     WidgetProvider* widgetProvider;
+    ActionManager* actionManager;
     MainWindow* mainWindow;
 
     explicit Private(QObject* parent)
@@ -61,7 +63,7 @@ struct Application::Private
         , library(new Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, parent))
         , settingsDialog(std::make_unique<SettingsDialog>(libraryManager))
         , widgetProvider(new WidgetProvider(playerManager, libraryManager, library, settingsDialog.get(), parent))
-        , mainWindow(new MainWindow(widgetProvider, settingsDialog.get(), library))
+        , actionManager(new ActionManager(parent))
     {
         threadManager->moveToNewThread(&engine);
 
@@ -70,6 +72,10 @@ struct Application::Private
         PluginSystem::addObject(library);
         PluginSystem::addObject(settingsDialog.get());
         PluginSystem::addObject(widgetProvider);
+        PluginSystem::addObject(actionManager);
+
+        mainWindow = new MainWindow(widgetProvider, settingsDialog.get(), library);
+        PluginSystem::addObject(mainWindow);
 
         setupConnections();
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
