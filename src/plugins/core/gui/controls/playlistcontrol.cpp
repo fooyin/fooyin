@@ -20,7 +20,7 @@
 #include "playlistcontrol.h"
 
 #include "core/constants.h"
-#include "core/gui/widgets/clickablelabel.h"
+#include "core/gui/widgets/comboicon.h"
 #include "core/settings/settings.h"
 
 #include <QHBoxLayout>
@@ -30,54 +30,13 @@
 
 struct PlaylistControl::Private
 {
-    Settings* settings;
-
+    Settings* settings{PluginSystem::object<Settings>()};
     QHBoxLayout* layout;
 
-    ClickableLabel* repeat;
-    ClickableLabel* shuffle;
+    QSize labelSize{20, 20};
 
-    QPalette def;
-
-    Private()
-        : settings(PluginSystem::object<Settings>())
-    { }
-
-    void setMode(Player::PlayMode mode) const
-    {
-        QPalette palette = repeat->palette();
-
-        switch(mode) {
-            case(Player::PlayMode::Repeat): {
-                palette.setColor(repeat->foregroundRole(), palette.highlight().color());
-                repeat->setPalette(palette);
-                repeat->setText(Core::Constants::Icons::Repeat);
-                break;
-            }
-            case(Player::PlayMode::RepeatAll): {
-                shuffle->setPalette(def);
-                palette.setColor(repeat->foregroundRole(), palette.highlight().color());
-                repeat->setPalette(palette);
-                repeat->setText(Core::Constants::Icons::RepeatAll);
-                break;
-            }
-            case(Player::PlayMode::Shuffle): {
-                palette.setColor(shuffle->foregroundRole(), palette.highlight().color());
-                shuffle->setPalette(palette);
-                repeat->setPalette(def);
-                repeat->setText(Core::Constants::Icons::RepeatAll);
-                break;
-            }
-            case(Player::PlayMode::Default): {
-                repeat->setPalette(def);
-                shuffle->setPalette(def);
-                repeat->setText(Core::Constants::Icons::RepeatAll);
-                break;
-            }
-            default:
-                return;
-        }
-    }
+    ComboIcon* repeat;
+    ComboIcon* shuffle;
 };
 
 PlaylistControl::PlaylistControl(QWidget* parent)
@@ -86,10 +45,8 @@ PlaylistControl::PlaylistControl(QWidget* parent)
 {
     setupUi();
 
-    p->def = palette();
-
-    connect(p->repeat, &ClickableLabel::clicked, this, &PlaylistControl::repeatClicked);
-    connect(p->shuffle, &ClickableLabel::clicked, this, &PlaylistControl::shuffleClicked);
+    connect(p->repeat, &ComboIcon::clicked, this, &PlaylistControl::repeatClicked);
+    connect(p->shuffle, &ComboIcon::clicked, this, &PlaylistControl::shuffleClicked);
 }
 
 PlaylistControl::~PlaylistControl() = default;
@@ -102,28 +59,52 @@ void PlaylistControl::setupUi()
     p->layout->setSpacing(10);
     p->layout->setContentsMargins(0, 0, 0, 0);
 
-    p->repeat = new ClickableLabel(this);
-    p->shuffle = new ClickableLabel(this);
+    p->repeat = new ComboIcon(Core::Constants::Icons::RepeatAll, this);
+    p->shuffle = new ComboIcon(Core::Constants::Icons::Shuffle, this);
+
+    p->repeat->addPixmap(Core::Constants::Icons::Repeat);
+
+    p->repeat->setMaximumSize(p->labelSize);
+    p->shuffle->setMaximumSize(p->labelSize);
 
     p->layout->addWidget(p->repeat, 0, Qt::AlignVCenter);
     p->layout->addWidget(p->shuffle, 0, Qt::AlignVCenter);
 
-    QFont font = QFont(Core::Constants::IconFont, 12);
-    setFont(font);
-
-    p->repeat->setText(Core::Constants::Icons::RepeatAll);
-    p->shuffle->setText(Core::Constants::Icons::Shuffle);
-
-    Util::setMinimumWidth(p->repeat, Core::Constants::Icons::Repeat);
-
     const auto mode
         = EnumHelper::fromString<Player::PlayMode>(p->settings->value(Settings::Setting::PlayMode).toString());
-    p->setMode(mode);
+    setMode(mode);
 }
 
 void PlaylistControl::playModeChanged(Player::PlayMode mode)
 {
     p->settings->set(Settings::Setting::PlayMode, EnumHelper::toString(mode));
+    setMode(mode);
+}
 
-    p->setMode(mode);
+void PlaylistControl::setMode(Player::PlayMode mode) const
+{
+    switch(mode) {
+        case(Player::PlayMode::Repeat): {
+            p->repeat->setIcon(Core::Constants::Icons::Repeat, true);
+            p->shuffle->setIcon(Core::Constants::Icons::Shuffle);
+            break;
+        }
+        case(Player::PlayMode::RepeatAll): {
+            p->repeat->setIcon(Core::Constants::Icons::RepeatAll, true);
+            p->shuffle->setIcon(Core::Constants::Icons::Shuffle);
+            break;
+        }
+        case(Player::PlayMode::Shuffle): {
+            p->shuffle->setIcon(Core::Constants::Icons::Shuffle, true);
+            p->repeat->setIcon(Core::Constants::Icons::RepeatAll);
+            break;
+        }
+        case(Player::PlayMode::Default): {
+            p->repeat->setIcon(Core::Constants::Icons::RepeatAll);
+            p->shuffle->setIcon(Core::Constants::Icons::Shuffle);
+            break;
+        }
+        default:
+            return;
+    }
 }

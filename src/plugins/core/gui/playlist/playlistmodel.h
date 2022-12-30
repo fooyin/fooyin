@@ -23,6 +23,7 @@
 #include "playlistitem.h"
 
 #include <QAbstractItemModel>
+#include <QPixmap>
 
 using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
@@ -84,5 +85,7 @@ private:
     PlayerManager* m_playerManager;
     Library::MusicLibrary* m_library;
     Settings* m_settings;
+    QPixmap m_playingIcon;
+    QPixmap m_pausedIcon;
 };
 } // namespace Library

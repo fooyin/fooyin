@@ -41,12 +41,17 @@ PlaylistModel::PlaylistModel(PlayerManager* playerManager, Library::MusicLibrary
     , m_playerManager(playerManager)
     , m_library(library)
     , m_settings(PluginSystem::object<Settings>())
+    , m_playingIcon{Core::Constants::Icons::Play}
+    , m_pausedIcon{Core::Constants::Icons::Pause}
 {
     setupModelData();
 
     connect(m_settings, &Settings::playlistSettingChanged, this, &PlaylistModel::reset);
     connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistModel::changeRowColours);
     connect(m_library, &Library::MusicLibrary::filteredTracks, this, &PlaylistModel::reset);
+
+    m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_pausedIcon = m_pausedIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 PlaylistModel::~PlaylistModel() = default;
@@ -223,14 +228,14 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
             return m_playerManager->currentTrack() && m_playerManager->currentTrack()->id() == track->id();
         }
         case(ItemRole::State): {
-            switch(m_playerManager->playState()) {
-                case(Player::PlayState::Playing):
-                    return Core::Constants::Icons::Play;
-                case(Player::PlayState::Paused):
-                    return Core::Constants::Icons::Pause;
-                default:
-                    break;
-            }
+            //            switch(m_playerManager->playState()) {
+            //                case(Player::PlayState::Playing):
+            //                    return Core::Constants::Icons::Play;
+            //                case(Player::PlayState::Paused):
+            //                    return Core::Constants::Icons::Pause;
+            //                default:
+            //                    break;
+            //            }
             break;
         }
         case(ItemRole::Path): {
@@ -246,6 +251,17 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
             return m_settings->value(Settings::Setting::PlaylistAltColours).toBool()
                      ? item->row() & 1 ? QPalette::Base : QPalette::AlternateBase
                      : QPalette::Base;
+        }
+        case(Qt::DecorationRole): {
+            switch(m_playerManager->playState()) {
+                case(Player::PlayState::Playing):
+                    return m_playingIcon;
+                case(Player::PlayState::Paused):
+                    return m_pausedIcon;
+                default:
+                    break;
+            }
+            break;
         }
         default: {
             return {};

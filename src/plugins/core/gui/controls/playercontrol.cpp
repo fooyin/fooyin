@@ -20,20 +20,21 @@
 #include "playercontrol.h"
 
 #include "core/constants.h"
-#include "core/gui/widgets/clickablelabel.h"
+#include "core/gui/widgets/comboicon.h"
 
 #include <QHBoxLayout>
-#include <QPainter>
 #include <utils/utils.h>
 
 struct PlayerControl::Private
 {
     QHBoxLayout* layout;
 
-    ClickableLabel* stop;
-    ClickableLabel* prev;
-    ClickableLabel* play;
-    ClickableLabel* next;
+    ComboIcon* stop;
+    ComboIcon* prev;
+    ComboIcon* play;
+    ComboIcon* next;
+
+    QSize labelSize{20, 20};
 };
 
 PlayerControl::PlayerControl(QWidget* parent)
@@ -42,10 +43,10 @@ PlayerControl::PlayerControl(QWidget* parent)
 {
     setupUi();
 
-    connect(p->stop, &ClickableLabel::clicked, this, &PlayerControl::stopClicked);
-    connect(p->prev, &ClickableLabel::clicked, this, &PlayerControl::prevClicked);
-    connect(p->play, &ClickableLabel::clicked, this, &PlayerControl::pauseClicked);
-    connect(p->next, &ClickableLabel::clicked, this, &PlayerControl::nextClicked);
+    connect(p->stop, &ComboIcon::clicked, this, &PlayerControl::stopClicked);
+    connect(p->prev, &ComboIcon::clicked, this, &PlayerControl::prevClicked);
+    connect(p->play, &ComboIcon::clicked, this, &PlayerControl::pauseClicked);
+    connect(p->next, &ComboIcon::clicked, this, &PlayerControl::nextClicked);
 }
 
 PlayerControl::~PlayerControl() = default;
@@ -58,25 +59,21 @@ void PlayerControl::setupUi()
     p->layout->setSpacing(10);
     p->layout->setContentsMargins(10, 0, 0, 0);
 
-    p->stop = new ClickableLabel(this);
-    p->prev = new ClickableLabel(this);
-    p->play = new ClickableLabel(this);
-    p->next = new ClickableLabel(this);
+    p->stop = new ComboIcon(Core::Constants::Icons::Stop, this);
+    p->prev = new ComboIcon(Core::Constants::Icons::Prev, this);
+    p->next = new ComboIcon(Core::Constants::Icons::Next, this);
+    p->play = new ComboIcon(Core::Constants::Icons::Play, this);
+    p->play->addPixmap(Core::Constants::Icons::Pause);
+
+    p->stop->setMaximumSize(p->labelSize);
+    p->prev->setMaximumSize(p->labelSize);
+    p->play->setMaximumSize(p->labelSize);
+    p->next->setMaximumSize(p->labelSize);
 
     p->layout->addWidget(p->stop, 0, Qt::AlignVCenter);
     p->layout->addWidget(p->prev, 0, Qt::AlignVCenter);
     p->layout->addWidget(p->play, 0, Qt::AlignVCenter);
     p->layout->addWidget(p->next, 0, Qt::AlignVCenter);
-
-    QFont font = QFont(Core::Constants::IconFont, 12);
-    setFont(font);
-
-    p->stop->setText(Core::Constants::Icons::Stop);
-    p->prev->setText(Core::Constants::Icons::Prev);
-    p->play->setText(Core::Constants::Icons::Play);
-    p->next->setText(Core::Constants::Icons::Next);
-
-    Util::setMinimumWidth(p->play, Core::Constants::Icons::Play);
 
     setEnabled(false);
 }
@@ -86,11 +83,11 @@ void PlayerControl::stateChanged(Player::PlayState state)
     switch(state) {
         case(Player::PlayState::Stopped):
             setEnabled(false);
-            return p->play->setText(Core::Constants::Icons::Play);
+            return p->play->setIcon(Core::Constants::Icons::Play);
         case(Player::PlayState::Playing):
             setEnabled(true);
-            return p->play->setText(Core::Constants::Icons::Pause);
+            return p->play->setIcon(Core::Constants::Icons::Pause);
         case(Player::PlayState::Paused):
-            return p->play->setText(Core::Constants::Icons::Play);
+            return p->play->setIcon(Core::Constants::Icons::Play);
     }
 }

@@ -39,6 +39,9 @@ signals:
     void repeatClicked();
     void shuffleClicked();
 
+protected:
+    void setMode(Player::PlayMode mode) const;
+
 private:
     struct Private;
     std::unique_ptr<PlaylistControl::Private> p;

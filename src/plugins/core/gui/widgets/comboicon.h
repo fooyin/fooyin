@@ -53,6 +53,7 @@ public:
 
 signals:
     void clicked(const QString& path = {});
+    void entered();
 
 protected:
     void labelClicked();

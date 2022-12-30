@@ -75,8 +75,6 @@ struct Application::Private
         PluginSystem::addObject(widgetProvider);
         PluginSystem::addObject(actionManager);
 
-        QFontDatabase::addApplicationFont("://fonts/Guifx v2 Transports.ttf");
-
         mainWindow = new MainWindow(widgetProvider, settingsDialog.get(), library);
         PluginSystem::addObject(mainWindow);
 

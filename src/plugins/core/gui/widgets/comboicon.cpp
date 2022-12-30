@@ -55,6 +55,7 @@ void ComboIcon::setup(const QString& path)
     setLayout(m_layout);
 
     connect(m_label, &ClickableLabel::clicked, this, &ComboIcon::labelClicked);
+    connect(m_label, &ClickableLabel::entered, this, &ComboIcon::entered);
 }
 
 void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)

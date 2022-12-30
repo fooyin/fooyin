@@ -20,21 +20,23 @@
 #include "volumecontrol.h"
 
 #include "core/constants.h"
-#include "core/gui/widgets/clickablelabel.h"
+#include "core/gui/widgets/comboicon.h"
 #include "core/gui/widgets/hovermenu.h"
 #include "core/gui/widgets/slider.h"
 
 #include <QHBoxLayout>
-#include <utils/utils.h>
 
 struct VolumeControl::Private
 {
     QHBoxLayout* layout;
-    ClickableLabel* mute;
+
+    ComboIcon* volumeIcon;
+
     Slider* volumeSlider;
     QHBoxLayout* volumeLayout;
     HoverMenu* volumeMenu;
 
+    QSize labelSize{20, 20};
     int prevValue{0};
 };
 
@@ -45,8 +47,8 @@ VolumeControl::VolumeControl(QWidget* parent)
     setupUi();
 
     connect(p->volumeSlider, &QSlider::valueChanged, this, &VolumeControl::updateVolume);
-    connect(p->mute, &ClickableLabel::entered, this, &VolumeControl::showVolumeMenu);
-    connect(p->mute, &ClickableLabel::clicked, this, &VolumeControl::mute);
+    connect(p->volumeIcon, &ComboIcon::entered, this, &VolumeControl::showVolumeMenu);
+    connect(p->volumeIcon, &ComboIcon::clicked, this, &VolumeControl::mute);
 }
 
 VolumeControl::~VolumeControl()
@@ -65,21 +67,23 @@ void VolumeControl::setupUi()
     p->volumeMenu = new HoverMenu(this);
     p->volumeLayout = new QHBoxLayout(p->volumeMenu);
 
-    p->mute = new ClickableLabel(this);
+    p->volumeIcon = new ComboIcon(Core::Constants::Icons::VolumeMute, this);
+    p->volumeIcon->addPixmap(Core::Constants::Icons::VolumeMin);
+    p->volumeIcon->addPixmap(Core::Constants::Icons::VolumeLow);
+    p->volumeIcon->addPixmap(Core::Constants::Icons::VolumeMed);
+    p->volumeIcon->addPixmap(Core::Constants::Icons::VolumeMax);
+
     p->volumeSlider = new Slider(Qt::Vertical, this);
     p->volumeLayout->addWidget(p->volumeSlider);
 
-    p->layout->addWidget(p->mute, 0, Qt::AlignRight | Qt::AlignVCenter);
+    p->layout->addWidget(p->volumeIcon, 0, Qt::AlignRight | Qt::AlignVCenter);
 
     p->volumeSlider->setMaximum(100);
     p->volumeSlider->setValue(100);
 
-    QFont font = QFont(Core::Constants::IconFont, 12);
-    setFont(font);
+    p->volumeIcon->setMaximumSize(p->labelSize);
 
-    p->mute->setText(Core::Constants::Icons::VolumeMax);
-
-    Util::setMinimumWidth(p->mute, Core::Constants::Icons::VolumeMax);
+    p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMax);
 }
 
 void VolumeControl::updateVolume(double value)
@@ -87,17 +91,20 @@ void VolumeControl::updateVolume(double value)
     double vol = value;
     emit volumeChanged(vol);
 
-    if(vol <= 100 && vol >= 66) {
-        p->mute->setText(Core::Constants::Icons::VolumeMax);
+    if(vol <= 100 && vol >= 75) {
+        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMax);
     }
-    else if(vol < 66 && vol >= 33) {
-        p->mute->setText(Core::Constants::Icons::VolumeMid);
+    else if(vol < 75 && vol >= 50) {
+        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMed);
     }
-    else if(vol < 33 && vol > 0) {
-        p->mute->setText(Core::Constants::Icons::VolumeMin);
+    else if(vol < 50 && vol >= 25) {
+        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeLow);
+    }
+    else if(vol < 25 && vol >= 1) {
+        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMin);
     }
     else {
-        p->mute->setText(Core::Constants::Icons::VolumeMute);
+        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMute);
     }
 }
 

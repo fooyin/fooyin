@@ -21,22 +21,27 @@
 
 namespace Core::Constants {
 
-constexpr auto IconFont = "Guifx v2 Transports";
-
 namespace Icons {
-    constexpr auto Fooyin = "://images/fooyin.png";
-    constexpr auto Play = "1";
-    constexpr auto Pause = "2";
-    constexpr auto Stop = "3";
-    constexpr auto Prev = "7";
-    constexpr auto Next = "8";
-    constexpr auto Repeat = "(";
-    constexpr auto RepeatAll = "*";
-    constexpr auto Shuffle = "&";
-    constexpr auto VolumeMax = "$";
-    constexpr auto VolumeMid = "#";
-    constexpr auto VolumeMin = "@";
-    constexpr auto VolumeMute = "!";
+    constexpr auto Fooyin = "://icons/sc-fooyin.svg";
+    constexpr auto Play = "://icons/play.svg";
+    constexpr auto Pause = "://icons/pause.svg";
+    constexpr auto Stop = "://icons/stop.svg";
+    constexpr auto Prev = "://icons/prev.svg";
+    constexpr auto Next = "://icons/next.svg";
+    constexpr auto Repeat = "://icons/repeat-once.svg";
+    constexpr auto RepeatAll = "://icons/repeat.svg";
+    constexpr auto Shuffle = "://icons/shuffle.svg";
+    constexpr auto VolumeMax = "://icons/volume-max.svg";
+    constexpr auto VolumeMed = "://icons/volume-med.svg";
+    constexpr auto VolumeLow = "://icons/volume-low.svg";
+    constexpr auto VolumeMin = "://icons/volume-min.svg";
+    constexpr auto VolumeMute = "://icons/volume-mute.svg";
+
+    constexpr auto Quit = "://icons/quit.svg";
+    constexpr auto Settings = "://icons/settings.svg";
+    constexpr auto RescanLibrary = "://icons/reload.svg";
+    constexpr auto LayoutEditing = "://icons/layout-editing.svg";
+    constexpr auto QuickSetup = "://icons/quick-setup.svg";
 }; // namespace Icons
 
 constexpr auto MenuBar = "Fooyin.MenuBar";

@@ -265,6 +265,7 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     const bool multiDiscs = index.data(ItemRole::MultiDisk).toBool();
     const bool isPlaying = index.data(ItemRole::Playing).toBool();
     const QString state = index.data(ItemRole::State).toString();
+    const auto pixmap = index.data(Qt::DecorationRole).value<QPixmap>();
 
     QFont playFont = QFont("Guifx v2 Transports", 12);
     QColor selectColour = option.palette.highlight().color();
@@ -280,7 +281,7 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
         offset += 20;
     }
 
-    const QRect playRect = QRect((offset / 2), y, 15, height);
+    const QRect playRect = QRect((offset / 2), y, 20, height);
     QRect titleRect = QRect((x + 45 + offset), y, ((right - 80) - (x + 45 + offset)), height);
     const QRect numRect = QRect((x + 10 + offset), y, 15, height);
     const QRect countRect = QRect((right - 110), y, 35, height);
@@ -316,8 +317,10 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
 
     if(isPlaying) {
         painter->setFont(playFont);
-        option.widget->style()->drawItemText(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
-                                             state);
+        //        option.widget->style()->drawItemText(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter,
+        //        option.palette, true,
+        //                                             state);
+        option.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
     }
 }
 

@@ -133,13 +133,14 @@ void MainWindow::setupUi()
     menubar->addMenu(helpMenu, Core::Constants::Groups::Help);
     helpMenu->menu()->setTitle(tr("&Help"));
 
-    QIcon quitIcon = QIcon::fromTheme(QLatin1String("application-exit"));
+    QIcon quitIcon = QIcon(Core::Constants::Icons::Quit);
     p->quitAction = new QAction(quitIcon, tr("E&xit"), this);
     p->actionManager->registerAction(p->quitAction, Core::Constants::Actions::Exit);
     fileMenu->addAction(p->quitAction, Core::Constants::Groups::Three);
     connect(p->quitAction, &QAction::triggered, this, &MainWindow::close);
 
-    p->layoutEditing = new QAction(tr("Layout &Editing Mode"), this);
+    QIcon layoutEditingIcon = QIcon(Core::Constants::Icons::LayoutEditing);
+    p->layoutEditing = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
     p->actionManager->registerAction(p->layoutEditing, Core::Constants::Actions::LayoutEditing);
     viewMenu->addAction(p->layoutEditing, Core::Constants::Groups::Three);
     connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
@@ -147,19 +148,20 @@ void MainWindow::setupUi()
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value(Settings::Setting::LayoutEditing).toBool());
 
-    p->openQuickSetup = new QAction(tr("&Quick Setup"), this);
+    QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
+    p->openQuickSetup = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
     p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
     viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
     connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSeupDialog::show);
     connect(p->quickSetupDialog, &QuickSeupDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
 
-    QIcon rescanIcon = QIcon::fromTheme(QLatin1String("view-refresh"));
+    QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
     p->rescan = new QAction(rescanIcon, tr("&Rescan Library"), this);
     p->actionManager->registerAction(p->rescan, Core::Constants::Actions::Rescan);
     libraryMenu->addAction(p->rescan, Core::Constants::Groups::Two);
     connect(p->rescan, &QAction::triggered, p->library, &Library::MusicLibrary::reloadAll);
 
-    QIcon settingsIcon = QIcon::fromTheme(QLatin1String("preferences-system"));
+    QIcon settingsIcon = QIcon(Core::Constants::Icons::Settings);
     p->openSettings = new QAction(settingsIcon, tr("&Settings"), this);
     p->actionManager->registerAction(p->openSettings, Core::Constants::Actions::Settings);
     libraryMenu->addAction(p->openSettings, Core::Constants::Groups::Three);
