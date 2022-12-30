@@ -3,5 +3,24 @@
         <file>images/nocover.png</file>
         <file>images/fooyin.png</file>
         <file>images/fooyin-small.png</file>
+        <file>icons/sc-fooyin.svg</file>
+        <file>icons/next.svg</file>
+        <file>icons/pause.svg</file>
+        <file>icons/play.svg</file>
+        <file>icons/prev.svg</file>
+        <file>icons/repeat-once.svg</file>
+        <file>icons/repeat.svg</file>
+        <file>icons/shuffle.svg</file>
+        <file>icons/stop.svg</file>
+        <file>icons/volume-low.svg</file>
+        <file>icons/volume-max.svg</file>
+        <file>icons/volume-med.svg</file>
+        <file>icons/volume-min.svg</file>
+        <file>icons/volume-mute.svg</file>
+        <file>icons/settings.svg</file>
+        <file>icons/reload.svg</file>
+        <file>icons/quit.svg</file>
+        <file>icons/layout-editing.svg</file>
+        <file>icons/quick-setup.svg</file>
     </qresource>
 </RCC>
