@@ -40,11 +40,23 @@ class ComboIcon : public QWidget
     using PathIconContainer = std::vector<PathIconPair>;
 
 public:
-    explicit ComboIcon(const QString& path, bool autoShift, QWidget* parent = nullptr);
+    enum Attribute
+    {
+        HasActiveIcon = 1,
+        AutoShift = 2,
+        Active = 4
+    };
+    Q_DECLARE_FLAGS(Attributes, Attribute)
+
+    explicit ComboIcon(const QString& path, Attribute attribute, QWidget* parent = nullptr);
     explicit ComboIcon(const QString& path, QWidget* parent = nullptr);
     ~ComboIcon() override;
 
     void setup(const QString& name);
+
+    bool hasAttribute(Attribute attribute);
+    void addAttribute(Attribute attribute);
+    void removeAttribute(Attribute attribute);
 
     void addPixmap(const QString& path, const QPixmap& icon);
     void addPixmap(const QString& path);
@@ -61,8 +73,7 @@ protected:
 private:
     QVBoxLayout* m_layout;
     ClickableLabel* m_label;
-    bool m_autoShift;
-    bool m_active;
+    Attributes m_attributes;
     int m_currentIndex;
     PathIconContainer m_icons;
 };

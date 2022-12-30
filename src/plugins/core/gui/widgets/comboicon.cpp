@@ -23,19 +23,18 @@
 #include <utility>
 #include <utils/utils.h>
 
-ComboIcon::ComboIcon(const QString& path, bool autoShift, QWidget* parent)
+ComboIcon::ComboIcon(const QString& path, Attribute attribute, QWidget* parent)
     : QWidget{parent}
     , m_layout{new QVBoxLayout(this)}
     , m_label{new ClickableLabel(this)}
-    , m_autoShift{autoShift}
-    , m_active{false}
     , m_currentIndex{0}
 {
+    addAttribute(attribute);
     setup(path);
 }
 
 ComboIcon::ComboIcon(const QString& path, QWidget* parent)
-    : ComboIcon{path, false, parent}
+    : ComboIcon{path, {}, parent}
 { }
 
 ComboIcon::~ComboIcon() = default;
@@ -58,12 +57,29 @@ void ComboIcon::setup(const QString& path)
     connect(m_label, &ClickableLabel::entered, this, &ComboIcon::entered);
 }
 
+bool ComboIcon::hasAttribute(Attribute attribute)
+{
+    return (m_attributes & attribute);
+}
+
+void ComboIcon::addAttribute(Attribute attribute)
+{
+    m_attributes |= attribute;
+}
+
+void ComboIcon::removeAttribute(Attribute attribute)
+{
+    m_attributes &= ~attribute;
+}
+
 void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)
 {
     QPalette palette = m_label->palette();
     Icon ico;
     ico.icon = icon;
-    ico.iconActive = Util::changePixmapColour(icon, palette.highlight().color());
+    if(hasAttribute(HasActiveIcon)) {
+        ico.iconActive = Util::changePixmapColour(icon, palette.highlight().color());
+    }
     m_icons.emplace_back(path, ico);
 }
 
@@ -79,6 +95,13 @@ void ComboIcon::setIcon(const QString& path, bool active)
         return;
     }
 
+    if(active) {
+        addAttribute(Active);
+    }
+    else {
+        removeAttribute(Active);
+    }
+
     auto it = std::find_if(m_icons.cbegin(), m_icons.cend(), [this, path](const PathIconPair& icon) {
         return (icon.first == path);
     });
@@ -89,7 +112,7 @@ void ComboIcon::setIcon(const QString& path, bool active)
 
     auto idx = static_cast<int>(std::distance(m_icons.cbegin(), it));
     m_currentIndex = idx;
-    if(active) {
+    if(hasAttribute(HasActiveIcon) && hasAttribute(Active)) {
         m_label->setPixmap(m_icons.at(m_currentIndex).second.iconActive);
     }
     else {
@@ -99,17 +122,17 @@ void ComboIcon::setIcon(const QString& path, bool active)
 
 void ComboIcon::labelClicked()
 {
-    if(m_autoShift) {
-        if(m_active) {
+    if(hasAttribute(AutoShift)) {
+        if(hasAttribute(Active)) {
             ++m_currentIndex;
         }
         if(m_currentIndex >= m_icons.size()) {
             m_currentIndex = 0;
-            m_active = false;
+            removeAttribute(Active);
             m_label->setPixmap(m_icons.at(m_currentIndex).second.icon);
         }
         else {
-            m_active = true;
+            addAttribute(Active);
             m_label->setPixmap(m_icons.at(m_currentIndex).second.iconActive);
         }
     }

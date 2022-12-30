@@ -59,8 +59,8 @@ void PlaylistControl::setupUi()
     p->layout->setSpacing(10);
     p->layout->setContentsMargins(0, 0, 0, 0);
 
-    p->repeat = new ComboIcon(Core::Constants::Icons::RepeatAll, this);
-    p->shuffle = new ComboIcon(Core::Constants::Icons::Shuffle, this);
+    p->repeat = new ComboIcon(Core::Constants::Icons::RepeatAll, ComboIcon::Attribute::HasActiveIcon, this);
+    p->shuffle = new ComboIcon(Core::Constants::Icons::Shuffle, ComboIcon::Attribute::HasActiveIcon, this);
 
     p->repeat->addPixmap(Core::Constants::Icons::Repeat);
 
