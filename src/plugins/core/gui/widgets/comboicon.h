@@ -20,7 +20,7 @@
 #pragma once
 
 #include "clickablelabel.h"
-#include "core/namespace.h"
+#include "core/typedefs.h"
 
 #include <QPixmap>
 #include <QWidget>

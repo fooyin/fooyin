@@ -38,10 +38,9 @@ const int Number = Qt::UserRole + 15;
 const int PlayCount = Qt::UserRole + 16;
 const int MultiDisk = Qt::UserRole + 17;
 const int Playing = Qt::UserRole + 18;
-const int State = Qt::UserRole + 19;
-const int Path = Qt::UserRole + 20;
-const int Index = Qt::UserRole + 21;
-const int Data = Qt::UserRole + 22;
+const int Path = Qt::UserRole + 19;
+const int Index = Qt::UserRole + 20;
+const int Data = Qt::UserRole + 21;
 } // namespace ItemRole
 
 namespace InfoRole {
@@ -68,6 +67,18 @@ const int Name = Qt::UserRole + 41;
 namespace LayoutRole {
 const int Type = Qt::UserRole + 50;
 } // namespace LayoutRole
+
+namespace Fy {
+Q_NAMESPACE
+enum Attribute
+{
+    HasActiveIcon = 1,
+    AutoShift = 2,
+    Active = 4,
+};
+Q_DECLARE_FLAGS(Attributes, Attribute)
+} // namespace Fy
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Attributes)
 
 namespace Filters {
 Q_NAMESPACE

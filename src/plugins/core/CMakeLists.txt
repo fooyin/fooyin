@@ -6,7 +6,6 @@ fooyin_add_plugin(Core
         coreplugin.h
         coreplugin.cpp
         constants.h
-        namespace.h
         typedefs.h
 
         actions/actioncontainer.h

@@ -227,17 +227,6 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
         case(ItemRole::Playing): {
             return m_playerManager->currentTrack() && m_playerManager->currentTrack()->id() == track->id();
         }
-        case(ItemRole::State): {
-            //            switch(m_playerManager->playState()) {
-            //                case(Player::PlayState::Playing):
-            //                    return Core::Constants::Icons::Play;
-            //                case(Player::PlayState::Paused):
-            //                    return Core::Constants::Icons::Pause;
-            //                default:
-            //                    break;
-            //            }
-            break;
-        }
         case(ItemRole::Path): {
             return track->filepath();
         }
@@ -449,7 +438,6 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     roles.insert(+ItemRole::PlayCount, "PlayCount");
     roles.insert(+ItemRole::MultiDisk, "Multiple Discs");
     roles.insert(+ItemRole::Playing, "IsPlaying");
-    roles.insert(+ItemRole::State, "State");
     roles.insert(+ItemRole::Path, "Path");
     roles.insert(+ItemRole::Index, "Index");
     roles.insert(+ItemRole::Data, "Data");

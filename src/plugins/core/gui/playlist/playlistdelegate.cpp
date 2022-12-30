@@ -264,7 +264,6 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     const QString trackDuration = index.data(ItemRole::Duration).toString();
     const bool multiDiscs = index.data(ItemRole::MultiDisk).toBool();
     const bool isPlaying = index.data(ItemRole::Playing).toBool();
-    const QString state = index.data(ItemRole::State).toString();
     const auto pixmap = index.data(Qt::DecorationRole).value<QPixmap>();
 
     QFont playFont = QFont("Guifx v2 Transports", 12);
