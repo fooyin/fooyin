@@ -138,6 +138,7 @@ void PlayerController::setRepeat()
             m_playMode = Player::PlayMode::Default;
             break;
         case Player::PlayMode::Shuffle:
+            m_playMode = Player::PlayMode::RepeatAll;
             break;
     }
     emit playModeChanged(m_playMode);
