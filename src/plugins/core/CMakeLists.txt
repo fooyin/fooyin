@@ -171,6 +171,8 @@ fooyin_add_plugin(Core
         gui/widgets/dummy.cpp
         gui/widgets/hovermenu.h
         gui/widgets/hovermenu.cpp
+        gui/widgets/comboicon.h
+        gui/widgets/comboicon.cpp
         gui/widgets/overlay.h
         gui/widgets/overlay.cpp
         gui/widgets/menuheader.h
