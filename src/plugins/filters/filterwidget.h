@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include "core/gui/fywidget.h"
-#include "core/typedefs.h"
-#include "gui/filter/filterfwd.h"
+#include "filterfwd.h"
 
 #include <QItemSelection>
+#include <core/gui/fywidget.h>
+#include <core/typedefs.h>
 
 class Settings;
 class PlayerManager;
@@ -40,7 +40,7 @@ class FilterWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit FilterWidget(Filters::FilterType type, QWidget* parent = nullptr);
+    explicit FilterWidget(Filters::FilterType type = Filters::FilterType::AlbumArtist, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();

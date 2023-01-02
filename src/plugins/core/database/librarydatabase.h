@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "core/gui/filter/filterfwd.h"
 #include "core/library/models/trackfwd.h"
 #include "core/library/sorting/sortorder.h"
 #include "module.h"
@@ -37,10 +36,6 @@ public:
     bool getAllAlbums(AlbumList& result) const;
     bool getAllArtists(ArtistHash& result) const;
     bool getAllGenres(GenreHash& result) const;
-    bool getAllItems(Filters::FilterType type, ::Library::SortOrder order, FilterList& result) const;
-
-    bool getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
-                          ::Library::SortOrder order, FilterList& result) const;
 
     [[nodiscard]] static QString fetchQueryTracks(const QString& where, const QString& join);
     [[nodiscard]] static QString fetchQueryAlbums(const QString& where, const QString& join);
@@ -53,7 +48,6 @@ public:
     static bool dbFetchAlbums(Query& q, AlbumList& result);
     static bool dbFetchArtists(Query& q, ArtistHash& result);
     static bool dbFetchGenres(Query& q, GenreHash& result);
-    static bool dbFetchItems(Query& q, FilterList& result);
 
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);

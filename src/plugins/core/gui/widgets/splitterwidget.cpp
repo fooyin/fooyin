@@ -19,13 +19,13 @@
 
 #include "splitterwidget.h"
 
+#include "core/widgets/widgetprovider.h"
 #include "dummy.h"
 #include "splitter.h"
-#include "core/widgets/widgetprovider.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QJsonObject>
 #include <QMenu>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
 SplitterWidget::SplitterWidget(QWidget* parent)
@@ -172,25 +172,31 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
 {
     for(const auto& widget : array) {
         QJsonObject object = widget.toObject();
-        if(object.contains("Splitter")) {
-            QJsonObject childSplitterObject = object["Splitter"].toObject();
-            auto type = EnumHelper::fromString<Qt::Orientation>(childSplitterObject["Type"].toString());
-            //            auto widgetType = type == Qt::Vertical ? Widgets::WidgetType::VerticalSplitter
-            //                                                   : Widgets::WidgetType::HorizontalSplitter;
+        if(!object.isEmpty()) {
+            if(object.contains("Splitter")) {
+                QJsonObject childSplitterObject = object["Splitter"].toObject();
+                auto type = EnumHelper::fromString<Qt::Orientation>(childSplitterObject["Type"].toString());
+                //            auto widgetType = type == Qt::Vertical ? Widgets::WidgetType::VerticalSplitter
+                //                                                   : Widgets::WidgetType::HorizontalSplitter;
 
-            QJsonArray splitterArray = childSplitterObject["Children"].toArray();
-            QByteArray splitterState = QByteArray::fromBase64(childSplitterObject["State"].toString().toUtf8());
+                QJsonArray splitterArray = childSplitterObject["Children"].toArray();
+                QByteArray splitterState = QByteArray::fromBase64(childSplitterObject["State"].toString().toUtf8());
 
-            auto* childSplitter = m_widgetProvider->createSplitter(type, this);
-            splitter->addWidget(childSplitter);
-            loadSplitter(splitterArray, childSplitter);
-            childSplitter->restoreState(splitterState);
+                auto* childSplitter = m_widgetProvider->createSplitter(type, this);
+                splitter->addWidget(childSplitter);
+                loadSplitter(splitterArray, childSplitter);
+                childSplitter->restoreState(splitterState);
+            }
+            else {
+                const auto jObject = object.constBegin().key();
+                m_widgetProvider->createWidget(jObject, splitter);
+            }
         }
-        else if(object.contains("Filter")) {
-            const QJsonObject filterObject = object["Filter"].toObject();
-            auto filterType = EnumHelper::fromString<Filters::FilterType>(filterObject["Type"].toString());
-            m_widgetProvider->createFilter(filterType, splitter);
-        }
+        //        else if(object.contains("Filter")) {
+        //            const QJsonObject filterObject = object["Filter"].toObject();
+        //            auto filterType = EnumHelper::fromString<Filters::FilterType>(filterObject["Type"].toString());
+        //            m_widgetProvider->createFilter(filterType, splitter);
+        //        }
         else {
             m_widgetProvider->createWidget(widget.toString(), splitter);
         }

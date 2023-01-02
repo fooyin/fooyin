@@ -19,29 +19,22 @@
 
 #pragma once
 
-#include "core/app/worker.h"
-#include "core/library/models/trackfwd.h"
+#include <pluginsystem/plugin.h>
 
-namespace DB {
-class LibraryDatabase;
-}
-
-class LibraryDatabaseManager : public Worker
+class FiltersPlugin : public QObject,
+                      public PluginSystem::Plugin
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
+    Q_INTERFACES(PluginSystem::Plugin)
 
 public:
-    explicit LibraryDatabaseManager(QObject* parent = nullptr);
-    ~LibraryDatabaseManager() override;
+    FiltersPlugin();
+    ~FiltersPlugin() override;
 
-    void getAllTracks();
-    void updateTracks(const TrackPtrList& tracks);
-
-    void stopThread() override;
-
-signals:
-    void gotTracks(const TrackList& result);
+    void initialise() override;
+    void finalise() override;
+    void shutdown() override;
 
 private:
-    DB::LibraryDatabase* m_libraryDatabase;
 };

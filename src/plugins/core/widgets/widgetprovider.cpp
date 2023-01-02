@@ -20,7 +20,6 @@
 #include "widgetprovider.h"
 
 #include "core/gui/controls/controlwidget.h"
-#include "core/gui/filter/filterwidget.h"
 #include "core/gui/info/infowidget.h"
 #include "core/gui/library/coverwidget.h"
 #include "core/gui/library/searchwidget.h"
@@ -32,8 +31,8 @@
 #include "core/library/librarymanager.h"
 #include "widgetfactory.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QMenu>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
 struct WidgetProvider::Private
@@ -46,7 +45,7 @@ struct WidgetProvider::Private
 
     QMap<QString, QMenu*> menus;
 
-    QList<Library::FilterWidget*> filters;
+    //    QList<Library::FilterWidget*> filters;
 
     Private(PlayerManager* playerManager, Library::LibraryManager* libraryManager, Library::MusicLibrary* library,
             SettingsDialog* settingsDialog)
@@ -75,14 +74,14 @@ FyWidget* WidgetProvider::createWidget(const QString& widget, SplitterWidget* sp
     return createdWidget;
 }
 
-FyWidget* WidgetProvider::createFilter(Filters::FilterType filterType, SplitterWidget* splitter)
-{
-    const int index = static_cast<int>(p->filters.size());
-    auto* filter = qobject_cast<Library::FilterWidget*>(createWidget(EnumHelper::toString(filterType), splitter));
-    filter->setIndex(index);
-    p->filters.append(filter);
-    return filter;
-}
+// FyWidget* WidgetProvider::createFilter(Filters::FilterType filterType, SplitterWidget* splitter)
+//{
+//     const int index = static_cast<int>(p->filters.size());
+//     auto* filter = qobject_cast<Library::FilterWidget*>(createWidget(EnumHelper::toString(filterType), splitter));
+//     filter->setIndex(index);
+//     p->filters.append(filter);
+//     return filter;
+// }
 
 SplitterWidget* WidgetProvider::createSplitter(Qt::Orientation type, QWidget* parent)
 {
@@ -135,11 +134,11 @@ void WidgetProvider::registerWidgets()
 
     factory->registerClass<ControlWidget>("Controls");
 
-    factory->registerClass<Library::GenreFilter>("Genre", {"Filter"});
-    factory->registerClass<Library::YearFilter>("Year", {"Filter"});
-    factory->registerClass<Library::AlbmArtistFilter>("AlbumArtist", {"Filter"});
-    factory->registerClass<Library::ArtistFilter>("Artist", {"Filter"});
-    factory->registerClass<Library::AlbumFilter>("Album", {"Filter"});
+    //    factory->registerClass<Library::GenreFilter>("Genre", {"Filter"});
+    //    factory->registerClass<Library::YearFilter>("Year", {"Filter"});
+    //    factory->registerClass<Library::AlbmArtistFilter>("AlbumArtist", {"Filter"});
+    //    factory->registerClass<Library::ArtistFilter>("Artist", {"Filter"});
+    //    factory->registerClass<Library::AlbumFilter>("Album", {"Filter"});
 
     factory->registerClass<InfoWidget>("Info");
     factory->registerClass<CoverWidget>("Artwork");

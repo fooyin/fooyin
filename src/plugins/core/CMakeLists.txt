@@ -117,20 +117,6 @@ fooyin_add_plugin(Core
         gui/controls/volumecontrol.h
         gui/controls/volumecontrol.cpp
 
-        gui/filter/filterdelegate.h
-        gui/filter/filterdelegate.cpp
-        gui/filter/filteritem.h
-        gui/filter/filteritem.cpp
-        gui/filter/filtermanager.h
-        gui/filter/filtermanager.cpp
-        gui/filter/filtermodel.h
-        gui/filter/filtermodel.cpp
-        gui/filter/filterview.h
-        gui/filter/filterview.cpp
-        gui/filter/filterwidget.h
-        gui/filter/filterwidget.cpp
-        gui/filter/filterfwd.h
-
         gui/info/itemdelegate.h
         gui/info/itemdelegate.cpp
         gui/info/infomodel.h

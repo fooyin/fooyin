@@ -45,7 +45,7 @@ public:
 
     FyWidget* createWidget(const QString& widget, SplitterWidget* splitter);
     //    FyWidget* createWidget(Widgets::WidgetType type, SplitterWidget* splitter);
-    FyWidget* createFilter(Filters::FilterType filterType, SplitterWidget* splitter);
+    //    FyWidget* createFilter(Filters::FilterType filterType, SplitterWidget* splitter);
     static SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);
 
     void addMenuActions(QMenu* menu, SplitterWidget* splitter);

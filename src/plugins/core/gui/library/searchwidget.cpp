@@ -22,11 +22,11 @@
 #include "core/library/musiclibrary.h"
 #include "core/settings/settings.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QMenu>
+#include <pluginsystem/pluginmanager.h>
 
 struct SearchWidget::Private
 {
@@ -53,7 +53,7 @@ SearchWidget::SearchWidget(QWidget* parent)
 
     connect(p->settings, &Settings::layoutEditingChanged, this, &SearchWidget::searchBoxContextMenu);
     connect(p->searchBox, &QLineEdit::textChanged, this, &SearchWidget::textChanged);
-    connect(this, &SearchWidget::searchChanged, p->library, &Library::MusicLibrary::searchChanged);
+    //    connect(this, &SearchWidget::searchChanged, p->library, &Library::MusicLibrary::searchChanged);
 }
 
 QString SearchWidget::name() const
@@ -85,9 +85,9 @@ void SearchWidget::keyPressEvent(QKeyEvent* e)
 {
     const auto key = e->key();
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        if(p->library->tracksHaveFiltered()) {
-            return p->library->prepareTracks();
-        }
+        //        if(p->library->tracksHaveFiltered()) {
+        //            return p->library->prepareTracks();
+        //        }
     }
     // p->searchBox->setFocusPolicy(Qt::StrongFocus);
     p->searchBox->setFocus();

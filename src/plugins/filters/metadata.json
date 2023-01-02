@@ -1,0 +1,14 @@
+{
+    "Name" : "Filters",
+    "Version" : "1.0.0",
+    "Vendor" : "Luke Taylor",
+    "Copyright" : "Copyright 2022, Luke Taylor <LukeT1@proton.me>",
+    "Category" : "Core",
+    "Description" : [
+        "Adds widgets to filter library."
+    ],
+    "Dependencies" : [
+        "Core"
+    ],
+    "Url" : "https://github.com/ludouzi/fooyin"
+}
