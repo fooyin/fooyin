@@ -35,45 +35,30 @@
 namespace DB {
 struct Database::Private
 {
-    QString directory;
-    QString filename;
-    QString connectionName;
     bool initialized{false};
 
     std::unique_ptr<Library> libraryConnector;
     std::unique_ptr<Playlist> playlistConnector;
-
     std::unique_ptr<LibraryDatabase> libraryDatabase;
-
-    Private(const QString& directory, const QString& filename)
-        : directory(directory)
-        , filename(filename)
-
-    {
-        connectionName = directory + "/" + filename;
-
-        if(!Util::File::exists(directory)) {
-            Util::File::createDirectories(directory);
-        }
-    }
 };
 
 Database::Database(const QString& directory, const QString& filename)
     : Module(directory + "/" + filename)
-    , p(std::make_unique<Private>(directory, filename))
+    , p(std::make_unique<Private>())
 {
-    bool success = Util::File::exists(p->connectionName);
+    if(!Util::File::exists(directory)) {
+        Util::File::createDirectories(directory);
+    }
+    bool success = Util::File::exists(connectionName());
 
     if(!success) {
         success = createDatabase();
     }
-
     p->initialized = success && db().isOpen();
 
     if(!Database::isInitialized()) {
         qDebug() << "Database could not be initialised";
     }
-
     else {
         p->libraryDatabase = std::make_unique<LibraryDatabase>(connectionName(), -1);
     }
