@@ -29,6 +29,7 @@ public:
     explicit Application(QObject* parent = nullptr);
     ~Application() override;
 
+    void startup();
     void shutdown();
 
 private:

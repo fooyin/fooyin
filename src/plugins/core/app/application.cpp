@@ -33,7 +33,6 @@
 #include "core/widgets/widgetprovider.h"
 #include "threadmanager.h"
 
-#include <QFontDatabase>
 #include <pluginsystem/pluginmanager.h>
 
 struct Application::Private
@@ -75,13 +74,7 @@ struct Application::Private
         PluginSystem::addObject(widgetProvider);
         PluginSystem::addObject(actionManager);
 
-        mainWindow = new MainWindow(widgetProvider, settingsDialog.get(), library);
-        PluginSystem::addObject(mainWindow);
-
         setupConnections();
-        mainWindow->setAttribute(Qt::WA_DeleteOnClose);
-        mainWindow->setupUi();
-        mainWindow->show();
     }
 
     void setupConnections() const
@@ -95,6 +88,17 @@ Application::Application(QObject* parent)
     : QObject(parent)
     , p(std::make_unique<Private>(this))
 { }
+
+void Application::startup()
+{
+    p->mainWindow = new MainWindow(p->widgetProvider, p->settingsDialog.get(), p->library);
+    PluginSystem::addObject(p->mainWindow);
+
+    p->setupConnections();
+    p->mainWindow->setAttribute(Qt::WA_DeleteOnClose);
+    p->mainWindow->setupUi();
+    p->mainWindow->show();
+}
 
 Application::~Application() = default;
 

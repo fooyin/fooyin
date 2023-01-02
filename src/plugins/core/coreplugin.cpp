@@ -34,7 +34,10 @@ void CorePlugin::initialise()
     m_app = new Application();
 }
 
-void CorePlugin::finalise() { }
+void CorePlugin::finalise()
+{
+    m_app->startup();
+}
 
 void CorePlugin::shutdown()
 {
