@@ -25,7 +25,6 @@
 int main(int argc, char* argv[])
 {
     Q_INIT_RESOURCE(icons);
-    Q_INIT_RESOURCE(fonts);
 
     qApp->setApplicationName("fooyin");
     qApp->setApplicationVersion(VERSION);

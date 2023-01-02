@@ -9,7 +9,6 @@ set(SOURCES
 
 set(RESOURCES
     ${CMAKE_SOURCE_DIR}/data/icons.qrc
-    ${CMAKE_SOURCE_DIR}/data/fonts.qrc
 )
 
 string(TOLOWER ${PROJECT_NAME} output_name)
