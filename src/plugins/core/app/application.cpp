@@ -67,6 +67,8 @@ struct Application::Private
     {
         threadManager->moveToNewThread(&engine);
 
+        PluginSystem::addObject(settings);
+        PluginSystem::addObject(threadManager);
         PluginSystem::addObject(playerManager);
         PluginSystem::addObject(libraryManager);
         PluginSystem::addObject(library);
