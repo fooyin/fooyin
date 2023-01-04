@@ -71,7 +71,6 @@ MusicLibrary::~MusicLibrary()
 void MusicLibrary::load()
 {
     getAllTracks();
-    emit filteredItems(-1);
     QTimer::singleShot(3000, this, &Library::MusicLibrary::reloadAll);
 }
 
@@ -95,31 +94,6 @@ TrackPtrList MusicLibrary::selectedTracks()
 {
     return m_selectedTracks;
 }
-
-// void MusicLibrary::changeFilter(int index)
-//{
-//     if(!m_activeFilters.isEmpty()) {
-//         for(const auto& [filterIndex, filter] : asRange(m_filterIndexes)) {
-//             if(index <= filterIndex) {
-//                 m_activeFilters.remove(filter);
-//             }
-//         }
-//     }
-//     emit filteredItems(index - 1);
-// }
-
-// void MusicLibrary::resetFilter(Filters::FilterType type)
-//{
-//     emit filterReset(type, m_activeFilters.value(type));
-// }
-
-// void MusicLibrary::unregisterFilter(int index)
-//{
-//     Filters::FilterType type = m_filterIndexes.take(index);
-//     m_activeFilters.remove(type);
-//     emit filteredItems(-1);
-//     getFilteredTracks();
-// }
 
 void MusicLibrary::updateTracks(const TrackPtrList& tracks)
 {
@@ -145,7 +119,6 @@ void MusicLibrary::newTracksAdded(const TrackList& tracks)
         m_trackMap.emplace(trackPtr->id(), trackPtr);
     }
     Library::sortTracks(m_tracks, m_order);
-    emit filteredItems();
 }
 
 void MusicLibrary::tracksUpdated(const TrackList& tracks)
@@ -158,7 +131,6 @@ void MusicLibrary::tracksUpdated(const TrackList& tracks)
             }
         }
     }
-    emit filteredItems();
 }
 
 void MusicLibrary::tracksDeleted(const IdSet& tracks)
@@ -171,7 +143,6 @@ void MusicLibrary::tracksDeleted(const IdSet& tracks)
             }
         }
     }
-    emit filteredItems();
 }
 
 void MusicLibrary::reloadAll()
@@ -187,7 +158,6 @@ void MusicLibrary::reload(const Library::LibraryInfo& info)
 void MusicLibrary::refresh()
 {
     getAllTracks();
-    emit filteredItems(-1);
 }
 
 void MusicLibrary::refreshTracks(const TrackList& result)
@@ -215,20 +185,10 @@ TrackPtrList MusicLibrary::tracks()
     return lst.empty() ? m_tracks : lst;
 }
 
-// QList<Filters::FilterType> MusicLibrary::filters()
-//{
-//     return m_filterIndexes.values();
-// }
-
 Library::SortOrder MusicLibrary::sortOrder()
 {
     return m_order;
 }
-
-// SortOrder MusicLibrary::filterOrder(Filters::FilterType type)
-//{
-//     return m_filterSortOrders.value(type);
-// }
 
 void MusicLibrary::changeOrder(SortOrder order)
 {
@@ -237,24 +197,6 @@ void MusicLibrary::changeOrder(SortOrder order)
     //    if(!m_filteredTracks.empty()) {
     //        Library::sortTracks(m_filteredTracks, m_order);
     //    }
-    emit filteredTracks();
-}
-
-// void MusicLibrary::changeFilterOrder(Filters::FilterType type, SortOrder order)
-//{
-//     m_filterSortOrders.insert(type, order);
-//     emit orderedFilter(type);
-// }
-
-void MusicLibrary::selectionChanged(const IdSet& indexes, Filters::FilterType type, int index)
-{
-    if(indexes.empty()) {
-        return;
-    }
-
-    changeSelection(indexes, type, index);
-
-    emit filteredItems(index);
 }
 
 void MusicLibrary::changeTrackSelection(const QSet<Track*>& tracks)
@@ -280,30 +222,6 @@ void MusicLibrary::trackSelectionChanged(const QSet<Track*>& tracks)
     changeTrackSelection(tracks);
     emit tracksSelChanged();
 }
-
-// void MusicLibrary::changeSearch(const QString& search)
-//{
-//     m_searchFilter = search;
-//     m_filteredTracks.clear();
-//     if(search.isEmpty()) {
-//         if(!m_activeFilters.isEmpty()) {
-//             getFilteredTracks();
-//         }
-//         else {
-//             emit filteredTracks();
-//         }
-//         emit filteredItems(-1);
-//     }
-//     else {
-//         getFilteredTracks();
-//         emit filteredItems(-1);
-//     }
-// }
-
-// void MusicLibrary::searchChanged(const QString& search)
-//{
-//     changeSearch(search);
-// }
 
 void MusicLibrary::getAllTracks()
 {

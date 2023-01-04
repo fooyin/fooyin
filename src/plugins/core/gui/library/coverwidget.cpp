@@ -53,7 +53,7 @@ CoverWidget::CoverWidget(QWidget* parent)
     setupUi();
 
     connect(p->playerManager, &PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
-    connect(p->library, &Library::MusicLibrary::filteredTracks, this, &CoverWidget::reloadCover);
+    connect(p->library, &Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
     connect(p->library, &Library::MusicLibrary::tracksSelChanged, this, &CoverWidget::reloadCover);
 
     reloadCover();

@@ -49,7 +49,7 @@ PlaylistModel::PlaylistModel(PlayerManager* playerManager, Library::MusicLibrary
     connect(m_settings, &Settings::playlistSettingChanged, this, &PlaylistModel::reset);
     connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistModel::changeRowColours);
     connect(m_library, &Library::MusicLibrary::tracksLoaded, this, &PlaylistModel::reset);
-    connect(m_library, &Library::MusicLibrary::filteredTracks, this, &PlaylistModel::reset);
+    connect(m_library, &Library::MusicLibrary::tracksChanged, this, &PlaylistModel::reset);
 
     m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_pausedIcon = m_pausedIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);

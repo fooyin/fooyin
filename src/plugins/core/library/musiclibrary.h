@@ -52,21 +52,13 @@ public:
 
     TrackPtrList tracks();
 
-    //    QList<Filters::FilterType> filters();
     SortOrder sortOrder();
-    //    SortOrder filterOrder(Filters::FilterType type);
-
     void changeOrder(SortOrder order);
-    //    void changeFilterOrder(Filters::FilterType type, SortOrder order);
 
     void changeSelection(const IdSet& indexes, Filters::FilterType type, int index);
     void selectionChanged(const IdSet& indexes, Filters::FilterType type, int index);
-
     void changeTrackSelection(const QSet<Track*>& tracks);
     void trackSelectionChanged(const QSet<Track*>& tracks);
-
-    //    void changeSearch(const QString& search);
-    //    void searchChanged(const QString& search);
 
     void libraryAdded();
 
@@ -77,18 +69,13 @@ public:
     void getAllTracks();
     void updateTracks(const TrackPtrList& tracks);
 
-    //    void changeFilter(int index);
-    //    void resetFilter(Filters::FilterType type);
-    //    void unregisterFilter(int index);
     void addInteractor(MusicLibraryInteractor* interactor);
 
 signals:
     void runLibraryScan(TrackPtrList tracks, Library::LibraryInfo info);
     void runAllLibrariesScan(TrackPtrList tracks);
-    void filteredTracks();
-    void filteredItems(int index = -1);
-    //    void orderedFilter(Filters::FilterType type);
-    void filterReset(Filters::FilterType type, const IdSet& selection);
+
+    void tracksChanged();
     void tracksSelChanged();
 
     void tracksLoaded(const TrackPtrList& tracks);

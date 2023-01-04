@@ -58,7 +58,7 @@ FilterManager::FilterManager(QObject* parent)
     connect(this, &FilterManager::loadFilteredTracks, &p->databaseManager, &FilterDatabaseManager::filterTracks);
     connect(&p->databaseManager, &FilterDatabaseManager::tracksFiltered, this, &FilterManager::filteredTracksLoaded);
 
-    connect(this, &FilterManager::filteredTracks, p->library, &Library::MusicLibrary::filteredTracks);
+    connect(this, &FilterManager::filteredTracks, p->library, &Library::MusicLibrary::tracksChanged);
 }
 
 TrackPtrList FilterManager::tracks()
