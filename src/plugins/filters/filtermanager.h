@@ -57,6 +57,7 @@ public:
     void getItemsByFilter(Filters::FilterType type, Library::SortOrder order);
 
     void getFilteredTracks();
+    bool tracksHaveFiltered();
 
     void changeSelection(const IdSet& indexes, Filters::FilterType type, int index);
     void selectionChanged(const IdSet& indexes, Filters::FilterType type, int index);

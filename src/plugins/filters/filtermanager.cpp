@@ -52,6 +52,7 @@ FilterManager::FilterManager(QObject* parent)
     , p{std::make_unique<Private>()}
 {
     connect(this, &FilterManager::loadAllItems, &p->databaseManager, &FilterDatabaseManager::getAllItems);
+    connect(this, &FilterManager::loadItemsByFilter, &p->databaseManager, &FilterDatabaseManager::getItemsByFilter);
     connect(&p->databaseManager, &FilterDatabaseManager::gotItems, this, &FilterManager::itemsHaveLoaded);
 
     connect(this, &FilterManager::loadFilteredTracks, &p->databaseManager, &FilterDatabaseManager::filterTracks);
@@ -140,6 +141,11 @@ void FilterManager::getFilteredTracks()
 {
     p->filteredTracks.clear();
     emit loadFilteredTracks(p->library->tracks(), p->activeFilters, p->searchFilter);
+}
+
+bool FilterManager::tracksHaveFiltered()
+{
+    return !p->filteredTracks.empty();
 }
 
 void FilterManager::changeSelection(const IdSet& indexes, Filters::FilterType type, int index)
