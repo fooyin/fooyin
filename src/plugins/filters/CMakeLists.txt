@@ -22,4 +22,6 @@ fooyin_add_plugin(Filters
         filterwidget.h
         filterwidget.cpp
         filterfwd.h
+        searchwidget.h
+        searchwidget.cpp
 )

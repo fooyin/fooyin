@@ -21,6 +21,7 @@
 
 #include "filtermanager.h"
 #include "filterwidget.h"
+#include "searchwidget.h"
 
 #include <QMenu>
 #include <core/actions/actioncontainer.h>
@@ -48,5 +49,6 @@ void FiltersPlugin::finalise()
     factory->registerClass<Library::AlbmArtistFilter>("AlbumArtist", {"Filter"});
     factory->registerClass<Library::ArtistFilter>("Artist", {"Filter"});
     factory->registerClass<Library::AlbumFilter>("Album", {"Filter"});
+    factory->registerClass<SearchWidget>("Search");
 }
 void FiltersPlugin::shutdown() { }

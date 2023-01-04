@@ -131,8 +131,6 @@ fooyin_add_plugin(Core
 
         gui/library/coverwidget.h
         gui/library/coverwidget.cpp
-        gui/library/searchwidget.h
-        gui/library/searchwidget.cpp
         gui/library/statuswidget.h
         gui/library/statuswidget.cpp
 

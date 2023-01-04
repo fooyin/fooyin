@@ -22,7 +22,6 @@
 #include "core/gui/controls/controlwidget.h"
 #include "core/gui/info/infowidget.h"
 #include "core/gui/library/coverwidget.h"
-#include "core/gui/library/searchwidget.h"
 #include "core/gui/library/statuswidget.h"
 #include "core/gui/playlist/playlistwidget.h"
 #include "core/gui/settings/settingsdialog.h"
@@ -142,7 +141,6 @@ void WidgetProvider::registerWidgets()
 
     factory->registerClass<InfoWidget>("Info");
     factory->registerClass<CoverWidget>("Artwork");
-    factory->registerClass<SearchWidget>("Search");
     factory->registerClass<Library::PlaylistWidget>("Playlist");
     factory->registerClass<Widgets::Spacer>("Spacer");
     factory->registerClass<VerticalSplitterWidget>("Vertical", {"Splitter"});
