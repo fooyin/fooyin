@@ -50,6 +50,7 @@ fooyin_add_plugin(Core
         library/librarydatabasemanager.cpp
         library/musiclibrary.h
         library/musiclibrary.cpp
+        library/musiclibraryinteractor.h
         library/libraryscanner.h
         library/libraryscanner.cpp
         library/libraryutils.h

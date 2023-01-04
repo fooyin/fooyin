@@ -30,6 +30,7 @@
 class LibraryPlaylistInterface;
 class LibraryDatabaseManager;
 class ThreadManager;
+class MusicLibraryInteractor;
 
 namespace Library {
 class LibraryScanner;
@@ -49,8 +50,6 @@ public:
     void refresh();
     void refreshTracks(const TrackList& result);
 
-    //    void items(Filters::FilterType type);
-
     TrackPtrList tracks();
 
     //    QList<Filters::FilterType> filters();
@@ -59,8 +58,6 @@ public:
 
     void changeOrder(SortOrder order);
     //    void changeFilterOrder(Filters::FilterType type, SortOrder order);
-
-    //    bool tracksHaveFiltered();
 
     void changeSelection(const IdSet& indexes, Filters::FilterType type, int index);
     void selectionChanged(const IdSet& indexes, Filters::FilterType type, int index);
@@ -77,16 +74,13 @@ public:
 
     TrackPtrList selectedTracks();
 
-    //    void getAllItems(Filters::FilterType type, SortOrder order);
-    //    void getItemsByFilter(Filters::FilterType type, SortOrder order);
     void getAllTracks();
-    //    void getFilteredTracks();
     void updateTracks(const TrackPtrList& tracks);
 
     //    void changeFilter(int index);
     //    void resetFilter(Filters::FilterType type);
-    //    void registerFilter(Filters::FilterType type, int index);
     //    void unregisterFilter(int index);
+    void addInteractor(MusicLibraryInteractor* interactor);
 
 signals:
     void runLibraryScan(TrackPtrList tracks, Library::LibraryInfo info);
@@ -97,17 +91,12 @@ signals:
     void filterReset(Filters::FilterType type, const IdSet& selection);
     void tracksSelChanged();
 
-    //    void itemsLoaded(Filters::FilterType type, FilterList result);
+    void tracksLoaded(const TrackPtrList& tracks);
     void loadAllTracks();
-    //    void loadAllItems(Filters::FilterType type, Library::SortOrder order);
-    //    void loadItemsByFilter(Filters::FilterType type, ActiveFilters filters, QString search, Library::SortOrder
-    //    order); void loadFilteredTracks(TrackPtrList tracks, ActiveFilters filters, QString search);
     void updateSaveTracks(TrackPtrList tracks);
 
 protected:
-    void tracksLoaded(const TrackList& tracks);
-    //    void itemsHaveLoaded(Filters::FilterType type, FilterList result);
-    //    void filteredTracksLoaded(TrackPtrList tracks);
+    void tracksHaveLoaded(const TrackList& tracks);
     void newTracksAdded(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
     void tracksDeleted(const IdSet& tracks);
@@ -121,15 +110,10 @@ private:
 
     TrackPtrList m_tracks;
     TrackHash m_trackMap;
-    TrackPtrList m_filteredTracks;
 
     std::vector<Track*> m_selectedTracks;
-
-    QMap<int, Filters::FilterType> m_filterIndexes;
-    //    ActiveFilters m_activeFilters;
-    QString m_searchFilter;
+    std::vector<MusicLibraryInteractor*> m_interactors;
 
     SortOrder m_order;
-    //    FilterSortOrders m_filterSortOrders;
 };
 } // namespace Library

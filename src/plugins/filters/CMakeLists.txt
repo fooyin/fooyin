@@ -7,6 +7,8 @@ fooyin_add_plugin(Filters
         filtersplugin.cpp
         filterdatabase.h
         filterdatabase.cpp
+        filterdatabasemanager.h
+        filterdatabasemanager.cpp
         filterdelegate.h
         filterdelegate.cpp
         filteritem.h

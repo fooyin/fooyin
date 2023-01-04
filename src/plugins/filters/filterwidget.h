@@ -29,6 +29,7 @@ class Settings;
 class PlayerManager;
 class QHBoxLayout;
 class WidgetProvider;
+class FilterManager;
 
 namespace Library {
 class FilterView;
@@ -83,7 +84,7 @@ private:
     QHBoxLayout* m_layout;
     Filters::FilterType m_type;
     int m_index;
-    MusicLibrary* m_library;
+    FilterManager* m_manager;
     Library::FilterView* m_filter;
     FilterModel* m_model;
     Settings* m_settings;

@@ -19,25 +19,17 @@
 
 #pragma once
 
-#include <pluginsystem/plugin.h>
+#include <QObject>
+#include <core/library/models/trackfwd.h>
 
-class FilterManager;
-
-class FiltersPlugin : public QObject,
-                      public PluginSystem::Plugin
+class MusicLibraryInteractor : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
-    Q_INTERFACES(PluginSystem::Plugin)
 
 public:
-    FiltersPlugin();
-    ~FiltersPlugin() override;
+    explicit MusicLibraryInteractor(QObject* parent)
+        : QObject{parent} {};
+    ~MusicLibraryInteractor() override = default;
 
-    void initialise() override;
-    void finalise() override;
-    void shutdown() override;
-
-private:
-    FilterManager* m_filterManager;
+    virtual TrackPtrList tracks() = 0;
 };

@@ -19,7 +19,6 @@
 
 #include "filterview.h"
 
-#include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
 
 #include <QActionGroup>
@@ -29,10 +28,9 @@
 #include <QScrollBar>
 
 namespace Library {
-FilterView::FilterView(PlayerManager* playerManager, MusicLibrary* library, QWidget* parent)
+FilterView::FilterView(PlayerManager* playerManager, QWidget* parent)
     : QTreeView(parent)
     , m_playerManager(playerManager)
-    , m_library(library)
 {
     setObjectName("FilterView");
     setupView();
@@ -77,7 +75,7 @@ void FilterView::keyPressEvent(QKeyEvent* e)
     const auto key = e->key();
 
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        m_library->prepareTracks();
+        //        m_library->prepareTracks();
     }
     QTreeView::keyPressEvent(e);
 }

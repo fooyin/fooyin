@@ -27,8 +27,10 @@
 #include "libraryinfo.h"
 #include "librarymanager.h"
 #include "libraryscanner.h"
+#include "musiclibraryinteractor.h"
 
 #include <QTimer>
+#include <pluginsystem/pluginmanager.h>
 #include <utility>
 #include <utils/helpers.h>
 
@@ -54,17 +56,8 @@ MusicLibrary::MusicLibrary(LibraryPlaylistInterface* playlistInteractor, Library
     connect(&m_scanner, &LibraryScanner::updatedTracks, this, &MusicLibrary::tracksUpdated);
     connect(&m_scanner, &LibraryScanner::tracksDeleted, this, &MusicLibrary::tracksDeleted);
 
-    connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &MusicLibrary::tracksLoaded);
-    //    connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotItems, this, &MusicLibrary::itemsHaveLoaded);
-    //    connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::tracksFiltered, this,
-    //            &MusicLibrary::filteredTracksLoaded);
-
-    //    connect(this, &MusicLibrary::loadAllItems, &m_libraryDatabaseManager, &LibraryDatabaseManager::getAllItems);
-    //    connect(this, &MusicLibrary::loadItemsByFilter, &m_libraryDatabaseManager,
-    //            &LibraryDatabaseManager::getItemsByFilter);
+    connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &MusicLibrary::tracksHaveLoaded);
     connect(this, &MusicLibrary::loadAllTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
-    //    connect(this, &MusicLibrary::loadFilteredTracks, &m_libraryDatabaseManager,
-    //    &LibraryDatabaseManager::filterTracks);
     connect(this, &MusicLibrary::updateSaveTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::updateTracks);
 
     load();
@@ -89,16 +82,12 @@ void MusicLibrary::libraryAdded()
 
 void MusicLibrary::prepareTracks(int idx)
 {
-    if(!m_filteredTracks.empty()) {
-        m_playlistInteractor->createPlaylist(m_filteredTracks, idx);
-    }
-
-    else if(m_selectedTracks.empty()) {
-        m_playlistInteractor->createPlaylist(m_tracks, 0);
+    if(m_selectedTracks.empty()) {
+        m_playlistInteractor->createPlaylist(tracks(), 0);
     }
 
     else {
-        m_playlistInteractor->createPlaylist(m_tracks, idx);
+        m_playlistInteractor->createPlaylist(tracks(), idx);
     }
 }
 
@@ -124,13 +113,6 @@ TrackPtrList MusicLibrary::selectedTracks()
 //     emit filterReset(type, m_activeFilters.value(type));
 // }
 
-// void MusicLibrary::registerFilter(Filters::FilterType type, int index)
-//{
-//     m_filterIndexes.insert(index, type);
-//     // TODO: Properly handle different sort orders
-//     m_filterSortOrders.insert(type, SortOrder::TitleAsc);
-// }
-
 // void MusicLibrary::unregisterFilter(int index)
 //{
 //     Filters::FilterType type = m_filterIndexes.take(index);
@@ -144,23 +126,16 @@ void MusicLibrary::updateTracks(const TrackPtrList& tracks)
     emit updateSaveTracks(tracks);
 }
 
-void MusicLibrary::tracksLoaded(const TrackList& tracks)
+void MusicLibrary::addInteractor(MusicLibraryInteractor* interactor)
+{
+    m_interactors.emplace_back(interactor);
+}
+
+void MusicLibrary::tracksHaveLoaded(const TrackList& tracks)
 {
     qDeleteAll(m_tracks);
     refreshTracks(tracks);
-    emit filteredTracks();
 }
-
-// void MusicLibrary::itemsHaveLoaded(Filters::FilterType type, FilterList result)
-//{
-//     emit itemsLoaded(type, std::move(result));
-// }
-
-// void MusicLibrary::filteredTracksLoaded(TrackPtrList tracks)
-//{
-//     m_filteredTracks = std::move(tracks);
-//     emit filteredTracks();
-// }
 
 void MusicLibrary::newTracksAdded(const TrackList& tracks)
 {
@@ -171,7 +146,6 @@ void MusicLibrary::newTracksAdded(const TrackList& tracks)
     }
     Library::sortTracks(m_tracks, m_order);
     emit filteredItems();
-    //    getFilteredTracks();
 }
 
 void MusicLibrary::tracksUpdated(const TrackList& tracks)
@@ -185,7 +159,6 @@ void MusicLibrary::tracksUpdated(const TrackList& tracks)
         }
     }
     emit filteredItems();
-    //    getFilteredTracks();
 }
 
 void MusicLibrary::tracksDeleted(const IdSet& tracks)
@@ -199,7 +172,6 @@ void MusicLibrary::tracksDeleted(const IdSet& tracks)
         }
     }
     emit filteredItems();
-    //    getFilteredTracks();
 }
 
 void MusicLibrary::reloadAll()
@@ -222,31 +194,25 @@ void MusicLibrary::refreshTracks(const TrackList& result)
 {
     m_tracks.clear();
     m_trackMap.clear();
-    m_filteredTracks.clear();
     for(const auto& track : result) {
         auto* trackPtr = new Track(track);
         m_tracks.emplace_back(trackPtr);
         m_trackMap.emplace(trackPtr->id(), trackPtr);
     }
     Library::sortTracks(m_tracks, m_order);
+    emit tracksLoaded(m_tracks);
 }
-
-// void MusicLibrary::items(Filters::FilterType type)
-//{
-//     if(!m_activeFilters.isEmpty() || !m_searchFilter.isEmpty()) {
-//         getItemsByFilter(type, m_filterSortOrders.value(type));
-//     }
-//     else {
-//         getAllItems(type, m_filterSortOrders.value(type));
-//     }
-// }
 
 TrackPtrList MusicLibrary::tracks()
 {
-    if(!m_filteredTracks.empty() || !m_searchFilter.isEmpty()) {
-        return m_filteredTracks;
+    TrackPtrList lst;
+    for(auto* inter : m_interactors) {
+        auto trks = inter->tracks();
+        if(!trks.empty()) {
+            lst.insert(lst.end(), trks.begin(), trks.end());
+        }
     }
-    return m_tracks;
+    return lst.empty() ? m_tracks : lst;
 }
 
 // QList<Filters::FilterType> MusicLibrary::filters()
@@ -268,9 +234,9 @@ void MusicLibrary::changeOrder(SortOrder order)
 {
     m_order = order;
     Library::sortTracks(m_tracks, m_order);
-    if(!m_filteredTracks.empty()) {
-        Library::sortTracks(m_filteredTracks, m_order);
-    }
+    //    if(!m_filteredTracks.empty()) {
+    //        Library::sortTracks(m_filteredTracks, m_order);
+    //    }
     emit filteredTracks();
 }
 
@@ -279,44 +245,6 @@ void MusicLibrary::changeOrder(SortOrder order)
 //     m_filterSortOrders.insert(type, order);
 //     emit orderedFilter(type);
 // }
-
-// bool MusicLibrary::tracksHaveFiltered()
-//{
-//     return !m_filteredTracks.empty();
-// }
-
-// void MusicLibrary::changeSelection(const IdSet& indexes, Filters::FilterType type, int index)
-//{
-//     if(m_activeFilters.isEmpty() && indexes.contains(-1)) {
-//         return;
-//     }
-
-//    for(const auto& [filterIndex, filter] : asRange(m_filterIndexes)) {
-//        if(index < filterIndex) {
-//            m_activeFilters.remove(filter);
-//        }
-//    }
-
-//    if(indexes.contains(-1)) {
-//        m_activeFilters.remove(type);
-//    }
-//    else {
-//        m_activeFilters.insert(type, indexes);
-//    }
-
-//    m_filteredTracks.clear();
-//    m_selectedTracks.clear();
-
-//    const IdSet& filterIds = m_activeFilters.value(type);
-
-//    if((!m_activeFilters.isEmpty() && !filterIds.contains(-1)) || !m_searchFilter.isEmpty()) {
-//        getFilteredTracks();
-//    }
-
-//    else {
-//        emit filteredTracks();
-//    }
-//}
 
 void MusicLibrary::selectionChanged(const IdSet& indexes, Filters::FilterType type, int index)
 {
@@ -377,24 +305,8 @@ void MusicLibrary::trackSelectionChanged(const QSet<Track*>& tracks)
 //     changeSearch(search);
 // }
 
-// void MusicLibrary::getAllItems(Filters::FilterType type, SortOrder order)
-//{
-//     emit loadAllItems(type, order);
-// }
-
-// void MusicLibrary::getItemsByFilter(Filters::FilterType type, SortOrder order)
-//{
-//     emit loadItemsByFilter(type, m_activeFilters, m_searchFilter, order);
-// }
-
 void MusicLibrary::getAllTracks()
 {
     emit loadAllTracks();
 }
-
-// void MusicLibrary::getFilteredTracks()
-//{
-//     m_filteredTracks.clear();
-//     emit loadFilteredTracks(m_tracks, m_activeFilters, m_searchFilter);
-// }
 } // namespace Library

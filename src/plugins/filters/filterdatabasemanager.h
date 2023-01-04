@@ -31,8 +31,10 @@ class FilterDatabase;
 
 class FilterDatabaseManager : public Worker
 {
+    Q_OBJECT
+
 public:
-    FilterDatabaseManager(QObject* parent = nullptr);
+    explicit FilterDatabaseManager(QObject* parent = nullptr);
     ~FilterDatabaseManager() override;
 
     void getAllItems(Filters::FilterType type, ::Library::SortOrder order);
@@ -40,7 +42,7 @@ public:
                           ::Library::SortOrder order);
     void filterTracks(const TrackPtrList& tracks, const ActiveFilters& filters, const QString& search);
 
-     void stopThread() override;
+    void stopThread() override;
 
 signals:
     void gotItems(Filters::FilterType type, const FilterList& result);
@@ -49,4 +51,3 @@ signals:
 private:
     DB::FilterDatabase* m_filterDatabase;
 };
-

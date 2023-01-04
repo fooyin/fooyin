@@ -20,17 +20,15 @@
 #include "filtermodel.h"
 
 #include "filteritem.h"
-#include "core/library/musiclibrary.h"
 
 #include <QSize>
 
 namespace Library {
-FilterModel::FilterModel(Filters::FilterType type, int index, MusicLibrary* library, QObject* parent)
+FilterModel::FilterModel(Filters::FilterType type, int index, QObject* parent)
     : QAbstractListModel(parent)
     , m_root(new FilterItem())
     , m_type(type)
     , m_index(index)
-    , m_library(library)
 { }
 
 FilterModel::~FilterModel() = default;
@@ -143,11 +141,6 @@ int FilterModel::columnCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent)
     return m_root->columnCount();
-}
-
-Library::MusicLibrary* FilterModel::library()
-{
-    return m_library;
 }
 
 QHash<int, QByteArray> FilterModel::roleNames() const

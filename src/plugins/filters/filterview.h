@@ -25,14 +25,12 @@
 class PlayerManager;
 
 namespace Library {
-class MusicLibrary;
-
 class FilterView : public QTreeView
 {
     Q_OBJECT
 
 public:
-    FilterView(PlayerManager* playerManager, MusicLibrary* library, QWidget* parent = nullptr);
+    FilterView(PlayerManager* playerManager, QWidget* parent = nullptr);
     ~FilterView() override;
 
     void setupView();
@@ -45,6 +43,5 @@ protected:
 
 private:
     PlayerManager* m_playerManager;
-    MusicLibrary* m_library;
 };
 } // namespace Library

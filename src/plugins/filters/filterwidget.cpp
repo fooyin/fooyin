@@ -20,6 +20,7 @@
 #include "filterwidget.h"
 
 #include "filterdelegate.h"
+#include "filtermanager.h"
 #include "filtermodel.h"
 #include "filterview.h"
 
@@ -41,9 +42,9 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     , m_layout(new QHBoxLayout(this))
     , m_type(type)
     , m_index(0)
-    , m_library(PluginSystem::object<Library::MusicLibrary>())
-    , m_filter(new Library::FilterView(PluginSystem::object<PlayerManager>(), m_library, this))
-    , m_model(new FilterModel(m_type, m_index, m_library, m_filter))
+    , m_manager(PluginSystem::object<FilterManager>())
+    , m_filter(new Library::FilterView(PluginSystem::object<PlayerManager>(), this))
+    , m_model(new FilterModel(m_type, m_index, m_filter))
     , m_settings(PluginSystem::object<Settings>())
 {
     setObjectName(FilterWidget::name());
@@ -51,7 +52,7 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     m_layout->addWidget(m_filter);
     m_filter->setModel(m_model);
     m_filter->setItemDelegate(new FilterDelegate(this));
-    //    m_library->registerFilter(m_type, m_index);
+    m_index = m_manager->registerFilter(m_type);
     setupConnections();
     setHeaderHidden(m_settings->value(Settings::Setting::FilterHeader).toBool());
     setScrollbarHidden(m_settings->value(Settings::Setting::FilterScrollBar).toBool());
@@ -62,7 +63,7 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
 
 FilterWidget::~FilterWidget()
 {
-    // m_library->unregisterFilter(m_index);
+    m_manager->unregisterFilter(m_index);
 }
 
 void FilterWidget::setupConnections()
@@ -74,18 +75,18 @@ void FilterWidget::setupConnections()
     connect(m_filter->header(), &FilterView::customContextMenuRequested, this,
             &FilterWidget::customHeaderMenuRequested);
     connect(m_filter, &QTreeView::doubleClicked, this, [this] {
-        m_library->prepareTracks();
+        //        m_library->prepareTracks();
     });
     connect(m_filter->header(), &QHeaderView::sectionClicked, this, &FilterWidget::switchOrder);
-    //    connect(this, &FilterWidget::typeChanged, m_library, &Library::MusicLibrary::changeFilter);
+    connect(this, &FilterWidget::typeChanged, m_manager, &FilterManager::changeFilter);
     //    connect(m_model, &FilterModel::modelReset, this, [this] {
     //        m_library->resetFilter(m_type);
     //    });
     connect(m_filter->selectionModel(), &QItemSelectionModel::selectionChanged, this, &FilterWidget::selectionChanged);
 
-    connect(m_library, &Library::MusicLibrary::filteredItems, this, &FilterWidget::resetByIndex);
-    //    connect(m_library, &Library::MusicLibrary::orderedFilter, this, &FilterWidget::resetByType);
-    //    connect(m_library, &Library::MusicLibrary::itemsLoaded, this, &FilterWidget::dataLoaded);
+    connect(m_manager, &FilterManager::filteredItems, this, &FilterWidget::resetByIndex);
+    connect(m_manager, &FilterManager::orderedFilter, this, &FilterWidget::resetByType);
+    connect(m_manager, &FilterManager::itemsLoaded, this, &FilterWidget::dataLoaded);
 }
 
 Filters::FilterType FilterWidget::type()
@@ -98,7 +99,7 @@ void FilterWidget::setType(Filters::FilterType type)
     m_type = type;
     m_model->setType(type);
     emit typeChanged(m_index);
-    //    m_library->registerFilter(m_type, m_index);
+    m_manager->registerFilter(m_type);
     m_filter->clearSelection();
     m_filter->scrollToTop();
 }
@@ -116,19 +117,19 @@ void FilterWidget::setIndex(int index)
 
 void FilterWidget::switchOrder()
 {
-    //    const auto order = m_library->filterOrder(m_type);
-    //    switch(order) {
-    //        case(Library::SortOrder::TitleAsc):
-    //            return m_library->changeFilterOrder(m_type, Library::SortOrder::TitleDesc);
-    //        case(Library::SortOrder::TitleDesc):
-    //            return m_library->changeFilterOrder(m_type, Library::SortOrder::TitleAsc);
-    //        case(Library::SortOrder::YearAsc):
-    //            return m_library->changeFilterOrder(m_type, Library::SortOrder::YearDesc);
-    //        case(Library::SortOrder::YearDesc):
-    //            return m_library->changeFilterOrder(m_type, Library::SortOrder::YearAsc);
-    //        case(Library::SortOrder::NoSorting):
-    //            return m_library->changeFilterOrder(m_type, Library::SortOrder::TitleAsc);
-    //    }
+    const auto order = m_manager->filterOrder(m_type);
+    switch(order) {
+        case(Library::SortOrder::TitleAsc):
+            return m_manager->changeFilterOrder(m_type, Library::SortOrder::TitleDesc);
+        case(Library::SortOrder::TitleDesc):
+            return m_manager->changeFilterOrder(m_type, Library::SortOrder::TitleAsc);
+        case(Library::SortOrder::YearAsc):
+            return m_manager->changeFilterOrder(m_type, Library::SortOrder::YearDesc);
+        case(Library::SortOrder::YearDesc):
+            return m_manager->changeFilterOrder(m_type, Library::SortOrder::YearAsc);
+        case(Library::SortOrder::NoSorting):
+            return m_manager->changeFilterOrder(m_type, Library::SortOrder::TitleAsc);
+    }
 }
 
 bool FilterWidget::isHeaderHidden()
@@ -210,8 +211,8 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     QMenu orderMenu;
     orderMenu.setTitle("Sort Order");
 
-    //    const auto filters = m_library->filters();
-    //    const auto order = m_library->filterOrder(m_type);
+    const auto filters = m_manager->filters();
+    const auto order = m_manager->filterOrder(m_type);
 
     QActionGroup editFilters{&menu};
     QActionGroup sortOrder{&menu};
@@ -220,14 +221,14 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     titleSort.setText("Title");
     titleSort.setData(QVariant::fromValue<Library::SortOrder>(Library::SortOrder::TitleAsc));
     titleSort.setCheckable(true);
-    //    titleSort.setChecked(order == Library::SortOrder::TitleAsc || order == Library::SortOrder::TitleDesc);
+    titleSort.setChecked(order == Library::SortOrder::TitleAsc || order == Library::SortOrder::TitleDesc);
     orderMenu.addAction(&titleSort);
 
     QAction yearSort;
     yearSort.setText("Year");
     yearSort.setData(QVariant::fromValue<Library::SortOrder>(Library::SortOrder::YearAsc));
     yearSort.setCheckable(true);
-    //    yearSort.setChecked(order == Library::SortOrder::YearAsc || order == Library::SortOrder::YearDesc);
+    yearSort.setChecked(order == Library::SortOrder::YearAsc || order == Library::SortOrder::YearDesc);
     orderMenu.addAction(&yearSort);
 
     sortOrder.addAction(&titleSort);
@@ -238,7 +239,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     genre.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Genre));
     genre.setCheckable(true);
     genre.setChecked(m_type == Filters::FilterType::Genre);
-    //    genre.setDisabled(!genre.isChecked() && filters.contains(Filters::FilterType::Genre));
+    genre.setDisabled(!genre.isChecked() && filters.contains(Filters::FilterType::Genre));
     menu.addAction(&genre);
 
     QAction year;
@@ -246,7 +247,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     year.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Year));
     year.setCheckable(true);
     year.setChecked(m_type == Filters::FilterType::Year);
-    //    year.setDisabled(!year.isChecked() && filters.contains(Filters::FilterType::Year));
+    year.setDisabled(!year.isChecked() && filters.contains(Filters::FilterType::Year));
     menu.addAction(&year);
 
     QAction albumArtist;
@@ -254,7 +255,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     albumArtist.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::AlbumArtist));
     albumArtist.setCheckable(true);
     albumArtist.setChecked(m_type == Filters::FilterType::AlbumArtist);
-    //    albumArtist.setDisabled(!albumArtist.isChecked() && filters.contains(Filters::FilterType::AlbumArtist));
+    albumArtist.setDisabled(!albumArtist.isChecked() && filters.contains(Filters::FilterType::AlbumArtist));
     menu.addAction(&albumArtist);
 
     QAction artist;
@@ -262,7 +263,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     artist.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Artist));
     artist.setCheckable(true);
     artist.setChecked(m_type == Filters::FilterType::Artist);
-    //    artist.setDisabled(!artist.isChecked() && filters.contains(Filters::FilterType::Artist));
+    artist.setDisabled(!artist.isChecked() && filters.contains(Filters::FilterType::Artist));
     menu.addAction(&artist);
 
     QAction album;
@@ -270,7 +271,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     album.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Album));
     album.setCheckable(true);
     album.setChecked(m_type == Filters::FilterType::Album);
-    //    album.setDisabled(!album.isChecked() && filters.contains(Filters::FilterType::Album));
+    album.setDisabled(!album.isChecked() && filters.contains(Filters::FilterType::Album));
     menu.addAction(&album);
 
     editFilters.addAction(&genre);
@@ -311,7 +312,7 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
             ids.insert(id);
         }
     }
-    m_library->selectionChanged(ids, m_type, m_index);
+    m_manager->selectionChanged(ids, m_type, m_index);
 }
 
 void FilterWidget::editFilter(QAction* action)
@@ -323,7 +324,7 @@ void FilterWidget::editFilter(QAction* action)
 void FilterWidget::changeOrder(QAction* action)
 {
     auto order = action->data().value<Library::SortOrder>();
-    //    m_library->changeFilterOrder(m_type, order);
+    m_manager->changeFilterOrder(m_type, order);
 }
 
 void FilterWidget::dataLoaded(Filters::FilterType type, const FilterList& result)
@@ -337,14 +338,14 @@ void FilterWidget::dataLoaded(Filters::FilterType type, const FilterList& result
 void FilterWidget::resetByIndex(int idx)
 {
     if(idx < index()) {
-        //        m_library->items(m_type);
+        m_manager->items(m_type);
     }
 }
 
 void FilterWidget::resetByType(Filters::FilterType type)
 {
     if(type == m_type) {
-        //        m_library->items(m_type);
+        m_manager->items(m_type);
     }
 }
 

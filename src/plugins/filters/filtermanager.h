@@ -20,21 +20,66 @@
 #pragma once
 
 #include "core/typedefs.h"
+#include "filterfwd.h"
 
-#include <QList>
+#include <core/library/models/trackfwd.h>
+#include <core/library/musiclibraryinteractor.h>
+#include <core/library/sorting/sortorder.h>
 
 namespace Library {
-class FilterWidget;
-};
+class MusicLibrary;
+}; // namespace Library
 
-class FilterManager
+class FilterDatabaseManager;
+class ThreadManager;
+class FilterLibraryController;
+
+class FilterManager : public MusicLibraryInteractor
 {
-public:
-    explicit FilterManager();
-    ~FilterManager();
+    Q_OBJECT
 
+public:
+    explicit FilterManager(QObject* parent = nullptr);
+    ~FilterManager() override;
+
+    TrackPtrList tracks() override;
+
+    QList<Filters::FilterType> filters();
     int registerFilter(Filters::FilterType type);
+    void unregisterFilter(int index);
+    void changeFilter(int index);
+    void resetFilter(Filters::FilterType type);
+    Library::SortOrder filterOrder(Filters::FilterType type);
+    void changeFilterOrder(Filters::FilterType type, Library::SortOrder order);
+
+    void items(Filters::FilterType type);
+    void getAllItems(Filters::FilterType type, Library::SortOrder order);
+    void getItemsByFilter(Filters::FilterType type, Library::SortOrder order);
+
+    void getFilteredTracks();
+
+    void changeSelection(const IdSet& indexes, Filters::FilterType type, int index);
+    void selectionChanged(const IdSet& indexes, Filters::FilterType type, int index);
+    void changeSearch(const QString& search);
+    void searchChanged(const QString& search);
+
+signals:
+    void loadAllItems(Filters::FilterType type, Library::SortOrder order);
+    void loadItemsByFilter(Filters::FilterType type, ActiveFilters filters, QString search, Library::SortOrder order);
+
+    void itemsLoaded(Filters::FilterType type, FilterList result);
+
+    void filteredTracks();
+    void loadFilteredTracks(TrackPtrList tracks, ActiveFilters filters, QString search);
+    void filteredItems(int index = -1);
+    void orderedFilter(Filters::FilterType type);
+    void filterReset(Filters::FilterType type, const IdSet& selection);
+
+protected:
+    void itemsHaveLoaded(Filters::FilterType type, FilterList result);
+    void filteredTracksLoaded(TrackPtrList tracks);
 
 private:
-    QList<Filters::FilterType> m_filters;
+    struct Private;
+    std::unique_ptr<FilterManager::Private> p;
 };

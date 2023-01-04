@@ -27,11 +27,10 @@
 class FilterItem;
 
 namespace Library {
-class MusicLibrary;
 class FilterModel : public QAbstractListModel
 {
 public:
-    FilterModel(Filters::FilterType type, int index, MusicLibrary* library, QObject* parent = nullptr);
+    FilterModel(Filters::FilterType type, int index, QObject* parent = nullptr);
     ~FilterModel() override;
 
     void setType(Filters::FilterType type);
@@ -45,8 +44,6 @@ public:
     [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
-
-    MusicLibrary* library();
 
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
@@ -62,6 +59,5 @@ private:
     std::unique_ptr<FilterItem> m_root;
     Filters::FilterType m_type;
     int m_index;
-    MusicLibrary* m_library;
 };
 } // namespace Library
