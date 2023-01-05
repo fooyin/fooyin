@@ -160,4 +160,13 @@ QString capitalise(const QString& s)
 
     return parts.join(" ");
 }
+
+QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
+{
+    QPixmap pixmap{orig.size()};
+    pixmap.fill(color);
+    pixmap.setMask(orig.createMaskFromColor(Qt::transparent));
+    return pixmap;
+}
+
 }; // namespace Util

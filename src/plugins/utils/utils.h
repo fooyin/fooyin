@@ -47,4 +47,6 @@ void setMinimumWidth(QLabel* label, const QString& text);
 
 quint64 currentDateToInt();
 QString capitalise(const QString& s);
+
+QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
 } // namespace Util
