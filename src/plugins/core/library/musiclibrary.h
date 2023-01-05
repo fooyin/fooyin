@@ -21,20 +21,15 @@
 
 #include "core/library/models/trackfwd.h"
 #include "core/library/sorting/sortorder.h"
-#include "librarydatabasemanager.h"
-#include "libraryinfo.h"
-#include "libraryscanner.h"
+#include "librarymanager.h"
 
 #include <QThread>
 
 class LibraryPlaylistInterface;
-class LibraryDatabaseManager;
 class ThreadManager;
 class MusicLibraryInteractor;
 
 namespace Library {
-class LibraryScanner;
-
 class MusicLibrary : public QObject
 {
     Q_OBJECT
@@ -51,6 +46,7 @@ public:
     void refreshTracks(const TrackList& result);
 
     TrackPtrList tracks();
+    TrackPtrList allTracks();
 
     SortOrder sortOrder();
     void changeOrder(SortOrder order);
@@ -89,18 +85,7 @@ protected:
     void tracksDeleted(const IdSet& tracks);
 
 private:
-    LibraryPlaylistInterface* m_playlistInteractor;
-    LibraryManager* m_libraryManager;
-    ThreadManager* m_threadManager;
-    LibraryScanner m_scanner;
-    LibraryDatabaseManager m_libraryDatabaseManager;
-
-    TrackPtrList m_tracks;
-    TrackHash m_trackMap;
-
-    std::vector<Track*> m_selectedTracks;
-    std::vector<MusicLibraryInteractor*> m_interactors;
-
-    SortOrder m_order;
+    struct Private;
+    std::unique_ptr<MusicLibrary::Private> p;
 };
 } // namespace Library
