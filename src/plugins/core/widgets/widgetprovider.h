@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "core/typedefs.h"
-
 #include <QObject>
 
 namespace Library {
@@ -44,13 +42,9 @@ public:
     ~WidgetProvider() override;
 
     FyWidget* createWidget(const QString& widget, SplitterWidget* splitter);
-    //    FyWidget* createWidget(Widgets::WidgetType type, SplitterWidget* splitter);
-    //    FyWidget* createFilter(Filters::FilterType filterType, SplitterWidget* splitter);
     static SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);
 
     void addMenuActions(QMenu* menu, SplitterWidget* splitter);
-    //    void addWidgetMenu(QMenu* menu, SplitterWidget* splitter);
-    //    void addFilterMenu(QMenu* menu, SplitterWidget* splitter);
 
 protected:
     static void registerWidgets();
