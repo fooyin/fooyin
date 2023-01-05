@@ -193,6 +193,11 @@ void MusicLibrary::refreshTracks(const TrackList& result)
     emit tracksLoaded(p->tracks);
 }
 
+Track* MusicLibrary::track(int id)
+{
+    return p->trackMap.at(id);
+}
+
 TrackPtrList MusicLibrary::tracks()
 {
     TrackPtrList lst;

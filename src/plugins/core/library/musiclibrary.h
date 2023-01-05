@@ -45,6 +45,7 @@ public:
     void refresh();
     void refreshTracks(const TrackList& result);
 
+    Track* track(int id);
     TrackPtrList tracks();
     TrackPtrList allTracks();
 
