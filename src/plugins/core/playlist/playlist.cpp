@@ -23,29 +23,51 @@
 #include "core/player/playermanager.h"
 
 #include <QMessageBox>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 
-Playlist::Playlist::Playlist(int idx, QString name, PlayerManager* playerManager)
+namespace Playlist {
+Playlist::Playlist(int idx, QString name)
     : m_name(std::move(name))
-    , m_playerManager(playerManager)
+    , m_playerManager(PluginSystem::object<PlayerManager>())
     , m_playlistIndex(idx)
     , m_playingTrack(nullptr)
 { }
 
-QString Playlist::Playlist::name()
+Playlist::Playlist(const Playlist& other)
+    : m_name(other.m_name)
+    , m_playlistIndex(other.m_playlistIndex)
+    , m_playingTrack(other.m_playingTrack)
+    , m_tracks(other.m_tracks)
+{ }
+
+Playlist& Playlist::operator=(const Playlist& other)
+{
+    if(this == &other) {
+        return *this;
+    }
+    m_name = other.m_name;
+    m_playlistIndex = other.m_playlistIndex;
+    m_playingTrack = other.m_playingTrack;
+    m_tracks = other.m_tracks;
+
+    return *this;
+}
+
+QString Playlist::name()
 {
     return m_name;
 }
 
-Playlist::Playlist::~Playlist() = default;
+Playlist::~Playlist() = default;
 
-int Playlist::Playlist::createPlaylist(const TrackPtrList& tracks)
+int Playlist::createPlaylist(const TrackPtrList& tracks)
 {
     m_tracks.insert(m_tracks.end(), tracks.begin(), tracks.end());
     return static_cast<int>(m_tracks.size());
 }
 
-int Playlist::Playlist::currentTrackIndex() const
+int Playlist::currentTrackIndex() const
 {
     if(!m_playingTrack) {
         return -1;
@@ -62,7 +84,7 @@ int Playlist::Playlist::currentTrackIndex() const
     return static_cast<int>(std::distance(m_tracks.cbegin(), it));
 }
 
-Track* Playlist::Playlist::currentTrack() const
+Track* Playlist::currentTrack() const
 {
     const auto trackIndex = currentTrackIndex();
     if(trackIndex >= m_tracks.size() || trackIndex < 0) {
@@ -72,27 +94,27 @@ Track* Playlist::Playlist::currentTrack() const
     return m_tracks.at(trackIndex);
 }
 
-int Playlist::Playlist::index() const
+int Playlist::index() const
 {
     return m_playlistIndex;
 }
 
-void Playlist::Playlist::insertTracks(const TrackPtrList& tracks)
+void Playlist::insertTracks(const TrackPtrList& tracks)
 {
     m_tracks = tracks;
 }
 
-void Playlist::Playlist::appendTracks(const TrackPtrList& tracks)
+void Playlist::appendTracks(const TrackPtrList& tracks)
 {
     m_tracks.insert(m_tracks.end(), tracks.begin(), tracks.end());
 }
 
-void Playlist::Playlist::clear()
+void Playlist::clear()
 {
     m_tracks.clear();
 }
 
-void Playlist::Playlist::setCurrentTrack(int index)
+void Playlist::setCurrentTrack(int index)
 {
     if(index < 0 || index >= m_tracks.size()) {
         stop();
@@ -105,7 +127,7 @@ void Playlist::Playlist::setCurrentTrack(int index)
     }
 }
 
-bool Playlist::Playlist::changeTrack(int index)
+bool Playlist::changeTrack(int index)
 {
     setCurrentTrack(index);
 
@@ -128,19 +150,19 @@ bool Playlist::Playlist::changeTrack(int index)
     return true;
 }
 
-void Playlist::Playlist::play()
+void Playlist::play()
 {
     if(currentTrackIndex() < 0) {
         next();
     }
 }
 
-void Playlist::Playlist::stop()
+void Playlist::stop()
 {
     m_playingTrack = nullptr;
 }
 
-int Playlist::Playlist::next()
+int Playlist::next()
 {
     if(m_tracks.empty()) {
         stop();
@@ -151,7 +173,7 @@ int Playlist::Playlist::next()
     return index;
 }
 
-int Playlist::Playlist::previous()
+int Playlist::previous()
 {
     int index = currentTrackIndex();
     if(m_playerManager->currentPosition() > 5000) {
@@ -163,7 +185,7 @@ int Playlist::Playlist::previous()
     return index;
 }
 
-int Playlist::Playlist::nextIndex()
+int Playlist::nextIndex()
 {
     const int currentIndex = currentTrackIndex();
     const bool isLastTrack = (currentIndex >= m_tracks.size() - 1);
@@ -184,3 +206,4 @@ int Playlist::Playlist::nextIndex()
 
     return index;
 }
+}; // namespace Playlist

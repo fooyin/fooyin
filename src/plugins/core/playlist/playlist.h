@@ -31,8 +31,11 @@ class Playlist : public QObject
     Q_OBJECT
 
 public:
-    Playlist(int idx, QString name, PlayerManager* playerManager);
+    Playlist(int idx, QString name);
     ~Playlist() override;
+
+    Playlist(const Playlist& other);
+    Playlist& operator=(const Playlist& other);
 
     QString name();
 
