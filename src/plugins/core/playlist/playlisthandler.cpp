@@ -115,7 +115,7 @@ int PlaylistHandler::addNewPlaylist(const QString& name)
     }
 
     const auto count = static_cast<int>(m_playlists.count());
-    auto* playlist = new Playlist(count, name, m_playerManager);
+    auto* playlist = new Playlist(count, name);
     m_playlists.insert(playlist->index(), playlist);
 
     return playlist->index();
