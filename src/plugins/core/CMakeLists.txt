@@ -99,7 +99,6 @@ fooyin_add_plugin(Core
         widgets/widgetprovider.cpp
 
         gui/fywidget.h
-        gui/fywidget.cpp
         gui/mainwindow.h
         gui/mainwindow.cpp
         gui/editablelayout.h
