@@ -196,13 +196,15 @@ void MusicLibrary::refreshTracks(const TrackList& result)
 TrackPtrList MusicLibrary::tracks()
 {
     TrackPtrList lst;
+    bool haveTracks{false};
     for(auto* inter : p->interactors) {
-        auto trks = inter->tracks();
-        if(!trks.empty()) {
+        if(inter->hasTracks()) {
+            haveTracks = true;
+            auto trks = inter->tracks();
             lst.insert(lst.end(), trks.begin(), trks.end());
         }
     }
-    return lst.empty() ? p->tracks : lst;
+    return !haveTracks ? p->tracks : lst;
 }
 
 TrackPtrList MusicLibrary::allTracks()

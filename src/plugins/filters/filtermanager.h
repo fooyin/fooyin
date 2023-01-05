@@ -43,6 +43,7 @@ public:
     ~FilterManager() override;
 
     TrackPtrList tracks() override;
+    bool hasTracks() override;
 
     QList<Filters::FilterType> filters();
     int registerFilter(Filters::FilterType type);

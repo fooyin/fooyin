@@ -66,6 +66,11 @@ TrackPtrList FilterManager::tracks()
     return p->filteredTracks;
 }
 
+bool FilterManager::hasTracks()
+{
+    return !p->filteredTracks.empty() || !p->searchFilter.isEmpty() || !p->activeFilters.empty();
+}
+
 QList<Filters::FilterType> FilterManager::filters()
 {
     return p->filterIndexes.values();

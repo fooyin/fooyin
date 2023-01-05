@@ -32,4 +32,5 @@ public:
     ~MusicLibraryInteractor() override = default;
 
     virtual TrackPtrList tracks() = 0;
+    virtual bool hasTracks() = 0;
 };
