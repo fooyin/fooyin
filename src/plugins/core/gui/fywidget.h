@@ -29,13 +29,27 @@ class FyWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit FyWidget(QWidget* parent);
-    ~FyWidget() override;
-
-    FyWidget* findParent();
+    explicit FyWidget(QWidget* parent)
+        : QWidget{parent}
+    { }
+    ~FyWidget() override = default;
 
     [[nodiscard]] virtual QString name() const = 0;
-    virtual void addWidgetMenu(QMenu* menu, QAction* action);
-    virtual void layoutEditingMenu(QMenu* menu);
-    virtual void saveLayout(QJsonArray& array);
+
+    [[nodiscard]] FyWidget* findParent()
+    {
+        QWidget* parent = parentWidget();
+        while(parent && !qobject_cast<FyWidget*>(parent)) {
+            parent = parent->parentWidget();
+        }
+        return qobject_cast<FyWidget*>(parent);
+    }
+
+    virtual void addWidgetMenu(QMenu* menu, QAction* action) { }
+    virtual void layoutEditingMenu(QMenu* menu) { }
+    virtual void saveLayout(QJsonArray& array)
+    {
+        array.append(name());
+    }
+    virtual void loadLayout(QJsonObject& object) { }
 };
