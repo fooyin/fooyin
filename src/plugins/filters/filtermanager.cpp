@@ -140,7 +140,7 @@ void FilterManager::getItemsByFilter(Filters::FilterType type, Library::SortOrde
 void FilterManager::getFilteredTracks()
 {
     p->filteredTracks.clear();
-    emit loadFilteredTracks(p->library->tracks(), p->activeFilters, p->searchFilter);
+    emit loadFilteredTracks(p->library->allTracks(), p->activeFilters, p->searchFilter);
 }
 
 bool FilterManager::tracksHaveFiltered()
