@@ -198,6 +198,15 @@ Track* MusicLibrary::track(int id)
     return p->trackMap.at(id);
 }
 
+TrackPtrList MusicLibrary::tracks(const std::vector<int>& ids)
+{
+    TrackPtrList tracks;
+    for(const auto& id : ids) {
+        tracks.emplace_back(p->trackMap.at(id));
+    }
+    return tracks;
+}
+
 TrackPtrList MusicLibrary::tracks()
 {
     TrackPtrList lst;

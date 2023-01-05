@@ -46,6 +46,7 @@ public:
     void refreshTracks(const TrackList& result);
 
     Track* track(int id);
+    TrackPtrList tracks(const std::vector<int>& ids);
     TrackPtrList tracks();
     TrackPtrList allTracks();
 
