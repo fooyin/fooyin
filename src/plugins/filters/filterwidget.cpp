@@ -205,6 +205,12 @@ void FilterWidget::saveLayout(QJsonArray& array)
     array.append(object);
 }
 
+void FilterWidget::loadLayout(QJsonObject& object)
+{
+    auto type = EnumHelper::fromString<Filters::FilterType>(object["Type"].toString());
+    setType(type);
+}
+
 void FilterWidget::customHeaderMenuRequested(QPoint pos)
 {
     QMenu menu;
