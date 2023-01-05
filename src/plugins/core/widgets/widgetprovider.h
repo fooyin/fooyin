@@ -21,13 +21,10 @@
 
 #include <QObject>
 
-namespace Library {
-class LibraryManager;
-class MusicLibrary;
-} // namespace Library
+namespace Widgets {
+class WidgetFactory;
+} // namespace Widgets
 
-class PlayerManager;
-class SettingsDialog;
 class SplitterWidget;
 class FyWidget;
 class QMenu;
@@ -37,17 +34,13 @@ class WidgetProvider : public QObject
     Q_OBJECT
 
 public:
-    WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager,
-                   Library::MusicLibrary* library, SettingsDialog* settingsDialog, QObject* parent = nullptr);
+    WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent = nullptr);
     ~WidgetProvider() override;
 
     FyWidget* createWidget(const QString& widget, SplitterWidget* splitter);
     static SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);
 
     void addMenuActions(QMenu* menu, SplitterWidget* splitter);
-
-protected:
-    static void registerWidgets();
 
 private:
     struct Private;

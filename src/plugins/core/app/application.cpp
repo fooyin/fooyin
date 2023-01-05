@@ -19,24 +19,33 @@
 
 #include "application.h"
 
-#include "actions/actionmanager.h"
+#include "core/actions/actionmanager.h"
 #include "core/database/database.h"
 #include "core/engine/enginehandler.h"
 #include "core/gui/mainwindow.h"
 #include "core/gui/settings/settingsdialog.h"
+#include "core/gui/widgets/spacer.h"
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playercontroller.h"
 #include "core/playlist/libraryplaylistmanager.h"
 #include "core/playlist/playlisthandler.h"
 #include "core/settings/settings.h"
+#include "core/widgets/widgetfactory.h"
 #include "core/widgets/widgetprovider.h"
+#include "gui/controls/controlwidget.h"
+#include "gui/info/infowidget.h"
+#include "gui/library/coverwidget.h"
+#include "gui/library/statuswidget.h"
+#include "gui/playlist/playlistwidget.h"
+#include "gui/widgets/splitterwidget.h"
 #include "threadmanager.h"
 
 #include <pluginsystem/pluginmanager.h>
 
 struct Application::Private
 {
+    Widgets::WidgetFactory* widgetFactory;
     Settings* settings;
     ThreadManager* threadManager;
     DB::Database* db;
@@ -52,7 +61,8 @@ struct Application::Private
     MainWindow* mainWindow;
 
     explicit Private(QObject* parent)
-        : settings(new Settings(parent))
+        : widgetFactory(new Widgets::WidgetFactory())
+        , settings(new Settings(parent))
         , threadManager(new ThreadManager(parent))
         , db(DB::Database::instance())
         , playerManager(new PlayerController(parent))
@@ -62,11 +72,25 @@ struct Application::Private
         , libraryManager(new Library::LibraryManager(parent))
         , library(new Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, parent))
         , settingsDialog(std::make_unique<SettingsDialog>(libraryManager))
-        , widgetProvider(new WidgetProvider(playerManager, libraryManager, library, settingsDialog.get(), parent))
+        , widgetProvider(new WidgetProvider(widgetFactory, parent))
         , actionManager(new ActionManager(parent))
     {
         threadManager->moveToNewThread(&engine);
 
+        addObjects();
+        setupConnections();
+        registerWidgets();
+    }
+
+    void setupConnections() const
+    {
+        connect(libraryManager, &Library::LibraryManager::libraryAdded, library, &Library::MusicLibrary::reload);
+        connect(libraryManager, &Library::LibraryManager::libraryRemoved, library, &Library::MusicLibrary::refresh);
+    }
+
+    void addObjects() const
+    {
+        PluginSystem::addObject(widgetFactory);
         PluginSystem::addObject(settings);
         PluginSystem::addObject(threadManager);
         PluginSystem::addObject(playerManager);
@@ -75,14 +99,18 @@ struct Application::Private
         PluginSystem::addObject(settingsDialog.get());
         PluginSystem::addObject(widgetProvider);
         PluginSystem::addObject(actionManager);
-
-        setupConnections();
     }
 
-    void setupConnections() const
+    void registerWidgets() const
     {
-        connect(libraryManager, &Library::LibraryManager::libraryAdded, library, &Library::MusicLibrary::reload);
-        connect(libraryManager, &Library::LibraryManager::libraryRemoved, library, &Library::MusicLibrary::refresh);
+        widgetFactory->registerClass<ControlWidget>("Controls");
+        widgetFactory->registerClass<InfoWidget>("Info");
+        widgetFactory->registerClass<CoverWidget>("Artwork");
+        widgetFactory->registerClass<Library::PlaylistWidget>("Playlist");
+        widgetFactory->registerClass<Widgets::Spacer>("Spacer");
+        widgetFactory->registerClass<VerticalSplitterWidget>("Vertical", {"Splitter"});
+        widgetFactory->registerClass<HoriztonalSplitterWidget>("Horiztonal", {"Splitter"});
+        widgetFactory->registerClass<StatusWidget>("Status");
     }
 };
 
@@ -117,4 +145,5 @@ void Application::shutdown()
         p->db->closeDatabase();
         p->db = nullptr;
     }
+    delete p->widgetProvider;
 }

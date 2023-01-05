@@ -19,7 +19,6 @@
 #include "coreplugin.h"
 
 #include "core/app/application.h"
-#include "core/widgets/widgetfactory.h"
 
 #include <pluginsystem/pluginmanager.h>
 
@@ -29,8 +28,6 @@ CorePlugin::~CorePlugin() = default;
 
 void CorePlugin::initialise()
 {
-    m_factory = new Widgets::WidgetFactory();
-    PluginSystem::addObject(m_factory);
     m_app = new Application();
 }
 
@@ -43,5 +40,4 @@ void CorePlugin::shutdown()
 {
     m_app->shutdown();
     delete m_app;
-    delete m_factory;
 }

@@ -19,15 +19,7 @@
 
 #include "widgetprovider.h"
 
-#include "core/gui/controls/controlwidget.h"
-#include "core/gui/info/infowidget.h"
-#include "core/gui/library/coverwidget.h"
-#include "core/gui/library/statuswidget.h"
-#include "core/gui/playlist/playlistwidget.h"
-#include "core/gui/settings/settingsdialog.h"
-#include "core/gui/widgets/spacer.h"
 #include "core/gui/widgets/splitterwidget.h"
-#include "core/library/librarymanager.h"
 #include "widgetfactory.h"
 
 #include <QMenu>
@@ -36,31 +28,19 @@
 
 struct WidgetProvider::Private
 {
-    PlayerManager* playerManager;
-    Library::LibraryManager* libraryManager;
-    Library::MusicLibrary* library;
-    SettingsDialog* settingsDialog;
     Widgets::WidgetFactory* widgetFactory;
 
     QMap<QString, QMenu*> menus;
 
-    Private(PlayerManager* playerManager, Library::LibraryManager* libraryManager, Library::MusicLibrary* library,
-            SettingsDialog* settingsDialog)
-        : playerManager(playerManager)
-        , libraryManager(libraryManager)
-        , library(library)
-        , settingsDialog(settingsDialog)
-        , widgetFactory(PluginSystem::object<Widgets::WidgetFactory>())
+    explicit Private(Widgets::WidgetFactory* widgetFactory)
+        : widgetFactory{widgetFactory}
     { }
 };
 
-WidgetProvider::WidgetProvider(PlayerManager* playerManager, Library::LibraryManager* libraryManager,
-                               Library::MusicLibrary* library, SettingsDialog* settingsDialog, QObject* parent)
-    : QObject(parent)
-    , p(std::make_unique<Private>(playerManager, libraryManager, library, settingsDialog))
-{
-    registerWidgets();
-}
+WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent)
+    : QObject{parent}
+    , p{std::make_unique<Private>(widgetFactory)}
+{ }
 
 WidgetProvider::~WidgetProvider() = default;
 
@@ -101,18 +81,4 @@ void WidgetProvider::addMenuActions(QMenu* menu, SplitterWidget* splitter)
         });
         parentMenu->addAction(addWidget);
     }
-}
-
-void WidgetProvider::registerWidgets()
-{
-    auto* factory = PluginSystem::object<Widgets::WidgetFactory>();
-
-    factory->registerClass<ControlWidget>("Controls");
-    factory->registerClass<InfoWidget>("Info");
-    factory->registerClass<CoverWidget>("Artwork");
-    factory->registerClass<Library::PlaylistWidget>("Playlist");
-    factory->registerClass<Widgets::Spacer>("Spacer");
-    factory->registerClass<VerticalSplitterWidget>("Vertical", {"Splitter"});
-    factory->registerClass<HoriztonalSplitterWidget>("Horiztonal", {"Splitter"});
-    factory->registerClass<StatusWidget>("Status");
 }
