@@ -55,19 +55,19 @@ struct MainWindow::Private
     WidgetProvider* widgetProvider;
     ActionManager* actionManager;
 
-    Private(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, Library::MusicLibrary* library)
+    Private(ActionManager* actionManager, Settings* settings, SettingsDialog* settingsDialog,
+            Library::MusicLibrary* library)
         : settingsDialog(settingsDialog)
         , library(library)
-        , settings(PluginSystem::object<Settings>())
-        , widgetProvider(widgetProvider)
-        , actionManager(PluginSystem::object<ActionManager>())
+        , settings(settings)
+        , actionManager(actionManager)
     { }
 };
 
-MainWindow::MainWindow(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, Library::MusicLibrary* library,
-                       QWidget* parent)
+MainWindow::MainWindow(ActionManager* actionManager, Settings* settings, SettingsDialog* settingsDialog,
+                       Library::MusicLibrary* library, QWidget* parent)
     : QMainWindow(parent)
-    , p(std::make_unique<Private>(widgetProvider, settingsDialog, library))
+    , p(std::make_unique<Private>(actionManager, settings, settingsDialog, library))
 { }
 
 MainWindow::~MainWindow()
@@ -90,7 +90,7 @@ void MainWindow::setupUi()
     QByteArray geometry = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
-    p->mainLayout = new EditableLayout(p->widgetProvider, this);
+    p->mainLayout = new EditableLayout(this);
     p->quickSetupDialog = new QuickSeupDialog(this);
 
     setCentralWidget(p->mainLayout);
@@ -173,14 +173,20 @@ void MainWindow::setupUi()
     }
 }
 
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    emit closing();
+    QMainWindow::closeEvent(event);
+}
+
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
     QMainWindow::resizeEvent(event);
 }
 
-void MainWindow::contextMenuEvent(QContextMenuEvent* e)
+void MainWindow::contextMenuEvent(QContextMenuEvent* event)
 {
-    QMainWindow::contextMenuEvent(e);
+    QMainWindow::contextMenuEvent(event);
 }
 
 void MainWindow::enableLayoutEditing(bool enable)

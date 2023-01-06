@@ -74,7 +74,10 @@ struct Application::Private
         , settingsDialog(std::make_unique<SettingsDialog>(libraryManager))
         , widgetProvider(new WidgetProvider(widgetFactory, parent))
         , actionManager(new ActionManager(parent))
+        , mainWindow(new MainWindow(actionManager, settings, settingsDialog.get(), library))
     {
+        mainWindow->setAttribute(Qt::WA_DeleteOnClose);
+
         threadManager->moveToNewThread(&engine);
 
         addObjects();
@@ -84,12 +87,14 @@ struct Application::Private
 
     void setupConnections() const
     {
+        connect(mainWindow, &MainWindow::closing, threadManager, &ThreadManager::close);
         connect(libraryManager, &Library::LibraryManager::libraryAdded, library, &Library::MusicLibrary::reload);
         connect(libraryManager, &Library::LibraryManager::libraryRemoved, library, &Library::MusicLibrary::refresh);
     }
 
     void addObjects() const
     {
+        PluginSystem::addObject(mainWindow);
         PluginSystem::addObject(widgetFactory);
         PluginSystem::addObject(settings);
         PluginSystem::addObject(threadManager);
@@ -121,11 +126,6 @@ Application::Application(QObject* parent)
 
 void Application::startup()
 {
-    p->mainWindow = new MainWindow(p->widgetProvider, p->settingsDialog.get(), p->library);
-    PluginSystem::addObject(p->mainWindow);
-
-    p->setupConnections();
-    p->mainWindow->setAttribute(Qt::WA_DeleteOnClose);
     p->mainWindow->setupUi();
     p->mainWindow->show();
 }
@@ -134,9 +134,6 @@ Application::~Application() = default;
 
 void Application::shutdown()
 {
-    if(p->threadManager) {
-        p->threadManager->close();
-    }
     if(p->settings) {
         p->settings->storeSettings();
     }

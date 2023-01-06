@@ -21,8 +21,9 @@
 
 #include <QMainWindow>
 
-class WidgetProvider;
+class ActionManager;
 class SettingsDialog;
+class Settings;
 
 namespace Library {
 class MusicLibrary;
@@ -33,13 +34,17 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(WidgetProvider* widgetProvider, SettingsDialog* settingsDialog, Library::MusicLibrary* library,
-                        QWidget* parent = nullptr);
+    explicit MainWindow(ActionManager* actionManager, Settings* settings, SettingsDialog* settingsDialog,
+                        Library::MusicLibrary* library, QWidget* parent = nullptr);
     ~MainWindow() override;
 
     void setupUi();
 
+signals:
+    void closing();
+
 protected:
+    void closeEvent(QCloseEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 

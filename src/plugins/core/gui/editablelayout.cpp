@@ -26,7 +26,6 @@
 #include "core/settings/settings.h"
 #include "core/widgets/widgetprovider.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QJsonArray>
@@ -34,6 +33,7 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QMouseEvent>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
 namespace {
@@ -64,14 +64,14 @@ void addParentContext(FyWidget* widget, QMenu* menu)
 }
 } // namespace
 
-EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
+EditableLayout::EditableLayout(QWidget* parent)
     : QWidget(parent)
     , m_box(new QHBoxLayout(this))
     , m_settings(PluginSystem::object<Settings>())
     , m_layoutEditing(false)
     , m_overlay(new Overlay(this))
     , m_menu(new QMenu(this))
-    , m_widgetProvider(widgetProvider)
+    , m_widgetProvider(PluginSystem::object<WidgetProvider>())
 {
     setObjectName("EditableLayout");
 
@@ -84,7 +84,7 @@ EditableLayout::EditableLayout(WidgetProvider* widgetProvider, QWidget* parent)
 
     bool loaded = loadLayout();
     if(!loaded) {
-        m_splitter = m_widgetProvider->createSplitter(Qt::Vertical, this);
+        m_splitter = WidgetProvider::createSplitter(Qt::Vertical, this);
         m_box->addWidget(m_splitter);
     }
     if(!m_splitter->hasChildren()) {

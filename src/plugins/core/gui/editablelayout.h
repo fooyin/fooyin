@@ -34,7 +34,7 @@ class EditableLayout : public QWidget
     Q_OBJECT
 
 public:
-    explicit EditableLayout(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit EditableLayout(QWidget* parent = nullptr);
     ~EditableLayout() override;
 
     void changeLayout(const QByteArray& layout);
