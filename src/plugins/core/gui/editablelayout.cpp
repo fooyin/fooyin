@@ -64,31 +64,45 @@ void addParentContext(FyWidget* widget, QMenu* menu)
 }
 } // namespace
 
+struct EditableLayout::Private
+{
+    QHBoxLayout* box;
+    Settings* settings;
+    bool layoutEditing{false};
+    Overlay* overlay;
+    SplitterWidget* splitter;
+    QMenu* menu;
+    WidgetProvider* widgetProvider;
+
+    explicit Private(QWidget* parent)
+        : box{new QHBoxLayout(parent)}
+        , settings{PluginSystem::object<Settings>()}
+        , overlay{new Overlay(parent)}
+        , menu{new QMenu(parent)}
+        , widgetProvider{PluginSystem::object<WidgetProvider>()}
+    { }
+};
+
 EditableLayout::EditableLayout(QWidget* parent)
-    : QWidget(parent)
-    , m_box(new QHBoxLayout(this))
-    , m_settings(PluginSystem::object<Settings>())
-    , m_layoutEditing(false)
-    , m_overlay(new Overlay(this))
-    , m_menu(new QMenu(this))
-    , m_widgetProvider(PluginSystem::object<WidgetProvider>())
+    : QWidget{parent}
+    , p{std::make_unique<Private>(this)}
 {
     setObjectName("EditableLayout");
 
-    m_box->setContentsMargins(5, 5, 5, 5);
+    p->box->setContentsMargins(5, 5, 5, 5);
 
-    connect(m_menu, &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
-    connect(m_settings, &Settings::layoutEditingChanged, this, [this](bool enabled) {
-        m_layoutEditing = enabled;
+    connect(p->menu, &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
+    connect(p->settings, &Settings::layoutEditingChanged, this, [this](bool enabled) {
+        p->layoutEditing = enabled;
     });
 
     bool loaded = loadLayout();
     if(!loaded) {
-        m_splitter = WidgetProvider::createSplitter(Qt::Vertical, this);
-        m_box->addWidget(m_splitter);
+        p->splitter = WidgetProvider::createSplitter(Qt::Vertical, this);
+        p->box->addWidget(p->splitter);
     }
-    if(!m_splitter->hasChildren()) {
-        m_settings->set(Settings::Setting::LayoutEditing, true);
+    if(!p->splitter->hasChildren()) {
+        p->settings->set(Settings::Setting::LayoutEditing, true);
     }
     qApp->installEventFilter(this);
 }
@@ -97,13 +111,13 @@ void EditableLayout::changeLayout(const QByteArray& layout)
 {
     // Delete all current widgets
     // TODO: Look into caching previous layout widgets
-    m_splitter->deleteLater();
+    p->splitter->deleteLater();
     bool success = loadLayout(layout);
-    if(success && m_splitter->hasChildren()) {
-        m_settings->set(Settings::Setting::LayoutEditing, false);
+    if(success && p->splitter->hasChildren()) {
+        p->settings->set(Settings::Setting::LayoutEditing, false);
     }
     else {
-        m_settings->set(Settings::Setting::LayoutEditing, true);
+        p->settings->set(Settings::Setting::LayoutEditing, true);
     }
 }
 
@@ -126,26 +140,26 @@ FyWidget* EditableLayout::splitterChild(QWidget* widget)
 
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 {
-    if(!m_layoutEditing) {
+    if(!p->layoutEditing) {
         return QWidget::eventFilter(watched, event);
     }
 
     if(event->type() == QEvent::MouseButtonPress) {
         auto* mouseEvent = dynamic_cast<QMouseEvent*>(event);
-        if(mouseEvent->button() == Qt::RightButton && m_menu->isHidden()) {
-            m_menu->clear();
+        if(mouseEvent->button() == Qt::RightButton && p->menu->isHidden()) {
+            p->menu->clear();
 
             QWidget* widget = childAt(mouseEvent->pos());
             FyWidget* child = splitterChild(widget);
 
             if(child) {
-                m_menu->addAction(new MenuHeaderAction(child->objectName(), m_menu));
-                child->layoutEditingMenu(m_menu);
-                addParentContext(child, m_menu);
+                p->menu->addAction(new MenuHeaderAction(child->objectName(), p->menu));
+                child->layoutEditingMenu(p->menu);
+                addParentContext(child, p->menu);
             }
-            if(child && !m_menu->isEmpty()) {
+            if(child && !p->menu->isEmpty()) {
                 showOverlay(child);
-                m_menu->exec(mapToGlobal(mouseEvent->pos()));
+                p->menu->exec(mapToGlobal(mouseEvent->pos()));
             }
             return true;
         }
@@ -170,14 +184,14 @@ QRect EditableLayout::widgetGeometry(FyWidget* widget)
 
 void EditableLayout::showOverlay(FyWidget* widget)
 {
-    m_overlay->setGeometry(widgetGeometry(widget));
-    m_overlay->raise();
-    m_overlay->show();
+    p->overlay->setGeometry(widgetGeometry(widget));
+    p->overlay->raise();
+    p->overlay->show();
 }
 
 void EditableLayout::hideOverlay()
 {
-    m_overlay->hide();
+    p->overlay->hide();
 }
 
 void EditableLayout::saveLayout()
@@ -186,13 +200,13 @@ void EditableLayout::saveLayout()
     QJsonObject object;
     QJsonArray array;
 
-    m_splitter->saveSplitter(object, array);
+    p->splitter->saveSplitter(object, array);
 
     root["Layout"] = object;
 
     QString json = QString::fromUtf8(QJsonDocument(root).toJson(QJsonDocument::Compact).toBase64());
 
-    m_settings->set(Settings::Setting::Layout, json);
+    p->settings->set(Settings::Setting::Layout, json);
 }
 
 bool EditableLayout::loadLayout(const QByteArray& layout)
@@ -209,11 +223,11 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
                 QJsonArray splitterChildren = splitterObject["Children"].toArray();
                 auto state = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
 
-                m_splitter = WidgetProvider::createSplitter(type, this);
-                m_box->addWidget(m_splitter);
+                p->splitter = WidgetProvider::createSplitter(type, this);
+                p->box->addWidget(p->splitter);
 
-                m_splitter->loadSplitter(splitterChildren, m_splitter);
-                m_splitter->restoreState(state);
+                p->splitter->loadSplitter(splitterChildren, p->splitter);
+                p->splitter->restoreState(state);
             }
             return true;
         }
@@ -223,6 +237,6 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
 
 bool EditableLayout::loadLayout()
 {
-    auto layout = QByteArray::fromBase64(m_settings->value(Settings::Setting::Layout).toByteArray());
+    auto layout = QByteArray::fromBase64(p->settings->value(Settings::Setting::Layout).toByteArray());
     return loadLayout(layout);
 }

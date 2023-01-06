@@ -52,11 +52,6 @@ public:
     void hideOverlay();
 
 private:
-    QHBoxLayout* m_box;
-    Settings* m_settings;
-    bool m_layoutEditing;
-    Overlay* m_overlay;
-    SplitterWidget* m_splitter;
-    QMenu* m_menu;
-    WidgetProvider* m_widgetProvider;
+    struct Private;
+    std::unique_ptr<EditableLayout::Private> p;
 };
