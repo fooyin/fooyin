@@ -210,8 +210,8 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
         if(mouseEvent->button() == Qt::RightButton && p->menu->isHidden()) {
             p->menu->clear();
 
-            auto pos = mouseEvent->position().toPoint();
-            QWidget* widget = this->parentWidget()->childAt(pos);
+            const QPoint pos = mouseEvent->position().toPoint();
+            QWidget* widget = parentWidget()->childAt(pos);
             FyWidget* child = splitterChild(widget);
 
             if(child) {
