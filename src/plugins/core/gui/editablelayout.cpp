@@ -149,10 +149,17 @@ EditableLayout::~EditableLayout() = default;
 
 FyWidget* EditableLayout::splitterChild(QWidget* widget)
 {
+    if(!widget) {
+        return {};
+    }
+
     QWidget* child = widget;
 
     while(!qobject_cast<FyWidget*>(child) || qobject_cast<Dummy*>(child)) {
         child = child->parentWidget();
+        if(!child) {
+            return {};
+        }
     }
 
     if(child) {
@@ -203,7 +210,8 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
         if(mouseEvent->button() == Qt::RightButton && p->menu->isHidden()) {
             p->menu->clear();
 
-            QWidget* widget = childAt(mouseEvent->pos());
+            auto pos = mouseEvent->position().toPoint();
+            QWidget* widget = this->parentWidget()->childAt(pos);
             FyWidget* child = splitterChild(widget);
 
             if(child) {
@@ -213,7 +221,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
             }
             if(child && !p->menu->isEmpty()) {
                 showOverlay(child);
-                p->menu->menu()->exec(mapToGlobal(mouseEvent->pos()));
+                p->menu->menu()->exec(mapToGlobal(pos));
             }
             return true;
         }
