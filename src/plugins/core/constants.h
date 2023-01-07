@@ -77,11 +77,15 @@ namespace Actions {
 }; // namespace Actions
 
 namespace ContextMenus {
+    constexpr auto Layout = "Fooyin.Menu.Layout";
+    constexpr auto AddWidget = "Fooyin.Menu.Widget.Add";
     constexpr auto Playlist = "Fooyin.Menu.Playlist";
     constexpr auto PlaylistAddTo = "Fooyin.Menu.Playlist.AddTo";
 }; // namespace ContextMenus
 
 namespace ContextMenuGroups {
+    constexpr auto Layout = "Fooyin.Group.Layout";
+    constexpr auto AddWidget = "Fooyin.Group.Widget.Add";
     constexpr auto Playlist = "Fooyin.Group.Playlist";
     constexpr auto PlaylistAddTo = "Fooyin.Group.Playlist.AddTo";
 }; // namespace ContextMenuGroups
