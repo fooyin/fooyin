@@ -62,6 +62,13 @@ public:
     virtual void insertAction(QAction* beforeAction, QAction* action) = 0;
     virtual void insertMenu(QAction* beforeAction, ActionContainer* container) = 0;
 
+    virtual bool isEmpty() = 0;
+    virtual bool isHidden() = 0;
+    virtual void clear() = 0;
+
+signals:
+    void aboutToHide();
+
 protected:
     virtual bool canBeAddedToContainer(ActionContainer* container) const = 0;
 
@@ -91,6 +98,10 @@ public:
     void insertAction(QAction* beforeAction, QAction* action) override;
     void insertMenu(QAction* beforeAction, ActionContainer* container) override;
 
+    bool isEmpty() override;
+    bool isHidden() override;
+    void clear() override;
+
 protected:
     bool canBeAddedToContainer(ActionContainer* container) const override;
 
@@ -113,6 +124,10 @@ public:
 
     void insertAction(QAction* beforeAction, QAction* action) override;
     void insertMenu(QAction* beforeAction, ActionContainer* container) override;
+
+    bool isEmpty() override;
+    bool isHidden() override;
+    void clear() override;
 
 protected:
     bool canBeAddedToContainer(ActionContainer* container) const override;

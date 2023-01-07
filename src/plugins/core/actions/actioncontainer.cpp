@@ -89,7 +89,7 @@ void ActionContainer::addAction(QAction* action, const Util::Id& group)
         return;
     }
 
-    const Util::Id actualGroupId = group.isValid() ? group : Util::Id(Core::Constants::Groups::Two);
+    const Util::Id actualGroupId = group.isValid() ? group : Util::Id(Core::Constants::Groups::One);
     QList<Group>::const_iterator groupIt = findGroup(actualGroupId);
     if(groupIt == m_groups.constEnd()) {
         qDebug() << "Can't find group" << group.name() << "in container" << id().name();
@@ -109,7 +109,7 @@ void ActionContainer::addMenu(ActionContainer* menu, const Util::Id& group)
         return;
     };
 
-    const Util::Id groupId = group.isValid() ? group : Util::Id(Core::Constants::Groups::Two);
+    const Util::Id groupId = group.isValid() ? group : Util::Id(Core::Constants::Groups::One);
     auto groupIt = findGroup(groupId);
     if(groupIt == m_groups.cend()) {
         return;
@@ -235,6 +235,21 @@ void MenuBarActionContainer::insertMenu(QAction* beforeAction, ActionContainer* 
     m_menuBar->insertMenu(beforeAction, menu);
 }
 
+bool MenuBarActionContainer::isEmpty()
+{
+    return false;
+}
+
+bool MenuBarActionContainer::isHidden()
+{
+    return m_menuBar->isHidden();
+}
+
+void MenuBarActionContainer::clear()
+{
+    m_menuBar->clear();
+}
+
 bool MenuBarActionContainer::canBeAddedToContainer(ActionContainer* container) const
 {
     Q_UNUSED(container)
@@ -244,7 +259,9 @@ bool MenuBarActionContainer::canBeAddedToContainer(ActionContainer* container) c
 MenuActionContainer::MenuActionContainer(const Util::Id& id, QObject* parent)
     : ActionContainer{id, parent}
     , m_menu{new QMenu()}
-{ }
+{
+    connect(m_menu, &QMenu::aboutToHide, this, &MenuActionContainer::aboutToHide);
+}
 
 MenuActionContainer::~MenuActionContainer()
 {
@@ -273,6 +290,21 @@ void MenuActionContainer::insertMenu(QAction* beforeAction, ActionContainer* con
         return;
     }
     m_menu->insertMenu(beforeAction, menu);
+}
+
+bool MenuActionContainer::isEmpty()
+{
+    return m_menu->isEmpty();
+}
+
+bool MenuActionContainer::isHidden()
+{
+    return m_menu->isHidden();
+}
+
+void MenuActionContainer::clear()
+{
+    m_menu->clear();
 }
 
 bool MenuActionContainer::canBeAddedToContainer(ActionContainer* container) const
