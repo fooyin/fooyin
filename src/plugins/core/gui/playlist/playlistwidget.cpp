@@ -19,6 +19,7 @@
 
 #include "playlistwidget.h"
 
+#include "core/actions/actioncontainer.h"
 #include "core/gui/settings/settingsdialog.h"
 #include "core/gui/widgets/nolibraryoverlay.h"
 #include "core/library/librarymanager.h"
@@ -78,8 +79,8 @@ void PlaylistWidget::setup()
     }
     else {
         m_noLibrary->hide();
-    m_layout->addWidget(m_playlist);
-    m_playlist->show();
+        m_layout->addWidget(m_playlist);
+        m_playlist->show();
     }
 }
 
@@ -146,7 +147,7 @@ QString PlaylistWidget::name() const
     return "Playlist";
 }
 
-void PlaylistWidget::layoutEditingMenu(QMenu* menu)
+void PlaylistWidget::layoutEditingMenu(ActionContainer* menu)
 {
     auto* showHeaders = new QAction("Show Header", menu);
     showHeaders->setCheckable(true);

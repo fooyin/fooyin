@@ -58,7 +58,7 @@ public:
     void setScrollbarHidden(bool showScrollBar);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(QMenu* menu) override;
+    void layoutEditingMenu(ActionContainer* menu) override;
 
 signals:
     void clickedTrack(int idx, bool createNewPlaylist);
