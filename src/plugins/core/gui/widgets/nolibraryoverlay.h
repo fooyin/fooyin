@@ -25,13 +25,16 @@ class QVBoxLayout;
 class QLabel;
 class QPushButton;
 
-class NoLibraryOverlay : public QWidget
+class OverlayWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit NoLibraryOverlay(QWidget* parent = nullptr);
-    ~NoLibraryOverlay() override;
+    explicit OverlayWidget(bool button = false, QWidget* parent = nullptr);
+    ~OverlayWidget() override;
+
+    void setText(const QString& text);
+    void setButtonText(const QString& text);
 
 signals:
     void settingsClicked();
@@ -39,5 +42,5 @@ signals:
 private:
     QVBoxLayout* m_layout;
     QLabel* m_text;
-    QPushButton* m_addLibrary;
+    QPushButton* m_button;
 };

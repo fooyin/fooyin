@@ -24,21 +24,34 @@
 #include <QVBoxLayout>
 #include <QWidgetAction>
 
-NoLibraryOverlay::NoLibraryOverlay(QWidget* parent)
-    : QWidget(parent)
-    , m_layout(new QVBoxLayout(this))
-    , m_text(new QLabel("No tracks to show - add a library first", this))
-    , m_addLibrary(new QPushButton("Library Settings", this))
+OverlayWidget::OverlayWidget(bool button, QWidget* parent)
+    : QWidget{parent}
+    , m_layout{new QVBoxLayout(this)}
+    , m_text{new QLabel(this)}
 {
+    if(button) {
+        m_button = new QPushButton(this);
+        QObject::connect(m_button, &QPushButton::pressed, this, &OverlayWidget::settingsClicked);
+    }
     m_layout->setContentsMargins(0, 0, 0, 0);
     setAutoFillBackground(true);
     m_layout->setAlignment(Qt::AlignCenter);
     m_layout->addWidget(m_text);
-    m_layout->addWidget(m_addLibrary);
-
-    connect(m_addLibrary, &QPushButton::pressed, this, &NoLibraryOverlay::settingsClicked);
+    m_layout->addWidget(m_button);
 
     hide();
 }
 
-NoLibraryOverlay::~NoLibraryOverlay() = default;
+OverlayWidget::~OverlayWidget() = default;
+
+void OverlayWidget::setText(const QString& text)
+{
+    m_text->setText(text);
+}
+
+void OverlayWidget::setButtonText(const QString& text)
+{
+    if(m_button) {
+        m_button->setText(text);
+    }
+}

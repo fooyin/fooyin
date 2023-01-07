@@ -50,16 +50,19 @@ PlaylistWidget::PlaylistWidget(QWidget* parent)
     , m_playlist(new PlaylistView(this))
     , m_settings(PluginSystem::object<Settings>())
     , m_altRowColours(m_settings->value(Settings::Setting::PlaylistAltColours).toBool())
-    , m_noLibrary(new NoLibraryOverlay(this))
+    , m_noLibrary(new OverlayWidget(true, this))
 {
     setObjectName("Playlist");
     m_layout->setContentsMargins(0, 0, 0, 0);
+
+    m_noLibrary->setText(QStringLiteral("No tracks to show - add a library first"));
+    m_noLibrary->setButtonText(QStringLiteral("Library Settings"));
 
     m_playlist->setModel(m_model);
     m_playlist->setItemDelegate(new PlaylistDelegate(this));
 
     setupConnections();
-    connect(m_noLibrary, &NoLibraryOverlay::settingsClicked, this, [this] {
+    connect(m_noLibrary, &OverlayWidget::settingsClicked, this, [this] {
         PluginSystem::object<SettingsDialog>()->openPage(SettingsDialog::Page::Library);
     });
 
