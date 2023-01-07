@@ -17,7 +17,7 @@
  *
  */
 
-#include "nolibraryoverlay.h"
+#include "overlaywidget.h"
 
 #include <QLabel>
 #include <QPushButton>

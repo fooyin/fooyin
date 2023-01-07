@@ -28,7 +28,7 @@ class QHBoxLayout;
 class QPushButton;
 class PlayerManager;
 class Settings;
-class NoLibraryOverlay;
+class OverlayWidget;
 
 namespace Library {
 class PlaylistModel;
@@ -83,6 +83,6 @@ private:
     PlaylistView* m_playlist;
     Settings* m_settings;
     bool m_altRowColours;
-    NoLibraryOverlay* m_noLibrary;
+    OverlayWidget* m_noLibrary;
 };
 }; // namespace Library

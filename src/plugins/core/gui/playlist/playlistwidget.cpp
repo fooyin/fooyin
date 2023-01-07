@@ -21,7 +21,7 @@
 
 #include "core/actions/actioncontainer.h"
 #include "core/gui/settings/settingsdialog.h"
-#include "core/gui/widgets/nolibraryoverlay.h"
+#include "core/gui/widgets/overlaywidget.h"
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"

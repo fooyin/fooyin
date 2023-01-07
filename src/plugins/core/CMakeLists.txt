@@ -162,8 +162,8 @@ fooyin_add_plugin(Core
         gui/widgets/overlayfilter.cpp
         gui/widgets/menuheader.h
         gui/widgets/menuheader.cpp
-        gui/widgets/nolibraryoverlay.h
-        gui/widgets/nolibraryoverlay.cpp
+        gui/widgets/overlaywidget.h
+        gui/widgets/overlaywidget.cpp
         gui/widgets/slider.h
         gui/widgets/slider.cpp
         gui/widgets/spacer.h
