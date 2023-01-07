@@ -37,6 +37,12 @@ QString Id::name() const
     return m_name;
 }
 
+Id Id::append(const Id& id)
+{
+    QString name = m_name.append(id.name());
+    return Id{name};
+}
+
 Id Id::append(const QString& str)
 {
     QString name = m_name.append(str);
@@ -54,9 +60,15 @@ Id Id::append(int num)
     return Id{name};
 }
 
+Id Id::append(quintptr addr)
+{
+    QString name = m_name.append(QString::number(addr));
+    return Id{name};
+}
+
 bool Id::operator==(const Id& id) const
 {
-    return m_id == id.m_id;
+    return (m_id == id.m_id) && (m_name == id.m_name);
 }
 
 bool Id::operator!=(const Id& id) const

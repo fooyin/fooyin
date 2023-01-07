@@ -27,6 +27,16 @@ namespace Util {
 class Id
 {
 public:
+    struct IdHash
+    {
+        size_t operator()(const Id& id) const
+        {
+            size_t rowHash = std::hash<unsigned int>()(id.m_id);
+            size_t colHash = std::hash<QString>()(id.m_name) << 1;
+            return rowHash ^ colHash;
+        }
+    };
+
     Id() = default;
     explicit Id(const QString& name);
     Id(const char* name);
@@ -37,9 +47,11 @@ public:
     [[nodiscard]] unsigned int id() const;
     [[nodiscard]] QString name() const;
 
+    Id append(const Id& id);
     Id append(const QString& str);
     Id append(const char* str);
     Id append(int num);
+    Id append(quintptr addr);
 
     bool operator==(const Id& id) const;
     bool operator!=(const Id& id) const;
