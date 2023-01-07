@@ -46,7 +46,7 @@ void FiltersPlugin::finalise()
     factory->registerClass<Library::FilterWidget>("Filter", {"Filter"});
     factory->registerClass<Library::GenreFilter>("Genre", {"Filter"});
     factory->registerClass<Library::YearFilter>("Year", {"Filter"});
-    factory->registerClass<Library::AlbmArtistFilter>("AlbumArtist", {"Filter"});
+    factory->registerClass<Library::AlbumArtistFilter>("Album Artist", {"Filter"});
     factory->registerClass<Library::ArtistFilter>("Artist", {"Filter"});
     factory->registerClass<Library::AlbumFilter>("Album", {"Filter"});
     factory->registerClass<SearchWidget>("Search");

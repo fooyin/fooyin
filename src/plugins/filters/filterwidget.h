@@ -109,13 +109,13 @@ public:
     ~YearFilter() override = default;
 };
 
-class AlbmArtistFilter : public FilterWidget
+class AlbumArtistFilter : public FilterWidget
 {
 public:
-    explicit AlbmArtistFilter(QWidget* parent = nullptr)
+    explicit AlbumArtistFilter(QWidget* parent = nullptr)
         : FilterWidget(Filters::FilterType::AlbumArtist, parent)
     { }
-    ~AlbmArtistFilter() override = default;
+    ~AlbumArtistFilter() override = default;
 };
 
 class ArtistFilter : public FilterWidget
