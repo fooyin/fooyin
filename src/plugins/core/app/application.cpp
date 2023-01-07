@@ -46,6 +46,7 @@
 struct Application::Private
 {
     Widgets::WidgetFactory* widgetFactory;
+    ActionManager* actionManager;
     Settings* settings;
     ThreadManager* threadManager;
     DB::Database* db;
@@ -56,12 +57,12 @@ struct Application::Private
     Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
     std::unique_ptr<SettingsDialog> settingsDialog;
-    WidgetProvider* widgetProvider;
-    ActionManager* actionManager;
+    Widgets::WidgetProvider* widgetProvider;
     MainWindow* mainWindow;
 
     explicit Private(QObject* parent)
         : widgetFactory(new Widgets::WidgetFactory())
+        , actionManager(new ActionManager(parent))
         , settings(new Settings(parent))
         , threadManager(new ThreadManager(parent))
         , db(DB::Database::instance())
@@ -72,8 +73,7 @@ struct Application::Private
         , libraryManager(new Library::LibraryManager(parent))
         , library(new Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, parent))
         , settingsDialog(std::make_unique<SettingsDialog>(libraryManager))
-        , widgetProvider(new WidgetProvider(widgetFactory, parent))
-        , actionManager(new ActionManager(parent))
+        , widgetProvider(new Widgets::WidgetProvider(widgetFactory, parent))
         , mainWindow(new MainWindow(actionManager, settings, settingsDialog.get(), library))
     {
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);

@@ -26,11 +26,10 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
+namespace Widgets {
 struct WidgetProvider::Private
 {
     Widgets::WidgetFactory* widgetFactory;
-
-    QMap<QString, QMenu*> menus;
 
     explicit Private(Widgets::WidgetFactory* widgetFactory)
         : widgetFactory{widgetFactory}
@@ -57,28 +56,4 @@ SplitterWidget* WidgetProvider::createSplitter(Qt::Orientation type, QWidget* pa
     splitter->setOrientation(type);
     return splitter;
 }
-
-void WidgetProvider::addMenuActions(QMenu* menu, SplitterWidget* splitter)
-{
-    p->menus.clear();
-    auto widgets = p->widgetFactory->widgetNames();
-    auto widgetSubMenus = p->widgetFactory->menus();
-    for(const auto& widget : widgets) {
-        const QStringList subMenus = widgetSubMenus.value(widget);
-        auto* parentMenu = menu;
-        for(const auto& subMenu : subMenus) {
-            if(!p->menus.contains(subMenu)) {
-                auto* childMenu = new QMenu(subMenu, parentMenu);
-                p->menus.insert(subMenu, childMenu);
-            }
-            auto* childMenu = p->menus.value(subMenu);
-            parentMenu->addMenu(childMenu);
-            parentMenu = childMenu;
-        }
-        auto* addWidget = new QAction(widget, parentMenu);
-        QAction::connect(addWidget, &QAction::triggered, this, [this, widget, splitter] {
-            createWidget(widget, splitter);
-        });
-        parentMenu->addAction(addWidget);
-    }
-}
+}; // namespace Widgets

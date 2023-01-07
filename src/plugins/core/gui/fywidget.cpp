@@ -17,32 +17,40 @@
  *
  */
 
-#pragma once
+#include "fywidget.h"
 
 #include <QJsonArray>
-#include <QWidget>
-#include <utils/id.h>
 
-class ActionContainer;
-
-class FyWidget : public QWidget
+FyWidget::FyWidget(QWidget* parent)
+    : QWidget{parent}
+    , m_id{"FyWidget"}
 {
-    Q_OBJECT
+    m_id.append(reinterpret_cast<quintptr>(this));
+}
 
-public:
-    explicit FyWidget(QWidget* parent);
-    ~FyWidget() override;
+FyWidget::~FyWidget() = default;
 
-    [[nodiscard]] Util::Id id() const;
-    [[nodiscard]] virtual QString name() const = 0;
+Util::Id FyWidget::id() const
+{
+    return m_id;
+}
 
-    [[nodiscard]] FyWidget* findParent();
+FyWidget* FyWidget::findParent()
+{
+    QWidget* parent = parentWidget();
+    while(parent && !qobject_cast<FyWidget*>(parent)) {
+        parent = parent->parentWidget();
+    }
+    return qobject_cast<FyWidget*>(parent);
+}
 
-    virtual void addWidgetMenu(ActionContainer* menu, QAction* action);
-    virtual void layoutEditingMenu(ActionContainer* menu);
-    virtual void saveLayout(QJsonArray& array);
-    virtual void loadLayout(QJsonObject& object);
+void FyWidget::addWidgetMenu(ActionContainer* menu, QAction* action) { }
 
-private:
-    Util::Id m_id;
-};
+void FyWidget::layoutEditingMenu(ActionContainer* menu) { }
+
+void FyWidget::saveLayout(QJsonArray& array)
+{
+    array.append(name());
+}
+
+void FyWidget::loadLayout(QJsonObject& object) { }

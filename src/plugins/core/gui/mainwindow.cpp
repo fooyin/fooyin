@@ -52,7 +52,6 @@ struct MainWindow::Private
 
     QuickSeupDialog* quickSetupDialog;
 
-    WidgetProvider* widgetProvider;
     ActionManager* actionManager;
 
     Private(ActionManager* actionManager, Settings* settings, SettingsDialog* settingsDialog,

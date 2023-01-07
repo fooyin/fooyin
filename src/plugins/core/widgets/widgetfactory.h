@@ -22,7 +22,7 @@
 #include "core/gui/fywidget.h"
 
 #include <QDebug>
-#include <QHash>
+#include <map>
 
 namespace Widgets {
 class WidgetFactory : public QObject
@@ -32,51 +32,59 @@ class WidgetFactory : public QObject
 public:
     using Instantiator = FyWidget* (*)();
 
+    struct FactoryWidget
+    {
+        QString name;
+        Instantiator instantiator;
+        QStringList subMenus;
+    };
+
 protected:
     template <typename U>
     static FyWidget* createInstance()
     {
         return new U();
     }
-    using Instantiators = QMap<QString, Instantiator>;
-    using SubMenus = QMap<QString, QStringList>;
+    using FactoryWidgets = std::map<QString, FactoryWidget>;
 
-    Instantiators instantiators;
-    SubMenus subMenus;
+    FactoryWidgets widgets;
 
 public:
     template <typename U>
-    bool registerClass(const QString& key, const QStringList& subMenu = {})
+    bool registerClass(const QString& name, const QStringList& subMenus = {})
     {
         static_assert(std::is_base_of<FyWidget, U>::value, "Class must derive from the factory's base class");
-        if(instantiators.contains(key)) {
+
+        if(widgets.count(name)) {
             qDebug() << ("Subclass already registered");
             return false;
         }
-        instantiators.insert(key, &createInstance<U>);
-        if(!subMenu.isEmpty()) {
-            subMenus.insert(key, subMenu);
-        }
+
+        FactoryWidget fw;
+        fw.name = name;
+        fw.instantiator = &createInstance<U>;
+        fw.subMenus = subMenus;
+
+        widgets.emplace(name, fw);
         return true;
     }
 
-    [[nodiscard]] FyWidget* make(const QString& key) const
+    [[nodiscard]] FyWidget* make(const QString& name) const
     {
-        auto it = instantiators.value(key, nullptr);
-        if(!it) {
+        if(!widgets.count(name)) {
             return nullptr;
         }
-        return it();
+
+        auto widget = widgets.at(name);
+        if(!widget.instantiator) {
+            return nullptr;
+        }
+        return widget.instantiator();
     }
 
-    [[nodiscard]] QList<QString> widgetNames() const
+    [[nodiscard]] FactoryWidgets registeredWidgets() const
     {
-        return instantiators.keys();
-    }
-
-    [[nodiscard]] SubMenus menus() const
-    {
-        return subMenus;
+        return widgets;
     }
 };
 } // namespace Widgets

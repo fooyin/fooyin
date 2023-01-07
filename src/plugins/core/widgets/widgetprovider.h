@@ -21,28 +21,24 @@
 
 #include <QObject>
 
-namespace Widgets {
-class WidgetFactory;
-} // namespace Widgets
-
 class SplitterWidget;
 class FyWidget;
-class QMenu;
 
+namespace Widgets {
+class WidgetFactory;
 class WidgetProvider : public QObject
 {
     Q_OBJECT
 
 public:
-    WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent = nullptr);
+    explicit WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent = nullptr);
     ~WidgetProvider() override;
 
     FyWidget* createWidget(const QString& widget, SplitterWidget* splitter);
     static SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);
 
-    void addMenuActions(QMenu* menu, SplitterWidget* splitter);
-
 private:
     struct Private;
     std::unique_ptr<WidgetProvider::Private> p;
 };
+}; // namespace Widgets

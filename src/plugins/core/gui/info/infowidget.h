@@ -19,9 +19,9 @@
 
 #pragma once
 
+#include "core/gui/fywidget.h"
 #include "core/gui/info/infomodel.h"
 #include "core/gui/info/infoview.h"
-#include "core/gui/fywidget.h"
 
 #include <QHBoxLayout>
 #include <QWidget>
@@ -50,7 +50,7 @@ public:
     void setAltRowColors(bool altColours);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(QMenu* menu) override;
+    void layoutEditingMenu(ActionContainer* menu) override;
 
 protected:
     void setupUi();

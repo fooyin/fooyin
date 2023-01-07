@@ -19,12 +19,11 @@
 
 #include "dummy.h"
 
-Dummy::Dummy(WidgetProvider* widgetProvider, QWidget* parent)
+Dummy::Dummy(QWidget* parent)
     : FyWidget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_label(new QLabel(this))
 {
-    Q_UNUSED(widgetProvider)
     setObjectName(Dummy::name());
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_label->setText("Right-Click to add a new widget.");

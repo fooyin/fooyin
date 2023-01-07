@@ -20,14 +20,10 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QWidget>
 
-class QHBoxLayout;
-class Overlay;
-class SplitterWidget;
-class WidgetProvider;
 class FyWidget;
-class Settings;
+class ActionContainer;
+class SplitterWidget;
 
 class EditableLayout : public QWidget
 {
@@ -37,9 +33,13 @@ public:
     explicit EditableLayout(QWidget* parent = nullptr);
     ~EditableLayout() override;
 
+    ActionContainer* createAddMenu(SplitterWidget* parent);
+    void setupAddMenu(ActionContainer* menu, SplitterWidget* parent);
+
     void changeLayout(const QByteArray& layout);
 
     static FyWidget* splitterChild(QWidget* widget);
+    void addParentContext(FyWidget* widget, ActionContainer* menu);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 

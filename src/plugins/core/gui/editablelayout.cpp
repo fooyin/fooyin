@@ -19,11 +19,15 @@
 
 #include "editablelayout.h"
 
+#include "core/actions/actioncontainer.h"
+#include "core/actions/actionmanager.h"
+#include "core/constants.h"
 #include "core/gui/widgets/dummy.h"
 #include "core/gui/widgets/menuheader.h"
 #include "core/gui/widgets/overlay.h"
 #include "core/gui/widgets/splitterwidget.h"
 #include "core/settings/settings.h"
+#include "core/widgets/widgetfactory.h"
 #include "core/widgets/widgetprovider.h"
 
 #include <QCoreApplication>
@@ -36,50 +40,29 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
-namespace {
-void addParentContext(FyWidget* widget, QMenu* menu)
-{
-    auto* parent = qobject_cast<SplitterWidget*>(widget->findParent());
-
-    if(parent) {
-        auto* remove = new QAction("Remove", menu);
-        QAction::connect(remove, &QAction::triggered, parent, [parent, widget] {
-            parent->removeWidget(widget);
-        });
-        menu->addAction(remove);
-
-        menu->addAction(new MenuHeaderAction(parent->name(), menu));
-        parent->layoutEditingMenu(menu);
-
-        auto* parentOfParent = qobject_cast<SplitterWidget*>(parent->findParent());
-        // Only splitters with a splitter parent are removable.
-        if(parentOfParent) {
-            auto* removeParent = new QAction("Remove", menu);
-            QAction::connect(removeParent, &QAction::triggered, parentOfParent, [parentOfParent, parent] {
-                parentOfParent->removeWidget(parent);
-            });
-            menu->addAction(removeParent);
-        }
-    }
-}
-} // namespace
-
 struct EditableLayout::Private
 {
+    using MenuMap = std::unordered_map<Util::Id, ActionContainer*, Util::Id::IdHash>;
+
     QHBoxLayout* box;
     Settings* settings;
     bool layoutEditing{false};
     Overlay* overlay;
+    ActionManager* actionManager;
     SplitterWidget* splitter;
-    QMenu* menu;
-    WidgetProvider* widgetProvider;
+    ActionContainer* menu;
+    int menuLevels{2};
+    MenuMap addMenus;
+    Widgets::WidgetFactory* widgetFactory;
+    Widgets::WidgetProvider* widgetProvider;
 
     explicit Private(QWidget* parent)
         : box{new QHBoxLayout(parent)}
         , settings{PluginSystem::object<Settings>()}
         , overlay{new Overlay(parent)}
-        , menu{new QMenu(parent)}
-        , widgetProvider{PluginSystem::object<WidgetProvider>()}
+        , actionManager{PluginSystem::object<ActionManager>()}
+        , widgetFactory{PluginSystem::object<Widgets::WidgetFactory>()}
+        , widgetProvider{PluginSystem::object<Widgets::WidgetProvider>()}
     { }
 };
 
@@ -89,22 +72,63 @@ EditableLayout::EditableLayout(QWidget* parent)
 {
     setObjectName("EditableLayout");
 
+    p->menu = p->actionManager->createMenu(Core::Constants::ContextMenus::Layout);
+
+    p->menu->appendGroup(Core::Constants::Groups::Two);
+    p->menu->appendGroup(Core::Constants::Groups::Three);
+
     p->box->setContentsMargins(5, 5, 5, 5);
 
-    connect(p->menu, &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
+    connect(p->menu, &ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
     connect(p->settings, &Settings::layoutEditingChanged, this, [this](bool enabled) {
         p->layoutEditing = enabled;
     });
 
     bool loaded = loadLayout();
     if(!loaded) {
-        p->splitter = WidgetProvider::createSplitter(Qt::Vertical, this);
+        p->splitter = Widgets::WidgetProvider::createSplitter(Qt::Vertical, this);
         p->box->addWidget(p->splitter);
     }
     if(!p->splitter->hasChildren()) {
         p->settings->set(Settings::Setting::LayoutEditing, true);
     }
     qApp->installEventFilter(this);
+}
+
+ActionContainer* EditableLayout::createAddMenu(SplitterWidget* parent)
+{
+    auto id = parent->id();
+    auto* menu = p->actionManager->createMenu(id);
+    p->addMenus.emplace(id, menu);
+    menu->menu()->setTitle(tr("&Add"));
+
+    return menu;
+}
+
+void EditableLayout::setupAddMenu(ActionContainer* menu, SplitterWidget* parent)
+{
+    if(!menu->isEmpty()) {
+        return;
+    }
+    auto widgets = p->widgetFactory->registeredWidgets();
+    for(const auto& widget : widgets) {
+        auto* parentMenu = menu;
+        for(const auto& subMenu : widget.second.subMenus) {
+            Util::Id id = Util::Id{menu->id()}.append(subMenu);
+            auto* childMenu = p->actionManager->actionContainer(id);
+            if(!childMenu) {
+                childMenu = p->actionManager->createMenu(id);
+                childMenu->menu()->setTitle(subMenu);
+                parentMenu->addMenu(childMenu);
+            }
+            parentMenu = childMenu;
+        }
+        auto* addWidget = new QAction(widget.first, parentMenu);
+        QAction::connect(addWidget, &QAction::triggered, this, [this, widget, parent] {
+            p->widgetProvider->createWidget(widget.first, parent);
+        });
+        parentMenu->addAction(addWidget);
+    }
 }
 
 void EditableLayout::changeLayout(const QByteArray& layout)
@@ -138,6 +162,36 @@ FyWidget* EditableLayout::splitterChild(QWidget* widget)
     return {};
 }
 
+void EditableLayout::addParentContext(FyWidget* widget, ActionContainer* menu)
+{
+    auto* parent = qobject_cast<SplitterWidget*>(widget->findParent());
+    if(parent) {
+        if(qobject_cast<SplitterWidget*>(widget)) {
+            auto* addMenu = createAddMenu(parent);
+            setupAddMenu(addMenu, parent);
+            menu->addMenu(addMenu);
+        }
+        auto* remove = new QAction("Remove", menu);
+        QAction::connect(remove, &QAction::triggered, parent, [parent, widget] {
+            parent->removeWidget(widget);
+        });
+        menu->addAction(remove);
+    }
+    auto level = p->menuLevels;
+    while(level > 1) {
+        if(!parent) {
+            break;
+        }
+        menu->addAction(new MenuHeaderAction(parent->name(), menu));
+        parent->layoutEditingMenu(menu);
+        auto* addMenu = createAddMenu(parent);
+        setupAddMenu(addMenu, parent);
+        menu->addMenu(addMenu);
+        parent = qobject_cast<SplitterWidget*>(parent->findParent());
+        --level;
+    }
+}
+
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 {
     if(!p->layoutEditing) {
@@ -159,7 +213,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
             }
             if(child && !p->menu->isEmpty()) {
                 showOverlay(child);
-                p->menu->exec(mapToGlobal(mouseEvent->pos()));
+                p->menu->menu()->exec(mapToGlobal(mouseEvent->pos()));
             }
             return true;
         }
@@ -223,7 +277,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
                 QJsonArray splitterChildren = splitterObject["Children"].toArray();
                 auto state = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
 
-                p->splitter = WidgetProvider::createSplitter(type, this);
+                p->splitter = Widgets::WidgetProvider::createSplitter(type, this);
                 p->box->addWidget(p->splitter);
 
                 p->splitter->loadSplitter(splitterChildren, p->splitter);

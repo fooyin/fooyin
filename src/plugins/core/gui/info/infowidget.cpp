@@ -19,6 +19,8 @@
 
 #include "infowidget.h"
 
+#include "core/actions/actioncontainer.h"
+#include "core/constants.h"
 #include "core/gui/info/infoitem.h"
 #include "core/gui/info/itemdelegate.h"
 #include "core/library/models/track.h"
@@ -124,7 +126,7 @@ QString InfoWidget::name() const
     return "Info";
 }
 
-void InfoWidget::layoutEditingMenu(QMenu* menu)
+void InfoWidget::layoutEditingMenu(ActionContainer* menu)
 {
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);

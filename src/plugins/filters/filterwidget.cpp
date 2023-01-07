@@ -30,6 +30,7 @@
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QMenu>
+#include <core/actions/actioncontainer.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <core/settings/settings.h>
@@ -167,7 +168,7 @@ QString FilterWidget::name() const
     return "Filter";
 }
 
-void FilterWidget::layoutEditingMenu(QMenu* menu)
+void FilterWidget::layoutEditingMenu(ActionContainer* menu)
 {
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);

@@ -23,16 +23,13 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QWidget>
-
-class WidgetProvider;
 
 class Dummy : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit Dummy(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit Dummy(QWidget* parent = nullptr);
     ~Dummy() override;
 
     [[nodiscard]] QString name() const override;

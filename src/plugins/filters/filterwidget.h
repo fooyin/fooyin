@@ -64,7 +64,7 @@ public:
     void setAltRowColors(bool altColours);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(QMenu* menu) override;
+    void layoutEditingMenu(ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
     void loadLayout(QJsonObject& object) override;
 
