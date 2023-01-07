@@ -44,12 +44,15 @@ PlaylistModel::PlaylistModel(PlayerManager* playerManager, Library::MusicLibrary
     , m_playingIcon{Core::Constants::Icons::Play}
     , m_pausedIcon{Core::Constants::Icons::Pause}
 {
-    //    setupModelData();
+    setupModelData();
 
     connect(m_settings, &Settings::playlistSettingChanged, this, &PlaylistModel::reset);
     connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistModel::changeRowColours);
     connect(m_library, &Library::MusicLibrary::tracksLoaded, this, &PlaylistModel::reset);
     connect(m_library, &Library::MusicLibrary::tracksChanged, this, &PlaylistModel::reset);
+    connect(m_library, &Library::MusicLibrary::tracksDeleted, this, &PlaylistModel::reset);
+    connect(m_library, &Library::MusicLibrary::tracksAdded, this, &PlaylistModel::reset);
+    connect(m_library, &Library::MusicLibrary::libraryRemoved, this, &PlaylistModel::reset);
 
     m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_pausedIcon = m_pausedIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);

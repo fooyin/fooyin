@@ -72,19 +72,23 @@ public:
 signals:
     void runLibraryScan(TrackPtrList tracks, Library::LibraryInfo info);
     void runAllLibrariesScan(TrackPtrList tracks);
+    void libraryRemoved();
 
     void tracksChanged();
     void tracksSelChanged();
 
     void tracksLoaded(const TrackPtrList& tracks);
+    void tracksAdded();
+    void tracksUpdated();
+    void tracksDeleted();
     void loadAllTracks();
     void updateSaveTracks(TrackPtrList tracks);
 
 protected:
-    void tracksHaveLoaded(const TrackList& tracks);
-    void newTracksAdded(const TrackList& tracks);
-    void tracksUpdated(const TrackList& tracks);
-    void tracksDeleted(const IdSet& tracks);
+    void loadTracks(const TrackList& tracks);
+    void addNewTracks(const TrackList& tracks);
+    void updateChangedTracks(const TrackList& tracks);
+    void removeDeletedTracks(const IdSet& tracks);
 
 private:
     struct Private;

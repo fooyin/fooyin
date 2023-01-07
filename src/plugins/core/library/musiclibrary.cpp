@@ -68,15 +68,16 @@ MusicLibrary::MusicLibrary(LibraryPlaylistInterface* playlistInteractor, Library
     p->threadManager->moveToNewThread(&p->libraryDatabaseManager);
 
     connect(p->libraryManager, &Library::LibraryManager::libraryRemoved, &p->scanner, &LibraryScanner::stopThread);
+    connect(p->libraryManager, &Library::LibraryManager::libraryRemoved, this, &MusicLibrary::libraryRemoved);
 
     connect(this, &MusicLibrary::runLibraryScan, &p->scanner, &LibraryScanner::scanLibrary);
     connect(this, &MusicLibrary::runAllLibrariesScan, &p->scanner, &LibraryScanner::scanAll);
     connect(&p->scanner, &LibraryScanner::libraryAdded, this, &MusicLibrary::libraryAdded);
-    connect(&p->scanner, &LibraryScanner::addedTracks, this, &MusicLibrary::newTracksAdded);
-    connect(&p->scanner, &LibraryScanner::updatedTracks, this, &MusicLibrary::tracksUpdated);
-    connect(&p->scanner, &LibraryScanner::tracksDeleted, this, &MusicLibrary::tracksDeleted);
+    connect(&p->scanner, &LibraryScanner::addedTracks, this, &MusicLibrary::addNewTracks);
+    connect(&p->scanner, &LibraryScanner::updatedTracks, this, &MusicLibrary::updateChangedTracks);
+    connect(&p->scanner, &LibraryScanner::tracksDeleted, this, &MusicLibrary::removeDeletedTracks);
 
-    connect(&p->libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &MusicLibrary::tracksHaveLoaded);
+    connect(&p->libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &MusicLibrary::loadTracks);
     connect(this, &MusicLibrary::loadAllTracks, &p->libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
     connect(this, &MusicLibrary::updateSaveTracks, &p->libraryDatabaseManager, &LibraryDatabaseManager::updateTracks);
 
@@ -125,13 +126,13 @@ void MusicLibrary::addInteractor(MusicLibraryInteractor* interactor)
     p->interactors.emplace_back(interactor);
 }
 
-void MusicLibrary::tracksHaveLoaded(const TrackList& tracks)
+void MusicLibrary::loadTracks(const TrackList& tracks)
 {
     qDeleteAll(p->tracks);
     refreshTracks(tracks);
 }
 
-void MusicLibrary::newTracksAdded(const TrackList& tracks)
+void MusicLibrary::addNewTracks(const TrackList& tracks)
 {
     for(const auto& track : tracks) {
         auto* trackPtr = new Track(track);
@@ -139,9 +140,10 @@ void MusicLibrary::newTracksAdded(const TrackList& tracks)
         p->trackMap.emplace(trackPtr->id(), trackPtr);
     }
     Library::sortTracks(p->tracks, p->order);
+    emit tracksAdded();
 }
 
-void MusicLibrary::tracksUpdated(const TrackList& tracks)
+void MusicLibrary::updateChangedTracks(const TrackList& tracks)
 {
     for(const auto& track : tracks) {
         if(p->trackMap.count(track.id())) {
@@ -151,9 +153,10 @@ void MusicLibrary::tracksUpdated(const TrackList& tracks)
             }
         }
     }
+    emit tracksUpdated();
 }
 
-void MusicLibrary::tracksDeleted(const IdSet& tracks)
+void MusicLibrary::removeDeletedTracks(const IdSet& tracks)
 {
     for(auto trackId : tracks) {
         if(p->trackMap.count(trackId)) {
@@ -163,6 +166,7 @@ void MusicLibrary::tracksDeleted(const IdSet& tracks)
             }
         }
     }
+    emit tracksDeleted();
 }
 
 void MusicLibrary::reloadAll()
