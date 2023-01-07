@@ -23,10 +23,10 @@
 #include "core/library/models/track.h"
 #include "core/player/playermanager.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 
 struct StatusWidget::Private
@@ -61,11 +61,6 @@ StatusWidget::StatusWidget(QWidget* parent)
 QString StatusWidget::name() const
 {
     return "Status";
-}
-
-void StatusWidget::layoutEditingMenu(QMenu* menu)
-{
-    Q_UNUSED(menu)
 }
 
 StatusWidget::~StatusWidget() = default;

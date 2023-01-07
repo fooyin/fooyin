@@ -30,7 +30,6 @@ public:
     ~CoverWidget() override;
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(QMenu* menu) override;
 
 protected:
     void setupUi();

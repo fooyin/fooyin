@@ -33,7 +33,6 @@ public:
     ~StatusWidget() override;
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(QMenu* menu) override;
 
 signals:
     void clicked();

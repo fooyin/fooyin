@@ -26,10 +26,10 @@
 #include "progresswidget.h"
 #include "volumecontrol.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
+#include <pluginsystem/pluginmanager.h>
 
 struct ControlWidget::Private
 {
@@ -101,11 +101,6 @@ void ControlWidget::setupConnections()
 QString ControlWidget::name() const
 {
     return "Controls";
-}
-
-void ControlWidget::layoutEditingMenu(QMenu* menu)
-{
-    Q_UNUSED(menu)
 }
 
 void ControlWidget::contextMenuEvent(QContextMenuEvent* event)

@@ -32,7 +32,6 @@ public:
     ~SearchWidget() override;
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(QMenu* menu) override;
 
 signals:
     void searchChanged(const QString& search);

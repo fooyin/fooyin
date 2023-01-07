@@ -61,11 +61,6 @@ QString SearchWidget::name() const
     return "Search";
 }
 
-void SearchWidget::layoutEditingMenu(QMenu* menu)
-{
-    Q_UNUSED(menu)
-}
-
 SearchWidget::~SearchWidget() = default;
 
 void SearchWidget::setupUi()

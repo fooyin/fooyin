@@ -64,11 +64,6 @@ QString CoverWidget::name() const
     return "Artwork";
 }
 
-void CoverWidget::layoutEditingMenu(QMenu* menu)
-{
-    Q_UNUSED(menu)
-}
-
 CoverWidget::~CoverWidget() = default;
 
 void CoverWidget::setupUi()

@@ -37,7 +37,6 @@ public:
     void setupConnections();
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(QMenu* menu) override;
 
 signals:
     void stop();
