@@ -20,6 +20,7 @@
 #include "actionmanager.h"
 
 #include "actioncontainer.h"
+#include "core/constants.h"
 
 #include <QMainWindow>
 #include <QMenuBar>
@@ -48,6 +49,7 @@ ActionContainer* ActionManager::createMenu(const Util::Id& id)
     }
 
     auto* mActionContainer = new MenuActionContainer(id, this);
+    mActionContainer->appendGroup(Core::Constants::Groups::One);
     p->idContainerMap.emplace(id, mActionContainer);
     connect(mActionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
 
