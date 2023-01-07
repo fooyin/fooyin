@@ -22,7 +22,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 
-Overlay::Overlay(QWidget* parent)
+OverlayFilter::OverlayFilter(QWidget* parent)
     : QWidget(parent)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -30,9 +30,9 @@ Overlay::Overlay(QWidget* parent)
     hide();
 }
 
-Overlay::~Overlay() = default;
+OverlayFilter::~OverlayFilter() = default;
 
-void Overlay::paintEvent(QPaintEvent* e)
+void OverlayFilter::paintEvent(QPaintEvent* e)
 {
     Q_UNUSED(e)
     QPainter painter(this);

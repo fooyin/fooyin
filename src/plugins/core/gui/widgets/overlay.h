@@ -21,13 +21,13 @@
 
 #include <QFrame>
 
-class Overlay : public QWidget
+class OverlayFilter : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Overlay(QWidget* parent = nullptr);
-    ~Overlay() override;
+    explicit OverlayFilter(QWidget* parent = nullptr);
+    ~OverlayFilter() override;
 
 protected:
     void paintEvent(QPaintEvent* event) override;
