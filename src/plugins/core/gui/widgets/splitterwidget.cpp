@@ -19,6 +19,8 @@
 
 #include "splitterwidget.h"
 
+#include "core/actions/actioncontainer.h"
+#include "core/actions/actionmanager.h"
 #include "core/widgets/widgetprovider.h"
 #include "dummy.h"
 #include "splitter.h"
@@ -29,11 +31,12 @@
 #include <utils/enumhelper.h>
 
 SplitterWidget::SplitterWidget(QWidget* parent)
-    : FyWidget(parent)
-    , m_layout(new QHBoxLayout(this))
-    , m_splitter(new Splitter(Qt::Vertical))
-    , m_widgetProvider(PluginSystem::object<WidgetProvider>())
-    , m_dummy(new Dummy(m_widgetProvider, this))
+    : FyWidget{parent}
+    , m_layout{new QHBoxLayout(this)}
+    , m_splitter{new Splitter(Qt::Vertical)}
+    , m_actionManager{PluginSystem::object<ActionManager>()}
+    , m_widgetProvider{PluginSystem::object<Widgets::WidgetProvider>()}
+    , m_dummy{new Dummy(this)}
 {
     setObjectName(SplitterWidget::name());
 
@@ -41,6 +44,18 @@ SplitterWidget::SplitterWidget(QWidget* parent)
     m_layout->addWidget(m_splitter);
 
     m_splitter->addWidget(m_dummy);
+
+    setupActions();
+}
+
+void SplitterWidget::setupActions()
+{
+    m_changeSplitter = new QAction("Change Splitter", this);
+
+    QAction::connect(m_changeSplitter, &QAction::triggered, this, [this] {
+        setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
+        setObjectName(QString("%1 Splitter").arg(EnumHelper::toString(m_splitter->orientation())));
+    });
 }
 
 SplitterWidget::~SplitterWidget() = default;
@@ -53,6 +68,7 @@ Qt::Orientation SplitterWidget::orientation() const
 void SplitterWidget::setOrientation(Qt::Orientation orientation)
 {
     m_splitter->setOrientation(orientation);
+    setObjectName(SplitterWidget::name());
 }
 
 QByteArray SplitterWidget::saveState() const
@@ -122,20 +138,9 @@ QString SplitterWidget::name() const
     return QString("%1 Splitter").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical");
 }
 
-void SplitterWidget::layoutEditingMenu(QMenu* menu)
+void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
 {
-    auto* addMenu = new QMenu("Add", this);
-    auto* changeSplitter = new QAction("Change Splitter", this);
-
-    QAction::connect(changeSplitter, &QAction::triggered, this, [this] {
-        setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
-        setObjectName(QString("%1 Splitter").arg(EnumHelper::toString(m_splitter->orientation())));
-    });
-
-    m_widgetProvider->addMenuActions(addMenu, this);
-
-    menu->addAction(changeSplitter);
-    menu->addMenu(addMenu);
+    menu->addAction(m_changeSplitter);
 }
 
 void SplitterWidget::saveSplitter(QJsonObject& object, QJsonArray& splitterArray)
@@ -180,7 +185,7 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
                 QJsonArray splitterArray = childSplitterObject["Children"].toArray();
                 QByteArray splitterState = QByteArray::fromBase64(childSplitterObject["State"].toString().toUtf8());
 
-                auto* childSplitter = WidgetProvider::createSplitter(type, this);
+                auto* childSplitter = Widgets::WidgetProvider::createSplitter(type, this);
                 splitter->addWidget(childSplitter);
                 loadSplitter(splitterArray, childSplitter);
                 childSplitter->restoreState(splitterState);

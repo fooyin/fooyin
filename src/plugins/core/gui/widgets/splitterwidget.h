@@ -22,9 +22,13 @@
 #include "core/gui/fywidget.h"
 #include "splitter.h"
 
+namespace Widgets {
 class WidgetProvider;
+}
+
 class QHBoxLayout;
 class Dummy;
+class ActionManager;
 
 class SplitterWidget : public FyWidget
 {
@@ -33,6 +37,8 @@ class SplitterWidget : public FyWidget
 public:
     explicit SplitterWidget(QWidget* parent = nullptr);
     ~SplitterWidget() override;
+
+    void setupActions();
 
     [[nodiscard]] Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orientation);
@@ -50,7 +56,7 @@ public:
     QList<FyWidget*> children();
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(QMenu* menu) override;
+    void layoutEditingMenu(ActionContainer* menu) override;
 
     void saveSplitter(QJsonObject& object, QJsonArray& splitterArray);
     void loadSplitter(const QJsonArray& array, SplitterWidget* splitter);
@@ -59,8 +65,11 @@ private:
     QHBoxLayout* m_layout;
     Splitter* m_splitter;
     QList<FyWidget*> m_children;
-    WidgetProvider* m_widgetProvider;
+    ActionManager* m_actionManager;
+    Widgets::WidgetProvider* m_widgetProvider;
     Dummy* m_dummy;
+
+    QAction* m_changeSplitter;
 };
 
 class VerticalSplitterWidget : public SplitterWidget
