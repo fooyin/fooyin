@@ -53,5 +53,3 @@ void LibraryDatabaseManager::updateTracks(const TrackPtrList& tracks)
         }
     }
 }
-
-void LibraryDatabaseManager::stopThread() { }

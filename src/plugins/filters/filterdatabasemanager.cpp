@@ -125,5 +125,3 @@ void FilterDatabaseManager::filterTracks(const TrackPtrList& tracks, const Activ
     }
     emit tracksFiltered(filteredTracks);
 }
-
-void FilterDatabaseManager::stopThread() { }

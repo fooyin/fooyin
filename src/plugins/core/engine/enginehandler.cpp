@@ -37,8 +37,6 @@ EngineHandler::EngineHandler(PlayerManager* playerManager, QObject* parent)
     connect(this, &EngineHandler::stop, &m_engine, &Engine::stop);
 }
 
-void EngineHandler::stopThread() { }
-
 EngineHandler::~EngineHandler() = default;
 
 void EngineHandler::playStateChanged(Player::PlayState state)

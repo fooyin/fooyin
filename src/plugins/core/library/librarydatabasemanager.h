@@ -37,8 +37,6 @@ public:
     void getAllTracks();
     void updateTracks(const TrackPtrList& tracks);
 
-    void stopThread() override;
-
 signals:
     void gotTracks(const TrackList& result);
 

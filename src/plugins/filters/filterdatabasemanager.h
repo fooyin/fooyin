@@ -42,8 +42,6 @@ public:
                           ::Library::SortOrder order);
     void filterTracks(const TrackPtrList& tracks, const ActiveFilters& filters, const QString& search);
 
-    void stopThread() override;
-
 signals:
     void gotItems(Filters::FilterType type, const FilterList& result);
     void tracksFiltered(const TrackPtrList& result);

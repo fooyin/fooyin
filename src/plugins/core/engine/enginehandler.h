@@ -35,8 +35,6 @@ public:
     explicit EngineHandler(PlayerManager* playerManager, QObject* parent = nullptr);
     ~EngineHandler() override;
 
-    void stopThread() override;
-
 signals:
     void play();
     void pause();
