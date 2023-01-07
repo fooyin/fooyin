@@ -59,7 +59,7 @@ FilterManager::FilterManager(QObject* parent)
     connect(&p->databaseManager, &FilterDatabaseManager::tracksFiltered, this, &FilterManager::filteredTracksLoaded);
 
     connect(this, &FilterManager::filteredTracks, p->library, &Library::MusicLibrary::tracksChanged);
-    connect(p->library, &Library::MusicLibrary::tracksChanged, this, [this] {
+    connect(p->library, &Library::MusicLibrary::tracksUpdated, this, [this] {
         emit filteredItems();
     });
     connect(p->library, &Library::MusicLibrary::tracksAdded, this, [this] {
