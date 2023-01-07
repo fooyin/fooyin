@@ -17,7 +17,7 @@
  *
  */
 
-#include "overlay.h"
+#include "overlayfilter.h"
 
 #include <QPaintEvent>
 #include <QPainter>

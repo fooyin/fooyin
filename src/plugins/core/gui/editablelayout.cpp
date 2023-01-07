@@ -24,7 +24,7 @@
 #include "core/constants.h"
 #include "core/gui/widgets/dummy.h"
 #include "core/gui/widgets/menuheader.h"
-#include "core/gui/widgets/overlay.h"
+#include "core/gui/widgets/overlayfilter.h"
 #include "core/gui/widgets/splitterwidget.h"
 #include "core/settings/settings.h"
 #include "core/widgets/widgetfactory.h"
@@ -47,7 +47,7 @@ struct EditableLayout::Private
     QHBoxLayout* box;
     Settings* settings;
     bool layoutEditing{false};
-    Overlay* overlay;
+    OverlayFilter* overlay;
     ActionManager* actionManager;
     SplitterWidget* splitter;
     ActionContainer* menu;
@@ -59,7 +59,7 @@ struct EditableLayout::Private
     explicit Private(QWidget* parent)
         : box{new QHBoxLayout(parent)}
         , settings{PluginSystem::object<Settings>()}
-        , overlay{new Overlay(parent)}
+        , overlay{new OverlayFilter(parent)}
         , actionManager{PluginSystem::object<ActionManager>()}
         , widgetFactory{PluginSystem::object<Widgets::WidgetFactory>()}
         , widgetProvider{PluginSystem::object<Widgets::WidgetProvider>()}
