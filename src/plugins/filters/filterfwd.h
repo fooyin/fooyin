@@ -20,8 +20,21 @@
 #ifndef FILTER_FWD_H
 #define FILTER_FWD_H
 
-#include "core/library/sorting/sortorder.h"
-#include "core/typedefs.h"
+#include <core/library/sorting/sortorder.h>
+#include <core/typedefs.h>
+
+namespace Filters {
+Q_NAMESPACE
+enum class FilterType
+{
+    Genre = 0,
+    Year,
+    AlbumArtist,
+    Artist,
+    Album,
+};
+Q_ENUM_NS(FilterType)
+} // namespace Filters
 
 struct LibraryFilter
 {

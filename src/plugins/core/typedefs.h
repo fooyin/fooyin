@@ -81,19 +81,6 @@ Q_DECLARE_FLAGS(Attributes, Attribute)
 } // namespace Fy
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Attributes)
 
-namespace Filters {
-Q_NAMESPACE
-enum class FilterType
-{
-    Genre = 0,
-    Year,
-    AlbumArtist,
-    Artist,
-    Album,
-};
-Q_ENUM_NS(FilterType)
-} // namespace Filters
-
 namespace Widgets {
 Q_NAMESPACE
 enum class WidgetType

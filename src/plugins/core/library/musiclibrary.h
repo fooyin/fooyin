@@ -53,8 +53,6 @@ public:
     SortOrder sortOrder();
     void changeOrder(SortOrder order);
 
-    void changeSelection(const IdSet& indexes, Filters::FilterType type, int index);
-    void selectionChanged(const IdSet& indexes, Filters::FilterType type, int index);
     void changeTrackSelection(const QSet<Track*>& tracks);
     void trackSelectionChanged(const QSet<Track*>& tracks);
 

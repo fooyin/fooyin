@@ -20,7 +20,6 @@
 #pragma once
 
 #include "core/library/models/trackfwd.h"
-#include "core/library/sorting/sortorder.h"
 #include "module.h"
 
 namespace DB {
@@ -41,8 +40,6 @@ public:
     [[nodiscard]] static QString fetchQueryAlbums(const QString& where, const QString& join);
     [[nodiscard]] static QString fetchQueryArtists(const QString& where);
     [[nodiscard]] static QString fetchQueryGenres(const QString& where);
-    [[nodiscard]] static QString fetchQueryItems(Filters::FilterType type, const QString& where, const QString& join,
-                                                 ::Library::SortOrder order);
 
     static bool dbFetchTracks(Query& q, TrackList& result);
     static bool dbFetchAlbums(Query& q, AlbumList& result);
