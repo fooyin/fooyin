@@ -19,6 +19,7 @@
 
 #include "filterwidget.h"
 
+#include "constants.h"
 #include "filterdelegate.h"
 #include "filtermanager.h"
 #include "filtermodel.h"
@@ -312,7 +313,7 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
     IdSet ids;
     for(const auto& index : indexes) {
         if(index.isValid()) {
-            const int id = index.data(FilterRole::Id).toInt();
+            const int id = index.data(Filters::Constants::Role::Id).toInt();
             ids.insert(id);
         }
     }

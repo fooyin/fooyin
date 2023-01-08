@@ -19,7 +19,7 @@
 
 #include "filteritem.h"
 
-#include "core/typedefs.h"
+#include "constants.h"
 
 FilterItem::FilterItem(int id, QString name, FilterItem* parent)
     : m_id(id)
@@ -59,9 +59,9 @@ int FilterItem::columnCount()
 QVariant FilterItem::data(int role) const
 {
     switch(role) {
-        case(FilterRole::Id):
+        case(Filters::Constants::Role::Id):
             return m_id;
-        case(FilterRole::Name):
+        case(Filters::Constants::Role::Name):
             return !m_name.isEmpty() ? m_name : "Unknown";
         default:
             return {};

@@ -3,6 +3,7 @@ fooyin_add_plugin(Filters
     PLUGIN_DEPENDS FooyinVersion PluginSystem Core Utils
     DEPENDS Qt6::Core Qt6::Widgets Qt6::Sql
     SOURCES
+        constants.h
         filtersplugin.h
         filtersplugin.cpp
         filterdatabase.h

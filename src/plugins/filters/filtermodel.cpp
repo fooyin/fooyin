@@ -19,6 +19,7 @@
 
 #include "filtermodel.h"
 
+#include "constants.h"
 #include "filteritem.h"
 
 #include <QSize>
@@ -58,10 +59,10 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
 
     switch(role) {
         case(Qt::DisplayRole): {
-            return item->data(FilterRole::Name).toString();
+            return item->data(Filters::Constants::Role::Name).toString();
         }
-        case(FilterRole::Id): {
-            return item->data(FilterRole::Id).toInt();
+        case(Filters::Constants::Role::Id): {
+            return item->data(Filters::Constants::Role::Id).toInt();
         }
         default: {
             return {};
@@ -146,7 +147,7 @@ QHash<int, QByteArray> FilterModel::roleNames() const
 {
     auto roles = QAbstractItemModel::roleNames();
 
-    roles.insert(+FilterRole::Id, "ID");
+    roles.insert(+Filters::Constants::Role::Id, "ID");
 
     return roles;
 }
@@ -154,7 +155,7 @@ QHash<int, QByteArray> FilterModel::roleNames() const
 QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                    Qt::MatchFlags flags) const
 {
-    if(role != FilterRole::Id) {
+    if(role != Filters::Constants::Role::Id) {
         return QAbstractItemModel::match(start, role, value, hits, flags);
     }
 

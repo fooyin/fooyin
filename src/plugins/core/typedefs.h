@@ -60,11 +60,6 @@ const int Bitrate = 11;
 const int SampleRate = 12;
 } // namespace InfoRole
 
-namespace FilterRole {
-const int Id = Qt::UserRole + 40;
-const int Name = Qt::UserRole + 41;
-} // namespace FilterRole
-
 namespace LayoutRole {
 const int Type = Qt::UserRole + 50;
 } // namespace LayoutRole
@@ -80,25 +75,6 @@ enum Attribute
 Q_DECLARE_FLAGS(Attributes, Attribute)
 } // namespace Fy
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Attributes)
-
-namespace Widgets {
-Q_NAMESPACE
-enum class WidgetType
-{
-    Dummy = 0,
-    Filter,
-    Playlist,
-    Status,
-    Info,
-    Controls,
-    Artwork,
-    Search,
-    HorizontalSplitter,
-    VerticalSplitter,
-    Spacer
-};
-Q_ENUM_NS(WidgetType)
-} // namespace Widgets
 
 namespace Player {
 Q_NAMESPACE
