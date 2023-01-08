@@ -46,17 +46,17 @@ public:
     explicit FilterManager(QObject* parent = nullptr);
     ~FilterManager() override;
 
-    Core::TrackPtrList tracks() override;
-    bool hasTracks() override;
+    [[nodiscard]] Core::TrackPtrList tracks() const override;
+    [[nodiscard]] bool hasTracks() const override;
 
-    LibraryFilters filters();
-    bool hasFilter(Filters::FilterType type) const;
-    LibraryFilter findFilter(Filters::FilterType type);
+    [[nodiscard]] LibraryFilters filters() const;
+    [[nodiscard]] bool hasFilter(Filters::FilterType type) const;
+    [[nodiscard]] LibraryFilter findFilter(Filters::FilterType type) const;
     int registerFilter(Filters::FilterType type);
     void unregisterFilter(Filters::FilterType type);
     void changeFilter(int index);
     void resetFilter(Filters::FilterType type);
-    Core::Library::SortOrder filterOrder(Filters::FilterType type);
+    [[nodiscard]] Core::Library::SortOrder filterOrder(Filters::FilterType type) const;
     void changeFilterOrder(Filters::FilterType type, Core::Library::SortOrder order);
 
     void items(Filters::FilterType type);

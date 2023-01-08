@@ -70,7 +70,7 @@ QPixmap coverFromFile(const TagLib::FileRef& fileRef);
 QString convertString(const TagLib::String& str);
 int convertNumber(const TagLib::String& num);
 TagLib::String convertString(const QString& string);
-TagLib::String convertString(int i);
+TagLib::String convertString(int num);
 TagLib::StringList convertStringList(const QStringList& str);
 QStringList convertStringList(const TagLib::StringList& str);
 }; // namespace Core::Tagging

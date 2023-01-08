@@ -74,17 +74,17 @@ FilterManager::FilterManager(QObject* parent)
     p->library->addInteractor(this);
 }
 
-Core::TrackPtrList FilterManager::tracks()
+Core::TrackPtrList FilterManager::tracks() const
 {
     return p->filteredTracks;
 }
 
-bool FilterManager::hasTracks()
+bool FilterManager::hasTracks() const
 {
     return !p->filteredTracks.empty() || !p->searchFilter.isEmpty() || !p->activeFilters.empty();
 }
 
-LibraryFilters FilterManager::filters()
+LibraryFilters FilterManager::filters() const
 {
     return p->filters;
 }
@@ -96,7 +96,7 @@ bool FilterManager::hasFilter(Filters::FilterType type) const
     });
 }
 
-LibraryFilter FilterManager::findFilter(Filters::FilterType type)
+LibraryFilter FilterManager::findFilter(Filters::FilterType type) const
 {
     for(const auto& filter : p->filters) {
         if(filter.type == type) {
@@ -152,7 +152,7 @@ void FilterManager::resetFilter(Filters::FilterType type)
     emit filterReset(type, p->activeFilters.at(type));
 }
 
-Core::Library::SortOrder FilterManager::filterOrder(Filters::FilterType type)
+Core::Library::SortOrder FilterManager::filterOrder(Filters::FilterType type) const
 {
     for(const auto& filter : p->filters) {
         if(filter.type == type) {

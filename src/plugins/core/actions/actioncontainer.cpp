@@ -74,7 +74,7 @@ void ActionContainer::appendGroup(const Utils::Id& group)
     m_groups.append(Group{group});
 }
 
-void ActionContainer::insertGroup(Utils::Id beforeGroup, Utils::Id group)
+void ActionContainer::insertGroup(Utils::Id beforeGroup, const Utils::Id& group)
 {
     auto it = std::find_if(m_groups.cbegin(), m_groups.cend(), [&](const auto& group) {
         return (group.id == beforeGroup);

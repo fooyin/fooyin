@@ -50,11 +50,11 @@ signals:
     void previousTrack();
     void positionChanged(quint64 ms);
     void positionMoved(quint64 ms);
-    void currentTrackChanged(Track* track);
+    void currentTrackChanged(Core::Track* track);
     void volumeChanged(double value);
     void muteChanged(bool b);
 
-public slots:
+public:
     virtual void play() = 0;
     virtual void wakeUp() = 0;
     virtual void playPause() = 0;
@@ -67,7 +67,7 @@ public slots:
     virtual void setShuffle() = 0;
     virtual void setCurrentPosition(quint64 ms) = 0;
     virtual void changePosition(quint64 ms) = 0;
-    virtual void changeCurrentTrack(Track* track) = 0;
+    virtual void changeCurrentTrack(Core::Track* track) = 0;
     virtual void volumeUp() = 0;
     virtual void volumeDown() = 0;
     virtual void setVolume(double vol) = 0;

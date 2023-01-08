@@ -50,7 +50,7 @@ public:
 
     [[nodiscard]] QAction* insertLocation(const Utils::Id& group) const;
     void appendGroup(const Utils::Id& group);
-    void insertGroup(Utils::Id beforeGroup, Utils::Id group);
+    void insertGroup(Utils::Id beforeGroup, const Utils::Id& group);
     void addAction(QAction* action, const Utils::Id& group = {});
     void addMenu(ActionContainer* menu, const Utils::Id& group = {});
     void addMenu(ActionContainer* beforeContainer, ActionContainer* menu);

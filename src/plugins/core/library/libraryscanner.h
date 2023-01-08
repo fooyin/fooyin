@@ -42,9 +42,9 @@ public:
 
 signals:
     void libraryAdded();
-    void updatedTracks(TrackList tracks);
-    void addedTracks(TrackList tracks);
-    void tracksDeleted(const IdSet& tracks);
+    void updatedTracks(Core::TrackList tracks);
+    void addedTracks(Core::TrackList tracks);
+    void tracksDeleted(const Core::IdSet& tracks);
 
 protected:
     void storeTracks(TrackList& tracks) const;

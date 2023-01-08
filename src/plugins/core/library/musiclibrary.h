@@ -73,19 +73,19 @@ public:
     void addInteractor(MusicLibraryInteractor* interactor);
 
 signals:
-    void runLibraryScan(TrackPtrList tracks, Library::LibraryInfo info);
-    void runAllLibrariesScan(TrackPtrList tracks);
+    void runLibraryScan(Core::TrackPtrList tracks, Library::LibraryInfo info);
+    void runAllLibrariesScan(Core::TrackPtrList tracks);
     void libraryRemoved();
 
     void tracksChanged();
     void tracksSelChanged();
 
-    void tracksLoaded(const TrackPtrList& tracks);
+    void tracksLoaded(const Core::TrackPtrList& tracks);
     void tracksAdded();
     void tracksUpdated();
     void tracksDeleted();
     void loadAllTracks();
-    void updateSaveTracks(TrackPtrList tracks);
+    void updateSaveTracks(Core::TrackPtrList tracks);
 
 protected:
     void loadTracks(const TrackList& tracks);

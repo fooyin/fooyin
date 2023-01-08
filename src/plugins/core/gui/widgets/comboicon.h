@@ -46,7 +46,7 @@ public:
     explicit ComboIcon(const QString& path, QWidget* parent = nullptr);
     ~ComboIcon() override;
 
-    void setup(const QString& name);
+    void setup(const QString& path);
 
     bool hasAttribute(Fy::Attribute attribute);
     void addAttribute(Fy::Attribute attribute);

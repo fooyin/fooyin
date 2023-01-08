@@ -40,7 +40,7 @@ public:
     void updateTracks(const TrackPtrList& tracks);
 
 signals:
-    void gotTracks(const TrackList& result);
+    void gotTracks(const Core::TrackList& result);
 
 private:
     DB::LibraryDatabase* m_libraryDatabase;

@@ -34,7 +34,6 @@ class PlayerManager;
 
 namespace Library {
 class MusicLibrary;
-class Container;
 }; // namespace Library
 
 namespace Widgets {
