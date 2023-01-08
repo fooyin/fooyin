@@ -22,3 +22,7 @@ Checks: >
   -readability-implicit-bool-conversion,
   -readability-magic-numbers,
   -readability-identifier-length,
+
+CheckOptions:
+  - key: readability-function-cognitive-complexity.Threshold
+    value: "30"
