@@ -24,7 +24,7 @@
 #include <core/database/database.h>
 #include <utils/helpers.h>
 
-namespace {
+namespace Filters {
 void filterByType(Track* track, const ActiveFilters& filters, int& matches)
 {
     for(const auto& [filter, ids] : filters) {
@@ -68,11 +68,10 @@ void filterByType(Track* track, const ActiveFilters& filters, int& matches)
         }
     }
 }
-}; // namespace
 
 FilterDatabaseManager::FilterDatabaseManager(QObject* parent)
     : Worker(parent)
-    , m_filterDatabase(new DB::FilterDatabase(DB::Database::instance()->connectionName()))
+    , m_filterDatabase(new FilterDatabase(DB::Database::instance()->connectionName()))
 { }
 
 FilterDatabaseManager::~FilterDatabaseManager()
@@ -132,3 +131,4 @@ void FilterDatabaseManager::filterTracks(const TrackPtrList& tracks, const Activ
     }
     emit tracksFiltered(filteredTracks);
 }
+}; // namespace Filters

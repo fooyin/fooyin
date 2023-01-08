@@ -25,10 +25,8 @@
 #include <core/library/models/trackfwd.h>
 #include <core/library/sorting/sortorder.h>
 
-namespace DB {
+namespace Filters {
 class FilterDatabase;
-}
-
 class FilterDatabaseManager : public Worker
 {
     Q_OBJECT
@@ -47,5 +45,6 @@ signals:
     void tracksFiltered(const TrackPtrList& result);
 
 private:
-    DB::FilterDatabase* m_filterDatabase;
+    FilterDatabase* m_filterDatabase;
 };
+}; // namespace Filters

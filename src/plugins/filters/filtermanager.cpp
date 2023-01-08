@@ -27,6 +27,7 @@
 #include <utility>
 #include <utils/helpers.h>
 
+namespace Filters {
 struct FilterManager::Private
 {
     FilterDatabaseManager databaseManager;
@@ -273,3 +274,4 @@ void FilterManager::filteredTracksLoaded(TrackPtrList tracks)
     p->filteredTracks = std::move(tracks);
     emit filteredTracks();
 }
+}; // namespace Filters

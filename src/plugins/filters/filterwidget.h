@@ -29,13 +29,15 @@ class Settings;
 class PlayerManager;
 class QHBoxLayout;
 class WidgetProvider;
-class FilterManager;
 
 namespace Library {
+class MusicLibrary;
+};
+
+namespace Filters {
+class FilterManager;
 class FilterView;
 class FilterModel;
-class MusicLibrary;
-
 class FilterWidget : public FyWidget
 {
     Q_OBJECT
@@ -86,7 +88,7 @@ private:
     Filters::FilterType m_type;
     int m_index;
     FilterManager* m_manager;
-    Library::FilterView* m_filter;
+    FilterView* m_filter;
     FilterModel* m_model;
     Settings* m_settings;
 };
@@ -135,5 +137,4 @@ public:
     { }
     ~AlbumFilter() override = default;
 };
-
-}; // namespace Library
+}; // namespace Filters

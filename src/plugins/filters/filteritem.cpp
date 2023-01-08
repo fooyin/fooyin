@@ -21,6 +21,7 @@
 
 #include "constants.h"
 
+namespace Filters {
 FilterItem::FilterItem(int id, QString name, FilterItem* parent)
     : m_id(id)
     , m_name(std::move(name))
@@ -81,3 +82,4 @@ FilterItem* FilterItem::parentItem() const
 {
     return m_parentItem;
 }
+}; // namespace Filters

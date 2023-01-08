@@ -25,11 +25,11 @@
 #include <core/library/models/trackfwd.h>
 #include <core/library/sorting/sortorder.h>
 
-namespace DB {
+namespace Filters {
 class FilterDatabase : public DB::Module
 {
 public:
-    FilterDatabase(const QString& connectionName);
+    explicit FilterDatabase(const QString& connectionName);
     ~FilterDatabase() override;
 
     bool getAllItems(Filters::FilterType type, ::Library::SortOrder order, FilterEntries& result) const;
@@ -40,9 +40,9 @@ public:
     [[nodiscard]] static QString fetchQueryItems(Filters::FilterType type, const QString& where, const QString& join,
                                                  ::Library::SortOrder order);
 
-    static bool dbFetchItems(Query& q, FilterEntries& result);
+    static bool dbFetchItems(DB::Query& q, FilterEntries& result);
 
 protected:
     [[nodiscard]] const Module* module() const;
 };
-} // namespace DB
+} // namespace Filters

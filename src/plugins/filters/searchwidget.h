@@ -23,6 +23,7 @@
 
 class Splitter;
 
+namespace Filters {
 class SearchWidget : public FyWidget
 {
     Q_OBJECT
@@ -49,3 +50,4 @@ private:
 
     void textChanged(const QString& text);
 };
+}; // namespace Filters

@@ -25,8 +25,7 @@
 #include <utils/helpers.h>
 #include <utils/utils.h>
 
-namespace {
-
+namespace Filters {
 QString getFilterJoins(const Filters::FilterType type = {})
 {
     QString joins;
@@ -51,6 +50,7 @@ QString getFilterJoins(const Filters::FilterType type = {})
     }
     return joins;
 }
+
 QString getSearchJoins()
 {
     QString joins;
@@ -63,9 +63,7 @@ QString getSearchJoins()
 
     return joins;
 }
-} // namespace
 
-namespace DB {
 FilterDatabase::FilterDatabase(const QString& connectionName)
     : DB::Module(connectionName)
 { }
@@ -77,7 +75,7 @@ bool FilterDatabase::getAllItems(Filters::FilterType type, ::Library::SortOrder 
     const auto join = getFilterJoins(type);
     const auto queryText = fetchQueryItems(type, {}, join, order);
     if(!queryText.isEmpty()) {
-        auto query = Query(module());
+        auto query = DB::Query(module());
         query.prepareQuery(queryText);
 
         return dbFetchItems(query, result);
@@ -182,7 +180,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
 
         const auto queryText = fetchQueryItems(type, where, join, order);
         if(!queryText.isEmpty()) {
-            auto query = Query(module());
+            auto query = DB::Query(module());
             query.prepareQuery(queryText);
 
             return dbFetchItems(query, result);
@@ -269,7 +267,7 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
     return queryText;
 }
 
-bool FilterDatabase::dbFetchItems(Query& q, FilterEntries& result)
+bool FilterDatabase::dbFetchItems(DB::Query& q, FilterEntries& result)
 {
     result.clear();
 
@@ -294,4 +292,4 @@ const DB::Module* FilterDatabase::module() const
 {
     return this;
 }
-} // namespace DB
+} // namespace Filters

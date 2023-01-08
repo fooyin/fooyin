@@ -21,6 +21,7 @@
 
 #include <QStyledItemDelegate>
 
+namespace Filters {
 class FilterDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -33,3 +34,4 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 };
+}; // namespace Filters

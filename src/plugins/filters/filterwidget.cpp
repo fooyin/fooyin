@@ -38,14 +38,14 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
-namespace Library {
+namespace Filters {
 FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     : FyWidget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_type(type)
     , m_index(0)
     , m_manager(PluginSystem::object<FilterManager>())
-    , m_filter(new Library::FilterView(PluginSystem::object<PlayerManager>(), this))
+    , m_filter(new FilterView(PluginSystem::object<PlayerManager>(), this))
     , m_model(new FilterModel(m_type, m_index, m_filter))
     , m_settings(PluginSystem::object<Settings>())
 {
@@ -354,4 +354,4 @@ void FilterWidget::resetByType(Filters::FilterType type)
     }
 }
 
-} // namespace Library
+} // namespace Filters

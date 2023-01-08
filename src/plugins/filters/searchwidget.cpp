@@ -28,6 +28,7 @@
 #include <core/settings/settings.h>
 #include <pluginsystem/pluginmanager.h>
 
+namespace Filters {
 struct SearchWidget::Private
 {
     Settings* settings;
@@ -109,3 +110,4 @@ void SearchWidget::textChanged(const QString& text)
 {
     emit searchChanged(text);
 }
+}; // namespace Filters

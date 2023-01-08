@@ -21,8 +21,8 @@
 
 #include <pluginsystem/plugin.h>
 
+namespace Filters {
 class FilterManager;
-
 class FiltersPlugin : public QObject,
                       public PluginSystem::Plugin
 {
@@ -41,3 +41,4 @@ public:
 private:
     FilterManager* m_filterManager;
 };
+}; // namespace Filters

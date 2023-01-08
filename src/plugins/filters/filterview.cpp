@@ -27,7 +27,7 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 
-namespace Library {
+namespace Filters {
 FilterView::FilterView(PlayerManager* playerManager, QWidget* parent)
     : QTreeView(parent)
     , m_playerManager(playerManager)
@@ -84,4 +84,4 @@ void FilterView::contextMenuEvent(QContextMenuEvent* e)
 {
     Q_UNUSED(e)
 }
-} // namespace Library
+} // namespace Filters

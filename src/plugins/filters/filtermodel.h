@@ -19,14 +19,12 @@
 
 #pragma once
 
-#include "core/typedefs.h"
 #include "filterfwd.h"
 
 #include <QAbstractListModel>
 
+namespace Filters {
 class FilterItem;
-
-namespace Library {
 class FilterModel : public QAbstractListModel
 {
 public:
@@ -57,7 +55,7 @@ protected:
 
 private:
     std::unique_ptr<FilterItem> m_root;
-    Filters::FilterType m_type;
+    FilterType m_type;
     int m_index;
 };
-} // namespace Library
+} // namespace Filters

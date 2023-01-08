@@ -31,6 +31,7 @@
 #include <core/widgets/widgetfactory.h>
 #include <pluginsystem/pluginmanager.h>
 
+namespace Filters {
 FiltersPlugin::FiltersPlugin() = default;
 
 FiltersPlugin::~FiltersPlugin() = default;
@@ -43,12 +44,13 @@ void FiltersPlugin::finalise()
     PluginSystem::addObject(m_filterManager);
 
     auto* factory = PluginSystem::object<Widgets::WidgetFactory>();
-    factory->registerClass<Library::FilterWidget>("Filter", {"Filter"});
-    factory->registerClass<Library::GenreFilter>("Genre", {"Filter"});
-    factory->registerClass<Library::YearFilter>("Year", {"Filter"});
-    factory->registerClass<Library::AlbumArtistFilter>("Album Artist", {"Filter"});
-    factory->registerClass<Library::ArtistFilter>("Artist", {"Filter"});
-    factory->registerClass<Library::AlbumFilter>("Album", {"Filter"});
+    factory->registerClass<FilterWidget>("Filter", {"Filter"});
+    factory->registerClass<GenreFilter>("Genre", {"Filter"});
+    factory->registerClass<YearFilter>("Year", {"Filter"});
+    factory->registerClass<AlbumArtistFilter>("Album Artist", {"Filter"});
+    factory->registerClass<ArtistFilter>("Artist", {"Filter"});
+    factory->registerClass<AlbumFilter>("Album", {"Filter"});
     factory->registerClass<SearchWidget>("Search");
 }
 void FiltersPlugin::shutdown() { }
+}; // namespace Filters

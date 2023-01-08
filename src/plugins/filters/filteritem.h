@@ -21,10 +21,11 @@
 
 #include <QVariant>
 
+namespace Filters {
 class FilterItem
 {
 public:
-    explicit FilterItem(int id = -1, QString name = "", FilterItem* parent = {});
+    FilterItem(int id = -1, QString name = "", FilterItem* parent = {});
     ~FilterItem();
 
     void appendChild(FilterItem* child);
@@ -42,3 +43,4 @@ private:
     FilterItem* m_parentItem;
     QList<FilterItem*> m_childItems;
 };
+}; // namespace Filters

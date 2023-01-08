@@ -34,6 +34,7 @@ class FilterDatabaseManager;
 class ThreadManager;
 class FilterLibraryController;
 
+namespace Filters {
 class FilterManager : public MusicLibraryInteractor
 {
     Q_OBJECT
@@ -87,3 +88,4 @@ private:
     struct Private;
     std::unique_ptr<FilterManager::Private> p;
 };
+}; // namespace Filters

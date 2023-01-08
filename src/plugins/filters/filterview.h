@@ -24,13 +24,13 @@
 
 class PlayerManager;
 
-namespace Library {
+namespace Filters {
 class FilterView : public QTreeView
 {
     Q_OBJECT
 
 public:
-    FilterView(PlayerManager* playerManager, QWidget* parent = nullptr);
+    explicit FilterView(PlayerManager* playerManager, QWidget* parent = nullptr);
     ~FilterView() override;
 
     void setupView();
@@ -44,4 +44,4 @@ protected:
 private:
     PlayerManager* m_playerManager;
 };
-} // namespace Library
+} // namespace Filters
