@@ -136,7 +136,7 @@ bool Playlist::changeTrack(int index)
         return false;
     }
 
-    while(!Util::File::exists(m_tracks[index]->filepath())) {
+    while(!Utils::File::exists(m_tracks[index]->filepath())) {
         QMessageBox message;
         message.setText(QString("Track %1 cannot be found.").arg(index));
         message.setInformativeText(m_tracks[index]->filepath());
@@ -197,7 +197,7 @@ int Playlist::nextIndex()
     }
     // TODO: Implement full shuffle functionality
     else if(mode == Player::PlayMode::Shuffle) {
-        index = Util::randomNumber(0, static_cast<int>(m_tracks.size()) - 1);
+        index = Utils::randomNumber(0, static_cast<int>(m_tracks.size()) - 1);
     }
 
     else if(isLastTrack) {

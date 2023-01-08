@@ -26,18 +26,18 @@ class QString;
 class QLabel;
 class QWidget;
 
-namespace Util {
+namespace Utils {
 namespace File {
-    QString cleanPath(const QString& path);
-    bool isSamePath(const QString& filename1, const QString& filename2);
-    bool isSubdir(const QString& dir, const QString& parentDir);
-    bool exists(const QString& filename);
-    QString getParentDirectory(const QString& filename);
-    bool createDirectories(const QString& path);
+QString cleanPath(const QString& path);
+bool isSamePath(const QString& filename1, const QString& filename2);
+bool isSubdir(const QString& dir, const QString& parentDir);
+bool exists(const QString& filename);
+QString getParentDirectory(const QString& filename);
+bool createDirectories(const QString& path);
 } // namespace File
 
 namespace Widgets {
-    QWidget* indentWidget(QWidget* widget, QWidget* parent);
+QWidget* indentWidget(QWidget* widget, QWidget* parent);
 } // namespace Widgets
 
 int randomNumber(int min, int max);
@@ -49,4 +49,4 @@ quint64 currentDateToInt();
 QString capitalise(const QString& s);
 
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
-} // namespace Util
+} // namespace Utils

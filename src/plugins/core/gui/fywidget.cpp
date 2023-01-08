@@ -31,7 +31,7 @@ FyWidget::FyWidget(QWidget* parent)
 
 FyWidget::~FyWidget() = default;
 
-Util::Id FyWidget::id() const
+Utils::Id FyWidget::id() const
 {
     return m_id;
 }

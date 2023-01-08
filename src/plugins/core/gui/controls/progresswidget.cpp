@@ -83,7 +83,7 @@ void ProgressWidget::changeTrack(Track* track)
     p->max = static_cast<int>(track->duration());
     p->slider->setMaximum(p->max);
     auto elapsed = p->settings->value(Settings::Setting::ElapsedTotal).toBool();
-    p->total->setText(elapsed ? "-" + Util::msToString(p->max) : Util::msToString(p->max));
+    p->total->setText(elapsed ? "-" + Utils::msToString(p->max) : Utils::msToString(p->max));
     setEnabled(true);
 }
 
@@ -100,15 +100,15 @@ void ProgressWidget::updateTime(int elapsed)
     int secs = elapsed / 1000;
     int max = p->max / 1000;
 
-    p->elapsed->setText(Util::secsToString(secs));
+    p->elapsed->setText(Utils::secsToString(secs));
 
     if(p->settings->value(Settings::Setting::ElapsedTotal).toBool()) {
         int remaining = max - secs;
-        p->total->setText("-" + Util::secsToString(remaining));
+        p->total->setText("-" + Utils::secsToString(remaining));
     }
     else {
         if(!p->slider->isEnabled()) {
-            p->total->setText(Util::msToString(max));
+            p->total->setText(Utils::msToString(max));
         }
     }
 }
@@ -139,7 +139,7 @@ void ProgressWidget::toggleRemaining()
 {
     if(p->settings->value(Settings::Setting::ElapsedTotal).toBool()) {
         p->settings->set(Settings::Setting::ElapsedTotal, false);
-        p->total->setText(Util::msToString(p->max));
+        p->total->setText(Utils::msToString(p->max));
     }
     else {
         p->settings->set(Settings::Setting::ElapsedTotal, true);

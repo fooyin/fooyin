@@ -30,8 +30,8 @@
 namespace Core {
 struct ActionManager::Private
 {
-    QHash<Util::Id, QAction*> idCmdMap;
-    QHash<Util::Id, ActionContainer*> idContainerMap;
+    QHash<Utils::Id, QAction*> idCmdMap;
+    QHash<Utils::Id, ActionContainer*> idContainerMap;
 };
 
 ActionManager::ActionManager(QObject* parent)
@@ -41,9 +41,9 @@ ActionManager::ActionManager(QObject* parent)
 
 ActionManager::~ActionManager() = default;
 
-ActionContainer* ActionManager::createMenu(const Util::Id& id)
+ActionContainer* ActionManager::createMenu(const Utils::Id& id)
 {
-    for(auto [mapId, container] : asRange(p->idContainerMap)) {
+    for(auto [mapId, container] : Utils::asRange(p->idContainerMap)) {
         if(mapId == id) {
             return container;
         }
@@ -57,9 +57,9 @@ ActionContainer* ActionManager::createMenu(const Util::Id& id)
     return mActionContainer;
 }
 
-ActionContainer* ActionManager::createMenuBar(const Util::Id& id)
+ActionContainer* ActionManager::createMenuBar(const Utils::Id& id)
 {
-    for(auto [mapId, container] : asRange(p->idContainerMap)) {
+    for(auto [mapId, container] : Utils::asRange(p->idContainerMap)) {
         if(mapId == id) {
             return container;
         }
@@ -76,16 +76,16 @@ ActionContainer* ActionManager::createMenuBar(const Util::Id& id)
     return mbActionContainer;
 }
 
-void ActionManager::registerAction(QAction* action, const Util::Id& id)
+void ActionManager::registerAction(QAction* action, const Utils::Id& id)
 {
     p->idCmdMap.emplace(id, action);
     PluginSystem::object<QMainWindow>()->addAction(action);
     action->setObjectName(id.name());
 }
 
-QAction* ActionManager::action(const Util::Id& id)
+QAction* ActionManager::action(const Utils::Id& id)
 {
-    for(auto [mapId, action] : asRange(p->idCmdMap)) {
+    for(auto [mapId, action] : Utils::asRange(p->idCmdMap)) {
         if(mapId == id) {
             return action;
         }
@@ -93,9 +93,9 @@ QAction* ActionManager::action(const Util::Id& id)
     return nullptr;
 }
 
-ActionContainer* ActionManager::actionContainer(const Util::Id& id)
+ActionContainer* ActionManager::actionContainer(const Utils::Id& id)
 {
-    for(auto [mapId, container] : asRange(p->idContainerMap)) {
+    for(auto [mapId, container] : Utils::asRange(p->idContainerMap)) {
         if(mapId == id) {
             return container;
         }

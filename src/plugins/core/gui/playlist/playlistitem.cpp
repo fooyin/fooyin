@@ -35,7 +35,7 @@ PlaylistItem::~PlaylistItem() = default;
 
 void PlaylistItem::appendChild(PlaylistItem* child)
 {
-    if(!contains(m_children, child)) {
+    if(!Utils::contains(m_children, child)) {
         m_children.emplace_back(child);
     }
 }
@@ -82,7 +82,7 @@ int PlaylistItem::index() const
 int PlaylistItem::row() const
 {
     if(m_parent) {
-        return static_cast<int>(getIndex(m_parent->m_children, const_cast<PlaylistItem*>(this))); // NOLINT
+        return static_cast<int>(Utils::getIndex(m_parent->m_children, const_cast<PlaylistItem*>(this))); // NOLINT
     }
     return 0;
 }

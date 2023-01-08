@@ -36,7 +36,7 @@ PlayerController::PlayerController(QObject* parent)
     , m_volume(1.0F)
     , m_counted(false)
 {
-    m_playMode = EnumHelper::fromString<Player::PlayMode>(
+    m_playMode = Utils::EnumHelper::fromString<Player::PlayMode>(
         PluginSystem::object<Settings>()->value(Settings::Setting::PlayMode).toString());
 }
 

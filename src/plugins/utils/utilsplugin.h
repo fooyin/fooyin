@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <Plugin>
+#include <pluginsystem/plugin.h>
 
+namespace Utils {
 class UtilsPlugin : public QObject,
                    public PluginSystem::Plugin
 {
@@ -31,4 +32,5 @@ class UtilsPlugin : public QObject,
 public:
     UtilsPlugin();
     ~UtilsPlugin() override;
+};
 };

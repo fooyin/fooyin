@@ -1,6 +1,6 @@
 #include "id.h"
 
-namespace {
+namespace Utils {
 unsigned int idFromString(const QString& str)
 {
     unsigned int result{0};
@@ -9,9 +9,7 @@ unsigned int idFromString(const QString& str)
     }
     return result;
 }
-} // namespace
 
-namespace Util {
 Id::Id(const QString& str)
     : m_id{idFromString(str)}
     , m_name{str}
@@ -80,4 +78,4 @@ size_t qHash(const Id& id) noexcept
 {
     return static_cast<size_t>(id.m_id);
 }
-} // namespace Util
+} // namespace Utils

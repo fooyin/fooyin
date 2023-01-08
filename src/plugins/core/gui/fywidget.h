@@ -35,7 +35,7 @@ public:
     explicit FyWidget(QWidget* parent);
     ~FyWidget() override;
 
-    [[nodiscard]] Util::Id id() const;
+    [[nodiscard]] Utils::Id id() const;
     [[nodiscard]] virtual QString name() const = 0;
 
     [[nodiscard]] FyWidget* findParent();
@@ -46,7 +46,7 @@ public:
     virtual void loadLayout(QJsonObject& object);
 
 private:
-    Util::Id m_id;
+    Utils::Id m_id;
 };
 }; // namespace Widgets
 }; // namespace Core

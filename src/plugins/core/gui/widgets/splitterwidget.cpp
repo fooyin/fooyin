@@ -55,7 +55,7 @@ void SplitterWidget::setupActions()
 
     QAction::connect(m_changeSplitter, &QAction::triggered, this, [this] {
         setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
-        setObjectName(QString("%1 Splitter").arg(EnumHelper::toString(m_splitter->orientation())));
+        setObjectName(QString("%1 Splitter").arg(Utils::EnumHelper::toString(m_splitter->orientation())));
     });
 }
 
@@ -160,7 +160,7 @@ void SplitterWidget::saveSplitter(QJsonObject& object, QJsonArray& splitterArray
     QString state = QString::fromUtf8(saveState().toBase64());
 
     QJsonObject children;
-    children["Type"] = EnumHelper::toString(orientation());
+    children["Type"] = Utils::EnumHelper::toString(orientation());
     children["State"] = state;
     children["Children"] = array;
 
@@ -181,7 +181,7 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
         if(!object.isEmpty()) {
             if(object.contains("Splitter")) {
                 QJsonObject childSplitterObject = object["Splitter"].toObject();
-                auto type = EnumHelper::fromString<Qt::Orientation>(childSplitterObject["Type"].toString());
+                auto type = Utils::EnumHelper::fromString<Qt::Orientation>(childSplitterObject["Type"].toString());
 
                 QJsonArray splitterArray = childSplitterObject["Children"].toArray();
                 QByteArray splitterState = QByteArray::fromBase64(childSplitterObject["State"].toString().toUtf8());

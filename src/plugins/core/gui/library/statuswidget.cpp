@@ -80,7 +80,7 @@ void StatusWidget::setupUi()
 
     // p->playing->setText("Waiting for track...");
 
-    //    Util::setMinimumWidth(p->iconLabel, "...");
+    //    Utils::setMinimumWidth(p->iconLabel, "...");
 
     //    QPalette palette;
     //    palette.setColor(QPalette::WindowText, Qt::white);
@@ -124,7 +124,7 @@ void StatusWidget::stateChanged(Player::PlayState state)
         case(Player::PlayState::Playing): {
             auto* track = p->playerManager->currentTrack();
             auto number = QStringLiteral("%1").arg(track->trackNumber(), 2, 10, QLatin1Char('0'));
-            auto duration = QString(" (%1)").arg(Util::msToString(track->duration()));
+            auto duration = QString(" (%1)").arg(Utils::msToString(track->duration()));
             auto albumArtist = !track->albumArtist().isEmpty() ? " \u2022 " + track->albumArtist() : "";
             auto album = !track->album().isEmpty() ? " \u2022 " + track->album() : "";
             auto text = number + ". " + track->title() + duration + albumArtist + album;

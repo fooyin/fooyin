@@ -23,6 +23,7 @@
 #include <type_traits>
 #include <vector>
 
+namespace Utils {
 template <typename T>
 class asRange
 {
@@ -84,3 +85,4 @@ constexpr void joinSkipEmpty(C c, S& s, D d)
         ++j;
     }
 }
+}; // namespace Utils

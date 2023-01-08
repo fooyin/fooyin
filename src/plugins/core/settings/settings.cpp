@@ -54,8 +54,8 @@ Settings::Settings(QObject* parent)
     m_values[Setting::SplitterHandles] = defaults(Setting::SplitterHandles);
     m_values[Setting::Layout] = defaults(Setting::Layout);
 
-    m_settings = new QSettings(Util::settingsPath(), QSettings::IniFormat, this);
-    if(Util::File::exists(Util::settingsPath())) {
+    m_settings = new QSettings(Utils::settingsPath(), QSettings::IniFormat, this);
+    if(Utils::File::exists(Utils::settingsPath())) {
         loadSettings();
         m_values[Setting::FirstRun] = false;
     }
@@ -76,7 +76,7 @@ QMap<Settings::Setting, QVariant>& Settings::settings()
 
 void Settings::loadSettings()
 {
-    for(const auto& [key, value] : asRange(m_values)) {
+    for(const auto& [key, value] : Utils::asRange(m_values)) {
         const auto keyString = getKeyString(key);
         if(!keyString.isEmpty()) {
             const auto diskValue = m_settings->value(keyString);
@@ -89,7 +89,7 @@ void Settings::loadSettings()
 
 void Settings::storeSettings()
 {
-    for(const auto& [key, value] : asRange(m_values)) {
+    for(const auto& [key, value] : Utils::asRange(m_values)) {
         const auto keyString = getKeyString(key);
         if(!keyString.isEmpty()) {
             m_settings->setValue(keyString, value);
@@ -158,7 +158,7 @@ QVariant Settings::defaults(Setting key)
         case(Setting::DatabaseVersion):
             return DATABASE_VERSION;
         case(Setting::PlayMode):
-            return EnumHelper::toString(Player::PlayMode::Default);
+            return Utils::EnumHelper::toString(Player::PlayMode::Default);
         case(Setting::SplitDiscs):
         case(Setting::SimplePlaylist):
         case(Setting::LayoutEditing):
@@ -224,7 +224,7 @@ QString Settings::getKeyString(Setting key)
             // Don't save to disk
             return {};
     }
-    keyString += "/" + EnumHelper::toString(key);
+    keyString += "/" + Utils::EnumHelper::toString(key);
     return keyString;
 }
 }; // namespace Core

@@ -79,7 +79,7 @@ void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)
     Icon ico;
     ico.icon = icon;
     if(hasAttribute(Fy::HasActiveIcon)) {
-        ico.iconActive = Util::changePixmapColour(icon, palette.highlight().color());
+        ico.iconActive = Utils::changePixmapColour(icon, palette.highlight().color());
     }
     m_icons.emplace_back(path, ico);
 }

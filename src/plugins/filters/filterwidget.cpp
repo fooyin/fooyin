@@ -200,14 +200,14 @@ void FilterWidget::saveLayout(QJsonArray& array)
 {
     QJsonObject object;
     QJsonObject filterOptions;
-    filterOptions["Type"] = EnumHelper::toString<Filters::FilterType>(type());
+    filterOptions["Type"] = Utils::EnumHelper::toString<Filters::FilterType>(type());
     object[name()] = filterOptions;
     array.append(object);
 }
 
 void FilterWidget::loadLayout(QJsonObject& object)
 {
-    auto type = EnumHelper::fromString<Filters::FilterType>(object["Type"].toString());
+    auto type = Utils::EnumHelper::fromString<Filters::FilterType>(object["Type"].toString());
     setType(type);
 }
 

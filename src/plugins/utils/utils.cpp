@@ -27,86 +27,86 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-namespace Util {
+namespace Utils {
 namespace File {
-    QString cleanPath(const QString& path)
-    {
-        return (path.trimmed().isEmpty()) ? QString("") : QDir::cleanPath(path);
-    }
+QString cleanPath(const QString& path)
+{
+    return (path.trimmed().isEmpty()) ? QString("") : QDir::cleanPath(path);
+}
 
-    bool isSamePath(const QString& filename1, const QString& filename2)
-    {
-        const auto cleaned1 = cleanPath(filename1);
-        const auto cleaned2 = cleanPath(filename2);
+bool isSamePath(const QString& filename1, const QString& filename2)
+{
+    const auto cleaned1 = cleanPath(filename1);
+    const auto cleaned2 = cleanPath(filename2);
 
-        return (cleaned1.compare(cleaned2) == 0);
-    }
+    return (cleaned1.compare(cleaned2) == 0);
+}
 
-    bool isSubdir(const QString& dir, const QString& parentDir)
-    {
-        if(isSamePath(dir, parentDir)) {
-            return false;
-        }
-
-        const auto cleanedDir = cleanPath(dir);
-        const auto cleanedParentDir = cleanPath(parentDir);
-
-        if(cleanedDir.isEmpty() || cleanedParentDir.isEmpty()) {
-            return false;
-        }
-
-        const QFileInfo info(cleanedDir);
-
-        QDir d1(cleanedDir);
-        if(info.exists() && info.isFile()) {
-            const auto d1String = getParentDirectory(cleanedDir);
-            if(isSamePath(d1String, parentDir)) {
-                return true;
-            }
-
-            d1 = QDir(d1String);
-        }
-
-        const QDir d2(cleanedParentDir);
-
-        while(!d1.isRoot()) {
-            d1 = QDir(getParentDirectory(d1.absolutePath()));
-            if(isSamePath(d1.absolutePath(), d2.absolutePath())) {
-                return true;
-            }
-        }
-
+bool isSubdir(const QString& dir, const QString& parentDir)
+{
+    if(isSamePath(dir, parentDir)) {
         return false;
     }
 
-    bool exists(const QString& filename)
-    {
-        return (!filename.isEmpty()) && QFile::exists(filename);
+    const auto cleanedDir = cleanPath(dir);
+    const auto cleanedParentDir = cleanPath(parentDir);
+
+    if(cleanedDir.isEmpty() || cleanedParentDir.isEmpty()) {
+        return false;
     }
 
-    QString getParentDirectory(const QString& filename)
-    {
-        const auto cleaned = cleanPath(filename);
-        const auto index = cleaned.lastIndexOf(QDir::separator());
+    const QFileInfo info(cleanedDir);
 
-        return (index > 0) ? cleanPath(cleaned.left(index)) : QDir::rootPath();
+    QDir d1(cleanedDir);
+    if(info.exists() && info.isFile()) {
+        const auto d1String = getParentDirectory(cleanedDir);
+        if(isSamePath(d1String, parentDir)) {
+            return true;
+        }
+
+        d1 = QDir(d1String);
     }
 
-    bool createDirectories(const QString& path)
-    {
-        return QDir().mkpath(path);
+    const QDir d2(cleanedParentDir);
+
+    while(!d1.isRoot()) {
+        d1 = QDir(getParentDirectory(d1.absolutePath()));
+        if(isSamePath(d1.absolutePath(), d2.absolutePath())) {
+            return true;
+        }
     }
+
+    return false;
+}
+
+bool exists(const QString& filename)
+{
+    return (!filename.isEmpty()) && QFile::exists(filename);
+}
+
+QString getParentDirectory(const QString& filename)
+{
+    const auto cleaned = cleanPath(filename);
+    const auto index = cleaned.lastIndexOf(QDir::separator());
+
+    return (index > 0) ? cleanPath(cleaned.left(index)) : QDir::rootPath();
+}
+
+bool createDirectories(const QString& path)
+{
+    return QDir().mkpath(path);
+}
 }; // namespace File
 
 namespace Widgets {
-    QWidget* indentWidget(QWidget* widget, QWidget* parent)
-    {
-        auto* indentWidget = new QWidget(parent);
-        indentWidget->setLayout(new QVBoxLayout());
-        indentWidget->layout()->addWidget(widget);
-        indentWidget->layout()->setContentsMargins(25, 0, 0, 0);
-        return indentWidget;
-    }
+QWidget* indentWidget(QWidget* widget, QWidget* parent)
+{
+    auto* indentWidget = new QWidget(parent);
+    indentWidget->setLayout(new QVBoxLayout());
+    indentWidget->layout()->addWidget(widget);
+    indentWidget->layout()->setContentsMargins(25, 0, 0, 0);
+    return indentWidget;
+}
 } // namespace Widgets
 
 int randomNumber(int min, int max)
@@ -169,4 +169,4 @@ QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
     return pixmap;
 }
 
-}; // namespace Util
+}; // namespace Utils

@@ -31,7 +31,7 @@ namespace Core::DB {
 QMap<QString, QVariant> getTrackBindings(const Track& track)
 {
     return QMap<QString, QVariant>{
-        {QStringLiteral("FilePath"), Util::File::cleanPath(track.filepath())},
+        {QStringLiteral("FilePath"), Utils::File::cleanPath(track.filepath())},
         {QStringLiteral("Title"), track.title()},
         {QStringLiteral("TrackNumber"), track.trackNumber()},
         {QStringLiteral("TrackTotal"), track.trackTotal()},
@@ -601,14 +601,14 @@ bool LibraryDatabase::updateTrackArtists(int id, const IdSet& artists)
 
     // Remove artists not in track
     for(auto artistId : databaseArtists) {
-        if(!contains(artists, artistId)) {
+        if(!Utils::contains(artists, artistId)) {
             artistsToDelete.insert(artistId);
         }
     }
 
     // Insert new artists
     for(auto artistId : artists) {
-        if(!contains(databaseArtists, artistId)) {
+        if(!Utils::contains(databaseArtists, artistId)) {
             artistsToInsert.insert(artistId);
         }
     }
@@ -663,13 +663,13 @@ bool LibraryDatabase::updateTrackGenres(int id, const IdSet& genres)
     }
 
     for(auto genreId : databaseGenres) {
-        if(!contains(genres, genreId)) {
+        if(!Utils::contains(genres, genreId)) {
             genresToDelete.insert(genreId);
         }
     }
 
     for(auto genreId : genres) {
-        if(!contains(databaseGenres, genreId)) {
+        if(!Utils::contains(databaseGenres, genreId)) {
             genresToInsert.insert(genreId);
         }
     }

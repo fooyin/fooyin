@@ -25,16 +25,16 @@
 #include <QDir>
 #include <QStandardPaths>
 
-namespace Util {
+namespace Utils {
 QString operator/(const QString& first, const QString& second)
 {
-    return (second.isEmpty()) ? Util::File::cleanPath(first)
-                              : Util::File::cleanPath(first + QDir::separator() + second);
+    return (second.isEmpty()) ? Utils::File::cleanPath(first)
+                              : Utils::File::cleanPath(first + QDir::separator() + second);
 }
 
 QString createPath(const QString& path, const QString& appendPath)
 {
-    if(!Util::File::exists(path)) {
+    if(!Utils::File::exists(path)) {
         if(!QDir().mkpath(path)) {
             qDebug() << "Cannot create path: " << path;
         }
@@ -42,7 +42,7 @@ QString createPath(const QString& path, const QString& appendPath)
 
     auto fullPath = path / appendPath;
 
-    if(!Util::File::exists(fullPath)) {
+    if(!Utils::File::exists(fullPath)) {
         if(!QDir().mkpath(fullPath)) {
             qDebug() << "Cannot create path: " << fullPath;
         }
@@ -79,4 +79,4 @@ QString settingsPath()
     return configPath().append("/fooyin.conf");
 }
 
-}; // namespace Util
+}; // namespace Utils

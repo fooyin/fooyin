@@ -43,7 +43,7 @@
 namespace Core::Widgets {
 struct EditableLayout::Private
 {
-    using MenuMap = std::unordered_map<Util::Id, ActionContainer*, Util::Id::IdHash>;
+    using MenuMap = std::unordered_map<Utils::Id, ActionContainer*, Utils::Id::IdHash>;
 
     QHBoxLayout* box;
     Settings* settings;
@@ -115,7 +115,7 @@ void EditableLayout::setupAddMenu(ActionContainer* menu, SplitterWidget* parent)
     for(const auto& widget : widgets) {
         auto* parentMenu = menu;
         for(const auto& subMenu : widget.second.subMenus) {
-            Util::Id id = Util::Id{menu->id()}.append(subMenu);
+            Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
             auto* childMenu = p->actionManager->actionContainer(id);
             if(!childMenu) {
                 childMenu = p->actionManager->createMenu(id);
@@ -282,7 +282,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
             if(object.contains("Splitter") && object["Splitter"].isObject()) {
                 QJsonObject splitterObject = object["Splitter"].toObject();
 
-                auto type = EnumHelper::fromString<Qt::Orientation>(splitterObject["Type"].toString());
+                auto type = Utils::EnumHelper::fromString<Qt::Orientation>(splitterObject["Type"].toString());
                 QJsonArray splitterChildren = splitterObject["Children"].toArray();
                 auto state = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
 

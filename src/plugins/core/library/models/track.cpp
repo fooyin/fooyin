@@ -383,7 +383,7 @@ QByteArray Track::extraTagsToJson() const
 {
     QJsonObject extra;
     QJsonArray extraArray;
-    for(const auto& [tag, values] : asRange(m_extraTags)) {
+    for(const auto& [tag, values] : Utils::asRange(m_extraTags)) {
         QJsonObject tagObject;
         const auto tagArray = QJsonArray::fromStringList(values);
         tagObject[tag] = tagArray;

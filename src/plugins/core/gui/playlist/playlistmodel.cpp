@@ -218,7 +218,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
             return {};
         }
         case(ItemRole::Duration): {
-            return Util::msToString(track->duration());
+            return Utils::msToString(track->duration());
         }
         case(ItemRole::MultiDisk): {
             if(item->parent()->type() == PlaylistItem::Type::Disc
@@ -299,7 +299,7 @@ QVariant PlaylistModel::albumData(PlaylistItem* item, int role) const
                 dur += " | ";
             }
             dur += QString(QString::number(count) + (count > 1 ? " Tracks" : " Track") + " | "
-                           + Util::msToString(duration));
+                           + Utils::msToString(duration));
             return dur;
         }
         case(ItemRole::Year): {
@@ -326,7 +326,7 @@ QVariant PlaylistModel::discData(PlaylistItem* item, int role) const
         }
         case(ItemRole::Duration): {
             auto duration = static_cast<int>(disc->duration());
-            return QString(Util::msToString(duration));
+            return QString(Utils::msToString(duration));
         }
         default: {
             return {};

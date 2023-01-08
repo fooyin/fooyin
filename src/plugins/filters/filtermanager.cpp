@@ -205,7 +205,7 @@ bool FilterManager::tracksHaveFiltered()
 
 void FilterManager::changeSelection(const Core::IdSet& indexes, Filters::FilterType type, int index)
 {
-    const bool filterAll = contains(indexes, -1);
+    const bool filterAll = Utils::contains(indexes, -1);
 
     for(const auto& filter : p->filters) {
         if(index < filter.index) {

@@ -23,7 +23,7 @@
 #include <QMetaType>
 #include <QString>
 
-namespace Util {
+namespace Utils {
 class Id
 {
 public:
@@ -62,7 +62,7 @@ private:
     unsigned int m_id;
     QString m_name;
 };
-} // namespace Util
+} // namespace Utils
 
-Q_DECLARE_METATYPE(Util::Id)
-Q_DECLARE_METATYPE(QList<Util::Id>)
+Q_DECLARE_METATYPE(Utils::Id)
+Q_DECLARE_METATYPE(QList<Utils::Id>)

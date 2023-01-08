@@ -33,10 +33,10 @@ QString storeCover(const Track& track)
     QString coverPath = "";
     QString coverHash = calcCoverHash(track.album(), track.albumArtist());
 
-    const QString cacheCover = ::Util::coverPath() + coverHash + ".jpg";
-    const QString folderCover = coverInDirectory(::Util::File::getParentDirectory(track.filepath()));
+    const QString cacheCover = ::Utils::coverPath() + coverHash + ".jpg";
+    const QString folderCover = coverInDirectory(::Utils::File::getParentDirectory(track.filepath()));
 
-    if(::Util::File::exists(cacheCover)) {
+    if(::Utils::File::exists(cacheCover)) {
         coverPath = cacheCover;
     }
     else if(!folderCover.isEmpty()) {
@@ -70,7 +70,7 @@ QString calcCoverHash(const QString& albumName, const QString& albumArtist)
 
 QPixmap getCover(const QString& path, int size)
 {
-    if(::Util::File::exists(path)) {
+    if(::Utils::File::exists(path)) {
         QPixmap cover;
         cover.load(path);
         if(!cover.isNull()) {
@@ -88,7 +88,7 @@ QPixmap getCover(const QString& path, int size)
 
 bool saveCover(const QPixmap& cover, const QString& hash)
 {
-    auto path = ::Util::coverPath();
+    auto path = ::Utils::coverPath();
     QFile file(QString(path + hash).append(".jpg"));
     file.open(QIODevice::WriteOnly);
     return cover.save(&file, "JPG", 100);

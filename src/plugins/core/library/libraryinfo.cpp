@@ -23,7 +23,7 @@
 
 namespace Core::Library {
 LibraryInfo::LibraryInfo(const QString& path, QString name, int id)
-    : m_path(Util::File::cleanPath(path))
+    : m_path(Utils::File::cleanPath(path))
     , m_name(std::move(name))
     , m_id(id)
 { }

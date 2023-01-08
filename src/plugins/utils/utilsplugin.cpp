@@ -16,8 +16,11 @@
  * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "utilsplugin.h"
 
+namespace Utils {
 UtilsPlugin::UtilsPlugin() = default;
 
 UtilsPlugin::~UtilsPlugin() = default;
+};

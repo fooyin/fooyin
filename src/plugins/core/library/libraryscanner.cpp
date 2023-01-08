@@ -62,12 +62,12 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks, const LibraryInfo& 
     // TODO: Don't delete if disk/top level is inaccessible
     //       and ask for confirmation.
     for(const auto& track : tracks) {
-        if(!::Util::File::exists(track->filepath())) {
+        if(!::Utils::File::exists(track->filepath())) {
             tracksToDelete.insert(track->id());
         }
         else {
             trackMap.emplace(track->filepath(), track);
-            if(track->hasCover() && !::Util::File::exists(track->coverPath())) {
+            if(track->hasCover() && !::Utils::File::exists(track->coverPath())) {
                 Utils::storeCover(*track);
             }
         }
@@ -144,7 +144,7 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
 
 bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, const TrackPathMap& tracks)
 {
-    if(path.isEmpty() || !::Util::File::exists(path)) {
+    if(path.isEmpty() || !::Utils::File::exists(path)) {
         return false;
     }
 

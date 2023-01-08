@@ -34,28 +34,28 @@ class ActionContainer : public QObject
 public:
     struct Group
     {
-        explicit Group(const Util::Id& id)
+        explicit Group(const Utils::Id& id)
             : id{id}
         { }
-        Util::Id id;
+        Utils::Id id;
         QList<QObject*> items;
     };
 
-    explicit ActionContainer(const Util::Id& id, QObject* parent = nullptr);
+    explicit ActionContainer(const Utils::Id& id, QObject* parent = nullptr);
     ~ActionContainer() override;
 
-    [[nodiscard]] Util::Id id() const;
+    [[nodiscard]] Utils::Id id() const;
     [[nodiscard]] virtual QMenu* menu() const;
     [[nodiscard]] virtual QMenuBar* menuBar() const;
 
-    [[nodiscard]] QAction* insertLocation(const Util::Id& group) const;
-    void appendGroup(const Util::Id& group);
-    void insertGroup(Util::Id beforeGroup, Util::Id group);
-    void addAction(QAction* action, const Util::Id& group = {});
-    void addMenu(ActionContainer* menu, const Util::Id& group = {});
+    [[nodiscard]] QAction* insertLocation(const Utils::Id& group) const;
+    void appendGroup(const Utils::Id& group);
+    void insertGroup(Utils::Id beforeGroup, Utils::Id group);
+    void addAction(QAction* action, const Utils::Id& group = {});
+    void addMenu(ActionContainer* menu, const Utils::Id& group = {});
     void addMenu(ActionContainer* beforeContainer, ActionContainer* menu);
-    QAction* addSeparator(const Util::Id& group = {});
-    QAction* addSeparator(const Util::Id& group = {}, QAction** outSeparator = nullptr);
+    QAction* addSeparator(const Utils::Id& group = {});
+    QAction* addSeparator(const Utils::Id& group = {}, QAction** outSeparator = nullptr);
 
     [[nodiscard]] virtual QAction* containerAction() const = 0;
     virtual QAction* actionForItem(QObject* item) const;
@@ -78,10 +78,10 @@ protected:
 private:
     void itemDestroyed(QObject* sender);
 
-    [[nodiscard]] QList<Group>::const_iterator findGroup(const Util::Id& groupId) const;
+    [[nodiscard]] QList<Group>::const_iterator findGroup(const Utils::Id& groupId) const;
     [[nodiscard]] QAction* insertLocation(QList<Group>::const_iterator group) const;
 
-    Util::Id m_id;
+    Utils::Id m_id;
 };
 
 class MenuActionContainer : public ActionContainer
@@ -89,7 +89,7 @@ class MenuActionContainer : public ActionContainer
     Q_OBJECT
 
 public:
-    explicit MenuActionContainer(const Util::Id& id, QObject* parent = nullptr);
+    explicit MenuActionContainer(const Utils::Id& id, QObject* parent = nullptr);
     ~MenuActionContainer() override;
 
     [[nodiscard]] QMenu* menu() const override;
@@ -115,7 +115,7 @@ class MenuBarActionContainer : public ActionContainer
     Q_OBJECT
 
 public:
-    explicit MenuBarActionContainer(const Util::Id& id, QObject* parent = nullptr);
+    explicit MenuBarActionContainer(const Utils::Id& id, QObject* parent = nullptr);
 
     [[nodiscard]] QMenu* menu() const override;
     void setMenuBar(QMenuBar* menuBar);

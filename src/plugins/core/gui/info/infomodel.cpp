@@ -149,7 +149,7 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
             case(InfoRole::Path):
                 return m_currentTrack->filepath();
             case(InfoRole::Duration):
-                return Util::msToString(m_currentTrack->duration());
+                return Utils::msToString(m_currentTrack->duration());
             case(InfoRole::Bitrate):
                 return QString::number(m_currentTrack->bitrate()).append(" kbps");
             case(InfoRole::SampleRate):

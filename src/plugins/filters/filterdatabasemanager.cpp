@@ -30,7 +30,7 @@ void filterByType(Core::Track* track, const ActiveFilters& filters, int& matches
     for(const auto& [filter, ids] : filters) {
         switch(filter) {
             case(Filters::FilterType::AlbumArtist): {
-                if(contains(ids, track->albumArtistId())) {
+                if(Utils::contains(ids, track->albumArtistId())) {
                     matches += 1;
                 }
                 break;
@@ -38,20 +38,20 @@ void filterByType(Core::Track* track, const ActiveFilters& filters, int& matches
             case(Filters::FilterType::Artist): {
                 const Core::IdSet artistIds{track->artistIds()};
                 for(const auto artistId : artistIds) {
-                    if(contains(ids, artistId)) {
+                    if(Utils::contains(ids, artistId)) {
                         matches += 1;
                     }
                 }
                 break;
             }
             case(Filters::FilterType::Album): {
-                if(contains(ids, track->albumId())) {
+                if(Utils::contains(ids, track->albumId())) {
                     matches += 1;
                 }
                 break;
             }
             case(Filters::FilterType::Year): {
-                if(contains(ids, track->year())) {
+                if(Utils::contains(ids, track->year())) {
                     matches += 1;
                 }
                 break;
@@ -59,7 +59,7 @@ void filterByType(Core::Track* track, const ActiveFilters& filters, int& matches
             case(Filters::FilterType::Genre): {
                 const Core::IdSet genreIds{track->genreIds()};
                 for(const int& genreId : genreIds) {
-                    if(contains(ids, genreId)) {
+                    if(Utils::contains(ids, genreId)) {
                         matches += 1;
                     }
                 }

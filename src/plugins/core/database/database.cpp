@@ -46,10 +46,10 @@ Database::Database(const QString& directory, const QString& filename)
     : Module(directory + "/" + filename)
     , p(std::make_unique<Private>())
 {
-    if(!Util::File::exists(directory)) {
-        Util::File::createDirectories(directory);
+    if(!Utils::File::exists(directory)) {
+        Utils::File::createDirectories(directory);
     }
-    bool success = Util::File::exists(connectionName());
+    bool success = Utils::File::exists(connectionName());
 
     if(!success) {
         success = createDatabase();
@@ -70,7 +70,7 @@ Database::~Database() = default;
 
 Database* Database::instance()
 {
-    const QString directory = Util::sharePath();
+    const QString directory = Utils::sharePath();
     const QString databaseFilename = "fooyin.db";
 
     static Database database(directory, databaseFilename);

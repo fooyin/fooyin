@@ -34,12 +34,12 @@ public:
     explicit ActionManager(QObject* parent = nullptr);
     ~ActionManager() override;
 
-    ActionContainer* createMenu(const Util::Id& id);
-    ActionContainer* createMenuBar(const Util::Id& id);
-    void registerAction(QAction* action, const Util::Id& id);
+    ActionContainer* createMenu(const Utils::Id& id);
+    ActionContainer* createMenuBar(const Utils::Id& id);
+    void registerAction(QAction* action, const Utils::Id& id);
 
-    QAction* action(const Util::Id& id);
-    ActionContainer* actionContainer(const Util::Id& id);
+    QAction* action(const Utils::Id& id);
+    ActionContainer* actionContainer(const Utils::Id& id);
 
 protected:
     void containerDestroyed(QObject* sender);

@@ -33,8 +33,8 @@ bool checkNewPath(const QString& path, const QMap<int, LibraryInfo>& libraries, 
     }
 
     return std::all_of(libraries.constBegin(), libraries.constEnd(), [libraryId, path](const LibraryInfo& info) {
-        return (info.id() != libraryId && !Util::File::isSamePath(info.path(), path)
-                && !Util::File::isSubdir(path, info.path()));
+        return (info.id() != libraryId && !Utils::File::isSamePath(info.path(), path)
+                && !Utils::File::isSubdir(path, info.path()));
     });
 }
 
