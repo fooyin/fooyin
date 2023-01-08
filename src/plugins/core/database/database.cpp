@@ -32,7 +32,7 @@
 #include <utils/paths.h>
 #include <utils/utils.h>
 
-namespace DB {
+namespace Core::DB {
 struct Database::Private
 {
     bool initialized{false};
@@ -99,8 +99,8 @@ Library* Database::libraryConnector()
 bool Database::update()
 {
     auto* settings = PluginSystem::object<Settings>();
-    if(settings->value(::Settings::Setting::DatabaseVersion).toString() < DATABASE_VERSION) {
-        settings->set(::Settings::Setting::DatabaseVersion, DATABASE_VERSION);
+    if(settings->value(Settings::Setting::DatabaseVersion).toString() < DATABASE_VERSION) {
+        settings->set(Settings::Setting::DatabaseVersion, DATABASE_VERSION);
         return true;
     }
     return true;
@@ -361,4 +361,4 @@ bool Database::checkInsertIndex(const QString& indexName, const QString& createS
     }
     return true;
 }
-} // namespace DB
+} // namespace Core::DB

@@ -23,7 +23,7 @@
 
 #include <algorithm>
 
-namespace Library {
+namespace Core::Library {
 bool tracksBase(Track* tr1, Track* tr2)
 {
     if(tr1->discNumber() != tr2->discNumber()) {
@@ -85,4 +85,4 @@ void sortTracks(TrackPtrList& tracks, SortOrder sortOrder)
             return std::sort(tracks.begin(), tracks.end(), tracksBase);
     }
 }
-} // namespace Library
+} // namespace Core::Library

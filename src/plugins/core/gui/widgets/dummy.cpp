@@ -19,6 +19,7 @@
 
 #include "dummy.h"
 
+namespace Core::Widgets {
 Dummy::Dummy(QWidget* parent)
     : FyWidget(parent)
     , m_layout(new QHBoxLayout(this))
@@ -36,9 +37,10 @@ Dummy::Dummy(QWidget* parent)
     m_layout->addWidget(m_label);
 }
 
+Dummy::~Dummy() = default;
+
 QString Dummy::name() const
 {
     return "Dummy";
 }
-
-Dummy::~Dummy() = default;
+}; // namespace Core::Widgets

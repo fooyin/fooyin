@@ -19,6 +19,8 @@
 
 #include "libraryitem.h"
 
+namespace Core {
 LibraryItem::LibraryItem() = default;
 
 LibraryItem::~LibraryItem() = default;
+}; // namespace Core

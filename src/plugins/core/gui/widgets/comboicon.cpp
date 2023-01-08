@@ -23,6 +23,7 @@
 #include <utility>
 #include <utils/utils.h>
 
+namespace Core::Widgets {
 ComboIcon::ComboIcon(const QString& path, Fy::Attributes attributes, QWidget* parent)
     : QWidget{parent}
     , m_layout{new QVBoxLayout(this)}
@@ -138,3 +139,4 @@ void ComboIcon::labelClicked()
     }
     emit clicked(m_icons.at(m_currentIndex).first);
 }
+}; // namespace Core::Widgets

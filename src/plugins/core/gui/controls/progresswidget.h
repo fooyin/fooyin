@@ -23,8 +23,10 @@
 
 #include <QWidget>
 
+namespace Core {
 class Track;
 
+namespace Widgets {
 class ProgressWidget : public QWidget
 {
     Q_OBJECT
@@ -52,3 +54,5 @@ private:
     struct Private;
     std::unique_ptr<ProgressWidget::Private> p;
 };
+}; // namespace Widgets
+}; // namespace Core

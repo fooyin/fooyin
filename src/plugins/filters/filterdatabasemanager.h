@@ -27,7 +27,7 @@
 
 namespace Filters {
 class FilterDatabase;
-class FilterDatabaseManager : public Worker
+class FilterDatabaseManager : public Core::Worker
 {
     Q_OBJECT
 
@@ -35,14 +35,14 @@ public:
     explicit FilterDatabaseManager(QObject* parent = nullptr);
     ~FilterDatabaseManager() override;
 
-    void getAllItems(Filters::FilterType type, ::Library::SortOrder order);
+    void getAllItems(Filters::FilterType type, Core::Library::SortOrder order);
     void getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
-                          ::Library::SortOrder order);
-    void filterTracks(const TrackPtrList& tracks, const ActiveFilters& filters, const QString& search);
+                          Core::Library::SortOrder order);
+    void filterTracks(const Core::TrackPtrList& tracks, const ActiveFilters& filters, const QString& search);
 
 signals:
     void gotItems(Filters::FilterType type, const FilterEntries& result);
-    void tracksFiltered(const TrackPtrList& result);
+    void tracksFiltered(const Core::TrackPtrList& result);
 
 private:
     FilterDatabase* m_filterDatabase;

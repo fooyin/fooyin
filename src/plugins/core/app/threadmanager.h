@@ -21,8 +21,8 @@
 
 #include <QObject>
 
+namespace Core {
 class Worker;
-
 class ThreadManager : public QObject
 {
     Q_OBJECT
@@ -42,3 +42,4 @@ private:
     struct Private;
     std::unique_ptr<ThreadManager::Private> p;
 };
+}; // namespace Core

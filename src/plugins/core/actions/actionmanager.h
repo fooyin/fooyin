@@ -22,9 +22,10 @@
 #include <QObject>
 #include <utils/id.h>
 
-class ActionContainer;
 class QAction;
 
+namespace Core {
+class ActionContainer;
 class ActionManager : public QObject
 {
     Q_OBJECT
@@ -47,3 +48,4 @@ private:
     struct Private;
     std::unique_ptr<ActionManager::Private> p;
 };
+}; // namespace Core

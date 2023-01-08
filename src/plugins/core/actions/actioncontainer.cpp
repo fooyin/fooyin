@@ -27,6 +27,7 @@
 #include <QMenuBar>
 #include <pluginsystem/pluginmanager.h>
 
+namespace Core {
 ActionContainer::ActionContainer(const Util::Id& id, QObject* parent)
     : QObject{parent}
     , m_id{id}
@@ -171,7 +172,7 @@ QAction* ActionContainer::addSeparator(const Util::Id& group, QAction** outSepar
     return separator;
 }
 
-QList<Group>::const_iterator ActionContainer::findGroup(const Util::Id& groupId) const
+QList<ActionContainer::Group>::const_iterator ActionContainer::findGroup(const Util::Id& groupId) const
 {
     return std::find_if(m_groups.cbegin(), m_groups.cend(), [&](const auto& group) {
         return (group.id == groupId);
@@ -311,3 +312,4 @@ bool MenuActionContainer::canBeAddedToContainer(ActionContainer* container) cons
 {
     return qobject_cast<MenuActionContainer*>(container) || qobject_cast<MenuBarActionContainer*>(container);
 }
+}; // namespace Core

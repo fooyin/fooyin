@@ -28,6 +28,7 @@
 #include <utils/enumhelper.h>
 #include <utils/utils.h>
 
+namespace Core::Widgets {
 struct PlaylistControl::Private
 {
     Settings* settings{PluginSystem::object<Settings>()};
@@ -108,3 +109,4 @@ void PlaylistControl::setMode(Player::PlayMode mode) const
             return;
     }
 }
+}; // namespace Core::Widgets

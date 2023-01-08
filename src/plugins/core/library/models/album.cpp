@@ -21,6 +21,7 @@
 
 #include "track.h"
 
+namespace Core {
 Album::Album(const QString& title)
     : Container(title)
     , m_id(-1)
@@ -149,3 +150,4 @@ void Album::reset()
     Container::reset();
     m_discCount = 0;
 }
+}; // namespace Core

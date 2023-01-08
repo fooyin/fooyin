@@ -22,15 +22,16 @@
 #include "core/library/models/track.h"
 #include "core/player/playermanager.h"
 
-EngineHandler::EngineHandler(PlayerManager* playerManager, QObject* parent)
+namespace Core::Engine {
+EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* parent)
     : Worker(parent)
 {
-    connect(playerManager, &PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
-    connect(playerManager, &PlayerManager::volumeChanged, &m_engine, &Engine::setVolume);
-    connect(playerManager, &PlayerManager::currentTrackChanged, &m_engine, &Engine::changeTrack);
-    connect(&m_engine, &Engine::currentPositionChanged, playerManager, &PlayerManager::setCurrentPosition);
-    connect(&m_engine, &Engine::trackFinished, playerManager, &PlayerManager::next);
-    connect(playerManager, &PlayerManager::positionMoved, &m_engine, &Engine::seek);
+    connect(playerManager, &Player::PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
+    connect(playerManager, &Player::PlayerManager::volumeChanged, &m_engine, &Engine::setVolume);
+    connect(playerManager, &Player::PlayerManager::currentTrackChanged, &m_engine, &Engine::changeTrack);
+    connect(&m_engine, &Engine::currentPositionChanged, playerManager, &Player::PlayerManager::setCurrentPosition);
+    connect(&m_engine, &Engine::trackFinished, playerManager, &Player::PlayerManager::next);
+    connect(playerManager, &Player::PlayerManager::positionMoved, &m_engine, &Engine::seek);
 
     connect(this, &EngineHandler::play, &m_engine, &Engine::play);
     connect(this, &EngineHandler::pause, &m_engine, &Engine::pause);
@@ -52,3 +53,4 @@ void EngineHandler::playStateChanged(Player::PlayState state)
             return;
     }
 }
+}; // namespace Core::Engine

@@ -23,7 +23,10 @@
 
 #include <QObject>
 
+namespace Core {
+namespace Player {
 class PlayerManager;
+};
 
 namespace Playlist {
 class Playlist : public QObject
@@ -64,9 +67,10 @@ protected:
 
 private:
     QString m_name;
-    PlayerManager* m_playerManager;
+    Player::PlayerManager* m_playerManager;
     int m_playlistIndex;
     Track* m_playingTrack;
     TrackPtrList m_tracks;
 };
 } // namespace Playlist
+}; // namespace Core

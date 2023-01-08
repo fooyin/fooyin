@@ -22,16 +22,17 @@
 #include "core/library/libraryinfo.h"
 #include "query.h"
 
-namespace DB {
+namespace Core::DB {
+
 Library::Library(const QString& connectionName)
-    : Module(connectionName)
+    : Module{connectionName}
 { }
 
-QMap<int, ::Library::LibraryInfo> Library::getAllLibraries()
+IdLibraryMap Library::getAllLibraries()
 {
     QString query = "SELECT LibraryID, Name, Path FROM Libraries;";
 
-    QMap<int, ::Library::LibraryInfo> libs;
+    QMap<int, Core::Library::LibraryInfo> libs;
 
     Query q(this);
     q.prepare(query);
@@ -47,7 +48,7 @@ QMap<int, ::Library::LibraryInfo> Library::getAllLibraries()
         QString name = q.value(1).toString();
         QString path = q.value(2).toString();
 
-        libs.insert(id, ::Library::LibraryInfo(path, name, id));
+        libs.insert(id, Core::Library::LibraryInfo{path, name, id});
     }
 
     return libs;
@@ -56,7 +57,6 @@ QMap<int, ::Library::LibraryInfo> Library::getAllLibraries()
 bool Library::insertLibrary(int id, const QString& path, const QString& name)
 {
     if(name.isEmpty() || path.isEmpty()) {
-        //        mLog(Log::Warning, this) << "Cannot insert library: Invalid parameters";
         return false;
     }
 
@@ -100,4 +100,4 @@ bool Library::removeLibrary(int id)
 }
 
 Library::~Library() = default;
-} // namespace DB
+} // namespace Core::DB

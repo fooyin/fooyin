@@ -21,7 +21,9 @@
 
 #include <QTreeView>
 
-namespace Library {
+namespace Core {
+
+namespace Widgets {
 class PlaylistView : public QTreeView
 {
     Q_OBJECT
@@ -36,4 +38,5 @@ protected:
     void drawBranches(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 };
-} // namespace Library
+} // namespace Widgets
+}; // namespace Core

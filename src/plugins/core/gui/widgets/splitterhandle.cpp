@@ -23,6 +23,7 @@
 
 #include <pluginsystem/pluginmanager.h>
 
+namespace Core::Widgets {
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)
     , m_settings(PluginSystem::object<Settings>())
@@ -45,3 +46,4 @@ void SplitterHandle::showHandle(bool show)
     m_showHandle = show;
     update();
 }
+}; // namespace Core::Widgets

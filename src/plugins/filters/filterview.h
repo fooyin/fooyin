@@ -22,7 +22,9 @@
 #include <QListView>
 #include <QTreeView>
 
+namespace Core::Player {
 class PlayerManager;
+};
 
 namespace Filters {
 class FilterView : public QTreeView
@@ -30,7 +32,7 @@ class FilterView : public QTreeView
     Q_OBJECT
 
 public:
-    explicit FilterView(PlayerManager* playerManager, QWidget* parent = nullptr);
+    explicit FilterView(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
     ~FilterView() override;
 
     void setupView();
@@ -42,6 +44,6 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    PlayerManager* m_playerManager;
+    Core::Player::PlayerManager* m_playerManager;
 };
 } // namespace Filters

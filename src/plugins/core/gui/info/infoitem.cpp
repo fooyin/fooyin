@@ -19,6 +19,7 @@
 
 #include "infoitem.h"
 
+namespace Core::Widgets {
 InfoItem::InfoItem(Type type, QString title)
     : m_type(type)
     , m_title(std::move(title))
@@ -76,3 +77,4 @@ InfoItem* InfoItem::parent() const
 {
     return m_parent;
 }
+}; // namespace Core::Widgets

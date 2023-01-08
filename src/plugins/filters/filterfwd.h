@@ -40,7 +40,7 @@ struct LibraryFilter
 {
     int index;
     Filters::FilterType type;
-    Library::SortOrder sortOrder;
+    Core::Library::SortOrder sortOrder;
 };
 using LibraryFilters = std::vector<LibraryFilter>;
 
@@ -51,6 +51,6 @@ struct FilterEntry
 };
 using FilterEntries = std::vector<FilterEntry>;
 
-using ActiveFilters = std::unordered_map<Filters::FilterType, IdSet>;
+using ActiveFilters = std::unordered_map<Filters::FilterType, Core::IdSet>;
 
 #endif // FILTER_FWD_H

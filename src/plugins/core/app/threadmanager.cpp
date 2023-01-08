@@ -23,6 +23,7 @@
 
 #include <QThread>
 
+namespace Core {
 struct ThreadManager::Private
 {
     QList<QThread*> threads;
@@ -56,3 +57,4 @@ void ThreadManager::moveToNewThread(Worker* worker)
     connect(this, &ThreadManager::stop, worker, &Worker::stopThread);
     p->workers.append(worker);
 }
+}; // namespace Core

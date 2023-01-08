@@ -24,6 +24,7 @@
 #include <QVBoxLayout>
 #include <QWidgetAction>
 
+namespace Core::Widgets {
 OverlayWidget::OverlayWidget(bool button, QWidget* parent)
     : QWidget{parent}
     , m_layout{new QVBoxLayout(this)}
@@ -55,3 +56,4 @@ void OverlayWidget::setButtonText(const QString& text)
         m_button->setText(text);
     }
 }
+}; // namespace Core::Widgets

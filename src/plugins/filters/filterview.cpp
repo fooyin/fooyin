@@ -28,7 +28,7 @@
 #include <QScrollBar>
 
 namespace Filters {
-FilterView::FilterView(PlayerManager* playerManager, QWidget* parent)
+FilterView::FilterView(Core::Player::PlayerManager* playerManager, QWidget* parent)
     : QTreeView(parent)
     , m_playerManager(playerManager)
 {

@@ -23,6 +23,7 @@
 
 #include <mpv/client.h>
 
+namespace Core::Engine {
 struct EngineMpv::Private
 {
     const int posInterval{100};
@@ -192,3 +193,4 @@ void EngineMpv::handlePropertyChange(mpv_event* event)
         }
     }
 }
+}; // namespace Core::Engine

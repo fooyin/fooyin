@@ -26,10 +26,10 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 
-namespace Playlist {
+namespace Core::Playlist {
 Playlist::Playlist(int idx, QString name)
     : m_name(std::move(name))
-    , m_playerManager(PluginSystem::object<PlayerManager>())
+    , m_playerManager(PluginSystem::object<Player::PlayerManager>())
     , m_playlistIndex(idx)
     , m_playingTrack(nullptr)
 { }
@@ -206,4 +206,4 @@ int Playlist::nextIndex()
 
     return index;
 }
-}; // namespace Playlist
+}; // namespace Core::Playlist

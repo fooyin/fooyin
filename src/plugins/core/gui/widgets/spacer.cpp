@@ -19,7 +19,7 @@
 
 #include "spacer.h"
 
-namespace Widgets {
+namespace Core::Widgets {
 Spacer::Spacer(QWidget* parent)
     : FyWidget(parent)
 {
@@ -33,4 +33,4 @@ QString Spacer::name() const
 {
     return "Spacer";
 }
-} // namespace Widgets
+} // namespace Core::Widgets

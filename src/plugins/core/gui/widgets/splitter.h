@@ -21,6 +21,7 @@
 
 #include <QSplitter>
 
+namespace Core::Widgets {
 class FyWidget;
 
 class Splitter : public QSplitter
@@ -32,3 +33,4 @@ public:
 protected:
     QSplitterHandle* createHandle() override;
 };
+}; // namespace Core::Widgets

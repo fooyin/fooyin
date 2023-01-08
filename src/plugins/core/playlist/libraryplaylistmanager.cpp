@@ -22,7 +22,8 @@
 #include "playlist.h"
 #include "playlisthandler.h"
 
-LibraryPlaylistManager::LibraryPlaylistManager(Playlist::PlaylistHandler* playlistHandler)
+namespace Core::Playlist {
+LibraryPlaylistManager::LibraryPlaylistManager(PlaylistHandler* playlistHandler)
     : m_playlistHandler(playlistHandler)
 { }
 
@@ -41,10 +42,11 @@ void LibraryPlaylistManager::append(const TrackPtrList& tracks)
     playlist->appendTracks(tracks);
 }
 
-void LibraryPlaylistManager::activatePlaylist(Playlist::PlaylistHandler* playlistHandler, int id)
+void LibraryPlaylistManager::activatePlaylist(PlaylistHandler* playlistHandler, int id)
 {
     const auto currentIndex = playlistHandler->currentIndex();
     auto* currentPlaylist = playlistHandler->playlist(currentIndex);
 
     currentPlaylist->changeTrack(id);
 }
+}; // namespace Core::Playlist

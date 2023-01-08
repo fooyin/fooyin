@@ -21,10 +21,9 @@
 
 #include <QObject>
 
+namespace Core::Widgets {
 class SplitterWidget;
 class FyWidget;
-
-namespace Widgets {
 class WidgetFactory;
 class WidgetProvider : public QObject
 {
@@ -41,4 +40,4 @@ private:
     struct Private;
     std::unique_ptr<WidgetProvider::Private> p;
 };
-}; // namespace Widgets
+}; // namespace Core::Widgets

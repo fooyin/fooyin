@@ -22,6 +22,7 @@
 #include <QReadWriteLock>
 #include <QSettings>
 
+namespace Core {
 class Settings : public QObject
 {
     Q_OBJECT
@@ -89,3 +90,4 @@ private:
     QMap<Setting, QVariant> m_values;
     QReadWriteLock m_lock;
 };
+}; // namespace Core

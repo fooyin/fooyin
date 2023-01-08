@@ -33,10 +33,11 @@
 #include <QTableWidget>
 #include <pluginsystem/pluginmanager.h>
 
+namespace Core::Widgets {
 InfoWidget::InfoWidget(QWidget* parent)
     : FyWidget(parent)
     , m_settings(PluginSystem::object<Settings>())
-    , m_playerManager(PluginSystem::object<PlayerManager>())
+    , m_playerManager(PluginSystem::object<Player::PlayerManager>())
     , m_library(PluginSystem::object<Library::MusicLibrary>())
     , m_layout(new QHBoxLayout(this))
 {
@@ -47,8 +48,8 @@ InfoWidget::InfoWidget(QWidget* parent)
     setScrollbarHidden(m_settings->value(Settings::Setting::InfoScrollBar).toBool());
     setAltRowColors(m_settings->value(Settings::Setting::InfoAltColours).toBool());
 
-    connect(m_playerManager, &PlayerManager::currentTrackChanged, this, &InfoWidget::refreshTrack);
-    connect(m_playerManager, &PlayerManager::currentTrackChanged, &m_model, &InfoModel::reset);
+    connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, this, &Widgets::InfoWidget::refreshTrack);
+    connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, &m_model, &InfoModel::reset);
 
     connect(m_settings, &Settings::infoAltColorsChanged, this, &InfoWidget::setAltRowColors);
     connect(m_settings, &Settings::infoHeaderChanged, this, &InfoWidget::setHeaderHidden);
@@ -154,3 +155,4 @@ void InfoWidget::layoutEditingMenu(ActionContainer* menu)
     menu->addAction(showScrollBar);
     menu->addAction(altColours);
 }
+}; // namespace Core::Widgets

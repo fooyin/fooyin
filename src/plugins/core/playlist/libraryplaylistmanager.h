@@ -21,22 +21,21 @@
 
 #include "libraryplaylistinterface.h"
 
-namespace Playlist {
+namespace Core::Playlist {
 class PlaylistHandler;
-}
-
 class LibraryPlaylistManager : public LibraryPlaylistInterface
 {
 public:
-    explicit LibraryPlaylistManager(Playlist::PlaylistHandler* playlistHandler);
+    explicit LibraryPlaylistManager(PlaylistHandler* playlistHandler);
     ~LibraryPlaylistManager() override;
 
     void createPlaylist(const TrackPtrList& tracks, int id) override;
     void append(const TrackPtrList& tracks) override;
 
 protected:
-    static void activatePlaylist(Playlist::PlaylistHandler* playlistHandler, int id);
+    static void activatePlaylist(PlaylistHandler* playlistHandler, int id);
 
 private:
     Playlist::PlaylistHandler* m_playlistHandler;
 };
+}; // namespace Core::Playlist

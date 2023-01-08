@@ -31,7 +31,7 @@
 namespace Filters {
 struct SearchWidget::Private
 {
-    Settings* settings;
+    Core::Settings* settings;
     QHBoxLayout* layout;
     QLineEdit* searchBox;
     const QString defaultText = "Search library...";
@@ -39,7 +39,7 @@ struct SearchWidget::Private
     FilterManager* manager;
 
     explicit Private()
-        : settings(PluginSystem::object<Settings>())
+        : settings(PluginSystem::object<Core::Settings>())
         , manager(PluginSystem::object<FilterManager>())
     { }
 };
@@ -52,7 +52,7 @@ SearchWidget::SearchWidget(QWidget* parent)
 
     setupUi();
 
-    connect(p->settings, &Settings::layoutEditingChanged, this, &SearchWidget::searchBoxContextMenu);
+    connect(p->settings, &Core::Settings::layoutEditingChanged, this, &SearchWidget::searchBoxContextMenu);
     connect(p->searchBox, &QLineEdit::textChanged, this, &SearchWidget::textChanged);
     connect(this, &SearchWidget::searchChanged, p->manager, &FilterManager::searchChanged);
 }
@@ -72,7 +72,7 @@ void SearchWidget::setupUi()
     p->searchBox = new QLineEdit(this);
     p->searchBox->setPlaceholderText(p->defaultText);
     p->searchBox->setClearButtonEnabled(true);
-    searchBoxContextMenu(p->settings->value(Settings::Setting::LayoutEditing).toBool());
+    searchBoxContextMenu(p->settings->value(Core::Settings::Setting::LayoutEditing).toBool());
 
     p->layout->addWidget(p->searchBox);
 }

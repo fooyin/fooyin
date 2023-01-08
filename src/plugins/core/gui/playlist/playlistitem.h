@@ -23,6 +23,7 @@
 
 #include <QList>
 
+namespace Core::Widgets {
 class PlaylistItem
 {
 public:
@@ -58,3 +59,4 @@ private:
     PlaylistItem* m_parent;
     bool m_enabled;
 };
+}; // namespace Core::Widgets

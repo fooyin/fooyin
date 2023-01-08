@@ -25,6 +25,7 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
+namespace Core::Player {
 PlayerController::PlayerController(QObject* parent)
     : PlayerManager(parent)
     , m_currentTrack(nullptr)
@@ -195,3 +196,4 @@ double PlayerController::volume() const
 {
     return m_volume;
 }
+}; // namespace Core::Player

@@ -23,8 +23,10 @@
 
 #include <QObject>
 
+namespace Core {
 class Track;
 
+namespace Player {
 class PlayerManager : public QObject
 {
     Q_OBJECT
@@ -70,3 +72,5 @@ public slots:
     virtual void volumeDown() = 0;
     virtual void setVolume(double vol) = 0;
 };
+}; // namespace Player
+}; // namespace Core

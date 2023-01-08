@@ -22,15 +22,15 @@
 #include "core/library/models/track.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
-#include "core/widgets/widgetprovider.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <pluginsystem/pluginmanager.h>
 
+namespace Core::Widgets {
 struct CoverWidget::Private
 {
-    PlayerManager* playerManager;
+    Player::PlayerManager* playerManager;
     Library::MusicLibrary* library;
 
     QHBoxLayout* layout;
@@ -40,7 +40,7 @@ struct CoverWidget::Private
     bool hasCover{false};
 
     explicit Private()
-        : playerManager(PluginSystem::object<PlayerManager>())
+        : playerManager(PluginSystem::object<Player::PlayerManager>())
         , library(PluginSystem::object<Library::MusicLibrary>())
     { }
 };
@@ -52,7 +52,7 @@ CoverWidget::CoverWidget(QWidget* parent)
     setObjectName("Artwork");
     setupUi();
 
-    connect(p->playerManager, &PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
+    connect(p->playerManager, &Player::PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
     connect(p->library, &Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
     connect(p->library, &Library::MusicLibrary::tracksSelChanged, this, &CoverWidget::reloadCover);
 
@@ -132,3 +132,4 @@ void CoverWidget::reloadCover()
         }
     }
 }
+}; // namespace Core::Widgets

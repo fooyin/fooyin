@@ -29,9 +29,10 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 
+namespace Core::Widgets {
 struct StatusWidget::Private
 {
-    PlayerManager* playerManager;
+    Player::PlayerManager* playerManager;
 
     QHBoxLayout* layout;
 
@@ -41,7 +42,7 @@ struct StatusWidget::Private
     ClickableLabel* playing;
 
     explicit Private()
-        : playerManager(PluginSystem::object<PlayerManager>())
+        : playerManager(PluginSystem::object<Player::PlayerManager>())
     { }
 };
 
@@ -54,8 +55,8 @@ StatusWidget::StatusWidget(QWidget* parent)
     setupUi();
 
     connect(p->playing, &ClickableLabel::clicked, this, &StatusWidget::labelClicked);
-    connect(p->playerManager, &PlayerManager::currentTrackChanged, this, &StatusWidget::reloadStatus);
-    connect(p->playerManager, &PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
+    connect(p->playerManager, &Player::PlayerManager::currentTrackChanged, this, &StatusWidget::reloadStatus);
+    connect(p->playerManager, &Player::PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
 }
 
 QString StatusWidget::name() const
@@ -133,3 +134,4 @@ void StatusWidget::stateChanged(Player::PlayState state)
             break;
     }
 }
+}; // namespace Core::Widgets

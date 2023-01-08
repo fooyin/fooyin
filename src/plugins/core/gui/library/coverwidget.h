@@ -21,6 +21,7 @@
 
 #include "core/gui/fywidget.h"
 
+namespace Core::Widgets {
 class CoverWidget : public FyWidget
 {
     Q_OBJECT
@@ -41,3 +42,4 @@ private:
     struct Private;
     std::unique_ptr<CoverWidget::Private> p;
 };
+}; // namespace Core::Widgets

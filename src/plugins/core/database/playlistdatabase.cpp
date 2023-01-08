@@ -19,8 +19,10 @@
 
 #include "playlistdatabase.h"
 
-DB::Playlist::Playlist(const QString& connectionName)
+namespace Core::DB {
+Playlist::Playlist(const QString& connectionName)
     : Module(connectionName)
 { }
 
-DB::Playlist::~Playlist() = default;
+Playlist::~Playlist() = default;
+}; // namespace Core::DB

@@ -43,6 +43,7 @@
 
 #include <pluginsystem/pluginmanager.h>
 
+namespace Core {
 struct Application::Private
 {
     Widgets::WidgetFactory* widgetFactory;
@@ -50,13 +51,13 @@ struct Application::Private
     Settings* settings;
     ThreadManager* threadManager;
     DB::Database* db;
-    PlayerManager* playerManager;
-    EngineHandler engine;
+    Player::PlayerManager* playerManager;
+    Engine::EngineHandler engine;
     Playlist::PlaylistHandler* playlistHandler;
-    std::unique_ptr<LibraryPlaylistInterface> playlistInterface;
+    std::unique_ptr<Playlist::LibraryPlaylistInterface> playlistInterface;
     Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
-    std::unique_ptr<SettingsDialog> settingsDialog;
+    std::unique_ptr<Widgets::SettingsDialog> settingsDialog;
     Widgets::WidgetProvider* widgetProvider;
     MainWindow* mainWindow;
 
@@ -66,13 +67,13 @@ struct Application::Private
         , settings(new Settings(parent))
         , threadManager(new ThreadManager(parent))
         , db(DB::Database::instance())
-        , playerManager(new PlayerController(parent))
+        , playerManager(new Player::PlayerController(parent))
         , engine(playerManager)
         , playlistHandler(new Playlist::PlaylistHandler(playerManager, parent))
-        , playlistInterface(std::make_unique<LibraryPlaylistManager>(playlistHandler))
+        , playlistInterface(std::make_unique<Playlist::LibraryPlaylistManager>(playlistHandler))
         , libraryManager(new Library::LibraryManager(parent))
         , library(new Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, parent))
-        , settingsDialog(std::make_unique<SettingsDialog>(libraryManager))
+        , settingsDialog(std::make_unique<Widgets::SettingsDialog>(libraryManager))
         , widgetProvider(new Widgets::WidgetProvider(widgetFactory, parent))
         , mainWindow(new MainWindow(actionManager, settings, settingsDialog.get(), library))
     {
@@ -108,14 +109,14 @@ struct Application::Private
 
     void registerWidgets() const
     {
-        widgetFactory->registerClass<ControlWidget>("Controls");
-        widgetFactory->registerClass<InfoWidget>("Info");
-        widgetFactory->registerClass<CoverWidget>("Artwork");
-        widgetFactory->registerClass<Library::PlaylistWidget>("Playlist");
+        widgetFactory->registerClass<Widgets::ControlWidget>("Controls");
+        widgetFactory->registerClass<Widgets::InfoWidget>("Info");
+        widgetFactory->registerClass<Widgets::CoverWidget>("Artwork");
+        widgetFactory->registerClass<Widgets::PlaylistWidget>("Playlist");
         widgetFactory->registerClass<Widgets::Spacer>("Spacer");
-        widgetFactory->registerClass<VerticalSplitterWidget>("Vertical", {"Splitter"});
-        widgetFactory->registerClass<HoriztonalSplitterWidget>("Horiztonal", {"Splitter"});
-        widgetFactory->registerClass<StatusWidget>("Status");
+        widgetFactory->registerClass<Widgets::VerticalSplitterWidget>("Vertical", {"Splitter"});
+        widgetFactory->registerClass<Widgets::HoriztonalSplitterWidget>("Horiztonal", {"Splitter"});
+        widgetFactory->registerClass<Widgets::StatusWidget>("Status");
     }
 };
 
@@ -144,3 +145,4 @@ void Application::shutdown()
     }
     delete p->widgetProvider;
 }
+}; // namespace Core

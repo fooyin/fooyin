@@ -34,8 +34,8 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 
-namespace Library {
-PlaylistModel::PlaylistModel(PlayerManager* playerManager, Library::MusicLibrary* library, QObject* parent)
+namespace Core::Widgets {
+PlaylistModel::PlaylistModel(Player::PlayerManager* playerManager, Library::MusicLibrary* library, QObject* parent)
     : QAbstractItemModel(parent)
     , m_root(std::make_unique<PlaylistItem>())
     , m_playerManager(playerManager)
@@ -559,4 +559,4 @@ QModelIndex PlaylistModel::indexOfItem(const PlaylistItem* item)
     }
     return index;
 }
-} // namespace Library
+} // namespace Core::Widgets

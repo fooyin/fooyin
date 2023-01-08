@@ -21,20 +21,24 @@
 
 #include <QMainWindow>
 
-class ActionManager;
-class SettingsDialog;
-class Settings;
-
-namespace Library {
+namespace Core::Library {
 class MusicLibrary;
 }
+
+namespace Core {
+class ActionManager;
+class Settings;
+
+namespace Widgets {
+class SettingsDialog;
+};
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(ActionManager* actionManager, Settings* settings, SettingsDialog* settingsDialog,
+    explicit MainWindow(ActionManager* actionManager, Settings* settings, Widgets::SettingsDialog* settingsDialog,
                         Library::MusicLibrary* library, QWidget* parent = nullptr);
     ~MainWindow() override;
 
@@ -54,3 +58,4 @@ private:
     struct Private;
     std::unique_ptr<MainWindow::Private> p;
 };
+}; // namespace Core

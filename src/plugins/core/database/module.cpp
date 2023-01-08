@@ -25,7 +25,7 @@
 #include <QSqlError>
 #include <QThread>
 
-namespace DB {
+namespace Core::DB {
 Module::Module(QString connectionName)
     : m_connectionName(std::move(connectionName))
 { }
@@ -189,4 +189,4 @@ Query Module::remove(const QString& tableName, const QList<QPair<QString, QVaria
 
     return q;
 }
-} // namespace DB
+} // namespace Core::DB

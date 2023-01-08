@@ -22,6 +22,7 @@
 #include <QObject>
 #include <core/library/models/trackfwd.h>
 
+namespace Core::Library {
 class MusicLibraryInteractor : public QObject
 {
     Q_OBJECT
@@ -34,3 +35,4 @@ public:
     virtual TrackPtrList tracks() = 0;
     virtual bool hasTracks() = 0;
 };
+}; // namespace Core::Library

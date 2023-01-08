@@ -26,6 +26,7 @@
 
 #include <QHBoxLayout>
 
+namespace Core::Widgets {
 struct VolumeControl::Private
 {
     QHBoxLayout* layout;
@@ -136,3 +137,4 @@ void VolumeControl::showVolumeMenu()
     p->volumeMenu->move(pos);
     p->volumeMenu->show();
 }
+}; // namespace Core::Widgets

@@ -20,8 +20,11 @@
 #pragma once
 
 class QPixmap;
+
+namespace Core {
 class Album;
 
-namespace Library::Covers {
-    QPixmap albumCover(Album* album);
-} // namespace Library
+namespace Covers {
+QPixmap albumCover(Album* album);
+} // namespace Covers
+}; // namespace Core

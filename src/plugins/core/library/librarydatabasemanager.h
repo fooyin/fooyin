@@ -22,10 +22,12 @@
 #include "core/app/worker.h"
 #include "core/library/models/trackfwd.h"
 
+namespace Core {
 namespace DB {
 class LibraryDatabase;
 }
 
+namespace Library {
 class LibraryDatabaseManager : public Worker
 {
     Q_OBJECT
@@ -43,3 +45,5 @@ signals:
 private:
     DB::LibraryDatabase* m_libraryDatabase;
 };
+}; // namespace Library
+}; // namespace Core

@@ -21,7 +21,7 @@
 
 #include <QString>
 
-namespace Library {
+namespace Core::Library {
 class LibraryInfo
 {
 public:
@@ -39,4 +39,4 @@ private:
     QString m_name;
     int m_id;
 };
-} // namespace Library
+} // namespace Core::Library

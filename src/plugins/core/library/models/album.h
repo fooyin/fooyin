@@ -22,9 +22,10 @@
 #include "container.h"
 
 #include <QString>
+#include <QStringList>
 
+namespace Core {
 class Track;
-
 class Album : public Container
 {
 public:
@@ -72,3 +73,4 @@ private:
     int m_discCount;
     QString m_coverPath;
 };
+}; // namespace Core

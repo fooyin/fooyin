@@ -21,7 +21,7 @@
 
 #include "library/models/trackfwd.h"
 
-namespace Playlist {
+namespace Core::Playlist {
 class Playlist;
 class PlaylistManager
 {

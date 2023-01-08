@@ -21,8 +21,8 @@
 
 #include <pluginsystem/plugin.h>
 
+namespace Core {
 class Application;
-
 class CorePlugin : public QObject,
                    public PluginSystem::Plugin
 {
@@ -41,3 +41,4 @@ public:
 private:
     Application* m_app;
 };
+} // namespace Core

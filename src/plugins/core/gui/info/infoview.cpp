@@ -21,6 +21,7 @@
 
 #include <QHeaderView>
 
+namespace Core::Widgets {
 InfoView::InfoView(QWidget* parent)
     : QTreeView(parent)
 {
@@ -39,3 +40,4 @@ InfoView::InfoView(QWidget* parent)
 }
 
 InfoView::~InfoView() = default;
+}; // namespace Core::Widgets

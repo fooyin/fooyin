@@ -23,6 +23,7 @@
 
 #include <QObject>
 
+namespace Core::Player {
 class PlayerController : public PlayerManager
 {
     Q_OBJECT
@@ -64,3 +65,4 @@ private:
     double m_volume;
     bool m_counted;
 };
+}; // namespace Core::Player

@@ -23,6 +23,7 @@
 
 #include <QString>
 
+namespace Core {
 class Artist : public LibraryItem
 {
 public:
@@ -39,3 +40,4 @@ private:
     int m_id;
     QString m_name;
 };
+}; // namespace Core

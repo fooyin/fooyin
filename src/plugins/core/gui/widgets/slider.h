@@ -21,6 +21,7 @@
 
 #include <QSlider>
 
+namespace Core::Widgets {
 class Slider : public QSlider
 {
     Q_OBJECT
@@ -31,3 +32,4 @@ public:
 protected:
     void mousePressEvent(QMouseEvent* event) override;
 };
+}; // namespace Core::Widgets

@@ -21,11 +21,11 @@
 
 #include "module.h"
 
-namespace DB {
+namespace Core::DB {
 class Playlist : private Module
 {
 public:
     explicit Playlist(const QString& connectionName);
     ~Playlist() override;
 };
-} // namespace DB
+} // namespace Core::DB

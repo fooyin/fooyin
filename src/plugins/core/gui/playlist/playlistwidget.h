@@ -26,15 +26,23 @@
 
 class QHBoxLayout;
 class QPushButton;
-class PlayerManager;
+
+namespace Core {
 class Settings;
-class OverlayWidget;
+
+namespace Player {
+class PlayerManager;
+}; // namespace Player
 
 namespace Library {
-class PlaylistModel;
-class PlaylistView;
 class LibraryManager;
 class MusicLibrary;
+}; // namespace Library
+
+namespace Widgets {
+class OverlayWidget;
+class PlaylistModel;
+class PlaylistView;
 
 class PlaylistWidget : public FyWidget
 {
@@ -76,13 +84,14 @@ protected:
 
 private:
     QHBoxLayout* m_layout;
-    LibraryManager* m_libraryManager;
-    MusicLibrary* m_library;
-    PlayerManager* m_playerManager;
+    Library::LibraryManager* m_libraryManager;
+    Library::MusicLibrary* m_library;
+    Player::PlayerManager* m_playerManager;
     PlaylistModel* m_model;
     PlaylistView* m_playlist;
     Settings* m_settings;
     bool m_altRowColours;
     OverlayWidget* m_noLibrary;
 };
-}; // namespace Library
+}; // namespace Widgets
+}; // namespace Core

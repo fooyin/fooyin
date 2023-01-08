@@ -27,6 +27,7 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/helpers.h>
 
+namespace Core {
 struct ActionManager::Private
 {
     QHash<Util::Id, QAction*> idCmdMap;
@@ -107,3 +108,4 @@ void ActionManager::containerDestroyed(QObject* sender)
     auto* container = static_cast<ActionContainer*>(sender);
     p->idContainerMap.remove(p->idContainerMap.key(container));
 }
+}; // namespace Core

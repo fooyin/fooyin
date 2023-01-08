@@ -23,10 +23,13 @@
 
 class QListWidgetItem;
 
+namespace Core {
+
 namespace Library {
 class LibraryManager;
 }
 
+namespace Widgets {
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
@@ -53,3 +56,5 @@ private:
     struct Private;
     std::unique_ptr<SettingsDialog::Private> p;
 };
+}; // namespace Widgets
+}; // namespace Core

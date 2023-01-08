@@ -21,6 +21,7 @@
 
 #include <QJsonArray>
 
+namespace Core::Widgets {
 FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
     , m_id{"FyWidget"}
@@ -54,3 +55,4 @@ void FyWidget::saveLayout(QJsonArray& array)
 }
 
 void FyWidget::loadLayout(QJsonObject& object) { }
+}; // namespace Core::Widgets

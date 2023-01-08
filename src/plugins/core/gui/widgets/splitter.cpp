@@ -24,6 +24,7 @@
 #include <QBoxLayout>
 #include <QMenu>
 
+namespace Core::Widgets {
 Splitter::Splitter(Qt::Orientation type, QWidget* parent)
     : QSplitter(type, parent)
 {
@@ -37,3 +38,4 @@ QSplitterHandle* Splitter::createHandle()
 {
     return new SplitterHandle(this->orientation(), this);
 }
+}; // namespace Core::Widgets

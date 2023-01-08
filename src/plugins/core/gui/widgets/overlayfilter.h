@@ -21,6 +21,7 @@
 
 #include <QFrame>
 
+namespace Core::Widgets {
 class OverlayFilter : public QWidget
 {
     Q_OBJECT
@@ -32,3 +33,4 @@ public:
 protected:
     void paintEvent(QPaintEvent* event) override;
 };
+}; // namespace Core::Widgets

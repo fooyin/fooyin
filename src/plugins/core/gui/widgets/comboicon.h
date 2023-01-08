@@ -27,6 +27,7 @@
 
 class QVBoxLayout;
 
+namespace Core::Widgets {
 class ComboIcon : public QWidget
 {
     Q_OBJECT
@@ -70,3 +71,4 @@ private:
     int m_currentIndex;
     PathIconContainer m_icons;
 };
+}; // namespace Core::Widgets

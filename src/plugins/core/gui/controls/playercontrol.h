@@ -25,6 +25,7 @@
 
 class QLabel;
 
+namespace Core::Widgets {
 class PlayerControl : public QWidget
 {
     Q_OBJECT
@@ -47,3 +48,4 @@ private:
     struct Private;
     std::unique_ptr<PlayerControl::Private> p;
 };
+}; // namespace Core::Widgets

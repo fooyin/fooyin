@@ -25,6 +25,7 @@
 #include <QDateTime>
 #include <QSet>
 
+namespace Core {
 using ExtraTags = QMap<QString, QList<QString>>;
 
 class Track : public LibraryItem
@@ -171,3 +172,4 @@ private:
     int m_libraryId;
     ExtraTags m_extraTags;
 };
+}; // namespace Core

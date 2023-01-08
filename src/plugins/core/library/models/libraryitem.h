@@ -19,9 +19,11 @@
 
 #pragma once
 
+namespace Core {
 class LibraryItem
 {
 public:
     explicit LibraryItem();
     virtual ~LibraryItem();
 };
+}; // namespace Core

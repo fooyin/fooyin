@@ -36,10 +36,11 @@
 #include <QTimer>
 #include <pluginsystem/pluginmanager.h>
 
+namespace Core {
 struct MainWindow::Private
 {
-    EditableLayout* mainLayout;
-    SettingsDialog* settingsDialog;
+    Widgets::EditableLayout* mainLayout;
+    Widgets::SettingsDialog* settingsDialog;
     Library::MusicLibrary* library;
 
     QAction* openSettings;
@@ -54,7 +55,7 @@ struct MainWindow::Private
 
     ActionManager* actionManager;
 
-    Private(ActionManager* actionManager, Settings* settings, SettingsDialog* settingsDialog,
+    Private(ActionManager* actionManager, Settings* settings, Widgets::SettingsDialog* settingsDialog,
             Library::MusicLibrary* library)
         : settingsDialog(settingsDialog)
         , library(library)
@@ -63,7 +64,7 @@ struct MainWindow::Private
     { }
 };
 
-MainWindow::MainWindow(ActionManager* actionManager, Settings* settings, SettingsDialog* settingsDialog,
+MainWindow::MainWindow(ActionManager* actionManager, Settings* settings, Widgets::SettingsDialog* settingsDialog,
                        Library::MusicLibrary* library, QWidget* parent)
     : QMainWindow(parent)
     , p(std::make_unique<Private>(actionManager, settings, settingsDialog, library))
@@ -89,7 +90,7 @@ void MainWindow::setupUi()
     QByteArray geometry = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
-    p->mainLayout = new EditableLayout(this);
+    p->mainLayout = new Widgets::EditableLayout(this);
     p->quickSetupDialog = new QuickSeupDialog(this);
 
     setCentralWidget(p->mainLayout);
@@ -152,7 +153,8 @@ void MainWindow::setupUi()
     p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
     viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
     connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSeupDialog::show);
-    connect(p->quickSetupDialog, &QuickSeupDialog::layoutChanged, p->mainLayout, &EditableLayout::changeLayout);
+    connect(p->quickSetupDialog, &QuickSeupDialog::layoutChanged, p->mainLayout,
+            &Widgets::EditableLayout::changeLayout);
 
     QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
     p->rescan = new QAction(rescanIcon, tr("&Rescan Library"), this);
@@ -164,7 +166,7 @@ void MainWindow::setupUi()
     p->openSettings = new QAction(settingsIcon, tr("&Settings"), this);
     p->actionManager->registerAction(p->openSettings, Core::Constants::Actions::Settings);
     libraryMenu->addAction(p->openSettings, Core::Constants::Groups::Three);
-    connect(p->openSettings, &QAction::triggered, p->settingsDialog, &SettingsDialog::show);
+    connect(p->openSettings, &QAction::triggered, p->settingsDialog, &Widgets::SettingsDialog::show);
 
     if(p->settings->value(Settings::Setting::FirstRun).toBool()) {
         // Delay showing until size of parent widget (this) is set.
@@ -192,3 +194,4 @@ void MainWindow::enableLayoutEditing(bool enable)
 {
     p->settings->set(Settings::Setting::LayoutEditing, enable);
 }
+}; // namespace Core

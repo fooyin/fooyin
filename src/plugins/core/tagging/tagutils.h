@@ -34,7 +34,7 @@ class Tag;
 
 #include <QStringList>
 
-namespace Tagging {
+namespace Core::Tagging {
 
 Q_NAMESPACE
 
@@ -73,4 +73,4 @@ TagLib::String convertString(const QString& string);
 TagLib::String convertString(int i);
 TagLib::StringList convertStringList(const QStringList& str);
 QStringList convertStringList(const TagLib::StringList& str);
-}; // namespace Tagging
+}; // namespace Core::Tagging

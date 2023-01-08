@@ -31,16 +31,16 @@ namespace Filters {
 struct FilterManager::Private
 {
     FilterDatabaseManager databaseManager;
-    ThreadManager* threadManager;
-    Library::MusicLibrary* library;
-    TrackPtrList filteredTracks;
+    Core::ThreadManager* threadManager;
+    Core::Library::MusicLibrary* library;
+    Core::TrackPtrList filteredTracks;
     LibraryFilters filters;
     ActiveFilters activeFilters;
     QString searchFilter;
 
     Private()
-        : threadManager{PluginSystem::object<ThreadManager>()}
-        , library{PluginSystem::object<Library::MusicLibrary>()}
+        : threadManager{PluginSystem::object<Core::ThreadManager>()}
+        , library{PluginSystem::object<Core::Library::MusicLibrary>()}
     {
         threadManager->moveToNewThread(&databaseManager);
     }
@@ -57,24 +57,24 @@ FilterManager::FilterManager(QObject* parent)
     connect(this, &FilterManager::loadFilteredTracks, &p->databaseManager, &FilterDatabaseManager::filterTracks);
     connect(&p->databaseManager, &FilterDatabaseManager::tracksFiltered, this, &FilterManager::filteredTracksLoaded);
 
-    connect(this, &FilterManager::filteredTracks, p->library, &Library::MusicLibrary::tracksChanged);
-    connect(p->library, &Library::MusicLibrary::tracksUpdated, this, [this] {
+    connect(this, &FilterManager::filteredTracks, p->library, &Core::Library::MusicLibrary::tracksChanged);
+    connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, this, [this] {
         emit filteredItems();
     });
-    connect(p->library, &Library::MusicLibrary::tracksAdded, this, [this] {
+    connect(p->library, &Core::Library::MusicLibrary::tracksAdded, this, [this] {
         emit filteredItems();
     });
-    connect(p->library, &Library::MusicLibrary::tracksDeleted, this, [this] {
+    connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, this, [this] {
         emit filteredItems();
     });
-    connect(p->library, &Library::MusicLibrary::libraryRemoved, this, [this] {
+    connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, this, [this] {
         emit filteredItems();
     });
 
     p->library->addInteractor(this);
 }
 
-TrackPtrList FilterManager::tracks()
+Core::TrackPtrList FilterManager::tracks()
 {
     return p->filteredTracks;
 }
@@ -115,7 +115,7 @@ int FilterManager::registerFilter(Filters::FilterType type)
         filter = findFilter(type);
     }
     else {
-        filter.sortOrder = Library::SortOrder::TitleAsc;
+        filter.sortOrder = Core::Library::SortOrder::TitleAsc;
         filter.type = type;
         filter.index = static_cast<int>(p->filters.size());
         p->filters.emplace_back(filter);
@@ -152,7 +152,7 @@ void FilterManager::resetFilter(Filters::FilterType type)
     emit filterReset(type, p->activeFilters.at(type));
 }
 
-Library::SortOrder FilterManager::filterOrder(Filters::FilterType type)
+Core::Library::SortOrder FilterManager::filterOrder(Filters::FilterType type)
 {
     for(const auto& filter : p->filters) {
         if(filter.type == type) {
@@ -162,7 +162,7 @@ Library::SortOrder FilterManager::filterOrder(Filters::FilterType type)
     return {};
 }
 
-void FilterManager::changeFilterOrder(Filters::FilterType type, Library::SortOrder order)
+void FilterManager::changeFilterOrder(Filters::FilterType type, Core::Library::SortOrder order)
 {
     for(auto& filter : p->filters) {
         if(filter.type == type) {
@@ -182,12 +182,12 @@ void FilterManager::items(Filters::FilterType type)
     }
 }
 
-void FilterManager::getAllItems(Filters::FilterType type, Library::SortOrder order)
+void FilterManager::getAllItems(Filters::FilterType type, Core::Library::SortOrder order)
 {
     emit loadAllItems(type, order);
 }
 
-void FilterManager::getItemsByFilter(Filters::FilterType type, Library::SortOrder order)
+void FilterManager::getItemsByFilter(Filters::FilterType type, Core::Library::SortOrder order)
 {
     emit loadItemsByFilter(type, p->activeFilters, p->searchFilter, order);
 }
@@ -203,7 +203,7 @@ bool FilterManager::tracksHaveFiltered()
     return !p->filteredTracks.empty();
 }
 
-void FilterManager::changeSelection(const IdSet& indexes, Filters::FilterType type, int index)
+void FilterManager::changeSelection(const Core::IdSet& indexes, Filters::FilterType type, int index)
 {
     const bool filterAll = contains(indexes, -1);
 
@@ -229,7 +229,7 @@ void FilterManager::changeSelection(const IdSet& indexes, Filters::FilterType ty
     }
 }
 
-void FilterManager::selectionChanged(const IdSet& indexes, Filters::FilterType type, int index)
+void FilterManager::selectionChanged(const Core::IdSet& indexes, Filters::FilterType type, int index)
 {
     if(indexes.empty()) {
         return;
@@ -269,7 +269,7 @@ void FilterManager::itemsHaveLoaded(Filters::FilterType type, FilterEntries resu
     emit itemsLoaded(type, std::move(result));
 }
 
-void FilterManager::filteredTracksLoaded(TrackPtrList tracks)
+void FilterManager::filteredTracksLoaded(Core::TrackPtrList tracks)
 {
     p->filteredTracks = std::move(tracks);
     emit filteredTracks();

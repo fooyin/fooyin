@@ -22,13 +22,14 @@
 #include "core/gui/fywidget.h"
 #include "splitter.h"
 
-namespace Widgets {
-class WidgetProvider;
-}
-
 class QHBoxLayout;
-class Dummy;
+
+namespace Core {
 class ActionManager;
+
+namespace Widgets {
+class Dummy;
+class WidgetProvider;
 
 class SplitterWidget : public FyWidget
 {
@@ -93,3 +94,5 @@ public:
     }
     ~HoriztonalSplitterWidget() override = default;
 };
+}; // namespace Widgets
+}; // namespace Core

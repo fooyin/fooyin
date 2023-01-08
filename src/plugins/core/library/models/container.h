@@ -21,11 +21,10 @@
 
 #include "libraryitem.h"
 
-#include <QList>
 #include <QString>
 
+namespace Core {
 class Track;
-
 class Container : public LibraryItem
 {
 public:
@@ -54,3 +53,4 @@ private:
     quint64 m_duration;
     int m_trackCount;
 };
+}; // namespace Core

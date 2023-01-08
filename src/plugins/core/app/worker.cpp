@@ -22,6 +22,7 @@
 #include <QAbstractEventDispatcher>
 #include <QThread>
 
+namespace Core {
 Worker::Worker(QObject* parent)
     : QObject(parent)
     , m_state(State::Idle)
@@ -54,3 +55,4 @@ bool Worker::mayRun() const
     dispatcher->processEvents(QEventLoop::AllEvents);
     return m_state == State::Running;
 }
+}; // namespace Core

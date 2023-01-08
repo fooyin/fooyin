@@ -25,6 +25,7 @@
 
 #include <utils/helpers.h>
 
+namespace Core::Library {
 LibraryDatabaseManager::LibraryDatabaseManager(QObject* parent)
     : Worker(parent)
     , m_libraryDatabase(DB::Database::instance()->libraryDatabase())
@@ -53,3 +54,4 @@ void LibraryDatabaseManager::updateTracks(const TrackPtrList& tracks)
         }
     }
 }
+}; // namespace Core::Library

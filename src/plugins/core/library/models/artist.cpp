@@ -19,6 +19,7 @@
 
 #include "artist.h"
 
+namespace Core {
 Artist::Artist(QString name)
     : LibraryItem()
     , m_id(-1)
@@ -41,3 +42,4 @@ QString Artist::name() const
 {
     return m_name;
 }
+}; // namespace Core

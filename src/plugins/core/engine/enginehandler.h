@@ -25,14 +25,18 @@
 #include <QObject>
 #include <QThread>
 
+namespace Core {
+namespace Player {
 class PlayerManager;
+}; // namespace Player
 
+namespace Engine {
 class EngineHandler : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit EngineHandler(PlayerManager* playerManager, QObject* parent = nullptr);
+    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
     ~EngineHandler() override;
 
 signals:
@@ -46,3 +50,5 @@ protected:
 private:
     EngineMpv m_engine;
 };
+}; // namespace Engine
+} // namespace Core

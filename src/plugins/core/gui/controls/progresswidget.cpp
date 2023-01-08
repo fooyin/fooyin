@@ -24,11 +24,12 @@
 #include "core/library/models/track.h"
 #include "core/settings/settings.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QHBoxLayout>
 #include <QSlider>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 
+namespace Core::Widgets {
 struct ProgressWidget::Private
 {
     QHBoxLayout* layout;
@@ -150,3 +151,4 @@ void ProgressWidget::sliderDropped()
     const auto pos = p->slider->value();
     emit movedSlider(pos);
 }
+}; // namespace Core::Widgets

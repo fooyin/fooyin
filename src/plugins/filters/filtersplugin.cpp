@@ -43,7 +43,7 @@ void FiltersPlugin::finalise()
     m_filterManager = new FilterManager(this);
     PluginSystem::addObject(m_filterManager);
 
-    auto* factory = PluginSystem::object<Widgets::WidgetFactory>();
+    auto* factory = PluginSystem::object<Core::Widgets::WidgetFactory>();
     factory->registerClass<FilterWidget>("Filter", {"Filter"});
     factory->registerClass<GenreFilter>("Genre", {"Filter"});
     factory->registerClass<YearFilter>("Year", {"Filter"});

@@ -21,6 +21,7 @@
 
 #include <QLabel>
 
+namespace Core::Widgets {
 class ClickableLabel : public QLabel
 {
     Q_OBJECT
@@ -37,3 +38,4 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void enterEvent(QEnterEvent* event) override;
 };
+}; // namespace Core::Widgets

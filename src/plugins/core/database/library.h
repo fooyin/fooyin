@@ -21,19 +21,24 @@
 
 #include "module.h"
 
+namespace Core {
+
 namespace Library {
 class LibraryInfo;
-}
+}; // namespace Library
 
 namespace DB {
+using IdLibraryMap = QMap<int, Core::Library::LibraryInfo>;
+
 class Library : private Module
 {
 public:
     explicit Library(const QString& connectionName);
     ~Library() override;
 
-    QMap<int, ::Library::LibraryInfo> getAllLibraries();
+    IdLibraryMap getAllLibraries();
     bool insertLibrary(int id, const QString& path, const QString& name);
     bool removeLibrary(int id);
 };
-} // namespace DB
+}; // namespace DB
+}; // namespace Core

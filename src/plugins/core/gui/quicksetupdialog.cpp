@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+namespace Core {
 QuickSeupDialog::QuickSeupDialog(QWidget* parent)
     : QDialog{parent}
     , m_layout{new QVBoxLayout(this)}
@@ -97,3 +98,4 @@ void QuickSeupDialog::showEvent(QShowEvent* event)
 
     QDialog::showEvent(event);
 }
+}; // namespace Core

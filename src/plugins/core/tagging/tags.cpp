@@ -27,7 +27,7 @@
 #include <taglib/fileref.h>
 #include <taglib/tfilestream.h>
 
-namespace Tagging {
+namespace Core::Tagging {
 struct ReadingProperties
 {
     TagLib::AudioProperties::ReadStyle readStyle{TagLib::AudioProperties::ReadStyle::Fast};
@@ -190,11 +190,13 @@ bool writeMetaData(const Track& track)
     const auto discTotal = track.discTotal();
 
     if(trackTotal > 0) {
-        trackNumber += "/" + convertString(trackTotal);
+        trackNumber += "/";
+        trackNumber.append(convertString(trackTotal));
     }
 
     if(discTotal > 0) {
-        disc += "/" + convertString(discTotal);
+        disc += "/";
+        disc.append(convertString(discTotal));
     }
 
     auto parsedTag = tagsFromFile(fileRef);
@@ -219,4 +221,4 @@ bool writeMetaData(const Track& track)
     return fileRef.save();
 }
 
-} // namespace Tagging
+} // namespace Core::Tagging

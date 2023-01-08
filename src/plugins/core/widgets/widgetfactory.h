@@ -24,7 +24,7 @@
 #include <QDebug>
 #include <map>
 
-namespace Widgets {
+namespace Core::Widgets {
 class WidgetFactory : public QObject
 {
     Q_OBJECT
@@ -87,4 +87,4 @@ public:
         return widgets;
     }
 };
-} // namespace Widgets
+} // namespace Core::Widgets

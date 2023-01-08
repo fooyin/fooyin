@@ -6,6 +6,7 @@ class QVBoxLayout;
 class QListWidget;
 class QPushButton;
 
+namespace Core {
 class QuickSeupDialog : public QDialog
 {
     Q_OBJECT
@@ -22,10 +23,11 @@ protected:
     void setupList();
     void changeLayout();
 
-    void showEvent(QShowEvent *event) override;
+    void showEvent(QShowEvent* event) override;
 
 private:
     QVBoxLayout* m_layout;
     QListWidget* m_layoutList;
     QPushButton* m_accept;
 };
+}; // namespace Core

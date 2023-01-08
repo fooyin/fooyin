@@ -21,6 +21,7 @@
 
 #include <QObject>
 
+namespace Core {
 class Worker : public QObject
 {
 public:
@@ -44,3 +45,4 @@ public:
 private:
     State m_state;
 };
+}; // namespace Core

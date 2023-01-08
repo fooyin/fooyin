@@ -21,6 +21,7 @@
 
 #include <QList>
 
+namespace Core::Widgets {
 class InfoItem
 {
 public:
@@ -49,3 +50,4 @@ private:
     QString m_title;
     InfoItem* m_parent;
 };
+}; // namespace Core::Widgets

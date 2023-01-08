@@ -26,7 +26,7 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
-namespace Widgets {
+namespace Core::Widgets {
 struct WidgetProvider::Private
 {
     Widgets::WidgetFactory* widgetFactory;
@@ -56,4 +56,4 @@ SplitterWidget* WidgetProvider::createSplitter(Qt::Orientation type, QWidget* pa
     splitter->setOrientation(type);
     return splitter;
 }
-}; // namespace Widgets
+}; // namespace Core::Widgets

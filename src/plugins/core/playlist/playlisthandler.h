@@ -21,16 +21,18 @@
 
 #include "playlistmanager.h"
 
+namespace Core::Player {
 class PlayerManager;
+};
 
-namespace Playlist {
+namespace Core::Playlist {
 class PlaylistHandler : public QObject,
                         PlaylistManager
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistHandler(PlayerManager* playerManager, QObject* parent = nullptr);
+    explicit PlaylistHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
     Playlist* playlist(int id) override;
@@ -54,7 +56,7 @@ protected:
 
 private:
     QMap<int, Playlist*> m_playlists;
-    PlayerManager* m_playerManager;
+    Player::PlayerManager* m_playerManager;
     int m_currentPlaylistIndex;
 };
-} // namespace Playlist
+} // namespace Core::Playlist

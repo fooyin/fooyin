@@ -30,6 +30,7 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
+namespace Core::Widgets {
 SplitterWidget::SplitterWidget(QWidget* parent)
     : FyWidget{parent}
     , m_layout{new QHBoxLayout(this)}
@@ -202,3 +203,4 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
         }
     }
 }
+}; // namespace Core::Widgets

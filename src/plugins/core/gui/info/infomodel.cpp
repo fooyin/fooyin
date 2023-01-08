@@ -25,6 +25,7 @@
 
 #include <utils/utils.h>
 
+namespace Core::Widgets {
 InfoModel::InfoModel(QObject* parent)
     : QAbstractItemModel(parent)
     , m_root(std::make_unique<InfoItem>())
@@ -180,3 +181,4 @@ QModelIndex InfoModel::parent(const QModelIndex& child) const
     // All rows are parents of root
     return {};
 }
+}; // namespace Core::Widgets

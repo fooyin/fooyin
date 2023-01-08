@@ -31,6 +31,7 @@
 #include <QMenu>
 #include <pluginsystem/pluginmanager.h>
 
+namespace Core::Widgets {
 struct ControlWidget::Private
 {
     QHBoxLayout* layout;
@@ -39,10 +40,10 @@ struct ControlWidget::Private
     VolumeControl* volumeControls;
     ProgressWidget* progress;
 
-    PlayerManager* playerManager;
+    Player::PlayerManager* playerManager;
 
     explicit Private()
-        : playerManager(PluginSystem::object<PlayerManager>())
+        : playerManager(PluginSystem::object<Player::PlayerManager>())
     { }
 };
 
@@ -80,22 +81,24 @@ void ControlWidget::setupUi()
 
 void ControlWidget::setupConnections()
 {
-    connect(p->playerManager, &PlayerManager::currentTrackChanged, this, &ControlWidget::currentTrackChanged);
-    connect(p->playerManager, &PlayerManager::positionChanged, this, &ControlWidget::currentPositionChanged);
-    connect(p->playerManager, &PlayerManager::playStateChanged, p->playControls, &PlayerControl::stateChanged);
-    connect(p->playerManager, &PlayerManager::playStateChanged, p->progress, &ProgressWidget::stateChanged);
-    connect(p->playControls, &PlayerControl::stopClicked, p->playerManager, &PlayerManager::stop);
-    connect(p->playControls, &PlayerControl::nextClicked, p->playerManager, &PlayerManager::next);
-    connect(p->playControls, &PlayerControl::prevClicked, p->playerManager, &PlayerManager::previous);
+    connect(p->playerManager, &Player::PlayerManager::currentTrackChanged, this, &ControlWidget::currentTrackChanged);
+    connect(p->playerManager, &Player::PlayerManager::positionChanged, this, &ControlWidget::currentPositionChanged);
+    connect(p->playerManager, &Player::PlayerManager::playStateChanged, p->playControls, &PlayerControl::stateChanged);
+    connect(p->playerManager, &Player::PlayerManager::playStateChanged, p->progress, &ProgressWidget::stateChanged);
+    connect(p->playControls, &PlayerControl::stopClicked, p->playerManager, &Player::PlayerManager::stop);
+    connect(p->playControls, &PlayerControl::nextClicked, p->playerManager, &Player::PlayerManager::next);
+    connect(p->playControls, &PlayerControl::prevClicked, p->playerManager, &Player::PlayerManager::previous);
     connect(p->playControls, &PlayerControl::stopClicked, p->progress, &ProgressWidget::reset);
-    connect(p->playControls, &PlayerControl::pauseClicked, p->playerManager, &PlayerManager::playPause);
-    connect(p->volumeControls, &VolumeControl::volumeUp, p->playerManager, &PlayerManager::volumeUp);
-    connect(p->volumeControls, &VolumeControl::volumeDown, p->playerManager, &PlayerManager::volumeDown);
-    connect(p->volumeControls, &VolumeControl::volumeChanged, p->playerManager, &PlayerManager::setVolume);
-    connect(p->progress, &ProgressWidget::movedSlider, p->playerManager, &PlayerManager::changePosition);
-    connect(p->playlistControls, &PlaylistControl::repeatClicked, p->playerManager, &PlayerManager::setRepeat);
-    connect(p->playlistControls, &PlaylistControl::shuffleClicked, p->playerManager, &PlayerManager::setShuffle);
-    connect(p->playerManager, &PlayerManager::playModeChanged, p->playlistControls, &PlaylistControl::playModeChanged);
+    connect(p->playControls, &PlayerControl::pauseClicked, p->playerManager, &Player::PlayerManager::playPause);
+    connect(p->volumeControls, &VolumeControl::volumeUp, p->playerManager, &Player::PlayerManager::volumeUp);
+    connect(p->volumeControls, &VolumeControl::volumeDown, p->playerManager, &Player::PlayerManager::volumeDown);
+    connect(p->volumeControls, &VolumeControl::volumeChanged, p->playerManager, &Player::PlayerManager::setVolume);
+    connect(p->progress, &ProgressWidget::movedSlider, p->playerManager, &Player::PlayerManager::changePosition);
+    connect(p->playlistControls, &PlaylistControl::repeatClicked, p->playerManager, &Player::PlayerManager::setRepeat);
+    connect(p->playlistControls, &PlaylistControl::shuffleClicked, p->playerManager,
+            &Player::PlayerManager::setShuffle);
+    connect(p->playerManager, &Player::PlayerManager::playModeChanged, p->playlistControls,
+            &PlaylistControl::playModeChanged);
 }
 
 QString ControlWidget::name() const
@@ -121,3 +124,4 @@ void ControlWidget::currentPositionChanged(qint64 ms)
 {
     p->progress->setCurrentPosition(static_cast<int>(ms));
 }
+}; // namespace Core::Widgets

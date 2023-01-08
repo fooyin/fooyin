@@ -23,6 +23,7 @@
 #include "artist.h"
 #include "track.h"
 
+namespace Core {
 using TrackPtrList = std::vector<Track*>;
 using TrackHash = std::unordered_map<int, Track*>;
 using TrackPathMap = std::unordered_map<QString, Track*>;
@@ -33,3 +34,4 @@ using ArtistHash = std::unordered_map<int, Artist>;
 using GenreHash = std::unordered_map<int, QString>;
 
 using ContainerHash = std::unordered_map<QString, std::unique_ptr<Container>>;
+}; // namespace Core

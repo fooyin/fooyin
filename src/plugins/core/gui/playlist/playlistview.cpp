@@ -27,7 +27,7 @@
 #include <QScrollBar>
 #include <QSortFilterProxyModel>
 
-namespace Library {
+namespace Core::Widgets {
 PlaylistView::PlaylistView(QWidget* parent)
     : QTreeView(parent)
 {
@@ -65,4 +65,4 @@ void PlaylistView::contextMenuEvent(QContextMenuEvent* e)
 {
     Q_UNUSED(e)
 }
-} // namespace Library
+} // namespace Core::Widgets

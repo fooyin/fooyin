@@ -21,6 +21,7 @@
 
 #include <QObject>
 
+namespace Core {
 class Application : public QObject
 {
     Q_OBJECT
@@ -36,3 +37,4 @@ private:
     struct Private;
     std::unique_ptr<Application::Private> p;
 };
+}; // namespace Core

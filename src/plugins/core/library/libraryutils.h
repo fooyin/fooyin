@@ -23,13 +23,11 @@
 
 class QString;
 
-namespace Library {
-namespace Util {
-    QString coverInDirectory(const QString& directory);
-    QString calcAlbumHash(const QString& albumName, const QString& albumArtist, int year);
-    QString calcCoverHash(const QString& albumName, const QString& albumArtist);
-    QPixmap getCover(const QString& path, int size);
-    bool saveCover(const QPixmap& cover, const QString& hash);
-    QString storeCover(const Track& track);
-}; // namespace Util
-}; // namespace Library
+namespace Core::Library::Utils {
+QString coverInDirectory(const QString& directory);
+QString calcAlbumHash(const QString& albumName, const QString& albumArtist, int year);
+QString calcCoverHash(const QString& albumName, const QString& albumArtist);
+QPixmap getCover(const QString& path, int size);
+bool saveCover(const QPixmap& cover, const QString& hash);
+QString storeCover(const Track& track);
+}; // namespace Core::Library::Utils

@@ -34,10 +34,10 @@
 #include <utility>
 #include <utils/helpers.h>
 
-namespace Library {
+namespace Core::Library {
 struct MusicLibrary::Private
 {
-    LibraryPlaylistInterface* playlistInteractor;
+    Playlist::LibraryPlaylistInterface* playlistInteractor;
     LibraryManager* libraryManager;
     ThreadManager* threadManager;
     LibraryScanner scanner;
@@ -51,7 +51,8 @@ struct MusicLibrary::Private
 
     SortOrder order{Library::SortOrder::YearDesc};
 
-    Private(LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager, ThreadManager* threadManager)
+    Private(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
+            ThreadManager* threadManager)
         : playlistInteractor{playlistInteractor}
         , libraryManager{libraryManager}
         , threadManager{threadManager}
@@ -59,7 +60,7 @@ struct MusicLibrary::Private
     { }
 };
 
-MusicLibrary::MusicLibrary(LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
+MusicLibrary::MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
                            ThreadManager* threadManager, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(playlistInteractor, libraryManager, threadManager)}
@@ -272,4 +273,4 @@ void MusicLibrary::getAllTracks()
 {
     emit loadAllTracks();
 }
-} // namespace Library
+} // namespace Core::Library

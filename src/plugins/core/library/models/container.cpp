@@ -21,6 +21,7 @@
 
 #include "track.h"
 
+namespace Core {
 Container::Container(QString title)
     : LibraryItem()
     , m_title(std::move(title))
@@ -82,3 +83,4 @@ void Container::reset()
     m_trackCount = 0;
     m_duration = 0;
 }
+}; // namespace Core

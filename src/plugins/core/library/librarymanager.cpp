@@ -25,7 +25,7 @@
 
 #include <utils/utils.h>
 
-namespace Library {
+namespace Core::Library {
 bool checkNewPath(const QString& path, const QMap<int, LibraryInfo>& libraries, qint8 libraryId = -1)
 {
     if(path.isEmpty()) {
@@ -103,4 +103,4 @@ LibraryInfo LibraryManager::libraryInfo(int id) const
 {
     return m_libraries.value(id);
 }
-} // namespace Library
+} // namespace Core::Library

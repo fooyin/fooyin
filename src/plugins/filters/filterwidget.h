@@ -25,25 +25,35 @@
 #include <core/gui/fywidget.h>
 #include <core/typedefs.h>
 
-class Settings;
-class PlayerManager;
 class QHBoxLayout;
-class WidgetProvider;
+
+namespace Core {
+class Settings;
+
+namespace Player {
+class PlayerManager;
+};
 
 namespace Library {
 class MusicLibrary;
 };
 
+namespace Widgets {
+class WidgetProvider;
+};
+}; // namespace Core
+
 namespace Filters {
 class FilterManager;
 class FilterView;
 class FilterModel;
-class FilterWidget : public FyWidget
+
+class FilterWidget : public Core::Widgets::FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit FilterWidget(Filters::FilterType type = Filters::FilterType::AlbumArtist, QWidget* parent = nullptr);
+    explicit FilterWidget(FilterType type = FilterType::AlbumArtist, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();
@@ -66,7 +76,7 @@ public:
     void setAltRowColors(bool altColours);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(ActionContainer* menu) override;
+    void layoutEditingMenu(Core::ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
     void loadLayout(QJsonObject& object) override;
 
@@ -90,7 +100,7 @@ private:
     FilterManager* m_manager;
     FilterView* m_filter;
     FilterModel* m_model;
-    Settings* m_settings;
+    Core::Settings* m_settings;
 };
 
 class GenreFilter : public FilterWidget

@@ -26,20 +26,21 @@ class QMenu;
 class QMenuBar;
 class QAction;
 
-struct Group
-{
-    explicit Group(const Util::Id& id)
-        : id{id}
-    { }
-    Util::Id id;
-    QList<QObject*> items;
-};
-
+namespace Core {
 class ActionContainer : public QObject
 {
     Q_OBJECT
 
 public:
+    struct Group
+    {
+        explicit Group(const Util::Id& id)
+            : id{id}
+        { }
+        Util::Id id;
+        QList<QObject*> items;
+    };
+
     explicit ActionContainer(const Util::Id& id, QObject* parent = nullptr);
     ~ActionContainer() override;
 
@@ -135,3 +136,4 @@ protected:
 private:
     QMenuBar* m_menuBar;
 };
+}; // namespace Core

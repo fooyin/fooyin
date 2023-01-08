@@ -25,21 +25,28 @@
 #include <QAbstractItemModel>
 #include <QPixmap>
 
-using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
-
-class Container;
+namespace Core {
 class Settings;
+
+namespace Player {
 class PlayerManager;
+};
 
 namespace Library {
 class MusicLibrary;
+class Container;
+}; // namespace Library
+
+namespace Widgets {
+using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
 class PlaylistModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistModel(PlayerManager* playerManager, Library::MusicLibrary* library, QObject* parent = nullptr);
+    explicit PlaylistModel(Player::PlayerManager* playerManager, Library::MusicLibrary* library,
+                           QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     void setupModelData();
@@ -82,10 +89,11 @@ private:
     std::unique_ptr<PlaylistItem> m_root;
     PlaylistItemHash m_nodes;
     ContainerHash m_containers;
-    PlayerManager* m_playerManager;
+    Player::PlayerManager* m_playerManager;
     Library::MusicLibrary* m_library;
     Settings* m_settings;
     QPixmap m_playingIcon;
     QPixmap m_pausedIcon;
 };
-} // namespace Library
+} // namespace Widgets
+}; // namespace Core

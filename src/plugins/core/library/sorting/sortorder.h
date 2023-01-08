@@ -19,13 +19,13 @@
 
 #pragma once
 
-namespace Library {
-enum class SortOrder : unsigned char
+namespace Core::Library {
+enum class SortOrder : unsigned int
 {
     NoSorting = 0,
-    YearAsc,
-    YearDesc,
-    TitleAsc,
-    TitleDesc
+    YearAsc = 1,
+    YearDesc = 2,
+    TitleAsc = 3,
+    TitleDesc = 4
 };
-} // namespace Library
+} // namespace Core::Library

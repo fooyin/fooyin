@@ -29,6 +29,7 @@
 #include <utils/paths.h>
 #include <utils/utils.h>
 
+namespace Core {
 Settings::Settings(QObject* parent)
     : QObject(parent)
 {
@@ -226,3 +227,4 @@ QString Settings::getKeyString(Setting key)
     keyString += "/" + EnumHelper::toString(key);
     return keyString;
 }
+}; // namespace Core

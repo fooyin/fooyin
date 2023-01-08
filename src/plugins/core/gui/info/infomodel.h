@@ -21,7 +21,10 @@
 
 #include <QAbstractItemModel>
 
+namespace Core {
 class Track;
+
+namespace Widgets {
 class InfoItem;
 
 class InfoModel : public QAbstractItemModel
@@ -44,3 +47,5 @@ private:
     std::unique_ptr<InfoItem> m_root;
     Track* m_currentTrack;
 };
+}; // namespace Widgets
+}; // namespace Core

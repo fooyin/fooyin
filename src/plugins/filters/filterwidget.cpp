@@ -45,9 +45,9 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     , m_type(type)
     , m_index(0)
     , m_manager(PluginSystem::object<FilterManager>())
-    , m_filter(new FilterView(PluginSystem::object<PlayerManager>(), this))
+    , m_filter(new FilterView(PluginSystem::object<Core::Player::PlayerManager>(), this))
     , m_model(new FilterModel(m_type, m_index, m_filter))
-    , m_settings(PluginSystem::object<Settings>())
+    , m_settings(PluginSystem::object<Core::Settings>())
 {
     setObjectName(FilterWidget::name());
     m_layout->setContentsMargins(0, 0, 0, 0);
@@ -55,9 +55,9 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     m_filter->setModel(m_model);
     m_filter->setItemDelegate(new FilterDelegate(this));
     setupConnections();
-    setHeaderHidden(m_settings->value(Settings::Setting::FilterHeader).toBool());
-    setScrollbarHidden(m_settings->value(Settings::Setting::FilterScrollBar).toBool());
-    setAltRowColors(m_settings->value(Settings::Setting::FilterAltColours).toBool());
+    setHeaderHidden(m_settings->value(Core::Settings::Setting::FilterHeader).toBool());
+    setScrollbarHidden(m_settings->value(Core::Settings::Setting::FilterScrollBar).toBool());
+    setAltRowColors(m_settings->value(Core::Settings::Setting::FilterAltColours).toBool());
 }
 
 FilterWidget::~FilterWidget()
@@ -67,9 +67,9 @@ FilterWidget::~FilterWidget()
 
 void FilterWidget::setupConnections()
 {
-    connect(m_settings, &Settings::filterAltColorsChanged, this, &FilterWidget::setAltRowColors);
-    connect(m_settings, &Settings::filterHeaderChanged, this, &FilterWidget::setHeaderHidden);
-    connect(m_settings, &Settings::filterScrollBarChanged, this, &FilterWidget::setScrollbarHidden);
+    connect(m_settings, &Core::Settings::filterAltColorsChanged, this, &FilterWidget::setAltRowColors);
+    connect(m_settings, &Core::Settings::filterHeaderChanged, this, &FilterWidget::setHeaderHidden);
+    connect(m_settings, &Core::Settings::filterScrollBarChanged, this, &FilterWidget::setScrollbarHidden);
 
     connect(m_filter->header(), &FilterView::customContextMenuRequested, this,
             &FilterWidget::customHeaderMenuRequested);
@@ -119,16 +119,16 @@ void FilterWidget::switchOrder()
 {
     const auto order = m_manager->filterOrder(m_type);
     switch(order) {
-        case(Library::SortOrder::TitleAsc):
-            return m_manager->changeFilterOrder(m_type, Library::SortOrder::TitleDesc);
-        case(Library::SortOrder::TitleDesc):
-            return m_manager->changeFilterOrder(m_type, Library::SortOrder::TitleAsc);
-        case(Library::SortOrder::YearAsc):
-            return m_manager->changeFilterOrder(m_type, Library::SortOrder::YearDesc);
-        case(Library::SortOrder::YearDesc):
-            return m_manager->changeFilterOrder(m_type, Library::SortOrder::YearAsc);
-        case(Library::SortOrder::NoSorting):
-            return m_manager->changeFilterOrder(m_type, Library::SortOrder::TitleAsc);
+        case(Core::Library::SortOrder::TitleAsc):
+            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::TitleDesc);
+        case(Core::Library::SortOrder::TitleDesc):
+            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::TitleAsc);
+        case(Core::Library::SortOrder::YearAsc):
+            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::YearDesc);
+        case(Core::Library::SortOrder::YearDesc):
+            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::YearAsc);
+        case(Core::Library::SortOrder::NoSorting):
+            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::TitleAsc);
     }
 }
 
@@ -167,20 +167,20 @@ QString FilterWidget::name() const
     return "Filter";
 }
 
-void FilterWidget::layoutEditingMenu(ActionContainer* menu)
+void FilterWidget::layoutEditingMenu(Core::ActionContainer* menu)
 {
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Settings::Setting::FilterHeader, checked);
+        m_settings->set(Core::Settings::Setting::FilterHeader, checked);
     });
 
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
     QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Settings::Setting::FilterScrollBar, checked);
+        m_settings->set(Core::Settings::Setting::FilterScrollBar, checked);
     });
     menu->addAction(showScrollBar);
 
@@ -188,7 +188,7 @@ void FilterWidget::layoutEditingMenu(ActionContainer* menu)
     altColours->setCheckable(true);
     altColours->setChecked(altRowColors());
     QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Settings::Setting::FilterAltColours, checked);
+        m_settings->set(Core::Settings::Setting::FilterAltColours, checked);
     });
 
     menu->addAction(showHeaders);
@@ -224,16 +224,16 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
 
     QAction titleSort;
     titleSort.setText("Title");
-    titleSort.setData(QVariant::fromValue<Library::SortOrder>(Library::SortOrder::TitleAsc));
+    titleSort.setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::TitleAsc));
     titleSort.setCheckable(true);
-    titleSort.setChecked(order == Library::SortOrder::TitleAsc || order == Library::SortOrder::TitleDesc);
+    titleSort.setChecked(order == Core::Library::SortOrder::TitleAsc || order == Core::Library::SortOrder::TitleDesc);
     orderMenu.addAction(&titleSort);
 
     QAction yearSort;
     yearSort.setText("Year");
-    yearSort.setData(QVariant::fromValue<Library::SortOrder>(Library::SortOrder::YearAsc));
+    yearSort.setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::YearAsc));
     yearSort.setCheckable(true);
-    yearSort.setChecked(order == Library::SortOrder::YearAsc || order == Library::SortOrder::YearDesc);
+    yearSort.setChecked(order == Core::Library::SortOrder::YearAsc || order == Core::Library::SortOrder::YearDesc);
     orderMenu.addAction(&yearSort);
 
     sortOrder.addAction(&titleSort);
@@ -310,7 +310,7 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
         return;
     }
 
-    IdSet ids;
+    Core::IdSet ids;
     for(const auto& index : indexes) {
         if(index.isValid()) {
             const int id = index.data(Filters::Constants::Role::Id).toInt();
@@ -328,7 +328,7 @@ void FilterWidget::editFilter(QAction* action)
 
 void FilterWidget::changeOrder(QAction* action)
 {
-    auto order = action->data().value<Library::SortOrder>();
+    auto order = action->data().value<Core::Library::SortOrder>();
     m_manager->changeFilterOrder(m_type, order);
 }
 

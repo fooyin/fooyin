@@ -21,6 +21,7 @@
 
 #include <QWidget>
 
+namespace Core::Widgets {
 class VolumeControl : public QWidget
 {
     Q_OBJECT
@@ -46,3 +47,4 @@ private:
     struct Private;
     std::unique_ptr<VolumeControl::Private> p;
 };
+}; // namespace Core::Widgets

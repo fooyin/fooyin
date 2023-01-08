@@ -22,14 +22,14 @@
 #include "core/player/playermanager.h"
 #include "playlist.h"
 
-namespace Playlist {
-PlaylistHandler::PlaylistHandler(PlayerManager* playerManager, QObject* parent)
+namespace Core::Playlist {
+PlaylistHandler::PlaylistHandler(Player::PlayerManager* playerManager, QObject* parent)
     : QObject(parent)
     , m_playerManager(playerManager)
     , m_currentPlaylistIndex(-1)
 {
-    connect(m_playerManager, &PlayerManager::nextTrack, this, &PlaylistHandler::next);
-    connect(m_playerManager, &PlayerManager::previousTrack, this, &PlaylistHandler::previous);
+    connect(m_playerManager, &Player::PlayerManager::nextTrack, this, &PlaylistHandler::next);
+    connect(m_playerManager, &Player::PlayerManager::previousTrack, this, &PlaylistHandler::previous);
 }
 
 PlaylistHandler::~PlaylistHandler()
@@ -136,4 +136,4 @@ void PlaylistHandler::previous()
 {
     activePlaylist()->previous();
 }
-} // namespace Playlist
+} // namespace Core::Playlist

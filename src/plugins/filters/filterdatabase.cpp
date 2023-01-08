@@ -65,17 +65,17 @@ QString getSearchJoins()
 }
 
 FilterDatabase::FilterDatabase(const QString& connectionName)
-    : DB::Module(connectionName)
+    : Core::DB::Module(connectionName)
 { }
 
 FilterDatabase::~FilterDatabase() = default;
 
-bool FilterDatabase::getAllItems(Filters::FilterType type, ::Library::SortOrder order, FilterEntries& result) const
+bool FilterDatabase::getAllItems(Filters::FilterType type, Core::Library::SortOrder order, FilterEntries& result) const
 {
     const auto join = getFilterJoins(type);
     const auto queryText = fetchQueryItems(type, {}, join, order);
     if(!queryText.isEmpty()) {
-        auto query = DB::Query(module());
+        auto query = Core::DB::Query(module());
         query.prepareQuery(queryText);
 
         return dbFetchItems(query, result);
@@ -84,7 +84,7 @@ bool FilterDatabase::getAllItems(Filters::FilterType type, ::Library::SortOrder 
 }
 
 bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
-                                      ::Library::SortOrder order, FilterEntries& result) const
+                                      Core::Library::SortOrder order, FilterEntries& result) const
 {
     if(!filters.empty() || !search.isEmpty()) {
         QString where;
@@ -180,7 +180,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
 
         const auto queryText = fetchQueryItems(type, where, join, order);
         if(!queryText.isEmpty()) {
-            auto query = DB::Query(module());
+            auto query = Core::DB::Query(module());
             query.prepareQuery(queryText);
 
             return dbFetchItems(query, result);
@@ -190,7 +190,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
 }
 
 QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString& where, const QString& join,
-                                        Library::SortOrder order)
+                                        Core::Library::SortOrder order)
 {
     QStringList fields{};
     QString group{};
@@ -202,19 +202,19 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
             fields.append(QStringLiteral("AlbumArtists.Name"));
             group = QStringLiteral("AlbumArtists.ArtistID");
             switch(order) {
-                case(Library::SortOrder::TitleDesc):
+                case(Core::Library::SortOrder::TitleDesc):
                     sortOrder = QStringLiteral("LOWER(AlbumArtists.Name) DESC");
                     break;
-                case(Library::SortOrder::TitleAsc):
+                case(Core::Library::SortOrder::TitleAsc):
                     sortOrder = QStringLiteral("LOWER(AlbumArtists.Name)");
                     break;
-                case(Library::SortOrder::YearDesc):
+                case(Core::Library::SortOrder::YearDesc):
                     sortOrder = QStringLiteral("Tracks.Year, LOWER(AlbumArtists.Name)");
                     break;
-                case(Library::SortOrder::YearAsc):
+                case(Core::Library::SortOrder::YearAsc):
                     sortOrder = QStringLiteral("Tracks.Year ASC, LOWER(AlbumArtists.Name)");
                     break;
-                case(Library::SortOrder::NoSorting):
+                case(Core::Library::SortOrder::NoSorting):
                     break;
             }
             break;
@@ -229,19 +229,19 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
             fields.append(QStringLiteral("Albums.Title"));
             group = QStringLiteral("Albums.AlbumID");
             switch(order) {
-                case(Library::SortOrder::TitleDesc):
+                case(Core::Library::SortOrder::TitleDesc):
                     sortOrder = QStringLiteral("LOWER(Albums.Title) DESC");
                     break;
-                case(Library::SortOrder::TitleAsc):
+                case(Core::Library::SortOrder::TitleAsc):
                     sortOrder = QStringLiteral("LOWER(Albums.Title)");
                     break;
-                case(Library::SortOrder::YearDesc):
+                case(Core::Library::SortOrder::YearDesc):
                     sortOrder = QStringLiteral("Albums.Year DESC, LOWER(Albums.Title)");
                     break;
-                case(Library::SortOrder::YearAsc):
+                case(Core::Library::SortOrder::YearAsc):
                     sortOrder = QStringLiteral("Albums.Year ASC, LOWER(Albums.Title)");
                     break;
-                case(Library::SortOrder::NoSorting):
+                case(Core::Library::SortOrder::NoSorting):
                     sortOrder = QStringLiteral("LOWER(Albums.Title)");
                     break;
             }
@@ -267,7 +267,7 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
     return queryText;
 }
 
-bool FilterDatabase::dbFetchItems(DB::Query& q, FilterEntries& result)
+bool FilterDatabase::dbFetchItems(Core::DB::Query& q, FilterEntries& result)
 {
     result.clear();
 
@@ -288,7 +288,7 @@ bool FilterDatabase::dbFetchItems(DB::Query& q, FilterEntries& result)
     return true;
 }
 
-const DB::Module* FilterDatabase::module() const
+const Core::DB::Module* FilterDatabase::module() const
 {
     return this;
 }

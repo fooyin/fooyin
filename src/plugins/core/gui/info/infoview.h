@@ -21,9 +21,11 @@
 
 #include <QTreeView>
 
+namespace Core::Widgets {
 class InfoView : public QTreeView
 {
 public:
     explicit InfoView(QWidget* parent = nullptr);
     ~InfoView() override;
 };
+}; // namespace Core::Widgets

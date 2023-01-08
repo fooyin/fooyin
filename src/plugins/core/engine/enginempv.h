@@ -21,9 +21,13 @@
 
 #include "engine.h"
 
+namespace Core::Library {
 class Track;
+}; // namespace Core::Library
+
 class mpv_event;
 
+namespace Core::Engine {
 class EngineMpv : public Engine
 {
     Q_OBJECT
@@ -53,3 +57,4 @@ private:
     struct Private;
     std::unique_ptr<EngineMpv::Private> p;
 };
+} // namespace Core::Engine

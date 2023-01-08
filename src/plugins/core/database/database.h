@@ -23,10 +23,10 @@
 
 class QSqlDatabase;
 
-namespace DB {
+namespace Core::DB {
 class LibraryDatabase;
 class Library;
-class Database : public DB::Module
+class Database : public Module
 {
 public:
     Database(const QString& directory, const QString& filename);
@@ -58,4 +58,4 @@ private:
     struct Private;
     std::unique_ptr<Database::Private> p;
 };
-} // namespace DB
+} // namespace Core::DB

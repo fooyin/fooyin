@@ -27,7 +27,7 @@
 #include <utils/helpers.h>
 #include <utils/utils.h>
 
-namespace {
+namespace Core::DB {
 QMap<QString, QVariant> getTrackBindings(const Track& track)
 {
     return QMap<QString, QVariant>{
@@ -55,9 +55,7 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("LibraryID"), track.libraryId()},
     };
 }
-} // namespace
 
-namespace DB {
 LibraryDatabase::LibraryDatabase(const QString& connectionName, int libraryId)
     : DB::Module(connectionName)
     , m_libraryId(libraryId)
@@ -79,7 +77,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         getAllAlbums(dbAlbums);
 
         for(const auto& album : qAsConst(dbAlbums)) {
-            QString hash = Library::Util::calcAlbumHash(album.title(), album.artist(), album.year());
+            QString hash = Library::Utils::calcAlbumHash(album.title(), album.artist(), album.year());
             albumMap.insert(hash, album);
         }
     }
@@ -157,7 +155,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         }
 
         // Check album id
-        QString hash = Library::Util::calcAlbumHash(track.album(), track.albumArtist(), track.year());
+        QString hash = Library::Utils::calcAlbumHash(track.album(), track.albumArtist(), track.year());
         if(!albumMap.contains(hash)) {
             Album album{track.album()};
             album.setYear(track.year());
@@ -172,7 +170,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         auto album = albumMap.value(hash);
         track.setAlbumId(album.id());
         if(!album.hasCover()) {
-            QString coverPath = Library::Util::storeCover(track);
+            QString coverPath = Library::Utils::storeCover(track);
             album.setCoverPath(coverPath);
         }
         track.setCoverPath(album.coverPath());
@@ -719,4 +717,4 @@ int LibraryDatabase::insertTrack(const Track& track)
 
     return (query.hasError()) ? -1 : query.lastInsertId().toInt();
 }
-} // namespace DB
+} // namespace Core::DB

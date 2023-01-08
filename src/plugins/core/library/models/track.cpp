@@ -25,6 +25,7 @@
 #include <utility>
 #include <utils/helpers.h>
 
+namespace Core {
 Track::Track(QString filepath)
     : LibraryItem()
     , m_enabled(true)
@@ -427,3 +428,4 @@ void Track::resetIds()
     m_artistIds.clear();
     m_genreIds.clear();
 }
+}; // namespace Core

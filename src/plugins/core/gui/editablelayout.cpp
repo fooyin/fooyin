@@ -40,6 +40,7 @@
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
+namespace Core::Widgets {
 struct EditableLayout::Private
 {
     using MenuMap = std::unordered_map<Util::Id, ActionContainer*, Util::Id::IdHash>;
@@ -302,3 +303,4 @@ bool EditableLayout::loadLayout()
     auto layout = QByteArray::fromBase64(p->settings->value(Settings::Setting::Layout).toByteArray());
     return loadLayout(layout);
 }
+}; // namespace Core::Widgets

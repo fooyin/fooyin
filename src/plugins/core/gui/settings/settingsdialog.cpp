@@ -27,6 +27,7 @@
 #include <QSize>
 #include <QStackedWidget>
 
+namespace Core::Widgets {
 struct SettingsDialog::Private
 {
     Library::LibraryManager* libraryManager;
@@ -116,3 +117,4 @@ void SettingsDialog::openPage(Page page)
     p->contentsWidget->setCurrentRow(index);
     show();
 }
+}; // namespace Core::Widgets

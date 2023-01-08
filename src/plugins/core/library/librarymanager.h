@@ -24,12 +24,12 @@
 #include <QMap>
 #include <QObject>
 
-namespace DB {
+namespace Core::DB {
 class Database;
 class Library;
-} // namespace DB
+} // namespace Core::DB
 
-namespace Library {
+namespace Core::Library {
 class LibraryManager : public QObject
 {
     Q_OBJECT
@@ -55,4 +55,4 @@ private:
     DB::Database* m_database;
     DB::Library* m_libraryConnector;
 };
-} // namespace Library
+} // namespace Core::Library

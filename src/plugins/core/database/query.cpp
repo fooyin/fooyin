@@ -23,7 +23,7 @@
 
 #include <QSqlError>
 
-namespace DB {
+namespace Core::DB {
 Query::Query(const Module* module)
     : QSqlQuery(module->db())
     , m_success(false)
@@ -99,4 +99,4 @@ void Query::error(const QString& error) const
 
     showQuery();
 }
-} // namespace DB
+} // namespace Core::DB

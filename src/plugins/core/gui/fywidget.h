@@ -23,8 +23,10 @@
 #include <QWidget>
 #include <utils/id.h>
 
+namespace Core {
 class ActionContainer;
 
+namespace Widgets {
 class FyWidget : public QWidget
 {
     Q_OBJECT
@@ -46,3 +48,5 @@ public:
 private:
     Util::Id m_id;
 };
+}; // namespace Widgets
+}; // namespace Core

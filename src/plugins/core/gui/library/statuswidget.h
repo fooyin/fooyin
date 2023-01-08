@@ -24,6 +24,7 @@
 
 #include <QWidget>
 
+namespace Core::Widgets {
 class StatusWidget : public FyWidget
 {
     Q_OBJECT
@@ -49,3 +50,4 @@ private:
     struct Private;
     std::unique_ptr<StatusWidget::Private> p;
 };
+}; // namespace Core::Widgets

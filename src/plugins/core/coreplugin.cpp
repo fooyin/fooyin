@@ -22,6 +22,7 @@
 
 #include <pluginsystem/pluginmanager.h>
 
+namespace Core {
 CorePlugin::CorePlugin() = default;
 
 CorePlugin::~CorePlugin() = default;
@@ -41,3 +42,4 @@ void CorePlugin::shutdown()
     m_app->shutdown();
     delete m_app;
 }
+}; // namespace Core

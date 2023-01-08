@@ -29,7 +29,7 @@
 #include <QDir>
 #include <utils/utils.h>
 
-namespace Library {
+namespace Core::Library {
 LibraryScanner::LibraryScanner(LibraryManager* libraryManager, QObject* parent)
     : Worker(parent)
     , m_libraryManager(libraryManager)
@@ -68,7 +68,7 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks, const LibraryInfo& 
         else {
             trackMap.emplace(track->filepath(), track);
             if(track->hasCover() && !::Util::File::exists(track->coverPath())) {
-                Util::storeCover(*track);
+                Utils::storeCover(*track);
             }
         }
         if(!mayRun()) {
@@ -210,4 +210,4 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
 
     return true;
 }
-} // namespace Library
+} // namespace Core::Library

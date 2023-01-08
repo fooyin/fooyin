@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "core/gui/fywidget.h"
+#include <core/gui/fywidget.h>
 
 class Splitter;
 
 namespace Filters {
-class SearchWidget : public FyWidget
+class SearchWidget : public Core::Widgets::FyWidget
 {
     Q_OBJECT
 

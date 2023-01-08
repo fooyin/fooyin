@@ -25,7 +25,7 @@
 #include <utils/helpers.h>
 
 namespace Filters {
-void filterByType(Track* track, const ActiveFilters& filters, int& matches)
+void filterByType(Core::Track* track, const ActiveFilters& filters, int& matches)
 {
     for(const auto& [filter, ids] : filters) {
         switch(filter) {
@@ -36,7 +36,7 @@ void filterByType(Track* track, const ActiveFilters& filters, int& matches)
                 break;
             }
             case(Filters::FilterType::Artist): {
-                const IdSet artistIds{track->artistIds()};
+                const Core::IdSet artistIds{track->artistIds()};
                 for(const auto artistId : artistIds) {
                     if(contains(ids, artistId)) {
                         matches += 1;
@@ -57,7 +57,7 @@ void filterByType(Track* track, const ActiveFilters& filters, int& matches)
                 break;
             }
             case(Filters::FilterType::Genre): {
-                const IdSet genreIds{track->genreIds()};
+                const Core::IdSet genreIds{track->genreIds()};
                 for(const int& genreId : genreIds) {
                     if(contains(ids, genreId)) {
                         matches += 1;
@@ -71,15 +71,15 @@ void filterByType(Track* track, const ActiveFilters& filters, int& matches)
 
 FilterDatabaseManager::FilterDatabaseManager(QObject* parent)
     : Worker(parent)
-    , m_filterDatabase(new FilterDatabase(DB::Database::instance()->connectionName()))
+    , m_filterDatabase(new FilterDatabase(Core::DB::Database::instance()->connectionName()))
 { }
 
 FilterDatabaseManager::~FilterDatabaseManager()
 {
-    DB::Database::instance()->closeDatabase();
+    Core::DB::Database::instance()->closeDatabase();
 }
 
-void FilterDatabaseManager::getAllItems(Filters::FilterType type, Library::SortOrder order)
+void FilterDatabaseManager::getAllItems(Filters::FilterType type, Core::Library::SortOrder order)
 {
     FilterEntries items;
     bool success = m_filterDatabase->getAllItems(type, order, items);
@@ -89,7 +89,7 @@ void FilterDatabaseManager::getAllItems(Filters::FilterType type, Library::SortO
 }
 
 void FilterDatabaseManager::getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters,
-                                             const QString& search, Library::SortOrder order)
+                                             const QString& search, Core::Library::SortOrder order)
 {
     FilterEntries items;
     bool success = m_filterDatabase->getItemsByFilter(type, filters, search, order, items);
@@ -98,10 +98,10 @@ void FilterDatabaseManager::getItemsByFilter(Filters::FilterType type, const Act
     }
 }
 
-void FilterDatabaseManager::filterTracks(const TrackPtrList& tracks, const ActiveFilters& filters,
+void FilterDatabaseManager::filterTracks(const Core::TrackPtrList& tracks, const ActiveFilters& filters,
                                          const QString& search)
 {
-    TrackPtrList filteredTracks;
+    Core::TrackPtrList filteredTracks;
 
     for(const auto& track : tracks) {
         int matches = 0;

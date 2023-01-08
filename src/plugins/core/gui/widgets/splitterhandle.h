@@ -21,8 +21,10 @@
 
 #include <QSplitterHandle>
 
+namespace Core {
 class Settings;
 
+namespace Widgets {
 class SplitterHandle : public QSplitterHandle
 {
     Q_OBJECT
@@ -39,3 +41,5 @@ private:
     Settings* m_settings;
     bool m_showHandle;
 };
+}; // namespace Widgets
+}; // namespace Core

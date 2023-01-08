@@ -21,7 +21,7 @@
 
 #include <utils/utils.h>
 
-namespace Library {
+namespace Core::Library {
 LibraryInfo::LibraryInfo(const QString& path, QString name, int id)
     : m_path(Util::File::cleanPath(path))
     , m_name(std::move(name))
@@ -44,4 +44,4 @@ int LibraryInfo::id() const
 {
     return m_id;
 }
-} // namespace Library
+} // namespace Core::Library

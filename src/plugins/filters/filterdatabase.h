@@ -26,21 +26,21 @@
 #include <core/library/sorting/sortorder.h>
 
 namespace Filters {
-class FilterDatabase : public DB::Module
+class FilterDatabase : public Core::DB::Module
 {
 public:
     explicit FilterDatabase(const QString& connectionName);
     ~FilterDatabase() override;
 
-    bool getAllItems(Filters::FilterType type, ::Library::SortOrder order, FilterEntries& result) const;
+    bool getAllItems(Filters::FilterType type, Core::Library::SortOrder order, FilterEntries& result) const;
 
     bool getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
-                          ::Library::SortOrder order, FilterEntries& result) const;
+                          Core::Library::SortOrder order, FilterEntries& result) const;
 
     [[nodiscard]] static QString fetchQueryItems(Filters::FilterType type, const QString& where, const QString& join,
-                                                 ::Library::SortOrder order);
+                                                 Core::Library::SortOrder order);
 
-    static bool dbFetchItems(DB::Query& q, FilterEntries& result);
+    static bool dbFetchItems(Core::DB::Query& q, FilterEntries& result);
 
 protected:
     [[nodiscard]] const Module* module() const;

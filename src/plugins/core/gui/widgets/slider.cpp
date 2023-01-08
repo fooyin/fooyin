@@ -23,6 +23,7 @@
 #include <QProxyStyle>
 #include <QStyle>
 
+namespace Core::Widgets {
 Slider::Slider(Qt::Orientation type, QWidget* parent)
     : QSlider(type, parent)
 {
@@ -48,3 +49,4 @@ void Slider::mousePressEvent(QMouseEvent* e)
     QMouseEvent event(e->type(), e->position(), e->globalPosition(), button, button, e->modifiers());
     QSlider::mousePressEvent(&event);
 }
+}; // namespace Core::Widgets

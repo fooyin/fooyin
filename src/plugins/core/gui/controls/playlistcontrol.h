@@ -23,6 +23,7 @@
 
 #include <QWidget>
 
+namespace Core::Widgets {
 class PlaylistControl : public QWidget
 {
     Q_OBJECT
@@ -46,3 +47,4 @@ private:
     struct Private;
     std::unique_ptr<PlaylistControl::Private> p;
 };
+}; // namespace Core::Widgets

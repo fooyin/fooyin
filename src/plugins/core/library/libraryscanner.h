@@ -25,7 +25,7 @@
 
 class QDir;
 
-namespace Library {
+namespace Core::Library {
 class LibraryManager;
 class LibraryScanner : public Worker
 {
@@ -54,4 +54,4 @@ protected:
 private:
     LibraryManager* m_libraryManager;
 };
-} // namespace Library
+} // namespace Core::Library

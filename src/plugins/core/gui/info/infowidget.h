@@ -26,14 +26,19 @@
 #include <QHBoxLayout>
 #include <QWidget>
 
+namespace Core {
+class Settings;
+class Track;
+
 namespace Library {
 class MusicLibrary;
-}
+}; // namespace Library
 
+namespace Player {
 class PlayerManager;
-class Track;
-class Settings;
+}; // namespace Player
 
+namespace Widgets {
 class InfoWidget : public FyWidget
 {
 public:
@@ -59,10 +64,12 @@ protected:
 
 private:
     Settings* m_settings;
-    PlayerManager* m_playerManager;
+    Player::PlayerManager* m_playerManager;
     Library::MusicLibrary* m_library;
 
     QHBoxLayout* m_layout;
     InfoView m_view;
     InfoModel m_model;
 };
+}; // namespace Widgets
+}; // namespace Core

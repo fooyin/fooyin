@@ -19,6 +19,7 @@
 
 #include "hovermenu.h"
 
+namespace Core::Widgets {
 HoverMenu::HoverMenu(QWidget* parent)
     : QDialog(parent)
 {
@@ -51,3 +52,4 @@ void HoverMenu::closeMenu()
     m_timer.stop();
     accept();
 }
+}; // namespace Core::Widgets

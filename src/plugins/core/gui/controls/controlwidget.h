@@ -23,8 +23,10 @@
 
 #include <QWidget>
 
+namespace Core {
 class Track;
 
+namespace Widgets {
 class ControlWidget : public FyWidget
 {
     Q_OBJECT
@@ -51,3 +53,5 @@ private:
     struct Private;
     std::unique_ptr<ControlWidget::Private> p;
 };
+}; // namespace Widgets
+}; // namespace Core

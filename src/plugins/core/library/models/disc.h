@@ -21,10 +21,8 @@
 
 #include "container.h"
 
-#include <QtGlobal>
-
+namespace Core {
 class Album;
-
 class Disc : public Container
 {
 public:
@@ -36,3 +34,4 @@ public:
 private:
     int m_number;
 };
+}; // namespace Core

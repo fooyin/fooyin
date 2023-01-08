@@ -21,6 +21,7 @@
 
 #include "core/player/playermanager.h"
 
+namespace Core::Engine {
 class Engine : public QObject
 {
     Q_OBJECT
@@ -41,3 +42,4 @@ signals:
     void currentPositionChanged(quint64 ms);
     void trackFinished();
 };
+}; // namespace Core::Engine

@@ -39,13 +39,13 @@
 #include <QScrollBar>
 #include <pluginsystem/pluginmanager.h>
 
-namespace Library {
+namespace Core::Widgets {
 PlaylistWidget::PlaylistWidget(QWidget* parent)
     : FyWidget(parent)
     , m_layout(new QHBoxLayout(this))
     , m_libraryManager(PluginSystem::object<Library::LibraryManager>())
     , m_library(PluginSystem::object<Library::MusicLibrary>())
-    , m_playerManager(PluginSystem::object<PlayerManager>())
+    , m_playerManager(PluginSystem::object<Player::PlayerManager>())
     , m_model(new PlaylistModel(m_playerManager, m_library, this))
     , m_playlist(new PlaylistView(this))
     , m_settings(PluginSystem::object<Settings>())
@@ -97,8 +97,8 @@ void PlaylistWidget::reset()
 
 void PlaylistWidget::setupConnections()
 {
-    connect(m_libraryManager, &LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
-    connect(m_libraryManager, &LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
+    connect(m_libraryManager, &Library::LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
+    connect(m_libraryManager, &Library::LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
 
     connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistWidget::setAltRowColours);
     connect(m_settings, &Settings::playlistHeaderChanged, this, &PlaylistWidget::setHeaderHidden);
@@ -113,11 +113,11 @@ void PlaylistWidget::setupConnections()
             &PlaylistWidget::selectionChanged);
     connect(m_playlist, &PlaylistView::doubleClicked, this, &PlaylistWidget::playTrack);
 
-    connect(m_playerManager, &PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
-    connect(m_playerManager, &PlayerManager::nextTrack, this, &PlaylistWidget::nextTrack);
+    connect(m_playerManager, &Player::PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
+    connect(m_playerManager, &Player::PlayerManager::nextTrack, this, &PlaylistWidget::nextTrack);
 
-    connect(this, &PlaylistWidget::clickedTrack, m_playerManager, &PlayerManager::reset);
-    connect(this, &PlaylistWidget::clickedTrack, m_library, &MusicLibrary::prepareTracks);
+    connect(this, &PlaylistWidget::clickedTrack, m_playerManager, &Player::PlayerManager::reset);
+    connect(this, &PlaylistWidget::clickedTrack, m_library, &Library::MusicLibrary::prepareTracks);
 }
 
 void PlaylistWidget::setAltRowColours(bool altColours)
@@ -333,4 +333,4 @@ void PlaylistWidget::findCurrent()
         //        setCurrentIndex(index.constFirst());
     }
 }
-} // namespace Library
+} // namespace Core::Widgets

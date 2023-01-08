@@ -25,17 +25,22 @@
 
 #include <QThread>
 
-class LibraryPlaylistInterface;
+namespace Core {
 class ThreadManager;
-class MusicLibraryInteractor;
+
+namespace Playlist {
+class LibraryPlaylistInterface;
+};
 
 namespace Library {
+class MusicLibraryInteractor;
+
 class MusicLibrary : public QObject
 {
     Q_OBJECT
 
 public:
-    MusicLibrary(LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
+    MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
                  ThreadManager* threadManager, QObject* parent = nullptr);
     ~MusicLibrary() override;
 
@@ -93,3 +98,4 @@ private:
     std::unique_ptr<MusicLibrary::Private> p;
 };
 } // namespace Library
+}; // namespace Core

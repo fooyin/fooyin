@@ -21,8 +21,11 @@
 
 #include <QMainWindow>
 
-class FyWidget;
+namespace Core {
 class ActionContainer;
+
+namespace Widgets {
+class FyWidget;
 class SplitterWidget;
 
 class EditableLayout : public QWidget
@@ -55,3 +58,5 @@ private:
     struct Private;
     std::unique_ptr<EditableLayout::Private> p;
 };
+}; // namespace Widgets
+}; // namespace Core

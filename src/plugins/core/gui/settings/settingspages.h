@@ -23,11 +23,13 @@
 #include <QTableWidget>
 #include <QWidget>
 
+namespace Core {
 namespace Library {
 class LibraryManager;
 class LibraryInfo;
 } // namespace Library
 
+namespace Widgets {
 class GeneralPage : public QWidget
 {
 public:
@@ -59,3 +61,5 @@ public:
     explicit PlaylistPage(QWidget* parent = nullptr);
     ~PlaylistPage() override;
 };
+}; // namespace Widgets
+}; // namespace Core

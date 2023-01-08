@@ -21,6 +21,7 @@
 
 #include <QHBoxLayout>
 
+namespace Core::Widgets {
 ClickableLabel::ClickableLabel(QWidget* parent)
     : QLabel(parent)
 { }
@@ -38,3 +39,4 @@ void ClickableLabel::enterEvent(QEnterEvent* event)
     emit entered();
     QLabel::enterEvent(event);
 }
+}; // namespace Core::Widgets

@@ -23,6 +23,7 @@
 
 #include <utils/helpers.h>
 
+namespace Core::Widgets {
 PlaylistItem::PlaylistItem(Type type, LibraryItem* data, PlaylistItem* parent)
     : m_data(data)
     , m_type(type)
@@ -90,3 +91,4 @@ PlaylistItem* PlaylistItem::parent() const
 {
     return m_parent;
 }
+}; // namespace Core::Widgets

@@ -21,6 +21,7 @@
 
 #include <QStyledItemDelegate>
 
+namespace Core::Widgets {
 class PlaylistDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -38,3 +39,4 @@ public:
     static void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintDisc(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
 };
+}; // namespace Core::Widgets

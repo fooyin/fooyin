@@ -23,7 +23,6 @@
 #include "core/library/librarymanager.h"
 #include "core/settings/settings.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -32,8 +31,10 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTableWidget>
+#include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 
+namespace Core::Widgets {
 GeneralPage::GeneralPage(QWidget* parent)
     : QWidget(parent)
 {
@@ -192,3 +193,4 @@ PlaylistPage::PlaylistPage(QWidget* parent)
 }
 
 PlaylistPage::~PlaylistPage() = default;
+}; // namespace Core::Widgets
