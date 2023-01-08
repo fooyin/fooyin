@@ -53,18 +53,15 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     m_layout->addWidget(m_filter);
     m_filter->setModel(m_model);
     m_filter->setItemDelegate(new FilterDelegate(this));
-    m_index = m_manager->registerFilter(m_type);
     setupConnections();
     setHeaderHidden(m_settings->value(Settings::Setting::FilterHeader).toBool());
     setScrollbarHidden(m_settings->value(Settings::Setting::FilterScrollBar).toBool());
     setAltRowColors(m_settings->value(Settings::Setting::FilterAltColours).toBool());
-
-    resetByIndex(-1);
 }
 
 FilterWidget::~FilterWidget()
 {
-    m_manager->unregisterFilter(m_index);
+    m_manager->unregisterFilter(m_type);
 }
 
 void FilterWidget::setupConnections()
@@ -100,9 +97,10 @@ void FilterWidget::setType(Filters::FilterType type)
     m_type = type;
     m_model->setType(type);
     emit typeChanged(m_index);
-    m_manager->registerFilter(m_type);
+    m_index = m_manager->registerFilter(m_type);
     m_filter->clearSelection();
     m_filter->scrollToTop();
+    resetByIndex(-1);
 }
 
 int FilterWidget::index() const
@@ -218,7 +216,6 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     QMenu orderMenu;
     orderMenu.setTitle("Sort Order");
 
-    const auto filters = m_manager->filters();
     const auto order = m_manager->filterOrder(m_type);
 
     QActionGroup editFilters{&menu};
@@ -246,7 +243,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     genre.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Genre));
     genre.setCheckable(true);
     genre.setChecked(m_type == Filters::FilterType::Genre);
-    genre.setDisabled(!genre.isChecked() && filters.contains(Filters::FilterType::Genre));
+    genre.setDisabled(!genre.isChecked() && m_manager->hasFilter(Filters::FilterType::Genre));
     menu.addAction(&genre);
 
     QAction year;
@@ -254,7 +251,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     year.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Year));
     year.setCheckable(true);
     year.setChecked(m_type == Filters::FilterType::Year);
-    year.setDisabled(!year.isChecked() && filters.contains(Filters::FilterType::Year));
+    year.setDisabled(!year.isChecked() && m_manager->hasFilter(Filters::FilterType::Year));
     menu.addAction(&year);
 
     QAction albumArtist;
@@ -262,7 +259,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     albumArtist.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::AlbumArtist));
     albumArtist.setCheckable(true);
     albumArtist.setChecked(m_type == Filters::FilterType::AlbumArtist);
-    albumArtist.setDisabled(!albumArtist.isChecked() && filters.contains(Filters::FilterType::AlbumArtist));
+    albumArtist.setDisabled(!albumArtist.isChecked() && m_manager->hasFilter(Filters::FilterType::AlbumArtist));
     menu.addAction(&albumArtist);
 
     QAction artist;
@@ -270,7 +267,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     artist.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Artist));
     artist.setCheckable(true);
     artist.setChecked(m_type == Filters::FilterType::Artist);
-    artist.setDisabled(!artist.isChecked() && filters.contains(Filters::FilterType::Artist));
+    artist.setDisabled(!artist.isChecked() && m_manager->hasFilter(Filters::FilterType::Artist));
     menu.addAction(&artist);
 
     QAction album;
@@ -278,7 +275,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     album.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Album));
     album.setCheckable(true);
     album.setChecked(m_type == Filters::FilterType::Album);
-    album.setDisabled(!album.isChecked() && filters.contains(Filters::FilterType::Album));
+    album.setDisabled(!album.isChecked() && m_manager->hasFilter(Filters::FilterType::Album));
     menu.addAction(&album);
 
     editFilters.addAction(&genre);
@@ -334,7 +331,7 @@ void FilterWidget::changeOrder(QAction* action)
     m_manager->changeFilterOrder(m_type, order);
 }
 
-void FilterWidget::dataLoaded(Filters::FilterType type, const FilterList& result)
+void FilterWidget::dataLoaded(Filters::FilterType type, const FilterEntries& result)
 {
     if(type != m_type) {
         return;

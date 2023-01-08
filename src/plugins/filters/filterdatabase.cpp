@@ -72,7 +72,7 @@ FilterDatabase::FilterDatabase(const QString& connectionName)
 
 FilterDatabase::~FilterDatabase() = default;
 
-bool FilterDatabase::getAllItems(Filters::FilterType type, ::Library::SortOrder order, FilterList& result) const
+bool FilterDatabase::getAllItems(Filters::FilterType type, ::Library::SortOrder order, FilterEntries& result) const
 {
     const auto join = getFilterJoins(type);
     const auto queryText = fetchQueryItems(type, {}, join, order);
@@ -86,13 +86,13 @@ bool FilterDatabase::getAllItems(Filters::FilterType type, ::Library::SortOrder 
 }
 
 bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
-                                      ::Library::SortOrder order, FilterList& result) const
+                                      ::Library::SortOrder order, FilterEntries& result) const
 {
-    if(!filters.isEmpty() || !search.isEmpty()) {
+    if(!filters.empty() || !search.isEmpty()) {
         QString where;
         QString join;
 
-        for(const auto& [filter, ids] : asRange(filters)) {
+        for(const auto& [filter, ids] : filters) {
             QString values;
 
             for(const auto& id : ids) {
@@ -269,7 +269,7 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
     return queryText;
 }
 
-bool FilterDatabase::dbFetchItems(Query& q, FilterList& result)
+bool FilterDatabase::dbFetchItems(Query& q, FilterEntries& result)
 {
     result.clear();
 
@@ -284,7 +284,7 @@ bool FilterDatabase::dbFetchItems(Query& q, FilterList& result)
         item.id = q.value(0).toInt();
         item.name = q.value(1).toString();
 
-        result.append(item);
+        result.emplace_back(item);
     }
 
     return true;

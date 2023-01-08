@@ -33,11 +33,9 @@ struct FilterManager::Private
     ThreadManager* threadManager;
     Library::MusicLibrary* library;
     TrackPtrList filteredTracks;
-    std::vector<Filters::FilterType> filters;
-    QMap<int, Filters::FilterType> filterIndexes;
+    LibraryFilters filters;
     ActiveFilters activeFilters;
     QString searchFilter;
-    FilterSortOrders filterSortOrders;
 
     Private()
         : threadManager{PluginSystem::object<ThreadManager>()}
@@ -71,6 +69,8 @@ FilterManager::FilterManager(QObject* parent)
     connect(p->library, &Library::MusicLibrary::libraryRemoved, this, [this] {
         emit filteredItems();
     });
+
+    p->library->addInteractor(this);
 }
 
 TrackPtrList FilterManager::tracks()
@@ -83,35 +83,63 @@ bool FilterManager::hasTracks()
     return !p->filteredTracks.empty() || !p->searchFilter.isEmpty() || !p->activeFilters.empty();
 }
 
-QList<Filters::FilterType> FilterManager::filters()
+LibraryFilters FilterManager::filters()
 {
-    return p->filterIndexes.values();
+    return p->filters;
+}
+
+bool FilterManager::hasFilter(Filters::FilterType type) const
+{
+    return std::any_of(p->filters.cbegin(), p->filters.cend(), [type](const LibraryFilter& f) {
+        return f.type == type;
+    });
+}
+
+LibraryFilter FilterManager::findFilter(Filters::FilterType type)
+{
+    for(const auto& filter : p->filters) {
+        if(filter.type == type) {
+            return filter;
+        }
+    }
+    return {};
 };
 
 FilterManager::~FilterManager() = default;
 
 int FilterManager::registerFilter(Filters::FilterType type)
 {
-    p->filters.emplace_back(type);
-    p->filterSortOrders.insert(type, Library::SortOrder::TitleAsc);
-    p->library->addInteractor(this);
-    return static_cast<int>(p->filters.size() - 1);
+    LibraryFilter filter;
+    if(hasFilter(type)) {
+        filter = findFilter(type);
+    }
+    else {
+        filter.sortOrder = Library::SortOrder::TitleAsc;
+        filter.type = type;
+        filter.index = static_cast<int>(p->filters.size());
+        p->filters.emplace_back(filter);
+    }
+    return filter.index;
 }
 
-void FilterManager::unregisterFilter(int index)
+void FilterManager::unregisterFilter(Filters::FilterType type)
 {
-    auto idx = p->filterIndexes.take(index);
-    p->activeFilters.remove(idx);
+    p->filters.erase(std::remove_if(p->filters.begin(), p->filters.end(),
+                                    [type](const auto& f) {
+                                        return f.type == type;
+                                    }),
+                     p->filters.end());
+    p->activeFilters.erase(type);
     emit filteredItems(-1);
     getFilteredTracks();
 }
 
 void FilterManager::changeFilter(int index)
 {
-    if(!p->activeFilters.isEmpty()) {
-        for(const auto& [filterIndex, filter] : asRange(p->filterIndexes)) {
-            if(index <= filterIndex) {
-                p->activeFilters.remove(filter);
+    if(!p->activeFilters.empty()) {
+        for(const auto& filter : p->filters) {
+            if(index <= filter.index) {
+                p->activeFilters.erase(filter.type);
             }
         }
     }
@@ -120,27 +148,36 @@ void FilterManager::changeFilter(int index)
 
 void FilterManager::resetFilter(Filters::FilterType type)
 {
-    emit filterReset(type, p->activeFilters.value(type));
+    emit filterReset(type, p->activeFilters.at(type));
 }
 
 Library::SortOrder FilterManager::filterOrder(Filters::FilterType type)
 {
-    return p->filterSortOrders.value(type);
+    for(const auto& filter : p->filters) {
+        if(filter.type == type) {
+            return filter.sortOrder;
+        }
+    }
+    return {};
 }
 
 void FilterManager::changeFilterOrder(Filters::FilterType type, Library::SortOrder order)
 {
-    p->filterSortOrders.insert(type, order);
+    for(auto& filter : p->filters) {
+        if(filter.type == type) {
+            filter.sortOrder = order;
+        }
+    }
     emit orderedFilter(type);
 }
 
 void FilterManager::items(Filters::FilterType type)
 {
-    if(!p->activeFilters.isEmpty() || !p->searchFilter.isEmpty()) {
-        getItemsByFilter(type, p->filterSortOrders.value(type));
+    if(!p->activeFilters.empty() || !p->searchFilter.isEmpty()) {
+        getItemsByFilter(type, findFilter(type).sortOrder);
     }
     else {
-        getAllItems(type, p->filterSortOrders.value(type));
+        getAllItems(type, findFilter(type).sortOrder);
     }
 }
 
@@ -167,29 +204,24 @@ bool FilterManager::tracksHaveFiltered()
 
 void FilterManager::changeSelection(const IdSet& indexes, Filters::FilterType type, int index)
 {
-    if(p->activeFilters.isEmpty() && indexes.contains(-1)) {
-        return;
-    }
+    const bool filterAll = contains(indexes, -1);
 
-    for(const auto& [filterIndex, filter] : asRange(p->filterIndexes)) {
-        if(index < filterIndex) {
-            p->activeFilters.remove(filter);
+    for(const auto& filter : p->filters) {
+        if(index < filter.index) {
+            p->activeFilters.erase(filter.type);
         }
     }
 
-    if(indexes.contains(-1)) {
-        p->activeFilters.remove(type);
+    if(filterAll) {
+        p->activeFilters.erase(type);
     }
     else {
-        p->activeFilters.insert(type, indexes);
+        p->activeFilters[type] = indexes;
     }
 
-    const IdSet& filterIds = p->activeFilters.value(type);
-
-    if((!p->activeFilters.isEmpty() && !filterIds.contains(-1)) || !p->searchFilter.isEmpty()) {
+    if((!p->activeFilters.empty() && !filterAll) || !p->searchFilter.isEmpty()) {
         getFilteredTracks();
     }
-
     else {
         p->filteredTracks.clear();
         emit filteredTracks();
@@ -212,7 +244,7 @@ void FilterManager::changeSearch(const QString& search)
     p->searchFilter = search;
     p->filteredTracks.clear();
     if(search.isEmpty()) {
-        if(!p->activeFilters.isEmpty()) {
+        if(!p->activeFilters.empty()) {
             getFilteredTracks();
         }
         else {
@@ -231,7 +263,7 @@ void FilterManager::searchChanged(const QString& search)
     changeSearch(search);
 }
 
-void FilterManager::itemsHaveLoaded(Filters::FilterType type, FilterList result)
+void FilterManager::itemsHaveLoaded(Filters::FilterType type, FilterEntries result)
 {
     emit itemsLoaded(type, std::move(result));
 }

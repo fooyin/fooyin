@@ -45,9 +45,11 @@ public:
     TrackPtrList tracks() override;
     bool hasTracks() override;
 
-    QList<Filters::FilterType> filters();
+    LibraryFilters filters();
+    bool hasFilter(Filters::FilterType type) const;
+    LibraryFilter findFilter(Filters::FilterType type);
     int registerFilter(Filters::FilterType type);
-    void unregisterFilter(int index);
+    void unregisterFilter(Filters::FilterType type);
     void changeFilter(int index);
     void resetFilter(Filters::FilterType type);
     Library::SortOrder filterOrder(Filters::FilterType type);
@@ -69,7 +71,7 @@ signals:
     void loadAllItems(Filters::FilterType type, Library::SortOrder order);
     void loadItemsByFilter(Filters::FilterType type, ActiveFilters filters, QString search, Library::SortOrder order);
 
-    void itemsLoaded(Filters::FilterType type, FilterList result);
+    void itemsLoaded(Filters::FilterType type, FilterEntries result);
 
     void filteredTracks();
     void loadFilteredTracks(TrackPtrList tracks, ActiveFilters filters, QString search);
@@ -78,7 +80,7 @@ signals:
     void filterReset(Filters::FilterType type, const IdSet& selection);
 
 protected:
-    void itemsHaveLoaded(Filters::FilterType type, FilterList result);
+    void itemsHaveLoaded(Filters::FilterType type, FilterEntries result);
     void filteredTracksLoaded(TrackPtrList tracks);
 
 private:

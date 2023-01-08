@@ -49,11 +49,11 @@ public:
 
     [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                         Qt::MatchFlags flags) const override;
-    void reload(const FilterList& result);
+    void reload(const FilterEntries& result);
 
 protected:
     void beginReset();
-    void setupModelData(const FilterList& items);
+    void setupModelData(const FilterEntries& items);
 
 private:
     std::unique_ptr<FilterItem> m_root;

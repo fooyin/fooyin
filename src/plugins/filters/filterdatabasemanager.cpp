@@ -24,6 +24,52 @@
 #include <core/database/database.h>
 #include <utils/helpers.h>
 
+namespace {
+void filterByType(Track* track, const ActiveFilters& filters, int& matches)
+{
+    for(const auto& [filter, ids] : filters) {
+        switch(filter) {
+            case(Filters::FilterType::AlbumArtist): {
+                if(contains(ids, track->albumArtistId())) {
+                    matches += 1;
+                }
+                break;
+            }
+            case(Filters::FilterType::Artist): {
+                const IdSet artistIds{track->artistIds()};
+                for(const auto artistId : artistIds) {
+                    if(contains(ids, artistId)) {
+                        matches += 1;
+                    }
+                }
+                break;
+            }
+            case(Filters::FilterType::Album): {
+                if(contains(ids, track->albumId())) {
+                    matches += 1;
+                }
+                break;
+            }
+            case(Filters::FilterType::Year): {
+                if(contains(ids, track->year())) {
+                    matches += 1;
+                }
+                break;
+            }
+            case(Filters::FilterType::Genre): {
+                const IdSet genreIds{track->genreIds()};
+                for(const int& genreId : genreIds) {
+                    if(contains(ids, genreId)) {
+                        matches += 1;
+                    }
+                }
+                break;
+            }
+        }
+    }
+}
+}; // namespace
+
 FilterDatabaseManager::FilterDatabaseManager(QObject* parent)
     : Worker(parent)
     , m_filterDatabase(new DB::FilterDatabase(DB::Database::instance()->connectionName()))
@@ -36,7 +82,7 @@ FilterDatabaseManager::~FilterDatabaseManager()
 
 void FilterDatabaseManager::getAllItems(Filters::FilterType type, Library::SortOrder order)
 {
-    FilterList items;
+    FilterEntries items;
     bool success = m_filterDatabase->getAllItems(type, order, items);
     if(success) {
         emit gotItems(type, items);
@@ -46,7 +92,7 @@ void FilterDatabaseManager::getAllItems(Filters::FilterType type, Library::SortO
 void FilterDatabaseManager::getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters,
                                              const QString& search, Library::SortOrder order)
 {
-    FilterList items;
+    FilterEntries items;
     bool success = m_filterDatabase->getItemsByFilter(type, filters, search, order, items);
     if(success) {
         emit gotItems(type, items);
@@ -62,47 +108,8 @@ void FilterDatabaseManager::filterTracks(const TrackPtrList& tracks, const Activ
         int matches = 0;
         int total = static_cast<int>(filters.size()) + (search.isEmpty() ? 0 : 1);
 
-        if(!filters.isEmpty()) {
-            for(const auto& [filter, ids] : asRange(filters)) {
-                switch(filter) {
-                    case(Filters::FilterType::AlbumArtist): {
-                        if(ids.contains(track->albumArtistId())) {
-                            ++matches;
-                        }
-                        break;
-                    }
-                    case(Filters::FilterType::Artist): {
-                        const IdSet artistIds{track->artistIds()};
-                        for(const auto artistId : artistIds) {
-                            if(ids.contains(artistId)) {
-                                ++matches;
-                            }
-                        }
-                        break;
-                    }
-                    case(Filters::FilterType::Album): {
-                        if(ids.contains(track->albumId())) {
-                            ++matches;
-                        }
-                        break;
-                    }
-                    case(Filters::FilterType::Year): {
-                        if(ids.contains(track->year())) {
-                            ++matches;
-                        }
-                        break;
-                    }
-                    case(Filters::FilterType::Genre): {
-                        const IdSet genreIds{track->genreIds()};
-                        for(const int& genreId : genreIds) {
-                            if(ids.contains(genreId)) {
-                                ++matches;
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
+        if(!filters.empty()) {
+            filterByType(track, filters, matches);
         }
 
         if(!search.isEmpty()) {

@@ -36,7 +36,6 @@ FilterModel::~FilterModel() = default;
 void FilterModel::setType(Filters::FilterType type)
 {
     m_type = type;
-    // reset(-1);
 }
 
 int FilterModel::index() const
@@ -170,7 +169,7 @@ QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVa
     return indexes;
 }
 
-void FilterModel::reload(const FilterList& result)
+void FilterModel::reload(const FilterEntries& result)
 {
     beginResetModel();
     beginReset();
@@ -184,10 +183,10 @@ void FilterModel::beginReset()
     m_root = std::make_unique<FilterItem>();
 }
 
-void FilterModel::setupModelData(const FilterList& items)
+void FilterModel::setupModelData(const FilterEntries& items)
 {
     m_root->appendChild(new FilterItem(-1, QString("All (%1)").arg(items.size()), m_root.get()));
-    if(!items.isEmpty()) {
+    if(!items.empty()) {
         for(const auto& item : items) {
             auto* filterItem = new FilterItem(item.id, item.name, m_root.get());
             m_root->appendChild(filterItem);

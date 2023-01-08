@@ -858,14 +858,14 @@ bool LibraryDatabase::updateTrackArtists(int id, const IdSet& artists)
 
     // Remove artists not in track
     for(auto artistId : databaseArtists) {
-        if(!artists.contains(artistId)) {
+        if(!contains(artists, artistId)) {
             artistsToDelete.insert(artistId);
         }
     }
 
     // Insert new artists
     for(auto artistId : artists) {
-        if(!databaseArtists.contains(artistId)) {
+        if(!contains(databaseArtists, artistId)) {
             artistsToInsert.insert(artistId);
         }
     }
@@ -920,13 +920,13 @@ bool LibraryDatabase::updateTrackGenres(int id, const IdSet& genres)
     }
 
     for(auto genreId : databaseGenres) {
-        if(!genres.contains(genreId)) {
+        if(!contains(genres, genreId)) {
             genresToDelete.insert(genreId);
         }
     }
 
     for(auto genreId : genres) {
-        if(!databaseGenres.contains(genreId)) {
+        if(!contains(databaseGenres, genreId)) {
             genresToInsert.insert(genreId);
         }
     }

@@ -32,15 +32,15 @@ public:
     FilterDatabase(const QString& connectionName);
     ~FilterDatabase() override;
 
-    bool getAllItems(Filters::FilterType type, ::Library::SortOrder order, FilterList& result) const;
+    bool getAllItems(Filters::FilterType type, ::Library::SortOrder order, FilterEntries& result) const;
 
     bool getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
-                          ::Library::SortOrder order, FilterList& result) const;
+                          ::Library::SortOrder order, FilterEntries& result) const;
 
     [[nodiscard]] static QString fetchQueryItems(Filters::FilterType type, const QString& where, const QString& join,
                                                  ::Library::SortOrder order);
 
-    static bool dbFetchItems(Query& q, FilterList& result);
+    static bool dbFetchItems(Query& q, FilterEntries& result);
 
 protected:
     [[nodiscard]] const Module* module() const;

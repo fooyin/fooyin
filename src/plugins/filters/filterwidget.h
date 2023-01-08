@@ -77,7 +77,7 @@ protected:
     void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
     void editFilter(QAction* action);
     void changeOrder(QAction* action);
-    void dataLoaded(Filters::FilterType type, const FilterList& result);
+    void dataLoaded(Filters::FilterType type, const FilterEntries& result);
     void resetByIndex(int idx);
     void resetByType(Filters::FilterType type);
 

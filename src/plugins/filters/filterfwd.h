@@ -23,14 +23,21 @@
 #include "core/library/sorting/sortorder.h"
 #include "core/typedefs.h"
 
+struct LibraryFilter
+{
+    int index;
+    Filters::FilterType type;
+    Library::SortOrder sortOrder;
+};
+using LibraryFilters = std::vector<LibraryFilter>;
+
 struct FilterEntry
 {
     int id;
     QString name;
 };
+using FilterEntries = std::vector<FilterEntry>;
 
-using FilterList = QList<FilterEntry>;
-using FilterSortOrders = QHash<Filters::FilterType, Library::SortOrder>;
-using ActiveFilters = QMap<Filters::FilterType, IdSet>;
+using ActiveFilters = std::unordered_map<Filters::FilterType, IdSet>;
 
 #endif // FILTER_FWD_H

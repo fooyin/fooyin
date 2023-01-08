@@ -43,7 +43,7 @@ public:
     void filterTracks(const TrackPtrList& tracks, const ActiveFilters& filters, const QString& search);
 
 signals:
-    void gotItems(Filters::FilterType type, const FilterList& result);
+    void gotItems(Filters::FilterType type, const FilterEntries& result);
     void tracksFiltered(const TrackPtrList& result);
 
 private:

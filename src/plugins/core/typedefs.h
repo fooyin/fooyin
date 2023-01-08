@@ -20,8 +20,9 @@
 #pragma once
 
 #include <QVariant>
+#include <set>
 
-using IdSet = QSet<int>;
+using IdSet = std::set<int>;
 
 namespace Role {
 const int Type = Qt::UserRole + 1;
