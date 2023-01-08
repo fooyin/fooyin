@@ -46,6 +46,7 @@ SpaceBeforeCpp11BracedList:                     false
 IndentCaseLabels:                               true
 FixNamespaceComments:                           true
 KeepEmptyLinesAtTheStartOfBlocks:               false
+NamespaceIndentation:                           None
 
 SpaceBeforeParens:                              Never
 
