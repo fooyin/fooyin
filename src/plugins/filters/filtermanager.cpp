@@ -106,7 +106,10 @@ LibraryFilter FilterManager::findFilter(Filters::FilterType type) const
     auto it = std::find_if(p->filters.cbegin(), p->filters.cend(), [type](const LibraryFilter& filter) {
         return filter.type == type;
     });
-    return *it;
+    if(it != p->filters.end()) {
+        return *it;
+    }
+    return {};
 };
 
 FilterManager::~FilterManager() = default;
