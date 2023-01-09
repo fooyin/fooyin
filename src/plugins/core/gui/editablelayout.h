@@ -36,21 +36,16 @@ public:
     explicit EditableLayout(QWidget* parent = nullptr);
     ~EditableLayout() override;
 
-    ActionContainer* createAddMenu(SplitterWidget* parent);
-    void setupAddMenu(ActionContainer* menu, SplitterWidget* parent);
-
-    void changeLayout(const QByteArray& layout);
-
-    static FyWidget* splitterChild(QWidget* widget);
-    void addParentContext(FyWidget* widget, ActionContainer* menu);
+    void setupAddMenu(ActionContainer* menu, FyWidget* parent);
+    void setupContextMenu(FyWidget* widget, ActionContainer* menu);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
+    void changeLayout(const QByteArray& layout);
     void saveLayout();
     bool loadLayout(const QByteArray& layout);
     bool loadLayout();
 
-    static QRect widgetGeometry(FyWidget* widget);
     void showOverlay(FyWidget* widget);
     void hideOverlay();
 
