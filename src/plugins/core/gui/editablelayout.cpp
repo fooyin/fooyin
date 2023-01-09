@@ -63,11 +63,11 @@ struct EditableLayout::Private
         , widgetProvider{PluginSystem::object<Widgets::WidgetProvider>()}
     { }
 
-    ActionContainer* createAddMenu(FyWidget* parent)
+    ActionContainer* createNewMenu(FyWidget* parent, const QString& title)
     {
         auto id = parent->id();
         auto* menu = actionManager->createMenu(id);
-        menu->menu()->setTitle(tr("&Add"));
+        menu->menu()->setTitle(title);
 
         return menu;
     }
@@ -184,7 +184,7 @@ void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
         auto* parent = qobject_cast<SplitterWidget*>(currentWidget->findParent());
 
         if(auto* splitter = qobject_cast<SplitterWidget*>(currentWidget)) {
-            auto* addMenu = p->createAddMenu(splitter);
+            auto* addMenu = p->createNewMenu(splitter, tr("&Add"));
             setupAddMenu(addMenu, splitter);
             menu->addMenu(addMenu);
         }
