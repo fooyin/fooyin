@@ -173,6 +173,9 @@ void EditableLayout::setupAddMenu(ActionContainer* menu, FyWidget* parent)
 
 void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
 {
+    if(!widget) {
+        return;
+    }
     auto* currentWidget = widget;
     auto level = p->menuLevels;
     while(level > 0) {
