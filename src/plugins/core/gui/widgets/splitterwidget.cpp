@@ -106,7 +106,39 @@ void SplitterWidget::addWidget(QWidget* newWidget)
     return m_splitter->insertWidget(index, widget);
 }
 
-void SplitterWidget::removeWidget(QWidget* widget)
+void SplitterWidget::insertWidget(int index, FyWidget* widget)
+{
+    if(!widget) {
+        return;
+    }
+    if(m_children.isEmpty()) {
+        m_dummy->hide();
+    }
+    m_children.insert(index, widget);
+    m_splitter->insertWidget(index, widget);
+}
+
+void SplitterWidget::replaceWidget(int index, FyWidget* widget)
+{
+    if(!widget || m_children.isEmpty()) {
+        return;
+    }
+    FyWidget* oldWidget = m_children.takeAt(index);
+    oldWidget->deleteLater();
+    m_children.insert(index, widget);
+    m_splitter->insertWidget(index, widget);
+}
+
+void SplitterWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
+{
+    if(!oldWidget || !newWidget || m_children.isEmpty()) {
+        return;
+    }
+    int index = findIndex(oldWidget);
+    replaceWidget(index, newWidget);
+}
+
+void SplitterWidget::removeWidget(FyWidget* widget)
 {
     int index = findIndex(widget);
     if(index != -1) {
@@ -118,10 +150,10 @@ void SplitterWidget::removeWidget(QWidget* widget)
     }
 }
 
-int SplitterWidget::findIndex(QWidget* widgetToFind)
+int SplitterWidget::findIndex(FyWidget* widgetToFind)
 {
     for(int i = 0; i < m_children.size(); ++i) {
-        QWidget* widget = m_children.value(i);
+        FyWidget* widget = m_children.value(i);
         if(widget == widgetToFind) {
             return i;
         }
@@ -193,13 +225,15 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
             }
             else {
                 const auto jObject = object.constBegin().key();
-                auto* childWidget = m_widgetProvider->createWidget(jObject, splitter);
+                auto* childWidget = m_widgetProvider->createWidget(jObject);
+                splitter->addWidget(childWidget);
                 auto widgetObject = object.value(jObject).toObject();
                 childWidget->loadLayout(widgetObject);
             }
         }
         else {
-            m_widgetProvider->createWidget(widget.toString(), splitter);
+            auto* childWidget = m_widgetProvider->createWidget(widget.toString());
+            splitter->addWidget(childWidget);
         }
     }
 }

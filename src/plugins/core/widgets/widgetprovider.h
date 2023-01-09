@@ -33,7 +33,7 @@ public:
     explicit WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent = nullptr);
     ~WidgetProvider() override;
 
-    FyWidget* createWidget(const QString& widget, SplitterWidget* splitter);
+    FyWidget* createWidget(const QString& widget);
     static SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);
 
 private:

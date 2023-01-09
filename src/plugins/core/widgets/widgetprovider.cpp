@@ -43,10 +43,9 @@ WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* p
 
 WidgetProvider::~WidgetProvider() = default;
 
-FyWidget* WidgetProvider::createWidget(const QString& widget, SplitterWidget* splitter)
+FyWidget* WidgetProvider::createWidget(const QString& widget)
 {
-    auto* createdWidget = p->widgetFactory->make(widget);
-    splitter->addWidget(createdWidget);
+    FyWidget* createdWidget = p->widgetFactory->make(widget);
     return createdWidget;
 }
 

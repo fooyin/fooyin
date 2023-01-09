@@ -139,31 +139,39 @@ EditableLayout::EditableLayout(QWidget* parent)
 
 EditableLayout::~EditableLayout() = default;
 
-void EditableLayout::setupAddMenu(ActionContainer* menu, FyWidget* parent)
+void EditableLayout::setupAddMenu(ActionContainer* menu, FyWidget* parent, bool change)
 {
     if(!menu->isEmpty()) {
         return;
     }
-    if(auto* splitter = qobject_cast<SplitterWidget*>(parent)) {
-        auto widgets = p->widgetFactory->registeredWidgets();
-        for(const auto& widget : widgets) {
-            auto* parentMenu = menu;
-            for(const auto& subMenu : widget.second.subMenus) {
-                Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
-                auto* childMenu = p->actionManager->actionContainer(id);
-                if(!childMenu) {
-                    childMenu = p->actionManager->createMenu(id);
-                    childMenu->menu()->setTitle(subMenu);
-                    parentMenu->addMenu(childMenu);
-                }
-                parentMenu = childMenu;
+    auto* splitter = qobject_cast<SplitterWidget*>(parent);
+    if(!splitter) {
+        splitter = qobject_cast<SplitterWidget*>(parent->findParent());
+    }
+    auto widgets = p->widgetFactory->registeredWidgets();
+    for(const auto& widget : widgets) {
+        auto* parentMenu = menu;
+        for(const auto& subMenu : widget.second.subMenus) {
+            Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
+            auto* childMenu = p->actionManager->actionContainer(id);
+            if(!childMenu) {
+                childMenu = p->actionManager->createMenu(id);
+                childMenu->menu()->setTitle(subMenu);
+                parentMenu->addMenu(childMenu);
             }
-            auto* addWidget = new QAction(widget.first, parentMenu);
-            QAction::connect(addWidget, &QAction::triggered, this, [this, widget, splitter] {
-                p->widgetProvider->createWidget(widget.first, splitter);
-            });
-            parentMenu->addAction(addWidget);
+            parentMenu = childMenu;
         }
+        auto* addWidget = new QAction(widget.first, parentMenu);
+        QAction::connect(addWidget, &QAction::triggered, this, [this, parent, change, widget, splitter] {
+            FyWidget* newWidget = p->widgetProvider->createWidget(widget.first);
+            if(change) {
+                splitter->replaceWidget(parent, newWidget);
+            }
+            else {
+                splitter->addWidget(newWidget);
+            }
+        });
+        parentMenu->addAction(addWidget);
     }
 }
 
@@ -189,6 +197,10 @@ void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
             menu->addMenu(addMenu);
         }
         else {
+            auto* changeMenu = p->createNewMenu(currentWidget, tr("&Change"));
+            setupAddMenu(changeMenu, currentWidget, true);
+            menu->addMenu(changeMenu);
+
             auto* remove = new QAction("Remove", menu);
             QAction::connect(remove, &QAction::triggered, parent, [parent, widget] {
                 parent->removeWidget(widget);

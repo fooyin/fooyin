@@ -51,9 +51,12 @@ public:
     [[nodiscard]] bool hasChildren();
 
     void addWidget(QWidget* widget);
-    void removeWidget(QWidget* widget);
+    void insertWidget(int index, FyWidget* widget);
+    void replaceWidget(int index, FyWidget* widget);
+    void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget);
+    void removeWidget(FyWidget* widget);
 
-    int findIndex(QWidget* widgetToFind);
+    int findIndex(FyWidget* widgetToFind);
     QList<FyWidget*> children();
 
     [[nodiscard]] QString name() const override;
