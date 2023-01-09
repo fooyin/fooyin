@@ -184,7 +184,9 @@ void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
         }
         menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));
         currentWidget->layoutEditingMenu(menu);
+
         auto* parent = qobject_cast<SplitterWidget*>(currentWidget->findParent());
+
         if(auto* splitter = qobject_cast<SplitterWidget*>(currentWidget)) {
             auto* addMenu = p->createAddMenu(splitter);
             setupAddMenu(addMenu, splitter);
@@ -197,7 +199,7 @@ void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
             });
             menu->addAction(remove);
         }
-        currentWidget = qobject_cast<SplitterWidget*>(currentWidget->findParent());
+        currentWidget = parent;
         --level;
     }
 }
