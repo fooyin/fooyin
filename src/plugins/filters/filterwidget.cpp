@@ -95,10 +95,10 @@ Filters::FilterType FilterWidget::type()
 
 void FilterWidget::setType(Filters::FilterType type)
 {
+    auto oldType = m_type;
     m_type = type;
     m_model->setType(type);
-    emit typeChanged(m_index);
-    m_index = m_manager->registerFilter(m_type);
+    emit typeChanged(oldType, type);
     m_filter->clearSelection();
     m_filter->scrollToTop();
     resetByIndex(-1);
@@ -208,7 +208,10 @@ void FilterWidget::saveLayout(QJsonArray& array)
 void FilterWidget::loadLayout(QJsonObject& object)
 {
     auto type = Utils::EnumHelper::fromString<Filters::FilterType>(object["Type"].toString());
-    setType(type);
+    m_type = type;
+    m_index = m_manager->registerFilter(type);
+    m_model->setType(type);
+    resetByIndex(-1);
 }
 
 void FilterWidget::customHeaderMenuRequested(QPoint pos)

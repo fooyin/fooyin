@@ -50,42 +50,43 @@ public:
     [[nodiscard]] bool hasTracks() const override;
 
     [[nodiscard]] LibraryFilters filters() const;
-    [[nodiscard]] bool hasFilter(Filters::FilterType type) const;
-    [[nodiscard]] LibraryFilter findFilter(Filters::FilterType type) const;
-    int registerFilter(Filters::FilterType type);
-    void unregisterFilter(Filters::FilterType type);
-    void changeFilter(int index);
-    void resetFilter(Filters::FilterType type);
-    [[nodiscard]] Core::Library::SortOrder filterOrder(Filters::FilterType type) const;
-    void changeFilterOrder(Filters::FilterType type, Core::Library::SortOrder order);
+    [[nodiscard]] bool hasFilter(FilterType type) const;
+    [[nodiscard]] bool filterIsActive(FilterType type) const;
+    [[nodiscard]] LibraryFilter findFilter(FilterType type) const;
+    int registerFilter(FilterType type);
+    void unregisterFilter(FilterType type);
+    void changeFilter(FilterType oldType, FilterType type);
+    void resetFilter(FilterType type);
+    [[nodiscard]] Core::Library::SortOrder filterOrder(FilterType type) const;
+    void changeFilterOrder(FilterType type, Core::Library::SortOrder order);
 
-    void items(Filters::FilterType type);
-    void getAllItems(Filters::FilterType type, Core::Library::SortOrder order);
-    void getItemsByFilter(Filters::FilterType type, Core::Library::SortOrder order);
+    void items(FilterType type);
+    void getAllItems(FilterType type, Core::Library::SortOrder order);
+    void getItemsByFilter(FilterType type, Core::Library::SortOrder order);
 
     void getFilteredTracks();
     bool tracksHaveFiltered();
 
-    void changeSelection(const Core::IdSet& indexes, Filters::FilterType type, int index);
-    void selectionChanged(const Core::IdSet& indexes, Filters::FilterType type, int index);
+    void changeSelection(const Core::IdSet& indexes, FilterType type, int index);
+    void selectionChanged(const Core::IdSet& indexes, FilterType type, int index);
     void changeSearch(const QString& search);
     void searchChanged(const QString& search);
 
 signals:
     void loadAllItems(Filters::FilterType type, Core::Library::SortOrder order);
-    void loadItemsByFilter(Filters::FilterType type, ActiveFilters filters, QString search,
+    void loadItemsByFilter(Filters ::FilterType type, ActiveFilters filters, QString search,
                            Core::Library::SortOrder order);
-
     void itemsLoaded(Filters::FilterType type, FilterEntries result);
-
-    void filteredTracks();
-    void loadFilteredTracks(Core::TrackPtrList tracks, ActiveFilters filters, QString search);
     void filteredItems(int index = -1);
-    void orderedFilter(Filters::FilterType type);
-    void filterReset(Filters::FilterType type, const Core::IdSet& selection);
+
+    void loadFilteredTracks(Core::TrackPtrList tracks, ActiveFilters filters, QString search);
+    void filteredTracks();
+
+    void orderedFilter(Filters ::FilterType type);
+    void filterReset(Filters ::FilterType type, const Core::IdSet& selection);
 
 protected:
-    void itemsHaveLoaded(Filters::FilterType type, FilterEntries result);
+    void itemsHaveLoaded(FilterType type, FilterEntries result);
     void filteredTracksLoaded(Core::TrackPtrList tracks);
 
 private:

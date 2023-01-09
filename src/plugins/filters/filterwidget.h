@@ -83,7 +83,7 @@ public:
     void customHeaderMenuRequested(QPoint pos);
 
 signals:
-    void typeChanged(int index);
+    void typeChanged(FilterType oldType, FilterType type);
 
 protected:
     void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);

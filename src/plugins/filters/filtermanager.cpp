@@ -91,9 +91,14 @@ LibraryFilters FilterManager::filters() const
 
 bool FilterManager::hasFilter(Filters::FilterType type) const
 {
-    return std::any_of(p->filters.cbegin(), p->filters.cend(), [type](const LibraryFilter& f) {
-        return f.type == type;
+    return std::any_of(p->filters.cbegin(), p->filters.cend(), [type](const LibraryFilter& filter) {
+        return filter.type == type;
     });
+}
+
+bool FilterManager::filterIsActive(FilterType type) const
+{
+    return p->activeFilters.count(type);
 }
 
 LibraryFilter FilterManager::findFilter(Filters::FilterType type) const
@@ -135,16 +140,19 @@ void FilterManager::unregisterFilter(Filters::FilterType type)
     getFilteredTracks();
 }
 
-void FilterManager::changeFilter(int index)
+void FilterManager::changeFilter(FilterType oldType, FilterType type)
 {
-    if(!p->activeFilters.empty()) {
-        for(const auto& filter : p->filters) {
-            if(index <= filter.index) {
-                p->activeFilters.erase(filter.type);
-            }
-        }
+    if(filterIsActive(oldType)) {
+        p->activeFilters.erase(oldType);
     }
-    emit filteredItems(index - 1);
+    int index = -1;
+    std::for_each(p->filters.begin(), p->filters.end(), [oldType, type, &index](LibraryFilter& filter) {
+        if(filter.type == oldType) {
+            filter.type = type;
+            index = filter.index;
+        }
+    });
+    emit filteredItems(index);
 }
 
 void FilterManager::resetFilter(Filters::FilterType type)
