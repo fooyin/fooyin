@@ -43,8 +43,6 @@
 namespace Core::Widgets {
 struct EditableLayout::Private
 {
-    using MenuMap = std::unordered_map<Utils::Id, ActionContainer*, Utils::Id::IdHash>;
-
     QHBoxLayout* box;
     Settings* settings;
     bool layoutEditing{false};
@@ -53,7 +51,6 @@ struct EditableLayout::Private
     SplitterWidget* splitter;
     ActionContainer* menu;
     int menuLevels{2};
-    MenuMap addMenus;
     Widgets::WidgetFactory* widgetFactory;
     Widgets::WidgetProvider* widgetProvider;
 
@@ -70,7 +67,6 @@ struct EditableLayout::Private
     {
         auto id = parent->id();
         auto* menu = actionManager->createMenu(id);
-        addMenus.emplace(id, menu);
         menu->menu()->setTitle(tr("&Add"));
 
         return menu;
