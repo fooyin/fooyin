@@ -173,7 +173,7 @@ void EditableLayout::setupAddMenu(ActionContainer* menu, FyWidget* parent)
 
 void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
 {
-    if(!widget) {
+    if(!widget || !menu) {
         return;
     }
     auto* currentWidget = widget;
