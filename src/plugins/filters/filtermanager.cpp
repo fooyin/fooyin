@@ -131,8 +131,8 @@ int FilterManager::registerFilter(Filters::FilterType type)
 void FilterManager::unregisterFilter(Filters::FilterType type)
 {
     p->filters.erase(std::remove_if(p->filters.begin(), p->filters.end(),
-                                    [type](const auto& f) {
-                                        return f.type == type;
+                                    [type](const auto& filter) {
+                                        return filter.type == type;
                                     }),
                      p->filters.end());
     p->activeFilters.erase(type);
@@ -142,14 +142,19 @@ void FilterManager::unregisterFilter(Filters::FilterType type)
 
 void FilterManager::changeFilter(FilterType oldType, FilterType type)
 {
+    LibraryFilter filter = findFilter(oldType);
     if(filterIsActive(oldType)) {
         p->activeFilters.erase(oldType);
     }
-    int index = -1;
-    std::for_each(p->filters.begin(), p->filters.end(), [oldType, type, &index](LibraryFilter& filter) {
+    int index = filter.index;
+    std::for_each(p->filters.begin(), p->filters.end(), [oldType, type, this, &index](LibraryFilter& filter) {
         if(filter.type == oldType) {
             filter.type = type;
-            index = filter.index;
+        }
+        if(filter.index > index) {
+            if(filterIsActive(filter.type)) {
+                p->activeFilters.erase(filter.type);
+            }
         }
     });
     emit filteredItems(index);
