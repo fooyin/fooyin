@@ -103,12 +103,10 @@ bool FilterManager::filterIsActive(FilterType type) const
 
 LibraryFilter FilterManager::findFilter(Filters::FilterType type) const
 {
-    for(const auto& filter : p->filters) {
-        if(filter.type == type) {
-            return filter;
-        }
-    }
-    return {};
+    auto it = std::find_if(p->filters.cbegin(), p->filters.cend(), [type](const LibraryFilter& filter) {
+        return filter.type == type;
+    });
+    return *it;
 };
 
 FilterManager::~FilterManager() = default;
