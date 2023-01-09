@@ -139,7 +139,7 @@ EditableLayout::EditableLayout(QWidget* parent)
 
 EditableLayout::~EditableLayout() = default;
 
-void EditableLayout::setupAddMenu(ActionContainer* menu, FyWidget* parent, bool change)
+void EditableLayout::setupWidgetMenu(ActionContainer* menu, FyWidget* parent, bool replace)
 {
     if(!menu->isEmpty()) {
         return;
@@ -162,9 +162,9 @@ void EditableLayout::setupAddMenu(ActionContainer* menu, FyWidget* parent, bool 
             parentMenu = childMenu;
         }
         auto* addWidget = new QAction(widget.first, parentMenu);
-        QAction::connect(addWidget, &QAction::triggered, this, [this, parent, change, widget, splitter] {
+        QAction::connect(addWidget, &QAction::triggered, this, [this, parent, replace, widget, splitter] {
             FyWidget* newWidget = p->widgetProvider->createWidget(widget.first);
-            if(change) {
+            if(replace) {
                 splitter->replaceWidget(parent, newWidget);
             }
             else {
@@ -193,12 +193,12 @@ void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
 
         if(auto* splitter = qobject_cast<SplitterWidget*>(currentWidget)) {
             auto* addMenu = p->createNewMenu(splitter, tr("&Add"));
-            setupAddMenu(addMenu, splitter);
+            setupWidgetMenu(addMenu, splitter);
             menu->addMenu(addMenu);
         }
         else {
-            auto* changeMenu = p->createNewMenu(currentWidget, tr("&Change"));
-            setupAddMenu(changeMenu, currentWidget, true);
+            auto* changeMenu = p->createNewMenu(currentWidget, tr("&Replace"));
+            setupWidgetMenu(changeMenu, currentWidget, true);
             menu->addMenu(changeMenu);
 
             auto* remove = new QAction("Remove", menu);

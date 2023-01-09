@@ -36,7 +36,7 @@ public:
     explicit EditableLayout(QWidget* parent = nullptr);
     ~EditableLayout() override;
 
-    void setupAddMenu(ActionContainer* menu, FyWidget* parent, bool change = false);
+    void setupWidgetMenu(ActionContainer* menu, FyWidget* parent, bool replace = false);
     void setupContextMenu(FyWidget* widget, ActionContainer* menu);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
