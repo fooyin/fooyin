@@ -47,6 +47,7 @@ IndentCaseLabels:                               true
 FixNamespaceComments:                           true
 KeepEmptyLinesAtTheStartOfBlocks:               false
 NamespaceIndentation:                           None
+AlignConsecutiveAssignments:                    Consecutive
 
 SpaceBeforeParens:                              Never
 
