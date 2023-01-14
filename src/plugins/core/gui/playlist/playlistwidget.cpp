@@ -100,9 +100,14 @@ void PlaylistWidget::setupConnections()
     connect(m_libraryManager, &Library::LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
     connect(m_libraryManager, &Library::LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
 
-    //    connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistWidget::setAltRowColours);
-    //    connect(m_settings, &Settings::playlistHeaderChanged, this, &PlaylistWidget::setHeaderHidden);
-    //    connect(m_settings, &Settings::playlistScrollBarChanged, this, &PlaylistWidget::setScrollbarHidden);
+    m_settings->subscribe<Settings::PlaylistAltColours>(this, &PlaylistWidget::setAltRowColours);
+    m_settings->subscribe<Settings::PlaylistAltColours>(m_model, &PlaylistModel::changeRowColours);
+    m_settings->subscribe<Settings::SimplePlaylist>(m_model, &PlaylistModel::reset);
+    m_settings->subscribe<Settings::SplitDiscs>(m_model, &PlaylistModel::reset);
+    m_settings->subscribe<Settings::DiscHeaders>(m_model, &PlaylistModel::reset);
+    m_settings->subscribe<Settings::PlaylistHeader>(this, &PlaylistWidget::setHeaderHidden);
+    m_settings->subscribe<Settings::PlaylistScrollBar>(this, &PlaylistWidget::setScrollbarHidden);
+
     connect(m_playlist->header(), &QHeaderView::sectionClicked, this, &PlaylistWidget::switchOrder);
 
     connect(m_model, &PlaylistModel::modelReset, this, &PlaylistWidget::reset);

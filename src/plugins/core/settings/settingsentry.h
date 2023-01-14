@@ -39,10 +39,14 @@ public:
     [[nodiscard]] bool writeToDisk() const;
 
     void setValue(const QVariant& value);
-    void changedSetting();
 
 signals:
     void settingChanged();
+    void settingChangedBool(bool value);
+    void settingChangedInt(int value);
+    void settingChangedDouble(double value);
+    void settingChangedString(QString value);
+    void settingChangedByteArray(QByteArray value);
 
 private:
     QString m_name;

@@ -67,9 +67,4 @@ void SettingsEntry::setValue(const QVariant& value)
 {
     m_value = value;
 }
-
-void SettingsEntry::changedSetting()
-{
-    emit settingChanged();
-}
 }; // namespace Core

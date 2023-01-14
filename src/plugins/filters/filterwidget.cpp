@@ -67,9 +67,9 @@ FilterWidget::~FilterWidget()
 
 void FilterWidget::setupConnections()
 {
-    //    connect(m_settings, &Core::Settings::filterAltColorsChanged, this, &FilterWidget::setAltRowColors);
-    //    connect(m_settings, &Core::Settings::filterHeaderChanged, this, &FilterWidget::setHeaderHidden);
-    //    connect(m_settings, &Core::Settings::filterScrollBarChanged, this, &FilterWidget::setScrollbarHidden);
+    m_settings->subscribe<Settings::FilterAltColours>(this, &FilterWidget::setAltRowColors);
+    m_settings->subscribe<Settings::FilterHeader>(this, &FilterWidget::setHeaderHidden);
+    m_settings->subscribe<Settings::FilterScrollBar>(this, &FilterWidget::setScrollbarHidden);
 
     connect(m_filter->header(), &FilterView::customContextMenuRequested, this,
             &FilterWidget::customHeaderMenuRequested);

@@ -67,14 +67,55 @@ public:
         return mapKey;
     }
 
-    template <typename E, typename T>
-    void constexpr subscribe(E key, T* obj, void (T::*func)())
+    template <auto key, typename T, typename F>
+    void constexpr connectTypeSignals(T obj, F func)
     {
         const auto mapKey = getMapKey(key);
+        const auto type   = findType<key>();
+
+        if(m_settings.count(mapKey)) {
+            if constexpr(type == Settings::Type::Bool) {
+                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
+            }
+            else if constexpr(type == Settings::Type::Double) {
+                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, obj, func);
+            }
+            else if constexpr(type == Settings::Type::Int) {
+                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedInt, obj, func);
+            }
+            else if constexpr(type == Settings::Type::String) {
+                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj, func);
+            }
+            else if constexpr(type == Settings::Type::ByteArray) {
+                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, obj, func);
+            }
+            else {
+                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChanged, obj, func);
+            }
+        };
+    }
+
+    template <auto key, typename T>
+    void constexpr subscribe(T* obj, void (T::*func)())
+    {
+        const auto mapKey = getMapKey(key);
+        const auto type   = findType<key>();
 
         if(m_settings.count(mapKey)) {
             QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChanged, obj, func);
         };
+    }
+
+    template <auto key, typename T, typename R>
+    void constexpr subscribe(T* obj, void (T::*func)(R ret))
+    {
+        connectTypeSignals<key>(obj, func);
+    }
+
+    template <auto key, typename T, typename L>
+    void constexpr subscribe(T* obj, L const& lambda)
+    {
+        connectTypeSignals<key>(obj, lambda);
     }
 
     template <typename E, typename T>
@@ -156,11 +197,29 @@ public:
             m_lock.unlock();
             return;
         }
+        const auto type = findType<key>();
         m_settings.at(mapKey).setValue(value);
 
         m_lock.unlock();
 
-        m_settings.at(mapKey).changedSetting();
+        if constexpr(type == Settings::Type::Bool) {
+            m_settings.at(mapKey).settingChangedBool(value);
+        }
+        else if constexpr(type == Settings::Type::Double) {
+            m_settings.at(mapKey).settingChangedDouble(value);
+        }
+        else if constexpr(type == Settings::Type::Int) {
+            m_settings.at(mapKey).settingChangedInt(value);
+        }
+        else if constexpr(type == Settings::Type::String) {
+            m_settings.at(mapKey).settingChangedString(value);
+        }
+        else if constexpr(type == Settings::Type::ByteArray) {
+            m_settings.at(mapKey).settingChangedByteArray(value);
+        }
+        else {
+            m_settings.at(mapKey).settingChanged();
+        }
     }
 
 private:

@@ -71,13 +71,13 @@ public:
 
     void traverseIndex(const QModelIndex& start, QModelIndexList& list) const;
 
+    void reset();
+    void changeRowColours();
     void changeTrackState();
     QModelIndex indexOfItem(int id);
     QModelIndex indexOfItem(const PlaylistItem* item);
 
 protected:
-    void reset();
-    void changeRowColours();
     void resetContainers();
     void beginReset();
     PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, LibraryItem* item, PlaylistItem* parent);
