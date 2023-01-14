@@ -23,8 +23,7 @@
 
 #include <QObject>
 
-namespace Core {
-namespace Setting {
+namespace Core::Settings {
 Q_NAMESPACE
 enum Core : uint32_t
 {
@@ -61,5 +60,4 @@ public:
 private:
     SettingsManager* m_settings;
 };
-}; // namespace Setting
-}; // namespace Core
+}; // namespace Core::Settings

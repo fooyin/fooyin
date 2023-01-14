@@ -132,7 +132,7 @@ EditableLayout::EditableLayout(QWidget* parent)
         p->box->addWidget(p->splitter);
     }
     if(!p->splitter->hasChildren()) {
-        p->settings->set(Setting::LayoutEditing, true);
+        p->settings->set(Settings::LayoutEditing, true);
     }
     qApp->installEventFilter(this);
 }
@@ -247,10 +247,10 @@ void EditableLayout::changeLayout(const QByteArray& layout)
     p->splitter->deleteLater();
     bool success = loadLayout(layout);
     if(success && p->splitter->hasChildren()) {
-        p->settings->set(Setting::LayoutEditing, false);
+        p->settings->set(Settings::LayoutEditing, false);
     }
     else {
-        p->settings->set(Setting::LayoutEditing, true);
+        p->settings->set(Settings::LayoutEditing, true);
     }
 }
 
@@ -266,7 +266,7 @@ void EditableLayout::saveLayout()
 
     QString json = QString::fromUtf8(QJsonDocument(root).toJson(QJsonDocument::Compact).toBase64());
 
-    p->settings->set(Setting::Layout, json);
+    p->settings->set(Settings::Layout, json);
 }
 
 bool EditableLayout::loadLayout(const QByteArray& layout)
@@ -297,7 +297,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
 
 bool EditableLayout::loadLayout()
 {
-    auto layout = QByteArray::fromBase64(p->settings->value(Setting::Layout).toByteArray());
+    auto layout = QByteArray::fromBase64(p->settings->value(Settings::Layout).toByteArray());
     return loadLayout(layout);
 }
 

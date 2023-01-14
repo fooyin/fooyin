@@ -19,7 +19,6 @@
 
 #include "coresettings.h"
 
-#include "core/settings/settingsmanager.h"
 #include "core/typedefs.h"
 #include "version.h"
 
@@ -27,34 +26,34 @@
 #include <utils/paths.h>
 #include <utils/utils.h>
 
-namespace Core::Setting {
+namespace Core::Settings {
 CoreSettings::CoreSettings()
     : m_settings(PluginSystem::object<SettingsManager>())
 {
-    m_settings->createSetting(Setting::Version, VERSION);
-    m_settings->createSetting(Setting::DatabaseVersion, DATABASE_VERSION);
-    m_settings->createTempSetting(Setting::FirstRun, true);
-    m_settings->createTempSetting(Setting::LayoutEditing, false);
-    m_settings->createSetting(Setting::Geometry, "", "Layout");
-    m_settings->createSetting(Setting::Layout, "", "Layout");
-    m_settings->createSetting(Setting::SplitterHandles, true, "Splitters");
-    m_settings->createSetting(Setting::DiscHeaders, true, "Playlist");
-    m_settings->createSetting(Setting::SplitDiscs, false, "Playlist");
-    m_settings->createSetting(Setting::SimplePlaylist, false, "Playlist");
-    m_settings->createSetting(Setting::PlaylistAltColours, true, "Playlist");
-    m_settings->createSetting(Setting::PlaylistHeader, true, "Playlist");
-    m_settings->createSetting(Setting::PlaylistScrollBar, true, "Playlist");
-    m_settings->createSetting(Setting::PlayMode, Player::PlayMode::Default, "Player");
-    m_settings->createSetting(Setting::ElapsedTotal, false, "Player");
-    m_settings->createSetting(Setting::FilterAltColours, false, "Filters");
-    m_settings->createSetting(Setting::FilterHeader, true, "Filters");
-    m_settings->createSetting(Setting::FilterScrollBar, true, "Filters");
-    m_settings->createSetting(Setting::InfoAltColours, true, "Info");
-    m_settings->createSetting(Setting::InfoHeader, true, "Info");
-    m_settings->createSetting(Setting::InfoScrollBar, true, "Info");
+    m_settings->createSetting(Settings::Version, VERSION);
+    m_settings->createSetting(Settings::DatabaseVersion, DATABASE_VERSION);
+    m_settings->createTempSetting(Settings::FirstRun, true);
+    m_settings->createTempSetting(Settings::LayoutEditing, false);
+    m_settings->createSetting(Settings::Geometry, "", "Layout");
+    m_settings->createSetting(Settings::Layout, "", "Layout");
+    m_settings->createSetting(Settings::SplitterHandles, true, "Splitters");
+    m_settings->createSetting(Settings::DiscHeaders, true, "Playlist");
+    m_settings->createSetting(Settings::SplitDiscs, false, "Playlist");
+    m_settings->createSetting(Settings::SimplePlaylist, false, "Playlist");
+    m_settings->createSetting(Settings::PlaylistAltColours, true, "Playlist");
+    m_settings->createSetting(Settings::PlaylistHeader, true, "Playlist");
+    m_settings->createSetting(Settings::PlaylistScrollBar, true, "Playlist");
+    m_settings->createSetting(Settings::PlayMode, Player::PlayMode::Default, "Player");
+    m_settings->createSetting(Settings::ElapsedTotal, false, "Player");
+    m_settings->createSetting(Settings::FilterAltColours, false, "Filters");
+    m_settings->createSetting(Settings::FilterHeader, true, "Filters");
+    m_settings->createSetting(Settings::FilterScrollBar, true, "Filters");
+    m_settings->createSetting(Settings::InfoAltColours, true, "Info");
+    m_settings->createSetting(Settings::InfoHeader, true, "Info");
+    m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
 
-    m_settings->set(Setting::FirstRun, !Utils::File::exists(Utils::settingsPath()));
+    m_settings->set(Settings::FirstRun, !Utils::File::exists(Utils::settingsPath()));
 }
 
 CoreSettings::~CoreSettings() = default;
-}; // namespace Core::Setting
+}; // namespace Core::Settings

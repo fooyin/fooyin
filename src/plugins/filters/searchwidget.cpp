@@ -72,7 +72,7 @@ void SearchWidget::setupUi()
     p->searchBox = new QLineEdit(this);
     p->searchBox->setPlaceholderText(p->defaultText);
     p->searchBox->setClearButtonEnabled(true);
-    searchBoxContextMenu(p->settings->value(Core::Setting::LayoutEditing).toBool());
+    searchBoxContextMenu(p->settings->value(Core::Settings::LayoutEditing).toBool());
 
     p->layout->addWidget(p->searchBox);
 }

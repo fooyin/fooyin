@@ -27,7 +27,7 @@ namespace Core::Widgets {
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)
     , m_settings(PluginSystem::object<SettingsManager>())
-    , m_showHandle(m_settings->value(Setting::SplitterHandles).toBool())
+    , m_showHandle(m_settings->value(Settings::SplitterHandles).toBool())
 {
     //    connect(m_settings, &Settings::splitterHandlesChanged, this, &SplitterHandle::showHandle);
 }

@@ -49,7 +49,7 @@ struct Application::Private
     Widgets::WidgetFactory* widgetFactory;
     ActionManager* actionManager;
     SettingsManager* settings;
-    std::unique_ptr<Setting::CoreSettings> coreSettings;
+    std::unique_ptr<Settings::CoreSettings> coreSettings;
     ThreadManager* threadManager;
     DB::Database* db;
     Player::PlayerManager* playerManager;
@@ -66,7 +66,7 @@ struct Application::Private
         : widgetFactory(new Widgets::WidgetFactory())
         , actionManager(new ActionManager(parent))
         , settings(new SettingsManager(parent))
-        , coreSettings(std::make_unique<Setting::CoreSettings>())
+        , coreSettings(std::make_unique<Settings::CoreSettings>())
         , threadManager(new ThreadManager(parent))
         , db(DB::Database::instance())
         , playerManager(new Player::PlayerController(parent))
