@@ -20,6 +20,7 @@
 #include "playlistwidget.h"
 
 #include "core/actions/actioncontainer.h"
+#include "core/coresettings.h"
 #include "core/gui/settings/settingsdialog.h"
 #include "core/gui/widgets/overlaywidget.h"
 #include "core/library/librarymanager.h"
@@ -49,7 +50,7 @@ PlaylistWidget::PlaylistWidget(QWidget* parent)
     , m_model(new PlaylistModel(m_playerManager, m_library, this))
     , m_playlist(new PlaylistView(this))
     , m_settings(PluginSystem::object<Settings>())
-    , m_altRowColours(m_settings->value(Settings::Setting::PlaylistAltColours).toBool())
+    , m_altRowColours(m_settings->value(Setting::PlaylistAltColours).toBool())
     , m_noLibrary(new OverlayWidget(true, this))
 {
     setObjectName("Playlist");
@@ -67,8 +68,8 @@ PlaylistWidget::PlaylistWidget(QWidget* parent)
     });
 
     reset();
-    setHeaderHidden(m_settings->value(Settings::Setting::PlaylistHeader).toBool());
-    setScrollbarHidden(m_settings->value(Settings::Setting::PlaylistScrollBar).toBool());
+    setHeaderHidden(m_settings->value(Setting::PlaylistHeader).toBool());
+    setScrollbarHidden(m_settings->value(Setting::PlaylistScrollBar).toBool());
     setup();
 }
 
@@ -156,7 +157,7 @@ void PlaylistWidget::layoutEditingMenu(ActionContainer* menu)
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::Setting::PlaylistHeader, isHeaderHidden());
+        m_settings->set(Setting::PlaylistHeader, isHeaderHidden());
     });
     menu->addAction(showHeaders);
 
@@ -164,7 +165,7 @@ void PlaylistWidget::layoutEditingMenu(ActionContainer* menu)
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
     QAction::connect(showScrollBar, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::Setting::PlaylistScrollBar, isScrollbarHidden());
+        m_settings->set(Setting::PlaylistScrollBar, isScrollbarHidden());
     });
     menu->addAction(showScrollBar);
 
@@ -172,7 +173,7 @@ void PlaylistWidget::layoutEditingMenu(ActionContainer* menu)
     altRowColours->setCheckable(true);
     altRowColours->setChecked(m_altRowColours);
     QAction::connect(altRowColours, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::Setting::PlaylistAltColours, !m_altRowColours);
+        m_settings->set(Setting::PlaylistAltColours, !m_altRowColours);
     });
     menu->addAction(altRowColours);
 }

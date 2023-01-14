@@ -31,32 +31,6 @@ class Settings : public QObject
     Q_OBJECT
 
 public:
-    enum Setting : uint32_t
-    {
-        Version            = 1,
-        DatabaseVersion    = 2,
-        FirstRun           = 3,
-        LayoutEditing      = 4,
-        Geometry           = 5,
-        Layout             = 6,
-        SplitterHandles    = 7,
-        DiscHeaders        = 8,
-        SplitDiscs         = 9,
-        SimplePlaylist     = 10,
-        PlaylistAltColours = 11,
-        PlaylistHeader     = 12,
-        PlaylistScrollBar  = 13,
-        PlayMode           = 14,
-        ElapsedTotal       = 15,
-        FilterAltColours   = 16,
-        FilterHeader       = 17,
-        FilterScrollBar    = 18,
-        InfoAltColours     = 19,
-        InfoHeader         = 20,
-        InfoScrollBar      = 21,
-    };
-    Q_ENUM(Setting);
-
     explicit Settings(QObject* parent = nullptr);
     ~Settings() override;
     Settings(const Settings& other)             = delete;

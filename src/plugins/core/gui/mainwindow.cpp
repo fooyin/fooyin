@@ -22,6 +22,7 @@
 #include "actions/actioncontainer.h"
 #include "actions/actionmanager.h"
 #include "core/constants.h"
+#include "core/coresettings.h"
 #include "core/gui/editablelayout.h"
 #include "core/gui/quicksetupdialog.h"
 #include "core/gui/settings/settingsdialog.h"
@@ -72,7 +73,7 @@ MainWindow::MainWindow(ActionManager* actionManager, Settings* settings, Widgets
 
 MainWindow::~MainWindow()
 {
-    p->settings->set(Settings::Setting::Geometry, QString::fromUtf8(saveGeometry().toBase64()));
+    p->settings->set(Setting::Geometry, QString::fromUtf8(saveGeometry().toBase64()));
     p->mainLayout->saveLayout();
 }
 
@@ -86,7 +87,7 @@ void MainWindow::setupUi()
     setMinimumSize(410, 320);
     setWindowIcon(QIcon(Core::Constants::Icons::Fooyin));
 
-    QByteArray geometryArray = p->settings->value(Settings::Setting::Geometry).toString().toUtf8();
+    QByteArray geometryArray = p->settings->value(Setting::Geometry).toString().toUtf8();
     QByteArray geometry = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
@@ -146,7 +147,7 @@ void MainWindow::setupUi()
     connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
     // connect(p->settings, &Settings::layoutEditingChanged, p->layoutEditing, &QAction::setChecked);
     p->layoutEditing->setCheckable(true);
-    p->layoutEditing->setChecked(p->settings->value(Settings::Setting::LayoutEditing).toBool());
+    p->layoutEditing->setChecked(p->settings->value(Setting::LayoutEditing).toBool());
 
     QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
     p->openQuickSetup = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
@@ -168,7 +169,7 @@ void MainWindow::setupUi()
     libraryMenu->addAction(p->openSettings, Core::Constants::Groups::Three);
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &Widgets::SettingsDialog::show);
 
-    if(p->settings->value(Settings::Setting::FirstRun).toBool()) {
+    if(p->settings->value(Setting::FirstRun).toBool()) {
         // Delay showing until size of parent widget (this) is set.
         QTimer::singleShot(1000, p->quickSetupDialog, &QuickSeupDialog::show);
     }
@@ -192,6 +193,6 @@ void MainWindow::contextMenuEvent(QContextMenuEvent* event)
 
 void MainWindow::enableLayoutEditing(bool enable)
 {
-    p->settings->set(Settings::Setting::LayoutEditing, enable);
+    p->settings->set(Setting::LayoutEditing, enable);
 }
 }; // namespace Core

@@ -20,11 +20,18 @@
 #include "application.h"
 
 #include "core/actions/actionmanager.h"
+#include "core/coresettings.h"
 #include "core/database/database.h"
 #include "core/engine/enginehandler.h"
+#include "core/gui/controls/controlwidget.h"
+#include "core/gui/info/infowidget.h"
+#include "core/gui/library/coverwidget.h"
+#include "core/gui/library/statuswidget.h"
 #include "core/gui/mainwindow.h"
+#include "core/gui/playlist/playlistwidget.h"
 #include "core/gui/settings/settingsdialog.h"
 #include "core/gui/widgets/spacer.h"
+#include "core/gui/widgets/splitterwidget.h"
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playercontroller.h"
@@ -33,12 +40,6 @@
 #include "core/settings/settings.h"
 #include "core/widgets/widgetfactory.h"
 #include "core/widgets/widgetprovider.h"
-#include "gui/controls/controlwidget.h"
-#include "gui/info/infowidget.h"
-#include "gui/library/coverwidget.h"
-#include "gui/library/statuswidget.h"
-#include "gui/playlist/playlistwidget.h"
-#include "gui/widgets/splitterwidget.h"
 #include "threadmanager.h"
 
 #include <pluginsystem/pluginmanager.h>
@@ -49,6 +50,7 @@ struct Application::Private
     Widgets::WidgetFactory* widgetFactory;
     ActionManager* actionManager;
     Settings* settings;
+    std::unique_ptr<Setting::CoreSettings> coreSettings;
     ThreadManager* threadManager;
     DB::Database* db;
     Player::PlayerManager* playerManager;
@@ -65,6 +67,7 @@ struct Application::Private
         : widgetFactory(new Widgets::WidgetFactory())
         , actionManager(new ActionManager(parent))
         , settings(new Settings(parent))
+        , coreSettings(std::make_unique<Setting::CoreSettings>())
         , threadManager(new ThreadManager(parent))
         , db(DB::Database::instance())
         , playerManager(new Player::PlayerController(parent))
@@ -78,6 +81,8 @@ struct Application::Private
         , mainWindow(new MainWindow(actionManager, settings, settingsDialog.get(), library))
     {
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+        settings->loadSettings();
 
         threadManager->moveToNewThread(&engine);
 

@@ -20,7 +20,7 @@
 #include "infowidget.h"
 
 #include "core/actions/actioncontainer.h"
-#include "core/constants.h"
+#include "core/coresettings.h"
 #include "core/gui/info/infoitem.h"
 #include "core/gui/info/itemdelegate.h"
 #include "core/library/models/track.h"
@@ -44,9 +44,9 @@ InfoWidget::InfoWidget(QWidget* parent)
     setObjectName("Info Panel");
     setupUi();
 
-    setHeaderHidden(m_settings->value(Settings::Setting::InfoHeader).toBool());
-    setScrollbarHidden(m_settings->value(Settings::Setting::InfoScrollBar).toBool());
-    setAltRowColors(m_settings->value(Settings::Setting::InfoAltColours).toBool());
+    setHeaderHidden(m_settings->value(Setting::InfoHeader).toBool());
+    setScrollbarHidden(m_settings->value(Setting::InfoScrollBar).toBool());
+    setAltRowColors(m_settings->value(Setting::InfoAltColours).toBool());
 
     connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, this, &Widgets::InfoWidget::refreshTrack);
     connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, &m_model, &InfoModel::reset);
@@ -133,14 +133,14 @@ void InfoWidget::layoutEditingMenu(ActionContainer* menu)
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Settings::Setting::InfoHeader, checked);
+        m_settings->set(Setting::InfoHeader, checked);
     });
 
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
     QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Settings::Setting::InfoScrollBar, checked);
+        m_settings->set(Setting::InfoScrollBar, checked);
     });
     menu->addAction(showScrollBar);
 
@@ -148,7 +148,7 @@ void InfoWidget::layoutEditingMenu(ActionContainer* menu)
     altColours->setCheckable(true);
     altColours->setChecked(altRowColors());
     QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Settings::Setting::InfoAltColours, checked);
+        m_settings->set(Setting::InfoAltColours, checked);
     });
 
     menu->addAction(showHeaders);

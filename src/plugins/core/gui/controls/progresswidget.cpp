@@ -19,6 +19,7 @@
 
 #include "progresswidget.h"
 
+#include "core/coresettings.h"
 #include "core/gui/widgets/clickablelabel.h"
 #include "core/gui/widgets/slider.h"
 #include "core/library/models/track.h"
@@ -82,7 +83,7 @@ void ProgressWidget::changeTrack(Track* track)
     reset();
     p->max = static_cast<int>(track->duration());
     p->slider->setMaximum(p->max);
-    auto elapsed = p->settings->value(Settings::Setting::ElapsedTotal).toBool();
+    auto elapsed = p->settings->value(Setting::ElapsedTotal).toBool();
     p->total->setText(elapsed ? "-" + Utils::msToString(p->max) : Utils::msToString(p->max));
     setEnabled(true);
 }
@@ -102,7 +103,7 @@ void ProgressWidget::updateTime(int elapsed)
 
     p->elapsed->setText(Utils::secsToString(secs));
 
-    if(p->settings->value(Settings::Setting::ElapsedTotal).toBool()) {
+    if(p->settings->value(Setting::ElapsedTotal).toBool()) {
         int remaining = max - secs;
         p->total->setText("-" + Utils::secsToString(remaining));
     }
@@ -115,7 +116,7 @@ void ProgressWidget::updateTime(int elapsed)
 
 void ProgressWidget::reset()
 {
-    auto elapsed = p->settings->value(Settings::Setting::ElapsedTotal).toBool();
+    auto elapsed = p->settings->value(Setting::ElapsedTotal).toBool();
     p->elapsed->setText("00:00");
     p->total->setText(elapsed ? "-00:00" : "00:00");
     p->slider->setValue(0);
@@ -137,12 +138,12 @@ void ProgressWidget::stateChanged(Player::PlayState state)
 
 void ProgressWidget::toggleRemaining()
 {
-    if(p->settings->value(Settings::Setting::ElapsedTotal).toBool()) {
-        p->settings->set(Settings::Setting::ElapsedTotal, false);
+    if(p->settings->value(Setting::ElapsedTotal).toBool()) {
+        p->settings->set(Setting::ElapsedTotal, false);
         p->total->setText(Utils::msToString(p->max));
     }
     else {
-        p->settings->set(Settings::Setting::ElapsedTotal, true);
+        p->settings->set(Setting::ElapsedTotal, true);
     }
 }
 

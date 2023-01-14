@@ -22,6 +22,7 @@
 #include "core/actions/actioncontainer.h"
 #include "core/actions/actionmanager.h"
 #include "core/constants.h"
+#include "core/coresettings.h"
 #include "core/gui/widgets/dummy.h"
 #include "core/gui/widgets/menuheader.h"
 #include "core/gui/widgets/overlayfilter.h"
@@ -132,7 +133,7 @@ EditableLayout::EditableLayout(QWidget* parent)
         p->box->addWidget(p->splitter);
     }
     if(!p->splitter->hasChildren()) {
-        p->settings->set(Settings::Setting::LayoutEditing, true);
+        p->settings->set(Setting::LayoutEditing, true);
     }
     qApp->installEventFilter(this);
 }
@@ -247,10 +248,10 @@ void EditableLayout::changeLayout(const QByteArray& layout)
     p->splitter->deleteLater();
     bool success = loadLayout(layout);
     if(success && p->splitter->hasChildren()) {
-        p->settings->set(Settings::Setting::LayoutEditing, false);
+        p->settings->set(Setting::LayoutEditing, false);
     }
     else {
-        p->settings->set(Settings::Setting::LayoutEditing, true);
+        p->settings->set(Setting::LayoutEditing, true);
     }
 }
 
@@ -266,7 +267,7 @@ void EditableLayout::saveLayout()
 
     QString json = QString::fromUtf8(QJsonDocument(root).toJson(QJsonDocument::Compact).toBase64());
 
-    p->settings->set(Settings::Setting::Layout, json);
+    p->settings->set(Setting::Layout, json);
 }
 
 bool EditableLayout::loadLayout(const QByteArray& layout)
@@ -297,7 +298,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
 
 bool EditableLayout::loadLayout()
 {
-    auto layout = QByteArray::fromBase64(p->settings->value(Settings::Setting::Layout).toByteArray());
+    auto layout = QByteArray::fromBase64(p->settings->value(Setting::Layout).toByteArray());
     return loadLayout(layout);
 }
 

@@ -19,6 +19,7 @@
 
 #include "database.h"
 
+#include "core/coresettings.h"
 #include "core/settings/settings.h"
 #include "library.h"
 #include "librarydatabase.h"
@@ -99,8 +100,8 @@ Library* Database::libraryConnector()
 bool Database::update()
 {
     auto* settings = PluginSystem::object<Settings>();
-    if(settings->value(Settings::Setting::DatabaseVersion).toString() < DATABASE_VERSION) {
-        settings->set(Settings::Setting::DatabaseVersion, DATABASE_VERSION);
+    if(settings->value(Setting::DatabaseVersion).toString() < DATABASE_VERSION) {
+        settings->set(Setting::DatabaseVersion, DATABASE_VERSION);
         return true;
     }
     return true;

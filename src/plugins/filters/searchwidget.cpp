@@ -25,6 +25,7 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QMenu>
+#include <core/coresettings.h>
 #include <core/settings/settings.h>
 #include <pluginsystem/pluginmanager.h>
 
@@ -72,7 +73,7 @@ void SearchWidget::setupUi()
     p->searchBox = new QLineEdit(this);
     p->searchBox->setPlaceholderText(p->defaultText);
     p->searchBox->setClearButtonEnabled(true);
-    searchBoxContextMenu(p->settings->value(Core::Settings::Setting::LayoutEditing).toBool());
+    searchBoxContextMenu(p->settings->value(Core::Setting::LayoutEditing).toBool());
 
     p->layout->addWidget(p->searchBox);
 }

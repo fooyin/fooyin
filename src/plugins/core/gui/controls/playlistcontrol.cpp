@@ -20,6 +20,7 @@
 #include "playlistcontrol.h"
 
 #include "core/constants.h"
+#include "core/coresettings.h"
 #include "core/gui/widgets/comboicon.h"
 #include "core/settings/settings.h"
 
@@ -71,13 +72,13 @@ void PlaylistControl::setupUi()
     p->layout->addWidget(p->repeat, 0, Qt::AlignVCenter);
     p->layout->addWidget(p->shuffle, 0, Qt::AlignVCenter);
 
-    const auto mode = static_cast<Player::PlayMode>(p->settings->value(Settings::Setting::PlayMode).toInt());
+    const auto mode = static_cast<Player::PlayMode>(p->settings->value(Setting::PlayMode).toInt());
     setMode(mode);
 }
 
 void PlaylistControl::playModeChanged(Player::PlayMode mode)
 {
-    p->settings->set(Settings::Setting::PlayMode, Utils::EnumHelper::toString(mode));
+    p->settings->set(Setting::PlayMode, Utils::EnumHelper::toString(mode));
     setMode(mode);
 }
 

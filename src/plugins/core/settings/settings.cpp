@@ -19,9 +19,6 @@
 
 #include "settings.h"
 
-#include "core/typedefs.h"
-#include "version.h"
-
 #include <QSettings>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
@@ -34,37 +31,6 @@ Settings::Settings(QObject* parent)
     : QObject{parent}
     , m_settingsFile{Utils::settingsPath(), QSettings::IniFormat, this}
 {
-    createSetting(Setting::Version, VERSION);
-    createSetting(Setting::DatabaseVersion, DATABASE_VERSION);
-    createTempSetting(Setting::FirstRun, true);
-    createTempSetting(Setting::LayoutEditing, false);
-    createSetting(Setting::Geometry, "", "Layout");
-    createSetting(Setting::Layout, "", "Layout");
-    createSetting(Setting::SplitterHandles, true, "Splitters");
-    createSetting(Setting::DiscHeaders, true, "Playlist");
-    createSetting(Setting::SplitDiscs, false, "Playlist");
-    createSetting(Setting::SimplePlaylist, false, "Playlist");
-    createSetting(Setting::PlaylistAltColours, true, "Playlist");
-    createSetting(Setting::PlaylistHeader, true, "Playlist");
-    createSetting(Setting::PlaylistScrollBar, true, "Playlist");
-    createSetting(Setting::PlayMode, Player::PlayMode::Default, "Player");
-    createSetting(Setting::ElapsedTotal, false, "Player");
-    createSetting(Setting::FilterAltColours, false, "Filters");
-    createSetting(Setting::FilterHeader, true, "Filters");
-    createSetting(Setting::FilterScrollBar, true, "Filters");
-    createSetting(Setting::InfoAltColours, true, "Info");
-    createSetting(Setting::InfoHeader, true, "Info");
-    createSetting(Setting::InfoScrollBar, true, "Info");
-
-    if(Utils::File::exists(Utils::settingsPath())) {
-        loadSettings();
-        set(Setting::FirstRun, false);
-    }
-    else {
-        storeSettings();
-        set(Setting::FirstRun, true);
-    }
-
     PluginSystem::addObject(this);
 }
 

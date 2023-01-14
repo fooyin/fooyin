@@ -19,6 +19,7 @@
 
 #include "playercontroller.h"
 
+#include "core/coresettings.h"
 #include "core/library/models/track.h"
 #include "core/settings/settings.h"
 
@@ -36,7 +37,7 @@ PlayerController::PlayerController(QObject* parent)
     , m_volume(1.0F)
     , m_counted(false)
 {
-    m_playMode = static_cast<PlayMode>(PluginSystem::object<Settings>()->value(Settings::Setting::PlayMode).toInt());
+    m_playMode = static_cast<PlayMode>(PluginSystem::object<Settings>()->value(Setting::PlayMode).toInt());
 }
 
 PlayerController::~PlayerController() = default;

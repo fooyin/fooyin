@@ -20,6 +20,7 @@
 #include "playlistmodel.h"
 
 #include "core/constants.h"
+#include "core/coresettings.h"
 #include "core/library/coverprovider.h"
 #include "core/library/models/album.h"
 #include "core/library/models/disc.h"
@@ -62,8 +63,8 @@ PlaylistModel::~PlaylistModel() = default;
 
 void PlaylistModel::setupModelData()
 {
-    const bool discHeaders = m_settings->value(Settings::Setting::DiscHeaders).toBool();
-    const bool splitDiscs = m_settings->value(Settings::Setting::SplitDiscs).toBool();
+    const bool discHeaders = m_settings->value(Setting::DiscHeaders).toBool();
+    const bool splitDiscs  = m_settings->value(Setting::SplitDiscs).toBool();
 
     if(m_library) {
         const TrackPtrList& tracks = m_library->tracks();
@@ -169,7 +170,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     const PlaylistItem::Type type = item->type();
 
     if(role == Role::PlaylistType) {
-        return m_settings->value(Settings::Setting::SimplePlaylist);
+        return m_settings->value(Setting::SimplePlaylist);
     }
 
     if(role == Role::Type) {
@@ -221,9 +222,8 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
             return Utils::msToString(track->duration());
         }
         case(ItemRole::MultiDisk): {
-            if(item->parent()->type() == PlaylistItem::Type::Disc
-               && m_settings->value(Settings::Setting::DiscHeaders).toBool()
-               && !m_settings->value(Settings::Setting::SplitDiscs).toBool()) {
+            if(item->parent()->type() == PlaylistItem::Type::Disc && m_settings->value(Setting::DiscHeaders).toBool()
+               && !m_settings->value(Setting::SplitDiscs).toBool()) {
                 return true;
             }
             return false;
@@ -241,7 +241,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
             return QVariant::fromValue<Track*>(track);
         }
         case(Qt::BackgroundRole): {
-            return m_settings->value(Settings::Setting::PlaylistAltColours).toBool()
+            return m_settings->value(Setting::PlaylistAltColours).toBool()
                      ? item->row() & 1 ? QPalette::Base : QPalette::AlternateBase
                      : QPalette::Base;
         }

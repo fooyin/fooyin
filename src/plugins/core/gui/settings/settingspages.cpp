@@ -19,6 +19,7 @@
 
 #include "settingspages.h"
 
+#include "core/coresettings.h"
 #include "core/library/libraryinfo.h"
 #include "core/library/librarymanager.h"
 #include "core/settings/settings.h"
@@ -45,12 +46,12 @@ GeneralPage::GeneralPage(QWidget* parent)
     auto* settings = PluginSystem::object<Settings>();
 
     auto* splitterHandles = new QCheckBox("Show Splitter Handles", this);
-    splitterHandles->setChecked(settings->value(Settings::Setting::SplitterHandles).toBool());
+    splitterHandles->setChecked(settings->value(Setting::SplitterHandles).toBool());
 
     mainLayout->addWidget(splitterHandles);
 
     connect(splitterHandles, &QCheckBox::clicked, this, [settings](bool checked) {
-        settings->set(Settings::Setting::SplitterHandles, checked);
+        settings->set(Setting::SplitterHandles, checked);
     });
 }
 
@@ -150,17 +151,17 @@ PlaylistPage::PlaylistPage(QWidget* parent)
     auto* settings = PluginSystem::object<Settings>();
 
     auto* groupHeaders = new QCheckBox("Enable Disc Headers", this);
-    groupHeaders->setChecked(settings->value(Settings::Setting::DiscHeaders).toBool());
+    groupHeaders->setChecked(settings->value(Setting::DiscHeaders).toBool());
 
     auto* splitDiscs = new QCheckBox("Split Discs", this);
-    splitDiscs->setChecked(settings->value(Settings::Setting::SplitDiscs).toBool());
+    splitDiscs->setChecked(settings->value(Setting::SplitDiscs).toBool());
     splitDiscs->setEnabled(groupHeaders->isChecked());
 
     auto* simpleList = new QCheckBox("Simple Playlist", this);
-    simpleList->setChecked(settings->value(Settings::Setting::SimplePlaylist).toBool());
+    simpleList->setChecked(settings->value(Setting::SimplePlaylist).toBool());
 
     auto* altColours = new QCheckBox("Alternate Row Colours", this);
-    altColours->setChecked(settings->value(Settings::Setting::PlaylistAltColours).toBool());
+    altColours->setChecked(settings->value(Setting::PlaylistAltColours).toBool());
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(groupHeaders);
@@ -172,7 +173,7 @@ PlaylistPage::PlaylistPage(QWidget* parent)
     mainLayout->addStretch();
 
     connect(groupHeaders, &QCheckBox::clicked, this, [settings, splitDiscs](bool checked) {
-        settings->set(Settings::Setting::DiscHeaders, checked);
+        settings->set(Setting::DiscHeaders, checked);
         if(checked) {
             splitDiscs->setEnabled(checked);
         }
@@ -182,13 +183,13 @@ PlaylistPage::PlaylistPage(QWidget* parent)
         }
     });
     connect(splitDiscs, &QCheckBox::clicked, this, [settings](bool checked) {
-        settings->set(Settings::Setting::SplitDiscs, checked);
+        settings->set(Setting::SplitDiscs, checked);
     });
     connect(simpleList, &QCheckBox::clicked, this, [settings](bool checked) {
-        settings->set(Settings::Setting::SimplePlaylist, checked);
+        settings->set(Setting::SimplePlaylist, checked);
     });
     connect(altColours, &QCheckBox::clicked, this, [settings](bool checked) {
-        settings->set(Settings::Setting::PlaylistAltColours, checked);
+        settings->set(Setting::PlaylistAltColours, checked);
     });
 }
 
