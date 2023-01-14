@@ -26,17 +26,17 @@
 #include <QSettings>
 
 namespace Core {
-class Settings : public QObject
+class SettingsManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit Settings(QObject* parent = nullptr);
-    ~Settings() override;
-    Settings(const Settings& other)             = delete;
-    Settings& operator=(const Settings& other)  = delete;
-    Settings(const Settings&& other)            = delete;
-    Settings& operator=(const Settings&& other) = delete;
+    explicit SettingsManager(QObject* parent = nullptr);
+    ~SettingsManager() override;
+    SettingsManager(const SettingsManager& other)             = delete;
+    SettingsManager& operator=(const SettingsManager& other)  = delete;
+    SettingsManager(const SettingsManager&& other)            = delete;
+    SettingsManager& operator=(const SettingsManager&& other) = delete;
 
     void loadSettings();
     void storeSettings();

@@ -19,7 +19,7 @@
 
 #include "coresettings.h"
 
-#include "core/settings/settings.h"
+#include "core/settings/settingsmanager.h"
 #include "core/typedefs.h"
 #include "version.h"
 
@@ -29,7 +29,7 @@
 
 namespace Core::Setting {
 CoreSettings::CoreSettings()
-    : m_settings(PluginSystem::object<Settings>())
+    : m_settings(PluginSystem::object<SettingsManager>())
 {
     m_settings->createSetting(Setting::Version, VERSION);
     m_settings->createSetting(Setting::DatabaseVersion, DATABASE_VERSION);

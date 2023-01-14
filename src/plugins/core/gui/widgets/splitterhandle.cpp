@@ -20,14 +20,13 @@
 #include "splitterhandle.h"
 
 #include "core/coresettings.h"
-#include "core/settings/settings.h"
 
 #include <pluginsystem/pluginmanager.h>
 
 namespace Core::Widgets {
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)
-    , m_settings(PluginSystem::object<Settings>())
+    , m_settings(PluginSystem::object<SettingsManager>())
     , m_showHandle(m_settings->value(Setting::SplitterHandles).toBool())
 {
     //    connect(m_settings, &Settings::splitterHandlesChanged, this, &SplitterHandle::showHandle);

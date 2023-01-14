@@ -27,7 +27,7 @@
 #include <QWidget>
 
 namespace Core {
-class Settings;
+class SettingsManager;
 class Track;
 
 namespace Library {
@@ -63,7 +63,7 @@ protected:
     static void refreshTrack(Track* track);
 
 private:
-    Settings* m_settings;
+    SettingsManager* m_settings;
     Player::PlayerManager* m_playerManager;
     Library::MusicLibrary* m_library;
 

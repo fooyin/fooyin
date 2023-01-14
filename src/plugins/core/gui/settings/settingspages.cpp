@@ -22,7 +22,6 @@
 #include "core/coresettings.h"
 #include "core/library/libraryinfo.h"
 #include "core/library/librarymanager.h"
-#include "core/settings/settings.h"
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -43,7 +42,7 @@ GeneralPage::GeneralPage(QWidget* parent)
     //    mainLayout->addStretch();
     mainLayout->setAlignment(Qt::AlignTop);
 
-    auto* settings = PluginSystem::object<Settings>();
+    auto* settings = PluginSystem::object<SettingsManager>();
 
     auto* splitterHandles = new QCheckBox("Show Splitter Handles", this);
     splitterHandles->setChecked(settings->value(Setting::SplitterHandles).toBool());
@@ -74,10 +73,10 @@ LibraryPage::LibraryPage(Library::LibraryManager* libraryManager, QWidget* paren
     }
     m_libraryList.hideColumn(0);
 
-    auto* libraryButtons = new QWidget(this);
+    auto* libraryButtons      = new QWidget(this);
     auto* libraryButtonLayout = new QVBoxLayout(libraryButtons);
-    auto* addLibrary = new QPushButton("+", this);
-    auto* removeLibrary = new QPushButton("-", this);
+    auto* addLibrary          = new QPushButton("+", this);
+    auto* removeLibrary       = new QPushButton("-", this);
 
     libraryButtonLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     libraryButtonLayout->addWidget(addLibrary);
@@ -99,7 +98,7 @@ void LibraryPage::addLibraryRow(const Library::LibraryInfo& info)
     const int row = m_libraryList.rowCount();
     m_libraryList.setRowCount(row + 1);
 
-    auto* libId = new QTableWidgetItem{QString::number(info.id())};
+    auto* libId   = new QTableWidgetItem{QString::number(info.id())};
     auto* libName = new QTableWidgetItem{info.name()};
     auto* libPath = new QTableWidgetItem{info.path()};
 
@@ -128,7 +127,7 @@ void LibraryPage::addLibrary()
         if(!text.isEmpty()) {
             name = text;
         }
-        const auto id = m_libraryManager->addLibrary(newDir, name);
+        const auto id  = m_libraryManager->addLibrary(newDir, name);
         const auto lib = m_libraryManager->libraryInfo(id);
         addLibraryRow(lib);
     }
@@ -139,7 +138,7 @@ void LibraryPage::removeLibrary()
     const auto selItems = m_libraryList.selectionModel()->selectedRows();
     for(const auto& item : selItems) {
         const int row = item.row();
-        const int id = m_libraryList.item(row, 0)->text().toInt();
+        const int id  = m_libraryList.item(row, 0)->text().toInt();
         m_libraryManager->removeLibrary(id);
         m_libraryList.removeRow(row);
     }
@@ -148,7 +147,7 @@ void LibraryPage::removeLibrary()
 PlaylistPage::PlaylistPage(QWidget* parent)
     : QWidget(parent)
 {
-    auto* settings = PluginSystem::object<Settings>();
+    auto* settings = PluginSystem::object<SettingsManager>();
 
     auto* groupHeaders = new QCheckBox("Enable Disc Headers", this);
     groupHeaders->setChecked(settings->value(Setting::DiscHeaders).toBool());

@@ -88,8 +88,8 @@ fooyin_add_plugin(Core
         player/playercontroller.cpp
         player/playermanager.h
 
-        settings/settings.h
-        settings/settings.cpp
+        settings/settingsmanager.h
+        settings/settingsmanager.cpp
         settings/settingsentry.h
         settings/settingsentry.cpp
 

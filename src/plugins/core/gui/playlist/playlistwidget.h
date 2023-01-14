@@ -28,7 +28,7 @@ class QHBoxLayout;
 class QPushButton;
 
 namespace Core {
-class Settings;
+class SettingsManager;
 
 namespace Player {
 class PlayerManager;
@@ -89,7 +89,7 @@ private:
     Player::PlayerManager* m_playerManager;
     PlaylistModel* m_model;
     PlaylistView* m_playlist;
-    Settings* m_settings;
+    SettingsManager* m_settings;
     bool m_altRowColours;
     OverlayWidget* m_noLibrary;
 };

@@ -37,7 +37,6 @@
 #include "core/player/playercontroller.h"
 #include "core/playlist/libraryplaylistmanager.h"
 #include "core/playlist/playlisthandler.h"
-#include "core/settings/settings.h"
 #include "core/widgets/widgetfactory.h"
 #include "core/widgets/widgetprovider.h"
 #include "threadmanager.h"
@@ -49,7 +48,7 @@ struct Application::Private
 {
     Widgets::WidgetFactory* widgetFactory;
     ActionManager* actionManager;
-    Settings* settings;
+    SettingsManager* settings;
     std::unique_ptr<Setting::CoreSettings> coreSettings;
     ThreadManager* threadManager;
     DB::Database* db;
@@ -66,7 +65,7 @@ struct Application::Private
     explicit Private(QObject* parent)
         : widgetFactory(new Widgets::WidgetFactory())
         , actionManager(new ActionManager(parent))
-        , settings(new Settings(parent))
+        , settings(new SettingsManager(parent))
         , coreSettings(std::make_unique<Setting::CoreSettings>())
         , threadManager(new ThreadManager(parent))
         , db(DB::Database::instance())

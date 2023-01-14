@@ -26,7 +26,6 @@
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
-#include "core/settings/settings.h"
 #include "playlistdelegate.h"
 #include "playlistmodel.h"
 #include "playlistview.h"
@@ -49,7 +48,7 @@ PlaylistWidget::PlaylistWidget(QWidget* parent)
     , m_playerManager(PluginSystem::object<Player::PlayerManager>())
     , m_model(new PlaylistModel(m_playerManager, m_library, this))
     , m_playlist(new PlaylistView(this))
-    , m_settings(PluginSystem::object<Settings>())
+    , m_settings(PluginSystem::object<SettingsManager>())
     , m_altRowColours(m_settings->value(Setting::PlaylistAltColours).toBool())
     , m_noLibrary(new OverlayWidget(true, this))
 {

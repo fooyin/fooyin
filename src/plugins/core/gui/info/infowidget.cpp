@@ -26,7 +26,6 @@
 #include "core/library/models/track.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
-#include "core/settings/settings.h"
 
 #include <QHeaderView>
 #include <QMenu>
@@ -36,7 +35,7 @@
 namespace Core::Widgets {
 InfoWidget::InfoWidget(QWidget* parent)
     : FyWidget(parent)
-    , m_settings(PluginSystem::object<Settings>())
+    , m_settings(PluginSystem::object<SettingsManager>())
     , m_playerManager(PluginSystem::object<Player::PlayerManager>())
     , m_library(PluginSystem::object<Library::MusicLibrary>())
     , m_layout(new QHBoxLayout(this))

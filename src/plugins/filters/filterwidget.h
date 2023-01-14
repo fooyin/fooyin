@@ -28,7 +28,7 @@
 class QHBoxLayout;
 
 namespace Core {
-class Settings;
+class SettingsManager;
 
 namespace Player {
 class PlayerManager;
@@ -100,7 +100,7 @@ private:
     FilterManager* m_manager;
     FilterView* m_filter;
     FilterModel* m_model;
-    Core::Settings* m_settings;
+    Core::SettingsManager* m_settings;
 };
 
 class GenreFilter : public FilterWidget

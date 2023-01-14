@@ -22,7 +22,7 @@
 #include <QSplitterHandle>
 
 namespace Core {
-class Settings;
+class SettingsManager;
 
 namespace Widgets {
 class SplitterHandle : public QSplitterHandle
@@ -38,7 +38,7 @@ protected:
     void showHandle(bool show);
 
 private:
-    Settings* m_settings;
+    SettingsManager* m_settings;
     bool m_showHandle;
 };
 }; // namespace Widgets

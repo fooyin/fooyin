@@ -17,7 +17,7 @@
  *
  */
 
-#include "settings.h"
+#include "settingsmanager.h"
 
 #include <QSettings>
 #include <pluginsystem/pluginmanager.h>
@@ -27,16 +27,16 @@
 #include <utils/utils.h>
 
 namespace Core {
-Settings::Settings(QObject* parent)
+SettingsManager::SettingsManager(QObject* parent)
     : QObject{parent}
     , m_settingsFile{Utils::settingsPath(), QSettings::IniFormat, this}
 {
     PluginSystem::addObject(this);
 }
 
-Settings::~Settings() = default;
+SettingsManager::~SettingsManager() = default;
 
-void Settings::loadSettings()
+void SettingsManager::loadSettings()
 {
     for(auto& [key, setting] : m_settings) {
         if(!setting.writeToDisk()) {
@@ -52,7 +52,7 @@ void Settings::loadSettings()
     }
 }
 
-void Settings::storeSettings()
+void SettingsManager::storeSettings()
 {
     for(const auto& [key, setting] : m_settings) {
         if(!setting.writeToDisk()) {
@@ -67,7 +67,7 @@ void Settings::storeSettings()
     m_settingsFile.sync();
 }
 
-QString Settings::getKeyString(const SettingsEntry& setting)
+QString SettingsManager::getKeyString(const SettingsEntry& setting)
 {
     return setting.group() + "/" + setting.name();
 }

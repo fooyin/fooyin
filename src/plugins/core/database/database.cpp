@@ -20,7 +20,6 @@
 #include "database.h"
 
 #include "core/coresettings.h"
-#include "core/settings/settings.h"
 #include "library.h"
 #include "librarydatabase.h"
 #include "playlistdatabase.h"
@@ -71,7 +70,7 @@ Database::~Database() = default;
 
 Database* Database::instance()
 {
-    const QString directory = Utils::sharePath();
+    const QString directory        = Utils::sharePath();
     const QString databaseFilename = "fooyin.db";
 
     static Database database(directory, databaseFilename);
@@ -99,7 +98,7 @@ Library* Database::libraryConnector()
 
 bool Database::update()
 {
-    auto* settings = PluginSystem::object<Settings>();
+    auto* settings = PluginSystem::object<SettingsManager>();
     if(settings->value(Setting::DatabaseVersion).toString() < DATABASE_VERSION) {
         settings->set(Setting::DatabaseVersion, DATABASE_VERSION);
         return true;
@@ -301,8 +300,8 @@ bool Database::closeDatabase()
 
     QString connectionName;
     {
-        QSqlDatabase database = db();
-        connectionName = database.connectionName();
+        QSqlDatabase database       = db();
+        connectionName              = database.connectionName();
         QStringList connectionNames = QSqlDatabase::connectionNames();
         if(!connectionNames.contains(connectionName)) {
             return false;

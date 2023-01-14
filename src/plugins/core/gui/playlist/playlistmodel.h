@@ -26,7 +26,7 @@
 #include <QPixmap>
 
 namespace Core {
-class Settings;
+class SettingsManager;
 
 namespace Player {
 class PlayerManager;
@@ -90,7 +90,7 @@ private:
     ContainerHash m_containers;
     Player::PlayerManager* m_playerManager;
     Library::MusicLibrary* m_library;
-    Settings* m_settings;
+    SettingsManager* m_settings;
     QPixmap m_playingIcon;
     QPixmap m_pausedIcon;
 };

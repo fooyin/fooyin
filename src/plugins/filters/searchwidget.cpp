@@ -26,13 +26,12 @@
 #include <QLineEdit>
 #include <QMenu>
 #include <core/coresettings.h>
-#include <core/settings/settings.h>
 #include <pluginsystem/pluginmanager.h>
 
 namespace Filters {
 struct SearchWidget::Private
 {
-    Core::Settings* settings;
+    Core::SettingsManager* settings;
     QHBoxLayout* layout;
     QLineEdit* searchBox;
     const QString defaultText = "Search library...";
@@ -40,7 +39,7 @@ struct SearchWidget::Private
     FilterManager* manager;
 
     explicit Private()
-        : settings(PluginSystem::object<Core::Settings>())
+        : settings(PluginSystem::object<Core::SettingsManager>())
         , manager(PluginSystem::object<FilterManager>())
     { }
 };

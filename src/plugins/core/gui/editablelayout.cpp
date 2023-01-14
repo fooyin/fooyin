@@ -27,7 +27,6 @@
 #include "core/gui/widgets/menuheader.h"
 #include "core/gui/widgets/overlayfilter.h"
 #include "core/gui/widgets/splitterwidget.h"
-#include "core/settings/settings.h"
 #include "core/widgets/widgetfactory.h"
 #include "core/widgets/widgetprovider.h"
 
@@ -45,7 +44,7 @@ namespace Core::Widgets {
 struct EditableLayout::Private
 {
     QHBoxLayout* box;
-    Settings* settings;
+    SettingsManager* settings;
     bool layoutEditing{false};
     OverlayFilter* overlay;
     ActionManager* actionManager;
@@ -57,7 +56,7 @@ struct EditableLayout::Private
 
     explicit Private(QWidget* parent)
         : box{new QHBoxLayout(parent)}
-        , settings{PluginSystem::object<Settings>()}
+        , settings{PluginSystem::object<SettingsManager>()}
         , overlay{new OverlayFilter(parent)}
         , actionManager{PluginSystem::object<ActionManager>()}
         , widgetFactory{PluginSystem::object<Widgets::WidgetFactory>()}
@@ -66,7 +65,7 @@ struct EditableLayout::Private
 
     ActionContainer* createNewMenu(FyWidget* parent, const QString& title)
     {
-        auto id = parent->id();
+        auto id    = parent->id();
         auto* menu = actionManager->createMenu(id);
         menu->menu()->setTitle(title);
 
@@ -153,7 +152,7 @@ void EditableLayout::setupWidgetMenu(ActionContainer* menu, FyWidget* parent, bo
     for(const auto& widget : widgets) {
         auto* parentMenu = menu;
         for(const auto& subMenu : widget.second.subMenus) {
-            Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
+            Utils::Id id    = Utils::Id{menu->id()}.append(subMenu);
             auto* childMenu = p->actionManager->actionContainer(id);
             if(!childMenu) {
                 childMenu = p->actionManager->createMenu(id);
@@ -182,7 +181,7 @@ void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
         return;
     }
     auto* currentWidget = widget;
-    auto level = p->menuLevels;
+    auto level          = p->menuLevels;
     while(level > 0) {
         if(!currentWidget) {
             break;
@@ -225,8 +224,8 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
             p->menu->clear();
 
             const QPoint pos = mouseEvent->position().toPoint();
-            QWidget* widget = parentWidget()->childAt(pos);
-            FyWidget* child = p->splitterChild(widget);
+            QWidget* widget  = parentWidget()->childAt(pos);
+            FyWidget* child  = p->splitterChild(widget);
 
             if(child) {
                 setupContextMenu(child, p->menu);
@@ -282,7 +281,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
 
                 auto type = Utils::EnumHelper::fromString<Qt::Orientation>(splitterObject["Type"].toString());
                 QJsonArray splitterChildren = splitterObject["Children"].toArray();
-                auto state = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
+                auto state                  = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
 
                 p->splitter = Widgets::WidgetProvider::createSplitter(type, this);
                 p->box->addWidget(p->splitter);

@@ -23,7 +23,6 @@
 #include "core/gui/widgets/clickablelabel.h"
 #include "core/gui/widgets/slider.h"
 #include "core/library/models/track.h"
-#include "core/settings/settings.h"
 
 #include <QHBoxLayout>
 #include <QSlider>
@@ -41,7 +40,7 @@ struct ProgressWidget::Private
 
     int max{0};
 
-    Settings* settings{PluginSystem::object<Settings>()};
+    SettingsManager* settings{PluginSystem::object<SettingsManager>()};
 };
 
 ProgressWidget::ProgressWidget(QWidget* parent)
@@ -62,9 +61,9 @@ void ProgressWidget::setupUi()
 
     p->layout->setContentsMargins(0, 0, 0, 0);
 
-    p->slider = new Slider(Qt::Horizontal, this);
+    p->slider  = new Slider(Qt::Horizontal, this);
     p->elapsed = new ClickableLabel(this);
-    p->total = new ClickableLabel(this);
+    p->total   = new ClickableLabel(this);
 
     p->slider->setFocusPolicy(Qt::NoFocus);
 
@@ -99,7 +98,7 @@ void ProgressWidget::setCurrentPosition(int ms)
 void ProgressWidget::updateTime(int elapsed)
 {
     int secs = elapsed / 1000;
-    int max = p->max / 1000;
+    int max  = p->max / 1000;
 
     p->elapsed->setText(Utils::secsToString(secs));
 

@@ -27,7 +27,6 @@
 #include "core/gui/quicksetupdialog.h"
 #include "core/gui/settings/settingsdialog.h"
 #include "core/library/musiclibrary.h"
-#include "core/settings/settings.h"
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -50,13 +49,13 @@ struct MainWindow::Private
     QAction* rescan;
     QAction* quitAction;
 
-    Settings* settings;
+    SettingsManager* settings;
 
     QuickSeupDialog* quickSetupDialog;
 
     ActionManager* actionManager;
 
-    Private(ActionManager* actionManager, Settings* settings, Widgets::SettingsDialog* settingsDialog,
+    Private(ActionManager* actionManager, SettingsManager* settings, Widgets::SettingsDialog* settingsDialog,
             Library::MusicLibrary* library)
         : settingsDialog(settingsDialog)
         , library(library)
@@ -65,7 +64,7 @@ struct MainWindow::Private
     { }
 };
 
-MainWindow::MainWindow(ActionManager* actionManager, Settings* settings, Widgets::SettingsDialog* settingsDialog,
+MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, Widgets::SettingsDialog* settingsDialog,
                        Library::MusicLibrary* library, QWidget* parent)
     : QMainWindow(parent)
     , p(std::make_unique<Private>(actionManager, settings, settingsDialog, library))
@@ -88,10 +87,10 @@ void MainWindow::setupUi()
     setWindowIcon(QIcon(Core::Constants::Icons::Fooyin));
 
     QByteArray geometryArray = p->settings->value(Setting::Geometry).toString().toUtf8();
-    QByteArray geometry = QByteArray::fromBase64(geometryArray);
+    QByteArray geometry      = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
-    p->mainLayout = new Widgets::EditableLayout(this);
+    p->mainLayout       = new Widgets::EditableLayout(this);
     p->quickSetupDialog = new QuickSeupDialog(this);
 
     setCentralWidget(p->mainLayout);
@@ -135,13 +134,13 @@ void MainWindow::setupUi()
     helpMenu->menu()->setTitle(tr("&Help"));
 
     QIcon quitIcon = QIcon(Core::Constants::Icons::Quit);
-    p->quitAction = new QAction(quitIcon, tr("E&xit"), this);
+    p->quitAction  = new QAction(quitIcon, tr("E&xit"), this);
     p->actionManager->registerAction(p->quitAction, Core::Constants::Actions::Exit);
     fileMenu->addAction(p->quitAction, Core::Constants::Groups::Three);
     connect(p->quitAction, &QAction::triggered, this, &MainWindow::close);
 
     QIcon layoutEditingIcon = QIcon(Core::Constants::Icons::LayoutEditing);
-    p->layoutEditing = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
+    p->layoutEditing        = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
     p->actionManager->registerAction(p->layoutEditing, Core::Constants::Actions::LayoutEditing);
     viewMenu->addAction(p->layoutEditing, Core::Constants::Groups::Three);
     connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
@@ -150,7 +149,7 @@ void MainWindow::setupUi()
     p->layoutEditing->setChecked(p->settings->value(Setting::LayoutEditing).toBool());
 
     QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
-    p->openQuickSetup = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
+    p->openQuickSetup    = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
     p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
     viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
     connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSeupDialog::show);
@@ -158,13 +157,13 @@ void MainWindow::setupUi()
             &Widgets::EditableLayout::changeLayout);
 
     QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
-    p->rescan = new QAction(rescanIcon, tr("&Rescan Library"), this);
+    p->rescan        = new QAction(rescanIcon, tr("&Rescan Library"), this);
     p->actionManager->registerAction(p->rescan, Core::Constants::Actions::Rescan);
     libraryMenu->addAction(p->rescan, Core::Constants::Groups::Two);
     connect(p->rescan, &QAction::triggered, p->library, &Library::MusicLibrary::reloadAll);
 
     QIcon settingsIcon = QIcon(Core::Constants::Icons::Settings);
-    p->openSettings = new QAction(settingsIcon, tr("&Settings"), this);
+    p->openSettings    = new QAction(settingsIcon, tr("&Settings"), this);
     p->actionManager->registerAction(p->openSettings, Core::Constants::Actions::Settings);
     libraryMenu->addAction(p->openSettings, Core::Constants::Groups::Three);
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &Widgets::SettingsDialog::show);

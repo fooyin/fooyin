@@ -27,7 +27,7 @@ class MusicLibrary;
 
 namespace Core {
 class ActionManager;
-class Settings;
+class SettingsManager;
 
 namespace Widgets {
 class SettingsDialog;
@@ -38,7 +38,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(ActionManager* actionManager, Settings* settings, Widgets::SettingsDialog* settingsDialog,
+    explicit MainWindow(ActionManager* actionManager, SettingsManager* settings, Widgets::SettingsDialog* settingsDialog,
                         Library::MusicLibrary* library, QWidget* parent = nullptr);
     ~MainWindow() override;
 

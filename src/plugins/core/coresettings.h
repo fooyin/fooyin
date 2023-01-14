@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/settings/settings.h"
+#include "core/settings/settingsmanager.h"
 
 #include <QObject>
 
@@ -59,7 +59,7 @@ public:
     ~CoreSettings();
 
 private:
-    Settings* m_settings;
+    SettingsManager* m_settings;
 };
 }; // namespace Setting
 }; // namespace Core

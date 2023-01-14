@@ -35,7 +35,6 @@
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
-#include <core/settings/settings.h>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
@@ -48,7 +47,7 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     , m_manager(PluginSystem::object<FilterManager>())
     , m_filter(new FilterView(PluginSystem::object<Core::Player::PlayerManager>(), this))
     , m_model(new FilterModel(m_type, m_index, m_filter))
-    , m_settings(PluginSystem::object<Core::Settings>())
+    , m_settings(PluginSystem::object<Core::SettingsManager>())
 {
     setObjectName(FilterWidget::name());
     m_layout->setContentsMargins(0, 0, 0, 0);

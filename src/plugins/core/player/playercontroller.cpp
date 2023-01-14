@@ -21,7 +21,6 @@
 
 #include "core/coresettings.h"
 #include "core/library/models/track.h"
-#include "core/settings/settings.h"
 
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
@@ -37,7 +36,7 @@ PlayerController::PlayerController(QObject* parent)
     , m_volume(1.0F)
     , m_counted(false)
 {
-    m_playMode = static_cast<PlayMode>(PluginSystem::object<Settings>()->value(Setting::PlayMode).toInt());
+    m_playMode = static_cast<PlayMode>(PluginSystem::object<SettingsManager>()->value(Setting::PlayMode).toInt());
 }
 
 PlayerController::~PlayerController() = default;
@@ -45,7 +44,7 @@ PlayerController::~PlayerController() = default;
 void PlayerController::reset()
 {
     m_playStatus = Player::PlayState::Stopped;
-    m_position = 0;
+    m_position   = 0;
 }
 
 void PlayerController::play()

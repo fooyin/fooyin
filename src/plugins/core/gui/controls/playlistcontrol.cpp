@@ -22,7 +22,6 @@
 #include "core/constants.h"
 #include "core/coresettings.h"
 #include "core/gui/widgets/comboicon.h"
-#include "core/settings/settings.h"
 
 #include <QHBoxLayout>
 #include <pluginsystem/pluginmanager.h>
@@ -32,7 +31,7 @@
 namespace Core::Widgets {
 struct PlaylistControl::Private
 {
-    Settings* settings{PluginSystem::object<Settings>()};
+    SettingsManager* settings{PluginSystem::object<SettingsManager>()};
     QHBoxLayout* layout;
 
     QSize labelSize{20, 20};
@@ -61,7 +60,7 @@ void PlaylistControl::setupUi()
     p->layout->setSpacing(10);
     p->layout->setContentsMargins(0, 0, 0, 0);
 
-    p->repeat = new ComboIcon(Core::Constants::Icons::RepeatAll, Fy::HasActiveIcon, this);
+    p->repeat  = new ComboIcon(Core::Constants::Icons::RepeatAll, Fy::HasActiveIcon, this);
     p->shuffle = new ComboIcon(Core::Constants::Icons::Shuffle, Fy::HasActiveIcon, this);
 
     p->repeat->addPixmap(Core::Constants::Icons::Repeat);
