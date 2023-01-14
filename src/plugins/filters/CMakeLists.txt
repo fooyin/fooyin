@@ -18,6 +18,8 @@ fooyin_add_plugin(Filters
         filtermanager.cpp
         filtermodel.h
         filtermodel.cpp
+        filtersettings.h
+        filtersettings.cpp
         filterview.h
         filterview.cpp
         filterwidget.h

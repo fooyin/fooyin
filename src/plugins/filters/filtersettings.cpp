@@ -17,34 +17,18 @@
  *
  */
 
-#pragma once
+#include "filtersettings.h"
 
-#include <pluginsystem/plugin.h>
+#include <pluginsystem/pluginmanager.h>
 
-namespace Filters {
-class FilterManager;
-
-namespace Settings {
-class FiltersSettings;
-};
-
-class FiltersPlugin : public QObject,
-                      public PluginSystem::Plugin
+namespace Filters::Settings {
+FiltersSettings::FiltersSettings()
+    : m_settings(PluginSystem::object<Core::SettingsManager>())
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
-    Q_INTERFACES(PluginSystem::Plugin)
+    m_settings->createSetting(Settings::FilterAltColours, false, "Filters");
+    m_settings->createSetting(Settings::FilterHeader, true, "Filters");
+    m_settings->createSetting(Settings::FilterScrollBar, true, "Filters");
+}
 
-public:
-    FiltersPlugin();
-    ~FiltersPlugin() override;
-
-    void initialise() override;
-    void finalise() override;
-    void shutdown() override;
-
-private:
-    FilterManager* m_filterManager;
-    std::unique_ptr<Settings::FiltersSettings> m_filterSettings;
-};
-}; // namespace Filters
+FiltersSettings::~FiltersSettings() = default;
+}; // namespace Filters::Settings

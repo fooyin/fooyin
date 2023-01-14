@@ -23,6 +23,7 @@
 #include "filterdelegate.h"
 #include "filtermanager.h"
 #include "filtermodel.h"
+#include "filtersettings.h"
 #include "filterview.h"
 
 #include <QAction>
@@ -32,7 +33,6 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <core/actions/actioncontainer.h>
-#include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <pluginsystem/pluginmanager.h>
@@ -55,9 +55,9 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     m_filter->setModel(m_model);
     m_filter->setItemDelegate(new FilterDelegate(this));
     setupConnections();
-    setHeaderHidden(m_settings->value(Core::Settings::FilterHeader).toBool());
-    setScrollbarHidden(m_settings->value(Core::Settings::FilterScrollBar).toBool());
-    setAltRowColors(m_settings->value(Core::Settings::FilterAltColours).toBool());
+    setHeaderHidden(m_settings->value(Settings::FilterHeader).toBool());
+    setScrollbarHidden(m_settings->value(Settings::FilterScrollBar).toBool());
+    setAltRowColors(m_settings->value(Settings::FilterAltColours).toBool());
 }
 
 FilterWidget::~FilterWidget()
@@ -173,14 +173,14 @@ void FilterWidget::layoutEditingMenu(Core::ActionContainer* menu)
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Core::Settings::FilterHeader, checked);
+        m_settings->set(Settings::FilterHeader, checked);
     });
 
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
     QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Core::Settings::FilterScrollBar, checked);
+        m_settings->set(Settings::FilterScrollBar, checked);
     });
     menu->addAction(showScrollBar);
 
@@ -188,7 +188,7 @@ void FilterWidget::layoutEditingMenu(Core::ActionContainer* menu)
     altColours->setCheckable(true);
     altColours->setChecked(altRowColors());
     QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Core::Settings::FilterAltColours, checked);
+        m_settings->set(Settings::FilterAltColours, checked);
     });
 
     menu->addAction(showHeaders);

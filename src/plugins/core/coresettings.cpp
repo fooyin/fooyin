@@ -45,9 +45,6 @@ CoreSettings::CoreSettings()
     m_settings->createSetting(Settings::PlaylistScrollBar, true, "Playlist");
     m_settings->createSetting(Settings::PlayMode, Player::PlayMode::Default, "Player");
     m_settings->createSetting(Settings::ElapsedTotal, false, "Player");
-    m_settings->createSetting(Settings::FilterAltColours, false, "Filters");
-    m_settings->createSetting(Settings::FilterHeader, true, "Filters");
-    m_settings->createSetting(Settings::FilterScrollBar, true, "Filters");
     m_settings->createSetting(Settings::InfoAltColours, true, "Info");
     m_settings->createSetting(Settings::InfoHeader, true, "Info");
     m_settings->createSetting(Settings::InfoScrollBar, true, "Info");

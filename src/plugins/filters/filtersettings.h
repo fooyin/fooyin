@@ -19,32 +19,25 @@
 
 #pragma once
 
-#include <pluginsystem/plugin.h>
+#include <core/settings/settingsmanager.h>
 
-namespace Filters {
-class FilterManager;
-
-namespace Settings {
-class FiltersSettings;
-};
-
-class FiltersPlugin : public QObject,
-                      public PluginSystem::Plugin
+namespace Filters::Settings {
+Q_NAMESPACE
+enum Filters : uint32_t
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
-    Q_INTERFACES(PluginSystem::Plugin)
+    FilterAltColours = 1,
+    FilterHeader     = 2,
+    FilterScrollBar  = 3,
+};
+Q_ENUM_NS(Filters);
 
+class FiltersSettings
+{
 public:
-    FiltersPlugin();
-    ~FiltersPlugin() override;
-
-    void initialise() override;
-    void finalise() override;
-    void shutdown() override;
+    FiltersSettings();
+    ~FiltersSettings();
 
 private:
-    FilterManager* m_filterManager;
-    std::unique_ptr<Settings::FiltersSettings> m_filterSettings;
+    Core::SettingsManager* m_settings;
 };
-}; // namespace Filters
+}; // namespace Filters::Settings

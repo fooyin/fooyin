@@ -42,12 +42,9 @@ enum Core : uint32_t
     PlaylistScrollBar  = 13,
     PlayMode           = 14,
     ElapsedTotal       = 15,
-    FilterAltColours   = 16,
-    FilterHeader       = 17,
-    FilterScrollBar    = 18,
-    InfoAltColours     = 19,
-    InfoHeader         = 20,
-    InfoScrollBar      = 21,
+    InfoAltColours     = 16,
+    InfoHeader         = 17,
+    InfoScrollBar      = 18,
 };
 Q_ENUM_NS(Core);
 

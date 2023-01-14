@@ -20,6 +20,7 @@
 #include "filtersplugin.h"
 
 #include "filtermanager.h"
+#include "filtersettings.h"
 #include "filterwidget.h"
 #include "searchwidget.h"
 
@@ -40,7 +41,9 @@ void FiltersPlugin::initialise() { }
 
 void FiltersPlugin::finalise()
 {
-    m_filterManager = new FilterManager(this);
+    m_filterManager  = new FilterManager(this);
+    m_filterSettings = std::make_unique<Settings::FiltersSettings>();
+
     PluginSystem::addObject(m_filterManager);
 
     auto* factory = PluginSystem::object<Core::Widgets::WidgetFactory>();
