@@ -49,7 +49,7 @@ PlaylistWidget::PlaylistWidget(QWidget* parent)
     , m_model(new PlaylistModel(m_playerManager, m_library, this))
     , m_playlist(new PlaylistView(this))
     , m_settings(PluginSystem::object<SettingsManager>())
-    , m_altRowColours(m_settings->value(Settings::PlaylistAltColours).toBool())
+    , m_altRowColours(m_settings->value<Settings::PlaylistAltColours>())
     , m_noLibrary(new OverlayWidget(true, this))
 {
     setObjectName("Playlist");
@@ -67,8 +67,8 @@ PlaylistWidget::PlaylistWidget(QWidget* parent)
     });
 
     reset();
-    setHeaderHidden(m_settings->value(Settings::PlaylistHeader).toBool());
-    setScrollbarHidden(m_settings->value(Settings::PlaylistScrollBar).toBool());
+    setHeaderHidden(m_settings->value<Settings::PlaylistHeader>());
+    setScrollbarHidden(m_settings->value<Settings::PlaylistScrollBar>());
     setup();
 }
 
@@ -156,7 +156,7 @@ void PlaylistWidget::layoutEditingMenu(ActionContainer* menu)
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::PlaylistHeader, isHeaderHidden());
+        m_settings->set<Settings::PlaylistHeader>(isHeaderHidden());
     });
     menu->addAction(showHeaders);
 
@@ -164,7 +164,7 @@ void PlaylistWidget::layoutEditingMenu(ActionContainer* menu)
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
     QAction::connect(showScrollBar, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::PlaylistScrollBar, isScrollbarHidden());
+        m_settings->set<Settings::PlaylistScrollBar>(isScrollbarHidden());
     });
     menu->addAction(showScrollBar);
 
@@ -172,7 +172,7 @@ void PlaylistWidget::layoutEditingMenu(ActionContainer* menu)
     altRowColours->setCheckable(true);
     altRowColours->setChecked(m_altRowColours);
     QAction::connect(altRowColours, &QAction::triggered, this, [this] {
-        m_settings->set(Settings::PlaylistAltColours, !m_altRowColours);
+        m_settings->set<Settings::PlaylistAltColours>(!m_altRowColours);
     });
     menu->addAction(altRowColours);
 }

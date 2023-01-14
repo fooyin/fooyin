@@ -92,6 +92,7 @@ fooyin_add_plugin(Core
         settings/settingsmanager.cpp
         settings/settingsentry.h
         settings/settingsentry.cpp
+        settings/settingtypes.h
 
         tagging/tags.h
         tagging/tags.cpp

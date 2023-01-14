@@ -99,8 +99,8 @@ Library* Database::libraryConnector()
 bool Database::update()
 {
     auto* settings = PluginSystem::object<SettingsManager>();
-    if(settings->value(Settings::DatabaseVersion).toString() < DATABASE_VERSION) {
-        settings->set(Settings::DatabaseVersion, DATABASE_VERSION);
+    if(settings->value<Settings::DatabaseVersion>() < DATABASE_VERSION) {
+        settings->set<Settings::DatabaseVersion>(DATABASE_VERSION);
         return true;
     }
     return true;

@@ -72,7 +72,7 @@ MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, 
 
 MainWindow::~MainWindow()
 {
-    p->settings->set(Settings::Geometry, QString::fromUtf8(saveGeometry().toBase64()));
+    p->settings->set<Settings::Geometry>(saveGeometry().toBase64());
     p->mainLayout->saveLayout();
 }
 
@@ -86,7 +86,7 @@ void MainWindow::setupUi()
     setMinimumSize(410, 320);
     setWindowIcon(QIcon(Core::Constants::Icons::Fooyin));
 
-    QByteArray geometryArray = p->settings->value(Settings::Geometry).toString().toUtf8();
+    QByteArray geometryArray = p->settings->value<Settings::Geometry>();
     QByteArray geometry      = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
@@ -146,7 +146,7 @@ void MainWindow::setupUi()
     connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
     // connect(p->settings, &Settings::layoutEditingChanged, p->layoutEditing, &QAction::setChecked);
     p->layoutEditing->setCheckable(true);
-    p->layoutEditing->setChecked(p->settings->value(Settings::LayoutEditing).toBool());
+    p->layoutEditing->setChecked(p->settings->value<Settings::LayoutEditing>());
 
     QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
     p->openQuickSetup    = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
@@ -168,7 +168,7 @@ void MainWindow::setupUi()
     libraryMenu->addAction(p->openSettings, Core::Constants::Groups::Three);
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &Widgets::SettingsDialog::show);
 
-    if(p->settings->value(Settings::FirstRun).toBool()) {
+    if(p->settings->value<Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
         QTimer::singleShot(1000, p->quickSetupDialog, &QuickSeupDialog::show);
     }
@@ -192,6 +192,6 @@ void MainWindow::contextMenuEvent(QContextMenuEvent* event)
 
 void MainWindow::enableLayoutEditing(bool enable)
 {
-    p->settings->set(Settings::LayoutEditing, enable);
+    p->settings->set<Settings::LayoutEditing>(enable);
 }
 }; // namespace Core

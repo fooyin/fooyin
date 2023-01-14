@@ -36,7 +36,7 @@ PlayerController::PlayerController(QObject* parent)
     , m_volume(1.0F)
     , m_counted(false)
 {
-    m_playMode = static_cast<PlayMode>(PluginSystem::object<SettingsManager>()->value(Settings::PlayMode).toInt());
+    m_playMode = PluginSystem::object<SettingsManager>()->value<Settings::PlayMode>().value<PlayMode>();
 }
 
 PlayerController::~PlayerController() = default;

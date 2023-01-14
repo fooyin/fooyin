@@ -20,6 +20,7 @@
 #pragma once
 
 #include "settingsentry.h"
+#include "settingtypes.h"
 
 #include <QMetaEnum>
 #include <QReadWriteLock>
@@ -42,6 +43,18 @@ public:
     void storeSettings();
 
     QString getKeyString(const SettingsEntry& setting);
+
+    template <auto key>
+    static int constexpr findType()
+    {
+        using E = decltype(key);
+        static_assert(std::is_enum_v<E>, "The template parameter is not an enum!");
+        static_assert(std::is_same_v<std::underlying_type_t<E>, uint32_t>, "Enum should be of type 'uint32_t'");
+
+        // Use last 4 bits to determine type
+        const auto type = (key & 0xF0'00'00'00);
+        return static_cast<int>(type);
+    }
 
     template <typename E>
     auto constexpr getMapKey(E key)
@@ -100,26 +113,40 @@ public:
         }
     }
 
-    template <typename E>
-    auto constexpr value(E key)
+    template <auto key>
+    auto constexpr value()
     {
         const auto mapKey = getMapKey(key);
 
-        if(!m_settings.count(mapKey)) {
-            return QVariant{};
-        }
-
         m_lock.lockForRead();
 
-        const auto value = m_settings.at(mapKey).value();
+        const auto value = m_settings.count(mapKey) ? m_settings.at(mapKey).value() : -1;
+        const auto type  = findType<key>();
 
         m_lock.unlock();
 
-        return value;
+        if constexpr(type == Settings::Type::Bool) {
+            return value.toBool();
+        }
+        else if constexpr(type == Settings::Type::Double) {
+            return value.toDouble();
+        }
+        else if constexpr(type == Settings::Type::Int) {
+            return value.toInt();
+        }
+        else if constexpr(type == Settings::Type::String) {
+            return value.toString();
+        }
+        else if constexpr(type == Settings::Type::ByteArray) {
+            return value.toByteArray();
+        }
+        else {
+            return value;
+        }
     }
 
-    template <typename E, typename V>
-    void constexpr set(E key, V value)
+    template <auto key, typename V>
+    void constexpr set(V value)
     {
         const auto mapKey = getMapKey(key);
 

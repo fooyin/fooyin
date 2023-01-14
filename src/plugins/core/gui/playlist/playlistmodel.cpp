@@ -62,8 +62,8 @@ PlaylistModel::~PlaylistModel() = default;
 
 void PlaylistModel::setupModelData()
 {
-    const bool discHeaders = m_settings->value(Settings::DiscHeaders).toBool();
-    const bool splitDiscs  = m_settings->value(Settings::SplitDiscs).toBool();
+    const bool discHeaders = m_settings->value<Settings::DiscHeaders>();
+    const bool splitDiscs  = m_settings->value<Settings::SplitDiscs>();
 
     if(m_library) {
         const TrackPtrList& tracks = m_library->tracks();
@@ -169,7 +169,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     const PlaylistItem::Type type = item->type();
 
     if(role == Role::PlaylistType) {
-        return m_settings->value(Settings::SimplePlaylist);
+        return m_settings->value<Settings::SimplePlaylist>();
     }
 
     if(role == Role::Type) {
@@ -221,8 +221,8 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
             return Utils::msToString(track->duration());
         }
         case(ItemRole::MultiDisk): {
-            if(item->parent()->type() == PlaylistItem::Type::Disc && m_settings->value(Settings::DiscHeaders).toBool()
-               && !m_settings->value(Settings::SplitDiscs).toBool()) {
+            if(item->parent()->type() == PlaylistItem::Type::Disc && m_settings->value<Settings::DiscHeaders>()
+               && !m_settings->value<Settings::SplitDiscs>()) {
                 return true;
             }
             return false;
@@ -240,7 +240,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
             return QVariant::fromValue<Track*>(track);
         }
         case(Qt::BackgroundRole): {
-            return m_settings->value(Settings::PlaylistAltColours).toBool()
+            return m_settings->value<Settings::PlaylistAltColours>()
                      ? item->row() & 1 ? QPalette::Base : QPalette::AlternateBase
                      : QPalette::Base;
         }

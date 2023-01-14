@@ -49,7 +49,7 @@ CoreSettings::CoreSettings()
     m_settings->createSetting(Settings::InfoHeader, true, "Info");
     m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
 
-    m_settings->set(Settings::FirstRun, !Utils::File::exists(Utils::settingsPath()));
+    m_settings->set<Settings::FirstRun>(!Utils::File::exists(Utils::settingsPath()));
 }
 
 CoreSettings::~CoreSettings() = default;

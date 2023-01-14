@@ -55,9 +55,9 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     m_filter->setModel(m_model);
     m_filter->setItemDelegate(new FilterDelegate(this));
     setupConnections();
-    setHeaderHidden(m_settings->value(Settings::FilterHeader).toBool());
-    setScrollbarHidden(m_settings->value(Settings::FilterScrollBar).toBool());
-    setAltRowColors(m_settings->value(Settings::FilterAltColours).toBool());
+    setHeaderHidden(m_settings->value<Settings::FilterHeader>());
+    setScrollbarHidden(m_settings->value<Settings::FilterScrollBar>());
+    setAltRowColors(m_settings->value<Settings::FilterAltColours>());
 }
 
 FilterWidget::~FilterWidget()
@@ -173,14 +173,14 @@ void FilterWidget::layoutEditingMenu(Core::ActionContainer* menu)
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Settings::FilterHeader, checked);
+        m_settings->set<Settings::FilterHeader>(checked);
     });
 
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(!isScrollbarHidden());
     QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Settings::FilterScrollBar, checked);
+        m_settings->set<Settings::FilterScrollBar>(checked);
     });
     menu->addAction(showScrollBar);
 
@@ -188,7 +188,7 @@ void FilterWidget::layoutEditingMenu(Core::ActionContainer* menu)
     altColours->setCheckable(true);
     altColours->setChecked(altRowColors());
     QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set(Settings::FilterAltColours, checked);
+        m_settings->set<Settings::FilterAltColours>(checked);
     });
 
     menu->addAction(showHeaders);
