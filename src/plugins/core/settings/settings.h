@@ -69,13 +69,21 @@ public:
 
     QString getKeyString(const SettingsEntry& setting);
 
-    template <typename E, typename T>
-    void constexpr subscribe(E key, T* obj, void (T::*func)())
+    template <typename E>
+    auto constexpr getMapKey(E key)
     {
         const auto meta      = QMetaEnum::fromType<E>();
         const auto enumName  = meta.name();
         const auto keyString = QString::fromLatin1(meta.valueToKey(key));
         const auto mapKey    = enumName + keyString;
+
+        return mapKey;
+    }
+
+    template <typename E, typename T>
+    void constexpr subscribe(E key, T* obj, void (T::*func)())
+    {
+        const auto mapKey = getMapKey(key);
 
         if(m_settings.count(mapKey)) {
             QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChanged, obj, func);
@@ -85,10 +93,7 @@ public:
     template <typename E, typename T>
     void constexpr unsubscribe(E key, T* obj)
     {
-        const auto meta      = QMetaEnum::fromType<E>();
-        const auto enumName  = meta.name();
-        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
-        const auto mapKey    = enumName + keyString;
+        const auto mapKey = getMapKey(key);
 
         if(m_settings.count(mapKey)) {
             QObject::disconnect(&m_settings.at(mapKey), nullptr, obj, nullptr);
@@ -124,10 +129,7 @@ public:
     template <typename E>
     auto constexpr value(E key)
     {
-        const auto meta      = QMetaEnum::fromType<E>();
-        const auto enumName  = meta.name();
-        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
-        const auto mapKey    = enumName + keyString;
+        const auto mapKey = getMapKey(key);
 
         if(!m_settings.count(mapKey)) {
             return QVariant{};
@@ -145,10 +147,7 @@ public:
     template <typename E, typename V>
     void constexpr set(E key, V value)
     {
-        const auto meta      = QMetaEnum::fromType<E>();
-        const auto enumName  = meta.name();
-        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
-        const auto mapKey    = enumName + keyString;
+        const auto mapKey = getMapKey(key);
 
         m_lock.lockForWrite();
 
