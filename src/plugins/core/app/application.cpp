@@ -82,8 +82,6 @@ struct Application::Private
     {
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
 
-        settings->loadSettings();
-
         threadManager->moveToNewThread(&engine);
 
         addObjects();
@@ -131,6 +129,7 @@ Application::Application(QObject* parent)
 
 void Application::startup()
 {
+    p->settings->loadSettings();
     p->mainWindow->setupUi();
     p->mainWindow->show();
 }
