@@ -30,14 +30,13 @@ PlayerController::PlayerController(QObject* parent)
     : PlayerManager(parent)
     , m_currentTrack(nullptr)
     , m_totalDuration(0)
-    , m_playStatus(Player::PlayState::Stopped)
-    , m_playMode(Player::PlayMode::Default)
+    , m_playStatus(PlayState::Stopped)
+    , m_playMode(PlayMode::Default)
     , m_position(0)
     , m_volume(1.0F)
     , m_counted(false)
 {
-    m_playMode = Utils::EnumHelper::fromString<Player::PlayMode>(
-        PluginSystem::object<Settings>()->value(Settings::Setting::PlayMode).toString());
+    m_playMode = static_cast<PlayMode>(PluginSystem::object<Settings>()->value(Settings::Setting::PlayMode).toInt());
 }
 
 PlayerController::~PlayerController() = default;
@@ -117,10 +116,10 @@ void PlayerController::changePosition(quint64 ms)
 
 void PlayerController::changeCurrentTrack(Track* track)
 {
-    m_currentTrack = track;
+    m_currentTrack  = track;
     m_totalDuration = track->duration();
-    m_position = 0;
-    m_counted = false;
+    m_position      = 0;
+    m_counted       = false;
 
     emit currentTrackChanged(m_currentTrack);
     play();

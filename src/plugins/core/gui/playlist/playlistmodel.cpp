@@ -46,8 +46,8 @@ PlaylistModel::PlaylistModel(Player::PlayerManager* playerManager, Library::Musi
 {
     setupModelData();
 
-    connect(m_settings, &Settings::playlistSettingChanged, this, &PlaylistModel::reset);
-    connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistModel::changeRowColours);
+    //    connect(m_settings, &Settings::playlistSettingChanged, this, &PlaylistModel::reset);
+    //    connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistModel::changeRowColours);
     connect(m_library, &Library::MusicLibrary::tracksLoaded, this, &PlaylistModel::reset);
     connect(m_library, &Library::MusicLibrary::tracksChanged, this, &PlaylistModel::reset);
     connect(m_library, &Library::MusicLibrary::tracksDeleted, this, &PlaylistModel::reset);

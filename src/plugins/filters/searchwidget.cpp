@@ -52,7 +52,7 @@ SearchWidget::SearchWidget(QWidget* parent)
 
     setupUi();
 
-    connect(p->settings, &Core::Settings::layoutEditingChanged, this, &SearchWidget::searchBoxContextMenu);
+    //    connect(p->settings, &Core::Settings::layoutEditingChanged, this, &SearchWidget::searchBoxContextMenu);
     connect(p->searchBox, &QLineEdit::textChanged, this, &SearchWidget::textChanged);
     connect(this, &SearchWidget::searchChanged, p->manager, &FilterManager::searchChanged);
 }

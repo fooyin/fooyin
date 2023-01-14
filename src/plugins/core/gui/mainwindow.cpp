@@ -144,7 +144,7 @@ void MainWindow::setupUi()
     p->actionManager->registerAction(p->layoutEditing, Core::Constants::Actions::LayoutEditing);
     viewMenu->addAction(p->layoutEditing, Core::Constants::Groups::Three);
     connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
-    connect(p->settings, &Settings::layoutEditingChanged, p->layoutEditing, &QAction::setChecked);
+    // connect(p->settings, &Settings::layoutEditingChanged, p->layoutEditing, &QAction::setChecked);
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value(Settings::Setting::LayoutEditing).toBool());
 

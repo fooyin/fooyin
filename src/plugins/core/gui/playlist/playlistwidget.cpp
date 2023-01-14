@@ -100,9 +100,9 @@ void PlaylistWidget::setupConnections()
     connect(m_libraryManager, &Library::LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
     connect(m_libraryManager, &Library::LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
 
-    connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistWidget::setAltRowColours);
-    connect(m_settings, &Settings::playlistHeaderChanged, this, &PlaylistWidget::setHeaderHidden);
-    connect(m_settings, &Settings::playlistScrollBarChanged, this, &PlaylistWidget::setScrollbarHidden);
+    //    connect(m_settings, &Settings::playlistAltColorsChanged, this, &PlaylistWidget::setAltRowColours);
+    //    connect(m_settings, &Settings::playlistHeaderChanged, this, &PlaylistWidget::setHeaderHidden);
+    //    connect(m_settings, &Settings::playlistScrollBarChanged, this, &PlaylistWidget::setScrollbarHidden);
     connect(m_playlist->header(), &QHeaderView::sectionClicked, this, &PlaylistWidget::switchOrder);
 
     connect(m_model, &PlaylistModel::modelReset, this, &PlaylistWidget::reset);
@@ -207,7 +207,7 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
         QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
         if(!indexes.isEmpty()) {
             const QModelIndex index = indexes.constFirst();
-            const auto type = index.data(Role::Type).value<PlaylistItem::Type>();
+            const auto type         = index.data(Role::Type).value<PlaylistItem::Type>();
 
             if(type != PlaylistItem::Type::Track) {
                 return;

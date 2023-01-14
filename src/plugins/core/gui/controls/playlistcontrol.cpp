@@ -71,8 +71,7 @@ void PlaylistControl::setupUi()
     p->layout->addWidget(p->repeat, 0, Qt::AlignVCenter);
     p->layout->addWidget(p->shuffle, 0, Qt::AlignVCenter);
 
-    const auto mode
-        = Utils::EnumHelper::fromString<Player::PlayMode>(p->settings->value(Settings::Setting::PlayMode).toString());
+    const auto mode = static_cast<Player::PlayMode>(p->settings->value(Settings::Setting::PlayMode).toInt());
     setMode(mode);
 }
 

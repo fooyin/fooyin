@@ -51,9 +51,9 @@ InfoWidget::InfoWidget(QWidget* parent)
     connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, this, &Widgets::InfoWidget::refreshTrack);
     connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, &m_model, &InfoModel::reset);
 
-    connect(m_settings, &Settings::infoAltColorsChanged, this, &InfoWidget::setAltRowColors);
-    connect(m_settings, &Settings::infoHeaderChanged, this, &InfoWidget::setHeaderHidden);
-    connect(m_settings, &Settings::infoScrollBarChanged, this, &InfoWidget::setScrollbarHidden);
+    //    connect(m_settings, &Settings::infoAltColorsChanged, this, &InfoWidget::setAltRowColors);
+    //    connect(m_settings, &Settings::infoHeaderChanged, this, &InfoWidget::setHeaderHidden);
+    //    connect(m_settings, &Settings::infoScrollBarChanged, this, &InfoWidget::setScrollbarHidden);
 
     spanHeaders();
 }

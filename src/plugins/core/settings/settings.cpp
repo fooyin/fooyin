@@ -31,37 +31,38 @@
 
 namespace Core {
 Settings::Settings(QObject* parent)
-    : QObject(parent)
+    : QObject{parent}
+    , m_settingsFile{Utils::settingsPath(), QSettings::IniFormat, this}
 {
-    m_values[Setting::Version] = defaults(Setting::Version);
-    m_values[Setting::DatabaseVersion] = defaults(Setting::DatabaseVersion);
-    m_values[Setting::DiscHeaders] = defaults(Setting::DiscHeaders);
-    m_values[Setting::SplitDiscs] = defaults(Setting::SplitDiscs);
-    m_values[Setting::SimplePlaylist] = defaults(Setting::SimplePlaylist);
-    m_values[Setting::LayoutEditing] = defaults(Setting::LayoutEditing);
-    m_values[Setting::PlayMode] = defaults(Setting::PlayMode);
-    m_values[Setting::Geometry] = defaults(Setting::Geometry);
-    m_values[Setting::ElapsedTotal] = defaults(Setting::ElapsedTotal);
-    m_values[Setting::FilterAltColours] = defaults(Setting::FilterAltColours);
-    m_values[Setting::FilterHeader] = defaults(Setting::FilterHeader);
-    m_values[Setting::FilterScrollBar] = defaults(Setting::FilterScrollBar);
-    m_values[Setting::InfoAltColours] = defaults(Setting::InfoAltColours);
-    m_values[Setting::InfoHeader] = defaults(Setting::InfoHeader);
-    m_values[Setting::InfoScrollBar] = defaults(Setting::InfoScrollBar);
-    m_values[Setting::PlaylistAltColours] = defaults(Setting::PlaylistAltColours);
-    m_values[Setting::PlaylistHeader] = defaults(Setting::PlaylistHeader);
-    m_values[Setting::PlaylistScrollBar] = defaults(Setting::PlaylistScrollBar);
-    m_values[Setting::SplitterHandles] = defaults(Setting::SplitterHandles);
-    m_values[Setting::Layout] = defaults(Setting::Layout);
+    createSetting(Setting::Version, VERSION);
+    createSetting(Setting::DatabaseVersion, DATABASE_VERSION);
+    createTempSetting(Setting::FirstRun, true);
+    createTempSetting(Setting::LayoutEditing, false);
+    createSetting(Setting::Geometry, "", "Layout");
+    createSetting(Setting::Layout, "", "Layout");
+    createSetting(Setting::SplitterHandles, true, "Splitters");
+    createSetting(Setting::DiscHeaders, true, "Playlist");
+    createSetting(Setting::SplitDiscs, false, "Playlist");
+    createSetting(Setting::SimplePlaylist, false, "Playlist");
+    createSetting(Setting::PlaylistAltColours, true, "Playlist");
+    createSetting(Setting::PlaylistHeader, true, "Playlist");
+    createSetting(Setting::PlaylistScrollBar, true, "Playlist");
+    createSetting(Setting::PlayMode, Player::PlayMode::Default, "Player");
+    createSetting(Setting::ElapsedTotal, false, "Player");
+    createSetting(Setting::FilterAltColours, false, "Filters");
+    createSetting(Setting::FilterHeader, true, "Filters");
+    createSetting(Setting::FilterScrollBar, true, "Filters");
+    createSetting(Setting::InfoAltColours, true, "Info");
+    createSetting(Setting::InfoHeader, true, "Info");
+    createSetting(Setting::InfoScrollBar, true, "Info");
 
-    m_settings = new QSettings(Utils::settingsPath(), QSettings::IniFormat, this);
     if(Utils::File::exists(Utils::settingsPath())) {
         loadSettings();
-        m_values[Setting::FirstRun] = false;
+        set(Setting::FirstRun, false);
     }
     else {
         storeSettings();
-        m_values[Setting::FirstRun] = true;
+        set(Setting::FirstRun, true);
     }
 
     PluginSystem::addObject(this);
@@ -69,19 +70,17 @@ Settings::Settings(QObject* parent)
 
 Settings::~Settings() = default;
 
-QMap<Settings::Setting, QVariant>& Settings::settings()
-{
-    return m_values;
-}
-
 void Settings::loadSettings()
 {
-    for(const auto& [key, value] : Utils::asRange(m_values)) {
-        const auto keyString = getKeyString(key);
+    for(auto& [key, setting] : m_settings) {
+        if(!setting.writeToDisk()) {
+            continue;
+        }
+        const auto keyString = getKeyString(setting);
         if(!keyString.isEmpty()) {
-            const auto diskValue = m_settings->value(keyString);
-            if(!diskValue.isNull() && diskValue != value) {
-                set(key, diskValue);
+            const auto diskValue = m_settingsFile.value(keyString);
+            if(!diskValue.isNull() && diskValue != setting.value()) {
+                setting.setValue(diskValue);
             }
         }
     }
@@ -89,142 +88,21 @@ void Settings::loadSettings()
 
 void Settings::storeSettings()
 {
-    for(const auto& [key, value] : Utils::asRange(m_values)) {
-        const auto keyString = getKeyString(key);
+    for(const auto& [key, setting] : m_settings) {
+        if(!setting.writeToDisk()) {
+            continue;
+        }
+        const auto keyString = getKeyString(setting);
         if(!keyString.isEmpty()) {
-            m_settings->setValue(keyString, value);
+            m_settingsFile.setValue(keyString, setting.value());
         }
     }
 
-    m_settings->sync();
+    m_settingsFile.sync();
 }
 
-QVariant Settings::value(Setting key)
+QString Settings::getKeyString(const SettingsEntry& setting)
 {
-    m_lock.lockForRead();
-    auto value = m_values.value(key);
-    m_lock.unlock();
-    return value;
-}
-
-void Settings::set(Setting key, const QVariant& value)
-{
-    m_lock.lockForWrite();
-    m_values.insert(key, value);
-    m_lock.unlock();
-
-    bool checked = value.toBool();
-
-    switch(key) {
-        case(Setting::LayoutEditing):
-            return emit layoutEditingChanged(checked);
-        case(Setting::SimplePlaylist):
-            return emit playlistSettingChanged();
-        case(Setting::ElapsedTotal):
-            return emit elapsedTotalChanged(checked);
-        case(Setting::FilterAltColours):
-            return emit filterAltColorsChanged(checked);
-        case(Setting::FilterHeader):
-            return emit filterHeaderChanged(checked);
-        case(Setting::FilterScrollBar):
-            return emit filterScrollBarChanged(checked);
-        case(Setting::InfoAltColours):
-            return emit infoAltColorsChanged(checked);
-        case(Setting::InfoHeader):
-            return emit infoHeaderChanged(checked);
-        case(Setting::InfoScrollBar):
-            return emit infoScrollBarChanged(checked);
-        case(Setting::PlaylistAltColours):
-            return emit playlistAltColorsChanged(checked);
-        case(Setting::PlaylistHeader):
-            return emit playlistHeaderChanged(checked);
-        case(Setting::PlaylistScrollBar):
-            return emit playlistScrollBarChanged(checked);
-        case(Setting::DiscHeaders):
-        case(Setting::SplitDiscs):
-            return emit playlistSettingChanged();
-        case(Setting::SplitterHandles):
-            return emit splitterHandlesChanged(checked);
-        default:
-            break;
-    }
-}
-
-QVariant Settings::defaults(Setting key)
-{
-    switch(key) {
-        case(Setting::Version):
-            return VERSION;
-        case(Setting::DatabaseVersion):
-            return DATABASE_VERSION;
-        case(Setting::PlayMode):
-            return Utils::EnumHelper::toString(Player::PlayMode::Default);
-        case(Setting::SplitDiscs):
-        case(Setting::SimplePlaylist):
-        case(Setting::LayoutEditing):
-        case(Setting::ElapsedTotal):
-        case(Setting::FilterAltColours):
-        case(Setting::InfoHeader):
-            return false;
-        case(Setting::DiscHeaders):
-        case(Setting::InfoAltColours):
-        case(Setting::InfoScrollBar):
-        case(Setting::FilterHeader):
-        case(Setting::FilterScrollBar):
-        case(Setting::PlaylistAltColours):
-        case(Setting::PlaylistHeader):
-        case(Setting::PlaylistScrollBar):
-        case(Setting::SplitterHandles):
-            return true;
-        case(Setting::Layout):
-            return "";
-        default:
-            return {};
-    }
-}
-
-QString Settings::getKeyString(Setting key)
-{
-    QString keyString = "";
-    switch(key) {
-        case(Setting::DiscHeaders):
-        case(Setting::SplitDiscs):
-        case(Setting::SimplePlaylist):
-        case(Setting::PlaylistAltColours):
-        case(Setting::PlaylistHeader):
-        case(Setting::PlaylistScrollBar):
-            keyString = "Playlist";
-            break;
-        case(Setting::FilterAltColours):
-        case(Setting::FilterHeader):
-        case(Setting::FilterScrollBar):
-            keyString = "Filter";
-            break;
-        case(Setting::InfoAltColours):
-        case(Setting::InfoHeader):
-        case(Setting::InfoScrollBar):
-            keyString = "Info";
-            break;
-        case(Setting::PlayMode):
-        case(Setting::ElapsedTotal):
-            keyString = "Player";
-            break;
-        case(Setting::Layout):
-        case(Setting::Geometry):
-            keyString = "Layout";
-            break;
-        case(Setting::SplitterHandles):
-            keyString = "Splitter";
-            break;
-        case(Setting::Version):
-        case(Setting::DatabaseVersion):
-            break;
-        case(Setting::LayoutEditing):
-        case(Setting::FirstRun):
-            // Don't save to disk
-            return {};
-    }
-    keyString += "/" + Utils::EnumHelper::toString(key);
-    return keyString;
+    return setting.group() + "/" + setting.name();
 }
 }; // namespace Core

@@ -26,73 +26,73 @@ namespace Core {
 using IdSet = std::set<int>;
 
 namespace Role {
-    const int Type = Qt::UserRole + 1;
-    const int PlaylistType = Qt::UserRole + 2;
+const int Type         = Qt::UserRole + 1;
+const int PlaylistType = Qt::UserRole + 2;
 } // namespace Role
 
 namespace ItemRole {
-    const int Id = Qt::UserRole + 10;
-    const int Artist = Qt::UserRole + 11;
-    const int Year = Qt::UserRole + 12;
-    const int Duration = Qt::UserRole + 13;
-    const int Cover = Qt::UserRole + 14;
-    const int Number = Qt::UserRole + 15;
-    const int PlayCount = Qt::UserRole + 16;
-    const int MultiDisk = Qt::UserRole + 17;
-    const int Playing = Qt::UserRole + 18;
-    const int Path = Qt::UserRole + 19;
-    const int Index = Qt::UserRole + 20;
-    const int Data = Qt::UserRole + 21;
+const int Id        = Qt::UserRole + 10;
+const int Artist    = Qt::UserRole + 11;
+const int Year      = Qt::UserRole + 12;
+const int Duration  = Qt::UserRole + 13;
+const int Cover     = Qt::UserRole + 14;
+const int Number    = Qt::UserRole + 15;
+const int PlayCount = Qt::UserRole + 16;
+const int MultiDisk = Qt::UserRole + 17;
+const int Playing   = Qt::UserRole + 18;
+const int Path      = Qt::UserRole + 19;
+const int Index     = Qt::UserRole + 20;
+const int Data      = Qt::UserRole + 21;
 } // namespace ItemRole
 
 namespace InfoRole {
-    // These correspond to row numbers of the infomodel
-    // Do not change!
-    const int Title = 1;
-    const int Artist = 2;
-    const int Album = 3;
-    const int Year = 4;
-    const int Genre = 5;
-    const int TrackNumber = 6;
-    const int Filename = 8;
-    const int Path = 9;
-    const int Duration = 10;
-    const int Bitrate = 11;
-    const int SampleRate = 12;
+// These correspond to row numbers of the infomodel
+// Do not change!
+const int Title       = 1;
+const int Artist      = 2;
+const int Album       = 3;
+const int Year        = 4;
+const int Genre       = 5;
+const int TrackNumber = 6;
+const int Filename    = 8;
+const int Path        = 9;
+const int Duration    = 10;
+const int Bitrate     = 11;
+const int SampleRate  = 12;
 } // namespace InfoRole
 
 namespace LayoutRole {
-    const int Type = Qt::UserRole + 50;
+const int Type = Qt::UserRole + 50;
 } // namespace LayoutRole
 
 namespace Fy {
-    Q_NAMESPACE
-    enum Attribute
-    {
-        HasActiveIcon = 1,
-        AutoShift = 2,
-        Active = 4,
-    };
-    Q_DECLARE_FLAGS(Attributes, Attribute)
+Q_NAMESPACE
+enum Attribute
+{
+    HasActiveIcon = 1,
+    AutoShift     = 2,
+    Active        = 4,
+};
+Q_DECLARE_FLAGS(Attributes, Attribute)
 } // namespace Fy
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Attributes)
 
 namespace Player {
-    Q_NAMESPACE
-    enum class PlayState
-    {
-        Playing = 0,
-        Paused,
-        Stopped
-    };
-    Q_ENUM_NS(PlayState)
-    enum class PlayMode
-    {
-        Default = 0,
-        RepeatAll,
-        Repeat,
-        Shuffle
-    };
-    Q_ENUM_NS(PlayMode)
+Q_NAMESPACE
+enum PlayState : uint8_t
+{
+    Playing = 1,
+    Paused  = 2,
+    Stopped = 3,
+};
+Q_ENUM_NS(PlayState)
+enum PlayMode : uint8_t
+{
+    Default   = 1,
+    RepeatAll = 2,
+    Repeat    = 3,
+    Shuffle   = 4,
+};
+Q_ENUM_NS(PlayMode)
 } // namespace Player
 }; // namespace Core

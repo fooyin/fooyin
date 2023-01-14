@@ -67,9 +67,9 @@ FilterWidget::~FilterWidget()
 
 void FilterWidget::setupConnections()
 {
-    connect(m_settings, &Core::Settings::filterAltColorsChanged, this, &FilterWidget::setAltRowColors);
-    connect(m_settings, &Core::Settings::filterHeaderChanged, this, &FilterWidget::setHeaderHidden);
-    connect(m_settings, &Core::Settings::filterScrollBarChanged, this, &FilterWidget::setScrollbarHidden);
+    //    connect(m_settings, &Core::Settings::filterAltColorsChanged, this, &FilterWidget::setAltRowColors);
+    //    connect(m_settings, &Core::Settings::filterHeaderChanged, this, &FilterWidget::setHeaderHidden);
+    //    connect(m_settings, &Core::Settings::filterScrollBarChanged, this, &FilterWidget::setScrollbarHidden);
 
     connect(m_filter->header(), &FilterView::customContextMenuRequested, this,
             &FilterWidget::customHeaderMenuRequested);
@@ -96,7 +96,7 @@ Filters::FilterType FilterWidget::type()
 void FilterWidget::setType(Filters::FilterType type)
 {
     auto oldType = m_type;
-    m_type = type;
+    m_type       = type;
     m_model->setType(type);
     emit typeChanged(oldType, type);
     m_filter->clearSelection();
@@ -201,15 +201,15 @@ void FilterWidget::saveLayout(QJsonArray& array)
     QJsonObject object;
     QJsonObject filterOptions;
     filterOptions["Type"] = Utils::EnumHelper::toString<Filters::FilterType>(type());
-    object[name()] = filterOptions;
+    object[name()]        = filterOptions;
     array.append(object);
 }
 
 void FilterWidget::loadLayout(QJsonObject& object)
 {
     auto type = Utils::EnumHelper::fromString<Filters::FilterType>(object["Type"].toString());
-    m_type = type;
-    m_index = m_manager->registerFilter(type);
+    m_type    = type;
+    m_index   = m_manager->registerFilter(type);
     m_model->setType(type);
     resetByIndex(-1);
 }

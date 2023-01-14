@@ -97,7 +97,6 @@ struct Application::Private
     {
         PluginSystem::addObject(mainWindow);
         PluginSystem::addObject(widgetFactory);
-        PluginSystem::addObject(settings);
         PluginSystem::addObject(threadManager);
         PluginSystem::addObject(playerManager);
         PluginSystem::addObject(libraryManager);

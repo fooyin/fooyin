@@ -122,9 +122,9 @@ EditableLayout::EditableLayout(QWidget* parent)
     p->box->setContentsMargins(5, 5, 5, 5);
 
     connect(p->menu, &ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
-    connect(p->settings, &Settings::layoutEditingChanged, this, [this](bool enabled) {
-        p->layoutEditing = enabled;
-    });
+    //    connect(p->settings, &Settings::layoutEditingChanged, this, [this](bool enabled) {
+    //        p->layoutEditing = enabled;
+    //    });
 
     bool loaded = loadLayout();
     if(!loaded) {

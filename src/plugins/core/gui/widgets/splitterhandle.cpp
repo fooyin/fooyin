@@ -29,7 +29,7 @@ SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     , m_settings(PluginSystem::object<Settings>())
     , m_showHandle(m_settings->value(Settings::Setting::SplitterHandles).toBool())
 {
-    connect(m_settings, &Settings::splitterHandlesChanged, this, &SplitterHandle::showHandle);
+    //    connect(m_settings, &Settings::splitterHandlesChanged, this, &SplitterHandle::showHandle);
 }
 
 SplitterHandle::~SplitterHandle() = default;

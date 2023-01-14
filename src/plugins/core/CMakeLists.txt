@@ -88,6 +88,8 @@ fooyin_add_plugin(Core
 
         settings/settings.h
         settings/settings.cpp
+        settings/settingsentry.h
+        settings/settingsentry.cpp
 
         tagging/tags.h
         tagging/tags.cpp

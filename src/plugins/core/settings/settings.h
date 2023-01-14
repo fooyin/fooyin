@@ -19,6 +19,9 @@
 
 #pragma once
 
+#include "settingsentry.h"
+
+#include <QMetaEnum>
 #include <QReadWriteLock>
 #include <QSettings>
 
@@ -28,66 +31,141 @@ class Settings : public QObject
     Q_OBJECT
 
 public:
-    enum class Setting : qint8
+    enum Setting : uint32_t
     {
-        Version = 0,
-        DatabaseVersion,
-        FirstRun,
-        LayoutEditing,
-        SplitterHandles,
-        DiscHeaders,
-        SplitDiscs,
-        SimplePlaylist,
-        PlayMode,
-        Geometry,
-        ElapsedTotal,
-        FilterAltColours,
-        FilterHeader,
-        FilterScrollBar,
-        InfoAltColours,
-        InfoHeader,
-        InfoScrollBar,
-        PlaylistAltColours,
-        PlaylistHeader,
-        PlaylistScrollBar,
-        Layout,
+        Version            = 1,
+        DatabaseVersion    = 2,
+        FirstRun           = 3,
+        LayoutEditing      = 4,
+        Geometry           = 5,
+        Layout             = 6,
+        SplitterHandles    = 7,
+        DiscHeaders        = 8,
+        SplitDiscs         = 9,
+        SimplePlaylist     = 10,
+        PlaylistAltColours = 11,
+        PlaylistHeader     = 12,
+        PlaylistScrollBar  = 13,
+        PlayMode           = 14,
+        ElapsedTotal       = 15,
+        FilterAltColours   = 16,
+        FilterHeader       = 17,
+        FilterScrollBar    = 18,
+        InfoAltColours     = 19,
+        InfoHeader         = 20,
+        InfoScrollBar      = 21,
     };
     Q_ENUM(Setting);
 
     explicit Settings(QObject* parent = nullptr);
     ~Settings() override;
-    Settings(const Settings& other) = delete;
-    Settings& operator=(const Settings& other) = delete;
-    Settings(const Settings&& other) = delete;
+    Settings(const Settings& other)             = delete;
+    Settings& operator=(const Settings& other)  = delete;
+    Settings(const Settings&& other)            = delete;
     Settings& operator=(const Settings&& other) = delete;
 
-    QMap<Setting, QVariant>& settings();
     void loadSettings();
     void storeSettings();
 
-    static QVariant defaults(Setting key);
-    QVariant value(Setting key);
-    void set(Setting key, const QVariant& value);
-    static QString getKeyString(Setting key);
+    QString getKeyString(const SettingsEntry& setting);
 
-signals:
-    void layoutEditingChanged(bool enabled);
-    void playlistSettingChanged();
-    void elapsedTotalChanged(bool enabled);
-    void filterAltColorsChanged(bool enabled);
-    void filterHeaderChanged(bool enabled);
-    void filterScrollBarChanged(bool enabled);
-    void infoAltColorsChanged(bool enabled);
-    void infoHeaderChanged(bool enabled);
-    void infoScrollBarChanged(bool enabled);
-    void playlistAltColorsChanged(bool enabled);
-    void playlistHeaderChanged(bool enabled);
-    void playlistScrollBarChanged(bool enabled);
-    void splitterHandlesChanged(bool enabled);
+    template <typename E, typename T>
+    void constexpr subscribe(E key, T* obj, void (T::*func)())
+    {
+        const auto meta      = QMetaEnum::fromType<E>();
+        const auto enumName  = meta.name();
+        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
+        const auto mapKey    = enumName + keyString;
+
+        if(m_settings.count(mapKey)) {
+            QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChanged, obj, func);
+        };
+    }
+
+    template <typename E, typename T>
+    void constexpr unsubscribe(E key, T* obj)
+    {
+        const auto meta      = QMetaEnum::fromType<E>();
+        const auto enumName  = meta.name();
+        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
+        const auto mapKey    = enumName + keyString;
+
+        if(m_settings.count(mapKey)) {
+            QObject::disconnect(&m_settings.at(mapKey), nullptr, obj, nullptr);
+        }
+    }
+
+    template <typename E>
+    void constexpr createSetting(E key, const QVariant& value, const QString& group = {})
+    {
+        const auto meta      = QMetaEnum::fromType<E>();
+        const auto enumName  = meta.name();
+        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
+        const auto mapKey    = enumName + keyString;
+
+        if(!m_settings.count(mapKey)) {
+            m_settings.emplace(mapKey, SettingsEntry{keyString, value, true, group});
+        }
+    }
+
+    template <typename E>
+    void constexpr createTempSetting(E key, const QVariant& value, const QString& group = {})
+    {
+        const auto meta      = QMetaEnum::fromType<E>();
+        const auto enumName  = meta.name();
+        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
+        const auto mapKey    = enumName + keyString;
+
+        if(!m_settings.count(mapKey)) {
+            m_settings.emplace(mapKey, SettingsEntry{keyString, value, false, group});
+        }
+    }
+
+    template <typename E>
+    auto constexpr value(E key)
+    {
+        const auto meta      = QMetaEnum::fromType<E>();
+        const auto enumName  = meta.name();
+        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
+        const auto mapKey    = enumName + keyString;
+
+        if(!m_settings.count(mapKey)) {
+            return QVariant{};
+        }
+
+        m_lock.lockForRead();
+
+        const auto value = m_settings.at(mapKey).value();
+
+        m_lock.unlock();
+
+        return value;
+    }
+
+    template <typename E, typename V>
+    void constexpr set(E key, V value)
+    {
+        const auto meta      = QMetaEnum::fromType<E>();
+        const auto enumName  = meta.name();
+        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
+        const auto mapKey    = enumName + keyString;
+
+        m_lock.lockForWrite();
+
+        if(!m_settings.count(mapKey)) {
+            m_lock.unlock();
+            return;
+        }
+        m_settings.at(mapKey).setValue(value);
+
+        m_lock.unlock();
+
+        m_settings.at(mapKey).changedSetting();
+    }
 
 private:
-    QSettings* m_settings;
-    QMap<Setting, QVariant> m_values;
+    QSettings m_settingsFile;
+    std::map<QString, SettingsEntry> m_settings;
     QReadWriteLock m_lock;
 };
 }; // namespace Core
