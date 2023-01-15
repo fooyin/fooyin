@@ -36,6 +36,8 @@ public:
         : QObject(parent){};
     ~PlayerManager() override = default;
 
+    virtual void restoreState() = 0;
+
     [[nodiscard]] virtual Player::PlayState playState() const = 0;
     [[nodiscard]] virtual Player::PlayMode playMode() const   = 0;
     [[nodiscard]] virtual quint64 currentPosition() const     = 0;

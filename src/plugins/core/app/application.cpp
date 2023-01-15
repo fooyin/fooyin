@@ -129,6 +129,7 @@ Application::Application(QObject* parent)
 void Application::startup()
 {
     p->settings->loadSettings();
+    p->playerManager->restoreState();
     p->mainWindow->setupUi();
     p->mainWindow->show();
 }

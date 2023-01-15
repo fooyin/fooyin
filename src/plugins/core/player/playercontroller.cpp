@@ -35,6 +35,9 @@ PlayerController::PlayerController(QObject* parent)
     , m_position(0)
     , m_volume(1.0F)
     , m_counted(false)
+{ }
+
+void PlayerController::restoreState()
 {
     m_playMode = PluginSystem::object<SettingsManager>()->value<Settings::PlayMode>().value<PlayMode>();
 }

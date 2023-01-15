@@ -32,6 +32,8 @@ public:
     explicit PlayerController(QObject* parent = nullptr);
     ~PlayerController() override;
 
+    void restoreState() override;
+
 protected:
     void reset() override;
     void play() override;

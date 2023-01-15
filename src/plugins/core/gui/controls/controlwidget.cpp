@@ -85,18 +85,23 @@ void ControlWidget::setupConnections()
     connect(p->playerManager, &Player::PlayerManager::positionChanged, this, &ControlWidget::currentPositionChanged);
     connect(p->playerManager, &Player::PlayerManager::playStateChanged, p->playControls, &PlayerControl::stateChanged);
     connect(p->playerManager, &Player::PlayerManager::playStateChanged, p->progress, &ProgressWidget::stateChanged);
+
     connect(p->playControls, &PlayerControl::stopClicked, p->playerManager, &Player::PlayerManager::stop);
     connect(p->playControls, &PlayerControl::nextClicked, p->playerManager, &Player::PlayerManager::next);
     connect(p->playControls, &PlayerControl::prevClicked, p->playerManager, &Player::PlayerManager::previous);
     connect(p->playControls, &PlayerControl::stopClicked, p->progress, &ProgressWidget::reset);
     connect(p->playControls, &PlayerControl::pauseClicked, p->playerManager, &Player::PlayerManager::playPause);
+
     connect(p->volumeControls, &VolumeControl::volumeUp, p->playerManager, &Player::PlayerManager::volumeUp);
     connect(p->volumeControls, &VolumeControl::volumeDown, p->playerManager, &Player::PlayerManager::volumeDown);
     connect(p->volumeControls, &VolumeControl::volumeChanged, p->playerManager, &Player::PlayerManager::setVolume);
+
     connect(p->progress, &ProgressWidget::movedSlider, p->playerManager, &Player::PlayerManager::changePosition);
+
     connect(p->playlistControls, &PlaylistControl::repeatClicked, p->playerManager, &Player::PlayerManager::setRepeat);
     connect(p->playlistControls, &PlaylistControl::shuffleClicked, p->playerManager,
             &Player::PlayerManager::setShuffle);
+
     connect(p->playerManager, &Player::PlayerManager::playModeChanged, p->playlistControls,
             &PlaylistControl::playModeChanged);
 }
