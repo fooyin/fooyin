@@ -19,8 +19,6 @@
 
 #include "sorting.h"
 
-#include "core/library/models/track.h"
-
 #include <algorithm>
 
 namespace Core::Library {

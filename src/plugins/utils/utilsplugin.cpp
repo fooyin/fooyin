@@ -23,4 +23,4 @@ namespace Utils {
 UtilsPlugin::UtilsPlugin() = default;
 
 UtilsPlugin::~UtilsPlugin() = default;
-};
+} // namespace Utils

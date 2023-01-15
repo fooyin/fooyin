@@ -50,4 +50,4 @@ private:
     QString m_title;
     InfoItem* m_parent;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

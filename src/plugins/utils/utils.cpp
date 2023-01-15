@@ -48,7 +48,7 @@ bool isSubdir(const QString& dir, const QString& parentDir)
         return false;
     }
 
-    const auto cleanedDir = cleanPath(dir);
+    const auto cleanedDir       = cleanPath(dir);
     const auto cleanedParentDir = cleanPath(parentDir);
 
     if(cleanedDir.isEmpty() || cleanedParentDir.isEmpty()) {
@@ -87,7 +87,7 @@ bool exists(const QString& filename)
 QString getParentDirectory(const QString& filename)
 {
     const auto cleaned = cleanPath(filename);
-    const auto index = cleaned.lastIndexOf(QDir::separator());
+    const auto index   = cleaned.lastIndexOf(QDir::separator());
 
     return (index > 0) ? cleanPath(cleaned.left(index)) : QDir::rootPath();
 }
@@ -96,7 +96,7 @@ bool createDirectories(const QString& path)
 {
     return QDir().mkpath(path);
 }
-}; // namespace File
+} // namespace File
 
 namespace Widgets {
 QWidget* indentWidget(QWidget* widget, QWidget* parent)
@@ -119,16 +119,16 @@ int randomNumber(int min, int max)
 
 QString msToString(quint64 ms)
 {
-    int milliseconds = static_cast<int>(ms);
-    QTime t(0, 0, 0);
+    const int milliseconds = static_cast<int>(ms);
+    const QTime t(0, 0, 0);
     auto time = t.addMSecs(milliseconds);
     return time.toString(time.hour() == 0 ? "mm:ss" : "hh:mm:ss");
 }
 
 QString secsToString(quint64 secs)
 {
-    int seconds = static_cast<int>(secs);
-    QTime t(0, 0, 0);
+    const int seconds = static_cast<int>(secs);
+    const QTime t(0, 0, 0);
     auto time = t.addSecs(seconds);
     return time.toString(time.hour() == 0 ? "mm:ss" : "hh:mm:ss");
 }
@@ -141,7 +141,7 @@ quint64 currentDateToInt()
 
 void setMinimumWidth(QLabel* label, const QString& text)
 {
-    QString oldText = label->text();
+    const QString oldText = label->text();
     label->setText(text);
     label->setMinimumWidth(0);
     auto width = label->sizeHint().width();
@@ -169,4 +169,4 @@ QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
     return pixmap;
 }
 
-}; // namespace Utils
+} // namespace Utils

@@ -56,5 +56,5 @@ private:
     struct Private;
     std::unique_ptr<SettingsDialog::Private> p;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

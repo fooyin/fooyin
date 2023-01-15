@@ -54,5 +54,5 @@ private:
     struct Private;
     std::unique_ptr<ProgressWidget::Private> p;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

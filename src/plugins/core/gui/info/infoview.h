@@ -28,4 +28,4 @@ public:
     explicit InfoView(QWidget* parent = nullptr);
     ~InfoView() override;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

@@ -303,7 +303,7 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
 {
     Q_UNUSED(selected)
     Q_UNUSED(deselected)
-    QModelIndexList indexes = m_filter->selectionModel()->selectedIndexes();
+    const QModelIndexList indexes = m_filter->selectionModel()->selectedIndexes();
 
     if(indexes.isEmpty()) {
         return;
@@ -356,5 +356,4 @@ void FilterWidget::resetByType(Filters::FilterType type)
         m_manager->items(m_type);
     }
 }
-
 } // namespace Filters

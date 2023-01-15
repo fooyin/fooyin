@@ -37,4 +37,4 @@ public:
     static void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintEntry(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

@@ -19,7 +19,6 @@
 
 #include "playlist.h"
 
-#include "core/library/models/track.h"
 #include "core/player/playermanager.h"
 
 #include <QMessageBox>
@@ -46,10 +45,10 @@ Playlist& Playlist::operator=(const Playlist& other)
     if(this == &other) {
         return *this;
     }
-    m_name = other.m_name;
+    m_name          = other.m_name;
     m_playlistIndex = other.m_playlistIndex;
-    m_playingTrack = other.m_playingTrack;
-    m_tracks = other.m_tracks;
+    m_playingTrack  = other.m_playingTrack;
+    m_tracks        = other.m_tracks;
 
     return *this;
 }
@@ -121,7 +120,7 @@ void Playlist::setCurrentTrack(int index)
     }
 
     else {
-        Track* track = m_tracks[index];
+        Track* track   = m_tracks[index];
         m_playingTrack = track;
         m_playerManager->changeCurrentTrack(track);
     }
@@ -168,7 +167,7 @@ int Playlist::next()
         stop();
         return -1;
     }
-    int index = nextIndex();
+    const int index = nextIndex();
     changeTrack(index);
     return index;
 }
@@ -189,8 +188,8 @@ int Playlist::nextIndex()
 {
     const int currentIndex = currentTrackIndex();
     const bool isLastTrack = (currentIndex >= m_tracks.size() - 1);
-    const auto mode = m_playerManager->playMode();
-    int index = currentIndex + 1;
+    const auto mode        = m_playerManager->playMode();
+    int index              = currentIndex + 1;
 
     if(mode == Player::PlayMode::Repeat) {
         index = currentIndex;
@@ -206,4 +205,4 @@ int Playlist::nextIndex()
 
     return index;
 }
-}; // namespace Core::Playlist
+} // namespace Core::Playlist

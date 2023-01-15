@@ -46,7 +46,7 @@ enum Core : uint32_t
     InfoHeader         = 17 | Type::Bool,
     InfoScrollBar      = 18 | Type::Bool,
 };
-Q_ENUM_NS(Core);
+Q_ENUM_NS(Core)
 
 class CoreSettings
 {
@@ -57,4 +57,4 @@ public:
 private:
     SettingsManager* m_settings;
 };
-}; // namespace Core::Settings
+} // namespace Core::Settings

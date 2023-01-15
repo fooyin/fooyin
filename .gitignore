@@ -26,6 +26,7 @@
 .qmake.cache
 .qmake.stash
 .vscode
+.idea
 Makefile*
 Thumbs.db
 moc_*.cpp

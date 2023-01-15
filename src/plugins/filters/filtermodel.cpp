@@ -162,7 +162,7 @@ QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVa
     QModelIndexList indexes{};
     for(int i = 0; i < rowCount(start); ++i) {
         const auto child = index(i, 0, start);
-        const auto data = child.data(role);
+        const auto data  = child.data(role);
         if(data.toInt() == value.toInt()) {
             indexes.append(child);
         }

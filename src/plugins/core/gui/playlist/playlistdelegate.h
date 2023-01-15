@@ -39,4 +39,4 @@ public:
     static void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintDisc(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

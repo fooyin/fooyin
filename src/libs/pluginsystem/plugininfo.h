@@ -24,13 +24,22 @@
 #include <QJsonObject>
 #include <QString>
 
-
 namespace PluginSystem {
 class Plugin;
 class PLUGINSYSTEM_EXPORT PluginInfo
 {
 public:
-    enum Status { Invalid, Read, Resolved, Loaded, Initialised, Running, Stopped, Deleted};
+    enum Status
+    {
+        Invalid,
+        Read,
+        Resolved,
+        Loaded,
+        Initialised,
+        Running,
+        Stopped,
+        Deleted
+    };
 
     PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata);
     ~PluginInfo();
@@ -42,7 +51,7 @@ public:
     void initialise();
     void finalise();
 
-    Plugin* plugin() const;
+    [[nodiscard]] Plugin* plugin() const;
 
     [[nodiscard]] QString name() const;
     [[nodiscard]] QString filename() const;
@@ -67,6 +76,6 @@ private:
     struct Private;
     std::unique_ptr<PluginInfo::Private> p;
 };
-}; // namespace PluginSystem
+} // namespace PluginSystem
 
 Q_DECLARE_METATYPE(PluginSystem::PluginInfo*)

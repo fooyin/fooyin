@@ -37,10 +37,10 @@ public:
     ~PlayerManager() override = default;
 
     [[nodiscard]] virtual Player::PlayState playState() const = 0;
-    [[nodiscard]] virtual Player::PlayMode playMode() const = 0;
-    [[nodiscard]] virtual quint64 currentPosition() const = 0;
-    [[nodiscard]] virtual Track* currentTrack() const = 0;
-    [[nodiscard]] virtual double volume() const = 0;
+    [[nodiscard]] virtual Player::PlayMode playMode() const   = 0;
+    [[nodiscard]] virtual quint64 currentPosition() const     = 0;
+    [[nodiscard]] virtual Track* currentTrack() const         = 0;
+    [[nodiscard]] virtual double volume() const               = 0;
 
 signals:
     void playStateChanged(Player::PlayState);
@@ -55,22 +55,22 @@ signals:
     void muteChanged(bool b);
 
 public:
-    virtual void play() = 0;
-    virtual void wakeUp() = 0;
-    virtual void playPause() = 0;
-    virtual void pause() = 0;
-    virtual void previous() = 0;
-    virtual void next() = 0;
-    virtual void stop() = 0;
-    virtual void reset() = 0;
-    virtual void setRepeat() = 0;
-    virtual void setShuffle() = 0;
-    virtual void setCurrentPosition(quint64 ms) = 0;
-    virtual void changePosition(quint64 ms) = 0;
+    virtual void play()                                 = 0;
+    virtual void wakeUp()                               = 0;
+    virtual void playPause()                            = 0;
+    virtual void pause()                                = 0;
+    virtual void previous()                             = 0;
+    virtual void next()                                 = 0;
+    virtual void stop()                                 = 0;
+    virtual void reset()                                = 0;
+    virtual void setRepeat()                            = 0;
+    virtual void setShuffle()                           = 0;
+    virtual void setCurrentPosition(quint64 ms)         = 0;
+    virtual void changePosition(quint64 ms)             = 0;
     virtual void changeCurrentTrack(Core::Track* track) = 0;
-    virtual void volumeUp() = 0;
-    virtual void volumeDown() = 0;
-    virtual void setVolume(double vol) = 0;
+    virtual void volumeUp()                             = 0;
+    virtual void volumeDown()                           = 0;
+    virtual void setVolume(double vol)                  = 0;
 };
-}; // namespace Player
-}; // namespace Core
+} // namespace Player
+} // namespace Core

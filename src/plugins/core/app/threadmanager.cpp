@@ -57,4 +57,4 @@ void ThreadManager::moveToNewThread(Worker* worker)
     connect(this, &ThreadManager::stop, worker, &Worker::stopThread);
     p->workers.append(worker);
 }
-}; // namespace Core
+} // namespace Core

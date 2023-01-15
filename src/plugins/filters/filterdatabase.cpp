@@ -22,8 +22,6 @@
 #include <QBuffer>
 #include <QPixmap>
 #include <core/database/query.h>
-#include <utils/helpers.h>
-#include <utils/utils.h>
 
 namespace Filters {
 QString getFilterJoins(const Filters::FilterType type = {})
@@ -72,7 +70,7 @@ FilterDatabase::~FilterDatabase() = default;
 
 bool FilterDatabase::getAllItems(Filters::FilterType type, Core::Library::SortOrder order, FilterEntries& result) const
 {
-    const auto join = getFilterJoins(type);
+    const auto join      = getFilterJoins(type);
     const auto queryText = fetchQueryItems(type, {}, join, order);
     if(!queryText.isEmpty()) {
         auto query = Core::DB::Query(module());
@@ -221,7 +219,7 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
         case(Filters::FilterType::Artist):
             fields.append(QStringLiteral("Artists.ArtistID"));
             fields.append(QStringLiteral("Artists.Name"));
-            group = QStringLiteral("Artists.ArtistID");
+            group     = QStringLiteral("Artists.ArtistID");
             sortOrder = QStringLiteral("LOWER(Artists.Name)");
             break;
         case(Filters::FilterType::Album):
@@ -279,7 +277,7 @@ bool FilterDatabase::dbFetchItems(Core::DB::Query& q, FilterEntries& result)
     while(q.next()) {
         FilterEntry item;
 
-        item.id = q.value(0).toInt();
+        item.id   = q.value(0).toInt();
         item.name = q.value(1).toString();
 
         result.emplace_back(item);

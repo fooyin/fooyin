@@ -73,7 +73,7 @@ void StatusWidget::setupUi()
     p->layout->setContentsMargins(5, 0, 0, 0);
 
     p->iconLabel = new ClickableLabel(this);
-    p->playing = new ClickableLabel(this);
+    p->playing   = new ClickableLabel(this);
 
     p->iconLabel->setPixmap(p->icon);
     p->iconLabel->setScaledContents(true);
@@ -122,16 +122,16 @@ void StatusWidget::stateChanged(Player::PlayState state)
             p->playing->setText("Waiting for track...");
             break;
         case(Player::PlayState::Playing): {
-            auto* track = p->playerManager->currentTrack();
-            auto number = QStringLiteral("%1").arg(track->trackNumber(), 2, 10, QLatin1Char('0'));
-            auto duration = QString(" (%1)").arg(Utils::msToString(track->duration()));
+            auto* track      = p->playerManager->currentTrack();
+            auto number      = QStringLiteral("%1").arg(track->trackNumber(), 2, 10, QLatin1Char('0'));
+            auto duration    = QString(" (%1)").arg(Utils::msToString(track->duration()));
             auto albumArtist = !track->albumArtist().isEmpty() ? " \u2022 " + track->albumArtist() : "";
-            auto album = !track->album().isEmpty() ? " \u2022 " + track->album() : "";
-            auto text = number + ". " + track->title() + duration + albumArtist + album;
+            auto album       = !track->album().isEmpty() ? " \u2022 " + track->album() : "";
+            auto text        = number + ". " + track->title() + duration + albumArtist + album;
             p->playing->setText(text);
         }
         case(Player::PlayState::Paused):
             break;
     }
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

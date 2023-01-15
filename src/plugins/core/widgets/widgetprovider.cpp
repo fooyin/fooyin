@@ -55,4 +55,4 @@ SplitterWidget* WidgetProvider::createSplitter(Qt::Orientation type, QWidget* pa
     splitter->setOrientation(type);
     return splitter;
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

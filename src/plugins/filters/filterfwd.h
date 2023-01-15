@@ -49,6 +49,7 @@ struct FilterEntry
     int id;
     QString name;
 };
+
 using FilterEntries = std::vector<FilterEntry>;
 
 using ActiveFilters = std::unordered_map<Filters::FilterType, Core::IdSet>;

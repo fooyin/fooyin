@@ -22,7 +22,6 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QWidgetAction>
 
 namespace Core::Widgets {
 OverlayWidget::OverlayWidget(bool button, QWidget* parent)
@@ -56,4 +55,4 @@ void OverlayWidget::setButtonText(const QString& text)
         m_button->setText(text);
     }
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

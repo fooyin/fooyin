@@ -48,4 +48,4 @@ private:
     struct Private;
     std::unique_ptr<PlayerControl::Private> p;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

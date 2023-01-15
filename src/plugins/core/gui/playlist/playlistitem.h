@@ -57,6 +57,5 @@ private:
     Type m_type;
     int m_index;
     PlaylistItem* m_parent;
-    bool m_enabled;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

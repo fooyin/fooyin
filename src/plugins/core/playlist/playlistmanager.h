@@ -31,14 +31,14 @@ public:
     virtual Playlist* playlist(int id) = 0;
 
     [[nodiscard]] virtual int activeIndex() const = 0;
-    virtual Playlist* activePlaylist() = 0;
+    virtual Playlist* activePlaylist()            = 0;
 
-    [[nodiscard]] virtual int currentIndex() const = 0;
+    [[nodiscard]] virtual int currentIndex() const  = 0;
     virtual void setCurrentIndex(int playlistIndex) = 0;
 
     [[nodiscard]] virtual int count() const = 0;
 
     virtual int createPlaylist(const TrackPtrList& tracks, const QString& name) = 0;
-    virtual int createEmptyPlaylist() = 0;
+    virtual int createEmptyPlaylist()                                           = 0;
 };
-} // namespace Playlist
+} // namespace Core::Playlist

@@ -195,4 +195,4 @@ double PlayerController::volume() const
 {
     return m_volume;
 }
-}; // namespace Core::Player
+} // namespace Core::Player

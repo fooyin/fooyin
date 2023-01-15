@@ -84,7 +84,7 @@ void PluginInfo::load()
         return;
     }
 
-    p->status = Loaded;
+    p->status   = Loaded;
     p->isLoaded = true;
 }
 
@@ -94,7 +94,7 @@ void PluginInfo::unload()
         return;
     }
     p->plugin->shutdown();
-    bool deleted = p->loader.unload();
+    const bool deleted = p->loader.unload();
     if(!deleted) {
         delete p->plugin;
     }
@@ -200,4 +200,4 @@ QList<PluginInfo*> PluginInfo::dependencies() const
 {
     return p->dependencies;
 }
-}; // namespace PluginSystem
+} // namespace PluginSystem

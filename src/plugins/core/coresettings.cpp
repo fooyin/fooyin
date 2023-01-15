@@ -53,4 +53,4 @@ CoreSettings::CoreSettings()
 }
 
 CoreSettings::~CoreSettings() = default;
-}; // namespace Core::Settings
+} // namespace Core::Settings

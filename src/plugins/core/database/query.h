@@ -27,7 +27,7 @@ class Query : public QSqlQuery
 {
 public:
     explicit Query(const Module* module);
-    explicit Query(QSqlResult* result) = delete;
+    explicit Query(QSqlResult* result)                           = delete;
     explicit Query(const QString& query, const QSqlDatabase& db) = delete;
     virtual ~Query();
 

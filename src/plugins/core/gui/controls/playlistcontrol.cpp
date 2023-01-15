@@ -25,8 +25,6 @@
 
 #include <QHBoxLayout>
 #include <pluginsystem/pluginmanager.h>
-#include <utils/enumhelper.h>
-#include <utils/utils.h>
 
 namespace Core::Widgets {
 struct PlaylistControl::Private
@@ -108,4 +106,4 @@ void PlaylistControl::setMode(Player::PlayMode mode) const
             return;
     }
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

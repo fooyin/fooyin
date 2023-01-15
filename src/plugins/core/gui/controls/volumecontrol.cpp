@@ -55,7 +55,7 @@ VolumeControl::VolumeControl(QWidget* parent)
 VolumeControl::~VolumeControl()
 {
     delete p->volumeMenu;
-};
+}
 
 void VolumeControl::setupUi()
 {
@@ -65,7 +65,7 @@ void VolumeControl::setupUi()
 
     p->layout->setSpacing(10);
 
-    p->volumeMenu = new HoverMenu(this);
+    p->volumeMenu   = new HoverMenu(this);
     p->volumeLayout = new QHBoxLayout(p->volumeMenu);
 
     p->volumeIcon = new ComboIcon(Core::Constants::Icons::VolumeMute, this);
@@ -89,7 +89,7 @@ void VolumeControl::setupUi()
 
 void VolumeControl::updateVolume(double value)
 {
-    double vol = value;
+    const double vol = value;
     emit volumeChanged(vol);
 
     if(vol <= 100 && vol >= 75) {
@@ -122,7 +122,7 @@ void VolumeControl::mute()
 
 void VolumeControl::showVolumeMenu()
 {
-    const int menuWidth = p->volumeMenu->sizeHint().width();
+    const int menuWidth  = p->volumeMenu->sizeHint().width();
     const int menuHeight = p->volumeMenu->sizeHint().height();
 
     const int yPosToWindow = this->parentWidget()->mapToParent(QPoint(0, 0)).y();
@@ -137,4 +137,4 @@ void VolumeControl::showVolumeMenu()
     p->volumeMenu->move(pos);
     p->volumeMenu->show();
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

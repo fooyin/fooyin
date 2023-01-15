@@ -38,4 +38,4 @@ protected:
 private:
     Playlist::PlaylistHandler* m_playlistHandler;
 };
-}; // namespace Core::Playlist
+} // namespace Core::Playlist

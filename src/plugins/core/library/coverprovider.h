@@ -27,4 +27,4 @@ class Album;
 namespace Covers {
 QPixmap albumCover(Album* album);
 } // namespace Covers
-}; // namespace Core
+} // namespace Core

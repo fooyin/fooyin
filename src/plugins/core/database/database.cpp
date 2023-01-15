@@ -300,9 +300,9 @@ bool Database::closeDatabase()
 
     QString connectionName;
     {
-        QSqlDatabase database       = db();
-        connectionName              = database.connectionName();
-        QStringList connectionNames = QSqlDatabase::connectionNames();
+        QSqlDatabase database             = db();
+        connectionName                    = database.connectionName();
+        const QStringList connectionNames = QSqlDatabase::connectionNames();
         if(!connectionNames.contains(connectionName)) {
             return false;
         }
@@ -335,7 +335,7 @@ void Database::rollback()
 bool Database::checkInsertTable(const QString& tableName, const QString& createString)
 {
     Query q(this);
-    QString queryText = "SELECT * FROM " + tableName + ";";
+    const QString queryText = "SELECT * FROM " + tableName + ";";
     q.prepareQuery(queryText);
 
     if(!q.execQuery()) {

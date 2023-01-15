@@ -35,13 +35,13 @@ struct PluginManager::Private
 
 void PluginManager::addObject(QObject* object)
 {
-    QWriteLocker lock(&p->objectLock);
+    const QWriteLocker lock(&p->objectLock);
     p->objectList.append(object);
 }
 
 void PluginManager::removeObject(QObject* object)
 {
-    QWriteLocker lock(&p->objectLock);
+    const QWriteLocker lock(&p->objectLock);
     p->objectList.removeAll(object);
 }
 
@@ -63,12 +63,12 @@ QReadWriteLock* PluginManager::objectLock()
 
 void PluginManager::findPlugins(const QString& pluginDir)
 {
-    QDir dir{pluginDir};
+    const QDir dir{pluginDir};
     if(!dir.exists()) {
         return;
     }
 
-    QFileInfoList fileList{dir.entryInfoList()};
+    const QFileInfoList fileList{dir.entryInfoList()};
 
     for(const auto& file : fileList) {
         auto pluginFilename = file.absoluteFilePath();
@@ -78,14 +78,14 @@ void PluginManager::findPlugins(const QString& pluginDir)
         }
 
         auto pluginLoader = std::make_unique<QPluginLoader>(pluginFilename);
-        auto metaData = pluginLoader->metaData();
+        auto metaData     = pluginLoader->metaData();
 
         if(metaData.isEmpty()) {
             continue;
         }
 
         auto pluginMetadata = metaData.value("MetaData");
-        auto version = metaData.value("version");
+        auto version        = metaData.value("version");
 
         auto name = pluginMetadata.toObject().value("Name");
 
@@ -136,7 +136,7 @@ void PluginManager::loadPlugins()
 {
     const QList<PluginInfo*> queue = loadOrder();
     for(PluginInfo* plugin : queue) {
-        auto metadata = plugin->metadata();
+        auto metadata     = plugin->metadata();
         auto dependencies = metadata.value("Dependencies").toArray();
         for(auto dependency : dependencies) {
             auto dependencyName = dependency.toObject().value("Name").toString();
@@ -213,4 +213,4 @@ PluginManager::PluginManager()
 
 PluginManager::~PluginManager() = default;
 
-}; // namespace PluginSystem
+} // namespace PluginSystem

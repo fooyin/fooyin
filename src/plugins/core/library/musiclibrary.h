@@ -30,7 +30,7 @@ class ThreadManager;
 
 namespace Playlist {
 class LibraryPlaylistInterface;
-};
+}
 
 namespace Library {
 class MusicLibraryInteractor;
@@ -98,4 +98,4 @@ private:
     std::unique_ptr<MusicLibrary::Private> p;
 };
 } // namespace Library
-}; // namespace Core
+} // namespace Core

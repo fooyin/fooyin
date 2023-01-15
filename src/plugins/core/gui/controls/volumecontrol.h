@@ -47,4 +47,4 @@ private:
     struct Private;
     std::unique_ptr<VolumeControl::Private> p;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

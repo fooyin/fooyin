@@ -132,4 +132,4 @@ void CoverWidget::reloadCover()
         }
     }
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

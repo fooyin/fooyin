@@ -23,7 +23,7 @@
 
 namespace Core::Player {
 class PlayerManager;
-};
+}
 
 namespace Core::Playlist {
 class PlaylistHandler : public QObject,

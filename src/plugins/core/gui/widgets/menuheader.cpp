@@ -30,9 +30,9 @@ MenuHeader::MenuHeader(QString text, QWidget* parent)
     , m_margin(0)
 {
     const int textMinWidth = fontMetrics().boundingRect(m_text).width();
-    m_textHeight = fontMetrics().height();
-    m_margin = fontMetrics().horizontalAdvance("...");
-    m_minWidth = 2 * m_margin + textMinWidth;
+    m_textHeight           = fontMetrics().height();
+    m_margin               = fontMetrics().horizontalAdvance("...");
+    m_minWidth             = 2 * m_margin + textMinWidth;
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     updateGeometry();
 }
@@ -51,9 +51,9 @@ void MenuHeader::paintEvent(QPaintEvent* e)
 {
     Q_UNUSED(e)
     QPainter painter(this);
-    const QPalette palette = this->palette();
+    const QPalette palette        = this->palette();
     const QColor headerBackground = palette.color(QPalette::AlternateBase);
-    const QColor headerText = palette.color(QPalette::BrightText);
+    const QColor headerText       = palette.color(QPalette::BrightText);
 
     painter.setBrush(headerBackground);
     painter.setPen(Qt::NoPen);
@@ -71,4 +71,4 @@ MenuHeaderAction::MenuHeaderAction(const QString& text, QObject* parent)
     // Takes ownership
     setDefaultWidget(header);
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

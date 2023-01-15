@@ -31,4 +31,4 @@ int Disc::number() const
 {
     return m_number;
 }
-}; // namespace Core
+} // namespace Core

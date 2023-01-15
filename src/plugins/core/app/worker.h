@@ -45,4 +45,4 @@ public:
 private:
     State m_state;
 };
-}; // namespace Core
+} // namespace Core

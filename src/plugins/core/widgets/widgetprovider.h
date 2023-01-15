@@ -40,4 +40,4 @@ private:
     struct Private;
     std::unique_ptr<WidgetProvider::Private> p;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

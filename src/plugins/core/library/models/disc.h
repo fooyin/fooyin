@@ -34,4 +34,4 @@ public:
 private:
     int m_number;
 };
-}; // namespace Core
+} // namespace Core

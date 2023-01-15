@@ -82,4 +82,4 @@ FilterItem* FilterItem::parentItem() const
 {
     return m_parentItem;
 }
-}; // namespace Filters
+} // namespace Filters

@@ -26,8 +26,8 @@
 namespace Core::Engine {
 struct EngineMpv::Private
 {
-    const int posInterval{100};
-    const int ms{1000LL};
+    int posInterval{100};
+    int ms{1000LL};
     quint64 lastTick{0};
     mpv_handle* mpv;
 };
@@ -123,15 +123,15 @@ void EngineMpv::pause()
 void EngineMpv::seek(quint64 pos)
 {
     const quint64 seconds = pos / 1000;
-    const QByteArray tmp = QString::number(seconds).toUtf8();
-    const char* cmd[] = {"seek", tmp.constData(), "absolute", nullptr}; // NOLINT
+    const QByteArray tmp  = QString::number(seconds).toUtf8();
+    const char* cmd[]     = {"seek", tmp.constData(), "absolute", nullptr}; // NOLINT
     mpv_command(p->mpv, cmd);
 }
 
 void EngineMpv::changeTrack(Track* track)
 {
     const QByteArray path_ba = track->filepath().toUtf8();
-    const char* cmd[] = {"loadfile", path_ba.constData(), "replace", nullptr}; // NOLINT
+    const char* cmd[]        = {"loadfile", path_ba.constData(), "replace", nullptr}; // NOLINT
     mpv_command(p->mpv, cmd);
 }
 
@@ -193,4 +193,4 @@ void EngineMpv::handlePropertyChange(mpv_event* event)
         }
     }
 }
-}; // namespace Core::Engine
+} // namespace Core::Engine

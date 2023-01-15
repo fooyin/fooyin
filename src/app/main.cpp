@@ -29,11 +29,11 @@ int main(int argc, char* argv[])
     qApp->setApplicationName("fooyin");
     qApp->setApplicationVersion(VERSION);
 
-    auto* app = new QApplication(argc, argv);
+    auto* app           = new QApplication(argc, argv);
     auto* pluginManager = PluginSystem::PluginManager::instance();
 
     // TODO: Pass down CMake vars
-    QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
+    const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
     pluginManager->findPlugins(pluginsPath);
     pluginManager->loadPlugins();
 
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     // Required to ensure plugins are unloaded before main event loop quits
     QObject::connect(app, &QCoreApplication::aboutToQuit, pluginManager, &PluginSystem::PluginManager::shutdown);
 
-    int result = QApplication::exec();
+    const int result = QApplication::exec();
 
     delete app;
 

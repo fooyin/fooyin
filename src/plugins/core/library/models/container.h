@@ -53,4 +53,4 @@ private:
     quint64 m_duration;
     int m_trackCount;
 };
-}; // namespace Core
+} // namespace Core

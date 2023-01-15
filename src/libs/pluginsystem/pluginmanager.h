@@ -53,7 +53,7 @@ public:
 
 private:
     PluginManager();
-    ~PluginManager();
+    ~PluginManager() override;
 
     struct Private;
     std::unique_ptr<PluginManager::Private> p;
@@ -82,7 +82,7 @@ inline QReadWriteLock* objectLock()
 template <typename T>
 inline T* object()
 {
-    QReadLocker lock(objectLock());
+    const QReadLocker lock(objectLock());
     for(auto* object : PluginManager::instance()->allObjects()) {
         if(auto* result = qobject_cast<T*>(object)) {
             return result;
@@ -94,7 +94,7 @@ inline T* object()
 template <typename T>
 inline QList<T*> objects()
 {
-    QReadLocker lock(objectLock());
+    const QReadLocker lock(objectLock());
     QList<T*> results;
     for(auto* object : PluginManager::instance()->allObjects()) {
         if(auto* result = qobject_cast<T*>(object)) {
@@ -103,4 +103,4 @@ inline QList<T*> objects()
     }
     return results;
 }
-}; // namespace PluginSystem
+} // namespace PluginSystem

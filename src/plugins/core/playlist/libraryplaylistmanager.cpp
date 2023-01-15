@@ -45,8 +45,8 @@ void LibraryPlaylistManager::append(const TrackPtrList& tracks)
 void LibraryPlaylistManager::activatePlaylist(PlaylistHandler* playlistHandler, int id)
 {
     const auto currentIndex = playlistHandler->currentIndex();
-    auto* currentPlaylist = playlistHandler->playlist(currentIndex);
+    auto* currentPlaylist   = playlistHandler->playlist(currentIndex);
 
     currentPlaylist->changeTrack(id);
 }
-}; // namespace Core::Playlist
+} // namespace Core::Playlist

@@ -50,4 +50,4 @@ private:
     struct Private;
     std::unique_ptr<StatusWidget::Private> p;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

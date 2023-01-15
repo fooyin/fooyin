@@ -33,4 +33,4 @@ public:
 protected:
     QSplitterHandle* createHandle() override;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

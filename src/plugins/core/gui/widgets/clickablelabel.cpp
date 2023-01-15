@@ -39,4 +39,4 @@ void ClickableLabel::enterEvent(QEnterEvent* event)
     emit entered();
     QLabel::enterEvent(event);
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

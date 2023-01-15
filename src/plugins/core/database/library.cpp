@@ -30,23 +30,23 @@ Library::Library(const QString& connectionName)
 
 IdLibraryMap Library::getAllLibraries()
 {
-    QString query = "SELECT LibraryID, Name, Path FROM Libraries;";
+    const QString query = "SELECT LibraryID, Name, Path FROM Libraries;";
 
     QMap<int, Core::Library::LibraryInfo> libs;
 
     Query q(this);
     q.prepare(query);
 
-    bool success = q.exec();
+    const bool success = q.exec();
 
     if(!success) {
         q.error("Cannot fetch all libraries");
     }
 
     while(q.next()) {
-        qint8 id = static_cast<qint8>(q.value(0).toInt());
-        QString name = q.value(1).toString();
-        QString path = q.value(2).toString();
+        const qint8 id     = static_cast<qint8>(q.value(0).toInt());
+        const QString name = q.value(1).toString();
+        const QString path = q.value(2).toString();
 
         libs.insert(id, Core::Library::LibraryInfo{path, name, id});
     }
@@ -60,10 +60,10 @@ bool Library::insertLibrary(int id, const QString& path, const QString& name)
         return false;
     }
 
-    QString query = "INSERT INTO Libraries "
-                    "(LibraryID, Name, Path) "
-                    "VALUES "
-                    "(:libraryId, :libraryName, :libraryPath);";
+    const QString query = "INSERT INTO Libraries "
+                          "(LibraryID, Name, Path) "
+                          "VALUES "
+                          "(:libraryId, :libraryName, :libraryPath);";
 
     Query q(this);
 
@@ -72,7 +72,7 @@ bool Library::insertLibrary(int id, const QString& path, const QString& name)
     q.bindValue(":libraryName", name);
     q.bindValue(":libraryPath", path);
 
-    bool success = q.exec();
+    const bool success = q.exec();
 
     if(!success) {
         q.error(QString("Cannot insert library (name: %1, path: %2)").arg(name, path));
@@ -83,14 +83,14 @@ bool Library::insertLibrary(int id, const QString& path, const QString& name)
 
 bool Library::removeLibrary(int id)
 {
-    QString query = "DELETE FROM Libraries WHERE LibraryID=:libraryId;";
+    const QString query = "DELETE FROM Libraries WHERE LibraryID=:libraryId;";
 
     Query q(this);
 
     q.prepare(query);
     q.bindValue(":libraryId", id);
 
-    bool success = q.exec();
+    const bool success = q.exec();
 
     if(!success) {
         q.error(QString("Cannot remove library %1").arg(id));

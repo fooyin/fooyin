@@ -23,7 +23,7 @@
 
 namespace Utils {
 class UtilsPlugin : public QObject,
-                   public PluginSystem::Plugin
+                    public PluginSystem::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
@@ -33,4 +33,4 @@ public:
     UtilsPlugin();
     ~UtilsPlugin() override;
 };
-};
+} // namespace Utils

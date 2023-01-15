@@ -53,5 +53,5 @@ private:
     struct Private;
     std::unique_ptr<EditableLayout::Private> p;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

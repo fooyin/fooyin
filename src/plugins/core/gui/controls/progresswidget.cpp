@@ -97,13 +97,13 @@ void ProgressWidget::setCurrentPosition(int ms)
 
 void ProgressWidget::updateTime(int elapsed)
 {
-    int secs = elapsed / 1000;
-    int max  = p->max / 1000;
+    const int secs = elapsed / 1000;
+    const int max  = p->max / 1000;
 
     p->elapsed->setText(Utils::secsToString(secs));
 
     if(p->settings->value<Settings::ElapsedTotal>()) {
-        int remaining = max - secs;
+        const int remaining = max - secs;
         p->total->setText("-" + Utils::secsToString(remaining));
     }
     else {
@@ -151,4 +151,4 @@ void ProgressWidget::sliderDropped()
     const auto pos = p->slider->value();
     emit movedSlider(pos);
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

@@ -23,9 +23,9 @@ namespace Core::Library {
 enum class SortOrder : unsigned int
 {
     NoSorting = 0,
-    YearAsc = 1,
-    YearDesc = 2,
-    TitleAsc = 3,
+    YearAsc   = 1,
+    YearDesc  = 2,
+    TitleAsc  = 3,
     TitleDesc = 4
 };
 } // namespace Core::Library

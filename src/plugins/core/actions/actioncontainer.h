@@ -50,7 +50,7 @@ public:
 
     [[nodiscard]] QAction* insertLocation(const Utils::Id& group) const;
     void appendGroup(const Utils::Id& group);
-    void insertGroup(Utils::Id beforeGroup, const Utils::Id& group);
+    void insertGroup(const Utils::Id& beforeGroup, const Utils::Id& group);
     void addAction(QAction* action, const Utils::Id& group = {});
     void addMenu(ActionContainer* menu, const Utils::Id& group = {});
     void addMenu(ActionContainer* beforeContainer, ActionContainer* menu);
@@ -60,12 +60,12 @@ public:
     [[nodiscard]] virtual QAction* containerAction() const = 0;
     virtual QAction* actionForItem(QObject* item) const;
 
-    virtual void insertAction(QAction* beforeAction, QAction* action) = 0;
+    virtual void insertAction(QAction* beforeAction, QAction* action)          = 0;
     virtual void insertMenu(QAction* beforeAction, ActionContainer* container) = 0;
 
-    virtual bool isEmpty() = 0;
+    virtual bool isEmpty()  = 0;
     virtual bool isHidden() = 0;
-    virtual void clear() = 0;
+    virtual void clear()    = 0;
 
 signals:
     void aboutToHide();
@@ -136,4 +136,4 @@ protected:
 private:
     QMenuBar* m_menuBar;
 };
-}; // namespace Core
+} // namespace Core

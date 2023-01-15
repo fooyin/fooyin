@@ -92,18 +92,17 @@ public:
             else {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChanged, obj, func);
             }
-        };
+        }
     }
 
     template <auto key, typename T>
     void constexpr subscribe(T* obj, void (T::*func)())
     {
         const auto mapKey = getMapKey(key);
-        const auto type   = findType<key>();
 
         if(m_settings.count(mapKey)) {
             QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChanged, obj, func);
-        };
+        }
     }
 
     template <auto key, typename T, typename R>
@@ -227,4 +226,4 @@ private:
     std::map<QString, SettingsEntry> m_settings;
     QReadWriteLock m_lock;
 };
-}; // namespace Core
+} // namespace Core

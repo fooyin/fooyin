@@ -41,5 +41,5 @@ private:
     SettingsManager* m_settings;
     bool m_showHandle;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

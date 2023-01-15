@@ -37,4 +37,4 @@ private:
     struct Private;
     std::unique_ptr<Application::Private> p;
 };
-}; // namespace Core
+} // namespace Core

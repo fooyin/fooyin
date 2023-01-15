@@ -31,7 +31,7 @@ FilterDelegate::~FilterDelegate() = default;
 QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const auto width = index.data(Qt::SizeHintRole).toSize().width();
-    auto height = option.fontMetrics.height();
+    auto height      = option.fontMetrics.height();
     height += 8;
     return {width, height};
 }
@@ -53,15 +53,15 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
     const auto rect = opt.rect;
 
-    QRect titleRect = QRect(rect.x() + 5, rect.y(), rect.width(), rect.height());
+    const QRect titleRect = QRect(rect.x() + 5, rect.y(), rect.width(), rect.height());
 
     if((opt.state & QStyle::State_Selected)) {
         painter->fillRect(rect, opt.palette.highlight());
     }
 
     if((opt.state & QStyle::State_MouseOver)) {
-        QColor selectColour = opt.palette.highlight().color();
-        QColor hoverCol = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
+        const QColor selectColour = opt.palette.highlight().color();
+        const QColor hoverCol     = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
         painter->fillRect(rect, hoverCol);
     }
 
@@ -69,4 +69,4 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
                                       painter->fontMetrics().elidedText(title, Qt::ElideRight, rect.width()));
     painter->restore();
 }
-}; // namespace Filters
+} // namespace Filters

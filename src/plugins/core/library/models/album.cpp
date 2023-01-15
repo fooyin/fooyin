@@ -150,4 +150,4 @@ void Album::reset()
     Container::reset();
     m_discCount = 0;
 }
-}; // namespace Core
+} // namespace Core

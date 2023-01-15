@@ -41,6 +41,6 @@ public:
     virtual void finalise(){};
     virtual void shutdown(){};
 };
-}; // namespace PluginSystem
+} // namespace PluginSystem
 
 Q_DECLARE_INTERFACE(PluginSystem::Plugin, "com.fooyin.plugin")

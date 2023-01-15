@@ -52,4 +52,4 @@ void HoverMenu::closeMenu()
     m_timer.stop();
     accept();
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

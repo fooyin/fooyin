@@ -31,4 +31,4 @@ FiltersSettings::FiltersSettings()
 }
 
 FiltersSettings::~FiltersSettings() = default;
-}; // namespace Filters::Settings
+} // namespace Filters::Settings

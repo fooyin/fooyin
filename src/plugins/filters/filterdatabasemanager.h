@@ -47,4 +47,4 @@ signals:
 private:
     FilterDatabase* m_filterDatabase;
 };
-}; // namespace Filters
+} // namespace Filters

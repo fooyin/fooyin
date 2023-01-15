@@ -32,7 +32,7 @@ public:
         : QObject{parent} {};
     ~MusicLibraryInteractor() override = default;
 
-    virtual TrackPtrList tracks() const = 0;
-    virtual bool hasTracks() const = 0;
+    [[nodiscard]] virtual TrackPtrList tracks() const = 0;
+    [[nodiscard]] virtual bool hasTracks() const      = 0;
 };
-}; // namespace Core::Library
+} // namespace Core::Library

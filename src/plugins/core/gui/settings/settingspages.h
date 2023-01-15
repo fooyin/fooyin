@@ -61,5 +61,5 @@ public:
     explicit PlaylistPage(QWidget* parent = nullptr);
     ~PlaylistPage() override;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

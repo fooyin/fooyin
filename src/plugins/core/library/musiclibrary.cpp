@@ -20,7 +20,6 @@
 #include "musiclibrary.h"
 
 #include "core/app/threadmanager.h"
-#include "core/library/models/track.h"
 #include "core/library/sorting/sorting.h"
 #include "core/playlist/libraryplaylistinterface.h"
 #include "librarydatabasemanager.h"
@@ -219,7 +218,7 @@ TrackPtrList MusicLibrary::tracks()
     for(auto* inter : p->interactors) {
         if(inter->hasTracks()) {
             haveTracks = true;
-            auto trks = inter->tracks();
+            auto trks  = inter->tracks();
             lst.insert(lst.end(), trks.begin(), trks.end());
         }
     }

@@ -42,4 +42,4 @@ private:
     struct Private;
     std::unique_ptr<CoverWidget::Private> p;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

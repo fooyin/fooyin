@@ -48,7 +48,7 @@ ReadingProperties getReadingProperties(Quality quality)
         case Quality::Fast:
             readingProperties.readStyle = TagLib::AudioProperties::Fast;
             break;
-    };
+    }
 
     return readingProperties;
 }
@@ -58,8 +58,8 @@ bool readMetaData(Track& track, Quality quality)
     const auto filepath = track.filepath();
     const auto fileInfo = QFileInfo(filepath);
 
-    QDateTime md = fileInfo.lastModified();
-    qint64 timeNow = QDateTime::currentMSecsSinceEpoch();
+    const QDateTime md   = fileInfo.lastModified();
+    const qint64 timeNow = QDateTime::currentMSecsSinceEpoch();
 
     track.setAddedTime(timeNow);
     track.setMTime(md.isValid() ? md.toMSecsSinceEpoch() : 0);
@@ -78,7 +78,7 @@ bool readMetaData(Track& track, Quality quality)
     }
 
     auto parsedTag = tagsFromFile(fileRef);
-    parsedTag.map = fileRef.file()->properties();
+    parsedTag.map  = fileRef.file()->properties();
     if(!parsedTag.tag) {
         return false;
     }
@@ -86,43 +86,43 @@ bool readMetaData(Track& track, Quality quality)
     const QStringList baseTags{"TITLE", "ARTIST",     "ALBUMARTIST", "GENRE",   "TRACKNUMBER",
                                "ALBUM", "DISCNUMBER", "DATE",        "COMMENT", "LYRICS"};
 
-    const auto artists = convertStringList(parsedTag.map.value("ARTIST"));
-    const auto album = convertString(parsedTag.map.value("ALBUM").toString());
+    const auto artists     = convertStringList(parsedTag.map.value("ARTIST"));
+    const auto album       = convertString(parsedTag.map.value("ALBUM").toString());
     const auto albumArtist = convertString(parsedTag.map.value("ALBUMARTIST").toString());
-    const auto title = convertString(parsedTag.map.value("TITLE").toString());
-    const auto genres = convertStringList(parsedTag.map.value("GENRE").toString());
-    const auto comment = convertString(parsedTag.map.value("COMMENT").toString());
-    const auto year = convertNumber(parsedTag.map.value("DATE").toString());
-    const auto lyrics = convertString(parsedTag.map.value("LYRICS").toString());
+    const auto title       = convertString(parsedTag.map.value("TITLE").toString());
+    const auto genres      = convertStringList(parsedTag.map.value("GENRE").toString());
+    const auto comment     = convertString(parsedTag.map.value("COMMENT").toString());
+    const auto year        = convertNumber(parsedTag.map.value("DATE").toString());
+    const auto lyrics      = convertString(parsedTag.map.value("LYRICS").toString());
 
     // TODO: Check for TRACKTOTAL and DISCTOTAL tags when X/Y not standard i.e. FLAC
-    auto trackNum = 0;
-    auto trackTotal = 0;
+    auto trackNum           = 0;
+    auto trackTotal         = 0;
     const auto trackNumData = convertString(parsedTag.map.value("TRACKNUMBER").toString());
 
     if(trackNumData.contains("/")) {
-        trackNum = trackNumData.split("/")[0].toInt();
+        trackNum   = trackNumData.split("/")[0].toInt();
         trackTotal = trackNumData.split("/")[1].toInt();
     }
     else {
         trackNum = trackNumData.toInt();
     }
 
-    auto disc = 0;
-    auto discTotal = 0;
+    int disc            = 0;
+    int discTotal       = 0;
     const auto discData = convertString(parsedTag.map.value("DISCNUMBER").toString());
 
     if(discData.contains("/")) {
-        disc = discData.split("/")[0].toInt();
+        disc      = discData.split("/")[0].toInt();
         discTotal = discData.split("/")[1].toInt();
     }
     else {
         disc = discData.toInt();
     }
 
-    const auto bitrate = fileRef.audioProperties()->bitrate();
+    const auto bitrate    = fileRef.audioProperties()->bitrate();
     const auto sampleRate = fileRef.audioProperties()->sampleRate();
-    const auto length = fileRef.audioProperties()->lengthInMilliseconds();
+    const auto length     = fileRef.audioProperties()->lengthInMilliseconds();
 
     for(const auto& [tag, values] : parsedTag.map) {
         for(const auto& value : values) {
@@ -172,22 +172,22 @@ bool writeMetaData(const Track& track)
 
     auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()));
 
-    const auto album = convertString(track.album());
-    const auto artist = convertStringList(track.artists());
+    const auto album       = convertString(track.album());
+    const auto artist      = convertStringList(track.artists());
     const auto albumArtist = convertString(track.albumArtist());
-    const auto title = convertString(track.title());
-    const auto composer = convertString(track.composer());
-    const auto performer = convertString(track.performer());
-    const auto genre = convertStringList(track.genres());
-    const auto year = convertString(track.year());
-    const auto comment = convertString(track.comment());
+    const auto title       = convertString(track.title());
+    const auto composer    = convertString(track.composer());
+    const auto performer   = convertString(track.performer());
+    const auto genre       = convertStringList(track.genres());
+    const auto year        = convertString(track.year());
+    const auto comment     = convertString(track.comment());
 
     // TODO: Add option for saving to TRACKTOTAL and DISCTOTAL tags when X/Y not standard i.e. FLAC
     auto trackNumber = convertString(track.trackNumber());
-    auto disc = convertString(track.discNumber());
+    auto disc        = convertString(track.discNumber());
 
     const auto trackTotal = track.trackTotal();
-    const auto discTotal = track.discTotal();
+    const auto discTotal  = track.discTotal();
 
     if(trackTotal > 0) {
         trackNumber += "/";
@@ -200,7 +200,7 @@ bool writeMetaData(const Track& track)
     }
 
     auto parsedTag = tagsFromFile(fileRef);
-    parsedTag.map = fileRef.file()->properties();
+    parsedTag.map  = fileRef.file()->properties();
     if(!parsedTag.tag) {
         return false;
     }
@@ -220,5 +220,4 @@ bool writeMetaData(const Track& track)
     fileRef.file()->setProperties(parsedTag.map);
     return fileRef.save();
 }
-
 } // namespace Core::Tagging

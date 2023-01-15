@@ -21,8 +21,6 @@
 
 #include <QSettings>
 #include <pluginsystem/pluginmanager.h>
-#include <utils/enumhelper.h>
-#include <utils/helpers.h>
 #include <utils/paths.h>
 #include <utils/utils.h>
 
@@ -71,4 +69,4 @@ QString SettingsManager::getKeyString(const SettingsEntry& setting)
 {
     return setting.group() + "/" + setting.name();
 }
-}; // namespace Core
+} // namespace Core

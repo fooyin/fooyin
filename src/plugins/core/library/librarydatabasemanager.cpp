@@ -23,8 +23,6 @@
 #include "core/database/librarydatabase.h"
 #include "core/tagging/tags.h"
 
-#include <utils/helpers.h>
-
 namespace Core::Library {
 LibraryDatabaseManager::LibraryDatabaseManager(QObject* parent)
     : Worker(parent)
@@ -39,7 +37,7 @@ LibraryDatabaseManager::~LibraryDatabaseManager()
 void LibraryDatabaseManager::getAllTracks()
 {
     TrackList tracks;
-    bool success = m_libraryDatabase->getAllTracks(tracks);
+    const bool success = m_libraryDatabase->getAllTracks(tracks);
     if(success) {
         emit gotTracks(tracks);
     }
@@ -48,10 +46,10 @@ void LibraryDatabaseManager::getAllTracks()
 void LibraryDatabaseManager::updateTracks(const TrackPtrList& tracks)
 {
     for(const auto& track : tracks) {
-        bool saved = Tagging::writeMetaData(*track);
+        const bool saved = Tagging::writeMetaData(*track);
         if(saved) {
             m_libraryDatabase->updateTrack(*track);
         }
     }
 }
-}; // namespace Core::Library
+} // namespace Core::Library

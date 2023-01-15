@@ -57,4 +57,4 @@ private:
     std::unique_ptr<EngineMpv::Private> p;
 };
 } // namespace Engine
-}; // namespace Core
+} // namespace Core

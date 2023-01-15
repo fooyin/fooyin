@@ -39,4 +39,4 @@ private:
     QHBoxLayout* m_layout;
     QLabel* m_label;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

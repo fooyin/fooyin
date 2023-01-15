@@ -56,7 +56,7 @@ template <typename C, typename F>
 constexpr int getIndex(C c, F f)
 {
     int index = -1;
-    auto it = std::find(c.begin(), c.end(), f);
+    auto it   = std::find(c.begin(), c.end(), f);
     if(it != c.end()) {
         index = it - c.begin();
     }
@@ -85,4 +85,4 @@ constexpr void joinSkipEmpty(C c, S& s, D d)
         ++j;
     }
 }
-}; // namespace Utils
+} // namespace Utils

@@ -47,5 +47,5 @@ private:
     std::unique_ptr<InfoItem> m_root;
     Track* m_currentTrack;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

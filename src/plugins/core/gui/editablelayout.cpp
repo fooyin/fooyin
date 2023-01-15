@@ -63,11 +63,11 @@ struct EditableLayout::Private
         , widgetProvider{PluginSystem::object<Widgets::WidgetProvider>()}
     { }
 
-    ActionContainer* createNewMenu(FyWidget* parent, const QString& title)
+    ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const
     {
-        auto id    = parent->id();
-        auto* menu = actionManager->createMenu(id);
-        menu->menu()->setTitle(title);
+        auto id       = parent->id();
+        auto* newMenu = actionManager->createMenu(id);
+        newMenu->menu()->setTitle(title);
 
         return menu;
     }
@@ -100,11 +100,7 @@ struct EditableLayout::Private
                 return {};
             }
         }
-
-        if(child) {
-            return qobject_cast<FyWidget*>(child);
-        }
-        return {};
+        return qobject_cast<FyWidget*>(child);
     }
 };
 
@@ -126,7 +122,7 @@ EditableLayout::EditableLayout(QWidget* parent)
         p->layoutEditing = enabled;
     });
 
-    bool loaded = loadLayout();
+    const bool loaded = loadLayout();
     if(!loaded) {
         p->splitter = Widgets::WidgetProvider::createSplitter(Qt::Vertical, this);
         p->box->addWidget(p->splitter);
@@ -152,8 +148,8 @@ void EditableLayout::setupWidgetMenu(ActionContainer* menu, FyWidget* parent, bo
     for(const auto& widget : widgets) {
         auto* parentMenu = menu;
         for(const auto& subMenu : widget.second.subMenus) {
-            Utils::Id id    = Utils::Id{menu->id()}.append(subMenu);
-            auto* childMenu = p->actionManager->actionContainer(id);
+            const Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
+            auto* childMenu    = p->actionManager->actionContainer(id);
             if(!childMenu) {
                 childMenu = p->actionManager->createMenu(id);
                 childMenu->menu()->setTitle(subMenu);
@@ -245,7 +241,7 @@ void EditableLayout::changeLayout(const QByteArray& layout)
     // Delete all current widgets
     // TODO: Look into caching previous layout widgets
     p->splitter->deleteLater();
-    bool success = loadLayout(layout);
+    const bool success = loadLayout(layout);
     if(success && p->splitter->hasChildren()) {
         p->settings->set<Settings::LayoutEditing>(false);
     }
@@ -271,7 +267,7 @@ void EditableLayout::saveLayout()
 
 bool EditableLayout::loadLayout(const QByteArray& layout)
 {
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(layout);
+    const QJsonDocument jsonDoc = QJsonDocument::fromJson(layout);
     if(!jsonDoc.isNull() && !jsonDoc.isEmpty()) {
         QJsonObject json = jsonDoc.object();
         if(json.contains("Layout") && json["Layout"].isObject()) {
@@ -280,8 +276,8 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
                 QJsonObject splitterObject = object["Splitter"].toObject();
 
                 auto type = Utils::EnumHelper::fromString<Qt::Orientation>(splitterObject["Type"].toString());
-                QJsonArray splitterChildren = splitterObject["Children"].toArray();
-                auto state                  = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
+                const QJsonArray splitterChildren = splitterObject["Children"].toArray();
+                auto state                        = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
 
                 p->splitter = Widgets::WidgetProvider::createSplitter(type, this);
                 p->box->addWidget(p->splitter);
@@ -312,4 +308,4 @@ void EditableLayout::hideOverlay()
 {
     p->overlay->hide();
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

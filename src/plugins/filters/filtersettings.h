@@ -29,7 +29,7 @@ enum Filters : uint32_t
     FilterHeader     = 2 | Core::Settings::Type::Bool,
     FilterScrollBar  = 3 | Core::Settings::Type::Bool,
 };
-Q_ENUM_NS(Filters);
+Q_ENUM_NS(Filters)
 
 class FiltersSettings
 {
@@ -40,4 +40,4 @@ public:
 private:
     Core::SettingsManager* m_settings;
 };
-}; // namespace Filters::Settings
+} // namespace Filters::Settings

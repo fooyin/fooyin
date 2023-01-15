@@ -16,11 +16,10 @@
  * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "coreplugin.h"
 
 #include "core/app/application.h"
-
-#include <pluginsystem/pluginmanager.h>
 
 namespace Core {
 CorePlugin::CorePlugin() = default;
@@ -42,4 +41,4 @@ void CorePlugin::shutdown()
     m_app->shutdown();
     delete m_app;
 }
-}; // namespace Core
+} // namespace Core

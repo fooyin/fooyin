@@ -45,8 +45,6 @@ FyWidget* FyWidget::findParent()
     return qobject_cast<FyWidget*>(parent);
 }
 
-void FyWidget::addWidgetMenu(ActionContainer* menu, QAction* action) { }
-
 void FyWidget::layoutEditingMenu(ActionContainer* menu) { }
 
 void FyWidget::saveLayout(QJsonArray& array)
@@ -55,4 +53,4 @@ void FyWidget::saveLayout(QJsonArray& array)
 }
 
 void FyWidget::loadLayout(QJsonObject& object) { }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

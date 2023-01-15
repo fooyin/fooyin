@@ -37,7 +37,6 @@ InfoWidget::InfoWidget(QWidget* parent)
     : FyWidget(parent)
     , m_settings(PluginSystem::object<SettingsManager>())
     , m_playerManager(PluginSystem::object<Player::PlayerManager>())
-    , m_library(PluginSystem::object<Library::MusicLibrary>())
     , m_layout(new QHBoxLayout(this))
 {
     setObjectName("Info Panel");
@@ -154,4 +153,4 @@ void InfoWidget::layoutEditingMenu(ActionContainer* menu)
     menu->addAction(showScrollBar);
     menu->addAction(altColours);
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

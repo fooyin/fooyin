@@ -65,10 +65,10 @@ void ControlWidget::setupUi()
 
     //    setEnabled(false);
 
-    p->playControls = new PlayerControl(this);
+    p->playControls     = new PlayerControl(this);
     p->playlistControls = new PlaylistControl(this);
-    p->volumeControls = new VolumeControl(this);
-    p->progress = new ProgressWidget(this);
+    p->volumeControls   = new VolumeControl(this);
+    p->progress         = new ProgressWidget(this);
 
     p->layout->addWidget(p->playControls, 0, Qt::AlignLeft | Qt::AlignVCenter);
     p->layout->addWidget(p->progress, 0, Qt::AlignVCenter);
@@ -124,4 +124,4 @@ void ControlWidget::currentPositionChanged(qint64 ms)
 {
     p->progress->setCurrentPosition(static_cast<int>(ms));
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

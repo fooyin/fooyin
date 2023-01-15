@@ -40,9 +40,9 @@ Q_NAMESPACE
 
 enum class Quality
 {
-    Fast = TagLib::AudioProperties::Fast,
+    Fast     = TagLib::AudioProperties::Fast,
     Standard = TagLib::AudioProperties::Average,
-    Quality = TagLib::AudioProperties::Accurate,
+    Quality  = TagLib::AudioProperties::Accurate,
 };
 
 enum class TagType
@@ -73,4 +73,4 @@ TagLib::String convertString(const QString& string);
 TagLib::String convertString(int num);
 TagLib::StringList convertStringList(const QStringList& str);
 QStringList convertStringList(const TagLib::StringList& str);
-}; // namespace Core::Tagging
+} // namespace Core::Tagging

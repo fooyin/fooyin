@@ -42,4 +42,4 @@ private:
     struct Private;
     std::unique_ptr<ThreadManager::Private> p;
 };
-}; // namespace Core
+} // namespace Core

@@ -20,7 +20,6 @@
 #include "infomodel.h"
 
 #include "core/library/models/track.h"
-#include "core/typedefs.h"
 #include "infoitem.h"
 
 #include <utils/utils.h>
@@ -112,10 +111,10 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    auto* item = static_cast<InfoItem*>(index.internalPointer());
+    auto* item                = static_cast<InfoItem*>(index.internalPointer());
     const InfoItem::Type type = item->type();
 
-    const int row = index.row();
+    const int row    = index.row();
     const int column = index.column();
 
     if(role == Role::Type) {
@@ -181,4 +180,4 @@ QModelIndex InfoModel::parent(const QModelIndex& child) const
     // All rows are parents of root
     return {};
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

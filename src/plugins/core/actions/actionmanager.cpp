@@ -108,4 +108,4 @@ void ActionManager::containerDestroyed(QObject* sender)
     auto* container = static_cast<ActionContainer*>(sender);
     p->idContainerMap.remove(p->idContainerMap.key(container));
 }
-}; // namespace Core
+} // namespace Core

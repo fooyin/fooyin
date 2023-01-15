@@ -22,10 +22,7 @@
 #include "core/constants.h"
 #include "core/coresettings.h"
 #include "core/library/coverprovider.h"
-#include "core/library/models/album.h"
 #include "core/library/models/disc.h"
-#include "core/library/models/libraryitem.h"
-#include "core/library/models/track.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playermanager.h"
 #include "playlistitem.h"
@@ -181,8 +178,6 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
             return trackData(item, role);
         case(PlaylistItem::Type::Disc):
             return discData(item, role);
-        default:
-            return {};
     }
     return {};
 }
@@ -301,9 +296,6 @@ QVariant PlaylistModel::albumData(PlaylistItem* item, int role) const
         }
         case(ItemRole::Year): {
             return album->year();
-        }
-        default: {
-            return {};
         }
     }
     return {};

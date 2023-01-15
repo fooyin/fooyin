@@ -30,11 +30,11 @@ class SettingsManager;
 
 namespace Player {
 class PlayerManager;
-};
+}
 
 namespace Library {
 class MusicLibrary;
-}; // namespace Library
+}
 
 namespace Widgets {
 using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
@@ -95,4 +95,4 @@ private:
     QPixmap m_pausedIcon;
 };
 } // namespace Widgets
-}; // namespace Core
+} // namespace Core

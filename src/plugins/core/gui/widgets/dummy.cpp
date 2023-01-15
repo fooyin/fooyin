@@ -43,4 +43,4 @@ QString Dummy::name() const
 {
     return "Dummy";
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

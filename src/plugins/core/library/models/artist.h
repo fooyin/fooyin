@@ -40,4 +40,4 @@ private:
     int m_id;
     QString m_name;
 };
-}; // namespace Core
+} // namespace Core

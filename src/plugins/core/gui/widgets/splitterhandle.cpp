@@ -46,4 +46,4 @@ void SplitterHandle::showHandle(bool show)
     m_showHandle = show;
     update();
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

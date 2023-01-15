@@ -55,4 +55,4 @@ bool Worker::mayRun() const
     dispatcher->processEvents(QEventLoop::AllEvents);
     return m_state == State::Running;
 }
-}; // namespace Core
+} // namespace Core

@@ -45,5 +45,5 @@ signals:
 private:
     DB::LibraryDatabase* m_libraryDatabase;
 };
-}; // namespace Library
-}; // namespace Core
+} // namespace Library
+} // namespace Core

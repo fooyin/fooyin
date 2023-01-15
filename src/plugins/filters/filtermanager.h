@@ -31,8 +31,8 @@ class ThreadManager;
 
 namespace Library {
 class MusicLibrary;
-}; // namespace Library
-}; // namespace Core
+} // namespace Library
+} // namespace Core
 
 namespace Filters {
 class FilterDatabaseManager;
@@ -93,4 +93,4 @@ private:
     struct Private;
     std::unique_ptr<FilterManager::Private> p;
 };
-}; // namespace Filters
+} // namespace Filters

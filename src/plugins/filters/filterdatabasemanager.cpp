@@ -82,7 +82,7 @@ FilterDatabaseManager::~FilterDatabaseManager()
 void FilterDatabaseManager::getAllItems(Filters::FilterType type, Core::Library::SortOrder order)
 {
     FilterEntries items;
-    bool success = m_filterDatabase->getAllItems(type, order, items);
+    const bool success = m_filterDatabase->getAllItems(type, order, items);
     if(success) {
         emit gotItems(type, items);
     }
@@ -92,7 +92,7 @@ void FilterDatabaseManager::getItemsByFilter(Filters::FilterType type, const Act
                                              const QString& search, Core::Library::SortOrder order)
 {
     FilterEntries items;
-    bool success = m_filterDatabase->getItemsByFilter(type, filters, search, order, items);
+    const bool success = m_filterDatabase->getItemsByFilter(type, filters, search, order, items);
     if(success) {
         emit gotItems(type, items);
     }
@@ -104,8 +104,8 @@ void FilterDatabaseManager::filterTracks(const Core::TrackPtrList& tracks, const
     Core::TrackPtrList filteredTracks;
 
     for(const auto& track : tracks) {
-        int matches = 0;
-        int total = static_cast<int>(filters.size()) + (search.isEmpty() ? 0 : 1);
+        int matches     = 0;
+        const int total = static_cast<int>(filters.size()) + (search.isEmpty() ? 0 : 1);
 
         if(!filters.empty()) {
             filterByType(track, filters, matches);
@@ -117,7 +117,7 @@ void FilterDatabaseManager::filterTracks(const Core::TrackPtrList& tracks, const
                 if(artist.contains(search, Qt::CaseInsensitive)) {
                     hasArtistMatch = true;
                 }
-            };
+            }
 
             if(track->title().contains(search, Qt::CaseInsensitive)
                || track->album().contains(search, Qt::CaseInsensitive)
@@ -131,4 +131,4 @@ void FilterDatabaseManager::filterTracks(const Core::TrackPtrList& tracks, const
     }
     emit tracksFiltered(filteredTracks);
 }
-}; // namespace Filters
+} // namespace Filters

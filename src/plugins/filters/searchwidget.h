@@ -50,4 +50,4 @@ private:
 
     void textChanged(const QString& text);
 };
-}; // namespace Filters
+} // namespace Filters

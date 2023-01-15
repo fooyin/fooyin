@@ -45,4 +45,4 @@ private:
     QLabel* m_text;
     QPushButton* m_button;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

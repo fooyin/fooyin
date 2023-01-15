@@ -20,7 +20,6 @@
 #include "comboicon.h"
 
 #include <QVBoxLayout>
-#include <utility>
 #include <utils/utils.h>
 
 namespace Core::Widgets {
@@ -42,7 +41,7 @@ ComboIcon::~ComboIcon() = default;
 
 void ComboIcon::setup(const QString& path)
 {
-    QPixmap icon{path};
+    const QPixmap icon{path};
     addPixmap(path, icon);
 
     m_label->setPixmap(icon);
@@ -75,7 +74,7 @@ void ComboIcon::removeAttribute(Fy::Attribute attribute)
 
 void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)
 {
-    QPalette palette = m_label->palette();
+    const QPalette palette = m_label->palette();
     Icon ico;
     ico.icon = icon;
     if(hasAttribute(Fy::HasActiveIcon)) {
@@ -86,7 +85,7 @@ void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)
 
 void ComboIcon::addPixmap(const QString& path)
 {
-    QPixmap pixmap{path};
+    const QPixmap pixmap{path};
     addPixmap(path, pixmap);
 }
 
@@ -111,7 +110,7 @@ void ComboIcon::setIcon(const QString& path, bool active)
         return;
     }
 
-    auto idx = static_cast<int>(std::distance(m_icons.cbegin(), it));
+    auto idx       = static_cast<int>(std::distance(m_icons.cbegin(), it));
     m_currentIndex = idx;
     if(hasAttribute(Fy::HasActiveIcon) && hasAttribute(Fy::Active)) {
         m_label->setPixmap(m_icons.at(m_currentIndex).second.iconActive);
@@ -139,4 +138,4 @@ void ComboIcon::labelClicked()
     }
     emit clicked(m_icons.at(m_currentIndex).first);
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

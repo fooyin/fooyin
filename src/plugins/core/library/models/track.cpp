@@ -386,7 +386,7 @@ QByteArray Track::extraTagsToJson() const
     for(const auto& [tag, values] : Utils::asRange(m_extraTags)) {
         QJsonObject tagObject;
         const auto tagArray = QJsonArray::fromStringList(values);
-        tagObject[tag] = tagArray;
+        tagObject[tag]      = tagArray;
         extraArray.append(tagObject);
     }
     extra["tags"] = extraArray;
@@ -397,20 +397,20 @@ QByteArray Track::extraTagsToJson() const
 
 void Track::jsonToExtraTags(const QByteArray& ba)
 {
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(ba);
+    const QJsonDocument jsonDoc = QJsonDocument::fromJson(ba);
 
     if(!jsonDoc.isNull()) {
         QJsonObject json = jsonDoc.object();
 
         if(json.contains("tags") && json["tags"].isArray()) {
-            QJsonArray extraArray = json["tags"].toArray();
+            const QJsonArray extraArray = json["tags"].toArray();
 
             for(QJsonArray::const_iterator i = extraArray.constBegin(); i != extraArray.constEnd(); i++) {
                 QJsonObject tagObject = i->toObject();
                 for(QJsonObject::const_iterator j = tagObject.constBegin(); j != tagObject.constEnd(); j++) {
-                    QString tag = j.key();
+                    const QString tag = j.key();
                     if(tagObject[tag].isArray()) {
-                        QJsonArray tagArray = j.value().toArray();
+                        const QJsonArray tagArray = j.value().toArray();
                         QList<QString> values;
                         for(const auto& value : tagArray) {
                             values.append(value.toString());
@@ -428,4 +428,4 @@ void Track::resetIds()
     m_artistIds.clear();
     m_genreIds.clear();
 }
-}; // namespace Core
+} // namespace Core

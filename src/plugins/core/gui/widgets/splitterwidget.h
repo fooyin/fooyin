@@ -72,7 +72,6 @@ private:
     ActionManager* m_actionManager;
     Widgets::WidgetProvider* m_widgetProvider;
     Dummy* m_dummy;
-
     QAction* m_changeSplitter;
 };
 
@@ -87,15 +86,15 @@ public:
     ~VerticalSplitterWidget() override = default;
 };
 
-class HoriztonalSplitterWidget : public SplitterWidget
+class HorizontalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit HoriztonalSplitterWidget(QWidget* parent = nullptr)
+    explicit HorizontalSplitterWidget(QWidget* parent = nullptr)
         : SplitterWidget(parent)
     {
         setOrientation(Qt::Horizontal);
     }
-    ~HoriztonalSplitterWidget() override = default;
+    ~HorizontalSplitterWidget() override = default;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

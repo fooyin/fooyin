@@ -42,4 +42,4 @@ QString Artist::name() const
 {
     return m_name;
 }
-}; // namespace Core
+} // namespace Core

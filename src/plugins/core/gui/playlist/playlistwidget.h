@@ -32,12 +32,12 @@ class SettingsManager;
 
 namespace Player {
 class PlayerManager;
-}; // namespace Player
+} // namespace Player
 
 namespace Library {
 class LibraryManager;
 class MusicLibrary;
-}; // namespace Library
+} // namespace Library
 
 namespace Widgets {
 class OverlayWidget;
@@ -93,5 +93,5 @@ private:
     bool m_altRowColours;
     OverlayWidget* m_noLibrary;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

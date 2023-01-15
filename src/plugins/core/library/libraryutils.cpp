@@ -30,10 +30,10 @@
 namespace Core::Library::Utils {
 QString storeCover(const Track& track)
 {
-    QString coverPath = "";
-    QString coverHash = calcCoverHash(track.album(), track.albumArtist());
+    QString coverPath       = "";
+    const QString coverHash = calcCoverHash(track.album(), track.albumArtist());
 
-    const QString cacheCover = ::Utils::coverPath() + coverHash + ".jpg";
+    const QString cacheCover  = ::Utils::coverPath() + coverHash + ".jpg";
     const QString folderCover = coverInDirectory(::Utils::File::getParentDirectory(track.filepath()));
 
     if(::Utils::File::exists(cacheCover)) {
@@ -43,9 +43,9 @@ QString storeCover(const Track& track)
         coverPath = folderCover;
     }
     else {
-        QPixmap cover = Tagging::readCover(track.filepath());
+        const QPixmap cover = Tagging::readCover(track.filepath());
         if(!cover.isNull()) {
-            bool saved = saveCover(cover, coverHash);
+            const bool saved = saveCover(cover, coverHash);
             if(saved) {
                 coverPath = cacheCover;
             }
@@ -57,14 +57,14 @@ QString storeCover(const Track& track)
 QString calcAlbumHash(const QString& albumName, const QString& albumArtist, int year)
 {
     const QString albumId = albumName.toLower() + albumArtist.toLower() + QString::number(year);
-    QString albumKey = QCryptographicHash::hash(albumId.toUtf8(), QCryptographicHash::Sha1).toHex();
+    QString albumKey      = QCryptographicHash::hash(albumId.toUtf8(), QCryptographicHash::Sha1).toHex();
     return albumKey;
 }
 
 QString calcCoverHash(const QString& albumName, const QString& albumArtist)
 {
     const QString albumId = albumName.toLower() + albumArtist.toLower();
-    QString albumKey = QCryptographicHash::hash(albumId.toUtf8(), QCryptographicHash::Sha1).toHex();
+    QString albumKey      = QCryptographicHash::hash(albumId.toUtf8(), QCryptographicHash::Sha1).toHex();
     return albumKey;
 }
 
@@ -75,8 +75,8 @@ QPixmap getCover(const QString& path, int size)
         cover.load(path);
         if(!cover.isNull()) {
             static const int maximumSize = size;
-            const int width = cover.size().width();
-            const int height = cover.size().height();
+            const int width              = cover.size().width();
+            const int height             = cover.size().height();
             if(width > maximumSize || height > maximumSize) {
                 cover = cover.scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
@@ -96,10 +96,10 @@ bool saveCover(const QPixmap& cover, const QString& hash)
 
 QString coverInDirectory(const QString& directory)
 {
-    QDir baseDirectory = QDir(directory);
-    QStringList fileExtensions{"*.jpg", "*.jpeg", "*.png", "*.gif", "*.tiff", "*.bmp"};
+    const QDir baseDirectory = QDir(directory);
+    const QStringList fileExtensions{"*.jpg", "*.jpeg", "*.png", "*.gif", "*.tiff", "*.bmp"};
     // Use first image found as album cover
-    QStringList fileList = baseDirectory.entryList(fileExtensions, QDir::Files);
+    const QStringList fileList = baseDirectory.entryList(fileExtensions, QDir::Files);
     if(!fileList.isEmpty()) {
         QString cover = baseDirectory.absolutePath() + "/" + fileList.constFirst();
         return cover;
@@ -107,4 +107,4 @@ QString coverInDirectory(const QString& directory)
     return {};
 }
 
-}; // namespace Core::Library::Utils
+} // namespace Core::Library::Utils

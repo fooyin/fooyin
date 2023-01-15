@@ -109,18 +109,18 @@ void LibraryPage::addLibraryRow(const Library::LibraryInfo& info)
 
 void LibraryPage::addLibrary()
 {
-    QString newDir
+    const QString newDir
         = QFileDialog::getExistingDirectory(this, tr("Directory"), QDir::homePath(), QFileDialog::ShowDirsOnly);
 
     if(newDir.isEmpty()) {
         return;
     }
 
-    QFileInfo info{newDir};
+    const QFileInfo info{newDir};
     QString name = info.fileName();
 
     bool success = false;
-    QString text
+    const QString text
         = QInputDialog::getText(this, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal, name, &success);
 
     if(success) {
@@ -193,4 +193,4 @@ PlaylistPage::PlaylistPage(QWidget* parent)
 }
 
 PlaylistPage::~PlaylistPage() = default;
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

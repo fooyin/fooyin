@@ -23,7 +23,6 @@
 #include "core/gui/widgets/comboicon.h"
 
 #include <QHBoxLayout>
-#include <utils/utils.h>
 
 namespace Core::Widgets {
 struct PlayerControl::Private
@@ -92,4 +91,4 @@ void PlayerControl::stateChanged(Player::PlayState state)
             return p->play->setIcon(Core::Constants::Icons::Play);
     }
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

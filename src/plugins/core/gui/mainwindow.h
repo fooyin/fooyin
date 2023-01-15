@@ -31,15 +31,16 @@ class SettingsManager;
 
 namespace Widgets {
 class SettingsDialog;
-};
+}
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(ActionManager* actionManager, SettingsManager* settings, Widgets::SettingsDialog* settingsDialog,
-                        Library::MusicLibrary* library, QWidget* parent = nullptr);
+    explicit MainWindow(ActionManager* actionManager, SettingsManager* settings,
+                        Widgets::SettingsDialog* settingsDialog, Library::MusicLibrary* library,
+                        QWidget* parent = nullptr);
     ~MainWindow() override;
 
     void setupUi();
@@ -58,4 +59,4 @@ private:
     struct Private;
     std::unique_ptr<MainWindow::Private> p;
 };
-}; // namespace Core
+} // namespace Core

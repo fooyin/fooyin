@@ -65,4 +65,4 @@ private:
     double m_volume;
     bool m_counted;
 };
-}; // namespace Core::Player
+} // namespace Core::Player

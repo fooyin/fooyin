@@ -77,4 +77,4 @@ InfoItem* InfoItem::parent() const
 {
     return m_parent;
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

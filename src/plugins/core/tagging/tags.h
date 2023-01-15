@@ -33,4 +33,4 @@ bool readMetaData(Track& track, Quality quality);
 bool writeMetaData(const Track& track);
 QPixmap readCover(const QString& filepath);
 } // namespace Tagging
-}; // namespace Core
+} // namespace Core

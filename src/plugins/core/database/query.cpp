@@ -48,7 +48,7 @@ bool Query::prepareQuery(const QString& query)
 
 void Query::bindQueryValue(const QString& placeholder, const QVariant& val, QSql::ParamType paramType)
 {
-    QString replaceString = QString("'") + val.toString() + "'";
+    const QString replaceString = QString("'") + val.toString() + "'";
 
     m_queryString.replace(placeholder + " ", replaceString + " ");
     m_queryString.replace(placeholder + ",", replaceString + ",");
@@ -83,7 +83,7 @@ void Query::error(const QString& error) const
 {
     qDebug() << "SQL ERROR: " << error << ": " << int(this->lastError().type());
 
-    QSqlError e = this->lastError();
+    const QSqlError e = this->lastError();
 
     if(!e.text().isEmpty()) {
         qDebug() << e.text();

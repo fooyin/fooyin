@@ -25,7 +25,7 @@ namespace Core {
 
 namespace Library {
 class LibraryInfo;
-}; // namespace Library
+} // namespace Library
 
 namespace DB {
 using IdLibraryMap = QMap<int, Core::Library::LibraryInfo>;
@@ -40,5 +40,5 @@ public:
     bool insertLibrary(int id, const QString& path, const QString& name);
     bool removeLibrary(int id);
 };
-}; // namespace DB
-}; // namespace Core
+} // namespace DB
+} // namespace Core

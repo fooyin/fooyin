@@ -110,7 +110,7 @@ LibraryFilter FilterManager::findFilter(Filters::FilterType type) const
         return *it;
     }
     return {};
-};
+}
 
 FilterManager::~FilterManager() = default;
 
@@ -122,8 +122,8 @@ int FilterManager::registerFilter(Filters::FilterType type)
     }
     else {
         filter.sortOrder = Core::Library::SortOrder::TitleAsc;
-        filter.type = type;
-        filter.index = static_cast<int>(p->filters.size());
+        filter.type      = type;
+        filter.index     = static_cast<int>(p->filters.size());
         p->filters.emplace_back(filter);
     }
     return filter.index;
@@ -143,7 +143,7 @@ void FilterManager::unregisterFilter(Filters::FilterType type)
 
 void FilterManager::changeFilter(FilterType oldType, FilterType type)
 {
-    LibraryFilter filter = findFilter(oldType);
+    const LibraryFilter filter = findFilter(oldType);
     if(filterIsActive(oldType)) {
         p->activeFilters.erase(oldType);
     }
@@ -288,4 +288,4 @@ void FilterManager::filteredTracksLoaded(Core::TrackPtrList tracks)
     p->filteredTracks = std::move(tracks);
     emit filteredTracks();
 }
-}; // namespace Filters
+} // namespace Filters

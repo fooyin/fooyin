@@ -95,4 +95,4 @@ enum PlayMode : uint8_t
 };
 Q_ENUM_NS(PlayMode)
 } // namespace Player
-}; // namespace Core
+} // namespace Core

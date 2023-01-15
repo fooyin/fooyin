@@ -1,3 +1,22 @@
+/*
+ * Fooyin
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "quicksetupdialog.h"
 
 #include "core/typedefs.h"
@@ -7,7 +26,7 @@
 #include <QVBoxLayout>
 
 namespace Core {
-QuickSeupDialog::QuickSeupDialog(QWidget* parent)
+QuickSetupDialog::QuickSetupDialog(QWidget* parent)
     : QDialog{parent}
     , m_layout{new QVBoxLayout(this)}
     , m_layoutList{new QListWidget(this)}
@@ -19,20 +38,20 @@ QuickSeupDialog::QuickSeupDialog(QWidget* parent)
     setupUi();
     setupList();
 
-    connect(m_layoutList, &QListWidget::itemSelectionChanged, this, &QuickSeupDialog::changeLayout);
-    connect(m_accept, &QPushButton::pressed, this, &QuickSeupDialog::close);
+    connect(m_layoutList, &QListWidget::itemSelectionChanged, this, &QuickSetupDialog::changeLayout);
+    connect(m_accept, &QPushButton::pressed, this, &QuickSetupDialog::close);
 }
 
-void QuickSeupDialog::setupUi()
+void QuickSetupDialog::setupUi()
 {
     m_layout->addWidget(m_layoutList);
     m_layout->addWidget(m_accept);
 }
 
-QuickSeupDialog::~QuickSeupDialog() = default;
+QuickSetupDialog::~QuickSetupDialog() = default;
 
 // Not the best way to handle layouts. Maybe save to (readable) files?
-void QuickSeupDialog::setupList()
+void QuickSetupDialog::setupList()
 {
     m_layoutList->setSelectionMode(QAbstractItemView::SingleSelection);
 
@@ -82,20 +101,20 @@ void QuickSeupDialog::setupList()
     emberLayout->setData(LayoutRole::Type, ember);
 }
 
-void QuickSeupDialog::changeLayout()
+void QuickSetupDialog::changeLayout()
 {
     const auto selectedItem = m_layoutList->selectionModel()->selectedRows().constFirst();
-    const auto layout = QByteArray::fromBase64(selectedItem.data(LayoutRole::Type).toByteArray());
+    const auto layout       = QByteArray::fromBase64(selectedItem.data(LayoutRole::Type).toByteArray());
 
     emit layoutChanged(layout);
 }
 
-void QuickSeupDialog::showEvent(QShowEvent* event)
+void QuickSetupDialog::showEvent(QShowEvent* event)
 {
     // Centre to parent widget
-    QRect parentRect{parentWidget()->mapToGlobal(QPoint(0, 0)), parentWidget()->size()};
+    const QRect parentRect{parentWidget()->mapToGlobal(QPoint(0, 0)), parentWidget()->size()};
     move(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), parentRect).topLeft());
 
     QDialog::showEvent(event);
 }
-}; // namespace Core
+} // namespace Core

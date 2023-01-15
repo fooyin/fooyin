@@ -23,5 +23,5 @@
 
 namespace Filters::Constants::Role {
 constexpr auto Id = Qt::UserRole + 40;
-const auto Name = Qt::UserRole + 41;
+const auto Name   = Qt::UserRole + 41;
 } // namespace Filters::Constants::Role

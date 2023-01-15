@@ -26,7 +26,7 @@
 namespace Core {
 namespace Player {
 class PlayerManager;
-};
+}
 
 namespace Playlist {
 class Playlist : public QObject
@@ -73,4 +73,4 @@ private:
     TrackPtrList m_tracks;
 };
 } // namespace Playlist
-}; // namespace Core
+} // namespace Core

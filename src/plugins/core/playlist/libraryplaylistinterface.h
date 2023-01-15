@@ -28,6 +28,6 @@ public:
     virtual ~LibraryPlaylistInterface() = default;
 
     virtual void createPlaylist(const TrackPtrList& tracks, int id) = 0;
-    virtual void append(const TrackPtrList& tracks) = 0;
+    virtual void append(const TrackPtrList& tracks)                 = 0;
 };
-}; // namespace Core::Playlist
+} // namespace Core::Playlist

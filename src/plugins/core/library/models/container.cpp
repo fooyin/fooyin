@@ -81,6 +81,6 @@ void Container::removeTrack(Track* track)
 void Container::reset()
 {
     m_trackCount = 0;
-    m_duration = 0;
+    m_duration   = 0;
 }
-}; // namespace Core
+} // namespace Core

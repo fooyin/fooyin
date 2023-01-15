@@ -24,7 +24,7 @@
 
 namespace Core::Player {
 class PlayerManager;
-};
+}
 
 namespace Filters {
 class FilterView : public QTreeView

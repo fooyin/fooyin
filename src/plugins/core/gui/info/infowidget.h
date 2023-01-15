@@ -30,13 +30,9 @@ namespace Core {
 class SettingsManager;
 class Track;
 
-namespace Library {
-class MusicLibrary;
-}; // namespace Library
-
 namespace Player {
 class PlayerManager;
-}; // namespace Player
+} // namespace Player
 
 namespace Widgets {
 class InfoWidget : public FyWidget
@@ -65,11 +61,10 @@ protected:
 private:
     SettingsManager* m_settings;
     Player::PlayerManager* m_playerManager;
-    Library::MusicLibrary* m_library;
 
     QHBoxLayout* m_layout;
     InfoView m_view;
     InfoModel m_model;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

@@ -43,4 +43,4 @@ void OverlayFilter::paintEvent(QPaintEvent* e)
 
     painter.fillRect(rect(), colour);
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

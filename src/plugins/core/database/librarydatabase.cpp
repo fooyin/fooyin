@@ -23,7 +23,6 @@
 #include "query.h"
 
 #include <QBuffer>
-#include <QPixmap>
 #include <utils/helpers.h>
 #include <utils/utils.h>
 
@@ -77,7 +76,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         getAllAlbums(dbAlbums);
 
         for(const auto& album : qAsConst(dbAlbums)) {
-            QString hash = Library::Utils::calcAlbumHash(album.title(), album.artist(), album.year());
+            const QString hash = Library::Utils::calcAlbumHash(album.title(), album.artist(), album.year());
             albumMap.insert(hash, album);
         }
     }
@@ -126,7 +125,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         for(const auto& trackArtist : track.artists()) {
             if(!artistMap.contains(trackArtist)) {
                 Artist artist{trackArtist};
-                int id = insertArtist(artist);
+                const int id = insertArtist(artist);
                 artist.setId(id);
                 artistMap.insert(trackArtist, artist);
             }
@@ -137,7 +136,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         // Check album artist
         if(!artistMap.contains(track.albumArtist())) {
             Artist albumArtist{track.albumArtist()};
-            int id = insertArtist(albumArtist);
+            const int id = insertArtist(albumArtist);
             albumArtist.setId(id);
             artistMap.insert(track.albumArtist(), albumArtist);
         }
@@ -147,15 +146,15 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         // Check genres
         for(const auto& genre : track.genres()) {
             if(!genreMap.contains(genre)) {
-                int id = insertGenre(genre);
+                const int id = insertGenre(genre);
                 genreMap.insert(genre, id);
             }
-            int trackGenre = genreMap.value(genre);
+            const int trackGenre = genreMap.value(genre);
             track.addGenreId(trackGenre);
         }
 
         // Check album id
-        QString hash = Library::Utils::calcAlbumHash(track.album(), track.albumArtist(), track.year());
+        const QString hash = Library::Utils::calcAlbumHash(track.album(), track.albumArtist(), track.year());
         if(!albumMap.contains(hash)) {
             Album album{track.album()};
             album.setYear(track.year());
@@ -163,21 +162,21 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             album.setArtistId(albumArtist.id());
             album.setArtist(track.albumArtist());
 
-            int id = insertAlbum(album);
+            const int id = insertAlbum(album);
             album.setId(id);
             albumMap.insert(hash, album);
         }
         auto album = albumMap.value(hash);
         track.setAlbumId(album.id());
         if(!album.hasCover()) {
-            QString coverPath = Library::Utils::storeCover(track);
+            const QString coverPath = Library::Utils::storeCover(track);
             album.setCoverPath(coverPath);
         }
         track.setCoverPath(album.coverPath());
 
         // Check track id
         if(trackMap.contains(track.filepath())) {
-            int id = trackMap.value(track.filepath()).id();
+            const int id = trackMap.value(track.filepath()).id();
             track.setId(id);
         }
 
@@ -203,7 +202,7 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
             //            updateTrackGenres(track.id(), track.genreIds());
         }
         else {
-            int id = insertTrack(track);
+            const int id = insertTrack(track);
             track.setId(id);
             insertTrackArtists(id, track.artistIds());
             insertTrackGenres(id, track.genreIds());
@@ -215,7 +214,7 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
 
 bool LibraryDatabase::getAllTracks(TrackList& result) const
 {
-    auto q = Query(module());
+    auto q           = Query(module());
     const auto query = fetchQueryTracks({}, {});
     q.prepareQuery(query);
 
@@ -452,7 +451,7 @@ bool LibraryDatabase::dbFetchGenres(Query& q, GenreHash& result)
     }
 
     while(q.next()) {
-        auto id = q.value(0).toInt();
+        auto id    = q.value(0).toInt();
         auto genre = q.value(1).toString();
 
         result.emplace(id, genre);
@@ -484,7 +483,7 @@ bool LibraryDatabase::updateTrack(const Track& track)
 bool LibraryDatabase::deleteTrack(int id)
 {
     const auto queryText = QStringLiteral("DELETE FROM Tracks WHERE TrackID = :TrackID;");
-    const auto q = module()->runQuery(queryText, {":TrackID", id}, QString("Cannot delete track %1").arg(id));
+    const auto q         = module()->runQuery(queryText, {":TrackID", id}, QString("Cannot delete track %1").arg(id));
 
     return (!q.hasError());
 }
@@ -513,7 +512,7 @@ bool LibraryDatabase::deleteLibraryTracks(int id)
     }
 
     const auto query = QStringLiteral("DELETE FROM Tracks WHERE LibraryID=:libraryId;");
-    const auto q = module()->runQuery(query, {":libraryId", id}, "Cannot delete library tracks");
+    const auto q     = module()->runQuery(query, {":libraryId", id}, "Cannot delete library tracks");
     return (!q.hasError());
 }
 
@@ -594,7 +593,7 @@ bool LibraryDatabase::updateTrackArtists(int id, const IdSet& artists)
     // Gather track artists in database
     if(!q.hasError()) {
         while(q.next()) {
-            int artistId = q.value(0).toInt();
+            const int artistId = q.value(0).toInt();
             databaseArtists.insert(artistId);
         }
     }
@@ -657,7 +656,7 @@ bool LibraryDatabase::updateTrackGenres(int id, const IdSet& genres)
 
     if(!q.hasError()) {
         while(q.next()) {
-            int genreId = q.value(0).toInt();
+            const int genreId = q.value(0).toInt();
             databaseGenres.insert(genreId);
         }
     }

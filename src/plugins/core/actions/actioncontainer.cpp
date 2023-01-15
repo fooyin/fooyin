@@ -74,7 +74,7 @@ void ActionContainer::appendGroup(const Utils::Id& group)
     m_groups.append(Group{group});
 }
 
-void ActionContainer::insertGroup(Utils::Id beforeGroup, const Utils::Id& group)
+void ActionContainer::insertGroup(const Utils::Id& beforeGroup, const Utils::Id& group)
 {
     auto it = std::find_if(m_groups.cbegin(), m_groups.cend(), [&](const auto& group) {
         return (group.id == beforeGroup);
@@ -91,7 +91,8 @@ void ActionContainer::addAction(QAction* action, const Utils::Id& group)
     }
 
     const Utils::Id actualGroupId = group.isValid() ? group : Utils::Id(Core::Constants::Groups::One);
-    QList<Group>::const_iterator groupIt = findGroup(actualGroupId);
+
+    const QList<Group>::const_iterator groupIt = findGroup(actualGroupId);
     if(groupIt == m_groups.constEnd()) {
         qDebug() << "Can't find group" << group.name() << "in container" << id().name();
         return;
@@ -108,13 +109,14 @@ void ActionContainer::addMenu(ActionContainer* menu, const Utils::Id& group)
     auto* container = static_cast<ActionContainer*>(menu);
     if(!container->canBeAddedToContainer(this)) {
         return;
-    };
+    }
 
     const Utils::Id groupId = group.isValid() ? group : Utils::Id(Core::Constants::Groups::One);
+
     auto groupIt = findGroup(groupId);
     if(groupIt == m_groups.cend()) {
         return;
-    };
+    }
     m_groups[groupIt - m_groups.cbegin()].items.append(menu);
     connect(menu, &QObject::destroyed, this, &ActionContainer::itemDestroyed);
 
@@ -136,7 +138,7 @@ void ActionContainer::addMenu(ActionContainer* beforeContainer, ActionContainer*
     auto* container = static_cast<ActionContainer*>(menu);
     if(container->canBeAddedToContainer(this)) {
         return;
-    };
+    }
 
     for(Group& group : m_groups) {
         const int insertionPoint = static_cast<int>(group.items.indexOf(beforeContainer));
@@ -161,9 +163,10 @@ QAction* ActionContainer::addSeparator(const Utils::Id& group)
 QAction* ActionContainer::addSeparator(const Utils::Id& group, QAction** outSeparator)
 {
     static int separatorIdCount = 0;
+
     auto* separator = new QAction(this);
     separator->setSeparator(true);
-    Utils::Id sepId = id().append(".Separator.").append(++separatorIdCount);
+    const Utils::Id sepId = id().append(".Separator.").append(++separatorIdCount);
     PluginSystem::object<ActionManager>()->registerAction(separator, sepId);
     addAction(separator, group);
     if(outSeparator) {
@@ -187,7 +190,7 @@ QAction* ActionContainer::insertLocation(QList<Group>::const_iterator group) con
     ++group;
     while(group != m_groups.cend()) {
         if(!group->items.isEmpty()) {
-            QObject* item = group->items.first();
+            QObject* item   = group->items.first();
             QAction* action = actionForItem(item);
             if(action) {
                 return action;
@@ -267,7 +270,7 @@ MenuActionContainer::MenuActionContainer(const Utils::Id& id, QObject* parent)
 MenuActionContainer::~MenuActionContainer()
 {
     delete m_menu;
-};
+}
 
 QMenu* MenuActionContainer::menu() const
 {
@@ -312,4 +315,4 @@ bool MenuActionContainer::canBeAddedToContainer(ActionContainer* container) cons
 {
     return qobject_cast<MenuActionContainer*>(container) || qobject_cast<MenuBarActionContainer*>(container);
 }
-}; // namespace Core
+} // namespace Core

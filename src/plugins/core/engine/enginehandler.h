@@ -26,9 +26,10 @@
 #include <QThread>
 
 namespace Core {
+
 namespace Player {
 class PlayerManager;
-}; // namespace Player
+} // namespace Player
 
 namespace Engine {
 class EngineHandler : public Worker
@@ -50,5 +51,5 @@ protected:
 private:
     EngineMpv m_engine;
 };
-}; // namespace Engine
+} // namespace Engine
 } // namespace Core

@@ -34,7 +34,7 @@ void Slider::mousePressEvent(QMouseEvent* e)
 {
     Qt::MouseButton button = e->button();
     if(button == Qt::LeftButton) {
-        int absolute = style()->styleHint(QStyle::SH_Slider_AbsoluteSetButtons);
+        const int absolute = style()->styleHint(QStyle::SH_Slider_AbsoluteSetButtons);
         if(Qt::LeftButton & absolute) {
             button = Qt::LeftButton;
         }
@@ -49,4 +49,4 @@ void Slider::mousePressEvent(QMouseEvent* e)
     QMouseEvent event(e->type(), e->position(), e->globalPosition(), button, button, e->modifiers());
     QSlider::mousePressEvent(&event);
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

@@ -101,7 +101,7 @@ void SplitterWidget::addWidget(QWidget* newWidget)
     if(m_children.isEmpty()) {
         m_dummy->hide();
     }
-    int index = static_cast<int>(m_children.count());
+    const int index = static_cast<int>(m_children.count());
     m_children.append(widget);
     return m_splitter->insertWidget(index, widget);
 }
@@ -134,13 +134,13 @@ void SplitterWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
     if(!oldWidget || !newWidget || m_children.isEmpty()) {
         return;
     }
-    int index = findIndex(oldWidget);
+    const int index = findIndex(oldWidget);
     replaceWidget(index, newWidget);
 }
 
 void SplitterWidget::removeWidget(FyWidget* widget)
 {
-    int index = findIndex(widget);
+    const int index = findIndex(widget);
     if(index != -1) {
         widget->deleteLater();
         m_children.remove(index);
@@ -189,20 +189,20 @@ void SplitterWidget::saveSplitter(QJsonObject& object, QJsonArray& splitterArray
             widget->saveLayout(array);
         }
     }
-    QString state = QString::fromUtf8(saveState().toBase64());
+    const QString state = QString::fromUtf8(saveState().toBase64());
 
     QJsonObject children;
-    children["Type"] = Utils::EnumHelper::toString(orientation());
-    children["State"] = state;
+    children["Type"]     = Utils::EnumHelper::toString(orientation());
+    children["State"]    = state;
     children["Children"] = array;
 
     if(!findParent()) {
         object["Splitter"] = children;
     }
     else {
-        QJsonObject object;
-        object["Splitter"] = children;
-        splitterArray.append(object);
+        QJsonObject splitterObject;
+        splitterObject["Splitter"] = children;
+        splitterArray.append(splitterObject);
     }
 }
 
@@ -215,8 +215,9 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
                 QJsonObject childSplitterObject = object["Splitter"].toObject();
                 auto type = Utils::EnumHelper::fromString<Qt::Orientation>(childSplitterObject["Type"].toString());
 
-                QJsonArray splitterArray = childSplitterObject["Children"].toArray();
-                QByteArray splitterState = QByteArray::fromBase64(childSplitterObject["State"].toString().toUtf8());
+                const QJsonArray splitterArray = childSplitterObject["Children"].toArray();
+                const QByteArray splitterState
+                    = QByteArray::fromBase64(childSplitterObject["State"].toString().toUtf8());
 
                 auto* childSplitter = Widgets::WidgetProvider::createSplitter(type, this);
                 splitter->addWidget(childSplitter);
@@ -225,7 +226,7 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
             }
             else {
                 const auto jObject = object.constBegin().key();
-                auto* childWidget = m_widgetProvider->createWidget(jObject);
+                auto* childWidget  = m_widgetProvider->createWidget(jObject);
                 splitter->addWidget(childWidget);
                 auto widgetObject = object.value(jObject).toObject();
                 childWidget->loadLayout(widgetObject);
@@ -237,4 +238,4 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
         }
     }
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

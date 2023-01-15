@@ -23,7 +23,6 @@
 #include "core/database/librarydatabase.h"
 #include "core/library/librarymanager.h"
 #include "core/library/libraryutils.h"
-#include "core/library/models/track.h"
 #include "core/tagging/tags.h"
 
 #include <QDir>
@@ -51,7 +50,7 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks, const LibraryInfo& 
         return;
     }
 
-    auto* db = DB::Database::instance();
+    auto* db                             = DB::Database::instance();
     DB::LibraryDatabase* libraryDatabase = db->libraryDatabase();
 
     setState(State::Running);
@@ -76,7 +75,7 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks, const LibraryInfo& 
         }
     }
 
-    bool deletedSuccess = libraryDatabase->deleteTracks(tracksToDelete);
+    const bool deletedSuccess = libraryDatabase->deleteTracks(tracksToDelete);
 
     if(deletedSuccess && !tracksToDelete.empty()) {
         emit tracksDeleted(tracksToDelete);
@@ -106,7 +105,7 @@ void LibraryScanner::storeTracks(TrackList& tracks) const
         return;
     }
 
-    auto* db = DB::Database::instance();
+    auto* db                             = DB::Database::instance();
     DB::LibraryDatabase* libraryDatabase = db->libraryDatabase();
 
     libraryDatabase->storeTracks(tracks);
@@ -121,11 +120,11 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
     QStringList ret;
     QList<QDir> stack{baseDirectory};
 
-    QStringList soundFileExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga",  "*.m4a", "*.wav",  "*.flac",
-                                    "*.aac", "*.wma", "*.mpc",  "*.aiff", "*.ape", "*.webm", "*.mp4"};
+    const QStringList soundFileExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga",  "*.m4a", "*.wav",  "*.flac",
+                                          "*.aac", "*.wma", "*.mpc",  "*.aiff", "*.ape", "*.webm", "*.mp4"};
 
     while(!stack.isEmpty()) {
-        QDir dir = stack.takeFirst();
+        const QDir dir = stack.takeFirst();
         for(const auto& subDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
             if(!mayRun()) {
                 return {};
@@ -153,14 +152,14 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
     TrackList tracksToStore{};
     TrackList tracksToUpdate{};
 
-    QStringList files = getFiles(dir);
+    const QStringList files = getFiles(dir);
 
     for(const auto& filepath : files) {
         if(!mayRun()) {
             return false;
         }
 
-        QFileInfo info{filepath};
+        const QFileInfo info{filepath};
 
         auto modified = info.lastModified().isValid() ? info.lastModified().toMSecsSinceEpoch() : 0;
 

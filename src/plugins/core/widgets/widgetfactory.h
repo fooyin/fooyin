@@ -61,9 +61,9 @@ public:
         }
 
         FactoryWidget fw;
-        fw.name = name;
+        fw.name         = name;
         fw.instantiator = &createInstance<U>;
-        fw.subMenus = subMenus;
+        fw.subMenus     = subMenus;
 
         widgets.emplace(name, fw);
         return true;

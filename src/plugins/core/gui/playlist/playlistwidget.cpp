@@ -184,7 +184,7 @@ void PlaylistWidget::layoutEditingMenu(ActionContainer* menu)
 
 void PlaylistWidget::selectionChanged()
 {
-    QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
+    const QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
     QSet<Track*> tracks;
     for(const auto& index : indexes) {
         if(index.isValid()) {
@@ -209,7 +209,7 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
     const auto key = e->key();
 
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
+        const QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
         if(!indexes.isEmpty()) {
             const QModelIndex index = indexes.constFirst();
             const auto type         = index.data(Role::Type).value<PlaylistItem::Type>();

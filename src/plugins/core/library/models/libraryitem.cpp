@@ -23,4 +23,4 @@ namespace Core {
 LibraryItem::LibraryItem() = default;
 
 LibraryItem::~LibraryItem() = default;
-}; // namespace Core
+} // namespace Core

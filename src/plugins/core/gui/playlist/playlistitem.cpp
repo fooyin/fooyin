@@ -19,8 +19,6 @@
 
 #include "playlistitem.h"
 
-#include "core/library/models/libraryitem.h"
-
 #include <utils/helpers.h>
 
 namespace Core::Widgets {
@@ -91,4 +89,4 @@ PlaylistItem* PlaylistItem::parent() const
 {
     return m_parent;
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

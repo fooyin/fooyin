@@ -38,4 +38,4 @@ QSplitterHandle* Splitter::createHandle()
 {
     return new SplitterHandle(this->orientation(), this);
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

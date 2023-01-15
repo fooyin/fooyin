@@ -172,4 +172,4 @@ private:
     int m_libraryId;
     ExtraTags m_extraTags;
 };
-}; // namespace Core
+} // namespace Core

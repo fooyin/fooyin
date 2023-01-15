@@ -38,4 +38,4 @@ protected:
 private:
     QTimer m_timer;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

@@ -40,4 +40,4 @@ InfoView::InfoView(QWidget* parent)
 }
 
 InfoView::~InfoView() = default;
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

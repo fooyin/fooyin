@@ -26,7 +26,7 @@ class FilterManager;
 
 namespace Settings {
 class FiltersSettings;
-};
+}
 
 class FiltersPlugin : public QObject,
                       public PluginSystem::Plugin
@@ -47,4 +47,4 @@ private:
     FilterManager* m_filterManager;
     std::unique_ptr<Settings::FiltersSettings> m_filterSettings;
 };
-}; // namespace Filters
+} // namespace Filters

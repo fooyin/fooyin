@@ -30,7 +30,6 @@
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
-#include <QDir>
 #include <QMenuBar>
 #include <QTextEdit>
 #include <QTimer>
@@ -51,7 +50,7 @@ struct MainWindow::Private
 
     SettingsManager* settings;
 
-    QuickSeupDialog* quickSetupDialog;
+    QuickSetupDialog* quickSetupDialog;
 
     ActionManager* actionManager;
 
@@ -86,12 +85,12 @@ void MainWindow::setupUi()
     setMinimumSize(410, 320);
     setWindowIcon(QIcon(Core::Constants::Icons::Fooyin));
 
-    QByteArray geometryArray = p->settings->value<Settings::Geometry>();
-    QByteArray geometry      = QByteArray::fromBase64(geometryArray);
+    const QByteArray geometryArray = p->settings->value<Settings::Geometry>();
+    const QByteArray geometry      = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
     p->mainLayout       = new Widgets::EditableLayout(this);
-    p->quickSetupDialog = new QuickSeupDialog(this);
+    p->quickSetupDialog = new QuickSetupDialog(this);
 
     setCentralWidget(p->mainLayout);
 
@@ -133,14 +132,14 @@ void MainWindow::setupUi()
     menubar->addMenu(helpMenu, Core::Constants::Groups::Help);
     helpMenu->menu()->setTitle(tr("&Help"));
 
-    QIcon quitIcon = QIcon(Core::Constants::Icons::Quit);
-    p->quitAction  = new QAction(quitIcon, tr("E&xit"), this);
+    const QIcon quitIcon = QIcon(Core::Constants::Icons::Quit);
+    p->quitAction        = new QAction(quitIcon, tr("E&xit"), this);
     p->actionManager->registerAction(p->quitAction, Core::Constants::Actions::Exit);
     fileMenu->addAction(p->quitAction, Core::Constants::Groups::Three);
     connect(p->quitAction, &QAction::triggered, this, &MainWindow::close);
 
-    QIcon layoutEditingIcon = QIcon(Core::Constants::Icons::LayoutEditing);
-    p->layoutEditing        = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
+    const QIcon layoutEditingIcon = QIcon(Core::Constants::Icons::LayoutEditing);
+    p->layoutEditing              = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
     p->actionManager->registerAction(p->layoutEditing, Core::Constants::Actions::LayoutEditing);
     viewMenu->addAction(p->layoutEditing, Core::Constants::Groups::Three);
     connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
@@ -148,29 +147,29 @@ void MainWindow::setupUi()
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value<Settings::LayoutEditing>());
 
-    QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
-    p->openQuickSetup    = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
+    const QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
+    p->openQuickSetup          = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
     p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
     viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
-    connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSeupDialog::show);
-    connect(p->quickSetupDialog, &QuickSeupDialog::layoutChanged, p->mainLayout,
+    connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
+    connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->mainLayout,
             &Widgets::EditableLayout::changeLayout);
 
-    QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
-    p->rescan        = new QAction(rescanIcon, tr("&Rescan Library"), this);
+    const QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
+    p->rescan              = new QAction(rescanIcon, tr("&Rescan Library"), this);
     p->actionManager->registerAction(p->rescan, Core::Constants::Actions::Rescan);
     libraryMenu->addAction(p->rescan, Core::Constants::Groups::Two);
     connect(p->rescan, &QAction::triggered, p->library, &Library::MusicLibrary::reloadAll);
 
-    QIcon settingsIcon = QIcon(Core::Constants::Icons::Settings);
-    p->openSettings    = new QAction(settingsIcon, tr("&Settings"), this);
+    const QIcon settingsIcon = QIcon(Core::Constants::Icons::Settings);
+    p->openSettings          = new QAction(settingsIcon, tr("&Settings"), this);
     p->actionManager->registerAction(p->openSettings, Core::Constants::Actions::Settings);
     libraryMenu->addAction(p->openSettings, Core::Constants::Groups::Three);
     connect(p->openSettings, &QAction::triggered, p->settingsDialog, &Widgets::SettingsDialog::show);
 
     if(p->settings->value<Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
-        QTimer::singleShot(1000, p->quickSetupDialog, &QuickSeupDialog::show);
+        QTimer::singleShot(1000, p->quickSetupDialog, &QuickSetupDialog::show);
     }
 }
 
@@ -194,4 +193,4 @@ void MainWindow::enableLayoutEditing(bool enable)
 {
     p->settings->set<Settings::LayoutEditing>(enable);
 }
-}; // namespace Core
+} // namespace Core

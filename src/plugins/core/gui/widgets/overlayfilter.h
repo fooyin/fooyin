@@ -33,4 +33,4 @@ public:
 protected:
     void paintEvent(QPaintEvent* event) override;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

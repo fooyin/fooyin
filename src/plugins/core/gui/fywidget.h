@@ -40,7 +40,6 @@ public:
 
     [[nodiscard]] FyWidget* findParent();
 
-    virtual void addWidgetMenu(ActionContainer* menu, QAction* action);
     virtual void layoutEditingMenu(ActionContainer* menu);
     virtual void saveLayout(QJsonArray& array);
     virtual void loadLayout(QJsonObject& object);
@@ -48,5 +47,5 @@ public:
 private:
     Utils::Id m_id;
 };
-}; // namespace Widgets
-}; // namespace Core
+} // namespace Widgets
+} // namespace Core

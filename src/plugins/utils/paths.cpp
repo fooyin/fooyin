@@ -78,5 +78,4 @@ QString settingsPath()
 {
     return configPath().append("/fooyin.conf");
 }
-
-}; // namespace Utils
+} // namespace Utils

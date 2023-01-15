@@ -73,4 +73,4 @@ private:
     int m_discCount;
     QString m_coverPath;
 };
-}; // namespace Core
+} // namespace Core

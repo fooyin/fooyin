@@ -31,4 +31,4 @@ enum Type : uint32_t
     String    = 4 << 28,
     ByteArray = 5 << 28,
 };
-}; // namespace Core::Settings
+} // namespace Core::Settings

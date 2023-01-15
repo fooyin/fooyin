@@ -20,7 +20,6 @@
 #include "enginehandler.h"
 
 #include "core/library/models/track.h"
-#include "core/player/playermanager.h"
 
 namespace Core::Engine {
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* parent)
@@ -53,4 +52,4 @@ void EngineHandler::playStateChanged(Player::PlayState state)
             return;
     }
 }
-}; // namespace Core::Engine
+} // namespace Core::Engine

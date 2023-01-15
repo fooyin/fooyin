@@ -38,4 +38,4 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void enterEvent(QEnterEvent* event) override;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

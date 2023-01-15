@@ -117,4 +117,4 @@ void SettingsDialog::openPage(Page page)
     p->contentsWidget->setCurrentRow(index);
     show();
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

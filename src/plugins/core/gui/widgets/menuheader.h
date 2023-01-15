@@ -50,4 +50,4 @@ class MenuHeaderAction : public QWidgetAction
 public:
     explicit MenuHeaderAction(const QString& text, QObject* parent = nullptr);
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

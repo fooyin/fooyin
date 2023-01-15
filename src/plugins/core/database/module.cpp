@@ -56,7 +56,7 @@ QSqlDatabase Module::db() const
         id = 0;
     }
 
-    QString threadConnectionName = QString("%1-%2").arg(m_connectionName).arg(id);
+    const QString threadConnectionName = QString("%1-%2").arg(m_connectionName).arg(id);
 
     const QStringList connections = QSqlDatabase::connectionNames();
     if(connections.contains(threadConnectionName)) {
@@ -67,7 +67,7 @@ QSqlDatabase Module::db() const
     db.setDatabaseName(m_connectionName);
 
     if(!db.open()) {
-        QSqlError er = db.lastError();
+        const QSqlError er = db.lastError();
 
         qDebug() << "Database cannot be opened! " << m_connectionName;
         qDebug() << er.driverText();
@@ -113,8 +113,8 @@ DB::Query Module::insert(const QString& tableName, const QMap<QString, QVariant>
                          const QString& errorMessage)
 {
     const QStringList fieldNames = fieldBindings.keys();
-    const QString fields = fieldNames.join(", ");
-    const QString bindings = ":" + fieldNames.join(", :");
+    const QString fields         = fieldNames.join(", ");
+    const QString bindings       = ":" + fieldNames.join(", :");
 
     QString query = "INSERT INTO " + tableName;
     query += " (" + fields + ") ";

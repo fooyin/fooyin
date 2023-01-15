@@ -38,8 +38,8 @@ namespace Core::Tagging {
 void scaleImage(QPixmap& image)
 {
     static const int maximumSize = 400;
-    const int width = image.size().width();
-    const int height = image.size().height();
+    const int width              = image.size().width();
+    const int height             = image.size().height();
     if(width > maximumSize || height > maximumSize) {
         image = image.scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
@@ -53,7 +53,7 @@ QByteArray getCoverFromMpeg(TagLib::MPEG::File* file)
             using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
             for(const auto& frame : qAsConst(frames)) {
                 auto* coverFrame = dynamic_cast<PictureFrame*>(frame);
-                const auto type = coverFrame->type();
+                const auto type  = coverFrame->type();
                 if((frame && type == PictureFrame::FrontCover) || type == PictureFrame::Other) {
                     return {coverFrame->picture().data(), coverFrame->picture().size()};
                 }
@@ -80,7 +80,7 @@ QByteArray getCoverFromFlac(TagLib::FLAC::File* file)
 
 QByteArray getCoverFromMp4(TagLib::MP4::File* file)
 {
-    const TagLib::MP4::Item coverItem = file->tag()->item("covr");
+    const TagLib::MP4::Item coverItem            = file->tag()->item("covr");
     const TagLib::MP4::CoverArtList coverArtList = coverItem.toCoverArtList();
     if(!coverArtList.isEmpty()) {
         const TagLib::MP4::CoverArt& coverArt = coverArtList.front();
@@ -115,17 +115,17 @@ FileTags tagsFromMpeg(TagLib::MPEG::File* file)
     FileTags parsedTag;
 
     if(file && file->hasID3v2Tag()) {
-        parsedTag.tag = file->ID3v2Tag();
+        parsedTag.tag  = file->ID3v2Tag();
         parsedTag.type = Tagging::TagType::ID3v2;
     }
 
     else if(file && file->hasID3v1Tag()) {
-        parsedTag.tag = file->ID3v1Tag();
+        parsedTag.tag  = file->ID3v1Tag();
         parsedTag.type = Tagging::TagType::ID3v1;
     }
 
     else if(file) {
-        parsedTag.tag = file->ID3v2Tag(true);
+        parsedTag.tag  = file->ID3v2Tag(true);
         parsedTag.type = Tagging::TagType::ID3v2;
     }
 
@@ -137,27 +137,27 @@ FileTags tagsFromFlac(TagLib::FLAC::File* file)
     FileTags parsedTag;
 
     if(file && file->hasXiphComment()) {
-        parsedTag.tag = file->xiphComment();
+        parsedTag.tag  = file->xiphComment();
         parsedTag.type = Tagging::TagType::Xiph;
     }
 
     else if(file && file->hasID3v2Tag()) {
-        parsedTag.tag = file->ID3v2Tag();
+        parsedTag.tag  = file->ID3v2Tag();
         parsedTag.type = Tagging::TagType::ID3v2;
     }
 
     else if(file && file->hasID3v1Tag()) {
-        parsedTag.tag = file->ID3v1Tag();
+        parsedTag.tag  = file->ID3v1Tag();
         parsedTag.type = Tagging::TagType::ID3v1;
     }
 
     else if(file && file->tag()) {
-        parsedTag.tag = file->tag();
+        parsedTag.tag  = file->tag();
         parsedTag.type = Tagging::TagType::Unknown;
     }
 
     else if(file && !file->tag()) {
-        parsedTag.tag = file->ID3v2Tag(true);
+        parsedTag.tag  = file->ID3v2Tag(true);
         parsedTag.type = Tagging::TagType::ID3v2;
     }
 
@@ -169,7 +169,7 @@ FileTags tagsFromMP4(TagLib::MP4::File* file)
     FileTags parsedTag;
 
     if(file && file->hasMP4Tag()) {
-        parsedTag.tag = file->tag();
+        parsedTag.tag  = file->tag();
         parsedTag.type = Tagging::TagType::MP4;
     }
 
@@ -225,7 +225,7 @@ FileTags tagsFromFile(const TagLib::FileRef& fileRef)
 {
     FileTags parsedTag;
 
-    parsedTag.tag = nullptr;
+    parsedTag.tag  = nullptr;
     parsedTag.type = TagType::Unsupported;
 
     if(auto* mpg = dynamic_cast<TagLib::MPEG::File*>(fileRef.file()); mpg) {
@@ -241,7 +241,7 @@ FileTags tagsFromFile(const TagLib::FileRef& fileRef)
     }
 
     else if(fileRef.file()) {
-        parsedTag.tag = fileRef.tag();
+        parsedTag.tag  = fileRef.tag();
         parsedTag.type = TagType::Unknown;
     }
 
@@ -279,5 +279,4 @@ bool isValidFile(const TagLib::FileRef& fileRef)
 {
     return (!fileRef.isNull() && fileRef.tag() && fileRef.file() && fileRef.file()->isValid());
 }
-
 } // namespace Core::Tagging

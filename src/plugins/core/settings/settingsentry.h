@@ -55,4 +55,4 @@ private:
     QString m_group;
     bool m_writeToDisk;
 };
-}; // namespace Core
+} // namespace Core

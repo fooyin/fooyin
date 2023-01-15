@@ -116,7 +116,7 @@ struct Application::Private
         widgetFactory->registerClass<Widgets::PlaylistWidget>("Playlist");
         widgetFactory->registerClass<Widgets::Spacer>("Spacer");
         widgetFactory->registerClass<Widgets::VerticalSplitterWidget>("Vertical", {"Splitter"});
-        widgetFactory->registerClass<Widgets::HoriztonalSplitterWidget>("Horiztonal", {"Splitter"});
+        widgetFactory->registerClass<Widgets::HorizontalSplitterWidget>("Horiztonal", {"Splitter"});
         widgetFactory->registerClass<Widgets::StatusWidget>("Status");
     }
 };
@@ -147,4 +147,4 @@ void Application::shutdown()
     }
     delete p->widgetProvider;
 }
-}; // namespace Core
+} // namespace Core

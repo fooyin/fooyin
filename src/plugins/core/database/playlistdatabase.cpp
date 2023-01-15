@@ -25,4 +25,4 @@ Playlist::Playlist(const QString& connectionName)
 { }
 
 Playlist::~Playlist() = default;
-}; // namespace Core::DB
+} // namespace Core::DB

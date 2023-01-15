@@ -34,7 +34,7 @@ struct SearchWidget::Private
     Core::SettingsManager* settings;
     QHBoxLayout* layout;
     QLineEdit* searchBox;
-    const QString defaultText = "Search library...";
+    QString defaultText = "Search library...";
 
     FilterManager* manager;
 
@@ -110,4 +110,4 @@ void SearchWidget::textChanged(const QString& text)
 {
     emit searchChanged(text);
 }
-}; // namespace Filters
+} // namespace Filters

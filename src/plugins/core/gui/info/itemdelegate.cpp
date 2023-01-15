@@ -34,14 +34,14 @@ ItemDelegate::~ItemDelegate() = default;
 QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const auto text = index.data(Qt::DisplayRole).toString();
-    auto height = option.fontMetrics.height();
+    auto height     = option.fontMetrics.height();
 
     QFont textFont = option.font;
     // Set font slightly larger than actual to eliminate clipping when resizing
     textFont.setPixelSize(15);
 
-    QFontMetrics fm{textFont};
-    int width = fm.boundingRect(text).width();
+    const QFontMetrics fm{textFont};
+    const int width = fm.boundingRect(text).width();
 
     const auto type = index.data(Role::Type).value<InfoItem::Type>();
 
@@ -63,7 +63,7 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     painter->save();
 
     QStyleOptionViewItem opt = option;
-    const auto type = index.data(Role::Type).value<InfoItem::Type>();
+    const auto type          = index.data(Role::Type).value<InfoItem::Type>();
 
     initStyleOption(&opt, index);
 
@@ -87,11 +87,11 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
 
 void ItemDelegate::paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-    const int x = option.rect.x();
-    const int y = option.rect.y();
-    const int width = option.rect.width();
-    const int height = option.rect.height();
-    const int right = x + width;
+    const int x       = option.rect.x();
+    const int y       = option.rect.y();
+    const int width   = option.rect.width();
+    const int height  = option.rect.height();
+    const int right   = x + width;
     const int centreY = y + (height / 2);
 
     QPen linePen = painter->pen();
@@ -121,9 +121,9 @@ void ItemDelegate::paintHeader(QPainter* painter, const QStyleOptionViewItem& op
 
 void ItemDelegate::paintEntry(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-    const int x = option.rect.x();
-    const int y = option.rect.y();
-    const int width = option.rect.width();
+    const int x      = option.rect.x();
+    const int y      = option.rect.y();
+    const int width  = option.rect.width();
     const int height = option.rect.height();
 
     const QString title = index.data(Qt::DisplayRole).toString();
@@ -137,4 +137,4 @@ void ItemDelegate::paintEntry(QPainter* painter, const QStyleOptionViewItem& opt
     option.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
                                          painter->fontMetrics().elidedText(title, Qt::ElideRight, titleRect.width()));
 }
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

@@ -26,9 +26,6 @@
 
 #include <QMenu>
 #include <core/actions/actioncontainer.h>
-#include <core/actions/actionmanager.h>
-#include <core/constants.h>
-#include <core/gui/mainwindow.h>
 #include <core/widgets/widgetfactory.h>
 #include <pluginsystem/pluginmanager.h>
 
@@ -56,4 +53,4 @@ void FiltersPlugin::finalise()
     factory->registerClass<SearchWidget>("Search");
 }
 void FiltersPlugin::shutdown() { }
-}; // namespace Filters
+} // namespace Filters

@@ -32,16 +32,16 @@ class SettingsManager;
 
 namespace Player {
 class PlayerManager;
-};
+}
 
 namespace Library {
 class MusicLibrary;
-};
+}
 
 namespace Widgets {
 class WidgetProvider;
-};
-}; // namespace Core
+}
+} // namespace Core
 
 namespace Filters {
 class FilterManager;
@@ -147,4 +147,4 @@ public:
     { }
     ~AlbumFilter() override = default;
 };
-}; // namespace Filters
+} // namespace Filters

@@ -48,4 +48,4 @@ private:
     struct Private;
     std::unique_ptr<ActionManager::Private> p;
 };
-}; // namespace Core
+} // namespace Core

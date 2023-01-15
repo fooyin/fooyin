@@ -26,4 +26,4 @@ public:
     explicit LibraryItem();
     virtual ~LibraryItem();
 };
-}; // namespace Core
+} // namespace Core

@@ -1,3 +1,22 @@
+/*
+ * Fooyin
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "id.h"
 
 namespace Utils {
@@ -37,13 +56,13 @@ QString Id::name() const
 
 Id Id::append(const Id& id)
 {
-    QString name = m_name.append(id.name());
+    const QString name = m_name.append(id.name());
     return Id{name};
 }
 
 Id Id::append(const QString& str)
 {
-    QString name = m_name.append(str);
+    const QString name = m_name.append(str);
     return Id{name};
 }
 
@@ -54,13 +73,13 @@ Id Id::append(const char* const str)
 
 Id Id::append(int num)
 {
-    QString name = m_name.append(QString::number(num));
+    const QString name = m_name.append(QString::number(num));
     return Id{name};
 }
 
 Id Id::append(quintptr addr)
 {
-    QString name = m_name.append(QString::number(addr));
+    const QString name = m_name.append(QString::number(addr));
     return Id{name};
 }
 

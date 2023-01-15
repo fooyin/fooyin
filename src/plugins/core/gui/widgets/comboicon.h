@@ -38,7 +38,7 @@ class ComboIcon : public QWidget
         QPixmap iconActive;
     };
 
-    using PathIconPair = std::pair<QString, Icon>;
+    using PathIconPair      = std::pair<QString, Icon>;
     using PathIconContainer = std::vector<PathIconPair>;
 
 public:
@@ -71,4 +71,4 @@ private:
     int m_currentIndex;
     PathIconContainer m_icons;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets

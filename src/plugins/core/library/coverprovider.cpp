@@ -35,4 +35,4 @@ QPixmap albumCover(Album* album)
     }
     return cover;
 }
-}; // namespace Core::Covers
+} // namespace Core::Covers

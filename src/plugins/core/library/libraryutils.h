@@ -30,4 +30,4 @@ QString calcCoverHash(const QString& albumName, const QString& albumArtist);
 QPixmap getCover(const QString& path, int size);
 bool saveCover(const QPixmap& cover, const QString& hash);
 QString storeCover(const Track& track);
-}; // namespace Core::Library::Utils
+} // namespace Core::Library::Utils

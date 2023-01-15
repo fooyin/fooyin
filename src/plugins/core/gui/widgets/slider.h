@@ -32,4 +32,4 @@ public:
 protected:
     void mousePressEvent(QMouseEvent* event) override;
 };
-}; // namespace Core::Widgets
+} // namespace Core::Widgets
