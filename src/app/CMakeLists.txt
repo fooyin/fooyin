@@ -5,6 +5,8 @@ target_include_directories(FooyinVersion PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set(SOURCES
     main.cpp
+    singleinstance.h
+    singleinstance.cpp
 )
 
 set(RESOURCES

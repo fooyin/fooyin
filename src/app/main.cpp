@@ -17,6 +17,7 @@
  *
  */
 
+#include "singleinstance.h"
 #include "version.h"
 
 #include <QApplication>
@@ -28,6 +29,12 @@ int main(int argc, char* argv[])
 
     qApp->setApplicationName("fooyin");
     qApp->setApplicationVersion(VERSION);
+
+    // Prevent additional instances
+    SingleInstance instance("fooyin");
+    if(!instance.tryRunning()) {
+        return 0;
+    }
 
     auto* app           = new QApplication(argc, argv);
     auto* pluginManager = PluginSystem::PluginManager::instance();
