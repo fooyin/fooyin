@@ -216,9 +216,7 @@ public:
         else if constexpr(type == Settings::Type::ByteArray) {
             m_settings.at(mapKey).settingChangedByteArray(value);
         }
-        else {
-            m_settings.at(mapKey).settingChanged();
-        }
+        m_settings.at(mapKey).settingChanged();
     }
 
 private:
