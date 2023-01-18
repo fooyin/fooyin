@@ -69,7 +69,7 @@ struct EditableLayout::Private
         auto* newMenu = actionManager->createMenu(id);
         newMenu->menu()->setTitle(title);
 
-        return menu;
+        return newMenu;
     }
 
     QRect widgetGeometry(FyWidget* widget)
