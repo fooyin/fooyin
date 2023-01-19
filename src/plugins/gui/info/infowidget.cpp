@@ -23,14 +23,15 @@
 #include "gui/info/infoitem.h"
 #include "gui/info/itemdelegate.h"
 
-#include <QHeaderView>
-#include <QMenu>
-#include <QTableWidget>
 #include <core/actions/actioncontainer.h>
 #include <core/library/models/track.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <pluginsystem/pluginmanager.h>
+
+#include <QHeaderView>
+#include <QMenu>
+#include <QTableWidget>
 
 namespace Gui::Widgets {
 InfoWidget::InfoWidget(QWidget* parent)

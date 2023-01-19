@@ -19,8 +19,9 @@
 
 #include "comboicon.h"
 
-#include <QVBoxLayout>
 #include <utils/utils.h>
+
+#include <QVBoxLayout>
 
 namespace Gui::Widgets {
 ComboIcon::ComboIcon(const QString& path, Core::Fy::Attributes attributes, QWidget* parent)

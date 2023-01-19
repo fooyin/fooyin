@@ -24,12 +24,13 @@
 #include "progresswidget.h"
 #include "volumecontrol.h"
 
-#include <QContextMenuEvent>
-#include <QHBoxLayout>
-#include <QMenu>
 #include <core/library/models/track.h>
 #include <core/player/playermanager.h>
 #include <pluginsystem/pluginmanager.h>
+
+#include <QContextMenuEvent>
+#include <QHBoxLayout>
+#include <QMenu>
 
 namespace Gui::Widgets {
 struct ControlWidget::Private

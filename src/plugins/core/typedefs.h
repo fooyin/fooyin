@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <QVariant>
 #include <set>
+
+#include <QVariant>
 
 namespace Core {
 using IdSet = std::set<int>;

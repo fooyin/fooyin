@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <QObject>
 #include <core/settings/settingsmanager.h>
+
+#include <QObject>
 
 namespace Gui::Settings {
 Q_NAMESPACE

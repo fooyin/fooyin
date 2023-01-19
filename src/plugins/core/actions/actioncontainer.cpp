@@ -22,10 +22,11 @@
 #include "actionmanager.h"
 #include "core/constants.h"
 
+#include <pluginsystem/pluginmanager.h>
+
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
-#include <pluginsystem/pluginmanager.h>
 
 namespace Core {
 ActionContainer::ActionContainer(const Utils::Id& id, QObject* parent)

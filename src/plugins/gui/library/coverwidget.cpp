@@ -19,12 +19,13 @@
 
 #include "coverwidget.h"
 
-#include <QHBoxLayout>
-#include <QLabel>
 #include <core/library/models/track.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <pluginsystem/pluginmanager.h>
+
+#include <QHBoxLayout>
+#include <QLabel>
 
 namespace Gui::Widgets {
 struct CoverWidget::Private

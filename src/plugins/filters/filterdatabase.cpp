@@ -19,9 +19,10 @@
 
 #include "filterdatabase.h"
 
+#include <core/database/query.h>
+
 #include <QBuffer>
 #include <QPixmap>
-#include <core/database/query.h>
 
 namespace Filters {
 QString getFilterJoins(const Filters::FilterType type = {})

@@ -20,8 +20,8 @@
 #pragma once
 
 #include "core/app/worker.h"
-#include "core/library/libraryinfo.h"
 #include "core/library/models/trackfwd.h"
+#include "libraryinfo.h"
 
 class QDir;
 

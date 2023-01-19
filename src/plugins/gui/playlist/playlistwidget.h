@@ -21,8 +21,9 @@
 
 #include "gui/fywidget.h"
 
-#include <QItemSelection>
 #include <core/typedefs.h>
+
+#include <QItemSelection>
 
 class QHBoxLayout;
 class QPushButton;

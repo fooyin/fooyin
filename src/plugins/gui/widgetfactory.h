@@ -21,8 +21,9 @@
 
 #include "gui/fywidget.h"
 
-#include <QDebug>
 #include <map>
+
+#include <QDebug>
 
 namespace Gui::Widgets {
 class WidgetFactory : public QObject

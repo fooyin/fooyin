@@ -21,8 +21,9 @@
 
 #include "gui/widgets/comboicon.h"
 
-#include <QHBoxLayout>
 #include <core/constants.h>
+
+#include <QHBoxLayout>
 
 namespace Gui::Widgets {
 struct PlayerControl::Private

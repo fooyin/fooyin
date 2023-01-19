@@ -26,11 +26,12 @@
 #include "query.h"
 #include "version.h"
 
-#include <QFile>
-#include <QSqlQuery>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/paths.h>
 #include <utils/utils.h>
+
+#include <QFile>
+#include <QSqlQuery>
 
 namespace Core::DB {
 struct Database::Private

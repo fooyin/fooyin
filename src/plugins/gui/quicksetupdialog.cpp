@@ -19,10 +19,11 @@
 
 #include "quicksetupdialog.h"
 
+#include <core/typedefs.h>
+
 #include <QListWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <core/typedefs.h>
 
 namespace Gui {
 QuickSetupDialog::QuickSetupDialog(QWidget* parent)

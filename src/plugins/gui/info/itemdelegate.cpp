@@ -21,8 +21,9 @@
 
 #include "gui/info/infoitem.h"
 
-#include <QPainter>
 #include <core/typedefs.h>
+
+#include <QPainter>
 
 namespace Gui::Widgets {
 ItemDelegate::ItemDelegate(QObject* parent)

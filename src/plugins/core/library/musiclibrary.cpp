@@ -28,10 +28,11 @@
 #include "libraryscanner.h"
 #include "musiclibraryinteractor.h"
 
-#include <QTimer>
 #include <pluginsystem/pluginmanager.h>
-#include <utility>
 #include <utils/helpers.h>
+
+#include <QTimer>
+#include <utility>
 
 namespace Core::Library {
 struct MusicLibrary::Private

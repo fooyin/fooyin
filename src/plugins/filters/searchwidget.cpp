@@ -21,12 +21,13 @@
 
 #include "filtermanager.h"
 
+#include <gui/guisettings.h>
+#include <pluginsystem/pluginmanager.h>
+
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QMenu>
-#include <gui/guisettings.h>
-#include <pluginsystem/pluginmanager.h>
 
 namespace Filters {
 struct SearchWidget::Private

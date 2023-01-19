@@ -21,8 +21,9 @@
 
 #include "gui/fywidget.h"
 
-#include <QWidget>
 #include <core/typedefs.h>
+
+#include <QWidget>
 
 namespace Gui::Widgets {
 class StatusWidget : public FyWidget

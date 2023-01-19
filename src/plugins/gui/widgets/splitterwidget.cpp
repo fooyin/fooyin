@@ -23,12 +23,13 @@
 #include "gui/widgetprovider.h"
 #include "splitter.h"
 
-#include <QJsonObject>
-#include <QMenu>
 #include <core/actions/actioncontainer.h>
 #include <core/actions/actionmanager.h>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
+
+#include <QJsonObject>
+#include <QMenu>
 
 namespace Gui::Widgets {
 SplitterWidget::SplitterWidget(QWidget* parent)

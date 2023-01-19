@@ -19,8 +19,9 @@
 
 #pragma once
 
+#include "core/library/models/trackfwd.h"
+
 #include <QObject>
-#include <core/library/models/trackfwd.h>
 
 namespace Core::Library {
 class MusicLibraryInteractor : public QObject

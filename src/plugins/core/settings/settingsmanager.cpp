@@ -19,10 +19,11 @@
 
 #include "settingsmanager.h"
 
-#include <QSettings>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/paths.h>
 #include <utils/utils.h>
+
+#include <QSettings>
 
 namespace Core {
 SettingsManager::SettingsManager(QObject* parent)

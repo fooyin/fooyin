@@ -22,10 +22,11 @@
 #include "actioncontainer.h"
 #include "core/constants.h"
 
-#include <QMainWindow>
-#include <QMenuBar>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/helpers.h>
+
+#include <QMainWindow>
+#include <QMenuBar>
 
 namespace Core {
 struct ActionManager::Private

@@ -24,10 +24,11 @@
 #include "filterwidget.h"
 #include "searchwidget.h"
 
-#include <QMenu>
 #include <core/actions/actioncontainer.h>
 #include <gui/widgetfactory.h>
 #include <pluginsystem/pluginmanager.h>
+
+#include <QMenu>
 
 namespace Filters {
 FiltersPlugin::FiltersPlugin() = default;

@@ -21,10 +21,11 @@
 
 #include "widgetfactory.h"
 
-#include <QMenu>
 #include <gui/widgets/splitterwidget.h>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
+
+#include <QMenu>
 
 namespace Gui::Widgets {
 struct WidgetProvider::Private

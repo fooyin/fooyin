@@ -26,11 +26,11 @@
 #include "gui/playlist/playlistwidget.h"
 #include "gui/settings/settingsdialog.h"
 #include "gui/widgets/spacer.h"
+#include "gui/widgets/splitterwidget.h"
 #include "guisettings.h"
 #include "mainwindow.h"
 #include "widgetfactory.h"
 #include "widgetprovider.h"
-#include "widgets/splitterwidget.h"
 
 #include <core/actions/actionmanager.h>
 #include <core/app/threadmanager.h>

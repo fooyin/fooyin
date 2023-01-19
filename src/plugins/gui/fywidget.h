@@ -19,9 +19,10 @@
 
 #pragma once
 
+#include <utils/id.h>
+
 #include <QJsonArray>
 #include <QWidget>
-#include <utils/id.h>
 
 namespace Core {
 class ActionContainer;

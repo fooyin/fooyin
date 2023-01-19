@@ -21,9 +21,10 @@
 
 #include "core/player/playermanager.h"
 
-#include <QMessageBox>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
+
+#include <QMessageBox>
 
 namespace Core::Playlist {
 Playlist::Playlist(int idx, QString name)

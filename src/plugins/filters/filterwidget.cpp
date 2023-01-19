@@ -26,17 +26,18 @@
 #include "filtersettings.h"
 #include "filterview.h"
 
+#include <core/actions/actioncontainer.h>
+#include <core/library/musiclibrary.h>
+#include <core/player/playermanager.h>
+#include <pluginsystem/pluginmanager.h>
+#include <utils/enumhelper.h>
+
 #include <QAction>
 #include <QActionGroup>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QMenu>
-#include <core/actions/actioncontainer.h>
-#include <core/library/musiclibrary.h>
-#include <core/player/playermanager.h>
-#include <pluginsystem/pluginmanager.h>
-#include <utils/enumhelper.h>
 
 namespace Filters {
 FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)

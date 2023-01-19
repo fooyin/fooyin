@@ -20,8 +20,9 @@
 #include "singleinstance.h"
 #include "version.h"
 
-#include <QApplication>
 #include <pluginsystem/pluginmanager.h>
+
+#include <QApplication>
 
 int main(int argc, char* argv[])
 {

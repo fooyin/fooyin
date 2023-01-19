@@ -21,12 +21,13 @@
 
 #include "core/database/database.h"
 #include "core/database/librarydatabase.h"
-#include "core/library/librarymanager.h"
-#include "core/library/libraryutils.h"
 #include "core/tagging/tags.h"
+#include "librarymanager.h"
+#include "libraryutils.h"
+
+#include <utils/utils.h>
 
 #include <QDir>
-#include <utils/utils.h>
 
 namespace Core::Library {
 LibraryScanner::LibraryScanner(LibraryManager* libraryManager, QObject* parent)

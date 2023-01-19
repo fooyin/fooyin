@@ -23,8 +23,9 @@
 #include "gui/widgets/hovermenu.h"
 #include "gui/widgets/slider.h"
 
-#include <QHBoxLayout>
 #include <core/constants.h>
+
+#include <QHBoxLayout>
 
 namespace Gui::Widgets {
 struct VolumeControl::Private

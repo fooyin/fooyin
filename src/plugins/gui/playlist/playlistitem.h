@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <QList>
 #include <core/library/models/libraryitem.h>
+
+#include <QList>
 
 namespace Gui::Widgets {
 class PlaylistItem

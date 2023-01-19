@@ -21,6 +21,11 @@
 
 #include "gui/guisettings.h"
 
+#include <core/library/libraryinfo.h>
+#include <core/library/librarymanager.h>
+#include <pluginsystem/pluginmanager.h>
+#include <utils/utils.h>
+
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -29,10 +34,6 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTableWidget>
-#include <core/library/libraryinfo.h>
-#include <core/library/librarymanager.h>
-#include <pluginsystem/pluginmanager.h>
-#include <utils/utils.h>
 
 namespace Gui::Settings {
 GeneralPage::GeneralPage(QWidget* parent)

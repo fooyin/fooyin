@@ -27,6 +27,12 @@
 #include "widgetfactory.h"
 #include "widgetprovider.h"
 
+#include <core/actions/actioncontainer.h>
+#include <core/actions/actionmanager.h>
+#include <core/constants.h>
+#include <pluginsystem/pluginmanager.h>
+#include <utils/enumhelper.h>
+
 #include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QJsonArray>
@@ -34,11 +40,6 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QMouseEvent>
-#include <core/actions/actioncontainer.h>
-#include <core/actions/actionmanager.h>
-#include <core/constants.h>
-#include <pluginsystem/pluginmanager.h>
-#include <utils/enumhelper.h>
 
 namespace Gui::Widgets {
 struct EditableLayout::Private

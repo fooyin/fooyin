@@ -23,11 +23,12 @@
 #include "gui/widgets/clickablelabel.h"
 #include "gui/widgets/slider.h"
 
-#include <QHBoxLayout>
-#include <QSlider>
 #include <core/library/models/track.h>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
+
+#include <QHBoxLayout>
+#include <QSlider>
 
 namespace Gui::Widgets {
 struct ProgressWidget::Private

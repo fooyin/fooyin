@@ -21,10 +21,11 @@
 
 #include "gui/widgets/comboicon.h"
 
-#include <QHBoxLayout>
 #include <core/constants.h>
 #include <core/coresettings.h>
 #include <pluginsystem/pluginmanager.h>
+
+#include <QHBoxLayout>
 
 namespace Gui::Widgets {
 struct PlaylistControl::Private

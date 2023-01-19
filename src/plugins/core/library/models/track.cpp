@@ -19,11 +19,13 @@
 
 #include "track.h"
 
+#include <utils/helpers.h>
+
+#include <utility>
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <utility>
-#include <utils/helpers.h>
 
 namespace Core {
 Track::Track(QString filepath)

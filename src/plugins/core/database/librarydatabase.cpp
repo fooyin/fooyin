@@ -22,9 +22,10 @@
 #include "core/library/libraryutils.h"
 #include "query.h"
 
-#include <QBuffer>
 #include <utils/helpers.h>
 #include <utils/utils.h>
+
+#include <QBuffer>
 
 namespace Core::DB {
 QMap<QString, QVariant> getTrackBindings(const Track& track)

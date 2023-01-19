@@ -26,6 +26,12 @@
 #include "playlistmodel.h"
 #include "playlistview.h"
 
+#include <core/actions/actioncontainer.h>
+#include <core/library/librarymanager.h>
+#include <core/library/musiclibrary.h>
+#include <core/player/playermanager.h>
+#include <pluginsystem/pluginmanager.h>
+
 #include <QAction>
 #include <QActionGroup>
 #include <QHBoxLayout>
@@ -33,11 +39,6 @@
 #include <QKeyEvent>
 #include <QMenu>
 #include <QScrollBar>
-#include <core/actions/actioncontainer.h>
-#include <core/library/librarymanager.h>
-#include <core/library/musiclibrary.h>
-#include <core/player/playermanager.h>
-#include <pluginsystem/pluginmanager.h>
 
 namespace Gui::Widgets {
 PlaylistWidget::PlaylistWidget(QWidget* parent)

@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <QWidget>
 #include <core/typedefs.h>
+
+#include <QWidget>
 
 class QLabel;
 

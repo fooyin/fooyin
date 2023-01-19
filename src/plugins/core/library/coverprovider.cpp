@@ -19,8 +19,8 @@
 
 #include "coverprovider.h"
 
-#include "core/library/libraryutils.h"
 #include "core/library/models/album.h"
+#include "libraryutils.h"
 
 #include <QPixmapCache>
 

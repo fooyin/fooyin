@@ -21,9 +21,10 @@
 
 #include "filterfwd.h"
 
-#include <QItemSelection>
 #include <core/typedefs.h>
 #include <gui/fywidget.h>
+
+#include <QItemSelection>
 
 class QHBoxLayout;
 

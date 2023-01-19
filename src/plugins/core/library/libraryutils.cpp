@@ -21,11 +21,12 @@
 
 #include "core/tagging/tags.h"
 
+#include <utils/paths.h>
+#include <utils/utils.h>
+
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
-#include <utils/paths.h>
-#include <utils/utils.h>
 
 namespace Core::Library::Utils {
 QString storeCover(const Track& track)

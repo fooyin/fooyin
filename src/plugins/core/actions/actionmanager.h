@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include <QObject>
 #include <utils/id.h>
+
+#include <QObject>
 
 class QAction;
 

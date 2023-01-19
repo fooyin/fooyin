@@ -21,8 +21,9 @@
 
 #include "gui/playlist/playlistitem.h"
 
-#include <QPainter>
 #include <core/typedefs.h>
+
+#include <QPainter>
 
 namespace Gui::Widgets {
 PlaylistDelegate::PlaylistDelegate(QObject* parent)

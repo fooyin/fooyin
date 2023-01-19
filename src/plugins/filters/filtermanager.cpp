@@ -24,8 +24,9 @@
 #include <core/app/threadmanager.h>
 #include <core/library/musiclibrary.h>
 #include <pluginsystem/pluginmanager.h>
-#include <utility>
 #include <utils/helpers.h>
+
+#include <utility>
 
 namespace Filters {
 struct FilterManager::Private

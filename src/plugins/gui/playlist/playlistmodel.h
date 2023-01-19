@@ -21,9 +21,10 @@
 
 #include "playlistitem.h"
 
+#include <core/library/models/trackfwd.h>
+
 #include <QAbstractItemModel>
 #include <QPixmap>
-#include <core/library/models/trackfwd.h>
 
 namespace Core {
 class SettingsManager;
