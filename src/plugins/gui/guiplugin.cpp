@@ -49,11 +49,10 @@ void GuiPlugin::initialise()
     m_guiSettings    = std::make_unique<Settings::GuiSettings>();
     m_widgetFactory  = std::make_unique<Widgets::WidgetFactory>();
     m_widgetProvider = std::make_unique<Widgets::WidgetProvider>(m_widgetFactory.get());
-    m_settingsDialog
-        = std::make_unique<Settings::SettingsDialog>(PluginSystem::object<Core::Library::LibraryManager>());
+    m_settingsDialog = new Settings::SettingsDialog(PluginSystem::object<Core::Library::LibraryManager>());
     m_mainWindow
         = new MainWindow(PluginSystem::object<Core::ActionManager>(), PluginSystem::object<Core::SettingsManager>(),
-                         m_settingsDialog.get(), PluginSystem::object<Core::Library::MusicLibrary>());
+                         m_settingsDialog, PluginSystem::object<Core::Library::MusicLibrary>());
 
     m_mainWindow->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -63,7 +62,7 @@ void GuiPlugin::initialise()
     PluginSystem::addObject(m_widgetFactory.get());
     PluginSystem::addObject(m_widgetProvider.get());
     PluginSystem::addObject(m_mainWindow);
-    PluginSystem::addObject(m_settingsDialog.get());
+    PluginSystem::addObject(m_settingsDialog);
 
     m_widgetFactory->registerClass<Widgets::ControlWidget>("Controls");
     m_widgetFactory->registerClass<Widgets::InfoWidget>("Info");

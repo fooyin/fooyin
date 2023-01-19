@@ -53,6 +53,6 @@ private:
     std::unique_ptr<Settings::GuiSettings> m_guiSettings;
     std::unique_ptr<Widgets::WidgetFactory> m_widgetFactory;
     std::unique_ptr<Widgets::WidgetProvider> m_widgetProvider;
-    std::unique_ptr<Settings::SettingsDialog> m_settingsDialog;
+    Settings::SettingsDialog* m_settingsDialog;
 };
 } // namespace Gui
