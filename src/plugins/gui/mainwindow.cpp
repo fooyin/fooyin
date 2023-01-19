@@ -170,7 +170,7 @@ void MainWindow::setupUi()
     p->openSettings          = new QAction(settingsIcon, tr("&Settings"), this);
     p->actionManager->registerAction(p->openSettings, Core::Constants::Actions::Settings);
     libraryMenu->addAction(p->openSettings, Core::Constants::Groups::Three);
-    connect(p->openSettings, &QAction::triggered, p->settingsDialog.get(), &Settings::SettingsDialog::show);
+    connect(p->openSettings, &QAction::triggered, p->settingsDialog.get(), &Settings::SettingsDialog::exec);
 
     if(p->settings->value<Core::Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.

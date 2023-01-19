@@ -115,6 +115,6 @@ void SettingsDialog::openPage(Page page)
 {
     auto index = static_cast<int>(page);
     p->contentsWidget->setCurrentRow(index);
-    show();
+    exec();
 }
 } // namespace Gui::Settings
