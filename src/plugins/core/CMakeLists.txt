@@ -1,7 +1,12 @@
 fooyin_add_plugin(Core
     TYPE SHARED
-    PLUGIN_DEPENDS FooyinVersion PluginSystem Utils
-    DEPENDS Qt6::Core Qt6::Widgets Qt6::Sql
+    DEPENDS
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Sql
+        FooyinVersion
+        PluginSystem
+        Utils
     SOURCES
         coreplugin.h
         coreplugin.cpp

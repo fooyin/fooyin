@@ -1,14 +1,61 @@
 include(GNUInstallDirs)
 
-set(FOOYIN_BINARY_DIR "${CMAKE_INSTALL_BINDIR}")
+set(FOOYIN_BINARY_DIR ${CMAKE_INSTALL_BINDIR})
 set(FOOYIN_LIBRARY_DIR "${CMAKE_INSTALL_LIBDIR}/fooyin")
 set(FOOYIN_PLUGIN_DIR "${FOOYIN_LIBRARY_DIR}/plugins")
 
 set(FOOYIN_HEADER_INSTALL_PATH "include/fooyin")
+set(FOOYIN_LIBRARY_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/${FOOYIN_LIBRARY_DIR})
+set(FOOYIN_PLUGIN_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/${FOOYIN_PLUGIN_DIR})
 
 set(FOOYIN_BINARY_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_BINARY_DIR})
 set(FOOYIN_LIBRARY_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_LIBRARY_DIR})
 set(FOOYIN_PLUGIN_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_PLUGIN_DIR})
+
+macro(fooyin_add_library library_name)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTORCC ON)
+
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+  cmake_parse_arguments(library
+    ""
+    "TYPE"
+    "SOURCES;DEPENDS"
+    ${ARGN}
+  )
+
+  add_library(${library_name} ${library_TYPE} ${library_SOURCES})
+  target_link_libraries(${library_name} PRIVATE ${library_DEPENDS})
+
+  cmake_path(SET library_build_interface "${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+  target_include_directories(${library_name}
+    PRIVATE
+      "${CMAKE_CURRENT_BINARY_DIR}"
+      "${CMAKE_BINARY_DIR}/src"
+      "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+    PUBLIC
+      "$<BUILD_INTERFACE:${library_build_interface}>"
+   )
+
+  string(TOUPPER ${library_name} def_name)
+
+  target_compile_definitions(${library_name} PRIVATE ${def_name}_LIBRARY)
+
+  string(TOLOWER ${library_name} output_name)
+
+  set_target_properties(${library_name} PROPERTIES
+    LIBRARY_OUTPUT_NAME ${output_name}
+    SOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
+    LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_LIBRARY_OUTPUT_DIR}
+    INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH}
+  )
+
+  install(TARGETS ${library_name} LIBRARY DESTINATION ${FOOYIN_LIBRARY_DIR})
+endmacro(fooyin_add_library)
 
 macro(fooyin_add_plugin plugin_name)
   set(CMAKE_AUTOUIC ON)
@@ -39,7 +86,7 @@ macro(fooyin_add_plugin plugin_name)
     PREFIX "fooyin_"
     OUTPUT_NAME ${output_name}
     LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
-    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FOOYIN_PLUGIN_DIR}"
+    INSTALL_RPATH "${FOOYIN_LIBRARY_INSTALL_PATH};${FOOYIN_PLUGIN_INSTALL_PATH}"
   )
 
   cmake_path(SET public_build_interface "${CMAKE_CURRENT_SOURCE_DIR}/..")
