@@ -45,6 +45,6 @@ signals:
     void tracksFiltered(const Core::TrackPtrList& result);
 
 private:
-    FilterDatabase* m_filterDatabase;
+    std::unique_ptr<FilterDatabase> m_filterDatabase;
 };
 } // namespace Filters

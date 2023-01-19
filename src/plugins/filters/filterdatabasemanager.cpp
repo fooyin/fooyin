@@ -71,7 +71,7 @@ void filterByType(Core::Track* track, const ActiveFilters& filters, int& matches
 
 FilterDatabaseManager::FilterDatabaseManager(QObject* parent)
     : Worker(parent)
-    , m_filterDatabase(new FilterDatabase(Core::DB::Database::instance()->connectionName()))
+    , m_filterDatabase(std::make_unique<FilterDatabase>(Core::DB::Database::instance()->connectionName()))
 { }
 
 FilterDatabaseManager::~FilterDatabaseManager()
