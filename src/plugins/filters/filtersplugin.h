@@ -39,9 +39,7 @@ public:
     FiltersPlugin();
     ~FiltersPlugin() override;
 
-    void initialise() override;
     void finalise() override;
-    void shutdown() override;
 
 private:
     FilterManager* m_filterManager;

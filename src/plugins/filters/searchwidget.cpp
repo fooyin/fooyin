@@ -25,7 +25,7 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QMenu>
-#include <core/coresettings.h>
+#include <gui/guisettings.h>
 #include <pluginsystem/pluginmanager.h>
 
 namespace Filters {
@@ -52,7 +52,7 @@ SearchWidget::SearchWidget(QWidget* parent)
 
     setupUi();
 
-    p->settings->subscribe<Core::Settings::LayoutEditing>(this, &SearchWidget::searchBoxContextMenu);
+    p->settings->subscribe<Gui::Settings::LayoutEditing>(this, &SearchWidget::searchBoxContextMenu);
     connect(p->searchBox, &QLineEdit::textChanged, this, &SearchWidget::textChanged);
     connect(this, &SearchWidget::searchChanged, p->manager, &FilterManager::searchChanged);
 }
@@ -72,7 +72,7 @@ void SearchWidget::setupUi()
     p->searchBox = new QLineEdit(this);
     p->searchBox->setPlaceholderText(p->defaultText);
     p->searchBox->setClearButtonEnabled(true);
-    searchBoxContextMenu(p->settings->value<Core::Settings::LayoutEditing>());
+    searchBoxContextMenu(p->settings->value<Gui::Settings::LayoutEditing>());
 
     p->layout->addWidget(p->searchBox);
 }

@@ -22,8 +22,8 @@
 #include "filterfwd.h"
 
 #include <QItemSelection>
-#include <core/gui/fywidget.h>
 #include <core/typedefs.h>
+#include <gui/fywidget.h>
 
 class QHBoxLayout;
 
@@ -48,7 +48,7 @@ class FilterManager;
 class FilterView;
 class FilterModel;
 
-class FilterWidget : public Core::Widgets::FyWidget
+class FilterWidget : public Gui::Widgets::FyWidget
 {
     Q_OBJECT
 

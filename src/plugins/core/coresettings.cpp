@@ -33,21 +33,7 @@ CoreSettings::CoreSettings()
     m_settings->createSetting(Settings::Version, VERSION);
     m_settings->createSetting(Settings::DatabaseVersion, DATABASE_VERSION);
     m_settings->createTempSetting(Settings::FirstRun, true);
-    m_settings->createTempSetting(Settings::LayoutEditing, false);
-    m_settings->createSetting(Settings::Geometry, "", "Layout");
-    m_settings->createSetting(Settings::Layout, "", "Layout");
-    m_settings->createSetting(Settings::SplitterHandles, true, "Splitters");
-    m_settings->createSetting(Settings::DiscHeaders, true, "Playlist");
-    m_settings->createSetting(Settings::SplitDiscs, false, "Playlist");
-    m_settings->createSetting(Settings::SimplePlaylist, false, "Playlist");
-    m_settings->createSetting(Settings::PlaylistAltColours, true, "Playlist");
-    m_settings->createSetting(Settings::PlaylistHeader, true, "Playlist");
-    m_settings->createSetting(Settings::PlaylistScrollBar, true, "Playlist");
     m_settings->createSetting(Settings::PlayMode, Player::PlayMode::Default, "Player");
-    m_settings->createSetting(Settings::ElapsedTotal, false, "Player");
-    m_settings->createSetting(Settings::InfoAltColours, true, "Info");
-    m_settings->createSetting(Settings::InfoHeader, true, "Info");
-    m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(Utils::settingsPath()));
 }

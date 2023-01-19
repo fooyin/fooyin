@@ -27,24 +27,10 @@ namespace Core::Settings {
 Q_NAMESPACE
 enum Core : uint32_t
 {
-    Version            = 1 | Type::String,
-    DatabaseVersion    = 2 | Type::String,
-    FirstRun           = 3 | Type::Bool,
-    LayoutEditing      = 4 | Type::Bool,
-    Geometry           = 5 | Type::ByteArray,
-    Layout             = 6 | Type::ByteArray,
-    SplitterHandles    = 7 | Type::Bool,
-    DiscHeaders        = 8 | Type::Bool,
-    SplitDiscs         = 9 | Type::Bool,
-    SimplePlaylist     = 10 | Type::Bool,
-    PlaylistAltColours = 11 | Type::Bool,
-    PlaylistHeader     = 12 | Type::Bool,
-    PlaylistScrollBar  = 13 | Type::Bool,
-    PlayMode           = 14,
-    ElapsedTotal       = 15 | Type::Bool,
-    InfoAltColours     = 16 | Type::Bool,
-    InfoHeader         = 17 | Type::Bool,
-    InfoScrollBar      = 18 | Type::Bool,
+    Version         = 1 | Type::String,
+    DatabaseVersion = 2 | Type::String,
+    FirstRun        = 3 | Type::Bool,
+    PlayMode        = 4,
 };
 Q_ENUM_NS(Core)
 

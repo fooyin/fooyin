@@ -155,6 +155,10 @@ void PluginManager::loadPlugins()
     for(; i >= 0; --i) {
         queue.at(i)->finalise();
     }
+
+    for(PluginInfo* plugin : queue) {
+        plugin->pluginsFinalised();
+    }
 }
 
 void PluginManager::loadPlugin(PluginInfo* plugin)

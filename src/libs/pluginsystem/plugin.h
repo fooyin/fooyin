@@ -37,9 +37,10 @@ class PLUGINSYSTEM_EXPORT Plugin
 public:
     virtual ~Plugin() = default;
 
-    virtual void initialise(){};
-    virtual void finalise(){};
-    virtual void shutdown(){};
+    virtual void initialise() {};
+    virtual void finalise() {};
+    virtual void pluginsFinalised() {};
+    virtual void shutdown() {};
 };
 } // namespace PluginSystem
 

@@ -23,22 +23,11 @@
 #include "core/coresettings.h"
 #include "core/database/database.h"
 #include "core/engine/enginehandler.h"
-#include "core/gui/controls/controlwidget.h"
-#include "core/gui/info/infowidget.h"
-#include "core/gui/library/coverwidget.h"
-#include "core/gui/library/statuswidget.h"
-#include "core/gui/mainwindow.h"
-#include "core/gui/playlist/playlistwidget.h"
-#include "core/gui/settings/settingsdialog.h"
-#include "core/gui/widgets/spacer.h"
-#include "core/gui/widgets/splitterwidget.h"
 #include "core/library/librarymanager.h"
 #include "core/library/musiclibrary.h"
 #include "core/player/playercontroller.h"
 #include "core/playlist/libraryplaylistmanager.h"
 #include "core/playlist/playlisthandler.h"
-#include "core/widgets/widgetfactory.h"
-#include "core/widgets/widgetprovider.h"
 #include "threadmanager.h"
 
 #include <pluginsystem/pluginmanager.h>
@@ -46,7 +35,6 @@
 namespace Core {
 struct Application::Private
 {
-    Widgets::WidgetFactory* widgetFactory;
     ActionManager* actionManager;
     SettingsManager* settings;
     std::unique_ptr<Settings::CoreSettings> coreSettings;
@@ -58,13 +46,9 @@ struct Application::Private
     std::unique_ptr<Playlist::LibraryPlaylistInterface> playlistInterface;
     Library::LibraryManager* libraryManager;
     Library::MusicLibrary* library;
-    std::unique_ptr<Widgets::SettingsDialog> settingsDialog;
-    Widgets::WidgetProvider* widgetProvider;
-    MainWindow* mainWindow;
 
     explicit Private(QObject* parent)
-        : widgetFactory(new Widgets::WidgetFactory())
-        , actionManager(new ActionManager(parent))
+        : actionManager(new ActionManager(parent))
         , settings(new SettingsManager(parent))
         , coreSettings(std::make_unique<Settings::CoreSettings>())
         , threadManager(new ThreadManager(parent))
@@ -75,49 +59,26 @@ struct Application::Private
         , playlistInterface(std::make_unique<Playlist::LibraryPlaylistManager>(playlistHandler))
         , libraryManager(new Library::LibraryManager(parent))
         , library(new Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, parent))
-        , settingsDialog(std::make_unique<Widgets::SettingsDialog>(libraryManager))
-        , widgetProvider(new Widgets::WidgetProvider(widgetFactory, parent))
-        , mainWindow(new MainWindow(actionManager, settings, settingsDialog.get(), library))
     {
-        mainWindow->setAttribute(Qt::WA_DeleteOnClose);
-
         threadManager->moveToNewThread(&engine);
 
         addObjects();
         setupConnections();
-        registerWidgets();
     }
 
     void setupConnections() const
     {
-        connect(mainWindow, &MainWindow::closing, threadManager, &ThreadManager::close);
         connect(libraryManager, &Library::LibraryManager::libraryAdded, library, &Library::MusicLibrary::reload);
         connect(libraryManager, &Library::LibraryManager::libraryRemoved, library, &Library::MusicLibrary::refresh);
     }
 
     void addObjects() const
     {
-        PluginSystem::addObject(mainWindow);
-        PluginSystem::addObject(widgetFactory);
         PluginSystem::addObject(threadManager);
         PluginSystem::addObject(playerManager);
         PluginSystem::addObject(libraryManager);
         PluginSystem::addObject(library);
-        PluginSystem::addObject(settingsDialog.get());
-        PluginSystem::addObject(widgetProvider);
         PluginSystem::addObject(actionManager);
-    }
-
-    void registerWidgets() const
-    {
-        widgetFactory->registerClass<Widgets::ControlWidget>("Controls");
-        widgetFactory->registerClass<Widgets::InfoWidget>("Info");
-        widgetFactory->registerClass<Widgets::CoverWidget>("Artwork");
-        widgetFactory->registerClass<Widgets::PlaylistWidget>("Playlist");
-        widgetFactory->registerClass<Widgets::Spacer>("Spacer");
-        widgetFactory->registerClass<Widgets::VerticalSplitterWidget>("Vertical", {"Splitter"});
-        widgetFactory->registerClass<Widgets::HorizontalSplitterWidget>("Horiztonal", {"Splitter"});
-        widgetFactory->registerClass<Widgets::StatusWidget>("Status");
     }
 };
 
@@ -130,8 +91,6 @@ void Application::startup()
 {
     p->settings->loadSettings();
     p->playerManager->restoreState();
-    p->mainWindow->setupUi();
-    p->mainWindow->show();
 }
 
 Application::~Application() = default;
@@ -146,6 +105,5 @@ void Application::shutdown()
         p->db->closeDatabase();
         p->db = nullptr;
     }
-    delete p->widgetProvider;
 }
 } // namespace Core

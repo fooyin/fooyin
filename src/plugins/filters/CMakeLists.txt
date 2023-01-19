@@ -2,6 +2,7 @@ fooyin_add_plugin(Filters
     TYPE SHARED
     PLUGIN_DEPENDS
         Core
+        Gui
     DEPENDS
         Qt6::Core
         Qt6::Widgets

@@ -50,6 +50,7 @@ public:
     void unload();
     void initialise();
     void finalise();
+    void pluginsFinalised();
 
     [[nodiscard]] Plugin* plugin() const;
 

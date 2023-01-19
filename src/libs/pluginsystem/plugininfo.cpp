@@ -111,6 +111,11 @@ void PluginInfo::finalise()
     p->plugin->finalise();
 }
 
+void PluginInfo::pluginsFinalised()
+{
+    p->plugin->pluginsFinalised();
+}
+
 Plugin* PluginInfo::plugin() const
 {
     return p->plugin;

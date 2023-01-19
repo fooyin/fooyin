@@ -26,15 +26,13 @@
 
 #include <QMenu>
 #include <core/actions/actioncontainer.h>
-#include <core/widgets/widgetfactory.h>
+#include <gui/widgetfactory.h>
 #include <pluginsystem/pluginmanager.h>
 
 namespace Filters {
 FiltersPlugin::FiltersPlugin() = default;
 
 FiltersPlugin::~FiltersPlugin() = default;
-
-void FiltersPlugin::initialise() { }
 
 void FiltersPlugin::finalise()
 {
@@ -43,7 +41,7 @@ void FiltersPlugin::finalise()
 
     PluginSystem::addObject(m_filterManager);
 
-    auto* factory = PluginSystem::object<Core::Widgets::WidgetFactory>();
+    auto* factory = PluginSystem::object<Gui::Widgets::WidgetFactory>();
     factory->registerClass<FilterWidget>("Filter", {"Filter"});
     factory->registerClass<GenreFilter>("Genre", {"Filter"});
     factory->registerClass<YearFilter>("Year", {"Filter"});
@@ -52,5 +50,4 @@ void FiltersPlugin::finalise()
     factory->registerClass<AlbumFilter>("Album", {"Filter"});
     factory->registerClass<SearchWidget>("Search");
 }
-void FiltersPlugin::shutdown() { }
 } // namespace Filters
