@@ -186,7 +186,7 @@ void PlaylistWidget::layoutEditingMenu(Core::ActionContainer* menu)
 void PlaylistWidget::selectionChanged()
 {
     const QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
-    QSet<Core::Track*> tracks;
+    Core::TrackSet tracks;
     for(const auto& index : indexes) {
         if(index.isValid()) {
             const auto type = index.data(Core::Role::Type).value<PlaylistItem::Type>();

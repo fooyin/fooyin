@@ -22,7 +22,6 @@
 #include "gui/guisettings.h"
 #include "playlistitem.h"
 
-#include <QPalette>
 #include <core/constants.h>
 #include <core/library/coverprovider.h>
 #include <core/library/models/disc.h>
@@ -30,6 +29,8 @@
 #include <core/player/playermanager.h>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
+
+#include <QPalette>
 
 namespace Gui::Widgets {
 PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
@@ -151,7 +152,7 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
         return {};
     }
 
-    return QString("%1 Tracks").arg(m_library->tracks().size());
+    return QString("%1 Tracks").arg(m_library->trackCount());
 }
 
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const

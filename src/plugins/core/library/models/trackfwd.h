@@ -23,11 +23,14 @@
 #include "artist.h"
 #include "track.h"
 
+#include <deque>
+
 namespace Core {
+using TrackList    = std::deque<Track>;
 using TrackPtrList = std::vector<Track*>;
+using TrackSet     = std::set<Track*>;
 using TrackHash    = std::unordered_map<int, Track*>;
-using TrackPathMap = std::unordered_map<QString, Track*>;
-using TrackList    = std::vector<Track>;
+using TrackPathMap = std::unordered_map<QString, Track>;
 
 using AlbumList  = std::vector<Album>;
 using ArtistHash = std::unordered_map<int, Artist>;

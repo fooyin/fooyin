@@ -37,8 +37,8 @@ public:
 
     void stopThread() override;
 
-    void scanLibrary(const TrackPtrList& tracks, const LibraryInfo& info);
-    void scanAll(const TrackPtrList& tracks);
+    void scanLibrary(const TrackList tracks, const LibraryInfo& info);
+    void scanAll(const TrackList tracks);
 
 signals:
     void libraryAdded();

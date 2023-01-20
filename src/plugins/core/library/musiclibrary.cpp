@@ -43,10 +43,11 @@ struct MusicLibrary::Private
     LibraryScanner scanner;
     LibraryDatabaseManager libraryDatabaseManager;
 
+    TrackList trackStore;
     TrackPtrList tracks;
     TrackHash trackMap;
 
-    std::vector<Track*> selectedTracks;
+    TrackPtrList selectedTracks;
     std::vector<MusicLibraryInteractor*> interactors;
 
     SortOrder order{Library::SortOrder::YearDesc};
@@ -85,10 +86,7 @@ MusicLibrary::MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteracto
     load();
 }
 
-MusicLibrary::~MusicLibrary()
-{
-    qDeleteAll(p->tracks);
-}
+MusicLibrary::~MusicLibrary() = default;
 
 void MusicLibrary::load()
 {
@@ -112,7 +110,7 @@ void MusicLibrary::prepareTracks(int idx)
     }
 }
 
-TrackPtrList MusicLibrary::selectedTracks()
+TrackPtrList MusicLibrary::selectedTracks() const
 {
     return p->selectedTracks;
 }
@@ -129,16 +127,22 @@ void MusicLibrary::addInteractor(MusicLibraryInteractor* interactor)
 
 void MusicLibrary::loadTracks(const TrackList& tracks)
 {
-    qDeleteAll(p->tracks);
+    p->trackStore.clear();
+    p->tracks.clear();
+    p->trackMap.clear();
+
     refreshTracks(tracks);
 }
 
 void MusicLibrary::addNewTracks(const TrackList& tracks)
 {
+    p->tracks.reserve(p->tracks.size() + tracks.size());
+    p->trackMap.reserve(p->trackMap.size() + tracks.size());
+
     for(const auto& track : tracks) {
-        auto* trackPtr = new Track(track);
-        p->tracks.emplace_back(trackPtr);
-        p->trackMap.emplace(trackPtr->id(), trackPtr);
+        auto& newTrack = p->trackStore.emplace_back(track);
+        p->tracks.emplace_back(&newTrack);
+        p->trackMap.emplace(newTrack.id(), &newTrack);
     }
     Library::sortTracks(p->tracks, p->order);
     emit tracksAdded();
@@ -149,9 +153,7 @@ void MusicLibrary::updateChangedTracks(const TrackList& tracks)
     for(const auto& track : tracks) {
         if(p->trackMap.count(track.id())) {
             Track* libraryTrack = p->trackMap.at(track.id());
-            if(libraryTrack) {
-                *libraryTrack = track;
-            }
+            *libraryTrack       = track;
         }
     }
     emit tracksUpdated();
@@ -172,12 +174,12 @@ void MusicLibrary::removeDeletedTracks(const IdSet& tracks)
 
 void MusicLibrary::reloadAll()
 {
-    emit runAllLibrariesScan(p->tracks);
+    emit runAllLibrariesScan(p->trackStore);
 }
 
 void MusicLibrary::reload(const Library::LibraryInfo& info)
 {
-    emit runLibraryScan(p->tracks, info);
+    emit runLibraryScan(p->trackStore, info);
 }
 
 void MusicLibrary::refresh()
@@ -187,23 +189,28 @@ void MusicLibrary::refresh()
 
 void MusicLibrary::refreshTracks(const TrackList& result)
 {
+    p->trackStore.clear();
     p->tracks.clear();
     p->trackMap.clear();
+
+    p->tracks.reserve(result.size());
+    p->trackMap.reserve(result.size());
+
     for(const auto& track : result) {
-        auto* trackPtr = new Track(track);
-        p->tracks.emplace_back(trackPtr);
-        p->trackMap.emplace(trackPtr->id(), trackPtr);
+        auto& newTrack = p->trackStore.emplace_back(track);
+        p->tracks.emplace_back(&newTrack);
+        p->trackMap.emplace(newTrack.id(), &newTrack);
     }
     Library::sortTracks(p->tracks, p->order);
     emit tracksLoaded(p->tracks);
 }
 
-Track* MusicLibrary::track(int id)
+Track* MusicLibrary::track(int id) const
 {
     return p->trackMap.at(id);
 }
 
-TrackPtrList MusicLibrary::tracks(const std::vector<int>& ids)
+TrackPtrList MusicLibrary::tracks(const std::vector<int>& ids) const
 {
     TrackPtrList tracks;
     for(const auto& id : ids) {
@@ -212,10 +219,11 @@ TrackPtrList MusicLibrary::tracks(const std::vector<int>& ids)
     return tracks;
 }
 
-TrackPtrList MusicLibrary::tracks()
+TrackPtrList MusicLibrary::tracks() const
 {
     TrackPtrList lst;
     bool haveTracks{false};
+
     for(auto* inter : p->interactors) {
         if(inter->hasTracks()) {
             haveTracks = true;
@@ -223,15 +231,20 @@ TrackPtrList MusicLibrary::tracks()
             lst.insert(lst.end(), trks.begin(), trks.end());
         }
     }
-    return !haveTracks ? p->tracks : lst;
+    return haveTracks ? lst : p->tracks;
 }
 
-TrackPtrList MusicLibrary::allTracks()
+TrackPtrList MusicLibrary::allTracks() const
 {
     return p->tracks;
 }
 
-Library::SortOrder MusicLibrary::sortOrder()
+int MusicLibrary::trackCount() const
+{
+    return static_cast<int>(tracks().size());
+}
+
+Library::SortOrder MusicLibrary::sortOrder() const
 {
     return p->order;
 }
@@ -240,14 +253,11 @@ void MusicLibrary::changeOrder(SortOrder order)
 {
     p->order = order;
     Library::sortTracks(p->tracks, p->order);
-    //    if(!p->filteredTracks.empty()) {
-    //        Library::sortTracks(p->filteredTracks, p->order);
-    //    }
 }
 
-void MusicLibrary::changeTrackSelection(const QSet<Track*>& tracks)
+void MusicLibrary::changeTrackSelection(const TrackSet& tracks)
 {
-    std::vector<Track*> newSelectedTracks;
+    TrackPtrList newSelectedTracks;
     for(const auto& track : tracks) {
         newSelectedTracks.emplace_back(track);
     }
@@ -259,9 +269,9 @@ void MusicLibrary::changeTrackSelection(const QSet<Track*>& tracks)
     p->selectedTracks = std::move(newSelectedTracks);
 }
 
-void MusicLibrary::trackSelectionChanged(const QSet<Track*>& tracks)
+void MusicLibrary::trackSelectionChanged(const TrackSet& tracks)
 {
-    if(tracks.isEmpty()) {
+    if(tracks.empty()) {
         return;
     }
 

@@ -50,22 +50,23 @@ public:
     void refresh();
     void refreshTracks(const TrackList& result);
 
-    Track* track(int id);
-    TrackPtrList tracks(const std::vector<int>& ids);
-    TrackPtrList tracks();
-    TrackPtrList allTracks();
+    [[nodiscard]] Track* track(int id) const;
+    [[nodiscard]] TrackPtrList tracks(const std::vector<int>& ids) const;
+    [[nodiscard]] TrackPtrList tracks() const;
+    [[nodiscard]] TrackPtrList allTracks() const;
+    [[nodiscard]] int trackCount() const;
 
-    SortOrder sortOrder();
+    SortOrder sortOrder() const;
     void changeOrder(SortOrder order);
 
-    void changeTrackSelection(const QSet<Track*>& tracks);
-    void trackSelectionChanged(const QSet<Track*>& tracks);
+    void changeTrackSelection(const TrackSet& tracks);
+    void trackSelectionChanged(const TrackSet& tracks);
 
     void libraryAdded();
 
     void prepareTracks(int idx = 0);
 
-    TrackPtrList selectedTracks();
+    TrackPtrList selectedTracks() const;
 
     void getAllTracks();
     void updateTracks(const TrackPtrList& tracks);
@@ -73,14 +74,14 @@ public:
     void addInteractor(MusicLibraryInteractor* interactor);
 
 signals:
-    void runLibraryScan(Core::TrackPtrList tracks, Library::LibraryInfo info);
-    void runAllLibrariesScan(Core::TrackPtrList tracks);
+    void runLibraryScan(Core::TrackList tracks, Library::LibraryInfo info);
+    void runAllLibrariesScan(Core::TrackList tracks);
     void libraryRemoved();
 
     void tracksChanged();
     void tracksSelChanged();
 
-    void tracksLoaded(const Core::TrackPtrList& tracks);
+    void tracksLoaded(Core::TrackPtrList& tracks);
     void tracksAdded();
     void tracksUpdated();
     void tracksDeleted();
