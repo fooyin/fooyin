@@ -21,7 +21,7 @@
 
 #include "core/library/sorting/sortorder.h"
 #include "core/models/trackfwd.h"
-#include "librarymanager.h"
+#include "libraryinfo.h"
 
 #include <QThread>
 
@@ -34,6 +34,7 @@ class LibraryPlaylistInterface;
 }
 
 namespace Library {
+class LibraryManager;
 class MusicLibraryInteractor;
 
 class MusicLibrary : public QObject
