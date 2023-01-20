@@ -31,6 +31,7 @@ enum Core : uint32_t
     DatabaseVersion = 2 | Type::String,
     FirstRun        = 3 | Type::Bool,
     PlayMode        = 4,
+    AutoRefresh     = 5 | Type::Bool,
 };
 Q_ENUM_NS(Core)
 

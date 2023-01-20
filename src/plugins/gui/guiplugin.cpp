@@ -76,6 +76,7 @@ void GuiPlugin::initialise()
 
 void GuiPlugin::pluginsFinalised()
 {
+    m_settingsDialog->setupUi();
     m_mainWindow->setupUi();
     m_mainWindow->show();
 }

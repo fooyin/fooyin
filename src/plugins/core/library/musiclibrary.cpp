@@ -20,6 +20,7 @@
 #include "musiclibrary.h"
 
 #include "core/app/threadmanager.h"
+#include "core/coresettings.h"
 #include "core/library/sorting/sorting.h"
 #include "core/playlist/libraryplaylistinterface.h"
 #include "librarydatabasemanager.h"
@@ -40,6 +41,7 @@ struct MusicLibrary::Private
     Playlist::LibraryPlaylistInterface* playlistInteractor;
     LibraryManager* libraryManager;
     ThreadManager* threadManager;
+    SettingsManager* settings;
     LibraryScanner scanner;
     LibraryDatabaseManager libraryDatabaseManager;
 
@@ -53,18 +55,19 @@ struct MusicLibrary::Private
     SortOrder order{Library::SortOrder::YearDesc};
 
     Private(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
-            ThreadManager* threadManager)
+            ThreadManager* threadManager, SettingsManager* settings)
         : playlistInteractor{playlistInteractor}
         , libraryManager{libraryManager}
         , threadManager{threadManager}
+        , settings{settings}
         , scanner{libraryManager}
     { }
 };
 
 MusicLibrary::MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
-                           ThreadManager* threadManager, QObject* parent)
+                           ThreadManager* threadManager, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(playlistInteractor, libraryManager, threadManager)}
+    , p{std::make_unique<Private>(playlistInteractor, libraryManager, threadManager, settings)}
 {
     p->threadManager->moveToNewThread(&p->scanner);
     p->threadManager->moveToNewThread(&p->libraryDatabaseManager);
@@ -82,8 +85,6 @@ MusicLibrary::MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteracto
     connect(&p->libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &MusicLibrary::loadTracks);
     connect(this, &MusicLibrary::loadAllTracks, &p->libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
     connect(this, &MusicLibrary::updateSaveTracks, &p->libraryDatabaseManager, &LibraryDatabaseManager::updateTracks);
-
-    load();
 }
 
 MusicLibrary::~MusicLibrary() = default;
@@ -91,7 +92,10 @@ MusicLibrary::~MusicLibrary() = default;
 void MusicLibrary::load()
 {
     getAllTracks();
-    QTimer::singleShot(3000, this, &Library::MusicLibrary::reloadAll);
+
+    if(p->settings->value<Settings::AutoRefresh>()) {
+        QTimer::singleShot(3000, this, &Library::MusicLibrary::reloadAll);
+    }
 }
 
 void MusicLibrary::libraryAdded()

@@ -57,11 +57,7 @@ struct SettingsDialog::Private
 SettingsDialog::SettingsDialog(Core::Library::LibraryManager* libManager, QWidget* parent)
     : QDialog(parent)
     , p(std::make_unique<Private>(libManager))
-{
-    setupUi();
-    p->createIcons();
-    connect(p->contentsWidget, &QListWidget::currentItemChanged, this, &SettingsDialog::changePage);
-}
+{ }
 
 SettingsDialog::~SettingsDialog() = default;
 
@@ -100,6 +96,9 @@ void SettingsDialog::setupUi()
     mainLayout->addLayout(buttonsLayout);
 
     setWindowTitle("Settings");
+
+    p->createIcons();
+    connect(p->contentsWidget, &QListWidget::currentItemChanged, this, &SettingsDialog::changePage);
 }
 
 void SettingsDialog::changePage(QListWidgetItem* current, QListWidgetItem* previous)

@@ -58,7 +58,7 @@ struct Application::Private
         , playlistHandler(new Playlist::PlaylistHandler(playerManager, parent))
         , playlistInterface(std::make_unique<Playlist::LibraryPlaylistManager>(playlistHandler))
         , libraryManager(new Library::LibraryManager(parent))
-        , library(new Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, parent))
+        , library(new Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, settings, parent))
     {
         threadManager->moveToNewThread(&engine);
 
@@ -91,6 +91,7 @@ void Application::startup()
 {
     p->settings->loadSettings();
     p->playerManager->restoreState();
+    p->library->load();
 }
 
 Application::~Application() = default;

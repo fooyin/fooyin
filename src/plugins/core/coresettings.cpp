@@ -34,6 +34,7 @@ CoreSettings::CoreSettings()
     m_settings->createSetting(Settings::DatabaseVersion, DATABASE_VERSION);
     m_settings->createTempSetting(Settings::FirstRun, true);
     m_settings->createSetting(Settings::PlayMode, Player::PlayMode::Default, "Player");
+    m_settings->createSetting(Settings::AutoRefresh, true, "Library");
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(Utils::settingsPath()));
 }

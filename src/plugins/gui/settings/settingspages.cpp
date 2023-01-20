@@ -21,6 +21,7 @@
 
 #include "gui/guisettings.h"
 
+#include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/librarymanager.h>
 #include <pluginsystem/pluginmanager.h>
@@ -62,6 +63,7 @@ LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, QWidget*
     , m_libraryManager(libraryManager)
     , m_libraryList(0, 3, this)
 {
+    auto* settings = PluginSystem::object<Core::SettingsManager>();
     auto libraries = m_libraryManager->allLibraries();
 
     m_libraryList.setHorizontalHeaderLabels({"ID", "Name", "Path"});
@@ -78,18 +80,30 @@ LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, QWidget*
     auto* libraryButtonLayout = new QVBoxLayout(libraryButtons);
     auto* addLibrary          = new QPushButton("+", this);
     auto* removeLibrary       = new QPushButton("-", this);
+    auto* autoRefresh         = new QCheckBox("Auto Refresh", this);
+    autoRefresh->setToolTip(tr("Auto refresh libraries on startup"));
+
+    autoRefresh->setChecked(settings->value<Core::Settings::AutoRefresh>());
 
     libraryButtonLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     libraryButtonLayout->addWidget(addLibrary);
     libraryButtonLayout->addWidget(removeLibrary);
 
-    auto* mainLayout = new QHBoxLayout(this);
-    mainLayout->addWidget(&m_libraryList);
-    mainLayout->addWidget(libraryButtons);
+    auto* mainLayout    = new QVBoxLayout(this);
+    auto* libraryLayout = new QHBoxLayout();
+    setLayout(mainLayout);
+    mainLayout->addLayout(libraryLayout);
+    libraryLayout->addWidget(&m_libraryList);
+    libraryLayout->addWidget(libraryButtons);
+    mainLayout->addWidget(autoRefresh);
     // mainLayout->addStretch();
 
     connect(addLibrary, &QPushButton::clicked, this, &LibraryPage::addLibrary);
     connect(removeLibrary, &QPushButton::clicked, this, &LibraryPage::removeLibrary);
+
+    connect(autoRefresh, &QCheckBox::clicked, this, [settings](bool checked) {
+        settings->set<Core::Settings::AutoRefresh>(checked);
+    });
 }
 
 LibraryPage::~LibraryPage() = default;

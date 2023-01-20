@@ -27,6 +27,7 @@
 
 namespace Core {
 class ThreadManager;
+class SettingsManager;
 
 namespace Playlist {
 class LibraryPlaylistInterface;
@@ -41,7 +42,7 @@ class MusicLibrary : public QObject
 
 public:
     MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
-                 ThreadManager* threadManager, QObject* parent = nullptr);
+                 ThreadManager* threadManager, SettingsManager* settings, QObject* parent = nullptr);
     ~MusicLibrary() override;
 
     void load();
@@ -56,7 +57,7 @@ public:
     [[nodiscard]] TrackPtrList allTracks() const;
     [[nodiscard]] int trackCount() const;
 
-    SortOrder sortOrder() const;
+    [[nodiscard]] SortOrder sortOrder() const;
     void changeOrder(SortOrder order);
 
     void changeTrackSelection(const TrackSet& tracks);
@@ -66,7 +67,7 @@ public:
 
     void prepareTracks(int idx = 0);
 
-    TrackPtrList selectedTracks() const;
+    [[nodiscard]] TrackPtrList selectedTracks() const;
 
     void getAllTracks();
     void updateTracks(const TrackPtrList& tracks);
