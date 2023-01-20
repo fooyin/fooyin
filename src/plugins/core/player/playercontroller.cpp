@@ -20,7 +20,7 @@
 #include "playercontroller.h"
 
 #include "core/coresettings.h"
-#include "core/library/models/track.h"
+#include "core/models/track.h"
 
 #include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>

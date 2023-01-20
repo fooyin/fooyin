@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "core/library/models/trackfwd.h"
 #include "core/library/sorting/sortorder.h"
+#include "core/models/trackfwd.h"
 #include "librarymanager.h"
 
 #include <QThread>

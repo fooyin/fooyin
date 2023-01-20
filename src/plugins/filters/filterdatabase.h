@@ -22,8 +22,8 @@
 #include "filterfwd.h"
 
 #include <core/database/module.h>
-#include <core/library/models/trackfwd.h>
 #include <core/library/sorting/sortorder.h>
+#include <core/models/trackfwd.h>
 
 namespace Filters {
 class FilterDatabase : public Core::DB::Module

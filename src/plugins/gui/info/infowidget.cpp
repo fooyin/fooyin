@@ -24,8 +24,8 @@
 #include "gui/info/itemdelegate.h"
 
 #include <core/actions/actioncontainer.h>
-#include <core/library/models/track.h>
 #include <core/library/musiclibrary.h>
+#include <core/models/track.h>
 #include <core/player/playermanager.h>
 #include <pluginsystem/pluginmanager.h>
 

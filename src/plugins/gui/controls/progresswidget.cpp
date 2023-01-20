@@ -23,7 +23,7 @@
 #include "gui/widgets/clickablelabel.h"
 #include "gui/widgets/slider.h"
 
-#include <core/library/models/track.h>
+#include <core/models/track.h>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 

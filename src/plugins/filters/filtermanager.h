@@ -22,9 +22,9 @@
 #include "core/typedefs.h"
 #include "filterfwd.h"
 
-#include <core/library/models/trackfwd.h>
 #include <core/library/musiclibraryinteractor.h>
 #include <core/library/sorting/sortorder.h>
+#include <core/models/trackfwd.h>
 
 namespace Core {
 class ThreadManager;

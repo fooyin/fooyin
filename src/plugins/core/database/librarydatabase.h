@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/library/models/trackfwd.h"
+#include "core/models/trackfwd.h"
 #include "module.h"
 
 namespace Core::DB {

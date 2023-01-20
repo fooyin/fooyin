@@ -63,23 +63,23 @@ fooyin_add_plugin(Core
         library/libraryutils.h
         library/libraryutils.cpp
 
-        library/models/container.h
-        library/models/container.cpp
-        library/models/libraryitem.h
-        library/models/libraryitem.cpp
-        library/models/album.h
-        library/models/album.cpp
-        library/models/artist.h
-        library/models/artist.cpp
-        library/models/disc.h
-        library/models/disc.cpp
-        library/models/track.h
-        library/models/track.cpp
-        library/models/trackfwd.h
-
         library/sorting/sorting.h
         library/sorting/sorting.cpp
         library/sorting/sortorder.h
+
+        models/container.h
+        models/container.cpp
+        models/libraryitem.h
+        models/libraryitem.cpp
+        models/album.h
+        models/album.cpp
+        models/artist.h
+        models/artist.cpp
+        models/disc.h
+        models/disc.cpp
+        models/track.h
+        models/track.cpp
+        models/trackfwd.h
 
         playlist/libraryplaylistinterface.h
         playlist/libraryplaylistmanager.h

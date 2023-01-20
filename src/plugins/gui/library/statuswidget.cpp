@@ -21,7 +21,7 @@
 
 #include "gui/widgets/clickablelabel.h"
 
-#include <core/library/models/track.h>
+#include <core/models/track.h>
 #include <core/player/playermanager.h>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>

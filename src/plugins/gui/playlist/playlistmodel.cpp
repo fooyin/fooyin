@@ -24,8 +24,8 @@
 
 #include <core/constants.h>
 #include <core/library/coverprovider.h>
-#include <core/library/models/disc.h>
 #include <core/library/musiclibrary.h>
+#include <core/models/disc.h>
 #include <core/player/playermanager.h>
 #include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>

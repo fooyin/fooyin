@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/library/models/trackfwd.h"
+#include "core/models/trackfwd.h"
 #include "sortorder.h"
 
 namespace Core::Library {

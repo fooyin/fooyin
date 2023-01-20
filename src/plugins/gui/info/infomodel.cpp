@@ -21,7 +21,7 @@
 
 #include "infoitem.h"
 
-#include <core/library/models/track.h>
+#include <core/models/track.h>
 #include <utils/utils.h>
 
 namespace Gui::Widgets {

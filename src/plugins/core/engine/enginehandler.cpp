@@ -19,7 +19,7 @@
 
 #include "enginehandler.h"
 
-#include "core/library/models/track.h"
+#include "core/models/track.h"
 
 namespace Core::Engine {
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* parent)

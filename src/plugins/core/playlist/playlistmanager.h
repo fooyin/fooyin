@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "library/models/trackfwd.h"
+#include "core/models/trackfwd.h"
 
 namespace Core::Playlist {
 class Playlist;

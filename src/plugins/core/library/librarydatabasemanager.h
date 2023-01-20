@@ -20,7 +20,7 @@
 #pragma once
 
 #include "core/app/worker.h"
-#include "core/library/models/trackfwd.h"
+#include "core/models/trackfwd.h"
 
 namespace Core {
 namespace DB {

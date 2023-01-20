@@ -19,7 +19,7 @@
 
 #include "tags.h"
 
-#include "core/library/models/track.h"
+#include "core/models/track.h"
 #include "tagutils.h"
 
 #include <QFileInfo>

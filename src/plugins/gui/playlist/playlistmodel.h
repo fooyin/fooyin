@@ -21,7 +21,7 @@
 
 #include "playlistitem.h"
 
-#include <core/library/models/trackfwd.h>
+#include <core/models/trackfwd.h>
 
 #include <QAbstractItemModel>
 #include <QPixmap>
