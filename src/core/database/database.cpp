@@ -20,13 +20,13 @@
 #include "database.h"
 
 #include "core/coresettings.h"
+#include "core/plugins/pluginmanager.h"
 #include "library.h"
 #include "librarydatabase.h"
 #include "playlistdatabase.h"
 #include "query.h"
 #include "version.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <utils/paths.h>
 #include <utils/utils.h>
 

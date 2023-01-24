@@ -21,8 +21,8 @@
 
 #include "core/coresettings.h"
 #include "core/models/track.h"
+#include "core/plugins/pluginmanager.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <utils/enumhelper.h>
 
 namespace Core::Player {

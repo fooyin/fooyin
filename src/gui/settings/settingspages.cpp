@@ -24,7 +24,7 @@
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/librarymanager.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 #include <utils/utils.h>
 
 #include <QCheckBox>

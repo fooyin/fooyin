@@ -27,7 +27,7 @@
 #include <core/library/musiclibrary.h>
 #include <core/models/disc.h>
 #include <core/player/playermanager.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 #include <utils/utils.h>
 
 #include <QPalette>

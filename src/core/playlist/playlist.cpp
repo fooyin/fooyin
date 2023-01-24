@@ -20,8 +20,8 @@
 #include "playlist.h"
 
 #include "core/player/playermanager.h"
+#include "core/plugins/pluginmanager.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <utils/utils.h>
 
 #include <QMessageBox>

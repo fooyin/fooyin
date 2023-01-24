@@ -19,7 +19,7 @@
 
 #include "filtersettings.h"
 
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 
 namespace Filters::Settings {
 FiltersSettings::FiltersSettings()

@@ -23,7 +23,7 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 
 #include <QHBoxLayout>
 

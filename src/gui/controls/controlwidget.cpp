@@ -26,7 +26,7 @@
 
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>

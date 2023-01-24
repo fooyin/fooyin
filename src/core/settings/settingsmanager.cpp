@@ -19,7 +19,8 @@
 
 #include "settingsmanager.h"
 
-#include <pluginsystem/pluginmanager.h>
+#include "core/plugins/pluginmanager.h"
+
 #include <utils/paths.h>
 #include <utils/utils.h>
 

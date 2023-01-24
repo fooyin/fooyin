@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <pluginsystem/plugin.h>
+#include <core/plugins/plugin.h>
 
 namespace Filters {
 class FilterManager;

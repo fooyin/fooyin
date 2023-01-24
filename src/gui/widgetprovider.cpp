@@ -19,10 +19,10 @@
 
 #include "widgetprovider.h"
 
+#include "gui/widgets/splitterwidget.h"
 #include "widgetfactory.h"
 
-#include <gui/widgets/splitterwidget.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 #include <utils/enumhelper.h>
 
 #include <QMenu>

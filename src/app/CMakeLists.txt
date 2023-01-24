@@ -37,7 +37,6 @@ target_link_libraries(${PROJECT_NAME}
    ${TAGLIB_LIBRARIES}
    ${ZLIB_LIBRARIES}
    ${LIBMPV_LIBRARIES}
-   Fooyin_PluginSystem
    Fooyin_Core
    Fooyin_Gui
    #${SDL2_LIBRARIES}

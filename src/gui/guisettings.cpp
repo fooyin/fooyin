@@ -19,7 +19,7 @@
 
 #include "guisettings.h"
 
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 
 namespace Gui::Settings {
 GuiSettings::GuiSettings()

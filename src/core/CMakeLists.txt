@@ -6,7 +6,6 @@ fooyin_add_library(Core
         Qt6::Widgets
         Qt6::Sql
         Fooyin_Version
-        Fooyin_PluginSystem
         Fooyin_Utils
     SOURCES
         coresettings.h
@@ -88,6 +87,12 @@ fooyin_add_library(Core
         player/playercontroller.h
         player/playercontroller.cpp
         player/playermanager.h
+
+        plugins/plugin.h
+        plugins/plugininfo.h
+        plugins/plugininfo.cpp
+        plugins/pluginmanager.h
+        plugins/pluginmanager.cpp
 
         settings/settingsmanager.h
         settings/settingsmanager.cpp

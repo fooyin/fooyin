@@ -21,7 +21,7 @@
 
 #include "gui/guisettings.h"
 
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 
 namespace Gui::Widgets {
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)

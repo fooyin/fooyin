@@ -24,7 +24,7 @@
 #include "gui/widgets/slider.h"
 
 #include <core/models/track.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 #include <utils/utils.h>
 
 #include <QHBoxLayout>

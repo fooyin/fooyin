@@ -23,7 +23,7 @@
 
 #include <core/app/threadmanager.h>
 #include <core/library/musiclibrary.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 #include <utils/helpers.h>
 
 #include <utility>

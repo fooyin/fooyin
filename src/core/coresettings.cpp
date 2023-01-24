@@ -19,10 +19,10 @@
 
 #include "coresettings.h"
 
+#include "core/plugins/pluginmanager.h"
 #include "core/typedefs.h"
 #include "version.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <utils/paths.h>
 #include <utils/utils.h>
 

@@ -21,8 +21,7 @@
 
 #include "actionmanager.h"
 #include "core/constants.h"
-
-#include <pluginsystem/pluginmanager.h>
+#include "core/plugins/pluginmanager.h"
 
 #include <QAction>
 #include <QMenu>

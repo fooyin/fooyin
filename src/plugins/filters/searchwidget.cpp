@@ -21,8 +21,8 @@
 
 #include "filtermanager.h"
 
+#include <core/plugins/pluginmanager.h>
 #include <gui/guisettings.h>
-#include <pluginsystem/pluginmanager.h>
 
 #include <QHBoxLayout>
 #include <QKeyEvent>

@@ -29,7 +29,6 @@
 #include "libraryscanner.h"
 #include "musiclibraryinteractor.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <utils/helpers.h>
 
 #include <QTimer>

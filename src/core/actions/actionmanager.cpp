@@ -21,8 +21,8 @@
 
 #include "actioncontainer.h"
 #include "core/constants.h"
+#include "core/plugins/pluginmanager.h"
 
-#include <pluginsystem/pluginmanager.h>
 #include <utils/helpers.h>
 
 #include <QMainWindow>

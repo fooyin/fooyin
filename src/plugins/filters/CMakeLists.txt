@@ -4,7 +4,6 @@ fooyin_add_plugin(Filters
         Qt6::Core
         Qt6::Widgets
         Qt6::Sql
-        Fooyin_PluginSystem
         Fooyin_Core
         Fooyin_Gui
         Fooyin_Utils

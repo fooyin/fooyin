@@ -30,7 +30,7 @@
 #include <core/actions/actioncontainer.h>
 #include <core/actions/actionmanager.h>
 #include <core/constants.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 #include <utils/enumhelper.h>
 
 #include <QCoreApplication>

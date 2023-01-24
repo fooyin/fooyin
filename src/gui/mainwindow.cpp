@@ -26,17 +26,18 @@
 #include "widgetfactory.h"
 #include "widgetprovider.h"
 
-#include <QActionGroup>
-#include <QContextMenuEvent>
-#include <QMenuBar>
-#include <QTextEdit>
-#include <QTimer>
 #include <core/actions/actioncontainer.h>
 #include <core/actions/actionmanager.h>
 #include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
+
+#include <QActionGroup>
+#include <QContextMenuEvent>
+#include <QMenuBar>
+#include <QTextEdit>
+#include <QTimer>
 
 namespace Gui {
 struct MainWindow::Private

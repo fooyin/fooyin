@@ -4,7 +4,6 @@ fooyin_add_library(Gui
     DEPENDS
         Qt6::Core
         Qt6::Widgets
-        Fooyin_PluginSystem
         Fooyin_Core
         Fooyin_Utils
     SOURCES

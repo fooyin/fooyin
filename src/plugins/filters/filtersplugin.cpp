@@ -25,8 +25,8 @@
 #include "searchwidget.h"
 
 #include <core/actions/actioncontainer.h>
+#include <core/plugins/pluginmanager.h>
 #include <gui/widgetfactory.h>
-#include <pluginsystem/pluginmanager.h>
 
 #include <QMenu>
 

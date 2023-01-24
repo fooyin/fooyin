@@ -19,32 +19,31 @@
 
 #include "application.h"
 
-#include "core/actions/actionmanager.h"
-#include "core/app/threadmanager.h"
-#include "core/coresettings.h"
-#include "core/database/database.h"
-#include "core/engine/enginehandler.h"
-#include "core/library/librarymanager.h"
-#include "core/library/libraryscanner.h"
-#include "core/library/musiclibrary.h"
-#include "core/player/playercontroller.h"
-#include "core/playlist/libraryplaylistmanager.h"
-#include "core/playlist/playlisthandler.h"
-#include "gui/controls/controlwidget.h"
-#include "gui/editablelayout.h"
-#include "gui/guisettings.h"
-#include "gui/info/infowidget.h"
-#include "gui/library/coverwidget.h"
-#include "gui/library/statuswidget.h"
-#include "gui/mainwindow.h"
-#include "gui/playlist/playlistwidget.h"
-#include "gui/settings/settingsdialog.h"
-#include "gui/widgetfactory.h"
-#include "gui/widgetprovider.h"
-#include "gui/widgets/spacer.h"
-#include "gui/widgets/splitterwidget.h"
-
-#include <pluginsystem/pluginmanager.h>
+#include <core/actions/actionmanager.h>
+#include <core/app/threadmanager.h>
+#include <core/coresettings.h>
+#include <core/database/database.h>
+#include <core/engine/enginehandler.h>
+#include <core/library/librarymanager.h>
+#include <core/library/libraryscanner.h>
+#include <core/library/musiclibrary.h>
+#include <core/player/playercontroller.h>
+#include <core/playlist/libraryplaylistmanager.h>
+#include <core/playlist/playlisthandler.h>
+#include <core/plugins/pluginmanager.h>
+#include <gui/controls/controlwidget.h>
+#include <gui/editablelayout.h>
+#include <gui/guisettings.h>
+#include <gui/info/infowidget.h>
+#include <gui/library/coverwidget.h>
+#include <gui/library/statuswidget.h>
+#include <gui/mainwindow.h>
+#include <gui/playlist/playlistwidget.h>
+#include <gui/settings/settingsdialog.h>
+#include <gui/widgetfactory.h>
+#include <gui/widgetprovider.h>
+#include <gui/widgets/spacer.h>
+#include <gui/widgets/splitterwidget.h>
 
 struct Application::Private
 {
