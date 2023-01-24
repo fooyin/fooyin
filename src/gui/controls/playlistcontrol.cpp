@@ -30,7 +30,7 @@
 namespace Gui::Widgets {
 struct PlaylistControl::Private
 {
-    Core::SettingsManager* settings{PluginSystem::object<Core::SettingsManager>()};
+    Core::SettingsManager* settings{Plugins::object<Core::SettingsManager>()};
     QHBoxLayout* layout;
 
     QSize labelSize{20, 20};

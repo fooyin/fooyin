@@ -43,7 +43,7 @@ struct StatusWidget::Private
     ClickableLabel* playing;
 
     explicit Private()
-        : playerManager(PluginSystem::object<Core::Player::PlayerManager>())
+        : playerManager(Plugins::object<Core::Player::PlayerManager>())
     { }
 };
 

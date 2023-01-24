@@ -44,12 +44,12 @@ namespace Gui::Widgets {
 PlaylistWidget::PlaylistWidget(QWidget* parent)
     : FyWidget(parent)
     , m_layout(new QHBoxLayout(this))
-    , m_libraryManager(PluginSystem::object<Core::Library::LibraryManager>())
-    , m_library(PluginSystem::object<Core::Library::MusicLibrary>())
-    , m_playerManager(PluginSystem::object<Core::Player::PlayerManager>())
+    , m_libraryManager(Plugins::object<Core::Library::LibraryManager>())
+    , m_library(Plugins::object<Core::Library::MusicLibrary>())
+    , m_playerManager(Plugins::object<Core::Player::PlayerManager>())
     , m_model(new PlaylistModel(m_playerManager, m_library, this))
     , m_playlist(new PlaylistView(this))
-    , m_settings(PluginSystem::object<Core::SettingsManager>())
+    , m_settings(Plugins::object<Core::SettingsManager>())
     , m_altRowColours(m_settings->value<Settings::PlaylistAltColours>())
     , m_noLibrary(new OverlayWidget(true, this))
 {
@@ -64,7 +64,7 @@ PlaylistWidget::PlaylistWidget(QWidget* parent)
 
     setupConnections();
     connect(m_noLibrary, &OverlayWidget::settingsClicked, this, [this] {
-        PluginSystem::object<Settings::SettingsDialog>()->openPage(Settings::SettingsDialog::Page::Library);
+        Plugins::object<Settings::SettingsDialog>()->openPage(Settings::SettingsDialog::Page::Library);
     });
 
     reset();

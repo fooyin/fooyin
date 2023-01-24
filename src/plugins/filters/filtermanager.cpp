@@ -40,8 +40,8 @@ struct FilterManager::Private
     QString searchFilter;
 
     Private()
-        : threadManager{PluginSystem::object<Core::ThreadManager>()}
-        , library{PluginSystem::object<Core::Library::MusicLibrary>()}
+        : threadManager{Plugins::object<Core::ThreadManager>()}
+        , library{Plugins::object<Core::Library::MusicLibrary>()}
     {
         threadManager->moveToNewThread(&databaseManager);
     }

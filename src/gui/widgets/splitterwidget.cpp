@@ -36,8 +36,8 @@ SplitterWidget::SplitterWidget(QWidget* parent)
     : FyWidget{parent}
     , m_layout{new QHBoxLayout(this)}
     , m_splitter{new Splitter(Qt::Vertical)}
-    , m_actionManager{PluginSystem::object<Core::ActionManager>()}
-    , m_widgetProvider{PluginSystem::object<Widgets::WidgetProvider>()}
+    , m_actionManager{Plugins::object<Core::ActionManager>()}
+    , m_widgetProvider{Plugins::object<Widgets::WidgetProvider>()}
     , m_dummy{new Dummy(this)}
 {
     setObjectName(SplitterWidget::name());

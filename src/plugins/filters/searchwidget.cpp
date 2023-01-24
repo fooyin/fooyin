@@ -40,8 +40,8 @@ struct SearchWidget::Private
     FilterManager* manager;
 
     explicit Private()
-        : settings(PluginSystem::object<Core::SettingsManager>())
-        , manager(PluginSystem::object<FilterManager>())
+        : settings(Plugins::object<Core::SettingsManager>())
+        , manager(Plugins::object<FilterManager>())
     { }
 };
 

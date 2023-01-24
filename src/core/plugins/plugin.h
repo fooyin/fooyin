@@ -21,7 +21,7 @@
 
 #include <QtPlugin>
 
-namespace PluginSystem {
+namespace Plugins {
 /*!
     The Plugin class is an abstract base class that each plugin must implement.
 
@@ -38,6 +38,6 @@ public:
     virtual void initialise() {};
     virtual void shutdown() {};
 };
-} // namespace PluginSystem
+} // namespace Plugins
 
-Q_DECLARE_INTERFACE(PluginSystem::Plugin, "com.fooyin.plugin")
+Q_DECLARE_INTERFACE(Plugins::Plugin, "com.fooyin.plugin")

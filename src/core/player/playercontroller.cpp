@@ -39,7 +39,7 @@ PlayerController::PlayerController(QObject* parent)
 
 void PlayerController::restoreState()
 {
-    m_playMode = PluginSystem::object<SettingsManager>()->value<Settings::PlayMode>().value<PlayMode>();
+    m_playMode = Plugins::object<SettingsManager>()->value<Settings::PlayMode>().value<PlayMode>();
 }
 
 PlayerController::~PlayerController() = default;

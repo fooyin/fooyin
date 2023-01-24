@@ -23,7 +23,7 @@
 
 namespace Gui::Settings {
 GuiSettings::GuiSettings()
-    : m_settings(PluginSystem::object<Core::SettingsManager>())
+    : m_settings(Plugins::object<Core::SettingsManager>())
 {
     m_settings->createTempSetting(Settings::LayoutEditing, false);
     m_settings->createSetting(Settings::Geometry, "", "Layout");

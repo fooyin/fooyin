@@ -58,7 +58,7 @@ struct EditableLayout::Private
     explicit Private(Core::SettingsManager* settings, Core::ActionManager* actionManager, WidgetFactory* widgetFactory,
                      WidgetProvider* widgetProvider, QWidget* parent)
         : box{new QHBoxLayout(parent)}
-        , settings{PluginSystem::object<Core::SettingsManager>()}
+        , settings{Plugins::object<Core::SettingsManager>()}
         , overlay{new OverlayFilter(parent)}
         , actionManager{actionManager}
         , widgetFactory{widgetFactory}

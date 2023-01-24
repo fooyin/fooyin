@@ -27,7 +27,7 @@
 
 class QPluginLoader;
 
-namespace PluginSystem {
+namespace Plugins {
 class Plugin;
 
 class PluginManager : public QObject
@@ -101,4 +101,4 @@ inline QList<T*> objects()
     }
     return results;
 }
-} // namespace PluginSystem
+} // namespace Plugins

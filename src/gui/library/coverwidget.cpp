@@ -40,8 +40,8 @@ struct CoverWidget::Private
     bool hasCover{false};
 
     explicit Private()
-        : playerManager(PluginSystem::object<Core::Player::PlayerManager>())
-        , library(PluginSystem::object<Core::Library::MusicLibrary>())
+        : playerManager(Plugins::object<Core::Player::PlayerManager>())
+        , library(Plugins::object<Core::Library::MusicLibrary>())
     { }
 };
 

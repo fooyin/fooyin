@@ -44,7 +44,7 @@ struct ControlWidget::Private
     Core::Player::PlayerManager* playerManager;
 
     explicit Private()
-        : playerManager(PluginSystem::object<Core::Player::PlayerManager>())
+        : playerManager(Plugins::object<Core::Player::PlayerManager>())
     { }
 };
 

@@ -41,7 +41,7 @@ struct ProgressWidget::Private
 
     int max{0};
 
-    Core::SettingsManager* settings{PluginSystem::object<Core::SettingsManager>()};
+    Core::SettingsManager* settings{Plugins::object<Core::SettingsManager>()};
 };
 
 ProgressWidget::ProgressWidget(QWidget* parent)

@@ -167,7 +167,7 @@ QAction* ActionContainer::addSeparator(const Utils::Id& group, QAction** outSepa
     auto* separator = new QAction(this);
     separator->setSeparator(true);
     const Utils::Id sepId = id().append(".Separator.").append(++separatorIdCount);
-    PluginSystem::object<ActionManager>()->registerAction(separator, sepId);
+    Plugins::object<ActionManager>()->registerAction(separator, sepId);
     addAction(separator, group);
     if(outSeparator) {
         *outSeparator = separator;

@@ -23,7 +23,7 @@
 
 namespace Filters::Settings {
 FiltersSettings::FiltersSettings()
-    : m_settings(PluginSystem::object<Core::SettingsManager>())
+    : m_settings(Plugins::object<Core::SettingsManager>())
 {
     m_settings->createSetting(Settings::FilterAltColours, false, "Filters");
     m_settings->createSetting(Settings::FilterHeader, true, "Filters");

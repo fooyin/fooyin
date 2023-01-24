@@ -31,7 +31,7 @@ SettingsManager::SettingsManager(QObject* parent)
     : QObject{parent}
     , m_settingsFile{Utils::settingsPath(), QSettings::IniFormat, this}
 {
-    PluginSystem::addObject(this);
+    Plugins::addObject(this);
 }
 
 SettingsManager::~SettingsManager() = default;

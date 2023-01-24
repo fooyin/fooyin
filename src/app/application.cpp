@@ -66,7 +66,7 @@ struct Application::Private
     Gui::Widgets::EditableLayout* editableLayout;
     Gui::MainWindow* mainWindow;
 
-    PluginSystem::PluginManager* pluginManager;
+    Plugins::PluginManager* pluginManager;
 
     explicit Private(QObject* parent)
         : actionManager(new Core::ActionManager(parent))
@@ -96,7 +96,7 @@ struct Application::Private
         setupConnections();
         registerWidgets();
 
-        pluginManager             = PluginSystem::PluginManager::instance();
+        pluginManager             = Plugins::PluginManager::instance();
         const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
         pluginManager->findPlugins(pluginsPath);
         pluginManager->loadPlugins();
@@ -112,15 +112,15 @@ struct Application::Private
 
     void addObjects() const
     {
-        PluginSystem::addObject(threadManager);
-        PluginSystem::addObject(playerManager);
-        PluginSystem::addObject(libraryManager);
-        PluginSystem::addObject(library);
-        PluginSystem::addObject(actionManager);
-        PluginSystem::addObject(widgetFactory.get());
-        PluginSystem::addObject(widgetProvider.get());
-        PluginSystem::addObject(mainWindow);
-        PluginSystem::addObject(settingsDialog);
+        Plugins::addObject(threadManager);
+        Plugins::addObject(playerManager);
+        Plugins::addObject(libraryManager);
+        Plugins::addObject(library);
+        Plugins::addObject(actionManager);
+        Plugins::addObject(widgetFactory.get());
+        Plugins::addObject(widgetProvider.get());
+        Plugins::addObject(mainWindow);
+        Plugins::addObject(settingsDialog);
     }
 
     void registerWidgets()
@@ -143,7 +143,7 @@ Application::Application(int& argc, char** argv, int flags)
     // Shutdown plugins on exit
     // Required to ensure plugins are unloaded before main event loop quits
     QObject::connect(this, &QCoreApplication::aboutToQuit, p->threadManager, &Core::ThreadManager::close);
-    QObject::connect(this, &QCoreApplication::aboutToQuit, p->pluginManager, &PluginSystem::PluginManager::shutdown);
+    QObject::connect(this, &QCoreApplication::aboutToQuit, p->pluginManager, &Plugins::PluginManager::shutdown);
 
     startup();
 }

@@ -44,7 +44,7 @@ GeneralPage::GeneralPage(QWidget* parent)
     //    mainLayout->addStretch();
     mainLayout->setAlignment(Qt::AlignTop);
 
-    auto* settings = PluginSystem::object<Core::SettingsManager>();
+    auto* settings = Plugins::object<Core::SettingsManager>();
 
     auto* splitterHandles = new QCheckBox("Show Splitter Handles", this);
     splitterHandles->setChecked(settings->value<Settings::SplitterHandles>());
@@ -63,7 +63,7 @@ LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, QWidget*
     , m_libraryManager(libraryManager)
     , m_libraryList(0, 3, this)
 {
-    auto* settings = PluginSystem::object<Core::SettingsManager>();
+    auto* settings = Plugins::object<Core::SettingsManager>();
     auto libraries = m_libraryManager->allLibraries();
 
     m_libraryList.setHorizontalHeaderLabels({"ID", "Name", "Path"});
@@ -162,7 +162,7 @@ void LibraryPage::removeLibrary()
 PlaylistPage::PlaylistPage(QWidget* parent)
     : QWidget(parent)
 {
-    auto* settings = PluginSystem::object<Core::SettingsManager>();
+    auto* settings = Plugins::object<Core::SettingsManager>();
 
     auto* groupHeaders = new QCheckBox("Enable Disc Headers", this);
     groupHeaders->setChecked(settings->value<Settings::DiscHeaders>());

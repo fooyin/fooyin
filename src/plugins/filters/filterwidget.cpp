@@ -45,10 +45,10 @@ FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
     , m_layout(new QHBoxLayout(this))
     , m_type(type)
     , m_index(0)
-    , m_manager(PluginSystem::object<FilterManager>())
-    , m_filter(new FilterView(PluginSystem::object<Core::Player::PlayerManager>(), this))
+    , m_manager(Plugins::object<FilterManager>())
+    , m_filter(new FilterView(Plugins::object<Core::Player::PlayerManager>(), this))
     , m_model(new FilterModel(m_type, m_index, m_filter))
-    , m_settings(PluginSystem::object<Core::SettingsManager>())
+    , m_settings(Plugins::object<Core::SettingsManager>())
 {
     setObjectName(FilterWidget::name());
     m_layout->setContentsMargins(0, 0, 0, 0);

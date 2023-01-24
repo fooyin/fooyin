@@ -24,7 +24,7 @@
 #include <QLibrary>
 #include <QPluginLoader>
 
-namespace PluginSystem {
+namespace Plugins {
 struct PluginManager::Private
 {
     mutable QReadWriteLock objectLock;
@@ -144,4 +144,4 @@ PluginManager::PluginManager()
 
 PluginManager::~PluginManager() = default;
 
-} // namespace PluginSystem
+} // namespace Plugins

@@ -29,11 +29,11 @@ class FiltersSettings;
 }
 
 class FiltersPlugin : public QObject,
-                      public PluginSystem::Plugin
+                      public Plugins::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
-    Q_INTERFACES(PluginSystem::Plugin)
+    Q_INTERFACES(Plugins::Plugin)
 
 public:
     FiltersPlugin();

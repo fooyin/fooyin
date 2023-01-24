@@ -80,7 +80,7 @@ ActionContainer* ActionManager::createMenuBar(const Utils::Id& id)
 void ActionManager::registerAction(QAction* action, const Utils::Id& id)
 {
     p->idCmdMap.emplace(id, action);
-    PluginSystem::object<QMainWindow>()->addAction(action);
+    Plugins::object<QMainWindow>()->addAction(action);
     action->setObjectName(id.name());
 }
 

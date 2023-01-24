@@ -26,7 +26,7 @@
 namespace Gui::Widgets {
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)
-    , m_settings(PluginSystem::object<Core::SettingsManager>())
+    , m_settings(Plugins::object<Core::SettingsManager>())
     , m_showHandle(m_settings->value<Settings::SplitterHandles>())
 {
     m_settings->subscribe<Settings::SplitterHandles>(this, &SplitterHandle::showHandle);

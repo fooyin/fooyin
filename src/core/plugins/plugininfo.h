@@ -22,7 +22,7 @@
 #include <QJsonObject>
 #include <QString>
 
-namespace PluginSystem {
+namespace Plugins {
 class Plugin;
 
 class PluginInfo
@@ -70,4 +70,4 @@ private:
     struct Private;
     std::unique_ptr<PluginInfo::Private> p;
 };
-} // namespace PluginSystem
+} // namespace Plugins

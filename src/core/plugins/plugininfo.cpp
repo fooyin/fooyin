@@ -24,7 +24,7 @@
 #include <QPluginLoader>
 #include <utility>
 
-namespace PluginSystem {
+namespace Plugins {
 struct PluginInfo::Private
 {
     QString name;
@@ -187,4 +187,4 @@ QString PluginInfo::url() const
 {
     return p->url;
 }
-} // namespace PluginSystem
+} // namespace Plugins

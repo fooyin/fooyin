@@ -36,8 +36,8 @@
 namespace Gui::Widgets {
 InfoWidget::InfoWidget(QWidget* parent)
     : FyWidget(parent)
-    , m_settings(PluginSystem::object<Core::SettingsManager>())
-    , m_playerManager(PluginSystem::object<Core::Player::PlayerManager>())
+    , m_settings(Plugins::object<Core::SettingsManager>())
+    , m_playerManager(Plugins::object<Core::Player::PlayerManager>())
     , m_layout(new QHBoxLayout(this))
 {
     setObjectName("Info Panel");

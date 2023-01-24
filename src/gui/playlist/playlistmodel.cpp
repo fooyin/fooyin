@@ -39,7 +39,7 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::L
     , m_root(std::make_unique<PlaylistItem>())
     , m_playerManager(playerManager)
     , m_library(library)
-    , m_settings(PluginSystem::object<Core::SettingsManager>())
+    , m_settings(Plugins::object<Core::SettingsManager>())
     , m_playingIcon{Core::Constants::Icons::Play}
     , m_pausedIcon{Core::Constants::Icons::Pause}
 {

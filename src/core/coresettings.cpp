@@ -28,7 +28,7 @@
 
 namespace Core::Settings {
 CoreSettings::CoreSettings()
-    : m_settings(PluginSystem::object<SettingsManager>())
+    : m_settings(Plugins::object<SettingsManager>())
 {
     m_settings->createSetting(Settings::Version, VERSION);
     m_settings->createSetting(Settings::DatabaseVersion, DATABASE_VERSION);

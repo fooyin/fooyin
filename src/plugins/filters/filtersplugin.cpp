@@ -40,9 +40,9 @@ void FiltersPlugin::initialise()
     m_filterManager  = new FilterManager(this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>();
 
-    PluginSystem::addObject(m_filterManager);
+    Plugins::addObject(m_filterManager);
 
-    auto* factory = PluginSystem::object<Gui::Widgets::WidgetFactory>();
+    auto* factory = Plugins::object<Gui::Widgets::WidgetFactory>();
     factory->registerClass<FilterWidget>("Filter", {"Filter"});
     factory->registerClass<GenreFilter>("Genre", {"Filter"});
     factory->registerClass<YearFilter>("Year", {"Filter"});
