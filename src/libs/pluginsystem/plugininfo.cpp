@@ -29,14 +29,14 @@ struct PluginInfo::Private
 {
     QString name;
     QString filename;
+    QJsonObject metadata;
     QString version;
     QString vendor;
     QString copyright;
+    QString license;
     QString category;
     QString description;
-    QList<PluginInfo*> dependencies;
     QString url;
-    QJsonObject metadata;
     bool isRequired{false};
     bool isLoaded{false};
     bool isDisabled{false};
@@ -46,15 +46,22 @@ struct PluginInfo::Private
     Plugin* plugin{nullptr};
     QPluginLoader loader;
 
-    Private(QString name, QString filename, const QJsonObject& metadata)
+    Private(QString name, QString filename, const QJsonObject& allMetaData)
         : name{std::move(name)}
         , filename{std::move(filename)}
-        , metadata{metadata.value("MetaData").toObject()}
+        , metadata{allMetaData.value("MetaData").toObject()}
+        , version{metadata.value("Version").toString()}
+        , vendor{metadata.value("Vendor").toString()}
+        , copyright{metadata.value("Copyright").toString()}
+        , license{metadata.value("License").toString()}
+        , category{metadata.value("Category").toString()}
+        , description{metadata.value("Description").toString()}
+        , url{metadata.value("Url").toString()}
     { }
 };
 
 PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata)
-    : p(std::make_unique<Private>(name, filename, metadata))
+    : p{std::make_unique<Private>(name, filename, metadata)}
 {
     p->loader.setFileName(filename);
 }
