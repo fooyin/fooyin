@@ -7,6 +7,8 @@ set(SOURCES
     main.cpp
     singleinstance.h
     singleinstance.cpp
+    application.h
+    application.cpp
 )
 
 set(RESOURCES
@@ -37,6 +39,8 @@ target_link_libraries(${PROJECT_NAME}
    ${LIBMPV_LIBRARIES}
    FooyinVersion
    PluginSystem
+   Core
+   Gui
    #${SDL2_LIBRARIES}
    #${FFMPEG_LIBRARIES}
 )

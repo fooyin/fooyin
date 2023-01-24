@@ -31,6 +31,9 @@ class MusicLibrary;
 } // namespace Core
 
 namespace Gui {
+namespace Widgets {
+class EditableLayout;
+}
 
 namespace Settings {
 class SettingsDialog;
@@ -42,7 +45,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(Core::ActionManager* actionManager, Core::SettingsManager* settings,
-                        Settings::SettingsDialog* settingsDialog, Core::Library::MusicLibrary* library,
+                        Settings::SettingsDialog* settingsDialog, Widgets::EditableLayout* editableLayout,
                         QWidget* parent = nullptr);
     ~MainWindow() override;
 

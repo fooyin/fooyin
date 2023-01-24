@@ -1,12 +1,11 @@
-fooyin_add_plugin(Gui
+fooyin_add_library(Gui
     TYPE SHARED
-    PLUGIN_DEPENDS
-        Core
     DEPENDS
         Qt6::Core
         Qt6::Widgets
         FooyinVersion
         PluginSystem
+        Core
         Utils
     SOURCES
         fywidget.h
@@ -19,8 +18,6 @@ fooyin_add_plugin(Gui
         quicksetupdialog.cpp
         guisettings.h
         guisettings.cpp
-        guiplugin.h
-        guiplugin.cpp
         widgetfactory.h
         widgetprovider.h
         widgetprovider.cpp

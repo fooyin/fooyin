@@ -1,4 +1,4 @@
-fooyin_add_plugin(Core
+fooyin_add_library(Core
     TYPE SHARED
     DEPENDS
         Qt6::Core
@@ -8,8 +8,6 @@ fooyin_add_plugin(Core
         PluginSystem
         Utils
     SOURCES
-        coreplugin.h
-        coreplugin.cpp
         coresettings.h
         coresettings.cpp
         constants.h
@@ -20,9 +18,6 @@ fooyin_add_plugin(Core
         actions/actionmanager.h
         actions/actionmanager.cpp
 
-
-        app/application.h
-        app/application.cpp
         app/threadmanager.h
         app/threadmanager.cpp
         app/worker.h

@@ -42,7 +42,6 @@ namespace Gui {
 struct MainWindow::Private
 {
     Widgets::EditableLayout* mainLayout;
-    Core::Library::MusicLibrary* library;
 
     QAction* openSettings;
     QAction* layoutEditing;
@@ -60,18 +59,19 @@ struct MainWindow::Private
     Widgets::WidgetProvider* widgetProvider;
 
     Private(Core::ActionManager* actionManager, Core::SettingsManager* settings,
-            Settings::SettingsDialog* settingsDialog, Core::Library::MusicLibrary* library)
+            Settings::SettingsDialog* settingsDialog, Widgets::EditableLayout* editableLayout)
         : settingsDialog(settingsDialog)
-        , library(library)
+        , mainLayout(editableLayout)
         , settings(settings)
         , actionManager(actionManager)
     { }
 };
 
 MainWindow::MainWindow(Core::ActionManager* actionManager, Core::SettingsManager* settings,
-                       Settings::SettingsDialog* settingsDialog, Core::Library::MusicLibrary* library, QWidget* parent)
+                       Settings::SettingsDialog* settingsDialog, Widgets::EditableLayout* editableLayout,
+                       QWidget* parent)
     : QMainWindow(parent)
-    , p(std::make_unique<Private>(actionManager, settings, settingsDialog, library))
+    , p(std::make_unique<Private>(actionManager, settings, settingsDialog, editableLayout))
 { }
 
 MainWindow::~MainWindow()
@@ -94,9 +94,9 @@ void MainWindow::setupUi()
     const QByteArray geometry      = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
-    p->mainLayout       = new Widgets::EditableLayout(this);
     p->quickSetupDialog = new QuickSetupDialog(this);
 
+    p->mainLayout->initialise();
     setCentralWidget(p->mainLayout);
 
     Core::ActionContainer* menubar = p->actionManager->createMenuBar(Core::Constants::MenuBar);
@@ -160,11 +160,12 @@ void MainWindow::setupUi()
     connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->mainLayout,
             &Widgets::EditableLayout::changeLayout);
 
-    const QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
-    p->rescan              = new QAction(rescanIcon, tr("&Rescan Library"), this);
-    p->actionManager->registerAction(p->rescan, Core::Constants::Actions::Rescan);
-    libraryMenu->addAction(p->rescan, Core::Constants::Groups::Two);
-    connect(p->rescan, &QAction::triggered, p->library, &Core::Library::MusicLibrary::reloadAll);
+    // TODO: Move to MusicLibrary
+    //    const QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
+    //    p->rescan              = new QAction(rescanIcon, tr("&Rescan Library"), this);
+    //    p->actionManager->registerAction(p->rescan, Core::Constants::Actions::Rescan);
+    //    libraryMenu->addAction(p->rescan, Core::Constants::Groups::Two);
+    //    connect(p->rescan, &QAction::triggered, p->library, &Core::Library::MusicLibrary::reloadAll);
 
     const QIcon settingsIcon = QIcon(Core::Constants::Icons::Settings);
     p->openSettings          = new QAction(settingsIcon, tr("&Settings"), this);

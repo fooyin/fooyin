@@ -23,19 +23,26 @@
 
 namespace Core {
 class ActionContainer;
-}
+class SettingsManager;
+class ActionManager;
+} // namespace Core
 
 namespace Gui::Widgets {
 class FyWidget;
 class SplitterWidget;
+class WidgetFactory;
+class WidgetProvider;
 
 class EditableLayout : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit EditableLayout(QWidget* parent = nullptr);
+    explicit EditableLayout(Core::SettingsManager* settings, Core::ActionManager* actionManager,
+                            WidgetFactory* widgetFactory, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~EditableLayout() override;
+
+    void initialise();
 
     void setupWidgetMenu(Core::ActionContainer* menu, FyWidget* parent, bool replace = false);
     void setupContextMenu(FyWidget* widget, Core::ActionContainer* menu);

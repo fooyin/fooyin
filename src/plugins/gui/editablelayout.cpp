@@ -55,13 +55,14 @@ struct EditableLayout::Private
     Widgets::WidgetFactory* widgetFactory;
     Widgets::WidgetProvider* widgetProvider;
 
-    explicit Private(QWidget* parent)
+    explicit Private(Core::SettingsManager* settings, Core::ActionManager* actionManager, WidgetFactory* widgetFactory,
+                     WidgetProvider* widgetProvider, QWidget* parent)
         : box{new QHBoxLayout(parent)}
         , settings{PluginSystem::object<Core::SettingsManager>()}
         , overlay{new OverlayFilter(parent)}
-        , actionManager{PluginSystem::object<Core::ActionManager>()}
-        , widgetFactory{PluginSystem::object<Widgets::WidgetFactory>()}
-        , widgetProvider{PluginSystem::object<Widgets::WidgetProvider>()}
+        , actionManager{actionManager}
+        , widgetFactory{widgetFactory}
+        , widgetProvider{widgetProvider}
     { }
 
     Core::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const
@@ -105,9 +106,10 @@ struct EditableLayout::Private
     }
 };
 
-EditableLayout::EditableLayout(QWidget* parent)
+EditableLayout::EditableLayout(Core::SettingsManager* settings, Core::ActionManager* actionManager,
+                               WidgetFactory* widgetFactory, WidgetProvider* widgetProvider, QWidget* parent)
     : QWidget{parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<Private>(settings, actionManager, widgetFactory, widgetProvider, this)}
 {
     setObjectName("EditableLayout");
 
@@ -117,7 +119,10 @@ EditableLayout::EditableLayout(QWidget* parent)
     p->menu->appendGroup(Core::Constants::Groups::Three);
 
     p->box->setContentsMargins(5, 5, 5, 5);
+}
 
+void EditableLayout::initialise()
+{
     connect(p->menu, &Core::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
     p->settings->subscribe<Settings::LayoutEditing>(this, [this](bool enabled) {
         p->layoutEditing = enabled;

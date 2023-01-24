@@ -19,26 +19,20 @@
 
 #pragma once
 
-#include <pluginsystem/plugin.h>
+#include <QApplication>
 
-namespace Core {
-class Application;
-class CorePlugin : public QObject,
-                   public PluginSystem::Plugin
+class Application : public QApplication
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
-    Q_INTERFACES(PluginSystem::Plugin)
 
 public:
-    CorePlugin();
-    ~CorePlugin() override;
+    explicit Application(int& argc, char** argv, int flags = ApplicationFlags);
+    ~Application() override;
 
-    void initialise() override;
-    void finalise() override;
-    void shutdown() override;
+    void startup();
+    void shutdown();
 
 private:
-    Application* m_app;
+    struct Private;
+    std::unique_ptr<Application::Private> p;
 };
-} // namespace Core
