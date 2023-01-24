@@ -31,7 +31,6 @@ macro(fooyin_add_library name)
 
   if(library_PREFIX)
     set(library_name "Fooyin_${library_name}")
-    message(${library_name})
   endif()
 
   add_library(${library_name} ${library_TYPE} ${library_SOURCES})
