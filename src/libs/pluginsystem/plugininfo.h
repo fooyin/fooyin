@@ -19,14 +19,13 @@
 
 #pragma once
 
-#include "pluginsystem_global.h"
-
 #include <QJsonObject>
 #include <QString>
 
 namespace PluginSystem {
 class Plugin;
-class PLUGINSYSTEM_EXPORT PluginInfo
+
+class PluginInfo
 {
 public:
     enum Status
@@ -44,13 +43,9 @@ public:
     PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata);
     ~PluginInfo();
 
-    void addDependency(PluginInfo* dependency);
-
     void load();
     void unload();
     void initialise();
-    void finalise();
-    void pluginsFinalised();
 
     [[nodiscard]] Plugin* plugin() const;
 
@@ -63,8 +58,6 @@ public:
     [[nodiscard]] QString copyright() const;
     [[nodiscard]] QString description() const;
     [[nodiscard]] QString url() const;
-    [[nodiscard]] QList<PluginInfo*> dependencies() const;
-    [[nodiscard]] bool isRequired() const;
     [[nodiscard]] bool isLoaded() const;
     [[nodiscard]] bool isDisabled() const;
     [[nodiscard]] Status status() const;
@@ -78,5 +71,3 @@ private:
     std::unique_ptr<PluginInfo::Private> p;
 };
 } // namespace PluginSystem
-
-Q_DECLARE_METATYPE(PluginSystem::PluginInfo*)

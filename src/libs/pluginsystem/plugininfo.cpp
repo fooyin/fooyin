@@ -61,11 +61,6 @@ PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJson
 
 PluginInfo::~PluginInfo() = default;
 
-void PluginInfo::addDependency(PluginInfo* dependency)
-{
-    p->dependencies.append(dependency);
-}
-
 void PluginInfo::load()
 {
     if(p->loader.fileName().isEmpty()) {
@@ -104,16 +99,6 @@ void PluginInfo::initialise()
 {
     p->plugin->initialise();
     p->status = Initialised;
-}
-
-void PluginInfo::finalise()
-{
-    p->plugin->finalise();
-}
-
-void PluginInfo::pluginsFinalised()
-{
-    p->plugin->pluginsFinalised();
 }
 
 Plugin* PluginInfo::plugin() const
@@ -166,11 +151,6 @@ void PluginInfo::setError(const QString& error)
     p->error = error;
 }
 
-bool PluginInfo::isRequired() const
-{
-    return p->isRequired;
-}
-
 QString PluginInfo::version() const
 {
     return p->version;
@@ -199,10 +179,5 @@ QString PluginInfo::description() const
 QString PluginInfo::url() const
 {
     return p->url;
-}
-
-QList<PluginInfo*> PluginInfo::dependencies() const
-{
-    return p->dependencies;
 }
 } // namespace PluginSystem

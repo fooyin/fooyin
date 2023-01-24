@@ -29,8 +29,7 @@ struct PluginManager::Private
 {
     mutable QReadWriteLock objectLock;
     QList<QObject*> objectList;
-    QList<PluginInfo*> loadOrder;
-    QMap<QString, PluginInfo*> plugins;
+    std::unordered_map<QString, PluginInfo*> plugins;
 };
 
 void PluginManager::addObject(QObject* object)
@@ -95,94 +94,25 @@ void PluginManager::findPlugins(const QString& pluginDir)
 
         auto* plugin = new PluginInfo(name.toString(), pluginFilename, metaData);
 
-        p->plugins.insert(name.toString(), plugin);
+        p->plugins.emplace(name.toString(), plugin);
     }
-}
-
-QList<PluginInfo*> PluginManager::loadOrder()
-{
-    QList<PluginInfo*> queue;
-    for(auto* plugin : qAsConst(p->plugins)) {
-        loadOrder(plugin, queue);
-    }
-    p->loadOrder = queue;
-    return queue;
-}
-
-bool PluginManager::loadOrder(PluginInfo* plugin, QList<PluginInfo*>& queue)
-{
-    if(queue.contains(plugin)) {
-        return true;
-    }
-
-    if(plugin->status() == PluginInfo::Invalid || plugin->status() == PluginInfo::Read) {
-        queue.append(plugin);
-        return false;
-    }
-
-    const QList<PluginInfo*> deps = plugin->dependencies();
-    for(auto* dep : deps) {
-        if(!loadOrder(dep, queue)) {
-            plugin->setError(QString("Cannot load plugin because dependency failed to load: %1 (%2)\nReason: %3")
-                                 .arg(dep->name(), dep->version(), dep->error()));
-            return false;
-        }
-    }
-    queue.append(plugin);
-    return true;
 }
 
 void PluginManager::loadPlugins()
 {
-    const QList<PluginInfo*> queue = loadOrder();
-    for(PluginInfo* plugin : queue) {
-        auto metadata     = plugin->metadata();
-        auto dependencies = metadata.value("Dependencies").toArray();
-        for(auto dependency : dependencies) {
-            auto dependencyName = dependency.toObject().value("Name").toString();
-            if(p->plugins.contains(dependencyName)) {
-                plugin->addDependency(p->plugins.value(dependencyName));
-            }
-        }
+    for(const auto& [name, plugin] : p->plugins) {
+        auto metadata = plugin->metadata();
         loadPlugin(plugin);
-    }
-
-    for(PluginInfo* plugin : queue) {
-        initialisePlugin(plugin);
-    }
-
-    int i = static_cast<int>(queue.size() - 1);
-    for(; i >= 0; --i) {
-        queue.at(i)->finalise();
-    }
-
-    for(PluginInfo* plugin : queue) {
-        plugin->pluginsFinalised();
+        if(plugin->status() == PluginInfo::Loaded) {
+            initialisePlugin(plugin);
+        }
     }
 }
 
 void PluginManager::loadPlugin(PluginInfo* plugin)
 {
-    if(plugin->hasError()) {
+    if(plugin->hasError() || plugin->isDisabled()) {
         return;
-    }
-
-    if(plugin->isDisabled()) {
-        return;
-    }
-
-    const QList<PluginInfo*> dependencies = plugin->dependencies();
-    for(const auto& dependency : dependencies) {
-        if(!dependency->isRequired()) {
-            continue;
-        }
-
-        if(dependency->status() != PluginInfo::Loaded) {
-            plugin->setError(
-                PluginManager::tr("Cannot load plugin because dependency failed to load: %1(%2)\nReason: %3")
-                    .arg(plugin->name(), plugin->version(), plugin->error()));
-            return;
-        }
     }
     plugin->load();
 }
@@ -197,13 +127,10 @@ void PluginManager::initialisePlugin(PluginInfo* plugin)
 
 void PluginManager::unloadPlugins()
 {
-    int i = static_cast<int>(p->loadOrder.size() - 1);
-    for(; i >= 0; --i) {
-        auto* plugin = p->loadOrder.at(i);
+    for(const auto& [name, plugin] : p->plugins) {
         plugin->unload();
         delete plugin;
     }
-    p->loadOrder.clear();
 }
 
 void PluginManager::shutdown()

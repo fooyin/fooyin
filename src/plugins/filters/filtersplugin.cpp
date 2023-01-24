@@ -35,7 +35,7 @@ FiltersPlugin::FiltersPlugin() = default;
 
 FiltersPlugin::~FiltersPlugin() = default;
 
-void FiltersPlugin::finalise()
+void FiltersPlugin::initialise()
 {
     m_filterManager  = new FilterManager(this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>();

@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "pluginsystem_global.h"
-
 #include <QtPlugin>
 
 namespace PluginSystem {
@@ -32,14 +30,12 @@ namespace PluginSystem {
 
     Plugins must set their IID to "com.fooyin.plugin".
 */
-class PLUGINSYSTEM_EXPORT Plugin
+class Plugin
 {
 public:
     virtual ~Plugin() = default;
 
     virtual void initialise() {};
-    virtual void finalise() {};
-    virtual void pluginsFinalised() {};
     virtual void shutdown() {};
 };
 } // namespace PluginSystem
