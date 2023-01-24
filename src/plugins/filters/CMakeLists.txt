@@ -4,11 +4,10 @@ fooyin_add_plugin(Filters
         Qt6::Core
         Qt6::Widgets
         Qt6::Sql
-        FooyinVersion
-        PluginSystem
-        Core
-        Gui
-        Utils
+        Fooyin_PluginSystem
+        Fooyin_Core
+        Fooyin_Gui
+        Fooyin_Utils
     SOURCES
         constants.h
         filtersplugin.h

@@ -1,12 +1,12 @@
 fooyin_add_library(Gui
     TYPE SHARED
+    PREFIX Yes
     DEPENDS
         Qt6::Core
         Qt6::Widgets
-        FooyinVersion
-        PluginSystem
-        Core
-        Utils
+        Fooyin_PluginSystem
+        Fooyin_Core
+        Fooyin_Utils
     SOURCES
         fywidget.h
         fywidget.cpp

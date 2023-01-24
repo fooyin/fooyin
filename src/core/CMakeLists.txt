@@ -1,12 +1,13 @@
 fooyin_add_library(Core
     TYPE SHARED
+    PREFIX Yes
     DEPENDS
         Qt6::Core
         Qt6::Widgets
         Qt6::Sql
-        FooyinVersion
-        PluginSystem
-        Utils
+        Fooyin_Version
+        Fooyin_PluginSystem
+        Fooyin_Utils
     SOURCES
         coresettings.h
         coresettings.cpp

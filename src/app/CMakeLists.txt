@@ -1,7 +1,7 @@
 
 configure_file(version.h.in version.h @ONLY)
-add_library(FooyinVersion)
-target_include_directories(FooyinVersion PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+add_library(Fooyin_Version)
+target_include_directories(Fooyin_Version PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set(SOURCES
     main.cpp
@@ -37,10 +37,9 @@ target_link_libraries(${PROJECT_NAME}
    ${TAGLIB_LIBRARIES}
    ${ZLIB_LIBRARIES}
    ${LIBMPV_LIBRARIES}
-   FooyinVersion
-   PluginSystem
-   Core
-   Gui
+   Fooyin_PluginSystem
+   Fooyin_Core
+   Fooyin_Gui
    #${SDL2_LIBRARIES}
    #${FFMPEG_LIBRARIES}
 )
