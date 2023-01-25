@@ -21,6 +21,9 @@
 #include "singleinstance.h"
 #include "version.h"
 
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
+
 int main(int argc, char* argv[])
 {
     Q_INIT_RESOURCE(icons);
@@ -28,9 +31,13 @@ int main(int argc, char* argv[])
     qApp->setApplicationName("fooyin");
     qApp->setApplicationVersion(VERSION);
 
+    auto console = spdlog::stdout_color_mt("console");
+    spdlog::set_default_logger(console);
+
     // Prevent additional instances
     SingleInstance instance("fooyin");
     if(!instance.tryRunning()) {
+        spdlog::info("Fooyin already running");
         return 0;
     }
 
