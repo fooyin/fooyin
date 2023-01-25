@@ -21,8 +21,9 @@
 
 namespace Gui::Widgets {
 InfoItem::InfoItem(Type type, QString title)
-    : m_type(type)
-    , m_title(std::move(title))
+    : m_type{type}
+    , m_title{std::move(title)}
+    , m_parent{nullptr}
 { }
 
 void InfoItem::appendChild(InfoItem* child)

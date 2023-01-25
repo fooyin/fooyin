@@ -202,6 +202,7 @@ QAction* ActionContainer::insertLocation(QList<Group>::const_iterator group) con
 
 MenuBarActionContainer::MenuBarActionContainer(const Utils::Id& id, QObject* parent)
     : ActionContainer{id, parent}
+    , m_menuBar{nullptr}
 { }
 
 QMenu* MenuBarActionContainer::menu() const

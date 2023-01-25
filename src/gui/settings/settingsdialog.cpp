@@ -33,20 +33,20 @@ SettingsDialog::SettingsDialog(Core::Library::LibraryManager* libraryManager, Co
     : QDialog{parent}
     , m_libraryManager{libraryManager}
     , m_settings{settings}
+    , m_contentsWidget{new QListWidget(this)}
+    , m_pagesWidget{new QStackedWidget(this)}
 { }
 
 SettingsDialog::~SettingsDialog() = default;
 
 void SettingsDialog::setupUi()
 {
-    m_contentsWidget = new QListWidget(this);
     m_contentsWidget->setViewMode(QListView::ListMode);
     //    m_contentsWidget->setIconSize(QSize(96, 84));
     m_contentsWidget->setMovement(QListView::Static);
     m_contentsWidget->setMaximumWidth(90);
     //    m_contentsWidget->setSpacing(10);
 
-    m_pagesWidget = new QStackedWidget(this);
     m_pagesWidget->addWidget(new GeneralPage(m_settings, this));
     m_pagesWidget->addWidget(new LibraryPage(m_libraryManager, m_settings, this));
     m_pagesWidget->addWidget(new PlaylistPage(m_settings, this));

@@ -61,6 +61,7 @@ struct EditableLayout::Private
         , settings{settings}
         , widgetFactory{widgetFactory}
         , widgetProvider{widgetProvider}
+        , menu{actionManager->createMenu(Core::Constants::ContextMenus::Layout)}
         , box{new QHBoxLayout(parent)}
         , overlay{new OverlayFilter(parent)}
     { }
@@ -112,8 +113,6 @@ EditableLayout::EditableLayout(Core::SettingsManager* settings, Core::ActionMana
     , p{std::make_unique<Private>(settings, actionManager, widgetFactory, widgetProvider, this)}
 {
     setObjectName("EditableLayout");
-
-    p->menu = p->actionManager->createMenu(Core::Constants::ContextMenus::Layout);
 
     p->menu->appendGroup(Core::Constants::Groups::Two);
     p->menu->appendGroup(Core::Constants::Groups::Three);

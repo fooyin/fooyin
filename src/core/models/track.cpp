@@ -407,9 +407,9 @@ void Track::jsonToExtraTags(const QByteArray& ba)
         if(json.contains("tags") && json["tags"].isArray()) {
             const QJsonArray extraArray = json["tags"].toArray();
 
-            for(QJsonArray::const_iterator i = extraArray.constBegin(); i != extraArray.constEnd(); i++) {
+            for(auto i = extraArray.constBegin(); i != extraArray.constEnd(); ++i) {
                 QJsonObject tagObject = i->toObject();
-                for(QJsonObject::const_iterator j = tagObject.constBegin(); j != tagObject.constEnd(); j++) {
+                for(QJsonObject::const_iterator j = tagObject.constBegin(); j != tagObject.constEnd(); ++j) {
                     const QString tag = j.key();
                     if(tagObject[tag].isArray()) {
                         const QJsonArray tagArray = j.value().toArray();

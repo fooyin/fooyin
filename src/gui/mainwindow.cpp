@@ -23,8 +23,6 @@
 #include "gui/guisettings.h"
 #include "gui/settings/settingsdialog.h"
 #include "quicksetupdialog.h"
-#include "widgetfactory.h"
-#include "widgetprovider.h"
 
 #include <core/actions/actioncontainer.h>
 #include <core/actions/actionmanager.h>
@@ -42,7 +40,10 @@
 namespace Gui {
 struct MainWindow::Private
 {
-    Widgets::EditableLayout* mainLayout;
+    Core::ActionManager* actionManager;
+    Core::SettingsManager* settings;
+    std::unique_ptr<Settings::SettingsDialog> settingsDialog;
+    Widgets::EditableLayout* editableLayout;
 
     QAction* openSettings;
     QAction* layoutEditing;
@@ -50,35 +51,28 @@ struct MainWindow::Private
     QAction* rescan;
     QAction* quitAction;
 
-    Core::SettingsManager* settings;
-
     QuickSetupDialog* quickSetupDialog;
-
-    Core::ActionManager* actionManager;
-    Widgets::WidgetFactory* widgetFactory;
-    std::unique_ptr<Settings::SettingsDialog> settingsDialog;
-    Widgets::WidgetProvider* widgetProvider;
 
     Private(Core::ActionManager* actionManager, Core::SettingsManager* settings,
             Settings::SettingsDialog* settingsDialog, Widgets::EditableLayout* editableLayout)
-        : settingsDialog(settingsDialog)
-        , mainLayout(editableLayout)
-        , settings(settings)
-        , actionManager(actionManager)
+        : actionManager{actionManager}
+        , settings{settings}
+        , settingsDialog{settingsDialog}
+        , editableLayout{editableLayout}
     { }
 };
 
 MainWindow::MainWindow(Core::ActionManager* actionManager, Core::SettingsManager* settings,
                        Settings::SettingsDialog* settingsDialog, Widgets::EditableLayout* editableLayout,
                        QWidget* parent)
-    : QMainWindow(parent)
-    , p(std::make_unique<Private>(actionManager, settings, settingsDialog, editableLayout))
+    : QMainWindow{parent}
+    , p{std::make_unique<Private>(actionManager, settings, settingsDialog, editableLayout)}
 { }
 
 MainWindow::~MainWindow()
 {
     p->settings->set<Settings::Geometry>(saveGeometry().toBase64());
-    p->mainLayout->saveLayout();
+    p->editableLayout->saveLayout();
 }
 
 void MainWindow::setupUi()
@@ -97,8 +91,8 @@ void MainWindow::setupUi()
 
     p->quickSetupDialog = new QuickSetupDialog(this);
 
-    p->mainLayout->initialise();
-    setCentralWidget(p->mainLayout);
+    p->editableLayout->initialise();
+    setCentralWidget(p->editableLayout);
 
     Core::ActionContainer* menubar = p->actionManager->createMenuBar(Core::Constants::MenuBar);
     setMenuBar(menubar->menuBar());
@@ -158,7 +152,7 @@ void MainWindow::setupUi()
     p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
     viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
     connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
-    connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->mainLayout,
+    connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
             &Widgets::EditableLayout::changeLayout);
 
     // TODO: Move to MusicLibrary

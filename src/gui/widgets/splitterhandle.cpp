@@ -19,13 +19,10 @@
 
 #include "splitterhandle.h"
 
-#include "gui/guisettings.h"
-
-#include <core/plugins/pluginmanager.h>
-
 namespace Gui::Widgets {
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
-    : QSplitterHandle(type, parent)
+    : QSplitterHandle{type, parent}
+    , m_showHandle{true}
 { }
 
 SplitterHandle::~SplitterHandle() = default;

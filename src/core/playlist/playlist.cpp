@@ -27,14 +27,15 @@
 
 namespace Core::Playlist {
 Playlist::Playlist(Player::PlayerManager* playerManager, int idx, QString name)
-    : m_name(std::move(name))
-    , m_playerManager{playerManager}
+    : m_playerManager{playerManager}
+    , m_name(std::move(name))
     , m_playlistIndex{idx}
     , m_playingTrack{nullptr}
 { }
 
 Playlist::Playlist(const Playlist& other)
-    : m_name(other.m_name)
+    : m_playerManager(other.m_playerManager)
+    , m_name(other.m_name)
     , m_playlistIndex(other.m_playlistIndex)
     , m_playingTrack(other.m_playingTrack)
     , m_tracks(other.m_tracks)
@@ -45,6 +46,7 @@ Playlist& Playlist::operator=(const Playlist& other)
     if(this == &other) {
         return *this;
     }
+    m_playerManager = other.m_playerManager;
     m_name          = other.m_name;
     m_playlistIndex = other.m_playlistIndex;
     m_playingTrack  = other.m_playingTrack;
