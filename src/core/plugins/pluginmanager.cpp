@@ -25,28 +25,21 @@
 #include <QPluginLoader>
 
 namespace Plugins {
-struct PluginManager::Private
-{
-    mutable QReadWriteLock objectLock;
-    QList<QObject*> objectList;
-    std::unordered_map<QString, PluginInfo*> plugins;
-};
-
 void PluginManager::addObject(QObject* object)
 {
-    const QWriteLocker lock(&p->objectLock);
-    p->objectList.append(object);
+    const QWriteLocker lock(&m_objectLock);
+    m_objectList.append(object);
 }
 
 void PluginManager::removeObject(QObject* object)
 {
-    const QWriteLocker lock(&p->objectLock);
-    p->objectList.removeAll(object);
+    const QWriteLocker lock(&m_objectLock);
+    m_objectList.removeAll(object);
 }
 
 QList<QObject*> PluginManager::allObjects()
 {
-    return p->objectList;
+    return m_objectList;
 }
 
 PluginManager* PluginManager::instance()
@@ -57,7 +50,7 @@ PluginManager* PluginManager::instance()
 
 QReadWriteLock* PluginManager::objectLock()
 {
-    return &p->objectLock;
+    return &m_objectLock;
 }
 
 void PluginManager::findPlugins(const QString& pluginDir)
@@ -94,18 +87,25 @@ void PluginManager::findPlugins(const QString& pluginDir)
 
         auto* plugin = new PluginInfo(name.toString(), pluginFilename, metaData);
 
-        p->plugins.emplace(name.toString(), plugin);
+        m_plugins.emplace(name.toString(), plugin);
     }
 }
 
 void PluginManager::loadPlugins()
 {
-    for(const auto& [name, plugin] : p->plugins) {
+    for(const auto& [name, plugin] : m_plugins) {
         auto metadata = plugin->metadata();
         loadPlugin(plugin);
-        if(plugin->status() == PluginInfo::Loaded) {
-            initialisePlugin(plugin);
+        if(!plugin->isLoaded()) {
+            continue;
         }
+    }
+}
+
+void PluginManager::initialisePlugins()
+{
+    for(const auto& [name, plugin] : m_plugins) {
+        plugin->initialise();
     }
 }
 
@@ -117,17 +117,9 @@ void PluginManager::loadPlugin(PluginInfo* plugin)
     plugin->load();
 }
 
-void PluginManager::initialisePlugin(PluginInfo* plugin)
-{
-    if(!plugin->isLoaded()) {
-        return;
-    }
-    plugin->initialise();
-}
-
 void PluginManager::unloadPlugins()
 {
-    for(const auto& [name, plugin] : p->plugins) {
+    for(const auto& [name, plugin] : m_plugins) {
         plugin->unload();
         delete plugin;
     }
@@ -138,9 +130,7 @@ void PluginManager::shutdown()
     unloadPlugins();
 }
 
-PluginManager::PluginManager()
-    : p(std::make_unique<Private>())
-{ }
+PluginManager::PluginManager() { }
 
 PluginManager::~PluginManager() = default;
 

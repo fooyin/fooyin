@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QJsonObject>
+#include <QPluginLoader>
 #include <QString>
 
 namespace Plugins {
@@ -48,6 +49,7 @@ public:
     void initialise();
 
     [[nodiscard]] Plugin* plugin() const;
+    [[nodiscard]] QObject* root() const;
 
     [[nodiscard]] QString name() const;
     [[nodiscard]] QString filename() const;
@@ -67,7 +69,24 @@ public:
     void setError(const QString& error);
 
 private:
-    struct Private;
-    std::unique_ptr<PluginInfo::Private> p;
+    QString m_name;
+    QString m_filename;
+    QJsonObject m_metadata;
+    QString m_version;
+    QString m_vendor;
+    QString m_copyright;
+    QString m_license;
+    QString m_category;
+    QString m_description;
+    QString m_url;
+    bool m_isRequired{false};
+    bool m_isLoaded{false};
+    bool m_isDisabled{false};
+    Status m_status{Invalid};
+    QString m_error;
+
+    QObject* m_root{nullptr};
+    Plugin* m_plugin{nullptr};
+    QPluginLoader m_loader;
 };
 } // namespace Plugins

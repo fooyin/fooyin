@@ -30,7 +30,12 @@
 #include <core/player/playercontroller.h>
 #include <core/playlist/libraryplaylistmanager.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/plugins/databaseplugin.h>
+#include <core/plugins/plugincontext.h>
 #include <core/plugins/pluginmanager.h>
+#include <core/plugins/settingsplugin.h>
+#include <core/plugins/threadplugin.h>
+#include <core/plugins/widgetplugin.h>
 #include <gui/controls/controlwidget.h>
 #include <gui/editablelayout.h>
 #include <gui/guisettings.h>
@@ -51,7 +56,7 @@ struct Application::Private
     Core::SettingsManager* settingsManager;
     std::unique_ptr<Core::Settings::CoreSettings> coreSettings;
     Core::ThreadManager* threadManager;
-    Core::DB::Database* db;
+    Core::DB::Database* database;
     Core::Player::PlayerManager* playerManager;
     Core::Engine::EngineHandler engine;
     Core::Playlist::PlaylistHandler* playlistHandler;
@@ -67,13 +72,17 @@ struct Application::Private
     Gui::MainWindow* mainWindow;
 
     Plugins::PluginManager* pluginManager;
+    WidgetPluginContext widgetContext;
+    ThreadPluginContext threadContext;
+    DatabasePluginContext databaseContext;
+    SettingsPluginContext settingsContext;
 
     explicit Private(QObject* parent)
         : actionManager(new Core::ActionManager(parent))
         , settingsManager(new Core::SettingsManager(parent))
         , coreSettings(std::make_unique<Core::Settings::CoreSettings>())
         , threadManager(new Core::ThreadManager(parent))
-        , db(Core::DB::Database::instance())
+        , database(Core::DB::Database::instance())
         , playerManager(new Core::Player::PlayerController(parent))
         , engine(playerManager)
         , playlistHandler(new Core::Playlist::PlaylistHandler(playerManager, parent))
@@ -88,6 +97,11 @@ struct Application::Private
         , editableLayout{new Gui::Widgets::EditableLayout(settingsManager, actionManager, widgetFactory.get(),
                                                           widgetProvider.get())}
         , mainWindow{new Gui::MainWindow(actionManager, settingsManager, settingsDialog, editableLayout)}
+        , pluginManager{Plugins::PluginManager::instance()}
+        , widgetContext{actionManager, playerManager, library, widgetFactory.get()}
+        , threadContext{threadManager}
+        , databaseContext{database}
+        , settingsContext{settingsManager, settingsDialog}
     {
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
         threadManager->moveToNewThread(&engine);
@@ -96,10 +110,10 @@ struct Application::Private
         setupConnections();
         registerWidgets();
 
-        pluginManager             = Plugins::PluginManager::instance();
         const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
         pluginManager->findPlugins(pluginsPath);
         pluginManager->loadPlugins();
+        initialisePlugins();
     }
 
     void setupConnections() const
@@ -134,6 +148,15 @@ struct Application::Private
         widgetFactory->registerClass<Gui::Widgets::HorizontalSplitterWidget>("Horiztonal", {"Splitter"});
         widgetFactory->registerClass<Gui::Widgets::StatusWidget>("Status");
     }
+
+    void initialisePlugins()
+    {
+        pluginManager->initialisePlugins();
+        pluginManager->initialisePlugins<Plugins::WidgetPlugin>(widgetContext);
+        pluginManager->initialisePlugins<Plugins::SettingsPlugin>(settingsContext);
+        pluginManager->initialisePlugins<Plugins::ThreadPlugin>(threadContext);
+        pluginManager->initialisePlugins<Plugins::DatabasePlugin>(databaseContext);
+    }
 };
 
 Application::Application(int& argc, char** argv, int flags)
@@ -166,9 +189,9 @@ void Application::shutdown()
     if(p->settingsManager) {
         p->settingsManager->storeSettings();
     }
-    if(p->db) {
-        p->db->cleanup();
-        p->db->closeDatabase();
-        p->db = nullptr;
+    if(p->database) {
+        p->database->cleanup();
+        p->database->closeDatabase();
+        p->database = nullptr;
     }
 }

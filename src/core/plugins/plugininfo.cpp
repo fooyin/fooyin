@@ -25,166 +25,148 @@
 #include <utility>
 
 namespace Plugins {
-struct PluginInfo::Private
+PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJsonObject& allMetadata)
+    : m_name{name}
+    , m_filename{filename}
+    , m_metadata{allMetadata.value("MetaData").toObject()}
+    , m_version{m_metadata.value("Version").toString()}
+    , m_vendor{m_metadata.value("Vendor").toString()}
+    , m_copyright{m_metadata.value("Copyright").toString()}
+    , m_license{m_metadata.value("License").toString()}
+    , m_category{m_metadata.value("Category").toString()}
+    , m_description{m_metadata.value("Description").toString()}
+    , m_url{m_metadata.value("Url").toString()}
 {
-    QString name;
-    QString filename;
-    QJsonObject metadata;
-    QString version;
-    QString vendor;
-    QString copyright;
-    QString license;
-    QString category;
-    QString description;
-    QString url;
-    bool isRequired{false};
-    bool isLoaded{false};
-    bool isDisabled{false};
-    Status status{Invalid};
-    QString error;
-
-    Plugin* plugin{nullptr};
-    QPluginLoader loader;
-
-    Private(QString name, QString filename, const QJsonObject& allMetaData)
-        : name{std::move(name)}
-        , filename{std::move(filename)}
-        , metadata{allMetaData.value("MetaData").toObject()}
-        , version{metadata.value("Version").toString()}
-        , vendor{metadata.value("Vendor").toString()}
-        , copyright{metadata.value("Copyright").toString()}
-        , license{metadata.value("License").toString()}
-        , category{metadata.value("Category").toString()}
-        , description{metadata.value("Description").toString()}
-        , url{metadata.value("Url").toString()}
-    { }
-};
-
-PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata)
-    : p{std::make_unique<Private>(name, filename, metadata)}
-{
-    p->loader.setFileName(filename);
+    m_loader.setFileName(filename);
 }
 
 PluginInfo::~PluginInfo() = default;
 
 void PluginInfo::load()
 {
-    if(p->loader.fileName().isEmpty()) {
+    if(m_loader.fileName().isEmpty()) {
         return;
     }
 
-    if(!p->loader.load()) {
-        p->error = QString("Plugin %1 couldn't be loaded (%2)").arg(p->name, p->error);
+    if(!m_loader.load()) {
+        m_error = QString("Plugin %1 couldn't be loaded (%2)").arg(m_name, m_error);
         return;
     }
 
-    p->plugin = qobject_cast<Plugin*>(p->loader.instance());
+    m_root   = m_loader.instance();
+    m_plugin = qobject_cast<Plugin*>(m_root);
 
-    if(!p->plugin) {
-        p->error = QString("Plugin %1 couldn't be loaded").arg(p->name);
+    if(!m_plugin) {
+        m_error = QString("Plugin %1 couldn't be loaded").arg(m_name);
         return;
     }
 
-    p->status   = Loaded;
-    p->isLoaded = true;
+    m_status   = Loaded;
+    m_isLoaded = true;
 }
 
 void PluginInfo::unload()
 {
-    if(!p->plugin) {
+    if(!m_plugin) {
         return;
     }
-    p->plugin->shutdown();
-    const bool deleted = p->loader.unload();
+    m_plugin->shutdown();
+    const bool deleted = m_loader.unload();
     if(!deleted) {
-        delete p->plugin;
+        delete m_plugin;
     }
 }
 
 void PluginInfo::initialise()
 {
-    p->plugin->initialise();
-    p->status = Initialised;
+    if(isLoaded()) {
+        m_plugin->initialise();
+        m_status = Initialised;
+    }
 }
 
 Plugin* PluginInfo::plugin() const
 {
-    return p->plugin;
+    return m_plugin;
+}
+
+QObject* PluginInfo::root() const
+{
+    return m_root;
 }
 
 QString PluginInfo::name() const
 {
-    return p->name;
+    return m_name;
 }
 
 QString PluginInfo::filename() const
 {
-    return p->filename;
+    return m_filename;
 }
 
 QJsonObject PluginInfo::metadata() const
 {
-    return p->metadata;
+    return m_metadata;
 }
 
 bool PluginInfo::isLoaded() const
 {
-    return p->isLoaded;
+    return m_isLoaded;
 }
 
 bool PluginInfo::isDisabled() const
 {
-    return p->isDisabled;
+    return m_isDisabled;
 }
 
 PluginInfo::Status PluginInfo::status() const
 {
-    return p->status;
+    return m_status;
 }
 
 QString PluginInfo::error() const
 {
-    return p->error;
+    return m_error;
 }
 
 bool PluginInfo::hasError() const
 {
-    return !p->error.isEmpty();
+    return !m_error.isEmpty();
 }
 
 void PluginInfo::setError(const QString& error)
 {
-    p->error = error;
+    m_error = error;
 }
 
 QString PluginInfo::version() const
 {
-    return p->version;
+    return m_version;
 }
 
 QString PluginInfo::identifier() const
 {
-    return (p->vendor + "." + p->name).toLower();
+    return (m_vendor + "." + m_name).toLower();
 }
 
 QString PluginInfo::category() const
 {
-    return p->category;
+    return m_category;
 }
 
 QString PluginInfo::copyright() const
 {
-    return p->copyright;
+    return m_copyright;
 }
 
 QString PluginInfo::description() const
 {
-    return p->description;
+    return m_description;
 }
 
 QString PluginInfo::url() const
 {
-    return p->url;
+    return m_url;
 }
 } // namespace Plugins

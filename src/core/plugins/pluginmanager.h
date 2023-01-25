@@ -43,8 +43,19 @@ public:
 
     void findPlugins(const QString& pluginDir);
     void loadPlugins();
-    static void loadPlugin(PluginInfo* plugin);
-    static void initialisePlugin(PluginInfo* plugin);
+    void initialisePlugins();
+
+    template <typename T, typename Context>
+    void initialisePlugins(Context context)
+    {
+        for(const auto& [name, plugin] : m_plugins) {
+            if(const auto& pluginInstance = qobject_cast<T*>(plugin->root())) {
+                pluginInstance->initialise(context);
+            }
+        }
+    }
+
+    void loadPlugin(PluginInfo* plugin);
     void unloadPlugins();
 
     void shutdown();
@@ -53,8 +64,9 @@ private:
     PluginManager();
     ~PluginManager() override;
 
-    struct Private;
-    std::unique_ptr<PluginManager::Private> p;
+    mutable QReadWriteLock m_objectLock;
+    QList<QObject*> m_objectList;
+    std::unordered_map<QString, PluginInfo*> m_plugins;
 };
 
 inline void addObject(QObject* object)
