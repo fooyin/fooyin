@@ -1,4 +1,4 @@
-# <a href="https://www.ludouzi.com/fooyin"><img src="data/images/logo.svg" width=15%></a>
+# <a href="https://www.ludouzi.com/fooyin"><img src="data/images/logo.svg" width=17%></a>
 
 
 Fooyin is a customisable music player for linux. It has not yet reached a stable release so bugs and breaking changes should be expected.
