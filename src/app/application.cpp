@@ -93,8 +93,7 @@ struct Application::Private
         , library{new Core::Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, database,
                                                   settingsManager, parent)}
         , widgetFactory{std::make_unique<Gui::Widgets::WidgetFactory>()}
-        , widgetProvider{std::make_unique<Gui::Widgets::WidgetProvider>(widgetFactory.get(), actionManager,
-                                                                        settingsManager)}
+        , widgetProvider{std::make_unique<Gui::Widgets::WidgetProvider>(widgetFactory.get())}
         , guiSettings{std::make_unique<Gui::Settings::GuiSettings>(settingsManager)}
         , settingsDialog{new Gui::Settings::SettingsDialog(libraryManager, settingsManager)}
         , editableLayout{new Gui::Widgets::EditableLayout(settingsManager, actionManager, widgetFactory.get(),
@@ -150,14 +149,14 @@ struct Application::Private
         });
 
         widgetFactory->registerClass<Gui::Widgets::VerticalSplitterWidget>(
-            "Vertical",
+            "Vertical Splitter",
             [this]() {
                 return new Gui::Widgets::VerticalSplitterWidget(actionManager, widgetProvider.get(), settingsManager);
             },
             {"Splitter"});
 
         widgetFactory->registerClass<Gui::Widgets::HorizontalSplitterWidget>(
-            "Horiztonal",
+            "Horizontal Splitter",
             [this]() {
                 return new Gui::Widgets::HorizontalSplitterWidget(actionManager, widgetProvider.get(), settingsManager);
             },
@@ -201,7 +200,10 @@ void Application::startup()
     p->mainWindow->show();
 }
 
-Application::~Application() = default;
+Application::~Application()
+{
+    shutdown();
+};
 
 void Application::shutdown()
 {

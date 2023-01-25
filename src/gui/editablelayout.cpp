@@ -129,7 +129,8 @@ void EditableLayout::initialise()
 
     const bool loaded = loadLayout();
     if(!loaded) {
-        p->splitter = p->widgetProvider->createSplitter(Qt::Vertical, this);
+        p->splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget("Vertical Splitter"));
+        p->splitter->setParent(this);
         p->box->addWidget(p->splitter);
     }
     if(!p->splitter->hasChildren()) {
@@ -258,12 +259,11 @@ void EditableLayout::changeLayout(const QByteArray& layout)
 void EditableLayout::saveLayout()
 {
     QJsonObject root;
-    QJsonObject object;
     QJsonArray array;
 
-    p->splitter->saveSplitter(object, array);
+    p->splitter->saveLayout(array);
 
-    root["Layout"] = object;
+    root["Layout"] = array;
 
     const auto json = QJsonDocument(root).toJson(QJsonDocument::Compact).toBase64();
 
@@ -275,22 +275,22 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
     const QJsonDocument jsonDoc = QJsonDocument::fromJson(layout);
     if(!jsonDoc.isNull() && !jsonDoc.isEmpty()) {
         QJsonObject json = jsonDoc.object();
-        if(json.contains("Layout") && json["Layout"].isObject()) {
-            QJsonObject object = json["Layout"].toObject();
-            if(object.contains("Splitter") && object["Splitter"].isObject()) {
-                QJsonObject splitterObject = object["Splitter"].toObject();
-
-                auto type = Utils::EnumHelper::fromString<Qt::Orientation>(splitterObject["Type"].toString());
-                const QJsonArray splitterChildren = splitterObject["Children"].toArray();
-                auto state                        = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
-
-                p->splitter = p->widgetProvider->createSplitter(type, this);
-                p->box->addWidget(p->splitter);
-
-                p->splitter->loadSplitter(splitterChildren, p->splitter);
-                p->splitter->restoreState(state);
+        if(json.contains("Layout") && json["Layout"].isArray()) {
+            auto layout = json["Layout"].toArray();
+            if(!layout.isEmpty() && layout.size() == 1) {
+                const auto first = layout.constBegin();
+                auto widget      = first->toObject();
+                if(!widget.isEmpty()) {
+                    const auto name = widget.constBegin().key();
+                    if(auto* splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget(name))) {
+                        p->splitter  = splitter;
+                        auto options = widget.value(name).toObject();
+                        p->splitter->loadLayout(options);
+                        p->box->addWidget(p->splitter);
+                        return true;
+                    }
+                }
             }
-            return true;
         }
     }
     return false;

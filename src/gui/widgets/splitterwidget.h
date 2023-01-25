@@ -64,9 +64,8 @@ public:
 
     [[nodiscard]] QString name() const override;
     void layoutEditingMenu(Core::ActionContainer* menu) override;
-
-    void saveSplitter(QJsonObject& object, QJsonArray& splitterArray);
-    void loadSplitter(const QJsonArray& array, SplitterWidget* splitter);
+    void saveLayout(QJsonArray& array) override;
+    void loadLayout(QJsonObject& object) override;
 
 private:
     Core::SettingsManager* m_settings;

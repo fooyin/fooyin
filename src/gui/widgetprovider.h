@@ -21,13 +21,7 @@
 
 #include <QObject>
 
-namespace Core {
-class ActionManager;
-class SettingsManager;
-} // namespace Core
-
 namespace Gui::Widgets {
-class SplitterWidget;
 class FyWidget;
 class WidgetFactory;
 
@@ -36,16 +30,12 @@ class WidgetProvider : public QObject
     Q_OBJECT
 
 public:
-    explicit WidgetProvider(Widgets::WidgetFactory* widgetFactory, Core::ActionManager* actionManager,
-                            Core::SettingsManager* settings, QObject* parent = nullptr);
+    explicit WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent = nullptr);
     ~WidgetProvider() override;
 
     FyWidget* createWidget(const QString& widget);
-    SplitterWidget* createSplitter(Qt::Orientation type, QWidget* parent);
 
 private:
     Widgets::WidgetFactory* m_widgetFactory;
-    Core::ActionManager* m_actionManager;
-    Core::SettingsManager* m_settings;
 };
 } // namespace Gui::Widgets
