@@ -22,14 +22,22 @@
 #include <gui/fywidget.h>
 
 class Splitter;
+class QHBoxLayout;
+class QLineEdit;
+
+namespace Core {
+class SettingsManager;
+}
 
 namespace Filters {
+class FilterManager;
+
 class SearchWidget : public Gui::Widgets::FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit SearchWidget(QWidget* parent = nullptr);
+    explicit SearchWidget(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~SearchWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -45,9 +53,12 @@ protected:
     void searchBoxContextMenu(bool editing);
 
 private:
-    struct Private;
-    std::unique_ptr<SearchWidget::Private> p;
-
     void textChanged(const QString& text);
+
+    Core::SettingsManager* m_settings;
+    FilterManager* m_manager;
+    QHBoxLayout* m_layout;
+    QLineEdit* m_searchBox;
+    QString m_defaultText;
 };
 } // namespace Filters

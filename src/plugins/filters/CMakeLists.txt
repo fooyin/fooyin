@@ -1,15 +1,12 @@
 fooyin_add_plugin(Filters
     TYPE SHARED
-    PLUGIN_DEPENDS
-        Core
-        Gui
     DEPENDS
         Qt6::Core
         Qt6::Widgets
         Qt6::Sql
-        FooyinVersion
-        PluginSystem
-        Utils
+        Fooyin_Core
+        Fooyin_Gui
+        Fooyin_Utils
     SOURCES
         constants.h
         filtersplugin.h

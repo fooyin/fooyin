@@ -23,7 +23,7 @@
 
 #include <core/app/threadmanager.h>
 #include <core/library/musiclibrary.h>
-#include <pluginsystem/pluginmanager.h>
+#include <core/plugins/pluginmanager.h>
 #include <utils/helpers.h>
 
 #include <utility>
@@ -31,25 +31,29 @@
 namespace Filters {
 struct FilterManager::Private
 {
-    FilterDatabaseManager databaseManager;
     Core::ThreadManager* threadManager;
     Core::Library::MusicLibrary* library;
+
+    FilterDatabaseManager databaseManager;
+
     Core::TrackPtrList filteredTracks;
     LibraryFilters filters;
     ActiveFilters activeFilters;
     QString searchFilter;
 
-    Private()
-        : threadManager{PluginSystem::object<Core::ThreadManager>()}
-        , library{PluginSystem::object<Core::Library::MusicLibrary>()}
+    Private(Core::ThreadManager* threadManager, Core::DB::Database* database, Core::Library::MusicLibrary* library)
+        : threadManager{threadManager}
+        , library{library}
+        , databaseManager{database}
     {
         threadManager->moveToNewThread(&databaseManager);
     }
 };
 
-FilterManager::FilterManager(QObject* parent)
+FilterManager::FilterManager(Core::ThreadManager* threadManager, Core::DB::Database* database,
+                             Core::Library::MusicLibrary* library, QObject* parent)
     : MusicLibraryInteractor{parent}
-    , p{std::make_unique<Private>()}
+    , p{std::make_unique<Private>(threadManager, database, library)}
 {
     connect(this, &FilterManager::loadAllItems, &p->databaseManager, &FilterDatabaseManager::getAllItems);
     connect(this, &FilterManager::loadItemsByFilter, &p->databaseManager, &FilterDatabaseManager::getItemsByFilter);

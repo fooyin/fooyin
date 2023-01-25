@@ -12,7 +12,7 @@ set(FOOYIN_BINARY_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_BINARY_DIR})
 set(FOOYIN_LIBRARY_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_LIBRARY_DIR})
 set(FOOYIN_PLUGIN_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_PLUGIN_DIR})
 
-macro(fooyin_add_library library_name)
+macro(fooyin_add_library name)
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTORCC ON)
@@ -22,10 +22,16 @@ macro(fooyin_add_library library_name)
 
   cmake_parse_arguments(library
     ""
-    "TYPE"
+    "TYPE;PREFIX"
     "SOURCES;DEPENDS"
     ${ARGN}
   )
+
+  set(library_name ${name})
+
+  if(library_PREFIX)
+    set(library_name "Fooyin_${library_name}")
+  endif()
 
   add_library(${library_name} ${library_TYPE} ${library_SOURCES})
   target_link_libraries(${library_name} PRIVATE ${library_DEPENDS})

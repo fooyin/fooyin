@@ -54,7 +54,8 @@ class FilterWidget : public Gui::Widgets::FyWidget
     Q_OBJECT
 
 public:
-    explicit FilterWidget(FilterType type = FilterType::AlbumArtist, QWidget* parent = nullptr);
+    explicit FilterWidget(FilterManager* manager, Core::SettingsManager* settings,
+                          FilterType type = FilterType::AlbumArtist, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();
@@ -107,8 +108,8 @@ private:
 class GenreFilter : public FilterWidget
 {
 public:
-    explicit GenreFilter(QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::Genre, parent)
+    explicit GenreFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
+        : FilterWidget(manager, settings, Filters::FilterType::Genre, parent)
     { }
     ~GenreFilter() override = default;
 };
@@ -116,8 +117,8 @@ public:
 class YearFilter : public FilterWidget
 {
 public:
-    explicit YearFilter(QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::Year, parent)
+    explicit YearFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
+        : FilterWidget(manager, settings, Filters::FilterType::Year, parent)
     { }
     ~YearFilter() override = default;
 };
@@ -125,8 +126,8 @@ public:
 class AlbumArtistFilter : public FilterWidget
 {
 public:
-    explicit AlbumArtistFilter(QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::AlbumArtist, parent)
+    explicit AlbumArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
+        : FilterWidget(manager, settings, Filters::FilterType::AlbumArtist, parent)
     { }
     ~AlbumArtistFilter() override = default;
 };
@@ -134,8 +135,8 @@ public:
 class ArtistFilter : public FilterWidget
 {
 public:
-    explicit ArtistFilter(QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::Artist, parent)
+    explicit ArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
+        : FilterWidget(manager, settings, Filters::FilterType::Artist, parent)
     { }
     ~ArtistFilter() override = default;
 };
@@ -143,8 +144,8 @@ public:
 class AlbumFilter : public FilterWidget
 {
 public:
-    explicit AlbumFilter(QWidget* parent = nullptr)
-        : FilterWidget(Filters::FilterType::Album, parent)
+    explicit AlbumFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
+        : FilterWidget(manager, settings, Filters::FilterType::Album, parent)
     { }
     ~AlbumFilter() override = default;
 };
