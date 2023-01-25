@@ -26,24 +26,20 @@
 namespace Gui::Widgets {
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle(type, parent)
-    , m_settings(Plugins::object<Core::SettingsManager>())
-    , m_showHandle(m_settings->value<Settings::SplitterHandles>())
-{
-    m_settings->subscribe<Settings::SplitterHandles>(this, &SplitterHandle::showHandle);
-}
+{ }
 
 SplitterHandle::~SplitterHandle() = default;
+
+void SplitterHandle::showHandle(bool show)
+{
+    m_showHandle = show;
+    update();
+}
 
 void SplitterHandle::paintEvent(QPaintEvent* e)
 {
     if(m_showHandle) {
         return QSplitterHandle::paintEvent(e);
     }
-}
-
-void SplitterHandle::showHandle(bool show)
-{
-    m_showHandle = show;
-    update();
 }
 } // namespace Gui::Widgets

@@ -38,10 +38,10 @@ bool checkNewPath(const QString& path, const QMap<int, LibraryInfo>& libraries, 
     });
 }
 
-LibraryManager::LibraryManager(QObject* parent)
-    : QObject(parent)
-    , m_database(DB::Database::instance())
-    , m_libraryConnector(m_database->libraryConnector())
+LibraryManager::LibraryManager(DB::Database* database, QObject* parent)
+    : QObject{parent}
+    , m_database{database}
+    , m_libraryConnector{m_database->libraryConnector()}
 {
     reset();
 }

@@ -38,7 +38,7 @@ Q_ENUM_NS(Core)
 class CoreSettings
 {
 public:
-    CoreSettings();
+    CoreSettings(SettingsManager* settingsManager);
     ~CoreSettings();
 
 private:

@@ -39,6 +39,7 @@ target_link_libraries(${PROJECT_NAME}
    ${LIBMPV_LIBRARIES}
    Fooyin_Core
    Fooyin_Gui
+   Fooyin_Utils
    #${SDL2_LIBRARIES}
    #${FFMPEG_LIBRARIES}
 )

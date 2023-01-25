@@ -25,14 +25,21 @@
 
 class QDir;
 
-namespace Core::Library {
+namespace Core {
+
+namespace DB {
+class Database;
+}
+
+namespace Library {
 class LibraryManager;
+
 class LibraryScanner : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit LibraryScanner(LibraryManager* libraryManager, QObject* parent = nullptr);
+    explicit LibraryScanner(LibraryManager* libraryManager, DB::Database* database, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
     void stopThread() override;
@@ -53,5 +60,7 @@ protected:
 
 private:
     LibraryManager* m_libraryManager;
+    DB::Database* m_database;
 };
-} // namespace Core::Library
+} // namespace Library
+} // namespace Core

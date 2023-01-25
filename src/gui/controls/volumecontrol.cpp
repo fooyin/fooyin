@@ -28,64 +28,52 @@
 #include <QHBoxLayout>
 
 namespace Gui::Widgets {
-struct VolumeControl::Private
-{
-    QHBoxLayout* layout;
-
-    ComboIcon* volumeIcon;
-
-    Slider* volumeSlider;
-    QHBoxLayout* volumeLayout;
-    HoverMenu* volumeMenu;
-
-    QSize labelSize{20, 20};
-    int prevValue{0};
-};
-
 VolumeControl::VolumeControl(QWidget* parent)
-    : QWidget(parent)
-    , p(std::make_unique<Private>())
+    : QWidget{parent}
+    , m_layout{new QHBoxLayout(this)}
+    , m_volumeMenu{new HoverMenu(this)}
+    , m_volumeLayout{new QHBoxLayout()}
+    , m_volumeIcon{new ComboIcon(Core::Constants::Icons::VolumeMute, this)}
+    , m_volumeSlider{new Slider(Qt::Vertical, this)}
+    , m_labelSize{20, 20}
+    , m_prevValue{0}
 {
+    m_volumeMenu->setLayout(m_volumeLayout);
+
     setupUi();
 
-    connect(p->volumeSlider, &QSlider::valueChanged, this, &VolumeControl::updateVolume);
-    connect(p->volumeIcon, &ComboIcon::entered, this, &VolumeControl::showVolumeMenu);
-    connect(p->volumeIcon, &ComboIcon::clicked, this, &VolumeControl::mute);
+    connect(m_volumeSlider, &QSlider::valueChanged, this, &VolumeControl::updateVolume);
+    connect(m_volumeIcon, &ComboIcon::entered, this, &VolumeControl::showVolumeMenu);
+    connect(m_volumeIcon, &ComboIcon::clicked, this, &VolumeControl::mute);
 }
 
 VolumeControl::~VolumeControl()
 {
-    delete p->volumeMenu;
+    delete m_volumeMenu;
 }
 
 void VolumeControl::setupUi()
 {
-    p->layout = new QHBoxLayout(this);
-    p->layout->setContentsMargins(0, 0, 5, 0);
-    p->layout->setSizeConstraint(QLayout::SetFixedSize);
+    m_layout->setContentsMargins(0, 0, 5, 0);
+    m_layout->setSizeConstraint(QLayout::SetFixedSize);
 
-    p->layout->setSpacing(10);
+    m_layout->setSpacing(10);
 
-    p->volumeMenu   = new HoverMenu(this);
-    p->volumeLayout = new QHBoxLayout(p->volumeMenu);
+    m_volumeIcon->addPixmap(Core::Constants::Icons::VolumeMin);
+    m_volumeIcon->addPixmap(Core::Constants::Icons::VolumeLow);
+    m_volumeIcon->addPixmap(Core::Constants::Icons::VolumeMed);
+    m_volumeIcon->addPixmap(Core::Constants::Icons::VolumeMax);
 
-    p->volumeIcon = new ComboIcon(Core::Constants::Icons::VolumeMute, this);
-    p->volumeIcon->addPixmap(Core::Constants::Icons::VolumeMin);
-    p->volumeIcon->addPixmap(Core::Constants::Icons::VolumeLow);
-    p->volumeIcon->addPixmap(Core::Constants::Icons::VolumeMed);
-    p->volumeIcon->addPixmap(Core::Constants::Icons::VolumeMax);
+    m_volumeLayout->addWidget(m_volumeSlider);
 
-    p->volumeSlider = new Slider(Qt::Vertical, this);
-    p->volumeLayout->addWidget(p->volumeSlider);
+    m_layout->addWidget(m_volumeIcon, 0, Qt::AlignRight | Qt::AlignVCenter);
 
-    p->layout->addWidget(p->volumeIcon, 0, Qt::AlignRight | Qt::AlignVCenter);
+    m_volumeSlider->setMaximum(100);
+    m_volumeSlider->setValue(100);
 
-    p->volumeSlider->setMaximum(100);
-    p->volumeSlider->setValue(100);
+    m_volumeIcon->setMaximumSize(m_labelSize);
 
-    p->volumeIcon->setMaximumSize(p->labelSize);
-
-    p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMax);
+    m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMax);
 }
 
 void VolumeControl::updateVolume(double value)
@@ -94,37 +82,37 @@ void VolumeControl::updateVolume(double value)
     emit volumeChanged(vol);
 
     if(vol <= 100 && vol >= 75) {
-        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMax);
+        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMax);
     }
     else if(vol < 75 && vol >= 50) {
-        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMed);
+        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMed);
     }
     else if(vol < 50 && vol >= 25) {
-        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeLow);
+        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeLow);
     }
     else if(vol < 25 && vol >= 1) {
-        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMin);
+        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMin);
     }
     else {
-        p->volumeIcon->setIcon(Core::Constants::Icons::VolumeMute);
+        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMute);
     }
 }
 
 void VolumeControl::mute()
 {
-    if(p->volumeSlider->value() != 0) {
-        p->prevValue = p->volumeSlider->value();
-        p->volumeSlider->setValue(0);
+    if(m_volumeSlider->value() != 0) {
+        m_prevValue = m_volumeSlider->value();
+        m_volumeSlider->setValue(0);
         return updateVolume(0);
     }
-    p->volumeSlider->setValue(p->prevValue);
-    return updateVolume(p->prevValue);
+    m_volumeSlider->setValue(m_prevValue);
+    return updateVolume(m_prevValue);
 }
 
 void VolumeControl::showVolumeMenu()
 {
-    const int menuWidth  = p->volumeMenu->sizeHint().width();
-    const int menuHeight = p->volumeMenu->sizeHint().height();
+    const int menuWidth  = m_volumeMenu->sizeHint().width();
+    const int menuHeight = m_volumeMenu->sizeHint().height();
 
     const int yPosToWindow = this->parentWidget()->mapToParent(QPoint(0, 0)).y();
 
@@ -135,7 +123,7 @@ void VolumeControl::showVolumeMenu()
     const int y = displayAbove ? (!this->height() - menuHeight - 10) : (this->height() + 10);
 
     const QPoint pos(mapToGlobal(QPoint(x, y)));
-    p->volumeMenu->move(pos);
-    p->volumeMenu->show();
+    m_volumeMenu->move(pos);
+    m_volumeMenu->show();
 }
 } // namespace Gui::Widgets

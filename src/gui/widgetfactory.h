@@ -30,8 +30,7 @@ class WidgetFactory : public QObject
 {
     Q_OBJECT
 
-public:
-    using Instantiator = FyWidget* (*)();
+    using Instantiator = std::function<FyWidget*()>;
 
     struct FactoryWidget
     {
@@ -41,20 +40,14 @@ public:
     };
 
 protected:
-    template <typename U>
-    static FyWidget* createInstance()
-    {
-        return new U();
-    }
     using FactoryWidgets = std::map<QString, FactoryWidget>;
-
     FactoryWidgets widgets;
 
 public:
-    template <typename U>
-    bool registerClass(const QString& name, const QStringList& subMenus = {})
+    template <typename T, typename Factory>
+    bool registerClass(const QString& name, Factory factory, const QStringList& subMenus = {})
     {
-        static_assert(std::is_base_of<FyWidget, U>::value, "Class must derive from the factory's base class");
+        static_assert(std::is_base_of<FyWidget, T>::value, "Class must derive from the factory's base class");
 
         if(widgets.count(name)) {
             qDebug() << ("Subclass already registered");
@@ -63,7 +56,7 @@ public:
 
         FactoryWidget fw;
         fw.name         = name;
-        fw.instantiator = &createInstance<U>;
+        fw.instantiator = factory;
         fw.subMenus     = subMenus;
 
         widgets.emplace(name, fw);

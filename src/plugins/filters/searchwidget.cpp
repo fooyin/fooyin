@@ -30,32 +30,19 @@
 #include <QMenu>
 
 namespace Filters {
-struct SearchWidget::Private
-{
-    Core::SettingsManager* settings;
-    QHBoxLayout* layout;
-    QLineEdit* searchBox;
-    QString defaultText = "Search library...";
-
-    FilterManager* manager;
-
-    explicit Private()
-        : settings(Plugins::object<Core::SettingsManager>())
-        , manager(Plugins::object<FilterManager>())
-    { }
-};
-
-SearchWidget::SearchWidget(QWidget* parent)
-    : FyWidget(parent)
-    , p(std::make_unique<Private>())
+SearchWidget::SearchWidget(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+    : FyWidget{parent}
+    , m_manager{manager}
+    , m_settings{settings}
+    , m_defaultText{"Search library..."}
 {
     setObjectName("Search Bar");
 
     setupUi();
 
-    p->settings->subscribe<Gui::Settings::LayoutEditing>(this, &SearchWidget::searchBoxContextMenu);
-    connect(p->searchBox, &QLineEdit::textChanged, this, &SearchWidget::textChanged);
-    connect(this, &SearchWidget::searchChanged, p->manager, &FilterManager::searchChanged);
+    m_settings->subscribe<Gui::Settings::LayoutEditing>(this, &SearchWidget::searchBoxContextMenu);
+    connect(m_searchBox, &QLineEdit::textChanged, this, &SearchWidget::textChanged);
+    connect(this, &SearchWidget::searchChanged, m_manager, &FilterManager::searchChanged);
 }
 
 QString SearchWidget::name() const
@@ -67,28 +54,28 @@ SearchWidget::~SearchWidget() = default;
 
 void SearchWidget::setupUi()
 {
-    p->layout = new QHBoxLayout(this);
-    p->layout->setContentsMargins(0, 0, 0, 0);
+    m_layout = new QHBoxLayout(this);
+    m_layout->setContentsMargins(0, 0, 0, 0);
 
-    p->searchBox = new QLineEdit(this);
-    p->searchBox->setPlaceholderText(p->defaultText);
-    p->searchBox->setClearButtonEnabled(true);
-    searchBoxContextMenu(p->settings->value<Gui::Settings::LayoutEditing>());
+    m_searchBox = new QLineEdit(this);
+    m_searchBox->setPlaceholderText(m_defaultText);
+    m_searchBox->setClearButtonEnabled(true);
+    searchBoxContextMenu(m_settings->value<Gui::Settings::LayoutEditing>());
 
-    p->layout->addWidget(p->searchBox);
+    m_layout->addWidget(m_searchBox);
 }
 
 void SearchWidget::keyPressEvent(QKeyEvent* e)
 {
     const auto key = e->key();
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        if(p->manager->tracksHaveFiltered()) {
-            // return p->library->prepareTracks();
+        if(m_manager->tracksHaveFiltered()) {
+            // return m_library->prepareTracks();
         }
     }
-    // p->searchBox->setFocusPolicy(Qt::StrongFocus);
-    p->searchBox->setFocus();
-    p->searchBox->setText(e->text());
+    // m_searchBox->setFocusPolicy(Qt::StrongFocus);
+    m_searchBox->setFocus();
+    m_searchBox->setText(e->text());
     QWidget::keyPressEvent(e);
 }
 
@@ -100,10 +87,10 @@ void SearchWidget::contextMenuEvent(QContextMenuEvent* event)
 void SearchWidget::searchBoxContextMenu(bool editing)
 {
     if(!editing) {
-        p->searchBox->setContextMenuPolicy(Qt::DefaultContextMenu);
+        m_searchBox->setContextMenuPolicy(Qt::DefaultContextMenu);
     }
     else {
-        p->searchBox->setContextMenuPolicy(Qt::NoContextMenu);
+        m_searchBox->setContextMenuPolicy(Qt::NoContextMenu);
     }
 }
 

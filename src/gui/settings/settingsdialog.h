@@ -22,10 +22,16 @@
 #include <QDialog>
 
 class QListWidgetItem;
+class QListWidget;
+class QStackedWidget;
 
-namespace Core::Library {
+namespace Core {
+class SettingsManager;
+
+namespace Library {
 class LibraryManager;
 }
+} // namespace Core
 
 namespace Gui::Settings {
 class SettingsDialog : public QDialog
@@ -42,16 +48,22 @@ public:
         Playlist
     };
 
-    explicit SettingsDialog(Core::Library::LibraryManager* libManager, QWidget* parent = nullptr);
+    explicit SettingsDialog(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings,
+                            QWidget* parent = nullptr);
     ~SettingsDialog() override;
 
     void setupUi();
+
+    void createIcons() const;
 
     void changePage(QListWidgetItem* current, QListWidgetItem* previous);
     void openPage(Page page);
 
 private:
-    struct Private;
-    std::unique_ptr<SettingsDialog::Private> p;
+    Core::Library::LibraryManager* m_libraryManager;
+    Core::SettingsManager* m_settings;
+
+    QListWidget* m_contentsWidget;
+    QStackedWidget* m_pagesWidget;
 };
 } // namespace Gui::Settings

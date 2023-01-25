@@ -29,6 +29,10 @@
 namespace Core {
 class ThreadManager;
 
+namespace DB {
+class Database;
+}
+
 namespace Library {
 class MusicLibrary;
 } // namespace Library
@@ -43,7 +47,8 @@ class FilterManager : public Core::Library::MusicLibraryInteractor
     Q_OBJECT
 
 public:
-    explicit FilterManager(QObject* parent = nullptr);
+    explicit FilterManager(Core::ThreadManager* threadManager, Core::DB::Database* database,
+                           Core::Library::MusicLibrary* library, QObject* parent = nullptr);
     ~FilterManager() override;
 
     [[nodiscard]] Core::TrackPtrList tracks() const override;

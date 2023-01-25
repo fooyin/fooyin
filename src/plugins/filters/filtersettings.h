@@ -34,7 +34,7 @@ Q_ENUM_NS(Filters)
 class FiltersSettings
 {
 public:
-    FiltersSettings();
+    FiltersSettings(Core::SettingsManager* settingsManager);
     ~FiltersSettings();
 
 private:

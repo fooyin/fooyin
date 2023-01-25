@@ -21,15 +21,23 @@
 
 #include "module.h"
 
+#include <utils/paths.h>
+
 class QSqlDatabase;
 
-namespace Core::DB {
+namespace Core {
+class SettingsManager;
+
+namespace DB {
 class LibraryDatabase;
 class Library;
+class Playlist;
+
 class Database : public Module
 {
 public:
-    Database(const QString& directory, const QString& filename);
+    explicit Database(Core::SettingsManager* settings, const QString& directory = Utils::sharePath(),
+                      const QString& filename = "fooyin.db");
     ~Database() override;
 
     virtual bool closeDatabase();
@@ -39,14 +47,12 @@ public:
     virtual void commit();
     virtual void rollback();
 
-    static Database* instance();
-
     LibraryDatabase* libraryDatabase();
     void deleteLibraryDatabase(int id);
 
     Library* libraryConnector();
 
-    static bool update();
+    bool update();
     bool cleanup();
 
 protected:
@@ -55,7 +61,13 @@ protected:
     bool checkInsertIndex(const QString& indexName, const QString& createString);
 
 private:
-    struct Private;
-    std::unique_ptr<Database::Private> p;
+    Core::SettingsManager* m_settings;
+
+    bool m_initialized;
+
+    std::unique_ptr<Library> m_libraryConnector;
+    std::unique_ptr<Playlist> m_playlistConnector;
+    std::unique_ptr<LibraryDatabase> m_libraryDatabase;
 };
-} // namespace Core::DB
+} // namespace DB
+} // namespace Core

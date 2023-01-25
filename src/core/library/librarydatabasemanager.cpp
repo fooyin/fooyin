@@ -24,14 +24,15 @@
 #include "core/tagging/tags.h"
 
 namespace Core::Library {
-LibraryDatabaseManager::LibraryDatabaseManager(QObject* parent)
-    : Worker(parent)
-    , m_libraryDatabase(DB::Database::instance()->libraryDatabase())
+LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, QObject* parent)
+    : Worker{parent}
+    , m_database{database}
+    , m_libraryDatabase{m_database->libraryDatabase()}
 { }
 
 LibraryDatabaseManager::~LibraryDatabaseManager()
 {
-    DB::Database::instance()->closeDatabase();
+    m_database->closeDatabase();
 }
 
 void LibraryDatabaseManager::getAllTracks()

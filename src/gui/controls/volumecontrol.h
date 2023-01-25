@@ -21,7 +21,13 @@
 
 #include <QWidget>
 
+class QHBoxLayout;
+
 namespace Gui::Widgets {
+class ComboIcon;
+class Slider;
+class HoverMenu;
+
 class VolumeControl : public QWidget
 {
     Q_OBJECT
@@ -44,7 +50,12 @@ protected:
     void showVolumeMenu();
 
 private:
-    struct Private;
-    std::unique_ptr<VolumeControl::Private> p;
+    QHBoxLayout* m_layout;
+    ComboIcon* m_volumeIcon;
+    Slider* m_volumeSlider;
+    QHBoxLayout* m_volumeLayout;
+    HoverMenu* m_volumeMenu;
+    QSize m_labelSize;
+    int m_prevValue;
 };
 } // namespace Gui::Widgets

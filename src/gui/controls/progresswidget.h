@@ -23,17 +23,23 @@
 
 #include <QWidget>
 
+class QHBoxLayout;
+
 namespace Core {
 class Track;
-}
+class SettingsManager;
+} // namespace Core
 
 namespace Gui::Widgets {
+class Slider;
+class ClickableLabel;
+
 class ProgressWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ProgressWidget(QWidget* parent = nullptr);
+    explicit ProgressWidget(Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~ProgressWidget() override;
 
     void setupUi();
@@ -52,7 +58,12 @@ protected:
     void sliderDropped();
 
 private:
-    struct Private;
-    std::unique_ptr<ProgressWidget::Private> p;
+    Core::SettingsManager* m_settings;
+
+    QHBoxLayout* m_layout;
+    Slider* m_slider;
+    ClickableLabel* m_elapsed;
+    ClickableLabel* m_total;
+    int m_max;
 };
 } // namespace Gui::Widgets

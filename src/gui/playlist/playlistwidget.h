@@ -41,7 +41,12 @@ class MusicLibrary;
 } // namespace Library
 } // namespace Core
 
-namespace Gui::Widgets {
+namespace Gui {
+
+namespace Settings {
+class SettingsDialog;
+}
+namespace Widgets {
 class OverlayWidget;
 class PlaylistModel;
 class PlaylistView;
@@ -51,7 +56,9 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(QWidget* parent = nullptr);
+    explicit PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
+                            Core::Player::PlayerManager* playerManager, Settings::SettingsDialog* settingsDialog,
+                            Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     void setup();
@@ -85,14 +92,17 @@ protected:
     void findCurrent();
 
 private:
-    QHBoxLayout* m_layout;
     Core::Library::LibraryManager* m_libraryManager;
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
+    Settings::SettingsDialog* m_settingsDialog;
+    Core::SettingsManager* m_settings;
+
+    QHBoxLayout* m_layout;
     PlaylistModel* m_model;
     PlaylistView* m_playlist;
-    Core::SettingsManager* m_settings;
     bool m_altRowColours;
     OverlayWidget* m_noLibrary;
 };
-} // namespace Gui::Widgets
+} // namespace Widgets
+} // namespace Gui

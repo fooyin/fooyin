@@ -24,6 +24,7 @@
 #include <QObject>
 
 class QAction;
+class QMainWindow;
 
 namespace Core {
 class ActionContainer;
@@ -34,6 +35,8 @@ class ActionManager : public QObject
 public:
     explicit ActionManager(QObject* parent = nullptr);
     ~ActionManager() override;
+
+    void setMainWindow(QMainWindow* mainWindow);
 
     ActionContainer* createMenu(const Utils::Id& id);
     ActionContainer* createMenuBar(const Utils::Id& id);

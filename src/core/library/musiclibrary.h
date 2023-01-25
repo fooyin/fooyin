@@ -29,6 +29,10 @@ namespace Core {
 class ThreadManager;
 class SettingsManager;
 
+namespace DB {
+class Database;
+}
+
 namespace Playlist {
 class LibraryPlaylistInterface;
 }
@@ -43,7 +47,8 @@ class MusicLibrary : public QObject
 
 public:
     MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
-                 ThreadManager* threadManager, SettingsManager* settings, QObject* parent = nullptr);
+                 ThreadManager* threadManager, DB::Database* database, SettingsManager* settings,
+                 QObject* parent = nullptr);
     ~MusicLibrary() override;
 
     void load();

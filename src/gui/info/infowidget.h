@@ -39,7 +39,8 @@ namespace Gui::Widgets {
 class InfoWidget : public FyWidget
 {
 public:
-    explicit InfoWidget(QWidget* parent = nullptr);
+    explicit InfoWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+                        QWidget* parent = nullptr);
     ~InfoWidget() override;
 
     bool isHeaderHidden();
@@ -60,8 +61,8 @@ protected:
     static void refreshTrack(Core::Track* track);
 
 private:
-    Core::SettingsManager* m_settings;
     Core::Player::PlayerManager* m_playerManager;
+    Core::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
     InfoView m_view;

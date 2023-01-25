@@ -69,6 +69,7 @@ public:
 
 signals:
     void aboutToHide();
+    void registerSeperator(QAction* action, const Utils::Id& id);
 
 protected:
     virtual bool canBeAddedToContainer(ActionContainer* container) const = 0;

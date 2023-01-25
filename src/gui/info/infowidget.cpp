@@ -34,11 +34,11 @@
 #include <QTableWidget>
 
 namespace Gui::Widgets {
-InfoWidget::InfoWidget(QWidget* parent)
-    : FyWidget(parent)
-    , m_settings(Plugins::object<Core::SettingsManager>())
-    , m_playerManager(Plugins::object<Core::Player::PlayerManager>())
-    , m_layout(new QHBoxLayout(this))
+InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings, QWidget* parent)
+    : FyWidget{parent}
+    , m_playerManager{playerManager}
+    , m_settings{settings}
+    , m_layout{new QHBoxLayout(this)}
 {
     setObjectName("Info Panel");
     setupUi();

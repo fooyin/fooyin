@@ -23,9 +23,11 @@
 
 #include <QWidget>
 
-class QLabel;
+class QHBoxLayout;
 
 namespace Gui::Widgets {
+class ComboIcon;
+
 class PlayerControl : public QWidget
 {
     Q_OBJECT
@@ -45,7 +47,11 @@ signals:
     void nextClicked();
 
 private:
-    struct Private;
-    std::unique_ptr<PlayerControl::Private> p;
+    QHBoxLayout* m_layout;
+    ComboIcon* m_stop;
+    ComboIcon* m_prev;
+    ComboIcon* m_play;
+    ComboIcon* m_next;
+    QSize m_labelSize;
 };
 } // namespace Gui::Widgets

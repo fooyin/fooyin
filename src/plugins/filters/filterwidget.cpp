@@ -40,15 +40,16 @@
 #include <QMenu>
 
 namespace Filters {
-FilterWidget::FilterWidget(Filters::FilterType type, QWidget* parent)
-    : FyWidget(parent)
-    , m_layout(new QHBoxLayout(this))
-    , m_type(type)
-    , m_index(0)
-    , m_manager(Plugins::object<FilterManager>())
-    , m_filter(new FilterView(Plugins::object<Core::Player::PlayerManager>(), this))
-    , m_model(new FilterModel(m_type, m_index, m_filter))
-    , m_settings(Plugins::object<Core::SettingsManager>())
+FilterWidget::FilterWidget(FilterManager* manager, Core::SettingsManager* settings, Filters::FilterType type,
+                           QWidget* parent)
+    : FyWidget{parent}
+    , m_layout{new QHBoxLayout(this)}
+    , m_type{type}
+    , m_index{0}
+    , m_manager{manager}
+    , m_filter{new FilterView(this)}
+    , m_model{new FilterModel(m_type, m_index, m_filter)}
+    , m_settings{settings}
 {
     setObjectName(FilterWidget::name());
     m_layout->setContentsMargins(0, 0, 0, 0);

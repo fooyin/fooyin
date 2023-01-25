@@ -31,25 +31,29 @@
 namespace Filters {
 struct FilterManager::Private
 {
-    FilterDatabaseManager databaseManager;
     Core::ThreadManager* threadManager;
     Core::Library::MusicLibrary* library;
+
+    FilterDatabaseManager databaseManager;
+
     Core::TrackPtrList filteredTracks;
     LibraryFilters filters;
     ActiveFilters activeFilters;
     QString searchFilter;
 
-    Private()
-        : threadManager{Plugins::object<Core::ThreadManager>()}
-        , library{Plugins::object<Core::Library::MusicLibrary>()}
+    Private(Core::ThreadManager* threadManager, Core::DB::Database* database, Core::Library::MusicLibrary* library)
+        : threadManager{threadManager}
+        , library{library}
+        , databaseManager{database}
     {
         threadManager->moveToNewThread(&databaseManager);
     }
 };
 
-FilterManager::FilterManager(QObject* parent)
+FilterManager::FilterManager(Core::ThreadManager* threadManager, Core::DB::Database* database,
+                             Core::Library::MusicLibrary* library, QObject* parent)
     : MusicLibraryInteractor{parent}
-    , p{std::make_unique<Private>()}
+    , p{std::make_unique<Private>(threadManager, database, library)}
 {
     connect(this, &FilterManager::loadAllItems, &p->databaseManager, &FilterDatabaseManager::getAllItems);
     connect(this, &FilterManager::loadItemsByFilter, &p->databaseManager, &FilterDatabaseManager::getItemsByFilter);

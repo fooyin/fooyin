@@ -21,7 +21,6 @@
 
 #include "actionmanager.h"
 #include "core/constants.h"
-#include "core/plugins/pluginmanager.h"
 
 #include <QAction>
 #include <QMenu>
@@ -167,7 +166,7 @@ QAction* ActionContainer::addSeparator(const Utils::Id& group, QAction** outSepa
     auto* separator = new QAction(this);
     separator->setSeparator(true);
     const Utils::Id sepId = id().append(".Separator.").append(++separatorIdCount);
-    Plugins::object<ActionManager>()->registerAction(separator, sepId);
+    emit registerSeperator(separator, sepId);
     addAction(separator, group);
     if(outSeparator) {
         *outSeparator = separator;

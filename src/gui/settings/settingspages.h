@@ -24,6 +24,8 @@
 #include <QWidget>
 
 namespace Core {
+class SettingsManager;
+
 namespace Library {
 class LibraryManager;
 class LibraryInfo;
@@ -34,17 +36,19 @@ namespace Gui::Settings {
 class GeneralPage : public QWidget
 {
 public:
-    explicit GeneralPage(QWidget* parent = nullptr);
+    explicit GeneralPage(Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~GeneralPage() override;
 
 private:
+    Core::SettingsManager* m_settings;
     QComboBox m_deviceList;
 };
 
 class LibraryPage : public QWidget
 {
 public:
-    explicit LibraryPage(Core::Library::LibraryManager* libraryManager, QWidget* parent = nullptr);
+    explicit LibraryPage(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings,
+                         QWidget* parent = nullptr);
     ~LibraryPage() override;
 
 private:
@@ -52,6 +56,7 @@ private:
     void addLibrary();
     void removeLibrary();
 
+    Core::SettingsManager* m_settings;
     Core::Library::LibraryManager* m_libraryManager;
     QTableWidget m_libraryList;
 };
@@ -59,7 +64,10 @@ private:
 class PlaylistPage : public QWidget
 {
 public:
-    explicit PlaylistPage(QWidget* parent = nullptr);
+    explicit PlaylistPage(Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistPage() override;
+
+private:
+    Core::SettingsManager* m_settings;
 };
 } // namespace Gui::Settings

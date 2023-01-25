@@ -21,13 +21,26 @@
 
 #include "gui/fywidget.h"
 
+class QHBoxLayout;
+class QLabel;
+
+namespace Core {
+namespace Library {
+class MusicLibrary;
+}
+namespace Player {
+class PlayerManager;
+}
+} // namespace Core
+
 namespace Gui::Widgets {
 class CoverWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit CoverWidget(QWidget* parent = nullptr);
+    explicit CoverWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
+                         QWidget* parent = nullptr);
     ~CoverWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -39,7 +52,13 @@ protected:
     void reloadCover();
 
 private:
-    struct Private;
-    std::unique_ptr<CoverWidget::Private> p;
+    Core::Library::MusicLibrary* m_library;
+    Core::Player::PlayerManager* m_playerManager;
+
+    QHBoxLayout* m_layout;
+    QLabel* m_coverLabel;
+    QString m_coverPath;
+    QPixmap m_cover;
+    bool m_hasCover;
 };
 } // namespace Gui::Widgets

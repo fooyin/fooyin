@@ -25,33 +25,11 @@
 #include <QPluginLoader>
 
 namespace Plugins {
-void PluginManager::addObject(QObject* object)
-{
-    const QWriteLocker lock(&m_objectLock);
-    m_objectList.append(object);
-}
+PluginManager::PluginManager(QObject* parent)
+    : QObject{parent}
+{ }
 
-void PluginManager::removeObject(QObject* object)
-{
-    const QWriteLocker lock(&m_objectLock);
-    m_objectList.removeAll(object);
-}
-
-QList<QObject*> PluginManager::allObjects()
-{
-    return m_objectList;
-}
-
-PluginManager* PluginManager::instance()
-{
-    static PluginManager pluginManager;
-    return &pluginManager;
-}
-
-QReadWriteLock* PluginManager::objectLock()
-{
-    return &m_objectLock;
-}
+PluginManager::~PluginManager() = default;
 
 void PluginManager::findPlugins(const QString& pluginDir)
 {
@@ -129,9 +107,5 @@ void PluginManager::shutdown()
 {
     unloadPlugins();
 }
-
-PluginManager::PluginManager() { }
-
-PluginManager::~PluginManager() = default;
 
 } // namespace Plugins

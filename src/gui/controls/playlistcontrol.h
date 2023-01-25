@@ -23,13 +23,21 @@
 
 #include <QWidget>
 
+class QHBoxLayout;
+
+namespace Core {
+class SettingsManager;
+}
+
 namespace Gui::Widgets {
+class ComboIcon;
+
 class PlaylistControl : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistControl(QWidget* parent = nullptr);
+    explicit PlaylistControl(Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistControl() override;
 
     void setupUi();
@@ -44,7 +52,11 @@ protected:
     void setMode(Core::Player::PlayMode mode) const;
 
 private:
-    struct Private;
-    std::unique_ptr<PlaylistControl::Private> p;
+    Core::SettingsManager* m_settings;
+
+    QHBoxLayout* m_layout;
+    QSize m_labelSize;
+    ComboIcon* m_repeat;
+    ComboIcon* m_shuffle;
 };
 } // namespace Gui::Widgets

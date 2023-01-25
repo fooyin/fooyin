@@ -23,17 +23,30 @@
 
 #include <QWidget>
 
+class QHBoxLayout;
+
 namespace Core {
 class Track;
+class SettingsManager;
+
+namespace Player {
+class PlayerManager;
 }
+} // namespace Core
 
 namespace Gui::Widgets {
+class PlayerControl;
+class PlaylistControl;
+class VolumeControl;
+class ProgressWidget;
+
 class ControlWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit ControlWidget(QWidget* parent = nullptr);
+    explicit ControlWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+                           QWidget* parent = nullptr);
     ~ControlWidget() override;
 
     void setupUi();
@@ -51,7 +64,13 @@ protected:
     void currentPositionChanged(qint64 ms);
 
 private:
-    struct Private;
-    std::unique_ptr<ControlWidget::Private> p;
+    Core::Player::PlayerManager* m_playerManager;
+    Core::SettingsManager* m_settings;
+
+    QHBoxLayout* m_layout;
+    PlayerControl* m_playControls;
+    PlaylistControl* m_playlistControls;
+    VolumeControl* m_volumeControls;
+    ProgressWidget* m_progress;
 };
 } // namespace Gui::Widgets

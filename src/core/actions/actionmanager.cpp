@@ -21,7 +21,6 @@
 
 #include "actioncontainer.h"
 #include "core/constants.h"
-#include "core/plugins/pluginmanager.h"
 
 #include <utils/helpers.h>
 
@@ -31,6 +30,8 @@
 namespace Core {
 struct ActionManager::Private
 {
+    QMainWindow* mainWindow;
+
     QHash<Utils::Id, QAction*> idCmdMap;
     QHash<Utils::Id, ActionContainer*> idContainerMap;
 };
@@ -39,6 +40,11 @@ ActionManager::ActionManager(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>()}
 { }
+
+void ActionManager::setMainWindow(QMainWindow* mainWindow)
+{
+    p->mainWindow = mainWindow;
+}
 
 ActionManager::~ActionManager() = default;
 
@@ -51,6 +57,7 @@ ActionContainer* ActionManager::createMenu(const Utils::Id& id)
     }
 
     auto* mActionContainer = new MenuActionContainer(id, this);
+    connect(mActionContainer, &ActionContainer::registerSeperator, this, &ActionManager::registerAction);
     mActionContainer->appendGroup(Core::Constants::Groups::One);
     p->idContainerMap.emplace(id, mActionContainer);
     connect(mActionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
@@ -70,6 +77,7 @@ ActionContainer* ActionManager::createMenuBar(const Utils::Id& id)
     menuBar->setObjectName(id.name());
 
     auto* mbActionContainer = new MenuBarActionContainer(id, this);
+    connect(mbActionContainer, &ActionContainer::registerSeperator, this, &ActionManager::registerAction);
     mbActionContainer->setMenuBar(menuBar);
     p->idContainerMap.emplace(id, mbActionContainer);
     connect(mbActionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
@@ -80,7 +88,7 @@ ActionContainer* ActionManager::createMenuBar(const Utils::Id& id)
 void ActionManager::registerAction(QAction* action, const Utils::Id& id)
 {
     p->idCmdMap.emplace(id, action);
-    Plugins::object<QMainWindow>()->addAction(action);
+    p->mainWindow->addAction(action);
     action->setObjectName(id.name());
 }
 

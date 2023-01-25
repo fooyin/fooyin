@@ -19,14 +19,16 @@
 
 #include "splitter.h"
 
+#include "gui/guisettings.h"
 #include "splitterhandle.h"
 
 #include <QBoxLayout>
 #include <QMenu>
 
 namespace Gui::Widgets {
-Splitter::Splitter(Qt::Orientation type, QWidget* parent)
-    : QSplitter(type, parent)
+Splitter::Splitter(Qt::Orientation type, Core::SettingsManager* settings, QWidget* parent)
+    : QSplitter{type, parent}
+    , m_settings{settings}
 {
     setObjectName("Splitter");
     setChildrenCollapsible(false);
@@ -36,6 +38,8 @@ Splitter::~Splitter() = default;
 
 QSplitterHandle* Splitter::createHandle()
 {
-    return new SplitterHandle(this->orientation(), this);
+    auto* handle = new SplitterHandle(orientation(), this);
+    m_settings->subscribe<Settings::SplitterHandles>(handle, &SplitterHandle::showHandle);
+    return handle;
 }
 } // namespace Gui::Widgets

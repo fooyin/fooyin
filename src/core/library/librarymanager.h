@@ -35,7 +35,7 @@ class LibraryManager : public QObject
     Q_OBJECT
 
 public:
-    explicit LibraryManager(QObject* parent = nullptr);
+    explicit LibraryManager(DB::Database* database, QObject* parent = nullptr);
     ~LibraryManager() override;
 
     void reset();
@@ -51,8 +51,9 @@ signals:
     void libraryRemoved();
 
 private:
-    QMap<int, LibraryInfo> m_libraries;
     DB::Database* m_database;
     DB::Library* m_libraryConnector;
+
+    QMap<int, LibraryInfo> m_libraries;
 };
 } // namespace Core::Library

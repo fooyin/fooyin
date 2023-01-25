@@ -19,11 +19,9 @@
 
 #include "guisettings.h"
 
-#include <core/plugins/pluginmanager.h>
-
 namespace Gui::Settings {
-GuiSettings::GuiSettings()
-    : m_settings(Plugins::object<Core::SettingsManager>())
+GuiSettings::GuiSettings(Core::SettingsManager* settingsManager)
+    : m_settings{settingsManager}
 {
     m_settings->createTempSetting(Settings::LayoutEditing, false);
     m_settings->createSetting(Settings::Geometry, "", "Layout");

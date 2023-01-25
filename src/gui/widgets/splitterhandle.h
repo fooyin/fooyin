@@ -21,10 +21,6 @@
 
 #include <QSplitterHandle>
 
-namespace Core {
-class SettingsManager;
-}
-
 namespace Gui::Widgets {
 class SplitterHandle : public QSplitterHandle
 {
@@ -34,12 +30,12 @@ public:
     explicit SplitterHandle(Qt::Orientation type, QSplitter* parent = nullptr);
     ~SplitterHandle() override;
 
-protected:
-    void paintEvent(QPaintEvent* event) override;
     void showHandle(bool show);
 
+protected:
+    void paintEvent(QPaintEvent* event) override;
+
 private:
-    Core::SettingsManager* m_settings;
     bool m_showHandle;
 };
 } // namespace Gui::Widgets

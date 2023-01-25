@@ -33,24 +33,16 @@
 #include <QMenu>
 
 namespace Gui::Widgets {
-struct ControlWidget::Private
-{
-    QHBoxLayout* layout;
-    PlayerControl* playControls;
-    PlaylistControl* playlistControls;
-    VolumeControl* volumeControls;
-    ProgressWidget* progress;
-
-    Core::Player::PlayerManager* playerManager;
-
-    explicit Private()
-        : playerManager(Plugins::object<Core::Player::PlayerManager>())
-    { }
-};
-
-ControlWidget::ControlWidget(QWidget* parent)
-    : FyWidget(parent)
-    , p(std::make_unique<Private>())
+ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+                             QWidget* parent)
+    : FyWidget{parent}
+    , m_playerManager{playerManager}
+    , m_settings{settings}
+    , m_layout{new QHBoxLayout(this)}
+    , m_playControls{new PlayerControl(this)}
+    , m_playlistControls{new PlaylistControl(m_settings, this)}
+    , m_volumeControls{new VolumeControl(this)}
+    , m_progress{new ProgressWidget(m_settings, this)}
 {
     setObjectName("Control Bar");
 
@@ -62,54 +54,45 @@ ControlWidget::~ControlWidget() = default;
 
 void ControlWidget::setupUi()
 {
-    p->layout = new QHBoxLayout(this);
-
     //    setEnabled(false);
 
-    p->playControls     = new PlayerControl(this);
-    p->playlistControls = new PlaylistControl(this);
-    p->volumeControls   = new VolumeControl(this);
-    p->progress         = new ProgressWidget(this);
+    m_layout->addWidget(m_playControls, 0, Qt::AlignLeft | Qt::AlignVCenter);
+    m_layout->addWidget(m_progress, 0, Qt::AlignVCenter);
+    m_layout->addWidget(m_playlistControls, 0, Qt::AlignVCenter);
+    m_layout->addWidget(m_volumeControls, 0, Qt::AlignVCenter);
 
-    p->layout->addWidget(p->playControls, 0, Qt::AlignLeft | Qt::AlignVCenter);
-    p->layout->addWidget(p->progress, 0, Qt::AlignVCenter);
-    p->layout->addWidget(p->playlistControls, 0, Qt::AlignVCenter);
-    p->layout->addWidget(p->volumeControls, 0, Qt::AlignVCenter);
-
-    p->layout->setContentsMargins(0, 0, 0, 0);
-    p->layout->setSpacing(15);
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setSpacing(15);
 }
 
 void ControlWidget::setupConnections()
 {
-    connect(p->playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
+    connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
             &ControlWidget::currentTrackChanged);
-    connect(p->playerManager, &Core::Player::PlayerManager::positionChanged, this,
+    connect(m_playerManager, &Core::Player::PlayerManager::positionChanged, this,
             &ControlWidget::currentPositionChanged);
-    connect(p->playerManager, &Core::Player::PlayerManager::playStateChanged, p->playControls,
+    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, m_playControls,
             &PlayerControl::stateChanged);
-    connect(p->playerManager, &Core::Player::PlayerManager::playStateChanged, p->progress,
-            &ProgressWidget::stateChanged);
+    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, m_progress, &ProgressWidget::stateChanged);
 
-    connect(p->playControls, &PlayerControl::stopClicked, p->playerManager, &Core::Player::PlayerManager::stop);
-    connect(p->playControls, &PlayerControl::nextClicked, p->playerManager, &Core::Player::PlayerManager::next);
-    connect(p->playControls, &PlayerControl::prevClicked, p->playerManager, &Core::Player::PlayerManager::previous);
-    connect(p->playControls, &PlayerControl::stopClicked, p->progress, &ProgressWidget::reset);
-    connect(p->playControls, &PlayerControl::pauseClicked, p->playerManager, &Core::Player::PlayerManager::playPause);
+    connect(m_playControls, &PlayerControl::stopClicked, m_playerManager, &Core::Player::PlayerManager::stop);
+    connect(m_playControls, &PlayerControl::nextClicked, m_playerManager, &Core::Player::PlayerManager::next);
+    connect(m_playControls, &PlayerControl::prevClicked, m_playerManager, &Core::Player::PlayerManager::previous);
+    connect(m_playControls, &PlayerControl::stopClicked, m_progress, &ProgressWidget::reset);
+    connect(m_playControls, &PlayerControl::pauseClicked, m_playerManager, &Core::Player::PlayerManager::playPause);
 
-    connect(p->volumeControls, &VolumeControl::volumeUp, p->playerManager, &Core::Player::PlayerManager::volumeUp);
-    connect(p->volumeControls, &VolumeControl::volumeDown, p->playerManager, &Core::Player::PlayerManager::volumeDown);
-    connect(p->volumeControls, &VolumeControl::volumeChanged, p->playerManager,
-            &Core::Player::PlayerManager::setVolume);
+    connect(m_volumeControls, &VolumeControl::volumeUp, m_playerManager, &Core::Player::PlayerManager::volumeUp);
+    connect(m_volumeControls, &VolumeControl::volumeDown, m_playerManager, &Core::Player::PlayerManager::volumeDown);
+    connect(m_volumeControls, &VolumeControl::volumeChanged, m_playerManager, &Core::Player::PlayerManager::setVolume);
 
-    connect(p->progress, &ProgressWidget::movedSlider, p->playerManager, &Core::Player::PlayerManager::changePosition);
+    connect(m_progress, &ProgressWidget::movedSlider, m_playerManager, &Core::Player::PlayerManager::changePosition);
 
-    connect(p->playlistControls, &PlaylistControl::repeatClicked, p->playerManager,
+    connect(m_playlistControls, &PlaylistControl::repeatClicked, m_playerManager,
             &Core::Player::PlayerManager::setRepeat);
-    connect(p->playlistControls, &PlaylistControl::shuffleClicked, p->playerManager,
+    connect(m_playlistControls, &PlaylistControl::shuffleClicked, m_playerManager,
             &Core::Player::PlayerManager::setShuffle);
 
-    connect(p->playerManager, &Core::Player::PlayerManager::playModeChanged, p->playlistControls,
+    connect(m_playerManager, &Core::Player::PlayerManager::playModeChanged, m_playlistControls,
             &PlaylistControl::playModeChanged);
 }
 
@@ -129,11 +112,11 @@ void ControlWidget::currentTrackChanged(Core::Track* track)
     //    {
     //        setEnabled(true);
     //    }
-    p->progress->changeTrack(track);
+    m_progress->changeTrack(track);
 }
 
 void ControlWidget::currentPositionChanged(qint64 ms)
 {
-    p->progress->setCurrentPosition(static_cast<int>(ms));
+    m_progress->setCurrentPosition(static_cast<int>(ms));
 }
 } // namespace Gui::Widgets

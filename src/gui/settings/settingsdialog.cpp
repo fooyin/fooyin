@@ -28,62 +28,38 @@
 #include <QStackedWidget>
 
 namespace Gui::Settings {
-struct SettingsDialog::Private
-{
-    Core::Library::LibraryManager* libraryManager;
-    QListWidget* contentsWidget;
-    QStackedWidget* pagesWidget;
-
-    explicit Private(Core::Library::LibraryManager* libManager)
-        : libraryManager(libManager)
-    { }
-
-    void createIcons() const
-    {
-        auto* generalButton = new QListWidgetItem(contentsWidget);
-        generalButton->setText(tr("General"));
-        generalButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-
-        auto* libraryButton = new QListWidgetItem(contentsWidget);
-        libraryButton->setText(tr("Library"));
-        libraryButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-
-        auto* playlistButton = new QListWidgetItem(contentsWidget);
-        playlistButton->setText(tr("Playlist"));
-        playlistButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    }
-};
-
-SettingsDialog::SettingsDialog(Core::Library::LibraryManager* libManager, QWidget* parent)
-    : QDialog(parent)
-    , p(std::make_unique<Private>(libManager))
+SettingsDialog::SettingsDialog(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings,
+                               QWidget* parent)
+    : QDialog{parent}
+    , m_libraryManager{libraryManager}
+    , m_settings{settings}
 { }
 
 SettingsDialog::~SettingsDialog() = default;
 
 void SettingsDialog::setupUi()
 {
-    p->contentsWidget = new QListWidget(this);
-    p->contentsWidget->setViewMode(QListView::ListMode);
-    //    p->contentsWidget->setIconSize(QSize(96, 84));
-    p->contentsWidget->setMovement(QListView::Static);
-    p->contentsWidget->setMaximumWidth(90);
-    //    p->contentsWidget->setSpacing(10);
+    m_contentsWidget = new QListWidget(this);
+    m_contentsWidget->setViewMode(QListView::ListMode);
+    //    m_contentsWidget->setIconSize(QSize(96, 84));
+    m_contentsWidget->setMovement(QListView::Static);
+    m_contentsWidget->setMaximumWidth(90);
+    //    m_contentsWidget->setSpacing(10);
 
-    p->pagesWidget = new QStackedWidget(this);
-    p->pagesWidget->addWidget(new GeneralPage(this));
-    p->pagesWidget->addWidget(new LibraryPage(p->libraryManager, this));
-    p->pagesWidget->addWidget(new PlaylistPage(this));
+    m_pagesWidget = new QStackedWidget(this);
+    m_pagesWidget->addWidget(new GeneralPage(m_settings, this));
+    m_pagesWidget->addWidget(new LibraryPage(m_libraryManager, m_settings, this));
+    m_pagesWidget->addWidget(new PlaylistPage(m_settings, this));
 
     auto* closeButton = new QPushButton("Close", this);
 
-    // p->contentsWidget->setCurrentRow(0);
+    // m_contentsWidget->setCurrentRow(0);
 
     connect(closeButton, &QAbstractButton::clicked, this, &QWidget::close);
 
     auto* horizontalLayout = new QHBoxLayout();
-    horizontalLayout->addWidget(p->contentsWidget);
-    horizontalLayout->addWidget(p->pagesWidget);
+    horizontalLayout->addWidget(m_contentsWidget);
+    horizontalLayout->addWidget(m_pagesWidget);
 
     auto* buttonsLayout = new QHBoxLayout();
     buttonsLayout->addStretch(1);
@@ -97,8 +73,23 @@ void SettingsDialog::setupUi()
 
     setWindowTitle("Settings");
 
-    p->createIcons();
-    connect(p->contentsWidget, &QListWidget::currentItemChanged, this, &SettingsDialog::changePage);
+    createIcons();
+    connect(m_contentsWidget, &QListWidget::currentItemChanged, this, &SettingsDialog::changePage);
+}
+
+void SettingsDialog::createIcons() const
+{
+    auto* generalButton = new QListWidgetItem(m_contentsWidget);
+    generalButton->setText(tr("General"));
+    generalButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    auto* libraryButton = new QListWidgetItem(m_contentsWidget);
+    libraryButton->setText(tr("Library"));
+    libraryButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    auto* playlistButton = new QListWidgetItem(m_contentsWidget);
+    playlistButton->setText(tr("Playlist"));
+    playlistButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 }
 
 void SettingsDialog::changePage(QListWidgetItem* current, QListWidgetItem* previous)
@@ -107,13 +98,13 @@ void SettingsDialog::changePage(QListWidgetItem* current, QListWidgetItem* previ
         current = previous;
     }
 
-    p->pagesWidget->setCurrentIndex(p->contentsWidget->row(current));
+    m_pagesWidget->setCurrentIndex(m_contentsWidget->row(current));
 }
 
 void SettingsDialog::openPage(Page page)
 {
     auto index = static_cast<int>(page);
-    p->contentsWidget->setCurrentRow(index);
+    m_contentsWidget->setCurrentRow(index);
     exec();
 }
 } // namespace Gui::Settings

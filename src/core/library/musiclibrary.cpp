@@ -40,6 +40,7 @@ struct MusicLibrary::Private
     Playlist::LibraryPlaylistInterface* playlistInteractor;
     LibraryManager* libraryManager;
     ThreadManager* threadManager;
+    DB::Database* database;
     SettingsManager* settings;
     LibraryScanner scanner;
     LibraryDatabaseManager libraryDatabaseManager;
@@ -54,19 +55,22 @@ struct MusicLibrary::Private
     SortOrder order{Library::SortOrder::YearDesc};
 
     Private(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
-            ThreadManager* threadManager, SettingsManager* settings)
+            ThreadManager* threadManager, DB::Database* database, SettingsManager* settings)
         : playlistInteractor{playlistInteractor}
         , libraryManager{libraryManager}
         , threadManager{threadManager}
+        , database{database}
         , settings{settings}
-        , scanner{libraryManager}
+        , scanner{libraryManager, database}
+        , libraryDatabaseManager{database}
     { }
 };
 
 MusicLibrary::MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
-                           ThreadManager* threadManager, SettingsManager* settings, QObject* parent)
+                           ThreadManager* threadManager, DB::Database* database, SettingsManager* settings,
+                           QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(playlistInteractor, libraryManager, threadManager, settings)}
+    , p{std::make_unique<Private>(playlistInteractor, libraryManager, threadManager, database, settings)}
 {
     p->threadManager->moveToNewThread(&p->scanner);
     p->threadManager->moveToNewThread(&p->libraryDatabaseManager);

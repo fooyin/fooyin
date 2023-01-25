@@ -37,18 +37,41 @@ FiltersPlugin::~FiltersPlugin() = default;
 
 void FiltersPlugin::initialise()
 {
-    m_filterManager  = new FilterManager(this);
-    m_filterSettings = std::make_unique<Settings::FiltersSettings>();
+    m_filterManager  = new FilterManager(m_threadManager, m_database, m_library, this);
+    m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
 
-    Plugins::addObject(m_filterManager);
+    registerFilter<FilterWidget>("Filter");
+    registerFilter<GenreFilter>("Genre");
+    registerFilter<YearFilter>("Year");
+    registerFilter<AlbumArtistFilter>("Album Artist");
+    registerFilter<ArtistFilter>("Artist");
+    registerFilter<AlbumFilter>("Album");
 
-    auto* factory = Plugins::object<Gui::Widgets::WidgetFactory>();
-    factory->registerClass<FilterWidget>("Filter", {"Filter"});
-    factory->registerClass<GenreFilter>("Genre", {"Filter"});
-    factory->registerClass<YearFilter>("Year", {"Filter"});
-    factory->registerClass<AlbumArtistFilter>("Album Artist", {"Filter"});
-    factory->registerClass<ArtistFilter>("Artist", {"Filter"});
-    factory->registerClass<AlbumFilter>("Album", {"Filter"});
-    factory->registerClass<SearchWidget>("Search");
+    m_factory->registerClass<SearchWidget>("Search", [this]() {
+        return new SearchWidget(m_filterManager, m_settings);
+    });
+}
+
+void FiltersPlugin::initialise(WidgetPluginContext context)
+{
+    m_actionManager = context.actionManager;
+    m_library       = context.library;
+    m_playerManager = context.playerManager;
+    m_factory       = context.widgetFactory;
+}
+
+void FiltersPlugin::initialise(SettingsPluginContext context)
+{
+    m_settings = context.settingsManager;
+}
+
+void FiltersPlugin::initialise(ThreadPluginContext context)
+{
+    m_threadManager = context.threadManager;
+}
+
+void FiltersPlugin::initialise(DatabasePluginContext context)
+{
+    m_database = context.database;
 }
 } // namespace Filters

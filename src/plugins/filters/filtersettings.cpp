@@ -19,11 +19,9 @@
 
 #include "filtersettings.h"
 
-#include <core/plugins/pluginmanager.h>
-
 namespace Filters::Settings {
-FiltersSettings::FiltersSettings()
-    : m_settings(Plugins::object<Core::SettingsManager>())
+FiltersSettings::FiltersSettings(Core::SettingsManager* settingsManager)
+    : m_settings{settingsManager}
 {
     m_settings->createSetting(Settings::FilterAltColours, false, "Filters");
     m_settings->createSetting(Settings::FilterHeader, true, "Filters");

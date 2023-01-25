@@ -19,8 +19,6 @@
 
 #include "filterview.h"
 
-#include "core/player/playermanager.h"
-
 #include <QActionGroup>
 #include <QHeaderView>
 #include <QMenu>
@@ -28,9 +26,8 @@
 #include <QScrollBar>
 
 namespace Filters {
-FilterView::FilterView(Core::Player::PlayerManager* playerManager, QWidget* parent)
+FilterView::FilterView(QWidget* parent)
     : QTreeView(parent)
-    , m_playerManager(playerManager)
 {
     setObjectName("FilterView");
     setupView();

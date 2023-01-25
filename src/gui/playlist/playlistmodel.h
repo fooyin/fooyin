@@ -47,7 +47,7 @@ class PlaylistModel : public QAbstractItemModel
 
 public:
     explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
-                           QObject* parent = nullptr);
+                           Core::SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     void setupModelData();
@@ -88,12 +88,13 @@ protected:
     void filterModel(const Core::TrackPtrList& tracks);
 
 private:
-    std::unique_ptr<PlaylistItem> m_root;
-    PlaylistItemHash m_nodes;
-    Core::ContainerHash m_containers;
     Core::Player::PlayerManager* m_playerManager;
     Core::Library::MusicLibrary* m_library;
     Core::SettingsManager* m_settings;
+
+    std::unique_ptr<PlaylistItem> m_root;
+    PlaylistItemHash m_nodes;
+    Core::ContainerHash m_containers;
     QPixmap m_playingIcon;
     QPixmap m_pausedIcon;
 };

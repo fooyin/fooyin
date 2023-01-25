@@ -30,7 +30,6 @@
 #include <core/actions/actioncontainer.h>
 #include <core/actions/actionmanager.h>
 #include <core/constants.h>
-#include <core/plugins/pluginmanager.h>
 #include <utils/enumhelper.h>
 
 #include <QCoreApplication>
@@ -44,25 +43,26 @@
 namespace Gui::Widgets {
 struct EditableLayout::Private
 {
-    QHBoxLayout* box;
-    Core::SettingsManager* settings;
-    bool layoutEditing{false};
-    OverlayFilter* overlay;
     Core::ActionManager* actionManager;
-    SplitterWidget* splitter;
-    Core::ActionContainer* menu;
-    int menuLevels{2};
+    Core::SettingsManager* settings;
     Widgets::WidgetFactory* widgetFactory;
     Widgets::WidgetProvider* widgetProvider;
 
+    Core::ActionContainer* menu;
+    QHBoxLayout* box;
+    OverlayFilter* overlay;
+    SplitterWidget* splitter;
+    int menuLevels{2};
+    bool layoutEditing{false};
+
     explicit Private(Core::SettingsManager* settings, Core::ActionManager* actionManager, WidgetFactory* widgetFactory,
                      WidgetProvider* widgetProvider, QWidget* parent)
-        : box{new QHBoxLayout(parent)}
-        , settings{Plugins::object<Core::SettingsManager>()}
-        , overlay{new OverlayFilter(parent)}
-        , actionManager{actionManager}
+        : actionManager{actionManager}
+        , settings{settings}
         , widgetFactory{widgetFactory}
         , widgetProvider{widgetProvider}
+        , box{new QHBoxLayout(parent)}
+        , overlay{new OverlayFilter(parent)}
     { }
 
     Core::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const
@@ -130,7 +130,7 @@ void EditableLayout::initialise()
 
     const bool loaded = loadLayout();
     if(!loaded) {
-        p->splitter = Widgets::WidgetProvider::createSplitter(Qt::Vertical, this);
+        p->splitter = p->widgetProvider->createSplitter(Qt::Vertical, this);
         p->box->addWidget(p->splitter);
     }
     if(!p->splitter->hasChildren()) {
@@ -285,7 +285,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
                 const QJsonArray splitterChildren = splitterObject["Children"].toArray();
                 auto state                        = QByteArray::fromBase64(splitterObject["State"].toString().toUtf8());
 
-                p->splitter = Widgets::WidgetProvider::createSplitter(type, this);
+                p->splitter = p->widgetProvider->createSplitter(type, this);
                 p->box->addWidget(p->splitter);
 
                 p->splitter->loadSplitter(splitterChildren, p->splitter);

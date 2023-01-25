@@ -20,18 +20,17 @@
 #include "playlist.h"
 
 #include "core/player/playermanager.h"
-#include "core/plugins/pluginmanager.h"
 
 #include <utils/utils.h>
 
 #include <QMessageBox>
 
 namespace Core::Playlist {
-Playlist::Playlist(int idx, QString name)
+Playlist::Playlist(Player::PlayerManager* playerManager, int idx, QString name)
     : m_name(std::move(name))
-    , m_playerManager(Plugins::object<Player::PlayerManager>())
-    , m_playlistIndex(idx)
-    , m_playingTrack(nullptr)
+    , m_playerManager{playerManager}
+    , m_playlistIndex{idx}
+    , m_playingTrack{nullptr}
 { }
 
 Playlist::Playlist(const Playlist& other)

@@ -34,12 +34,12 @@
 
 namespace Gui::Widgets {
 PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
-                             QObject* parent)
-    : QAbstractItemModel(parent)
-    , m_root(std::make_unique<PlaylistItem>())
-    , m_playerManager(playerManager)
-    , m_library(library)
-    , m_settings(Plugins::object<Core::SettingsManager>())
+                             Core::SettingsManager* settings, QObject* parent)
+    : QAbstractItemModel{parent}
+    , m_playerManager{playerManager}
+    , m_library{library}
+    , m_settings{settings}
+    , m_root{std::make_unique<PlaylistItem>()}
     , m_playingIcon{Core::Constants::Icons::Play}
     , m_pausedIcon{Core::Constants::Icons::Pause}
 {

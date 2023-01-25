@@ -25,6 +25,10 @@
 #include <core/library/sorting/sortorder.h>
 #include <core/models/trackfwd.h>
 
+namespace Core::DB {
+class Database;
+}
+
 namespace Filters {
 class FilterDatabase;
 class FilterDatabaseManager : public Core::Worker
@@ -32,7 +36,7 @@ class FilterDatabaseManager : public Core::Worker
     Q_OBJECT
 
 public:
-    explicit FilterDatabaseManager(QObject* parent = nullptr);
+    explicit FilterDatabaseManager(Core::DB::Database* database, QObject* parent = nullptr);
     ~FilterDatabaseManager() override;
 
     void getAllItems(Filters::FilterType type, Core::Library::SortOrder order);
@@ -45,6 +49,7 @@ signals:
     void tracksFiltered(const Core::TrackPtrList& result);
 
 private:
+    Core::DB::Database* m_database;
     std::unique_ptr<FilterDatabase> m_filterDatabase;
 };
 } // namespace Filters

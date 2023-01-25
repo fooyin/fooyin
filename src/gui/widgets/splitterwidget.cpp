@@ -32,12 +32,14 @@
 #include <QMenu>
 
 namespace Gui::Widgets {
-SplitterWidget::SplitterWidget(QWidget* parent)
+SplitterWidget::SplitterWidget(Core::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+                               Core::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
+    , m_settings{settings}
+    , m_actionManager{actionManager}
+    , m_widgetProvider{widgetProvider}
     , m_layout{new QHBoxLayout(this)}
-    , m_splitter{new Splitter(Qt::Vertical)}
-    , m_actionManager{Plugins::object<Core::ActionManager>()}
-    , m_widgetProvider{Plugins::object<Widgets::WidgetProvider>()}
+    , m_splitter{new Splitter(Qt::Vertical, settings, this)}
     , m_dummy{new Dummy(this)}
 {
     setObjectName(SplitterWidget::name());
@@ -220,7 +222,7 @@ void SplitterWidget::loadSplitter(const QJsonArray& array, SplitterWidget* split
                 const QByteArray splitterState
                     = QByteArray::fromBase64(childSplitterObject["State"].toString().toUtf8());
 
-                auto* childSplitter = Widgets::WidgetProvider::createSplitter(type, this);
+                auto* childSplitter = m_widgetProvider->createSplitter(type, this);
                 splitter->addWidget(childSplitter);
                 loadSplitter(splitterArray, childSplitter);
                 childSplitter->restoreState(splitterState);

@@ -19,8 +19,6 @@
 
 #include "settingsmanager.h"
 
-#include "core/plugins/pluginmanager.h"
-
 #include <utils/paths.h>
 #include <utils/utils.h>
 
@@ -30,9 +28,7 @@ namespace Core {
 SettingsManager::SettingsManager(QObject* parent)
     : QObject{parent}
     , m_settingsFile{Utils::settingsPath(), QSettings::IniFormat, this}
-{
-    Plugins::addObject(this);
-}
+{ }
 
 SettingsManager::~SettingsManager() = default;
 

@@ -20,32 +20,21 @@
 #include "database.h"
 
 #include "core/coresettings.h"
-#include "core/plugins/pluginmanager.h"
 #include "library.h"
 #include "librarydatabase.h"
 #include "playlistdatabase.h"
 #include "query.h"
 #include "version.h"
 
-#include <utils/paths.h>
 #include <utils/utils.h>
 
 #include <QFile>
 #include <QSqlQuery>
 
 namespace Core::DB {
-struct Database::Private
-{
-    bool initialized{false};
-
-    std::unique_ptr<Library> libraryConnector;
-    std::unique_ptr<Playlist> playlistConnector;
-    std::unique_ptr<LibraryDatabase> libraryDatabase;
-};
-
-Database::Database(const QString& directory, const QString& filename)
-    : Module(directory + "/" + filename)
-    , p(std::make_unique<Private>())
+Database::Database(Core::SettingsManager* settings, const QString& directory, const QString& filename)
+    : Module{directory + "/" + filename}
+    , m_settings{settings}
 {
     if(!Utils::File::exists(directory)) {
         Utils::File::createDirectories(directory);
@@ -55,13 +44,13 @@ Database::Database(const QString& directory, const QString& filename)
     if(!success) {
         success = createDatabase();
     }
-    p->initialized = success && db().isOpen();
+    m_initialized = success && db().isOpen();
 
     if(!Database::isInitialized()) {
         qDebug() << "Database could not be initialised";
     }
     else {
-        p->libraryDatabase = std::make_unique<LibraryDatabase>(connectionName(), -1);
+        m_libraryDatabase = std::make_unique<LibraryDatabase>(connectionName(), -1);
     }
 
     update();
@@ -69,39 +58,29 @@ Database::Database(const QString& directory, const QString& filename)
 
 Database::~Database() = default;
 
-Database* Database::instance()
-{
-    const QString directory        = Utils::sharePath();
-    const QString databaseFilename = "fooyin.db";
-
-    static Database database(directory, databaseFilename);
-    return &database;
-}
-
 LibraryDatabase* Database::libraryDatabase()
 {
-    return p->libraryDatabase.get();
+    return m_libraryDatabase.get();
 }
 
 void Database::deleteLibraryDatabase(int id)
 {
-    p->libraryDatabase->deleteLibraryTracks(id);
+    m_libraryDatabase->deleteLibraryTracks(id);
 }
 
 Library* Database::libraryConnector()
 {
-    if(!p->libraryConnector) {
-        p->libraryConnector = std::make_unique<Library>(connectionName());
+    if(!m_libraryConnector) {
+        m_libraryConnector = std::make_unique<Library>(connectionName());
     }
 
-    return p->libraryConnector.get();
+    return m_libraryConnector.get();
 }
 
 bool Database::update()
 {
-    auto* settings = Plugins::object<SettingsManager>();
-    if(settings->value<Settings::DatabaseVersion>() < DATABASE_VERSION) {
-        settings->set<Settings::DatabaseVersion>(DATABASE_VERSION);
+    if(m_settings->value<Settings::DatabaseVersion>() < DATABASE_VERSION) {
+        m_settings->set<Settings::DatabaseVersion>(DATABASE_VERSION);
         return true;
     }
     return true;
@@ -109,8 +88,8 @@ bool Database::update()
 
 bool Database::createDatabase()
 {
-    p->initialized = db().isOpen();
-    if(!p->initialized) {
+    m_initialized = db().isOpen();
+    if(!m_initialized) {
         return false;
     }
 
@@ -290,7 +269,7 @@ bool Database::cleanup()
 
 bool Database::isInitialized()
 {
-    return p->initialized;
+    return m_initialized;
 }
 
 bool Database::closeDatabase()

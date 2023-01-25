@@ -19,7 +19,14 @@
 
 #pragma once
 
+#include "core/plugins/databaseplugin.h"
+#include "filterwidget.h"
+
 #include <core/plugins/plugin.h>
+#include <core/plugins/settingsplugin.h>
+#include <core/plugins/threadplugin.h>
+#include <core/plugins/widgetplugin.h>
+#include <gui/widgetfactory.h>
 
 namespace Filters {
 class FilterManager;
@@ -29,19 +36,48 @@ class FiltersSettings;
 }
 
 class FiltersPlugin : public QObject,
-                      public Plugins::Plugin
+                      public Plugins::Plugin,
+                      public Plugins::WidgetPlugin,
+                      public Plugins::ThreadPlugin,
+                      public Plugins::DatabasePlugin,
+                      public Plugins::SettingsPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
     Q_INTERFACES(Plugins::Plugin)
+    Q_INTERFACES(Plugins::WidgetPlugin)
+    Q_INTERFACES(Plugins::ThreadPlugin)
+    Q_INTERFACES(Plugins::DatabasePlugin)
+    Q_INTERFACES(Plugins::SettingsPlugin)
 
 public:
     FiltersPlugin();
     ~FiltersPlugin() override;
 
     void initialise() override;
+    void initialise(WidgetPluginContext context) override;
+    void initialise(SettingsPluginContext context) override;
+    void initialise(ThreadPluginContext context) override;
+    void initialise(DatabasePluginContext context) override;
 
 private:
+    template <typename T>
+    void registerFilter(const QString& name)
+    {
+        m_factory->registerClass<T>(name,
+                                    [this]() {
+                                        return new T(m_filterManager, m_settings);
+                                    },
+                                    {"Filter"});
+    }
+
+    Core::ActionManager* m_actionManager;
+    Core::SettingsManager* m_settings;
+    Core::ThreadManager* m_threadManager;
+    Core::DB::Database* m_database;
+    Core::Library::MusicLibrary* m_library;
+    Core::Player::PlayerManager* m_playerManager;
+    Gui::Widgets::WidgetFactory* m_factory;
     FilterManager* m_filterManager;
     std::unique_ptr<Settings::FiltersSettings> m_filterSettings;
 };

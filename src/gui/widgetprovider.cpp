@@ -28,31 +28,25 @@
 #include <QMenu>
 
 namespace Gui::Widgets {
-struct WidgetProvider::Private
-{
-    Widgets::WidgetFactory* widgetFactory;
-
-    explicit Private(Widgets::WidgetFactory* widgetFactory)
-        : widgetFactory{widgetFactory}
-    { }
-};
-
-WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent)
+WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, Core::ActionManager* actionManager,
+                               Core::SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(widgetFactory)}
+    , m_widgetFactory{widgetFactory}
+    , m_actionManager{actionManager}
+    , m_settings{settings}
 { }
 
 WidgetProvider::~WidgetProvider() = default;
 
 FyWidget* WidgetProvider::createWidget(const QString& widget)
 {
-    FyWidget* createdWidget = p->widgetFactory->make(widget);
+    FyWidget* createdWidget = m_widgetFactory->make(widget);
     return createdWidget;
 }
 
 SplitterWidget* WidgetProvider::createSplitter(Qt::Orientation type, QWidget* parent)
 {
-    auto* splitter = new SplitterWidget(parent);
+    auto* splitter = new SplitterWidget(m_actionManager, this, m_settings, parent);
     splitter->setOrientation(type);
     return splitter;
 }

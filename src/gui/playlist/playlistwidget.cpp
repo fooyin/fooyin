@@ -41,17 +41,20 @@
 #include <QScrollBar>
 
 namespace Gui::Widgets {
-PlaylistWidget::PlaylistWidget(QWidget* parent)
-    : FyWidget(parent)
-    , m_layout(new QHBoxLayout(this))
-    , m_libraryManager(Plugins::object<Core::Library::LibraryManager>())
-    , m_library(Plugins::object<Core::Library::MusicLibrary>())
-    , m_playerManager(Plugins::object<Core::Player::PlayerManager>())
-    , m_model(new PlaylistModel(m_playerManager, m_library, this))
-    , m_playlist(new PlaylistView(this))
-    , m_settings(Plugins::object<Core::SettingsManager>())
-    , m_altRowColours(m_settings->value<Settings::PlaylistAltColours>())
-    , m_noLibrary(new OverlayWidget(true, this))
+PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
+                               Core::Player::PlayerManager* playerManager, Settings::SettingsDialog* settingsDialog,
+                               Core::SettingsManager* settings, QWidget* parent)
+    : FyWidget{parent}
+    , m_libraryManager{libraryManager}
+    , m_library{library}
+    , m_playerManager{playerManager}
+    , m_settingsDialog{settingsDialog}
+    , m_settings{settings}
+    , m_layout{new QHBoxLayout(this)}
+    , m_model{new PlaylistModel(m_playerManager, m_library, m_settings, this)}
+    , m_playlist{new PlaylistView(this)}
+    , m_altRowColours{m_settings->value<Settings::PlaylistAltColours>()}
+    , m_noLibrary{new OverlayWidget(true, this)}
 {
     setObjectName("Playlist");
     m_layout->setContentsMargins(0, 0, 0, 0);
@@ -64,7 +67,7 @@ PlaylistWidget::PlaylistWidget(QWidget* parent)
 
     setupConnections();
     connect(m_noLibrary, &OverlayWidget::settingsClicked, this, [this] {
-        Plugins::object<Settings::SettingsDialog>()->openPage(Settings::SettingsDialog::Page::Library);
+        m_settingsDialog->openPage(Settings::SettingsDialog::Page::Library);
     });
 
     reset();

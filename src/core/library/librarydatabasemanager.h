@@ -23,9 +23,11 @@
 #include "core/models/trackfwd.h"
 
 namespace Core {
+
 namespace DB {
+class Database;
 class LibraryDatabase;
-}
+} // namespace DB
 
 namespace Library {
 class LibraryDatabaseManager : public Worker
@@ -33,7 +35,7 @@ class LibraryDatabaseManager : public Worker
     Q_OBJECT
 
 public:
-    explicit LibraryDatabaseManager(QObject* parent = nullptr);
+    explicit LibraryDatabaseManager(DB::Database* database, QObject* parent = nullptr);
     ~LibraryDatabaseManager() override;
 
     void getAllTracks();
@@ -43,6 +45,7 @@ signals:
     void gotTracks(const Core::TrackList& result);
 
 private:
+    DB::Database* m_database;
     DB::LibraryDatabase* m_libraryDatabase;
 };
 } // namespace Library

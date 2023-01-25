@@ -21,19 +21,24 @@
 
 namespace Gui::Widgets {
 Dummy::Dummy(QWidget* parent)
-    : FyWidget(parent)
-    , m_layout(new QHBoxLayout(this))
-    , m_label(new QLabel(this))
+    : FyWidget{parent}
+    , m_layout{new QHBoxLayout(this)}
+    , m_label{new QLabel(this)}
 {
     setObjectName(Dummy::name());
+
     m_layout->setContentsMargins(0, 0, 0, 0);
+
     m_label->setText("Right-Click to add a new widget.");
     m_label->setAutoFillBackground(true);
+
     QPalette palette = m_label->palette();
     palette.setColor(m_label->backgroundRole(), palette.base().color());
     m_label->setPalette(palette);
+
     m_label->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     m_label->setAlignment(Qt::AlignCenter);
+
     m_layout->addWidget(m_label);
 }
 

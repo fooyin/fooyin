@@ -47,7 +47,7 @@ Q_ENUM_NS(Gui)
 class GuiSettings
 {
 public:
-    GuiSettings();
+    GuiSettings(Core::SettingsManager* settingsManager);
     ~GuiSettings();
 
 private:

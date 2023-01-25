@@ -31,33 +31,21 @@
 #include <QMenu>
 
 namespace Gui::Widgets {
-struct StatusWidget::Private
-{
-    Core::Player::PlayerManager* playerManager;
-
-    QHBoxLayout* layout;
-
-    ClickableLabel* iconLabel;
-    QPixmap icon{"://images/fooyin-small.png"};
-
-    ClickableLabel* playing;
-
-    explicit Private()
-        : playerManager(Plugins::object<Core::Player::PlayerManager>())
-    { }
-};
-
-StatusWidget::StatusWidget(QWidget* parent)
-    : FyWidget(parent)
-    , p(std::make_unique<Private>())
+StatusWidget::StatusWidget(Core::Player::PlayerManager* playerManager, QWidget* parent)
+    : FyWidget{parent}
+    , m_playerManager{playerManager}
+    , m_layout{new QHBoxLayout(this)}
+    , m_iconLabel{new ClickableLabel(this)}
+    , m_icon{"://images/fooyin-small.png"}
+    , m_playing{new ClickableLabel(this)}
 {
     setObjectName("Status Bar");
 
     setupUi();
 
-    connect(p->playing, &ClickableLabel::clicked, this, &StatusWidget::labelClicked);
-    connect(p->playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &StatusWidget::reloadStatus);
-    connect(p->playerManager, &Core::Player::PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
+    connect(m_playing, &ClickableLabel::clicked, this, &StatusWidget::labelClicked);
+    connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &StatusWidget::reloadStatus);
+    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
 }
 
 QString StatusWidget::name() const
@@ -69,32 +57,27 @@ StatusWidget::~StatusWidget() = default;
 
 void StatusWidget::setupUi()
 {
-    p->layout = new QHBoxLayout(this);
+    m_layout->setContentsMargins(5, 0, 0, 0);
 
-    p->layout->setContentsMargins(5, 0, 0, 0);
+    m_iconLabel->setPixmap(m_icon);
+    m_iconLabel->setScaledContents(true);
 
-    p->iconLabel = new ClickableLabel(this);
-    p->playing   = new ClickableLabel(this);
+    // m_playing->setText("Waiting for track...");
 
-    p->iconLabel->setPixmap(p->icon);
-    p->iconLabel->setScaledContents(true);
-
-    // p->playing->setText("Waiting for track...");
-
-    //    Utils::setMinimumWidth(p->iconLabel, "...");
+    //    Utils::setMinimumWidth(m_iconLabel, "...");
 
     //    QPalette palette;
     //    palette.setColor(QPalette::WindowText, Qt::white);
-    //    p->playing->setPalette(palette);
+    //    m_playing->setPalette(palette);
 
-    p->iconLabel->setMaximumHeight(22);
-    p->iconLabel->setMaximumWidth(22);
+    m_iconLabel->setMaximumHeight(22);
+    m_iconLabel->setMaximumWidth(22);
 
-    p->layout->addWidget(p->iconLabel);
-    p->layout->addWidget(p->playing);
+    m_layout->addWidget(m_iconLabel);
+    m_layout->addWidget(m_playing);
 
     setMinimumHeight(25);
-    //    p->playing->setMinimumHeight(25);
+    //    m_playing->setMinimumHeight(25);
 }
 
 void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -104,7 +87,7 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void StatusWidget::labelClicked()
 {
-    const Core::Player::PlayState ps = p->playerManager->playState();
+    const Core::Player::PlayState ps = m_playerManager->playState();
     if(ps == Core::Player::PlayState::Playing || ps == Core::Player::PlayState::Paused) {
         emit clicked();
     }
@@ -112,24 +95,24 @@ void StatusWidget::labelClicked()
 
 void StatusWidget::reloadStatus()
 {
-    auto* track = p->playerManager->currentTrack();
-    p->playing->setText(track->title());
+    auto* track = m_playerManager->currentTrack();
+    m_playing->setText(track->title());
 }
 
 void StatusWidget::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
         case(Core::Player::PlayState::Stopped):
-            p->playing->setText("Waiting for track...");
+            m_playing->setText("Waiting for track...");
             break;
         case(Core::Player::PlayState::Playing): {
-            auto* track      = p->playerManager->currentTrack();
+            auto* track      = m_playerManager->currentTrack();
             auto number      = QStringLiteral("%1").arg(track->trackNumber(), 2, 10, QLatin1Char('0'));
             auto duration    = QString(" (%1)").arg(Utils::msToString(track->duration()));
             auto albumArtist = !track->albumArtist().isEmpty() ? " \u2022 " + track->albumArtist() : "";
             auto album       = !track->album().isEmpty() ? " \u2022 " + track->album() : "";
             auto text        = number + ". " + track->title() + duration + albumArtist + album;
-            p->playing->setText(text);
+            m_playing->setText(text);
         }
         case(Core::Player::PlayState::Paused):
             break;

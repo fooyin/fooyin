@@ -21,25 +21,25 @@
 
 #include "core/coresettings.h"
 #include "core/models/track.h"
-#include "core/plugins/pluginmanager.h"
 
 #include <utils/enumhelper.h>
 
 namespace Core::Player {
-PlayerController::PlayerController(QObject* parent)
-    : PlayerManager(parent)
-    , m_currentTrack(nullptr)
-    , m_totalDuration(0)
-    , m_playStatus(PlayState::Stopped)
-    , m_playMode(PlayMode::Default)
-    , m_position(0)
-    , m_volume(1.0F)
-    , m_counted(false)
+PlayerController::PlayerController(Core::SettingsManager* settings, QObject* parent)
+    : PlayerManager{parent}
+    , m_settings{settings}
+    , m_currentTrack{nullptr}
+    , m_totalDuration{0}
+    , m_playStatus{PlayState::Stopped}
+    , m_playMode{PlayMode::Default}
+    , m_position{0}
+    , m_volume{1.0F}
+    , m_counted{false}
 { }
 
 void PlayerController::restoreState()
 {
-    m_playMode = Plugins::object<SettingsManager>()->value<Settings::PlayMode>().value<PlayMode>();
+    m_playMode = m_settings->value<Settings::PlayMode>().value<PlayMode>();
 }
 
 PlayerController::~PlayerController() = default;

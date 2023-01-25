@@ -26,7 +26,8 @@ class QHBoxLayout;
 
 namespace Core {
 class ActionManager;
-}
+class SettingsManager;
+} // namespace Core
 
 namespace Gui::Widgets {
 class Dummy;
@@ -37,7 +38,8 @@ class SplitterWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit SplitterWidget(QWidget* parent = nullptr);
+    explicit SplitterWidget(Core::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+                            Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~SplitterWidget() override;
 
     void setupActions();
@@ -67,11 +69,13 @@ public:
     void loadSplitter(const QJsonArray& array, SplitterWidget* splitter);
 
 private:
+    Core::SettingsManager* m_settings;
+    Core::ActionManager* m_actionManager;
+    Widgets::WidgetProvider* m_widgetProvider;
+
     QHBoxLayout* m_layout;
     Splitter* m_splitter;
     QList<FyWidget*> m_children;
-    Core::ActionManager* m_actionManager;
-    Widgets::WidgetProvider* m_widgetProvider;
     Dummy* m_dummy;
     QAction* m_changeSplitter;
 };
@@ -79,8 +83,9 @@ private:
 class VerticalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit VerticalSplitterWidget(QWidget* parent = nullptr)
-        : SplitterWidget(parent)
+    explicit VerticalSplitterWidget(Core::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+                                    Core::SettingsManager* settings, QWidget* parent = nullptr)
+        : SplitterWidget(actionManager, widgetProvider, settings, parent)
     {
         setOrientation(Qt::Vertical);
     }
@@ -90,8 +95,9 @@ public:
 class HorizontalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit HorizontalSplitterWidget(QWidget* parent = nullptr)
-        : SplitterWidget(parent)
+    explicit HorizontalSplitterWidget(Core::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+                                      Core::SettingsManager* settings, QWidget* parent = nullptr)
+        : SplitterWidget(actionManager, widgetProvider, settings, parent)
     {
         setOrientation(Qt::Horizontal);
     }

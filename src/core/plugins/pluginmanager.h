@@ -35,11 +35,8 @@ class PluginManager : public QObject
     Q_OBJECT
 
 public:
-    void addObject(QObject* object);
-    void removeObject(QObject* object);
-    QList<QObject*> allObjects();
-    static PluginManager* instance();
-    QReadWriteLock* objectLock();
+    explicit PluginManager(QObject* parent = nullptr);
+    ~PluginManager() override;
 
     void findPlugins(const QString& pluginDir);
     void loadPlugins();
@@ -61,56 +58,6 @@ public:
     void shutdown();
 
 private:
-    PluginManager();
-    ~PluginManager() override;
-
-    mutable QReadWriteLock m_objectLock;
-    QList<QObject*> m_objectList;
     std::unordered_map<QString, PluginInfo*> m_plugins;
 };
-
-inline void addObject(QObject* object)
-{
-    PluginManager::instance()->addObject(object);
-}
-
-inline void removeObject(QObject* object)
-{
-    PluginManager::instance()->removeObject(object);
-}
-
-inline QList<QObject*> allObjects()
-{
-    return PluginManager::instance()->allObjects();
-}
-
-inline QReadWriteLock* objectLock()
-{
-    return PluginManager::instance()->objectLock();
-}
-
-template <typename T>
-inline T* object()
-{
-    const QReadLocker lock(objectLock());
-    for(auto* object : PluginManager::instance()->allObjects()) {
-        if(auto* result = qobject_cast<T*>(object)) {
-            return result;
-        }
-    }
-    return nullptr;
-}
-
-template <typename T>
-inline QList<T*> objects()
-{
-    const QReadLocker lock(objectLock());
-    QList<T*> results;
-    for(auto* object : PluginManager::instance()->allObjects()) {
-        if(auto* result = qobject_cast<T*>(object)) {
-            results.append(result);
-        }
-    }
-    return results;
-}
 } // namespace Plugins

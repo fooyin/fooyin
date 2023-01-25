@@ -30,14 +30,15 @@
 #include <QDir>
 
 namespace Core::Library {
-LibraryScanner::LibraryScanner(LibraryManager* libraryManager, QObject* parent)
-    : Worker(parent)
-    , m_libraryManager(libraryManager)
+LibraryScanner::LibraryScanner(LibraryManager* libraryManager, DB::Database* database, QObject* parent)
+    : Worker{parent}
+    , m_libraryManager{libraryManager}
+    , m_database{database}
 { }
 
 LibraryScanner::~LibraryScanner()
 {
-    DB::Database::instance()->closeDatabase();
+    m_database->closeDatabase();
 }
 
 void LibraryScanner::stopThread()
@@ -51,8 +52,7 @@ void LibraryScanner::scanLibrary(const TrackList tracks, const LibraryInfo& info
         return;
     }
 
-    auto* db                             = DB::Database::instance();
-    DB::LibraryDatabase* libraryDatabase = db->libraryDatabase();
+    DB::LibraryDatabase* libraryDatabase = m_database->libraryDatabase();
 
     setState(State::Running);
 
@@ -106,8 +106,7 @@ void LibraryScanner::storeTracks(TrackList& tracks) const
         return;
     }
 
-    auto* db                             = DB::Database::instance();
-    DB::LibraryDatabase* libraryDatabase = db->libraryDatabase();
+    DB::LibraryDatabase* libraryDatabase = m_database->libraryDatabase();
 
     libraryDatabase->storeTracks(tracks);
 

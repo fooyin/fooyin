@@ -32,7 +32,7 @@ class FilterView : public QTreeView
     Q_OBJECT
 
 public:
-    explicit FilterView(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
+    explicit FilterView(QWidget* parent = nullptr);
     ~FilterView() override;
 
     void setupView();
@@ -42,8 +42,5 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
-
-private:
-    Core::Player::PlayerManager* m_playerManager;
 };
 } // namespace Filters

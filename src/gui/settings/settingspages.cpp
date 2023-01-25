@@ -37,33 +37,33 @@
 #include <QTableWidget>
 
 namespace Gui::Settings {
-GeneralPage::GeneralPage(QWidget* parent)
-    : QWidget(parent)
+GeneralPage::GeneralPage(Core::SettingsManager* settings, QWidget* parent)
+    : QWidget{parent}
+    , m_settings{settings}
 {
     auto* mainLayout = new QVBoxLayout(this);
     //    mainLayout->addStretch();
     mainLayout->setAlignment(Qt::AlignTop);
 
-    auto* settings = Plugins::object<Core::SettingsManager>();
-
     auto* splitterHandles = new QCheckBox("Show Splitter Handles", this);
-    splitterHandles->setChecked(settings->value<Settings::SplitterHandles>());
+    splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
 
     mainLayout->addWidget(splitterHandles);
 
-    connect(splitterHandles, &QCheckBox::clicked, this, [settings](bool checked) {
-        settings->set<Settings::SplitterHandles>(checked);
+    connect(splitterHandles, &QCheckBox::clicked, this, [this](bool checked) {
+        m_settings->set<Settings::SplitterHandles>(checked);
     });
 }
 
 GeneralPage::~GeneralPage() = default;
 
-LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, QWidget* parent)
-    : QWidget(parent)
-    , m_libraryManager(libraryManager)
-    , m_libraryList(0, 3, this)
+LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings,
+                         QWidget* parent)
+    : QWidget{parent}
+    , m_libraryManager{libraryManager}
+    , m_settings{settings}
+    , m_libraryList{0, 3, this}
 {
-    auto* settings = Plugins::object<Core::SettingsManager>();
     auto libraries = m_libraryManager->allLibraries();
 
     m_libraryList.setHorizontalHeaderLabels({"ID", "Name", "Path"});
@@ -83,7 +83,7 @@ LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, QWidget*
     auto* autoRefresh         = new QCheckBox("Auto Refresh", this);
     autoRefresh->setToolTip(tr("Auto refresh libraries on startup"));
 
-    autoRefresh->setChecked(settings->value<Core::Settings::AutoRefresh>());
+    autoRefresh->setChecked(m_settings->value<Core::Settings::AutoRefresh>());
 
     libraryButtonLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     libraryButtonLayout->addWidget(addLibrary);
@@ -101,8 +101,8 @@ LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, QWidget*
     connect(addLibrary, &QPushButton::clicked, this, &LibraryPage::addLibrary);
     connect(removeLibrary, &QPushButton::clicked, this, &LibraryPage::removeLibrary);
 
-    connect(autoRefresh, &QCheckBox::clicked, this, [settings](bool checked) {
-        settings->set<Core::Settings::AutoRefresh>(checked);
+    connect(autoRefresh, &QCheckBox::clicked, this, [this](bool checked) {
+        m_settings->set<Core::Settings::AutoRefresh>(checked);
     });
 }
 
@@ -159,23 +159,22 @@ void LibraryPage::removeLibrary()
     }
 }
 
-PlaylistPage::PlaylistPage(QWidget* parent)
-    : QWidget(parent)
+PlaylistPage::PlaylistPage(Core::SettingsManager* settings, QWidget* parent)
+    : QWidget{parent}
+    , m_settings{settings}
 {
-    auto* settings = Plugins::object<Core::SettingsManager>();
-
     auto* groupHeaders = new QCheckBox("Enable Disc Headers", this);
-    groupHeaders->setChecked(settings->value<Settings::DiscHeaders>());
+    groupHeaders->setChecked(m_settings->value<Settings::DiscHeaders>());
 
     auto* splitDiscs = new QCheckBox("Split Discs", this);
-    splitDiscs->setChecked(settings->value<Settings::SplitDiscs>());
+    splitDiscs->setChecked(m_settings->value<Settings::SplitDiscs>());
     splitDiscs->setEnabled(groupHeaders->isChecked());
 
     auto* simpleList = new QCheckBox("Simple Playlist", this);
-    simpleList->setChecked(settings->value<Settings::SimplePlaylist>());
+    simpleList->setChecked(m_settings->value<Settings::SimplePlaylist>());
 
     auto* altColours = new QCheckBox("Alternate Row Colours", this);
-    altColours->setChecked(settings->value<Settings::PlaylistAltColours>());
+    altColours->setChecked(m_settings->value<Settings::PlaylistAltColours>());
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(groupHeaders);
@@ -186,8 +185,8 @@ PlaylistPage::PlaylistPage(QWidget* parent)
     mainLayout->addWidget(altColours);
     mainLayout->addStretch();
 
-    connect(groupHeaders, &QCheckBox::clicked, this, [settings, splitDiscs](bool checked) {
-        settings->set<Settings::DiscHeaders>(checked);
+    connect(groupHeaders, &QCheckBox::clicked, this, [this, splitDiscs](bool checked) {
+        m_settings->set<Settings::DiscHeaders>(checked);
         if(checked) {
             splitDiscs->setEnabled(checked);
         }
@@ -196,14 +195,14 @@ PlaylistPage::PlaylistPage(QWidget* parent)
             splitDiscs->setEnabled(checked);
         }
     });
-    connect(splitDiscs, &QCheckBox::clicked, this, [settings](bool checked) {
-        settings->set<Settings::SplitDiscs>(checked);
+    connect(splitDiscs, &QCheckBox::clicked, this, [this](bool checked) {
+        m_settings->set<Settings::SplitDiscs>(checked);
     });
-    connect(simpleList, &QCheckBox::clicked, this, [settings](bool checked) {
-        settings->set<Settings::SimplePlaylist>(checked);
+    connect(simpleList, &QCheckBox::clicked, this, [this](bool checked) {
+        m_settings->set<Settings::SimplePlaylist>(checked);
     });
-    connect(altColours, &QCheckBox::clicked, this, [settings](bool checked) {
-        settings->set<Settings::PlaylistAltColours>(checked);
+    connect(altColours, &QCheckBox::clicked, this, [this](bool checked) {
+        m_settings->set<Settings::PlaylistAltColours>(checked);
     });
 }
 

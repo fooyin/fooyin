@@ -25,13 +25,21 @@
 
 #include <QWidget>
 
+class QHBoxLayout;
+
+namespace Core::Player {
+class PlayerManager;
+} // namespace Core
+
 namespace Gui::Widgets {
+class ClickableLabel;
+
 class StatusWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit StatusWidget(QWidget* parent = nullptr);
+    explicit StatusWidget(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
     ~StatusWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -48,7 +56,11 @@ protected:
     void stateChanged(Core::Player::PlayState state);
 
 private:
-    struct Private;
-    std::unique_ptr<StatusWidget::Private> p;
+    Core::Player::PlayerManager* m_playerManager;
+
+    QHBoxLayout* m_layout;
+    ClickableLabel* m_iconLabel;
+    QPixmap m_icon;
+    ClickableLabel* m_playing;
 };
 } // namespace Gui::Widgets

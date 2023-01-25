@@ -69,14 +69,15 @@ void filterByType(Core::Track* track, const ActiveFilters& filters, int& matches
     }
 }
 
-FilterDatabaseManager::FilterDatabaseManager(QObject* parent)
-    : Worker(parent)
-    , m_filterDatabase(std::make_unique<FilterDatabase>(Core::DB::Database::instance()->connectionName()))
+FilterDatabaseManager::FilterDatabaseManager(Core::DB::Database* database, QObject* parent)
+    : Worker{parent}
+    , m_database{database}
+    , m_filterDatabase{std::make_unique<FilterDatabase>(m_database->connectionName())}
 { }
 
 FilterDatabaseManager::~FilterDatabaseManager()
 {
-    Core::DB::Database::instance()->closeDatabase();
+    m_database->closeDatabase();
 }
 
 void FilterDatabaseManager::getAllItems(Filters::FilterType type, Core::Library::SortOrder order)

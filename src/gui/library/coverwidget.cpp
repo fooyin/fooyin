@@ -28,33 +28,20 @@
 #include <QLabel>
 
 namespace Gui::Widgets {
-struct CoverWidget::Private
-{
-    Core::Player::PlayerManager* playerManager;
-    Core::Library::MusicLibrary* library;
-
-    QHBoxLayout* layout;
-    QLabel* coverLabel;
-    QString coverPath;
-    QPixmap cover;
-    bool hasCover{false};
-
-    explicit Private()
-        : playerManager(Plugins::object<Core::Player::PlayerManager>())
-        , library(Plugins::object<Core::Library::MusicLibrary>())
-    { }
-};
-
-CoverWidget::CoverWidget(QWidget* parent)
-    : FyWidget(parent)
-    , p(std::make_unique<Private>())
+CoverWidget::CoverWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
+                         QWidget* parent)
+    : FyWidget{parent}
+    , m_library{library}
+    , m_playerManager{playerManager}
+    , m_layout{new QHBoxLayout(this)}
+    , m_coverLabel{new QLabel(this)}
 {
     setObjectName("Artwork");
     setupUi();
 
-    connect(p->playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
-    connect(p->library, &Core::Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
-    connect(p->library, &Core::Library::MusicLibrary::tracksSelChanged, this, &CoverWidget::reloadCover);
+    connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
+    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
+    connect(m_library, &Core::Library::MusicLibrary::tracksSelChanged, this, &CoverWidget::reloadCover);
 
     reloadCover();
 }
@@ -68,24 +55,18 @@ CoverWidget::~CoverWidget() = default;
 
 void CoverWidget::setupUi()
 {
-    p->layout = new QHBoxLayout(this);
-    p->layout->setAlignment(Qt::AlignCenter);
-
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setAlignment(Qt::AlignCenter);
     setAutoFillBackground(true);
 
-    p->coverLabel = new QLabel(this);
-
-    p->coverLabel->setMinimumSize(100, 100);
-
-    p->layout->addWidget(p->coverLabel);
-
-    p->layout->setContentsMargins(0, 0, 0, 0);
+    m_coverLabel->setMinimumSize(100, 100);
+    m_layout->addWidget(m_coverLabel);
 }
 
 void CoverWidget::resizeEvent(QResizeEvent* e)
 {
-    if(p->hasCover) {
-        p->coverLabel->setPixmap(p->cover.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    if(m_hasCover) {
+        m_coverLabel->setPixmap(m_cover.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
     QWidget::resizeEvent(e);
 }
@@ -93,22 +74,22 @@ void CoverWidget::resizeEvent(QResizeEvent* e)
 void CoverWidget::reloadCover()
 {
     QString coverPath = "";
-    if(!p->library->tracks().empty()) {
-        const Core::Player::PlayState state = p->playerManager->playState();
+    if(!m_library->tracks().empty()) {
+        const Core::Player::PlayState state = m_playerManager->playState();
         if(state == Core::Player::PlayState::Playing || state == Core::Player::PlayState::Paused) {
-            Core::Track* track = p->playerManager->currentTrack();
+            Core::Track* track = m_playerManager->currentTrack();
             if(track) {
                 coverPath = track->coverPath();
             }
         }
-        else if(p->library->selectedTracks().empty()) {
-            Core::Track* track = p->library->tracks().front();
+        else if(m_library->selectedTracks().empty()) {
+            Core::Track* track = m_library->tracks().front();
             if(track) {
                 coverPath = track->coverPath();
             }
         }
         else {
-            Core::Track* track = p->library->selectedTracks().front();
+            Core::Track* track = m_library->selectedTracks().front();
             if(track) {
                 coverPath = track->coverPath();
             }
@@ -118,17 +99,17 @@ void CoverWidget::reloadCover()
     if(coverPath.isEmpty()) {
         coverPath = "://images/nocover.png";
         //        setAutoFillBackground(true);
-        //        QPalette palette = p->coverLabel->palette();
-        //        palette.setColor(p->coverLabel->backgroundRole(), palette.base().color());
-        //        p->coverLabel->setPalette(palette);
+        //        QPalette palette = m_coverLabel->palette();
+        //        palette.setColor(m_coverLabel->backgroundRole(), palette.base().color());
+        //        m_coverLabel->setPalette(palette);
     }
 
-    if(coverPath != p->coverPath) {
-        p->coverPath = coverPath;
-        p->cover.load(coverPath);
-        if(!p->cover.isNull()) {
-            p->coverLabel->setPixmap(p->cover.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-            p->hasCover = true;
+    if(coverPath != m_coverPath) {
+        m_coverPath = coverPath;
+        m_cover.load(coverPath);
+        if(!m_cover.isNull()) {
+            m_coverLabel->setPixmap(m_cover.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            m_hasCover = true;
         }
     }
 }
