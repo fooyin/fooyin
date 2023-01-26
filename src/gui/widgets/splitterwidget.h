@@ -54,7 +54,6 @@ public:
     [[nodiscard]] bool hasChildren();
 
     void addWidget(QWidget* widget);
-    void insertWidget(int index, FyWidget* widget);
     void replaceWidget(int index, FyWidget* widget);
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget);
     void removeWidget(FyWidget* widget);
@@ -68,6 +67,9 @@ public:
     void saveLayout(QJsonArray& array) override;
     void loadLayout(QJsonObject& object) override;
 
+protected:
+    void insertWidget(int index, FyWidget* widget);
+
 private:
     Core::SettingsManager* m_settings;
     Core::ActionManager* m_actionManager;
@@ -78,6 +80,8 @@ private:
     QList<FyWidget*> m_children;
     Dummy* m_dummy;
     QAction* m_changeSplitter;
+    int m_widgetCount;
+    bool m_isRoot;
 };
 
 class VerticalSplitterWidget : public SplitterWidget

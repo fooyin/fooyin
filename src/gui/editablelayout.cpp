@@ -102,7 +102,7 @@ struct EditableLayout::Private
         }
         QWidget* child = widget;
 
-        while(!qobject_cast<FyWidget*>(child) || qobject_cast<Dummy*>(child)) {
+        while(!qobject_cast<FyWidget*>(child)) {
             child = child->parentWidget();
             if(!child) {
                 return {};
@@ -246,13 +246,16 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
             FyWidget* child  = p->splitterChild(widget);
 
             if(child) {
-                setupContextMenu(child, p->menu);
-            }
-            if(child && !p->menu->isEmpty()) {
+                if(qobject_cast<Dummy*>(child)) {
+                    setupContextMenu(child->findParent(), p->menu);
+                }
+                else {
+                    setupContextMenu(child, p->menu);
+                }
                 showOverlay(child);
                 p->menu->menu()->exec(mapToGlobal(pos));
+                return true;
             }
-            return true;
         }
     }
     return QWidget::eventFilter(watched, event);

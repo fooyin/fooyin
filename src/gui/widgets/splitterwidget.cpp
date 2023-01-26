@@ -40,8 +40,14 @@ SplitterWidget::SplitterWidget(Core::ActionManager* actionManager, Widgets::Widg
     , m_layout{new QHBoxLayout(this)}
     , m_splitter{new Splitter(Qt::Vertical, settings, this)}
     , m_dummy{new Dummy(this)}
+    , m_widgetCount{0}
+    , m_isRoot{false}
 {
     setObjectName(SplitterWidget::name());
+
+    if(!qobject_cast<SplitterWidget*>(findParent())) {
+        m_isRoot = true;
+    }
 
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->addWidget(m_splitter);
@@ -98,9 +104,17 @@ void SplitterWidget::addWidget(QWidget* newWidget)
     if(!widget) {
         return;
     }
-    if(m_children.isEmpty()) {
+
+    const auto* newSplitter = qobject_cast<SplitterWidget*>(newWidget);
+
+    if((m_isRoot && newSplitter) || !newSplitter) {
+        ++m_widgetCount;
+    }
+    // Only hide dummy if there's at least 2 non-splitter widgets
+    if(m_widgetCount > 1) {
         m_dummy->hide();
     }
+
     const int index = static_cast<int>(m_children.count());
     m_children.append(widget);
     return m_splitter->insertWidget(index, widget);
@@ -110,9 +124,6 @@ void SplitterWidget::insertWidget(int index, FyWidget* widget)
 {
     if(!widget) {
         return;
-    }
-    if(m_children.isEmpty()) {
-        m_dummy->hide();
     }
     m_children.insert(index, widget);
     m_splitter->insertWidget(index, widget);
@@ -142,10 +153,14 @@ void SplitterWidget::removeWidget(FyWidget* widget)
 {
     const int index = findIndex(widget);
     if(index != -1) {
+        const auto* removeSplitter = qobject_cast<SplitterWidget*>(widget);
+        if((m_isRoot && removeSplitter) || !removeSplitter) {
+            --m_widgetCount;
+        }
         widget->deleteLater();
         m_children.remove(index);
     }
-    if(m_children.isEmpty()) {
+    if(m_widgetCount < 2) {
         m_dummy->show();
     }
 }
