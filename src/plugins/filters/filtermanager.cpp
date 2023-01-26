@@ -223,22 +223,20 @@ bool FilterManager::tracksHaveFiltered()
 
 void FilterManager::changeSelection(const Core::IdSet& indexes, Filters::FilterType type, int index)
 {
-    const bool filterAll = Utils::contains(indexes, -1);
-
     for(const auto& filter : p->filters) {
         if(index < filter.index) {
             p->activeFilters.erase(filter.type);
         }
     }
 
-    if(filterAll) {
+    if(Utils::contains(indexes, -1)) {
         p->activeFilters.erase(type);
     }
     else {
         p->activeFilters[type] = indexes;
     }
 
-    if((!p->activeFilters.empty() && !filterAll) || !p->searchFilter.isEmpty()) {
+    if(!p->activeFilters.empty() || !p->searchFilter.isEmpty()) {
         getFilteredTracks();
     }
     else {
