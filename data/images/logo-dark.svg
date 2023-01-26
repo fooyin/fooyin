@@ -87,6 +87,78 @@
          result="composite2"
          id="feComposite3957" />
     </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter2122"
+       x="-0.013875317"
+       y="-0.059268371"
+       width="1.0297794"
+       height="1.1081426">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood2112" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite2114" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="3.13474"
+         result="blur"
+         id="feGaussianBlur2116" />
+      <feOffset
+         dx="1.1"
+         dy="-1.6"
+         result="offset"
+         id="feOffset2118" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite2120" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter2134"
+       x="-0.026091948"
+       y="-0.064445139"
+       width="1.0559988"
+       height="1.1175883">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood2124" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite2126" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="3.13474"
+         result="blur"
+         id="feGaussianBlur2128" />
+      <feOffset
+         dx="1.1"
+         dy="-1.6"
+         result="offset"
+         id="feOffset2130" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite2132" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="namedview4"
@@ -99,7 +171,7 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
      inkscape:zoom="0.91541025"
-     inkscape:cx="459.90309"
+     inkscape:cx="341.9232"
      inkscape:cy="345.20042"
      inkscape:window-width="1886"
      inkscape:window-height="1080"
@@ -114,7 +186,7 @@
      transform="translate(-54.999583,-189.49958)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:148.706px;font-family:'MesloLGS NF';-inkscape-font-specification:'MesloLGS NF';fill:#e5e5e5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4.64707;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:148.706px;font-family:'MesloLGS NF';-inkscape-font-specification:'MesloLGS NF';fill:#e5e5e5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4.64707;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;filter:url(#filter2134)"
        x="504.25235"
        y="582.89978"
        id="text565-5"
@@ -126,7 +198,7 @@
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:148.706px;font-family:'MesloLGS NF';-inkscape-font-specification:'MesloLGS NF Bold';fill:#e5e5e5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4.64707;stroke-opacity:1">福音</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.108px;font-family:'MesloLGS NF';-inkscape-font-specification:'MesloLGS NF';fill:#e5e5e5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5.12836;stroke-linecap:round;stroke-linejoin:round"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.108px;font-family:'MesloLGS NF';-inkscape-font-specification:'MesloLGS NF';fill:#e5e5e5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5.12836;stroke-linecap:round;stroke-linejoin:round;filter:url(#filter2122)"
        x="500.5899"
        y="394.44373"
        id="text565"
