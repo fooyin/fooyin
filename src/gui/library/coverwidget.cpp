@@ -54,7 +54,7 @@ void CoverWidget::setupUi()
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setAlignment(Qt::AlignCenter);
-    setAutoFillBackground(true);
+    //    setAutoFillBackground(true);
 
     m_coverLabel->setMinimumSize(100, 100);
     m_layout->addWidget(m_coverLabel);
