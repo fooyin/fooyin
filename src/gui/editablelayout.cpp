@@ -73,7 +73,7 @@ struct EditableLayout::Private
 
     Core::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const
     {
-        auto id       = parent->id();
+        auto id       = parent->id().append(title);
         auto* newMenu = actionManager->createMenu(id);
         newMenu->menu()->setTitle(title);
 
@@ -141,6 +141,9 @@ void EditableLayout::initialise()
             p->splitter->setParent(this);
             p->box->addWidget(p->splitter);
         }
+        else {
+            p->splitter = new SplitterWidget(p->actionManager, p->widgetProvider, p->settings, this);
+        }
     }
     if(!p->splitter->hasChildren()) {
         p->settings->set<Settings::LayoutEditing>(true);
@@ -154,7 +157,7 @@ void EditableLayout::setupWidgetMenu(Core::ActionContainer* menu, FyWidget* pare
         return;
     }
     auto* splitter = qobject_cast<SplitterWidget*>(parent);
-    if(!splitter) {
+    if(!splitter || replace) {
         splitter = qobject_cast<SplitterWidget*>(parent->findParent());
     }
     auto widgets = p->widgetFactory->registeredWidgets();
@@ -207,6 +210,10 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Core::ActionContainer* m
 
             // Only non-root splitters are removable
             if(parent) {
+                auto* changeMenu = p->createNewMenu(splitter, tr("&Replace"));
+                setupWidgetMenu(changeMenu, splitter, true);
+                menu->addMenu(changeMenu);
+
                 auto* remove = new QAction("Remove", menu);
                 QAction::connect(remove, &QAction::triggered, parent, [parent, splitter] {
                     parent->removeWidget(splitter);
