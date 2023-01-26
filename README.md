@@ -1,8 +1,8 @@
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="data/images/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="data/images/logo.svg">
-  <img alt="Fooyin logo." align="center" width=52% src="data/images/logo.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/logo.svg">
+  <img alt="Fooyin logo." align="center" width=35% src="https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/logo.svg">
 </picture>
 </p>
 
