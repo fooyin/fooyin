@@ -35,8 +35,6 @@ PlaylistView::PlaylistView(QWidget* parent)
     setupView();
 }
 
-PlaylistView::~PlaylistView() = default;
-
 void PlaylistView::setupView()
 {
     setRootIsDecorated(false);

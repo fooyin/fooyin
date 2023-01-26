@@ -37,8 +37,6 @@ EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* pare
     connect(this, &EngineHandler::stop, &m_engine, &Engine::stop);
 }
 
-EngineHandler::~EngineHandler() = default;
-
 void EngineHandler::playStateChanged(Player::PlayState state)
 {
     switch(state) {

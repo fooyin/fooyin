@@ -27,7 +27,7 @@ class Disc : public Container
 {
 public:
     explicit Disc(int number);
-    ~Disc() override;
+    ~Disc() override = default;
 
     [[nodiscard]] int number() const;
 

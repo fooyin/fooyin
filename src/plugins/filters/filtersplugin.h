@@ -51,8 +51,8 @@ class FiltersPlugin : public QObject,
     Q_INTERFACES(Plugins::SettingsPlugin)
 
 public:
-    FiltersPlugin();
-    ~FiltersPlugin() override;
+    FiltersPlugin()           = default;
+    ~FiltersPlugin() override = default;
 
     void initialise() override;
     void initialise(WidgetPluginContext context) override;

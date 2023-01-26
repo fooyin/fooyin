@@ -41,7 +41,7 @@ class InfoWidget : public FyWidget
 public:
     explicit InfoWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
                         QWidget* parent = nullptr);
-    ~InfoWidget() override;
+    ~InfoWidget() override = default;
 
     bool isHeaderHidden();
     void setHeaderHidden(bool showHeader);

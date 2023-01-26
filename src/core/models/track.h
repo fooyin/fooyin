@@ -33,7 +33,7 @@ class Track : public LibraryItem
 public:
     Track() = default;
     explicit Track(QString filepath);
-    ~Track() override;
+    ~Track() override = default;
 
     [[nodiscard]] bool isEnabled() const;
     void setIsEnabled(bool enabled);

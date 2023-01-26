@@ -24,24 +24,15 @@
 #include <QThread>
 
 namespace Core {
-struct ThreadManager::Private
-{
-    QList<QThread*> threads;
-    QList<Worker*> workers;
-};
-
 ThreadManager::ThreadManager(QObject* parent)
     : QObject{parent}
-    , p(std::make_unique<Private>())
 { }
-
-ThreadManager::~ThreadManager() = default;
 
 void ThreadManager::close()
 {
     emit stop();
 
-    for(const auto& thread : p->threads) {
+    for(const auto& thread : m_threads) {
         thread->quit();
         thread->wait();
     }
@@ -50,11 +41,11 @@ void ThreadManager::close()
 void ThreadManager::moveToNewThread(Worker* worker)
 {
     auto* thread = new QThread(this);
-    p->threads.append(thread);
+    m_threads.emplace_back(thread);
     thread->start();
 
     worker->moveToThread(thread);
     connect(this, &ThreadManager::stop, worker, &Worker::stopThread);
-    p->workers.append(worker);
+    m_workers.emplace_back(worker);
 }
 } // namespace Core

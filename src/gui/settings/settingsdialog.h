@@ -50,7 +50,7 @@ public:
 
     explicit SettingsDialog(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings,
                             QWidget* parent = nullptr);
-    ~SettingsDialog() override;
+    ~SettingsDialog() override = default;
 
     void setupUi();
 

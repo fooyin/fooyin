@@ -23,7 +23,7 @@ namespace Core {
 class LibraryItem
 {
 public:
-    explicit LibraryItem();
-    virtual ~LibraryItem();
+    explicit LibraryItem() = default;
+    virtual ~LibraryItem() = default;
 };
 } // namespace Core

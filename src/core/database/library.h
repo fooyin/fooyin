@@ -34,7 +34,7 @@ class Library : private Module
 {
 public:
     explicit Library(const QString& connectionName);
-    ~Library() override;
+    ~Library() override = default;
 
     IdLibraryMap getAllLibraries();
     bool insertLibrary(int id, const QString& path, const QString& name);

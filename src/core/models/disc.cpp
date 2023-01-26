@@ -25,8 +25,6 @@ Disc::Disc(int number)
     , m_number(number)
 { }
 
-Disc::~Disc() = default;
-
 int Disc::number() const
 {
     return m_number;

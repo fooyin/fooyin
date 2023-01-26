@@ -67,8 +67,6 @@ FilterDatabase::FilterDatabase(const QString& connectionName)
     : Core::DB::Module(connectionName)
 { }
 
-FilterDatabase::~FilterDatabase() = default;
-
 bool FilterDatabase::getAllItems(Filters::FilterType type, Core::Library::SortOrder order, FilterEntries& result) const
 {
     const auto join      = getFilterJoins(type);

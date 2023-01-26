@@ -30,8 +30,6 @@ Module::Module(QString connectionName)
     : m_connectionName(std::move(connectionName))
 { }
 
-Module::~Module() = default;
-
 QString Module::connectionName() const
 {
     return m_connectionName;

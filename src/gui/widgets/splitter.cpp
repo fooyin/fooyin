@@ -34,8 +34,6 @@ Splitter::Splitter(Qt::Orientation type, Core::SettingsManager* settings, QWidge
     setChildrenCollapsible(false);
 }
 
-Splitter::~Splitter() = default;
-
 QSplitterHandle* Splitter::createHandle()
 {
     auto* handle = new SplitterHandle(orientation(), this);

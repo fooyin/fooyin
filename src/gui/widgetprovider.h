@@ -31,7 +31,7 @@ class WidgetProvider : public QObject
 
 public:
     explicit WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent = nullptr);
-    ~WidgetProvider() override;
+    ~WidgetProvider() override = default;
 
     FyWidget* createWidget(const QString& widget);
 

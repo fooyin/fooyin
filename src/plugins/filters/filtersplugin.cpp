@@ -25,16 +25,11 @@
 #include "searchwidget.h"
 
 #include <core/actions/actioncontainer.h>
-#include <core/plugins/pluginmanager.h>
 #include <gui/widgetfactory.h>
 
 #include <QMenu>
 
 namespace Filters {
-FiltersPlugin::FiltersPlugin() = default;
-
-FiltersPlugin::~FiltersPlugin() = default;
-
 void FiltersPlugin::initialise()
 {
     m_filterManager  = new FilterManager(m_threadManager, m_database, m_library, this);

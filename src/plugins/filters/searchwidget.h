@@ -38,7 +38,7 @@ class SearchWidget : public Gui::Widgets::FyWidget
 
 public:
     explicit SearchWidget(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~SearchWidget() override;
+    ~SearchWidget() override = default;
 
     [[nodiscard]] QString name() const override;
 

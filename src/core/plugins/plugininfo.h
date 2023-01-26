@@ -42,7 +42,7 @@ public:
     };
 
     PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata);
-    ~PluginInfo();
+    ~PluginInfo() = default;
 
     void load();
     void unload();

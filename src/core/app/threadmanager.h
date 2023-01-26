@@ -29,7 +29,7 @@ class ThreadManager : public QObject
 
 public:
     explicit ThreadManager(QObject* parent = nullptr);
-    ~ThreadManager() override;
+    ~ThreadManager() override = default;
 
     void close();
 
@@ -39,7 +39,7 @@ signals:
     void stop();
 
 private:
-    struct Private;
-    std::unique_ptr<ThreadManager::Private> p;
+    std::vector<QThread*> m_threads;
+    std::vector<Worker*> m_workers;
 };
 } // namespace Core

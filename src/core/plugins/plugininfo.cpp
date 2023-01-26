@@ -40,8 +40,6 @@ PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJson
     m_loader.setFileName(filename);
 }
 
-PluginInfo::~PluginInfo() = default;
-
 void PluginInfo::load()
 {
     if(m_loader.fileName().isEmpty()) {

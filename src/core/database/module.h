@@ -28,7 +28,7 @@ class Module
 {
 public:
     explicit Module(QString connectionName);
-    virtual ~Module();
+    virtual ~Module() = default;
 
     [[nodiscard]] QSqlDatabase db() const;
     [[nodiscard]] QString connectionName() const;

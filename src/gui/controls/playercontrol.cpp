@@ -43,8 +43,6 @@ PlayerControl::PlayerControl(QWidget* parent)
     connect(m_next, &ComboIcon::clicked, this, &PlayerControl::nextClicked);
 }
 
-PlayerControl::~PlayerControl() = default;
-
 void PlayerControl::setupUi()
 {
     m_layout->setSizeConstraint(QLayout::SetFixedSize);

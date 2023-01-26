@@ -27,8 +27,6 @@ Spacer::Spacer(QWidget* parent)
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 }
 
-Spacer::~Spacer() = default;
-
 QString Spacer::name() const
 {
     return "Spacer";

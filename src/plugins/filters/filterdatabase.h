@@ -30,7 +30,7 @@ class FilterDatabase : public Core::DB::Module
 {
 public:
     explicit FilterDatabase(const QString& connectionName);
-    ~FilterDatabase() override;
+    ~FilterDatabase() override = default;
 
     bool getAllItems(Filters::FilterType type, Core::Library::SortOrder order, FilterEntries& result) const;
 

@@ -44,7 +44,7 @@ class ComboIcon : public QWidget
 public:
     explicit ComboIcon(const QString& path, Core::Fy::Attributes attributes, QWidget* parent = nullptr);
     explicit ComboIcon(const QString& path, QWidget* parent = nullptr);
-    ~ComboIcon() override;
+    ~ComboIcon() override = default;
 
     void setup(const QString& path);
 

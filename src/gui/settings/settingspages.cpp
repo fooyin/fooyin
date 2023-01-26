@@ -24,7 +24,6 @@
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/librarymanager.h>
-#include <core/plugins/pluginmanager.h>
 #include <utils/utils.h>
 
 #include <QCheckBox>
@@ -54,8 +53,6 @@ GeneralPage::GeneralPage(Core::SettingsManager* settings, QWidget* parent)
         m_settings->set<Settings::SplitterHandles>(checked);
     });
 }
-
-GeneralPage::~GeneralPage() = default;
 
 LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings,
                          QWidget* parent)
@@ -105,8 +102,6 @@ LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, Core::Se
         m_settings->set<Core::Settings::AutoRefresh>(checked);
     });
 }
-
-LibraryPage::~LibraryPage() = default;
 
 void LibraryPage::addLibraryRow(const Core::Library::LibraryInfo& info)
 {
@@ -205,6 +200,4 @@ PlaylistPage::PlaylistPage(Core::SettingsManager* settings, QWidget* parent)
         m_settings->set<Settings::PlaylistAltColours>(checked);
     });
 }
-
-PlaylistPage::~PlaylistPage() = default;
 } // namespace Gui::Settings

@@ -29,7 +29,7 @@ class Artist : public LibraryItem
 public:
     Artist() = default;
     explicit Artist(QString name);
-    ~Artist() override;
+    ~Artist() override = default;
 
     [[nodiscard]] int id() const;
     void setId(int id);

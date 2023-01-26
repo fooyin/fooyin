@@ -38,7 +38,7 @@ class EngineHandler : public Worker
 
 public:
     explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+    ~EngineHandler() override = default;
 
 signals:
     void play();

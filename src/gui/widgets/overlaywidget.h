@@ -32,7 +32,7 @@ class OverlayWidget : public QWidget
 
 public:
     explicit OverlayWidget(bool button = false, QWidget* parent = nullptr);
-    ~OverlayWidget() override;
+    ~OverlayWidget() override = default;
 
     void setText(const QString& text);
     void setButtonText(const QString& text);

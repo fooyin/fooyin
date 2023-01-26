@@ -59,7 +59,7 @@ public:
     explicit PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
                             Core::Player::PlayerManager* playerManager, Settings::SettingsDialog* settingsDialog,
                             Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~PlaylistWidget() override;
+    ~PlaylistWidget() override = default;
 
     void setup();
     void reset();

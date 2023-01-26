@@ -30,7 +30,7 @@ class Container : public LibraryItem
 public:
     Container() = default;
     explicit Container(QString title);
-    ~Container() override;
+    ~Container() override = default;
 
     [[nodiscard]] QString title() const;
 

@@ -24,7 +24,6 @@
 #include "gui/widgets/slider.h"
 
 #include <core/models/track.h>
-#include <core/plugins/pluginmanager.h>
 #include <utils/utils.h>
 
 #include <QHBoxLayout>
@@ -45,8 +44,6 @@ ProgressWidget::ProgressWidget(Core::SettingsManager* settings, QWidget* parent)
     connect(m_total, &ClickableLabel::clicked, this, &ProgressWidget::toggleRemaining);
     connect(m_slider, &Slider::sliderReleased, this, &ProgressWidget::sliderDropped);
 }
-
-ProgressWidget::~ProgressWidget() = default;
 
 void ProgressWidget::setupUi()
 {

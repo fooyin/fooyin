@@ -29,7 +29,6 @@
 #include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
-#include <core/plugins/pluginmanager.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>

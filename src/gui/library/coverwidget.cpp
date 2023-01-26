@@ -22,7 +22,6 @@
 #include <core/library/musiclibrary.h>
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
-#include <core/plugins/pluginmanager.h>
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -50,8 +49,6 @@ QString CoverWidget::name() const
 {
     return "Artwork";
 }
-
-CoverWidget::~CoverWidget() = default;
 
 void CoverWidget::setupUi()
 {

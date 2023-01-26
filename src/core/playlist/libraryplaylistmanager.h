@@ -27,7 +27,7 @@ class LibraryPlaylistManager : public LibraryPlaylistInterface
 {
 public:
     explicit LibraryPlaylistManager(PlaylistHandler* playlistHandler);
-    ~LibraryPlaylistManager() override;
+    ~LibraryPlaylistManager() override = default;
 
     void createPlaylist(const TrackPtrList& tracks, int id) override;
     void append(const TrackPtrList& tracks) override;

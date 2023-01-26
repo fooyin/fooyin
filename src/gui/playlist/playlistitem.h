@@ -37,7 +37,7 @@ public:
     };
 
     explicit PlaylistItem(Type type = Type::Root, Core::LibraryItem* data = {}, PlaylistItem* parentItem = nullptr);
-    ~PlaylistItem();
+    ~PlaylistItem() = default;
 
     void appendChild(PlaylistItem* child);
     void setIndex(int idx);

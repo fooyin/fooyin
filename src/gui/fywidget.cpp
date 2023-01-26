@@ -29,8 +29,6 @@ FyWidget::FyWidget(QWidget* parent)
     m_id.append(reinterpret_cast<quintptr>(this));
 }
 
-FyWidget::~FyWidget() = default;
-
 Utils::Id FyWidget::id() const
 {
     return m_id;

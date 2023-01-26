@@ -23,6 +23,4 @@ namespace Core::DB {
 Playlist::Playlist(const QString& connectionName)
     : Module(connectionName)
 { }
-
-Playlist::~Playlist() = default;
 } // namespace Core::DB

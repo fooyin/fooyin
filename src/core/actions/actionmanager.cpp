@@ -22,35 +22,22 @@
 #include "actioncontainer.h"
 #include "core/constants.h"
 
-#include <utils/helpers.h>
-
 #include <QMainWindow>
 #include <QMenuBar>
 
 namespace Core {
-struct ActionManager::Private
-{
-    QMainWindow* mainWindow;
-
-    QHash<Utils::Id, QAction*> idCmdMap;
-    QHash<Utils::Id, ActionContainer*> idContainerMap;
-};
-
 ActionManager::ActionManager(QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>()}
 { }
 
 void ActionManager::setMainWindow(QMainWindow* mainWindow)
 {
-    p->mainWindow = mainWindow;
+    m_mainWindow = mainWindow;
 }
-
-ActionManager::~ActionManager() = default;
 
 ActionContainer* ActionManager::createMenu(const Utils::Id& id)
 {
-    for(auto [mapId, container] : Utils::asRange(p->idContainerMap)) {
+    for(const auto& [mapId, container] : m_idContainerMap) {
         if(mapId == id) {
             return container;
         }
@@ -58,16 +45,17 @@ ActionContainer* ActionManager::createMenu(const Utils::Id& id)
 
     auto* mActionContainer = new MenuActionContainer(id, this);
     connect(mActionContainer, &ActionContainer::registerSeperator, this, &ActionManager::registerAction);
-    mActionContainer->appendGroup(Core::Constants::Groups::One);
-    p->idContainerMap.emplace(id, mActionContainer);
     connect(mActionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
+
+    mActionContainer->appendGroup(Core::Constants::Groups::One);
+    m_idContainerMap.emplace(id, mActionContainer);
 
     return mActionContainer;
 }
 
 ActionContainer* ActionManager::createMenuBar(const Utils::Id& id)
 {
-    for(auto [mapId, container] : Utils::asRange(p->idContainerMap)) {
+    for(const auto& [mapId, container] : m_idContainerMap) {
         if(mapId == id) {
             return container;
         }
@@ -78,23 +66,24 @@ ActionContainer* ActionManager::createMenuBar(const Utils::Id& id)
 
     auto* mbActionContainer = new MenuBarActionContainer(id, this);
     connect(mbActionContainer, &ActionContainer::registerSeperator, this, &ActionManager::registerAction);
-    mbActionContainer->setMenuBar(menuBar);
-    p->idContainerMap.emplace(id, mbActionContainer);
     connect(mbActionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
+
+    mbActionContainer->setMenuBar(menuBar);
+    m_idContainerMap.emplace(id, mbActionContainer);
 
     return mbActionContainer;
 }
 
 void ActionManager::registerAction(QAction* action, const Utils::Id& id)
 {
-    p->idCmdMap.emplace(id, action);
-    p->mainWindow->addAction(action);
+    m_idCmdMap.emplace(id, action);
+    m_mainWindow->addAction(action);
     action->setObjectName(id.name());
 }
 
 QAction* ActionManager::action(const Utils::Id& id)
 {
-    for(auto [mapId, action] : Utils::asRange(p->idCmdMap)) {
+    for(const auto& [mapId, action] : m_idCmdMap) {
         if(mapId == id) {
             return action;
         }
@@ -104,7 +93,7 @@ QAction* ActionManager::action(const Utils::Id& id)
 
 ActionContainer* ActionManager::actionContainer(const Utils::Id& id)
 {
-    for(auto [mapId, container] : Utils::asRange(p->idContainerMap)) {
+    for(const auto& [mapId, container] : m_idContainerMap) {
         if(mapId == id) {
             return container;
         }
@@ -115,6 +104,6 @@ ActionContainer* ActionManager::actionContainer(const Utils::Id& id)
 void ActionManager::containerDestroyed(QObject* sender)
 {
     auto* container = static_cast<ActionContainer*>(sender);
-    p->idContainerMap.remove(p->idContainerMap.key(container));
+    m_idContainerMap.erase(container->id());
 }
 } // namespace Core

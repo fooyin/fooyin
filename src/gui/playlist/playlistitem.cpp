@@ -29,8 +29,6 @@ PlaylistItem::PlaylistItem(Type type, Core::LibraryItem* data, PlaylistItem* par
     , m_parent(parent)
 { }
 
-PlaylistItem::~PlaylistItem() = default;
-
 void PlaylistItem::appendChild(PlaylistItem* child)
 {
     if(!Utils::contains(m_children, child)) {

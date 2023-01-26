@@ -27,7 +27,6 @@
 #include <core/library/musiclibrary.h>
 #include <core/models/disc.h>
 #include <core/player/playermanager.h>
-#include <core/plugins/pluginmanager.h>
 #include <utils/utils.h>
 
 #include <QPalette>
@@ -54,8 +53,6 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::L
     m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_pausedIcon  = m_pausedIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
-
-PlaylistModel::~PlaylistModel() = default;
 
 void PlaylistModel::setupModelData()
 {

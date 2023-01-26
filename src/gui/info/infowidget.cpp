@@ -27,7 +27,6 @@
 #include <core/library/musiclibrary.h>
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
-#include <core/plugins/pluginmanager.h>
 
 #include <QHeaderView>
 #include <QMenu>
@@ -57,8 +56,6 @@ InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, Core::Setting
 
     spanHeaders();
 }
-
-InfoWidget::~InfoWidget() = default;
 
 void InfoWidget::setupUi()
 {

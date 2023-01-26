@@ -26,8 +26,6 @@ ClickableLabel::ClickableLabel(QWidget* parent)
     : QLabel(parent)
 { }
 
-ClickableLabel::~ClickableLabel() = default;
-
 void ClickableLabel::mousePressEvent(QMouseEvent* event)
 {
     emit clicked();

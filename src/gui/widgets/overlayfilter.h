@@ -28,7 +28,7 @@ class OverlayFilter : public QWidget
 
 public:
     explicit OverlayFilter(QWidget* parent = nullptr);
-    ~OverlayFilter() override;
+    ~OverlayFilter() override = default;
 
 protected:
     void paintEvent(QPaintEvent* event) override;

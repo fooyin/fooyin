@@ -28,7 +28,7 @@ class FilterDelegate : public QStyledItemDelegate
 
 public:
     explicit FilterDelegate(QObject* parent = nullptr);
-    ~FilterDelegate() override;
+    ~FilterDelegate() override = default;
 
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 

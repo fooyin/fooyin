@@ -33,7 +33,7 @@ class FilterView : public QTreeView
 
 public:
     explicit FilterView(QWidget* parent = nullptr);
-    ~FilterView() override;
+    ~FilterView() override = default;
 
     void setupView();
 

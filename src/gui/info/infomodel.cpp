@@ -91,8 +91,6 @@ QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int rol
     return {};
 }
 
-InfoModel::~InfoModel() = default;
-
 int InfoModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent)

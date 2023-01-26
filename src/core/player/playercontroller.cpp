@@ -42,8 +42,6 @@ void PlayerController::restoreState()
     m_playMode = m_settings->value<Settings::PlayMode>().value<PlayMode>();
 }
 
-PlayerController::~PlayerController() = default;
-
 void PlayerController::reset()
 {
     m_playStatus = Player::PlayState::Stopped;

@@ -27,7 +27,7 @@ class LibraryDatabase : public DB::Module
 {
 public:
     LibraryDatabase(const QString& connectionName, int libraryId);
-    ~LibraryDatabase() override;
+    ~LibraryDatabase() override = default;
 
     bool storeTracks(TrackList& tracksToStore);
 

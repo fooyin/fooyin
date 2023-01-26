@@ -46,8 +46,6 @@ LibraryManager::LibraryManager(DB::Database* database, QObject* parent)
     reset();
 }
 
-LibraryManager::~LibraryManager() = default;
-
 void LibraryManager::reset()
 {
     m_libraries = m_libraryConnector->getAllLibraries();

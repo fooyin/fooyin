@@ -31,8 +31,6 @@ OverlayFilter::OverlayFilter(QWidget* parent)
     hide();
 }
 
-OverlayFilter::~OverlayFilter() = default;
-
 void OverlayFilter::paintEvent(QPaintEvent* e)
 {
     Q_UNUSED(e)

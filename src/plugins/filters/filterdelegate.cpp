@@ -26,8 +26,6 @@ FilterDelegate::FilterDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 { }
 
-FilterDelegate::~FilterDelegate() = default;
-
 QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const auto width = index.data(Qt::SizeHintRole).toSize().width();

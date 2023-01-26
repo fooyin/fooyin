@@ -37,8 +37,6 @@ SettingsDialog::SettingsDialog(Core::Library::LibraryManager* libraryManager, Co
     , m_pagesWidget{new QStackedWidget(this)}
 { }
 
-SettingsDialog::~SettingsDialog() = default;
-
 void SettingsDialog::setupUi()
 {
     m_contentsWidget->setViewMode(QListView::ListMode);

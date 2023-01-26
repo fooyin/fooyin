@@ -19,7 +19,6 @@
 
 #include "actioncontainer.h"
 
-#include "actionmanager.h"
 #include "core/constants.h"
 
 #include <QAction>
@@ -31,8 +30,6 @@ ActionContainer::ActionContainer(const Utils::Id& id, QObject* parent)
     : QObject{parent}
     , m_id{id}
 { }
-
-ActionContainer::~ActionContainer() = default;
 
 Utils::Id ActionContainer::id() const
 {

@@ -56,13 +56,8 @@ public:
     bool operator==(const Id& id) const;
     bool operator!=(const Id& id) const;
 
-    friend size_t qHash(const Id& id) noexcept;
-
 private:
     unsigned int m_id;
     QString m_name;
 };
 } // namespace Utils
-
-Q_DECLARE_METATYPE(Utils::Id)
-Q_DECLARE_METATYPE(QList<Utils::Id>)

@@ -38,6 +38,4 @@ GuiSettings::GuiSettings(Core::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::InfoHeader, true, "Info");
     m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
 }
-
-GuiSettings::~GuiSettings() = default;
 } // namespace Gui::Settings

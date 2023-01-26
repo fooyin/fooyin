@@ -23,7 +23,6 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
-#include <core/plugins/pluginmanager.h>
 
 #include <QHBoxLayout>
 
@@ -42,8 +41,6 @@ PlaylistControl::PlaylistControl(Core::SettingsManager* settings, QWidget* paren
     connect(m_repeat, &ComboIcon::clicked, this, &PlaylistControl::repeatClicked);
     connect(m_shuffle, &ComboIcon::clicked, this, &PlaylistControl::shuffleClicked);
 }
-
-PlaylistControl::~PlaylistControl() = default;
 
 void PlaylistControl::setupUi()
 {

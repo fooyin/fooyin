@@ -30,8 +30,6 @@ SettingsManager::SettingsManager(QObject* parent)
     , m_settingsFile{Utils::settingsPath(), QSettings::IniFormat, this}
 { }
 
-SettingsManager::~SettingsManager() = default;
-
 void SettingsManager::loadSettings()
 {
     for(auto& [key, setting] : m_settings) {

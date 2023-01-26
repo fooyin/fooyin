@@ -29,7 +29,6 @@
 #include <core/actions/actioncontainer.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
-#include <core/plugins/pluginmanager.h>
 #include <utils/enumhelper.h>
 
 #include <QAction>

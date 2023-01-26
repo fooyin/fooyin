@@ -33,7 +33,7 @@ class PlayerController : public PlayerManager
 
 public:
     explicit PlayerController(Core::SettingsManager* settings, QObject* parent = nullptr);
-    ~PlayerController() override;
+    ~PlayerController() override = default;
 
     void restoreState() override;
 

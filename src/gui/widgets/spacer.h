@@ -26,7 +26,7 @@ class Spacer : public FyWidget
 {
 public:
     explicit Spacer(QWidget* parent = nullptr);
-    ~Spacer() override;
+    ~Spacer() override = default;
 
     [[nodiscard]] QString name() const override;
 };

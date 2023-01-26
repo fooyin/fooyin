@@ -29,7 +29,7 @@ class QHBoxLayout;
 
 namespace Core::Player {
 class PlayerManager;
-} // namespace Core
+} // namespace Core::Player
 
 namespace Gui::Widgets {
 class ClickableLabel;
@@ -40,7 +40,7 @@ class StatusWidget : public FyWidget
 
 public:
     explicit StatusWidget(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
-    ~StatusWidget() override;
+    ~StatusWidget() override = default;
 
     [[nodiscard]] QString name() const override;
 

@@ -27,7 +27,7 @@ class LibraryInfo
 public:
     LibraryInfo() = default;
     LibraryInfo(const QString& path, QString name, int id);
-    ~LibraryInfo();
+    ~LibraryInfo() = default;
 
     [[nodiscard]] QString path() const;
     [[nodiscard]] QString name() const;

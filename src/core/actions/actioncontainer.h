@@ -42,7 +42,7 @@ public:
     };
 
     explicit ActionContainer(const Utils::Id& id, QObject* parent = nullptr);
-    ~ActionContainer() override;
+    ~ActionContainer() override = default;
 
     [[nodiscard]] Utils::Id id() const;
     [[nodiscard]] virtual QMenu* menu() const;

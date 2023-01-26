@@ -40,7 +40,7 @@ class SplitterWidget : public FyWidget
 public:
     explicit SplitterWidget(Core::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
                             Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~SplitterWidget() override;
+    ~SplitterWidget() override = default;
 
     void setupActions();
 

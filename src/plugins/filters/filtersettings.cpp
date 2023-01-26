@@ -27,6 +27,4 @@ FiltersSettings::FiltersSettings(Core::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::FilterHeader, true, "Filters");
     m_settings->createSetting(Settings::FilterScrollBar, true, "Filters");
 }
-
-FiltersSettings::~FiltersSettings() = default;
 } // namespace Filters::Settings

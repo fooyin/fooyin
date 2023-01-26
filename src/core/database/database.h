@@ -38,7 +38,7 @@ class Database : public Module
 public:
     explicit Database(Core::SettingsManager* settings, const QString& directory = Utils::sharePath(),
                       const QString& filename = "fooyin.db");
-    ~Database() override;
+    ~Database() override = default;
 
     virtual bool closeDatabase();
     virtual bool isInitialized();

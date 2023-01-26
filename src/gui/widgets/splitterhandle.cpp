@@ -25,8 +25,6 @@ SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     , m_showHandle{true}
 { }
 
-SplitterHandle::~SplitterHandle() = default;
-
 void SplitterHandle::showHandle(bool show)
 {
     m_showHandle = show;

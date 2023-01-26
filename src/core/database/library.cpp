@@ -98,6 +98,4 @@ bool Library::removeLibrary(int id)
 
     return success;
 }
-
-Library::~Library() = default;
 } // namespace Core::DB

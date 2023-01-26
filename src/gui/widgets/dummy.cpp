@@ -42,8 +42,6 @@ Dummy::Dummy(QWidget* parent)
     m_layout->addWidget(m_label);
 }
 
-Dummy::~Dummy() = default;
-
 QString Dummy::name() const
 {
     return "Dummy";

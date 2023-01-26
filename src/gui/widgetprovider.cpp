@@ -27,8 +27,6 @@ WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* p
     , m_widgetFactory{widgetFactory}
 { }
 
-WidgetProvider::~WidgetProvider() = default;
-
 FyWidget* WidgetProvider::createWidget(const QString& widget)
 {
     FyWidget* createdWidget = m_widgetFactory->make(widget);

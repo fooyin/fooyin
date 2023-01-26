@@ -30,8 +30,6 @@ PlaylistDelegate::PlaylistDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 { }
 
-PlaylistDelegate::~PlaylistDelegate() = default;
-
 QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const auto width = index.data(Qt::SizeHintRole).toSize().width();

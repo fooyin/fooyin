@@ -21,7 +21,6 @@
 
 #include "filtermanager.h"
 
-#include <core/plugins/pluginmanager.h>
 #include <gui/guisettings.h>
 
 #include <QHBoxLayout>
@@ -49,8 +48,6 @@ QString SearchWidget::name() const
 {
     return "Search";
 }
-
-SearchWidget::~SearchWidget() = default;
 
 void SearchWidget::setupUi()
 {

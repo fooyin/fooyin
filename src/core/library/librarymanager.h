@@ -36,7 +36,7 @@ class LibraryManager : public QObject
 
 public:
     explicit LibraryManager(DB::Database* database, QObject* parent = nullptr);
-    ~LibraryManager() override;
+    ~LibraryManager() override = default;
 
     void reset();
 

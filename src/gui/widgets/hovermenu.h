@@ -27,7 +27,7 @@ class HoverMenu : public QDialog
 {
 public:
     explicit HoverMenu(QWidget* parent = nullptr);
-    ~HoverMenu() override;
+    ~HoverMenu() override = default;
 
 protected:
     void leaveEvent(QEvent* event) override;

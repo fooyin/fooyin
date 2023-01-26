@@ -48,9 +48,9 @@ class GuiSettings
 {
 public:
     GuiSettings(Core::SettingsManager* settingsManager);
-    ~GuiSettings();
+    ~GuiSettings() = default;
 
 private:
-    ::Core::SettingsManager* m_settings;
+    Core::SettingsManager* m_settings;
 };
 } // namespace Gui::Settings

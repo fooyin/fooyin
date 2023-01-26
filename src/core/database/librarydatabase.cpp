@@ -62,8 +62,6 @@ LibraryDatabase::LibraryDatabase(const QString& connectionName, int libraryId)
     , m_connectionName(connectionName)
 { }
 
-LibraryDatabase::~LibraryDatabase() = default;
-
 bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
 {
     if(tracks.empty()) {

@@ -37,7 +37,7 @@ class GeneralPage : public QWidget
 {
 public:
     explicit GeneralPage(Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~GeneralPage() override;
+    ~GeneralPage() override = default;
 
 private:
     Core::SettingsManager* m_settings;
@@ -49,7 +49,7 @@ class LibraryPage : public QWidget
 public:
     explicit LibraryPage(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings,
                          QWidget* parent = nullptr);
-    ~LibraryPage() override;
+    ~LibraryPage() override = default;
 
 private:
     void addLibraryRow(const Core::Library::LibraryInfo& info);
@@ -65,7 +65,7 @@ class PlaylistPage : public QWidget
 {
 public:
     explicit PlaylistPage(Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~PlaylistPage() override;
+    ~PlaylistPage() override = default;
 
 private:
     Core::SettingsManager* m_settings;

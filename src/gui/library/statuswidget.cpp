@@ -23,7 +23,6 @@
 
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
-#include <core/plugins/pluginmanager.h>
 #include <utils/utils.h>
 
 #include <QContextMenuEvent>
@@ -52,8 +51,6 @@ QString StatusWidget::name() const
 {
     return "Status";
 }
-
-StatusWidget::~StatusWidget() = default;
 
 void StatusWidget::setupUi()
 {

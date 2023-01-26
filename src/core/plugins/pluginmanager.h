@@ -21,22 +21,14 @@
 
 #include "plugininfo.h"
 
-#include <QMap>
-#include <QObject>
-#include <QReadWriteLock>
-
-class QPluginLoader;
-
 namespace Plugins {
-class Plugin;
-
 class PluginManager : public QObject
 {
     Q_OBJECT
 
 public:
     explicit PluginManager(QObject* parent = nullptr);
-    ~PluginManager() override;
+    ~PluginManager() override = default;
 
     void findPlugins(const QString& pluginDir);
     void loadPlugins();

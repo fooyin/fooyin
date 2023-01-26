@@ -33,8 +33,6 @@ FilterView::FilterView(QWidget* parent)
     setupView();
 }
 
-FilterView::~FilterView() = default;
-
 void FilterView::setupView()
 {
     setSelectionBehavior(QAbstractItemView::SelectRows);

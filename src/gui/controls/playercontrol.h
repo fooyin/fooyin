@@ -34,7 +34,7 @@ class PlayerControl : public QWidget
 
 public:
     explicit PlayerControl(QWidget* parent = nullptr);
-    ~PlayerControl() override;
+    ~PlayerControl() override = default;
 
     void setupUi();
 

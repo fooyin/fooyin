@@ -29,7 +29,7 @@ class FilterModel : public QAbstractListModel
 {
 public:
     FilterModel(Filters::FilterType type, int index, QObject* parent = nullptr);
-    ~FilterModel() override;
+    ~FilterModel() override = default;
 
     void setType(Filters::FilterType type);
     [[nodiscard]] int index() const;

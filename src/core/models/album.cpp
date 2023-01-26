@@ -30,8 +30,6 @@ Album::Album(const QString& title)
     , m_discCount(0)
 { }
 
-Album::~Album() = default;
-
 int Album::id() const
 {
     return m_id;

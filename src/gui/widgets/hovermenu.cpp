@@ -28,8 +28,6 @@ HoverMenu::HoverMenu(QWidget* parent)
     connect(&m_timer, &QTimer::timeout, this, &HoverMenu::closeMenu);
 }
 
-HoverMenu::~HoverMenu() = default;
-
 void HoverMenu::leaveEvent(QEvent* event)
 {
     accept();

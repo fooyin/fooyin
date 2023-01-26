@@ -37,6 +37,4 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(Utils::settingsPath()));
 }
-
-CoreSettings::~CoreSettings() = default;
 } // namespace Core::Settings

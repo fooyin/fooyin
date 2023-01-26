@@ -20,16 +20,12 @@
 #include "pluginmanager.h"
 
 #include <QDir>
-#include <QJsonArray>
 #include <QLibrary>
-#include <QPluginLoader>
 
 namespace Plugins {
 PluginManager::PluginManager(QObject* parent)
     : QObject{parent}
 { }
-
-PluginManager::~PluginManager() = default;
 
 void PluginManager::findPlugins(const QString& pluginDir)
 {

@@ -26,6 +26,6 @@ class InfoView : public QTreeView
 {
 public:
     explicit InfoView(QWidget* parent = nullptr);
-    ~InfoView() override;
+    ~InfoView() override = default;
 };
 } // namespace Gui::Widgets

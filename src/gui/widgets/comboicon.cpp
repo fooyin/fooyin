@@ -38,8 +38,6 @@ ComboIcon::ComboIcon(const QString& path, QWidget* parent)
     : ComboIcon{path, {}, parent}
 { }
 
-ComboIcon::~ComboIcon() = default;
-
 void ComboIcon::setup(const QString& path)
 {
     const QPixmap icon{path};

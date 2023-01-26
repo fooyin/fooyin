@@ -23,7 +23,6 @@
 
 #include <core/app/threadmanager.h>
 #include <core/library/musiclibrary.h>
-#include <core/plugins/pluginmanager.h>
 #include <utils/helpers.h>
 
 #include <utility>
@@ -79,6 +78,8 @@ FilterManager::FilterManager(Core::ThreadManager* threadManager, Core::DB::Datab
     p->library->addInteractor(this);
 }
 
+FilterManager::~FilterManager() = default;
+
 Core::TrackPtrList FilterManager::tracks() const
 {
     return p->filteredTracks;
@@ -116,8 +117,6 @@ LibraryFilter FilterManager::findFilter(Filters::FilterType type) const
     }
     return {};
 }
-
-FilterManager::~FilterManager() = default;
 
 int FilterManager::registerFilter(Filters::FilterType type)
 {

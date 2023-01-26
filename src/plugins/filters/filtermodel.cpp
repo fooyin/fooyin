@@ -32,8 +32,6 @@ FilterModel::FilterModel(Filters::FilterType type, int index, QObject* parent)
     , m_index(index)
 { }
 
-FilterModel::~FilterModel() = default;
-
 void FilterModel::setType(Filters::FilterType type)
 {
     m_type = type;

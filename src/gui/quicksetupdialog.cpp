@@ -48,8 +48,6 @@ void QuickSetupDialog::setupUi()
     m_layout->addWidget(m_accept);
 }
 
-QuickSetupDialog::~QuickSetupDialog() = default;
-
 // Not the best way to handle layouts. Maybe save to (readable) files?
 void QuickSetupDialog::setupList()
 {

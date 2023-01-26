@@ -40,7 +40,7 @@ class ProgressWidget : public QWidget
 
 public:
     explicit ProgressWidget(Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~ProgressWidget() override;
+    ~ProgressWidget() override = default;
 
     void setupUi();
 

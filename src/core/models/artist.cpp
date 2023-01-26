@@ -26,8 +26,6 @@ Artist::Artist(QString name)
     , m_name(std::move(name))
 { }
 
-Artist::~Artist() = default;
-
 int Artist::id() const
 {
     return m_id;

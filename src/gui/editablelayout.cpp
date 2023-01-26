@@ -120,6 +120,8 @@ EditableLayout::EditableLayout(Core::SettingsManager* settings, Core::ActionMana
     p->box->setContentsMargins(5, 5, 5, 5);
 }
 
+EditableLayout::~EditableLayout() = default;
+
 void EditableLayout::initialise()
 {
     connect(p->menu, &Core::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
@@ -138,8 +140,6 @@ void EditableLayout::initialise()
     }
     qApp->installEventFilter(this);
 }
-
-EditableLayout::~EditableLayout() = default;
 
 void EditableLayout::setupWidgetMenu(Core::ActionContainer* menu, FyWidget* parent, bool replace)
 {

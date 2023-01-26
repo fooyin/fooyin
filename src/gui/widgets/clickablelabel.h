@@ -28,7 +28,7 @@ class ClickableLabel : public QLabel
 
 public:
     explicit ClickableLabel(QWidget* parent = nullptr);
-    ~ClickableLabel() override;
+    ~ClickableLabel() override = default;
 
 signals:
     void clicked();

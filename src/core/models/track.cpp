@@ -58,8 +58,6 @@ void Track::setIsEnabled(bool enabled)
     m_enabled = enabled;
 }
 
-Track::~Track() = default;
-
 int Track::id() const
 {
     return m_id;

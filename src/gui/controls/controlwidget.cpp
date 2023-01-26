@@ -26,7 +26,6 @@
 
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
-#include <core/plugins/pluginmanager.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
@@ -49,8 +48,6 @@ ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Core::S
     setupUi();
     setupConnections();
 }
-
-ControlWidget::~ControlWidget() = default;
 
 void ControlWidget::setupUi()
 {

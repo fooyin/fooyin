@@ -29,7 +29,6 @@ class ActionManager;
 
 namespace Gui::Widgets {
 class FyWidget;
-class SplitterWidget;
 class WidgetFactory;
 class WidgetProvider;
 

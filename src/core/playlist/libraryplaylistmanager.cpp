@@ -27,8 +27,6 @@ LibraryPlaylistManager::LibraryPlaylistManager(PlaylistHandler* playlistHandler)
     : m_playlistHandler(playlistHandler)
 { }
 
-LibraryPlaylistManager::~LibraryPlaylistManager() = default;
-
 void LibraryPlaylistManager::createPlaylist(const TrackPtrList& tracks, const int id)
 {
     const QString name = "Playlist";

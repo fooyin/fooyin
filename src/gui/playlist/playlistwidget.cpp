@@ -30,7 +30,6 @@
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
-#include <core/plugins/pluginmanager.h>
 
 #include <QAction>
 #include <QActionGroup>
@@ -90,8 +89,6 @@ void PlaylistWidget::setup()
         m_playlist->show();
     }
 }
-
-PlaylistWidget::~PlaylistWidget() = default;
 
 void PlaylistWidget::reset()
 {

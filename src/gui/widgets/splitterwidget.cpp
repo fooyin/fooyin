@@ -25,7 +25,6 @@
 
 #include <core/actions/actioncontainer.h>
 #include <core/actions/actionmanager.h>
-#include <core/plugins/pluginmanager.h>
 #include <utils/enumhelper.h>
 
 #include <QJsonObject>
@@ -61,8 +60,6 @@ void SplitterWidget::setupActions()
         setObjectName(QString("%1 Splitter").arg(Utils::EnumHelper::toString(m_splitter->orientation())));
     });
 }
-
-SplitterWidget::~SplitterWidget() = default;
 
 Qt::Orientation SplitterWidget::orientation() const
 {

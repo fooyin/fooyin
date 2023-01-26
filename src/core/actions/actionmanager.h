@@ -34,7 +34,7 @@ class ActionManager : public QObject
 
 public:
     explicit ActionManager(QObject* parent = nullptr);
-    ~ActionManager() override;
+    ~ActionManager() override = default;
 
     void setMainWindow(QMainWindow* mainWindow);
 
@@ -49,7 +49,9 @@ protected:
     void containerDestroyed(QObject* sender);
 
 private:
-    struct Private;
-    std::unique_ptr<ActionManager::Private> p;
+    QMainWindow* m_mainWindow;
+
+    std::unordered_map<Utils::Id, QAction*, Utils::Id::IdHash> m_idCmdMap;
+    std::unordered_map<Utils::Id, ActionContainer*, Utils::Id::IdHash> m_idContainerMap;
 };
 } // namespace Core

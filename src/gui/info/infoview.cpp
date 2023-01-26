@@ -38,6 +38,4 @@ InfoView::InfoView(QWidget* parent)
     setSortingEnabled(false);
     setAlternatingRowColors(true);
 }
-
-InfoView::~InfoView() = default;
 } // namespace Gui::Widgets

@@ -32,7 +32,7 @@ class QuickSetupDialog : public QDialog
 
 public:
     explicit QuickSetupDialog(QWidget* parent = nullptr);
-    ~QuickSetupDialog() override;
+    ~QuickSetupDialog() override = default;
 
 signals:
     void layoutChanged(const QByteArray& layout);

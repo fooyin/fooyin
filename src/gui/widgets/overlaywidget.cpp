@@ -42,8 +42,6 @@ OverlayWidget::OverlayWidget(bool button, QWidget* parent)
     hide();
 }
 
-OverlayWidget::~OverlayWidget() = default;
-
 void OverlayWidget::setText(const QString& text)
 {
     m_text->setText(text);

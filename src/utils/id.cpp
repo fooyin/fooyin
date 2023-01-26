@@ -92,9 +92,4 @@ bool Id::operator!=(const Id& id) const
 {
     return m_id != id.m_id;
 }
-
-size_t qHash(const Id& id) noexcept
-{
-    return static_cast<size_t>(id.m_id);
-}
 } // namespace Utils

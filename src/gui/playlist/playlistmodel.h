@@ -48,7 +48,7 @@ class PlaylistModel : public QAbstractItemModel
 public:
     explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
                            Core::SettingsManager* settings, QObject* parent = nullptr);
-    ~PlaylistModel() override;
+    ~PlaylistModel() override = default;
 
     void setupModelData();
     PlaylistItem* iterateTrack(Core::Track* track, bool discHeaders, bool splitDiscs);

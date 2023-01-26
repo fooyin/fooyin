@@ -29,8 +29,6 @@ Container::Container(QString title)
     , m_trackCount(0)
 { }
 
-Container::~Container() = default;
-
 QString Container::title() const
 {
     return m_title;

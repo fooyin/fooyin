@@ -30,8 +30,6 @@ ItemDelegate::ItemDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 { }
 
-ItemDelegate::~ItemDelegate() = default;
-
 QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const auto text = index.data(Qt::DisplayRole).toString();
