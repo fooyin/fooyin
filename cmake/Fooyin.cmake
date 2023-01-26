@@ -74,12 +74,12 @@ macro(fooyin_add_plugin plugin_name)
   cmake_parse_arguments(plugin
     ""
     "TYPE"
-    "SOURCES;PLUGIN_DEPENDS;DEPENDS"
+    "SOURCES;DEPENDS"
     ${ARGN}
   )
 
   add_library(${plugin_name} ${plugin_TYPE} ${plugin_SOURCES})
-  target_link_libraries(${plugin_name} PRIVATE ${plugin_DEPENDS} PUBLIC ${plugin_PLUGIN_DEPENDS})
+  target_link_libraries(${plugin_name} PRIVATE ${plugin_DEPENDS})
 
   string(TOLOWER ${plugin_name} output_name)
 
