@@ -56,6 +56,8 @@ Database::Database(Core::SettingsManager* settings, const QString& directory, co
     update();
 }
 
+Database::~Database() = default;
+
 LibraryDatabase* Database::libraryDatabase()
 {
     return m_libraryDatabase.get();
