@@ -31,8 +31,8 @@ PlayerControl::PlayerControl(QWidget* parent)
     , m_layout{new QHBoxLayout(this)}
     , m_stop{new ComboIcon(Core::Constants::Icons::Stop, this)}
     , m_prev{new ComboIcon(Core::Constants::Icons::Prev, this)}
-    , m_next{new ComboIcon(Core::Constants::Icons::Next, this)}
     , m_play{new ComboIcon(Core::Constants::Icons::Play, this)}
+    , m_next{new ComboIcon(Core::Constants::Icons::Next, this)}
     , m_labelSize{20, 20}
 {
     setupUi();

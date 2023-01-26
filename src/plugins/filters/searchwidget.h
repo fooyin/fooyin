@@ -55,8 +55,9 @@ protected:
 private:
     void textChanged(const QString& text);
 
-    Core::SettingsManager* m_settings;
     FilterManager* m_manager;
+    Core::SettingsManager* m_settings;
+
     QHBoxLayout* m_layout;
     QLineEdit* m_searchBox;
     QString m_defaultText;

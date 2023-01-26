@@ -25,8 +25,8 @@
 
 namespace Core::DB {
 Query::Query(const Module* module)
-    : QSqlQuery(module->db())
-    , m_success(false)
+    : QSqlQuery{module->db()}
+    , m_success{false}
 {
     setForwardOnly(true);
 }
@@ -34,13 +34,6 @@ Query::Query(const Module* module)
 Query::~Query()
 {
     clear();
-}
-
-Query::Query(const Query& other)
-    : m_queryString(other.m_queryString)
-    , m_success(other.m_success)
-{
-    setForwardOnly(true);
 }
 
 bool Query::prepareQuery(const QString& query)

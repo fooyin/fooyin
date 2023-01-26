@@ -45,12 +45,18 @@ FyWidget* FyWidget::findParent()
     return qobject_cast<FyWidget*>(parent);
 }
 
-void FyWidget::layoutEditingMenu(Core::ActionContainer* menu) { }
+void FyWidget::layoutEditingMenu(Core::ActionContainer* menu)
+{
+    Q_UNUSED(menu)
+}
 
 void FyWidget::saveLayout(QJsonArray& array)
 {
     array.append(name());
 }
 
-void FyWidget::loadLayout(QJsonObject& object) { }
+void FyWidget::loadLayout(QJsonObject& object)
+{
+    Q_UNUSED(object)
+}
 } // namespace Gui::Widgets

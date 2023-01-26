@@ -103,7 +103,7 @@ void ComboIcon::setIcon(const QString& path, bool active)
         removeAttribute(Core::Fy::Active);
     }
 
-    auto it = std::find_if(m_icons.cbegin(), m_icons.cend(), [this, path](const PathIconPair& icon) {
+    auto it = std::find_if(m_icons.cbegin(), m_icons.cend(), [path](const PathIconPair& icon) {
         return (icon.first == path);
     });
 
@@ -127,7 +127,7 @@ void ComboIcon::labelClicked()
         if(hasAttribute(Core::Fy::Active)) {
             ++m_currentIndex;
         }
-        if(m_currentIndex >= m_icons.size()) {
+        if(m_currentIndex >= static_cast<int>(m_icons.size())) {
             m_currentIndex = 0;
             removeAttribute(Core::Fy::Active);
             m_label->setPixmap(m_icons.at(m_currentIndex).second.icon);

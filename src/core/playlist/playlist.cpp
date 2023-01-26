@@ -33,34 +33,10 @@ Playlist::Playlist(Player::PlayerManager* playerManager, int idx, QString name)
     , m_playingTrack{nullptr}
 { }
 
-Playlist::Playlist(const Playlist& other)
-    : m_playerManager(other.m_playerManager)
-    , m_name(other.m_name)
-    , m_playlistIndex(other.m_playlistIndex)
-    , m_playingTrack(other.m_playingTrack)
-    , m_tracks(other.m_tracks)
-{ }
-
-Playlist& Playlist::operator=(const Playlist& other)
-{
-    if(this == &other) {
-        return *this;
-    }
-    m_playerManager = other.m_playerManager;
-    m_name          = other.m_name;
-    m_playlistIndex = other.m_playlistIndex;
-    m_playingTrack  = other.m_playingTrack;
-    m_tracks        = other.m_tracks;
-
-    return *this;
-}
-
 QString Playlist::name()
 {
     return m_name;
 }
-
-Playlist::~Playlist() = default;
 
 int Playlist::createPlaylist(const TrackPtrList& tracks)
 {
@@ -88,7 +64,7 @@ int Playlist::currentTrackIndex() const
 Track* Playlist::currentTrack() const
 {
     const auto trackIndex = currentTrackIndex();
-    if(trackIndex >= m_tracks.size() || trackIndex < 0) {
+    if(trackIndex >= numberOfTracks() || trackIndex < 0) {
         return {};
     }
 
@@ -117,7 +93,7 @@ void Playlist::clear()
 
 void Playlist::setCurrentTrack(int index)
 {
-    if(index < 0 || index >= m_tracks.size()) {
+    if(index < 0 || index >= numberOfTracks()) {
         stop();
     }
 
@@ -132,7 +108,7 @@ bool Playlist::changeTrack(int index)
 {
     setCurrentTrack(index);
 
-    if(index < 0 || index >= m_tracks.size()) {
+    if(index < 0 || index >= numberOfTracks()) {
         stop();
         return false;
     }
@@ -189,7 +165,7 @@ int Playlist::previous()
 int Playlist::nextIndex()
 {
     const int currentIndex = currentTrackIndex();
-    const bool isLastTrack = (currentIndex >= m_tracks.size() - 1);
+    const bool isLastTrack = (currentIndex >= numberOfTracks() - 1);
     const auto mode        = m_playerManager->playMode();
     int index              = currentIndex + 1;
 
@@ -206,5 +182,10 @@ int Playlist::nextIndex()
     }
 
     return index;
+}
+
+int Playlist::numberOfTracks() const
+{
+    return static_cast<int>(m_tracks.size());
 }
 } // namespace Core::Playlist

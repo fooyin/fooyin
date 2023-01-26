@@ -47,6 +47,8 @@ macro(fooyin_add_library name)
       "$<BUILD_INTERFACE:${library_build_interface}>"
    )
 
+  target_compile_options(${library_name} PRIVATE -Werror -Wall -Wextra -Wpedantic)
+
   string(TOUPPER ${library_name} def_name)
 
   target_compile_definitions(${library_name} PRIVATE ${def_name}_LIBRARY)
@@ -105,6 +107,8 @@ macro(fooyin_add_plugin plugin_name)
     PUBLIC
       "$<BUILD_INTERFACE:${public_build_interface}>"
    )
+
+  target_compile_options(${plugin_name} PRIVATE -Werror -Wall -Wextra -Wpedantic)
 
   install(TARGETS ${plugin_name} DESTINATION ${FOOYIN_PLUGIN_DIR})
 endmacro(fooyin_add_plugin)

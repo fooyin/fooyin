@@ -56,8 +56,8 @@ private:
     void addLibrary();
     void removeLibrary();
 
-    Core::SettingsManager* m_settings;
     Core::Library::LibraryManager* m_libraryManager;
+    Core::SettingsManager* m_settings;
     QTableWidget m_libraryList;
 };
 

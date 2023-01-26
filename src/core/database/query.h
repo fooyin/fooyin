@@ -27,11 +27,13 @@ class Query : public QSqlQuery
 {
 public:
     explicit Query(const Module* module);
-    explicit Query(QSqlResult* result)                           = delete;
-    explicit Query(const QString& query, const QSqlDatabase& db) = delete;
     virtual ~Query();
 
-    Query(const Query& other);
+    explicit Query(QSqlResult* result)                           = delete;
+    explicit Query(const QString& query, const QSqlDatabase& db) = delete;
+    Query(const Query& other)                                    = delete;
+
+    Query(Query&& other) noexcept = default;
 
     bool prepareQuery(const QString& query);
     void bindQueryValue(const QString& placeholder, const QVariant& val, QSql::ParamType paramType = QSql::In);

@@ -67,7 +67,7 @@ void PlaylistModel::setupModelData()
         if(!tracks.empty()) {
             // Create albums before model to ensure discs (based on discCount) are properly created
             createAlbums(tracks);
-            for(int i = 0; i < tracks.size(); ++i) {
+            for(int i = 0; i < static_cast<int>(tracks.size()); ++i) {
                 Core::Track* track = tracks.at(i);
                 if(track && track->isEnabled()) {
                     const QString trackKey = track->album() + QString::number(track->id()) + track->title();

@@ -35,10 +35,7 @@ class Playlist : public QObject
 
 public:
     Playlist(Player::PlayerManager* playerManager, int idx, QString name);
-    ~Playlist() override;
-
-    Playlist(const Playlist& other);
-    Playlist& operator=(const Playlist& other);
+    ~Playlist() override = default;
 
     QString name();
 
@@ -64,6 +61,7 @@ public:
 
 protected:
     int nextIndex();
+    int numberOfTracks() const;
 
 private:
     Player::PlayerManager* m_playerManager;

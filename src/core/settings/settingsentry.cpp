@@ -29,14 +29,13 @@ SettingsEntry::SettingsEntry(QString name, const QVariant& value, bool writeToDi
 { }
 
 SettingsEntry::SettingsEntry(const SettingsEntry& other)
-    : m_name{other.m_name}
+    : QObject{} // NOLINT
+    , m_name{other.m_name}
     , m_value{other.m_value}
     , m_defaultValue{other.m_defaultValue}
     , m_group{other.m_group}
     , m_writeToDisk{other.m_writeToDisk}
 { }
-
-SettingsEntry::~SettingsEntry() = default;
 
 QString SettingsEntry::name() const
 {

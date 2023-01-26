@@ -45,7 +45,7 @@ void PlaylistItem::setIndex(int idx)
 
 PlaylistItem* PlaylistItem::child(int number)
 {
-    if(number < 0 || number >= m_children.size()) {
+    if(number < 0 || number >= childCount()) {
         return nullptr;
     }
 

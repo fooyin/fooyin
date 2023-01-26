@@ -31,10 +31,10 @@ namespace Gui::Widgets {
 VolumeControl::VolumeControl(QWidget* parent)
     : QWidget{parent}
     , m_layout{new QHBoxLayout(this)}
-    , m_volumeMenu{new HoverMenu(this)}
-    , m_volumeLayout{new QHBoxLayout()}
     , m_volumeIcon{new ComboIcon(Core::Constants::Icons::VolumeMute, this)}
     , m_volumeSlider{new Slider(Qt::Vertical, this)}
+    , m_volumeLayout{new QHBoxLayout()}
+    , m_volumeMenu{new HoverMenu(this)}
     , m_labelSize{20, 20}
     , m_prevValue{0}
 {
