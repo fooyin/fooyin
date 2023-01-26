@@ -62,10 +62,6 @@ const int Bitrate     = 11;
 const int SampleRate  = 12;
 } // namespace InfoRole
 
-namespace LayoutRole {
-const int Type = Qt::UserRole + 50;
-} // namespace LayoutRole
-
 namespace Fy {
 Q_NAMESPACE
 enum Attribute

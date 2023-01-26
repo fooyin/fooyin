@@ -21,8 +21,6 @@
 
 #include "gui/layoutprovider.h"
 
-#include <core/typedefs.h>
-
 namespace Gui {
 QuickSetupModel::QuickSetupModel(LayoutProvider* layoutProvider, QObject* parent)
     : QAbstractListModel{parent}
@@ -46,7 +44,7 @@ QVariant QuickSetupModel::data(const QModelIndex& index, int role) const
         case(Qt::DisplayRole): {
             return m_layoutProvider->layouts().at(index.row()).name;
         }
-        case(Core::LayoutRole::Type): {
+        case(QuickSetupRole::Layout): {
             return m_layoutProvider->layouts().at(index.row()).json;
         }
         default: {

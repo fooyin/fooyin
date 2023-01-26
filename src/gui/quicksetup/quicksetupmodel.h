@@ -24,6 +24,10 @@
 namespace Gui {
 class LayoutProvider;
 
+namespace QuickSetupRole {
+const int Layout = Qt::UserRole + 50;
+} // namespace QuickSetupRole
+
 class QuickSetupModel : public QAbstractListModel
 {
 public:
