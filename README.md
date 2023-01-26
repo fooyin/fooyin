@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="data/images/logo-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="data/images/logo.svg">
-  <img alt="Fooyin logo." src="data/images/logo.svg">
+  <img alt="Fooyin logo." width=20% src="data/images/logo.svg">
 </picture>
 
 
