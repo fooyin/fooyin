@@ -58,6 +58,9 @@ void QuickSetupDialog::setupUi()
 void QuickSetupDialog::changeLayout(const QItemSelection& selected, const QItemSelection& deselected)
 {
     Q_UNUSED(deselected)
+    if(selected.isEmpty()) {
+        return;
+    }
     const auto json = selected.indexes().constFirst().data(Core::LayoutRole::Type).toByteArray();
     emit layoutChanged(json);
 }
