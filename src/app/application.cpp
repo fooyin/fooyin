@@ -175,10 +175,8 @@ Application::Application(int& argc, char** argv, int flags)
     : QApplication{argc, argv, flags}
     , p{std::make_unique<Private>()}
 {
-    // Shutdown plugins on exit
     // Required to ensure plugins are unloaded before main event loop quits
-    QObject::connect(this, &QCoreApplication::aboutToQuit, &p->threadManager, &Core::ThreadManager::close);
-    QObject::connect(this, &QCoreApplication::aboutToQuit, &p->pluginManager, &Plugins::PluginManager::shutdown);
+    QObject::connect(this, &QCoreApplication::aboutToQuit, this, &Application::shutdown);
 
     startup();
 }
@@ -194,15 +192,13 @@ void Application::startup()
     p->mainWindow->show();
 }
 
-Application::~Application()
-{
-    shutdown();
-};
+Application::~Application() = default;
 
 void Application::shutdown()
 {
+    p->threadManager.close();
+    p->pluginManager.shutdown();
     p->settingsManager.storeSettings();
-
     p->database.cleanup();
     p->database.closeDatabase();
 }
