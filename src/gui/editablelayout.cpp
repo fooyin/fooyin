@@ -204,6 +204,15 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Core::ActionContainer* m
             auto* addMenu = p->createNewMenu(splitter, tr("&Add"));
             setupWidgetMenu(addMenu, splitter);
             menu->addMenu(addMenu);
+
+            // Only non-root splitters are removable
+            if(parent) {
+                auto* remove = new QAction("Remove", menu);
+                QAction::connect(remove, &QAction::triggered, parent, [parent, splitter] {
+                    parent->removeWidget(splitter);
+                });
+                menu->addAction(remove);
+            }
         }
         else {
             auto* changeMenu = p->createNewMenu(currentWidget, tr("&Replace"));
