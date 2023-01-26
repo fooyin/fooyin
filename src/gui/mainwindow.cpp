@@ -146,13 +146,13 @@ void MainWindow::setupUi()
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value<Settings::LayoutEditing>());
 
-    const QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
-    p->openQuickSetup          = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
-    p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
-    viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
-    connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
-    connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
-            &Widgets::EditableLayout::changeLayout);
+    //    const QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
+    //    p->openQuickSetup          = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
+    //    p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
+    //    viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
+    //    connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
+    //    connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
+    //            &Widgets::EditableLayout::changeLayout);
 
     // TODO: Move to MusicLibrary
     //    const QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
@@ -169,7 +169,7 @@ void MainWindow::setupUi()
 
     if(p->settings->value<Core::Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
-        QTimer::singleShot(1000, p->quickSetupDialog, &QuickSetupDialog::show);
+        //        QTimer::singleShot(1000, p->quickSetupDialog, &QuickSetupDialog::show);
     }
 }
 
