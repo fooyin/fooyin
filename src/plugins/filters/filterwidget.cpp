@@ -51,11 +51,14 @@ FilterWidget::FilterWidget(FilterManager* manager, Core::SettingsManager* settin
     , m_settings{settings}
 {
     setObjectName(FilterWidget::name());
+
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->addWidget(m_filter);
     m_filter->setModel(m_model);
     m_filter->setItemDelegate(new FilterDelegate(this));
-    m_manager->registerFilter(m_type);
+
+    m_index = m_manager->registerFilter(m_type);
+
     setupConnections();
     setHeaderHidden(m_settings->value<Settings::FilterHeader>());
     setScrollbarHidden(m_settings->value<Settings::FilterScrollBar>());
