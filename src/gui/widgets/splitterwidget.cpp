@@ -171,6 +171,11 @@ QString SplitterWidget::name() const
     return QString("%1 Splitter").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical");
 }
 
+QString SplitterWidget::layoutName() const
+{
+    return QString("Splitter%1").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical");
+}
+
 void SplitterWidget::layoutEditingMenu(Core::ActionContainer* menu)
 {
     menu->addAction(m_changeSplitter);
@@ -189,7 +194,7 @@ void SplitterWidget::saveLayout(QJsonArray& array)
     options["Children"] = childern;
 
     QJsonObject splitter;
-    splitter[name()] = options;
+    splitter[layoutName()] = options;
     array.append(splitter);
 }
 

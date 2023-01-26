@@ -28,5 +28,5 @@ QString cachePath(const QString& appendPath = {});
 QString coverPath();
 QString tempPath(const QString& appendPath);
 QString settingsPath();
-
+QString layoutsPath();
 } // namespace Utils

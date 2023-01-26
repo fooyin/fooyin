@@ -143,18 +143,18 @@ struct Application::Private
         });
 
         widgetFactory.registerClass<Gui::Widgets::VerticalSplitterWidget>(
-            "Vertical Splitter",
+            "SplitterVertical",
             [this]() {
                 return new Gui::Widgets::VerticalSplitterWidget(&actionManager, &widgetProvider, &settingsManager);
             },
-            {"Splitter"});
+            "Vertical Splitter", {"Splitter"});
 
         widgetFactory.registerClass<Gui::Widgets::HorizontalSplitterWidget>(
-            "Horizontal Splitter",
+            "SplitterHorizontal",
             [this]() {
                 return new Gui::Widgets::HorizontalSplitterWidget(&actionManager, &widgetProvider, &settingsManager);
             },
-            {"Splitter"});
+            "Horizontal Splitter", {"Splitter"});
 
         widgetFactory.registerClass<Gui::Widgets::StatusWidget>("Status", [this]() {
             return new Gui::Widgets::StatusWidget(playerManager.get());

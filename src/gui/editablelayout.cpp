@@ -31,8 +31,10 @@
 #include <core/actions/actionmanager.h>
 #include <core/constants.h>
 #include <utils/enumhelper.h>
+#include <utils/paths.h>
 
 #include <QCoreApplication>
+#include <QFile>
 #include <QHBoxLayout>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -55,6 +57,8 @@ struct EditableLayout::Private
     int menuLevels{2};
     bool layoutEditing{false};
 
+    QFile layoutFile;
+
     explicit Private(Core::SettingsManager* settings, Core::ActionManager* actionManager, WidgetFactory* widgetFactory,
                      WidgetProvider* widgetProvider, QWidget* parent)
         : actionManager{actionManager}
@@ -64,6 +68,7 @@ struct EditableLayout::Private
         , menu{actionManager->createMenu(Core::Constants::ContextMenus::Layout)}
         , box{new QHBoxLayout(parent)}
         , overlay{new OverlayFilter(parent)}
+        , layoutFile{Utils::configPath() + "/layout.fyl"}
     { }
 
     Core::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const
@@ -131,9 +136,11 @@ void EditableLayout::initialise()
 
     const bool loaded = loadLayout();
     if(!loaded) {
-        p->splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget("Vertical Splitter"));
-        p->splitter->setParent(this);
-        p->box->addWidget(p->splitter);
+        p->splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget("SplitterVertical"));
+        if(p->splitter) {
+            p->splitter->setParent(this);
+            p->box->addWidget(p->splitter);
+        }
     }
     if(!p->splitter->hasChildren()) {
         p->settings->set<Settings::LayoutEditing>(true);
@@ -163,7 +170,7 @@ void EditableLayout::setupWidgetMenu(Core::ActionContainer* menu, FyWidget* pare
             }
             parentMenu = childMenu;
         }
-        auto* addWidget = new QAction(widget.first, parentMenu);
+        auto* addWidget = new QAction(widget.second.name, parentMenu);
         QAction::connect(addWidget, &QAction::triggered, this, [this, parent, replace, widget, splitter] {
             FyWidget* newWidget = p->widgetProvider->createWidget(widget.first);
             if(replace) {
@@ -265,14 +272,20 @@ void EditableLayout::saveLayout()
 
     root["Layout"] = array;
 
-    const auto json = QJsonDocument(root).toJson(QJsonDocument::Compact).toBase64();
+    const auto json = QJsonDocument(root).toJson();
 
-    p->settings->set<Settings::Layout>(json);
+    if(!p->layoutFile.open(QIODevice::WriteOnly)) {
+        qCritical() << "Couldn't open layout file.";
+        return;
+    }
+
+    p->layoutFile.write(json);
+    p->layoutFile.close();
 }
 
 bool EditableLayout::loadLayout(const QByteArray& layout)
 {
-    const QJsonDocument jsonDoc = QJsonDocument::fromJson(layout);
+    const auto jsonDoc = QJsonDocument::fromJson(layout);
     if(!jsonDoc.isNull() && !jsonDoc.isEmpty()) {
         QJsonObject json = jsonDoc.object();
         if(json.contains("Layout") && json["Layout"].isArray()) {
@@ -298,7 +311,14 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
 
 bool EditableLayout::loadLayout()
 {
-    auto layout = QByteArray::fromBase64(p->settings->value<Settings::Layout>());
+    if(!p->layoutFile.open(QIODevice::ReadOnly)) {
+        qCritical() << "Couldn't open layout file.";
+        return false;
+    }
+
+    const QByteArray layout = p->layoutFile.readAll();
+    p->layoutFile.close();
+
     return loadLayout(layout);
 }
 

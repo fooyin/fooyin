@@ -25,7 +25,6 @@ GuiSettings::GuiSettings(Core::SettingsManager* settingsManager)
 {
     m_settings->createTempSetting(Settings::LayoutEditing, false);
     m_settings->createSetting(Settings::Geometry, "", "Layout");
-    m_settings->createSetting(Settings::Layout, "", "Layout");
     m_settings->createSetting(Settings::SplitterHandles, true, "Splitters");
     m_settings->createSetting(Settings::DiscHeaders, true, "Playlist");
     m_settings->createSetting(Settings::SplitDiscs, false, "Playlist");

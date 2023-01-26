@@ -63,6 +63,7 @@ public:
     QList<FyWidget*> children();
 
     [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
     void layoutEditingMenu(Core::ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
     void loadLayout(QJsonObject& object) override;

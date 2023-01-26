@@ -39,6 +39,10 @@ public:
 
     [[nodiscard]] Utils::Id id() const;
     [[nodiscard]] virtual QString name() const = 0;
+    [[nodiscard]] virtual QString layoutName() const
+    {
+        return name();
+    };
 
     [[nodiscard]] FyWidget* findParent();
 

@@ -79,13 +79,11 @@ public:
 
     [[nodiscard]] QString name() const override;
     void layoutEditingMenu(Core::ActionContainer* menu) override;
-    void saveLayout(QJsonArray& array) override;
-    void loadLayout(QJsonObject& object) override;
 
     void customHeaderMenuRequested(QPoint pos);
 
 signals:
-    void typeChanged(FilterType oldType, FilterType type);
+    void typeChanged(Filters::FilterType oldType, Filters::FilterType type);
 
 protected:
     void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
@@ -108,45 +106,50 @@ private:
 class GenreFilter : public FilterWidget
 {
 public:
-    explicit GenreFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
-        : FilterWidget(manager, settings, Filters::FilterType::Genre, parent)
-    { }
+    explicit GenreFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~GenreFilter() override = default;
+
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 };
 
 class YearFilter : public FilterWidget
 {
 public:
-    explicit YearFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
-        : FilterWidget(manager, settings, Filters::FilterType::Year, parent)
-    { }
+    explicit YearFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~YearFilter() override = default;
+
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 };
 
 class AlbumArtistFilter : public FilterWidget
 {
 public:
-    explicit AlbumArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
-        : FilterWidget(manager, settings, Filters::FilterType::AlbumArtist, parent)
-    { }
+    explicit AlbumArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~AlbumArtistFilter() override = default;
+
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 };
 
 class ArtistFilter : public FilterWidget
 {
 public:
-    explicit ArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
-        : FilterWidget(manager, settings, Filters::FilterType::Artist, parent)
-    { }
+    explicit ArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~ArtistFilter() override = default;
+
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 };
 
 class AlbumFilter : public FilterWidget
 {
 public:
-    explicit AlbumFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr)
-        : FilterWidget(manager, settings, Filters::FilterType::Album, parent)
-    { }
+    explicit AlbumFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~AlbumFilter() override = default;
+
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 };
 } // namespace Filters

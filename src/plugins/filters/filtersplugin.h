@@ -62,13 +62,13 @@ public:
 
 private:
     template <typename T>
-    void registerFilter(const QString& name)
+    void registerFilter(const QString& key, const QString& name)
     {
-        m_factory->registerClass<T>(name,
+        m_factory->registerClass<T>(key,
                                     [this]() {
                                         return new T(m_filterManager, m_settings);
                                     },
-                                    {"Filter"});
+                                    name, {"Filter"});
     }
 
     Core::ActionManager* m_actionManager;

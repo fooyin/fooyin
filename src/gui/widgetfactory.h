@@ -34,6 +34,7 @@ class WidgetFactory : public QObject
 
     struct FactoryWidget
     {
+        QString key;
         QString name;
         Instantiator instantiator;
         QStringList subMenus;
@@ -45,31 +46,33 @@ protected:
 
 public:
     template <typename T, typename Factory>
-    bool registerClass(const QString& name, Factory factory, const QStringList& subMenus = {})
+    bool registerClass(const QString& key, Factory factory, const QString& displayName = "",
+                       const QStringList& subMenus = {})
     {
         static_assert(std::is_base_of<FyWidget, T>::value, "Class must derive from the factory's base class");
 
-        if(widgets.count(name)) {
+        if(widgets.count(key)) {
             qDebug() << ("Subclass already registered");
             return false;
         }
 
         FactoryWidget fw;
-        fw.name         = name;
+        fw.key          = key;
+        fw.name         = displayName.isEmpty() ? key : displayName;
         fw.instantiator = factory;
         fw.subMenus     = subMenus;
 
-        widgets.emplace(name, fw);
+        widgets.emplace(key, fw);
         return true;
     }
 
-    [[nodiscard]] FyWidget* make(const QString& name) const
+    [[nodiscard]] FyWidget* make(const QString& key) const
     {
-        if(!widgets.count(name)) {
+        if(!widgets.count(key)) {
             return nullptr;
         }
 
-        auto widget = widgets.at(name);
+        auto widget = widgets.at(key);
         if(!widget.instantiator) {
             return nullptr;
         }

@@ -35,12 +35,12 @@ void FiltersPlugin::initialise()
     m_filterManager  = new FilterManager(m_threadManager, m_database, m_library, this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
 
-    registerFilter<FilterWidget>("Filter");
-    registerFilter<GenreFilter>("Genre");
-    registerFilter<YearFilter>("Year");
-    registerFilter<AlbumArtistFilter>("Album Artist");
-    registerFilter<ArtistFilter>("Artist");
-    registerFilter<AlbumFilter>("Album");
+    registerFilter<FilterWidget>("Filter", "Filter");
+    registerFilter<GenreFilter>("FilterGenre", "Genre");
+    registerFilter<YearFilter>("FilterYear", "Year");
+    registerFilter<AlbumArtistFilter>("FilterAlbumArtist", "Album Artist");
+    registerFilter<ArtistFilter>("FilterArtist", "Artist");
+    registerFilter<AlbumFilter>("FilterAlbum", "Album");
 
     m_factory->registerClass<SearchWidget>("Search", [this]() {
         return new SearchWidget(m_filterManager, m_settings);

@@ -55,10 +55,13 @@ FilterWidget::FilterWidget(FilterManager* manager, Core::SettingsManager* settin
     m_layout->addWidget(m_filter);
     m_filter->setModel(m_model);
     m_filter->setItemDelegate(new FilterDelegate(this));
+    m_manager->registerFilter(m_type);
     setupConnections();
     setHeaderHidden(m_settings->value<Settings::FilterHeader>());
     setScrollbarHidden(m_settings->value<Settings::FilterScrollBar>());
     setAltRowColors(m_settings->value<Settings::FilterAltColours>());
+
+    resetByType(m_type);
 }
 
 FilterWidget::~FilterWidget()
@@ -74,7 +77,7 @@ void FilterWidget::setupConnections()
 
     connect(m_filter->header(), &FilterView::customContextMenuRequested, this,
             &FilterWidget::customHeaderMenuRequested);
-    connect(m_filter, &QTreeView::doubleClicked, this, [this] {
+    connect(m_filter, &QTreeView::doubleClicked, this, []() {
         //        m_library->prepareTracks();
     });
     connect(m_filter->header(), &QHeaderView::sectionClicked, this, &FilterWidget::switchOrder);
@@ -195,24 +198,6 @@ void FilterWidget::layoutEditingMenu(Core::ActionContainer* menu)
     menu->addAction(showHeaders);
     menu->addAction(showScrollBar);
     menu->addAction(altColours);
-}
-
-void FilterWidget::saveLayout(QJsonArray& array)
-{
-    QJsonObject object;
-    QJsonObject filterOptions;
-    filterOptions["Type"] = Utils::EnumHelper::toString<Filters::FilterType>(type());
-    object[name()]        = filterOptions;
-    array.append(object);
-}
-
-void FilterWidget::loadLayout(QJsonObject& object)
-{
-    auto type = Utils::EnumHelper::fromString<Filters::FilterType>(object["Type"].toString());
-    m_type    = type;
-    m_index   = m_manager->registerFilter(type);
-    m_model->setType(type);
-    resetByIndex(-1);
 }
 
 void FilterWidget::customHeaderMenuRequested(QPoint pos)
@@ -357,4 +342,75 @@ void FilterWidget::resetByType(Filters::FilterType type)
         m_manager->items(m_type);
     }
 }
+
+GenreFilter::GenreFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+    : FilterWidget(manager, settings, Filters::FilterType::Genre, parent)
+{ }
+
+QString GenreFilter::name() const
+{
+    return "Genre Filter";
+}
+
+QString GenreFilter::layoutName() const
+{
+    return "FilterGenre";
+}
+
+YearFilter::YearFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+    : FilterWidget(manager, settings, Filters::FilterType::Year, parent)
+{ }
+
+QString YearFilter::name() const
+{
+    return "Year Filter";
+}
+
+QString YearFilter::layoutName() const
+{
+    return "FilterYear";
+}
+
+AlbumArtistFilter::AlbumArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+    : FilterWidget(manager, settings, Filters::FilterType::AlbumArtist, parent)
+{ }
+
+QString AlbumArtistFilter::name() const
+{
+    return "Album Artist Filter";
+}
+
+QString AlbumArtistFilter::layoutName() const
+{
+    return "FilterAlbumArtist";
+}
+
+ArtistFilter::ArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+    : FilterWidget(manager, settings, Filters::FilterType::Artist, parent)
+{ }
+
+QString ArtistFilter::name() const
+{
+    return "Artist Filter";
+}
+
+QString ArtistFilter::layoutName() const
+{
+    return "FilterArtist";
+}
+
+AlbumFilter::AlbumFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+    : FilterWidget(manager, settings, Filters::FilterType::Album, parent)
+{ }
+
+QString AlbumFilter::name() const
+{
+    return "Album Filter";
+}
+
+QString AlbumFilter::layoutName() const
+{
+    return "FilterAlbum";
+}
+
 } // namespace Filters

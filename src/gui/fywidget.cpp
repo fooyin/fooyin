@@ -50,7 +50,7 @@ void FyWidget::layoutEditingMenu(Core::ActionContainer* menu)
 
 void FyWidget::saveLayout(QJsonArray& array)
 {
-    array.append(name());
+    array.append(layoutName());
 }
 
 void FyWidget::loadLayout(QJsonObject& object)
