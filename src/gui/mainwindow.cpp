@@ -22,6 +22,7 @@
 #include "editablelayout.h"
 #include "gui/guisettings.h"
 #include "gui/settings/settingsdialog.h"
+#include "layoutprovider.h"
 #include "quicksetupdialog.h"
 
 #include <core/actions/actioncontainer.h>
@@ -50,22 +51,25 @@ struct MainWindow::Private
     QAction* rescan;
     QAction* quitAction;
 
+    LayoutProvider* layoutProvider;
     QuickSetupDialog* quickSetupDialog;
 
     Private(Core::ActionManager* actionManager, Core::SettingsManager* settings,
-            Settings::SettingsDialog* settingsDialog, Widgets::EditableLayout* editableLayout)
+            Settings::SettingsDialog* settingsDialog, LayoutProvider* layoutProvider,
+            Widgets::EditableLayout* editableLayout)
         : actionManager{actionManager}
         , settings{settings}
         , settingsDialog{settingsDialog}
         , editableLayout{editableLayout}
+        , layoutProvider{layoutProvider}
     { }
 };
 
 MainWindow::MainWindow(Core::ActionManager* actionManager, Core::SettingsManager* settings,
-                       Settings::SettingsDialog* settingsDialog, Widgets::EditableLayout* editableLayout,
-                       QWidget* parent)
+                       Settings::SettingsDialog* settingsDialog, LayoutProvider* layoutProvider,
+                       Widgets::EditableLayout* editableLayout, QWidget* parent)
     : QMainWindow{parent}
-    , p{std::make_unique<Private>(actionManager, settings, settingsDialog, editableLayout)}
+    , p{std::make_unique<Private>(actionManager, settings, settingsDialog, layoutProvider, editableLayout)}
 { }
 
 MainWindow::~MainWindow()
@@ -88,7 +92,7 @@ void MainWindow::setupUi()
     const QByteArray geometry      = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
-    p->quickSetupDialog = new QuickSetupDialog(this);
+    p->quickSetupDialog = new QuickSetupDialog(p->layoutProvider, this);
 
     p->editableLayout->initialise();
     setCentralWidget(p->editableLayout);
@@ -146,13 +150,13 @@ void MainWindow::setupUi()
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value<Settings::LayoutEditing>());
 
-    //    const QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
-    //    p->openQuickSetup          = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
-    //    p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
-    //    viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
-    //    connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
-    //    connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
-    //            &Widgets::EditableLayout::changeLayout);
+    const QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
+    p->openQuickSetup          = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
+    p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
+    viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
+    connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
+    connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
+            &Widgets::EditableLayout::changeLayout);
 
     // TODO: Move to MusicLibrary
     //    const QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
@@ -169,7 +173,7 @@ void MainWindow::setupUi()
 
     if(p->settings->value<Core::Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
-        //        QTimer::singleShot(1000, p->quickSetupDialog, &QuickSetupDialog::show);
+        QTimer::singleShot(1000, p->quickSetupDialog, &QuickSetupDialog::show);
     }
 }
 

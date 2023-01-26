@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,38 +19,21 @@
 
 #pragma once
 
-#include <QDialog>
-#include <QItemSelection>
-
-class QVBoxLayout;
-class QListView;
-class QPushButton;
+#include <QAbstractListModel>
 
 namespace Gui {
 class LayoutProvider;
-class QuickSetupModel;
 
-class QuickSetupDialog : public QDialog
+class QuickSetupModel : public QAbstractListModel
 {
-    Q_OBJECT
-
 public:
-    explicit QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent = nullptr);
-    ~QuickSetupDialog() override = default;
+    explicit QuickSetupModel(LayoutProvider* layoutProvider, QObject* parent = nullptr);
+    ~QuickSetupModel() override = default;
 
-signals:
-    void layoutChanged(const QByteArray& layout);
-
-protected:
-    void setupUi();
-    void changeLayout(const QItemSelection& selected, const QItemSelection& deselected);
-
-    void showEvent(QShowEvent* event) override;
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
 private:
-    QVBoxLayout* m_layout;
-    QListView* m_layoutList;
-    QuickSetupModel* m_model;
-    QPushButton* m_accept;
+    LayoutProvider* m_layoutProvider;
 };
 } // namespace Gui

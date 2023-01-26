@@ -17,6 +17,8 @@ fooyin_add_library(Gui
         quicksetupdialog.cpp
         guisettings.h
         guisettings.cpp
+        layoutprovider.h
+        layoutprovider.cpp
         widgetfactory.h
         widgetprovider.h
         widgetprovider.cpp
@@ -58,6 +60,9 @@ fooyin_add_library(Gui
         playlist/playlistdelegate.cpp
         playlist/playlistwidget.h
         playlist/playlistwidget.cpp
+
+        quicksetup/quicksetupmodel.h
+        quicksetup/quicksetupmodel.cpp
 
         settings/settingsdialog.h
         settings/settingsdialog.cpp

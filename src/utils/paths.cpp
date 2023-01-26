@@ -81,7 +81,7 @@ QString settingsPath()
 
 QString layoutsPath()
 {
-    return configPath("layouts");
+    return configPath("layouts").append("/");
 }
 
 } // namespace Utils
