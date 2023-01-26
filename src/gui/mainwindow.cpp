@@ -21,9 +21,9 @@
 
 #include "editablelayout.h"
 #include "gui/guisettings.h"
+#include "gui/quicksetup/quicksetupdialog.h"
 #include "gui/settings/settingsdialog.h"
 #include "layoutprovider.h"
-#include "quicksetupdialog.h"
 
 #include <core/actions/actioncontainer.h>
 #include <core/actions/actionmanager.h>
