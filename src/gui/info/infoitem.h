@@ -31,6 +31,23 @@ public:
         Entry,
     };
 
+    enum Role
+    {
+        // These correspond to row numbers of the infomodel
+        // Do not change!
+        Title       = 1,
+        Artist      = 2,
+        Album       = 3,
+        Year        = 4,
+        Genre       = 5,
+        TrackNumber = 6,
+        Filename    = 8,
+        Path        = 9,
+        Duration    = 10,
+        Bitrate     = 11,
+        SampleRate  = 12,
+    };
+
     explicit InfoItem(Type type = Type::Header, QString title = {});
     ~InfoItem();
 

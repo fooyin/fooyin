@@ -129,27 +129,27 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
 
     if(m_currentTrack) {
         switch(row) {
-            case(Core::InfoRole::Title):
+            case(InfoItem::Role::Title):
                 return m_currentTrack->title();
-            case(Core::InfoRole::Artist):
+            case(InfoItem::Role::Artist):
                 return m_currentTrack->artists().join(", ");
-            case(Core::InfoRole::Album):
+            case(InfoItem::Role::Album):
                 return m_currentTrack->album();
-            case(Core::InfoRole::Year):
+            case(InfoItem::Role::Year):
                 return m_currentTrack->year();
-            case(Core::InfoRole::Genre):
+            case(InfoItem::Role::Genre):
                 return m_currentTrack->genres().join(", ");
-            case(Core::InfoRole::TrackNumber):
+            case(InfoItem::Role::TrackNumber):
                 return m_currentTrack->trackNumber();
-            case(Core::InfoRole::Filename):
+            case(InfoItem::Role::Filename):
                 return m_currentTrack->filepath().split("/").constLast();
-            case(Core::InfoRole::Path):
+            case(InfoItem::Role::Path):
                 return m_currentTrack->filepath();
-            case(Core::InfoRole::Duration):
+            case(InfoItem::Role::Duration):
                 return Utils::msToString(m_currentTrack->duration());
-            case(Core::InfoRole::Bitrate):
+            case(InfoItem::Role::Bitrate):
                 return QString::number(m_currentTrack->bitrate()).append(" kbps");
-            case(Core::InfoRole::SampleRate):
+            case(InfoItem::Role::SampleRate):
                 return m_currentTrack->sampleRate();
         }
     }

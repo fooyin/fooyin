@@ -31,22 +31,6 @@ const int Type         = Qt::UserRole + 1;
 const int PlaylistType = Qt::UserRole + 2;
 } // namespace Role
 
-namespace InfoRole {
-// These correspond to row numbers of the infomodel
-// Do not change!
-const int Title       = 1;
-const int Artist      = 2;
-const int Album       = 3;
-const int Year        = 4;
-const int Genre       = 5;
-const int TrackNumber = 6;
-const int Filename    = 8;
-const int Path        = 9;
-const int Duration    = 10;
-const int Bitrate     = 11;
-const int SampleRate  = 12;
-} // namespace InfoRole
-
 namespace Fy {
 Q_NAMESPACE
 enum Attribute
