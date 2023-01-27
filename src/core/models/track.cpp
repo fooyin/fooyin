@@ -370,20 +370,20 @@ ExtraTags Track::extra() const
 void Track::addExtra(const QString& tag, const QString& value)
 {
     if(!tag.isEmpty() && !value.isEmpty()) {
-        if(m_extraTags.contains(tag)) {
-            auto entry = m_extraTags.value(tag);
+        if(Utils::hasKey(m_extraTags, tag)) {
+            auto entry = m_extraTags.at(tag);
             entry.append(value);
-            m_extraTags.insert(tag, entry);
+            m_extraTags.emplace(tag, entry);
         }
     }
-    m_extraTags.insert(tag, {value});
+    m_extraTags.emplace(tag, value);
 }
 
 QByteArray Track::extraTagsToJson() const
 {
     QJsonObject extra;
     QJsonArray extraArray;
-    for(const auto& [tag, values] : Utils::asRange(m_extraTags)) {
+    for(const auto& [tag, values] : m_extraTags) {
         QJsonObject tagObject;
         const auto tagArray = QJsonArray::fromStringList(values);
         tagObject[tag]      = tagArray;
@@ -415,7 +415,7 @@ void Track::jsonToExtraTags(const QByteArray& ba)
                         for(const auto& value : tagArray) {
                             values.append(value.toString());
                         }
-                        m_extraTags.insert(tag, values);
+                        m_extraTags.emplace(tag, values);
                     }
                 }
             }

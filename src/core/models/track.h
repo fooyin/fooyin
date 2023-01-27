@@ -26,7 +26,7 @@
 #include <QSet>
 
 namespace Core {
-using ExtraTags = QMap<QString, QList<QString>>;
+using ExtraTags = std::map<QString, QList<QString>>;
 
 class Track : public LibraryItem
 {
