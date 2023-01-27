@@ -272,7 +272,7 @@ void EditableLayout::changeLayout(const QByteArray& layout)
 {
     // Delete all current widgets
     // TODO: Look into caching previous layout widgets
-    p->splitter->deleteLater();
+    delete p->splitter;
     const bool success = loadLayout(layout);
     if(success && p->splitter->hasChildren()) {
         p->settings->set<Settings::LayoutEditing>(false);
