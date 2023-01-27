@@ -21,7 +21,6 @@
 
 #include "gui/quicksetup/quicksetupmodel.h"
 
-#include <core/typedefs.h>
 #include <utils/paths.h>
 
 #include <QDir>

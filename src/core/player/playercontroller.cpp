@@ -30,8 +30,8 @@ PlayerController::PlayerController(Core::SettingsManager* settings, QObject* par
     , m_settings{settings}
     , m_currentTrack{nullptr}
     , m_totalDuration{0}
-    , m_playStatus{PlayState::Stopped}
-    , m_playMode{PlayMode::Default}
+    , m_playStatus{Stopped}
+    , m_playMode{Default}
     , m_position{0}
     , m_volume{1.0F}
     , m_counted{false}
@@ -44,13 +44,13 @@ void PlayerController::restoreState()
 
 void PlayerController::reset()
 {
-    m_playStatus = Player::PlayState::Stopped;
+    m_playStatus = Stopped;
     m_position   = 0;
 }
 
 void PlayerController::play()
 {
-    m_playStatus = Player::PlayState::Playing;
+    m_playStatus = Playing;
     emit playStateChanged(m_playStatus);
 }
 
@@ -62,9 +62,9 @@ void PlayerController::wakeUp()
 void PlayerController::playPause()
 {
     switch(m_playStatus) {
-        case(Player::PlayState::Playing):
+        case(Playing):
             return pause();
-        case(Player::PlayState::Stopped):
+        case(Stopped):
             return wakeUp();
         default:
             return play();
@@ -73,7 +73,7 @@ void PlayerController::playPause()
 
 void PlayerController::pause()
 {
-    m_playStatus = Player::PlayState::Paused;
+    m_playStatus = Paused;
     emit playStateChanged(m_playStatus);
 }
 
@@ -129,17 +129,17 @@ void PlayerController::changeCurrentTrack(Track* track)
 void PlayerController::setRepeat()
 {
     switch(m_playMode) {
-        case Player::PlayMode::Default:
+        case Default:
             m_playMode = Player::PlayMode::RepeatAll;
             break;
-        case Player::PlayMode::RepeatAll:
-            m_playMode = Player::PlayMode::Repeat;
+        case RepeatAll:
+            m_playMode = Repeat;
             break;
         case Player::PlayMode::Repeat:
-            m_playMode = Player::PlayMode::Default;
+            m_playMode = Default;
             break;
         case Player::PlayMode::Shuffle:
-            m_playMode = Player::PlayMode::RepeatAll;
+            m_playMode = RepeatAll;
             break;
     }
     emit playModeChanged(m_playMode);
@@ -147,11 +147,11 @@ void PlayerController::setRepeat()
 
 void PlayerController::setShuffle()
 {
-    if(m_playMode == Player::PlayMode::Shuffle) {
-        m_playMode = Player::PlayMode::Default;
+    if(m_playMode == Shuffle) {
+        m_playMode = Default;
     }
     else {
-        m_playMode = Player::PlayMode::Shuffle;
+        m_playMode = Shuffle;
     }
     emit playModeChanged(m_playMode);
 }

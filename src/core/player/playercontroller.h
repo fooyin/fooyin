@@ -55,8 +55,8 @@ protected:
     void volumeDown() override;
     void setVolume(double value) override;
 
-    [[nodiscard]] Player::PlayState playState() const override;
-    [[nodiscard]] Player::PlayMode playMode() const override;
+    [[nodiscard]] PlayState playState() const override;
+    [[nodiscard]] PlayMode playMode() const override;
     [[nodiscard]] quint64 currentPosition() const override;
     [[nodiscard]] Track* currentTrack() const override;
     [[nodiscard]] double volume() const override;
@@ -66,8 +66,8 @@ private:
 
     Track* m_currentTrack;
     quint64 m_totalDuration;
-    Player::PlayState m_playStatus;
-    Player::PlayMode m_playMode;
+    PlayState m_playStatus;
+    PlayMode m_playMode;
     quint64 m_position;
     double m_volume;
     bool m_counted;

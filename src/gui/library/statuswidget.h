@@ -21,14 +21,13 @@
 
 #include "gui/fywidget.h"
 
-#include <core/typedefs.h>
-
 #include <QWidget>
 
 class QHBoxLayout;
 
 namespace Core::Player {
 class PlayerManager;
+enum PlayState : uint8_t;
 } // namespace Core::Player
 
 namespace Gui::Widgets {

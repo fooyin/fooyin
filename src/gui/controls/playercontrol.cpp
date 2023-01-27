@@ -22,6 +22,7 @@
 #include "gui/widgets/comboicon.h"
 
 #include <core/constants.h>
+#include <core/player/playermanager.h>
 
 #include <QHBoxLayout>
 
@@ -67,13 +68,13 @@ void PlayerControl::setupUi()
 void PlayerControl::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
-        case(Core::Player::PlayState::Stopped):
+        case(Core::Player::Stopped):
             setEnabled(false);
             return m_play->setIcon(Core::Constants::Icons::Play);
-        case(Core::Player::PlayState::Playing):
+        case(Core::Player::Playing):
             setEnabled(true);
             return m_play->setIcon(Core::Constants::Icons::Pause);
-        case(Core::Player::PlayState::Paused):
+        case(Core::Player::Paused):
             return m_play->setIcon(Core::Constants::Icons::Play);
     }
 }

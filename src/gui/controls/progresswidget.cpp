@@ -24,6 +24,7 @@
 #include "gui/widgets/slider.h"
 
 #include <core/models/track.h>
+#include <core/player/playermanager.h>
 #include <utils/utils.h>
 
 #include <QHBoxLayout>
@@ -109,12 +110,12 @@ void ProgressWidget::reset()
 void ProgressWidget::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
-        case(Core::Player::PlayState::Stopped):
+        case(Core::Player::Stopped):
             reset();
             return setEnabled(false);
-        case(Core::Player::PlayState::Playing):
+        case(Core::Player::Playing):
             return setEnabled(true);
-        case(Core::Player::PlayState::Paused):
+        case(Core::Player::Paused):
             return;
     }
 }

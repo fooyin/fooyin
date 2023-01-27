@@ -21,8 +21,6 @@
 
 #include "gui/fywidget.h"
 
-#include <core/typedefs.h>
-
 #include <QItemSelection>
 
 class QHBoxLayout;
@@ -33,6 +31,7 @@ class SettingsManager;
 
 namespace Player {
 class PlayerManager;
+enum PlayState : uint8_t;
 } // namespace Player
 
 namespace Library {

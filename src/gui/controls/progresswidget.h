@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include <core/typedefs.h>
-
 #include <QWidget>
 
 class QHBoxLayout;
@@ -28,6 +26,10 @@ class QHBoxLayout;
 namespace Core {
 class Track;
 class SettingsManager;
+
+namespace Player {
+enum PlayState : uint8_t;
+}
 } // namespace Core
 
 namespace Gui::Widgets {

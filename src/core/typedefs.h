@@ -42,23 +42,4 @@ enum Attribute
 Q_DECLARE_FLAGS(Attributes, Attribute)
 } // namespace Fy
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Attributes)
-
-namespace Player {
-Q_NAMESPACE
-enum PlayState : uint8_t
-{
-    Playing = 1,
-    Paused  = 2,
-    Stopped = 3,
-};
-Q_ENUM_NS(PlayState)
-enum PlayMode : uint8_t
-{
-    Default   = 1,
-    RepeatAll = 2,
-    Repeat    = 3,
-    Shuffle   = 4,
-};
-Q_ENUM_NS(PlayMode)
-} // namespace Player
 } // namespace Core

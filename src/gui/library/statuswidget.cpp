@@ -99,10 +99,10 @@ void StatusWidget::reloadStatus()
 void StatusWidget::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
-        case(Core::Player::PlayState::Stopped):
+        case(Core::Player::Stopped):
             m_playing->setText("Waiting for track...");
             break;
-        case(Core::Player::PlayState::Playing): {
+        case(Core::Player::Playing): {
             auto* track      = m_playerManager->currentTrack();
             auto number      = QStringLiteral("%1").arg(track->trackNumber(), 2, 10, QLatin1Char('0'));
             auto duration    = QString(" (%1)").arg(Utils::msToString(track->duration()));
@@ -111,7 +111,7 @@ void StatusWidget::stateChanged(Core::Player::PlayState state)
             auto text        = number + ". " + track->title() + duration + albumArtist + album;
             m_playing->setText(text);
         }
-        case(Core::Player::PlayState::Paused):
+        case(Core::Player::Paused):
             break;
     }
 }

@@ -23,6 +23,7 @@
 
 #include <core/constants.h>
 #include <core/coresettings.h>
+#include <core/player/playermanager.h>
 
 #include <QHBoxLayout>
 
@@ -69,22 +70,22 @@ void PlaylistControl::playModeChanged(Core::Player::PlayMode mode)
 void PlaylistControl::setMode(Core::Player::PlayMode mode) const
 {
     switch(mode) {
-        case(Core::Player::PlayMode::Repeat): {
+        case(Core::Player::Repeat): {
             m_repeat->setIcon(Core::Constants::Icons::Repeat, true);
             m_shuffle->setIcon(Core::Constants::Icons::Shuffle);
             break;
         }
-        case(Core::Player::PlayMode::RepeatAll): {
+        case(Core::Player::RepeatAll): {
             m_repeat->setIcon(Core::Constants::Icons::RepeatAll, true);
             m_shuffle->setIcon(Core::Constants::Icons::Shuffle);
             break;
         }
-        case(Core::Player::PlayMode::Shuffle): {
+        case(Core::Player::Shuffle): {
             m_shuffle->setIcon(Core::Constants::Icons::Shuffle, true);
             m_repeat->setIcon(Core::Constants::Icons::RepeatAll);
             break;
         }
-        case(Core::Player::PlayMode::Default): {
+        case(Core::Player::Default): {
             m_repeat->setIcon(Core::Constants::Icons::RepeatAll);
             m_shuffle->setIcon(Core::Constants::Icons::Shuffle);
             break;

@@ -294,11 +294,11 @@ void PlaylistWidget::switchOrder()
 void PlaylistWidget::changeState(Core::Player::PlayState state)
 {
     switch(state) {
-        case(Core::Player::PlayState::Playing):
+        case(Core::Player::Playing):
             m_model->changeTrackState();
             return findCurrent();
-        case(Core::Player::PlayState::Stopped):
-        case(Core::Player::PlayState::Paused):
+        case(Core::Player::Stopped):
+        case(Core::Player::Paused):
             return m_model->changeTrackState();
     }
 }

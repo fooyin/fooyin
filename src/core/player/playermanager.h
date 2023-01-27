@@ -19,14 +19,27 @@
 
 #pragma once
 
-#include "core/typedefs.h"
-
 #include <QObject>
 
 namespace Core {
 class Track;
 
 namespace Player {
+enum PlayMode : uint8_t
+{
+    Default   = 1,
+    RepeatAll = 2,
+    Repeat    = 3,
+    Shuffle   = 4,
+};
+
+enum PlayState : uint8_t
+{
+    Playing = 1,
+    Paused  = 2,
+    Stopped = 3,
+};
+
 class PlayerManager : public QObject
 {
     Q_OBJECT
@@ -38,15 +51,15 @@ public:
 
     virtual void restoreState() = 0;
 
-    [[nodiscard]] virtual Player::PlayState playState() const = 0;
-    [[nodiscard]] virtual Player::PlayMode playMode() const   = 0;
-    [[nodiscard]] virtual quint64 currentPosition() const     = 0;
-    [[nodiscard]] virtual Track* currentTrack() const         = 0;
-    [[nodiscard]] virtual double volume() const               = 0;
+    [[nodiscard]] virtual PlayState playState() const     = 0;
+    [[nodiscard]] virtual PlayMode playMode() const       = 0;
+    [[nodiscard]] virtual quint64 currentPosition() const = 0;
+    [[nodiscard]] virtual Track* currentTrack() const     = 0;
+    [[nodiscard]] virtual double volume() const           = 0;
 
 signals:
-    void playStateChanged(Player::PlayState);
-    void playModeChanged(Player::PlayMode);
+    void playStateChanged(Core::Player::PlayState);
+    void playModeChanged(Core::Player::PlayMode);
     void nextTrack();
     void wakeup();
     void previousTrack();

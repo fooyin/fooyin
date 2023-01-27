@@ -21,7 +21,6 @@
 
 #include "filterfwd.h"
 
-#include <core/typedefs.h>
 #include <gui/fywidget.h>
 
 #include <QItemSelection>

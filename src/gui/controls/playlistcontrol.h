@@ -19,15 +19,17 @@
 
 #pragma once
 
-#include <core/typedefs.h>
-
 #include <QWidget>
 
 class QHBoxLayout;
 
 namespace Core {
 class SettingsManager;
+
+namespace Player {
+enum PlayMode : uint8_t;
 }
+} // namespace Core
 
 namespace Gui::Widgets {
 class ComboIcon;
