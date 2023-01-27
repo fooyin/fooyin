@@ -36,6 +36,22 @@ public:
         Root
     };
 
+    enum Role
+    {
+        Id        = Qt::UserRole + 1,
+        Artist    = Qt::UserRole + 2,
+        Year      = Qt::UserRole + 3,
+        Duration  = Qt::UserRole + 4,
+        Cover     = Qt::UserRole + 5,
+        Number    = Qt::UserRole + 6,
+        PlayCount = Qt::UserRole + 7,
+        MultiDisk = Qt::UserRole + 8,
+        Playing   = Qt::UserRole + 9,
+        Path      = Qt::UserRole + 10,
+        Index     = Qt::UserRole + 11,
+        Data      = Qt::UserRole + 12,
+    };
+
     explicit PlaylistItem(Type type = Type::Root, Core::LibraryItem* data = {}, PlaylistItem* parentItem = nullptr);
     ~PlaylistItem() = default;
 

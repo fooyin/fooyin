@@ -31,21 +31,6 @@ const int Type         = Qt::UserRole + 1;
 const int PlaylistType = Qt::UserRole + 2;
 } // namespace Role
 
-namespace ItemRole {
-const int Id        = Qt::UserRole + 10;
-const int Artist    = Qt::UserRole + 11;
-const int Year      = Qt::UserRole + 12;
-const int Duration  = Qt::UserRole + 13;
-const int Cover     = Qt::UserRole + 14;
-const int Number    = Qt::UserRole + 15;
-const int PlayCount = Qt::UserRole + 16;
-const int MultiDisk = Qt::UserRole + 17;
-const int Playing   = Qt::UserRole + 18;
-const int Path      = Qt::UserRole + 19;
-const int Index     = Qt::UserRole + 20;
-const int Data      = Qt::UserRole + 21;
-} // namespace ItemRole
-
 namespace InfoRole {
 // These correspond to row numbers of the infomodel
 // Do not change!

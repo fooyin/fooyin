@@ -127,10 +127,10 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
     linePen.setColor(lineColour);
 
     const QString albumTitle    = index.data(Qt::DisplayRole).toString();
-    const QString albumArtist   = index.data(Core::ItemRole::Artist).toString();
-    const QString albumYear     = index.data(Core::ItemRole::Year).toString();
-    const QString albumDuration = index.data(Core::ItemRole::Duration).toString();
-    const auto albumCover       = index.data(Core::ItemRole::Cover).value<QPixmap>();
+    const QString albumArtist   = index.data(PlaylistItem::Role::Artist).toString();
+    const QString albumYear     = index.data(PlaylistItem::Role::Year).toString();
+    const QString albumDuration = index.data(PlaylistItem::Role::Duration).toString();
+    const auto albumCover       = index.data(PlaylistItem::Role::Cover).value<QPixmap>();
 
     QFont artistFont = painter->font();
     artistFont.setPixelSize(15);
@@ -257,13 +257,13 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     const int right  = x + width;
 
     const auto background        = index.data(Qt::BackgroundRole).value<QPalette::ColorRole>();
-    const QString trackNumber    = index.data(Core::ItemRole::Number).toString();
+    const QString trackNumber    = index.data(PlaylistItem::Role::Number).toString();
     const QString trackTitle     = index.data(Qt::DisplayRole).toString();
-    const QString trackArtists   = index.data(Core::ItemRole::Artist).toString();
-    const QString trackPlayCount = index.data(Core::ItemRole::PlayCount).toString();
-    const QString trackDuration  = index.data(Core::ItemRole::Duration).toString();
-    const bool multiDiscs        = index.data(Core::ItemRole::MultiDisk).toBool();
-    const bool isPlaying         = index.data(Core::ItemRole::Playing).toBool();
+    const QString trackArtists   = index.data(PlaylistItem::Role::Artist).toString();
+    const QString trackPlayCount = index.data(PlaylistItem::Role::PlayCount).toString();
+    const QString trackDuration  = index.data(PlaylistItem::Role::Duration).toString();
+    const bool multiDiscs        = index.data(PlaylistItem::Role::MultiDisk).toBool();
+    const bool isPlaying         = index.data(PlaylistItem::Role::Playing).toBool();
     const auto pixmap            = index.data(Qt::DecorationRole).value<QPixmap>();
 
     const QFont playFont      = QFont("Guifx v2 Transports", 12);
@@ -332,7 +332,7 @@ void PlaylistDelegate::paintDisc(QPainter* painter, const QStyleOptionViewItem& 
     const int right  = x + width;
 
     const QString discNumber   = index.data(Qt::DisplayRole).toString();
-    const QString discDuration = index.data(Core::ItemRole::Duration).toString();
+    const QString discDuration = index.data(PlaylistItem::Role::Duration).toString();
 
     paintSelectionBackground(painter, option);
 

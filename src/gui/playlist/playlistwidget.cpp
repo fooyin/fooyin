@@ -191,7 +191,7 @@ void PlaylistWidget::selectionChanged()
         if(index.isValid()) {
             const auto type = index.data(Core::Role::Type).value<PlaylistItem::Type>();
             if(type == PlaylistItem::Type::Track) {
-                auto* data = index.data(Core::ItemRole::Data).value<Core::Track*>();
+                auto* data = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
                 tracks.insert(data);
             }
             else {
@@ -219,7 +219,7 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
                 return;
             }
 
-            auto idx = index.data(Core::ItemRole::Index).toInt();
+            auto idx = index.data(PlaylistItem::Role::Index).toInt();
 
             emit clickedTrack(idx, false);
             m_model->changeTrackState();
@@ -310,7 +310,7 @@ void PlaylistWidget::playTrack(const QModelIndex& index)
         return;
     }
 
-    auto idx = index.data(Core::ItemRole::Index).toInt();
+    auto idx = index.data(PlaylistItem::Role::Index).toInt();
 
     emit clickedTrack(idx, false);
     m_model->changeTrackState();

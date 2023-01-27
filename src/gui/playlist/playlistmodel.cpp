@@ -193,45 +193,45 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
     }
 
     switch(role) {
-        case(Core::ItemRole::Id): {
+        case(PlaylistItem::Role::Id): {
             return track->id();
         }
-        case(Core::ItemRole::Number): {
+        case(PlaylistItem::Role::Number): {
             return QStringLiteral("%1").arg(track->trackNumber(), 2, 10, QLatin1Char('0'));
         }
         case(Qt::DisplayRole): {
             return !track->title().isEmpty() ? track->title() : "Unknown Title";
         }
-        case(Core::ItemRole::Artist): {
+        case(PlaylistItem::Role::Artist): {
             return trackArtistString(track);
         }
-        case(Core::ItemRole::PlayCount): {
+        case(PlaylistItem::Role::PlayCount): {
             const int count = track->playCount();
             if(count > 0) {
                 return QString::number(count) + QString("|");
             }
             return {};
         }
-        case(Core::ItemRole::Duration): {
+        case(PlaylistItem::Role::Duration): {
             return Utils::msToString(track->duration());
         }
-        case(Core::ItemRole::MultiDisk): {
+        case(PlaylistItem::Role::MultiDisk): {
             if(item->parent()->type() == PlaylistItem::Type::Disc && m_settings->value<Settings::DiscHeaders>()
                && !m_settings->value<Settings::SplitDiscs>()) {
                 return true;
             }
             return false;
         }
-        case(Core::ItemRole::Playing): {
+        case(PlaylistItem::Role::Playing): {
             return m_playerManager->currentTrack() && m_playerManager->currentTrack()->id() == track->id();
         }
-        case(Core::ItemRole::Path): {
+        case(PlaylistItem::Role::Path): {
             return track->filepath();
         }
-        case(Core::ItemRole::Index): {
+        case(PlaylistItem::Role::Index): {
             return item->index();
         }
-        case(Core::ItemRole::Data): {
+        case(PlaylistItem::Role::Data): {
             return QVariant::fromValue<Core::Track*>(track);
         }
         case(Qt::BackgroundRole): {
@@ -266,7 +266,7 @@ QVariant PlaylistModel::albumData(PlaylistItem* item, int role) const
     }
 
     switch(role) {
-        case(Core::ItemRole::Id): {
+        case(PlaylistItem::Role::Id): {
             return album->id();
         }
         case(Qt::DisplayRole): {
@@ -277,13 +277,13 @@ QVariant PlaylistModel::albumData(PlaylistItem* item, int role) const
             }
             return title;
         }
-        case(Core::ItemRole::Cover): {
+        case(PlaylistItem::Role::Cover): {
             return Core::Covers::albumCover(album);
         }
-        case(Core::ItemRole::Artist): {
+        case(PlaylistItem::Role::Artist): {
             return !album->artist().isEmpty() ? album->artist() : "Unknown Artist";
         }
-        case(Core::ItemRole::Duration): {
+        case(PlaylistItem::Role::Duration): {
             const auto genre    = album->genres().join(" / ");
             const auto count    = album->trackCount();
             const auto duration = album->duration();
@@ -296,7 +296,7 @@ QVariant PlaylistModel::albumData(PlaylistItem* item, int role) const
                            + Utils::msToString(duration));
             return dur;
         }
-        case(Core::ItemRole::Year): {
+        case(PlaylistItem::Role::Year): {
             return album->year();
         }
     }
@@ -315,7 +315,7 @@ QVariant PlaylistModel::discData(PlaylistItem* item, int role) const
         case(Qt::DisplayRole): {
             return "Disc #" + QString::number(disc->number());
         }
-        case(Core::ItemRole::Duration): {
+        case(PlaylistItem::Role::Duration): {
             auto duration = static_cast<int>(disc->duration());
             return QString(Utils::msToString(duration));
         }
@@ -404,7 +404,7 @@ int PlaylistModel::columnCount(const QModelIndex& parent) const
 
 void PlaylistModel::changeTrackState()
 {
-    emit dataChanged({}, {}, {Core::ItemRole::Playing});
+    emit dataChanged({}, {}, {PlaylistItem::Role::Playing});
 }
 
 void PlaylistModel::changeRowColours()
@@ -424,18 +424,18 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
 {
     auto roles = QAbstractItemModel::roleNames();
 
-    roles.insert(+Core::ItemRole::Id, "ID");
-    roles.insert(+Core::ItemRole::Artist, "Artist");
-    roles.insert(+Core::ItemRole::Year, "Year");
-    roles.insert(+Core::ItemRole::Duration, "Duration");
-    roles.insert(+Core::ItemRole::Cover, "Cover");
-    roles.insert(+Core::ItemRole::Number, "TrackNumber");
-    roles.insert(+Core::ItemRole::PlayCount, "PlayCount");
-    roles.insert(+Core::ItemRole::MultiDisk, "Multiple Discs");
-    roles.insert(+Core::ItemRole::Playing, "IsPlaying");
-    roles.insert(+Core::ItemRole::Path, "Path");
-    roles.insert(+Core::ItemRole::Index, "Index");
-    roles.insert(+Core::ItemRole::Data, "Data");
+    roles.insert(+PlaylistItem::Role::Id, "ID");
+    roles.insert(+PlaylistItem::Role::Artist, "Artist");
+    roles.insert(+PlaylistItem::Role::Year, "Year");
+    roles.insert(+PlaylistItem::Role::Duration, "Duration");
+    roles.insert(+PlaylistItem::Role::Cover, "Cover");
+    roles.insert(+PlaylistItem::Role::Number, "TrackNumber");
+    roles.insert(+PlaylistItem::Role::PlayCount, "PlayCount");
+    roles.insert(+PlaylistItem::Role::MultiDisk, "Multiple Discs");
+    roles.insert(+PlaylistItem::Role::Playing, "IsPlaying");
+    roles.insert(+PlaylistItem::Role::Path, "Path");
+    roles.insert(+PlaylistItem::Role::Index, "Index");
+    roles.insert(+PlaylistItem::Role::Data, "Data");
 
     return roles;
 }
@@ -443,7 +443,7 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
 QModelIndexList PlaylistModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                      Qt::MatchFlags flags) const
 {
-    if(role != Core::ItemRole::Id) {
+    if(role != PlaylistItem::Role::Id) {
         return QAbstractItemModel::match(start, role, value, hits, flags);
     }
 
