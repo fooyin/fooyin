@@ -62,6 +62,7 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 
     QStyleOptionViewItem opt = option;
     const auto type          = index.data(Playlist::Type).value<PlaylistItem::Type>();
+    const auto simple        = index.data(Playlist::Mode).toBool();
 
     initStyleOption(&opt, index);
 
@@ -77,7 +78,7 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 
     switch(type) {
         case(PlaylistItem::Album): {
-            paintAlbum(painter, option, index);
+            simple ? paintSimpleAlbum(painter, option, index) : paintAlbum(painter, option, index);
             break;
         }
         case(PlaylistItem::Track): {
@@ -111,8 +112,6 @@ void PlaylistDelegate::paintSelectionBackground(QPainter* painter, const QStyleO
 
 void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-    const auto simple = index.data(Playlist::Mode).toBool();
-
     const int x      = option.rect.x();
     const int y      = option.rect.y();
     const int width  = option.rect.width();
@@ -142,108 +141,135 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
 
     paintSelectionBackground(painter, option);
 
-    if(!simple) {
-        const auto coverFrameWidth  = 2;
-        const auto coverFrameOffset = coverFrameWidth / 2;
+    const auto coverFrameWidth  = 2;
+    const auto coverFrameOffset = coverFrameWidth / 2;
 
-        const QRect coverRect      = QRect(x + 10, y + 10, 58, height - 19);
-        const QRect coverFrameRect = QRect(coverRect.x() - coverFrameOffset, coverRect.y() - coverFrameOffset,
-                                           coverRect.width() + coverFrameWidth, coverRect.height() + coverFrameWidth);
-        const QRect artistRect     = QRect(coverFrameRect.right() + 10, y - 20, ((right - 80) - (x + 80)), height);
-        const QRect titleRect      = QRect(coverFrameRect.right() + 10, y, ((right - 80) - (x + 80)), height);
-        const QRect subRect        = QRect(coverFrameRect.right() + 10, y + 20, ((right - 80) - (x + 80)), height);
-        const QRect yearRect       = QRect(right - 60, y, 50, height);
+    const QRect coverRect      = QRect(x + 10, y + 10, 58, height - 19);
+    const QRect coverFrameRect = QRect(coverRect.x() - coverFrameOffset, coverRect.y() - coverFrameOffset,
+                                       coverRect.width() + coverFrameWidth, coverRect.height() + coverFrameWidth);
+    const QRect artistRect     = QRect(coverFrameRect.right() + 10, y - 20, ((right - 80) - (x + 80)), height);
+    const QRect titleRect      = QRect(coverFrameRect.right() + 10, y, ((right - 80) - (x + 80)), height);
+    const QRect subRect        = QRect(coverFrameRect.right() + 10, y + 20, ((right - 80) - (x + 80)), height);
+    const QRect yearRect       = QRect(right - 60, y, 50, height);
 
-        QPen coverPen     = painter->pen();
-        QColor coverColor = option.palette.color(QPalette::Shadow);
-        coverColor.setAlpha(65);
-        coverPen.setColor(coverColor);
-        coverPen.setWidth(coverFrameWidth);
+    QPen coverPen     = painter->pen();
+    QColor coverColor = option.palette.color(QPalette::Shadow);
+    coverColor.setAlpha(65);
+    coverPen.setColor(coverColor);
+    coverPen.setWidth(coverFrameWidth);
 
-        painter->drawPixmap(coverRect, albumCover);
+    painter->drawPixmap(coverRect, albumCover);
 
-        painter->setFont(artistFont);
-        option.widget->style()->drawItemText(
-            painter, artistRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
-            painter->fontMetrics().elidedText(albumArtist, Qt::ElideRight, artistRect.width()));
+    painter->setFont(artistFont);
+    option.widget->style()->drawItemText(
+        painter, artistRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
+        painter->fontMetrics().elidedText(albumArtist, Qt::ElideRight, artistRect.width()));
 
-        painter->setPen(option.palette.color(QPalette::Text));
-        painter->setFont(titleFont);
-        const QRect titleBound
-            = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumTitle);
-        option.widget->style()->drawItemText(
-            painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
-            painter->fontMetrics().elidedText(albumTitle, Qt::ElideRight, titleRect.width()));
+    painter->setPen(option.palette.color(QPalette::Text));
+    painter->setFont(titleFont);
+    const QRect titleBound
+        = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumTitle);
+    option.widget->style()->drawItemText(
+        painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
+        painter->fontMetrics().elidedText(albumTitle, Qt::ElideRight, titleRect.width()));
 
-        painter->setFont(yearFont);
-        const QRect yearBound = painter->boundingRect(yearRect, Qt::AlignRight | Qt::AlignVCenter, albumYear);
-        if(width > 160) {
-            option.widget->style()->drawItemText(painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette,
-                                                 true, albumYear);
-        }
-
-        painter->setFont(totalFont);
-        option.widget->style()->drawItemText(
-            painter, subRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
-            painter->fontMetrics().elidedText(albumDuration, Qt::ElideRight, subRect.width()));
-
-        painter->setPen(linePen);
-        const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
-                              (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
-        const QLineF headerLine(x + 77, (y + height) - 8, (right)-10, (y + height) - 8);
-        if(!albumTitle.isEmpty() && width > 160) {
-            painter->drawLine(yearLine);
-        }
-        painter->drawLine(headerLine);
-
-        painter->setPen(coverPen);
-        painter->setRenderHint(QPainter::Antialiasing);
-        painter->drawRect(coverFrameRect);
-    }
-    else {
-        artistFont.setPixelSize(13);
-        titleFont.setPixelSize(12);
-        yearFont.setPixelSize(12);
-
-        const QRect artistRect = QRect(x + 10, y, ((right - 80) - (x + 80)), height);
-        const QRect yearRect   = QRect(right - 60, y, 50, height);
-
-        const QString titleSpacing = !albumTitle.isEmpty() && !albumArtist.isEmpty() ? "  -  " : "";
-
-        painter->setFont(artistFont);
-        option.widget->style()->drawItemText(
-            painter, artistRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
-            painter->fontMetrics().elidedText(albumArtist + titleSpacing, Qt::ElideRight, artistRect.width()));
-
-        const QRect artistBound = painter->boundingRect(
-            artistRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumArtist + titleSpacing);
-
-        const QRect titleRect = QRect(artistBound.right(), y, ((right - 80) - (x + 80)), height);
-
-        painter->setPen(option.palette.color(QPalette::Text));
-        painter->setFont(titleFont);
-        const QRect titleBound
-            = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumTitle);
-        option.widget->style()->drawItemText(
-            painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
-            painter->fontMetrics().elidedText(albumTitle, Qt::ElideRight, titleRect.width()));
-
-        painter->setFont(yearFont);
-        const QRect yearBound = painter->boundingRect(yearRect, Qt::AlignRight | Qt::AlignVCenter, albumYear);
+    painter->setFont(yearFont);
+    const QRect yearBound = painter->boundingRect(yearRect, Qt::AlignRight | Qt::AlignVCenter, albumYear);
+    if(width > 160) {
         option.widget->style()->drawItemText(painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
                                              albumYear);
+    }
 
-        painter->setPen(lineColour);
-        const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
-                              (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
-        //        const QLineF artistTitleLine((artistBound.x() + artistBound.width() + 10),
-        //                                     (artistBound.y() + (artistBound.height() / 2)), (titleBound.x() - 10),
-        //                                     (titleBound.y()) + (titleBound.height() / 2));
-        if(!albumTitle.isEmpty()) {
-            painter->drawLine(yearLine);
-            //            if (!albumArtist.isEmpty())
-            //                painter->drawLine(artistTitleLine);
-        }
+    painter->setFont(totalFont);
+    option.widget->style()->drawItemText(
+        painter, subRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
+        painter->fontMetrics().elidedText(albumDuration, Qt::ElideRight, subRect.width()));
+
+    painter->setPen(linePen);
+    const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
+                          (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
+    const QLineF headerLine(x + 77, (y + height) - 8, (right)-10, (y + height) - 8);
+    if(!albumTitle.isEmpty() && width > 160) {
+        painter->drawLine(yearLine);
+    }
+    painter->drawLine(headerLine);
+
+    painter->setPen(coverPen);
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->drawRect(coverFrameRect);
+}
+
+void PlaylistDelegate::paintSimpleAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+{
+    const int x      = option.rect.x();
+    const int y      = option.rect.y();
+    const int width  = option.rect.width();
+    const int height = option.rect.height();
+    const int right  = x + width;
+
+    QPen linePen = painter->pen();
+    linePen.setWidth(1);
+    QColor lineColour = option.palette.color(QPalette::BrightText);
+    lineColour.setAlpha(40);
+    linePen.setColor(lineColour);
+
+    const QString albumTitle  = index.data(Qt::DisplayRole).toString();
+    const QString albumArtist = index.data(PlaylistItem::Role::Artist).toString();
+    const QString albumYear   = index.data(PlaylistItem::Role::Year).toString();
+
+    QFont artistFont = painter->font();
+    artistFont.setPixelSize(15);
+    QFont titleFont = painter->font();
+    titleFont.setPixelSize(14);
+    QFont yearFont = painter->font();
+    yearFont.setPixelSize(14);
+    QFont totalFont = painter->font();
+    totalFont.setPixelSize(10);
+
+    paintSelectionBackground(painter, option);
+
+    artistFont.setPixelSize(13);
+    titleFont.setPixelSize(12);
+    yearFont.setPixelSize(12);
+
+    const QRect artistRect = QRect(x + 10, y, ((right - 80) - (x + 80)), height);
+    const QRect yearRect   = QRect(right - 60, y, 50, height);
+
+    const QString titleSpacing = !albumTitle.isEmpty() && !albumArtist.isEmpty() ? "  -  " : "";
+
+    painter->setFont(artistFont);
+    option.widget->style()->drawItemText(
+        painter, artistRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
+        painter->fontMetrics().elidedText(albumArtist + titleSpacing, Qt::ElideRight, artistRect.width()));
+
+    const QRect artistBound = painter->boundingRect(artistRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere,
+                                                    albumArtist + titleSpacing);
+
+    const QRect titleRect = QRect(artistBound.right(), y, ((right - 80) - (x + 80)), height);
+
+    painter->setPen(option.palette.color(QPalette::Text));
+    painter->setFont(titleFont);
+    const QRect titleBound
+        = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumTitle);
+    option.widget->style()->drawItemText(
+        painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
+        painter->fontMetrics().elidedText(albumTitle, Qt::ElideRight, titleRect.width()));
+
+    painter->setFont(yearFont);
+    const QRect yearBound = painter->boundingRect(yearRect, Qt::AlignRight | Qt::AlignVCenter, albumYear);
+    option.widget->style()->drawItemText(painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
+                                         albumYear);
+
+    painter->setPen(lineColour);
+    const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
+                          (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
+    //        const QLineF artistTitleLine((artistBound.x() + artistBound.width() + 10),
+    //                                     (artistBound.y() + (artistBound.height() / 2)), (titleBound.x() - 10),
+    //                                     (titleBound.y()) + (titleBound.height() / 2));
+    if(!albumTitle.isEmpty()) {
+        painter->drawLine(yearLine);
+        //            if (!albumArtist.isEmpty())
+        //                painter->drawLine(artistTitleLine);
     }
 }
 

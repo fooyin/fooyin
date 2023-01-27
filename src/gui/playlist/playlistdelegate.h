@@ -36,6 +36,7 @@ public:
     static void paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option);
 
     static void paintAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
+    static void paintSimpleAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintDisc(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
 };
