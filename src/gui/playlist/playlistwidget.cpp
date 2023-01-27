@@ -189,8 +189,8 @@ void PlaylistWidget::selectionChanged()
     Core::TrackSet tracks;
     for(const auto& index : indexes) {
         if(index.isValid()) {
-            const auto type = index.data(Core::Role::Type).value<PlaylistItem::Type>();
-            if(type == PlaylistItem::Type::Track) {
+            const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
+            if(type == PlaylistItem::Track) {
                 auto* data = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
                 tracks.insert(data);
             }
@@ -213,9 +213,9 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
         const QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
         if(!indexes.isEmpty()) {
             const QModelIndex index = indexes.constFirst();
-            const auto type         = index.data(Core::Role::Type).value<PlaylistItem::Type>();
+            const auto type         = index.data(Playlist::Type).value<PlaylistItem::Type>();
 
-            if(type != PlaylistItem::Type::Track) {
+            if(type != PlaylistItem::Track) {
                 return;
             }
 
@@ -305,8 +305,8 @@ void PlaylistWidget::changeState(Core::Player::PlayState state)
 
 void PlaylistWidget::playTrack(const QModelIndex& index)
 {
-    const auto type = index.data(Core::Role::Type).value<PlaylistItem::Type>();
-    if(type != PlaylistItem::Type::Track) {
+    const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
+    if(type != PlaylistItem::Track) {
         return;
     }
 

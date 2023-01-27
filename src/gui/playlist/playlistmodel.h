@@ -39,11 +39,19 @@ class MusicLibrary;
 } // namespace Core
 
 namespace Gui::Widgets {
-using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
+namespace Playlist {
+enum Role
+{
+    Type = Qt::UserRole + 20,
+    Mode = Qt::UserRole + 21,
+};
+}
 
 class PlaylistModel : public QAbstractItemModel
 {
     Q_OBJECT
+
+    using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
 public:
     explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,

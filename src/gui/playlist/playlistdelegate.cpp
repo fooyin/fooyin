@@ -19,9 +19,8 @@
 
 #include "playlistdelegate.h"
 
-#include "gui/playlist/playlistitem.h"
-
-#include <core/typedefs.h>
+#include "playlistitem.h"
+#include "playlistmodel.h"
 
 #include <QPainter>
 
@@ -35,19 +34,19 @@ QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
     const auto width = index.data(Qt::SizeHintRole).toSize().width();
     auto height      = option.fontMetrics.height();
 
-    const auto type   = index.data(Core::Role::Type).value<PlaylistItem::Type>();
-    const auto simple = index.data(Core::Role::PlaylistType).toBool();
+    const auto type   = index.data(Playlist::Type).value<PlaylistItem::Type>();
+    const auto simple = index.data(Playlist::Mode).toBool();
 
     switch(type) {
-        case(PlaylistItem::Type::Album): {
+        case(PlaylistItem::Album): {
             height += !simple ? 60 : 10;
             break;
         }
-        case(PlaylistItem::Type::Track): {
+        case(PlaylistItem::Track): {
             height += 7;
             break;
         }
-        case(PlaylistItem::Type::Disc): {
+        case(PlaylistItem::Disc): {
             height += 3;
             break;
         }
@@ -62,7 +61,7 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     painter->save();
 
     QStyleOptionViewItem opt = option;
-    const auto type          = index.data(Core::Role::Type).value<PlaylistItem::Type>();
+    const auto type          = index.data(Playlist::Type).value<PlaylistItem::Type>();
 
     initStyleOption(&opt, index);
 
@@ -77,15 +76,15 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     //    painter->setRenderHint(QPainter::Antialiasing);
 
     switch(type) {
-        case(PlaylistItem::Type::Album): {
+        case(PlaylistItem::Album): {
             paintAlbum(painter, option, index);
             break;
         }
-        case(PlaylistItem::Type::Track): {
+        case(PlaylistItem::Track): {
             paintTrack(painter, option, index);
             break;
         }
-        case(PlaylistItem::Type::Disc): {
+        case(PlaylistItem::Disc): {
             paintDisc(painter, option, index);
             break;
         }
@@ -112,7 +111,7 @@ void PlaylistDelegate::paintSelectionBackground(QPainter* painter, const QStyleO
 
 void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-    const auto simple = index.data(Core::Role::PlaylistType).toBool();
+    const auto simple = index.data(Playlist::Mode).toBool();
 
     const int x      = option.rect.x();
     const int y      = option.rect.y();

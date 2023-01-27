@@ -25,10 +25,10 @@ namespace Gui::Widgets {
 class InfoItem
 {
 public:
-    enum class Type : qint8
+    enum Type
     {
         Header = 0,
-        Entry,
+        Entry  = 1,
     };
 
     enum Role

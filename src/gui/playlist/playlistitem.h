@@ -27,29 +27,29 @@ namespace Gui::Widgets {
 class PlaylistItem
 {
 public:
-    enum class Type : qint8
+    enum Type
     {
-        Track = 0,
-        Disc,
-        Container,
-        Album,
-        Root
+        Track     = 0,
+        Disc      = 1,
+        Container = 2,
+        Album     = 3,
+        Root      = 4,
     };
 
     enum Role
     {
-        Id        = Qt::UserRole + 1,
-        Artist    = Qt::UserRole + 2,
-        Year      = Qt::UserRole + 3,
-        Duration  = Qt::UserRole + 4,
-        Cover     = Qt::UserRole + 5,
-        Number    = Qt::UserRole + 6,
-        PlayCount = Qt::UserRole + 7,
-        MultiDisk = Qt::UserRole + 8,
-        Playing   = Qt::UserRole + 9,
-        Path      = Qt::UserRole + 10,
-        Index     = Qt::UserRole + 11,
-        Data      = Qt::UserRole + 12,
+        Id        = Qt::UserRole + 6,
+        Artist    = Qt::UserRole + 7,
+        Year      = Qt::UserRole + 8,
+        Duration  = Qt::UserRole + 9,
+        Cover     = Qt::UserRole + 10,
+        Number    = Qt::UserRole + 11,
+        PlayCount = Qt::UserRole + 12,
+        MultiDisk = Qt::UserRole + 13,
+        Playing   = Qt::UserRole + 14,
+        Path      = Qt::UserRole + 15,
+        Index     = Qt::UserRole + 16,
+        Data      = Qt::UserRole + 17,
     };
 
     explicit PlaylistItem(Type type = Type::Root, Core::LibraryItem* data = {}, PlaylistItem* parentItem = nullptr);

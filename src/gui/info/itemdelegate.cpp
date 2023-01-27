@@ -19,9 +19,8 @@
 
 #include "itemdelegate.h"
 
-#include "gui/info/infoitem.h"
-
-#include <core/typedefs.h>
+#include "infoitem.h"
+#include "infomodel.h"
 
 #include <QPainter>
 
@@ -42,7 +41,7 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
     const QFontMetrics fm{textFont};
     const int width = fm.boundingRect(text).width();
 
-    const auto type = index.data(Core::Role::Type).value<InfoItem::Type>();
+    const auto type = index.data(Info::Type).value<InfoItem::Type>();
 
     switch(type) {
         case(InfoItem::Type::Header): {
@@ -62,7 +61,7 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     painter->save();
 
     QStyleOptionViewItem opt = option;
-    const auto type          = index.data(Core::Role::Type).value<InfoItem::Type>();
+    const auto type          = index.data(Info::Role::Type).value<InfoItem::Type>();
 
     initStyleOption(&opt, index);
 
@@ -72,11 +71,11 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     painter->setFont(font);
 
     switch(type) {
-        case(InfoItem::Type::Header): {
+        case(InfoItem::Header): {
             paintHeader(painter, option, index);
             break;
         }
-        case(InfoItem::Type::Entry): {
+        case(InfoItem::Entry): {
             paintEntry(painter, option, index);
             break;
         }

@@ -26,11 +26,6 @@
 namespace Core {
 using IdSet = std::set<int>;
 
-namespace Role {
-const int Type         = Qt::UserRole + 1;
-const int PlaylistType = Qt::UserRole + 2;
-} // namespace Role
-
 namespace Fy {
 Q_NAMESPACE
 enum Attribute

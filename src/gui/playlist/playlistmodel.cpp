@@ -72,7 +72,7 @@ void PlaylistModel::setupModelData()
 
                     if(parent) {
                         if(!m_nodes.count(trackKey)) {
-                            auto trackItem = std::make_unique<PlaylistItem>(PlaylistItem::Type::Track, track, parent);
+                            auto trackItem = std::make_unique<PlaylistItem>(PlaylistItem::Track, track, parent);
                             m_nodes.emplace(trackKey, std::move(trackItem));
                         }
                         auto* trackItem = m_nodes.at(trackKey).get();
@@ -97,7 +97,7 @@ PlaylistItem* PlaylistModel::iterateTrack(Core::Track* track, bool discHeaders, 
         const bool singleDisk = album->isSingleDiscAlbum() || (!splitDiscs && !discHeaders);
 
         if(singleDisk) {
-            parent = checkInsertKey(albumKey, PlaylistItem::Type::Album, album, m_root.get());
+            parent = checkInsertKey(albumKey, PlaylistItem::Album, album, m_root.get());
         }
 
         else if(splitDiscs) {
@@ -106,7 +106,7 @@ PlaylistItem* PlaylistModel::iterateTrack(Core::Track* track, bool discHeaders, 
                 const QString discTitle = "Disc #" + QString::number(track->discNumber());
                 discAlbum->setSubTitle(discTitle);
                 discAlbum->reset();
-                checkInsertKey(discKey, PlaylistItem::Type::Album, discAlbum.get(), m_root.get());
+                checkInsertKey(discKey, PlaylistItem::Album, discAlbum.get(), m_root.get());
                 m_containers.emplace(discKey, std::move(discAlbum));
             }
             Core::Container* discAlbum = m_containers.at(discKey).get();
@@ -117,8 +117,8 @@ PlaylistItem* PlaylistModel::iterateTrack(Core::Track* track, bool discHeaders, 
         else {
             if(!m_containers.count(discKey)) {
                 auto disc                = std::make_unique<Core::Disc>(track->discNumber());
-                PlaylistItem* parentNode = checkInsertKey(albumKey, PlaylistItem::Type::Album, album, m_root.get());
-                checkInsertKey(discKey, PlaylistItem::Type::Disc, disc.get(), parentNode);
+                PlaylistItem* parentNode = checkInsertKey(albumKey, PlaylistItem::Album, album, m_root.get());
+                checkInsertKey(discKey, PlaylistItem::Disc, disc.get(), parentNode);
                 m_containers.emplace(discKey, std::move(disc));
             }
             Core::Container* disc = m_containers.at(discKey).get();
@@ -162,23 +162,23 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 
     const PlaylistItem::Type type = item->type();
 
-    if(role == Core::Role::PlaylistType) {
+    if(role == Playlist::Mode) {
         return m_settings->value<Settings::SimplePlaylist>();
     }
 
-    if(role == Core::Role::Type) {
+    if(role == Playlist::Type) {
         return QVariant::fromValue<PlaylistItem::Type>(type);
     }
 
     switch(type) {
-        case(PlaylistItem::Type::Album):
+        case(PlaylistItem::Album):
             return albumData(item, role);
-        case(PlaylistItem::Type::Track):
+        case(PlaylistItem::Track):
             return trackData(item, role);
-        case(PlaylistItem::Type::Disc):
+        case(PlaylistItem::Disc):
             return discData(item, role);
-        case(PlaylistItem::Type::Container):
-        case(PlaylistItem::Type::Root):
+        case(PlaylistItem::Container):
+        case(PlaylistItem::Root):
             return {};
     }
     return {};
@@ -216,7 +216,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
             return Utils::msToString(track->duration());
         }
         case(PlaylistItem::Role::MultiDisk): {
-            if(item->parent()->type() == PlaylistItem::Type::Disc && m_settings->value<Settings::DiscHeaders>()
+            if(item->parent()->type() == PlaylistItem::Disc && m_settings->value<Settings::DiscHeaders>()
                && !m_settings->value<Settings::SplitDiscs>()) {
                 return true;
             }

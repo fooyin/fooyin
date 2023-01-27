@@ -28,6 +28,13 @@ class Track;
 namespace Gui::Widgets {
 class InfoItem;
 
+namespace Info {
+enum Role
+{
+    Type = Qt::UserRole + 20,
+};
+}
+
 class InfoModel : public QAbstractItemModel
 {
 public:

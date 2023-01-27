@@ -35,34 +35,34 @@ InfoModel::InfoModel(QObject* parent)
 
 void InfoModel::setupModel()
 {
-    auto* metadataHeader = new InfoItem{InfoItem::Type::Header, "Metadata"};
+    auto* metadataHeader = new InfoItem{InfoItem::Header, "Metadata"};
     m_root->appendChild(metadataHeader);
 
-    auto* title = new InfoItem{InfoItem::Type::Entry, "Title"};
+    auto* title = new InfoItem{InfoItem::Entry, "Title"};
     m_root->appendChild(title);
-    auto* album = new InfoItem{InfoItem::Type::Entry, "Album"};
+    auto* album = new InfoItem{InfoItem::Entry, "Album"};
     m_root->appendChild(album);
-    auto* artist = new InfoItem{InfoItem::Type::Entry, "Artist"};
+    auto* artist = new InfoItem{InfoItem::Entry, "Artist"};
     m_root->appendChild(artist);
-    auto* year = new InfoItem{InfoItem::Type::Entry, "Year"};
+    auto* year = new InfoItem{InfoItem::Entry, "Year"};
     m_root->appendChild(year);
-    auto* genre = new InfoItem{InfoItem::Type::Entry, "Genre"};
+    auto* genre = new InfoItem{InfoItem::Entry, "Genre"};
     m_root->appendChild(genre);
-    auto* trackNumber = new InfoItem{InfoItem::Type::Entry, "Track Number"};
+    auto* trackNumber = new InfoItem{InfoItem::Entry, "Track Number"};
     m_root->appendChild(trackNumber);
 
-    auto* detailsHeader = new InfoItem{InfoItem::Type::Header, "Details"};
+    auto* detailsHeader = new InfoItem{InfoItem::Header, "Details"};
     m_root->appendChild(detailsHeader);
 
-    auto* fileName = new InfoItem{InfoItem::Type::Entry, "Filename"};
+    auto* fileName = new InfoItem{InfoItem::Entry, "Filename"};
     m_root->appendChild(fileName);
-    auto* path = new InfoItem{InfoItem::Type::Entry, "Path"};
+    auto* path = new InfoItem{InfoItem::Entry, "Path"};
     m_root->appendChild(path);
-    auto* duration = new InfoItem{InfoItem::Type::Entry, "Duration"};
+    auto* duration = new InfoItem{InfoItem::Entry, "Duration"};
     m_root->appendChild(duration);
-    auto* bitrate = new InfoItem{InfoItem::Type::Entry, "Bitrate"};
+    auto* bitrate = new InfoItem{InfoItem::Entry, "Bitrate"};
     m_root->appendChild(bitrate);
-    auto* sampleRate = new InfoItem{InfoItem::Type::Entry, "Sample Rate"};
+    auto* sampleRate = new InfoItem{InfoItem::Entry, "Sample Rate"};
     m_root->appendChild(sampleRate);
 }
 
@@ -115,7 +115,7 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
     const int row    = index.row();
     const int column = index.column();
 
-    if(role == Core::Role::Type) {
+    if(role == Info::Role::Type) {
         return QVariant::fromValue<InfoItem::Type>(type);
     }
 
@@ -129,27 +129,27 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
 
     if(m_currentTrack) {
         switch(row) {
-            case(InfoItem::Role::Title):
+            case(InfoItem::Title):
                 return m_currentTrack->title();
-            case(InfoItem::Role::Artist):
+            case(InfoItem::Artist):
                 return m_currentTrack->artists().join(", ");
-            case(InfoItem::Role::Album):
+            case(InfoItem::Album):
                 return m_currentTrack->album();
-            case(InfoItem::Role::Year):
+            case(InfoItem::Year):
                 return m_currentTrack->year();
-            case(InfoItem::Role::Genre):
+            case(InfoItem::Genre):
                 return m_currentTrack->genres().join(", ");
-            case(InfoItem::Role::TrackNumber):
+            case(InfoItem::TrackNumber):
                 return m_currentTrack->trackNumber();
-            case(InfoItem::Role::Filename):
+            case(InfoItem::Filename):
                 return m_currentTrack->filepath().split("/").constLast();
-            case(InfoItem::Role::Path):
+            case(InfoItem::Path):
                 return m_currentTrack->filepath();
-            case(InfoItem::Role::Duration):
+            case(InfoItem::Duration):
                 return Utils::msToString(m_currentTrack->duration());
-            case(InfoItem::Role::Bitrate):
+            case(InfoItem::Bitrate):
                 return QString::number(m_currentTrack->bitrate()).append(" kbps");
-            case(InfoItem::Role::SampleRate):
+            case(InfoItem::SampleRate):
                 return m_currentTrack->sampleRate();
         }
     }
