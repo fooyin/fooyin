@@ -21,20 +21,6 @@
 
 #include <set>
 
-#include <QVariant>
-
 namespace Core {
 using IdSet = std::set<int>;
-
-namespace Fy {
-Q_NAMESPACE
-enum Attribute
-{
-    HasActiveIcon = 1,
-    AutoShift     = 2,
-    Active        = 4,
-};
-Q_DECLARE_FLAGS(Attributes, Attribute)
-} // namespace Fy
-Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Attributes)
 } // namespace Core

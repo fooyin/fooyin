@@ -20,7 +20,6 @@
 #pragma once
 
 #include "clickablelabel.h"
-#include "core/typedefs.h"
 
 #include <QPixmap>
 #include <QWidget>
@@ -42,15 +41,23 @@ class ComboIcon : public QWidget
     using PathIconContainer = std::vector<PathIconPair>;
 
 public:
-    explicit ComboIcon(const QString& path, Core::Fy::Attributes attributes, QWidget* parent = nullptr);
+    enum Attribute
+    {
+        HasActiveIcon = 1,
+        AutoShift     = 2,
+        Active        = 4,
+    };
+    Q_DECLARE_FLAGS(Attributes, Attribute)
+
+    explicit ComboIcon(const QString& path, Attributes attributes, QWidget* parent = nullptr);
     explicit ComboIcon(const QString& path, QWidget* parent = nullptr);
     ~ComboIcon() override = default;
 
     void setup(const QString& path);
 
-    bool hasAttribute(Core::Fy::Attribute attribute);
-    void addAttribute(Core::Fy::Attribute attribute);
-    void removeAttribute(Core::Fy::Attribute attribute);
+    bool hasAttribute(Attribute attribute);
+    void addAttribute(Attribute attribute);
+    void removeAttribute(Attribute attribute);
 
     void addPixmap(const QString& path, const QPixmap& icon);
     void addPixmap(const QString& path);
@@ -67,7 +74,7 @@ protected:
 private:
     QVBoxLayout* m_layout;
     ClickableLabel* m_label;
-    Core::Fy::Attributes m_attributes;
+    Attributes m_attributes;
     int m_currentIndex;
     PathIconContainer m_icons;
 };

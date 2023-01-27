@@ -33,8 +33,8 @@ PlaylistControl::PlaylistControl(Core::SettingsManager* settings, QWidget* paren
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_labelSize{20, 20}
-    , m_repeat{new ComboIcon(Core::Constants::Icons::RepeatAll, Core::Fy::HasActiveIcon, this)}
-    , m_shuffle{new ComboIcon(Core::Constants::Icons::Shuffle, Core::Fy::HasActiveIcon, this)}
+    , m_repeat{new ComboIcon(Core::Constants::Icons::RepeatAll, ComboIcon::HasActiveIcon, this)}
+    , m_shuffle{new ComboIcon(Core::Constants::Icons::Shuffle, ComboIcon::HasActiveIcon, this)}
 
 {
     setupUi();

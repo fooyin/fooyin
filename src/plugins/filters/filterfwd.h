@@ -23,6 +23,8 @@
 #include <core/library/sorting/sortorder.h>
 #include <core/typedefs.h>
 
+#include <QObject>
+
 namespace Filters {
 Q_NAMESPACE
 enum class FilterType
