@@ -57,10 +57,8 @@ QAction* ActionContainer::insertLocation(const Utils::Id& group) const
 
 QAction* ActionContainer::actionForItem(QObject* item) const
 {
-    if(auto* actContainer = qobject_cast<ActionContainer*>(item)) {
-        if(auto* container = actContainer->containerAction()) {
-            return container;
-        }
+    if(auto* action = qobject_cast<QAction*>(item)) {
+        return action;
     }
     return nullptr;
 }
