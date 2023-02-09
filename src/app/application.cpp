@@ -19,8 +19,10 @@
 
 #include "application.h"
 
+#include <core/actions/actioncontainer.h>
 #include <core/actions/actionmanager.h>
 #include <core/app/threadmanager.h>
+#include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/database/database.h>
 #include <core/engine/enginehandler.h>
@@ -75,6 +77,10 @@ struct Application::Private
     Gui::LayoutProvider layoutProvider;
     Gui::MainWindow* mainWindow;
 
+    QAction* quitAction;
+    QAction* openSettings;
+    QAction* rescanLibrary;
+
     Plugins::PluginManager pluginManager;
     WidgetPluginContext widgetContext;
     ThreadPluginContext threadContext;
@@ -109,6 +115,7 @@ struct Application::Private
         setupConnections();
         registerLayouts();
         registerWidgets();
+        registerActions();
 
         const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
         pluginManager.findPlugins(pluginsPath);
@@ -199,6 +206,29 @@ struct Application::Private
         widgetFactory.registerClass<Gui::Widgets::StatusWidget>("Status", [this]() {
             return new Gui::Widgets::StatusWidget(playerManager.get());
         });
+    }
+
+    void registerActions()
+    {
+        const auto quitIcon = QIcon(Core::Constants::Icons::Quit);
+        quitAction          = new QAction(quitIcon, tr("E&xit"), mainWindow);
+        actionManager.registerAction(quitAction, Core::Constants::Actions::Exit);
+        auto* fileMenu = actionManager.actionContainer(Core::Constants::Menus::File);
+        fileMenu->addAction(quitAction, Core::Constants::Groups::Three);
+        connect(quitAction, &QAction::triggered, mainWindow, &QMainWindow::close);
+
+        const QIcon settingsIcon = QIcon(Core::Constants::Icons::Settings);
+        openSettings             = new QAction(settingsIcon, tr("&Settings"), mainWindow);
+        actionManager.registerAction(openSettings, Core::Constants::Actions::Settings);
+        auto* libraryMenu = actionManager.actionContainer(Core::Constants::Menus::Library);
+        libraryMenu->addAction(openSettings, Core::Constants::Groups::Three);
+        connect(openSettings, &QAction::triggered, settingsDialog, &Gui::Settings::SettingsDialog::exec);
+
+        const QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
+        rescanLibrary          = new QAction(rescanIcon, tr("&Rescan Library"), mainWindow);
+        actionManager.registerAction(rescanLibrary, Core::Constants::Actions::Rescan);
+        libraryMenu->addAction(rescanLibrary, Core::Constants::Groups::Two);
+        connect(rescanLibrary, &QAction::triggered, &library, &Core::Library::MusicLibrary::reloadAll);
     }
 
     void initialisePlugins()

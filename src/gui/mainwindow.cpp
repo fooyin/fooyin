@@ -102,15 +102,7 @@ void MainWindow::setupUi()
     setCentralWidget(p->editableLayout);
     setMenuBar(p->mainMenu.menuBar());
 
-    Core::ActionContainer* fileMenu    = p->actionManager->actionContainer(Core::Constants::Menus::File);
-    Core::ActionContainer* viewMenu    = p->actionManager->actionContainer(Core::Constants::Menus::View);
-    Core::ActionContainer* libraryMenu = p->actionManager->actionContainer(Core::Constants::Menus::Library);
-
-    const QIcon quitIcon = QIcon(Core::Constants::Icons::Quit);
-    p->quitAction        = new QAction(quitIcon, tr("E&xit"), this);
-    p->actionManager->registerAction(p->quitAction, Core::Constants::Actions::Exit);
-    fileMenu->addAction(p->quitAction, Core::Constants::Groups::Three);
-    connect(p->quitAction, &QAction::triggered, this, &MainWindow::close);
+    Core::ActionContainer* viewMenu = p->actionManager->actionContainer(Core::Constants::Menus::View);
 
     const QIcon layoutEditingIcon = QIcon(Core::Constants::Icons::LayoutEditing);
     p->layoutEditing              = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
@@ -128,19 +120,6 @@ void MainWindow::setupUi()
     connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
     connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
             &Widgets::EditableLayout::changeLayout);
-
-    // TODO: Move to MusicLibrary
-    //    const QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
-    //    p->rescan              = new QAction(rescanIcon, tr("&Rescan Library"), this);
-    //    p->actionManager->registerAction(p->rescan, Core::Constants::Actions::Rescan);
-    //    libraryMenu->addAction(p->rescan, Core::Constants::Groups::Two);
-    //    connect(p->rescan, &QAction::triggered, p->library, &Core::Library::MusicLibrary::reloadAll);
-
-    const QIcon settingsIcon = QIcon(Core::Constants::Icons::Settings);
-    p->openSettings          = new QAction(settingsIcon, tr("&Settings"), this);
-    p->actionManager->registerAction(p->openSettings, Core::Constants::Actions::Settings);
-    libraryMenu->addAction(p->openSettings, Core::Constants::Groups::Three);
-    connect(p->openSettings, &QAction::triggered, p->settingsDialog.get(), &Settings::SettingsDialog::exec);
 
     if(p->settings->value<Core::Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
