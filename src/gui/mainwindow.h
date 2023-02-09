@@ -37,18 +37,14 @@ namespace Widgets {
 class EditableLayout;
 }
 
-namespace Settings {
-class SettingsDialog;
-}
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
     explicit MainWindow(Core::ActionManager* actionManager, Core::SettingsManager* settings,
-                        Settings::SettingsDialog* settingsDialog, LayoutProvider* layoutProvider,
-                        Widgets::EditableLayout* editableLayout, QWidget* parent = nullptr);
+                        LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,
+                        QWidget* parent = nullptr);
     ~MainWindow() override;
 
     void setupUi();

@@ -21,7 +21,6 @@
 
 #include "editablelayout.h"
 #include "gui/quicksetup/quicksetupdialog.h"
-#include "gui/settings/settingsdialog.h"
 #include "guisettings.h"
 #include "layoutprovider.h"
 #include "mainmenubar.h"
@@ -30,7 +29,6 @@
 #include <core/actions/actionmanager.h>
 #include <core/constants.h>
 #include <core/coresettings.h>
-#include <core/library/musiclibrary.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -43,7 +41,6 @@ struct MainWindow::Private
 {
     Core::ActionManager* actionManager;
     Core::SettingsManager* settings;
-    std::unique_ptr<Settings::SettingsDialog> settingsDialog;
     Widgets::EditableLayout* editableLayout;
 
     MainMenuBar mainMenu;
@@ -57,23 +54,57 @@ struct MainWindow::Private
     LayoutProvider* layoutProvider;
     QuickSetupDialog* quickSetupDialog;
 
-    Private(Core::ActionManager* actionManager, Core::SettingsManager* settings,
-            Settings::SettingsDialog* settingsDialog, LayoutProvider* layoutProvider,
+    Private(Core::ActionManager* actionManager, Core::SettingsManager* settings, LayoutProvider* layoutProvider,
             Widgets::EditableLayout* editableLayout)
         : actionManager{actionManager}
         , settings{settings}
-        , settingsDialog{settingsDialog}
         , editableLayout{editableLayout}
         , mainMenu{actionManager}
         , layoutProvider{layoutProvider}
-    { }
+    {
+        registerLayouts();
+    }
+
+    void registerLayouts()
+    {
+        layoutProvider->registerLayout("Empty", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[],\"State\":\"AAAA/"
+                                                "wAAAAEAAAABAAACLwD/////AQAAAAIA\"}}]}");
+
+        layoutProvider->registerLayout(
+            "Simple", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Playlist\",\"Controls\"],"
+                      "\"State\":\"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA\"}}]}");
+
+        layoutProvider->registerLayout(
+            "Stone", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Search\",{\"SplitterHorizontal\":{"
+                     "\"Children\":[\"FilterAlbumArtist\",\"Playlist\"],\"State\":\"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP/"
+                     "///8BAAAAAQA=\"}},\"Controls\"],\"State\":\"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////"
+                     "wEAAAACAA==\"}}]}");
+
+        layoutProvider->registerLayout(
+            "Vision", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",{\"SplitterHorizontal\":{"
+                      "\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////"
+                      "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[\"Artwork\",\"Playlist\"],\"State\":"
+                      "\"AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA=\"}}],\"State\":\"AAAA/"
+                      "wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA\"}}]}");
+
+        layoutProvider->registerLayout(
+            "Ember",
+            "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[{\"SplitterHorizontal\":{\"Children\":[\"FilterGenre\","
+            "\"FilterAlbumArtist\",\"FilterArtist\",\"FilterAlbum\"],\"State\":\"AAAA/"
+            "wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAALUA/////"
+            "wEAAAABAA==\"}},{\"SplitterHorizontal\":{\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/"
+            "wAAAAEAAAADAAAFfgAAAdIAAAAAAP////"
+            "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[{\"SplitterVertical\":{\"Children\":[\"Artwork\","
+            "\"Info\"],\"State\":\"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAAAP////8BAAAAAgA=\"}},\"Playlist\"],\"State\":\"AAAA/"
+            "wAAAAEAAAADAAABdQAABdsAAAAAAP////8BAAAAAQA=\"}},\"Status\"],\"State\":\"AAAA/"
+            "wAAAAEAAAAFAAAA+gAAAB4AAALWAAAAGQAAAAAA/////wEAAAACAA==\"}}]}");
+    }
 };
 
 MainWindow::MainWindow(Core::ActionManager* actionManager, Core::SettingsManager* settings,
-                       Settings::SettingsDialog* settingsDialog, LayoutProvider* layoutProvider,
-                       Widgets::EditableLayout* editableLayout, QWidget* parent)
+                       LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout, QWidget* parent)
     : QMainWindow{parent}
-    , p{std::make_unique<Private>(actionManager, settings, settingsDialog, layoutProvider, editableLayout)}
+    , p{std::make_unique<Private>(actionManager, settings, layoutProvider, editableLayout)}
 { }
 
 MainWindow::~MainWindow()

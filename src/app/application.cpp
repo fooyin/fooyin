@@ -101,8 +101,7 @@ struct Application::Private
         , settingsDialog{new Gui::Settings::SettingsDialog(&libraryManager, &settingsManager)}
         , editableLayout{new Gui::Widgets::EditableLayout(&settingsManager, &actionManager, &widgetFactory,
                                                           &widgetProvider)}
-        , mainWindow{new Gui::MainWindow(&actionManager, &settingsManager, settingsDialog, &layoutProvider,
-                                         editableLayout)}
+        , mainWindow{new Gui::MainWindow(&actionManager, &settingsManager, &layoutProvider, editableLayout)}
         , widgetContext{&actionManager, playerManager.get(), &library, &widgetFactory}
         , threadContext{&threadManager}
         , databaseContext{&database}
@@ -113,7 +112,6 @@ struct Application::Private
         threadManager.moveToNewThread(&engine);
 
         setupConnections();
-        registerLayouts();
         registerWidgets();
         registerActions();
 
@@ -129,41 +127,6 @@ struct Application::Private
                 &Core::Library::MusicLibrary::reload);
         connect(&libraryManager, &Core::Library::LibraryManager::libraryRemoved, &library,
                 &Core::Library::MusicLibrary::refresh);
-    }
-
-    void registerLayouts()
-    {
-        layoutProvider.registerLayout("Empty", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[],\"State\":\"AAAA/"
-                                               "wAAAAEAAAABAAACLwD/////AQAAAAIA\"}}]}");
-
-        layoutProvider.registerLayout(
-            "Simple", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Playlist\",\"Controls\"],"
-                      "\"State\":\"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA\"}}]}");
-
-        layoutProvider.registerLayout(
-            "Stone", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Search\",{\"SplitterHorizontal\":{"
-                     "\"Children\":[\"FilterAlbumArtist\",\"Playlist\"],\"State\":\"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP/"
-                     "///8BAAAAAQA=\"}},\"Controls\"],\"State\":\"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////"
-                     "wEAAAACAA==\"}}]}");
-
-        layoutProvider.registerLayout(
-            "Vision", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",{\"SplitterHorizontal\":{"
-                      "\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////"
-                      "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[\"Artwork\",\"Playlist\"],\"State\":"
-                      "\"AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA=\"}}],\"State\":\"AAAA/"
-                      "wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA\"}}]}");
-
-        layoutProvider.registerLayout(
-            "Ember",
-            "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[{\"SplitterHorizontal\":{\"Children\":[\"FilterGenre\","
-            "\"FilterAlbumArtist\",\"FilterArtist\",\"FilterAlbum\"],\"State\":\"AAAA/"
-            "wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAALUA/////"
-            "wEAAAABAA==\"}},{\"SplitterHorizontal\":{\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/"
-            "wAAAAEAAAADAAAFfgAAAdIAAAAAAP////"
-            "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[{\"SplitterVertical\":{\"Children\":[\"Artwork\","
-            "\"Info\"],\"State\":\"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAAAP////8BAAAAAgA=\"}},\"Playlist\"],\"State\":\"AAAA/"
-            "wAAAAEAAAADAAABdQAABdsAAAAAAP////8BAAAAAQA=\"}},\"Status\"],\"State\":\"AAAA/"
-            "wAAAAEAAAAFAAAA+gAAAB4AAALWAAAAGQAAAAAA/////wEAAAACAA==\"}}]}");
     }
 
     void registerWidgets()
