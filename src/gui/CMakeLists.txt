@@ -9,6 +9,8 @@ fooyin_add_library(Gui
     SOURCES
         fywidget.h
         fywidget.cpp
+        mainmenubar.h
+        mainmenubar.cpp
         mainwindow.h
         mainwindow.cpp
         editablelayout.h

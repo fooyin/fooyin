@@ -20,10 +20,11 @@
 #include "mainwindow.h"
 
 #include "editablelayout.h"
-#include "gui/guisettings.h"
 #include "gui/quicksetup/quicksetupdialog.h"
 #include "gui/settings/settingsdialog.h"
+#include "guisettings.h"
 #include "layoutprovider.h"
+#include "mainmenubar.h"
 
 #include <core/actions/actioncontainer.h>
 #include <core/actions/actionmanager.h>
@@ -45,6 +46,8 @@ struct MainWindow::Private
     std::unique_ptr<Settings::SettingsDialog> settingsDialog;
     Widgets::EditableLayout* editableLayout;
 
+    MainMenuBar mainMenu;
+
     QAction* openSettings;
     QAction* layoutEditing;
     QAction* openQuickSetup;
@@ -61,6 +64,7 @@ struct MainWindow::Private
         , settings{settings}
         , settingsDialog{settingsDialog}
         , editableLayout{editableLayout}
+        , mainMenu{actionManager}
         , layoutProvider{layoutProvider}
     { }
 };
@@ -96,44 +100,11 @@ void MainWindow::setupUi()
 
     p->editableLayout->initialise();
     setCentralWidget(p->editableLayout);
+    setMenuBar(p->mainMenu.menuBar());
 
-    Core::ActionContainer* menubar = p->actionManager->createMenuBar(Core::Constants::MenuBar);
-    setMenuBar(menubar->menuBar());
-
-    menubar->appendGroup(Core::Constants::Groups::File);
-    menubar->appendGroup(Core::Constants::Groups::Edit);
-    menubar->appendGroup(Core::Constants::Groups::View);
-    menubar->appendGroup(Core::Constants::Groups::Playback);
-    menubar->appendGroup(Core::Constants::Groups::Library);
-    menubar->appendGroup(Core::Constants::Groups::Help);
-
-    Core::ActionContainer* fileMenu = p->actionManager->createMenu(Core::Constants::Menus::File);
-    menubar->addMenu(fileMenu, Core::Constants::Groups::File);
-    fileMenu->menu()->setTitle(tr("&File"));
-    fileMenu->appendGroup(Core::Constants::Groups::Three);
-
-    Core::ActionContainer* editMenu = p->actionManager->createMenu(Core::Constants::Menus::Edit);
-    menubar->addMenu(editMenu, Core::Constants::Groups::Edit);
-    editMenu->menu()->setTitle(tr("&Edit"));
-
-    Core::ActionContainer* viewMenu = p->actionManager->createMenu(Core::Constants::Menus::View);
-    menubar->addMenu(viewMenu, Core::Constants::Groups::View);
-    viewMenu->menu()->setTitle(tr("&View"));
-    viewMenu->appendGroup(Core::Constants::Groups::Three);
-
-    Core::ActionContainer* playbackMenu = p->actionManager->createMenu(Core::Constants::Menus::Playback);
-    menubar->addMenu(playbackMenu, Core::Constants::Groups::Playback);
-    playbackMenu->menu()->setTitle(tr("&Playback"));
-
-    Core::ActionContainer* libraryMenu = p->actionManager->createMenu(Core::Constants::Menus::Library);
-    menubar->addMenu(libraryMenu, Core::Constants::Groups::Library);
-    libraryMenu->menu()->setTitle(tr("&Library"));
-    libraryMenu->appendGroup(Core::Constants::Groups::Two);
-    libraryMenu->appendGroup(Core::Constants::Groups::Three);
-
-    Core::ActionContainer* helpMenu = p->actionManager->createMenu(Core::Constants::Menus::Help);
-    menubar->addMenu(helpMenu, Core::Constants::Groups::Help);
-    helpMenu->menu()->setTitle(tr("&Help"));
+    Core::ActionContainer* fileMenu    = p->actionManager->actionContainer(Core::Constants::Menus::File);
+    Core::ActionContainer* viewMenu    = p->actionManager->actionContainer(Core::Constants::Menus::View);
+    Core::ActionContainer* libraryMenu = p->actionManager->actionContainer(Core::Constants::Menus::Library);
 
     const QIcon quitIcon = QIcon(Core::Constants::Icons::Quit);
     p->quitAction        = new QAction(quitIcon, tr("E&xit"), this);
