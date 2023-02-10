@@ -25,7 +25,8 @@ class QHBoxLayout;
 
 namespace Utils {
 class ClickableLabel;
-}
+class Slider;
+} // namespace Utils
 
 namespace Core {
 class Track;
@@ -37,7 +38,6 @@ enum PlayState : uint8_t;
 } // namespace Core
 
 namespace Gui::Widgets {
-class Slider;
 class ProgressWidget : public QWidget
 {
     Q_OBJECT
@@ -65,7 +65,7 @@ private:
     Core::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
-    Slider* m_slider;
+    Utils::Slider* m_slider;
     Utils::ClickableLabel* m_elapsed;
     Utils::ClickableLabel* m_total;
     int m_max;

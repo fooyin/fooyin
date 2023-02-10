@@ -19,6 +19,9 @@
 
 #include "dummy.h"
 
+#include <QHBoxLayout>
+#include <QLabel>
+
 namespace Gui::Widgets {
 Dummy::Dummy(QWidget* parent)
     : FyWidget{parent}

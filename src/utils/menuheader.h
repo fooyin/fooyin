@@ -22,7 +22,7 @@
 #include <QWidget>
 #include <QWidgetAction>
 
-namespace Gui::Widgets {
+namespace Utils {
 class MenuHeader : public QWidget
 {
     Q_OBJECT
@@ -50,4 +50,4 @@ class MenuHeaderAction : public QWidgetAction
 public:
     explicit MenuHeaderAction(const QString& text, QObject* parent = nullptr);
 };
-} // namespace Gui::Widgets
+} // namespace Utils

@@ -21,7 +21,7 @@
 
 #include <QSlider>
 
-namespace Gui::Widgets {
+namespace Utils {
 class Slider : public QSlider
 {
     Q_OBJECT
@@ -32,4 +32,4 @@ public:
 protected:
     void mousePressEvent(QMouseEvent* event) override;
 };
-} // namespace Gui::Widgets
+} // namespace Utils

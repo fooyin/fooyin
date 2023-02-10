@@ -26,9 +26,6 @@ class SettingsManager;
 }
 
 namespace Gui::Widgets {
-class FyWidget;
-class SplitterHandle;
-
 class Splitter : public QSplitter
 {
 public:

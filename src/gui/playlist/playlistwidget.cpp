@@ -21,7 +21,6 @@
 
 #include "gui/guisettings.h"
 #include "gui/settings/settingsdialog.h"
-#include "gui/widgets/overlaywidget.h"
 #include "playlistdelegate.h"
 #include "playlistmodel.h"
 #include "playlistview.h"
@@ -30,6 +29,7 @@
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
+#include <utils/overlaywidget.h>
 
 #include <QAction>
 #include <QActionGroup>
@@ -53,7 +53,7 @@ PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Co
     , m_model{new PlaylistModel(m_playerManager, m_library, m_settings, this)}
     , m_playlist{new PlaylistView(this)}
     , m_altRowColours{m_settings->value<Settings::PlaylistAltColours>()}
-    , m_noLibrary{new OverlayWidget(true, this)}
+    , m_noLibrary{new Utils::OverlayWidget(true, this)}
 {
     setObjectName("Playlist");
     m_layout->setContentsMargins(0, 0, 0, 0);
@@ -65,7 +65,7 @@ PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Co
     m_playlist->setItemDelegate(new PlaylistDelegate(this));
 
     setupConnections();
-    connect(m_noLibrary, &OverlayWidget::settingsClicked, this, [this] {
+    connect(m_noLibrary, &Utils::OverlayWidget::settingsClicked, this, [this] {
         m_settingsDialog->openPage(Settings::SettingsDialog::Page::Library);
     });
 

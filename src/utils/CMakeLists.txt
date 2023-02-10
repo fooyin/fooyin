@@ -7,7 +7,12 @@ fooyin_add_library(Utils
     SOURCES
         clickablelabel.cpp
         comboicon.cpp
+        hovermenu.cpp
         id.cpp
+        menuheader.cpp
+        overlayfilter.cpp
+        overlaywidget.cpp
         paths.cpp
+        slider.cpp
         utils.cpp
 )

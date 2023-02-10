@@ -27,6 +27,7 @@
 #include <core/actions/actionmanager.h>
 #include <utils/enumhelper.h>
 
+#include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
 

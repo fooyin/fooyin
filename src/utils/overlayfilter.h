@@ -17,28 +17,20 @@
  *
  */
 
-#include "overlayfilter.h"
+#pragma once
 
-#include <QPaintEvent>
-#include <QPainter>
+#include <QFrame>
 
-namespace Gui::Widgets {
-OverlayFilter::OverlayFilter(QWidget* parent)
-    : QWidget(parent)
+namespace Utils {
+class OverlayFilter : public QWidget
 {
-    setAttribute(Qt::WA_TransparentForMouseEvents);
-    setAttribute(Qt::WA_NoSystemBackground);
-    hide();
-}
+    Q_OBJECT
 
-void OverlayFilter::paintEvent(QPaintEvent* e)
-{
-    Q_UNUSED(e)
-    QPainter painter(this);
+public:
+    explicit OverlayFilter(QWidget* parent = nullptr);
+    ~OverlayFilter() override = default;
 
-    QColor colour = palette().color(QPalette::Highlight);
-    colour.setAlpha(30);
-
-    painter.fillRect(rect(), colour);
-}
-} // namespace Gui::Widgets
+protected:
+    void paintEvent(QPaintEvent* event) override;
+};
+} // namespace Utils

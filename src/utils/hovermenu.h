@@ -19,30 +19,23 @@
 
 #pragma once
 
-#include <QWidget>
+#include <QDialog>
+#include <QTimer>
 
-class QVBoxLayout;
-class QLabel;
-class QPushButton;
-
-namespace Gui::Widgets {
-class OverlayWidget : public QWidget
+namespace Utils {
+class HoverMenu : public QDialog
 {
-    Q_OBJECT
-
 public:
-    explicit OverlayWidget(bool button = false, QWidget* parent = nullptr);
-    ~OverlayWidget() override = default;
+    explicit HoverMenu(QWidget* parent = nullptr);
+    ~HoverMenu() override = default;
 
-    void setText(const QString& text);
-    void setButtonText(const QString& text);
+protected:
+    void leaveEvent(QEvent* event) override;
+    void showEvent(QShowEvent* event) override;
 
-signals:
-    void settingsClicked();
+    void closeMenu();
 
 private:
-    QVBoxLayout* m_layout;
-    QLabel* m_text;
-    QPushButton* m_button;
+    QTimer m_timer;
 };
-} // namespace Gui::Widgets
+} // namespace Utils

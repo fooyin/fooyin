@@ -17,25 +17,28 @@
  *
  */
 
-#pragma once
+#include "overlayfilter.h"
 
-#include <QDialog>
-#include <QTimer>
+#include <QPaintEvent>
+#include <QPainter>
 
-namespace Gui::Widgets {
-class HoverMenu : public QDialog
+namespace Utils {
+OverlayFilter::OverlayFilter(QWidget* parent)
+    : QWidget(parent)
 {
-public:
-    explicit HoverMenu(QWidget* parent = nullptr);
-    ~HoverMenu() override = default;
+    setAttribute(Qt::WA_TransparentForMouseEvents);
+    setAttribute(Qt::WA_NoSystemBackground);
+    hide();
+}
 
-protected:
-    void leaveEvent(QEvent* event) override;
-    void showEvent(QShowEvent* event) override;
+void OverlayFilter::paintEvent(QPaintEvent* e)
+{
+    Q_UNUSED(e)
+    QPainter painter(this);
 
-    void closeMenu();
+    QColor colour = palette().color(QPalette::Highlight);
+    colour.setAlpha(30);
 
-private:
-    QTimer m_timer;
-};
-} // namespace Gui::Widgets
+    painter.fillRect(rect(), colour);
+}
+} // namespace Utils

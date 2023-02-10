@@ -21,8 +21,6 @@
 
 #include "gui/guisettings.h"
 #include "gui/widgets/dummy.h"
-#include "gui/widgets/menuheader.h"
-#include "gui/widgets/overlayfilter.h"
 #include "gui/widgets/splitterwidget.h"
 #include "widgetfactory.h"
 #include "widgetprovider.h"
@@ -31,6 +29,8 @@
 #include <core/actions/actionmanager.h>
 #include <core/constants.h>
 #include <utils/enumhelper.h>
+#include <utils/menuheader.h>
+#include <utils/overlayfilter.h>
 #include <utils/paths.h>
 
 #include <QCoreApplication>
@@ -52,7 +52,7 @@ struct EditableLayout::Private
 
     Core::ActionContainer* menu;
     QHBoxLayout* box;
-    OverlayFilter* overlay;
+    Utils::OverlayFilter* overlay;
     SplitterWidget* splitter;
     int menuLevels{2};
     bool layoutEditing{false};
@@ -67,7 +67,7 @@ struct EditableLayout::Private
         , widgetProvider{widgetProvider}
         , menu{actionManager->createMenu(Core::Constants::ContextMenus::Layout)}
         , box{new QHBoxLayout(parent)}
-        , overlay{new OverlayFilter(parent)}
+        , overlay{new Utils::OverlayFilter(parent)}
         , layoutFile{Utils::configPath() + "/layout.fyl"}
     { }
 
@@ -198,7 +198,7 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Core::ActionContainer* m
         if(!currentWidget) {
             break;
         }
-        menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));
+        menu->addAction(new Utils::MenuHeaderAction(currentWidget->name(), menu));
         currentWidget->layoutEditingMenu(menu);
 
         auto* parent = qobject_cast<SplitterWidget*>(currentWidget->findParent());

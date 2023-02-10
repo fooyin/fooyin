@@ -21,7 +21,7 @@
 
 #include <QPainter>
 
-namespace Gui::Widgets {
+namespace Utils {
 MenuHeader::MenuHeader(QString text, QWidget* parent)
     : QWidget(parent)
     , m_minWidth(0)
@@ -71,4 +71,4 @@ MenuHeaderAction::MenuHeaderAction(const QString& text, QObject* parent)
     // Takes ownership
     setDefaultWidget(header);
 }
-} // namespace Gui::Widgets
+} // namespace Utils

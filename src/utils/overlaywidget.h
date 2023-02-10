@@ -19,18 +19,30 @@
 
 #pragma once
 
-#include <QFrame>
+#include <QWidget>
 
-namespace Gui::Widgets {
-class OverlayFilter : public QWidget
+class QVBoxLayout;
+class QLabel;
+class QPushButton;
+
+namespace Utils {
+class OverlayWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit OverlayFilter(QWidget* parent = nullptr);
-    ~OverlayFilter() override = default;
+    explicit OverlayWidget(bool button = false, QWidget* parent = nullptr);
+    ~OverlayWidget() override = default;
 
-protected:
-    void paintEvent(QPaintEvent* event) override;
+    void setText(const QString& text);
+    void setButtonText(const QString& text);
+
+signals:
+    void settingsClicked();
+
+private:
+    QVBoxLayout* m_layout;
+    QLabel* m_text;
+    QPushButton* m_button;
 };
 } // namespace Gui::Widgets

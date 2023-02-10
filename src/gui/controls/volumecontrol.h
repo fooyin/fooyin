@@ -25,12 +25,11 @@ class QHBoxLayout;
 
 namespace Utils {
 class ComboIcon;
-}
-
-namespace Gui::Widgets {
 class Slider;
 class HoverMenu;
+} // namespace Utils
 
+namespace Gui::Widgets {
 class VolumeControl : public QWidget
 {
     Q_OBJECT
@@ -55,9 +54,9 @@ protected:
 private:
     QHBoxLayout* m_layout;
     Utils::ComboIcon* m_volumeIcon;
-    Slider* m_volumeSlider;
+    Utils::Slider* m_volumeSlider;
     QHBoxLayout* m_volumeLayout;
-    HoverMenu* m_volumeMenu;
+    Utils::HoverMenu* m_volumeMenu;
     QSize m_labelSize;
     int m_prevValue;
 };

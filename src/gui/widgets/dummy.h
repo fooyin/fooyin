@@ -21,8 +21,8 @@
 
 #include "gui/fywidget.h"
 
-#include <QHBoxLayout>
-#include <QLabel>
+class QHBoxLayout;
+class QLabel;
 
 namespace Gui::Widgets {
 class Dummy : public FyWidget

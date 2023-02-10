@@ -26,6 +26,10 @@
 class QHBoxLayout;
 class QPushButton;
 
+namespace Utils {
+class OverlayWidget;
+}
+
 namespace Core {
 class SettingsManager;
 
@@ -101,7 +105,7 @@ private:
     PlaylistModel* m_model;
     PlaylistView* m_playlist;
     bool m_altRowColours;
-    OverlayWidget* m_noLibrary;
+    Utils::OverlayWidget* m_noLibrary;
 };
 } // namespace Widgets
 } // namespace Gui

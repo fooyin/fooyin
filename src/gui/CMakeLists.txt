@@ -73,16 +73,6 @@ fooyin_add_library(Gui
 
         widgets/dummy.h
         widgets/dummy.cpp
-        widgets/hovermenu.h
-        widgets/hovermenu.cpp
-        widgets/overlayfilter.h
-        widgets/overlayfilter.cpp
-        widgets/menuheader.h
-        widgets/menuheader.cpp
-        widgets/overlaywidget.h
-        widgets/overlaywidget.cpp
-        widgets/slider.h
-        widgets/slider.cpp
         widgets/spacer.h
         widgets/spacer.cpp
         widgets/splitter.h
