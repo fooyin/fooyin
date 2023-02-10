@@ -20,11 +20,11 @@
 #include "progresswidget.h"
 
 #include "gui/guisettings.h"
-#include "gui/widgets/clickablelabel.h"
 #include "gui/widgets/slider.h"
 
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
+#include <utils/clickablelabel.h>
 #include <utils/utils.h>
 
 #include <QHBoxLayout>
@@ -36,13 +36,13 @@ ProgressWidget::ProgressWidget(Core::SettingsManager* settings, QWidget* parent)
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_slider{new Slider(Qt::Horizontal, this)}
-    , m_elapsed{new ClickableLabel(this)}
-    , m_total{new ClickableLabel(this)}
+    , m_elapsed{new Utils::ClickableLabel(this)}
+    , m_total{new Utils::ClickableLabel(this)}
     , m_max{0}
 {
     setupUi();
 
-    connect(m_total, &ClickableLabel::clicked, this, &ProgressWidget::toggleRemaining);
+    connect(m_total, &Utils::ClickableLabel::clicked, this, &ProgressWidget::toggleRemaining);
     connect(m_slider, &Slider::sliderReleased, this, &ProgressWidget::sliderDropped);
 }
 

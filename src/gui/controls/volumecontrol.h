@@ -23,8 +23,11 @@
 
 class QHBoxLayout;
 
-namespace Gui::Widgets {
+namespace Utils {
 class ComboIcon;
+}
+
+namespace Gui::Widgets {
 class Slider;
 class HoverMenu;
 
@@ -51,7 +54,7 @@ protected:
 
 private:
     QHBoxLayout* m_layout;
-    ComboIcon* m_volumeIcon;
+    Utils::ComboIcon* m_volumeIcon;
     Slider* m_volumeSlider;
     QHBoxLayout* m_volumeLayout;
     HoverMenu* m_volumeMenu;

@@ -19,11 +19,10 @@
 
 #include "playlistcontrol.h"
 
-#include "gui/widgets/comboicon.h"
-
 #include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/player/playermanager.h>
+#include <utils/comboicon.h>
 
 #include <QHBoxLayout>
 
@@ -33,14 +32,14 @@ PlaylistControl::PlaylistControl(Core::SettingsManager* settings, QWidget* paren
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_labelSize{20, 20}
-    , m_repeat{new ComboIcon(Core::Constants::Icons::RepeatAll, ComboIcon::HasActiveIcon, this)}
-    , m_shuffle{new ComboIcon(Core::Constants::Icons::Shuffle, ComboIcon::HasActiveIcon, this)}
+    , m_repeat{new Utils::ComboIcon(Core::Constants::Icons::RepeatAll, Utils::ComboIcon::HasActiveIcon, this)}
+    , m_shuffle{new Utils::ComboIcon(Core::Constants::Icons::Shuffle, Utils::ComboIcon::HasActiveIcon, this)}
 
 {
     setupUi();
 
-    connect(m_repeat, &ComboIcon::clicked, this, &PlaylistControl::repeatClicked);
-    connect(m_shuffle, &ComboIcon::clicked, this, &PlaylistControl::shuffleClicked);
+    connect(m_repeat, &Utils::ComboIcon::clicked, this, &PlaylistControl::repeatClicked);
+    connect(m_shuffle, &Utils::ComboIcon::clicked, this, &PlaylistControl::shuffleClicked);
 }
 
 void PlaylistControl::setupUi()

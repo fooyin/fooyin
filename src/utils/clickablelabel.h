@@ -17,24 +17,25 @@
  *
  */
 
-#include "clickablelabel.h"
+#pragma once
 
-#include <QHBoxLayout>
+#include <QLabel>
 
-namespace Gui::Widgets {
-ClickableLabel::ClickableLabel(QWidget* parent)
-    : QLabel(parent)
-{ }
-
-void ClickableLabel::mousePressEvent(QMouseEvent* event)
+namespace Utils {
+class ClickableLabel : public QLabel
 {
-    emit clicked();
-    QLabel::mousePressEvent(event);
-}
+    Q_OBJECT
 
-void ClickableLabel::enterEvent(QEnterEvent* event)
-{
-    emit entered();
-    QLabel::enterEvent(event);
-}
-} // namespace Gui::Widgets
+public:
+    explicit ClickableLabel(QWidget* parent = nullptr);
+    ~ClickableLabel() override = default;
+
+signals:
+    void clicked();
+    void entered();
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
+    void enterEvent(QEnterEvent* event) override;
+};
+} // namespace Utils::Widgets

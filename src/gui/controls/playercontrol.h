@@ -27,9 +27,11 @@ namespace Core::Player {
 enum PlayState : uint8_t;
 }
 
-namespace Gui::Widgets {
+namespace Utils {
 class ComboIcon;
+}
 
+namespace Gui::Widgets {
 class PlayerControl : public QWidget
 {
     Q_OBJECT
@@ -50,10 +52,10 @@ signals:
 
 private:
     QHBoxLayout* m_layout;
-    ComboIcon* m_stop;
-    ComboIcon* m_prev;
-    ComboIcon* m_play;
-    ComboIcon* m_next;
+    Utils::ComboIcon* m_stop;
+    Utils::ComboIcon* m_prev;
+    Utils::ComboIcon* m_play;
+    Utils::ComboIcon* m_next;
     QSize m_labelSize;
 };
 } // namespace Gui::Widgets

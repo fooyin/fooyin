@@ -71,14 +71,10 @@ fooyin_add_library(Gui
         settings/settingspages.h
         settings/settingspages.cpp
 
-        widgets/clickablelabel.h
-        widgets/clickablelabel.cpp
         widgets/dummy.h
         widgets/dummy.cpp
         widgets/hovermenu.h
         widgets/hovermenu.cpp
-        widgets/comboicon.h
-        widgets/comboicon.cpp
         widgets/overlayfilter.h
         widgets/overlayfilter.cpp
         widgets/menuheader.h

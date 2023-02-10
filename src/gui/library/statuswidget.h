@@ -25,14 +25,16 @@
 
 class QHBoxLayout;
 
+namespace Utils {
+class ClickableLabel;
+}
+
 namespace Core::Player {
 class PlayerManager;
 enum PlayState : uint8_t;
 } // namespace Core::Player
 
 namespace Gui::Widgets {
-class ClickableLabel;
-
 class StatusWidget : public FyWidget
 {
     Q_OBJECT
@@ -58,8 +60,8 @@ private:
     Core::Player::PlayerManager* m_playerManager;
 
     QHBoxLayout* m_layout;
-    ClickableLabel* m_iconLabel;
+    Utils::ClickableLabel* m_iconLabel;
     QPixmap m_icon;
-    ClickableLabel* m_playing;
+    Utils::ClickableLabel* m_playing;
 };
 } // namespace Gui::Widgets

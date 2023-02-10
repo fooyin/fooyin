@@ -19,11 +19,11 @@
 
 #include "volumecontrol.h"
 
-#include "gui/widgets/comboicon.h"
 #include "gui/widgets/hovermenu.h"
 #include "gui/widgets/slider.h"
 
 #include <core/constants.h>
+#include <utils/comboicon.h>
 
 #include <QHBoxLayout>
 
@@ -31,7 +31,7 @@ namespace Gui::Widgets {
 VolumeControl::VolumeControl(QWidget* parent)
     : QWidget{parent}
     , m_layout{new QHBoxLayout(this)}
-    , m_volumeIcon{new ComboIcon(Core::Constants::Icons::VolumeMute, this)}
+    , m_volumeIcon{new Utils::ComboIcon(Core::Constants::Icons::VolumeMute, this)}
     , m_volumeSlider{new Slider(Qt::Vertical, this)}
     , m_volumeLayout{new QHBoxLayout()}
     , m_volumeMenu{new HoverMenu(this)}
@@ -43,8 +43,8 @@ VolumeControl::VolumeControl(QWidget* parent)
     setupUi();
 
     connect(m_volumeSlider, &QSlider::valueChanged, this, &VolumeControl::updateVolume);
-    connect(m_volumeIcon, &ComboIcon::entered, this, &VolumeControl::showVolumeMenu);
-    connect(m_volumeIcon, &ComboIcon::clicked, this, &VolumeControl::mute);
+    connect(m_volumeIcon, &Utils::ComboIcon::entered, this, &VolumeControl::showVolumeMenu);
+    connect(m_volumeIcon, &Utils::ComboIcon::clicked, this, &VolumeControl::mute);
 }
 
 VolumeControl::~VolumeControl()

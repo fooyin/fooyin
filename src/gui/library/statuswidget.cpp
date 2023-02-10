@@ -19,10 +19,9 @@
 
 #include "statuswidget.h"
 
-#include "gui/widgets/clickablelabel.h"
-
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
+#include <utils/clickablelabel.h>
 #include <utils/utils.h>
 
 #include <QContextMenuEvent>
@@ -34,15 +33,15 @@ StatusWidget::StatusWidget(Core::Player::PlayerManager* playerManager, QWidget* 
     : FyWidget{parent}
     , m_playerManager{playerManager}
     , m_layout{new QHBoxLayout(this)}
-    , m_iconLabel{new ClickableLabel(this)}
+    , m_iconLabel{new Utils::ClickableLabel(this)}
     , m_icon{"://images/fooyin-small.png"}
-    , m_playing{new ClickableLabel(this)}
+    , m_playing{new Utils::ClickableLabel(this)}
 {
     setObjectName("Status Bar");
 
     setupUi();
 
-    connect(m_playing, &ClickableLabel::clicked, this, &StatusWidget::labelClicked);
+    connect(m_playing, &Utils::ClickableLabel::clicked, this, &StatusWidget::labelClicked);
     connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &StatusWidget::reloadStatus);
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
 }

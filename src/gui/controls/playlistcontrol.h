@@ -23,6 +23,10 @@
 
 class QHBoxLayout;
 
+namespace Utils {
+class ComboIcon;
+}
+
 namespace Core {
 class SettingsManager;
 
@@ -32,8 +36,6 @@ enum PlayMode : uint8_t;
 } // namespace Core
 
 namespace Gui::Widgets {
-class ComboIcon;
-
 class PlaylistControl : public QWidget
 {
     Q_OBJECT
@@ -58,7 +60,7 @@ private:
 
     QHBoxLayout* m_layout;
     QSize m_labelSize;
-    ComboIcon* m_repeat;
-    ComboIcon* m_shuffle;
+    Utils::ComboIcon* m_repeat;
+    Utils::ComboIcon* m_shuffle;
 };
 } // namespace Gui::Widgets
