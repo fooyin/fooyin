@@ -37,6 +37,7 @@ Splitter::Splitter(Qt::Orientation type, Core::SettingsManager* settings, QWidge
 QSplitterHandle* Splitter::createHandle()
 {
     auto* handle = new SplitterHandle(orientation(), this);
+    handle->showHandle(m_settings->value<Settings::SplitterHandles>());
     m_settings->subscribe<Settings::SplitterHandles>(handle, &SplitterHandle::showHandle);
     return handle;
 }
