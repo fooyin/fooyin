@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include "core/plugins/databaseplugin.h"
 #include "filterwidget.h"
 
+#include <core/plugins/databaseplugin.h>
 #include <core/plugins/plugin.h>
 #include <core/plugins/settingsplugin.h>
 #include <core/plugins/threadplugin.h>
