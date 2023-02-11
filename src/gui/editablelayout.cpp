@@ -22,6 +22,7 @@
 #include "gui/guisettings.h"
 #include "gui/widgets/dummy.h"
 #include "gui/widgets/splitterwidget.h"
+#include "layoutprovider.h"
 #include "widgetfactory.h"
 #include "widgetprovider.h"
 
@@ -34,7 +35,6 @@
 #include <utils/paths.h>
 
 #include <QCoreApplication>
-#include <QFile>
 #include <QHBoxLayout>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -43,112 +43,88 @@
 #include <QMouseEvent>
 
 namespace Gui::Widgets {
-struct EditableLayout::Private
+QRect widgetGeometry(FyWidget* widget)
 {
-    Core::ActionManager* actionManager;
-    Core::SettingsManager* settings;
-    Widgets::WidgetFactory* widgetFactory;
-    Widgets::WidgetProvider* widgetProvider;
+    const int w = widget->width();
+    const int h = widget->height();
 
-    Core::ActionContainer* menu;
-    QHBoxLayout* box;
-    Utils::OverlayFilter* overlay;
-    SplitterWidget* splitter;
-    int menuLevels{2};
-    bool layoutEditing{false};
+    int x = widget->x();
+    int y = widget->y();
 
-    QFile layoutFile;
-
-    explicit Private(Core::SettingsManager* settings, Core::ActionManager* actionManager, WidgetFactory* widgetFactory,
-                     WidgetProvider* widgetProvider, QWidget* parent)
-        : actionManager{actionManager}
-        , settings{settings}
-        , widgetFactory{widgetFactory}
-        , widgetProvider{widgetProvider}
-        , menu{actionManager->createMenu(Core::Constants::ContextMenus::Layout)}
-        , box{new QHBoxLayout(parent)}
-        , overlay{new Utils::OverlayFilter(parent)}
-        , layoutFile{Utils::configPath() + "/layout.fyl"}
-    { }
-
-    Core::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const
-    {
-        auto id       = parent->id().append(title);
-        auto* newMenu = actionManager->createMenu(id);
-        newMenu->menu()->setTitle(title);
-
-        return newMenu;
+    while((widget = widget->findParent())) {
+        x += widget->x();
+        y += widget->y();
     }
+    return {x, y, w, h};
+}
 
-    QRect widgetGeometry(FyWidget* widget)
-    {
-        const int w = widget->width();
-        const int h = widget->height();
-
-        int x = widget->x();
-        int y = widget->y();
-
-        while((widget = widget->findParent())) {
-            x += widget->x();
-            y += widget->y();
-        }
-        return {x, y, w, h};
+FyWidget* splitterChild(QWidget* widget)
+{
+    if(!widget) {
+        return {};
     }
+    QWidget* child = widget;
 
-    FyWidget* splitterChild(QWidget* widget)
-    {
-        if(!widget) {
+    while(!qobject_cast<FyWidget*>(child)) {
+        child = child->parentWidget();
+        if(!child) {
             return {};
         }
-        QWidget* child = widget;
-
-        while(!qobject_cast<FyWidget*>(child)) {
-            child = child->parentWidget();
-            if(!child) {
-                return {};
-            }
-        }
-        return qobject_cast<FyWidget*>(child);
     }
-};
+    return qobject_cast<FyWidget*>(child);
+}
 
 EditableLayout::EditableLayout(Core::SettingsManager* settings, Core::ActionManager* actionManager,
-                               WidgetFactory* widgetFactory, WidgetProvider* widgetProvider, QWidget* parent)
+                               WidgetFactory* widgetFactory, WidgetProvider* widgetProvider,
+                               LayoutProvider* layoutProvider, QWidget* parent)
     : QWidget{parent}
-    , p{std::make_unique<Private>(settings, actionManager, widgetFactory, widgetProvider, this)}
+    , m_actionManager{actionManager}
+    , m_settings{settings}
+    , m_widgetFactory{widgetFactory}
+    , m_widgetProvider{widgetProvider}
+    , m_layoutProvider{layoutProvider}
+    , m_menu{actionManager->createMenu(Core::Constants::ContextMenus::Layout)}
+    , m_box{new QHBoxLayout(this)}
+    , m_overlay{new Utils::OverlayFilter(this)}
+    , m_menuLevels{2}
+    , m_layoutEditing{false}
 {
     setObjectName("EditableLayout");
 
-    p->menu->appendGroup(Core::Constants::Groups::Two);
-    p->menu->appendGroup(Core::Constants::Groups::Three);
+    m_menu->appendGroup(Core::Constants::Groups::Two);
+    m_menu->appendGroup(Core::Constants::Groups::Three);
 
-    p->box->setContentsMargins(5, 5, 5, 5);
+    m_box->setContentsMargins(5, 5, 5, 5);
 }
 
 EditableLayout::~EditableLayout() = default;
 
 void EditableLayout::initialise()
 {
-    connect(p->menu, &Core::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
-    p->settings->subscribe<Settings::LayoutEditing>(this, [this](bool enabled) {
-        p->layoutEditing = enabled;
+    connect(m_menu, &Core::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
+    m_settings->subscribe<Settings::LayoutEditing>(this, [this](bool enabled) {
+        m_layoutEditing = enabled;
     });
 
     const bool loaded = loadLayout();
     if(!loaded) {
-        p->splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget("SplitterVertical"));
-        if(p->splitter) {
-            p->splitter->setParent(this);
-            p->box->addWidget(p->splitter);
-        }
-        else {
-            p->splitter = new SplitterWidget(p->actionManager, p->widgetProvider, p->settings, this);
-        }
+        m_splitter = qobject_cast<SplitterWidget*>(m_widgetProvider->createWidget("SplitterVertical"));
+        m_splitter->setParent(this);
+        m_box->addWidget(m_splitter);
     }
-    if(!p->splitter->hasChildren()) {
-        p->settings->set<Settings::LayoutEditing>(true);
+    if(!m_splitter->hasChildren()) {
+        m_settings->set<Settings::LayoutEditing>(true);
     }
     qApp->installEventFilter(this);
+}
+
+Core::ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QString& title) const
+{
+    auto id       = parent->id().append(title);
+    auto* newMenu = m_actionManager->createMenu(id);
+    newMenu->menu()->setTitle(title);
+
+    return newMenu;
 }
 
 void EditableLayout::setupWidgetMenu(Core::ActionContainer* menu, FyWidget* parent, bool replace)
@@ -160,14 +136,14 @@ void EditableLayout::setupWidgetMenu(Core::ActionContainer* menu, FyWidget* pare
     if(!splitter || replace) {
         splitter = qobject_cast<SplitterWidget*>(parent->findParent());
     }
-    auto widgets = p->widgetFactory->registeredWidgets();
+    auto widgets = m_widgetFactory->registeredWidgets();
     for(const auto& widget : widgets) {
         auto* parentMenu = menu;
         for(const auto& subMenu : widget.second.subMenus) {
             const Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
-            auto* childMenu    = p->actionManager->actionContainer(id);
+            auto* childMenu    = m_actionManager->actionContainer(id);
             if(!childMenu) {
-                childMenu = p->actionManager->createMenu(id);
+                childMenu = m_actionManager->createMenu(id);
                 childMenu->menu()->setTitle(subMenu);
                 parentMenu->addMenu(childMenu);
             }
@@ -175,7 +151,7 @@ void EditableLayout::setupWidgetMenu(Core::ActionContainer* menu, FyWidget* pare
         }
         auto* addWidget = new QAction(widget.second.name, parentMenu);
         QAction::connect(addWidget, &QAction::triggered, this, [this, parent, replace, widget, splitter] {
-            FyWidget* newWidget = p->widgetProvider->createWidget(widget.first);
+            FyWidget* newWidget = m_widgetProvider->createWidget(widget.first);
             if(replace) {
                 splitter->replaceWidget(parent, newWidget);
             }
@@ -193,7 +169,7 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Core::ActionContainer* m
         return;
     }
     auto* currentWidget = widget;
-    auto level          = p->menuLevels;
+    auto level          = m_menuLevels;
     while(level > 0) {
         if(!currentWidget) {
             break;
@@ -204,13 +180,13 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Core::ActionContainer* m
         auto* parent = qobject_cast<SplitterWidget*>(currentWidget->findParent());
 
         if(auto* splitter = qobject_cast<SplitterWidget*>(currentWidget)) {
-            auto* addMenu = p->createNewMenu(splitter, tr("&Add"));
+            auto* addMenu = createNewMenu(splitter, tr("&Add"));
             setupWidgetMenu(addMenu, splitter);
             menu->addMenu(addMenu);
 
             // Only non-root splitters are removable
             if(parent) {
-                auto* changeMenu = p->createNewMenu(splitter, tr("&Replace"));
+                auto* changeMenu = createNewMenu(splitter, tr("&Replace"));
                 setupWidgetMenu(changeMenu, splitter, true);
                 menu->addMenu(changeMenu);
 
@@ -222,7 +198,7 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Core::ActionContainer* m
             }
         }
         else {
-            auto* changeMenu = p->createNewMenu(currentWidget, tr("&Replace"));
+            auto* changeMenu = createNewMenu(currentWidget, tr("&Replace"));
             setupWidgetMenu(changeMenu, currentWidget, true);
             menu->addMenu(changeMenu);
 
@@ -239,28 +215,28 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Core::ActionContainer* m
 
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 {
-    if(!p->layoutEditing) {
+    if(!m_layoutEditing) {
         return QWidget::eventFilter(watched, event);
     }
 
     if(event->type() == QEvent::MouseButtonPress) {
         auto* mouseEvent = dynamic_cast<QMouseEvent*>(event);
-        if(mouseEvent->button() == Qt::RightButton && p->menu->isHidden()) {
-            p->menu->clear();
+        if(mouseEvent->button() == Qt::RightButton && m_menu->isHidden()) {
+            m_menu->clear();
 
             const QPoint pos = mouseEvent->position().toPoint();
             QWidget* widget  = parentWidget()->childAt(pos);
-            FyWidget* child  = p->splitterChild(widget);
+            FyWidget* child  = splitterChild(widget);
 
             if(child) {
                 if(qobject_cast<Dummy*>(child)) {
-                    setupContextMenu(child->findParent(), p->menu);
+                    setupContextMenu(child->findParent(), m_menu);
                 }
                 else {
-                    setupContextMenu(child, p->menu);
+                    setupContextMenu(child, m_menu);
                 }
                 showOverlay(child);
-                p->menu->menu()->exec(mapToGlobal(pos));
+                m_menu->menu()->exec(mapToGlobal(pos));
                 return true;
             }
         }
@@ -268,17 +244,17 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
     return QWidget::eventFilter(watched, event);
 }
 
-void EditableLayout::changeLayout(const QByteArray& layout)
+void EditableLayout::changeLayout(const Layout& layout)
 {
     // Delete all current widgets
     // TODO: Look into caching previous layout widgets
-    delete p->splitter;
-    const bool success = loadLayout(layout);
-    if(success && p->splitter->hasChildren()) {
-        p->settings->set<Settings::LayoutEditing>(false);
+    delete m_splitter;
+    const bool success = loadLayout(layout.json);
+    if(success && m_splitter->hasChildren()) {
+        m_settings->set<Settings::LayoutEditing>(false);
     }
     else {
-        p->settings->set<Settings::LayoutEditing>(true);
+        m_settings->set<Settings::LayoutEditing>(true);
     }
 }
 
@@ -287,19 +263,12 @@ void EditableLayout::saveLayout()
     QJsonObject root;
     QJsonArray array;
 
-    p->splitter->saveLayout(array);
+    m_splitter->saveLayout(array);
 
     root["Layout"] = array;
 
     const auto json = QJsonDocument(root).toJson();
-
-    if(!p->layoutFile.open(QIODevice::WriteOnly)) {
-        qCritical() << "Couldn't open layout file.";
-        return;
-    }
-
-    p->layoutFile.write(json);
-    p->layoutFile.close();
+    m_layoutProvider->saveCurrentLayout(json);
 }
 
 bool EditableLayout::loadLayout(const QByteArray& layout)
@@ -314,11 +283,11 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
                 auto widget      = first->toObject();
                 if(!widget.isEmpty()) {
                     const auto name = widget.constBegin().key();
-                    if(auto* splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget(name))) {
-                        p->splitter  = splitter;
+                    if(auto* splitter = qobject_cast<SplitterWidget*>(m_widgetProvider->createWidget(name))) {
+                        m_splitter   = splitter;
                         auto options = widget.value(name).toObject();
-                        p->splitter->loadLayout(options);
-                        p->box->addWidget(p->splitter);
+                        m_splitter->loadLayout(options);
+                        m_box->addWidget(m_splitter);
                         return true;
                     }
                 }
@@ -330,26 +299,19 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
 
 bool EditableLayout::loadLayout()
 {
-    if(!p->layoutFile.open(QIODevice::ReadOnly)) {
-        qCritical() << "Couldn't open layout file.";
-        return false;
-    }
-
-    const QByteArray layout = p->layoutFile.readAll();
-    p->layoutFile.close();
-
-    return loadLayout(layout);
+    const Layout layout = m_layoutProvider->currentLayout();
+    return loadLayout(layout.json);
 }
 
 void EditableLayout::showOverlay(FyWidget* widget)
 {
-    p->overlay->setGeometry(p->widgetGeometry(widget));
-    p->overlay->raise();
-    p->overlay->show();
+    m_overlay->setGeometry(widgetGeometry(widget));
+    m_overlay->raise();
+    m_overlay->show();
 }
 
 void EditableLayout::hideOverlay()
 {
-    p->overlay->hide();
+    m_overlay->hide();
 }
 } // namespace Gui::Widgets

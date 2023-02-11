@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "gui/layoutprovider.h"
+
 #include <QDialog>
 #include <QItemSelection>
 
@@ -27,7 +29,6 @@ class QListView;
 class QPushButton;
 
 namespace Gui {
-class LayoutProvider;
 class QuickSetupModel;
 
 class QuickSetupDialog : public QDialog
@@ -39,7 +40,7 @@ public:
     ~QuickSetupDialog() override = default;
 
 signals:
-    void layoutChanged(const QByteArray& layout);
+    void layoutChanged(const Gui::Layout& layout);
 
 protected:
     void setupUi();

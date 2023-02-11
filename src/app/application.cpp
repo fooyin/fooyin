@@ -100,7 +100,7 @@ struct Application::Private
         , guiSettings{&settingsManager}
         , settingsDialog{new Gui::Settings::SettingsDialog(&libraryManager, &settingsManager)}
         , editableLayout{new Gui::Widgets::EditableLayout(&settingsManager, &actionManager, &widgetFactory,
-                                                          &widgetProvider)}
+                                                          &widgetProvider, &layoutProvider)}
         , mainWindow{new Gui::MainWindow(&actionManager, &settingsManager, &layoutProvider, editableLayout)}
         , widgetContext{&actionManager, playerManager.get(), &library, &widgetFactory}
         , threadContext{&threadManager}

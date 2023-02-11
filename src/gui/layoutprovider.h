@@ -19,12 +19,14 @@
 
 #pragma once
 
+#include <QFile>
 #include <QString>
 
 namespace Gui {
 struct Layout
 {
-    explicit Layout(QString name, QByteArray json)
+    Layout() = default;
+    Layout(QString name, QByteArray json)
         : name{std::move(name)}
         , json{std::move(json)}
     { }
@@ -37,10 +39,14 @@ class LayoutProvider
 public:
     using LayoutList = std::vector<Layout>;
 
-    explicit LayoutProvider() = default;
-    ~LayoutProvider()         = default;
+    explicit LayoutProvider();
+    ~LayoutProvider() = default;
 
     void findLayouts();
+
+    [[nodiscard]] Layout currentLayout() const;
+    void loadCurrentLayout();
+    void saveCurrentLayout(const QByteArray& json);
 
     [[nodiscard]] LayoutList layouts() const;
     void registerLayout(const QString& name, const QByteArray& json);
@@ -50,5 +56,7 @@ private:
     void addLayout(const QString& file);
 
     LayoutList m_layouts;
+    Layout m_currentLayout;
+    QFile m_layoutFile;
 };
 } // namespace Gui

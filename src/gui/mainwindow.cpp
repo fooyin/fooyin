@@ -65,7 +65,7 @@ struct MainWindow::Private
         registerLayouts();
     }
 
-    void registerLayouts()
+    void registerLayouts() const
     {
         layoutProvider->registerLayout("Empty", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[],\"State\":\"AAAA/"
                                                 "wAAAAEAAAABAAACLwD/////AQAAAAIA\"}}]}");

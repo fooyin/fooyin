@@ -19,7 +19,15 @@
 
 #pragma once
 
-#include <QMainWindow>
+#include "layoutprovider.h"
+
+#include <QWidget>
+
+class QHBoxLayout;
+
+namespace Utils {
+class OverlayFilter;
+}
 
 namespace Core {
 class ActionContainer;
@@ -31,6 +39,7 @@ namespace Gui::Widgets {
 class FyWidget;
 class WidgetFactory;
 class WidgetProvider;
+class SplitterWidget;
 
 class EditableLayout : public QWidget
 {
@@ -38,17 +47,19 @@ class EditableLayout : public QWidget
 
 public:
     explicit EditableLayout(Core::SettingsManager* settings, Core::ActionManager* actionManager,
-                            WidgetFactory* widgetFactory, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+                            WidgetFactory* widgetFactory, WidgetProvider* widgetProvider,
+                            LayoutProvider* layoutProvider, QWidget* parent = nullptr);
     ~EditableLayout() override;
 
     void initialise();
 
+    Core::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const;
     void setupWidgetMenu(Core::ActionContainer* menu, FyWidget* parent, bool replace = false);
     void setupContextMenu(FyWidget* widget, Core::ActionContainer* menu);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
-    void changeLayout(const QByteArray& layout);
+    void changeLayout(const Layout& layout);
     void saveLayout();
     bool loadLayout(const QByteArray& layout);
     bool loadLayout();
@@ -57,7 +68,17 @@ public:
     void hideOverlay();
 
 private:
-    struct Private;
-    std::unique_ptr<EditableLayout::Private> p;
+    Core::ActionManager* m_actionManager;
+    Core::SettingsManager* m_settings;
+    Widgets::WidgetFactory* m_widgetFactory;
+    Widgets::WidgetProvider* m_widgetProvider;
+    LayoutProvider* m_layoutProvider;
+
+    Core::ActionContainer* m_menu;
+    QHBoxLayout* m_box;
+    Utils::OverlayFilter* m_overlay;
+    SplitterWidget* m_splitter;
+    int m_menuLevels;
+    bool m_layoutEditing;
 };
 } // namespace Gui::Widgets

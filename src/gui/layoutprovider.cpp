@@ -30,6 +30,12 @@ bool checkFile(const QFileInfo& file)
         && file.completeSuffix().compare("fyl", Qt::CaseInsensitive) == 0;
 }
 
+LayoutProvider::LayoutProvider()
+    : m_layoutFile{Utils::configPath() + "/layout.fyl"}
+{
+    loadCurrentLayout();
+}
+
 void Gui::LayoutProvider::findLayouts()
 {
     QStringList files;
@@ -48,6 +54,35 @@ void Gui::LayoutProvider::findLayouts()
     for(const auto& file : files) {
         addLayout(file);
     }
+}
+
+Layout LayoutProvider::currentLayout() const
+{
+    return m_currentLayout;
+}
+
+void LayoutProvider::loadCurrentLayout()
+{
+    if(!m_layoutFile.open(QIODevice::ReadOnly)) {
+        qCritical() << "Couldn't open layout file.";
+        return;
+    }
+
+    const QByteArray layout = m_layoutFile.readAll();
+    m_layoutFile.close();
+
+    m_currentLayout = {"Default", layout};
+}
+
+void LayoutProvider::saveCurrentLayout(const QByteArray& json)
+{
+    if(!m_layoutFile.open(QIODevice::WriteOnly)) {
+        qCritical() << "Couldn't open layout file.";
+        return;
+    }
+
+    m_layoutFile.write(json);
+    m_layoutFile.close();
 }
 
 LayoutProvider::LayoutList LayoutProvider::layouts() const

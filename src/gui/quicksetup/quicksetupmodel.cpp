@@ -39,13 +39,15 @@ QVariant QuickSetupModel::data(const QModelIndex& index, int role) const
     if(!index.isValid() && !checkIndex(index)) {
         return {};
     }
+    const auto layouts = m_layoutProvider->layouts();
+    const auto& layout  = layouts.at(index.row());
 
     switch(role) {
         case(Qt::DisplayRole): {
-            return m_layoutProvider->layouts().at(index.row()).name;
+            return layout.name;
         }
         case(QuickSetupRole::Layout): {
-            return m_layoutProvider->layouts().at(index.row()).json;
+            return QVariant::fromValue<Layout>(layout);
         }
         default: {
             return {};
