@@ -53,6 +53,7 @@ PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Co
     , m_model{new PlaylistModel(m_playerManager, m_library, m_settings, this)}
     , m_playlist{new PlaylistView(this)}
     , m_altRowColours{m_settings->value<Settings::PlaylistAltColours>()}
+    , m_changingSelection{false}
     , m_noLibrary{new Utils::OverlayWidget(true, this)}
 {
     setObjectName("Playlist");
@@ -185,9 +186,20 @@ void PlaylistWidget::layoutEditingMenu(Core::ActionContainer* menu)
 
 void PlaylistWidget::selectionChanged()
 {
-    const QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
+    if(m_changingSelection) {
+        return;
+    }
+    m_changingSelection = true;
+
+    const auto selectedIndexes = m_playlist->selectionModel()->selectedIndexes();
     Core::TrackSet tracks;
-    for(const auto& index : indexes) {
+    std::deque<QModelIndex> indexes;
+
+    indexes.insert(indexes.end(), selectedIndexes.begin(), selectedIndexes.end());
+
+    while(!indexes.empty()) {
+        const auto index = indexes.front();
+        indexes.pop_front();
         if(index.isValid()) {
             const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
             if(type == PlaylistItem::Track) {
@@ -195,14 +207,16 @@ void PlaylistWidget::selectionChanged()
                 tracks.insert(data);
             }
             else {
-                QItemSelection selection{m_model->index(0, 0, index),
-                                         m_model->index(m_model->rowCount(index) - 1, 0, index)};
-                selection.select(index, index);
-                m_playlist->selectionModel()->select(selection, QItemSelectionModel::Select);
+                const QItemSelection selectedChildren{m_model->index(0, 0, index),
+                                                      m_model->index(m_model->rowCount(index) - 1, 0, index)};
+                const auto childIndexes = selectedChildren.indexes();
+                indexes.insert(indexes.end(), childIndexes.begin(), childIndexes.end());
+                m_playlist->selectionModel()->select(selectedChildren, QItemSelectionModel::Select);
             }
         }
     }
     m_library->trackSelectionChanged(tracks);
+    m_changingSelection = false;
 }
 
 void PlaylistWidget::keyPressEvent(QKeyEvent* e)

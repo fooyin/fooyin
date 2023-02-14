@@ -105,6 +105,7 @@ private:
     PlaylistModel* m_model;
     PlaylistView* m_playlist;
     bool m_altRowColours;
+    bool m_changingSelection;
     Utils::OverlayWidget* m_noLibrary;
 };
 } // namespace Widgets
