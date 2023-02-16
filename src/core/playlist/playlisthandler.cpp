@@ -22,6 +22,8 @@
 #include "core/player/playermanager.h"
 #include "playlist.h"
 
+#include <utils/helpers.h>
+
 namespace Core::Playlist {
 PlaylistHandler::PlaylistHandler(Player::PlayerManager* playerManager, QObject* parent)
     : QObject(parent)
@@ -34,14 +36,13 @@ PlaylistHandler::PlaylistHandler(Player::PlayerManager* playerManager, QObject* 
 
 PlaylistHandler::~PlaylistHandler()
 {
-    qDeleteAll(m_playlists);
     m_playlists.clear();
 }
 
 Playlist* PlaylistHandler::playlist(int id)
 {
-    if(m_playlists.contains(id)) {
-        return m_playlists.value(id);
+    if(m_playlists.count(id)) {
+        return m_playlists.at(id).get();
     }
     return {};
 }
@@ -69,9 +70,9 @@ int PlaylistHandler::activeIndex() const
     return currentIndex();
 }
 
-Playlist* PlaylistHandler::activePlaylist()
+Playlist* PlaylistHandler::activePlaylist() const
 {
-    return m_playlists.value(activeIndex());
+    return m_playlists.at(activeIndex()).get();
 }
 
 int PlaylistHandler::currentIndex() const
@@ -91,36 +92,6 @@ int PlaylistHandler::count() const
     return static_cast<int>(m_playlists.size());
 }
 
-int PlaylistHandler::exists(const QString& name) const
-{
-    if(name.isEmpty() && m_currentPlaylistIndex >= 0 && m_currentPlaylistIndex < m_playlists.size()) {
-        return m_currentPlaylistIndex;
-    }
-
-    auto it = std::find_if(m_playlists.constBegin(), m_playlists.constEnd(), [&](const auto& playlist) {
-        return (playlist->name().compare(name, Qt::CaseInsensitive) == 0);
-    });
-    if(it == m_playlists.end()) {
-        return -1;
-    }
-    return static_cast<int>(std::distance(m_playlists.constBegin(), it));
-}
-
-int PlaylistHandler::addNewPlaylist(const QString& name)
-{
-    const auto index = exists(name);
-    if(index >= 0) {
-        m_playlists.value(index)->clear();
-        return index;
-    }
-
-    const auto count = static_cast<int>(m_playlists.count());
-    auto* playlist   = new Playlist(m_playerManager, count, name);
-    m_playlists.insert(playlist->index(), playlist);
-
-    return playlist->index();
-}
-
 void PlaylistHandler::next()
 {
     auto* playlist = activePlaylist();
@@ -132,8 +103,43 @@ void PlaylistHandler::next()
     }
 }
 
-void PlaylistHandler::previous()
+void PlaylistHandler::previous() const
 {
     activePlaylist()->previous();
+}
+
+int PlaylistHandler::exists(const QString& name) const
+{
+    if(name.isEmpty() && validIndex(m_currentPlaylistIndex)) {
+        return m_currentPlaylistIndex;
+    }
+
+    auto it = std::find_if(m_playlists.cbegin(), m_playlists.cend(), [&](const auto& playlist) {
+        return (playlist.second->name().compare(name, Qt::CaseInsensitive) == 0);
+    });
+    if(it == m_playlists.end()) {
+        return -1;
+    }
+    return static_cast<int>(std::distance(m_playlists.cbegin(), it));
+}
+
+bool PlaylistHandler::validIndex(int index) const
+{
+    return (index >= 0 && index < count());
+}
+
+int PlaylistHandler::addNewPlaylist(const QString& name)
+{
+    const auto index = exists(name);
+    if(index >= 0) {
+        m_playlists.at(index)->clear();
+        return index;
+    }
+
+    const auto count = static_cast<int>(m_playlists.size());
+    auto* playlist   = new Playlist(m_playerManager, count, name);
+    m_playlists.emplace(playlist->index(), playlist);
+
+    return playlist->index();
 }
 } // namespace Core::Playlist

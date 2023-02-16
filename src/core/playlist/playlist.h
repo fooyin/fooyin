@@ -61,7 +61,7 @@ public:
 
 protected:
     int nextIndex();
-    int numberOfTracks() const;
+    [[nodiscard]] int numberOfTracks() const;
 
 private:
     Player::PlayerManager* m_playerManager;

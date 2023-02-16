@@ -30,8 +30,8 @@ public:
 
     virtual Playlist* playlist(int id) = 0;
 
-    [[nodiscard]] virtual int activeIndex() const = 0;
-    virtual Playlist* activePlaylist()            = 0;
+    [[nodiscard]] virtual int activeIndex() const          = 0;
+    [[nodiscard]] virtual Playlist* activePlaylist() const = 0;
 
     [[nodiscard]] virtual int currentIndex() const  = 0;
     virtual void setCurrentIndex(int playlistIndex) = 0;

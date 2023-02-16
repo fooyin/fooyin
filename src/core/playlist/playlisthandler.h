@@ -21,11 +21,15 @@
 
 #include "playlistmanager.h"
 
+#include <QObject>
+
 namespace Core::Player {
 class PlayerManager;
 }
 
 namespace Core::Playlist {
+using PlaylistMap = std::map<int, std::unique_ptr<Playlist>>;
+
 class PlaylistHandler : public QObject,
                         PlaylistManager
 {
@@ -41,21 +45,23 @@ public:
     int createEmptyPlaylist() override;
 
     [[nodiscard]] int activeIndex() const override;
-    Playlist* activePlaylist() override;
+    [[nodiscard]] Playlist* activePlaylist() const override;
+
     [[nodiscard]] int currentIndex() const override;
     void setCurrentIndex(int playlistIndex) override;
-    [[nodiscard]] int count() const override;
 
-private:
-    [[nodiscard]] int exists(const QString& name) const;
-    int addNewPlaylist(const QString& name);
+    [[nodiscard]] int count() const override;
 
 protected:
     void next();
-    void previous();
+    void previous() const;
 
 private:
-    QMap<int, Playlist*> m_playlists;
+    [[nodiscard]] int exists(const QString& name) const;
+    [[nodiscard]] bool validIndex(int index) const;
+    int addNewPlaylist(const QString& name);
+
+    PlaylistMap m_playlists;
     Player::PlayerManager* m_playerManager;
     int m_currentPlaylistIndex;
 };
