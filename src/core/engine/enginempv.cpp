@@ -23,6 +23,8 @@
 
 #include <mpv/client.h>
 
+#include <QDebug>
+
 namespace Core::Engine {
 struct EngineMpv::Private
 {

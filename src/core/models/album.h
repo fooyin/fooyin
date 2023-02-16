@@ -21,11 +21,13 @@
 
 #include "container.h"
 
-#include <QString>
-#include <QStringList>
+#include <QList>
 
 namespace Core {
 class Track;
+
+using GenreList = QList<QString>;
+
 class Album : public Container
 {
 public:
@@ -34,42 +36,36 @@ public:
     ~Album() override = default;
 
     [[nodiscard]] int id() const;
-    void setId(int id);
-
     [[nodiscard]] int artistId() const;
-    void setArtistId(int id);
-
     [[nodiscard]] QString artist() const;
-    void setArtist(const QString& artist);
-
+    [[nodiscard]] QString date() const;
     [[nodiscard]] int year() const;
-    void setYear(int year);
-
-    [[nodiscard]] QStringList genres() const;
-    void setGenres(const QStringList& genres);
-
-    [[nodiscard]] QString mainGenre() const;
-
+    [[nodiscard]] GenreList genres() const;
     [[nodiscard]] int discCount() const;
-    void setDiscCount(int count);
-
     [[nodiscard]] bool isSingleDiscAlbum() const;
-
     [[nodiscard]] bool hasCover() const;
-
     [[nodiscard]] QString coverPath() const;
+
+    void setId(int id);
+    void setArtistId(int id);
+    void setArtist(const QString& artist);
+    void setDate(const QString& date);
+    void setGenres(const GenreList& genres);
+    void setDiscCount(int count);
     void setCoverPath(const QString& path);
 
     void addTrack(Track* track) override;
     void removeTrack(Track* track) override;
+
     void reset() override;
 
 private:
     int m_id;
     int m_artistId;
     QString m_artist;
+    QString m_date;
     int m_year;
-    QStringList m_genres;
+    GenreList m_genres;
     int m_discCount;
     QString m_coverPath;
 };

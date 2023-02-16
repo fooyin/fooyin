@@ -150,7 +150,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
     const QRect artistRect     = QRect(coverFrameRect.right() + 10, y - 20, ((right - 80) - (x + 80)), height);
     const QRect titleRect      = QRect(coverFrameRect.right() + 10, y, ((right - 80) - (x + 80)), height);
     const QRect subRect        = QRect(coverFrameRect.right() + 10, y + 20, ((right - 80) - (x + 80)), height);
-    const QRect yearRect       = QRect(right - 60, y, 50, height);
+    const QRect yearRect       = QRect(right - 110, y, 100, height);
 
     QPen coverPen     = painter->pen();
     QColor coverColor = option.palette.color(QPalette::Shadow);

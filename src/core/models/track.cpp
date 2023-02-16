@@ -30,22 +30,22 @@
 namespace Core {
 Track::Track(QString filepath)
     : LibraryItem()
-    , m_enabled(true)
-    , m_id(-1)
-    , m_filepath(std::move(filepath))
-    , m_albumId()
-    , m_albumArtistId()
-    , m_trackNumber(0)
-    , m_trackTotal(0)
-    , m_discNumber(0)
-    , m_discTotal(0)
-    , m_duration(0)
-    , m_bitrate(0)
-    , m_sampleRate(0)
-    , m_playcount(0)
-    , m_mTime(0)
-    , m_filesize(0)
-    , m_libraryId(-1)
+    , m_enabled{true}
+    , m_libraryId{-1}
+    , m_id{-1}
+    , m_filepath{std::move(filepath)}
+    , m_albumId{-1}
+    , m_albumArtistId{-1}
+    , m_trackNumber{0}
+    , m_trackTotal{0}
+    , m_discNumber{0}
+    , m_discTotal{0}
+    , m_duration{0}
+    , m_filesize{0}
+    , m_bitrate{0}
+    , m_sampleRate{0}
+    , m_playcount{0}
+    , m_modifiedTime{0}
 { }
 
 bool Track::isEnabled() const
@@ -53,19 +53,14 @@ bool Track::isEnabled() const
     return m_enabled;
 }
 
-void Track::setIsEnabled(bool enabled)
+int Track::libraryId() const
 {
-    m_enabled = enabled;
+    return m_libraryId;
 }
 
 int Track::id() const
 {
     return m_id;
-}
-
-void Track::setId(int id)
-{
-    m_id = id;
 }
 
 QString Track::filepath() const
@@ -78,19 +73,9 @@ QString Track::title() const
     return m_title;
 }
 
-void Track::setTitle(const QString& title)
-{
-    m_title = title;
-}
-
-QStringList Track::artists() const
+ArtistList Track::artists() const
 {
     return m_artists;
-}
-
-void Track::setArtists(const QStringList& artists)
-{
-    m_artists = artists;
 }
 
 IdSet Track::artistIds() const
@@ -98,24 +83,9 @@ IdSet Track::artistIds() const
     return m_artistIds;
 }
 
-void Track::setArtistIds(const IdSet& ids)
-{
-    m_artistIds = ids;
-}
-
-void Track::addArtistId(int id)
-{
-    m_artistIds.insert(id);
-}
-
 int Track::albumId() const
 {
     return m_albumId;
-}
-
-void Track::setAlbumId(int id)
-{
-    m_albumId = id;
 }
 
 QString Track::album() const
@@ -123,19 +93,9 @@ QString Track::album() const
     return m_album;
 }
 
-void Track::setAlbum(const QString& title)
-{
-    m_album = title;
-}
-
 QString Track::albumArtist() const
 {
     return m_albumArtist;
-}
-
-void Track::setAlbumArtist(const QString& artist)
-{
-    m_albumArtist = artist;
 }
 
 int Track::albumArtistId() const
@@ -143,49 +103,24 @@ int Track::albumArtistId() const
     return m_albumArtistId;
 }
 
-void Track::setAlbumArtistId(int id)
-{
-    m_albumArtistId = id;
-}
-
-quint16 Track::trackNumber() const
+int Track::trackNumber() const
 {
     return m_trackNumber;
 }
 
-void Track::setTrackNumber(quint16 num)
-{
-    m_trackNumber = num;
-}
-
-quint16 Track::trackTotal() const
+int Track::trackTotal() const
 {
     return m_trackTotal;
 }
 
-void Track::setTrackTotal(quint16 num)
-{
-    m_trackTotal = num;
-}
-
-quint8 Track::discNumber() const
+int Track::discNumber() const
 {
     return m_discNumber;
 }
 
-void Track::setDiscNumber(quint8 num)
-{
-    m_discNumber = num;
-}
-
-quint8 Track::discTotal() const
+int Track::discTotal() const
 {
     return m_discTotal;
-}
-
-void Track::setDiscTotal(quint8 num)
-{
-    m_discTotal = num;
 }
 
 IdSet Track::genreIds() const
@@ -193,24 +128,9 @@ IdSet Track::genreIds() const
     return m_genreIds;
 }
 
-void Track::setGenreIds(const IdSet& ids)
-{
-    m_genreIds = ids;
-}
-
-void Track::addGenreId(int id)
-{
-    m_genreIds.insert(id);
-}
-
-QStringList Track::genres() const
+GenreList Track::genres() const
 {
     return m_genres;
-}
-
-void Track::setGenres(const QStringList& genre)
-{
-    m_genres = genre;
 }
 
 QString Track::composer() const
@@ -218,19 +138,9 @@ QString Track::composer() const
     return m_composer;
 }
 
-void Track::setComposer(const QString& composer)
-{
-    m_composer = composer;
-}
-
 QString Track::performer() const
 {
     return m_performer;
-}
-
-void Track::setPerformer(const QString& performer)
-{
-    m_performer = performer;
 }
 
 quint64 Track::duration() const
@@ -238,19 +148,9 @@ quint64 Track::duration() const
     return m_duration;
 }
 
-void Track::setDuration(quint64 duration)
-{
-    m_duration = duration;
-}
-
 QString Track::lyrics() const
 {
     return m_lyrics;
-}
-
-void Track::setLyrics(const QString& lyrics)
-{
-    m_lyrics = lyrics;
 }
 
 QString Track::comment() const
@@ -258,19 +158,14 @@ QString Track::comment() const
     return m_comment;
 }
 
-void Track::setComment(const QString& comment)
+QString Track::date() const
 {
-    m_comment = comment;
+    return m_date;
 }
 
-quint16 Track::year() const
+int Track::year() const
 {
     return m_year;
-}
-
-void Track::setYear(quint16 year)
-{
-    m_year = year;
 }
 
 QString Track::coverPath() const
@@ -278,105 +173,19 @@ QString Track::coverPath() const
     return m_coverPath;
 }
 
-void Track::setCoverPath(const QString& path)
-{
-    m_coverPath = path;
-}
-
 bool Track::hasCover() const
 {
     return !m_coverPath.isEmpty();
 }
 
-quint16 Track::bitrate() const
-{
-    return m_bitrate;
-}
-
-void Track::setBitrate(quint16 rate)
-{
-    m_bitrate = rate;
-}
-
-quint16 Track::sampleRate() const
-{
-    return m_sampleRate;
-}
-
-void Track::setSampleRate(quint16 rate)
-{
-    m_sampleRate = rate;
-}
-quint16 Track::playCount() const
-{
-    return m_playcount;
-}
-
-void Track::setPlayCount(quint16 count)
-{
-    m_playcount = count;
-}
-
-qint64 Track::addedTime() const
-{
-    return m_addedTime;
-}
-
-void Track::setAddedTime(qint64 time)
-{
-    m_addedTime = time;
-}
-
-qint64 Track::mTime() const
-{
-    return m_mTime;
-}
-
-void Track::setMTime(qint64 time)
-{
-    m_mTime = time;
-}
-
 bool Track::isSingleDiscAlbum() const
 {
-    return !m_coverPath.isEmpty();
+    return m_discTotal <= 1;
 }
 
-quint64 Track::fileSize() const
-{
-    return m_filesize;
-}
-
-void Track::setFileSize(quint64 fileSize)
-{
-    m_filesize = fileSize;
-}
-
-int Track::libraryId() const
-{
-    return m_libraryId;
-}
-
-void Track::setLibraryId(int id)
-{
-    m_libraryId = id;
-}
-
-ExtraTags Track::extra() const
+ExtraTags Track::extraTags() const
 {
     return m_extraTags;
-}
-
-void Track::addExtra(const QString& tag, const QString& value)
-{
-    if(!tag.isEmpty() && !value.isEmpty()) {
-        if(Utils::hasKey(m_extraTags, tag)) {
-            auto entry = m_extraTags.at(tag);
-            entry.append(value);
-            m_extraTags.emplace(tag, entry);
-        }
-    }
-    m_extraTags.emplace(tag, value);
 }
 
 QByteArray Track::extraTagsToJson() const
@@ -395,9 +204,177 @@ QByteArray Track::extraTagsToJson() const
     return json;
 }
 
-void Track::jsonToExtraTags(const QByteArray& ba)
+uint64_t Track::fileSize() const
 {
-    const QJsonDocument jsonDoc = QJsonDocument::fromJson(ba);
+    return m_filesize;
+}
+
+int Track::bitrate() const
+{
+    return m_bitrate;
+}
+
+int Track::sampleRate() const
+{
+    return m_sampleRate;
+}
+
+int Track::playCount() const
+{
+    return m_playcount;
+}
+
+uint64_t Track::addedTime() const
+{
+    return m_addedTime;
+}
+
+uint64_t Track::modifiedTime() const
+{
+    return m_modifiedTime;
+}
+
+void Track::setIsEnabled(bool enabled)
+{
+    m_enabled = enabled;
+}
+
+void Track::setLibraryId(int id)
+{
+    m_libraryId = id;
+}
+
+void Track::setId(int id)
+{
+    m_id = id;
+}
+
+void Track::setTitle(const QString& title)
+{
+    m_title = title;
+}
+
+void Track::setArtists(const ArtistList& artists)
+{
+    m_artists = artists;
+}
+
+void Track::setArtistIds(const IdSet& ids)
+{
+    m_artistIds = ids;
+}
+
+void Track::addArtistId(int id)
+{
+    m_artistIds.emplace(id);
+}
+
+void Track::setAlbumId(int id)
+{
+    m_albumId = id;
+}
+
+void Track::setAlbum(const QString& title)
+{
+    m_album = title;
+}
+
+void Track::setAlbumArtist(const QString& artist)
+{
+    m_albumArtist = artist;
+}
+
+void Track::setAlbumArtistId(int id)
+{
+    m_albumArtistId = id;
+}
+
+void Track::setTrackNumber(int number)
+{
+    m_trackNumber = number;
+}
+
+void Track::setTrackTotal(int total)
+{
+    m_trackTotal = total;
+}
+
+void Track::setDiscNumber(int number)
+{
+    m_discNumber = number;
+}
+
+void Track::setDiscTotal(int total)
+{
+    m_discTotal = total;
+}
+
+void Track::setGenreIds(const IdSet& ids)
+{
+    m_genreIds = ids;
+}
+
+void Track::addGenreId(int id)
+{
+    m_genreIds.emplace(id);
+}
+
+void Track::setGenres(const GenreList& genres)
+{
+    m_genres = genres;
+}
+
+void Track::setComposer(const QString& composer)
+{
+    m_composer = composer;
+}
+
+void Track::setPerformer(const QString& performer)
+{
+    m_performer = performer;
+}
+
+void Track::setDuration(quint64 duration)
+{
+    m_duration = duration;
+}
+
+void Track::setLyrics(const QString& lyrics)
+{
+    m_lyrics = lyrics;
+}
+
+void Track::setComment(const QString& comment)
+{
+    m_comment = comment;
+}
+
+void Track::setDate(const QString& date)
+{
+    m_date = date;
+    m_year = date.toInt();
+}
+
+void Track::setCoverPath(const QString& path)
+{
+    m_coverPath = path;
+}
+
+void Track::addExtraTag(const QString& tag, const QString& value)
+{
+    if(!tag.isEmpty() && !value.isEmpty()) {
+        if(Utils::hasKey(m_extraTags, tag)) {
+            auto entry = m_extraTags.at(tag);
+            entry.append(value);
+            m_extraTags.emplace(tag, entry);
+        }
+    }
+    m_extraTags.emplace(tag, value);
+}
+
+void Track::jsonToExtraTags(const QByteArray& json)
+{
+    const QJsonDocument jsonDoc = QJsonDocument::fromJson(json);
 
     if(!jsonDoc.isNull()) {
         QJsonObject json = jsonDoc.object();
@@ -421,6 +398,36 @@ void Track::jsonToExtraTags(const QByteArray& ba)
             }
         }
     }
+}
+
+void Track::setFileSize(uint64_t fileSize)
+{
+    m_filesize = fileSize;
+}
+
+void Track::setBitrate(int rate)
+{
+    m_bitrate = rate;
+}
+
+void Track::setSampleRate(int rate)
+{
+    m_sampleRate = rate;
+}
+
+void Track::setPlayCount(int count)
+{
+    m_playcount = count;
+}
+
+void Track::setAddedTime(uint64_t time)
+{
+    m_addedTime = time;
+}
+
+void Track::setModifiedTime(uint64_t time)
+{
+    m_modifiedTime = time;
 }
 
 void Track::resetIds()

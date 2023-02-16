@@ -33,15 +33,13 @@ public:
     ~Container() override = default;
 
     [[nodiscard]] QString title() const;
-
     [[nodiscard]] QString subTitle() const;
-    void setSubTitle(const QString& title);
-
     [[nodiscard]] int trackCount() const;
-    void setTrackCount(int count);
+    [[nodiscard]] uint64_t duration() const;
 
-    [[nodiscard]] quint64 duration() const;
-    void setDuration(quint64 duration);
+    void setSubTitle(const QString& title);
+    void setTrackCount(int count);
+    void setDuration(uint64_t duration);
 
     virtual void addTrack(Track* track);
     virtual void removeTrack(Track* track);
@@ -50,7 +48,7 @@ public:
 private:
     QString m_title;
     QString m_subTitle;
-    quint64 m_duration;
+    uint64_t m_duration;
     int m_trackCount;
 };
 } // namespace Core

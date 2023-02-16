@@ -21,8 +21,8 @@
 
 namespace Core {
 Disc::Disc(int number)
-    : Container("Disc")
-    , m_number(number)
+    : Container{"Disc"}
+    , m_number{number}
 { }
 
 int Disc::number() const

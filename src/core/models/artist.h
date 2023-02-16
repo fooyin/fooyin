@@ -32,9 +32,9 @@ public:
     ~Artist() override = default;
 
     [[nodiscard]] int id() const;
-    void setId(int id);
-
     [[nodiscard]] QString name() const;
+
+    void setId(int id);
 
 private:
     int m_id;

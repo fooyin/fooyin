@@ -22,8 +22,8 @@
 namespace Core {
 Artist::Artist(QString name)
     : LibraryItem()
-    , m_id(-1)
-    , m_name(std::move(name))
+    , m_id{-1}
+    , m_name{std::move(name)}
 { }
 
 int Artist::id() const
@@ -31,13 +31,14 @@ int Artist::id() const
     return m_id;
 }
 
+QString Artist::name() const
+{
+    return m_name;
+}
+
 void Artist::setId(int id)
 {
     m_id = id;
 }
 
-QString Artist::name() const
-{
-    return m_name;
-}
 } // namespace Core

@@ -21,13 +21,14 @@
 
 #include "track.h"
 
+#include <utils/helpers.h>
+
 namespace Core {
 Album::Album(const QString& title)
-    : Container(title)
-    , m_id(-1)
-    , m_artistId(-1)
-    , m_year(-1)
-    , m_discCount(0)
+    : Container{title}
+    , m_id{-1}
+    , m_artistId{-1}
+    , m_discCount{0}
 { }
 
 int Album::id() const
@@ -35,19 +36,9 @@ int Album::id() const
     return m_id;
 }
 
-void Album::setId(int id)
-{
-    m_id = id;
-}
-
 int Album::artistId() const
 {
     return m_artistId;
-}
-
-void Album::setArtistId(int id)
-{
-    m_artistId = id;
 }
 
 QString Album::artist() const
@@ -55,12 +46,17 @@ QString Album::artist() const
     return m_artist;
 }
 
+QString Album::date() const
+{
+    return m_date;
+}
+
 int Album::year() const
 {
     return m_year;
 }
 
-QStringList Album::genres() const
+GenreList Album::genres() const
 {
     return m_genres;
 }
@@ -75,31 +71,6 @@ bool Album::isSingleDiscAlbum() const
     return m_discCount <= 1;
 }
 
-void Album::setArtist(const QString& artist)
-{
-    m_artist = artist;
-}
-
-void Album::setYear(int year)
-{
-    m_year = year;
-}
-
-void Album::setGenres(const QStringList& genres)
-{
-    m_genres = genres;
-}
-
-QString Album::mainGenre() const
-{
-    return m_genres.constFirst();
-}
-
-void Album::setDiscCount(int count)
-{
-    m_discCount = count;
-}
-
 bool Album::hasCover() const
 {
     return !m_coverPath.isEmpty();
@@ -108,6 +79,37 @@ bool Album::hasCover() const
 QString Album::coverPath() const
 {
     return m_coverPath;
+}
+
+void Album::setId(int id)
+{
+    m_id = id;
+}
+
+void Album::setArtistId(int id)
+{
+    m_artistId = id;
+}
+
+void Album::setArtist(const QString& artist)
+{
+    m_artist = artist;
+}
+
+void Album::setDate(const QString& date)
+{
+    m_date = date;
+    m_year = date.toInt();
+}
+
+void Album::setGenres(const GenreList& genres)
+{
+    m_genres = genres;
+}
+
+void Album::setDiscCount(int count)
+{
+    m_discCount = count;
 }
 
 void Album::setCoverPath(const QString& path)
@@ -125,8 +127,8 @@ void Album::addTrack(Track* track)
     }
 
     for(const auto& genre : track->genres()) {
-        if(!m_genres.contains(genre)) {
-            m_genres.append(genre);
+        if(!Utils::contains(m_genres, genre)) {
+            m_genres.emplace_back(genre);
         }
     }
 }
@@ -134,13 +136,6 @@ void Album::addTrack(Track* track)
 void Album::removeTrack(Track* track)
 {
     Container::removeTrack(track);
-
-    for(const auto& genre : track->genres()) {
-        if(m_genres.contains(genre)) {
-            auto idx = static_cast<int>(m_genres.indexOf(genre));
-            m_genres.remove(idx);
-        }
-    }
 }
 
 void Album::reset()

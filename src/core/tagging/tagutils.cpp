@@ -213,10 +213,10 @@ QStringList convertStringList(const TagLib::StringList& str)
     QStringList list;
 
     for(const auto& string : str) {
-        list += TStringToQString(string);
+        list.emplace_back(TStringToQString(string));
     }
 
-    list.sort();
+    std::sort(list.begin(), list.end());
 
     return list;
 }

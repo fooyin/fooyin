@@ -55,9 +55,9 @@ QString storeCover(const Track& track)
     return coverPath;
 }
 
-QString calcAlbumHash(const QString& albumName, const QString& albumArtist, int year)
+QString calcAlbumHash(const QString& albumName, const QString& albumArtist, const QString& date)
 {
-    const QString albumId = albumName.toLower() + albumArtist.toLower() + QString::number(year);
+    const QString albumId = albumName.toLower() + albumArtist.toLower() + date;
     QString albumKey      = QCryptographicHash::hash(albumId.toUtf8(), QCryptographicHash::Sha1).toHex();
     return albumKey;
 }

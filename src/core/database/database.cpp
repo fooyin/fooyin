@@ -101,12 +101,12 @@ bool Database::createDatabase()
                                "    AlbumID INTEGER PRIMARY KEY AUTOINCREMENT,"
                                "    Title TEXT,"
                                "    ArtistID INTEGER REFERENCES Artists,"
-                               "    Year INTEGER);");
+                               "    Date TEXT);");
 
     checkInsertTable("AlbumView", "CREATE VIEW AlbumView AS"
                                   "    SELECT Albums.AlbumID,"
                                   "           Albums.Title,"
-                                  "           Albums.Year,"
+                                  "           Albums.Date,"
                                   "           Albums.ArtistID,"
                                   "           Artists.Name AS ArtistName"
                                   "    FROM Albums"
@@ -124,7 +124,7 @@ bool Database::createDatabase()
                                "    CoverPath TEXT,"
                                "    DiscNumber INTEGER,"
                                "    DiscTotal INTEGER,"
-                               "    Year INTEGER,"
+                               "    Date TEXT,"
                                "    Composer TEXT,"
                                "    Performer TEXT,"
                                "    Lyrics TEXT,"
@@ -155,7 +155,7 @@ bool Database::createDatabase()
                                   "           Tracks.CoverPath,"
                                   "           Tracks.DiscNumber,"
                                   "           Tracks.DiscTotal,"
-                                  "           Tracks.Year,"
+                                  "           Tracks.Date,"
                                   "           Tracks.Composer,"
                                   "           Tracks.Performer,"
                                   "           TrackGenres.GenreIDs AS GenreIDs,"
@@ -221,9 +221,9 @@ bool Database::createDatabase()
                                        "    TrackID  INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
                                        "    PRIMARY KEY (PlaylistID, TrackID));");
 
-    checkInsertIndex("AlbumIndex", "CREATE INDEX AlbumIndex ON Albums(AlbumID, Title, Year, ArtistID);");
+    checkInsertIndex("AlbumIndex", "CREATE INDEX AlbumIndex ON Albums(AlbumID, Title, Date, ArtistID);");
     checkInsertIndex("GenreIndex", "CREATE INDEX GenreIndex ON Genres(GenreID,Name);");
-    checkInsertIndex("TrackIndex", "CREATE INDEX TrackIndex ON Tracks(Year,AlbumArtistID,AlbumID,TrackID);");
+    checkInsertIndex("TrackIndex", "CREATE INDEX TrackIndex ON Tracks(Date,AlbumArtistID,AlbumID,TrackID);");
     checkInsertIndex("PlaylistIndex", "CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);");
     checkInsertIndex("TrackViewIndex", "CREATE INDEX TrackViewIndex ON Tracks(TrackID,AlbumID,AlbumArtistID);");
     checkInsertIndex("TrackAlbumIndex", "CREATE INDEX TrackAlbumIndex ON Tracks(AlbumID,DiscNumber,Duration);");

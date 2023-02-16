@@ -22,11 +22,14 @@
 #include "core/typedefs.h"
 #include "libraryitem.h"
 
-#include <QDateTime>
-#include <QSet>
+#include <QList>
+
+#include <map>
 
 namespace Core {
-using ExtraTags = std::map<QString, QList<QString>>;
+using GenreList  = QList<QString>;
+using ArtistList = QList<QString>;
+using ExtraTags  = std::map<QString, QList<QString>>;
 
 class Track : public LibraryItem
 {
@@ -36,140 +39,126 @@ public:
     ~Track() override = default;
 
     [[nodiscard]] bool isEnabled() const;
-    void setIsEnabled(bool enabled);
-
-    [[nodiscard]] int id() const;
-    void setId(int id);
-
-    [[nodiscard]] QString filepath() const;
-
-    [[nodiscard]] QString title() const;
-    void setTitle(const QString& title);
-
-    [[nodiscard]] QStringList artists() const;
-    void setArtists(const QStringList& artist);
-
-    [[nodiscard]] IdSet artistIds() const;
-    void setArtistIds(const IdSet& ids);
-    void addArtistId(int id);
-
-    [[nodiscard]] int albumId() const;
-    void setAlbumId(int id);
-
-    [[nodiscard]] QString album() const;
-    void setAlbum(const QString& title);
-
-    [[nodiscard]] QString albumArtist() const;
-    void setAlbumArtist(const QString& artist);
-
-    [[nodiscard]] int albumArtistId() const;
-    void setAlbumArtistId(int id);
-
-    [[nodiscard]] quint16 trackNumber() const;
-    void setTrackNumber(quint16 num);
-
-    [[nodiscard]] quint16 trackTotal() const;
-    void setTrackTotal(quint16 num);
-
-    [[nodiscard]] quint8 discNumber() const;
-    void setDiscNumber(quint8 num);
-
-    [[nodiscard]] quint8 discTotal() const;
-    void setDiscTotal(quint8 num);
-
-    [[nodiscard]] IdSet genreIds() const;
-    void setGenreIds(const IdSet& ids);
-    void addGenreId(int id);
-
-    [[nodiscard]] QStringList genres() const;
-    void setGenres(const QStringList& genre);
-
-    [[nodiscard]] QString composer() const;
-    void setComposer(const QString& composer);
-
-    [[nodiscard]] QString performer() const;
-    void setPerformer(const QString& performer);
-
-    [[nodiscard]] quint64 duration() const;
-    void setDuration(quint64 duration);
-
-    [[nodiscard]] QString lyrics() const;
-    void setLyrics(const QString& lyrics);
-
-    [[nodiscard]] QString comment() const;
-    void setComment(const QString& comment);
-
-    [[nodiscard]] quint16 year() const;
-    void setYear(quint16 year);
-
-    [[nodiscard]] QString coverPath() const;
-    void setCoverPath(const QString& path);
-
-    [[nodiscard]] bool hasCover() const;
-
-    [[nodiscard]] quint16 bitrate() const;
-    void setBitrate(quint16 rate);
-
-    [[nodiscard]] quint16 sampleRate() const;
-    void setSampleRate(quint16 rate);
-
-    [[nodiscard]] quint16 playCount() const;
-    void setPlayCount(quint16 count);
-
-    [[nodiscard]] qint64 addedTime() const;
-    void setAddedTime(qint64 time);
-
-    [[nodiscard]] qint64 mTime() const;
-    void setMTime(qint64 time);
-
-    [[nodiscard]] bool isSingleDiscAlbum() const;
-
-    [[nodiscard]] quint64 fileSize() const;
-    void setFileSize(quint64 fileSize);
 
     [[nodiscard]] int libraryId() const;
+
+    [[nodiscard]] int id() const;
+    [[nodiscard]] QString filepath() const;
+    [[nodiscard]] QString title() const;
+    [[nodiscard]] ArtistList artists() const;
+    [[nodiscard]] IdSet artistIds() const;
+    [[nodiscard]] int albumId() const;
+    [[nodiscard]] QString album() const;
+    [[nodiscard]] QString albumArtist() const;
+    [[nodiscard]] int albumArtistId() const;
+    [[nodiscard]] int trackNumber() const;
+    [[nodiscard]] int trackTotal() const;
+    [[nodiscard]] int discNumber() const;
+    [[nodiscard]] int discTotal() const;
+    [[nodiscard]] IdSet genreIds() const;
+    [[nodiscard]] GenreList genres() const;
+    [[nodiscard]] QString composer() const;
+    [[nodiscard]] QString performer() const;
+    [[nodiscard]] quint64 duration() const;
+    [[nodiscard]] QString lyrics() const;
+    [[nodiscard]] QString comment() const;
+    [[nodiscard]] QString date() const;
+    [[nodiscard]] int year() const;
+    [[nodiscard]] QString coverPath() const;
+    [[nodiscard]] bool hasCover() const;
+    [[nodiscard]] bool isSingleDiscAlbum() const;
+
+    [[nodiscard]] ExtraTags extraTags() const;
+    [[nodiscard]] QByteArray extraTagsToJson() const;
+
+    [[nodiscard]] uint64_t fileSize() const;
+    [[nodiscard]] int bitrate() const;
+    [[nodiscard]] int sampleRate() const;
+
+    [[nodiscard]] int playCount() const;
+
+    [[nodiscard]] uint64_t addedTime() const;
+    [[nodiscard]] uint64_t modifiedTime() const;
+
+    void setIsEnabled(bool enabled);
+
     void setLibraryId(int id);
 
-    [[nodiscard]] ExtraTags extra() const;
+    void setId(int id);
+    void setTitle(const QString& title);
+    void setArtists(const ArtistList& artists);
+    void setArtistIds(const IdSet& ids);
+    void addArtistId(int id);
+    void setAlbumId(int id);
+    void setAlbum(const QString& title);
+    void setAlbumArtist(const QString& artist);
+    void setAlbumArtistId(int id);
+    void setTrackNumber(int num);
+    void setTrackTotal(int num);
+    void setDiscNumber(int num);
+    void setDiscTotal(int num);
+    void setGenreIds(const IdSet& ids);
+    void addGenreId(int id);
+    void setGenres(const GenreList& genres);
+    void setComposer(const QString& composer);
+    void setPerformer(const QString& performer);
+    void setDuration(quint64 duration);
+    void setLyrics(const QString& lyrics);
+    void setComment(const QString& comment);
+    void setDate(const QString& date);
+    void setCoverPath(const QString& path);
 
-    void addExtra(const QString& tag, const QString& value);
+    void addExtraTag(const QString& tag, const QString& value);
+    void jsonToExtraTags(const QByteArray& json);
 
-    [[nodiscard]] QByteArray extraTagsToJson() const;
-    void jsonToExtraTags(const QByteArray& ba);
+    void setFileSize(uint64_t fileSize);
+    void setBitrate(int rate);
+    void setSampleRate(int rate);
+
+    void setPlayCount(int count);
+
+    void setAddedTime(uint64_t time);
+    void setModifiedTime(uint64_t time);
 
     void resetIds();
 
 private:
     bool m_enabled;
+
+    int m_libraryId;
+
     int m_id;
     QString m_filepath;
     QString m_title;
-    QStringList m_artists;
+    ArtistList m_artists;
     IdSet m_artistIds;
     int m_albumId;
     QString m_album;
     QString m_albumArtist;
     int m_albumArtistId;
-    quint16 m_trackNumber;
-    quint16 m_trackTotal;
-    quint8 m_discNumber;
-    quint8 m_discTotal;
+    int m_trackNumber;
+    int m_trackTotal;
+    int m_discNumber;
+    int m_discTotal;
     IdSet m_genreIds;
-    QStringList m_genres;
+    GenreList m_genres;
     QString m_composer;
     QString m_performer;
-    quint64 m_duration;
+    uint64_t m_duration;
     QString m_lyrics;
     QString m_comment;
-    quint16 m_year;
+    QString m_date;
+    int m_year;
     QString m_coverPath;
-    quint64 m_bitrate;
-    quint16 m_sampleRate;
-    quint16 m_playcount;
-    qint64 m_addedTime;
-    qint64 m_mTime;
-    quint64 m_filesize;
-    int m_libraryId;
     ExtraTags m_extraTags;
+
+    uint64_t m_filesize;
+    int m_bitrate;
+    int m_sampleRate;
+
+    int m_playcount;
+
+    uint64_t m_addedTime;
+    uint64_t m_modifiedTime;
 };
 } // namespace Core

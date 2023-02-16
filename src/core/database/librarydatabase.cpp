@@ -40,18 +40,18 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("CoverPath"), track.coverPath()},
         {QStringLiteral("DiscNumber"), track.discNumber()},
         {QStringLiteral("DiscTotal"), track.discTotal()},
-        {QStringLiteral("Year"), track.year()},
+        {QStringLiteral("Date"), track.date()},
         {QStringLiteral("Composer"), track.composer()},
         {QStringLiteral("Performer"), track.performer()},
         {QStringLiteral("Lyrics"), track.lyrics()},
         {QStringLiteral("Comment"), track.comment()},
         {QStringLiteral("Duration"), track.duration()},
-        {QStringLiteral("FileSize"), track.fileSize()},
+        {QStringLiteral("FileSize"), QVariant::fromValue(track.fileSize())},
         {QStringLiteral("BitRate"), track.bitrate()},
         {QStringLiteral("SampleRate"), track.sampleRate()},
         {QStringLiteral("ExtraTags"), track.extraTagsToJson()},
-        {QStringLiteral("AddedDate"), track.addedTime()},
-        {QStringLiteral("ModifiedDate"), track.mTime()},
+        {QStringLiteral("AddedDate"), QVariant::fromValue(track.addedTime())},
+        {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime())},
         {QStringLiteral("LibraryID"), track.libraryId()},
     };
 }
@@ -75,7 +75,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         getAllAlbums(dbAlbums);
 
         for(const auto& album : qAsConst(dbAlbums)) {
-            const QString hash = Library::Utils::calcAlbumHash(album.title(), album.artist(), album.year());
+            const QString hash = Library::Utils::calcAlbumHash(album.title(), album.artist(), album.date());
             albumMap.insert(hash, album);
         }
     }
@@ -153,10 +153,10 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         }
 
         // Check album id
-        const QString hash = Library::Utils::calcAlbumHash(track.album(), track.albumArtist(), track.year());
+        const QString hash = Library::Utils::calcAlbumHash(track.album(), track.albumArtist(), track.date());
         if(!albumMap.contains(hash)) {
             Album album{track.album()};
-            album.setYear(track.year());
+            album.setDate(track.date());
             album.setGenres(track.genres());
             album.setArtistId(albumArtist.id());
             album.setArtist(track.albumArtist());
@@ -267,7 +267,7 @@ QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& j
         QStringLiteral("CoverPath"),     // 11
         QStringLiteral("DiscNumber"),    // 12
         QStringLiteral("DiscTotal"),     // 13
-        QStringLiteral("Year"),          // 14
+        QStringLiteral("Date"),          // 14
         QStringLiteral("Composer"),      // 15
         QStringLiteral("Performer"),     // 16
         QStringLiteral("GenreIDs"),      // 17
@@ -296,7 +296,7 @@ QString LibraryDatabase::fetchQueryAlbums(const QString& where, const QString& j
     static const auto fields = QStringList{
         QStringLiteral("AlbumView.AlbumID"),    // 0
         QStringLiteral("AlbumView.Title"),      // 1
-        QStringLiteral("AlbumView.Year"),       // 2
+        QStringLiteral("AlbumView.Date"),       // 2
         QStringLiteral("AlbumView.ArtistID"),   // 3
         QStringLiteral("AlbumView.ArtistName"), // 4
     };
@@ -362,21 +362,21 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setCoverPath(q.value(11).toString());
         track.setDiscNumber(q.value(12).toInt());
         track.setDiscTotal(q.value(13).toInt());
-        track.setYear(q.value(14).toInt());
+        track.setDate(q.value(14).toString());
         track.setComposer(q.value(15).toString());
         track.setPerformer(q.value(16).toString());
         const QStringList genreIds = q.value(17).toString().split("|");
         track.setGenres(q.value(18).toString().split("|", Qt::SkipEmptyParts));
         track.setLyrics(q.value(19).toString());
         track.setComment(q.value(20).toString());
-        track.setDuration(q.value(21).value<quint64>());
+        track.setDuration(q.value(21).value<uint64_t>());
         track.setPlayCount(q.value(22).toInt());
         track.setFileSize(q.value(23).toInt());
         track.setBitrate(q.value(24).toInt());
         track.setSampleRate(q.value(25).toInt());
         track.jsonToExtraTags(q.value(26).toByteArray());
-        track.setAddedTime(static_cast<qint64>(q.value(27).toULongLong()));
-        track.setMTime(static_cast<qint64>(q.value(28).toULongLong()));
+        track.setAddedTime(q.value(27).value<uint64_t>());
+        track.setModifiedTime(q.value(28).value<uint64_t>());
         track.setLibraryId(q.value(29).toInt());
 
         for(const auto& id : artistIds) {
@@ -405,14 +405,14 @@ bool LibraryDatabase::dbFetchAlbums(Query& q, AlbumList& result)
     while(q.next()) {
         Album album{q.value(1).toString()};
 
-        album.setId(q.value(0).value<int>());
-        album.setYear(q.value(2).value<int>());
-        album.setArtistId(q.value(3).value<int>());
+        album.setId(q.value(0).toInt());
+        album.setDate(q.value(2).toString());
+        album.setArtistId(q.value(3).toInt());
         album.setArtist(q.value(4).toString());
         album.setGenres(q.value(5).toString().split("|"));
-        album.setDiscCount(q.value(6).value<int>());
-        album.setTrackCount(q.value(7).value<int>());
-        album.setDuration(q.value(8).value<quint64>());
+        album.setDiscCount(q.value(6).toInt());
+        album.setTrackCount(q.value(7).toInt());
+        album.setDuration(q.value(8).value<uint64_t>());
         album.setCoverPath(q.value(9).toString());
 
         result.emplace_back(album);
@@ -538,7 +538,7 @@ int LibraryDatabase::insertArtist(const Artist& artist)
 int LibraryDatabase::insertAlbum(const Album& album)
 {
     const auto bindings
-        = QMap<QString, QVariant>{{"Title", album.title()}, {"ArtistID", album.artistId()}, {"Year", album.year()}};
+        = QMap<QString, QVariant>{{"Title", album.title()}, {"ArtistID", album.artistId()}, {"Date", album.date()}};
 
     const auto q = module()->insert("Albums", bindings, QString("Cannot insert album %1").arg(album.title()));
 

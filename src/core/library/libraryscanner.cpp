@@ -160,15 +160,19 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
         }
 
         const QFileInfo info{filepath};
+        const QDateTime lastModifiedTime{info.lastModified()};
+        uint64_t lastModified{0};
 
-        auto modified = info.lastModified().isValid() ? info.lastModified().toMSecsSinceEpoch() : 0;
+        if(lastModifiedTime.isValid()) {
+            lastModified = static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch());
+        };
 
         bool fileWasRead;
 
         if(tracks.count(filepath)) {
             const Track& libraryTrack = tracks.at(filepath);
             if(libraryTrack.id() >= 0) {
-                if(libraryTrack.mTime() == modified) {
+                if(libraryTrack.modifiedTime() == lastModified) {
                     continue;
                 }
 

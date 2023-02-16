@@ -22,10 +22,11 @@
 #include "core/models/track.h"
 
 class QString;
+class QPixmap;
 
 namespace Core::Library::Utils {
 QString coverInDirectory(const QString& directory);
-QString calcAlbumHash(const QString& albumName, const QString& albumArtist, int year);
+QString calcAlbumHash(const QString& albumName, const QString& albumArtist, const QString& date);
 QString calcCoverHash(const QString& albumName, const QString& albumArtist);
 QPixmap getCover(const QString& path, int size);
 bool saveCover(const QPixmap& cover, const QString& hash);

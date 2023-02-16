@@ -519,7 +519,7 @@ void PlaylistModel::createAlbums(const Core::TrackPtrList& tracks)
             if(!m_containers.count(albumKey)) {
                 auto album = std::make_unique<Core::Album>(track->album());
                 album->setId(track->albumId());
-                album->setYear(track->year());
+                album->setDate(track->date());
                 album->setArtistId(track->albumArtistId());
                 album->setArtist(track->albumArtist());
                 album->setCoverPath(track->coverPath());

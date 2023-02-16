@@ -62,7 +62,7 @@ bool readMetaData(Track& track, Quality quality)
     const qint64 timeNow = QDateTime::currentMSecsSinceEpoch();
 
     track.setAddedTime(timeNow);
-    track.setMTime(md.isValid() ? md.toMSecsSinceEpoch() : 0);
+    track.setModifiedTime(md.isValid() ? md.toMSecsSinceEpoch() : 0);
 
     if(fileInfo.size() <= 0) {
         return false;
@@ -92,7 +92,7 @@ bool readMetaData(Track& track, Quality quality)
     const auto title       = convertString(parsedTag.map.value("TITLE").toString());
     const auto genres      = convertStringList(parsedTag.map.value("GENRE").toString());
     const auto comment     = convertString(parsedTag.map.value("COMMENT").toString());
-    const auto year        = convertNumber(parsedTag.map.value("DATE").toString());
+    const auto date        = convertString(parsedTag.map.value("DATE").toString());
     const auto lyrics      = convertString(parsedTag.map.value("LYRICS").toString());
 
     // TODO: Check for TRACKTOTAL and DISCTOTAL tags when X/Y not standard i.e. FLAC
@@ -128,7 +128,7 @@ bool readMetaData(Track& track, Quality quality)
         for(const auto& value : values) {
             const auto tagEntry = QString::fromStdString(tag.to8Bit(true));
             if(!baseTags.contains(tagEntry)) {
-                track.addExtra(tagEntry, QString::fromStdString(value.to8Bit(true)));
+                track.addExtraTag(tagEntry, QString::fromStdString(value.to8Bit(true)));
             }
         }
     }
@@ -138,7 +138,7 @@ bool readMetaData(Track& track, Quality quality)
     track.setAlbumArtist(albumArtist);
     track.setTitle(title);
     track.setDuration(length);
-    track.setYear(year);
+    track.setDate(date);
     track.setGenres(genres);
     track.setTrackNumber(trackNum);
     track.setTrackTotal(trackTotal);

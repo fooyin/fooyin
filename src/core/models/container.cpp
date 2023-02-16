@@ -24,9 +24,9 @@
 namespace Core {
 Container::Container(QString title)
     : LibraryItem()
-    , m_title(std::move(title))
-    , m_duration(0)
-    , m_trackCount(0)
+    , m_title{std::move(title)}
+    , m_duration{0}
+    , m_trackCount{0}
 { }
 
 QString Container::title() const
@@ -39,14 +39,19 @@ QString Container::subTitle() const
     return m_subTitle;
 }
 
-void Container::setSubTitle(const QString& title)
-{
-    m_subTitle = title;
-}
-
 int Container::trackCount() const
 {
     return m_trackCount;
+}
+
+uint64_t Container::duration() const
+{
+    return m_duration;
+}
+
+void Container::setSubTitle(const QString& title)
+{
+    m_subTitle = title;
 }
 
 void Container::setTrackCount(int count)
@@ -54,12 +59,7 @@ void Container::setTrackCount(int count)
     m_trackCount = count;
 }
 
-quint64 Container::duration() const
-{
-    return m_duration;
-}
-
-void Container::setDuration(quint64 duration)
+void Container::setDuration(uint64_t duration)
 {
     m_duration = duration;
 }

@@ -139,7 +139,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
                         if(!where.isEmpty()) {
                             where += " AND ";
                         }
-                        where += QString("Tracks.Year IN (%1)").arg(values);
+                        where += QString("SUBSTRING(Tracks.Date, 1, 4) IN (%1)").arg(values);
                     }
                     break;
                 }
@@ -206,10 +206,10 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
                     sortOrder = QStringLiteral("LOWER(AlbumArtists.Name)");
                     break;
                 case(Core::Library::SortOrder::YearDesc):
-                    sortOrder = QStringLiteral("Tracks.Year, LOWER(AlbumArtists.Name)");
+                    sortOrder = QStringLiteral("Tracks.Date, LOWER(AlbumArtists.Name)");
                     break;
                 case(Core::Library::SortOrder::YearAsc):
-                    sortOrder = QStringLiteral("Tracks.Year ASC, LOWER(AlbumArtists.Name)");
+                    sortOrder = QStringLiteral("Tracks.Date ASC, LOWER(AlbumArtists.Name)");
                     break;
                 case(Core::Library::SortOrder::NoSorting):
                     break;
@@ -233,10 +233,10 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
                     sortOrder = QStringLiteral("LOWER(Albums.Title)");
                     break;
                 case(Core::Library::SortOrder::YearDesc):
-                    sortOrder = QStringLiteral("Albums.Year DESC, LOWER(Albums.Title)");
+                    sortOrder = QStringLiteral("Albums.Date DESC, LOWER(Albums.Title)");
                     break;
                 case(Core::Library::SortOrder::YearAsc):
-                    sortOrder = QStringLiteral("Albums.Year ASC, LOWER(Albums.Title)");
+                    sortOrder = QStringLiteral("Albums.Date ASC, LOWER(Albums.Title)");
                     break;
                 case(Core::Library::SortOrder::NoSorting):
                     sortOrder = QStringLiteral("LOWER(Albums.Title)");
@@ -244,9 +244,9 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
             }
             break;
         case(Filters::FilterType::Year):
-            fields.append(QStringLiteral("Tracks.Year"));
-            fields.append(QStringLiteral("Tracks.Year"));
-            group = QStringLiteral("Tracks.Year");
+            fields.append(QStringLiteral("SUBSTRING(Tracks.Date, 1, 4)"));
+            fields.append(QStringLiteral("SUBSTRING(Tracks.Date, 1, 4)"));
+            group = QStringLiteral("SUBSTRING(Tracks.Date, 1, 4)");
             break;
         case(Filters::FilterType::Genre):
             fields.append(QStringLiteral("Genres.GenreID"));
