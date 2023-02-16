@@ -20,8 +20,6 @@
 #pragma once
 
 #include <algorithm>
-#include <type_traits>
-#include <vector>
 
 namespace Utils {
 template <typename C, typename F>
