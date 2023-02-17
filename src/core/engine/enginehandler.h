@@ -20,18 +20,13 @@
 #pragma once
 
 #include "core/app/worker.h"
-#include "enginempv.h"
+#include "core/player/playermanager.h"
+#include "engine.h"
 
 #include <QObject>
 #include <QThread>
 
-namespace Core {
-
-namespace Player {
-class PlayerManager;
-} // namespace Player
-
-namespace Engine {
+namespace Core::Engine {
 class EngineHandler : public Worker
 {
     Q_OBJECT
@@ -49,7 +44,6 @@ protected:
     void playStateChanged(Player::PlayState state);
 
 private:
-    EngineMpv m_engine;
+    std::unique_ptr<Engine> m_engine;
 };
-} // namespace Engine
-} // namespace Core
+} // namespace Core::Engine
