@@ -55,6 +55,7 @@ public:
 
     bool operator==(const Id& id) const;
     bool operator!=(const Id& id) const;
+    bool operator<(const Id& id) const;
 
 private:
     unsigned int m_id;
