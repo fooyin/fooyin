@@ -37,7 +37,7 @@ IdLibraryMap Library::getAllLibraries()
     Query q(this);
     q.prepare(query);
 
-    const bool success = q.exec();
+    const bool success = q.execQuery();
 
     if(!success) {
         q.error("Cannot fetch all libraries");
@@ -72,7 +72,7 @@ bool Library::insertLibrary(int id, const QString& path, const QString& name)
     q.bindValue(":libraryName", name);
     q.bindValue(":libraryPath", path);
 
-    const bool success = q.exec();
+    const bool success = q.execQuery();
 
     if(!success) {
         q.error(QString("Cannot insert library (name: %1, path: %2)").arg(name, path));
@@ -90,7 +90,7 @@ bool Library::removeLibrary(int id)
     q.prepare(query);
     q.bindValue(":libraryId", id);
 
-    const bool success = q.exec();
+    const bool success = q.execQuery();
 
     if(!success) {
         q.error(QString("Cannot remove library %1").arg(id));
