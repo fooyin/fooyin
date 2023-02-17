@@ -236,7 +236,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
                     setupContextMenu(child, m_menu);
                 }
                 showOverlay(child);
-                m_menu->menu()->exec(mapToGlobal(pos));
+                m_menu->menu()->popup(mapToGlobal(pos));
                 return true;
             }
         }
