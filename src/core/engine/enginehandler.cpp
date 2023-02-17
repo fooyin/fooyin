@@ -20,21 +20,23 @@
 #include "enginehandler.h"
 
 #include "core/models/track.h"
+#include "enginempv.h"
 
 namespace Core::Engine {
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* parent)
-    : Worker(parent)
+    : Worker{parent}
+    , m_engine{std::make_unique<EngineMpv>()}
 {
     connect(playerManager, &Player::PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
-    connect(playerManager, &Player::PlayerManager::volumeChanged, &m_engine, &Engine::setVolume);
-    connect(playerManager, &Player::PlayerManager::currentTrackChanged, &m_engine, &Engine::changeTrack);
-    connect(&m_engine, &Engine::currentPositionChanged, playerManager, &Player::PlayerManager::setCurrentPosition);
-    connect(&m_engine, &Engine::trackFinished, playerManager, &Player::PlayerManager::next);
-    connect(playerManager, &Player::PlayerManager::positionMoved, &m_engine, &Engine::seek);
+    connect(playerManager, &Player::PlayerManager::volumeChanged, m_engine.get(), &Engine::setVolume);
+    connect(playerManager, &Player::PlayerManager::currentTrackChanged, m_engine.get(), &Engine::changeTrack);
+    connect(m_engine.get(), &Engine::currentPositionChanged, playerManager, &Player::PlayerManager::setCurrentPosition);
+    connect(m_engine.get(), &Engine::trackFinished, playerManager, &Player::PlayerManager::next);
+    connect(playerManager, &Player::PlayerManager::positionMoved, m_engine.get(), &Engine::seek);
 
-    connect(this, &EngineHandler::play, &m_engine, &Engine::play);
-    connect(this, &EngineHandler::pause, &m_engine, &Engine::pause);
-    connect(this, &EngineHandler::stop, &m_engine, &Engine::stop);
+    connect(this, &EngineHandler::play, m_engine.get(), &Engine::play);
+    connect(this, &EngineHandler::pause, m_engine.get(), &Engine::pause);
+    connect(this, &EngineHandler::stop, m_engine.get(), &Engine::stop);
 }
 
 void EngineHandler::playStateChanged(Player::PlayState state)
