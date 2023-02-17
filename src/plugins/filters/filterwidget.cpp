@@ -205,87 +205,89 @@ void FilterWidget::layoutEditingMenu(Core::ActionContainer* menu)
 
 void FilterWidget::customHeaderMenuRequested(QPoint pos)
 {
-    QMenu menu;
-    QMenu orderMenu;
-    orderMenu.setTitle("Sort Order");
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* orderMenu = new QMenu(menu);
+    orderMenu->setTitle("Sort Order");
 
     const auto order = m_manager->filterOrder(m_type);
 
-    QActionGroup editFilters{&menu};
-    QActionGroup sortOrder{&menu};
+    auto* editFilters = new QActionGroup{menu};
+    auto* sortOrder   = new QActionGroup{menu};
 
-    QAction titleSort;
-    titleSort.setText("Title");
-    titleSort.setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::TitleAsc));
-    titleSort.setCheckable(true);
-    titleSort.setChecked(order == Core::Library::SortOrder::TitleAsc || order == Core::Library::SortOrder::TitleDesc);
-    orderMenu.addAction(&titleSort);
+    auto* titleSort = new QAction(orderMenu);
+    titleSort->setText("Title");
+    titleSort->setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::TitleAsc));
+    titleSort->setCheckable(true);
+    titleSort->setChecked(order == Core::Library::SortOrder::TitleAsc || order == Core::Library::SortOrder::TitleDesc);
+    orderMenu->addAction(titleSort);
 
-    QAction yearSort;
-    yearSort.setText("Year");
-    yearSort.setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::YearAsc));
-    yearSort.setCheckable(true);
-    yearSort.setChecked(order == Core::Library::SortOrder::YearAsc || order == Core::Library::SortOrder::YearDesc);
-    orderMenu.addAction(&yearSort);
+    auto* yearSort = new QAction(orderMenu);
+    yearSort->setText("Year");
+    yearSort->setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::YearAsc));
+    yearSort->setCheckable(true);
+    yearSort->setChecked(order == Core::Library::SortOrder::YearAsc || order == Core::Library::SortOrder::YearDesc);
+    orderMenu->addAction(yearSort);
 
-    sortOrder.addAction(&titleSort);
-    sortOrder.addAction(&yearSort);
+    sortOrder->addAction(titleSort);
+    sortOrder->addAction(yearSort);
 
-    QAction genre;
-    genre.setText("Genre");
-    genre.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Genre));
-    genre.setCheckable(true);
-    genre.setChecked(m_type == Filters::FilterType::Genre);
-    genre.setDisabled(!genre.isChecked() && m_manager->hasFilter(Filters::FilterType::Genre));
-    menu.addAction(&genre);
+    auto* genre = new QAction(menu);
+    genre->setText("Genre");
+    genre->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Genre));
+    genre->setCheckable(true);
+    genre->setChecked(m_type == Filters::FilterType::Genre);
+    genre->setDisabled(!genre->isChecked() && m_manager->hasFilter(Filters::FilterType::Genre));
+    menu->addAction(genre);
 
-    QAction year;
-    year.setText("Year");
-    year.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Year));
-    year.setCheckable(true);
-    year.setChecked(m_type == Filters::FilterType::Year);
-    year.setDisabled(!year.isChecked() && m_manager->hasFilter(Filters::FilterType::Year));
-    menu.addAction(&year);
+    auto* year = new QAction(menu);
+    year->setText("Year");
+    year->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Year));
+    year->setCheckable(true);
+    year->setChecked(m_type == Filters::FilterType::Year);
+    year->setDisabled(!year->isChecked() && m_manager->hasFilter(Filters::FilterType::Year));
+    menu->addAction(year);
 
-    QAction albumArtist;
-    albumArtist.setText("Album Artist");
-    albumArtist.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::AlbumArtist));
-    albumArtist.setCheckable(true);
-    albumArtist.setChecked(m_type == Filters::FilterType::AlbumArtist);
-    albumArtist.setDisabled(!albumArtist.isChecked() && m_manager->hasFilter(Filters::FilterType::AlbumArtist));
-    menu.addAction(&albumArtist);
+    auto* albumArtist = new QAction(menu);
+    albumArtist->setText("Album Artist");
+    albumArtist->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::AlbumArtist));
+    albumArtist->setCheckable(true);
+    albumArtist->setChecked(m_type == Filters::FilterType::AlbumArtist);
+    albumArtist->setDisabled(!albumArtist->isChecked() && m_manager->hasFilter(Filters::FilterType::AlbumArtist));
+    menu->addAction(albumArtist);
 
-    QAction artist;
-    artist.setText("Artist");
-    artist.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Artist));
-    artist.setCheckable(true);
-    artist.setChecked(m_type == Filters::FilterType::Artist);
-    artist.setDisabled(!artist.isChecked() && m_manager->hasFilter(Filters::FilterType::Artist));
-    menu.addAction(&artist);
+    auto* artist = new QAction(menu);
+    artist->setText("Artist");
+    artist->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Artist));
+    artist->setCheckable(true);
+    artist->setChecked(m_type == Filters::FilterType::Artist);
+    artist->setDisabled(!artist->isChecked() && m_manager->hasFilter(Filters::FilterType::Artist));
+    menu->addAction(artist);
 
-    QAction album;
-    album.setText("Album");
-    album.setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Album));
-    album.setCheckable(true);
-    album.setChecked(m_type == Filters::FilterType::Album);
-    album.setDisabled(!album.isChecked() && m_manager->hasFilter(Filters::FilterType::Album));
-    menu.addAction(&album);
+    auto* album = new QAction(menu);
+    album->setText("Album");
+    album->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Album));
+    album->setCheckable(true);
+    album->setChecked(m_type == Filters::FilterType::Album);
+    album->setDisabled(!album->isChecked() && m_manager->hasFilter(Filters::FilterType::Album));
+    menu->addAction(album);
 
-    editFilters.addAction(&genre);
-    editFilters.addAction(&year);
-    editFilters.addAction(&albumArtist);
-    editFilters.addAction(&artist);
-    editFilters.addAction(&album);
+    editFilters->addAction(genre);
+    editFilters->addAction(year);
+    editFilters->addAction(albumArtist);
+    editFilters->addAction(artist);
+    editFilters->addAction(album);
 
-    menu.addSeparator();
-    menu.addMenu(&orderMenu);
+    menu->addSeparator();
+    menu->addMenu(orderMenu);
 
-    menu.setDefaultAction(editFilters.checkedAction());
+    menu->setDefaultAction(editFilters->checkedAction());
 
-    connect(&editFilters, &QActionGroup::triggered, this, &FilterWidget::editFilter);
-    connect(&sortOrder, &QActionGroup::triggered, this, &FilterWidget::changeOrder);
+    connect(editFilters, &QActionGroup::triggered, this, &FilterWidget::editFilter);
+    connect(sortOrder, &QActionGroup::triggered, this, &FilterWidget::changeOrder);
 
-    menu.exec(mapToGlobal(pos));
+    menu->popup(mapToGlobal(pos));
 }
 
 void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
