@@ -322,7 +322,7 @@ bool Database::checkInsertTable(const QString& tableName, const QString& createS
         Query q2(this);
         q2.prepareQuery(createString);
 
-        if(!q2.exec()) {
+        if(!q2.execQuery()) {
             q.error("Cannot create table " + tableName);
             return false;
         }
@@ -335,7 +335,7 @@ bool Database::checkInsertIndex(const QString& indexName, const QString& createS
     Query q(this);
     q.prepareQuery(createString);
 
-    if(!q.exec()) {
+    if(!q.execQuery()) {
         q.error("Cannot create index " + indexName);
         return false;
     }
