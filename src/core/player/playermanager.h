@@ -25,6 +25,7 @@ namespace Core {
 class Track;
 
 namespace Player {
+Q_NAMESPACE
 enum PlayMode : uint8_t
 {
     Default   = 1,
@@ -32,6 +33,7 @@ enum PlayMode : uint8_t
     Repeat    = 3,
     Shuffle   = 4,
 };
+Q_ENUM_NS(PlayMode)
 
 enum PlayState : uint8_t
 {
@@ -39,6 +41,7 @@ enum PlayState : uint8_t
     Paused  = 2,
     Stopped = 3,
 };
+Q_ENUM_NS(PlayState)
 
 class PlayerManager : public QObject
 {
