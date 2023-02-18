@@ -19,19 +19,17 @@
 
 #include "actioncontainer.h"
 
-#include "core/constants.h"
-
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
 
-namespace Core {
-ActionContainer::ActionContainer(const Utils::Id& id, QObject* parent)
+namespace Utils {
+ActionContainer::ActionContainer(const Id& id, QObject* parent)
     : QObject{parent}
     , m_id{id}
 { }
 
-Utils::Id ActionContainer::id() const
+Id ActionContainer::id() const
 {
     return m_id;
 }
@@ -46,7 +44,7 @@ QMenuBar* ActionContainer::menuBar() const
     return nullptr;
 }
 
-QAction* ActionContainer::insertLocation(const Utils::Id& group) const
+QAction* ActionContainer::insertLocation(const Id& group) const
 {
     auto it = findGroup(group);
     if(it != m_groups.cend()) {
@@ -63,12 +61,12 @@ QAction* ActionContainer::actionForItem(QObject* item) const
     return nullptr;
 }
 
-void ActionContainer::appendGroup(const Utils::Id& group)
+void ActionContainer::appendGroup(const Id& group)
 {
     m_groups.append(Group{group});
 }
 
-void ActionContainer::insertGroup(const Utils::Id& beforeGroup, const Utils::Id& group)
+void ActionContainer::insertGroup(const Id& beforeGroup, const Id& group)
 {
     auto it = std::find_if(m_groups.cbegin(), m_groups.cend(), [&](const auto& group) {
         return (group.id == beforeGroup);
@@ -78,13 +76,13 @@ void ActionContainer::insertGroup(const Utils::Id& beforeGroup, const Utils::Id&
     }
 }
 
-void ActionContainer::addAction(QAction* action, const Utils::Id& group)
+void ActionContainer::addAction(QAction* action, const Id& group)
 {
     if(!action) {
         return;
     }
 
-    const Utils::Id actualGroupId = group.isValid() ? group : Utils::Id(Core::Constants::Groups::One);
+    const Id actualGroupId = group.isValid() ? group : Id{Groups::Default};
 
     const QList<Group>::const_iterator groupIt = findGroup(actualGroupId);
     if(groupIt == m_groups.constEnd()) {
@@ -98,14 +96,14 @@ void ActionContainer::addAction(QAction* action, const Utils::Id& group)
     insertAction(beforeAction, action);
 }
 
-void ActionContainer::addMenu(ActionContainer* menu, const Utils::Id& group)
+void ActionContainer::addMenu(ActionContainer* menu, const Id& group)
 {
     auto* container = static_cast<ActionContainer*>(menu);
     if(!container->canBeAddedToContainer(this)) {
         return;
     }
 
-    const Utils::Id groupId = group.isValid() ? group : Utils::Id(Core::Constants::Groups::One);
+    const Id groupId = group.isValid() ? group : Id{Groups::Default};
 
     auto groupIt = findGroup(groupId);
     if(groupIt == m_groups.cend()) {
@@ -149,18 +147,18 @@ void ActionContainer::addMenu(ActionContainer* beforeContainer, ActionContainer*
     }
 }
 
-QAction* ActionContainer::addSeparator(const Utils::Id& group)
+QAction* ActionContainer::addSeparator(const Id& group)
 {
     return addSeparator(group, {});
 }
 
-QAction* ActionContainer::addSeparator(const Utils::Id& group, QAction** outSeparator)
+QAction* ActionContainer::addSeparator(const Id& group, QAction** outSeparator)
 {
     static int separatorIdCount = 0;
 
     auto* separator = new QAction(this);
     separator->setSeparator(true);
-    const Utils::Id sepId = id().append(".Separator.").append(++separatorIdCount);
+    const Id sepId = id().append(".Separator.").append(++separatorIdCount);
     emit registerSeperator(separator, sepId);
     addAction(separator, group);
     if(outSeparator) {
@@ -169,7 +167,7 @@ QAction* ActionContainer::addSeparator(const Utils::Id& group, QAction** outSepa
     return separator;
 }
 
-QList<ActionContainer::Group>::const_iterator ActionContainer::findGroup(const Utils::Id& groupId) const
+QList<ActionContainer::Group>::const_iterator ActionContainer::findGroup(const Id& groupId) const
 {
     return std::find_if(m_groups.cbegin(), m_groups.cend(), [&](const auto& group) {
         return (group.id == groupId);
@@ -195,7 +193,7 @@ QAction* ActionContainer::insertLocation(QList<Group>::const_iterator group) con
     return nullptr;
 }
 
-MenuBarActionContainer::MenuBarActionContainer(const Utils::Id& id, QObject* parent)
+MenuBarActionContainer::MenuBarActionContainer(const Id& id, QObject* parent)
     : ActionContainer{id, parent}
     , m_menuBar{nullptr}
 { }
@@ -255,7 +253,7 @@ bool MenuBarActionContainer::canBeAddedToContainer(ActionContainer* container) c
     return false;
 }
 
-MenuActionContainer::MenuActionContainer(const Utils::Id& id, QObject* parent)
+MenuActionContainer::MenuActionContainer(const Id& id, QObject* parent)
     : ActionContainer{id, parent}
     , m_menu{new QMenu()}
 {
@@ -310,4 +308,4 @@ bool MenuActionContainer::canBeAddedToContainer(ActionContainer* container) cons
 {
     return qobject_cast<MenuActionContainer*>(container) || qobject_cast<MenuBarActionContainer*>(container);
 }
-} // namespace Core
+} // namespace Utils

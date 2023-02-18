@@ -19,8 +19,6 @@
 
 #include "application.h"
 
-#include <core/actions/actioncontainer.h>
-#include <core/actions/actionmanager.h>
 #include <core/app/threadmanager.h>
 #include <core/constants.h>
 #include <core/coresettings.h>
@@ -40,6 +38,7 @@
 
 #include <gui/controls/controlwidget.h>
 #include <gui/editablelayout.h>
+#include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/info/infowidget.h>
 #include <gui/layoutprovider.h>
@@ -47,17 +46,23 @@
 #include <gui/library/statuswidget.h>
 #include <gui/mainwindow.h>
 #include <gui/playlist/playlistwidget.h>
-#include <gui/settings/settingsdialog.h>
+#include <gui/settings/generalpage.h>
+#include <gui/settings/guigeneralpage.h>
+#include <gui/settings/librarygeneralpage.h>
+#include <gui/settings/playlistguipage.h>
 #include <gui/widgetfactory.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/spacer.h>
 #include <gui/widgets/splitterwidget.h>
 
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
 #include <utils/paths.h>
+#include <utils/settings/settingsdialogcontroller.h>
 
 struct Application::Private
 {
-    Core::ActionManager actionManager;
+    Utils::ActionManager actionManager;
     Core::SettingsManager settingsManager;
     Core::Settings::CoreSettings coreSettings;
     Core::ThreadManager threadManager;
@@ -72,10 +77,16 @@ struct Application::Private
     Gui::Widgets::WidgetFactory widgetFactory;
     Gui::Widgets::WidgetProvider widgetProvider;
     Gui::Settings::GuiSettings guiSettings;
-    Gui::Settings::SettingsDialog* settingsDialog;
     Gui::Widgets::EditableLayout* editableLayout;
     Gui::LayoutProvider layoutProvider;
     Gui::MainWindow* mainWindow;
+
+    Utils::SettingsDialogController settingsDialogController;
+
+    Gui::Settings::GeneralPage generalPage;
+    Gui::Settings::LibraryGeneralPage libraryGeneralPage;
+    Gui::Settings::GuiGeneralPage guiGeneralPage;
+    Gui::Settings::PlaylistGuiPage playlistGuiPage;
 
     QAction* quitAction;
     QAction* openSettings;
@@ -98,14 +109,17 @@ struct Application::Private
         , library{playlistInterface.get(), &libraryManager, &threadManager, &database, &settingsManager}
         , widgetProvider{&widgetFactory}
         , guiSettings{&settingsManager}
-        , settingsDialog{new Gui::Settings::SettingsDialog(&libraryManager, &settingsManager)}
         , editableLayout{new Gui::Widgets::EditableLayout(&settingsManager, &actionManager, &widgetFactory,
                                                           &widgetProvider, &layoutProvider)}
         , mainWindow{new Gui::MainWindow(&actionManager, &settingsManager, &layoutProvider, editableLayout)}
+        , generalPage{&settingsDialogController, &settingsManager}
+        , libraryGeneralPage{&settingsDialogController, &libraryManager, &settingsManager}
+        , guiGeneralPage{&settingsDialogController, &settingsManager}
+        , playlistGuiPage{&settingsDialogController, &settingsManager}
         , widgetContext{&actionManager, playerManager.get(), &library, &widgetFactory}
         , threadContext{&threadManager}
         , databaseContext{&database}
-        , settingsContext{&settingsManager, settingsDialog}
+        , settingsContext{&settingsManager, &settingsDialogController}
     {
         actionManager.setMainWindow(mainWindow);
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -144,8 +158,8 @@ struct Application::Private
         });
 
         widgetFactory.registerClass<Gui::Widgets::PlaylistWidget>("Playlist", [this]() {
-            return new Gui::Widgets::PlaylistWidget(&libraryManager, &library, playerManager.get(), settingsDialog,
-                                                    &settingsManager);
+            return new Gui::Widgets::PlaylistWidget(&libraryManager, &library, playerManager.get(),
+                                                    &settingsDialogController, &settingsManager);
         });
 
         widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {
@@ -173,24 +187,24 @@ struct Application::Private
 
     void registerActions()
     {
-        const auto quitIcon = QIcon(Core::Constants::Icons::Quit);
+        const auto quitIcon = QIcon(Gui::Constants::Icons::Quit);
         quitAction          = new QAction(quitIcon, tr("E&xit"), mainWindow);
-        actionManager.registerAction(quitAction, Core::Constants::Actions::Exit);
-        auto* fileMenu = actionManager.actionContainer(Core::Constants::Menus::File);
-        fileMenu->addAction(quitAction, Core::Constants::Groups::Three);
+        actionManager.registerAction(quitAction, Gui::Constants::Actions::Exit);
+        auto* fileMenu = actionManager.actionContainer(Gui::Constants::Menus::File);
+        fileMenu->addAction(quitAction, Gui::Constants::Groups::Three);
         connect(quitAction, &QAction::triggered, mainWindow, &QMainWindow::close);
 
-        const QIcon settingsIcon = QIcon(Core::Constants::Icons::Settings);
+        const QIcon settingsIcon = QIcon(Gui::Constants::Icons::Settings);
         openSettings             = new QAction(settingsIcon, tr("&Settings"), mainWindow);
-        actionManager.registerAction(openSettings, Core::Constants::Actions::Settings);
-        auto* libraryMenu = actionManager.actionContainer(Core::Constants::Menus::Library);
-        libraryMenu->addAction(openSettings, Core::Constants::Groups::Three);
-        connect(openSettings, &QAction::triggered, settingsDialog, &Gui::Settings::SettingsDialog::exec);
+        actionManager.registerAction(openSettings, Gui::Constants::Actions::Settings);
+        auto* libraryMenu = actionManager.actionContainer(Gui::Constants::Menus::Library);
+        libraryMenu->addAction(openSettings, Gui::Constants::Groups::Three);
+        connect(openSettings, &QAction::triggered, &settingsDialogController, &Utils::SettingsDialogController::open);
 
-        const QIcon rescanIcon = QIcon(Core::Constants::Icons::RescanLibrary);
+        const QIcon rescanIcon = QIcon(Gui::Constants::Icons::RescanLibrary);
         rescanLibrary          = new QAction(rescanIcon, tr("&Rescan Library"), mainWindow);
-        actionManager.registerAction(rescanLibrary, Core::Constants::Actions::Rescan);
-        libraryMenu->addAction(rescanLibrary, Core::Constants::Groups::Two);
+        actionManager.registerAction(rescanLibrary, Gui::Constants::Actions::Rescan);
+        libraryMenu->addAction(rescanLibrary, Gui::Constants::Groups::Two);
         connect(rescanLibrary, &QAction::triggered, &library, &Core::Library::MusicLibrary::reloadAll);
     }
 
@@ -214,6 +228,8 @@ Application::Application(int& argc, char** argv, int flags)
     startup();
 }
 
+Application::~Application() = default;
+
 void Application::startup()
 {
     p->settingsManager.loadSettings();
@@ -221,12 +237,9 @@ void Application::startup()
     p->layoutProvider.findLayouts();
     p->library.load();
 
-    p->settingsDialog->setupUi();
     p->mainWindow->setupUi();
     p->mainWindow->show();
 }
-
-Application::~Application() = default;
 
 void Application::shutdown()
 {

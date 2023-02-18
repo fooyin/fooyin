@@ -19,8 +19,10 @@
 
 #include "playercontrol.h"
 
-#include <core/constants.h>
+#include "gui/guiconstants.h"
+
 #include <core/player/playermanager.h>
+
 #include <utils/comboicon.h>
 
 #include <QHBoxLayout>
@@ -29,10 +31,10 @@ namespace Gui::Widgets {
 PlayerControl::PlayerControl(QWidget* parent)
     : QWidget{parent}
     , m_layout{new QHBoxLayout(this)}
-    , m_stop{new Utils::ComboIcon(Core::Constants::Icons::Stop, this)}
-    , m_prev{new Utils::ComboIcon(Core::Constants::Icons::Prev, this)}
-    , m_play{new Utils::ComboIcon(Core::Constants::Icons::Play, this)}
-    , m_next{new Utils::ComboIcon(Core::Constants::Icons::Next, this)}
+    , m_stop{new Utils::ComboIcon(Constants::Icons::Stop, this)}
+    , m_prev{new Utils::ComboIcon(Constants::Icons::Prev, this)}
+    , m_play{new Utils::ComboIcon(Constants::Icons::Play, this)}
+    , m_next{new Utils::ComboIcon(Constants::Icons::Next, this)}
     , m_labelSize{20, 20}
 {
     setupUi();
@@ -49,7 +51,7 @@ void PlayerControl::setupUi()
     m_layout->setSpacing(10);
     m_layout->setContentsMargins(10, 0, 0, 0);
 
-    m_play->addPixmap(Core::Constants::Icons::Pause);
+    m_play->addPixmap(Constants::Icons::Pause);
 
     m_stop->setMaximumSize(m_labelSize);
     m_prev->setMaximumSize(m_labelSize);
@@ -69,12 +71,12 @@ void PlayerControl::stateChanged(Core::Player::PlayState state)
     switch(state) {
         case(Core::Player::Stopped):
             setEnabled(false);
-            return m_play->setIcon(Core::Constants::Icons::Play);
+            return m_play->setIcon(Constants::Icons::Play);
         case(Core::Player::Playing):
             setEnabled(true);
-            return m_play->setIcon(Core::Constants::Icons::Pause);
+            return m_play->setIcon(Constants::Icons::Pause);
         case(Core::Player::Paused):
-            return m_play->setIcon(Core::Constants::Icons::Play);
+            return m_play->setIcon(Constants::Icons::Play);
     }
 }
 } // namespace Gui::Widgets

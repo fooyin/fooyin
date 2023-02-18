@@ -20,8 +20,8 @@
 #pragma once
 
 #include "gui/fywidget.h"
-#include "gui/info/infomodel.h"
-#include "gui/info/infoview.h"
+#include "infomodel.h"
+#include "infoview.h"
 
 #include <QHBoxLayout>
 #include <QWidget>
@@ -53,7 +53,7 @@ public:
     void setAltRowColors(bool altColours);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(Core::ActionContainer* menu) override;
+    void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
 protected:
     void setupUi();

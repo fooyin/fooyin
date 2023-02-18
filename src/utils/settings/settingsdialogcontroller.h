@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,38 +19,26 @@
 
 #pragma once
 
-#include <utils/id.h>
-
-#include <QJsonArray>
-#include <QWidget>
+#include "settingscategory.h"
+#include "utils/id.h"
 
 namespace Utils {
-class ActionContainer;
-}
+class SettingsPage;
 
-namespace Gui::Widgets {
-class FyWidget : public QWidget
+class SettingsDialogController : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit FyWidget(QWidget* parent);
-    ~FyWidget() override = default;
+    explicit SettingsDialogController(QObject* parent = nullptr);
+    ~SettingsDialogController() override = default;
 
-    [[nodiscard]] Utils::Id id() const;
-    [[nodiscard]] virtual QString name() const = 0;
-    [[nodiscard]] virtual QString layoutName() const
-    {
-        return name();
-    };
+    void open();
+    void openAtPage(const Id& page);
 
-    [[nodiscard]] FyWidget* findParent();
-
-    virtual void layoutEditingMenu(Utils::ActionContainer* menu);
-    virtual void saveLayout(QJsonArray& array);
-    virtual void loadLayout(QJsonObject& object);
+    void addPage(SettingsPage* page);
 
 private:
-    Utils::Id m_id;
+    PageList m_pages;
 };
-} // namespace Gui::Widgets
+} // namespace Utils

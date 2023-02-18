@@ -28,7 +28,8 @@ class QPushButton;
 
 namespace Utils {
 class OverlayWidget;
-}
+class SettingsDialogController;
+} // namespace Utils
 
 namespace Core {
 class SettingsManager;
@@ -45,12 +46,7 @@ class MusicLibrary;
 } // namespace Core
 
 namespace Gui {
-
-namespace Settings {
-class SettingsDialog;
-}
 namespace Widgets {
-class OverlayWidget;
 class PlaylistModel;
 class PlaylistView;
 
@@ -60,8 +56,9 @@ class PlaylistWidget : public FyWidget
 
 public:
     explicit PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
-                            Core::Player::PlayerManager* playerManager, Settings::SettingsDialog* settingsDialog,
-                            Core::SettingsManager* settings, QWidget* parent = nullptr);
+                            Core::Player::PlayerManager* playerManager,
+                            Utils::SettingsDialogController* settingsDialogController, Core::SettingsManager* settings,
+                            QWidget* parent = nullptr);
     ~PlaylistWidget() override = default;
 
     void setup();
@@ -78,7 +75,7 @@ public:
     void setScrollbarHidden(bool showScrollBar);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(Core::ActionContainer* menu) override;
+    void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
 signals:
     void clickedTrack(int idx, bool createNewPlaylist);
@@ -98,7 +95,7 @@ private:
     Core::Library::LibraryManager* m_libraryManager;
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
-    Settings::SettingsDialog* m_settingsDialog;
+    Utils::SettingsDialogController* m_settingsDialogController;
     Core::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;

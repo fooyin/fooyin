@@ -21,14 +21,15 @@
 
 #include "editablelayout.h"
 #include "gui/quicksetup/quicksetupdialog.h"
+#include "guiconstants.h"
 #include "guisettings.h"
 #include "layoutprovider.h"
 #include "mainmenubar.h"
 
-#include <core/actions/actioncontainer.h>
-#include <core/actions/actionmanager.h>
-#include <core/constants.h>
 #include <core/coresettings.h>
+
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -39,7 +40,7 @@
 namespace Gui {
 struct MainWindow::Private
 {
-    Core::ActionManager* actionManager;
+    Utils::ActionManager* actionManager;
     Core::SettingsManager* settings;
     Widgets::EditableLayout* editableLayout;
 
@@ -54,7 +55,7 @@ struct MainWindow::Private
     LayoutProvider* layoutProvider;
     QuickSetupDialog* quickSetupDialog;
 
-    Private(Core::ActionManager* actionManager, Core::SettingsManager* settings, LayoutProvider* layoutProvider,
+    Private(Utils::ActionManager* actionManager, Core::SettingsManager* settings, LayoutProvider* layoutProvider,
             Widgets::EditableLayout* editableLayout)
         : actionManager{actionManager}
         , settings{settings}
@@ -101,7 +102,7 @@ struct MainWindow::Private
     }
 };
 
-MainWindow::MainWindow(Core::ActionManager* actionManager, Core::SettingsManager* settings,
+MainWindow::MainWindow(Utils::ActionManager* actionManager, Core::SettingsManager* settings,
                        LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout, QWidget* parent)
     : QMainWindow{parent}
     , p{std::make_unique<Private>(actionManager, settings, layoutProvider, editableLayout)}
@@ -121,7 +122,7 @@ void MainWindow::setupUi()
 
     resize(1280, 720);
     setMinimumSize(410, 320);
-    setWindowIcon(QIcon(Core::Constants::Icons::Fooyin));
+    setWindowIcon(QIcon(Constants::Icons::Fooyin));
 
     const QByteArray geometryArray = p->settings->value<Settings::Geometry>();
     const QByteArray geometry      = QByteArray::fromBase64(geometryArray);
@@ -133,21 +134,21 @@ void MainWindow::setupUi()
     setCentralWidget(p->editableLayout);
     setMenuBar(p->mainMenu.menuBar());
 
-    Core::ActionContainer* viewMenu = p->actionManager->actionContainer(Core::Constants::Menus::View);
+    Utils::ActionContainer* viewMenu = p->actionManager->actionContainer(Constants::Menus::View);
 
-    const QIcon layoutEditingIcon = QIcon(Core::Constants::Icons::LayoutEditing);
+    const QIcon layoutEditingIcon = QIcon(Constants::Icons::LayoutEditing);
     p->layoutEditing              = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
-    p->actionManager->registerAction(p->layoutEditing, Core::Constants::Actions::LayoutEditing);
-    viewMenu->addAction(p->layoutEditing, Core::Constants::Groups::Three);
+    p->actionManager->registerAction(p->layoutEditing, Constants::Actions::LayoutEditing);
+    viewMenu->addAction(p->layoutEditing, Constants::Groups::Three);
     connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
     p->settings->subscribe<Settings::LayoutEditing>(p->layoutEditing, &QAction::setChecked);
     p->layoutEditing->setCheckable(true);
     p->layoutEditing->setChecked(p->settings->value<Settings::LayoutEditing>());
 
-    const QIcon quickSetupIcon = QIcon(Core::Constants::Icons::QuickSetup);
+    const QIcon quickSetupIcon = QIcon(Constants::Icons::QuickSetup);
     p->openQuickSetup          = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
-    p->actionManager->registerAction(p->openQuickSetup, Core::Constants::Actions::LayoutEditing);
-    viewMenu->addAction(p->openQuickSetup, Core::Constants::Groups::Three);
+    p->actionManager->registerAction(p->openQuickSetup, Constants::Actions::LayoutEditing);
+    viewMenu->addAction(p->openQuickSetup, Constants::Groups::Three);
     connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
     connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
             &Widgets::EditableLayout::changeLayout);

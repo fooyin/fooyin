@@ -24,8 +24,11 @@
 
 class QHBoxLayout;
 
-namespace Core {
+namespace Utils {
 class ActionManager;
+}
+
+namespace Core {
 class SettingsManager;
 } // namespace Core
 
@@ -38,7 +41,7 @@ class SplitterWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit SplitterWidget(Core::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+    explicit SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
                             Core::SettingsManager* settings, QWidget* parent = nullptr);
     ~SplitterWidget() override = default;
 
@@ -63,7 +66,7 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
-    void layoutEditingMenu(Core::ActionContainer* menu) override;
+    void layoutEditingMenu(Utils::ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
     void loadLayout(QJsonObject& object) override;
 
@@ -72,7 +75,7 @@ protected:
 
 private:
     Core::SettingsManager* m_settings;
-    Core::ActionManager* m_actionManager;
+    Utils::ActionManager* m_actionManager;
     Widgets::WidgetProvider* m_widgetProvider;
 
     QHBoxLayout* m_layout;
@@ -87,7 +90,7 @@ private:
 class VerticalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit VerticalSplitterWidget(Core::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+    explicit VerticalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
                                     Core::SettingsManager* settings, QWidget* parent = nullptr)
         : SplitterWidget(actionManager, widgetProvider, settings, parent)
     {
@@ -99,7 +102,7 @@ public:
 class HorizontalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit HorizontalSplitterWidget(Core::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+    explicit HorizontalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
                                       Core::SettingsManager* settings, QWidget* parent = nullptr)
         : SplitterWidget(actionManager, widgetProvider, settings, parent)
     {

@@ -19,29 +19,20 @@
 
 #pragma once
 
-#include <QObject>
-
-class QMenuBar;
-class QAction;
+#include <QResizeEvent>
+#include <QScrollArea>
 
 namespace Utils {
-class ActionManager;
-class ActionContainer;
-} // namespace Utils
-
-namespace Gui {
-class MainMenuBar : public QObject
+class ScrollArea : public QScrollArea
 {
-    Q_OBJECT
-
 public:
-    explicit MainMenuBar(Utils::ActionManager* actionManager, QObject* parent = nullptr);
-    ~MainMenuBar() override = default;
-
-    [[nodiscard]] QMenuBar* menuBar() const;
+    explicit ScrollArea(QWidget* parent);
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Utils::ActionContainer* m_menubar;
+    void resizeEvent(QResizeEvent* event) override;
+    [[nodiscard]] QSize minimumSizeHint() const override;
+    bool event(QEvent* event) override;
+
+    [[nodiscard]] int scrollBarWidth() const;
 };
-} // namespace Gui
+} // namespace Utils

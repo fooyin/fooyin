@@ -20,12 +20,11 @@
 #include "actionmanager.h"
 
 #include "actioncontainer.h"
-#include "core/constants.h"
 
 #include <QMainWindow>
 #include <QMenuBar>
 
-namespace Core {
+namespace Utils {
 ActionManager::ActionManager(QObject* parent)
     : QObject{parent}
 { }
@@ -35,7 +34,7 @@ void ActionManager::setMainWindow(QMainWindow* mainWindow)
     m_mainWindow = mainWindow;
 }
 
-ActionContainer* ActionManager::createMenu(const Utils::Id& id)
+ActionContainer* ActionManager::createMenu(const Id& id)
 {
     for(const auto& [mapId, container] : m_idContainerMap) {
         if(mapId == id) {
@@ -47,13 +46,13 @@ ActionContainer* ActionManager::createMenu(const Utils::Id& id)
     connect(mActionContainer, &ActionContainer::registerSeperator, this, &ActionManager::registerAction);
     connect(mActionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
 
-    mActionContainer->appendGroup(Core::Constants::Groups::One);
+    mActionContainer->appendGroup(Groups::Default);
     m_idContainerMap.emplace(id, mActionContainer);
 
     return mActionContainer;
 }
 
-ActionContainer* ActionManager::createMenuBar(const Utils::Id& id)
+ActionContainer* ActionManager::createMenuBar(const Id& id)
 {
     for(const auto& [mapId, container] : m_idContainerMap) {
         if(mapId == id) {
@@ -74,14 +73,14 @@ ActionContainer* ActionManager::createMenuBar(const Utils::Id& id)
     return mbActionContainer;
 }
 
-void ActionManager::registerAction(QAction* action, const Utils::Id& id)
+void ActionManager::registerAction(QAction* action, const Id& id)
 {
     m_idCmdMap.emplace(id, action);
     m_mainWindow->addAction(action);
     action->setObjectName(id.name());
 }
 
-QAction* ActionManager::action(const Utils::Id& id)
+QAction* ActionManager::action(const Id& id)
 {
     for(const auto& [mapId, action] : m_idCmdMap) {
         if(mapId == id) {
@@ -91,7 +90,7 @@ QAction* ActionManager::action(const Utils::Id& id)
     return nullptr;
 }
 
-ActionContainer* ActionManager::actionContainer(const Utils::Id& id)
+ActionContainer* ActionManager::actionContainer(const Id& id)
 {
     for(const auto& [mapId, container] : m_idContainerMap) {
         if(mapId == id) {

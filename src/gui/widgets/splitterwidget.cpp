@@ -23,8 +23,8 @@
 #include "gui/widgetprovider.h"
 #include "splitter.h"
 
-#include <core/actions/actioncontainer.h>
-#include <core/actions/actionmanager.h>
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
 #include <utils/enumhelper.h>
 
 #include <QHBoxLayout>
@@ -32,7 +32,7 @@
 #include <QMenu>
 
 namespace Gui::Widgets {
-SplitterWidget::SplitterWidget(Core::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
                                Core::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_settings{settings}
@@ -192,7 +192,7 @@ QString SplitterWidget::layoutName() const
     return QString("Splitter%1").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical");
 }
 
-void SplitterWidget::layoutEditingMenu(Core::ActionContainer* menu)
+void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 {
     menu->addAction(m_changeSplitter);
 }

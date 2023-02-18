@@ -21,8 +21,11 @@
 
 #include <QMainWindow>
 
-namespace Core {
+namespace Utils {
 class ActionManager;
+}
+
+namespace Core {
 class SettingsManager;
 
 namespace Library {
@@ -42,7 +45,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(Core::ActionManager* actionManager, Core::SettingsManager* settings,
+    explicit MainWindow(Utils::ActionManager* actionManager, Core::SettingsManager* settings,
                         LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,
                         QWidget* parent = nullptr);
     ~MainWindow() override;

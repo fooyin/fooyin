@@ -66,10 +66,14 @@ fooyin_add_library(Gui
         quicksetup/quicksetupmodel.h
         quicksetup/quicksetupmodel.cpp
 
-        settings/settingsdialog.h
-        settings/settingsdialog.cpp
-        settings/settingspages.h
-        settings/settingspages.cpp
+        settings/generalpage.h
+        settings/generalpage.cpp
+        settings/guigeneralpage.h
+        settings/guigeneralpage.cpp
+        settings/librarygeneralpage.h
+        settings/librarygeneralpage.cpp
+        settings/playlistguipage.h
+        settings/playlistguipage.cpp
 
         widgets/dummy.h
         widgets/dummy.cpp

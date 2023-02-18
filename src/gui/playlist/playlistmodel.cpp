@@ -19,14 +19,15 @@
 
 #include "playlistmodel.h"
 
+#include "gui/guiconstants.h"
 #include "gui/guisettings.h"
 #include "playlistitem.h"
 
-#include <core/constants.h>
 #include <core/library/coverprovider.h>
 #include <core/library/musiclibrary.h>
 #include <core/models/disc.h>
 #include <core/player/playermanager.h>
+
 #include <utils/utils.h>
 
 #include <QPalette>
@@ -39,8 +40,8 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::L
     , m_library{library}
     , m_settings{settings}
     , m_root{std::make_unique<PlaylistItem>()}
-    , m_playingIcon{Core::Constants::Icons::Play}
-    , m_pausedIcon{Core::Constants::Icons::Pause}
+    , m_playingIcon{Constants::Icons::Play}
+    , m_pausedIcon{Constants::Icons::Pause}
 {
     setupModelData();
 

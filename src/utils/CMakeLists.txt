@@ -13,6 +13,16 @@ fooyin_add_library(Utils
         overlayfilter.cpp
         overlaywidget.cpp
         paths.cpp
+        simplelistview.cpp
+        scrollarea.cpp
         slider.cpp
         utils.cpp
+
+        actions/actioncontainer.cpp
+        actions/actionmanager.cpp
+
+        settings/settingsdialog.cpp
+        settings/settingsdialogcontroller.cpp
+        settings/settingspage.cpp
+        settings/settingsmodel.cpp
 )

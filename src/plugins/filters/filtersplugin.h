@@ -71,7 +71,7 @@ private:
                                     name, {"Filter"});
     }
 
-    Core::ActionManager* m_actionManager;
+    Utils::ActionManager* m_actionManager;
     Core::SettingsManager* m_settings;
     Core::ThreadManager* m_threadManager;
     Core::DB::Database* m_database;

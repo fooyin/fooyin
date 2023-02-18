@@ -13,11 +13,6 @@ fooyin_add_library(Core
         constants.h
         typedefs.h
 
-        actions/actioncontainer.h
-        actions/actioncontainer.cpp
-        actions/actionmanager.h
-        actions/actionmanager.cpp
-
         app/threadmanager.h
         app/threadmanager.cpp
         app/worker.h

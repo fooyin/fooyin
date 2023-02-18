@@ -77,7 +77,7 @@ public:
     void setAltRowColors(bool altColours);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(Core::ActionContainer* menu) override;
+    void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
     void customHeaderMenuRequested(QPoint pos);
 

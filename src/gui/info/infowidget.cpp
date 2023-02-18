@@ -20,13 +20,14 @@
 #include "infowidget.h"
 
 #include "gui/guisettings.h"
-#include "gui/info/infoitem.h"
-#include "gui/info/itemdelegate.h"
+#include "infoitem.h"
+#include "itemdelegate.h"
 
-#include <core/actions/actioncontainer.h>
 #include <core/library/musiclibrary.h>
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
+
+#include <utils/actions/actioncontainer.h>
 
 #include <QHeaderView>
 #include <QMenu>
@@ -124,7 +125,7 @@ QString InfoWidget::name() const
     return "Info";
 }
 
-void InfoWidget::layoutEditingMenu(Core::ActionContainer* menu)
+void InfoWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 {
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);

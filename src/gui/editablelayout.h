@@ -27,12 +27,12 @@ class QHBoxLayout;
 
 namespace Utils {
 class OverlayFilter;
-}
+class ActionManager;
+class ActionContainer;
+} // namespace Utils
 
 namespace Core {
-class ActionContainer;
 class SettingsManager;
-class ActionManager;
 } // namespace Core
 
 namespace Gui::Widgets {
@@ -46,16 +46,16 @@ class EditableLayout : public QWidget
     Q_OBJECT
 
 public:
-    explicit EditableLayout(Core::SettingsManager* settings, Core::ActionManager* actionManager,
+    explicit EditableLayout(Core::SettingsManager* settings, Utils::ActionManager* actionManager,
                             WidgetFactory* widgetFactory, WidgetProvider* widgetProvider,
                             LayoutProvider* layoutProvider, QWidget* parent = nullptr);
     ~EditableLayout() override;
 
     void initialise();
 
-    Core::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const;
-    void setupWidgetMenu(Core::ActionContainer* menu, FyWidget* parent, bool replace = false);
-    void setupContextMenu(FyWidget* widget, Core::ActionContainer* menu);
+    Utils::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const;
+    void setupWidgetMenu(Utils::ActionContainer* menu, FyWidget* parent, bool replace = false);
+    void setupContextMenu(FyWidget* widget, Utils::ActionContainer* menu);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
@@ -68,13 +68,13 @@ public:
     void hideOverlay();
 
 private:
-    Core::ActionManager* m_actionManager;
+    Utils::ActionManager* m_actionManager;
     Core::SettingsManager* m_settings;
     Widgets::WidgetFactory* m_widgetFactory;
     Widgets::WidgetProvider* m_widgetProvider;
     LayoutProvider* m_layoutProvider;
 
-    Core::ActionContainer* m_menu;
+    Utils::ActionContainer* m_menu;
     QHBoxLayout* m_box;
     Utils::OverlayFilter* m_overlay;
     SplitterWidget* m_splitter;

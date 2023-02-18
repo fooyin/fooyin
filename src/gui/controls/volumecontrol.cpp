@@ -19,7 +19,8 @@
 
 #include "volumecontrol.h"
 
-#include <core/constants.h>
+#include "gui/guiconstants.h"
+
 #include <utils/comboicon.h>
 #include <utils/hovermenu.h>
 #include <utils/slider.h>
@@ -30,7 +31,7 @@ namespace Gui::Widgets {
 VolumeControl::VolumeControl(QWidget* parent)
     : QWidget{parent}
     , m_layout{new QHBoxLayout(this)}
-    , m_volumeIcon{new Utils::ComboIcon(Core::Constants::Icons::VolumeMute, this)}
+    , m_volumeIcon{new Utils::ComboIcon(Constants::Icons::VolumeMute, this)}
     , m_volumeSlider{new Utils::Slider(Qt::Vertical, this)}
     , m_volumeLayout{new QHBoxLayout()}
     , m_volumeMenu{new Utils::HoverMenu(this)}
@@ -58,10 +59,10 @@ void VolumeControl::setupUi()
 
     m_layout->setSpacing(10);
 
-    m_volumeIcon->addPixmap(Core::Constants::Icons::VolumeMin);
-    m_volumeIcon->addPixmap(Core::Constants::Icons::VolumeLow);
-    m_volumeIcon->addPixmap(Core::Constants::Icons::VolumeMed);
-    m_volumeIcon->addPixmap(Core::Constants::Icons::VolumeMax);
+    m_volumeIcon->addPixmap(Constants::Icons::VolumeMin);
+    m_volumeIcon->addPixmap(Constants::Icons::VolumeLow);
+    m_volumeIcon->addPixmap(Constants::Icons::VolumeMed);
+    m_volumeIcon->addPixmap(Constants::Icons::VolumeMax);
 
     m_volumeLayout->addWidget(m_volumeSlider);
 
@@ -72,7 +73,7 @@ void VolumeControl::setupUi()
 
     m_volumeIcon->setMaximumSize(m_labelSize);
 
-    m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMax);
+    m_volumeIcon->setIcon(Constants::Icons::VolumeMax);
 }
 
 void VolumeControl::updateVolume(double value)
@@ -81,19 +82,19 @@ void VolumeControl::updateVolume(double value)
     emit volumeChanged(vol);
 
     if(vol <= 100 && vol >= 75) {
-        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMax);
+        m_volumeIcon->setIcon(Constants::Icons::VolumeMax);
     }
     else if(vol < 75 && vol >= 50) {
-        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMed);
+        m_volumeIcon->setIcon(Constants::Icons::VolumeMed);
     }
     else if(vol < 50 && vol >= 25) {
-        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeLow);
+        m_volumeIcon->setIcon(Constants::Icons::VolumeLow);
     }
     else if(vol < 25 && vol >= 1) {
-        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMin);
+        m_volumeIcon->setIcon(Constants::Icons::VolumeMin);
     }
     else {
-        m_volumeIcon->setIcon(Core::Constants::Icons::VolumeMute);
+        m_volumeIcon->setIcon(Constants::Icons::VolumeMute);
     }
 }
 

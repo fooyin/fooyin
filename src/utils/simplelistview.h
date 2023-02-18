@@ -19,29 +19,37 @@
 
 #pragma once
 
-#include <QObject>
-
-class QMenuBar;
-class QAction;
+#include <QEvent>
+#include <QListView>
+#include <QScrollBar>
+#include <QStyledItemDelegate>
 
 namespace Utils {
-class ActionManager;
-class ActionContainer;
-} // namespace Utils
-
-namespace Gui {
-class MainMenuBar : public QObject
+class SimpleListViewDelegate : public QStyledItemDelegate
 {
-    Q_OBJECT
-
 public:
-    explicit MainMenuBar(Utils::ActionManager* actionManager, QObject* parent = nullptr);
-    ~MainMenuBar() override = default;
+    explicit SimpleListViewDelegate(QObject* parent);
 
-    [[nodiscard]] QMenuBar* menuBar() const;
+    void setHeight(int height);
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Utils::ActionContainer* m_menubar;
+    [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+    int m_height;
 };
-} // namespace Gui
+
+class SimpleListView : public QListView
+{
+public:
+    explicit SimpleListView(QWidget* parent = nullptr);
+
+    void setWidth(int width);
+    void setHeight(int height);
+
+private:
+    [[nodiscard]] QSize sizeHint() const override;
+
+    SimpleListViewDelegate* m_delegate;
+    int m_width;
+};
+} // namespace Utils

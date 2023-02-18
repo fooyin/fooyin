@@ -24,8 +24,9 @@
 #include "filterwidget.h"
 #include "searchwidget.h"
 
-#include <core/actions/actioncontainer.h>
 #include <gui/widgetfactory.h>
+
+#include <utils/actions/actioncontainer.h>
 
 #include <QMenu>
 

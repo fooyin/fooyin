@@ -19,29 +19,33 @@
 
 #pragma once
 
-#include <QObject>
-
-class QMenuBar;
-class QAction;
+#include <utils/settings/settingspage.h>
 
 namespace Utils {
-class ActionManager;
-class ActionContainer;
-} // namespace Utils
+class SettingsDialogController;
+}
 
-namespace Gui {
-class MainMenuBar : public QObject
+namespace Core {
+class SettingsManager;
+}
+
+namespace Gui::Settings {
+class GeneralPageWidget : public Utils::SettingsPageWidget
 {
-    Q_OBJECT
-
 public:
-    explicit MainMenuBar(Utils::ActionManager* actionManager, QObject* parent = nullptr);
-    ~MainMenuBar() override = default;
+    explicit GeneralPageWidget(Core::SettingsManager* settings);
+    ~GeneralPageWidget() override = default;
 
-    [[nodiscard]] QMenuBar* menuBar() const;
+    void apply() override;
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Utils::ActionContainer* m_menubar;
+    Core::SettingsManager* m_settings;
 };
-} // namespace Gui
+
+class GeneralPage : public Utils::SettingsPage
+{
+public:
+    explicit GeneralPage(Utils::SettingsDialogController* controller, Core::SettingsManager* settings);
+    ~GeneralPage() override = default;
+};
+} // namespace Gui::Settings

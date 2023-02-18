@@ -22,5 +22,9 @@
         <file>icons/quit.svg</file>
         <file>icons/layout-editing.svg</file>
         <file>icons/quick-setup.svg</file>
+        <file>icons/category-general.svg</file>
+        <file>icons/category-interface.svg</file>
+        <file>icons/category-library.svg</file>
+        <file>icons/category-playlist.svg</file>
     </qresource>
 </RCC>

@@ -43,7 +43,7 @@ FyWidget* FyWidget::findParent()
     return qobject_cast<FyWidget*>(parent);
 }
 
-void FyWidget::layoutEditingMenu(Core::ActionContainer* menu)
+void FyWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 {
     Q_UNUSED(menu)
 }

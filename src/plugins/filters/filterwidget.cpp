@@ -26,9 +26,10 @@
 #include "filtersettings.h"
 #include "filterview.h"
 
-#include <core/actions/actioncontainer.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
+
+#include <utils/actions/actioncontainer.h>
 #include <utils/enumhelper.h>
 
 #include <QAction>
@@ -174,7 +175,7 @@ QString FilterWidget::name() const
     return "Filter";
 }
 
-void FilterWidget::layoutEditingMenu(Core::ActionContainer* menu)
+void FilterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 {
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);

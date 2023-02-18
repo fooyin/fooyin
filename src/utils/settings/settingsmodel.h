@@ -19,29 +19,36 @@
 
 #pragma once
 
-#include <QObject>
+#include "settingscategory.h"
 
-class QMenuBar;
-class QAction;
+#include "utils/id.h"
+
+#include <QAbstractListModel>
+#include <QIcon>
+
+#include <set>
 
 namespace Utils {
-class ActionManager;
-class ActionContainer;
-} // namespace Utils
+using CategoryList = std::vector<SettingsCategory*>;
 
-namespace Gui {
-class MainMenuBar : public QObject
+class SettingsModel : public QAbstractListModel
 {
-    Q_OBJECT
-
 public:
-    explicit MainMenuBar(Utils::ActionManager* actionManager, QObject* parent = nullptr);
-    ~MainMenuBar() override = default;
+    SettingsModel();
+    ~SettingsModel() override;
 
-    [[nodiscard]] QMenuBar* menuBar() const;
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+
+    [[nodiscard]] const CategoryList& categories() const;
+
+    void setPages(const PageList& pages);
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Utils::ActionContainer* m_menubar;
+    SettingsCategory* findCategoryById(const Id& id);
+
+    CategoryList m_categories;
+    std::set<Id> m_pageIds;
+    QIcon m_emptyIcon;
 };
-} // namespace Gui
+} // namespace Utils

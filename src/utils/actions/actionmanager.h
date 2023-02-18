@@ -26,7 +26,7 @@
 class QAction;
 class QMainWindow;
 
-namespace Core {
+namespace Utils {
 class ActionContainer;
 class ActionManager : public QObject
 {
@@ -38,12 +38,12 @@ public:
 
     void setMainWindow(QMainWindow* mainWindow);
 
-    ActionContainer* createMenu(const Utils::Id& id);
-    ActionContainer* createMenuBar(const Utils::Id& id);
-    void registerAction(QAction* action, const Utils::Id& id);
+    ActionContainer* createMenu(const Id& id);
+    ActionContainer* createMenuBar(const Id& id);
+    void registerAction(QAction* action, const Id& id);
 
-    QAction* action(const Utils::Id& id);
-    ActionContainer* actionContainer(const Utils::Id& id);
+    QAction* action(const Id& id);
+    ActionContainer* actionContainer(const Id& id);
 
 protected:
     void containerDestroyed(QObject* sender);
@@ -51,7 +51,7 @@ protected:
 private:
     QMainWindow* m_mainWindow;
 
-    std::unordered_map<Utils::Id, QAction*, Utils::Id::IdHash> m_idCmdMap;
-    std::unordered_map<Utils::Id, ActionContainer*, Utils::Id::IdHash> m_idContainerMap;
+    std::unordered_map<Id, QAction*, Id::IdHash> m_idCmdMap;
+    std::unordered_map<Id, ActionContainer*, Id::IdHash> m_idContainerMap;
 };
-} // namespace Core
+} // namespace Utils

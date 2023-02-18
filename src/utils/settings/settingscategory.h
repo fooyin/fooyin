@@ -19,29 +19,34 @@
 
 #pragma once
 
-#include <QObject>
+#include "settingspage.h"
+#include "utils/id.h"
 
-class QMenuBar;
-class QAction;
+#include <QIcon>
+
+class QTabWidget;
 
 namespace Utils {
-class ActionManager;
-class ActionContainer;
-} // namespace Utils
+class SettingsPage;
 
-namespace Gui {
-class MainMenuBar : public QObject
+using PageList = std::vector<SettingsPage*>;
+
+struct SettingsCategory
 {
-    Q_OBJECT
+    Id id;
+    int index;
+    QString name;
+    QIcon icon;
+    PageList pages;
+    QTabWidget* tabWidget;
 
-public:
-    explicit MainMenuBar(Utils::ActionManager* actionManager, QObject* parent = nullptr);
-    ~MainMenuBar() override = default;
-
-    [[nodiscard]] QMenuBar* menuBar() const;
-
-private:
-    Utils::ActionManager* m_actionManager;
-    Utils::ActionContainer* m_menubar;
+    bool findPageById(const Id& idToFind, int* pageIndex) const
+    {
+        auto it    = std::find_if(pages.begin(), pages.end(), [idToFind](const SettingsPage* page) {
+            return page->id() == idToFind;
+        });
+        *pageIndex = it == pages.end() ? -1 : static_cast<int>(std::distance(pages.begin(), it));
+        return *pageIndex != -1;
+    }
 };
-} // namespace Gui
+} // namespace Utils

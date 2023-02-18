@@ -17,31 +17,32 @@
  *
  */
 
-#pragma once
+#include "settingsdialogcontroller.h"
 
-#include <QObject>
-
-class QMenuBar;
-class QAction;
+#include "settingsdialog.h"
 
 namespace Utils {
-class ActionManager;
-class ActionContainer;
-} // namespace Utils
+SettingsDialogController::SettingsDialogController(QObject* parent)
+    : QObject{parent}
+{ }
 
-namespace Gui {
-class MainMenuBar : public QObject
+void SettingsDialogController::open()
 {
-    Q_OBJECT
+    auto* settingsDialog = new SettingsDialog{m_pages};
+    settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+    settingsDialog->openSettings();
+}
 
-public:
-    explicit MainMenuBar(Utils::ActionManager* actionManager, QObject* parent = nullptr);
-    ~MainMenuBar() override = default;
+void SettingsDialogController::openAtPage(const Id& page)
+{
+    auto* settingsDialog = new SettingsDialog{m_pages};
+    settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+    settingsDialog->openSettings();
+    settingsDialog->openPage(page);
+}
 
-    [[nodiscard]] QMenuBar* menuBar() const;
-
-private:
-    Utils::ActionManager* m_actionManager;
-    Utils::ActionContainer* m_menubar;
-};
-} // namespace Gui
+void SettingsDialogController::addPage(SettingsPage* page)
+{
+    m_pages.emplace_back(page);
+}
+} // namespace Utils

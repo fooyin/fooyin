@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,51 +19,46 @@
 
 #pragma once
 
-#include <QDialog>
+#include <utils/settings/settingspage.h>
 
-class QListWidgetItem;
-class QListWidget;
-class QStackedWidget;
+#include <QTableWidget>
+
+namespace Utils {
+class SettingsDialogController;
+}
 
 namespace Core {
 class SettingsManager;
 
 namespace Library {
 class LibraryManager;
-}
+class LibraryInfo;
+} // namespace Library
 } // namespace Core
 
 namespace Gui::Settings {
-class SettingsDialog : public QDialog
+class LibraryGeneralPageWidget : public Utils::SettingsPageWidget
 {
-    Q_OBJECT
-
 public:
-    // Order of pages in settings
-    // Do not change!
-    enum class Page
-    {
-        General = 0,
-        Library,
-        Playlist
-    };
+    explicit LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings);
+    ~LibraryGeneralPageWidget() override = default;
 
-    explicit SettingsDialog(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings,
-                            QWidget* parent = nullptr);
-    ~SettingsDialog() override = default;
-
-    void setupUi();
-
-    void createIcons() const;
-
-    void changePage(QListWidgetItem* current, QListWidgetItem* previous);
-    void openPage(Page page);
+    void apply() override;
 
 private:
+    void addLibraryRow(const Core::Library::LibraryInfo& info);
+    void addLibrary();
+    void removeLibrary();
+
     Core::Library::LibraryManager* m_libraryManager;
     Core::SettingsManager* m_settings;
+    QTableWidget m_libraryList;
+};
 
-    QListWidget* m_contentsWidget;
-    QStackedWidget* m_pagesWidget;
+class LibraryGeneralPage : public Utils::SettingsPage
+{
+public:
+    LibraryGeneralPage(Utils::SettingsDialogController* controller, Core::Library::LibraryManager* libraryManager,
+                       Core::SettingsManager* settings);
 };
 } // namespace Gui::Settings

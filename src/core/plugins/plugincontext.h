@@ -19,8 +19,12 @@
 
 #pragma once
 
-namespace Core {
+namespace Utils {
+class SettingsDialogController;
 class ActionManager;
+} // namespace Utils
+
+namespace Core {
 class SettingsManager;
 class ThreadManager;
 
@@ -37,19 +41,13 @@ class MusicLibrary;
 }
 } // namespace Core
 
-namespace Gui {
-namespace Widgets {
+namespace Gui::Widgets {
 class WidgetFactory;
-}
-
-namespace Settings {
-class SettingsDialog;
-}
-} // namespace Gui
+} // namespace Gui::Widgets
 
 struct WidgetPluginContext
 {
-    WidgetPluginContext(Core::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
+    WidgetPluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
                         Core::Library::MusicLibrary* library, Gui::Widgets::WidgetFactory* widgetFactory)
         : actionManager{actionManager}
         , playerManager{playerManager}
@@ -57,7 +55,7 @@ struct WidgetPluginContext
         , widgetFactory{widgetFactory}
     { }
 
-    Core::ActionManager* actionManager;
+    Utils::ActionManager* actionManager;
     Core::Player::PlayerManager* playerManager;
     Core::Library::MusicLibrary* library;
     Gui::Widgets::WidgetFactory* widgetFactory;
@@ -65,13 +63,13 @@ struct WidgetPluginContext
 
 struct SettingsPluginContext
 {
-    SettingsPluginContext(Core::SettingsManager* settingsManager, Gui::Settings::SettingsDialog* settingsDialog)
+    SettingsPluginContext(Core::SettingsManager* settingsManager, Utils::SettingsDialogController* settingsController)
         : settingsManager{settingsManager}
-        , settingsDialog{settingsDialog}
+        , settingsController{settingsController}
     { }
 
     Core::SettingsManager* settingsManager;
-    Gui::Settings::SettingsDialog* settingsDialog;
+    Utils::SettingsDialogController* settingsController;
 };
 
 struct ThreadPluginContext

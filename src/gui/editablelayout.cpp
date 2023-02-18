@@ -19,16 +19,16 @@
 
 #include "editablelayout.h"
 
-#include "gui/guisettings.h"
 #include "gui/widgets/dummy.h"
 #include "gui/widgets/splitterwidget.h"
+#include "guiconstants.h"
+#include "guisettings.h"
 #include "layoutprovider.h"
 #include "widgetfactory.h"
 #include "widgetprovider.h"
 
-#include <core/actions/actioncontainer.h>
-#include <core/actions/actionmanager.h>
-#include <core/constants.h>
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
 #include <utils/enumhelper.h>
 #include <utils/menuheader.h>
 #include <utils/overlayfilter.h>
@@ -74,7 +74,7 @@ FyWidget* splitterChild(QWidget* widget)
     return qobject_cast<FyWidget*>(child);
 }
 
-EditableLayout::EditableLayout(Core::SettingsManager* settings, Core::ActionManager* actionManager,
+EditableLayout::EditableLayout(Core::SettingsManager* settings, Utils::ActionManager* actionManager,
                                WidgetFactory* widgetFactory, WidgetProvider* widgetProvider,
                                LayoutProvider* layoutProvider, QWidget* parent)
     : QWidget{parent}
@@ -83,7 +83,7 @@ EditableLayout::EditableLayout(Core::SettingsManager* settings, Core::ActionMana
     , m_widgetFactory{widgetFactory}
     , m_widgetProvider{widgetProvider}
     , m_layoutProvider{layoutProvider}
-    , m_menu{actionManager->createMenu(Core::Constants::ContextMenus::Layout)}
+    , m_menu{actionManager->createMenu(Constants::Menus::Context::Layout)}
     , m_box{new QHBoxLayout(this)}
     , m_overlay{new Utils::OverlayFilter(this)}
     , m_menuLevels{2}
@@ -91,8 +91,8 @@ EditableLayout::EditableLayout(Core::SettingsManager* settings, Core::ActionMana
 {
     setObjectName("EditableLayout");
 
-    m_menu->appendGroup(Core::Constants::Groups::Two);
-    m_menu->appendGroup(Core::Constants::Groups::Three);
+    m_menu->appendGroup(Constants::Groups::Two);
+    m_menu->appendGroup(Constants::Groups::Three);
 
     m_box->setContentsMargins(5, 5, 5, 5);
 }
@@ -101,7 +101,7 @@ EditableLayout::~EditableLayout() = default;
 
 void EditableLayout::initialise()
 {
-    connect(m_menu, &Core::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
+    connect(m_menu, &Utils::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
     m_settings->subscribe<Settings::LayoutEditing>(this, [this](bool enabled) {
         m_layoutEditing = enabled;
     });
@@ -118,7 +118,7 @@ void EditableLayout::initialise()
     qApp->installEventFilter(this);
 }
 
-Core::ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QString& title) const
+Utils::ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QString& title) const
 {
     auto id       = parent->id().append(title);
     auto* newMenu = m_actionManager->createMenu(id);
@@ -127,7 +127,7 @@ Core::ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QSt
     return newMenu;
 }
 
-void EditableLayout::setupWidgetMenu(Core::ActionContainer* menu, FyWidget* parent, bool replace)
+void EditableLayout::setupWidgetMenu(Utils::ActionContainer* menu, FyWidget* parent, bool replace)
 {
     if(!menu->isEmpty()) {
         return;
@@ -163,7 +163,7 @@ void EditableLayout::setupWidgetMenu(Core::ActionContainer* menu, FyWidget* pare
     }
 }
 
-void EditableLayout::setupContextMenu(FyWidget* widget, Core::ActionContainer* menu)
+void EditableLayout::setupContextMenu(FyWidget* widget, Utils::ActionContainer* menu)
 {
     if(!widget || !menu) {
         return;

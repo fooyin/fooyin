@@ -19,17 +19,19 @@
 
 #include "playlistwidget.h"
 
+#include "gui/guiconstants.h"
 #include "gui/guisettings.h"
-#include "gui/settings/settingsdialog.h"
 #include "playlistdelegate.h"
 #include "playlistmodel.h"
 #include "playlistview.h"
 
-#include <core/actions/actioncontainer.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
+
+#include <utils/actions/actioncontainer.h>
 #include <utils/overlaywidget.h>
+#include <utils/settings/settingsdialogcontroller.h>
 
 #include <QAction>
 #include <QActionGroup>
@@ -41,13 +43,14 @@
 
 namespace Gui::Widgets {
 PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
-                               Core::Player::PlayerManager* playerManager, Settings::SettingsDialog* settingsDialog,
+                               Core::Player::PlayerManager* playerManager,
+                               Utils::SettingsDialogController* settingsDialogController,
                                Core::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_libraryManager{libraryManager}
     , m_library{library}
     , m_playerManager{playerManager}
-    , m_settingsDialog{settingsDialog}
+    , m_settingsDialogController{settingsDialogController}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_model{new PlaylistModel(m_playerManager, m_library, m_settings, this)}
@@ -67,7 +70,7 @@ PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Co
 
     setupConnections();
     connect(m_noLibrary, &Utils::OverlayWidget::settingsClicked, this, [this] {
-        m_settingsDialog->openPage(Settings::SettingsDialog::Page::Library);
+        m_settingsDialogController->openAtPage(Constants::Page::LibraryGeneral);
     });
 
     reset();
@@ -157,7 +160,7 @@ QString PlaylistWidget::name() const
     return "Playlist";
 }
 
-void PlaylistWidget::layoutEditingMenu(Core::ActionContainer* menu)
+void PlaylistWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 {
     auto* showHeaders = new QAction("Show Header", menu);
     showHeaders->setCheckable(true);
@@ -279,7 +282,7 @@ void PlaylistWidget::customHeaderMenuRequested(QPoint pos)
 
     connect(&sortOrder, &QActionGroup::triggered, this, &PlaylistWidget::changeOrder);
 
-    menu.exec(mapToGlobal(pos));
+    menu.popup(mapToGlobal(pos));
 }
 
 void PlaylistWidget::changeOrder(QAction* action)

@@ -19,51 +19,52 @@
 
 #include "mainmenubar.h"
 
-#include <core/actions/actioncontainer.h>
-#include <core/actions/actionmanager.h>
-#include <core/constants.h>
+#include "guiconstants.h"
+
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
 
 #include <QMenu>
 
 namespace Gui {
-MainMenuBar::MainMenuBar(Core::ActionManager* actionManager, QObject* parent)
+MainMenuBar::MainMenuBar(Utils::ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
-    , m_menubar{m_actionManager->createMenuBar(Core::Constants::MenuBar)}
+    , m_menubar{m_actionManager->createMenuBar(Constants::MenuBar)}
 {
-    m_menubar->appendGroup(Core::Constants::Groups::File);
-    m_menubar->appendGroup(Core::Constants::Groups::Edit);
-    m_menubar->appendGroup(Core::Constants::Groups::View);
-    m_menubar->appendGroup(Core::Constants::Groups::Playback);
-    m_menubar->appendGroup(Core::Constants::Groups::Library);
-    m_menubar->appendGroup(Core::Constants::Groups::Help);
+    m_menubar->appendGroup(Constants::Groups::File);
+    m_menubar->appendGroup(Constants::Groups::Edit);
+    m_menubar->appendGroup(Constants::Groups::View);
+    m_menubar->appendGroup(Constants::Groups::Playback);
+    m_menubar->appendGroup(Constants::Groups::Library);
+    m_menubar->appendGroup(Constants::Groups::Help);
 
-    Core::ActionContainer* fileMenu = m_actionManager->createMenu(Core::Constants::Menus::File);
-    m_menubar->addMenu(fileMenu, Core::Constants::Groups::File);
+    Utils::ActionContainer* fileMenu = m_actionManager->createMenu(Constants::Menus::File);
+    m_menubar->addMenu(fileMenu, Constants::Groups::File);
     fileMenu->menu()->setTitle(tr("&File"));
-    fileMenu->appendGroup(Core::Constants::Groups::Three);
+    fileMenu->appendGroup(Constants::Groups::Three);
 
-    Core::ActionContainer* editMenu = m_actionManager->createMenu(Core::Constants::Menus::Edit);
-    m_menubar->addMenu(editMenu, Core::Constants::Groups::Edit);
+    Utils::ActionContainer* editMenu = m_actionManager->createMenu(Constants::Menus::Edit);
+    m_menubar->addMenu(editMenu, Constants::Groups::Edit);
     editMenu->menu()->setTitle(tr("&Edit"));
 
-    Core::ActionContainer* viewMenu = m_actionManager->createMenu(Core::Constants::Menus::View);
-    m_menubar->addMenu(viewMenu, Core::Constants::Groups::View);
+    Utils::ActionContainer* viewMenu = m_actionManager->createMenu(Constants::Menus::View);
+    m_menubar->addMenu(viewMenu, Constants::Groups::View);
     viewMenu->menu()->setTitle(tr("&View"));
-    viewMenu->appendGroup(Core::Constants::Groups::Three);
+    viewMenu->appendGroup(Constants::Groups::Three);
 
-    Core::ActionContainer* playbackMenu = m_actionManager->createMenu(Core::Constants::Menus::Playback);
-    m_menubar->addMenu(playbackMenu, Core::Constants::Groups::Playback);
+    Utils::ActionContainer* playbackMenu = m_actionManager->createMenu(Constants::Menus::Playback);
+    m_menubar->addMenu(playbackMenu, Constants::Groups::Playback);
     playbackMenu->menu()->setTitle(tr("&Playback"));
 
-    Core::ActionContainer* libraryMenu = m_actionManager->createMenu(Core::Constants::Menus::Library);
-    m_menubar->addMenu(libraryMenu, Core::Constants::Groups::Library);
+    Utils::ActionContainer* libraryMenu = m_actionManager->createMenu(Constants::Menus::Library);
+    m_menubar->addMenu(libraryMenu, Constants::Groups::Library);
     libraryMenu->menu()->setTitle(tr("&Library"));
-    libraryMenu->appendGroup(Core::Constants::Groups::Two);
-    libraryMenu->appendGroup(Core::Constants::Groups::Three);
+    libraryMenu->appendGroup(Constants::Groups::Two);
+    libraryMenu->appendGroup(Constants::Groups::Three);
 
-    Core::ActionContainer* helpMenu = m_actionManager->createMenu(Core::Constants::Menus::Help);
-    m_menubar->addMenu(helpMenu, Core::Constants::Groups::Help);
+    Utils::ActionContainer* helpMenu = m_actionManager->createMenu(Constants::Menus::Help);
+    m_menubar->addMenu(helpMenu, Constants::Groups::Help);
     helpMenu->menu()->setTitle(tr("&Help"));
 }
 

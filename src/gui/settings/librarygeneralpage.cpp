@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,47 +17,27 @@
  *
  */
 
-#include "settingspages.h"
+#include "librarygeneralpage.h"
 
-#include "gui/guisettings.h"
+#include "gui/guiconstants.h"
 
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/librarymanager.h>
-#include <utils/utils.h>
 
 #include <QCheckBox>
+#include <QDir>
 #include <QFileDialog>
-#include <QHBoxLayout>
+#include <QFileInfo>
 #include <QHeaderView>
 #include <QInputDialog>
-#include <QLineEdit>
 #include <QPushButton>
-#include <QTableWidget>
+#include <QVBoxLayout>
 
 namespace Gui::Settings {
-GeneralPage::GeneralPage(Core::SettingsManager* settings, QWidget* parent)
-    : QWidget{parent}
-    , m_settings{settings}
-{
-    auto* mainLayout = new QVBoxLayout(this);
-    //    mainLayout->addStretch();
-    mainLayout->setAlignment(Qt::AlignTop);
-
-    auto* splitterHandles = new QCheckBox("Show Splitter Handles", this);
-    splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
-
-    mainLayout->addWidget(splitterHandles);
-
-    connect(splitterHandles, &QCheckBox::clicked, this, [this](bool checked) {
-        m_settings->set<Settings::SplitterHandles>(checked);
-    });
-}
-
-LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings,
-                         QWidget* parent)
-    : QWidget{parent}
-    , m_libraryManager{libraryManager}
+LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager,
+                                                   Core::SettingsManager* settings)
+    : m_libraryManager{libraryManager}
     , m_settings{settings}
     , m_libraryList{0, 3, this}
 {
@@ -95,15 +75,17 @@ LibraryPage::LibraryPage(Core::Library::LibraryManager* libraryManager, Core::Se
     mainLayout->addWidget(autoRefresh);
     // mainLayout->addStretch();
 
-    connect(addLibrary, &QPushButton::clicked, this, &LibraryPage::addLibrary);
-    connect(removeLibrary, &QPushButton::clicked, this, &LibraryPage::removeLibrary);
+    connect(addLibrary, &QPushButton::clicked, this, &LibraryGeneralPageWidget::addLibrary);
+    connect(removeLibrary, &QPushButton::clicked, this, &LibraryGeneralPageWidget::removeLibrary);
 
     connect(autoRefresh, &QCheckBox::clicked, this, [this](bool checked) {
         m_settings->set<Core::Settings::AutoRefresh>(checked);
     });
 }
 
-void LibraryPage::addLibraryRow(const Core::Library::LibraryInfo& info)
+void LibraryGeneralPageWidget::apply() { }
+
+void LibraryGeneralPageWidget::addLibraryRow(const Core::Library::LibraryInfo& info)
 {
     const int row = m_libraryList.rowCount();
     m_libraryList.setRowCount(row + 1);
@@ -117,7 +99,7 @@ void LibraryPage::addLibraryRow(const Core::Library::LibraryInfo& info)
     m_libraryList.setItem(row, 2, libPath);
 }
 
-void LibraryPage::addLibrary()
+void LibraryGeneralPageWidget::addLibrary()
 {
     const QString newDir
         = QFileDialog::getExistingDirectory(this, tr("Directory"), QDir::homePath(), QFileDialog::ShowDirsOnly);
@@ -143,7 +125,7 @@ void LibraryPage::addLibrary()
     }
 }
 
-void LibraryPage::removeLibrary()
+void LibraryGeneralPageWidget::removeLibrary()
 {
     const auto selItems = m_libraryList.selectionModel()->selectedRows();
     for(const auto& item : selItems) {
@@ -154,50 +136,18 @@ void LibraryPage::removeLibrary()
     }
 }
 
-PlaylistPage::PlaylistPage(Core::SettingsManager* settings, QWidget* parent)
-    : QWidget{parent}
-    , m_settings{settings}
+LibraryGeneralPage::LibraryGeneralPage(Utils::SettingsDialogController* controller,
+                                       Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings)
+    : Utils::SettingsPage{controller}
 {
-    auto* groupHeaders = new QCheckBox("Enable Disc Headers", this);
-    groupHeaders->setChecked(m_settings->value<Settings::DiscHeaders>());
-
-    auto* splitDiscs = new QCheckBox("Split Discs", this);
-    splitDiscs->setChecked(m_settings->value<Settings::SplitDiscs>());
-    splitDiscs->setEnabled(groupHeaders->isChecked());
-
-    auto* simpleList = new QCheckBox("Simple Playlist", this);
-    simpleList->setChecked(m_settings->value<Settings::SimplePlaylist>());
-
-    auto* altColours = new QCheckBox("Alternate Row Colours", this);
-    altColours->setChecked(m_settings->value<Settings::PlaylistAltColours>());
-
-    auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(groupHeaders);
-
-    auto* indentWidget = Utils::Widgets::indentWidget(splitDiscs, this);
-    mainLayout->addWidget(indentWidget);
-    mainLayout->addWidget(simpleList);
-    mainLayout->addWidget(altColours);
-    mainLayout->addStretch();
-
-    connect(groupHeaders, &QCheckBox::clicked, this, [this, splitDiscs](bool checked) {
-        m_settings->set<Settings::DiscHeaders>(checked);
-        if(checked) {
-            splitDiscs->setEnabled(checked);
-        }
-        else {
-            splitDiscs->setChecked(checked);
-            splitDiscs->setEnabled(checked);
-        }
+    setId(Constants::Page::LibraryGeneral);
+    setName(tr("General"));
+    setCategory("Category.Library");
+    setCategoryName(tr("Library"));
+    setWidgetCreator([libraryManager, settings] {
+        return new LibraryGeneralPageWidget(libraryManager, settings);
     });
-    connect(splitDiscs, &QCheckBox::clicked, this, [this](bool checked) {
-        m_settings->set<Settings::SplitDiscs>(checked);
-    });
-    connect(simpleList, &QCheckBox::clicked, this, [this](bool checked) {
-        m_settings->set<Settings::SimplePlaylist>(checked);
-    });
-    connect(altColours, &QCheckBox::clicked, this, [this](bool checked) {
-        m_settings->set<Settings::PlaylistAltColours>(checked);
-    });
+    setCategoryIconPath(Constants::Icons::Category::Library);
 }
+
 } // namespace Gui::Settings

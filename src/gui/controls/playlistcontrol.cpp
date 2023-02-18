@@ -19,9 +19,11 @@
 
 #include "playlistcontrol.h"
 
-#include <core/constants.h>
+#include "gui/guiconstants.h"
+
 #include <core/coresettings.h>
 #include <core/player/playermanager.h>
+
 #include <utils/comboicon.h>
 
 #include <QHBoxLayout>
@@ -32,8 +34,8 @@ PlaylistControl::PlaylistControl(Core::SettingsManager* settings, QWidget* paren
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_labelSize{20, 20}
-    , m_repeat{new Utils::ComboIcon(Core::Constants::Icons::RepeatAll, Utils::ComboIcon::HasActiveIcon, this)}
-    , m_shuffle{new Utils::ComboIcon(Core::Constants::Icons::Shuffle, Utils::ComboIcon::HasActiveIcon, this)}
+    , m_repeat{new Utils::ComboIcon(Constants::Icons::RepeatAll, Utils::ComboIcon::HasActiveIcon, this)}
+    , m_shuffle{new Utils::ComboIcon(Constants::Icons::Shuffle, Utils::ComboIcon::HasActiveIcon, this)}
 
 {
     setupUi();
@@ -48,7 +50,7 @@ void PlaylistControl::setupUi()
     m_layout->setSpacing(10);
     m_layout->setContentsMargins(0, 0, 0, 0);
 
-    m_repeat->addPixmap(Core::Constants::Icons::Repeat);
+    m_repeat->addPixmap(Constants::Icons::Repeat);
 
     m_repeat->setMaximumSize(m_labelSize);
     m_shuffle->setMaximumSize(m_labelSize);
@@ -70,23 +72,23 @@ void PlaylistControl::setMode(Core::Player::PlayMode mode) const
 {
     switch(mode) {
         case(Core::Player::Repeat): {
-            m_repeat->setIcon(Core::Constants::Icons::Repeat, true);
-            m_shuffle->setIcon(Core::Constants::Icons::Shuffle);
+            m_repeat->setIcon(Constants::Icons::Repeat, true);
+            m_shuffle->setIcon(Constants::Icons::Shuffle);
             break;
         }
         case(Core::Player::RepeatAll): {
-            m_repeat->setIcon(Core::Constants::Icons::RepeatAll, true);
-            m_shuffle->setIcon(Core::Constants::Icons::Shuffle);
+            m_repeat->setIcon(Constants::Icons::RepeatAll, true);
+            m_shuffle->setIcon(Constants::Icons::Shuffle);
             break;
         }
         case(Core::Player::Shuffle): {
-            m_shuffle->setIcon(Core::Constants::Icons::Shuffle, true);
-            m_repeat->setIcon(Core::Constants::Icons::RepeatAll);
+            m_shuffle->setIcon(Constants::Icons::Shuffle, true);
+            m_repeat->setIcon(Constants::Icons::RepeatAll);
             break;
         }
         case(Core::Player::Default): {
-            m_repeat->setIcon(Core::Constants::Icons::RepeatAll);
-            m_shuffle->setIcon(Core::Constants::Icons::Shuffle);
+            m_repeat->setIcon(Constants::Icons::RepeatAll);
+            m_shuffle->setIcon(Constants::Icons::Shuffle);
             break;
         }
         default:
