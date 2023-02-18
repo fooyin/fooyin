@@ -24,8 +24,8 @@
 
 namespace Core {
 Worker::Worker(QObject* parent)
-    : QObject(parent)
-    , m_state(State::Idle)
+    : QObject{parent}
+    , m_state{Idle}
 { }
 
 void Worker::stopThread() { }
@@ -42,7 +42,7 @@ void Worker::setState(State state)
 
 bool Worker::isRunning()
 {
-    return m_state == State::Running;
+    return m_state == Running;
 }
 
 bool Worker::mayRun() const
@@ -53,6 +53,6 @@ bool Worker::mayRun() const
         return false;
     }
     dispatcher->processEvents(QEventLoop::AllEvents);
-    return m_state == State::Running;
+    return m_state == Running;
 }
 } // namespace Core
