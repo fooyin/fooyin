@@ -62,8 +62,12 @@ bool SettingsEntry::writeToDisk() const
     return m_writeToDisk;
 }
 
-void SettingsEntry::setValue(const QVariant& value)
+bool SettingsEntry::setValue(const QVariant& value)
 {
+    if(m_value == value) {
+        return false;
+    }
     m_value = value;
+    return true;
 }
 } // namespace Core

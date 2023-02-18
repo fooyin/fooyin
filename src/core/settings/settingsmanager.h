@@ -192,8 +192,13 @@ public:
             m_lock.unlock();
             return;
         }
+
+        if(!m_settings.at(mapKey).setValue(value)) {
+            m_lock.unlock();
+            return;
+        }
+
         const auto type = findType<key>();
-        m_settings.at(mapKey).setValue(value);
 
         m_lock.unlock();
 

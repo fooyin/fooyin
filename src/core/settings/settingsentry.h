@@ -38,7 +38,7 @@ public:
     [[nodiscard]] QString group() const;
     [[nodiscard]] bool writeToDisk() const;
 
-    void setValue(const QVariant& value);
+    bool setValue(const QVariant& value);
 
 signals:
     void settingChanged();
