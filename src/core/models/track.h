@@ -20,7 +20,7 @@
 #pragma once
 
 #include "core/typedefs.h"
-#include "libraryitem.h"
+#include "musicitem.h"
 
 #include <QList>
 
@@ -31,7 +31,7 @@ using GenreList  = QList<QString>;
 using ArtistList = QList<QString>;
 using ExtraTags  = std::map<QString, QList<QString>>;
 
-class Track : public LibraryItem
+class Track : public MusicItem
 {
 public:
     Track() = default;

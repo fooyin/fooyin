@@ -23,7 +23,7 @@
 
 namespace Core {
 Container::Container(QString title)
-    : LibraryItem()
+    : MusicItem()
     , m_title{std::move(title)}
     , m_duration{0}
     , m_trackCount{0}

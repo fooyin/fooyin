@@ -58,7 +58,7 @@ fooyin_add_library(Core
 
         models/container.h
         models/container.cpp
-        models/libraryitem.h
+        models/musicitem.h
         models/album.h
         models/album.cpp
         models/artist.h

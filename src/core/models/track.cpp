@@ -29,7 +29,7 @@
 
 namespace Core {
 Track::Track(QString filepath)
-    : LibraryItem()
+    : MusicItem()
     , m_enabled{true}
     , m_libraryId{-1}
     , m_id{-1}

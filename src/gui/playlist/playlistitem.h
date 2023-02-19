@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <core/models/libraryitem.h>
+#include <core/models/musicitem.h>
 
 #include <utils/treeitem.h>
 
@@ -54,17 +54,17 @@ public:
         Data      = Qt::UserRole + 17,
     };
 
-    explicit PlaylistItem(Type type = Type::Root, Core::LibraryItem* data = {}, PlaylistItem* parentItem = nullptr);
+    explicit PlaylistItem(Type type = Type::Root, Core::MusicItem* data = {}, PlaylistItem* parentItem = nullptr);
     ~PlaylistItem() override = default;
 
     void setIndex(int idx);
 
-    [[nodiscard]] Core::LibraryItem* data() const;
+    [[nodiscard]] Core::MusicItem* data() const;
     [[nodiscard]] Type type();
     [[nodiscard]] int index() const;
 
 private:
-    Core::LibraryItem* m_data;
+    Core::MusicItem* m_data;
     Type m_type;
     int m_index;
 };

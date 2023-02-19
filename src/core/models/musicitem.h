@@ -20,10 +20,10 @@
 #pragma once
 
 namespace Core {
-class LibraryItem
+class MusicItem
 {
 public:
-    explicit LibraryItem() = default;
-    virtual ~LibraryItem() = default;
+    explicit MusicItem() = default;
+    virtual ~MusicItem() = default;
 };
 } // namespace Core

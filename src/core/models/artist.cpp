@@ -21,7 +21,7 @@
 
 namespace Core {
 Artist::Artist(QString name)
-    : LibraryItem()
+    : MusicItem()
     , m_id{-1}
     , m_name{std::move(name)}
 { }

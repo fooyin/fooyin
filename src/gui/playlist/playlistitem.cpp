@@ -22,7 +22,7 @@
 #include <utils/helpers.h>
 
 namespace Gui::Widgets {
-PlaylistItem::PlaylistItem(Type type, Core::LibraryItem* data, PlaylistItem* parent)
+PlaylistItem::PlaylistItem(Type type, Core::MusicItem* data, PlaylistItem* parent)
     : TreeItem{parent}
     , m_data{data}
     , m_type{type}
@@ -34,7 +34,7 @@ void PlaylistItem::setIndex(int idx)
     m_index = idx;
 }
 
-Core::LibraryItem* PlaylistItem::data() const
+Core::MusicItem* PlaylistItem::data() const
 {
     return m_data;
 }

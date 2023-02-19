@@ -417,7 +417,7 @@ void PlaylistModel::beginReset()
     resetRoot();
 }
 
-PlaylistItem* PlaylistModel::checkInsertKey(const QString& key, PlaylistItem::Type type, Core::LibraryItem* item,
+PlaylistItem* PlaylistModel::checkInsertKey(const QString& key, PlaylistItem::Type type, Core::MusicItem* item,
                                             PlaylistItem* parent)
 {
     if(!m_nodes.count(key)) {

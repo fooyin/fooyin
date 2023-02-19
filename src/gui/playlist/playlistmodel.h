@@ -82,7 +82,7 @@ public:
 protected:
     void resetContainers();
     void beginReset();
-    PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, Core::LibraryItem* item,
+    PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, Core::MusicItem* item,
                                  PlaylistItem* parent);
     void createAlbums(const Core::TrackPtrList& tracks);
     void filterModel(const Core::TrackPtrList& tracks);

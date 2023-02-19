@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "libraryitem.h"
+#include "musicitem.h"
 
 #include <QString>
 
 namespace Core {
-class Artist : public LibraryItem
+class Artist : public MusicItem
 {
 public:
     Artist() = default;
