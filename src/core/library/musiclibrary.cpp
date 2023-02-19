@@ -80,7 +80,6 @@ MusicLibrary::MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteracto
 
     connect(this, &MusicLibrary::runLibraryScan, &p->scanner, &LibraryScanner::scanLibrary);
     connect(this, &MusicLibrary::runAllLibrariesScan, &p->scanner, &LibraryScanner::scanAll);
-    connect(&p->scanner, &LibraryScanner::libraryAdded, this, &MusicLibrary::libraryAdded);
     connect(&p->scanner, &LibraryScanner::addedTracks, this, &MusicLibrary::addNewTracks);
     connect(&p->scanner, &LibraryScanner::updatedTracks, this, &MusicLibrary::updateChangedTracks);
     connect(&p->scanner, &LibraryScanner::tracksDeleted, this, &MusicLibrary::removeDeletedTracks);

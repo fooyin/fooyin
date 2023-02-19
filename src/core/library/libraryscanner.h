@@ -57,8 +57,8 @@ signals:
 private:
     struct LibraryQueueEntry
     {
-        LibraryQueueEntry(const LibraryInfo& library, TrackList tracks)
-            : library{library}
+        LibraryQueueEntry(LibraryInfo library, TrackList tracks)
+            : library{std::move(library)}
             , tracks{std::move(tracks)}
         { }
         LibraryInfo library;
