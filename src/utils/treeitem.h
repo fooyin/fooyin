@@ -19,25 +19,65 @@
 
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
+
+#include <utils/helpers.h>
 
 namespace Utils {
+template <class Item>
 class TreeItem
 {
 public:
-    explicit TreeItem(TreeItem* parent = nullptr);
-    virtual ~TreeItem();
+    explicit TreeItem(Item* parent = nullptr)
+        : m_parent{parent}
+    { }
 
-    void appendChild(TreeItem* child);
-    TreeItem* child(int index);
-    [[nodiscard]] int childCount() const;
-    [[nodiscard]] int columnCount();
-    [[nodiscard]] int row() const;
-    [[nodiscard]] TreeItem* parent() const;
+    virtual ~TreeItem()
+    {
+        m_children.clear();
+    }
+
+    void appendChild(Item* child)
+    {
+        if(!Utils::contains(m_children, child)) {
+            m_children.emplace_back(child);
+        }
+    }
+
+    Item* child(int index)
+    {
+        if(index < 0 || index >= childCount()) {
+            return nullptr;
+        }
+        return m_children.at(index);
+    }
+
+    [[nodiscard]] int childCount() const
+    {
+        return static_cast<int>(m_children.size());
+    }
+
+    [[nodiscard]] int columnCount()
+    {
+        return 1;
+    }
+
+    [[nodiscard]] int row() const
+    {
+        if(m_parent) {
+            return Utils::getIndex(m_parent->m_children, this);
+        }
+        return 0;
+    }
+
+    [[nodiscard]] Item* parent() const
+    {
+        return m_parent;
+    }
 
 private:
-    TreeItem* m_parent;
-    std::vector<TreeItem*> m_children;
+    Item* m_parent;  // Not owned
+    std::vector<Item*> m_children;  // Not owned
 };
 } // namespace Utils

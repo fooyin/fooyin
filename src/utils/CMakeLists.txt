@@ -16,8 +16,6 @@ fooyin_add_library(Utils
         simplelistview.cpp
         scrollarea.cpp
         slider.cpp
-        treeitem.cpp
-        treemodel.cpp
         utils.cpp
 
         actions/actioncontainer.cpp

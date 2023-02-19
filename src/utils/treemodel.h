@@ -19,31 +19,108 @@
 
 #pragma once
 
-#include "treeitem.h"
-
 #include <QAbstractItemModel>
 
 namespace Utils {
+template<class Item>
 class TreeModel : public QAbstractItemModel
 {
-    Q_OBJECT
-
 public:
-    explicit TreeModel(QObject* parent = nullptr);
+    explicit TreeModel(QObject* parent = nullptr)
+        : QAbstractItemModel{parent}
+        , m_root{std::make_unique<Item>()}
+    { }
+
     ~TreeModel() override = default;
 
-    [[nodiscard]] TreeItem* rootItem() const;
-    void resetRoot();
+    [[nodiscard]] Item* rootItem() const
+    {
+        return m_root.get();
+    }
 
-    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
-    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
-    [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
-    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
+    void resetRoot()
+    {
+        m_root.reset();
+        m_root = std::make_unique<Item>();
+    }
 
-    [[nodiscard]] QModelIndex indexOfItem(const TreeItem* item);
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override
+    {
+        if(!index.isValid()) {
+            return Qt::NoItemFlags;
+        }
+        return QAbstractItemModel::flags(index);
+    }
+
+    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override
+    {
+        if(!hasIndex(row, column, parent)) {
+            return {};
+        }
+
+        Item* parentItem;
+
+        if(!parent.isValid()) {
+            parentItem = m_root.get();
+        }
+        else {
+            parentItem = static_cast<Item*>(parent.internalPointer());
+        }
+
+        Item* childItem = parentItem->child(row);
+        if(childItem) {
+            return createIndex(row, column, childItem);
+        }
+        return {};
+    }
+
+    [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override
+    {
+        if(!index.isValid()) {
+            return {};
+        }
+
+        auto* childItem      = static_cast<Item*>(index.internalPointer());
+        Item* parentItem = childItem->parent();
+
+        if(parentItem == m_root.get()) {
+            return {};
+        }
+
+        return createIndex(parentItem->row(), 0, parentItem);
+    }
+
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override
+    {
+        Item* parentItem;
+
+        if(!parent.isValid()) {
+            parentItem = m_root.get();
+        }
+        else {
+            parentItem = static_cast<Item*>(parent.internalPointer());
+        }
+
+        return parentItem->childCount();
+    }
+
+    [[nodiscard]] int columnCount(const QModelIndex& parent) const override
+    {
+        if(parent.isValid()) {
+            return static_cast<Item*>(parent.internalPointer())->columnCount();
+        }
+        return m_root->columnCount();
+    }
+
+    [[nodiscard]] QModelIndex indexOfItem(const Item* item)
+    {
+        if(item) {
+            return createIndex(item->row(), 0, item);
+        }
+        return {};
+    }
 
 private:
-    std::unique_ptr<TreeItem> m_root;
+    std::unique_ptr<Item> m_root;
 };
 } // namespace Utils
