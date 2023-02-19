@@ -43,6 +43,7 @@ public:
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] int id() const;
+    [[nodiscard]] QString uid() const;
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] ArtistList artists() const;

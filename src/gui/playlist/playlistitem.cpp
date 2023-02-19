@@ -23,41 +23,15 @@
 
 namespace Gui::Widgets {
 PlaylistItem::PlaylistItem(Type type, Core::LibraryItem* data, PlaylistItem* parent)
-    : m_data(data)
-    , m_type(type)
-    , m_index(0)
-    , m_parent(parent)
+    : TreeItem{parent}
+    , m_data{data}
+    , m_type{type}
+    , m_index{0}
 { }
-
-void PlaylistItem::appendChild(PlaylistItem* child)
-{
-    if(!Utils::contains(m_children, child)) {
-        m_children.emplace_back(child);
-    }
-}
 
 void PlaylistItem::setIndex(int idx)
 {
     m_index = idx;
-}
-
-PlaylistItem* PlaylistItem::child(int number)
-{
-    if(number < 0 || number >= childCount()) {
-        return nullptr;
-    }
-
-    return m_children.at(number);
-}
-
-int PlaylistItem::childCount() const
-{
-    return static_cast<int>(m_children.size());
-}
-
-int PlaylistItem::columnCount()
-{
-    return 1;
 }
 
 Core::LibraryItem* PlaylistItem::data() const
@@ -73,18 +47,5 @@ PlaylistItem::Type PlaylistItem::type()
 int PlaylistItem::index() const
 {
     return m_index;
-}
-
-int PlaylistItem::row() const
-{
-    if(m_parent) {
-        return static_cast<int>(Utils::getIndex(m_parent->m_children, const_cast<PlaylistItem*>(this))); // NOLINT
-    }
-    return 0;
-}
-
-PlaylistItem* PlaylistItem::parent() const
-{
-    return m_parent;
 }
 } // namespace Gui::Widgets

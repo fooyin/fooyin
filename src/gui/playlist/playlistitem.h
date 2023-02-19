@@ -21,10 +21,12 @@
 
 #include <core/models/libraryitem.h>
 
-#include <QList>
+#include <utils/treeitem.h>
+
+#include <QObject>
 
 namespace Gui::Widgets {
-class PlaylistItem
+class PlaylistItem : public Utils::TreeItem<PlaylistItem>
 {
 public:
     enum Type
@@ -53,25 +55,17 @@ public:
     };
 
     explicit PlaylistItem(Type type = Type::Root, Core::LibraryItem* data = {}, PlaylistItem* parentItem = nullptr);
-    ~PlaylistItem() = default;
+    ~PlaylistItem() override = default;
 
-    void appendChild(PlaylistItem* child);
     void setIndex(int idx);
 
-    PlaylistItem* child(int number);
-    [[nodiscard]] int childCount() const;
-    [[nodiscard]] int columnCount();
     [[nodiscard]] Core::LibraryItem* data() const;
     [[nodiscard]] Type type();
     [[nodiscard]] int index() const;
-    [[nodiscard]] int row() const;
-    [[nodiscard]] PlaylistItem* parent() const;
 
 private:
-    std::vector<PlaylistItem*> m_children;
     Core::LibraryItem* m_data;
     Type m_type;
     int m_index;
-    PlaylistItem* m_parent;
 };
 } // namespace Gui::Widgets

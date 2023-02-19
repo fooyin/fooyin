@@ -63,6 +63,11 @@ int Track::id() const
     return m_id;
 }
 
+QString Track::uid() const
+{
+    return {album() + QString::number(id()) + title()};
+}
+
 QString Track::filepath() const
 {
     return m_filepath;

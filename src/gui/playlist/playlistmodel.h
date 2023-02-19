@@ -23,6 +23,8 @@
 
 #include <core/models/trackfwd.h>
 
+#include <utils/treemodel.h>
+
 #include <QAbstractItemModel>
 #include <QPixmap>
 
@@ -47,11 +49,9 @@ enum Role
 };
 }
 
-class PlaylistModel : public QAbstractItemModel
+class PlaylistModel : public Utils::TreeModel<PlaylistItem>
 {
     Q_OBJECT
-
-    using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
 public:
     explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
@@ -66,14 +66,7 @@ public:
     [[nodiscard]] QVariant albumData(PlaylistItem* item, int role) const;
     [[nodiscard]] QVariant discData(PlaylistItem* item, int role) const;
 
-    [[nodiscard]] QString trackArtistString(Core::Track* track) const;
-
-    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
-    [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
-    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
     [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
@@ -85,7 +78,6 @@ public:
     void changeRowColours();
     void changeTrackState();
     QModelIndex indexOfItem(int id);
-    QModelIndex indexOfItem(const PlaylistItem* item);
 
 protected:
     void resetContainers();
@@ -96,11 +88,12 @@ protected:
     void filterModel(const Core::TrackPtrList& tracks);
 
 private:
+    using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
+
     Core::Player::PlayerManager* m_playerManager;
     Core::Library::MusicLibrary* m_library;
     Core::SettingsManager* m_settings;
 
-    std::unique_ptr<PlaylistItem> m_root;
     PlaylistItemHash m_nodes;
     Core::ContainerHash m_containers;
     QPixmap m_playingIcon;
