@@ -28,53 +28,66 @@
 #include <QVBoxLayout>
 
 namespace Gui::Settings {
-PlaylistGuiPageWidget::PlaylistGuiPageWidget(Core::SettingsManager* settings)
-    : m_settings{settings}
+
+struct PlaylistGuiPageWidget::Private
 {
-    auto* groupHeaders = new QCheckBox("Enable Disc Headers", this);
-    groupHeaders->setChecked(m_settings->value<Settings::DiscHeaders>());
+    Core::SettingsManager* settings;
 
-    auto* splitDiscs = new QCheckBox("Split Discs", this);
-    splitDiscs->setChecked(m_settings->value<Settings::SplitDiscs>());
-    splitDiscs->setEnabled(groupHeaders->isChecked());
+    QVBoxLayout* mainLayout;
 
-    auto* simpleList = new QCheckBox("Simple Playlist", this);
-    simpleList->setChecked(m_settings->value<Settings::SimplePlaylist>());
+    QCheckBox* groupHeaders;
+    QCheckBox* splitDiscs;
+    QCheckBox* simpleList;
+    QCheckBox* altColours;
 
-    auto* altColours = new QCheckBox("Alternate Row Colours", this);
-    altColours->setChecked(m_settings->value<Settings::PlaylistAltColours>());
+    explicit Private(Core::SettingsManager* settings)
+        : settings{settings}
+    { }
+};
 
-    auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(groupHeaders);
+PlaylistGuiPageWidget::PlaylistGuiPageWidget(Core::SettingsManager* settings)
+    : p{std::make_unique<Private>(settings)}
+{
+    p->groupHeaders = new QCheckBox("Enable Disc Headers", this);
+    p->groupHeaders->setChecked(p->settings->value<Settings::DiscHeaders>());
 
-    auto* indentWidget = Utils::Widgets::indentWidget(splitDiscs, this);
-    mainLayout->addWidget(indentWidget);
-    mainLayout->addWidget(simpleList);
-    mainLayout->addWidget(altColours);
-    mainLayout->addStretch();
+    p->splitDiscs = new QCheckBox("Split Discs", this);
+    p->splitDiscs->setChecked(p->settings->value<Settings::SplitDiscs>());
+    p->splitDiscs->setEnabled(p->groupHeaders->isChecked());
 
-    connect(groupHeaders, &QCheckBox::clicked, this, [this, splitDiscs](bool checked) {
-        m_settings->set<Settings::DiscHeaders>(checked);
+    p->simpleList = new QCheckBox("Simple Playlist", this);
+    p->simpleList->setChecked(p->settings->value<Settings::SimplePlaylist>());
+
+    p->altColours = new QCheckBox("Alternate Row Colours", this);
+    p->altColours->setChecked(p->settings->value<Settings::PlaylistAltColours>());
+
+    p->mainLayout = new QVBoxLayout(this);
+    p->mainLayout->addWidget(p->groupHeaders);
+
+    auto* indentWidget = Utils::Widgets::indentWidget(p->splitDiscs, this);
+    p->mainLayout->addWidget(indentWidget);
+    p->mainLayout->addWidget(p->simpleList);
+    p->mainLayout->addWidget(p->altColours);
+    p->mainLayout->addStretch();
+
+    connect(p->groupHeaders, &QCheckBox::clicked, this, [this](bool checked) {
         if(checked) {
-            splitDiscs->setEnabled(checked);
+            p->splitDiscs->setEnabled(checked);
         }
         else {
-            splitDiscs->setChecked(checked);
-            splitDiscs->setEnabled(checked);
+            p->splitDiscs->setChecked(checked);
+            p->splitDiscs->setEnabled(checked);
         }
-    });
-    connect(splitDiscs, &QCheckBox::clicked, this, [this](bool checked) {
-        m_settings->set<Settings::SplitDiscs>(checked);
-    });
-    connect(simpleList, &QCheckBox::clicked, this, [this](bool checked) {
-        m_settings->set<Settings::SimplePlaylist>(checked);
-    });
-    connect(altColours, &QCheckBox::clicked, this, [this](bool checked) {
-        m_settings->set<Settings::PlaylistAltColours>(checked);
     });
 }
 
-void PlaylistGuiPageWidget::apply() { }
+void PlaylistGuiPageWidget::apply()
+{
+    p->settings->set<Settings::DiscHeaders>(p->groupHeaders->isChecked());
+    p->settings->set<Settings::SplitDiscs>(p->splitDiscs->isChecked());
+    p->settings->set<Settings::SimplePlaylist>(p->simpleList->isChecked());
+    p->settings->set<Settings::PlaylistAltColours>(p->altColours->isChecked());
+}
 
 PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsDialogController* controller, Core::SettingsManager* settings)
     : Utils::SettingsPage{controller}

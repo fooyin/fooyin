@@ -39,7 +39,8 @@ public:
     void apply() override;
 
 private:
-    Core::SettingsManager* m_settings;
+    struct Private;
+    std::unique_ptr<PlaylistGuiPageWidget::Private> p;
 };
 
 class PlaylistGuiPage : public Utils::SettingsPage

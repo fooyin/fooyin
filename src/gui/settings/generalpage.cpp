@@ -25,10 +25,21 @@
 #include <QVBoxLayout>
 
 namespace Gui::Settings {
-GeneralPageWidget::GeneralPageWidget(Core::SettingsManager* settings)
-    : m_settings{settings}
+struct GeneralPageWidget::Private
 {
-    //    auto* mainLayout = new QVBoxLayout(this);
+    Core::SettingsManager* settings;
+
+    QVBoxLayout* mainLayout;
+
+    explicit Private(Core::SettingsManager* settings)
+        : settings{settings}
+    { }
+};
+
+GeneralPageWidget::GeneralPageWidget(Core::SettingsManager* settings)
+    : p{std::make_unique<Private>(settings)}
+{
+    p->mainLayout = new QVBoxLayout(this);
 }
 
 void GeneralPageWidget::apply() { }
