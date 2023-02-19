@@ -40,7 +40,6 @@ fooyin_add_library(Core
         library/coverprovider.h
         library/coverprovider.cpp
         library/libraryinfo.h
-        library/libraryinfo.cpp
         library/librarymanager.h
         library/librarymanager.cpp
         library/librarydatabasemanager.h

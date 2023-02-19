@@ -19,26 +19,19 @@
 
 #pragma once
 
+#include "core/library/libraryinfo.h"
 #include "module.h"
 
-namespace Core {
-
-namespace Library {
-class LibraryInfo;
-} // namespace Library
-
-namespace DB {
-using IdLibraryMap = QMap<int, Core::Library::LibraryInfo>;
-
+namespace Core::DB {
 class Library : private Module
 {
 public:
     explicit Library(const QString& connectionName);
     ~Library() override = default;
 
-    IdLibraryMap getAllLibraries();
+    Core::Library::IdLibraryMap getAllLibraries();
     bool insertLibrary(int id, const QString& path, const QString& name);
     bool removeLibrary(int id);
+    bool renameLibrary(int id, const QString& name);
 };
-} // namespace DB
-} // namespace Core
+} // namespace Core::DB

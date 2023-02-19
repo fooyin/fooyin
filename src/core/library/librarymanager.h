@@ -21,7 +21,6 @@
 
 #include "core/library/libraryinfo.h"
 
-#include <QMap>
 #include <QObject>
 
 namespace Core::DB {
@@ -40,20 +39,23 @@ public:
 
     void reset();
 
-    [[nodiscard]] QMap<int, LibraryInfo> allLibraries() const;
+    [[nodiscard]] IdLibraryMap allLibraries() const;
     int addLibrary(const QString& path, QString& name);
-    void removeLibrary(int id);
+    bool removeLibrary(int id);
+    bool renameLibrary(int id, const QString& name);
     [[nodiscard]] bool hasLibrary() const;
+    [[nodiscard]] bool findLibraryByPath(const QString& path, LibraryInfo& info) const;
     [[nodiscard]] LibraryInfo libraryInfo(int id) const;
 
 signals:
     void libraryAdded(const Library::LibraryInfo& info);
-    void libraryRemoved();
+    void libraryRemoved(int id);
+    void libraryRenamed(int id, const QString& name);
 
 private:
     DB::Database* m_database;
     DB::Library* m_libraryConnector;
 
-    QMap<int, LibraryInfo> m_libraries;
+    IdLibraryMap m_libraries;
 };
 } // namespace Core::Library

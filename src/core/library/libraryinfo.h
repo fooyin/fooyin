@@ -19,24 +19,21 @@
 
 #pragma once
 
+#include <utils/utils.h>
+
 #include <QString>
 
 namespace Core::Library {
-class LibraryInfo
+struct LibraryInfo
 {
-public:
     LibraryInfo() = default;
-    LibraryInfo(const QString& path, QString name, int id);
-    ~LibraryInfo() = default;
-
-    [[nodiscard]] QString path() const;
-    [[nodiscard]] QString name() const;
-
-    [[nodiscard]] int id() const;
-
-private:
-    QString m_path;
-    QString m_name;
-    int m_id;
+    LibraryInfo(QString name, const QString& path, int id = -1)
+        : name{std::move(name)}
+        , path{Utils::File::cleanPath(path)}
+        , id{id} {};
+    QString name;
+    QString path;
+    int id{-1};
 };
+using IdLibraryMap = std::map<int, Core::Library::LibraryInfo>;
 } // namespace Core::Library

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "core/app/worker.h"
 #include "core/models/trackfwd.h"
 #include "libraryinfo.h"
@@ -48,19 +50,30 @@ public:
     void scanAll(const TrackList tracks);
 
 signals:
-    void libraryAdded();
     void updatedTracks(Core::TrackList tracks);
     void addedTracks(Core::TrackList tracks);
     void tracksDeleted(const Core::IdSet& tracks);
 
-protected:
+private:
+    struct LibraryQueueEntry
+    {
+        LibraryQueueEntry(const LibraryInfo& library, TrackList tracks)
+            : library{library}
+            , tracks{std::move(tracks)}
+        { }
+        LibraryInfo library;
+        TrackList tracks;
+    };
+
     void storeTracks(TrackList& tracks) const;
     QStringList getFiles(QDir& baseDirectory);
     bool getAndSaveAllFiles(int libraryId, const QString& path, const TrackPathMap& tracks);
+    void processQueue();
 
-private:
     LibraryManager* m_libraryManager;
     DB::Database* m_database;
+
+    std::deque<LibraryQueueEntry> m_libraryQueue;
 };
 } // namespace Library
 } // namespace Core

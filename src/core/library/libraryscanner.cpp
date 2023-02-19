@@ -49,12 +49,14 @@ void LibraryScanner::stopThread()
 void LibraryScanner::scanLibrary(const TrackList tracks, const LibraryInfo& info)
 {
     if(isRunning()) {
+        const LibraryQueueEntry libraryEntry{info, tracks};
+        m_libraryQueue.emplace_back(libraryEntry);
         return;
     }
 
     DB::LibraryDatabase* libraryDatabase = m_database->libraryDatabase();
 
-    setState(State::Running);
+    setState(Running);
 
     TrackPathMap trackMap{};
     IdSet tracksToDelete{};
@@ -86,9 +88,11 @@ void LibraryScanner::scanLibrary(const TrackList tracks, const LibraryInfo& info
         return;
     }
 
-    getAndSaveAllFiles(info.id(), info.path(), trackMap);
+    getAndSaveAllFiles(info.id, info.path, trackMap);
 
-    setState(State::Idle);
+    setState(Idle);
+
+    processQueue();
 }
 
 void LibraryScanner::scanAll(const TrackList tracks)
@@ -96,7 +100,7 @@ void LibraryScanner::scanAll(const TrackList tracks)
     const auto libraries = m_libraryManager->allLibraries();
 
     for(const auto& info : libraries) {
-        scanLibrary(tracks, info);
+        scanLibrary(tracks, info.second);
     }
 }
 
@@ -213,5 +217,14 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
     tracksToStore.clear();
 
     return true;
+}
+
+void LibraryScanner::processQueue()
+{
+    if(!m_libraryQueue.empty()) {
+        const LibraryQueueEntry libraryEntry = m_libraryQueue.front();
+        m_libraryQueue.pop_front();
+        scanLibrary(libraryEntry.tracks, libraryEntry.library);
+    }
 }
 } // namespace Core::Library
