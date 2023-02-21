@@ -25,6 +25,7 @@ ScrollArea::ScrollArea(QWidget* parent)
 {
     setFrameStyle(QFrame::Plain | QFrame::NoFrame);
     setWidgetResizable(true);
+    setAutoFillBackground(true);
 }
 
 void ScrollArea::resizeEvent(QResizeEvent* event)
