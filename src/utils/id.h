@@ -31,9 +31,7 @@ public:
     {
         size_t operator()(const Id& id) const
         {
-            const size_t rowHash = std::hash<unsigned int>()(id.m_id);
-            const size_t colHash = std::hash<QString>()(id.m_name) << 1;
-            return rowHash ^ colHash;
+            return (std::hash<unsigned int>{}(id.m_id)) ^ (std::hash<QString>{}(id.m_name) << 1);
         }
     };
 
