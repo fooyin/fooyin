@@ -79,6 +79,11 @@ public:
         return 0;
     }
 
+    [[nodiscard]] virtual int columnCount() const
+    {
+        return 1;
+    }
+
     [[nodiscard]] virtual Item* parent() const
     {
         return m_parent;
