@@ -60,7 +60,7 @@ ActionContainer* ActionManager::createMenuBar(const Id& id)
         }
     }
 
-    auto* menuBar = new QMenuBar();
+    auto* menuBar = new QMenuBar(m_mainWindow);
     menuBar->setObjectName(id.name());
 
     auto* mbActionContainer = new MenuBarActionContainer(id, this);
@@ -105,4 +105,4 @@ void ActionManager::containerDestroyed(QObject* sender)
     auto* container = static_cast<ActionContainer*>(sender);
     m_idContainerMap.erase(container->id());
 }
-} // namespace Core
+} // namespace Utils

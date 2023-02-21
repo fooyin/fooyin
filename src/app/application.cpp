@@ -125,6 +125,8 @@ struct Application::Private
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
         threadManager.moveToNewThread(&engine);
 
+        mainWindow->setupMenu();
+
         setupConnections();
         registerWidgets();
         registerActions();
@@ -187,25 +189,31 @@ struct Application::Private
 
     void registerActions()
     {
-        const auto quitIcon = QIcon(Gui::Constants::Icons::Quit);
-        quitAction          = new QAction(quitIcon, tr("E&xit"), mainWindow);
-        actionManager.registerAction(quitAction, Gui::Constants::Actions::Exit);
         auto* fileMenu = actionManager.actionContainer(Gui::Constants::Menus::File);
-        fileMenu->addAction(quitAction, Gui::Constants::Groups::Three);
-        connect(quitAction, &QAction::triggered, mainWindow, &QMainWindow::close);
 
-        const QIcon settingsIcon = QIcon(Gui::Constants::Icons::Settings);
-        openSettings             = new QAction(settingsIcon, tr("&Settings"), mainWindow);
-        actionManager.registerAction(openSettings, Gui::Constants::Actions::Settings);
+        if(fileMenu) {
+            const auto quitIcon = QIcon(Gui::Constants::Icons::Quit);
+            quitAction          = new QAction(quitIcon, tr("E&xit"), mainWindow);
+            actionManager.registerAction(quitAction, Gui::Constants::Actions::Exit);
+            fileMenu->addAction(quitAction, Gui::Constants::Groups::Three);
+            connect(quitAction, &QAction::triggered, mainWindow, &QMainWindow::close);
+        }
+
         auto* libraryMenu = actionManager.actionContainer(Gui::Constants::Menus::Library);
-        libraryMenu->addAction(openSettings, Gui::Constants::Groups::Three);
-        connect(openSettings, &QAction::triggered, &settingsDialogController, &Utils::SettingsDialogController::open);
 
-        const QIcon rescanIcon = QIcon(Gui::Constants::Icons::RescanLibrary);
-        rescanLibrary          = new QAction(rescanIcon, tr("&Rescan Library"), mainWindow);
-        actionManager.registerAction(rescanLibrary, Gui::Constants::Actions::Rescan);
-        libraryMenu->addAction(rescanLibrary, Gui::Constants::Groups::Two);
-        connect(rescanLibrary, &QAction::triggered, &library, &Core::Library::MusicLibrary::reloadAll);
+        if(libraryMenu) {
+            const QIcon settingsIcon = QIcon(Gui::Constants::Icons::Settings);
+            openSettings             = new QAction(settingsIcon, tr("&Settings"), mainWindow);
+            actionManager.registerAction(openSettings, Gui::Constants::Actions::Settings);
+            libraryMenu->addAction(openSettings, Gui::Constants::Groups::Three);
+            connect(openSettings, &QAction::triggered, &settingsDialogController,
+                    &Utils::SettingsDialogController::open);
+            const QIcon rescanIcon = QIcon(Gui::Constants::Icons::RescanLibrary);
+            rescanLibrary          = new QAction(rescanIcon, tr("&Rescan Library"), mainWindow);
+            actionManager.registerAction(rescanLibrary, Gui::Constants::Actions::Rescan);
+            libraryMenu->addAction(rescanLibrary, Gui::Constants::Groups::Two);
+            connect(rescanLibrary, &QAction::triggered, &library, &Core::Library::MusicLibrary::reloadAll);
+        }
     }
 
     void initialisePlugins()

@@ -51,14 +51,13 @@ public:
     ~MainWindow() override;
 
     void setupUi();
+    void setupMenu();
 
 signals:
     void closing();
 
 protected:
     void closeEvent(QCloseEvent* event) override;
-    void resizeEvent(QResizeEvent* event) override;
-    void contextMenuEvent(QContextMenuEvent* event) override;
 
     void enableLayoutEditing(bool enable);
 

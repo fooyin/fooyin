@@ -44,7 +44,7 @@ struct MainWindow::Private
     Core::SettingsManager* settings;
     Widgets::EditableLayout* editableLayout;
 
-    MainMenuBar mainMenu;
+    MainMenuBar* mainMenu;
 
     QAction* openSettings;
     QAction* layoutEditing;
@@ -60,7 +60,6 @@ struct MainWindow::Private
         : actionManager{actionManager}
         , settings{settings}
         , editableLayout{editableLayout}
-        , mainMenu{actionManager}
         , layoutProvider{layoutProvider}
     {
         registerLayouts();
@@ -128,30 +127,8 @@ void MainWindow::setupUi()
     const QByteArray geometry      = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
-    p->quickSetupDialog = new QuickSetupDialog(p->layoutProvider, this);
-
     p->editableLayout->initialise();
     setCentralWidget(p->editableLayout);
-    setMenuBar(p->mainMenu.menuBar());
-
-    Utils::ActionContainer* viewMenu = p->actionManager->actionContainer(Constants::Menus::View);
-
-    const QIcon layoutEditingIcon = QIcon(Constants::Icons::LayoutEditing);
-    p->layoutEditing              = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
-    p->actionManager->registerAction(p->layoutEditing, Constants::Actions::LayoutEditing);
-    viewMenu->addAction(p->layoutEditing, Constants::Groups::Three);
-    connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
-    p->settings->subscribe<Settings::LayoutEditing>(p->layoutEditing, &QAction::setChecked);
-    p->layoutEditing->setCheckable(true);
-    p->layoutEditing->setChecked(p->settings->value<Settings::LayoutEditing>());
-
-    const QIcon quickSetupIcon = QIcon(Constants::Icons::QuickSetup);
-    p->openQuickSetup          = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
-    p->actionManager->registerAction(p->openQuickSetup, Constants::Actions::LayoutEditing);
-    viewMenu->addAction(p->openQuickSetup, Constants::Groups::Three);
-    connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
-    connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
-            &Widgets::EditableLayout::changeLayout);
 
     if(p->settings->value<Core::Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
@@ -159,20 +136,39 @@ void MainWindow::setupUi()
     }
 }
 
+void MainWindow::setupMenu()
+{
+    p->mainMenu = new MainMenuBar(p->actionManager, this);
+    setMenuBar(p->mainMenu->menuBar());
+
+    p->quickSetupDialog = new QuickSetupDialog(p->layoutProvider, this);
+
+    Utils::ActionContainer* viewMenu = p->actionManager->actionContainer(Constants::Menus::View);
+
+    if(viewMenu) {
+        const QIcon layoutEditingIcon = QIcon(Constants::Icons::LayoutEditing);
+        p->layoutEditing              = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
+        p->actionManager->registerAction(p->layoutEditing, Constants::Actions::LayoutEditing);
+        viewMenu->addAction(p->layoutEditing, Constants::Groups::Three);
+        connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
+        p->settings->subscribe<Settings::LayoutEditing>(p->layoutEditing, &QAction::setChecked);
+        p->layoutEditing->setCheckable(true);
+        p->layoutEditing->setChecked(p->settings->value<Settings::LayoutEditing>());
+
+        const QIcon quickSetupIcon = QIcon(Constants::Icons::QuickSetup);
+        p->openQuickSetup          = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
+        p->actionManager->registerAction(p->openQuickSetup, Constants::Actions::LayoutEditing);
+        viewMenu->addAction(p->openQuickSetup, Constants::Groups::Three);
+        connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
+        connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
+                &Widgets::EditableLayout::changeLayout);
+    }
+}
+
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     emit closing();
     QMainWindow::closeEvent(event);
-}
-
-void MainWindow::resizeEvent(QResizeEvent* event)
-{
-    QMainWindow::resizeEvent(event);
-}
-
-void MainWindow::contextMenuEvent(QContextMenuEvent* event)
-{
-    QMainWindow::contextMenuEvent(event);
 }
 
 void MainWindow::enableLayoutEditing(bool enable)
