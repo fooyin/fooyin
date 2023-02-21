@@ -16,6 +16,7 @@ fooyin_add_library(Utils
         simplelistview.cpp
         scrollarea.cpp
         slider.cpp
+        tablemodel.cpp
         utils.cpp
 
         actions/actioncontainer.cpp

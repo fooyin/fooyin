@@ -21,8 +21,6 @@
 
 #include <utils/settings/settingspage.h>
 
-#include <QTableWidget>
-
 namespace Utils {
 class SettingsDialogController;
 }
@@ -32,7 +30,6 @@ class SettingsManager;
 
 namespace Library {
 class LibraryManager;
-class LibraryInfo;
 } // namespace Library
 } // namespace Core
 
@@ -46,13 +43,8 @@ public:
     void apply() override;
 
 private:
-    void addLibraryRow(const Core::Library::LibraryInfo& info);
-    void addLibrary();
-    void removeLibrary();
-
-    Core::Library::LibraryManager* m_libraryManager;
-    Core::SettingsManager* m_settings;
-    QTableWidget m_libraryList;
+    struct Private;
+    std::unique_ptr<LibraryGeneralPageWidget::Private> p;
 };
 
 class LibraryGeneralPage : public Utils::SettingsPage

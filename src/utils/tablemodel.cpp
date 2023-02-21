@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,31 @@
  *
  */
 
-#pragma once
+#include "tablemodel.h"
 
-#include <QString>
+namespace Utils {
+SimpleTableModel::SimpleTableModel(QObject* parent)
+    : QAbstractItemModel{parent}
+{ }
 
-namespace Core::Library {
-struct LibraryInfo
+Qt::ItemFlags SimpleTableModel::flags(const QModelIndex& index) const
 {
-    LibraryInfo() = default;
-    LibraryInfo(QString name, QString path, int id = -1)
-        : name{std::move(name)}
-        , path{std::move(path)}
-        , id{id} {};
-    QString name;
-    QString path;
-    int id{-1};
-};
-using LibraryList = std::vector<std::unique_ptr<Core::Library::LibraryInfo>>;
-} // namespace Core::Library
+    if(!index.isValid()) {
+        return Qt::NoItemFlags;
+    }
+    return QAbstractItemModel::flags(index);
+}
+
+QModelIndex SimpleTableModel::index(int row, int column, const QModelIndex& parent) const
+{
+    Q_UNUSED(parent)
+    return createIndex(row, column, nullptr);
+}
+
+QModelIndex SimpleTableModel::parent(const QModelIndex& index) const
+{
+    Q_UNUSED(index)
+    return {};
+}
+
+} // namespace Utils

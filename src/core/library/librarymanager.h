@@ -35,20 +35,21 @@ class LibraryManager : public QObject
 
 public:
     explicit LibraryManager(DB::Database* database, QObject* parent = nullptr);
-    ~LibraryManager() override = default;
+    ~LibraryManager() override;
 
     void reset();
 
-    [[nodiscard]] IdLibraryMap allLibraries() const;
-    int addLibrary(const QString& path, QString& name);
+    [[nodiscard]] const LibraryList& allLibraries() const;
+    int addLibrary(const QString& path, const QString& name);
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
     [[nodiscard]] bool hasLibrary() const;
-    [[nodiscard]] bool findLibraryByPath(const QString& path, LibraryInfo& info) const;
-    [[nodiscard]] LibraryInfo libraryInfo(int id) const;
+    [[nodiscard]] bool hasLibrary(int id) const;
+    [[nodiscard]] LibraryInfo* findLibraryByPath(const QString& path) const;
+    [[nodiscard]] LibraryInfo* libraryInfo(int id) const;
 
 signals:
-    void libraryAdded(const Library::LibraryInfo& info);
+    void libraryAdded(Library::LibraryInfo* info);
     void libraryRemoved(int id);
     void libraryRenamed(int id, const QString& name);
 
@@ -56,6 +57,6 @@ private:
     DB::Database* m_database;
     DB::Library* m_libraryConnector;
 
-    IdLibraryMap m_libraries;
+    LibraryList m_libraries;
 };
 } // namespace Core::Library

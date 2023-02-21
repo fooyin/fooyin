@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,21 @@
  *
  */
 
-#pragma once
+#include "libraryitem.h"
 
-#include <QString>
+namespace Gui::Settings {
+LibraryItem::LibraryItem(Core::Library::LibraryInfo* info, LibraryItem* parent)
+    : TreeItem{parent}
+    , m_info{info}
+{ }
 
-namespace Core::Library {
-struct LibraryInfo
+Core::Library::LibraryInfo* LibraryItem::info() const
 {
-    LibraryInfo() = default;
-    LibraryInfo(QString name, QString path, int id = -1)
-        : name{std::move(name)}
-        , path{std::move(path)}
-        , id{id} {};
-    QString name;
-    QString path;
-    int id{-1};
-};
-using LibraryList = std::vector<std::unique_ptr<Core::Library::LibraryInfo>>;
-} // namespace Core::Library
+    return m_info;
+}
+
+void LibraryItem::changeInfo(Core::Library::LibraryInfo* info)
+{
+    m_info = info;
+}
+} // namespace Gui::Settings

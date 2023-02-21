@@ -46,8 +46,12 @@ void LibraryScanner::stopThread()
     setState(State::Idle);
 }
 
-void LibraryScanner::scanLibrary(const TrackList tracks, const LibraryInfo& info)
+void LibraryScanner::scanLibrary(const TrackList tracks, LibraryInfo* info)
 {
+    if(!info) {
+        return;
+    }
+
     if(isRunning()) {
         const LibraryQueueEntry libraryEntry{info, tracks};
         m_libraryQueue.emplace_back(libraryEntry);
@@ -88,7 +92,7 @@ void LibraryScanner::scanLibrary(const TrackList tracks, const LibraryInfo& info
         return;
     }
 
-    getAndSaveAllFiles(info.id, info.path, trackMap);
+    getAndSaveAllFiles(info->id, info->path, trackMap);
 
     setState(Idle);
 
@@ -97,10 +101,10 @@ void LibraryScanner::scanLibrary(const TrackList tracks, const LibraryInfo& info
 
 void LibraryScanner::scanAll(const TrackList tracks)
 {
-    const auto libraries = m_libraryManager->allLibraries();
+    const auto& libraries = m_libraryManager->allLibraries();
 
     for(const auto& info : libraries) {
-        scanLibrary(tracks, info.second);
+        scanLibrary(tracks, info.get());
     }
 }
 

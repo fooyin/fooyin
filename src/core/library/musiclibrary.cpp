@@ -183,7 +183,7 @@ void MusicLibrary::reloadAll()
     emit runAllLibrariesScan(p->trackStore);
 }
 
-void MusicLibrary::reload(const Library::LibraryInfo& info)
+void MusicLibrary::reload(Library::LibraryInfo* info)
 {
     emit runLibraryScan(p->trackStore, info);
 }

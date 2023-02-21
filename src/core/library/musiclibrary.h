@@ -53,7 +53,7 @@ public:
 
     void load();
     void reloadAll();
-    void reload(const Library::LibraryInfo& info);
+    void reload(Library::LibraryInfo* info);
     void refresh();
     void refreshTracks(const TrackList& result);
 
@@ -81,7 +81,7 @@ public:
     void addInteractor(MusicLibraryInteractor* interactor);
 
 signals:
-    void runLibraryScan(Core::TrackList tracks, Library::LibraryInfo info);
+    void runLibraryScan(Core::TrackList tracks, Library::LibraryInfo* info);
     void runAllLibrariesScan(Core::TrackList tracks);
     void libraryRemoved();
 

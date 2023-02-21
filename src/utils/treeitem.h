@@ -38,14 +38,27 @@ public:
         m_children.clear();
     }
 
-    void appendChild(Item* child)
+    virtual std::vector<Item*> children() const
+    {
+        return m_children;
+    }
+
+    virtual void appendChild(Item* child)
     {
         if(!Utils::contains(m_children, child)) {
             m_children.emplace_back(child);
         }
     }
 
-    Item* child(int index)
+    virtual void removeChild(int index)
+    {
+        if(index < 0 && index >= childCount()) {
+            return;
+        }
+        m_children.erase(m_children.cbegin() + index);
+    }
+
+    virtual Item* child(int index) const
     {
         if(index < 0 || index >= childCount()) {
             return nullptr;
@@ -53,17 +66,12 @@ public:
         return m_children.at(index);
     }
 
-    [[nodiscard]] int childCount() const
+    [[nodiscard]] virtual int childCount() const
     {
         return static_cast<int>(m_children.size());
     }
 
-    [[nodiscard]] int columnCount()
-    {
-        return 1;
-    }
-
-    [[nodiscard]] int row() const
+    [[nodiscard]] virtual int row() const
     {
         if(m_parent) {
             return Utils::getIndex(m_parent->m_children, this);
@@ -71,13 +79,13 @@ public:
         return 0;
     }
 
-    [[nodiscard]] Item* parent() const
+    [[nodiscard]] virtual Item* parent() const
     {
         return m_parent;
     }
 
 private:
-    Item* m_parent;  // Not owned
-    std::vector<Item*> m_children;  // Not owned
+    Item* m_parent;                // Not owned
+    std::vector<Item*> m_children; // Not owned
 };
 } // namespace Utils

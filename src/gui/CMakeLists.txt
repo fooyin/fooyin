@@ -72,6 +72,10 @@ fooyin_add_library(Gui
         settings/guigeneralpage.cpp
         settings/librarygeneralpage.h
         settings/librarygeneralpage.cpp
+        settings/librarymodel.h
+        settings/librarymodel.cpp
+        settings/libraryitem.h
+        settings/libraryitem.cpp
         settings/playlistguipage.h
         settings/playlistguipage.cpp
 

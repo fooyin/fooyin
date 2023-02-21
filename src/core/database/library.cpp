@@ -26,11 +26,11 @@ Library::Library(const QString& connectionName)
     : Module{connectionName}
 { }
 
-Core::Library::IdLibraryMap Library::getAllLibraries()
+Core::Library::LibraryList Library::getAllLibraries()
 {
     const QString query = "SELECT LibraryID, Name, Path FROM Libraries;";
 
-    Core::Library::IdLibraryMap libraries;
+    Core::Library::LibraryList libraries;
 
     Query q(this);
     q.prepare(query);
@@ -44,7 +44,7 @@ Core::Library::IdLibraryMap Library::getAllLibraries()
         const QString name = q.value(1).toString();
         const QString path = q.value(2).toString();
 
-        libraries.emplace(id, Core::Library::LibraryInfo{name, path, id});
+        libraries.emplace_back(std::make_unique<Core::Library::LibraryInfo>(name, path, id));
     }
     return libraries;
 }

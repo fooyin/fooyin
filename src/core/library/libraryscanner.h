@@ -46,7 +46,7 @@ public:
 
     void stopThread() override;
 
-    void scanLibrary(const TrackList tracks, const LibraryInfo& info);
+    void scanLibrary(const TrackList tracks, LibraryInfo* info);
     void scanAll(const TrackList tracks);
 
 signals:
@@ -57,11 +57,11 @@ signals:
 private:
     struct LibraryQueueEntry
     {
-        LibraryQueueEntry(LibraryInfo library, TrackList tracks)
-            : library{std::move(library)}
+        LibraryQueueEntry(LibraryInfo* library, TrackList tracks)
+            : library{library}
             , tracks{std::move(tracks)}
         { }
-        LibraryInfo library;
+        LibraryInfo* library;
         TrackList tracks;
     };
 

@@ -22,16 +22,27 @@
 #include <QAbstractItemModel>
 
 namespace Utils {
-template<class Item>
-class TreeModel : public QAbstractItemModel
+class SimpleTableModel : public QAbstractItemModel
 {
 public:
-    explicit TreeModel(QObject* parent = nullptr)
-        : QAbstractItemModel{parent}
+    explicit SimpleTableModel(QObject* parent = nullptr);
+    ~SimpleTableModel() override = default;
+
+    [[nodiscard]] virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
+    [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+    [[nodiscard]] virtual QModelIndex parent(const QModelIndex& index) const override;
+};
+
+template <class Item>
+class TableModel : public SimpleTableModel
+{
+public:
+    explicit TableModel(QObject* parent = nullptr)
+        : SimpleTableModel{parent}
         , m_root{std::make_unique<Item>()}
     { }
 
-    virtual ~TreeModel() override = default;
+    virtual ~TableModel() override = default;
 
     [[nodiscard]] virtual Item* rootItem() const
     {
@@ -58,16 +69,7 @@ public:
             return {};
         }
 
-        Item* parentItem;
-
-        if(!parent.isValid()) {
-            parentItem = m_root.get();
-        }
-        else {
-            parentItem = static_cast<Item*>(parent.internalPointer());
-        }
-
-        Item* childItem = parentItem->child(row);
+        Item* childItem = m_root.get()->child(row);
         if(childItem) {
             return createIndex(row, column, childItem);
         }
@@ -76,40 +78,14 @@ public:
 
     [[nodiscard]] virtual QModelIndex parent(const QModelIndex& index) const override
     {
-        if(!index.isValid()) {
-            return {};
-        }
-
-        auto* childItem      = static_cast<Item*>(index.internalPointer());
-        Item* parentItem = childItem->parent();
-
-        if(parentItem == m_root.get()) {
-            return {};
-        }
-
-        return createIndex(parentItem->row(), 0, parentItem);
+        Q_UNUSED(index)
+        return {};
     }
 
     [[nodiscard]] virtual int rowCount(const QModelIndex& parent) const override
     {
-        Item* parentItem;
-
-        if(!parent.isValid()) {
-            parentItem = m_root.get();
-        }
-        else {
-            parentItem = static_cast<Item*>(parent.internalPointer());
-        }
-
-        return parentItem->childCount();
-    }
-
-    [[nodiscard]] virtual int columnCount(const QModelIndex& parent) const override
-    {
-        if(parent.isValid()) {
-            return static_cast<Item*>(parent.internalPointer())->columnCount();
-        }
-        return m_root->columnCount();
+        Q_UNUSED(parent)
+        return m_root.get()->childCount();
     }
 
     [[nodiscard]] virtual QModelIndex indexOfItem(const Item* item)
