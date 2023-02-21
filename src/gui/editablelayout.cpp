@@ -112,7 +112,7 @@ void EditableLayout::initialise()
         m_splitter->setParent(this);
         m_box->addWidget(m_splitter);
     }
-    if(!m_splitter->hasChildren()) {
+    if(m_splitter && !m_splitter->hasChildren()) {
         m_settings->set<Settings::LayoutEditing>(true);
     }
     qApp->installEventFilter(this);
