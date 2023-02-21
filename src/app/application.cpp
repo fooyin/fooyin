@@ -83,7 +83,7 @@ struct Application::Private
 
     Utils::SettingsDialogController settingsDialogController;
 
-    Gui::Settings::GeneralPage generalPage;
+    //    Gui::Settings::GeneralPage generalPage;
     Gui::Settings::LibraryGeneralPage libraryGeneralPage;
     Gui::Settings::GuiGeneralPage guiGeneralPage;
     Gui::Settings::PlaylistGuiPage playlistGuiPage;
@@ -112,7 +112,7 @@ struct Application::Private
         , editableLayout{new Gui::Widgets::EditableLayout(&settingsManager, &actionManager, &widgetFactory,
                                                           &widgetProvider, &layoutProvider)}
         , mainWindow{new Gui::MainWindow(&actionManager, &settingsManager, &layoutProvider, editableLayout)}
-        , generalPage{&settingsDialogController, &settingsManager}
+        //        , generalPage{&settingsDialogController, &settingsManager}
         , libraryGeneralPage{&settingsDialogController, &libraryManager, &settingsManager}
         , guiGeneralPage{&settingsDialogController, &settingsManager}
         , playlistGuiPage{&settingsDialogController, &settingsManager}
