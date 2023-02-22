@@ -36,21 +36,16 @@ PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, QWidget
     , m_layout{new QHBoxLayout(this)}
     , m_stop{new ComboIcon(Constants::Icons::Stop, ComboIcon::HasDisabledIcon, this)}
     , m_prev{new ComboIcon(Constants::Icons::Prev, ComboIcon::HasDisabledIcon, this)}
-    , m_play{new ComboIcon(Constants::Icons::Play, ComboIcon::HasDisabledIcon, this)}
+    , m_playPause{new ComboIcon(Constants::Icons::Play, ComboIcon::HasDisabledIcon, this)}
     , m_next{new ComboIcon(Constants::Icons::Next, ComboIcon::HasDisabledIcon, this)}
     , m_labelSize{20, 20}
 {
     setupUi();
 
-    connect(m_stop, &ComboIcon::clicked, this, &PlayerControl::stopClicked);
-    connect(m_prev, &ComboIcon::clicked, this, &PlayerControl::prevClicked);
-    connect(m_play, &ComboIcon::clicked, this, &PlayerControl::pauseClicked);
-    connect(m_next, &ComboIcon::clicked, this, &PlayerControl::nextClicked);
-
-    connect(this, &PlayerControl::stopClicked, m_playerManager, &Core::Player::PlayerManager::stop);
-    connect(this, &PlayerControl::nextClicked, m_playerManager, &Core::Player::PlayerManager::next);
-    connect(this, &PlayerControl::prevClicked, m_playerManager, &Core::Player::PlayerManager::previous);
-    connect(this, &PlayerControl::pauseClicked, m_playerManager, &Core::Player::PlayerManager::playPause);
+    connect(m_stop, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::stop);
+    connect(m_prev, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::previous);
+    connect(m_playPause, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::playPause);
+    connect(m_next, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::next);
 
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlayerControl::stateChanged);
 }
@@ -61,16 +56,16 @@ void PlayerControl::setupUi()
     m_layout->setSpacing(10);
     m_layout->setContentsMargins(10, 0, 0, 0);
 
-    m_play->addPixmap(Constants::Icons::Pause);
+    m_playPause->addPixmap(Constants::Icons::Pause);
 
     m_stop->setMaximumSize(m_labelSize);
     m_prev->setMaximumSize(m_labelSize);
-    m_play->setMaximumSize(m_labelSize);
+    m_playPause->setMaximumSize(m_labelSize);
     m_next->setMaximumSize(m_labelSize);
 
     m_layout->addWidget(m_stop, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_prev, 0, Qt::AlignVCenter);
-    m_layout->addWidget(m_play, 0, Qt::AlignVCenter);
+    m_layout->addWidget(m_playPause, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_next, 0, Qt::AlignVCenter);
 
     setEnabled(m_playerManager->currentTrack());
@@ -80,13 +75,13 @@ void PlayerControl::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
         case(Core::Player::Stopped):
-            m_play->setIcon(Constants::Icons::Play);
+            m_playPause->setIcon(Constants::Icons::Play);
             return setEnabled(false);
         case(Core::Player::Playing):
-            m_play->setIcon(Constants::Icons::Pause);
+            m_playPause->setIcon(Constants::Icons::Pause);
             return setEnabled(true);
         case(Core::Player::Paused):
-            return m_play->setIcon(Constants::Icons::Play);
+            return m_playPause->setIcon(Constants::Icons::Play);
     }
 }
 } // namespace Gui::Widgets

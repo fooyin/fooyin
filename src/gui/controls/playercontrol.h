@@ -45,19 +45,13 @@ public:
 
     void stateChanged(Core::Player::PlayState state);
 
-signals:
-    void stopClicked();
-    void pauseClicked();
-    void prevClicked();
-    void nextClicked();
-
 private:
     Core::Player::PlayerManager* m_playerManager;
 
     QHBoxLayout* m_layout;
     Utils::ComboIcon* m_stop;
     Utils::ComboIcon* m_prev;
-    Utils::ComboIcon* m_play;
+    Utils::ComboIcon* m_playPause;
     Utils::ComboIcon* m_next;
     QSize m_labelSize;
 };
