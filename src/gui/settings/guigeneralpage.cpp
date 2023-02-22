@@ -24,37 +24,46 @@
 #include "gui/guiconstants.h"
 
 #include <QCheckBox>
+#include <QGroupBox>
 #include <QVBoxLayout>
 
 namespace Gui::Settings {
-struct GuiGeneralPageWidget::Private
+class GuiGeneralPageWidget : public Utils::SettingsPageWidget
 {
-    Core::SettingsManager* settings;
+public:
+    explicit GuiGeneralPageWidget(Core::SettingsManager* settings);
+    ~GuiGeneralPageWidget() override = default;
 
-    QVBoxLayout* mainLayout;
+    void apply() override;
 
-    QCheckBox* splitterHandles;
+private:
+    Core::SettingsManager* m_settings;
 
-    explicit Private(Core::SettingsManager* settings)
-        : settings{settings}
-    { }
+    QVBoxLayout* m_mainLayout;
+
+    QGroupBox* m_splitterBox;
+    QVBoxLayout* m_splitterBoxLayout;
+    QCheckBox* m_splitterHandles;
 };
 
 GuiGeneralPageWidget::GuiGeneralPageWidget(Core::SettingsManager* settings)
-    : p{std::make_unique<Private>(settings)}
+    : m_settings{settings}
+    , m_mainLayout{new QVBoxLayout(this)}
+    , m_splitterBox{new QGroupBox(tr("Splitters"))}
+    , m_splitterBoxLayout{new QVBoxLayout(m_splitterBox)}
+    , m_splitterHandles{new QCheckBox("Show Splitter Handles", this)}
 {
-    p->mainLayout = new QVBoxLayout(this);
-    p->mainLayout->setAlignment(Qt::AlignTop);
+    m_splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
 
-    p->splitterHandles = new QCheckBox("Show Splitter Handles", this);
-    p->splitterHandles->setChecked(p->settings->value<Settings::SplitterHandles>());
+    m_splitterBoxLayout->addWidget(m_splitterHandles);
+    m_mainLayout->addWidget(m_splitterBox);
 
-    p->mainLayout->addWidget(p->splitterHandles);
+    m_mainLayout->addStretch();
 }
 
 void GuiGeneralPageWidget::apply()
 {
-    p->settings->set<Settings::SplitterHandles>(p->splitterHandles->isChecked());
+    m_settings->set<Settings::SplitterHandles>(m_splitterHandles->isChecked());
 }
 
 GuiGeneralPage::GuiGeneralPage(Utils::SettingsDialogController* controller, Core::SettingsManager* settings)

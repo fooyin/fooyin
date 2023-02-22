@@ -30,19 +30,6 @@ class SettingsManager;
 }
 
 namespace Gui::Settings {
-class PlaylistGuiPageWidget : public Utils::SettingsPageWidget
-{
-public:
-    explicit PlaylistGuiPageWidget(Core::SettingsManager* settings);
-    ~PlaylistGuiPageWidget() override = default;
-
-    void apply() override;
-
-private:
-    struct Private;
-    std::unique_ptr<PlaylistGuiPageWidget::Private> p;
-};
-
 class PlaylistGuiPage : public Utils::SettingsPage
 {
 public:

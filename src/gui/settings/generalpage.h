@@ -30,19 +30,6 @@ class SettingsManager;
 }
 
 namespace Gui::Settings {
-class GeneralPageWidget : public Utils::SettingsPageWidget
-{
-public:
-    explicit GeneralPageWidget(Core::SettingsManager* settings);
-    ~GeneralPageWidget() override = default;
-
-    void apply() override;
-
-private:
-    struct Private;
-    std::unique_ptr<GeneralPageWidget::Private> p;
-};
-
 class GeneralPage : public Utils::SettingsPage
 {
 public:

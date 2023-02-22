@@ -37,145 +37,140 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-// TODO: Create model and use QTableView
 namespace Gui::Settings {
-struct LibraryGeneralPageWidget::Private
+class LibraryGeneralPageWidget : public Utils::SettingsPageWidget
 {
-    Core::Library::LibraryManager* libraryManager;
-    Core::SettingsManager* settings;
+public:
+    explicit LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings);
+    ~LibraryGeneralPageWidget() override = default;
 
-    QVBoxLayout* mainLayout;
-    QHBoxLayout* libraryLayout;
+    void apply() override;
 
-    QTableView* libraryList;
-    LibraryModel* model;
+private:
+    void addLibrary() const;
+    void removeLibrary() const;
+    void renameLibrary() const;
 
-    QWidget* buttons;
+    Core::Library::LibraryManager* m_libraryManager;
+    Core::SettingsManager* m_settings;
 
-    QVBoxLayout* buttonsLayout;
-    QPushButton* addButton;
-    QPushButton* removeButton;
-    QPushButton* renameButton;
+    QVBoxLayout* m_mainLayout;
+    QHBoxLayout* m_libraryLayout;
 
-    QCheckBox* autoRefresh;
+    QTableView* m_libraryList;
+    LibraryModel* m_model;
 
-    struct LibraryToAdd
-    {
-        LibraryToAdd(QString dir, QString name)
-            : dir{std::move(dir)}
-            , name{std::move(name)}
-        { }
-        QString dir;
-        QString name;
-    };
+    QWidget* m_buttons;
 
-    explicit Private(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings)
-        : libraryManager{libraryManager}
-        , settings{settings}
-    { }
+    QVBoxLayout* m_buttonsLayout;
+    QPushButton* m_addButton;
+    QPushButton* m_removeButton;
+    QPushButton* m_renameButton;
 
-    void addLibrary() const
-    {
-        const QString newDir = QFileDialog::getExistingDirectory(libraryList, tr("Directory"), QDir::homePath(),
-                                                                 QFileDialog::ShowDirsOnly);
-
-        if(newDir.isEmpty()) {
-            return;
-        }
-
-        const QFileInfo info{newDir};
-        const QString name = info.fileName();
-
-        bool success       = false;
-        const QString text = QInputDialog::getText(libraryList, tr("Add Library"), tr("Library Name:"),
-                                                   QLineEdit::Normal, name, &success);
-
-        if(success && !text.isEmpty()) {
-            Core::Library::LibraryInfo const info{name, newDir};
-            model->markForAddition(info);
-        }
-    }
-
-    void removeLibrary() const
-    {
-        const auto selectedItems = libraryList->selectionModel()->selectedRows();
-        for(const auto& selected : selectedItems) {
-            const auto* item = static_cast<LibraryItem*>(selected.internalPointer());
-            model->markForRemoval(item->info());
-        }
-    }
-
-    void renameLibrary() const
-    {
-        const auto selectedItems = libraryList->selectionModel()->selectedRows();
-        for(const auto& selected : selectedItems) {
-            const auto* item = static_cast<LibraryItem*>(selected.internalPointer());
-            auto* info       = item->info();
-
-            bool success       = false;
-            const QString text = QInputDialog::getText(libraryList, tr("Rename Library"), tr("Library Name:"),
-                                                       QLineEdit::Normal, info->name, &success);
-
-            if(success && !text.isEmpty()) {
-                info->name = text;
-                model->markForRename(info);
-            }
-        }
-    }
+    QCheckBox* m_autoRefresh;
 };
 
 LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager,
                                                    Core::SettingsManager* settings)
-    : p{std::make_unique<Private>(libraryManager, settings)}
+    : m_libraryManager{libraryManager}
+    , m_settings{settings}
+    , m_mainLayout{new QVBoxLayout(this)}
+    , m_libraryLayout{new QHBoxLayout()}
+    , m_libraryList{new QTableView(this)}
+    , m_model{new LibraryModel(m_libraryManager, this)}
+    , m_buttons{new QWidget(this)}
+    , m_buttonsLayout{new QVBoxLayout(m_buttons)}
+    , m_addButton{new QPushButton("Add", this)}
+    , m_removeButton{new QPushButton("Remove", this)}
+    , m_renameButton{new QPushButton("Rename", this)}
+    , m_autoRefresh{new QCheckBox("Auto refresh on startup", this)}
 {
-    p->libraryList = new QTableView(this);
-    p->model       = new LibraryModel(p->libraryManager, this);
-    p->libraryList->setModel(p->model);
+    m_libraryList->setModel(m_model);
 
-    p->libraryList->verticalHeader()->hide();
-    p->libraryList->horizontalHeader()->setStretchLastSection(true);
-    p->libraryList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_libraryList->verticalHeader()->hide();
+    m_libraryList->horizontalHeader()->setStretchLastSection(true);
+    m_libraryList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    p->libraryList->hideColumn(0);
+    // Hide Id column
+    m_libraryList->hideColumn(0);
 
-    p->buttons       = new QWidget(this);
-    p->buttonsLayout = new QVBoxLayout(p->buttons);
-    p->addButton     = new QPushButton("Add", this);
-    p->removeButton  = new QPushButton("Remove", this);
-    p->renameButton  = new QPushButton("Rename", this);
-    p->autoRefresh   = new QCheckBox("Auto Refresh", this);
-    p->autoRefresh->setToolTip(tr("Auto refresh libraries on startup"));
+    m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
+    m_autoRefresh->setChecked(m_settings->value<Core::Settings::AutoRefresh>());
 
-    p->autoRefresh->setChecked(p->settings->value<Core::Settings::AutoRefresh>());
+    m_buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    m_buttonsLayout->addWidget(m_addButton);
+    m_buttonsLayout->addWidget(m_removeButton);
+    m_buttonsLayout->addWidget(m_renameButton);
 
-    p->buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    p->buttonsLayout->addWidget(p->addButton);
-    p->buttonsLayout->addWidget(p->removeButton);
-    p->buttonsLayout->addWidget(p->renameButton);
+    m_libraryLayout->addWidget(m_libraryList);
+    m_libraryLayout->addWidget(m_buttons);
+    m_mainLayout->addLayout(m_libraryLayout);
+    m_mainLayout->addWidget(m_autoRefresh);
 
-    p->mainLayout    = new QVBoxLayout(this);
-    p->libraryLayout = new QHBoxLayout();
-    setLayout(p->mainLayout);
-    p->mainLayout->addLayout(p->libraryLayout);
-    p->libraryLayout->addWidget(p->libraryList);
-    p->libraryLayout->addWidget(p->buttons);
-    p->mainLayout->addWidget(p->autoRefresh);
-
-    connect(p->addButton, &QPushButton::clicked, this, [this]() {
-        p->addLibrary();
+    connect(m_addButton, &QPushButton::clicked, this, [this]() {
+        addLibrary();
     });
-    connect(p->removeButton, &QPushButton::clicked, this, [this]() {
-        p->removeLibrary();
+    connect(m_removeButton, &QPushButton::clicked, this, [this]() {
+        removeLibrary();
     });
-    connect(p->renameButton, &QPushButton::clicked, this, [this]() {
-        p->renameLibrary();
+    connect(m_renameButton, &QPushButton::clicked, this, [this]() {
+        renameLibrary();
     });
 }
 
 void LibraryGeneralPageWidget::apply()
 {
-    p->settings->set<Core::Settings::AutoRefresh>(p->autoRefresh->isChecked());
-    p->model->processQueue();
+    m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
+    m_model->processQueue();
+}
+
+void LibraryGeneralPageWidget::addLibrary() const
+{
+    const QString newDir = QFileDialog::getExistingDirectory(m_libraryList, tr("Directory"), QDir::homePath(),
+                                                             QFileDialog::ShowDirsOnly);
+
+    if(newDir.isEmpty()) {
+        return;
+    }
+
+    const QFileInfo info{newDir};
+    const QString name = info.fileName();
+
+    bool success       = false;
+    const QString text = QInputDialog::getText(m_libraryList, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal,
+                                               name, &success);
+
+    if(success && !text.isEmpty()) {
+        Core::Library::LibraryInfo const info{name, newDir};
+        m_model->markForAddition(info);
+    }
+}
+
+void LibraryGeneralPageWidget::removeLibrary() const
+{
+    const auto selectedItems = m_libraryList->selectionModel()->selectedRows();
+    for(const auto& selected : selectedItems) {
+        const auto* item = static_cast<LibraryItem*>(selected.internalPointer());
+        m_model->markForRemoval(item->info());
+    }
+}
+
+void LibraryGeneralPageWidget::renameLibrary() const
+{
+    const auto selectedItems = m_libraryList->selectionModel()->selectedRows();
+    for(const auto& selected : selectedItems) {
+        const auto* item = static_cast<LibraryItem*>(selected.internalPointer());
+        auto* info       = item->info();
+
+        bool success       = false;
+        const QString text = QInputDialog::getText(m_libraryList, tr("Rename Library"), tr("Library Name:"),
+                                                   QLineEdit::Normal, info->name, &success);
+
+        if(success && !text.isEmpty()) {
+            info->name = text;
+            m_model->markForRename(info);
+        }
+    }
 }
 
 LibraryGeneralPage::LibraryGeneralPage(Utils::SettingsDialogController* controller,

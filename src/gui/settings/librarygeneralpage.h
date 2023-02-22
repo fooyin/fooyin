@@ -34,19 +34,6 @@ class LibraryManager;
 } // namespace Core
 
 namespace Gui::Settings {
-class LibraryGeneralPageWidget : public Utils::SettingsPageWidget
-{
-public:
-    explicit LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings);
-    ~LibraryGeneralPageWidget() override = default;
-
-    void apply() override;
-
-private:
-    struct Private;
-    std::unique_ptr<LibraryGeneralPageWidget::Private> p;
-};
-
 class LibraryGeneralPage : public Utils::SettingsPage
 {
 public:

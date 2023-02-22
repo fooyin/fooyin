@@ -22,71 +22,75 @@
 #include "gui/guiconstants.h"
 #include "gui/guisettings.h"
 
-#include <utils/utils.h>
-
 #include <QCheckBox>
+#include <QGroupBox>
+#include <QRadioButton>
 #include <QVBoxLayout>
 
 namespace Gui::Settings {
-
-struct PlaylistGuiPageWidget::Private
+class PlaylistGuiPageWidget : public Utils::SettingsPageWidget
 {
-    Core::SettingsManager* settings;
+public:
+    explicit PlaylistGuiPageWidget(Core::SettingsManager* settings);
+    ~PlaylistGuiPageWidget() override = default;
 
-    QVBoxLayout* mainLayout;
+    void apply() override;
 
-    QCheckBox* groupHeaders;
-    QCheckBox* splitDiscs;
-    QCheckBox* simpleList;
-    QCheckBox* altColours;
+private:
+    Core::SettingsManager* m_settings;
 
-    explicit Private(Core::SettingsManager* settings)
-        : settings{settings}
-    { }
+    QVBoxLayout* m_mainLayout;
+
+    QGroupBox* m_discBox;
+    QVBoxLayout* m_discBoxLayout;
+
+    QRadioButton* m_noHeaders;
+    QRadioButton* m_discSubheaders;
+    QRadioButton* m_splitDiscs;
+    QCheckBox* m_simpleList;
+    QCheckBox* m_altColours;
 };
 
 PlaylistGuiPageWidget::PlaylistGuiPageWidget(Core::SettingsManager* settings)
-    : p{std::make_unique<Private>(settings)}
+    : m_settings{settings}
+    , m_mainLayout{new QVBoxLayout(this)}
+    , m_discBox{new QGroupBox(tr("Disc Handling"), this)}
+    , m_discBoxLayout{new QVBoxLayout(m_discBox)}
+    , m_noHeaders{new QRadioButton(tr("None"), this)}
+    , m_discSubheaders{new QRadioButton(tr("Disc Subheaders"), this)}
+    , m_splitDiscs{new QRadioButton("Split Discs", this)}
+    , m_simpleList{new QCheckBox("Simple Playlist", this)}
+    , m_altColours{new QCheckBox("Alternate Row Colours", this)}
 {
-    p->groupHeaders = new QCheckBox("Enable Disc Headers", this);
-    p->groupHeaders->setChecked(p->settings->value<Settings::DiscHeaders>());
+    if(m_settings->value<Settings::DiscHeaders>()) {
+        m_discSubheaders->setChecked(true);
+    }
+    else if(m_settings->value<Settings::SplitDiscs>()) {
+        m_splitDiscs->setChecked(true);
+    }
+    else {
+        m_noHeaders->setChecked(true);
+    }
 
-    p->splitDiscs = new QCheckBox("Split Discs", this);
-    p->splitDiscs->setChecked(p->settings->value<Settings::SplitDiscs>());
-    p->splitDiscs->setEnabled(p->groupHeaders->isChecked());
+    m_simpleList->setChecked(m_settings->value<Settings::SimplePlaylist>());
+    m_altColours->setChecked(m_settings->value<Settings::PlaylistAltColours>());
 
-    p->simpleList = new QCheckBox("Simple Playlist", this);
-    p->simpleList->setChecked(p->settings->value<Settings::SimplePlaylist>());
+    m_discBoxLayout->addWidget(m_noHeaders);
+    m_discBoxLayout->addWidget(m_discSubheaders);
+    m_discBoxLayout->addWidget(m_splitDiscs);
 
-    p->altColours = new QCheckBox("Alternate Row Colours", this);
-    p->altColours->setChecked(p->settings->value<Settings::PlaylistAltColours>());
-
-    p->mainLayout = new QVBoxLayout(this);
-    p->mainLayout->addWidget(p->groupHeaders);
-
-    auto* indentWidget = Utils::Widgets::indentWidget(p->splitDiscs, this);
-    p->mainLayout->addWidget(indentWidget);
-    p->mainLayout->addWidget(p->simpleList);
-    p->mainLayout->addWidget(p->altColours);
-    p->mainLayout->addStretch();
-
-    connect(p->groupHeaders, &QCheckBox::clicked, this, [this](bool checked) {
-        if(checked) {
-            p->splitDiscs->setEnabled(checked);
-        }
-        else {
-            p->splitDiscs->setChecked(checked);
-            p->splitDiscs->setEnabled(checked);
-        }
-    });
+    m_mainLayout->addWidget(m_discBox);
+    m_mainLayout->addWidget(m_simpleList);
+    m_mainLayout->addWidget(m_altColours);
+    m_mainLayout->addStretch();
 }
 
 void PlaylistGuiPageWidget::apply()
 {
-    p->settings->set<Settings::DiscHeaders>(p->groupHeaders->isChecked());
-    p->settings->set<Settings::SplitDiscs>(p->splitDiscs->isChecked());
-    p->settings->set<Settings::SimplePlaylist>(p->simpleList->isChecked());
-    p->settings->set<Settings::PlaylistAltColours>(p->altColours->isChecked());
+    m_settings->set<Settings::DiscHeaders>(m_discSubheaders->isChecked());
+    m_settings->set<Settings::SplitDiscs>(m_splitDiscs->isChecked());
+    m_settings->set<Settings::SimplePlaylist>(m_simpleList->isChecked());
+    m_settings->set<Settings::PlaylistAltColours>(m_altColours->isChecked());
 }
 
 PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsDialogController* controller, Core::SettingsManager* settings)
