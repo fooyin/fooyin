@@ -68,7 +68,7 @@ void PlayerControl::setupUi()
     m_layout->addWidget(m_playPause, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_next, 0, Qt::AlignVCenter);
 
-    setEnabled(m_playerManager->currentTrack());
+    stateChanged(m_playerManager->playState());
 }
 
 void PlayerControl::stateChanged(Core::Player::PlayState state)
