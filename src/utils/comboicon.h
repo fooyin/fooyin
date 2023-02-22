@@ -44,11 +44,11 @@ class ComboIcon : public QWidget
 public:
     enum Attribute
     {
-        HasActiveIcon   = 1,
-        HasDisabledIcon = 2,
-        AutoShift       = 4,
-        Active          = 6,
-        Enabled         = 8,
+        HasActiveIcon   = 1 << 0,
+        HasDisabledIcon = 1 << 1,
+        AutoShift       = 1 << 2,
+        Active          = 1 << 3,
+        Enabled         = 1 << 4,
     };
     Q_DECLARE_FLAGS(Attributes, Attribute)
 
@@ -84,3 +84,5 @@ private:
     PathIconContainer m_icons;
 };
 } // namespace Utils
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Utils::ComboIcon::Attributes)

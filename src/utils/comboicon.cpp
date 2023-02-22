@@ -32,6 +32,7 @@ ComboIcon::ComboIcon(const QString& path, Attributes attributes, QWidget* parent
     , m_attributes{attributes}
     , m_currentIndex{0}
 {
+    addAttribute(Enabled);
     setup(path);
 }
 
