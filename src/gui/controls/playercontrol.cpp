@@ -28,22 +28,24 @@
 #include <QHBoxLayout>
 
 namespace Gui::Widgets {
+using Utils::ComboIcon;
+
 PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, QWidget* parent)
     : QWidget{parent}
     , m_playerManager{playerManager}
     , m_layout{new QHBoxLayout(this)}
-    , m_stop{new Utils::ComboIcon(Constants::Icons::Stop, this)}
-    , m_prev{new Utils::ComboIcon(Constants::Icons::Prev, this)}
-    , m_play{new Utils::ComboIcon(Constants::Icons::Play, this)}
-    , m_next{new Utils::ComboIcon(Constants::Icons::Next, this)}
+    , m_stop{new ComboIcon(Constants::Icons::Stop, ComboIcon::HasDisabledIcon, this)}
+    , m_prev{new ComboIcon(Constants::Icons::Prev, ComboIcon::HasDisabledIcon, this)}
+    , m_play{new ComboIcon(Constants::Icons::Play, ComboIcon::HasDisabledIcon, this)}
+    , m_next{new ComboIcon(Constants::Icons::Next, ComboIcon::HasDisabledIcon, this)}
     , m_labelSize{20, 20}
 {
     setupUi();
 
-    connect(m_stop, &Utils::ComboIcon::clicked, this, &PlayerControl::stopClicked);
-    connect(m_prev, &Utils::ComboIcon::clicked, this, &PlayerControl::prevClicked);
-    connect(m_play, &Utils::ComboIcon::clicked, this, &PlayerControl::pauseClicked);
-    connect(m_next, &Utils::ComboIcon::clicked, this, &PlayerControl::nextClicked);
+    connect(m_stop, &ComboIcon::clicked, this, &PlayerControl::stopClicked);
+    connect(m_prev, &ComboIcon::clicked, this, &PlayerControl::prevClicked);
+    connect(m_play, &ComboIcon::clicked, this, &PlayerControl::pauseClicked);
+    connect(m_next, &ComboIcon::clicked, this, &PlayerControl::nextClicked);
 
     connect(this, &PlayerControl::stopClicked, m_playerManager, &Core::Player::PlayerManager::stop);
     connect(this, &PlayerControl::nextClicked, m_playerManager, &Core::Player::PlayerManager::next);

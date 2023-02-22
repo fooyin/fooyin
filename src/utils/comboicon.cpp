@@ -57,21 +57,6 @@ void ComboIcon::setup(const QString& path)
     connect(m_label, &ClickableLabel::entered, this, &ComboIcon::entered);
 }
 
-bool ComboIcon::hasAttribute(Attribute attribute)
-{
-    return (m_attributes & attribute);
-}
-
-void ComboIcon::addAttribute(Attribute attribute)
-{
-    m_attributes |= attribute;
-}
-
-void ComboIcon::removeAttribute(Attribute attribute)
-{
-    m_attributes &= ~attribute;
-}
-
 void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)
 {
     const QPalette palette = m_label->palette();
@@ -80,7 +65,9 @@ void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)
     if(hasAttribute(HasActiveIcon)) {
         ico.iconActive = Utils::changePixmapColour(icon, palette.highlight().color());
     }
-    ico.iconDisabled = Utils::changePixmapColour(icon, palette.color(QPalette::Disabled, QPalette::Base));
+    if(hasAttribute(HasDisabledIcon)) {
+        ico.iconDisabled = Utils::changePixmapColour(icon, palette.color(QPalette::Disabled, QPalette::Base));
+    }
     m_icons.emplace_back(path, ico);
 }
 
@@ -111,8 +98,8 @@ void ComboIcon::setIcon(const QString& path, bool active)
         return;
     }
 
-    auto idx       = static_cast<int>(std::distance(m_icons.cbegin(), it));
-    m_currentIndex = idx;
+    m_currentIndex = static_cast<int>(std::distance(m_icons.cbegin(), it));
+
     if(hasAttribute(HasActiveIcon) && hasAttribute(Active)) {
         m_label->setPixmap(m_icons.at(m_currentIndex).second.iconActive);
     }
@@ -139,6 +126,14 @@ void ComboIcon::setIconEnabled(bool enable)
     return m_label->setPixmap(m_icons.at(m_currentIndex).second.iconDisabled);
 }
 
+void ComboIcon::changeEvent(QEvent* event)
+{
+    if(event->type() == QEvent::EnabledChange && hasAttribute(HasDisabledIcon)) {
+        setIconEnabled(isEnabled());
+    }
+    return QWidget::changeEvent(event);
+}
+
 void ComboIcon::labelClicked()
 {
     if(hasAttribute(AutoShift)) {
@@ -158,11 +153,18 @@ void ComboIcon::labelClicked()
     emit clicked(m_icons.at(m_currentIndex).first);
 }
 
-void ComboIcon::changeEvent(QEvent* event)
+bool ComboIcon::hasAttribute(Attribute attribute)
 {
-    if(event->type() == QEvent::EnabledChange) {
-        setIconEnabled(isEnabled());
-    }
-    return QWidget::changeEvent(event);
+    return (m_attributes & attribute);
+}
+
+void ComboIcon::addAttribute(Attribute attribute)
+{
+    m_attributes |= attribute;
+}
+
+void ComboIcon::removeAttribute(Attribute attribute)
+{
+    m_attributes &= ~attribute;
 }
 } // namespace Utils

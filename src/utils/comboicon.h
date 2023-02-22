@@ -44,10 +44,11 @@ class ComboIcon : public QWidget
 public:
     enum Attribute
     {
-        HasActiveIcon = 1,
-        AutoShift     = 2,
-        Active        = 4,
-        Enabled       = 6,
+        HasActiveIcon   = 1,
+        HasDisabledIcon = 2,
+        AutoShift       = 4,
+        Active          = 6,
+        Enabled         = 8,
     };
     Q_DECLARE_FLAGS(Attributes, Attribute)
 
@@ -56,10 +57,6 @@ public:
     ~ComboIcon() override = default;
 
     void setup(const QString& path);
-
-    bool hasAttribute(Attribute attribute);
-    void addAttribute(Attribute attribute);
-    void removeAttribute(Attribute attribute);
 
     void addPixmap(const QString& path, const QPixmap& icon);
     void addPixmap(const QString& path);
@@ -72,10 +69,14 @@ signals:
     void entered();
 
 protected:
-    void labelClicked();
     void changeEvent(QEvent* event) override;
 
 private:
+    void labelClicked();
+    bool hasAttribute(Attribute attribute);
+    void addAttribute(Attribute attribute);
+    void removeAttribute(Attribute attribute);
+
     QVBoxLayout* m_layout;
     ClickableLabel* m_label;
     Attributes m_attributes;
