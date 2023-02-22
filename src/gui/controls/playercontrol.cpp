@@ -28,8 +28,9 @@
 #include <QHBoxLayout>
 
 namespace Gui::Widgets {
-PlayerControl::PlayerControl(QWidget* parent)
+PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, QWidget* parent)
     : QWidget{parent}
+    , m_playerManager{playerManager}
     , m_layout{new QHBoxLayout(this)}
     , m_stop{new Utils::ComboIcon(Constants::Icons::Stop, this)}
     , m_prev{new Utils::ComboIcon(Constants::Icons::Prev, this)}
@@ -43,6 +44,13 @@ PlayerControl::PlayerControl(QWidget* parent)
     connect(m_prev, &Utils::ComboIcon::clicked, this, &PlayerControl::prevClicked);
     connect(m_play, &Utils::ComboIcon::clicked, this, &PlayerControl::pauseClicked);
     connect(m_next, &Utils::ComboIcon::clicked, this, &PlayerControl::nextClicked);
+
+    connect(this, &PlayerControl::stopClicked, m_playerManager, &Core::Player::PlayerManager::stop);
+    connect(this, &PlayerControl::nextClicked, m_playerManager, &Core::Player::PlayerManager::next);
+    connect(this, &PlayerControl::prevClicked, m_playerManager, &Core::Player::PlayerManager::previous);
+    connect(this, &PlayerControl::pauseClicked, m_playerManager, &Core::Player::PlayerManager::playPause);
+
+    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlayerControl::stateChanged);
 }
 
 void PlayerControl::setupUi()
@@ -63,18 +71,18 @@ void PlayerControl::setupUi()
     m_layout->addWidget(m_play, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_next, 0, Qt::AlignVCenter);
 
-    setEnabled(false);
+    setEnabled(m_playerManager->currentTrack());
 }
 
 void PlayerControl::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
         case(Core::Player::Stopped):
-            setEnabled(false);
-            return m_play->setIcon(Constants::Icons::Play);
+            m_play->setIcon(Constants::Icons::Play);
+            return setEnabled(false);
         case(Core::Player::Playing):
-            setEnabled(true);
-            return m_play->setIcon(Constants::Icons::Pause);
+            m_play->setIcon(Constants::Icons::Pause);
+            return setEnabled(true);
         case(Core::Player::Paused):
             return m_play->setIcon(Constants::Icons::Play);
     }

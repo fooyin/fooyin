@@ -29,8 +29,10 @@
 #include <QHBoxLayout>
 
 namespace Gui::Widgets {
-PlaylistControl::PlaylistControl(Core::SettingsManager* settings, QWidget* parent)
+PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+                                 QWidget* parent)
     : QWidget{parent}
+    , m_playerManager{playerManager}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_labelSize{20, 20}
@@ -42,6 +44,11 @@ PlaylistControl::PlaylistControl(Core::SettingsManager* settings, QWidget* paren
 
     connect(m_repeat, &Utils::ComboIcon::clicked, this, &PlaylistControl::repeatClicked);
     connect(m_shuffle, &Utils::ComboIcon::clicked, this, &PlaylistControl::shuffleClicked);
+
+    connect(this, &PlaylistControl::repeatClicked, m_playerManager, &Core::Player::PlayerManager::setRepeat);
+    connect(this, &PlaylistControl::shuffleClicked, m_playerManager, &Core::Player::PlayerManager::setShuffle);
+
+    connect(m_playerManager, &Core::Player::PlayerManager::playModeChanged, this, &PlaylistControl::playModeChanged);
 }
 
 void PlaylistControl::setupUi()
@@ -58,8 +65,7 @@ void PlaylistControl::setupUi()
     m_layout->addWidget(m_repeat, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_shuffle, 0, Qt::AlignVCenter);
 
-    const auto mode = m_settings->value<Core::Settings::PlayMode>().value<Core::Player::PlayMode>();
-    setMode(mode);
+    setMode(m_settings->value<Core::Settings::PlayMode>().value<Core::Player::PlayMode>());
 }
 
 void PlaylistControl::playModeChanged(Core::Player::PlayMode mode)

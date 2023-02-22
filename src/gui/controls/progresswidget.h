@@ -33,8 +33,9 @@ class Track;
 class SettingsManager;
 
 namespace Player {
+class PlayerManager;
 enum PlayState : uint8_t;
-}
+} // namespace Player
 } // namespace Core
 
 namespace Gui::Widgets {
@@ -43,7 +44,8 @@ class ProgressWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit ProgressWidget(Core::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit ProgressWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+                            QWidget* parent = nullptr);
     ~ProgressWidget() override = default;
 
     void setupUi();
@@ -53,15 +55,17 @@ public:
     void updateTime(int elapsed);
     void reset();
     void stateChanged(Core::Player::PlayState state);
+    void changeElapsedTotal(bool enabled);
 
 signals:
     void movedSlider(int pos);
 
 protected:
+private:
     void toggleRemaining();
     void sliderDropped();
 
-private:
+    Core::Player::PlayerManager* m_playerManager;
     Core::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
@@ -69,5 +73,6 @@ private:
     Utils::ClickableLabel* m_elapsed;
     Utils::ClickableLabel* m_total;
     int m_max;
+    bool m_elapsedTotal;
 };
 } // namespace Gui::Widgets

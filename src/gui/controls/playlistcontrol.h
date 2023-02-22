@@ -31,8 +31,9 @@ namespace Core {
 class SettingsManager;
 
 namespace Player {
+class PlayerManager;
 enum PlayMode : uint8_t;
-}
+} // namespace Player
 } // namespace Core
 
 namespace Gui::Widgets {
@@ -41,7 +42,8 @@ class PlaylistControl : public QWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistControl(Core::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit PlaylistControl(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+                             QWidget* parent = nullptr);
     ~PlaylistControl() override = default;
 
     void setupUi();
@@ -56,6 +58,7 @@ protected:
     void setMode(Core::Player::PlayMode mode) const;
 
 private:
+    Core::Player::PlayerManager* m_playerManager;
     Core::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;

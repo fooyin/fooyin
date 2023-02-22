@@ -54,21 +54,12 @@ public:
 
     [[nodiscard]] QString name() const override;
 
-signals:
-    void stop();
-
-protected:
-    void contextMenuEvent(QContextMenuEvent* event) override;
-
-    void currentTrackChanged(Core::Track* track);
-    void currentPositionChanged(qint64 ms);
-
 private:
     Core::Player::PlayerManager* m_playerManager;
     Core::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
-    PlayerControl* m_playControls;
+    PlayerControl* m_playerControls;
     PlaylistControl* m_playlistControls;
     VolumeControl* m_volumeControls;
     ProgressWidget* m_progress;

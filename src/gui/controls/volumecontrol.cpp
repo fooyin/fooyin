@@ -21,6 +21,8 @@
 
 #include "gui/guiconstants.h"
 
+#include <core/player/playermanager.h>
+
 #include <utils/comboicon.h>
 #include <utils/hovermenu.h>
 #include <utils/slider.h>
@@ -28,8 +30,9 @@
 #include <QHBoxLayout>
 
 namespace Gui::Widgets {
-VolumeControl::VolumeControl(QWidget* parent)
+VolumeControl::VolumeControl(Core::Player::PlayerManager* playerManager, QWidget* parent)
     : QWidget{parent}
+    , m_playerManager{playerManager}
     , m_layout{new QHBoxLayout(this)}
     , m_volumeIcon{new Utils::ComboIcon(Constants::Icons::VolumeMute, this)}
     , m_volumeSlider{new Utils::Slider(Qt::Vertical, this)}
@@ -45,6 +48,10 @@ VolumeControl::VolumeControl(QWidget* parent)
     connect(m_volumeSlider, &QSlider::valueChanged, this, &VolumeControl::updateVolume);
     connect(m_volumeIcon, &Utils::ComboIcon::entered, this, &VolumeControl::showVolumeMenu);
     connect(m_volumeIcon, &Utils::ComboIcon::clicked, this, &VolumeControl::mute);
+
+    connect(this, &VolumeControl::volumeUp, m_playerManager, &Core::Player::PlayerManager::volumeUp);
+    connect(this, &VolumeControl::volumeDown, m_playerManager, &Core::Player::PlayerManager::volumeDown);
+    connect(this, &VolumeControl::volumeChanged, m_playerManager, &Core::Player::PlayerManager::setVolume);
 }
 
 VolumeControl::~VolumeControl()

@@ -29,13 +29,17 @@ class Slider;
 class HoverMenu;
 } // namespace Utils
 
+namespace Core::Player {
+class PlayerManager;
+}
+
 namespace Gui::Widgets {
 class VolumeControl : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit VolumeControl(QWidget* parent = nullptr);
+    explicit VolumeControl(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
     ~VolumeControl() override;
 
     void setupUi();
@@ -52,6 +56,8 @@ protected:
     void showVolumeMenu();
 
 private:
+    Core::Player::PlayerManager* m_playerManager;
+
     QHBoxLayout* m_layout;
     Utils::ComboIcon* m_volumeIcon;
     Utils::Slider* m_volumeSlider;

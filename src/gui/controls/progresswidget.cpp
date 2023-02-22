@@ -31,19 +31,27 @@
 #include <QSlider>
 
 namespace Gui::Widgets {
-ProgressWidget::ProgressWidget(Core::SettingsManager* settings, QWidget* parent)
+ProgressWidget::ProgressWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+                               QWidget* parent)
     : QWidget{parent}
+    , m_playerManager{playerManager}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_slider{new Utils::Slider(Qt::Horizontal, this)}
     , m_elapsed{new Utils::ClickableLabel(this)}
     , m_total{new Utils::ClickableLabel(this)}
     , m_max{0}
+    , m_elapsedTotal{settings->value<Settings::ElapsedTotal>()}
 {
     setupUi();
 
     connect(m_total, &Utils::ClickableLabel::clicked, this, &ProgressWidget::toggleRemaining);
     connect(m_slider, &Utils::Slider::sliderReleased, this, &ProgressWidget::sliderDropped);
+
+    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &ProgressWidget::stateChanged);
+    connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &ProgressWidget::changeTrack);
+    connect(m_playerManager, &Core::Player::PlayerManager::positionChanged, this, &ProgressWidget::setCurrentPosition);
+    connect(this, &ProgressWidget::movedSlider, m_playerManager, &Core::Player::PlayerManager::changePosition);
 }
 
 void ProgressWidget::setupUi()
@@ -59,17 +67,18 @@ void ProgressWidget::setupUi()
     m_layout->addWidget(m_slider, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_total, 0, Qt::AlignVCenter | Qt::AlignLeft);
 
-    setEnabled(false);
+    setEnabled(m_playerManager->currentTrack());
 }
 
 void ProgressWidget::changeTrack(Core::Track* track)
 {
+    if(!track) {
+        return;
+    }
     reset();
     m_max = static_cast<int>(track->duration());
     m_slider->setMaximum(m_max);
-    auto elapsed = m_settings->value<Settings::ElapsedTotal>();
-    m_total->setText(elapsed ? "-" + Utils::msToString(m_max) : Utils::msToString(m_max));
-    setEnabled(true);
+    m_total->setText(m_elapsedTotal ? "-" : "" + Utils::msToString(m_max));
 }
 
 void ProgressWidget::setCurrentPosition(int ms)
@@ -87,7 +96,7 @@ void ProgressWidget::updateTime(int elapsed)
 
     m_elapsed->setText(Utils::secsToString(secs));
 
-    if(m_settings->value<Settings::ElapsedTotal>()) {
+    if(m_elapsedTotal) {
         const int remaining = max - secs;
         m_total->setText("-" + Utils::secsToString(remaining));
     }
@@ -100,9 +109,8 @@ void ProgressWidget::updateTime(int elapsed)
 
 void ProgressWidget::reset()
 {
-    auto elapsed = m_settings->value<Settings::ElapsedTotal>();
     m_elapsed->setText("00:00");
-    m_total->setText(elapsed ? "-00:00" : "00:00");
+    m_total->setText(m_elapsedTotal ? "-00:00" : "00:00");
     m_slider->setValue(0);
     m_max = 0;
 }
@@ -120,15 +128,21 @@ void ProgressWidget::stateChanged(Core::Player::PlayState state)
     }
 }
 
+void ProgressWidget::changeElapsedTotal(bool enabled)
+{
+    m_elapsedTotal = enabled;
+}
+
 void ProgressWidget::toggleRemaining()
 {
-    if(m_settings->value<Settings::ElapsedTotal>()) {
+    if(m_elapsedTotal) {
         m_settings->set<Settings::ElapsedTotal>(false);
         m_total->setText(Utils::msToString(m_max));
     }
     else {
         m_settings->set<Settings::ElapsedTotal>(true);
     }
+    m_elapsedTotal = !m_elapsedTotal;
 }
 
 void ProgressWidget::sliderDropped()

@@ -24,8 +24,9 @@
 class QHBoxLayout;
 
 namespace Core::Player {
+class PlayerManager;
 enum PlayState : uint8_t;
-}
+} // namespace Core::Player
 
 namespace Utils {
 class ComboIcon;
@@ -37,7 +38,7 @@ class PlayerControl : public QWidget
     Q_OBJECT
 
 public:
-    explicit PlayerControl(QWidget* parent = nullptr);
+    explicit PlayerControl(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
     ~PlayerControl() override = default;
 
     void setupUi();
@@ -51,6 +52,8 @@ signals:
     void nextClicked();
 
 private:
+    Core::Player::PlayerManager* m_playerManager;
+
     QHBoxLayout* m_layout;
     Utils::ComboIcon* m_stop;
     Utils::ComboIcon* m_prev;
