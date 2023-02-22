@@ -44,8 +44,9 @@ void PlayerController::restoreState()
 
 void PlayerController::reset()
 {
-    m_playStatus = Stopped;
-    m_position   = 0;
+    m_playStatus   = Stopped;
+    m_position     = 0;
+    m_currentTrack = nullptr;
 }
 
 void PlayerController::play()
