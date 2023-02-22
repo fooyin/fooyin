@@ -21,6 +21,7 @@
 
 #include <utils/utils.h>
 
+#include <QEvent>
 #include <QVBoxLayout>
 
 namespace Utils {
@@ -79,6 +80,7 @@ void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)
     if(hasAttribute(HasActiveIcon)) {
         ico.iconActive = Utils::changePixmapColour(icon, palette.highlight().color());
     }
+    ico.iconDisabled = Utils::changePixmapColour(icon, palette.color(QPalette::Disabled, QPalette::Base));
     m_icons.emplace_back(path, ico);
 }
 
@@ -119,6 +121,24 @@ void ComboIcon::setIcon(const QString& path, bool active)
     }
 }
 
+void ComboIcon::setIconEnabled(bool enable)
+{
+    if(enable) {
+        addAttribute(Enabled);
+    }
+    else {
+        removeAttribute(Enabled);
+    }
+
+    if(hasAttribute(Enabled)) {
+        if(hasAttribute(HasActiveIcon) && hasAttribute(Active)) {
+            return m_label->setPixmap(m_icons.at(m_currentIndex).second.iconActive);
+        }
+        return m_label->setPixmap(m_icons.at(m_currentIndex).second.icon);
+    }
+    return m_label->setPixmap(m_icons.at(m_currentIndex).second.iconDisabled);
+}
+
 void ComboIcon::labelClicked()
 {
     if(hasAttribute(AutoShift)) {
@@ -136,5 +156,13 @@ void ComboIcon::labelClicked()
         }
     }
     emit clicked(m_icons.at(m_currentIndex).first);
+}
+
+void ComboIcon::changeEvent(QEvent* event)
+{
+    if(event->type() == QEvent::EnabledChange) {
+        setIconEnabled(isEnabled());
+    }
+    return QWidget::changeEvent(event);
 }
 } // namespace Utils

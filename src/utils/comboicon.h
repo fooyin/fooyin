@@ -35,6 +35,7 @@ class ComboIcon : public QWidget
     {
         QPixmap icon;
         QPixmap iconActive;
+        QPixmap iconDisabled;
     };
 
     using PathIconPair      = std::pair<QString, Icon>;
@@ -46,6 +47,7 @@ public:
         HasActiveIcon = 1,
         AutoShift     = 2,
         Active        = 4,
+        Enabled       = 6,
     };
     Q_DECLARE_FLAGS(Attributes, Attribute)
 
@@ -63,6 +65,7 @@ public:
     void addPixmap(const QString& path);
 
     void setIcon(const QString& path, bool active = false);
+    void setIconEnabled(bool enable = true);
 
 signals:
     void clicked(const QString& path = {});
@@ -70,6 +73,7 @@ signals:
 
 protected:
     void labelClicked();
+    void changeEvent(QEvent* event) override;
 
 private:
     QVBoxLayout* m_layout;
