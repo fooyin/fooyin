@@ -8,6 +8,8 @@ fooyin_add_library(Core
         Fooyin_Version
         Fooyin_Utils
     SOURCES
+        coreplugin.h
+        coreplugincontext.h
         coresettings.h
         coresettings.cpp
         constants.h
@@ -83,8 +85,6 @@ fooyin_add_library(Core
         player/playercontroller.cpp
         player/playermanager.h
 
-        plugins/plugin.h
-        plugins/plugincontext.h
         plugins/plugininfo.h
         plugins/plugininfo.cpp
         plugins/pluginmanager.h

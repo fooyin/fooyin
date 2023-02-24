@@ -41,12 +41,12 @@ class MusicLibrary;
 }
 } // namespace Core
 
-struct PluginContext
+struct CorePluginContext
 {
-    PluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                  Core::Library::MusicLibrary* library, Core::SettingsManager* settingsManager,
-                  Utils::SettingsDialogController* settingsController, Core::ThreadManager* threadManager,
-                  Core::DB::Database* database)
+    CorePluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
+                      Core::Library::MusicLibrary* library, Core::SettingsManager* settingsManager,
+                      Utils::SettingsDialogController* settingsController, Core::ThreadManager* threadManager,
+                      Core::DB::Database* database)
         : actionManager{actionManager}
         , playerManager{playerManager}
         , library{library}

@@ -21,6 +21,7 @@
 
 #include <core/app/threadmanager.h>
 #include <core/constants.h>
+#include <core/coreplugin.h>
 #include <core/coresettings.h>
 #include <core/database/database.h>
 #include <core/engine/enginehandler.h>
@@ -91,8 +92,8 @@ struct Application::Private
     QAction* rescanLibrary;
 
     Plugins::PluginManager pluginManager;
-    PluginContext pluginContext;
-    GuiPluginContext guiContext;
+    CorePluginContext corePluginContext;
+    GuiPluginContext guiPluginContext;
 
     explicit Private()
         : coreSettings{&settingsManager}
@@ -111,10 +112,10 @@ struct Application::Private
         , libraryGeneralPage{&settingsDialogController, &libraryManager, &settingsManager}
         , guiGeneralPage{&settingsDialogController, &settingsManager}
         , playlistGuiPage{&settingsDialogController, &settingsManager}
-        , pluginContext{&actionManager,   playerManager.get(),       &library,
-                        &settingsManager, &settingsDialogController, &threadManager,
-                        &database}
-        , guiContext{&widgetFactory}
+        , corePluginContext{&actionManager,   playerManager.get(),       &library,
+                            &settingsManager, &settingsDialogController, &threadManager,
+                            &database}
+        , guiPluginContext{&widgetFactory}
     {
         actionManager.setMainWindow(mainWindow);
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -213,8 +214,8 @@ struct Application::Private
         pluginManager.findPlugins(pluginsPath);
         pluginManager.loadPlugins();
 
-        pluginManager.initialisePlugins<Plugins::Plugin>(pluginContext);
-        pluginManager.initialisePlugins<Gui::Plugin>(guiContext);
+        pluginManager.initialisePlugins<Core::CorePlugin>(corePluginContext);
+        pluginManager.initialisePlugins<Gui::GuiPlugin>(guiPluginContext);
     }
 };
 

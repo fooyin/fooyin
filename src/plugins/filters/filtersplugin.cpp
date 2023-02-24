@@ -31,7 +31,7 @@
 #include <QMenu>
 
 namespace Filters {
-void FiltersPlugin::initialise(const PluginContext& context)
+void FiltersPlugin::initialise(const CorePluginContext& context)
 {
     m_actionManager = context.actionManager;
     m_library       = context.library;

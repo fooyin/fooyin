@@ -21,20 +21,20 @@
 
 #include "guiplugincontext.h"
 
+#include <core/plugins/plugin.h>
+
 #include <QtPlugin>
 
 namespace Gui {
-class Plugin
+class GuiPlugin : public Plugins::Plugin
 {
 public:
-    virtual ~Plugin() = default;
-
     virtual void initialise(const GuiPluginContext& context)
     {
         Q_UNUSED(context)
     };
-    virtual void shutdown(){};
+    void shutdown() override{};
 };
 } // namespace Gui
 
-Q_DECLARE_INTERFACE(Gui::Plugin, "com.fooyin.plugin.gui")
+Q_DECLARE_INTERFACE(Gui::GuiPlugin, "com.fooyin.plugin.gui")

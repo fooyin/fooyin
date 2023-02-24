@@ -21,7 +21,7 @@
 
 #include "filterwidget.h"
 
-#include <core/plugins/plugin.h>
+#include <core/coreplugin.h>
 #include <gui/guiplugin.h>
 #include <gui/widgetfactory.h>
 
@@ -33,16 +33,16 @@ class FiltersSettings;
 }
 
 class FiltersPlugin : public QObject,
-                      public Plugins::Plugin,
-                      public Gui::Plugin
+                      public Core::CorePlugin,
+                      public Gui::GuiPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
-    Q_INTERFACES(Plugins::Plugin)
-    Q_INTERFACES(Gui::Plugin)
+    Q_INTERFACES(Core::CorePlugin)
+    Q_INTERFACES(Gui::GuiPlugin)
 
 public:
-    void initialise(const PluginContext& context) override;
+    void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
 
 private:

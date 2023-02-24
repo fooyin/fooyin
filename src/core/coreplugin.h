@@ -19,24 +19,22 @@
 
 #pragma once
 
+#include "coreplugincontext.h"
+
+#include "core/plugins/plugin.h"
+
 #include <QtPlugin>
 
-namespace Plugins {
-/*!
- The Plugin class is an abstract base class that each plugin must implement.
-
- An additional metadata json must also be supplied detailing plugin info
- including dependencies.
-
- Plugins must set their IID to "com.fooyin.plugin".
-*/
-class Plugin
+namespace Core {
+class CorePlugin : public Plugins::Plugin
 {
 public:
-    virtual ~Plugin() = default;
-
-    virtual void shutdown() = 0;
+    virtual void initialise(const CorePluginContext& context)
+    {
+        Q_UNUSED(context)
+    };
+    void shutdown() override{};
 };
-} // namespace Plugins
+} // namespace Core
 
-Q_DECLARE_INTERFACE(Plugins::Plugin, "com.fooyin.plugin")
+Q_DECLARE_INTERFACE(Core::CorePlugin, "com.fooyin.plugin.core")
