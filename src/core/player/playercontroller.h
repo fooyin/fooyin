@@ -46,8 +46,8 @@ protected:
     void previous() override;
     void next() override;
     void stop() override;
-    void setCurrentPosition(quint64 ms) override;
-    void changePosition(quint64 ms) override;
+    void setCurrentPosition(uint64_t ms) override;
+    void changePosition(uint64_t ms) override;
     void changeCurrentTrack(Track* track) override;
     void setRepeat() override;
     void setShuffle() override;
@@ -57,7 +57,7 @@ protected:
 
     [[nodiscard]] PlayState playState() const override;
     [[nodiscard]] PlayMode playMode() const override;
-    [[nodiscard]] quint64 currentPosition() const override;
+    [[nodiscard]] uint64_t currentPosition() const override;
     [[nodiscard]] Track* currentTrack() const override;
     [[nodiscard]] double volume() const override;
 
@@ -65,10 +65,10 @@ private:
     Utils::SettingsManager* m_settings;
 
     Track* m_currentTrack;
-    quint64 m_totalDuration;
+    uint64_t m_totalDuration;
     PlayState m_playStatus;
     PlayMode m_playMode;
-    quint64 m_position;
+    uint64_t m_position;
     double m_volume;
     bool m_counted;
 };

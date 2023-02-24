@@ -41,11 +41,11 @@ QWidget* indentWidget(QWidget* widget, QWidget* parent);
 } // namespace Widgets
 
 int randomNumber(int min, int max);
-QString msToString(quint64 ms);
-QString secsToString(quint64 secs);
+QString msToString(uint64_t ms);
+QString secsToString(uint64_t secs);
 void setMinimumWidth(QLabel* label, const QString& text);
 
-quint64 currentDateToInt();
+uint64_t currentDateToInt();
 QString capitalise(const QString& s);
 
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);

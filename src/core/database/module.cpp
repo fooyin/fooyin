@@ -47,10 +47,10 @@ QSqlDatabase Module::db() const
         return {};
     }
 
-    QThread* t = QThread::currentThread();
+    QThread* currentThread = QThread::currentThread();
 
-    auto id = quint64(t);
-    if(QApplication::instance() && (t == QApplication::instance()->thread())) {
+    auto id = (uint64_t)currentThread;
+    if(QApplication::instance() && (currentThread == QApplication::instance()->thread())) {
         id = 0;
     }
 

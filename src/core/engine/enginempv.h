@@ -42,7 +42,7 @@ public:
     void play() override;
     void stop() override;
     void pause() override;
-    void seek(quint64 pos) override;
+    void seek(uint64_t pos) override;
     void changeTrack(Track* track) override;
     void setVolume(float value) override;
 
@@ -55,7 +55,7 @@ private:
 
     int m_posInterval;
     int m_ms;
-    quint64 m_lastTick;
+    uint64_t m_lastTick;
     mpv_handle* m_mpv;
 };
 } // namespace Engine

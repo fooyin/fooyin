@@ -95,20 +95,20 @@ void PlayerController::stop()
     emit playStateChanged(m_playStatus);
 }
 
-void PlayerController::setCurrentPosition(quint64 ms)
+void PlayerController::setCurrentPosition(uint64_t ms)
 {
     m_position = ms;
     // TODO: Only increment playCount based on total time listened excluding seeking.
     if(!m_counted && ms >= m_totalDuration / 2) {
         // TODO: Save playCounts to db.
-        quint16 playCount = m_currentTrack->playCount();
+        int playCount = m_currentTrack->playCount();
         m_currentTrack->setPlayCount(++playCount);
         m_counted = true;
     }
     emit positionChanged(ms);
 }
 
-void PlayerController::changePosition(quint64 ms)
+void PlayerController::changePosition(uint64_t ms)
 {
     if(ms >= m_totalDuration - 100) {
         return next();
@@ -184,7 +184,7 @@ Player::PlayMode PlayerController::playMode() const
     return m_playMode;
 }
 
-quint64 PlayerController::currentPosition() const
+uint64_t PlayerController::currentPosition() const
 {
     return m_position;
 }

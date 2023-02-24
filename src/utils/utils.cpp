@@ -117,7 +117,7 @@ int randomNumber(int min, int max)
     return QRandomGenerator::global()->bounded(min, max + 1);
 }
 
-QString msToString(quint64 ms)
+QString msToString(uint64_t ms)
 {
     const int milliseconds = static_cast<int>(ms);
     const QTime t(0, 0, 0);
@@ -125,7 +125,7 @@ QString msToString(quint64 ms)
     return time.toString(time.hour() == 0 ? "mm:ss" : "hh:mm:ss");
 }
 
-QString secsToString(quint64 secs)
+QString secsToString(uint64_t secs)
 {
     const int seconds = static_cast<int>(secs);
     const QTime t(0, 0, 0);
@@ -133,10 +133,10 @@ QString secsToString(quint64 secs)
     return time.toString(time.hour() == 0 ? "mm:ss" : "hh:mm:ss");
 }
 
-quint64 currentDateToInt()
+uint64_t currentDateToInt()
 {
     const auto str = QDateTime::currentDateTimeUtc().toString("yyyyMMddHHmmss");
-    return str.toULongLong();
+    return static_cast<uint64_t>(str.toULongLong());
 }
 
 void setMinimumWidth(QLabel* label, const QString& text)

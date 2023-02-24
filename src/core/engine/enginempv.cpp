@@ -117,11 +117,11 @@ void EngineMpv::pause()
     mpv_set_property_async(m_mpv, 0, "pause", MPV_FORMAT_FLAG, &f);
 }
 
-void EngineMpv::seek(quint64 pos)
+void EngineMpv::seek(uint64_t pos)
 {
-    const quint64 seconds = pos / 1000;
-    const QByteArray tmp  = QString::number(seconds).toUtf8();
-    const char* cmd[]     = {"seek", tmp.constData(), "absolute", nullptr}; // NOLINT
+    const uint64_t seconds = pos / 1000;
+    const QByteArray tmp   = QString::number(seconds).toUtf8();
+    const char* cmd[]      = {"seek", tmp.constData(), "absolute", nullptr}; // NOLINT
     mpv_command(m_mpv, cmd);
 }
 
@@ -179,7 +179,7 @@ void EngineMpv::handlePropertyChange(mpv_event* event)
 
     if(QString(prop->name) == "audio-pts") {
         if(prop->format == MPV_FORMAT_DOUBLE) {
-            auto time = static_cast<quint64>((*static_cast<double*>(prop->data) * m_ms));
+            auto time = static_cast<uint64_t>((*static_cast<double*>(prop->data) * m_ms));
 
             if(time != m_lastTick && time > 0) {
                 if(time + m_posInterval >= m_lastTick || time - m_posInterval <= m_lastTick) {

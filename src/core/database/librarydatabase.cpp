@@ -45,7 +45,7 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("Performer"), track.performer()},
         {QStringLiteral("Lyrics"), track.lyrics()},
         {QStringLiteral("Comment"), track.comment()},
-        {QStringLiteral("Duration"), track.duration()},
+        {QStringLiteral("Duration"), QVariant::fromValue(track.duration())},
         {QStringLiteral("FileSize"), QVariant::fromValue(track.fileSize())},
         {QStringLiteral("BitRate"), track.bitrate()},
         {QStringLiteral("SampleRate"), track.sampleRate()},

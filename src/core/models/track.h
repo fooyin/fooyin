@@ -59,7 +59,7 @@ public:
     [[nodiscard]] GenreList genres() const;
     [[nodiscard]] QString composer() const;
     [[nodiscard]] QString performer() const;
-    [[nodiscard]] quint64 duration() const;
+    [[nodiscard]] uint64_t duration() const;
     [[nodiscard]] QString lyrics() const;
     [[nodiscard]] QString comment() const;
     [[nodiscard]] QString date() const;
@@ -102,7 +102,7 @@ public:
     void setGenres(const GenreList& genres);
     void setComposer(const QString& composer);
     void setPerformer(const QString& performer);
-    void setDuration(quint64 duration);
+    void setDuration(uint64_t duration);
     void setLyrics(const QString& lyrics);
     void setComment(const QString& comment);
     void setDate(const QString& date);

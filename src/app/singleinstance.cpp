@@ -78,7 +78,7 @@ bool SingleInstance::tryRunning()
     }
 
     lock.acquire();
-    const bool result = memory.create(sizeof(quint64));
+    const bool result = memory.create(sizeof(uint64_t));
     lock.release();
 
     if(!result) {

@@ -148,7 +148,7 @@ QString Track::performer() const
     return m_performer;
 }
 
-quint64 Track::duration() const
+uint64_t Track::duration() const
 {
     return m_duration;
 }
@@ -339,7 +339,7 @@ void Track::setPerformer(const QString& performer)
     m_performer = performer;
 }
 
-void Track::setDuration(quint64 duration)
+void Track::setDuration(uint64_t duration)
 {
     m_duration = duration;
 }
