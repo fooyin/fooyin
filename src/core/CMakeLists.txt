@@ -51,6 +51,8 @@ fooyin_add_library(Core
         library/libraryscanner.cpp
         library/libraryutils.h
         library/libraryutils.cpp
+        library/trackstore.h
+        library/trackstore.cpp
 
         library/sorting/sorting.h
         library/sorting/sorting.cpp

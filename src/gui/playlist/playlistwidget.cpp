@@ -349,7 +349,7 @@ void PlaylistWidget::findCurrent()
 
     QModelIndex index;
     //    index = m_>model->match({}, ItemRole::Id, track->id(), 1, {});
-    index = m_model->indexOfItem(track->id());
+    index = m_model->indexForId(track->id());
 
     if(index.isValid()) {
         m_playlist->scrollTo(index);

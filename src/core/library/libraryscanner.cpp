@@ -46,7 +46,7 @@ void LibraryScanner::stopThread()
     setState(State::Idle);
 }
 
-void LibraryScanner::scanLibrary(const TrackList tracks, LibraryInfo* info)
+void LibraryScanner::scanLibrary(const TrackPtrList& tracks, LibraryInfo* info)
 {
     if(!info) {
         return;
@@ -68,13 +68,13 @@ void LibraryScanner::scanLibrary(const TrackList tracks, LibraryInfo* info)
     // TODO: Don't delete if disk/top level is inaccessible
     //       and ask for confirmation.
     for(const auto& track : tracks) {
-        if(!::Utils::File::exists(track.filepath())) {
-            tracksToDelete.insert(track.id());
+        if(!::Utils::File::exists(track->filepath())) {
+            tracksToDelete.insert(track->id());
         }
         else {
-            trackMap.emplace(track.filepath(), track);
-            if(track.hasCover() && !::Utils::File::exists(track.coverPath())) {
-                Utils::storeCover(track);
+            trackMap.emplace(track->filepath(), track);
+            if(track->hasCover() && !::Utils::File::exists(track->coverPath())) {
+                Utils::storeCover(*track);
             }
         }
         if(!mayRun()) {
@@ -99,7 +99,7 @@ void LibraryScanner::scanLibrary(const TrackList tracks, LibraryInfo* info)
     processQueue();
 }
 
-void LibraryScanner::scanAll(const TrackList tracks)
+void LibraryScanner::scanAll(const TrackPtrList& tracks)
 {
     const auto& libraries = m_libraryManager->allLibraries();
 
@@ -178,13 +178,13 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
         bool fileWasRead;
 
         if(tracks.count(filepath)) {
-            const Track& libraryTrack = tracks.at(filepath);
-            if(libraryTrack.id() >= 0) {
-                if(libraryTrack.modifiedTime() == lastModified) {
+            const Track* libraryTrack = tracks.at(filepath);
+            if(libraryTrack->id() >= 0) {
+                if(libraryTrack->modifiedTime() == lastModified) {
                     continue;
                 }
 
-                Track changedTrack{libraryTrack};
+                Track changedTrack{*libraryTrack};
                 changedTrack.resetIds();
                 fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
                 if(fileWasRead) {

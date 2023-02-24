@@ -46,8 +46,8 @@ public:
 
     void stopThread() override;
 
-    void scanLibrary(const TrackList tracks, LibraryInfo* info);
-    void scanAll(const TrackList tracks);
+    void scanLibrary(const TrackPtrList& tracks, LibraryInfo* info);
+    void scanAll(const TrackPtrList& tracks);
 
 signals:
     void updatedTracks(Core::TrackList tracks);
@@ -57,12 +57,12 @@ signals:
 private:
     struct LibraryQueueEntry
     {
-        LibraryQueueEntry(LibraryInfo* library, TrackList tracks)
+        LibraryQueueEntry(LibraryInfo* library, TrackPtrList tracks)
             : library{library}
             , tracks{std::move(tracks)}
         { }
         LibraryInfo* library;
-        TrackList tracks;
+        TrackPtrList tracks;
     };
 
     void storeTracks(TrackList& tracks) const;

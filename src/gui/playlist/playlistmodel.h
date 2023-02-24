@@ -77,7 +77,7 @@ public:
     void reset();
     void changeRowColours();
     void changeTrackState();
-    QModelIndex indexOfItem(int id);
+    QModelIndex indexForId(int id);
 
 protected:
     void resetContainers();

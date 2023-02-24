@@ -448,7 +448,7 @@ void PlaylistModel::createAlbums(const Core::TrackPtrList& tracks)
     }
 }
 
-QModelIndex PlaylistModel::indexOfItem(int id)
+QModelIndex PlaylistModel::indexForId(int id)
 {
     QModelIndex index;
     const auto key = QString("track%1").arg(id);

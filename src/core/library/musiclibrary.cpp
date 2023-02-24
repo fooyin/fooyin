@@ -21,13 +21,13 @@
 
 #include "core/app/threadmanager.h"
 #include "core/coresettings.h"
-#include "core/library/sorting/sorting.h"
 #include "core/playlist/libraryplaylistinterface.h"
 #include "librarydatabasemanager.h"
 #include "libraryinfo.h"
 #include "librarymanager.h"
 #include "libraryscanner.h"
 #include "musiclibraryinteractor.h"
+#include "trackstore.h"
 
 #include <utils/helpers.h>
 
@@ -45,9 +45,7 @@ struct MusicLibrary::Private
     LibraryScanner scanner;
     LibraryDatabaseManager libraryDatabaseManager;
 
-    TrackList trackStore;
-    TrackPtrList tracks;
-    TrackHash trackMap;
+    TrackStore trackStore;
 
     TrackPtrList selectedTracks;
     std::vector<MusicLibraryInteractor*> interactors;
@@ -134,58 +132,37 @@ void MusicLibrary::addInteractor(MusicLibraryInteractor* interactor)
 void MusicLibrary::loadTracks(const TrackList& tracks)
 {
     p->trackStore.clear();
-    p->tracks.clear();
-    p->trackMap.clear();
-
     refreshTracks(tracks);
 }
 
 void MusicLibrary::addNewTracks(const TrackList& tracks)
 {
-    p->tracks.reserve(p->tracks.size() + tracks.size());
-    p->trackMap.reserve(p->trackMap.size() + tracks.size());
-
-    for(const auto& track : tracks) {
-        auto& newTrack = p->trackStore.emplace_back(track);
-        p->tracks.emplace_back(&newTrack);
-        p->trackMap.emplace(newTrack.id(), &newTrack);
-    }
-    Library::sortTracks(p->tracks, p->order);
+    p->trackStore.add(tracks);
+    p->trackStore.sort(p->order);
     emit tracksAdded();
 }
 
 void MusicLibrary::updateChangedTracks(const TrackList& tracks)
 {
-    for(const auto& track : tracks) {
-        if(p->trackMap.count(track.id())) {
-            Track* libraryTrack = p->trackMap.at(track.id());
-            *libraryTrack       = track;
-        }
-    }
+    p->trackStore.update(tracks);
     emit tracksUpdated();
 }
 
 void MusicLibrary::removeDeletedTracks(const IdSet& tracks)
 {
-    for(auto trackId : tracks) {
-        if(p->trackMap.count(trackId)) {
-            {
-                Track* libraryTrack = p->trackMap.at(trackId);
-                libraryTrack->setIsEnabled(false);
-            }
-        }
-    }
+    p->trackStore.markForDelete(tracks);
     emit tracksDeleted();
+    p->trackStore.remove(tracks);
 }
 
 void MusicLibrary::reloadAll()
 {
-    emit runAllLibrariesScan(p->trackStore);
+    emit runAllLibrariesScan(p->trackStore.tracks());
 }
 
 void MusicLibrary::reload(Library::LibraryInfo* info)
 {
-    emit runLibraryScan(p->trackStore, info);
+    emit runLibraryScan(p->trackStore.tracks(), info);
 }
 
 void MusicLibrary::refresh()
@@ -196,33 +173,16 @@ void MusicLibrary::refresh()
 void MusicLibrary::refreshTracks(const TrackList& result)
 {
     p->trackStore.clear();
-    p->tracks.clear();
-    p->trackMap.clear();
 
-    p->tracks.reserve(result.size());
-    p->trackMap.reserve(result.size());
+    p->trackStore.add(result);
+    p->trackStore.sort(p->order);
 
-    for(const auto& track : result) {
-        auto& newTrack = p->trackStore.emplace_back(track);
-        p->tracks.emplace_back(&newTrack);
-        p->trackMap.emplace(newTrack.id(), &newTrack);
-    }
-    Library::sortTracks(p->tracks, p->order);
-    emit tracksLoaded(p->tracks);
+    emit tracksLoaded(p->trackStore.tracks());
 }
 
 Track* MusicLibrary::track(int id) const
 {
-    return p->trackMap.at(id);
-}
-
-TrackPtrList MusicLibrary::tracks(const std::vector<int>& ids) const
-{
-    TrackPtrList tracks;
-    for(const auto& id : ids) {
-        tracks.emplace_back(p->trackMap.at(id));
-    }
-    return tracks;
+    return p->trackStore.track(id);
 }
 
 TrackPtrList MusicLibrary::tracks() const
@@ -237,12 +197,12 @@ TrackPtrList MusicLibrary::tracks() const
             lst.insert(lst.end(), trks.begin(), trks.end());
         }
     }
-    return haveTracks ? lst : p->tracks;
+    return haveTracks ? lst : p->trackStore.tracks();
 }
 
 TrackPtrList MusicLibrary::allTracks() const
 {
-    return p->tracks;
+    return p->trackStore.tracks();
 }
 
 int MusicLibrary::trackCount() const
@@ -258,7 +218,7 @@ Library::SortOrder MusicLibrary::sortOrder() const
 void MusicLibrary::changeOrder(SortOrder order)
 {
     p->order = order;
-    Library::sortTracks(p->tracks, p->order);
+    p->trackStore.sort(p->order);
 }
 
 void MusicLibrary::changeTrackSelection(const TrackSet& tracks)
