@@ -28,6 +28,7 @@
 #include <core/models/disc.h>
 #include <core/player/playermanager.h>
 
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QPalette>
@@ -51,7 +52,7 @@ QString trackArtistString(Core::Track* track)
 }
 
 PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
-                             Core::SettingsManager* settings, QObject* parent)
+                             Utils::SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
     , m_playerManager{playerManager}
     , m_library{library}

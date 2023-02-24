@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "core/app/worker.h"
 #include "core/models/trackfwd.h"
+
+#include <utils/worker.h>
 
 namespace Core {
 
@@ -30,7 +31,7 @@ class LibraryDatabase;
 } // namespace DB
 
 namespace Library {
-class LibraryDatabaseManager : public Worker
+class LibraryDatabaseManager : public Utils::Worker
 {
     Q_OBJECT
 

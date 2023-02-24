@@ -21,7 +21,7 @@
 
 #include <QSplitter>
 
-namespace Core {
+namespace Utils {
 class SettingsManager;
 }
 
@@ -29,12 +29,12 @@ namespace Gui::Widgets {
 class Splitter : public QSplitter
 {
 public:
-    explicit Splitter(Qt::Orientation type, Core::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit Splitter(Qt::Orientation type, Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
 protected:
     QSplitterHandle* createHandle() override;
 
 private:
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 };
 } // namespace Gui::Widgets

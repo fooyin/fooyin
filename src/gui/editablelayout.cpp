@@ -33,6 +33,7 @@
 #include <utils/menuheader.h>
 #include <utils/overlayfilter.h>
 #include <utils/paths.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QCoreApplication>
 #include <QHBoxLayout>
@@ -74,7 +75,7 @@ FyWidget* splitterChild(QWidget* widget)
     return qobject_cast<FyWidget*>(child);
 }
 
-EditableLayout::EditableLayout(Core::SettingsManager* settings, Utils::ActionManager* actionManager,
+EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionManager* actionManager,
                                WidgetFactory* widgetFactory, WidgetProvider* widgetProvider,
                                LayoutProvider* layoutProvider, QWidget* parent)
     : QWidget{parent}

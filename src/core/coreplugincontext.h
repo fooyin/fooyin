@@ -20,14 +20,13 @@
 #pragma once
 
 namespace Utils {
+class SettingsManager;
 class SettingsDialogController;
 class ActionManager;
+class ThreadManager;
 } // namespace Utils
 
 namespace Core {
-class SettingsManager;
-class ThreadManager;
-
 namespace DB {
 class Database;
 }
@@ -44,8 +43,8 @@ class MusicLibrary;
 struct CorePluginContext
 {
     CorePluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                      Core::Library::MusicLibrary* library, Core::SettingsManager* settingsManager,
-                      Utils::SettingsDialogController* settingsController, Core::ThreadManager* threadManager,
+                      Core::Library::MusicLibrary* library, Utils::SettingsManager* settingsManager,
+                      Utils::SettingsDialogController* settingsController, Utils::ThreadManager* threadManager,
                       Core::DB::Database* database)
         : actionManager{actionManager}
         , playerManager{playerManager}
@@ -59,8 +58,8 @@ struct CorePluginContext
     Utils::ActionManager* actionManager;
     Core::Player::PlayerManager* playerManager;
     Core::Library::MusicLibrary* library;
-    Core::SettingsManager* settingsManager;
+    Utils::SettingsManager* settingsManager;
     Utils::SettingsDialogController* settingsController;
-    Core::ThreadManager* threadManager;
+    Utils::ThreadManager* threadManager;
     Core::DB::Database* database;
 };

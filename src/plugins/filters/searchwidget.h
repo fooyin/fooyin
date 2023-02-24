@@ -21,11 +21,10 @@
 
 #include <gui/fywidget.h>
 
-class Splitter;
 class QHBoxLayout;
 class QLineEdit;
 
-namespace Core {
+namespace Utils {
 class SettingsManager;
 }
 
@@ -37,7 +36,7 @@ class SearchWidget : public Gui::Widgets::FyWidget
     Q_OBJECT
 
 public:
-    explicit SearchWidget(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit SearchWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
 
@@ -55,7 +54,7 @@ private:
     void textChanged(const QString& text);
 
     FilterManager* m_manager;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
     QLineEdit* m_searchBox;

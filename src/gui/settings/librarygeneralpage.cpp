@@ -27,6 +27,8 @@
 #include <core/library/libraryinfo.h>
 #include <core/library/librarymanager.h>
 
+#include <utils/settings/settingsmanager.h>
+
 #include <QCheckBox>
 #include <QDir>
 #include <QFileDialog>
@@ -41,7 +43,7 @@ namespace Gui::Settings {
 class LibraryGeneralPageWidget : public Utils::SettingsPageWidget
 {
 public:
-    explicit LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings);
+    explicit LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings);
 
     void apply() override;
 
@@ -51,7 +53,7 @@ private:
     void renameLibrary() const;
 
     Core::Library::LibraryManager* m_libraryManager;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QVBoxLayout* m_mainLayout;
     QHBoxLayout* m_libraryLayout;
@@ -70,7 +72,7 @@ private:
 };
 
 LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager,
-                                                   Core::SettingsManager* settings)
+                                                   Utils::SettingsManager* settings)
     : m_libraryManager{libraryManager}
     , m_settings{settings}
     , m_mainLayout{new QVBoxLayout(this)}
@@ -173,7 +175,7 @@ void LibraryGeneralPageWidget::renameLibrary() const
 }
 
 LibraryGeneralPage::LibraryGeneralPage(Utils::SettingsDialogController* controller,
-                                       Core::Library::LibraryManager* libraryManager, Core::SettingsManager* settings)
+                                       Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings)
     : Utils::SettingsPage{controller}
 {
     setId(Constants::Page::LibraryGeneral);

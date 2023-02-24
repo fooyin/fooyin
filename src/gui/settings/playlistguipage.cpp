@@ -22,6 +22,8 @@
 #include "gui/guiconstants.h"
 #include "gui/guisettings.h"
 
+#include <utils/settings/settingsmanager.h>
+
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QRadioButton>
@@ -31,12 +33,12 @@ namespace Gui::Settings {
 class PlaylistGuiPageWidget : public Utils::SettingsPageWidget
 {
 public:
-    explicit PlaylistGuiPageWidget(Core::SettingsManager* settings);
+    explicit PlaylistGuiPageWidget(Utils::SettingsManager* settings);
 
     void apply() override;
 
 private:
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QVBoxLayout* m_mainLayout;
 
@@ -50,7 +52,7 @@ private:
     QCheckBox* m_altColours;
 };
 
-PlaylistGuiPageWidget::PlaylistGuiPageWidget(Core::SettingsManager* settings)
+PlaylistGuiPageWidget::PlaylistGuiPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
     , m_mainLayout{new QVBoxLayout(this)}
     , m_discBox{new QGroupBox(tr("Disc Handling"), this)}
@@ -92,7 +94,7 @@ void PlaylistGuiPageWidget::apply()
     m_settings->set<Settings::PlaylistAltColours>(m_altColours->isChecked());
 }
 
-PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsDialogController* controller, Core::SettingsManager* settings)
+PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsDialogController* controller, Utils::SettingsManager* settings)
     : Utils::SettingsPage{controller}
 {
     setId(Constants::Page::PlaylistInterface);

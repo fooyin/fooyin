@@ -19,7 +19,6 @@
 
 #include "application.h"
 
-#include <core/app/threadmanager.h>
 #include <core/constants.h>
 #include <core/coreplugin.h>
 #include <core/coresettings.h>
@@ -58,13 +57,15 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/paths.h>
 #include <utils/settings/settingsdialogcontroller.h>
+#include <utils/settings/settingsmanager.h>
+#include <utils/threadmanager.h>
 
 struct Application::Private
 {
     Utils::ActionManager actionManager;
-    Core::SettingsManager settingsManager;
+    Utils::SettingsManager settingsManager;
     Core::Settings::CoreSettings coreSettings;
-    Core::ThreadManager threadManager;
+    Utils::ThreadManager threadManager;
     Core::DB::Database database;
     std::unique_ptr<Core::Player::PlayerManager> playerManager;
     Core::Engine::EngineHandler engine;

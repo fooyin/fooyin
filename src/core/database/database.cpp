@@ -26,13 +26,14 @@
 #include "query.h"
 #include "version.h"
 
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QFile>
 #include <QSqlQuery>
 
 namespace Core::DB {
-Database::Database(Core::SettingsManager* settings, const QString& directory, const QString& filename)
+Database::Database(Utils::SettingsManager* settings, const QString& directory, const QString& filename)
     : Module{directory + "/" + filename}
     , m_settings{settings}
 {

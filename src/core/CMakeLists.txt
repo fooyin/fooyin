@@ -15,11 +15,6 @@ fooyin_add_library(Core
         constants.h
         typedefs.h
 
-        app/threadmanager.h
-        app/threadmanager.cpp
-        app/worker.h
-        app/worker.cpp
-
         database/database.h
         database/database.cpp
         database/library.h
@@ -89,12 +84,6 @@ fooyin_add_library(Core
         plugins/plugininfo.cpp
         plugins/pluginmanager.h
         plugins/pluginmanager.cpp
-
-        settings/settingsmanager.h
-        settings/settingsmanager.cpp
-        settings/settingsentry.h
-        settings/settingsentry.cpp
-        settings/settingtypes.h
 
         tagging/tags.h
         tagging/tags.cpp

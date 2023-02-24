@@ -22,11 +22,13 @@
 #include "gui/guisettings.h"
 #include "splitterhandle.h"
 
+#include <utils/settings/settingsmanager.h>
+
 #include <QBoxLayout>
 #include <QMenu>
 
 namespace Gui::Widgets {
-Splitter::Splitter(Qt::Orientation type, Core::SettingsManager* settings, QWidget* parent)
+Splitter::Splitter(Qt::Orientation type, Utils::SettingsManager* settings, QWidget* parent)
     : QSplitter{type, parent}
     , m_settings{settings}
 {

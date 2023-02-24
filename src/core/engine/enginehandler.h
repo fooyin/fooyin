@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "core/app/worker.h"
 #include "core/player/playermanager.h"
+
+#include <utils/worker.h>
 
 #include <QObject>
 #include <QThread>
@@ -28,7 +29,7 @@
 namespace Core::Engine {
 class Engine;
 
-class EngineHandler : public Worker
+class EngineHandler : public Utils::Worker
 {
     Q_OBJECT
 

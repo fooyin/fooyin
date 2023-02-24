@@ -27,9 +27,11 @@
 
 class QHBoxLayout;
 
-namespace Core {
+namespace Utils {
 class SettingsManager;
+}
 
+namespace Core {
 namespace Player {
 class PlayerManager;
 }
@@ -53,7 +55,7 @@ class FilterWidget : public Gui::Widgets::FyWidget
     Q_OBJECT
 
 public:
-    explicit FilterWidget(FilterManager* manager, Core::SettingsManager* settings,
+    explicit FilterWidget(FilterManager* manager, Utils::SettingsManager* settings,
                           FilterType type = FilterType::AlbumArtist, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
@@ -99,13 +101,13 @@ private:
     FilterManager* m_manager;
     FilterView* m_filter;
     FilterModel* m_model;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 };
 
 class GenreFilter : public FilterWidget
 {
 public:
-    explicit GenreFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit GenreFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -114,7 +116,7 @@ public:
 class YearFilter : public FilterWidget
 {
 public:
-    explicit YearFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit YearFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -123,7 +125,7 @@ public:
 class AlbumArtistFilter : public FilterWidget
 {
 public:
-    explicit AlbumArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit AlbumArtistFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -132,7 +134,7 @@ public:
 class ArtistFilter : public FilterWidget
 {
 public:
-    explicit ArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit ArtistFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -141,7 +143,7 @@ public:
 class AlbumFilter : public FilterWidget
 {
 public:
-    explicit AlbumFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit AlbumFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

@@ -26,7 +26,7 @@
 #include <QReadWriteLock>
 #include <QSettings>
 
-namespace Core {
+namespace Utils {
 class SettingsManager : public QObject
 {
     Q_OBJECT
@@ -224,4 +224,4 @@ private:
     std::map<QString, SettingsEntry> m_settings;
     QReadWriteLock m_lock;
 };
-} // namespace Core
+} // namespace Utils

@@ -19,7 +19,7 @@
 
 #include "settingsentry.h"
 
-namespace Core {
+namespace Utils {
 SettingsEntry::SettingsEntry(QString name, const QVariant& value, bool writeToDisk, QString group)
     : m_name{std::move(name)}
     , m_value{value}
@@ -70,4 +70,4 @@ bool SettingsEntry::setValue(const QVariant& value)
     m_value = value;
     return true;
 }
-} // namespace Core
+} // namespace Utils

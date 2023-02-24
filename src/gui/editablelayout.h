@@ -29,11 +29,8 @@ namespace Utils {
 class OverlayFilter;
 class ActionManager;
 class ActionContainer;
-} // namespace Utils
-
-namespace Core {
 class SettingsManager;
-} // namespace Core
+} // namespace Utils
 
 namespace Gui::Widgets {
 class FyWidget;
@@ -46,7 +43,7 @@ class EditableLayout : public QWidget
     Q_OBJECT
 
 public:
-    explicit EditableLayout(Core::SettingsManager* settings, Utils::ActionManager* actionManager,
+    explicit EditableLayout(Utils::SettingsManager* settings, Utils::ActionManager* actionManager,
                             WidgetFactory* widgetFactory, WidgetProvider* widgetProvider,
                             LayoutProvider* layoutProvider, QWidget* parent = nullptr);
 
@@ -68,7 +65,7 @@ public:
 
 private:
     Utils::ActionManager* m_actionManager;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
     Widgets::WidgetFactory* m_widgetFactory;
     Widgets::WidgetProvider* m_widgetProvider;
     LayoutProvider* m_layoutProvider;

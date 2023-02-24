@@ -19,9 +19,10 @@
 
 #include "guigeneralpage.h"
 
-#include "guisettings.h"
-
 #include "gui/guiconstants.h"
+#include "gui/guisettings.h"
+
+#include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
 #include <QGroupBox>
@@ -31,12 +32,12 @@ namespace Gui::Settings {
 class GuiGeneralPageWidget : public Utils::SettingsPageWidget
 {
 public:
-    explicit GuiGeneralPageWidget(Core::SettingsManager* settings);
+    explicit GuiGeneralPageWidget(Utils::SettingsManager* settings);
 
     void apply() override;
 
 private:
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QVBoxLayout* m_mainLayout;
 
@@ -45,7 +46,7 @@ private:
     QCheckBox* m_splitterHandles;
 };
 
-GuiGeneralPageWidget::GuiGeneralPageWidget(Core::SettingsManager* settings)
+GuiGeneralPageWidget::GuiGeneralPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
     , m_mainLayout{new QVBoxLayout(this)}
     , m_splitterBox{new QGroupBox(tr("Splitters"))}
@@ -65,7 +66,7 @@ void GuiGeneralPageWidget::apply()
     m_settings->set<Settings::SplitterHandles>(m_splitterHandles->isChecked());
 }
 
-GuiGeneralPage::GuiGeneralPage(Utils::SettingsDialogController* controller, Core::SettingsManager* settings)
+GuiGeneralPage::GuiGeneralPage(Utils::SettingsDialogController* controller, Utils::SettingsManager* settings)
     : Utils::SettingsPage{controller}
 {
     setId(Constants::Page::InterfaceGeneral);

@@ -17,35 +17,31 @@
  *
  */
 
-#include "threadmanager.h"
+#pragma once
 
-#include "worker.h"
+#include <QObject>
 
-#include <QThread>
-
-namespace Core {
-ThreadManager::ThreadManager(QObject* parent)
-    : QObject{parent}
-{ }
-
-void ThreadManager::close()
+namespace Utils {
+class Worker : public QObject
 {
-    emit stop();
+public:
+    enum State
+    {
+        Idle = 0,
+        Running
+    };
 
-    for(const auto& thread : m_threads) {
-        thread->quit();
-        thread->wait();
-    }
-}
+    explicit Worker(QObject* parent = nullptr);
 
-void ThreadManager::moveToNewThread(Worker* worker)
-{
-    auto* thread = new QThread(this);
-    m_threads.emplace_back(thread);
-    thread->start();
+    virtual void stopThread();
 
-    worker->moveToThread(thread);
-    connect(this, &ThreadManager::stop, worker, &Worker::stopThread);
-    m_workers.emplace_back(worker);
-}
-} // namespace Core
+    [[nodiscard]] State state() const;
+    void setState(State state);
+
+    [[nodiscard]] bool isRunning();
+    [[nodiscard]] bool mayRun() const;
+
+private:
+    State m_state;
+};
+} // namespace Utils

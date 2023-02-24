@@ -23,9 +23,10 @@
 #include "core/models/track.h"
 
 #include <utils/enumhelper.h>
+#include <utils/settings/settingsmanager.h>
 
 namespace Core::Player {
-PlayerController::PlayerController(Core::SettingsManager* settings, QObject* parent)
+PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* parent)
     : PlayerManager{parent}
     , m_settings{settings}
     , m_currentTrack{nullptr}

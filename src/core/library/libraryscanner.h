@@ -21,9 +21,10 @@
 
 #include <utility>
 
-#include "core/app/worker.h"
 #include "core/models/trackfwd.h"
 #include "libraryinfo.h"
+
+#include <utils/worker.h>
 
 class QDir;
 
@@ -36,7 +37,7 @@ class Database;
 namespace Library {
 class LibraryManager;
 
-class LibraryScanner : public Worker
+class LibraryScanner : public Utils::Worker
 {
     Q_OBJECT
 

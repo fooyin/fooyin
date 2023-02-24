@@ -23,10 +23,11 @@
 #include "version.h"
 
 #include <utils/paths.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 namespace Core::Settings {
-CoreSettings::CoreSettings(SettingsManager* settingsManager)
+CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
     m_settings->createSetting(Settings::Version, VERSION);

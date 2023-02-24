@@ -21,16 +21,17 @@
 
 #include "filterdatabasemanager.h"
 
-#include <core/app/threadmanager.h>
 #include <core/library/musiclibrary.h>
+
 #include <utils/helpers.h>
+#include <utils/threadmanager.h>
 
 #include <utility>
 
 namespace Filters {
 struct FilterManager::Private
 {
-    Core::ThreadManager* threadManager;
+    Utils::ThreadManager* threadManager;
     Core::Library::MusicLibrary* library;
 
     FilterDatabaseManager databaseManager;
@@ -40,7 +41,7 @@ struct FilterManager::Private
     ActiveFilters activeFilters;
     QString searchFilter;
 
-    Private(Core::ThreadManager* threadManager, Core::DB::Database* database, Core::Library::MusicLibrary* library)
+    Private(Utils::ThreadManager* threadManager, Core::DB::Database* database, Core::Library::MusicLibrary* library)
         : threadManager{threadManager}
         , library{library}
         , databaseManager{database}
@@ -49,7 +50,7 @@ struct FilterManager::Private
     }
 };
 
-FilterManager::FilterManager(Core::ThreadManager* threadManager, Core::DB::Database* database,
+FilterManager::FilterManager(Utils::ThreadManager* threadManager, Core::DB::Database* database,
                              Core::Library::MusicLibrary* library, QObject* parent)
     : MusicLibraryInteractor{parent}
     , p{std::make_unique<Private>(threadManager, database, library)}

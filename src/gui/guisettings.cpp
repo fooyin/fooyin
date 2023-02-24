@@ -19,8 +19,10 @@
 
 #include "guisettings.h"
 
+#include <utils/settings/settingsmanager.h>
+
 namespace Gui::Settings {
-GuiSettings::GuiSettings(Core::SettingsManager* settingsManager)
+GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
     m_settings->createTempSetting(Settings::LayoutEditing, false);

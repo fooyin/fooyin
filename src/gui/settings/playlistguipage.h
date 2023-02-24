@@ -22,17 +22,14 @@
 #include <utils/settings/settingspage.h>
 
 namespace Utils {
-class SettingsDialogController;
-}
-
-namespace Core {
 class SettingsManager;
-}
+class SettingsDialogController;
+} // namespace Utils
 
 namespace Gui::Settings {
 class PlaylistGuiPage : public Utils::SettingsPage
 {
 public:
-    PlaylistGuiPage(Utils::SettingsDialogController* controller, Core::SettingsManager* settings);
+    PlaylistGuiPage(Utils::SettingsDialogController* controller, Utils::SettingsManager* settings);
 };
 } // namespace Gui::Settings

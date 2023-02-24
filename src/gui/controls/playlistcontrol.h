@@ -24,12 +24,11 @@
 class QHBoxLayout;
 
 namespace Utils {
+class SettingsManager;
 class ComboIcon;
-}
+} // namespace Utils
 
 namespace Core {
-class SettingsManager;
-
 namespace Player {
 class PlayerManager;
 enum PlayMode : uint8_t;
@@ -42,7 +41,7 @@ class PlaylistControl : public QWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistControl(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+    explicit PlaylistControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                              QWidget* parent = nullptr);
 
     void setupUi();
@@ -58,7 +57,7 @@ protected:
 
 private:
     Core::Player::PlayerManager* m_playerManager;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
     QSize m_labelSize;

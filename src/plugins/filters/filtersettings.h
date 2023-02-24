@@ -19,24 +19,30 @@
 
 #pragma once
 
-#include <core/settings/settingsmanager.h>
+#include <utils/settings/settingtypes.h>
+
+#include <QObject>
+
+namespace Utils {
+class SettingsManager;
+}
 
 namespace Filters::Settings {
 Q_NAMESPACE
 enum Filters : uint32_t
 {
-    FilterAltColours = 1 | Core::Settings::Type::Bool,
-    FilterHeader     = 2 | Core::Settings::Type::Bool,
-    FilterScrollBar  = 3 | Core::Settings::Type::Bool,
+    FilterAltColours = 1 | Utils::Settings::Bool,
+    FilterHeader     = 2 | Utils::Settings::Bool,
+    FilterScrollBar  = 3 | Utils::Settings::Bool,
 };
 Q_ENUM_NS(Filters)
 
 class FiltersSettings
 {
 public:
-    FiltersSettings(Core::SettingsManager* settingsManager);
+    FiltersSettings(Utils::SettingsManager* settingsManager);
 
 private:
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 };
 } // namespace Filters::Settings

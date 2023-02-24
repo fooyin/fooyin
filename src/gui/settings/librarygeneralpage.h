@@ -22,12 +22,11 @@
 #include <utils/settings/settingspage.h>
 
 namespace Utils {
+class SettingsManager;
 class SettingsDialogController;
-}
+} // namespace Utils
 
 namespace Core {
-class SettingsManager;
-
 namespace Library {
 class LibraryManager;
 } // namespace Library
@@ -38,6 +37,6 @@ class LibraryGeneralPage : public Utils::SettingsPage
 {
 public:
     LibraryGeneralPage(Utils::SettingsDialogController* controller, Core::Library::LibraryManager* libraryManager,
-                       Core::SettingsManager* settings);
+                       Utils::SettingsManager* settings);
 };
 } // namespace Gui::Settings

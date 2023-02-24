@@ -33,7 +33,7 @@
 
 namespace Gui::Widgets {
 SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
-                               Core::SettingsManager* settings, QWidget* parent)
+                               Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_settings{settings}
     , m_actionManager{actionManager}

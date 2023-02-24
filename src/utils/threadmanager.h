@@ -21,8 +21,9 @@
 
 #include <QObject>
 
-namespace Core {
+namespace Utils {
 class Worker;
+
 class ThreadManager : public QObject
 {
     Q_OBJECT
@@ -41,4 +42,4 @@ private:
     std::vector<QThread*> m_threads;
     std::vector<Worker*> m_workers;
 };
-} // namespace Core
+} // namespace Utils

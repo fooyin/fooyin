@@ -57,8 +57,8 @@ private:
     }
 
     Utils::ActionManager* m_actionManager;
-    Core::SettingsManager* m_settings;
-    Core::ThreadManager* m_threadManager;
+    Utils::SettingsManager* m_settings;
+    Utils::ThreadManager* m_threadManager;
     Core::DB::Database* m_database;
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;

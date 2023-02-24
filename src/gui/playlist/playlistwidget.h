@@ -29,11 +29,10 @@ class QPushButton;
 namespace Utils {
 class OverlayWidget;
 class SettingsDialogController;
+class SettingsManager;
 } // namespace Utils
 
 namespace Core {
-class SettingsManager;
-
 namespace Player {
 class PlayerManager;
 enum PlayState : uint8_t;
@@ -57,7 +56,7 @@ class PlaylistWidget : public FyWidget
 public:
     explicit PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
                             Core::Player::PlayerManager* playerManager,
-                            Utils::SettingsDialogController* settingsDialogController, Core::SettingsManager* settings,
+                            Utils::SettingsDialogController* settingsDialogController, Utils::SettingsManager* settings,
                             QWidget* parent = nullptr);
 
     void setup();
@@ -95,7 +94,7 @@ private:
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
     Utils::SettingsDialogController* m_settingsDialogController;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
     PlaylistModel* m_model;

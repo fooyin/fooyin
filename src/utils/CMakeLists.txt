@@ -17,7 +17,9 @@ fooyin_add_library(Utils
         scrollarea.cpp
         slider.cpp
         tablemodel.cpp
+        threadmanager.cpp
         utils.cpp
+        worker.cpp
 
         actions/actioncontainer.cpp
         actions/actionmanager.cpp
@@ -26,4 +28,8 @@ fooyin_add_library(Utils
         settings/settingsdialogcontroller.cpp
         settings/settingspage.cpp
         settings/settingsmodel.cpp
+        settings/settingsmanager.h
+        settings/settingsmanager.cpp
+        settings/settingsentry.cpp
+        settings/settingtypes.h
 )

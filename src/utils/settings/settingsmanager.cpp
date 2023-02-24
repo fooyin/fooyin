@@ -19,12 +19,12 @@
 
 #include "settingsmanager.h"
 
-#include <utils/paths.h>
-#include <utils/utils.h>
+#include "utils/paths.h"
+#include "utils/utils.h"
 
 #include <QSettings>
 
-namespace Core {
+namespace Utils {
 SettingsManager::SettingsManager(QObject* parent)
     : QObject{parent}
     , m_settingsFile{Utils::settingsPath(), QSettings::IniFormat, this}
@@ -65,4 +65,4 @@ QString SettingsManager::getKeyString(const SettingsEntry& setting)
 {
     return setting.group() + "/" + setting.name();
 }
-} // namespace Core
+} // namespace Utils

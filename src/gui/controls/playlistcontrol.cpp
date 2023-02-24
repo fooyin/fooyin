@@ -25,11 +25,12 @@
 #include <core/player/playermanager.h>
 
 #include <utils/comboicon.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
 
 namespace Gui::Widgets {
-PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                                  QWidget* parent)
     : QWidget{parent}
     , m_playerManager{playerManager}

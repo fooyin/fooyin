@@ -30,6 +30,7 @@
 
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -41,7 +42,7 @@ namespace Gui {
 struct MainWindow::Private
 {
     Utils::ActionManager* actionManager;
-    Core::SettingsManager* settings;
+    Utils::SettingsManager* settings;
     Widgets::EditableLayout* editableLayout;
 
     MainMenuBar* mainMenu;
@@ -55,7 +56,7 @@ struct MainWindow::Private
     LayoutProvider* layoutProvider;
     QuickSetupDialog* quickSetupDialog;
 
-    Private(Utils::ActionManager* actionManager, Core::SettingsManager* settings, LayoutProvider* layoutProvider,
+    Private(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, LayoutProvider* layoutProvider,
             Widgets::EditableLayout* editableLayout)
         : actionManager{actionManager}
         , settings{settings}
@@ -101,7 +102,7 @@ struct MainWindow::Private
     }
 };
 
-MainWindow::MainWindow(Utils::ActionManager* actionManager, Core::SettingsManager* settings,
+MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
                        LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout, QWidget* parent)
     : QMainWindow{parent}
     , p{std::make_unique<Private>(actionManager, settings, layoutProvider, editableLayout)}

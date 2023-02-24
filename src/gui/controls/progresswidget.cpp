@@ -23,7 +23,9 @@
 
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
+
 #include <utils/clickablelabel.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/slider.h>
 #include <utils/utils.h>
 
@@ -31,7 +33,7 @@
 #include <QSlider>
 
 namespace Gui::Widgets {
-ProgressWidget::ProgressWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+ProgressWidget::ProgressWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                                QWidget* parent)
     : QWidget{parent}
     , m_playerManager{playerManager}

@@ -19,36 +19,40 @@
 
 #pragma once
 
-#include <core/settings/settingsmanager.h>
+#include <utils/settings/settingtypes.h>
 
 #include <QObject>
+
+namespace Utils {
+class SettingsManager;
+}
 
 namespace Gui::Settings {
 Q_NAMESPACE
 enum Gui : uint32_t
 {
-    LayoutEditing      = 1 | Core::Settings::Type::Bool,
-    Geometry           = 2 | Core::Settings::Type::ByteArray,
-    SplitterHandles    = 3 | Core::Settings::Type::Bool,
-    DiscHeaders        = 4 | Core::Settings::Type::Bool,
-    SplitDiscs         = 5 | Core::Settings::Type::Bool,
-    SimplePlaylist     = 6 | Core::Settings::Type::Bool,
-    PlaylistAltColours = 7 | Core::Settings::Type::Bool,
-    PlaylistHeader     = 8 | Core::Settings::Type::Bool,
-    PlaylistScrollBar  = 9 | Core::Settings::Type::Bool,
-    ElapsedTotal       = 10 | Core::Settings::Type::Bool,
-    InfoAltColours     = 11 | Core::Settings::Type::Bool,
-    InfoHeader         = 12 | Core::Settings::Type::Bool,
-    InfoScrollBar      = 13 | Core::Settings::Type::Bool,
+    LayoutEditing      = 1 | Utils::Settings::Bool,
+    Geometry           = 2 | Utils::Settings::ByteArray,
+    SplitterHandles    = 3 | Utils::Settings::Bool,
+    DiscHeaders        = 4 | Utils::Settings::Bool,
+    SplitDiscs         = 5 | Utils::Settings::Bool,
+    SimplePlaylist     = 6 | Utils::Settings::Bool,
+    PlaylistAltColours = 7 | Utils::Settings::Bool,
+    PlaylistHeader     = 8 | Utils::Settings::Bool,
+    PlaylistScrollBar  = 9 | Utils::Settings::Bool,
+    ElapsedTotal       = 10 | Utils::Settings::Bool,
+    InfoAltColours     = 11 | Utils::Settings::Bool,
+    InfoHeader         = 12 | Utils::Settings::Bool,
+    InfoScrollBar      = 13 | Utils::Settings::Bool,
 };
 Q_ENUM_NS(Gui)
 
 class GuiSettings
 {
 public:
-    GuiSettings(Core::SettingsManager* settingsManager);
+    GuiSettings(Utils::SettingsManager* settingsManager);
 
 private:
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 };
 } // namespace Gui::Settings

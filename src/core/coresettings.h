@@ -19,28 +19,32 @@
 
 #pragma once
 
-#include "core/settings/settingsmanager.h"
+#include <utils/settings/settingtypes.h>
 
 #include <QObject>
+
+namespace Utils {
+class SettingsManager;
+}
 
 namespace Core::Settings {
 Q_NAMESPACE
 enum Core : uint32_t
 {
-    Version         = 1 | Type::String,
-    DatabaseVersion = 2 | Type::String,
-    FirstRun        = 3 | Type::Bool,
+    Version         = 1 | Utils::Settings::String,
+    DatabaseVersion = 2 | Utils::Settings::String,
+    FirstRun        = 3 | Utils::Settings::Bool,
     PlayMode        = 4,
-    AutoRefresh     = 5 | Type::Bool,
+    AutoRefresh     = 5 | Utils::Settings::Bool,
 };
 Q_ENUM_NS(Core)
 
 class CoreSettings
 {
 public:
-    explicit CoreSettings(SettingsManager* settingsManager);
+    explicit CoreSettings(Utils::SettingsManager* settingsManager);
 
 private:
-    SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 };
 } // namespace Core::Settings

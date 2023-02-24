@@ -25,10 +25,11 @@
 
 class QSqlDatabase;
 
-namespace Core {
+namespace Utils {
 class SettingsManager;
+}
 
-namespace DB {
+namespace Core::DB {
 class LibraryDatabase;
 class Library;
 class Playlist;
@@ -36,7 +37,7 @@ class Playlist;
 class Database : public Module
 {
 public:
-    explicit Database(Core::SettingsManager* settings, const QString& directory = Utils::sharePath(),
+    explicit Database(Utils::SettingsManager* settings, const QString& directory = Utils::sharePath(),
                       const QString& filename = "fooyin.db");
     ~Database() override;
 
@@ -61,7 +62,7 @@ protected:
     bool checkInsertIndex(const QString& indexName, const QString& createString);
 
 private:
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     bool m_initialized;
 
@@ -69,5 +70,4 @@ private:
     std::unique_ptr<Playlist> m_playlistConnector;
     std::unique_ptr<LibraryDatabase> m_libraryDatabase;
 };
-} // namespace DB
-} // namespace Core
+} // namespace Core::DB

@@ -28,13 +28,14 @@
 #include <core/player/playermanager.h>
 
 #include <utils/actions/actioncontainer.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QHeaderView>
 #include <QMenu>
 #include <QTableWidget>
 
 namespace Gui::Widgets {
-InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings, QWidget* parent)
+InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerManager{playerManager}
     , m_settings{settings}

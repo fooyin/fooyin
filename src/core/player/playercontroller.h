@@ -23,16 +23,17 @@
 
 #include <QObject>
 
-namespace Core {
+namespace Utils {
 class SettingsManager;
+}
 
-namespace Player {
+namespace Core::Player {
 class PlayerController : public PlayerManager
 {
     Q_OBJECT
 
 public:
-    explicit PlayerController(Core::SettingsManager* settings, QObject* parent = nullptr);
+    explicit PlayerController(Utils::SettingsManager* settings, QObject* parent = nullptr);
 
     void restoreState() override;
 
@@ -61,7 +62,7 @@ protected:
     [[nodiscard]] double volume() const override;
 
 private:
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     Track* m_currentTrack;
     quint64 m_totalDuration;
@@ -71,5 +72,4 @@ private:
     double m_volume;
     bool m_counted;
 };
-} // namespace Player
-} // namespace Core
+} // namespace Core::Player

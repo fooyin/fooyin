@@ -24,13 +24,13 @@
 class QHBoxLayout;
 
 namespace Utils {
+class SettingsManager;
 class ClickableLabel;
 class Slider;
 } // namespace Utils
 
 namespace Core {
 class Track;
-class SettingsManager;
 
 namespace Player {
 class PlayerManager;
@@ -44,7 +44,7 @@ class ProgressWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit ProgressWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+    explicit ProgressWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                             QWidget* parent = nullptr);
 
     void setupUi();
@@ -65,7 +65,7 @@ private:
     void sliderDropped();
 
     Core::Player::PlayerManager* m_playerManager;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
     Utils::Slider* m_slider;

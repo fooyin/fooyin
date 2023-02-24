@@ -26,13 +26,14 @@
 
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
 
 namespace Gui::Widgets {
-ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                              QWidget* parent)
     : FyWidget{parent}
     , m_playerManager{playerManager}

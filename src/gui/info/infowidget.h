@@ -26,8 +26,11 @@
 #include <QHBoxLayout>
 #include <QWidget>
 
-namespace Core {
+namespace Utils {
 class SettingsManager;
+}
+
+namespace Core {
 class Track;
 
 namespace Player {
@@ -39,7 +42,7 @@ namespace Gui::Widgets {
 class InfoWidget : public FyWidget
 {
 public:
-    explicit InfoWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+    explicit InfoWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                         QWidget* parent = nullptr);
 
     bool isHeaderHidden();
@@ -61,7 +64,7 @@ protected:
 
 private:
     Core::Player::PlayerManager* m_playerManager;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
     InfoView m_view;

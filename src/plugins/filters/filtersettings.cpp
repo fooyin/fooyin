@@ -19,8 +19,10 @@
 
 #include "filtersettings.h"
 
+#include <utils/settings/settingsmanager.h>
+
 namespace Filters::Settings {
-FiltersSettings::FiltersSettings(Core::SettingsManager* settingsManager)
+FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
     m_settings->createSetting(Settings::FilterAltColours, false, "Filters");

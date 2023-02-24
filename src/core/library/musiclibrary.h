@@ -25,10 +25,12 @@
 
 #include <QThread>
 
-namespace Core {
+namespace Utils {
 class ThreadManager;
 class SettingsManager;
+} // namespace Utils
 
+namespace Core {
 namespace DB {
 class Database;
 }
@@ -47,7 +49,7 @@ class MusicLibrary : public QObject
 
 public:
     MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
-                 ThreadManager* threadManager, DB::Database* database, SettingsManager* settings,
+                 Utils::ThreadManager* threadManager, DB::Database* database, Utils::SettingsManager* settings,
                  QObject* parent = nullptr);
     ~MusicLibrary() override;
 

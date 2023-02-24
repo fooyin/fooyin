@@ -23,15 +23,8 @@
 
 namespace Utils {
 class ActionManager;
-}
-
-namespace Core {
 class SettingsManager;
-
-namespace Library {
-class MusicLibrary;
-}
-} // namespace Core
+} // namespace Utils
 
 namespace Gui {
 class LayoutProvider;
@@ -45,7 +38,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(Utils::ActionManager* actionManager, Core::SettingsManager* settings,
+    explicit MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
                         LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,
                         QWidget* parent = nullptr);
     ~MainWindow() override;

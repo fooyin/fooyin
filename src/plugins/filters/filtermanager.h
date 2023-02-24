@@ -26,9 +26,11 @@
 #include <core/library/sorting/sortorder.h>
 #include <core/models/trackfwd.h>
 
-namespace Core {
+namespace Utils {
 class ThreadManager;
+}
 
+namespace Core {
 namespace DB {
 class Database;
 }
@@ -47,7 +49,7 @@ class FilterManager : public Core::Library::MusicLibraryInteractor
     Q_OBJECT
 
 public:
-    explicit FilterManager(Core::ThreadManager* threadManager, Core::DB::Database* database,
+    explicit FilterManager(Utils::ThreadManager* threadManager, Core::DB::Database* database,
                            Core::Library::MusicLibrary* library, QObject* parent = nullptr);
     ~FilterManager() override;
 

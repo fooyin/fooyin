@@ -25,9 +25,12 @@
 
 class QHBoxLayout;
 
+namespace Utils {
+class SettingsManager;
+}
+
 namespace Core {
 class Track;
-class SettingsManager;
 
 namespace Player {
 class PlayerManager;
@@ -45,7 +48,7 @@ class ControlWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit ControlWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
+    explicit ControlWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                            QWidget* parent = nullptr);
 
     void setupUi();
@@ -55,7 +58,7 @@ public:
 
 private:
     Core::Player::PlayerManager* m_playerManager;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
     PlayerControl* m_playerControls;

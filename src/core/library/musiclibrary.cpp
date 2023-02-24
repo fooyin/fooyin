@@ -19,7 +19,6 @@
 
 #include "musiclibrary.h"
 
-#include "core/app/threadmanager.h"
 #include "core/coresettings.h"
 #include "core/playlist/libraryplaylistinterface.h"
 #include "librarydatabasemanager.h"
@@ -30,6 +29,8 @@
 #include "trackstore.h"
 
 #include <utils/helpers.h>
+#include <utils/settings/settingsmanager.h>
+#include <utils/threadmanager.h>
 
 #include <QTimer>
 #include <utility>
@@ -39,9 +40,9 @@ struct MusicLibrary::Private
 {
     Playlist::LibraryPlaylistInterface* playlistInteractor;
     LibraryManager* libraryManager;
-    ThreadManager* threadManager;
+    Utils::ThreadManager* threadManager;
     DB::Database* database;
-    SettingsManager* settings;
+    Utils::SettingsManager* settings;
     LibraryScanner scanner;
     LibraryDatabaseManager libraryDatabaseManager;
 
@@ -53,7 +54,7 @@ struct MusicLibrary::Private
     SortOrder order{Library::SortOrder::YearDesc};
 
     Private(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
-            ThreadManager* threadManager, DB::Database* database, SettingsManager* settings)
+            Utils::ThreadManager* threadManager, DB::Database* database, Utils::SettingsManager* settings)
         : playlistInteractor{playlistInteractor}
         , libraryManager{libraryManager}
         , threadManager{threadManager}
@@ -65,8 +66,8 @@ struct MusicLibrary::Private
 };
 
 MusicLibrary::MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteractor, LibraryManager* libraryManager,
-                           ThreadManager* threadManager, DB::Database* database, SettingsManager* settings,
-                           QObject* parent)
+                           Utils::ThreadManager* threadManager, DB::Database* database,
+                           Utils::SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(playlistInteractor, libraryManager, threadManager, database, settings)}
 {

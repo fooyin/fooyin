@@ -21,9 +21,10 @@
 
 #include "filterfwd.h"
 
-#include <core/app/worker.h>
 #include <core/library/sorting/sortorder.h>
 #include <core/models/trackfwd.h>
+
+#include <utils/worker.h>
 
 namespace Core::DB {
 class Database;
@@ -31,7 +32,7 @@ class Database;
 
 namespace Filters {
 class FilterDatabase;
-class FilterDatabaseManager : public Core::Worker
+class FilterDatabaseManager : public Utils::Worker
 {
     Q_OBJECT
 

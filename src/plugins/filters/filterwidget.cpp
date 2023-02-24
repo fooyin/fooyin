@@ -31,6 +31,7 @@
 
 #include <utils/actions/actioncontainer.h>
 #include <utils/enumhelper.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QAction>
 #include <QActionGroup>
@@ -40,7 +41,7 @@
 #include <QMenu>
 
 namespace Filters {
-FilterWidget::FilterWidget(FilterManager* manager, Core::SettingsManager* settings, Filters::FilterType type,
+FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* settings, Filters::FilterType type,
                            QWidget* parent)
     : FyWidget{parent}
     , m_layout{new QHBoxLayout(this)}
@@ -349,7 +350,7 @@ void FilterWidget::resetByType(Filters::FilterType type)
     }
 }
 
-GenreFilter::GenreFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+GenreFilter::GenreFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
     : FilterWidget(manager, settings, Filters::FilterType::Genre, parent)
 { }
 
@@ -363,7 +364,7 @@ QString GenreFilter::layoutName() const
     return "FilterGenre";
 }
 
-YearFilter::YearFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+YearFilter::YearFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
     : FilterWidget(manager, settings, Filters::FilterType::Year, parent)
 { }
 
@@ -377,7 +378,7 @@ QString YearFilter::layoutName() const
     return "FilterYear";
 }
 
-AlbumArtistFilter::AlbumArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+AlbumArtistFilter::AlbumArtistFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
     : FilterWidget(manager, settings, Filters::FilterType::AlbumArtist, parent)
 { }
 
@@ -391,7 +392,7 @@ QString AlbumArtistFilter::layoutName() const
     return "FilterAlbumArtist";
 }
 
-ArtistFilter::ArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+ArtistFilter::ArtistFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
     : FilterWidget(manager, settings, Filters::FilterType::Artist, parent)
 { }
 
@@ -405,7 +406,7 @@ QString ArtistFilter::layoutName() const
     return "FilterArtist";
 }
 
-AlbumFilter::AlbumFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+AlbumFilter::AlbumFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
     : FilterWidget(manager, settings, Filters::FilterType::Album, parent)
 { }
 

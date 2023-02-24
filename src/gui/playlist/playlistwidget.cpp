@@ -32,6 +32,7 @@
 #include <utils/actions/actioncontainer.h>
 #include <utils/overlaywidget.h>
 #include <utils/settings/settingsdialogcontroller.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QAction>
 #include <QActionGroup>
@@ -45,7 +46,7 @@ namespace Gui::Widgets {
 PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
                                Core::Player::PlayerManager* playerManager,
                                Utils::SettingsDialogController* settingsDialogController,
-                               Core::SettingsManager* settings, QWidget* parent)
+                               Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_libraryManager{libraryManager}
     , m_library{library}

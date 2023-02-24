@@ -28,9 +28,11 @@
 #include <QAbstractItemModel>
 #include <QPixmap>
 
-namespace Core {
+namespace Utils {
 class SettingsManager;
+}
 
+namespace Core {
 namespace Player {
 class PlayerManager;
 }
@@ -55,7 +57,7 @@ class PlaylistModel : public Utils::TreeModel<PlaylistItem>
 
 public:
     explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
-                           Core::SettingsManager* settings, QObject* parent = nullptr);
+                           Utils::SettingsManager* settings, QObject* parent = nullptr);
 
     void setupModelData();
     PlaylistItem* iterateTrack(Core::Track* track, bool discHeaders, bool splitDiscs);
@@ -91,7 +93,7 @@ private:
 
     Core::Player::PlayerManager* m_playerManager;
     Core::Library::MusicLibrary* m_library;
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     PlaylistItemHash m_nodes;
     Core::ContainerHash m_containers;

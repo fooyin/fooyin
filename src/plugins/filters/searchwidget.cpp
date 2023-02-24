@@ -22,6 +22,7 @@
 #include "filtermanager.h"
 
 #include <gui/guisettings.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
 #include <QKeyEvent>
@@ -29,7 +30,7 @@
 #include <QMenu>
 
 namespace Filters {
-SearchWidget::SearchWidget(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent)
+SearchWidget::SearchWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_manager{manager}
     , m_settings{settings}
