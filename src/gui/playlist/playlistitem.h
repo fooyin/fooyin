@@ -55,7 +55,6 @@ public:
     };
 
     explicit PlaylistItem(Type type = Type::Root, Core::MusicItem* data = {}, PlaylistItem* parentItem = nullptr);
-    ~PlaylistItem() override = default;
 
     void setIndex(int idx);
 

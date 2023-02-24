@@ -89,10 +89,6 @@ fooyin_add_library(Core
         plugins/plugininfo.cpp
         plugins/pluginmanager.h
         plugins/pluginmanager.cpp
-        plugins/databaseplugin.h
-        plugins/settingsplugin.h
-        plugins/threadplugin.h
-        plugins/widgetplugin.h
 
         settings/settingsmanager.h
         settings/settingsmanager.cpp

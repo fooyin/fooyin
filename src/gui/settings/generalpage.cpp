@@ -29,7 +29,6 @@ class GeneralPageWidget : public Utils::SettingsPageWidget
 {
 public:
     explicit GeneralPageWidget(Core::SettingsManager* settings);
-    ~GeneralPageWidget() override = default;
 
     void apply() override;
 

@@ -32,7 +32,6 @@ class QuickSetupModel : public QAbstractListModel
 {
 public:
     explicit QuickSetupModel(LayoutProvider* layoutProvider, QObject* parent = nullptr);
-    ~QuickSetupModel() override = default;
 
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;

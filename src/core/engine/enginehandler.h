@@ -21,19 +21,20 @@
 
 #include "core/app/worker.h"
 #include "core/player/playermanager.h"
-#include "engine.h"
 
 #include <QObject>
 #include <QThread>
 
 namespace Core::Engine {
+class Engine;
+
 class EngineHandler : public Worker
 {
     Q_OBJECT
 
 public:
     explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override = default;
+    ~EngineHandler() override;
 
 signals:
     void play();

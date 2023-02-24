@@ -28,7 +28,6 @@ class PlaylistDelegate : public QStyledItemDelegate
 
 public:
     explicit PlaylistDelegate(QObject* parent = nullptr);
-    ~PlaylistDelegate() override = default;
 
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 

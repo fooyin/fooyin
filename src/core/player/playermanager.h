@@ -50,7 +50,6 @@ class PlayerManager : public QObject
 public:
     explicit PlayerManager(QObject* parent)
         : QObject(parent){};
-    ~PlayerManager() override = default;
 
     virtual void restoreState() = 0;
 

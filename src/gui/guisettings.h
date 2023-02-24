@@ -47,7 +47,6 @@ class GuiSettings
 {
 public:
     GuiSettings(Core::SettingsManager* settingsManager);
-    ~GuiSettings() = default;
 
 private:
     Core::SettingsManager* m_settings;

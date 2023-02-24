@@ -35,7 +35,6 @@ class Playlist : public QObject
 
 public:
     Playlist(Player::PlayerManager* playerManager, int idx, QString name);
-    ~Playlist() override = default;
 
     QString name();
 

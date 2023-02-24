@@ -30,7 +30,6 @@ class Container : public MusicItem
 public:
     Container() = default;
     explicit Container(QString title);
-    ~Container() override = default;
 
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString subTitle() const;

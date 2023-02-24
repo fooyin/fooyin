@@ -33,7 +33,6 @@ class Album : public Container
 public:
     Album() = default;
     explicit Album(const QString& title);
-    ~Album() override = default;
 
     [[nodiscard]] int id() const;
     [[nodiscard]] int artistId() const;

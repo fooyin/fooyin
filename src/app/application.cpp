@@ -30,11 +30,8 @@
 #include <core/player/playercontroller.h>
 #include <core/playlist/libraryplaylistmanager.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/plugins/databaseplugin.h>
+#include <core/plugins/plugin.h>
 #include <core/plugins/pluginmanager.h>
-#include <core/plugins/settingsplugin.h>
-#include <core/plugins/threadplugin.h>
-#include <core/plugins/widgetplugin.h>
 
 #include <gui/controls/controlwidget.h>
 #include <gui/editablelayout.h>
@@ -93,10 +90,7 @@ struct Application::Private
     QAction* rescanLibrary;
 
     Plugins::PluginManager pluginManager;
-    WidgetPluginContext widgetContext;
-    ThreadPluginContext threadContext;
-    DatabasePluginContext databaseContext;
-    SettingsPluginContext settingsContext;
+    PluginContext pluginContext;
 
     explicit Private()
         : coreSettings{&settingsManager}
@@ -112,14 +106,11 @@ struct Application::Private
         , editableLayout{new Gui::Widgets::EditableLayout(&settingsManager, &actionManager, &widgetFactory,
                                                           &widgetProvider, &layoutProvider)}
         , mainWindow{new Gui::MainWindow(&actionManager, &settingsManager, &layoutProvider, editableLayout)}
-        //        , generalPage{&settingsDialogController, &settingsManager}
         , libraryGeneralPage{&settingsDialogController, &libraryManager, &settingsManager}
         , guiGeneralPage{&settingsDialogController, &settingsManager}
         , playlistGuiPage{&settingsDialogController, &settingsManager}
-        , widgetContext{&actionManager, playerManager.get(), &library, &widgetFactory}
-        , threadContext{&threadManager}
-        , databaseContext{&database}
-        , settingsContext{&settingsManager, &settingsDialogController}
+        , pluginContext{&actionManager,   playerManager.get(),       &library,       &widgetFactory,
+                        &settingsManager, &settingsDialogController, &threadManager, &database}
     {
         actionManager.setMainWindow(mainWindow);
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -130,11 +121,7 @@ struct Application::Private
         setupConnections();
         registerWidgets();
         registerActions();
-
-        const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
-        pluginManager.findPlugins(pluginsPath);
-        pluginManager.loadPlugins();
-        initialisePlugins();
+        loadPlugins();
     }
 
     void setupConnections() const
@@ -216,13 +203,12 @@ struct Application::Private
         }
     }
 
-    void initialisePlugins()
+    void loadPlugins()
     {
-        pluginManager.initialisePlugins<Plugins::WidgetPlugin>(widgetContext);
-        pluginManager.initialisePlugins<Plugins::SettingsPlugin>(settingsContext);
-        pluginManager.initialisePlugins<Plugins::ThreadPlugin>(threadContext);
-        pluginManager.initialisePlugins<Plugins::DatabasePlugin>(databaseContext);
-        pluginManager.initialisePlugins();
+        const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
+        pluginManager.findPlugins(pluginsPath);
+        pluginManager.loadPlugins();
+        pluginManager.initialisePlugins<Plugins::Plugin>(pluginContext);
     }
 };
 

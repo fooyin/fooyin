@@ -34,7 +34,6 @@ class LibraryModel : public Utils::TableModel<LibraryItem>
 {
 public:
     explicit LibraryModel(Core::Library::LibraryManager* libraryManager, QObject* parent = nullptr);
-    ~LibraryModel() override = default;
 
     void setupModelData();
     void markForAddition(const Core::Library::LibraryInfo& info);

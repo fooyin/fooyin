@@ -37,7 +37,6 @@ class QuickSetupDialog : public QDialog
 
 public:
     explicit QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent = nullptr);
-    ~QuickSetupDialog() override = default;
 
 signals:
     void layoutChanged(const Gui::Layout& layout);

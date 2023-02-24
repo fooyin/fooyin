@@ -26,6 +26,5 @@ class Playlist : private Module
 {
 public:
     explicit Playlist(const QString& connectionName);
-    ~Playlist() override = default;
 };
 } // namespace Core::DB

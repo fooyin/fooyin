@@ -34,6 +34,5 @@ class GeneralPage : public Utils::SettingsPage
 {
 public:
     explicit GeneralPage(Utils::SettingsDialogController* controller, Core::SettingsManager* settings);
-    ~GeneralPage() override = default;
 };
 } // namespace Gui::Settings

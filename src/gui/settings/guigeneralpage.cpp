@@ -32,7 +32,6 @@ class GuiGeneralPageWidget : public Utils::SettingsPageWidget
 {
 public:
     explicit GuiGeneralPageWidget(Core::SettingsManager* settings);
-    ~GuiGeneralPageWidget() override = default;
 
     void apply() override;
 

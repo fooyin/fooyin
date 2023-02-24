@@ -22,6 +22,7 @@
 #include "engine.h"
 
 class mpv_event;
+class mpv_handle;
 
 namespace Core {
 class Track;
@@ -48,13 +49,14 @@ public:
 signals:
     void mpvEvent();
 
-protected:
+private:
     void handleEvent(mpv_event* event);
     void handlePropertyChange(mpv_event* event);
 
-private:
-    struct Private;
-    std::unique_ptr<EngineMpv::Private> p;
+    int m_posInterval;
+    int m_ms;
+    quint64 m_lastTick;
+    mpv_handle* m_mpv;
 };
 } // namespace Engine
 } // namespace Core

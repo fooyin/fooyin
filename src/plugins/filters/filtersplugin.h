@@ -21,11 +21,7 @@
 
 #include "filterwidget.h"
 
-#include <core/plugins/databaseplugin.h>
 #include <core/plugins/plugin.h>
-#include <core/plugins/settingsplugin.h>
-#include <core/plugins/threadplugin.h>
-#include <core/plugins/widgetplugin.h>
 #include <gui/widgetfactory.h>
 
 namespace Filters {
@@ -36,29 +32,14 @@ class FiltersSettings;
 }
 
 class FiltersPlugin : public QObject,
-                      public Plugins::Plugin,
-                      public Plugins::WidgetPlugin,
-                      public Plugins::ThreadPlugin,
-                      public Plugins::DatabasePlugin,
-                      public Plugins::SettingsPlugin
+                      public Plugins::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
     Q_INTERFACES(Plugins::Plugin)
-    Q_INTERFACES(Plugins::WidgetPlugin)
-    Q_INTERFACES(Plugins::ThreadPlugin)
-    Q_INTERFACES(Plugins::DatabasePlugin)
-    Q_INTERFACES(Plugins::SettingsPlugin)
 
 public:
-    FiltersPlugin()           = default;
-    ~FiltersPlugin() override = default;
-
-    void initialise() override;
-    void initialise(WidgetPluginContext context) override;
-    void initialise(SettingsPluginContext context) override;
-    void initialise(ThreadPluginContext context) override;
-    void initialise(DatabasePluginContext context) override;
+    void initialise(const PluginContext& context) override;
 
 private:
     template <typename T>

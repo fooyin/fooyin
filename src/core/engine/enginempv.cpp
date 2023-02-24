@@ -26,14 +26,6 @@
 #include <QDebug>
 
 namespace Core::Engine {
-struct EngineMpv::Private
-{
-    int posInterval{100};
-    int ms{1000LL};
-    quint64 lastTick{0};
-    mpv_handle* mpv;
-};
-
 static void wakeup(void* ctx)
 {
     auto* engine = static_cast<EngineMpv*>(ctx);
@@ -41,15 +33,18 @@ static void wakeup(void* ctx)
 }
 
 EngineMpv::EngineMpv(QObject* parent)
-    : Engine(parent)
-    , p(std::make_unique<Private>())
+    : Engine{parent}
+    , m_posInterval{100}
+    , m_ms{1000LL}
+    , m_lastTick{0}
+    , m_mpv{nullptr}
 {
     // Not thread safe
     setlocale(LC_NUMERIC, "C"); // NOLINT
 
-    p->mpv = mpv_create();
+    m_mpv = mpv_create();
 
-    if(!p->mpv) {
+    if(!m_mpv) {
         return;
     }
 
@@ -58,33 +53,33 @@ EngineMpv::EngineMpv(QObject* parent)
 
 EngineMpv::~EngineMpv()
 {
-    mpv_terminate_destroy(p->mpv);
-    p->mpv = nullptr;
+    mpv_terminate_destroy(m_mpv);
+    m_mpv = nullptr;
 }
 
 void EngineMpv::engineSetup()
 {
-    mpv_set_option_string(p->mpv, "config", "no");
-    mpv_set_option_string(p->mpv, "audio-display", "no");
-    mpv_set_option_string(p->mpv, "vo", "null");
-    mpv_set_option_string(p->mpv, "idle", "yes");
-    mpv_set_option_string(p->mpv, "input-default-bindings", "no");
-    mpv_set_option_string(p->mpv, "input-vo-keyboard", "no");
-    mpv_set_option_string(p->mpv, "input-cursor", "no");
-    mpv_set_option_string(p->mpv, "input-media-keys", "no");
-    mpv_set_option_string(p->mpv, "ytdl", "no");
-    mpv_set_option_string(p->mpv, "fs", "no");
-    mpv_set_option_string(p->mpv, "osd-level", "0");
-    mpv_set_option_string(p->mpv, "quiet", "yes");
-    mpv_set_option_string(p->mpv, "softvol", "yes");
-    mpv_set_option_string(p->mpv, "softvol-max", "100.0");
-    mpv_set_option_string(p->mpv, "audio-client-name", "fooyin");
+    mpv_set_option_string(m_mpv, "config", "no");
+    mpv_set_option_string(m_mpv, "audio-display", "no");
+    mpv_set_option_string(m_mpv, "vo", "null");
+    mpv_set_option_string(m_mpv, "idle", "yes");
+    mpv_set_option_string(m_mpv, "input-default-bindings", "no");
+    mpv_set_option_string(m_mpv, "input-vo-keyboard", "no");
+    mpv_set_option_string(m_mpv, "input-cursor", "no");
+    mpv_set_option_string(m_mpv, "input-media-keys", "no");
+    mpv_set_option_string(m_mpv, "ytdl", "no");
+    mpv_set_option_string(m_mpv, "fs", "no");
+    mpv_set_option_string(m_mpv, "osd-level", "0");
+    mpv_set_option_string(m_mpv, "quiet", "yes");
+    mpv_set_option_string(m_mpv, "softvol", "yes");
+    mpv_set_option_string(m_mpv, "softvol-max", "100.0");
+    mpv_set_option_string(m_mpv, "audio-client-name", "fooyin");
 
     connect(this, &EngineMpv::mpvEvent, this, &EngineMpv::processEvents, Qt::QueuedConnection);
 
-    mpv_set_wakeup_callback(p->mpv, wakeup, this);
+    mpv_set_wakeup_callback(m_mpv, wakeup, this);
 
-    if(mpv_initialize(p->mpv) < 0) {
+    if(mpv_initialize(m_mpv) < 0) {
         return;
     }
 }
@@ -92,8 +87,8 @@ void EngineMpv::engineSetup()
 void EngineMpv::processEvents()
 {
     // Process all events, until the event queue is empty.
-    while(p->mpv) {
-        mpv_event* event = mpv_wait_event(p->mpv, 0);
+    while(m_mpv) {
+        mpv_event* event = mpv_wait_event(m_mpv, 0);
         if(event->event_id == MPV_EVENT_NONE) {
             break;
         }
@@ -103,23 +98,23 @@ void EngineMpv::processEvents()
 
 void EngineMpv::play()
 {
-    mpv_observe_property(p->mpv, 1, "audio-pts", MPV_FORMAT_DOUBLE);
+    mpv_observe_property(m_mpv, 1, "audio-pts", MPV_FORMAT_DOUBLE);
     int f = 0;
-    mpv_set_property_async(p->mpv, 0, "pause", MPV_FORMAT_FLAG, &f);
+    mpv_set_property_async(m_mpv, 0, "pause", MPV_FORMAT_FLAG, &f);
 }
 
 void EngineMpv::stop()
 {
-    mpv_unobserve_property(p->mpv, 1);
+    mpv_unobserve_property(m_mpv, 1);
 
     const char* cmd[] = {"stop", nullptr}; // NOLINT
-    mpv_command(p->mpv, cmd);
+    mpv_command(m_mpv, cmd);
 }
 
 void EngineMpv::pause()
 {
     int f = 1;
-    mpv_set_property_async(p->mpv, 0, "pause", MPV_FORMAT_FLAG, &f);
+    mpv_set_property_async(m_mpv, 0, "pause", MPV_FORMAT_FLAG, &f);
 }
 
 void EngineMpv::seek(quint64 pos)
@@ -127,20 +122,20 @@ void EngineMpv::seek(quint64 pos)
     const quint64 seconds = pos / 1000;
     const QByteArray tmp  = QString::number(seconds).toUtf8();
     const char* cmd[]     = {"seek", tmp.constData(), "absolute", nullptr}; // NOLINT
-    mpv_command(p->mpv, cmd);
+    mpv_command(m_mpv, cmd);
 }
 
 void EngineMpv::changeTrack(Track* track)
 {
     const QByteArray path_ba = track->filepath().toUtf8();
     const char* cmd[]        = {"loadfile", path_ba.constData(), "replace", nullptr}; // NOLINT
-    mpv_command(p->mpv, cmd);
+    mpv_command(m_mpv, cmd);
 }
 
 void EngineMpv::setVolume(float value)
 {
     double volume = value;
-    mpv_set_property_async(p->mpv, 0, "volume", MPV_FORMAT_DOUBLE, &volume);
+    mpv_set_property_async(m_mpv, 0, "volume", MPV_FORMAT_DOUBLE, &volume);
 }
 
 void EngineMpv::handleEvent(mpv_event* event)
@@ -184,11 +179,11 @@ void EngineMpv::handlePropertyChange(mpv_event* event)
 
     if(QString(prop->name) == "audio-pts") {
         if(prop->format == MPV_FORMAT_DOUBLE) {
-            auto time = static_cast<quint64>((*static_cast<double*>(prop->data) * p->ms));
+            auto time = static_cast<quint64>((*static_cast<double*>(prop->data) * m_ms));
 
-            if(time != p->lastTick && time > 0) {
-                if(time + p->posInterval >= p->lastTick || time - p->posInterval <= p->lastTick) {
-                    p->lastTick = time;
+            if(time != m_lastTick && time > 0) {
+                if(time + m_posInterval >= m_lastTick || time - m_posInterval <= m_lastTick) {
+                    m_lastTick = time;
                     emit currentPositionChanged(time);
                 }
             }

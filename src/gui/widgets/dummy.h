@@ -31,7 +31,6 @@ class Dummy : public FyWidget
 
 public:
     explicit Dummy(QWidget* parent = nullptr);
-    ~Dummy() override = default;
 
     [[nodiscard]] QString name() const override;
 

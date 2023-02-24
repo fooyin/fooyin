@@ -35,7 +35,6 @@ class FyWidget : public QWidget
 
 public:
     explicit FyWidget(QWidget* parent);
-    ~FyWidget() override = default;
 
     [[nodiscard]] Utils::Id id() const;
     [[nodiscard]] virtual QString name() const = 0;

@@ -29,7 +29,6 @@ class Engine : public QObject
 public:
     explicit Engine(QObject* parent = nullptr)
         : QObject{parent} {};
-    ~Engine() override = default;
 
     virtual void play()                    = 0;
     virtual void stop()                    = 0;

@@ -27,7 +27,6 @@ class Library : private Module
 {
 public:
     explicit Library(const QString& connectionName);
-    ~Library() override = default;
 
     Core::Library::LibraryList getAllLibraries();
     bool insertLibrary(int id, const QString& path, const QString& name);

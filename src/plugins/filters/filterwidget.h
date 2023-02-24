@@ -106,7 +106,6 @@ class GenreFilter : public FilterWidget
 {
 public:
     explicit GenreFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~GenreFilter() override = default;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -116,7 +115,6 @@ class YearFilter : public FilterWidget
 {
 public:
     explicit YearFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~YearFilter() override = default;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -126,7 +124,6 @@ class AlbumArtistFilter : public FilterWidget
 {
 public:
     explicit AlbumArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~AlbumArtistFilter() override = default;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -136,7 +133,6 @@ class ArtistFilter : public FilterWidget
 {
 public:
     explicit ArtistFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~ArtistFilter() override = default;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -146,7 +142,6 @@ class AlbumFilter : public FilterWidget
 {
 public:
     explicit AlbumFilter(FilterManager* manager, Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~AlbumFilter() override = default;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

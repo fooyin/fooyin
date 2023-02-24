@@ -45,47 +45,28 @@ namespace Gui::Widgets {
 class WidgetFactory;
 } // namespace Gui::Widgets
 
-struct WidgetPluginContext
+struct PluginContext
 {
-    WidgetPluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                        Core::Library::MusicLibrary* library, Gui::Widgets::WidgetFactory* widgetFactory)
+    PluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
+                  Core::Library::MusicLibrary* library, Gui::Widgets::WidgetFactory* widgetFactory,
+                  Core::SettingsManager* settingsManager, Utils::SettingsDialogController* settingsController,
+                  Core::ThreadManager* threadManager, Core::DB::Database* database)
         : actionManager{actionManager}
         , playerManager{playerManager}
         , library{library}
         , widgetFactory{widgetFactory}
+        , settingsManager{settingsManager}
+        , settingsController{settingsController}
+        , threadManager{threadManager}
+        , database{database}
     { }
 
     Utils::ActionManager* actionManager;
     Core::Player::PlayerManager* playerManager;
     Core::Library::MusicLibrary* library;
     Gui::Widgets::WidgetFactory* widgetFactory;
-};
-
-struct SettingsPluginContext
-{
-    SettingsPluginContext(Core::SettingsManager* settingsManager, Utils::SettingsDialogController* settingsController)
-        : settingsManager{settingsManager}
-        , settingsController{settingsController}
-    { }
-
     Core::SettingsManager* settingsManager;
     Utils::SettingsDialogController* settingsController;
-};
-
-struct ThreadPluginContext
-{
-    explicit ThreadPluginContext(Core::ThreadManager* threadManager)
-        : threadManager{threadManager}
-    { }
-
     Core::ThreadManager* threadManager;
-};
-
-struct DatabasePluginContext
-{
-    explicit DatabasePluginContext(Core::DB::Database* database)
-        : database{database}
-    { }
-
     Core::DB::Database* database;
 };

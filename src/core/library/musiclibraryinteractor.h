@@ -31,7 +31,6 @@ class MusicLibraryInteractor : public QObject
 public:
     explicit MusicLibraryInteractor(QObject* parent)
         : QObject{parent} {};
-    ~MusicLibraryInteractor() override = default;
 
     [[nodiscard]] virtual TrackPtrList tracks() const = 0;
     [[nodiscard]] virtual bool hasTracks() const      = 0;

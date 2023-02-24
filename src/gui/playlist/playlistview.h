@@ -28,7 +28,6 @@ class PlaylistView : public QTreeView
 
 public:
     explicit PlaylistView(QWidget* parent = nullptr);
-    ~PlaylistView() override = default;
 
     void setupView();
 

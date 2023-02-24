@@ -41,7 +41,6 @@ class CoverWidget : public FyWidget
 public:
     explicit CoverWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
                          QWidget* parent = nullptr);
-    ~CoverWidget() override = default;
 
     [[nodiscard]] QString name() const override;
 

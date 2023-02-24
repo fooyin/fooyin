@@ -43,7 +43,6 @@ class SplitterWidget : public FyWidget
 public:
     explicit SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
                             Core::SettingsManager* settings, QWidget* parent = nullptr);
-    ~SplitterWidget() override = default;
 
     void setupActions();
 
@@ -96,7 +95,6 @@ public:
     {
         setOrientation(Qt::Vertical);
     }
-    ~VerticalSplitterWidget() override = default;
 };
 
 class HorizontalSplitterWidget : public SplitterWidget
@@ -108,6 +106,5 @@ public:
     {
         setOrientation(Qt::Horizontal);
     }
-    ~HorizontalSplitterWidget() override = default;
 };
 } // namespace Gui::Widgets

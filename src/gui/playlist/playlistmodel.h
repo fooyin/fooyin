@@ -56,7 +56,6 @@ class PlaylistModel : public Utils::TreeModel<PlaylistItem>
 public:
     explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
                            Core::SettingsManager* settings, QObject* parent = nullptr);
-    ~PlaylistModel() override = default;
 
     void setupModelData();
     PlaylistItem* iterateTrack(Core::Track* track, bool discHeaders, bool splitDiscs);

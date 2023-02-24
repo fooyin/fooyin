@@ -39,7 +39,6 @@ class InfoModel : public QAbstractItemModel
 {
 public:
     explicit InfoModel(QObject* parent = nullptr);
-    ~InfoModel() override = default;
 
     void setupModel();
     void reset(Core::Track* track);

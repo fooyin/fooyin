@@ -44,7 +44,6 @@ class PlaylistControl : public QWidget
 public:
     explicit PlaylistControl(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
                              QWidget* parent = nullptr);
-    ~PlaylistControl() override = default;
 
     void setupUi();
 

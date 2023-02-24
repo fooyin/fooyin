@@ -97,8 +97,6 @@ EditableLayout::EditableLayout(Core::SettingsManager* settings, Utils::ActionMan
     m_box->setContentsMargins(5, 5, 5, 5);
 }
 
-EditableLayout::~EditableLayout() = default;
-
 void EditableLayout::initialise()
 {
     connect(m_menu, &Utils::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);

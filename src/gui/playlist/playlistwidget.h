@@ -59,7 +59,6 @@ public:
                             Core::Player::PlayerManager* playerManager,
                             Utils::SettingsDialogController* settingsDialogController, Core::SettingsManager* settings,
                             QWidget* parent = nullptr);
-    ~PlaylistWidget() override = default;
 
     void setup();
     void reset();

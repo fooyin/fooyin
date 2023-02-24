@@ -36,7 +36,6 @@ class Track : public MusicItem
 public:
     Track() = default;
     explicit Track(QString filepath);
-    ~Track() override = default;
 
     [[nodiscard]] bool isEnabled() const;
 

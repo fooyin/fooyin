@@ -31,8 +31,16 @@
 #include <QMenu>
 
 namespace Filters {
-void FiltersPlugin::initialise()
+void FiltersPlugin::initialise(const PluginContext& context)
 {
+    m_actionManager = context.actionManager;
+    m_library       = context.library;
+    m_playerManager = context.playerManager;
+    m_factory       = context.widgetFactory;
+    m_settings      = context.settingsManager;
+    m_threadManager = context.threadManager;
+    m_database      = context.database;
+
     m_filterManager  = new FilterManager(m_threadManager, m_database, m_library, this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
 
@@ -48,26 +56,4 @@ void FiltersPlugin::initialise()
     });
 }
 
-void FiltersPlugin::initialise(WidgetPluginContext context)
-{
-    m_actionManager = context.actionManager;
-    m_library       = context.library;
-    m_playerManager = context.playerManager;
-    m_factory       = context.widgetFactory;
-}
-
-void FiltersPlugin::initialise(SettingsPluginContext context)
-{
-    m_settings = context.settingsManager;
-}
-
-void FiltersPlugin::initialise(ThreadPluginContext context)
-{
-    m_threadManager = context.threadManager;
-}
-
-void FiltersPlugin::initialise(DatabasePluginContext context)
-{
-    m_database = context.database;
-}
 } // namespace Filters

@@ -36,7 +36,6 @@ class MainMenuBar : public QObject
 
 public:
     explicit MainMenuBar(Utils::ActionManager* actionManager, QObject* parent = nullptr);
-    ~MainMenuBar() override = default;
 
     [[nodiscard]] QMenuBar* menuBar() const;
 

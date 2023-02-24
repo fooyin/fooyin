@@ -33,7 +33,6 @@ class SettingsManager : public QObject
 
 public:
     explicit SettingsManager(QObject* parent = nullptr);
-    ~SettingsManager() override = default;
 
     void loadSettings();
     void storeSettings();

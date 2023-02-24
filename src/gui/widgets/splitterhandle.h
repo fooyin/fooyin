@@ -28,7 +28,6 @@ class SplitterHandle : public QSplitterHandle
 
 public:
     explicit SplitterHandle(Qt::Orientation type, QSplitter* parent = nullptr);
-    ~SplitterHandle() override = default;
 
     void showHandle(bool show);
 

@@ -36,6 +36,12 @@ PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJson
     , m_category{m_metadata.value("Category").toString()}
     , m_description{m_metadata.value("Description").toString()}
     , m_url{m_metadata.value("Url").toString()}
+    , m_isRequired{false}
+    , m_isLoaded{false}
+    , m_isDisabled{false}
+    , m_status{Invalid}
+    , m_root{nullptr}
+    , m_plugin{nullptr}
 {
     m_loader.setFileName(filename);
 }
@@ -78,7 +84,6 @@ void PluginInfo::unload()
 void PluginInfo::initialise()
 {
     if(isLoaded()) {
-        m_plugin->initialise();
         m_status = Initialised;
     }
 }

@@ -31,11 +31,6 @@ Query::Query(const Module* module)
     setForwardOnly(true);
 }
 
-Query::~Query()
-{
-    clear();
-}
-
 bool Query::prepareQuery(const QString& query)
 {
     m_queryString = query;

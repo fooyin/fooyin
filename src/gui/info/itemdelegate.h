@@ -28,7 +28,6 @@ class ItemDelegate : public QStyledItemDelegate
 
 public:
     explicit ItemDelegate(QObject* parent = nullptr);
-    ~ItemDelegate() override = default;
 
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 

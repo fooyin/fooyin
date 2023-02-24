@@ -29,7 +29,6 @@ class Artist : public MusicItem
 public:
     Artist() = default;
     explicit Artist(QString name);
-    ~Artist() override = default;
 
     [[nodiscard]] int id() const;
     [[nodiscard]] QString name() const;

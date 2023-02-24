@@ -42,7 +42,6 @@ public:
     };
 
     PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata);
-    ~PluginInfo() = default;
 
     void load();
     void unload();
@@ -79,14 +78,14 @@ private:
     QString m_category;
     QString m_description;
     QString m_url;
-    bool m_isRequired{false};
-    bool m_isLoaded{false};
-    bool m_isDisabled{false};
-    Status m_status{Invalid};
+    bool m_isRequired;
+    bool m_isLoaded;
+    bool m_isDisabled;
+    Status m_status;
     QString m_error;
 
-    QObject* m_root{nullptr};
-    Plugin* m_plugin{nullptr};
+    QObject* m_root;
+    Plugin* m_plugin;
     QPluginLoader m_loader;
 };
 } // namespace Plugins

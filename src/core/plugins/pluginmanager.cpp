@@ -76,13 +76,6 @@ void PluginManager::loadPlugins()
     }
 }
 
-void PluginManager::initialisePlugins()
-{
-    for(const auto& [name, plugin] : m_plugins) {
-        plugin->initialise();
-    }
-}
-
 void PluginManager::loadPlugin(PluginInfo* plugin)
 {
     if(plugin->hasError() || plugin->isDisabled()) {

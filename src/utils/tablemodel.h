@@ -26,7 +26,6 @@ class SimpleTableModel : public QAbstractItemModel
 {
 public:
     explicit SimpleTableModel(QObject* parent = nullptr);
-    ~SimpleTableModel() override = default;
 
     [[nodiscard]] virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent) const override;
@@ -41,8 +40,6 @@ public:
         : SimpleTableModel{parent}
         , m_root{std::make_unique<Item>()}
     { }
-
-    virtual ~TableModel() override = default;
 
     [[nodiscard]] virtual Item* rootItem() const
     {

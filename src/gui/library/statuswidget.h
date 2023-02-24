@@ -41,7 +41,6 @@ class StatusWidget : public FyWidget
 
 public:
     explicit StatusWidget(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
-    ~StatusWidget() override = default;
 
     [[nodiscard]] QString name() const override;
 

@@ -28,7 +28,6 @@ class SettingsEntry : public QObject
 
 public:
     explicit SettingsEntry(QString name, const QVariant& value, bool writeToDisk, QString group = {});
-    ~SettingsEntry() override = default;
 
     SettingsEntry(const SettingsEntry& other);
 

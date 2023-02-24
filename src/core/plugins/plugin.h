@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "plugincontext.h"
+
 #include <QtPlugin>
 
 namespace Plugins {
@@ -35,8 +37,11 @@ class Plugin
 public:
     virtual ~Plugin() = default;
 
-    virtual void initialise() {};
-    virtual void shutdown() {};
+    virtual void initialise(const PluginContext& context)
+    {
+        Q_UNUSED(context)
+    };
+    virtual void shutdown(){};
 };
 } // namespace Plugins
 

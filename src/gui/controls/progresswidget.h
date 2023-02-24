@@ -46,7 +46,6 @@ class ProgressWidget : public QWidget
 public:
     explicit ProgressWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
                             QWidget* parent = nullptr);
-    ~ProgressWidget() override = default;
 
     void setupUi();
 

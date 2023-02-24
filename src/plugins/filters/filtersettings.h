@@ -35,7 +35,6 @@ class FiltersSettings
 {
 public:
     FiltersSettings(Core::SettingsManager* settingsManager);
-    ~FiltersSettings() = default;
 
 private:
     Core::SettingsManager* m_settings;

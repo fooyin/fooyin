@@ -32,7 +32,6 @@ class PlaylistGuiPageWidget : public Utils::SettingsPageWidget
 {
 public:
     explicit PlaylistGuiPageWidget(Core::SettingsManager* settings);
-    ~PlaylistGuiPageWidget() override = default;
 
     void apply() override;
 

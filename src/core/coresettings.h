@@ -39,7 +39,6 @@ class CoreSettings
 {
 public:
     CoreSettings(SettingsManager* settingsManager);
-    ~CoreSettings() = default;
 
 private:
     SettingsManager* m_settings;

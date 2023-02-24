@@ -28,18 +28,17 @@ class PluginManager : public QObject
 
 public:
     explicit PluginManager(QObject* parent = nullptr);
-    ~PluginManager() override = default;
 
     void findPlugins(const QString& pluginDir);
     void loadPlugins();
-    void initialisePlugins();
 
     template <typename T, typename Context>
-    void initialisePlugins(Context context)
+    void initialisePlugins(const Context& context)
     {
         for(const auto& [name, plugin] : m_plugins) {
             if(const auto& pluginInstance = qobject_cast<T*>(plugin->root())) {
                 pluginInstance->initialise(context);
+                plugin->initialise();
             }
         }
     }

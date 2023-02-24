@@ -47,7 +47,6 @@ class ControlWidget : public FyWidget
 public:
     explicit ControlWidget(Core::Player::PlayerManager* playerManager, Core::SettingsManager* settings,
                            QWidget* parent = nullptr);
-    ~ControlWidget() override = default;
 
     void setupUi();
     void setupConnections();

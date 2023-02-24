@@ -26,10 +26,8 @@
 #include <QDebug>
 
 namespace Gui::Widgets {
-class WidgetFactory : public QObject
+class WidgetFactory
 {
-    Q_OBJECT
-
     using Instantiator = std::function<FyWidget*()>;
 
     struct FactoryWidget

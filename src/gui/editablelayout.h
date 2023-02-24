@@ -49,7 +49,6 @@ public:
     explicit EditableLayout(Core::SettingsManager* settings, Utils::ActionManager* actionManager,
                             WidgetFactory* widgetFactory, WidgetProvider* widgetProvider,
                             LayoutProvider* layoutProvider, QWidget* parent = nullptr);
-    ~EditableLayout() override;
 
     void initialise();
 

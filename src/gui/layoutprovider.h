@@ -40,7 +40,6 @@ public:
     using LayoutList = std::vector<Layout>;
 
     explicit LayoutProvider();
-    ~LayoutProvider() = default;
 
     void findLayouts();
 
