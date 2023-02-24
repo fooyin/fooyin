@@ -32,12 +32,10 @@ class SettingsManager : public QObject
     Q_OBJECT
 
 public:
-    explicit SettingsManager(QObject* parent = nullptr);
+    explicit SettingsManager(const QString& settingsPath, QObject* parent = nullptr);
 
     void loadSettings();
     void storeSettings();
-
-    QString getKeyString(const SettingsEntry& setting);
 
     template <auto key>
     static int constexpr findType()
@@ -220,6 +218,8 @@ public:
     }
 
 private:
+    QString getKeyString(const SettingsEntry& setting);
+
     QSettings m_settingsFile;
     std::map<QString, SettingsEntry> m_settings;
     QReadWriteLock m_lock;

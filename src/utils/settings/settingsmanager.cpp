@@ -19,15 +19,12 @@
 
 #include "settingsmanager.h"
 
-#include "utils/paths.h"
-#include "utils/utils.h"
-
 #include <QSettings>
 
 namespace Utils {
-SettingsManager::SettingsManager(QObject* parent)
+SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
-    , m_settingsFile{Utils::settingsPath(), QSettings::IniFormat, this}
+    , m_settingsFile{settingsPath, QSettings::IniFormat, this}
 { }
 
 void SettingsManager::loadSettings()
