@@ -41,20 +41,15 @@ class MusicLibrary;
 }
 } // namespace Core
 
-namespace Gui::Widgets {
-class WidgetFactory;
-} // namespace Gui::Widgets
-
 struct PluginContext
 {
     PluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                  Core::Library::MusicLibrary* library, Gui::Widgets::WidgetFactory* widgetFactory,
-                  Core::SettingsManager* settingsManager, Utils::SettingsDialogController* settingsController,
-                  Core::ThreadManager* threadManager, Core::DB::Database* database)
+                  Core::Library::MusicLibrary* library, Core::SettingsManager* settingsManager,
+                  Utils::SettingsDialogController* settingsController, Core::ThreadManager* threadManager,
+                  Core::DB::Database* database)
         : actionManager{actionManager}
         , playerManager{playerManager}
         , library{library}
-        , widgetFactory{widgetFactory}
         , settingsManager{settingsManager}
         , settingsController{settingsController}
         , threadManager{threadManager}
@@ -64,7 +59,6 @@ struct PluginContext
     Utils::ActionManager* actionManager;
     Core::Player::PlayerManager* playerManager;
     Core::Library::MusicLibrary* library;
-    Gui::Widgets::WidgetFactory* widgetFactory;
     Core::SettingsManager* settingsManager;
     Utils::SettingsDialogController* settingsController;
     Core::ThreadManager* threadManager;

@@ -36,6 +36,7 @@
 #include <gui/controls/controlwidget.h>
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
+#include <gui/guiplugin.h>
 #include <gui/guisettings.h>
 #include <gui/info/infowidget.h>
 #include <gui/layoutprovider.h>
@@ -91,6 +92,7 @@ struct Application::Private
 
     Plugins::PluginManager pluginManager;
     PluginContext pluginContext;
+    GuiPluginContext guiContext;
 
     explicit Private()
         : coreSettings{&settingsManager}
@@ -109,8 +111,10 @@ struct Application::Private
         , libraryGeneralPage{&settingsDialogController, &libraryManager, &settingsManager}
         , guiGeneralPage{&settingsDialogController, &settingsManager}
         , playlistGuiPage{&settingsDialogController, &settingsManager}
-        , pluginContext{&actionManager,   playerManager.get(),       &library,       &widgetFactory,
-                        &settingsManager, &settingsDialogController, &threadManager, &database}
+        , pluginContext{&actionManager,   playerManager.get(),       &library,
+                        &settingsManager, &settingsDialogController, &threadManager,
+                        &database}
+        , guiContext{&widgetFactory}
     {
         actionManager.setMainWindow(mainWindow);
         mainWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -208,7 +212,9 @@ struct Application::Private
         const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
         pluginManager.findPlugins(pluginsPath);
         pluginManager.loadPlugins();
+
         pluginManager.initialisePlugins<Plugins::Plugin>(pluginContext);
+        pluginManager.initialisePlugins<Gui::Plugin>(guiContext);
     }
 };
 

@@ -36,13 +36,17 @@ void FiltersPlugin::initialise(const PluginContext& context)
     m_actionManager = context.actionManager;
     m_library       = context.library;
     m_playerManager = context.playerManager;
-    m_factory       = context.widgetFactory;
     m_settings      = context.settingsManager;
     m_threadManager = context.threadManager;
     m_database      = context.database;
 
     m_filterManager  = new FilterManager(m_threadManager, m_database, m_library, this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
+}
+
+void FiltersPlugin::initialise(const GuiPluginContext& context)
+{
+    m_factory = context.widgetFactory;
 
     registerFilter<FilterWidget>("Filter", "Filter");
     registerFilter<GenreFilter>("FilterGenre", "Genre");
