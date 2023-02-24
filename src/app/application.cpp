@@ -20,6 +20,7 @@
 #include "application.h"
 
 #include <core/constants.h>
+#include <core/corepaths.h>
 #include <core/coreplugin.h>
 #include <core/coresettings.h>
 #include <core/database/database.h>
@@ -55,7 +56,6 @@
 
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
-#include <utils/paths.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/threadmanager.h>
@@ -97,7 +97,8 @@ struct Application::Private
     GuiPluginContext guiPluginContext;
 
     explicit Private()
-        : coreSettings{&settingsManager}
+        : settingsManager{Core::settingsPath()}
+        , coreSettings{&settingsManager}
         , database{&settingsManager}
         , playerManager{std::make_unique<Core::Player::PlayerController>(&settingsManager)}
         , engine{playerManager.get()}

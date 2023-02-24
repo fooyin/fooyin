@@ -68,20 +68,4 @@ QString cachePath(const QString& appendPath)
     static const auto path = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     return createPath(path, appendPath);
 }
-
-QString coverPath()
-{
-    return cachePath("covers").append("/");
-}
-
-QString settingsPath()
-{
-    return configPath().append("/fooyin.conf");
-}
-
-QString layoutsPath()
-{
-    return configPath("layouts").append("/");
-}
-
 } // namespace Utils

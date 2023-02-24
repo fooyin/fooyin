@@ -17,12 +17,23 @@
  *
  */
 
-#pragma once
+#include "corepaths.h"
 
-#include <QString>
+#include <utils/paths.h>
 
-namespace Utils {
-QString configPath(const QString& appendPath = {});
-QString sharePath(const QString& appendPath = {});
-QString cachePath(const QString& appendPath = {});
-} // namespace Utils
+namespace Core {
+QString coverPath()
+{
+    return Utils::cachePath("covers").append("/");
+}
+
+QString settingsPath()
+{
+    return Utils::configPath().append("/fooyin.conf");
+}
+
+QString layoutsPath()
+{
+    return Utils::configPath("layouts").append("/");
+}
+} // namespace Core

@@ -20,9 +20,9 @@
 #include "coresettings.h"
 
 #include "core/player/playermanager.h"
+#include "corepaths.h"
 #include "version.h"
 
-#include <utils/paths.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -36,6 +36,6 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::PlayMode, Player::PlayMode::Default, "Player");
     m_settings->createSetting(Settings::AutoRefresh, true, "Library");
 
-    m_settings->set<Settings::FirstRun>(!Utils::File::exists(Utils::settingsPath()));
+    m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 }
 } // namespace Core::Settings

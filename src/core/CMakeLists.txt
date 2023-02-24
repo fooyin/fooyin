@@ -10,6 +10,8 @@ fooyin_add_library(Core
     SOURCES
         coreplugin.h
         coreplugincontext.h
+        corepaths.h
+        corepaths.cpp
         coresettings.h
         coresettings.cpp
         constants.h

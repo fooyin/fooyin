@@ -19,9 +19,9 @@
 
 #include "libraryutils.h"
 
+#include "core/corepaths.h"
 #include "core/tagging/tags.h"
 
-#include <utils/paths.h>
 #include <utils/utils.h>
 
 #include <QCryptographicHash>
@@ -34,7 +34,7 @@ QString storeCover(const Track& track)
     QString coverPath       = "";
     const QString coverHash = calcCoverHash(track.album(), track.albumArtist());
 
-    const QString cacheCover  = ::Utils::coverPath() + coverHash + ".jpg";
+    const QString cacheCover  = Core::coverPath() + coverHash + ".jpg";
     const QString folderCover = coverInDirectory(::Utils::File::getParentDirectory(track.filepath()));
 
     if(::Utils::File::exists(cacheCover)) {
@@ -89,7 +89,7 @@ QPixmap getCover(const QString& path, int size)
 
 bool saveCover(const QPixmap& cover, const QString& hash)
 {
-    auto path = ::Utils::coverPath();
+    auto path = Core::coverPath();
     QFile file(QString(path + hash).append(".jpg"));
     file.open(QIODevice::WriteOnly);
     return cover.save(&file, "JPG", 100);

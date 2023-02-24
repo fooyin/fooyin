@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include <QString>
+class QString;
 
-namespace Utils {
-QString configPath(const QString& appendPath = {});
-QString sharePath(const QString& appendPath = {});
-QString cachePath(const QString& appendPath = {});
-} // namespace Utils
+namespace Core {
+QString coverPath();
+QString settingsPath();
+QString layoutsPath();
+} // namespace Core
