@@ -21,7 +21,7 @@
 
 #include <utils/paths.h>
 
-namespace Core {
+namespace Fy::Core {
 QString coverPath()
 {
     return Utils::cachePath("covers").append("/");
@@ -36,4 +36,4 @@ QString layoutsPath()
 {
     return Utils::configPath("layouts").append("/");
 }
-} // namespace Core
+} // namespace Fy::Core

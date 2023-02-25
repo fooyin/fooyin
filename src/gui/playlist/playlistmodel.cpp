@@ -33,7 +33,7 @@
 
 #include <QPalette>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 QString trackArtistString(Core::Track* track)
 {
     QString artistString;
@@ -459,4 +459,4 @@ QModelIndex PlaylistModel::indexForId(int id)
     }
     return index;
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

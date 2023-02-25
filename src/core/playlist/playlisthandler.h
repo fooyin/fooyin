@@ -23,11 +23,13 @@
 
 #include <QObject>
 
-namespace Core::Player {
+namespace Fy::Core {
+
+namespace Player {
 class PlayerManager;
 }
 
-namespace Core::Playlist {
+namespace Playlist {
 using PlaylistMap = std::map<int, std::unique_ptr<Playlist>>;
 
 class PlaylistHandler : public QObject,
@@ -65,4 +67,5 @@ private:
     Player::PlayerManager* m_playerManager;
     int m_currentPlaylistIndex;
 };
-} // namespace Core::Playlist
+} // namespace Playlist
+} // namespace Fy::Core

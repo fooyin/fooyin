@@ -23,7 +23,7 @@
 #include <QMetaType>
 #include <QString>
 
-namespace Utils {
+namespace Fy::Utils {
 class Id
 {
 public:
@@ -59,4 +59,4 @@ private:
     unsigned int m_id;
     QString m_name;
 };
-} // namespace Utils
+} // namespace Fy::Utils

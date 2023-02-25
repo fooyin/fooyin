@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-namespace Core {
+namespace Fy::Core {
 class Track;
 
 namespace Player {
@@ -90,4 +90,4 @@ public:
     virtual void setVolume(double vol)                  = 0;
 };
 } // namespace Player
-} // namespace Core
+} // namespace Fy::Core

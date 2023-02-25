@@ -23,7 +23,7 @@
 
 #include <QString>
 
-namespace Core {
+namespace Fy::Core {
 class Artist : public MusicItem
 {
 public:
@@ -39,4 +39,4 @@ private:
     int m_id;
     QString m_name;
 };
-} // namespace Core
+} // namespace Fy::Core

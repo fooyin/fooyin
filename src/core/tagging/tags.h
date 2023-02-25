@@ -25,7 +25,7 @@
 
 class QPixmap;
 
-namespace Core {
+namespace Fy::Core {
 class Track;
 
 namespace Tagging {
@@ -33,4 +33,4 @@ bool readMetaData(Track& track, Quality quality);
 bool writeMetaData(const Track& track);
 QPixmap readCover(const QString& filepath);
 } // namespace Tagging
-} // namespace Core
+} // namespace Fy::Core

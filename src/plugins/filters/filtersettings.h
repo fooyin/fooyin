@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
@@ -46,3 +48,4 @@ private:
     Utils::SettingsManager* m_settings;
 };
 } // namespace Filters::Settings
+} // namespace Fy

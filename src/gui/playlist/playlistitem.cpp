@@ -21,7 +21,7 @@
 
 #include <utils/helpers.h>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 PlaylistItem::PlaylistItem(Type type, Core::MusicItem* data, PlaylistItem* parent)
     : TreeItem{parent}
     , m_data{data}
@@ -48,4 +48,4 @@ int PlaylistItem::index() const
 {
     return m_index;
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

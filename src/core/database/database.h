@@ -25,6 +25,8 @@
 
 class QSqlDatabase;
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
@@ -71,3 +73,4 @@ private:
     std::unique_ptr<LibraryDatabase> m_libraryDatabase;
 };
 } // namespace Core::DB
+} // namespace Fy

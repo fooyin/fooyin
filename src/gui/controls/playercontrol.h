@@ -23,14 +23,16 @@
 
 class QHBoxLayout;
 
-namespace Core::Player {
-class PlayerManager;
-enum PlayState : uint8_t;
-} // namespace Core::Player
+namespace Fy {
 
 namespace Utils {
 class ComboIcon;
 }
+
+namespace Core::Player {
+class PlayerManager;
+enum PlayState : uint8_t;
+} // namespace Core::Player
 
 namespace Gui::Widgets {
 class PlayerControl : public QWidget
@@ -55,3 +57,4 @@ private:
     QSize m_labelSize;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

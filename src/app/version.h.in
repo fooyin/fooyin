@@ -19,5 +19,7 @@
 
 #pragma once
 
+namespace Fy {
 #define VERSION "@FOOYIN_VERSION@"
 #define DATABASE_VERSION "@FOOYIN_DATABASE_VERSION@"
+}

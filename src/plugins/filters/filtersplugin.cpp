@@ -30,8 +30,8 @@
 
 #include <QMenu>
 
-namespace Filters {
-void FiltersPlugin::initialise(const CorePluginContext& context)
+namespace Fy::Filters {
+void FiltersPlugin::initialise(const Core::CorePluginContext& context)
 {
     m_actionManager = context.actionManager;
     m_library       = context.library;
@@ -44,7 +44,7 @@ void FiltersPlugin::initialise(const CorePluginContext& context)
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
 }
 
-void FiltersPlugin::initialise(const GuiPluginContext& context)
+void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
 {
     m_factory = context.widgetFactory;
 
@@ -60,4 +60,4 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
     });
 }
 
-} // namespace Filters
+} // namespace Fy::Filters

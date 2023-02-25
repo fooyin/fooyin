@@ -25,7 +25,7 @@
 
 #include <QDir>
 
-namespace Gui {
+namespace Fy::Gui {
 bool checkFile(const QFileInfo& file)
 {
     return file.exists() && file.isFile() && file.isReadable()
@@ -127,4 +127,4 @@ void LayoutProvider::addLayout(const QString& file)
         m_layouts.emplace_back(layout);
     }
 }
-} // namespace Gui
+} // namespace Fy::Gui

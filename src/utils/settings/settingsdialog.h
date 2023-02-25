@@ -28,7 +28,7 @@
 class QGridLayout;
 class QStackedLayout;
 
-namespace Utils {
+namespace Fy::Utils {
 class SimpleListView;
 
 class SettingsDialog : public QDialog
@@ -67,4 +67,4 @@ private:
     Id m_currentCategory;
     Id m_currentPage;
 };
-} // namespace Utils
+} // namespace Fy::Utils

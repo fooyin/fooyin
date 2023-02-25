@@ -21,10 +21,10 @@
 
 #include <QTreeView>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 class InfoView : public QTreeView
 {
 public:
     explicit InfoView(QWidget* parent = nullptr);
 };
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

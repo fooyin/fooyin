@@ -21,8 +21,7 @@
 
 #include <core/library/librarymanager.h>
 
-namespace Gui::Settings {
-
+namespace Fy::Gui::Settings {
 LibraryModel::LibraryModel(Core::Library::LibraryManager* libraryManager, QObject* parent)
     : TableModel{parent}
     , m_libraryManager{libraryManager}
@@ -290,4 +289,4 @@ void LibraryModel::removeFromQueue(const QueueEntry& libraryToDelete)
                                  }),
                   m_queue.end());
 }
-} // namespace Gui::Settings
+} // namespace Fy::Gui::Settings

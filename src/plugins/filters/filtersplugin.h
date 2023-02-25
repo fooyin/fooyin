@@ -25,6 +25,8 @@
 #include <gui/guiplugin.h>
 #include <gui/widgetfactory.h>
 
+namespace Fy {
+
 namespace Filters {
 class FilterManager;
 
@@ -38,12 +40,12 @@ class FiltersPlugin : public QObject,
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
-    Q_INTERFACES(Core::CorePlugin)
-    Q_INTERFACES(Gui::GuiPlugin)
+    Q_INTERFACES(Fy::Core::CorePlugin)
+    Q_INTERFACES(Fy::Gui::GuiPlugin)
 
 public:
-    void initialise(const CorePluginContext& context) override;
-    void initialise(const GuiPluginContext& context) override;
+    void initialise(const Core::CorePluginContext& context) override;
+    void initialise(const Gui::GuiPluginContext& context) override;
 
 private:
     template <typename T>
@@ -68,3 +70,4 @@ private:
     std::unique_ptr<Settings::FiltersSettings> m_filterSettings;
 };
 } // namespace Filters
+} // namespace Fy

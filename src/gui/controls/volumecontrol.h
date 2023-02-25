@@ -23,6 +23,8 @@
 
 class QHBoxLayout;
 
+namespace Fy {
+
 namespace Utils {
 class ComboIcon;
 class Slider;
@@ -67,3 +69,4 @@ private:
     int m_prevValue;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

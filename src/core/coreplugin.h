@@ -25,7 +25,7 @@
 
 #include <QtPlugin>
 
-namespace Core {
+namespace Fy::Core {
 class CorePlugin : public Plugins::Plugin
 {
 public:
@@ -35,6 +35,6 @@ public:
     };
     void shutdown() override{};
 };
-} // namespace Core
+} // namespace Fy::Core
 
-Q_DECLARE_INTERFACE(Core::CorePlugin, "com.fooyin.plugin.core")
+Q_DECLARE_INTERFACE(Fy::Core::CorePlugin, "com.fooyin.plugin.core")

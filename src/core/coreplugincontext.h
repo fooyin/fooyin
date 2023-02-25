@@ -19,6 +19,8 @@
 
 #pragma once
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 class SettingsDialogController;
@@ -38,7 +40,6 @@ class PlayerManager;
 namespace Library {
 class MusicLibrary;
 }
-} // namespace Core
 
 struct CorePluginContext
 {
@@ -63,3 +64,5 @@ struct CorePluginContext
     Utils::ThreadManager* threadManager;
     Core::DB::Database* database;
 };
+} // namespace Core
+} // namespace Fy

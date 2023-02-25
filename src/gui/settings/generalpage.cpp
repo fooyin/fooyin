@@ -24,7 +24,7 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 
-namespace Gui::Settings {
+namespace Fy::Gui::Settings {
 class GeneralPageWidget : public Utils::SettingsPageWidget
 {
 public:
@@ -60,4 +60,4 @@ GeneralPage::GeneralPage(Utils::SettingsDialogController* controller, Core::Sett
     setCategoryIconPath(Constants::Icons::Category::General);
 }
 
-} // namespace Gui::Settings
+} // namespace Fy::Gui::Settings

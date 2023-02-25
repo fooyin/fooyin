@@ -24,7 +24,7 @@
 #include <QEvent>
 #include <QVBoxLayout>
 
-namespace Utils {
+namespace Fy::Utils {
 ComboIcon::ComboIcon(const QString& path, Attributes attributes, QWidget* parent)
     : QWidget{parent}
     , m_layout{new QVBoxLayout(this)}
@@ -168,4 +168,4 @@ void ComboIcon::removeAttribute(Attribute attribute)
 {
     m_attributes &= ~attribute;
 }
-} // namespace Utils
+} // namespace Fy::Utils

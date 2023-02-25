@@ -21,7 +21,7 @@
 
 #include <QSqlQuery>
 
-namespace Core::DB {
+namespace Fy::Core::DB {
 class Module;
 class Query : public QSqlQuery
 {
@@ -47,4 +47,4 @@ private:
     QString m_queryString;
     bool m_success;
 };
-} // namespace Core::DB
+} // namespace Fy::Core::DB

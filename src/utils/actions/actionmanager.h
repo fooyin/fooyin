@@ -26,7 +26,7 @@
 class QAction;
 class QMainWindow;
 
-namespace Utils {
+namespace Fy::Utils {
 class ActionContainer;
 class ActionManager : public QObject
 {
@@ -54,4 +54,4 @@ private:
     std::unordered_map<Id, QAction*, Id::IdHash> m_idCmdMap;
     std::unordered_map<Id, ActionContainer*, Id::IdHash> m_idContainerMap;
 };
-} // namespace Utils
+} // namespace Fy::Utils

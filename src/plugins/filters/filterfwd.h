@@ -17,15 +17,14 @@
  *
  */
 
-#ifndef FILTER_FWD_H
-#define FILTER_FWD_H
+#pragma once
 
 #include <core/library/sorting/sortorder.h>
 #include <core/typedefs.h>
 
 #include <QObject>
 
-namespace Filters {
+namespace Fy::Filters {
 Q_NAMESPACE
 enum class FilterType
 {
@@ -36,7 +35,6 @@ enum class FilterType
     Album,
 };
 Q_ENUM_NS(FilterType)
-} // namespace Filters
 
 struct LibraryFilter
 {
@@ -55,5 +53,4 @@ struct FilterEntry
 using FilterEntries = std::vector<FilterEntry>;
 
 using ActiveFilters = std::unordered_map<Filters::FilterType, Core::IdSet>;
-
-#endif // FILTER_FWD_H
+} // namespace Fy::Filters

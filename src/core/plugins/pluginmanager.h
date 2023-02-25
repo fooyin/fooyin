@@ -21,7 +21,7 @@
 
 #include "plugininfo.h"
 
-namespace Plugins {
+namespace Fy::Plugins {
 class PluginManager : public QObject
 {
     Q_OBJECT
@@ -51,4 +51,4 @@ public:
 private:
     std::unordered_map<QString, PluginInfo*> m_plugins;
 };
-} // namespace Plugins
+} // namespace Fy::Plugins

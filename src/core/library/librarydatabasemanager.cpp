@@ -23,7 +23,7 @@
 #include "core/database/librarydatabase.h"
 #include "core/tagging/tags.h"
 
-namespace Core::Library {
+namespace Fy::Core::Library {
 LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, QObject* parent)
     : Worker{parent}
     , m_database{database}
@@ -53,4 +53,4 @@ void LibraryDatabaseManager::updateTracks(const TrackPtrList& tracks)
         }
     }
 }
-} // namespace Core::Library
+} // namespace Fy::Core::Library

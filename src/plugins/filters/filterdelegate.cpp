@@ -21,7 +21,7 @@
 
 #include <QPainter>
 
-namespace Filters {
+namespace Fy::Filters {
 FilterDelegate::FilterDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 { }
@@ -67,4 +67,4 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
                                       painter->fontMetrics().elidedText(title, Qt::ElideRight, rect.width()));
     painter->restore();
 }
-} // namespace Filters
+} // namespace Fy::Filters

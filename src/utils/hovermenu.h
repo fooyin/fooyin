@@ -22,7 +22,7 @@
 #include <QDialog>
 #include <QTimer>
 
-namespace Utils {
+namespace Fy::Utils {
 class HoverMenu : public QDialog
 {
 public:
@@ -38,4 +38,4 @@ protected:
 private:
     QTimer m_timer;
 };
-} // namespace Utils
+} // namespace Fy::Utils

@@ -19,7 +19,7 @@
 
 #include "libraryitem.h"
 
-namespace Gui::Settings {
+namespace Fy::Gui::Settings {
 LibraryItem::LibraryItem(Core::Library::LibraryInfo* info, LibraryItem* parent)
     : TreeItem{parent}
     , m_info{info}
@@ -34,4 +34,4 @@ void LibraryItem::changeInfo(Core::Library::LibraryInfo* info)
 {
     m_info = info;
 }
-} // namespace Gui::Settings
+} // namespace Fy::Gui::Settings

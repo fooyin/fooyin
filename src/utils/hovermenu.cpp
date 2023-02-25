@@ -19,7 +19,7 @@
 
 #include "hovermenu.h"
 
-namespace Utils {
+namespace Fy::Utils {
 HoverMenu::HoverMenu(QWidget* parent)
     : QDialog(parent)
 {
@@ -50,4 +50,4 @@ void HoverMenu::closeMenu()
     m_timer.stop();
     accept();
 }
-} // namespace Utils
+} // namespace Fy::Utils

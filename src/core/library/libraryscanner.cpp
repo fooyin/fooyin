@@ -29,7 +29,9 @@
 
 #include <QDir>
 
-namespace Core::Library {
+using namespace Fy::Utils;
+
+namespace Fy::Core::Library {
 LibraryScanner::LibraryScanner(LibraryManager* libraryManager, DB::Database* database, QObject* parent)
     : Worker{parent}
     , m_libraryManager{libraryManager}
@@ -68,12 +70,12 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks, LibraryInfo* info)
     // TODO: Don't delete if disk/top level is inaccessible
     //       and ask for confirmation.
     for(const auto& track : tracks) {
-        if(!::Utils::File::exists(track->filepath())) {
+        if(!File::exists(track->filepath())) {
             tracksToDelete.insert(track->id());
         }
         else {
             trackMap.emplace(track->filepath(), track);
-            if(track->hasCover() && !::Utils::File::exists(track->coverPath())) {
+            if(track->hasCover() && !File::exists(track->coverPath())) {
                 Utils::storeCover(*track);
             }
         }
@@ -151,7 +153,7 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
 
 bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, const TrackPathMap& tracks)
 {
-    if(path.isEmpty() || !::Utils::File::exists(path)) {
+    if(path.isEmpty() || !File::exists(path)) {
         return false;
     }
 
@@ -231,4 +233,4 @@ void LibraryScanner::processQueue()
         scanLibrary(libraryEntry.tracks, libraryEntry.library);
     }
 }
-} // namespace Core::Library
+} // namespace Fy::Core::Library

@@ -23,7 +23,7 @@
 
 #include <utils/worker.h>
 
-namespace Core {
+namespace Fy::Core {
 
 namespace DB {
 class Database;

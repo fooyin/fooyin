@@ -26,7 +26,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
-namespace Core::Settings {
+namespace Fy::Core::Settings {
 CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
@@ -38,4 +38,4 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 }
-} // namespace Core::Settings
+} // namespace Fy::Core::Settings

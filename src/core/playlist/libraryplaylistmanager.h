@@ -21,7 +21,7 @@
 
 #include "libraryplaylistinterface.h"
 
-namespace Core::Playlist {
+namespace Fy::Core::Playlist {
 class PlaylistHandler;
 class LibraryPlaylistManager : public LibraryPlaylistInterface
 {
@@ -37,4 +37,4 @@ protected:
 private:
     Playlist::PlaylistHandler* m_playlistHandler;
 };
-} // namespace Core::Playlist
+} // namespace Fy::Core::Playlist

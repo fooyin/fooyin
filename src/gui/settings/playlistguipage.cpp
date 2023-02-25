@@ -29,7 +29,7 @@
 #include <QRadioButton>
 #include <QVBoxLayout>
 
-namespace Gui::Settings {
+namespace Fy::Gui::Settings {
 class PlaylistGuiPageWidget : public Utils::SettingsPageWidget
 {
 public:
@@ -106,4 +106,4 @@ PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsDialogController* controller, Ut
     });
     setCategoryIconPath(Constants::Icons::Category::Playlist);
 }
-} // namespace Gui::Settings
+} // namespace Fy::Gui::Settings

@@ -25,7 +25,7 @@
 
 #include <utils/utils.h>
 
-namespace Core::Library {
+namespace Fy::Core::Library {
 bool checkNewPath(const QString& path, const LibraryList& libraries, int libraryId = -1)
 {
     if(path.isEmpty()) {
@@ -156,4 +156,4 @@ LibraryInfo* LibraryManager::libraryInfo(int id) const
     });
     return it->get();
 }
-} // namespace Core::Library
+} // namespace Fy::Core::Library

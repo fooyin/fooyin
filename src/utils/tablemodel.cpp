@@ -19,7 +19,7 @@
 
 #include "tablemodel.h"
 
-namespace Utils {
+namespace Fy::Utils {
 SimpleTableModel::SimpleTableModel(QObject* parent)
     : QAbstractItemModel{parent}
 { }
@@ -44,4 +44,4 @@ QModelIndex SimpleTableModel::parent(const QModelIndex& index) const
     return {};
 }
 
-} // namespace Utils
+} // namespace Fy::Utils

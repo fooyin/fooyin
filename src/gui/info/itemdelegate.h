@@ -21,7 +21,7 @@
 
 #include <QStyledItemDelegate>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 class ItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -36,4 +36,4 @@ public:
     static void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintEntry(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
 };
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

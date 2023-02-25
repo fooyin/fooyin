@@ -21,7 +21,7 @@
 
 #include <QHeaderView>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 InfoView::InfoView(QWidget* parent)
     : QTreeView(parent)
 {
@@ -38,4 +38,4 @@ InfoView::InfoView(QWidget* parent)
     setSortingEnabled(false);
     setAlternatingRowColors(true);
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

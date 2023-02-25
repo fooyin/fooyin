@@ -28,16 +28,18 @@
 #include <QDir>
 #include <QFile>
 
-namespace Core::Library::Utils {
+using namespace Fy::Utils;
+
+namespace Fy::Core::Library::Utils {
 QString storeCover(const Track& track)
 {
     QString coverPath       = "";
     const QString coverHash = calcCoverHash(track.album(), track.albumArtist());
 
     const QString cacheCover  = Core::coverPath() + coverHash + ".jpg";
-    const QString folderCover = coverInDirectory(::Utils::File::getParentDirectory(track.filepath()));
+    const QString folderCover = coverInDirectory(File::getParentDirectory(track.filepath()));
 
-    if(::Utils::File::exists(cacheCover)) {
+    if(File::exists(cacheCover)) {
         coverPath = cacheCover;
     }
     else if(!folderCover.isEmpty()) {
@@ -71,7 +73,7 @@ QString calcCoverHash(const QString& albumName, const QString& albumArtist)
 
 QPixmap getCover(const QString& path, int size)
 {
-    if(::Utils::File::exists(path)) {
+    if(File::exists(path)) {
         QPixmap cover;
         cover.load(path);
         if(!cover.isNull()) {
@@ -108,4 +110,4 @@ QString coverInDirectory(const QString& directory)
     return {};
 }
 
-} // namespace Core::Library::Utils
+} // namespace Fy::Core::Library::Utils

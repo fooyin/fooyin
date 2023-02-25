@@ -19,7 +19,7 @@
 
 #include "infoitem.h"
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 InfoItem::InfoItem(Type type, QString title)
     : m_type{type}
     , m_title{std::move(title)}
@@ -78,4 +78,4 @@ InfoItem* InfoItem::parent() const
 {
     return m_parent;
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

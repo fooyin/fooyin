@@ -21,7 +21,7 @@
 
 #include "track.h"
 
-namespace Core {
+namespace Fy::Core {
 Container::Container(QString title)
     : MusicItem()
     , m_title{std::move(title)}
@@ -81,4 +81,4 @@ void Container::reset()
     m_trackCount = 0;
     m_duration   = 0;
 }
-} // namespace Core
+} // namespace Fy::Core

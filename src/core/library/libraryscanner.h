@@ -28,7 +28,7 @@
 
 class QDir;
 
-namespace Core {
+namespace Fy::Core {
 
 namespace DB {
 class Database;
@@ -77,4 +77,4 @@ private:
     std::deque<LibraryQueueEntry> m_libraryQueue;
 };
 } // namespace Library
-} // namespace Core
+} // namespace Fy::Core

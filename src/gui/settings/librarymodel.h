@@ -25,6 +25,8 @@
 
 #include <deque>
 
+namespace Fy {
+
 namespace Core::Library {
 class LibraryManager;
 } // namespace Core::Library
@@ -84,3 +86,4 @@ private:
     LibraryInfoList m_librariesToAdd;
 };
 } // namespace Gui::Settings
+} // namespace Fy

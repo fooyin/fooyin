@@ -29,16 +29,14 @@ int main(int argc, char* argv[])
     QCoreApplication::setApplicationVersion(VERSION);
 
     // Prevent additional instances
-    SingleInstance instance("fooyin");
+    Fy::SingleInstance instance("fooyin");
     if(!instance.tryRunning()) {
         qInfo() << "Fooyin already running";
         return 0;
     }
 
-    auto* app        = new Application(argc, argv);
+    const Fy::Application app{argc, argv};
     const int result = QCoreApplication::exec();
-
-    delete app;
 
     return result;
 }

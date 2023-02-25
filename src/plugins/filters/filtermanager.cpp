@@ -28,7 +28,7 @@
 
 #include <utility>
 
-namespace Filters {
+namespace Fy::Filters {
 struct FilterManager::Private
 {
     Utils::ThreadManager* threadManager;
@@ -291,4 +291,4 @@ void FilterManager::filteredTracksLoaded(Core::TrackPtrList tracks)
     p->filteredTracks = std::move(tracks);
     emit filteredTracks();
 }
-} // namespace Filters
+} // namespace Fy::Filters

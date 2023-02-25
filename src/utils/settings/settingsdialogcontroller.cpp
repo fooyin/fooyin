@@ -21,7 +21,7 @@
 
 #include "settingsdialog.h"
 
-namespace Utils {
+namespace Fy::Utils {
 SettingsDialogController::SettingsDialogController(QObject* parent)
     : QObject{parent}
 { }
@@ -45,4 +45,4 @@ void SettingsDialogController::addPage(SettingsPage* page)
 {
     m_pages.emplace_back(page);
 }
-} // namespace Utils
+} // namespace Fy::Utils

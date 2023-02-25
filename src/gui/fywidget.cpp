@@ -21,7 +21,7 @@
 
 #include <QJsonArray>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
     , m_id{"FyWidget"}
@@ -57,4 +57,4 @@ void FyWidget::loadLayout(QJsonObject& object)
 {
     Q_UNUSED(object)
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

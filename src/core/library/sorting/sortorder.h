@@ -19,7 +19,7 @@
 
 #pragma once
 
-namespace Core::Library {
+namespace Fy::Core::Library {
 enum class SortOrder : unsigned int
 {
     NoSorting = 0,
@@ -28,4 +28,4 @@ enum class SortOrder : unsigned int
     TitleAsc  = 3,
     TitleDesc = 4
 };
-} // namespace Core::Library
+} // namespace Fy::Core::Library

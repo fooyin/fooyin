@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 class FyWidget;
 class WidgetFactory;
 
@@ -37,4 +37,4 @@ public:
 private:
     Widgets::WidgetFactory* m_widgetFactory;
 };
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

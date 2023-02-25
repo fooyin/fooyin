@@ -21,6 +21,8 @@
 
 #include <QAbstractListModel>
 
+namespace Fy {
+
 namespace Gui {
 class LayoutProvider;
 
@@ -40,3 +42,4 @@ private:
     LayoutProvider* m_layoutProvider;
 };
 } // namespace Gui
+} // namespace Fy

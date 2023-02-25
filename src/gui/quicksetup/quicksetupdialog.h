@@ -28,7 +28,7 @@ class QVBoxLayout;
 class QListView;
 class QPushButton;
 
-namespace Gui {
+namespace Fy::Gui {
 class QuickSetupModel;
 
 class QuickSetupDialog : public QDialog
@@ -53,4 +53,4 @@ private:
     QuickSetupModel* m_model;
     QPushButton* m_accept;
 };
-} // namespace Gui
+} // namespace Fy::Gui

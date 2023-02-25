@@ -21,7 +21,7 @@
 
 #include <QAbstractItemModel>
 
-namespace Utils {
+namespace Fy::Utils {
 class SimpleTableModel : public QAbstractItemModel
 {
 public:
@@ -96,4 +96,4 @@ public:
 private:
     std::unique_ptr<Item> m_root;
 };
-} // namespace Utils
+} // namespace Fy::Utils

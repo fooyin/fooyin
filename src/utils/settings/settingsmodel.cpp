@@ -21,7 +21,7 @@
 
 #include "settingspage.h"
 
-namespace Utils {
+namespace Fy::Utils {
 SettingsModel::SettingsModel()
 {
     QPixmap emptyPixmap(24, 24);
@@ -114,4 +114,4 @@ SettingsCategory* SettingsModel::findCategoryById(const Id& id)
     }
     return nullptr;
 }
-} // namespace Utils
+} // namespace Fy::Utils

@@ -19,7 +19,7 @@
 
 #include "id.h"
 
-namespace Utils {
+namespace Fy::Utils {
 unsigned int idFromString(const QString& str)
 {
     unsigned int result{0};
@@ -97,4 +97,4 @@ bool Id::operator<(const Id& id) const
 {
     return m_id < id.m_id;
 }
-} // namespace Utils
+} // namespace Fy::Utils

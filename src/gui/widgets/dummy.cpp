@@ -22,7 +22,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 Dummy::Dummy(QWidget* parent)
     : FyWidget{parent}
     , m_layout{new QHBoxLayout(this)}
@@ -49,4 +49,4 @@ QString Dummy::name() const
 {
     return "Dummy";
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

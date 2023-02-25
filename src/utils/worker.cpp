@@ -22,7 +22,7 @@
 #include <QAbstractEventDispatcher>
 #include <QThread>
 
-namespace Utils {
+namespace Fy::Utils {
 Worker::Worker(QObject* parent)
     : QObject{parent}
     , m_state{Idle}
@@ -55,4 +55,4 @@ bool Worker::mayRun() const
     dispatcher->processEvents(QEventLoop::AllEvents);
     return m_state == Running;
 }
-} // namespace Utils
+} // namespace Fy::Utils

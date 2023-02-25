@@ -27,6 +27,8 @@
 
 class QHBoxLayout;
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
@@ -149,3 +151,4 @@ public:
     [[nodiscard]] QString layoutName() const override;
 };
 } // namespace Filters
+} // namespace Fy

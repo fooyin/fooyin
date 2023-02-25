@@ -24,6 +24,8 @@
 
 class QHBoxLayout;
 
+namespace Fy {
+
 namespace Utils {
 class ActionManager;
 class SettingsManager;
@@ -105,3 +107,4 @@ public:
     }
 };
 } // namespace Gui::Widgets
+} // namespace Fy

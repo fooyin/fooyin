@@ -19,7 +19,7 @@
 
 #pragma once
 
-namespace Gui::Constants {
+namespace Fy::Gui::Constants {
 namespace Icons {
 constexpr auto Fooyin     = "://icons/sc-fooyin.svg";
 constexpr auto Play       = "://icons/play.svg";
@@ -97,10 +97,10 @@ constexpr auto PlaylistCreate = "Fooyin.Action.Playlist.Create";
 } // namespace Actions
 
 namespace Category {
-constexpr auto General  = "Fooyin.Category.General";
+constexpr auto General   = "Fooyin.Category.General";
 constexpr auto Interface = "Fooyin.Category.Interface";
-constexpr auto Library  = "Fooyin.Category.Library";
-constexpr auto Playlist = "Fooyin.Category.Playlist";
+constexpr auto Library   = "Fooyin.Category.Library";
+constexpr auto Playlist  = "Fooyin.Category.Playlist";
 } // namespace Category
 
 namespace Page {
@@ -109,4 +109,4 @@ constexpr auto InterfaceGeneral  = "Fooyin.Page.Interface.General";
 constexpr auto LibraryGeneral    = "Fooyin.Page.Library.General";
 constexpr auto PlaylistInterface = "Fooyin.Page.Playlist.Interface";
 } // namespace Page
-} // namespace Gui::Constants
+} // namespace Fy::Gui::Constants

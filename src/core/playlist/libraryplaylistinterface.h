@@ -21,7 +21,7 @@
 
 #include "core/models/trackfwd.h"
 
-namespace Core::Playlist {
+namespace Fy::Core::Playlist {
 class LibraryPlaylistInterface
 {
 public:
@@ -30,4 +30,4 @@ public:
     virtual void createPlaylist(const TrackPtrList& tracks, int id) = 0;
     virtual void append(const TrackPtrList& tracks)                 = 0;
 };
-} // namespace Core::Playlist
+} // namespace Fy::Core::Playlist

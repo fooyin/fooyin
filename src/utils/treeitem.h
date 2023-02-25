@@ -24,7 +24,7 @@
 
 #include <utils/helpers.h>
 
-namespace Utils {
+namespace Fy::Utils {
 template <class Item>
 class TreeItem
 {
@@ -93,4 +93,4 @@ private:
     Item* m_parent;                // Not owned
     std::vector<Item*> m_children; // Not owned
 };
-} // namespace Utils
+} // namespace Fy::Utils

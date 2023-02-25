@@ -25,7 +25,7 @@ class QVBoxLayout;
 class QLabel;
 class QPushButton;
 
-namespace Utils {
+namespace Fy::Utils {
 class OverlayWidget : public QWidget
 {
     Q_OBJECT
@@ -45,4 +45,4 @@ private:
     QLabel* m_text;
     QPushButton* m_button;
 };
-} // namespace Gui::Widgets
+} // namespace Fy::Utils

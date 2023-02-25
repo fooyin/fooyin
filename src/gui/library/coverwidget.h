@@ -24,6 +24,8 @@
 class QHBoxLayout;
 class QLabel;
 
+namespace Fy {
+
 namespace Core {
 namespace Library {
 class MusicLibrary;
@@ -61,3 +63,4 @@ private:
     bool m_hasCover;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

@@ -22,7 +22,7 @@
 #include "core/models/track.h"
 #include "enginempv.h"
 
-namespace Core::Engine {
+namespace Fy::Core::Engine {
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* parent)
     : Worker{parent}
     , m_engine{std::make_unique<EngineMpv>()}
@@ -54,4 +54,4 @@ void EngineHandler::playStateChanged(Player::PlayState state)
             return;
     }
 }
-} // namespace Core::Engine
+} // namespace Fy::Core::Engine

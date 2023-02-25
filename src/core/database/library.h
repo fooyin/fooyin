@@ -22,7 +22,7 @@
 #include "core/library/libraryinfo.h"
 #include "module.h"
 
-namespace Core::DB {
+namespace Fy::Core::DB {
 class Library : private Module
 {
 public:
@@ -33,4 +33,4 @@ public:
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
 };
-} // namespace Core::DB
+} // namespace Fy::Core::DB

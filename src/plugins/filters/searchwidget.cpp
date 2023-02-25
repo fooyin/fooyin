@@ -29,7 +29,7 @@
 #include <QLineEdit>
 #include <QMenu>
 
-namespace Filters {
+namespace Fy::Filters {
 SearchWidget::SearchWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_manager{manager}
@@ -96,4 +96,4 @@ void SearchWidget::textChanged(const QString& text)
 {
     emit searchChanged(text);
 }
-} // namespace Filters
+} // namespace Fy::Filters

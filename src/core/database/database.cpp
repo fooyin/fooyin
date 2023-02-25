@@ -32,7 +32,7 @@
 #include <QFile>
 #include <QSqlQuery>
 
-namespace Core::DB {
+namespace Fy::Core::DB {
 Database::Database(Utils::SettingsManager* settings, const QString& directory, const QString& filename)
     : Module{directory + "/" + filename}
     , m_settings{settings}
@@ -342,4 +342,4 @@ bool Database::checkInsertIndex(const QString& indexName, const QString& createS
     }
     return true;
 }
-} // namespace Core::DB
+} // namespace Fy::Core::DB

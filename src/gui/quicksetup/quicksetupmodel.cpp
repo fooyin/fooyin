@@ -21,7 +21,7 @@
 
 #include "gui/layoutprovider.h"
 
-namespace Gui {
+namespace Fy::Gui {
 QuickSetupModel::QuickSetupModel(LayoutProvider* layoutProvider, QObject* parent)
     : QAbstractListModel{parent}
     , m_layoutProvider{layoutProvider}
@@ -40,7 +40,7 @@ QVariant QuickSetupModel::data(const QModelIndex& index, int role) const
         return {};
     }
     const auto layouts = m_layoutProvider->layouts();
-    const auto& layout  = layouts.at(index.row());
+    const auto& layout = layouts.at(index.row());
 
     switch(role) {
         case(Qt::DisplayRole): {
@@ -56,4 +56,4 @@ QVariant QuickSetupModel::data(const QModelIndex& index, int role) const
 
     return {};
 }
-} // namespace Gui
+} // namespace Fy::Gui

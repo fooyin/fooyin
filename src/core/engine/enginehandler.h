@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QThread>
 
-namespace Core::Engine {
+namespace Fy::Core::Engine {
 class Engine;
 
 class EngineHandler : public Utils::Worker
@@ -48,4 +48,4 @@ protected:
 private:
     std::unique_ptr<Engine> m_engine;
 };
-} // namespace Core::Engine
+} // namespace Fy::Core::Engine

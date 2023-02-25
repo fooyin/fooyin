@@ -26,12 +26,15 @@
 
 #include <utils/worker.h>
 
+namespace Fy {
+
 namespace Core::DB {
 class Database;
 }
 
 namespace Filters {
 class FilterDatabase;
+
 class FilterDatabaseManager : public Utils::Worker
 {
     Q_OBJECT
@@ -54,3 +57,4 @@ private:
     std::unique_ptr<FilterDatabase> m_filterDatabase;
 };
 } // namespace Filters
+} // namespace Fy

@@ -21,8 +21,8 @@
 
 class QString;
 
-namespace Core {
+namespace Fy::Core {
 QString coverPath();
 QString settingsPath();
 QString layoutsPath();
-} // namespace Core
+} // namespace Fy::Core

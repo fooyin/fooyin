@@ -25,6 +25,8 @@
 
 class QHBoxLayout;
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
@@ -67,3 +69,4 @@ private:
     ProgressWidget* m_progress;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

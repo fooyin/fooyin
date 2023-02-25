@@ -24,7 +24,7 @@
 #include <QMainWindow>
 #include <QMenuBar>
 
-namespace Utils {
+namespace Fy::Utils {
 ActionManager::ActionManager(QObject* parent)
     : QObject{parent}
 { }
@@ -105,4 +105,4 @@ void ActionManager::containerDestroyed(QObject* sender)
     auto* container = static_cast<ActionContainer*>(sender);
     m_idContainerMap.erase(container->id());
 }
-} // namespace Utils
+} // namespace Fy::Utils

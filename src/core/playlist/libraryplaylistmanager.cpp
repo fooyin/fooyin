@@ -22,7 +22,7 @@
 #include "playlist.h"
 #include "playlisthandler.h"
 
-namespace Core::Playlist {
+namespace Fy::Core::Playlist {
 LibraryPlaylistManager::LibraryPlaylistManager(PlaylistHandler* playlistHandler)
     : m_playlistHandler(playlistHandler)
 { }
@@ -47,4 +47,4 @@ void LibraryPlaylistManager::activatePlaylist(PlaylistHandler* playlistHandler, 
 
     currentPlaylist->changeTrack(id);
 }
-} // namespace Core::Playlist
+} // namespace Fy::Core::Playlist

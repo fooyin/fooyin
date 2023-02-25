@@ -21,7 +21,7 @@
 
 #include <QFrame>
 
-namespace Utils {
+namespace Fy::Utils {
 class OverlayFilter : public QWidget
 {
     Q_OBJECT
@@ -33,4 +33,4 @@ public:
 protected:
     void paintEvent(QPaintEvent* event) override;
 };
-} // namespace Utils
+} // namespace Fy::Utils

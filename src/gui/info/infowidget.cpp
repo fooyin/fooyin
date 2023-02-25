@@ -34,7 +34,7 @@
 #include <QMenu>
 #include <QTableWidget>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerManager{playerManager}
@@ -154,4 +154,4 @@ void InfoWidget::layoutEditingMenu(Utils::ActionContainer* menu)
     menu->addAction(showScrollBar);
     menu->addAction(altColours);
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

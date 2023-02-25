@@ -21,7 +21,7 @@
 
 #include "core/models/trackfwd.h"
 
-namespace Core::Playlist {
+namespace Fy::Core::Playlist {
 class Playlist;
 class PlaylistManager
 {
@@ -41,4 +41,4 @@ public:
     virtual int createPlaylist(const TrackPtrList& tracks, const QString& name) = 0;
     virtual int createEmptyPlaylist()                                           = 0;
 };
-} // namespace Core::Playlist
+} // namespace Fy::Core::Playlist

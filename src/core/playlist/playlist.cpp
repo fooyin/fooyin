@@ -25,7 +25,7 @@
 
 #include <QMessageBox>
 
-namespace Core::Playlist {
+namespace Fy::Core::Playlist {
 Playlist::Playlist(Player::PlayerManager* playerManager, int idx, QString name)
     : m_playerManager{playerManager}
     , m_name{std::move(name)}
@@ -190,4 +190,4 @@ int Playlist::numberOfTracks() const
 {
     return static_cast<int>(m_tracks.size());
 }
-} // namespace Core::Playlist
+} // namespace Fy::Core::Playlist

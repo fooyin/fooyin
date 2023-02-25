@@ -24,7 +24,7 @@
 class mpv_event;
 class mpv_handle;
 
-namespace Core {
+namespace Fy::Core {
 class Track;
 
 namespace Engine {
@@ -59,4 +59,4 @@ private:
     mpv_handle* m_mpv;
 };
 } // namespace Engine
-} // namespace Core
+} // namespace Fy::Core

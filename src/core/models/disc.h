@@ -21,7 +21,7 @@
 
 #include "container.h"
 
-namespace Core {
+namespace Fy::Core {
 class Album;
 class Disc : public Container
 {
@@ -33,4 +33,4 @@ public:
 private:
     int m_number;
 };
-} // namespace Core
+} // namespace Fy::Core

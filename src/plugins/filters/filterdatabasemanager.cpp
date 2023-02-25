@@ -24,7 +24,7 @@
 #include <core/database/database.h>
 #include <utils/helpers.h>
 
-namespace Filters {
+namespace Fy::Filters {
 void filterByType(Core::Track* track, const ActiveFilters& filters, int& matches)
 {
     for(const auto& [filter, ids] : filters) {
@@ -132,4 +132,4 @@ void FilterDatabaseManager::filterTracks(const Core::TrackPtrList& tracks, const
     }
     emit tracksFiltered(filteredTracks);
 }
-} // namespace Filters
+} // namespace Fy::Filters

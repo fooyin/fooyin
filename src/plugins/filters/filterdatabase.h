@@ -25,7 +25,7 @@
 #include <core/library/sorting/sortorder.h>
 #include <core/models/trackfwd.h>
 
-namespace Filters {
+namespace Fy::Filters {
 class FilterDatabase : public Core::DB::Module
 {
 public:
@@ -44,4 +44,4 @@ public:
 protected:
     [[nodiscard]] const Module* module() const;
 };
-} // namespace Filters
+} // namespace Fy::Filters

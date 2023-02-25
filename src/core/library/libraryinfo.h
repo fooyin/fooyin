@@ -21,7 +21,7 @@
 
 #include <QString>
 
-namespace Core::Library {
+namespace Fy::Core::Library {
 struct LibraryInfo
 {
     LibraryInfo() = default;
@@ -34,4 +34,4 @@ struct LibraryInfo
     int id{-1};
 };
 using LibraryList = std::vector<std::unique_ptr<Core::Library::LibraryInfo>>;
-} // namespace Core::Library
+} // namespace Fy::Core::Library

@@ -26,7 +26,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 CoverWidget::CoverWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
                          QWidget* parent)
     : FyWidget{parent}
@@ -110,4 +110,4 @@ void CoverWidget::reloadCover()
         }
     }
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

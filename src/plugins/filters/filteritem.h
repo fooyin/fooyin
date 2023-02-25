@@ -21,7 +21,7 @@
 
 #include <QVariant>
 
-namespace Filters {
+namespace Fy::Filters {
 class FilterItem
 {
 public:
@@ -43,4 +43,4 @@ private:
     FilterItem* m_parentItem;
     QList<FilterItem*> m_childItems;
 };
-} // namespace Filters
+} // namespace Fy::Filters

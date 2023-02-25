@@ -23,7 +23,7 @@
 #include <QMenu>
 #include <QMenuBar>
 
-namespace Utils {
+namespace Fy::Utils {
 ActionContainer::ActionContainer(const Id& id, QObject* parent)
     : QObject{parent}
     , m_id{id}
@@ -308,4 +308,4 @@ bool MenuActionContainer::canBeAddedToContainer(ActionContainer* container) cons
 {
     return qobject_cast<MenuActionContainer*>(container) || qobject_cast<MenuBarActionContainer*>(container);
 }
-} // namespace Utils
+} // namespace Fy::Utils

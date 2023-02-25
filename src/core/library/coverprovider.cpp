@@ -24,7 +24,7 @@
 
 #include <QPixmapCache>
 
-namespace Core::Covers {
+namespace Fy::Core::Covers {
 QPixmap albumCover(Album* album)
 {
     const auto id = QString::number(album->hasCover() ? album->id() : 0);
@@ -35,4 +35,4 @@ QPixmap albumCover(Album* album)
     }
     return cover;
 }
-} // namespace Core::Covers
+} // namespace Fy::Core::Covers

@@ -24,7 +24,7 @@
 #include <QPluginLoader>
 #include <utility>
 
-namespace Plugins {
+namespace Fy::Plugins {
 PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJsonObject& allMetadata)
     : m_name{name}
     , m_filename{filename}
@@ -172,4 +172,4 @@ QString PluginInfo::url() const
 {
     return m_url;
 }
-} // namespace Plugins
+} // namespace Fy::Plugins

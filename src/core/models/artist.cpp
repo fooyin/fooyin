@@ -19,7 +19,7 @@
 
 #include "artist.h"
 
-namespace Core {
+namespace Fy::Core {
 Artist::Artist(QString name)
     : MusicItem()
     , m_id{-1}
@@ -41,4 +41,4 @@ void Artist::setId(int id)
     m_id = id;
 }
 
-} // namespace Core
+} // namespace Fy::Core

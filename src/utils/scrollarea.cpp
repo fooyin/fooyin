@@ -19,7 +19,7 @@
 
 #include "scrollarea.h"
 
-namespace Utils {
+namespace Fy::Utils {
 ScrollArea::ScrollArea(QWidget* parent)
     : QScrollArea{parent}
 {
@@ -82,4 +82,4 @@ int ScrollArea::scrollBarWidth() const
     }
     return list.first()->sizeHint().width();
 }
-} // namespace Utils
+} // namespace Fy::Utils

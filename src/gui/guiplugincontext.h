@@ -19,9 +19,11 @@
 
 #pragma once
 
-namespace Gui::Widgets {
+namespace Fy::Gui {
+
+namespace Widgets {
 class WidgetFactory;
-} // namespace Gui::Widgets
+} // namespace Widgets
 
 struct GuiPluginContext
 {
@@ -31,3 +33,4 @@ struct GuiPluginContext
 
     Gui::Widgets::WidgetFactory* widgetFactory;
 };
+} // namespace Fy::Gui

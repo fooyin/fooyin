@@ -23,7 +23,7 @@
 #include <QMetaEnum>
 #include <QString>
 
-namespace Utils::EnumHelper {
+namespace Fy::Utils::EnumHelper {
 template <typename E>
 E fromString(const QString& text)
 {
@@ -42,4 +42,4 @@ QString toString(E value)
     const int intValue = static_cast<int>(value);
     return QString::fromUtf8(QMetaEnum::fromType<E>().valueToKey(intValue));
 }
-} // namespace Utils::EnumHelper
+} // namespace Fy::Utils::EnumHelper

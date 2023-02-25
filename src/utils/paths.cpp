@@ -25,7 +25,7 @@
 #include <QDir>
 #include <QStandardPaths>
 
-namespace Utils {
+namespace Fy::Utils {
 QString operator/(const QString& first, const QString& second)
 {
     return (second.isEmpty()) ? Utils::File::cleanPath(first)
@@ -68,4 +68,4 @@ QString cachePath(const QString& appendPath)
     static const auto path = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     return createPath(path, appendPath);
 }
-} // namespace Utils
+} // namespace Fy::Utils

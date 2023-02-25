@@ -21,7 +21,7 @@
 
 #include <QCryptographicHash>
 
-namespace {
+namespace Fy {
 QString generateKeyHash(const QString& key, const QString& salt)
 {
     QByteArray data;
@@ -31,7 +31,6 @@ QString generateKeyHash(const QString& key, const QString& salt)
 
     return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
 }
-} // namespace
 
 SingleInstance::SingleInstance(const QString& key)
     : key{key}
@@ -99,3 +98,4 @@ void SingleInstance::release()
 
     lock.release();
 }
+} // namespace Fy

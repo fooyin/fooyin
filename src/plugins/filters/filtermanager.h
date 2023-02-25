@@ -26,6 +26,8 @@
 #include <core/library/sorting/sortorder.h>
 #include <core/models/trackfwd.h>
 
+namespace Fy {
+
 namespace Utils {
 class ThreadManager;
 }
@@ -101,3 +103,4 @@ private:
     std::unique_ptr<FilterManager::Private> p;
 };
 } // namespace Filters
+} // namespace Fy

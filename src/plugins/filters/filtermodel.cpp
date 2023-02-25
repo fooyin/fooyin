@@ -24,7 +24,7 @@
 
 #include <QSize>
 
-namespace Filters {
+namespace Fy::Filters {
 FilterModel::FilterModel(Filters::FilterType type, int index, QObject* parent)
     : QAbstractListModel(parent)
     , m_root(new FilterItem())
@@ -192,4 +192,4 @@ void FilterModel::setupModelData(const FilterEntries& items)
         }
     }
 }
-} // namespace Filters
+} // namespace Fy::Filters

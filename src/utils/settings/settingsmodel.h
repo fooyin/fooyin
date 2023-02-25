@@ -28,7 +28,7 @@
 
 #include <set>
 
-namespace Utils {
+namespace Fy::Utils {
 using CategoryList = std::vector<SettingsCategory*>;
 
 class SettingsModel : public QAbstractListModel
@@ -51,4 +51,4 @@ private:
     std::set<Id> m_pageIds;
     QIcon m_emptyIcon;
 };
-} // namespace Utils
+} // namespace Fy::Utils

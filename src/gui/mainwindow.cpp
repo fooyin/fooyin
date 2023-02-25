@@ -38,7 +38,7 @@
 #include <QTextEdit>
 #include <QTimer>
 
-namespace Gui {
+namespace Fy::Gui {
 struct MainWindow::Private
 {
     Utils::ActionManager* actionManager;
@@ -176,4 +176,4 @@ void MainWindow::enableLayoutEditing(bool enable)
 {
     p->settings->set<Settings::LayoutEditing>(enable);
 }
-} // namespace Gui
+} // namespace Fy::Gui

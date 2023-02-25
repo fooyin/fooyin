@@ -21,10 +21,10 @@
 
 #include "module.h"
 
-namespace Core::DB {
+namespace Fy::Core::DB {
 class Playlist : private Module
 {
 public:
     explicit Playlist(const QString& connectionName);
 };
-} // namespace Core::DB
+} // namespace Fy::Core::DB

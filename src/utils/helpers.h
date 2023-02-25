@@ -21,7 +21,7 @@
 
 #include <algorithm>
 
-namespace Utils {
+namespace Fy::Utils {
 template <typename C, typename F>
 constexpr int getIndex(C c, F f)
 {
@@ -45,4 +45,4 @@ constexpr bool hasKey(C c, F f)
 {
     return c.count(f);
 }
-} // namespace Utils
+} // namespace Fy::Utils

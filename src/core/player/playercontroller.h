@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
@@ -73,3 +75,4 @@ private:
     bool m_counted;
 };
 } // namespace Core::Player
+} // namespace Fy

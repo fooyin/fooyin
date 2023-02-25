@@ -26,7 +26,7 @@ class QString;
 class QLabel;
 class QWidget;
 
-namespace Utils {
+namespace Fy::Utils {
 namespace File {
 QString cleanPath(const QString& path);
 bool isSamePath(const QString& filename1, const QString& filename2);
@@ -49,4 +49,4 @@ uint64_t currentDateToInt();
 QString capitalise(const QString& s);
 
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
-} // namespace Utils
+} // namespace Fy::Utils

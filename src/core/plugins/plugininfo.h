@@ -23,7 +23,7 @@
 #include <QPluginLoader>
 #include <QString>
 
-namespace Plugins {
+namespace Fy::Plugins {
 class Plugin;
 
 class PluginInfo
@@ -88,4 +88,4 @@ private:
     Plugin* m_plugin;
     QPluginLoader m_loader;
 };
-} // namespace Plugins
+} // namespace Fy::Plugins

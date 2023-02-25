@@ -24,7 +24,7 @@
 #include <QScrollBar>
 #include <QStyledItemDelegate>
 
-namespace Utils {
+namespace Fy::Utils {
 class SimpleListViewDelegate : public QStyledItemDelegate
 {
 public:
@@ -52,4 +52,4 @@ private:
     SimpleListViewDelegate* m_delegate;
     int m_width;
 };
-} // namespace Utils
+} // namespace Fy::Utils
