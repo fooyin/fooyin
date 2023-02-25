@@ -35,7 +35,9 @@
 #include <QFileInfo>
 #include <QHeaderView>
 #include <QInputDialog>
+#include <QLabel>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QTableView>
 #include <QVBoxLayout>
 
@@ -55,36 +57,21 @@ private:
     Core::Library::LibraryManager* m_libraryManager;
     Utils::SettingsManager* m_settings;
 
-    QVBoxLayout* m_mainLayout;
-    QHBoxLayout* m_libraryLayout;
-
     QTableView* m_libraryList;
     LibraryModel* m_model;
 
-    QWidget* m_buttons;
-
-    QVBoxLayout* m_buttonsLayout;
-    QPushButton* m_addButton;
-    QPushButton* m_removeButton;
-    QPushButton* m_renameButton;
-
     QCheckBox* m_autoRefresh;
+    QSpinBox* m_lazyTracksBox;
 };
 
 LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager,
                                                    Utils::SettingsManager* settings)
     : m_libraryManager{libraryManager}
     , m_settings{settings}
-    , m_mainLayout{new QVBoxLayout(this)}
-    , m_libraryLayout{new QHBoxLayout()}
     , m_libraryList{new QTableView(this)}
     , m_model{new LibraryModel(m_libraryManager, this)}
-    , m_buttons{new QWidget(this)}
-    , m_buttonsLayout{new QVBoxLayout(m_buttons)}
-    , m_addButton{new QPushButton("Add", this)}
-    , m_removeButton{new QPushButton("Remove", this)}
-    , m_renameButton{new QPushButton("Rename", this)}
     , m_autoRefresh{new QCheckBox("Auto refresh on startup", this)}
+    , m_lazyTracksBox{new QSpinBox(this)}
 {
     m_libraryList->setModel(m_model);
 
@@ -95,26 +82,50 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     // Hide Id column
     m_libraryList->hideColumn(0);
 
+    auto* buttons       = new QWidget(this);
+    auto* buttonsLayout = new QVBoxLayout(buttons);
+    buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+
+    auto* addButton    = new QPushButton("Add", this);
+    auto* removeButton = new QPushButton("Remove", this);
+    auto* renameButton = new QPushButton("Rename", this);
+
+    buttonsLayout->addWidget(addButton);
+    buttonsLayout->addWidget(removeButton);
+    buttonsLayout->addWidget(renameButton);
+
+    auto* libraryLayout = new QHBoxLayout();
+    libraryLayout->addWidget(m_libraryList);
+    libraryLayout->addWidget(buttons);
+
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
     m_autoRefresh->setChecked(m_settings->value<Core::Settings::AutoRefresh>());
 
-    m_buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    m_buttonsLayout->addWidget(m_addButton);
-    m_buttonsLayout->addWidget(m_removeButton);
-    m_buttonsLayout->addWidget(m_renameButton);
+    auto* lazyTracksLabel  = new QLabel("Lazy Tracks", this);
+    auto* lazyTracksLayout = new QHBoxLayout();
+    m_lazyTracksBox->setMinimum(0);
+    m_lazyTracksBox->setMaximum(100000);
+    m_lazyTracksBox->setSingleStep(250);
+    m_lazyTracksBox->setValue(m_settings->value<Core::Settings::LazyTracks>());
+    lazyTracksLayout->addWidget(m_lazyTracksBox);
+    lazyTracksLayout->addStretch();
 
-    m_libraryLayout->addWidget(m_libraryList);
-    m_libraryLayout->addWidget(m_buttons);
-    m_mainLayout->addLayout(m_libraryLayout);
-    m_mainLayout->addWidget(m_autoRefresh);
+    auto* lazySettingsLayout = new QGridLayout();
+    lazySettingsLayout->addWidget(lazyTracksLabel, 1, 0);
+    lazySettingsLayout->addLayout(lazyTracksLayout, 1, 1);
 
-    connect(m_addButton, &QPushButton::clicked, this, [this]() {
+    auto* mainLayout = new QVBoxLayout(this);
+    mainLayout->addLayout(libraryLayout);
+    mainLayout->addWidget(m_autoRefresh);
+    mainLayout->addLayout(lazySettingsLayout);
+
+    connect(addButton, &QPushButton::clicked, this, [this]() {
         addLibrary();
     });
-    connect(m_removeButton, &QPushButton::clicked, this, [this]() {
+    connect(removeButton, &QPushButton::clicked, this, [this]() {
         removeLibrary();
     });
-    connect(m_renameButton, &QPushButton::clicked, this, [this]() {
+    connect(renameButton, &QPushButton::clicked, this, [this]() {
         renameLibrary();
     });
 }
@@ -122,6 +133,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
 void LibraryGeneralPageWidget::apply()
 {
     m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
+    m_settings->set<Core::Settings::LazyTracks>(m_lazyTracksBox->value());
     m_model->processQueue();
 }
 

@@ -19,15 +19,20 @@
 
 #include "librarydatabasemanager.h"
 
+#include "core/coresettings.h"
 #include "core/database/database.h"
 #include "core/database/librarydatabase.h"
 #include "core/tagging/tags.h"
 
+#include <utils/settings/settingsmanager.h>
+
 namespace Core::Library {
-LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, QObject* parent)
+LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
+                                               QObject* parent)
     : Worker{parent}
     , m_database{database}
     , m_libraryDatabase{m_database->libraryDatabase()}
+    , m_settings{settings}
 { }
 
 LibraryDatabaseManager::~LibraryDatabaseManager()
@@ -35,12 +40,22 @@ LibraryDatabaseManager::~LibraryDatabaseManager()
     m_database->closeDatabase();
 }
 
-void LibraryDatabaseManager::getAllTracks()
+void LibraryDatabaseManager::getAllTracks(SortOrder order)
 {
     TrackList tracks;
-    const bool success = m_libraryDatabase->getAllTracks(tracks);
-    if(success) {
-        emit gotTracks(tracks);
+    const int limit = m_settings->value<Settings::LazyTracks>();
+    int offset      = 0;
+
+    if(limit > 0) {
+        while(m_libraryDatabase->getAllTracks(tracks, order, offset, limit)) {
+            offset += limit;
+            emit gotTracks(tracks);
+        }
+    }
+    else {
+        if(m_libraryDatabase->getAllTracks(tracks, order)) {
+            emit gotTracks(tracks);
+        }
     }
 }
 

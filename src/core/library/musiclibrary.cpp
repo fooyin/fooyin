@@ -61,7 +61,7 @@ struct MusicLibrary::Private
         , database{database}
         , settings{settings}
         , scanner{libraryManager, database}
-        , libraryDatabaseManager{database}
+        , libraryDatabaseManager{database, settings}
     { }
 };
 
@@ -132,7 +132,7 @@ void MusicLibrary::addInteractor(MusicLibraryInteractor* interactor)
 
 void MusicLibrary::loadTracks(const TrackList& tracks)
 {
-    p->trackStore.clear();
+    //    p->trackStore.clear();
     refreshTracks(tracks);
 }
 
@@ -173,10 +173,10 @@ void MusicLibrary::refresh()
 
 void MusicLibrary::refreshTracks(const TrackList& result)
 {
-    p->trackStore.clear();
+    //    p->trackStore.clear();
 
     p->trackStore.add(result);
-    p->trackStore.sort(p->order);
+    //    p->trackStore.sort(p->order);
 
     emit tracksLoaded(p->trackStore.tracks());
 }
@@ -248,6 +248,6 @@ void MusicLibrary::trackSelectionChanged(const TrackSet& tracks)
 
 void MusicLibrary::getAllTracks()
 {
-    emit loadAllTracks();
+    emit loadAllTracks(p->order);
 }
 } // namespace Core::Library

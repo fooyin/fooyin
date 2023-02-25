@@ -57,14 +57,17 @@ public:
     explicit PlaylistItem(Type type = Type::Root, Core::MusicItem* data = {}, PlaylistItem* parentItem = nullptr);
 
     void setIndex(int idx);
+    void setKey(const QString& key);
 
     [[nodiscard]] Core::MusicItem* data() const;
     [[nodiscard]] Type type();
     [[nodiscard]] int index() const;
+    [[nodiscard]] QString key() const;
 
 private:
     Core::MusicItem* m_data;
     Type m_type;
     int m_index;
+    QString m_key;
 };
 } // namespace Gui::Widgets

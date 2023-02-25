@@ -94,7 +94,7 @@ signals:
     void tracksAdded();
     void tracksUpdated();
     void tracksDeleted();
-    void loadAllTracks();
+    void loadAllTracks(SortOrder order);
     void updateSaveTracks(Core::TrackPtrList tracks);
 
 protected:
