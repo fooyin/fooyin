@@ -72,18 +72,13 @@ void filterByType(Core::Track* track, const ActiveFilters& filters, int& matches
 FilterDatabaseManager::FilterDatabaseManager(Core::DB::Database* database, QObject* parent)
     : Worker{parent}
     , m_database{database}
-    , m_filterDatabase{std::make_unique<FilterDatabase>(m_database->connectionName())}
+    , m_filterDatabase{m_database->connectionName()}
 { }
-
-FilterDatabaseManager::~FilterDatabaseManager()
-{
-    m_database->closeDatabase();
-}
 
 void FilterDatabaseManager::getAllItems(Filters::FilterType type, Core::Library::SortOrder order)
 {
     FilterEntries items;
-    const bool success = m_filterDatabase->getAllItems(type, order, items);
+    const bool success = m_filterDatabase.getAllItems(type, order, items);
     if(success) {
         emit gotItems(type, items);
     }
@@ -93,7 +88,7 @@ void FilterDatabaseManager::getItemsByFilter(Filters::FilterType type, const Act
                                              const QString& search, Core::Library::SortOrder order)
 {
     FilterEntries items;
-    const bool success = m_filterDatabase->getItemsByFilter(type, filters, search, order, items);
+    const bool success = m_filterDatabase.getItemsByFilter(type, filters, search, order, items);
     if(success) {
         emit gotItems(type, items);
     }

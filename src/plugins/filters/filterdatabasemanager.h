@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "filterdatabase.h"
 #include "filterfwd.h"
 
 #include <core/library/sorting/sortorder.h>
@@ -31,14 +32,12 @@ class Database;
 }
 
 namespace Filters {
-class FilterDatabase;
 class FilterDatabaseManager : public Utils::Worker
 {
     Q_OBJECT
 
 public:
     explicit FilterDatabaseManager(Core::DB::Database* database, QObject* parent = nullptr);
-    ~FilterDatabaseManager() override;
 
     void getAllItems(Filters::FilterType type, Core::Library::SortOrder order);
     void getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
@@ -51,6 +50,6 @@ signals:
 
 private:
     Core::DB::Database* m_database;
-    std::unique_ptr<FilterDatabase> m_filterDatabase;
+    FilterDatabase m_filterDatabase;
 };
 } // namespace Filters
