@@ -10,6 +10,8 @@ project(
     LANGUAGES CXX
 )
 
+set(DATABASE_VERSION "0.6.0")
+
 include(cmake/CheckLevel.cmake)
 
 include(FeatureSummary)
@@ -66,39 +68,36 @@ set_package_properties(Libmpv PROPERTIES TYPE REQUIRED)
 configure_file(src/app/version.h.in app/version.h @ONLY)
 add_library(fooyin_version OBJECT)
 add_library(fooyin::version ALIAS fooyin_version)
-target_include_directories(
-    fooyin_version
+target_include_directories(fooyin_version
     PUBLIC
-    "${PROJECT_BINARY_DIR}/app"
+      "${PROJECT_BINARY_DIR}/app"
 )
 
-add_library(
-    fooyin_lib
+add_library(fooyin_lib
     OBJECT
-    src/app/application.cpp
-    src/app/singleinstance.cpp
+      src/app/application.cpp
+      src/app/singleinstance.cpp
 )
 add_library(fooyin::lib ALIAS fooyin_lib)
 
-target_include_directories(
-    fooyin_lib ${warning_guard}
+target_include_directories(fooyin_lib
     PUBLIC
-    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/app>"
+      "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/app>"
 )
 
 add_subdirectory(src)
 
 target_link_libraries(fooyin_lib
    PRIVATE
-   Qt6::Core
-   Qt6::Gui
-   Qt6::Widgets
-   Qt6::Sql
-   fooyin::core
-   fooyin::gui
-   fooyin::utils
-   #${SDL2_LIBRARIES}
-   #${FFMPEG_LIBRARIES}
+     Qt6::Core
+     Qt6::Gui
+     Qt6::Widgets
+     Qt6::Sql
+     fooyin::core
+     fooyin::gui
+     fooyin::utils
+     #${SDL2_LIBRARIES}
+     #${FFMPEG_LIBRARIES}
 )
 
 target_compile_features(fooyin_lib PUBLIC cxx_std_17)
@@ -126,9 +125,9 @@ set_target_properties(fooyin_exe PROPERTIES
 target_compile_features(fooyin_exe PRIVATE cxx_std_17)
 target_link_libraries(fooyin_exe
     PRIVATE
-    Qt6::Widgets
-    fooyin_version
-    fooyin_lib
+      Qt6::Widgets
+      fooyin_version
+      fooyin_lib
 )
 
 # ---- Fooyin data ----
