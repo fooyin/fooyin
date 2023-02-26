@@ -19,7 +19,7 @@
 
 #include "comboicon.h"
 
-#include <utils/utils.h>
+#include "utils.h"
 
 #include <QEvent>
 #include <QVBoxLayout>

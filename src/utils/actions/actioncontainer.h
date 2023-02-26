@@ -19,8 +19,9 @@
 
 #pragma once
 
+#include "utils/id.h"
+
 #include <QObject>
-#include <utils/id.h>
 
 class QMenu;
 class QMenuBar;
