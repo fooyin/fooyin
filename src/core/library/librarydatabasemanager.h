@@ -37,7 +37,8 @@ class LibraryDatabaseManager : public Utils::Worker
 
 public:
     explicit LibraryDatabaseManager(DB::Database* database, QObject* parent = nullptr);
-    ~LibraryDatabaseManager() override;
+
+    void stopThread() override;
 
     void getAllTracks();
     void updateTracks(const TrackPtrList& tracks);
@@ -50,4 +51,4 @@ private:
     DB::LibraryDatabase* m_libraryDatabase;
 };
 } // namespace Library
-} // namespace Core
+} // namespace Fy::Core

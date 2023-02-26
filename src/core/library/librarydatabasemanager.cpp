@@ -30,7 +30,7 @@ LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, QObject* 
     , m_libraryDatabase{m_database->libraryDatabase()}
 { }
 
-LibraryDatabaseManager::~LibraryDatabaseManager()
+void LibraryDatabaseManager::stopThread()
 {
     m_database->closeDatabase();
 }

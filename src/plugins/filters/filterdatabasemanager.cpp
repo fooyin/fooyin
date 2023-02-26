@@ -75,7 +75,9 @@ FilterDatabaseManager::FilterDatabaseManager(Core::DB::Database* database, QObje
     , m_filterDatabase{std::make_unique<FilterDatabase>(m_database->connectionName())}
 { }
 
-FilterDatabaseManager::~FilterDatabaseManager()
+FilterDatabaseManager::~FilterDatabaseManager() = default;
+
+void FilterDatabaseManager::stopThread()
 {
     m_database->closeDatabase();
 }

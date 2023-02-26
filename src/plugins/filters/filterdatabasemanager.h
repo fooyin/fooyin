@@ -43,13 +43,15 @@ public:
     explicit FilterDatabaseManager(Core::DB::Database* database, QObject* parent = nullptr);
     ~FilterDatabaseManager() override;
 
+    void stopThread() override;
+
     void getAllItems(Filters::FilterType type, Core::Library::SortOrder order);
     void getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
                           Core::Library::SortOrder order);
     void filterTracks(const Core::TrackPtrList& tracks, const ActiveFilters& filters, const QString& search);
 
 signals:
-    void gotItems(Filters::FilterType type, const FilterEntries& result);
+    void gotItems(Filters::FilterType type, const Fy::Filters::FilterEntries& result);
     void tracksFiltered(const Core::TrackPtrList& result);
 
 private:
