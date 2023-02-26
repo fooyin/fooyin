@@ -21,7 +21,7 @@
 #include "singleinstance.h"
 #include "version.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
     Q_INIT_RESOURCE(icons);
 
@@ -36,7 +36,5 @@ int main(int argc, char* argv[])
     }
 
     const Fy::Application app{argc, argv};
-    const int result = QCoreApplication::exec();
-
-    return result;
+    return QCoreApplication::exec();
 }
