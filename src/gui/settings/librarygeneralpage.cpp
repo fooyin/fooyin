@@ -101,8 +101,11 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
     m_autoRefresh->setChecked(m_settings->value<Core::Settings::AutoRefresh>());
 
-    auto* lazyTracksLabel  = new QLabel("Lazy Tracks", this);
+    auto* lazyTracksLabel  = new QLabel("Lazy Tracks:", this);
     auto* lazyTracksLayout = new QHBoxLayout();
+    m_lazyTracksBox->setToolTip(
+        tr("Load tracks from the database in groups of the number specified. \nThis can improve the startup speed "
+           "of the playlist for large libraries. \nSet to 0 to turn off. \n(Default: 2500)"));
     m_lazyTracksBox->setMinimum(0);
     m_lazyTracksBox->setMaximum(100000);
     m_lazyTracksBox->setSingleStep(250);
