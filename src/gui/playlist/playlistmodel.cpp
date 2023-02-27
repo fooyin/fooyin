@@ -81,7 +81,7 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::L
     connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, this, &PlaylistModel::setupModelData);
     connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, this, &PlaylistModel::reset);
-    connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &PlaylistModel::setupModelData);
     connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &PlaylistModel::reset);
 
     m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
