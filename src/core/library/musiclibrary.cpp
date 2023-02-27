@@ -75,7 +75,7 @@ MusicLibrary::MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteracto
     p->threadManager->moveToNewThread(&p->libraryDatabaseManager);
 
     connect(p->libraryManager, &Library::LibraryManager::libraryRemoved, &p->scanner, &LibraryScanner::stopThread);
-    connect(p->libraryManager, &Library::LibraryManager::libraryRemoved, this, &MusicLibrary::libraryRemoved);
+    connect(p->libraryManager, &Library::LibraryManager::libraryRemoved, this, &MusicLibrary::removeLibrary);
 
     connect(this, &MusicLibrary::runLibraryScan, &p->scanner, &LibraryScanner::scanLibrary);
     connect(this, &MusicLibrary::runAllLibrariesScan, &p->scanner, &LibraryScanner::scanAll);
@@ -102,6 +102,12 @@ void MusicLibrary::load()
 void MusicLibrary::libraryAdded()
 {
     load();
+}
+
+void MusicLibrary::removeLibrary(int id)
+{
+    p->trackStore.removeLibrary(id);
+    emit libraryRemoved();
 }
 
 void MusicLibrary::prepareTracks(int idx)

@@ -80,9 +80,9 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::L
     });
     connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, this, &PlaylistModel::setupModelData);
     connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &PlaylistModel::reset);
-    //    connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, this, &PlaylistModel::reset);
-    //    connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &PlaylistModel::reset);
-    //    connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, this, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &PlaylistModel::reset);
 
     m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_pausedIcon  = m_pausedIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -437,9 +437,10 @@ PlaylistItem* PlaylistModel::checkInsertKey(const QString& key, PlaylistItem::Ty
         node->setKey(key);
     }
     PlaylistItem* child = m_nodes.at(key).get();
-    beginInsertRows(indexForItem(parent), parent->childCount(), parent->childCount() + 1);
-    parent->appendChild(child);
-    endInsertRows();
+    if(Utils::contains(parent->children(), child)) {
+        return child;
+    }
+    insertRow(parent, child);
     return child;
 }
 
@@ -461,6 +462,14 @@ void PlaylistModel::createAlbums(const Core::TrackPtrList& tracks)
             album->addTrack(track);
         }
     }
+}
+
+void PlaylistModel::insertRow(PlaylistItem* parent, PlaylistItem* child)
+{
+    const int row = parent->childCount();
+    beginInsertRows(indexForItem(parent), row, row);
+    parent->appendChild(child);
+    endInsertRows();
 }
 
 QModelIndex PlaylistModel::indexForId(int id) const

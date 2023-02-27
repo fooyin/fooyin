@@ -36,6 +36,7 @@ public:
     void update(const TrackList& tracks);
     void markForDelete(const IdSet& tracks);
     void remove(const IdSet& tracks);
+    void removeLibrary(int id);
 
     void sort(SortOrder order);
 

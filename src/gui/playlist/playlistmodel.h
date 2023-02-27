@@ -90,6 +90,8 @@ protected:
     void filterModel(const Core::TrackPtrList& tracks);
 
 private:
+    void insertRow(PlaylistItem* parent, PlaylistItem* child);
+
     using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
     Core::Player::PlayerManager* m_playerManager;
