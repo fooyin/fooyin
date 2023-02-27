@@ -389,10 +389,6 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         return false;
     }
 
-    if(!q.next()) {
-        return false;
-    }
-
     while(q.next()) {
         Track track{q.value(1).toString()};
 
@@ -437,7 +433,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         result.emplace_back(track);
     }
 
-    return true;
+    return !result.empty();
 }
 
 bool LibraryDatabase::dbFetchAlbums(Query& q, AlbumList& result)
