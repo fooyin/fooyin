@@ -27,7 +27,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-namespace Utils {
+namespace Fy::Utils {
 namespace File {
 QString cleanPath(const QString& path)
 {
@@ -168,5 +168,4 @@ QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
     pixmap.setMask(orig.createMaskFromColor(Qt::transparent));
     return pixmap;
 }
-
-} // namespace Utils
+} // namespace Fy::Utils

@@ -21,8 +21,8 @@
 
 #include <QString>
 
-namespace Utils {
+namespace Fy::Utils {
 QString configPath(const QString& appendPath = {});
 QString sharePath(const QString& appendPath = {});
 QString cachePath(const QString& appendPath = {});
-} // namespace Utils
+} // namespace Fy::Utils

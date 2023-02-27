@@ -24,6 +24,8 @@
 class QMenuBar;
 class QAction;
 
+namespace Fy {
+
 namespace Utils {
 class ActionManager;
 class ActionContainer;
@@ -44,3 +46,4 @@ private:
     Utils::ActionContainer* m_menubar;
 };
 } // namespace Gui
+} // namespace Fy

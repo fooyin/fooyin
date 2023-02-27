@@ -21,7 +21,7 @@
 
 #include <utils/helpers.h>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 PlaylistItem::PlaylistItem(Type type, Core::MusicItem* data, PlaylistItem* parent)
     : TreeItem{parent}
     , m_data{data}
@@ -58,4 +58,4 @@ QString PlaylistItem::key() const
 {
     return m_key;
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

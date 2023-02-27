@@ -28,7 +28,7 @@
 #include <QHBoxLayout>
 #include <QMenu>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 StatusWidget::StatusWidget(Core::Player::PlayerManager* playerManager, QWidget* parent)
     : FyWidget{parent}
     , m_playerManager{playerManager}
@@ -114,4 +114,4 @@ void StatusWidget::stateChanged(Core::Player::PlayState state)
             break;
     }
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

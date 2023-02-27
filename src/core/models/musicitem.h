@@ -19,11 +19,11 @@
 
 #pragma once
 
-namespace Core {
+namespace Fy::Core {
 class MusicItem
 {
 public:
     explicit MusicItem() = default;
     virtual ~MusicItem() = default;
 };
-} // namespace Core
+} // namespace Fy::Core

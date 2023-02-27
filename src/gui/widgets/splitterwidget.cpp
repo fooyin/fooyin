@@ -31,7 +31,7 @@
 #include <QJsonObject>
 #include <QMenu>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
                                Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
@@ -236,4 +236,4 @@ void SplitterWidget::loadLayout(QJsonObject& object)
     }
     restoreState(state);
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

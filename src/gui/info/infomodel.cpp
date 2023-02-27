@@ -24,7 +24,7 @@
 #include <core/models/track.h>
 #include <utils/utils.h>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 InfoModel::InfoModel(QObject* parent)
     : QAbstractItemModel(parent)
     , m_root(std::make_unique<InfoItem>())
@@ -178,4 +178,4 @@ QModelIndex InfoModel::parent(const QModelIndex& child) const
     // All rows are parents of root
     return {};
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

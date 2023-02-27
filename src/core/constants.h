@@ -19,4 +19,4 @@
 
 #pragma once
 
-namespace Core::Constants { } // namespace Core::Constants
+namespace Fy::Core::Constants { } // namespace Fy::Core::Constants

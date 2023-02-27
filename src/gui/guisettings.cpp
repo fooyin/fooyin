@@ -21,7 +21,7 @@
 
 #include <utils/settings/settingsmanager.h>
 
-namespace Gui::Settings {
+namespace Fy::Gui::Settings {
 GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
@@ -39,4 +39,4 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::InfoHeader, true, "Info");
     m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
 }
-} // namespace Gui::Settings
+} // namespace Fy::Gui::Settings

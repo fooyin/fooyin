@@ -24,6 +24,8 @@
 class QHBoxLayout;
 class QLineEdit;
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
@@ -61,3 +63,4 @@ private:
     QString m_defaultText;
 };
 } // namespace Filters
+} // namespace Fy

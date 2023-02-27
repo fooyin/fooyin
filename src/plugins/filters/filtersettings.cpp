@@ -21,7 +21,7 @@
 
 #include <utils/settings/settingsmanager.h>
 
-namespace Filters::Settings {
+namespace Fy::Filters::Settings {
 FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
@@ -29,4 +29,4 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::FilterHeader, true, "Filters");
     m_settings->createSetting(Settings::FilterScrollBar, true, "Filters");
 }
-} // namespace Filters::Settings
+} // namespace Fy::Filters::Settings

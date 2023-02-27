@@ -34,7 +34,7 @@
 #include <taglib/tstring.h>
 #include <taglib/xiphcomment.h>
 
-namespace Core::Tagging {
+namespace Fy::Core::Tagging {
 void scaleImage(QPixmap& image)
 {
     static const int maximumSize = 400;
@@ -279,4 +279,4 @@ bool isValidFile(const TagLib::FileRef& fileRef)
 {
     return (!fileRef.isNull() && fileRef.tag() && fileRef.file() && fileRef.file()->isValid());
 }
-} // namespace Core::Tagging
+} // namespace Fy::Core::Tagging

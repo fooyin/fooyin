@@ -23,7 +23,7 @@
 
 #include <QThread>
 
-namespace Utils {
+namespace Fy::Utils {
 ThreadManager::ThreadManager(QObject* parent)
     : QObject{parent}
 { }
@@ -48,4 +48,4 @@ void ThreadManager::moveToNewThread(Worker* worker)
     connect(this, &ThreadManager::stop, worker, &Worker::stopThread);
     m_workers.emplace_back(worker);
 }
-} // namespace Utils
+} // namespace Fy::Utils

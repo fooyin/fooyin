@@ -21,6 +21,8 @@
 
 #include <utils/settings/settingspage.h>
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 class SettingsDialogController;
@@ -40,3 +42,4 @@ public:
                        Utils::SettingsManager* settings);
 };
 } // namespace Gui::Settings
+} // namespace Fy

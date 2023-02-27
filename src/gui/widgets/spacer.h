@@ -21,7 +21,7 @@
 
 #include "gui/fywidget.h"
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 class Spacer : public FyWidget
 {
 public:
@@ -29,4 +29,4 @@ public:
 
     [[nodiscard]] QString name() const override;
 };
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

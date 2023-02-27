@@ -24,11 +24,14 @@
 
 #include <utils/worker.h>
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
 
 namespace Core {
+
 namespace DB {
 class Database;
 class LibraryDatabase;
@@ -42,7 +45,8 @@ class LibraryDatabaseManager : public Utils::Worker
 public:
     explicit LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
                                     QObject* parent = nullptr);
-    ~LibraryDatabaseManager() override;
+
+    void stopThread() override;
 
     void getAllTracks(SortOrder order);
     void updateTracks(const TrackPtrList& tracks);
@@ -57,3 +61,4 @@ private:
 };
 } // namespace Library
 } // namespace Core
+} // namespace Fy

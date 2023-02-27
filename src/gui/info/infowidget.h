@@ -26,6 +26,8 @@
 #include <QHBoxLayout>
 #include <QWidget>
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
@@ -71,3 +73,4 @@ private:
     InfoModel m_model;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

@@ -22,7 +22,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 
-namespace Utils {
+namespace Fy::Utils {
 OverlayFilter::OverlayFilter(QWidget* parent)
     : QWidget(parent)
 {
@@ -41,4 +41,4 @@ void OverlayFilter::paintEvent(QPaintEvent* e)
 
     painter.fillRect(rect(), colour);
 }
-} // namespace Utils
+} // namespace Fy::Utils

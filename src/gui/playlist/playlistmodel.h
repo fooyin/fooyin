@@ -28,6 +28,8 @@
 #include <QAbstractItemModel>
 #include <QPixmap>
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
@@ -109,3 +111,4 @@ private:
     QPixmap m_pausedIcon;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

@@ -27,7 +27,7 @@
 #include <taglib/fileref.h>
 #include <taglib/tfilestream.h>
 
-namespace Core::Tagging {
+namespace Fy::Core::Tagging {
 struct ReadingProperties
 {
     TagLib::AudioProperties::ReadStyle readStyle{TagLib::AudioProperties::ReadStyle::Fast};
@@ -220,4 +220,4 @@ bool writeMetaData(const Track& track)
     fileRef.file()->setProperties(parsedTag.map);
     return fileRef.save();
 }
-} // namespace Core::Tagging
+} // namespace Fy::Core::Tagging

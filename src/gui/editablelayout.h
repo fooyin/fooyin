@@ -25,6 +25,8 @@
 
 class QHBoxLayout;
 
+namespace Fy {
+
 namespace Utils {
 class OverlayFilter;
 class ActionManager;
@@ -78,3 +80,4 @@ private:
     bool m_layoutEditing;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

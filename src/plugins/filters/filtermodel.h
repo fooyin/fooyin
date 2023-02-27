@@ -23,8 +23,11 @@
 
 #include <QAbstractListModel>
 
+namespace Fy {
+
 namespace Filters {
 class FilterItem;
+
 class FilterModel : public QAbstractListModel
 {
 public:
@@ -58,3 +61,4 @@ private:
     int m_index;
 };
 } // namespace Filters
+} // namespace Fy

@@ -29,7 +29,7 @@
 
 #include <QHBoxLayout>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                                  QWidget* parent)
     : QWidget{parent}
@@ -102,4 +102,4 @@ void PlaylistControl::setMode(Core::Player::PlayMode mode) const
             return;
     }
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

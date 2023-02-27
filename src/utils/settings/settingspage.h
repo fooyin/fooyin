@@ -23,7 +23,7 @@
 
 #include <QWidget>
 
-namespace Utils {
+namespace Fy::Utils {
 class SettingsDialogController;
 
 class SettingsPageWidget : public QWidget
@@ -75,4 +75,4 @@ private:
     WidgetCreator m_widgetCreator;
     QWidget* m_widget;
 };
-} // namespace Utils
+} // namespace Fy::Utils

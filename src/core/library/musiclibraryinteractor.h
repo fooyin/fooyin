@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-namespace Core::Library {
+namespace Fy::Core::Library {
 class MusicLibraryInteractor : public QObject
 {
     Q_OBJECT
@@ -35,4 +35,4 @@ public:
     [[nodiscard]] virtual TrackPtrList tracks() const = 0;
     [[nodiscard]] virtual bool hasTracks() const      = 0;
 };
-} // namespace Core::Library
+} // namespace Fy::Core::Library

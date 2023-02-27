@@ -23,6 +23,8 @@
 
 class QHBoxLayout;
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 class ClickableLabel;
@@ -75,3 +77,4 @@ private:
     bool m_elapsedTotal;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

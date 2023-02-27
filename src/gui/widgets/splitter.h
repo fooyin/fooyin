@@ -21,6 +21,8 @@
 
 #include <QSplitter>
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 }
@@ -38,3 +40,4 @@ private:
     Utils::SettingsManager* m_settings;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

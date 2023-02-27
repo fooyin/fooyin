@@ -32,7 +32,7 @@
 #include <QHBoxLayout>
 #include <QSlider>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 ProgressWidget::ProgressWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                                QWidget* parent)
     : QWidget{parent}
@@ -152,4 +152,4 @@ void ProgressWidget::sliderDropped()
     const auto pos = m_slider->value();
     emit movedSlider(pos);
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

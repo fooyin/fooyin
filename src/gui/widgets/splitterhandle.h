@@ -21,7 +21,7 @@
 
 #include <QSplitterHandle>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 class SplitterHandle : public QSplitterHandle
 {
     Q_OBJECT
@@ -37,4 +37,4 @@ protected:
 private:
     bool m_showHandle;
 };
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

@@ -22,7 +22,7 @@
 #include "settingscategory.h"
 #include "utils/id.h"
 
-namespace Utils {
+namespace Fy::Utils {
 class SettingsPage;
 
 class SettingsDialogController : public QObject
@@ -41,4 +41,4 @@ public:
 private:
     PageList m_pages;
 };
-} // namespace Utils
+} // namespace Fy::Utils

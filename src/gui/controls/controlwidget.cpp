@@ -32,7 +32,7 @@
 #include <QHBoxLayout>
 #include <QMenu>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                              QWidget* parent)
     : FyWidget{parent}
@@ -68,4 +68,4 @@ QString ControlWidget::name() const
 {
     return "Controls";
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

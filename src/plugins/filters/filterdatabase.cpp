@@ -24,7 +24,7 @@
 #include <QBuffer>
 #include <QPixmap>
 
-namespace Filters {
+namespace Fy::Filters {
 QString getFilterJoins(const Filters::FilterType type = {})
 {
     QString joins;
@@ -289,4 +289,4 @@ const Core::DB::Module* FilterDatabase::module() const
 {
     return this;
 }
-} // namespace Filters
+} // namespace Fy::Filters

@@ -26,7 +26,7 @@
 
 #include <QMenu>
 
-namespace Gui {
+namespace Fy::Gui {
 MainMenuBar::MainMenuBar(Utils::ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
@@ -72,4 +72,4 @@ QMenuBar* MainMenuBar::menuBar() const
 {
     return m_menubar->menuBar();
 }
-} // namespace Gui
+} // namespace Fy::Gui

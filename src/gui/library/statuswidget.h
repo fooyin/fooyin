@@ -25,6 +25,8 @@
 
 class QHBoxLayout;
 
+namespace Fy {
+
 namespace Utils {
 class ClickableLabel;
 }
@@ -64,3 +66,4 @@ private:
     Utils::ClickableLabel* m_playing;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

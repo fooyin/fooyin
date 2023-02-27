@@ -23,7 +23,7 @@
 
 #include <utils/helpers.h>
 
-namespace Core {
+namespace Fy::Core {
 Album::Album(const QString& title)
     : Container{title}
     , m_id{-1}
@@ -143,4 +143,4 @@ void Album::reset()
     Container::reset();
     m_discCount = 0;
 }
-} // namespace Core
+} // namespace Fy::Core

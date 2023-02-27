@@ -21,8 +21,8 @@
 
 #include <QAbstractItemModel>
 
-namespace Utils {
-template<class Item>
+namespace Fy::Utils {
+template <class Item>
 class TreeModel : public QAbstractItemModel
 {
 public:
@@ -80,7 +80,7 @@ public:
             return {};
         }
 
-        auto* childItem      = static_cast<Item*>(index.internalPointer());
+        auto* childItem  = static_cast<Item*>(index.internalPointer());
         Item* parentItem = childItem->parent();
 
         if(parentItem == m_root.get()) {
@@ -123,4 +123,4 @@ public:
 private:
     std::unique_ptr<Item> m_root;
 };
-} // namespace Utils
+} // namespace Fy::Utils

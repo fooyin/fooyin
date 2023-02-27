@@ -26,7 +26,7 @@
 
 class QVBoxLayout;
 
-namespace Utils {
+namespace Fy::Utils {
 class ComboIcon : public QWidget
 {
     Q_OBJECT
@@ -83,6 +83,6 @@ private:
     int m_currentIndex;
     PathIconContainer m_icons;
 };
-} // namespace Utils
+} // namespace Fy::Utils
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Utils::ComboIcon::Attributes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Utils::ComboIcon::Attributes)

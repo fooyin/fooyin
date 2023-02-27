@@ -22,7 +22,7 @@
 #include <QFile>
 #include <QString>
 
-namespace Gui {
+namespace Fy::Gui {
 struct Layout
 {
     Layout() = default;
@@ -58,4 +58,4 @@ private:
     Layout m_currentLayout;
     QFile m_layoutFile;
 };
-} // namespace Gui
+} // namespace Fy::Gui

@@ -25,7 +25,7 @@
 #include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
 
-namespace Core::Player {
+namespace Fy::Core::Player {
 PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* parent)
     : PlayerManager{parent}
     , m_settings{settings}
@@ -198,4 +198,4 @@ double PlayerController::volume() const
 {
     return m_volume;
 }
-} // namespace Core::Player
+} // namespace Fy::Core::Player

@@ -27,7 +27,7 @@
 #include <QBoxLayout>
 #include <QMenu>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 Splitter::Splitter(Qt::Orientation type, Utils::SettingsManager* settings, QWidget* parent)
     : QSplitter{type, parent}
     , m_settings{settings}
@@ -43,4 +43,4 @@ QSplitterHandle* Splitter::createHandle()
     m_settings->subscribe<Settings::SplitterHandles>(handle, &SplitterHandle::showHandle);
     return handle;
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

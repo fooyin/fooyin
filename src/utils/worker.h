@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-namespace Utils {
+namespace Fy::Utils {
 class Worker : public QObject
 {
 public:
@@ -44,4 +44,4 @@ public:
 private:
     State m_state;
 };
-} // namespace Utils
+} // namespace Fy::Utils

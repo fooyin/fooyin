@@ -40,7 +40,7 @@
 #include <QJsonObject>
 #include <QMenu>
 
-namespace Filters {
+namespace Fy::Filters {
 FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* settings, Filters::FilterType type,
                            QWidget* parent)
     : FyWidget{parent}
@@ -420,4 +420,4 @@ QString AlbumFilter::layoutName() const
     return "FilterAlbum";
 }
 
-} // namespace Filters
+} // namespace Fy::Filters

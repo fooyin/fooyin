@@ -28,7 +28,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-namespace Gui {
+namespace Fy::Gui {
 QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent)
     : QDialog{parent}
     , m_layout{new QVBoxLayout(this)}
@@ -72,4 +72,4 @@ void QuickSetupDialog::showEvent(QShowEvent* event)
 
     QDialog::showEvent(event);
 }
-} // namespace Gui
+} // namespace Fy::Gui

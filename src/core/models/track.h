@@ -26,7 +26,7 @@
 
 #include <map>
 
-namespace Core {
+namespace Fy::Core {
 using GenreList  = QList<QString>;
 using ArtistList = QList<QString>;
 using ExtraTags  = std::map<QString, QList<QString>>;
@@ -161,4 +161,4 @@ private:
     uint64_t m_addedTime;
     uint64_t m_modifiedTime;
 };
-} // namespace Core
+} // namespace Fy::Core

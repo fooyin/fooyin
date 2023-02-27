@@ -43,7 +43,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 QRect widgetGeometry(FyWidget* widget)
 {
     const int w = widget->width();
@@ -313,4 +313,4 @@ void EditableLayout::hideOverlay()
 {
     m_overlay->hide();
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

@@ -23,7 +23,7 @@
 #include "core/models/trackfwd.h"
 #include "module.h"
 
-namespace Core::DB {
+namespace Fy::Core::DB {
 class LibraryDatabase : public DB::Module
 {
 public:
@@ -71,4 +71,4 @@ private:
     int m_libraryId;
     QString m_connectionName;
 };
-} // namespace Core::DB
+} // namespace Fy::Core::DB

@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-namespace Utils {
+namespace Fy::Utils {
 class Worker;
 
 class ThreadManager : public QObject
@@ -42,4 +42,4 @@ private:
     std::vector<QThread*> m_threads;
     std::vector<Worker*> m_workers;
 };
-} // namespace Utils
+} // namespace Fy::Utils

@@ -24,7 +24,7 @@
 
 #include <utils/helpers.h>
 
-namespace Core::Playlist {
+namespace Fy::Core::Playlist {
 PlaylistHandler::PlaylistHandler(Player::PlayerManager* playerManager, QObject* parent)
     : QObject(parent)
     , m_playerManager(playerManager)
@@ -142,4 +142,4 @@ int PlaylistHandler::addNewPlaylist(const QString& name)
 
     return playlist->index();
 }
-} // namespace Core::Playlist
+} // namespace Fy::Core::Playlist

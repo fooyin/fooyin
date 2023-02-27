@@ -26,7 +26,7 @@
 
 class QTabWidget;
 
-namespace Utils {
+namespace Fy::Utils {
 class SettingsPage;
 
 using PageList = std::vector<SettingsPage*>;
@@ -49,4 +49,4 @@ struct SettingsCategory
         return *pageIndex != -1;
     }
 };
-} // namespace Utils
+} // namespace Fy::Utils

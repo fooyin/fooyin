@@ -22,7 +22,7 @@
 #include <QDir>
 #include <QLibrary>
 
-namespace Plugins {
+namespace Fy::Plugins {
 PluginManager::PluginManager(QObject* parent)
     : QObject{parent}
 { }
@@ -97,4 +97,4 @@ void PluginManager::shutdown()
     unloadPlugins();
 }
 
-} // namespace Plugins
+} // namespace Fy::Plugins

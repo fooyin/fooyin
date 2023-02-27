@@ -21,7 +21,7 @@
 
 #include <QVariant>
 
-namespace Utils {
+namespace Fy::Utils {
 class SettingsEntry : public QObject
 {
     Q_OBJECT
@@ -54,4 +54,4 @@ private:
     QString m_group;
     bool m_writeToDisk;
 };
-} // namespace Utils
+} // namespace Fy::Utils

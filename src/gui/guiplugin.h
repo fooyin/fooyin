@@ -25,7 +25,7 @@
 
 #include <QtPlugin>
 
-namespace Gui {
+namespace Fy::Gui {
 class GuiPlugin : public Plugins::Plugin
 {
 public:
@@ -35,6 +35,6 @@ public:
     };
     void shutdown() override{};
 };
-} // namespace Gui
+} // namespace Fy::Gui
 
-Q_DECLARE_INTERFACE(Gui::GuiPlugin, "com.fooyin.plugin.gui")
+Q_DECLARE_INTERFACE(Fy::Gui::GuiPlugin, "com.fooyin.plugin.gui")

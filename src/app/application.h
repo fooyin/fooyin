@@ -21,6 +21,7 @@
 
 #include <QApplication>
 
+namespace Fy {
 class Application : public QApplication
 {
     Q_OBJECT
@@ -36,3 +37,4 @@ private:
     struct Private;
     std::unique_ptr<Application::Private> p;
 };
+} // namespace Fy

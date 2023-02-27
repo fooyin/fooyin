@@ -21,6 +21,8 @@
 
 #include <QAbstractItemModel>
 
+namespace Fy {
+
 namespace Core {
 class Track;
 }
@@ -55,3 +57,4 @@ private:
     Core::Track* m_currentTrack;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

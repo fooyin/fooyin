@@ -21,7 +21,7 @@
 
 #include <QList>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 class InfoItem
 {
 public:
@@ -67,4 +67,4 @@ private:
     QString m_title;
     InfoItem* m_parent;
 };
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

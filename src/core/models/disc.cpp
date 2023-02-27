@@ -19,7 +19,7 @@
 
 #include "disc.h"
 
-namespace Core {
+namespace Fy::Core {
 Disc::Disc(int number)
     : Container{"Disc"}
     , m_number{number}
@@ -29,4 +29,4 @@ int Disc::number() const
 {
     return m_number;
 }
-} // namespace Core
+} // namespace Fy::Core

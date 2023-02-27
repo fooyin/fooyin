@@ -60,6 +60,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/threadmanager.h>
 
+namespace Fy {
 struct Application::Private
 {
     Utils::ActionManager actionManager;
@@ -93,8 +94,8 @@ struct Application::Private
     QAction* rescanLibrary;
 
     Plugins::PluginManager pluginManager;
-    CorePluginContext corePluginContext;
-    GuiPluginContext guiPluginContext;
+    Core::CorePluginContext corePluginContext;
+    Gui::GuiPluginContext guiPluginContext;
 
     explicit Private()
         : settingsManager{Core::settingsPath()}
@@ -212,7 +213,7 @@ struct Application::Private
 
     void loadPlugins()
     {
-        const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin/plugins";
+        const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin";
         pluginManager.findPlugins(pluginsPath);
         pluginManager.loadPlugins();
 
@@ -252,3 +253,4 @@ void Application::shutdown()
     p->database.cleanup();
     p->database.closeDatabase();
 }
+} // namespace Fy

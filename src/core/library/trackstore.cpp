@@ -21,7 +21,7 @@
 
 #include "core/library/sorting/sorting.h"
 
-namespace Core::Library {
+namespace Fy::Core::Library {
 Track* TrackStore::track(int id)
 {
     if(hasTrack(id)) {
@@ -142,4 +142,4 @@ void TrackStore::remove(int trackId)
         m_trackIdMap.erase(track->id());
     }
 }
-} // namespace Core::Library
+} // namespace Fy::Core::Library

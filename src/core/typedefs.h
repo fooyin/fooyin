@@ -21,6 +21,6 @@
 
 #include <set>
 
-namespace Core {
+namespace Fy::Core {
 using IdSet = std::set<int>;
-} // namespace Core
+} // namespace Fy::Core

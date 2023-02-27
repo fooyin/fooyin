@@ -28,7 +28,7 @@
 #include <QSize>
 #include <QStackedLayout>
 
-namespace Utils {
+namespace Fy::Utils {
 SettingsDialog::SettingsDialog(PageList pages, QWidget* parent)
     : QDialog{parent}
     , m_categoryList{new SimpleListView(this)}
@@ -220,4 +220,4 @@ void SettingsDialog::currentTabChanged(int index)
     m_currentPage              = page->id();
     m_visitedPages.insert(page);
 }
-} // namespace Utils
+} // namespace Fy::Utils

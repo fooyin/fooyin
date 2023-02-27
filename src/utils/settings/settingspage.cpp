@@ -21,7 +21,7 @@
 
 #include "settingsdialogcontroller.h"
 
-namespace Utils {
+namespace Fy::Utils {
 SettingsPage::SettingsPage(SettingsDialogController* controller, QObject* parent)
     : QObject{parent}
     , m_widget{nullptr}
@@ -120,4 +120,4 @@ void SettingsPage::setCategoryIconPath(const QString& iconPath)
 {
     m_categoryIcon = QIcon{iconPath};
 }
-} // namespace Utils
+} // namespace Fy::Utils

@@ -22,7 +22,7 @@
 #include <QSqlDatabase>
 #include <QVariant>
 
-namespace Core::DB {
+namespace Fy::Core::DB {
 class Query;
 class Module
 {
@@ -49,4 +49,4 @@ public:
 private:
     QString m_connectionName;
 };
-} // namespace Core::DB
+} // namespace Fy::Core::DB

@@ -29,7 +29,7 @@
 
 #include <QHBoxLayout>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 VolumeControl::VolumeControl(Core::Player::PlayerManager* playerManager, QWidget* parent)
     : QWidget{parent}
     , m_playerManager{playerManager}
@@ -133,4 +133,4 @@ void VolumeControl::showVolumeMenu()
     m_volumeMenu->move(pos);
     m_volumeMenu->show();
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

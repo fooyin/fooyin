@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 class PlaylistItem : public Utils::TreeItem<PlaylistItem>
 {
 public:
@@ -70,4 +70,4 @@ private:
     int m_index;
     QString m_key;
 };
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

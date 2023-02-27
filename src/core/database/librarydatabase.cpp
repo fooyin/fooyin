@@ -27,7 +27,7 @@
 
 #include <QBuffer>
 
-namespace Core::DB {
+namespace Fy::Core::DB {
 QMap<QString, QVariant> getTrackBindings(const Track& track)
 {
     return QMap<QString, QVariant>{
@@ -758,4 +758,4 @@ int LibraryDatabase::insertTrack(const Track& track)
 
     return (query.hasError()) ? -1 : query.lastInsertId().toInt();
 }
-} // namespace Core::DB
+} // namespace Fy::Core::DB

@@ -23,6 +23,7 @@
 
 #include <QObject>
 
+namespace Fy {
 namespace Utils {
 class SettingsManager;
 }
@@ -49,3 +50,4 @@ private:
     Utils::SettingsManager* m_settings;
 };
 } // namespace Core::Settings
+} // namespace Fy

@@ -22,7 +22,7 @@
 #include <QResizeEvent>
 #include <QScrollArea>
 
-namespace Utils {
+namespace Fy::Utils {
 class ScrollArea : public QScrollArea
 {
 public:
@@ -35,4 +35,4 @@ private:
 
     [[nodiscard]] int scrollBarWidth() const;
 };
-} // namespace Utils
+} // namespace Fy::Utils

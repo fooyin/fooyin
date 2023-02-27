@@ -19,7 +19,7 @@
 
 #include <utils/simplelistview.h>
 
-namespace Utils {
+namespace Fy::Utils {
 SimpleListViewDelegate::SimpleListViewDelegate(QObject* parent)
     : QStyledItemDelegate{parent}
     , m_height{0}
@@ -66,4 +66,4 @@ QSize SimpleListView::sizeHint() const
     width += m_width;
     return {width, 100};
 }
-} // namespace Utils
+} // namespace Fy::Utils

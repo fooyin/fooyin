@@ -28,7 +28,7 @@
 #include <QGroupBox>
 #include <QVBoxLayout>
 
-namespace Gui::Settings {
+namespace Fy::Gui::Settings {
 class GuiGeneralPageWidget : public Utils::SettingsPageWidget
 {
 public:
@@ -78,4 +78,4 @@ GuiGeneralPage::GuiGeneralPage(Utils::SettingsDialogController* controller, Util
     });
     setCategoryIconPath(Constants::Icons::Category::Interface);
 }
-} // namespace Gui::Settings
+} // namespace Fy::Gui::Settings

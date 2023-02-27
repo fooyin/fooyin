@@ -22,6 +22,8 @@
 #include <QListView>
 #include <QTreeView>
 
+namespace Fy {
+
 namespace Core::Player {
 class PlayerManager;
 }
@@ -43,3 +45,4 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 };
 } // namespace Filters
+} // namespace Fy

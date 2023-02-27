@@ -35,7 +35,7 @@
 #include <QTimer>
 #include <utility>
 
-namespace Core::Library {
+namespace Fy::Core::Library {
 struct MusicLibrary::Private
 {
     Playlist::LibraryPlaylistInterface* playlistInteractor;
@@ -256,4 +256,4 @@ void MusicLibrary::getAllTracks()
 {
     emit loadAllTracks(p->order);
 }
-} // namespace Core::Library
+} // namespace Fy::Core::Library

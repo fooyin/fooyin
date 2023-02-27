@@ -21,7 +21,7 @@
 
 #include <cstdint>
 
-namespace Utils::Settings {
+namespace Fy::Utils::Settings {
 enum Type : uint32_t
 {
     None      = 0 << 28,
@@ -31,4 +31,4 @@ enum Type : uint32_t
     String    = 4 << 28,
     ByteArray = 5 << 28,
 };
-} // namespace Utils::Settings
+} // namespace Fy::Utils::Settings

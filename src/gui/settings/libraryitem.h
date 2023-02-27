@@ -25,7 +25,7 @@
 
 class QString;
 
-namespace Gui::Settings {
+namespace Fy::Gui::Settings {
 class LibraryItem : public Utils::TreeItem<LibraryItem>
 {
 public:
@@ -38,4 +38,4 @@ public:
 private:
     Core::Library::LibraryInfo* m_info;
 };
-} // namespace Gui::Settings
+} // namespace Fy::Gui::Settings

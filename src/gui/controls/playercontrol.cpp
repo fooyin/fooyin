@@ -27,7 +27,7 @@
 
 #include <QHBoxLayout>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 using Utils::ComboIcon;
 
 PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, QWidget* parent)
@@ -84,4 +84,4 @@ void PlayerControl::stateChanged(Core::Player::PlayState state)
             return m_playPause->setIcon(Constants::Icons::Play);
     }
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

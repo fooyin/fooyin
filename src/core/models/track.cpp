@@ -27,7 +27,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-namespace Core {
+namespace Fy::Core {
 Track::Track(QString filepath)
     : MusicItem()
     , m_enabled{true}
@@ -440,4 +440,4 @@ void Track::resetIds()
     m_artistIds.clear();
     m_genreIds.clear();
 }
-} // namespace Core
+} // namespace Fy::Core

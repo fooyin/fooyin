@@ -21,7 +21,7 @@
 
 #include <QHBoxLayout>
 
-namespace Utils {
+namespace Fy::Utils {
 ClickableLabel::ClickableLabel(QWidget* parent)
     : QLabel(parent)
 { }
@@ -37,4 +37,4 @@ void ClickableLabel::enterEvent(QEnterEvent* event)
     emit entered();
     QLabel::enterEvent(event);
 }
-} // namespace Utils
+} // namespace Fy::Utils

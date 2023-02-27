@@ -19,14 +19,15 @@
 
 #pragma once
 
+#include "utils/id.h"
+
 #include <QObject>
-#include <utils/id.h>
 
 class QMenu;
 class QMenuBar;
 class QAction;
 
-namespace Utils {
+namespace Fy::Utils {
 namespace Groups {
 constexpr auto Default = "Group.Default";
 }
@@ -141,4 +142,4 @@ protected:
 private:
     QMenuBar* m_menuBar;
 };
-} // namespace Utils
+} // namespace Fy::Utils

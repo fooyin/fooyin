@@ -42,7 +42,7 @@
 #include <QMenu>
 #include <QScrollBar>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
                                Core::Player::PlayerManager* playerManager,
                                Utils::SettingsDialogController* settingsDialogController,
@@ -363,4 +363,4 @@ void PlaylistWidget::findCurrent()
         //        setCurrentIndex(index.constFirst());
     }
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

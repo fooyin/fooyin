@@ -21,7 +21,7 @@
 
 #include "query.h"
 
-namespace Core::DB {
+namespace Fy::Core::DB {
 Library::Library(const QString& connectionName)
     : Module{connectionName}
 { }
@@ -112,4 +112,4 @@ bool Library::renameLibrary(int id, const QString& name)
     }
     return true;
 }
-} // namespace Core::DB
+} // namespace Fy::Core::DB

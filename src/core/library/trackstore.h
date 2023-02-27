@@ -24,7 +24,7 @@
 
 #include <QReadWriteLock>
 
-namespace Core::Library {
+namespace Fy::Core::Library {
 class TrackStore
 {
 public:
@@ -55,4 +55,4 @@ private:
     TrackPtrList m_tracks;
     TrackPathMap m_trackPathMap;
 };
-} // namespace Core::Library
+} // namespace Fy::Core::Library

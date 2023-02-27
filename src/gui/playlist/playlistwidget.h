@@ -26,6 +26,8 @@
 class QHBoxLayout;
 class QPushButton;
 
+namespace Fy {
+
 namespace Utils {
 class OverlayWidget;
 class SettingsDialogController;
@@ -105,3 +107,4 @@ private:
 };
 } // namespace Widgets
 } // namespace Gui
+} // namespace Fy

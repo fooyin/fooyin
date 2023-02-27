@@ -23,6 +23,8 @@
 
 class QHBoxLayout;
 
+namespace Fy {
+
 namespace Utils {
 class SettingsManager;
 class ComboIcon;
@@ -65,3 +67,4 @@ private:
     Utils::ComboIcon* m_shuffle;
 };
 } // namespace Gui::Widgets
+} // namespace Fy

@@ -23,12 +23,14 @@
 
 #include <QObject>
 
-namespace Core::DB {
+namespace Fy::Core {
+
+namespace DB {
 class Database;
 class Library;
-} // namespace Core::DB
+} // namespace DB
 
-namespace Core::Library {
+namespace Library {
 class LibraryManager : public QObject
 {
     Q_OBJECT
@@ -59,4 +61,5 @@ private:
 
     LibraryList m_libraries;
 };
-} // namespace Core::Library
+} // namespace Library
+} // namespace Fy::Core

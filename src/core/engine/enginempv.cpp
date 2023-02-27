@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-namespace Core::Engine {
+namespace Fy::Core::Engine {
 static void wakeup(void* ctx)
 {
     auto* engine = static_cast<EngineMpv*>(ctx);
@@ -190,4 +190,4 @@ void EngineMpv::handlePropertyChange(mpv_event* event)
         }
     }
 }
-} // namespace Core::Engine
+} // namespace Fy::Core::Engine

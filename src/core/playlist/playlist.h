@@ -23,7 +23,8 @@
 
 #include <QObject>
 
-namespace Core {
+namespace Fy::Core {
+
 namespace Player {
 class PlayerManager;
 }
@@ -71,4 +72,4 @@ private:
     TrackPtrList m_tracks;
 };
 } // namespace Playlist
-} // namespace Core
+} // namespace Fy::Core

@@ -25,6 +25,8 @@
 
 #include <QThread>
 
+namespace Fy {
+
 namespace Utils {
 class ThreadManager;
 class SettingsManager;
@@ -110,3 +112,4 @@ private:
 };
 } // namespace Library
 } // namespace Core
+} // namespace Fy

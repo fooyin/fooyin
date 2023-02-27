@@ -21,7 +21,7 @@
 
 #include <QSettings>
 
-namespace Utils {
+namespace Fy::Utils {
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
     , m_settingsFile{settingsPath, QSettings::IniFormat, this}
@@ -62,4 +62,4 @@ QString SettingsManager::getKeyString(const SettingsEntry& setting)
 {
     return setting.group() + "/" + setting.name();
 }
-} // namespace Utils
+} // namespace Fy::Utils

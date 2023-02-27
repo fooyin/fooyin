@@ -23,7 +23,7 @@
 
 #include <QList>
 
-namespace Core {
+namespace Fy::Core {
 class Track;
 
 using GenreList = QList<QString>;
@@ -68,4 +68,4 @@ private:
     int m_discCount;
     QString m_coverPath;
 };
-} // namespace Core
+} // namespace Fy::Core

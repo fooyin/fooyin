@@ -24,7 +24,7 @@
 
 #include <QPainter>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 PlaylistDelegate::PlaylistDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 { }
@@ -375,4 +375,4 @@ void PlaylistDelegate::paintDisc(QPainter* painter, const QStyleOptionViewItem& 
                           (durationBound.x() - 5), (durationBound.y()) + (durationBound.height() / 2));
     painter->drawLine(discLine);
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

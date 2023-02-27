@@ -19,8 +19,8 @@
 
 #include "playlistdatabase.h"
 
-namespace Core::DB {
+namespace Fy::Core::DB {
 Playlist::Playlist(const QString& connectionName)
     : Module(connectionName)
 { }
-} // namespace Core::DB
+} // namespace Fy::Core::DB

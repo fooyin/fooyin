@@ -1,94 +1,135 @@
-fooyin_add_library(Core
-    TYPE SHARED
-    PREFIX Yes
-    DEPENDS
-        Qt6::Core
-        Qt6::Widgets
-        Qt6::Sql
-        Fooyin_Version
-        Fooyin_Utils
-    SOURCES
-        coreplugin.h
-        coreplugincontext.h
-        corepaths.h
-        corepaths.cpp
-        coresettings.h
-        coresettings.cpp
-        constants.h
-        typedefs.h
+cmake_minimum_required(VERSION 3.14)
 
-        database/database.h
-        database/database.cpp
-        database/library.h
-        database/library.cpp
-        database/librarydatabase.h
-        database/librarydatabase.cpp
-        database/module.h
-        database/module.cpp
-        database/playlistdatabase.h
-        database/playlistdatabase.cpp
-        database/query.h
-        database/query.cpp
-
-        engine/engine.h
-        engine/enginempv.h
-        engine/enginempv.cpp
-        engine/enginehandler.h
-        engine/enginehandler.cpp
-
-        library/coverprovider.h
-        library/coverprovider.cpp
-        library/libraryinfo.h
-        library/librarymanager.h
-        library/librarymanager.cpp
-        library/librarydatabasemanager.h
-        library/librarydatabasemanager.cpp
-        library/musiclibrary.h
-        library/musiclibrary.cpp
-        library/musiclibraryinteractor.h
-        library/libraryscanner.h
-        library/libraryscanner.cpp
-        library/libraryutils.h
-        library/libraryutils.cpp
-        library/trackstore.h
-        library/trackstore.cpp
-
-        library/sorting/sorting.h
-        library/sorting/sorting.cpp
-        library/sorting/sortorder.h
-
-        models/container.h
-        models/container.cpp
-        models/musicitem.h
-        models/album.h
-        models/album.cpp
-        models/artist.h
-        models/artist.cpp
-        models/disc.h
-        models/disc.cpp
-        models/track.h
-        models/track.cpp
-        models/trackfwd.h
-
-        playlist/libraryplaylistinterface.h
-        playlist/libraryplaylistmanager.h
-        playlist/libraryplaylistmanager.cpp
-        playlist/playlist.h
-        playlist/playlist.cpp
-        playlist/playlisthandler.h
-        playlist/playlisthandler.cpp
-
-        player/playercontroller.h
-        player/playercontroller.cpp
-        player/playermanager.h
-
-        plugins/plugininfo.h
-        plugins/plugininfo.cpp
-        plugins/pluginmanager.h
-        plugins/pluginmanager.cpp
-
-        tagging/tags.h
-        tagging/tags.cpp
-        tagging/tagutils.h
-        tagging/tagutils.cpp
+project(
+    fooyin_core
+    VERSION 0.1.0
+    DESCRIPTION "Core library for fooyin"
+    HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
+    LANGUAGES CXX
 )
+
+set(SOURCES
+    coreplugin.h
+    coreplugincontext.h
+    corepaths.h
+    corepaths.cpp
+    coresettings.h
+    coresettings.cpp
+    constants.h
+    typedefs.h
+
+    database/database.h
+    database/database.cpp
+    database/library.h
+    database/library.cpp
+    database/librarydatabase.h
+    database/librarydatabase.cpp
+    database/module.h
+    database/module.cpp
+    database/playlistdatabase.h
+    database/playlistdatabase.cpp
+    database/query.h
+    database/query.cpp
+
+    engine/engine.h
+    engine/enginempv.h
+    engine/enginempv.cpp
+    engine/enginehandler.h
+    engine/enginehandler.cpp
+
+    library/coverprovider.h
+    library/coverprovider.cpp
+    library/libraryinfo.h
+    library/librarymanager.h
+    library/librarymanager.cpp
+    library/librarydatabasemanager.h
+    library/librarydatabasemanager.cpp
+    library/musiclibrary.h
+    library/musiclibrary.cpp
+    library/musiclibraryinteractor.h
+    library/libraryscanner.h
+    library/libraryscanner.cpp
+    library/libraryutils.h
+    library/libraryutils.cpp
+    library/trackstore.h
+    library/trackstore.cpp
+
+    library/sorting/sorting.h
+    library/sorting/sorting.cpp
+    library/sorting/sortorder.h
+
+    models/container.h
+    models/container.cpp
+    models/musicitem.h
+    models/album.h
+    models/album.cpp
+    models/artist.h
+    models/artist.cpp
+    models/disc.h
+    models/disc.cpp
+    models/track.h
+    models/track.cpp
+    models/trackfwd.h
+
+    playlist/libraryplaylistinterface.h
+    playlist/libraryplaylistmanager.h
+    playlist/libraryplaylistmanager.cpp
+    playlist/playlist.h
+    playlist/playlist.cpp
+    playlist/playlisthandler.h
+    playlist/playlisthandler.cpp
+
+    player/playercontroller.h
+    player/playercontroller.cpp
+    player/playermanager.h
+
+    plugins/plugininfo.h
+    plugins/plugininfo.cpp
+    plugins/pluginmanager.h
+    plugins/pluginmanager.cpp
+
+    tagging/tags.h
+    tagging/tags.cpp
+    tagging/tagutils.h
+    tagging/tagutils.cpp
+)
+
+add_library(
+    fooyin_core
+    ${FOOYIN_LIBRARY_TYPE}
+    ${SOURCES}
+)
+add_library(fooyin::core ALIAS fooyin_core)
+
+target_include_directories(fooyin_core
+  PRIVATE
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "${CMAKE_BINARY_DIR}/src"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
+)
+
+set_target_properties(fooyin_core PROPERTIES
+    VERSION "${PROJECT_VERSION}"
+    EXPORT_NAME fooyin_core
+    OUTPUT_NAME fooyin_core
+    LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_LIBRARY_OUTPUT_DIR}
+    INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH}
+)
+
+target_link_libraries(fooyin_core
+   PRIVATE
+     Qt6::Core
+     Qt6::Widgets
+     Qt6::Sql
+     Taglib::Taglib
+     Libmpv::Libmpv
+     fooyin::version
+     fooyin::utils
+)
+
+target_compile_features(fooyin_core PUBLIC cxx_std_17)
+target_compile_options(fooyin_core PRIVATE -Werror -Wall -Wextra -Wpedantic)
+
+install(TARGETS fooyin_core LIBRARY DESTINATION ${FOOYIN_LIBRARY_DIR})

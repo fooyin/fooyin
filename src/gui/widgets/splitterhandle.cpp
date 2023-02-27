@@ -19,7 +19,7 @@
 
 #include "splitterhandle.h"
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 SplitterHandle::SplitterHandle(Qt::Orientation type, QSplitter* parent)
     : QSplitterHandle{type, parent}
     , m_showHandle{true}
@@ -37,4 +37,4 @@ void SplitterHandle::paintEvent(QPaintEvent* e)
         return QSplitterHandle::paintEvent(e);
     }
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

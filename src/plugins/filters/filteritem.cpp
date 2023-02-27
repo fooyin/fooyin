@@ -21,7 +21,7 @@
 
 #include "constants.h"
 
-namespace Filters {
+namespace Fy::Filters {
 FilterItem::FilterItem(int id, QString name, FilterItem* parent)
     : m_id(id)
     , m_name(std::move(name))
@@ -74,7 +74,6 @@ int FilterItem::row() const
     if(parentItem()) {
         return static_cast<int>(parentItem()->m_childItems.indexOf(const_cast<FilterItem*>(this)));
     }
-
     return 0;
 }
 
@@ -82,4 +81,4 @@ FilterItem* FilterItem::parentItem() const
 {
     return m_parentItem;
 }
-} // namespace Filters
+} // namespace Fy::Filters

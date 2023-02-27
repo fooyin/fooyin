@@ -22,6 +22,7 @@
 #include <QSharedMemory>
 #include <QSystemSemaphore>
 
+namespace Fy {
 class SingleInstance
 {
 public:
@@ -42,3 +43,4 @@ private:
     QSharedMemory memory;
     QSystemSemaphore lock;
 };
+} // namespace Fy

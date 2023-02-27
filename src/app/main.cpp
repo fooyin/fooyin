@@ -21,7 +21,7 @@
 #include "singleinstance.h"
 #include "version.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
     Q_INIT_RESOURCE(icons);
 
@@ -29,16 +29,12 @@ int main(int argc, char* argv[])
     QCoreApplication::setApplicationVersion(VERSION);
 
     // Prevent additional instances
-    SingleInstance instance("fooyin");
+    Fy::SingleInstance instance("fooyin");
     if(!instance.tryRunning()) {
         qInfo() << "Fooyin already running";
         return 0;
     }
 
-    auto* app        = new Application(argc, argv);
-    const int result = QCoreApplication::exec();
-
-    delete app;
-
-    return result;
+    const Fy::Application app{argc, argv};
+    return QCoreApplication::exec();
 }

@@ -26,16 +26,15 @@
 
 #include <utils/settings/settingsmanager.h>
 
-namespace Core::Library {
-LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
-                                               QObject* parent)
+namespace Fy::Core::Library {
+LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings, QObject* parent)
     : Worker{parent}
     , m_database{database}
     , m_libraryDatabase{m_database->libraryDatabase()}
     , m_settings{settings}
 { }
 
-LibraryDatabaseManager::~LibraryDatabaseManager()
+void LibraryDatabaseManager::stopThread()
 {
     m_database->closeDatabase();
 }
@@ -68,4 +67,4 @@ void LibraryDatabaseManager::updateTracks(const TrackPtrList& tracks)
         }
     }
 }
-} // namespace Core::Library
+} // namespace Fy::Core::Library

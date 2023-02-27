@@ -24,7 +24,7 @@
 
 #include <QPainter>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 ItemDelegate::ItemDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 { }
@@ -135,4 +135,4 @@ void ItemDelegate::paintEntry(QPainter* painter, const QStyleOptionViewItem& opt
     option.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
                                          painter->fontMetrics().elidedText(title, Qt::ElideRight, titleRect.width()));
 }
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

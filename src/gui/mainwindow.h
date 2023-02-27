@@ -21,6 +21,8 @@
 
 #include <QMainWindow>
 
+namespace Fy {
+
 namespace Utils {
 class ActionManager;
 class SettingsManager;
@@ -59,3 +61,4 @@ private:
     std::unique_ptr<MainWindow::Private> p;
 };
 } // namespace Gui
+} // namespace Fy

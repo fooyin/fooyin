@@ -23,7 +23,7 @@
 
 #include <QString>
 
-namespace Core {
+namespace Fy::Core {
 class Track;
 class Container : public MusicItem
 {
@@ -50,4 +50,4 @@ private:
     uint64_t m_duration;
     int m_trackCount;
 };
-} // namespace Core
+} // namespace Fy::Core

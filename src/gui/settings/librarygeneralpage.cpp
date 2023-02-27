@@ -41,7 +41,7 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-namespace Gui::Settings {
+namespace Fy::Gui::Settings {
 class LibraryGeneralPageWidget : public Utils::SettingsPageWidget
 {
 public:
@@ -203,4 +203,4 @@ LibraryGeneralPage::LibraryGeneralPage(Utils::SettingsDialogController* controll
     setCategoryIconPath(Constants::Icons::Category::Library);
 }
 
-} // namespace Gui::Settings
+} // namespace Fy::Gui::Settings

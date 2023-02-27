@@ -25,7 +25,7 @@
 
 #include <deque>
 
-namespace Core {
+namespace Fy::Core {
 using TrackList         = std::vector<Track>;
 using TrackPtrList      = std::vector<Track*>;
 using TrackSet          = std::set<Track*>;
@@ -37,4 +37,4 @@ using ArtistHash = std::unordered_map<int, Artist>;
 using GenreHash  = std::unordered_map<int, QString>;
 
 using ContainerHash = std::unordered_map<QString, std::unique_ptr<Container>>;
-} // namespace Core
+} // namespace Fy::Core

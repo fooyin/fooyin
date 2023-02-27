@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 class WidgetFactory
 {
     using Instantiator = std::function<FyWidget*()>;
@@ -82,4 +82,4 @@ public:
         return widgets;
     }
 };
-} // namespace Gui::Widgets
+} // namespace Fy::Gui::Widgets

@@ -21,7 +21,7 @@
 
 #include <QLabel>
 
-namespace Utils {
+namespace Fy::Utils {
 class ClickableLabel : public QLabel
 {
     Q_OBJECT
@@ -38,4 +38,4 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void enterEvent(QEnterEvent* event) override;
 };
-} // namespace Utils::Widgets
+} // namespace Fy::Utils

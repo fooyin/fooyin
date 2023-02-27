@@ -24,6 +24,8 @@
 #include <QJsonArray>
 #include <QWidget>
 
+namespace Fy {
+
 namespace Utils {
 class ActionContainer;
 }
@@ -53,3 +55,4 @@ private:
     Utils::Id m_id;
 };
 } // namespace Gui::Widgets
+} // namespace Fy
