@@ -27,7 +27,8 @@
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::Core::Library {
-LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings, QObject* parent)
+LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
+                                               QObject* parent)
     : Worker{parent}
     , m_database{database}
     , m_libraryDatabase{m_database->libraryDatabase()}
@@ -43,9 +44,9 @@ void LibraryDatabaseManager::getAllTracks(SortOrder order)
 {
     TrackList tracks;
     const int limit = m_settings->value<Settings::LazyTracks>();
-    int offset      = 0;
 
     if(limit > 0) {
+        int offset = 0;
         while(m_libraryDatabase->getAllTracks(tracks, order, offset, limit)) {
             offset += limit;
             emit gotTracks(tracks);
