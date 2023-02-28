@@ -49,29 +49,28 @@ Core::Library::LibraryList Library::getAllLibraries()
     return libraries;
 }
 
-bool Library::insertLibrary(int id, const QString& path, const QString& name)
+int Library::insertLibrary(const QString& path, const QString& name)
 {
     if(name.isEmpty() || path.isEmpty()) {
-        return false;
+        return -1;
     }
 
     const QString query = "INSERT INTO Libraries "
-                          "(LibraryID, Name, Path) "
+                          "(Name, Path) "
                           "VALUES "
-                          "(:libraryId, :libraryName, :libraryPath);";
+                          "(:libraryName, :libraryPath);";
 
     Query q(this);
 
     q.prepare(query);
-    q.bindValue(":libraryId", id);
     q.bindValue(":libraryName", name);
     q.bindValue(":libraryPath", path);
 
     if(!q.execQuery()) {
         q.error(QString("Cannot insert library (name: %1, path: %2)").arg(name, path));
-        return false;
+        return -1;
     }
-    return true;
+    return q.lastInsertId().toInt();
 }
 
 bool Library::removeLibrary(int id)

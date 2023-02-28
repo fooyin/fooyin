@@ -83,17 +83,13 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
         libraryName = QString{"Library %1"}.arg(m_libraries.size());
     }
 
-    const auto id = static_cast<int>(m_libraries.size());
+    const auto id = m_libraryConnector->insertLibrary(path, name);
 
-    m_libraries.emplace_back(std::make_unique<LibraryInfo>(name, path, id));
-
-    const bool success = m_libraryConnector->insertLibrary(id, path, name);
-
-    if(success) {
-        emit libraryAdded(libraryInfo(id));
+    if(id >= 0) {
+        auto info = m_libraries.emplace_back(std::make_unique<LibraryInfo>(name, path, id)).get();
+        emit libraryAdded(info);
         return id;
     }
-
     return -1;
 }
 

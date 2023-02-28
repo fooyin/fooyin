@@ -29,7 +29,7 @@ public:
     explicit Library(const QString& connectionName);
 
     Core::Library::LibraryList getAllLibraries();
-    bool insertLibrary(int id, const QString& path, const QString& name);
+    int insertLibrary(const QString& path, const QString& name);
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
 };
