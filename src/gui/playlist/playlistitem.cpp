@@ -34,6 +34,11 @@ void PlaylistItem::setIndex(int idx)
     m_index = idx;
 }
 
+void PlaylistItem::setKey(const QString& key)
+{
+    m_key = key;
+}
+
 Core::MusicItem* PlaylistItem::data() const
 {
     return m_data;
@@ -47,5 +52,10 @@ PlaylistItem::Type PlaylistItem::type()
 int PlaylistItem::index() const
 {
     return m_index;
+}
+
+QString PlaylistItem::key() const
+{
+    return m_key;
 }
 } // namespace Fy::Gui::Widgets

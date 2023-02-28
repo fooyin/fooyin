@@ -61,7 +61,7 @@ struct MusicLibrary::Private
         , database{database}
         , settings{settings}
         , scanner{libraryManager, database}
-        , libraryDatabaseManager{database}
+        , libraryDatabaseManager{database, settings}
     { }
 };
 
@@ -75,7 +75,7 @@ MusicLibrary::MusicLibrary(Playlist::LibraryPlaylistInterface* playlistInteracto
     p->threadManager->moveToNewThread(&p->libraryDatabaseManager);
 
     connect(p->libraryManager, &Library::LibraryManager::libraryRemoved, &p->scanner, &LibraryScanner::stopThread);
-    connect(p->libraryManager, &Library::LibraryManager::libraryRemoved, this, &MusicLibrary::libraryRemoved);
+    connect(p->libraryManager, &Library::LibraryManager::libraryRemoved, this, &MusicLibrary::removeLibrary);
 
     connect(this, &MusicLibrary::runLibraryScan, &p->scanner, &LibraryScanner::scanLibrary);
     connect(this, &MusicLibrary::runAllLibrariesScan, &p->scanner, &LibraryScanner::scanAll);
@@ -102,6 +102,12 @@ void MusicLibrary::load()
 void MusicLibrary::libraryAdded()
 {
     load();
+}
+
+void MusicLibrary::removeLibrary(int id)
+{
+    p->trackStore.removeLibrary(id);
+    emit libraryRemoved();
 }
 
 void MusicLibrary::prepareTracks(int idx)
@@ -132,7 +138,7 @@ void MusicLibrary::addInteractor(MusicLibraryInteractor* interactor)
 
 void MusicLibrary::loadTracks(const TrackList& tracks)
 {
-    p->trackStore.clear();
+    //    p->trackStore.clear();
     refreshTracks(tracks);
 }
 
@@ -173,10 +179,10 @@ void MusicLibrary::refresh()
 
 void MusicLibrary::refreshTracks(const TrackList& result)
 {
-    p->trackStore.clear();
+    //    p->trackStore.clear();
 
     p->trackStore.add(result);
-    p->trackStore.sort(p->order);
+    //    p->trackStore.sort(p->order);
 
     emit tracksLoaded(p->trackStore.tracks());
 }
@@ -248,6 +254,6 @@ void MusicLibrary::trackSelectionChanged(const TrackSet& tracks)
 
 void MusicLibrary::getAllTracks()
 {
-    emit loadAllTracks();
+    emit loadAllTracks(p->order);
 }
 } // namespace Fy::Core::Library

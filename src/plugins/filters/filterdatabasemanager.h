@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "filterdatabase.h"
 #include "filterfwd.h"
 
 #include <core/library/sorting/sortorder.h>
@@ -41,7 +42,6 @@ class FilterDatabaseManager : public Utils::Worker
 
 public:
     explicit FilterDatabaseManager(Core::DB::Database* database, QObject* parent = nullptr);
-    ~FilterDatabaseManager() override;
 
     void stopThread() override;
 
@@ -56,7 +56,7 @@ signals:
 
 private:
     Core::DB::Database* m_database;
-    std::unique_ptr<FilterDatabase> m_filterDatabase;
+    FilterDatabase m_filterDatabase;
 };
 } // namespace Filters
 } // namespace Fy

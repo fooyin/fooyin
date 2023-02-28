@@ -129,6 +129,12 @@ void PlaylistWidget::setupConnections()
 
     connect(this, &PlaylistWidget::clickedTrack, m_playerManager, &Core::Player::PlayerManager::reset);
     connect(this, &PlaylistWidget::clickedTrack, m_library, &Core::Library::MusicLibrary::prepareTracks);
+
+    connect(m_model, &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex& parent, int first, int last) {
+        for(; first <= last; ++first) {
+            m_playlist->expand(m_model->index(first, 0, parent));
+        }
+    });
 }
 
 void PlaylistWidget::setAltRowColours(bool altColours)

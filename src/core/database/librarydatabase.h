@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "core/library/sorting/sortorder.h"
 #include "core/models/trackfwd.h"
 #include "module.h"
 
@@ -30,12 +31,14 @@ public:
 
     bool storeTracks(TrackList& tracksToStore);
 
-    bool getAllTracks(TrackList& result) const;
+    bool getAllTracks(TrackList& result, Core::Library::SortOrder order = Core::Library::SortOrder::NoSorting) const;
+    bool getAllTracks(TrackList& result, Core::Library::SortOrder order, int start, int limit) const;
     bool getAllAlbums(AlbumList& result) const;
     bool getAllArtists(ArtistHash& result) const;
     bool getAllGenres(GenreHash& result) const;
 
-    [[nodiscard]] static QString fetchQueryTracks(const QString& where, const QString& join);
+    [[nodiscard]] static QString fetchQueryTracks(const QString& where, const QString& join, const QString& order,
+                                                  const QString& offsetLimit);
     [[nodiscard]] static QString fetchQueryAlbums(const QString& where, const QString& join);
     [[nodiscard]] static QString fetchQueryArtists(const QString& where);
     [[nodiscard]] static QString fetchQueryGenres(const QString& where);

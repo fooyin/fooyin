@@ -74,6 +74,7 @@ public:
     void trackSelectionChanged(const TrackSet& tracks);
 
     void libraryAdded();
+    void removeLibrary(int id);
 
     void prepareTracks(int idx = 0);
 
@@ -96,7 +97,7 @@ signals:
     void tracksAdded();
     void tracksUpdated();
     void tracksDeleted();
-    void loadAllTracks();
+    void loadAllTracks(Core::Library::SortOrder order);
     void updateSaveTracks(Core::TrackPtrList tracks);
 
 protected:

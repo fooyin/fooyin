@@ -19,11 +19,18 @@
 
 #pragma once
 
+#include "core/library/sorting/sortorder.h"
 #include "core/models/trackfwd.h"
 
 #include <utils/worker.h>
 
-namespace Fy::Core {
+namespace Fy {
+
+namespace Utils {
+class SettingsManager;
+}
+
+namespace Core {
 
 namespace DB {
 class Database;
@@ -36,11 +43,12 @@ class LibraryDatabaseManager : public Utils::Worker
     Q_OBJECT
 
 public:
-    explicit LibraryDatabaseManager(DB::Database* database, QObject* parent = nullptr);
+    explicit LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
+                                    QObject* parent = nullptr);
 
     void stopThread() override;
 
-    void getAllTracks();
+    void getAllTracks(SortOrder order);
     void updateTracks(const TrackPtrList& tracks);
 
 signals:
@@ -49,6 +57,8 @@ signals:
 private:
     DB::Database* m_database;
     DB::LibraryDatabase* m_libraryDatabase;
+    Utils::SettingsManager* m_settings;
 };
 } // namespace Library
-} // namespace Fy::Core
+} // namespace Core
+} // namespace Fy

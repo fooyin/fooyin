@@ -37,6 +37,7 @@ enum Core : uint32_t
     FirstRun        = 3 | Utils::Settings::Bool,
     PlayMode        = 4,
     AutoRefresh     = 5 | Utils::Settings::Bool,
+    LazyTracks      = 6 | Utils::Settings::Int,
 };
 Q_ENUM_NS(Core)
 

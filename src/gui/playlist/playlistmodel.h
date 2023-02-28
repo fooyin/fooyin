@@ -80,7 +80,8 @@ public:
     void reset();
     void changeRowColours();
     void changeTrackState();
-    QModelIndex indexForId(int id);
+    QModelIndex indexForId(int id) const;
+    QModelIndex indexForItem(PlaylistItem* item) const;
 
 protected:
     void resetContainers();
@@ -91,11 +92,18 @@ protected:
     void filterModel(const Core::TrackPtrList& tracks);
 
 private:
+    void insertRow(PlaylistItem* parent, PlaylistItem* child);
+
     using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
     Core::Player::PlayerManager* m_playerManager;
     Core::Library::MusicLibrary* m_library;
     Utils::SettingsManager* m_settings;
+
+    bool m_discHeaders;
+    bool m_splitDiscs;
+    bool m_altColours;
+    bool m_simplePlaylist;
 
     PlaylistItemHash m_nodes;
     Core::ContainerHash m_containers;

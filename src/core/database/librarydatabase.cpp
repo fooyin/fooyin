@@ -56,6 +56,29 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
     };
 }
 
+QString getOrderString(Core::Library::SortOrder order)
+{
+    QString orderString;
+
+    switch(order) {
+        case(Core::Library::SortOrder::TitleAsc):
+            orderString = "AlbumArtist ASC, Title ASC, TrackNumber ASC";
+            break;
+        case(Core::Library::SortOrder::TitleDesc):
+            orderString = "AlbumArtist ASC, Title DESC, TrackNumber ASC";
+            break;
+        case(Core::Library::SortOrder::YearAsc):
+            orderString = "AlbumArtist ASC, Date ASC, TrackNumber ASC";
+            break;
+        case(Core::Library::SortOrder::YearDesc):
+            orderString = "AlbumArtist ASC, Date DESC, TrackNumber ASC";
+            break;
+        case(Core::Library::SortOrder::NoSorting):
+            orderString = "AlbumArtist ASC";
+    }
+    return orderString;
+}
+
 LibraryDatabase::LibraryDatabase(const QString& connectionName, int libraryId)
     : DB::Module(connectionName)
     , m_libraryId(libraryId)
@@ -211,10 +234,28 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
     return db().commit();
 }
 
-bool LibraryDatabase::getAllTracks(TrackList& result) const
+bool LibraryDatabase::getAllTracks(TrackList& result, Core::Library::SortOrder order) const
 {
     auto q           = Query(module());
-    const auto query = fetchQueryTracks({}, {});
+    const auto query = fetchQueryTracks({}, {}, getOrderString(order), {});
+    q.prepareQuery(query);
+
+    return dbFetchTracks(q, result);
+}
+
+bool LibraryDatabase::getAllTracks(TrackList& result, Core::Library::SortOrder order, int offset, int limit) const
+{
+    auto q = Query(module());
+
+    QString offsetLimit;
+    if(limit > 0) {
+        offsetLimit.append(QString("LIMIT %1").arg(limit));
+        if(offset > 0) {
+            offsetLimit.append(QString(" OFFSET %1").arg(offset));
+        }
+    }
+
+    const auto query = fetchQueryTracks({}, {}, getOrderString(order), offsetLimit);
     q.prepareQuery(query);
 
     return dbFetchTracks(q, result);
@@ -250,7 +291,8 @@ bool LibraryDatabase::getAllGenres(GenreHash& result) const
     return dbFetchGenres(query, result);
 }
 
-QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& join)
+QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& join, const QString& order,
+                                          const QString& offsetLimit)
 {
     static const auto fields = QStringList{
         QStringLiteral("TrackID"),       // 0
@@ -287,8 +329,9 @@ QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& j
 
     const auto joinedFields = fields.join(", ");
 
-    return QString("SELECT %1 FROM TrackView %2 WHERE %3;")
-        .arg(joinedFields, join.isEmpty() ? "" : join, where.isEmpty() ? "1" : where);
+    return QString("SELECT %1 FROM TrackView %2 WHERE %3 ORDER BY %4 %5;")
+        .arg(joinedFields, join.isEmpty() ? "" : join, where.isEmpty() ? "1" : where, order.isEmpty() ? "1" : order,
+             offsetLimit);
 }
 
 QString LibraryDatabase::fetchQueryAlbums(const QString& where, const QString& join)
@@ -390,7 +433,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         result.emplace_back(track);
     }
 
-    return true;
+    return !result.empty();
 }
 
 bool LibraryDatabase::dbFetchAlbums(Query& q, AlbumList& result)

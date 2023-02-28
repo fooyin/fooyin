@@ -75,6 +75,21 @@ void TrackStore::remove(const IdSet& tracks)
     }
 }
 
+void TrackStore::removeLibrary(int id)
+{
+    auto it = m_tracks.begin();
+    while(it != m_tracks.end()) {
+        if((*it)->libraryId() == id) {
+            m_trackPathMap.erase((*it)->filepath());
+            m_trackIdMap.erase((*it)->id());
+            it = m_tracks.erase(it);
+        }
+        else {
+            it++;
+        }
+    }
+}
+
 void TrackStore::sort(SortOrder order)
 {
     Sorting::sortTracks(m_tracks, order);
