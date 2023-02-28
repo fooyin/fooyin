@@ -62,7 +62,6 @@ public:
 protected:
     void setupUi();
     void spanHeaders();
-    static void refreshTrack(Core::Track* track);
 
 private:
     Core::Player::PlayerManager* m_playerManager;

@@ -125,6 +125,7 @@ void TrackStore::remove(int trackId)
         m_tracks.erase(std::find(m_tracks.begin(), m_tracks.end(), track));
         m_trackPathMap.erase(track->filepath());
         m_trackIdMap.erase(track->id());
+        track = nullptr;
     }
 }
 } // namespace Fy::Core::Library

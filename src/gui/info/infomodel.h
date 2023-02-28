@@ -25,7 +25,11 @@ namespace Fy {
 
 namespace Core {
 class Track;
+
+namespace Player {
+class PlayerManager;
 }
+} // namespace Core
 
 namespace Gui::Widgets {
 class InfoItem;
@@ -40,10 +44,10 @@ enum Role
 class InfoModel : public QAbstractItemModel
 {
 public:
-    explicit InfoModel(QObject* parent = nullptr);
+    explicit InfoModel(Core::Player::PlayerManager* playerManager, QObject* parent = nullptr);
 
     void setupModel();
-    void reset(Core::Track* track);
+    void reset();
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
@@ -53,8 +57,8 @@ public:
     [[nodiscard]] QModelIndex parent(const QModelIndex& child) const override;
 
 private:
+    Core::Player::PlayerManager* m_playerManager;
     std::unique_ptr<InfoItem> m_root;
-    Core::Track* m_currentTrack;
 };
 } // namespace Gui::Widgets
 } // namespace Fy

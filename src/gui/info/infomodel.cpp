@@ -22,13 +22,14 @@
 #include "infoitem.h"
 
 #include <core/models/track.h>
+#include <core/player/playermanager.h>
 #include <utils/utils.h>
 
 namespace Fy::Gui::Widgets {
-InfoModel::InfoModel(QObject* parent)
-    : QAbstractItemModel(parent)
-    , m_root(std::make_unique<InfoItem>())
-    , m_currentTrack(nullptr)
+InfoModel::InfoModel(Core::Player::PlayerManager* playerManager, QObject* parent)
+    : QAbstractItemModel{parent}
+    , m_playerManager{playerManager}
+    , m_root{std::make_unique<InfoItem>()}
 {
     setupModel();
 }
@@ -66,9 +67,8 @@ void InfoModel::setupModel()
     m_root->appendChild(sampleRate);
 }
 
-void InfoModel::reset(Core::Track* track)
+void InfoModel::reset()
 {
-    m_currentTrack = track;
     emit dataChanged({}, {}, {Qt::DisplayRole});
 }
 
@@ -127,30 +127,32 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
         return m_root->child(row)->data();
     }
 
-    if(m_currentTrack) {
+    Core::Track* track = m_playerManager->currentTrack();
+
+    if(track) {
         switch(row) {
             case(InfoItem::Title):
-                return m_currentTrack->title();
+                return track->title();
             case(InfoItem::Artist):
-                return m_currentTrack->artists().join(", ");
+                return track->artists().join(", ");
             case(InfoItem::Album):
-                return m_currentTrack->album();
+                return track->album();
             case(InfoItem::Year):
-                return m_currentTrack->year();
+                return track->year();
             case(InfoItem::Genre):
-                return m_currentTrack->genres().join(", ");
+                return track->genres().join(", ");
             case(InfoItem::TrackNumber):
-                return m_currentTrack->trackNumber();
+                return track->trackNumber();
             case(InfoItem::Filename):
-                return m_currentTrack->filepath().split("/").constLast();
+                return track->filepath().split("/").constLast();
             case(InfoItem::Path):
-                return m_currentTrack->filepath();
+                return track->filepath();
             case(InfoItem::Duration):
-                return Utils::msToString(m_currentTrack->duration());
+                return Utils::msToString(track->duration());
             case(InfoItem::Bitrate):
-                return QString::number(m_currentTrack->bitrate()).append(" kbps");
+                return QString::number(track->bitrate()).append(" kbps");
             case(InfoItem::SampleRate):
-                return m_currentTrack->sampleRate();
+                return track->sampleRate();
         }
     }
     return {};

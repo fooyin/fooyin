@@ -40,6 +40,7 @@ InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, Utils::Settin
     , m_playerManager{playerManager}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
+    , m_model{playerManager}
 {
     setObjectName("Info Panel");
     setupUi();
@@ -48,15 +49,11 @@ InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, Utils::Settin
     setScrollbarHidden(m_settings->value<Settings::InfoScrollBar>());
     setAltRowColors(m_settings->value<Settings::InfoAltColours>());
 
-    connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
-            &Widgets::InfoWidget::refreshTrack);
     connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, &m_model, &InfoModel::reset);
 
     m_settings->subscribe<Settings::InfoAltColours>(this, &InfoWidget::setAltRowColors);
     m_settings->subscribe<Settings::InfoHeader>(this, &InfoWidget::setHeaderHidden);
     m_settings->subscribe<Settings::InfoScrollBar>(this, &InfoWidget::setScrollbarHidden);
-
-    spanHeaders();
 }
 
 void InfoWidget::setupUi()
@@ -79,15 +76,6 @@ void InfoWidget::spanHeaders()
         if(type == InfoItem::Header) {
             m_view.setFirstColumnSpanned(i, {}, true);
         }
-    }
-}
-
-void InfoWidget::refreshTrack(Core::Track* track)
-{
-    if(track) {
-        //        spanHeaders();
-        //        m_table.resetLayout();
-        //        m_table.resizeColumnToContents(0);
     }
 }
 
