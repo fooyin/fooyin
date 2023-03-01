@@ -20,37 +20,13 @@
 #include "infoitem.h"
 
 namespace Fy::Gui::Widgets {
-InfoItem::InfoItem(Type type, QString title)
-    : m_type{type}
+InfoItem::InfoItem(Type type, QString title, InfoItem* parent)
+    : TreeItem{parent}
+    , m_type{type}
     , m_title{std::move(title)}
-    , m_parent{nullptr}
 { }
 
-void InfoItem::appendChild(InfoItem* child)
-{
-    m_children.append(child);
-}
-
-InfoItem::~InfoItem()
-{
-    qDeleteAll(m_children);
-}
-
-InfoItem* InfoItem::child(int number)
-{
-    if(number < 0 || number >= m_children.size()) {
-        return nullptr;
-    }
-
-    return m_children.at(number);
-}
-
-int InfoItem::childCount() const
-{
-    return static_cast<int>(m_children.size());
-}
-
-int InfoItem::columnCount()
+int InfoItem::columnCount() const
 {
     return 2;
 }
@@ -63,19 +39,5 @@ QString InfoItem::data() const
 InfoItem::Type InfoItem::type()
 {
     return m_type;
-}
-
-int InfoItem::row() const
-{
-    if(m_parent) {
-        return static_cast<int>(m_parent->m_children.indexOf(const_cast<InfoItem*>(this))); // NOLINT
-    }
-
-    return 0;
-}
-
-InfoItem* InfoItem::parent() const
-{
-    return m_parent;
 }
 } // namespace Fy::Gui::Widgets

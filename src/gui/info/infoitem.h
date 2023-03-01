@@ -19,10 +19,12 @@
 
 #pragma once
 
-#include <QList>
+#include <utils/treeitem.h>
+
+#include <QString>
 
 namespace Fy::Gui::Widgets {
-class InfoItem
+class InfoItem : public Utils::TreeItem<InfoItem>
 {
 public:
     enum Type
@@ -48,23 +50,14 @@ public:
         SampleRate  = 12,
     };
 
-    explicit InfoItem(Type type = Type::Header, QString title = {});
-    ~InfoItem();
+    explicit InfoItem(Type type = Header, QString title = {}, InfoItem* parent = nullptr);
 
-    void appendChild(InfoItem* child);
-
-    [[nodiscard]] InfoItem* child(int number);
-    [[nodiscard]] int childCount() const;
-    [[nodiscard]] static int columnCount();
+    [[nodiscard]] int columnCount() const override;
     [[nodiscard]] QString data() const;
     [[nodiscard]] Type type();
-    [[nodiscard]] int row() const;
-    [[nodiscard]] InfoItem* parent() const;
 
 private:
-    QList<InfoItem*> m_children;
     Type m_type;
     QString m_title;
-    InfoItem* m_parent;
 };
 } // namespace Fy::Gui::Widgets

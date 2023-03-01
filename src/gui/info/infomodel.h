@@ -19,7 +19,9 @@
 
 #pragma once
 
-#include <QAbstractItemModel>
+#include "infoitem.h"
+
+#include <utils/treemodel.h>
 
 namespace Fy {
 
@@ -32,8 +34,6 @@ class PlayerManager;
 } // namespace Core
 
 namespace Gui::Widgets {
-class InfoItem;
-
 namespace Info {
 enum Role
 {
@@ -41,24 +41,22 @@ enum Role
 };
 }
 
-class InfoModel : public QAbstractItemModel
+class InfoModel : public Utils::TreeModel<InfoItem>
 {
 public:
     explicit InfoModel(Core::Player::PlayerManager* playerManager, QObject* parent = nullptr);
 
     void setupModel();
+    void addNode(InfoItem::Type type, const QString& title, InfoItem* parent);
     void reset();
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
-    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
-    [[nodiscard]] QModelIndex parent(const QModelIndex& child) const override;
 
 private:
     Core::Player::PlayerManager* m_playerManager;
-    std::unique_ptr<InfoItem> m_root;
+    std::vector<std::unique_ptr<InfoItem>> m_nodes;
 };
 } // namespace Gui::Widgets
 } // namespace Fy
