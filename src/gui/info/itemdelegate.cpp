@@ -72,11 +72,11 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
 
     switch(type) {
         case(InfoItem::Header): {
-            paintHeader(painter, option, index);
+            paintHeader(painter, opt, index);
             break;
         }
         case(InfoItem::Entry): {
-            paintEntry(painter, option, index);
+            paintEntry(painter, opt, index);
             break;
         }
     }

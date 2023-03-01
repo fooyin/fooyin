@@ -47,7 +47,8 @@ public:
     explicit InfoModel(Core::Player::PlayerManager* playerManager, QObject* parent = nullptr);
 
     void setupModel();
-    void addNode(InfoItem::Type type, const QString& title, InfoItem* parent);
+    InfoItem* addNode(const QString& title, InfoItem* parent, InfoItem::Role role = InfoItem::None,
+                      InfoItem::Type type = InfoItem::Entry);
     void reset();
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

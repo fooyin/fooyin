@@ -20,9 +20,10 @@
 #include "infoitem.h"
 
 namespace Fy::Gui::Widgets {
-InfoItem::InfoItem(Type type, QString title, InfoItem* parent)
+InfoItem::InfoItem(Type type, Role role, QString title, InfoItem* parent)
     : TreeItem{parent}
     , m_type{type}
+    , m_role{role}
     , m_title{std::move(title)}
 { }
 
@@ -36,8 +37,13 @@ QString InfoItem::data() const
     return m_title;
 }
 
-InfoItem::Type InfoItem::type()
+InfoItem::Type InfoItem::type() const
 {
     return m_type;
+}
+
+InfoItem::Role InfoItem::role() const
+{
+    return m_role;
 }
 } // namespace Fy::Gui::Widgets

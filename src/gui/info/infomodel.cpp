@@ -37,28 +37,29 @@ void InfoModel::setupModel()
 {
     InfoItem* root = rootItem();
 
-    addNode(InfoItem::Header, "Metadata", root);
+    auto* metaData = addNode("Metadata", root, InfoItem::None, InfoItem::Header);
 
-    addNode(InfoItem::Entry, "Title", root);
-    addNode(InfoItem::Entry, "Album", root);
-    addNode(InfoItem::Entry, "Artist", root);
-    addNode(InfoItem::Entry, "Year", root);
-    addNode(InfoItem::Entry, "Genre", root);
-    addNode(InfoItem::Entry, "Track Number", root);
+    addNode("Title", metaData, InfoItem::Title);
+    addNode("Album", metaData, InfoItem::Album);
+    addNode("Artist", metaData, InfoItem::Artist);
+    addNode("Year", metaData, InfoItem::Year);
+    addNode("Genre", metaData, InfoItem::Genre);
+    addNode("Track Number", metaData, InfoItem::TrackNumber);
 
-    addNode(InfoItem::Header, "Details", root);
+    auto* details = addNode("Details", root, InfoItem::None, InfoItem::Header);
 
-    addNode(InfoItem::Entry, "Filename", root);
-    addNode(InfoItem::Entry, "Path", root);
-    addNode(InfoItem::Entry, "Duration", root);
-    addNode(InfoItem::Entry, "Bitrate", root);
-    addNode(InfoItem::Entry, "Sample Rate", root);
+    addNode("Filename", details, InfoItem::Filename);
+    addNode("Path", details, InfoItem::Path);
+    addNode("Duration", details, InfoItem::Duration);
+    addNode("Bitrate", details, InfoItem::Bitrate);
+    addNode("Sample Rate", details, InfoItem::SampleRate);
 }
 
-void InfoModel::addNode(InfoItem::Type type, const QString& title, InfoItem* parent)
+InfoItem* InfoModel::addNode(const QString& title, InfoItem* parent, InfoItem::Role role, InfoItem::Type type)
 {
-    auto* node = m_nodes.emplace_back(std::make_unique<InfoItem>(type, title, parent)).get();
+    auto* node = m_nodes.emplace_back(std::make_unique<InfoItem>(type, role, title, parent)).get();
     parent->appendChild(node);
+    return node;
 }
 
 void InfoModel::reset()
@@ -108,16 +109,14 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    const int row = index.row();
-
     if(index.column() == 0) {
-        return rootItem()->child(row)->data();
+        return item->data();
     }
 
     Core::Track* track = m_playerManager->currentTrack();
 
     if(track) {
-        switch(row) {
+        switch(item->role()) {
             case(InfoItem::Title):
                 return track->title();
             case(InfoItem::Artist):
@@ -140,6 +139,8 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
                 return QString::number(track->bitrate()).append(" kbps");
             case(InfoItem::SampleRate):
                 return track->sampleRate();
+            case(InfoItem::None):
+                break;
         }
     }
     return {};

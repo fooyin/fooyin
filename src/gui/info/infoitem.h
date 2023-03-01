@@ -35,29 +35,30 @@ public:
 
     enum Role
     {
-        // These correspond to row numbers of the infomodel
-        // Do not change!
+        None        = 0,
         Title       = 1,
         Artist      = 2,
         Album       = 3,
         Year        = 4,
         Genre       = 5,
         TrackNumber = 6,
-        Filename    = 8,
-        Path        = 9,
-        Duration    = 10,
-        Bitrate     = 11,
-        SampleRate  = 12,
+        Filename    = 7,
+        Path        = 8,
+        Duration    = 9,
+        Bitrate     = 10,
+        SampleRate  = 11,
     };
 
-    explicit InfoItem(Type type = Header, QString title = {}, InfoItem* parent = nullptr);
+    explicit InfoItem(Type type = Header, Role role = Title, QString title = {}, InfoItem* parent = nullptr);
 
     [[nodiscard]] int columnCount() const override;
     [[nodiscard]] QString data() const;
-    [[nodiscard]] Type type();
+    [[nodiscard]] Type type() const;
+    [[nodiscard]] Role role() const;
 
 private:
     Type m_type;
+    Role m_role;
     QString m_title;
 };
 } // namespace Fy::Gui::Widgets

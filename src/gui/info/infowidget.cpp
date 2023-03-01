@@ -66,7 +66,10 @@ void InfoWidget::setupUi()
     m_layout->addWidget(&m_view);
 
     m_view.header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
     spanHeaders();
+
+    m_view.expandAll();
 }
 
 void InfoWidget::spanHeaders()
