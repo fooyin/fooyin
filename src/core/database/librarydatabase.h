@@ -50,7 +50,7 @@ public:
 
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);
-    bool deleteTracks(const IdSet& tracks);
+    bool deleteTracks(const TrackPtrList& tracks);
     bool deleteLibraryTracks(int id);
 
 protected:

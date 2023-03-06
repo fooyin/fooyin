@@ -51,9 +51,9 @@ public:
     void scanAll(const TrackPtrList& tracks);
 
 signals:
-    void updatedTracks(Core::TrackList tracks);
-    void addedTracks(Core::TrackList tracks);
-    void tracksDeleted(const Core::IdSet& tracks);
+    void updatedTracks(const Core::TrackList& tracks);
+    void addedTracks(const Core::TrackList& tracks);
+    void tracksDeleted(const Core::TrackPtrList& tracks);
 
 private:
     struct LibraryQueueEntry

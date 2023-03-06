@@ -155,7 +155,7 @@ void MusicLibrary::updateChangedTracks(const TrackList& tracks)
     emit tracksUpdated();
 }
 
-void MusicLibrary::removeDeletedTracks(const IdSet& tracks)
+void MusicLibrary::removeDeletedTracks(const TrackPtrList& tracks)
 {
     p->trackStore.markForDelete(tracks);
     emit tracksDeleted();

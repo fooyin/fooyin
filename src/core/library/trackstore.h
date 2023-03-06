@@ -31,8 +31,8 @@ public:
 
     void add(const TrackList& tracks);
     void update(const TrackList& tracks);
-    void markForDelete(const IdSet& tracks);
-    void remove(const IdSet& tracks);
+    void markForDelete(const TrackPtrList& tracks);
+    void remove(const TrackPtrList& tracks);
     void removeLibrary(int id);
 
     void sort(SortOrder order);
@@ -44,8 +44,8 @@ private:
 
     void add(const Track& track);
     void update(const Track& track);
-    void markForDelete(int trackId);
-    void remove(int trackId);
+    void markForDelete(Track* track);
+    void remove(Track* track);
 
     TrackIdMap m_trackIdMap;
     TrackPtrList m_tracks;

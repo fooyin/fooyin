@@ -530,7 +530,7 @@ bool LibraryDatabase::deleteTrack(int id)
     return (!q.hasError());
 }
 
-bool LibraryDatabase::deleteTracks(const IdSet& tracks)
+bool LibraryDatabase::deleteTracks(const TrackPtrList& tracks)
 {
     if(tracks.empty()) {
         return true;
@@ -538,8 +538,8 @@ bool LibraryDatabase::deleteTracks(const IdSet& tracks)
 
     module()->db().transaction();
 
-    const int fileCount = static_cast<int>(std::count_if(tracks.cbegin(), tracks.cend(), [&](int trackId) {
-        return deleteTrack(trackId);
+    const int fileCount = static_cast<int>(std::count_if(tracks.cbegin(), tracks.cend(), [&](const Track* track) {
+        return deleteTrack(track->id());
     }));
 
     const auto success = module()->db().commit();

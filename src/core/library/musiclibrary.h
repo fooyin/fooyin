@@ -104,7 +104,7 @@ protected:
     void loadTracks(const TrackList& tracks);
     void addNewTracks(const TrackList& tracks);
     void updateChangedTracks(const TrackList& tracks);
-    void removeDeletedTracks(const IdSet& tracks);
+    void removeDeletedTracks(const TrackPtrList& tracks);
 
 private:
     struct Private;

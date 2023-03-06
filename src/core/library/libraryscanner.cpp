@@ -65,13 +65,13 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks, LibraryInfo* info)
     setState(Running);
 
     TrackPathMap trackMap{};
-    IdSet tracksToDelete{};
+    TrackPtrList tracksToDelete{};
 
     // TODO: Don't delete if disk/top level is inaccessible
     //       and ask for confirmation.
     for(const auto& track : tracks) {
         if(!File::exists(track->filepath())) {
-            tracksToDelete.insert(track->id());
+            tracksToDelete.emplace_back(track);
         }
         else {
             trackMap.emplace(track->filepath(), track);

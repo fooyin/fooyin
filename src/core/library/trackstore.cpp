@@ -52,17 +52,17 @@ void TrackStore::update(const TrackList& tracks)
     }
 }
 
-void TrackStore::markForDelete(const IdSet& tracks)
+void TrackStore::markForDelete(const TrackPtrList& tracks)
 {
-    for(auto trackId : tracks) {
-        markForDelete(trackId);
+    for(auto* track : tracks) {
+        markForDelete(track);
     }
 }
 
-void TrackStore::remove(const IdSet& tracks)
+void TrackStore::remove(const TrackPtrList& tracks)
 {
-    for(auto trackId : tracks) {
-        remove(trackId);
+    for(auto* track : tracks) {
+        remove(track);
     }
 }
 
@@ -107,20 +107,18 @@ void TrackStore::update(const Track& track)
     m_trackIdMap.at(track.id()) = track;
 }
 
-void TrackStore::markForDelete(int trackId)
+void TrackStore::markForDelete(Track* track)
 {
-    if(hasTrack(trackId)) {
-        Track* track = &m_trackIdMap.at(trackId);
+    if(hasTrack(track->id())) {
         track->setIsEnabled(false);
     }
 }
 
-void TrackStore::remove(int trackId)
+void TrackStore::remove(Track* track)
 {
-    if(hasTrack(trackId)) {
-        Track* track = &m_trackIdMap.at(trackId);
+    if(hasTrack(track->id())) {
         m_tracks.erase(std::find(m_tracks.begin(), m_tracks.end(), track));
-        m_trackIdMap.erase(trackId);
+        m_trackIdMap.erase(track->id());
     }
 }
 } // namespace Fy::Core::Library
