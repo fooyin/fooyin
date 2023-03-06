@@ -22,14 +22,11 @@
 #include "core/library/sorting/sortorder.h"
 #include "core/models/trackfwd.h"
 
-#include <QReadWriteLock>
-
 namespace Fy::Core::Library {
 class TrackStore
 {
 public:
     Track* track(int id);
-    Track* track(const QString& filepath);
     TrackPtrList tracks() const;
 
     void add(const TrackList& tracks);
@@ -44,15 +41,13 @@ public:
 
 private:
     bool hasTrack(int id) const;
-    bool hasTrack(const QString& filepath) const;
 
     void add(const Track& track);
     void update(const Track& track);
     void markForDelete(int trackId);
     void remove(int trackId);
 
-    TrackIdUniqPtrMap m_trackIdMap;
+    TrackIdMap m_trackIdMap;
     TrackPtrList m_tracks;
-    TrackPathMap m_trackPathMap;
 };
 } // namespace Fy::Core::Library

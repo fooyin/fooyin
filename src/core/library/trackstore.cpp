@@ -25,15 +25,7 @@ namespace Fy::Core::Library {
 Track* TrackStore::track(int id)
 {
     if(hasTrack(id)) {
-        return m_trackIdMap.at(id).get();
-    }
-    return nullptr;
-}
-
-Track* TrackStore::track(const QString& filepath)
-{
-    if(hasTrack(filepath)) {
-        return m_trackPathMap.at(filepath);
+        return &m_trackIdMap.at(id);
     }
     return nullptr;
 }
@@ -47,7 +39,6 @@ void TrackStore::add(const TrackList& tracks)
 {
     m_trackIdMap.reserve(m_trackIdMap.size() + tracks.size());
     m_tracks.reserve(m_tracks.size() + tracks.size());
-    m_trackPathMap.reserve(m_trackPathMap.size() + tracks.size());
 
     for(const Track& track : tracks) {
         add(track);
@@ -80,7 +71,6 @@ void TrackStore::removeLibrary(int id)
     auto it = m_tracks.begin();
     while(it != m_tracks.end()) {
         if((*it)->libraryId() == id) {
-            m_trackPathMap.erase((*it)->filepath());
             m_trackIdMap.erase((*it)->id());
             it = m_tracks.erase(it);
         }
@@ -98,7 +88,6 @@ void TrackStore::sort(SortOrder order)
 void TrackStore::clear()
 {
     m_tracks.clear();
-    m_trackPathMap.clear();
     m_trackIdMap.clear();
 }
 
@@ -107,28 +96,21 @@ bool TrackStore::hasTrack(int id) const
     return m_trackIdMap.count(id);
 }
 
-bool TrackStore::hasTrack(const QString& filepath) const
-{
-    return m_trackPathMap.count(filepath);
-}
-
 void TrackStore::add(const Track& track)
 {
-    Track* newTrack = m_trackIdMap.emplace(track.id(), std::make_unique<Track>(track)).first->second.get();
+    Track* newTrack = &m_trackIdMap.emplace(track.id(), track).first->second;
     m_tracks.emplace_back(newTrack);
-    m_trackPathMap.emplace(newTrack->filepath(), newTrack);
 }
 
 void TrackStore::update(const Track& track)
 {
-    Track* libraryTrack = m_trackIdMap.at(track.id()).get();
-    *libraryTrack       = track;
+    m_trackIdMap.at(track.id()) = track;
 }
 
 void TrackStore::markForDelete(int trackId)
 {
     if(hasTrack(trackId)) {
-        Track* track = m_trackIdMap.at(trackId).get();
+        Track* track = &m_trackIdMap.at(trackId);
         track->setIsEnabled(false);
     }
 }
@@ -136,11 +118,9 @@ void TrackStore::markForDelete(int trackId)
 void TrackStore::remove(int trackId)
 {
     if(hasTrack(trackId)) {
-        Track* track = m_trackIdMap.at(trackId).get();
+        Track* track = &m_trackIdMap.at(trackId);
         m_tracks.erase(std::find(m_tracks.begin(), m_tracks.end(), track));
-        m_trackPathMap.erase(track->filepath());
         m_trackIdMap.erase(track->id());
-        track = nullptr;
     }
 }
 } // namespace Fy::Core::Library
