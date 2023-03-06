@@ -35,7 +35,7 @@ class Playlist : public QObject
     Q_OBJECT
 
 public:
-    Playlist(Player::PlayerManager* playerManager, int idx, QString name);
+    Playlist(Player::PlayerManager* playerManager, int idx, QString name, QObject* parent = nullptr);
 
     QString name();
 

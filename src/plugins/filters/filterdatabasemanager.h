@@ -43,7 +43,7 @@ class FilterDatabaseManager : public Utils::Worker
 public:
     explicit FilterDatabaseManager(Core::DB::Database* database, QObject* parent = nullptr);
 
-    void stopThread() override;
+    void closeThread() override;
 
     void getAllItems(Filters::FilterType type, Core::Library::SortOrder order);
     void getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,

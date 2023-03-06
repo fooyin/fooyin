@@ -22,9 +22,8 @@
 #include "widgetfactory.h"
 
 namespace Fy::Gui::Widgets {
-WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent)
-    : QObject{parent}
-    , m_widgetFactory{widgetFactory}
+WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory)
+    : m_widgetFactory{widgetFactory}
 { }
 
 FyWidget* WidgetProvider::createWidget(const QString& widget)

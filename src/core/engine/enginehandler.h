@@ -46,6 +46,6 @@ protected:
     void playStateChanged(Player::PlayState state);
 
 private:
-    std::unique_ptr<Engine> m_engine;
+    Engine* m_engine;
 };
 } // namespace Fy::Core::Engine

@@ -35,7 +35,7 @@ LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, Utils::Se
     , m_settings{settings}
 { }
 
-void LibraryDatabaseManager::stopThread()
+void LibraryDatabaseManager::closeThread()
 {
     m_database->closeDatabase();
 }

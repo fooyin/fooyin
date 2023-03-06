@@ -20,10 +20,10 @@
 #include "libraryplaylistmanager.h"
 
 #include "playlist.h"
-#include "playlisthandler.h"
+#include "playlistmanager.h"
 
 namespace Fy::Core::Playlist {
-LibraryPlaylistManager::LibraryPlaylistManager(PlaylistHandler* playlistHandler)
+LibraryPlaylistManager::LibraryPlaylistManager(PlaylistManager* playlistHandler)
     : m_playlistHandler(playlistHandler)
 { }
 
@@ -40,7 +40,7 @@ void LibraryPlaylistManager::append(const TrackPtrList& tracks)
     playlist->appendTracks(tracks);
 }
 
-void LibraryPlaylistManager::activatePlaylist(PlaylistHandler* playlistHandler, int id)
+void LibraryPlaylistManager::activatePlaylist(PlaylistManager* playlistHandler, int id)
 {
     const auto currentIndex = playlistHandler->currentIndex();
     auto* currentPlaylist   = playlistHandler->playlist(currentIndex);

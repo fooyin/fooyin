@@ -28,9 +28,9 @@ ThreadManager::ThreadManager(QObject* parent)
     : QObject{parent}
 { }
 
-void ThreadManager::close()
+void ThreadManager::shutdown()
 {
-    emit stop();
+    emit closeThread();
 
     for(const auto& thread : m_threads) {
         thread->quit();
@@ -45,7 +45,7 @@ void ThreadManager::moveToNewThread(Worker* worker)
     thread->start();
 
     worker->moveToThread(thread);
-    connect(this, &ThreadManager::stop, worker, &Worker::stopThread);
+    connect(this, &ThreadManager::closeThread, worker, &Worker::closeThread);
     m_workers.emplace_back(worker);
 }
 } // namespace Fy::Utils

@@ -33,7 +33,7 @@ public:
 
     explicit Worker(QObject* parent = nullptr);
 
-    virtual void stopThread();
+    virtual void closeThread();
 
     [[nodiscard]] State state() const;
     void setState(State state);

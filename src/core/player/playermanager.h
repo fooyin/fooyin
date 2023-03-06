@@ -48,8 +48,8 @@ class PlayerManager : public QObject
     Q_OBJECT
 
 public:
-    explicit PlayerManager(QObject* parent)
-        : QObject(parent){};
+    explicit PlayerManager(QObject* parent = nullptr)
+        : QObject{parent} {};
 
     virtual void restoreState() = 0;
 

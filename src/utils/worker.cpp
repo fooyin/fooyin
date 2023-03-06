@@ -28,7 +28,7 @@ Worker::Worker(QObject* parent)
     , m_state{Idle}
 { }
 
-void Worker::stopThread() { }
+void Worker::closeThread() { }
 
 Worker::State Worker::state() const
 {

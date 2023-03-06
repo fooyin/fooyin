@@ -26,9 +26,9 @@
 
 namespace Fy::Core::Playlist {
 PlaylistHandler::PlaylistHandler(Player::PlayerManager* playerManager, QObject* parent)
-    : QObject(parent)
-    , m_playerManager(playerManager)
-    , m_currentPlaylistIndex(-1)
+    : QObject{parent}
+    , m_playerManager{playerManager}
+    , m_currentPlaylistIndex{-1}
 {
     connect(m_playerManager, &Player::PlayerManager::nextTrack, this, &PlaylistHandler::next);
     connect(m_playerManager, &Player::PlayerManager::previousTrack, this, &PlaylistHandler::previous);
@@ -42,7 +42,7 @@ PlaylistHandler::~PlaylistHandler()
 Playlist* PlaylistHandler::playlist(int id)
 {
     if(m_playlists.count(id)) {
-        return m_playlists.at(id).get();
+        return m_playlists.at(id);
     }
     return {};
 }
@@ -72,7 +72,7 @@ int PlaylistHandler::activeIndex() const
 
 Playlist* PlaylistHandler::activePlaylist() const
 {
-    return m_playlists.at(activeIndex()).get();
+    return m_playlists.at(activeIndex());
 }
 
 int PlaylistHandler::currentIndex() const
@@ -137,7 +137,7 @@ int PlaylistHandler::addNewPlaylist(const QString& name)
     }
 
     const auto count = static_cast<int>(m_playlists.size());
-    auto* playlist   = new Playlist(m_playerManager, count, name);
+    auto* playlist   = new Playlist(m_playerManager, count, name, this);
     m_playlists.emplace(playlist->index(), playlist);
 
     return playlist->index();

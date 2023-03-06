@@ -46,7 +46,7 @@ public:
     explicit LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
                                     QObject* parent = nullptr);
 
-    void stopThread() override;
+    void closeThread() override;
 
     void getAllTracks(SortOrder order);
     void updateTracks(const TrackPtrList& tracks);

@@ -38,7 +38,7 @@ LibraryScanner::LibraryScanner(LibraryManager* libraryManager, DB::Database* dat
     , m_database{database}
 { }
 
-LibraryScanner::~LibraryScanner()
+void LibraryScanner::closeThread()
 {
     m_database->closeDatabase();
 }

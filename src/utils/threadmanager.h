@@ -31,12 +31,12 @@ class ThreadManager : public QObject
 public:
     explicit ThreadManager(QObject* parent = nullptr);
 
-    void close();
+    void shutdown();
 
     void moveToNewThread(Worker* worker);
 
 signals:
-    void stop();
+    void closeThread();
 
 private:
     std::vector<QThread*> m_threads;

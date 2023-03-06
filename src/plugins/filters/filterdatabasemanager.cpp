@@ -75,7 +75,7 @@ FilterDatabaseManager::FilterDatabaseManager(Core::DB::Database* database, QObje
     , m_filterDatabase{m_database->connectionName()}
 { }
 
-void FilterDatabaseManager::stopThread()
+void FilterDatabaseManager::closeThread()
 {
     m_database->closeDatabase();
 }

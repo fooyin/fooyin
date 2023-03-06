@@ -43,9 +43,9 @@ class LibraryScanner : public Utils::Worker
 
 public:
     explicit LibraryScanner(LibraryManager* libraryManager, DB::Database* database, QObject* parent = nullptr);
-    ~LibraryScanner() override;
 
-    void stopThread() override;
+    void closeThread() override;
+    void stopThread();
 
     void scanLibrary(const TrackPtrList& tracks, LibraryInfo* info);
     void scanAll(const TrackPtrList& tracks);

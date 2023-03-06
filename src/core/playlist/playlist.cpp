@@ -26,8 +26,9 @@
 #include <QMessageBox>
 
 namespace Fy::Core::Playlist {
-Playlist::Playlist(Player::PlayerManager* playerManager, int idx, QString name)
-    : m_playerManager{playerManager}
+Playlist::Playlist(Player::PlayerManager* playerManager, int idx, QString name, QObject* parent)
+    : QObject{parent}
+    , m_playerManager{playerManager}
     , m_name{std::move(name)}
     , m_playlistIndex{idx}
     , m_playingTrack{nullptr}
