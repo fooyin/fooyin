@@ -51,7 +51,7 @@ Database::Database(Utils::SettingsManager* settings, const QString& directory, c
         qDebug() << "Database could not be initialised";
     }
     else {
-        m_libraryDatabase = std::make_unique<LibraryDatabase>(connectionName(), -1);
+        m_libraryDatabase = std::make_unique<LibraryDatabase>(connectionName());
     }
 
     update();

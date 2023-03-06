@@ -79,9 +79,8 @@ QString getOrderString(Core::Library::SortOrder order)
     return orderString;
 }
 
-LibraryDatabase::LibraryDatabase(const QString& connectionName, int libraryId)
+LibraryDatabase::LibraryDatabase(const QString& connectionName)
     : DB::Module(connectionName)
-    , m_libraryId(libraryId)
     , m_connectionName(connectionName)
 { }
 
@@ -140,7 +139,8 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
 
     for(auto& track : tracks) {
         if(track.libraryId() < 0) {
-            track.setLibraryId(m_libraryId);
+            qWarning() << QString{"Track (%1) doesn't belong to a library!"}.arg(track.title());
+            continue;
         }
 
         // Check artists
