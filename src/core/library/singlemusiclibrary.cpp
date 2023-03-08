@@ -58,11 +58,14 @@ SingleMusicLibrary::SingleMusicLibrary(LibraryInfo* info, DB::Database* database
     connect(this, &SingleMusicLibrary::updateSaveTracks, &m_libraryDatabaseManager,
             &LibraryDatabaseManager::updateTracks);
 
-    SingleMusicLibrary::getAllTracks();
-
     if(m_settings->value<Settings::AutoRefresh>()) {
         QTimer::singleShot(3000, this, &Library::SingleMusicLibrary::reload);
     }
+}
+
+void SingleMusicLibrary::loadLibrary()
+{
+    getAllTracks();
 }
 
 void SingleMusicLibrary::updateTracks(const TrackPtrList& tracks)

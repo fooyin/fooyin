@@ -92,6 +92,7 @@ Application::~Application() = default;
 void Application::startup()
 {
     m_settingsManager->loadSettings();
+    m_library->loadLibrary();
     m_playerManager->restoreState();
     m_layoutProvider.findLayouts();
 

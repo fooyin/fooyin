@@ -18,7 +18,6 @@
  */
 
 #include "musiclibrarycontainer.h"
-#include "library/trackstore.h"
 #include "libraryinfo.h"
 #include "libraryinteractor.h"
 
@@ -29,6 +28,11 @@ MusicLibraryContainer::MusicLibraryContainer(MusicLibraryInternal* library, QObj
     : MusicLibrary{parent}
     , m_currentLibrary{library}
 { }
+
+void MusicLibraryContainer::loadLibrary()
+{
+    m_currentLibrary->loadLibrary();
+}
 
 LibraryInfo* MusicLibraryContainer::info() const
 {

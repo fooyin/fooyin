@@ -32,6 +32,7 @@ class UnifiedMusicLibrary : public MusicLibraryInternal
 public:
     explicit UnifiedMusicLibrary(LibraryInfo* info, LibraryManager* libraryManager, QObject* parent = nullptr);
 
+    void loadLibrary() override;
     void reload() override;
     void rescan() override;
 

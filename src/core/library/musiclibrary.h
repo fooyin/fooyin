@@ -37,6 +37,8 @@ public:
         : QObject{parent}
     { }
 
+    virtual void loadLibrary() = 0;
+
     [[nodiscard]] virtual LibraryInfo* info() const = 0;
 
     virtual void reload() = 0;

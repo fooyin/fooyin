@@ -47,6 +47,7 @@ public:
     SingleMusicLibrary(LibraryInfo* info, DB::Database* database, Utils::ThreadManager* threadManager,
                        Utils::SettingsManager* settings, QObject* parent = nullptr);
 
+    void loadLibrary() override;
     void reload() override;
     void rescan() override;
     void refreshTracks(const TrackList& result);

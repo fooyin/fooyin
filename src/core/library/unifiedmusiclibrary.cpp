@@ -31,6 +31,14 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryInfo* info, LibraryManager* libr
     , m_trackStore{std::make_unique<UnifiedTrackStore>()}
 { }
 
+void UnifiedMusicLibrary::loadLibrary()
+{
+    const LibraryIdMap& libraries = m_libraryManager->allLibraries();
+    for(const auto& library : libraries) {
+        library.second->loadLibrary();
+    }
+}
+
 void UnifiedMusicLibrary::reload()
 {
     const LibraryIdMap& libraries = m_libraryManager->allLibraries();

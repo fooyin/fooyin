@@ -30,6 +30,8 @@ class MusicLibraryContainer : public MusicLibrary
 public:
     explicit MusicLibraryContainer(MusicLibraryInternal* library = nullptr, QObject* parent = nullptr);
 
+    void loadLibrary() override;
+
     [[nodiscard]] LibraryInfo* info() const override;
 
     void reload() override;
