@@ -27,7 +27,7 @@ namespace Fy::Core::DB {
 class LibraryDatabase : public DB::Module
 {
 public:
-    explicit LibraryDatabase(const QString& connectionName);
+    LibraryDatabase(const QString& connectionName, int libraryId);
 
     bool storeTracks(TrackList& tracksToStore);
 
@@ -68,6 +68,7 @@ protected:
     int insertTrack(const Track& track);
 
 private:
+    int m_libraryId;
     QString m_connectionName;
 };
 } // namespace Fy::Core::DB

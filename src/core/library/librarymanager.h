@@ -19,32 +19,50 @@
 
 #pragma once
 
-#include "core/library/libraryinfo.h"
+#include "libraryinfo.h"
+#include "musiclibrary.h"
+#include "unifiedmusiclibrary.h"
 
 #include <QObject>
 
-namespace Fy::Core {
+namespace Fy {
 
+namespace Utils {
+class ThreadManager;
+class SettingsManager;
+} // namespace Utils
+
+namespace Core {
 namespace DB {
 class Database;
 class Library;
 } // namespace DB
 
 namespace Library {
+class UnifiedTrackStore;
+class MusicLibraryContainer;
+
+using LibraryIdMap = std::unordered_map<int, MusicLibraryInternal*>;
+
 class LibraryManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit LibraryManager(DB::Database* database, QObject* parent = nullptr);
+    explicit LibraryManager(Utils::ThreadManager* threadManager, DB::Database* database,
+                            Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryManager() override;
 
     void reset();
 
-    [[nodiscard]] const LibraryList& allLibraries() const;
+    [[nodiscard]] MusicLibrary* currentLibrary() const;
+    [[nodiscard]] MusicLibrary* library(int id) const;
+    [[nodiscard]] const LibraryInfoList& allLibrariesInfo() const;
+    [[nodiscard]] const LibraryIdMap& allLibraries() const;
     int addLibrary(const QString& path, const QString& name);
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
+    void changeCurrentLibrary(int id);
     [[nodiscard]] bool hasLibrary() const;
     [[nodiscard]] bool hasLibrary(int id) const;
     [[nodiscard]] LibraryInfo* findLibraryByPath(const QString& path) const;
@@ -56,10 +74,20 @@ signals:
     void libraryRenamed(int id, const QString& name);
 
 private:
+    MusicLibraryInternal* addNewLibrary(LibraryInfo* info);
+
+    Utils::ThreadManager* m_threadManager;
     DB::Database* m_database;
+    Utils::SettingsManager* m_settings;
+
     DB::Library* m_libraryConnector;
 
-    LibraryList m_libraries;
+    LibraryInfoList m_libraryInfos;
+    LibraryIdMap m_libraries;
+    UnifiedMusicLibrary* m_unifiedLibrary;
+    UnifiedTrackStore* m_unifiedStore;
+    MusicLibraryContainer* m_libraryHandler;
 };
 } // namespace Library
-} // namespace Fy::Core
+} // namespace Core
+} // namespace Fy

@@ -53,12 +53,13 @@ constexpr auto Playlist  = "://icons/category-playlist.svg";
 constexpr auto MenuBar = "Fooyin.MenuBar";
 
 namespace Menus {
-constexpr auto File     = "Fooyin.Menu.File";
-constexpr auto Edit     = "Fooyin.Menu.Edit";
-constexpr auto View     = "Fooyin.Menu.View";
-constexpr auto Playback = "Fooyin.Menu.Playback";
-constexpr auto Library  = "Fooyin.Menu.Library";
-constexpr auto Help     = "Fooyin.Menu.Help";
+constexpr auto File          = "Fooyin.Menu.File";
+constexpr auto Edit          = "Fooyin.Menu.Edit";
+constexpr auto View          = "Fooyin.Menu.View";
+constexpr auto Playback      = "Fooyin.Menu.Playback";
+constexpr auto Library       = "Fooyin.Menu.Library";
+constexpr auto SwitchLibrary = "Fooyin.Menu.Library.Switch";
+constexpr auto Help          = "Fooyin.Menu.Help";
 
 namespace Context {
 constexpr auto Layout        = "Fooyin.Menu.Layout";
@@ -93,6 +94,7 @@ constexpr auto Exit           = "Fooyin.Action.Exit";
 constexpr auto Settings       = "Fooyin.Action.Settings";
 constexpr auto LayoutEditing  = "Fooyin.Action.LayoutEditing";
 constexpr auto Rescan         = "Fooyin.Action.Rescan";
+constexpr auto LibrarySwitch  = "Fooyin.Action.LibrarySwitch";
 constexpr auto PlaylistCreate = "Fooyin.Action.Playlist.Create";
 } // namespace Actions
 

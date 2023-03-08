@@ -19,10 +19,6 @@
 
 #include "track.h"
 
-#include <utils/helpers.h>
-
-#include <utility>
-
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -368,7 +364,7 @@ void Track::setCoverPath(const QString& path)
 void Track::addExtraTag(const QString& tag, const QString& value)
 {
     if(!tag.isEmpty() && !value.isEmpty()) {
-        if(Utils::hasKey(m_extraTags, tag)) {
+        if(m_extraTags.count(tag)) {
             auto entry = m_extraTags.at(tag);
             entry.append(value);
             m_extraTags.emplace(tag, entry);

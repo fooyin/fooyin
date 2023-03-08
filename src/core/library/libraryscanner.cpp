@@ -22,7 +22,6 @@
 #include "core/database/database.h"
 #include "core/database/librarydatabase.h"
 #include "core/tagging/tags.h"
-#include "librarymanager.h"
 #include "libraryutils.h"
 
 #include <utils/utils.h>
@@ -32,14 +31,15 @@
 using namespace Fy::Utils;
 
 namespace Fy::Core::Library {
-LibraryScanner::LibraryScanner(LibraryManager* libraryManager, DB::Database* database, QObject* parent)
+LibraryScanner::LibraryScanner(LibraryInfo* info, DB::Database* database, QObject* parent)
     : Worker{parent}
-    , m_libraryManager{libraryManager}
+    , m_library{info}
     , m_database{database}
 { }
 
 void LibraryScanner::closeThread()
 {
+    stopThread();
     m_database->closeDatabase();
 }
 
@@ -48,15 +48,9 @@ void LibraryScanner::stopThread()
     setState(State::Idle);
 }
 
-void LibraryScanner::scanLibrary(const TrackPtrList& tracks, LibraryInfo* info)
+void LibraryScanner::scanLibrary(const TrackPtrList& tracks)
 {
-    if(!info) {
-        return;
-    }
-
-    if(isRunning()) {
-        const LibraryQueueEntry libraryEntry{info, tracks};
-        m_libraryQueue.emplace_back(libraryEntry);
+    if(!m_library) {
         return;
     }
 
@@ -94,20 +88,9 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks, LibraryInfo* info)
         return;
     }
 
-    getAndSaveAllFiles(info->id, info->path, trackMap);
+    getAndSaveAllFiles(trackMap);
 
     setState(Idle);
-
-    processQueue();
-}
-
-void LibraryScanner::scanAll(const TrackPtrList& tracks)
-{
-    const auto& libraries = m_libraryManager->allLibraries();
-
-    for(const auto& info : libraries) {
-        scanLibrary(tracks, info.get());
-    }
 }
 
 void LibraryScanner::storeTracks(TrackList& tracks) const
@@ -134,14 +117,16 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
                                           "*.aac", "*.wma", "*.mpc",  "*.aiff", "*.ape", "*.webm", "*.mp4"};
 
     while(!stack.isEmpty()) {
-        const QDir dir = stack.takeFirst();
-        for(const auto& subDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+        const QDir dir              = stack.takeFirst();
+        const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        for(const auto& subDir : subDirs) {
             if(!mayRun()) {
                 return {};
             }
             stack.append(QDir{subDir.absoluteFilePath()});
         }
-        for(const auto& file : dir.entryInfoList(soundFileExtensions, QDir::Files)) {
+        const QFileInfoList files = dir.entryInfoList(soundFileExtensions, QDir::Files);
+        for(const auto& file : files) {
             if(!mayRun()) {
                 return {};
             }
@@ -151,13 +136,9 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
     return ret;
 }
 
-bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, const TrackPathMap& tracks)
+bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
 {
-    if(path.isEmpty() || !File::exists(path)) {
-        return false;
-    }
-
-    QDir dir(path);
+    QDir dir(m_library->path);
 
     TrackList tracksToStore{};
     TrackList tracksToUpdate{};
@@ -197,7 +178,7 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
         }
 
         Track track{filepath};
-        track.setLibraryId(libraryId);
+        track.setLibraryId(m_library->id);
 
         fileWasRead = Tagging::readMetaData(track, Tagging::Quality::Quality);
         if(fileWasRead) {
@@ -223,14 +204,5 @@ bool LibraryScanner::getAndSaveAllFiles(int libraryId, const QString& path, cons
     tracksToStore.clear();
 
     return true;
-}
-
-void LibraryScanner::processQueue()
-{
-    if(!m_libraryQueue.empty()) {
-        const LibraryQueueEntry libraryEntry = m_libraryQueue.front();
-        m_libraryQueue.pop_front();
-        scanLibrary(libraryEntry.tracks, libraryEntry.library);
-    }
 }
 } // namespace Fy::Core::Library

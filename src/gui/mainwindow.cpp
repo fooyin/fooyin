@@ -106,7 +106,12 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
                        LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout, QWidget* parent)
     : QMainWindow{parent}
     , p{std::make_unique<Private>(actionManager, settings, layoutProvider, editableLayout)}
-{ }
+{
+    actionManager->setMainWindow(this);
+    setAttribute(Qt::WA_DeleteOnClose);
+
+    setupMenu();
+}
 
 MainWindow::~MainWindow()
 {

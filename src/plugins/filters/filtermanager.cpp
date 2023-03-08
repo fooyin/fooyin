@@ -52,7 +52,7 @@ struct FilterManager::Private
 
 FilterManager::FilterManager(Utils::ThreadManager* threadManager, Core::DB::Database* database,
                              Core::Library::MusicLibrary* library, QObject* parent)
-    : MusicLibraryInteractor{parent}
+    : LibraryInteractor{parent}
     , p{std::make_unique<Private>(threadManager, database, library)}
 {
     connect(this, &FilterManager::loadAllItems, &p->databaseManager, &FilterDatabaseManager::getAllItems);

@@ -21,6 +21,8 @@
 
 #include "gui/guiconstants.h"
 
+#include <utils/settings/settingsmanager.h>
+
 #include <QCheckBox>
 #include <QVBoxLayout>
 
@@ -28,17 +30,17 @@ namespace Fy::Gui::Settings {
 class GeneralPageWidget : public Utils::SettingsPageWidget
 {
 public:
-    explicit GeneralPageWidget(Core::SettingsManager* settings);
+    explicit GeneralPageWidget(Utils::SettingsManager* settings);
 
     void apply() override;
 
 private:
-    Core::SettingsManager* m_settings;
+    Utils::SettingsManager* m_settings;
 
     QVBoxLayout* m_mainLayout;
 };
 
-GeneralPageWidget::GeneralPageWidget(Core::SettingsManager* settings)
+GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
     , m_mainLayout{new QVBoxLayout(this)}
 {
@@ -47,8 +49,8 @@ GeneralPageWidget::GeneralPageWidget(Core::SettingsManager* settings)
 
 void GeneralPageWidget::apply() { }
 
-GeneralPage::GeneralPage(Utils::SettingsDialogController* controller, Core::SettingsManager* settings)
-    : Utils::SettingsPage{controller}
+GeneralPage::GeneralPage(Utils::SettingsManager* settings)
+    : Utils::SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::GeneralCore);
     setName(tr("General"));

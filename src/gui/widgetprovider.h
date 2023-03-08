@@ -25,10 +25,12 @@ namespace Fy::Gui::Widgets {
 class FyWidget;
 class WidgetFactory;
 
-class WidgetProvider
+class WidgetProvider : public QObject
 {
+    Q_OBJECT
+
 public:
-    explicit WidgetProvider(Widgets::WidgetFactory* widgetFactory);
+    explicit WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent = nullptr);
 
     FyWidget* createWidget(const QString& widget);
 

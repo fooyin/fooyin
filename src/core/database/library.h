@@ -28,7 +28,7 @@ class Library : private Module
 public:
     explicit Library(const QString& connectionName);
 
-    Core::Library::LibraryList getAllLibraries();
+    bool getAllLibraries(Core::Library::LibraryInfoList& libraries);
     int insertLibrary(const QString& path, const QString& name);
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);

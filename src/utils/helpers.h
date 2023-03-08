@@ -20,15 +20,16 @@
 #pragma once
 
 #include <algorithm>
+#include <unordered_set>
 
 namespace Fy::Utils {
 template <typename C, typename F>
 constexpr int getIndex(C c, F f)
 {
     int index = -1;
-    auto it   = std::find(c.begin(), c.end(), f);
-    if(it != c.end()) {
-        index = it - c.begin();
+    auto it   = std::find(c.cbegin(), c.cend(), f);
+    if(it != c.cend()) {
+        index = it - c.cbegin();
     }
     return index;
 }
@@ -36,8 +37,8 @@ constexpr int getIndex(C c, F f)
 template <typename C, typename F>
 constexpr bool contains(C c, F f)
 {
-    auto it = std::find(c.begin(), c.end(), f);
-    return static_cast<bool>(it != c.end());
+    auto it = std::find(c.cbegin(), c.cend(), f);
+    return static_cast<bool>(it != c.cend());
 }
 
 template <typename C, typename F>
@@ -45,4 +46,15 @@ constexpr bool hasKey(C c, F f)
 {
     return c.count(f);
 }
+
+template <typename E, typename T>
+constexpr void intersection(T& v1, const T& v2, T& result)
+{
+    std::unordered_set<E> first(v1.cbegin(), v1.cend());
+    for (auto entry : v2)
+        if (first.count(entry)) {
+            result.emplace_back(entry);
+        }
+}
+
 } // namespace Fy::Utils

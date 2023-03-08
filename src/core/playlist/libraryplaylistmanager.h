@@ -21,21 +21,28 @@
 
 #include "libraryplaylistinterface.h"
 
-namespace Fy::Core::Playlist {
+namespace Fy::Core {
+
+namespace Library {
+class MusicLibrary;
+}
+
+namespace Playlist {
 class PlaylistManager;
 
 class LibraryPlaylistManager : public LibraryPlaylistInterface
 {
 public:
-    explicit LibraryPlaylistManager(PlaylistManager* playlistHandler);
+    explicit LibraryPlaylistManager(Library::MusicLibrary* library, PlaylistManager* playlistHandler);
 
-    void createPlaylist(const TrackPtrList& tracks, int id) override;
+    void createPlaylist(const TrackPtrList& tracks, int startIndex) override;
     void append(const TrackPtrList& tracks) override;
 
-protected:
-    static void activatePlaylist(PlaylistManager* playlistHandler, int id);
-
 private:
+    void activatePlaylist(int startIndex);
+
+    Library::MusicLibrary* m_library;
     Playlist::PlaylistManager* m_playlistHandler;
 };
-} // namespace Fy::Core::Playlist
+} // namespace Playlist
+} // namespace Fy::Core

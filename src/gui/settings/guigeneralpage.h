@@ -32,7 +32,7 @@ namespace Gui::Settings {
 class GuiGeneralPage : public Utils::SettingsPage
 {
 public:
-    explicit GuiGeneralPage(Utils::SettingsDialogController* controller, Utils::SettingsManager* settings);
+    explicit GuiGeneralPage(Utils::SettingsManager* settings);
 };
 } // namespace Gui::Settings
 } // namespace Fy

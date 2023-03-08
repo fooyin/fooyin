@@ -23,7 +23,6 @@ namespace Fy {
 
 namespace Utils {
 class SettingsManager;
-class SettingsDialogController;
 class ActionManager;
 class ThreadManager;
 } // namespace Utils
@@ -45,13 +44,11 @@ struct CorePluginContext
 {
     CorePluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
                       Core::Library::MusicLibrary* library, Utils::SettingsManager* settingsManager,
-                      Utils::SettingsDialogController* settingsController, Utils::ThreadManager* threadManager,
-                      Core::DB::Database* database)
+                      Utils::ThreadManager* threadManager, Core::DB::Database* database)
         : actionManager{actionManager}
         , playerManager{playerManager}
         , library{library}
         , settingsManager{settingsManager}
-        , settingsController{settingsController}
         , threadManager{threadManager}
         , database{database}
     { }
@@ -60,7 +57,6 @@ struct CorePluginContext
     Core::Player::PlayerManager* playerManager;
     Core::Library::MusicLibrary* library;
     Utils::SettingsManager* settingsManager;
-    Utils::SettingsDialogController* settingsController;
     Utils::ThreadManager* threadManager;
     Core::DB::Database* database;
 };

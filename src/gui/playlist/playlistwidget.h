@@ -21,10 +21,10 @@
 
 #include "gui/fywidget.h"
 
-#include <QItemSelection>
+#include <core/models/trackfwd.h>
+#include <core/playlist/libraryplaylistinterface.h>
 
 class QHBoxLayout;
-class QPushButton;
 
 namespace Fy {
 
@@ -44,10 +44,13 @@ namespace Library {
 class LibraryManager;
 class MusicLibrary;
 } // namespace Library
+
+namespace Playlist {
+class PlaylistManager;
+} // namespace Playlist
 } // namespace Core
 
-namespace Gui {
-namespace Widgets {
+namespace Gui::Widgets {
 class PlaylistModel;
 class PlaylistView;
 
@@ -56,9 +59,9 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
-                            Core::Player::PlayerManager* playerManager,
-                            Utils::SettingsDialogController* settingsDialogController, Utils::SettingsManager* settings,
+    explicit PlaylistWidget(Core::Library::LibraryManager* libraryManager,
+                            Core::Playlist::PlaylistManager* playlistHandler,
+                            Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                             QWidget* parent = nullptr);
 
     void setup();
@@ -78,7 +81,8 @@ public:
     void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
 signals:
-    void clickedTrack(int idx, bool createNewPlaylist);
+    void clickedTrack(int idx);
+    void selectionWasChanged(const Core::TrackPtrList& tracks);
 
 protected:
     void selectionChanged();
@@ -92,11 +96,19 @@ protected:
     void findCurrent();
 
 private:
+    void prepareTracks(int idx);
+    void expandPlaylist(const QModelIndex& parent, int first, int last);
+
     Core::Library::LibraryManager* m_libraryManager;
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
-    Utils::SettingsDialogController* m_settingsDialogController;
     Utils::SettingsManager* m_settings;
+    Utils::SettingsDialogController* m_settingsDialog;
+
+    Core::Playlist::PlaylistManager* m_playlistHandler;
+    std::unique_ptr<Core::Playlist::LibraryPlaylistInterface> m_libraryPlaylistManager;
+
+    Core::TrackPtrList m_selectedTracks;
 
     QHBoxLayout* m_layout;
     PlaylistModel* m_model;
@@ -105,6 +117,5 @@ private:
     bool m_changingSelection;
     Utils::OverlayWidget* m_noLibrary;
 };
-} // namespace Widgets
-} // namespace Gui
+} // namespace Gui::Widgets
 } // namespace Fy

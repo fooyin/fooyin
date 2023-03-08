@@ -52,6 +52,11 @@ set(SOURCES
     library/statuswidget.h
     library/statuswidget.cpp
 
+    menu/filemenu.h
+    menu/filemenu.cpp
+    menu/librarymenu.h
+    menu/librarymenu.cpp
+
     playlist/playlistview.h
     playlist/playlistview.cpp
     playlist/playlistmodel.h
@@ -121,6 +126,7 @@ target_link_libraries(fooyin_gui
    PRIVATE
      Qt6::Core
      Qt6::Widgets
+     Qt6::Sql
      fooyin::core
      fooyin::utils
 )

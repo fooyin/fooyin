@@ -22,9 +22,10 @@
 #include <QSettings>
 
 namespace Fy::Utils {
-SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
+SettingsManager::SettingsManager(const QString& settingsPath, SettingsDialogController* settingsDialog, QObject* parent)
     : QObject{parent}
     , m_settingsFile{settingsPath, QSettings::IniFormat, this}
+    , m_settingsDialog{settingsDialog}
 { }
 
 void SettingsManager::loadSettings()
@@ -56,6 +57,11 @@ void SettingsManager::storeSettings()
     }
 
     m_settingsFile.sync();
+}
+
+SettingsDialogController* SettingsManager::settingsDialog() const
+{
+    return m_settingsDialog;
 }
 
 QString SettingsManager::getKeyString(const SettingsEntry& setting)

@@ -19,24 +19,31 @@
 
 #pragma once
 
-#include "core/library/sorting/sortorder.h"
-#include "core/models/trackfwd.h"
+#include "trackstore.h"
 
 namespace Fy::Core::Library {
-class LibraryManager;
-
-class TrackStore
+class UnifiedTrackStore : public TrackStore
 {
 public:
-    virtual ~TrackStore() = default;
+    [[nodiscard]] bool hasTrack(int id) const override;
 
-    [[nodiscard]] virtual bool hasTrack(int id) const      = 0;
-    [[nodiscard]] virtual Track* track(int id)             = 0;
-    [[nodiscard]] virtual TrackPtrList tracks() const      = 0;
-    virtual void add(const TrackList& tracks)              = 0;
-    virtual void update(const TrackList& tracks)           = 0;
-    virtual void markForDelete(const TrackPtrList& tracks) = 0;
-    virtual void remove(const TrackPtrList& tracks)        = 0;
-    virtual void sort(SortOrder order)                     = 0;
+    [[nodiscard]] Track* track(int id) override;
+
+    [[nodiscard]] TrackPtrList tracks() const override;
+
+    void add(const TrackList& tracks) override;
+    void update(const TrackList& tracks) override;
+    void markForDelete(const TrackPtrList& tracks) override;
+    void remove(const TrackPtrList& tracks) override;
+
+    void sort(SortOrder order) override;
+
+    void addLibrary(int libraryId, TrackStore* store);
+    void removeLibrary(int libraryId);
+
+private:
+    void markForDelete(Track* trackId);
+
+    std::unordered_map<int, TrackStore*> m_libraryStores;
 };
 } // namespace Fy::Core::Library

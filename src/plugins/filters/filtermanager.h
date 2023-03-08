@@ -22,7 +22,7 @@
 #include "core/typedefs.h"
 #include "filterfwd.h"
 
-#include <core/library/musiclibraryinteractor.h>
+#include <core/library/libraryinteractor.h>
 #include <core/library/sorting/sortorder.h>
 #include <core/models/trackfwd.h>
 
@@ -46,7 +46,7 @@ namespace Filters {
 class FilterDatabaseManager;
 class FilterLibraryController;
 
-class FilterManager : public Core::Library::MusicLibraryInteractor
+class FilterManager : public Core::Library::LibraryInteractor
 {
     Q_OBJECT
 

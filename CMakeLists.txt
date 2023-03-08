@@ -88,7 +88,7 @@ target_include_directories(fooyin_lib
 add_subdirectory(src)
 
 target_link_libraries(fooyin_lib
-   PRIVATE
+   PUBLIC
      Qt6::Core
      Qt6::Gui
      Qt6::Widgets
@@ -125,7 +125,6 @@ set_target_properties(fooyin_exe PROPERTIES
 target_compile_features(fooyin_exe PRIVATE cxx_std_17)
 target_link_libraries(fooyin_exe
     PRIVATE
-      Qt6::Widgets
       fooyin_version
       fooyin_lib
 )

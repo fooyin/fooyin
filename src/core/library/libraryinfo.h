@@ -33,5 +33,5 @@ struct LibraryInfo
     QString path;
     int id{-1};
 };
-using LibraryList = std::vector<std::unique_ptr<Core::Library::LibraryInfo>>;
+using LibraryInfoList = std::vector<std::unique_ptr<Core::Library::LibraryInfo>>;
 } // namespace Fy::Core::Library

@@ -84,7 +84,6 @@ public:
     QModelIndex indexForItem(PlaylistItem* item) const;
 
 protected:
-    void resetContainers();
     void beginReset();
     PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, Core::MusicItem* item,
                                  PlaylistItem* parent);
@@ -93,6 +92,7 @@ protected:
 
 private:
     void insertRow(PlaylistItem* parent, PlaylistItem* child);
+    void processInsertQueue();
 
     using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 

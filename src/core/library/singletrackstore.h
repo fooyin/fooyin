@@ -19,24 +19,35 @@
 
 #pragma once
 
-#include "core/library/sorting/sortorder.h"
-#include "core/models/trackfwd.h"
+#include "trackstore.h"
 
 namespace Fy::Core::Library {
-class LibraryManager;
-
-class TrackStore
+class SingleTrackStore : public TrackStore
 {
 public:
-    virtual ~TrackStore() = default;
+    [[nodiscard]] bool hasTrack(int id) const override;
 
-    [[nodiscard]] virtual bool hasTrack(int id) const      = 0;
-    [[nodiscard]] virtual Track* track(int id)             = 0;
-    [[nodiscard]] virtual TrackPtrList tracks() const      = 0;
-    virtual void add(const TrackList& tracks)              = 0;
-    virtual void update(const TrackList& tracks)           = 0;
-    virtual void markForDelete(const TrackPtrList& tracks) = 0;
-    virtual void remove(const TrackPtrList& tracks)        = 0;
-    virtual void sort(SortOrder order)                     = 0;
+    [[nodiscard]] Track* track(int id) override;
+    [[nodiscard]] TrackPtrList tracks() const override;
+
+    void add(const TrackList& tracks) override;
+    void add(const Track& track);
+
+    void update(const TrackList& tracks) override;
+    void update(const Track& track);
+
+    void markForDelete(const TrackPtrList& tracks) override;
+    void markForDelete(Track* trackId);
+
+    void remove(const TrackPtrList& tracks) override;
+    void remove(int trackId);
+
+    void sort(SortOrder order) override;
+
+    void clear();
+
+private:
+    TrackIdMap m_trackIdMap;
+    TrackPtrList m_tracks;
 };
 } // namespace Fy::Core::Library
