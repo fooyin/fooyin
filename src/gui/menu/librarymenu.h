@@ -19,20 +19,43 @@
 
 #pragma once
 
-#include <utils/settings/settingspage.h>
+#include <QActionGroup>
+#include <QObject>
 
 namespace Fy {
 
 namespace Utils {
-class SettingsDialogController;
+class ActionManager;
+class ActionContainer;
 class SettingsManager;
 } // namespace Utils
 
-namespace Gui::Settings {
-class GeneralPage : public Utils::SettingsPage
+namespace Core::Library {
+class LibraryManager;
+}
+
+namespace Gui {
+class LibraryMenu : public QObject
 {
+    Q_OBJECT
+
 public:
-    explicit GeneralPage(Utils::SettingsManager* settings);
+    LibraryMenu(Utils::ActionManager* actionManager, Core::Library::LibraryManager* libraryManager,
+                Utils::SettingsManager* settings, QObject* parent = nullptr);
+
+private:
+    void setupSwitchMenu();
+
+    Utils::ActionManager* m_actionManager;
+    Core::Library::LibraryManager* m_libraryManager;
+    Utils::SettingsManager* m_settings;
+
+    QAction* m_openSettings;
+    QAction* m_rescanLibrary;
+
+    Utils::ActionContainer* m_switchLibraryMenu;
+    QActionGroup* m_librarySwitchGroup;
+    std::vector<std::unique_ptr<QAction>> m_libraryActions;
 };
-} // namespace Gui::Settings
+} // namespace Gui
 } // namespace Fy

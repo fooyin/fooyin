@@ -94,8 +94,8 @@ void PlaylistGuiPageWidget::apply()
     m_settings->set<Settings::PlaylistAltColours>(m_altColours->isChecked());
 }
 
-PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsDialogController* controller, Utils::SettingsManager* settings)
-    : Utils::SettingsPage{controller}
+PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsManager* settings)
+    : Utils::SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::PlaylistInterface);
     setName(tr("Interface"));

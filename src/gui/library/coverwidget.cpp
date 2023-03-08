@@ -19,6 +19,8 @@
 
 #include "coverwidget.h"
 
+#include "gui/playlist/playlistwidget.h"
+
 #include <core/library/musiclibrary.h>
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
@@ -40,7 +42,6 @@ CoverWidget::CoverWidget(Core::Library::MusicLibrary* library, Core::Player::Pla
 
     connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
     connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
-    connect(m_library, &Core::Library::MusicLibrary::tracksSelChanged, this, &CoverWidget::reloadCover);
 
     reloadCover();
 }
@@ -70,23 +71,18 @@ void CoverWidget::resizeEvent(QResizeEvent* e)
 
 void CoverWidget::reloadCover()
 {
-    QString coverPath = "";
-    if(!m_library->tracks().empty()) {
-        const Core::Player::PlayState state = m_playerManager->playState();
-        if(state == Core::Player::PlayState::Playing || state == Core::Player::PlayState::Paused) {
-            Core::Track* track = m_playerManager->currentTrack();
-            if(track) {
-                coverPath = track->coverPath();
-            }
+    QString coverPath;
+    const Core::Player::PlayState state = m_playerManager->playState();
+    if(state == Core::Player::PlayState::Playing || state == Core::Player::PlayState::Paused) {
+        Core::Track* track = m_playerManager->currentTrack();
+        if(track) {
+            coverPath = track->coverPath();
         }
-        else if(m_library->selectedTracks().empty()) {
-            Core::Track* track = m_library->tracks().front();
-            if(track) {
-                coverPath = track->coverPath();
-            }
-        }
-        else {
-            Core::Track* track = m_library->selectedTracks().front();
+    }
+    else {
+        auto tracks = m_library->tracks();
+        if(!tracks.empty()) {
+            Core::Track* track = tracks.front();
             if(track) {
                 coverPath = track->coverPath();
             }

@@ -42,39 +42,25 @@ class LibraryScanner : public Utils::Worker
     Q_OBJECT
 
 public:
-    explicit LibraryScanner(LibraryManager* libraryManager, DB::Database* database, QObject* parent = nullptr);
+    explicit LibraryScanner(LibraryInfo* info, DB::Database* database, QObject* parent = nullptr);
 
     void closeThread() override;
     void stopThread();
 
-    void scanLibrary(const TrackPtrList& tracks, LibraryInfo* info);
-    void scanAll(const TrackPtrList& tracks);
+    void scanLibrary(const TrackPtrList& tracks);
 
 signals:
-    void updatedTracks(const Core::TrackList& tracks);
-    void addedTracks(const Core::TrackList& tracks);
+    void updatedTracks(Core::TrackList tracks);
+    void addedTracks(Core::TrackList tracks);
     void tracksDeleted(const Core::TrackPtrList& tracks);
 
 private:
-    struct LibraryQueueEntry
-    {
-        LibraryQueueEntry(LibraryInfo* library, TrackPtrList tracks)
-            : library{library}
-            , tracks{std::move(tracks)}
-        { }
-        LibraryInfo* library;
-        TrackPtrList tracks;
-    };
-
     void storeTracks(TrackList& tracks) const;
     QStringList getFiles(QDir& baseDirectory);
-    bool getAndSaveAllFiles(int libraryId, const QString& path, const TrackPathMap& tracks);
-    void processQueue();
+    bool getAndSaveAllFiles(const TrackPathMap& tracks);
 
-    LibraryManager* m_libraryManager;
+    LibraryInfo* m_library;
     DB::Database* m_database;
-
-    std::deque<LibraryQueueEntry> m_libraryQueue;
 };
 } // namespace Library
 } // namespace Fy::Core

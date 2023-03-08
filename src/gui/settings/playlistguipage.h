@@ -32,7 +32,7 @@ namespace Gui::Settings {
 class PlaylistGuiPage : public Utils::SettingsPage
 {
 public:
-    PlaylistGuiPage(Utils::SettingsDialogController* controller, Utils::SettingsManager* settings);
+    PlaylistGuiPage(Utils::SettingsManager* settings);
 };
 } // namespace Gui::Settings
 } // namespace Fy

@@ -22,9 +22,6 @@
 #include <core/constants.h>
 #include <core/corepaths.h>
 #include <core/coreplugin.h>
-#include <core/coresettings.h>
-#include <core/database/database.h>
-#include <core/engine/enginehandler.h>
 #include <core/library/librarymanager.h>
 #include <core/library/libraryscanner.h>
 #include <core/library/musiclibrary.h>
@@ -38,199 +35,54 @@
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guiplugin.h>
-#include <gui/guisettings.h>
 #include <gui/info/infowidget.h>
-#include <gui/layoutprovider.h>
 #include <gui/library/coverwidget.h>
 #include <gui/library/statuswidget.h>
 #include <gui/mainwindow.h>
 #include <gui/playlist/playlistwidget.h>
-#include <gui/settings/generalpage.h>
-#include <gui/settings/guigeneralpage.h>
-#include <gui/settings/librarygeneralpage.h>
-#include <gui/settings/playlistguipage.h>
-#include <gui/widgetfactory.h>
-#include <gui/widgetprovider.h>
 #include <gui/widgets/spacer.h>
 #include <gui/widgets/splitterwidget.h>
 
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
-#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/threadmanager.h>
 
 namespace Fy {
-struct Application::Private
-{
-    Utils::ActionManager* actionManager;
-    Utils::SettingsManager* settingsManager;
-    Core::Settings::CoreSettings coreSettings;
-    Utils::ThreadManager* threadManager;
-    Core::DB::Database database;
-    Core::Player::PlayerManager* playerManager;
-    Core::Engine::EngineHandler engine;
-    Core::Playlist::PlaylistManager* playlistHandler;
-    std::unique_ptr<Core::Playlist::LibraryPlaylistInterface> playlistInterface;
-    Core::Library::LibraryManager* libraryManager;
-    Core::Library::MusicLibrary* library;
-
-    Gui::Widgets::WidgetFactory widgetFactory;
-    Gui::Widgets::WidgetProvider widgetProvider;
-    Gui::Settings::GuiSettings guiSettings;
-    Gui::Widgets::EditableLayout* editableLayout;
-    Gui::LayoutProvider layoutProvider;
-    Gui::MainWindow* mainWindow;
-
-    Utils::SettingsDialogController settingsDialogController;
-
-    //    Gui::Settings::GeneralPage generalPage;
-    Gui::Settings::LibraryGeneralPage libraryGeneralPage;
-    Gui::Settings::GuiGeneralPage guiGeneralPage;
-    Gui::Settings::PlaylistGuiPage playlistGuiPage;
-
-    QAction* quitAction;
-    QAction* openSettings;
-    QAction* rescanLibrary;
-
-    Plugins::PluginManager* pluginManager;
-    Core::CorePluginContext corePluginContext;
-    Gui::GuiPluginContext guiPluginContext;
-
-    explicit Private(QObject* parent)
-        : actionManager{new Utils::ActionManager(parent)}
-        , settingsManager{new Utils::SettingsManager(Core::settingsPath(), parent)}
-        , coreSettings{settingsManager}
-        , threadManager{new Utils::ThreadManager(parent)}
-        , database{settingsManager}
-        , playerManager{new Core::Player::PlayerController(settingsManager, parent)}
-        , engine{playerManager}
-        , playlistHandler{new Core::Playlist::PlaylistHandler(playerManager, parent)}
-        , playlistInterface{std::make_unique<Core::Playlist::LibraryPlaylistManager>(playlistHandler)}
-        , libraryManager{new Core::Library::LibraryManager(&database, parent)}
-        , library{new Core::Library::MusicLibrary(playlistInterface.get(), libraryManager, threadManager, &database,
-                                                  settingsManager, parent)}
-        , widgetProvider{&widgetFactory}
-        , guiSettings{settingsManager}
-        , editableLayout{new Gui::Widgets::EditableLayout(settingsManager, actionManager, &widgetFactory,
-                                                          &widgetProvider, &layoutProvider)}
-        , mainWindow{new Gui::MainWindow(actionManager, settingsManager, &layoutProvider, editableLayout)}
-        , libraryGeneralPage{&settingsDialogController, libraryManager, settingsManager}
-        , guiGeneralPage{&settingsDialogController, settingsManager}
-        , playlistGuiPage{&settingsDialogController, settingsManager}
-        , pluginManager{new Plugins::PluginManager(parent)}
-        , corePluginContext{actionManager, playerManager, library, settingsManager, &settingsDialogController,
-                            threadManager, &database}
-        , guiPluginContext{&widgetFactory}
-    {
-        actionManager->setMainWindow(mainWindow);
-        mainWindow->setAttribute(Qt::WA_DeleteOnClose);
-        threadManager->moveToNewThread(&engine);
-
-        mainWindow->setupMenu();
-
-        setupConnections();
-        registerWidgets();
-        registerActions();
-        loadPlugins();
-    }
-
-    void setupConnections() const
-    {
-        connect(libraryManager, &Core::Library::LibraryManager::libraryAdded, library,
-                &Core::Library::MusicLibrary::reload);
-        connect(libraryManager, &Core::Library::LibraryManager::libraryRemoved, library,
-                &Core::Library::MusicLibrary::refresh);
-    }
-
-    void registerWidgets()
-    {
-        widgetFactory.registerClass<Gui::Widgets::ControlWidget>("Controls", [this]() {
-            return new Gui::Widgets::ControlWidget(playerManager, settingsManager);
-        });
-
-        widgetFactory.registerClass<Gui::Widgets::InfoWidget>("Info", [this]() {
-            return new Gui::Widgets::InfoWidget(playerManager, settingsManager);
-        });
-
-        widgetFactory.registerClass<Gui::Widgets::CoverWidget>("Artwork", [this]() {
-            return new Gui::Widgets::CoverWidget(library, playerManager);
-        });
-
-        widgetFactory.registerClass<Gui::Widgets::PlaylistWidget>("Playlist", [this]() {
-            return new Gui::Widgets::PlaylistWidget(libraryManager, library, playerManager, &settingsDialogController,
-                                                    settingsManager);
-        });
-
-        widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {
-            return new Gui::Widgets::Spacer();
-        });
-
-        widgetFactory.registerClass<Gui::Widgets::VerticalSplitterWidget>(
-            "SplitterVertical",
-            [this]() {
-                return new Gui::Widgets::VerticalSplitterWidget(actionManager, &widgetProvider, settingsManager);
-            },
-            "Vertical Splitter", {"Splitter"});
-
-        widgetFactory.registerClass<Gui::Widgets::HorizontalSplitterWidget>(
-            "SplitterHorizontal",
-            [this]() {
-                return new Gui::Widgets::HorizontalSplitterWidget(actionManager, &widgetProvider, settingsManager);
-            },
-            "Horizontal Splitter", {"Splitter"});
-
-        widgetFactory.registerClass<Gui::Widgets::StatusWidget>("Status", [this]() {
-            return new Gui::Widgets::StatusWidget(playerManager);
-        });
-    }
-
-    void registerActions()
-    {
-        auto* fileMenu = actionManager->actionContainer(Gui::Constants::Menus::File);
-
-        if(fileMenu) {
-            const auto quitIcon = QIcon(Gui::Constants::Icons::Quit);
-            quitAction          = new QAction(quitIcon, tr("E&xit"), mainWindow);
-            actionManager->registerAction(quitAction, Gui::Constants::Actions::Exit);
-            fileMenu->addAction(quitAction, Gui::Constants::Groups::Three);
-            connect(quitAction, &QAction::triggered, mainWindow, &QMainWindow::close);
-        }
-
-        auto* libraryMenu = actionManager->actionContainer(Gui::Constants::Menus::Library);
-
-        if(libraryMenu) {
-            const QIcon settingsIcon = QIcon(Gui::Constants::Icons::Settings);
-            openSettings             = new QAction(settingsIcon, tr("&Settings"), mainWindow);
-            actionManager->registerAction(openSettings, Gui::Constants::Actions::Settings);
-            libraryMenu->addAction(openSettings, Gui::Constants::Groups::Three);
-            connect(openSettings, &QAction::triggered, &settingsDialogController,
-                    &Utils::SettingsDialogController::open);
-            const QIcon rescanIcon = QIcon(Gui::Constants::Icons::RescanLibrary);
-            rescanLibrary          = new QAction(rescanIcon, tr("&Rescan Library"), mainWindow);
-            actionManager->registerAction(rescanLibrary, Gui::Constants::Actions::Rescan);
-            libraryMenu->addAction(rescanLibrary, Gui::Constants::Groups::Two);
-            connect(rescanLibrary, &QAction::triggered, library, &Core::Library::MusicLibrary::reloadAll);
-        }
-    }
-
-    void loadPlugins()
-    {
-        const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin";
-        pluginManager->findPlugins(pluginsPath);
-        pluginManager->loadPlugins();
-
-        pluginManager->initialisePlugins<Core::CorePlugin>(corePluginContext);
-        pluginManager->initialisePlugins<Gui::GuiPlugin>(guiPluginContext);
-    }
-};
-
 Application::Application(int& argc, char** argv, int flags)
     : QApplication{argc, argv, flags}
-    , p{std::make_unique<Private>(this)}
+    , m_actionManager{new Utils::ActionManager(this)}
+    , m_settingsManager{new Utils::SettingsManager(Core::settingsPath(), &m_settingsDialogController, this)}
+    , m_coreSettings{m_settingsManager}
+    , m_threadManager{new Utils::ThreadManager(this)}
+    , m_database{m_settingsManager}
+    , m_playerManager{new Core::Player::PlayerController(m_settingsManager, this)}
+    , m_engine{m_playerManager}
+    , m_playlistHandler{new Core::Playlist::PlaylistHandler(m_playerManager, this)}
+    , m_libraryManager{new Core::Library::LibraryManager(m_threadManager, &m_database, m_settingsManager, this)}
+    , m_library{m_libraryManager->currentLibrary()}
+    , m_playlistInterface{std::make_unique<Core::Playlist::LibraryPlaylistManager>(m_library, m_playlistHandler)}
+    , m_widgetProvider{&m_widgetFactory}
+    , m_guiSettings{m_settingsManager}
+    , m_editableLayout{new Gui::Widgets::EditableLayout(m_settingsManager, m_actionManager, &m_widgetFactory,
+                                                        &m_widgetProvider, &m_layoutProvider)}
+    , m_mainWindow{new Gui::MainWindow(m_actionManager, m_settingsManager, &m_layoutProvider, m_editableLayout)}
+    , m_libraryGeneralPage{m_libraryManager, m_settingsManager}
+    , m_guiGeneralPage{m_settingsManager}
+    , m_playlistGuiPage{m_settingsManager}
+    , m_fileMenu{m_actionManager}
+    , m_libraryMenu{m_actionManager, m_libraryManager, m_settingsManager}
+    , m_pluginManager{new Plugins::PluginManager(this)}
+    , m_corePluginContext{m_actionManager, m_playerManager, m_library, m_settingsManager, m_threadManager, &m_database}
+    , m_guiPluginContext{&m_widgetFactory}
 {
+    m_threadManager->moveToNewThread(&m_engine);
+
     // Required to ensure plugins are unloaded before main event loop quits
     QObject::connect(this, &QCoreApplication::aboutToQuit, this, &Application::shutdown);
+
+    registerWidgets();
+    loadPlugins();
 
     startup();
 }
@@ -239,21 +91,72 @@ Application::~Application() = default;
 
 void Application::startup()
 {
-    p->settingsManager->loadSettings();
-    p->playerManager->restoreState();
-    p->layoutProvider.findLayouts();
-    p->library->load();
+    m_settingsManager->loadSettings();
+    m_playerManager->restoreState();
+    m_layoutProvider.findLayouts();
 
-    p->mainWindow->setupUi();
-    p->mainWindow->show();
+    m_mainWindow->setupUi();
+    m_mainWindow->show();
 }
 
 void Application::shutdown()
 {
-    p->threadManager->shutdown();
-    p->pluginManager->shutdown();
-    p->settingsManager->storeSettings();
-    p->database.cleanup();
-    p->database.closeDatabase();
+    m_threadManager->shutdown();
+    m_pluginManager->shutdown();
+    m_settingsManager->storeSettings();
+    m_database.cleanup();
+    m_database.closeDatabase();
+}
+
+void Application::registerWidgets()
+{
+    m_widgetFactory.registerClass<Gui::Widgets::ControlWidget>("Controls", [this]() {
+        return new Gui::Widgets::ControlWidget(m_playerManager, m_settingsManager);
+    });
+
+    m_widgetFactory.registerClass<Gui::Widgets::InfoWidget>("Info", [this]() {
+        return new Gui::Widgets::InfoWidget(m_playerManager, m_settingsManager);
+    });
+
+    m_widgetFactory.registerClass<Gui::Widgets::CoverWidget>("Artwork", [this]() {
+        return new Gui::Widgets::CoverWidget(m_library, m_playerManager);
+    });
+
+    m_widgetFactory.registerClass<Gui::Widgets::PlaylistWidget>("Playlist", [this]() {
+        return new Gui::Widgets::PlaylistWidget(m_libraryManager, m_playlistHandler, m_playerManager,
+                                                m_settingsManager);
+    });
+
+    m_widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {
+        return new Gui::Widgets::Spacer();
+    });
+
+    m_widgetFactory.registerClass<Gui::Widgets::VerticalSplitterWidget>(
+        "SplitterVertical",
+        [this]() {
+            return new Gui::Widgets::VerticalSplitterWidget(m_actionManager, &m_widgetProvider, m_settingsManager);
+        },
+        "Vertical Splitter", {"Splitter"});
+
+    m_widgetFactory.registerClass<Gui::Widgets::HorizontalSplitterWidget>(
+        "SplitterHorizontal",
+        [this]() {
+            return new Gui::Widgets::HorizontalSplitterWidget(m_actionManager, &m_widgetProvider, m_settingsManager);
+        },
+        "Horizontal Splitter", {"Splitter"});
+
+    m_widgetFactory.registerClass<Gui::Widgets::StatusWidget>("Status", [this]() {
+        return new Gui::Widgets::StatusWidget(m_playerManager);
+    });
+}
+
+void Application::loadPlugins()
+{
+    const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin";
+    m_pluginManager->findPlugins(pluginsPath);
+    m_pluginManager->loadPlugins();
+
+    m_pluginManager->initialisePlugins<Core::CorePlugin>(m_corePluginContext);
+    m_pluginManager->initialisePlugins<Gui::GuiPlugin>(m_guiPluginContext);
 }
 } // namespace Fy

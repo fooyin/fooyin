@@ -28,18 +28,15 @@ class SettingsManager;
 class SettingsDialogController;
 } // namespace Utils
 
-namespace Core {
-namespace Library {
+namespace Core::Library {
 class LibraryManager;
-} // namespace Library
-} // namespace Core
+} // namespace Core::Library
 
 namespace Gui::Settings {
 class LibraryGeneralPage : public Utils::SettingsPage
 {
 public:
-    LibraryGeneralPage(Utils::SettingsDialogController* controller, Core::Library::LibraryManager* libraryManager,
-                       Utils::SettingsManager* settings);
+    LibraryGeneralPage(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings);
 };
 } // namespace Gui::Settings
 } // namespace Fy

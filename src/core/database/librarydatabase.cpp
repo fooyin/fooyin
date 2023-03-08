@@ -79,8 +79,9 @@ QString getOrderString(Core::Library::SortOrder order)
     return orderString;
 }
 
-LibraryDatabase::LibraryDatabase(const QString& connectionName)
+LibraryDatabase::LibraryDatabase(const QString& connectionName, int libraryId)
     : DB::Module(connectionName)
+    , m_libraryId(libraryId)
     , m_connectionName(connectionName)
 { }
 
@@ -139,8 +140,7 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
 
     for(auto& track : tracks) {
         if(track.libraryId() < 0) {
-            qWarning() << QString{"Track (%1) doesn't belong to a library!"}.arg(track.title());
-            continue;
+            track.setLibraryId(m_libraryId);
         }
 
         // Check artists
@@ -236,8 +236,9 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
 
 bool LibraryDatabase::getAllTracks(TrackList& result, Core::Library::SortOrder order) const
 {
-    auto q           = Query(module());
-    const auto query = fetchQueryTracks({}, {}, getOrderString(order), {});
+    auto q               = Query(module());
+    const QString& where = m_libraryId >= 0 ? QString{"LibraryID = %1"}.arg(m_libraryId) : "";
+    const auto query     = fetchQueryTracks(where, {}, getOrderString(order), {});
     q.prepareQuery(query);
 
     return dbFetchTracks(q, result);
@@ -247,6 +248,8 @@ bool LibraryDatabase::getAllTracks(TrackList& result, Core::Library::SortOrder o
 {
     auto q = Query(module());
 
+    const QString& where = m_libraryId >= 0 ? QString{"LibraryID = %1"}.arg(m_libraryId) : "";
+
     QString offsetLimit;
     if(limit > 0) {
         offsetLimit.append(QString("LIMIT %1").arg(limit));
@@ -255,7 +258,7 @@ bool LibraryDatabase::getAllTracks(TrackList& result, Core::Library::SortOrder o
         }
     }
 
-    const auto query = fetchQueryTracks({}, {}, getOrderString(order), offsetLimit);
+    const auto query = fetchQueryTracks(where, {}, getOrderString(order), offsetLimit);
     q.prepareQuery(query);
 
     return dbFetchTracks(q, result);
@@ -538,7 +541,7 @@ bool LibraryDatabase::deleteTracks(const TrackPtrList& tracks)
 
     module()->db().transaction();
 
-    const int fileCount = static_cast<int>(std::count_if(tracks.cbegin(), tracks.cend(), [&](const Track* track) {
+    const int fileCount = static_cast<int>(std::count_if(tracks.cbegin(), tracks.cend(), [&](Track* track) {
         return deleteTrack(track->id());
     }));
 

@@ -17,19 +17,22 @@
  *
  */
 
-#include "widgetprovider.h"
+#pragma once
 
-#include "widgetfactory.h"
+#include "core/models/trackfwd.h"
 
-namespace Fy::Gui::Widgets {
-WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent)
-    : QObject{parent}
-    , m_widgetFactory{widgetFactory}
-{ }
+#include <QObject>
 
-FyWidget* WidgetProvider::createWidget(const QString& widget)
+namespace Fy::Core::Library {
+class LibraryInteractor : public QObject
 {
-    FyWidget* createdWidget = m_widgetFactory->make(widget);
-    return createdWidget;
-}
-} // namespace Fy::Gui::Widgets
+    Q_OBJECT
+
+public:
+    explicit LibraryInteractor(QObject* parent)
+        : QObject{parent} {};
+
+    [[nodiscard]] virtual TrackPtrList tracks() const = 0;
+    [[nodiscard]] virtual bool hasTracks() const      = 0;
+};
+} // namespace Fy::Core::Library

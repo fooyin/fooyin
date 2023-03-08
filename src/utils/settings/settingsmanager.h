@@ -27,15 +27,20 @@
 #include <QSettings>
 
 namespace Fy::Utils {
+class SettingsDialogController;
+
 class SettingsManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit SettingsManager(const QString& settingsPath, QObject* parent = nullptr);
+    explicit SettingsManager(const QString& settingsPath, SettingsDialogController* settingsDialog,
+                             QObject* parent = nullptr);
 
     void loadSettings();
     void storeSettings();
+
+    SettingsDialogController* settingsDialog() const;
 
     template <auto key>
     static int constexpr findType()
@@ -223,5 +228,7 @@ private:
     QSettings m_settingsFile;
     std::map<QString, SettingsEntry> m_settings;
     QReadWriteLock m_lock;
+
+    SettingsDialogController* m_settingsDialog;
 };
 } // namespace Fy::Utils

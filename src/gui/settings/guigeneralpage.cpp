@@ -66,8 +66,8 @@ void GuiGeneralPageWidget::apply()
     m_settings->set<Settings::SplitterHandles>(m_splitterHandles->isChecked());
 }
 
-GuiGeneralPage::GuiGeneralPage(Utils::SettingsDialogController* controller, Utils::SettingsManager* settings)
-    : Utils::SettingsPage{controller}
+GuiGeneralPage::GuiGeneralPage(Utils::SettingsManager* settings)
+    : Utils::SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::InterfaceGeneral);
     setName(tr("General"));

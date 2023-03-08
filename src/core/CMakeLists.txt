@@ -39,20 +39,30 @@ set(SOURCES
 
     library/coverprovider.h
     library/coverprovider.cpp
-    library/libraryinfo.h
-    library/librarymanager.h
-    library/librarymanager.cpp
     library/librarydatabasemanager.h
     library/librarydatabasemanager.cpp
-    library/musiclibrary.h
-    library/musiclibrary.cpp
-    library/musiclibraryinteractor.h
+    library/libraryinfo.h
+    library/libraryinteractor.h
+    library/librarymanager.h
+    library/librarymanager.cpp
     library/libraryscanner.h
     library/libraryscanner.cpp
     library/libraryutils.h
     library/libraryutils.cpp
+    library/musiclibrary.h
+    library/musiclibrarycontainer.h
+    library/musiclibrarycontainer.cpp
+    library/musiclibraryinternal.h
+    library/singlemusiclibrary.h
+    library/singlemusiclibrary.cpp
+    library/singletrackstore.h
+    library/singletrackstore.cpp
     library/trackstore.h
     library/trackstore.cpp
+    library/unifiedmusiclibrary.h
+    library/unifiedmusiclibrary.cpp
+    library/unifiedtrackstore.h
+    library/unifiedtrackstore.cpp
 
     library/sorting/sorting.h
     library/sorting/sorting.cpp

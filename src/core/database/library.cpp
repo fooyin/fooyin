@@ -26,17 +26,16 @@ Library::Library(const QString& connectionName)
     : Module{connectionName}
 { }
 
-Core::Library::LibraryList Library::getAllLibraries()
+bool Library::getAllLibraries(Core::Library::LibraryInfoList& libraries)
 {
     const QString query = "SELECT LibraryID, Name, Path FROM Libraries;";
-
-    Core::Library::LibraryList libraries;
 
     Query q(this);
     q.prepare(query);
 
     if(!q.execQuery()) {
         q.error("Cannot fetch all libraries");
+        return false;
     }
 
     while(q.next()) {
@@ -46,7 +45,7 @@ Core::Library::LibraryList Library::getAllLibraries()
 
         libraries.emplace_back(std::make_unique<Core::Library::LibraryInfo>(name, path, id));
     }
-    return libraries;
+    return true;
 }
 
 int Library::insertLibrary(const QString& path, const QString& name)

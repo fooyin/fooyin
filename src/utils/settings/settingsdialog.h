@@ -22,8 +22,6 @@
 #include "settingsmodel.h"
 
 #include <QDialog>
-#include <QResizeEvent>
-#include <QScrollArea>
 
 class QGridLayout;
 class QStackedLayout;

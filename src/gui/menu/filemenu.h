@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,30 @@
  *
  */
 
-#include "widgetprovider.h"
+#pragma once
 
-#include "widgetfactory.h"
+#include <QAction>
+#include <QObject>
 
-namespace Fy::Gui::Widgets {
-WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent)
-    : QObject{parent}
-    , m_widgetFactory{widgetFactory}
-{ }
+namespace Fy {
 
-FyWidget* WidgetProvider::createWidget(const QString& widget)
+namespace Utils {
+class ActionManager;
+class ActionContainer;
+} // namespace Utils
+
+namespace Gui {
+class FileMenu : public QObject
 {
-    FyWidget* createdWidget = m_widgetFactory->make(widget);
-    return createdWidget;
-}
-} // namespace Fy::Gui::Widgets
+    Q_OBJECT
+
+public:
+    explicit FileMenu(Utils::ActionManager* actionManager, QObject* parent = nullptr);
+
+private:
+    Utils::ActionManager* m_actionManager;
+
+    QAction* m_quit;
+};
+} // namespace Gui
+} // namespace Fy

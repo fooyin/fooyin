@@ -31,16 +31,19 @@ LibraryModel::LibraryModel(Core::Library::LibraryManager* libraryManager, QObjec
 
 void LibraryModel::setupModelData()
 {
-    const auto& libraries = m_libraryManager->allLibraries();
+    const auto& libraries = m_libraryManager->allLibrariesInfo();
 
     for(const auto& library : libraries) {
-        const QString id    = library->path;
+        if(!(library->id >= 0)) {
+            continue;
+        }
+        const QString key   = library->path;
         LibraryItem* parent = rootItem();
 
-        if(!m_nodes.count(id)) {
-            m_nodes.emplace(id, std::make_unique<LibraryItem>(library.get(), parent));
+        if(!m_nodes.count(key)) {
+            m_nodes.emplace(key, std::make_unique<LibraryItem>(library.get(), parent));
         }
-        LibraryItem* child = m_nodes.at(id).get();
+        LibraryItem* child = m_nodes.at(key).get();
         parent->appendChild(child);
     }
 }

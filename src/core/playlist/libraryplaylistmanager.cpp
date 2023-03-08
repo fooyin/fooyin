@@ -23,15 +23,16 @@
 #include "playlistmanager.h"
 
 namespace Fy::Core::Playlist {
-LibraryPlaylistManager::LibraryPlaylistManager(PlaylistManager* playlistHandler)
-    : m_playlistHandler(playlistHandler)
+LibraryPlaylistManager::LibraryPlaylistManager(Library::MusicLibrary* library, PlaylistManager* playlistHandler)
+    : m_library{library}
+    , m_playlistHandler{playlistHandler}
 { }
 
-void LibraryPlaylistManager::createPlaylist(const TrackPtrList& tracks, const int id)
+void LibraryPlaylistManager::createPlaylist(const TrackPtrList& tracks, int startIndex)
 {
     const QString name = "Playlist";
     m_playlistHandler->createPlaylist(tracks, name);
-    activatePlaylist(m_playlistHandler, id);
+    activatePlaylist(startIndex);
 }
 
 void LibraryPlaylistManager::append(const TrackPtrList& tracks)
@@ -40,11 +41,11 @@ void LibraryPlaylistManager::append(const TrackPtrList& tracks)
     playlist->appendTracks(tracks);
 }
 
-void LibraryPlaylistManager::activatePlaylist(PlaylistManager* playlistHandler, int id)
+void LibraryPlaylistManager::activatePlaylist(int startIndex)
 {
-    const auto currentIndex = playlistHandler->currentIndex();
-    auto* currentPlaylist   = playlistHandler->playlist(currentIndex);
+    const auto currentIndex = m_playlistHandler->currentIndex();
+    auto* currentPlaylist   = m_playlistHandler->playlist(currentIndex);
 
-    currentPlaylist->changeTrack(id);
+    currentPlaylist->changeTrack(startIndex);
 }
 } // namespace Fy::Core::Playlist

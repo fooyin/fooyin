@@ -27,11 +27,11 @@
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::Core::Library {
-LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
+LibraryDatabaseManager::LibraryDatabaseManager(int libraryId, DB::Database* database, Utils::SettingsManager* settings,
                                                QObject* parent)
     : Worker{parent}
     , m_database{database}
-    , m_libraryDatabase{m_database->libraryDatabase()}
+    , m_libraryDatabase{database->connectionName(), libraryId}
     , m_settings{settings}
 { }
 
@@ -47,13 +47,13 @@ void LibraryDatabaseManager::getAllTracks(SortOrder order)
 
     if(limit > 0) {
         int offset = 0;
-        while(m_libraryDatabase->getAllTracks(tracks, order, offset, limit)) {
+        while(m_libraryDatabase.getAllTracks(tracks, order, offset, limit)) {
             offset += limit;
             emit gotTracks(tracks);
         }
     }
     else {
-        if(m_libraryDatabase->getAllTracks(tracks, order)) {
+        if(m_libraryDatabase.getAllTracks(tracks, order)) {
             emit gotTracks(tracks);
         }
     }
@@ -64,7 +64,7 @@ void LibraryDatabaseManager::updateTracks(const TrackPtrList& tracks)
     for(const auto& track : tracks) {
         const bool saved = Tagging::writeMetaData(*track);
         if(saved) {
-            m_libraryDatabase->updateTrack(*track);
+            m_libraryDatabase.updateTrack(*track);
         }
     }
 }

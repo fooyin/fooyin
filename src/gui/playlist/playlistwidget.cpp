@@ -28,6 +28,7 @@
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
+#include <core/playlist/libraryplaylistmanager.h>
 
 #include <utils/actions/actioncontainer.h>
 #include <utils/overlaywidget.h>
@@ -43,16 +44,18 @@
 #include <QScrollBar>
 
 namespace Fy::Gui::Widgets {
-PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Core::Library::MusicLibrary* library,
-                               Core::Player::PlayerManager* playerManager,
-                               Utils::SettingsDialogController* settingsDialogController,
-                               Utils::SettingsManager* settings, QWidget* parent)
+PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager,
+                               Core::Playlist::PlaylistManager* playlistHandler,
+                               Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
+                               QWidget* parent)
     : FyWidget{parent}
     , m_libraryManager{libraryManager}
-    , m_library{library}
+    , m_library{libraryManager->currentLibrary()}
     , m_playerManager{playerManager}
-    , m_settingsDialogController{settingsDialogController}
     , m_settings{settings}
+    , m_settingsDialog{settings->settingsDialog()}
+    , m_playlistHandler{playlistHandler}
+    , m_libraryPlaylistManager{std::make_unique<Core::Playlist::LibraryPlaylistManager>(m_library, playlistHandler)}
     , m_layout{new QHBoxLayout(this)}
     , m_model{new PlaylistModel(m_playerManager, m_library, m_settings, this)}
     , m_playlist{new PlaylistView(this)}
@@ -69,15 +72,15 @@ PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager, Co
     m_playlist->setModel(m_model);
     m_playlist->setItemDelegate(new PlaylistDelegate(this));
 
-    setupConnections();
     connect(m_noLibrary, &Utils::OverlayWidget::settingsClicked, this, [this] {
-        m_settingsDialogController->openAtPage(Constants::Page::LibraryGeneral);
+        m_settingsDialog->openAtPage(Constants::Page::LibraryGeneral);
     });
 
     reset();
     setHeaderHidden(m_settings->value<Settings::PlaylistHeader>());
     setScrollbarHidden(m_settings->value<Settings::PlaylistScrollBar>());
     setup();
+    setupConnections();
 }
 
 void PlaylistWidget::setup()
@@ -116,7 +119,9 @@ void PlaylistWidget::setupConnections()
 
     connect(m_playlist->header(), &QHeaderView::sectionClicked, this, &PlaylistWidget::switchOrder);
 
-    connect(m_model, &PlaylistModel::modelReset, this, &PlaylistWidget::reset);
+    connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistWidget::reset);
+    connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlist->selectionModel(),
+            &QItemSelectionModel::clear);
 
     connect(m_playlist->header(), &QHeaderView::customContextMenuRequested, this,
             &PlaylistWidget::customHeaderMenuRequested);
@@ -127,14 +132,9 @@ void PlaylistWidget::setupConnections()
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
     connect(m_playerManager, &Core::Player::PlayerManager::nextTrack, this, &PlaylistWidget::nextTrack);
 
-    connect(this, &PlaylistWidget::clickedTrack, m_playerManager, &Core::Player::PlayerManager::reset);
-    connect(this, &PlaylistWidget::clickedTrack, m_library, &Core::Library::MusicLibrary::prepareTracks);
+    connect(this, &PlaylistWidget::clickedTrack, this, &PlaylistWidget::prepareTracks);
 
-    connect(m_model, &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex& parent, int first, int last) {
-        for(; first <= last; ++first) {
-            m_playlist->expand(m_model->index(first, 0, parent));
-        }
-    });
+    connect(m_model, &QAbstractItemModel::rowsInserted, this, &PlaylistWidget::expandPlaylist);
 }
 
 void PlaylistWidget::setAltRowColours(bool altColours)
@@ -202,7 +202,6 @@ void PlaylistWidget::selectionChanged()
     m_changingSelection = true;
 
     const auto selectedIndexes = m_playlist->selectionModel()->selectedIndexes();
-    Core::TrackSet tracks;
     std::deque<QModelIndex> indexes;
 
     indexes.insert(indexes.end(), selectedIndexes.begin(), selectedIndexes.end());
@@ -214,7 +213,7 @@ void PlaylistWidget::selectionChanged()
             const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
             if(type == PlaylistItem::Track) {
                 auto* data = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
-                tracks.insert(data);
+                m_selectedTracks.emplace_back(data);
             }
             else {
                 const QItemSelection selectedChildren{m_model->index(0, 0, index),
@@ -225,7 +224,7 @@ void PlaylistWidget::selectionChanged()
             }
         }
     }
-    m_library->trackSelectionChanged(tracks);
+    emit selectionWasChanged(m_selectedTracks);
     m_changingSelection = false;
 }
 
@@ -245,7 +244,7 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
 
             auto idx = index.data(PlaylistItem::Role::Index).toInt();
 
-            emit clickedTrack(idx, false);
+            emit clickedTrack(idx);
             m_model->changeTrackState();
             m_playlist->clearSelection();
         }
@@ -295,7 +294,7 @@ void PlaylistWidget::customHeaderMenuRequested(QPoint pos)
 void PlaylistWidget::changeOrder(QAction* action)
 {
     auto order = action->data().value<Core::Library::SortOrder>();
-    m_library->changeOrder(order);
+    m_library->sortTracks(order);
 }
 
 void PlaylistWidget::switchOrder()
@@ -303,15 +302,15 @@ void PlaylistWidget::switchOrder()
     const auto order = m_library->sortOrder();
     switch(order) {
         case(Core::Library::SortOrder::TitleAsc):
-            return m_library->changeOrder(Core::Library::SortOrder::TitleDesc);
+            return m_library->sortTracks(Core::Library::SortOrder::TitleDesc);
         case(Core::Library::SortOrder::TitleDesc):
-            return m_library->changeOrder(Core::Library::SortOrder::TitleAsc);
+            return m_library->sortTracks(Core::Library::SortOrder::TitleAsc);
         case(Core::Library::SortOrder::YearAsc):
-            return m_library->changeOrder(Core::Library::SortOrder::YearDesc);
+            return m_library->sortTracks(Core::Library::SortOrder::YearDesc);
         case(Core::Library::SortOrder::YearDesc):
-            return m_library->changeOrder(Core::Library::SortOrder::YearAsc);
+            return m_library->sortTracks(Core::Library::SortOrder::YearAsc);
         case(Core::Library::SortOrder::NoSorting):
-            return m_library->changeOrder(Core::Library::SortOrder::TitleAsc);
+            return m_library->sortTracks(Core::Library::SortOrder::TitleAsc);
     }
 }
 
@@ -336,7 +335,7 @@ void PlaylistWidget::playTrack(const QModelIndex& index)
 
     auto idx = index.data(PlaylistItem::Role::Index).toInt();
 
-    emit clickedTrack(idx, false);
+    emit clickedTrack(idx);
     m_model->changeTrackState();
     m_playlist->clearSelection();
 }
@@ -348,19 +347,32 @@ void PlaylistWidget::nextTrack()
 
 void PlaylistWidget::findCurrent()
 {
-    const auto* track = m_playerManager->currentTrack();
+    //    const auto* track = m_playerManager->currentTrack();
 
-    if(!track) {
-        return;
-    }
+    //    if(!track) {
+    //        return;
+    //    }
 
-    QModelIndex index;
+    //    QModelIndex index;
     //    index = m_>model->match({}, ItemRole::Id, track->id(), 1, {});
-    index = m_model->indexForId(track->id());
+    //    index = m_model->indexForId(track->id());
 
-    if(index.isValid()) {
-        m_playlist->scrollTo(index);
-        //        setCurrentIndex(index.constFirst());
+    //    if(index.isValid()) {
+    //        m_playlist->scrollTo(index);
+    //        setCurrentIndex(index.constFirst());
+    //    }
+}
+
+void PlaylistWidget::prepareTracks(int idx)
+{
+    m_libraryPlaylistManager->createPlaylist(m_library->tracks(), idx);
+}
+
+void PlaylistWidget::expandPlaylist(const QModelIndex& parent, int first, int last)
+{
+    while(first <= last) {
+        m_playlist->expand(m_model->index(first, 0, parent));
+        ++first;
     }
 }
 } // namespace Fy::Gui::Widgets

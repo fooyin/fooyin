@@ -189,9 +189,8 @@ void LibraryGeneralPageWidget::renameLibrary() const
     }
 }
 
-LibraryGeneralPage::LibraryGeneralPage(Utils::SettingsDialogController* controller,
-                                       Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings)
-    : Utils::SettingsPage{controller}
+LibraryGeneralPage::LibraryGeneralPage(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings)
+    : Utils::SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryGeneral);
     setName(tr("General"));

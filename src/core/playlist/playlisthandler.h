@@ -30,7 +30,7 @@ class PlayerManager;
 }
 
 namespace Playlist {
-using PlaylistMap = std::map<int, Playlist*>;
+using PlaylistMap = std::map<int, std::unique_ptr<Playlist>>;
 
 class PlaylistHandler : public QObject,
                         public PlaylistManager

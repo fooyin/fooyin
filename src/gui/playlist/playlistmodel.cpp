@@ -83,6 +83,7 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::L
     connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, this, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &PlaylistModel::setupModelData);
     connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::libraryChanged, this, &PlaylistModel::reset);
 
     m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_pausedIcon  = m_pausedIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -413,18 +414,9 @@ void PlaylistModel::traverseIndex(const QModelIndex& start, QModelIndexList& lis
     }
 }
 
-void PlaylistModel::resetContainers()
-{
-    //    for (const auto& [key, container]: m_containers)
-    //    {
-    //        container->reset();
-    //    }
-    m_containers.clear();
-}
-
 void PlaylistModel::beginReset()
 {
-    resetContainers();
+    m_containers.clear();
     m_nodes.clear();
     resetRoot();
 }

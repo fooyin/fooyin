@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "core/database/librarydatabase.h"
 #include "core/library/sorting/sortorder.h"
 #include "core/models/trackfwd.h"
 
@@ -34,7 +35,6 @@ namespace Core {
 
 namespace DB {
 class Database;
-class LibraryDatabase;
 } // namespace DB
 
 namespace Library {
@@ -43,7 +43,7 @@ class LibraryDatabaseManager : public Utils::Worker
     Q_OBJECT
 
 public:
-    explicit LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
+    explicit LibraryDatabaseManager(int libraryId, DB::Database* database, Utils::SettingsManager* settings,
                                     QObject* parent = nullptr);
 
     void closeThread() override;
@@ -56,7 +56,7 @@ signals:
 
 private:
     DB::Database* m_database;
-    DB::LibraryDatabase* m_libraryDatabase;
+    DB::LibraryDatabase m_libraryDatabase;
     Utils::SettingsManager* m_settings;
 };
 } // namespace Library
