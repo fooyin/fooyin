@@ -70,7 +70,7 @@ Application::Application(int& argc, char** argv, int flags)
     , m_libraryGeneralPage{m_libraryManager, m_settingsManager}
     , m_guiGeneralPage{m_settingsManager}
     , m_playlistGuiPage{m_settingsManager}
-    , m_fileMenu{m_actionManager}
+    , m_fileMenu{m_actionManager, m_settingsManager}
     , m_libraryMenu{m_actionManager, m_libraryManager, m_settingsManager}
     , m_pluginManager{new Plugins::PluginManager(this)}
     , m_corePluginContext{m_actionManager, m_playerManager, m_library, m_settingsManager, m_threadManager, &m_database}

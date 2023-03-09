@@ -54,7 +54,9 @@ LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::Lib
     m_openSettings = new QAction(settingsIcon, tr("&Settings"), this);
     actionManager->registerAction(m_openSettings, Gui::Constants::Actions::Settings);
     libraryMenu->addAction(m_openSettings, Gui::Constants::Groups::Three);
-    connect(m_openSettings, &QAction::triggered, m_settings->settingsDialog(), &Utils::SettingsDialogController::open);
+    connect(m_openSettings, &QAction::triggered, this, [this]() {
+        m_settings->settingsDialog()->openAtPage(Gui::Constants::Page::LibraryGeneral);
+    });
 
     m_switchLibraryMenu = m_actionManager->createMenu(Gui::Constants::Menus::SwitchLibrary);
     libraryMenu->addMenu(m_switchLibraryMenu, Gui::Constants::Groups::Two);
