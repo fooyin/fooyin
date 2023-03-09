@@ -120,8 +120,7 @@ void PlaylistWidget::setupConnections()
     connect(m_playlist->header(), &QHeaderView::sectionClicked, this, &PlaylistWidget::switchOrder);
 
     connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistWidget::reset);
-    connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlist->selectionModel(),
-            &QItemSelectionModel::clear);
+    connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlist, &QAbstractItemView::clearSelection);
 
     connect(m_playlist->header(), &QHeaderView::customContextMenuRequested, this,
             &PlaylistWidget::customHeaderMenuRequested);
@@ -200,6 +199,7 @@ void PlaylistWidget::selectionChanged()
         return;
     }
     m_changingSelection = true;
+    clearSelection();
 
     const auto selectedIndexes = m_playlist->selectionModel()->selectedIndexes();
     std::deque<QModelIndex> indexes;
@@ -212,8 +212,8 @@ void PlaylistWidget::selectionChanged()
         if(index.isValid()) {
             const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
             if(type == PlaylistItem::Track) {
-                auto* data = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
-                m_selectedTracks.emplace_back(data);
+                auto* track = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
+                m_selectedTracks.emplace_back(track);
             }
             else {
                 const QItemSelection selectedChildren{m_model->index(0, 0, index),
@@ -233,20 +233,13 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
     const auto key = e->key();
 
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        const QModelIndexList indexes = m_playlist->selectionModel()->selectedIndexes();
-        if(!indexes.isEmpty()) {
-            const QModelIndex index = indexes.constFirst();
-            const auto type         = index.data(Playlist::Type).value<PlaylistItem::Type>();
-
-            if(type != PlaylistItem::Track) {
-                return;
-            }
-
-            auto idx = index.data(PlaylistItem::Role::Index).toInt();
-
+        if(!m_selectedTracks.empty()) {
+            const int idx = m_model->findTrackIndex(m_selectedTracks.front());
             emit clickedTrack(idx);
+
             m_model->changeTrackState();
             m_playlist->clearSelection();
+            m_selectedTracks.clear();
         }
     }
     QWidget::keyPressEvent(e);
@@ -329,15 +322,24 @@ void PlaylistWidget::changeState(Core::Player::PlayState state)
 void PlaylistWidget::playTrack(const QModelIndex& index)
 {
     const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
-    if(type != PlaylistItem::Track) {
+    Core::Track* track{nullptr};
+
+    if(type != PlaylistItem::Track && !m_selectedTracks.empty()) {
+        track = m_selectedTracks.front();
+    }
+    else {
+        track = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
+    }
+
+    if(!track) {
         return;
     }
 
-    auto idx = index.data(PlaylistItem::Role::Index).toInt();
+    const int playlistIndex = m_model->findTrackIndex(track);
 
-    emit clickedTrack(idx);
+    emit clickedTrack(playlistIndex);
     m_model->changeTrackState();
-    m_playlist->clearSelection();
+    clearSelection(true);
 }
 
 void PlaylistWidget::nextTrack()
@@ -365,7 +367,7 @@ void PlaylistWidget::findCurrent()
 
 void PlaylistWidget::prepareTracks(int idx)
 {
-    m_libraryPlaylistManager->createPlaylist(m_library->tracks(), idx);
+    m_libraryPlaylistManager->createPlaylist(m_model->tracks(), idx);
 }
 
 void PlaylistWidget::expandPlaylist(const QModelIndex& parent, int first, int last)
@@ -374,5 +376,13 @@ void PlaylistWidget::expandPlaylist(const QModelIndex& parent, int first, int la
         m_playlist->expand(m_model->index(first, 0, parent));
         ++first;
     }
+}
+
+void PlaylistWidget::clearSelection(bool clearView)
+{
+    if(clearView) {
+        m_playlist->clearSelection();
+    }
+    m_selectedTracks.clear();
 }
 } // namespace Fy::Gui::Widgets

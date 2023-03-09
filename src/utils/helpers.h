@@ -24,25 +24,25 @@
 
 namespace Fy::Utils {
 template <typename C, typename F>
-constexpr int getIndex(C c, F f)
+constexpr int findIndex(const C& c, const F& f)
 {
     int index = -1;
     auto it   = std::find(c.cbegin(), c.cend(), f);
     if(it != c.cend()) {
-        index = it - c.cbegin();
+        index = static_cast<int>(std::distance(c.cbegin(), it));
     }
     return index;
 }
 
 template <typename C, typename F>
-constexpr bool contains(C c, F f)
+constexpr bool contains(const C& c, const F& f)
 {
     auto it = std::find(c.cbegin(), c.cend(), f);
     return static_cast<bool>(it != c.cend());
 }
 
 template <typename C, typename F>
-constexpr bool hasKey(C c, F f)
+constexpr bool hasKey(const C& c, const F& f)
 {
     return c.count(f);
 }

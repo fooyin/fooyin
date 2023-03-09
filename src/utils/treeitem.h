@@ -74,7 +74,7 @@ public:
     [[nodiscard]] virtual int row() const
     {
         if(m_parent) {
-            return Utils::getIndex(m_parent->m_children, this);
+            return Utils::findIndex(m_parent->m_children, this);
         }
         return 0;
     }

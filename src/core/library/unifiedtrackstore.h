@@ -28,11 +28,10 @@ public:
     [[nodiscard]] bool hasTrack(int id) const override;
 
     [[nodiscard]] Track* track(int id) override;
-
     [[nodiscard]] TrackPtrList tracks() const override;
 
-    void add(const TrackList& tracks) override;
-    void update(const TrackList& tracks) override;
+    TrackPtrList add(const TrackList& tracks) override;
+    TrackPtrList update(const TrackList& tracks) override;
     void markForDelete(const TrackPtrList& tracks) override;
     void remove(const TrackPtrList& tracks) override;
 

@@ -70,11 +70,6 @@ TrackPtrList UnifiedMusicLibrary::tracks() const
     return m_trackStore->tracks();
 }
 
-int UnifiedMusicLibrary::trackCount() const
-{
-    return static_cast<int>(tracks().size());
-}
-
 UnifiedTrackStore* UnifiedMusicLibrary::trackStore() const
 {
     return m_trackStore.get();

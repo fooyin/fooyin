@@ -42,7 +42,6 @@ public:
     [[nodiscard]] Track* track(int id) const override;
     [[nodiscard]] TrackPtrList tracks() const override;
     [[nodiscard]] TrackPtrList allTracks() const override;
-    [[nodiscard]] int trackCount() const override;
 
     [[nodiscard]] SortOrder sortOrder() const override;
     void sortTracks(SortOrder order) override;

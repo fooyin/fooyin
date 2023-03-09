@@ -98,6 +98,7 @@ protected:
 private:
     void prepareTracks(int idx);
     void expandPlaylist(const QModelIndex& parent, int first, int last);
+    void clearSelection(bool clearView = false);
 
     Core::Library::LibraryManager* m_libraryManager;
     Core::Library::MusicLibrary* m_library;

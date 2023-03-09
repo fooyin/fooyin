@@ -50,24 +50,20 @@ public:
         MultiDisk = Qt::UserRole + 13,
         Playing   = Qt::UserRole + 14,
         Path      = Qt::UserRole + 15,
-        Index     = Qt::UserRole + 16,
-        Data      = Qt::UserRole + 17,
+        Data      = Qt::UserRole + 16,
     };
 
     explicit PlaylistItem(Type type = Type::Root, Core::MusicItem* data = {}, PlaylistItem* parentItem = nullptr);
 
-    void setIndex(int idx);
     void setKey(const QString& key);
 
     [[nodiscard]] Core::MusicItem* data() const;
     [[nodiscard]] Type type();
-    [[nodiscard]] int index() const;
     [[nodiscard]] QString key() const;
 
 private:
     Core::MusicItem* m_data;
     Type m_type;
-    int m_index;
     QString m_key;
 };
 } // namespace Fy::Gui::Widgets

@@ -50,13 +50,12 @@ public:
     void loadLibrary() override;
     void reload() override;
     void rescan() override;
-    void refreshTracks(const TrackList& result);
+    void refreshTracks(const TrackList& tracks);
 
     [[nodiscard]] LibraryInfo* info() const override;
 
     [[nodiscard]] Track* track(int id) const override;
     [[nodiscard]] TrackPtrList tracks() const override;
-    [[nodiscard]] int trackCount() const override;
 
     [[nodiscard]] TrackStore* trackStore() const override;
 

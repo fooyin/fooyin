@@ -30,13 +30,15 @@ class TrackStore
 public:
     virtual ~TrackStore() = default;
 
-    [[nodiscard]] virtual bool hasTrack(int id) const      = 0;
-    [[nodiscard]] virtual Track* track(int id)             = 0;
-    [[nodiscard]] virtual TrackPtrList tracks() const      = 0;
-    virtual void add(const TrackList& tracks)              = 0;
-    virtual void update(const TrackList& tracks)           = 0;
+    [[nodiscard]] virtual bool hasTrack(int id) const = 0;
+    [[nodiscard]] virtual Track* track(int id)        = 0;
+    [[nodiscard]] virtual TrackPtrList tracks() const = 0;
+
+    virtual TrackPtrList add(const TrackList& tracks)      = 0;
+    virtual TrackPtrList update(const TrackList& tracks)   = 0;
     virtual void markForDelete(const TrackPtrList& tracks) = 0;
     virtual void remove(const TrackPtrList& tracks)        = 0;
-    virtual void sort(SortOrder order)                     = 0;
+
+    virtual void sort(SortOrder order) = 0;
 };
 } // namespace Fy::Core::Library

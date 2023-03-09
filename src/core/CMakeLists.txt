@@ -58,7 +58,6 @@ set(SOURCES
     library/singletrackstore.h
     library/singletrackstore.cpp
     library/trackstore.h
-    library/trackstore.cpp
     library/unifiedmusiclibrary.h
     library/unifiedmusiclibrary.cpp
     library/unifiedtrackstore.h

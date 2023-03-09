@@ -26,13 +26,7 @@ PlaylistItem::PlaylistItem(Type type, Core::MusicItem* data, PlaylistItem* paren
     : TreeItem{parent}
     , m_data{data}
     , m_type{type}
-    , m_index{0}
 { }
-
-void PlaylistItem::setIndex(int idx)
-{
-    m_index = idx;
-}
 
 void PlaylistItem::setKey(const QString& key)
 {
@@ -47,11 +41,6 @@ Core::MusicItem* PlaylistItem::data() const
 PlaylistItem::Type PlaylistItem::type()
 {
     return m_type;
-}
-
-int PlaylistItem::index() const
-{
-    return m_index;
 }
 
 QString PlaylistItem::key() const

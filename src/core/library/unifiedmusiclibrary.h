@@ -40,7 +40,6 @@ public:
 
     [[nodiscard]] Track* track(int id) const override;
     [[nodiscard]] TrackPtrList tracks() const override;
-    [[nodiscard]] int trackCount() const override;
 
     [[nodiscard]] UnifiedTrackStore* trackStore() const override;
 

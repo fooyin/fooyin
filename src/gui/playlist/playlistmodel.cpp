@@ -91,19 +91,22 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::L
 
 void PlaylistModel::setupModelData()
 {
-    if(m_library) {
-        const Core::TrackPtrList& tracks = m_library->tracks();
-        if(!tracks.empty()) {
-            // Create albums before model to ensure discs (based on discCount) are properly created
-            createAlbums(tracks);
-            for(int i = 0; i < static_cast<int>(tracks.size()); ++i) {
-                Core::Track* track = tracks.at(i);
-                if(track && track->isEnabled() && !m_nodes.count(track->uid())) {
-                    if(auto* parent = iterateTrack(track, m_discHeaders, m_splitDiscs)) {
-                        auto* trackItem = checkInsertKey(track->uid(), PlaylistItem::Track, track, parent);
-                        trackItem->setIndex(i);
-                    }
-                }
+    if(!m_library) {
+        return;
+    }
+    m_tracks = m_library->tracks();
+
+    if(m_tracks.empty()) {
+        return;
+    }
+
+    // Create albums before model to ensure discs (based on discCount) are properly created
+    createAlbums(m_tracks);
+
+    for(const auto& track : m_tracks) {
+        if(track && track->isEnabled() && !m_nodes.count(track->uid())) {
+            if(auto* parent = iterateTrack(track, m_discHeaders, m_splitDiscs)) {
+                checkInsertKey(track->uid(), PlaylistItem::Track, track, parent);
             }
         }
     }
@@ -164,7 +167,7 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
         return {};
     }
 
-    return QString("%1 Tracks").arg(m_library->trackCount());
+    return QString("%1 Tracks").arg(static_cast<int>(m_tracks.size()));
 }
 
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
@@ -238,9 +241,6 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
         }
         case(PlaylistItem::Role::Path): {
             return track->filepath();
-        }
-        case(PlaylistItem::Role::Index): {
-            return item->index();
         }
         case(PlaylistItem::Role::Data): {
             return QVariant::fromValue<Core::Track*>(track);
@@ -366,7 +366,6 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     roles.insert(+PlaylistItem::Role::MultiDisk, "Multiple Discs");
     roles.insert(+PlaylistItem::Role::Playing, "IsPlaying");
     roles.insert(+PlaylistItem::Role::Path, "Path");
-    roles.insert(+PlaylistItem::Role::Index, "Index");
     roles.insert(+PlaylistItem::Role::Data, "Data");
 
     return roles;
@@ -414,8 +413,14 @@ void PlaylistModel::traverseIndex(const QModelIndex& start, QModelIndexList& lis
     }
 }
 
+Core::TrackPtrList PlaylistModel::tracks() const
+{
+    return m_tracks;
+}
+
 void PlaylistModel::beginReset()
 {
+    m_tracks.clear();
     m_containers.clear();
     m_nodes.clear();
     resetRoot();
@@ -484,5 +489,10 @@ QModelIndex PlaylistModel::indexForItem(PlaylistItem* item) const
         index            = createIndex(item->row(), 0, item);
     }
     return index;
+}
+
+int PlaylistModel::findTrackIndex(Core::Track* track) const
+{
+    return Utils::findIndex(m_tracks, track);
 }
 } // namespace Fy::Gui::Widgets

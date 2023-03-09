@@ -18,6 +18,7 @@
  */
 
 #include "singletrackstore.h"
+
 #include "core/library/sorting/sorting.h"
 
 namespace Fy::Core::Library {
@@ -34,27 +35,45 @@ TrackPtrList SingleTrackStore::tracks() const
     return m_tracks;
 }
 
-void SingleTrackStore::add(const TrackList& tracks)
+TrackPtrList SingleTrackStore::add(const TrackList& tracks)
 {
-    m_trackIdMap.reserve(m_trackIdMap.size() + tracks.size());
-    m_tracks.reserve(m_tracks.size() + tracks.size());
+    TrackPtrList addedTracks;
+    const auto size = tracks.size();
+
+    addedTracks.reserve(size);
+    m_trackIdMap.reserve(m_trackIdMap.size() + size);
+    m_tracks.reserve(m_tracks.size() + size);
 
     for(const Track& track : tracks) {
-        add(track);
+        addedTracks.emplace_back(add(track));
     }
+    return addedTracks;
 }
 
-void SingleTrackStore::add(const Track& track)
+Track* SingleTrackStore::add(const Track& track)
 {
     Track* newTrack = &m_trackIdMap.emplace(track.id(), track).first->second;
     m_tracks.emplace_back(newTrack);
+
+    return newTrack;
 }
 
-void SingleTrackStore::update(const TrackList& tracks)
+TrackPtrList SingleTrackStore::update(const TrackList& tracks)
 {
+    TrackPtrList updatedTracks;
+    updatedTracks.reserve(tracks.size());
+
     for(const auto& track : tracks) {
-        update(track);
+        updatedTracks.emplace_back(update(track));
     }
+    return updatedTracks;
+}
+
+Track* SingleTrackStore::update(const Track& track)
+{
+    Track* libraryTrack = &m_trackIdMap.at(track.id());
+    *libraryTrack       = track;
+    return libraryTrack;
 }
 
 void SingleTrackStore::markForDelete(const TrackPtrList& tracks)
@@ -101,10 +120,5 @@ void SingleTrackStore::clear()
 bool SingleTrackStore::hasTrack(int id) const
 {
     return m_trackIdMap.count(id);
-}
-
-void SingleTrackStore::update(const Track& track)
-{
-    m_trackIdMap.at(track.id()) = track;
 }
 } // namespace Fy::Core::Library

@@ -77,11 +77,14 @@ public:
 
     void traverseIndex(const QModelIndex& start, QModelIndexList& list) const;
 
+    Core::TrackPtrList tracks() const;
+
     void reset();
     void changeRowColours();
     void changeTrackState();
-    QModelIndex indexForId(int id) const;
-    QModelIndex indexForItem(PlaylistItem* item) const;
+    [[nodiscard]] QModelIndex indexForId(int id) const;
+    [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;
+    [[nodiscard]] int findTrackIndex(Core::Track* track) const;
 
 protected:
     void beginReset();
@@ -92,7 +95,6 @@ protected:
 
 private:
     void insertRow(PlaylistItem* parent, PlaylistItem* child);
-    void processInsertQueue();
 
     using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
@@ -104,6 +106,8 @@ private:
     bool m_splitDiscs;
     bool m_altColours;
     bool m_simplePlaylist;
+
+    Core::TrackPtrList m_tracks;
 
     PlaylistItemHash m_nodes;
     Core::ContainerHash m_containers;

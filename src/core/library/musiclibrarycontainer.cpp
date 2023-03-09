@@ -85,11 +85,6 @@ TrackPtrList MusicLibraryContainer::allTracks() const
     return m_currentLibrary->tracks();
 }
 
-int MusicLibraryContainer::trackCount() const
-{
-    return static_cast<int>(tracks().size());
-}
-
 SortOrder MusicLibraryContainer::sortOrder() const
 {
     return m_currentLibrary->sortOrder();

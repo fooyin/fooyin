@@ -47,14 +47,16 @@ TrackPtrList UnifiedTrackStore::tracks() const
     return tracks;
 }
 
-void UnifiedTrackStore::add(const TrackList& tracks)
+TrackPtrList UnifiedTrackStore::add(const TrackList& tracks)
 {
     Q_UNUSED(tracks)
+    return {};
 }
 
-void UnifiedTrackStore::update(const TrackList& tracks)
+TrackPtrList UnifiedTrackStore::update(const TrackList& tracks)
 {
     Q_UNUSED(tracks)
+    return {};
 }
 
 void UnifiedTrackStore::markForDelete(const TrackPtrList& tracks)
@@ -92,4 +94,4 @@ void UnifiedTrackStore::markForDelete(Track* track)
         track->setIsEnabled(false);
     }
 }
-}
+} // namespace Fy::Core::Library

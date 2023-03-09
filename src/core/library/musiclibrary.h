@@ -47,7 +47,6 @@ public:
     [[nodiscard]] virtual Track* track(int id) const     = 0;
     [[nodiscard]] virtual TrackPtrList tracks() const    = 0;
     [[nodiscard]] virtual TrackPtrList allTracks() const = 0;
-    [[nodiscard]] virtual int trackCount() const         = 0;
 
     [[nodiscard]] virtual SortOrder sortOrder() const = 0;
     virtual void sortTracks(SortOrder order)          = 0;
@@ -61,8 +60,8 @@ signals:
     void runLibraryScan(const Core::TrackPtrList& tracks);
 
     void tracksLoaded(const Core::TrackPtrList& tracks);
-    void tracksAdded();
-    void tracksUpdated();
+    void tracksAdded(const Core::TrackPtrList& tracks);
+    void tracksUpdated(const Core::TrackPtrList& tracks);
     void tracksDeleted(const Core::TrackPtrList& tracks);
 
     void libraryRemoved();
