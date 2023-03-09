@@ -61,42 +61,40 @@ public:
     explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
                            Utils::SettingsManager* settings, QObject* parent = nullptr);
 
-    void setupModelData();
-    PlaylistItem* iterateTrack(Core::Track* track, bool discHeaders, bool splitDiscs);
-
-    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
-    [[nodiscard]] QVariant trackData(PlaylistItem* item, int role) const;
-    [[nodiscard]] QVariant albumData(PlaylistItem* item, int role) const;
-    [[nodiscard]] QVariant discData(PlaylistItem* item, int role) const;
-
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
     [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                         Qt::MatchFlags flags) const override;
 
-    void traverseIndex(const QModelIndex& start, QModelIndexList& list) const;
-
-    Core::TrackPtrList tracks() const;
+    [[nodiscard]] Core::TrackPtrList tracks() const;
 
     void reset();
     void changeRowColours();
     void changeTrackState();
+
     [[nodiscard]] QModelIndex indexForId(int id) const;
     [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;
     [[nodiscard]] int findTrackIndex(Core::Track* track) const;
 
-protected:
-    void beginReset();
+private:
+    using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
+
+    void setupModelData();
+    void createAlbums(const Core::TrackPtrList& tracks);
+    PlaylistItem* iterateTrack(Core::Track* track, bool discHeaders, bool splitDiscs);
     PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, Core::MusicItem* item,
                                  PlaylistItem* parent);
-    void createAlbums(const Core::TrackPtrList& tracks);
-    void filterModel(const Core::TrackPtrList& tracks);
-
-private:
     void insertRow(PlaylistItem* parent, PlaylistItem* child);
 
-    using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
+    void beginReset();
+
+    void traverseIndex(const QModelIndex& start, QModelIndexList& list) const;
+
+    [[nodiscard]] QVariant trackData(PlaylistItem* item, int role) const;
+    [[nodiscard]] QVariant albumData(PlaylistItem* item, int role) const;
+    [[nodiscard]] QVariant discData(PlaylistItem* item, int role) const;
 
     Core::Player::PlayerManager* m_playerManager;
     Core::Library::MusicLibrary* m_library;
