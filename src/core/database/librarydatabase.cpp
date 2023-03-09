@@ -62,16 +62,16 @@ QString getOrderString(Core::Library::SortOrder order)
 
     switch(order) {
         case(Core::Library::SortOrder::TitleAsc):
-            orderString = "AlbumArtist ASC, Title ASC, TrackNumber ASC";
+            orderString = "AlbumArtist ASC, Title ASC, DiscNumber ASC, TrackNumber ASC";
             break;
         case(Core::Library::SortOrder::TitleDesc):
-            orderString = "AlbumArtist ASC, Title DESC, TrackNumber ASC";
+            orderString = "AlbumArtist ASC, Title DESC, DiscNumber ASC, TrackNumber ASC";
             break;
         case(Core::Library::SortOrder::YearAsc):
-            orderString = "AlbumArtist ASC, Date ASC, TrackNumber ASC";
+            orderString = "AlbumArtist ASC, Date ASC, DiscNumber ASC, TrackNumber ASC";
             break;
         case(Core::Library::SortOrder::YearDesc):
-            orderString = "AlbumArtist ASC, Date DESC, TrackNumber ASC";
+            orderString = "AlbumArtist ASC, Date DESC, DiscNumber ASC, TrackNumber ASC";
             break;
         case(Core::Library::SortOrder::NoSorting):
             orderString = "AlbumArtist ASC";
