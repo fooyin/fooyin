@@ -66,12 +66,11 @@ Application::Application(int& argc, char** argv, int flags)
     , m_guiSettings{m_settingsManager}
     , m_editableLayout{new Gui::Widgets::EditableLayout(m_settingsManager, m_actionManager, &m_widgetFactory,
                                                         &m_widgetProvider, &m_layoutProvider)}
-    , m_mainWindow{new Gui::MainWindow(m_actionManager, m_settingsManager, &m_layoutProvider, m_editableLayout)}
+    , m_mainWindow{new Gui::MainWindow(m_actionManager, m_playerManager, m_libraryManager, m_settingsManager,
+                                       &m_layoutProvider, m_editableLayout)}
     , m_libraryGeneralPage{m_libraryManager, m_settingsManager}
     , m_guiGeneralPage{m_settingsManager}
     , m_playlistGuiPage{m_settingsManager}
-    , m_fileMenu{m_actionManager, m_settingsManager}
-    , m_libraryMenu{m_actionManager, m_libraryManager, m_settingsManager}
     , m_pluginManager{new Plugins::PluginManager(this)}
     , m_corePluginContext{m_actionManager, m_playerManager, m_library, m_settingsManager, m_threadManager, &m_database}
     , m_guiPluginContext{&m_widgetFactory}
@@ -93,7 +92,6 @@ void Application::startup()
 {
     m_settingsManager->loadSettings();
     m_library->loadLibrary();
-    m_playerManager->restoreState();
     m_layoutProvider.findLayouts();
 
     m_mainWindow->setupUi();

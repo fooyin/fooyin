@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,46 +19,35 @@
 
 #pragma once
 
-#include <QWidget>
+#include <QObject>
 
-class QHBoxLayout;
+class QAction;
 
 namespace Fy {
 
 namespace Utils {
+class ActionManager;
 class SettingsManager;
-class ComboIcon;
 } // namespace Utils
 
-namespace Core {
-namespace Player {
-class PlayerManager;
-enum PlayMode : uint8_t;
-} // namespace Player
-} // namespace Core
-
-namespace Gui::Widgets {
-class PlaylistControl : public QWidget
+namespace Gui {
+class ViewMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                             QWidget* parent = nullptr);
+    explicit ViewMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, QObject* parent = nullptr);
+
+signals:
+    void layoutEditingChanged(bool enabled);
+    void openQuickSetup();
 
 private:
-    void setupUi();
-    void repeatClicked();
-    void shuffleClicked();
-    void setMode(Core::Player::PlayMode mode) const;
-
-    Core::Player::PlayerManager* m_playerManager;
+    Utils::ActionManager* m_actionManager;
     Utils::SettingsManager* m_settings;
 
-    QHBoxLayout* m_layout;
-    QSize m_labelSize;
-    Utils::ComboIcon* m_repeat;
-    Utils::ComboIcon* m_shuffle;
+    QAction* m_layoutEditing;
+    QAction* m_openQuickSetup;
 };
-} // namespace Gui::Widgets
+} // namespace Gui
 } // namespace Fy

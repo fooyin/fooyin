@@ -28,8 +28,6 @@
 #include <gui/guiplugincontext.h>
 #include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
-#include <gui/menu/filemenu.h>
-#include <gui/menu/librarymenu.h>
 #include <gui/settings/guigeneralpage.h>
 #include <gui/settings/librarygeneralpage.h>
 #include <gui/settings/playlistguipage.h>
@@ -116,9 +114,6 @@ private:
     Gui::Settings::LibraryGeneralPage m_libraryGeneralPage;
     Gui::Settings::GuiGeneralPage m_guiGeneralPage;
     Gui::Settings::PlaylistGuiPage m_playlistGuiPage;
-
-    Gui::FileMenu m_fileMenu;
-    Gui::LibraryMenu m_libraryMenu;
 
     Plugins::PluginManager* m_pluginManager;
     Core::CorePluginContext m_corePluginContext;

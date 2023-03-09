@@ -52,10 +52,18 @@ set(SOURCES
     library/statuswidget.h
     library/statuswidget.cpp
 
+    menu/editmenu.h
+    menu/editmenu.cpp
     menu/filemenu.h
     menu/filemenu.cpp
+    menu/helpmenu.h
+    menu/helpmenu.cpp
     menu/librarymenu.h
     menu/librarymenu.cpp
+    menu/playbackmenu.h
+    menu/playbackmenu.cpp
+    menu/viewmenu.h
+    menu/viewmenu.cpp
 
     playlist/playlistview.h
     playlist/playlistview.cpp

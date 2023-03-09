@@ -26,7 +26,6 @@ namespace Fy {
 
 namespace Utils {
 class ActionManager;
-class ActionContainer;
 class SettingsManager;
 } // namespace Utils
 

@@ -38,5 +38,7 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::InfoAltColours, true, "Info");
     m_settings->createSetting(Settings::InfoHeader, true, "Info");
     m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
+
+    m_settings->loadSettings();
 }
 } // namespace Fy::Gui::Settings

@@ -126,7 +126,7 @@ int FilterManager::registerFilter(Filters::FilterType type)
         filter = findFilter(type);
     }
     else {
-        filter.sortOrder = Core::Library::SortOrder::TitleAsc;
+        filter.sortOrder = Core::Library::SortOrder::NoSorting;
         filter.type      = type;
         filter.index     = static_cast<int>(p->filters.size());
         p->filters.emplace_back(filter);

@@ -58,24 +58,13 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
 
 QString getOrderString(Core::Library::SortOrder order)
 {
-    QString orderString;
+    QString orderString{"AlbumArtist ASC"};
 
     switch(order) {
-        case(Core::Library::SortOrder::TitleAsc):
-            orderString = "AlbumArtist ASC, Title ASC, DiscNumber ASC, TrackNumber ASC";
-            break;
-        case(Core::Library::SortOrder::TitleDesc):
-            orderString = "AlbumArtist ASC, Title DESC, DiscNumber ASC, TrackNumber ASC";
-            break;
-        case(Core::Library::SortOrder::YearAsc):
-            orderString = "AlbumArtist ASC, Date ASC, DiscNumber ASC, TrackNumber ASC";
-            break;
-        case(Core::Library::SortOrder::YearDesc):
-            orderString = "AlbumArtist ASC, Date DESC, DiscNumber ASC, TrackNumber ASC";
-            break;
         case(Core::Library::SortOrder::NoSorting):
-            orderString = "AlbumArtist ASC";
+            orderString += ", Date DESC";
     }
+    orderString += ", Album ASC, DiscNumber ASC, TrackNumber ASC";
     return orderString;
 }
 

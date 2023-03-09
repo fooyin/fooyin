@@ -38,5 +38,7 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::LazyTracks, 2500, "Library");
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
+
+    m_settings->loadSettings();
 }
 } // namespace Fy::Core::Settings

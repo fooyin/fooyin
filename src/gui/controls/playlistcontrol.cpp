@@ -46,10 +46,7 @@ PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Uti
     connect(m_repeat, &Utils::ComboIcon::clicked, this, &PlaylistControl::repeatClicked);
     connect(m_shuffle, &Utils::ComboIcon::clicked, this, &PlaylistControl::shuffleClicked);
 
-    connect(this, &PlaylistControl::repeatClicked, m_playerManager, &Core::Player::PlayerManager::setRepeat);
-    connect(this, &PlaylistControl::shuffleClicked, m_playerManager, &Core::Player::PlayerManager::setShuffle);
-
-    connect(m_playerManager, &Core::Player::PlayerManager::playModeChanged, this, &PlaylistControl::playModeChanged);
+    connect(m_playerManager, &Core::Player::PlayerManager::playModeChanged, this, &PlaylistControl::setMode);
 }
 
 void PlaylistControl::setupUi()
@@ -69,37 +66,53 @@ void PlaylistControl::setupUi()
     setMode(m_settings->value<Core::Settings::PlayMode>().value<Core::Player::PlayMode>());
 }
 
-void PlaylistControl::playModeChanged(Core::Player::PlayMode mode)
+void PlaylistControl::repeatClicked()
 {
-    m_settings->set<Core::Settings::PlayMode>(mode);
-    setMode(mode);
+    const auto mode = m_settings->value<Core::Settings::PlayMode>().value<Core::Player::PlayMode>();
+    switch(mode) {
+        case(Core::Player::Repeat):
+            m_playerManager->setPlayMode(Core::Player::Default);
+            break;
+        case(Core::Player::RepeatAll):
+            m_playerManager->setPlayMode(Core::Player::Repeat);
+            break;
+        case(Core::Player::Shuffle):
+        case(Core::Player::Default):
+            m_playerManager->setPlayMode(Core::Player::RepeatAll);
+            break;
+    }
+}
+
+void PlaylistControl::shuffleClicked()
+{
+    const auto mode = m_settings->value<Core::Settings::PlayMode>().value<Core::Player::PlayMode>();
+    if(mode == Core::Player::Shuffle) {
+        m_playerManager->setPlayMode(Core::Player::Default);
+    }
+    else {
+        m_playerManager->setPlayMode(Core::Player::Shuffle);
+    }
 }
 
 void PlaylistControl::setMode(Core::Player::PlayMode mode) const
 {
     switch(mode) {
-        case(Core::Player::Repeat): {
+        case(Core::Player::Repeat):
             m_repeat->setIcon(Constants::Icons::Repeat, true);
             m_shuffle->setIcon(Constants::Icons::Shuffle);
             break;
-        }
-        case(Core::Player::RepeatAll): {
+        case(Core::Player::RepeatAll):
             m_repeat->setIcon(Constants::Icons::RepeatAll, true);
             m_shuffle->setIcon(Constants::Icons::Shuffle);
             break;
-        }
-        case(Core::Player::Shuffle): {
+        case(Core::Player::Shuffle):
             m_shuffle->setIcon(Constants::Icons::Shuffle, true);
             m_repeat->setIcon(Constants::Icons::RepeatAll);
             break;
-        }
-        case(Core::Player::Default): {
+        case(Core::Player::Default):
             m_repeat->setIcon(Constants::Icons::RepeatAll);
             m_shuffle->setIcon(Constants::Icons::Shuffle);
             break;
-        }
-        default:
-            return;
     }
 }
 } // namespace Fy::Gui::Widgets

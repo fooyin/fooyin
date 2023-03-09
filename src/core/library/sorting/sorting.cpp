@@ -71,14 +71,14 @@ bool tracksByYearDesc(Track* tr1, Track* tr2)
 void sortTracks(TrackPtrList& tracks, SortOrder sortOrder)
 {
     switch(sortOrder) {
-        case(SortOrder::YearDesc):
-            return std::sort(tracks.begin(), tracks.end(), tracksByYearDesc);
-        case(SortOrder::YearAsc):
-            return std::sort(tracks.begin(), tracks.end(), tracksByYearAsc);
-        case(SortOrder::TitleDesc):
-            return std::sort(tracks.begin(), tracks.end(), tracksByTitleDesc);
-        case(SortOrder::TitleAsc):
-            return std::sort(tracks.begin(), tracks.end(), tracksByTitleAsc);
+            //        case(SortOrder::YearDesc):
+            //            return std::sort(tracks.begin(), tracks.end(), tracksByYearDesc);
+            //        case(SortOrder::YearAsc):
+            //            return std::sort(tracks.begin(), tracks.end(), tracksByYearAsc);
+            //        case(SortOrder::TitleDesc):
+            //            return std::sort(tracks.begin(), tracks.end(), tracksByTitleDesc);
+            //        case(SortOrder::TitleAsc):
+            //            return std::sort(tracks.begin(), tracks.end(), tracksByTitleAsc);
         case(SortOrder::NoSorting):
             return std::sort(tracks.begin(), tracks.end(), tracksBase);
     }

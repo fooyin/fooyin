@@ -51,6 +51,6 @@ private:
     LibraryManager* m_libraryManager;
     std::unique_ptr<UnifiedTrackStore> m_trackStore;
 
-    SortOrder m_order{Library::SortOrder::YearDesc};
+    SortOrder m_order;
 };
 } // namespace Fy::Core::Library

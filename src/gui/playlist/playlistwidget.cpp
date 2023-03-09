@@ -260,28 +260,29 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
 
 void PlaylistWidget::customHeaderMenuRequested(QPoint pos)
 {
-    QMenu menu;
+    Q_UNUSED(pos)
+    //    QMenu menu;
 
-    const auto order = m_library->sortOrder();
+    //    const auto order = m_library->sortOrder();
 
-    QActionGroup sortOrder{&menu};
+    //    QActionGroup sortOrder{&menu};
 
-    QAction yearSort{&menu};
-    yearSort.setText("Year");
-    yearSort.setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::YearDesc));
-    yearSort.setCheckable(true);
-    yearSort.setChecked(order == Core::Library::SortOrder::YearAsc || order == Core::Library::SortOrder::YearDesc);
-    menu.addAction(&yearSort);
+    //    QAction yearSort{&menu};
+    //    yearSort.setText("Year");
+    //    yearSort.setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::YearDesc));
+    //    yearSort.setCheckable(true);
+    //    yearSort.setChecked(order == Core::Library::SortOrder::YearAsc || order ==
+    //    Core::Library::SortOrder::YearDesc); menu.addAction(&yearSort);
 
-    sortOrder.addAction(&yearSort);
+    //    sortOrder.addAction(&yearSort);
 
-    menu.addSeparator();
+    //    menu.addSeparator();
 
-    menu.setDefaultAction(sortOrder.checkedAction());
+    //    menu.setDefaultAction(sortOrder.checkedAction());
 
-    connect(&sortOrder, &QActionGroup::triggered, this, &PlaylistWidget::changeOrder);
+    //    connect(&sortOrder, &QActionGroup::triggered, this, &PlaylistWidget::changeOrder);
 
-    menu.popup(mapToGlobal(pos));
+    //    menu.popup(mapToGlobal(pos));
 }
 
 void PlaylistWidget::changeOrder(QAction* action)
@@ -292,19 +293,19 @@ void PlaylistWidget::changeOrder(QAction* action)
 
 void PlaylistWidget::switchOrder()
 {
-    const auto order = m_library->sortOrder();
-    switch(order) {
-        case(Core::Library::SortOrder::TitleAsc):
-            return m_library->sortTracks(Core::Library::SortOrder::TitleDesc);
-        case(Core::Library::SortOrder::TitleDesc):
-            return m_library->sortTracks(Core::Library::SortOrder::TitleAsc);
-        case(Core::Library::SortOrder::YearAsc):
-            return m_library->sortTracks(Core::Library::SortOrder::YearDesc);
-        case(Core::Library::SortOrder::YearDesc):
-            return m_library->sortTracks(Core::Library::SortOrder::YearAsc);
-        case(Core::Library::SortOrder::NoSorting):
-            return m_library->sortTracks(Core::Library::SortOrder::TitleAsc);
-    }
+    //    const auto order = m_library->sortOrder();
+    //    switch(order) {
+    //        case(Core::Library::SortOrder::TitleAsc):
+    //            return m_library->sortTracks(Core::Library::SortOrder::TitleDesc);
+    //        case(Core::Library::SortOrder::TitleDesc):
+    //            return m_library->sortTracks(Core::Library::SortOrder::TitleAsc);
+    //        case(Core::Library::SortOrder::YearAsc):
+    //            return m_library->sortTracks(Core::Library::SortOrder::YearDesc);
+    //        case(Core::Library::SortOrder::YearDesc):
+    //            return m_library->sortTracks(Core::Library::SortOrder::YearAsc);
+    //        case(Core::Library::SortOrder::NoSorting):
+    //            return m_library->sortTracks(Core::Library::SortOrder::TitleAsc);
+    //    }
 }
 
 void PlaylistWidget::changeState(Core::Player::PlayState state)

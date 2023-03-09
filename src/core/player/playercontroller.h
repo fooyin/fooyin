@@ -37,8 +37,6 @@ class PlayerController : public PlayerManager
 public:
     explicit PlayerController(Utils::SettingsManager* settings, QObject* parent = nullptr);
 
-    void restoreState() override;
-
 protected:
     void reset() override;
     void play() override;
@@ -51,8 +49,7 @@ protected:
     void setCurrentPosition(uint64_t ms) override;
     void changePosition(uint64_t ms) override;
     void changeCurrentTrack(Track* track) override;
-    void setRepeat() override;
-    void setShuffle() override;
+    void setPlayMode(PlayMode mode) override;
     void volumeUp() override;
     void volumeDown() override;
     void setVolume(double value) override;
@@ -64,6 +61,8 @@ protected:
     [[nodiscard]] double volume() const override;
 
 private:
+    void changePlayMode();
+
     Utils::SettingsManager* m_settings;
 
     Track* m_currentTrack;

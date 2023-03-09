@@ -85,7 +85,7 @@ private:
 
     std::unique_ptr<TrackStore> m_trackStore;
 
-    SortOrder m_order{Library::SortOrder::YearDesc};
+    SortOrder m_order;
 };
 } // namespace Library
 } // namespace Core

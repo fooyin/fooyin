@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,22 @@
 
 #pragma once
 
-namespace Fy::Core::Library {
-enum class SortOrder : unsigned int
+#include <QObject>
+
+namespace Fy {
+
+namespace Utils {
+class ActionManager;
+} // namespace Utils
+
+namespace Gui {
+class HelpMenu : public QObject
 {
-    NoSorting = 0,
+public:
+    explicit HelpMenu(Utils::ActionManager* actionManager, QObject* parent = nullptr);
+
+private:
+    Utils::ActionManager* m_actionManager;
 };
-} // namespace Fy::Core::Library
+} // namespace Gui
+} // namespace Fy

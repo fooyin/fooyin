@@ -36,11 +36,9 @@ PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* pa
     , m_position{0}
     , m_volume{1.0F}
     , m_counted{false}
-{ }
-
-void PlayerController::restoreState()
 {
     m_playMode = m_settings->value<Settings::PlayMode>().value<PlayMode>();
+    m_settings->subscribe<Settings::PlayMode>(this, &PlayerController::changePlayMode);
 }
 
 void PlayerController::reset()
@@ -128,34 +126,9 @@ void PlayerController::changeCurrentTrack(Track* track)
     play();
 }
 
-void PlayerController::setRepeat()
+void PlayerController::setPlayMode(PlayMode mode)
 {
-    switch(m_playMode) {
-        case Default:
-            m_playMode = Player::PlayMode::RepeatAll;
-            break;
-        case RepeatAll:
-            m_playMode = Repeat;
-            break;
-        case Player::PlayMode::Repeat:
-            m_playMode = Default;
-            break;
-        case Player::PlayMode::Shuffle:
-            m_playMode = RepeatAll;
-            break;
-    }
-    emit playModeChanged(m_playMode);
-}
-
-void PlayerController::setShuffle()
-{
-    if(m_playMode == Shuffle) {
-        m_playMode = Default;
-    }
-    else {
-        m_playMode = Shuffle;
-    }
-    emit playModeChanged(m_playMode);
+    m_settings->set<Settings::PlayMode>(mode);
 }
 
 void PlayerController::volumeUp()
@@ -197,5 +170,14 @@ Track* PlayerController::currentTrack() const
 double PlayerController::volume() const
 {
     return m_volume;
+}
+
+void PlayerController::changePlayMode()
+{
+    const auto mode = m_settings->value<Settings::PlayMode>().value<PlayMode>();
+    if(m_playMode != mode) {
+        m_playMode = mode;
+        emit playModeChanged(mode);
+    }
 }
 } // namespace Fy::Core::Player

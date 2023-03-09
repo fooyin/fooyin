@@ -29,6 +29,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryInfo* info, LibraryManager* libr
     , m_info{info}
     , m_libraryManager{libraryManager}
     , m_trackStore{std::make_unique<UnifiedTrackStore>()}
+    , m_order{SortOrder::NoSorting}
 { }
 
 void UnifiedMusicLibrary::loadLibrary()

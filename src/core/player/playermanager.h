@@ -51,8 +51,6 @@ public:
     explicit PlayerManager(QObject* parent = nullptr)
         : QObject{parent} {};
 
-    virtual void restoreState() = 0;
-
     [[nodiscard]] virtual PlayState playState() const      = 0;
     [[nodiscard]] virtual PlayMode playMode() const        = 0;
     [[nodiscard]] virtual uint64_t currentPosition() const = 0;
@@ -80,8 +78,7 @@ public:
     virtual void next()                                 = 0;
     virtual void stop()                                 = 0;
     virtual void reset()                                = 0;
-    virtual void setRepeat()                            = 0;
-    virtual void setShuffle()                           = 0;
+    virtual void setPlayMode(PlayMode mode)             = 0;
     virtual void setCurrentPosition(uint64_t ms)        = 0;
     virtual void changePosition(uint64_t ms)            = 0;
     virtual void changeCurrentTrack(Core::Track* track) = 0;

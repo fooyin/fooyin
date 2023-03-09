@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
  *
  */
 
-#pragma once
+#include "editmenu.h"
 
-namespace Fy::Core::Library {
-enum class SortOrder : unsigned int
-{
-    NoSorting = 0,
-};
-} // namespace Fy::Core::Library
+namespace Fy::Gui {
+EditMenu::EditMenu(Utils::ActionManager* actionManager, QObject* parent)
+    : QObject{parent}
+    , m_actionManager{actionManager}
+{ }
+} // namespace Fy::Gui

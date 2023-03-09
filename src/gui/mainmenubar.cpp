@@ -42,30 +42,44 @@ MainMenuBar::MainMenuBar(Utils::ActionManager* actionManager, QObject* parent)
     Utils::ActionContainer* fileMenu = m_actionManager->createMenu(Constants::Menus::File);
     m_menubar->addMenu(fileMenu, Constants::Groups::File);
     fileMenu->menu()->setTitle(tr("&File"));
+    fileMenu->appendGroup(Constants::Groups::One);
+    fileMenu->appendGroup(Constants::Groups::Two);
     fileMenu->appendGroup(Constants::Groups::Three);
 
     Utils::ActionContainer* editMenu = m_actionManager->createMenu(Constants::Menus::Edit);
     m_menubar->addMenu(editMenu, Constants::Groups::Edit);
     editMenu->menu()->setTitle(tr("&Edit"));
+    editMenu->appendGroup(Constants::Groups::One);
+    editMenu->appendGroup(Constants::Groups::Two);
+    editMenu->appendGroup(Constants::Groups::Three);
 
     Utils::ActionContainer* viewMenu = m_actionManager->createMenu(Constants::Menus::View);
     m_menubar->addMenu(viewMenu, Constants::Groups::View);
     viewMenu->menu()->setTitle(tr("&View"));
+    viewMenu->appendGroup(Constants::Groups::One);
+    viewMenu->appendGroup(Constants::Groups::Two);
     viewMenu->appendGroup(Constants::Groups::Three);
 
     Utils::ActionContainer* playbackMenu = m_actionManager->createMenu(Constants::Menus::Playback);
     m_menubar->addMenu(playbackMenu, Constants::Groups::Playback);
     playbackMenu->menu()->setTitle(tr("&Playback"));
+    playbackMenu->appendGroup(Constants::Groups::One);
+    playbackMenu->appendGroup(Constants::Groups::Two);
+    playbackMenu->appendGroup(Constants::Groups::Three);
 
     Utils::ActionContainer* libraryMenu = m_actionManager->createMenu(Constants::Menus::Library);
     m_menubar->addMenu(libraryMenu, Constants::Groups::Library);
     libraryMenu->menu()->setTitle(tr("&Library"));
+    libraryMenu->appendGroup(Constants::Groups::One);
     libraryMenu->appendGroup(Constants::Groups::Two);
     libraryMenu->appendGroup(Constants::Groups::Three);
 
     Utils::ActionContainer* helpMenu = m_actionManager->createMenu(Constants::Menus::Help);
     m_menubar->addMenu(helpMenu, Constants::Groups::Help);
     helpMenu->menu()->setTitle(tr("&Help"));
+    helpMenu->appendGroup(Constants::Groups::One);
+    helpMenu->appendGroup(Constants::Groups::Two);
+    helpMenu->appendGroup(Constants::Groups::Three);
 }
 
 QMenuBar* MainMenuBar::menuBar() const

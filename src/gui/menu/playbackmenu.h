@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,46 +19,58 @@
 
 #pragma once
 
-#include <QWidget>
+#include <core/player/playermanager.h>
 
-class QHBoxLayout;
+#include <QIcon>
+#include <QObject>
+
+class QAction;
+class QActionGroup;
 
 namespace Fy {
 
 namespace Utils {
+class ActionManager;
+class ActionContainer;
 class SettingsManager;
-class ComboIcon;
 } // namespace Utils
 
 namespace Core {
 namespace Player {
 class PlayerManager;
-enum PlayMode : uint8_t;
-} // namespace Player
+}
 } // namespace Core
 
-namespace Gui::Widgets {
-class PlaylistControl : public QWidget
+namespace Gui {
+class PlaybackMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                             QWidget* parent = nullptr);
+    PlaybackMenu(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
+                 QObject* parent = nullptr);
 
 private:
-    void setupUi();
-    void repeatClicked();
-    void shuffleClicked();
-    void setMode(Core::Player::PlayMode mode) const;
+    void updatePlayPause(Core::Player::PlayState state);
+    void updatePlayMode(Core::Player::PlayMode mode);
 
+    Utils::ActionManager* m_actionManager;
     Core::Player::PlayerManager* m_playerManager;
-    Utils::SettingsManager* m_settings;
 
-    QHBoxLayout* m_layout;
-    QSize m_labelSize;
-    Utils::ComboIcon* m_repeat;
-    Utils::ComboIcon* m_shuffle;
+    QAction* m_stop;
+    QAction* m_playPause;
+    QAction* m_previous;
+    QAction* m_next;
+
+    QActionGroup* m_playbackGroup;
+
+    QAction* m_default;
+    QAction* m_repeat;
+    QAction* m_repeatAll;
+    QAction* m_shuffle;
+
+    QIcon m_playIcon;
+    QIcon m_pauseIcon;
 };
-} // namespace Gui::Widgets
+} // namespace Gui
 } // namespace Fy

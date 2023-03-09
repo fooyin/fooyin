@@ -128,16 +128,16 @@ void FilterWidget::switchOrder()
 {
     const auto order = m_manager->filterOrder(m_type);
     switch(order) {
-        case(Core::Library::SortOrder::TitleAsc):
-            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::TitleDesc);
-        case(Core::Library::SortOrder::TitleDesc):
-            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::TitleAsc);
-        case(Core::Library::SortOrder::YearAsc):
-            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::YearDesc);
-        case(Core::Library::SortOrder::YearDesc):
-            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::YearAsc);
+            //        case(Core::Library::SortOrder::TitleAsc):
+            //            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::TitleDesc);
+            //        case(Core::Library::SortOrder::TitleDesc):
+            //            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::TitleAsc);
+            //        case(Core::Library::SortOrder::YearAsc):
+            //            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::YearDesc);
+            //        case(Core::Library::SortOrder::YearDesc):
+            //            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::YearAsc);
         case(Core::Library::SortOrder::NoSorting):
-            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::TitleAsc);
+            return m_manager->changeFilterOrder(m_type, Core::Library::SortOrder::NoSorting);
     }
 }
 
@@ -213,27 +213,27 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     auto* orderMenu = new QMenu(menu);
     orderMenu->setTitle("Sort Order");
 
-    const auto order = m_manager->filterOrder(m_type);
+    //    const auto order = m_manager->filterOrder(m_type);
 
     auto* editFilters = new QActionGroup{menu};
-    auto* sortOrder   = new QActionGroup{menu};
+    //    auto* sortOrder   = new QActionGroup{menu};
 
-    auto* titleSort = new QAction(orderMenu);
-    titleSort->setText("Title");
-    titleSort->setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::TitleAsc));
-    titleSort->setCheckable(true);
-    titleSort->setChecked(order == Core::Library::SortOrder::TitleAsc || order == Core::Library::SortOrder::TitleDesc);
-    orderMenu->addAction(titleSort);
+    //    auto* titleSort = new QAction(orderMenu);
+    //    titleSort->setText("Title");
+    //    titleSort->setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::TitleAsc));
+    //    titleSort->setCheckable(true);
+    //    titleSort->setChecked(order == Core::Library::SortOrder::TitleAsc || order ==
+    //    Core::Library::SortOrder::TitleDesc); orderMenu->addAction(titleSort);
 
-    auto* yearSort = new QAction(orderMenu);
-    yearSort->setText("Year");
-    yearSort->setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::YearAsc));
-    yearSort->setCheckable(true);
-    yearSort->setChecked(order == Core::Library::SortOrder::YearAsc || order == Core::Library::SortOrder::YearDesc);
-    orderMenu->addAction(yearSort);
+    //    auto* yearSort = new QAction(orderMenu);
+    //    yearSort->setText("Year");
+    //    yearSort->setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::YearAsc));
+    //    yearSort->setCheckable(true);
+    //    yearSort->setChecked(order == Core::Library::SortOrder::YearAsc || order ==
+    //    Core::Library::SortOrder::YearDesc); orderMenu->addAction(yearSort);
 
-    sortOrder->addAction(titleSort);
-    sortOrder->addAction(yearSort);
+    //    sortOrder->addAction(titleSort);
+    //    sortOrder->addAction(yearSort);
 
     auto* genre = new QAction(menu);
     genre->setText("Genre");
@@ -287,7 +287,7 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     menu->setDefaultAction(editFilters->checkedAction());
 
     connect(editFilters, &QActionGroup::triggered, this, &FilterWidget::editFilter);
-    connect(sortOrder, &QActionGroup::triggered, this, &FilterWidget::changeOrder);
+    //    connect(sortOrder, &QActionGroup::triggered, this, &FilterWidget::changeOrder);
 
     menu->popup(mapToGlobal(pos));
 }

@@ -199,19 +199,20 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
             fields.append(QStringLiteral("AlbumArtists.Name"));
             group = QStringLiteral("AlbumArtists.ArtistID");
             switch(order) {
-                case(Core::Library::SortOrder::TitleDesc):
-                    sortOrder = QStringLiteral("LOWER(AlbumArtists.Name) DESC");
-                    break;
-                case(Core::Library::SortOrder::TitleAsc):
-                    sortOrder = QStringLiteral("LOWER(AlbumArtists.Name)");
-                    break;
-                case(Core::Library::SortOrder::YearDesc):
-                    sortOrder = QStringLiteral("Tracks.Date, LOWER(AlbumArtists.Name)");
-                    break;
-                case(Core::Library::SortOrder::YearAsc):
-                    sortOrder = QStringLiteral("Tracks.Date ASC, LOWER(AlbumArtists.Name)");
-                    break;
+                    //                case(Core::Library::SortOrder::TitleDesc):
+                    //                    sortOrder = QStringLiteral("LOWER(AlbumArtists.Name) DESC");
+                    //                    break;
+                    //                case(Core::Library::SortOrder::TitleAsc):
+                    //                    sortOrder = QStringLiteral("LOWER(AlbumArtists.Name)");
+                    //                    break;
+                    //                case(Core::Library::SortOrder::YearDesc):
+                    //                    sortOrder = QStringLiteral("Tracks.Date, LOWER(AlbumArtists.Name)");
+                    //                    break;
+                    //                case(Core::Library::SortOrder::YearAsc):
+                    //                    sortOrder = QStringLiteral("Tracks.Date ASC, LOWER(AlbumArtists.Name)");
+                    //                    break;
                 case(Core::Library::SortOrder::NoSorting):
+                    sortOrder = QStringLiteral("LOWER(AlbumArtists.Name)");
                     break;
             }
             break;
@@ -226,18 +227,18 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
             fields.append(QStringLiteral("Albums.Title"));
             group = QStringLiteral("Albums.AlbumID");
             switch(order) {
-                case(Core::Library::SortOrder::TitleDesc):
-                    sortOrder = QStringLiteral("LOWER(Albums.Title) DESC");
-                    break;
-                case(Core::Library::SortOrder::TitleAsc):
-                    sortOrder = QStringLiteral("LOWER(Albums.Title)");
-                    break;
-                case(Core::Library::SortOrder::YearDesc):
-                    sortOrder = QStringLiteral("Albums.Date DESC, LOWER(Albums.Title)");
-                    break;
-                case(Core::Library::SortOrder::YearAsc):
-                    sortOrder = QStringLiteral("Albums.Date ASC, LOWER(Albums.Title)");
-                    break;
+                    //                case(Core::Library::SortOrder::TitleDesc):
+                    //                    sortOrder = QStringLiteral("LOWER(Albums.Title) DESC");
+                    //                    break;
+                    //                case(Core::Library::SortOrder::TitleAsc):
+                    //                    sortOrder = QStringLiteral("LOWER(Albums.Title)");
+                    //                    break;
+                    //                case(Core::Library::SortOrder::YearDesc):
+                    //                    sortOrder = QStringLiteral("Albums.Date DESC, LOWER(Albums.Title)");
+                    //                    break;
+                    //                case(Core::Library::SortOrder::YearAsc):
+                    //                    sortOrder = QStringLiteral("Albums.Date ASC, LOWER(Albums.Title)");
+                    //                    break;
                 case(Core::Library::SortOrder::NoSorting):
                     sortOrder = QStringLiteral("LOWER(Albums.Title)");
                     break;

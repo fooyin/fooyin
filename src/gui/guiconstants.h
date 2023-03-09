@@ -57,6 +57,7 @@ constexpr auto File          = "Fooyin.Menu.File";
 constexpr auto Edit          = "Fooyin.Menu.Edit";
 constexpr auto View          = "Fooyin.Menu.View";
 constexpr auto Playback      = "Fooyin.Menu.Playback";
+constexpr auto PlaybackOrder = "Fooyin.Menu.Playback.Order";
 constexpr auto Library       = "Fooyin.Menu.Library";
 constexpr auto SwitchLibrary = "Fooyin.Menu.Library.Switch";
 constexpr auto Help          = "Fooyin.Menu.Help";
@@ -90,12 +91,19 @@ constexpr auto PlaylistAddTo = "Fooyin.Group.Playlist.AddTo";
 } // namespace Groups
 
 namespace Actions {
-constexpr auto Exit           = "Fooyin.Action.Exit";
-constexpr auto Settings       = "Fooyin.Action.Settings";
-constexpr auto LayoutEditing  = "Fooyin.Action.LayoutEditing";
-constexpr auto Rescan         = "Fooyin.Action.Rescan";
-constexpr auto LibrarySwitch  = "Fooyin.Action.LibrarySwitch";
-constexpr auto PlaylistCreate = "Fooyin.Action.Playlist.Create";
+constexpr auto Exit            = "Fooyin.Action.Exit";
+constexpr auto Settings        = "Fooyin.Action.Settings";
+constexpr auto LayoutEditing   = "Fooyin.Action.LayoutEditing";
+constexpr auto Rescan          = "Fooyin.Action.Rescan";
+constexpr auto LibrarySwitch   = "Fooyin.Action.LibrarySwitch";
+constexpr auto Stop            = "Fooyin.Action.Stop";
+constexpr auto PlayPause       = "Fooyin.Action.PlayPause";
+constexpr auto Next            = "Fooyin.Action.Next";
+constexpr auto Previous        = "Fooyin.Action.Previous";
+constexpr auto PlaybackDefault = "Fooyin.Action.Playback.Default";
+constexpr auto Repeat          = "Fooyin.Action.Playback.Repeat";
+constexpr auto RepeatAll       = "Fooyin.Action.Playback.RepeatAll";
+constexpr auto Shuffle         = "Fooyin.Action.Playback.Shuffle";
 } // namespace Actions
 
 namespace Category {

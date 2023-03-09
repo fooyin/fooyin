@@ -20,6 +20,12 @@
 #include "mainwindow.h"
 
 #include "editablelayout.h"
+#include "gui/menu/editmenu.h"
+#include "gui/menu/filemenu.h"
+#include "gui/menu/helpmenu.h"
+#include "gui/menu/librarymenu.h"
+#include "gui/menu/playbackmenu.h"
+#include "gui/menu/viewmenu.h"
 #include "gui/quicksetup/quicksetupdialog.h"
 #include "guiconstants.h"
 #include "guisettings.h"
@@ -39,73 +45,16 @@
 #include <QTimer>
 
 namespace Fy::Gui {
-struct MainWindow::Private
-{
-    Utils::ActionManager* actionManager;
-    Utils::SettingsManager* settings;
-    Widgets::EditableLayout* editableLayout;
-
-    MainMenuBar* mainMenu;
-
-    QAction* openSettings;
-    QAction* layoutEditing;
-    QAction* openQuickSetup;
-    QAction* rescan;
-    QAction* quitAction;
-
-    LayoutProvider* layoutProvider;
-    QuickSetupDialog* quickSetupDialog;
-
-    Private(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, LayoutProvider* layoutProvider,
-            Widgets::EditableLayout* editableLayout)
-        : actionManager{actionManager}
-        , settings{settings}
-        , editableLayout{editableLayout}
-        , layoutProvider{layoutProvider}
-    {
-        registerLayouts();
-    }
-
-    void registerLayouts() const
-    {
-        layoutProvider->registerLayout("Empty", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[],\"State\":\"AAAA/"
-                                                "wAAAAEAAAABAAACLwD/////AQAAAAIA\"}}]}");
-
-        layoutProvider->registerLayout(
-            "Simple", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Playlist\",\"Controls\"],"
-                      "\"State\":\"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA\"}}]}");
-
-        layoutProvider->registerLayout(
-            "Stone", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Search\",{\"SplitterHorizontal\":{"
-                     "\"Children\":[\"FilterAlbumArtist\",\"Playlist\"],\"State\":\"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP/"
-                     "///8BAAAAAQA=\"}},\"Controls\"],\"State\":\"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////"
-                     "wEAAAACAA==\"}}]}");
-
-        layoutProvider->registerLayout(
-            "Vision", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",{\"SplitterHorizontal\":{"
-                      "\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////"
-                      "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[\"Artwork\",\"Playlist\"],\"State\":"
-                      "\"AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA=\"}}],\"State\":\"AAAA/"
-                      "wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA\"}}]}");
-
-        layoutProvider->registerLayout(
-            "Ember",
-            "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[{\"SplitterHorizontal\":{\"Children\":[\"FilterGenre\","
-            "\"FilterAlbumArtist\",\"FilterArtist\",\"FilterAlbum\"],\"State\":\"AAAA/"
-            "wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAALUA/////"
-            "wEAAAABAA==\"}},{\"SplitterHorizontal\":{\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/"
-            "wAAAAEAAAADAAAFfgAAAdIAAAAAAP////"
-            "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[{\"SplitterVertical\":{\"Children\":[\"Artwork\","
-            "\"Info\"],\"State\":\"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAAAP////8BAAAAAgA=\"}},\"Playlist\"],\"State\":\"AAAA/"
-            "wAAAAEAAAADAAABdQAABdsAAAAAAP////8BAAAAAQA=\"}},\"Status\"],\"State\":\"AAAA/"
-            "wAAAAEAAAAFAAAA+gAAAB4AAALWAAAAGQAAAAAA/////wEAAAACAA==\"}}]}");
-    }
-};
-
-MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
+MainWindow::MainWindow(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
+                       Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings,
                        LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout, QWidget* parent)
     : QMainWindow{parent}
-    , p{std::make_unique<Private>(actionManager, settings, layoutProvider, editableLayout)}
+    , m_actionManager{actionManager}
+    , m_playerManager{playerManager}
+    , m_libraryManager{libraryManager}
+    , m_settings{settings}
+    , m_editableLayout{editableLayout}
+    , m_layoutProvider{layoutProvider}
 {
     actionManager->setMainWindow(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -115,8 +64,8 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
 
 MainWindow::~MainWindow()
 {
-    p->settings->set<Settings::Geometry>(saveGeometry().toBase64());
-    p->editableLayout->saveLayout();
+    m_settings->set<Settings::Geometry>(saveGeometry().toBase64());
+    m_editableLayout->saveLayout();
 }
 
 void MainWindow::setupUi()
@@ -129,46 +78,37 @@ void MainWindow::setupUi()
     setMinimumSize(410, 320);
     setWindowIcon(QIcon(Constants::Icons::Fooyin));
 
-    const QByteArray geometryArray = p->settings->value<Settings::Geometry>();
+    const QByteArray geometryArray = m_settings->value<Settings::Geometry>();
     const QByteArray geometry      = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
-    p->editableLayout->initialise();
-    setCentralWidget(p->editableLayout);
+    m_editableLayout->initialise();
+    setCentralWidget(m_editableLayout);
 
-    if(p->settings->value<Core::Settings::FirstRun>()) {
+    m_fileMenu     = new FileMenu(m_actionManager, m_settings, this);
+    m_editMenu     = new EditMenu(m_actionManager, this);
+    m_viewMenu     = new ViewMenu(m_actionManager, m_settings, this);
+    m_playbackMenu = new PlaybackMenu(m_actionManager, m_playerManager, this);
+    m_libraryMenu  = new LibraryMenu(m_actionManager, m_libraryManager, m_settings, this);
+    m_helpMenu     = new HelpMenu(m_actionManager, this);
+
+    connect(m_viewMenu, &ViewMenu::layoutEditingChanged, this, &MainWindow::enableLayoutEditing);
+
+    if(m_settings->value<Core::Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
-        QTimer::singleShot(1000, p->quickSetupDialog, &QuickSetupDialog::show);
+        QTimer::singleShot(1000, m_quickSetupDialog, &QuickSetupDialog::show);
     }
 }
 
 void MainWindow::setupMenu()
 {
-    p->mainMenu = new MainMenuBar(p->actionManager, this);
-    setMenuBar(p->mainMenu->menuBar());
+    m_mainMenu = new MainMenuBar(m_actionManager, this);
+    setMenuBar(m_mainMenu->menuBar());
 
-    p->quickSetupDialog = new QuickSetupDialog(p->layoutProvider, this);
+    m_quickSetupDialog = new QuickSetupDialog(m_layoutProvider, this);
 
-    Utils::ActionContainer* viewMenu = p->actionManager->actionContainer(Constants::Menus::View);
-
-    if(viewMenu) {
-        const QIcon layoutEditingIcon = QIcon(Constants::Icons::LayoutEditing);
-        p->layoutEditing              = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
-        p->actionManager->registerAction(p->layoutEditing, Constants::Actions::LayoutEditing);
-        viewMenu->addAction(p->layoutEditing, Constants::Groups::Three);
-        connect(p->layoutEditing, &QAction::triggered, this, &MainWindow::enableLayoutEditing);
-        p->settings->subscribe<Settings::LayoutEditing>(p->layoutEditing, &QAction::setChecked);
-        p->layoutEditing->setCheckable(true);
-        p->layoutEditing->setChecked(p->settings->value<Settings::LayoutEditing>());
-
-        const QIcon quickSetupIcon = QIcon(Constants::Icons::QuickSetup);
-        p->openQuickSetup          = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
-        p->actionManager->registerAction(p->openQuickSetup, Constants::Actions::LayoutEditing);
-        viewMenu->addAction(p->openQuickSetup, Constants::Groups::Three);
-        connect(p->openQuickSetup, &QAction::triggered, p->quickSetupDialog, &QuickSetupDialog::show);
-        connect(p->quickSetupDialog, &QuickSetupDialog::layoutChanged, p->editableLayout,
-                &Widgets::EditableLayout::changeLayout);
-    }
+    connect(m_quickSetupDialog, &QuickSetupDialog::layoutChanged, m_editableLayout,
+            &Widgets::EditableLayout::changeLayout);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -179,6 +119,41 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::enableLayoutEditing(bool enable)
 {
-    p->settings->set<Settings::LayoutEditing>(enable);
+    m_settings->set<Settings::LayoutEditing>(enable);
+}
+
+void MainWindow::registerLayouts() const
+{
+    m_layoutProvider->registerLayout("Empty", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[],\"State\":\"AAAA/"
+                                              "wAAAAEAAAABAAACLwD/////AQAAAAIA\"}}]}");
+
+    m_layoutProvider->registerLayout(
+        "Simple", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Playlist\",\"Controls\"],"
+                  "\"State\":\"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA\"}}]}");
+
+    m_layoutProvider->registerLayout(
+        "Stone", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Search\",{\"SplitterHorizontal\":{"
+                 "\"Children\":[\"FilterAlbumArtist\",\"Playlist\"],\"State\":\"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP/"
+                 "///8BAAAAAQA=\"}},\"Controls\"],\"State\":\"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////"
+                 "wEAAAACAA==\"}}]}");
+
+    m_layoutProvider->registerLayout(
+        "Vision", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",{\"SplitterHorizontal\":{"
+                  "\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////"
+                  "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[\"Artwork\",\"Playlist\"],\"State\":"
+                  "\"AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA=\"}}],\"State\":\"AAAA/"
+                  "wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA\"}}]}");
+
+    m_layoutProvider->registerLayout(
+        "Ember",
+        "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[{\"SplitterHorizontal\":{\"Children\":[\"FilterGenre\","
+        "\"FilterAlbumArtist\",\"FilterArtist\",\"FilterAlbum\"],\"State\":\"AAAA/"
+        "wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAALUA/////"
+        "wEAAAABAA==\"}},{\"SplitterHorizontal\":{\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/"
+        "wAAAAEAAAADAAAFfgAAAdIAAAAAAP////"
+        "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[{\"SplitterVertical\":{\"Children\":[\"Artwork\","
+        "\"Info\"],\"State\":\"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAAAP////8BAAAAAgA=\"}},\"Playlist\"],\"State\":\"AAAA/"
+        "wAAAAEAAAADAAABdQAABdsAAAAAAP////8BAAAAAQA=\"}},\"Status\"],\"State\":\"AAAA/"
+        "wAAAAEAAAAFAAAA+gAAAB4AAALWAAAAGQAAAAAA/////wEAAAACAA==\"}}]}");
 }
 } // namespace Fy::Gui

@@ -42,6 +42,7 @@ SingleMusicLibrary::SingleMusicLibrary(LibraryInfo* info, DB::Database* database
     , m_scanner{info, database}
     , m_libraryDatabaseManager{info->id, database, settings}
     , m_trackStore{std::make_unique<SingleTrackStore>()}
+    , m_order{SortOrder::NoSorting}
 {
     m_threadManager->moveToNewThread(&m_scanner);
     m_threadManager->moveToNewThread(&m_libraryDatabaseManager);
