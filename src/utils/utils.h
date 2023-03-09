@@ -49,4 +49,5 @@ uint64_t currentDateToInt();
 QString capitalise(const QString& s);
 
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
+void showMessageBox(const QString& text, const QString& infoText);
 } // namespace Fy::Utils

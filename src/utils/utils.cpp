@@ -22,6 +22,7 @@
 #include <QDir>
 #include <QFile>
 #include <QLabel>
+#include <QMessageBox>
 #include <QPixmap>
 #include <QRandomGenerator>
 #include <QVBoxLayout>
@@ -168,4 +169,13 @@ QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
     pixmap.setMask(orig.createMaskFromColor(Qt::transparent));
     return pixmap;
 }
+
+void showMessageBox(const QString& text, const QString& infoText)
+{
+    QMessageBox message;
+    message.setText(text);
+    message.setInformativeText(infoText);
+    message.exec();
+}
+
 } // namespace Fy::Utils

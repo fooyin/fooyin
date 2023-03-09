@@ -115,13 +115,7 @@ bool Playlist::changeTrack(int index)
     }
 
     while(!Utils::File::exists(m_tracks[index]->filepath())) {
-        auto* message = new QMessageBox();
-        message->setAttribute(Qt::WA_DeleteOnClose);
-
-        message->setText(QString("Track %1 cannot be found.").arg(index));
-        message->setInformativeText(m_tracks[index]->filepath());
-        message->open();
-
+        Utils::showMessageBox(QString{"Track %1 cannot be found."}.arg(index), m_tracks[index]->filepath());
         setCurrentTrack(++index);
     }
 
