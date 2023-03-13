@@ -35,7 +35,7 @@ private:
     Value evaluate(Expression* exp);
 
     Scanner m_scanner;
-    Registry m_enviroment;
+    Registry m_registry;
     QString m_input;
     std::vector<Expression> m_nodes;
 };

@@ -48,11 +48,9 @@ Value Parser::evaluate(Expression* exp)
     switch(exp->type) {
         case Literal: {
             return {std::get<Literal>(exp->value).value, true};
-            break;
         }
         case Variable: {
-            return {m_enviroment.varValue(std::get<Variable>(exp->value).value)};
-            break;
+            return {m_registry.varValue(std::get<Variable>(exp->value).value)};
         }
         case Function: {
             auto value = std::get<Function>(exp->value);
@@ -60,8 +58,7 @@ Value Parser::evaluate(Expression* exp)
             for(auto& arg : value.args) {
                 args.emplace_back(evaluate(&arg));
             }
-            return {m_enviroment.function(value.name, args)};
-            break;
+            return {m_registry.function(value.name, args)};
         }
         case Null:
             break;
