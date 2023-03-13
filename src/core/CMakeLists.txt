@@ -97,6 +97,11 @@ set(SOURCES
     plugins/pluginmanager.h
     plugins/pluginmanager.cpp
 
+    scripting/scriptregistry.cpp
+    scripting/scriptparser.cpp
+    scripting/scriptscanner.cpp
+    scripting/functions/mathfuncs.cpp
+
     tagging/tags.h
     tagging/tags.cpp
     tagging/tagutils.h
