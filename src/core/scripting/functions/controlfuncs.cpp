@@ -17,15 +17,21 @@
  *
  */
 
-#pragma once
-
-#include "core/scripting/scriptvalue.h"
+#include "controlfuncs.h"
 
 namespace Fy::Core::Scripting {
-QString add(const StringList& vec);
-QString sub(const StringList& vec);
-QString mul(const StringList& vec);
-QString div(const StringList& vec);
-QString min(const StringList& vec);
-QString max(const StringList& vec);
+Value cif(const ValueList& vec)
+{
+    const auto size = vec.size();
+    if(size < 2 || size > 3) {
+        return {};
+    }
+    if(vec[0].cond) {
+        return vec[1];
+    }
+    if(size > 2) {
+        return vec[2];
+    }
+    return {};
+}
 } // namespace Fy::Core::Scripting

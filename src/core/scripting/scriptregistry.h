@@ -19,25 +19,11 @@
 
 #pragma once
 
+#include "scriptvalue.h"
+
 #include <QObject>
 
 namespace Fy::Core::Scripting {
-struct Value
-{
-    operator QString() const
-    {
-        return value;
-    }
-    QString value;
-    bool cond;
-};
-using ValueList  = std::vector<Value>;
-using StringList = std::vector<QString>;
-
-using NativeFunc = QString (*)(const StringList&);
-
-using Func = std::variant<NativeFunc>;
-
 class Registry
 {
 public:
@@ -55,7 +41,7 @@ public:
 private:
     void addDefaultFunctions();
 
-    std::unordered_map<QString, QString> m_vars;
+    std::unordered_map<QString, QVariant> m_vars;
     std::unordered_map<QString, StringList> m_metadata;
     std::unordered_map<QString, Func> m_funcs;
 };

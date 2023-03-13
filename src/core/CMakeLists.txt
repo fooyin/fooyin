@@ -101,6 +101,7 @@ set(SOURCES
     scripting/scriptparser.cpp
     scripting/scriptscanner.cpp
     scripting/functions/mathfuncs.cpp
+    scripting/functions/controlfuncs.cpp
 
     tagging/tags.h
     tagging/tags.cpp

@@ -20,7 +20,7 @@
 #include "mathfuncs.h"
 
 namespace Fy::Core::Scripting {
-QString baseOperation(const std::vector<QString>& vec, const QChar op)
+QString baseOperation(const StringList& vec, const QChar op)
 {
     if(vec.size() < 2) {
         return {};
@@ -51,7 +51,7 @@ QString baseOperation(const std::vector<QString>& vec, const QChar op)
     }
     return QString::number(total);
 }
-QString add(const std::vector<QString>& vec)
+QString add(const StringList& vec)
 {
     if(vec.size() < 2) {
         return {};
@@ -68,22 +68,22 @@ QString add(const std::vector<QString>& vec)
     return QString::number(total);
 }
 
-QString sub(const std::vector<QString>& vec)
+QString sub(const StringList& vec)
 {
     return baseOperation(vec, '-');
 }
 
-QString mul(const std::vector<QString>& vec)
+QString mul(const StringList& vec)
 {
     return baseOperation(vec, '*');
 }
 
-QString div(const std::vector<QString>& vec)
+QString div(const StringList& vec)
 {
     return baseOperation(vec, '/');
 }
 
-QString min(const std::vector<QString>& vec)
+QString min(const StringList& vec)
 {
     if(vec.size() < 2) {
         return {};
@@ -94,7 +94,7 @@ QString min(const std::vector<QString>& vec)
     return *result;
 }
 
-QString max(const std::vector<QString>& vec)
+QString max(const StringList& vec)
 {
     if(vec.size() < 2) {
         return {};

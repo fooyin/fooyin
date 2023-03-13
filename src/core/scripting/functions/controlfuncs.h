@@ -22,10 +22,5 @@
 #include "core/scripting/scriptvalue.h"
 
 namespace Fy::Core::Scripting {
-QString add(const StringList& vec);
-QString sub(const StringList& vec);
-QString mul(const StringList& vec);
-QString div(const StringList& vec);
-QString min(const StringList& vec);
-QString max(const StringList& vec);
-} // namespace Fy::Core::Scripting
+Value cif(const ValueList& vec);
+}

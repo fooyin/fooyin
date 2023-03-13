@@ -58,4 +58,21 @@ struct Expression
     ExprType type{Null};
     ExpressionValue value;
 };
+
+struct Value
+{
+    operator QString() const
+    {
+        return value;
+    }
+    QString value;
+    bool cond;
+};
+using ValueList  = std::vector<Value>;
+using StringList = std::vector<QString>;
+
+using NativeFunc     = QString (*)(const StringList&);
+using NativeCondFunc = Value (*)(const ValueList&);
+
+using Func = std::variant<NativeFunc, NativeCondFunc>;
 } // namespace Fy::Core::Scripting

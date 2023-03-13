@@ -19,7 +19,10 @@
 
 #include "scriptregistry.h"
 
+#include "functions/controlfuncs.h"
 #include "functions/mathfuncs.h"
+
+#include <QVariant>
 
 namespace Fy::Core::Scripting {
 Registry::Registry()
@@ -32,7 +35,8 @@ Value Registry::varValue(const QString& var)
     if(var.isEmpty() || !m_vars.count(var)) {
         return {"", false};
     }
-    return {m_vars.at(var), true};
+    const QVariant v = m_vars.at(var);
+    return {v.toString(), v.toBool()};
 }
 
 Value Registry::function(const QString& func, const ValueList& args)
@@ -40,18 +44,15 @@ Value Registry::function(const QString& func, const ValueList& args)
     if(func.isEmpty() || !m_funcs.count(func)) {
         return {"", false};
     }
-    for(const auto& arg : args) {
-        if(!arg.cond) {
-            return {"", false};
-        }
-    }
     auto function = m_funcs.at(func);
     if(std::holds_alternative<NativeFunc>(function)) {
         const auto f         = std::get<0>(function);
         const QString result = f(containerCast<StringList>(args));
-        if(!result.isEmpty()) {
-            return {result, true};
-        }
+        return {result, !result.isEmpty()};
+    }
+    if(std::holds_alternative<NativeCondFunc>(function)) {
+        const auto f = std::get<1>(function);
+        return f(args);
     }
     return {"", false};
 }
@@ -64,5 +65,6 @@ void Registry::addDefaultFunctions()
     m_funcs.emplace("div", NativeFunc(div));
     m_funcs.emplace("min", NativeFunc(min));
     m_funcs.emplace("max", NativeFunc(max));
+    m_funcs.emplace("if", NativeCondFunc(cif));
 }
 } // namespace Fy::Core::Scripting
