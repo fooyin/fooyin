@@ -36,7 +36,6 @@ private:
 
     Scanner m_scanner;
     Registry m_registry;
-    QString m_input;
     std::vector<Expression> m_nodes;
 };
 } // namespace Fy::Core::Scripting
