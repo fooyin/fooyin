@@ -23,7 +23,7 @@
 #include "artist.h"
 #include "track.h"
 
-#include <deque>
+#include <unordered_map>
 
 namespace Fy::Core {
 using TrackList    = std::vector<Track>;

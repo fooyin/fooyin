@@ -202,13 +202,13 @@ void PlaylistWidget::selectionChanged()
     clearSelection();
 
     const auto selectedIndexes = m_playlist->selectionModel()->selectedIndexes();
-    std::deque<QModelIndex> indexes;
+    std::vector<QModelIndex> indexes;
 
-    indexes.insert(indexes.end(), selectedIndexes.begin(), selectedIndexes.end());
+    indexes.insert(indexes.cend(), selectedIndexes.cbegin(), selectedIndexes.cend());
 
     while(!indexes.empty()) {
         const auto index = indexes.front();
-        indexes.pop_front();
+        indexes.erase(indexes.cbegin());
         if(index.isValid()) {
             const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
             if(type == PlaylistItem::Track) {

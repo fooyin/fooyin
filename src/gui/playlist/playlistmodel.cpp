@@ -61,6 +61,7 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::L
     , m_splitDiscs{m_settings->value<Settings::SplitDiscs>()}
     , m_altColours{m_settings->value<Settings::PlaylistAltColours>()}
     , m_simplePlaylist{m_settings->value<Settings::SimplePlaylist>()}
+    , m_resetting{false}
     , m_playingIcon{Constants::Icons::Play}
     , m_pausedIcon{Constants::Icons::Pause}
 {
@@ -186,10 +187,12 @@ Core::TrackPtrList PlaylistModel::tracks() const
 
 void PlaylistModel::reset()
 {
+    m_resetting = true;
     beginResetModel();
     beginReset();
     setupModelData();
     endResetModel();
+    m_resetting = false;
 }
 
 void PlaylistModel::changeRowColours()
@@ -327,7 +330,12 @@ PlaylistItem* PlaylistModel::checkInsertKey(const QString& key, PlaylistItem::Ty
     if(Utils::contains(parent->children(), child)) {
         return child;
     }
-    insertRow(parent, child);
+    if(m_resetting) {
+        parent->appendChild(child);
+    }
+    else {
+        insertRow(parent, child);
+    }
     return child;
 }
 

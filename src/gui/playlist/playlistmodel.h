@@ -107,6 +107,8 @@ private:
 
     Core::TrackPtrList m_tracks;
 
+    bool m_resetting;
+
     PlaylistItemHash m_nodes;
     Core::ContainerHash m_containers;
     QPixmap m_playingIcon;
