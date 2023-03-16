@@ -60,6 +60,7 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Core::Player::Player
     setAttribute(Qt::WA_DeleteOnClose);
 
     setupMenu();
+    registerLayouts();
 }
 
 MainWindow::~MainWindow()
@@ -93,6 +94,7 @@ void MainWindow::setupUi()
     m_helpMenu     = new HelpMenu(m_actionManager, this);
 
     connect(m_viewMenu, &ViewMenu::layoutEditingChanged, this, &MainWindow::enableLayoutEditing);
+    connect(m_viewMenu, &ViewMenu::openQuickSetup, m_quickSetupDialog, &QuickSetupDialog::show);
 
     if(m_settings->value<Core::Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
