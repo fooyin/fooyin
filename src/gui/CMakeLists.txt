@@ -52,6 +52,8 @@ set(SOURCES
     library/statuswidget.h
     library/statuswidget.cpp
 
+    menu/aboutdialog.h
+    menu/aboutdialog.cpp
     menu/editmenu.h
     menu/editmenu.cpp
     menu/filemenu.h

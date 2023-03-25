@@ -19,9 +19,33 @@
 
 #include "helpmenu.h"
 
+#include "aboutdialog.h"
+#include "gui/guiconstants.h"
+
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
+
+#include <QAction>
+#include <QIcon>
+
 namespace Fy::Gui {
 HelpMenu::HelpMenu(Utils::ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
-{ }
+{
+    auto* helpMenu = m_actionManager->actionContainer(Constants::Menus::Help);
+
+    const QIcon aboutIcon = QIcon(Constants::Icons::Fooyin);
+    m_about               = new QAction(aboutIcon, tr("&About"), this);
+    m_actionManager->registerAction(m_about, Constants::Actions::About);
+    helpMenu->addAction(m_about, Constants::Groups::Three);
+    connect(m_about, &QAction::triggered, this, &HelpMenu::showAboutDialog);
+}
+
+void HelpMenu::showAboutDialog()
+{
+    auto* aboutDialog = new AboutDialog();
+    connect(aboutDialog, &QDialog::finished, aboutDialog, &QObject::deleteLater);
+    aboutDialog->show();
+}
 } // namespace Fy::Gui

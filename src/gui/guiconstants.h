@@ -21,20 +21,21 @@
 
 namespace Fy::Gui::Constants {
 namespace Icons {
-constexpr auto Fooyin     = "://icons/sc-fooyin.svg";
-constexpr auto Play       = "://icons/play.svg";
-constexpr auto Pause      = "://icons/pause.svg";
-constexpr auto Stop       = "://icons/stop.svg";
-constexpr auto Prev       = "://icons/prev.svg";
-constexpr auto Next       = "://icons/next.svg";
-constexpr auto Repeat     = "://icons/repeat-once.svg";
-constexpr auto RepeatAll  = "://icons/repeat.svg";
-constexpr auto Shuffle    = "://icons/shuffle.svg";
-constexpr auto VolumeMax  = "://icons/volume-max.svg";
-constexpr auto VolumeMed  = "://icons/volume-med.svg";
-constexpr auto VolumeLow  = "://icons/volume-low.svg";
-constexpr auto VolumeMin  = "://icons/volume-min.svg";
-constexpr auto VolumeMute = "://icons/volume-mute.svg";
+constexpr auto Fooyin      = "://icons/sc-fooyin.svg";
+constexpr auto FooyinLarge = "://images/fooyin.png";
+constexpr auto Play        = "://icons/play.svg";
+constexpr auto Pause       = "://icons/pause.svg";
+constexpr auto Stop        = "://icons/stop.svg";
+constexpr auto Prev        = "://icons/prev.svg";
+constexpr auto Next        = "://icons/next.svg";
+constexpr auto Repeat      = "://icons/repeat-once.svg";
+constexpr auto RepeatAll   = "://icons/repeat.svg";
+constexpr auto Shuffle     = "://icons/shuffle.svg";
+constexpr auto VolumeMax   = "://icons/volume-max.svg";
+constexpr auto VolumeMed   = "://icons/volume-med.svg";
+constexpr auto VolumeLow   = "://icons/volume-low.svg";
+constexpr auto VolumeMin   = "://icons/volume-min.svg";
+constexpr auto VolumeMute  = "://icons/volume-mute.svg";
 
 constexpr auto Quit          = "://icons/quit.svg";
 constexpr auto Settings      = "://icons/settings.svg";
@@ -94,6 +95,7 @@ namespace Actions {
 constexpr auto Exit            = "Fooyin.Action.Exit";
 constexpr auto Settings        = "Fooyin.Action.Settings";
 constexpr auto LayoutEditing   = "Fooyin.Action.LayoutEditing";
+constexpr auto About           = "Fooyin.Action.About";
 constexpr auto Rescan          = "Fooyin.Action.Rescan";
 constexpr auto LibrarySwitch   = "Fooyin.Action.LibrarySwitch";
 constexpr auto Stop            = "Fooyin.Action.Stop";

@@ -19,4 +19,7 @@
 
 #pragma once
 
-namespace Fy::Core::Constants { } // namespace Fy::Core::Constants
+namespace Fy::Core::Constants {
+constexpr auto AppName     = "fooyin";
+constexpr auto DisplayName = "Fooyin";
+} // namespace Fy::Core::Constants

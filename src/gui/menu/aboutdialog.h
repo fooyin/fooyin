@@ -17,26 +17,22 @@
  *
  */
 
-#include "application.h"
-#include "singleinstance.h"
-#include "version.h"
+#pragma once
 
-#include <core/constants.h>
+#include <QDialog>
 
-int main(int argc, char** argv)
+namespace Fy::Gui {
+class AboutDialog : public QDialog
 {
-    Q_INIT_RESOURCE(icons);
+    Q_OBJECT
 
-    QCoreApplication::setApplicationName(Fy::Core::Constants::AppName);
-    QCoreApplication::setApplicationVersion(VERSION);
+public:
+    explicit AboutDialog(QWidget* parent = nullptr);
 
-    // Prevent additional instances
-    Fy::SingleInstance instance("fooyin");
-    if(!instance.tryRunning()) {
-        qInfo() << "Fooyin already running";
-        return 0;
-    }
-
-    const Fy::Application app{argc, argv};
-    return QCoreApplication::exec();
-}
+private:
+    QString description();
+    QString copyright();
+    QString qtVersion();
+    QString compilerVersion();
+};
+} // namespace Fy::Gui

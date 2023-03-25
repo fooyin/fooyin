@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+class QAction;
+
 namespace Fy {
 
 namespace Utils {
@@ -30,11 +32,17 @@ class ActionManager;
 namespace Gui {
 class HelpMenu : public QObject
 {
+    Q_OBJECT
+
 public:
     explicit HelpMenu(Utils::ActionManager* actionManager, QObject* parent = nullptr);
 
 private:
+    void showAboutDialog();
+
     Utils::ActionManager* m_actionManager;
+
+    QAction* m_about;
 };
 } // namespace Gui
 } // namespace Fy
