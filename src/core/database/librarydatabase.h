@@ -33,20 +33,11 @@ public:
 
     bool getAllTracks(TrackList& result, Core::Library::SortOrder order = Core::Library::SortOrder::NoSorting) const;
     bool getAllTracks(TrackList& result, Core::Library::SortOrder order, int start, int limit) const;
-    bool getAllAlbums(AlbumList& result) const;
-    bool getAllArtists(ArtistHash& result) const;
-    bool getAllGenres(GenreHash& result) const;
 
     [[nodiscard]] static QString fetchQueryTracks(const QString& where, const QString& join, const QString& order,
                                                   const QString& offsetLimit);
-    [[nodiscard]] static QString fetchQueryAlbums(const QString& where, const QString& join);
-    [[nodiscard]] static QString fetchQueryArtists(const QString& where);
-    [[nodiscard]] static QString fetchQueryGenres(const QString& where);
 
     static bool dbFetchTracks(Query& q, TrackList& result);
-    static bool dbFetchAlbums(Query& q, AlbumList& result);
-    static bool dbFetchArtists(Query& q, ArtistHash& result);
-    static bool dbFetchGenres(Query& q, GenreHash& result);
 
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);
@@ -58,13 +49,6 @@ protected:
     [[nodiscard]] const Module* module() const;
 
     bool insertArtistsAlbums(TrackList& tracks);
-    int insertArtist(const Artist& artist);
-    int insertAlbum(const Album& album);
-    bool insertTrackArtists(int id, const IdSet& artists);
-    bool insertTrackGenres(int id, const IdSet& genres);
-    bool updateTrackArtists(int id, const IdSet& artists);
-    bool updateTrackGenres(int id, const IdSet& genres);
-    int insertGenre(const QString& genre);
     int insertTrack(const Track& track);
 
 private:

@@ -57,6 +57,10 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
 
     switch(role) {
         case(Qt::DisplayRole): {
+            const QString& name = item->data(Filters::Constants::Role::Name).toString();
+            return !name.isEmpty() ? name : "Unknown";
+        }
+        case(Filters::Constants::Role::Name): {
             return item->data(Filters::Constants::Role::Name).toString();
         }
         case(Filters::Constants::Role::Id): {

@@ -48,9 +48,29 @@ struct FilterEntry
 {
     int id;
     QString name;
+
+    bool operator<(const FilterEntry& other) const
+    {
+        return std::tuple(id, name) < std::tuple(other.id, other.name);
+    }
+
+    bool operator==(const FilterEntry& other) const
+    {
+        return std::tuple(id, name) == std::tuple(other.id, other.name);
+    }
+
+    bool operator==(int otherId) const
+    {
+        return id == otherId;
+    }
+
+    bool operator==(const QString& otherName) const
+    {
+        return name == otherName;
+    }
 };
 
-using FilterEntries = std::vector<FilterEntry>;
-
-using ActiveFilters = std::unordered_map<Filters::FilterType, Core::IdSet>;
+using FilterEntries  = std::vector<FilterEntry>;
+using FilterEntrySet = std::set<FilterEntry>;
+using ActiveFilters  = std::unordered_map<Filters::FilterType, FilterEntrySet>;
 } // namespace Fy::Filters

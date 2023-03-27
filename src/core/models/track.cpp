@@ -30,8 +30,6 @@ Track::Track(QString filepath)
     , m_libraryId{-1}
     , m_id{-1}
     , m_filepath{std::move(filepath)}
-    , m_albumId{-1}
-    , m_albumArtistId{-1}
     , m_trackNumber{0}
     , m_trackTotal{0}
     , m_discNumber{0}
@@ -79,16 +77,6 @@ ArtistList Track::artists() const
     return m_artists;
 }
 
-IdSet Track::artistIds() const
-{
-    return m_artistIds;
-}
-
-int Track::albumId() const
-{
-    return m_albumId;
-}
-
 QString Track::album() const
 {
     return m_album;
@@ -97,11 +85,6 @@ QString Track::album() const
 QString Track::albumArtist() const
 {
     return m_albumArtist;
-}
-
-int Track::albumArtistId() const
-{
-    return m_albumArtistId;
 }
 
 int Track::trackNumber() const
@@ -122,11 +105,6 @@ int Track::discNumber() const
 int Track::discTotal() const
 {
     return m_discTotal;
-}
-
-IdSet Track::genreIds() const
-{
-    return m_genreIds;
 }
 
 GenreList Track::genres() const
@@ -260,21 +238,6 @@ void Track::setArtists(const ArtistList& artists)
     m_artists = artists;
 }
 
-void Track::setArtistIds(const IdSet& ids)
-{
-    m_artistIds = ids;
-}
-
-void Track::addArtistId(int id)
-{
-    m_artistIds.emplace(id);
-}
-
-void Track::setAlbumId(int id)
-{
-    m_albumId = id;
-}
-
 void Track::setAlbum(const QString& title)
 {
     m_album = title;
@@ -283,11 +246,6 @@ void Track::setAlbum(const QString& title)
 void Track::setAlbumArtist(const QString& artist)
 {
     m_albumArtist = artist;
-}
-
-void Track::setAlbumArtistId(int id)
-{
-    m_albumArtistId = id;
 }
 
 void Track::setTrackNumber(int number)
@@ -308,16 +266,6 @@ void Track::setDiscNumber(int number)
 void Track::setDiscTotal(int total)
 {
     m_discTotal = total;
-}
-
-void Track::setGenreIds(const IdSet& ids)
-{
-    m_genreIds = ids;
-}
-
-void Track::addGenreId(int id)
-{
-    m_genreIds.emplace(id);
 }
 
 void Track::setGenres(const GenreList& genres)
@@ -429,11 +377,5 @@ void Track::setAddedTime(uint64_t time)
 void Track::setModifiedTime(uint64_t time)
 {
     m_modifiedTime = time;
-}
-
-void Track::resetIds()
-{
-    m_artistIds.clear();
-    m_genreIds.clear();
 }
 } // namespace Fy::Core

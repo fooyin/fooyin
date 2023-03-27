@@ -27,7 +27,7 @@
 namespace Fy::Core::Covers {
 QPixmap albumCover(Album* album)
 {
-    const auto id = QString::number(album->hasCover() ? album->id() : 0);
+    const auto id = QString::number(album->year()) + album->title();
     QPixmap cover;
     if(!QPixmapCache::find(id, &cover)) {
         cover = Library::Utils::getCover(album->hasCover() ? album->coverPath() : "://images/nocover.png", 60);

@@ -27,39 +27,39 @@
 namespace Fy::Filters {
 void filterByType(Core::Track* track, const ActiveFilters& filters, int& matches)
 {
-    for(const auto& [filter, ids] : filters) {
+    for(const auto& [filter, items] : filters) {
         switch(filter) {
             case(Filters::FilterType::AlbumArtist): {
-                if(Utils::contains(ids, track->albumArtistId())) {
+                if(Utils::contains(items, track->albumArtist())) {
                     matches += 1;
                 }
                 break;
             }
             case(Filters::FilterType::Artist): {
-                const Core::IdSet artistIds{track->artistIds()};
-                for(const auto artistId : artistIds) {
-                    if(Utils::contains(ids, artistId)) {
+                const auto& artists{track->artists()};
+                for(const auto& artist : artists) {
+                    if(Utils::contains(items, artist)) {
                         matches += 1;
                     }
                 }
                 break;
             }
             case(Filters::FilterType::Album): {
-                if(Utils::contains(ids, track->albumId())) {
+                if(Utils::contains(items, track->album())) {
                     matches += 1;
                 }
                 break;
             }
             case(Filters::FilterType::Year): {
-                if(Utils::contains(ids, track->year())) {
+                if(Utils::contains(items, QString::number(track->year()))) {
                     matches += 1;
                 }
                 break;
             }
             case(Filters::FilterType::Genre): {
-                const Core::IdSet genreIds{track->genreIds()};
-                for(const int& genreId : genreIds) {
-                    if(Utils::contains(ids, genreId)) {
+                const auto& genres{track->genres()};
+                for(const auto& genre : genres) {
+                    if(Utils::contains(items, genre)) {
                         matches += 1;
                     }
                 }

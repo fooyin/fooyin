@@ -76,8 +76,8 @@ public:
     void getFilteredTracks();
     bool tracksHaveFiltered();
 
-    void changeSelection(const Core::IdSet& indexes, FilterType type, int index);
-    void selectionChanged(const Core::IdSet& indexes, FilterType type, int index);
+    void changeSelection(const FilterEntrySet& indexes, FilterType type, int index);
+    void selectionChanged(const FilterEntrySet& indexes, FilterType type, int index);
     void changeSearch(const QString& search);
     void searchChanged(const QString& search);
 
@@ -92,7 +92,7 @@ signals:
     void filteredTracks();
 
     void orderedFilter(Filters ::FilterType type);
-    void filterReset(Filters ::FilterType type, const Core::IdSet& selection);
+    void filterReset(Filters ::FilterType type, const FilterEntrySet& selection);
 
 protected:
     void itemsHaveLoaded(FilterType type, FilterEntries result);

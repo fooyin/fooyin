@@ -35,14 +35,16 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("Title"), track.title()},
         {QStringLiteral("TrackNumber"), track.trackNumber()},
         {QStringLiteral("TrackTotal"), track.trackTotal()},
-        {QStringLiteral("AlbumArtistID"), track.albumArtistId()},
-        {QStringLiteral("AlbumID"), track.albumId()},
+        {QStringLiteral("Artists"), track.artists()},
+        {QStringLiteral("AlbumArtist"), track.albumArtist()},
+        {QStringLiteral("Album"), track.album()},
         {QStringLiteral("CoverPath"), track.coverPath()},
         {QStringLiteral("DiscNumber"), track.discNumber()},
         {QStringLiteral("DiscTotal"), track.discTotal()},
         {QStringLiteral("Date"), track.date()},
         {QStringLiteral("Composer"), track.composer()},
         {QStringLiteral("Performer"), track.performer()},
+        {QStringLiteral("Genres"), track.genres()},
         {QStringLiteral("Lyrics"), track.lyrics()},
         {QStringLiteral("Comment"), track.comment()},
         {QStringLiteral("Duration"), QVariant::fromValue(track.duration())},
@@ -80,40 +82,6 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
         return {};
     }
 
-    // Gather all albums
-    QHash<QString, Album> albumMap;
-    {
-        AlbumList dbAlbums;
-        getAllAlbums(dbAlbums);
-
-        for(const auto& album : qAsConst(dbAlbums)) {
-            const QString hash = Library::Utils::calcAlbumHash(album.title(), album.artist(), album.date());
-            albumMap.insert(hash, album);
-        }
-    }
-
-    // Gather all artists
-    QHash<QString, Artist> artistMap;
-    {
-        ArtistHash dbArtists;
-        getAllArtists(dbArtists);
-
-        for(const auto& [id, artist] : dbArtists) {
-            artistMap.emplace(artist.name(), artist);
-        }
-    }
-
-    // Gather all genres
-    QHash<QString, int> genreMap;
-    {
-        GenreHash dbGenres;
-        getAllGenres(dbGenres);
-
-        for(const auto& [id, name] : dbGenres) {
-            genreMap.insert(name, id);
-        }
-    }
-
     // Gather all tracks
     QHash<QString, Track> trackMap;
     {
@@ -132,58 +100,10 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             track.setLibraryId(m_libraryId);
         }
 
-        // Check artists
-        for(const auto& trackArtist : track.artists()) {
-            if(!artistMap.contains(trackArtist)) {
-                Artist artist{trackArtist};
-                const int id = insertArtist(artist);
-                artist.setId(id);
-                artistMap.insert(trackArtist, artist);
-            }
-            auto artist = artistMap.value(trackArtist);
-            track.addArtistId(artist.id());
-        }
-
-        // Check album artist
-        if(!artistMap.contains(track.albumArtist())) {
-            Artist albumArtist{track.albumArtist()};
-            const int id = insertArtist(albumArtist);
-            albumArtist.setId(id);
-            artistMap.insert(track.albumArtist(), albumArtist);
-        }
-        auto albumArtist = artistMap.value(track.albumArtist());
-        track.setAlbumArtistId(albumArtist.id());
-
-        // Check genres
-        for(const auto& genre : track.genres()) {
-            if(!genreMap.contains(genre)) {
-                const int id = insertGenre(genre);
-                genreMap.insert(genre, id);
-            }
-            const int trackGenre = genreMap.value(genre);
-            track.addGenreId(trackGenre);
-        }
-
-        // Check album id
-        const QString hash = Library::Utils::calcAlbumHash(track.album(), track.albumArtist(), track.date());
-        if(!albumMap.contains(hash)) {
-            Album album{track.album()};
-            album.setDate(track.date());
-            album.setGenres(track.genres());
-            album.setArtistId(albumArtist.id());
-            album.setArtist(track.albumArtist());
-
-            const int id = insertAlbum(album);
-            album.setId(id);
-            albumMap.insert(hash, album);
-        }
-        auto album = albumMap.value(hash);
-        track.setAlbumId(album.id());
-        if(!album.hasCover()) {
+        if(!track.hasCover()) {
             const QString coverPath = Library::Utils::storeCover(track);
-            album.setCoverPath(coverPath);
+            track.setCoverPath(coverPath);
         }
-        track.setCoverPath(album.coverPath());
 
         // Check track id
         if(trackMap.contains(track.filepath())) {
@@ -209,14 +129,10 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
     for(auto& track : tracks) {
         if(track.id() >= 0) {
             updateTrack(track);
-            //            updateTrackArtists(track.id(), track.artistIds());
-            //            updateTrackGenres(track.id(), track.genreIds());
         }
         else {
             const int id = insertTrack(track);
             track.setId(id);
-            insertTrackArtists(id, track.artistIds());
-            insertTrackGenres(id, track.genreIds());
         }
     }
 
@@ -253,123 +169,43 @@ bool LibraryDatabase::getAllTracks(TrackList& result, Core::Library::SortOrder o
     return dbFetchTracks(q, result);
 }
 
-bool LibraryDatabase::getAllAlbums(AlbumList& result) const
-{
-    const auto query = QString("%1 GROUP BY AlbumView.AlbumID, AlbumView.Title;").arg(fetchQueryAlbums({}, {}));
-
-    auto q = Query(module());
-    q.prepareQuery(query);
-
-    return dbFetchAlbums(q, result);
-}
-
-bool LibraryDatabase::getAllArtists(ArtistHash& result) const
-{
-    const auto queryText = QString("%1 GROUP BY Artists.ArtistID, Artists.Name;").arg(fetchQueryArtists(""));
-
-    auto query = Query(module());
-    query.prepareQuery(queryText);
-
-    return dbFetchArtists(query, result);
-}
-
-bool LibraryDatabase::getAllGenres(GenreHash& result) const
-{
-    const auto queryText = QString("%1;").arg(fetchQueryGenres(""));
-
-    auto query = Query(module());
-    query.prepareQuery(queryText);
-
-    return dbFetchGenres(query, result);
-}
-
 QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& join, const QString& order,
                                           const QString& offsetLimit)
 {
     static const auto fields = QStringList{
-        QStringLiteral("TrackID"),       // 0
-        QStringLiteral("FilePath"),      // 1
-        QStringLiteral("Title"),         // 2
-        QStringLiteral("TrackNumber"),   // 3
-        QStringLiteral("TrackTotal"),    // 4
-        QStringLiteral("ArtistIDs"),     // 5
-        QStringLiteral("Artists"),       // 6
-        QStringLiteral("AlbumArtistID"), // 7
-        QStringLiteral("AlbumArtist"),   // 8
-        QStringLiteral("AlbumID"),       // 9
-        QStringLiteral("Album"),         // 10
-        QStringLiteral("CoverPath"),     // 11
-        QStringLiteral("DiscNumber"),    // 12
-        QStringLiteral("DiscTotal"),     // 13
-        QStringLiteral("Date"),          // 14
-        QStringLiteral("Composer"),      // 15
-        QStringLiteral("Performer"),     // 16
-        QStringLiteral("GenreIDs"),      // 17
-        QStringLiteral("Genres"),        // 18
-        QStringLiteral("Lyrics"),        // 19
-        QStringLiteral("Comment"),       // 20
-        QStringLiteral("Duration"),      // 21
-        QStringLiteral("PlayCount"),     // 22
-        QStringLiteral("FileSize"),      // 23
-        QStringLiteral("BitRate"),       // 24
-        QStringLiteral("SampleRate"),    // 25
-        QStringLiteral("ExtraTags"),     // 26
-        QStringLiteral("AddedDate"),     // 27
-        QStringLiteral("ModifiedDate"),  // 28
-        QStringLiteral("LibraryID"),     // 29
+        QStringLiteral("TrackID"),      // 0
+        QStringLiteral("FilePath"),     // 1
+        QStringLiteral("Title"),        // 2
+        QStringLiteral("TrackNumber"),  // 3
+        QStringLiteral("TrackTotal"),   // 4
+        QStringLiteral("Artists"),      // 5
+        QStringLiteral("AlbumArtist"),  // 6
+        QStringLiteral("Album"),        // 7
+        QStringLiteral("CoverPath"),    // 8
+        QStringLiteral("DiscNumber"),   // 9
+        QStringLiteral("DiscTotal"),    // 10
+        QStringLiteral("Date"),         // 11
+        QStringLiteral("Composer"),     // 12
+        QStringLiteral("Performer"),    // 13
+        QStringLiteral("Genres"),       // 14
+        QStringLiteral("Lyrics"),       // 15
+        QStringLiteral("Comment"),      // 16
+        QStringLiteral("Duration"),     // 17
+        QStringLiteral("PlayCount"),    // 18
+        QStringLiteral("FileSize"),     // 20
+        QStringLiteral("BitRate"),      // 21
+        QStringLiteral("SampleRate"),   // 22
+        QStringLiteral("ExtraTags"),    // 23
+        QStringLiteral("AddedDate"),    // 24
+        QStringLiteral("ModifiedDate"), // 25
+        QStringLiteral("LibraryID"),    // 26
     };
 
     const auto joinedFields = fields.join(", ");
 
-    return QString("SELECT %1 FROM TrackView %2 WHERE %3 ORDER BY %4 %5;")
+    return QString("SELECT %1 FROM Tracks %2 WHERE %3 ORDER BY %4 %5;")
         .arg(joinedFields, join.isEmpty() ? "" : join, where.isEmpty() ? "1" : where, order.isEmpty() ? "1" : order,
              offsetLimit);
-}
-
-QString LibraryDatabase::fetchQueryAlbums(const QString& where, const QString& join)
-{
-    static const auto fields = QStringList{
-        QStringLiteral("AlbumView.AlbumID"),    // 0
-        QStringLiteral("AlbumView.Title"),      // 1
-        QStringLiteral("AlbumView.Date"),       // 2
-        QStringLiteral("AlbumView.ArtistID"),   // 3
-        QStringLiteral("AlbumView.ArtistName"), // 4
-    };
-
-    const auto joinedFields = fields.join(", ");
-
-    auto query = QString("SELECT %1 FROM AlbumView %2 WHERE %3")
-                     .arg(joinedFields, join.isEmpty() ? "" : join, where.isEmpty() ? "1" : where);
-
-    return query;
-}
-
-QString LibraryDatabase::fetchQueryArtists(const QString& where)
-{
-    static const auto fields = QStringList{
-        QStringLiteral("Artists.ArtistID"), // 0
-        QStringLiteral("Artists.Name"),     // 1
-    };
-
-    const auto joinedFields = fields.join(", ");
-
-    auto queryText = QString("SELECT %1 FROM Artists WHERE %2").arg(joinedFields, where.isEmpty() ? "1" : where);
-
-    return queryText;
-}
-
-QString LibraryDatabase::fetchQueryGenres(const QString& where)
-{
-    static const auto fields = QStringList{
-        QStringLiteral("Genres.GenreID"), // 0
-        QStringLiteral("Genres.Name"),    // 1
-    };
-
-    const auto joinedFields = fields.join(", ");
-
-    auto queryText = QString("SELECT %1 FROM Genres WHERE %2").arg(joinedFields, where.isEmpty() ? "1" : where);
-
-    return queryText;
 }
 
 bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
@@ -388,39 +224,27 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setTitle(q.value(2).toString());
         track.setTrackNumber(q.value(3).toInt());
         track.setTrackTotal(q.value(4).toInt());
-        const QStringList artistIds = q.value(5).toString().split("|");
-        track.setArtists(q.value(6).toString().split("|", Qt::SkipEmptyParts));
-        track.setAlbumArtistId(q.value(7).toInt());
-        track.setAlbumArtist(q.value(8).toString());
-        track.setAlbumId(q.value(9).toInt());
-        track.setAlbum(q.value(10).toString());
-        track.setCoverPath(q.value(11).toString());
-        track.setDiscNumber(q.value(12).toInt());
-        track.setDiscTotal(q.value(13).toInt());
-        track.setDate(q.value(14).toString());
-        track.setComposer(q.value(15).toString());
-        track.setPerformer(q.value(16).toString());
-        const QStringList genreIds = q.value(17).toString().split("|");
-        track.setGenres(q.value(18).toString().split("|", Qt::SkipEmptyParts));
-        track.setLyrics(q.value(19).toString());
-        track.setComment(q.value(20).toString());
-        track.setDuration(q.value(21).value<uint64_t>());
-        track.setPlayCount(q.value(22).toInt());
-        track.setFileSize(q.value(23).toInt());
-        track.setBitrate(q.value(24).toInt());
-        track.setSampleRate(q.value(25).toInt());
-        track.jsonToExtraTags(q.value(26).toByteArray());
-        track.setAddedTime(q.value(27).value<uint64_t>());
-        track.setModifiedTime(q.value(28).value<uint64_t>());
-        track.setLibraryId(q.value(29).toInt());
-
-        for(const auto& id : artistIds) {
-            track.addArtistId(id.toInt());
-        }
-
-        for(const auto& id : genreIds) {
-            track.addGenreId(id.toInt());
-        }
+        track.setArtists(q.value(5).toStringList());
+        track.setAlbumArtist(q.value(6).toString());
+        track.setAlbum(q.value(7).toString());
+        track.setCoverPath(q.value(8).toString());
+        track.setDiscNumber(q.value(9).toInt());
+        track.setDiscTotal(q.value(10).toInt());
+        track.setDate(q.value(11).toString());
+        track.setComposer(q.value(12).toString());
+        track.setPerformer(q.value(13).toString());
+        track.setGenres(q.value(14).toStringList());
+        track.setLyrics(q.value(15).toString());
+        track.setComment(q.value(16).toString());
+        track.setDuration(q.value(17).value<uint64_t>());
+        track.setPlayCount(q.value(18).toInt());
+        track.setFileSize(q.value(20).toInt());
+        track.setBitrate(q.value(21).toInt());
+        track.setSampleRate(q.value(22).toInt());
+        track.jsonToExtraTags(q.value(23).toByteArray());
+        track.setAddedTime(q.value(24).value<uint64_t>());
+        track.setModifiedTime(q.value(25).value<uint64_t>());
+        track.setLibraryId(q.value(26).toInt());
 
         result.emplace_back(track);
     }
@@ -428,77 +252,10 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
     return !result.empty();
 }
 
-bool LibraryDatabase::dbFetchAlbums(Query& q, AlbumList& result)
-{
-    result.clear();
-
-    if(!q.execQuery()) {
-        q.error("Could not get all albums from database");
-        return false;
-    }
-
-    while(q.next()) {
-        Album album{q.value(1).toString()};
-
-        album.setId(q.value(0).toInt());
-        album.setDate(q.value(2).toString());
-        album.setArtistId(q.value(3).toInt());
-        album.setArtist(q.value(4).toString());
-        album.setGenres(q.value(5).toString().split("|"));
-        album.setDiscCount(q.value(6).toInt());
-        album.setTrackCount(q.value(7).toInt());
-        album.setDuration(q.value(8).value<uint64_t>());
-        album.setCoverPath(q.value(9).toString());
-
-        result.emplace_back(album);
-    }
-
-    return true;
-}
-
-bool LibraryDatabase::dbFetchArtists(Query& q, ArtistHash& result)
-{
-    result.clear();
-
-    if(!q.execQuery()) {
-        q.error("Could not get all artists from database");
-        return false;
-    }
-
-    while(q.next()) {
-        Artist artist{q.value(1).toString()};
-        artist.setId(q.value(0).toInt());
-
-        result.emplace(artist.id(), artist);
-    }
-
-    return true;
-}
-
-bool LibraryDatabase::dbFetchGenres(Query& q, GenreHash& result)
-{
-    result.clear();
-
-    if(!q.execQuery()) {
-        q.error("Could not get all genres from database");
-        return false;
-    }
-
-    while(q.next()) {
-        auto id    = q.value(0).toInt();
-        auto genre = q.value(1).toString();
-
-        result.emplace(id, genre);
-    }
-
-    return true;
-}
-
 bool LibraryDatabase::updateTrack(const Track& track)
 {
-    if(track.id() < 0 || track.albumId() < 0 || track.albumArtistId() < 0 || track.libraryId() < 0) {
+    if(track.id() < 0 || track.libraryId() < 0) {
         qDebug() << "Cannot update track (value negative): "
-                 << " AlbumArtistID: " << track.albumArtistId() << " AlbumID: " << track.albumId()
                  << " TrackID: " << track.id() << " LibraryID: " << track.libraryId();
         return false;
     }
@@ -509,7 +266,7 @@ bool LibraryDatabase::updateTrack(const Track& track)
                                     QString("Cannot update track %1").arg(track.filepath()));
 
     if(!q.hasError()) {
-        return (updateTrackArtists(track.id(), track.artistIds()) && updateTrackGenres(track.id(), track.genreIds()));
+        return true;
     }
     return false;
 }
@@ -558,188 +315,6 @@ DB::Module* LibraryDatabase::module()
 const DB::Module* LibraryDatabase::module() const
 {
     return this;
-}
-
-int LibraryDatabase::insertArtist(const Artist& artist)
-{
-    const auto bindings = QMap<QString, QVariant>{
-        {"Name", artist.name()},
-    };
-
-    auto query = module()->insert("Artists", bindings, QString("Cannot insert artist %1").arg(artist.name()));
-    return (query.hasError()) ? -1 : query.lastInsertId().toInt();
-}
-
-int LibraryDatabase::insertAlbum(const Album& album)
-{
-    const auto bindings
-        = QMap<QString, QVariant>{{"Title", album.title()}, {"ArtistID", album.artistId()}, {"Date", album.date()}};
-
-    const auto q = module()->insert("Albums", bindings, QString("Cannot insert album %1").arg(album.title()));
-
-    return (!q.hasError()) ? q.lastInsertId().toInt() : -1;
-}
-
-bool LibraryDatabase::insertTrackArtists(int id, const IdSet& artists)
-{
-    for(const auto& artist : artists) {
-        const auto bindings = QMap<QString, QVariant>{{"TrackID", id}, {"ArtistID", artist}};
-
-        const auto q = module()->insert("TrackArtists", bindings, QString("Cannot insert track artist %1").arg(artist));
-        if(!q.hasError()) {
-            continue;
-        }
-        return false;
-    }
-    return true;
-}
-
-bool LibraryDatabase::insertTrackGenres(int id, const IdSet& genres)
-{
-    for(const auto& genre : genres) {
-        const auto bindings = QMap<QString, QVariant>{{"TrackID", id}, {"GenreID", genre}};
-
-        const auto q = module()->insert("TrackGenres", bindings, QString("Cannot insert track genre %1").arg(genre));
-        if(!q.hasError()) {
-            continue;
-        }
-        return false;
-    }
-    return true;
-}
-
-bool LibraryDatabase::updateTrackArtists(int id, const IdSet& artists)
-{
-    const auto query = QString("SELECT ArtistID FROM TrackArtists WHERE TrackID = %1;").arg(id);
-
-    auto q = Query(module());
-    q.prepareQuery(query);
-
-    if(!q.execQuery()) {
-        q.error("Could not get all track artists from database");
-        return false;
-    }
-
-    IdSet databaseArtists;
-    IdSet artistsToDelete;
-    IdSet artistsToInsert;
-
-    // Gather track artists in database
-    if(!q.hasError()) {
-        while(q.next()) {
-            const int artistId = q.value(0).toInt();
-            databaseArtists.insert(artistId);
-        }
-    }
-
-    // Remove artists not in track
-    for(auto artistId : databaseArtists) {
-        if(!Utils::contains(artists, artistId)) {
-            artistsToDelete.insert(artistId);
-        }
-    }
-
-    // Insert new artists
-    for(auto artistId : artists) {
-        if(!Utils::contains(databaseArtists, artistId)) {
-            artistsToInsert.insert(artistId);
-        }
-    }
-
-    if(!artistsToDelete.empty()) {
-        for(auto artistId : artistsToDelete) {
-            const auto bindings = QList<QPair<QString, QVariant>>{{"TrackID", id}, {"ArtistID", artistId}};
-
-            const auto q2
-                = module()->remove("TrackArtists", bindings, QString("Cannot remove track artist %1").arg(artistId));
-            if(!q2.hasError()) {
-                continue;
-            }
-            return false;
-        }
-    }
-
-    for(auto artist : artistsToInsert) {
-        const auto bindings = QMap<QString, QVariant>{{"TrackID", id}, {"ArtistID", artist}};
-
-        const auto q2
-            = module()->insert("TrackArtists", bindings, QString("Cannot insert track artist %1").arg(artist));
-        if(!q2.hasError()) {
-            continue;
-        }
-        return false;
-    }
-    return true;
-}
-
-bool LibraryDatabase::updateTrackGenres(int id, const IdSet& genres)
-{
-    const auto query = QString("SELECT GenreID FROM TrackGenres WHERE TrackID = %1;").arg(id);
-
-    auto q = Query(module());
-    q.prepareQuery(query);
-
-    if(!q.execQuery()) {
-        q.error("Could not get all track genres from database");
-        return false;
-    }
-
-    IdSet databaseGenres;
-    IdSet genresToDelete;
-    IdSet genresToInsert;
-
-    if(!q.hasError()) {
-        while(q.next()) {
-            const int genreId = q.value(0).toInt();
-            databaseGenres.insert(genreId);
-        }
-    }
-
-    for(auto genreId : databaseGenres) {
-        if(!Utils::contains(genres, genreId)) {
-            genresToDelete.insert(genreId);
-        }
-    }
-
-    for(auto genreId : genres) {
-        if(!Utils::contains(databaseGenres, genreId)) {
-            genresToInsert.insert(genreId);
-        }
-    }
-
-    if(!genresToDelete.empty()) {
-        for(auto genreId : genresToDelete) {
-            const auto bindings = QList<QPair<QString, QVariant>>{{"TrackID", id}, {"GenreID", genreId}};
-
-            const auto q2
-                = module()->remove("TrackGenres", bindings, QString("Cannot remove track genre %1").arg(genreId));
-            if(!q2.hasError()) {
-                continue;
-            }
-            return false;
-        }
-    }
-
-    for(auto genre : genresToInsert) {
-        const auto bindings = QMap<QString, QVariant>{{"TrackID", id}, {"GenreID", genre}};
-
-        const auto q3 = module()->insert("TrackGenres", bindings, QString("Cannot insert track genre %1").arg(genre));
-        if(!q3.hasError()) {
-            continue;
-        }
-        return false;
-    }
-    return true;
-}
-
-int LibraryDatabase::insertGenre(const QString& genre)
-{
-    const auto bindings = QMap<QString, QVariant>{
-        {"Name", genre},
-    };
-
-    auto query = module()->insert("Genres", bindings, QString("Cannot insert genre %1").arg(genre));
-    return (query.hasError()) ? -1 : query.lastInsertId().toInt();
 }
 
 int LibraryDatabase::insertTrack(const Track& track)

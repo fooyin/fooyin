@@ -259,12 +259,10 @@ void PlaylistModel::createAlbums(const Core::TrackPtrList& tracks)
 {
     for(const auto& track : tracks) {
         if(track->isEnabled() && !m_nodes.count(track->uid())) {
-            const QString albumKey = QString::number(track->albumId()) + track->album();
+            const QString albumKey = QString::number(track->year()) + track->album();
             if(!m_containers.count(albumKey)) {
                 auto album = std::make_unique<Core::Album>(track->album());
-                album->setId(track->albumId());
                 album->setDate(track->date());
-                album->setArtistId(track->albumArtistId());
                 album->setArtist(track->albumArtist());
                 album->setCoverPath(track->coverPath());
                 m_containers.emplace(albumKey, std::move(album));
@@ -279,7 +277,7 @@ PlaylistItem* PlaylistModel::iterateTrack(Core::Track* track, bool discHeaders, 
 {
     PlaylistItem* parent = nullptr;
 
-    const QString albumKey = QString::number(track->albumId()) + track->album();
+    const QString albumKey = QString::number(track->year()) + track->album();
     const QString discKey  = albumKey + QString::number(track->discNumber());
 
     if(m_containers.count(albumKey) == 1) {

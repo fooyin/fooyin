@@ -25,52 +25,13 @@
 #include <QPixmap>
 
 namespace Fy::Filters {
-QString getFilterJoins(const Filters::FilterType type = {})
-{
-    QString joins;
-    switch(type) {
-        case(Filters::FilterType::AlbumArtist):
-            joins += "LEFT JOIN Artists AS AlbumArtists ON AlbumArtists.ArtistID = "
-                     "Tracks.AlbumArtistID ";
-            break;
-        case(Filters::FilterType::Artist):
-            joins += "LEFT JOIN TrackArtists ON TrackArtists.TrackID = Tracks.TrackID ";
-            joins += "LEFT JOIN Artists ON Artists.ArtistID = TrackArtists.ArtistID ";
-            break;
-        case(Filters::FilterType::Album):
-            joins += "LEFT JOIN Albums ON Albums.AlbumID = Tracks.AlbumID ";
-            break;
-        case(Filters::FilterType::Genre):
-            joins += "INNER JOIN TrackGenres ON TrackGenres.TrackID = Tracks.TrackID ";
-            joins += "LEFT JOIN Genres ON Genres.GenreID = TrackGenres.GenreID ";
-            break;
-        case(Filters::FilterType::Year):
-            break;
-    }
-    return joins;
-}
-
-QString getSearchJoins()
-{
-    QString joins;
-    joins += "LEFT JOIN Artists AS AlbumArtists ON AlbumArtists.ArtistID = Tracks.AlbumArtistID ";
-    joins += "LEFT JOIN Albums ON Albums.AlbumID = Tracks.AlbumID ";
-    joins += "LEFT JOIN TrackArtists ON TrackArtists.TrackID = Tracks.TrackID ";
-    joins += "LEFT JOIN Artists ON Artists.ArtistID = TrackArtists.ArtistID ";
-    joins += "LEFT JOIN TrackGenres ON TrackGenres.TrackID = Tracks.TrackID ";
-    joins += "LEFT JOIN Genres ON Genres.GenreID = TrackGenres.GenreID ";
-
-    return joins;
-}
-
 FilterDatabase::FilterDatabase(const QString& connectionName)
     : Core::DB::Module(connectionName)
 { }
 
 bool FilterDatabase::getAllItems(Filters::FilterType type, Core::Library::SortOrder order, FilterEntries& result) const
 {
-    const auto join      = getFilterJoins(type);
-    const auto queryText = fetchQueryItems(type, {}, join, order);
+    const auto queryText = fetchQueryItems(type, {}, {}, order);
     if(!queryText.isEmpty()) {
         auto query = Core::DB::Query(module());
         query.prepareQuery(queryText);
@@ -85,7 +46,6 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
 {
     if(!filters.empty() || !search.isEmpty()) {
         QString where;
-        QString join;
 
         for(const auto& [filter, ids] : filters) {
             QString values;
@@ -94,7 +54,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
                 if(!values.isEmpty()) {
                     values += ",";
                 }
-                values += QString::number(id);
+                values += "\"" + id.name + "\"";
             }
 
             switch(filter) {
@@ -103,10 +63,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
                         if(!where.isEmpty()) {
                             where += " AND ";
                         }
-                        where += QString("AlbumArtistID IN (%1)").arg(values);
-                        if(search.isEmpty()) {
-                            join += getFilterJoins(filter);
-                        }
+                        where += QString("AlbumArtist IN (%1)").arg(values);
                     }
                     break;
                 }
@@ -115,10 +72,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
                         if(!where.isEmpty()) {
                             where += " AND ";
                         }
-                        where += QString("TrackArtists.ArtistID IN (%1)").arg(values);
-                        if(search.isEmpty()) {
-                            join += getFilterJoins(filter);
-                        }
+                        where += QString("Artists IN (%1)").arg(values);
                     }
                     break;
                 }
@@ -127,10 +81,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
                         if(!where.isEmpty()) {
                             where += " AND ";
                         }
-                        where += QString("Tracks.AlbumID IN (%1)").arg(values);
-                        if(search.isEmpty()) {
-                            join += getFilterJoins(filter);
-                        }
+                        where += QString("Album IN (%1)").arg(values);
                     }
                     break;
                 }
@@ -139,7 +90,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
                         if(!where.isEmpty()) {
                             where += " AND ";
                         }
-                        where += QString("SUBSTRING(Tracks.Date, 1, 4) IN (%1)").arg(values);
+                        where += QString("SUBSTRING(Date, 1, 4) IN (%1)").arg(values);
                     }
                     break;
                 }
@@ -148,10 +99,7 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
                         if(!where.isEmpty()) {
                             where += " AND ";
                         }
-                        where += QString("TrackGenres.GenreID IN (%1)").arg(values);
-                        if(search.isEmpty()) {
-                            join += getFilterJoins(filter);
-                        }
+                        where += QString("Genres IN (%1)").arg(values);
                     }
                     break;
                 }
@@ -163,19 +111,14 @@ bool FilterDatabase::getItemsByFilter(Filters::FilterType type, const ActiveFilt
                 where += " AND ";
             }
 
-            where += QString("(Tracks.Title LIKE '%%1%' OR Artists.Name LIKE '%1%%' "
+            where += QString("(Title LIKE '%%1%' OR Artists LIKE '%1%%' "
                              "OR "
-                             "AlbumArtists.Name LIKE '%%1%' OR Albums.Title LIKE "
+                             "AlbumArtist LIKE '%%1%' OR Album LIKE "
                              "'%%1%')")
                          .arg(search.toLower());
-
-            join += getSearchJoins();
-        }
-        else {
-            join += getFilterJoins(type);
         }
 
-        const auto queryText = fetchQueryItems(type, where, join, order);
+        const auto queryText = fetchQueryItems(type, where, {}, order);
         if(!queryText.isEmpty()) {
             auto query = Core::DB::Query(module());
             query.prepareQuery(queryText);
@@ -195,9 +138,8 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
 
     switch(type) {
         case(Filters::FilterType::AlbumArtist):
-            fields.append(QStringLiteral("AlbumArtists.ArtistID"));
-            fields.append(QStringLiteral("AlbumArtists.Name"));
-            group = QStringLiteral("AlbumArtists.ArtistID");
+            fields.append(QStringLiteral("AlbumArtist"));
+            group = QStringLiteral("AlbumArtist");
             switch(order) {
                     //                case(Core::Library::SortOrder::TitleDesc):
                     //                    sortOrder = QStringLiteral("LOWER(AlbumArtists.Name) DESC");
@@ -212,20 +154,18 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
                     //                    sortOrder = QStringLiteral("Tracks.Date ASC, LOWER(AlbumArtists.Name)");
                     //                    break;
                 case(Core::Library::SortOrder::NoSorting):
-                    sortOrder = QStringLiteral("LOWER(AlbumArtists.Name)");
+                    sortOrder = QStringLiteral("LOWER(AlbumArtist)");
                     break;
             }
             break;
         case(Filters::FilterType::Artist):
-            fields.append(QStringLiteral("Artists.ArtistID"));
-            fields.append(QStringLiteral("Artists.Name"));
-            group     = QStringLiteral("Artists.ArtistID");
-            sortOrder = QStringLiteral("LOWER(Artists.Name)");
+            fields.append(QStringLiteral("Artists"));
+            group     = QStringLiteral("Artists");
+            sortOrder = QStringLiteral("LOWER(Artists)");
             break;
         case(Filters::FilterType::Album):
-            fields.append(QStringLiteral("Albums.AlbumID"));
-            fields.append(QStringLiteral("Albums.Title"));
-            group = QStringLiteral("Albums.AlbumID");
+            fields.append(QStringLiteral("Album"));
+            group = QStringLiteral("Album");
             switch(order) {
                     //                case(Core::Library::SortOrder::TitleDesc):
                     //                    sortOrder = QStringLiteral("LOWER(Albums.Title) DESC");
@@ -240,19 +180,17 @@ QString FilterDatabase::fetchQueryItems(Filters::FilterType type, const QString&
                     //                    sortOrder = QStringLiteral("Albums.Date ASC, LOWER(Albums.Title)");
                     //                    break;
                 case(Core::Library::SortOrder::NoSorting):
-                    sortOrder = QStringLiteral("LOWER(Albums.Title)");
+                    sortOrder = QStringLiteral("LOWER(Album)");
                     break;
             }
             break;
         case(Filters::FilterType::Year):
             fields.append(QStringLiteral("SUBSTRING(Tracks.Date, 1, 4)"));
-            fields.append(QStringLiteral("SUBSTRING(Tracks.Date, 1, 4)"));
             group = QStringLiteral("SUBSTRING(Tracks.Date, 1, 4)");
             break;
         case(Filters::FilterType::Genre):
-            fields.append(QStringLiteral("Genres.GenreID"));
-            fields.append(QStringLiteral("Genres.Name"));
-            group = QStringLiteral("Genres.GenreID");
+            fields.append(QStringLiteral("Genres"));
+            group = QStringLiteral("Genres");
             break;
     }
 
@@ -277,8 +215,8 @@ bool FilterDatabase::dbFetchItems(Core::DB::Query& q, FilterEntries& result)
     while(q.next()) {
         FilterEntry item;
 
-        item.id   = q.value(0).toInt();
-        item.name = q.value(1).toString();
+        item.id   = result.size();
+        item.name = q.value(0).toString();
 
         result.emplace_back(item);
     }

@@ -94,40 +94,22 @@ bool Database::createDatabase()
         return false;
     }
 
-    checkInsertTable("Artists", "CREATE TABLE Artists ("
-                                "    ArtistID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                "    Name TEXT UNIQUE);");
-
-    checkInsertTable("Albums", "CREATE TABLE Albums ("
-                               "    AlbumID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                               "    Title TEXT,"
-                               "    ArtistID INTEGER REFERENCES Artists,"
-                               "    Date TEXT);");
-
-    checkInsertTable("AlbumView", "CREATE VIEW AlbumView AS"
-                                  "    SELECT Albums.AlbumID,"
-                                  "           Albums.Title,"
-                                  "           Albums.Date,"
-                                  "           Albums.ArtistID,"
-                                  "           Artists.Name AS ArtistName"
-                                  "    FROM Albums"
-                                  "    LEFT JOIN Artists ON Artists.ArtistID = Albums.ArtistID"
-                                  "    GROUP BY Albums.AlbumID");
-
     checkInsertTable("Tracks", "CREATE TABLE Tracks ("
                                "    TrackID INTEGER PRIMARY KEY AUTOINCREMENT,"
                                "    FilePath TEXT UNIQUE NOT NULL,"
                                "    Title TEXT,"
                                "    TrackNumber INTEGER,"
                                "    TrackTotal INTEGER,"
-                               "    AlbumArtistID INTEGER REFERENCES Artists,"
-                               "    AlbumID INTEGER REFERENCES Albums,"
+                               "    Artists TEXT,"
+                               "    AlbumArtist TEXT,"
+                               "    Album TEXT,"
                                "    CoverPath TEXT,"
                                "    DiscNumber INTEGER,"
                                "    DiscTotal INTEGER,"
                                "    Date TEXT,"
                                "    Composer TEXT,"
                                "    Performer TEXT,"
+                               "    Genres TEXT,"
                                "    Lyrics TEXT,"
                                "    Comment TEXT,"
                                "    Duration INTEGER DEFAULT 0,"
@@ -140,73 +122,6 @@ bool Database::createDatabase()
                                "    AddedDate INTEGER,"
                                "    ModifiedDate INTEGER,"
                                "    LibraryID INTEGER REFERENCES Libraries);");
-
-    checkInsertTable("TrackView", "CREATE VIEW TrackView AS"
-                                  "    SELECT Tracks.TrackID,"
-                                  "           Tracks.FilePath,"
-                                  "           Tracks.Title,"
-                                  "           Tracks.TrackNumber,"
-                                  "           Tracks.TrackTotal,"
-                                  "           TrackArtists.ArtistIDs AS ArtistIDs,"
-                                  "           TrackArtists.Artists AS Artists,"
-                                  "           Tracks.AlbumArtistID,"
-                                  "           Artists.Name AS AlbumArtist,"
-                                  "           Tracks.AlbumID,"
-                                  "           Albums.Title AS Album,"
-                                  "           Tracks.CoverPath,"
-                                  "           Tracks.DiscNumber,"
-                                  "           Tracks.DiscTotal,"
-                                  "           Tracks.Date,"
-                                  "           Tracks.Composer,"
-                                  "           Tracks.Performer,"
-                                  "           TrackGenres.GenreIDs AS GenreIDs,"
-                                  "           TrackGenres.Genres AS Genres,"
-                                  "           Tracks.Lyrics,"
-                                  "           Tracks.Comment,"
-                                  "           Tracks.Duration,"
-                                  "           Tracks.PlayCount,"
-                                  "           Tracks.Rating,"
-                                  "           Tracks.FileSize,"
-                                  "           Tracks.BitRate,"
-                                  "           Tracks.SampleRate,"
-                                  "           Tracks.ExtraTags,"
-                                  "           Tracks.AddedDate,"
-                                  "           Tracks.ModifiedDate,"
-                                  "           Tracks.LibraryID"
-                                  "    FROM Tracks"
-                                  "    LEFT JOIN Artists ON Artists.ArtistID = Tracks.AlbumArtistID"
-                                  "    LEFT JOIN Albums ON Albums.AlbumID = Tracks.AlbumID"
-                                  "    LEFT JOIN ("
-                                  "           SELECT TrackID, "
-                                  "                  GROUP_CONCAT(TrackArtists.ArtistID, '|') AS ArtistIDs, "
-                                  "                  GROUP_CONCAT(Name, '|') AS Artists "
-                                  "           FROM TrackArtists "
-                                  "           LEFT JOIN Artists ON Artists.ArtistID = TrackArtists.ArtistID"
-                                  "           GROUP BY TrackID) "
-                                  "    AS TrackArtists ON Tracks.TrackID = TrackArtists.TrackID"
-                                  "    LEFT JOIN ("
-                                  "           SELECT TrackID, "
-                                  "                  GROUP_CONCAT(TrackGenres.GenreID, '|') AS GenreIDs, "
-                                  "                  GROUP_CONCAT(Name, '|') AS Genres "
-                                  "           FROM TrackGenres "
-                                  "           LEFT JOIN Genres ON Genres.GenreID = TrackGenres.GenreID"
-                                  "           GROUP BY TrackID) "
-                                  "    AS TrackGenres ON Tracks.TrackID = TrackGenres.TrackID"
-                                  "    GROUP BY Tracks.TrackID;");
-
-    checkInsertTable("Genres", "CREATE TABLE Genres ("
-                               "    GenreID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                               "    Name TEXT NOT NULL UNIQUE);");
-
-    checkInsertTable("TrackGenres", "CREATE TABLE TrackGenres ("
-                                    "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
-                                    "    GenreID INTEGER NOT NULL REFERENCES Genres ON DELETE CASCADE,"
-                                    "    PRIMARY KEY (TrackID, GenreID));");
-
-    checkInsertTable("TrackArtists", "CREATE TABLE TrackArtists ("
-                                     "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
-                                     "    ArtistID INTEGER NOT NULL REFERENCES Artists ON DELETE CASCADE,"
-                                     "    PRIMARY KEY (TrackID, ArtistID));");
 
     checkInsertTable("Libraries", "CREATE TABLE Libraries ("
                                   "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -222,17 +137,8 @@ bool Database::createDatabase()
                                        "    TrackID  INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
                                        "    PRIMARY KEY (PlaylistID, TrackID));");
 
-    checkInsertIndex("AlbumIndex", "CREATE INDEX AlbumIndex ON Albums(AlbumID, Title, Date, ArtistID);");
-    checkInsertIndex("GenreIndex", "CREATE INDEX GenreIndex ON Genres(GenreID,Name);");
-    checkInsertIndex("TrackIndex", "CREATE INDEX TrackIndex ON Tracks(Date,AlbumArtistID,AlbumID,TrackID);");
     checkInsertIndex("PlaylistIndex", "CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);");
-    checkInsertIndex("TrackViewIndex", "CREATE INDEX TrackViewIndex ON Tracks(TrackID,AlbumID,AlbumArtistID);");
-    checkInsertIndex("TrackAlbumIndex", "CREATE INDEX TrackAlbumIndex ON Tracks(AlbumID,DiscNumber,Duration);");
-    checkInsertIndex("TrackGenresIndex", "CREATE INDEX TrackGenresIndex ON TrackGenres(TrackID,GenreID);");
-    checkInsertIndex("GenresTrackIndex", "CREATE INDEX GenresTrackIndex ON TrackGenres(GenreID,TrackID);");
-    checkInsertIndex("TrackArtistsIndex", "CREATE INDEX TrackArtistsIndex ON TrackArtists(TrackID,ArtistID);");
     checkInsertIndex("PlaylistTracksIndex", "CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackID);");
-    checkInsertIndex("ArtistsTrackIndex", "CREATE INDEX ArtistsTrackIndex ON TrackArtists(ArtistID,TrackID);");
 
     return true;
 }

@@ -222,7 +222,7 @@ bool FilterManager::tracksHaveFiltered()
     return !p->filteredTracks.empty();
 }
 
-void FilterManager::changeSelection(const Core::IdSet& indexes, Filters::FilterType type, int index)
+void FilterManager::changeSelection(const FilterEntrySet& indexes, Filters::FilterType type, int index)
 {
     for(const auto& filter : p->filters) {
         if(index < filter.index) {
@@ -246,7 +246,7 @@ void FilterManager::changeSelection(const Core::IdSet& indexes, Filters::FilterT
     }
 }
 
-void FilterManager::selectionChanged(const Core::IdSet& indexes, Filters::FilterType type, int index)
+void FilterManager::selectionChanged(const FilterEntrySet& indexes, Filters::FilterType type, int index)
 {
     if(indexes.empty()) {
         return;

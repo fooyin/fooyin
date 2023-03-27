@@ -306,11 +306,12 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
         return;
     }
 
-    Core::IdSet ids;
+    FilterEntrySet ids;
     for(const auto& index : indexes) {
         if(index.isValid()) {
-            const int id = index.data(Filters::Constants::Role::Id).toInt();
-            ids.insert(id);
+            FilterEntry entry{index.data(Filters::Constants::Role::Id).toInt(),
+                              index.data(Filters::Constants::Role::Name).toString()};
+            ids.emplace(std::move(entry));
         }
     }
     m_manager->selectionChanged(ids, m_type, m_index);

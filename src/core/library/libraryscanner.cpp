@@ -168,7 +168,6 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
                 }
 
                 Track changedTrack{*libraryTrack};
-                changedTrack.resetIds();
                 fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
                 if(fileWasRead) {
                     tracksToUpdate.emplace_back(changedTrack);

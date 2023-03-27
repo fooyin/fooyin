@@ -46,16 +46,12 @@ public:
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] ArtistList artists() const;
-    [[nodiscard]] IdSet artistIds() const;
-    [[nodiscard]] int albumId() const;
     [[nodiscard]] QString album() const;
     [[nodiscard]] QString albumArtist() const;
-    [[nodiscard]] int albumArtistId() const;
     [[nodiscard]] int trackNumber() const;
     [[nodiscard]] int trackTotal() const;
     [[nodiscard]] int discNumber() const;
     [[nodiscard]] int discTotal() const;
-    [[nodiscard]] IdSet genreIds() const;
     [[nodiscard]] GenreList genres() const;
     [[nodiscard]] QString composer() const;
     [[nodiscard]] QString performer() const;
@@ -87,9 +83,6 @@ public:
     void setId(int id);
     void setTitle(const QString& title);
     void setArtists(const ArtistList& artists);
-    void setArtistIds(const IdSet& ids);
-    void addArtistId(int id);
-    void setAlbumId(int id);
     void setAlbum(const QString& title);
     void setAlbumArtist(const QString& artist);
     void setAlbumArtistId(int id);
@@ -97,8 +90,6 @@ public:
     void setTrackTotal(int num);
     void setDiscNumber(int num);
     void setDiscTotal(int num);
-    void setGenreIds(const IdSet& ids);
-    void addGenreId(int id);
     void setGenres(const GenreList& genres);
     void setComposer(const QString& composer);
     void setPerformer(const QString& performer);
@@ -120,8 +111,6 @@ public:
     void setAddedTime(uint64_t time);
     void setModifiedTime(uint64_t time);
 
-    void resetIds();
-
 private:
     bool m_enabled;
 
@@ -131,11 +120,8 @@ private:
     QString m_filepath;
     QString m_title;
     ArtistList m_artists;
-    IdSet m_artistIds;
-    int m_albumId;
     QString m_album;
     QString m_albumArtist;
-    int m_albumArtistId;
     int m_trackNumber;
     int m_trackTotal;
     int m_discNumber;

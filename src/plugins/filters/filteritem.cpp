@@ -63,7 +63,7 @@ QVariant FilterItem::data(int role) const
         case(Filters::Constants::Role::Id):
             return m_id;
         case(Filters::Constants::Role::Name):
-            return !m_name.isEmpty() ? m_name : "Unknown";
+            return m_name;
         default:
             return {};
     }
