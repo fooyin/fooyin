@@ -177,11 +177,6 @@ int SplitterWidget::findIndex(FyWidget* widgetToFind)
     return -1;
 }
 
-QList<FyWidget*> SplitterWidget::children()
-{
-    return m_children;
-}
-
 QString SplitterWidget::name() const
 {
     return QString("%1 Splitter").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical");
@@ -200,7 +195,7 @@ void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 void SplitterWidget::saveLayout(QJsonArray& array)
 {
     QJsonArray children;
-    for(const auto& widget : children()) {
+    for(const auto& widget : m_children) {
         widget->saveLayout(children);
     }
     const QString state = QString::fromUtf8(saveState().toBase64());

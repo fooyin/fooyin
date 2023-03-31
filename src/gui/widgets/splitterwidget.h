@@ -60,7 +60,6 @@ public:
     void removeWidget(FyWidget* widget);
 
     int findIndex(FyWidget* widgetToFind);
-    QList<FyWidget*> children();
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
