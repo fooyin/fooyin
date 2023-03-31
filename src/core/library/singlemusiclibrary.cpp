@@ -55,6 +55,8 @@ SingleMusicLibrary::SingleMusicLibrary(LibraryInfo* info, DB::Database* database
     connect(&m_scanner, &LibraryScanner::tracksDeleted, this, &SingleMusicLibrary::removeDeletedTracks);
 
     connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &SingleMusicLibrary::loadTracks);
+    connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::allTracksLoaded, this,
+            &SingleMusicLibrary::allTracksLoaded);
     connect(this, &SingleMusicLibrary::loadAllTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
     connect(this, &SingleMusicLibrary::updateSaveTracks, &m_libraryDatabaseManager,
             &LibraryDatabaseManager::updateTracks);

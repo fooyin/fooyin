@@ -209,6 +209,8 @@ MusicLibraryInternal* LibraryManager::addNewLibrary(LibraryInfo* info)
     m_unifiedStore->addLibrary(info->id, library->trackStore());
 
     // Forward individual library signals
+    connect(library, &Library::MusicLibraryInternal::allTracksLoaded, m_libraryHandler,
+            &Library::MusicLibrary::allTracksLoaded);
     connect(library, &Library::MusicLibraryInternal::tracksLoaded, m_libraryHandler,
             &Library::MusicLibrary::tracksLoaded);
     connect(library, &Library::MusicLibraryInternal::tracksAdded, m_libraryHandler,

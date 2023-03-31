@@ -62,6 +62,7 @@ private:
 
     QCheckBox* m_autoRefresh;
     QSpinBox* m_lazyTracksBox;
+    QCheckBox* m_waitForTracks;
 };
 
 LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager,
@@ -72,6 +73,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     , m_model{new LibraryModel(m_libraryManager, this)}
     , m_autoRefresh{new QCheckBox("Auto refresh on startup", this)}
     , m_lazyTracksBox{new QSpinBox(this)}
+    , m_waitForTracks{new QCheckBox("Wait for tracks", this)}
 {
     m_libraryList->setModel(m_model);
 
@@ -98,8 +100,11 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     libraryLayout->addWidget(m_libraryList);
     libraryLayout->addWidget(buttons);
 
-    m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
+    m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
     m_autoRefresh->setChecked(m_settings->value<Core::Settings::AutoRefresh>());
+
+    m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded.\n(Disables Lazy Tracks)"));
+    m_waitForTracks->setChecked(m_settings->value<Core::Settings::WaitForTracks>());
 
     auto* lazyTracksLabel  = new QLabel("Lazy Tracks:", this);
     auto* lazyTracksLayout = new QHBoxLayout();
@@ -110,6 +115,8 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     m_lazyTracksBox->setMaximum(100000);
     m_lazyTracksBox->setSingleStep(250);
     m_lazyTracksBox->setValue(m_settings->value<Core::Settings::LazyTracks>());
+    m_lazyTracksBox->setEnabled(!m_waitForTracks->isChecked());
+
     lazyTracksLayout->addWidget(m_lazyTracksBox);
     lazyTracksLayout->addStretch();
 
@@ -120,6 +127,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(libraryLayout);
     mainLayout->addWidget(m_autoRefresh);
+    mainLayout->addWidget(m_waitForTracks);
     mainLayout->addLayout(lazySettingsLayout);
 
     connect(addButton, &QPushButton::clicked, this, [this]() {
@@ -131,12 +139,17 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     connect(renameButton, &QPushButton::clicked, this, [this]() {
         renameLibrary();
     });
+
+    connect(m_waitForTracks, &QCheckBox::clicked, this, [this](bool checked) {
+        m_lazyTracksBox->setEnabled(!checked);
+    });
 }
 
 void LibraryGeneralPageWidget::apply()
 {
     m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
     m_settings->set<Core::Settings::LazyTracks>(m_lazyTracksBox->value());
+    m_settings->set<Core::Settings::WaitForTracks>(m_waitForTracks->isChecked());
     m_model->processQueue();
 }
 

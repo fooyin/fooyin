@@ -43,9 +43,10 @@ void LibraryDatabaseManager::closeThread()
 void LibraryDatabaseManager::getAllTracks(SortOrder order)
 {
     TrackList tracks;
+    const bool wait = m_settings->value<Settings::WaitForTracks>();
     const int limit = m_settings->value<Settings::LazyTracks>();
 
-    if(limit > 0) {
+    if(limit > 0 && !wait) {
         int offset = 0;
         while(m_libraryDatabase.getAllTracks(tracks, order, offset, limit)) {
             offset += limit;
@@ -57,6 +58,7 @@ void LibraryDatabaseManager::getAllTracks(SortOrder order)
             emit gotTracks(tracks);
         }
     }
+    emit allTracksLoaded();
 }
 
 void LibraryDatabaseManager::updateTracks(const TrackPtrList& tracks)

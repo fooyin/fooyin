@@ -95,7 +95,13 @@ void Application::startup()
     m_layoutProvider.findLayouts();
 
     m_mainWindow->setupUi();
-    m_mainWindow->show();
+
+    if(m_settingsManager->value<Core::Settings::WaitForTracks>()) {
+        connect(m_library, &Core::Library::MusicLibrary::allTracksLoaded, m_mainWindow, &Gui::MainWindow::show);
+    }
+    else {
+        m_mainWindow->show();
+    }
 }
 
 void Application::shutdown()
