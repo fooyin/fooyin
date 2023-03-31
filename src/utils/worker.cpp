@@ -28,6 +28,11 @@ Worker::Worker(QObject* parent)
     , m_state{Idle}
 { }
 
+void Worker::stopThread()
+{
+    m_state = Idle;
+}
+
 void Worker::closeThread() { }
 
 Worker::State Worker::state() const

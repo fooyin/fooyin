@@ -24,7 +24,7 @@
 #include "module.h"
 
 namespace Fy::Core::DB {
-class LibraryDatabase : public DB::Module
+class LibraryDatabase : public Module
 {
 public:
     LibraryDatabase(const QString& connectionName, int libraryId);
@@ -42,13 +42,12 @@ public:
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);
     bool deleteTracks(const TrackPtrList& tracks);
-    bool deleteLibraryTracks(int id);
 
 protected:
     Module* module();
     [[nodiscard]] const Module* module() const;
 
-    bool insertArtistsAlbums(TrackList& tracks);
+    bool storeCovers(TrackList& tracks);
     int insertTrack(const Track& track);
 
 private:

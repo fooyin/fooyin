@@ -57,14 +57,19 @@ public:
 
     [[nodiscard]] MusicLibrary* currentLibrary() const;
     [[nodiscard]] MusicLibrary* library(int id) const;
+
     [[nodiscard]] const LibraryInfoList& allLibrariesInfo() const;
     [[nodiscard]] const LibraryIdMap& allLibraries() const;
+
     int addLibrary(const QString& path, const QString& name);
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
+
     void changeCurrentLibrary(int id);
+
     [[nodiscard]] bool hasLibrary() const;
     [[nodiscard]] bool hasLibrary(int id) const;
+
     [[nodiscard]] LibraryInfo* findLibraryByPath(const QString& path) const;
     [[nodiscard]] LibraryInfo* libraryInfo(int id) const;
 

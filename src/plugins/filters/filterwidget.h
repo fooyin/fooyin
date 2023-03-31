@@ -28,24 +28,9 @@
 class QHBoxLayout;
 
 namespace Fy {
-
 namespace Utils {
 class SettingsManager;
 }
-
-namespace Core {
-namespace Player {
-class PlayerManager;
-}
-
-namespace Library {
-class MusicLibrary;
-}
-
-namespace Widgets {
-class WidgetProvider;
-}
-} // namespace Core
 
 namespace Filters {
 class FilterManager;
@@ -64,12 +49,7 @@ public:
     void setupConnections();
 
     Filters::FilterType type();
-    void setType(Filters::FilterType type);
-
-    [[nodiscard]] int index() const;
-    void setIndex(int index);
-
-    void switchOrder();
+    void setType(Filters::FilterType newType);
 
     bool isHeaderHidden();
     void setHeaderHidden(bool showHeader);
@@ -86,24 +66,24 @@ public:
     void customHeaderMenuRequested(QPoint pos);
 
 signals:
-    void typeChanged(Filters::FilterType oldType, Filters::FilterType type);
+    void typeChanged(int index);
 
 protected:
     void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
-    void editFilter(QAction* action);
-    void changeOrder(QAction* action);
-    void dataLoaded(Filters::FilterType type, const FilterEntries& result);
-    void resetByIndex(int idx);
-    void resetByType(Filters::FilterType type);
 
 private:
-    QHBoxLayout* m_layout;
-    Filters::FilterType m_type;
-    int m_index;
+    void editFilter(QAction* action);
+    void changeOrder(QAction* action);
+    void resetByIndex(int idx);
+    void resetByType();
+
     FilterManager* m_manager;
-    FilterView* m_filter;
-    FilterModel* m_model;
     Utils::SettingsManager* m_settings;
+
+    QHBoxLayout* m_layout;
+    LibraryFilter* m_filter;
+    FilterView* m_view;
+    FilterModel* m_model;
 };
 
 class GenreFilter : public FilterWidget

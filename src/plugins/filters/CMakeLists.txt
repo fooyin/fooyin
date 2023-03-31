@@ -12,10 +12,6 @@ set(SOURCES
     constants.h
     filtersplugin.h
     filtersplugin.cpp
-    filterdatabase.h
-    filterdatabase.cpp
-    filterdatabasemanager.h
-    filterdatabasemanager.cpp
     filterdelegate.h
     filterdelegate.cpp
     filteritem.h
@@ -31,8 +27,12 @@ set(SOURCES
     filterwidget.h
     filterwidget.cpp
     filterfwd.h
+    filterstore.h
+    filterstore.cpp
     searchwidget.h
     searchwidget.cpp
+    trackfilterer.h
+    trackfilterer.cpp
 )
 
 add_library(fooyin_filters MODULE ${SOURCES})

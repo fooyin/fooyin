@@ -21,6 +21,7 @@
 
 #include <utility>
 
+#include "core/database/librarydatabase.h"
 #include "core/models/trackfwd.h"
 #include "libraryinfo.h"
 
@@ -45,7 +46,7 @@ public:
     explicit LibraryScanner(LibraryInfo* info, DB::Database* database, QObject* parent = nullptr);
 
     void closeThread() override;
-    void stopThread();
+    void stopThread() override;
 
     void scanLibrary(const TrackPtrList& tracks);
 
@@ -55,12 +56,13 @@ signals:
     void tracksDeleted(const Core::TrackPtrList& tracks);
 
 private:
-    void storeTracks(TrackList& tracks) const;
+    void storeTracks(TrackList& tracks);
     QStringList getFiles(QDir& baseDirectory);
     bool getAndSaveAllFiles(const TrackPathMap& tracks);
 
     LibraryInfo* m_library;
     DB::Database* m_database;
+    DB::LibraryDatabase m_libraryDatabase;
 };
 } // namespace Library
 } // namespace Fy::Core

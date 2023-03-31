@@ -32,9 +32,7 @@ class SettingsManager;
 }
 
 namespace Core::DB {
-class LibraryDatabase;
 class Library;
-class Playlist;
 
 class Database : public Module
 {
@@ -50,13 +48,9 @@ public:
     virtual void commit();
     virtual void rollback();
 
-    LibraryDatabase* libraryDatabase();
-    void deleteLibraryDatabase(int id);
-
     Library* libraryConnector();
 
     bool update();
-    bool cleanup();
 
 protected:
     bool createDatabase();
@@ -69,8 +63,6 @@ private:
     bool m_initialized;
 
     std::unique_ptr<Library> m_libraryConnector;
-    std::unique_ptr<Playlist> m_playlistConnector;
-    std::unique_ptr<LibraryDatabase> m_libraryDatabase;
 };
 } // namespace Core::DB
 } // namespace Fy

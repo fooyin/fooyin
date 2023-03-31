@@ -67,9 +67,7 @@ void SearchWidget::keyPressEvent(QKeyEvent* e)
 {
     const auto key = e->key();
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        if(m_manager->tracksHaveFiltered()) {
-            // return m_library->prepareTracks();
-        }
+        //            m_library->prepareTracks();
     }
     // m_searchBox->setFocusPolicy(Qt::StrongFocus);
     m_searchBox->setFocus();

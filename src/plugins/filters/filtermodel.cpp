@@ -25,26 +25,15 @@
 #include <QSize>
 
 namespace Fy::Filters {
-FilterModel::FilterModel(Filters::FilterType type, int index, QObject* parent)
+FilterModel::FilterModel(Filters::FilterType type, QObject* parent)
     : QAbstractListModel(parent)
-    , m_root(new FilterItem())
-    , m_type(type)
-    , m_index(index)
+    , m_root{std::make_unique<FilterItem>()}
+    , m_type{type}
 { }
 
 void FilterModel::setType(Filters::FilterType type)
 {
     m_type = type;
-}
-
-int FilterModel::index() const
-{
-    return m_index;
-}
-
-void FilterModel::setIndex(int index)
-{
-    m_index = index;
 }
 
 QVariant FilterModel::data(const QModelIndex& index, int role) const
@@ -57,14 +46,14 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
 
     switch(role) {
         case(Qt::DisplayRole): {
-            const QString& name = item->data(Filters::Constants::Role::Name).toString();
+            const QString& name = item->data(Filters::Constants::Role::Title).toString();
             return !name.isEmpty() ? name : "Unknown";
         }
-        case(Filters::Constants::Role::Name): {
-            return item->data(Filters::Constants::Role::Name).toString();
+        case(Filters::Constants::Role::Title): {
+            return item->data(Filters::Constants::Role::Title);
         }
-        case(Filters::Constants::Role::Id): {
-            return item->data(Filters::Constants::Role::Id).toInt();
+        case(Filters::Constants::Role::Tracks): {
+            return item->data(Filters::Constants::Role::Tracks);
         }
         default: {
             return {};
@@ -145,19 +134,10 @@ int FilterModel::columnCount(const QModelIndex& parent) const
     return m_root->columnCount();
 }
 
-QHash<int, QByteArray> FilterModel::roleNames() const
-{
-    auto roles = QAbstractItemModel::roleNames();
-
-    roles.insert(+Filters::Constants::Role::Id, "ID");
-
-    return roles;
-}
-
 QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                    Qt::MatchFlags flags) const
 {
-    if(role != Filters::Constants::Role::Id) {
+    if(role != Qt::DisplayRole) {
         return QAbstractItemModel::match(start, role, value, hits, flags);
     }
 
@@ -172,28 +152,80 @@ QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVa
     return indexes;
 }
 
-void FilterModel::reload(const FilterEntries& result)
+// TODO: Implement methods to insert/delete rows
+void FilterModel::reload(const Core::TrackPtrList& tracks)
 {
     beginResetModel();
     beginReset();
-    setupModelData(result);
+    setupModelData(tracks);
     endResetModel();
 }
 
 void FilterModel::beginReset()
 {
     m_root.reset();
+    m_nodes.clear();
     m_root = std::make_unique<FilterItem>();
 }
 
-void FilterModel::setupModelData(const FilterEntries& items)
+void FilterModel::setupModelData(const Core::TrackPtrList& tracks)
 {
-    m_root->appendChild(new FilterItem(-1, QString("All (%1)").arg(items.size()), m_root.get()));
-    if(!items.empty()) {
-        for(const auto& item : items) {
-            auto* filterItem = new FilterItem(item.id, item.name, m_root.get());
-            m_root->appendChild(filterItem);
+    m_allNode = std::make_unique<FilterItem>("", m_root.get());
+    m_root->appendChild(m_allNode.get());
+
+    if(tracks.empty()) {
+        return;
+    }
+
+    for(const auto& track : tracks) {
+        switch(m_type) {
+            case FilterType::Genre: {
+                for(FilterItem* genre : createNodes(track->genres())) {
+                    genre->addTrack(track);
+                }
+                break;
+            }
+            case FilterType::Year: {
+                createNode(QString::number(track->year()))->addTrack(track);
+                break;
+            }
+            case FilterType::AlbumArtist: {
+                createNode(track->albumArtist())->addTrack(track);
+                break;
+            }
+            case FilterType::Artist: {
+                for(FilterItem* artist : createNodes(track->artists())) {
+                    artist->addTrack(track);
+                }
+                break;
+            }
+            case FilterType::Album: {
+                createNode(track->album())->addTrack(track);
+                break;
+            }
         }
     }
+    m_allNode->changeTitle(QString("All (%1)").arg(m_nodes.size()));
+}
+
+FilterItem* FilterModel::createNode(const QString& title)
+{
+    FilterItem* filterItem;
+    if(!m_nodes.count(title)) {
+        filterItem = m_nodes.emplace(title, std::make_unique<FilterItem>(title, m_root.get())).first->second.get();
+        m_root->appendChild(filterItem);
+    }
+    filterItem = m_nodes.at(title).get();
+    return filterItem;
+}
+
+std::vector<FilterItem*> FilterModel::createNodes(const QStringList& titles)
+{
+    std::vector<FilterItem*> items;
+    for(const auto& title : titles) {
+        auto* filterItem = createNode(title);
+        items.emplace_back(filterItem);
+    }
+    return items;
 }
 } // namespace Fy::Filters

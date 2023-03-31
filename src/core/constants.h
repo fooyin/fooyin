@@ -22,4 +22,6 @@
 namespace Fy::Core::Constants {
 constexpr auto AppName     = "fooyin";
 constexpr auto DisplayName = "Fooyin";
+
+constexpr auto Separator = "\037"; // ASCII Code 31 - ␟
 } // namespace Fy::Core::Constants

@@ -72,7 +72,7 @@ void Query::showQuery() const
 
 void Query::error(const QString& error) const
 {
-    qDebug() << "SQL ERROR: " << error << ": " << int(this->lastError().type());
+    qDebug() << "SQL ERROR: " << error << ": " << static_cast<int>(lastError().type());
 
     const QSqlError e = this->lastError();
 

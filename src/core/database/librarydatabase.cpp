@@ -19,6 +19,7 @@
 
 #include "librarydatabase.h"
 
+#include "core/constants.h"
 #include "core/library/libraryutils.h"
 #include "query.h"
 
@@ -35,7 +36,7 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("Title"), track.title()},
         {QStringLiteral("TrackNumber"), track.trackNumber()},
         {QStringLiteral("TrackTotal"), track.trackTotal()},
-        {QStringLiteral("Artists"), track.artists()},
+        {QStringLiteral("Artists"), track.artists().join(Constants::Separator)},
         {QStringLiteral("AlbumArtist"), track.albumArtist()},
         {QStringLiteral("Album"), track.album()},
         {QStringLiteral("CoverPath"), track.coverPath()},
@@ -44,7 +45,7 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("Date"), track.date()},
         {QStringLiteral("Composer"), track.composer()},
         {QStringLiteral("Performer"), track.performer()},
-        {QStringLiteral("Genres"), track.genres()},
+        {QStringLiteral("Genres"), track.genres().join(Constants::Separator)},
         {QStringLiteral("Lyrics"), track.lyrics()},
         {QStringLiteral("Comment"), track.comment()},
         {QStringLiteral("Duration"), QVariant::fromValue(track.duration())},
@@ -76,24 +77,11 @@ LibraryDatabase::LibraryDatabase(const QString& connectionName, int libraryId)
     , m_connectionName(connectionName)
 { }
 
-bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
+bool LibraryDatabase::storeCovers(TrackList& tracks)
 {
     if(tracks.empty()) {
-        return {};
+        return false;
     }
-
-    // Gather all tracks
-    QHash<QString, Track> trackMap;
-    {
-        TrackList dbTracks;
-        getAllTracks(dbTracks);
-
-        for(const auto& track : qAsConst(dbTracks)) {
-            trackMap.insert(track.filepath(), track);
-        }
-    }
-
-    db().transaction();
 
     for(auto& track : tracks) {
         if(track.libraryId() < 0) {
@@ -104,14 +92,6 @@ bool LibraryDatabase::insertArtistsAlbums(TrackList& tracks)
             const QString coverPath = Library::Utils::storeCover(track);
             track.setCoverPath(coverPath);
         }
-
-        // Check track id
-        if(trackMap.contains(track.filepath())) {
-            const int id = trackMap.value(track.filepath()).id();
-            track.setId(id);
-        }
-
-        db().commit();
     }
     return true;
 }
@@ -122,7 +102,7 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
         return true;
     }
 
-    insertArtistsAlbums(tracks);
+    storeCovers(tracks);
 
     db().transaction();
 
@@ -192,6 +172,7 @@ QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& j
         QStringLiteral("Comment"),      // 16
         QStringLiteral("Duration"),     // 17
         QStringLiteral("PlayCount"),    // 18
+        QStringLiteral("Rating"),       // 19
         QStringLiteral("FileSize"),     // 20
         QStringLiteral("BitRate"),      // 21
         QStringLiteral("SampleRate"),   // 22
@@ -224,7 +205,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setTitle(q.value(2).toString());
         track.setTrackNumber(q.value(3).toInt());
         track.setTrackTotal(q.value(4).toInt());
-        track.setArtists(q.value(5).toStringList());
+        track.setArtists(q.value(5).toString().split(Constants::Separator));
         track.setAlbumArtist(q.value(6).toString());
         track.setAlbum(q.value(7).toString());
         track.setCoverPath(q.value(8).toString());
@@ -233,7 +214,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setDate(q.value(11).toString());
         track.setComposer(q.value(12).toString());
         track.setPerformer(q.value(13).toString());
-        track.setGenres(q.value(14).toStringList());
+        track.setGenres(q.value(14).toString().split(Constants::Separator));
         track.setLyrics(q.value(15).toString());
         track.setComment(q.value(16).toString());
         track.setDuration(q.value(17).value<uint64_t>());
@@ -265,10 +246,7 @@ bool LibraryDatabase::updateTrack(const Track& track)
     const auto q = module()->update("Tracks", bindings, {"TrackID", track.id()},
                                     QString("Cannot update track %1").arg(track.filepath()));
 
-    if(!q.hasError()) {
-        return true;
-    }
-    return false;
+    return !q.hasError();
 }
 
 bool LibraryDatabase::deleteTrack(int id)
@@ -296,23 +274,12 @@ bool LibraryDatabase::deleteTracks(const TrackPtrList& tracks)
     return (success && (fileCount == static_cast<int>(tracks.size())));
 }
 
-bool LibraryDatabase::deleteLibraryTracks(int id)
-{
-    if(id < 0) {
-        return false;
-    }
-
-    const auto query = QStringLiteral("DELETE FROM Tracks WHERE LibraryID=:libraryId;");
-    const auto q     = module()->runQuery(query, {":libraryId", id}, "Cannot delete library tracks");
-    return (!q.hasError());
-}
-
-DB::Module* LibraryDatabase::module()
+Module* LibraryDatabase::module()
 {
     return this;
 }
 
-const DB::Module* LibraryDatabase::module() const
+const Module* LibraryDatabase::module() const
 {
     return this;
 }

@@ -21,8 +21,6 @@
 
 #include "core/coresettings.h"
 #include "library.h"
-#include "librarydatabase.h"
-#include "playlistdatabase.h"
 #include "query.h"
 #include "version.h"
 
@@ -48,26 +46,14 @@ Database::Database(Utils::SettingsManager* settings, const QString& directory, c
     m_initialized = success && db().isOpen();
 
     if(!Database::isInitialized()) {
-        qDebug() << "Database could not be initialised";
+        qCritical() << "Database could not be initialised";
     }
     else {
-        m_libraryDatabase = std::make_unique<LibraryDatabase>(connectionName(), -1);
+        update();
     }
-
-    update();
 }
 
 Database::~Database() = default;
-
-LibraryDatabase* Database::libraryDatabase()
-{
-    return m_libraryDatabase.get();
-}
-
-void Database::deleteLibraryDatabase(int id)
-{
-    m_libraryDatabase->deleteLibraryTracks(id);
-}
 
 Library* Database::libraryConnector()
 {
@@ -141,37 +127,6 @@ bool Database::createDatabase()
     checkInsertIndex("PlaylistTracksIndex", "CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackID);");
 
     return true;
-}
-
-bool Database::cleanup()
-{
-    Query q(this);
-    QString queryText = "DELETE FROM Albums "
-                        "WHERE AlbumID NOT IN "
-                        "   (SELECT DISTINCT AlbumID FROM Tracks);";
-    q.prepareQuery(queryText);
-
-    if(q.execQuery()) {
-        Query q2(this);
-        queryText = "DELETE FROM Artists "
-                    "WHERE ArtistID NOT IN "
-                    "   (SELECT DISTINCT ArtistID FROM TrackArtists) "
-                    "AND ArtistID NOT IN "
-                    "   (SELECT DISTINCT ArtistID FROM Albums);";
-        q2.prepareQuery(queryText);
-
-        if(q2.execQuery()) {
-            Query q3(this);
-            queryText = "DELETE FROM Genres "
-                        "WHERE GenreID NOT IN "
-                        "   (SELECT DISTINCT GenreID FROM TrackGenres);";
-            q3.prepareQuery(queryText);
-
-            return q3.execQuery();
-        }
-    }
-
-    return false;
 }
 
 bool Database::isInitialized()

@@ -21,64 +21,39 @@
 
 #include "constants.h"
 
+#include <QVariant>
+
 namespace Fy::Filters {
-FilterItem::FilterItem(int id, QString name, FilterItem* parent)
-    : m_id(id)
-    , m_name(std::move(name))
-    , m_parentItem(parent)
-    , m_childItems(0)
+FilterItem::FilterItem(QString title, FilterItem* parent)
+    : TreeItem{parent}
+    , m_title(std::move(title))
 { }
 
-void FilterItem::appendChild(FilterItem* child)
+void FilterItem::changeTitle(const QString& title)
 {
-    m_childItems.append(child);
-}
-
-FilterItem* FilterItem::child(int number)
-{
-    if(number < 0 || number >= m_childItems.size()) {
-        return nullptr;
-    }
-    return m_childItems.at(number);
-}
-
-FilterItem::~FilterItem()
-{
-    qDeleteAll(m_childItems);
-}
-
-int FilterItem::childCount() const
-{
-    return static_cast<int>(m_childItems.count());
-}
-
-int FilterItem::columnCount()
-{
-    return 1;
+    m_title = title;
 }
 
 QVariant FilterItem::data(int role) const
 {
     switch(role) {
-        case(Filters::Constants::Role::Id):
-            return m_id;
-        case(Filters::Constants::Role::Name):
-            return m_name;
+        case Constants::Role::Title:
+            return m_title;
+        case Constants::Role::Tracks:
+            return QVariant::fromValue(m_tracks);
         default:
             return {};
     }
 }
 
-int FilterItem::row() const
+int FilterItem::trackCount() const
 {
-    if(parentItem()) {
-        return static_cast<int>(parentItem()->m_childItems.indexOf(const_cast<FilterItem*>(this)));
-    }
-    return 0;
+    return static_cast<int>(m_tracks.size());
 }
 
-FilterItem* FilterItem::parentItem() const
+void FilterItem::addTrack(Core::Track* track)
 {
-    return m_parentItem;
+    m_tracks.emplace_back(track);
 }
+
 } // namespace Fy::Filters

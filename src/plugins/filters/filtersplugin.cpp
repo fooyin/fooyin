@@ -38,9 +38,8 @@ void FiltersPlugin::initialise(const Core::CorePluginContext& context)
     m_playerManager = context.playerManager;
     m_settings      = context.settingsManager;
     m_threadManager = context.threadManager;
-    m_database      = context.database;
 
-    m_filterManager  = new FilterManager(m_threadManager, m_database, m_library, this);
+    m_filterManager  = new FilterManager(m_threadManager, m_library, this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
 }
 

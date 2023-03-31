@@ -103,7 +103,6 @@ void Application::shutdown()
     m_threadManager->shutdown();
     m_pluginManager->shutdown();
     m_settingsManager->storeSettings();
-    m_database.cleanup();
     m_database.closeDatabase();
 }
 
