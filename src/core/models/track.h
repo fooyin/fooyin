@@ -27,9 +27,7 @@
 #include <map>
 
 namespace Fy::Core {
-using GenreList  = QList<QString>;
-using ArtistList = QList<QString>;
-using ExtraTags  = std::map<QString, QList<QString>>;
+using ExtraTags = std::map<QString, QList<QString>>;
 
 class Track : public MusicItem
 {
@@ -37,26 +35,24 @@ public:
     Track() = default;
     explicit Track(QString filepath);
 
+    QString generateHash();
+
     [[nodiscard]] bool isEnabled() const;
 
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] int id() const;
-    [[nodiscard]] QString uid() const;
+    [[nodiscard]] QString hash() const;
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString title() const;
-    [[nodiscard]] ArtistList artists() const;
-    [[nodiscard]] IdSet artistIds() const;
-    [[nodiscard]] int albumId() const;
+    [[nodiscard]] QStringList artists() const;
     [[nodiscard]] QString album() const;
     [[nodiscard]] QString albumArtist() const;
-    [[nodiscard]] int albumArtistId() const;
     [[nodiscard]] int trackNumber() const;
     [[nodiscard]] int trackTotal() const;
     [[nodiscard]] int discNumber() const;
     [[nodiscard]] int discTotal() const;
-    [[nodiscard]] IdSet genreIds() const;
-    [[nodiscard]] GenreList genres() const;
+    [[nodiscard]] QStringList genres() const;
     [[nodiscard]] QString composer() const;
     [[nodiscard]] QString performer() const;
     [[nodiscard]] uint64_t duration() const;
@@ -85,11 +81,9 @@ public:
     void setLibraryId(int id);
 
     void setId(int id);
+    void setHash(const QString& hash);
     void setTitle(const QString& title);
-    void setArtists(const ArtistList& artists);
-    void setArtistIds(const IdSet& ids);
-    void addArtistId(int id);
-    void setAlbumId(int id);
+    void setArtists(const QStringList& artists);
     void setAlbum(const QString& title);
     void setAlbumArtist(const QString& artist);
     void setAlbumArtistId(int id);
@@ -97,9 +91,7 @@ public:
     void setTrackTotal(int num);
     void setDiscNumber(int num);
     void setDiscTotal(int num);
-    void setGenreIds(const IdSet& ids);
-    void addGenreId(int id);
-    void setGenres(const GenreList& genres);
+    void setGenres(const QStringList& genres);
     void setComposer(const QString& composer);
     void setPerformer(const QString& performer);
     void setDuration(uint64_t duration);
@@ -120,28 +112,24 @@ public:
     void setAddedTime(uint64_t time);
     void setModifiedTime(uint64_t time);
 
-    void resetIds();
-
 private:
     bool m_enabled;
 
     int m_libraryId;
 
     int m_id;
+    QString m_hash;
     QString m_filepath;
     QString m_title;
-    ArtistList m_artists;
-    IdSet m_artistIds;
-    int m_albumId;
+    QStringList m_artists;
     QString m_album;
     QString m_albumArtist;
-    int m_albumArtistId;
     int m_trackNumber;
     int m_trackTotal;
     int m_discNumber;
     int m_discTotal;
     IdSet m_genreIds;
-    GenreList m_genres;
+    QStringList m_genres;
     QString m_composer;
     QString m_performer;
     uint64_t m_duration;

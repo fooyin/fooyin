@@ -63,21 +63,19 @@ Track* MusicLibraryContainer::track(int id) const
 TrackPtrList MusicLibraryContainer::tracks() const
 {
     TrackPtrList intersectedTracks;
-    bool haveTracks{false};
 
     for(const auto& interactor : m_interactors) {
         if(interactor->hasTracks()) {
-            haveTracks            = true;
             auto interactorTracks = interactor->tracks();
             if(intersectedTracks.empty()) {
                 intersectedTracks.insert(intersectedTracks.end(), interactorTracks.cbegin(), interactorTracks.cend());
             }
             else {
-                Utils::intersection<Track*>(interactorTracks, intersectedTracks, intersectedTracks);
+                intersectedTracks = Utils::intersection<Track*>(interactorTracks, intersectedTracks);
             }
         }
     }
-    return haveTracks ? intersectedTracks : m_currentLibrary->tracks();
+    return !intersectedTracks.empty() ? intersectedTracks : m_currentLibrary->tracks();
 }
 
 TrackPtrList MusicLibraryContainer::allTracks() const

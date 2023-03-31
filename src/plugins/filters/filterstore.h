@@ -19,30 +19,29 @@
 
 #pragma once
 
-#include <core/models/trackfwd.h>
+#include "filterfwd.h"
 
-#include <QObject>
-
-#include <deque>
+#include <utils/helpers.h>
 
 namespace Fy::Filters {
-Q_NAMESPACE
-enum class FilterType
+class FilterStore
 {
-    Genre = 0,
-    Year,
-    AlbumArtist,
-    Artist,
-    Album,
-};
-Q_ENUM_NS(FilterType)
+public:
+    [[nodiscard]] FilterList filters() const;
 
-struct LibraryFilter
-{
-    FilterType type;
-    int index;
-    Core::TrackPtrList tracks;
-};
+    // TODO: Allow user-defined types and indexes
+    LibraryFilter& addFilter(FilterType type);
+    void removeFilter(FilterType type);
 
-using FilterList = std::deque<LibraryFilter>;
+    LibraryFilter* find(FilterType type);
+    [[nodiscard]] bool hasFilter(FilterType type) const;
+
+    [[nodiscard]] bool filterIsActive(FilterType type) const;
+    [[nodiscard]] bool hasActiveFilters() const;
+    [[nodiscard]] FilterList activeFilters() const;
+    void deactivateFilter(FilterType type);
+
+private:
+    FilterList m_filters;
+};
 } // namespace Fy::Filters

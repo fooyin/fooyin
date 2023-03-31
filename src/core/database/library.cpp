@@ -74,15 +74,23 @@ int Library::insertLibrary(const QString& path, const QString& name)
 
 bool Library::removeLibrary(int id)
 {
-    const QString query = "DELETE FROM Libraries WHERE LibraryID=:libraryId;";
+    Query delTracks(this);
+    auto delTracksQuery = QStringLiteral("DELETE FROM Tracks WHERE LibraryID=:libraryId;");
+    delTracks.prepare(delTracksQuery);
+    delTracks.bindValue(":libraryId", id);
 
-    Query q(this);
+    if(!delTracks.execQuery()) {
+        delTracks.error(QString{"Cannot delete library (%1) tracks"}.arg(id));
+        return false;
+    }
 
-    q.prepare(query);
-    q.bindValue(":libraryId", id);
+    Query delLibrary(this);
+    const QString delLibraryQuery = "DELETE FROM Libraries WHERE LibraryID=:libraryId;";
+    delLibrary.prepare(delLibraryQuery);
+    delLibrary.bindValue(":libraryId", id);
 
-    if(!q.execQuery()) {
-        q.error(QString{"Cannot remove library %1"}.arg(id));
+    if(!delLibrary.execQuery()) {
+        delLibrary.error(QString{"Cannot remove library %1"}.arg(id));
         return false;
     }
     return true;

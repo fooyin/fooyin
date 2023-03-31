@@ -90,6 +90,8 @@ public:
     }
 
 private:
+    friend Item;
+
     Item* m_parent;                // Not owned
     std::vector<Item*> m_children; // Not owned
 };

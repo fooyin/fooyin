@@ -54,7 +54,7 @@ void eraseLibrary(LibraryInfoList& libraries, int id)
 
 LibraryManager::LibraryManager(Utils::ThreadManager* threadManager, DB::Database* database,
                                Utils::SettingsManager* settings, QObject* parent)
-    : QObject{parent} //    , m_playlistInteractor{playlistInteractor}
+    : QObject{parent}
     , m_threadManager{threadManager}
     , m_database{database}
     , m_settings{settings}
@@ -130,7 +130,6 @@ bool LibraryManager::removeLibrary(int id)
         return false;
     }
 
-    m_database->deleteLibraryDatabase(id);
     if(m_libraryConnector->removeLibrary(id)) {
         eraseLibrary(m_libraryInfos, id);
         m_unifiedStore->removeLibrary(id);
@@ -210,6 +209,8 @@ MusicLibraryInternal* LibraryManager::addNewLibrary(LibraryInfo* info)
     m_unifiedStore->addLibrary(info->id, library->trackStore());
 
     // Forward individual library signals
+    connect(library, &Library::MusicLibraryInternal::allTracksLoaded, m_libraryHandler,
+            &Library::MusicLibrary::allTracksLoaded);
     connect(library, &Library::MusicLibraryInternal::tracksLoaded, m_libraryHandler,
             &Library::MusicLibrary::tracksLoaded);
     connect(library, &Library::MusicLibraryInternal::tracksAdded, m_libraryHandler,

@@ -23,7 +23,7 @@
 #include "module.h"
 
 namespace Fy::Core::DB {
-class Library : private Module
+class Library : public Module
 {
 public:
     explicit Library(const QString& connectionName);

@@ -35,6 +35,7 @@ LibraryScanner::LibraryScanner(LibraryInfo* info, DB::Database* database, QObjec
     : Worker{parent}
     , m_library{info}
     , m_database{database}
+    , m_libraryDatabase{database->connectionName(), info->id}
 { }
 
 void LibraryScanner::closeThread()
@@ -53,8 +54,6 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks)
     if(!m_library) {
         return;
     }
-
-    DB::LibraryDatabase* libraryDatabase = m_database->libraryDatabase();
 
     setState(Running);
 
@@ -78,7 +77,7 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks)
         }
     }
 
-    const bool deletedSuccess = libraryDatabase->deleteTracks(tracksToDelete);
+    const bool deletedSuccess = m_libraryDatabase.deleteTracks(tracksToDelete);
 
     if(deletedSuccess && !tracksToDelete.empty()) {
         emit tracksDeleted(tracksToDelete);
@@ -93,15 +92,13 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks)
     setState(Idle);
 }
 
-void LibraryScanner::storeTracks(TrackList& tracks) const
+void LibraryScanner::storeTracks(TrackList& tracks)
 {
     if(!mayRun()) {
         return;
     }
 
-    DB::LibraryDatabase* libraryDatabase = m_database->libraryDatabase();
-
-    libraryDatabase->storeTracks(tracks);
+    m_libraryDatabase.storeTracks(tracks);
 
     if(!mayRun()) {
         return;
@@ -168,9 +165,10 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
                 }
 
                 Track changedTrack{*libraryTrack};
-                changedTrack.resetIds();
                 fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
                 if(fileWasRead) {
+                    // Regenerate hash
+                    changedTrack.generateHash();
                     tracksToUpdate.emplace_back(changedTrack);
                     continue;
                 }
@@ -182,6 +180,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
 
         fileWasRead = Tagging::readMetaData(track, Tagging::Quality::Quality);
         if(fileWasRead) {
+            track.generateHash();
             tracksToStore.emplace_back(track);
             if(tracksToStore.size() >= 500) {
                 storeTracks(tracksToStore);

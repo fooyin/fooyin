@@ -21,17 +21,19 @@
 
 #include "filterfwd.h"
 
+#include <core/models/trackfwd.h>
+
+#include <utils/treemodel.h>
+
 #include <QAbstractListModel>
 
-namespace Fy {
-
-namespace Filters {
+namespace Fy::Filters {
 class FilterItem;
 
 class FilterModel : public QAbstractListModel
 {
 public:
-    FilterModel(Filters::FilterType type, int index, QObject* parent = nullptr);
+    explicit FilterModel(Filters::FilterType type, QObject* parent = nullptr);
 
     void setType(Filters::FilterType type);
     [[nodiscard]] int index() const;
@@ -45,20 +47,20 @@ public:
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
-    [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
-
+    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
     [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                         Qt::MatchFlags flags) const override;
-    void reload(const FilterEntries& result);
-
-protected:
-    void beginReset();
-    void setupModelData(const FilterEntries& items);
+    void reload(const Core::TrackPtrList& tracks);
 
 private:
+    void beginReset();
+    void setupModelData(const Core::TrackPtrList& tracks);
+    FilterItem* createNode(const QString& title);
+    std::vector<FilterItem*> createNodes(const QStringList& titles);
+
     std::unique_ptr<FilterItem> m_root;
+    std::unique_ptr<FilterItem> m_allNode;
+    std::unordered_map<QString, std::unique_ptr<FilterItem>> m_nodes;
     FilterType m_type;
-    int m_index;
 };
-} // namespace Filters
-} // namespace Fy
+} // namespace Fy::Filters

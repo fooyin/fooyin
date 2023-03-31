@@ -90,7 +90,7 @@ bool readMetaData(Track& track, Quality quality)
     const auto album       = convertString(parsedTag.map.value("ALBUM").toString());
     const auto albumArtist = convertString(parsedTag.map.value("ALBUMARTIST").toString());
     const auto title       = convertString(parsedTag.map.value("TITLE").toString());
-    const auto genres      = convertStringList(parsedTag.map.value("GENRE").toString());
+    const auto genres      = convertStringList(parsedTag.map.value("GENRE"));
     const auto comment     = convertString(parsedTag.map.value("COMMENT").toString());
     const auto date        = convertString(parsedTag.map.value("DATE").toString());
     const auto lyrics      = convertString(parsedTag.map.value("LYRICS").toString());

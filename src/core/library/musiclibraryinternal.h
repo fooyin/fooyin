@@ -54,6 +54,7 @@ public:
 
 signals:
     void loadAllTracks(Core::Library::SortOrder order);
+    void allTracksLoaded();
     void runLibraryScan(const Core::TrackPtrList& tracks);
 
     void tracksLoaded(const Core::TrackPtrList& tracks);

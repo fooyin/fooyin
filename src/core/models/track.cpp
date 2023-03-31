@@ -30,8 +30,6 @@ Track::Track(QString filepath)
     , m_libraryId{-1}
     , m_id{-1}
     , m_filepath{std::move(filepath)}
-    , m_albumId{-1}
-    , m_albumArtistId{-1}
     , m_trackNumber{0}
     , m_trackTotal{0}
     , m_discNumber{0}
@@ -43,6 +41,14 @@ Track::Track(QString filepath)
     , m_playcount{0}
     , m_modifiedTime{0}
 { }
+
+QString Track::generateHash()
+{
+    m_hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(
+        m_artists.join(","), m_album, QString::number(m_year), QString::number(m_discNumber),
+        QStringLiteral("%1").arg(m_trackNumber, 2, 10, QLatin1Char('0')), QString::number(m_duration));
+    return m_hash;
+}
 
 bool Track::isEnabled() const
 {
@@ -59,9 +65,9 @@ int Track::id() const
     return m_id;
 }
 
-QString Track::uid() const
+QString Track::hash() const
 {
-    return {album() + QString::number(id()) + title()};
+    return m_hash;
 }
 
 QString Track::filepath() const
@@ -74,19 +80,9 @@ QString Track::title() const
     return m_title;
 }
 
-ArtistList Track::artists() const
+QStringList Track::artists() const
 {
     return m_artists;
-}
-
-IdSet Track::artistIds() const
-{
-    return m_artistIds;
-}
-
-int Track::albumId() const
-{
-    return m_albumId;
 }
 
 QString Track::album() const
@@ -97,11 +93,6 @@ QString Track::album() const
 QString Track::albumArtist() const
 {
     return m_albumArtist;
-}
-
-int Track::albumArtistId() const
-{
-    return m_albumArtistId;
 }
 
 int Track::trackNumber() const
@@ -124,12 +115,7 @@ int Track::discTotal() const
     return m_discTotal;
 }
 
-IdSet Track::genreIds() const
-{
-    return m_genreIds;
-}
-
-GenreList Track::genres() const
+QStringList Track::genres() const
 {
     return m_genres;
 }
@@ -250,29 +236,19 @@ void Track::setId(int id)
     m_id = id;
 }
 
+void Track::setHash(const QString& hash)
+{
+    m_hash = hash;
+}
+
 void Track::setTitle(const QString& title)
 {
     m_title = title;
 }
 
-void Track::setArtists(const ArtistList& artists)
+void Track::setArtists(const QStringList& artists)
 {
     m_artists = artists;
-}
-
-void Track::setArtistIds(const IdSet& ids)
-{
-    m_artistIds = ids;
-}
-
-void Track::addArtistId(int id)
-{
-    m_artistIds.emplace(id);
-}
-
-void Track::setAlbumId(int id)
-{
-    m_albumId = id;
 }
 
 void Track::setAlbum(const QString& title)
@@ -283,11 +259,6 @@ void Track::setAlbum(const QString& title)
 void Track::setAlbumArtist(const QString& artist)
 {
     m_albumArtist = artist;
-}
-
-void Track::setAlbumArtistId(int id)
-{
-    m_albumArtistId = id;
 }
 
 void Track::setTrackNumber(int number)
@@ -310,17 +281,7 @@ void Track::setDiscTotal(int total)
     m_discTotal = total;
 }
 
-void Track::setGenreIds(const IdSet& ids)
-{
-    m_genreIds = ids;
-}
-
-void Track::addGenreId(int id)
-{
-    m_genreIds.emplace(id);
-}
-
-void Track::setGenres(const GenreList& genres)
+void Track::setGenres(const QStringList& genres)
 {
     m_genres = genres;
 }
@@ -429,11 +390,5 @@ void Track::setAddedTime(uint64_t time)
 void Track::setModifiedTime(uint64_t time)
 {
     m_modifiedTime = time;
-}
-
-void Track::resetIds()
-{
-    m_artistIds.clear();
-    m_genreIds.clear();
 }
 } // namespace Fy::Core

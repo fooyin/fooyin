@@ -19,16 +19,11 @@
 
 #pragma once
 
-#include "filterdatabase.h"
-#include "filterfwd.h"
-
-#include <core/library/sorting/sortorder.h>
 #include <core/models/trackfwd.h>
 
 #include <utils/worker.h>
 
 namespace Fy {
-
 namespace Core::DB {
 class Database;
 }
@@ -36,27 +31,17 @@ class Database;
 namespace Filters {
 class FilterDatabase;
 
-class FilterDatabaseManager : public Utils::Worker
+class TrackFilterer : public Utils::Worker
 {
     Q_OBJECT
 
 public:
-    explicit FilterDatabaseManager(Core::DB::Database* database, QObject* parent = nullptr);
+    explicit TrackFilterer(QObject* parent = nullptr);
 
-    void closeThread() override;
-
-    void getAllItems(Filters::FilterType type, Core::Library::SortOrder order);
-    void getItemsByFilter(Filters::FilterType type, const ActiveFilters& filters, const QString& search,
-                          Core::Library::SortOrder order);
-    void filterTracks(const Core::TrackPtrList& tracks, const ActiveFilters& filters, const QString& search);
+    void filterTracks(const Core::TrackPtrList& tracks, const QString& search);
 
 signals:
-    void gotItems(Filters::FilterType type, const Fy::Filters::FilterEntries& result);
     void tracksFiltered(const Core::TrackPtrList& result);
-
-private:
-    Core::DB::Database* m_database;
-    FilterDatabase m_filterDatabase;
 };
 } // namespace Filters
 } // namespace Fy

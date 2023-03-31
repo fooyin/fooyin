@@ -52,6 +52,7 @@ public:
     void updateTracks(const TrackPtrList& tracks);
 
 signals:
+    void allTracksLoaded();
     void gotTracks(const Core::TrackList& result);
 
 private:

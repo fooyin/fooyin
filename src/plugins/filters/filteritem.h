@@ -19,28 +19,30 @@
 
 #pragma once
 
-#include <QVariant>
+#include "constants.h"
+
+#include <core/models/trackfwd.h>
+
+#include <utils/treeitem.h>
+
+#include <QObject>
 
 namespace Fy::Filters {
-class FilterItem
+class FilterItem : public Utils::TreeItem<FilterItem>
 {
 public:
-    explicit FilterItem(int id = -1, QString name = "", FilterItem* parent = {});
-    ~FilterItem();
+    explicit FilterItem(QString title = "", FilterItem* parent = {});
 
-    void appendChild(FilterItem* child);
+    void changeTitle(const QString& title);
 
-    FilterItem* child(int number);
-    [[nodiscard]] int childCount() const;
-    static int columnCount();
-    [[nodiscard]] QVariant data(int role = 0) const;
-    [[nodiscard]] int row() const;
-    [[nodiscard]] FilterItem* parentItem() const;
+    [[nodiscard]] QVariant data(int role = Constants::Role::Title) const;
+    [[nodiscard]] int trackCount() const;
+    void addTrack(Core::Track* track);
+
+    void sortChildren(Qt::SortOrder order);
 
 private:
-    int m_id;
-    QString m_name;
-    FilterItem* m_parentItem;
-    QList<FilterItem*> m_childItems;
+    QString m_title;
+    Core::TrackPtrList m_tracks;
 };
 } // namespace Fy::Filters

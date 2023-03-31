@@ -23,38 +23,49 @@
 #include <unordered_set>
 
 namespace Fy::Utils {
-template <typename C, typename F>
-constexpr int findIndex(const C& c, const F& f)
+template <typename Ctnr, typename Element>
+constexpr int findIndex(const Ctnr& c, const Element& e)
 {
     int index = -1;
-    auto it   = std::find(c.cbegin(), c.cend(), f);
-    if(it != c.cend()) {
-        index = static_cast<int>(std::distance(c.cbegin(), it));
+    auto eIter   = std::find(c.cbegin(), c.cend(), e);
+    if(eIter != c.cend()) {
+        index = static_cast<int>(std::distance(c.cbegin(), eIter));
     }
     return index;
 }
 
-template <typename C, typename F>
-constexpr bool contains(const C& c, const F& f)
+template <typename Ctnr, typename Element>
+constexpr bool contains(const Ctnr& c, const Element& f)
 {
     auto it = std::find(c.cbegin(), c.cend(), f);
     return static_cast<bool>(it != c.cend());
 }
 
-template <typename C, typename F>
-constexpr bool hasKey(const C& c, const F& f)
+template <typename Ctnr, typename Key>
+constexpr bool hasKey(const Ctnr& c, const Key& key)
 {
-    return c.count(f);
+    return c.count(key);
 }
 
-template <typename E, typename T>
-constexpr void intersection(T& v1, const T& v2, T& result)
+template <typename T, typename Ctnr>
+constexpr Ctnr intersection(Ctnr& v1, const Ctnr& v2)
 {
-    std::unordered_set<E> first(v1.cbegin(), v1.cend());
+    Ctnr result;
+    std::unordered_set<T> first(v1.cbegin(), v1.cend());
     for (auto entry : v2)
+    {
         if (first.count(entry)) {
             result.emplace_back(entry);
         }
+    }
+    return result;
+}
+
+template <typename Ctnr, typename Pred>
+Ctnr filter(const Ctnr &container, Pred pred) {
+    Ctnr result;
+    std::copy_if(container.cbegin(), container.cend(), std::back_inserter(result), pred);
+    return result;
 }
 
 } // namespace Fy::Utils

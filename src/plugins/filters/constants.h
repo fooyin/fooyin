@@ -22,6 +22,6 @@
 #include <Qt>
 
 namespace Fy::Filters::Constants::Role {
-constexpr auto Id   = Qt::UserRole + 40;
-constexpr auto Name = Qt::UserRole + 41;
+constexpr auto Title  = Qt::UserRole + 1;
+constexpr auto Tracks = Qt::UserRole + 2;
 } // namespace Fy::Filters::Constants::Role

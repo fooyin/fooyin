@@ -26,7 +26,6 @@
 #include <gui/widgetfactory.h>
 
 namespace Fy {
-
 namespace Filters {
 class FilterManager;
 
@@ -61,7 +60,6 @@ private:
     Utils::ActionManager* m_actionManager;
     Utils::SettingsManager* m_settings;
     Utils::ThreadManager* m_threadManager;
-    Core::DB::Database* m_database;
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
     Gui::Widgets::WidgetFactory* m_factory;
