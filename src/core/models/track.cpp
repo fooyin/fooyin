@@ -72,7 +72,7 @@ QString Track::title() const
     return m_title;
 }
 
-ArtistList Track::artists() const
+QStringList Track::artists() const
 {
     return m_artists;
 }
@@ -107,7 +107,7 @@ int Track::discTotal() const
     return m_discTotal;
 }
 
-GenreList Track::genres() const
+QStringList Track::genres() const
 {
     return m_genres;
 }
@@ -233,7 +233,7 @@ void Track::setTitle(const QString& title)
     m_title = title;
 }
 
-void Track::setArtists(const ArtistList& artists)
+void Track::setArtists(const QStringList& artists)
 {
     m_artists = artists;
 }
@@ -268,7 +268,7 @@ void Track::setDiscTotal(int total)
     m_discTotal = total;
 }
 
-void Track::setGenres(const GenreList& genres)
+void Track::setGenres(const QStringList& genres)
 {
     m_genres = genres;
 }

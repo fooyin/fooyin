@@ -27,9 +27,7 @@
 #include <map>
 
 namespace Fy::Core {
-using GenreList  = QList<QString>;
-using ArtistList = QList<QString>;
-using ExtraTags  = std::map<QString, QList<QString>>;
+using ExtraTags = std::map<QString, QList<QString>>;
 
 class Track : public MusicItem
 {
@@ -45,14 +43,14 @@ public:
     [[nodiscard]] QString uid() const;
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString title() const;
-    [[nodiscard]] ArtistList artists() const;
+    [[nodiscard]] QStringList artists() const;
     [[nodiscard]] QString album() const;
     [[nodiscard]] QString albumArtist() const;
     [[nodiscard]] int trackNumber() const;
     [[nodiscard]] int trackTotal() const;
     [[nodiscard]] int discNumber() const;
     [[nodiscard]] int discTotal() const;
-    [[nodiscard]] GenreList genres() const;
+    [[nodiscard]] QStringList genres() const;
     [[nodiscard]] QString composer() const;
     [[nodiscard]] QString performer() const;
     [[nodiscard]] uint64_t duration() const;
@@ -82,7 +80,7 @@ public:
 
     void setId(int id);
     void setTitle(const QString& title);
-    void setArtists(const ArtistList& artists);
+    void setArtists(const QStringList& artists);
     void setAlbum(const QString& title);
     void setAlbumArtist(const QString& artist);
     void setAlbumArtistId(int id);
@@ -90,7 +88,7 @@ public:
     void setTrackTotal(int num);
     void setDiscNumber(int num);
     void setDiscTotal(int num);
-    void setGenres(const GenreList& genres);
+    void setGenres(const QStringList& genres);
     void setComposer(const QString& composer);
     void setPerformer(const QString& performer);
     void setDuration(uint64_t duration);
@@ -119,7 +117,7 @@ private:
     int m_id;
     QString m_filepath;
     QString m_title;
-    ArtistList m_artists;
+    QStringList m_artists;
     QString m_album;
     QString m_albumArtist;
     int m_trackNumber;
@@ -127,7 +125,7 @@ private:
     int m_discNumber;
     int m_discTotal;
     IdSet m_genreIds;
-    GenreList m_genres;
+    QStringList m_genres;
     QString m_composer;
     QString m_performer;
     uint64_t m_duration;
