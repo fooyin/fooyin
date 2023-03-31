@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "constants.h"
+
 #include <core/models/trackfwd.h>
 
 #include <utils/treeitem.h>
@@ -33,9 +35,11 @@ public:
 
     void changeTitle(const QString& title);
 
-    [[nodiscard]] QVariant data(int role = 0) const;
+    [[nodiscard]] QVariant data(int role = Constants::Role::Title) const;
     [[nodiscard]] int trackCount() const;
     void addTrack(Core::Track* track);
+
+    void sortChildren(Qt::SortOrder order);
 
 private:
     QString m_title;

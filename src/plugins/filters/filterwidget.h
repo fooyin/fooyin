@@ -73,7 +73,7 @@ protected:
 
 private:
     void editFilter(QAction* action);
-    void changeOrder(QAction* action);
+    void changeOrder();
     void resetByIndex(int idx);
     void resetByType();
 
@@ -84,6 +84,7 @@ private:
     LibraryFilter* m_filter;
     FilterView* m_view;
     FilterModel* m_model;
+    Qt::SortOrder m_sortOrder;
 };
 
 class GenreFilter : public FilterWidget

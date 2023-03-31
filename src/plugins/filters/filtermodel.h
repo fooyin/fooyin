@@ -33,7 +33,7 @@ class FilterItem;
 class FilterModel : public QAbstractListModel
 {
 public:
-    FilterModel(Filters::FilterType type, QObject* parent = nullptr);
+    explicit FilterModel(Filters::FilterType type, QObject* parent = nullptr);
 
     void setType(Filters::FilterType type);
     [[nodiscard]] int index() const;
@@ -47,6 +47,7 @@ public:
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
+    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
     [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                         Qt::MatchFlags flags) const override;
     void reload(const Core::TrackPtrList& tracks);

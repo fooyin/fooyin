@@ -22,8 +22,6 @@
 #include "constants.h"
 #include "filteritem.h"
 
-#include <QSize>
-
 namespace Fy::Filters {
 FilterModel::FilterModel(Filters::FilterType type, QObject* parent)
     : QAbstractListModel(parent)
@@ -132,6 +130,13 @@ int FilterModel::columnCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent)
     return m_root->columnCount();
+}
+
+void FilterModel::sort(int column, Qt::SortOrder order)
+{
+    Q_UNUSED(column)
+    m_root->sortChildren(order);
+    emit layoutChanged({});
 }
 
 QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,

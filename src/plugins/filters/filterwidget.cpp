@@ -50,6 +50,7 @@ FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* setti
     , m_filter{m_manager->registerFilter(type)}
     , m_view{new FilterView(this)}
     , m_model{new FilterModel(type, this)}
+    , m_sortOrder{Qt::AscendingOrder}
 {
     setObjectName(FilterWidget::name());
 
@@ -83,7 +84,7 @@ void FilterWidget::setupConnections()
     connect(m_view, &QTreeView::doubleClicked, this, []() {
         //        m_library->prepareTracks();
     });
-    //    connect(m_view->header(), &QHeaderView::sectionClicked, this, &FilterWidget::switchOrder);
+    connect(m_view->header(), &QHeaderView::sectionClicked, this, &FilterWidget::changeOrder);
     connect(this, &FilterWidget::typeChanged, m_manager, &FilterManager::changeFilter);
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &FilterWidget::selectionChanged);
 
@@ -174,9 +175,6 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* orderMenu = new QMenu(menu);
-    orderMenu->setTitle("Sort Order");
-
     auto* editFilters = new QActionGroup{menu};
 
     const FilterType type = m_filter->type;
@@ -227,9 +225,6 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
     editFilters->addAction(artist);
     editFilters->addAction(album);
 
-    menu->addSeparator();
-    menu->addMenu(orderMenu);
-
     menu->setDefaultAction(editFilters->checkedAction());
 
     connect(editFilters, &QActionGroup::triggered, this, &FilterWidget::editFilter);
@@ -270,16 +265,23 @@ void FilterWidget::editFilter(QAction* action)
     setType(type);
 }
 
-void FilterWidget::changeOrder(QAction* action)
+// TODO: Save current sorting order
+void FilterWidget::changeOrder()
 {
-    auto order = action->data().value<Core::Library::SortOrder>();
-    Q_UNUSED(order)
+    if(m_sortOrder == Qt::AscendingOrder) {
+        m_sortOrder = Qt::DescendingOrder;
+    }
+    else {
+        m_sortOrder = Qt::AscendingOrder;
+    }
+    m_model->sort(0, m_sortOrder);
 }
 
 void FilterWidget::resetByIndex(int idx)
 {
     if(idx < m_filter->index) {
         m_model->reload(m_manager->tracks());
+        m_model->sort(0, m_sortOrder);
     }
 }
 

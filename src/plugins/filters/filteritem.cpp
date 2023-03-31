@@ -19,8 +19,6 @@
 
 #include "filteritem.h"
 
-#include "constants.h"
-
 #include <QVariant>
 
 namespace Fy::Filters {
@@ -56,4 +54,21 @@ void FilterItem::addTrack(Core::Track* track)
     m_tracks.emplace_back(track);
 }
 
+void FilterItem::sortChildren(Qt::SortOrder order)
+{
+    std::vector<FilterItem*> sortedChildren{m_children};
+    std::sort(sortedChildren.begin(), sortedChildren.end(), [order](FilterItem* lhs, FilterItem* rhs) {
+        if(lhs->m_tracks.empty()) {
+            return true;
+        }
+        if(rhs->m_tracks.empty()) {
+            return false;
+        }
+        if(order == Qt::AscendingOrder) {
+            return QString::localeAwareCompare(lhs->data().toString(), rhs->data().toString()) < 0;
+        }
+        return QString::localeAwareCompare(lhs->data().toString(), rhs->data().toString()) > 0;
+    });
+    m_children = sortedChildren;
+}
 } // namespace Fy::Filters
