@@ -199,15 +199,15 @@ void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 
 void SplitterWidget::saveLayout(QJsonArray& array)
 {
-    QJsonArray childern;
+    QJsonArray children;
     for(const auto& widget : children()) {
-        widget->saveLayout(childern);
+        widget->saveLayout(children);
     }
     const QString state = QString::fromUtf8(saveState().toBase64());
 
     QJsonObject options;
     options["State"]    = state;
-    options["Children"] = childern;
+    options["Children"] = children;
 
     QJsonObject splitter;
     splitter[layoutName()] = options;
