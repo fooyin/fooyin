@@ -42,6 +42,14 @@ Track::Track(QString filepath)
     , m_modifiedTime{0}
 { }
 
+QString Track::generateHash()
+{
+    m_hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(
+        m_artists.join(","), m_album, QString::number(m_year), QString::number(m_discNumber),
+        QStringLiteral("%1").arg(m_trackNumber, 2, 10, QLatin1Char('0')), QString::number(m_duration));
+    return m_hash;
+}
+
 bool Track::isEnabled() const
 {
     return m_enabled;
@@ -57,9 +65,9 @@ int Track::id() const
     return m_id;
 }
 
-QString Track::uid() const
+QString Track::hash() const
 {
-    return {album() + QString::number(id()) + title()};
+    return m_hash;
 }
 
 QString Track::filepath() const
@@ -226,6 +234,11 @@ void Track::setLibraryId(int id)
 void Track::setId(int id)
 {
     m_id = id;
+}
+
+void Track::setHash(const QString& hash)
+{
+    m_hash = hash;
 }
 
 void Track::setTitle(const QString& title)

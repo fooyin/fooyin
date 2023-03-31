@@ -35,12 +35,14 @@ public:
     Track() = default;
     explicit Track(QString filepath);
 
+    QString generateHash();
+
     [[nodiscard]] bool isEnabled() const;
 
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] int id() const;
-    [[nodiscard]] QString uid() const;
+    [[nodiscard]] QString hash() const;
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] QStringList artists() const;
@@ -79,6 +81,7 @@ public:
     void setLibraryId(int id);
 
     void setId(int id);
+    void setHash(const QString& hash);
     void setTitle(const QString& title);
     void setArtists(const QStringList& artists);
     void setAlbum(const QString& title);
@@ -115,6 +118,7 @@ private:
     int m_libraryId;
 
     int m_id;
+    QString m_hash;
     QString m_filepath;
     QString m_title;
     QStringList m_artists;

@@ -247,9 +247,9 @@ void PlaylistModel::setupModelData()
     createAlbums(m_tracks);
 
     for(const auto& track : m_tracks) {
-        if(track && track->isEnabled() && !m_nodes.count(track->uid())) {
+        if(track && track->isEnabled() && !m_nodes.count(track->hash())) {
             if(auto* parent = iterateTrack(track, m_discHeaders, m_splitDiscs)) {
-                checkInsertKey(track->uid(), PlaylistItem::Track, track, parent);
+                checkInsertKey(track->hash(), PlaylistItem::Track, track, parent);
             }
         }
     }
@@ -258,7 +258,7 @@ void PlaylistModel::setupModelData()
 void PlaylistModel::createAlbums(const Core::TrackPtrList& tracks)
 {
     for(const auto& track : tracks) {
-        if(track->isEnabled() && !m_nodes.count(track->uid())) {
+        if(track->isEnabled() && !m_nodes.count(track->hash())) {
             const QString albumKey = QString::number(track->year()) + track->album();
             if(!m_containers.count(albumKey)) {
                 auto album = std::make_unique<Core::Album>(track->album());

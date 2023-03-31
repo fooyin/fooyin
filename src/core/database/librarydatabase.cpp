@@ -227,6 +227,8 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setModifiedTime(q.value(25).value<uint64_t>());
         track.setLibraryId(q.value(26).toInt());
 
+        track.generateHash();
+
         result.emplace_back(track);
     }
 

@@ -167,6 +167,8 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
                 Track changedTrack{*libraryTrack};
                 fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
                 if(fileWasRead) {
+                    // Regenerate hash
+                    changedTrack.generateHash();
                     tracksToUpdate.emplace_back(changedTrack);
                     continue;
                 }
@@ -178,6 +180,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
 
         fileWasRead = Tagging::readMetaData(track, Tagging::Quality::Quality);
         if(fileWasRead) {
+            track.generateHash();
             tracksToStore.emplace_back(track);
             if(tracksToStore.size() >= 500) {
                 storeTracks(tracksToStore);
