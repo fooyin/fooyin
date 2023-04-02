@@ -32,7 +32,6 @@
 #include <core/plugins/pluginmanager.h>
 
 #include <gui/controls/controlwidget.h>
-#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guiplugin.h>
 #include <gui/info/infowidget.h>
@@ -52,7 +51,7 @@ namespace Fy {
 Application::Application(int& argc, char** argv, int flags)
     : QApplication{argc, argv, flags}
     , m_actionManager{new Utils::ActionManager(this)}
-    , m_settingsManager{new Utils::SettingsManager(Core::settingsPath(), &m_settingsDialogController, this)}
+    , m_settingsManager{new Utils::SettingsManager(Core::settingsPath(), this)}
     , m_coreSettings{m_settingsManager}
     , m_threadManager{new Utils::ThreadManager(this)}
     , m_database{m_settingsManager}
@@ -62,12 +61,9 @@ Application::Application(int& argc, char** argv, int flags)
     , m_libraryManager{new Core::Library::LibraryManager(m_threadManager, &m_database, m_settingsManager, this)}
     , m_library{m_libraryManager->currentLibrary()}
     , m_playlistInterface{std::make_unique<Core::Playlist::LibraryPlaylistManager>(m_library, m_playlistHandler)}
-    , m_widgetProvider{&m_widgetFactory}
     , m_guiSettings{m_settingsManager}
-    , m_editableLayout{new Gui::Widgets::EditableLayout(m_settingsManager, m_actionManager, &m_widgetFactory,
-                                                        &m_widgetProvider, &m_layoutProvider)}
-    , m_mainWindow{new Gui::MainWindow(m_actionManager, m_playerManager, m_libraryManager, m_settingsManager,
-                                       &m_layoutProvider, m_editableLayout)}
+    , m_mainWindow{std::make_unique<Gui::MainWindow>(m_actionManager, m_playerManager, m_libraryManager,
+                                                     m_settingsManager, &m_layoutProvider, &m_widgetFactory)}
     , m_libraryGeneralPage{m_libraryManager, m_settingsManager}
     , m_guiGeneralPage{m_settingsManager}
     , m_playlistGuiPage{m_settingsManager}
@@ -97,7 +93,7 @@ void Application::startup()
     m_mainWindow->setupUi();
 
     if(m_settingsManager->value<Core::Settings::WaitForTracks>()) {
-        connect(m_library, &Core::Library::MusicLibrary::allTracksLoaded, m_mainWindow, &Gui::MainWindow::show);
+        connect(m_library, &Core::Library::MusicLibrary::allTracksLoaded, m_mainWindow.get(), &Gui::MainWindow::show);
     }
     else {
         m_mainWindow->show();
@@ -106,6 +102,7 @@ void Application::startup()
 
 void Application::shutdown()
 {
+    m_mainWindow.reset(nullptr);
     m_threadManager->shutdown();
     m_pluginManager->shutdown();
     m_settingsManager->storeSettings();
@@ -134,20 +131,6 @@ void Application::registerWidgets()
     m_widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {
         return new Gui::Widgets::Spacer();
     });
-
-    m_widgetFactory.registerClass<Gui::Widgets::VerticalSplitterWidget>(
-        "SplitterVertical",
-        [this]() {
-            return new Gui::Widgets::VerticalSplitterWidget(m_actionManager, &m_widgetProvider, m_settingsManager);
-        },
-        "Vertical Splitter", {"Splitter"});
-
-    m_widgetFactory.registerClass<Gui::Widgets::HorizontalSplitterWidget>(
-        "SplitterHorizontal",
-        [this]() {
-            return new Gui::Widgets::HorizontalSplitterWidget(m_actionManager, &m_widgetProvider, m_settingsManager);
-        },
-        "Horizontal Splitter", {"Splitter"});
 
     m_widgetFactory.registerClass<Gui::Widgets::StatusWidget>("Status", [this]() {
         return new Gui::Widgets::StatusWidget(m_playerManager);

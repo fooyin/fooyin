@@ -47,17 +47,18 @@
 namespace Fy::Gui {
 MainWindow::MainWindow(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
                        Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings,
-                       LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout, QWidget* parent)
+                       LayoutProvider* layoutProvider, Widgets::WidgetFactory* widgetFactory, QWidget* parent)
     : QMainWindow{parent}
     , m_actionManager{actionManager}
     , m_playerManager{playerManager}
     , m_libraryManager{libraryManager}
     , m_settings{settings}
-    , m_editableLayout{editableLayout}
+    , m_widgetFactory{widgetFactory}
     , m_layoutProvider{layoutProvider}
+    , m_editableLayout{
+          new Widgets::EditableLayout(m_settings, m_actionManager, m_widgetFactory, m_layoutProvider, this)}
 {
     actionManager->setMainWindow(this);
-    setAttribute(Qt::WA_DeleteOnClose);
 
     setupMenu();
     registerLayouts();

@@ -21,19 +21,15 @@
 
 #include "coreplugincontext.h"
 
-#include "core/plugins/plugin.h"
-
 #include <QtPlugin>
 
 namespace Fy::Core {
-class CorePlugin : public Plugins::Plugin
+class CorePlugin
 {
 public:
-    virtual void initialise(const CorePluginContext& context)
-    {
-        Q_UNUSED(context)
-    };
-    void shutdown() override{};
+    virtual ~CorePlugin() = default;
+
+    virtual void initialise(const CorePluginContext& context) = 0;
 };
 } // namespace Fy::Core
 

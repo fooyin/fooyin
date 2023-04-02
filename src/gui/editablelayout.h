@@ -20,6 +20,7 @@
 #pragma once
 
 #include "layoutprovider.h"
+#include "widgetprovider.h"
 
 #include <QWidget>
 
@@ -37,7 +38,6 @@ class SettingsManager;
 namespace Gui::Widgets {
 class FyWidget;
 class WidgetFactory;
-class WidgetProvider;
 class SplitterWidget;
 
 class EditableLayout : public QWidget
@@ -46,8 +46,7 @@ class EditableLayout : public QWidget
 
 public:
     explicit EditableLayout(Utils::SettingsManager* settings, Utils::ActionManager* actionManager,
-                            WidgetFactory* widgetFactory, WidgetProvider* widgetProvider,
-                            LayoutProvider* layoutProvider, QWidget* parent = nullptr);
+                            WidgetFactory* widgetFactory, LayoutProvider* layoutProvider, QWidget* parent = nullptr);
 
     void initialise();
 
@@ -69,7 +68,7 @@ private:
     Utils::ActionManager* m_actionManager;
     Utils::SettingsManager* m_settings;
     Widgets::WidgetFactory* m_widgetFactory;
-    Widgets::WidgetProvider* m_widgetProvider;
+    Widgets::WidgetProvider m_widgetProvider;
     LayoutProvider* m_layoutProvider;
 
     Utils::ActionContainer* m_menu;

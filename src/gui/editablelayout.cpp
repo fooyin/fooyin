@@ -76,13 +76,12 @@ FyWidget* splitterChild(QWidget* widget)
 }
 
 EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionManager* actionManager,
-                               WidgetFactory* widgetFactory, WidgetProvider* widgetProvider,
-                               LayoutProvider* layoutProvider, QWidget* parent)
+                               WidgetFactory* widgetFactory, LayoutProvider* layoutProvider, QWidget* parent)
     : QWidget{parent}
     , m_actionManager{actionManager}
     , m_settings{settings}
     , m_widgetFactory{widgetFactory}
-    , m_widgetProvider{widgetProvider}
+    , m_widgetProvider{m_widgetFactory}
     , m_layoutProvider{layoutProvider}
     , m_menu{actionManager->createMenu(Constants::Menus::Context::Layout)}
     , m_box{new QHBoxLayout(this)}
@@ -96,6 +95,20 @@ EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionMa
     m_menu->appendGroup(Constants::Groups::Three);
 
     m_box->setContentsMargins(5, 5, 5, 5);
+
+    m_widgetFactory->registerClass<Gui::Widgets::VerticalSplitterWidget>(
+        "SplitterVertical",
+        [this]() {
+            return new Gui::Widgets::VerticalSplitterWidget(m_actionManager, &m_widgetProvider, m_settings);
+        },
+        "Vertical Splitter", {"Splitter"});
+
+    m_widgetFactory->registerClass<Gui::Widgets::HorizontalSplitterWidget>(
+        "SplitterHorizontal",
+        [this]() {
+            return new Gui::Widgets::HorizontalSplitterWidget(m_actionManager, &m_widgetProvider, m_settings);
+        },
+        "Horizontal Splitter", {"Splitter"});
 }
 
 void EditableLayout::initialise()
@@ -107,7 +120,7 @@ void EditableLayout::initialise()
 
     const bool loaded = loadLayout();
     if(!loaded) {
-        m_splitter = qobject_cast<SplitterWidget*>(m_widgetProvider->createWidget("SplitterVertical"));
+        m_splitter = qobject_cast<SplitterWidget*>(m_widgetProvider.createWidget("SplitterVertical"));
         m_splitter->setParent(this);
         m_box->addWidget(m_splitter);
     }
@@ -150,7 +163,7 @@ void EditableLayout::setupWidgetMenu(Utils::ActionContainer* menu, FyWidget* par
         }
         auto* addWidget = new QAction(widget.second.name, parentMenu);
         QAction::connect(addWidget, &QAction::triggered, this, [this, parent, replace, widget, splitter] {
-            FyWidget* newWidget = m_widgetProvider->createWidget(widget.first);
+            FyWidget* newWidget = m_widgetProvider.createWidget(widget.first);
             if(replace) {
                 splitter->replaceWidget(parent, newWidget);
             }
@@ -282,7 +295,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
                 auto widget      = first->toObject();
                 if(!widget.isEmpty()) {
                     const auto name = widget.constBegin().key();
-                    if(auto* splitter = qobject_cast<SplitterWidget*>(m_widgetProvider->createWidget(name))) {
+                    if(auto* splitter = qobject_cast<SplitterWidget*>(m_widgetProvider.createWidget(name))) {
                         m_splitter   = splitter;
                         auto options = widget.value(name).toObject();
                         m_splitter->loadLayout(options);

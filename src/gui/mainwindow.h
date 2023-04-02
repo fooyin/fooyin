@@ -50,8 +50,9 @@ class LibraryMenu;
 class HelpMenu;
 
 namespace Widgets {
+class WidgetFactory;
 class EditableLayout;
-}
+} // namespace Widgets
 
 class MainWindow : public QMainWindow
 {
@@ -60,9 +61,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
                         Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings,
-                        LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,
+                        LayoutProvider* layoutProvider, Widgets::WidgetFactory* widgetFactory,
                         QWidget* parent = nullptr);
-    ~MainWindow() override;
+
+    ~MainWindow();
 
     void setupUi();
     void setupMenu();
@@ -82,7 +84,7 @@ private:
     Core::Player::PlayerManager* m_playerManager;
     Core::Library::LibraryManager* m_libraryManager;
     Utils::SettingsManager* m_settings;
-    Widgets::EditableLayout* m_editableLayout;
+    Widgets::WidgetFactory* m_widgetFactory;
 
     MainMenuBar* m_mainMenu;
     FileMenu* m_fileMenu;
@@ -94,6 +96,7 @@ private:
 
     LayoutProvider* m_layoutProvider;
     QuickSetupDialog* m_quickSetupDialog;
+    Widgets::EditableLayout* m_editableLayout;
 };
 } // namespace Gui
 } // namespace Fy
