@@ -107,6 +107,7 @@ void Application::startup()
 void Application::shutdown()
 {
     m_threadManager->shutdown();
+    m_mainWindow->shutdown();
     m_pluginManager->shutdown();
     m_settingsManager->storeSettings();
     m_database.closeDatabase();

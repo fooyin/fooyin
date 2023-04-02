@@ -63,10 +63,10 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Core::Player::Player
     registerLayouts();
 }
 
-MainWindow::~MainWindow()
+void MainWindow::shutdown()
 {
     m_settings->set<Settings::Geometry>(saveGeometry().toBase64());
-    m_editableLayout->saveLayout();
+    m_editableLayout->shutdown();
 }
 
 void MainWindow::setupUi()

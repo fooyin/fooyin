@@ -78,10 +78,13 @@ void PluginManager::loadPlugins()
 
 void PluginManager::loadPlugin(PluginInfo* plugin)
 {
-    if(plugin->hasError() || plugin->isDisabled()) {
+    if(plugin->isDisabled()) {
         return;
     }
     plugin->load();
+    if(plugin->hasError()) {
+        qCritical() << plugin->error();
+    }
 }
 
 void PluginManager::unloadPlugins()

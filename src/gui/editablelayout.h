@@ -50,6 +50,7 @@ public:
                             LayoutProvider* layoutProvider, QWidget* parent = nullptr);
 
     void initialise();
+    void shutdown();
 
     Utils::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const;
     void setupWidgetMenu(Utils::ActionContainer* menu, FyWidget* parent, bool replace = false);

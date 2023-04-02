@@ -62,7 +62,8 @@ public:
                         Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings,
                         LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,
                         QWidget* parent = nullptr);
-    ~MainWindow() override;
+
+    void shutdown();
 
     void setupUi();
     void setupMenu();

@@ -21,19 +21,15 @@
 
 #include "guiplugincontext.h"
 
-#include <core/plugins/plugin.h>
-
 #include <QtPlugin>
 
 namespace Fy::Gui {
-class GuiPlugin : public Plugins::Plugin
+class GuiPlugin
 {
 public:
-    virtual void initialise(const GuiPluginContext& context)
-    {
-        Q_UNUSED(context)
-    };
-    void shutdown() override{};
+    virtual ~GuiPlugin() = default;
+
+    virtual void initialise(const GuiPluginContext& context) = 0;
 };
 } // namespace Fy::Gui
 

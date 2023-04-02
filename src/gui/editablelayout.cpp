@@ -117,6 +117,12 @@ void EditableLayout::initialise()
     qApp->installEventFilter(this);
 }
 
+void EditableLayout::shutdown()
+{
+    saveLayout();
+    m_splitter->deleteLater();
+}
+
 Utils::ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QString& title) const
 {
     auto id       = parent->id().append(title);

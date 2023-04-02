@@ -59,4 +59,8 @@ void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
     });
 }
 
+void FiltersPlugin::shutdown()
+{
+
+}
 } // namespace Fy::Filters
