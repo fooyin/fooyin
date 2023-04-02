@@ -34,13 +34,12 @@ class SettingsManager : public QObject
     Q_OBJECT
 
 public:
-    explicit SettingsManager(const QString& settingsPath, SettingsDialogController* settingsDialog,
-                             QObject* parent = nullptr);
+    explicit SettingsManager(const QString& settingsPath, QObject* parent = nullptr);
 
     void loadSettings();
     void storeSettings();
 
-    SettingsDialogController* settingsDialog() const;
+    [[nodiscard]] SettingsDialogController* settingsDialog() const;
 
     template <auto key>
     static int constexpr findType()

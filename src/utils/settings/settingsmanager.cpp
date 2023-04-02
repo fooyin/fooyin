@@ -19,13 +19,15 @@
 
 #include "settingsmanager.h"
 
+#include <utils/settings/settingsdialogcontroller.h>
+
 #include <QSettings>
 
 namespace Fy::Utils {
-SettingsManager::SettingsManager(const QString& settingsPath, SettingsDialogController* settingsDialog, QObject* parent)
+SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
     , m_settingsFile{settingsPath, QSettings::IniFormat, this}
-    , m_settingsDialog{settingsDialog}
+    , m_settingsDialog{new SettingsDialogController(this)}
 { }
 
 void SettingsManager::loadSettings()

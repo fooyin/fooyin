@@ -32,9 +32,6 @@
 #include <gui/settings/librarygeneralpage.h>
 #include <gui/settings/playlistguipage.h>
 #include <gui/widgetfactory.h>
-#include <gui/widgetprovider.h>
-
-#include <utils/settings/settingsdialogcontroller.h>
 
 #include <QApplication>
 
@@ -67,10 +64,6 @@ class MusicLibrary;
 
 namespace Gui {
 class MainWindow;
-
-namespace Widgets {
-class EditableLayout;
-}
 } // namespace Gui
 
 class Application : public QApplication
@@ -102,13 +95,9 @@ private:
     std::unique_ptr<Core::Playlist::LibraryPlaylistInterface> m_playlistInterface;
 
     Gui::Widgets::WidgetFactory m_widgetFactory;
-    Gui::Widgets::WidgetProvider m_widgetProvider;
     Gui::Settings::GuiSettings m_guiSettings;
-    Gui::Widgets::EditableLayout* m_editableLayout;
     Gui::LayoutProvider m_layoutProvider;
-    Gui::MainWindow* m_mainWindow;
-
-    Utils::SettingsDialogController m_settingsDialogController;
+    std::unique_ptr<Gui::MainWindow> m_mainWindow;
 
     //    Gui::Settings::GeneralPage m_generalPage;
     Gui::Settings::LibraryGeneralPage m_libraryGeneralPage;
