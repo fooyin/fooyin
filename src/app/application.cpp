@@ -92,7 +92,7 @@ void Application::startup()
 
     m_mainWindow->setupUi();
 
-    if(m_settingsManager->value<Core::Settings::WaitForTracks>()) {
+    if(m_libraryManager->hasLibrary() && m_settingsManager->value<Core::Settings::WaitForTracks>()) {
         connect(m_library, &Core::Library::MusicLibrary::allTracksLoaded, m_mainWindow.get(), &Gui::MainWindow::show);
     }
     else {
@@ -124,8 +124,8 @@ void Application::registerWidgets()
     });
 
     m_widgetFactory.registerClass<Gui::Widgets::PlaylistWidget>("Playlist", [this]() {
-        return new Gui::Widgets::PlaylistWidget(m_libraryManager, m_playlistHandler, m_playerManager,
-                                                m_settingsManager);
+        return new Gui::Widgets::PlaylistWidget(
+            m_libraryManager, m_playlistHandler, m_playerManager, m_settingsManager);
     });
 
     m_widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {
