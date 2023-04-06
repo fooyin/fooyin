@@ -19,13 +19,14 @@
 
 #pragma once
 
-#include "core/scripting/scriptvalue.h"
+#include <QStringList>
 
 namespace Fy::Core::Scripting {
-QString add(const StringList& vec);
-QString sub(const StringList& vec);
-QString mul(const StringList& vec);
-QString div(const StringList& vec);
-QString min(const StringList& vec);
-QString max(const StringList& vec);
+QString add(const QStringList& vec);
+QString sub(const QStringList& vec);
+QString mul(const QStringList& vec);
+QString div(const QStringList& vec);
+QString mod(const QStringList& vec);
+QString min(const QStringList& vec);
+QString max(const QStringList& vec);
 } // namespace Fy::Core::Scripting

@@ -20,7 +20,7 @@
 #include "controlfuncs.h"
 
 namespace Fy::Core::Scripting {
-Value cif(const ValueList& vec)
+ScriptResult cif(const ValueList& vec)
 {
     const auto size = vec.size();
     if(size < 2 || size > 3) {
@@ -34,4 +34,41 @@ Value cif(const ValueList& vec)
     }
     return {};
 }
+
+ScriptResult ifequal(const ValueList& vec)
+{
+    const auto size = vec.size();
+    if(size != 4) {
+        return {};
+    }
+    if(vec[0].value.toDouble() == vec[1].value.toDouble()) {
+        return vec[2];
+    }
+    return vec[3];
+}
+
+ScriptResult ifgreater(const ValueList& vec)
+{
+    const auto size = vec.size();
+    if(size != 4) {
+        return {};
+    }
+    if(vec[0].value.toDouble() > vec[1].value.toDouble()) {
+        return vec[2];
+    }
+    return vec[3];
+}
+
+ScriptResult iflonger(const ValueList& vec)
+{
+    const auto size = vec.size();
+    if(size != 4) {
+        return {};
+    }
+    if(vec[0].value.size() > vec[1].value.size()) {
+        return vec[2];
+    }
+    return vec[3];
+}
+
 } // namespace Fy::Core::Scripting

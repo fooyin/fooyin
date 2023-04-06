@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022, Luke Taylor <LukeT1@proton.me>
+ * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,34 @@
 
 #pragma once
 
-#include "core/scripting/scriptvalue.h"
+#include <QString>
 
 namespace Fy::Core::Scripting {
-ScriptResult cif(const ValueList& vec);
-ScriptResult ifequal(const ValueList& vec);
-ScriptResult ifgreater(const ValueList& vec);
-ScriptResult iflonger(const ValueList& vec);
-}
+enum ExprType : int
+{
+    Literal     = 0,
+    Variable    = 1,
+    Function    = 2,
+    FunctionArg = 3,
+    Conditional = 4,
+    Null        = 5
+};
+
+struct Expression;
+
+struct FuncValue
+{
+    QString name;
+    std::vector<Expression> args;
+};
+
+using ExpressionList = std::vector<Expression>;
+
+using ExpressionValue = std::variant<QString, FuncValue, ExpressionList>;
+
+struct Expression
+{
+    ExprType type{Null};
+    ExpressionValue value{""};
+};
+} // namespace Fy::Core::Scripting

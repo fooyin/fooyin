@@ -20,142 +20,84 @@
 #include "scriptscanner.h"
 
 namespace Fy::Core::Scripting {
-bool isAtEnd(const State& s)
+bool isLiteral(QChar ch)
 {
-    return *s.current == '\0';
-}
-
-QChar advance(State& s)
-{
-    std::advance(s.current, 1);
-    return *std::prev(s.current);
-}
-
-QChar peek(const State& s)
-{
-    return *s.current;
-}
-
-QChar peekNext(const State& s)
-{
-    if(isAtEnd(s)) {
-        return '\0';
-    }
-    return *std::next(s.current);
-}
-
-void consume(State& s)
-{
-    s.start = s.current;
-}
-
-Expression parseLiteral(State& s)
-{
-    while(peek(s) != '%' && peek(s) != '$' && !isAtEnd(s)) {
-        advance(s);
-    }
-    Expression expr{Literal};
-    expr.value = LiteralValue{QString{s.start, s.current - s.start}};
-    return expr;
-}
-
-Expression parseVariable(State& s)
-{
-    consume(s);
-    while(peek(s) != '%' && !isAtEnd(s)) {
-        advance(s);
-    }
-    Expression expr{Variable};
-    expr.value = VarValue{QString{s.start, s.current - s.start}};
-
-    if(!isAtEnd(s)) {
-        advance(s);
-    }
-    return expr;
+    return (ch != TokComma && ch != TokQuote && ch != TokLeftParen && ch != TokRightParen && ch != TokLeftSquare
+            && ch != TokFunc && ch != TokVar && ch != TokEscape);
 }
 
 void Scanner::setup(const QString& input)
 {
-    m_state.start   = input.constData();
-    m_state.current = m_state.start;
+    m_input   = input;
+    m_start   = m_input.cbegin();
+    m_current = m_start;
 }
 
-Expression Scanner::scanNext()
+Token Scanner::scanNext()
 {
-    return scanNext(m_state);
-}
+    m_start = m_current;
 
-Expression Scanner::scanNext(State& s)
-{
-    s.start = s.current;
-
-    if(isAtEnd(s)) {
-        return {};
+    if(isAtEnd()) {
+        return makeToken(TokEos);
     }
 
-    const QChar c = advance(s);
+    const QChar c = advance();
 
     switch(c.cell()) {
-        case '$': {
-            return parseFunction(s);
-        }
-        case '%': {
-            return parseVariable(s);
-        }
-        default: {
-            return parseLiteral(s);
-        }
-    };
-    return {};
+        case('('):
+            return makeToken(TokLeftParen);
+        case(')'):
+            return makeToken(TokRightParen);
+        case('['):
+            return makeToken(TokLeftSquare);
+        case(']'):
+            return makeToken(TokRightSquare);
+        case('$'):
+            return makeToken(TokFunc);
+        case('%'):
+            return makeToken(TokVar);
+        case(','):
+            return makeToken(TokComma);
+        case('"'):
+            return makeToken(TokQuote);
+        case('\\'):
+            return makeToken(TokEscape);
+        default:
+            return literal();
+    }
 }
 
-Expression Scanner::parseFunction(State& s)
+Token Scanner::makeToken(TokenType type) const
 {
-    consume(s);
-    while(peek(s) != '(' && !isAtEnd(s)) {
-        advance(s);
-    }
-    Expression expr{Function};
-    FuncValue val{QString{s.start, s.current - s.start}, {}};
-
-    advance(s);
-    consume(s);
-
-    int nestedCount{0};
-
-    while(peek(s) != ')' || nestedCount > 0) {
-        if(isAtEnd(s)) {
-            break;
-        }
-        if(nestedCount == 0 && peek(s) == ',') {
-            val.args.emplace_back(parseFunctionArg(s));
-            advance(s);
-            consume(s);
-            continue;
-        }
-        if(peek(s) == '$') {
-            ++nestedCount;
-        }
-        else if(peek(s) == ')') {
-            --nestedCount;
-        }
-        advance(s);
-    }
-
-    val.args.emplace_back(parseFunctionArg(s));
-    expr.value = val;
-
-    if(!isAtEnd(s)) {
-        advance(s);
-    }
-    return expr;
+    Token token;
+    token.type     = type;
+    token.value    = {m_start, m_current - m_start};
+    token.position = static_cast<int>(m_start - m_input.cbegin());
+    return token;
 }
 
-Expression Scanner::parseFunctionArg(State& s)
+Token Scanner::literal()
 {
-    QString const arg{s.start, s.current - s.start};
-    State argState;
-    argState.current = arg.constData();
-    return scanNext(argState);
+    while(isLiteral(peek()) && !isAtEnd()) {
+        advance();
+    }
+
+    return makeToken(TokLiteral);
+}
+
+bool Scanner::isAtEnd() const
+{
+    return *m_current == '\0';
+}
+
+QChar Scanner::advance()
+{
+    std::advance(m_current, 1);
+    return *std::prev(m_current);
+}
+
+QChar Scanner::peek() const
+{
+    return *m_current;
 }
 } // namespace Fy::Core::Scripting

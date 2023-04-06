@@ -31,6 +31,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 fooyin_option(FOOYIN_STATIC "Build fooyin libraries as static." OFF)
+fooyin_option(BUILD_TESTS "Build fooyin tests." OFF)
 
 find_package(
     Qt6
@@ -46,11 +47,20 @@ set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
 
+find_package(
+    Qt6
+    COMPONENTS
+    Test
+)
+set_package_properties(Qt6Test PROPERTIES TYPE OPTIONAL)
+
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(Libmpv)
 
 set_package_properties(Taglib PROPERTIES TYPE REQUIRED)
 set_package_properties(Libmpv PROPERTIES TYPE REQUIRED)
+
+find_package(GTest)
 
 #find_package(FFmpeg
 #                COMPONENTS
@@ -102,6 +112,12 @@ target_link_libraries(fooyin_lib
 
 target_compile_features(fooyin_lib PUBLIC cxx_std_17)
 target_compile_options(fooyin_lib PRIVATE -Werror -Wall -Wextra -Wpedantic)
+
+# ---- Fooyin testing ----
+
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
 
 # ---- Fooyin executable ----
 

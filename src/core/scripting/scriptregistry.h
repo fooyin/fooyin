@@ -23,26 +23,49 @@
 
 #include <QObject>
 
-namespace Fy::Core::Scripting {
+namespace Fy::Core {
+class Track;
+
+namespace Scripting {
 class Registry
 {
 public:
     Registry();
 
-    Value varValue(const QString& var);
-    Value function(const QString& func, const ValueList& args);
+    bool varExists(const QString& var) const;
+    bool funcExists(const QString& func) const;
 
-    template <typename F, typename C>
-    F containerCast(C&& from)
+    ScriptResult varValue(const QString& var) const;
+    ScriptResult function(const QString& func, const ValueList& args) const;
+
+    void changeCurrentTrack(Track* track);
+
+    template <typename NewCntr, typename Cntr>
+    NewCntr containerCast(Cntr&& from) const
     {
-        return F(from.cbegin(), from.cend());
+        return NewCntr(from.cbegin(), from.cend());
     }
 
 private:
-    void addDefaultFunctions();
+    using NativeFunc     = QString (*)(const QStringList&);
+    using NativeCondFunc = ScriptResult (*)(const ValueList&);
 
+    using Func = std::variant<NativeFunc, NativeCondFunc>;
+
+    using StringFunc     = QString (Track::*)();
+    using IntegerFunc    = int (Track::*)();
+    using StringListFunc = QStringList (Track::*)();
+    using U64Func        = uint64_t (Track::*)();
+
+    using TrackFunc = std::variant<StringFunc, IntegerFunc, StringListFunc, U64Func>;
+
+    void addDefaultFunctions();
+    void addDefaultMetadata();
+
+    Track* m_currentTrack;
+    std::unordered_map<QString, TrackFunc> m_metadata;
     std::unordered_map<QString, QVariant> m_vars;
-    std::unordered_map<QString, StringList> m_metadata;
     std::unordered_map<QString, Func> m_funcs;
 };
-} // namespace Fy::Core::Scripting
+} // namespace Scripting
+} // namespace Fy::Core

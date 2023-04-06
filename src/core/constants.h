@@ -24,4 +24,30 @@ constexpr auto AppName     = "fooyin";
 constexpr auto DisplayName = "Fooyin";
 
 constexpr auto Separator = "\037"; // ASCII Code 31 - ␟
+
+namespace MetaData {
+constexpr auto Title        = "title";
+constexpr auto Artist       = "artist";
+constexpr auto Album        = "album";
+constexpr auto AlbumArtist  = "albumartist";
+constexpr auto Track        = "track";
+constexpr auto TrackTotal   = "tracktotal";
+constexpr auto Disc         = "disc";
+constexpr auto DiscTotal    = "disctotal";
+constexpr auto Genre        = "genre";
+constexpr auto Composer     = "composer";
+constexpr auto Performer    = "performer";
+constexpr auto Duration     = "duration";
+constexpr auto Lyrics       = "lyrics";
+constexpr auto Comment      = "comment";
+constexpr auto Date         = "date";
+constexpr auto Year         = "year";
+constexpr auto Cover        = "cover";
+constexpr auto FileSize     = "filesize";
+constexpr auto Bitrate      = "bitrate";
+constexpr auto SampleRate   = "samplerate";
+constexpr auto PlayCount    = "playcount";
+constexpr auto AddedTime    = "addedtime";
+constexpr auto ModifiedTime = "modifiedtime";
+} // namespace MetaData
 } // namespace Fy::Core::Constants
