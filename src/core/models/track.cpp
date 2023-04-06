@@ -19,34 +19,43 @@
 
 #include "track.h"
 
+#include "core/constants.h"
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 
 namespace Fy::Core {
+Track::Track()
+    : Track("")
+{ }
+
 Track::Track(QString filepath)
-    : MusicItem()
-    , m_enabled{true}
+    : m_enabled{true}
     , m_libraryId{-1}
     , m_id{-1}
     , m_filepath{std::move(filepath)}
-    , m_trackNumber{0}
-    , m_trackTotal{0}
-    , m_discNumber{0}
-    , m_discTotal{0}
+    , m_trackNumber{-1}
+    , m_trackTotal{-1}
+    , m_discNumber{-1}
+    , m_discTotal{-1}
     , m_duration{0}
     , m_filesize{0}
-    , m_bitrate{0}
-    , m_sampleRate{0}
+    , m_bitrate{-1}
+    , m_sampleRate{-1}
     , m_playcount{0}
+    , m_addedTime{0}
     , m_modifiedTime{0}
 { }
 
 QString Track::generateHash()
 {
-    m_hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(
-        m_artists.join(","), m_album, QString::number(m_year), QString::number(m_discNumber),
-        QStringLiteral("%1").arg(m_trackNumber, 2, 10, QLatin1Char('0')), QString::number(m_duration));
+    m_hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(m_artists.join(","),
+                                              m_album,
+                                              QString::number(m_year),
+                                              QString::number(m_discNumber),
+                                              QStringLiteral("%1").arg(m_trackNumber, 2, 10, QLatin1Char('0')),
+                                              QString::number(m_duration));
     return m_hash;
 }
 
@@ -85,6 +94,11 @@ QStringList Track::artists() const
     return m_artists;
 }
 
+QString Track::artist() const
+{
+    return m_artists.join(Constants::Separator);
+}
+
 QString Track::album() const
 {
     return m_album;
@@ -118,6 +132,11 @@ int Track::discTotal() const
 QStringList Track::genres() const
 {
     return m_genres;
+}
+
+QString Track::genre() const
+{
+    return m_genres.join(Constants::Separator);
 }
 
 QString Track::composer() const

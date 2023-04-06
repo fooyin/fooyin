@@ -23,6 +23,7 @@
 #include "artist.h"
 #include "track.h"
 
+#include <set>
 #include <unordered_map>
 
 namespace Fy::Core {
