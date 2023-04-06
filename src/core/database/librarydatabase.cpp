@@ -32,30 +32,30 @@ namespace Fy::Core::DB {
 QMap<QString, QVariant> getTrackBindings(const Track& track)
 {
     return QMap<QString, QVariant>{
-        {QStringLiteral("FilePath"), Utils::File::cleanPath(track.filepath())},
-        {QStringLiteral("Title"), track.title()},
-        {QStringLiteral("TrackNumber"), track.trackNumber()},
-        {QStringLiteral("TrackTotal"), track.trackTotal()},
-        {QStringLiteral("Artists"), track.artists().join(Constants::Separator)},
-        {QStringLiteral("AlbumArtist"), track.albumArtist()},
-        {QStringLiteral("Album"), track.album()},
-        {QStringLiteral("CoverPath"), track.coverPath()},
-        {QStringLiteral("DiscNumber"), track.discNumber()},
-        {QStringLiteral("DiscTotal"), track.discTotal()},
-        {QStringLiteral("Date"), track.date()},
-        {QStringLiteral("Composer"), track.composer()},
-        {QStringLiteral("Performer"), track.performer()},
-        {QStringLiteral("Genres"), track.genres().join(Constants::Separator)},
-        {QStringLiteral("Lyrics"), track.lyrics()},
-        {QStringLiteral("Comment"), track.comment()},
-        {QStringLiteral("Duration"), QVariant::fromValue(track.duration())},
-        {QStringLiteral("FileSize"), QVariant::fromValue(track.fileSize())},
-        {QStringLiteral("BitRate"), track.bitrate()},
-        {QStringLiteral("SampleRate"), track.sampleRate()},
-        {QStringLiteral("ExtraTags"), track.extraTagsToJson()},
-        {QStringLiteral("AddedDate"), QVariant::fromValue(track.addedTime())},
-        {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime())},
-        {QStringLiteral("LibraryID"), track.libraryId()},
+        {QStringLiteral("FilePath"),     Utils::File::cleanPath(track.filepath())  },
+        {QStringLiteral("Title"),        track.title()                             },
+        {QStringLiteral("TrackNumber"),  track.trackNumber()                       },
+        {QStringLiteral("TrackTotal"),   track.trackTotal()                        },
+        {QStringLiteral("Artists"),      track.artists().join(Constants::Separator)},
+        {QStringLiteral("AlbumArtist"),  track.albumArtist()                       },
+        {QStringLiteral("Album"),        track.album()                             },
+        {QStringLiteral("CoverPath"),    track.coverPath()                         },
+        {QStringLiteral("DiscNumber"),   track.discNumber()                        },
+        {QStringLiteral("DiscTotal"),    track.discTotal()                         },
+        {QStringLiteral("Date"),         track.date()                              },
+        {QStringLiteral("Composer"),     track.composer()                          },
+        {QStringLiteral("Performer"),    track.performer()                         },
+        {QStringLiteral("Genres"),       track.genres().join(Constants::Separator) },
+        {QStringLiteral("Lyrics"),       track.lyrics()                            },
+        {QStringLiteral("Comment"),      track.comment()                           },
+        {QStringLiteral("Duration"),     QVariant::fromValue(track.duration())     },
+        {QStringLiteral("FileSize"),     QVariant::fromValue(track.fileSize())     },
+        {QStringLiteral("BitRate"),      track.bitrate()                           },
+        {QStringLiteral("SampleRate"),   track.sampleRate()                        },
+        {QStringLiteral("ExtraTags"),    track.extraTagsToJson()                   },
+        {QStringLiteral("AddedDate"),    QVariant::fromValue(track.addedTime())    },
+        {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime()) },
+        {QStringLiteral("LibraryID"),    track.libraryId()                         },
     };
 }
 
@@ -185,7 +185,10 @@ QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& j
     const auto joinedFields = fields.join(", ");
 
     return QString("SELECT %1 FROM Tracks %2 WHERE %3 ORDER BY %4 %5;")
-        .arg(joinedFields, join.isEmpty() ? "" : join, where.isEmpty() ? "1" : where, order.isEmpty() ? "1" : order,
+        .arg(joinedFields,
+             join.isEmpty() ? "" : join,
+             where.isEmpty() ? "1" : where,
+             order.isEmpty() ? "1" : order,
              offsetLimit);
 }
 
@@ -205,7 +208,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setTitle(q.value(2).toString());
         track.setTrackNumber(q.value(3).toInt());
         track.setTrackTotal(q.value(4).toInt());
-        track.setArtists(q.value(5).toString().split(Constants::Separator));
+        track.setArtists(q.value(5).toString().split(Constants::Separator, Qt::SkipEmptyParts));
         track.setAlbumArtist(q.value(6).toString());
         track.setAlbum(q.value(7).toString());
         track.setCoverPath(q.value(8).toString());
@@ -214,7 +217,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setDate(q.value(11).toString());
         track.setComposer(q.value(12).toString());
         track.setPerformer(q.value(13).toString());
-        track.setGenres(q.value(14).toString().split(Constants::Separator));
+        track.setGenres(q.value(14).toString().split(Constants::Separator, Qt::SkipEmptyParts));
         track.setLyrics(q.value(15).toString());
         track.setComment(q.value(16).toString());
         track.setDuration(q.value(17).value<uint64_t>());
@@ -245,8 +248,8 @@ bool LibraryDatabase::updateTrack(const Track& track)
 
     auto bindings = getTrackBindings(track);
 
-    const auto q = module()->update("Tracks", bindings, {"TrackID", track.id()},
-                                    QString("Cannot update track %1").arg(track.filepath()));
+    const auto q = module()->update(
+        "Tracks", bindings, {"TrackID", track.id()}, QString("Cannot update track %1").arg(track.filepath()));
 
     return !q.hasError();
 }
