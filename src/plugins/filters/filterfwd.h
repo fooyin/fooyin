@@ -28,7 +28,7 @@
 namespace Fy::Filters {
 struct FilterField
 {
-    int index;
+    int index{-1};
     QString name;
     QString field;
     QString sortField;
