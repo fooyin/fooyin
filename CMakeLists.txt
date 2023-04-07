@@ -47,13 +47,6 @@ set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
 
-find_package(
-    Qt6
-    COMPONENTS
-    Test
-)
-set_package_properties(Qt6Test PROPERTIES TYPE OPTIONAL)
-
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(Libmpv)
 

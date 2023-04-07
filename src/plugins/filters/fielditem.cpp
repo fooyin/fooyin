@@ -17,27 +17,21 @@
  *
  */
 
-#pragma once
+#include "fielditem.h"
 
-#include "filterfwd.h"
+namespace Fy::Filters::Settings {
+FieldItem::FieldItem(FilterField field, FieldItem* parent)
+    : TreeItem{parent}
+    , m_field{std::move(field)}
+{ }
 
-#include <utils/helpers.h>
-
-namespace Fy::Filters {
-class FilterStore
+FilterField FieldItem::field() const
 {
-public:
-    [[nodiscard]] FilterList filters() const;
+    return m_field;
+}
 
-    LibraryFilter* addFilter(const FilterField& field);
-    void removeFilter(int index);
-
-    [[nodiscard]] bool hasActiveFilters() const;
-    [[nodiscard]] FilterList activeFilters() const;
-
-    void clearActiveFilters(int index, bool includeIndex = false);
-
-private:
-    FilterList m_filters;
-};
-} // namespace Fy::Filters
+void FieldItem::changeField(const FilterField& field)
+{
+    m_field = field;
+}
+} // namespace Fy::Filters::Settings

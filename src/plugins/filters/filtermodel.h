@@ -19,25 +19,27 @@
 
 #pragma once
 
-#include "filterfwd.h"
-
 #include <core/models/trackfwd.h>
 
 #include <utils/treemodel.h>
 
 #include <QAbstractListModel>
 
-namespace Fy::Filters {
+namespace Fy {
+namespace Core::Scripting {
+class Parser;
+}
+
+namespace Filters {
 class FilterItem;
+class FilterField;
 
 class FilterModel : public QAbstractListModel
 {
 public:
-    explicit FilterModel(Filters::FilterType type, QObject* parent = nullptr);
+    explicit FilterModel(FilterField* field, QObject* parent = nullptr);
 
-    void setType(Filters::FilterType type);
-    [[nodiscard]] int index() const;
-    void setIndex(int index);
+    void setField(FilterField* field);
 
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -47,20 +49,23 @@ public:
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
-    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
-    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
-                                        Qt::MatchFlags flags) const override;
+    void sort(int column, Qt::SortOrder order) override;
+    //    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
+    //                                        Qt::MatchFlags flags) const override;
     void reload(const Core::TrackPtrList& tracks);
 
 private:
     void beginReset();
     void setupModelData(const Core::TrackPtrList& tracks);
-    FilterItem* createNode(const QString& title);
-    std::vector<FilterItem*> createNodes(const QStringList& titles);
+    FilterItem* createNode(const QString& title, const QString& sortTitle = {});
+    std::vector<FilterItem*> createNodes(const QStringList& titles, const QString& sortTitle = {});
 
     std::unique_ptr<FilterItem> m_root;
     std::unique_ptr<FilterItem> m_allNode;
     std::unordered_map<QString, std::unique_ptr<FilterItem>> m_nodes;
-    FilterType m_type;
+    FilterField* m_field;
+
+    std::unique_ptr<Core::Scripting::Parser> m_parser;
 };
-} // namespace Fy::Filters
+} // namespace Filters
+} // namespace Fy

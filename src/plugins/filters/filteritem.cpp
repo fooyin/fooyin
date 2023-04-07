@@ -19,12 +19,15 @@
 
 #include "filteritem.h"
 
+#include "constants.h"
+
 #include <QVariant>
 
 namespace Fy::Filters {
-FilterItem::FilterItem(QString title, FilterItem* parent)
+FilterItem::FilterItem(QString title, FilterItem* parent, bool isAllNode)
     : TreeItem{parent}
-    , m_title(std::move(title))
+    , m_title{std::move(title)}
+    , m_isAllNode{isAllNode}
 { }
 
 void FilterItem::changeTitle(const QString& title)
@@ -39,6 +42,8 @@ QVariant FilterItem::data(int role) const
             return m_title;
         case Constants::Role::Tracks:
             return QVariant::fromValue(m_tracks);
+        case Constants::Role::Sorting:
+            return m_sortTitle;
         default:
             return {};
     }
@@ -54,20 +59,35 @@ void FilterItem::addTrack(Core::Track* track)
     m_tracks.emplace_back(track);
 }
 
+bool FilterItem::hasSortTitle() const
+{
+    return !m_sortTitle.isEmpty();
+}
+
+void FilterItem::setSortTitle(const QString& title)
+{
+    m_sortTitle = title;
+}
+
 void FilterItem::sortChildren(Qt::SortOrder order)
 {
     std::vector<FilterItem*> sortedChildren{m_children};
     std::sort(sortedChildren.begin(), sortedChildren.end(), [order](FilterItem* lhs, FilterItem* rhs) {
-        if(lhs->m_tracks.empty()) {
+        if(lhs->m_isAllNode) {
             return true;
         }
-        if(rhs->m_tracks.empty()) {
+        if(rhs->m_isAllNode) {
             return false;
         }
+        const auto lTitle
+            = lhs->data(lhs->hasSortTitle() ? Constants::Role::Sorting : Constants::Role::Title).toString();
+        const auto rTitle
+            = rhs->data(rhs->hasSortTitle() ? Constants::Role::Sorting : Constants::Role::Title).toString();
+
         if(order == Qt::AscendingOrder) {
-            return QString::localeAwareCompare(lhs->data().toString(), rhs->data().toString()) < 0;
+            return QString::localeAwareCompare(lTitle, rTitle) <= 0;
         }
-        return QString::localeAwareCompare(lhs->data().toString(), rhs->data().toString()) > 0;
+        return QString::localeAwareCompare(lTitle, rTitle) > 0;
     });
     m_children = sortedChildren;
 }

@@ -42,28 +42,29 @@ class FilterWidget : public Gui::Widgets::FyWidget
     Q_OBJECT
 
 public:
-    explicit FilterWidget(FilterManager* manager, Utils::SettingsManager* settings,
-                          FilterType type = FilterType::AlbumArtist, QWidget* parent = nullptr);
+    explicit FilterWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();
 
-    Filters::FilterType type();
-    void setType(Filters::FilterType newType);
+    void setField(const QString& name);
 
-    bool isHeaderHidden();
-    void setHeaderHidden(bool showHeader);
+    bool isHeaderEnabled();
+    void setHeaderEnabled(bool enabled);
 
-    bool isScrollbarHidden();
-    void setScrollbarHidden(bool showScrollBar);
+    bool isScrollbarEnabled();
+    void setScrollbarEnabled(bool enabled);
 
-    bool altRowColors();
-    void setAltRowColors(bool altColours);
+    bool hasAltColors();
+    void setAltColors(bool enabled);
 
     [[nodiscard]] QString name() const override;
     void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
     void customHeaderMenuRequested(QPoint pos);
+
+    void saveLayout(QJsonArray& array) override;
+    void loadLayout(QJsonObject& object) override;
 
 signals:
     void typeChanged(int index);
@@ -72,7 +73,8 @@ protected:
     void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
-    void editFilter(QAction* action);
+    void fieldChanged(const FilterField& field);
+    void editFilter(int index, const QString& name);
     void changeOrder();
     void resetByIndex(int idx);
     void resetByType();
@@ -85,51 +87,6 @@ private:
     FilterView* m_view;
     FilterModel* m_model;
     Qt::SortOrder m_sortOrder;
-};
-
-class GenreFilter : public FilterWidget
-{
-public:
-    explicit GenreFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
-
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QString layoutName() const override;
-};
-
-class YearFilter : public FilterWidget
-{
-public:
-    explicit YearFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
-
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QString layoutName() const override;
-};
-
-class AlbumArtistFilter : public FilterWidget
-{
-public:
-    explicit AlbumArtistFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
-
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QString layoutName() const override;
-};
-
-class ArtistFilter : public FilterWidget
-{
-public:
-    explicit ArtistFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
-
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QString layoutName() const override;
-};
-
-class AlbumFilter : public FilterWidget
-{
-public:
-    explicit AlbumFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
-
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QString layoutName() const override;
 };
 } // namespace Filters
 } // namespace Fy

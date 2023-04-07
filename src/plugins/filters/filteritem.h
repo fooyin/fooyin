@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "constants.h"
-
 #include <core/models/trackfwd.h>
 
 #include <utils/treeitem.h>
@@ -31,18 +29,23 @@ namespace Fy::Filters {
 class FilterItem : public Utils::TreeItem<FilterItem>
 {
 public:
-    explicit FilterItem(QString title = "", FilterItem* parent = {});
+    explicit FilterItem(QString title = "", FilterItem* parent = {}, bool isAllNode = false);
 
     void changeTitle(const QString& title);
 
-    [[nodiscard]] QVariant data(int role = Constants::Role::Title) const;
+    [[nodiscard]] QVariant data(int role) const;
     [[nodiscard]] int trackCount() const;
     void addTrack(Core::Track* track);
+
+    [[nodiscard]] bool hasSortTitle() const;
+    void setSortTitle(const QString& title);
 
     void sortChildren(Qt::SortOrder order);
 
 private:
     QString m_title;
+    QString m_sortTitle;
     Core::TrackPtrList m_tracks;
+    bool m_isAllNode;
 };
 } // namespace Fy::Filters

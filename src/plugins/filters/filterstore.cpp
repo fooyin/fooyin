@@ -26,47 +26,22 @@ FilterList FilterStore::filters() const
     return m_filters;
 }
 
-LibraryFilter& FilterStore::addFilter(FilterType type)
+LibraryFilter* FilterStore::addFilter(const FilterField& field)
 {
     LibraryFilter& filter = m_filters.emplace_back();
-    filter.type           = type;
+    filter.field          = field;
     filter.index          = static_cast<int>(m_filters.size() - 1);
-    return filter;
+    return &filter;
 }
 
-void FilterStore::removeFilter(FilterType type)
+void FilterStore::removeFilter(int index)
 {
-    m_filters.erase(std::remove_if(m_filters.begin(), m_filters.end(),
-                                   [type](const LibraryFilter& filter) {
-                                       return filter.type == type;
+    m_filters.erase(std::remove_if(m_filters.begin(),
+                                   m_filters.end(),
+                                   [index](const LibraryFilter& filter) {
+                                       return filter.index == index;
                                    }),
                     m_filters.end());
-}
-
-LibraryFilter* FilterStore::find(FilterType type)
-{
-    for(auto& filter : m_filters) {
-        if(filter.type == type) {
-            return &filter;
-        }
-    }
-    return nullptr;
-}
-
-bool FilterStore::hasFilter(FilterType type) const
-{
-    return std::find_if(m_filters.cbegin(), m_filters.cend(),
-                        [type](const LibraryFilter& filter) {
-                            return (filter.type == type);
-                        })
-        != m_filters.cend();
-}
-
-bool FilterStore::filterIsActive(FilterType type) const
-{
-    return std::any_of(m_filters.cbegin(), m_filters.cend(), [type](const LibraryFilter& filter) {
-        return (filter.type == type);
-    });
 }
 
 [[nodiscard]] bool FilterStore::hasActiveFilters() const
@@ -83,11 +58,13 @@ FilterList FilterStore::activeFilters() const
     });
 }
 
-void FilterStore::deactivateFilter(FilterType type)
+void FilterStore::clearActiveFilters(int index, bool includeIndex)
 {
-    if(auto* filter = find(type)) {
-        filter->tracks.clear();
+    const int fromIndex = includeIndex ? index - 1 : index;
+    for(LibraryFilter& filter : m_filters) {
+        if(filter.index > fromIndex) {
+            filter.tracks.clear();
+        }
     }
 }
-
 } // namespace Fy::Filters

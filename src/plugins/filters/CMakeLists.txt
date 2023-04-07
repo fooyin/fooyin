@@ -10,10 +10,22 @@ project(
 
 set(SOURCES
     constants.h
+    fieldparser.h
+    fieldparser.cpp
+    fieldregistry.h
+    fieldregistry.cpp
     filtersplugin.h
     filtersplugin.cpp
     filterdelegate.h
     filterdelegate.cpp
+    fielditem.h
+    fielditem.cpp
+    fieldmodel.h
+    fieldmodel.cpp
+    filtersfieldspage.h
+    filtersfieldspage.cpp
+    filtersgeneralpage.h
+    filtersgeneralpage.cpp
     filteritem.h
     filteritem.cpp
     filtermanager.h
@@ -35,7 +47,12 @@ set(SOURCES
     trackfilterer.cpp
 )
 
-add_library(fooyin_filters MODULE ${SOURCES})
+qt_add_resources(
+    SOURCES
+    data/icons.qrc
+)
+
+add_library(fooyin_filters SHARED ${SOURCES})
 target_link_libraries(fooyin_filters
     PRIVATE
       Qt6::Core

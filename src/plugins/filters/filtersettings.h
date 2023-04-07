@@ -36,13 +36,14 @@ enum Filters : uint32_t
     FilterAltColours = 1 | Utils::Settings::Bool,
     FilterHeader     = 2 | Utils::Settings::Bool,
     FilterScrollBar  = 3 | Utils::Settings::Bool,
+    Fields           = 4 | Utils::Settings::ByteArray,
 };
 Q_ENUM_NS(Filters)
 
 class FiltersSettings
 {
 public:
-    FiltersSettings(Utils::SettingsManager* settingsManager);
+    explicit FiltersSettings(Utils::SettingsManager* settingsManager);
 
 private:
     Utils::SettingsManager* m_settings;

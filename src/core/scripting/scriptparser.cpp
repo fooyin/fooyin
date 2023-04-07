@@ -169,8 +169,11 @@ ScriptResult Parser::evalConditional(const Expression& exp) const
     auto arg = std::get<ExpressionList>(exp.value);
     for(auto& subArg : arg) {
         const auto subExpr = evalExpression(subArg);
+
+        // Literals return false
         if(subArg.type != Literal) {
             if(!subExpr.cond || subExpr.value.isEmpty()) {
+                // No need to evaluate rest
                 result.value = {};
                 result.cond  = false;
                 return result;

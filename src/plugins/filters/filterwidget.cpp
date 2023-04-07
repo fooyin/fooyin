@@ -30,7 +30,6 @@
 #include <core/player/playermanager.h>
 
 #include <utils/actions/actioncontainer.h>
-#include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -41,15 +40,14 @@
 #include <QMenu>
 
 namespace Fy::Filters {
-FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* settings, Filters::FilterType type,
-                           QWidget* parent)
+FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_manager{manager}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
-    , m_filter{m_manager->registerFilter(type)}
+    , m_filter{m_manager->registerFilter("")}
     , m_view{new FilterView(this)}
-    , m_model{new FilterModel(type, this)}
+    , m_model{new FilterModel(&m_filter->field, this)}
     , m_sortOrder{Qt::AscendingOrder}
 {
     setObjectName(FilterWidget::name());
@@ -62,23 +60,23 @@ FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* setti
     m_layout->addWidget(m_view);
 
     setupConnections();
-    setHeaderHidden(m_settings->value<Settings::FilterHeader>());
-    setScrollbarHidden(m_settings->value<Settings::FilterScrollBar>());
-    setAltRowColors(m_settings->value<Settings::FilterAltColours>());
+    //    setHeaderHidden(m_settings->value<Settings::FilterHeader>());
+    setScrollbarEnabled(!m_settings->value<Settings::FilterScrollBar>());
+    setAltColors(m_settings->value<Settings::FilterAltColours>());
 
     resetByType();
 }
 
 FilterWidget::~FilterWidget()
 {
-    m_manager->unregisterFilter(m_filter->type);
+    m_manager->unregisterFilter(m_filter->index);
 }
 
 void FilterWidget::setupConnections()
 {
-    m_settings->subscribe<Settings::FilterAltColours>(this, &FilterWidget::setAltRowColors);
-    m_settings->subscribe<Settings::FilterHeader>(this, &FilterWidget::setHeaderHidden);
-    m_settings->subscribe<Settings::FilterScrollBar>(this, &FilterWidget::setScrollbarHidden);
+    m_settings->subscribe<Settings::FilterAltColours>(this, &FilterWidget::setAltColors);
+    m_settings->subscribe<Settings::FilterHeader>(this, &FilterWidget::setHeaderEnabled);
+    m_settings->subscribe<Settings::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
 
     connect(m_view->header(), &FilterView::customContextMenuRequested, this, &FilterWidget::customHeaderMenuRequested);
     connect(m_view, &QTreeView::doubleClicked, this, []() {
@@ -89,51 +87,48 @@ void FilterWidget::setupConnections()
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &FilterWidget::selectionChanged);
 
     connect(m_manager, &FilterManager::filteredItems, this, &FilterWidget::resetByIndex);
+    connect(m_manager, &FilterManager::filterChanged, this, &FilterWidget::editFilter);
+    connect(m_manager, &FilterManager::fieldChanged, this, &FilterWidget::fieldChanged);
 }
 
-Filters::FilterType FilterWidget::type()
+void FilterWidget::setField(const QString& name)
 {
-    return m_filter->type;
-}
-
-void FilterWidget::setType(Filters::FilterType newType)
-{
-    m_filter->type = newType;
-    m_model->setType(newType);
+    m_filter->field = m_manager->findField(name);
+    m_model->setField(&m_filter->field);
     emit typeChanged(m_filter->index);
     m_view->clearSelection();
     m_view->scrollToTop();
-    resetByIndex(-1);
+    resetByType();
 }
 
-bool FilterWidget::isHeaderHidden()
+bool FilterWidget::isHeaderEnabled()
 {
-    return m_view->isHeaderHidden();
+    return !m_view->isHeaderHidden();
 }
 
-void FilterWidget::setHeaderHidden(bool showHeader)
+void FilterWidget::setHeaderEnabled(bool enabled)
 {
-    m_view->setHeaderHidden(!showHeader);
+    m_view->setHeaderHidden(!enabled);
 }
 
-bool FilterWidget::isScrollbarHidden()
+bool FilterWidget::isScrollbarEnabled()
 {
-    return m_view->verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
+    return m_view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff;
 }
 
-void FilterWidget::setScrollbarHidden(bool showScrollBar)
+void FilterWidget::setScrollbarEnabled(bool enabled)
 {
-    m_view->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+    m_view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 }
 
-bool FilterWidget::altRowColors()
+bool FilterWidget::hasAltColors()
 {
     return m_view->alternatingRowColors();
 }
 
-void FilterWidget::setAltRowColors(bool altColours)
+void FilterWidget::setAltColors(bool enabled)
 {
-    m_view->setAlternatingRowColors(altColours);
+    m_view->setAlternatingRowColors(enabled);
 }
 
 QString FilterWidget::name() const
@@ -145,14 +140,14 @@ void FilterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 {
     auto* showHeaders = new QAction("Show Header", this);
     showHeaders->setCheckable(true);
-    showHeaders->setChecked(!isHeaderHidden());
+    showHeaders->setChecked(isHeaderEnabled());
     QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set<Settings::FilterHeader>(checked);
+        setHeaderEnabled(checked);
     });
 
     auto* showScrollBar = new QAction("Show Scrollbar", menu);
     showScrollBar->setCheckable(true);
-    showScrollBar->setChecked(!isScrollbarHidden());
+    showScrollBar->setChecked(isScrollbarEnabled());
     QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
         m_settings->set<Settings::FilterScrollBar>(checked);
     });
@@ -160,7 +155,7 @@ void FilterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 
     auto* altColours = new QAction("Alternate Row Colours", this);
     altColours->setCheckable(true);
-    altColours->setChecked(altRowColors());
+    altColours->setChecked(hasAltColors());
     QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
         m_settings->set<Settings::FilterAltColours>(checked);
     });
@@ -172,64 +167,36 @@ void FilterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 
 void FilterWidget::customHeaderMenuRequested(QPoint pos)
 {
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
+    if(!m_filter) {
+        return;
+    }
+    auto* menu = m_manager->filterHeaderMenu(m_filter->index, &m_filter->field);
 
-    auto* editFilters = new QActionGroup{menu};
-
-    const FilterType type = m_filter->type;
-
-    auto* genre = new QAction(menu);
-    genre->setText("Genre");
-    genre->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Genre));
-    genre->setCheckable(true);
-    genre->setChecked(type == Filters::FilterType::Genre);
-    genre->setDisabled(!genre->isChecked() && m_manager->hasFilter(Filters::FilterType::Genre));
-    menu->addAction(genre);
-
-    auto* year = new QAction(menu);
-    year->setText("Year");
-    year->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Year));
-    year->setCheckable(true);
-    year->setChecked(type == Filters::FilterType::Year);
-    year->setDisabled(!year->isChecked() && m_manager->hasFilter(Filters::FilterType::Year));
-    menu->addAction(year);
-
-    auto* albumArtist = new QAction(menu);
-    albumArtist->setText("Album Artist");
-    albumArtist->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::AlbumArtist));
-    albumArtist->setCheckable(true);
-    albumArtist->setChecked(type == Filters::FilterType::AlbumArtist);
-    albumArtist->setDisabled(!albumArtist->isChecked() && m_manager->hasFilter(Filters::FilterType::AlbumArtist));
-    menu->addAction(albumArtist);
-
-    auto* artist = new QAction(menu);
-    artist->setText("Artist");
-    artist->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Artist));
-    artist->setCheckable(true);
-    artist->setChecked(type == Filters::FilterType::Artist);
-    artist->setDisabled(!artist->isChecked() && m_manager->hasFilter(Filters::FilterType::Artist));
-    menu->addAction(artist);
-
-    auto* album = new QAction(menu);
-    album->setText("Album");
-    album->setData(QVariant::fromValue<Filters::FilterType>(Filters::FilterType::Album));
-    album->setCheckable(true);
-    album->setChecked(type == Filters::FilterType::Album);
-    album->setDisabled(!album->isChecked() && m_manager->hasFilter(Filters::FilterType::Album));
-    menu->addAction(album);
-
-    editFilters->addAction(genre);
-    editFilters->addAction(year);
-    editFilters->addAction(albumArtist);
-    editFilters->addAction(artist);
-    editFilters->addAction(album);
-
-    menu->setDefaultAction(editFilters->checkedAction());
-
-    connect(editFilters, &QActionGroup::triggered, this, &FilterWidget::editFilter);
+    if(!menu) {
+        return;
+    }
 
     menu->popup(mapToGlobal(pos));
+}
+
+void FilterWidget::saveLayout(QJsonArray& array)
+{
+    if(!m_filter) {
+        return;
+    }
+    QJsonObject options;
+    options["Type"]   = m_filter->field.name;
+    options["Header"] = isHeaderEnabled();
+
+    QJsonObject filter;
+    filter[name()] = options;
+    array.append(filter);
+}
+
+void FilterWidget::loadLayout(QJsonObject& object)
+{
+    setField(object["Type"].toString());
+    setHeaderEnabled(object["Header"].toBool());
 }
 
 void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -256,13 +223,25 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
             tracks.insert(tracks.end(), newTracks.cbegin(), newTracks.cend());
         }
     }
-    m_manager->selectionChanged(*m_filter, tracks);
+    m_filter->tracks = tracks;
+    m_manager->selectionChanged(m_filter->index);
 }
 
-void FilterWidget::editFilter(QAction* action)
+void FilterWidget::fieldChanged(const FilterField& field)
 {
-    auto type = action->data().value<Filters::FilterType>();
-    setType(type);
+    if(m_filter->field.index == field.index) {
+        m_filter->field = field;
+        emit typeChanged(m_filter->index);
+        m_model->reload(m_manager->tracks());
+        m_model->sort(0, m_sortOrder);
+    }
+}
+
+void FilterWidget::editFilter(int index, const QString& name)
+{
+    if(m_filter->index == index) {
+        setField(name);
+    }
 }
 
 // TODO: Save current sorting order
@@ -288,76 +267,6 @@ void FilterWidget::resetByIndex(int idx)
 void FilterWidget::resetByType()
 {
     m_model->reload(m_manager->tracks());
+    m_model->sort(0, m_sortOrder);
 }
-
-GenreFilter::GenreFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
-    : FilterWidget(manager, settings, Filters::FilterType::Genre, parent)
-{ }
-
-QString GenreFilter::name() const
-{
-    return "Genre Filter";
-}
-
-QString GenreFilter::layoutName() const
-{
-    return "FilterGenre";
-}
-
-YearFilter::YearFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
-    : FilterWidget(manager, settings, Filters::FilterType::Year, parent)
-{ }
-
-QString YearFilter::name() const
-{
-    return "Year Filter";
-}
-
-QString YearFilter::layoutName() const
-{
-    return "FilterYear";
-}
-
-AlbumArtistFilter::AlbumArtistFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
-    : FilterWidget(manager, settings, Filters::FilterType::AlbumArtist, parent)
-{ }
-
-QString AlbumArtistFilter::name() const
-{
-    return "Album Artist Filter";
-}
-
-QString AlbumArtistFilter::layoutName() const
-{
-    return "FilterAlbumArtist";
-}
-
-ArtistFilter::ArtistFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
-    : FilterWidget(manager, settings, Filters::FilterType::Artist, parent)
-{ }
-
-QString ArtistFilter::name() const
-{
-    return "Artist Filter";
-}
-
-QString ArtistFilter::layoutName() const
-{
-    return "FilterArtist";
-}
-
-AlbumFilter::AlbumFilter(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
-    : FilterWidget(manager, settings, Filters::FilterType::Album, parent)
-{ }
-
-QString AlbumFilter::name() const
-{
-    return "Album Filter";
-}
-
-QString AlbumFilter::layoutName() const
-{
-    return "FilterAlbum";
-}
-
 } // namespace Fy::Filters
