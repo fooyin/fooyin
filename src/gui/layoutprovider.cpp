@@ -65,6 +65,10 @@ Layout LayoutProvider::currentLayout() const
 
 void LayoutProvider::loadCurrentLayout()
 {
+    if(!m_layoutFile.exists()) {
+        return;
+    }
+
     if(!m_layoutFile.open(QIODevice::ReadOnly)) {
         qCritical() << "Couldn't open layout file.";
         return;
