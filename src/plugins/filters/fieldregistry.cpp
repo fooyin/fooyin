@@ -167,11 +167,11 @@ QDataStream& operator>>(QDataStream& stream, IndexFieldMap& fieldMap)
     while(size > 0) {
         --size;
 
-        FilterField field;
+        FilterField field{};
         int index;
         stream >> index;
         stream >> field;
-        fieldMap.emplace(index, std::move(field));
+        fieldMap.emplace(index, field);
     }
     return stream;
 }
