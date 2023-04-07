@@ -19,25 +19,34 @@
 
 #pragma once
 
-#include "filterfwd.h"
+#include <QString>
 
-#include <utils/helpers.h>
-
-namespace Fy::Filters {
-class FilterStore
+namespace Fy::Core::Scripting {
+enum ExprType : int
 {
-public:
-    [[nodiscard]] FilterList filters() const;
-
-    LibraryFilter* addFilter(const FilterField& field);
-    void removeFilter(int index);
-
-    [[nodiscard]] bool hasActiveFilters() const;
-    [[nodiscard]] FilterList activeFilters() const;
-
-    void clearActiveFilters(int index, bool includeIndex = false);
-
-private:
-    FilterList m_filters;
+    Literal     = 0,
+    Variable    = 1,
+    Function    = 2,
+    FunctionArg = 3,
+    Conditional = 4,
+    Null        = 5
 };
-} // namespace Fy::Filters
+
+struct Expression;
+
+struct FuncValue
+{
+    QString name;
+    std::vector<Expression> args;
+};
+
+using ExpressionList = std::vector<Expression>;
+
+using ExpressionValue = std::variant<QString, FuncValue, ExpressionList>;
+
+struct Expression
+{
+    ExprType type{Null};
+    ExpressionValue value{""};
+};
+} // namespace Fy::Core::Scripting

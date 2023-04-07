@@ -21,23 +21,20 @@
 
 #include "filterfwd.h"
 
-#include <utils/helpers.h>
+#include <core/library/libraryinfo.h>
 
-namespace Fy::Filters {
-class FilterStore
+#include <utils/treeitem.h>
+
+namespace Fy::Filters::Settings {
+class FieldItem : public Utils::TreeItem<FieldItem>
 {
 public:
-    [[nodiscard]] FilterList filters() const;
+    explicit FieldItem(FilterField field = {}, FieldItem* parent = nullptr);
 
-    LibraryFilter* addFilter(const FilterField& field);
-    void removeFilter(int index);
-
-    [[nodiscard]] bool hasActiveFilters() const;
-    [[nodiscard]] FilterList activeFilters() const;
-
-    void clearActiveFilters(int index, bool includeIndex = false);
+    [[nodiscard]] FilterField field() const;
+    void changeField(const FilterField& field);
 
 private:
-    FilterList m_filters;
+    FilterField m_field;
 };
-} // namespace Fy::Filters
+} // namespace Fy::Filters::Settings

@@ -19,29 +19,48 @@
 
 #pragma once
 
-#include "scriptvalue.h"
-
 #include <QString>
 
 namespace Fy::Core::Scripting {
-struct State
+enum TokenType : char
 {
-    const QChar* start;
-    const QChar* current;
+    TokVar         = '%',
+    TokFunc        = '$',
+    TokComma       = ',',
+    TokQuote       = '"',
+    TokLeftParen   = '(',
+    TokRightParen  = ')',
+    TokLeftSquare  = '[',
+    TokRightSquare = ']',
+    TokEscape      = '\\',
+    TokEos         = '\0',
+    TokError,
+    TokLiteral,
+};
+
+struct Token
+{
+    TokenType type;
+    QStringView value;
+    int position;
 };
 
 class Scanner
 {
 public:
     void setup(const QString& input);
-    Expression scanNext();
+    Token scanNext();
 
 private:
-    Expression scanNext(State& state);
+    [[nodiscard]] Token makeToken(TokenType type) const;
+    Token literal();
 
-    Expression parseFunction(State& state);
-    Expression parseFunctionArg(State& state);
+    [[nodiscard]] bool isAtEnd() const;
+    QChar advance();
+    [[nodiscard]] QChar peek() const;
 
-    State m_state;
+    QStringView m_input;
+    const QChar* m_start;
+    const QChar* m_current;
 };
 } // namespace Fy::Core::Scripting

@@ -19,16 +19,17 @@
 
 #pragma once
 
+#include "fieldregistry.h"
+#include "filtersfieldspage.h"
+#include "filtersgeneralpage.h"
 #include "filterwidget.h"
 
 #include <core/coreplugin.h>
 #include <core/plugins/plugin.h>
 
 #include <gui/guiplugin.h>
-#include <gui/widgetfactory.h>
 
-namespace Fy {
-namespace Filters {
+namespace Fy::Filters {
 class FilterManager;
 
 namespace Settings {
@@ -52,16 +53,6 @@ public:
     void shutdown() override;
 
 private:
-    template <typename T>
-    void registerFilter(const QString& key, const QString& name)
-    {
-        m_factory->registerClass<T>(key,
-                                    [this]() {
-                                        return new T(m_filterManager, m_settings);
-                                    },
-                                    name, {"Filter"});
-    }
-
     Utils::ActionManager* m_actionManager;
     Utils::SettingsManager* m_settings;
     Utils::ThreadManager* m_threadManager;
@@ -70,7 +61,10 @@ private:
     Gui::Widgets::WidgetFactory* m_factory;
 
     FilterManager* m_filterManager;
+    std::unique_ptr<FieldRegistry> m_fieldsRegistry;
     std::unique_ptr<Settings::FiltersSettings> m_filterSettings;
+
+    std::unique_ptr<Settings::FiltersGeneralPage> m_generalPage;
+    std::unique_ptr<Settings::FiltersFieldsPage> m_fieldsPage;
 };
-} // namespace Filters
 } // namespace Fy

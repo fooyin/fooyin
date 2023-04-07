@@ -20,59 +20,17 @@
 #pragma once
 
 #include <QObject>
+#include <QVariant>
 
 namespace Fy::Core::Scripting {
-enum ExprType : int
+struct ScriptResult
 {
-    // Do not change
-    // These values correspond to the order in ExpressionValue
-    Literal  = 0,
-    Variable = 1,
-    Function = 2,
-    Null     = 3
-};
-
-struct Expression;
-
-struct LiteralValue
-{
-    QString value;
-};
-struct VarValue
-{
-    QString value;
-};
-struct FuncValue
-{
-    QString name;
-    std::vector<Expression> args;
-};
-
-using ExpressionValue = std::variant<LiteralValue, VarValue, FuncValue>;
-
-struct Expression
-{
-    Expression() = default;
-    Expression(ExprType type)
-        : type{type} {};
-    ExprType type{Null};
-    ExpressionValue value;
-};
-
-struct Value
-{
-    operator QString() const
+    explicit operator QString() const
     {
         return value;
     }
     QString value;
-    bool cond;
+    bool cond{false};
 };
-using ValueList  = std::vector<Value>;
-using StringList = std::vector<QString>;
-
-using NativeFunc     = QString (*)(const StringList&);
-using NativeCondFunc = Value (*)(const ValueList&);
-
-using Func = std::variant<NativeFunc, NativeCondFunc>;
+using ValueList  = std::vector<ScriptResult>;
 } // namespace Fy::Core::Scripting

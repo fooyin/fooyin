@@ -19,25 +19,20 @@
 
 #pragma once
 
-#include "filterfwd.h"
+#include <core/scripting/scriptparser.h>
 
-#include <utils/helpers.h>
-
-namespace Fy::Filters {
-class FilterStore
+namespace Fy::Filters::Scripting {
+class FieldParser : public Core::Scripting::Parser
 {
 public:
-    [[nodiscard]] FilterList filters() const;
+    QString evaluate(const Core::Scripting::ParsedScript& parsedScript) override;
 
-    LibraryFilter* addFilter(const FilterField& field);
-    void removeFilter(int index);
-
-    [[nodiscard]] bool hasActiveFilters() const;
-    [[nodiscard]] FilterList activeFilters() const;
-
-    void clearActiveFilters(int index, bool includeIndex = false);
+protected:
+    Core::Scripting::ScriptResult evalVariable(const Core::Scripting::Expression& exp) const override;
+    Core::Scripting::ScriptResult evalFunctionArg(const Core::Scripting::Expression& exp) const override;
+    Core::Scripting::ScriptResult evalConditional(const Core::Scripting::Expression& exp) const override;
 
 private:
-    FilterList m_filters;
+    QStringList m_result;
 };
-} // namespace Fy::Filters
+} // namespace Fy::Filters::Scripting

@@ -22,5 +22,8 @@
 #include "core/scripting/scriptvalue.h"
 
 namespace Fy::Core::Scripting {
-Value cif(const ValueList& vec);
+ScriptResult cif(const ValueList& vec);
+ScriptResult ifequal(const ValueList& vec);
+ScriptResult ifgreater(const ValueList& vec);
+ScriptResult iflonger(const ValueList& vec);
 }

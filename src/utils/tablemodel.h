@@ -60,13 +60,13 @@ public:
         return QAbstractItemModel::flags(index);
     }
 
-    [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent) const override
+    [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent = {}) const override
     {
         if(!hasIndex(row, column, parent)) {
             return {};
         }
 
-        Item* childItem = m_root.get()->child(row);
+        Item* childItem = m_root->child(row);
         if(childItem) {
             return createIndex(row, column, childItem);
         }
@@ -79,10 +79,10 @@ public:
         return {};
     }
 
-    [[nodiscard]] virtual int rowCount(const QModelIndex& parent) const override
+    [[nodiscard]] virtual int rowCount(const QModelIndex& parent = {}) const override
     {
         Q_UNUSED(parent)
-        return m_root.get()->childCount();
+        return m_root->childCount();
     }
 
     [[nodiscard]] virtual QModelIndex indexOfItem(const Item* item)

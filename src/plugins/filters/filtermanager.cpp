@@ -19,16 +19,22 @@
 
 #include "filtermanager.h"
 
+#include "fieldregistry.h"
+
 #include <core/library/musiclibrary.h>
 
-#include <utils/helpers.h>
 #include <utils/threadmanager.h>
 
+#include <QActionGroup>
+#include <QMenu>
+
 namespace Fy::Filters {
-FilterManager::FilterManager(Utils::ThreadManager* threadManager, Core::Library::MusicLibrary* library, QObject* parent)
+FilterManager::FilterManager(Utils::ThreadManager* threadManager, Core::Library::MusicLibrary* library,
+                             FieldRegistry* fieldsRegistry, QObject* parent)
     : LibraryInteractor{parent}
     , m_threadManager{threadManager}
     , m_library{library}
+    , m_fieldsRegistry{fieldsRegistry}
 {
     m_threadManager->moveToNewThread(&m_searchManager);
 
@@ -44,6 +50,8 @@ FilterManager::FilterManager(Utils::ThreadManager* threadManager, Core::Library:
     connect(m_library, &Core::Library::MusicLibrary::libraryChanged, this, &FilterManager::tracksChanged);
     connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &FilterManager::tracksChanged);
 
+    connect(m_fieldsRegistry, &FieldRegistry::fieldChanged, this, &FilterManager::fieldChanged);
+
     m_library->addInteractor(this);
 }
 
@@ -57,34 +65,29 @@ bool FilterManager::hasTracks() const
     return !m_filteredTracks.empty() || !m_searchFilter.isEmpty() || m_filterStore.hasActiveFilters();
 }
 
-bool FilterManager::hasFilter(Filters::FilterType type) const
+LibraryFilter* FilterManager::registerFilter(const QString& name)
 {
-    return m_filterStore.hasFilter(type);
+    FilterField const filterField = m_fieldsRegistry->fieldByName(name);
+    return m_filterStore.addFilter(filterField);
 }
 
-LibraryFilter* FilterManager::registerFilter(Filters::FilterType type)
+void FilterManager::unregisterFilter(int index)
 {
-    if(auto* filter = m_filterStore.find(type)) {
-        return filter;
-    }
-    return &m_filterStore.addFilter(type);
-}
-
-void FilterManager::unregisterFilter(Filters::FilterType type)
-{
-    m_filterStore.removeFilter(type);
+    m_filterStore.removeFilter(index);
     emit filteredItems(-1);
     getFilteredTracks();
 }
 
 void FilterManager::changeFilter(int index)
 {
-    for(auto& filter : m_filterStore.activeFilters()) {
-        if(filter.index > index) {
-            m_filterStore.removeFilter(filter.type);
-        }
-    };
+    m_filterStore.clearActiveFilters(index, true);
+    getFilteredTracks();
     emit filteredItems(index);
+}
+
+FilterField FilterManager::findField(const QString& name) const
+{
+    return m_fieldsRegistry->fieldByName(name);
 }
 
 void FilterManager::getFilteredTracks()
@@ -104,34 +107,50 @@ void FilterManager::getFilteredTracks()
     emit filteredItems(m_lastFilterIndex);
 }
 
-void FilterManager::selectionChanged(LibraryFilter& filter, const Core::TrackPtrList& tracks)
+void FilterManager::selectionChanged(int index)
 {
-    for(const auto& activeFilter : m_filterStore.activeFilters()) {
-        if(filter.index < activeFilter.index) {
-            m_filterStore.deactivateFilter(activeFilter.type);
-        }
-    }
-
-    filter.tracks = tracks;
-
-    m_lastFilterIndex = filter.index;
-
+    m_filterStore.clearActiveFilters(index);
+    m_lastFilterIndex = index;
     getFilteredTracks();
 }
 
 void FilterManager::searchChanged(const QString& search)
 {
     m_searchFilter = search;
-    m_filteredTracks.clear();
-
     emit filterTracks(!m_filteredTracks.empty() ? m_filteredTracks : m_library->allTracks(), m_searchFilter);
+}
+
+QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
+{
+    auto* menu = new QMenu();
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* filterList = new QActionGroup{menu};
+
+    for(const auto& [filterIndex, registryField] : m_fieldsRegistry->fields()) {
+        const QString name = registryField.name;
+        auto* fieldAction  = new QAction(menu);
+        fieldAction->setText(name);
+        fieldAction->setData(name);
+        fieldAction->setCheckable(true);
+        fieldAction->setChecked(field && name == field->name);
+        menu->addAction(fieldAction);
+        filterList->addAction(fieldAction);
+    }
+
+    menu->setDefaultAction(filterList->checkedAction());
+    connect(filterList, &QActionGroup::triggered, this, [this, index](QAction* action) {
+        emit filterChanged(index, action->data().toString());
+    });
+
+    return menu;
 }
 
 void FilterManager::tracksFiltered(const Core::TrackPtrList& tracks)
 {
     m_filteredTracks = tracks;
     emit filteredTracks();
-    emit filteredItems(-1);
+    emit filteredItems(m_lastFilterIndex);
 }
 
 void FilterManager::tracksChanged()

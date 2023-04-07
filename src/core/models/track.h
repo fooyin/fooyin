@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "core/typedefs.h"
 #include "musicitem.h"
 
 #include <QList>
@@ -32,7 +31,7 @@ using ExtraTags = std::map<QString, QList<QString>>;
 class Track : public MusicItem
 {
 public:
-    Track() = default;
+    Track();
     explicit Track(QString filepath);
 
     QString generateHash();
@@ -46,6 +45,7 @@ public:
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] QStringList artists() const;
+    [[nodiscard]] QString artist() const;
     [[nodiscard]] QString album() const;
     [[nodiscard]] QString albumArtist() const;
     [[nodiscard]] int trackNumber() const;
@@ -53,6 +53,7 @@ public:
     [[nodiscard]] int discNumber() const;
     [[nodiscard]] int discTotal() const;
     [[nodiscard]] QStringList genres() const;
+    [[nodiscard]] QString genre() const;
     [[nodiscard]] QString composer() const;
     [[nodiscard]] QString performer() const;
     [[nodiscard]] uint64_t duration() const;
@@ -128,7 +129,6 @@ private:
     int m_trackTotal;
     int m_discNumber;
     int m_discTotal;
-    IdSet m_genreIds;
     QStringList m_genres;
     QString m_composer;
     QString m_performer;

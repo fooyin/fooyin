@@ -19,23 +19,70 @@
 
 #pragma once
 
+#include "expression.h"
 #include "scriptregistry.h"
 #include "scriptscanner.h"
 
 #include <QObject>
 
 namespace Fy::Core::Scripting {
+struct ParsedScript
+{
+    QString input;
+    ExpressionList expressions;
+    bool valid{false};
+};
+
 class Parser
 {
 public:
-    void parse(const QString& input);
+    virtual ~Parser() = default;
+
+    ParsedScript parse(const QString& input);
+
     QString evaluate();
+    QString evaluate(const ParsedScript& input, Track* track);
+
+    virtual QString evaluate(const ParsedScript& input);
+
+    void setMetadata(Track* track);
+
+protected:
+    ScriptResult evalExpression(const Expression& exp) const;
+
+    virtual ScriptResult evalLiteral(const Expression& exp) const;
+    virtual ScriptResult evalVariable(const Expression& exp) const;
+    virtual ScriptResult evalFunction(const Expression& exp) const;
+    virtual ScriptResult evalFunctionArg(const Expression& exp) const;
+    virtual ScriptResult evalConditional(const Expression& exp) const;
+
+    virtual Expression expression();
+    virtual Expression literal() const;
+    virtual Expression quote();
+    virtual Expression variable();
+    virtual Expression function();
+    virtual Expression functionArgs();
+    virtual Expression conditional();
+
+    const Registry& registry() const;
+    const ParsedScript& lastParsedScript() const;
+
+    void advance();
+    void consume(TokenType type, const QString& message);
+    bool currentToken(TokenType type) const;
+    bool match(TokenType type);
+    void errorAtCurrent(const QString& message);
+    void errorAt(const Token& token, const QString& message);
+    void error(const QString& message);
 
 private:
-    Value evaluate(Expression* exp);
-
     Scanner m_scanner;
     Registry m_registry;
-    std::vector<Expression> m_nodes;
+
+    Token m_current;
+    Token m_previous;
+    ParsedScript m_parsedScript;
+    QString m_result;
+    bool m_hadError;
 };
 } // namespace Fy::Core::Scripting

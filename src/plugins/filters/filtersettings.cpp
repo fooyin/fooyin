@@ -28,5 +28,13 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::FilterAltColours, false, "Filters");
     m_settings->createSetting(Settings::FilterHeader, true, "Filters");
     m_settings->createSetting(Settings::FilterScrollBar, true, "Filters");
+    m_settings->createSetting(
+        Settings::Fields,
+        "AAAABAAAAAAAAAAAAAAACgBHAGUAbgByAGUAAAAOACUAZwBlAG4AcgBlACUAAAAAAAAAAQAAAAEAAAAYAEEAbABiAHUAbQAgAEEAcgB0AGkAcw"
+        "B0AAAAGgAlAGEAbABiAHUAbQBhAHIAdABpAHMAdAAlAAAAAAAAAAIAAAACAAAADABBAHIAdABpAHMAdAAAABAAJQBhAHIAdABpAHMAdAAlAAAA"
+        "AAAAAAMAAAADAAAACgBBAGwAYgB1AG0AAAAOACUAYQBsAGIAdQBtACUAAAAA",
+        "Filters");
+
+    m_settings->loadSettings();
 }
 } // namespace Fy::Filters::Settings

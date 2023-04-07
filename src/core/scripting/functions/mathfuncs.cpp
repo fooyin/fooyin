@@ -20,24 +20,18 @@
 #include "mathfuncs.h"
 
 namespace Fy::Core::Scripting {
-QString baseOperation(const StringList& vec, const QChar op)
+QString baseOperation(const QStringList& vec, const QChar op)
 {
     if(vec.size() < 2) {
         return {};
     }
-    bool success;
-    const double num = vec.front().toDouble(&success);
-    if(!success) {
-        return {};
-    }
-    double total = num;
+    double total = vec.front().toDouble();
     for(int i = 1; i < static_cast<int>(vec.size()); ++i) {
-        bool success;
-        const double num = vec[i].toDouble(&success);
-        if(!success) {
-            return {};
-        }
+        const double num = vec[i].toDouble();
         switch(op.cell()) {
+            case '+':
+                total += num;
+                break;
             case '-':
                 total -= num;
                 break;
@@ -51,39 +45,27 @@ QString baseOperation(const StringList& vec, const QChar op)
     }
     return QString::number(total);
 }
-QString add(const StringList& vec)
+QString add(const QStringList& vec)
 {
-    if(vec.size() < 2) {
-        return {};
-    }
-    double total = 0;
-    for(const auto& numStr : vec) {
-        bool success;
-        const double num = numStr.toDouble(&success);
-        if(!success) {
-            return {};
-        }
-        total += num;
-    }
-    return QString::number(total);
+    return baseOperation(vec, '+');
 }
 
-QString sub(const StringList& vec)
+QString sub(const QStringList& vec)
 {
     return baseOperation(vec, '-');
 }
 
-QString mul(const StringList& vec)
+QString mul(const QStringList& vec)
 {
     return baseOperation(vec, '*');
 }
 
-QString div(const StringList& vec)
+QString div(const QStringList& vec)
 {
     return baseOperation(vec, '/');
 }
 
-QString min(const StringList& vec)
+QString min(const QStringList& vec)
 {
     if(vec.size() < 2) {
         return {};
@@ -94,7 +76,7 @@ QString min(const StringList& vec)
     return *result;
 }
 
-QString max(const StringList& vec)
+QString max(const QStringList& vec)
 {
     if(vec.size() < 2) {
         return {};
@@ -105,4 +87,15 @@ QString max(const StringList& vec)
     return *result;
 }
 
+QString mod(const QStringList& vec)
+{
+    if(vec.size() < 2) {
+        return {};
+    }
+    int total = vec.front().toInt();
+    for(int i = 1; i < static_cast<int>(vec.size()); ++i) {
+        total %= vec[i].toInt();
+    }
+    return QString::number(total);
+}
 } // namespace Fy::Core::Scripting

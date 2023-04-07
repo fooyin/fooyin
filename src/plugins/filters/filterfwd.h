@@ -26,23 +26,32 @@
 #include <deque>
 
 namespace Fy::Filters {
-Q_NAMESPACE
-enum class FilterType
+struct FilterField
 {
-    Genre = 0,
-    Year,
-    AlbumArtist,
-    Artist,
-    Album,
+    int index{-1};
+    QString name;
+    QString field;
+    QString sortField;
+
+    bool operator==(const FilterField& other) const
+    {
+        return std::tie(index, name, field, sortField)
+            == std::tie(other.index, other.name, other.field, other.sortField);
+    }
+
+    [[nodiscard]] bool isValid() const
+    {
+        return !name.isEmpty() && !field.isEmpty();
+    }
 };
-Q_ENUM_NS(FilterType)
 
 struct LibraryFilter
 {
-    FilterType type;
+    FilterField field;
     int index;
     Core::TrackPtrList tracks;
 };
 
-using FilterList = std::deque<LibraryFilter>;
+using IndexFieldMap = std::map<int, FilterField>;
+using FilterList    = std::deque<LibraryFilter>;
 } // namespace Fy::Filters

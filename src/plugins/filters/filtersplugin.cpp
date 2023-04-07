@@ -27,6 +27,7 @@
 #include <gui/widgetfactory.h>
 
 #include <utils/actions/actioncontainer.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QMenu>
 
@@ -39,28 +40,31 @@ void FiltersPlugin::initialise(const Core::CorePluginContext& context)
     m_settings      = context.settingsManager;
     m_threadManager = context.threadManager;
 
-    m_filterManager  = new FilterManager(m_threadManager, m_library, this);
+    m_fieldsRegistry = std::make_unique<FieldRegistry>(m_settings);
+    m_filterManager  = new FilterManager(m_threadManager, m_library, m_fieldsRegistry.get(), this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
+
+    m_fieldsRegistry->loadFields();
 }
 
 void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
 {
     m_factory = context.widgetFactory;
 
-    registerFilter<FilterWidget>("Filter", "Filter");
-    registerFilter<GenreFilter>("FilterGenre", "Genre");
-    registerFilter<YearFilter>("FilterYear", "Year");
-    registerFilter<AlbumArtistFilter>("FilterAlbumArtist", "Album Artist");
-    registerFilter<ArtistFilter>("FilterArtist", "Artist");
-    registerFilter<AlbumFilter>("FilterAlbum", "Album");
+    m_factory->registerClass<FilterWidget>("Filter", [this]() {
+        return new FilterWidget(m_filterManager, m_settings);
+    });
 
     m_factory->registerClass<SearchWidget>("Search", [this]() {
         return new SearchWidget(m_filterManager, m_settings);
     });
+
+    m_generalPage = std::make_unique<Settings::FiltersGeneralPage>(m_settings);
+    m_fieldsPage  = std::make_unique<Settings::FiltersFieldsPage>(m_fieldsRegistry.get(), m_settings);
 }
 
 void FiltersPlugin::shutdown()
 {
-
+    m_fieldsRegistry->saveFields();
 }
 } // namespace Fy::Filters

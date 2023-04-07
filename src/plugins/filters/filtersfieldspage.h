@@ -19,25 +19,23 @@
 
 #pragma once
 
-#include "filterfwd.h"
+#include <utils/settings/settingspage.h>
 
-#include <utils/helpers.h>
+namespace Fy {
+namespace Utils {
+class SettingsManager;
+class SettingsDialogController;
+} // namespace Utils
 
-namespace Fy::Filters {
-class FilterStore
+namespace Filters {
+class FieldRegistry;
+
+namespace Settings {
+class FiltersFieldsPage : public Utils::SettingsPage
 {
 public:
-    [[nodiscard]] FilterList filters() const;
-
-    LibraryFilter* addFilter(const FilterField& field);
-    void removeFilter(int index);
-
-    [[nodiscard]] bool hasActiveFilters() const;
-    [[nodiscard]] FilterList activeFilters() const;
-
-    void clearActiveFilters(int index, bool includeIndex = false);
-
-private:
-    FilterList m_filters;
+    explicit FiltersFieldsPage(FieldRegistry* fieldsRegistry, Utils::SettingsManager* settings);
 };
-} // namespace Fy::Filters
+} // namespace Settings
+} // namespace Filters
+} // namespace Fy

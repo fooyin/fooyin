@@ -20,18 +20,23 @@
 #include "filtermodel.h"
 
 #include "constants.h"
+#include "fieldparser.h"
+#include "filterfwd.h"
 #include "filteritem.h"
 
+#include <core/constants.h>
+
 namespace Fy::Filters {
-FilterModel::FilterModel(Filters::FilterType type, QObject* parent)
-    : QAbstractListModel(parent)
+FilterModel::FilterModel(FilterField* field, QObject* parent)
+    : QAbstractListModel{parent}
     , m_root{std::make_unique<FilterItem>()}
-    , m_type{type}
+    , m_field{field}
+    , m_parser{std::make_unique<Scripting::FieldParser>()}
 { }
 
-void FilterModel::setType(Filters::FilterType type)
+void FilterModel::setField(FilterField* field)
 {
-    m_type = type;
+    m_field = field;
 }
 
 QVariant FilterModel::data(const QModelIndex& index, int role) const
@@ -45,7 +50,7 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
     switch(role) {
         case(Qt::DisplayRole): {
             const QString& name = item->data(Filters::Constants::Role::Title).toString();
-            return !name.isEmpty() ? name : "Unknown";
+            return !name.isEmpty() ? name : "?";
         }
         case(Filters::Constants::Role::Title): {
             return item->data(Filters::Constants::Role::Title);
@@ -71,6 +76,10 @@ Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
 QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     Q_UNUSED(section)
+    if(!m_field) {
+        return {};
+    }
+
     if(orientation == Qt::Orientation::Vertical) {
         return {};
     }
@@ -83,20 +92,7 @@ QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int r
         return {};
     }
 
-    switch(m_type) {
-        case(Filters::FilterType::Genre):
-            return "Genre";
-        case(Filters::FilterType::Year):
-            return "Year";
-        case(Filters::FilterType::AlbumArtist):
-            return "Album Artist";
-        case(Filters::FilterType::Artist):
-            return "Artist";
-        case(Filters::FilterType::Album):
-            return "Album";
-        default:
-            return {};
-    }
+    return m_field->name;
 }
 
 QModelIndex FilterModel::index(int row, int column, const QModelIndex& parent) const
@@ -139,27 +135,30 @@ void FilterModel::sort(int column, Qt::SortOrder order)
     emit layoutChanged({});
 }
 
-QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
-                                   Qt::MatchFlags flags) const
-{
-    if(role != Qt::DisplayRole) {
-        return QAbstractItemModel::match(start, role, value, hits, flags);
-    }
+// QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
+//                                    Qt::MatchFlags flags) const
+//{
+//     if(role != Qt::DisplayRole) {
+//         return QAbstractItemModel::match(start, role, value, hits, flags);
+//     }
 
-    QModelIndexList indexes{};
-    for(int i = 0; i < rowCount(start); ++i) {
-        const auto child = index(i, 0, start);
-        const auto data  = child.data(role);
-        if(data.toInt() == value.toInt()) {
-            indexes.append(child);
-        }
-    }
-    return indexes;
-}
+//    QModelIndexList indexes{};
+//    for(int i = 0; i < rowCount(start); ++i) {
+//        const auto child = index(i, 0, start);
+//        const auto data  = child.data(role);
+//        if(data.toInt() == value.toInt()) {
+//            indexes.append(child);
+//        }
+//    }
+//    return indexes;
+//}
 
 // TODO: Implement methods to insert/delete rows
 void FilterModel::reload(const Core::TrackPtrList& tracks)
 {
+    if(!m_field) {
+        return;
+    }
     beginResetModel();
     beginReset();
     setupModelData(tracks);
@@ -175,60 +174,54 @@ void FilterModel::beginReset()
 
 void FilterModel::setupModelData(const Core::TrackPtrList& tracks)
 {
-    m_allNode = std::make_unique<FilterItem>("", m_root.get());
-    m_root->appendChild(m_allNode.get());
-
     if(tracks.empty()) {
         return;
     }
 
-    for(const auto& track : tracks) {
-        switch(m_type) {
-            case FilterType::Genre: {
-                for(FilterItem* genre : createNodes(track->genres())) {
-                    genre->addTrack(track);
-                }
-                break;
-            }
-            case FilterType::Year: {
-                createNode(QString::number(track->year()))->addTrack(track);
-                break;
-            }
-            case FilterType::AlbumArtist: {
-                createNode(track->albumArtist())->addTrack(track);
-                break;
-            }
-            case FilterType::Artist: {
-                for(FilterItem* artist : createNodes(track->artists())) {
-                    artist->addTrack(track);
-                }
-                break;
-            }
-            case FilterType::Album: {
-                createNode(track->album())->addTrack(track);
-                break;
+    m_allNode = std::make_unique<FilterItem>("", m_root.get(), true);
+    m_root->appendChild(m_allNode.get());
+
+    const auto parsedField = m_parser->parse(m_field->field);
+    const auto parsedSort  = m_parser->parse(m_field->sortField);
+
+    for(Core::Track* track : tracks) {
+        const QString field = m_parser->evaluate(parsedField, track);
+        const QString sort  = m_parser->evaluate(parsedSort, track);
+        if(field.isNull()) {
+            continue;
+        }
+        if(field.contains(Core::Constants::Separator)) {
+            const QStringList values = field.split(Core::Constants::Separator);
+            const auto nodes         = createNodes(values, sort);
+            for(FilterItem* node : nodes) {
+                node->addTrack(track);
             }
         }
+        else {
+            createNode(field, sort)->addTrack(track);
+        }
+        m_allNode->addTrack(track);
     }
     m_allNode->changeTitle(QString("All (%1)").arg(m_nodes.size()));
 }
 
-FilterItem* FilterModel::createNode(const QString& title)
+FilterItem* FilterModel::createNode(const QString& title, const QString& sortTitle)
 {
     FilterItem* filterItem;
     if(!m_nodes.count(title)) {
         filterItem = m_nodes.emplace(title, std::make_unique<FilterItem>(title, m_root.get())).first->second.get();
+        filterItem->setSortTitle(sortTitle);
         m_root->appendChild(filterItem);
     }
     filterItem = m_nodes.at(title).get();
     return filterItem;
 }
 
-std::vector<FilterItem*> FilterModel::createNodes(const QStringList& titles)
+std::vector<FilterItem*> FilterModel::createNodes(const QStringList& titles, const QString& sortTitle)
 {
     std::vector<FilterItem*> items;
-    for(const auto& title : titles) {
-        auto* filterItem = createNode(title);
+    for(const QString& title : titles) {
+        auto* filterItem = createNode(title, sortTitle);
         items.emplace_back(filterItem);
     }
     return items;
