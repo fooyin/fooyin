@@ -53,6 +53,7 @@ ReadingProperties getReadingProperties(Quality quality)
     return readingProperties;
 }
 
+// TODO: Handle different filetypes separately
 bool readMetaData(Track& track, Quality quality)
 {
     const auto filepath = track.filepath();
@@ -69,8 +70,8 @@ bool readMetaData(Track& track, Quality quality)
     }
 
     const auto readingProperties = getReadingProperties(quality);
-    auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties,
-                                   readingProperties.readStyle);
+    auto fileRef                 = TagLib::FileRef(
+        TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties, readingProperties.readStyle);
 
     if(!isValidFile(fileRef)) {
         qDebug() << "Cannot open tags for " << filepath << ": Err 1";
@@ -83,8 +84,8 @@ bool readMetaData(Track& track, Quality quality)
         return false;
     }
 
-    const QStringList baseTags{"TITLE", "ARTIST",     "ALBUMARTIST", "GENRE",   "TRACKNUMBER",
-                               "ALBUM", "DISCNUMBER", "DATE",        "COMMENT", "LYRICS"};
+    const QStringList baseTags{
+        "TITLE", "ARTIST", "ALBUMARTIST", "GENRE", "TRACKNUMBER", "ALBUM", "DISCNUMBER", "DATE", "COMMENT", "LYRICS"};
 
     const auto artists     = convertStringList(parsedTag.map.value("ARTIST"));
     const auto album       = convertString(parsedTag.map.value("ALBUM").toString());
@@ -95,7 +96,6 @@ bool readMetaData(Track& track, Quality quality)
     const auto date        = convertString(parsedTag.map.value("DATE").toString());
     const auto lyrics      = convertString(parsedTag.map.value("LYRICS").toString());
 
-    // TODO: Check for TRACKTOTAL and DISCTOTAL tags when X/Y not standard i.e. FLAC
     auto trackNum           = 0;
     auto trackTotal         = 0;
     const auto trackNumData = convertString(parsedTag.map.value("TRACKNUMBER").toString());
@@ -108,6 +108,10 @@ bool readMetaData(Track& track, Quality quality)
         trackNum = trackNumData.toInt();
     }
 
+    if(parsedTag.map.contains("TRACKTOTAL")) {
+        trackTotal = convertString(parsedTag.map.value("TRACKTOTAL").toString()).toInt();
+    }
+
     int disc            = 0;
     int discTotal       = 0;
     const auto discData = convertString(parsedTag.map.value("DISCNUMBER").toString());
@@ -118,6 +122,10 @@ bool readMetaData(Track& track, Quality quality)
     }
     else {
         disc = discData.toInt();
+    }
+
+    if(parsedTag.map.contains("DISCTOTAL")) {
+        discTotal = convertString(parsedTag.map.value("DISCTOTAL").toString()).toInt();
     }
 
     const auto bitrate    = fileRef.audioProperties()->bitrate();
@@ -156,8 +164,8 @@ bool readMetaData(Track& track, Quality quality)
 QPixmap readCover(const QString& filepath)
 {
     const auto readingProperties = getReadingProperties(Quality::Quality);
-    auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties,
-                                   readingProperties.readStyle);
+    auto fileRef                 = TagLib::FileRef(
+        TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties, readingProperties.readStyle);
 
     return coverFromFile(fileRef);
 }
