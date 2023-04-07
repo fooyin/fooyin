@@ -69,7 +69,7 @@ Application::Application(int& argc, char** argv, int flags)
     , m_playlistGuiPage{m_settingsManager}
     , m_pluginManager{new Plugins::PluginManager(this)}
     , m_corePluginContext{m_actionManager, m_playerManager, m_library, m_settingsManager, m_threadManager, &m_database}
-    , m_guiPluginContext{&m_widgetFactory}
+    , m_guiPluginContext{&m_layoutProvider, &m_widgetFactory}
 {
     m_threadManager->moveToNewThread(&m_engine);
 

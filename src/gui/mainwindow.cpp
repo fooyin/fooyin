@@ -110,8 +110,8 @@ void MainWindow::setupMenu()
 
     m_quickSetupDialog = new QuickSetupDialog(m_layoutProvider, this);
 
-    connect(m_quickSetupDialog, &QuickSetupDialog::layoutChanged, m_editableLayout,
-            &Widgets::EditableLayout::changeLayout);
+    connect(
+        m_quickSetupDialog, &QuickSetupDialog::layoutChanged, m_editableLayout, &Widgets::EditableLayout::changeLayout);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -127,36 +127,19 @@ void MainWindow::enableLayoutEditing(bool enable)
 
 void MainWindow::registerLayouts() const
 {
-    m_layoutProvider->registerLayout("Empty", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[],\"State\":\"AAAA/"
-                                              "wAAAAEAAAABAAACLwD/////AQAAAAIA\"}}]}");
+    m_layoutProvider->registerLayout("Empty",
+                                     R"({"Layout":[{"SplitterVertical":{"Children":[],
+                                     "State":"AAAA/wAAAAEAAAABAAACLwD/////AQAAAAIA"}}]})");
 
-    m_layoutProvider->registerLayout(
-        "Simple", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Playlist\",\"Controls\"],"
-                  "\"State\":\"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA\"}}]}");
+    m_layoutProvider->registerLayout("Simple",
+                                     R"({"Layout":[{"SplitterVertical":{"Children":["Status","Playlist","Controls"],
+                                     "State":"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA"}}]})");
 
-    m_layoutProvider->registerLayout(
-        "Stone", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",\"Search\",{\"SplitterHorizontal\":{"
-                 "\"Children\":[\"FilterAlbumArtist\",\"Playlist\"],\"State\":\"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP/"
-                 "///8BAAAAAQA=\"}},\"Controls\"],\"State\":\"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////"
-                 "wEAAAACAA==\"}}]}");
-
-    m_layoutProvider->registerLayout(
-        "Vision", "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[\"Status\",{\"SplitterHorizontal\":{"
-                  "\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////"
-                  "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[\"Artwork\",\"Playlist\"],\"State\":"
-                  "\"AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA=\"}}],\"State\":\"AAAA/"
-                  "wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA\"}}]}");
-
-    m_layoutProvider->registerLayout(
-        "Ember",
-        "{\"Layout\":[{\"SplitterVertical\":{\"Children\":[{\"SplitterHorizontal\":{\"Children\":[\"FilterGenre\","
-        "\"FilterAlbumArtist\",\"FilterArtist\",\"FilterAlbum\"],\"State\":\"AAAA/"
-        "wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAALUA/////"
-        "wEAAAABAA==\"}},{\"SplitterHorizontal\":{\"Children\":[\"Controls\",\"Search\"],\"State\":\"AAAA/"
-        "wAAAAEAAAADAAAFfgAAAdIAAAAAAP////"
-        "8BAAAAAQA=\"}},{\"SplitterHorizontal\":{\"Children\":[{\"SplitterVertical\":{\"Children\":[\"Artwork\","
-        "\"Info\"],\"State\":\"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAAAP////8BAAAAAgA=\"}},\"Playlist\"],\"State\":\"AAAA/"
-        "wAAAAEAAAADAAABdQAABdsAAAAAAP////8BAAAAAQA=\"}},\"Status\"],\"State\":\"AAAA/"
-        "wAAAAEAAAAFAAAA+gAAAB4AAALWAAAAGQAAAAAA/////wEAAAACAA==\"}}]}");
+    m_layoutProvider->registerLayout("Vision",
+                                     R"({"Layout":[{"SplitterVertical":{"Children":["Status",{"SplitterHorizontal":{
+                                     "Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////
+                                     8BAAAAAQA="}},{"SplitterHorizontal":{"Children":["Artwork","Playlist"],"State":
+                                     "AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA="}}],"State":"AAAA/
+                                     wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA"}}]})");
 }
 } // namespace Fy::Gui

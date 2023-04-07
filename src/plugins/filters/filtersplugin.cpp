@@ -24,6 +24,7 @@
 #include "filterwidget.h"
 #include "searchwidget.h"
 
+#include <gui/layoutprovider.h>
 #include <gui/widgetfactory.h>
 
 #include <utils/actions/actioncontainer.h>
@@ -49,7 +50,8 @@ void FiltersPlugin::initialise(const Core::CorePluginContext& context)
 
 void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
 {
-    m_factory = context.widgetFactory;
+    m_layoutProvider = context.layoutProvider;
+    m_factory        = context.widgetFactory;
 
     m_factory->registerClass<FilterWidget>("Filter", [this]() {
         return new FilterWidget(m_filterManager, m_settings);
@@ -61,10 +63,33 @@ void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
 
     m_generalPage = std::make_unique<Settings::FiltersGeneralPage>(m_settings);
     m_fieldsPage  = std::make_unique<Settings::FiltersFieldsPage>(m_fieldsRegistry.get(), m_settings);
+
+    registerLayouts();
 }
 
 void FiltersPlugin::shutdown()
 {
     m_fieldsRegistry->saveFields();
+}
+
+void FiltersPlugin::registerLayouts()
+{
+    m_layoutProvider->registerLayout(
+        "Stone",
+        R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{"SplitterHorizontal":{
+                     "Children":[{"Filter":{"Header": true,"Type": "Album Artist"}},"Playlist"],
+                     "State":"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP////8BAAAAAQA="}},"Controls"],
+                     "State":"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////
+                     wEAAAACAA=="}}]})");
+
+    m_layoutProvider->registerLayout(
+        "Ember",
+        R"({"Layout":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"Filter":{"Header":true,"Type":"Genre"}},
+        {"Filter":{"Header":true,"Type":"Album Artist"}},{"Filter":{"Header":true,"Type":"Artist"}},
+        {"Filter":{"Header":true,"Type":"Album"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
+        {"SplitterHorizontal":{"Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAFfgAAAdIAAAC1AP////8BAAAAAQA="}},
+        {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["Artwork","Info"],
+        "State":"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAUAP////8BAAAAAgA="}},"Playlist"],"State":"AAAA/wAAAAEAAAADAAABdQAABdsAAAC1AP////8BAAAAAQA="}},
+        "Status"],"State":"AAAA/wAAAAEAAAAFAAAA/wAAAB4AAALRAAAAGQAAAAAA/////wEAAAACAA=="}}]})");
 }
 } // namespace Fy::Filters

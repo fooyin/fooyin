@@ -53,11 +53,14 @@ public:
     void shutdown() override;
 
 private:
+    void registerLayouts();
+
     Utils::ActionManager* m_actionManager;
     Utils::SettingsManager* m_settings;
     Utils::ThreadManager* m_threadManager;
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
+    Gui::LayoutProvider* m_layoutProvider;
     Gui::Widgets::WidgetFactory* m_factory;
 
     FilterManager* m_filterManager;
@@ -67,4 +70,4 @@ private:
     std::unique_ptr<Settings::FiltersGeneralPage> m_generalPage;
     std::unique_ptr<Settings::FiltersFieldsPage> m_fieldsPage;
 };
-} // namespace Fy
+} // namespace Fy::Filters

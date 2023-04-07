@@ -20,17 +20,19 @@
 #pragma once
 
 namespace Fy::Gui {
-
+class LayoutProvider;
 namespace Widgets {
 class WidgetFactory;
 } // namespace Widgets
 
 struct GuiPluginContext
 {
-    GuiPluginContext(Gui::Widgets::WidgetFactory* widgetFactory)
-        : widgetFactory{widgetFactory}
+    GuiPluginContext(Gui::LayoutProvider* layoutProvider, Gui::Widgets::WidgetFactory* widgetFactory)
+        : layoutProvider{layoutProvider}
+        , widgetFactory{widgetFactory}
     { }
 
+    Gui::LayoutProvider* layoutProvider;
     Gui::Widgets::WidgetFactory* widgetFactory;
 };
 } // namespace Fy::Gui
