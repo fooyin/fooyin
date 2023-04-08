@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "album.h"
-#include "artist.h"
 #include "track.h"
 
 #include <set>
@@ -32,10 +30,4 @@ using TrackPtrList = std::vector<Track*>;
 using TrackSet     = std::set<Track*>;
 using TrackIdMap   = std::unordered_map<int, Track>;
 using TrackPathMap = std::unordered_map<QString, Track*>;
-
-using AlbumList  = std::vector<Album>;
-using ArtistHash = std::unordered_map<int, Artist>;
-using GenreHash  = std::unordered_map<int, QString>;
-
-using ContainerHash = std::unordered_map<QString, std::unique_ptr<Container>>;
 } // namespace Fy::Core

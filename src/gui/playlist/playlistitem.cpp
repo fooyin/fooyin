@@ -22,7 +22,7 @@
 #include <utils/helpers.h>
 
 namespace Fy::Gui::Widgets {
-PlaylistItem::PlaylistItem(Type type, Core::MusicItem* data, PlaylistItem* parent)
+PlaylistItem::PlaylistItem(Type type, const ItemType& data, PlaylistItem* parent)
     : TreeItem{parent}
     , m_data{data}
     , m_type{type}
@@ -33,7 +33,7 @@ void PlaylistItem::setKey(const QString& key)
     m_key = key;
 }
 
-Core::MusicItem* PlaylistItem::data() const
+ItemType PlaylistItem::data() const
 {
     return m_data;
 }

@@ -21,24 +21,16 @@
 
 namespace Fy::Core {
 Artist::Artist(QString name)
-    : MusicItem()
-    , m_id{-1}
-    , m_name{std::move(name)}
+    : m_name{std::move(name)}
 { }
-
-int Artist::id() const
-{
-    return m_id;
-}
 
 QString Artist::name() const
 {
     return m_name;
 }
 
-void Artist::setId(int id)
+void Artist::setName(const QString& name)
 {
-    m_id = id;
+    m_name = name;
 }
-
 } // namespace Fy::Core

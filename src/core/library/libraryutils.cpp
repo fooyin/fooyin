@@ -77,11 +77,11 @@ QPixmap getCover(const QString& path, int size)
         QPixmap cover;
         cover.load(path);
         if(!cover.isNull()) {
-            static const int maximumSize = size;
-            const int width              = cover.size().width();
-            const int height             = cover.size().height();
-            if(width > maximumSize || height > maximumSize) {
-                cover = cover.scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            const int scale  = size * 4;
+            const int width  = cover.size().width();
+            const int height = cover.size().height();
+            if(width > size || height > size) {
+                cover = cover.scaled(scale, scale).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
             return cover;
         }

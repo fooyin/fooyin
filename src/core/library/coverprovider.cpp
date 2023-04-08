@@ -25,12 +25,12 @@
 #include <QPixmapCache>
 
 namespace Fy::Core::Covers {
-QPixmap albumCover(Album* album)
+QPixmap albumCover(const Album& album)
 {
-    const auto id = QString::number(album->year()) + album->title();
+    const auto id = album.date() + album.title();
     QPixmap cover;
     if(!QPixmapCache::find(id, &cover)) {
-        cover = Library::Utils::getCover(album->hasCover() ? album->coverPath() : "://images/nocover.png", 60);
+        cover = Library::Utils::getCover(album.hasCover() ? album.coverPath() : "://images/nocover.png", 60);
         QPixmapCache::insert(id, cover);
     }
     return cover;

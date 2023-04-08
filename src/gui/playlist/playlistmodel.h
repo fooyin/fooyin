@@ -21,6 +21,8 @@
 
 #include "playlistitem.h"
 
+#include <core/models/album.h>
+#include <core/models/container.h>
 #include <core/models/trackfwd.h>
 
 #include <utils/treemodel.h>
@@ -84,8 +86,10 @@ private:
     void setupModelData();
     void createAlbums(const Core::TrackPtrList& tracks);
     PlaylistItem* iterateTrack(Core::Track* track, bool discHeaders, bool splitDiscs);
-    PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, Core::MusicItem* item,
+
+    PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, const ItemType& item,
                                  PlaylistItem* parent);
+
     void insertRow(PlaylistItem* parent, PlaylistItem* child);
 
     void beginReset();
@@ -94,7 +98,7 @@ private:
 
     [[nodiscard]] QVariant trackData(PlaylistItem* item, int role) const;
     [[nodiscard]] QVariant albumData(PlaylistItem* item, int role) const;
-    [[nodiscard]] QVariant discData(PlaylistItem* item, int role) const;
+    [[nodiscard]] QVariant containerData(PlaylistItem* item, int role) const;
 
     Core::Player::PlayerManager* m_playerManager;
     Core::Library::MusicLibrary* m_library;
@@ -110,6 +114,7 @@ private:
     bool m_resetting;
 
     PlaylistItemHash m_nodes;
+    Core::AlbumHash m_albums;
     Core::ContainerHash m_containers;
     QPixmap m_playingIcon;
     QPixmap m_pausedIcon;

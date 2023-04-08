@@ -23,8 +23,7 @@
 
 namespace Fy::Core {
 Container::Container(QString title)
-    : MusicItem()
-    , m_title{std::move(title)}
+    : m_title{std::move(title)}
     , m_duration{0}
     , m_trackCount{0}
 { }
@@ -74,11 +73,5 @@ void Container::removeTrack(Track* track)
 {
     --m_trackCount;
     m_duration -= track->duration();
-}
-
-void Container::reset()
-{
-    m_trackCount = 0;
-    m_duration   = 0;
 }
 } // namespace Fy::Core
