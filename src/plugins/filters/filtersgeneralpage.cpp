@@ -40,31 +40,16 @@ private:
     Utils::SettingsManager* m_settings;
 
     QVBoxLayout* m_mainLayout;
-
-    QGroupBox* m_splitterBox;
-    QVBoxLayout* m_splitterBoxLayout;
-    QCheckBox* m_filterScrollBars;
 };
 
 FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
     , m_mainLayout{new QVBoxLayout(this)}
-    , m_splitterBox{new QGroupBox(tr("Filters"))}
-    , m_splitterBoxLayout{new QVBoxLayout(m_splitterBox)}
-    , m_filterScrollBars{new QCheckBox("Show Filter Scrollbars", this)}
 {
-    m_filterScrollBars->setChecked(m_settings->value<Settings::FilterScrollBar>());
-
-    m_splitterBoxLayout->addWidget(m_filterScrollBars);
-    m_mainLayout->addWidget(m_splitterBox);
-
     m_mainLayout->addStretch();
 }
 
-void FiltersGeneralPageWidget::apply()
-{
-    m_settings->set<Settings::FilterScrollBar>(m_filterScrollBars->isChecked());
-}
+void FiltersGeneralPageWidget::apply() { }
 
 FiltersGeneralPage::FiltersGeneralPage(Utils::SettingsManager* settings)
     : Utils::SettingsPage{settings->settingsDialog()}

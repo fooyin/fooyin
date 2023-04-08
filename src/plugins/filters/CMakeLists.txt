@@ -22,6 +22,8 @@ set(SOURCES
     fielditem.cpp
     fieldmodel.h
     fieldmodel.cpp
+    filtersappearancepage.h
+    filtersappearancepage.cpp
     filtersfieldspage.h
     filtersfieldspage.cpp
     filtersgeneralpage.h

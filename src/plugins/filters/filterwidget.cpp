@@ -60,7 +60,7 @@ FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* setti
     m_layout->addWidget(m_view);
 
     setupConnections();
-    //    setHeaderHidden(m_settings->value<Settings::FilterHeader>());
+    setHeaderEnabled(m_settings->value<Settings::FilterHeader>());
     setScrollbarEnabled(!m_settings->value<Settings::FilterScrollBar>());
     setAltColors(m_settings->value<Settings::FilterAltColours>());
 
@@ -136,35 +136,6 @@ QString FilterWidget::name() const
     return "Filter";
 }
 
-void FilterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
-{
-    auto* showHeaders = new QAction("Show Header", this);
-    showHeaders->setCheckable(true);
-    showHeaders->setChecked(isHeaderEnabled());
-    QAction::connect(showHeaders, &QAction::triggered, this, [this](bool checked) {
-        setHeaderEnabled(checked);
-    });
-
-    auto* showScrollBar = new QAction("Show Scrollbar", menu);
-    showScrollBar->setCheckable(true);
-    showScrollBar->setChecked(isScrollbarEnabled());
-    QAction::connect(showScrollBar, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set<Settings::FilterScrollBar>(checked);
-    });
-    menu->addAction(showScrollBar);
-
-    auto* altColours = new QAction("Alternate Row Colours", this);
-    altColours->setCheckable(true);
-    altColours->setChecked(hasAltColors());
-    QAction::connect(altColours, &QAction::triggered, this, [this](bool checked) {
-        m_settings->set<Settings::FilterAltColours>(checked);
-    });
-
-    menu->addAction(showHeaders);
-    menu->addAction(showScrollBar);
-    menu->addAction(altColours);
-}
-
 void FilterWidget::customHeaderMenuRequested(QPoint pos)
 {
     if(!m_filter) {
@@ -185,8 +156,7 @@ void FilterWidget::saveLayout(QJsonArray& array)
         return;
     }
     QJsonObject options;
-    options["Type"]   = m_filter->field.name;
-    options["Header"] = isHeaderEnabled();
+    options["Type"] = m_filter->field.name;
 
     QJsonObject filter;
     filter[name()] = options;
@@ -196,7 +166,6 @@ void FilterWidget::saveLayout(QJsonArray& array)
 void FilterWidget::loadLayout(QJsonObject& object)
 {
     setField(object["Type"].toString());
-    setHeaderEnabled(object["Header"].toBool());
 }
 
 void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)

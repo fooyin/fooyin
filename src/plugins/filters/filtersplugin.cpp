@@ -61,8 +61,9 @@ void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
         return new SearchWidget(m_filterManager, m_settings);
     });
 
-    m_generalPage = std::make_unique<Settings::FiltersGeneralPage>(m_settings);
-    m_fieldsPage  = std::make_unique<Settings::FiltersFieldsPage>(m_fieldsRegistry.get(), m_settings);
+    //    m_generalPage    = std::make_unique<Settings::FiltersGeneralPage>(m_settings);
+    m_appearancePage = std::make_unique<Settings::FiltersAppearancePage>(m_settings);
+    m_fieldsPage     = std::make_unique<Settings::FiltersFieldsPage>(m_fieldsRegistry.get(), m_settings);
 
     registerLayouts();
 }
@@ -77,16 +78,16 @@ void FiltersPlugin::registerLayouts()
     m_layoutProvider->registerLayout(
         "Stone",
         R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{"SplitterHorizontal":{
-                     "Children":[{"Filter":{"Header": true,"Type": "Album Artist"}},"Playlist"],
+                     "Children":[{"Filter":{"Type": "Album Artist"}},"Playlist"],
                      "State":"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP////8BAAAAAQA="}},"Controls"],
                      "State":"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////
                      wEAAAACAA=="}}]})");
 
     m_layoutProvider->registerLayout(
         "Ember",
-        R"({"Layout":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"Filter":{"Header":true,"Type":"Genre"}},
-        {"Filter":{"Header":true,"Type":"Album Artist"}},{"Filter":{"Header":true,"Type":"Artist"}},
-        {"Filter":{"Header":true,"Type":"Album"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
+        R"({"Layout":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"Filter":{"Type":"Genre"}},
+        {"Filter":{"Type":"Album Artist"}},{"Filter":{"Type":"Artist"}},{"Filter":{"Type":"Album"}}],
+        "State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
         {"SplitterHorizontal":{"Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAFfgAAAdIAAAC1AP////8BAAAAAQA="}},
         {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["Artwork","Info"],
         "State":"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAUAP////8BAAAAAgA="}},"Playlist"],"State":"AAAA/wAAAAEAAAADAAABdQAABdsAAAC1AP////8BAAAAAQA="}},

@@ -19,22 +19,19 @@
 
 #pragma once
 
-#include <Qt>
+#include <utils/settings/settingspage.h>
 
-namespace Fy::Filters::Constants {
-namespace Role {
-constexpr auto Title   = Qt::UserRole + 1;
-constexpr auto Tracks  = Qt::UserRole + 2;
-constexpr auto Sorting = Qt::UserRole + 3;
-} // namespace Role
+namespace Fy {
+namespace Utils {
+class SettingsManager;
+class SettingsDialogController;
+} // namespace Utils
 
-namespace Icons::Category {
-constexpr auto Filters = "://icons/category-filters.svg";
-} // namespace Icons::Category
-
-namespace Page {
-constexpr auto FiltersAppearance = "Fooyin.Page.Filters.Appearance";
-constexpr auto FiltersGeneral    = "Fooyin.Page.Filters.General";
-constexpr auto FiltersFields     = "Fooyin.Page.Filters.Fields";
-} // namespace Page
-} // namespace Fy::Filters::Constants
+namespace Filters::Settings {
+class FiltersAppearancePage : public Utils::SettingsPage
+{
+public:
+    FiltersAppearancePage(Utils::SettingsManager* settings);
+};
+} // namespace Filters::Settings
+} // namespace Fy

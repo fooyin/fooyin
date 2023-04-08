@@ -59,7 +59,6 @@ public:
     void setAltColors(bool enabled);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
     void customHeaderMenuRequested(QPoint pos);
 

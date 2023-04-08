@@ -20,6 +20,7 @@
 #pragma once
 
 #include "fieldregistry.h"
+#include "filtersappearancepage.h"
 #include "filtersfieldspage.h"
 #include "filtersgeneralpage.h"
 #include "filterwidget.h"
@@ -68,6 +69,7 @@ private:
     std::unique_ptr<Settings::FiltersSettings> m_filterSettings;
 
     std::unique_ptr<Settings::FiltersGeneralPage> m_generalPage;
+    std::unique_ptr<Settings::FiltersAppearancePage> m_appearancePage;
     std::unique_ptr<Settings::FiltersFieldsPage> m_fieldsPage;
 };
 } // namespace Fy::Filters
