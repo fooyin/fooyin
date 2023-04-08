@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "musicitem.h"
-
 #include <QList>
 
 #include <map>
@@ -28,7 +26,7 @@
 namespace Fy::Core {
 using ExtraTags = std::map<QString, QList<QString>>;
 
-class Track : public MusicItem
+class Track
 {
 public:
     Track();

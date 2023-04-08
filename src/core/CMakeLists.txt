@@ -69,13 +69,10 @@ set(SOURCES
 
     models/container.h
     models/container.cpp
-    models/musicitem.h
     models/album.h
     models/album.cpp
     models/artist.h
     models/artist.cpp
-    models/disc.h
-    models/disc.cpp
     models/track.h
     models/track.cpp
     models/trackfwd.h

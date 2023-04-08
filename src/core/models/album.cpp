@@ -24,21 +24,25 @@
 #include <utils/helpers.h>
 
 namespace Fy::Core {
-Album::Album(const QString& title)
-    : Container{title}
-    , m_id{-1}
-    , m_artistId{-1}
+Album::Album()
+    : Album("")
+{ }
+
+Album::Album(QString title)
+    : m_title{std::move(title)}
+    , m_duration{0}
+    , m_trackCount{0}
     , m_discCount{0}
 { }
 
-int Album::id() const
+QString Album::title() const
 {
-    return m_id;
+    return m_title;
 }
 
-int Album::artistId() const
+QString Album::subTitle() const
 {
-    return m_artistId;
+    return m_subTitle;
 }
 
 QString Album::artist() const
@@ -51,24 +55,9 @@ QString Album::date() const
     return m_date;
 }
 
-int Album::year() const
-{
-    return m_year;
-}
-
-GenreList Album::genres() const
+QStringList Album::genres() const
 {
     return m_genres;
-}
-
-int Album::discCount() const
-{
-    return m_discCount;
-}
-
-bool Album::isSingleDiscAlbum() const
-{
-    return m_discCount <= 1;
 }
 
 bool Album::hasCover() const
@@ -81,14 +70,29 @@ QString Album::coverPath() const
     return m_coverPath;
 }
 
-void Album::setId(int id)
+bool Album::isSingleDiscAlbum() const
 {
-    m_id = id;
+    return m_discCount <= 1;
 }
 
-void Album::setArtistId(int id)
+int Album::trackCount() const
 {
-    m_artistId = id;
+    return m_trackCount;
+}
+
+uint64_t Album::duration() const
+{
+    return m_duration;
+}
+
+void Album::setTitle(const QString& title)
+{
+    m_title = title;
+}
+
+void Album::setSubTitle(const QString& title)
+{
+    m_subTitle = title;
 }
 
 void Album::setArtist(const QString& artist)
@@ -99,17 +103,11 @@ void Album::setArtist(const QString& artist)
 void Album::setDate(const QString& date)
 {
     m_date = date;
-    m_year = date.toInt();
 }
 
-void Album::setGenres(const GenreList& genres)
+void Album::setGenres(const QStringList& genres)
 {
     m_genres = genres;
-}
-
-void Album::setDiscCount(int count)
-{
-    m_discCount = count;
 }
 
 void Album::setCoverPath(const QString& path)
@@ -119,28 +117,28 @@ void Album::setCoverPath(const QString& path)
 
 void Album::addTrack(Track* track)
 {
-    Container::addTrack(track);
-
-    const int trackDisc = track->discNumber();
-    if(trackDisc > m_discCount) {
-        m_discCount = trackDisc;
-    }
+    ++m_trackCount;
+    m_duration += track->duration();
 
     for(const auto& genre : track->genres()) {
         if(!Utils::contains(m_genres, genre)) {
             m_genres.emplace_back(genre);
         }
     }
+
+    m_discCount = track->discTotal();
 }
 
 void Album::removeTrack(Track* track)
 {
-    Container::removeTrack(track);
+    --m_trackCount;
+    m_duration -= track->duration();
 }
 
 void Album::reset()
 {
-    Container::reset();
-    m_discCount = 0;
+    m_trackCount = 0;
+    m_duration   = 0;
+    m_genres.clear();
 }
 } // namespace Fy::Core

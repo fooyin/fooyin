@@ -19,53 +19,53 @@
 
 #pragma once
 
-#include "container.h"
-
 #include <QList>
 
 namespace Fy::Core {
 class Track;
 
-using GenreList = QList<QString>;
-
-class Album : public Container
+class Album
 {
 public:
-    Album() = default;
-    explicit Album(const QString& title);
+    Album();
+    explicit Album(QString title);
 
-    [[nodiscard]] int id() const;
-    [[nodiscard]] int artistId() const;
+    [[nodiscard]] QString title() const;
+    [[nodiscard]] QString subTitle() const;
     [[nodiscard]] QString artist() const;
     [[nodiscard]] QString date() const;
-    [[nodiscard]] int year() const;
-    [[nodiscard]] GenreList genres() const;
-    [[nodiscard]] int discCount() const;
-    [[nodiscard]] bool isSingleDiscAlbum() const;
+    [[nodiscard]] QStringList genres() const;
     [[nodiscard]] bool hasCover() const;
     [[nodiscard]] QString coverPath() const;
 
-    void setId(int id);
-    void setArtistId(int id);
+    [[nodiscard]] bool isSingleDiscAlbum() const;
+
+    [[nodiscard]] int trackCount() const;
+    [[nodiscard]] uint64_t duration() const;
+
+    void setTitle(const QString& title);
+    void setSubTitle(const QString& title);
     void setArtist(const QString& artist);
     void setDate(const QString& date);
-    void setGenres(const GenreList& genres);
+    void setGenres(const QStringList& genres);
     void setDiscCount(int count);
     void setCoverPath(const QString& path);
 
-    void addTrack(Track* track) override;
-    void removeTrack(Track* track) override;
+    void addTrack(Track* track);
+    void removeTrack(Track* track);
 
-    void reset() override;
+    void reset();
 
 private:
-    int m_id;
-    int m_artistId;
+    QString m_title;
+    QString m_subTitle;
     QString m_artist;
     QString m_date;
-    int m_year;
-    GenreList m_genres;
-    int m_discCount;
+    QStringList m_genres;
     QString m_coverPath;
+    uint64_t m_duration;
+    int m_trackCount;
+    int m_discCount;
 };
+using AlbumHash = std::unordered_map<QString, Album>;
 } // namespace Fy::Core

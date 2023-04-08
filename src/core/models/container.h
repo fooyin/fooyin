@@ -19,13 +19,11 @@
 
 #pragma once
 
-#include "musicitem.h"
-
 #include <QString>
 
 namespace Fy::Core {
 class Track;
-class Container : public MusicItem
+class Container
 {
 public:
     Container() = default;
@@ -40,9 +38,9 @@ public:
     void setTrackCount(int count);
     void setDuration(uint64_t duration);
 
-    virtual void addTrack(Track* track);
-    virtual void removeTrack(Track* track);
-    virtual void reset();
+    void addTrack(Track* track);
+    void removeTrack(Track* track);
+    void reset();
 
 private:
     QString m_title;
@@ -50,4 +48,5 @@ private:
     uint64_t m_duration;
     int m_trackCount;
 };
+using ContainerHash = std::unordered_map<QString, Container>;
 } // namespace Fy::Core

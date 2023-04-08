@@ -25,6 +25,6 @@ namespace Fy::Core {
 class Album;
 
 namespace Covers {
-QPixmap albumCover(Album* album);
+QPixmap albumCover(const Album& album);
 } // namespace Covers
 } // namespace Fy::Core

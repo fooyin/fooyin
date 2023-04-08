@@ -19,30 +19,36 @@
 
 #pragma once
 
-#include <core/models/musicitem.h>
-
 #include <utils/treeitem.h>
 
 #include <QObject>
 
-namespace Fy::Gui::Widgets {
+namespace Fy {
+namespace Core {
+class Track;
+class Album;
+class Container;
+} // namespace Core
+
+namespace Gui::Widgets {
+using ItemType = std::variant<Core::Track*, Core::Album*, Core::Container*>;
+
 class PlaylistItem : public Utils::TreeItem<PlaylistItem>
 {
 public:
     enum Type
     {
-        Track     = 0,
-        Disc      = 1,
+        Root      = 0,
+        Track     = 1,
         Container = 2,
         Album     = 3,
-        Root      = 4,
     };
 
     enum Role
     {
         Id        = Qt::UserRole + 6,
         Artist    = Qt::UserRole + 7,
-        Year      = Qt::UserRole + 8,
+        Date      = Qt::UserRole + 8,
         Duration  = Qt::UserRole + 9,
         Cover     = Qt::UserRole + 10,
         Number    = Qt::UserRole + 11,
@@ -53,17 +59,18 @@ public:
         Data      = Qt::UserRole + 16,
     };
 
-    explicit PlaylistItem(Type type = Type::Root, Core::MusicItem* data = {}, PlaylistItem* parentItem = nullptr);
+    explicit PlaylistItem(Type type = Type::Root, const ItemType& data = {}, PlaylistItem* parentItem = nullptr);
 
     void setKey(const QString& key);
 
-    [[nodiscard]] Core::MusicItem* data() const;
+    [[nodiscard]] ItemType data() const;
     [[nodiscard]] Type type();
     [[nodiscard]] QString key() const;
 
 private:
-    Core::MusicItem* m_data;
+    ItemType m_data;
     Type m_type;
     QString m_key;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Gui::Widgets
+} // namespace Fy

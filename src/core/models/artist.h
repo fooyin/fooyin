@@ -19,24 +19,20 @@
 
 #pragma once
 
-#include "musicitem.h"
-
 #include <QString>
 
 namespace Fy::Core {
-class Artist : public MusicItem
+class Artist
 {
 public:
     Artist() = default;
     explicit Artist(QString name);
 
-    [[nodiscard]] int id() const;
     [[nodiscard]] QString name() const;
 
-    void setId(int id);
+    void setName(const QString& name);
 
 private:
-    int m_id;
     QString m_name;
 };
 } // namespace Fy::Core
