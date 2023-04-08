@@ -19,8 +19,6 @@
 
 #include "coverwidget.h"
 
-#include "gui/playlist/playlistwidget.h"
-
 #include <core/library/musiclibrary.h>
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
@@ -72,13 +70,10 @@ void CoverWidget::resizeEvent(QResizeEvent* e)
 void CoverWidget::reloadCover()
 {
     QString coverPath;
-    const Core::Player::PlayState state = m_playerManager->playState();
-    if(state == Core::Player::PlayState::Playing || state == Core::Player::PlayState::Paused) {
-        Core::Track* track = m_playerManager->currentTrack();
-        if(track) {
-            coverPath = track->coverPath();
-        }
+    if(auto* track = m_playerManager->currentTrack()) {
+        coverPath = track->coverPath();
     }
+
     else {
         auto tracks = m_library->tracks();
         if(!tracks.empty()) {
