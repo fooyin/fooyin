@@ -61,7 +61,7 @@ FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* setti
 
     setupConnections();
     setHeaderEnabled(m_settings->value<Settings::FilterHeader>());
-    setScrollbarEnabled(!m_settings->value<Settings::FilterScrollBar>());
+    setScrollbarEnabled(m_settings->value<Settings::FilterScrollBar>());
     setAltColors(m_settings->value<Settings::FilterAltColours>());
 
     resetByType();
