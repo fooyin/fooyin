@@ -47,12 +47,13 @@ public:
     [[nodiscard]] QString name() const override;
 
 protected:
-    void setupUi();
     void resizeEvent(QResizeEvent* event) override;
 
-    void reloadCover();
-
 private:
+    void setupUi();
+    void reloadCover();
+    void rescaleCover();
+
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
 
@@ -60,7 +61,6 @@ private:
     QLabel* m_coverLabel;
     QString m_coverPath;
     QPixmap m_cover;
-    bool m_hasCover;
 };
 } // namespace Gui::Widgets
 } // namespace Fy

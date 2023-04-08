@@ -61,8 +61,8 @@ void CoverWidget::setupUi()
 
 void CoverWidget::resizeEvent(QResizeEvent* e)
 {
-    if(m_hasCover) {
-        m_coverLabel->setPixmap(m_cover.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    if(!m_cover.isNull()) {
+        rescaleCover();
     }
     QWidget::resizeEvent(e);
 }
@@ -96,9 +96,17 @@ void CoverWidget::reloadCover()
         m_coverPath = coverPath;
         m_cover.load(coverPath);
         if(!m_cover.isNull()) {
-            m_coverLabel->setPixmap(m_cover.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-            m_hasCover = true;
+            rescaleCover();
         }
     }
+}
+
+void CoverWidget::rescaleCover()
+{
+    const int w       = width();
+    const int h       = height();
+    const QSize scale = {w * 4, h * 4};
+    m_coverLabel->setPixmap(
+        m_cover.scaled(scale, Qt::KeepAspectRatio).scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 } // namespace Fy::Gui::Widgets
