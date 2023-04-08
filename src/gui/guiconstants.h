@@ -40,7 +40,7 @@ constexpr auto VolumeMute  = "://icons/volume-mute.svg";
 constexpr auto Quit          = "://icons/quit.svg";
 constexpr auto Settings      = "://icons/settings.svg";
 constexpr auto RescanLibrary = "://icons/reload.svg";
-constexpr auto LayoutEditing = "://icons/layout-editing.svg";
+constexpr auto LayoutEditing = "://icons/category-interface.svg";
 constexpr auto QuickSetup    = "://icons/quick-setup.svg";
 
 namespace Category {
@@ -48,6 +48,7 @@ constexpr auto General   = "://icons/category-general.svg";
 constexpr auto Interface = "://icons/category-interface.svg";
 constexpr auto Library   = "://icons/category-library.svg";
 constexpr auto Playlist  = "://icons/category-playlist.svg";
+constexpr auto Plugins   = "://icons/category-plugins.svg";
 } // namespace Category
 } // namespace Icons
 
@@ -120,5 +121,6 @@ constexpr auto GeneralCore       = "Fooyin.Page.General.Core";
 constexpr auto InterfaceGeneral  = "Fooyin.Page.Interface.General";
 constexpr auto LibraryGeneral    = "Fooyin.Page.Library.General";
 constexpr auto PlaylistInterface = "Fooyin.Page.Playlist.Interface";
+constexpr auto Plugins           = "Fooyin.Page.Plugins";
 } // namespace Page
 } // namespace Fy::Gui::Constants

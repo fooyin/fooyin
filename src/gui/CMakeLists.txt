@@ -95,6 +95,12 @@ set(SOURCES
     settings/libraryitem.cpp
     settings/playlistguipage.h
     settings/playlistguipage.cpp
+    settings/pluginitem.h
+    settings/pluginitem.cpp
+    settings/pluginsmodel.h
+    settings/pluginsmodel.cpp
+    settings/pluginspage.h
+    settings/pluginspage.cpp
 
     widgets/dummy.h
     widgets/dummy.cpp

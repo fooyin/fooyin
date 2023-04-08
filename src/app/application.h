@@ -31,6 +31,7 @@
 #include <gui/settings/guigeneralpage.h>
 #include <gui/settings/librarygeneralpage.h>
 #include <gui/settings/playlistguipage.h>
+#include <gui/settings/pluginspage.h>
 #include <gui/widgetfactory.h>
 
 #include <QApplication>
@@ -105,6 +106,7 @@ private:
     Gui::Settings::PlaylistGuiPage m_playlistGuiPage;
 
     Plugins::PluginManager* m_pluginManager;
+    Gui::Settings::PluginPage m_pluginPage;
     Core::CorePluginContext m_corePluginContext;
     Gui::GuiPluginContext m_guiPluginContext;
 };

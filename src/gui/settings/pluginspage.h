@@ -19,25 +19,23 @@
 
 #pragma once
 
-#include <utils/treeitem.h>
+#include <utils/settings/settingspage.h>
 
 namespace Fy {
-namespace Core::Library {
-class LibraryInfo;
+namespace Plugins {
+class PluginManager;
 }
 
+namespace Utils {
+class SettingsManager;
+class SettingsDialogController;
+} // namespace Utils
+
 namespace Gui::Settings {
-class LibraryItem : public Utils::TreeItem<LibraryItem>
+class PluginPage : public Utils::SettingsPage
 {
 public:
-    explicit LibraryItem(Core::Library::LibraryInfo* info = nullptr, LibraryItem* parent = nullptr);
-
-    [[nodiscard]] Core::Library::LibraryInfo* info() const;
-
-    void changeInfo(Core::Library::LibraryInfo* info);
-
-private:
-    Core::Library::LibraryInfo* m_info;
+    PluginPage(Utils::SettingsManager* settings, Plugins::PluginManager* pluginManager);
 };
 } // namespace Gui::Settings
 } // namespace Fy

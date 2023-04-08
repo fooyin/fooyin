@@ -26,21 +26,23 @@
 namespace Fy::Plugins {
 class Plugin;
 
+Q_NAMESPACE
+enum PluginStatus
+{
+    Invalid,
+    Read,
+    Resolved,
+    Loaded,
+    Initialised,
+    Running,
+    Stopped,
+    Deleted
+};
+Q_ENUM_NS(PluginStatus)
+
 class PluginInfo
 {
 public:
-    enum Status
-    {
-        Invalid,
-        Read,
-        Resolved,
-        Loaded,
-        Initialised,
-        Running,
-        Stopped,
-        Deleted
-    };
-
     PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata);
 
     void load();
@@ -54,6 +56,7 @@ public:
     [[nodiscard]] QString filename() const;
     [[nodiscard]] QJsonObject metadata() const;
     [[nodiscard]] QString version() const;
+    [[nodiscard]] QString vendor() const;
     [[nodiscard]] QString identifier() const;
     [[nodiscard]] QString category() const;
     [[nodiscard]] QString copyright() const;
@@ -61,7 +64,7 @@ public:
     [[nodiscard]] QString url() const;
     [[nodiscard]] bool isLoaded() const;
     [[nodiscard]] bool isDisabled() const;
-    [[nodiscard]] Status status() const;
+    [[nodiscard]] PluginStatus status() const;
     [[nodiscard]] QString error() const;
     [[nodiscard]] bool hasError() const;
 
@@ -81,7 +84,7 @@ private:
     bool m_isRequired;
     bool m_isLoaded;
     bool m_isDisabled;
-    Status m_status;
+    PluginStatus m_status;
     QString m_error;
 
     QObject* m_root;

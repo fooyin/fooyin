@@ -27,6 +27,11 @@ PluginManager::PluginManager(QObject* parent)
     : QObject{parent}
 { }
 
+const PluginInfoMap& PluginManager::allPluginInfo() const
+{
+    return m_plugins;
+}
+
 void PluginManager::findPlugins(const QString& pluginDir)
 {
     const QDir dir{pluginDir};

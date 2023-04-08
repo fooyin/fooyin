@@ -22,12 +22,16 @@
 #include "plugininfo.h"
 
 namespace Fy::Plugins {
+using PluginInfoMap = std::unordered_map<QString, PluginInfo*>;
+
 class PluginManager : public QObject
 {
     Q_OBJECT
 
 public:
     explicit PluginManager(QObject* parent = nullptr);
+
+    const PluginInfoMap& allPluginInfo() const;
 
     void findPlugins(const QString& pluginDir);
     void loadPlugins();
@@ -49,6 +53,6 @@ public:
     void shutdown();
 
 private:
-    std::unordered_map<QString, PluginInfo*> m_plugins;
+    PluginInfoMap m_plugins;
 };
 } // namespace Fy::Plugins

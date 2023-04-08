@@ -22,22 +22,20 @@
 #include <utils/treeitem.h>
 
 namespace Fy {
-namespace Core::Library {
-class LibraryInfo;
+namespace Plugins {
+class PluginInfo;
 }
 
 namespace Gui::Settings {
-class LibraryItem : public Utils::TreeItem<LibraryItem>
+class PluginItem : public Utils::TreeItem<PluginItem>
 {
 public:
-    explicit LibraryItem(Core::Library::LibraryInfo* info = nullptr, LibraryItem* parent = nullptr);
+    explicit PluginItem(Plugins::PluginInfo* info = nullptr, PluginItem* parent = nullptr);
 
-    [[nodiscard]] Core::Library::LibraryInfo* info() const;
-
-    void changeInfo(Core::Library::LibraryInfo* info);
+    [[nodiscard]] Plugins::PluginInfo* info() const;
 
 private:
-    Core::Library::LibraryInfo* m_info;
+    Plugins::PluginInfo* m_info;
 };
 } // namespace Gui::Settings
 } // namespace Fy

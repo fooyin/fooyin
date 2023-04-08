@@ -19,25 +19,34 @@
 
 #pragma once
 
-#include <utils/treeitem.h>
+#include "pluginitem.h"
+
+#include <utils/tablemodel.h>
 
 namespace Fy {
-namespace Core::Library {
-class LibraryInfo;
+namespace Plugins {
+class PluginManager;
 }
 
 namespace Gui::Settings {
-class LibraryItem : public Utils::TreeItem<LibraryItem>
+class PluginsModel : public Utils::TableModel<PluginItem>
 {
 public:
-    explicit LibraryItem(Core::Library::LibraryInfo* info = nullptr, LibraryItem* parent = nullptr);
+    explicit PluginsModel(Plugins::PluginManager* pluginManager, QObject* parent = nullptr);
 
-    [[nodiscard]] Core::Library::LibraryInfo* info() const;
+    void setupModelData();
 
-    void changeInfo(Core::Library::LibraryInfo* info);
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
+    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
+    [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
 private:
-    Core::Library::LibraryInfo* m_info;
+    using PluginNameMap = std::unordered_map<QString, std::unique_ptr<PluginItem>>;
+
+    Plugins::PluginManager* m_pluginManager;
+
+    PluginNameMap m_nodes;
 };
 } // namespace Gui::Settings
 } // namespace Fy

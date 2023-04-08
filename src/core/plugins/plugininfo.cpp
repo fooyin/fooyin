@@ -123,7 +123,7 @@ bool PluginInfo::isDisabled() const
     return m_isDisabled;
 }
 
-PluginInfo::Status PluginInfo::status() const
+PluginStatus PluginInfo::status() const
 {
     return m_status;
 }
@@ -146,6 +146,11 @@ void PluginInfo::setError(const QString& error)
 QString PluginInfo::version() const
 {
     return m_version;
+}
+
+QString PluginInfo::vendor() const
+{
+    return m_vendor;
 }
 
 QString PluginInfo::identifier() const

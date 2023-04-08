@@ -17,27 +17,17 @@
  *
  */
 
-#pragma once
+#include "pluginitem.h"
 
-#include <utils/treeitem.h>
+namespace Fy::Gui::Settings {
 
-namespace Fy {
-namespace Core::Library {
-class LibraryInfo;
-}
+PluginItem::PluginItem(Plugins::PluginInfo* info, PluginItem* parent)
+    : TreeItem{parent}
+    , m_info{info}
+{ }
 
-namespace Gui::Settings {
-class LibraryItem : public Utils::TreeItem<LibraryItem>
+Plugins::PluginInfo* PluginItem::info() const
 {
-public:
-    explicit LibraryItem(Core::Library::LibraryInfo* info = nullptr, LibraryItem* parent = nullptr);
-
-    [[nodiscard]] Core::Library::LibraryInfo* info() const;
-
-    void changeInfo(Core::Library::LibraryInfo* info);
-
-private:
-    Core::Library::LibraryInfo* m_info;
-};
-} // namespace Gui::Settings
-} // namespace Fy
+    return m_info;
+}
+} // namespace Fy::Gui::Settings
