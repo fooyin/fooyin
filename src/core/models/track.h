@@ -40,6 +40,7 @@ public:
 
     [[nodiscard]] int id() const;
     [[nodiscard]] QString hash() const;
+    [[nodiscard]] QString albumHash() const;
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] QStringList artists() const;

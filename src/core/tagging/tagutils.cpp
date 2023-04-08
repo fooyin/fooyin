@@ -37,11 +37,13 @@
 namespace Fy::Core::Tagging {
 void scaleImage(QPixmap& image)
 {
-    static const int maximumSize = 400;
+    static const int maximumSize = 600;
+    static const int scale       = 4 * maximumSize;
     const int width              = image.size().width();
     const int height             = image.size().height();
     if(width > maximumSize || height > maximumSize) {
-        image = image.scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        image = image.scaled(scale, scale)
+                    .scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 }
 

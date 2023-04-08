@@ -257,7 +257,7 @@ void PlaylistModel::createAlbums(const Core::TrackPtrList& tracks)
 {
     for(const auto& track : tracks) {
         if(track->isEnabled() && !m_nodes.count(track->hash())) {
-            const QString albumKey = QString::number(track->year()) + track->album();
+            const QString albumKey = track->albumHash();
             if(!m_albums.count(albumKey)) {
                 Core::Album album{track->album()};
                 album.setDate(track->date());
@@ -275,11 +275,11 @@ PlaylistItem* PlaylistModel::iterateTrack(Core::Track* track, bool discHeaders, 
 {
     PlaylistItem* parent = nullptr;
 
-    const QString albumKey = QString::number(track->year()) + track->album();
-    const QString discKey  = albumKey + QString::number(track->discNumber());
+    const QString albumKey = track->albumHash();
 
     if(m_albums.count(albumKey)) {
         auto& album           = m_albums.at(albumKey);
+        const QString discKey = albumKey + QString::number(track->discNumber());
         const bool singleDisk = album.isSingleDiscAlbum() || (!splitDiscs && !discHeaders);
 
         if(singleDisk) {

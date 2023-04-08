@@ -52,7 +52,7 @@ QString Track::generateHash()
 {
     m_hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(m_artists.join(","),
                                               m_album,
-                                              QString::number(m_year),
+                                              m_date,
                                               QString::number(m_discNumber),
                                               QStringLiteral("%1").arg(m_trackNumber, 2, 10, QLatin1Char('0')),
                                               QString::number(m_duration));
@@ -77,6 +77,11 @@ int Track::id() const
 QString Track::hash() const
 {
     return m_hash;
+}
+
+QString Track::albumHash() const
+{
+    return QString{"%1|%2|%3"}.arg(m_date, !m_albumArtist.isEmpty() ? m_albumArtist : m_artists.join(""), m_album);
 }
 
 QString Track::filepath() const
