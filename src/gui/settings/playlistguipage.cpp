@@ -40,11 +40,6 @@ public:
 private:
     Utils::SettingsManager* m_settings;
 
-    QVBoxLayout* m_mainLayout;
-
-    QGroupBox* m_discBox;
-    QVBoxLayout* m_discBoxLayout;
-
     QRadioButton* m_noHeaders;
     QRadioButton* m_discSubheaders;
     QRadioButton* m_splitDiscs;
@@ -54,9 +49,6 @@ private:
 
 PlaylistGuiPageWidget::PlaylistGuiPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
-    , m_mainLayout{new QVBoxLayout(this)}
-    , m_discBox{new QGroupBox(tr("Disc Handling"), this)}
-    , m_discBoxLayout{new QVBoxLayout(m_discBox)}
     , m_noHeaders{new QRadioButton(tr("None"), this)}
     , m_discSubheaders{new QRadioButton(tr("Disc Subheaders"), this)}
     , m_splitDiscs{new QRadioButton("Split Discs", this)}
@@ -76,14 +68,17 @@ PlaylistGuiPageWidget::PlaylistGuiPageWidget(Utils::SettingsManager* settings)
     m_simpleList->setChecked(m_settings->value<Settings::SimplePlaylist>());
     m_altColours->setChecked(m_settings->value<Settings::PlaylistAltColours>());
 
-    m_discBoxLayout->addWidget(m_noHeaders);
-    m_discBoxLayout->addWidget(m_discSubheaders);
-    m_discBoxLayout->addWidget(m_splitDiscs);
+    auto* discBox       = new QGroupBox(tr("Disc Handling"), this);
+    auto* discBoxLayout = new QVBoxLayout(discBox);
+    discBoxLayout->addWidget(m_noHeaders);
+    discBoxLayout->addWidget(m_discSubheaders);
+    discBoxLayout->addWidget(m_splitDiscs);
 
-    m_mainLayout->addWidget(m_discBox);
-    m_mainLayout->addWidget(m_simpleList);
-    m_mainLayout->addWidget(m_altColours);
-    m_mainLayout->addStretch();
+    auto* mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(discBox);
+    mainLayout->addWidget(m_simpleList);
+    mainLayout->addWidget(m_altColours);
+    mainLayout->addStretch();
 }
 
 void PlaylistGuiPageWidget::apply()
