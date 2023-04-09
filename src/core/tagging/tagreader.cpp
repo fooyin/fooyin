@@ -17,17 +17,51 @@
  *
  */
 
-#include "tags.h"
+#include "tagreader.h"
 
+#include "core/corepaths.h"
 #include "core/models/track.h"
 #include "tagutils.h"
 
-#include <QFileInfo>
-#include <QPixmap>
+#include <utils/utils.h>
+
 #include <taglib/fileref.h>
 #include <taglib/tfilestream.h>
 
+#include <QCryptographicHash>
+#include <QDir>
+#include <QFileInfo>
+#include <QPixmap>
+
 namespace Fy::Core::Tagging {
+QString calcCoverHash(const QString& albumName, const QString& albumArtist)
+{
+    const QString albumId = albumName.toLower() + albumArtist.toLower();
+    QString albumKey      = QCryptographicHash::hash(albumId.toUtf8(), QCryptographicHash::Sha1).toHex();
+    return albumKey;
+}
+
+QString coverInDirectory(const QString& directory)
+{
+    const QDir baseDirectory = QDir(directory);
+    const QStringList fileExtensions{"*.jpg", "*.jpeg", "*.png", "*.gif", "*.tiff", "*.bmp"};
+    // Use first image found as album cover
+    const QStringList fileList = baseDirectory.entryList(fileExtensions, QDir::Files);
+    if(!fileList.isEmpty()) {
+        QString cover = baseDirectory.absolutePath() + "/" + fileList.constFirst();
+        return cover;
+    }
+    return {};
+}
+
+bool saveCover(const QPixmap& cover, const QString& hash)
+{
+    auto path = Core::coverPath();
+    QFile file(QString(path + hash).append(".jpg"));
+    file.open(QIODevice::WriteOnly);
+    return cover.save(&file, "JPG", 100);
+}
+
 struct ReadingProperties
 {
     TagLib::AudioProperties::ReadStyle readStyle{TagLib::AudioProperties::ReadStyle::Fast};
@@ -54,7 +88,7 @@ ReadingProperties getReadingProperties(Quality quality)
 }
 
 // TODO: Handle different filetypes separately
-bool readMetaData(Track& track, Quality quality)
+bool TagReader::readMetaData(Track& track, Quality quality)
 {
     const auto filepath = track.filepath();
     const auto fileInfo = QFileInfo(filepath);
@@ -161,7 +195,7 @@ bool readMetaData(Track& track, Quality quality)
     return true;
 }
 
-QPixmap readCover(const QString& filepath)
+QPixmap TagReader::readCover(const QString& filepath)
 {
     const auto readingProperties = getReadingProperties(Quality::Quality);
     auto fileRef                 = TagLib::FileRef(
@@ -170,7 +204,7 @@ QPixmap readCover(const QString& filepath)
     return coverFromFile(fileRef);
 }
 
-bool writeMetaData(const Track& track)
+bool TagReader::writeMetaData(const Track& track)
 {
     const auto filepath = track.filepath();
     const auto fileInfo = QFileInfo(filepath);
@@ -227,5 +261,31 @@ bool writeMetaData(const Track& track)
 
     fileRef.file()->setProperties(parsedTag.map);
     return fileRef.save();
+}
+
+QString TagReader::storeCover(const Track& track)
+{
+    QString coverPath       = "";
+    const QString coverHash = calcCoverHash(track.album(), track.albumArtist());
+
+    const QString cacheCover  = Core::coverPath() + coverHash + ".jpg";
+    const QString folderCover = coverInDirectory(Utils::File::getParentDirectory(track.filepath()));
+
+    if(Utils::File::exists(cacheCover)) {
+        coverPath = cacheCover;
+    }
+    else if(!folderCover.isEmpty()) {
+        coverPath = folderCover;
+    }
+    else {
+        const QPixmap cover = readCover(track.filepath());
+        if(!cover.isNull()) {
+            const bool saved = saveCover(cover, coverHash);
+            if(saved) {
+                coverPath = cacheCover;
+            }
+        }
+    }
+    return coverPath;
 }
 } // namespace Fy::Core::Tagging

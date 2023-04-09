@@ -21,8 +21,7 @@
 
 #include "core/database/database.h"
 #include "core/database/librarydatabase.h"
-#include "core/tagging/tags.h"
-#include "libraryutils.h"
+#include "core/tagging/tagreader.h"
 
 #include <utils/utils.h>
 
@@ -69,7 +68,7 @@ void LibraryScanner::scanLibrary(const TrackList& tracks)
         else {
             trackMap.emplace(track.filepath(), track);
             if(track.hasCover() && !File::exists(track.coverPath())) {
-                Utils::storeCover(track);
+                m_tagReader.storeCover(track);
             }
         }
         if(!mayRun()) {
@@ -92,17 +91,48 @@ void LibraryScanner::scanLibrary(const TrackList& tracks)
     setState(Idle);
 }
 
+void LibraryScanner::updateTracks(const TrackList& tracks)
+{
+    for(const Track& track : tracks) {
+        const bool saved = m_tagReader.writeMetaData(track);
+        if(saved) {
+            m_libraryDatabase.updateTrack(track);
+        }
+    }
+}
+
 void LibraryScanner::storeTracks(TrackList& tracks)
 {
     if(!mayRun()) {
         return;
     }
 
-    m_libraryDatabase.storeTracks(tracks);
+    if(storeCovers(tracks)) {
+        m_libraryDatabase.storeTracks(tracks);
+    }
 
     if(!mayRun()) {
         return;
     }
+}
+
+bool LibraryScanner::storeCovers(TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return false;
+    }
+
+    for(auto& track : tracks) {
+        if(track.libraryId() < 0) {
+            track.setLibraryId(m_library->id);
+        }
+
+        if(!track.hasCover()) {
+            const QString coverPath = m_tagReader.storeCover(track);
+            track.setCoverPath(coverPath);
+        }
+    }
+    return true;
 }
 
 QStringList LibraryScanner::getFiles(QDir& baseDirectory)
@@ -177,7 +207,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
                 }
 
                 Track changedTrack{libraryTrack};
-                fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
+                fileWasRead = m_tagReader.readMetaData(changedTrack, Tagging::Quality::Fast);
                 if(fileWasRead) {
                     // Regenerate hash
                     changedTrack.generateHash();
@@ -190,7 +220,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
         Track track{filepath};
         track.setLibraryId(m_library->id);
 
-        fileWasRead = Tagging::readMetaData(track, Tagging::Quality::Quality);
+        fileWasRead = m_tagReader.readMetaData(track, Tagging::Quality::Quality);
         if(fileWasRead) {
             track.generateHash();
             tracksToStore.emplace_back(track);

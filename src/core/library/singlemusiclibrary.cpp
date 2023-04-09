@@ -60,8 +60,7 @@ SingleMusicLibrary::SingleMusicLibrary(LibraryInfo* info, DB::Database* database
             this,
             &SingleMusicLibrary::allTracksLoaded);
     connect(this, &SingleMusicLibrary::loadAllTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
-    connect(
-        this, &SingleMusicLibrary::updateSaveTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::updateTracks);
+    connect(this, &SingleMusicLibrary::updateSaveTracks, &m_scanner, &LibraryScanner::updateTracks);
 
     if(m_settings->value<Settings::AutoRefresh>()) {
         QTimer::singleShot(3000, this, &Library::SingleMusicLibrary::reload);

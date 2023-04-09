@@ -22,7 +22,6 @@
 #include "core/coresettings.h"
 #include "core/database/database.h"
 #include "core/database/librarydatabase.h"
-#include "core/tagging/tags.h"
 
 #include <utils/settings/settingsmanager.h>
 
@@ -59,15 +58,5 @@ void LibraryDatabaseManager::getAllTracks(SortOrder order)
         }
     }
     emit allTracksLoaded();
-}
-
-void LibraryDatabaseManager::updateTracks(const TrackList& tracks)
-{
-    for(const Track& track : tracks) {
-        const bool saved = Tagging::writeMetaData(track);
-        if(saved) {
-            m_libraryDatabase.updateTrack(track);
-        }
-    }
 }
 } // namespace Fy::Core::Library

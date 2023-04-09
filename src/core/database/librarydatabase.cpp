@@ -20,7 +20,6 @@
 #include "librarydatabase.h"
 
 #include "core/constants.h"
-#include "core/library/libraryutils.h"
 #include "query.h"
 
 #include <utils/helpers.h>
@@ -77,32 +76,11 @@ LibraryDatabase::LibraryDatabase(const QString& connectionName, int libraryId)
     , m_connectionName(connectionName)
 { }
 
-bool LibraryDatabase::storeCovers(TrackList& tracks)
-{
-    if(tracks.empty()) {
-        return false;
-    }
-
-    for(auto& track : tracks) {
-        if(track.libraryId() < 0) {
-            track.setLibraryId(m_libraryId);
-        }
-
-        if(!track.hasCover()) {
-            const QString coverPath = Library::Utils::storeCover(track);
-            track.setCoverPath(coverPath);
-        }
-    }
-    return true;
-}
-
 bool LibraryDatabase::storeTracks(TrackList& tracks)
 {
     if(tracks.empty()) {
         return true;
     }
-
-    storeCovers(tracks);
 
     db().transaction();
 

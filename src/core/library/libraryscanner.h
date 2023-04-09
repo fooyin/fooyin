@@ -23,6 +23,7 @@
 
 #include "core/database/librarydatabase.h"
 #include "core/models/trackfwd.h"
+#include "core/tagging/tagreader.h"
 #include "libraryinfo.h"
 
 #include <utils/worker.h>
@@ -49,6 +50,8 @@ public:
 
     void scanLibrary(const TrackList& tracks);
 
+    void updateTracks(const TrackList& tracks);
+
 signals:
     void updatedTracks(Core::TrackList tracks);
     void addedTracks(Core::TrackList tracks);
@@ -56,12 +59,14 @@ signals:
 
 private:
     void storeTracks(TrackList& tracks);
+    bool storeCovers(TrackList& tracks);
     QStringList getFiles(QDir& baseDirectory);
     bool getAndSaveAllFiles(const TrackPathMap& tracks);
 
     LibraryInfo* m_library;
     DB::Database* m_database;
     DB::LibraryDatabase m_libraryDatabase;
+    Tagging::TagReader m_tagReader;
 };
 } // namespace Library
 } // namespace Fy::Core

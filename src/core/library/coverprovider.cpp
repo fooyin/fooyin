@@ -20,17 +20,36 @@
 #include "coverprovider.h"
 
 #include "core/models/album.h"
-#include "libraryutils.h"
+
+#include <utils/utils.h>
 
 #include <QPixmapCache>
 
 namespace Fy::Core::Covers {
+QPixmap getCover(const QString& path, int size)
+{
+    if(Utils::File::exists(path)) {
+        QPixmap cover;
+        cover.load(path);
+        if(!cover.isNull()) {
+            const int scale  = size * 4;
+            const int width  = cover.size().width();
+            const int height = cover.size().height();
+            if(width > size || height > size) {
+                cover = cover.scaled(scale, scale).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            }
+            return cover;
+        }
+    }
+    return {};
+}
+
 QPixmap albumCover(const Album& album)
 {
     const auto id = album.date() + album.title();
     QPixmap cover;
     if(!QPixmapCache::find(id, &cover)) {
-        cover = Library::Utils::getCover(album.hasCover() ? album.coverPath() : "://images/nocover.png", 60);
+        cover = getCover(album.hasCover() ? album.coverPath() : "://images/nocover.png", 60);
         QPixmapCache::insert(id, cover);
     }
     return cover;

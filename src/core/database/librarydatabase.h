@@ -43,14 +43,12 @@ public:
     bool deleteTrack(int id);
     bool deleteTracks(const TrackList& tracks);
 
-protected:
+private:
     Module* module();
     [[nodiscard]] const Module* module() const;
 
-    bool storeCovers(TrackList& tracks);
     int insertTrack(const Track& track);
 
-private:
     int m_libraryId;
     QString m_connectionName;
 };

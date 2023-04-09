@@ -19,16 +19,23 @@
 
 #pragma once
 
-#include "core/models/track.h"
+#include "tagutils.h"
 
-class QString;
+#include <QString>
+
 class QPixmap;
 
-namespace Fy::Core::Library::Utils {
-QString coverInDirectory(const QString& directory);
-QString calcAlbumHash(const QString& albumName, const QString& albumArtist, const QString& date);
-QString calcCoverHash(const QString& albumName, const QString& albumArtist);
-QPixmap getCover(const QString& path, int size);
-bool saveCover(const QPixmap& cover, const QString& hash);
-QString storeCover(const Track& track);
-} // namespace Fy::Core::Library::Utils
+namespace Fy::Core {
+class Track;
+
+namespace Tagging {
+class TagReader
+{
+public:
+    bool readMetaData(Track& track, Quality quality);
+    bool writeMetaData(const Track& track);
+    QString storeCover(const Track& track);
+    QPixmap readCover(const QString& filepath);
+};
+} // namespace Tagging
+} // namespace Fy::Core

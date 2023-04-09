@@ -47,8 +47,6 @@ set(SOURCES
     library/librarymanager.cpp
     library/libraryscanner.h
     library/libraryscanner.cpp
-    library/libraryutils.h
-    library/libraryutils.cpp
     library/musiclibrary.h
     library/musiclibrarycontainer.h
     library/musiclibrarycontainer.cpp
@@ -100,8 +98,8 @@ set(SOURCES
     scripting/functions/mathfuncs.cpp
     scripting/functions/controlfuncs.cpp
 
-    tagging/tags.h
-    tagging/tags.cpp
+    tagging/tagreader.h
+    tagging/tagreader.cpp
     tagging/tagutils.h
     tagging/tagutils.cpp
 )
