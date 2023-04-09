@@ -25,16 +25,11 @@ namespace Fy::Core::Library {
 class SingleTrackStore : public TrackStore
 {
 public:
-    [[nodiscard]] bool hasTrack(int id) const override;
-
-    [[nodiscard]] Track track(int id) override;
     [[nodiscard]] TrackList tracks() const override;
 
-    TrackList add(const TrackList& tracks) override;
-    Track add(const Track& track);
+    void add(const TrackList& tracks) override;
 
-    TrackList update(const TrackList& tracks) override;
-    Track update(const Track& track);
+    void update(const TrackList& tracks) override;
 
     void remove(const TrackList& tracks) override;
     void remove(int trackId);
@@ -44,7 +39,6 @@ public:
     void clear();
 
 private:
-    TrackIdMap m_trackIdMap;
     TrackList m_tracks;
 };
 } // namespace Fy::Core::Library

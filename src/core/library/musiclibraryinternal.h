@@ -44,8 +44,7 @@ public:
     virtual void reload() = 0;
     virtual void rescan() = 0;
 
-    [[nodiscard]] virtual Track track(int id) const = 0;
-    [[nodiscard]] virtual TrackList tracks() const  = 0;
+    [[nodiscard]] virtual TrackList tracks() const = 0;
 
     [[nodiscard]] virtual SortOrder sortOrder() const = 0;
     virtual void sortTracks(SortOrder order)          = 0;

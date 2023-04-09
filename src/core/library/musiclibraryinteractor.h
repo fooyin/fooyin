@@ -32,7 +32,7 @@ public:
     explicit MusicLibraryInteractor(QObject* parent)
         : QObject{parent} {};
 
-    [[nodiscard]] virtual TrackPtrList tracks() const = 0;
-    [[nodiscard]] virtual bool hasTracks() const      = 0;
+    [[nodiscard]] virtual TrackList tracks() const = 0;
+    [[nodiscard]] virtual bool hasTracks() const   = 0;
 };
 } // namespace Fy::Core::Library

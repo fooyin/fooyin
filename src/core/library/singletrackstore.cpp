@@ -22,59 +22,27 @@
 #include "core/library/sorting/sorting.h"
 
 namespace Fy::Core::Library {
-Track SingleTrackStore::track(int id)
-{
-    if(hasTrack(id)) {
-        return m_trackIdMap.at(id);
-    }
-    return {};
-}
-
 TrackList SingleTrackStore::tracks() const
 {
     return m_tracks;
 }
 
-TrackList SingleTrackStore::add(const TrackList& tracks)
+void SingleTrackStore::add(const TrackList& tracks)
 {
-    TrackList addedTracks;
-    const auto size = tracks.size();
-
-    addedTracks.reserve(size);
-    m_trackIdMap.reserve(m_trackIdMap.size() + size);
-    m_tracks.reserve(m_tracks.size() + size);
-
+    m_tracks.reserve(m_tracks.capacity() + tracks.size());
     for(const Track& track : tracks) {
-        addedTracks.emplace_back(add(track));
+        m_tracks.emplace_back(track);
     }
-
-    return addedTracks;
 }
 
-Track SingleTrackStore::add(const Track& track)
+void SingleTrackStore::update(const TrackList& tracks)
 {
-    m_trackIdMap.emplace(track.id(), track);
-    m_tracks.emplace_back(track);
-
-    return track;
-}
-
-TrackList SingleTrackStore::update(const TrackList& tracks)
-{
-    TrackList updatedTracks;
-    updatedTracks.reserve(tracks.size());
-
     for(const auto& track : tracks) {
-        updatedTracks.emplace_back(update(track));
+        auto it = std::find(m_tracks.begin(), m_tracks.end(), track);
+        if(it != m_tracks.cend()) {
+            *it = track;
+        }
     }
-    return updatedTracks;
-}
-
-Track SingleTrackStore::update(const Track& track)
-{
-    Track& libraryTrack = m_trackIdMap.at(track.id());
-    libraryTrack        = track;
-    return libraryTrack;
 }
 
 void SingleTrackStore::remove(const TrackList& tracks)
@@ -86,11 +54,9 @@ void SingleTrackStore::remove(const TrackList& tracks)
 
 void SingleTrackStore::remove(int trackId)
 {
-    if(hasTrack(trackId)) {
-        const Track& track = m_trackIdMap.at(trackId);
-        m_tracks.erase(std::find(m_tracks.begin(), m_tracks.end(), track));
-        m_trackIdMap.erase(trackId);
-    }
+    m_tracks.erase(std::find_if(m_tracks.begin(), m_tracks.end(), [trackId](const Track& track) {
+        return track.id() == trackId;
+    }));
 }
 
 void SingleTrackStore::sort(SortOrder order)
@@ -101,11 +67,5 @@ void SingleTrackStore::sort(SortOrder order)
 void SingleTrackStore::clear()
 {
     m_tracks.clear();
-    m_trackIdMap.clear();
-}
-
-bool SingleTrackStore::hasTrack(int id) const
-{
-    return m_trackIdMap.count(id);
 }
 } // namespace Fy::Core::Library

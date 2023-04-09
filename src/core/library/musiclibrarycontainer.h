@@ -39,7 +39,6 @@ public:
 
     void changeLibrary(MusicLibraryInternal* library);
 
-    [[nodiscard]] Track track(int id) const override;
     [[nodiscard]] TrackList tracks() const override;
     [[nodiscard]] TrackList allTracks() const override;
 

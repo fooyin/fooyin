@@ -25,13 +25,10 @@ namespace Fy::Core::Library {
 class UnifiedTrackStore : public TrackStore
 {
 public:
-    [[nodiscard]] bool hasTrack(int id) const override;
-
-    [[nodiscard]] Track track(int id) override;
     [[nodiscard]] TrackList tracks() const override;
 
-    TrackList add(const TrackList& tracks) override;
-    TrackList update(const TrackList& tracks) override;
+    void add(const TrackList& tracks) override;
+    void update(const TrackList& tracks) override;
     void remove(const TrackList& tracks) override;
 
     void sort(SortOrder order) override;

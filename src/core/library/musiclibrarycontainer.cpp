@@ -55,11 +55,6 @@ void MusicLibraryContainer::changeLibrary(MusicLibraryInternal* library)
     emit libraryChanged();
 }
 
-Track MusicLibraryContainer::track(int id) const
-{
-    return m_currentLibrary->track(id);
-}
-
 TrackList MusicLibraryContainer::tracks() const
 {
     TrackList intersectedTracks;

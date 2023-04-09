@@ -86,15 +86,15 @@ void SingleMusicLibrary::loadTracks(const TrackList& tracks)
 
 void SingleMusicLibrary::addNewTracks(const TrackList& tracks)
 {
-    const TrackList addedTracks = m_trackStore->add(tracks);
+    m_trackStore->add(tracks);
     //    m_trackStore->sort(m_order);
-    emit tracksAdded(addedTracks);
+    emit tracksAdded(tracks);
 }
 
 void SingleMusicLibrary::updateChangedTracks(const TrackList& tracks)
 {
-    const TrackList updatedTracks = m_trackStore->update(tracks);
-    emit tracksUpdated(updatedTracks);
+    m_trackStore->update(tracks);
+    emit tracksUpdated(tracks);
 }
 
 void SingleMusicLibrary::removeDeletedTracks(const TrackList& tracks)
@@ -116,11 +116,9 @@ void SingleMusicLibrary::rescan()
 void SingleMusicLibrary::refreshTracks(const TrackList& tracks)
 {
     //    m_trackStore.clear();
-
-    const TrackList newTracks = m_trackStore->add(tracks);
+    m_trackStore->add(tracks);
     //    m_trackStore.sort(m_order);
-
-    emit tracksLoaded(newTracks);
+    emit tracksLoaded(tracks);
 }
 
 LibraryInfo* SingleMusicLibrary::info() const
@@ -131,11 +129,6 @@ LibraryInfo* SingleMusicLibrary::info() const
 TrackStore* SingleMusicLibrary::trackStore() const
 {
     return m_trackStore.get();
-}
-
-Track SingleMusicLibrary::track(int id) const
-{
-    return m_trackStore->track(id);
 }
 
 TrackList SingleMusicLibrary::tracks() const

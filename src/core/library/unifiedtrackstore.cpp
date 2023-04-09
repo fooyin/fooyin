@@ -20,23 +20,6 @@
 #include "unifiedtrackstore.h"
 
 namespace Fy::Core::Library {
-bool UnifiedTrackStore::hasTrack(int id) const
-{
-    return std::any_of(m_libraryStores.cbegin(), m_libraryStores.cend(), [id](const auto& library) {
-        return library.second->hasTrack(id);
-    });
-}
-
-Track UnifiedTrackStore::track(int id)
-{
-    for(const auto& [libraryId, store] : m_libraryStores) {
-        if(store->hasTrack(id)) {
-            return store->track(id);
-        }
-    }
-    return {};
-}
-
 TrackList UnifiedTrackStore::tracks() const
 {
     TrackList tracks{};
@@ -47,16 +30,14 @@ TrackList UnifiedTrackStore::tracks() const
     return tracks;
 }
 
-TrackList UnifiedTrackStore::add(const TrackList& tracks)
+void UnifiedTrackStore::add(const TrackList& tracks)
 {
     Q_UNUSED(tracks)
-    return {};
 }
 
-TrackList UnifiedTrackStore::update(const TrackList& tracks)
+void UnifiedTrackStore::update(const TrackList& tracks)
 {
     Q_UNUSED(tracks)
-    return {};
 }
 
 void UnifiedTrackStore::remove(const TrackList& tracks)
