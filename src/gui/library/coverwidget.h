@@ -52,7 +52,6 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
-    void setupUi();
     void reloadCover(const Core::Track& track);
     void rescaleCover();
 

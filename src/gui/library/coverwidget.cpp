@@ -36,7 +36,11 @@ CoverWidget::CoverWidget(Core::Library::MusicLibrary* library, Core::Player::Pla
     , m_coverLabel{new QLabel(this)}
 {
     setObjectName("Artwork");
-    setupUi();
+
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setAlignment(Qt::AlignCenter);
+    m_coverLabel->setMinimumSize(100, 100);
+    m_layout->addWidget(m_coverLabel);
 
     connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
     //    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
@@ -47,16 +51,6 @@ CoverWidget::CoverWidget(Core::Library::MusicLibrary* library, Core::Player::Pla
 QString CoverWidget::name() const
 {
     return "Artwork";
-}
-
-void CoverWidget::setupUi()
-{
-    m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->setAlignment(Qt::AlignCenter);
-    //    setAutoFillBackground(true);
-
-    m_coverLabel->setMinimumSize(100, 100);
-    m_layout->addWidget(m_coverLabel);
 }
 
 void CoverWidget::resizeEvent(QResizeEvent* e)
