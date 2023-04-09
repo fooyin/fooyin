@@ -72,7 +72,7 @@ public:
     [[nodiscard]] Core::TrackList tracks() const;
 
     void reset();
-    void changeRowColours();
+    void setupModelData();
     void changeTrackState();
 
     [[nodiscard]] QModelIndex indexForId(int id) const;
@@ -82,7 +82,6 @@ public:
 private:
     using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
-    void setupModelData();
     void createAlbums(const Core::TrackList& tracks);
     PlaylistItem* iterateTrack(const Core::Track& track, bool discHeaders, bool splitDiscs);
 

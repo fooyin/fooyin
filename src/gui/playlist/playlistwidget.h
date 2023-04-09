@@ -69,8 +69,6 @@ public:
 
     void setupConnections();
 
-    void setAltRowColours(bool altColours);
-
     bool isHeaderHidden();
     void setHeaderHidden(bool showHeader);
 
@@ -114,7 +112,6 @@ private:
     QHBoxLayout* m_layout;
     PlaylistModel* m_model;
     PlaylistView* m_playlist;
-    bool m_altRowColours;
     bool m_changingSelection;
     Utils::OverlayWidget* m_noLibrary;
 };

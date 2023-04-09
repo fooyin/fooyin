@@ -68,22 +68,20 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::L
 
     m_settings->subscribe<Settings::DiscHeaders>(this, [this](bool enabled) {
         m_discHeaders = enabled;
+        reset();
     });
     m_settings->subscribe<Settings::SplitDiscs>(this, [this](bool enabled) {
         m_splitDiscs = enabled;
+        reset();
     });
     m_settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
         m_altColours = enabled;
+        emit dataChanged({}, {}, {Qt::BackgroundRole});
     });
     m_settings->subscribe<Settings::SimplePlaylist>(this, [this](bool enabled) {
         m_simplePlaylist = enabled;
+        reset();
     });
-    connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, this, &PlaylistModel::setupModelData);
-    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &PlaylistModel::reset);
-    connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, this, &PlaylistModel::reset);
-    connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &PlaylistModel::setupModelData);
-    connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &PlaylistModel::reset);
-    connect(m_library, &Core::Library::MusicLibrary::libraryChanged, this, &PlaylistModel::reset);
 
     m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_pausedIcon  = m_pausedIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -193,9 +191,27 @@ void PlaylistModel::reset()
     m_resetting = false;
 }
 
-void PlaylistModel::changeRowColours()
+void PlaylistModel::setupModelData()
 {
-    emit dataChanged({}, {}, {Qt::BackgroundRole});
+    if(!m_library) {
+        return;
+    }
+    m_tracks = m_library->tracks();
+
+    if(m_tracks.empty()) {
+        return;
+    }
+
+    // Create albums before model to ensure discs (based on discCount) are properly created
+    createAlbums(m_tracks);
+
+    for(const Core::Track& track : m_tracks) {
+        if(!m_nodes.count(track.hash())) {
+            if(auto* parent = iterateTrack(track, m_discHeaders, m_splitDiscs)) {
+                checkInsertKey(track.hash(), PlaylistItem::Track, track, parent);
+            }
+        }
+    }
 }
 
 void PlaylistModel::changeTrackState()
@@ -228,29 +244,6 @@ QModelIndex PlaylistModel::indexForItem(PlaylistItem* item) const
 int PlaylistModel::findTrackIndex(const Core::Track& track) const
 {
     return Utils::findIndex(m_tracks, track);
-}
-
-void PlaylistModel::setupModelData()
-{
-    if(!m_library) {
-        return;
-    }
-    m_tracks = m_library->tracks();
-
-    if(m_tracks.empty()) {
-        return;
-    }
-
-    // Create albums before model to ensure discs (based on discCount) are properly created
-    createAlbums(m_tracks);
-
-    for(const Core::Track& track : m_tracks) {
-        if(!m_nodes.count(track.hash())) {
-            if(auto* parent = iterateTrack(track, m_discHeaders, m_splitDiscs)) {
-                checkInsertKey(track.hash(), PlaylistItem::Track, track, parent);
-            }
-        }
-    }
 }
 
 void PlaylistModel::createAlbums(const Core::TrackList& tracks)
@@ -371,7 +364,7 @@ void PlaylistModel::traverseIndex(const QModelIndex& start, QModelIndexList& lis
 
 QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
 {
-    Core::Track track = std::get<Core::Track>(item->data());
+    const Core::Track track = std::get<Core::Track>(item->data());
 
     switch(role) {
         case(PlaylistItem::Role::Id): {
