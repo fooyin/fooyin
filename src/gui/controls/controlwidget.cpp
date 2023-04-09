@@ -59,8 +59,8 @@ void ControlWidget::setupUi()
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(15);
 
-    m_playerControls->setEnabled(m_playerManager->currentTrack());
-    m_progress->setEnabled(m_playerManager->currentTrack());
+    m_playerControls->setEnabled(m_playerManager->currentTrack().id());
+    m_progress->setEnabled(m_playerManager->currentTrack().id());
     m_progress->changeTrack(m_playerManager->currentTrack());
 }
 

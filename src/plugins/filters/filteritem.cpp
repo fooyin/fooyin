@@ -54,7 +54,7 @@ int FilterItem::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
-void FilterItem::addTrack(Core::Track* track)
+void FilterItem::addTrack(const Core::Track& track)
 {
     m_tracks.emplace_back(track);
 }

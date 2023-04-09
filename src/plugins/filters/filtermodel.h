@@ -52,11 +52,11 @@ public:
     void sort(int column, Qt::SortOrder order) override;
     //    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
     //                                        Qt::MatchFlags flags) const override;
-    void reload(const Core::TrackPtrList& tracks);
+    void reload(const Core::TrackList& tracks);
 
 private:
     void beginReset();
-    void setupModelData(const Core::TrackPtrList& tracks);
+    void setupModelData(const Core::TrackList& tracks);
     FilterItem* createNode(const QString& title, const QString& sortTitle = {});
     std::vector<FilterItem*> createNodes(const QStringList& titles, const QString& sortTitle = {});
 

@@ -154,7 +154,7 @@ void FilterModel::sort(int column, Qt::SortOrder order)
 //}
 
 // TODO: Implement methods to insert/delete rows
-void FilterModel::reload(const Core::TrackPtrList& tracks)
+void FilterModel::reload(const Core::TrackList& tracks)
 {
     if(!m_field) {
         return;
@@ -172,7 +172,7 @@ void FilterModel::beginReset()
     m_root = std::make_unique<FilterItem>();
 }
 
-void FilterModel::setupModelData(const Core::TrackPtrList& tracks)
+void FilterModel::setupModelData(const Core::TrackList& tracks)
 {
     if(tracks.empty()) {
         return;
@@ -184,7 +184,7 @@ void FilterModel::setupModelData(const Core::TrackPtrList& tracks)
     const auto parsedField = m_parser->parse(m_field->field);
     const auto parsedSort  = m_parser->parse(m_field->sortField);
 
-    for(Core::Track* track : tracks) {
+    for(const Core::Track& track : tracks) {
         const QString field = m_parser->evaluate(parsedField, track);
         const QString sort  = m_parser->evaluate(parsedSort, track);
         if(field.isNull()) {

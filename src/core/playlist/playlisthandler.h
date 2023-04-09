@@ -43,7 +43,7 @@ public:
 
     Playlist* playlist(int id) override;
 
-    int createPlaylist(const TrackPtrList& tracks, const QString& name) override;
+    int createPlaylist(const TrackList& tracks, const QString& name) override;
     int createEmptyPlaylist() override;
 
     [[nodiscard]] int activeIndex() const override;

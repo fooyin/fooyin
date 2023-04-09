@@ -30,7 +30,6 @@
 class QDir;
 
 namespace Fy::Core {
-
 namespace DB {
 class Database;
 }
@@ -48,12 +47,12 @@ public:
     void closeThread() override;
     void stopThread() override;
 
-    void scanLibrary(const TrackPtrList& tracks);
+    void scanLibrary(const TrackList& tracks);
 
 signals:
     void updatedTracks(Core::TrackList tracks);
     void addedTracks(Core::TrackList tracks);
-    void tracksDeleted(const Core::TrackPtrList& tracks);
+    void tracksDeleted(const Core::TrackList& tracks);
 
 private:
     void storeTracks(TrackList& tracks);

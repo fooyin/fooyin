@@ -51,8 +51,8 @@ public:
     void setDiscCount(int count);
     void setCoverPath(const QString& path);
 
-    void addTrack(Track* track);
-    void removeTrack(Track* track);
+    void addTrack(const Track& track);
+    void removeTrack(const Track& track);
 
     void reset();
 

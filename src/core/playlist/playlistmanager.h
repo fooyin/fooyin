@@ -38,7 +38,7 @@ public:
 
     [[nodiscard]] virtual int count() const = 0;
 
-    virtual int createPlaylist(const TrackPtrList& tracks, const QString& name) = 0;
+    virtual int createPlaylist(const TrackList& tracks, const QString& name) = 0;
     virtual int createEmptyPlaylist()                                           = 0;
 };
 } // namespace Fy::Core::Playlist

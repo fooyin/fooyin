@@ -55,7 +55,7 @@ FilterManager::FilterManager(Utils::ThreadManager* threadManager, Core::Library:
     m_library->addInteractor(this);
 }
 
-Core::TrackPtrList FilterManager::tracks() const
+Core::TrackList FilterManager::tracks() const
 {
     return hasTracks() ? m_filteredTracks : m_library->allTracks();
 }
@@ -99,7 +99,8 @@ void FilterManager::getFilteredTracks()
             m_filteredTracks.insert(m_filteredTracks.cend(), filter.tracks.cbegin(), filter.tracks.cend());
         }
         else {
-            m_filteredTracks = Utils::intersection<Core::Track*>(filter.tracks, m_filteredTracks);
+            m_filteredTracks
+                = Utils::intersection<Core::Track, Core::Track::TrackHash>(filter.tracks, m_filteredTracks);
         }
     }
 
@@ -146,7 +147,7 @@ QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
     return menu;
 }
 
-void FilterManager::tracksFiltered(const Core::TrackPtrList& tracks)
+void FilterManager::tracksFiltered(const Core::TrackList& tracks)
 {
     m_filteredTracks = tracks;
     emit filteredTracks();
@@ -156,5 +157,6 @@ void FilterManager::tracksFiltered(const Core::TrackPtrList& tracks)
 void FilterManager::tracksChanged()
 {
     emit filteredItems(-1);
+    getFilteredTracks();
 }
 } // namespace Fy::Filters

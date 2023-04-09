@@ -41,11 +41,11 @@ public:
     ParsedScript parse(const QString& input);
 
     QString evaluate();
-    QString evaluate(const ParsedScript& input, Track* track);
+    QString evaluate(const ParsedScript& input, const Core::Track& track);
 
     virtual QString evaluate(const ParsedScript& input);
 
-    void setMetadata(Track* track);
+    void setMetadata(const Core::Track& track);
 
 protected:
     ScriptResult evalExpression(const Expression& exp) const;

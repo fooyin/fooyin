@@ -39,7 +39,7 @@ QString Playlist::name()
     return m_name;
 }
 
-int Playlist::createPlaylist(const TrackPtrList& tracks)
+int Playlist::createPlaylist(const TrackList& tracks)
 {
     m_tracks.insert(m_tracks.end(), tracks.begin(), tracks.end());
     return static_cast<int>(m_tracks.size());
@@ -47,12 +47,8 @@ int Playlist::createPlaylist(const TrackPtrList& tracks)
 
 int Playlist::currentTrackIndex() const
 {
-    if(!m_playingTrack) {
-        return -1;
-    }
-
-    auto it = std::find_if(m_tracks.cbegin(), m_tracks.cend(), [this](Track* track) {
-        return (track->id() == m_playingTrack->id());
+    auto it = std::find_if(m_tracks.cbegin(), m_tracks.cend(), [this](const Track& track) {
+        return (track.id() == m_playingTrack.id());
     });
 
     if(it == m_tracks.end()) {
@@ -62,7 +58,7 @@ int Playlist::currentTrackIndex() const
     return static_cast<int>(std::distance(m_tracks.cbegin(), it));
 }
 
-Track* Playlist::currentTrack() const
+Track Playlist::currentTrack() const
 {
     const auto trackIndex = currentTrackIndex();
     if(trackIndex >= numberOfTracks() || trackIndex < 0) {
@@ -77,12 +73,12 @@ int Playlist::index() const
     return m_playlistIndex;
 }
 
-void Playlist::insertTracks(const TrackPtrList& tracks)
+void Playlist::insertTracks(const TrackList& tracks)
 {
     m_tracks = tracks;
 }
 
-void Playlist::appendTracks(const TrackPtrList& tracks)
+void Playlist::appendTracks(const TrackList& tracks)
 {
     m_tracks.insert(m_tracks.end(), tracks.begin(), tracks.end());
 }
@@ -99,7 +95,7 @@ void Playlist::setCurrentTrack(int index)
     }
 
     else {
-        Track* track   = m_tracks[index];
+        Track track    = m_tracks[index];
         m_playingTrack = track;
         m_playerManager->changeCurrentTrack(track);
     }
@@ -114,8 +110,8 @@ bool Playlist::changeTrack(int index)
         return false;
     }
 
-    while(!Utils::File::exists(m_tracks[index]->filepath())) {
-        Utils::showMessageBox(QString{"Track %1 cannot be found."}.arg(index), m_tracks[index]->filepath());
+    while(!Utils::File::exists(m_tracks[index].filepath())) {
+        Utils::showMessageBox(QString{"Track %1 cannot be found."}.arg(index), m_tracks[index].filepath());
         setCurrentTrack(++index);
     }
 
@@ -131,10 +127,7 @@ void Playlist::play()
     }
 }
 
-void Playlist::stop()
-{
-    m_playingTrack = nullptr;
-}
+void Playlist::stop() { }
 
 int Playlist::next()
 {

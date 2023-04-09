@@ -27,7 +27,7 @@ class LibraryPlaylistInterface
 public:
     virtual ~LibraryPlaylistInterface() = default;
 
-    virtual void createPlaylist(const TrackPtrList& tracks, int startIndex) = 0;
-    virtual void append(const TrackPtrList& tracks)                         = 0;
+    virtual void createPlaylist(const TrackList& tracks, int startIndex) = 0;
+    virtual void append(const TrackList& tracks)                         = 0;
 };
 } // namespace Fy::Core::Playlist

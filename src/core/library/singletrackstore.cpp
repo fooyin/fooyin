@@ -22,88 +22,41 @@
 #include "core/library/sorting/sorting.h"
 
 namespace Fy::Core::Library {
-Track* SingleTrackStore::track(int id)
-{
-    if(hasTrack(id)) {
-        return &m_trackIdMap.at(id);
-    }
-    return nullptr;
-}
-
-TrackPtrList SingleTrackStore::tracks() const
+TrackList SingleTrackStore::tracks() const
 {
     return m_tracks;
 }
 
-TrackPtrList SingleTrackStore::add(const TrackList& tracks)
+void SingleTrackStore::add(const TrackList& tracks)
 {
-    TrackPtrList addedTracks;
-    const auto size = tracks.size();
-
-    addedTracks.reserve(size);
-    m_trackIdMap.reserve(m_trackIdMap.size() + size);
-    m_tracks.reserve(m_tracks.size() + size);
-
+    m_tracks.reserve(m_tracks.capacity() + tracks.size());
     for(const Track& track : tracks) {
-        addedTracks.emplace_back(add(track));
-    }
-    return addedTracks;
-}
-
-Track* SingleTrackStore::add(const Track& track)
-{
-    Track* newTrack = &m_trackIdMap.emplace(track.id(), track).first->second;
-    m_tracks.emplace_back(newTrack);
-
-    return newTrack;
-}
-
-TrackPtrList SingleTrackStore::update(const TrackList& tracks)
-{
-    TrackPtrList updatedTracks;
-    updatedTracks.reserve(tracks.size());
-
-    for(const auto& track : tracks) {
-        updatedTracks.emplace_back(update(track));
-    }
-    return updatedTracks;
-}
-
-Track* SingleTrackStore::update(const Track& track)
-{
-    Track* libraryTrack = &m_trackIdMap.at(track.id());
-    *libraryTrack       = track;
-    return libraryTrack;
-}
-
-void SingleTrackStore::markForDelete(const TrackPtrList& tracks)
-{
-    for(auto* track : tracks) {
-        markForDelete(track);
+        m_tracks.emplace_back(track);
     }
 }
 
-void SingleTrackStore::markForDelete(Track* track)
-{
-    if(hasTrack(track->id())) {
-        track->setIsEnabled(false);
-    }
-}
-
-void SingleTrackStore::remove(const TrackPtrList& tracks)
+void SingleTrackStore::update(const TrackList& tracks)
 {
     for(const auto& track : tracks) {
-        remove(track->id());
+        auto it = std::find(m_tracks.begin(), m_tracks.end(), track);
+        if(it != m_tracks.cend()) {
+            *it = track;
+        }
+    }
+}
+
+void SingleTrackStore::remove(const TrackList& tracks)
+{
+    for(const Track& track : tracks) {
+        remove(track.id());
     }
 }
 
 void SingleTrackStore::remove(int trackId)
 {
-    if(hasTrack(trackId)) {
-        Track* track = &m_trackIdMap.at(trackId);
-        m_tracks.erase(std::find(m_tracks.begin(), m_tracks.end(), track));
-        m_trackIdMap.erase(trackId);
-    }
+    m_tracks.erase(std::find_if(m_tracks.begin(), m_tracks.end(), [trackId](const Track& track) {
+        return track.id() == trackId;
+    }));
 }
 
 void SingleTrackStore::sort(SortOrder order)
@@ -114,11 +67,5 @@ void SingleTrackStore::sort(SortOrder order)
 void SingleTrackStore::clear()
 {
     m_tracks.clear();
-    m_trackIdMap.clear();
-}
-
-bool SingleTrackStore::hasTrack(int id) const
-{
-    return m_trackIdMap.count(id);
 }
 } // namespace Fy::Core::Library

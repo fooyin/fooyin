@@ -29,29 +29,29 @@ bool containsSearch(const QString& text, const QString& search)
 }
 
 // TODO: Support user-defined tags
-bool matchSearch(Core::Track* track, const QString& search)
+bool matchSearch(const Core::Track& track, const QString& search)
 {
     if(search.isEmpty()) {
         return true;
     }
 
-    for(const auto& artist : track->artists()) {
+    for(const QString& artist : track.artists()) {
         if(artist.contains(search, Qt::CaseInsensitive)) {
             return true;
         }
     }
 
-    return (containsSearch(track->title(), search) || containsSearch(track->album(), search)
-            || containsSearch(track->albumArtist(), search));
+    return (containsSearch(track.title(), search) || containsSearch(track.album(), search)
+            || containsSearch(track.albumArtist(), search));
 }
 
 TrackFilterer::TrackFilterer(QObject* parent)
     : Worker{parent}
 { }
 
-void TrackFilterer::filterTracks(const Core::TrackPtrList& tracks, const QString& search)
+void TrackFilterer::filterTracks(const Core::TrackList& tracks, const QString& search)
 {
-    const auto filteredTracks = Utils::filter(tracks, [search](Core::Track* track) {
+    const auto filteredTracks = Utils::filter(tracks, [search](const Core::Track& track) {
         return matchSearch(track, search);
     });
     emit tracksFiltered(filteredTracks);

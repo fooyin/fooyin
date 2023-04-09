@@ -19,19 +19,20 @@
 
 #pragma once
 
+#include <core/models/track.h>
+
 #include <utils/treeitem.h>
 
 #include <QObject>
 
 namespace Fy {
 namespace Core {
-class Track;
 class Album;
 class Container;
 } // namespace Core
 
 namespace Gui::Widgets {
-using ItemType = std::variant<Core::Track*, Core::Album*, Core::Container*>;
+using ItemType = std::variant<Core::Track, Core::Album*, Core::Container*>;
 
 class PlaylistItem : public Utils::TreeItem<PlaylistItem>
 {

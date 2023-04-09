@@ -55,14 +55,9 @@ void MusicLibraryContainer::changeLibrary(MusicLibraryInternal* library)
     emit libraryChanged();
 }
 
-Track* MusicLibraryContainer::track(int id) const
+TrackList MusicLibraryContainer::tracks() const
 {
-    return m_currentLibrary->track(id);
-}
-
-TrackPtrList MusicLibraryContainer::tracks() const
-{
-    TrackPtrList intersectedTracks;
+    TrackList intersectedTracks;
 
     for(const auto& interactor : m_interactors) {
         if(interactor->hasTracks()) {
@@ -71,14 +66,14 @@ TrackPtrList MusicLibraryContainer::tracks() const
                 intersectedTracks.insert(intersectedTracks.end(), interactorTracks.cbegin(), interactorTracks.cend());
             }
             else {
-                intersectedTracks = Utils::intersection<Track*>(interactorTracks, intersectedTracks);
+                intersectedTracks = Utils::intersection<Track, Track::TrackHash>(interactorTracks, intersectedTracks);
             }
         }
     }
     return !intersectedTracks.empty() ? intersectedTracks : m_currentLibrary->tracks();
 }
 
-TrackPtrList MusicLibraryContainer::allTracks() const
+TrackList MusicLibraryContainer::allTracks() const
 {
     return m_currentLibrary->tracks();
 }

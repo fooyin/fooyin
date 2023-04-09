@@ -61,12 +61,7 @@ LibraryInfo* UnifiedMusicLibrary::info() const
     return m_info;
 }
 
-Track* UnifiedMusicLibrary::track(int id) const
-{
-    return m_trackStore->track(id);
-}
-
-TrackPtrList UnifiedMusicLibrary::tracks() const
+TrackList UnifiedMusicLibrary::tracks() const
 {
     return m_trackStore->tracks();
 }

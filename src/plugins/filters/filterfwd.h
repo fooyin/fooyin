@@ -49,7 +49,7 @@ struct LibraryFilter
 {
     FilterField field;
     int index;
-    Core::TrackPtrList tracks;
+    Core::TrackList tracks;
 };
 
 using IndexFieldMap = std::map<int, FilterField>;

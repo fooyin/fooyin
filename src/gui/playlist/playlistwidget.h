@@ -69,8 +69,6 @@ public:
 
     void setupConnections();
 
-    void setAltRowColours(bool altColours);
-
     bool isHeaderHidden();
     void setHeaderHidden(bool showHeader);
 
@@ -78,11 +76,10 @@ public:
     void setScrollbarHidden(bool showScrollBar);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
 signals:
     void clickedTrack(int idx);
-    void selectionWasChanged(const Core::TrackPtrList& tracks);
+    void selectionWasChanged(const Core::TrackList& tracks);
 
 protected:
     void selectionChanged();
@@ -109,12 +106,11 @@ private:
     Core::Playlist::PlaylistManager* m_playlistHandler;
     std::unique_ptr<Core::Playlist::LibraryPlaylistInterface> m_libraryPlaylistManager;
 
-    Core::TrackPtrList m_selectedTracks;
+    Core::TrackList m_selectedTracks;
 
     QHBoxLayout* m_layout;
     PlaylistModel* m_model;
     PlaylistView* m_playlist;
-    bool m_altRowColours;
     bool m_changingSelection;
     Utils::OverlayWidget* m_noLibrary;
 };

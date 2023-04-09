@@ -36,27 +36,21 @@ CoverWidget::CoverWidget(Core::Library::MusicLibrary* library, Core::Player::Pla
     , m_coverLabel{new QLabel(this)}
 {
     setObjectName("Artwork");
-    setupUi();
+
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setAlignment(Qt::AlignCenter);
+    m_coverLabel->setMinimumSize(100, 100);
+    m_layout->addWidget(m_coverLabel);
 
     connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
-    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
+    //    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
 
-    reloadCover();
+    reloadCover({});
 }
 
 QString CoverWidget::name() const
 {
     return "Artwork";
-}
-
-void CoverWidget::setupUi()
-{
-    m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->setAlignment(Qt::AlignCenter);
-    //    setAutoFillBackground(true);
-
-    m_coverLabel->setMinimumSize(100, 100);
-    m_layout->addWidget(m_coverLabel);
 }
 
 void CoverWidget::resizeEvent(QResizeEvent* e)
@@ -67,29 +61,14 @@ void CoverWidget::resizeEvent(QResizeEvent* e)
     QWidget::resizeEvent(e);
 }
 
-void CoverWidget::reloadCover()
+void CoverWidget::reloadCover(const Core::Track& track)
 {
     QString coverPath;
-    if(auto* track = m_playerManager->currentTrack()) {
-        coverPath = track->coverPath();
+    if(track.isValid()) {
+        coverPath = track.coverPath();
     }
-
     else {
-        auto tracks = m_library->tracks();
-        if(!tracks.empty()) {
-            Core::Track* track = tracks.front();
-            if(track) {
-                coverPath = track->coverPath();
-            }
-        }
-    }
-
-    if(coverPath.isEmpty()) {
         coverPath = "://images/nocover.png";
-        //        setAutoFillBackground(true);
-        //        QPalette palette = m_coverLabel->palette();
-        //        palette.setColor(m_coverLabel->backgroundRole(), palette.base().color());
-        //        m_coverLabel->setPalette(palette);
     }
 
     if(coverPath != m_coverPath) {

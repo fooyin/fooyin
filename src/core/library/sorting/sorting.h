@@ -23,5 +23,5 @@
 #include "sortorder.h"
 
 namespace Fy::Core::Library::Sorting {
-void sortTracks(TrackPtrList& tracks, SortOrder sortOrder);
+void sortTracks(TrackList& tracks, SortOrder sortOrder);
 } // namespace Fy::Core::Library::Sorting

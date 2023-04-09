@@ -22,65 +22,9 @@
 #include <algorithm>
 
 namespace Fy::Core::Library::Sorting {
-bool tracksBase(Track* tr1, Track* tr2)
+void sortTracks(TrackList& tracks, SortOrder sortOrder)
 {
-    if(tr1->discNumber() != tr2->discNumber()) {
-        return tr1->discNumber() < tr2->discNumber();
-    }
-    return tr1->trackNumber() < tr2->trackNumber();
-}
-
-bool tracksByTitleAsc(Track* tr1, Track* tr2)
-{
-    if(tr1->album() != tr2->album()) {
-        return tr1->album() < tr2->album();
-    }
-    return tracksBase(tr1, tr2);
-}
-
-bool tracksByTitleDesc(Track* tr1, Track* tr2)
-{
-    if(tr1->album() != tr2->album()) {
-        return tr1->album() < tr2->album();
-    }
-    return tracksBase(tr1, tr2);
-}
-
-bool tracksByYearAsc(Track* tr1, Track* tr2)
-{
-    if(tr1->albumArtist() != tr2->albumArtist()) {
-        return tr1->albumArtist() < tr2->albumArtist();
-    }
-    if(tr1->year() != tr2->year()) {
-        return tr1->year() < tr2->year();
-    }
-    return tracksByTitleDesc(tr1, tr2);
-}
-
-bool tracksByYearDesc(Track* tr1, Track* tr2)
-{
-    if(tr1->albumArtist() != tr2->albumArtist()) {
-        return tr1->albumArtist() < tr2->albumArtist();
-    }
-    if(tr1->year() != tr2->year()) {
-        return tr1->year() > tr2->year();
-    }
-    return tracksByTitleDesc(tr1, tr2);
-}
-
-void sortTracks(TrackPtrList& tracks, SortOrder sortOrder)
-{
-    switch(sortOrder) {
-            //        case(SortOrder::YearDesc):
-            //            return std::sort(tracks.begin(), tracks.end(), tracksByYearDesc);
-            //        case(SortOrder::YearAsc):
-            //            return std::sort(tracks.begin(), tracks.end(), tracksByYearAsc);
-            //        case(SortOrder::TitleDesc):
-            //            return std::sort(tracks.begin(), tracks.end(), tracksByTitleDesc);
-            //        case(SortOrder::TitleAsc):
-            //            return std::sort(tracks.begin(), tracks.end(), tracksByTitleAsc);
-        case(SortOrder::NoSorting):
-            return std::sort(tracks.begin(), tracks.end(), tracksBase);
-    }
+    Q_UNUSED(tracks)
+    Q_UNUSED(sortOrder)
 }
 } // namespace Fy::Core::Library::Sorting

@@ -47,7 +47,7 @@ Playlist* PlaylistHandler::playlist(int id)
     return {};
 }
 
-int PlaylistHandler::createPlaylist(const TrackPtrList& tracks, const QString& name)
+int PlaylistHandler::createPlaylist(const TrackList& tracks, const QString& name)
 {
     const auto index = addNewPlaylist(name);
 

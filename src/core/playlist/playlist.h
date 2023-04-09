@@ -39,15 +39,15 @@ public:
 
     QString name();
 
-    int createPlaylist(const TrackPtrList& tracks);
+    int createPlaylist(const TrackList& tracks);
 
     [[nodiscard]] int currentTrackIndex() const;
-    [[nodiscard]] Track* currentTrack() const;
+    [[nodiscard]] Track currentTrack() const;
 
     [[nodiscard]] int index() const;
 
-    void insertTracks(const TrackPtrList& tracks);
-    void appendTracks(const TrackPtrList& tracks);
+    void insertTracks(const TrackList& tracks);
+    void appendTracks(const TrackList& tracks);
 
     void clear();
 
@@ -68,8 +68,8 @@ private:
 
     QString m_name;
     int m_playlistIndex;
-    Track* m_playingTrack;
-    TrackPtrList m_tracks;
+    Track m_playingTrack;
+    TrackList m_tracks;
 };
 } // namespace Playlist
 } // namespace Fy::Core

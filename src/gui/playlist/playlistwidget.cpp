@@ -59,7 +59,6 @@ PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager,
     , m_layout{new QHBoxLayout(this)}
     , m_model{new PlaylistModel(m_playerManager, m_library, m_settings, this)}
     , m_playlist{new PlaylistView(this)}
-    , m_altRowColours{m_settings->value<Settings::PlaylistAltColours>()}
     , m_changingSelection{false}
     , m_noLibrary{new Utils::OverlayWidget(true, this)}
 {
@@ -109,11 +108,13 @@ void PlaylistWidget::setupConnections()
     connect(m_libraryManager, &Core::Library::LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
     connect(m_libraryManager, &Core::Library::LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
 
-    m_settings->subscribe<Settings::PlaylistAltColours>(this, &PlaylistWidget::setAltRowColours);
-    m_settings->subscribe<Settings::PlaylistAltColours>(m_model, &PlaylistModel::changeRowColours);
-    m_settings->subscribe<Settings::SimplePlaylist>(m_model, &PlaylistModel::reset);
-    m_settings->subscribe<Settings::SplitDiscs>(m_model, &PlaylistModel::reset);
-    m_settings->subscribe<Settings::DiscHeaders>(m_model, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, m_model, &PlaylistModel::setupModelData);
+    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, m_model, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, m_model, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::tracksAdded, m_model, &PlaylistModel::setupModelData);
+    connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, m_model, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::libraryChanged, m_model, &PlaylistModel::reset);
+
     m_settings->subscribe<Settings::PlaylistHeader>(this, &PlaylistWidget::setHeaderHidden);
     m_settings->subscribe<Settings::PlaylistScrollBar>(this, &PlaylistWidget::setScrollbarHidden);
 
@@ -122,10 +123,12 @@ void PlaylistWidget::setupConnections()
     connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistWidget::reset);
     connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlist, &QAbstractItemView::clearSelection);
 
-    connect(m_playlist->header(), &QHeaderView::customContextMenuRequested, this,
+    connect(m_playlist->header(),
+            &QHeaderView::customContextMenuRequested,
+            this,
             &PlaylistWidget::customHeaderMenuRequested);
-    connect(m_playlist->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-            &PlaylistWidget::selectionChanged);
+    connect(
+        m_playlist->selectionModel(), &QItemSelectionModel::selectionChanged, this, &PlaylistWidget::selectionChanged);
     connect(m_playlist, &PlaylistView::doubleClicked, this, &PlaylistWidget::playTrack);
 
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
@@ -134,11 +137,6 @@ void PlaylistWidget::setupConnections()
     connect(this, &PlaylistWidget::clickedTrack, this, &PlaylistWidget::prepareTracks);
 
     connect(m_model, &QAbstractItemModel::rowsInserted, this, &PlaylistWidget::expandPlaylist);
-}
-
-void PlaylistWidget::setAltRowColours(bool altColours)
-{
-    m_altRowColours = altColours;
 }
 
 bool PlaylistWidget::isHeaderHidden()
@@ -166,33 +164,6 @@ QString PlaylistWidget::name() const
     return "Playlist";
 }
 
-void PlaylistWidget::layoutEditingMenu(Utils::ActionContainer* menu)
-{
-    auto* showHeaders = new QAction("Show Header", menu);
-    showHeaders->setCheckable(true);
-    showHeaders->setChecked(!isHeaderHidden());
-    QAction::connect(showHeaders, &QAction::triggered, this, [this] {
-        m_settings->set<Settings::PlaylistHeader>(isHeaderHidden());
-    });
-    menu->addAction(showHeaders);
-
-    auto* showScrollBar = new QAction("Show Scrollbar", menu);
-    showScrollBar->setCheckable(true);
-    showScrollBar->setChecked(!isScrollbarHidden());
-    QAction::connect(showScrollBar, &QAction::triggered, this, [this] {
-        m_settings->set<Settings::PlaylistScrollBar>(isScrollbarHidden());
-    });
-    menu->addAction(showScrollBar);
-
-    auto* altRowColours = new QAction("Alternative Row Colours", menu);
-    altRowColours->setCheckable(true);
-    altRowColours->setChecked(m_altRowColours);
-    QAction::connect(altRowColours, &QAction::triggered, this, [this] {
-        m_settings->set<Settings::PlaylistAltColours>(!m_altRowColours);
-    });
-    menu->addAction(altRowColours);
-}
-
 void PlaylistWidget::selectionChanged()
 {
     if(m_changingSelection) {
@@ -212,8 +183,7 @@ void PlaylistWidget::selectionChanged()
         if(index.isValid()) {
             const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
             if(type == PlaylistItem::Track) {
-                auto* track = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
-                m_selectedTracks.emplace_back(track);
+                m_selectedTracks.emplace_back(index.data(PlaylistItem::Role::Data).value<Core::Track>());
             }
             else {
                 const QItemSelection selectedChildren{m_model->index(0, 0, index),
@@ -323,17 +293,13 @@ void PlaylistWidget::changeState(Core::Player::PlayState state)
 void PlaylistWidget::playTrack(const QModelIndex& index)
 {
     const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
-    Core::Track* track{nullptr};
+    Core::Track track;
 
     if(type != PlaylistItem::Track && !m_selectedTracks.empty()) {
         track = m_selectedTracks.front();
     }
     else {
-        track = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
-    }
-
-    if(!track) {
-        return;
+        track = index.data(PlaylistItem::Role::Data).value<Core::Track>();
     }
 
     const int playlistIndex = m_model->findTrackIndex(track);

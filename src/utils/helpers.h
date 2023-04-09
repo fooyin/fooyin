@@ -47,11 +47,11 @@ constexpr bool hasKey(const Ctnr& c, const Key& key)
     return c.count(key);
 }
 
-template <typename T, typename Ctnr>
+template <typename T, typename Hash, typename Ctnr>
 constexpr Ctnr intersection(Ctnr& v1, const Ctnr& v2)
 {
     Ctnr result;
-    std::unordered_set<T> first(v1.cbegin(), v1.cend());
+    std::unordered_set<T, Hash> first(v1.cbegin(), v1.cend());
     for (auto entry : v2)
     {
         if (first.count(entry)) {

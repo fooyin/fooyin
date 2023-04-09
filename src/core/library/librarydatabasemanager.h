@@ -49,7 +49,7 @@ public:
     void closeThread() override;
 
     void getAllTracks(SortOrder order);
-    void updateTracks(const TrackPtrList& tracks);
+    void updateTracks(const TrackList& tracks);
 
 signals:
     void allTracksLoaded();

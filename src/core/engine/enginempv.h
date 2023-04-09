@@ -43,7 +43,7 @@ public:
     void stop() override;
     void pause() override;
     void seek(uint64_t pos) override;
-    void changeTrack(Track* track) override;
+    void changeTrack(const Track& track) override;
     void setVolume(float value) override;
 
 signals:

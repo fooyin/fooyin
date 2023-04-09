@@ -38,8 +38,8 @@ public:
     void setTrackCount(int count);
     void setDuration(uint64_t duration);
 
-    void addTrack(Track* track);
-    void removeTrack(Track* track);
+    void addTrack(const Track& track);
+    void removeTrack(const Track& track);
     void reset();
 
 private:
