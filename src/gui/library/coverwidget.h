@@ -27,6 +27,8 @@ class QLabel;
 namespace Fy {
 
 namespace Core {
+class Track;
+
 namespace Library {
 class MusicLibrary;
 }
@@ -51,7 +53,7 @@ protected:
 
 private:
     void setupUi();
-    void reloadCover();
+    void reloadCover(const Core::Track& track);
     void rescaleCover();
 
     Core::Library::MusicLibrary* m_library;

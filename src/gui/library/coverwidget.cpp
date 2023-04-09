@@ -39,9 +39,9 @@ CoverWidget::CoverWidget(Core::Library::MusicLibrary* library, Core::Player::Pla
     setupUi();
 
     connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
-    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
+    //    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
 
-    reloadCover();
+    reloadCover({});
 }
 
 QString CoverWidget::name() const
@@ -67,28 +67,14 @@ void CoverWidget::resizeEvent(QResizeEvent* e)
     QWidget::resizeEvent(e);
 }
 
-void CoverWidget::reloadCover()
+void CoverWidget::reloadCover(const Core::Track& track)
 {
     QString coverPath;
-    Core::Track track = m_playerManager->currentTrack();
     if(track.isValid()) {
         coverPath = track.coverPath();
     }
-
     else {
-        auto tracks = m_library->tracks();
-        if(!tracks.empty()) {
-            Core::Track track = tracks.front();
-            coverPath         = track.coverPath();
-        }
-    }
-
-    if(coverPath.isEmpty()) {
         coverPath = "://images/nocover.png";
-        //        setAutoFillBackground(true);
-        //        QPalette palette = m_coverLabel->palette();
-        //        palette.setColor(m_coverLabel->backgroundRole(), palette.base().color());
-        //        m_coverLabel->setPalette(palette);
     }
 
     if(coverPath != m_coverPath) {
