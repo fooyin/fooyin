@@ -48,7 +48,7 @@ struct FilterField
 struct LibraryFilter
 {
     FilterField field;
-    int index;
+    int index{-1};
     Core::TrackList tracks;
 };
 
