@@ -64,9 +64,7 @@ void PluginManager::findPlugins(const QString& pluginDir)
             continue;
         }
 
-        auto* plugin = new PluginInfo(name.toString(), pluginFilename, metaData);
-
-        m_plugins.emplace(name.toString(), plugin);
+        m_plugins.emplace(name.toString(), std::make_unique<PluginInfo>(name.toString(), pluginFilename, metaData));
     }
 }
 
@@ -74,7 +72,7 @@ void PluginManager::loadPlugins()
 {
     for(const auto& [name, plugin] : m_plugins) {
         auto metadata = plugin->metadata();
-        loadPlugin(plugin);
+        loadPlugin(plugin.get());
         if(!plugin->isLoaded()) {
             continue;
         }
@@ -96,8 +94,8 @@ void PluginManager::unloadPlugins()
 {
     for(const auto& [name, plugin] : m_plugins) {
         plugin->unload();
-        delete plugin;
     }
+    m_plugins.clear();
 }
 
 void PluginManager::shutdown()

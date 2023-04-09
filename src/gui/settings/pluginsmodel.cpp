@@ -41,7 +41,7 @@ void PluginsModel::setupModelData()
         PluginItem* parent = rootItem();
 
         if(!m_nodes.count(name)) {
-            m_nodes.emplace(name, std::make_unique<PluginItem>(info, parent));
+            m_nodes.emplace(name, std::make_unique<PluginItem>(info.get(), parent));
         }
         PluginItem* child = m_nodes.at(name).get();
         parent->appendChild(child);

@@ -22,7 +22,7 @@
 #include "plugininfo.h"
 
 namespace Fy::Plugins {
-using PluginInfoMap = std::unordered_map<QString, PluginInfo*>;
+using PluginInfoMap = std::unordered_map<QString, std::unique_ptr<PluginInfo>>;
 
 class PluginManager : public QObject
 {
@@ -39,7 +39,7 @@ public:
     template <typename T, typename Context>
     void initialisePlugins(const Context& context)
     {
-        for(const auto& [name, plugin] : m_plugins) {
+        for(auto& [name, plugin] : m_plugins) {
             if(const auto& pluginInstance = qobject_cast<T*>(plugin->root())) {
                 pluginInstance->initialise(context);
                 plugin->initialise();
