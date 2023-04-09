@@ -164,25 +164,6 @@ QString PlaylistWidget::name() const
     return "Playlist";
 }
 
-void PlaylistWidget::layoutEditingMenu(Utils::ActionContainer* menu)
-{
-    auto* showHeaders = new QAction("Show Header", menu);
-    showHeaders->setCheckable(true);
-    showHeaders->setChecked(!isHeaderHidden());
-    QAction::connect(showHeaders, &QAction::triggered, this, [this] {
-        m_settings->set<Settings::PlaylistHeader>(isHeaderHidden());
-    });
-    menu->addAction(showHeaders);
-
-    auto* showScrollBar = new QAction("Show Scrollbar", menu);
-    showScrollBar->setCheckable(true);
-    showScrollBar->setChecked(!isScrollbarHidden());
-    QAction::connect(showScrollBar, &QAction::triggered, this, [this] {
-        m_settings->set<Settings::PlaylistScrollBar>(isScrollbarHidden());
-    });
-    menu->addAction(showScrollBar);
-}
-
 void PlaylistWidget::selectionChanged()
 {
     if(m_changingSelection) {

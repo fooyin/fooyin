@@ -76,7 +76,6 @@ public:
     void setScrollbarHidden(bool showScrollBar);
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
 signals:
     void clickedTrack(int idx);
