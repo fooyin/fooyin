@@ -27,19 +27,19 @@ bool UnifiedTrackStore::hasTrack(int id) const
     });
 }
 
-Track* UnifiedTrackStore::track(int id)
+Track UnifiedTrackStore::track(int id)
 {
     for(const auto& [libraryId, store] : m_libraryStores) {
-        if(Track* track = store->track(id)) {
-            return track;
+        if(store->hasTrack(id)) {
+            return store->track(id);
         }
     }
-    return nullptr;
+    return {};
 }
 
-TrackPtrList UnifiedTrackStore::tracks() const
+TrackList UnifiedTrackStore::tracks() const
 {
-    TrackPtrList tracks{};
+    TrackList tracks{};
     for(const auto& [libraryId, store] : m_libraryStores) {
         const auto libraryTracks = store->tracks();
         tracks.insert(tracks.end(), libraryTracks.cbegin(), libraryTracks.cend());
@@ -47,26 +47,19 @@ TrackPtrList UnifiedTrackStore::tracks() const
     return tracks;
 }
 
-TrackPtrList UnifiedTrackStore::add(const TrackList& tracks)
+TrackList UnifiedTrackStore::add(const TrackList& tracks)
 {
     Q_UNUSED(tracks)
     return {};
 }
 
-TrackPtrList UnifiedTrackStore::update(const TrackList& tracks)
+TrackList UnifiedTrackStore::update(const TrackList& tracks)
 {
     Q_UNUSED(tracks)
     return {};
 }
 
-void UnifiedTrackStore::markForDelete(const TrackPtrList& tracks)
-{
-    for(auto* track : tracks) {
-        markForDelete(track);
-    }
-}
-
-void UnifiedTrackStore::remove(const TrackPtrList& tracks)
+void UnifiedTrackStore::remove(const TrackList& tracks)
 {
     Q_UNUSED(tracks)
 }
@@ -86,12 +79,5 @@ void UnifiedTrackStore::addLibrary(int libraryId, TrackStore* store)
 void UnifiedTrackStore::removeLibrary(int libraryId)
 {
     m_libraryStores.erase(libraryId);
-}
-
-void UnifiedTrackStore::markForDelete(Track* track)
-{
-    if(hasTrack(track->id())) {
-        track->setIsEnabled(false);
-    }
 }
 } // namespace Fy::Core::Library

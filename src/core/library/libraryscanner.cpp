@@ -49,7 +49,7 @@ void LibraryScanner::stopThread()
     setState(State::Idle);
 }
 
-void LibraryScanner::scanLibrary(const TrackPtrList& tracks)
+void LibraryScanner::scanLibrary(const TrackList& tracks)
 {
     if(!m_library) {
         return;
@@ -58,18 +58,18 @@ void LibraryScanner::scanLibrary(const TrackPtrList& tracks)
     setState(Running);
 
     TrackPathMap trackMap{};
-    TrackPtrList tracksToDelete{};
+    TrackList tracksToDelete{};
 
     // TODO: Don't delete if disk/top level is inaccessible
     //       and ask for confirmation.
-    for(const auto& track : tracks) {
-        if(!File::exists(track->filepath())) {
+    for(const Track& track : tracks) {
+        if(!File::exists(track.filepath())) {
             tracksToDelete.emplace_back(track);
         }
         else {
-            trackMap.emplace(track->filepath(), track);
-            if(track->hasCover() && !File::exists(track->coverPath())) {
-                Utils::storeCover(*track);
+            trackMap.emplace(track.filepath(), track);
+            if(track.hasCover() && !File::exists(track.coverPath())) {
+                Utils::storeCover(track);
             }
         }
         if(!mayRun()) {
@@ -110,8 +110,20 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
     QStringList ret;
     QList<QDir> stack{baseDirectory};
 
-    const QStringList soundFileExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga",  "*.m4a", "*.wav",  "*.flac",
-                                          "*.aac", "*.wma", "*.mpc",  "*.aiff", "*.ape", "*.webm", "*.mp4"};
+    const QStringList soundFileExtensions{"*.mp3",
+                                          "*.ogg",
+                                          "*.opus",
+                                          "*.oga",
+                                          "*.m4a",
+                                          "*.wav",
+                                          "*.flac",
+                                          "*.aac",
+                                          "*.wma",
+                                          "*.mpc",
+                                          "*.aiff",
+                                          "*.ape",
+                                          "*.webm",
+                                          "*.mp4"};
 
     while(!stack.isEmpty()) {
         const QDir dir              = stack.takeFirst();
@@ -158,13 +170,13 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
         bool fileWasRead;
 
         if(tracks.count(filepath)) {
-            const Track* libraryTrack = tracks.at(filepath);
-            if(libraryTrack->id() >= 0) {
-                if(libraryTrack->modifiedTime() == lastModified) {
+            const Track& libraryTrack = tracks.at(filepath);
+            if(libraryTrack.id() >= 0) {
+                if(libraryTrack.modifiedTime() == lastModified) {
                     continue;
                 }
 
-                Track changedTrack{*libraryTrack};
+                Track changedTrack{libraryTrack};
                 fileWasRead = Tagging::readMetaData(changedTrack, Tagging::Quality::Fast);
                 if(fileWasRead) {
                     // Regenerate hash

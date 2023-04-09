@@ -38,8 +38,8 @@ public:
 
     [[nodiscard]] LibraryInfo* info() const override;
 
-    [[nodiscard]] Track* track(int id) const override;
-    [[nodiscard]] TrackPtrList tracks() const override;
+    [[nodiscard]] Track track(int id) const override;
+    [[nodiscard]] TrackList tracks() const override;
 
     [[nodiscard]] UnifiedTrackStore* trackStore() const override;
 

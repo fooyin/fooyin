@@ -51,7 +51,7 @@ public:
 
     void setupUi();
 
-    void changeTrack(Core::Track* track);
+    void changeTrack(const Core::Track& track);
     void setCurrentPosition(int ms);
     void updateTime(int elapsed);
     void reset();

@@ -49,11 +49,11 @@ ScriptResult Registry::varValue(const QString& var) const
     if(var.isEmpty()) {
         return {};
     }
-    if(m_metadata.count(var) && m_currentTrack) {
+    if(m_metadata.count(var)) {
         auto function = m_metadata.at(var);
         if(std::holds_alternative<StringFunc>(function)) {
             const auto f        = std::get<0>(function);
-            const QString value = (m_currentTrack->*f)();
+            const QString value = (m_currentTrack.*f)();
 
             ScriptResult result;
             result.value = value;
@@ -61,8 +61,8 @@ ScriptResult Registry::varValue(const QString& var) const
             return result;
         }
         if(std::holds_alternative<IntegerFunc>(function)) {
-            const auto f    = std::get<1>(function);
-            const int value = (m_currentTrack->*f)();
+            auto f    = std::get<1>(function);
+            int value = (m_currentTrack.*f)();
 
             ScriptResult result;
             result.value = QString::number(value);
@@ -71,7 +71,7 @@ ScriptResult Registry::varValue(const QString& var) const
         }
         if(std::holds_alternative<StringListFunc>(function)) {
             const auto f            = std::get<2>(function);
-            const QStringList value = (m_currentTrack->*f)();
+            const QStringList value = (m_currentTrack.*f)();
 
             ScriptResult result;
             result.value = value.empty() ? "" : value.join(Constants::Separator);
@@ -80,7 +80,7 @@ ScriptResult Registry::varValue(const QString& var) const
         }
         if(std::holds_alternative<U64Func>(function)) {
             const auto f         = std::get<3>(function);
-            const uint64_t value = (m_currentTrack->*f)();
+            const uint64_t value = (m_currentTrack.*f)();
 
             ScriptResult result;
             result.value = QString::number(value);
@@ -119,7 +119,7 @@ ScriptResult Registry::function(const QString& func, const ValueList& args) cons
     return {};
 }
 
-void Registry::changeCurrentTrack(Track* track)
+void Registry::changeCurrentTrack(const Core::Track& track)
 {
     m_currentTrack = track;
 }

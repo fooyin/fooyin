@@ -22,22 +22,22 @@
 #include "core/library/sorting/sorting.h"
 
 namespace Fy::Core::Library {
-Track* SingleTrackStore::track(int id)
+Track SingleTrackStore::track(int id)
 {
     if(hasTrack(id)) {
-        return &m_trackIdMap.at(id);
+        return m_trackIdMap.at(id);
     }
-    return nullptr;
+    return {};
 }
 
-TrackPtrList SingleTrackStore::tracks() const
+TrackList SingleTrackStore::tracks() const
 {
     return m_tracks;
 }
 
-TrackPtrList SingleTrackStore::add(const TrackList& tracks)
+TrackList SingleTrackStore::add(const TrackList& tracks)
 {
-    TrackPtrList addedTracks;
+    TrackList addedTracks;
     const auto size = tracks.size();
 
     addedTracks.reserve(size);
@@ -47,20 +47,21 @@ TrackPtrList SingleTrackStore::add(const TrackList& tracks)
     for(const Track& track : tracks) {
         addedTracks.emplace_back(add(track));
     }
+
     return addedTracks;
 }
 
-Track* SingleTrackStore::add(const Track& track)
+Track SingleTrackStore::add(const Track& track)
 {
-    Track* newTrack = &m_trackIdMap.emplace(track.id(), track).first->second;
-    m_tracks.emplace_back(newTrack);
+    m_trackIdMap.emplace(track.id(), track);
+    m_tracks.emplace_back(track);
 
-    return newTrack;
+    return track;
 }
 
-TrackPtrList SingleTrackStore::update(const TrackList& tracks)
+TrackList SingleTrackStore::update(const TrackList& tracks)
 {
-    TrackPtrList updatedTracks;
+    TrackList updatedTracks;
     updatedTracks.reserve(tracks.size());
 
     for(const auto& track : tracks) {
@@ -69,38 +70,24 @@ TrackPtrList SingleTrackStore::update(const TrackList& tracks)
     return updatedTracks;
 }
 
-Track* SingleTrackStore::update(const Track& track)
+Track SingleTrackStore::update(const Track& track)
 {
-    Track* libraryTrack = &m_trackIdMap.at(track.id());
-    *libraryTrack       = track;
+    Track& libraryTrack = m_trackIdMap.at(track.id());
+    libraryTrack        = track;
     return libraryTrack;
 }
 
-void SingleTrackStore::markForDelete(const TrackPtrList& tracks)
+void SingleTrackStore::remove(const TrackList& tracks)
 {
-    for(auto* track : tracks) {
-        markForDelete(track);
-    }
-}
-
-void SingleTrackStore::markForDelete(Track* track)
-{
-    if(hasTrack(track->id())) {
-        track->setIsEnabled(false);
-    }
-}
-
-void SingleTrackStore::remove(const TrackPtrList& tracks)
-{
-    for(const auto& track : tracks) {
-        remove(track->id());
+    for(const Track& track : tracks) {
+        remove(track.id());
     }
 }
 
 void SingleTrackStore::remove(int trackId)
 {
     if(hasTrack(trackId)) {
-        Track* track = &m_trackIdMap.at(trackId);
+        Track& track = m_trackIdMap.at(trackId);
         m_tracks.erase(std::find(m_tracks.begin(), m_tracks.end(), track));
         m_trackIdMap.erase(trackId);
     }

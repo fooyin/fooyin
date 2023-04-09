@@ -41,7 +41,7 @@ public:
 
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);
-    bool deleteTracks(const TrackPtrList& tracks);
+    bool deleteTracks(const TrackList& tracks);
 
 protected:
     Module* module();

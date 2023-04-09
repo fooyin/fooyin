@@ -47,7 +47,7 @@ public:
     explicit FilterManager(Utils::ThreadManager* threadManager, Core::Library::MusicLibrary* library,
                            FieldRegistry* fieldsRegistry, QObject* parent = nullptr);
 
-    [[nodiscard]] Core::TrackPtrList tracks() const override;
+    [[nodiscard]] Core::TrackList tracks() const override;
     [[nodiscard]] bool hasTracks() const override;
 
     LibraryFilter* registerFilter(const QString& name);
@@ -66,12 +66,12 @@ public:
 signals:
     void fieldChanged(const Fy::Filters::FilterField& field);
     void filterChanged(int index, const QString& name);
-    void filterTracks(const Core::TrackPtrList& tracks, const QString& search);
+    void filterTracks(const Core::TrackList& tracks, const QString& search);
     void filteredItems(int index);
     void filteredTracks();
 
 private:
-    void tracksFiltered(const Core::TrackPtrList& tracks);
+    void tracksFiltered(const Core::TrackList& tracks);
     void tracksChanged();
 
     Utils::ThreadManager* m_threadManager;
@@ -80,7 +80,7 @@ private:
     TrackFilterer m_searchManager;
 
     FieldRegistry* m_fieldsRegistry;
-    Core::TrackPtrList m_filteredTracks;
+    Core::TrackList m_filteredTracks;
     int m_lastFilterIndex;
     FilterStore m_filterStore;
     QString m_searchFilter;

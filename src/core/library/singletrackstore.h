@@ -27,19 +27,16 @@ class SingleTrackStore : public TrackStore
 public:
     [[nodiscard]] bool hasTrack(int id) const override;
 
-    [[nodiscard]] Track* track(int id) override;
-    [[nodiscard]] TrackPtrList tracks() const override;
+    [[nodiscard]] Track track(int id) override;
+    [[nodiscard]] TrackList tracks() const override;
 
-    TrackPtrList add(const TrackList& tracks) override;
-    Track* add(const Track& track);
+    TrackList add(const TrackList& tracks) override;
+    Track add(const Track& track);
 
-    TrackPtrList update(const TrackList& tracks) override;
-    Track* update(const Track& track);
+    TrackList update(const TrackList& tracks) override;
+    Track update(const Track& track);
 
-    void markForDelete(const TrackPtrList& tracks) override;
-    void markForDelete(Track* trackId);
-
-    void remove(const TrackPtrList& tracks) override;
+    void remove(const TrackList& tracks) override;
     void remove(int trackId);
 
     void sort(SortOrder order) override;
@@ -48,6 +45,6 @@ public:
 
 private:
     TrackIdMap m_trackIdMap;
-    TrackPtrList m_tracks;
+    TrackList m_tracks;
 };
 } // namespace Fy::Core::Library

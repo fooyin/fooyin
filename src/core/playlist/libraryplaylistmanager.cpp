@@ -28,14 +28,14 @@ LibraryPlaylistManager::LibraryPlaylistManager(Library::MusicLibrary* library, P
     , m_playlistHandler{playlistHandler}
 { }
 
-void LibraryPlaylistManager::createPlaylist(const TrackPtrList& tracks, int startIndex)
+void LibraryPlaylistManager::createPlaylist(const TrackList& tracks, int startIndex)
 {
     const QString name = "Playlist";
     m_playlistHandler->createPlaylist(tracks, name);
     activatePlaylist(startIndex);
 }
 
-void LibraryPlaylistManager::append(const TrackPtrList& tracks)
+void LibraryPlaylistManager::append(const TrackList& tracks)
 {
     auto* playlist = m_playlistHandler->activePlaylist();
     playlist->appendTracks(tracks);

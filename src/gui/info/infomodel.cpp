@@ -113,35 +113,33 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
         return item->data();
     }
 
-    Core::Track* track = m_playerManager->currentTrack();
+    Core::Track track = m_playerManager->currentTrack();
 
-    if(track) {
-        switch(item->role()) {
-            case(InfoItem::Title):
-                return track->title();
-            case(InfoItem::Artist):
-                return track->artists().join(", ");
-            case(InfoItem::Album):
-                return track->album();
-            case(InfoItem::Year):
-                return track->year();
-            case(InfoItem::Genre):
-                return track->genres().join(", ");
-            case(InfoItem::TrackNumber):
-                return track->trackNumber();
-            case(InfoItem::Filename):
-                return track->filepath().split("/").constLast();
-            case(InfoItem::Path):
-                return track->filepath();
-            case(InfoItem::Duration):
-                return Utils::msToString(track->duration());
-            case(InfoItem::Bitrate):
-                return QString::number(track->bitrate()).append(" kbps");
-            case(InfoItem::SampleRate):
-                return track->sampleRate();
-            case(InfoItem::None):
-                break;
-        }
+    switch(item->role()) {
+        case(InfoItem::Title):
+            return track.title();
+        case(InfoItem::Artist):
+            return track.artists().join(", ");
+        case(InfoItem::Album):
+            return track.album();
+        case(InfoItem::Year):
+            return track.year();
+        case(InfoItem::Genre):
+            return track.genres().join(", ");
+        case(InfoItem::TrackNumber):
+            return track.trackNumber();
+        case(InfoItem::Filename):
+            return track.filepath().split("/").constLast();
+        case(InfoItem::Path):
+            return track.filepath();
+        case(InfoItem::Duration):
+            return Utils::msToString(track.duration());
+        case(InfoItem::Bitrate):
+            return QString::number(track.bitrate()).append(" kbps");
+        case(InfoItem::SampleRate):
+            return track.sampleRate();
+        case(InfoItem::None):
+            break;
     }
     return {};
 }

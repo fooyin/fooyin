@@ -27,13 +27,12 @@ class UnifiedTrackStore : public TrackStore
 public:
     [[nodiscard]] bool hasTrack(int id) const override;
 
-    [[nodiscard]] Track* track(int id) override;
-    [[nodiscard]] TrackPtrList tracks() const override;
+    [[nodiscard]] Track track(int id) override;
+    [[nodiscard]] TrackList tracks() const override;
 
-    TrackPtrList add(const TrackList& tracks) override;
-    TrackPtrList update(const TrackList& tracks) override;
-    void markForDelete(const TrackPtrList& tracks) override;
-    void remove(const TrackPtrList& tracks) override;
+    TrackList add(const TrackList& tracks) override;
+    TrackList update(const TrackList& tracks) override;
+    void remove(const TrackList& tracks) override;
 
     void sort(SortOrder order) override;
 
@@ -41,8 +40,6 @@ public:
     void removeLibrary(int libraryId);
 
 private:
-    void markForDelete(Track* trackId);
-
     std::unordered_map<int, TrackStore*> m_libraryStores;
 };
 } // namespace Fy::Core::Library

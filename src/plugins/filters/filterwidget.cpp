@@ -185,10 +185,10 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
         return;
     }
 
-    Core::TrackPtrList tracks;
+    Core::TrackList tracks;
     for(const auto& index : indexes) {
         if(index.isValid()) {
-            const auto newTracks = index.data(Filters::Constants::Role::Tracks).value<Core::TrackPtrList>();
+            const auto newTracks = index.data(Filters::Constants::Role::Tracks).value<Core::TrackList>();
             tracks.insert(tracks.end(), newTracks.cbegin(), newTracks.cend());
         }
     }

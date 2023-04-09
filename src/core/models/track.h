@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QList>
+#include <QSharedDataPointer>
 
 #include <map>
 
@@ -29,12 +30,23 @@ using ExtraTags = std::map<QString, QList<QString>>;
 class Track
 {
 public:
-    Track();
-    explicit Track(QString filepath);
+    struct TrackHash
+    {
+        size_t operator()(const Track& track) const
+        {
+            return qHash(track.filepath());
+        }
+    };
+
+    Track(QString filepath = {});
+    ~Track();
+
+    Track(const Track& other);
+    Track& operator=(const Track& other);
+    bool operator==(const Track& other) const;
+    bool operator!=(const Track& other) const;
 
     QString generateHash();
-
-    [[nodiscard]] bool isEnabled() const;
 
     [[nodiscard]] int libraryId() const;
 
@@ -76,8 +88,6 @@ public:
     [[nodiscard]] uint64_t addedTime() const;
     [[nodiscard]] uint64_t modifiedTime() const;
 
-    void setIsEnabled(bool enabled);
-
     void setLibraryId(int id);
 
     void setId(int id);
@@ -113,39 +123,9 @@ public:
     void setModifiedTime(uint64_t time);
 
 private:
-    bool m_enabled;
-
-    int m_libraryId;
-
-    int m_id;
-    QString m_hash;
-    QString m_filepath;
-    QString m_title;
-    QStringList m_artists;
-    QString m_album;
-    QString m_albumArtist;
-    int m_trackNumber;
-    int m_trackTotal;
-    int m_discNumber;
-    int m_discTotal;
-    QStringList m_genres;
-    QString m_composer;
-    QString m_performer;
-    uint64_t m_duration;
-    QString m_lyrics;
-    QString m_comment;
-    QString m_date;
-    int m_year;
-    QString m_coverPath;
-    ExtraTags m_extraTags;
-
-    uint64_t m_filesize;
-    int m_bitrate;
-    int m_sampleRate;
-
-    int m_playcount;
-
-    uint64_t m_addedTime;
-    uint64_t m_modifiedTime;
+    struct Private;
+    QSharedDataPointer<Private> p;
 };
 } // namespace Fy::Core
+
+size_t qHash(const Fy::Core::Track& track);

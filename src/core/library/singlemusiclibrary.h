@@ -54,26 +54,26 @@ public:
 
     [[nodiscard]] LibraryInfo* info() const override;
 
-    [[nodiscard]] Track* track(int id) const override;
-    [[nodiscard]] TrackPtrList tracks() const override;
+    [[nodiscard]] Track track(int id) const override;
+    [[nodiscard]] TrackList tracks() const override;
 
     [[nodiscard]] TrackStore* trackStore() const override;
 
     [[nodiscard]] SortOrder sortOrder() const override;
     void sortTracks(SortOrder order) override;
 
-    void updateTracks(const TrackPtrList& tracks);
+    void updateTracks(const TrackList& tracks);
 
 signals:
     void tracksSelChanged();
-    void updateSaveTracks(Core::TrackPtrList tracks);
+    void updateSaveTracks(Core::TrackList tracks);
 
 protected:
     void getAllTracks();
     void loadTracks(const TrackList& tracks);
     void addNewTracks(const TrackList& tracks);
     void updateChangedTracks(const TrackList& tracks);
-    void removeDeletedTracks(const TrackPtrList& tracks);
+    void removeDeletedTracks(const TrackList& tracks);
 
 private:
     LibraryInfo* m_info;

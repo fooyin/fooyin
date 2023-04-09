@@ -69,16 +69,13 @@ void ProgressWidget::setupUi()
     m_layout->addWidget(m_slider, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_total, 0, Qt::AlignVCenter | Qt::AlignLeft);
 
-    setEnabled(m_playerManager->currentTrack());
+    setEnabled(m_playerManager->currentTrack().id());
 }
 
-void ProgressWidget::changeTrack(Core::Track* track)
+void ProgressWidget::changeTrack(const Core::Track& track)
 {
-    if(!track) {
-        return;
-    }
     reset();
-    m_max = static_cast<int>(track->duration());
+    m_max = static_cast<int>(track.duration());
     m_slider->setMaximum(m_max);
     m_total->setText(m_elapsedTotal ? "-" : "" + Utils::msToString(m_max));
 }

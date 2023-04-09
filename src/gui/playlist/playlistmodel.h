@@ -31,7 +31,6 @@
 #include <QPixmap>
 
 namespace Fy {
-
 namespace Utils {
 class SettingsManager;
 }
@@ -70,7 +69,7 @@ public:
     [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                         Qt::MatchFlags flags) const override;
 
-    [[nodiscard]] Core::TrackPtrList tracks() const;
+    [[nodiscard]] Core::TrackList tracks() const;
 
     void reset();
     void changeRowColours();
@@ -78,14 +77,14 @@ public:
 
     [[nodiscard]] QModelIndex indexForId(int id) const;
     [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;
-    [[nodiscard]] int findTrackIndex(Core::Track* track) const;
+    [[nodiscard]] int findTrackIndex(const Core::Track& track) const;
 
 private:
     using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
     void setupModelData();
-    void createAlbums(const Core::TrackPtrList& tracks);
-    PlaylistItem* iterateTrack(Core::Track* track, bool discHeaders, bool splitDiscs);
+    void createAlbums(const Core::TrackList& tracks);
+    PlaylistItem* iterateTrack(const Core::Track& track, bool discHeaders, bool splitDiscs);
 
     PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, const ItemType& item,
                                  PlaylistItem* parent);
@@ -109,7 +108,7 @@ private:
     bool m_altColours;
     bool m_simplePlaylist;
 
-    Core::TrackPtrList m_tracks;
+    Core::TrackList m_tracks;
 
     bool m_resetting;
 

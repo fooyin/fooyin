@@ -70,17 +70,16 @@ void CoverWidget::resizeEvent(QResizeEvent* e)
 void CoverWidget::reloadCover()
 {
     QString coverPath;
-    if(auto* track = m_playerManager->currentTrack()) {
-        coverPath = track->coverPath();
+    Core::Track track = m_playerManager->currentTrack();
+    if(track.id()) {
+        coverPath = track.coverPath();
     }
 
     else {
         auto tracks = m_library->tracks();
         if(!tracks.empty()) {
-            Core::Track* track = tracks.front();
-            if(track) {
-                coverPath = track->coverPath();
-            }
+            Core::Track track = tracks.front();
+            coverPath         = track.coverPath();
         }
     }
 

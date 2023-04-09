@@ -61,12 +61,12 @@ void LibraryDatabaseManager::getAllTracks(SortOrder order)
     emit allTracksLoaded();
 }
 
-void LibraryDatabaseManager::updateTracks(const TrackPtrList& tracks)
+void LibraryDatabaseManager::updateTracks(const TrackList& tracks)
 {
-    for(const auto& track : tracks) {
-        const bool saved = Tagging::writeMetaData(*track);
+    for(const Track& track : tracks) {
+        const bool saved = Tagging::writeMetaData(track);
         if(saved) {
-            m_libraryDatabase.updateTrack(*track);
+            m_libraryDatabase.updateTrack(track);
         }
     }
 }

@@ -55,11 +55,13 @@ SingleMusicLibrary::SingleMusicLibrary(LibraryInfo* info, DB::Database* database
     connect(&m_scanner, &LibraryScanner::tracksDeleted, this, &SingleMusicLibrary::removeDeletedTracks);
 
     connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &SingleMusicLibrary::loadTracks);
-    connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::allTracksLoaded, this,
+    connect(&m_libraryDatabaseManager,
+            &LibraryDatabaseManager::allTracksLoaded,
+            this,
             &SingleMusicLibrary::allTracksLoaded);
     connect(this, &SingleMusicLibrary::loadAllTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
-    connect(this, &SingleMusicLibrary::updateSaveTracks, &m_libraryDatabaseManager,
-            &LibraryDatabaseManager::updateTracks);
+    connect(
+        this, &SingleMusicLibrary::updateSaveTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::updateTracks);
 
     if(m_settings->value<Settings::AutoRefresh>()) {
         QTimer::singleShot(3000, this, &Library::SingleMusicLibrary::reload);
@@ -71,7 +73,7 @@ void SingleMusicLibrary::loadLibrary()
     getAllTracks();
 }
 
-void SingleMusicLibrary::updateTracks(const TrackPtrList& tracks)
+void SingleMusicLibrary::updateTracks(const TrackList& tracks)
 {
     emit updateSaveTracks(tracks);
 }
@@ -84,20 +86,19 @@ void SingleMusicLibrary::loadTracks(const TrackList& tracks)
 
 void SingleMusicLibrary::addNewTracks(const TrackList& tracks)
 {
-    const TrackPtrList addedTracks = m_trackStore->add(tracks);
+    const TrackList addedTracks = m_trackStore->add(tracks);
     //    m_trackStore->sort(m_order);
     emit tracksAdded(addedTracks);
 }
 
 void SingleMusicLibrary::updateChangedTracks(const TrackList& tracks)
 {
-    const TrackPtrList updatedTracks = m_trackStore->update(tracks);
+    const TrackList updatedTracks = m_trackStore->update(tracks);
     emit tracksUpdated(updatedTracks);
 }
 
-void SingleMusicLibrary::removeDeletedTracks(const TrackPtrList& tracks)
+void SingleMusicLibrary::removeDeletedTracks(const TrackList& tracks)
 {
-    m_trackStore->markForDelete(tracks);
     emit tracksDeleted(tracks);
     m_trackStore->remove(tracks);
 }
@@ -116,7 +117,7 @@ void SingleMusicLibrary::refreshTracks(const TrackList& tracks)
 {
     //    m_trackStore.clear();
 
-    const TrackPtrList newTracks = m_trackStore->add(tracks);
+    const TrackList newTracks = m_trackStore->add(tracks);
     //    m_trackStore.sort(m_order);
 
     emit tracksLoaded(newTracks);
@@ -132,12 +133,12 @@ TrackStore* SingleMusicLibrary::trackStore() const
     return m_trackStore.get();
 }
 
-Track* SingleMusicLibrary::track(int id) const
+Track SingleMusicLibrary::track(int id) const
 {
     return m_trackStore->track(id);
 }
 
-TrackPtrList SingleMusicLibrary::tracks() const
+TrackList SingleMusicLibrary::tracks() const
 {
     return m_trackStore->tracks();
 }

@@ -125,9 +125,9 @@ void EngineMpv::seek(uint64_t pos)
     mpv_command(m_mpv, cmd);
 }
 
-void EngineMpv::changeTrack(Track* track)
+void EngineMpv::changeTrack(const Track& track)
 {
-    const QByteArray path_ba = track->filepath().toUtf8();
+    const QByteArray path_ba = track.filepath().toUtf8();
     const char* cmd[]        = {"loadfile", path_ba.constData(), "replace", nullptr}; // NOLINT
     mpv_command(m_mpv, cmd);
 }

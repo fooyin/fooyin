@@ -44,9 +44,9 @@ public:
     virtual void reload() = 0;
     virtual void rescan() = 0;
 
-    [[nodiscard]] virtual Track* track(int id) const     = 0;
-    [[nodiscard]] virtual TrackPtrList tracks() const    = 0;
-    [[nodiscard]] virtual TrackPtrList allTracks() const = 0;
+    [[nodiscard]] virtual Track track(int id) const   = 0;
+    [[nodiscard]] virtual TrackList tracks() const    = 0;
+    [[nodiscard]] virtual TrackList allTracks() const = 0;
 
     [[nodiscard]] virtual SortOrder sortOrder() const = 0;
     virtual void sortTracks(SortOrder order)          = 0;
@@ -58,12 +58,12 @@ public:
 signals:
     void loadAllTracks(Core::Library::SortOrder order);
     void allTracksLoaded();
-    void runLibraryScan(const Core::TrackPtrList& tracks);
+    void runLibraryScan(const Core::TrackList& tracks);
 
-    void tracksLoaded(const Core::TrackPtrList& tracks);
-    void tracksAdded(const Core::TrackPtrList& tracks);
-    void tracksUpdated(const Core::TrackPtrList& tracks);
-    void tracksDeleted(const Core::TrackPtrList& tracks);
+    void tracksLoaded(const Core::TrackList& tracks);
+    void tracksAdded(const Core::TrackList& tracks);
+    void tracksUpdated(const Core::TrackList& tracks);
+    void tracksDeleted(const Core::TrackList& tracks);
 
     void libraryRemoved();
     void libraryChanged();

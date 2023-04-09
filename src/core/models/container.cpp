@@ -63,15 +63,15 @@ void Container::setDuration(uint64_t duration)
     m_duration = duration;
 }
 
-void Container::addTrack(Track* track)
+void Container::addTrack(const Track& track)
 {
     ++m_trackCount;
-    m_duration += track->duration();
+    m_duration += track.duration();
 }
 
-void Container::removeTrack(Track* track)
+void Container::removeTrack(const Track& track)
 {
     --m_trackCount;
-    m_duration -= track->duration();
+    m_duration -= track.duration();
 }
 } // namespace Fy::Core

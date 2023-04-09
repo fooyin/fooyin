@@ -38,10 +38,10 @@ class TrackFilterer : public Utils::Worker
 public:
     explicit TrackFilterer(QObject* parent = nullptr);
 
-    void filterTracks(const Core::TrackPtrList& tracks, const QString& search);
+    void filterTracks(const Core::TrackList& tracks, const QString& search);
 
 signals:
-    void tracksFiltered(const Core::TrackPtrList& result);
+    void tracksFiltered(const Core::TrackList& result);
 };
 } // namespace Filters
 } // namespace Fy

@@ -91,8 +91,8 @@ void StatusWidget::labelClicked()
 
 void StatusWidget::reloadStatus()
 {
-    auto* track = m_playerManager->currentTrack();
-    m_playing->setText(track->title());
+    Core::Track track = m_playerManager->currentTrack();
+    m_playing->setText(track.title());
 }
 
 void StatusWidget::stateChanged(Core::Player::PlayState state)
@@ -102,12 +102,12 @@ void StatusWidget::stateChanged(Core::Player::PlayState state)
             m_playing->setText("Waiting for track...");
             break;
         case(Core::Player::Playing): {
-            auto* track      = m_playerManager->currentTrack();
-            auto number      = QStringLiteral("%1").arg(track->trackNumber(), 2, 10, QLatin1Char('0'));
-            auto duration    = QString(" (%1)").arg(Utils::msToString(track->duration()));
-            auto albumArtist = !track->albumArtist().isEmpty() ? " \u2022 " + track->albumArtist() : "";
-            auto album       = !track->album().isEmpty() ? " \u2022 " + track->album() : "";
-            auto text        = number + ". " + track->title() + duration + albumArtist + album;
+            Core::Track track = m_playerManager->currentTrack();
+            auto number       = QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0'));
+            auto duration     = QString(" (%1)").arg(Utils::msToString(track.duration()));
+            auto albumArtist  = !track.albumArtist().isEmpty() ? " \u2022 " + track.albumArtist() : "";
+            auto album        = !track.album().isEmpty() ? " \u2022 " + track.album() : "";
+            auto text         = number + ". " + track.title() + duration + albumArtist + album;
             m_playing->setText(text);
         }
         case(Core::Player::Paused):

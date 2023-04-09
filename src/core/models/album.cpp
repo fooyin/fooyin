@@ -115,24 +115,24 @@ void Album::setCoverPath(const QString& path)
     m_coverPath = path;
 }
 
-void Album::addTrack(Track* track)
+void Album::addTrack(const Track& track)
 {
     ++m_trackCount;
-    m_duration += track->duration();
+    m_duration += track.duration();
 
-    for(const auto& genre : track->genres()) {
+    for(const auto& genre : track.genres()) {
         if(!Utils::contains(m_genres, genre)) {
             m_genres.emplace_back(genre);
         }
     }
 
-    m_discCount = track->discTotal();
+    m_discCount = track.discTotal();
 }
 
-void Album::removeTrack(Track* track)
+void Album::removeTrack(const Track& track)
 {
     --m_trackCount;
-    m_duration -= track->duration();
+    m_duration -= track.duration();
 }
 
 void Album::reset()

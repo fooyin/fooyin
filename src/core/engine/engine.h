@@ -30,12 +30,12 @@ public:
     explicit Engine(QObject* parent = nullptr)
         : QObject{parent} {};
 
-    virtual void play()                    = 0;
-    virtual void stop()                    = 0;
-    virtual void pause()                   = 0;
-    virtual void seek(uint64_t pos)        = 0;
-    virtual void changeTrack(Track* track) = 0;
-    virtual void setVolume(float value)    = 0;
+    virtual void play()                          = 0;
+    virtual void stop()                          = 0;
+    virtual void pause()                         = 0;
+    virtual void seek(uint64_t pos)              = 0;
+    virtual void changeTrack(const Track& track) = 0;
+    virtual void setVolume(float value)          = 0;
 
 signals:
     void currentPositionChanged(uint64_t ms);

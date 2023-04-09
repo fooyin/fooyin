@@ -26,184 +26,215 @@
 #include <QJsonObject>
 
 namespace Fy::Core {
-Track::Track()
-    : Track("")
-{ }
+struct Track::Private : public QSharedData
+{
+    int libraryId{-1};
+
+    int id{-1};
+    QString hash;
+    QString filepath;
+    QString title;
+    QStringList artists;
+    QString album;
+    QString albumArtist;
+    int trackNumber{-1};
+    int trackTotal{-1};
+    int discNumber{-1};
+    int discTotal{-1};
+    QStringList genres;
+    QString composer;
+    QString performer;
+    uint64_t duration{0};
+    QString lyrics;
+    QString comment;
+    QString date;
+    int year{-1};
+    QString coverPath;
+    ExtraTags extraTags;
+
+    uint64_t filesize{0};
+    int bitrate{0};
+    int sampleRate{0};
+
+    int playcount{0};
+
+    uint64_t addedTime{0};
+    uint64_t modifiedTime{0};
+
+    explicit Private(QString filepath = {})
+        : filepath{std::move(filepath)}
+    { }
+};
 
 Track::Track(QString filepath)
-    : m_enabled{true}
-    , m_libraryId{-1}
-    , m_id{-1}
-    , m_filepath{std::move(filepath)}
-    , m_trackNumber{-1}
-    , m_trackTotal{-1}
-    , m_discNumber{-1}
-    , m_discTotal{-1}
-    , m_duration{0}
-    , m_filesize{0}
-    , m_bitrate{-1}
-    , m_sampleRate{-1}
-    , m_playcount{0}
-    , m_addedTime{0}
-    , m_modifiedTime{0}
+    : p{new Private(std::move(filepath))}
 { }
+
+bool Track::operator==(const Track& other) const
+{
+    return filepath() == other.filepath();
+}
+
+bool Track::operator!=(const Track& other) const
+{
+    return filepath() != other.filepath();
+}
+
+Track::~Track()                             = default;
+Track::Track(const Track& other)            = default;
+Track& Track::operator=(const Track& other) = default;
 
 QString Track::generateHash()
 {
-    m_hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(m_artists.join(","),
-                                              m_album,
-                                              m_date,
-                                              QString::number(m_discNumber),
-                                              QStringLiteral("%1").arg(m_trackNumber, 2, 10, QLatin1Char('0')),
-                                              QString::number(m_duration));
-    return m_hash;
-}
-
-bool Track::isEnabled() const
-{
-    return m_enabled;
+    p->hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(p->artists.join(","),
+                                               p->album,
+                                               p->date,
+                                               QString::number(p->discNumber),
+                                               QStringLiteral("%1").arg(p->trackNumber, 2, 10, QLatin1Char('0')),
+                                               QString::number(p->duration));
+    return p->hash;
 }
 
 int Track::libraryId() const
 {
-    return m_libraryId;
+    return p->libraryId;
 }
 
 int Track::id() const
 {
-    return m_id;
+    return p->id;
 }
 
 QString Track::hash() const
 {
-    return m_hash;
+    return p->hash;
 }
 
 QString Track::albumHash() const
 {
-    return QString{"%1|%2|%3"}.arg(m_date, !m_albumArtist.isEmpty() ? m_albumArtist : m_artists.join(""), m_album);
+    return QString{"%1|%2|%3"}.arg(p->date, !p->albumArtist.isEmpty() ? p->albumArtist : p->artists.join(""), p->album);
 }
 
 QString Track::filepath() const
 {
-    return m_filepath;
+    return p->filepath;
 }
 
 QString Track::title() const
 {
-    return m_title;
+    return p->title;
 }
 
 QStringList Track::artists() const
 {
-    return m_artists;
+    return p->artists;
 }
 
 QString Track::artist() const
 {
-    return m_artists.join(Constants::Separator);
+    return p->artists.join(Constants::Separator);
 }
 
 QString Track::album() const
 {
-    return m_album;
+    return p->album;
 }
 
 QString Track::albumArtist() const
 {
-    return m_albumArtist;
+    return p->albumArtist;
 }
 
 int Track::trackNumber() const
 {
-    return m_trackNumber;
+    return p->trackNumber;
 }
 
 int Track::trackTotal() const
 {
-    return m_trackTotal;
+    return p->trackTotal;
 }
 
 int Track::discNumber() const
 {
-    return m_discNumber;
+    return p->discNumber;
 }
 
 int Track::discTotal() const
 {
-    return m_discTotal;
+    return p->discTotal;
 }
 
 QStringList Track::genres() const
 {
-    return m_genres;
+    return p->genres;
 }
 
 QString Track::genre() const
 {
-    return m_genres.join(Constants::Separator);
+    return p->genres.join(Constants::Separator);
 }
 
 QString Track::composer() const
 {
-    return m_composer;
+    return p->composer;
 }
 
 QString Track::performer() const
 {
-    return m_performer;
+    return p->performer;
 }
 
 uint64_t Track::duration() const
 {
-    return m_duration;
+    return p->duration;
 }
 
 QString Track::lyrics() const
 {
-    return m_lyrics;
+    return p->lyrics;
 }
 
 QString Track::comment() const
 {
-    return m_comment;
+    return p->comment;
 }
 
 QString Track::date() const
 {
-    return m_date;
+    return p->date;
 }
 
 int Track::year() const
 {
-    return m_year;
+    return p->year;
 }
 
 QString Track::coverPath() const
 {
-    return m_coverPath;
+    return p->coverPath;
 }
 
 bool Track::hasCover() const
 {
-    return !m_coverPath.isEmpty();
+    return !p->coverPath.isEmpty();
 }
 
 bool Track::isSingleDiscAlbum() const
 {
-    return m_discTotal <= 1;
+    return p->discTotal <= 1;
 }
 
 ExtraTags Track::extraTags() const
 {
-    return m_extraTags;
+    return p->extraTags;
 }
 
 QByteArray Track::extraTagsToJson() const
 {
     QJsonObject extra;
     QJsonArray extraArray;
-    for(const auto& [tag, values] : m_extraTags) {
+    for(const auto& [tag, values] : p->extraTags) {
         QJsonObject tagObject;
         const auto tagArray = QJsonArray::fromStringList(values);
         tagObject[tag]      = tagArray;
@@ -217,145 +248,140 @@ QByteArray Track::extraTagsToJson() const
 
 uint64_t Track::fileSize() const
 {
-    return m_filesize;
+    return p->filesize;
 }
 
 int Track::bitrate() const
 {
-    return m_bitrate;
+    return p->bitrate;
 }
 
 int Track::sampleRate() const
 {
-    return m_sampleRate;
+    return p->sampleRate;
 }
 
 int Track::playCount() const
 {
-    return m_playcount;
+    return p->playcount;
 }
 
 uint64_t Track::addedTime() const
 {
-    return m_addedTime;
+    return p->addedTime;
 }
 
 uint64_t Track::modifiedTime() const
 {
-    return m_modifiedTime;
-}
-
-void Track::setIsEnabled(bool enabled)
-{
-    m_enabled = enabled;
+    return p->modifiedTime;
 }
 
 void Track::setLibraryId(int id)
 {
-    m_libraryId = id;
+    p->libraryId = id;
 }
 
 void Track::setId(int id)
 {
-    m_id = id;
+    p->id = id;
 }
 
 void Track::setHash(const QString& hash)
 {
-    m_hash = hash;
+    p->hash = hash;
 }
 
 void Track::setTitle(const QString& title)
 {
-    m_title = title;
+    p->title = title;
 }
 
 void Track::setArtists(const QStringList& artists)
 {
-    m_artists = artists;
+    p->artists = artists;
 }
 
 void Track::setAlbum(const QString& title)
 {
-    m_album = title;
+    p->album = title;
 }
 
 void Track::setAlbumArtist(const QString& artist)
 {
-    m_albumArtist = artist;
+    p->albumArtist = artist;
 }
 
 void Track::setTrackNumber(int number)
 {
-    m_trackNumber = number;
+    p->trackNumber = number;
 }
 
 void Track::setTrackTotal(int total)
 {
-    m_trackTotal = total;
+    p->trackTotal = total;
 }
 
 void Track::setDiscNumber(int number)
 {
-    m_discNumber = number;
+    p->discNumber = number;
 }
 
 void Track::setDiscTotal(int total)
 {
-    m_discTotal = total;
+    p->discTotal = total;
 }
 
 void Track::setGenres(const QStringList& genres)
 {
-    m_genres = genres;
+    p->genres = genres;
 }
 
 void Track::setComposer(const QString& composer)
 {
-    m_composer = composer;
+    p->composer = composer;
 }
 
 void Track::setPerformer(const QString& performer)
 {
-    m_performer = performer;
+    p->performer = performer;
 }
 
 void Track::setDuration(uint64_t duration)
 {
-    m_duration = duration;
+    p->duration = duration;
 }
 
 void Track::setLyrics(const QString& lyrics)
 {
-    m_lyrics = lyrics;
+    p->lyrics = lyrics;
 }
 
 void Track::setComment(const QString& comment)
 {
-    m_comment = comment;
+    p->comment = comment;
 }
 
 void Track::setDate(const QString& date)
 {
-    m_date = date;
-    m_year = date.toInt();
+    p->date = date;
+    p->year = date.toInt();
 }
 
 void Track::setCoverPath(const QString& path)
 {
-    m_coverPath = path;
+    p->coverPath = path;
 }
 
 void Track::addExtraTag(const QString& tag, const QString& value)
 {
     if(!tag.isEmpty() && !value.isEmpty()) {
-        if(m_extraTags.count(tag)) {
-            auto entry = m_extraTags.at(tag);
+        if(p->extraTags.count(tag)) {
+            auto entry = p->extraTags.at(tag);
             entry.append(value);
-            m_extraTags.emplace(tag, entry);
+            p->extraTags.emplace(tag, entry);
         }
     }
-    m_extraTags.emplace(tag, value);
+    p->extraTags.emplace(tag, value);
 }
 
 void Track::jsonToExtraTags(const QByteArray& json)
@@ -378,7 +404,7 @@ void Track::jsonToExtraTags(const QByteArray& json)
                         for(const auto& value : tagArray) {
                             values.append(value.toString());
                         }
-                        m_extraTags.emplace(tag, values);
+                        p->extraTags.emplace(tag, values);
                     }
                 }
             }
@@ -388,31 +414,36 @@ void Track::jsonToExtraTags(const QByteArray& json)
 
 void Track::setFileSize(uint64_t fileSize)
 {
-    m_filesize = fileSize;
+    p->filesize = fileSize;
 }
 
 void Track::setBitrate(int rate)
 {
-    m_bitrate = rate;
+    p->bitrate = rate;
 }
 
 void Track::setSampleRate(int rate)
 {
-    m_sampleRate = rate;
+    p->sampleRate = rate;
 }
 
 void Track::setPlayCount(int count)
 {
-    m_playcount = count;
+    p->playcount = count;
 }
 
 void Track::setAddedTime(uint64_t time)
 {
-    m_addedTime = time;
+    p->addedTime = time;
 }
 
 void Track::setModifiedTime(uint64_t time)
 {
-    m_modifiedTime = time;
+    p->modifiedTime = time;
 }
 } // namespace Fy::Core
+
+size_t qHash(const Fy::Core::Track& track)
+{
+    return qHash(track.filepath());
+}

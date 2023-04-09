@@ -19,12 +19,12 @@
 
 #pragma once
 
+#include "core/models/track.h"
 #include "playermanager.h"
 
 #include <QObject>
 
 namespace Fy {
-
 namespace Utils {
 class SettingsManager;
 }
@@ -48,7 +48,7 @@ protected:
     void stop() override;
     void setCurrentPosition(uint64_t ms) override;
     void changePosition(uint64_t ms) override;
-    void changeCurrentTrack(Track* track) override;
+    void changeCurrentTrack(const Track& track) override;
     void setPlayMode(PlayMode mode) override;
     void volumeUp() override;
     void volumeDown() override;
@@ -57,7 +57,7 @@ protected:
     [[nodiscard]] PlayState playState() const override;
     [[nodiscard]] PlayMode playMode() const override;
     [[nodiscard]] uint64_t currentPosition() const override;
-    [[nodiscard]] Track* currentTrack() const override;
+    [[nodiscard]] Track currentTrack() const override;
     [[nodiscard]] double volume() const override;
 
 private:
@@ -65,7 +65,7 @@ private:
 
     Utils::SettingsManager* m_settings;
 
-    Track* m_currentTrack;
+    Track m_currentTrack;
     uint64_t m_totalDuration;
     PlayState m_playStatus;
     PlayMode m_playMode;

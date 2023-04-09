@@ -82,7 +82,7 @@ public:
 
 signals:
     void clickedTrack(int idx);
-    void selectionWasChanged(const Core::TrackPtrList& tracks);
+    void selectionWasChanged(const Core::TrackList& tracks);
 
 protected:
     void selectionChanged();
@@ -109,7 +109,7 @@ private:
     Core::Playlist::PlaylistManager* m_playlistHandler;
     std::unique_ptr<Core::Playlist::LibraryPlaylistInterface> m_libraryPlaylistManager;
 
-    Core::TrackPtrList m_selectedTracks;
+    Core::TrackList m_selectedTracks;
 
     QHBoxLayout* m_layout;
     PlaylistModel* m_model;

@@ -43,9 +43,8 @@ PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* pa
 
 void PlayerController::reset()
 {
-    m_playStatus   = Stopped;
-    m_position     = 0;
-    m_currentTrack = nullptr;
+    m_playStatus = Stopped;
+    m_position   = 0;
 }
 
 void PlayerController::play()
@@ -99,8 +98,8 @@ void PlayerController::setCurrentPosition(uint64_t ms)
     // TODO: Only increment playCount based on total time listened excluding seeking.
     if(!m_counted && ms >= m_totalDuration / 2) {
         // TODO: Save playCounts to db.
-        int playCount = m_currentTrack->playCount();
-        m_currentTrack->setPlayCount(++playCount);
+        int playCount = m_currentTrack.playCount();
+        m_currentTrack.setPlayCount(++playCount);
         m_counted = true;
     }
     emit positionChanged(ms);
@@ -115,10 +114,10 @@ void PlayerController::changePosition(uint64_t ms)
     emit positionMoved(ms);
 }
 
-void PlayerController::changeCurrentTrack(Track* track)
+void PlayerController::changeCurrentTrack(const Track& track)
 {
     m_currentTrack  = track;
-    m_totalDuration = track->duration();
+    m_totalDuration = track.duration();
     m_position      = 0;
     m_counted       = false;
 
@@ -162,7 +161,7 @@ uint64_t PlayerController::currentPosition() const
     return m_position;
 }
 
-Track* PlayerController::currentTrack() const
+Track PlayerController::currentTrack() const
 {
     return m_currentTrack;
 }

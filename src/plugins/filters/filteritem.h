@@ -35,7 +35,7 @@ public:
 
     [[nodiscard]] QVariant data(int role) const;
     [[nodiscard]] int trackCount() const;
-    void addTrack(Core::Track* track);
+    void addTrack(const Core::Track& track);
 
     [[nodiscard]] bool hasSortTitle() const;
     void setSortTitle(const QString& title);
@@ -45,7 +45,7 @@ public:
 private:
     QString m_title;
     QString m_sortTitle;
-    Core::TrackPtrList m_tracks;
+    Core::TrackList m_tracks;
     bool m_isAllNode;
 };
 } // namespace Fy::Filters

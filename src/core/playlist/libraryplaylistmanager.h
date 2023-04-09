@@ -35,8 +35,8 @@ class LibraryPlaylistManager : public LibraryPlaylistInterface
 public:
     explicit LibraryPlaylistManager(Library::MusicLibrary* library, PlaylistManager* playlistHandler);
 
-    void createPlaylist(const TrackPtrList& tracks, int startIndex) override;
-    void append(const TrackPtrList& tracks) override;
+    void createPlaylist(const TrackList& tracks, int startIndex) override;
+    void append(const TrackList& tracks) override;
 
 private:
     void activatePlaylist(int startIndex);

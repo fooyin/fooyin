@@ -72,13 +72,13 @@ QString Parser::evaluate(const ParsedScript& input)
     return m_result;
 }
 
-QString Parser::evaluate(const ParsedScript& input, Track* track)
+QString Parser::evaluate(const ParsedScript& input, const Core::Track& track)
 {
     setMetadata(track);
     return evaluate(input);
 }
 
-void Parser::setMetadata(Track* track)
+void Parser::setMetadata(const Core::Track& track)
 {
     m_registry.changeCurrentTrack(track);
 }

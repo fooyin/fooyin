@@ -122,10 +122,12 @@ void PlaylistWidget::setupConnections()
     connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistWidget::reset);
     connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlist, &QAbstractItemView::clearSelection);
 
-    connect(m_playlist->header(), &QHeaderView::customContextMenuRequested, this,
+    connect(m_playlist->header(),
+            &QHeaderView::customContextMenuRequested,
+            this,
             &PlaylistWidget::customHeaderMenuRequested);
-    connect(m_playlist->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-            &PlaylistWidget::selectionChanged);
+    connect(
+        m_playlist->selectionModel(), &QItemSelectionModel::selectionChanged, this, &PlaylistWidget::selectionChanged);
     connect(m_playlist, &PlaylistView::doubleClicked, this, &PlaylistWidget::playTrack);
 
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
@@ -212,8 +214,7 @@ void PlaylistWidget::selectionChanged()
         if(index.isValid()) {
             const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
             if(type == PlaylistItem::Track) {
-                auto* track = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
-                m_selectedTracks.emplace_back(track);
+                m_selectedTracks.emplace_back(index.data(PlaylistItem::Role::Data).value<Core::Track>());
             }
             else {
                 const QItemSelection selectedChildren{m_model->index(0, 0, index),
@@ -323,17 +324,13 @@ void PlaylistWidget::changeState(Core::Player::PlayState state)
 void PlaylistWidget::playTrack(const QModelIndex& index)
 {
     const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
-    Core::Track* track{nullptr};
+    Core::Track track;
 
     if(type != PlaylistItem::Track && !m_selectedTracks.empty()) {
         track = m_selectedTracks.front();
     }
     else {
-        track = index.data(PlaylistItem::Role::Data).value<Core::Track*>();
-    }
-
-    if(!track) {
-        return;
+        track = index.data(PlaylistItem::Role::Data).value<Core::Track>();
     }
 
     const int playlistIndex = m_model->findTrackIndex(track);
