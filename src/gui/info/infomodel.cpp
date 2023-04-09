@@ -113,7 +113,11 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
         return item->data();
     }
 
-    Core::Track track = m_playerManager->currentTrack();
+    const Core::Track track = m_playerManager->currentTrack();
+
+    if(!track.isValid()) {
+        return {};
+    }
 
     switch(item->role()) {
         case(InfoItem::Title):

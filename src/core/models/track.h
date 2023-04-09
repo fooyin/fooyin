@@ -38,7 +38,8 @@ public:
         }
     };
 
-    Track(QString filepath = {});
+    Track();
+    explicit Track(QString filepath);
     ~Track();
 
     Track(const Track& other);
@@ -47,6 +48,8 @@ public:
     bool operator!=(const Track& other) const;
 
     QString generateHash();
+
+    [[nodiscard]] bool isValid() const;
 
     [[nodiscard]] int libraryId() const;
 
@@ -126,6 +129,6 @@ private:
     struct Private;
     QSharedDataPointer<Private> p;
 };
-} // namespace Fy::Core
 
-size_t qHash(const Fy::Core::Track& track);
+size_t qHash(const Track& track);
+} // namespace Fy::Core

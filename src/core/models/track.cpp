@@ -66,6 +66,10 @@ struct Track::Private : public QSharedData
     { }
 };
 
+Track::Track()
+    : Track{""}
+{ }
+
 Track::Track(QString filepath)
     : p{new Private(std::move(filepath))}
 { }
@@ -93,6 +97,11 @@ QString Track::generateHash()
                                                QStringLiteral("%1").arg(p->trackNumber, 2, 10, QLatin1Char('0')),
                                                QString::number(p->duration));
     return p->hash;
+}
+
+bool Track::isValid() const
+{
+    return p->id >= 0 && !p->filepath.isEmpty();
 }
 
 int Track::libraryId() const
@@ -441,9 +450,9 @@ void Track::setModifiedTime(uint64_t time)
 {
     p->modifiedTime = time;
 }
-} // namespace Fy::Core
 
-size_t qHash(const Fy::Core::Track& track)
+size_t qHash(const Track& track)
 {
     return qHash(track.filepath());
 }
+} // namespace Fy::Core

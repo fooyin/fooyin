@@ -71,7 +71,7 @@ void CoverWidget::reloadCover()
 {
     QString coverPath;
     Core::Track track = m_playerManager->currentTrack();
-    if(track.id()) {
+    if(track.isValid()) {
         coverPath = track.coverPath();
     }
 
