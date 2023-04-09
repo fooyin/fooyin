@@ -35,6 +35,7 @@ FilterManager::FilterManager(Utils::ThreadManager* threadManager, Core::Library:
     , m_threadManager{threadManager}
     , m_library{library}
     , m_fieldsRegistry{fieldsRegistry}
+    , m_lastFilterIndex{-1}
 {
     m_threadManager->moveToNewThread(&m_searchManager);
 
@@ -67,7 +68,7 @@ bool FilterManager::hasTracks() const
 
 LibraryFilter* FilterManager::registerFilter(const QString& name)
 {
-    FilterField const filterField = m_fieldsRegistry->fieldByName(name);
+    const FilterField filterField = m_fieldsRegistry->fieldByName(name);
     return m_filterStore.addFilter(filterField);
 }
 
