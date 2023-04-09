@@ -87,7 +87,7 @@ void SingleTrackStore::remove(const TrackList& tracks)
 void SingleTrackStore::remove(int trackId)
 {
     if(hasTrack(trackId)) {
-        Track& track = m_trackIdMap.at(trackId);
+        const Track& track = m_trackIdMap.at(trackId);
         m_tracks.erase(std::find(m_tracks.begin(), m_tracks.end(), track));
         m_trackIdMap.erase(trackId);
     }

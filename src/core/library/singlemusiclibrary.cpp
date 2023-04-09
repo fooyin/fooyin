@@ -99,8 +99,8 @@ void SingleMusicLibrary::updateChangedTracks(const TrackList& tracks)
 
 void SingleMusicLibrary::removeDeletedTracks(const TrackList& tracks)
 {
-    emit tracksDeleted(tracks);
     m_trackStore->remove(tracks);
+    emit tracksDeleted(tracks);
 }
 
 void SingleMusicLibrary::reload()
