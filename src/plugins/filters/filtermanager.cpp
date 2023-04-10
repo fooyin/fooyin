@@ -117,8 +117,9 @@ void FilterManager::selectionChanged(int index)
 
 void FilterManager::searchChanged(const QString& search)
 {
-    m_searchFilter = search;
-    emit filterTracks(!m_filteredTracks.empty() ? m_filteredTracks : m_library->allTracks(), m_searchFilter);
+    const bool reset = m_searchFilter.length() > search.length();
+    m_searchFilter   = search;
+    emit filterTracks(!reset && !m_filteredTracks.empty() ? m_filteredTracks : m_library->allTracks(), m_searchFilter);
 }
 
 QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
@@ -151,7 +152,7 @@ void FilterManager::tracksFiltered(const Core::TrackList& tracks)
 {
     m_filteredTracks = tracks;
     emit filteredTracks();
-    emit filteredItems(m_lastFilterIndex);
+    emit filteredItems(-1);
 }
 
 void FilterManager::tracksChanged()
