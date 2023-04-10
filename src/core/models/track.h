@@ -25,7 +25,7 @@
 #include <map>
 
 namespace Fy::Core {
-using ExtraTags = std::map<QString, QList<QString>>;
+using ExtraTags = QMap<QString, QList<QString>>;
 
 class Track
 {
@@ -80,7 +80,7 @@ public:
     [[nodiscard]] bool isSingleDiscAlbum() const;
 
     [[nodiscard]] ExtraTags extraTags() const;
-    [[nodiscard]] QByteArray extraTagsToJson() const;
+    [[nodiscard]] QByteArray serialiseExtrasTags() const;
 
     [[nodiscard]] uint64_t fileSize() const;
     [[nodiscard]] int bitrate() const;
@@ -99,7 +99,6 @@ public:
     void setArtists(const QStringList& artists);
     void setAlbum(const QString& title);
     void setAlbumArtist(const QString& artist);
-    void setAlbumArtistId(int id);
     void setTrackNumber(int num);
     void setTrackTotal(int num);
     void setDiscNumber(int num);
@@ -114,7 +113,7 @@ public:
     void setCoverPath(const QString& path);
 
     void addExtraTag(const QString& tag, const QString& value);
-    void jsonToExtraTags(const QByteArray& json);
+    void storeExtraTags(const QByteArray& json);
 
     void setFileSize(uint64_t fileSize);
     void setBitrate(int rate);

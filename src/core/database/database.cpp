@@ -80,48 +80,52 @@ bool Database::createDatabase()
         return false;
     }
 
-    checkInsertTable("Tracks", "CREATE TABLE Tracks ("
-                               "    TrackID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                               "    FilePath TEXT UNIQUE NOT NULL,"
-                               "    Title TEXT,"
-                               "    TrackNumber INTEGER,"
-                               "    TrackTotal INTEGER,"
-                               "    Artists TEXT,"
-                               "    AlbumArtist TEXT,"
-                               "    Album TEXT,"
-                               "    CoverPath TEXT,"
-                               "    DiscNumber INTEGER,"
-                               "    DiscTotal INTEGER,"
-                               "    Date TEXT,"
-                               "    Composer TEXT,"
-                               "    Performer TEXT,"
-                               "    Genres TEXT,"
-                               "    Lyrics TEXT,"
-                               "    Comment TEXT,"
-                               "    Duration INTEGER DEFAULT 0,"
-                               "    PlayCount INTEGER DEFAULT 0,"
-                               "    Rating INTEGER DEFAULT 0,"
-                               "    FileSize INTEGER DEFAULT 0,"
-                               "    BitRate INTEGER DEFAULT 0,"
-                               "    SampleRate INTEGER DEFAULT 0,"
-                               "    ExtraTags TEXT,"
-                               "    AddedDate INTEGER,"
-                               "    ModifiedDate INTEGER,"
-                               "    LibraryID INTEGER REFERENCES Libraries);");
+    checkInsertTable("Tracks",
+                     "CREATE TABLE Tracks ("
+                     "    TrackID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                     "    FilePath TEXT UNIQUE NOT NULL,"
+                     "    Title TEXT,"
+                     "    TrackNumber INTEGER,"
+                     "    TrackTotal INTEGER,"
+                     "    Artists TEXT,"
+                     "    AlbumArtist TEXT,"
+                     "    Album TEXT,"
+                     "    CoverPath TEXT,"
+                     "    DiscNumber INTEGER,"
+                     "    DiscTotal INTEGER,"
+                     "    Date TEXT,"
+                     "    Composer TEXT,"
+                     "    Performer TEXT,"
+                     "    Genres TEXT,"
+                     "    Lyrics TEXT,"
+                     "    Comment TEXT,"
+                     "    Duration INTEGER DEFAULT 0,"
+                     "    PlayCount INTEGER DEFAULT 0,"
+                     "    Rating INTEGER DEFAULT 0,"
+                     "    FileSize INTEGER DEFAULT 0,"
+                     "    BitRate INTEGER DEFAULT 0,"
+                     "    SampleRate INTEGER DEFAULT 0,"
+                     "    ExtraTags BLOB,"
+                     "    AddedDate INTEGER,"
+                     "    ModifiedDate INTEGER,"
+                     "    LibraryID INTEGER REFERENCES Libraries);");
 
-    checkInsertTable("Libraries", "CREATE TABLE Libraries ("
-                                  "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                  "    Name TEXT NOT NULL UNIQUE,"
-                                  "    Path TEXT NOT NULL UNIQUE);");
+    checkInsertTable("Libraries",
+                     "CREATE TABLE Libraries ("
+                     "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                     "    Name TEXT NOT NULL UNIQUE,"
+                     "    Path TEXT NOT NULL UNIQUE);");
 
-    checkInsertTable("Playlists", "CREATE TABLE Playlists ("
-                                  "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                  "    Name TEXT NOT NULL UNIQUE);");
+    checkInsertTable("Playlists",
+                     "CREATE TABLE Playlists ("
+                     "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                     "    Name TEXT NOT NULL UNIQUE);");
 
-    checkInsertTable("PlaylistTracks", "CREATE TABLE PlaylistTracks ("
-                                       "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
-                                       "    TrackID  INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
-                                       "    PRIMARY KEY (PlaylistID, TrackID));");
+    checkInsertTable("PlaylistTracks",
+                     "CREATE TABLE PlaylistTracks ("
+                     "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
+                     "    TrackID  INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
+                     "    PRIMARY KEY (PlaylistID, TrackID));");
 
     checkInsertIndex("PlaylistIndex", "CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);");
     checkInsertIndex("PlaylistTracksIndex", "CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackID);");

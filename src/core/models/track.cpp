@@ -21,9 +21,8 @@
 
 #include "core/constants.h"
 
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
+#include <QIODevice>
+#include <QMap>
 
 namespace Fy::Core {
 struct Track::Private : public QSharedData
@@ -239,20 +238,15 @@ ExtraTags Track::extraTags() const
     return p->extraTags;
 }
 
-QByteArray Track::extraTagsToJson() const
+QByteArray Track::serialiseExtrasTags() const
 {
-    QJsonObject extra;
-    QJsonArray extraArray;
-    for(const auto& [tag, values] : p->extraTags) {
-        QJsonObject tagObject;
-        const auto tagArray = QJsonArray::fromStringList(values);
-        tagObject[tag]      = tagArray;
-        extraArray.append(tagObject);
-    }
-    extra["tags"] = extraArray;
+    QByteArray byteArray;
+    QDataStream out(&byteArray, QIODevice::WriteOnly);
 
-    QByteArray json = QJsonDocument(extra).toJson(QJsonDocument::Compact);
-    return json;
+    out << p->extraTags;
+
+    //    byteArray = byteArray.toBase64();
+    return byteArray;
 }
 
 uint64_t Track::fileSize() const
@@ -383,42 +377,26 @@ void Track::setCoverPath(const QString& path)
 
 void Track::addExtraTag(const QString& tag, const QString& value)
 {
-    if(!tag.isEmpty() && !value.isEmpty()) {
-        if(p->extraTags.count(tag)) {
-            auto entry = p->extraTags.at(tag);
-            entry.append(value);
-            p->extraTags.emplace(tag, entry);
-        }
+    if(tag.isEmpty() || value.isEmpty()) {
+        return;
     }
-    p->extraTags.emplace(tag, value);
+    if(p->extraTags.count(tag)) {
+        auto entry = p->extraTags[tag];
+        entry.emplace_back(value);
+        p->extraTags.insert(tag, entry);
+    }
+    else {
+        p->extraTags.insert(tag, {value});
+    }
 }
 
-void Track::jsonToExtraTags(const QByteArray& json)
+void Track::storeExtraTags(const QByteArray& ba)
 {
-    const QJsonDocument jsonDoc = QJsonDocument::fromJson(json);
+    //    QByteArray tags = QByteArray::fromBase64(ba);
+    QByteArray tags = ba;
+    QDataStream in(&tags, QIODevice::ReadOnly);
 
-    if(!jsonDoc.isNull()) {
-        QJsonObject json = jsonDoc.object();
-
-        if(json.contains("tags") && json["tags"].isArray()) {
-            const QJsonArray extraArray = json["tags"].toArray();
-
-            for(auto i = extraArray.constBegin(); i != extraArray.constEnd(); ++i) {
-                QJsonObject tagObject = i->toObject();
-                for(QJsonObject::const_iterator j = tagObject.constBegin(); j != tagObject.constEnd(); ++j) {
-                    const QString tag = j.key();
-                    if(tagObject[tag].isArray()) {
-                        const QJsonArray tagArray = j.value().toArray();
-                        QList<QString> values;
-                        for(const auto& value : tagArray) {
-                            values.append(value.toString());
-                        }
-                        p->extraTags.emplace(tag, values);
-                    }
-                }
-            }
-        }
-    }
+    in >> p->extraTags;
 }
 
 void Track::setFileSize(uint64_t fileSize)

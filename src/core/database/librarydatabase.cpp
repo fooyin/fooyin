@@ -51,7 +51,7 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("FileSize"),     QVariant::fromValue(track.fileSize())     },
         {QStringLiteral("BitRate"),      track.bitrate()                           },
         {QStringLiteral("SampleRate"),   track.sampleRate()                        },
-        {QStringLiteral("ExtraTags"),    track.extraTagsToJson()                   },
+        {QStringLiteral("ExtraTags"),    track.serialiseExtrasTags()                   },
         {QStringLiteral("AddedDate"),    QVariant::fromValue(track.addedTime())    },
         {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime()) },
         {QStringLiteral("LibraryID"),    track.libraryId()                         },
@@ -203,7 +203,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setFileSize(q.value(20).toInt());
         track.setBitrate(q.value(21).toInt());
         track.setSampleRate(q.value(22).toInt());
-        track.jsonToExtraTags(q.value(23).toByteArray());
+        track.storeExtraTags(q.value(23).toByteArray());
         track.setAddedTime(q.value(24).value<uint64_t>());
         track.setModifiedTime(q.value(25).value<uint64_t>());
         track.setLibraryId(q.value(26).toInt());
