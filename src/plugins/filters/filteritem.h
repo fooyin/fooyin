@@ -21,24 +21,36 @@
 
 #include <core/models/trackfwd.h>
 
-#include <utils/treeitem.h>
-
 #include <QObject>
 
 namespace Fy::Filters {
-class FilterItem : public Utils::TreeItem<FilterItem>
+enum FilterItemRole
+{
+    Title   = Qt::UserRole + 1,
+    Tracks  = Qt::UserRole + 2,
+    Sorting = Qt::UserRole + 3,
+};
+
+class FilterItem;
+using ItemChildren = std::vector<FilterItem*>;
+
+class FilterItem
 {
 public:
-    explicit FilterItem(QString title = "", FilterItem* parent = {}, bool isAllNode = false);
+    FilterItem() = default;
+    explicit FilterItem(QString title, QString sortTitle = "", bool isAllNode = false);
 
-    void changeTitle(const QString& title);
+    [[nodiscard]] const ItemChildren& children() const;
+    [[nodiscard]] FilterItem* child(int index) const;
+    void appendChild(FilterItem* child);
+    [[nodiscard]] int childCount() const;
 
     [[nodiscard]] QVariant data(int role) const;
     [[nodiscard]] int trackCount() const;
     void addTrack(const Core::Track& track);
 
+    [[nodiscard]] bool isAllNode() const;
     [[nodiscard]] bool hasSortTitle() const;
-    void setSortTitle(const QString& title);
 
     void sortChildren(Qt::SortOrder order);
 
@@ -47,5 +59,6 @@ private:
     QString m_sortTitle;
     Core::TrackList m_tracks;
     bool m_isAllNode;
+    ItemChildren m_children;
 };
 } // namespace Fy::Filters

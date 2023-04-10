@@ -48,8 +48,9 @@ public:
     [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
+    [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-    void sort(int column, Qt::SortOrder order) override;
+    void sortFilter(Qt::SortOrder order);
     //    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
     //                                        Qt::MatchFlags flags) const override;
     void reload(const Core::TrackList& tracks);

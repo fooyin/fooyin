@@ -49,7 +49,7 @@ QString FieldParser::evaluate(const Core::Scripting::ParsedScript& parsedScript)
 {
     Core::Scripting::ParsedScript input{parsedScript};
     if(!input.valid) {
-        input = lastParsedScript();
+        return {};
     }
 
     m_result.clear();

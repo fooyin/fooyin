@@ -26,6 +26,8 @@
 
 #include <core/constants.h>
 
+#include <utils/helpers.h>
+
 namespace Fy::Filters {
 FilterModel::FilterModel(FilterField* field, QObject* parent)
     : QAbstractListModel{parent}
@@ -49,14 +51,20 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
 
     switch(role) {
         case(Qt::DisplayRole): {
-            const QString& name = item->data(Filters::Constants::Role::Title).toString();
+            if(item->isAllNode()) {
+                return QString("All (%1)").arg(m_nodes.size());
+            }
+            const QString& name = item->data(FilterItemRole::Title).toString();
             return !name.isEmpty() ? name : "?";
         }
-        case(Filters::Constants::Role::Title): {
-            return item->data(Filters::Constants::Role::Title);
+        case(FilterItemRole::Title): {
+            return item->data(FilterItemRole::Title);
         }
-        case(Filters::Constants::Role::Tracks): {
-            return item->data(Filters::Constants::Role::Tracks);
+        case(FilterItemRole::Tracks): {
+            return item->data(FilterItemRole::Tracks);
+        }
+        case(FilterItemRole::Sorting): {
+            return item->data(FilterItemRole::Sorting);
         }
         default: {
             return {};
@@ -101,9 +109,7 @@ QModelIndex FilterModel::index(int row, int column, const QModelIndex& parent) c
         return {};
     }
 
-    FilterItem* parentItem = m_root.get();
-
-    FilterItem* childItem = parentItem->child(row);
+    FilterItem* childItem = m_root->child(row);
     if(childItem) {
         return createIndex(row, column, childItem);
     }
@@ -125,12 +131,21 @@ int FilterModel::rowCount(const QModelIndex& parent) const
 int FilterModel::columnCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent)
-    return m_root->columnCount();
+    return 1;
 }
 
-void FilterModel::sort(int column, Qt::SortOrder order)
+QHash<int, QByteArray> FilterModel::roleNames() const
 {
-    Q_UNUSED(column)
+    auto roles = QAbstractItemModel::roleNames();
+
+    roles.insert(+FilterItemRole::Title, "Title");
+    roles.insert(+FilterItemRole::Sorting, "Sorting");
+
+    return roles;
+}
+
+void FilterModel::sortFilter(Qt::SortOrder order)
+{
     m_root->sortChildren(order);
     emit layoutChanged({});
 }
@@ -178,11 +193,11 @@ void FilterModel::setupModelData(const Core::TrackList& tracks)
         return;
     }
 
-    m_allNode = std::make_unique<FilterItem>("", m_root.get(), true);
-    m_root->appendChild(m_allNode.get());
-
     const auto parsedField = m_parser->parse(m_field->field);
     const auto parsedSort  = m_parser->parse(m_field->sortField);
+
+    m_allNode = std::make_unique<FilterItem>("", "", true);
+    m_root->appendChild(m_allNode.get());
 
     for(const Core::Track& track : tracks) {
         const QString field = m_parser->evaluate(parsedField, track);
@@ -202,15 +217,13 @@ void FilterModel::setupModelData(const Core::TrackList& tracks)
         }
         m_allNode->addTrack(track);
     }
-    m_allNode->changeTitle(QString("All (%1)").arg(m_nodes.size()));
 }
 
 FilterItem* FilterModel::createNode(const QString& title, const QString& sortTitle)
 {
     FilterItem* filterItem;
     if(!m_nodes.count(title)) {
-        filterItem = m_nodes.emplace(title, std::make_unique<FilterItem>(title, m_root.get())).first->second.get();
-        filterItem->setSortTitle(sortTitle);
+        filterItem = m_nodes.emplace(title, std::make_unique<FilterItem>(title, sortTitle)).first->second.get();
         m_root->appendChild(filterItem);
     }
     filterItem = m_nodes.at(title).get();

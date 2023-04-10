@@ -19,8 +19,8 @@
 
 #include "filterwidget.h"
 
-#include "constants.h"
 #include "filterdelegate.h"
+#include "filteritem.h"
 #include "filtermanager.h"
 #include "filtermodel.h"
 #include "filtersettings.h"
@@ -98,7 +98,6 @@ void FilterWidget::setField(const QString& name)
     emit typeChanged(m_filter->index);
     m_view->clearSelection();
     m_view->scrollToTop();
-    resetByType();
 }
 
 bool FilterWidget::isHeaderEnabled()
@@ -188,7 +187,7 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
     Core::TrackList tracks;
     for(const auto& index : indexes) {
         if(index.isValid()) {
-            const auto newTracks = index.data(Filters::Constants::Role::Tracks).value<Core::TrackList>();
+            const auto newTracks = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
             tracks.insert(tracks.end(), newTracks.cbegin(), newTracks.cend());
         }
     }
@@ -222,20 +221,20 @@ void FilterWidget::changeOrder()
     else {
         m_sortOrder = Qt::AscendingOrder;
     }
-    m_model->sort(0, m_sortOrder);
+    m_model->sortFilter(m_sortOrder);
 }
 
 void FilterWidget::resetByIndex(int idx)
 {
     if(idx < m_filter->index) {
         m_model->reload(m_manager->tracks());
-        m_model->sort(0, m_sortOrder);
+        m_model->sortFilter(m_sortOrder);
     }
 }
 
 void FilterWidget::resetByType()
 {
     m_model->reload(m_manager->tracks());
-    m_model->sort(0, m_sortOrder);
+    m_model->sortFilter(m_sortOrder);
 }
 } // namespace Fy::Filters

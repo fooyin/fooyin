@@ -83,7 +83,7 @@ void FilterManager::changeFilter(int index)
 {
     m_filterStore.clearActiveFilters(index, true);
     getFilteredTracks();
-    emit filteredItems(index);
+    emit filteredItems(index - 1);
 }
 
 FilterField FilterManager::findField(const QString& name) const
@@ -104,9 +104,7 @@ void FilterManager::getFilteredTracks()
                 = Utils::intersection<Core::Track, Core::Track::TrackHash>(filter.tracks, m_filteredTracks);
         }
     }
-
     emit filteredTracks();
-    emit filteredItems(m_lastFilterIndex);
 }
 
 void FilterManager::selectionChanged(int index)
@@ -114,6 +112,7 @@ void FilterManager::selectionChanged(int index)
     m_filterStore.clearActiveFilters(index);
     m_lastFilterIndex = index;
     getFilteredTracks();
+    emit filteredItems(m_lastFilterIndex);
 }
 
 void FilterManager::searchChanged(const QString& search)
@@ -157,7 +156,7 @@ void FilterManager::tracksFiltered(const Core::TrackList& tracks)
 
 void FilterManager::tracksChanged()
 {
-    emit filteredItems(-1);
     getFilteredTracks();
+    emit filteredItems(-1);
 }
 } // namespace Fy::Filters

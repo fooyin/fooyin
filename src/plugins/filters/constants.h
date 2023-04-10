@@ -22,12 +22,6 @@
 #include <Qt>
 
 namespace Fy::Filters::Constants {
-namespace Role {
-constexpr auto Title   = Qt::UserRole + 1;
-constexpr auto Tracks  = Qt::UserRole + 2;
-constexpr auto Sorting = Qt::UserRole + 3;
-} // namespace Role
-
 namespace Icons::Category {
 constexpr auto Filters = "://icons/category-filters.svg";
 } // namespace Icons::Category
