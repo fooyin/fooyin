@@ -30,6 +30,7 @@
 #include <core/player/playermanager.h>
 
 #include <utils/actions/actioncontainer.h>
+#include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -156,6 +157,7 @@ void FilterWidget::saveLayout(QJsonArray& array)
     }
     QJsonObject options;
     options["Type"] = m_filter->field.name;
+    options["Sort"] = Utils::EnumHelper::toString(m_sortOrder);
 
     QJsonObject filter;
     filter[name()] = options;
@@ -165,6 +167,7 @@ void FilterWidget::saveLayout(QJsonArray& array)
 void FilterWidget::loadLayout(QJsonObject& object)
 {
     setField(object["Type"].toString());
+    m_sortOrder = Utils::EnumHelper::fromString<Qt::SortOrder>(object["Sort"].toString());
 }
 
 void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -212,7 +215,6 @@ void FilterWidget::editFilter(int index, const QString& name)
     }
 }
 
-// TODO: Save current sorting order
 void FilterWidget::changeOrder()
 {
     if(m_sortOrder == Qt::AscendingOrder) {
