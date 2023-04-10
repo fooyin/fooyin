@@ -20,6 +20,7 @@
 #include "track.h"
 
 #include "core/constants.h"
+#include "core/corepaths.h"
 
 #include <QIODevice>
 #include <QMap>
@@ -226,6 +227,16 @@ QString Track::coverPath() const
 bool Track::hasCover() const
 {
     return !p->coverPath.isEmpty();
+}
+
+bool Track::hasEmbeddedCover() const
+{
+    return p->coverPath == Constants::EmbeddedCover;
+}
+
+QString Track::thumbnailPath() const
+{
+    return QString{"%1%2 - %3.jpg"}.arg(Core::coverPath(), p->albumArtist, p->album);
 }
 
 bool Track::isSingleDiscAlbum() const

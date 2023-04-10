@@ -67,7 +67,7 @@ void LibraryScanner::scanLibrary(const TrackList& tracks)
         }
         else {
             trackMap.emplace(track.filepath(), track);
-            if(track.hasCover() && !File::exists(track.coverPath())) {
+            if(track.hasCover() && !File::exists(track.thumbnailPath())) {
                 m_tagReader.storeCover(track);
             }
         }

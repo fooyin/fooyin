@@ -48,6 +48,7 @@ void setMinimumWidth(QLabel* label, const QString& text);
 uint64_t currentDateToInt();
 QString capitalise(const QString& s);
 
+QPixmap scaleImage(QPixmap& image, int size);
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
 void showMessageBox(const QString& text, const QString& infoText);
 } // namespace Fy::Utils

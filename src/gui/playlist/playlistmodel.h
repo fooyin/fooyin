@@ -21,6 +21,7 @@
 
 #include "playlistitem.h"
 
+#include <core/library/coverprovider.h>
 #include <core/models/album.h>
 #include <core/models/container.h>
 #include <core/models/trackfwd.h>
@@ -101,6 +102,7 @@ private:
     Core::Player::PlayerManager* m_playerManager;
     Core::Library::MusicLibrary* m_library;
     Utils::SettingsManager* m_settings;
+    Core::Library::CoverProvider m_coverProvider;
 
     bool m_discHeaders;
     bool m_splitDiscs;

@@ -35,9 +35,6 @@ class Tag;
 #include <QStringList>
 
 namespace Fy::Core::Tagging {
-
-Q_NAMESPACE
-
 enum class Quality
 {
     Fast     = TagLib::AudioProperties::Fast,
@@ -54,7 +51,6 @@ enum class TagType
     Unsupported,
     Unknown
 };
-Q_ENUM_NS(TagType)
 
 struct FileTags
 {
@@ -66,11 +62,14 @@ struct FileTags
 bool isValidFile(const TagLib::FileRef& fileRef);
 FileTags tagsFromFile(const TagLib::FileRef& fileRef);
 QPixmap coverFromFile(const TagLib::FileRef& fileRef);
+bool saveCover(const QPixmap& cover, const QString& filename);
 
-QString convertString(const TagLib::String& str);
-int convertNumber(const TagLib::String& num);
 TagLib::String convertString(const QString& string);
+QString convertString(const TagLib::String& str);
 TagLib::String convertString(int num);
+
+int convertNumber(const TagLib::String& num);
+
 TagLib::StringList convertStringList(const QStringList& str);
 QStringList convertStringList(const TagLib::StringList& str);
 } // namespace Fy::Core::Tagging

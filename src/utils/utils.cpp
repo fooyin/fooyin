@@ -162,6 +162,19 @@ QString capitalise(const QString& s)
     return parts.join(" ");
 }
 
+QPixmap scaleImage(QPixmap& image, int size)
+{
+    static const int maximumSize = size;
+    static const int scale       = 4 * maximumSize;
+    const int width              = image.size().width();
+    const int height             = image.size().height();
+    if(width > maximumSize || height > maximumSize) {
+        return image.scaled(scale, scale)
+            .scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+    return {};
+}
+
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
 {
     QPixmap pixmap{orig.size()};

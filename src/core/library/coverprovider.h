@@ -19,12 +19,23 @@
 
 #pragma once
 
+#include "core/tagging/tagreader.h"
+
 class QPixmap;
 
 namespace Fy::Core {
 class Album;
+class Track;
 
-namespace Covers {
-QPixmap albumCover(const Album& album);
-} // namespace Covers
+namespace Library {
+class CoverProvider
+{
+public:
+    QPixmap trackCover(const Track& track);
+    QPixmap albumThumbnail(const Album& album) const;
+
+private:
+    Tagging::TagReader m_tagReader;
+};
+} // namespace Library
 } // namespace Fy::Core

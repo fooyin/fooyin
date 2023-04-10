@@ -19,10 +19,12 @@
 
 #include "tagreader.h"
 
+#include "core/constants.h"
 #include "core/corepaths.h"
 #include "core/models/track.h"
 #include "tagutils.h"
 
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <taglib/fileref.h>
@@ -34,11 +36,29 @@
 #include <QPixmap>
 
 namespace Fy::Core::Tagging {
-QString calcCoverHash(const QString& albumName, const QString& albumArtist)
+struct ReadingProperties
 {
-    const QString albumId = albumName.toLower() + albumArtist.toLower();
-    QString albumKey      = QCryptographicHash::hash(albumId.toUtf8(), QCryptographicHash::Sha1).toHex();
-    return albumKey;
+    TagLib::AudioProperties::ReadStyle readStyle{TagLib::AudioProperties::ReadStyle::Fast};
+    bool readAudioProperties{true};
+};
+
+ReadingProperties getReadingProperties(Quality quality)
+{
+    ReadingProperties readingProperties;
+
+    switch(quality) {
+        case(Quality::Quality):
+            readingProperties.readStyle = TagLib::AudioProperties::Accurate;
+            break;
+        case(Quality::Standard):
+            readingProperties.readStyle = TagLib::AudioProperties::Average;
+            break;
+        case(Quality::Fast):
+            readingProperties.readStyle = TagLib::AudioProperties::Fast;
+            break;
+    }
+
+    return readingProperties;
 }
 
 QString coverInDirectory(const QString& directory)
@@ -52,39 +72,6 @@ QString coverInDirectory(const QString& directory)
         return cover;
     }
     return {};
-}
-
-bool saveCover(const QPixmap& cover, const QString& hash)
-{
-    auto path = Core::coverPath();
-    QFile file(QString(path + hash).append(".jpg"));
-    file.open(QIODevice::WriteOnly);
-    return cover.save(&file, "JPG", 100);
-}
-
-struct ReadingProperties
-{
-    TagLib::AudioProperties::ReadStyle readStyle{TagLib::AudioProperties::ReadStyle::Fast};
-    bool readAudioProperties{true};
-};
-
-ReadingProperties getReadingProperties(Quality quality)
-{
-    ReadingProperties readingProperties;
-
-    switch(quality) {
-        case Quality::Quality:
-            readingProperties.readStyle = TagLib::AudioProperties::Accurate;
-            break;
-        case Quality::Standard:
-            readingProperties.readStyle = TagLib::AudioProperties::Average;
-            break;
-        case Quality::Fast:
-            readingProperties.readStyle = TagLib::AudioProperties::Fast;
-            break;
-    }
-
-    return readingProperties;
 }
 
 // TODO: Handle different filetypes separately
@@ -195,15 +182,6 @@ bool TagReader::readMetaData(Track& track, Quality quality)
     return true;
 }
 
-QPixmap TagReader::readCover(const QString& filepath)
-{
-    const auto readingProperties = getReadingProperties(Quality::Quality);
-    auto fileRef                 = TagLib::FileRef(
-        TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties, readingProperties.readStyle);
-
-    return coverFromFile(fileRef);
-}
-
 bool TagReader::writeMetaData(const Track& track)
 {
     const auto filepath = track.filepath();
@@ -263,26 +241,38 @@ bool TagReader::writeMetaData(const Track& track)
     return fileRef.save();
 }
 
+QPixmap TagReader::readCover(const QString& filepath)
+{
+    const auto readingProperties = getReadingProperties(Quality::Quality);
+    auto fileRef                 = TagLib::FileRef(
+        TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties, readingProperties.readStyle);
+
+    return coverFromFile(fileRef);
+}
+
 QString TagReader::storeCover(const Track& track)
 {
-    QString coverPath       = "";
-    const QString coverHash = calcCoverHash(track.album(), track.albumArtist());
+    QString coverPath;
+    QPixmap cover;
 
-    const QString cacheCover  = Core::coverPath() + coverHash + ".jpg";
     const QString folderCover = coverInDirectory(Utils::File::getParentDirectory(track.filepath()));
-
-    if(Utils::File::exists(cacheCover)) {
-        coverPath = cacheCover;
-    }
-    else if(!folderCover.isEmpty()) {
+    if(!folderCover.isEmpty()) {
         coverPath = folderCover;
     }
     else {
-        const QPixmap cover = readCover(track.filepath());
+        cover = readCover(track.filepath());
         if(!cover.isNull()) {
-            const bool saved = saveCover(cover, coverHash);
-            if(saved) {
-                coverPath = cacheCover;
+            coverPath = Constants::EmbeddedCover;
+        }
+    }
+
+    const QString thumbnailPath = track.thumbnailPath();
+    if(!Utils::File::exists(thumbnailPath)) {
+        if(!coverPath.isEmpty()) {
+            const QPixmap thumb = Utils::scaleImage(cover, 300);
+            const bool saved    = Tagging::saveCover(thumb, thumbnailPath);
+            if(!saved) {
+                qDebug() << "Thumbnail could not be saved: " << thumbnailPath;
             }
         }
     }

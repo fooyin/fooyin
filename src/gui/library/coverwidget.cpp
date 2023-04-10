@@ -63,17 +63,8 @@ void CoverWidget::resizeEvent(QResizeEvent* e)
 
 void CoverWidget::reloadCover(const Core::Track& track)
 {
-    QString coverPath;
     if(track.isValid()) {
-        coverPath = track.coverPath();
-    }
-    else {
-        coverPath = "://images/nocover.png";
-    }
-
-    if(coverPath != m_coverPath) {
-        m_coverPath = coverPath;
-        m_cover.load(coverPath);
+        m_cover = m_coverProvider.trackCover(track);
         if(!m_cover.isNull()) {
             rescaleCover();
         }

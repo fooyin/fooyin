@@ -25,6 +25,9 @@ constexpr auto DisplayName = "Fooyin";
 
 constexpr auto Separator = "\037"; // ASCII Code 31 - ␟
 
+constexpr auto EmbeddedCover = "|Embedded|";
+constexpr auto NoCover       = "://images/nocover.png";
+
 namespace MetaData {
 constexpr auto Title        = "title";
 constexpr auto Artist       = "artist";

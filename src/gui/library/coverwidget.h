@@ -21,6 +21,8 @@
 
 #include "gui/fywidget.h"
 
+#include <core/library/coverprovider.h>
+
 class QHBoxLayout;
 class QLabel;
 
@@ -57,6 +59,8 @@ private:
 
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
+
+    Core::Library::CoverProvider m_coverProvider;
 
     QHBoxLayout* m_layout;
     QLabel* m_coverLabel;

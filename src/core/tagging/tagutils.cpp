@@ -19,10 +19,8 @@
 
 #include "tagutils.h"
 
-#include <QBuffer>
-#include <QByteArray>
-#include <QPixmap>
-#include <QString>
+#include "core/corepaths.h"
+
 #include <taglib/attachedpictureframe.h>
 #include <taglib/fileref.h>
 #include <taglib/flacfile.h>
@@ -34,19 +32,13 @@
 #include <taglib/tstring.h>
 #include <taglib/xiphcomment.h>
 
-namespace Fy::Core::Tagging {
-void scaleImage(QPixmap& image)
-{
-    static const int maximumSize = 600;
-    static const int scale       = 4 * maximumSize;
-    const int width              = image.size().width();
-    const int height             = image.size().height();
-    if(width > maximumSize || height > maximumSize) {
-        image = image.scaled(scale, scale)
-                    .scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-}
+#include <QBuffer>
+#include <QByteArray>
+#include <QFile>
+#include <QPixmap>
+#include <QString>
 
+namespace Fy::Core::Tagging {
 QByteArray getCoverFromMpeg(TagLib::MPEG::File* file)
 {
     if(file && file->ID3v2Tag()) {
@@ -178,49 +170,9 @@ FileTags tagsFromMP4(TagLib::MP4::File* file)
     return parsedTag;
 }
 
-TagLib::String convertString(const QString& str)
+bool isValidFile(const TagLib::FileRef& fileRef)
 {
-    return {str.toUtf8().data(), TagLib::String::Type::UTF8};
-}
-
-QString convertString(const TagLib::String& str)
-{
-    return QString::fromStdString(str.to8Bit(true));
-}
-
-TagLib::String convertString(int num)
-{
-    auto str = QString::number(num);
-    return convertString(str);
-}
-
-int convertNumber(const TagLib::String& num)
-{
-    return convertString(num).toInt();
-}
-
-TagLib::StringList convertStringList(const QStringList& str)
-{
-    TagLib::StringList list;
-
-    for(const auto& string : str) {
-        list.append(TagLib::String(string.toUtf8(), TagLib::String::Type::UTF8));
-    }
-
-    return list;
-}
-
-QStringList convertStringList(const TagLib::StringList& str)
-{
-    QStringList list;
-
-    for(const auto& string : str) {
-        list.emplace_back(TStringToQString(string));
-    }
-
-    std::sort(list.begin(), list.end());
-
-    return list;
+    return (!fileRef.isNull() && fileRef.tag() && fileRef.file() && fileRef.file()->isValid());
 }
 
 FileTags tagsFromFile(const TagLib::FileRef& fileRef)
@@ -273,12 +225,58 @@ QPixmap coverFromFile(const TagLib::FileRef& fileRef)
 
     QPixmap cover;
     cover.loadFromData(data);
-    scaleImage(cover);
     return cover;
 }
 
-bool isValidFile(const TagLib::FileRef& fileRef)
+bool saveCover(const QPixmap& cover, const QString& path)
 {
-    return (!fileRef.isNull() && fileRef.tag() && fileRef.file() && fileRef.file()->isValid());
+    QFile file{path};
+    file.open(QIODevice::WriteOnly);
+    return cover.save(&file, "JPG", 100);
+}
+
+TagLib::String convertString(const QString& str)
+{
+    return {str.toUtf8().data(), TagLib::String::Type::UTF8};
+}
+
+QString convertString(const TagLib::String& str)
+{
+    return QString::fromStdString(str.to8Bit(true));
+}
+
+TagLib::String convertString(int num)
+{
+    auto str = QString::number(num);
+    return convertString(str);
+}
+
+int convertNumber(const TagLib::String& num)
+{
+    return convertString(num).toInt();
+}
+
+TagLib::StringList convertStringList(const QStringList& str)
+{
+    TagLib::StringList list;
+
+    for(const auto& string : str) {
+        list.append(TagLib::String(string.toUtf8(), TagLib::String::Type::UTF8));
+    }
+
+    return list;
+}
+
+QStringList convertStringList(const TagLib::StringList& str)
+{
+    QStringList list;
+
+    for(const auto& string : str) {
+        list.emplace_back(TStringToQString(string));
+    }
+
+    std::sort(list.begin(), list.end());
+
+    return list;
 }
 } // namespace Fy::Core::Tagging

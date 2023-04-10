@@ -440,7 +440,7 @@ QVariant PlaylistModel::albumData(PlaylistItem* item, int role) const
             return title;
         }
         case(PlaylistItem::Role::Cover): {
-            return Core::Covers::albumCover(*album);
+            return m_coverProvider.albumThumbnail(*album);
         }
         case(PlaylistItem::Role::Artist): {
             return !album->artist().isEmpty() ? album->artist() : "Unknown Artist";
