@@ -34,9 +34,9 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::DatabaseVersion, DATABASE_VERSION);
     m_settings->createTempSetting(Settings::FirstRun, true);
     m_settings->createSetting(Settings::PlayMode, Player::PlayMode::Default, "Player");
-    m_settings->createSetting(Settings::AutoRefresh, true, "Library");
-    m_settings->createSetting(Settings::LazyTracks, 2500, "Library");
-    m_settings->createSetting(Settings::WaitForTracks, false, "Library");
+    m_settings->createSetting(Settings::AutoRefresh, false, "Library");
+    m_settings->createSetting(Settings::LazyTracks, 3000, "Library");
+    m_settings->createSetting(Settings::WaitForTracks, true, "Library");
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 
