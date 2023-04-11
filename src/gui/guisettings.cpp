@@ -19,7 +19,12 @@
 
 #include "guisettings.h"
 
+#include "guipaths.h"
+
+#include <core/coresettings.h>
+
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 namespace Fy::Gui::Settings {
 GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
@@ -38,6 +43,8 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::InfoAltColours, true, "Info");
     m_settings->createSetting(Settings::InfoHeader, true, "Info");
     m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
+
+    m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(activeLayoutPath()));
 
     m_settings->loadSettings();
 }

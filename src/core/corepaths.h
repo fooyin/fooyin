@@ -24,5 +24,4 @@ class QString;
 namespace Fy::Core {
 QString coverPath();
 QString settingsPath();
-QString layoutsPath();
 } // namespace Fy::Core

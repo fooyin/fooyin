@@ -19,7 +19,7 @@
 
 #include "layoutprovider.h"
 
-#include <core/corepaths.h>
+#include "guipaths.h"
 
 #include <utils/paths.h>
 
@@ -41,7 +41,7 @@ LayoutProvider::LayoutProvider()
 void Gui::LayoutProvider::findLayouts()
 {
     QStringList files;
-    QList<QDir> stack{Core::layoutsPath()};
+    QList<QDir> stack{layoutsPath()};
 
     while(!stack.isEmpty()) {
         const QDir dir = stack.takeFirst();

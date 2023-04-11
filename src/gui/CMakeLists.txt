@@ -17,6 +17,8 @@ set(SOURCES
     mainwindow.cpp
     editablelayout.h
     editablelayout.cpp
+    guipaths.h
+    guipaths.cpp
     guisettings.h
     guisettings.cpp
     layoutprovider.h

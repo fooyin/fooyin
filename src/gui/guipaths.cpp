@@ -17,18 +17,19 @@
  *
  */
 
-#include "corepaths.h"
+#include "guipaths.h"
 
 #include <utils/paths.h>
 
-namespace Fy::Core {
-QString coverPath()
-{
-    return Utils::cachePath("covers").append("/");
-}
+#include <QString>
 
-QString settingsPath()
+namespace Fy::Gui {
+QString layoutsPath()
 {
-    return Utils::configPath().append("/fooyin.conf");
+    return Utils::configPath("layouts").append("/");
 }
-} // namespace Fy::Core
+QString activeLayoutPath()
+{
+    return Utils::configPath().append("/layout.fyl");
+}
+} // namespace Fy::Gui

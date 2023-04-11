@@ -17,18 +17,11 @@
  *
  */
 
-#include "corepaths.h"
+#pragma once
 
-#include <utils/paths.h>
+class QString;
 
-namespace Fy::Core {
-QString coverPath()
-{
-    return Utils::cachePath("covers").append("/");
-}
-
-QString settingsPath()
-{
-    return Utils::configPath().append("/fooyin.conf");
-}
-} // namespace Fy::Core
+namespace Fy::Gui {
+QString layoutsPath();
+QString activeLayoutPath();
+} // namespace Fy::Gui
