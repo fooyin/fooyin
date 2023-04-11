@@ -42,27 +42,27 @@ public:
 
     QString evaluate();
     QString evaluate(const ParsedScript& input, const Core::Track& track);
-
-    virtual QString evaluate(const ParsedScript& input);
+    QString evaluate(const ParsedScript& input);
 
     void setMetadata(const Core::Track& track);
 
 protected:
     ScriptResult evalExpression(const Expression& exp) const;
 
-    virtual ScriptResult evalLiteral(const Expression& exp) const;
-    virtual ScriptResult evalVariable(const Expression& exp) const;
-    virtual ScriptResult evalFunction(const Expression& exp) const;
-    virtual ScriptResult evalFunctionArg(const Expression& exp) const;
-    virtual ScriptResult evalConditional(const Expression& exp) const;
+    ScriptResult evalLiteral(const Expression& exp) const;
+    ScriptResult evalVariable(const Expression& exp) const;
+    ScriptResult evalVariableList(const Expression& exp) const;
+    ScriptResult evalFunction(const Expression& exp) const;
+    ScriptResult evalFunctionArg(const Expression& exp) const;
+    ScriptResult evalConditional(const Expression& exp) const;
 
-    virtual Expression expression();
-    virtual Expression literal() const;
-    virtual Expression quote();
-    virtual Expression variable();
-    virtual Expression function();
-    virtual Expression functionArgs();
-    virtual Expression conditional();
+    Expression expression();
+    Expression literal() const;
+    Expression quote();
+    Expression variable();
+    Expression function();
+    Expression functionArgs();
+    Expression conditional();
 
     const Registry& registry() const;
     const ParsedScript& lastParsedScript() const;
@@ -82,7 +82,7 @@ private:
     Token m_current;
     Token m_previous;
     ParsedScript m_parsedScript;
-    QString m_result;
+    QStringList m_result;
     bool m_hadError;
 };
 } // namespace Fy::Core::Scripting

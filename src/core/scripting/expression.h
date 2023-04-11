@@ -24,12 +24,13 @@
 namespace Fy::Core::Scripting {
 enum ExprType : int
 {
-    Literal     = 0,
-    Variable    = 1,
-    Function    = 2,
-    FunctionArg = 3,
-    Conditional = 4,
-    Null        = 5
+    Literal      = 0,
+    Variable     = 1,
+    VariableList = 2,
+    Function     = 3,
+    FunctionArg  = 4,
+    Conditional  = 5,
+    Null         = 6,
 };
 
 struct Expression;

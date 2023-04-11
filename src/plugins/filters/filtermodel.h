@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/models/trackfwd.h>
+#include <core/scripting/scriptparser.h>
 
 #include <utils/treemodel.h>
 
@@ -66,7 +67,7 @@ private:
     std::unordered_map<QString, std::unique_ptr<FilterItem>> m_nodes;
     FilterField* m_field;
 
-    std::unique_ptr<Core::Scripting::Parser> m_parser;
+    Core::Scripting::Parser m_parser;
 };
 } // namespace Filters
 } // namespace Fy

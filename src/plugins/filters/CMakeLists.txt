@@ -10,8 +10,6 @@ project(
 
 set(SOURCES
     constants.h
-    fieldparser.h
-    fieldparser.cpp
     fieldregistry.h
     fieldregistry.cpp
     filtersplugin.h

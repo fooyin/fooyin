@@ -95,10 +95,16 @@ TEST_F(ScriptParserTest, MetadataTest)
     m_parser.parse("%genre%");
     EXPECT_EQ("Pop, Rock", m_parser.evaluate());
 
+    m_parser.parse("%<genre>%");
+    EXPECT_EQ("Pop\037Rock", m_parser.evaluate());
+
     track.setArtists({"Me", "You"});
     m_parser.setMetadata(track);
     m_parser.parse("%genre% - %artist%");
     EXPECT_EQ("Pop, Rock - Me, You", m_parser.evaluate());
+
+    m_parser.parse("%<genre>% - %<artist>%");
+    EXPECT_EQ("Pop - Me\037Rock - Me\037Pop - You\037Rock - You", m_parser.evaluate());
 
     m_parser.parse("[%disc% - %track%]");
     EXPECT_EQ("", m_parser.evaluate());

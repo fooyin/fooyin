@@ -21,10 +21,3 @@ target_link_libraries(test_scriptparser
     fooyin_core
 )
 
-fooyin_add_test(test_fieldparser filters/fieldparsertest.cpp)
-target_link_libraries(test_fieldparser
-    Qt6::Core
-    fooyin_core
-    fooyin_filters
-)
-

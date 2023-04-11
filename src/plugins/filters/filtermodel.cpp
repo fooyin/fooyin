@@ -19,8 +19,6 @@
 
 #include "filtermodel.h"
 
-#include "constants.h"
-#include "fieldparser.h"
 #include "filterfwd.h"
 #include "filteritem.h"
 
@@ -33,7 +31,6 @@ FilterModel::FilterModel(FilterField* field, QObject* parent)
     : QAbstractListModel{parent}
     , m_root{std::make_unique<FilterItem>()}
     , m_field{field}
-    , m_parser{std::make_unique<Scripting::FieldParser>()}
 { }
 
 void FilterModel::setField(FilterField* field)
@@ -193,15 +190,15 @@ void FilterModel::setupModelData(const Core::TrackList& tracks)
         return;
     }
 
-    const auto parsedField = m_parser->parse(m_field->field);
-    const auto parsedSort  = m_parser->parse(m_field->sortField);
+    const auto parsedField = m_parser.parse(m_field->field);
+    const auto parsedSort  = m_parser.parse(m_field->sortField);
 
     m_allNode = std::make_unique<FilterItem>("", "", true);
     m_root->appendChild(m_allNode.get());
 
     for(const Core::Track& track : tracks) {
-        const QString field = m_parser->evaluate(parsedField, track);
-        const QString sort  = m_parser->evaluate(parsedSort, track);
+        const QString field = m_parser.evaluate(parsedField, track);
+        const QString sort  = m_parser.evaluate(parsedSort, track);
         if(field.isNull()) {
             continue;
         }

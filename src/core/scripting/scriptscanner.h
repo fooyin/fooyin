@@ -25,6 +25,8 @@ namespace Fy::Core::Scripting {
 enum TokenType : char
 {
     TokVar         = '%',
+    TokLeftAngle   = '<',
+    TokRightAngle  = '>',
     TokFunc        = '$',
     TokComma       = ',',
     TokQuote       = '"',
