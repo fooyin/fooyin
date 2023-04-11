@@ -204,7 +204,7 @@ void FilterWidget::fieldChanged(const FilterField& field)
         m_filter->field = field;
         emit typeChanged(m_filter->index);
         m_model->reload(m_manager->tracks());
-        m_model->sort(0, m_sortOrder);
+        m_model->sortFilter(m_sortOrder);
     }
 }
 
