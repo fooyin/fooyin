@@ -78,7 +78,7 @@ TEST_F(ScriptParserTest, MetadataTest)
 {
     Core::Track track;
     track.setTitle("A Test");
-    m_parser.setMetadata(&track);
+    m_parser.setMetadata(track);
 
     m_parser.parse("%title%");
     EXPECT_EQ("A Test", m_parser.evaluate());
@@ -87,13 +87,16 @@ TEST_F(ScriptParserTest, MetadataTest)
     EXPECT_EQ("A Test", m_parser.evaluate());
 
     track.setAlbum("A Test Album");
+    m_parser.setMetadata(track);
     EXPECT_EQ("A Test - A Test Album", m_parser.evaluate());
 
     track.setGenres({"Pop", "Rock"});
+    m_parser.setMetadata(track);
     m_parser.parse("%genre%");
     EXPECT_EQ("Pop, Rock", m_parser.evaluate());
 
     track.setArtists({"Me", "You"});
+    m_parser.setMetadata(track);
     m_parser.parse("%genre% - %artist%");
     EXPECT_EQ("Pop, Rock - Me, You", m_parser.evaluate());
 
