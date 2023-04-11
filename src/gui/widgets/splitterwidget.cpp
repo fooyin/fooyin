@@ -111,8 +111,7 @@ void SplitterWidget::addWidget(QWidget* newWidget)
     if((m_isRoot && newSplitter) || !newSplitter) {
         ++m_widgetCount;
     }
-    // Only hide dummy if there's at least 2 non-splitter widgets
-    if(m_widgetCount > 1) {
+    if(m_widgetCount > 0) {
         m_dummy->hide();
     }
 
