@@ -95,11 +95,11 @@ void MainWindow::setupUi()
     m_helpMenu     = new HelpMenu(m_actionManager, this);
 
     connect(m_viewMenu, &ViewMenu::layoutEditingChanged, this, &MainWindow::enableLayoutEditing);
-    connect(m_viewMenu, &ViewMenu::openQuickSetup, m_quickSetupDialog, &QuickSetupDialog::show);
+    connect(m_viewMenu, &ViewMenu::openQuickSetup, this, &MainWindow::showQuickSetup);
 
     if(m_settings->value<Core::Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
-        QTimer::singleShot(1000, m_quickSetupDialog, &QuickSetupDialog::show);
+        QTimer::singleShot(1000, this, &MainWindow::showQuickSetup);
     }
 }
 
@@ -107,11 +107,14 @@ void MainWindow::setupMenu()
 {
     m_mainMenu = new MainMenuBar(m_actionManager, this);
     setMenuBar(m_mainMenu->menuBar());
+}
 
-    m_quickSetupDialog = new QuickSetupDialog(m_layoutProvider, this);
-
-    connect(
-        m_quickSetupDialog, &QuickSetupDialog::layoutChanged, m_editableLayout, &Widgets::EditableLayout::changeLayout);
+void MainWindow::showQuickSetup()
+{
+    auto* quickSetup = new QuickSetupDialog(m_layoutProvider, this);
+    quickSetup->setAttribute(Qt::WA_DeleteOnClose);
+    connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout, &Widgets::EditableLayout::changeLayout);
+    quickSetup->show();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

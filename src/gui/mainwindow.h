@@ -40,7 +40,6 @@ class PlayerManager;
 
 namespace Gui {
 class LayoutProvider;
-class QuickSetupDialog;
 class MainMenuBar;
 class FileMenu;
 class EditMenu;
@@ -68,6 +67,7 @@ public:
 
     void setupUi();
     void setupMenu();
+    void showQuickSetup();
 
 signals:
     void closing();
@@ -95,7 +95,6 @@ private:
     HelpMenu* m_helpMenu;
 
     LayoutProvider* m_layoutProvider;
-    QuickSetupDialog* m_quickSetupDialog;
     Widgets::EditableLayout* m_editableLayout;
 };
 } // namespace Gui
