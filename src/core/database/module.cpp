@@ -49,7 +49,7 @@ QSqlDatabase Module::db() const
 
     QThread* currentThread = QThread::currentThread();
 
-    auto id = (uint64_t)currentThread;
+    auto id = reinterpret_cast<intptr_t>(currentThread);
     if(QApplication::instance() && (currentThread == QApplication::instance()->thread())) {
         id = 0;
     }
@@ -86,7 +86,11 @@ DB::Query Module::runQuery(const QString& query, const QString& errorText) const
 DB::Query Module::runQuery(const QString& query, const QPair<QString, QVariant>& bindings,
                            const QString& errorText) const
 {
-    return runQuery(query, {{bindings.first, bindings.second}}, errorText);
+    return runQuery(query,
+                    {
+                        {bindings.first, bindings.second}
+    },
+                    errorText);
 }
 
 DB::Query Module::runQuery(const QString& query, const QMap<QString, QVariant>& bindings,
