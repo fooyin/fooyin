@@ -21,7 +21,7 @@
 
 #include "gui/guiconstants.h"
 
-#include <core/library/librarymanager.h>
+#include <core/library/musiclibrary.h>
 
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -32,13 +32,12 @@
 #include <QMenu>
 
 namespace Fy::Gui {
-LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::LibraryManager* libraryManager,
+LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::MusicLibrary* library,
                          Utils::SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
-    , m_libraryManager{libraryManager}
+    , m_library{library}
     , m_settings{settings}
-    , m_librarySwitchGroup{new QActionGroup(this)}
 {
     auto* libraryMenu = m_actionManager->actionContainer(Gui::Constants::Menus::Library);
 
@@ -48,8 +47,7 @@ LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::Lib
     m_rescanLibrary = new QAction(rescanIcon, tr("&Rescan Library"), this);
     m_actionManager->registerAction(m_rescanLibrary, Gui::Constants::Actions::Rescan);
     libraryMenu->addAction(m_rescanLibrary, Gui::Constants::Groups::Two);
-    connect(m_rescanLibrary, &QAction::triggered, m_libraryManager->currentLibrary(),
-            &Core::Library::MusicLibrary::reload);
+    connect(m_rescanLibrary, &QAction::triggered, m_library, &Core::Library::MusicLibrary::reloadAll);
 
     m_openSettings = new QAction(settingsIcon, tr("&Settings"), this);
     actionManager->registerAction(m_openSettings, Gui::Constants::Actions::Settings);
@@ -57,37 +55,5 @@ LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::Lib
     connect(m_openSettings, &QAction::triggered, this, [this]() {
         m_settings->settingsDialog()->openAtPage(Gui::Constants::Page::LibraryGeneral);
     });
-
-    m_switchLibraryMenu = m_actionManager->createMenu(Gui::Constants::Menus::SwitchLibrary);
-    libraryMenu->addMenu(m_switchLibraryMenu, Gui::Constants::Groups::Two);
-    m_switchLibraryMenu->menu()->setTitle(tr("&Switch Library"));
-    m_switchLibraryMenu->appendGroup(Gui::Constants::Groups::Two);
-
-    setupSwitchMenu();
-
-    connect(libraryManager, &Core::Library::LibraryManager::libraryAdded, this, &LibraryMenu::setupSwitchMenu);
-    connect(libraryManager, &Core::Library::LibraryManager::libraryRemoved, this, &LibraryMenu::setupSwitchMenu);
-}
-
-void LibraryMenu::setupSwitchMenu()
-{
-    m_switchLibraryMenu->clear();
-    m_libraryActions.clear();
-
-    for(const auto& libraryInfo : m_libraryManager->allLibrariesInfo()) {
-        auto* lib           = libraryInfo.get();
-        const auto id       = Utils::Id{Gui::Constants::Actions::LibrarySwitch}.append(lib->id);
-        auto* librarySwitch = m_libraryActions.emplace_back(std::make_unique<QAction>(lib->name)).get();
-        librarySwitch->setCheckable(true);
-        librarySwitch->setChecked(m_libraryManager->currentLibrary()->info()->id == lib->id);
-        m_librarySwitchGroup->addAction(librarySwitch);
-        m_switchLibraryMenu->addAction(librarySwitch);
-        m_actionManager->registerAction(librarySwitch, id);
-        m_switchLibraryMenu->addAction(librarySwitch, Gui::Constants::Groups::Two);
-        connect(librarySwitch, &QAction::triggered, this, [this, librarySwitch, lib](bool checked) {
-            librarySwitch->setChecked(checked);
-            m_libraryManager->changeCurrentLibrary(lib->id);
-        });
-    }
 }
 } // namespace Fy::Gui

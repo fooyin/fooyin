@@ -61,6 +61,8 @@ struct Track::Private : public QSharedData
     uint64_t addedTime{0};
     uint64_t modifiedTime{0};
 
+    QString sort;
+
     explicit Private(QString filepath = {})
         : filepath{std::move(filepath)}
     { }
@@ -290,6 +292,11 @@ uint64_t Track::modifiedTime() const
     return p->modifiedTime;
 }
 
+QString Track::sort() const
+{
+    return p->sort;
+}
+
 void Track::setLibraryId(int id)
 {
     p->libraryId = id;
@@ -438,6 +445,11 @@ void Track::setAddedTime(uint64_t time)
 void Track::setModifiedTime(uint64_t time)
 {
     p->modifiedTime = time;
+}
+
+void Track::setSort(const QString& sort)
+{
+    p->sort = sort;
 }
 
 size_t qHash(const Track& track)

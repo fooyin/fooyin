@@ -22,10 +22,7 @@
 #include "core/constants.h"
 #include "query.h"
 
-#include <utils/helpers.h>
 #include <utils/utils.h>
-
-#include <QBuffer>
 
 namespace Fy::Core::DB {
 QMap<QString, QVariant> getTrackBindings(const Track& track)
@@ -51,28 +48,15 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("FileSize"),     QVariant::fromValue(track.fileSize())     },
         {QStringLiteral("BitRate"),      track.bitrate()                           },
         {QStringLiteral("SampleRate"),   track.sampleRate()                        },
-        {QStringLiteral("ExtraTags"),    track.serialiseExtrasTags()                   },
+        {QStringLiteral("ExtraTags"),    track.serialiseExtrasTags()               },
         {QStringLiteral("AddedDate"),    QVariant::fromValue(track.addedTime())    },
         {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime()) },
         {QStringLiteral("LibraryID"),    track.libraryId()                         },
     };
 }
 
-QString getOrderString(Core::Library::SortOrder order)
-{
-    QString orderString{"AlbumArtist ASC"};
-
-    switch(order) {
-        case(Core::Library::SortOrder::NoSorting):
-            orderString += ", Date DESC";
-    }
-    orderString += ", Album ASC, DiscNumber ASC, TrackNumber ASC";
-    return orderString;
-}
-
-LibraryDatabase::LibraryDatabase(const QString& connectionName, int libraryId)
+LibraryDatabase::LibraryDatabase(const QString& connectionName)
     : DB::Module(connectionName)
-    , m_libraryId(libraryId)
     , m_connectionName(connectionName)
 { }
 
@@ -97,21 +81,18 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
     return db().commit();
 }
 
-bool LibraryDatabase::getAllTracks(TrackList& result, Core::Library::SortOrder order) const
+bool LibraryDatabase::getAllTracks(TrackList& result)
 {
-    auto q               = Query(module());
-    const QString& where = m_libraryId >= 0 ? QString{"LibraryID = %1"}.arg(m_libraryId) : "";
-    const auto query     = fetchQueryTracks(where, {}, getOrderString(order), {});
+    auto q           = Query(module());
+    const auto query = fetchQueryTracks({}, {});
     q.prepareQuery(query);
 
     return dbFetchTracks(q, result);
 }
 
-bool LibraryDatabase::getAllTracks(TrackList& result, Core::Library::SortOrder order, int offset, int limit) const
+bool LibraryDatabase::getAllTracks(TrackList& result, int offset, int limit)
 {
     auto q = Query(module());
-
-    const QString& where = m_libraryId >= 0 ? QString{"LibraryID = %1"}.arg(m_libraryId) : "";
 
     QString offsetLimit;
     if(limit > 0) {
@@ -121,14 +102,13 @@ bool LibraryDatabase::getAllTracks(TrackList& result, Core::Library::SortOrder o
         }
     }
 
-    const auto query = fetchQueryTracks(where, {}, getOrderString(order), offsetLimit);
+    const auto query = fetchQueryTracks({}, offsetLimit);
     q.prepareQuery(query);
 
     return dbFetchTracks(q, result);
 }
 
-QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& join, const QString& order,
-                                          const QString& offsetLimit)
+QString LibraryDatabase::fetchQueryTracks(const QString& join, const QString& offsetLimit)
 {
     static const auto fields = QStringList{
         QStringLiteral("TrackID"),      // 0
@@ -162,12 +142,7 @@ QString LibraryDatabase::fetchQueryTracks(const QString& where, const QString& j
 
     const auto joinedFields = fields.join(", ");
 
-    return QString("SELECT %1 FROM Tracks %2 WHERE %3 ORDER BY %4 %5;")
-        .arg(joinedFields,
-             join.isEmpty() ? "" : join,
-             where.isEmpty() ? "1" : where,
-             order.isEmpty() ? "1" : order,
-             offsetLimit);
+    return QString("SELECT %1 FROM Tracks %2 %5;").arg(joinedFields, join.isEmpty() ? "" : join, offsetLimit);
 }
 
 bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
@@ -212,7 +187,6 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
 
         result.emplace_back(track);
     }
-
     return !result.empty();
 }
 

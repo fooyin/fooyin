@@ -95,6 +95,8 @@ set(SOURCES
     settings/librarymodel.cpp
     settings/libraryitem.h
     settings/libraryitem.cpp
+    settings/libraryview.h
+    settings/libraryview.cpp
     settings/playlistguipage.h
     settings/playlistguipage.cpp
     settings/pluginitem.h

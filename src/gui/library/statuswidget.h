@@ -31,10 +31,15 @@ namespace Utils {
 class ClickableLabel;
 }
 
-namespace Core::Player {
+namespace Core {
+namespace Library {
+class MusicLibrary;
+}
+namespace Player {
 class PlayerManager;
 enum PlayState : uint8_t;
-} // namespace Core::Player
+} // namespace Player
+} // namespace Core
 
 namespace Gui::Widgets {
 class StatusWidget : public FyWidget
@@ -42,7 +47,8 @@ class StatusWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit StatusWidget(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
+    explicit StatusWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
+                          QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
 
@@ -50,14 +56,14 @@ signals:
     void clicked();
 
 protected:
-    void setupUi();
     void contextMenuEvent(QContextMenuEvent* event) override;
 
-    void labelClicked();
-    void reloadStatus();
-    void stateChanged(Core::Player::PlayState state);
-
 private:
+    void labelClicked();
+    void stateChanged(Core::Player::PlayState state);
+    void scanProgressChanged(int progress);
+
+    Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
 
     QHBoxLayout* m_layout;

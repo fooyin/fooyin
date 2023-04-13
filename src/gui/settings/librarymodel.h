@@ -72,6 +72,7 @@ private:
         }
     };
 
+    void updateDisplay();
     [[nodiscard]] bool findInQueue(const QString& id, OperationType op, QueueEntry* library = nullptr) const;
     void removeFromQueue(const QueueEntry& libraryToDelete);
 

@@ -24,6 +24,8 @@
 namespace Fy::Utils {
 class Worker : public QObject
 {
+    Q_OBJECT
+
 public:
     enum State
     {
@@ -41,6 +43,9 @@ public:
 
     [[nodiscard]] bool isRunning();
     [[nodiscard]] bool mayRun() const;
+
+signals:
+    void finished();
 
 private:
     State m_state;

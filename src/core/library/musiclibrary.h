@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "core/library/sorting/sortorder.h"
 #include "core/models/trackfwd.h"
 
 #include <QObject>
@@ -37,34 +36,37 @@ public:
         : QObject{parent}
     { }
 
+    [[nodiscard]] virtual bool hasLibrary() const = 0;
+
     virtual void loadLibrary() = 0;
 
-    [[nodiscard]] virtual LibraryInfo* info() const = 0;
-
-    virtual void reload() = 0;
-    virtual void rescan() = 0;
+    virtual void reloadAll()                  = 0;
+    virtual void reload(LibraryInfo* library) = 0;
+    virtual void rescan()                     = 0;
 
     [[nodiscard]] virtual TrackList tracks() const    = 0;
     [[nodiscard]] virtual TrackList allTracks() const = 0;
 
-    [[nodiscard]] virtual SortOrder sortOrder() const = 0;
-    virtual void sortTracks(SortOrder order)          = 0;
+    virtual void sortTracks(const QString& sort) = 0;
 
     virtual void addInteractor(LibraryInteractor* interactor) = 0;
 
     virtual void removeLibrary(int id) = 0;
 
 signals:
-    void loadAllTracks(Core::Library::SortOrder order);
+    void loadAllTracks();
     void allTracksLoaded();
-    void runLibraryScan(const Core::TrackList& tracks);
+    void runLibraryScan(const Library::LibraryInfo& library, const Core::TrackList& tracks);
+    void scanProgress(int percent);
 
     void tracksLoaded(const Core::TrackList& tracks);
     void tracksAdded(const Core::TrackList& tracks);
     void tracksUpdated(const Core::TrackList& tracks);
     void tracksDeleted(const Core::TrackList& tracks);
+    void tracksSorted();
 
-    void libraryRemoved();
+    void libraryAdded();
+    void libraryRemoved(int id);
     void libraryChanged();
     void tracksChanged();
 };

@@ -48,22 +48,12 @@ set(SOURCES
     library/libraryscanner.h
     library/libraryscanner.cpp
     library/musiclibrary.h
-    library/musiclibrarycontainer.h
-    library/musiclibrarycontainer.cpp
-    library/musiclibraryinternal.h
-    library/singlemusiclibrary.h
-    library/singlemusiclibrary.cpp
-    library/singletrackstore.h
-    library/singletrackstore.cpp
-    library/trackstore.h
     library/unifiedmusiclibrary.h
     library/unifiedmusiclibrary.cpp
-    library/unifiedtrackstore.h
-    library/unifiedtrackstore.cpp
-
-    library/sorting/sorting.h
-    library/sorting/sorting.cpp
-    library/sorting/sortorder.h
+    library/librarythreadhandler.h
+    library/librarythreadhandler.cpp
+    library/tracksorter.h
+    library/tracksorter.cpp
 
     models/container.h
     models/container.cpp

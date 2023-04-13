@@ -34,7 +34,7 @@ public:
     bool varExists(const QString& var) const;
     bool funcExists(const QString& func) const;
 
-    ScriptResult varValue(const QString& var) const;
+    ScriptResult trackValue(const QString& var) const;
     ScriptResult function(const QString& func, const ValueList& args) const;
 
     void changeCurrentTrack(const Core::Track& track);

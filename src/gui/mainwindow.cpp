@@ -46,12 +46,12 @@
 
 namespace Fy::Gui {
 MainWindow::MainWindow(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                       Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings,
+                       Core::Library::MusicLibrary* library, Utils::SettingsManager* settings,
                        LayoutProvider* layoutProvider, Widgets::WidgetFactory* widgetFactory, QWidget* parent)
     : QMainWindow{parent}
     , m_actionManager{actionManager}
     , m_playerManager{playerManager}
-    , m_libraryManager{libraryManager}
+    , m_library{library}
     , m_settings{settings}
     , m_widgetFactory{widgetFactory}
     , m_layoutProvider{layoutProvider}
@@ -91,7 +91,7 @@ void MainWindow::setupUi()
     m_editMenu     = new EditMenu(m_actionManager, this);
     m_viewMenu     = new ViewMenu(m_actionManager, m_settings, this);
     m_playbackMenu = new PlaybackMenu(m_actionManager, m_playerManager, this);
-    m_libraryMenu  = new LibraryMenu(m_actionManager, m_libraryManager, m_settings, this);
+    m_libraryMenu  = new LibraryMenu(m_actionManager, m_library, m_settings, this);
     m_helpMenu     = new HelpMenu(m_actionManager, this);
 
     connect(m_viewMenu, &ViewMenu::layoutEditingChanged, this, &MainWindow::enableLayoutEditing);

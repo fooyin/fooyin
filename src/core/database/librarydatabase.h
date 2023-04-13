@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "core/library/sorting/sortorder.h"
 #include "core/models/trackfwd.h"
 #include "module.h"
 
@@ -27,17 +26,16 @@ namespace Fy::Core::DB {
 class LibraryDatabase : public Module
 {
 public:
-    LibraryDatabase(const QString& connectionName, int libraryId);
+    explicit LibraryDatabase(const QString& connectionName);
 
     bool storeTracks(TrackList& tracksToStore);
 
-    bool getAllTracks(TrackList& result, Core::Library::SortOrder order = Core::Library::SortOrder::NoSorting) const;
-    bool getAllTracks(TrackList& result, Core::Library::SortOrder order, int start, int limit) const;
+    bool getAllTracks(TrackList& result);
+    bool getAllTracks(TrackList& result, int start, int limit);
 
-    [[nodiscard]] static QString fetchQueryTracks(const QString& where, const QString& join, const QString& order,
-                                                  const QString& offsetLimit);
+    [[nodiscard]] QString fetchQueryTracks(const QString& join, const QString& offsetLimit);
 
-    static bool dbFetchTracks(Query& q, TrackList& result);
+    bool dbFetchTracks(Query& q, TrackList& result);
 
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);
@@ -49,7 +47,6 @@ private:
 
     int insertTrack(const Track& track);
 
-    int m_libraryId;
     QString m_connectionName;
 };
 } // namespace Fy::Core::DB

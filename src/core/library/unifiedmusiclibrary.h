@@ -19,37 +19,72 @@
 
 #pragma once
 
-#include "musiclibraryinternal.h"
-#include "unifiedtrackstore.h"
+#include "libraryscanner.h"
+#include "librarythreadhandler.h"
+#include "musiclibrary.h"
+#include "tracksorter.h"
 
-namespace Fy::Core::Library {
-class LibraryManager;
+namespace Fy {
 
-class UnifiedMusicLibrary : public MusicLibraryInternal
+namespace Utils {
+class SettingsManager;
+} // namespace Utils
+
+namespace Core {
+namespace DB {
+class Database;
+}
+
+namespace Library {
+struct LibraryInfo;
+
+class UnifiedMusicLibrary : public MusicLibrary
 {
     Q_OBJECT
 
 public:
-    explicit UnifiedMusicLibrary(LibraryInfo* info, LibraryManager* libraryManager, QObject* parent = nullptr);
+    UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database, Utils::SettingsManager* settings,
+                       QObject* parent = nullptr);
 
     void loadLibrary() override;
-    void reload() override;
+    void reloadAll() override;
+    void reload(LibraryInfo* library) override;
     void rescan() override;
 
-    [[nodiscard]] LibraryInfo* info() const override;
+    bool hasLibrary() const override;
 
+    [[nodiscard]] TrackList allTracks() const override;
     [[nodiscard]] TrackList tracks() const override;
 
-    [[nodiscard]] UnifiedTrackStore* trackStore() const override;
+    void sortTracks(const QString& sort) override;
 
-    [[nodiscard]] SortOrder sortOrder() const override;
-    void sortTracks(SortOrder order) override;
+    void addInteractor(LibraryInteractor* interactor) override;
+    void removeLibrary(int id) override;
+
+signals:
+    void tracksSelChanged();
+    void updateSaveTracks(Core::TrackList tracks);
 
 private:
-    LibraryInfo* m_info;
-    LibraryManager* m_libraryManager;
-    std::unique_ptr<UnifiedTrackStore> m_trackStore;
+    void getAllTracks();
+    void loadTracks(const TrackList& tracks);
+    void addTracks(const TrackList& tracks);
+    void updateTracks(const TrackList& tracks);
+    void removeTracks(const TrackList& tracks);
 
-    SortOrder m_order;
+    void libraryStatusChanged(const LibraryInfo& library);
+
+    LibraryManager* m_libraryManager;
+    DB::Database* m_database;
+    Utils::SettingsManager* m_settings;
+    LibraryThreadHandler m_threadHandler;
+    TrackSorter m_trackSorter;
+
+    TrackList m_tracks;
+
+    using LibraryInteractors = std::vector<LibraryInteractor*>;
+    LibraryInteractors m_interactors;
 };
-} // namespace Fy::Core::Library
+} // namespace Library
+} // namespace Core
+} // namespace Fy

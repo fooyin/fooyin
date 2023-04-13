@@ -43,30 +43,37 @@ class LibraryScanner : public Utils::Worker
     Q_OBJECT
 
 public:
-    explicit LibraryScanner(LibraryInfo* info, DB::Database* database, QObject* parent = nullptr);
+    explicit LibraryScanner(DB::Database* database, QObject* parent = nullptr);
 
     void closeThread() override;
     void stopThread() override;
 
-    void scanLibrary(const TrackList& tracks);
-
+    void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
     void updateTracks(const TrackList& tracks);
 
+    [[nodiscard]] LibraryInfo currentLibrary() const;
+
 signals:
+    void progressChanged(int percent);
+    void statusChanged(const Fy::Core::Library::LibraryInfo& library);
     void updatedTracks(Core::TrackList tracks);
     void addedTracks(Core::TrackList tracks);
     void tracksDeleted(const Core::TrackList& tracks);
 
 private:
+    void changeLibraryStatus(Status status);
+
     void storeTracks(TrackList& tracks);
     bool storeCovers(TrackList& tracks);
     QStringList getFiles(QDir& baseDirectory);
     bool getAndSaveAllFiles(const TrackPathMap& tracks);
 
-    LibraryInfo* m_library;
+    LibraryInfo m_library;
     DB::Database* m_database;
     DB::LibraryDatabase m_libraryDatabase;
     Tagging::TagReader m_tagReader;
+
+    std::atomic<bool> m_mayRun;
 };
 } // namespace Library
 } // namespace Fy::Core

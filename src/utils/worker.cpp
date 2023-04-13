@@ -33,7 +33,10 @@ void Worker::stopThread()
     m_state = Idle;
 }
 
-void Worker::closeThread() { }
+void Worker::closeThread()
+{
+    stopThread();
+}
 
 Worker::State Worker::state() const
 {

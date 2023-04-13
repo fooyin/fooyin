@@ -59,8 +59,7 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Core::Library::LibraryManager* libraryManager,
-                            Core::Playlist::PlaylistManager* playlistHandler,
+    explicit PlaylistWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistManager* playlistHandler,
                             Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                             QWidget* parent = nullptr);
 
@@ -85,8 +84,6 @@ protected:
     void selectionChanged();
     void keyPressEvent(QKeyEvent* event) override;
     void customHeaderMenuRequested(QPoint pos);
-    void changeOrder(QAction* action);
-    void switchOrder();
     void changeState(Core::Player::PlayState state);
     void playTrack(const QModelIndex& index);
     void nextTrack();
@@ -97,7 +94,6 @@ private:
     void expandPlaylist(const QModelIndex& parent, int first, int last);
     void clearSelection(bool clearView = false);
 
-    Core::Library::LibraryManager* m_libraryManager;
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
     Utils::SettingsManager* m_settings;
