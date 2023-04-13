@@ -18,18 +18,18 @@
  */
 
 #include "librarythreadhandler.h"
+#include "core/database/database.h"
 
 #include <QThread>
 
 namespace Fy::Core::Library {
 
-LibraryThreadHandler::LibraryThreadHandler(DB::Database* database, Utils::SettingsManager* settings, QObject* parent)
+LibraryThreadHandler::LibraryThreadHandler(DB::Database* database, QObject* parent)
     : QObject{parent}
     , m_database{database}
-    , m_settings{settings}
     , m_thread{new QThread(this)}
     , m_scanner{m_database}
-    , m_libraryDatabaseManager{database, settings}
+    , m_libraryDatabaseManager{database}
 {
     m_scanner.moveToThread(m_thread);
     m_libraryDatabaseManager.moveToThread(m_thread);
@@ -100,5 +100,4 @@ void LibraryThreadHandler::finishScanRequest()
         emit scanNext(request.library, request.tracks);
     }
 }
-
 } // namespace Fy::Core::Library

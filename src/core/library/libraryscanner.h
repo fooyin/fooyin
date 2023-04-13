@@ -56,8 +56,8 @@ public:
 signals:
     void progressChanged(int percent);
     void statusChanged(const Fy::Core::Library::LibraryInfo& library);
-    void updatedTracks(Core::TrackList tracks);
-    void addedTracks(Core::TrackList tracks);
+    void updatedTracks(const Core::TrackList& tracks);
+    void addedTracks(const Core::TrackList& tracks);
     void tracksDeleted(const Core::TrackList& tracks);
 
 private:

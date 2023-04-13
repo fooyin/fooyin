@@ -26,7 +26,7 @@ namespace Fy::Core::Library {
 class TrackSorter
 {
 public:
-    TrackList sortTracks(const TrackList& tracks);
+    void sortTracks(TrackList& tracks);
     void calcSortField(Track& track);
     void calcSortFields(TrackList& tracks);
 

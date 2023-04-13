@@ -20,7 +20,7 @@
 #include "tracksorter.h"
 
 namespace Fy::Core::Library {
-TrackList TrackSorter::sortTracks(const TrackList& tracks)
+void TrackSorter::sortTracks(TrackList& tracks)
 {
     TrackList sortedTracks{tracks};
     std::sort(sortedTracks.begin(), sortedTracks.end(), [](const Track& lhs, const Track& rhs) {
@@ -30,7 +30,7 @@ TrackList TrackSorter::sortTracks(const TrackList& tracks)
         }
         return QString::localeAwareCompare(lhs.sort(), rhs.sort()) < 0;
     });
-    return sortedTracks;
+    tracks = sortedTracks;
 }
 
 void TrackSorter::calcSortField(Track& track)

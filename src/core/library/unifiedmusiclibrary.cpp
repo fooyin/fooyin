@@ -39,7 +39,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     , m_libraryManager{libraryManager}
     , m_database{database}
     , m_settings{settings}
-    , m_threadHandler{database, settings}
+    , m_threadHandler{database}
 {
     connect(m_libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::reload);
     connect(m_libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::libraryAdded);
@@ -61,7 +61,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     connect(&m_threadHandler, &LibraryThreadHandler::allTracksLoaded, this, &UnifiedMusicLibrary::allTracksLoaded);
     connect(this, &UnifiedMusicLibrary::loadAllTracks, &m_threadHandler, &LibraryThreadHandler::getAllTracks);
 
-    m_settings->subscribe<Settings::SortScript>(this, &UnifiedMusicLibrary::sortTracks);
+    m_settings->subscribe<Settings::SortScript>(this, &UnifiedMusicLibrary::changeSort);
     m_trackSorter.changeSorting(m_settings->value<Settings::SortScript>());
 
     if(m_settings->value<Settings::AutoRefresh>()) {
@@ -122,11 +122,11 @@ TrackList UnifiedMusicLibrary::tracks() const
     return !intersectedTracks.empty() ? intersectedTracks : m_tracks;
 }
 
-void UnifiedMusicLibrary::sortTracks(const QString& sort)
+void UnifiedMusicLibrary::changeSort(const QString& sort)
 {
     m_trackSorter.changeSorting(sort);
     m_trackSorter.calcSortFields(m_tracks);
-    m_tracks = m_trackSorter.sortTracks(m_tracks);
+    m_trackSorter.sortTracks(m_tracks);
     emit tracksSorted();
 }
 
@@ -168,7 +168,7 @@ void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
         m_trackSorter.calcSortField(track);
         m_tracks.emplace_back(track);
     }
-    m_tracks = m_trackSorter.sortTracks(m_tracks);
+    m_trackSorter.sortTracks(m_tracks);
     emit tracksAdded(newTracks);
 }
 

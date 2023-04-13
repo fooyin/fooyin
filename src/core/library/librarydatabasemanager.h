@@ -23,13 +23,7 @@
 
 #include <utils/worker.h>
 
-namespace Fy {
-
-namespace Utils {
-class SettingsManager;
-}
-
-namespace Core {
+namespace Fy::Core {
 namespace DB {
 class Database;
 } // namespace DB
@@ -40,8 +34,7 @@ class LibraryDatabaseManager : public Utils::Worker
     Q_OBJECT
 
 public:
-    explicit LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
-                                    QObject* parent = nullptr);
+    explicit LibraryDatabaseManager(DB::Database* database, QObject* parent = nullptr);
 
     void closeThread() override;
 
@@ -54,8 +47,6 @@ signals:
 private:
     DB::Database* m_database;
     DB::LibraryDatabase m_libraryDatabase;
-    Utils::SettingsManager* m_settings;
 };
 } // namespace Library
-} // namespace Core
-} // namespace Fy
+} // namespace Fy::Core

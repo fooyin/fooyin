@@ -19,19 +19,14 @@
 
 #include "librarydatabasemanager.h"
 
-#include "core/coresettings.h"
 #include "core/database/database.h"
 #include "core/database/librarydatabase.h"
 
-#include <utils/settings/settingsmanager.h>
-
 namespace Fy::Core::Library {
-LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
-                                               QObject* parent)
+LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, QObject* parent)
     : Worker{parent}
     , m_database{database}
     , m_libraryDatabase{database->connectionName()}
-    , m_settings{settings}
 { }
 
 void LibraryDatabaseManager::closeThread()
@@ -42,20 +37,9 @@ void LibraryDatabaseManager::closeThread()
 void LibraryDatabaseManager::getAllTracks()
 {
     TrackList tracks;
-    const bool wait = m_settings->value<Settings::WaitForTracks>();
-    const int limit = m_settings->value<Settings::LazyTracks>();
 
-    if(limit > 0 && !wait) {
-        int offset = 0;
-        while(m_libraryDatabase.getAllTracks(tracks, offset, limit)) {
-            offset += limit;
-            emit gotTracks(tracks);
-        }
-    }
-    else {
-        if(m_libraryDatabase.getAllTracks(tracks)) {
-            emit gotTracks(tracks);
-        }
+    if(m_libraryDatabase.getAllTracks(tracks)) {
+        emit gotTracks(tracks);
     }
     emit allTracksLoaded();
 }

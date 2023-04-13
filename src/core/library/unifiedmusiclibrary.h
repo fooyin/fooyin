@@ -44,7 +44,7 @@ class UnifiedMusicLibrary : public MusicLibrary
 
 public:
     UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database, Utils::SettingsManager* settings,
-                       QObject* parent = nullptr);
+                        QObject* parent = nullptr);
 
     void loadLibrary() override;
     void reloadAll() override;
@@ -56,7 +56,7 @@ public:
     [[nodiscard]] TrackList allTracks() const override;
     [[nodiscard]] TrackList tracks() const override;
 
-    void sortTracks(const QString& sort) override;
+    void changeSort(const QString& sort);
 
     void addInteractor(LibraryInteractor* interactor) override;
     void removeLibrary(int id) override;

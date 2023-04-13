@@ -47,8 +47,6 @@ public:
     [[nodiscard]] virtual TrackList tracks() const    = 0;
     [[nodiscard]] virtual TrackList allTracks() const = 0;
 
-    virtual void sortTracks(const QString& sort) = 0;
-
     virtual void addInteractor(LibraryInteractor* interactor) = 0;
 
     virtual void removeLibrary(int id) = 0;
@@ -63,6 +61,8 @@ signals:
     void tracksAdded(const Core::TrackList& tracks);
     void tracksUpdated(const Core::TrackList& tracks);
     void tracksDeleted(const Core::TrackList& tracks);
+
+    void sortTracks(const Core::TrackList& tracks);
     void tracksSorted();
 
     void libraryAdded();

@@ -35,7 +35,6 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createTempSetting(Settings::FirstRun, true);
     m_settings->createSetting(Settings::PlayMode, Player::PlayMode::Default, "Player");
     m_settings->createSetting(Settings::AutoRefresh, false, "Library");
-    m_settings->createSetting(Settings::LazyTracks, 3000, "Library");
     m_settings->createSetting(Settings::WaitForTracks, true, "Library");
     m_settings->createSetting(Settings::SortScript, "%albumartist% - %album% - %disc% - %track%", "Library");
 

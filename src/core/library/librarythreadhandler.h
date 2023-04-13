@@ -45,10 +45,11 @@ class LibraryThreadHandler : public QObject
     Q_OBJECT
 
 public:
-    explicit LibraryThreadHandler(DB::Database* database, Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit LibraryThreadHandler(DB::Database* database, QObject* parent = nullptr);
     ~LibraryThreadHandler();
 
     void stopScanner();
+
     void libraryRemoved(int id);
 
 signals:
@@ -71,7 +72,6 @@ private:
     void finishScanRequest();
 
     DB::Database* m_database;
-    Utils::SettingsManager* m_settings;
 
     QThread* m_thread;
     LibraryScanner m_scanner;
