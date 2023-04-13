@@ -28,10 +28,6 @@
 class QMenu;
 
 namespace Fy {
-namespace Utils {
-class ThreadManager;
-}
-
 namespace Core::Library {
 class MusicLibrary;
 } // namespace Core::Library
@@ -44,8 +40,9 @@ class FilterManager : public Core::Library::LibraryInteractor
     Q_OBJECT
 
 public:
-    explicit FilterManager(Utils::ThreadManager* threadManager, Core::Library::MusicLibrary* library,
-                           FieldRegistry* fieldsRegistry, QObject* parent = nullptr);
+    explicit FilterManager(Core::Library::MusicLibrary* library, FieldRegistry* fieldsRegistry,
+                           QObject* parent = nullptr);
+    ~FilterManager();
 
     [[nodiscard]] Core::TrackList tracks() const override;
     [[nodiscard]] bool hasTracks() const override;
@@ -74,9 +71,9 @@ private:
     void tracksFiltered(const Core::TrackList& tracks);
     void tracksChanged();
 
-    Utils::ThreadManager* m_threadManager;
     Core::Library::MusicLibrary* m_library;
 
+    QThread* m_searchThread;
     TrackFilterer m_searchManager;
 
     FieldRegistry* m_fieldsRegistry;

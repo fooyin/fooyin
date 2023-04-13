@@ -24,7 +24,7 @@
 
 namespace Fy::Core::Engine {
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* parent)
-    : Worker{parent}
+    : QObject{parent}
     , m_engine{new EngineMpv(this)}
 {
     connect(playerManager, &Player::PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);

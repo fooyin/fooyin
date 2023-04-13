@@ -21,17 +21,24 @@
 
 #include <core/library/librarymanager.h>
 
+#include <utils/enumhelper.h>
+
+#include <QSize>
+
 namespace Fy::Gui::Settings {
 LibraryModel::LibraryModel(Core::Library::LibraryManager* libraryManager, QObject* parent)
     : TableModel{parent}
     , m_libraryManager{libraryManager}
 {
     setupModelData();
+
+    QObject::connect(
+        m_libraryManager, &Core::Library::LibraryManager::libraryStatusChanged, this, &LibraryModel::updateDisplay);
 }
 
 void LibraryModel::setupModelData()
 {
-    const auto& libraries = m_libraryManager->allLibrariesInfo();
+    const LibraryInfoList& libraries = m_libraryManager->allLibraries();
 
     for(const auto& library : libraries) {
         if(!(library->id >= 0)) {
@@ -64,8 +71,8 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
             return;
         }
         // New library
-        m_librariesToAdd.emplace_back(std::make_unique<Core::Library::LibraryInfo>(info));
-        library = m_librariesToAdd.back().get();
+        library         = m_librariesToAdd.emplace_back(std::make_unique<Core::Library::LibraryInfo>(info)).get();
+        library->status = Core::Library::Pending;
         m_nodes.emplace(library->path, std::make_unique<LibraryItem>(library, parent));
         item = m_nodes.at(library->path).get();
     }
@@ -232,6 +239,8 @@ QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int 
             return "Name";
         case(2):
             return "Path";
+        case(3):
+            return "Status";
     }
     return {};
 }
@@ -256,6 +265,8 @@ QVariant LibraryModel::data(const QModelIndex& index, int role) const
             return item->info()->name;
         case(2):
             return item->info()->path;
+        case(3):
+            return Utils::EnumHelper::toString(item->info()->status);
     }
 
     return {};
@@ -270,7 +281,12 @@ int LibraryModel::rowCount(const QModelIndex& parent) const
 int LibraryModel::columnCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent)
-    return 3;
+    return 4;
+}
+
+void LibraryModel::updateDisplay()
+{
+    emit dataChanged({}, {}, {Qt::DisplayRole});
 }
 
 bool LibraryModel::findInQueue(const QString& id, OperationType type, QueueEntry* library) const
@@ -286,7 +302,8 @@ bool LibraryModel::findInQueue(const QString& id, OperationType type, QueueEntry
 
 void LibraryModel::removeFromQueue(const QueueEntry& libraryToDelete)
 {
-    m_queue.erase(std::remove_if(m_queue.begin(), m_queue.end(),
+    m_queue.erase(std::remove_if(m_queue.begin(),
+                                 m_queue.end(),
                                  [libraryToDelete](const QueueEntry& library) {
                                      return library == libraryToDelete;
                                  }),

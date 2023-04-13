@@ -93,6 +93,8 @@ public:
     [[nodiscard]] uint64_t addedTime() const;
     [[nodiscard]] uint64_t modifiedTime() const;
 
+    [[nodiscard]] QString sort() const;
+
     void setLibraryId(int id);
 
     void setId(int id);
@@ -125,6 +127,8 @@ public:
 
     void setAddedTime(uint64_t time);
     void setModifiedTime(uint64_t time);
+
+    void setSort(const QString& sort);
 
 private:
     struct Private;

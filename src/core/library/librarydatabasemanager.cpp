@@ -26,11 +26,11 @@
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::Core::Library {
-LibraryDatabaseManager::LibraryDatabaseManager(int libraryId, DB::Database* database, Utils::SettingsManager* settings,
+LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
                                                QObject* parent)
     : Worker{parent}
     , m_database{database}
-    , m_libraryDatabase{database->connectionName(), libraryId}
+    , m_libraryDatabase{database->connectionName()}
     , m_settings{settings}
 { }
 
@@ -39,7 +39,7 @@ void LibraryDatabaseManager::closeThread()
     m_database->closeDatabase();
 }
 
-void LibraryDatabaseManager::getAllTracks(SortOrder order)
+void LibraryDatabaseManager::getAllTracks()
 {
     TrackList tracks;
     const bool wait = m_settings->value<Settings::WaitForTracks>();
@@ -47,13 +47,13 @@ void LibraryDatabaseManager::getAllTracks(SortOrder order)
 
     if(limit > 0 && !wait) {
         int offset = 0;
-        while(m_libraryDatabase.getAllTracks(tracks, order, offset, limit)) {
+        while(m_libraryDatabase.getAllTracks(tracks, offset, limit)) {
             offset += limit;
             emit gotTracks(tracks);
         }
     }
     else {
-        if(m_libraryDatabase.getAllTracks(tracks, order)) {
+        if(m_libraryDatabase.getAllTracks(tracks)) {
             emit gotTracks(tracks);
         }
     }

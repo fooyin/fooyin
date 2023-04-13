@@ -44,13 +44,11 @@
 #include <QScrollBar>
 
 namespace Fy::Gui::Widgets {
-PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager,
-                               Core::Playlist::PlaylistManager* playlistHandler,
+PlaylistWidget::PlaylistWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistManager* playlistHandler,
                                Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                                QWidget* parent)
     : FyWidget{parent}
-    , m_libraryManager{libraryManager}
-    , m_library{libraryManager->currentLibrary()}
+    , m_library{library}
     , m_playerManager{playerManager}
     , m_settings{settings}
     , m_settingsDialog{settings->settingsDialog()}
@@ -84,7 +82,7 @@ PlaylistWidget::PlaylistWidget(Core::Library::LibraryManager* libraryManager,
 
 void PlaylistWidget::setup()
 {
-    if(!m_libraryManager->hasLibrary()) {
+    if(!m_library->hasLibrary()) {
         m_playlist->hide();
         m_layout->addWidget(m_noLibrary);
         m_noLibrary->show();
@@ -105,11 +103,12 @@ void PlaylistWidget::reset()
 
 void PlaylistWidget::setupConnections()
 {
-    connect(m_libraryManager, &Core::Library::LibraryManager::libraryAdded, this, &PlaylistWidget::setup);
-    connect(m_libraryManager, &Core::Library::LibraryManager::libraryRemoved, this, &PlaylistWidget::setup);
+    connect(m_library, &Core::Library::MusicLibrary::libraryAdded, this, &PlaylistWidget::setup);
+    connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &PlaylistWidget::setup);
 
     connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, m_model, &PlaylistModel::setupModelData);
     connect(m_library, &Core::Library::MusicLibrary::tracksChanged, m_model, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::tracksSorted, m_model, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, m_model, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::tracksAdded, m_model, &PlaylistModel::setupModelData);
     connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, m_model, &PlaylistModel::reset);
@@ -117,8 +116,6 @@ void PlaylistWidget::setupConnections()
 
     m_settings->subscribe<Settings::PlaylistHeader>(this, &PlaylistWidget::setHeaderHidden);
     m_settings->subscribe<Settings::PlaylistScrollBar>(this, &PlaylistWidget::setScrollbarHidden);
-
-    connect(m_playlist->header(), &QHeaderView::sectionClicked, this, &PlaylistWidget::switchOrder);
 
     connect(m_model, &QAbstractItemModel::modelReset, this, &PlaylistWidget::reset);
     connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlist, &QAbstractItemView::clearSelection);
@@ -231,51 +228,6 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
 void PlaylistWidget::customHeaderMenuRequested(QPoint pos)
 {
     Q_UNUSED(pos)
-    //    QMenu menu;
-
-    //    const auto order = m_library->sortOrder();
-
-    //    QActionGroup sortOrder{&menu};
-
-    //    QAction yearSort{&menu};
-    //    yearSort.setText("Year");
-    //    yearSort.setData(QVariant::fromValue<Core::Library::SortOrder>(Core::Library::SortOrder::YearDesc));
-    //    yearSort.setCheckable(true);
-    //    yearSort.setChecked(order == Core::Library::SortOrder::YearAsc || order ==
-    //    Core::Library::SortOrder::YearDesc); menu.addAction(&yearSort);
-
-    //    sortOrder.addAction(&yearSort);
-
-    //    menu.addSeparator();
-
-    //    menu.setDefaultAction(sortOrder.checkedAction());
-
-    //    connect(&sortOrder, &QActionGroup::triggered, this, &PlaylistWidget::changeOrder);
-
-    //    menu.popup(mapToGlobal(pos));
-}
-
-void PlaylistWidget::changeOrder(QAction* action)
-{
-    auto order = action->data().value<Core::Library::SortOrder>();
-    m_library->sortTracks(order);
-}
-
-void PlaylistWidget::switchOrder()
-{
-    //    const auto order = m_library->sortOrder();
-    //    switch(order) {
-    //        case(Core::Library::SortOrder::TitleAsc):
-    //            return m_library->sortTracks(Core::Library::SortOrder::TitleDesc);
-    //        case(Core::Library::SortOrder::TitleDesc):
-    //            return m_library->sortTracks(Core::Library::SortOrder::TitleAsc);
-    //        case(Core::Library::SortOrder::YearAsc):
-    //            return m_library->sortTracks(Core::Library::SortOrder::YearDesc);
-    //        case(Core::Library::SortOrder::YearDesc):
-    //            return m_library->sortTracks(Core::Library::SortOrder::YearAsc);
-    //        case(Core::Library::SortOrder::NoSorting):
-    //            return m_library->sortTracks(Core::Library::SortOrder::TitleAsc);
-    //    }
 }
 
 void PlaylistWidget::changeState(Core::Player::PlayState state)

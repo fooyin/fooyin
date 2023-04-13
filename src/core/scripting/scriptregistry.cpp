@@ -44,7 +44,7 @@ bool Registry::funcExists(const QString& func) const
     return m_funcs.count(func);
 }
 
-ScriptResult Registry::varValue(const QString& var) const
+ScriptResult Registry::trackValue(const QString& var) const
 {
     if(var.isEmpty()) {
         return {};
@@ -62,10 +62,10 @@ ScriptResult Registry::varValue(const QString& var) const
         }
         if(std::holds_alternative<IntegerFunc>(function)) {
             auto f    = std::get<1>(function);
-            int value = (m_currentTrack.*f)();
+            const int value = (m_currentTrack.*f)();
 
             ScriptResult result;
-            result.value = QString::number(value);
+            result.value = QStringLiteral("%1").arg(value, 2, 10, QLatin1Char('0'));
             result.cond  = value >= 0;
             return result;
         }
@@ -88,13 +88,7 @@ ScriptResult Registry::varValue(const QString& var) const
             return result;
         }
     }
-
-    if(!m_vars.count(var)) {
-        return {};
-    }
-
-    const QString value = m_vars.at(var).toString();
-    return {value, !value.isEmpty()};
+    return {};
 }
 
 ScriptResult Registry::function(const QString& func, const ValueList& args) const

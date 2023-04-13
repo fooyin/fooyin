@@ -393,7 +393,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
             return item->parent()->type() != PlaylistItem::Type::Album && m_discHeaders && !m_splitDiscs;
         }
         case(PlaylistItem::Role::Playing): {
-            return m_playerManager->currentTrack().id() == track.id();
+            return m_playerManager->currentTrack() == track;
         }
         case(PlaylistItem::Role::Path): {
             return track.filepath();

@@ -20,6 +20,7 @@
 #include "librarygeneralpage.h"
 
 #include "librarymodel.h"
+#include "libraryview.h"
 
 #include "gui/guiconstants.h"
 
@@ -57,32 +58,35 @@ private:
     Core::Library::LibraryManager* m_libraryManager;
     Utils::SettingsManager* m_settings;
 
-    QTableView* m_libraryList;
+    LibraryView* m_libraryView;
     LibraryModel* m_model;
 
     QCheckBox* m_autoRefresh;
     QSpinBox* m_lazyTracksBox;
     QCheckBox* m_waitForTracks;
+
+    QLineEdit* m_sortScript;
 };
 
 LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager,
                                                    Utils::SettingsManager* settings)
     : m_libraryManager{libraryManager}
     , m_settings{settings}
-    , m_libraryList{new QTableView(this)}
+    , m_libraryView{new LibraryView(this)}
     , m_model{new LibraryModel(m_libraryManager, this)}
     , m_autoRefresh{new QCheckBox("Auto refresh on startup", this)}
     , m_lazyTracksBox{new QSpinBox(this)}
     , m_waitForTracks{new QCheckBox("Wait for tracks", this)}
+    , m_sortScript{new QLineEdit(this)}
 {
-    m_libraryList->setModel(m_model);
+    m_libraryView->setModel(m_model);
 
-    m_libraryList->verticalHeader()->hide();
-    m_libraryList->horizontalHeader()->setStretchLastSection(true);
-    m_libraryList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_libraryView->verticalHeader()->hide();
+    m_libraryView->horizontalHeader()->setStretchLastSection(true);
+    m_libraryView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     // Hide Id column
-    m_libraryList->hideColumn(0);
+    m_libraryView->hideColumn(0);
 
     auto* buttons       = new QWidget(this);
     auto* buttonsLayout = new QVBoxLayout(buttons);
@@ -97,7 +101,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     buttonsLayout->addWidget(renameButton);
 
     auto* libraryLayout = new QHBoxLayout();
-    libraryLayout->addWidget(m_libraryList);
+    libraryLayout->addWidget(m_libraryView);
     libraryLayout->addWidget(buttons);
 
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
@@ -106,8 +110,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded.\n(Disables Lazy Tracks)"));
     m_waitForTracks->setChecked(m_settings->value<Core::Settings::WaitForTracks>());
 
-    auto* lazyTracksLabel  = new QLabel("Lazy Tracks:", this);
-    auto* lazyTracksLayout = new QHBoxLayout();
+    auto* lazyTracksLabel = new QLabel("Lazy Tracks:", this);
     m_lazyTracksBox->setToolTip(
         tr("Load tracks from the database in groups of the number specified. \nThis can improve the startup speed "
            "of the playlist for large libraries. \nSet to 0 to turn off. \n(Default: 2500)"));
@@ -117,28 +120,27 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     m_lazyTracksBox->setValue(m_settings->value<Core::Settings::LazyTracks>());
     m_lazyTracksBox->setEnabled(!m_waitForTracks->isChecked());
 
+    auto* lazyTracksLayout = new QHBoxLayout();
+    lazyTracksLayout->addWidget(lazyTracksLabel);
     lazyTracksLayout->addWidget(m_lazyTracksBox);
     lazyTracksLayout->addStretch();
 
-    auto* lazySettingsLayout = new QGridLayout();
-    lazySettingsLayout->addWidget(lazyTracksLabel, 1, 0);
-    lazySettingsLayout->addLayout(lazyTracksLayout, 1, 1);
+    auto* sortScriptLabel  = new QLabel("Sort tracks by:", this);
+    auto* sortScriptLayout = new QHBoxLayout();
+    sortScriptLayout->addWidget(sortScriptLabel);
+    sortScriptLayout->addWidget(m_sortScript);
+    m_sortScript->setText(m_settings->value<Core::Settings::SortScript>());
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(libraryLayout);
     mainLayout->addWidget(m_autoRefresh);
     mainLayout->addWidget(m_waitForTracks);
-    mainLayout->addLayout(lazySettingsLayout);
+    mainLayout->addLayout(lazyTracksLayout);
+    mainLayout->addLayout(sortScriptLayout);
 
-    connect(addButton, &QPushButton::clicked, this, [this]() {
-        addLibrary();
-    });
-    connect(removeButton, &QPushButton::clicked, this, [this]() {
-        removeLibrary();
-    });
-    connect(renameButton, &QPushButton::clicked, this, [this]() {
-        renameLibrary();
-    });
+    connect(addButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::addLibrary);
+    connect(removeButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::removeLibrary);
+    connect(renameButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::renameLibrary);
 
     connect(m_waitForTracks, &QCheckBox::clicked, this, [this](bool checked) {
         m_lazyTracksBox->setEnabled(!checked);
@@ -150,13 +152,14 @@ void LibraryGeneralPageWidget::apply()
     m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
     m_settings->set<Core::Settings::LazyTracks>(m_lazyTracksBox->value());
     m_settings->set<Core::Settings::WaitForTracks>(m_waitForTracks->isChecked());
+    m_settings->set<Core::Settings::SortScript>(m_sortScript->text());
     m_model->processQueue();
 }
 
 void LibraryGeneralPageWidget::addLibrary() const
 {
-    const QString newDir = QFileDialog::getExistingDirectory(m_libraryList, tr("Directory"), QDir::homePath(),
-                                                             QFileDialog::ShowDirsOnly);
+    const QString newDir = QFileDialog::getExistingDirectory(
+        m_libraryView, tr("Directory"), QDir::homePath(), QFileDialog::ShowDirsOnly);
 
     if(newDir.isEmpty()) {
         return;
@@ -166,8 +169,8 @@ void LibraryGeneralPageWidget::addLibrary() const
     const QString name = info.fileName();
 
     bool success       = false;
-    const QString text = QInputDialog::getText(m_libraryList, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal,
-                                               name, &success);
+    const QString text = QInputDialog::getText(
+        m_libraryView, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal, name, &success);
 
     if(success && !text.isEmpty()) {
         Core::Library::LibraryInfo const info{name, newDir};
@@ -177,23 +180,24 @@ void LibraryGeneralPageWidget::addLibrary() const
 
 void LibraryGeneralPageWidget::removeLibrary() const
 {
-    const auto selectedItems = m_libraryList->selectionModel()->selectedRows();
+    const auto selectedItems = m_libraryView->selectionModel()->selectedRows();
     for(const auto& selected : selectedItems) {
         const auto* item = static_cast<LibraryItem*>(selected.internalPointer());
         m_model->markForRemoval(item->info());
     }
+    //    m_libraryList->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
 void LibraryGeneralPageWidget::renameLibrary() const
 {
-    const auto selectedItems = m_libraryList->selectionModel()->selectedRows();
+    const auto selectedItems = m_libraryView->selectionModel()->selectedRows();
     for(const auto& selected : selectedItems) {
         const auto* item = static_cast<LibraryItem*>(selected.internalPointer());
         auto* info       = item->info();
 
         bool success       = false;
-        const QString text = QInputDialog::getText(m_libraryList, tr("Rename Library"), tr("Library Name:"),
-                                                   QLineEdit::Normal, info->name, &success);
+        const QString text = QInputDialog::getText(
+            m_libraryView, tr("Rename Library"), tr("Library Name:"), QLineEdit::Normal, info->name, &success);
 
         if(success && !text.isEmpty()) {
             info->name = text;

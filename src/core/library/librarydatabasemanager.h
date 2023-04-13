@@ -20,8 +20,6 @@
 #pragma once
 
 #include "core/database/librarydatabase.h"
-#include "core/library/sorting/sortorder.h"
-#include "core/models/trackfwd.h"
 
 #include <utils/worker.h>
 
@@ -32,7 +30,6 @@ class SettingsManager;
 }
 
 namespace Core {
-
 namespace DB {
 class Database;
 } // namespace DB
@@ -43,12 +40,12 @@ class LibraryDatabaseManager : public Utils::Worker
     Q_OBJECT
 
 public:
-    explicit LibraryDatabaseManager(int libraryId, DB::Database* database, Utils::SettingsManager* settings,
+    explicit LibraryDatabaseManager(DB::Database* database, Utils::SettingsManager* settings,
                                     QObject* parent = nullptr);
 
     void closeThread() override;
 
-    void getAllTracks(SortOrder order);
+    void getAllTracks();
 
 signals:
     void allTracksLoaded();

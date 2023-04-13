@@ -39,10 +39,9 @@ void FiltersPlugin::initialise(const Core::CorePluginContext& context)
     m_library       = context.library;
     m_playerManager = context.playerManager;
     m_settings      = context.settingsManager;
-    m_threadManager = context.threadManager;
 
     m_fieldsRegistry = std::make_unique<FieldRegistry>(m_settings);
-    m_filterManager  = new FilterManager(m_threadManager, m_library, m_fieldsRegistry.get(), this);
+    m_filterManager  = new FilterManager(m_library, m_fieldsRegistry.get(), this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
 
     m_fieldsRegistry->loadFields();

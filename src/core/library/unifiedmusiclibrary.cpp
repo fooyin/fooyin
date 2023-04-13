@@ -18,67 +18,187 @@
  */
 
 #include "unifiedmusiclibrary.h"
+
+#include "core/coresettings.h"
+#include "librarydatabasemanager.h"
+#include "libraryinfo.h"
+#include "libraryinteractor.h"
 #include "librarymanager.h"
-#include "unifiedtrackstore.h"
+#include "libraryscanner.h"
 
 #include <utils/helpers.h>
+#include <utils/settings/settingsmanager.h>
+
+#include <QThread>
+#include <QTimer>
 
 namespace Fy::Core::Library {
-UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryInfo* info, LibraryManager* libraryManager, QObject* parent)
-    : MusicLibraryInternal{parent}
-    , m_info{info}
+UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database,
+                                         Utils::SettingsManager* settings, QObject* parent)
+    : MusicLibrary{parent}
     , m_libraryManager{libraryManager}
-    , m_trackStore{std::make_unique<UnifiedTrackStore>()}
-    , m_order{SortOrder::NoSorting}
-{ }
-
-void UnifiedMusicLibrary::loadLibrary()
+    , m_database{database}
+    , m_settings{settings}
+    , m_threadHandler{database, settings}
 {
-    const LibraryIdMap& libraries = m_libraryManager->allLibraries();
-    for(const auto& library : libraries) {
-        library.second->loadLibrary();
+    connect(m_libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::reload);
+    connect(m_libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::libraryAdded);
+    connect(m_libraryManager, &LibraryManager::libraryRemoved, this, &MusicLibrary::removeLibrary);
+    connect(this, &UnifiedMusicLibrary::libraryRemoved, &m_threadHandler, &LibraryThreadHandler::libraryRemoved);
+
+    connect(this, &UnifiedMusicLibrary::runLibraryScan, &m_threadHandler, &LibraryThreadHandler::scanLibrary);
+    connect(&m_threadHandler, &LibraryThreadHandler::progressChanged, this, &UnifiedMusicLibrary::scanProgress);
+    connect(&m_threadHandler, &LibraryThreadHandler::statusChanged, this, &UnifiedMusicLibrary::libraryStatusChanged);
+    connect(&m_threadHandler,
+            &LibraryThreadHandler::statusChanged,
+            m_libraryManager,
+            &LibraryManager::libraryStatusChanged);
+    connect(&m_threadHandler, &LibraryThreadHandler::addedTracks, this, &UnifiedMusicLibrary::addTracks);
+    connect(&m_threadHandler, &LibraryThreadHandler::updatedTracks, this, &UnifiedMusicLibrary::updateTracks);
+    connect(&m_threadHandler, &LibraryThreadHandler::tracksDeleted, this, &UnifiedMusicLibrary::removeTracks);
+
+    connect(&m_threadHandler, &LibraryThreadHandler::gotTracks, this, &UnifiedMusicLibrary::loadTracks);
+    connect(&m_threadHandler, &LibraryThreadHandler::allTracksLoaded, this, &UnifiedMusicLibrary::allTracksLoaded);
+    connect(this, &UnifiedMusicLibrary::loadAllTracks, &m_threadHandler, &LibraryThreadHandler::getAllTracks);
+
+    m_settings->subscribe<Settings::SortScript>(this, &UnifiedMusicLibrary::sortTracks);
+    m_trackSorter.changeSorting(m_settings->value<Settings::SortScript>());
+
+    if(m_settings->value<Settings::AutoRefresh>()) {
+        QTimer::singleShot(3000, this, &Library::UnifiedMusicLibrary::reloadAll);
     }
 }
 
-void UnifiedMusicLibrary::reload()
+void UnifiedMusicLibrary::loadLibrary()
 {
-    const LibraryIdMap& libraries = m_libraryManager->allLibraries();
+    getAllTracks();
+}
+
+void UnifiedMusicLibrary::reloadAll()
+{
+    const LibraryInfoList& libraries = m_libraryManager->allLibraries();
     for(const auto& library : libraries) {
-        library.second->reload();
+        if(library->id >= 0) {
+            reload(library.get());
+        }
     }
+}
+
+void UnifiedMusicLibrary::reload(LibraryInfo* library)
+{
+    emit runLibraryScan(*library, tracks());
 }
 
 void UnifiedMusicLibrary::rescan()
 {
-    const LibraryIdMap& libraries = m_libraryManager->allLibraries();
-    for(const auto& library : libraries) {
-        library.second->rescan();
-    }
+    getAllTracks();
 }
 
-LibraryInfo* UnifiedMusicLibrary::info() const
+bool UnifiedMusicLibrary::hasLibrary() const
 {
-    return m_info;
+    return m_libraryManager->hasLibrary();
+}
+
+TrackList UnifiedMusicLibrary::allTracks() const
+{
+    return m_tracks;
 }
 
 TrackList UnifiedMusicLibrary::tracks() const
 {
-    return m_trackStore->tracks();
+    TrackList intersectedTracks;
+
+    for(const auto& interactor : m_interactors) {
+        if(interactor->hasTracks()) {
+            auto interactorTracks = interactor->tracks();
+            if(intersectedTracks.empty()) {
+                intersectedTracks.insert(intersectedTracks.end(), interactorTracks.cbegin(), interactorTracks.cend());
+            }
+            else {
+                intersectedTracks = Utils::intersection<Track, Track::TrackHash>(interactorTracks, intersectedTracks);
+            }
+        }
+    }
+    return !intersectedTracks.empty() ? intersectedTracks : m_tracks;
 }
 
-UnifiedTrackStore* UnifiedMusicLibrary::trackStore() const
+void UnifiedMusicLibrary::sortTracks(const QString& sort)
 {
-    return m_trackStore.get();
+    m_trackSorter.changeSorting(sort);
+    m_trackSorter.calcSortFields(m_tracks);
+    m_tracks = m_trackSorter.sortTracks(m_tracks);
+    emit tracksSorted();
 }
 
-SortOrder UnifiedMusicLibrary::sortOrder() const
+void UnifiedMusicLibrary::addInteractor(LibraryInteractor* interactor)
 {
-    return m_order;
+    m_interactors.emplace_back(interactor);
 }
 
-void UnifiedMusicLibrary::sortTracks(SortOrder order)
+void UnifiedMusicLibrary::removeLibrary(int id)
 {
-    m_order = order;
-    m_trackStore->sort(m_order);
+    TrackList filtered{m_tracks};
+    filtered.erase(std::remove_if(filtered.begin(),
+                                  filtered.end(),
+                                  [id](const Track& track) {
+                                      return track.libraryId() == id;
+                                  }),
+                   filtered.end());
+    m_tracks = filtered;
+    emit libraryRemoved(id);
+}
+
+void UnifiedMusicLibrary::getAllTracks()
+{
+    emit loadAllTracks();
+}
+
+void UnifiedMusicLibrary::loadTracks(const TrackList& tracks)
+{
+    addTracks(tracks);
+    emit tracksLoaded(tracks);
+}
+
+void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
+{
+    m_tracks.reserve(m_tracks.size() + tracks.size());
+
+    TrackList newTracks{tracks};
+    m_trackSorter.calcSortFields(newTracks);
+
+    for(const Track& track : newTracks) {
+        m_tracks.emplace_back(track);
+    }
+    m_tracks = m_trackSorter.sortTracks(m_tracks);
+    emit tracksAdded(newTracks);
+}
+
+void UnifiedMusicLibrary::updateTracks(const TrackList& tracks)
+{
+    for(const auto& track : tracks) {
+        auto it = std::find(m_tracks.begin(), m_tracks.end(), track);
+        if(it != m_tracks.cend()) {
+            *it = track;
+        }
+    }
+    emit tracksUpdated(tracks);
+}
+
+void UnifiedMusicLibrary::removeTracks(const TrackList& tracks)
+{
+    for(const Track& track : tracks) {
+        const int trackId = track.id();
+        m_tracks.erase(std::find_if(m_tracks.begin(), m_tracks.end(), [trackId](const Track& track) {
+            return track.id() == trackId;
+        }));
+    }
+    emit tracksDeleted(tracks);
+}
+
+void UnifiedMusicLibrary::libraryStatusChanged(const LibraryInfo& library)
+{
+    if(LibraryInfo* info = m_libraryManager->libraryInfo(library.id)) {
+        *info = library;
+    }
 }
 } // namespace Fy::Core::Library

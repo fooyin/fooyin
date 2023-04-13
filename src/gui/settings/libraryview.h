@@ -19,24 +19,14 @@
 
 #pragma once
 
-#include "trackstore.h"
+#include <QTableView>
 
-namespace Fy::Core::Library {
-class UnifiedTrackStore : public TrackStore
+namespace Fy::Gui::Settings {
+class LibraryView : public QTableView
 {
 public:
-    [[nodiscard]] TrackList tracks() const override;
+    LibraryView(QWidget* parent = nullptr);
 
-    void add(const TrackList& tracks) override;
-    void update(const TrackList& tracks) override;
-    void remove(const TrackList& tracks) override;
-
-    void sort(SortOrder order) override;
-
-    void addLibrary(int libraryId, TrackStore* store);
-    void removeLibrary(int libraryId);
-
-private:
-    std::unordered_map<int, TrackStore*> m_libraryStores;
+    void resizeEvent(QResizeEvent* event) override;
 };
-} // namespace Fy::Core::Library
+} // namespace Fy::Gui::Settings

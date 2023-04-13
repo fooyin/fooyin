@@ -20,15 +20,12 @@
 #pragma once
 
 #include "libraryinfo.h"
-#include "musiclibrary.h"
-#include "unifiedmusiclibrary.h"
 
 #include <QObject>
 
 namespace Fy {
 
 namespace Utils {
-class ThreadManager;
 class SettingsManager;
 } // namespace Utils
 
@@ -39,33 +36,20 @@ class Library;
 } // namespace DB
 
 namespace Library {
-class UnifiedTrackStore;
-class MusicLibraryContainer;
-
-using LibraryIdMap = std::unordered_map<int, MusicLibraryInternal*>;
-
 class LibraryManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit LibraryManager(Utils::ThreadManager* threadManager, DB::Database* database,
-                            Utils::SettingsManager* settings, QObject* parent = nullptr);
-    ~LibraryManager() override;
+    explicit LibraryManager(DB::Database* database, Utils::SettingsManager* settings, QObject* parent = nullptr);
 
     void reset();
 
-    [[nodiscard]] MusicLibrary* currentLibrary() const;
-    [[nodiscard]] MusicLibrary* library(int id) const;
-
-    [[nodiscard]] const LibraryInfoList& allLibrariesInfo() const;
-    [[nodiscard]] const LibraryIdMap& allLibraries() const;
+    [[nodiscard]] const LibraryInfoList& allLibraries() const;
 
     int addLibrary(const QString& path, const QString& name);
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
-
-    void changeCurrentLibrary(int id);
 
     [[nodiscard]] bool hasLibrary() const;
     [[nodiscard]] bool hasLibrary(int id) const;
@@ -74,24 +58,17 @@ public:
     [[nodiscard]] LibraryInfo* libraryInfo(int id) const;
 
 signals:
-    void libraryAdded(Library::LibraryInfo* info);
+    void libraryAdded(Library::LibraryInfo* library);
     void libraryRemoved(int id);
     void libraryRenamed(int id, const QString& name);
+    void libraryStatusChanged(const Library::LibraryInfo& info);
 
 private:
-    MusicLibraryInternal* addNewLibrary(LibraryInfo* info);
-
-    Utils::ThreadManager* m_threadManager;
     DB::Database* m_database;
     Utils::SettingsManager* m_settings;
 
     DB::Library* m_libraryConnector;
-
-    LibraryInfoList m_libraryInfos;
-    LibraryIdMap m_libraries;
-    UnifiedMusicLibrary* m_unifiedLibrary;
-    UnifiedTrackStore* m_unifiedStore;
-    MusicLibraryContainer* m_libraryHandler;
+    LibraryInfoList m_libraries;
 };
 } // namespace Library
 } // namespace Core

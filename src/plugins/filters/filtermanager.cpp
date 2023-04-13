@@ -23,21 +23,19 @@
 
 #include <core/library/musiclibrary.h>
 
-#include <utils/threadmanager.h>
-
 #include <QActionGroup>
 #include <QMenu>
+#include <QThread>
 
 namespace Fy::Filters {
-FilterManager::FilterManager(Utils::ThreadManager* threadManager, Core::Library::MusicLibrary* library,
-                             FieldRegistry* fieldsRegistry, QObject* parent)
+FilterManager::FilterManager(Core::Library::MusicLibrary* library, FieldRegistry* fieldsRegistry, QObject* parent)
     : LibraryInteractor{parent}
-    , m_threadManager{threadManager}
     , m_library{library}
+    , m_searchThread{new QThread(this)}
     , m_fieldsRegistry{fieldsRegistry}
     , m_lastFilterIndex{-1}
 {
-    m_threadManager->moveToNewThread(&m_searchManager);
+    m_searchManager.moveToThread(m_searchThread);
 
     connect(this, &FilterManager::filteredTracks, m_library, &Core::Library::MusicLibrary::tracksChanged);
 
@@ -48,12 +46,21 @@ FilterManager::FilterManager(Utils::ThreadManager* threadManager, Core::Library:
     connect(m_library, &Core::Library::MusicLibrary::tracksUpdated, this, &FilterManager::tracksChanged);
     connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &FilterManager::tracksChanged);
     connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, this, &FilterManager::tracksChanged);
+    connect(m_library, &Core::Library::MusicLibrary::tracksSorted, this, &FilterManager::tracksChanged);
     connect(m_library, &Core::Library::MusicLibrary::libraryChanged, this, &FilterManager::tracksChanged);
     connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &FilterManager::tracksChanged);
 
     connect(m_fieldsRegistry, &FieldRegistry::fieldChanged, this, &FilterManager::fieldChanged);
 
     m_library->addInteractor(this);
+
+    m_searchThread->start();
+}
+
+FilterManager::~FilterManager()
+{
+    m_searchThread->quit();
+    m_searchThread->wait();
 }
 
 Core::TrackList FilterManager::tracks() const

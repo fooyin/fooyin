@@ -21,15 +21,13 @@
 
 #include "core/player/playermanager.h"
 
-#include <utils/worker.h>
-
 #include <QObject>
 #include <QThread>
 
 namespace Fy::Core::Engine {
 class Engine;
 
-class EngineHandler : public Utils::Worker
+class EngineHandler : public QObject
 {
     Q_OBJECT
 

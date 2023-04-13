@@ -19,6 +19,7 @@
 
 #include "statuswidget.h"
 
+#include <core/library/musiclibrary.h>
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
 #include <utils/clickablelabel.h>
@@ -27,10 +28,13 @@
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
+#include <QTimer>
 
 namespace Fy::Gui::Widgets {
-StatusWidget::StatusWidget(Core::Player::PlayerManager* playerManager, QWidget* parent)
+StatusWidget::StatusWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
+                           QWidget* parent)
     : FyWidget{parent}
+    , m_library{library}
     , m_playerManager{playerManager}
     , m_layout{new QHBoxLayout(this)}
     , m_iconLabel{new Utils::ClickableLabel(this)}
@@ -39,32 +43,10 @@ StatusWidget::StatusWidget(Core::Player::PlayerManager* playerManager, QWidget* 
 {
     setObjectName("Status Bar");
 
-    setupUi();
-
-    connect(m_playing, &Utils::ClickableLabel::clicked, this, &StatusWidget::labelClicked);
-    connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &StatusWidget::reloadStatus);
-    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
-}
-
-QString StatusWidget::name() const
-{
-    return "Status";
-}
-
-void StatusWidget::setupUi()
-{
     m_layout->setContentsMargins(5, 0, 0, 0);
 
     m_iconLabel->setPixmap(m_icon);
     m_iconLabel->setScaledContents(true);
-
-    // m_playing->setText("Waiting for track...");
-
-    //    Utils::setMinimumWidth(m_iconLabel, "...");
-
-    //    QPalette palette;
-    //    palette.setColor(QPalette::WindowText, Qt::white);
-    //    m_playing->setPalette(palette);
 
     m_iconLabel->setMaximumHeight(22);
     m_iconLabel->setMaximumWidth(22);
@@ -73,7 +55,15 @@ void StatusWidget::setupUi()
     m_layout->addWidget(m_playing);
 
     setMinimumHeight(25);
-    //    m_playing->setMinimumHeight(25);
+
+    connect(m_playing, &Utils::ClickableLabel::clicked, this, &StatusWidget::labelClicked);
+    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
+    connect(m_library, &Core::Library::MusicLibrary::scanProgress, this, &StatusWidget::scanProgressChanged);
+}
+
+QString StatusWidget::name() const
+{
+    return "Status";
 }
 
 void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -89,12 +79,6 @@ void StatusWidget::labelClicked()
     }
 }
 
-void StatusWidget::reloadStatus()
-{
-    Core::Track track = m_playerManager->currentTrack();
-    m_playing->setText(track.title());
-}
-
 void StatusWidget::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
@@ -102,16 +86,26 @@ void StatusWidget::stateChanged(Core::Player::PlayState state)
             m_playing->setText("Waiting for track...");
             break;
         case(Core::Player::Playing): {
-            Core::Track track = m_playerManager->currentTrack();
-            auto number       = QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0'));
-            auto duration     = QString(" (%1)").arg(Utils::msToString(track.duration()));
-            auto albumArtist  = !track.albumArtist().isEmpty() ? " \u2022 " + track.albumArtist() : "";
-            auto album        = !track.album().isEmpty() ? " \u2022 " + track.album() : "";
-            auto text         = number + ". " + track.title() + duration + albumArtist + album;
-            m_playing->setText(text);
+            const Core::Track track = m_playerManager->currentTrack();
+            const auto playingText  = QString{"%1. %2 (%3) \u2022 %4 \u2022 %5"}.arg(
+                QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0')),
+                track.title(),
+                Utils::msToString(track.duration()),
+                track.albumArtist(),
+                track.album());
+            m_playing->setText(playingText);
         }
         case(Core::Player::Paused):
             break;
     }
+}
+
+void StatusWidget::scanProgressChanged(int progress)
+{
+    if(progress == 100) {
+        QTimer::singleShot(2000, m_playing, &QLabel::clear);
+    }
+    const auto scanText = QString{"Scanning library: %1%"}.arg(progress);
+    m_playing->setText(scanText);
 }
 } // namespace Fy::Gui::Widgets

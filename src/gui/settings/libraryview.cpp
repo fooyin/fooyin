@@ -17,11 +17,21 @@
  *
  */
 
-#pragma once
+#include "libraryview.h"
 
-#include "core/models/trackfwd.h"
-#include "sortorder.h"
+#include <QHeaderView>
+#include <QResizeEvent>
 
-namespace Fy::Core::Library::Sorting {
-void sortTracks(TrackList& tracks, SortOrder sortOrder);
-} // namespace Fy::Core::Library::Sorting
+namespace Fy::Gui::Settings {
+LibraryView::LibraryView(QWidget* parent)
+    : QTableView{parent}
+{ }
+
+void LibraryView::resizeEvent(QResizeEvent* event)
+{
+    const int width = event->size().width();
+    setColumnWidth(1, width * 0.30);
+    setColumnWidth(2, width * 0.55);
+    setColumnWidth(3, width * 0.15);
+}
+} // namespace Fy::Gui::Settings

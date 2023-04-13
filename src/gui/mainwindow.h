@@ -30,7 +30,7 @@ class SettingsManager;
 
 namespace Core {
 namespace Library {
-class LibraryManager;
+class MusicLibrary;
 }
 
 namespace Player {
@@ -59,7 +59,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                        Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings,
+                        Core::Library::MusicLibrary* library, Utils::SettingsManager* settings,
                         LayoutProvider* layoutProvider, Widgets::WidgetFactory* widgetFactory,
                         QWidget* parent = nullptr);
 
@@ -82,7 +82,7 @@ private:
 
     Utils::ActionManager* m_actionManager;
     Core::Player::PlayerManager* m_playerManager;
-    Core::Library::LibraryManager* m_libraryManager;
+    Core::Library::MusicLibrary* m_library;
     Utils::SettingsManager* m_settings;
     Widgets::WidgetFactory* m_widgetFactory;
 

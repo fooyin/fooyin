@@ -31,8 +31,8 @@ class SettingsManager;
 } // namespace Utils
 
 namespace Core::Library {
-class LibraryManager;
-}
+class MusicLibrary;
+} // namespace Core::Library
 
 namespace Gui {
 class LibraryMenu : public QObject
@@ -40,22 +40,18 @@ class LibraryMenu : public QObject
     Q_OBJECT
 
 public:
-    LibraryMenu(Utils::ActionManager* actionManager, Core::Library::LibraryManager* libraryManager,
+    LibraryMenu(Utils::ActionManager* actionManager, Core::Library::MusicLibrary* library,
                 Utils::SettingsManager* settings, QObject* parent = nullptr);
 
 private:
     void setupSwitchMenu();
 
     Utils::ActionManager* m_actionManager;
-    Core::Library::LibraryManager* m_libraryManager;
+    Core::Library::MusicLibrary* m_library;
     Utils::SettingsManager* m_settings;
 
     QAction* m_openSettings;
     QAction* m_rescanLibrary;
-
-    Utils::ActionContainer* m_switchLibraryMenu;
-    QActionGroup* m_librarySwitchGroup;
-    std::vector<std::unique_ptr<QAction>> m_libraryActions;
 };
 } // namespace Gui
 } // namespace Fy

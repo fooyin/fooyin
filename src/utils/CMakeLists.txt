@@ -21,7 +21,6 @@ set(SOURCES
     scrollarea.cpp
     slider.cpp
     tablemodel.cpp
-    threadmanager.cpp
     utils.cpp
     worker.cpp
 

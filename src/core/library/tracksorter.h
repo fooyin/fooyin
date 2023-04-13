@@ -19,26 +19,20 @@
 
 #pragma once
 
-#include "trackstore.h"
+#include "core/models/trackfwd.h"
+#include "core/scripting/scriptparser.h"
 
 namespace Fy::Core::Library {
-class SingleTrackStore : public TrackStore
+class TrackSorter
 {
 public:
-    [[nodiscard]] TrackList tracks() const override;
+    TrackList sortTracks(const TrackList& tracks);
+    void calcSortFields(TrackList& tracks);
 
-    void add(const TrackList& tracks) override;
-
-    void update(const TrackList& tracks) override;
-
-    void remove(const TrackList& tracks) override;
-    void remove(int trackId);
-
-    void sort(SortOrder order) override;
-
-    void clear();
+    void changeSorting(const QString& sort);
 
 private:
-    TrackList m_tracks;
+    Scripting::Parser m_parser;
+    Scripting::ParsedScript m_sortScript;
 };
 } // namespace Fy::Core::Library

@@ -38,7 +38,8 @@ enum Core : uint32_t
     PlayMode        = 4,
     AutoRefresh     = 5 | Utils::Settings::Bool,
     LazyTracks      = 6 | Utils::Settings::Int,
-    WaitForTracks   = 7 | Utils::Settings::Bool
+    WaitForTracks   = 7 | Utils::Settings::Bool,
+    SortScript      = 8 | Utils::Settings::String,
 };
 Q_ENUM_NS(Core)
 

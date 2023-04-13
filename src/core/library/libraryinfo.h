@@ -22,6 +22,16 @@
 #include <QString>
 
 namespace Fy::Core::Library {
+Q_NAMESPACE
+enum Status
+{
+    Idle,
+    Pending,
+    Initialised,
+    Scanning,
+};
+Q_ENUM_NS(Status)
+
 struct LibraryInfo
 {
     LibraryInfo() = default;
@@ -32,6 +42,7 @@ struct LibraryInfo
     QString name;
     QString path;
     int id{-1};
+    Status status{Idle};
 };
-using LibraryInfoList = std::vector<std::unique_ptr<Core::Library::LibraryInfo>>;
+using LibraryInfoList = std::vector<std::unique_ptr<LibraryInfo>>;
 } // namespace Fy::Core::Library

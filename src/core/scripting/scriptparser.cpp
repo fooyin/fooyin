@@ -161,7 +161,7 @@ ScriptResult Parser::evalLiteral(const Expression& exp) const
 ScriptResult Parser::evalVariable(const Expression& exp) const
 {
     const QString var   = std::get<QString>(exp.value);
-    ScriptResult result = m_registry.varValue(var);
+    ScriptResult result = m_registry.trackValue(var);
 
     if(result.value.contains(Constants::Separator)) {
         // TODO: Support custom separators
@@ -173,7 +173,7 @@ ScriptResult Parser::evalVariable(const Expression& exp) const
 ScriptResult Parser::evalVariableList(const Expression& exp) const
 {
     const QString var = std::get<QString>(exp.value);
-    return registry().varValue(var);
+    return registry().trackValue(var);
 }
 
 ScriptResult Parser::evalFunction(const Expression& exp) const
