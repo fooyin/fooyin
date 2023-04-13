@@ -41,6 +41,8 @@ public:
     explicit FilterModel(FilterField* field, QObject* parent = nullptr);
 
     void setField(FilterField* field);
+    void setRowHeight(int height);
+    void setFontSize(int size);
 
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -66,6 +68,9 @@ private:
     std::unique_ptr<FilterItem> m_allNode;
     std::unordered_map<QString, std::unique_ptr<FilterItem>> m_nodes;
     FilterField* m_field;
+
+    int m_rowHeight;
+    int m_fontSize;
 
     Core::Scripting::Parser m_parser;
 };

@@ -30,11 +30,7 @@ FilterView::FilterView(QWidget* parent)
     : QTreeView(parent)
 {
     setObjectName("FilterView");
-    setupView();
-}
 
-void FilterView::setupView()
-{
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setMouseTracking(true);

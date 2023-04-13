@@ -65,6 +65,9 @@ FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* setti
     setScrollbarEnabled(m_settings->value<Settings::FilterScrollBar>());
     setAltColors(m_settings->value<Settings::FilterAltColours>());
 
+    m_model->setRowHeight(m_settings->value<Settings::FilterRowHeight>());
+    m_model->setFontSize(m_settings->value<Settings::FilterFontSize>());
+
     resetByType();
 }
 
@@ -78,6 +81,8 @@ void FilterWidget::setupConnections()
     m_settings->subscribe<Settings::FilterAltColours>(this, &FilterWidget::setAltColors);
     m_settings->subscribe<Settings::FilterHeader>(this, &FilterWidget::setHeaderEnabled);
     m_settings->subscribe<Settings::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
+    m_settings->subscribe<Settings::FilterRowHeight>(m_model, &FilterModel::setRowHeight);
+    m_settings->subscribe<Settings::FilterFontSize>(m_model, &FilterModel::setFontSize);
 
     connect(m_view->header(), &FilterView::customContextMenuRequested, this, &FilterWidget::customHeaderMenuRequested);
     connect(m_view, &QTreeView::doubleClicked, this, []() {

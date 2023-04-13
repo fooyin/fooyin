@@ -36,8 +36,6 @@ class FilterView : public QTreeView
 public:
     explicit FilterView(QWidget* parent = nullptr);
 
-    void setupView();
-
 protected:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;

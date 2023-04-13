@@ -26,14 +26,6 @@ FilterDelegate::FilterDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 { }
 
-QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    const auto width = index.data(Qt::SizeHintRole).toSize().width();
-    auto height      = option.fontMetrics.height();
-    height += 8;
-    return {width, height};
-}
-
 void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     painter->save();
@@ -41,11 +33,14 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    QFont font = painter->font();
-    font.setBold(false);
-    font.setPixelSize(13);
-    painter->setFont(font);
-    //    painter->setPen(Qt::white);
+    const int fontSize = index.data(Qt::FontRole).toInt();
+
+    if(fontSize > 0) {
+        QFont font = painter->font();
+        font.setPixelSize(fontSize);
+        painter->setFont(font);
+        //    painter->setPen(Qt::white);
+    }
 
     const QString title = index.data(Qt::DisplayRole).toString();
 
@@ -63,7 +58,11 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         painter->fillRect(rect, hoverCol);
     }
 
-    opt.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, opt.palette, true,
+    opt.widget->style()->drawItemText(painter,
+                                      titleRect,
+                                      Qt::AlignLeft | Qt::AlignVCenter,
+                                      opt.palette,
+                                      true,
                                       painter->fontMetrics().elidedText(title, Qt::ElideRight, rect.width()));
     painter->restore();
 }

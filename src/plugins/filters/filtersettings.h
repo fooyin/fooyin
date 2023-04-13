@@ -37,6 +37,8 @@ enum Filters : uint32_t
     FilterHeader     = 2 | Utils::Settings::Bool,
     FilterScrollBar  = 3 | Utils::Settings::Bool,
     FilterFields     = 4 | Utils::Settings::ByteArray,
+    FilterFontSize   = 5 | Utils::Settings::Int,
+    FilterRowHeight  = 6 | Utils::Settings::Int,
 
 };
 Q_ENUM_NS(Filters)

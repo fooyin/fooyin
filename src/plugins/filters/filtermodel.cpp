@@ -26,6 +26,8 @@
 
 #include <utils/helpers.h>
 
+#include <QSize>
+
 namespace Fy::Filters {
 FilterModel::FilterModel(FilterField* field, QObject* parent)
     : QAbstractListModel{parent}
@@ -36,6 +38,18 @@ FilterModel::FilterModel(FilterField* field, QObject* parent)
 void FilterModel::setField(FilterField* field)
 {
     m_field = field;
+}
+
+void FilterModel::setRowHeight(int height)
+{
+    m_rowHeight = height;
+    emit layoutChanged({}, {});
+}
+
+void FilterModel::setFontSize(int size)
+{
+    m_fontSize = size;
+    emit dataChanged({}, {}, {Qt::FontRole});
 }
 
 QVariant FilterModel::data(const QModelIndex& index, int role) const
@@ -62,6 +76,12 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         }
         case(FilterItemRole::Sorting): {
             return item->data(FilterItemRole::Sorting);
+        }
+        case(Qt::SizeHintRole): {
+            return QSize{0, m_rowHeight};
+        }
+        case(Qt::FontRole): {
+            return m_fontSize;
         }
         default: {
             return {};

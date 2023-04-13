@@ -34,6 +34,8 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
         "BpAHMAdAAAABoAJQBhAGwAYgB1AG0AYQByAHQAaQBzAHQAJQAAAAAAAAACAAAAAgAAAAwAQQByAHQAaQBzAHQAAAAUACUAPABhAHIAdABpAHMA"
         "dAA+ACUAAAAAAAAAAwAAAAMAAAAKAEEAbABiAHUAbQAAAA4AJQBhAGwAYgB1AG0AJQAAAAA=",
         "Filters");
+    m_settings->createSetting(Settings::FilterFontSize, 13, "Filters");
+    m_settings->createSetting(Settings::FilterRowHeight, 25, "Filters");
 
     m_settings->loadSettings();
 }

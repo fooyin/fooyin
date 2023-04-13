@@ -26,6 +26,8 @@
 
 #include <QCheckBox>
 #include <QGroupBox>
+#include <QLabel>
+#include <QSpinBox>
 #include <QVBoxLayout>
 
 namespace Fy::Filters::Settings {
@@ -39,29 +41,49 @@ public:
 private:
     Utils::SettingsManager* m_settings;
 
-    QVBoxLayout* m_mainLayout;
-
     QCheckBox* m_filterHeaders;
     QCheckBox* m_filterScrollBars;
     QCheckBox* m_altRowColours;
+
+    QSpinBox* m_fontSize;
+    QSpinBox* m_rowHeight;
 };
 
 FiltersAppearancePageWidget::FiltersAppearancePageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
-    , m_mainLayout{new QVBoxLayout(this)}
     , m_filterHeaders{new QCheckBox("Show Headers", this)}
     , m_filterScrollBars{new QCheckBox("Show Scrollbars", this)}
     , m_altRowColours{new QCheckBox("Alternating Row Colours", this)}
+    , m_fontSize{new QSpinBox(this)}
+    , m_rowHeight{new QSpinBox(this)}
 {
     m_filterHeaders->setChecked(m_settings->value<Settings::FilterHeader>());
     m_filterScrollBars->setChecked(m_settings->value<Settings::FilterScrollBar>());
     m_altRowColours->setChecked(m_settings->value<Settings::FilterAltColours>());
+    m_fontSize->setValue(m_settings->value<Settings::FilterFontSize>());
+    m_rowHeight->setValue(m_settings->value<Settings::FilterRowHeight>());
 
-    m_mainLayout->addWidget(m_filterHeaders);
-    m_mainLayout->addWidget(m_filterScrollBars);
-    m_mainLayout->addWidget(m_altRowColours);
+    auto* fontSizeLabel  = new QLabel("Font Size", this);
+    auto* rowHeightLabel = new QLabel("Row Height", this);
 
-    m_mainLayout->addStretch();
+    auto* fontSizeBox = new QHBoxLayout();
+    fontSizeBox->addWidget(fontSizeLabel);
+    fontSizeBox->addWidget(m_fontSize);
+    fontSizeBox->addStretch();
+
+    auto* rowHeightBox = new QHBoxLayout();
+    rowHeightBox->addWidget(rowHeightLabel);
+    rowHeightBox->addWidget(m_rowHeight);
+    rowHeightBox->addStretch();
+
+    auto* mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(m_filterHeaders);
+    mainLayout->addWidget(m_filterScrollBars);
+    mainLayout->addWidget(m_altRowColours);
+    mainLayout->addLayout(fontSizeBox);
+    mainLayout->addLayout(rowHeightBox);
+
+    mainLayout->addStretch();
 }
 
 void FiltersAppearancePageWidget::apply()
@@ -69,6 +91,8 @@ void FiltersAppearancePageWidget::apply()
     m_settings->set<Settings::FilterHeader>(m_filterHeaders->isChecked());
     m_settings->set<Settings::FilterScrollBar>(m_filterScrollBars->isChecked());
     m_settings->set<Settings::FilterAltColours>(m_altRowColours->isChecked());
+    m_settings->set<Settings::FilterFontSize>(m_fontSize->value());
+    m_settings->set<Settings::FilterRowHeight>(m_rowHeight->value());
 }
 
 FiltersAppearancePage::FiltersAppearancePage(Utils::SettingsManager* settings)
