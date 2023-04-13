@@ -172,7 +172,7 @@ QPixmap scaleImage(QPixmap& image, int size)
         return image.scaled(scale, scale)
             .scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
-    return {};
+    return image;
 }
 
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
