@@ -199,7 +199,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
 
     int tracksProcessed{0};
     const auto totalTracks = static_cast<double>(files.size());
-    int currentProgress{0};
+    int currentProgress{-1};
 
     for(const auto& filepath : files) {
         if(!m_mayRun) {
@@ -249,12 +249,10 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
                 emit progressChanged(currentProgress);
             }
 
-            //            if(tracksToAdd.size() >= 250) {
-            //                if(storeCovers(tracksToAdd)) {
-            //                    emit addedTracks(tracksToAdd);
-            //                }
-            //                tracksToAdd.clear();
-            //            }
+            // if(tracksToStore.size() >= 250) {
+            //     emit addedTracks(tracksToStore);
+            //     tracksToStore.clear();
+            // }
         }
     }
 
