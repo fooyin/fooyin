@@ -94,6 +94,7 @@ bool Database::createDatabase()
                      "    DiscNumber INTEGER,"
                      "    DiscTotal INTEGER,"
                      "    Date TEXT,"
+                     "    Year INTEGER,"
                      "    Composer TEXT,"
                      "    Performer TEXT,"
                      "    Genres TEXT,"

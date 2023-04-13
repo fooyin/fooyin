@@ -39,6 +39,7 @@ QMap<QString, QVariant> getTrackBindings(const Track& track)
         {QStringLiteral("DiscNumber"),   track.discNumber()                        },
         {QStringLiteral("DiscTotal"),    track.discTotal()                         },
         {QStringLiteral("Date"),         track.date()                              },
+        {QStringLiteral("Year"),         track.year()                              },
         {QStringLiteral("Composer"),     track.composer()                          },
         {QStringLiteral("Performer"),    track.performer()                         },
         {QStringLiteral("Genres"),       track.genres().join(Constants::Separator) },
@@ -123,21 +124,22 @@ QString LibraryDatabase::fetchQueryTracks(const QString& join, const QString& of
         QStringLiteral("DiscNumber"),   // 9
         QStringLiteral("DiscTotal"),    // 10
         QStringLiteral("Date"),         // 11
-        QStringLiteral("Composer"),     // 12
-        QStringLiteral("Performer"),    // 13
-        QStringLiteral("Genres"),       // 14
-        QStringLiteral("Lyrics"),       // 15
-        QStringLiteral("Comment"),      // 16
-        QStringLiteral("Duration"),     // 17
-        QStringLiteral("PlayCount"),    // 18
-        QStringLiteral("Rating"),       // 19
-        QStringLiteral("FileSize"),     // 20
-        QStringLiteral("BitRate"),      // 21
-        QStringLiteral("SampleRate"),   // 22
-        QStringLiteral("ExtraTags"),    // 23
-        QStringLiteral("AddedDate"),    // 24
-        QStringLiteral("ModifiedDate"), // 25
-        QStringLiteral("LibraryID"),    // 26
+        QStringLiteral("Year"),         // 12
+        QStringLiteral("Composer"),     // 13
+        QStringLiteral("Performer"),    // 14
+        QStringLiteral("Genres"),       // 15
+        QStringLiteral("Lyrics"),       // 16
+        QStringLiteral("Comment"),      // 17
+        QStringLiteral("Duration"),     // 18
+        QStringLiteral("PlayCount"),    // 19
+        QStringLiteral("Rating"),       // 20
+        QStringLiteral("FileSize"),     // 21
+        QStringLiteral("BitRate"),      // 22
+        QStringLiteral("SampleRate"),   // 23
+        QStringLiteral("ExtraTags"),    // 24
+        QStringLiteral("AddedDate"),    // 25
+        QStringLiteral("ModifiedDate"), // 26
+        QStringLiteral("LibraryID"),    // 27
     };
 
     const auto joinedFields = fields.join(", ");
@@ -168,20 +170,22 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         track.setDiscNumber(q.value(9).toInt());
         track.setDiscTotal(q.value(10).toInt());
         track.setDate(q.value(11).toString());
-        track.setComposer(q.value(12).toString());
-        track.setPerformer(q.value(13).toString());
-        track.setGenres(q.value(14).toString().split(Constants::Separator, Qt::SkipEmptyParts));
-        track.setLyrics(q.value(15).toString());
-        track.setComment(q.value(16).toString());
-        track.setDuration(q.value(17).value<uint64_t>());
-        track.setPlayCount(q.value(18).toInt());
-        track.setFileSize(q.value(20).toInt());
-        track.setBitrate(q.value(21).toInt());
-        track.setSampleRate(q.value(22).toInt());
-        track.storeExtraTags(q.value(23).toByteArray());
-        track.setAddedTime(q.value(24).value<uint64_t>());
-        track.setModifiedTime(q.value(25).value<uint64_t>());
-        track.setLibraryId(q.value(26).toInt());
+        track.setYear(q.value(12).toInt());
+        track.setComposer(q.value(13).toString());
+        track.setPerformer(q.value(14).toString());
+        track.setGenres(q.value(15).toString().split(Constants::Separator, Qt::SkipEmptyParts));
+        track.setLyrics(q.value(16).toString());
+        track.setComment(q.value(17).toString());
+        track.setDuration(q.value(18).value<uint64_t>());
+        track.setPlayCount(q.value(19).toInt());
+        // 20 - Rating
+        track.setFileSize(q.value(21).toInt());
+        track.setBitrate(q.value(22).toInt());
+        track.setSampleRate(q.value(23).toInt());
+        track.storeExtraTags(q.value(24).toByteArray());
+        track.setAddedTime(q.value(25).value<uint64_t>());
+        track.setModifiedTime(q.value(26).value<uint64_t>());
+        track.setLibraryId(q.value(27).toInt());
 
         track.generateHash();
 
