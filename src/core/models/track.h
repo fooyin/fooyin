@@ -114,6 +114,7 @@ public:
     void setLyrics(const QString& lyrics);
     void setComment(const QString& comment);
     void setDate(const QString& date);
+    void setYear(int year);
     void setCoverPath(const QString& path);
 
     void addExtraTag(const QString& tag, const QString& value);

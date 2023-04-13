@@ -35,6 +35,7 @@ public:
     bool readMetaData(Track& track, Quality quality);
     bool writeMetaData(const Track& track);
     QPixmap readCover(const QString& filepath);
+    QString storeCover(const TagLib::FileRef& file, const Track& track);
     QString storeCover(const Track& track);
 };
 } // namespace Tagging

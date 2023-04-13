@@ -61,6 +61,7 @@ struct FileTags
 
 bool isValidFile(const TagLib::FileRef& fileRef);
 FileTags tagsFromFile(const TagLib::FileRef& fileRef);
+bool hasEmbeddedCover(const TagLib::FileRef& fileRef);
 QPixmap coverFromFile(const TagLib::FileRef& fileRef);
 bool saveCover(const QPixmap& cover, const QString& filename);
 

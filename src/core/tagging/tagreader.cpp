@@ -109,12 +109,13 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         "TITLE", "ARTIST", "ALBUMARTIST", "GENRE", "TRACKNUMBER", "ALBUM", "DISCNUMBER", "DATE", "COMMENT", "LYRICS"};
 
     const auto artists     = convertStringList(parsedTag.map.value("ARTIST"));
-    const auto album       = convertString(parsedTag.map.value("ALBUM").toString());
+    const QString album    = convertString(parsedTag.tag->album());
     const auto albumArtist = convertString(parsedTag.map.value("ALBUMARTIST").toString());
-    const auto title       = convertString(parsedTag.map.value("TITLE").toString());
+    const QString title    = convertString(parsedTag.tag->title());
     const auto genres      = convertStringList(parsedTag.map.value("GENRE"));
-    const auto comment     = convertString(parsedTag.map.value("COMMENT").toString());
+    const QString comment  = convertString(parsedTag.tag->comment());
     const auto date        = convertString(parsedTag.map.value("DATE").toString());
+    const int year         = parsedTag.tag->year();
     const auto lyrics      = convertString(parsedTag.map.value("LYRICS").toString());
 
     auto trackNum           = 0;
@@ -168,6 +169,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
     track.setTitle(title);
     track.setDuration(length);
     track.setDate(date);
+    track.setYear(year);
     track.setGenres(genres);
     track.setTrackNumber(trackNum);
     track.setTrackTotal(trackTotal);
@@ -178,6 +180,8 @@ bool TagReader::readMetaData(Track& track, Quality quality)
     track.setFileSize(fileInfo.size());
     track.setLyrics(lyrics);
     track.setComment(comment);
+
+    track.setCoverPath(storeCover(fileRef, track));
 
     return true;
 }
@@ -250,32 +254,41 @@ QPixmap TagReader::readCover(const QString& filepath)
     return coverFromFile(fileRef);
 }
 
-QString TagReader::storeCover(const Track& track)
+QString TagReader::storeCover(const TagLib::FileRef& file, const Track& track)
 {
     QString coverPath;
-    QPixmap cover;
 
     const QString folderCover = coverInDirectory(Utils::File::getParentDirectory(track.filepath()));
     if(!folderCover.isEmpty()) {
         coverPath = folderCover;
     }
-    else {
-        cover = readCover(track.filepath());
-        if(!cover.isNull()) {
-            coverPath = Constants::EmbeddedCover;
-        }
+    else if(hasEmbeddedCover(file)) {
+        coverPath = Constants::EmbeddedCover;
     }
 
     const QString thumbnailPath = track.thumbnailPath();
     if(!Utils::File::exists(thumbnailPath)) {
         if(!coverPath.isEmpty()) {
-            const QPixmap thumb = Utils::scaleImage(cover, 300);
-            const bool saved    = Tagging::saveCover(thumb, thumbnailPath);
-            if(!saved) {
-                qDebug() << "Thumbnail could not be saved: " << thumbnailPath;
+            QPixmap cover = coverFromFile(file);
+            if(!cover.isNull()) {
+                const QPixmap thumb = Utils::scaleImage(cover, 300);
+                const bool saved    = Tagging::saveCover(thumb, thumbnailPath);
+                if(!saved) {
+                    qDebug() << "Thumbnail could not be saved: " << thumbnailPath;
+                }
             }
         }
     }
     return coverPath;
+}
+
+QString TagReader::storeCover(const Track& track)
+{
+    const auto readingProperties = getReadingProperties(Quality::Quality);
+    auto fileRef                 = TagLib::FileRef(TagLib::FileName(track.filepath().toUtf8()),
+                                   readingProperties.readAudioProperties,
+                                   readingProperties.readStyle);
+
+    return storeCover(fileRef, track);
 }
 } // namespace Fy::Core::Tagging

@@ -19,8 +19,6 @@
 
 #include "tagutils.h"
 
-#include "core/corepaths.h"
-
 #include <taglib/attachedpictureframe.h>
 #include <taglib/fileref.h>
 #include <taglib/flacfile.h>
@@ -45,7 +43,7 @@ QByteArray getCoverFromMpeg(TagLib::MPEG::File* file)
         TagLib::ID3v2::FrameList frames = file->ID3v2Tag()->frameListMap()["APIC"];
         if(!frames.isEmpty()) {
             using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
-            for(const auto& frame : qAsConst(frames)) {
+            for(const auto& frame : std::as_const(frames)) {
                 auto* coverFrame = dynamic_cast<PictureFrame*>(frame);
                 const auto type  = coverFrame->type();
                 if((frame && type == PictureFrame::FrontCover) || type == PictureFrame::Other) {
@@ -207,19 +205,38 @@ FileTags tagsFromFile(const TagLib::FileRef& fileRef)
     return parsedTag;
 }
 
+bool hasEmbeddedCover(const TagLib::FileRef& fileRef)
+{
+    QByteArray data;
+
+    if(auto* mpg = dynamic_cast<TagLib::MPEG::File*>(fileRef.file())) {
+        data = getCoverFromMpeg(mpg);
+    }
+
+    else if(auto* flac = dynamic_cast<TagLib::FLAC::File*>(fileRef.file())) {
+        data = getCoverFromFlac(flac);
+    }
+
+    else if(auto* mp4 = dynamic_cast<TagLib::MP4::File*>(fileRef.file())) {
+        data = getCoverFromMp4(mp4);
+    }
+
+    return !data.isEmpty();
+}
+
 QPixmap coverFromFile(const TagLib::FileRef& fileRef)
 {
     QByteArray data;
 
-    if(auto* mpg = dynamic_cast<TagLib::MPEG::File*>(fileRef.file()); mpg) {
+    if(auto* mpg = dynamic_cast<TagLib::MPEG::File*>(fileRef.file())) {
         data = getCoverFromMpeg(mpg);
     }
 
-    else if(auto* flac = dynamic_cast<TagLib::FLAC::File*>(fileRef.file()); flac) {
+    else if(auto* flac = dynamic_cast<TagLib::FLAC::File*>(fileRef.file())) {
         data = getCoverFromFlac(flac);
     }
 
-    else if(auto* mp4 = dynamic_cast<TagLib::MP4::File*>(fileRef.file()); mp4) {
+    else if(auto* mp4 = dynamic_cast<TagLib::MP4::File*>(fileRef.file())) {
         data = getCoverFromMp4(mp4);
     }
 

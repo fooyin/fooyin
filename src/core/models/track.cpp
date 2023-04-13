@@ -385,7 +385,11 @@ void Track::setComment(const QString& comment)
 void Track::setDate(const QString& date)
 {
     p->date = date;
-    p->year = date.toInt();
+}
+
+void Track::setYear(int year)
+{
+    p->year = year;
 }
 
 void Track::setCoverPath(const QString& path)
