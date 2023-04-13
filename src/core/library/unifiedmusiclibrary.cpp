@@ -164,9 +164,8 @@ void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
     m_tracks.reserve(m_tracks.size() + tracks.size());
 
     TrackList newTracks{tracks};
-    m_trackSorter.calcSortFields(newTracks);
-
-    for(const Track& track : newTracks) {
+    for(Track& track : newTracks) {
+        m_trackSorter.calcSortField(track);
         m_tracks.emplace_back(track);
     }
     m_tracks = m_trackSorter.sortTracks(m_tracks);

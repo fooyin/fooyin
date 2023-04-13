@@ -33,6 +33,11 @@ TrackList TrackSorter::sortTracks(const TrackList& tracks)
     return sortedTracks;
 }
 
+void TrackSorter::calcSortField(Track& track)
+{
+    track.setSort(m_parser.evaluate(m_sortScript, track));
+}
+
 void TrackSorter::calcSortFields(TrackList& tracks)
 {
     for(Track& track : tracks) {

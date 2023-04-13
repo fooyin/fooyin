@@ -27,6 +27,7 @@ class TrackSorter
 {
 public:
     TrackList sortTracks(const TrackList& tracks);
+    void calcSortField(Track& track);
     void calcSortFields(TrackList& tracks);
 
     void changeSorting(const QString& sort);
