@@ -19,6 +19,7 @@
 
 #include "viewmenu.h"
 
+#include "gui/editablelayout.h"
 #include "gui/guiconstants.h"
 #include "gui/guisettings.h"
 
@@ -30,9 +31,11 @@
 #include <QIcon>
 
 namespace Fy::Gui {
-ViewMenu::ViewMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, QObject* parent)
+ViewMenu::ViewMenu(Utils::ActionManager* actionManager, Widgets::EditableLayout* editableLayout,
+                   Utils::SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
+    , m_editableLayout{editableLayout}
     , m_settings{settings}
 {
     auto* viewMenu = m_actionManager->actionContainer(Constants::Menus::View);
@@ -41,7 +44,9 @@ ViewMenu::ViewMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* 
     m_layoutEditing               = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
     m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing);
     viewMenu->addAction(m_layoutEditing, Constants::Groups::Three);
-    connect(m_layoutEditing, &QAction::triggered, this, &ViewMenu::layoutEditingChanged);
+    connect(m_layoutEditing, &QAction::triggered, this, [this](bool checked) {
+        m_settings->set<Settings::LayoutEditing>(checked);
+    });
     m_settings->subscribe<Settings::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
     m_layoutEditing->setCheckable(true);
     m_layoutEditing->setChecked(m_settings->value<Settings::LayoutEditing>());
@@ -50,6 +55,6 @@ ViewMenu::ViewMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* 
     m_openQuickSetup           = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
     m_actionManager->registerAction(m_openQuickSetup, Constants::Actions::LayoutEditing);
     viewMenu->addAction(m_openQuickSetup, Constants::Groups::Three);
-    connect(m_openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
+    connect(m_openQuickSetup, &QAction::triggered, m_editableLayout, &Widgets::EditableLayout::showQuickSetup);
 }
 } // namespace Fy::Gui

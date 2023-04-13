@@ -166,8 +166,8 @@ void FilterWidget::saveLayout(QJsonArray& array)
 
 void FilterWidget::loadLayout(QJsonObject& object)
 {
-    setField(object["Type"].toString());
     m_sortOrder = Utils::EnumHelper::fromString<Qt::SortOrder>(object["Sort"].toString());
+    setField(object["Type"].toString());
 }
 
 void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)

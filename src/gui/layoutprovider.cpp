@@ -21,9 +21,8 @@
 
 #include "guipaths.h"
 
-#include <utils/paths.h>
-
 #include <QDir>
+#include <QFileDialog>
 
 namespace Fy::Gui {
 bool checkFile(const QFileInfo& file)
@@ -33,7 +32,7 @@ bool checkFile(const QFileInfo& file)
 }
 
 LayoutProvider::LayoutProvider()
-    : m_layoutFile{Utils::configPath() + "/layout.fyl"}
+    : m_layoutFile{Gui::activeLayoutPath()}
 {
     loadCurrentLayout();
 }
@@ -91,7 +90,7 @@ void LayoutProvider::saveCurrentLayout(const QByteArray& json)
     m_layoutFile.close();
 }
 
-LayoutProvider::LayoutList LayoutProvider::layouts() const
+LayoutList LayoutProvider::layouts() const
 {
     return m_layouts;
 }
@@ -109,6 +108,53 @@ void LayoutProvider::registerLayout(const QString& name, const QByteArray& json)
 void LayoutProvider::registerLayout(const QString& file)
 {
     addLayout(file);
+}
+
+void LayoutProvider::importLayout()
+{
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    QString openFile = dialog.getOpenFileName(nullptr, "Open Layout", "", "Fooyin Layout (*.fyl)");
+    if(openFile.isEmpty()) {
+        return;
+    }
+    QFile file(openFile);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open layout for reading: " << openFile;
+        return;
+    }
+    const QByteArray json = file.readAll();
+    file.close();
+
+    if(!json.isEmpty()) {
+        const QFileInfo fileInfo{file};
+        const QString newFile = Gui::layoutsPath() + fileInfo.fileName();
+        if(file.copy(newFile)) {
+            registerLayout(fileInfo.fileName(), json);
+        }
+        else {
+            qDebug() << "Could not copy layout to " << newFile;
+        }
+    }
+}
+
+void LayoutProvider::exportLayout(const QByteArray& json)
+{
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::AnyFile);
+    QString saveFile = dialog.getSaveFileName(nullptr, "Save Layout", Gui::layoutsPath(), "Fooyin Layout (*.fyl)");
+    if(saveFile.isEmpty()) {
+        return;
+    }
+    if(!saveFile.contains(".fyl")) {
+        saveFile += ".fyl";
+    }
+    QFile file(saveFile);
+    if(!file.open(QIODevice::WriteOnly)) {
+        return;
+    }
+    file.write(json);
+    file.close();
 }
 
 void LayoutProvider::addLayout(const QString& file)

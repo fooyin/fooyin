@@ -19,6 +19,7 @@
 
 #include "editablelayout.h"
 
+#include "gui/quicksetup/quicksetupdialog.h"
 #include "gui/widgets/dummy.h"
 #include "gui/widgets/splitterwidget.h"
 #include "guiconstants.h"
@@ -101,14 +102,16 @@ EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionMa
         [this]() {
             return new Gui::Widgets::VerticalSplitterWidget(m_actionManager, &m_widgetProvider, m_settings);
         },
-        "Vertical Splitter", {"Splitter"});
+        "Vertical Splitter",
+        {"Splitter"});
 
     m_widgetFactory->registerClass<Gui::Widgets::HorizontalSplitterWidget>(
         "SplitterHorizontal",
         [this]() {
             return new Gui::Widgets::HorizontalSplitterWidget(m_actionManager, &m_widgetProvider, m_settings);
         },
-        "Horizontal Splitter", {"Splitter"});
+        "Horizontal Splitter",
+        {"Splitter"});
 }
 
 void EditableLayout::initialise()
@@ -272,6 +275,11 @@ void EditableLayout::changeLayout(const Layout& layout)
 
 void EditableLayout::saveLayout()
 {
+    m_layoutProvider->saveCurrentLayout(currentLayout());
+}
+
+QByteArray EditableLayout::currentLayout()
+{
     QJsonObject root;
     QJsonArray array;
 
@@ -280,7 +288,7 @@ void EditableLayout::saveLayout()
     root["Layout"] = array;
 
     const auto json = QJsonDocument(root).toJson();
-    m_layoutProvider->saveCurrentLayout(json);
+    return json;
 }
 
 bool EditableLayout::loadLayout(const QByteArray& layout)
@@ -325,5 +333,13 @@ void EditableLayout::showOverlay(FyWidget* widget)
 void EditableLayout::hideOverlay()
 {
     m_overlay->hide();
+}
+
+void EditableLayout::showQuickSetup()
+{
+    auto* quickSetup = new QuickSetupDialog(m_layoutProvider, this);
+    quickSetup->setAttribute(Qt::WA_DeleteOnClose);
+    connect(quickSetup, &QuickSetupDialog::layoutChanged, this, &Widgets::EditableLayout::changeLayout);
+    quickSetup->show();
 }
 } // namespace Fy::Gui::Widgets

@@ -31,19 +31,24 @@ class SettingsManager;
 } // namespace Utils
 
 namespace Gui {
+namespace Widgets {
+class EditableLayout;
+}
+
 class ViewMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ViewMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit ViewMenu(Utils::ActionManager* actionManager, Widgets::EditableLayout* editableLayout,
+                      Utils::SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
-    void layoutEditingChanged(bool enabled);
     void openQuickSetup();
 
 private:
     Utils::ActionManager* m_actionManager;
+    Widgets::EditableLayout* m_editableLayout;
     Utils::SettingsManager* m_settings;
 
     QAction* m_layoutEditing;

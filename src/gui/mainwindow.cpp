@@ -20,16 +20,8 @@
 #include "mainwindow.h"
 
 #include "editablelayout.h"
-#include "gui/menu/editmenu.h"
-#include "gui/menu/filemenu.h"
-#include "gui/menu/helpmenu.h"
-#include "gui/menu/librarymenu.h"
-#include "gui/menu/playbackmenu.h"
-#include "gui/menu/viewmenu.h"
-#include "gui/quicksetup/quicksetupdialog.h"
 #include "guiconstants.h"
 #include "guisettings.h"
-#include "layoutprovider.h"
 #include "mainmenubar.h"
 
 #include <core/coresettings.h>
@@ -45,29 +37,21 @@
 #include <QTimer>
 
 namespace Fy::Gui {
-MainWindow::MainWindow(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                       Core::Library::MusicLibrary* library, Utils::SettingsManager* settings,
-                       LayoutProvider* layoutProvider, Widgets::WidgetFactory* widgetFactory, QWidget* parent)
+MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
+                       Widgets::EditableLayout* editableLayout, QWidget* parent)
     : QMainWindow{parent}
     , m_actionManager{actionManager}
-    , m_playerManager{playerManager}
-    , m_library{library}
     , m_settings{settings}
-    , m_widgetFactory{widgetFactory}
-    , m_layoutProvider{layoutProvider}
-    , m_editableLayout{
-          new Widgets::EditableLayout(m_settings, m_actionManager, m_widgetFactory, m_layoutProvider, this)}
+    , m_editableLayout{editableLayout}
 {
     actionManager->setMainWindow(this);
 
     setupMenu();
-    registerLayouts();
 }
 
 MainWindow::~MainWindow()
 {
     m_settings->set<Settings::Geometry>(saveGeometry().toBase64());
-    m_editableLayout->saveLayout();
 }
 
 void MainWindow::setupUi()
@@ -84,22 +68,11 @@ void MainWindow::setupUi()
     const QByteArray geometry      = QByteArray::fromBase64(geometryArray);
     restoreGeometry(geometry);
 
-    m_editableLayout->initialise();
     setCentralWidget(m_editableLayout);
-
-    m_fileMenu     = new FileMenu(m_actionManager, m_settings, this);
-    m_editMenu     = new EditMenu(m_actionManager, this);
-    m_viewMenu     = new ViewMenu(m_actionManager, m_settings, this);
-    m_playbackMenu = new PlaybackMenu(m_actionManager, m_playerManager, this);
-    m_libraryMenu  = new LibraryMenu(m_actionManager, m_library, m_settings, this);
-    m_helpMenu     = new HelpMenu(m_actionManager, this);
-
-    connect(m_viewMenu, &ViewMenu::layoutEditingChanged, this, &MainWindow::enableLayoutEditing);
-    connect(m_viewMenu, &ViewMenu::openQuickSetup, this, &MainWindow::showQuickSetup);
 
     if(m_settings->value<Core::Settings::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
-        QTimer::singleShot(1000, this, &MainWindow::showQuickSetup);
+        QTimer::singleShot(1000, m_editableLayout, &Widgets::EditableLayout::showQuickSetup);
     }
 }
 
@@ -109,40 +82,9 @@ void MainWindow::setupMenu()
     setMenuBar(m_mainMenu->menuBar());
 }
 
-void MainWindow::showQuickSetup()
-{
-    auto* quickSetup = new QuickSetupDialog(m_layoutProvider, this);
-    quickSetup->setAttribute(Qt::WA_DeleteOnClose);
-    connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout, &Widgets::EditableLayout::changeLayout);
-    quickSetup->show();
-}
-
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     emit closing();
     QMainWindow::closeEvent(event);
-}
-
-void MainWindow::enableLayoutEditing(bool enable)
-{
-    m_settings->set<Settings::LayoutEditing>(enable);
-}
-
-void MainWindow::registerLayouts() const
-{
-    m_layoutProvider->registerLayout("Empty",
-                                     R"({"Layout":[{"SplitterVertical":{"Children":[],
-                                     "State":"AAAA/wAAAAEAAAABAAACLwD/////AQAAAAIA"}}]})");
-
-    m_layoutProvider->registerLayout("Simple",
-                                     R"({"Layout":[{"SplitterVertical":{"Children":["Status","Playlist","Controls"],
-                                     "State":"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA"}}]})");
-
-    m_layoutProvider->registerLayout("Vision",
-                                     R"({"Layout":[{"SplitterVertical":{"Children":["Status",{"SplitterHorizontal":{
-                                     "Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////
-                                     8BAAAAAQA="}},{"SplitterHorizontal":{"Children":["Artwork","Playlist"],"State":
-                                     "AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA="}}],"State":"AAAA/
-                                     wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA"}}]})");
 }
 } // namespace Fy::Gui

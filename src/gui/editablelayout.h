@@ -58,11 +58,14 @@ public:
 
     void changeLayout(const Layout& layout);
     void saveLayout();
+    QByteArray currentLayout();
     bool loadLayout(const QByteArray& layout);
     bool loadLayout();
 
     void showOverlay(FyWidget* widget);
     void hideOverlay();
+
+    void showQuickSetup();
 
 private:
     Utils::ActionManager* m_actionManager;

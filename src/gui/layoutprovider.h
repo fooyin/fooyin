@@ -33,12 +33,11 @@ struct Layout
     QString name;
     QByteArray json;
 };
+using LayoutList = std::vector<Layout>;
 
 class LayoutProvider
 {
 public:
-    using LayoutList = std::vector<Layout>;
-
     explicit LayoutProvider();
 
     void findLayouts();
@@ -50,6 +49,9 @@ public:
     [[nodiscard]] LayoutList layouts() const;
     void registerLayout(const QString& name, const QByteArray& json);
     void registerLayout(const QString& file);
+
+    void importLayout();
+    void exportLayout(const QByteArray& json);
 
 private:
     void addLayout(const QString& file);

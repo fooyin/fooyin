@@ -37,6 +37,7 @@
 #include <core/plugins/pluginmanager.h>
 
 #include <gui/controls/controlwidget.h>
+#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guiplugin.h>
 #include <gui/guiplugincontext.h>
@@ -46,6 +47,12 @@
 #include <gui/library/coverwidget.h>
 #include <gui/library/statuswidget.h>
 #include <gui/mainwindow.h>
+#include <gui/menu/editmenu.h>
+#include <gui/menu/filemenu.h>
+#include <gui/menu/helpmenu.h>
+#include <gui/menu/librarymenu.h>
+#include <gui/menu/playbackmenu.h>
+#include <gui/menu/viewmenu.h>
 #include <gui/playlist/playlistwidget.h>
 #include <gui/settings/generalpage.h>
 #include <gui/settings/guigeneralpage.h>
@@ -77,7 +84,15 @@ struct Application::Private
     Gui::Widgets::WidgetFactory widgetFactory;
     Gui::Settings::GuiSettings guiSettings;
     Gui::LayoutProvider layoutProvider;
+    std::unique_ptr<Gui::Widgets::EditableLayout> editableLayout;
     std::unique_ptr<Gui::MainWindow> mainWindow;
+
+    Gui::FileMenu* fileMenu;
+    Gui::EditMenu* editMenu;
+    Gui::ViewMenu* viewMenu;
+    Gui::PlaybackMenu* playbackMenu;
+    Gui::LibraryMenu* libraryMenu;
+    Gui::HelpMenu* helpMenu;
 
     Gui::Settings::GeneralPage generalPage;
     Gui::Settings::LibraryGeneralPage libraryGeneralPage;
@@ -101,19 +116,45 @@ struct Application::Private
         , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
         , playlistInterface{std::make_unique<Core::Playlist::LibraryPlaylistManager>(library, playlistHandler)}
         , guiSettings{settingsManager}
-        , mainWindow{std::make_unique<Gui::MainWindow>(actionManager, playerManager, library, settingsManager,
-                                                       &layoutProvider, &widgetFactory)}
+        , editableLayout{std::make_unique<Gui::Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,
+                                                                        &layoutProvider)}
+        , mainWindow{std::make_unique<Gui::MainWindow>(actionManager, settingsManager, editableLayout.get())}
+        , fileMenu{new Gui::FileMenu(actionManager, settingsManager, parent)}
+        , editMenu{new Gui::EditMenu(actionManager, parent)}
+        , viewMenu{new Gui::ViewMenu(actionManager, editableLayout.get(), settingsManager, parent)}
+        , playbackMenu{new Gui::PlaybackMenu(actionManager, playerManager, parent)}
+        , libraryMenu{new Gui::LibraryMenu(actionManager, library, settingsManager, parent)}
+        , helpMenu{new Gui::HelpMenu(actionManager, parent)}
         , generalPage{settingsManager}
         , libraryGeneralPage{libraryManager, settingsManager}
-        , guiGeneralPage{settingsManager}
+        , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , playlistGuiPage{settingsManager}
         , pluginManager{new Plugins::PluginManager(parent)}
         , pluginPage{settingsManager, pluginManager}
         , corePluginContext{actionManager, playerManager, library, settingsManager, &database}
         , guiPluginContext{&layoutProvider, &widgetFactory}
     {
+        registerLayouts();
         registerWidgets();
         loadPlugins();
+    }
+
+    void registerLayouts()
+    {
+        layoutProvider.registerLayout("Empty",
+                                      R"({"Layout":[{"SplitterVertical":{"Children":[],
+                                     "State":"AAAA/wAAAAEAAAABAAACLwD/////AQAAAAIA"}}]})");
+
+        layoutProvider.registerLayout("Simple",
+                                      R"({"Layout":[{"SplitterVertical":{"Children":["Status","Playlist","Controls"],
+                                     "State":"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA"}}]})");
+
+        layoutProvider.registerLayout("Vision",
+                                      R"({"Layout":[{"SplitterVertical":{"Children":["Status",{"SplitterHorizontal":{
+                                     "Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////
+                                     8BAAAAAQA="}},{"SplitterHorizontal":{"Children":["Artwork","Playlist"],"State":
+                                     "AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA="}}],"State":"AAAA/
+                                     wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA"}}]})");
     }
 
     void registerWidgets()
@@ -173,6 +214,7 @@ void Application::startup()
     p->layoutProvider.findLayouts();
 
     p->mainWindow->setupUi();
+    p->editableLayout->initialise();
 
     if(p->libraryManager->hasLibrary() && p->settingsManager->value<Core::Settings::WaitForTracks>()) {
         connect(p->library, &Core::Library::MusicLibrary::allTracksLoaded, p->mainWindow.get(), &Gui::MainWindow::show);
@@ -184,6 +226,8 @@ void Application::startup()
 
 void Application::shutdown()
 {
+    p->editableLayout->saveLayout();
+    p->editableLayout.reset(nullptr);
     p->mainWindow.reset(nullptr);
     p->pluginManager->shutdown();
     p->settingsManager->storeSettings();

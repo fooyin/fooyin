@@ -28,28 +28,10 @@ class ActionManager;
 class SettingsManager;
 } // namespace Utils
 
-namespace Core {
-namespace Library {
-class MusicLibrary;
-}
-
-namespace Player {
-class PlayerManager;
-}
-} // namespace Core
-
 namespace Gui {
-class LayoutProvider;
 class MainMenuBar;
-class FileMenu;
-class EditMenu;
-class ViewMenu;
-class PlaybackMenu;
-class LibraryMenu;
-class HelpMenu;
 
 namespace Widgets {
-class WidgetFactory;
 class EditableLayout;
 } // namespace Widgets
 
@@ -58,16 +40,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                        Core::Library::MusicLibrary* library, Utils::SettingsManager* settings,
-                        LayoutProvider* layoutProvider, Widgets::WidgetFactory* widgetFactory,
-                        QWidget* parent = nullptr);
+    explicit MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
+                        Widgets::EditableLayout* editableLayout, QWidget* parent = nullptr);
 
     ~MainWindow();
 
     void setupUi();
     void setupMenu();
-    void showQuickSetup();
 
 signals:
     void closing();
@@ -75,26 +54,12 @@ signals:
 protected:
     void closeEvent(QCloseEvent* event) override;
 
-    void enableLayoutEditing(bool enable);
-
 private:
-    void registerLayouts() const;
-
     Utils::ActionManager* m_actionManager;
-    Core::Player::PlayerManager* m_playerManager;
-    Core::Library::MusicLibrary* m_library;
     Utils::SettingsManager* m_settings;
-    Widgets::WidgetFactory* m_widgetFactory;
 
     MainMenuBar* m_mainMenu;
-    FileMenu* m_fileMenu;
-    EditMenu* m_editMenu;
-    ViewMenu* m_viewMenu;
-    PlaybackMenu* m_playbackMenu;
-    LibraryMenu* m_libraryMenu;
-    HelpMenu* m_helpMenu;
 
-    LayoutProvider* m_layoutProvider;
     Widgets::EditableLayout* m_editableLayout;
 };
 } // namespace Gui
