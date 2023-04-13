@@ -104,12 +104,12 @@ void FieldRegistry::saveFields()
     out << m_fields;
 
     byteArray = byteArray.toBase64();
-    m_settings->set<Settings::Fields>(byteArray);
+    m_settings->set<Settings::FilterFields>(byteArray);
 }
 
 void FieldRegistry::loadFields()
 {
-    QByteArray fields = m_settings->value<Settings::Fields>();
+    QByteArray fields = m_settings->value<Settings::FilterFields>();
     fields            = QByteArray::fromBase64(fields);
 
     QDataStream in(&fields, QIODevice::ReadOnly);

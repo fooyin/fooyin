@@ -29,7 +29,7 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::FilterHeader, true, "Filters");
     m_settings->createSetting(Settings::FilterScrollBar, true, "Filters");
     m_settings->createSetting(
-        Settings::Fields,
+        Settings::FilterFields,
         "AAAABAAAAAAAAAAAAAAACgBHAGUAbgByAGUAAAASACUAPABnAGUAbgByAGUAPgAlAAAAAAAAAAEAAAABAAAAGABBAGwAYgB1AG0AIABBAHIAdA"
         "BpAHMAdAAAABoAJQBhAGwAYgB1AG0AYQByAHQAaQBzAHQAJQAAAAAAAAACAAAAAgAAAAwAQQByAHQAaQBzAHQAAAAUACUAPABhAHIAdABpAHMA"
         "dAA+ACUAAAAAAAAAAwAAAAMAAAAKAEEAbABiAHUAbQAAAA4AJQBhAGwAYgB1AG0AJQAAAAA=",
