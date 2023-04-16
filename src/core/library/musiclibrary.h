@@ -49,7 +49,6 @@ public:
 
 signals:
     void loadAllTracks();
-    void allTracksLoaded();
     void runLibraryScan(const Library::LibraryInfo& library, const Core::TrackList& tracks);
     void scanProgress(int percent);
 

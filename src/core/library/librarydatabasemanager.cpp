@@ -41,6 +41,5 @@ void LibraryDatabaseManager::getAllTracks()
     if(m_libraryDatabase.getAllTracks(tracks)) {
         emit gotTracks(tracks);
     }
-    emit allTracksLoaded();
 }
 } // namespace Fy::Core::Library

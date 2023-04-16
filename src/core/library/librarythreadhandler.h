@@ -64,7 +64,6 @@ signals:
     void tracksDeleted(const Core::TrackList& tracks);
 
     void getAllTracks();
-    void allTracksLoaded();
     void gotTracks(const Core::TrackList& result);
 
 private:

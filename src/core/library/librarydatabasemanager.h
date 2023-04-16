@@ -41,7 +41,6 @@ public:
     void getAllTracks();
 
 signals:
-    void allTracksLoaded();
     void gotTracks(const Core::TrackList& result);
 
 private:

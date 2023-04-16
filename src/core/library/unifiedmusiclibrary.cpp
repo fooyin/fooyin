@@ -57,7 +57,6 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     connect(&m_threadHandler, &LibraryThreadHandler::tracksDeleted, this, &UnifiedMusicLibrary::removeTracks);
 
     connect(&m_threadHandler, &LibraryThreadHandler::gotTracks, this, &UnifiedMusicLibrary::loadTracks);
-    connect(&m_threadHandler, &LibraryThreadHandler::allTracksLoaded, this, &UnifiedMusicLibrary::allTracksLoaded);
     connect(this, &UnifiedMusicLibrary::loadAllTracks, &m_threadHandler, &LibraryThreadHandler::getAllTracks);
 
     m_settings->subscribe<Settings::SortScript>(this, &UnifiedMusicLibrary::changeSort);

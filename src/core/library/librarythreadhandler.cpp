@@ -39,10 +39,6 @@ LibraryThreadHandler::LibraryThreadHandler(DB::Database* database, QObject* pare
     connect(
         this, &LibraryThreadHandler::getAllTracks, &m_libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
     connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &LibraryThreadHandler::gotTracks);
-    connect(&m_libraryDatabaseManager,
-            &LibraryDatabaseManager::allTracksLoaded,
-            this,
-            &LibraryThreadHandler::allTracksLoaded);
     connect(&m_scanner, &Utils::Worker::finished, this, &LibraryThreadHandler::finishScanRequest);
     connect(&m_scanner, &LibraryScanner::progressChanged, this, &LibraryThreadHandler::progressChanged);
     connect(&m_scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
