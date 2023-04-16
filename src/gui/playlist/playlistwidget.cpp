@@ -289,9 +289,9 @@ void PlaylistWidget::switchContextMenu(int section, QPoint pos)
 
     for(const auto& playlist : playlists) {
         auto* switchtoPlaylist = new QAction(playlist->name(), menu);
-        const int index        = playlist->index();
-        QObject::connect(switchtoPlaylist, &QAction::triggered, this, [this, index]() {
-            m_playlistHandler->changeCurrentPlaylist(index);
+        const int id           = playlist->id();
+        QObject::connect(switchtoPlaylist, &QAction::triggered, this, [this, id]() {
+            m_playlistHandler->changeCurrentPlaylist(id);
         });
         menu->addAction(switchtoPlaylist);
     }

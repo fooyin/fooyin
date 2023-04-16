@@ -157,6 +157,10 @@ struct Application::Private
 
     void registerWidgets()
     {
+        widgetFactory.registerClass<Gui::Widgets::PlaylistTabs>("PlaylistTabs", [this]() {
+            return new Gui::Widgets::PlaylistTabs(actionManager, &widgetFactory, playlistHandler);
+        });
+
         widgetFactory.registerClass<Gui::Widgets::ControlWidget>("Controls", [this]() {
             return new Gui::Widgets::ControlWidget(playerManager, settingsManager);
         });

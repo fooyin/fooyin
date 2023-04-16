@@ -108,6 +108,8 @@ set(SOURCES
 
     widgets/dummy.h
     widgets/dummy.cpp
+    widgets/playlisttabs.h
+    widgets/playlisttabs.cpp
     widgets/spacer.h
     widgets/spacer.cpp
     widgets/splitter.h

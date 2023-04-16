@@ -66,7 +66,7 @@ PlaylistHandler::~PlaylistHandler()
     m_playlists.clear();
 }
 
-Playlist* PlaylistHandler::playlist(int id) const
+Playlist* PlaylistHandler::playlistById(int id) const
 {
     auto it = std::find_if(m_playlists.cbegin(), m_playlists.cend(), [id](const auto& playlist) {
         return playlist->id() == id;
@@ -96,22 +96,25 @@ const PlaylistList& PlaylistHandler::playlists() const
 void PlaylistHandler::createPlaylist(const QString& name, const TrackList& tracks, bool switchTo)
 {
     Playlist* playlist = addNewPlaylist(name);
-    playlist->replaceTracks(tracks);
-    if(switchTo) {
-        m_currentPlaylist = playlist;
+    if(playlist) {
+        playlist->replaceTracks(tracks);
+        if(switchTo) {
+            m_currentPlaylist = playlist;
+        }
+        emit currentPlaylistChanged(m_currentPlaylist);
     }
-    emit currentPlaylistChanged(m_currentPlaylist);
 }
 
 void PlaylistHandler::createEmptyPlaylist()
 {
-    createPlaylist("Playlist", {});
+    const QString name = findUniqueName("Playlist");
+    createPlaylist(name, {});
 }
 
-void PlaylistHandler::changeCurrentPlaylist(int index)
+void PlaylistHandler::changeCurrentPlaylist(int id)
 {
-    auto it = std::find_if(m_playlists.cbegin(), m_playlists.cend(), [index](const auto& playlist) {
-        return playlist->index() == index;
+    auto it = std::find_if(m_playlists.cbegin(), m_playlists.cend(), [id](const auto& playlist) {
+        return playlist->id() == id;
     });
     if(it != m_playlists.cend()) {
         m_currentPlaylist = it->get();
@@ -119,42 +122,43 @@ void PlaylistHandler::changeCurrentPlaylist(int index)
     }
 }
 
-void PlaylistHandler::renamePlaylist(int index, const QString& name)
+void PlaylistHandler::renamePlaylist(int id, const QString& name)
 {
-    auto it = std::find_if(m_playlists.cbegin(), m_playlists.cend(), [index](const auto& playlist) {
-        return playlist->index() == index;
-    });
-    if(it != m_playlists.cend()) {
-        QString newName = name;
-        if(exists(newName)) {
-            const int count = exists(newName + " (") + 1;
-            newName += QString{" (%1)"}.arg(count);
-        }
-        it->get()->setName(newName);
-        emit playlistRenamed(it->get());
+    if(playlistCount() < 1) {
+        return;
     }
+    auto* playlist = playlistById(id);
+    if(!playlist) {
+        qDebug() << QString{"Playlist %1 could not be renamed to %2"}.arg(id).arg("name");
+        return;
+    }
+    QString newName = findUniqueName(name);
+    playlist->setName(newName);
+    m_playlistConnector->renamePlaylist(playlist->id(), newName);
+    emit playlistRenamed(playlist);
 }
 
-void PlaylistHandler::removePlaylist(int index)
+void PlaylistHandler::removePlaylist(int id)
 {
     if(playlistCount() <= 1) {
         return;
     }
-    auto it = std::find_if(m_playlists.cbegin(), m_playlists.cend(), [index](const auto& playlist) {
-        return playlist->index() == index;
-    });
-    if(it != m_playlists.cend()) {
-        const auto index = static_cast<int>(std::distance(m_playlists.cbegin(), it));
-        m_playlists.erase(it);
-        if(!m_playlists.empty()) {
-            m_currentPlaylist = m_playlists.at(index == 0 ? index : index - 1).get();
-            emit playlistRemoved(index);
-        }
-        else {
-            m_currentPlaylist = nullptr;
-        }
-        emit currentPlaylistChanged(m_currentPlaylist);
+    auto* playlist = playlistById(id);
+    if(!playlist) {
+        return;
     }
+    const int index = playlist->index();
+    m_playlists.erase(m_playlists.cbegin() + index);
+    m_playlistConnector->removePlaylist(id);
+    if(!m_playlists.empty()) {
+        m_currentPlaylist = m_playlists.at(index == 0 ? index : index - 1).get();
+        updateIndexes();
+        emit playlistRemoved(id);
+    }
+    else {
+        m_currentPlaylist = nullptr;
+    }
+    emit currentPlaylistChanged(m_currentPlaylist);
 }
 
 Playlist* PlaylistHandler::activePlaylist() const
@@ -169,6 +173,7 @@ int PlaylistHandler::playlistCount() const
 
 void PlaylistHandler::savePlaylists()
 {
+    updateIndexes();
     for(const auto& playlist : m_playlists) {
         if(playlist->wasModified()) {
             m_playlistConnector->insertPlaylistTracks(playlist->id(), playlist->tracks());
@@ -252,6 +257,34 @@ void PlaylistHandler::previous() const
     }
     m_currentPlaylist->changeCurrentTrack(index);
     m_playerManager->changeCurrentTrack(m_currentPlaylist->currentTrack());
+}
+
+void PlaylistHandler::updateIndexes()
+{
+    for(auto [it, end, i] = std::tuple{m_playlists.cbegin(), m_playlists.cend(), 0}; it != end; ++it, ++i) {
+        it->get()->setIndex(i);
+    }
+}
+
+int PlaylistHandler::nameCount(const QString& name) const
+{
+    if(name.isEmpty()) {
+        return -1;
+    }
+    return static_cast<int>(std::count_if(m_playlists.cbegin(), m_playlists.cend(), [&](const auto& playlist) {
+        return playlist->name().contains(name);
+    }));
+}
+
+QString PlaylistHandler::findUniqueName(const QString& name) const
+{
+    QString newName{name};
+    int count{1};
+    while(exists(newName) >= 0) {
+        newName = QString{"%1 (%2)"}.arg(name).arg(count);
+        ++count;
+    }
+    return newName;
 }
 
 int PlaylistHandler::exists(const QString& name) const

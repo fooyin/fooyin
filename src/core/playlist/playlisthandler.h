@@ -54,17 +54,17 @@ public:
                              QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
-    Playlist* playlist(int id) const;
-    Playlist* playlistByIndex(int id) const;
+    Playlist* playlistById(int id) const;
+    Playlist* playlistByIndex(int index) const;
     const PlaylistList& playlists() const;
 
     void createPlaylist(const QString& name, const TrackList& tracks = {}, bool switchTo = false);
     void createEmptyPlaylist();
 
-    void changeCurrentPlaylist(int index);
+    void changeCurrentPlaylist(int id);
 
-    void renamePlaylist(int index, const QString& name);
-    void removePlaylist(int index);
+    void renamePlaylist(int id, const QString& name);
+    void removePlaylist(int id);
 
     [[nodiscard]] Playlist* activePlaylist() const;
     [[nodiscard]] int playlistCount() const;
@@ -75,15 +75,21 @@ public:
 
 signals:
     void playlistAdded(Core::Playlist::Playlist* playlist);
-    void playlistRemoved(int index);
+    void playlistRemoved(int id);
     void playlistRenamed(Core::Playlist::Playlist* playlist);
     void currentPlaylistChanged(Core::Playlist::Playlist* playlist);
 
 private:
     void next();
     void previous() const;
+
+    void updateIndexes();
+
+    int nameCount(const QString& name) const;
+    QString findUniqueName(const QString& name) const;
     [[nodiscard]] int exists(const QString& name) const;
     [[nodiscard]] bool validIndex(int index) const;
+
     Playlist* addNewPlaylist(const QString& name);
     void populatePlaylists(const TrackList& tracks);
     void libraryRemoved(int id);
