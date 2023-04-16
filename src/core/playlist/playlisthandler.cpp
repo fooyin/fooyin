@@ -49,9 +49,9 @@ PlaylistHandler::PlaylistHandler(DB::Database* database, Player::PlayerManager* 
         createPlaylist("Default", {});
     }
 
-    const int lastIndex = m_settings->value<Settings::LastPlaylistIndex>();
-    if(lastIndex >= 0 && validIndex(lastIndex)) {
-        changeCurrentPlaylist(lastIndex);
+    const int lastId = m_settings->value<Settings::LastPlaylistId>();
+    if(lastId >= 0) {
+        changeCurrentPlaylist(lastId);
     }
 
     connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, this, &PlaylistHandler::populatePlaylists);
@@ -179,7 +179,7 @@ void PlaylistHandler::savePlaylists()
             m_playlistConnector->insertPlaylistTracks(playlist->id(), playlist->tracks());
         }
     }
-    m_settings->set<Settings::LastPlaylistIndex>(m_currentPlaylist->index());
+    m_settings->set<Settings::LastPlaylistId>(m_currentPlaylist->id());
 }
 
 void PlaylistHandler::changeCurrentTrack(const Core::Track& track) const
