@@ -325,8 +325,6 @@ Expression Parser::expression()
 {
     advance();
     switch(m_previous.type) {
-        case(TokLiteral):
-            return literal();
         case(TokVar):
             return variable();
         case(TokFunc):
@@ -344,6 +342,8 @@ Expression Parser::expression()
         case(TokLeftParen):
         case(TokRightParen):
         case(TokRightSquare):
+        case(TokLiteral):
+            return literal();
         case(TokEos):
         case(TokError):
             break;
