@@ -31,7 +31,7 @@ bool Playlist::getAllPlaylists(Core::Playlist::PlaylistList& playlists)
     const QString query = "SELECT PlaylistID, Name, PlaylistIndex FROM Playlists;";
 
     Query q{this};
-    q.prepare(query);
+    q.prepareQuery(query);
 
     if(!q.execQuery()) {
         q.error("Cannot fetch all playlists");
@@ -53,8 +53,8 @@ bool Playlist::getPlaylistTracks(int id, std::vector<int>& ids)
     const QString query = "SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;";
 
     Query q{this};
-    q.prepare(query);
-    q.bindValue(":playlistId", id);
+    q.prepareQuery(query);
+    q.bindQueryValue(":playlistId", id);
 
     if(!q.execQuery()) {
         q.error("Cannot fetch playlist tracks");
@@ -80,9 +80,9 @@ int Playlist::insertPlaylist(const QString& name, int index)
 
     Query q{this};
 
-    q.prepare(query);
-    q.bindValue(":playlistName", name);
-    q.bindValue(":playlistIndex", index);
+    q.prepareQuery(query);
+    q.bindQueryValue(":playlistName", name);
+    q.bindQueryValue(":playlistIndex", index);
 
     if(!q.execQuery()) {
         q.error(QString("Cannot insert playlist (name: %1, index: %2)").arg(name).arg(index));
@@ -102,8 +102,8 @@ bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
     // Remove old tracks first
     Query delTracks{this};
     const QString delPlaylistQuery = "DELETE FROM PlaylistTracks WHERE PlaylistID=:playlistId;";
-    delTracks.prepare(delPlaylistQuery);
-    delTracks.bindValue(":playlistId", id);
+    delTracks.prepareQuery(delPlaylistQuery);
+    delTracks.bindQueryValue(":playlistId", id);
 
     if(!delTracks.execQuery()) {
         delTracks.error(QString{"Cannot remove old playlist %1 tracks"}.arg(id));
@@ -127,8 +127,8 @@ bool Playlist::removePlaylist(int id)
 {
     //    Query delTracks(this);
     //    auto delTracksQuery = QStringLiteral("DELETE FROM PlaylistTracks WHERE PlaylistID=:playlistId;");
-    //    delTracks.prepare(delTracksQuery);
-    //    delTracks.bindValue(":playlistId", id);
+    //    delTracks.prepareQuery(delTracksQuery);
+    //    delTracks.bindQueryValue(":playlistId", id);
 
     //    if(!delTracks.execQuery()) {
     //        delTracks.error(QString{"Cannot delete playlist (%1) tracks"}.arg(id));
@@ -137,8 +137,8 @@ bool Playlist::removePlaylist(int id)
 
     Query delPlaylist{this};
     const QString delPlaylistQuery = "DELETE FROM Playlists WHERE PlaylistID=:playlistId;";
-    delPlaylist.prepare(delPlaylistQuery);
-    delPlaylist.bindValue(":playlistId", id);
+    delPlaylist.prepareQuery(delPlaylistQuery);
+    delPlaylist.bindQueryValue(":playlistId", id);
 
     if(!delPlaylist.execQuery()) {
         delPlaylist.error(QString{"Cannot remove playlist %1"}.arg(id));
@@ -158,9 +158,9 @@ bool Playlist::renamePlaylist(int id, const QString& name)
                           "WHERE PlaylistID=:playlistId;";
 
     Query q{this};
-    q.prepare(query);
-    q.bindValue(":playlistId", id);
-    q.bindValue(":playlistName", name);
+    q.prepareQuery(query);
+    q.bindQueryValue(":playlistId", id);
+    q.bindQueryValue(":playlistName", name);
 
     if(!q.execQuery()) {
         q.error(QString{"Cannot update playlist (name: %1)"}.arg(name));
@@ -181,11 +181,10 @@ bool Playlist::insertPlaylistTrack(int playlistId, const Track& track, int index
                           "(:playlistId, :trackId, :trackIndex);";
 
     Query q{this};
-
-    q.prepare(query);
-    q.bindValue(":playlistId", playlistId);
-    q.bindValue(":trackId", track.id());
-    q.bindValue(":trackIndex", index);
+    q.prepareQuery(query);
+    q.bindQueryValue(":playlistId", playlistId);
+    q.bindQueryValue(":trackId", track.id());
+    q.bindQueryValue(":trackIndex", index);
 
     if(!q.execQuery()) {
         q.error(QString("Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)").arg(playlistId, track.id()));

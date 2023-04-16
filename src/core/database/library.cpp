@@ -31,7 +31,7 @@ bool Library::getAllLibraries(Core::Library::LibraryInfoList& libraries)
     const QString query = "SELECT LibraryID, Name, Path FROM Libraries;";
 
     Query q(this);
-    q.prepare(query);
+    q.prepareQuery(query);
 
     if(!q.execQuery()) {
         q.error("Cannot fetch all libraries");
@@ -61,9 +61,9 @@ int Library::insertLibrary(const QString& path, const QString& name)
 
     Query q(this);
 
-    q.prepare(query);
-    q.bindValue(":libraryName", name);
-    q.bindValue(":libraryPath", path);
+    q.prepareQuery(query);
+    q.bindQueryValue(":libraryName", name);
+    q.bindQueryValue(":libraryPath", path);
 
     if(!q.execQuery()) {
         q.error(QString("Cannot insert library (name: %1, path: %2)").arg(name, path));
@@ -76,8 +76,8 @@ bool Library::removeLibrary(int id)
 {
     Query delTracks(this);
     auto delTracksQuery = QStringLiteral("DELETE FROM Tracks WHERE LibraryID=:libraryId;");
-    delTracks.prepare(delTracksQuery);
-    delTracks.bindValue(":libraryId", id);
+    delTracks.prepareQuery(delTracksQuery);
+    delTracks.bindQueryValue(":libraryId", id);
 
     if(!delTracks.execQuery()) {
         delTracks.error(QString{"Cannot delete library (%1) tracks"}.arg(id));
@@ -86,8 +86,8 @@ bool Library::removeLibrary(int id)
 
     Query delLibrary(this);
     const QString delLibraryQuery = "DELETE FROM Libraries WHERE LibraryID=:libraryId;";
-    delLibrary.prepare(delLibraryQuery);
-    delLibrary.bindValue(":libraryId", id);
+    delLibrary.prepareQuery(delLibraryQuery);
+    delLibrary.bindQueryValue(":libraryId", id);
 
     if(!delLibrary.execQuery()) {
         delLibrary.error(QString{"Cannot remove library %1"}.arg(id));
@@ -108,9 +108,9 @@ bool Library::renameLibrary(int id, const QString& name)
 
     Query q(this);
 
-    q.prepare(query);
-    q.bindValue(":libraryId", id);
-    q.bindValue(":libraryName", name);
+    q.prepareQuery(query);
+    q.bindQueryValue(":libraryId", id);
+    q.bindQueryValue(":libraryName", name);
 
     if(!q.execQuery()) {
         q.error(QString{"Cannot update library (name: %1)"}.arg(name));
