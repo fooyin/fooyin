@@ -65,16 +65,15 @@ public:
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
-
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
-    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
-                                        Qt::MatchFlags flags) const override;
+
+    [[nodiscard]] QModelIndex matchTrack(int id) const;
 
     void reset();
     void setupModelData();
     void changeTrackState();
 
-    [[nodiscard]] QModelIndex indexForId(int id) const;
+    [[nodiscard]] QModelIndex indexForTrack(const Core::Track& track) const;
     [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;
 
 private:
@@ -89,8 +88,6 @@ private:
     void insertRow(PlaylistItem* parent, PlaylistItem* child);
 
     void beginReset();
-
-    void traverseIndex(const QModelIndex& start, QModelIndexList& list) const;
 
     [[nodiscard]] QVariant trackData(PlaylistItem* item, int role) const;
     [[nodiscard]] QVariant albumData(PlaylistItem* item, int role) const;

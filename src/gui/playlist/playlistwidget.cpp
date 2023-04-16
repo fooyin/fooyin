@@ -106,8 +106,8 @@ void PlaylistWidget::setupConnections()
     connect(m_playlist, &PlaylistView::doubleClicked, this, &PlaylistWidget::playTrack);
 
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
-    connect(m_playerManager, &Core::Player::PlayerManager::nextTrack, this, &PlaylistWidget::nextTrack);
-
+    connect(
+        m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, m_model, &PlaylistModel::changeTrackState);
     connect(
         m_playlistHandler, &Core::Playlist::PlaylistHandler::currentPlaylistChanged, m_model, &PlaylistModel::reset);
 
@@ -239,27 +239,14 @@ void PlaylistWidget::playTrack(const QModelIndex& index)
     clearSelection(true);
 }
 
-void PlaylistWidget::nextTrack()
-{
-    m_model->changeTrackState();
-}
-
 void PlaylistWidget::findCurrent()
 {
-    //    const auto* track = m_playerManager->currentTrack();
-
-    //    if(!track) {
-    //        return;
-    //    }
-
-    //    QModelIndex index;
-    //    index = m_>model->match({}, ItemRole::Id, track->id(), 1, {});
-    //    index = m_model->indexForId(track->id());
-
-    //    if(index.isValid()) {
-    //        m_playlist->scrollTo(index);
-    //        setCurrentIndex(index.constFirst());
-    //    }
+    const Core::Track track = m_playerManager->currentTrack();
+    QModelIndex index       = m_model->indexForTrack(track);
+    if(index.isValid()) {
+        m_playlist->scrollTo(index);
+        m_playlist->setCurrentIndex(index);
+    }
 }
 
 void PlaylistWidget::expandPlaylist(const QModelIndex& parent, int first, int last)

@@ -156,29 +156,26 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     return roles;
 }
 
-QModelIndexList PlaylistModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
-                                     Qt::MatchFlags flags) const
+QModelIndex PlaylistModel::matchTrack(int id) const
 {
-    if(role != PlaylistItem::Role::Id) {
-        return QAbstractItemModel::match(start, role, value, hits, flags);
-    }
-
-    QModelIndexList matches;
-    QModelIndexList list;
-
-    traverseIndex(start, list);
-
-    for(const auto& index : list) {
-        const auto* item        = static_cast<PlaylistItem*>(index.internalPointer());
-        const Core::Track track = std::get<Core::Track>(item->data());
-        if(track.id() == value.toInt()) {
-            matches.append(index);
-            if(matches.size() == hits) {
-                break;
+    QModelIndexList stack{};
+    while(!stack.isEmpty()) {
+        const QModelIndex parent = stack.takeFirst();
+        for(int i = 0; i < rowCount(parent); ++i) {
+            const QModelIndex child = index(i, 0, parent);
+            if(rowCount(child) > 0) {
+                stack.append(child);
+            }
+            else {
+                const auto* item        = static_cast<PlaylistItem*>(child.internalPointer());
+                const Core::Track track = std::get<Core::Track>(item->data());
+                if(track.id() == id) {
+                    return child;
+                }
             }
         }
     }
-    return matches;
+    return {};
 }
 
 void PlaylistModel::reset()
@@ -219,10 +216,10 @@ void PlaylistModel::changeTrackState()
     emit dataChanged({}, {}, {PlaylistItem::Role::Playing});
 }
 
-QModelIndex PlaylistModel::indexForId(int id) const
+QModelIndex PlaylistModel::indexForTrack(const Core::Track& track) const
 {
     QModelIndex index;
-    const auto key = QString("track%1").arg(id);
+    const auto key = track.hash();
     if(m_nodes.count(key)) {
         const auto* item = m_nodes.at(key).get();
         index            = createIndex(item->row(), 0, item);
@@ -337,23 +334,6 @@ void PlaylistModel::beginReset()
     m_albums.clear();
     m_nodes.clear();
     resetRoot();
-}
-
-void PlaylistModel::traverseIndex(const QModelIndex& start, QModelIndexList& list) const
-{
-    QModelIndexList stack{start};
-    while(!stack.isEmpty()) {
-        const QModelIndex parent = stack.takeFirst();
-        for(int i = 0; i < rowCount(parent); ++i) {
-            const QModelIndex child = index(i, 0, parent);
-            if(rowCount(child) > 0) {
-                stack.append(child);
-            }
-            else {
-                list.append(child);
-            }
-        }
-    }
 }
 
 QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const

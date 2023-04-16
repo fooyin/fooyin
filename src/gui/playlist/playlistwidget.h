@@ -87,7 +87,6 @@ private:
     void customHeaderMenuRequested(QPoint pos);
     void changeState(Core::Player::PlayState state);
     void playTrack(const QModelIndex& index);
-    void nextTrack();
     void findCurrent();
     void prepareTracks(int idx);
     void expandPlaylist(const QModelIndex& parent, int first, int last);
