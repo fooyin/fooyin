@@ -22,7 +22,6 @@
 #include "gui/fywidget.h"
 
 #include <core/models/trackfwd.h>
-#include <core/playlist/libraryplaylistinterface.h>
 
 class QHBoxLayout;
 
@@ -32,6 +31,7 @@ namespace Utils {
 class OverlayWidget;
 class SettingsDialogController;
 class SettingsManager;
+class HeaderView;
 } // namespace Utils
 
 namespace Core {
@@ -46,7 +46,7 @@ class MusicLibrary;
 } // namespace Library
 
 namespace Playlist {
-class PlaylistManager;
+class PlaylistHandler;
 } // namespace Playlist
 } // namespace Core
 
@@ -59,7 +59,7 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistManager* playlistHandler,
+    explicit PlaylistWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
                             Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                             QWidget* parent = nullptr);
 
@@ -77,38 +77,37 @@ public:
     [[nodiscard]] QString name() const override;
 
 signals:
-    void clickedTrack(int idx);
     void selectionWasChanged(const Core::TrackList& tracks);
 
 protected:
-    void selectionChanged();
     void keyPressEvent(QKeyEvent* event) override;
+
+private:
+    void selectionChanged();
     void customHeaderMenuRequested(QPoint pos);
     void changeState(Core::Player::PlayState state);
     void playTrack(const QModelIndex& index);
     void nextTrack();
     void findCurrent();
-
-private:
     void prepareTracks(int idx);
     void expandPlaylist(const QModelIndex& parent, int first, int last);
     void clearSelection(bool clearView = false);
+    void switchContextMenu(int section, QPoint pos);
 
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
     Utils::SettingsManager* m_settings;
     Utils::SettingsDialogController* m_settingsDialog;
 
-    Core::Playlist::PlaylistManager* m_playlistHandler;
-    std::unique_ptr<Core::Playlist::LibraryPlaylistInterface> m_libraryPlaylistManager;
+    Core::Playlist::PlaylistHandler* m_playlistHandler;
 
     Core::TrackList m_selectedTracks;
 
     QHBoxLayout* m_layout;
     PlaylistModel* m_model;
     PlaylistView* m_playlist;
+    Utils::HeaderView* m_header;
     bool m_changingSelection;
-    Utils::OverlayWidget* m_noLibrary;
 };
 } // namespace Gui::Widgets
 } // namespace Fy

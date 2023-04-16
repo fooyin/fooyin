@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "core/playlist/playlist.h"
 #include "module.h"
 
 namespace Fy::Core::DB {
@@ -26,5 +27,18 @@ class Playlist : private Module
 {
 public:
     explicit Playlist(const QString& connectionName);
+
+    bool getAllPlaylists(Core::Playlist::PlaylistList& playlists);
+    bool getPlaylistTracks(int id, std::vector<int>& ids);
+
+    int insertPlaylist(const QString& name, int index);
+    bool insertPlaylistTracks(int id, const TrackList& tracks);
+
+    bool removePlaylist(int id);
+    
+    bool renamePlaylist(int id, const QString& name);
+
+private:
+    bool insertPlaylistTrack(int playlistId, const Track& track, int index);
 };
 } // namespace Fy::Core::DB

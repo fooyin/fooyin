@@ -23,53 +23,41 @@
 
 #include <QObject>
 
-namespace Fy::Core {
-
-namespace Player {
-class PlayerManager;
-}
-
-namespace Playlist {
-class Playlist : public QObject
+namespace Fy::Core::Playlist {
+class Playlist
 {
-    Q_OBJECT
-
 public:
-    Playlist(Player::PlayerManager* playerManager, int idx, QString name, QObject* parent = nullptr);
+    Playlist(QString name, int index = -1, int id = -1);
 
-    QString name();
-
-    int createPlaylist(const TrackList& tracks);
+    [[nodiscard]] int id() const;
+    [[nodiscard]] int index() const;
+    void setIndex(int index);
+    [[nodiscard]] QString name() const;
+    void setName(const QString& name);
+    [[nodiscard]] TrackList tracks() const;
+    [[nodiscard]] int trackCount() const;
 
     [[nodiscard]] int currentTrackIndex() const;
     [[nodiscard]] Track currentTrack() const;
+    [[nodiscard]] bool wasModified() const;
 
-    [[nodiscard]] int index() const;
-
-    void insertTracks(const TrackList& tracks);
+    void replaceTracks(const TrackList& tracks);
     void appendTracks(const TrackList& tracks);
 
     void clear();
 
-    void setCurrentTrack(int index);
-    bool changeTrack(int index);
-
-    void play();
-    void stop();
-    int next();
-    int previous();
-
-protected:
-    int nextIndex();
-    [[nodiscard]] int numberOfTracks() const;
+    void changeCurrentTrack(int index);
+    void changeCurrentTrack(const Core::Track& track);
 
 private:
-    Player::PlayerManager* m_playerManager;
+    int findTrack(const Core::Track& track);
 
+    int m_id;
+    int m_index;
     QString m_name;
-    int m_playlistIndex;
-    Track m_playingTrack;
+    int m_currentTrackIndex;
     TrackList m_tracks;
+    bool m_modified;
 };
-} // namespace Playlist
-} // namespace Fy::Core
+using PlaylistList = std::vector<std::unique_ptr<Playlist>>;
+} // namespace Fy::Core::Playlist

@@ -53,12 +53,10 @@ public:
 
     bool hasLibrary() const override;
 
-    [[nodiscard]] TrackList allTracks() const override;
     [[nodiscard]] TrackList tracks() const override;
 
     void changeSort(const QString& sort);
 
-    void addInteractor(LibraryInteractor* interactor) override;
     void removeLibrary(int id) override;
 
 signals:
@@ -78,12 +76,9 @@ private:
     DB::Database* m_database;
     Utils::SettingsManager* m_settings;
     LibraryThreadHandler m_threadHandler;
+
     TrackSorter m_trackSorter;
-
     TrackList m_tracks;
-
-    using LibraryInteractors = std::vector<LibraryInteractor*>;
-    LibraryInteractors m_interactors;
 };
 } // namespace Library
 } // namespace Core

@@ -217,6 +217,9 @@ void FilterModel::setupModelData(const Core::TrackList& tracks)
     m_root->appendChild(m_allNode.get());
 
     for(const Core::Track& track : tracks) {
+        if(!track.enabled()) {
+            continue;
+        }
         const QString field = m_parser.evaluate(parsedField, track);
         const QString sort  = m_parser.evaluate(parsedSort, track);
         if(field.isNull()) {

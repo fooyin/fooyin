@@ -22,22 +22,22 @@
 #include "fieldregistry.h"
 
 #include <core/library/musiclibrary.h>
+#include <core/playlist/playlisthandler.h>
 
 #include <QActionGroup>
 #include <QMenu>
 #include <QThread>
 
 namespace Fy::Filters {
-FilterManager::FilterManager(Core::Library::MusicLibrary* library, FieldRegistry* fieldsRegistry, QObject* parent)
-    : LibraryInteractor{parent}
+FilterManager::FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
+                             FieldRegistry* fieldsRegistry, QObject* parent)
+    : QObject{parent}
     , m_library{library}
+    , m_playlistHandler{playlistHandler}
     , m_searchThread{new QThread(this)}
     , m_fieldsRegistry{fieldsRegistry}
-    , m_lastFilterIndex{-1}
 {
     m_searchManager.moveToThread(m_searchThread);
-
-    connect(this, &FilterManager::filteredTracks, m_library, &Core::Library::MusicLibrary::tracksChanged);
 
     connect(this, &FilterManager::filterTracks, &m_searchManager, &TrackFilterer::filterTracks);
     connect(&m_searchManager, &TrackFilterer::tracksFiltered, this, &FilterManager::tracksFiltered);
@@ -52,8 +52,6 @@ FilterManager::FilterManager(Core::Library::MusicLibrary* library, FieldRegistry
 
     connect(m_fieldsRegistry, &FieldRegistry::fieldChanged, this, &FilterManager::fieldChanged);
 
-    m_library->addInteractor(this);
-
     m_searchThread->start();
 }
 
@@ -65,7 +63,7 @@ FilterManager::~FilterManager()
 
 Core::TrackList FilterManager::tracks() const
 {
-    return hasTracks() ? m_filteredTracks : m_library->allTracks();
+    return hasTracks() ? m_filteredTracks : m_library->tracks();
 }
 
 bool FilterManager::hasTracks() const
@@ -111,22 +109,21 @@ void FilterManager::getFilteredTracks()
                 = Utils::intersection<Core::Track, Core::Track::TrackHash>(filter.tracks, m_filteredTracks);
         }
     }
-    emit filteredTracks();
 }
 
 void FilterManager::selectionChanged(int index)
 {
     m_filterStore.clearActiveFilters(index);
-    m_lastFilterIndex = index;
     getFilteredTracks();
-    emit filteredItems(m_lastFilterIndex);
+    m_playlistHandler->createPlaylist("Library Viewer", m_filteredTracks, true);
+    emit filteredItems(index);
 }
 
 void FilterManager::searchChanged(const QString& search)
 {
     const bool reset = m_searchFilter.length() > search.length();
     m_searchFilter   = search;
-    emit filterTracks(!reset && !m_filteredTracks.empty() ? m_filteredTracks : m_library->allTracks(), m_searchFilter);
+    emit filterTracks(!reset && !m_filteredTracks.empty() ? m_filteredTracks : m_library->tracks(), m_searchFilter);
 }
 
 QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
@@ -158,7 +155,7 @@ QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
 void FilterManager::tracksFiltered(const Core::TrackList& tracks)
 {
     m_filteredTracks = tracks;
-    emit filteredTracks();
+    m_playlistHandler->createPlaylist("Library Viewer", m_filteredTracks);
     emit filteredItems(-1);
 }
 

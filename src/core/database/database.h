@@ -33,6 +33,7 @@ class SettingsManager;
 
 namespace Core::DB {
 class Library;
+class Playlist;
 
 class Database : public Module
 {
@@ -49,6 +50,7 @@ public:
     virtual void rollback();
 
     Library* libraryConnector();
+    Playlist* playlistConnector();
 
     bool update();
 
@@ -63,6 +65,7 @@ private:
     bool m_initialized;
 
     std::unique_ptr<Library> m_libraryConnector;
+    std::unique_ptr<Playlist> m_playlistConnector;
 };
 } // namespace Core::DB
 } // namespace Fy

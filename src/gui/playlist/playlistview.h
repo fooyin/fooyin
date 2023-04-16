@@ -34,5 +34,6 @@ public:
 protected:
     void drawBranches(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 };
 } // namespace Fy::Gui::Widgets

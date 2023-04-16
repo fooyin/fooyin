@@ -50,7 +50,7 @@ public:
     QString generateHash();
 
     [[nodiscard]] bool isValid() const;
-
+    [[nodiscard]] bool enabled() const;
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] int id() const;
@@ -96,7 +96,7 @@ public:
     [[nodiscard]] QString sort() const;
 
     void setLibraryId(int id);
-
+    void setEnabled(bool enabled);
     void setId(int id);
     void setHash(const QString& hash);
     void setTitle(const QString& title);

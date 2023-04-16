@@ -25,7 +25,6 @@
 
 namespace Fy::Core::Library {
 struct LibraryInfo;
-class LibraryInteractor;
 
 class MusicLibrary : public QObject
 {
@@ -44,10 +43,7 @@ public:
     virtual void reload(LibraryInfo* library) = 0;
     virtual void rescan()                     = 0;
 
-    [[nodiscard]] virtual TrackList tracks() const    = 0;
-    [[nodiscard]] virtual TrackList allTracks() const = 0;
-
-    virtual void addInteractor(LibraryInteractor* interactor) = 0;
+    [[nodiscard]] virtual TrackList tracks() const = 0;
 
     virtual void removeLibrary(int id) = 0;
 
@@ -68,6 +64,5 @@ signals:
     void libraryAdded();
     void libraryRemoved(int id);
     void libraryChanged();
-    void tracksChanged();
 };
 } // namespace Fy::Core::Library

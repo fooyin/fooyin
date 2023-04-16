@@ -41,8 +41,8 @@ namespace Player {
 class PlayerManager;
 }
 
-namespace Library {
-class MusicLibrary;
+namespace Playlist {
+class PlaylistHandler;
 }
 } // namespace Core
 
@@ -60,7 +60,7 @@ class PlaylistModel : public Utils::TreeModel<PlaylistItem>
     Q_OBJECT
 
 public:
-    explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
+    explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Playlist::PlaylistHandler* playlistHandler,
                            Utils::SettingsManager* settings, QObject* parent = nullptr);
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -70,15 +70,12 @@ public:
     [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
                                         Qt::MatchFlags flags) const override;
 
-    [[nodiscard]] Core::TrackList tracks() const;
-
     void reset();
     void setupModelData();
     void changeTrackState();
 
     [[nodiscard]] QModelIndex indexForId(int id) const;
     [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;
-    [[nodiscard]] int findTrackIndex(const Core::Track& track) const;
 
 private:
     using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
@@ -100,7 +97,7 @@ private:
     [[nodiscard]] QVariant containerData(PlaylistItem* item, int role) const;
 
     Core::Player::PlayerManager* m_playerManager;
-    Core::Library::MusicLibrary* m_library;
+    Core::Playlist::PlaylistHandler* m_playlistHandler;
     Utils::SettingsManager* m_settings;
     Core::Library::CoverProvider m_coverProvider;
 
@@ -108,8 +105,6 @@ private:
     bool m_splitDiscs;
     bool m_altColours;
     bool m_simplePlaylist;
-
-    Core::TrackList m_tracks;
 
     bool m_resetting;
 

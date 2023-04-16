@@ -17,22 +17,14 @@
  *
  */
 
-#pragma once
+#include "headerview.h"
 
-#include "core/models/trackfwd.h"
-
-#include <QObject>
-
-namespace Fy::Core::Library {
-class MusicLibraryInteractor : public QObject
+namespace Fy::Utils {
+void HeaderView::mousePressEvent(QMouseEvent* event)
 {
-    Q_OBJECT
-
-public:
-    explicit MusicLibraryInteractor(QObject* parent)
-        : QObject{parent} {};
-
-    [[nodiscard]] virtual TrackList tracks() const = 0;
-    [[nodiscard]] virtual bool hasTracks() const   = 0;
-};
-} // namespace Fy::Core::Library
+    if(event->buttons() == Qt::LeftButton) {
+        emit leftClicked(logicalIndexAt(event->pos()), event->pos());
+    }
+    QHeaderView::mousePressEvent(event);
+}
+} // namespace Fy::Utils

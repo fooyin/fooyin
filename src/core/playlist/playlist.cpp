@@ -19,162 +19,109 @@
 
 #include "playlist.h"
 
-#include "core/player/playermanager.h"
-
-#include <utils/utils.h>
-
 #include <QMessageBox>
 
 namespace Fy::Core::Playlist {
-Playlist::Playlist(Player::PlayerManager* playerManager, int idx, QString name, QObject* parent)
-    : QObject{parent}
-    , m_playerManager{playerManager}
+Playlist::Playlist(QString name, int index, int id)
+    : m_id{id}
+    , m_index{index}
     , m_name{std::move(name)}
-    , m_playlistIndex{idx}
-    , m_playingTrack{nullptr}
+    , m_currentTrackIndex{-1}
+    , m_modified{false}
 { }
 
-QString Playlist::name()
+int Playlist::id() const
 {
-    return m_name;
-}
-
-int Playlist::createPlaylist(const TrackList& tracks)
-{
-    m_tracks.insert(m_tracks.end(), tracks.begin(), tracks.end());
-    return static_cast<int>(m_tracks.size());
-}
-
-int Playlist::currentTrackIndex() const
-{
-    auto it = std::find_if(m_tracks.cbegin(), m_tracks.cend(), [this](const Track& track) {
-        return (track.id() == m_playingTrack.id());
-    });
-
-    if(it == m_tracks.end()) {
-        return -1;
-    }
-
-    return static_cast<int>(std::distance(m_tracks.cbegin(), it));
-}
-
-Track Playlist::currentTrack() const
-{
-    const auto trackIndex = currentTrackIndex();
-    if(trackIndex >= numberOfTracks() || trackIndex < 0) {
-        return {};
-    }
-
-    return m_tracks.at(trackIndex);
+    return m_id;
 }
 
 int Playlist::index() const
 {
-    return m_playlistIndex;
+    return m_index;
 }
 
-void Playlist::insertTracks(const TrackList& tracks)
+void Playlist::setIndex(int index)
 {
-    m_tracks = tracks;
+    m_index = index;
+}
+
+QString Playlist::name() const
+{
+    return m_name;
+}
+
+void Playlist::setName(const QString& name)
+{
+    m_name = name;
+}
+
+TrackList Playlist::tracks() const
+{
+    return m_tracks;
+}
+
+int Playlist::currentTrackIndex() const
+{
+    return m_currentTrackIndex;
+}
+
+Track Playlist::currentTrack() const
+{
+    if(m_currentTrackIndex >= trackCount() || m_currentTrackIndex < 0) {
+        return {};
+    }
+    return m_tracks.at(m_currentTrackIndex);
+}
+
+// Playlist tracks were changed
+bool Playlist::wasModified() const
+{
+    return m_modified;
+}
+
+void Playlist::replaceTracks(const TrackList& tracks)
+{
+    m_tracks   = tracks;
+    m_modified = true;
 }
 
 void Playlist::appendTracks(const TrackList& tracks)
 {
     m_tracks.insert(m_tracks.end(), tracks.begin(), tracks.end());
+    m_modified = true;
 }
 
 void Playlist::clear()
 {
     m_tracks.clear();
+    m_modified = true;
 }
 
-void Playlist::setCurrentTrack(int index)
+void Playlist::changeCurrentTrack(int index)
 {
-    if(index < 0 || index >= numberOfTracks()) {
-        stop();
-    }
-
-    else {
-        Track track    = m_tracks[index];
-        m_playingTrack = track;
-        m_playerManager->changeCurrentTrack(track);
-    }
+    m_currentTrackIndex = index;
 }
 
-bool Playlist::changeTrack(int index)
+void Playlist::changeCurrentTrack(const Track& track)
 {
-    setCurrentTrack(index);
-
-    if(index < 0 || index >= numberOfTracks()) {
-        stop();
-        return false;
+    const int index = findTrack(track);
+    if(index >= 0) {
+        m_currentTrackIndex = index;
     }
-
-    while(!Utils::File::exists(m_tracks[index].filepath())) {
-        Utils::showMessageBox(QString{"Track %1 cannot be found."}.arg(index), m_tracks[index].filepath());
-        setCurrentTrack(++index);
-    }
-
-    m_playerManager->play();
-
-    return true;
 }
 
-void Playlist::play()
+int Playlist::findTrack(const Track& track)
 {
-    if(currentTrackIndex() < 0) {
-        next();
+    auto it = std::find_if(m_tracks.cbegin(), m_tracks.cend(), [track](const Track& playlistTrack) {
+        return playlistTrack == track;
+    });
+    if(it != m_tracks.cend()) {
+        return static_cast<int>(std::distance(m_tracks.cbegin(), it));
     }
+    return -1;
 }
 
-void Playlist::stop() { }
-
-int Playlist::next()
-{
-    if(m_tracks.empty()) {
-        stop();
-        return -1;
-    }
-    const int index = nextIndex();
-    changeTrack(index);
-    return index;
-}
-
-int Playlist::previous()
-{
-    int index = currentTrackIndex();
-    if(m_playerManager->currentPosition() > 5000) {
-        m_playerManager->changePosition(0);
-        return index;
-    }
-    --index;
-    changeTrack(index);
-    return index;
-}
-
-int Playlist::nextIndex()
-{
-    const int currentIndex = currentTrackIndex();
-    const bool isLastTrack = (currentIndex >= numberOfTracks() - 1);
-    const auto mode        = m_playerManager->playMode();
-    int index              = currentIndex + 1;
-
-    if(mode == Player::PlayMode::Repeat) {
-        index = currentIndex;
-    }
-    // TODO: Implement full shuffle functionality
-    else if(mode == Player::PlayMode::Shuffle) {
-        index = Utils::randomNumber(0, static_cast<int>(m_tracks.size()) - 1);
-    }
-
-    else if(isLastTrack) {
-        index = mode == Player::PlayMode::RepeatAll ? 0 : -1;
-    }
-
-    return index;
-}
-
-int Playlist::numberOfTracks() const
+int Playlist::trackCount() const
 {
     return static_cast<int>(m_tracks.size());
 }

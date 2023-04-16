@@ -10,7 +10,7 @@ project(
     LANGUAGES CXX
 )
 
-set(DATABASE_VERSION "0.6.0")
+set(DATABASE_VERSION "0.6.2")
 
 include(cmake/CheckLevel.cmake)
 

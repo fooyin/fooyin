@@ -19,15 +19,21 @@
 
 #pragma once
 
-#include "core/models/trackfwd.h"
+#include <QHeaderView>
+#include <QMouseEvent>
 
-namespace Fy::Core::Playlist {
-class LibraryPlaylistInterface
+namespace Fy::Utils {
+class HeaderView : public QHeaderView
 {
-public:
-    virtual ~LibraryPlaylistInterface() = default;
+    Q_OBJECT
 
-    virtual void createPlaylist(const TrackList& tracks, int startIndex) = 0;
-    virtual void append(const TrackList& tracks)                         = 0;
+public:
+    using QHeaderView::QHeaderView;
+
+signals:
+    void leftClicked(int section, QPoint pos);
+
+protected:
+    void mousePressEvent(QMouseEvent* event);
 };
-} // namespace Fy::Core::Playlist
+}

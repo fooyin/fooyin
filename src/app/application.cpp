@@ -30,8 +30,6 @@
 #include <core/library/libraryscanner.h>
 #include <core/library/unifiedmusiclibrary.h>
 #include <core/player/playercontroller.h>
-#include <core/playlist/libraryplaylistinterface.h>
-#include <core/playlist/libraryplaylistmanager.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/plugin.h>
 #include <core/plugins/pluginmanager.h>
@@ -60,6 +58,7 @@
 #include <gui/settings/playlistguipage.h>
 #include <gui/settings/pluginspage.h>
 #include <gui/widgetfactory.h>
+#include <gui/widgets/playlisttabs.h>
 #include <gui/widgets/spacer.h>
 #include <gui/widgets/splitterwidget.h>
 
@@ -76,10 +75,9 @@ struct Application::Private
     Core::DB::Database database;
     Core::Player::PlayerManager* playerManager;
     Core::Engine::EngineHandler engine;
-    Core::Playlist::PlaylistManager* playlistHandler;
     Core::Library::LibraryManager* libraryManager;
     Core::Library::MusicLibrary* library;
-    std::unique_ptr<Core::Playlist::LibraryPlaylistInterface> playlistInterface;
+    Core::Playlist::PlaylistHandler* playlistHandler;
 
     Gui::Widgets::WidgetFactory widgetFactory;
     Gui::Settings::GuiSettings guiSettings;
@@ -111,10 +109,10 @@ struct Application::Private
         , database{settingsManager}
         , playerManager{new Core::Player::PlayerController(settingsManager, parent)}
         , engine{playerManager}
-        , playlistHandler{new Core::Playlist::PlaylistHandler(playerManager, parent)}
         , libraryManager{new Core::Library::LibraryManager(&database, settingsManager, parent)}
         , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
-        , playlistInterface{std::make_unique<Core::Playlist::LibraryPlaylistManager>(library, playlistHandler)}
+        , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, library, settingsManager,
+                                                              parent)}
         , guiSettings{settingsManager}
         , editableLayout{std::make_unique<Gui::Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,
                                                                         &layoutProvider)}
@@ -131,7 +129,7 @@ struct Application::Private
         , playlistGuiPage{settingsManager}
         , pluginManager{new Plugins::PluginManager(parent)}
         , pluginPage{settingsManager, pluginManager}
-        , corePluginContext{actionManager, playerManager, library, settingsManager, &database}
+        , corePluginContext{actionManager, playerManager, library, playlistHandler, settingsManager, &database}
         , guiPluginContext{&layoutProvider, &widgetFactory}
     {
         registerLayouts();
@@ -159,6 +157,10 @@ struct Application::Private
 
     void registerWidgets()
     {
+        widgetFactory.registerClass<Gui::Widgets::PlaylistTabs>("PlaylistTabs", [this]() {
+            return new Gui::Widgets::PlaylistTabs(actionManager, &widgetFactory, playlistHandler);
+        });
+
         widgetFactory.registerClass<Gui::Widgets::ControlWidget>("Controls", [this]() {
             return new Gui::Widgets::ControlWidget(playerManager, settingsManager);
         });
@@ -226,6 +228,7 @@ void Application::startup()
 
 void Application::shutdown()
 {
+    p->playlistHandler->savePlaylists();
     p->editableLayout->saveLayout();
     p->editableLayout.reset(nullptr);
     p->mainWindow.reset(nullptr);

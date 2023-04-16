@@ -29,7 +29,6 @@ namespace Fy::Core::Player {
 PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* parent)
     : PlayerManager{parent}
     , m_settings{settings}
-    , m_currentTrack{nullptr}
     , m_totalDuration{0}
     , m_playStatus{Stopped}
     , m_playMode{Default}
@@ -43,8 +42,9 @@ PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* pa
 
 void PlayerController::reset()
 {
-    m_playStatus = Stopped;
-    m_position   = 0;
+    m_playStatus   = Stopped;
+    m_position     = 0;
+    m_currentTrack = {};
 }
 
 void PlayerController::play()
