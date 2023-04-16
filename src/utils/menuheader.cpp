@@ -53,7 +53,7 @@ void MenuHeader::paintEvent(QPaintEvent* e)
     QPainter painter(this);
     const QPalette palette        = this->palette();
     const QColor headerBackground = palette.color(QPalette::AlternateBase);
-    const QColor headerText       = palette.color(QPalette::BrightText);
+    const QColor headerText       = palette.color(QPalette::Text);
 
     painter.setBrush(headerBackground);
     painter.setPen(Qt::NoPen);
