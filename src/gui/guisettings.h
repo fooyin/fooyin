@@ -45,6 +45,7 @@ enum Gui : uint32_t
     InfoAltColours     = 11 | Utils::Settings::Bool,
     InfoHeader         = 12 | Utils::Settings::Bool,
     InfoScrollBar      = 13 | Utils::Settings::Bool,
+    EditingMenuLevels  = 14 | Utils::Settings::Int,
 };
 Q_ENUM_NS(Gui)
 

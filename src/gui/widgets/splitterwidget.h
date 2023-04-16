@@ -33,17 +33,15 @@ class SettingsManager;
 
 namespace Gui::Widgets {
 class Dummy;
-class WidgetProvider;
+class WidgetFactory;
 
 class SplitterWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+    explicit SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
                             Utils::SettingsManager* settings, QWidget* parent = nullptr);
-
-    void setupActions();
 
     [[nodiscard]] Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orientation);
@@ -71,15 +69,16 @@ protected:
     void insertWidget(int index, FyWidget* widget);
 
 private:
+    void setupAddWidgetMenu(Utils::ActionContainer* menu);
+
     Utils::SettingsManager* m_settings;
     Utils::ActionManager* m_actionManager;
-    Widgets::WidgetProvider* m_widgetProvider;
+    Widgets::WidgetFactory* m_widgetFactory;
 
     QHBoxLayout* m_layout;
     Splitter* m_splitter;
     QList<FyWidget*> m_children;
     Dummy* m_dummy;
-    QAction* m_changeSplitter;
     int m_widgetCount;
     bool m_isRoot;
 };
@@ -87,9 +86,9 @@ private:
 class VerticalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit VerticalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+    explicit VerticalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
                                     Utils::SettingsManager* settings, QWidget* parent = nullptr)
-        : SplitterWidget(actionManager, widgetProvider, settings, parent)
+        : SplitterWidget(actionManager, widgetFactory, settings, parent)
     {
         setOrientation(Qt::Vertical);
     }
@@ -98,9 +97,9 @@ public:
 class HorizontalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit HorizontalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+    explicit HorizontalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
                                       Utils::SettingsManager* settings, QWidget* parent = nullptr)
-        : SplitterWidget(actionManager, widgetProvider, settings, parent)
+        : SplitterWidget(actionManager, widgetFactory, settings, parent)
     {
         setOrientation(Qt::Horizontal);
     }

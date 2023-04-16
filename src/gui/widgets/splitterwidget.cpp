@@ -20,7 +20,7 @@
 #include "splitterwidget.h"
 
 #include "dummy.h"
-#include "gui/widgetprovider.h"
+#include "gui/widgetfactory.h"
 #include "splitter.h"
 
 #include <utils/actions/actioncontainer.h>
@@ -32,12 +32,20 @@
 #include <QMenu>
 
 namespace Fy::Gui::Widgets {
-SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetProvider* widgetProvider,
+Utils::ActionContainer* createNewMenu(Utils::ActionManager* actionManager, FyWidget* parent, const QString& title)
+{
+    auto id       = parent->id().append(title);
+    auto* newMenu = actionManager->createMenu(id);
+    newMenu->menu()->setTitle(title);
+    return newMenu;
+}
+
+SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
                                Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_settings{settings}
     , m_actionManager{actionManager}
-    , m_widgetProvider{widgetProvider}
+    , m_widgetFactory{widgetFactory}
     , m_layout{new QHBoxLayout(this)}
     , m_splitter{new Splitter(Qt::Vertical, settings, this)}
     , m_dummy{new Dummy(this)}
@@ -54,18 +62,6 @@ SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, Widgets::Wid
     m_layout->addWidget(m_splitter);
 
     m_splitter->addWidget(m_dummy);
-
-    setupActions();
-}
-
-void SplitterWidget::setupActions()
-{
-    m_changeSplitter = new QAction("Change Splitter", this);
-
-    QAction::connect(m_changeSplitter, &QAction::triggered, this, [this] {
-        setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
-        setObjectName(QString("%1 Splitter").arg(Utils::EnumHelper::toString(m_splitter->orientation())));
-    });
 }
 
 Qt::Orientation SplitterWidget::orientation() const
@@ -129,6 +125,33 @@ void SplitterWidget::insertWidget(int index, FyWidget* widget)
     m_splitter->insertWidget(index, widget);
 }
 
+void SplitterWidget::setupAddWidgetMenu(Utils::ActionContainer* menu)
+{
+    if(!menu->isEmpty()) {
+        return;
+    }
+    auto widgets = m_widgetFactory->registeredWidgets();
+    for(const auto& widget : widgets) {
+        auto* parentMenu = menu;
+        for(const auto& subMenu : widget.second.subMenus) {
+            const Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
+            auto* childMenu    = m_actionManager->actionContainer(id);
+            if(!childMenu) {
+                childMenu = m_actionManager->createMenu(id);
+                childMenu->menu()->setTitle(subMenu);
+                parentMenu->addMenu(childMenu);
+            }
+            parentMenu = childMenu;
+        }
+        auto* addWidgetAction = new QAction(widget.second.name, parentMenu);
+        QAction::connect(addWidgetAction, &QAction::triggered, this, [this, widget] {
+            FyWidget* newWidget = m_widgetFactory->make(widget.first);
+            addWidget(newWidget);
+        });
+        parentMenu->addAction(addWidgetAction);
+    }
+}
+
 void SplitterWidget::replaceWidget(int index, FyWidget* widget)
 {
     if(!widget || m_children.isEmpty()) {
@@ -188,7 +211,16 @@ QString SplitterWidget::layoutName() const
 
 void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 {
-    menu->addAction(m_changeSplitter);
+    QAction* changeSplitter = new QAction("Change Splitter", this);
+    QAction::connect(changeSplitter, &QAction::triggered, this, [this] {
+        setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
+        setObjectName(QString("%1 Splitter").arg(Utils::EnumHelper::toString(m_splitter->orientation())));
+    });
+    menu->addAction(changeSplitter);
+
+    auto* addMenu = createNewMenu(m_actionManager, this, tr("&Add"));
+    setupAddWidgetMenu(addMenu);
+    menu->addMenu(addMenu);
 }
 
 void SplitterWidget::saveLayout(QJsonArray& array)
@@ -217,14 +249,14 @@ void SplitterWidget::loadLayout(QJsonObject& object)
         const QJsonObject object = widget.toObject();
         if(!object.isEmpty()) {
             const auto name = object.constBegin().key();
-            if(auto* childWidget = m_widgetProvider->createWidget(name)) {
+            if(auto* childWidget = m_widgetFactory->make(name)) {
                 addWidget(childWidget);
                 auto widgetObject = object.value(name).toObject();
                 childWidget->loadLayout(widgetObject);
             }
         }
         else {
-            auto* childWidget = m_widgetProvider->createWidget(widget.toString());
+            auto* childWidget = m_widgetFactory->make(widget.toString());
             addWidget(childWidget);
         }
     }

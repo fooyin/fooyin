@@ -87,7 +87,6 @@ EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionMa
     , m_menu{actionManager->createMenu(Constants::Menus::Context::Layout)}
     , m_box{new QHBoxLayout(this)}
     , m_overlay{new Utils::OverlayFilter(this)}
-    , m_menuLevels{2}
     , m_layoutEditing{false}
 {
     setObjectName("EditableLayout");
@@ -100,7 +99,7 @@ EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionMa
     m_widgetFactory->registerClass<Gui::Widgets::VerticalSplitterWidget>(
         "SplitterVertical",
         [this]() {
-            return new Gui::Widgets::VerticalSplitterWidget(m_actionManager, &m_widgetProvider, m_settings);
+            return new Gui::Widgets::VerticalSplitterWidget(m_actionManager, m_widgetFactory, m_settings);
         },
         "Vertical Splitter",
         {"Splitter"});
@@ -108,7 +107,7 @@ EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionMa
     m_widgetFactory->registerClass<Gui::Widgets::HorizontalSplitterWidget>(
         "SplitterHorizontal",
         [this]() {
-            return new Gui::Widgets::HorizontalSplitterWidget(m_actionManager, &m_widgetProvider, m_settings);
+            return new Gui::Widgets::HorizontalSplitterWidget(m_actionManager, m_widgetFactory, m_settings);
         },
         "Horizontal Splitter",
         {"Splitter"});
@@ -142,14 +141,14 @@ Utils::ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QS
     return newMenu;
 }
 
-void EditableLayout::setupWidgetMenu(Utils::ActionContainer* menu, FyWidget* parent, bool replace)
+void EditableLayout::setupReplaceWidgetMenu(Utils::ActionContainer* menu, FyWidget* current)
 {
     if(!menu->isEmpty()) {
         return;
     }
-    auto* splitter = qobject_cast<SplitterWidget*>(parent);
-    if(!splitter || replace) {
-        splitter = qobject_cast<SplitterWidget*>(parent->findParent());
+    auto* splitter = qobject_cast<SplitterWidget*>(current->findParent());
+    if(!splitter) {
+        return;
     }
     auto widgets = m_widgetFactory->registeredWidgets();
     for(const auto& widget : widgets) {
@@ -165,14 +164,9 @@ void EditableLayout::setupWidgetMenu(Utils::ActionContainer* menu, FyWidget* par
             parentMenu = childMenu;
         }
         auto* addWidget = new QAction(widget.second.name, parentMenu);
-        QAction::connect(addWidget, &QAction::triggered, this, [this, parent, replace, widget, splitter] {
+        QAction::connect(addWidget, &QAction::triggered, this, [this, current, widget, splitter] {
             FyWidget* newWidget = m_widgetProvider.createWidget(widget.first);
-            if(replace) {
-                splitter->replaceWidget(parent, newWidget);
-            }
-            else {
-                splitter->addWidget(newWidget);
-            }
+            splitter->replaceWidget(current, newWidget);
         });
         parentMenu->addAction(addWidget);
     }
@@ -184,7 +178,7 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Utils::ActionContainer* 
         return;
     }
     auto* currentWidget = widget;
-    auto level          = m_menuLevels;
+    int level           = m_settings->value<Settings::EditingMenuLevels>();
     while(level > 0) {
         if(!currentWidget) {
             break;
@@ -193,28 +187,9 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Utils::ActionContainer* 
         currentWidget->layoutEditingMenu(menu);
 
         auto* parent = qobject_cast<SplitterWidget*>(currentWidget->findParent());
-
-        if(auto* splitter = qobject_cast<SplitterWidget*>(currentWidget)) {
-            auto* addMenu = createNewMenu(splitter, tr("&Add"));
-            setupWidgetMenu(addMenu, splitter);
-            menu->addMenu(addMenu);
-
-            // Only non-root splitters are removable
-            if(parent) {
-                auto* changeMenu = createNewMenu(splitter, tr("&Replace"));
-                setupWidgetMenu(changeMenu, splitter, true);
-                menu->addMenu(changeMenu);
-
-                auto* remove = new QAction("Remove", menu);
-                QAction::connect(remove, &QAction::triggered, parent, [parent, splitter] {
-                    parent->removeWidget(splitter);
-                });
-                menu->addAction(remove);
-            }
-        }
-        else {
+        if(parent) {
             auto* changeMenu = createNewMenu(currentWidget, tr("&Replace"));
-            setupWidgetMenu(changeMenu, currentWidget, true);
+            setupReplaceWidgetMenu(changeMenu, currentWidget);
             menu->addMenu(changeMenu);
 
             auto* remove = new QAction("Remove", menu);

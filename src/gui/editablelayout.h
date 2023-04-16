@@ -51,7 +51,7 @@ public:
     void initialise();
 
     Utils::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const;
-    void setupWidgetMenu(Utils::ActionContainer* menu, FyWidget* parent, bool replace = false);
+    void setupReplaceWidgetMenu(Utils::ActionContainer* menu, FyWidget* current);
     void setupContextMenu(FyWidget* widget, Utils::ActionContainer* menu);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
@@ -78,7 +78,6 @@ private:
     QHBoxLayout* m_box;
     Utils::OverlayFilter* m_overlay;
     SplitterWidget* m_splitter;
-    int m_menuLevels;
     bool m_layoutEditing;
 };
 } // namespace Gui::Widgets

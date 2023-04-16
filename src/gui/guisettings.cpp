@@ -43,6 +43,7 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::InfoAltColours, true, "Info");
     m_settings->createSetting(Settings::InfoHeader, true, "Info");
     m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
+    m_settings->createSetting(Settings::EditingMenuLevels, 2, "Layout");
 
     m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(activeLayoutPath()));
 
