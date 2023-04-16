@@ -29,7 +29,7 @@ namespace Fy::Core {
 struct Track::Private : public QSharedData
 {
     int libraryId{-1};
-
+    bool enabled{true};
     int id{-1};
     QString hash;
     QString filepath;
@@ -78,12 +78,12 @@ Track::Track(QString filepath)
 
 bool Track::operator==(const Track& other) const
 {
-    return filepath() == other.filepath();
+    return filepath() == other.filepath() && hash() == other.hash();
 }
 
 bool Track::operator!=(const Track& other) const
 {
-    return filepath() != other.filepath();
+    return filepath() != other.filepath() && hash() != other.hash();
 }
 
 Track::~Track()                             = default;
@@ -104,6 +104,11 @@ QString Track::generateHash()
 bool Track::isValid() const
 {
     return p->id >= 0 && !p->filepath.isEmpty();
+}
+
+bool Track::enabled() const
+{
+    return p->enabled;
 }
 
 int Track::libraryId() const
@@ -300,6 +305,11 @@ QString Track::sort() const
 void Track::setLibraryId(int id)
 {
     p->libraryId = id;
+}
+
+void Track::setEnabled(bool enabled)
+{
+    p->enabled = enabled;
 }
 
 void Track::setId(int id)

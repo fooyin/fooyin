@@ -21,6 +21,7 @@
 
 #include "core/coresettings.h"
 #include "library.h"
+#include "playlistdatabase.h"
 #include "query.h"
 #include "version.h"
 
@@ -60,8 +61,15 @@ Library* Database::libraryConnector()
     if(!m_libraryConnector) {
         m_libraryConnector = std::make_unique<Library>(connectionName());
     }
-
     return m_libraryConnector.get();
+}
+
+Playlist* Database::playlistConnector()
+{
+    if(!m_playlistConnector) {
+        m_playlistConnector = std::make_unique<Playlist>(connectionName());
+    }
+    return m_playlistConnector.get();
 }
 
 bool Database::update()
@@ -120,16 +128,19 @@ bool Database::createDatabase()
     checkInsertTable("Playlists",
                      "CREATE TABLE Playlists ("
                      "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                     "    Name TEXT NOT NULL UNIQUE);");
+                     "    Name TEXT NOT NULL UNIQUE,"
+                     "    PlaylistIndex INTEGER);");
 
     checkInsertTable("PlaylistTracks",
                      "CREATE TABLE PlaylistTracks ("
                      "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
-                     "    TrackID  INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
+                     "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
+                     "    TrackIndex INTEGER NOT NULL,"
                      "    PRIMARY KEY (PlaylistID, TrackID));");
 
     checkInsertIndex("PlaylistIndex", "CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);");
-    checkInsertIndex("PlaylistTracksIndex", "CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackID);");
+    checkInsertIndex("PlaylistTracksIndex",
+                     "CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);");
 
     return true;
 }

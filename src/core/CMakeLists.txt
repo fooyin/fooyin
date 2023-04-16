@@ -65,9 +65,6 @@ set(SOURCES
     models/track.cpp
     models/trackfwd.h
 
-    playlist/libraryplaylistinterface.h
-    playlist/libraryplaylistmanager.h
-    playlist/libraryplaylistmanager.cpp
     playlist/playlist.h
     playlist/playlist.cpp
     playlist/playlisthandler.h

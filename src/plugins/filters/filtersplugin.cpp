@@ -35,13 +35,14 @@
 namespace Fy::Filters {
 void FiltersPlugin::initialise(const Core::CorePluginContext& context)
 {
-    m_actionManager = context.actionManager;
-    m_library       = context.library;
-    m_playerManager = context.playerManager;
-    m_settings      = context.settingsManager;
+    m_actionManager   = context.actionManager;
+    m_library         = context.library;
+    m_playerManager   = context.playerManager;
+    m_playlistHandler = context.playlistHandler;
+    m_settings        = context.settingsManager;
 
     m_fieldsRegistry = std::make_unique<FieldRegistry>(m_settings);
-    m_filterManager  = new FilterManager(m_library, m_fieldsRegistry.get(), this);
+    m_filterManager  = new FilterManager(m_library, m_playlistHandler, m_fieldsRegistry.get(), this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
 
     m_fieldsRegistry->loadFields();

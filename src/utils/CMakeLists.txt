@@ -11,6 +11,7 @@ project(
 set(SOURCES
     clickablelabel.cpp
     comboicon.cpp
+    headerview.cpp
     hovermenu.cpp
     id.cpp
     menuheader.cpp

@@ -37,6 +37,7 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::AutoRefresh, false, "Library");
     m_settings->createSetting(Settings::WaitForTracks, true, "Library");
     m_settings->createSetting(Settings::SortScript, "%albumartist% - %album% - %disc% - %track% - %title%", "Library");
+    m_settings->createSetting(Settings::LastPlaylistIndex, 0, "Playlist");
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 

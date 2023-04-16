@@ -22,7 +22,6 @@
 #include "core/coresettings.h"
 #include "librarydatabasemanager.h"
 #include "libraryinfo.h"
-#include "libraryinteractor.h"
 #include "librarymanager.h"
 #include "libraryscanner.h"
 
@@ -99,27 +98,9 @@ bool UnifiedMusicLibrary::hasLibrary() const
     return m_libraryManager->hasLibrary();
 }
 
-TrackList UnifiedMusicLibrary::allTracks() const
-{
-    return m_tracks;
-}
-
 TrackList UnifiedMusicLibrary::tracks() const
 {
-    TrackList intersectedTracks;
-
-    for(const auto& interactor : m_interactors) {
-        if(interactor->hasTracks()) {
-            auto interactorTracks = interactor->tracks();
-            if(intersectedTracks.empty()) {
-                intersectedTracks.insert(intersectedTracks.end(), interactorTracks.cbegin(), interactorTracks.cend());
-            }
-            else {
-                intersectedTracks = Utils::intersection<Track, Track::TrackHash>(interactorTracks, intersectedTracks);
-            }
-        }
-    }
-    return !intersectedTracks.empty() ? intersectedTracks : m_tracks;
+    return m_tracks;
 }
 
 void UnifiedMusicLibrary::changeSort(const QString& sort)
@@ -128,11 +109,6 @@ void UnifiedMusicLibrary::changeSort(const QString& sort)
     m_trackSorter.calcSortFields(m_tracks);
     m_trackSorter.sortTracks(m_tracks);
     emit tracksSorted();
-}
-
-void UnifiedMusicLibrary::addInteractor(LibraryInteractor* interactor)
-{
-    m_interactors.emplace_back(interactor);
 }
 
 void UnifiedMusicLibrary::removeLibrary(int id)
@@ -145,6 +121,7 @@ void UnifiedMusicLibrary::removeLibrary(int id)
                                   }),
                    filtered.end());
     m_tracks = filtered;
+
     emit libraryRemoved(id);
 }
 

@@ -24,8 +24,8 @@
 #include "playlistitem.h"
 
 #include <core/library/coverprovider.h>
-#include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
+#include <core/playlist/playlisthandler.h>
 
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -50,11 +50,12 @@ QString trackArtistString(const Core::Track& track)
     return artistString;
 }
 
-PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Library::MusicLibrary* library,
-                             Utils::SettingsManager* settings, QObject* parent)
+PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager,
+                             Core::Playlist::PlaylistHandler* playlistHandler, Utils::SettingsManager* settings,
+                             QObject* parent)
     : TreeModel{parent}
     , m_playerManager{playerManager}
-    , m_library{library}
+    , m_playlistHandler{playlistHandler}
     , m_settings{settings}
     , m_discHeaders{m_settings->value<Settings::DiscHeaders>()}
     , m_splitDiscs{m_settings->value<Settings::SplitDiscs>()}
@@ -94,11 +95,15 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
         return (Qt::AlignHCenter);
     }
 
-    if(!m_library || role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical) {
+    if(role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical) {
         return {};
     }
 
-    return QString("%1 Tracks").arg(static_cast<int>(m_tracks.size()));
+    const auto playlist = m_playlistHandler->activePlaylist();
+    if(!playlist) {
+        return {};
+    }
+    return QString("%1: %2 Tracks").arg(playlist->name()).arg(playlist->trackCount());
 }
 
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
@@ -176,11 +181,6 @@ QModelIndexList PlaylistModel::match(const QModelIndex& start, int role, const Q
     return matches;
 }
 
-Core::TrackList PlaylistModel::tracks() const
-{
-    return m_tracks;
-}
-
 void PlaylistModel::reset()
 {
     m_resetting = true;
@@ -193,19 +193,19 @@ void PlaylistModel::reset()
 
 void PlaylistModel::setupModelData()
 {
-    if(!m_library) {
+    if(!m_playlistHandler->activePlaylist()) {
         return;
     }
-    m_tracks = m_library->tracks();
+    const Core::TrackList tracks = m_playlistHandler->activePlaylist()->tracks();
 
-    if(m_tracks.empty()) {
+    if(tracks.empty()) {
         return;
     }
 
     // Create albums before model to ensure discs (based on discCount) are properly created
-    createAlbums(m_tracks);
+    createAlbums(tracks);
 
-    for(const Core::Track& track : m_tracks) {
+    for(const Core::Track& track : tracks) {
         if(!m_nodes.count(track.hash())) {
             if(auto* parent = iterateTrack(track, m_discHeaders, m_splitDiscs)) {
                 checkInsertKey(track.hash(), PlaylistItem::Track, track, parent);
@@ -239,11 +239,6 @@ QModelIndex PlaylistModel::indexForItem(PlaylistItem* item) const
         index            = createIndex(item->row(), 0, item);
     }
     return index;
-}
-
-int PlaylistModel::findTrackIndex(const Core::Track& track) const
-{
-    return Utils::findIndex(m_tracks, track);
 }
 
 void PlaylistModel::createAlbums(const Core::TrackList& tracks)
@@ -338,7 +333,6 @@ void PlaylistModel::insertRow(PlaylistItem* parent, PlaylistItem* child)
 
 void PlaylistModel::beginReset()
 {
-    m_tracks.clear();
     m_containers.clear();
     m_albums.clear();
     m_nodes.clear();

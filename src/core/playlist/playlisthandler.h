@@ -19,53 +19,84 @@
 
 #pragma once
 
-#include "playlistmanager.h"
+#include "playlist.h"
 
 #include <QObject>
 
-namespace Fy::Core {
+namespace Fy {
+
+namespace Utils {
+class SettingsManager;
+} // namespace Utils
+
+namespace Core {
+namespace DB {
+class Database;
+class Playlist;
+} // namespace DB
 
 namespace Player {
 class PlayerManager;
 }
 
-namespace Playlist {
-using PlaylistMap = std::map<int, std::unique_ptr<Playlist>>;
+namespace Library {
+class MusicLibrary;
+}
 
-class PlaylistHandler : public QObject,
-                        public PlaylistManager
+namespace Playlist {
+class PlaylistHandler : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
+    explicit PlaylistHandler(DB::Database* database, Player::PlayerManager* playerManager,
+                             Core::Library::MusicLibrary* library, Utils::SettingsManager* settings,
+                             QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
-    Playlist* playlist(int id) override;
+    Playlist* playlist(int id) const;
+    Playlist* playlistByIndex(int id) const;
+    const PlaylistList& playlists() const;
 
-    int createPlaylist(const TrackList& tracks, const QString& name) override;
-    int createEmptyPlaylist() override;
+    void createPlaylist(const QString& name, const TrackList& tracks = {}, bool switchTo = false);
+    void createEmptyPlaylist();
 
-    [[nodiscard]] int activeIndex() const override;
-    [[nodiscard]] Playlist* activePlaylist() const override;
+    void changeCurrentPlaylist(int index);
 
-    [[nodiscard]] int currentIndex() const override;
-    void setCurrentIndex(int playlistIndex) override;
+    void renamePlaylist(int index, const QString& name);
+    void removePlaylist(int index);
 
-    [[nodiscard]] int count() const override;
+    [[nodiscard]] Playlist* activePlaylist() const;
+    [[nodiscard]] int playlistCount() const;
 
-protected:
-    void next();
-    void previous() const;
+    void savePlaylists();
+
+    void changeCurrentTrack(const Core::Track& track) const;
+
+signals:
+    void playlistAdded(Core::Playlist::Playlist* playlist);
+    void playlistRemoved(int index);
+    void playlistRenamed(Core::Playlist::Playlist* playlist);
+    void currentPlaylistChanged(Core::Playlist::Playlist* playlist);
 
 private:
+    void next();
+    void previous() const;
     [[nodiscard]] int exists(const QString& name) const;
     [[nodiscard]] bool validIndex(int index) const;
-    int addNewPlaylist(const QString& name);
+    Playlist* addNewPlaylist(const QString& name);
+    void populatePlaylists(const TrackList& tracks);
+    void libraryRemoved(int id);
 
-    PlaylistMap m_playlists;
+    DB::Database* m_database;
     Player::PlayerManager* m_playerManager;
-    int m_currentPlaylistIndex;
+    Core::Library::MusicLibrary* m_library;
+    Utils::SettingsManager* m_settings;
+    DB::Playlist* m_playlistConnector;
+
+    PlaylistList m_playlists;
+    Playlist* m_currentPlaylist;
 };
 } // namespace Playlist
-} // namespace Fy::Core
+} // namespace Core
+} // namespace Fy

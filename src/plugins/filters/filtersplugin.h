@@ -60,6 +60,7 @@ private:
     Utils::SettingsManager* m_settings;
     Core::Library::MusicLibrary* m_library;
     Core::Player::PlayerManager* m_playerManager;
+    Core::Playlist::PlaylistHandler* m_playlistHandler;
     Gui::LayoutProvider* m_layoutProvider;
     Gui::Widgets::WidgetFactory* m_factory;
 

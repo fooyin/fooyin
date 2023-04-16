@@ -22,30 +22,34 @@
 #include "filterstore.h"
 #include "trackfilterer.h"
 
-#include <core/library/libraryinteractor.h>
 #include <core/models/trackfwd.h>
 
 class QMenu;
 
 namespace Fy {
-namespace Core::Library {
+namespace Core {
+namespace Playlist {
+class PlaylistHandler;
+}
+namespace Library {
 class MusicLibrary;
-} // namespace Core::Library
+}
+} // namespace Core
 
 namespace Filters {
 class FieldRegistry;
 
-class FilterManager : public Core::Library::LibraryInteractor
+class FilterManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit FilterManager(Core::Library::MusicLibrary* library, FieldRegistry* fieldsRegistry,
-                           QObject* parent = nullptr);
+    explicit FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
+                           FieldRegistry* fieldsRegistry, QObject* parent = nullptr);
     ~FilterManager();
 
-    [[nodiscard]] Core::TrackList tracks() const override;
-    [[nodiscard]] bool hasTracks() const override;
+    [[nodiscard]] Core::TrackList tracks() const;
+    [[nodiscard]] bool hasTracks() const;
 
     LibraryFilter* registerFilter(const QString& name);
     void unregisterFilter(int index);
@@ -65,20 +69,19 @@ signals:
     void filterChanged(int index, const QString& name);
     void filterTracks(const Core::TrackList& tracks, const QString& search);
     void filteredItems(int index);
-    void filteredTracks();
 
 private:
     void tracksFiltered(const Core::TrackList& tracks);
     void tracksChanged();
 
     Core::Library::MusicLibrary* m_library;
+    Core::Playlist::PlaylistHandler* m_playlistHandler;
 
     QThread* m_searchThread;
     TrackFilterer m_searchManager;
 
     FieldRegistry* m_fieldsRegistry;
     Core::TrackList m_filteredTracks;
-    int m_lastFilterIndex;
     FilterStore m_filterStore;
     QString m_searchFilter;
 };

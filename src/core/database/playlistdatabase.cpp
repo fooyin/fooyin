@@ -19,8 +19,178 @@
 
 #include "playlistdatabase.h"
 
+#include "query.h"
+
 namespace Fy::Core::DB {
 Playlist::Playlist(const QString& connectionName)
-    : Module(connectionName)
+    : Module{connectionName}
 { }
+
+bool Playlist::getAllPlaylists(Core::Playlist::PlaylistList& playlists)
+{
+    const QString query = "SELECT PlaylistID, Name, PlaylistIndex FROM Playlists;";
+
+    Query q{this};
+    q.prepare(query);
+
+    if(!q.execQuery()) {
+        q.error("Cannot fetch all playlists");
+        return false;
+    }
+
+    while(q.next()) {
+        const int id       = q.value(0).toInt();
+        const QString name = q.value(1).toString();
+        const int index    = q.value(2).toInt();
+
+        playlists.emplace_back(std::make_unique<Core::Playlist::Playlist>(name, index, id));
+    }
+    return true;
+}
+
+bool Playlist::getPlaylistTracks(int id, std::vector<int>& ids)
+{
+    const QString query = "SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;";
+
+    Query q{this};
+    q.prepare(query);
+    q.bindValue(":playlistId", id);
+
+    if(!q.execQuery()) {
+        q.error("Cannot fetch playlist tracks");
+        return false;
+    }
+
+    while(q.next()) {
+        ids.emplace_back(q.value(0).toInt());
+    }
+    return true;
+}
+
+int Playlist::insertPlaylist(const QString& name, int index)
+{
+    if(name.isEmpty() || index < 0) {
+        return -1;
+    }
+
+    const QString query = "INSERT INTO Playlists "
+                          "(Name, PlaylistIndex) "
+                          "VALUES "
+                          "(:playlistName, :playlistIndex);";
+
+    Query q{this};
+
+    q.prepare(query);
+    q.bindValue(":playlistName", name);
+    q.bindValue(":playlistIndex", index);
+
+    if(!q.execQuery()) {
+        q.error(QString("Cannot insert playlist (name: %1, index: %2)").arg(name).arg(index));
+        return -1;
+    }
+    return q.lastInsertId().toInt();
+}
+
+bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
+{
+    if(id < 0 || tracks.empty()) {
+        return false;
+    }
+
+    db().transaction();
+
+    // Remove old tracks first
+    Query delTracks{this};
+    const QString delPlaylistQuery = "DELETE FROM PlaylistTracks WHERE PlaylistID=:playlistId;";
+    delTracks.prepare(delPlaylistQuery);
+    delTracks.bindValue(":playlistId", id);
+
+    if(!delTracks.execQuery()) {
+        delTracks.error(QString{"Cannot remove old playlist %1 tracks"}.arg(id));
+        return false;
+    }
+
+    for(auto [it, end, i] = std::tuple{tracks.cbegin(), tracks.cend(), 0}; it != end; ++it, ++i) {
+        const Track& track = *it;
+        if(!track.isValid() || !track.enabled()) {
+            continue;
+        }
+        insertPlaylistTrack(id, track, i);
+    }
+
+    db().commit();
+
+    return true;
+}
+
+bool Playlist::removePlaylist(int id)
+{
+    //    Query delTracks(this);
+    //    auto delTracksQuery = QStringLiteral("DELETE FROM PlaylistTracks WHERE PlaylistID=:playlistId;");
+    //    delTracks.prepare(delTracksQuery);
+    //    delTracks.bindValue(":playlistId", id);
+
+    //    if(!delTracks.execQuery()) {
+    //        delTracks.error(QString{"Cannot delete playlist (%1) tracks"}.arg(id));
+    //        return false;
+    //    }
+
+    Query delPlaylist{this};
+    const QString delPlaylistQuery = "DELETE FROM Playlists WHERE PlaylistID=:playlistId;";
+    delPlaylist.prepare(delPlaylistQuery);
+    delPlaylist.bindValue(":playlistId", id);
+
+    if(!delPlaylist.execQuery()) {
+        delPlaylist.error(QString{"Cannot remove playlist %1"}.arg(id));
+        return false;
+    }
+    return true;
+}
+
+bool Playlist::renamePlaylist(int id, const QString& name)
+{
+    if(name.isEmpty()) {
+        return false;
+    }
+
+    const QString query = "UPDATE Playlists "
+                          "SET Name = :playlistName "
+                          "WHERE PlaylistID=:playlistId;";
+
+    Query q{this};
+    q.prepare(query);
+    q.bindValue(":playlistId", id);
+    q.bindValue(":playlistName", name);
+
+    if(!q.execQuery()) {
+        q.error(QString{"Cannot update playlist (name: %1)"}.arg(name));
+        return false;
+    }
+    return true;
+}
+
+bool Playlist::insertPlaylistTrack(int playlistId, const Track& track, int index)
+{
+    if(playlistId < 0 || !track.isValid()) {
+        return false;
+    }
+
+    const QString query = "INSERT INTO PlaylistTracks "
+                          "(PlaylistID, TrackID, TrackIndex) "
+                          "VALUES "
+                          "(:playlistId, :trackId, :trackIndex);";
+
+    Query q{this};
+
+    q.prepare(query);
+    q.bindValue(":playlistId", playlistId);
+    q.bindValue(":trackId", track.id());
+    q.bindValue(":trackIndex", index);
+
+    if(!q.execQuery()) {
+        q.error(QString("Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)").arg(playlistId, track.id()));
+        return false;
+    }
+    return true;
+}
 } // namespace Fy::Core::DB

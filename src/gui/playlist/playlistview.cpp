@@ -29,7 +29,7 @@
 
 namespace Fy::Gui::Widgets {
 PlaylistView::PlaylistView(QWidget* parent)
-    : QTreeView(parent)
+    : QTreeView{parent}
 {
     setObjectName("PlaylistView");
     setupView();
@@ -62,5 +62,19 @@ void PlaylistView::drawBranches(QPainter* painter, const QRect& rect, const QMod
 void PlaylistView::contextMenuEvent(QContextMenuEvent* e)
 {
     Q_UNUSED(e)
+}
+
+void PlaylistView::paintEvent(QPaintEvent* event)
+{
+    if(model() && model()->rowCount() > 0) {
+        return QTreeView::paintEvent(event);
+    }
+    // Empty playlist
+    QPainter painter{viewport()};
+    const QString text{tr("Empty Playlist")};
+
+    QRect textRect = painter.fontMetrics().boundingRect(text);
+    textRect.moveCenter(viewport()->rect().center());
+    painter.drawText(textRect, Qt::AlignCenter, text);
 }
 } // namespace Fy::Gui::Widgets

@@ -41,6 +41,8 @@ FilterView::FilterView(QWidget* parent)
     setWordWrap(true);
     setTextElideMode(Qt::ElideLeft);
     setSortingEnabled(false);
+    setUniformRowHeights(true);
+
     header()->setSectionsClickable(true);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
 }

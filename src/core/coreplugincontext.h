@@ -35,6 +35,10 @@ namespace Player {
 class PlayerManager;
 }
 
+namespace Playlist {
+class PlaylistHandler;
+}
+
 namespace Library {
 class MusicLibrary;
 }
@@ -42,11 +46,12 @@ class MusicLibrary;
 struct CorePluginContext
 {
     CorePluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                      Core::Library::MusicLibrary* library, Utils::SettingsManager* settingsManager,
-                      Core::DB::Database* database)
+                      Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
+                      Utils::SettingsManager* settingsManager, Core::DB::Database* database)
         : actionManager{actionManager}
         , playerManager{playerManager}
         , library{library}
+        , playlistHandler{playlistHandler}
         , settingsManager{settingsManager}
         , database{database}
     { }
@@ -54,6 +59,7 @@ struct CorePluginContext
     Utils::ActionManager* actionManager;
     Core::Player::PlayerManager* playerManager;
     Core::Library::MusicLibrary* library;
+    Core::Playlist::PlaylistHandler* playlistHandler;
     Utils::SettingsManager* settingsManager;
     Core::DB::Database* database;
 };

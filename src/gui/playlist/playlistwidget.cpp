@@ -19,7 +19,6 @@
 
 #include "playlistwidget.h"
 
-#include "gui/guiconstants.h"
 #include "gui/guisettings.h"
 #include "playlistdelegate.h"
 #include "playlistmodel.h"
@@ -28,10 +27,10 @@
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
-#include <core/playlist/libraryplaylistmanager.h>
+#include <core/playlist/playlisthandler.h>
 
 #include <utils/actions/actioncontainer.h>
-#include <utils/overlaywidget.h>
+#include <utils/headerview.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -42,9 +41,10 @@
 #include <QKeyEvent>
 #include <QMenu>
 #include <QScrollBar>
+#include <QToolBar>
 
 namespace Fy::Gui::Widgets {
-PlaylistWidget::PlaylistWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistManager* playlistHandler,
+PlaylistWidget::PlaylistWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
                                Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                                QWidget* parent)
     : FyWidget{parent}
@@ -53,46 +53,27 @@ PlaylistWidget::PlaylistWidget(Core::Library::MusicLibrary* library, Core::Playl
     , m_settings{settings}
     , m_settingsDialog{settings->settingsDialog()}
     , m_playlistHandler{playlistHandler}
-    , m_libraryPlaylistManager{std::make_unique<Core::Playlist::LibraryPlaylistManager>(m_library, playlistHandler)}
     , m_layout{new QHBoxLayout(this)}
-    , m_model{new PlaylistModel(m_playerManager, m_library, m_settings, this)}
+    , m_model{new PlaylistModel(m_playerManager, m_playlistHandler, m_settings, this)}
     , m_playlist{new PlaylistView(this)}
+    , m_header{new Utils::HeaderView(Qt::Horizontal, this)}
     , m_changingSelection{false}
-    , m_noLibrary{new Utils::OverlayWidget(true, this)}
 {
     setObjectName("Playlist");
     m_layout->setContentsMargins(0, 0, 0, 0);
 
-    m_noLibrary->setText(QStringLiteral("No tracks to show - add a library first"));
-    m_noLibrary->setButtonText(QStringLiteral("Library Settings"));
+    m_header->setStretchLastSection(true);
+    m_playlist->setHeader(m_header);
 
     m_playlist->setModel(m_model);
     m_playlist->setItemDelegate(new PlaylistDelegate(this));
 
-    connect(m_noLibrary, &Utils::OverlayWidget::settingsClicked, this, [this] {
-        m_settingsDialog->openAtPage(Constants::Page::LibraryGeneral);
-    });
+    m_layout->addWidget(m_playlist);
 
     reset();
     setHeaderHidden(m_settings->value<Settings::PlaylistHeader>());
     setScrollbarHidden(m_settings->value<Settings::PlaylistScrollBar>());
-    setup();
     setupConnections();
-}
-
-void PlaylistWidget::setup()
-{
-    if(!m_library->hasLibrary()) {
-        m_playlist->hide();
-        m_layout->addWidget(m_noLibrary);
-        m_noLibrary->show();
-        m_noLibrary->raise();
-    }
-    else {
-        m_noLibrary->hide();
-        m_layout->addWidget(m_playlist);
-        m_playlist->show();
-    }
 }
 
 void PlaylistWidget::reset()
@@ -103,11 +84,7 @@ void PlaylistWidget::reset()
 
 void PlaylistWidget::setupConnections()
 {
-    connect(m_library, &Core::Library::MusicLibrary::libraryAdded, this, &PlaylistWidget::setup);
-    connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &PlaylistWidget::setup);
-
     connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, m_model, &PlaylistModel::setupModelData);
-    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, m_model, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::tracksSorted, m_model, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, m_model, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::tracksAdded, m_model, &PlaylistModel::setupModelData);
@@ -131,9 +108,12 @@ void PlaylistWidget::setupConnections()
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlaylistWidget::changeState);
     connect(m_playerManager, &Core::Player::PlayerManager::nextTrack, this, &PlaylistWidget::nextTrack);
 
-    connect(this, &PlaylistWidget::clickedTrack, this, &PlaylistWidget::prepareTracks);
+    connect(
+        m_playlistHandler, &Core::Playlist::PlaylistHandler::currentPlaylistChanged, m_model, &PlaylistModel::reset);
 
     connect(m_model, &QAbstractItemModel::rowsInserted, this, &PlaylistWidget::expandPlaylist);
+
+    connect(m_header, &Utils::HeaderView::leftClicked, this, &PlaylistWidget::switchContextMenu);
 }
 
 bool PlaylistWidget::isHeaderHidden()
@@ -200,14 +180,14 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* e)
     const auto key = e->key();
 
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        if(!m_selectedTracks.empty()) {
-            const int idx = m_model->findTrackIndex(m_selectedTracks.front());
-            emit clickedTrack(idx);
+        //        if(!m_selectedTracks.empty()) {
+        //            const int idx = m_model->findTrackIndex(m_selectedTracks.front());
+        //            emit clickedTrack(idx);
 
-            m_model->changeTrackState();
-            m_playlist->clearSelection();
-            m_selectedTracks.clear();
-        }
+        //            m_model->changeTrackState();
+        //            m_playlist->clearSelection();
+        //            m_selectedTracks.clear();
+        //        }
     }
     QWidget::keyPressEvent(e);
 }
@@ -254,9 +234,7 @@ void PlaylistWidget::playTrack(const QModelIndex& index)
         track = index.data(PlaylistItem::Role::Data).value<Core::Track>();
     }
 
-    const int playlistIndex = m_model->findTrackIndex(track);
-
-    emit clickedTrack(playlistIndex);
+    m_playlistHandler->changeCurrentTrack(track);
     m_model->changeTrackState();
     clearSelection(true);
 }
@@ -284,11 +262,6 @@ void PlaylistWidget::findCurrent()
     //    }
 }
 
-void PlaylistWidget::prepareTracks(int idx)
-{
-    m_libraryPlaylistManager->createPlaylist(m_model->tracks(), idx);
-}
-
 void PlaylistWidget::expandPlaylist(const QModelIndex& parent, int first, int last)
 {
     while(first <= last) {
@@ -303,5 +276,25 @@ void PlaylistWidget::clearSelection(bool clearView)
         m_playlist->clearSelection();
     }
     m_selectedTracks.clear();
+}
+
+void PlaylistWidget::switchContextMenu(int section, QPoint pos)
+{
+    Q_UNUSED(section)
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    //    const auto& activePlaylist = m_playlistHandler->activePlaylist();
+    const auto& playlists = m_playlistHandler->playlists();
+
+    for(const auto& playlist : playlists) {
+        auto* switchtoPlaylist = new QAction(playlist->name(), menu);
+        const int index        = playlist->index();
+        QObject::connect(switchtoPlaylist, &QAction::triggered, this, [this, index]() {
+            m_playlistHandler->changeCurrentPlaylist(index);
+        });
+        menu->addAction(switchtoPlaylist);
+    }
+    menu->popup(mapToGlobal(pos));
 }
 } // namespace Fy::Gui::Widgets
