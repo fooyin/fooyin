@@ -29,15 +29,15 @@ OverlayWidget::OverlayWidget(bool button, QWidget* parent)
     , m_layout{new QVBoxLayout(this)}
     , m_text{new QLabel(this)}
 {
-    if(button) {
-        m_button = new QPushButton(this);
-        QObject::connect(m_button, &QPushButton::pressed, this, &OverlayWidget::settingsClicked);
-    }
     m_layout->setContentsMargins(0, 0, 0, 0);
     setAutoFillBackground(true);
     m_layout->setAlignment(Qt::AlignCenter);
     m_layout->addWidget(m_text);
-    m_layout->addWidget(m_button);
+    if(button) {
+        m_button = new QPushButton(this);
+        QObject::connect(m_button, &QPushButton::pressed, this, &OverlayWidget::settingsClicked);
+        m_layout->addWidget(m_button);
+    }
 
     hide();
 }
