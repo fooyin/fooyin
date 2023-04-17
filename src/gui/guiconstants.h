@@ -48,6 +48,7 @@ constexpr auto General   = "://icons/category-general.svg";
 constexpr auto Interface = "://icons/category-interface.svg";
 constexpr auto Library   = "://icons/category-library.svg";
 constexpr auto Playlist  = "://icons/category-playlist.svg";
+constexpr auto Widgets  = "://icons/category-plugins.svg";
 constexpr auto Plugins   = "://icons/category-plugins.svg";
 } // namespace Category
 } // namespace Icons
@@ -114,13 +115,15 @@ constexpr auto General   = "Fooyin.Category.General";
 constexpr auto Interface = "Fooyin.Category.Interface";
 constexpr auto Library   = "Fooyin.Category.Library";
 constexpr auto Playlist  = "Fooyin.Category.Playlist";
+constexpr auto Widgets   = "Fooyin.Category.Widgets";
 } // namespace Category
 
 namespace Page {
-constexpr auto GeneralCore       = "Fooyin.Page.General.Core";
-constexpr auto InterfaceGeneral  = "Fooyin.Page.Interface.General";
-constexpr auto LibraryGeneral    = "Fooyin.Page.Library.General";
-constexpr auto PlaylistInterface = "Fooyin.Page.Playlist.Interface";
-constexpr auto Plugins           = "Fooyin.Page.Plugins";
+constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
+constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
+constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
+constexpr auto PlaylistInterface  = "Fooyin.Page.Playlist.Interface";
+constexpr auto WidgetsLibraryTree = "Fooyin.Page.Widgets.LibraryTree";
+constexpr auto Plugins            = "Fooyin.Page.Plugins";
 } // namespace Page
 } // namespace Fy::Gui::Constants

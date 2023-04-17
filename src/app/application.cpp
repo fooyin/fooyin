@@ -44,6 +44,8 @@
 #include <gui/layoutprovider.h>
 #include <gui/library/coverwidget.h>
 #include <gui/library/statuswidget.h>
+#include <gui/librarytree/librarytreepage.h>
+#include <gui/librarytree/librarytreewidget.h>
 #include <gui/mainwindow.h>
 #include <gui/menu/editmenu.h>
 #include <gui/menu/filemenu.h>
@@ -96,6 +98,7 @@ struct Application::Private
     Gui::Settings::LibraryGeneralPage libraryGeneralPage;
     Gui::Settings::GuiGeneralPage guiGeneralPage;
     Gui::Settings::PlaylistGuiPage playlistGuiPage;
+    Gui::Settings::LibraryTreePage libraryTreePage;
 
     Plugins::PluginManager* pluginManager;
     Gui::Settings::PluginPage pluginPage;
@@ -127,6 +130,7 @@ struct Application::Private
         , libraryGeneralPage{libraryManager, settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , playlistGuiPage{settingsManager}
+        , libraryTreePage{settingsManager}
         , pluginManager{new Plugins::PluginManager(parent)}
         , pluginPage{settingsManager, pluginManager}
         , corePluginContext{actionManager, playerManager, library, playlistHandler, settingsManager, &database}
@@ -157,6 +161,10 @@ struct Application::Private
 
     void registerWidgets()
     {
+        widgetFactory.registerClass<Gui::Widgets::LibraryTreeWidget>("TrackTree", [this]() {
+            return new Gui::Widgets::LibraryTreeWidget(library, settingsManager);
+        });
+
         widgetFactory.registerClass<Gui::Widgets::PlaylistTabs>("PlaylistTabs", [this]() {
             return new Gui::Widgets::PlaylistTabs(actionManager, &widgetFactory, playlistHandler);
         });

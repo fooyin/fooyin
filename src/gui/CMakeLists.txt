@@ -106,6 +106,15 @@ set(SOURCES
     settings/pluginspage.h
     settings/pluginspage.cpp
 
+    librarytree/librarytreeitem.h
+    librarytree/librarytreeitem.cpp
+    librarytree/librarytreemodel.h
+    librarytree/librarytreemodel.cpp
+    librarytree/librarytreepage.h
+    librarytree/librarytreepage.cpp
+    librarytree/librarytreewidget.h
+    librarytree/librarytreewidget.cpp
+
     widgets/dummy.h
     widgets/dummy.cpp
     widgets/playlisttabs.h

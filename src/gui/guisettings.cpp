@@ -44,6 +44,11 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::InfoHeader, true, "Info");
     m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
     m_settings->createSetting(Settings::EditingMenuLevels, 2, "Layout");
+    m_settings->createSetting(Settings::LibraryTreeGrouping,
+                              "%albumartist%||\n"
+                              "%album% (%year%)$ifgreater(%disctotal%,1,||Disc %disc%,)||\n"
+                              "%track%. %title%",
+                              "Library Tree");
 
     m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(activeLayoutPath()));
 
