@@ -129,25 +129,6 @@ void LibraryScanner::storeTracks(TrackList& tracks)
     }
 }
 
-bool LibraryScanner::storeCovers(TrackList& tracks)
-{
-    if(tracks.empty()) {
-        return false;
-    }
-
-    for(auto& track : tracks) {
-        if(track.libraryId() < 0) {
-            track.setLibraryId(m_library.id);
-        }
-
-        if(!track.hasCover()) {
-            const QString coverPath = m_tagReader.storeCover(track);
-            track.setCoverPath(coverPath);
-        }
-    }
-    return true;
-}
-
 QStringList LibraryScanner::getFiles(QDir& baseDirectory)
 {
     QStringList ret;
@@ -256,7 +237,6 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
         }
     }
 
-    storeCovers(tracksToStore);
     storeTracks(tracksToStore);
     storeTracks(tracksToUpdate);
 
