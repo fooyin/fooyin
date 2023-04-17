@@ -87,6 +87,7 @@ void PlaylistWidget::setupConnections()
     connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, m_model, &PlaylistModel::setupModelData);
     connect(m_library, &Core::Library::MusicLibrary::tracksSorted, m_model, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, m_model, &PlaylistModel::reset);
+    connect(m_library, &Core::Library::MusicLibrary::tracksUpdated, m_model, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::tracksAdded, m_model, &PlaylistModel::setupModelData);
     connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, m_model, &PlaylistModel::reset);
     connect(m_library, &Core::Library::MusicLibrary::libraryChanged, m_model, &PlaylistModel::reset);
