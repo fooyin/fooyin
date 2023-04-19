@@ -26,11 +26,22 @@
 #include <QObject>
 
 namespace Fy::Core::Scripting {
+struct Error {
+    int position;
+    QString value;
+    QString message;
+};
+using ErrorList = std::vector<Error>;
+
 struct ParsedScript
 {
     QString input;
     ExpressionList expressions;
-    bool valid{false};
+    ErrorList errors;
+
+    bool isValid() const {
+        return errors.empty();
+    }
 };
 
 class Parser

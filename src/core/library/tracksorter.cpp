@@ -48,7 +48,7 @@ void TrackSorter::calcSortFields(TrackList& tracks)
 void TrackSorter::changeSorting(const QString& sort)
 {
     const auto sortScript = m_parser.parse(sort);
-    if(sortScript.valid) {
+    if(sortScript.isValid()) {
         m_sortScript = sortScript;
     }
 }

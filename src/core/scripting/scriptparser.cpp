@@ -47,28 +47,25 @@ ParsedScript Parser::parse(const QString& input)
         return {};
     }
 
-    m_hadError = false;
-
-    ParsedScript result;
-    result.input = input;
+    m_parsedScript.errors.clear();
+    m_parsedScript.expressions.clear();
+    m_parsedScript.input = input;
 
     m_scanner.setup(input);
 
     advance();
     while(m_current.type != TokEos) {
-        result.expressions.emplace_back(expression());
+        m_parsedScript.expressions.emplace_back(expression());
     }
 
     consume(TokEos, "Expected end of expression");
-    result.valid   = !m_hadError;
-    m_parsedScript = result;
 
-    return result;
+    return m_parsedScript;
 }
 
 QString Parser::evaluate()
 {
-    if(!m_parsedScript.valid) {
+    if(!m_parsedScript.isValid()) {
         return {};
     }
     return evaluate(m_parsedScript);
@@ -76,7 +73,7 @@ QString Parser::evaluate()
 
 QString Parser::evaluate(const ParsedScript& input)
 {
-    if(!input.valid) {
+    if(!input.isValid()) {
         return {};
     }
 
@@ -298,10 +295,6 @@ void Parser::errorAtCurrent(const QString& message)
 
 void Parser::errorAt(const Token& token, const QString& message)
 {
-    if(m_hadError) {
-        return;
-    }
-    m_hadError    = true;
     auto errorMsg = QString{"[%1] Error"}.arg(token.position);
 
     if(token.type == TokEos) {
@@ -313,7 +306,12 @@ void Parser::errorAt(const Token& token, const QString& message)
 
     errorMsg += QString(" (%1)").arg(message);
 
-    qDebug() << errorMsg;
+    Error error;
+    error.value    = token.value.toString();
+    error.position = token.position;
+    error.message  = errorMsg;
+
+    m_parsedScript.errors.emplace_back(error);
 }
 
 void Parser::error(const QString& message)
