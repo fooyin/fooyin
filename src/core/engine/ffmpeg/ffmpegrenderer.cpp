@@ -217,17 +217,21 @@ void Renderer::doNextStep()
             p->position = std::max(frame.pts(), p->position);
             emit frameProcessed();
         }
+        else {
+            setAtEnd(true);
+        }
         p->frames.pop_front();
     }
-
-    setAtEnd(done && !isValid);
 
     scheduleNextStep(false);
 }
 
 int Renderer::timerInterval() const
 {
-    // TODO: Calculate interval based on frame duration
+    if(const Frame& frame = p->frames.front(); frame.isValid()) {
+        const auto delay = p->clock->timeFromPosition(frame.pts()) - std::chrono::steady_clock::now();
+        return std::max(0, static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(delay).count()) / 4);
+    }
     return 0;
 }
 } // namespace Fy::Core::Engine::FFmpeg
