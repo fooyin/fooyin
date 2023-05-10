@@ -31,8 +31,11 @@ class Stream
 public:
     Stream(AVStream* stream = nullptr);
 
-    int index() const;
     AVStream* avStream() const;
+    int index() const;
+
+    // Returns duration in milliseconds
+    uint64_t duration() const;
 
 private:
     AVStream* m_stream;

@@ -72,7 +72,7 @@ uint64_t Frame::pts() const
 
 uint64_t Frame::duration() const
 {
-    return m_frame->duration;
+    return av_rescale_q(m_frame->duration, m_codec->stream()->time_base, {1, 1000});
 }
 
 uint64_t Frame::end() const

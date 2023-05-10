@@ -59,7 +59,10 @@ public:
 
     // Returns pts in milliseconds
     uint64_t pts() const;
+
+    // Returns duration in milliseconds
     uint64_t duration() const;
+
     uint64_t end() const;
 
 private:

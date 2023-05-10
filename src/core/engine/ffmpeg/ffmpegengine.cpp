@@ -130,8 +130,8 @@ struct FFmpegEngine::Private
                 continue;
             }
 
-            duration = avStream->duration;
             stream   = {avStream};
+            duration = stream.duration();
         }
     }
 
