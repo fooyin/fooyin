@@ -48,23 +48,23 @@ set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
 
 find_package(Taglib REQUIRED taglib>=1.12)
-find_package(Libmpv)
+find_package(ALSA)
 
 set_package_properties(Taglib PROPERTIES TYPE REQUIRED)
 set_package_properties(Libmpv PROPERTIES TYPE REQUIRED)
 
 find_package(GTest)
 
-#find_package(FFmpeg
-#                COMPONENTS
-#                AVCODEC
-#                AVFORMAT
-#                AVUTIL
-#                AVDEVICE
-#                AVFILTER
-#                SWSCALE
-#                SWRESAMPLE
-#)
+find_package(FFmpeg
+                COMPONENTS
+                AVCODEC
+                AVFORMAT
+                AVUTIL
+                AVDEVICE
+                AVFILTER
+                SWSCALE
+                SWRESAMPLE
+)
 
 # ---- Fooyin library ----
 
@@ -99,8 +99,6 @@ target_link_libraries(fooyin_lib
      fooyin::core
      fooyin::gui
      fooyin::utils
-     #${SDL2_LIBRARIES}
-     #${FFMPEG_LIBRARIES}
 )
 
 target_compile_features(fooyin_lib PUBLIC cxx_std_17)

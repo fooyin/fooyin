@@ -19,37 +19,41 @@
 
 #pragma once
 
-#include "audioplayer.h"
-#include "core/player/playermanager.h"
-
-#include <QObject>
-#include <QThread>
-
-namespace Fy::Core::Engine {
-class EngineHandler : public QObject
+extern "C"
 {
-    Q_OBJECT
+#include <libavcodec/packet.h>
+}
 
+#include <memory>
+
+class AVPacket;
+
+namespace Fy::Core::Engine::FFmpeg {
+struct PacketDeleter
+{
+    void operator()(AVPacket* packet) const
+    {
+        if(packet) {
+            av_packet_free(&packet);
+        }
+    }
+};
+using PacketPtr = std::unique_ptr<AVPacket, PacketDeleter>;
+
+class Packet
+{
 public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+    Packet() = default;
+    Packet(PacketPtr packet);
 
-    void setup();
+    Packet(Packet&& other);
+    Packet(const Packet& other) = delete;
+    Packet& operator=(const Packet& other) = delete;
 
-signals:
-    void init();
-    void shutdown();
-
-    void play();
-    void pause();
-    void stop();
-
-protected:
-    void playStateChanged(Player::PlayState state);
+    bool isValid() const;
+    AVPacket* avPacket() const;
 
 private:
-    Player::PlayerManager* m_playerManager;
-    QThread* m_engineThread;
-    AudioPlayer* m_engine;
+    PacketPtr m_packet;
 };
-} // namespace Fy::Core::Engine
+} // namespace Fy::Core::Engine::FFmpeg

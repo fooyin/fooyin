@@ -19,37 +19,40 @@
 
 #pragma once
 
-#include "audioplayer.h"
-#include "core/player/playermanager.h"
+#include "ffmpegworker.h"
 
-#include <QObject>
-#include <QThread>
+class AVFormatContext;
 
-namespace Fy::Core::Engine {
-class EngineHandler : public QObject
+namespace Fy::Core::Engine::FFmpeg {
+class AudioClock;
+class Packet;
+class Codec;
+class Frame;
+
+class Decoder : public EngineWorker
 {
     Q_OBJECT
 
 public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+    Decoder(AVFormatContext* context, const Codec& codec, int streamIndex, AudioClock* clock,
+            QObject* parent = nullptr);
+    ~Decoder();
 
-    void setup();
+    void seek(uint64_t position);
+
+    void decode(Packet& packet);
+    void onFrameProcessed();
+
+    uint64_t position() const;
 
 signals:
-    void init();
-    void shutdown();
-
-    void play();
-    void pause();
-    void stop();
-
-protected:
-    void playStateChanged(Player::PlayState state);
+    void requestHandleFrame(Frame& frame);
 
 private:
-    Player::PlayerManager* m_playerManager;
-    QThread* m_engineThread;
-    AudioPlayer* m_engine;
+    bool canDoNextStep() const override;
+    void doNextStep() override;
+
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Fy::Core::Engine
+} // namespace Fy::Core::Engine::FFmpeg

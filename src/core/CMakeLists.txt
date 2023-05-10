@@ -31,11 +31,24 @@ set(SOURCES
     database/query.h
     database/query.cpp
 
-    engine/engine.h
-    engine/enginempv.h
-    engine/enginempv.cpp
     engine/enginehandler.h
     engine/enginehandler.cpp
+    engine/audioengine.cpp
+    engine/audioplayer.cpp
+    engine/audiooutput.h
+
+    engine/ffmpeg/ffmpegclock.cpp
+    engine/ffmpeg/ffmpegworker.cpp
+    engine/ffmpeg/ffmpegrenderer.cpp
+    engine/ffmpeg/ffmpegcodec.cpp
+    engine/ffmpeg/ffmpegdecoder.cpp
+    engine/ffmpeg/ffmpegengine.cpp
+    engine/ffmpeg/ffmpegpacket.cpp
+    engine/ffmpeg/ffmpegstream.cpp
+    engine/ffmpeg/ffmpegframe.cpp
+
+    engine/output/alsaoutput.cpp
+    engine/output/sdloutput.cpp
 
     library/coverprovider.h
     library/coverprovider.cpp
@@ -121,7 +134,9 @@ target_link_libraries(fooyin_core
      Qt6::Widgets
      Qt6::Sql
      Taglib::Taglib
-     Libmpv::Libmpv
+     ${SDL2_LIBRARIES}
+     ${FFMPEG_LIBRARIES}
+     ${ALSA_LIBRARIES}
      fooyin::version
      fooyin::utils
 )

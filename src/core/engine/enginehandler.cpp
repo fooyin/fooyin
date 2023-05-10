@@ -19,36 +19,56 @@
 
 #include "enginehandler.h"
 
+#include "audioplayer.h"
 #include "core/models/track.h"
-#include "enginempv.h"
 
 namespace Fy::Core::Engine {
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* parent)
     : QObject{parent}
-    , m_engine{new EngineMpv(this)}
+    , m_playerManager{playerManager}
+    , m_engineThread{new QThread(this)}
+    , m_engine{new AudioPlayer()}
 {
-    connect(playerManager, &Player::PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
-    connect(playerManager, &Player::PlayerManager::volumeChanged, m_engine, &Engine::setVolume);
-    connect(playerManager, &Player::PlayerManager::currentTrackChanged, m_engine, &Engine::changeTrack);
-    connect(m_engine, &Engine::currentPositionChanged, playerManager, &Player::PlayerManager::setCurrentPosition);
-    connect(m_engine, &Engine::trackFinished, playerManager, &Player::PlayerManager::next);
-    connect(playerManager, &Player::PlayerManager::positionMoved, m_engine, &Engine::seek);
+    m_engine->moveToThread(m_engineThread);
+    m_engineThread->start();
 
-    connect(this, &EngineHandler::play, m_engine, &Engine::play);
-    connect(this, &EngineHandler::pause, m_engine, &Engine::pause);
-    connect(this, &EngineHandler::stop, m_engine, &Engine::stop);
+    setup();
 }
 
-EngineHandler::~EngineHandler() = default;
+EngineHandler::~EngineHandler()
+{
+    emit shutdown();
+    m_engineThread->quit();
+    m_engineThread->wait();
+}
+
+void EngineHandler::setup()
+{
+    connect(m_playerManager, &Player::PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
+    connect(m_playerManager, &Player::PlayerManager::volumeChanged, m_engine, &AudioPlayer::setVolume);
+    connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, m_engine, &AudioPlayer::changeTrack);
+    connect(m_engine, &AudioPlayer::positionChanged, m_playerManager, &Player::PlayerManager::setCurrentPosition);
+    connect(m_engine, &AudioPlayer::trackFinished, m_playerManager, &Player::PlayerManager::next);
+    connect(m_playerManager, &Player::PlayerManager::positionMoved, m_engine, &AudioPlayer::seek);
+
+    connect(this, &EngineHandler::init, m_engine, &AudioPlayer::init);
+    connect(this, &EngineHandler::shutdown, m_engine, &Utils::Worker::stopThread);
+    connect(this, &EngineHandler::shutdown, m_engine, &AudioPlayer::deleteLater);
+    connect(this, &EngineHandler::play, m_engine, &AudioPlayer::play);
+    connect(this, &EngineHandler::pause, m_engine, &AudioPlayer::pause);
+    connect(this, &EngineHandler::stop, m_engine, &AudioPlayer::stop);
+
+    emit init();
+}
 
 void EngineHandler::playStateChanged(Player::PlayState state)
 {
     switch(state) {
-        case Player::PlayState::Playing:
+        case(Player::Playing):
             return emit play();
-        case Player::PlayState::Paused:
+        case(Player::Paused):
             return emit pause();
-        case Player::PlayState::Stopped:
+        case(Player::Stopped):
             return emit stop();
         default:
             return;

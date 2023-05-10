@@ -19,26 +19,41 @@
 
 #pragma once
 
-#include "core/player/playermanager.h"
+extern "C"
+{
+#include <libavutil/channel_layout.h>
+#include <libavutil/samplefmt.h>
+}
+
+#include <QObject>
+#include <QString>
 
 namespace Fy::Core::Engine {
-class Engine : public QObject
+struct OutputContext
+{
+    int sampleRate;
+    AVChannelLayout channelLayout;
+    AVSampleFormat format;
+};
+
+class AudioOutput : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit Engine(QObject* parent = nullptr)
-        : QObject{parent} {};
+    AudioOutput(QObject* parent = nullptr)
+        : QObject{parent}
+    { }
+    virtual ~AudioOutput() = default;
 
-    virtual void play()                          = 0;
-    virtual void stop()                          = 0;
-    virtual void pause()                         = 0;
-    virtual void seek(uint64_t pos)              = 0;
-    virtual void changeTrack(const Track& track) = 0;
-    virtual void setVolume(float value)          = 0;
+    virtual void init(OutputContext* of)          = 0;
+    virtual void start()                          = 0;
+    virtual int write(const char* data, int size) = 0;
 
-signals:
-    void currentPositionChanged(uint64_t ms);
-    void trackFinished();
+    virtual void setPaused(bool pause) = 0;
+
+    virtual int bufferSize() const       = 0;
+    virtual void setBufferSize(int size) = 0;
+    virtual void clearBuffer()           = 0;
 };
 } // namespace Fy::Core::Engine

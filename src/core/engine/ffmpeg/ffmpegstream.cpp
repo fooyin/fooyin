@@ -17,39 +17,25 @@
  *
  */
 
-#pragma once
+#include "ffmpegstream.h"
 
-#include "audioplayer.h"
-#include "core/player/playermanager.h"
-
-#include <QObject>
-#include <QThread>
-
-namespace Fy::Core::Engine {
-class EngineHandler : public QObject
+extern "C"
 {
-    Q_OBJECT
+#include <libavformat/avformat.h>
+}
 
-public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+namespace Fy::Core::Engine::FFmpeg {
+Stream::Stream(AVStream* stream)
+    : m_stream{stream}
+{ }
 
-    void setup();
+int Stream::index() const
+{
+    return m_stream->index;
+}
 
-signals:
-    void init();
-    void shutdown();
-
-    void play();
-    void pause();
-    void stop();
-
-protected:
-    void playStateChanged(Player::PlayState state);
-
-private:
-    Player::PlayerManager* m_playerManager;
-    QThread* m_engineThread;
-    AudioPlayer* m_engine;
-};
-} // namespace Fy::Core::Engine
+AVStream* Stream::avStream() const
+{
+    return m_stream;
+}
+} // namespace Fy::Core::Engine::FFmpeg

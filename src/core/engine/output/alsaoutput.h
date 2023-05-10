@@ -19,44 +19,30 @@
 
 #pragma once
 
-#include "engine.h"
+#include "core/engine/audiooutput.h"
 
-class mpv_event;
-class mpv_handle;
+#include <memory>
 
-namespace Fy::Core {
-class Track;
-
-namespace Engine {
-class EngineMpv : public Engine
+namespace Fy::Core::Engine {
+class AlsaOutput : public AudioOutput
 {
-    Q_OBJECT
-
 public:
-    explicit EngineMpv(QObject* parent = nullptr);
-    ~EngineMpv() override;
+    AlsaOutput(QObject* parent = nullptr);
+    ~AlsaOutput() override;
 
-    void engineSetup();
-    void processEvents();
+    void init(OutputContext* of) override;
+    void start() override;
+    size_t bytesFree() const;
+    int write(const char* data, int size) override;
 
-    void play() override;
-    void stop() override;
-    void pause() override;
-    void seek(uint64_t pos) override;
-    void changeTrack(const Track& track) override;
-    void setVolume(float value) override;
+    void setPaused(bool pause) override;
 
-signals:
-    void mpvEvent();
+    int bufferSize() const override;
+    void setBufferSize(int size) override;
+    void clearBuffer() override;
 
 private:
-    void handleEvent(mpv_event* event);
-    void handlePropertyChange(mpv_event* event);
-
-    int m_posInterval;
-    int m_ms;
-    uint64_t m_lastTick;
-    mpv_handle* m_mpv;
+    struct Private;
+    std::unique_ptr<AlsaOutput::Private> p;
 };
-} // namespace Engine
-} // namespace Fy::Core
+} // namespace Fy::Core::Engine

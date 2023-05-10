@@ -19,37 +19,27 @@
 
 #pragma once
 
-#include "audioplayer.h"
-#include "core/player/playermanager.h"
-
-#include <QObject>
-#include <QThread>
+#include "core/engine/audiooutput.h"
 
 namespace Fy::Core::Engine {
-class EngineHandler : public QObject
+class SdlOutput : public AudioOutput
 {
-    Q_OBJECT
-
 public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+    SdlOutput(QObject* parent = nullptr);
+    ~SdlOutput() override;
 
-    void setup();
+    void init(OutputContext* of) override;
+    void start() override;
+    int write(const char* data, int size) override;
 
-signals:
-    void init();
-    void shutdown();
+    void setPaused(bool pause) override;
 
-    void play();
-    void pause();
-    void stop();
-
-protected:
-    void playStateChanged(Player::PlayState state);
+    int bufferSize() const override;
+    void setBufferSize(int size) override;
+    void clearBuffer() override;
 
 private:
-    Player::PlayerManager* m_playerManager;
-    QThread* m_engineThread;
-    AudioPlayer* m_engine;
+    struct Private;
+    std::unique_ptr<SdlOutput::Private> p;
 };
 } // namespace Fy::Core::Engine

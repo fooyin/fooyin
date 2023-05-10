@@ -19,37 +19,37 @@
 
 #pragma once
 
-#include "audioplayer.h"
-#include "core/player/playermanager.h"
-
 #include <QObject>
-#include <QThread>
+#include <QTimer>
 
-namespace Fy::Core::Engine {
-class EngineHandler : public QObject
+namespace Fy::Core::Engine::FFmpeg {
+class EngineWorker : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+    EngineWorker(QObject* parent = nullptr);
 
-    void setup();
+    bool isPaused() const;
+    bool isAtEnd() const;
+    void setPaused(bool isPaused);
 
 signals:
-    void init();
-    void shutdown();
-
-    void play();
-    void pause();
-    void stop();
+    void atEnd();
 
 protected:
-    void playStateChanged(Player::PlayState state);
+    QTimer* timer();
+
+    virtual bool canDoNextStep() const;
+    virtual int timerInterval() const;
+    virtual void doNextStep() = 0;
+
+    void scheduleNextStep(bool immediate = true);
+    void setAtEnd(bool isAtEnd);
 
 private:
-    Player::PlayerManager* m_playerManager;
-    QThread* m_engineThread;
-    AudioPlayer* m_engine;
+    QTimer* m_timer;
+    bool m_paused;
+    bool m_atEnd;
 };
-} // namespace Fy::Core::Engine
+} // namespace Fy::Core::Engine::FFmpeg

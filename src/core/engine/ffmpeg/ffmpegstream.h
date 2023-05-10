@@ -19,37 +19,22 @@
 
 #pragma once
 
-#include "audioplayer.h"
-#include "core/player/playermanager.h"
+#include <QString>
 
-#include <QObject>
-#include <QThread>
+#include <cstdint>
 
-namespace Fy::Core::Engine {
-class EngineHandler : public QObject
+struct AVStream;
+
+namespace Fy::Core::Engine::FFmpeg {
+class Stream
 {
-    Q_OBJECT
-
 public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+    Stream(AVStream* stream = nullptr);
 
-    void setup();
-
-signals:
-    void init();
-    void shutdown();
-
-    void play();
-    void pause();
-    void stop();
-
-protected:
-    void playStateChanged(Player::PlayState state);
+    int index() const;
+    AVStream* avStream() const;
 
 private:
-    Player::PlayerManager* m_playerManager;
-    QThread* m_engineThread;
-    AudioPlayer* m_engine;
+    AVStream* m_stream;
 };
-} // namespace Fy::Core::Engine
+} // namespace Fy::Core::Engine::FFmpeg

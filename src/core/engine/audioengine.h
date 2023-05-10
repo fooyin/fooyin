@@ -20,36 +20,45 @@
 #pragma once
 
 #include "audioplayer.h"
-#include "core/player/playermanager.h"
 
 #include <QObject>
-#include <QThread>
 
 namespace Fy::Core::Engine {
-class EngineHandler : public QObject
+class AudioOutput;
+
+class AudioEngine
 {
-    Q_OBJECT
-
 public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+    virtual ~AudioEngine();
 
-    void setup();
+    virtual PlaybackState state() const;
+    virtual TrackStatus trackStatus() const;
 
-signals:
-    void init();
-    void shutdown();
+    virtual uint64_t position() const;
+    virtual void seek(uint64_t position) = 0;
 
-    void play();
-    void pause();
-    void stop();
+    virtual void changeTrack(const QString& media) = 0;
+
+    virtual void play()  = 0;
+    virtual void pause() = 0;
+    virtual void stop()  = 0;
+
+    virtual void setAudioOutput(AudioOutput* output);
+
+    void positionChanged(uint64_t position);
+
+    void stateChanged(PlaybackState newState);
+    void trackStatusChanged(TrackStatus status);
+
+    void trackFinished();
 
 protected:
-    void playStateChanged(Player::PlayState state);
+    explicit AudioEngine(AudioPlayer* parent = nullptr);
 
 private:
-    Player::PlayerManager* m_playerManager;
-    QThread* m_engineThread;
-    AudioPlayer* m_engine;
+    AudioPlayer* m_player;
+    TrackStatus m_status;
+    PlaybackState m_state;
+    uint64_t m_position;
 };
 } // namespace Fy::Core::Engine

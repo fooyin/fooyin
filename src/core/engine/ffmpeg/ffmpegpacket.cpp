@@ -17,39 +17,24 @@
  *
  */
 
-#pragma once
+#include "ffmpegpacket.h"
 
-#include "audioplayer.h"
-#include "core/player/playermanager.h"
+namespace Fy::Core::Engine::FFmpeg {
+Packet::Packet(PacketPtr packet)
+    : m_packet{std::move(packet)}
+{ }
 
-#include <QObject>
-#include <QThread>
+Packet::Packet(Packet&& other)
+    : m_packet{std::move(other.m_packet)}
+{ }
 
-namespace Fy::Core::Engine {
-class EngineHandler : public QObject
+bool Packet::isValid() const
 {
-    Q_OBJECT
+    return !!m_packet;
+}
 
-public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
-
-    void setup();
-
-signals:
-    void init();
-    void shutdown();
-
-    void play();
-    void pause();
-    void stop();
-
-protected:
-    void playStateChanged(Player::PlayState state);
-
-private:
-    Player::PlayerManager* m_playerManager;
-    QThread* m_engineThread;
-    AudioPlayer* m_engine;
-};
-} // namespace Fy::Core::Engine
+AVPacket* Packet::avPacket() const
+{
+    return m_packet.get();
+}
+} // namespace Fy::Core::Engine::FFmpeg
