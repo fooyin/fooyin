@@ -21,6 +21,7 @@
 
 #include "gui/guiconstants.h"
 
+#include <core/models/track.h>
 #include <core/player/playermanager.h>
 
 #include <utils/comboicon.h>
@@ -48,6 +49,8 @@ PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, QWidget
     connect(m_next, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::next);
 
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlayerControl::stateChanged);
+
+    setEnabled(m_playerManager->currentTrack().isValid());
 }
 
 void PlayerControl::setupUi()

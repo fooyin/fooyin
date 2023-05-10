@@ -53,9 +53,6 @@ public:
     explicit ControlWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                            QWidget* parent = nullptr);
 
-    void setupUi();
-    void setupConnections();
-
     [[nodiscard]] QString name() const override;
 
 private:
