@@ -43,9 +43,6 @@ int framesForDuration(int sampleRate, uint64_t milliseconds)
 
 uint64_t durationForBytes(OutputContext context, uint32_t bytes)
 {
-    if(bytes <= 0) {
-        return 0;
-    }
     return uint64_t(1000LL * (bytes / bytesPerFrame(context.format, context.channelLayout.nb_channels)))
          / context.sampleRate;
 }

@@ -69,7 +69,7 @@ struct FFmpegEngine::Private
 
     std::optional<Codec> codec;
 
-    Private(FFmpegEngine* engine)
+    explicit Private(FFmpegEngine* engine)
         : engine{engine}
         , audioOutput{nullptr}
         , duration{0}

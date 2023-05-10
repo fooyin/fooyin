@@ -82,10 +82,7 @@ struct Decoder::Private
 
     int sendAVPacket(const Packet& packet)
     {
-        if(packet.isValid()) {
-            return avcodec_send_packet(codec->context(), packet.isValid() ? packet.avPacket() : nullptr);
-        }
-        return 0;
+        return avcodec_send_packet(codec->context(), packet.isValid() ? packet.avPacket() : nullptr);
     }
 
     void receiveAVFrames()

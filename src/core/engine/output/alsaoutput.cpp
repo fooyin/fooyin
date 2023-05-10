@@ -248,17 +248,14 @@ void AlsaOutput::setPaused(bool pause)
     if(!p->pausable) {
         return;
     }
-    int error{0};
     const auto state = snd_pcm_state(p->pcmHandle.get());
     if(state == SND_PCM_STATE_RUNNING && pause) {
-        error = snd_pcm_pause(p->pcmHandle.get(), 1);
-        if(error < 0) {
+        if(snd_pcm_pause(p->pcmHandle.get(), 1) < 0) {
             qWarning() << "Couldn't pause ALSA device";
         }
     }
     else if(state == SND_PCM_STATE_PAUSED && !pause) {
-        error = snd_pcm_pause(p->pcmHandle.get(), 0);
-        if(error < 0) {
+        if(snd_pcm_pause(p->pcmHandle.get(), 0) < 0) {
             qWarning() << "Couldn't resume ALSA device";
         }
     }

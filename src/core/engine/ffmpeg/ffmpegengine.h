@@ -28,10 +28,10 @@ class FFmpegEngine : public QObject,
     Q_OBJECT
 
 public:
-    FFmpegEngine(AudioPlayer* player);
+    explicit FFmpegEngine(AudioPlayer* player);
     ~FFmpegEngine();
 
-    void seek(uint64_t pos);
+    void seek(uint64_t pos) override;
     uint64_t currentPosition() const;
 
     void changeTrack(const QString& trackPath) override;
