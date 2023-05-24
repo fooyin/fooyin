@@ -18,8 +18,8 @@
  */
 
 #include "application.h"
+#include "config.h"
 #include "singleinstance.h"
-#include "version.h"
 
 #include <core/constants.h>
 

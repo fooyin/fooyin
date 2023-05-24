@@ -19,39 +19,24 @@
 
 #pragma once
 
-#include <utils/settings/settingtypes.h>
-
-#include <QObject>
+#include <utils/settings/settingspage.h>
 
 namespace Fy {
+
 namespace Utils {
+class SettingsDialogController;
 class SettingsManager;
+} // namespace Utils
+
+namespace Core::Engine {
+class EngineHandler;
 }
 
-namespace Core::Settings {
-Q_NAMESPACE
-enum Core : uint32_t
-{
-    Version         = 1 | Utils::Settings::String,
-    DatabaseVersion = 2 | Utils::Settings::String,
-    FirstRun        = 3 | Utils::Settings::Bool,
-    PlayMode        = 4,
-    AutoRefresh     = 5 | Utils::Settings::Bool,
-    WaitForTracks   = 6 | Utils::Settings::Bool,
-    SortScript      = 7 | Utils::Settings::String,
-    LastPlaylistId  = 8 | Utils::Settings::Int,
-    AudioOutput     = 9 | Utils::Settings::String,
-    OutputDevice    = 10 | Utils::Settings::String,
-};
-Q_ENUM_NS(Core)
-
-class CoreSettings
+namespace Gui::Settings {
+class EnginePage : public Utils::SettingsPage
 {
 public:
-    explicit CoreSettings(Utils::SettingsManager* settingsManager);
-
-private:
-    Utils::SettingsManager* m_settings;
+    explicit EnginePage(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler);
 };
-} // namespace Core::Settings
+} // namespace Gui::Settings
 } // namespace Fy

@@ -20,16 +20,14 @@
 #pragma once
 
 #include "ffmpegworker.h"
-
-class AVFrame;
-class AVCodecContext;
+#include "ffmpegframe.h"
 
 namespace Fy::Core::Engine {
 class AudioOutput;
 
 namespace FFmpeg {
 class AudioClock;
-class Frame;
+class AudioBuffer;
 class Codec;
 
 class Renderer : public EngineWorker
@@ -37,13 +35,18 @@ class Renderer : public EngineWorker
     Q_OBJECT
 
 public:
-    Renderer(AudioClock* clock, AudioOutput* output, QObject* parent = nullptr);
-    ~Renderer();
+    Renderer(AudioClock* clock, QObject* parent = nullptr);
+    ~Renderer() override;
 
-    void seek(uint64_t pos);
-    void render(Frame& frame);
+    void run(Codec* codec, AudioOutput* output);
+    void reset() override;
+    void kill() override;
 
-    void updateOutput(AVCodecContext* context);
+    void render(Frame frame);
+
+    void pauseOutput(bool isPaused);
+    void updateOutput(AudioOutput* output);
+    void updateDevice(const QString& device);
 
 signals:
     void frameProcessed();

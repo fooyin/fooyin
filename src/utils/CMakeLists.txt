@@ -68,7 +68,7 @@ target_link_libraries(fooyin_utils
      Qt6::Widgets
 )
 
-target_compile_features(fooyin_utils PUBLIC cxx_std_17)
+target_compile_features(fooyin_utils PUBLIC cxx_std_20)
 target_compile_options(fooyin_utils PRIVATE -Werror -Wall -Wextra -Wpedantic)
 
 install(TARGETS fooyin_utils LIBRARY DESTINATION ${FOOYIN_LIBRARY_DIR})

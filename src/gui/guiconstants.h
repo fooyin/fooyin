@@ -45,6 +45,7 @@ constexpr auto QuickSetup    = "://icons/quick-setup.svg";
 
 namespace Category {
 constexpr auto General   = "://icons/category-general.svg";
+constexpr auto Engine   = "://icons/category-engine.svg";
 constexpr auto Interface = "://icons/category-interface.svg";
 constexpr auto Library   = "://icons/category-library.svg";
 constexpr auto Playlist  = "://icons/category-playlist.svg";
@@ -118,6 +119,7 @@ constexpr auto Playlist  = "Fooyin.Category.Playlist";
 
 namespace Page {
 constexpr auto GeneralCore       = "Fooyin.Page.General.Core";
+constexpr auto Engine            = "Fooyin.Page.Engine";
 constexpr auto InterfaceGeneral  = "Fooyin.Page.Interface.General";
 constexpr auto LibraryGeneral    = "Fooyin.Page.Library.General";
 constexpr auto PlaylistInterface = "Fooyin.Page.Playlist.Interface";

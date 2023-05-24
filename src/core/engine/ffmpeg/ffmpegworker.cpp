@@ -19,17 +19,36 @@
 
 #include "ffmpegworker.h"
 
+#include <QDebug>
+
 namespace Fy::Core::Engine::FFmpeg {
+
 EngineWorker::EngineWorker(QObject* parent)
     : QObject{parent}
     , m_timer{nullptr}
-    , m_paused{true}
+    , m_paused{false}
     , m_atEnd{false}
 { }
 
+void EngineWorker::reset()
+{
+    setPaused(true);
+    m_atEnd = false;
+}
+
+void EngineWorker::kill()
+{
+    setPaused(true);
+    m_atEnd = false;
+    if(m_timer) {
+        m_timer->deleteLater();
+        m_timer = nullptr;
+    }
+}
+
 bool EngineWorker::isPaused() const
 {
-    return m_paused;
+    return m_paused.load(std::memory_order_acquire);
 }
 
 bool EngineWorker::isAtEnd() const
@@ -39,10 +58,7 @@ bool EngineWorker::isAtEnd() const
 
 void EngineWorker::setPaused(bool isPaused)
 {
-    if(m_paused != isPaused) {
-        m_paused = isPaused;
-        scheduleNextStep();
-    }
+    m_paused.store(isPaused, std::memory_order_release);
 }
 
 QTimer* EngineWorker::timer()
@@ -51,7 +67,7 @@ QTimer* EngineWorker::timer()
         m_timer = new QTimer(this);
         m_timer->setTimerType(Qt::PreciseTimer);
         m_timer->setSingleShot(true);
-        connect(m_timer, &QTimer::timeout, this, [this]() {
+        QObject::connect(m_timer, &QTimer::timeout, this, [this]() {
             if(canDoNextStep()) {
                 doNextStep();
             }
@@ -62,7 +78,7 @@ QTimer* EngineWorker::timer()
 
 bool EngineWorker::canDoNextStep() const
 {
-    return !m_paused;
+    return !m_paused && !m_atEnd;
 }
 
 int EngineWorker::timerInterval() const
@@ -94,4 +110,5 @@ void EngineWorker::setAtEnd(bool isAtEnd)
         emit atEnd();
     }
 }
+
 } // namespace Fy::Core::Engine::FFmpeg

@@ -19,6 +19,8 @@
 
 #include "application.h"
 
+#include "config.h"
+
 #include <core/constants.h>
 #include <core/corepaths.h>
 #include <core/coreplugin.h>
@@ -26,6 +28,7 @@
 #include <core/coresettings.h>
 #include <core/database/database.h>
 #include <core/engine/enginehandler.h>
+#include <core/engine/output/alsaoutput.h>
 #include <core/library/librarymanager.h>
 #include <core/library/libraryscanner.h>
 #include <core/library/unifiedmusiclibrary.h>
@@ -33,6 +36,10 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/plugin.h>
 #include <core/plugins/pluginmanager.h>
+
+#ifdef SDL2_FOUND
+#include <core/engine/output/sdloutput.h>
+#endif
 
 #include <gui/controls/controlwidget.h>
 #include <gui/editablelayout.h>
@@ -52,6 +59,7 @@
 #include <gui/menu/playbackmenu.h>
 #include <gui/menu/viewmenu.h>
 #include <gui/playlist/playlistwidget.h>
+#include <gui/settings/enginepage.h>
 #include <gui/settings/generalpage.h>
 #include <gui/settings/guigeneralpage.h>
 #include <gui/settings/librarygeneralpage.h>
@@ -93,6 +101,7 @@ struct Application::Private
     Gui::HelpMenu* helpMenu;
 
     Gui::Settings::GeneralPage generalPage;
+    Gui::Settings::EnginePage enginePage;
     Gui::Settings::LibraryGeneralPage libraryGeneralPage;
     Gui::Settings::GuiGeneralPage guiGeneralPage;
     Gui::Settings::PlaylistGuiPage playlistGuiPage;
@@ -108,7 +117,7 @@ struct Application::Private
         , coreSettings{settingsManager}
         , database{settingsManager}
         , playerManager{new Core::Player::PlayerController(settingsManager, parent)}
-        , engine{playerManager}
+        , engine{playerManager, settingsManager}
         , libraryManager{new Core::Library::LibraryManager(&database, settingsManager, parent)}
         , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
         , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, library, settingsManager,
@@ -124,6 +133,7 @@ struct Application::Private
         , libraryMenu{new Gui::LibraryMenu(actionManager, library, settingsManager, parent)}
         , helpMenu{new Gui::HelpMenu(actionManager, parent)}
         , generalPage{settingsManager}
+        , enginePage{settingsManager, &engine}
         , libraryGeneralPage{libraryManager, settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , playlistGuiPage{settingsManager}
@@ -134,6 +144,7 @@ struct Application::Private
     {
         registerLayouts();
         registerWidgets();
+        registerOutputs();
         loadPlugins();
     }
 
@@ -186,6 +197,14 @@ struct Application::Private
         });
     }
 
+    void registerOutputs()
+    {
+        engine.addOutput(std::make_unique<Core::Engine::AlsaOutput>());
+#ifdef SDL2_FOUND
+        engine.addOutput(std::make_unique<Core::Engine::SdlOutput>());
+#endif
+    }
+
     void loadPlugins()
     {
         const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin";
@@ -214,6 +233,7 @@ void Application::startup()
     p->settingsManager->loadSettings();
     p->library->loadLibrary();
     p->layoutProvider.findLayouts();
+    p->engine.setup();
 
     p->mainWindow->setupUi();
     p->editableLayout->initialise();

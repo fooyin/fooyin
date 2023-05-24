@@ -19,45 +19,60 @@
 
 #include "ffmpegdecoder.h"
 
-#include "ffmpegclock.h"
+// #include "ffmpegaudiobuffer.h"
+#include "ffmpegcodec.h"
 #include "ffmpegframe.h"
 #include "ffmpegpacket.h"
+#include "ffmpegutils.h"
 
 #include <QDebug>
 
+#include <bit>
 #include <deque>
 
 namespace Fy::Core::Engine::FFmpeg {
-constexpr int MaxPendingFrames = 9;
+constexpr int MaxFrameQueue = 9;
+
+// Copies input frame's metadata and properties and assigns empty buffers for the data
+Frame copyFrame(const Frame& frame, AVSampleFormat format)
+{
+    auto avFrame = FramePtr(av_frame_alloc());
+
+    av_frame_copy_props(avFrame.get(), frame.avFrame());
+    avFrame->ch_layout  = frame.avFrame()->ch_layout;
+    avFrame->nb_samples = frame.sampleCount();
+    avFrame->format     = format;
+
+    Frame newFrame{std::move(avFrame)};
+
+    const int err = av_frame_get_buffer(newFrame.avFrame(), 0);
+    if(err < 0) {
+        qWarning() << "Buffer could not be allocated for frame";
+        return {};
+    }
+    return newFrame;
+}
 
 struct Decoder::Private
 {
     Decoder* decoder;
     AVFormatContext* context;
-    const Codec* codec;
-    int streamIndex;
-    AudioClock* clock;
+    Codec* codec;
 
-    int pendingFramesCount;
-    std::deque<Packet> packets;
+    int pendingFrameCount{0};
 
-    Private(Decoder* decoder, AVFormatContext* context, const Codec& codec, int streamIndex, AudioClock* clock)
+    Private(Decoder* decoder)
         : decoder{decoder}
-        , context{context}
-        , codec{&codec}
-        , streamIndex{streamIndex}
-        , clock{clock}
-        , pendingFramesCount{0}
+        , context{nullptr}
+        , codec{nullptr}
     { }
-
-    void reset()
-    {
-        packets.clear();
-        pendingFramesCount = 0;
-    }
 
     void decodeAudio(const Packet& packet)
     {
+        if(decoder->isPaused()) {
+            return;
+        }
+
         int result = sendAVPacket(packet);
 
         if(result == AVERROR(EAGAIN)) {
@@ -74,86 +89,159 @@ struct Decoder::Private
         }
     }
 
-    void onFrameFound(Frame frame)
+    int sendAVPacket(const Packet& packet) const
     {
-        ++pendingFramesCount;
-        emit decoder->requestHandleFrame(frame);
-    }
-
-    int sendAVPacket(const Packet& packet)
-    {
-        return avcodec_send_packet(codec->context(), packet.isValid() ? packet.avPacket() : nullptr);
+        return avcodec_send_packet(codec->context(), packet.avPacket());
     }
 
     void receiveAVFrames()
     {
-        while(true) {
-            auto avFrame     = FramePtr(av_frame_alloc());
-            const int result = avcodec_receive_frame(codec->context(), avFrame.get());
-
-            if(result == AVERROR_EOF || result == AVERROR(EAGAIN)) {
-                break;
-            }
-            if(result < 0) {
-                qWarning() << "Error receiving decoded frame";
-                break;
-            }
-            avFrame->time_base = context->streams[streamIndex]->time_base;
-            onFrameFound({std::move(avFrame), *codec});
+        if(decoder->isPaused()) {
+            return;
         }
+
+        auto avFrame     = FramePtr(av_frame_alloc());
+        const int result = avcodec_receive_frame(codec->context(), avFrame.get());
+
+        if(result == AVERROR_EOF || result == AVERROR(EAGAIN)) {
+            return;
+        }
+        if(result < 0) {
+            qWarning() << "Error receiving decoded frame";
+            return;
+        }
+        avFrame->time_base = context->streams[codec->streamIndex()]->time_base;
+        Frame frame{std::move(avFrame)};
+
+        if(av_sample_fmt_is_planar(frame.format())) {
+            frame = interleave(frame);
+        }
+        ++pendingFrameCount;
+        emit decoder->requestHandleFrame(frame);
+    }
+
+    template <typename T>
+    void interleaveSamples(uint8_t** in, int channels, uint8_t* out, int frames)
+    {
+        for(int ch = 0; ch < channels; ++ch) {
+            auto pSamples = std::bit_cast<const T*>(in[ch]);
+            auto iSamples = std::bit_cast<T*>(out) + ch;
+            auto end      = pSamples + frames;
+            while(pSamples < end) {
+                *iSamples = *pSamples++;
+                iSamples += channels;
+            }
+        }
+    }
+
+    Frame interleave(const Frame& inputFrame)
+    {
+        uint8_t** in                 = inputFrame.avFrame()->data;
+        const int channels           = inputFrame.channelCount();
+        const int samples            = inputFrame.sampleCount();
+        const auto interleavedFormat = interleaveFormat(inputFrame.format());
+
+        Frame frame  = copyFrame(inputFrame, interleavedFormat);
+        uint8_t* out = frame.avFrame()->data[0];
+
+        switch(inputFrame.format()) {
+            case AV_SAMPLE_FMT_FLTP:
+                interleaveSamples<float>(in, channels, out, samples);
+                break;
+            case AV_SAMPLE_FMT_U8P:
+                interleaveSamples<int8_t>(in, channels, out, samples);
+                break;
+            case AV_SAMPLE_FMT_S16P:
+                interleaveSamples<int16_t>(in, channels, out, samples);
+                break;
+            case AV_SAMPLE_FMT_S32P:
+                interleaveSamples<int32_t>(in, channels, out, samples);
+                break;
+            case AV_SAMPLE_FMT_S64P:
+            case AV_SAMPLE_FMT_DBLP:
+                interleaveSamples<int64_t>(in, channels, out, samples);
+                break;
+            case AV_SAMPLE_FMT_NONE:
+            case AV_SAMPLE_FMT_U8:
+            case AV_SAMPLE_FMT_S16:
+            case AV_SAMPLE_FMT_S32:
+            case AV_SAMPLE_FMT_FLT:
+            case AV_SAMPLE_FMT_DBL:
+            case AV_SAMPLE_FMT_S64:
+            case AV_SAMPLE_FMT_NB:
+                break;
+        }
+        frame.avFrame()->format = interleavedFormat;
+        return frame;
     }
 };
 
-Decoder::Decoder(AVFormatContext* context, const Codec& codec, int streamIndex, AudioClock* clock, QObject* parent)
+Decoder::Decoder(QObject* parent)
     : EngineWorker{parent}
-    , p{std::make_unique<Private>(this, context, codec, streamIndex, clock)}
+    , p{std::make_unique<Private>(this)}
 {
     setObjectName("Decoder");
 }
 
 Decoder::~Decoder() = default;
 
-void Decoder::seek(uint64_t position)
+void Decoder::run(AVFormatContext* context, Codec* codec)
 {
-    const int flags = position < p->clock->currentPosition() ? AVSEEK_FLAG_BACKWARD : 0;
-    if(av_seek_frame(p->context, 0, position, flags) < 0) {
-        qWarning() << "Could not seek to position: " << position;
-        return;
-    }
-    p->reset();
-    avcodec_flush_buffers(p->codec->context());
+    p->context = context;
+    p->codec   = codec;
+    setPaused(false);
     scheduleNextStep();
 }
 
-void Decoder::decode(Packet& packet)
+void Decoder::reset()
 {
-    p->packets.emplace_back(std::move(packet));
-    scheduleNextStep();
+    EngineWorker::reset();
+    p->pendingFrameCount = 0;
+}
+
+void Decoder::kill()
+{
+    EngineWorker::kill();
+    p->pendingFrameCount = 0;
+
+    p->context = nullptr;
+    p->codec   = nullptr;
 }
 
 void Decoder::onFrameProcessed()
 {
-    --p->pendingFramesCount;
+    --p->pendingFrameCount;
     scheduleNextStep(false);
 }
 
 bool Decoder::canDoNextStep() const
 {
-    return p->pendingFramesCount < MaxPendingFrames && EngineWorker::canDoNextStep();
+    return p->pendingFrameCount < MaxFrameQueue && EngineWorker::canDoNextStep();
+}
+
+int Decoder::timerInterval() const
+{
+    return 5;
 }
 
 void Decoder::doNextStep()
 {
-    Packet packet(PacketPtr{av_packet_alloc()});
+    if(isPaused()) {
+        return;
+    }
+    const Packet packet(PacketPtr{av_packet_alloc()});
     if(av_read_frame(p->context, packet.avPacket()) < 0) {
-        Frame frame;
-        emit requestHandleFrame(frame);
+        // Invalid EOF frame
+        emit requestHandleFrame({});
+        p->decoder->setAtEnd(true);
         return;
     }
 
-    if(packet.avPacket()->stream_index != p->streamIndex) {
+    if(packet.avPacket()->stream_index != p->codec->streamIndex()) {
         return scheduleNextStep(false);
     }
+
+    packet.avPacket()->time_base = p->codec->stream()->time_base;
 
     p->decodeAudio(packet);
     scheduleNextStep(false);

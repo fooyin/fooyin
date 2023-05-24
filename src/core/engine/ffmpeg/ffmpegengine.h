@@ -21,27 +21,46 @@
 
 #include "core/engine/audioengine.h"
 
+class AVFormatContext;
+
 namespace Fy::Core::Engine::FFmpeg {
-class FFmpegEngine : public QObject,
-                     public AudioEngine
+class Codec;
+
+class FFmpegEngine : public AudioEngine
 {
     Q_OBJECT
 
 public:
-    explicit FFmpegEngine(AudioPlayer* player);
-    ~FFmpegEngine();
+    explicit FFmpegEngine(QObject* parent = nullptr);
+    ~FFmpegEngine() override;
+
+    void shutdown() override;
 
     void seek(uint64_t pos) override;
-    uint64_t currentPosition() const;
+    [[nodiscard]] uint64_t currentPosition() const;
 
-    void changeTrack(const QString& trackPath) override;
+    void changeTrack(const Track& track) override;
     void setState(PlaybackState state);
 
     void play() override;
     void pause() override;
     void stop() override;
 
+    void setVolume(double volume) override;
+
     void setAudioOutput(AudioOutput* output) override;
+    void setOutputDevice(const QString& device) override;
+
+signals:
+    void resetWorkers();
+    void killWorkers();
+
+    void pauseOutput(bool pause);
+    void updateOutput(AudioOutput* output);
+    void updateDevice(const QString& output);
+
+    void startDecoder(AVFormatContext* context, Codec* codec);
+    void startRenderer(Codec* codec, AudioOutput* output);
 
 private:
     struct Private;

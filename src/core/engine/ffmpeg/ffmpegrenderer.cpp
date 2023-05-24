@@ -21,217 +21,190 @@
 
 #include "core/engine/audiooutput.h"
 #include "ffmpegclock.h"
+#include "ffmpegcodec.h"
 #include "ffmpegframe.h"
 #include "ffmpegutils.h"
 
-extern "C"
-{
-#include <libswresample/swresample.h>
-}
-
 #include <QDebug>
+#include <QTimer>
 
-#include <deque>
+#include <queue>
 
 namespace Fy::Core::Engine::FFmpeg {
-constexpr auto MinBufferSize = 10000;
-
-struct SwrContextDeleter
-{
-    void operator()(SwrContext* context) const
-    {
-        if(context) {
-            swr_free(&context);
-        }
-    }
-};
-using SwrContextPtr = std::unique_ptr<SwrContext, SwrContextDeleter>;
-
 struct Renderer::Private
 {
+    Renderer* renderer;
+
+    Codec* codec;
     AudioClock* clock;
-    uint64_t position;
-    std::deque<Frame> frames;
 
     AudioOutput* audioOutput;
     OutputContext outputContext;
-    SwrContextPtr swrContext;
-    QByteArray bufferedData;
-    int bufferWritten;
 
-    Private(AudioClock* clock, AudioOutput* output)
-        : clock{clock}
-        , position{0}
-        , audioOutput{output}
-        , swrContext{nullptr}
-        , bufferWritten{0}
+    bool bufferPrefilled{false};
+
+    std::queue<Frame> frameQueue;
+    std::vector<uint8_t> tempBuffer;
+
+    Private(Renderer* renderer, AudioClock* clock)
+        : renderer{renderer}
+        , codec{nullptr}
+        , clock{clock}
+        , audioOutput{nullptr}
     { }
 
-    std::chrono::microseconds outputRender(const Frame& frame)
+    bool updateOutput()
     {
-        if(!audioOutput) {
-            return {};
-        }
+        outputContext.format        = interleaveFormat(codec->context()->sample_fmt);
+        outputContext.sampleRate    = codec->context()->sample_rate;
+        outputContext.channelLayout = codec->context()->ch_layout;
+        outputContext.sstride = av_get_bytes_per_sample(outputContext.format) * outputContext.channelLayout.nb_channels;
 
-        if(bufferedData.isNull()) {
-            if(!frame.isValid()) {
-                return {};
-            }
-
-            bufferedData  = interleave(frame.avFrame());
-            bufferWritten = 0;
-        }
-
-        if(!bufferedData.isNull()) {
-            auto bytesWritten
-                = audioOutput->write(bufferedData.constData() + bufferWritten, bufferedData.size() - bufferWritten);
-            bufferWritten += bytesWritten;
-
-            if(bufferWritten >= bufferedData.size()) {
-                bufferedData  = {};
-                bufferWritten = 0;
-                return {};
-            }
-            return std::chrono::milliseconds{
-                durationForBytes(outputContext,
-                                 audioOutput->bufferSize() / outputContext.channelLayout.nb_channels
-                                     + bufferedData.size() - bufferWritten)};
-        }
-        return {};
+        return audioOutput->init(&outputContext);
     }
 
-    QByteArray interleave(const AVFrame* frame)
+    int renderAudio(int samples)
     {
-        const auto format = static_cast<AVSampleFormat>(frame->format);
-        if(av_sample_fmt_is_planar(format)) {
-            const auto channelLayout = frame->ch_layout;
-            const auto channelCount  = channelLayout.nb_channels;
-            const auto sampleRate    = frame->sample_rate;
-            const auto samplesCount  = frame->nb_samples;
+        if(renderer->isPaused()) {
+            return 0;
+        }
 
-            if(!swrContext) {
-                SwrContext* context{nullptr};
-                swr_alloc_set_opts2(&context,
-                                    &channelLayout,
-                                    interleaveFormat(format),
-                                    sampleRate,
-                                    &channelLayout,
-                                    format,
-                                    sampleRate,
-                                    0,
-                                    nullptr);
+        int samplesBuffered{0};
 
-                int ret = swr_init(context);
-                if(ret < 0) {
-                    return {};
+        while(samplesBuffered < samples) {
+            if(renderer->isPaused()) {
+                return samplesBuffered;
+            }
+
+            const Frame& frame = frameQueue.front();
+
+            if(!frame.isValid()) {
+                renderer->setAtEnd(true);
+                return samplesBuffered;
+            }
+
+            if(frame.avFrame()->nb_samples <= 0) {
+                const uint64_t pos = frame.ptsMs();
+                if(pos > 0) {
+                    clock->sync(frame.ptsMs());
                 }
-                swrContext.reset(context);
+                frameQueue.pop();
+                emit renderer->frameProcessed();
+                continue;
             }
 
-            const int outSamples = swr_get_out_samples(swrContext.get(), samplesCount);
-            std::vector<uint8_t> samples(bytesPerFrame(format, channelCount) * outSamples);
-            auto** in = const_cast<const uint8_t**>(frame->extended_data);
-            auto* out = static_cast<uint8_t*>(samples.data());
-            if(swr_convert(swrContext.get(), &out, outSamples, in, samplesCount) < 0) {
-                return {};
-            }
-            return QByteArray(reinterpret_cast<const char*>(samples.data()), samples.size());
+            uint8_t** fdata       = frame.avFrame()->data;
+            const int sstride     = outputContext.sstride;
+            const int sampleCount = std::min(frame.sampleCount(), samples - samplesBuffered);
+
+            tempBuffer.reserve(sampleCount * sstride);
+            std::copy(fdata[0], fdata[0] + sampleCount * sstride, std::back_inserter(tempBuffer));
+
+            samplesBuffered += sampleCount;
+            skipSamples(frame.avFrame(), sampleCount);
         }
-        else {
-            return QByteArray::fromRawData(reinterpret_cast<const char*>(frame->data[0]), frame->linesize[0]);
-        }
+        audioOutput->write(&outputContext, tempBuffer.data(), samples);
+        tempBuffer.clear();
+
+        return samples;
     }
 };
 
-Renderer::Renderer(AudioClock* clock, AudioOutput* output, QObject* parent)
+Renderer::Renderer(AudioClock* clock, QObject* parent)
     : EngineWorker{parent}
-    , p{std::make_unique<Private>(clock, output)}
+    , p{std::make_unique<Private>(this, clock)}
 {
     setObjectName("Renderer");
 }
 
-Renderer::~Renderer()
+Renderer::~Renderer() = default;
+
+void Renderer::run(Codec* codec, AudioOutput* output)
 {
-    p->frames.clear();
-    p->bufferedData = {};
-    p->swrContext.reset(nullptr);
-    p->bufferWritten = 0;
+    p->codec       = codec;
+    p->audioOutput = output;
+    setPaused(false);
+    p->updateOutput();
+    scheduleNextStep();
 }
 
-void Renderer::seek(uint64_t pos)
+void Renderer::reset()
 {
-    p->position = pos;
-    p->frames.clear();
-    p->bufferedData  = {};
-    p->bufferWritten = 0;
-    p->audioOutput->clearBuffer();
-}
+    EngineWorker::reset();
 
-void Renderer::render(Frame& frame)
-{
-    if(frame.isValid() && frame.end() < p->position) {
-        emit frameProcessed();
-        return;
+    if(p->audioOutput) {
+        p->audioOutput->reset();
     }
 
-    p->frames.emplace_back(std::move(frame));
+    p->bufferPrefilled = false;
+    p->frameQueue      = {};
+    p->tempBuffer.clear();
+}
 
-    if(p->frames.size() == 1) {
+void Renderer::kill()
+{
+    EngineWorker::kill();
+
+    if(p->audioOutput) {
+        p->audioOutput->uninit();
+    }
+
+    p->bufferPrefilled = false;
+    p->frameQueue      = {};
+    p->tempBuffer.clear();
+}
+
+void Renderer::render(Frame frame)
+{
+    p->frameQueue.emplace(frame);
+
+    if(p->frameQueue.size() == 1) {
         scheduleNextStep();
     }
 }
 
-void Renderer::updateOutput(AVCodecContext* context)
+void Renderer::pauseOutput(bool isPaused)
 {
-    if(!p->audioOutput) {
-        return;
-    }
-    p->outputContext.format        = context->sample_fmt;
-    p->outputContext.sampleRate    = context->sample_rate;
-    p->outputContext.channelLayout = context->ch_layout;
-
-    p->audioOutput->setBufferSize(bytesForDuration(p->outputContext, MinBufferSize));
-    p->audioOutput->init(&p->outputContext);
+    p->audioOutput->setPaused(isPaused);
 }
+
+void Renderer::updateOutput(AudioOutput* output)
+{
+    if(isPaused()) {
+        if(AudioOutput* prevOutput = std::exchange(p->audioOutput, output)) {
+            prevOutput->uninit();
+            p->bufferPrefilled = false;
+            p->updateOutput();
+        }
+    }
+}
+
+void Renderer::updateDevice(const QString& /*device*/) { }
 
 bool Renderer::canDoNextStep() const
 {
-    return !p->frames.empty() && EngineWorker::canDoNextStep();
-}
-
-void Renderer::doNextStep()
-{
-    const Frame& frame = p->frames.front();
-
-    const bool isValid = frame.isValid();
-    const auto result  = p->outputRender(frame);
-    const bool done    = result.count() <= 0;
-
-    if(!done && isValid) {
-        const auto now = std::chrono::steady_clock::now();
-        p->clock->sync(now + result, frame.pts());
-    }
-
-    if(done) {
-        if(isValid) {
-            p->position = std::max(frame.pts(), p->position);
-            emit frameProcessed();
-        }
-        else {
-            setAtEnd(true);
-        }
-        p->frames.pop_front();
-    }
-
-    scheduleNextStep(false);
+    return !p->frameQueue.empty() && EngineWorker::canDoNextStep();
 }
 
 int Renderer::timerInterval() const
 {
-    if(const Frame& frame = p->frames.front(); frame.isValid()) {
-        const auto delay = p->clock->timeFromPosition(frame.pts()) - std::chrono::steady_clock::now();
-        return std::max(0, static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(delay).count()) / 4);
+    return ((p->outputContext.bufferSize / static_cast<double>(p->outputContext.sampleRate)) * 0.25) * 1000;
+}
+
+void Renderer::doNextStep()
+{
+    if(isPaused()) {
+        return;
     }
-    return 0;
+    const int samples = p->audioOutput->currentState(&p->outputContext).freeSamples;
+    if(samples > 0) {
+        if(p->renderAudio(samples) == samples) {
+            if(!p->bufferPrefilled) {
+                p->bufferPrefilled = true;
+                p->audioOutput->start();
+            }
+        }
+    }
+    scheduleNextStep(false);
 }
 } // namespace Fy::Core::Engine::FFmpeg

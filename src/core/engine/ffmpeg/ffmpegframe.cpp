@@ -22,61 +22,64 @@
 #include <QDebug>
 
 namespace Fy::Core::Engine::FFmpeg {
-Frame::Frame(FramePtr f, const Codec& codec)
-    : m_frame{std::move(f)}
-    , m_codec{&codec}
-{ }
-
-Frame::Frame(Frame&& other)
-    : m_frame{std::move(other.m_frame)}
-    , m_codec{std::move(other.m_codec)}
+Frame::Frame(FramePtr frame)
+    : p{new Private(std::move(frame))}
 { }
 
 bool Frame::isValid() const
 {
-    return !!m_frame;
+    return p && p->frame;
 }
 
 AVFrame* Frame::avFrame() const
 {
-    return m_frame.get();
-}
-
-const Codec* Frame::codec() const
-{
-    return m_codec ? m_codec : nullptr;
+    return p->frame ? p->frame.get() : nullptr;
 }
 
 int Frame::channelCount() const
 {
-    return m_frame->ch_layout.nb_channels;
+    return p->frame ? p->frame->ch_layout.nb_channels : 0;
 }
 
 int Frame::sampleRate() const
 {
-    return m_frame->sample_rate;
+    return p->frame ? p->frame->sample_rate : 0;
 }
 
 AVSampleFormat Frame::format() const
 {
-    return static_cast<AVSampleFormat>(m_frame->format);
+    if(!p->frame) {
+        return AV_SAMPLE_FMT_NONE;
+    }
+    return static_cast<AVSampleFormat>(p->frame->format);
 }
 
-uint64_t Frame::pts() const
+int Frame::sampleCount() const
 {
-    if(m_frame->pts < 0) {
+    return p->frame ? p->frame->nb_samples : 0;
+}
+
+uint64_t Frame::ptsMs() const
+{
+    if(!p->frame || p->frame->pts < 0) {
         return 0;
     }
-    return av_rescale_q(m_frame->pts, m_codec->stream()->time_base, {1, 1000});
+    return av_rescale_q(p->frame->pts, p->frame->time_base, {1, 1000});
 }
 
-uint64_t Frame::duration() const
+uint64_t Frame::durationMs() const
 {
-    return av_rescale_q(m_frame->duration, m_codec->stream()->time_base, {1, 1000});
+    if(!p->frame) {
+        return 0;
+    }
+    return av_rescale_q(p->frame->duration, p->frame->time_base, {1, 1000});
 }
 
 uint64_t Frame::end() const
 {
-    return m_frame->pts + m_frame->duration;
+    if(!p->frame) {
+        return 0;
+    }
+    return p->frame->pts + p->frame->duration;
 }
 } // namespace Fy::Core::Engine::FFmpeg

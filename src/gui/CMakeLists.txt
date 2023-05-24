@@ -85,6 +85,7 @@ set(SOURCES
     quicksetup/quicksetupmodel.h
     quicksetup/quicksetupmodel.cpp
 
+    settings/enginepage.cpp
     settings/generalpage.h
     settings/generalpage.cpp
     settings/guigeneralpage.h
@@ -153,7 +154,7 @@ target_link_libraries(fooyin_gui
      fooyin::utils
 )
 
-target_compile_features(fooyin_gui PUBLIC cxx_std_17)
+target_compile_features(fooyin_gui PUBLIC cxx_std_20)
 target_compile_options(fooyin_gui PRIVATE -Werror -Wall -Wextra -Wpedantic)
 
 install(TARGETS fooyin_gui LIBRARY DESTINATION ${FOOYIN_LIBRARY_DIR})

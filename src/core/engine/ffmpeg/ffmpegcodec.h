@@ -43,21 +43,19 @@ using CodecContextPtr = std::unique_ptr<AVCodecContext, CodecContextDeleter>;
 class Codec
 {
 public:
-    static std::optional<Codec> create(AVStream* stream);
+    Codec(CodecContextPtr context, AVStream* stream);
 
-    Codec(Codec&& other);
+    Codec(Codec&& other) noexcept ;
     Codec& operator=(Codec&& other);
 
     Codec(const Codec& other)            = delete;
     Codec& operator=(const Codec& other) = delete;
 
-    AVCodecContext* context() const;
-    AVStream* stream() const;
-    uint streamIndex() const;
+    [[nodiscard]] AVCodecContext* context() const;
+    [[nodiscard]] AVStream* stream() const;
+    [[nodiscard]] int streamIndex() const;
 
 private:
-    Codec(CodecContextPtr context, AVStream* stream);
-
     CodecContextPtr m_context;
     AVStream* m_stream;
 };

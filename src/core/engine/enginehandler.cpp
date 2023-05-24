@@ -19,20 +19,40 @@
 
 #include "enginehandler.h"
 
-#include "audioplayer.h"
+#include "audioengine.h"
+#include "audiooutput.h"
+#include "core/coresettings.h"
+#include "core/engine/ffmpeg/ffmpegengine.h"
 #include "core/models/track.h"
 
+#include <utils/settings/settingsmanager.h>
+
 namespace Fy::Core::Engine {
-EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* parent)
+EngineHandler::EngineHandler(Player::PlayerManager* playerManager, Utils::SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_playerManager{playerManager}
+    , m_settings{settings}
     , m_engineThread{new QThread(this)}
-    , m_engine{new AudioPlayer()}
+    , m_engine(new FFmpeg::FFmpegEngine())
+    , m_output{nullptr}
 {
     m_engine->moveToThread(m_engineThread);
     m_engineThread->start();
 
-    setup();
+    connect(m_playerManager, &Player::PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
+    connect(m_playerManager, &Player::PlayerManager::volumeChanged, m_engine, &AudioEngine::setVolume);
+    connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, m_engine, &AudioEngine::changeTrack);
+    connect(m_engine, &AudioEngine::positionChanged, m_playerManager, &Player::PlayerManager::setCurrentPosition);
+    connect(m_engine, &AudioEngine::trackFinished, m_playerManager, &Player::PlayerManager::next);
+    connect(m_playerManager, &Player::PlayerManager::positionMoved, m_engine, &AudioEngine::seek);
+
+    connect(this, &EngineHandler::outputChanged, m_engine, &AudioEngine::setAudioOutput);
+    //    connect(this, &EngineHandler::deviceChanged, m_engine, &AudioEngine::setOutputDevice);
+    connect(this, &EngineHandler::shutdown, m_engine, &AudioEngine::shutdown);
+    connect(this, &EngineHandler::shutdown, m_engine, &QObject::deleteLater);
+    connect(this, &EngineHandler::play, m_engine, &AudioEngine::play);
+    connect(this, &EngineHandler::pause, m_engine, &AudioEngine::pause);
+    connect(this, &EngineHandler::stop, m_engine, &AudioEngine::stop);
 }
 
 EngineHandler::~EngineHandler()
@@ -44,21 +64,37 @@ EngineHandler::~EngineHandler()
 
 void EngineHandler::setup()
 {
-    connect(m_playerManager, &Player::PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
-    connect(m_playerManager, &Player::PlayerManager::volumeChanged, m_engine, &AudioPlayer::setVolume);
-    connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, m_engine, &AudioPlayer::changeTrack);
-    connect(m_engine, &AudioPlayer::positionChanged, m_playerManager, &Player::PlayerManager::setCurrentPosition);
-    connect(m_engine, &AudioPlayer::trackFinished, m_playerManager, &Player::PlayerManager::next);
-    connect(m_playerManager, &Player::PlayerManager::positionMoved, m_engine, &AudioPlayer::seek);
+    m_settings->subscribe<Settings::AudioOutput>(this, &EngineHandler::changeOutput);
+    m_settings->subscribe<Settings::OutputDevice>(this, &EngineHandler::changeOutputDevice);
 
-    connect(this, &EngineHandler::init, m_engine, &AudioPlayer::init);
-    connect(this, &EngineHandler::shutdown, m_engine, &Utils::Worker::stopThread);
-    connect(this, &EngineHandler::shutdown, m_engine, &AudioPlayer::deleteLater);
-    connect(this, &EngineHandler::play, m_engine, &AudioPlayer::play);
-    connect(this, &EngineHandler::pause, m_engine, &AudioPlayer::pause);
-    connect(this, &EngineHandler::stop, m_engine, &AudioPlayer::stop);
+    changeOutput(m_settings->value<Settings::AudioOutput>());
+    changeOutputDevice(m_settings->value<Settings::OutputDevice>());
+}
 
-    emit init();
+OutputNames EngineHandler::getAllOutputs() const
+{
+    OutputNames outputs;
+
+    for(const auto& [name, output] : m_outputs) {
+        outputs.emplace_back(name);
+    }
+
+    return outputs;
+}
+
+std::optional<OutputDevices> EngineHandler::getOutputDevices(const QString& output) const
+{
+    if(!m_outputs.count(output)) {
+        qDebug() << "Output not found: " << output;
+        return {};
+    }
+    const auto devices = m_outputs.at(output)->getAllDevices();
+    return devices;
+}
+
+void EngineHandler::addOutput(std::unique_ptr<AudioOutput> output)
+{
+    m_outputs.emplace(output->name(), std::move(output));
 }
 
 void EngineHandler::playStateChanged(Player::PlayState state)
@@ -73,5 +109,38 @@ void EngineHandler::playStateChanged(Player::PlayState state)
         default:
             return;
     }
+}
+
+void EngineHandler::changeOutput(const QString& output)
+{
+    if(m_outputs.empty()) {
+        qWarning() << "No Outputs have been registered";
+        return;
+    }
+
+    if(m_output && m_output->name() == output) {
+        return;
+    }
+
+    if(!m_outputs.count(output)) {
+        qDebug() << "Output not found: " << output;
+        m_output = m_outputs.cbegin()->second.get();
+    }
+    else {
+        m_output = m_outputs.at(output).get();
+    }
+
+    qDebug() << "Output changed: " << m_output->name();
+
+    emit outputChanged(m_output);
+}
+
+void EngineHandler::changeOutputDevice(const QString& device)
+{
+    if(m_outputs.empty()) {
+        qWarning() << "No Outputs have been registered";
+        return;
+    }
+    emit deviceChanged(device);
 }
 } // namespace Fy::Core::Engine

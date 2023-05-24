@@ -19,9 +19,9 @@
 
 #include "coresettings.h"
 
+#include "config.h"
 #include "core/player/playermanager.h"
 #include "corepaths.h"
-#include "version.h"
 
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -38,6 +38,8 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::WaitForTracks, true, "Library");
     m_settings->createSetting(Settings::SortScript, "%albumartist% - %album% - %disc% - %track% - %title%", "Library");
     m_settings->createSetting(Settings::LastPlaylistId, 0, "Playlist");
+    m_settings->createSetting(Settings::AudioOutput, "ALSA", "Engine");
+    m_settings->createSetting(Settings::OutputDevice, "default", "Engine");
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 

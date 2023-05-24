@@ -19,37 +19,64 @@
 
 #pragma once
 
-#include "audioplayer.h"
 #include "core/player/playermanager.h"
 
 #include <QObject>
 #include <QThread>
 
-namespace Fy::Core::Engine {
+namespace Fy {
+namespace Utils {
+class SettingsManager;
+}
+namespace Core::Engine {
+class AudioEngine;
+class AudioOutput;
+
+using OutputNames   = std::vector<QString>;
+using OutputDevices = std::map<QString, QString>;
+
 class EngineHandler : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
+    explicit EngineHandler(Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
+                           QObject* parent = nullptr);
     ~EngineHandler() override;
 
     void setup();
 
+    OutputNames getAllOutputs() const;
+    std::optional<OutputDevices> getOutputDevices(const QString& output) const;
+
+    // Takes ownership of AudioOutput
+    void addOutput(std::unique_ptr<AudioOutput> output);
+    void changeOutput(const QString& output);
+
+    // Changes device of currently active output
+    void changeOutputDevice(const QString& device);
+
 signals:
-    void init();
     void shutdown();
+
+    void outputChanged(Engine::AudioOutput* output);
+    void deviceChanged(const QString& device);
 
     void play();
     void pause();
     void stop();
 
-protected:
+private:
     void playStateChanged(Player::PlayState state);
 
-private:
     Player::PlayerManager* m_playerManager;
+    Utils::SettingsManager* m_settings;
+
     QThread* m_engineThread;
-    AudioPlayer* m_engine;
+    AudioEngine* m_engine;
+
+    std::map<QString, std::unique_ptr<AudioOutput>> m_outputs;
+    AudioOutput* m_output;
 };
-} // namespace Fy::Core::Engine
+} // namespace Core::Engine
+} // namespace Fy

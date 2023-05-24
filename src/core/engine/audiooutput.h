@@ -19,14 +19,14 @@
 
 #pragma once
 
+#include <QString>
 extern "C"
 {
 #include <libavutil/channel_layout.h>
 #include <libavutil/samplefmt.h>
 }
 
-#include <QObject>
-#include <QString>
+#include <map>
 
 namespace Fy::Core::Engine {
 struct OutputContext
@@ -34,26 +34,39 @@ struct OutputContext
     int sampleRate;
     AVChannelLayout channelLayout;
     AVSampleFormat format;
+    int sstride; // Size of a sample
+    int bufferSize{2048};
 };
 
-class AudioOutput : public QObject
+struct OutputState
 {
-    Q_OBJECT
+    int freeSamples{0};
+    int queuedSamples{0};
+    double delay{0.0};
+};
 
+using OutputDevices = std::map<QString, QString>;
+
+class AudioOutput
+{
 public:
-    AudioOutput(QObject* parent = nullptr)
-        : QObject{parent}
-    { }
     virtual ~AudioOutput() = default;
 
-    virtual void init(OutputContext* of)          = 0;
-    virtual void start()                          = 0;
-    virtual int write(const char* data, int size) = 0;
+    virtual QString name() const = 0;
 
-    virtual void setPaused(bool pause) = 0;
+    virtual QString device() const                = 0;
+    virtual void setDevice(const QString& device) = 0;
 
-    virtual int bufferSize() const       = 0;
-    virtual void setBufferSize(int size) = 0;
-    virtual void clearBuffer()           = 0;
+    virtual bool init(OutputContext* oc) = 0;
+    virtual void uninit()                = 0;
+    virtual void reset()                 = 0;
+    virtual void start()                 = 0;
+
+    virtual int write(OutputContext* oc, const uint8_t* data, int samples) = 0;
+
+    virtual void setPaused(bool pause)                  = 0;
+    virtual OutputState currentState(OutputContext* oc) = 0;
+
+    virtual OutputDevices getAllDevices() const = 0;
 };
 } // namespace Fy::Core::Engine

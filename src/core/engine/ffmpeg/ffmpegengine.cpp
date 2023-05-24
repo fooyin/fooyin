@@ -20,6 +20,7 @@
 #include "ffmpegengine.h"
 
 #include "core/engine/audiooutput.h"
+#include "core/models/track.h"
 #include "ffmpegclock.h"
 #include "ffmpegcodec.h"
 #include "ffmpegdecoder.h"
@@ -29,12 +30,17 @@
 extern "C"
 {
 #include <libavformat/avformat.h>
+#include <libavutil/opt.h>
 }
 
 #include <QDebug>
+#include <QThread>
 #include <QTime>
+#include <QTimer>
 
 namespace Fy::Core::Engine::FFmpeg {
+constexpr int AudioBufferSize = 9;
+
 struct FormatContextDeleter
 {
     void operator()(AVFormatContext* context) const
@@ -53,37 +59,48 @@ struct FFmpegEngine::Private
     FFmpegEngine* engine;
 
     AudioClock clock;
-    QTimer positionUpdateTimer;
+    QTimer* positionUpdateTimer;
+    uint64_t lastPos{0};
+
+    uint64_t duration{0};
+    FormatContextPtr context;
+    Stream stream;
+    bool isSeekable{false};
+
+    PlaybackState state{StoppedState};
 
     AudioOutput* audioOutput;
 
-    uint64_t duration;
-    FormatContextPtr context;
-    Stream stream;
-    bool isSeekable;
-
-    PlaybackState state;
-
-    std::unique_ptr<Decoder> decoder;
-    std::unique_ptr<Renderer> renderer;
+    QThread* decoderThread;
+    QThread* rendererThread;
+    Decoder decoder;
+    Renderer renderer;
 
     std::optional<Codec> codec;
 
     explicit Private(FFmpegEngine* engine)
         : engine{engine}
+        , positionUpdateTimer{nullptr}
         , audioOutput{nullptr}
-        , duration{0}
-        , isSeekable{false}
-        , state{StoppedState}
-        , decoder{nullptr}
-        , renderer{nullptr}
+        , decoderThread{new QThread(engine)}
+        , rendererThread{new QThread(engine)}
+        , renderer{&clock}
     {
-        positionUpdateTimer.setInterval(50);
-        positionUpdateTimer.setTimerType(Qt::PreciseTimer);
+        decoder.moveToThread(decoderThread);
+        renderer.moveToThread(rendererThread);
+    }
 
-        QObject::connect(&positionUpdateTimer, &QTimer::timeout, engine, [this]() {
-            updatePosition();
-        });
+    QTimer* positionTimer()
+    {
+        if(!positionUpdateTimer) {
+            positionUpdateTimer = new QTimer(engine);
+            positionUpdateTimer->setInterval(50);
+            positionUpdateTimer->setTimerType(Qt::PreciseTimer);
+            QObject::connect(positionUpdateTimer, &QTimer::timeout, engine, [this]() {
+                updatePosition();
+            });
+        }
+        return positionUpdateTimer;
     }
 
     bool createAVFormatContext(const QString& track)
@@ -117,6 +134,43 @@ struct FFmpegEngine::Private
         return true;
     }
 
+    void createCodec(AVStream* avStream)
+    {
+        if(!avStream) {
+            return;
+        }
+
+        const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
+        if(!avCodec) {
+            return;
+        }
+
+        CodecContextPtr avCodecContext(avcodec_alloc_context3(avCodec));
+        if(!avCodecContext) {
+            return;
+        }
+
+        if(avCodecContext->codec_type != AVMEDIA_TYPE_AUDIO) {
+            return;
+        }
+
+        if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
+            return;
+        }
+
+        avCodecContext.get()->pkt_timebase = avStream->time_base;
+
+        AVDictionary* opts{nullptr};
+        av_dict_set(&opts, "refcounted_frames", "1", 0);
+        av_dict_set(&opts, "threads", "auto", 0);
+
+        if(avcodec_open2(avCodecContext.get(), avCodec, &opts) < 0) {
+            return;
+        }
+
+        codec = Codec{std::move(avCodecContext), avStream};
+    }
+
     void updateStream()
     {
         if(!context) {
@@ -130,73 +184,69 @@ struct FFmpegEngine::Private
                 continue;
             }
 
-            stream   = {avStream};
+            stream   = Stream{avStream};
             duration = stream.duration();
         }
     }
 
-    void runPlayback()
-    {
-        engine->setState(PlayingState);
-        positionUpdateTimer.start();
-        engine->stateChanged(PlayingState);
-        engine->trackStatusChanged(BufferedTrack);
-    }
-
     void updatePosition()
     {
-        if(!renderer) {
-            return;
-        }
         const uint64_t pos = engine->currentPosition();
-        engine->positionChanged(pos);
+        if(std::exchange(lastPos, pos) != pos) {
+            emit engine->positionChanged(pos);
+        }
     }
 
     void createWorkers()
     {
-        clock.setPaused(true);
-
         if(!codec) {
-            codec = Codec::create(stream.avStream());
+            createCodec(stream.avStream());
             if(!codec) {
                 qWarning() << "Cannot create codec";
                 return;
             }
         }
 
-        decoder  = std::make_unique<Decoder>(context.get(), *codec, stream.index(), &clock);
-        renderer = std::make_unique<Renderer>(&clock, audioOutput);
+        decoderThread->start();
+        rendererThread->start();
 
-        QObject::connect(decoder.get(), &Decoder::requestHandleFrame, renderer.get(), &Renderer::render);
-        QObject::connect(renderer.get(), &Renderer::atEnd, engine, [this]() {
+        QObject::connect(decoderThread, &QThread::finished, &decoder, &EngineWorker::kill);
+        QObject::connect(engine, &FFmpegEngine::resetWorkers, &decoder, &EngineWorker::reset);
+        QObject::connect(engine, &FFmpegEngine::killWorkers, &decoder, &EngineWorker::kill);
+        QObject::connect(engine, &FFmpegEngine::startDecoder, &decoder, &Decoder::run);
+
+        QObject::connect(rendererThread, &QThread::finished, &renderer, &EngineWorker::kill);
+        QObject::connect(engine, &FFmpegEngine::resetWorkers, &renderer, &EngineWorker::reset);
+        QObject::connect(engine, &FFmpegEngine::killWorkers, &renderer, &EngineWorker::kill);
+        QObject::connect(engine, &FFmpegEngine::startRenderer, &renderer, &Renderer::run);
+        QObject::connect(engine, &FFmpegEngine::pauseOutput, &renderer, &Renderer::pauseOutput);
+        QObject::connect(engine, &FFmpegEngine::updateOutput, &renderer, &Renderer::updateOutput);
+        QObject::connect(engine, &FFmpegEngine::updateDevice, &renderer, &Renderer::updateDevice);
+
+        QObject::connect(&decoder, &Decoder::requestHandleFrame, &renderer, &Renderer::render);
+        QObject::connect(&renderer, &Renderer::frameProcessed, &decoder, &Decoder::onFrameProcessed);
+
+        QObject::connect(&renderer, &Renderer::atEnd, engine, [this]() {
             onRendererFinished();
         });
-        QObject::connect(renderer.get(), &Renderer::frameProcessed, decoder.get(), &Decoder::onFrameProcessed);
     }
 
-    void forceUpdate()
+    void startPlayback()
     {
-        createWorkers();
-        updateWorkerPausedState();
+        emit engine->startDecoder(context.get(), &codec.value());
+        emit engine->startRenderer(&codec.value(), audioOutput);
     }
 
-    void updateWorkerPausedState()
+    void pauseWorkers(bool pause)
     {
-        const bool paused = state != PlayingState;
-        clock.setPaused(paused);
-
-        if(decoder) {
-            decoder->setPaused(paused);
-        }
-
-        if(renderer) {
-            renderer->setPaused(paused);
-        }
+        clock.setPaused(pause);
+        decoder.setPaused(pause);
+        renderer.setPaused(pause);
     }
 
     void onRendererFinished()
     {
-        if(!renderer->isAtEnd()) {
+        if(!renderer.isAtEnd()) {
             return;
         }
 
@@ -204,23 +254,43 @@ struct FFmpegEngine::Private
             return;
         }
 
-        clock.setPaused(true);
+        pauseWorkers(true);
         clock.sync(duration);
 
         engine->trackStatusChanged(EndOfTrack);
-        engine->trackFinished();
+        emit engine->trackFinished();
+    }
+
+    void resetWorkers()
+    {
+        pauseWorkers(true);
+        emit engine->resetWorkers();
+    }
+
+    void killWorkers()
+    {
+        pauseWorkers(true);
+        emit engine->killWorkers();
     }
 };
 
-FFmpegEngine::FFmpegEngine(AudioPlayer* player)
-    : QObject{player}
-    , AudioEngine{player}
+FFmpegEngine::FFmpegEngine(QObject* parent)
+    : AudioEngine{parent}
     , p{std::make_unique<Private>(this)}
 { }
 
-FFmpegEngine::~FFmpegEngine()
+FFmpegEngine::~FFmpegEngine() = default;
+
+void FFmpegEngine::shutdown()
 {
-    disconnect();
+    //    p->killWorkers();
+
+    p->decoderThread->quit();
+    p->decoderThread->wait();
+    p->rendererThread->quit();
+    p->rendererThread->wait();
+
+    p->positionUpdateTimer->deleteLater();
 }
 
 void FFmpegEngine::seek(uint64_t pos)
@@ -228,17 +298,20 @@ void FFmpegEngine::seek(uint64_t pos)
     if(!p->isSeekable) {
         return;
     }
-    uint64_t timestamp = av_rescale_q(pos, {1, 1000}, p->stream.avStream()->time_base);
-    p->decoder->seek(timestamp);
-    p->renderer->seek(timestamp);
 
-    p->clock.setPaused(true);
-    p->clock.sync(pos);
+    p->resetWorkers();
 
-    p->updatePosition();
-    if(state() == StoppedState) {
-        trackStatusChanged(LoadedTrack);
+    const uint64_t timestamp = av_rescale_q(pos, {1, 1000}, p->stream.avStream()->time_base);
+
+    const int flags = pos < p->clock.currentPosition() ? AVSEEK_FLAG_BACKWARD : 0;
+    if(av_seek_frame(p->context.get(), p->stream.index(), timestamp, flags) < 0) {
+        qWarning() << "Could not seek to position: " << pos;
+        return;
     }
+    avcodec_flush_buffers(p->codec->context());
+
+    p->clock.sync(pos);
+    p->startPlayback();
 }
 
 uint64_t FFmpegEngine::currentPosition() const
@@ -246,11 +319,13 @@ uint64_t FFmpegEngine::currentPosition() const
     return p->clock.currentPosition();
 }
 
-void FFmpegEngine::changeTrack(const QString& trackPath)
+void FFmpegEngine::changeTrack(const Track& track)
 {
-    positionChanged(0);
+    p->killWorkers();
 
-    if(trackPath.isEmpty()) {
+    emit positionChanged(0);
+
+    if(!track.isValid()) {
         trackStatusChanged(NoTrack);
         return;
     }
@@ -258,11 +333,14 @@ void FFmpegEngine::changeTrack(const QString& trackPath)
     trackStatusChanged(LoadingTrack);
 
     p->context.reset();
-    p->codec = {};
+    p->codec.reset();
 
-    if(!p->createAVFormatContext(trackPath)) {
+    if(!p->createAVFormatContext(track.filepath())) {
         return;
     }
+
+    p->clock.setPaused(true);
+    p->clock.sync();
 
     p->createWorkers();
 
@@ -275,38 +353,50 @@ void FFmpegEngine::setState(PlaybackState state)
         return;
     }
 
-    p->state = state;
+    auto prevState = std::exchange(p->state, state);
+
+    p->pauseWorkers(p->state != PlayingState);
 
     if(state == StoppedState) {
-        p->clock.setPaused(true);
-        p->clock.sync();
+        p->killWorkers();
     }
-
-    if(state == PlayingState) {
-        p->renderer->updateOutput(p->codec->context());
-        p->audioOutput->start();
+    else if(state == PlayingState) {
+        if(prevState == PausedState) {
+            emit pauseOutput(false);
+        }
+        p->startPlayback();
     }
-
-    p->updateWorkerPausedState();
+    else if(state == PausedState) {
+        emit pauseOutput(true);
+    }
 }
 
 void FFmpegEngine::play()
 {
+    if(trackStatus() == NoTrack) {
+        return;
+    }
     if(trackStatus() == EndOfTrack && state() == StoppedState) {
         seek(0);
-        positionChanged(0);
+        emit positionChanged(0);
     }
-    p->runPlayback();
+    setState(PlayingState);
+    p->positionTimer()->start();
+    stateChanged(PlayingState);
+    trackStatusChanged(BufferedTrack);
 }
 
 void FFmpegEngine::pause()
 {
+    if(trackStatus() == NoTrack) {
+        return;
+    }
     if(trackStatus() == EndOfTrack && state() == StoppedState) {
         seek(0);
-        positionChanged(0);
+        emit positionChanged(0);
     }
     setState(PausedState);
-    p->positionUpdateTimer.stop();
+    p->positionTimer()->stop();
     stateChanged(PausedState);
     trackStatusChanged(BufferedTrack);
 }
@@ -314,22 +404,49 @@ void FFmpegEngine::pause()
 void FFmpegEngine::stop()
 {
     setState(StoppedState);
-    p->positionUpdateTimer.stop();
-    positionChanged(0);
+    p->positionTimer()->stop();
+    emit positionChanged(0);
     stateChanged(StoppedState);
     trackStatusChanged(NoTrack);
 }
 
+void FFmpegEngine::setVolume(double /*volume*/) { }
+
 void FFmpegEngine::setAudioOutput(AudioOutput* output)
 {
-    if(p->audioOutput == output) {
+    if(std::exchange(p->audioOutput, output) == output) {
         return;
     }
 
-    if(std::exchange(p->audioOutput, output) != output) {
-        if(p->context) {
-            p->forceUpdate();
-        }
+    const bool playing = state() == PlayingState || state() == PausedState;
+
+    if(playing) {
+        p->pauseWorkers(true);
+    }
+
+    emit updateOutput(p->audioOutput);
+
+    if(playing) {
+        p->startPlayback();
+    }
+}
+
+void FFmpegEngine::setOutputDevice(const QString& device)
+{
+    if(device.isEmpty()) {
+        return;
+    }
+
+    const bool playing = state() == PlayingState || state() == PausedState;
+
+    if(playing) {
+        p->pauseWorkers(true);
+    }
+
+    emit updateDevice(device);
+
+    if(playing) {
+        p->startPlayback();
     }
 }
 } // namespace Fy::Core::Engine::FFmpeg

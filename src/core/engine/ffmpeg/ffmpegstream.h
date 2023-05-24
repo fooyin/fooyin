@@ -29,13 +29,13 @@ namespace Fy::Core::Engine::FFmpeg {
 class Stream
 {
 public:
-    Stream(AVStream* stream = nullptr);
+    explicit Stream(AVStream* stream = nullptr);
 
-    AVStream* avStream() const;
-    int index() const;
+    [[nodiscard]] AVStream* avStream() const;
+    [[nodiscard]] int index() const;
 
     // Returns duration in milliseconds
-    uint64_t duration() const;
+    [[nodiscard]] uint64_t duration() const;
 
 private:
     AVStream* m_stream;

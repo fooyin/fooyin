@@ -44,14 +44,14 @@ class Packet
 {
 public:
     Packet() = default;
-    Packet(PacketPtr packet);
+    explicit Packet(PacketPtr packet);
 
-    Packet(Packet&& other);
-    Packet(const Packet& other) = delete;
+    Packet(Packet&& other) noexcept;
+    Packet(const Packet& other)            = delete;
     Packet& operator=(const Packet& other) = delete;
 
-    bool isValid() const;
-    AVPacket* avPacket() const;
+    [[nodiscard]] bool isValid() const;
+    [[nodiscard]] AVPacket* avPacket() const;
 
 private:
     PacketPtr m_packet;

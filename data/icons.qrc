@@ -26,5 +26,6 @@
         <file>icons/category-library.svg</file>
         <file>icons/category-playlist.svg</file>
         <file>icons/category-plugins.svg</file>
+        <file>icons/category-engine.svg</file>
     </qresource>
 </RCC>

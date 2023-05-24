@@ -24,7 +24,7 @@ Packet::Packet(PacketPtr packet)
     : m_packet{std::move(packet)}
 { }
 
-Packet::Packet(Packet&& other)
+Packet::Packet(Packet&& other) noexcept
     : m_packet{std::move(other.m_packet)}
 { }
 

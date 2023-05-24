@@ -19,46 +19,68 @@
 
 #pragma once
 
-#include "audioplayer.h"
-
 #include <QObject>
 
-namespace Fy::Core::Engine {
+namespace Fy::Core {
+class Track;
+namespace Engine {
 class AudioOutput;
 
-class AudioEngine
+enum PlaybackState
 {
+    StoppedState,
+    PlayingState,
+    PausedState
+};
+
+enum TrackStatus
+{
+    NoTrack,
+    LoadingTrack,
+    LoadedTrack,
+    BufferedTrack,
+    EndOfTrack,
+    InvalidTrack
+};
+
+class AudioEngine : public QObject
+{
+    Q_OBJECT
+
 public:
-    virtual ~AudioEngine();
+    AudioEngine(QObject* parent = nullptr);
+    virtual ~AudioEngine() = default;
 
-    virtual PlaybackState state() const;
-    virtual TrackStatus trackStatus() const;
+    virtual void shutdown();
 
-    virtual uint64_t position() const;
+    [[nodiscard]] virtual PlaybackState state() const;
+    [[nodiscard]] virtual TrackStatus trackStatus() const;
+    [[nodiscard]] virtual uint64_t position() const;
+
     virtual void seek(uint64_t position) = 0;
 
-    virtual void changeTrack(const QString& media) = 0;
+    virtual void changeTrack(const Track& track) = 0;
 
     virtual void play()  = 0;
     virtual void pause() = 0;
     virtual void stop()  = 0;
 
-    virtual void setAudioOutput(AudioOutput* output);
+    virtual void setVolume(double volume) = 0;
 
-    void positionChanged(uint64_t position);
+    virtual void setAudioOutput(AudioOutput* output)    = 0;
+    virtual void setOutputDevice(const QString& device) = 0;
 
-    void stateChanged(PlaybackState newState);
+    void stateChanged(PlaybackState state);
     void trackStatusChanged(TrackStatus status);
 
+signals:
     void trackFinished();
-
-protected:
-    explicit AudioEngine(AudioPlayer* parent = nullptr);
+    void positionChanged(uint64_t ms);
 
 private:
-    AudioPlayer* m_player;
     TrackStatus m_status;
     PlaybackState m_state;
     uint64_t m_position;
 };
-} // namespace Fy::Core::Engine
+} // namespace Engine
+} // namespace Fy::Core

@@ -27,19 +27,25 @@ namespace Fy::Core::Engine {
 class AlsaOutput : public AudioOutput
 {
 public:
-    AlsaOutput(QObject* parent = nullptr);
+    AlsaOutput();
     ~AlsaOutput() override;
 
-    void init(OutputContext* of) override;
+    QString name() const override;
+
+    QString device() const override;
+    void setDevice(const QString& device) override;
+
+    bool init(OutputContext* oc) override;
+    void uninit() override;
+    void reset() override;
+
     void start() override;
-    size_t bytesFree() const;
-    int write(const char* data, int size) override;
+    int write(OutputContext* oc, const uint8_t* data, int size) override;
 
     void setPaused(bool pause) override;
+    OutputState currentState(OutputContext* oc) override;
 
-    int bufferSize() const override;
-    void setBufferSize(int size) override;
-    void clearBuffer() override;
+    OutputDevices getAllDevices() const override;
 
 private:
     struct Private;

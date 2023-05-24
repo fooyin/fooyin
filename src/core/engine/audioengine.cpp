@@ -20,7 +20,14 @@
 #include "audioengine.h"
 
 namespace Fy::Core::Engine {
-AudioEngine::~AudioEngine() { }
+AudioEngine::AudioEngine(QObject* parent)
+    : QObject{parent}
+    , m_status{NoTrack}
+    , m_state{StoppedState}
+    , m_position{0}
+{ }
+
+void AudioEngine::shutdown() { }
 
 PlaybackState AudioEngine::state() const
 {
@@ -37,24 +44,12 @@ uint64_t AudioEngine::position() const
     return m_position;
 }
 
-void AudioEngine::setAudioOutput(AudioOutput*) { }
-
-void AudioEngine::positionChanged(uint64_t position)
+void AudioEngine::stateChanged(PlaybackState state)
 {
-    if(m_position == position) {
+    if(state == m_state) {
         return;
     }
-    m_position = position;
-    emit m_player->positionChanged(position);
-}
-
-void AudioEngine::stateChanged(PlaybackState newState)
-{
-    if(newState == m_state) {
-        return;
-    }
-    m_state = newState;
-    m_player->setState(newState);
+    m_state = state;
 }
 
 void AudioEngine::trackStatusChanged(TrackStatus status)
@@ -63,18 +58,5 @@ void AudioEngine::trackStatusChanged(TrackStatus status)
         return;
     }
     m_status = status;
-    m_player->setStatus(status);
 }
-
-void AudioEngine::trackFinished()
-{
-    emit m_player->trackFinished();
-}
-
-AudioEngine::AudioEngine(AudioPlayer* parent)
-    : m_player{parent}
-    , m_status{NoTrack}
-    , m_state{StoppedState}
-    , m_position{0}
-{ }
 } // namespace Fy::Core::Engine

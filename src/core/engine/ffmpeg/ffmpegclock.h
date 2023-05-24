@@ -33,12 +33,12 @@ public:
     void sync(uint64_t position = 0);
     void sync(const TimePoint& tp, uint64_t position);
 
-    uint64_t currentPosition() const;
+    [[nodiscard]] uint64_t currentPosition() const;
 
     void setPaused(bool paused);
 
-    TimePoint timeFromPosition(uint64_t position, bool ignorePause = false) const;
-    uint64_t positionFromTime(TimePoint tp, bool ignorePause = false) const;
+    [[nodiscard]] TimePoint timeFromPosition(uint64_t position, bool ignorePause = false) const;
+    [[nodiscard]] uint64_t positionFromTime(TimePoint tp, bool ignorePause = false) const;
 
 private:
     using TrackTime = std::chrono::milliseconds;

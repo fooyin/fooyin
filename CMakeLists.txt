@@ -47,13 +47,14 @@ set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
 
-find_package(Taglib REQUIRED taglib>=1.12)
-find_package(ALSA)
-
+find_package(Taglib)
 set_package_properties(Taglib PROPERTIES TYPE REQUIRED)
-set_package_properties(Libmpv PROPERTIES TYPE REQUIRED)
 
-find_package(GTest)
+find_package(ALSA)
+set_package_properties(ALSA PROPERTIES TYPE REQUIRED)
+
+find_package(SDL2)
+set_package_properties(SDL2 PROPERTIES TYPE OPTIONAL)
 
 find_package(FFmpeg
                 COMPONENTS
@@ -66,12 +67,14 @@ find_package(FFmpeg
                 SWRESAMPLE
 )
 
+set_package_properties(FFmpeg PROPERTIES TYPE REQUIRED)
+
 # ---- Fooyin library ----
 
-configure_file(src/app/version.h.in app/version.h @ONLY)
-add_library(fooyin_version OBJECT)
-add_library(fooyin::version ALIAS fooyin_version)
-target_include_directories(fooyin_version
+configure_file(src/app/config.h.in app/config.h @ONLY)
+add_library(fooyin_config OBJECT)
+add_library(fooyin::config ALIAS fooyin_config)
+target_include_directories(fooyin_config
     PUBLIC
       "${PROJECT_BINARY_DIR}/app"
 )
@@ -96,17 +99,19 @@ target_link_libraries(fooyin_lib
      Qt6::Gui
      Qt6::Widgets
      Qt6::Sql
+     fooyin::config
      fooyin::core
      fooyin::gui
      fooyin::utils
 )
 
-target_compile_features(fooyin_lib PUBLIC cxx_std_17)
+target_compile_features(fooyin_lib PUBLIC cxx_std_20)
 target_compile_options(fooyin_lib PRIVATE -Werror -Wall -Wextra -Wpedantic)
 
 # ---- Fooyin testing ----
 
 if(BUILD_TESTS)
+    find_package(GTest)
     add_subdirectory(tests)
 endif()
 
@@ -129,11 +134,10 @@ set_target_properties(fooyin_exe PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
     INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH}
 )
-target_compile_features(fooyin_exe PRIVATE cxx_std_17)
+target_compile_features(fooyin_exe PRIVATE cxx_std_20)
 target_link_libraries(fooyin_exe
     PRIVATE
-      fooyin_version
-      fooyin_lib
+     fooyin::lib
 )
 
 # ---- Fooyin data ----

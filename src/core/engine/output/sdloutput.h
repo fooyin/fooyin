@@ -21,25 +21,39 @@
 
 #include "core/engine/audiooutput.h"
 
+#include <SDL2/SDL_audio.h>
+
+#include <QString>
+
 namespace Fy::Core::Engine {
 class SdlOutput : public AudioOutput
 {
 public:
-    SdlOutput(QObject* parent = nullptr);
+    SdlOutput();
     ~SdlOutput() override;
 
-    void init(OutputContext* of) override;
+    QString name() const override;
+
+    QString device() const override;
+    void setDevice(const QString& device) override;
+
+    bool init(OutputContext* oc) override;
+    void uninit() override;
+    void reset() override;
+
     void start() override;
-    int write(const char* data, int size) override;
+    int write(OutputContext* oc, const uint8_t* data, int samples) override;
 
     void setPaused(bool pause) override;
+    OutputState currentState(OutputContext* oc) override;
 
-    int bufferSize() const override;
-    void setBufferSize(int size) override;
-    void clearBuffer() override;
+    OutputDevices getAllDevices() const override;
 
 private:
-    struct Private;
-    std::unique_ptr<SdlOutput::Private> p;
+    int m_bufferSize;
+    SDL_AudioSpec m_desiredSpec;
+    SDL_AudioSpec m_obtainedSpec;
+    SDL_AudioDeviceID m_audioDeviceId;
+    QString m_device;
 };
 } // namespace Fy::Core::Engine

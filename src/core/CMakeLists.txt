@@ -34,21 +34,20 @@ set(SOURCES
     engine/enginehandler.h
     engine/enginehandler.cpp
     engine/audioengine.cpp
-    engine/audioplayer.cpp
     engine/audiooutput.h
 
     engine/ffmpeg/ffmpegclock.cpp
-    engine/ffmpeg/ffmpegworker.cpp
     engine/ffmpeg/ffmpegrenderer.cpp
+    engine/ffmpeg/ffmpegworker.cpp
     engine/ffmpeg/ffmpegcodec.cpp
     engine/ffmpeg/ffmpegdecoder.cpp
     engine/ffmpeg/ffmpegengine.cpp
     engine/ffmpeg/ffmpegpacket.cpp
     engine/ffmpeg/ffmpegstream.cpp
     engine/ffmpeg/ffmpegframe.cpp
+    engine/ffmpeg/ffmpegutils.cpp
 
     engine/output/alsaoutput.cpp
-    engine/output/sdloutput.cpp
 
     library/coverprovider.h
     library/coverprovider.cpp
@@ -104,6 +103,10 @@ set(SOURCES
     tagging/tagutils.cpp
 )
 
+if(SDL2_FOUND)
+    set(SOURCES ${SOURCES} engine/output/sdloutput.cpp)
+endif()
+
 add_library(
     fooyin_core
     ${FOOYIN_LIBRARY_TYPE}
@@ -137,11 +140,11 @@ target_link_libraries(fooyin_core
      ${SDL2_LIBRARIES}
      ${FFMPEG_LIBRARIES}
      ${ALSA_LIBRARIES}
-     fooyin::version
+     fooyin::config
      fooyin::utils
 )
 
-target_compile_features(fooyin_core PUBLIC cxx_std_17)
+target_compile_features(fooyin_core PUBLIC cxx_std_20)
 target_compile_options(fooyin_core PRIVATE -Werror -Wall -Wextra -Wpedantic)
 
 install(TARGETS fooyin_core LIBRARY DESTINATION ${FOOYIN_LIBRARY_DIR})

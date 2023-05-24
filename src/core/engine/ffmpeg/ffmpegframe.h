@@ -19,19 +19,22 @@
 
 #pragma once
 
-#include "ffmpegcodec.h"
-
 extern "C"
 {
 #include <libavutil/frame.h>
 }
+
+#include <QSharedDataPointer>
+
+#include <memory>
+#include <vector>
 
 namespace Fy::Core::Engine::FFmpeg {
 struct FrameDeleter
 {
     void operator()(AVFrame* frame) const
     {
-        if(!!frame) {
+        if(frame != nullptr) {
             av_frame_free(&frame);
         }
     }
@@ -42,31 +45,33 @@ class Frame
 {
 public:
     Frame() = default;
-    Frame(FramePtr f, const Codec& codec);
+    explicit Frame(FramePtr frame);
 
-    Frame(Frame&& other);
-    Frame(const Frame& other)            = delete;
-    Frame& operator=(const Frame& other) = delete;
+    [[nodiscard]] bool isValid() const;
 
-    bool isValid() const;
+    [[nodiscard]] AVFrame* avFrame() const;
 
-    AVFrame* avFrame() const;
-    const Codec* codec() const;
+    [[nodiscard]] int channelCount() const;
+    [[nodiscard]] int sampleRate() const;
+    [[nodiscard]] AVSampleFormat format() const;
 
-    int channelCount() const;
-    int sampleRate() const;
-    AVSampleFormat format() const;
+    [[nodiscard]] int sampleCount() const;
 
-    // Returns pts in milliseconds
-    uint64_t pts() const;
+    [[nodiscard]] uint64_t ptsMs() const;
+    [[nodiscard]] uint64_t durationMs() const;
 
-    // Returns duration in milliseconds
-    uint64_t duration() const;
-
-    uint64_t end() const;
+    [[nodiscard]] uint64_t end() const;
 
 private:
-    FramePtr m_frame;
-    const Codec* m_codec;
+    struct Private : QSharedData
+    {
+        FramePtr frame{nullptr};
+
+        explicit Private(FramePtr frame)
+            : frame{std::move(frame)}
+        { }
+    };
+
+    QSharedDataPointer<Private> p;
 };
 } // namespace Fy::Core::Engine::FFmpeg

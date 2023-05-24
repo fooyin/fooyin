@@ -19,65 +19,17 @@
 
 #pragma once
 
-#include "core/engine/audiooutput.h"
-
 extern "C"
 {
 #include <libavutil/samplefmt.h>
 }
+
+class AVFrame;
+
 namespace Fy::Core::Engine::FFmpeg {
-int bytesPerSample(AVSampleFormat format) noexcept
-{
-    return av_get_bytes_per_sample(format);
-}
+AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
 
-int bytesPerFrame(AVSampleFormat format, int channelCount)
-{
-    return bytesPerSample(format) * channelCount;
-}
-
-int framesForDuration(int sampleRate, uint64_t milliseconds)
-{
-    return int((milliseconds * sampleRate) / 1000000LL);
-}
-
-uint64_t durationForBytes(OutputContext context, uint32_t bytes)
-{
-    return uint64_t(1000LL * (bytes / bytesPerFrame(context.format, context.channelLayout.nb_channels)))
-         / context.sampleRate;
-}
-
-int bytesForDuration(OutputContext context, uint64_t milliseconds)
-{
-    return bytesPerFrame(context.format, context.channelLayout.nb_channels)
-         * framesForDuration(context.sampleRate, milliseconds);
-}
-
-AVSampleFormat interleaveFormat(AVSampleFormat planarFormat)
-{
-    switch(planarFormat) {
-        case(AV_SAMPLE_FMT_U8P):
-            return AV_SAMPLE_FMT_U8;
-        case(AV_SAMPLE_FMT_S16P):
-            return AV_SAMPLE_FMT_S16;
-        case(AV_SAMPLE_FMT_S32P):
-            return AV_SAMPLE_FMT_S32;
-        case(AV_SAMPLE_FMT_FLTP):
-            return AV_SAMPLE_FMT_FLT;
-        case(AV_SAMPLE_FMT_DBLP):
-            return AV_SAMPLE_FMT_DBL;
-        case(AV_SAMPLE_FMT_S64P):
-            return AV_SAMPLE_FMT_S64;
-        case(AV_SAMPLE_FMT_NONE):
-        case(AV_SAMPLE_FMT_U8):
-        case(AV_SAMPLE_FMT_S16):
-        case(AV_SAMPLE_FMT_S32):
-        case(AV_SAMPLE_FMT_FLT):
-        case(AV_SAMPLE_FMT_DBL):
-        case(AV_SAMPLE_FMT_S64):
-        case(AV_SAMPLE_FMT_NB):
-        default:
-            return planarFormat;
-    }
-}
+// Set data in an interleaved frame to the audio
+// after the given number of samples
+void skipSamples(AVFrame* frame, int samples);
 } // namespace Fy::Core::Engine::FFmpeg

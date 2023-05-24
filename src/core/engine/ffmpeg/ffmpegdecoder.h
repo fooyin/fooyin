@@ -20,36 +20,33 @@
 #pragma once
 
 #include "ffmpegworker.h"
+#include "ffmpegframe.h"
 
 class AVFormatContext;
 
 namespace Fy::Core::Engine::FFmpeg {
-class AudioClock;
-class Packet;
 class Codec;
-class Frame;
 
 class Decoder : public EngineWorker
 {
     Q_OBJECT
 
 public:
-    Decoder(AVFormatContext* context, const Codec& codec, int streamIndex, AudioClock* clock,
-            QObject* parent = nullptr);
-    ~Decoder();
+    Decoder(QObject* parent = nullptr);
+    ~Decoder() override;
 
-    void seek(uint64_t position);
+    void run(AVFormatContext* context, Codec* codec);
+    void reset() override;
+    void kill() override;
 
-    void decode(Packet& packet);
     void onFrameProcessed();
 
-    uint64_t position() const;
-
 signals:
-    void requestHandleFrame(Frame& frame);
+    void requestHandleFrame(Frame frame);
 
 private:
     bool canDoNextStep() const override;
+    int timerInterval() const override;
     void doNextStep() override;
 
     struct Private;

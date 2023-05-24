@@ -19,11 +19,11 @@
 
 #include "database.h"
 
+#include "config.h"
 #include "core/coresettings.h"
 #include "library.h"
 #include "playlistdatabase.h"
 #include "query.h"
-#include "version.h"
 
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
