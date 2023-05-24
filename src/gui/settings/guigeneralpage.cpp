@@ -28,7 +28,9 @@
 
 #include <QCheckBox>
 #include <QGroupBox>
+#include <QLabel>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QVBoxLayout>
 
 namespace Fy::Gui::Settings {
@@ -47,6 +49,8 @@ private:
     Widgets::EditableLayout* m_editableLayout;
     Utils::SettingsManager* m_settings;
 
+    QRadioButton* m_lightTheme;
+    QRadioButton* m_darkTheme;
     QCheckBox* m_splitterHandles;
 };
 
@@ -55,9 +59,18 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     : m_layoutProvider{layoutProvider}
     , m_editableLayout{editableLayout}
     , m_settings{settings}
-    , m_splitterHandles{new QCheckBox("Show Splitter Handles", this)}
+    , m_lightTheme{new QRadioButton(tr("Light"), this)}
+    , m_darkTheme{new QRadioButton(tr("Dark"), this)}
+    , m_splitterHandles{new QCheckBox(tr("Show Splitter Handles"), this)}
 {
     m_splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
+
+    if(m_settings->value<Settings::IconTheme>() == "light") {
+        m_lightTheme->setChecked(true);
+    }
+    else {
+        m_darkTheme->setChecked(true);
+    }
 
     auto* splitterBox       = new QGroupBox(tr("Splitters"));
     auto* splitterBoxLayout = new QVBoxLayout(splitterBox);
@@ -65,9 +78,16 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
 
     auto* setupBox       = new QGroupBox(tr("Setup"));
     auto* setupBoxLayout = new QHBoxLayout(setupBox);
-    auto* quickSetup     = new QPushButton("Quick Setup", this);
-    auto* importLayout   = new QPushButton("Import Layout", this);
-    auto* exportLayout   = new QPushButton("Export Layout", this);
+    auto* quickSetup     = new QPushButton(tr("Quick Setup"), this);
+    auto* importLayout   = new QPushButton(tr("Import Layout"), this);
+    auto* exportLayout   = new QPushButton(tr("Export Layout"), this);
+
+    auto* iconThemeBox       = new QGroupBox(tr("Icon Theme"), this);
+    auto* iconThemeBoxLayout = new QVBoxLayout(iconThemeBox);
+    auto* iconThemeLabel     = new QLabel(tr("Requires restart"), this);
+    iconThemeBoxLayout->addWidget(m_lightTheme);
+    iconThemeBoxLayout->addWidget(m_darkTheme);
+    iconThemeBoxLayout->addWidget(iconThemeLabel);
 
     setupBoxLayout->addWidget(quickSetup);
     setupBoxLayout->addWidget(importLayout);
@@ -76,6 +96,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(setupBox);
     mainLayout->addWidget(splitterBox);
+    mainLayout->addWidget(iconThemeBox);
     mainLayout->addStretch();
 
     QObject::connect(quickSetup, &QPushButton::clicked, this, &GuiGeneralPageWidget::showQuickSetup);
@@ -89,6 +110,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
 
 void GuiGeneralPageWidget::apply()
 {
+    m_settings->set<Settings::IconTheme>(m_lightTheme->isChecked() ? "light" : "dark");
     m_settings->set<Settings::SplitterHandles>(m_splitterHandles->isChecked());
 }
 

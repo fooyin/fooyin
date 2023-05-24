@@ -38,14 +38,14 @@ PlaybackMenu::PlaybackMenu(Utils::ActionManager* actionManager, Core::Player::Pl
     , m_actionManager{actionManager}
     , m_playerManager{playerManager}
     , m_playbackGroup{new QActionGroup(this)}
-    , m_playIcon{Gui::Constants::Icons::Play}
-    , m_pauseIcon{Gui::Constants::Icons::Pause}
+    , m_playIcon{QIcon::fromTheme(Gui::Constants::Icons::Play)}
+    , m_pauseIcon{QIcon::fromTheme(Gui::Constants::Icons::Pause)}
 {
     auto* playbackMenu = m_actionManager->actionContainer(Gui::Constants::Menus::Playback);
 
-    const auto stopIcon = QIcon(Gui::Constants::Icons::Stop);
-    const auto prevIcon = QIcon(Gui::Constants::Icons::Prev);
-    const auto nextIcon = QIcon(Gui::Constants::Icons::Next);
+    const auto stopIcon = QIcon::fromTheme(Gui::Constants::Icons::Stop);
+    const auto prevIcon = QIcon::fromTheme(Gui::Constants::Icons::Prev);
+    const auto nextIcon = QIcon::fromTheme(Gui::Constants::Icons::Next);
 
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlaybackMenu::updatePlayPause);
     connect(m_playerManager, &Core::Player::PlayerManager::playModeChanged, this, &PlaybackMenu::updatePlayMode);

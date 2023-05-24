@@ -215,6 +215,8 @@ void Application::startup()
     p->library->loadLibrary();
     p->layoutProvider.findLayouts();
 
+    QIcon::setThemeName(p->settingsManager->value<Gui::Settings::IconTheme>());
+
     p->mainWindow->setupUi();
     p->editableLayout->initialise();
 

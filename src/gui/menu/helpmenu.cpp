@@ -35,8 +35,8 @@ HelpMenu::HelpMenu(Utils::ActionManager* actionManager, QObject* parent)
 {
     auto* helpMenu = m_actionManager->actionContainer(Constants::Menus::Help);
 
-    const QIcon aboutIcon = QIcon(Constants::Icons::Fooyin);
-    m_about               = new QAction(aboutIcon, tr("&About"), this);
+    const auto aboutIcon = QIcon::fromTheme(Constants::Icons::Fooyin);
+    m_about              = new QAction(aboutIcon, tr("&About"), this);
     m_actionManager->registerAction(m_about, Constants::Actions::About);
     helpMenu->addAction(m_about, Constants::Groups::Three);
     connect(m_about, &QAction::triggered, this, &HelpMenu::showAboutDialog);

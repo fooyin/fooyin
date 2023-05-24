@@ -118,6 +118,6 @@ void SettingsPage::setCategoryIcon(const QIcon& icon)
 
 void SettingsPage::setCategoryIconPath(const QString& iconPath)
 {
-    m_categoryIcon = QIcon{iconPath};
+    m_categoryIcon = QIcon::fromTheme(iconPath);
 }
 } // namespace Fy::Utils

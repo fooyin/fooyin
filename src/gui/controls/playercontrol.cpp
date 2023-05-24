@@ -56,7 +56,7 @@ void PlayerControl::setupUi()
     m_layout->setSpacing(10);
     m_layout->setContentsMargins(10, 0, 0, 0);
 
-    m_playPause->addPixmap(Constants::Icons::Pause);
+    m_playPause->addIcon(Constants::Icons::Pause);
 
     m_stop->setMaximumSize(m_labelSize);
     m_prev->setMaximumSize(m_labelSize);

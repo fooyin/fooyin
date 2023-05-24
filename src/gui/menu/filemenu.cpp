@@ -37,8 +37,8 @@ FileMenu::FileMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* 
 {
     auto* fileMenu = m_actionManager->actionContainer(Gui::Constants::Menus::File);
 
-    const auto settingsIcon = QIcon(Gui::Constants::Icons::Settings);
-    const auto quitIcon     = QIcon(Gui::Constants::Icons::Quit);
+    const auto settingsIcon = QIcon::fromTheme(Gui::Constants::Icons::Settings);
+    const auto quitIcon     = QIcon::fromTheme(Gui::Constants::Icons::Quit);
 
     m_openSettings = new QAction(settingsIcon, tr("&Settings"), this);
     actionManager->registerAction(m_openSettings, Gui::Constants::Actions::Settings);

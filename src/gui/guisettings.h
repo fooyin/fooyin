@@ -46,6 +46,7 @@ enum Gui : uint32_t
     InfoHeader         = 12 | Utils::Settings::Bool,
     InfoScrollBar      = 13 | Utils::Settings::Bool,
     EditingMenuLevels  = 14 | Utils::Settings::Int,
+    IconTheme          = 15 | Utils::Settings::String,
 };
 Q_ENUM_NS(Gui)
 

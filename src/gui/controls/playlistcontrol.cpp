@@ -55,7 +55,7 @@ void PlaylistControl::setupUi()
     m_layout->setSpacing(10);
     m_layout->setContentsMargins(0, 0, 0, 0);
 
-    m_repeat->addPixmap(Constants::Icons::Repeat);
+    m_repeat->addIcon(Constants::Icons::Repeat);
 
     m_repeat->setMaximumSize(m_labelSize);
     m_shuffle->setMaximumSize(m_labelSize);

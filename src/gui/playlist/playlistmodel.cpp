@@ -30,6 +30,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QIcon>
 #include <QPalette>
 
 namespace Fy::Gui::Widgets {
@@ -62,8 +63,8 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager,
     , m_altColours{m_settings->value<Settings::PlaylistAltColours>()}
     , m_simplePlaylist{m_settings->value<Settings::SimplePlaylist>()}
     , m_resetting{false}
-    , m_playingIcon{Constants::Icons::Play}
-    , m_pausedIcon{Constants::Icons::Pause}
+    , m_playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
+    , m_pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
 {
     setupModelData();
 
@@ -83,9 +84,6 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager,
         m_simplePlaylist = enabled;
         reset();
     });
-
-    m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    m_pausedIcon  = m_pausedIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
