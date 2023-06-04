@@ -49,6 +49,14 @@ set(SOURCES
     library/coverwidget.cpp
     library/statuswidget.h
     library/statuswidget.cpp
+    librarytree/librarytreeitem.h
+    librarytree/librarytreeitem.cpp
+    librarytree/librarytreemodel.h
+    librarytree/librarytreemodel.cpp
+    librarytree/librarytreepage.h
+    librarytree/librarytreepage.cpp
+    librarytree/librarytreewidget.h
+    librarytree/librarytreewidget.cpp
     menu/aboutdialog.h
     menu/aboutdialog.cpp
     menu/editmenu.h

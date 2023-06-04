@@ -44,6 +44,8 @@
 #include <gui/layoutprovider.h>
 #include <gui/library/coverwidget.h>
 #include <gui/library/statuswidget.h>
+#include <gui/librarytree/librarytreepage.h>
+#include <gui/librarytree/librarytreewidget.h>
 #include <gui/mainwindow.h>
 #include <gui/menu/editmenu.h>
 #include <gui/menu/filemenu.h>
@@ -98,6 +100,7 @@ struct Application::Private
     Gui::Settings::LibraryGeneralPage libraryGeneralPage;
     Gui::Settings::GuiGeneralPage guiGeneralPage;
     Gui::Settings::PlaylistGuiPage playlistGuiPage;
+    Gui::Settings::LibraryTreePage libraryTreePage;
 
     Plugins::PluginManager* pluginManager;
     Gui::Settings::PluginPage pluginPage;
@@ -116,7 +119,8 @@ struct Application::Private
         , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, library, settingsManager,
                                                               parent)}
         , guiSettings{settingsManager}
-        , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(playlistHandler, settingsManager)}
+        , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(playlistHandler,
+                                                                                          settingsManager)}
         , editableLayout{std::make_unique<Gui::Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,
                                                                         &layoutProvider)}
         , mainWindow{std::make_unique<Gui::MainWindow>(actionManager, settingsManager, editableLayout.get())}
@@ -130,6 +134,7 @@ struct Application::Private
         , libraryGeneralPage{libraryManager, settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , playlistGuiPage{settingsManager}
+        , libraryTreePage{settingsManager}
         , pluginManager{new Plugins::PluginManager(parent)}
         , pluginPage{settingsManager, pluginManager}
         , corePluginContext{actionManager, playerManager, library, playlistHandler, settingsManager, &database}
@@ -162,6 +167,10 @@ struct Application::Private
     {
         widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistTabs>("PlaylistTabs", [this]() {
             return new Gui::Widgets::Playlist::PlaylistTabs(playlistHandler, playlistController.get());
+        });
+
+        widgetFactory.registerClass<Gui::Widgets::LibraryTreeWidget>("TrackTree", [this]() {
+            return new Gui::Widgets::LibraryTreeWidget(library, playlistHandler, playlistController.get(), settingsManager);
         });
 
         widgetFactory.registerClass<Gui::Widgets::ControlWidget>("Controls", [this]() {

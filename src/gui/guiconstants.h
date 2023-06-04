@@ -46,6 +46,7 @@ constexpr auto General   = "applications-system";
 constexpr auto Interface = "applications-graphics";
 constexpr auto Library   = "applications-office";
 constexpr auto Playlist  = "applications-multimedia";
+constexpr auto Widgets   = "applications-accessories";
 constexpr auto Plugins   = "applications-accessories";
 } // namespace Category
 } // namespace Icons
@@ -113,13 +114,15 @@ constexpr auto General   = "Fooyin.Category.General";
 constexpr auto Interface = "Fooyin.Category.Interface";
 constexpr auto Library   = "Fooyin.Category.Library";
 constexpr auto Playlist  = "Fooyin.Category.Playlist";
+constexpr auto Widgets   = "Fooyin.Category.Widgets";
 } // namespace Category
 
 namespace Page {
-constexpr auto GeneralCore       = "Fooyin.Page.General.Core";
-constexpr auto InterfaceGeneral  = "Fooyin.Page.Interface.General";
-constexpr auto LibraryGeneral    = "Fooyin.Page.Library.General";
-constexpr auto PlaylistInterface = "Fooyin.Page.Playlist.Interface";
-constexpr auto Plugins           = "Fooyin.Page.Plugins";
+constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
+constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
+constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
+constexpr auto PlaylistInterface  = "Fooyin.Page.Playlist.Interface";
+constexpr auto WidgetsLibraryTree = "Fooyin.Page.Widgets.LibraryTree";
+constexpr auto Plugins            = "Fooyin.Page.Plugins";
 } // namespace Page
 } // namespace Fy::Gui::Constants
