@@ -23,6 +23,7 @@
 
 class QTreeView;
 class QVBoxLayout;
+class QItemSelection;
 
 namespace Fy {
 namespace Utils {
@@ -60,6 +61,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void groupingChanged(const QString& script);
     void reset();
 

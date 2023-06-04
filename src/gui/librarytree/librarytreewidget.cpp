@@ -34,6 +34,8 @@
 #include <QVBoxLayout>
 
 namespace Fy::Gui::Widgets {
+constexpr auto AutoPlaylist = "Library Selection";
+
 LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library,
                                      Core::Playlist::PlaylistHandler* playlistHandler,
                                      Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings,
@@ -59,6 +61,9 @@ LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library,
     m_settings->subscribe<Settings::TrackTreeGrouping>(this, &LibraryTreeWidget::groupingChanged);
 
     reset();
+
+    QObject::connect(m_trackTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     &LibraryTreeWidget::selectionChanged);
 
     QObject::connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, this, &LibraryTreeWidget::reset);
     QObject::connect(m_library, &Core::Library::MusicLibrary::tracksSorted, this, &LibraryTreeWidget::reset);
@@ -109,6 +114,24 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(addToPlaylist);
 
     menu->popup(mapToGlobal(event->pos()));
+}
+
+void LibraryTreeWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+    Q_UNUSED(selected)
+    Q_UNUSED(deselected)
+
+    const QModelIndexList selectedIndexes = m_trackTree->selectionModel()->selectedIndexes();
+    if(selectedIndexes.empty()) {
+        return;
+    }
+
+    Core::TrackList tracks;
+    for(const auto& index : selectedIndexes) {
+        Core::TrackList indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
+        tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
+    }
+    m_playlistHandler->createPlaylist(AutoPlaylist, tracks);
 }
 
 void LibraryTreeWidget::groupingChanged(const QString& script)
