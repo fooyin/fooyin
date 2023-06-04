@@ -71,7 +71,7 @@ private:
     Utils::SettingsManager* m_settings;
 
     QVBoxLayout* m_layout;
-    QTreeView* m_trackTree;
+    QTreeView* m_libraryTree;
     LibraryTreeModel* m_model;
 };
 } // namespace Gui::Widgets

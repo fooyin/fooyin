@@ -46,23 +46,23 @@ LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library,
     , m_playlistController{playlistController}
     , m_settings{settings}
     , m_layout{new QVBoxLayout(this)}
-    , m_trackTree{new QTreeView(this)}
+    , m_libraryTree{new QTreeView(this)}
     , m_model{new LibraryTreeModel(this)}
 {
     setObjectName(LibraryTreeWidget::name());
 
     m_layout->setContentsMargins(0, 0, 0, 0);
-    m_trackTree->setUniformRowHeights(true);
-    m_trackTree->setModel(m_model);
-    m_trackTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    m_layout->addWidget(m_trackTree);
+    m_libraryTree->setUniformRowHeights(true);
+    m_libraryTree->setModel(m_model);
+    m_libraryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    m_layout->addWidget(m_libraryTree);
 
-    m_model->setGroupScript(m_settings->value<Settings::TrackTreeGrouping>());
-    m_settings->subscribe<Settings::TrackTreeGrouping>(this, &LibraryTreeWidget::groupingChanged);
+    m_model->setGroupScript(m_settings->value<Settings::LibraryTreeGrouping>());
+    m_settings->subscribe<Settings::LibraryTreeGrouping>(this, &LibraryTreeWidget::groupingChanged);
 
     reset();
 
-    QObject::connect(m_trackTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+    QObject::connect(m_libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &LibraryTreeWidget::selectionChanged);
 
     QObject::connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, this, &LibraryTreeWidget::reset);
@@ -75,12 +75,12 @@ LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library,
 
 QString LibraryTreeWidget::name() const
 {
-    return "Track Tree";
+    return "Library Tree";
 }
 
 QString LibraryTreeWidget::layoutName() const
 {
-    return "TrackTree";
+    return "LibraryTree";
 }
 
 void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -88,7 +88,7 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const QModelIndexList selected = m_trackTree->selectionModel()->selection().indexes();
+    const QModelIndexList selected = m_libraryTree->selectionModel()->selection().indexes();
     if(selected.empty()) {
         return;
     }
@@ -121,7 +121,7 @@ void LibraryTreeWidget::selectionChanged(const QItemSelection& selected, const Q
     Q_UNUSED(selected)
     Q_UNUSED(deselected)
 
-    const QModelIndexList selectedIndexes = m_trackTree->selectionModel()->selectedIndexes();
+    const QModelIndexList selectedIndexes = m_libraryTree->selectionModel()->selectedIndexes();
     if(selectedIndexes.empty()) {
         return;
     }

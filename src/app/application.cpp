@@ -169,9 +169,9 @@ struct Application::Private
             return new Gui::Widgets::Playlist::PlaylistTabs(playlistHandler, playlistController.get());
         }, "Playlist Tabs");
 
-        widgetFactory.registerClass<Gui::Widgets::LibraryTreeWidget>("TrackTree", [this]() {
+        widgetFactory.registerClass<Gui::Widgets::LibraryTreeWidget>("LibraryTree", [this]() {
             return new Gui::Widgets::LibraryTreeWidget(library, playlistHandler, playlistController.get(), settingsManager);
-        }, "Track Tree");
+        }, "Library Tree");
 
         widgetFactory.registerClass<Gui::Widgets::ControlWidget>("Controls", [this]() {
             return new Gui::Widgets::ControlWidget(playerManager, settingsManager);
