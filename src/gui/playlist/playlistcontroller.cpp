@@ -33,7 +33,7 @@ struct PlaylistController::Private : QObject
     Core::Playlist::PlaylistHandler* handler;
     Utils::SettingsManager* settings;
 
-    Core::Playlist::Playlist* currentPlaylist{nullptr};
+    int currentPlaylistId{-1};
 
     Private(PlaylistController* controller, Core::Playlist::PlaylistHandler* handler, Utils::SettingsManager* settings)
         : controller{controller}
@@ -42,6 +42,14 @@ struct PlaylistController::Private : QObject
     {
         connect(handler, &Core::Playlist::PlaylistHandler::playlistsPopulated, this,
                 &PlaylistController::Private::restoreLastPlaylist);
+        connect(handler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
+                &PlaylistController::Private::handlePlaylistAdded);
+        QObject::connect(handler, &Core::Playlist::PlaylistHandler::playlistAdded, this,
+                         &PlaylistController::Private::handlePlaylistAdded);
+        QObject::connect(handler, &Core::Playlist::PlaylistHandler::playlistRemoved, this,
+                         &PlaylistController::Private::handlePlaylistRemoved);
+        QObject::connect(handler, &Core::Playlist::PlaylistHandler::playlistRenamed, controller,
+                         &PlaylistController::refreshCurrentPlaylist);
     }
 
     void restoreLastPlaylist()
@@ -50,9 +58,22 @@ struct PlaylistController::Private : QObject
         if(lastId >= 0) {
             auto* playlist = handler->playlistById(lastId);
             if(playlist) {
-                currentPlaylist = playlist;
-                emit controller->currentPlaylistChanged(currentPlaylist);
+                currentPlaylistId = playlist->id();
+                emit controller->currentPlaylistChanged(playlist);
             }
+        }
+    }
+
+    void handlePlaylistAdded(Core::Playlist::Playlist* playlist)
+    {
+        controller->changeCurrentPlaylist(playlist);
+    }
+
+    void handlePlaylistRemoved(int id)
+    {
+        if(currentPlaylistId == id) {
+            currentPlaylistId = handler->activePlaylist()->id();
+            emit controller->currentPlaylistChanged(handler->activePlaylist());
         }
     }
 };
@@ -65,28 +86,23 @@ PlaylistController::PlaylistController(Core::Playlist::PlaylistHandler* handler,
 
 PlaylistController::~PlaylistController()
 {
-    if(p->currentPlaylist) {
-        p->settings->set<Settings::LastPlaylistId>(p->currentPlaylist->id());
-    }
+    p->settings->set<Settings::LastPlaylistId>(p->currentPlaylistId);
 }
 
-const Core::Playlist::PlaylistList &PlaylistController::playlists() const
+const Core::Playlist::PlaylistList& PlaylistController::playlists() const
 {
-return p->handler->playlists();
+    return p->handler->playlists();
 }
 
 Core::Playlist::Playlist* PlaylistController::currentPlaylist() const
 {
-    return p->currentPlaylist;
+    return p->handler->playlistById(p->currentPlaylistId);
 }
 
 void PlaylistController::changeCurrentPlaylist(Core::Playlist::Playlist* playlist)
 {
-    if(p->currentPlaylist == playlist) {
-        return;
-    }
-    p->currentPlaylist = playlist;
-    emit currentPlaylistChanged(p->currentPlaylist);
+    p->currentPlaylistId = playlist->id();
+    emit currentPlaylistChanged(playlist);
 }
 
 void PlaylistController::changeCurrentPlaylist(int id)
@@ -98,11 +114,11 @@ void PlaylistController::changeCurrentPlaylist(int id)
 
 void PlaylistController::refreshCurrentPlaylist()
 {
-    emit refreshPlaylist(p->currentPlaylist);
+    emit refreshPlaylist(p->handler->playlistById(p->currentPlaylistId));
 }
 
 void PlaylistController::startPlayback(const Core::Track& track) const
 {
-    p->handler->startPlayback(p->currentPlaylist->id(), track);
+    p->handler->startPlayback(p->currentPlaylistId, track);
 }
 } // namespace Fy::Gui::Widgets::Playlist

@@ -19,7 +19,6 @@
 
 #include "playlisttabs.h"
 
-#include "gui/widgetfactory.h"
 #include "playlistcontroller.h"
 
 #include <core/playlist/playlisthandler.h>
@@ -51,10 +50,10 @@ PlaylistTabs::PlaylistTabs(Core::Playlist::PlaylistHandler* playlistHandler, Pla
 
     m_layout->addWidget(m_tabs);
 
-    QObject::connect(m_tabs, &QTabBar::currentChanged, this, &PlaylistTabs::tabChanged);
+    QObject::connect(m_tabs, &QTabBar::tabBarClicked, this, &PlaylistTabs::tabChanged);
     QObject::connect(m_controller, &PlaylistController::currentPlaylistChanged, this, &PlaylistTabs::playlistChanged);
-    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
-                     &PlaylistTabs::playlistChanged);
+//    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
+//                     &PlaylistTabs::playlistChanged);
     QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistAdded, this,
                      &PlaylistTabs::addPlaylist);
     QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistRemoved, this,
@@ -81,6 +80,8 @@ void PlaylistTabs::setupTabs()
     for(const auto& playlist : playlists) {
         addPlaylist(playlist.get());
     }
+    // Workaround for issue where QTabBar is scrolled to the right when initialised, hiding tabs before current.
+    m_tabs->adjustSize();
 }
 
 int PlaylistTabs::addPlaylist(Core::Playlist::Playlist* playlist)
@@ -163,7 +164,6 @@ void PlaylistTabs::playlistChanged(Core::Playlist::Playlist* playlist)
     for(int i = 0; i < m_tabs->count(); ++i) {
         if(m_tabs->tabData(i).toInt() == playlist->id()) {
             m_tabs->setCurrentIndex(i);
-            m_controller->refreshCurrentPlaylist();
         }
     }
 }
