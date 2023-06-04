@@ -321,6 +321,14 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
     return nullptr;
 }
 
+void PlaylistHandler::appendToPlaylist(int id, const TrackList &tracks)
+{
+    if(auto* playlist = playlistById(id)) {
+        playlist->appendTracks(tracks);
+        emit playlistTracksChanged(playlist);
+    }
+}
+
 void PlaylistHandler::createEmptyPlaylist()
 {
     const QString name = p->findUniqueName("Playlist");

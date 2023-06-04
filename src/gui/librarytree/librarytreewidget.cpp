@@ -20,6 +20,7 @@
 #include "librarytreewidget.h"
 
 #include "gui/guisettings.h"
+#include "gui/playlist/playlistcontroller.h"
 #include "librarytreemodel.h"
 
 #include <core/library/musiclibrary.h>
@@ -34,11 +35,13 @@
 
 namespace Fy::Gui::Widgets {
 LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library,
-                                     Core::Playlist::PlaylistHandler* playlistHandler, Utils::SettingsManager* settings,
+                                     Core::Playlist::PlaylistHandler* playlistHandler,
+                                     Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings,
                                      QWidget* parent)
     : FyWidget{parent}
     , m_library{library}
     , m_playlistHandler{playlistHandler}
+    , m_playlistController{playlistController}
     , m_settings{settings}
     , m_layout{new QVBoxLayout(this)}
     , m_trackTree{new QTreeView(this)}
@@ -87,7 +90,7 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
 
     QStringList playlistName;
     Core::TrackList tracks;
-    for(const auto& index  :selected) {
+    for(const auto& index : selected) {
         playlistName.emplace_back(index.data().toString());
         Core::TrackList indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
         tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
@@ -98,6 +101,12 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
         m_playlistHandler->createPlaylist(playlistName.join(", "), tracks);
     });
     menu->addAction(createPlaylist);
+
+    auto* addToPlaylist = new QAction("Add to current playlist", menu);
+    QObject::connect(addToPlaylist, &QAction::triggered, this, [this, tracks]() {
+        m_playlistHandler->appendToPlaylist(m_playlistController->currentPlaylist()->id(), tracks);
+    });
+    menu->addAction(addToPlaylist);
 
     menu->popup(mapToGlobal(event->pos()));
 }

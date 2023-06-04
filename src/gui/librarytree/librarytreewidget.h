@@ -42,10 +42,15 @@ class PlaylistHandler;
 namespace Gui::Widgets {
 class LibraryTreeModel;
 
+namespace Playlist {
+class PlaylistController;
+}
+
 class LibraryTreeWidget : public FyWidget
 {
 public:
-    LibraryTreeWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler, Utils::SettingsManager* settings,
+    LibraryTreeWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
+                      Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings,
                       QWidget* parent = nullptr);
 
     QString name() const override;
@@ -60,6 +65,7 @@ private:
 
     Core::Library::MusicLibrary* m_library;
     Core::Playlist::PlaylistHandler* m_playlistHandler;
+    Playlist::PlaylistController* m_playlistController;
     Utils::SettingsManager* m_settings;
 
     QVBoxLayout* m_layout;

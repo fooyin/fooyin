@@ -60,6 +60,7 @@ public:
     [[nodiscard]] const PlaylistList& playlists() const;
 
     Playlist* createPlaylist(const QString& name, const TrackList& tracks = {});
+    void appendToPlaylist(int id, const TrackList& tracks);
     void createEmptyPlaylist();
 
     void changeActivePlaylist(int id);
