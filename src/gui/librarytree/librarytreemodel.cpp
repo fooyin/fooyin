@@ -130,11 +130,10 @@ void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
 
 LibraryTreeItem* LibraryTreeModel::createNode(const QString& key, LibraryTreeItem* parent, const QString& title)
 {
-    LibraryTreeItem* treeItem;
     if(!m_nodes.count(key)) {
-        treeItem = m_nodes.emplace(key, std::make_unique<LibraryTreeItem>(title, parent)).first->second.get();
+        m_nodes.emplace(key, std::make_unique<LibraryTreeItem>(title, parent));
     }
-    treeItem = m_nodes.at(key).get();
+    LibraryTreeItem* treeItem = m_nodes.at(key).get();
     parent->appendChild(treeItem);
     return treeItem;
 }
