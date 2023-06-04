@@ -170,7 +170,7 @@ struct Application::Private
         });
 
         widgetFactory.registerClass<Gui::Widgets::LibraryTreeWidget>("TrackTree", [this]() {
-            return new Gui::Widgets::LibraryTreeWidget(library, settingsManager);
+            return new Gui::Widgets::LibraryTreeWidget(library, playlistHandler, settingsManager);
         });
 
         widgetFactory.registerClass<Gui::Widgets::ControlWidget>("Controls", [this]() {

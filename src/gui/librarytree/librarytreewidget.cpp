@@ -23,18 +23,22 @@
 #include "librarytreemodel.h"
 
 #include <core/library/musiclibrary.h>
+#include <core/playlist/playlisthandler.h>
 
 #include <utils/settings/settingsmanager.h>
 
+#include <QContextMenuEvent>
+#include <QMenu>
 #include <QTreeView>
 #include <QVBoxLayout>
 
 namespace Fy::Gui::Widgets {
-
-LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library, Utils::SettingsManager* settings,
+LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library,
+                                     Core::Playlist::PlaylistHandler* playlistHandler, Utils::SettingsManager* settings,
                                      QWidget* parent)
     : FyWidget{parent}
     , m_library{library}
+    , m_playlistHandler{playlistHandler}
     , m_settings{settings}
     , m_layout{new QVBoxLayout(this)}
     , m_trackTree{new QTreeView(this)}
@@ -45,6 +49,7 @@ LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library, Utils
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_trackTree->setUniformRowHeights(true);
     m_trackTree->setModel(m_model);
+    m_trackTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
     m_layout->addWidget(m_trackTree);
 
     m_model->setGroupScript(m_settings->value<Settings::TrackTreeGrouping>());
@@ -68,6 +73,33 @@ QString LibraryTreeWidget::name() const
 QString LibraryTreeWidget::layoutName() const
 {
     return "TrackTree";
+}
+
+void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    const QModelIndexList selected = m_trackTree->selectionModel()->selection().indexes();
+    if(selected.empty()) {
+        return;
+    }
+
+    QStringList playlistName;
+    Core::TrackList tracks;
+    for(const auto& index  :selected) {
+        playlistName.emplace_back(index.data().toString());
+        Core::TrackList indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
+        tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
+    }
+
+    auto* createPlaylist = new QAction("Send to playlist", menu);
+    QObject::connect(createPlaylist, &QAction::triggered, this, [this, playlistName, tracks]() {
+        m_playlistHandler->createPlaylist(playlistName.join(", "), tracks);
+    });
+    menu->addAction(createPlaylist);
+
+    menu->popup(mapToGlobal(event->pos()));
 }
 
 void LibraryTreeWidget::groupingChanged(const QString& script)

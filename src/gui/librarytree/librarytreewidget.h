@@ -26,7 +26,6 @@ class QVBoxLayout;
 
 namespace Fy {
 namespace Utils {
-class OverlayWidget;
 class SettingsManager;
 } // namespace Utils
 
@@ -34,6 +33,10 @@ namespace Core {
 namespace Library {
 class MusicLibrary;
 } // namespace Library
+
+namespace Playlist {
+class PlaylistHandler;
+} // namespace Playlist
 } // namespace Core
 
 namespace Gui::Widgets {
@@ -42,17 +45,21 @@ class LibraryTreeModel;
 class LibraryTreeWidget : public FyWidget
 {
 public:
-    LibraryTreeWidget(Core::Library::MusicLibrary* library, Utils::SettingsManager* settings,
+    LibraryTreeWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler, Utils::SettingsManager* settings,
                       QWidget* parent = nullptr);
 
     QString name() const override;
     QString layoutName() const override;
+
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
     void groupingChanged(const QString& script);
     void reset();
 
     Core::Library::MusicLibrary* m_library;
+    Core::Playlist::PlaylistHandler* m_playlistHandler;
     Utils::SettingsManager* m_settings;
 
     QVBoxLayout* m_layout;

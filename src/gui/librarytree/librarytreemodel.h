@@ -27,7 +27,7 @@
 
 namespace Fy {
 namespace Gui::Widgets {
-enum class LibraryTreeRole
+enum LibraryTreeRole
 {
     Title  = Qt::UserRole + 1,
     Tracks = Qt::UserRole + 2,
