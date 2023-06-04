@@ -50,7 +50,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(Utils::SettingsManager* settings)
     auto* groupScriptLayout = new QHBoxLayout();
     groupScriptLayout->addWidget(groupScriptLabel);
     groupScriptLayout->addWidget(m_groupScript);
-    m_groupScript->setPlainText(m_settings->value<Settings::LibraryTreeGrouping>());
+    m_groupScript->setPlainText(m_settings->value<Settings::TrackTreeGrouping>());
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(groupScriptLayout);
@@ -59,7 +59,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(Utils::SettingsManager* settings)
 
 void LibraryTreePageWidget::apply()
 {
-    m_settings->set<Settings::LibraryTreeGrouping>(m_groupScript->toPlainText());
+    m_settings->set<Settings::TrackTreeGrouping>(m_groupScript->toPlainText());
 }
 
 LibraryTreePage::LibraryTreePage(Utils::SettingsManager* settings)

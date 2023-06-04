@@ -47,8 +47,8 @@ LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library, Utils
     m_trackTree->setModel(m_model);
     m_layout->addWidget(m_trackTree);
 
-    m_model->setGroupScript(m_settings->value<Settings::LibraryTreeGrouping>());
-    m_settings->subscribe<Settings::LibraryTreeGrouping>(this, &LibraryTreeWidget::groupingChanged);
+    m_model->setGroupScript(m_settings->value<Settings::TrackTreeGrouping>());
+    m_settings->subscribe<Settings::TrackTreeGrouping>(this, &LibraryTreeWidget::groupingChanged);
 
     reset();
 
