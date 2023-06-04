@@ -35,43 +35,38 @@ find_package(PkgConfig QUIET)
 
 pkg_search_module(PC_MPV QUIET mpv)
 
-find_path(LIBMPV_INCLUDE_DIRS
-    NAMES client.h
-    PATH_SUFFIXES mpv
-    HINTS ${PC_MPV_INCLUDEDIR}
-)
+find_path(
+  LIBMPV_INCLUDE_DIRS
+  NAMES client.h
+  PATH_SUFFIXES mpv
+  HINTS ${PC_MPV_INCLUDEDIR})
 
-
-find_library(LIBMPV_LIBRARIES
-    NAMES mpv
-    HINTS ${PC_MPV_LIBDIR}
-)
+find_library(
+  LIBMPV_LIBRARIES
+  NAMES mpv
+  HINTS ${PC_MPV_LIBDIR})
 
 set(LIBMPV_VERSION ${PC_MPV_VERSION})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Libmpv
-    FOUND_VAR
-        LIBMPV_FOUND
-    REQUIRED_VARS
-        LIBMPV_LIBRARIES
-        LIBMPV_INCLUDE_DIRS
-    VERSION_VAR
-        LIBMPV_VERSION
-)
+find_package_handle_standard_args(
+  Libmpv
+  FOUND_VAR LIBMPV_FOUND
+  REQUIRED_VARS LIBMPV_LIBRARIES LIBMPV_INCLUDE_DIRS
+  VERSION_VAR LIBMPV_VERSION)
 
-if (LIBMPV_FOUND AND NOT TARGET Libmpv::Libmpv)
-    add_library(Libmpv::Libmpv UNKNOWN IMPORTED)
-    set_target_properties(Libmpv::Libmpv PROPERTIES
-        IMPORTED_LOCATION "${LIBMPV_LIBRARIES}"
-        INTERFACE_INCLUDE_DIRECTORIES "${LIBMPV_INCLUDE_DIRS}"
-    )
+if(LIBMPV_FOUND AND NOT TARGET Libmpv::Libmpv)
+  add_library(Libmpv::Libmpv UNKNOWN IMPORTED)
+  set_target_properties(
+    Libmpv::Libmpv
+    PROPERTIES IMPORTED_LOCATION "${LIBMPV_LIBRARIES}"
+               INTERFACE_INCLUDE_DIRECTORIES "${LIBMPV_INCLUDE_DIRS}")
 endif()
 
 mark_as_advanced(LIBMPV_LIBRARIES LIBMPV_INCLUDE_DIRS)
 
 include(FeatureSummary)
-set_package_properties(Libmpv PROPERTIES
-    URL "https://mpv.io"
-    DESCRIPTION "mpv media player client library"
-)
+set_package_properties(
+  Libmpv PROPERTIES
+  URL "https://mpv.io"
+  DESCRIPTION "mpv media player client library")

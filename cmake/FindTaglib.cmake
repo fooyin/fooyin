@@ -35,58 +35,63 @@ find_package(PkgConfig QUIET)
 
 pkg_check_modules(PC_TAGLIB QUIET taglib)
 
-find_path(TAGLIB_INCLUDE_DIRS
-    NAMES tag.h
-    PATH_SUFFIXES taglib
-    HINTS ${PC_TAGLIB_INCLUDEDIR}
-)
+find_path(
+  TAGLIB_INCLUDE_DIRS
+  NAMES tag.h
+  PATH_SUFFIXES taglib
+  HINTS ${PC_TAGLIB_INCLUDEDIR})
 
-find_library(TAGLIB_LIBRARIES
-    NAMES tag
-    HINTS ${PC_TAGLIB_LIBDIR}
-)
+find_library(
+  TAGLIB_LIBRARIES
+  NAMES tag
+  HINTS ${PC_TAGLIB_LIBDIR})
 
 set(TAGLIB_VERSION ${PC_TAGLIB_VERSION})
 
-if (TAGLIB_INCLUDE_DIRS AND NOT TAGLIB_VERSION)
-    if(EXISTS "${TAGLIB_INCLUDE_DIRS}/taglib.h")
-        file(READ "${TAGLIB_INCLUDE_DIRS}/taglib.h" TAGLIB_H)
+if(TAGLIB_INCLUDE_DIRS AND NOT TAGLIB_VERSION)
+  if(EXISTS "${TAGLIB_INCLUDE_DIRS}/taglib.h")
+    file(READ "${TAGLIB_INCLUDE_DIRS}/taglib.h" TAGLIB_H)
 
-        string(REGEX MATCH "#define TAGLIB_MAJOR_VERSION[ ]+[0-9]+" TAGLIB_MAJOR_VERSION_MATCH ${TAGLIB_H})
-        string(REGEX MATCH "#define TAGLIB_MINOR_VERSION[ ]+[0-9]+" TAGLIB_MINOR_VERSION_MATCH ${TAGLIB_H})
-        string(REGEX MATCH "#define TAGLIB_PATCH_VERSION[ ]+[0-9]+" TAGLIB_PATCH_VERSION_MATCH ${TAGLIB_H})
+    string(REGEX MATCH "#define TAGLIB_MAJOR_VERSION[ ]+[0-9]+"
+                 TAGLIB_MAJOR_VERSION_MATCH ${TAGLIB_H})
+    string(REGEX MATCH "#define TAGLIB_MINOR_VERSION[ ]+[0-9]+"
+                 TAGLIB_MINOR_VERSION_MATCH ${TAGLIB_H})
+    string(REGEX MATCH "#define TAGLIB_PATCH_VERSION[ ]+[0-9]+"
+                 TAGLIB_PATCH_VERSION_MATCH ${TAGLIB_H})
 
-        string(REGEX REPLACE ".*_MAJOR_VERSION[ ]+(.*)" "\\1" TAGLIB_MAJOR_VERSION "${TAGLIB_MAJOR_VERSION_MATCH}")
-        string(REGEX REPLACE ".*_MINOR_VERSION[ ]+(.*)" "\\1" TAGLIB_MINOR_VERSION "${TAGLIB_MINOR_VERSION_MATCH}")
-        string(REGEX REPLACE ".*_PATCH_VERSION[ ]+(.*)" "\\1" TAGLIB_PATCH_VERSION "${TAGLIB_PATCH_VERSION_MATCH}")
+    string(REGEX REPLACE ".*_MAJOR_VERSION[ ]+(.*)" "\\1" TAGLIB_MAJOR_VERSION
+                         "${TAGLIB_MAJOR_VERSION_MATCH}")
+    string(REGEX REPLACE ".*_MINOR_VERSION[ ]+(.*)" "\\1" TAGLIB_MINOR_VERSION
+                         "${TAGLIB_MINOR_VERSION_MATCH}")
+    string(REGEX REPLACE ".*_PATCH_VERSION[ ]+(.*)" "\\1" TAGLIB_PATCH_VERSION
+                         "${TAGLIB_PATCH_VERSION_MATCH}")
 
-        set(TAGLIB_VERSION "${TAGLIB_MAJOR_VERSION}.${TAGLIB_MINOR_VERSION}.${TAGLIB_PATCH_VERSION}")
-    endif()
+    set(TAGLIB_VERSION
+        "${TAGLIB_MAJOR_VERSION}.${TAGLIB_MINOR_VERSION}.${TAGLIB_PATCH_VERSION}"
+    )
+  endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Taglib
-    FOUND_VAR
-        TAGLIB_FOUND
-    REQUIRED_VARS
-        TAGLIB_LIBRARIES
-        TAGLIB_INCLUDE_DIRS
-    VERSION_VAR
-        TAGLIB_VERSION
-)
+find_package_handle_standard_args(
+  Taglib
+  FOUND_VAR TAGLIB_FOUND
+  REQUIRED_VARS TAGLIB_LIBRARIES TAGLIB_INCLUDE_DIRS
+  VERSION_VAR TAGLIB_VERSION)
 
-if (TAGLIB_FOUND AND NOT TARGET Taglib::Taglib)
-    add_library(Taglib::Taglib UNKNOWN IMPORTED)
-    set_target_properties(Taglib::Taglib PROPERTIES
-        IMPORTED_LOCATION "${TAGLIB_LIBRARIES}"
-        INTERFACE_INCLUDE_DIRECTORIES "${TAGLIB_INCLUDE_DIRS}"
-    )
+if(TAGLIB_FOUND AND NOT TARGET Taglib::Taglib)
+  add_library(Taglib::Taglib UNKNOWN IMPORTED)
+  set_target_properties(
+    Taglib::Taglib
+    PROPERTIES IMPORTED_LOCATION "${TAGLIB_LIBRARIES}"
+               INTERFACE_INCLUDE_DIRECTORIES "${TAGLIB_INCLUDE_DIRS}")
 endif()
 
 mark_as_advanced(TAGLIB_LIBRARIES TAGLIB_INCLUDE_DIRS)
 
 include(FeatureSummary)
-set_package_properties(Taglib PROPERTIES
-    URL "https://taglib.org/"
-    DESCRIPTION "A library for reading and editing the meta-data of audio formats"
+set_package_properties(
+  Taglib PROPERTIES
+  URL "https://taglib.org/"
+  DESCRIPTION "A library for reading and editing the meta-data of audio formats"
 )
