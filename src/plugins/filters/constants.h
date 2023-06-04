@@ -23,7 +23,7 @@
 
 namespace Fy::Filters::Constants {
 namespace Icons::Category {
-constexpr auto Filters = "://icons/category-filters.svg";
+constexpr auto Filters = "category-filters";
 } // namespace Icons::Category
 
 namespace Page {

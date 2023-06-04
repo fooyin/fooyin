@@ -257,25 +257,35 @@ QPixmap TagReader::readCover(const QString& filepath)
 QString TagReader::storeCover(const TagLib::FileRef& file, const Track& track)
 {
     QString coverPath;
+    bool hasEmbedded;
 
     const QString folderCover = coverInDirectory(Utils::File::getParentDirectory(track.filepath()));
     if(!folderCover.isEmpty()) {
         coverPath = folderCover;
     }
     else if(hasEmbeddedCover(file)) {
-        coverPath = Constants::EmbeddedCover;
+        hasEmbedded = true;
+        coverPath   = Constants::EmbeddedCover;
+    }
+    if(coverPath.isEmpty()) {
+        // Assume no cover
+        return {};
     }
 
     const QString thumbnailPath = track.thumbnailPath();
     if(!Utils::File::exists(thumbnailPath)) {
-        if(!coverPath.isEmpty()) {
-            QPixmap cover = coverFromFile(file);
-            if(!cover.isNull()) {
-                const QPixmap thumb = Utils::scaleImage(cover, 300);
-                const bool saved    = Tagging::saveCover(thumb, thumbnailPath);
-                if(!saved) {
-                    qDebug() << "Thumbnail could not be saved: " << thumbnailPath;
-                }
+        QPixmap cover;
+        if(hasEmbedded) {
+            cover = coverFromFile(file);
+        }
+        else {
+            cover.load(coverPath);
+        }
+        if(!cover.isNull()) {
+            const QPixmap thumb = Utils::scaleImage(cover, 300);
+            const bool saved    = Tagging::saveCover(thumb, thumbnailPath);
+            if(!saved) {
+                qDebug() << "Thumbnail could not be saved: " << thumbnailPath;
             }
         }
     }

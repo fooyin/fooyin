@@ -30,9 +30,10 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QIcon>
 #include <QPalette>
 
-namespace Fy::Gui::Widgets {
+namespace Fy::Gui::Widgets::Playlist {
 QString trackArtistString(const Core::Track& track)
 {
     QString artistString;
@@ -50,43 +51,288 @@ QString trackArtistString(const Core::Track& track)
     return artistString;
 }
 
-PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager,
-                             Core::Playlist::PlaylistHandler* playlistHandler, Utils::SettingsManager* settings,
+using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
+
+struct PlaylistModel::Private
+{
+    PlaylistModel* model;
+    Core::Player::PlayerManager* playerManager;
+    Utils::SettingsManager* settings;
+    Core::Library::CoverProvider coverProvider;
+
+    Core::Playlist::Playlist* currentPlaylist;
+
+    bool discHeaders;
+    bool splitDiscs;
+    bool altColours;
+    bool simplePlaylist;
+
+    bool resetting;
+
+    PlaylistItemHash nodes;
+    Core::AlbumHash albums;
+    Core::ContainerHash containers;
+    QPixmap playingIcon;
+    QPixmap pausedIcon;
+
+    Private(PlaylistModel* model, Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings)
+        : model{model}
+        , playerManager{playerManager}
+        , settings{settings}
+        , currentPlaylist{nullptr}
+        , discHeaders{settings->value<Settings::DiscHeaders>()}
+        , splitDiscs{settings->value<Settings::SplitDiscs>()}
+        , altColours{settings->value<Settings::PlaylistAltColours>()}
+        , simplePlaylist{settings->value<Settings::SimplePlaylist>()}
+        , resetting{false}
+        , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
+        , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
+    { }
+
+    void createAlbums(const Core::TrackList& tracks)
+    {
+        for(const auto& track : tracks) {
+            if(!nodes.count(track.hash())) {
+                const QString albumKey = track.albumHash();
+                if(!albums.count(albumKey)) {
+                    Core::Album album{track.album()};
+                    album.setDate(track.date());
+                    album.setArtist(track.albumArtist());
+                    album.setCoverPath(track.coverPath());
+                    albums.emplace(albumKey, album);
+                }
+                Core::Album& album = albums.at(albumKey);
+                album.addTrack(track);
+            }
+        }
+    }
+
+    PlaylistItem* iterateTrack(const Core::Track& track)
+    {
+        PlaylistItem* parent = nullptr;
+
+        const QString albumKey = track.albumHash();
+
+        if(albums.count(albumKey)) {
+            auto& album           = albums.at(albumKey);
+            const QString discKey = albumKey + QString::number(track.discNumber());
+            const bool singleDisk = album.isSingleDiscAlbum() || (!splitDiscs && !discHeaders);
+
+            if(singleDisk) {
+                parent = checkInsertKey(albumKey, PlaylistItem::Album, &album, model->rootItem());
+            }
+
+            else if(splitDiscs) {
+                if(!albums.count(discKey)) {
+                    Core::Album discAlbum{album};
+                    const QString discTitle = "Disc #" + QString::number(track.discNumber());
+                    discAlbum.setSubTitle(discTitle);
+                    discAlbum.reset();
+                    auto& addedAlbum = albums.emplace(discKey, std::move(discAlbum)).first->second;
+                    checkInsertKey(discKey, PlaylistItem::Album, &addedAlbum, model->rootItem());
+                }
+                Core::Album& discAlbum = albums.at(discKey);
+                discAlbum.addTrack(track);
+                parent = nodes.at(discKey).get();
+            }
+
+            else {
+                if(!containers.count(discKey)) {
+                    Core::Container disc{"Disc #" + QString::number(track.discNumber())};
+                    PlaylistItem* parentNode = checkInsertKey(albumKey, PlaylistItem::Album, &album, model->rootItem());
+                    auto& addedDisc          = containers.emplace(discKey, std::move(disc)).first->second;
+                    checkInsertKey(discKey, PlaylistItem::Container, &addedDisc, parentNode);
+                }
+                Core::Container& disc = containers.at(discKey);
+                disc.addTrack(track);
+                parent = nodes.at(discKey).get();
+            }
+        }
+        return parent;
+    }
+
+    PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, const ItemType& item,
+                                 PlaylistItem* parent)
+    {
+        if(!nodes.count(key)) {
+            auto* node = nodes.emplace(key, std::make_unique<PlaylistItem>(type, item, parent)).first->second.get();
+            node->setKey(key);
+        }
+        PlaylistItem* child = nodes.at(key).get();
+        if(Utils::contains(parent->children(), child)) {
+            return child;
+        }
+        if(resetting) {
+            parent->appendChild(child);
+        }
+        else {
+            insertRow(parent, child);
+        }
+        return child;
+    }
+
+    void insertRow(PlaylistItem* parent, PlaylistItem* child)
+    {
+        const int row = parent->childCount();
+        model->beginInsertRows(model->indexForItem(parent), row, row);
+        parent->appendChild(child);
+        model->endInsertRows();
+    }
+
+    void beginReset()
+    {
+        containers.clear();
+        albums.clear();
+        nodes.clear();
+        model->resetRoot();
+    }
+
+    QVariant trackData(PlaylistItem* item, int role) const
+    {
+        const Core::Track track = std::get<Core::Track>(item->data());
+
+        switch(role) {
+            case(PlaylistItem::Role::Id): {
+                return track.id();
+            }
+            case(PlaylistItem::Role::Number): {
+                return QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0'));
+            }
+            case(Qt::DisplayRole): {
+                return !track.title().isEmpty() ? track.title() : "Unknown Title";
+            }
+            case(PlaylistItem::Role::Artist): {
+                return trackArtistString(track);
+            }
+            case(PlaylistItem::Role::PlayCount): {
+                const int count = track.playCount();
+                if(count > 0) {
+                    return QString::number(count) + QString("|");
+                }
+                return {};
+            }
+            case(PlaylistItem::Role::Duration): {
+                return Utils::msToString(track.duration());
+            }
+            case(PlaylistItem::Role::MultiDisk): {
+                return item->parent()->type() != PlaylistItem::Type::Album && discHeaders && !splitDiscs;
+            }
+            case(PlaylistItem::Role::Playing): {
+                return playerManager->currentTrack() == track;
+            }
+            case(PlaylistItem::Role::Path): {
+                return track.filepath();
+            }
+            case(PlaylistItem::Role::Data): {
+                return QVariant::fromValue<Core::Track>(track);
+            }
+            case(Qt::BackgroundRole): {
+                return altColours && !(item->row() & 1) ? QPalette::AlternateBase : QPalette::Base;
+            }
+            case(Qt::DecorationRole): {
+                switch(playerManager->playState()) {
+                    case(Core::Player::PlayState::Playing):
+                        return playingIcon;
+                    case(Core::Player::PlayState::Paused):
+                        return pausedIcon;
+                    default:
+                        break;
+                }
+                break;
+            }
+            default: {
+                return {};
+            }
+        }
+        return {};
+    }
+
+    QVariant albumData(PlaylistItem* item, int role) const
+    {
+        const auto* album = std::get<Core::Album*>(item->data());
+
+        if(!album) {
+            return {};
+        }
+
+        switch(role) {
+            case(Qt::DisplayRole): {
+                QString title = !album->title().isEmpty() ? album->title() : "Unknown Title";
+                if(!album->subTitle().isEmpty()) {
+                    title += " \u25AA ";
+                    title += album->subTitle();
+                }
+                return title;
+            }
+            case(PlaylistItem::Role::Cover): {
+                return coverProvider.albumThumbnail(*album);
+            }
+            case(PlaylistItem::Role::Artist): {
+                return !album->artist().isEmpty() ? album->artist() : "Unknown Artist";
+            }
+            case(PlaylistItem::Role::Duration): {
+                const auto genre    = album->genres().join(" / ");
+                const auto count    = album->trackCount();
+                const auto duration = album->duration();
+
+                QString dur = genre;
+                if(!genre.isEmpty()) {
+                    dur += " | ";
+                }
+                dur += QString(QString::number(count) + (count > 1 ? " Tracks" : " Track") + " | "
+                               + Utils::msToString(duration));
+                return dur;
+            }
+            case(PlaylistItem::Role::Date): {
+                return album->date();
+            }
+        }
+        return {};
+    }
+
+    QVariant containerData(PlaylistItem* item, int role) const
+    {
+        const auto* container = std::get<Core::Container*>(item->data());
+
+        switch(role) {
+            case(Qt::DisplayRole): {
+                return container->title();
+            }
+            case(PlaylistItem::Role::Duration): {
+                auto duration = static_cast<int>(container->duration());
+                return QString(Utils::msToString(duration));
+            }
+            default: {
+                return {};
+            }
+        }
+    }
+};
+
+PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                              QObject* parent)
     : TreeModel{parent}
-    , m_playerManager{playerManager}
-    , m_playlistHandler{playlistHandler}
-    , m_settings{settings}
-    , m_discHeaders{m_settings->value<Settings::DiscHeaders>()}
-    , m_splitDiscs{m_settings->value<Settings::SplitDiscs>()}
-    , m_altColours{m_settings->value<Settings::PlaylistAltColours>()}
-    , m_simplePlaylist{m_settings->value<Settings::SimplePlaylist>()}
-    , m_resetting{false}
-    , m_playingIcon{Constants::Icons::Play}
-    , m_pausedIcon{Constants::Icons::Pause}
+    , p{std::make_unique<Private>(this, playerManager, settings)}
 {
-    setupModelData();
-
-    m_settings->subscribe<Settings::DiscHeaders>(this, [this](bool enabled) {
-        m_discHeaders = enabled;
-        reset();
-    });
-    m_settings->subscribe<Settings::SplitDiscs>(this, [this](bool enabled) {
-        m_splitDiscs = enabled;
-        reset();
-    });
-    m_settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
-        m_altColours = enabled;
-        emit dataChanged({}, {}, {Qt::BackgroundRole});
-    });
-    m_settings->subscribe<Settings::SimplePlaylist>(this, [this](bool enabled) {
-        m_simplePlaylist = enabled;
-        reset();
-    });
-
-    m_playingIcon = m_playingIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    m_pausedIcon  = m_pausedIcon.scaled({20, 20}, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        p->settings->subscribe<Settings::DiscHeaders>(this, [this](bool enabled) {
+            p->discHeaders = enabled;
+        reset(p->currentPlaylist);
+        });
+        p->settings->subscribe<Settings::SplitDiscs>(this, [this](bool enabled) {
+            p->splitDiscs = enabled;
+            reset(p->currentPlaylist);
+        });
+        p->settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
+            p->altColours = enabled;
+            emit dataChanged({}, {}, {Qt::BackgroundRole});
+        });
+        p->settings->subscribe<Settings::SimplePlaylist>(this, [this](bool enabled) {
+            p->simplePlaylist = enabled;
+            reset(p->currentPlaylist);
+        });
 }
+
+PlaylistModel::~PlaylistModel() = default;
 
 QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -99,11 +345,10 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
         return {};
     }
 
-    const auto playlist = m_playlistHandler->activePlaylist();
-    if(!playlist) {
+    if(!p->currentPlaylist) {
         return {};
     }
-    return QString("%1: %2 Tracks").arg(playlist->name()).arg(playlist->trackCount());
+    return QString("%1: %2 Tracks").arg(p->currentPlaylist->name()).arg(p->currentPlaylist->trackCount());
 }
 
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
@@ -117,7 +362,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     const PlaylistItem::Type type = item->type();
 
     if(role == Playlist::Mode) {
-        return m_simplePlaylist;
+        return p->simplePlaylist;
     }
 
     if(role == Playlist::Type) {
@@ -126,11 +371,11 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 
     switch(type) {
         case(PlaylistItem::Album):
-            return albumData(item, role);
+            return p->albumData(item, role);
         case(PlaylistItem::Track):
-            return trackData(item, role);
+            return p->trackData(item, role);
         case(PlaylistItem::Container):
-            return containerData(item, role);
+            return p->containerData(item, role);
         case(PlaylistItem::Root):
             return {};
     }
@@ -178,34 +423,36 @@ QModelIndex PlaylistModel::matchTrack(int id) const
     return {};
 }
 
-void PlaylistModel::reset()
+void PlaylistModel::reset(Core::Playlist::Playlist* playlist)
 {
-    m_resetting = true;
+    if(!playlist) {
+        return;
+    }
+
+    p->resetting = true;
+    p->currentPlaylist = playlist;
     beginResetModel();
-    beginReset();
-    setupModelData();
+    p->beginReset();
+    setupModelData(playlist);
     endResetModel();
-    m_resetting = false;
+    p->resetting = false;
 }
 
-void PlaylistModel::setupModelData()
+void PlaylistModel::setupModelData(const Core::Playlist::Playlist* playlist)
 {
-    if(!m_playlistHandler->activePlaylist()) {
+    if(!playlist) {
         return;
     }
-    const Core::TrackList tracks = m_playlistHandler->activePlaylist()->tracks();
 
-    if(tracks.empty()) {
-        return;
-    }
+    const auto tracks = playlist->tracks();
 
     // Create albums before model to ensure discs (based on discCount) are properly created
-    createAlbums(tracks);
+    p->createAlbums(tracks);
 
     for(const Core::Track& track : tracks) {
-        if(!m_nodes.count(track.hash())) {
-            if(auto* parent = iterateTrack(track, m_discHeaders, m_splitDiscs)) {
-                checkInsertKey(track.hash(), PlaylistItem::Track, track, parent);
+        if(!p->nodes.count(track.hash())) {
+            if(auto* parent = p->iterateTrack(track)) {
+                p->checkInsertKey(track.hash(), PlaylistItem::Track, track, parent);
             }
         }
     }
@@ -220,8 +467,8 @@ QModelIndex PlaylistModel::indexForTrack(const Core::Track& track) const
 {
     QModelIndex index;
     const auto key = track.hash();
-    if(m_nodes.count(key)) {
-        const auto* item = m_nodes.at(key).get();
+    if(p->nodes.count(key)) {
+        const auto* item = p->nodes.at(key).get();
         index            = createIndex(item->row(), 0, item);
     }
     return index;
@@ -231,229 +478,10 @@ QModelIndex PlaylistModel::indexForItem(PlaylistItem* item) const
 {
     QModelIndex index;
     const auto key = item->key();
-    if(m_nodes.count(key)) {
-        const auto* item = m_nodes.at(key).get();
-        index            = createIndex(item->row(), 0, item);
+    if(p->nodes.count(key)) {
+        auto* node = p->nodes.at(key).get();
+        index      = createIndex(node->row(), 0, node);
     }
     return index;
 }
-
-void PlaylistModel::createAlbums(const Core::TrackList& tracks)
-{
-    for(const auto& track : tracks) {
-        if(!m_nodes.count(track.hash())) {
-            const QString albumKey = track.albumHash();
-            if(!m_albums.count(albumKey)) {
-                Core::Album album{track.album()};
-                album.setDate(track.date());
-                album.setArtist(track.albumArtist());
-                album.setCoverPath(track.coverPath());
-                m_albums.emplace(albumKey, album);
-            }
-            Core::Album& album = m_albums.at(albumKey);
-            album.addTrack(track);
-        }
-    }
-}
-
-PlaylistItem* PlaylistModel::iterateTrack(const Core::Track& track, bool discHeaders, bool splitDiscs)
-{
-    PlaylistItem* parent = nullptr;
-
-    const QString albumKey = track.albumHash();
-
-    if(m_albums.count(albumKey)) {
-        auto& album           = m_albums.at(albumKey);
-        const QString discKey = albumKey + QString::number(track.discNumber());
-        const bool singleDisk = album.isSingleDiscAlbum() || (!splitDiscs && !discHeaders);
-
-        if(singleDisk) {
-            parent = checkInsertKey(albumKey, PlaylistItem::Album, &album, rootItem());
-        }
-
-        else if(splitDiscs) {
-            if(!m_albums.count(discKey)) {
-                Core::Album discAlbum{album};
-                const QString discTitle = "Disc #" + QString::number(track.discNumber());
-                discAlbum.setSubTitle(discTitle);
-                discAlbum.reset();
-                auto& addedAlbum = m_albums.emplace(discKey, std::move(discAlbum)).first->second;
-                checkInsertKey(discKey, PlaylistItem::Album, &addedAlbum, rootItem());
-            }
-            Core::Album& discAlbum = m_albums.at(discKey);
-            discAlbum.addTrack(track);
-            parent = m_nodes.at(discKey).get();
-        }
-
-        else {
-            if(!m_containers.count(discKey)) {
-                Core::Container disc{"Disc #" + QString::number(track.discNumber())};
-                PlaylistItem* parentNode = checkInsertKey(albumKey, PlaylistItem::Album, &album, rootItem());
-                auto& addedDisc          = m_containers.emplace(discKey, std::move(disc)).first->second;
-                checkInsertKey(discKey, PlaylistItem::Container, &addedDisc, parentNode);
-            }
-            Core::Container& disc = m_containers.at(discKey);
-            disc.addTrack(track);
-            parent = m_nodes.at(discKey).get();
-        }
-    }
-    return parent;
-}
-
-PlaylistItem* PlaylistModel::checkInsertKey(const QString& key, PlaylistItem::Type type, const ItemType& item,
-                                            PlaylistItem* parent)
-{
-    if(!m_nodes.count(key)) {
-        auto* node = m_nodes.emplace(key, std::make_unique<PlaylistItem>(type, item, parent)).first->second.get();
-        node->setKey(key);
-    }
-    PlaylistItem* child = m_nodes.at(key).get();
-    if(Utils::contains(parent->children(), child)) {
-        return child;
-    }
-    if(m_resetting) {
-        parent->appendChild(child);
-    }
-    else {
-        insertRow(parent, child);
-    }
-    return child;
-}
-
-void PlaylistModel::insertRow(PlaylistItem* parent, PlaylistItem* child)
-{
-    const int row = parent->childCount();
-    beginInsertRows(indexForItem(parent), row, row);
-    parent->appendChild(child);
-    endInsertRows();
-}
-
-void PlaylistModel::beginReset()
-{
-    m_containers.clear();
-    m_albums.clear();
-    m_nodes.clear();
-    resetRoot();
-}
-
-QVariant PlaylistModel::trackData(PlaylistItem* item, int role) const
-{
-    const Core::Track track = std::get<Core::Track>(item->data());
-
-    switch(role) {
-        case(PlaylistItem::Role::Id): {
-            return track.id();
-        }
-        case(PlaylistItem::Role::Number): {
-            return QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0'));
-        }
-        case(Qt::DisplayRole): {
-            return !track.title().isEmpty() ? track.title() : "Unknown Title";
-        }
-        case(PlaylistItem::Role::Artist): {
-            return trackArtistString(track);
-        }
-        case(PlaylistItem::Role::PlayCount): {
-            const int count = track.playCount();
-            if(count > 0) {
-                return QString::number(count) + QString("|");
-            }
-            return {};
-        }
-        case(PlaylistItem::Role::Duration): {
-            return Utils::msToString(track.duration());
-        }
-        case(PlaylistItem::Role::MultiDisk): {
-            return item->parent()->type() != PlaylistItem::Type::Album && m_discHeaders && !m_splitDiscs;
-        }
-        case(PlaylistItem::Role::Playing): {
-            return m_playerManager->currentTrack() == track;
-        }
-        case(PlaylistItem::Role::Path): {
-            return track.filepath();
-        }
-        case(PlaylistItem::Role::Data): {
-            return QVariant::fromValue<Core::Track>(track);
-        }
-        case(Qt::BackgroundRole): {
-            return m_altColours && !(item->row() & 1) ? QPalette::AlternateBase : QPalette::Base;
-        }
-        case(Qt::DecorationRole): {
-            switch(m_playerManager->playState()) {
-                case(Core::Player::PlayState::Playing):
-                    return m_playingIcon;
-                case(Core::Player::PlayState::Paused):
-                    return m_pausedIcon;
-                default:
-                    break;
-            }
-            break;
-        }
-        default: {
-            return {};
-        }
-    }
-    return {};
-}
-
-QVariant PlaylistModel::albumData(PlaylistItem* item, int role) const
-{
-    const auto* album = std::get<Core::Album*>(item->data());
-
-    if(!album) {
-        return {};
-    }
-
-    switch(role) {
-        case(Qt::DisplayRole): {
-            QString title = !album->title().isEmpty() ? album->title() : "Unknown Title";
-            if(!album->subTitle().isEmpty()) {
-                title += " \u25AA ";
-                title += album->subTitle();
-            }
-            return title;
-        }
-        case(PlaylistItem::Role::Cover): {
-            return m_coverProvider.albumThumbnail(*album);
-        }
-        case(PlaylistItem::Role::Artist): {
-            return !album->artist().isEmpty() ? album->artist() : "Unknown Artist";
-        }
-        case(PlaylistItem::Role::Duration): {
-            const auto genre    = album->genres().join(" / ");
-            const auto count    = album->trackCount();
-            const auto duration = album->duration();
-
-            QString dur = genre;
-            if(!genre.isEmpty()) {
-                dur += " | ";
-            }
-            dur += QString(QString::number(count) + (count > 1 ? " Tracks" : " Track") + " | "
-                           + Utils::msToString(duration));
-            return dur;
-        }
-        case(PlaylistItem::Role::Date): {
-            return album->date();
-        }
-    }
-    return {};
-}
-
-QVariant PlaylistModel::containerData(PlaylistItem* item, int role) const
-{
-    const auto* container = std::get<Core::Container*>(item->data());
-
-    switch(role) {
-        case(Qt::DisplayRole): {
-            return container->title();
-        }
-        case(PlaylistItem::Role::Duration): {
-            auto duration = static_cast<int>(container->duration());
-            return QString(Utils::msToString(duration));
-        }
-        default: {
-            return {};
-        }
-    }
-}
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Playlist

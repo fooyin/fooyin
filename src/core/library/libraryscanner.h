@@ -64,7 +64,6 @@ private:
     void changeLibraryStatus(Status status);
 
     void storeTracks(TrackList& tracks);
-    bool storeCovers(TrackList& tracks);
     QStringList getFiles(QDir& baseDirectory);
     bool getAndSaveAllFiles(const TrackPathMap& tracks);
 

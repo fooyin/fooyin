@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 
 project(
-    fooyin_gui
-    VERSION 0.1.0
-    DESCRIPTION "Gui library for fooyin"
-    HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
-    LANGUAGES CXX
-)
+  fooyin_gui
+  VERSION 0.1.0
+  DESCRIPTION "Gui library for fooyin"
+  HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
+  LANGUAGES CXX)
 
 set(SOURCES
     fywidget.h
@@ -26,7 +25,6 @@ set(SOURCES
     widgetfactory.h
     widgetprovider.h
     widgetprovider.cpp
-
     controls/controlwidget.h
     controls/controlwidget.cpp
     controls/playercontrol.h
@@ -37,7 +35,6 @@ set(SOURCES
     controls/progresswidget.cpp
     controls/volumecontrol.h
     controls/volumecontrol.cpp
-
     info/itemdelegate.h
     info/itemdelegate.cpp
     info/infomodel.h
@@ -48,12 +45,18 @@ set(SOURCES
     info/infowidget.cpp
     info/infoview.h
     info/infoview.cpp
-
     library/coverwidget.h
     library/coverwidget.cpp
     library/statuswidget.h
     library/statuswidget.cpp
-
+    librarytree/librarytreeitem.h
+    librarytree/librarytreeitem.cpp
+    librarytree/librarytreemodel.h
+    librarytree/librarytreemodel.cpp
+    librarytree/librarytreepage.h
+    librarytree/librarytreepage.cpp
+    librarytree/librarytreewidget.h
+    librarytree/librarytreewidget.cpp
     menu/aboutdialog.h
     menu/aboutdialog.cpp
     menu/editmenu.h
@@ -68,7 +71,7 @@ set(SOURCES
     menu/playbackmenu.cpp
     menu/viewmenu.h
     menu/viewmenu.cpp
-
+    playlist/playlistcontroller.cpp
     playlist/playlistview.h
     playlist/playlistview.cpp
     playlist/playlistmodel.h
@@ -77,14 +80,13 @@ set(SOURCES
     playlist/playlistitem.cpp
     playlist/playlistdelegate.h
     playlist/playlistdelegate.cpp
+    playlist/playlisttabs.cpp
     playlist/playlistwidget.h
     playlist/playlistwidget.cpp
-
     quicksetup/quicksetupdialog.h
     quicksetup/quicksetupdialog.cpp
     quicksetup/quicksetupmodel.h
     quicksetup/quicksetupmodel.cpp
-
     settings/generalpage.h
     settings/generalpage.cpp
     settings/guigeneralpage.h
@@ -105,20 +107,8 @@ set(SOURCES
     settings/pluginsmodel.cpp
     settings/pluginspage.h
     settings/pluginspage.cpp
-
-    librarytree/librarytreeitem.h
-    librarytree/librarytreeitem.cpp
-    librarytree/librarytreemodel.h
-    librarytree/librarytreemodel.cpp
-    librarytree/librarytreepage.h
-    librarytree/librarytreepage.cpp
-    librarytree/librarytreewidget.h
-    librarytree/librarytreewidget.cpp
-
     widgets/dummy.h
     widgets/dummy.cpp
-    widgets/playlisttabs.h
-    widgets/playlisttabs.cpp
     widgets/spacer.h
     widgets/spacer.cpp
     widgets/splitter.h
@@ -126,41 +116,27 @@ set(SOURCES
     widgets/splitterhandle.h
     widgets/splitterhandle.cpp
     widgets/splitterwidget.h
-    widgets/splitterwidget.cpp
-)
+    widgets/splitterwidget.cpp)
 
-add_library(
-    fooyin_gui
-    ${FOOYIN_LIBRARY_TYPE}
-    ${SOURCES}
-)
+add_library(fooyin_gui ${FOOYIN_LIBRARY_TYPE} ${SOURCES})
 add_library(fooyin::gui ALIAS fooyin_gui)
 
-target_include_directories(fooyin_gui
-  PRIVATE
-    "${CMAKE_CURRENT_BINARY_DIR}"
-    "${CMAKE_BINARY_DIR}/src"
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-  PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
-)
+target_include_directories(
+  fooyin_gui
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_BINARY_DIR}/src"
+          "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+  PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>")
 
-set_target_properties(fooyin_gui PROPERTIES
-    VERSION "${PROJECT_VERSION}"
-    EXPORT_NAME fooyin_gui
-    OUTPUT_NAME fooyin_gui
-    LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_LIBRARY_OUTPUT_DIR}
-    INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH}
-)
+set_target_properties(
+  fooyin_gui
+  PROPERTIES VERSION "${PROJECT_VERSION}"
+             EXPORT_NAME fooyin_gui
+             OUTPUT_NAME fooyin_gui
+             LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_LIBRARY_OUTPUT_DIR}
+             INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH})
 
-target_link_libraries(fooyin_gui
-   PRIVATE
-     Qt6::Core
-     Qt6::Widgets
-     Qt6::Sql
-     fooyin::core
-     fooyin::utils
-)
+target_link_libraries(fooyin_gui PRIVATE Qt6::Core Qt6::Widgets Qt6::Sql
+                                         fooyin::core fooyin::utils)
 
 target_compile_features(fooyin_gui PUBLIC cxx_std_17)
 target_compile_options(fooyin_gui PRIVATE -Werror -Wall -Wextra -Wpedantic)

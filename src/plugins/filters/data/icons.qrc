@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/category-filters.svg</file>
+        <file>icons/dark/index.theme</file>
+        <file>icons/dark/scalable/actions/category-filters.svg</file>
+        <file>icons/light/scalable/actions/category-filters.svg</file>
+        <file>icons/light/index.theme</file>
     </qresource>
 </RCC>

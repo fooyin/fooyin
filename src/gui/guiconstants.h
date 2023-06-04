@@ -21,35 +21,33 @@
 
 namespace Fy::Gui::Constants {
 namespace Icons {
-constexpr auto Fooyin      = "://icons/sc-fooyin.svg";
-constexpr auto FooyinLarge = "://images/fooyin.png";
-constexpr auto Play        = "://icons/play.svg";
-constexpr auto Pause       = "://icons/pause.svg";
-constexpr auto Stop        = "://icons/stop.svg";
-constexpr auto Prev        = "://icons/prev.svg";
-constexpr auto Next        = "://icons/next.svg";
-constexpr auto Repeat      = "://icons/repeat-once.svg";
-constexpr auto RepeatAll   = "://icons/repeat.svg";
-constexpr auto Shuffle     = "://icons/shuffle.svg";
-constexpr auto VolumeMax   = "://icons/volume-max.svg";
-constexpr auto VolumeMed   = "://icons/volume-med.svg";
-constexpr auto VolumeLow   = "://icons/volume-low.svg";
-constexpr auto VolumeMin   = "://icons/volume-min.svg";
-constexpr auto VolumeMute  = "://icons/volume-mute.svg";
+constexpr auto Fooyin     = "sc-fooyin";
+constexpr auto Play       = "media-playback-start";
+constexpr auto Pause      = "media-playback-pause";
+constexpr auto Stop       = "media-playback-stop";
+constexpr auto Prev       = "media-skip-backward";
+constexpr auto Next       = "media-skip-forward";
+constexpr auto Repeat     = "media-playlist-repeat-one";
+constexpr auto RepeatAll  = "media-playlist-repeat";
+constexpr auto Shuffle    = "media-playlist-shuffle";
+constexpr auto VolumeHigh = "audio-volume-high";
+constexpr auto VolumeMed  = "audio-volume-medium";
+constexpr auto VolumeLow  = "audio-volume-low";
+constexpr auto VolumeMute = "audio-volume-muted";
 
-constexpr auto Quit          = "://icons/quit.svg";
-constexpr auto Settings      = "://icons/settings.svg";
-constexpr auto RescanLibrary = "://icons/reload.svg";
-constexpr auto LayoutEditing = "://icons/category-interface.svg";
-constexpr auto QuickSetup    = "://icons/quick-setup.svg";
+constexpr auto Quit          = "application-exit";
+constexpr auto Settings      = "preferences-system";
+constexpr auto RescanLibrary = "view-refresh";
+constexpr auto LayoutEditing = "applications-graphics";
+constexpr auto QuickSetup    = "preferences-desktop";
 
 namespace Category {
-constexpr auto General   = "://icons/category-general.svg";
-constexpr auto Interface = "://icons/category-interface.svg";
-constexpr auto Library   = "://icons/category-library.svg";
-constexpr auto Playlist  = "://icons/category-playlist.svg";
-constexpr auto Widgets  = "://icons/category-plugins.svg";
-constexpr auto Plugins   = "://icons/category-plugins.svg";
+constexpr auto General   = "applications-system";
+constexpr auto Interface = "applications-graphics";
+constexpr auto Library   = "applications-office";
+constexpr auto Playlist  = "applications-multimedia";
+constexpr auto Widgets   = "applications-accessories";
+constexpr auto Plugins   = "applications-accessories";
 } // namespace Category
 } // namespace Icons
 
@@ -97,6 +95,7 @@ namespace Actions {
 constexpr auto Exit            = "Fooyin.Action.Exit";
 constexpr auto Settings        = "Fooyin.Action.Settings";
 constexpr auto LayoutEditing   = "Fooyin.Action.LayoutEditing";
+constexpr auto QuickSetup      = "Fooyin.Action.QuickSetup";
 constexpr auto About           = "Fooyin.Action.About";
 constexpr auto Rescan          = "Fooyin.Action.Rescan";
 constexpr auto LibrarySwitch   = "Fooyin.Action.LibrarySwitch";

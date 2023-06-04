@@ -20,6 +20,7 @@
 #include "playlisttabs.h"
 
 #include "gui/widgetfactory.h"
+#include "playlistcontroller.h"
 
 #include <core/playlist/playlisthandler.h>
 
@@ -28,18 +29,16 @@
 
 #include <QContextMenuEvent>
 #include <QInputDialog>
-#include <QLabel>
 #include <QLayout>
 #include <QMenu>
 #include <QTabBar>
 
-namespace Fy::Gui::Widgets {
-PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetFactory* widgetFactory,
-                           Core::Playlist::PlaylistHandler* playlistHandler, QWidget* parent)
+namespace Fy::Gui::Widgets::Playlist {
+PlaylistTabs::PlaylistTabs(Core::Playlist::PlaylistHandler* playlistHandler, PlaylistController* controller,
+                           QWidget* parent)
     : FyWidget{parent}
-    , m_actionManager{actionManager}
-    , m_widgetFactory{widgetFactory}
     , m_playlistHandler{playlistHandler}
+    , m_controller{controller}
     , m_layout{new QVBoxLayout(this)}
     , m_tabs{new QTabBar(this)}
 {
@@ -53,16 +52,15 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetFactory* w
     m_layout->addWidget(m_tabs);
 
     QObject::connect(m_tabs, &QTabBar::currentChanged, this, &PlaylistTabs::tabChanged);
-    QObject::connect(m_playlistHandler,
-                     &Core::Playlist::PlaylistHandler::currentPlaylistChanged,
-                     this,
+    QObject::connect(m_controller, &PlaylistController::currentPlaylistChanged, this, &PlaylistTabs::playlistChanged);
+    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
                      &PlaylistTabs::playlistChanged);
-    QObject::connect(
-        m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistAdded, this, &PlaylistTabs::addPlaylist);
-    QObject::connect(
-        m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistRemoved, this, &PlaylistTabs::removePlaylist);
-    QObject::connect(
-        m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistRenamed, this, &PlaylistTabs::playlistRenamed);
+    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistAdded, this,
+                     &PlaylistTabs::addPlaylist);
+    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistRemoved, this,
+                     &PlaylistTabs::removePlaylist);
+    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistRenamed, this,
+                     &PlaylistTabs::playlistRenamed);
 
     setupTabs();
 }
@@ -119,8 +117,8 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     auto* createPlaylist = new QAction("Add New Playlist", menu);
-    QObject::connect(
-        createPlaylist, &QAction::triggered, m_playlistHandler, &Core::Playlist::PlaylistHandler::createEmptyPlaylist);
+    QObject::connect(createPlaylist, &QAction::triggered, m_playlistHandler,
+                     &Core::Playlist::PlaylistHandler::createEmptyPlaylist);
     menu->addAction(createPlaylist);
 
     const QPoint point = event->pos();
@@ -131,8 +129,8 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         auto* renamePlaylist = new QAction("Rename Playlist", menu);
         QObject::connect(renamePlaylist, &QAction::triggered, this, [this, index, id]() {
             bool success       = false;
-            const QString text = QInputDialog::getText(
-                this, tr("Rename Playlist"), tr("Playlist Name:"), QLineEdit::Normal, m_tabs->tabText(index), &success);
+            const QString text = QInputDialog::getText(this, tr("Rename Playlist"), tr("Playlist Name:"),
+                                                       QLineEdit::Normal, m_tabs->tabText(index), &success);
 
             if(success && !text.isEmpty()) {
                 m_playlistHandler->renamePlaylist(id, text);
@@ -152,45 +150,11 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(mapToGlobal(point));
 }
 
-// void PlaylistTabs::layoutEditingMenu(Utils::ActionContainer* menu)
-//{
-//     auto menuId   = id().append(tr("&Add"));
-//     auto* addMenu = m_actionManager->createMenu(menuId);
-//     addMenu->menu()->setTitle(tr("&Add"));
-
-//    auto widgets = m_widgetFactory->registeredWidgets();
-//    for(const auto& widget : widgets) {
-//        auto* parentMenu = addMenu;
-//        for(const auto& subMenu : widget.second.subMenus) {
-//            const Utils::Id id = Utils::Id{addMenu->id()}.append(subMenu);
-//            auto* childMenu    = m_actionManager->actionContainer(id);
-//            if(!childMenu) {
-//                childMenu = m_actionManager->createMenu(id);
-//                childMenu->menu()->setTitle(subMenu);
-//                parentMenu->addMenu(childMenu);
-//            }
-//            parentMenu = childMenu;
-//        }
-//        auto* addWidget = new QAction(widget.second.name, parentMenu);
-//        QAction::connect(addWidget, &QAction::triggered, this, [this, widget] {
-//            FyWidget* newWidget = m_widgetFactory->make(widget.first);
-//            m_layout->addWidget(newWidget);
-//        });
-//        parentMenu->addAction(addWidget);
-//    }
-
-//    if(m_layout->children().count() > 1) {
-//        addMenu->menu()->setEnabled(false);
-//    }
-
-//    menu->addMenu(addMenu);
-//}
-
 void PlaylistTabs::tabChanged(int index)
 {
     const int id = m_tabs->tabData(index).toInt();
     if(id >= 0) {
-        m_playlistHandler->changeCurrentPlaylist(id);
+        m_controller->changeCurrentPlaylist(id);
     }
 }
 
@@ -199,6 +163,7 @@ void PlaylistTabs::playlistChanged(Core::Playlist::Playlist* playlist)
     for(int i = 0; i < m_tabs->count(); ++i) {
         if(m_tabs->tabData(i).toInt() == playlist->id()) {
             m_tabs->setCurrentIndex(i);
+            m_controller->refreshCurrentPlaylist();
         }
     }
 }
@@ -211,4 +176,4 @@ void PlaylistTabs::playlistRenamed(Core::Playlist::Playlist* playlist)
         }
     }
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Playlist

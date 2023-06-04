@@ -62,7 +62,7 @@ void MainWindow::setupUi()
 
     resize(1280, 720);
     setMinimumSize(410, 320);
-    setWindowIcon(QIcon(Constants::Icons::Fooyin));
+    setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
 
     const QByteArray geometryArray = m_settings->value<Settings::Geometry>();
     const QByteArray geometry      = QByteArray::fromBase64(geometryArray);

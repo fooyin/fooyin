@@ -31,7 +31,7 @@ class Album;
 class Container;
 } // namespace Core
 
-namespace Gui::Widgets {
+namespace Gui::Widgets::Playlist {
 using ItemType = std::variant<Core::Track, Core::Album*, Core::Container*>;
 
 class PlaylistItem : public Utils::TreeItem<PlaylistItem>
@@ -60,7 +60,7 @@ public:
         Data      = Qt::UserRole + 16,
     };
 
-    explicit PlaylistItem(Type type = Type::Root, const ItemType& data = {}, PlaylistItem* parentItem = nullptr);
+    explicit PlaylistItem(Type type = Type::Root, ItemType data = {}, PlaylistItem* parentItem = nullptr);
 
     void setKey(const QString& key);
 
@@ -73,5 +73,5 @@ private:
     Type m_type;
     QString m_key;
 };
-} // namespace Gui::Widgets
+} // namespace Gui::Widgets::Playlist
 } // namespace Fy

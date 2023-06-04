@@ -24,7 +24,7 @@
 
 #include <QPainter>
 
-namespace Fy::Gui::Widgets {
+namespace Fy::Gui::Widgets::Playlist {
 PlaylistDelegate::PlaylistDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 { }
@@ -143,10 +143,8 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
     const auto coverFrameOffset = coverFrameWidth / 2;
 
     const QRect coverRect{x + 10, y + 10, 58, height - 19};
-    const QRect coverFrameRect{coverRect.x() - coverFrameOffset,
-                               coverRect.y() - coverFrameOffset,
-                               coverRect.width() + coverFrameWidth,
-                               coverRect.height() + coverFrameWidth};
+    const QRect coverFrameRect{coverRect.x() - coverFrameOffset, coverRect.y() - coverFrameOffset,
+                               coverRect.width() + coverFrameWidth, coverRect.height() + coverFrameWidth};
     const QRect artistRect{coverFrameRect.right() + 10, y - 20, ((right - 80) - (x + 80)), height};
     const QRect titleRect{coverFrameRect.right() + 10, y, ((right - 80) - (x + 80)), height};
     const QRect subRect{coverFrameRect.right() + 10, y + 20, ((right - 80) - (x + 80)), height};
@@ -162,11 +160,7 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
 
     painter->setFont(artistFont);
     option.widget->style()->drawItemText(
-        painter,
-        artistRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
+        painter, artistRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
         painter->fontMetrics().elidedText(albumArtist, Qt::ElideRight, artistRect.width()));
 
     painter->setPen(option.palette.color(QPalette::Text));
@@ -174,34 +168,24 @@ void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem&
     const QRect titleBound
         = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumTitle);
     option.widget->style()->drawItemText(
-        painter,
-        titleRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
+        painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
         painter->fontMetrics().elidedText(albumTitle, Qt::ElideRight, titleRect.width()));
 
     painter->setFont(yearFont);
     const QRect yearBound = painter->boundingRect(yearRect, Qt::AlignRight | Qt::AlignVCenter, albumDate);
     if(width > 160) {
-        option.widget->style()->drawItemText(
-            painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, albumDate);
+        option.widget->style()->drawItemText(painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
+                                             albumDate);
     }
 
     painter->setFont(totalFont);
     option.widget->style()->drawItemText(
-        painter,
-        subRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
+        painter, subRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
         painter->fontMetrics().elidedText(albumDuration, Qt::ElideRight, subRect.width()));
 
     painter->setPen(linePen);
-    const QLineF yearLine((titleBound.x() + titleBound.width() + 10),
-                          (titleBound.y() + (titleBound.height() / 2)),
-                          (yearBound.x() - 10),
-                          (yearBound.y()) + (yearBound.height() / 2));
+    const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
+                          (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
     const QLineF headerLine(x + 77, (y + height) - 8, (right)-10, (y + height) - 8);
     if(!albumTitle.isEmpty() && width > 160) {
         painter->drawLine(yearLine);
@@ -253,15 +237,11 @@ void PlaylistDelegate::paintSimpleAlbum(QPainter* painter, const QStyleOptionVie
 
     painter->setFont(artistFont);
     option.widget->style()->drawItemText(
-        painter,
-        artistRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
+        painter, artistRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
         painter->fontMetrics().elidedText(albumArtist + titleSpacing, Qt::ElideRight, artistRect.width()));
 
-    const QRect artistBound = painter->boundingRect(
-        artistRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumArtist + titleSpacing);
+    const QRect artistBound = painter->boundingRect(artistRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere,
+                                                    albumArtist + titleSpacing);
 
     const QRect titleRect = QRect(artistBound.right(), y, ((right - 80) - (x + 80)), height);
 
@@ -270,23 +250,17 @@ void PlaylistDelegate::paintSimpleAlbum(QPainter* painter, const QStyleOptionVie
     const QRect titleBound
         = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumTitle);
     option.widget->style()->drawItemText(
-        painter,
-        titleRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
+        painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
         painter->fontMetrics().elidedText(albumTitle, Qt::ElideRight, titleRect.width()));
 
     painter->setFont(dateFont);
     const QRect yearBound = painter->boundingRect(yearRect, Qt::AlignRight | Qt::AlignVCenter, albumYear);
-    option.widget->style()->drawItemText(
-        painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, albumYear);
+    option.widget->style()->drawItemText(painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
+                                         albumYear);
 
     painter->setPen(lineColour);
-    const QLineF yearLine((titleBound.x() + titleBound.width() + 10),
-                          (titleBound.y() + (titleBound.height() / 2)),
-                          (yearBound.x() - 10),
-                          (yearBound.y()) + (yearBound.height() / 2));
+    const QLineF yearLine((titleBound.x() + titleBound.width() + 10), (titleBound.y() + (titleBound.height() / 2)),
+                          (yearBound.x() - 10), (yearBound.y()) + (yearBound.height() / 2));
 
     if(!albumTitle.isEmpty()) {
         painter->drawLine(yearLine);
@@ -339,15 +313,11 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     painter->fillRect(option.rect, isPlaying ? playColour : option.palette.color(background));
     paintSelectionBackground(painter, option);
 
-    option.widget->style()->drawItemText(
-        painter, numRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true, trackNumber);
+    option.widget->style()->drawItemText(painter, numRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
+                                         trackNumber);
 
     option.widget->style()->drawItemText(
-        painter,
-        titleRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
+        painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
         painter->fontMetrics().elidedText(trackTitle, Qt::ElideRight, titleRect.width()));
 
     titleRect.setWidth(titleRect.width() - titleBound.width());
@@ -356,20 +326,16 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
     painter->setPen(subTextColour);
 
     option.widget->style()->drawItemText(
-        painter,
-        titleRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
+        painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
         painter->fontMetrics().elidedText(trackArtists, Qt::ElideRight, titleRect.width()));
 
     painter->setPen(textColour);
 
-    option.widget->style()->drawItemText(
-        painter, countRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, trackPlayCount);
+    option.widget->style()->drawItemText(painter, countRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
+                                         trackPlayCount);
 
-    option.widget->style()->drawItemText(
-        painter, durRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, trackDuration);
+    option.widget->style()->drawItemText(painter, durRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
+                                         trackDuration);
 
     if(isPlaying) {
         option.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
@@ -401,17 +367,15 @@ void PlaylistDelegate::paintDisc(QPainter* painter, const QStyleOptionViewItem& 
         = painter->boundingRect(durationRect, Qt::AlignRight | Qt::AlignVCenter | Qt::TextWrapAnywhere, discDuration);
 
     painter->setPen(option.palette.color(QPalette::Text));
-    option.widget->style()->drawItemText(
-        painter, discRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true, discNumber);
+    option.widget->style()->drawItemText(painter, discRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
+                                         discNumber);
 
-    option.widget->style()->drawItemText(
-        painter, durationRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, discDuration);
+    option.widget->style()->drawItemText(painter, durationRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
+                                         discDuration);
 
     painter->setPen(lineColour);
-    const QLineF discLine((discBound.x() + discBound.width() + 5),
-                          (discBound.y() + (discBound.height() / 2)),
-                          (durationBound.x() - 5),
-                          (durationBound.y()) + (durationBound.height() / 2));
+    const QLineF discLine((discBound.x() + discBound.width() + 5), (discBound.y() + (discBound.height() / 2)),
+                          (durationBound.x() - 5), (durationBound.y()) + (durationBound.height() / 2));
     painter->drawLine(discLine);
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Playlist

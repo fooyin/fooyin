@@ -58,7 +58,7 @@ signals:
     void tracksDeleted(const Core::TrackList& tracks);
 
     void sortTracks(const Core::TrackList& tracks);
-    void tracksSorted();
+    void tracksSorted(const Core::TrackList& tracks);
 
     void libraryAdded();
     void libraryRemoved(int id);

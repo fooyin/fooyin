@@ -29,6 +29,25 @@
 #include <QThread>
 
 namespace Fy::Filters {
+constexpr auto FilterPlaylistName       = "Filter Results";
+constexpr auto FilterPlaylistActiveName = "Filter Results (Playback)";
+
+void sendToPlaylist(Core::Playlist::PlaylistHandler* playlistHandler, const Core::TrackList& filteredTracks)
+{
+    Core::Playlist::Playlist* activePlaylist = playlistHandler->activePlaylist();
+    if(activePlaylist && activePlaylist->name() == FilterPlaylistName) {
+        if(playlistHandler->playlistByName(FilterPlaylistActiveName)) {
+            auto* filterPlaylist = playlistHandler->createPlaylist(FilterPlaylistActiveName, activePlaylist->tracks());
+            filterPlaylist->changeCurrentTrack(activePlaylist->currentTrackIndex());
+            playlistHandler->changeActivePlaylist(filterPlaylist->id());
+        }
+        else {
+            playlistHandler->renamePlaylist(activePlaylist->id(), FilterPlaylistActiveName);
+        }
+    }
+    playlistHandler->createPlaylist(FilterPlaylistName, filteredTracks);
+}
+
 FilterManager::FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
                              FieldRegistry* fieldsRegistry, QObject* parent)
     : QObject{parent}
@@ -115,7 +134,7 @@ void FilterManager::selectionChanged(int index)
 {
     m_filterStore.clearActiveFilters(index);
     getFilteredTracks();
-    m_playlistHandler->createPlaylist("Library Viewer", m_filteredTracks, true);
+    sendToPlaylist(m_playlistHandler, m_filteredTracks);
     emit filteredItems(index);
 }
 
@@ -145,7 +164,7 @@ QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
     }
 
     menu->setDefaultAction(filterList->checkedAction());
-    connect(filterList, &QActionGroup::triggered, this, [this, index](QAction* action) {
+    QObject::connect(filterList, &QActionGroup::triggered, this, [this, index](QAction* action) {
         emit filterChanged(index, action->data().toString());
     });
 
@@ -155,7 +174,7 @@ QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
 void FilterManager::tracksFiltered(const Core::TrackList& tracks)
 {
     m_filteredTracks = tracks;
-    m_playlistHandler->createPlaylist("Library Viewer", m_filteredTracks);
+    sendToPlaylist(m_playlistHandler, m_filteredTracks);
     emit filteredItems(-1);
 }
 

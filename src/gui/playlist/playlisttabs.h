@@ -25,24 +25,22 @@ class QVBoxLayout;
 class QTabBar;
 
 namespace Fy {
-namespace Utils {
-class ActionManager;
-}
 
 namespace Core::Playlist {
 class PlaylistHandler;
 class Playlist;
 } // namespace Core::Playlist
 
-namespace Gui::Widgets {
-class WidgetFactory;
+namespace Gui::Widgets::Playlist {
+class PlaylistController;
+
 class PlaylistTabs : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistTabs(Utils::ActionManager* actionManager, WidgetFactory* widgetFactory,
-                          Core::Playlist::PlaylistHandler* playlistHandler, QWidget* parent = nullptr);
+    explicit PlaylistTabs(Core::Playlist::PlaylistHandler* playlistHandler, PlaylistController* controller,
+                          QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -55,19 +53,17 @@ public:
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
-    //    void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
 private:
     void tabChanged(int index);
     void playlistChanged(Core::Playlist::Playlist* playlist);
     void playlistRenamed(Core::Playlist::Playlist* playlist);
 
-    Utils::ActionManager* m_actionManager;
-    WidgetFactory* m_widgetFactory;
     Core::Playlist::PlaylistHandler* m_playlistHandler;
+    PlaylistController* m_controller;
 
     QVBoxLayout* m_layout;
     QTabBar* m_tabs;
 };
-} // namespace Gui::Widgets
+} // namespace Gui::Widgets::Playlist
 } // namespace Fy

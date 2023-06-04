@@ -56,10 +56,8 @@ public:
     explicit ComboIcon(const QString& path, QWidget* parent = nullptr);
     ~ComboIcon() override = default;
 
-    void setup(const QString& path);
-
-    void addPixmap(const QString& path, const QPixmap& icon);
-    void addPixmap(const QString& path);
+    void addIcon(const QString& path, const QPixmap& icon);
+    void addIcon(const QString& path);
 
     void setIcon(const QString& path, bool active = false);
     void setIconEnabled(bool enable = true);

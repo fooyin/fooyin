@@ -21,7 +21,7 @@
 
 #include <QStyledItemDelegate>
 
-namespace Fy::Gui::Widgets {
+namespace Fy::Gui::Widgets::Playlist {
 class PlaylistDelegate : public QStyledItemDelegate
 {
     Q_OBJECT

@@ -107,7 +107,7 @@ void UnifiedMusicLibrary::changeSort(const QString& sort)
     m_trackSorter.changeSorting(sort);
     m_trackSorter.calcSortFields(m_tracks);
     m_trackSorter.sortTracks(m_tracks);
-    emit tracksSorted();
+    emit tracksSorted(m_tracks);
 }
 
 void UnifiedMusicLibrary::removeLibrary(int id)
@@ -151,7 +151,9 @@ void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
 void UnifiedMusicLibrary::updateTracks(const TrackList& tracks)
 {
     for(const auto& track : tracks) {
-        auto it = std::find(m_tracks.begin(), m_tracks.end(), track);
+        auto it = std::find_if(m_tracks.begin(), m_tracks.end(), [track](const Track& libraryTrack) {
+            return libraryTrack.id() == track.id();
+        });
         if(it != m_tracks.cend()) {
             *it = track;
         }
@@ -162,9 +164,8 @@ void UnifiedMusicLibrary::updateTracks(const TrackList& tracks)
 void UnifiedMusicLibrary::removeTracks(const TrackList& tracks)
 {
     for(const Track& track : tracks) {
-        const int trackId = track.id();
-        m_tracks.erase(std::find_if(m_tracks.begin(), m_tracks.end(), [trackId](const Track& track) {
-            return track.id() == trackId;
+        m_tracks.erase(std::find_if(m_tracks.begin(), m_tracks.end(), [track](const Track& libraryTrack) {
+            return libraryTrack.id() == track.id();
         }));
     }
     emit tracksDeleted(tracks);

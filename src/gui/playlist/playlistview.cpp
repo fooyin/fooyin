@@ -27,7 +27,7 @@
 #include <QScrollBar>
 #include <QSortFilterProxyModel>
 
-namespace Fy::Gui::Widgets {
+namespace Fy::Gui::Widgets::Playlist {
 PlaylistView::PlaylistView(QWidget* parent)
     : QTreeView{parent}
 {

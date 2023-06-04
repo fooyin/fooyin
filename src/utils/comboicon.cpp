@@ -25,6 +25,8 @@
 #include <QVBoxLayout>
 
 namespace Fy::Utils {
+constexpr int IconSize = 128;
+
 ComboIcon::ComboIcon(const QString& path, Attributes attributes, QWidget* parent)
     : QWidget{parent}
     , m_layout{new QVBoxLayout(this)}
@@ -33,19 +35,13 @@ ComboIcon::ComboIcon(const QString& path, Attributes attributes, QWidget* parent
     , m_currentIndex{0}
 {
     addAttribute(Enabled);
-    setup(path);
-}
 
-ComboIcon::ComboIcon(const QString& path, QWidget* parent)
-    : ComboIcon{path, {}, parent}
-{ }
+    addIcon(path);
 
-void ComboIcon::setup(const QString& path)
-{
-    const QPixmap icon{path};
-    addPixmap(path, icon);
+    if(!m_icons.empty()) {
+        m_label->setPixmap(m_icons.front().second.icon);
+    }
 
-    m_label->setPixmap(icon);
     m_label->setScaledContents(true);
 
     m_layout->addWidget(m_label);
@@ -58,7 +54,11 @@ void ComboIcon::setup(const QString& path)
     connect(m_label, &ClickableLabel::entered, this, &ComboIcon::entered);
 }
 
-void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)
+ComboIcon::ComboIcon(const QString& path, QWidget* parent)
+    : ComboIcon{path, {}, parent}
+{ }
+
+void ComboIcon::addIcon(const QString& path, const QPixmap& icon)
 {
     const QPalette palette = m_label->palette();
     Icon ico;
@@ -72,10 +72,11 @@ void ComboIcon::addPixmap(const QString& path, const QPixmap& icon)
     m_icons.emplace_back(path, ico);
 }
 
-void ComboIcon::addPixmap(const QString& path)
+void ComboIcon::addIcon(const QString& path)
 {
-    const QPixmap pixmap{path};
-    addPixmap(path, pixmap);
+    const auto icon   = QIcon::fromTheme(path);
+    const auto pixmap = icon.pixmap(IconSize);
+    addIcon(path, pixmap);
 }
 
 void ComboIcon::setIcon(const QString& path, bool active)
@@ -132,7 +133,7 @@ void ComboIcon::changeEvent(QEvent* event)
     if(event->type() == QEvent::EnabledChange && hasAttribute(HasDisabledIcon)) {
         setIconEnabled(isEnabled());
     }
-    return QWidget::changeEvent(event);
+    QWidget::changeEvent(event);
 }
 
 void ComboIcon::labelClicked()

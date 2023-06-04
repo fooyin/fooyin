@@ -19,6 +19,8 @@
 
 #include "statuswidget.h"
 
+#include "gui/guiconstants.h"
+
 #include <core/library/musiclibrary.h>
 #include <core/models/track.h>
 #include <core/player/playermanager.h>
@@ -31,6 +33,8 @@
 #include <QTimer>
 
 namespace Fy::Gui::Widgets {
+constexpr int IconSize = 50;
+
 StatusWidget::StatusWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
                            QWidget* parent)
     : FyWidget{parent}
@@ -38,7 +42,7 @@ StatusWidget::StatusWidget(Core::Library::MusicLibrary* library, Core::Player::P
     , m_playerManager{playerManager}
     , m_layout{new QHBoxLayout(this)}
     , m_iconLabel{new Utils::ClickableLabel(this)}
-    , m_icon{"://images/fooyin-small.png"}
+    , m_icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
     , m_playing{new Utils::ClickableLabel(this)}
 {
     setObjectName("Status Bar");

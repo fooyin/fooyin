@@ -21,7 +21,7 @@
 
 #include <QTreeView>
 
-namespace Fy::Gui::Widgets {
+namespace Fy::Gui::Widgets::Playlist {
 class PlaylistView : public QTreeView
 {
     Q_OBJECT
