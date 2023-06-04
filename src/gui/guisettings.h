@@ -47,13 +47,14 @@ enum Gui : uint32_t
     InfoScrollBar      = 13 | Utils::Settings::Bool,
     EditingMenuLevels  = 14 | Utils::Settings::Int,
     IconTheme          = 15 | Utils::Settings::String,
+    LastPlaylistId     = 16 | Utils::Settings::Int,
 };
 Q_ENUM_NS(Gui)
 
 class GuiSettings
 {
 public:
-    GuiSettings(Utils::SettingsManager* settingsManager);
+    explicit GuiSettings(Utils::SettingsManager* settingsManager);
 
 private:
     Utils::SettingsManager* m_settings;

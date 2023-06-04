@@ -19,46 +19,49 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
+#include <QObject>
 
-#include <core/models/trackfwd.h>
+#include <core/playlist/playlist.h>
 
 namespace Fy {
 
 namespace Utils {
 class SettingsManager;
-} // namespace Utils
+}
 
 namespace Core {
-namespace Player {
-class PlayerManager;
-} // namespace Player
+class Track;
 
-namespace Library {
-class MusicLibrary;
-} // namespace Library
+namespace Playlist {
+class Playlist;
+class PlaylistHandler;
+} // namespace Playlist
 } // namespace Core
 
 namespace Gui::Widgets::Playlist {
-class PlaylistController;
-
-class PlaylistWidget : public FyWidget
+class PlaylistController : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-                            PlaylistController* playlistController, Utils::SettingsManager* settings,
-                            QWidget* parent = nullptr);
-    ~PlaylistWidget() override;
+    PlaylistController(Core::Playlist::PlaylistHandler* handler, Utils::SettingsManager* settings,
+                       QObject* parent = nullptr);
+    ~PlaylistController() override;
 
-    [[nodiscard]] QString name() const override;
+    const Core::Playlist::PlaylistList& playlists() const;
+
+    void startPlayback(const Core::Track& track) const;
+
+    [[nodiscard]] Core::Playlist::Playlist* currentPlaylist() const;
+
+    void changeCurrentPlaylist(Core::Playlist::Playlist* playlist);
+    void changeCurrentPlaylist(int id);
+
+    void refreshCurrentPlaylist();
 
 signals:
-    void selectionWasChanged(const Core::TrackList& tracks);
-
-protected:
-    void keyPressEvent(QKeyEvent* event) override;
+    void refreshPlaylist(Core::Playlist::Playlist* playlist);
+    void currentPlaylistChanged(Core::Playlist::Playlist* playlist);
 
 private:
     struct Private;

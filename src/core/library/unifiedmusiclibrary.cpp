@@ -107,7 +107,7 @@ void UnifiedMusicLibrary::changeSort(const QString& sort)
     m_trackSorter.changeSorting(sort);
     m_trackSorter.calcSortFields(m_tracks);
     m_trackSorter.sortTracks(m_tracks);
-    emit tracksSorted();
+    emit tracksSorted(m_tracks);
 }
 
 void UnifiedMusicLibrary::removeLibrary(int id)

@@ -54,14 +54,15 @@ public:
                              QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
-    Playlist* playlistById(int id) const;
-    Playlist* playlistByIndex(int index) const;
-    const PlaylistList& playlists() const;
+    [[nodiscard]] Playlist* playlistById(int id) const;
+    [[nodiscard]] Playlist* playlistByIndex(int index) const;
+    [[nodiscard]] Playlist* playlistByName(const QString& name) const;
+    [[nodiscard]] const PlaylistList& playlists() const;
 
-    void createPlaylist(const QString& name, const TrackList& tracks = {}, bool switchTo = false);
+    Playlist* createPlaylist(const QString& name, const TrackList& tracks = {});
     void createEmptyPlaylist();
 
-    void changeCurrentPlaylist(int id);
+    void changeActivePlaylist(int id);
 
     void renamePlaylist(int id, const QString& name);
     void removePlaylist(int id);
@@ -71,37 +72,19 @@ public:
 
     void savePlaylists();
 
-    void changeCurrentTrack(const Core::Track& track) const;
+    void startPlayback(int playlistId, const Core::Track& track = {});
 
 signals:
+    void playlistsPopulated();
     void playlistAdded(Core::Playlist::Playlist* playlist);
+    void playlistTracksChanged(Core::Playlist::Playlist* playlist);
     void playlistRemoved(int id);
     void playlistRenamed(Core::Playlist::Playlist* playlist);
-    void currentPlaylistChanged(Core::Playlist::Playlist* playlist);
+    void activePlaylistChanged(Core::Playlist::Playlist* playlist);
 
 private:
-    void next();
-    void previous() const;
-
-    void updateIndexes();
-
-    int nameCount(const QString& name) const;
-    QString findUniqueName(const QString& name) const;
-    [[nodiscard]] int exists(const QString& name) const;
-    [[nodiscard]] bool validIndex(int index) const;
-
-    Playlist* addNewPlaylist(const QString& name);
-    void populatePlaylists(const TrackList& tracks);
-    void libraryRemoved(int id);
-
-    DB::Database* m_database;
-    Player::PlayerManager* m_playerManager;
-    Core::Library::MusicLibrary* m_library;
-    Utils::SettingsManager* m_settings;
-    DB::Playlist* m_playlistConnector;
-
-    PlaylistList m_playlists;
-    Playlist* m_currentPlaylist;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Playlist
 } // namespace Core

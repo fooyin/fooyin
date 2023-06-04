@@ -46,7 +46,7 @@ class FilterManager : public QObject
 public:
     explicit FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
                            FieldRegistry* fieldsRegistry, QObject* parent = nullptr);
-    ~FilterManager();
+    ~FilterManager() override;
 
     [[nodiscard]] Core::TrackList tracks() const;
     [[nodiscard]] bool hasTracks() const;

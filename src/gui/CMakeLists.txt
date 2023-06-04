@@ -69,6 +69,7 @@ set(SOURCES
     menu/viewmenu.h
     menu/viewmenu.cpp
 
+    playlist/playlistcontroller.cpp
     playlist/playlistview.h
     playlist/playlistview.cpp
     playlist/playlistmodel.h
@@ -77,6 +78,7 @@ set(SOURCES
     playlist/playlistitem.cpp
     playlist/playlistdelegate.h
     playlist/playlistdelegate.cpp
+    playlist/playlisttabs.cpp
     playlist/playlistwidget.h
     playlist/playlistwidget.cpp
 
@@ -108,8 +110,6 @@ set(SOURCES
 
     widgets/dummy.h
     widgets/dummy.cpp
-    widgets/playlisttabs.h
-    widgets/playlisttabs.cpp
     widgets/spacer.h
     widgets/spacer.cpp
     widgets/splitter.h

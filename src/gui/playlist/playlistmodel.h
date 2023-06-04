@@ -42,26 +42,25 @@ class PlayerManager;
 }
 
 namespace Playlist {
-class PlaylistHandler;
-}
+class Playlist;
+} // namespace Playlist
 } // namespace Core
 
-namespace Gui::Widgets {
-namespace Playlist {
+namespace Gui::Widgets::Playlist {
 enum Role
 {
     Type = Qt::UserRole + 20,
     Mode = Qt::UserRole + 21,
 };
-}
 
 class PlaylistModel : public Utils::TreeModel<PlaylistItem>
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Playlist::PlaylistHandler* playlistHandler,
-                           Utils::SettingsManager* settings, QObject* parent = nullptr);
+    PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
+                  QObject* parent = nullptr);
+    ~PlaylistModel() override;
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
@@ -69,47 +68,16 @@ public:
 
     [[nodiscard]] QModelIndex matchTrack(int id) const;
 
-    void reset();
-    void setupModelData();
+    void reset(Core::Playlist::Playlist* playlist);
+    void setupModelData(const Core::Playlist::Playlist* playlist);
     void changeTrackState();
 
     [[nodiscard]] QModelIndex indexForTrack(const Core::Track& track) const;
     [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;
 
 private:
-    using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
-
-    void createAlbums(const Core::TrackList& tracks);
-    PlaylistItem* iterateTrack(const Core::Track& track, bool discHeaders, bool splitDiscs);
-
-    PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, const ItemType& item,
-                                 PlaylistItem* parent);
-
-    void insertRow(PlaylistItem* parent, PlaylistItem* child);
-
-    void beginReset();
-
-    [[nodiscard]] QVariant trackData(PlaylistItem* item, int role) const;
-    [[nodiscard]] QVariant albumData(PlaylistItem* item, int role) const;
-    [[nodiscard]] QVariant containerData(PlaylistItem* item, int role) const;
-
-    Core::Player::PlayerManager* m_playerManager;
-    Core::Playlist::PlaylistHandler* m_playlistHandler;
-    Utils::SettingsManager* m_settings;
-    Core::Library::CoverProvider m_coverProvider;
-
-    bool m_discHeaders;
-    bool m_splitDiscs;
-    bool m_altColours;
-    bool m_simplePlaylist;
-
-    bool m_resetting;
-
-    PlaylistItemHash m_nodes;
-    Core::AlbumHash m_albums;
-    Core::ContainerHash m_containers;
-    QPixmap m_playingIcon;
-    QPixmap m_pausedIcon;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
+} // namespace Gui::Widgets::Playlist
 } // namespace Fy

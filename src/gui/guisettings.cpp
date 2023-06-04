@@ -45,6 +45,7 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
     m_settings->createSetting(Settings::EditingMenuLevels, 2, "Layout");
     m_settings->createSetting(Settings::IconTheme, "light", "Theme");
+    m_settings->createSetting(Settings::LastPlaylistId, 0, "Playlist");
 
     m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(activeLayoutPath()));
 

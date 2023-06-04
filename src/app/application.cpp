@@ -51,6 +51,8 @@
 #include <gui/menu/librarymenu.h>
 #include <gui/menu/playbackmenu.h>
 #include <gui/menu/viewmenu.h>
+#include <gui/playlist/playlistcontroller.h>
+#include <gui/playlist/playlisttabs.h>
 #include <gui/playlist/playlistwidget.h>
 #include <gui/settings/generalpage.h>
 #include <gui/settings/guigeneralpage.h>
@@ -58,7 +60,6 @@
 #include <gui/settings/playlistguipage.h>
 #include <gui/settings/pluginspage.h>
 #include <gui/widgetfactory.h>
-#include <gui/widgets/playlisttabs.h>
 #include <gui/widgets/spacer.h>
 #include <gui/widgets/splitterwidget.h>
 
@@ -82,6 +83,7 @@ struct Application::Private
     Gui::Widgets::WidgetFactory widgetFactory;
     Gui::Settings::GuiSettings guiSettings;
     Gui::LayoutProvider layoutProvider;
+    std::unique_ptr<Gui::Widgets::Playlist::PlaylistController> playlistController;
     std::unique_ptr<Gui::Widgets::EditableLayout> editableLayout;
     std::unique_ptr<Gui::MainWindow> mainWindow;
 
@@ -114,6 +116,7 @@ struct Application::Private
         , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, library, settingsManager,
                                                               parent)}
         , guiSettings{settingsManager}
+        , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(playlistHandler, settingsManager)}
         , editableLayout{std::make_unique<Gui::Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,
                                                                         &layoutProvider)}
         , mainWindow{std::make_unique<Gui::MainWindow>(actionManager, settingsManager, editableLayout.get())}
@@ -157,8 +160,8 @@ struct Application::Private
 
     void registerWidgets()
     {
-        widgetFactory.registerClass<Gui::Widgets::PlaylistTabs>("PlaylistTabs", [this]() {
-            return new Gui::Widgets::PlaylistTabs(actionManager, &widgetFactory, playlistHandler);
+        widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistTabs>("PlaylistTabs", [this]() {
+            return new Gui::Widgets::Playlist::PlaylistTabs(playlistHandler, playlistController.get());
         });
 
         widgetFactory.registerClass<Gui::Widgets::ControlWidget>("Controls", [this]() {
@@ -173,8 +176,9 @@ struct Application::Private
             return new Gui::Widgets::CoverWidget(library, playerManager);
         });
 
-        widgetFactory.registerClass<Gui::Widgets::PlaylistWidget>("Playlist", [this]() {
-            return new Gui::Widgets::PlaylistWidget(library, playlistHandler, playerManager, settingsManager);
+        widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
+            return new Gui::Widgets::Playlist::PlaylistWidget(library, playerManager, playlistController.get(),
+                                                              settingsManager);
         });
 
         widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {
@@ -232,6 +236,7 @@ void Application::shutdown()
 {
     p->playlistHandler->savePlaylists();
     p->editableLayout->saveLayout();
+    p->playlistController.reset(nullptr);
     p->editableLayout.reset(nullptr);
     p->mainWindow.reset(nullptr);
     p->pluginManager->shutdown();

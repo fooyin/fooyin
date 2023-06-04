@@ -27,7 +27,7 @@ namespace Fy::Core::Playlist {
 class Playlist
 {
 public:
-    Playlist(QString name, int index = -1, int id = -1);
+    explicit Playlist(QString name, int index = -1, int id = -1);
 
     [[nodiscard]] int id() const;
     [[nodiscard]] int index() const;
