@@ -145,7 +145,7 @@ struct PlaylistHandler::Private : QObject
             return -1;
         }
         return static_cast<int>(std::count_if(playlists.cbegin(), playlists.cend(), [name](const auto& playlist) {
-            return playlist->name().contains(name);
+            return QString::compare(name, playlist->name(), Qt::CaseInsensitive) == 0;
         }));
     }
 
@@ -345,12 +345,16 @@ void PlaylistHandler::renamePlaylist(int id, const QString& name)
     }
     Playlist* playlist = playlistById(id);
     if(!playlist) {
-        qDebug() << QString{"Playlist %1 could not be renamed to %2"}.arg(id).arg("name");
+        qDebug() << QString{"Playlist %1 could not be found"}.arg(id);
         return;
     }
     const QString newName = p->findUniqueName(name);
     playlist->setName(newName);
-    p->playlistConnector->renamePlaylist(playlist->id(), newName);
+
+    if(!p->playlistConnector->renamePlaylist(playlist->id(), newName)) {
+        qDebug() << QString{"Playlist %1 could not be renamed to %2"}.arg(id).arg("name");
+        return;
+    }
     emit playlistRenamed(playlist);
 }
 
