@@ -23,7 +23,8 @@ namespace Fy::Core::Scripting {
 bool isLiteral(QChar ch)
 {
     return (ch != TokComma && ch != TokQuote && ch != TokLeftParen && ch != TokRightParen && ch != TokLeftSquare
-            && ch != TokFunc && ch != TokVar && ch != TokLeftAngle && ch != TokRightAngle && ch != TokEscape);
+            && ch != TokRightSquare && ch != TokFunc && ch != TokVar && ch != TokLeftAngle && ch != TokRightAngle
+            && ch != TokEscape);
 }
 
 void Scanner::setup(const QString& input)
