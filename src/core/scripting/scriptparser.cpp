@@ -21,6 +21,8 @@
 
 #include "core/constants.h"
 
+#include <QStringBuilder>
+
 namespace Fy::Core::Scripting {
 QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& result)
 {
@@ -145,9 +147,9 @@ ScriptResult Parser::evalExpression(const Expression& exp) const
         case(Conditional):
             return evalConditional(exp);
         case(Null):
-            break;
+        default:
+            return {};
     }
-    return {};
 }
 
 ScriptResult Parser::evalLiteral(const Expression& exp) const
@@ -201,12 +203,12 @@ ScriptResult Parser::evalFunctionArg(const Expression& exp) const
             QStringList newResult;
             const auto values = subExpr.value.split(Core::Constants::Separator);
             for(const auto& value : values) {
-                newResult.emplace_back(result.value + value);
+                newResult.emplace_back(result.value % value);
             }
             result.value = newResult.join(Core::Constants::Separator);
         }
         else {
-            result.value += subExpr.value;
+            result.value = result.value % subExpr.value;
         }
     }
     result.cond = allPassed;
