@@ -298,6 +298,9 @@ struct PlaylistModel::Private
             case(PlaylistItem::Role::RightTextFont): {
                 return currentPreset.header.sideTextFont;
             }
+            case(PlaylistItem::Role::InfoFont): {
+                return currentPreset.header.infoFont;
+            }
             case(Qt::SizeHintRole): {
                 return QSize{0, currentPreset.header.rowHeight};
             }
@@ -326,6 +329,9 @@ struct PlaylistModel::Private
             }
             case(PlaylistItem::Role::TitleFont): {
                 return currentPreset.subHeader.titleFont;
+            }
+            case(PlaylistItem::Role::RightTextFont): {
+                return currentPreset.subHeader.rightFont;
             }
             case(Qt::SizeHintRole): {
                 return QSize{0, currentPreset.subHeader.rowHeight};

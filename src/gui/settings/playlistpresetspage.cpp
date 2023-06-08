@@ -376,11 +376,15 @@ private:
     QLineEdit* m_headerSideText;
     QPushButton* m_headerSideTextFontButton;
     QFont m_headerSideTextFont;
+    QPushButton* m_headerInfoFontButton;
+    QFont m_headerInfoFont;
     QSpinBox* m_headerRowHeight;
 
     QLineEdit* m_subHeaderTitle;
     QPushButton* m_subHeaderTitleFontButton;
     QFont m_subHeaderTitleFont;
+    QPushButton* m_subHeaderRightFontButton;
+    QFont m_subHeaderRightFont;
     QSpinBox* m_subHeaderRowHeight;
 
     QLineEdit* m_trackLeft;
@@ -408,9 +412,11 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     , m_headerSubtitleFontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "", this)}
     , m_headerSideText{new QLineEdit(this)}
     , m_headerSideTextFontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "", this)}
+    , m_headerInfoFontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "", this)}
     , m_headerRowHeight{new QSpinBox(this)}
     , m_subHeaderTitle{new QLineEdit(this)}
     , m_subHeaderTitleFontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "", this)}
+    , m_subHeaderRightFontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "", this)}
     , m_subHeaderRowHeight{new QSpinBox(this)}
     , m_trackLeft{new QLineEdit(this)}
     , m_trackLeftFontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "", this)}
@@ -449,6 +455,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     auto* headerTitle     = new QLabel(tr("Title: "), this);
     auto* headerSubtitle  = new QLabel(tr("Subtitle: "), this);
     auto* headerSideText  = new QLabel(tr("Side text: "), this);
+    auto* headerInfo      = new QLabel(tr("Info: "), this);
     auto* headerRowHeight = new QLabel(tr("Row height: "), this);
 
     m_headerRowHeight->setMinimumWidth(120);
@@ -457,6 +464,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     m_headerTitleFontButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_headerSubtitleFontButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_headerSideTextFontButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_headerInfoFontButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     headerLayout->addWidget(headerRowHeight, 0, 0);
     headerLayout->addWidget(m_headerRowHeight, 1, 0);
@@ -471,6 +479,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     headerLayout->addWidget(headerSideText, 6, 0);
     headerLayout->addWidget(m_headerSideText, 7, 0, 1, 2);
     headerLayout->addWidget(m_headerSideTextFontButton, 7, 3);
+    headerLayout->addWidget(headerInfo, 8, 0);
+    headerLayout->addWidget(m_headerInfoFontButton, 9, 0);
 
     headerLayout->setRowStretch(headerLayout->rowCount(), 1);
     headerLayout->setColumnStretch(0, 1);
@@ -481,18 +491,22 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     auto* subHeaderLayout = new QGridLayout(subHeaderGroup);
 
     auto* subHeaderTitle     = new QLabel(tr("Title: "), this);
+    auto* subHeaderRight     = new QLabel(tr("Duration: "), this);
     auto* subHeaderRowHeight = new QLabel(tr("Row height: "), this);
 
     m_subHeaderRowHeight->setMinimumWidth(120);
     m_subHeaderRowHeight->setMaximumWidth(120);
 
     m_subHeaderTitleFontButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_subHeaderRightFontButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     subHeaderLayout->addWidget(subHeaderRowHeight, 0, 0);
     subHeaderLayout->addWidget(m_subHeaderRowHeight, 1, 0);
     subHeaderLayout->addWidget(subHeaderTitle, 2, 0);
     subHeaderLayout->addWidget(m_subHeaderTitle, 3, 0);
     subHeaderLayout->addWidget(m_subHeaderTitleFontButton, 3, 1);
+    subHeaderLayout->addWidget(subHeaderRight, 4, 0);
+    subHeaderLayout->addWidget(m_subHeaderRightFontButton, 5, 0);
 
     detailsLayout->addWidget(subHeaderGroup, 1, 0);
 
@@ -546,8 +560,14 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     QObject::connect(m_headerSideTextFontButton, &QPushButton::clicked, this, [this]() {
         showFontDialog(m_headerSideTextFont);
     });
+    QObject::connect(m_headerInfoFontButton, &QPushButton::clicked, this, [this]() {
+        showFontDialog(m_headerInfoFont);
+    });
     QObject::connect(m_subHeaderTitleFontButton, &QPushButton::clicked, this, [this]() {
         showFontDialog(m_subHeaderTitleFont);
+    });
+    QObject::connect(m_subHeaderRightFontButton, &QPushButton::clicked, this, [this]() {
+        showFontDialog(m_subHeaderRightFont);
     });
     QObject::connect(m_trackLeftFontButton, &QPushButton::clicked, this, [this]() {
         showFontDialog(m_trackLeftFont);
@@ -606,12 +626,14 @@ void PlaylistPresetsPageWidget::updatePreset()
     preset.header.subtitleFont = m_headerSubtitleFont;
     preset.header.sideText     = m_headerSideText->text();
     preset.header.sideTextFont = m_headerSideTextFont;
+    preset.header.infoFont     = m_headerInfoFont;
     preset.header.rowHeight    = m_headerRowHeight->value();
     preset.header.simple       = m_simpleHeader->isChecked();
     preset.header.showCover    = m_showCover->isEnabled() && m_showCover->isChecked();
 
     preset.subHeader.title     = m_subHeaderTitle->text();
     preset.subHeader.titleFont = m_subHeaderTitleFont;
+    preset.subHeader.rightFont = m_subHeaderRightFont;
     preset.subHeader.rowHeight = m_subHeaderRowHeight->value();
 
     preset.track.leftText      = m_trackLeft->text();
@@ -653,12 +675,14 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_headerSubtitleFont = preset.header.subtitleFont;
     m_headerSideText->setText(preset.header.sideText);
     m_headerSideTextFont = preset.header.sideTextFont;
+    m_headerInfoFont     = preset.header.infoFont;
     m_headerRowHeight->setValue(preset.header.rowHeight);
     m_showCover->setChecked(preset.header.showCover);
     m_simpleHeader->setChecked(preset.header.simple);
 
     m_subHeaderTitle->setText(preset.subHeader.title);
     m_subHeaderTitleFont = preset.subHeader.titleFont;
+    m_subHeaderRightFont = preset.subHeader.rightFont;
     m_subHeaderRowHeight->setValue(preset.subHeader.rowHeight);
 
     m_trackLeft->setText(preset.track.leftText);

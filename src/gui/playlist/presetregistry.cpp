@@ -42,19 +42,21 @@ PlaylistPreset loadDeault()
     preset.header.title     = "$if(%albumartist%,%albumartist%,Unknown Artist)";
     preset.header.subtitle  = "$if(%album%,%album%,Unknown Album)";
     preset.header.sideText  = "%year%";
-    preset.header.titleFont.setPointSize(13);
-    preset.header.subtitleFont.setPointSize(12);
-    preset.header.sideTextFont.setPointSize(12);
+    preset.header.titleFont.setPixelSize(17);
+    preset.header.subtitleFont.setPixelSize(16);
+    preset.header.sideTextFont.setPixelSize(16);
+    preset.header.infoFont.setPixelSize(13);
 
-    preset.subHeader.rowHeight = 18;
+    preset.subHeader.rowHeight = 19;
     preset.subHeader.title     = "$ifgreater(%disctotal%,1,Disc #%disc%)";
-    preset.subHeader.titleFont.setPointSize(10);
+    preset.subHeader.titleFont.setPixelSize(13);
+    preset.subHeader.rightFont.setPixelSize(13);
 
-    preset.track.rowHeight = 21;
+    preset.track.rowHeight = 23;
     preset.track.leftText  = "%track%.  %title%";
     preset.track.rightText = "$ifgreater(%playcount%,1,|%playcount%)  $timems(%duration%)";
-    preset.track.leftTextFont.setPointSize(10);
-    preset.track.rightTextFont.setPointSize(10);
+    preset.track.leftTextFont.setPixelSize(13);
+    preset.track.rightTextFont.setPixelSize(13);
 
     return preset;
 }

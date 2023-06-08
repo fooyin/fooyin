@@ -35,6 +35,7 @@ struct PlaylistHeader
     QFont titleFont;
     QFont subtitleFont;
     QFont sideTextFont;
+    QFont infoFont;
 
     int rowHeight{73};
     bool showCover{true};
@@ -48,6 +49,7 @@ struct PlaylistHeader
         stream << header.subtitleFont.toString();
         stream << header.sideText;
         stream << header.sideTextFont.toString();
+        stream << header.infoFont.toString();
         stream << header.rowHeight;
         stream << header.showCover;
         stream << header.simple;
@@ -74,6 +76,10 @@ struct PlaylistHeader
         stream >> sideTextFont;
         header.sideTextFont.fromString(sideTextFont);
 
+        QString infoFont;
+        stream >> infoFont;
+        header.infoFont.fromString(infoFont);
+
         stream >> header.rowHeight;
         stream >> header.showCover;
         stream >> header.simple;
@@ -85,12 +91,14 @@ struct PlaylistSubHeader
 {
     QString title;
     QFont titleFont;
+    QFont rightFont;
     int rowHeight{25};
 
     friend QDataStream& operator<<(QDataStream& stream, const PlaylistSubHeader& header)
     {
         stream << header.title;
         stream << header.titleFont.toString();
+        stream << header.rightFont.toString();
         stream << header.rowHeight;
         return stream;
     }
@@ -98,9 +106,15 @@ struct PlaylistSubHeader
     friend QDataStream& operator>>(QDataStream& stream, PlaylistSubHeader& header)
     {
         stream >> header.title;
+
         QString titleFont;
         stream >> titleFont;
         header.titleFont.fromString(titleFont);
+
+        QString rightFont;
+        stream >> rightFont;
+        header.rightFont.fromString(rightFont);
+
         stream >> header.rowHeight;
         return stream;
     }

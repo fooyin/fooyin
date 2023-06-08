@@ -100,9 +100,7 @@ void PlaylistDelegate::paintHeader(QPainter* painter, const QStyleOptionViewItem
     const auto titleFont    = index.data(PlaylistItem::Role::TitleFont).value<QFont>();
     const auto subtitleFont = index.data(PlaylistItem::Role::SubtitleFont).value<QFont>();
     const auto rightFont    = index.data(PlaylistItem::Role::RightTextFont).value<QFont>();
-
-    QFont infoFont{painter->font()};
-    infoFont.setPixelSize(11);
+    const auto infoFont    = index.data(PlaylistItem::Role::InfoFont).value<QFont>();
 
     paintSelectionBackground(painter, option);
 
@@ -331,6 +329,7 @@ void PlaylistDelegate::paintSubheader(QPainter* painter, const QStyleOptionViewI
     const auto indentation = index.data(PlaylistItem::Role::Indentation).toInt();
 
     const auto titleFont = index.data(PlaylistItem::Role::TitleFont).value<QFont>();
+    const auto rightFont = index.data(PlaylistItem::Role::RightTextFont).value<QFont>();
 
     paintSelectionBackground(painter, option);
 
@@ -347,6 +346,7 @@ void PlaylistDelegate::paintSubheader(QPainter* painter, const QStyleOptionViewI
     option.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
                                          title);
 
+    painter->setFont(rightFont);
     const QRect durationBound
         = painter->boundingRect(durationRect, Qt::AlignRight | Qt::AlignVCenter | Qt::TextWrapAnywhere, duration);
     option.widget->style()->drawItemText(painter, durationRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true,
