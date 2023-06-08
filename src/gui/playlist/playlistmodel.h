@@ -27,6 +27,7 @@
 #include <core/models/trackfwd.h>
 
 #include <utils/treemodel.h>
+#include <utils/utils.h>
 
 #include <QAbstractItemModel>
 #include <QPixmap>
@@ -47,11 +48,7 @@ class Playlist;
 } // namespace Core
 
 namespace Gui::Widgets::Playlist {
-enum Role
-{
-    Type = Qt::UserRole + 20,
-    Mode = Qt::UserRole + 21,
-};
+struct PlaylistPreset;
 
 class PlaylistModel : public Utils::TreeModel<PlaylistItem>
 {
@@ -71,6 +68,8 @@ public:
     void reset(Core::Playlist::Playlist* playlist);
     void setupModelData(const Core::Playlist::Playlist* playlist);
     void changeTrackState();
+
+    void changePreset(const PlaylistPreset& preset);
 
     [[nodiscard]] QModelIndex indexForTrack(const Core::Track& track) const;
     [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;

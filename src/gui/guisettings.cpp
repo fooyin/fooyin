@@ -33,12 +33,11 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createTempSetting(Settings::LayoutEditing, false);
     m_settings->createSetting(Settings::Geometry, "", "Layout");
     m_settings->createSetting(Settings::SplitterHandles, true, "Splitters");
-    m_settings->createSetting(Settings::DiscHeaders, true, "Playlist");
-    m_settings->createSetting(Settings::SplitDiscs, false, "Playlist");
-    m_settings->createSetting(Settings::SimplePlaylist, false, "Playlist");
     m_settings->createSetting(Settings::PlaylistAltColours, true, "Playlist");
     m_settings->createSetting(Settings::PlaylistHeader, true, "Playlist");
     m_settings->createSetting(Settings::PlaylistScrollBar, true, "Playlist");
+    m_settings->createSetting(Settings::PlaylistPresets, "", "Playlist");
+    m_settings->createSetting(Settings::CurrentPreset, "Default", "Playlist");
     m_settings->createSetting(Settings::ElapsedTotal, false, "Player");
     m_settings->createSetting(Settings::InfoAltColours, true, "Info");
     m_settings->createSetting(Settings::InfoHeader, true, "Info");

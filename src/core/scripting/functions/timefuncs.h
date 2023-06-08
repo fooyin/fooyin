@@ -19,23 +19,8 @@
 
 #pragma once
 
-#include "core/tagging/tagreader.h"
+#include <QString>
 
-class QPixmap;
-
-namespace Fy::Core {
-class Album;
-class Track;
-
-namespace Library {
-class CoverProvider
-{
-public:
-    QPixmap trackCover(const Track& track);
-    QPixmap albumThumbnail(const QString& path) const;
-
-private:
-    Tagging::TagReader m_tagReader;
-};
-} // namespace Library
-} // namespace Fy::Core
+namespace Fy::Core::Scripting {
+QString msToString(const QStringList& vec);
+}

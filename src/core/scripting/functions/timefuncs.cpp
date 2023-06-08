@@ -17,25 +17,18 @@
  *
  */
 
-#pragma once
+#include "timefuncs.h"
 
-#include "core/tagging/tagreader.h"
+#include <utils/utils.h>
 
-class QPixmap;
+#include <QStringList>
 
-namespace Fy::Core {
-class Album;
-class Track;
-
-namespace Library {
-class CoverProvider
+namespace Fy::Core::Scripting {
+QString msToString(const QStringList& vec)
 {
-public:
-    QPixmap trackCover(const Track& track);
-    QPixmap albumThumbnail(const QString& path) const;
-
-private:
-    Tagging::TagReader m_tagReader;
-};
-} // namespace Library
-} // namespace Fy::Core
+    if(vec.size() > 1 || vec[0].isEmpty()) {
+        return {};
+    }
+    return Utils::msToString(vec[0].toULongLong());
+}
+} // namespace Fy::Core::Scripting

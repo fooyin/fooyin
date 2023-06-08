@@ -24,6 +24,7 @@
 #include "playlistdelegate.h"
 #include "playlistmodel.h"
 #include "playlistview.h"
+#include "presetregistry.h"
 
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
@@ -48,6 +49,7 @@ struct PlaylistWidget::Private : QObject
     PlaylistWidget* widget;
     Core::Library::MusicLibrary* library;
     Core::Player::PlayerManager* playerManager;
+    PresetRegistry* presetRegistry;
     Utils::SettingsManager* settings;
     Utils::SettingsDialogController* settingsDialog;
 
@@ -61,10 +63,11 @@ struct PlaylistWidget::Private : QObject
     bool changingSelection{false};
 
     Private(PlaylistWidget* widget, Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-            PlaylistController* playlistController, Utils::SettingsManager* settings)
+            PlaylistController* playlistController, PresetRegistry* presetRegistry, Utils::SettingsManager* settings)
         : widget{widget}
         , library{library}
         , playerManager{playerManager}
+        , presetRegistry{presetRegistry}
         , settings{settings}
         , settingsDialog{settings->settingsDialog()}
         , playlistController{playlistController}
@@ -77,6 +80,9 @@ struct PlaylistWidget::Private : QObject
 
         header->setStretchLastSection(true);
         playlistView->setHeader(header);
+        header->setContextMenuPolicy(Qt::CustomContextMenu);
+
+        model->changePreset(presetRegistry->presetByName(settings->value<Settings::CurrentPreset>()));
 
         playlistView->setModel(model);
         playlistView->setItemDelegate(new PlaylistDelegate(this));
@@ -115,8 +121,26 @@ struct PlaylistWidget::Private : QObject
         //    connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, p->model, &PlaylistModel::reset);
         //    connect(p->library, &Core::Library::MusicLibrary::libraryChanged, p->model, &PlaylistModel::reset);
 
+        QObject::connect(presetRegistry, &PresetRegistry::presetChanged, this,
+                         &PlaylistWidget::Private::onPresetChanged);
+
         settings->subscribe<Settings::PlaylistHeader>(this, &PlaylistWidget::Private::setHeaderHidden);
         settings->subscribe<Settings::PlaylistScrollBar>(this, &PlaylistWidget::Private::setScrollbarHidden);
+
+        settings->subscribe<Settings::CurrentPreset>(this, &PlaylistWidget::Private::changePreset);
+    }
+
+    void onPresetChanged(const PlaylistPreset& preset)
+    {
+        if(preset.name == settings->value<Settings::CurrentPreset>()) {
+            changePreset(preset.name);
+        }
+    }
+
+    void changePreset(const QString& name)
+    {
+        model->changePreset(presetRegistry->presetByName(name));
+        model->reset(playlistController->currentPlaylist());
     }
 
     void changePlaylist(Core::Playlist::Playlist* playlist)
@@ -169,9 +193,9 @@ struct PlaylistWidget::Private : QObject
             const auto index = indexes.front();
             indexes.erase(indexes.cbegin());
             if(index.isValid()) {
-                const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
+                const auto type = index.data(PlaylistItem::Type);
                 if(type == PlaylistItem::Track) {
-                    selectedTracks.emplace_back(index.data(PlaylistItem::Role::Data).value<Core::Track>());
+                    selectedTracks.emplace_back(index.data(PlaylistItem::Role::ItemData).value<Core::Track>());
                 }
                 else {
                     const QItemSelection selectedChildren{model->index(0, 0, index),
@@ -188,7 +212,23 @@ struct PlaylistWidget::Private : QObject
 
     void customHeaderMenuRequested(QPoint pos)
     {
-        Q_UNUSED(pos)
+        auto* menu = new QMenu(widget);
+        menu->setAttribute(Qt::WA_DeleteOnClose);
+
+        const auto& currentPreset = presetRegistry->presetByName(settings->value<Settings::CurrentPreset>());
+        const auto& presets       = presetRegistry->presets();
+
+        for(const auto& [index, preset] : presets) {
+            //            if(preset.name != currentPreset.name) {
+            const QString name = preset.name;
+            auto* switchPreset = new QAction(name, menu);
+            QObject::connect(switchPreset, &QAction::triggered, this, [this, name]() {
+                settings->set<Settings::CurrentPreset>(name);
+            });
+            menu->addAction(switchPreset);
+            //            }
+        }
+        menu->popup(widget->mapToGlobal(pos));
     }
 
     void changeState(Core::Player::PlayState state)
@@ -205,14 +245,14 @@ struct PlaylistWidget::Private : QObject
 
     void playTrack(const QModelIndex& index)
     {
-        const auto type = index.data(Playlist::Type).value<PlaylistItem::Type>();
+        const auto type = index.data(PlaylistItem::Type);
         Core::Track track;
 
         if(type != PlaylistItem::Track && !selectedTracks.empty()) {
             track = selectedTracks.front();
         }
         else {
-            track = index.data(PlaylistItem::Role::Data).value<Core::Track>();
+            track = index.data(PlaylistItem::Role::ItemData).value<Core::Track>();
         }
 
         playlistController->startPlayback(track);
@@ -270,10 +310,10 @@ struct PlaylistWidget::Private : QObject
 };
 
 PlaylistWidget::PlaylistWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-                               PlaylistController* playlistController, Utils::SettingsManager* settings,
-                               QWidget* parent)
+                               PlaylistController* playlistController, PresetRegistry* presetRegistry,
+                               Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, library, playerManager, playlistController, settings)}
+    , p{std::make_unique<Private>(this, library, playerManager, playlistController, presetRegistry, settings)}
 {
     setObjectName("Playlist");
 

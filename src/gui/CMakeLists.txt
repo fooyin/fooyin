@@ -78,11 +78,13 @@ set(SOURCES
     playlist/playlistmodel.cpp
     playlist/playlistitem.h
     playlist/playlistitem.cpp
+    playlist/playlistitemmodels.cpp
     playlist/playlistdelegate.h
     playlist/playlistdelegate.cpp
     playlist/playlisttabs.cpp
     playlist/playlistwidget.h
     playlist/playlistwidget.cpp
+    playlist/presetregistry.cpp
     quicksetup/quicksetupdialog.h
     quicksetup/quicksetupdialog.cpp
     quicksetup/quicksetupmodel.h
@@ -101,6 +103,7 @@ set(SOURCES
     settings/libraryview.cpp
     settings/playlistguipage.h
     settings/playlistguipage.cpp
+    settings/playlistpresetspage.cpp
     settings/pluginitem.h
     settings/pluginitem.cpp
     settings/pluginsmodel.h

@@ -24,29 +24,40 @@
 #include <utility>
 
 namespace Fy::Gui::Widgets::Playlist {
-PlaylistItem::PlaylistItem(Type type, ItemType data, PlaylistItem* parent)
+PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
     : TreeItem{parent}
-    , m_data{std::move(data)}
     , m_type{type}
+    , m_data{std::move(data)}
+    , m_indentation{0}
 { }
+
+PlaylistItem::ItemType PlaylistItem::type() const
+{
+    return m_type;
+}
+
+Data PlaylistItem::data() const
+{
+    return m_data;
+}
+
+QString PlaylistItem::key() const
+{
+    return m_key;
+}
+
+int PlaylistItem::indentation() const
+{
+    return m_indentation;
+}
 
 void PlaylistItem::setKey(const QString& key)
 {
     m_key = key;
 }
 
-ItemType PlaylistItem::data() const
+void PlaylistItem::setIndentation(int indentation)
 {
-    return m_data;
-}
-
-PlaylistItem::Type PlaylistItem::type()
-{
-    return m_type;
-}
-
-QString PlaylistItem::key() const
-{
-    return m_key;
+    m_indentation = indentation;
 }
 } // namespace Fy::Gui::Widgets::Playlist

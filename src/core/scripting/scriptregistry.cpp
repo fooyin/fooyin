@@ -22,6 +22,7 @@
 #include "core/constants.h"
 #include "functions/controlfuncs.h"
 #include "functions/mathfuncs.h"
+#include "functions/timefuncs.h"
 #include "models/track.h"
 
 #include <QVariant>
@@ -61,7 +62,7 @@ ScriptResult Registry::trackValue(const QString& var) const
             return result;
         }
         if(std::holds_alternative<IntegerFunc>(function)) {
-            auto f    = std::get<1>(function);
+            auto f          = std::get<1>(function);
             const int value = (m_currentTrack.*f)();
 
             ScriptResult result;
@@ -127,6 +128,7 @@ void Registry::addDefaultFunctions()
     m_funcs.emplace("min", NativeFunc(min));
     m_funcs.emplace("max", NativeFunc(max));
     m_funcs.emplace("mod", NativeFunc(mod));
+    m_funcs.emplace("timems", NativeFunc(msToString));
 
     m_funcs.emplace("if", NativeCondFunc(cif));
     m_funcs.emplace("ifgreater", NativeCondFunc(ifgreater));

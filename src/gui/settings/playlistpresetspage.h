@@ -19,23 +19,25 @@
 
 #pragma once
 
-#include "core/tagging/tagreader.h"
+#include <utils/settings/settingspage.h>
 
-class QPixmap;
+namespace Fy {
 
-namespace Fy::Core {
-class Album;
-class Track;
+namespace Utils {
+class SettingsManager;
+class SettingsDialogController;
+} // namespace Utils
 
-namespace Library {
-class CoverProvider
+namespace Gui {
+namespace Widgets::Playlist {
+class PresetRegistry;
+}
+namespace Settings {
+class PlaylistPresetsPage : public Utils::SettingsPage
 {
 public:
-    QPixmap trackCover(const Track& track);
-    QPixmap albumThumbnail(const QString& path) const;
-
-private:
-    Tagging::TagReader m_tagReader;
+    PlaylistPresetsPage(Widgets::Playlist::PresetRegistry* presetRegistry, Utils::SettingsManager* settings);
 };
-} // namespace Library
-} // namespace Fy::Core
+} // namespace Settings
+} // namespace Gui
+} // namespace Fy

@@ -40,63 +40,33 @@ public:
 private:
     Utils::SettingsManager* m_settings;
 
-    QRadioButton* m_noHeaders;
-    QRadioButton* m_discSubheaders;
-    QRadioButton* m_splitDiscs;
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
     QCheckBox* m_altColours;
-    QCheckBox* m_simplePlaylist;
 };
 
 PlaylistGuiPageWidget::PlaylistGuiPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
-    , m_noHeaders{new QRadioButton(tr("None"), this)}
-    , m_discSubheaders{new QRadioButton(tr("Disc Subheaders"), this)}
-    , m_splitDiscs{new QRadioButton("Split Discs", this)}
     , m_scrollBars{new QCheckBox("Show Scrollbar", this)}
     , m_header{new QCheckBox("Show Header", this)}
     , m_altColours{new QCheckBox("Alternate Row Colours", this)}
-    , m_simplePlaylist{new QCheckBox("Simple Playlist", this)}
 {
-    if(m_settings->value<Settings::DiscHeaders>()) {
-        m_discSubheaders->setChecked(true);
-    }
-    else if(m_settings->value<Settings::SplitDiscs>()) {
-        m_splitDiscs->setChecked(true);
-    }
-    else {
-        m_noHeaders->setChecked(true);
-    }
-
     m_scrollBars->setChecked(m_settings->value<Settings::PlaylistScrollBar>());
     m_header->setChecked(m_settings->value<Settings::PlaylistHeader>());
     m_altColours->setChecked(m_settings->value<Settings::PlaylistAltColours>());
-    m_simplePlaylist->setChecked(m_settings->value<Settings::SimplePlaylist>());
-
-    auto* discBox       = new QGroupBox(tr("Disc Handling"), this);
-    auto* discBoxLayout = new QVBoxLayout(discBox);
-    discBoxLayout->addWidget(m_noHeaders);
-    discBoxLayout->addWidget(m_discSubheaders);
-    discBoxLayout->addWidget(m_splitDiscs);
 
     auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(discBox);
     mainLayout->addWidget(m_scrollBars);
     mainLayout->addWidget(m_header);
     mainLayout->addWidget(m_altColours);
-    mainLayout->addWidget(m_simplePlaylist);
     mainLayout->addStretch();
 }
 
 void PlaylistGuiPageWidget::apply()
 {
-    m_settings->set<Settings::DiscHeaders>(m_discSubheaders->isChecked());
-    m_settings->set<Settings::SplitDiscs>(m_splitDiscs->isChecked());
     m_settings->set<Settings::PlaylistScrollBar>(m_scrollBars->isChecked());
     m_settings->set<Settings::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::PlaylistAltColours>(m_altColours->isChecked());
-    m_settings->set<Settings::SimplePlaylist>(m_simplePlaylist->isChecked());
 }
 
 PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsManager* settings)

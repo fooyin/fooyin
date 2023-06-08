@@ -19,51 +19,46 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
+#include "presetfwd.h"
 
-#include <core/models/trackfwd.h>
+#include <QObject>
 
 namespace Fy {
-
 namespace Utils {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core {
-namespace Player {
-class PlayerManager;
-} // namespace Player
-
-namespace Library {
-class MusicLibrary;
-} // namespace Library
-} // namespace Core
+}
 
 namespace Gui::Widgets::Playlist {
-class PlaylistController;
-class PresetRegistry;
-
-class PlaylistWidget : public FyWidget
+class PresetRegistry : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-                            PlaylistController* playlistController, PresetRegistry* presetRegistry,
-                            Utils::SettingsManager* settings, QWidget* parent = nullptr);
-    ~PlaylistWidget() override;
+    explicit PresetRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
 
-    [[nodiscard]] QString name() const override;
+    [[nodiscard]] const IndexPresetMap& presets() const;
+
+    PlaylistPreset addPreset(const PlaylistPreset& preset);
+    bool changePreset(const PlaylistPreset& preset);
+
+    [[nodiscard]] PlaylistPreset presetByIndex(int index) const;
+    [[nodiscard]] PlaylistPreset presetByName(const QString& name) const;
+
+    bool removeByIndex(int index);
+
+    void savePresets();
+    void loadPresets();
 
 signals:
-    void selectionWasChanged(const Core::TrackList& tracks);
-
-protected:
-    void keyPressEvent(QKeyEvent* event) override;
+    void presetChanged(const PlaylistPreset& preset);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    Utils::SettingsManager* m_settings;
+
+    IndexPresetMap m_presets;
 };
+
+QDataStream& operator<<(QDataStream& stream, const IndexPresetMap& presetMap);
+QDataStream& operator>>(QDataStream& stream, IndexPresetMap& presetMap);
 } // namespace Gui::Widgets::Playlist
 } // namespace Fy

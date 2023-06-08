@@ -34,6 +34,7 @@ constexpr auto VolumeHigh = "audio-volume-high";
 constexpr auto VolumeMed  = "audio-volume-medium";
 constexpr auto VolumeLow  = "audio-volume-low";
 constexpr auto VolumeMute = "audio-volume-muted";
+constexpr auto Font       = "preferences-desktop-font";
 
 constexpr auto Quit          = "application-exit";
 constexpr auto Settings      = "preferences-system";
@@ -122,6 +123,7 @@ constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
 constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
 constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
 constexpr auto PlaylistInterface  = "Fooyin.Page.Playlist.Interface";
+constexpr auto PlaylistPresets    = "Fooyin.Page.Playlist.Presets";
 constexpr auto WidgetsLibraryTree = "Fooyin.Page.Widgets.LibraryTree";
 constexpr auto Plugins            = "Fooyin.Page.Plugins";
 } // namespace Page
