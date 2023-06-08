@@ -135,8 +135,8 @@ void LibraryGeneralPageWidget::apply()
 
 void LibraryGeneralPageWidget::addLibrary() const
 {
-    const QString newDir = QFileDialog::getExistingDirectory(
-        m_libraryView, tr("Directory"), QDir::homePath(), QFileDialog::ShowDirsOnly);
+    const QString newDir = QFileDialog::getExistingDirectory(m_libraryView, tr("Directory"), QDir::homePath(),
+                                                             QFileDialog::ShowDirsOnly);
 
     if(newDir.isEmpty()) {
         return;
@@ -146,12 +146,11 @@ void LibraryGeneralPageWidget::addLibrary() const
     const QString name = info.fileName();
 
     bool success       = false;
-    const QString text = QInputDialog::getText(
-        m_libraryView, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal, name, &success);
+    const QString text = QInputDialog::getText(m_libraryView, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal,
+                                               name, &success);
 
     if(success && !text.isEmpty()) {
-        Core::Library::LibraryInfo const info{name, newDir};
-        m_model->markForAddition(info);
+        m_model->markForAddition({name, newDir});
     }
 }
 
@@ -173,8 +172,8 @@ void LibraryGeneralPageWidget::renameLibrary() const
         auto* info       = item->info();
 
         bool success       = false;
-        const QString text = QInputDialog::getText(
-            m_libraryView, tr("Rename Library"), tr("Library Name:"), QLineEdit::Normal, info->name, &success);
+        const QString text = QInputDialog::getText(m_libraryView, tr("Rename Library"), tr("Library Name:"),
+                                                   QLineEdit::Normal, info->name, &success);
 
         if(success && !text.isEmpty()) {
             info->name = text;

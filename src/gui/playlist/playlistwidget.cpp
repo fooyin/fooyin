@@ -252,7 +252,7 @@ struct PlaylistWidget::Private : QObject
         auto* menu = new QMenu(widget);
         menu->setAttribute(Qt::WA_DeleteOnClose);
 
-        const auto& currentPlaylist = playlistController->currentPlaylist();
+        const auto* currentPlaylist = playlistController->currentPlaylist();
         const auto& playlists       = playlistController->playlists();
 
         for(const auto& playlist : playlists) {

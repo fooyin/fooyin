@@ -49,7 +49,7 @@ public:
     [[nodiscard]] QByteArray saveState() const;
     bool restoreState(const QByteArray& state);
 
-    [[nodiscard]] QWidget* widget(int index) const;
+    [[nodiscard]] QWidget* widgetAtIndex(int index) const;
     [[nodiscard]] bool hasChildren();
 
     void addWidget(QWidget* widget);

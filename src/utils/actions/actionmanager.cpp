@@ -27,6 +27,7 @@
 namespace Fy::Utils {
 ActionManager::ActionManager(QObject* parent)
     : QObject{parent}
+    , m_mainWindow{nullptr}
 { }
 
 void ActionManager::setMainWindow(QMainWindow* mainWindow)
@@ -73,18 +74,20 @@ ActionContainer* ActionManager::createMenuBar(const Id& id)
     return mbActionContainer;
 }
 
-void ActionManager::registerAction(QAction* action, const Id& id)
+void ActionManager::registerAction(QAction* newAction, const Id& id)
 {
-    m_idCmdMap.emplace(id, action);
-    m_mainWindow->addAction(action);
-    action->setObjectName(id.name());
+    if(m_mainWindow) {
+        m_idCmdMap.emplace(id, newAction);
+        m_mainWindow->addAction(newAction);
+        newAction->setObjectName(id.name());
+    }
 }
 
 QAction* ActionManager::action(const Id& id)
 {
-    for(const auto& [mapId, action] : m_idCmdMap) {
+    for(const auto& [mapId, mapAction] : m_idCmdMap) {
         if(mapId == id) {
-            return action;
+            return mapAction;
         }
     }
     return nullptr;

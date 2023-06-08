@@ -37,16 +37,25 @@
 #include <QString>
 
 namespace Fy::Core::Tagging {
+using FlacPicture  = TagLib::FLAC::Picture;
+using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
+
 QByteArray getCoverFromMpeg(TagLib::MPEG::File* file)
 {
-    if(file && file->ID3v2Tag()) {
-        TagLib::ID3v2::FrameList frames = file->ID3v2Tag()->frameListMap()["APIC"];
-        if(!frames.isEmpty()) {
-            using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
-            for(const auto& frame : std::as_const(frames)) {
-                auto* coverFrame = dynamic_cast<PictureFrame*>(frame);
-                const auto type  = coverFrame->type();
-                if((frame && type == PictureFrame::FrontCover) || type == PictureFrame::Other) {
+    if(!file || !file->ID3v2Tag()) {
+        return {};
+    }
+
+    TagLib::ID3v2::FrameList frames = file->ID3v2Tag()->frameListMap()["APIC"];
+    if(frames.isEmpty()) {
+        return {};
+    }
+
+    for(const auto& frame : std::as_const(frames)) {
+        if(frame) {
+            if(auto* coverFrame = dynamic_cast<PictureFrame*>(frame)) {
+                const auto type = coverFrame->type();
+                if(type == PictureFrame::FrontCover || type == PictureFrame::Other) {
                     return {coverFrame->picture().data(), coverFrame->picture().size()};
                 }
             }
@@ -57,12 +66,15 @@ QByteArray getCoverFromMpeg(TagLib::MPEG::File* file)
 
 QByteArray getCoverFromFlac(TagLib::FLAC::File* file)
 {
-    const TagLib::List<TagLib::FLAC::Picture*> pictureList = file->pictureList();
+    const TagLib::List<FlacPicture*> pictureList = file->pictureList();
+    if(pictureList.isEmpty()) {
+        return {};
+    }
 
-    if(!pictureList.isEmpty()) {
-        for(const auto& picture : qAsConst(pictureList)) {
-            if((picture->type() == TagLib::FLAC::Picture::FrontCover
-                || picture->type() == TagLib::FLAC::Picture::Other)) {
+    for(const auto& picture : std::as_const(pictureList)) {
+        if(picture) {
+            const auto type = picture->type();
+            if(type == FlacPicture::FrontCover || type == FlacPicture::Other) {
                 return {picture->data().data(), picture->data().size()};
             }
         }
@@ -74,11 +86,13 @@ QByteArray getCoverFromMp4(TagLib::MP4::File* file)
 {
     const TagLib::MP4::Item coverItem            = file->tag()->item("covr");
     const TagLib::MP4::CoverArtList coverArtList = coverItem.toCoverArtList();
-    if(!coverArtList.isEmpty()) {
-        const TagLib::MP4::CoverArt& coverArt = coverArtList.front();
-        return {coverArt.data().data(), coverArt.data().size()};
+
+    if(coverArtList.isEmpty()) {
+        return {};
     }
-    return {};
+
+    const auto& coverArt = coverArtList.front();
+    return {coverArt.data().data(), coverArt.data().size()};
 }
 
 Tagging::TagType getTagTypeFromTag(TagLib::Tag* tag)

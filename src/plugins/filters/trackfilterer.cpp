@@ -35,7 +35,8 @@ bool matchSearch(const Core::Track& track, const QString& search)
         return true;
     }
 
-    for(const QString& artist : track.artists()) {
+    const auto artists = track.artists();
+    for(const QString& artist : artists) {
         if(artist.contains(search, Qt::CaseInsensitive)) {
             return true;
         }

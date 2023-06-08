@@ -110,10 +110,9 @@ void SettingsDialog::openPage(const Id& id)
     if(categoryIndex >= 0) {
         const QModelIndex modelIndex = m_model.index(categoryIndex);
         m_categoryList->setCurrentIndex(modelIndex);
-        if(pageIndex >= 0) {
-            if(auto* widget = categories.at(categoryIndex)->tabWidget) {
-                widget->setCurrentIndex(pageIndex);
-            }
+
+        if(auto* widget = categories.at(categoryIndex)->tabWidget) {
+            widget->setCurrentIndex(pageIndex);
         }
     }
 }

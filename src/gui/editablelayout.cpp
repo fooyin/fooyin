@@ -87,6 +87,7 @@ EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionMa
     , m_menu{actionManager->createMenu(Constants::Menus::Context::Layout)}
     , m_box{new QHBoxLayout(this)}
     , m_overlay{new Utils::OverlayFilter(this)}
+    , m_splitter{nullptr}
     , m_layoutEditing{false}
 {
     setObjectName("EditableLayout");
@@ -101,16 +102,14 @@ EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionMa
         [this]() {
             return new Gui::Widgets::VerticalSplitterWidget(m_actionManager, m_widgetFactory, m_settings);
         },
-        "Vertical Splitter",
-        {"Splitter"});
+        "Vertical Splitter", {"Splitter"});
 
     m_widgetFactory->registerClass<Gui::Widgets::HorizontalSplitterWidget>(
         "SplitterHorizontal",
         [this]() {
             return new Gui::Widgets::HorizontalSplitterWidget(m_actionManager, m_widgetFactory, m_settings);
         },
-        "Horizontal Splitter",
-        {"Splitter"});
+        "Horizontal Splitter", {"Splitter"});
 }
 
 void EditableLayout::initialise()
@@ -272,9 +271,9 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
     if(!jsonDoc.isNull() && !jsonDoc.isEmpty()) {
         QJsonObject json = jsonDoc.object();
         if(json.contains("Layout") && json["Layout"].isArray()) {
-            auto layout = json["Layout"].toArray();
-            if(!layout.isEmpty() && layout.size() == 1) {
-                const auto first = layout.constBegin();
+            auto layoutArray = json["Layout"].toArray();
+            if(!layoutArray.isEmpty() && layoutArray.size() == 1) {
+                const auto first = layoutArray.constBegin();
                 auto widget      = first->toObject();
                 if(!widget.isEmpty()) {
                     const auto name = widget.constBegin().key();

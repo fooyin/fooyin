@@ -40,7 +40,7 @@ public:
 
     ActionContainer* createMenu(const Id& id);
     ActionContainer* createMenuBar(const Id& id);
-    void registerAction(QAction* action, const Id& id);
+    void registerAction(QAction* newAction, const Id& id);
 
     QAction* action(const Id& id);
     ActionContainer* actionContainer(const Id& id);

@@ -225,11 +225,9 @@ void MenuBarActionContainer::insertAction(QAction* beforeAction, QAction* action
 
 void MenuBarActionContainer::insertMenu(QAction* beforeAction, ActionContainer* container)
 {
-    QMenu* menu = container->menu();
-    if(!menu) {
-        return;
+    if(QMenu* currentMenu = container->menu()) {
+        m_menuBar->insertMenu(beforeAction, currentMenu);
     }
-    m_menuBar->insertMenu(beforeAction, menu);
 }
 
 bool MenuBarActionContainer::isEmpty()
@@ -282,11 +280,9 @@ void MenuActionContainer::insertAction(QAction* beforeAction, QAction* action)
 
 void MenuActionContainer::insertMenu(QAction* beforeAction, ActionContainer* container)
 {
-    QMenu* menu = container->menu();
-    if(!menu) {
-        return;
+    if(QMenu* currentMenu = container->menu()) {
+        m_menu->insertMenu(beforeAction, currentMenu);
     }
-    m_menu->insertMenu(beforeAction, menu);
 }
 
 bool MenuActionContainer::isEmpty()

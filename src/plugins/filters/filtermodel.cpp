@@ -33,6 +33,8 @@ FilterModel::FilterModel(FilterField* field, QObject* parent)
     : QAbstractListModel{parent}
     , m_root{std::make_unique<FilterItem>()}
     , m_field{field}
+    , m_rowHeight{0}
+    , m_fontSize{0}
 { }
 
 void FilterModel::setField(FilterField* field)
