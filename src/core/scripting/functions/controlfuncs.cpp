@@ -50,13 +50,16 @@ ScriptResult ifequal(const ValueList& vec)
 ScriptResult ifgreater(const ValueList& vec)
 {
     const auto size = vec.size();
-    if(size != 4) {
+    if(size < 3 || size > 4) {
         return {};
     }
     if(vec[0].value.toDouble() > vec[1].value.toDouble()) {
         return vec[2];
     }
-    return vec[3];
+    if(size == 4) {
+       return vec[3];
+    }
+    return {};
 }
 
 ScriptResult iflonger(const ValueList& vec)
