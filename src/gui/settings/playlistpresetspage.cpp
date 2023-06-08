@@ -442,12 +442,12 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     auto* mainLayout    = new QGridLayout(this);
     auto* detailsLayout = new QGridLayout();
 
-    mainLayout->addWidget(m_presetList, 0, 0, 1, 2);
-    mainLayout->addWidget(m_newPreset, 1, 0);
-    mainLayout->addWidget(m_deletePreset, 1, 1);
-    mainLayout->addWidget(m_updatePreset, 2, 0);
+    mainLayout->addWidget(m_presetList, 0, 0, 1, 2, Qt::AlignTop);
+    mainLayout->addWidget(m_newPreset, 1, 0, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_deletePreset, 1, 1, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_updatePreset, 2, 0, 1, 1, Qt::AlignTop);
 
-    mainLayout->addLayout(detailsLayout, 0, 2, 1, 2);
+    mainLayout->addLayout(detailsLayout, 0, 2, 4, 3);
 
     auto* headerGroup  = new QGroupBox(tr("Header: "), this);
     auto* headerLayout = new QGridLayout(headerGroup);
