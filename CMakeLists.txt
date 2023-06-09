@@ -15,12 +15,8 @@ include(cmake/CheckLevel.cmake)
 
 include(FeatureSummary)
 
-set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Fooyin.cmake)
@@ -35,16 +31,9 @@ fooyin_option(FOOYIN_STATIC "Build fooyin libraries as static." OFF)
 fooyin_option(BUILD_TESTS "Build fooyin tests." OFF)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Sql)
-set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
-set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
-set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
-set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
 
 find_package(Taglib REQUIRED taglib>=1.12)
-find_package(Libmpv)
-
-set_package_properties(Taglib PROPERTIES TYPE REQUIRED)
-set_package_properties(Libmpv PROPERTIES TYPE REQUIRED)
+find_package(Libmpv REQUIRED)
 
 find_package(GTest)
 
@@ -102,7 +91,7 @@ set_target_properties(
   PROPERTIES OUTPUT_NAME fooyin
              RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
              INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH})
-target_compile_features(fooyin_exe PRIVATE cxx_std_17)
+target_compile_features(fooyin_exe PUBLIC cxx_std_17)
 target_link_libraries(fooyin_exe PRIVATE fooyin_version fooyin_lib)
 
 # ---- Fooyin data ----
