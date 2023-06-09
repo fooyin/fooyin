@@ -32,7 +32,7 @@ namespace Gui::Settings {
 class LibraryTreePage : public Utils::SettingsPage
 {
 public:
-    LibraryTreePage(Utils::SettingsManager* settings);
+    explicit LibraryTreePage(Utils::SettingsManager* settings);
 };
 } // namespace Gui::Settings
 } // namespace Fy

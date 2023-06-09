@@ -165,13 +165,20 @@ struct Application::Private
 
     void registerWidgets()
     {
-        widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistTabs>("PlaylistTabs", [this]() {
-            return new Gui::Widgets::Playlist::PlaylistTabs(playlistHandler, playlistController.get());
-        }, "Playlist Tabs");
+        widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistTabs>(
+            "PlaylistTabs",
+            [this]() {
+                return new Gui::Widgets::Playlist::PlaylistTabs(playlistHandler, playlistController.get());
+            },
+            "Playlist Tabs");
 
-        widgetFactory.registerClass<Gui::Widgets::LibraryTreeWidget>("LibraryTree", [this]() {
-            return new Gui::Widgets::LibraryTreeWidget(library, playlistHandler, playlistController.get(), settingsManager);
-        }, "Library Tree");
+        widgetFactory.registerClass<Gui::Widgets::LibraryTreeWidget>(
+            "LibraryTree",
+            [this]() {
+                return new Gui::Widgets::LibraryTreeWidget(library, playlistHandler, playlistController.get(),
+                                                           settingsManager);
+            },
+            "Library Tree");
 
         widgetFactory.registerClass<Gui::Widgets::ControlWidget>("Controls", [this]() {
             return new Gui::Widgets::ControlWidget(playerManager, settingsManager);
@@ -199,7 +206,7 @@ struct Application::Private
         });
     }
 
-    void loadPlugins()
+    void loadPlugins() const
     {
         const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin";
         pluginManager->findPlugins(pluginsPath);
