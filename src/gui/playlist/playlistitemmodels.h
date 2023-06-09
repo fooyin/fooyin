@@ -67,7 +67,7 @@ private:
 class Subheader : public Container
 {
 public:
-    Subheader(QString title);
+    Subheader(const QString& title);
 
     [[nodiscard]] QString title() const;
 

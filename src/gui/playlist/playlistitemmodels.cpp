@@ -131,7 +131,7 @@ void Header::removeTrack(const Core::Track& trackToRemove)
     }
 }
 
-Subheader::Subheader(QString title)
+Subheader::Subheader(const QString& title)
     : m_title{title}
 { }
 

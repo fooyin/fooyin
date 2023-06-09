@@ -100,7 +100,7 @@ public:
     explicit PresetModel(PresetRegistry* presetRegistry, QObject* parent = nullptr);
 
     void setupModelData();
-    void addNewPreset();
+    void addNewPreset(const PlaylistPreset& preset = {});
     void markForRemoval(const PlaylistPreset& preset);
     void markForChange(const PlaylistPreset& preset);
     void processQueue();
@@ -141,14 +141,14 @@ void PresetModel::setupModelData()
     }
 }
 
-void PresetModel::addNewPreset()
+void PresetModel::addNewPreset(const PlaylistPreset& preset)
 {
     const int index = static_cast<int>(m_nodes.size());
 
-    PlaylistPreset preset;
-    preset.index = index;
+    PlaylistPreset newPreset{preset};
+    newPreset.index = index;
 
-    auto* item = m_nodes.emplace_back(std::make_unique<PresetItem>(preset, rootItem())).get();
+    auto* item = m_nodes.emplace_back(std::make_unique<PresetItem>(newPreset, rootItem())).get();
 
     item->setStatus(Added);
 
@@ -357,6 +357,7 @@ public:
     void newPreset();
     void deletePreset();
     void updatePreset();
+    void clonePreset();
 
     void showFontDialog(QFont& initialFont);
 
@@ -401,6 +402,7 @@ private:
     QPushButton* m_newPreset;
     QPushButton* m_deletePreset;
     QPushButton* m_updatePreset;
+    QPushButton* m_clonePreset;
 };
 
 PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRegistry* presetRegistry)
@@ -428,6 +430,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     , m_newPreset{new QPushButton(tr("New"), this)}
     , m_deletePreset{new QPushButton(tr("Delete"), this)}
     , m_updatePreset{new QPushButton(tr("Update"), this)}
+    , m_clonePreset{new QPushButton(tr("Clone"), this)}
 {
     m_presetList->setModel(m_model);
 
@@ -444,8 +447,9 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
 
     mainLayout->addWidget(m_presetList, 0, 0, 1, 2, Qt::AlignTop);
     mainLayout->addWidget(m_newPreset, 1, 0, 1, 1, Qt::AlignTop);
-    mainLayout->addWidget(m_deletePreset, 1, 1, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_clonePreset, 1, 1, 1, 1, Qt::AlignTop);
     mainLayout->addWidget(m_updatePreset, 2, 0, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_deletePreset, 2, 1, 1, 1, Qt::AlignTop);
 
     mainLayout->addLayout(detailsLayout, 0, 2, 4, 3);
 
@@ -546,6 +550,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     QObject::connect(m_newPreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::newPreset);
     QObject::connect(m_deletePreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::deletePreset);
     QObject::connect(m_updatePreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::updatePreset);
+    QObject::connect(m_clonePreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::clonePreset);
 
     QObject::connect(m_simpleHeader, &QPushButton::clicked, this, [this](bool checked) {
         m_showCover->setEnabled(!checked);
@@ -600,7 +605,7 @@ void PlaylistPresetsPageWidget::newPreset()
 void PlaylistPresetsPageWidget::deletePreset()
 {
     const auto selection = m_presetList->selectionModel()->selectedRows();
-    if(selection.empty() || selection.size() == 1) {
+    if(selection.empty() || m_model->rowCount() == 1) {
         return;
     }
     const auto index  = selection.constFirst();
@@ -645,10 +650,32 @@ void PlaylistPresetsPageWidget::updatePreset()
     m_model->markForChange(preset);
 }
 
+void PlaylistPresetsPageWidget::clonePreset()
+{
+    const auto selection = m_presetList->selectionModel()->selectedRows();
+    if(selection.empty()) {
+        return;
+    }
+    const auto index = selection.constFirst();
+    const auto* item = static_cast<PresetItem*>(index.internalPointer());
+
+    if(!item) {
+        return;
+    }
+
+    PlaylistPreset preset{item->preset()};
+    preset.name = QString{"Copy of %1"}.arg(preset.name);
+
+    m_model->addNewPreset(preset);
+
+    const int row = m_model->rowCount() - 1;
+    m_presetList->selectRow(row);
+}
+
 void PlaylistPresetsPageWidget::showFontDialog(QFont& initialFont)
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, initialFont, this);
+    const QFont font = QFontDialog::getFont(&ok, initialFont, this);
     if(ok) {
         initialFont = font;
     }

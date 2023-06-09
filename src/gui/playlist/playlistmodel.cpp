@@ -37,23 +37,6 @@
 #include <QPalette>
 
 namespace Fy::Gui::Widgets::Playlist {
-QString trackArtistString(const Core::Track& track)
-{
-    QString artistString;
-    for(const QString& artist : track.artists()) {
-        if(artist != track.albumArtist()) {
-            if(!artistString.isEmpty()) {
-                artistString += ", ";
-            }
-            artistString += artist;
-        }
-    }
-    if(!artistString.isEmpty()) {
-        artistString.prepend("  \u2022  ");
-    }
-    return artistString;
-}
-
 using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
 
 struct PlaylistModel::Private
@@ -64,11 +47,11 @@ struct PlaylistModel::Private
     Core::Library::CoverProvider coverProvider;
 
     PlaylistPreset currentPreset;
-    Core::Playlist::Playlist* currentPlaylist;
+    Core::Playlist::Playlist* currentPlaylist{nullptr};
 
     bool altColours;
 
-    bool resetting;
+    bool resetting{false};
 
     Core::Scripting::Parser parser;
 
@@ -89,9 +72,7 @@ struct PlaylistModel::Private
         : model{model}
         , playerManager{playerManager}
         , settings{settings}
-        , currentPlaylist{nullptr}
         , altColours{settings->value<Settings::PlaylistAltColours>()}
-        , resetting{false}
         , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
         , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
     { }
