@@ -23,7 +23,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: >
-        apt install -y
+        sudo apt install -y
         libtag1-dev
         mpv
     - name: Install GTest
