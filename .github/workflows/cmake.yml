@@ -18,7 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Update repositories
-      run: apt update -y
+      run: sudo apt update -y
     - name: Install packages
       env:
         DEBIAN_FRONTEND: noninteractive
