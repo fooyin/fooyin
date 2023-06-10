@@ -24,8 +24,9 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: >
         sudo apt install -y
-        libtag1-dev
         libmpv-dev
+    - name: Install TagLib
+      uses: anthepro/install-taglib@v1
     - name: Install GTest
       run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
     - name: Install Qt
