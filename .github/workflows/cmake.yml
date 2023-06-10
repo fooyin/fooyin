@@ -1,0 +1,40 @@
+name: CMake
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  BUILD_TYPE: Release
+  BUILD_TESTS: On
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Update repositories
+      run: apt update -y
+    - name: Install packages
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: >
+        apt install -y
+        libtag1-dev
+        mpv
+    - name: Install GTest
+      run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3.2.1
+      with:
+        version: '6.5.1'
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}  -DBUILD_TESTS=${{env.BUILD_TESTS}}
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: Run GTest
+      run: ${{github.workspace}}/build/tests/test_scriptparser
