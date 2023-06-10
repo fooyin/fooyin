@@ -25,10 +25,23 @@ jobs:
       run: >
         sudo apt install -y
         libmpv-dev
+    - name: Checkout TagLib
+      uses: actions/checkout@v3
+      with:
+        repository: taglib/taglib
+        path: taglib
+    - name: Install TagLib dependencies
+      run: sudo apt install -y libcppunit-dev zlib1g-dev
+    - name: Configure TagLib
+      run: mkdir taglib/build && cd taglib/build && cmake .. -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DCMAKE_BUILD_TYPE=Release -DWITH_ZLIB=OFF
+    - name: Build TagLib
+      run: make
     - name: Install TagLib
-      uses: anthepro/install-taglib@v1
+      run: sudo make install
+    - name: Install GTest development files
+      run: sudo apt-get install libgtest-dev
     - name: Install GTest
-      run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+      run: cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
     - name: Install Qt
       uses: jurplel/install-qt-action@v3.2.1
       with:
