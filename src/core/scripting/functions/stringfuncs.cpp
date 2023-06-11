@@ -17,22 +17,17 @@
  *
  */
 
-#pragma once
+#include "stringfuncs.h"
 
-#include <utils/settings/settingspage.h>
-
-namespace Fy {
-
-namespace Utils {
-class SettingsManager;
-class SettingsDialogController;
-} // namespace Utils
-
-namespace Gui::Settings {
-class PlaylistGuiPage : public Utils::SettingsPage
+namespace Fy::Core::Scripting {
+QString num(const QStringList& vec)
 {
-public:
-    PlaylistGuiPage(Utils::SettingsManager* settings);
-};
-} // namespace Gui::Settings
-} // namespace Fy
+    if(vec.empty() || vec.size() > 2) {
+        return {};
+    }
+    if(vec.size() == 1) {
+        return vec[0];
+    }
+    return QStringLiteral("%1").arg(vec[0].toInt(), vec[1].toInt(), 10, QLatin1Char('0'));
+}
+} // namespace Fy::Core::Scripting

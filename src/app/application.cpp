@@ -60,8 +60,8 @@
 #include <gui/settings/generalpage.h>
 #include <gui/settings/guigeneralpage.h>
 #include <gui/settings/librarygeneralpage.h>
-#include <gui/settings/playlistguipage.h>
-#include <gui/settings/playlistpresetspage.h>
+#include <gui/settings/playlist/playlistguipage.h>
+#include <gui/settings/playlist/playlistpresetspage.h>
 #include <gui/settings/pluginspage.h>
 #include <gui/widgetfactory.h>
 #include <gui/widgets/spacer.h>

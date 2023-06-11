@@ -22,10 +22,9 @@
 #include "core/constants.h"
 #include "functions/controlfuncs.h"
 #include "functions/mathfuncs.h"
+#include "functions/stringfuncs.h"
 #include "functions/timefuncs.h"
 #include "models/track.h"
-
-#include <QVariant>
 
 namespace Fy::Core::Scripting {
 Registry::Registry()
@@ -66,7 +65,7 @@ ScriptResult Registry::trackValue(const QString& var) const
             const int value = (m_currentTrack.*f)();
 
             ScriptResult result;
-            result.value = QStringLiteral("%1").arg(value, 2, 10, QLatin1Char('0'));
+            result.value = QString::number(value);
             result.cond  = value >= 0;
             return result;
         }
@@ -128,6 +127,9 @@ void Registry::addDefaultFunctions()
     m_funcs.emplace("min", NativeFunc(min));
     m_funcs.emplace("max", NativeFunc(max));
     m_funcs.emplace("mod", NativeFunc(mod));
+
+    m_funcs.emplace("num", NativeFunc(num));
+
     m_funcs.emplace("timems", NativeFunc(msToString));
 
     m_funcs.emplace("if", NativeCondFunc(cif));

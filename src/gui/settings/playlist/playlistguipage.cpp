@@ -25,8 +25,6 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
-#include <QGroupBox>
-#include <QRadioButton>
 #include <QVBoxLayout>
 
 namespace Fy::Gui::Settings {

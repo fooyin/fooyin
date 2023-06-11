@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "playlistpreset.h"
+
 #include <core/models/trackfwd.h>
 
 namespace Fy::Gui::Widgets::Playlist {
@@ -44,50 +46,59 @@ using ContainerHashMap = std::unordered_map<QString, std::unique_ptr<Container>>
 class Header : public Container
 {
 public:
-    Header(QString title, QString subtitle, QString rightText, QString coverPath);
+    Header(TextBlock title, TextBlock subtitle, TextBlock sideText, TextBlock info, QString coverPath);
 
-    [[nodiscard]] QString title() const;
-    [[nodiscard]] QString subtitle() const;
-    [[nodiscard]] QString rightText() const;
-    [[nodiscard]] QString info() const;
+    [[nodiscard]] TextBlock title() const;
+    [[nodiscard]] TextBlock subtitle() const;
+    [[nodiscard]] TextBlock sideText() const;
+    [[nodiscard]] TextBlock info() const;
+
     [[nodiscard]] bool hasCover() const;
     [[nodiscard]] QString coverPath() const;
 
-    void addTrack(const Core::Track& track) override;
-    void removeTrack(const Core::Track& trackToRemove) override;
+    void addTrack(const Core::Track &track) override;
+    void removeTrack(const Core::Track &trackToRemove) override;
 
 private:
-    QString m_title;
-    QString m_subtitle;
-    QString m_rightText;
+    void calculateInfo();
+
+    TextBlock m_title;
+    TextBlock m_subtitle;
+    TextBlock m_sideText;
+    TextBlock m_info;
+
     QStringList m_genres;
+
     QString m_coverPath;
 };
 
 class Subheader : public Container
 {
 public:
-    Subheader(const QString& title);
+    Subheader(TextBlockList title, TextBlockList subtitle);
 
-    [[nodiscard]] QString title() const;
+    [[nodiscard]] TextBlockList title() const;
+    [[nodiscard]] TextBlockList subtitle() const;
 
 private:
-    QString m_title;
+    TextBlockList m_title;
+    TextBlockList m_subtitle;
 };
 
 class Track
 {
 public:
     Track() = default;
-    Track(const Core::Track& track, QStringList leftSide, QStringList rightSide);
+    Track(TextBlockList left, TextBlockList right, const Core::Track& track);
 
+    [[nodiscard]] TextBlockList left() const;
+    [[nodiscard]] TextBlockList right() const;
     [[nodiscard]] Core::Track track() const;
-    [[nodiscard]] QStringList leftSide() const;
-    [[nodiscard]] QStringList rightSide() const;
 
 private:
+    TextBlockList m_left;
+    TextBlockList m_right;
+
     Core::Track m_track;
-    QStringList m_leftSide;
-    QStringList m_rightSide;
 };
 } // namespace Fy::Gui::Widgets::Playlist

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "presetfwd.h"
+#include "playlistpreset.h"
 
 #include <QObject>
 
@@ -29,6 +29,8 @@ class SettingsManager;
 }
 
 namespace Gui::Widgets::Playlist {
+using IndexPresetMap = std::map<int, PlaylistPreset>;
+
 class PresetRegistry : public QObject
 {
     Q_OBJECT

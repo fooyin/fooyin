@@ -53,5 +53,11 @@
         <file>icons/light/scalable/actions/view-refresh.svg</file>
         <file>icons/dark/scalable/actions/preferences-desktop-font.svg</file>
         <file>icons/light/scalable/actions/preferences-desktop-font.svg</file>
+        <file>icons/dark/scalable/actions/list-add.svg</file>
+        <file>icons/light/scalable/actions/list-add.svg</file>
+        <file>icons/dark/scalable/actions/format-text-bold.svg</file>
+        <file>icons/dark/scalable/actions/list-remove.svg</file>
+        <file>icons/light/scalable/actions/format-text-bold.svg</file>
+        <file>icons/light/scalable/actions/list-remove.svg</file>
     </qresource>
 </RCC>

@@ -21,6 +21,8 @@
 
 #include <utils/utils.h>
 
+#include <QStringBuilder>
+
 namespace Fy::Gui::Widgets::Playlist {
 Container::Container()
     : m_duration{0}
@@ -58,39 +60,32 @@ void Container::removeTrack(const Core::Track& trackToRemove)
     m_duration -= trackToRemove.duration();
 }
 
-Header::Header(QString title, QString subtitle, QString rightText, QString coverPath)
+Header::Header(TextBlock title, TextBlock subtitle, TextBlock sideText, TextBlock info, QString coverPath)
     : m_title{std::move(title)}
     , m_subtitle{std::move(subtitle)}
-    , m_rightText{std::move(rightText)}
+    , m_sideText{std::move(sideText)}
+    , m_info{std::move(info)}
     , m_coverPath{std::move(coverPath)}
 { }
 
-QString Header::title() const
+TextBlock Header::title() const
 {
     return m_title;
 }
 
-QString Header::subtitle() const
+TextBlock Header::subtitle() const
 {
     return m_subtitle;
 }
 
-QString Header::rightText() const
+TextBlock Header::sideText() const
 {
-    return m_rightText;
+    return m_sideText;
 }
 
-QString Header::info() const
+TextBlock Header::info() const
 {
-    const auto genres = m_genres.join(" / ");
-    const auto count  = trackCount();
-
-    QString dur = genres;
-    if(!genres.isEmpty()) {
-        dur += " | ";
-    }
-    dur += QString(QString::number(count) + (count > 1 ? " Tracks" : " Track") + " | " + Utils::msToString(duration()));
-    return dur;
+    return m_info;
 }
 
 bool Header::hasCover() const
@@ -112,6 +107,7 @@ void Header::addTrack(const Core::Track& track)
             m_genres.emplace_back(genre);
         }
     }
+    calculateInfo();
 }
 
 void Header::removeTrack(const Core::Track& trackToRemove)
@@ -129,35 +125,55 @@ void Header::removeTrack(const Core::Track& trackToRemove)
             }
         }
     }
+    calculateInfo();
 }
 
-Subheader::Subheader(const QString& title)
-    : m_title{title}
+void Header::calculateInfo()
+{
+    m_info.text      = m_genres.join(" / ");
+    const auto count = trackCount();
+
+    if(!m_info.text.isEmpty()) {
+        m_info.text = m_info.text % " | ";
+    }
+    m_info.text
+        = m_info.text
+        % QString(QString::number(count) % (count > 1 ? " Tracks" : " Track") % " | " % Utils::msToString(duration()));
+}
+
+Subheader::Subheader(TextBlockList title, TextBlockList subtitle)
+    : m_title{std::move(title)}
+    , m_subtitle{std::move(subtitle)}
 { }
 
-QString Subheader::title() const
+TextBlockList Subheader::title() const
 {
     return m_title;
 }
 
-Track::Track(const Core::Track& track, QStringList leftSide, QStringList rightSide)
-    : m_track{track}
-    , m_leftSide{std::move(leftSide)}
-    , m_rightSide{std::move(rightSide)}
+TextBlockList Subheader::subtitle() const
+{
+    return m_subtitle;
+}
+
+Track::Track(TextBlockList left, TextBlockList right, const Core::Track& track)
+    : m_left{std::move(left)}
+    , m_right{std::move(right)}
+    , m_track{track}
 { }
+
+TextBlockList Track::left() const
+{
+    return m_left;
+}
+
+TextBlockList Track::right() const
+{
+    return m_right;
+}
 
 Core::Track Track::track() const
 {
     return m_track;
-}
-
-QStringList Track::leftSide() const
-{
-    return m_leftSide;
-}
-
-QStringList Track::rightSide() const
-{
-    return m_rightSide;
 }
 } // namespace Fy::Gui::Widgets::Playlist

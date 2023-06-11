@@ -38,25 +38,43 @@ PlaylistPreset loadDeault()
     PlaylistPreset preset;
     preset.name = "Default";
 
-    preset.header.rowHeight = 76;
-    preset.header.title     = "$if(%albumartist%,%albumartist%,Unknown Artist)";
-    preset.header.subtitle  = "$if(%album%,%album%,Unknown Album)";
-    preset.header.sideText  = "%year%";
-    preset.header.titleFont.setPixelSize(17);
-    preset.header.subtitleFont.setPixelSize(16);
-    preset.header.sideTextFont.setPixelSize(16);
-    preset.header.infoFont.setPixelSize(13);
+    preset.header.rowHeight     = 76;
+    preset.header.title.text    = "$if(%albumartist%,%albumartist%,Unknown Artist)";
+    preset.header.subtitle.text = "$if(%album%,%album%,Unknown Album)";
+    preset.header.sideText.text = "%year%";
+    preset.header.info.text     = "%genres% | %trackcount& Tracks | %duration%";
+    preset.header.title.font.setPixelSize(17);
+    preset.header.subtitle.font.setPixelSize(16);
+    preset.header.sideText.font.setPixelSize(16);
+    preset.header.info.font.setPixelSize(13);
 
     preset.subHeader.rowHeight = 19;
-    preset.subHeader.title     = "$ifgreater(%disctotal%,1,Disc #%disc%)";
-    preset.subHeader.titleFont.setPixelSize(13);
-    preset.subHeader.rightFont.setPixelSize(13);
+    QFont subHeaderFont;
+    subHeaderFont.setPixelSize(13);
+    TextBlock subheaderTitle;
+    subheaderTitle.text = "$ifgreater(%disctotal%,1,Disc #%disc%,)";
+    subheaderTitle.font = subHeaderFont;
+    preset.subHeader.text.emplace_back(subheaderTitle);
 
     preset.track.rowHeight = 23;
-    preset.track.leftText  = "%track%.  %title%";
-    preset.track.rightText = "$ifgreater(%playcount%,1,|%playcount%)  $timems(%duration%)";
-    preset.track.leftTextFont.setPixelSize(13);
-    preset.track.rightTextFont.setPixelSize(13);
+    QFont trackFont;
+    trackFont.setPixelSize(13);
+    TextBlock trackBlock;
+    trackBlock.text = "$num(%track%,2). ";
+    trackBlock.font = trackFont;
+    preset.track.text.emplace_back(trackBlock);
+    TextBlock trackBlock2;
+    trackBlock2.text = "%title%";
+    trackBlock2.font = trackFont;
+    preset.track.text.emplace_back(trackBlock2);
+    TextBlock trackBlock3;
+    trackBlock3.text = "||$ifgreater(%playcount%,1,|%playcount%,) ";
+    trackBlock3.font = trackFont;
+    preset.track.text.emplace_back(trackBlock3);
+    TextBlock trackBlock4;
+    trackBlock4.text = "$timems(%duration%)";
+    trackBlock4.font = trackFont;
+    preset.track.text.emplace_back(trackBlock4);
 
     return preset;
 }

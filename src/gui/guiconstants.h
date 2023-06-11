@@ -35,6 +35,9 @@ constexpr auto VolumeMed  = "audio-volume-medium";
 constexpr auto VolumeLow  = "audio-volume-low";
 constexpr auto VolumeMute = "audio-volume-muted";
 constexpr auto Font       = "preferences-desktop-font";
+constexpr auto Add        = "list-add";
+constexpr auto Remove     = "list-remove";
+constexpr auto TextColour = "format-text-bold";
 
 constexpr auto Quit          = "application-exit";
 constexpr auto Settings      = "preferences-system";

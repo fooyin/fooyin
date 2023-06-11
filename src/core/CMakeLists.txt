@@ -75,6 +75,7 @@ set(SOURCES
     scripting/scriptscanner.cpp
     scripting/functions/controlfuncs.cpp
     scripting/functions/mathfuncs.cpp
+    scripting/functions/stringfuncs.cpp
     scripting/functions/timefuncs.cpp
     tagging/tagreader.h
     tagging/tagreader.cpp
