@@ -39,6 +39,6 @@ The engine backend is currently based on mpv, though this will change to ffmpeg 
 ```
 git clone git@github.com:ludouzi/fooyin.git
 cd fooyin && mkdir build && cd build
-cmake .. && make -j4
+cmake .. && make -j$(nproc)
 sudo make install
 ```
