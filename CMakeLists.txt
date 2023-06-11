@@ -68,7 +68,7 @@ target_link_libraries(
          # ${SDL2_LIBRARIES} ${FFMPEG_LIBRARIES}
 )
 
-target_compile_features(fooyin_lib PUBLIC cxx_std_17)
+target_compile_features(fooyin_lib PUBLIC cxx_std_20)
 target_compile_options(fooyin_lib PRIVATE -Werror -Wall -Wextra -Wpedantic)
 
 # ---- Fooyin testing ----
@@ -91,7 +91,7 @@ set_target_properties(
   PROPERTIES OUTPUT_NAME fooyin
              RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
              INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH})
-target_compile_features(fooyin_exe PUBLIC cxx_std_17)
+target_compile_features(fooyin_exe PUBLIC cxx_std_20)
 target_link_libraries(fooyin_exe PRIVATE fooyin_version fooyin_lib)
 
 # ---- Fooyin data ----
