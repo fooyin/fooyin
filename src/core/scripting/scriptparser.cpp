@@ -21,6 +21,8 @@
 
 #include "core/constants.h"
 
+#include <QStringBuilder>
+
 namespace Fy::Core::Scripting {
 QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& result)
 {
@@ -145,9 +147,9 @@ ScriptResult Parser::evalExpression(const Expression& exp) const
         case(Conditional):
             return evalConditional(exp);
         case(Null):
-            break;
+        default:
+            return {};
     }
-    return {};
 }
 
 ScriptResult Parser::evalLiteral(const Expression& exp) const
@@ -178,12 +180,12 @@ ScriptResult Parser::evalVariableList(const Expression& exp) const
 
 ScriptResult Parser::evalFunction(const Expression& exp) const
 {
-    auto function = std::get<FuncValue>(exp.value);
+    auto func = std::get<FuncValue>(exp.value);
     ValueList args;
-    for(auto& arg : function.args) {
+    for(const Expression& arg : func.args) {
         args.emplace_back(evalExpression(arg));
     }
-    return m_registry.function(function.name, args);
+    return m_registry.function(func.name, args);
 }
 
 ScriptResult Parser::evalFunctionArg(const Expression& exp) const
@@ -192,7 +194,7 @@ ScriptResult Parser::evalFunctionArg(const Expression& exp) const
     bool allPassed{true};
 
     auto arg = std::get<ExpressionList>(exp.value);
-    for(auto& subArg : arg) {
+    for(const Expression& subArg : arg) {
         const auto subExpr = evalExpression(subArg);
         if(!subExpr.cond) {
             allPassed = false;
@@ -201,12 +203,12 @@ ScriptResult Parser::evalFunctionArg(const Expression& exp) const
             QStringList newResult;
             const auto values = subExpr.value.split(Core::Constants::Separator);
             for(const auto& value : values) {
-                newResult.emplace_back(result.value + value);
+                newResult.emplace_back(result.value % value);
             }
             result.value = newResult.join(Core::Constants::Separator);
         }
         else {
-            result.value += subExpr.value;
+            result.value = result.value % subExpr.value;
         }
     }
     result.cond = allPassed;
@@ -220,7 +222,7 @@ ScriptResult Parser::evalConditional(const Expression& exp) const
     result.cond = true;
 
     auto arg = std::get<ExpressionList>(exp.value);
-    for(auto& subArg : arg) {
+    for(const Expression& subArg : arg) {
         const auto subExpr = evalExpression(subArg);
 
         // Literals return false

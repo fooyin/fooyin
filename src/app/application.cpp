@@ -212,7 +212,7 @@ struct Application::Private
         });
     }
 
-    void loadPlugins()
+    void loadPlugins() const
     {
         const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin";
         pluginManager->findPlugins(pluginsPath);

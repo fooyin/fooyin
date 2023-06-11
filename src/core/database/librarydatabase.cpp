@@ -28,31 +28,31 @@ namespace Fy::Core::DB {
 QMap<QString, QVariant> getTrackBindings(const Track& track)
 {
     return QMap<QString, QVariant>{
-        {QStringLiteral("FilePath"),     Utils::File::cleanPath(track.filepath())  },
-        {QStringLiteral("Title"),        track.title()                             },
-        {QStringLiteral("TrackNumber"),  track.trackNumber()                       },
-        {QStringLiteral("TrackTotal"),   track.trackTotal()                        },
-        {QStringLiteral("Artists"),      track.artists().join(Constants::Separator)},
-        {QStringLiteral("AlbumArtist"),  track.albumArtist()                       },
-        {QStringLiteral("Album"),        track.album()                             },
-        {QStringLiteral("CoverPath"),    track.coverPath()                         },
-        {QStringLiteral("DiscNumber"),   track.discNumber()                        },
-        {QStringLiteral("DiscTotal"),    track.discTotal()                         },
-        {QStringLiteral("Date"),         track.date()                              },
-        {QStringLiteral("Year"),         track.year()                              },
-        {QStringLiteral("Composer"),     track.composer()                          },
-        {QStringLiteral("Performer"),    track.performer()                         },
-        {QStringLiteral("Genres"),       track.genres().join(Constants::Separator) },
-        {QStringLiteral("Lyrics"),       track.lyrics()                            },
-        {QStringLiteral("Comment"),      track.comment()                           },
-        {QStringLiteral("Duration"),     QVariant::fromValue(track.duration())     },
-        {QStringLiteral("FileSize"),     QVariant::fromValue(track.fileSize())     },
-        {QStringLiteral("BitRate"),      track.bitrate()                           },
-        {QStringLiteral("SampleRate"),   track.sampleRate()                        },
-        {QStringLiteral("ExtraTags"),    track.serialiseExtrasTags()               },
-        {QStringLiteral("AddedDate"),    QVariant::fromValue(track.addedTime())    },
-        {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime()) },
-        {QStringLiteral("LibraryID"),    track.libraryId()                         },
+        {QStringLiteral("FilePath"), Utils::File::cleanPath(track.filepath())},
+        {QStringLiteral("Title"), track.title()},
+        {QStringLiteral("TrackNumber"), track.trackNumber()},
+        {QStringLiteral("TrackTotal"), track.trackTotal()},
+        {QStringLiteral("Artists"), track.artists().join(Constants::Separator)},
+        {QStringLiteral("AlbumArtist"), track.albumArtist()},
+        {QStringLiteral("Album"), track.album()},
+        {QStringLiteral("CoverPath"), track.coverPath()},
+        {QStringLiteral("DiscNumber"), track.discNumber()},
+        {QStringLiteral("DiscTotal"), track.discTotal()},
+        {QStringLiteral("Date"), track.date()},
+        {QStringLiteral("Year"), track.year()},
+        {QStringLiteral("Composer"), track.composer()},
+        {QStringLiteral("Performer"), track.performer()},
+        {QStringLiteral("Genres"), track.genres().join(Constants::Separator)},
+        {QStringLiteral("Lyrics"), track.lyrics()},
+        {QStringLiteral("Comment"), track.comment()},
+        {QStringLiteral("Duration"), QVariant::fromValue(track.duration())},
+        {QStringLiteral("FileSize"), QVariant::fromValue(track.fileSize())},
+        {QStringLiteral("BitRate"), track.bitrate()},
+        {QStringLiteral("SampleRate"), track.sampleRate()},
+        {QStringLiteral("ExtraTags"), track.serialiseExtrasTags()},
+        {QStringLiteral("AddedDate"), QVariant::fromValue(track.addedTime())},
+        {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime())},
+        {QStringLiteral("LibraryID"), track.libraryId()},
     };
 }
 
@@ -67,7 +67,10 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
         return true;
     }
 
-    db().transaction();
+    if(!db().transaction()) {
+        qDebug() << "Transaction could not be started";
+        return false;
+    }
 
     for(auto& track : tracks) {
         if(track.id() >= 0) {
@@ -79,7 +82,12 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
         }
     }
 
-    return db().commit();
+    if(!db().commit()) {
+        qDebug() << "Transaction could not be commited";
+        return false;
+    }
+
+    return true;
 }
 
 bool LibraryDatabase::getAllTracks(TrackList& result)
@@ -204,8 +212,8 @@ bool LibraryDatabase::updateTrack(const Track& track)
 
     auto bindings = getTrackBindings(track);
 
-    const auto q = module()->update(
-        "Tracks", bindings, {"TrackID", track.id()}, QString("Cannot update track %1").arg(track.filepath()));
+    const auto q = module()->update("Tracks", bindings, {"TrackID", track.id()},
+                                    QString("Cannot update track %1").arg(track.filepath()));
 
     return !q.hasError();
 }
@@ -224,7 +232,10 @@ bool LibraryDatabase::deleteTracks(const TrackList& tracks)
         return true;
     }
 
-    module()->db().transaction();
+    if(!module()->db().transaction()) {
+        qDebug() << "Transaction could not be started";
+        return false;
+    }
 
     const int fileCount = static_cast<int>(std::count_if(tracks.cbegin(), tracks.cend(), [&](const Track& track) {
         return deleteTrack(track.id());

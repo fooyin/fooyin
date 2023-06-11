@@ -52,8 +52,8 @@ PlaylistTabs::PlaylistTabs(Core::Playlist::PlaylistHandler* playlistHandler, Pla
 
     QObject::connect(m_tabs, &QTabBar::tabBarClicked, this, &PlaylistTabs::tabChanged);
     QObject::connect(m_controller, &PlaylistController::currentPlaylistChanged, this, &PlaylistTabs::playlistChanged);
-//    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
-//                     &PlaylistTabs::playlistChanged);
+    //    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
+    //                     &PlaylistTabs::playlistChanged);
     QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistAdded, this,
                      &PlaylistTabs::addPlaylist);
     QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistRemoved, this,
@@ -127,8 +127,8 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     if(index >= 0) {
         const int id = m_tabs->tabData(index).toInt();
 
-        auto* renamePlaylist = new QAction("Rename Playlist", menu);
-        QObject::connect(renamePlaylist, &QAction::triggered, this, [this, index, id]() {
+        auto* renamePlAction = new QAction("Rename Playlist", menu);
+        QObject::connect(renamePlAction, &QAction::triggered, this, [this, index, id]() {
             bool success       = false;
             const QString text = QInputDialog::getText(this, tr("Rename Playlist"), tr("Playlist Name:"),
                                                        QLineEdit::Normal, m_tabs->tabText(index), &success);
@@ -138,13 +138,13 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
             }
         });
 
-        auto* removePlaylist = new QAction("Remove Playlist", menu);
-        QObject::connect(removePlaylist, &QAction::triggered, this, [this, id]() {
+        auto* removePlAction = new QAction("Remove Playlist", menu);
+        QObject::connect(removePlAction, &QAction::triggered, this, [this, id]() {
             m_playlistHandler->removePlaylist(id);
         });
 
-        menu->addAction(renamePlaylist);
-        menu->addAction(removePlaylist);
+        menu->addAction(renamePlAction);
+        menu->addAction(removePlAction);
     }
     menu->addAction(createPlaylist);
 

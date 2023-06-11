@@ -50,7 +50,7 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
                               "%album% (%year%)||\n"
                               "$ifgreater(%disctotal%,1,Disc %disc%||,)\n"
                               "%track%. %title%",
-                              "Library Tree");
+                              "LibraryTree");
 
     m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(activeLayoutPath()));
 

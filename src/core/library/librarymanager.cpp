@@ -84,7 +84,7 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
     const auto id = m_libraryConnector->insertLibrary(path, name);
 
     if(id >= 0) {
-        auto* info = m_libraries.emplace_back(std::make_unique<LibraryInfo>(name, path, id)).get();
+        auto* info = m_libraries.emplace_back(std::make_unique<LibraryInfo>(libraryName, path, id)).get();
         emit libraryAdded(info);
         info->status = Initialised;
         return id;

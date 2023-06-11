@@ -7,7 +7,6 @@
 </p>
 
 #
-
 Fooyin is a customisable music player for linux. It has not yet reached a stable release so bugs and breaking changes should be expected.
 
 Fooyin features a _layout editing mode_ in which the entire user interface can be customised, starting from a blank state or a default layout.
@@ -18,29 +17,25 @@ The engine backend is currently based on mpv, though this will change to ffmpeg 
 </p>
 
 ## Features
-
 - [x] Fully customisable layout
 - [x] Filter and search collection
 - [x] Plugin system
-- [ ] Full playlist support
+- [x] Playlist support
 - [ ] Tag editing
 - [ ] FFmpeg backend
 - [ ] Visualisations
-- [ ] Lyrics support - embedded & lrc + enhanced lrc
+- [ ] Lyrics support
+- [ ] Lyric querying
 - [ ] Last.fm integration
 - [ ] Discogs integration
-- [ ] Lyric querying
 
-## Dependencies
-
-Fooyin requires:
-
+## Requirements
+- Compiler with support for C++20
 - Qt6
 - Taglib (1.12)
 - Libmpv (mpv)
 
 ## Setup
-
 ```
 git clone git@github.com:ludouzi/fooyin.git
 cd fooyin && mkdir build && cd build

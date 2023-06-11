@@ -74,8 +74,8 @@ QWidget* SettingsPage::widget()
 void SettingsPage::apply()
 {
     if(m_widget) {
-        if(auto* widget = qobject_cast<SettingsPageWidget*>(m_widget)) {
-            widget->apply();
+        if(auto* pageWidget = qobject_cast<SettingsPageWidget*>(m_widget)) {
+            pageWidget->apply();
         }
     }
 }
@@ -83,8 +83,8 @@ void SettingsPage::apply()
 void SettingsPage::finish()
 {
     if(m_widget) {
-        if(auto* widget = qobject_cast<SettingsPageWidget*>(m_widget)) {
-            widget->finish();
+        if(auto* pageWidget = qobject_cast<SettingsPageWidget*>(m_widget)) {
+            pageWidget->finish();
         }
         delete m_widget;
         m_widget = nullptr;

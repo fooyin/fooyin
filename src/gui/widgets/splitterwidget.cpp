@@ -85,7 +85,7 @@ bool SplitterWidget::restoreState(const QByteArray& state)
     return m_splitter->restoreState(state);
 }
 
-QWidget* SplitterWidget::widget(int index) const
+QWidget* SplitterWidget::widgetAtIndex(int index) const
 {
     return m_splitter->widget(index);
 }
@@ -246,12 +246,12 @@ void SplitterWidget::loadLayout(QJsonObject& object)
     const auto children = object["Children"].toArray();
 
     for(const auto& widget : children) {
-        const QJsonObject object = widget.toObject();
-        if(!object.isEmpty()) {
-            const auto name = object.constBegin().key();
-            if(auto* childWidget = m_widgetFactory->make(name)) {
+        const QJsonObject jsonObject = widget.toObject();
+        if(!jsonObject.isEmpty()) {
+            const auto widgetName = jsonObject.constBegin().key();
+            if(auto* childWidget = m_widgetFactory->make(widgetName)) {
                 addWidget(childWidget);
-                auto widgetObject = object.value(name).toObject();
+                auto widgetObject = jsonObject.value(widgetName).toObject();
                 childWidget->loadLayout(widgetObject);
             }
         }

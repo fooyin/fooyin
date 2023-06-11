@@ -97,7 +97,10 @@ bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
         return false;
     }
 
-    db().transaction();
+    if(!db().transaction()) {
+        qDebug() << "Transaction could not be started";
+        return false;
+    }
 
     // Remove old tracks first
     Query delTracks{this};
@@ -118,7 +121,10 @@ bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
         insertPlaylistTrack(id, track, i);
     }
 
-    db().commit();
+    if(!db().commit()) {
+        qDebug() << "Transaction could not be commited";
+        return false;
+    }
 
     return true;
 }

@@ -109,10 +109,10 @@ void FieldRegistry::saveFields()
 
 void FieldRegistry::loadFields()
 {
-    QByteArray fields = m_settings->value<Settings::FilterFields>();
-    fields            = QByteArray::fromBase64(fields);
+    QByteArray currentFields = m_settings->value<Settings::FilterFields>();
+    currentFields            = QByteArray::fromBase64(currentFields);
 
-    QDataStream in(&fields, QIODevice::ReadOnly);
+    QDataStream in(&currentFields, QIODevice::ReadOnly);
 
     in >> m_fields;
 }

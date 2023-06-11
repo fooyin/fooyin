@@ -26,6 +26,8 @@
 #include "functions/timefuncs.h"
 #include "models/track.h"
 
+#include <QVariant>
+
 namespace Fy::Core::Scripting {
 Registry::Registry()
     : m_currentTrack{nullptr}
@@ -50,9 +52,9 @@ ScriptResult Registry::trackValue(const QString& var) const
         return {};
     }
     if(m_metadata.count(var)) {
-        auto function = m_metadata.at(var);
-        if(std::holds_alternative<StringFunc>(function)) {
-            const auto f        = std::get<0>(function);
+        auto trackFunc = m_metadata.at(var);
+        if(std::holds_alternative<StringFunc>(trackFunc)) {
+            const auto f        = std::get<0>(trackFunc);
             const QString value = (m_currentTrack.*f)();
 
             ScriptResult result;
@@ -60,8 +62,8 @@ ScriptResult Registry::trackValue(const QString& var) const
             result.cond  = !value.isEmpty();
             return result;
         }
-        if(std::holds_alternative<IntegerFunc>(function)) {
-            auto f          = std::get<1>(function);
+        if(std::holds_alternative<IntegerFunc>(trackFunc)) {
+            auto f          = std::get<1>(trackFunc);
             const int value = (m_currentTrack.*f)();
 
             ScriptResult result;
@@ -69,8 +71,8 @@ ScriptResult Registry::trackValue(const QString& var) const
             result.cond  = value >= 0;
             return result;
         }
-        if(std::holds_alternative<StringListFunc>(function)) {
-            const auto f            = std::get<2>(function);
+        if(std::holds_alternative<StringListFunc>(trackFunc)) {
+            const auto f            = std::get<2>(trackFunc);
             const QStringList value = (m_currentTrack.*f)();
 
             ScriptResult result;
@@ -78,8 +80,8 @@ ScriptResult Registry::trackValue(const QString& var) const
             result.cond  = !value.isEmpty();
             return result;
         }
-        if(std::holds_alternative<U64Func>(function)) {
-            const auto f         = std::get<3>(function);
+        if(std::holds_alternative<U64Func>(trackFunc)) {
+            const auto f         = std::get<3>(trackFunc);
             const uint64_t value = (m_currentTrack.*f)();
 
             ScriptResult result;
@@ -98,8 +100,7 @@ ScriptResult Registry::function(const QString& func, const ValueList& args) cons
     }
     auto function = m_funcs.at(func);
     if(std::holds_alternative<NativeFunc>(function)) {
-        const auto f        = std::get<NativeFunc>(function);
-        const QString value = f(containerCast<QStringList>(args));
+        const QString value = std::get<NativeFunc>(function)(containerCast<QStringList>(args));
 
         ScriptResult result;
         result.value = value;
@@ -107,8 +108,7 @@ ScriptResult Registry::function(const QString& func, const ValueList& args) cons
         return result;
     }
     if(std::holds_alternative<NativeCondFunc>(function)) {
-        const auto f = std::get<NativeCondFunc>(function);
-        return f((args));
+        return std::get<NativeCondFunc>(function)(args);
     }
     return {};
 }

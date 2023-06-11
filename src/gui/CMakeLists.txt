@@ -144,7 +144,7 @@ set_target_properties(
 target_link_libraries(fooyin_gui PRIVATE Qt6::Core Qt6::Widgets Qt6::Sql
                                          fooyin::core fooyin::utils)
 
-target_compile_features(fooyin_gui PUBLIC cxx_std_17)
+target_compile_features(fooyin_gui PUBLIC cxx_std_20)
 target_compile_options(fooyin_gui PRIVATE -Werror -Wall -Wextra -Wpedantic)
 
 install(TARGETS fooyin_gui LIBRARY DESTINATION ${FOOYIN_LIBRARY_DIR})
