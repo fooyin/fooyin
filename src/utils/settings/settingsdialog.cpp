@@ -133,7 +133,7 @@ void SettingsDialog::showCategory(int index)
     if(currentTabIndex != -1) {
         auto* page    = category->pages.at(currentTabIndex);
         m_currentPage = page->id();
-        m_visitedPages.insert(page);
+        m_visitedPages.emplace(page);
     }
     m_stackedLayout->setCurrentIndex(category->index);
 }
@@ -169,9 +169,7 @@ void SettingsDialog::done(int value)
 
 void SettingsDialog::accept()
 {
-    for(const auto& page : m_pages) {
-        page->apply();
-    }
+    apply();
     for(const auto& page : m_pages) {
         page->finish();
     }
@@ -217,6 +215,6 @@ void SettingsDialog::currentTabChanged(int index)
     SettingsCategory* category = m_model.categories().at(modelIndex.row());
     SettingsPage* page         = category->pages.at(index);
     m_currentPage              = page->id();
-    m_visitedPages.insert(page);
+    m_visitedPages.emplace(page);
 }
 } // namespace Fy::Utils
