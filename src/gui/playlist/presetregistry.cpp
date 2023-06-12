@@ -42,19 +42,26 @@ PlaylistPreset loadDefault()
     preset.header.title.text    = "$if(%albumartist%,%albumartist%,Unknown Artist)";
     preset.header.subtitle.text = "$if(%album%,%album%,Unknown Album)";
     preset.header.sideText.text = "%year%";
-    preset.header.info.text     = "%genres% | %trackcount& Tracks | %duration%";
+    preset.header.info.text     = "$if(%ggenres%,%ggenres% | )$ifgreater(%gcount%,1,%gcount% Tracks,%gcount% Track) | "
+                                  "$timems(%gduration%)";
     preset.header.title.font.setPixelSize(17);
     preset.header.subtitle.font.setPixelSize(16);
     preset.header.sideText.font.setPixelSize(16);
     preset.header.info.font.setPixelSize(13);
 
-    preset.subHeader.rowHeight = 19;
-    QFont subHeaderFont;
-    subHeaderFont.setPixelSize(13);
-    TextBlock subheaderTitle;
-    subheaderTitle.text = "$ifgreater(%disctotal%,1,Disc #%disc%)";
-    subheaderTitle.font = subHeaderFont;
-    preset.subHeader.text.emplace_back(subheaderTitle);
+    preset.subHeaders.rowHeight = 19;
+    SubheaderRow subRow;
+    QFont subFont;
+    subFont.setPixelSize(13);
+    TextBlock subTitle;
+    subTitle.text = "$ifgreater(%disctotal%,1,Disc #%disc%)";
+    subTitle.font = subFont;
+    TextBlock subInfo;
+    subInfo.text = "$timems(%gduration%)";
+    subInfo.font = subFont;
+    subRow.title = subTitle;
+    subRow.info  = subInfo;
+    preset.subHeaders.rows.emplace_back(subRow);
 
     preset.track.rowHeight = 23;
     QFont trackFont;

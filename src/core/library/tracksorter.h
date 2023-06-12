@@ -26,6 +26,8 @@ namespace Fy::Core::Library {
 class TrackSorter
 {
 public:
+    TrackSorter();
+    
     void sortTracks(TrackList& tracks);
     void calcSortField(Track& track);
     void calcSortFields(TrackList& tracks);
@@ -33,6 +35,7 @@ public:
     void changeSorting(const QString& sort);
 
 private:
+    Scripting::Registry m_registry;
     Scripting::Parser m_parser;
     Scripting::ParsedScript m_sortScript;
 };

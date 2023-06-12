@@ -27,11 +27,6 @@ TextBlock::TextBlock()
     : colour{QApplication::palette().text().color()}
 { }
 
-bool PlaylistPreset::isValid() const
-{
-    return !name.isEmpty();
-}
-
 QDataStream& operator<<(QDataStream& stream, const TextBlock& block)
 {
     stream << block.text;
@@ -84,15 +79,29 @@ QDataStream& operator>>(QDataStream& stream, HeaderRow& header)
 
 QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader)
 {
-    stream << subheader.text;
-    stream << subheader.rowHeight;
+    stream << subheader.title;
+    stream << subheader.info;
     return stream;
 }
 
 QDataStream& operator>>(QDataStream& stream, SubheaderRow& subheader)
 {
-    stream >> subheader.text;
-    stream >> subheader.rowHeight;
+    stream >> subheader.title;
+    stream >> subheader.info;
+    return stream;
+}
+
+QDataStream& operator<<(QDataStream& stream, const SubheaderRows& subheaders)
+{
+    stream << subheaders.rows;
+    stream << subheaders.rowHeight;
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream& stream, SubheaderRows& subheaders)
+{
+    stream >> subheaders.rows;
+    stream >> subheaders.rowHeight;
     return stream;
 }
 
@@ -115,7 +124,7 @@ QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset)
     stream << preset.index;
     stream << preset.name;
     stream << preset.header;
-    stream << preset.subHeader;
+    stream << preset.subHeaders;
     stream << preset.track;
     return stream;
 }
@@ -125,7 +134,7 @@ QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset)
     stream >> preset.index;
     stream >> preset.name;
     stream >> preset.header;
-    stream >> preset.subHeader;
+    stream >> preset.subHeaders;
     stream >> preset.track;
     return stream;
 }

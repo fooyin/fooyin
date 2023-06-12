@@ -19,10 +19,6 @@
 
 #include "playlistitemmodels.h"
 
-#include <utils/utils.h>
-
-#include <QStringBuilder>
-
 namespace Fy::Gui::Widgets::Playlist {
 Container::Container()
     : m_duration{0}
@@ -60,11 +56,36 @@ void Container::removeTrack(const Core::Track& trackToRemove)
     m_duration -= trackToRemove.duration();
 }
 
-Header::Header(TextBlock title, TextBlock subtitle, TextBlock sideText, TextBlock info, QString coverPath)
+TextBlock Container::info() const
+{
+    return m_info;
+}
+
+QString Container::genres()
+{
+    QStringList genres;
+    if(m_genres.isEmpty()) {
+        for(const auto& track : m_tracks) {
+            for(const auto& genre : track.genres()) {
+                if(!genres.contains(genre)) {
+                    genres.emplace_back(genre);
+                }
+            }
+        }
+        m_genres = genres.join(" / ");
+    }
+    return m_genres;
+}
+
+void Container::modifyInfo(TextBlock info)
+{
+    m_info = std::move(info);
+}
+
+Header::Header(TextBlock title, TextBlock subtitle, TextBlock sideText, QString coverPath)
     : m_title{std::move(title)}
     , m_subtitle{std::move(subtitle)}
     , m_sideText{std::move(sideText)}
-    , m_info{std::move(info)}
     , m_coverPath{std::move(coverPath)}
 { }
 
@@ -83,11 +104,6 @@ TextBlock Header::sideText() const
     return m_sideText;
 }
 
-TextBlock Header::info() const
-{
-    return m_info;
-}
-
 bool Header::hasCover() const
 {
     return !m_coverPath.isEmpty();
@@ -98,62 +114,13 @@ QString Header::coverPath() const
     return m_coverPath;
 }
 
-void Header::addTrack(const Core::Track& track)
-{
-    Container::addTrack(track);
-
-    for(const auto& genre : track.genres()) {
-        if(!m_genres.contains(genre)) {
-            m_genres.emplace_back(genre);
-        }
-    }
-    calculateInfo();
-}
-
-void Header::removeTrack(const Core::Track& trackToRemove)
-{
-    Container::removeTrack(trackToRemove);
-
-    m_genres.clear();
-
-    const auto containerTracks = tracks();
-    for(const Core::Track& track : containerTracks) {
-        const auto genres = track.genres();
-        for(const QString& genre : genres) {
-            if(!m_genres.contains(genre)) {
-                m_genres.emplace_back(genre);
-            }
-        }
-    }
-    calculateInfo();
-}
-
-void Header::calculateInfo()
-{
-    m_info.text      = m_genres.join(" / ");
-    const auto count = trackCount();
-
-    if(!m_info.text.isEmpty()) {
-        m_info.text = m_info.text % " | ";
-    }
-    m_info.text
-        = m_info.text
-        % QString(QString::number(count) % (count > 1 ? " Tracks" : " Track") % " | " % Utils::msToString(duration()));
-}
-
-Subheader::Subheader(TextBlockList title, TextBlockList subtitle)
+Subheader::Subheader(TextBlock title)
     : m_title{std::move(title)}
-    , m_subtitle{std::move(subtitle)}
 { }
 
-TextBlockList Subheader::title() const
+TextBlock Subheader::title() const
 {
     return m_title;
-}
-
-TextBlockList Subheader::subtitle() const
-{
-    return m_subtitle;
 }
 
 Track::Track(TextBlockList left, TextBlockList right, const Core::Track& track)

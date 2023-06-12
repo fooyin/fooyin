@@ -25,8 +25,7 @@
 
 #include <utils/treemodel.h>
 
-namespace Fy {
-namespace Gui::Widgets {
+namespace Fy::Gui::Widgets {
 enum LibraryTreeRole
 {
     Title  = Qt::UserRole + 1,
@@ -51,10 +50,10 @@ public:
 private:
     LibraryTreeItem* createNode(const QString& key, LibraryTreeItem* parent, const QString& title);
 
+    Core::Scripting::Registry m_registry;
     Core::Scripting::Parser m_parser;
     QString m_groupScipt;
     std::unique_ptr<LibraryTreeItem> m_rootNode;
     std::unordered_map<QString, std::unique_ptr<LibraryTreeItem>> m_nodes;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fy::Gui::Widgets

@@ -24,6 +24,7 @@
 namespace Fy::Gui::Widgets {
 LibraryTreeModel::LibraryTreeModel(QObject* parent)
     : TreeModel{parent}
+    , m_parser{&m_registry}
 { }
 
 QVariant LibraryTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -130,7 +131,7 @@ void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
 
 LibraryTreeItem* LibraryTreeModel::createNode(const QString& key, LibraryTreeItem* parent, const QString& title)
 {
-    if(!m_nodes.count(key)) {
+    if(!m_nodes.contains(key)) {
         m_nodes.emplace(key, std::make_unique<LibraryTreeItem>(title, parent));
     }
     LibraryTreeItem* treeItem = m_nodes.at(key).get();

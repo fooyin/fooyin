@@ -119,6 +119,8 @@ void PresetModel::markForChange(const PlaylistPreset& preset)
 
 void PresetModel::processQueue()
 {
+    std::vector<PresetItem*> presetsToRemove;
+
     for(auto& node : m_nodes) {
         PresetItem* item                    = node.get();
         const PresetItem::ItemStatus status = item->status();
@@ -141,7 +143,7 @@ void PresetModel::processQueue()
                     beginRemoveRows({}, item->row(), item->row());
                     rootItem()->removeChild(item->row());
                     endRemoveRows();
-                    removePreset(preset.index);
+                    presetsToRemove.push_back(item);
                 }
                 else {
                     qWarning() << QString{"Field (%1) could not be removed"}.arg(preset.name);
@@ -160,6 +162,9 @@ void PresetModel::processQueue()
             case(PresetItem::None):
                 break;
         }
+    }
+    for(const auto& item : presetsToRemove) {
+        removePreset(item->preset().index);
     }
 }
 

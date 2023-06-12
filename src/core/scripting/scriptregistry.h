@@ -29,12 +29,20 @@ namespace Fy::Core::Scripting {
 class Registry
 {
 public:
+    using FuncRet = std::variant<int, uint64_t, QString, QStringList>;
+    using VarFunc = std::function<FuncRet()>;
+
     Registry();
 
     bool varExists(const QString& var) const;
     bool funcExists(const QString& func) const;
 
-    ScriptResult trackValue(const QString& var) const;
+    inline void setVar(const QString& var, VarFunc func = {})
+    {
+        m_vars[var] = std::move(func);
+    }
+
+    ScriptResult varValue(const QString& var) const;
     ScriptResult function(const QString& func, const ValueList& args) const;
 
     void changeCurrentTrack(const Core::Track& track);
@@ -46,24 +54,18 @@ public:
     }
 
 private:
-    using NativeFunc     = QString (*)(const QStringList&);
-    using NativeCondFunc = ScriptResult (*)(const ValueList&);
+    using NativeFunc     = std::function<QString(const QStringList&)>;
+    using NativeCondFunc = std::function<ScriptResult(const ValueList&)>;
+    using Func           = std::variant<NativeFunc, NativeCondFunc>;
 
-    using Func = std::variant<NativeFunc, NativeCondFunc>;
-
-    using StringFunc     = QString (Track::*)() const;
-    using IntegerFunc    = int (Track::*)() const;
-    using StringListFunc = QStringList (Track::*)() const;
-    using U64Func        = uint64_t (Track::*)() const;
-
-    using TrackFunc = std::variant<StringFunc, IntegerFunc, StringListFunc, U64Func>;
+    using TrackFunc = std::function<FuncRet(const Track&)>;
 
     void addDefaultFunctions();
     void addDefaultMetadata();
 
     Track m_currentTrack;
     std::unordered_map<QString, TrackFunc> m_metadata;
-    std::unordered_map<QString, QVariant> m_vars;
+    std::unordered_map<QString, VarFunc> m_vars;
     std::unordered_map<QString, Func> m_funcs;
 };
-} // namespace Scripting
+} // namespace Fy::Core::Scripting

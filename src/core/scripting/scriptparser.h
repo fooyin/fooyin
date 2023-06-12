@@ -36,6 +36,7 @@ struct ParsedScript
 class Parser
 {
 public:
+    explicit Parser(Registry* registry);
     virtual ~Parser() = default;
 
     ParsedScript parse(const QString& input);
@@ -64,7 +65,6 @@ protected:
     Expression functionArgs();
     Expression conditional();
 
-    const Registry& registry() const;
     const ParsedScript& lastParsedScript() const;
 
     void advance();
@@ -77,7 +77,7 @@ protected:
 
 private:
     Scanner m_scanner;
-    Registry m_registry;
+    Registry* m_registry;
 
     Token m_current;
     Token m_previous;

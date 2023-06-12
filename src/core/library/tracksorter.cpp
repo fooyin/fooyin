@@ -20,6 +20,10 @@
 #include "tracksorter.h"
 
 namespace Fy::Core::Library {
+TrackSorter::TrackSorter()
+    : m_parser{&m_registry}
+{ }
+
 void TrackSorter::sortTracks(TrackList& tracks)
 {
     TrackList sortedTracks{tracks};

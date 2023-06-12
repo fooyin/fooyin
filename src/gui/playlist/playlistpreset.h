@@ -56,6 +56,11 @@ struct TextBlock
         return QVariant::fromValue(*this);
     }
 
+    inline bool isValid()
+    {
+        return !text.isEmpty();
+    }
+
     inline void cloneProperties(const TextBlock& other)
     {
         fontChanged   = other.fontChanged;
@@ -83,18 +88,44 @@ struct HeaderRow
             == std::tie(other.title, other.subtitle, other.sideText, other.info, other.rowHeight, other.showCover,
                         other.simple);
     };
+
+    inline bool isValid()
+    {
+        return title.isValid() || subtitle.isValid() || sideText.isValid();
+    }
 };
 
 struct SubheaderRow
 {
-    TextBlockList text;
-
-    int rowHeight{25};
+    TextBlock title;
+    TextBlock info;
 
     inline bool operator==(const SubheaderRow& other) const
     {
-        return std::tie(text, rowHeight) == std::tie(other.text, other.rowHeight);
+        return std::tie(title, info) == std::tie(other.title, other.info);
     };
+
+    inline bool isValid()
+    {
+        return title.isValid();
+    }
+};
+
+struct SubheaderRows
+{
+    QList<SubheaderRow> rows;
+
+    int rowHeight{25};
+
+    inline bool operator==(const SubheaderRows& other) const
+    {
+        return std::tie(rows, rowHeight) == std::tie(other.rows, other.rowHeight);
+    };
+
+    inline bool isValid()
+    {
+        return !rows.isEmpty();
+    }
 };
 
 struct TrackRow
@@ -107,6 +138,11 @@ struct TrackRow
     {
         return std::tie(text, rowHeight) == std::tie(other.text, other.rowHeight);
     };
+
+    inline bool isValid()
+    {
+        return !text.isEmpty();
+    }
 };
 
 struct PlaylistPreset
@@ -115,15 +151,18 @@ struct PlaylistPreset
     QString name;
 
     HeaderRow header;
-    SubheaderRow subHeader;
+    SubheaderRows subHeaders;
     TrackRow track;
-
-    [[nodiscard]] bool isValid() const;
 
     inline bool operator==(const PlaylistPreset& other) const
     {
-        return std::tie(index, name, header, subHeader, track)
-            == std::tie(other.index, other.name, other.header, other.subHeader, other.track);
+        return std::tie(index, name, header, subHeaders, track)
+            == std::tie(other.index, other.name, other.header, other.subHeaders, other.track);
+    };
+
+    inline bool isValid() const
+    {
+        return !name.isEmpty();
     };
 };
 
@@ -133,6 +172,8 @@ QDataStream& operator<<(QDataStream& stream, const HeaderRow& header);
 QDataStream& operator>>(QDataStream& stream, HeaderRow& header);
 QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader);
 QDataStream& operator>>(QDataStream& stream, SubheaderRow& subheader);
+QDataStream& operator<<(QDataStream& stream, const SubheaderRows& subheaders);
+QDataStream& operator>>(QDataStream& stream, SubheaderRows& subheaders);
 QDataStream& operator<<(QDataStream& stream, const TrackRow& track);
 QDataStream& operator>>(QDataStream& stream, TrackRow& track);
 QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset);

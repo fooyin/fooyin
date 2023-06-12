@@ -22,6 +22,7 @@
 #include "core/constants.h"
 
 #include <QStringBuilder>
+#include <utility>
 
 namespace Fy::Core::Scripting {
 QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& result)
@@ -43,9 +44,13 @@ QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& resu
     return listResult;
 }
 
+Parser::Parser(Registry* registry)
+    : m_registry{registry}
+{ }
+
 ParsedScript Parser::parse(const QString& input)
 {
-    if(input.isEmpty()) {
+    if(input.isEmpty() || !m_registry) {
         return {};
     }
 
@@ -78,7 +83,7 @@ QString Parser::evaluate()
 
 QString Parser::evaluate(const ParsedScript& input)
 {
-    if(!input.valid) {
+    if(!input.valid || !m_registry) {
         return {};
     }
 
@@ -128,7 +133,9 @@ QString Parser::evaluate(const ParsedScript& input, const Track& track)
 
 void Parser::setMetadata(const Track& track)
 {
-    m_registry.changeCurrentTrack(track);
+    if(m_registry) {
+        m_registry->changeCurrentTrack(track);
+    }
 }
 
 ScriptResult Parser::evalExpression(const Expression& exp) const
@@ -163,7 +170,7 @@ ScriptResult Parser::evalLiteral(const Expression& exp) const
 ScriptResult Parser::evalVariable(const Expression& exp) const
 {
     const QString var   = std::get<QString>(exp.value);
-    ScriptResult result = m_registry.trackValue(var);
+    ScriptResult result = m_registry->varValue(var);
 
     if(result.value.contains(Constants::Separator)) {
         // TODO: Support custom separators
@@ -175,7 +182,7 @@ ScriptResult Parser::evalVariable(const Expression& exp) const
 ScriptResult Parser::evalVariableList(const Expression& exp) const
 {
     const QString var = std::get<QString>(exp.value);
-    return registry().trackValue(var);
+    return m_registry->varValue(var);
 }
 
 ScriptResult Parser::evalFunction(const Expression& exp) const
@@ -185,7 +192,7 @@ ScriptResult Parser::evalFunction(const Expression& exp) const
     for(const Expression& arg : func.args) {
         args.emplace_back(evalExpression(arg));
     }
-    return m_registry.function(func.name, args);
+    return m_registry->function(func.name, args);
 }
 
 ScriptResult Parser::evalFunctionArg(const Expression& exp) const
@@ -397,7 +404,7 @@ Expression Parser::variable()
         value     = QString{m_previous.value.toString()}.toLower();
     }
 
-    if(!m_registry.varExists(value)) {
+    if(!m_registry->varExists(value)) {
         error("Variable not found");
     }
 
@@ -418,7 +425,7 @@ Expression Parser::function()
     FuncValue funcExpr;
     funcExpr.name = QString{m_previous.value.toString()}.toLower();
 
-    if(!m_registry.funcExists(funcExpr.name)) {
+    if(!m_registry->funcExists(funcExpr.name)) {
         error("Function not found");
     }
 
@@ -461,11 +468,6 @@ Expression Parser::conditional()
     expr.value = condExpr;
     consume(TokRightSquare, "Expected ']' after expression");
     return expr;
-}
-
-const Registry& Parser::registry() const
-{
-    return m_registry;
 }
 
 const ParsedScript& Parser::lastParsedScript() const

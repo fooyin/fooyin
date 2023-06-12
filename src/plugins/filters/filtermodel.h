@@ -72,6 +72,7 @@ private:
     int m_rowHeight;
     int m_fontSize;
 
+    Core::Scripting::Registry m_registry;
     Core::Scripting::Parser m_parser;
 };
 } // namespace Filters
