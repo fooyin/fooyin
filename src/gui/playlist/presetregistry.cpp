@@ -33,7 +33,7 @@ int find(const IndexPresetMap& presets, const QString& name)
     }));
 }
 
-PlaylistPreset loadDeault()
+PlaylistPreset loadDefault()
 {
     PlaylistPreset preset;
     preset.name = "Default";
@@ -120,7 +120,7 @@ bool PresetRegistry::changePreset(const PlaylistPreset& preset)
 
 PlaylistPreset PresetRegistry::presetByIndex(int index) const
 {
-    if(!m_presets.count(index)) {
+    if(!m_presets.contains(index)) {
         return {};
     }
     return m_presets.at(index);
@@ -142,7 +142,7 @@ PlaylistPreset PresetRegistry::presetByName(const QString& name) const
 
 bool PresetRegistry::removeByIndex(int index)
 {
-    if(!m_presets.count(index)) {
+    if(!m_presets.contains(index)) {
         return false;
     }
     m_presets.erase(index);
@@ -170,7 +170,7 @@ void PresetRegistry::loadPresets()
     in >> m_presets;
 
     if(m_presets.empty()) {
-        addPreset(loadDeault());
+        addPreset(loadDefault());
     }
 }
 
