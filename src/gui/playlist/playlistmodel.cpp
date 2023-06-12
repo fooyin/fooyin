@@ -84,11 +84,12 @@ struct PlaylistModel::Private
     PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::ItemType type, const Data& item,
                                  PlaylistItem* parent)
     {
-        if(!nodes.contains(key)) {
-            auto* node = nodes.emplace(key, std::make_unique<PlaylistItem>(type, item, parent)).first->second.get();
-            node->setKey(key);
+        auto [node, inserted] = nodes.try_emplace(key, std::make_unique<PlaylistItem>(type, item, parent));
+        if(inserted) {
+            node->second->setKey(key);
         }
-        PlaylistItem* child = nodes.at(key).get();
+        PlaylistItem* child = node->second.get();
+
         parent->appendChild(child);
         return child;
     }
