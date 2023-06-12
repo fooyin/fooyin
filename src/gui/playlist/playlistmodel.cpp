@@ -86,7 +86,7 @@ struct PlaylistModel::Private
     PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::ItemType type, const Data& item,
                                  PlaylistItem* parent)
     {
-        if(!nodes.count(key)) {
+        if(!nodes.contains(key)) {
             auto* node = nodes.emplace(key, std::make_unique<PlaylistItem>(type, item, parent)).first->second.get();
             node->setKey(key);
         }
@@ -285,8 +285,9 @@ struct PlaylistModel::Private
                         break;
                 }
             }
+            default:
+                return {};
         }
-        return {};
     }
 
     QVariant headerData(PlaylistItem* item, int role) const
@@ -322,8 +323,9 @@ struct PlaylistModel::Private
             case(Qt::SizeHintRole): {
                 return QSize{0, currentPreset.header.rowHeight};
             }
+            default:
+                return {};
         }
-        return {};
     }
 
     QVariant subheaderData(PlaylistItem* item, int role) const
@@ -347,8 +349,9 @@ struct PlaylistModel::Private
             case(Qt::SizeHintRole): {
                 return QSize{0, currentPreset.subHeader.rowHeight};
             }
+            default:
+                return {};
         }
-        return {};
     }
 };
 
@@ -491,7 +494,7 @@ QModelIndex PlaylistModel::indexForTrack(const Core::Track& track) const
 {
     QModelIndex index;
     const auto key = track.hash();
-    if(p->nodes.count(key)) {
+    if(p->nodes.contains(key)) {
         const auto* item = p->nodes.at(key).get();
         index            = createIndex(item->row(), 0, item);
     }
@@ -502,7 +505,7 @@ QModelIndex PlaylistModel::indexForItem(PlaylistItem* item) const
 {
     QModelIndex index;
     const auto key = item->key();
-    if(p->nodes.count(key)) {
+    if(p->nodes.contains(key)) {
         auto* node = p->nodes.at(key).get();
         index      = createIndex(node->row(), 0, node);
     }

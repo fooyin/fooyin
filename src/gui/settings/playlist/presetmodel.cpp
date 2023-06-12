@@ -190,8 +190,9 @@ QVariant PresetModel::headerData(int section, Qt::Orientation orientation, int r
             return "Preset Index";
         case(1):
             return "Preset Name";
+        default:
+            return {};
     }
-    return {};
 }
 
 QVariant PresetModel::data(const QModelIndex& index, int role) const
@@ -254,6 +255,7 @@ bool PresetModel::setData(const QModelIndex& index, const QVariant& value, int r
             break;
         }
         case(0):
+        default:
             break;
     }
 
