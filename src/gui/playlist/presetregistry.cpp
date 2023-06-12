@@ -52,7 +52,7 @@ PlaylistPreset loadDeault()
     QFont subHeaderFont;
     subHeaderFont.setPixelSize(13);
     TextBlock subheaderTitle;
-    subheaderTitle.text = "$ifgreater(%disctotal%,1,Disc #%disc%,)";
+    subheaderTitle.text = "$ifgreater(%disctotal%,1,Disc #%disc%)";
     subheaderTitle.font = subHeaderFont;
     preset.subHeader.text.emplace_back(subheaderTitle);
 
@@ -68,7 +68,7 @@ PlaylistPreset loadDeault()
     trackBlock2.font = trackFont;
     preset.track.text.emplace_back(trackBlock2);
     TextBlock trackBlock3;
-    trackBlock3.text = "||$ifgreater(%playcount%,1,|%playcount%,) ";
+    trackBlock3.text = "||$ifgreater(%playcount%,1,|%playcount%) ";
     trackBlock3.font = trackFont;
     preset.track.text.emplace_back(trackBlock3);
     TextBlock trackBlock4;
