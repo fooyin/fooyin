@@ -321,7 +321,7 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
     return nullptr;
 }
 
-void PlaylistHandler::appendToPlaylist(int id, const TrackList &tracks)
+void PlaylistHandler::appendToPlaylist(int id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
         playlist->appendTracks(tracks);
@@ -407,7 +407,9 @@ void PlaylistHandler::savePlaylists()
             p->playlistConnector->insertPlaylistTracks(playlist->id(), playlist->tracks());
         }
     }
-    p->settings->set<Settings::ActivePlaylistId>(p->activePlaylist->id());
+    if(p->activePlaylist) {
+        p->settings->set<Settings::ActivePlaylistId>(p->activePlaylist->id());
+    }
 }
 
 void PlaylistHandler::startPlayback(int playlistId, const Core::Track& track)
