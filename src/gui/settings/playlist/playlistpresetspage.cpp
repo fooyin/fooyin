@@ -116,6 +116,8 @@ public:
     void clearBlocks();
 
 private:
+    Widgets::Playlist::PresetRegistry* m_presetRegistry;
+
     QTableView* m_presetList;
     PresetModel* m_model;
 
@@ -141,7 +143,8 @@ private:
 };
 
 PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRegistry* presetRegistry)
-    : m_presetList{new QTableView(this)}
+    : m_presetRegistry{presetRegistry}
+    , m_presetList{new QTableView(this)}
     , m_model{new PresetModel(presetRegistry, this)}
     , m_headerTitle{new PresetInput(this)}
     , m_headerSubtitle{new PresetInput(this)}
@@ -319,7 +322,9 @@ void PlaylistPresetsPageWidget::updatePreset()
     updateTextBlocks(m_trackText->blocks(), preset.track.text);
     preset.track.rowHeight = m_trackRowHeight->value();
 
-    m_model->markForChange(preset);
+    if(preset != m_presetRegistry->presetByIndex(preset.index)) {
+        m_model->markForChange(preset);
+    }
 }
 
 void PlaylistPresetsPageWidget::clonePreset()

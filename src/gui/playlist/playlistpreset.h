@@ -45,12 +45,18 @@ struct TextBlock
 
     TextBlock();
 
+    inline bool operator==(const TextBlock& other) const
+    {
+        return std::tie(text, fontChanged, font, colourChanged, colour)
+            == std::tie(other.text, other.fontChanged, other.font, other.colourChanged, other.colour);
+    };
+
     inline operator QVariant() const
     {
         return QVariant::fromValue(*this);
     }
 
-    void cloneProperties(const TextBlock& other)
+    inline void cloneProperties(const TextBlock& other)
     {
         fontChanged   = other.fontChanged;
         font          = other.font;
@@ -70,6 +76,13 @@ struct HeaderRow
     int rowHeight{73};
     bool showCover{true};
     bool simple{false};
+
+    inline bool operator==(const HeaderRow& other) const
+    {
+        return std::tie(title, subtitle, sideText, info, rowHeight, showCover, simple)
+            == std::tie(other.title, other.subtitle, other.sideText, other.info, other.rowHeight, other.showCover,
+                        other.simple);
+    };
 };
 
 struct SubheaderRow
@@ -77,6 +90,11 @@ struct SubheaderRow
     TextBlockList text;
 
     int rowHeight{25};
+
+    inline bool operator==(const SubheaderRow& other) const
+    {
+        return std::tie(text, rowHeight) == std::tie(other.text, other.rowHeight);
+    };
 };
 
 struct TrackRow
@@ -84,6 +102,11 @@ struct TrackRow
     TextBlockList text;
 
     int rowHeight{22};
+
+    inline bool operator==(const TrackRow& other) const
+    {
+        return std::tie(text, rowHeight) == std::tie(other.text, other.rowHeight);
+    };
 };
 
 struct PlaylistPreset
@@ -96,6 +119,12 @@ struct PlaylistPreset
     TrackRow track;
 
     [[nodiscard]] bool isValid() const;
+
+    inline bool operator==(const PlaylistPreset& other) const
+    {
+        return std::tie(index, name, header, subHeader, track)
+            == std::tie(other.index, other.name, other.header, other.subHeader, other.track);
+    };
 };
 
 QDataStream& operator<<(QDataStream& stream, const TextBlock& block);
