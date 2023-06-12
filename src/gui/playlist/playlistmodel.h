@@ -21,16 +21,9 @@
 
 #include "playlistitem.h"
 
-#include <core/library/coverprovider.h>
-#include <core/models/album.h>
-#include <core/models/container.h>
 #include <core/models/trackfwd.h>
 
 #include <utils/treemodel.h>
-#include <utils/utils.h>
-
-#include <QAbstractItemModel>
-#include <QPixmap>
 
 namespace Fy {
 namespace Utils {

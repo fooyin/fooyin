@@ -24,14 +24,12 @@
 #include "playlistitem.h"
 #include "playlistpreset.h"
 
-#include <core/constants.h>
 #include <core/library/coverprovider.h>
+#include <core/models/container.h>
 #include <core/player/playermanager.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/scripting/scriptparser.h>
 
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 #include <QIcon>
 #include <QPalette>
@@ -281,8 +279,9 @@ struct PlaylistModel::Private
                         return playingIcon;
                     case(Core::Player::PlayState::Paused):
                         return pausedIcon;
-                    case Core::Player::Stopped:
-                        break;
+                    case(Core::Player::PlayState::Stopped):
+                    default:
+                        return {};
                 }
             }
             default:
