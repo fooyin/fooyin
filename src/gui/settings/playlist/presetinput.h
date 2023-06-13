@@ -46,10 +46,12 @@ public:
     void setText(const QString& text);
     void setFont(const QFont& font);
     void setColour(const QColor& colour);
+    void setState(State state);
 
     void resetState();
 
 private:
+    void showContextMenu(const QPoint& pos);
     void showFontDialog();
     void showColourDialog();
 

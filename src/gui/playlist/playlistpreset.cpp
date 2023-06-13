@@ -24,7 +24,8 @@
 
 namespace Fy::Gui::Widgets::Playlist {
 TextBlock::TextBlock()
-    : colour{QApplication::palette().text().color()}
+    : font{QApplication::font()}
+    , colour{QApplication::palette().text().color()}
 { }
 
 QDataStream& operator<<(QDataStream& stream, const TextBlock& block)
@@ -43,7 +44,13 @@ QDataStream& operator>>(QDataStream& stream, TextBlock& block)
     stream >> block.fontChanged;
     stream >> block.font;
     if(!block.fontChanged) {
-        block.font = {};
+        QFont defaultFont;
+        defaultFont.setPixelSize(block.font.pixelSize());
+        defaultFont.setBold(block.font.bold());
+        defaultFont.setItalic(block.font.italic());
+        defaultFont.setStrikeOut(block.font.strikeOut());
+        defaultFont.setUnderline(block.font.underline());
+        block.font = defaultFont;
     }
     stream >> block.colourChanged;
     stream >> block.colour;

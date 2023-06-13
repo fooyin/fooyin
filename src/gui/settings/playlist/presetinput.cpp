@@ -21,10 +21,12 @@
 
 #include "gui/guiconstants.h"
 
+#include <QApplication>
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QHBoxLayout>
 #include <QLineEdit>
+#include <QMenu>
 #include <QPushButton>
 
 namespace Fy::Gui::Settings {
@@ -45,6 +47,9 @@ PresetInput::PresetInput(QWidget* parent)
 
     m_editBlock->addAction(blockColourButton, QLineEdit::TrailingPosition);
     m_editBlock->addAction(blockFontButton, QLineEdit::TrailingPosition);
+
+    m_editBlock->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(m_editBlock, &QLineEdit::customContextMenuRequested, this, &PresetInput::showContextMenu);
 }
 
 QString PresetInput::text() const
@@ -87,17 +92,46 @@ void PresetInput::setColour(const QColor& colour)
     m_colour = colour;
 }
 
+void PresetInput::setState(State state)
+{
+    m_state = state;
+}
+
 void PresetInput::resetState()
 {
-    m_state &= FontChanged;
-    m_state &= ColourChanged;
+    m_state &= ~FontChanged;
+    m_state &= ~ColourChanged;
+}
+
+void PresetInput::showContextMenu(const QPoint& pos)
+{
+    auto* resetFont   = new QAction(tr("Reset Font"), this);
+    auto* resetColour = new QAction(tr("Reset Colour"), this);
+
+    QObject::connect(resetFont, &QAction::triggered, this, [this]() {
+        setFont(QApplication::font());
+        m_state &= ~FontChanged;
+    });
+    QObject::connect(resetColour, &QAction::triggered, this, [this]() {
+        setColour(QApplication::palette().text().color());
+        m_state &= ~ColourChanged;
+    });
+
+    QMenu* menu = m_editBlock->createStandardContextMenu();
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    menu->addSeparator();
+    menu->addAction(resetFont);
+    menu->addAction(resetColour);
+
+    menu->popup(mapToGlobal(pos));
 }
 
 void PresetInput::showFontDialog()
 {
     bool ok;
     const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, "Select Font");
-    if(ok) {
+    if(ok && chosenFont != m_font) {
         m_font = chosenFont;
         m_state |= FontChanged;
     }
@@ -105,8 +139,8 @@ void PresetInput::showFontDialog()
 
 void PresetInput::showColourDialog()
 {
-    const QColor chosenColour = QColorDialog::getColor(m_colour, this, "Select Colour");
-    if(chosenColour.isValid()) {
+    const QColor chosenColour = QColorDialog::getColor(m_colour, this, "Select Colour", QColorDialog::ShowAlphaChannel);
+    if(chosenColour.isValid() && chosenColour != m_colour) {
         m_colour = chosenColour;
         m_state |= ColourChanged;
     }

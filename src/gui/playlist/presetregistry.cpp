@@ -33,10 +33,10 @@ int find(const IndexPresetMap& presets, const QString& name)
     }));
 }
 
-PlaylistPreset loadDefault()
+void loadDefaults(PresetRegistry* registry)
 {
     PlaylistPreset preset;
-    preset.name = "Default";
+    preset.name = "Album - Disc";
 
     preset.header.rowHeight     = 76;
     preset.header.title.text    = "$if(%albumartist%,%albumartist%,Unknown Artist)";
@@ -44,46 +44,48 @@ PlaylistPreset loadDefault()
     preset.header.sideText.text = "%year%";
     preset.header.info.text     = "$if(%ggenres%,%ggenres% | )$ifgreater(%gcount%,1,%gcount% Tracks,%gcount% Track) | "
                                   "$timems(%gduration%)";
-    preset.header.title.font.setPixelSize(17);
-    preset.header.subtitle.font.setPixelSize(16);
-    preset.header.sideText.font.setPixelSize(16);
-    preset.header.info.font.setPixelSize(13);
+    preset.header.title.font.setPixelSize(16);
+    preset.header.subtitle.font.setPixelSize(14);
+    preset.header.sideText.font.setPixelSize(14);
+    preset.header.info.font.setPixelSize(12);
 
     preset.subHeaders.rowHeight = 19;
     SubheaderRow subRow;
-    QFont subFont;
-    subFont.setPixelSize(13);
     TextBlock subTitle;
     subTitle.text = "$ifgreater(%disctotal%,1,Disc #%disc%)";
-    subTitle.font = subFont;
+    subTitle.font.setPixelSize(13);
     TextBlock subInfo;
     subInfo.text = "$timems(%gduration%)";
-    subInfo.font = subFont;
+    subInfo.font.setPixelSize(13);
     subRow.title = subTitle;
     subRow.info  = subInfo;
     preset.subHeaders.rows.emplace_back(subRow);
 
     preset.track.rowHeight = 23;
-    QFont trackFont;
-    trackFont.setPixelSize(13);
     TextBlock trackBlock;
-    trackBlock.text = "$num(%track%,2). ";
-    trackBlock.font = trackFont;
+    trackBlock.text = "$num(%track%,2).   ";
+    trackBlock.font.setPixelSize(13);
     preset.track.text.emplace_back(trackBlock);
     TextBlock trackBlock2;
     trackBlock2.text = "%title%";
-    trackBlock2.font = trackFont;
+    trackBlock2.font.setPixelSize(13);
     preset.track.text.emplace_back(trackBlock2);
     TextBlock trackBlock3;
-    trackBlock3.text = "||$ifgreater(%playcount%,1,|%playcount%) ";
-    trackBlock3.font = trackFont;
+    trackBlock3.text = "||$ifgreater(%playcount%,-1,| %playcount%)   ";
+    trackBlock3.font.setPixelSize(10);
     preset.track.text.emplace_back(trackBlock3);
     TextBlock trackBlock4;
     trackBlock4.text = "$timems(%duration%)";
-    trackBlock4.font = trackFont;
+    trackBlock4.font.setPixelSize(13);
     preset.track.text.emplace_back(trackBlock4);
 
-    return preset;
+    registry->addPreset(preset);
+
+    preset.name = "Split Discs";
+    preset.subHeaders.rows.clear();
+    preset.header.subtitle.text = "$if(%album%,%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)";
+
+    registry->addPreset(preset);
 }
 
 PresetRegistry::PresetRegistry(Utils::SettingsManager* settings, QObject* parent)
@@ -177,7 +179,7 @@ void PresetRegistry::loadPresets()
     in >> m_presets;
 
     if(m_presets.empty()) {
-        addPreset(loadDefault());
+        loadDefaults(this);
     }
 }
 

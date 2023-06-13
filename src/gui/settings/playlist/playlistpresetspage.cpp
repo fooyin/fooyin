@@ -50,6 +50,15 @@ void setupInputBox(const TextBlock& preset, PresetInput* block)
     block->setText(preset.text);
     block->setFont(preset.font);
     block->setColour(preset.colour);
+
+    PresetInput::State state;
+    if(preset.colourChanged) {
+        state |= PresetInput::ColourChanged;
+    }
+    if(preset.fontChanged) {
+        state |= PresetInput::FontChanged;
+    }
+    block->setState(state);
 }
 
 void updateTextBlock(PresetInput* presetInput, TextBlock& textBlock)
@@ -62,8 +71,6 @@ void updateTextBlock(PresetInput* presetInput, TextBlock& textBlock)
 
     textBlock.fontChanged   = state & PresetInput::FontChanged;
     textBlock.colourChanged = state & PresetInput::ColourChanged;
-
-    presetInput->resetState();
 }
 
 void updateTextBlocks(const PresetInputList& presetInputs, TextBlockList& textBlocks)
@@ -82,9 +89,7 @@ void updateTextBlocks(const PresetInputList& presetInputs, TextBlockList& textBl
 void createPresetInput(const TextBlock& block, PresetInputBox* box, QWidget* parent)
 {
     auto* input = new PresetInput(parent);
-    input->setText(block.text);
-    input->setFont(block.font);
-    input->setColour(block.colour);
+    setupInputBox(block, input);
     box->addInput(input);
 }
 
@@ -345,8 +350,6 @@ void PlaylistPresetsPageWidget::updatePreset()
             row.info = savePart(subHeader[1]);
         }
         preset.subHeaders.rows.emplace_back(row);
-
-        input->resetState();
     }
 
     preset.subHeaders.rowHeight = m_subHeaderRowHeight->value();
@@ -407,16 +410,19 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_showCover->setChecked(preset.header.showCover);
     m_simpleHeader->setChecked(preset.header.simple);
 
-    for(const auto& row : preset.subHeaders.rows) {
-        QString text{row.title.text};
-        if(!row.info.text.isEmpty()) {
-            text = text + "||" + row.info.text;
+    if(preset.subHeaders.rows.empty()) {
+        createPresetInput({}, m_subHeaderText, this);
+    }
+    else {
+        for(const auto& row : preset.subHeaders.rows) {
+            QString fullText{row.title.text};
+            if(!row.info.text.isEmpty()) {
+                fullText = fullText + "||" + row.info.text;
+            }
+            TextBlock subBlock{row.title};
+            subBlock.text = fullText;
+            createPresetInput(subBlock, m_subHeaderText, this);
         }
-        auto* input = new PresetInput(this);
-        input->setText(text);
-        input->setFont(row.title.font);
-        input->setColour(row.title.colour);
-        m_subHeaderText->addInput(input);
     }
 
     m_subHeaderRowHeight->setValue(preset.subHeaders.rowHeight);
