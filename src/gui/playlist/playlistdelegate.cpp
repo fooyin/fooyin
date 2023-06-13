@@ -303,7 +303,7 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
             painter->fontMetrics().elidedText(block.text, Qt::ElideRight, leftRect.width()));
 
         leftRect.setWidth(leftRect.width() - leftBound.width());
-        leftRect.moveLeft(leftRect.x() + leftBound.width() + offset);
+        leftRect.moveLeft(leftRect.x() + leftBound.width());
     }
 
     if(isPlaying) {
