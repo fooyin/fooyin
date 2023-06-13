@@ -71,7 +71,7 @@ void loadDefaults(PresetRegistry* registry)
     trackBlock2.font.setPixelSize(13);
     preset.track.text.emplace_back(trackBlock2);
     TextBlock trackBlock3;
-    trackBlock3.text = "||$ifgreater(%playcount%,-1,| %playcount%)   ";
+    trackBlock3.text = "||$ifgreater(%playcount%,0,| %playcount%)   ";
     trackBlock3.font.setPixelSize(10);
     preset.track.text.emplace_back(trackBlock3);
     TextBlock trackBlock4;
