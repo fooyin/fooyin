@@ -45,7 +45,11 @@ QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& resu
 }
 
 Parser::Parser(Registry* registry)
-    : m_registry{registry}
+    : m_scanner{}
+    , m_registry{registry}
+    , m_current{}
+    , m_previous{}
+    , m_hadError{false}
 { }
 
 ParsedScript Parser::parse(const QString& input)
