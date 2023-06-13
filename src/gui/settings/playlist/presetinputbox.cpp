@@ -24,6 +24,8 @@
 #include <QGridLayout>
 
 namespace Fy::Gui::Settings {
+constexpr int MaxInputs = 8;
+
 PresetInputBox::PresetInputBox(const QString& name, QWidget* parent)
     : QWidget{parent}
     , m_layout{new QGridLayout(this)}
@@ -100,7 +102,7 @@ int PresetInputBox::blockCount() const
 
 void PresetInputBox::updateButtonState()
 {
-    m_addBlock->setEnabled(m_blocks.size() < 4);
+    m_addBlock->setEnabled(m_blocks.size() < MaxInputs);
     m_deleteBlock->setVisible(m_blocks.size() > 1);
 }
 } // namespace Fy::Gui::Settings
