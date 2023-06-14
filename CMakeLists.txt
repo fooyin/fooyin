@@ -30,12 +30,13 @@ endif()
 fooyin_option(FOOYIN_STATIC "Build fooyin libraries as static." OFF)
 fooyin_option(BUILD_TESTS "Build fooyin tests." OFF)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Sql)
+find_package(Qt6Core REQUIRED)
+find_package(Qt6Widgets REQUIRED)
+find_package(Qt6Gui REQUIRED)
+find_package(Qt6Sql REQUIRED)
 
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(Libmpv REQUIRED)
-
-find_package(GTest)
 
 # find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL AVDEVICE AVFILTER
 # SWSCALE SWRESAMPLE )
@@ -65,7 +66,7 @@ target_link_libraries(
          fooyin::core
          fooyin::gui
          fooyin::utils
-         # ${SDL2_LIBRARIES} ${FFMPEG_LIBRARIES}
+  # ${SDL2_LIBRARIES} ${FFMPEG_LIBRARIES}
 )
 
 target_compile_features(fooyin_lib PUBLIC cxx_std_20)
@@ -74,6 +75,7 @@ target_compile_options(fooyin_lib PRIVATE -Werror -Wall -Wextra -Wpedantic)
 # ---- Fooyin testing ----
 
 if(BUILD_TESTS)
+  find_package(GTest)
   add_subdirectory(tests)
 endif()
 
