@@ -38,7 +38,12 @@ public:
         m_children.clear();
     }
 
-    virtual std::vector<Item*> children() const
+    virtual bool hasChild(Item* child) const
+    {
+        return Utils::contains(m_children, child);
+    }
+
+    virtual const std::vector<Item*>& children() const
     {
         return m_children;
     }

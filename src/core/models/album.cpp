@@ -21,8 +21,6 @@
 
 #include "track.h"
 
-#include <utils/helpers.h>
-
 namespace Fy::Core {
 Album::Album()
     : Album("")
@@ -121,7 +119,7 @@ void Album::addTrack(const Track& track)
     m_duration += track.duration();
 
     for(const auto& genre : track.genres()) {
-        if(!Utils::contains(m_genres, genre)) {
+        if(!m_genres.contains(genre)) {
             m_genres.emplace_back(genre);
         }
     }

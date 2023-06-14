@@ -27,6 +27,7 @@
 #include <core/player/playermanager.h>
 #include <core/playlist/playlisthandler.h>
 
+#include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -158,7 +159,7 @@ struct PlaylistModel::Private
             node->setKey(key);
         }
         PlaylistItem* child = nodes.at(key).get();
-        if(Utils::contains(parent->children(), child)) {
+        if(parent->hasChild(child)) {
             return child;
         }
         if(resetting) {

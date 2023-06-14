@@ -23,6 +23,7 @@
 #include <ranges>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 namespace Fy::Utils {
 template <typename Ctnr, typename Element>
@@ -36,11 +37,10 @@ int findIndex(const Ctnr& c, const Element& e)
     return index;
 }
 
-template <typename Ctnr, typename Element>
-bool contains(const Ctnr& c, const Element& f)
+template <typename Element>
+bool contains(const std::vector<Element>& c, const Element& f)
 {
-    auto it = std::ranges::find(std::as_const(c), f);
-    return static_cast<bool>(it != c.cend());
+    return std::ranges::find(std::as_const(c), f) != c.cend();
 }
 
 template <typename T, typename Hash, typename Ctnr>
