@@ -145,16 +145,20 @@ void EditableLayout::setupReplaceWidgetMenu(Utils::ActionContainer* menu, FyWidg
     if(!menu->isEmpty()) {
         return;
     }
+
     auto* splitter = qobject_cast<SplitterWidget*>(current->findParent());
     if(!splitter) {
         return;
     }
-    auto widgets = m_widgetFactory->registeredWidgets();
+
+    const auto widgets = m_widgetFactory->registeredWidgets();
     for(const auto& widget : widgets) {
         auto* parentMenu = menu;
+
         for(const auto& subMenu : widget.second.subMenus) {
             const Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
             auto* childMenu    = m_actionManager->actionContainer(id);
+
             if(!childMenu) {
                 childMenu = m_actionManager->createMenu(id);
                 childMenu->menu()->setTitle(subMenu);
@@ -163,7 +167,7 @@ void EditableLayout::setupReplaceWidgetMenu(Utils::ActionContainer* menu, FyWidg
             parentMenu = childMenu;
         }
         auto* addWidget = new QAction(widget.second.name, parentMenu);
-        QAction::connect(addWidget, &QAction::triggered, this, [this, current, widget, splitter] {
+        QObject::connect(addWidget, &QAction::triggered, this, [this, current, widget, splitter] {
             FyWidget* newWidget = m_widgetProvider.createWidget(widget.first);
             splitter->replaceWidget(current, newWidget);
         });
@@ -176,12 +180,11 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Utils::ActionContainer* 
     if(!widget || !menu) {
         return;
     }
-    auto* currentWidget = widget;
-    int level           = m_settings->value<Settings::EditingMenuLevels>();
-    while(level > 0) {
-        if(!currentWidget) {
-            break;
-        }
+
+    FyWidget* currentWidget = widget;
+    int level               = m_settings->value<Settings::EditingMenuLevels>();
+
+    while(level > 0 && currentWidget) {
         menu->addAction(new Utils::MenuHeaderAction(currentWidget->name(), menu));
         currentWidget->layoutEditingMenu(menu);
 
@@ -236,7 +239,6 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 void EditableLayout::changeLayout(const Layout& layout)
 {
     // Delete all current widgets
-    // TODO: Look into caching previous layout widgets
     delete m_splitter;
     const bool success = loadLayout(layout.json);
     if(success && m_splitter->hasChildren()) {
@@ -261,33 +263,40 @@ QByteArray EditableLayout::currentLayout()
 
     root["Layout"] = array;
 
-    const auto json = QJsonDocument(root).toJson();
-    return json;
+    return QJsonDocument(root).toJson();
 }
 
 bool EditableLayout::loadLayout(const QByteArray& layout)
 {
     const auto jsonDoc = QJsonDocument::fromJson(layout);
-    if(!jsonDoc.isNull() && !jsonDoc.isEmpty()) {
-        QJsonObject json = jsonDoc.object();
-        if(json.contains("Layout") && json["Layout"].isArray()) {
-            auto layoutArray = json["Layout"].toArray();
-            if(!layoutArray.isEmpty() && layoutArray.size() == 1) {
-                const auto first = layoutArray.constBegin();
-                auto widget      = first->toObject();
-                if(!widget.isEmpty()) {
-                    const auto name = widget.constBegin().key();
-                    if(auto* splitter = qobject_cast<SplitterWidget*>(m_widgetProvider.createWidget(name))) {
-                        m_splitter   = splitter;
-                        auto options = widget.value(name).toObject();
-                        m_splitter->loadLayout(options);
-                        m_box->addWidget(m_splitter);
-                        return true;
-                    }
-                }
-            }
-        }
+    if(jsonDoc.isNull() || jsonDoc.isEmpty()) {
+        return false;
     }
+
+    const QJsonObject json = jsonDoc.object();
+    if(!json.contains("Layout") || !json["Layout"].isArray()) {
+        return false;
+    }
+
+    const QJsonArray layoutArray = json["Layout"].toArray();
+    if(layoutArray.isEmpty() || layoutArray.size() != 1) {
+        return false;
+    }
+
+    const QJsonObject widget = layoutArray[0].toObject();
+    if(widget.isEmpty()) {
+        return false;
+    }
+
+    const auto name = widget.constBegin().key();
+    if(auto* splitter = qobject_cast<SplitterWidget*>(m_widgetProvider.createWidget(name))) {
+        m_splitter                = splitter;
+        const QJsonObject options = widget.value(name).toObject();
+        m_splitter->loadLayout(options);
+        m_box->addWidget(m_splitter);
+        return true;
+    }
+
     return false;
 }
 

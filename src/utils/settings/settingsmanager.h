@@ -119,7 +119,7 @@ public:
     {
         const auto mapKey = getMapKey(key);
 
-        if(m_settings.count(mapKey)) {
+        if(m_settings.contains(mapKey)) {
             QObject::disconnect(&m_settings.at(mapKey), nullptr, obj, nullptr);
         }
     }
@@ -132,7 +132,7 @@ public:
         const auto keyString = QString::fromLatin1(meta.valueToKey(key));
         const auto mapKey    = enumName + keyString;
 
-        if(!m_settings.count(mapKey)) {
+        if(!m_settings.contains(mapKey)) {
             m_settings.emplace(mapKey, SettingsEntry{keyString, value, true, group});
         }
     }
@@ -145,7 +145,7 @@ public:
         const auto keyString = QString::fromLatin1(meta.valueToKey(key));
         const auto mapKey    = enumName + keyString;
 
-        if(!m_settings.count(mapKey)) {
+        if(!m_settings.contains(mapKey)) {
             m_settings.emplace(mapKey, SettingsEntry{keyString, value, false, group});
         }
     }

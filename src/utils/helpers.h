@@ -20,52 +20,47 @@
 #pragma once
 
 #include <algorithm>
+#include <ranges>
 #include <unordered_set>
+#include <utility>
 
 namespace Fy::Utils {
 template <typename Ctnr, typename Element>
-constexpr int findIndex(const Ctnr& c, const Element& e)
+int findIndex(const Ctnr& c, const Element& e)
 {
-    int index = -1;
-    auto eIter   = std::find(c.cbegin(), c.cend(), e);
+    int index  = -1;
+    auto eIter = std::ranges::find(std::as_const(c), e);
     if(eIter != c.cend()) {
-        index = static_cast<int>(std::distance(c.cbegin(), eIter));
+        index = static_cast<int>(std::ranges::distance(c.cbegin(), eIter));
     }
     return index;
 }
 
 template <typename Ctnr, typename Element>
-constexpr bool contains(const Ctnr& c, const Element& f)
+bool contains(const Ctnr& c, const Element& f)
 {
-    auto it = std::find(c.cbegin(), c.cend(), f);
+    auto it = std::ranges::find(std::as_const(c), f);
     return static_cast<bool>(it != c.cend());
 }
 
-template <typename Ctnr, typename Key>
-constexpr bool hasKey(const Ctnr& c, const Key& key)
-{
-    return c.count(key);
-}
-
 template <typename T, typename Hash, typename Ctnr>
-constexpr Ctnr intersection(Ctnr& v1, const Ctnr& v2)
+Ctnr intersection(Ctnr& v1, const Ctnr& v2)
 {
     Ctnr result;
-    std::unordered_set<T, Hash> first(v1.cbegin(), v1.cend());
-    for (auto entry : v2)
-    {
-        if (first.count(entry)) {
-            result.emplace_back(entry);
-        }
+    std::unordered_set<T, Hash> first{v1.cbegin(), v1.cend()};
+    for(const auto& entry : v2 | std::views::filter([&first](const auto& elem) {
+                                return first.contains(elem);
+                            })) {
+        result.push_back(entry);
     }
     return result;
 }
 
 template <typename Ctnr, typename Pred>
-Ctnr filter(const Ctnr &container, Pred pred) {
+Ctnr filter(const Ctnr& container, Pred pred)
+{
     Ctnr result;
-    std::copy_if(container.cbegin(), container.cend(), std::back_inserter(result), pred);
+    std::ranges::copy_if(std::as_const(container), std::back_inserter(result), pred);
     return result;
 }
-
 } // namespace Fy::Utils

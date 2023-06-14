@@ -123,7 +123,7 @@ void FilterManager::getFilteredTracks()
 
     for(auto& filter : m_filterStore.activeFilters()) {
         if(m_filteredTracks.empty()) {
-            m_filteredTracks.insert(m_filteredTracks.cend(), filter.tracks.cbegin(), filter.tracks.cend());
+            std::ranges::copy(filter.tracks, std::back_inserter(m_filteredTracks));
         }
         else {
             m_filteredTracks

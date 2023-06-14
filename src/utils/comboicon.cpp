@@ -35,7 +35,6 @@ ComboIcon::ComboIcon(const QString& path, Attributes attributes, QWidget* parent
     , m_currentIndex{0}
 {
     addAttribute(Enabled);
-
     addIcon(path);
 
     if(!m_icons.empty()) {
@@ -63,12 +62,14 @@ void ComboIcon::addIcon(const QString& path, const QPixmap& icon)
     const QPalette palette = m_label->palette();
     Icon ico;
     ico.icon = icon;
+
     if(hasAttribute(HasActiveIcon)) {
         ico.iconActive = Utils::changePixmapColour(icon, palette.highlight().color());
     }
     if(hasAttribute(HasDisabledIcon)) {
         ico.iconDisabled = Utils::changePixmapColour(icon, palette.color(QPalette::Disabled, QPalette::Base));
     }
+
     m_icons.emplace_back(path, ico);
 }
 
@@ -92,11 +93,11 @@ void ComboIcon::setIcon(const QString& path, bool active)
         removeAttribute(Active);
     }
 
-    auto it = std::find_if(m_icons.cbegin(), m_icons.cend(), [path](const PathIconPair& icon) {
-        return (icon.first == path);
+    auto it = std::ranges::find_if(std::as_const(m_icons), [path](const PathIconPair& icon) {
+        return icon.first == path;
     });
 
-    if(it == m_icons.end()) {
+    if(it == m_icons.cend()) {
         return;
     }
 
