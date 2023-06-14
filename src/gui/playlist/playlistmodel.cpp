@@ -60,7 +60,7 @@ struct PlaylistModel::Private
     Utils::SettingsManager* settings;
     Core::Library::CoverProvider coverProvider;
 
-    Core::Playlist::Playlist* currentPlaylist;
+    Core::Playlist::Playlist currentPlaylist;
 
     bool discHeaders;
     bool splitDiscs;
@@ -79,7 +79,6 @@ struct PlaylistModel::Private
         : model{model}
         , playerManager{playerManager}
         , settings{settings}
-        , currentPlaylist{nullptr}
         , discHeaders{settings->value<Settings::DiscHeaders>()}
         , splitDiscs{settings->value<Settings::SplitDiscs>()}
         , altColours{settings->value<Settings::PlaylistAltColours>()}
@@ -92,9 +91,9 @@ struct PlaylistModel::Private
     void createAlbums(const Core::TrackList& tracks)
     {
         for(const auto& track : tracks) {
-            if(!nodes.count(track.hash())) {
+            if(!nodes.contains(track.hash())) {
                 const QString albumKey = track.albumHash();
-                if(!albums.count(albumKey)) {
+                if(!albums.contains(albumKey)) {
                     Core::Album album{track.album()};
                     album.setDate(track.date());
                     album.setArtist(track.albumArtist());
@@ -113,7 +112,7 @@ struct PlaylistModel::Private
 
         const QString albumKey = track.albumHash();
 
-        if(albums.count(albumKey)) {
+        if(albums.contains(albumKey)) {
             auto& album           = albums.at(albumKey);
             const QString discKey = albumKey + QString::number(track.discNumber());
             const bool singleDisk = album.isSingleDiscAlbum() || (!splitDiscs && !discHeaders);
@@ -123,7 +122,7 @@ struct PlaylistModel::Private
             }
 
             else if(splitDiscs) {
-                if(!albums.count(discKey)) {
+                if(!albums.contains(discKey)) {
                     Core::Album discAlbum{album};
                     const QString discTitle = "Disc #" + QString::number(track.discNumber());
                     discAlbum.setSubTitle(discTitle);
@@ -137,7 +136,7 @@ struct PlaylistModel::Private
             }
 
             else {
-                if(!containers.count(discKey)) {
+                if(!containers.contains(discKey)) {
                     Core::Container disc{"Disc #" + QString::number(track.discNumber())};
                     PlaylistItem* parentNode = checkInsertKey(albumKey, PlaylistItem::Album, &album, model->rootItem());
                     auto& addedDisc          = containers.emplace(discKey, std::move(disc)).first->second;
@@ -154,7 +153,7 @@ struct PlaylistModel::Private
     PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, const ItemType& item,
                                  PlaylistItem* parent)
     {
-        if(!nodes.count(key)) {
+        if(!nodes.contains(key)) {
             auto* node = nodes.emplace(key, std::make_unique<PlaylistItem>(type, item, parent)).first->second.get();
             node->setKey(key);
         }
@@ -314,22 +313,22 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::
     : TreeModel{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
-        p->settings->subscribe<Settings::DiscHeaders>(this, [this](bool enabled) {
-            p->discHeaders = enabled;
+    p->settings->subscribe<Settings::DiscHeaders>(this, [this](bool enabled) {
+        p->discHeaders = enabled;
         reset(p->currentPlaylist);
-        });
-        p->settings->subscribe<Settings::SplitDiscs>(this, [this](bool enabled) {
-            p->splitDiscs = enabled;
-            reset(p->currentPlaylist);
-        });
-        p->settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
-            p->altColours = enabled;
-            emit dataChanged({}, {}, {Qt::BackgroundRole});
-        });
-        p->settings->subscribe<Settings::SimplePlaylist>(this, [this](bool enabled) {
-            p->simplePlaylist = enabled;
-            reset(p->currentPlaylist);
-        });
+    });
+    p->settings->subscribe<Settings::SplitDiscs>(this, [this](bool enabled) {
+        p->splitDiscs = enabled;
+        reset(p->currentPlaylist);
+    });
+    p->settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
+        p->altColours = enabled;
+        emit dataChanged({}, {}, {Qt::BackgroundRole});
+    });
+    p->settings->subscribe<Settings::SimplePlaylist>(this, [this](bool enabled) {
+        p->simplePlaylist = enabled;
+        reset(p->currentPlaylist);
+    });
 }
 
 PlaylistModel::~PlaylistModel() = default;
@@ -345,10 +344,10 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
         return {};
     }
 
-    if(!p->currentPlaylist) {
+    if(!p->currentPlaylist.isValid()) {
         return {};
     }
-    return QString("%1: %2 Tracks").arg(p->currentPlaylist->name()).arg(p->currentPlaylist->trackCount());
+    return QString("%1: %2 Tracks").arg(p->currentPlaylist.name()).arg(p->currentPlaylist.trackCount());
 }
 
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
@@ -423,13 +422,13 @@ QModelIndex PlaylistModel::matchTrack(int id) const
     return {};
 }
 
-void PlaylistModel::reset(Core::Playlist::Playlist* playlist)
+void PlaylistModel::reset(const Core::Playlist::Playlist& playlist)
 {
-    if(!playlist) {
+    if(!playlist.isValid()) {
         return;
     }
 
-    p->resetting = true;
+    p->resetting       = true;
     p->currentPlaylist = playlist;
     beginResetModel();
     p->beginReset();
@@ -438,19 +437,19 @@ void PlaylistModel::reset(Core::Playlist::Playlist* playlist)
     p->resetting = false;
 }
 
-void PlaylistModel::setupModelData(const Core::Playlist::Playlist* playlist)
+void PlaylistModel::setupModelData(const Core::Playlist::Playlist& playlist)
 {
-    if(!playlist) {
+    if(!playlist.isValid()) {
         return;
     }
 
-    const auto tracks = playlist->tracks();
+    const auto tracks = playlist.tracks();
 
     // Create albums before model to ensure discs (based on discCount) are properly created
     p->createAlbums(tracks);
 
     for(const Core::Track& track : tracks) {
-        if(!p->nodes.count(track.hash())) {
+        if(!p->nodes.contains(track.hash())) {
             if(auto* parent = p->iterateTrack(track)) {
                 p->checkInsertKey(track.hash(), PlaylistItem::Track, track, parent);
             }
@@ -467,7 +466,7 @@ QModelIndex PlaylistModel::indexForTrack(const Core::Track& track) const
 {
     QModelIndex index;
     const auto key = track.hash();
-    if(p->nodes.count(key)) {
+    if(p->nodes.contains(key)) {
         const auto* item = p->nodes.at(key).get();
         index            = createIndex(item->row(), 0, item);
     }
@@ -478,7 +477,7 @@ QModelIndex PlaylistModel::indexForItem(PlaylistItem* item) const
 {
     QModelIndex index;
     const auto key = item->key();
-    if(p->nodes.count(key)) {
+    if(p->nodes.contains(key)) {
         auto* node = p->nodes.at(key).get();
         index      = createIndex(node->row(), 0, node);
     }

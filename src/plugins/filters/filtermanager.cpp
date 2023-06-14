@@ -34,16 +34,18 @@ constexpr auto FilterPlaylistActiveName = "Filter Results (Playback)";
 
 void sendToPlaylist(Core::Playlist::PlaylistHandler* playlistHandler, const Core::TrackList& filteredTracks)
 {
-    Core::Playlist::Playlist* activePlaylist = playlistHandler->activePlaylist();
-    if(activePlaylist && activePlaylist->name() == FilterPlaylistName) {
-        if(playlistHandler->playlistByName(FilterPlaylistActiveName)) {
-            auto* filterPlaylist = playlistHandler->createPlaylist(FilterPlaylistActiveName, activePlaylist->tracks());
-            filterPlaylist->changeCurrentTrack(activePlaylist->currentTrackIndex());
-            playlistHandler->changeActivePlaylist(filterPlaylist->id());
-        }
-        else {
-            playlistHandler->renamePlaylist(activePlaylist->id(), FilterPlaylistActiveName);
-        }
+    auto activePlaylist = playlistHandler->activePlaylist();
+    if(!activePlaylist || activePlaylist->name() != FilterPlaylistName) {
+        playlistHandler->createPlaylist(FilterPlaylistName, filteredTracks);
+        return;
+    }
+
+    if(auto filterPlaylist = playlistHandler->playlistByName(FilterPlaylistActiveName)) {
+        playlistHandler->exchangePlaylist(*filterPlaylist, *activePlaylist);
+        playlistHandler->changeActivePlaylist(filterPlaylist->id());
+    }
+    else {
+        playlistHandler->renamePlaylist(activePlaylist->id(), FilterPlaylistActiveName);
     }
     playlistHandler->createPlaylist(FilterPlaylistName, filteredTracks);
 }

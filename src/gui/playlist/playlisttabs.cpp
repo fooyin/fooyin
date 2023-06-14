@@ -78,17 +78,17 @@ void PlaylistTabs::setupTabs()
 {
     const auto& playlists = m_playlistHandler->playlists();
     for(const auto& playlist : playlists) {
-        addPlaylist(playlist.get());
+        addPlaylist(playlist);
     }
     // Workaround for issue where QTabBar is scrolled to the right when initialised, hiding tabs before current.
     m_tabs->adjustSize();
 }
 
-int PlaylistTabs::addPlaylist(Core::Playlist::Playlist* playlist)
+int PlaylistTabs::addPlaylist(const Core::Playlist::Playlist& playlist)
 {
-    const int index = addNewTab(playlist->name());
+    const int index = addNewTab(playlist.name());
     if(index >= 0) {
-        m_tabs->setTabData(index, playlist->id());
+        m_tabs->setTabData(index, playlist.id());
         m_tabs->setCurrentIndex(index);
         show();
     }
@@ -159,20 +159,20 @@ void PlaylistTabs::tabChanged(int index)
     }
 }
 
-void PlaylistTabs::playlistChanged(Core::Playlist::Playlist* playlist)
+void PlaylistTabs::playlistChanged(const Core::Playlist::Playlist& playlist)
 {
     for(int i = 0; i < m_tabs->count(); ++i) {
-        if(m_tabs->tabData(i).toInt() == playlist->id()) {
+        if(m_tabs->tabData(i).toInt() == playlist.id()) {
             m_tabs->setCurrentIndex(i);
         }
     }
 }
 
-void PlaylistTabs::playlistRenamed(Core::Playlist::Playlist* playlist)
+void PlaylistTabs::playlistRenamed(const Core::Playlist::Playlist& playlist)
 {
     for(int i = 0; i < m_tabs->count(); ++i) {
-        if(m_tabs->tabData(i).toInt() == playlist->id()) {
-            m_tabs->setTabText(i, playlist->name());
+        if(m_tabs->tabData(i).toInt() == playlist.id()) {
+            m_tabs->setTabText(i, playlist.name());
         }
     }
 }

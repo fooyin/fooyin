@@ -56,15 +56,15 @@ struct PlaylistController::Private : QObject
     {
         const int lastId = settings->value<Settings::LastPlaylistId>();
         if(lastId >= 0) {
-            auto* playlist = handler->playlistById(lastId);
+            auto playlist = handler->playlistById(lastId);
             if(playlist) {
                 currentPlaylistId = playlist->id();
-                emit controller->currentPlaylistChanged(playlist);
+                emit controller->currentPlaylistChanged(*playlist);
             }
         }
     }
 
-    void handlePlaylistAdded(Core::Playlist::Playlist* playlist)
+    void handlePlaylistAdded(const Core::Playlist::Playlist& playlist)
     {
         controller->changeCurrentPlaylist(playlist);
     }
@@ -72,8 +72,7 @@ struct PlaylistController::Private : QObject
     void handlePlaylistRemoved(int id)
     {
         if(currentPlaylistId == id) {
-            currentPlaylistId = handler->activePlaylist()->id();
-            emit controller->currentPlaylistChanged(handler->activePlaylist());
+            emit controller->currentPlaylistChanged(handler->playlists().back());
         }
     }
 };
@@ -89,32 +88,34 @@ PlaylistController::~PlaylistController()
     p->settings->set<Settings::LastPlaylistId>(p->currentPlaylistId);
 }
 
-const Core::Playlist::PlaylistList& PlaylistController::playlists() const
+Core::Playlist::PlaylistList PlaylistController::playlists() const
 {
     return p->handler->playlists();
 }
 
-Core::Playlist::Playlist* PlaylistController::currentPlaylist() const
+std::optional<Core::Playlist::Playlist> PlaylistController::currentPlaylist() const
 {
     return p->handler->playlistById(p->currentPlaylistId);
 }
 
-void PlaylistController::changeCurrentPlaylist(Core::Playlist::Playlist* playlist)
+void PlaylistController::changeCurrentPlaylist(const Core::Playlist::Playlist& playlist)
 {
-    p->currentPlaylistId = playlist->id();
+    p->currentPlaylistId = playlist.id();
     emit currentPlaylistChanged(playlist);
 }
 
 void PlaylistController::changeCurrentPlaylist(int id)
 {
-    if(auto* playlist = p->handler->playlistById(id)) {
-        changeCurrentPlaylist(playlist);
+    if(auto playlist = p->handler->playlistById(id)) {
+        changeCurrentPlaylist(*playlist);
     }
 }
 
 void PlaylistController::refreshCurrentPlaylist()
 {
-    emit refreshPlaylist(p->handler->playlistById(p->currentPlaylistId));
+    if(auto playlist = p->handler->playlistById(p->currentPlaylistId)) {
+        emit refreshPlaylist(*playlist);
+    }
 }
 
 void PlaylistController::startPlayback(const Core::Track& track) const

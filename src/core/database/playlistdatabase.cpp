@@ -43,7 +43,7 @@ bool Playlist::getAllPlaylists(Core::Playlist::PlaylistList& playlists)
         const QString name = q.value(1).toString();
         const int index    = q.value(2).toInt();
 
-        playlists.emplace_back(std::make_unique<Core::Playlist::Playlist>(name, index, id));
+        playlists.emplace_back(name, index, id);
     }
     return true;
 }

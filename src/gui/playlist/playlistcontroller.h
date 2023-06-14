@@ -48,20 +48,20 @@ public:
                        QObject* parent = nullptr);
     ~PlaylistController() override;
 
-    const Core::Playlist::PlaylistList& playlists() const;
+    Core::Playlist::PlaylistList playlists() const;
 
     void startPlayback(const Core::Track& track) const;
 
-    [[nodiscard]] Core::Playlist::Playlist* currentPlaylist() const;
+    [[nodiscard]] std::optional<Core::Playlist::Playlist> currentPlaylist() const;
 
-    void changeCurrentPlaylist(Core::Playlist::Playlist* playlist);
+    void changeCurrentPlaylist(const Core::Playlist::Playlist& playlist);
     void changeCurrentPlaylist(int id);
 
     void refreshCurrentPlaylist();
 
 signals:
-    void refreshPlaylist(Core::Playlist::Playlist* playlist);
-    void currentPlaylistChanged(Core::Playlist::Playlist* playlist);
+    void refreshPlaylist(const Core::Playlist::Playlist& playlist);
+    void currentPlaylistChanged(const Core::Playlist::Playlist& playlist);
 
 private:
     struct Private;
