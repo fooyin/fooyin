@@ -45,7 +45,9 @@ QDataStream& operator>>(QDataStream& stream, TextBlock& block)
     stream >> block.font;
     if(!block.fontChanged) {
         QFont defaultFont;
-        defaultFont.setPixelSize(block.font.pixelSize());
+        if(block.font.pixelSize() >= 0) {
+            defaultFont.setPixelSize(block.font.pixelSize());
+        }
         defaultFont.setBold(block.font.bold());
         defaultFont.setItalic(block.font.italic());
         defaultFont.setStrikeOut(block.font.strikeOut());
