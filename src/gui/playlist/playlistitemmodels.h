@@ -35,7 +35,7 @@ public:
     [[nodiscard]] uint64_t duration() const;
     [[nodiscard]] TextBlock info() const;
 
-    [[nodiscard]] QString genres();
+    [[nodiscard]] QString genres() const;
 
     virtual void addTrack(const Core::Track& track);
     virtual void removeTrack(const Core::Track& trackToRemove);
@@ -45,7 +45,7 @@ public:
 private:
     Core::TrackList m_tracks;
     uint64_t m_duration;
-    QString m_genres;
+    mutable QString m_genres;
     TextBlock m_info;
 };
 using ContainerHashMap = std::unordered_map<QString, std::unique_ptr<Container>>;

@@ -86,6 +86,7 @@ set(SOURCES
     playlist/playlistwidget.h
     playlist/playlistwidget.cpp
     playlist/presetregistry.cpp
+    playlist/playlistscriptregistry.cpp
     quicksetup/quicksetupdialog.h
     quicksetup/quicksetupdialog.cpp
     quicksetup/quicksetupmodel.h

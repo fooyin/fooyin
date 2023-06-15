@@ -36,7 +36,7 @@ Registry::Registry()
 
 bool Registry::varExists(const QString& var) const
 {
-    return m_vars.contains(var) || m_metadata.contains(var);
+    return m_metadata.contains(var);
 }
 
 bool Registry::funcExists(const QString& func) const
@@ -50,40 +50,8 @@ ScriptResult Registry::varValue(const QString& var) const
         return {};
     }
 
-    auto funcResult = m_vars.contains(var) ? m_vars.at(var)() : m_metadata.at(var)(m_currentTrack);
-    if(std::holds_alternative<int>(funcResult)) {
-        const int value = std::get<0>(funcResult);
-
-        ScriptResult result;
-        result.value = QString::number(value);
-        result.cond  = value >= 0;
-        return result;
-    }
-    if(std::holds_alternative<uint64_t>(funcResult)) {
-        const uint64_t value = std::get<1>(funcResult);
-
-        ScriptResult result;
-        result.value = QString::number(value);
-        result.cond  = true;
-        return result;
-    }
-    if(std::holds_alternative<QString>(funcResult)) {
-        const QString value = std::get<2>(funcResult);
-
-        ScriptResult result;
-        result.value = value;
-        result.cond  = !value.isEmpty();
-        return result;
-    }
-    if(std::holds_alternative<QStringList>(funcResult)) {
-        const QStringList value = std::get<3>(funcResult);
-
-        ScriptResult result;
-        result.value = value.empty() ? "" : value.join(Constants::Separator);
-        result.cond  = !value.isEmpty();
-        return result;
-    }
-    return {};
+    auto funcResult = m_metadata.at(var)(m_currentTrack);
+    return calculateResult(funcResult);
 }
 
 ScriptResult Registry::function(const QString& func, const ValueList& args) const
@@ -110,6 +78,43 @@ ScriptResult Registry::function(const QString& func, const ValueList& args) cons
 void Registry::changeCurrentTrack(const Core::Track& track)
 {
     m_currentTrack = track;
+}
+
+ScriptResult Registry::calculateResult(FuncRet funcRet) const
+{
+    if(std::holds_alternative<int>(funcRet)) {
+        const int value = std::get<0>(funcRet);
+
+        ScriptResult result;
+        result.value = QString::number(value);
+        result.cond  = value >= 0;
+        return result;
+    }
+    if(std::holds_alternative<uint64_t>(funcRet)) {
+        const uint64_t value = std::get<1>(funcRet);
+
+        ScriptResult result;
+        result.value = QString::number(value);
+        result.cond  = true;
+        return result;
+    }
+    if(std::holds_alternative<QString>(funcRet)) {
+        const QString value = std::get<2>(funcRet);
+
+        ScriptResult result;
+        result.value = value;
+        result.cond  = !value.isEmpty();
+        return result;
+    }
+    if(std::holds_alternative<QStringList>(funcRet)) {
+        const QStringList value = std::get<3>(funcRet);
+
+        ScriptResult result;
+        result.value = value.empty() ? "" : value.join(Constants::Separator);
+        result.cond  = !value.isEmpty();
+        return result;
+    }
+    return {};
 }
 
 void Registry::addDefaultFunctions()

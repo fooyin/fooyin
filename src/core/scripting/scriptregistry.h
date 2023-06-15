@@ -30,28 +30,26 @@ class Registry
 {
 public:
     using FuncRet = std::variant<int, uint64_t, QString, QStringList>;
-    using VarFunc = std::function<FuncRet()>;
 
     Registry();
+    virtual ~Registry() = default;
 
-    bool varExists(const QString& var) const;
-    bool funcExists(const QString& func) const;
+    virtual bool varExists(const QString& var) const;
+    virtual bool funcExists(const QString& func) const;
 
-    inline void setVar(const QString& var, VarFunc func = {})
-    {
-        m_vars[var] = std::move(func);
-    }
-
-    ScriptResult varValue(const QString& var) const;
-    ScriptResult function(const QString& func, const ValueList& args) const;
+    virtual ScriptResult varValue(const QString& var) const;
+    virtual ScriptResult function(const QString& func, const ValueList& args) const;
 
     void changeCurrentTrack(const Core::Track& track);
 
+protected:
     template <typename NewCntr, typename Cntr>
     NewCntr containerCast(Cntr&& from) const
     {
         return NewCntr(from.cbegin(), from.cend());
     }
+
+    ScriptResult calculateResult(FuncRet funcRet) const;
 
 private:
     using NativeFunc     = std::function<QString(const QStringList&)>;
@@ -65,7 +63,6 @@ private:
 
     Track m_currentTrack;
     std::unordered_map<QString, TrackFunc> m_metadata;
-    std::unordered_map<QString, VarFunc> m_vars;
     std::unordered_map<QString, Func> m_funcs;
 };
 } // namespace Fy::Core::Scripting

@@ -19,6 +19,8 @@
 
 #include "playlistitemmodels.h"
 
+#include <ranges>
+
 namespace Fy::Gui::Widgets::Playlist {
 Container::Container()
     : m_duration{0}
@@ -61,19 +63,21 @@ TextBlock Container::info() const
     return m_info;
 }
 
-QString Container::genres()
+QString Container::genres() const
 {
+    if(!m_genres.isEmpty()) {
+        return m_genres;
+    }
+    
     QStringList genres;
-    if(m_genres.isEmpty()) {
-        for(const auto& track : m_tracks) {
-            for(const auto& genre : track.genres()) {
-                if(!genres.contains(genre)) {
-                    genres.emplace_back(genre);
-                }
+    for(const auto& track : m_tracks) {
+        for(const auto& genre : track.genres()) {
+            if(!genres.contains(genre)) {
+                genres.emplace_back(genre);
             }
         }
-        m_genres = genres.join(" / ");
     }
+    m_genres = genres.join(" / ");
     return m_genres;
 }
 

@@ -23,6 +23,7 @@
 #include "gui/guisettings.h"
 #include "playlistitem.h"
 #include "playlistpreset.h"
+#include "playlistscriptregistry.h"
 
 #include <core/library/coverprovider.h>
 #include <core/player/playermanager.h>
@@ -74,7 +75,7 @@ struct PlaylistModel::Private
 
     bool resetting{false};
 
-    Core::Scripting::Registry registry;
+    std::unique_ptr<PlaylistScriptRegistry> registry;
     Core::Scripting::Parser parser;
 
     PlaylistItemHash nodes;
@@ -87,12 +88,11 @@ struct PlaylistModel::Private
         , playerManager{playerManager}
         , settings{settings}
         , altColours{settings->value<Settings::PlaylistAltColours>()}
-        , parser{&registry}
+        , registry{std::make_unique<PlaylistScriptRegistry>()}
+        , parser{registry.get()}
         , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
         , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
-    {
-        registerVars();
-    }
+    { }
 
     PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::ItemType type, const Data& item,
                                  PlaylistItem* parent)
@@ -120,26 +120,6 @@ struct PlaylistModel::Private
         headers.clear();
         nodes.clear();
         model->resetRoot();
-    }
-
-    void registerVars()
-    {
-        registry.setVar("gcount", {});
-        registry.setVar("gduration", {});
-        registry.setVar("ggenres", {});
-    }
-
-    void setContainerVars(Container& container)
-    {
-        registry.setVar("gcount", [&container]() {
-            return container.trackCount();
-        });
-        registry.setVar("gduration", [&container]() {
-            return container.duration();
-        });
-        registry.setVar("ggenres", [&container]() {
-            return container.genres();
-        });
     }
 
     void updateScripts()
@@ -178,7 +158,7 @@ struct PlaylistModel::Private
         auto* header = headerIt->second.get();
         header->addTrack(track);
 
-        setContainerVars(*header);
+        registry->changeCurrentContainer(header);
 
         row.info.text = parser.evaluate(currentPreset.header.info.script, track);
         header->modifyInfo(row.info);
@@ -212,7 +192,7 @@ struct PlaylistModel::Private
             auto* subheader = subheaderIt->second.get();
             subheader->addTrack(track);
 
-            setContainerVars(*subheader);
+            registry->changeCurrentContainer(subheader);
 
             TextBlock rowRight{row.info};
             rowRight.text.clear();
