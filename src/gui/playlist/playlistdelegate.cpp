@@ -289,7 +289,7 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
 
     const QRect playRect{x + offset, y, 20, height};
 
-    const int rightWidth = right - rightBound.x();
+    const int rightWidth = rightBound.width();
     const int leftWidth  = width - rightWidth - indent - (offset * 2) - 20;
     QRect leftRect{(x + offset + indent), y, leftWidth, height};
 
