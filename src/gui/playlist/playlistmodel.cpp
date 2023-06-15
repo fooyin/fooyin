@@ -262,20 +262,20 @@ struct PlaylistModel::Private
                 const QString right = result.section("||", 1);
                 if(!left.isEmpty()) {
                     trackBlock.text = left;
-                    trackLeft.text.emplace_back(trackBlock);
+                    trackLeft.text.push_back(trackBlock);
                 }
                 if(!right.isEmpty()) {
                     trackBlock.text = right;
-                    trackRight.text.emplace_back(trackBlock);
+                    trackRight.text.push_back(trackBlock);
                 }
             }
             else if(!leftFilled) {
                 trackBlock.text = result;
-                trackLeft.text.emplace_back(trackBlock);
+                trackLeft.text.push_back(trackBlock);
             }
             else {
                 trackBlock.text = result;
-                trackRight.text.emplace_back(trackBlock);
+                trackRight.text.push_back(trackBlock);
             }
         }
 
