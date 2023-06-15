@@ -29,6 +29,46 @@
 namespace Fy::Utils {
 class SettingsDialogController;
 
+template <auto key>
+constexpr int findType()
+{
+    using E = decltype(key);
+    static_assert(std::is_enum_v<E>, "The template parameter is not an enum!");
+    static_assert(std::is_same_v<std::underlying_type_t<E>, uint32_t>, "Enum should be of type 'uint32_t'");
+
+    // Use last 4 bits to determine type
+    const auto type = (key & 0xF0'00'00'00);
+    return static_cast<int>(type);
+}
+
+template <auto key, typename Value>
+concept IsNone = findType<key>() ==
+Settings::Type::None;
+
+template <auto key, typename Value>
+concept IsBool = findType<key>() ==
+Settings::Type::Bool&& std::same_as<Value, bool>;
+
+template <auto key, typename Value>
+concept IsDouble = findType<key>() ==
+Settings::Type::Double&& std::same_as<Value, double>;
+
+template <auto key, typename Value>
+concept IsInt = findType<key>() ==
+Settings::Type::Int&& std::same_as<Value, int>;
+
+template <auto key, typename Value>
+concept IsString = findType<key>() ==
+Settings::Type::String && (std::same_as<Value, QString> || std::same_as<Value, const char*>);
+
+template <auto key, typename Value>
+concept IsByteArray = findType<key>() ==
+Settings::Type::ByteArray&& std::same_as<Value, QByteArray>;
+
+template <auto key, typename Value>
+concept ValidValueType = IsNone<key, Value> || IsBool<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
+                      || IsString<key, Value> || IsByteArray<key, Value>;
+
 class SettingsManager : public QObject
 {
     Q_OBJECT
@@ -40,18 +80,6 @@ public:
     void storeSettings();
 
     [[nodiscard]] SettingsDialogController* settingsDialog() const;
-
-    template <auto key>
-    static int constexpr findType()
-    {
-        using E = decltype(key);
-        static_assert(std::is_enum_v<E>, "The template parameter is not an enum!");
-        static_assert(std::is_same_v<std::underlying_type_t<E>, uint32_t>, "Enum should be of type 'uint32_t'");
-
-        // Use last 4 bits to determine type
-        const auto type = (key & 0xF0'00'00'00);
-        return static_cast<int>(type);
-    }
 
     template <typename E>
     auto constexpr getMapKey(E key)
@@ -182,8 +210,9 @@ public:
         }
     }
 
-    template <auto key, typename V>
-    void constexpr set(V value)
+    template <auto key, typename Value>
+        requires ValidValueType<key, Value>
+    void constexpr set(Value value)
     {
         const auto mapKey = getMapKey(key);
 
@@ -204,21 +233,21 @@ public:
         m_lock.unlock();
 
         if constexpr(type == Settings::Type::Bool) {
-            m_settings.at(mapKey).settingChangedBool(value);
+            emit m_settings.at(mapKey).settingChangedBool(value);
         }
         else if constexpr(type == Settings::Type::Double) {
-            m_settings.at(mapKey).settingChangedDouble(value);
+            emit m_settings.at(mapKey).settingChangedDouble(value);
         }
         else if constexpr(type == Settings::Type::Int) {
-            m_settings.at(mapKey).settingChangedInt(value);
+            emit m_settings.at(mapKey).settingChangedInt(value);
         }
         else if constexpr(type == Settings::Type::String) {
-            m_settings.at(mapKey).settingChangedString(value);
+            emit m_settings.at(mapKey).settingChangedString(value);
         }
         else if constexpr(type == Settings::Type::ByteArray) {
-            m_settings.at(mapKey).settingChangedByteArray(value);
+            emit m_settings.at(mapKey).settingChangedByteArray(value);
         }
-        m_settings.at(mapKey).settingChanged();
+        emit m_settings.at(mapKey).settingChanged();
     }
 
 private:
