@@ -25,7 +25,6 @@
 #include "playlistpreset.h"
 
 #include <core/library/coverprovider.h>
-#include <core/models/container.h>
 #include <core/player/playermanager.h>
 #include <core/playlist/playlisthandler.h>
 
@@ -34,7 +33,6 @@
 #include <QCryptographicHash>
 #include <QIcon>
 #include <QPalette>
-#include <QStringBuilder>
 
 namespace Fy::Gui::Widgets::Playlist {
 using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
@@ -45,7 +43,7 @@ QString generateHeaderKey(const QString& titleText, const QString& subtitleText,
     hash.addData(titleText.toUtf8());
     hash.addData(subtitleText.toUtf8());
     hash.addData(sideText.toUtf8());
-    
+
     QString headerKey = hash.result().toHex();
     return headerKey;
 }
@@ -81,7 +79,6 @@ struct PlaylistModel::Private
 
     PlaylistItemHash nodes;
     ContainerHashMap headers;
-    Core::ContainerHash containers;
     QPixmap playingIcon;
     QPixmap pausedIcon;
 
@@ -120,7 +117,6 @@ struct PlaylistModel::Private
 
     void beginReset()
     {
-        containers.clear();
         headers.clear();
         nodes.clear();
         model->resetRoot();
