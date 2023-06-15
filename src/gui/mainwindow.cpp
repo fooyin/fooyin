@@ -28,6 +28,7 @@
 
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QActionGroup>
@@ -52,6 +53,7 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
 MainWindow::~MainWindow()
 {
     m_settings->set<Settings::Geometry>(saveGeometry().toBase64());
+    m_settings->set<Settings::SettingsGeometry>(m_settings->settingsDialog()->geometry().toBase64());
 }
 
 void MainWindow::setupUi()
@@ -64,9 +66,11 @@ void MainWindow::setupUi()
     setMinimumSize(410, 320);
     setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
 
-    const QByteArray geometryArray = m_settings->value<Settings::Geometry>();
-    const QByteArray geometry      = QByteArray::fromBase64(geometryArray);
-    restoreGeometry(geometry);
+    const QByteArray mainGeometry = QByteArray::fromBase64(m_settings->value<Settings::Geometry>());
+    restoreGeometry(mainGeometry);
+
+    const QByteArray settingsGeometry = QByteArray::fromBase64(m_settings->value<Settings::SettingsGeometry>());
+    m_settings->settingsDialog()->updateGeometry(settingsGeometry);
 
     setCentralWidget(m_editableLayout);
 

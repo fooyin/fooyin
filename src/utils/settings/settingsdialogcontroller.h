@@ -38,7 +38,11 @@ public:
 
     void addPage(SettingsPage* page);
 
+    [[nodiscard]] QByteArray geometry() const;
+    void updateGeometry(const QByteArray& geometry);
+
 private:
+    QByteArray m_geometry;
     PageList m_pages;
 };
 } // namespace Fy::Utils
