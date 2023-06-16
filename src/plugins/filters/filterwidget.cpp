@@ -169,7 +169,7 @@ void FilterWidget::saveLayout(QJsonArray& array)
     array.append(filter);
 }
 
-void FilterWidget::loadLayout(QJsonObject& object)
+void FilterWidget::loadLayout(const QJsonObject& object)
 {
     m_sortOrder = Utils::EnumHelper::fromString<Qt::SortOrder>(object["Sort"].toString());
     setField(object["Type"].toString());
@@ -184,11 +184,7 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
 
     const QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
 
-    if(indexes.isEmpty()) {
-        return;
-    }
-
-    if(!m_model) {
+    if(!m_model || indexes.isEmpty()) {
         return;
     }
 
@@ -196,10 +192,11 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
     for(const auto& index : indexes) {
         if(index.isValid()) {
             const auto newTracks = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
-            tracks.insert(tracks.end(), newTracks.cbegin(), newTracks.cend());
+            std::ranges::copy(newTracks, std::back_inserter(tracks));
         }
     }
-    m_filter->tracks = tracks;
+
+    m_filter->tracks = std::move(tracks);
     m_manager->selectionChanged(m_filter->index);
 }
 

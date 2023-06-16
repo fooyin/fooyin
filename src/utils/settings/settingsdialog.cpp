@@ -77,7 +77,6 @@ void SettingsDialog::setupUi()
 
 void SettingsDialog::openSettings()
 {
-    resize(750, 450);
     open();
 }
 

@@ -69,7 +69,7 @@ struct PlaylistModel::Private
     Core::Library::CoverProvider coverProvider;
 
     PlaylistPreset currentPreset;
-    Core::Playlist::Playlist* currentPlaylist{nullptr};
+    Core::Playlist::Playlist currentPlaylist;
 
     bool altColours;
 
@@ -412,10 +412,10 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
         return {};
     }
 
-    if(!p->currentPlaylist) {
+    if(!p->currentPlaylist.isValid()) {
         return {};
     }
-    return QString("%1: %2 Tracks").arg(p->currentPlaylist->name()).arg(p->currentPlaylist->trackCount());
+    return QString("%1: %2 Tracks").arg(p->currentPlaylist.name()).arg(p->currentPlaylist.trackCount());
 }
 
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
@@ -481,9 +481,9 @@ QModelIndex PlaylistModel::matchTrack(int id) const
     return {};
 }
 
-void PlaylistModel::reset(Core::Playlist::Playlist* playlist)
+void PlaylistModel::reset(const Core::Playlist::Playlist& playlist)
 {
-    if(!playlist) {
+    if(!playlist.isValid()) {
         return;
     }
 
@@ -496,13 +496,13 @@ void PlaylistModel::reset(Core::Playlist::Playlist* playlist)
     p->resetting = false;
 }
 
-void PlaylistModel::setupModelData(const Core::Playlist::Playlist* playlist)
+void PlaylistModel::setupModelData(const Core::Playlist::Playlist& playlist)
 {
-    if(!playlist) {
+    if(!playlist.isValid()) {
         return;
     }
 
-    const auto tracks = playlist->tracks();
+    const auto tracks = playlist.tracks();
 
     for(const Core::Track& track : tracks) {
         if(!track.enabled()) {

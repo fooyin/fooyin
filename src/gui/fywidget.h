@@ -49,7 +49,7 @@ public:
 
     virtual void layoutEditingMenu(Utils::ActionContainer* menu);
     virtual void saveLayout(QJsonArray& array);
-    virtual void loadLayout(QJsonObject& object);
+    virtual void loadLayout(const QJsonObject& object);
 
 private:
     Utils::Id m_id;

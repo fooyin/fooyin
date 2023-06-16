@@ -63,7 +63,7 @@ public:
     void customHeaderMenuRequested(QPoint pos);
 
     void saveLayout(QJsonArray& array) override;
-    void loadLayout(QJsonObject& object) override;
+    void loadLayout(const QJsonObject& object) override;
 
 signals:
     void typeChanged(int index);

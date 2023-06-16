@@ -31,6 +31,9 @@
 #include <QThread>
 #include <QTimer>
 
+#include <ranges>
+#include <vector>
+
 namespace Fy::Core::Library {
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database,
                                          Utils::SettingsManager* settings, QObject* parent)
@@ -48,9 +51,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     connect(this, &UnifiedMusicLibrary::runLibraryScan, &m_threadHandler, &LibraryThreadHandler::scanLibrary);
     connect(&m_threadHandler, &LibraryThreadHandler::progressChanged, this, &UnifiedMusicLibrary::scanProgress);
     connect(&m_threadHandler, &LibraryThreadHandler::statusChanged, this, &UnifiedMusicLibrary::libraryStatusChanged);
-    connect(&m_threadHandler,
-            &LibraryThreadHandler::statusChanged,
-            m_libraryManager,
+    connect(&m_threadHandler, &LibraryThreadHandler::statusChanged, m_libraryManager,
             &LibraryManager::libraryStatusChanged);
     connect(&m_threadHandler, &LibraryThreadHandler::addedTracks, this, &UnifiedMusicLibrary::addTracks);
     connect(&m_threadHandler, &LibraryThreadHandler::updatedTracks, this, &UnifiedMusicLibrary::updateTracks);
@@ -75,10 +76,10 @@ void UnifiedMusicLibrary::loadLibrary()
 void UnifiedMusicLibrary::reloadAll()
 {
     const LibraryInfoList& libraries = m_libraryManager->allLibraries();
-    for(const auto& library : libraries) {
-        if(library->id >= 0) {
-            reload(library.get());
-        }
+    for(const auto& library : libraries | std::views::filter([](const auto& lib) {
+                                  return lib->id >= 0;
+                              })) {
+        reload(library.get());
     }
 }
 
@@ -112,14 +113,10 @@ void UnifiedMusicLibrary::changeSort(const QString& sort)
 
 void UnifiedMusicLibrary::removeLibrary(int id)
 {
-    TrackList filtered{m_tracks};
-    filtered.erase(std::remove_if(filtered.begin(),
-                                  filtered.end(),
-                                  [id](const Track& track) {
-                                      return track.libraryId() == id;
-                                  }),
-                   filtered.end());
-    m_tracks = filtered;
+    auto filtered = m_tracks | std::views::filter([id](const Track& track) {
+                        return track.libraryId() != id;
+                    });
+    std::ranges::copy(filtered, std::back_inserter(m_tracks));
 
     emit libraryRemoved(id);
 }
@@ -150,24 +147,27 @@ void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
 
 void UnifiedMusicLibrary::updateTracks(const TrackList& tracks)
 {
-    for(const auto& track : tracks) {
-        auto it = std::find_if(m_tracks.begin(), m_tracks.end(), [track](const Track& libraryTrack) {
-            return libraryTrack.id() == track.id();
-        });
-        if(it != m_tracks.cend()) {
-            *it = track;
-        }
-    }
+    std::ranges::for_each(tracks, [this](const auto& track) {
+        std::ranges::replace_if(
+            m_tracks,
+            [track](const Track& libraryTrack) {
+                return libraryTrack.id() == track.id();
+            },
+            track);
+    });
+
     emit tracksUpdated(tracks);
 }
 
 void UnifiedMusicLibrary::removeTracks(const TrackList& tracks)
 {
-    for(const Track& track : tracks) {
-        m_tracks.erase(std::find_if(m_tracks.begin(), m_tracks.end(), [track](const Track& libraryTrack) {
+    auto [begin, end] = std::ranges::remove_if(m_tracks, [tracks](const Track& libraryTrack) {
+        return std::ranges::any_of(tracks, [libraryTrack](const Track& track) {
             return libraryTrack.id() == track.id();
-        }));
-    }
+        });
+    });
+    m_tracks.erase(begin, end);
+
     emit tracksDeleted(tracks);
 }
 

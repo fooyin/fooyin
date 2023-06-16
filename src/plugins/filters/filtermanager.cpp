@@ -34,16 +34,18 @@ constexpr auto FilterPlaylistActiveName = "Filter Results (Playback)";
 
 void sendToPlaylist(Core::Playlist::PlaylistHandler* playlistHandler, const Core::TrackList& filteredTracks)
 {
-    Core::Playlist::Playlist* activePlaylist = playlistHandler->activePlaylist();
-    if(activePlaylist && activePlaylist->name() == FilterPlaylistName) {
-        if(playlistHandler->playlistByName(FilterPlaylistActiveName)) {
-            auto* filterPlaylist = playlistHandler->createPlaylist(FilterPlaylistActiveName, activePlaylist->tracks());
-            filterPlaylist->changeCurrentTrack(activePlaylist->currentTrackIndex());
-            playlistHandler->changeActivePlaylist(filterPlaylist->id());
-        }
-        else {
-            playlistHandler->renamePlaylist(activePlaylist->id(), FilterPlaylistActiveName);
-        }
+    auto activePlaylist = playlistHandler->activePlaylist();
+    if(!activePlaylist || activePlaylist->name() != FilterPlaylistName) {
+        playlistHandler->createPlaylist(FilterPlaylistName, filteredTracks);
+        return;
+    }
+
+    if(auto filterPlaylist = playlistHandler->playlistByName(FilterPlaylistActiveName)) {
+        playlistHandler->exchangePlaylist(*filterPlaylist, *activePlaylist);
+        playlistHandler->changeActivePlaylist(filterPlaylist->id());
+    }
+    else {
+        playlistHandler->renamePlaylist(activePlaylist->id(), FilterPlaylistActiveName);
     }
     playlistHandler->createPlaylist(FilterPlaylistName, filteredTracks);
 }
@@ -121,7 +123,7 @@ void FilterManager::getFilteredTracks()
 
     for(auto& filter : m_filterStore.activeFilters()) {
         if(m_filteredTracks.empty()) {
-            m_filteredTracks.insert(m_filteredTracks.cend(), filter.tracks.cbegin(), filter.tracks.cend());
+            std::ranges::copy(filter.tracks, std::back_inserter(m_filteredTracks));
         }
         else {
             m_filteredTracks

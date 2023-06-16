@@ -54,21 +54,23 @@ public:
                              QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
-    [[nodiscard]] Playlist* playlistById(int id) const;
-    [[nodiscard]] Playlist* playlistByIndex(int index) const;
-    [[nodiscard]] Playlist* playlistByName(const QString& name) const;
-    [[nodiscard]] const PlaylistList& playlists() const;
+    [[nodiscard]] std::optional<Playlist> playlistById(int id) const;
+    [[nodiscard]] std::optional<Playlist> playlistByIndex(int index) const;
+    [[nodiscard]] std::optional<Playlist> playlistByName(const QString& name) const;
+    [[nodiscard]] PlaylistList playlists() const;
 
-    Playlist* createPlaylist(const QString& name, const TrackList& tracks = {});
+    std::optional<Playlist> createPlaylist(const QString& name, const TrackList& tracks = {});
     void appendToPlaylist(int id, const TrackList& tracks);
     void createEmptyPlaylist();
 
+    // Replaces tracks and current track index in playlist with those from other
+    void exchangePlaylist(Playlist& playlist, const Playlist& other);
     void changeActivePlaylist(int id);
 
     void renamePlaylist(int id, const QString& name);
     void removePlaylist(int id);
 
-    [[nodiscard]] Playlist* activePlaylist() const;
+    [[nodiscard]] std::optional<Playlist> activePlaylist() const;
     [[nodiscard]] int playlistCount() const;
 
     void savePlaylists();
@@ -77,11 +79,11 @@ public:
 
 signals:
     void playlistsPopulated();
-    void playlistAdded(Core::Playlist::Playlist* playlist);
-    void playlistTracksChanged(Core::Playlist::Playlist* playlist);
+    void playlistAdded(const Core::Playlist::Playlist& playlist);
+    void playlistTracksChanged(const Core::Playlist::Playlist& playlist);
     void playlistRemoved(int id);
-    void playlistRenamed(Core::Playlist::Playlist* playlist);
-    void activePlaylistChanged(Core::Playlist::Playlist* playlist);
+    void playlistRenamed(const Core::Playlist::Playlist& playlist);
+    void activePlaylistChanged(const Core::Playlist::Playlist& playlist = {});
 
 private:
     struct Private;

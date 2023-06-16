@@ -53,7 +53,7 @@ void FyWidget::saveLayout(QJsonArray& array)
     array.append(layoutName());
 }
 
-void FyWidget::loadLayout(QJsonObject& object)
+void FyWidget::loadLayout(const QJsonObject& object)
 {
     Q_UNUSED(object)
 }

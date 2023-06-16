@@ -58,8 +58,8 @@ public:
 
     [[nodiscard]] QModelIndex matchTrack(int id) const;
 
-    void reset(Core::Playlist::Playlist* playlist);
-    void setupModelData(const Core::Playlist::Playlist* playlist);
+    void reset(const Core::Playlist::Playlist&);
+    void setupModelData(const Core::Playlist::Playlist& playlist);
     void changeTrackState();
 
     void changePreset(const PlaylistPreset& preset);

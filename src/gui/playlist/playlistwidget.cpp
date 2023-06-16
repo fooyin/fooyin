@@ -143,11 +143,9 @@ struct PlaylistWidget::Private : QObject
         model->reset(playlistController->currentPlaylist());
     }
 
-    void changePlaylist(Core::Playlist::Playlist* playlist)
+    void changePlaylist(const Core::Playlist::Playlist& playlist)
     {
-        if(playlist) {
-            model->reset(playlist);
-        }
+        model->reset(playlist);
     }
 
     void reset()
@@ -292,18 +290,16 @@ struct PlaylistWidget::Private : QObject
         auto* menu = new QMenu(widget);
         menu->setAttribute(Qt::WA_DeleteOnClose);
 
-        const auto* currentPlaylist = playlistController->currentPlaylist();
-        const auto& playlists       = playlistController->playlists();
+        //        const auto currentPlaylist = playlistController->currentPlaylist();
+        const auto& playlists = playlistController->playlists();
 
         for(const auto& playlist : playlists) {
-            if(playlist.get() != currentPlaylist) {
-                auto* switchPl = new QAction(playlist->name(), menu);
-                const int id   = playlist->id();
-                QObject::connect(switchPl, &QAction::triggered, this, [this, id]() {
-                    playlistController->changeCurrentPlaylist(id);
-                });
-                menu->addAction(switchPl);
-            }
+            auto* switchPl = new QAction(playlist.name(), menu);
+            const int id   = playlist.id();
+            QObject::connect(switchPl, &QAction::triggered, this, [this, id]() {
+                playlistController->changeCurrentPlaylist(id);
+            });
+            menu->addAction(switchPl);
         }
         menu->popup(widget->mapToGlobal(pos));
     }
@@ -317,7 +313,9 @@ PlaylistWidget::PlaylistWidget(Core::Library::MusicLibrary* library, Core::Playe
 {
     setObjectName("Playlist");
 
-    p->changePlaylist(p->playlistController->currentPlaylist());
+    if(auto playlist = p->playlistController->currentPlaylist()) {
+        p->changePlaylist(*playlist);
+    }
 }
 
 PlaylistWidget::~PlaylistWidget() = default;

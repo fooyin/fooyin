@@ -134,20 +134,8 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
     QStringList ret;
     QList<QDir> stack{baseDirectory};
 
-    const QStringList soundFileExtensions{"*.mp3",
-                                          "*.ogg",
-                                          "*.opus",
-                                          "*.oga",
-                                          "*.m4a",
-                                          "*.wav",
-                                          "*.flac",
-                                          "*.aac",
-                                          "*.wma",
-                                          "*.mpc",
-                                          "*.aiff",
-                                          "*.ape",
-                                          "*.webm",
-                                          "*.mp4"};
+    const QStringList soundFileExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga",  "*.m4a", "*.wav",  "*.flac",
+                                          "*.aac", "*.wma", "*.mpc",  "*.aiff", "*.ape", "*.webm", "*.mp4"};
 
     while(!stack.isEmpty()) {
         const QDir dir              = stack.takeFirst();
@@ -197,7 +185,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
 
         bool fileWasRead;
 
-        if(tracks.count(filepath)) {
+        if(tracks.contains(filepath)) {
             const Track& libraryTrack = tracks.at(filepath);
             if(libraryTrack.id() >= 0) {
                 if(libraryTrack.modifiedTime() == lastModified) {
@@ -209,7 +197,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
                 if(fileWasRead) {
                     // Regenerate hash
                     changedTrack.generateHash();
-                    tracksToUpdate.emplace_back(changedTrack);
+                    tracksToUpdate.push_back(changedTrack);
                     continue;
                 }
             }
@@ -221,7 +209,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
         fileWasRead = m_tagReader.readMetaData(track, Tagging::Quality::Quality);
         if(fileWasRead) {
             track.generateHash();
-            tracksToStore.emplace_back(track);
+            tracksToStore.push_back(track);
 
             ++tracksProcessed;
             const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);

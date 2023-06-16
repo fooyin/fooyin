@@ -63,7 +63,7 @@ public:
     [[nodiscard]] QString layoutName() const override;
     void layoutEditingMenu(Utils::ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
-    void loadLayout(QJsonObject& object) override;
+    void loadLayout(const QJsonObject& object) override;
 
 protected:
     void insertWidget(int index, FyWidget* widget);

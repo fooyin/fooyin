@@ -47,7 +47,7 @@ public:
 
     void setupTabs();
 
-    int addPlaylist(Core::Playlist::Playlist* playlist);
+    int addPlaylist(const Core::Playlist::Playlist& playlist);
     void removePlaylist(int id);
     int addNewTab(const QString& name, const QIcon& icon = {});
 
@@ -56,8 +56,8 @@ protected:
 
 private:
     void tabChanged(int index);
-    void playlistChanged(Core::Playlist::Playlist* playlist);
-    void playlistRenamed(Core::Playlist::Playlist* playlist);
+    void playlistChanged(const Core::Playlist::Playlist& playlist);
+    void playlistRenamed(const Core::Playlist::Playlist& playlist);
 
     Core::Playlist::PlaylistHandler* m_playlistHandler;
     PlaylistController* m_controller;

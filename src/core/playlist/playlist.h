@@ -27,19 +27,24 @@ namespace Fy::Core::Playlist {
 class Playlist
 {
 public:
-    explicit Playlist(QString name, int index = -1, int id = -1);
+    Playlist();
+    explicit Playlist(QString name, int index, int id);
+
+    [[nodiscard]] bool isValid() const;
 
     [[nodiscard]] int id() const;
     [[nodiscard]] int index() const;
-    void setIndex(int index);
     [[nodiscard]] QString name() const;
-    void setName(const QString& name);
+
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
 
     [[nodiscard]] int currentTrackIndex() const;
     [[nodiscard]] Track currentTrack() const;
     [[nodiscard]] bool wasModified() const;
+
+    void setIndex(int index);
+    void setName(const QString& name);
 
     void replaceTracks(const TrackList& tracks);
     void appendTracks(const TrackList& tracks);
@@ -59,5 +64,5 @@ private:
     TrackList m_tracks;
     bool m_modified;
 };
-using PlaylistList = std::vector<std::unique_ptr<Playlist>>;
+using PlaylistList = std::vector<Playlist>;
 } // namespace Fy::Core::Playlist

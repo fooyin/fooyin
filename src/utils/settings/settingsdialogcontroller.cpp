@@ -28,21 +28,42 @@ SettingsDialogController::SettingsDialogController(QObject* parent)
 
 void SettingsDialogController::open()
 {
-    auto* settingsDialog = new SettingsDialog{m_pages};
-    settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
-    settingsDialog->openSettings();
+    openAtPage({});
 }
 
 void SettingsDialogController::openAtPage(const Id& page)
 {
     auto* settingsDialog = new SettingsDialog{m_pages};
+    QObject::connect(settingsDialog, &QDialog::destroyed, this, [this, settingsDialog]() {
+        m_geometry = settingsDialog->saveGeometry();
+    });
     settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+
+    if(m_geometry.isEmpty()) {
+        settingsDialog->resize(750, 450);
+    }
+    else {
+        settingsDialog->restoreGeometry(m_geometry);
+    }
     settingsDialog->openSettings();
-    settingsDialog->openPage(page);
+
+    if(page.isValid()) {
+        settingsDialog->openPage(page);
+    }
 }
 
 void SettingsDialogController::addPage(SettingsPage* page)
 {
-    m_pages.emplace_back(page);
+    m_pages.push_back(page);
+}
+
+QByteArray SettingsDialogController::geometry() const
+{
+    return m_geometry;
+}
+
+void SettingsDialogController::updateGeometry(const QByteArray& geometry)
+{
+    m_geometry = geometry;
 }
 } // namespace Fy::Utils
