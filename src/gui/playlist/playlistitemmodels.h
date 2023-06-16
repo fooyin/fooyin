@@ -28,14 +28,25 @@ class Container
 {
 public:
     Container();
-    virtual ~Container() = default;
 
     [[nodiscard]] Core::TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] uint64_t duration() const;
+
+    [[nodiscard]] TextBlock title() const;
+    [[nodiscard]] TextBlock subtitle() const;
+    [[nodiscard]] TextBlock sideText() const;
     [[nodiscard]] TextBlock info() const;
 
+    [[nodiscard]] bool hasCover() const;
+    [[nodiscard]] QString coverPath() const;
+
     [[nodiscard]] QString genres() const;
+
+    void setTitle(const TextBlock& title);
+    void setSubtitle(const TextBlock& subtitle);
+    void setSideText(const TextBlock& text);
+    void setCoverPath(const QString& path);
 
     virtual void addTrack(const Core::Track& track);
     virtual void removeTrack(const Core::Track& trackToRemove);
@@ -46,40 +57,15 @@ private:
     Core::TrackList m_tracks;
     uint64_t m_duration;
     mutable QString m_genres;
-    TextBlock m_info;
-};
-using ContainerHashMap = std::unordered_map<QString, std::unique_ptr<Container>>;
 
-class Header : public Container
-{
-public:
-    Header(TextBlock title, TextBlock subtitle, TextBlock sideText, QString coverPath);
-
-    [[nodiscard]] TextBlock title() const;
-    [[nodiscard]] TextBlock subtitle() const;
-    [[nodiscard]] TextBlock sideText() const;
-
-    [[nodiscard]] bool hasCover() const;
-    [[nodiscard]] QString coverPath() const;
-
-private:
     TextBlock m_title;
     TextBlock m_subtitle;
     TextBlock m_sideText;
+    TextBlock m_info;
 
     QString m_coverPath;
 };
-
-class Subheader : public Container
-{
-public:
-    explicit Subheader(TextBlock title);
-
-    [[nodiscard]] TextBlock title() const;
-
-private:
-    TextBlock m_title;
-};
+using ContainerHashMap = std::unordered_map<QString, Container>;
 
 class Track
 {

@@ -152,10 +152,16 @@ struct PlaylistModel::Private
         auto [headerIt, inserted] = headers.try_emplace(key);
 
         if(inserted) {
-            headerIt->second = std::make_unique<Header>(row.title, row.subtitle, row.sideText, track.thumbnailPath());
-            checkInsertKey(key, PlaylistItem::Header, headerIt->second.get(), parent);
+            Container header;
+            header.setTitle(row.title);
+            header.setSubtitle(row.subtitle);
+            header.setSideText(row.sideText);
+            header.setCoverPath(track.thumbnailPath());
+            headerIt->second = std::move(header);
+
+            checkInsertKey(key, PlaylistItem::Header, &headerIt->second, parent);
         }
-        auto* header = headerIt->second.get();
+        Container* header = &headerIt->second;
         header->addTrack(track);
 
         registry->changeCurrentContainer(header);
@@ -186,10 +192,13 @@ struct PlaylistModel::Private
 
             auto [subheaderIt, inserted] = headers.try_emplace(key);
             if(inserted) {
-                subheaderIt->second = std::make_unique<Subheader>(rowLeft);
-                checkInsertKey(key, PlaylistItem::Subheader, subheaderIt->second.get(), parent);
+                Container subheader;
+                subheader.setTitle(rowLeft);
+                subheaderIt->second = std::move(subheader);
+
+                checkInsertKey(key, PlaylistItem::Subheader, &subheaderIt->second, parent);
             }
-            auto* subheader = subheaderIt->second.get();
+            Container* subheader = &subheaderIt->second;
             subheader->addTrack(track);
 
             registry->changeCurrentContainer(subheader);
@@ -316,7 +325,7 @@ struct PlaylistModel::Private
 
     QVariant headerData(PlaylistItem* item, int role) const
     {
-        auto* header = static_cast<Header*>(std::get<Container*>(item->data()));
+        auto* header = std::get<Container*>(item->data());
 
         if(!header) {
             return {};
@@ -354,7 +363,7 @@ struct PlaylistModel::Private
 
     QVariant subheaderData(PlaylistItem* item, int role) const
     {
-        auto* header = static_cast<Subheader*>(std::get<Container*>(item->data()));
+        auto* header = std::get<Container*>(item->data());
 
         if(!header) {
             return {};

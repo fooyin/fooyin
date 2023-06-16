@@ -41,6 +41,74 @@ uint64_t Container::duration() const
     return m_duration;
 }
 
+TextBlock Container::title() const
+{
+    return m_title;
+}
+
+TextBlock Container::subtitle() const
+{
+    return m_subtitle;
+}
+
+TextBlock Container::sideText() const
+{
+    return m_sideText;
+}
+
+TextBlock Container::info() const
+{
+    return m_info;
+}
+
+bool Container::hasCover() const
+{
+    return !m_coverPath.isEmpty();
+}
+
+QString Container::coverPath() const
+{
+    return m_coverPath;
+}
+
+QString Container::genres() const
+{
+    if(!m_genres.isEmpty()) {
+        return m_genres;
+    }
+
+    QStringList genres;
+    for(const auto& track : m_tracks) {
+        for(const auto& genre : track.genres()) {
+            if(!genres.contains(genre)) {
+                genres.emplace_back(genre);
+            }
+        }
+    }
+    m_genres = genres.join(" / ");
+    return m_genres;
+}
+
+void Container::setTitle(const TextBlock& title)
+{
+    m_title = title;
+}
+
+void Container::setSubtitle(const TextBlock& subtitle)
+{
+    m_subtitle = subtitle;
+}
+
+void Container::setSideText(const TextBlock& text)
+{
+    m_sideText = text;
+}
+
+void Container::setCoverPath(const QString& path)
+{
+    m_coverPath = path;
+}
+
 void Container::addTrack(const Core::Track& track)
 {
     m_tracks.emplace_back(track);
@@ -58,73 +126,9 @@ void Container::removeTrack(const Core::Track& trackToRemove)
     m_duration -= trackToRemove.duration();
 }
 
-TextBlock Container::info() const
-{
-    return m_info;
-}
-
-QString Container::genres() const
-{
-    if(!m_genres.isEmpty()) {
-        return m_genres;
-    }
-    
-    QStringList genres;
-    for(const auto& track : m_tracks) {
-        for(const auto& genre : track.genres()) {
-            if(!genres.contains(genre)) {
-                genres.emplace_back(genre);
-            }
-        }
-    }
-    m_genres = genres.join(" / ");
-    return m_genres;
-}
-
 void Container::modifyInfo(TextBlock info)
 {
     m_info = std::move(info);
-}
-
-Header::Header(TextBlock title, TextBlock subtitle, TextBlock sideText, QString coverPath)
-    : m_title{std::move(title)}
-    , m_subtitle{std::move(subtitle)}
-    , m_sideText{std::move(sideText)}
-    , m_coverPath{std::move(coverPath)}
-{ }
-
-TextBlock Header::title() const
-{
-    return m_title;
-}
-
-TextBlock Header::subtitle() const
-{
-    return m_subtitle;
-}
-
-TextBlock Header::sideText() const
-{
-    return m_sideText;
-}
-
-bool Header::hasCover() const
-{
-    return !m_coverPath.isEmpty();
-}
-
-QString Header::coverPath() const
-{
-    return m_coverPath;
-}
-
-Subheader::Subheader(TextBlock title)
-    : m_title{std::move(title)}
-{ }
-
-TextBlock Subheader::title() const
-{
-    return m_title;
 }
 
 Track::Track(TextBlockList left, TextBlockList right, const Core::Track& track)
