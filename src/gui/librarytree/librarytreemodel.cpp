@@ -21,6 +21,8 @@
 
 #include <core/constants.h>
 
+#include <ranges>
+
 namespace Fy::Gui::Widgets {
 LibraryTreeModel::LibraryTreeModel(QObject* parent)
     : TreeModel{parent}
@@ -100,27 +102,30 @@ void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
 
     const auto parsedField = m_parser.parse(m_groupScipt);
 
-    for(const Core::Track& track : tracks) {
-        if(!track.enabled()) {
-            continue;
-        }
+    auto filteredTracks = tracks | std::views::filter([](const Core::Track& track) {
+                              return track.enabled();
+                          });
+
+    for(const Core::Track& track : filteredTracks) {
         const QString field = m_parser.evaluate(parsedField, track);
         if(field.isNull()) {
             continue;
         }
+
         LibraryTreeItem* parent = rootItem();
 
-        const QStringList values = field.split(Core::Constants::Separator);
+        auto values = field.split(Core::Constants::Separator, Qt::SkipEmptyParts)
+                    | std::views::filter([](const QString& value) {
+                          return !value.isNull();
+                      });
+
         for(const QString& value : values) {
-            if(value.isNull()) {
-                continue;
-            }
             const QStringList levels = value.split("||");
-            for(auto [it, end, i] = std::tuple{levels.cbegin(), levels.cend(), 0}; it != end; ++it, ++i) {
-                const QString title   = *it;
-                const QString trimmed = title.trimmed();
-                const QString key     = QString{"%1%2%3"}.arg(parent->title(), trimmed).arg(i);
-                createNode(key, parent, trimmed)->addTrack(track);
+
+            for(const QString& level : levels) {
+                const QString title = level.trimmed();
+                const QString key   = QString{"%1%2"}.arg(parent->title(), title);
+                createNode(key, parent, title)->addTrack(track);
                 parent = m_nodes.at(key).get();
             }
         }
