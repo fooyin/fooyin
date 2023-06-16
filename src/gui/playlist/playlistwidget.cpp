@@ -140,7 +140,9 @@ struct PlaylistWidget::Private : QObject
     void changePreset(const QString& name)
     {
         model->changePreset(presetRegistry->presetByName(name));
-        model->reset(playlistController->currentPlaylist());
+        if(auto playlist = playlistController->currentPlaylist()) {
+            model->reset(*playlist);
+        }
     }
 
     void changePlaylist(const Core::Playlist::Playlist& playlist)
