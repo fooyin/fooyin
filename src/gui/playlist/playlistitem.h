@@ -28,14 +28,8 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Core {
-class Album;
-class Container;
-} // namespace Core
-
-namespace Gui::Widgets::Playlist {
-using Data = std::variant<Track, Container*>;
+namespace Fy::Gui::Widgets::Playlist {
+using Data = std::variant<Track, Container>;
 
 class PlaylistItem : public Utils::TreeItem<PlaylistItem>
 {
@@ -68,19 +62,22 @@ public:
 
     explicit PlaylistItem(ItemType type = Root, Data data = {}, PlaylistItem* parentItem = nullptr);
 
+    [[nodiscard]] bool pending() const;
     [[nodiscard]] ItemType type() const;
-    [[nodiscard]] Data data() const;
+    [[nodiscard]] Data& data() const;
     [[nodiscard]] QString key() const;
     [[nodiscard]] int indentation() const;
 
+    void setPending(bool pending);
     void setKey(const QString& key);
+    void setParent(PlaylistItem* parent);
     void setIndentation(int indentation);
 
 private:
+    bool m_pending;
     ItemType m_type;
-    Data m_data;
+    mutable Data m_data;
     QString m_key;
     int m_indentation;
 };
-} // namespace Gui::Widgets::Playlist
-} // namespace Fy
+} // namespace Fy::Gui::Widgets::Playlist

@@ -49,7 +49,7 @@ protected:
         return NewCntr(from.cbegin(), from.cend());
     }
 
-    ScriptResult calculateResult(FuncRet funcRet) const;
+    static ScriptResult calculateResult(FuncRet funcRet);
 
 private:
     using NativeFunc     = std::function<QString(const QStringList&)>;

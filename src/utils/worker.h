@@ -48,6 +48,6 @@ signals:
     void finished();
 
 private:
-    State m_state;
+    std::atomic<State> m_state;
 };
 } // namespace Fy::Utils

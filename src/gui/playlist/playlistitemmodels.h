@@ -48,8 +48,8 @@ public:
     void setSideText(const TextBlock& text);
     void setCoverPath(const QString& path);
 
-    virtual void addTrack(const Core::Track& track);
-    virtual void removeTrack(const Core::Track& trackToRemove);
+    void addTrack(const Core::Track& track);
+    void removeTrack(const Core::Track& trackToRemove);
 
     void modifyInfo(TextBlock info);
 
@@ -65,7 +65,6 @@ private:
 
     QString m_coverPath;
 };
-using ContainerHashMap = std::unordered_map<QString, Container>;
 
 class Track
 {

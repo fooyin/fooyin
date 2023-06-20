@@ -80,41 +80,28 @@ void Registry::changeCurrentTrack(const Core::Track& track)
     m_currentTrack = track;
 }
 
-ScriptResult Registry::calculateResult(FuncRet funcRet) const
+ScriptResult Registry::calculateResult(Registry::FuncRet funcRet)
 {
-    if(std::holds_alternative<int>(funcRet)) {
-        const int value = std::get<0>(funcRet);
+    ScriptResult result;
 
-        ScriptResult result;
-        result.value = QString::number(value);
-        result.cond  = value >= 0;
-        return result;
+    if(auto* intVal = std::get_if<int>(&funcRet)) {
+        result.value = QString::number(*intVal);
+        result.cond  = (*intVal) >= 0;
     }
-    if(std::holds_alternative<uint64_t>(funcRet)) {
-        const uint64_t value = std::get<1>(funcRet);
-
-        ScriptResult result;
-        result.value = QString::number(value);
+    else if(auto* uintVal = std::get_if<uint64_t>(&funcRet)) {
+        result.value = QString::number(*uintVal);
         result.cond  = true;
-        return result;
     }
-    if(std::holds_alternative<QString>(funcRet)) {
-        const QString value = std::get<2>(funcRet);
+    else if(auto* strVal = std::get_if<QString>(&funcRet)) {
+        result.value = *strVal;
+        result.cond  = !strVal->isEmpty();
+    }
+    else if(auto* strListVal = std::get_if<QStringList>(&funcRet)) {
+        result.value = strListVal->empty() ? "" : strListVal->join(Constants::Separator);
+        result.cond  = !strListVal->isEmpty();
+    }
 
-        ScriptResult result;
-        result.value = value;
-        result.cond  = !value.isEmpty();
-        return result;
-    }
-    if(std::holds_alternative<QStringList>(funcRet)) {
-        const QStringList value = std::get<3>(funcRet);
-
-        ScriptResult result;
-        result.value = value.empty() ? "" : value.join(Constants::Separator);
-        result.cond  = !value.isEmpty();
-        return result;
-    }
-    return {};
+    return result;
 }
 
 void Registry::addDefaultFunctions()

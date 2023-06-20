@@ -97,7 +97,7 @@ struct PlaylistWidget::Private : QObject
         connect(playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                 &PlaylistWidget::Private::selectionChanged);
 
-        connect(playlistView, &PlaylistView::doubleClicked, this, &PlaylistWidget::Private::playTrack);
+        connect(playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidget::Private::playTrack);
         connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
                 &PlaylistWidget::Private::changeState);
         connect(model, &QAbstractItemModel::rowsInserted, this, &PlaylistWidget::Private::expandPlaylist);

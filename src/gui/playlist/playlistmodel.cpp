@@ -22,8 +22,8 @@
 #include "gui/guiconstants.h"
 #include "gui/guisettings.h"
 #include "playlistitem.h"
+#include "playlistpopulator.h"
 #include "playlistpreset.h"
-#include "playlistscriptregistry.h"
 
 #include <core/library/coverprovider.h>
 #include <core/player/playermanager.h>
@@ -31,37 +31,12 @@
 
 #include <utils/settings/settingsmanager.h>
 
-#include <QCryptographicHash>
 #include <QIcon>
 #include <QPalette>
+#include <QThread>
 
 namespace Fy::Gui::Widgets::Playlist {
-using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
-
-QString generateHeaderKey(const QString& titleText, const QString& subtitleText, const QString& sideText)
-{
-    QCryptographicHash hash{QCryptographicHash::Md5};
-    hash.addData(titleText.toUtf8());
-    hash.addData(subtitleText.toUtf8());
-    hash.addData(sideText.toUtf8());
-
-    QString headerKey = hash.result().toHex();
-    return headerKey;
-}
-
-void parseBlock(Core::Scripting::Parser& parser, TextBlock& block)
-{
-    block.script = parser.parse(block.text);
-}
-
-void parseBlockList(Core::Scripting::Parser& parser, TextBlockList& blocks)
-{
-    for(TextBlock& block : blocks) {
-        parseBlock(parser, block);
-    }
-}
-
-struct PlaylistModel::Private
+struct PlaylistModel::Private : public QObject
 {
     PlaylistModel* model;
     Core::Player::PlayerManager* playerManager;
@@ -75,11 +50,12 @@ struct PlaylistModel::Private
 
     bool resetting{false};
 
-    std::unique_ptr<PlaylistScriptRegistry> registry;
-    Core::Scripting::Parser parser;
+    QThread populatorThread;
+    PlaylistPopulator populator;
 
-    PlaylistItemHash nodes;
-    ContainerHashMap headers;
+    PlaylistItem root;
+    ItemMap nodes;
+
     QPixmap playingIcon;
     QPixmap pausedIcon;
 
@@ -88,194 +64,41 @@ struct PlaylistModel::Private
         , playerManager{playerManager}
         , settings{settings}
         , altColours{settings->value<Settings::PlaylistAltColours>()}
-        , registry{std::make_unique<PlaylistScriptRegistry>()}
-        , parser{registry.get()}
         , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
         , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
-    { }
-
-    PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::ItemType type, const Data& item,
-                                 PlaylistItem* parent)
     {
-        auto [node, inserted] = nodes.try_emplace(key, std::make_unique<PlaylistItem>(type, item, parent));
-        if(inserted) {
-            node->second->setKey(key);
-        }
-        PlaylistItem* child = node->second.get();
+        populator.moveToThread(&populatorThread);
+        populatorThread.start();
+    }
 
-        parent->appendChild(child);
-        return child;
+    void populateModel(PendingData& data)
+    {
+        for(const auto& pair : data.items) {
+            nodes.emplace(pair);
+        }
+
+        for(auto& [parentKey, rows] : data.nodes) {
+            PlaylistItem* parent = parentKey.isEmpty() ? &root : &nodes.at(parentKey);
+            const int baseRow    = parent->childCount();
+            model->beginInsertRows(model->indexForItem(parent), baseRow, baseRow + rows.size() - 1);
+            for(const QString& row : rows) {
+                PlaylistItem* child = &nodes.at(row);
+                insertRow(parent, child);
+            }
+            model->endInsertRows();
+        }
     }
 
     void insertRow(PlaylistItem* parent, PlaylistItem* child)
     {
-        const int row = parent->childCount();
-        model->beginInsertRows(model->indexForItem(parent), row, row);
         parent->appendChild(child);
-        model->endInsertRows();
+        child->setParent(parent);
     }
 
     void beginReset()
     {
-        headers.clear();
+        root = PlaylistItem{};
         nodes.clear();
-        model->resetRoot();
-    }
-
-    void updateScripts()
-    {
-        parseBlock(parser, currentPreset.header.title);
-        parseBlock(parser, currentPreset.header.subtitle);
-        parseBlock(parser, currentPreset.header.sideText);
-        parseBlock(parser, currentPreset.header.info);
-
-        for(auto& row : currentPreset.subHeaders.rows) {
-            parseBlock(parser, row.title);
-            parseBlock(parser, row.info);
-        }
-
-        parseBlockList(parser, currentPreset.track.text);
-    }
-
-    void iterateHeader(const Core::Track& track, PlaylistItem*& parent)
-    {
-        HeaderRow row{currentPreset.header};
-        if(!row.isValid()) {
-            return;
-        }
-        row.title.text    = parser.evaluate(currentPreset.header.title.script, track);
-        row.subtitle.text = parser.evaluate(currentPreset.header.subtitle.script, track);
-        row.sideText.text = parser.evaluate(currentPreset.header.sideText.script, track);
-
-        const QString key = generateHeaderKey(row.title.text, row.subtitle.text, row.sideText.text);
-
-        auto [headerIt, inserted] = headers.try_emplace(key);
-
-        if(inserted) {
-            Container header;
-            header.setTitle(row.title);
-            header.setSubtitle(row.subtitle);
-            header.setSideText(row.sideText);
-            header.setCoverPath(track.thumbnailPath());
-            headerIt->second = std::move(header);
-
-            checkInsertKey(key, PlaylistItem::Header, &headerIt->second, parent);
-        }
-        Container* header = &headerIt->second;
-        header->addTrack(track);
-
-        registry->changeCurrentContainer(header);
-
-        row.info.text = parser.evaluate(currentPreset.header.info.script, track);
-        header->modifyInfo(row.info);
-
-        parent = nodes.at(key).get();
-    }
-
-    void iterateSubheaders(const Core::Track& track, PlaylistItem*& parent)
-    {
-        for(const SubheaderRow& row : currentPreset.subHeaders.rows) {
-            TextBlock rowLeft{row.title};
-            if(!rowLeft.isValid()) {
-                return;
-            }
-            rowLeft.text.clear();
-
-            const QString result = parser.evaluate(rowLeft.script, track);
-            if(result.isEmpty()) {
-                continue;
-            }
-
-            rowLeft.text = result;
-
-            const QString key = generateHeaderKey(parent->key(), rowLeft.text, "");
-
-            auto [subheaderIt, inserted] = headers.try_emplace(key);
-            if(inserted) {
-                Container subheader;
-                subheader.setTitle(rowLeft);
-                subheaderIt->second = std::move(subheader);
-
-                checkInsertKey(key, PlaylistItem::Subheader, &subheaderIt->second, parent);
-            }
-            Container* subheader = &subheaderIt->second;
-            subheader->addTrack(track);
-
-            registry->changeCurrentContainer(subheader);
-
-            TextBlock rowRight{row.info};
-            rowRight.text.clear();
-
-            const QString rightResult = parser.evaluate(rowRight.script, track);
-            if(!rightResult.isEmpty()) {
-                rowRight.text = rightResult;
-                subheader->modifyInfo(rowRight);
-            }
-
-            parent = nodes.at(key).get();
-            if(parent->parent()->type() != PlaylistItem::Header) {
-                parent->setIndentation(parent->parent()->indentation() + 20);
-            }
-        }
-    }
-
-    void iterateTrack(const Core::Track& track)
-    {
-        PlaylistItem* parent = model->rootItem();
-
-        iterateHeader(track, parent);
-        iterateSubheaders(track, parent);
-
-        TrackRow trackLeft{currentPreset.track};
-        TrackRow trackRight{currentPreset.track};
-
-        if(!trackLeft.isValid() && !trackRight.isValid()) {
-            return;
-        }
-
-        trackLeft.text.clear();
-        trackRight.text.clear();
-
-        bool leftFilled{false};
-        for(const TextBlock& block : currentPreset.track.text) {
-            TextBlock trackBlock;
-            trackBlock.cloneProperties(block);
-
-            const QString result = parser.evaluate(block.script, track);
-            if(result.isEmpty()) {
-                continue;
-            }
-            if(result.contains("||") && !leftFilled) {
-                leftFilled          = true;
-                const QString left  = result.section("||", 0, 0);
-                const QString right = result.section("||", 1);
-                if(!left.isEmpty()) {
-                    trackBlock.text = left;
-                    trackLeft.text.push_back(trackBlock);
-                }
-                if(!right.isEmpty()) {
-                    trackBlock.text = right;
-                    trackRight.text.push_back(trackBlock);
-                }
-            }
-            else if(!leftFilled) {
-                trackBlock.text = result;
-                trackLeft.text.push_back(trackBlock);
-            }
-            else {
-                trackBlock.text = result;
-                trackRight.text.push_back(trackBlock);
-            }
-        }
-
-        const QString key = QString{"%1%2"}.arg(parent->key(), track.hash());
-
-        Track playlistTrack{trackLeft.text, trackRight.text, track};
-        auto* trackItem = checkInsertKey(key, PlaylistItem::Track, playlistTrack, parent);
-
-        if(parent->type() != PlaylistItem::Header) {
-            trackItem->setIndentation(parent->indentation() + 20);
-        }
     }
 
     QVariant trackData(PlaylistItem* item, int role) const
@@ -325,15 +148,11 @@ struct PlaylistModel::Private
 
     QVariant headerData(PlaylistItem* item, int role) const
     {
-        auto* header = std::get<Container*>(item->data());
-
-        if(!header) {
-            return {};
-        }
+        const auto& header = std::get<Container>(item->data());
 
         switch(role) {
             case(PlaylistItem::Role::Title): {
-                return header->title();
+                return header.title();
             }
             case(PlaylistItem::Role::ShowCover): {
                 return currentPreset.header.showCover;
@@ -342,16 +161,19 @@ struct PlaylistModel::Private
                 return currentPreset.header.simple;
             }
             case(PlaylistItem::Role::Cover): {
-                return coverProvider.albumThumbnail(header->coverPath());
+                if(!currentPreset.header.showCover) {
+                    return {};
+                }
+                return coverProvider.albumThumbnail(header.coverPath());
             }
             case(PlaylistItem::Role::Subtitle): {
-                return header->subtitle();
+                return header.subtitle();
             }
             case(PlaylistItem::Role::Info): {
-                return header->info();
+                return header.info();
             }
             case(PlaylistItem::Role::Right): {
-                return header->sideText();
+                return header.sideText();
             }
             case(Qt::SizeHintRole): {
                 return QSize{0, currentPreset.header.rowHeight};
@@ -363,18 +185,14 @@ struct PlaylistModel::Private
 
     QVariant subheaderData(PlaylistItem* item, int role) const
     {
-        auto* header = std::get<Container*>(item->data());
-
-        if(!header) {
-            return {};
-        }
+        const auto& header = std::get<Container>(item->data());
 
         switch(role) {
             case(PlaylistItem::Role::Title): {
-                return QVariant::fromValue(header->title());
+                return QVariant::fromValue(header.title());
             }
             case(PlaylistItem::Role::Subtitle): {
-                return QVariant::fromValue(header->info());
+                return QVariant::fromValue(header.info());
             }
             case(PlaylistItem::Role::Indentation): {
                 return item->indentation();
@@ -390,16 +208,35 @@ struct PlaylistModel::Private
 
 PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                              QObject* parent)
-    : TreeModel{parent}
+    : QAbstractItemModel{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
     p->settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
         p->altColours = enabled;
         emit dataChanged({}, {}, {Qt::BackgroundRole});
     });
+
+    QObject::connect(&p->populator, &PlaylistPopulator::populated, this, [this](PendingData data) {
+        if(p->resetting) {
+            beginResetModel();
+            p->beginReset();
+        }
+
+        p->populateModel(data);
+
+        if(p->resetting) {
+            endResetModel();
+        }
+        p->resetting = false;
+    });
 }
 
-PlaylistModel::~PlaylistModel() = default;
+PlaylistModel::~PlaylistModel()
+{
+    p->populator.stopThread();
+    p->populatorThread.quit();
+    p->populatorThread.wait();
+};
 
 QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -420,7 +257,7 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
 
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 {
-    if(!index.isValid()) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
 
@@ -443,6 +280,79 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
             return {};
     }
     return {};
+}
+
+Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return Qt::NoItemFlags;
+    }
+    return QAbstractItemModel::flags(index);
+}
+
+QModelIndex PlaylistModel::index(int row, int column, const QModelIndex& parent) const
+{
+    if(!hasIndex(row, column, parent)) {
+        return {};
+    }
+
+    PlaylistItem* parentItem;
+
+    if(!parent.isValid()) {
+        parentItem = &p->root;
+    }
+    else {
+        parentItem = static_cast<PlaylistItem*>(parent.internalPointer());
+    }
+
+    PlaylistItem* childItem = parentItem->child(row);
+    if(childItem) {
+        return createIndex(row, column, childItem);
+    }
+    return {};
+}
+
+QModelIndex PlaylistModel::parent(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return {};
+    }
+
+    auto* childItem          = static_cast<PlaylistItem*>(index.internalPointer());
+    PlaylistItem* parentItem = childItem->parent();
+
+    if(parentItem == &p->root || !parentItem) {
+        return {};
+    }
+
+    return createIndex(parentItem->row(), 0, parentItem);
+}
+
+int PlaylistModel::rowCount(const QModelIndex& parent) const
+{
+    PlaylistItem* parentItem;
+
+    if(!parent.isValid()) {
+        parentItem = &p->root;
+    }
+    else {
+        parentItem = static_cast<PlaylistItem*>(parent.internalPointer());
+    }
+
+    return parentItem->childCount();
+}
+
+int PlaylistModel::columnCount(const QModelIndex& parent) const
+{
+    if(parent.isValid()) {
+        return static_cast<PlaylistItem*>(parent.internalPointer())->columnCount();
+    }
+    return p->root.columnCount();
+}
+
+QModelIndex PlaylistModel::indexOfItem(const PlaylistItem& item)
+{
+    return createIndex(item.row(), 0, &item);
 }
 
 QHash<int, QByteArray> PlaylistModel::roleNames() const
@@ -489,27 +399,12 @@ void PlaylistModel::reset(const Core::Playlist::Playlist& playlist)
 
     p->resetting       = true;
     p->currentPlaylist = playlist;
-    beginResetModel();
-    p->beginReset();
-    setupModelData(playlist);
-    endResetModel();
-    p->resetting = false;
-}
 
-void PlaylistModel::setupModelData(const Core::Playlist::Playlist& playlist)
-{
-    if(!playlist.isValid()) {
-        return;
-    }
+    p->populator.stopThread();
 
-    const auto tracks = playlist.tracks();
-
-    for(const Core::Track& track : tracks) {
-        if(!track.enabled()) {
-            continue;
-        }
-        p->iterateTrack(track);
-    }
+    QMetaObject::invokeMethod(&p->populator, [this, playlist] {
+        p->populator.run(p->currentPreset, playlist.tracks());
+    });
 }
 
 void PlaylistModel::changeTrackState()
@@ -520,7 +415,6 @@ void PlaylistModel::changeTrackState()
 void PlaylistModel::changePreset(const PlaylistPreset& preset)
 {
     p->currentPreset = preset;
-    p->updateScripts();
 }
 
 QModelIndex PlaylistModel::indexForTrack(const Core::Track& track) const
@@ -528,20 +422,17 @@ QModelIndex PlaylistModel::indexForTrack(const Core::Track& track) const
     QModelIndex index;
     const auto key = track.hash();
     if(p->nodes.contains(key)) {
-        const auto* item = p->nodes.at(key).get();
-        index            = createIndex(item->row(), 0, item);
+        PlaylistItem* item = &p->nodes.at(key);
+        index              = createIndex(item->row(), 0, item);
     }
     return index;
 }
 
 QModelIndex PlaylistModel::indexForItem(PlaylistItem* item) const
 {
-    QModelIndex index;
-    const auto key = item->key();
-    if(p->nodes.contains(key)) {
-        auto* node = p->nodes.at(key).get();
-        index      = createIndex(node->row(), 0, node);
+    if(!item) {
+        return {};
     }
-    return index;
+    return createIndex(item->row(), 0, item);
 }
 } // namespace Fy::Gui::Widgets::Playlist

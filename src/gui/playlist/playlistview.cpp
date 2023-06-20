@@ -19,13 +19,10 @@
 
 #include "playlistview.h"
 
-#include <QActionGroup>
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QPainter>
-#include <QScrollBar>
-#include <QSortFilterProxyModel>
 
 namespace Fy::Gui::Widgets::Playlist {
 PlaylistView::PlaylistView(QWidget* parent)
@@ -77,4 +74,4 @@ void PlaylistView::paintEvent(QPaintEvent* event)
     textRect.moveCenter(viewport()->rect().center());
     painter.drawText(textRect, Qt::AlignCenter, text);
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Playlist
