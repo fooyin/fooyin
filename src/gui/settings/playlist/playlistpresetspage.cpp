@@ -258,6 +258,9 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
 
     QObject::connect(m_simpleHeader, &QPushButton::clicked, this, [this](bool checked) {
         m_showCover->setEnabled(!checked);
+        m_headerSubtitle->setEnabled(!checked);
+        m_headerSideText->setEnabled(!checked);
+        m_headerInfo->setEnabled(!checked);
     });
 
     if(m_model->rowCount() > 0) {
@@ -369,11 +372,17 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     createPresetInputs(preset.header.info, m_headerInfo, this);
 
     m_headerRowHeight->setValue(preset.header.rowHeight);
-    m_showCover->setChecked(preset.header.showCover);
+
     m_simpleHeader->setChecked(preset.header.simple);
+    m_showCover->setChecked(preset.header.showCover);
+    m_showCover->setEnabled(!preset.header.simple);
 
     createPresetInputs(preset.subHeader.text, m_subHeaderText, this);
     m_subHeaderRowHeight->setValue(preset.subHeader.rowHeight);
+
+    m_headerSubtitle->setEnabled(!preset.header.simple);
+    m_headerSideText->setEnabled(!preset.header.simple);
+    m_headerInfo->setEnabled(!preset.header.simple);
 
     createPresetInputs(preset.track.text, m_trackText, this);
     m_trackRowHeight->setValue(preset.track.rowHeight);
