@@ -57,46 +57,7 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
     return result;
 }
 
-PlaylistDelegate::PlaylistDelegate(QObject* parent)
-    : QStyledItemDelegate(parent)
-{ }
-
-QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    Q_UNUSED(option)
-    return index.data(Qt::SizeHintRole).toSize();
-}
-
-void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    painter->save();
-
-    QStyleOptionViewItem opt = option;
-    initStyleOption(&opt, index);
-
-    const auto type = index.data(PlaylistItem::Type).toInt();
-    switch(type) {
-        case(PlaylistItem::Header): {
-            const auto simple = index.data(PlaylistItem::Simple).toBool();
-            simple ? paintSimpleHeader(painter, option, index) : paintHeader(painter, option, index);
-            break;
-        }
-        case(PlaylistItem::Track): {
-            paintTrack(painter, option, index);
-            break;
-        }
-        case(PlaylistItem::Subheader): {
-            paintSubheader(painter, option, index);
-            break;
-        }
-        default: {
-            break;
-        }
-    }
-    painter->restore();
-}
-
-void PlaylistDelegate::paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option)
+void paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option)
 {
     const QColor selectColour = option.palette.highlight().color();
     const QColor hoverColour  = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
@@ -110,7 +71,7 @@ void PlaylistDelegate::paintSelectionBackground(QPainter* painter, const QStyleO
     }
 }
 
-void PlaylistDelegate::paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
     const int x         = option.rect.x();
     const int y         = option.rect.y();
@@ -190,8 +151,7 @@ void PlaylistDelegate::paintHeader(QPainter* painter, const QStyleOptionViewItem
     }
 }
 
-void PlaylistDelegate::paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option,
-                                         const QModelIndex& index)
+void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
     const int x         = option.rect.x();
     const int y         = option.rect.y();
@@ -235,7 +195,7 @@ void PlaylistDelegate::paintSimpleHeader(QPainter* painter, const QStyleOptionVi
     }
 }
 
-void PlaylistDelegate::paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
     const int x         = option.rect.x();
     const int y         = option.rect.y();
@@ -278,7 +238,7 @@ void PlaylistDelegate::paintSubheader(QPainter* painter, const QStyleOptionViewI
     painter->drawLine(titleLine);
 }
 
-void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
     const int x         = option.rect.x();
     const int y         = option.rect.y();
@@ -317,5 +277,44 @@ void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem&
         const QRect playRect{x + offset, y, 20, height};
         option.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
     }
+}
+
+PlaylistDelegate::PlaylistDelegate(QObject* parent)
+    : QStyledItemDelegate(parent)
+{ }
+
+QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    Q_UNUSED(option)
+    return index.data(Qt::SizeHintRole).toSize();
+}
+
+void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    painter->save();
+
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    const auto type = index.data(PlaylistItem::Type).toInt();
+    switch(type) {
+        case(PlaylistItem::Header): {
+            const auto simple = index.data(PlaylistItem::Simple).toBool();
+            simple ? paintSimpleHeader(painter, option, index) : paintHeader(painter, option, index);
+            break;
+        }
+        case(PlaylistItem::Track): {
+            paintTrack(painter, option, index);
+            break;
+        }
+        case(PlaylistItem::Subheader): {
+            paintSubheader(painter, option, index);
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+    painter->restore();
 }
 } // namespace Fy::Gui::Widgets::Playlist
