@@ -114,12 +114,11 @@ void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
 
         LibraryTreeItem* parent = rootItem();
 
-        auto values = field.split(Core::Constants::Separator, Qt::SkipEmptyParts)
-                    | std::views::filter([](const QString& value) {
-                          return !value.isNull();
-                      });
-
+        const QStringList values = field.split(Core::Constants::Separator, Qt::SkipEmptyParts);
         for(const QString& value : values) {
+            if(value.isNull()) {
+                continue;
+            }
             const QStringList levels = value.split("||");
 
             for(const QString& level : levels) {
