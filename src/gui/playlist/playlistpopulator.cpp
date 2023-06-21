@@ -23,6 +23,7 @@
 #include "playlistscriptregistry.h"
 
 #include <QCryptographicHash>
+#include <QStringBuilder>
 #include <QTimer>
 
 #include <ranges>
@@ -41,18 +42,6 @@ QString generateHeaderKey(const QString& titleText, const QString& subtitleText,
     return headerKey;
 }
 
-void parseBlock(Core::Scripting::Parser& parser, TextBlock& block)
-{
-    block.script = parser.parse(block.text);
-}
-
-void parseBlockList(Core::Scripting::Parser& parser, TextBlockList& blocks)
-{
-    for(TextBlock& block : blocks) {
-        parseBlock(parser, block);
-    }
-}
-
 struct PlaylistPopulator::Private : QObject
 {
     PlaylistPopulator* populator;
@@ -60,6 +49,8 @@ struct PlaylistPopulator::Private : QObject
 
     std::unique_ptr<PlaylistScriptRegistry> registry;
     Core::Scripting::Parser parser;
+
+    std::vector<Container> subheaders;
 
     PlaylistItem root;
     PendingData data;
@@ -74,17 +65,20 @@ struct PlaylistPopulator::Private : QObject
 
     void updateScripts()
     {
-        parseBlock(parser, currentPreset.header.title);
-        parseBlock(parser, currentPreset.header.subtitle);
-        parseBlock(parser, currentPreset.header.sideText);
-        parseBlock(parser, currentPreset.header.info);
+        auto parseBlockList = [this](TextBlockList& blocks) {
+            for(TextBlock& block : blocks) {
+                block.script = parser.parse(block.text);
+            }
+        };
 
-        for(auto& row : currentPreset.subHeaders.rows) {
-            parseBlock(parser, row.title);
-            parseBlock(parser, row.info);
-        }
+        parseBlockList(currentPreset.header.title);
+        parseBlockList(currentPreset.header.subtitle);
+        parseBlockList(currentPreset.header.sideText);
+        parseBlockList(currentPreset.header.info);
 
-        parseBlockList(parser, currentPreset.track.text);
+        parseBlockList(currentPreset.subHeader.text);
+
+        parseBlockList(currentPreset.track.text);
     }
 
     PlaylistItem* getOrInsertItem(const QString& key, PlaylistItem::ItemType type, const Data& item,
@@ -106,12 +100,7 @@ struct PlaylistPopulator::Private : QObject
     void updateContainers()
     {
         for(const auto& [key, container] : data.headers) {
-            if(container->trackCount() > 0) {
-                registry->changeCurrentContainer(container);
-                TextBlock headerInfo{container->info()};
-                headerInfo.text = parser.evaluate(headerInfo.script, container->tracks().front());
-                container->modifyInfo(headerInfo);
-            }
+            container->updateGroupText(&parser, registry.get());
         }
     }
 
@@ -121,11 +110,29 @@ struct PlaylistPopulator::Private : QObject
         if(!row.isValid()) {
             return;
         }
-        row.title.text    = parser.evaluate(currentPreset.header.title.script, track);
-        row.subtitle.text = parser.evaluate(currentPreset.header.subtitle.script, track);
-        row.sideText.text = parser.evaluate(currentPreset.header.sideText.script, track);
 
-        const QString key = generateHeaderKey(row.title.text, row.subtitle.text, row.sideText.text);
+        row.title.clear();
+        row.subtitle.clear();
+        row.sideText.clear();
+
+        auto evaluateBlocks = [this, track](const TextBlockList& presetBlocks, TextBlockList& headerBlocks) -> QString {
+            QString key;
+            for(const TextBlock& block : presetBlocks) {
+                TextBlock headerBlock{block};
+                headerBlock.text = parser.evaluate(headerBlock.script, track);
+                if(!headerBlock.text.isEmpty()) {
+                    headerBlocks.push_back(headerBlock);
+                }
+                key = key % headerBlock.text;
+            }
+            return key;
+        };
+
+        const QString titleKey    = evaluateBlocks(currentPreset.header.title, row.title);
+        const QString subtitleKey = evaluateBlocks(currentPreset.header.subtitle, row.subtitle);
+        const QString sideKey     = evaluateBlocks(currentPreset.header.sideText, row.sideText);
+
+        const QString key = generateHeaderKey(titleKey, subtitleKey, sideKey);
 
         if(!data.headers.contains(key)) {
             Container header;
@@ -133,7 +140,7 @@ struct PlaylistPopulator::Private : QObject
             header.setSubtitle(row.subtitle);
             header.setSideText(row.sideText);
             header.setCoverPath(track.thumbnailPath());
-            header.modifyInfo(row.info);
+            header.setInfo(row.info);
 
             auto* headerItem      = getOrInsertItem(key, PlaylistItem::Header, header, parent);
             auto& headerContainer = std::get<1>(headerItem->data());
@@ -146,28 +153,101 @@ struct PlaylistPopulator::Private : QObject
         parent           = headerItem;
     }
 
+    void calculateSubheaders(const TextBlockList& textBlockList)
+    {
+        if(textBlockList.empty()) {
+            return;
+        }
+
+        Container currentContainer;
+        SubheaderRow leftRow;
+        SubheaderRow rightRow;
+
+        bool isRightComponent = false;
+
+        auto addContainer = [this, &currentContainer, &leftRow, &rightRow, &isRightComponent]() {
+            currentContainer.setTitle(leftRow.text);
+            currentContainer.setInfo(rightRow.text);
+            subheaders.push_back(currentContainer);
+
+            leftRow.text.clear();
+            rightRow.text.clear();
+            isRightComponent = false;
+        };
+
+        auto processBlock = [this, &isRightComponent, &rightRow, &leftRow](TextBlock& block, const QString& text,
+                                                                           bool setRight = false) {
+            block.text       = text;
+            block.script     = parser.parse(block.text);
+            const bool valid = !block.text.isEmpty();
+
+            if(isRightComponent && valid) {
+                rightRow.text.push_back(block);
+            }
+            else {
+                if(valid) {
+                    leftRow.text.push_back(block);
+                }
+                if(setRight) {
+                    isRightComponent = true;
+                }
+            }
+        };
+
+        for(const TextBlock& textBlock : textBlockList) {
+            TextBlock block;
+            block.cloneProperties(textBlock);
+
+            const QStringList levels = textBlock.text.split("|||");
+            for(const QString& level : levels) {
+                if(level.isEmpty()) {
+                    continue;
+                }
+
+                const qsizetype separatorIndex = level.indexOf("||");
+                if(separatorIndex >= 0) {
+                    processBlock(block, level.left(separatorIndex), true);
+                    processBlock(block, level.mid(separatorIndex + 2), true);
+                }
+                else {
+                    processBlock(block, level);
+                }
+
+                if(&level != &levels.back()) {
+                    addContainer();
+                }
+            }
+        }
+
+        if(leftRow.isValid() || rightRow.isValid()) {
+            addContainer();
+        }
+    }
+
     void iterateSubheaders(const Core::Track& track, PlaylistItem*& parent)
     {
-        const auto rows = currentPreset.subHeaders.rows;
-        for(const SubheaderRow& row : rows) {
-            TextBlock rowLeft{row.title};
-            if(!rowLeft.isValid()) {
+        if(subheaders.empty()) {
+            calculateSubheaders(currentPreset.subHeader.text);
+        }
+
+        for(const Container& container : subheaders) {
+            TextBlockList title = container.title();
+            QString subheaderKey;
+            for(TextBlock& block : title) {
+                block.text   = parser.evaluate(block.script, track);
+                subheaderKey = subheaderKey % block.text;
+            }
+
+            if(subheaderKey.isEmpty()) {
                 return;
             }
 
-            const QString result = parser.evaluate(rowLeft.script, track);
-            if(result.isEmpty()) {
-                continue;
-            }
-
-            rowLeft.text = result;
-
-            const QString key = generateHeaderKey(parent->key(), rowLeft.text, "");
+            const QString key = generateHeaderKey(parent->key(), subheaderKey, "");
 
             if(!data.headers.contains(key)) {
                 Container subheader;
-                subheader.setTitle(rowLeft);
-                subheader.modifyInfo(row.info);
+                subheader.setTitle(title);
+                subheader.setInfo(container.info());
 
                 auto* subheaderItem      = getOrInsertItem(key, PlaylistItem::Subheader, subheader, parent);
                 auto& subheaderContainer = std::get<1>(subheaderItem->data());
@@ -286,7 +366,11 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const Core::TrackList&
     setState(Running);
 
     p->data.clear();
-    p->currentPreset = preset;
+
+    if(std::exchange(p->currentPreset, preset) != preset) {
+        p->subheaders.clear();
+    }
+
     p->updateScripts();
     p->pendingTracks = tracks;
 

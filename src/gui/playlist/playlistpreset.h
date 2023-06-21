@@ -44,6 +44,7 @@ struct TextBlock
     QColor colour;
 
     TextBlock();
+    TextBlock(QString text, int fontSize);
 
     inline bool operator==(const TextBlock& other) const
     {
@@ -56,7 +57,7 @@ struct TextBlock
         return QVariant::fromValue(*this);
     }
 
-    inline bool isValid()
+    [[nodiscard]] inline bool isValid() const
     {
         return !text.isEmpty();
     }
@@ -69,14 +70,31 @@ struct TextBlock
         colour        = other.colour;
     }
 };
-using TextBlockList = QList<TextBlock>;
+
+class TextBlockList : public QList<TextBlock>
+{
+public:
+    TextBlockList()
+        : QList<TextBlock>{}
+    { }
+
+    explicit TextBlockList(const TextBlock& block)
+    {
+        this->append(block);
+    }
+
+    inline operator QVariant() const
+    {
+        return QVariant::fromValue(*this);
+    }
+};
 
 struct HeaderRow
 {
-    TextBlock title;
-    TextBlock subtitle;
-    TextBlock sideText;
-    TextBlock info;
+    TextBlockList title;
+    TextBlockList subtitle;
+    TextBlockList sideText;
+    TextBlockList info;
 
     int rowHeight{73};
     bool showCover{true};
@@ -89,42 +107,26 @@ struct HeaderRow
                         other.simple);
     };
 
-    inline bool isValid()
+    [[nodiscard]] inline bool isValid() const
     {
-        return title.isValid() || subtitle.isValid() || sideText.isValid();
+        return !title.empty() || !subtitle.empty() || !sideText.empty();
     }
 };
 
 struct SubheaderRow
 {
-    TextBlock title;
-    TextBlock info;
+    TextBlockList text;
+
+    int rowHeight{22};
 
     inline bool operator==(const SubheaderRow& other) const
     {
-        return std::tie(title, info) == std::tie(other.title, other.info);
+        return std::tie(text, rowHeight) == std::tie(other.text, other.rowHeight);
     };
 
-    inline bool isValid()
+    [[nodiscard]] inline bool isValid() const
     {
-        return title.isValid();
-    }
-};
-
-struct SubheaderRows
-{
-    QList<SubheaderRow> rows;
-
-    int rowHeight{25};
-
-    inline bool operator==(const SubheaderRows& other) const
-    {
-        return std::tie(rows, rowHeight) == std::tie(other.rows, other.rowHeight);
-    };
-
-    inline bool isValid()
-    {
-        return !rows.isEmpty();
+        return !text.isEmpty();
     }
 };
 
@@ -139,7 +141,7 @@ struct TrackRow
         return std::tie(text, rowHeight) == std::tie(other.text, other.rowHeight);
     };
 
-    inline bool isValid()
+    [[nodiscard]] inline bool isValid() const
     {
         return !text.isEmpty();
     }
@@ -151,16 +153,16 @@ struct PlaylistPreset
     QString name;
 
     HeaderRow header;
-    SubheaderRows subHeaders;
+    SubheaderRow subHeader;
     TrackRow track;
 
     inline bool operator==(const PlaylistPreset& other) const
     {
-        return std::tie(index, name, header, subHeaders, track)
-            == std::tie(other.index, other.name, other.header, other.subHeaders, other.track);
+        return std::tie(index, name, header, subHeader, track)
+            == std::tie(other.index, other.name, other.header, other.subHeader, other.track);
     };
 
-    inline bool isValid() const
+    [[nodiscard]] inline bool isValid() const
     {
         return !name.isEmpty();
     };
@@ -172,8 +174,6 @@ QDataStream& operator<<(QDataStream& stream, const HeaderRow& header);
 QDataStream& operator>>(QDataStream& stream, HeaderRow& header);
 QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader);
 QDataStream& operator>>(QDataStream& stream, SubheaderRow& subheader);
-QDataStream& operator<<(QDataStream& stream, const SubheaderRows& subheaders);
-QDataStream& operator>>(QDataStream& stream, SubheaderRows& subheaders);
 QDataStream& operator<<(QDataStream& stream, const TrackRow& track);
 QDataStream& operator>>(QDataStream& stream, TrackRow& track);
 QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset);
@@ -181,3 +181,4 @@ QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset);
 } // namespace Fy::Gui::Widgets::Playlist
 
 Q_DECLARE_METATYPE(Fy::Gui::Widgets::Playlist::TextBlock);
+Q_DECLARE_METATYPE(Fy::Gui::Widgets::Playlist::TextBlockList);

@@ -24,9 +24,18 @@
 
 namespace Fy::Gui::Widgets::Playlist {
 TextBlock::TextBlock()
-    : font{QApplication::font()}
-    , colour{QApplication::palette().text().color()}
+    : TextBlock{"", 0}
 { }
+
+TextBlock::TextBlock(QString text, int fontSize)
+    : text{std::move(text)}
+    , font{QApplication::font()}
+    , colour{QApplication::palette().text().color()}
+{
+    if(fontSize > 0 && font.pixelSize() >= 0) {
+        font.setPixelSize(fontSize);
+    }
+}
 
 QDataStream& operator<<(QDataStream& stream, const TextBlock& block)
 {
@@ -88,29 +97,15 @@ QDataStream& operator>>(QDataStream& stream, HeaderRow& header)
 
 QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader)
 {
-    stream << subheader.title;
-    stream << subheader.info;
+    stream << subheader.text;
+    stream << subheader.rowHeight;
     return stream;
 }
 
 QDataStream& operator>>(QDataStream& stream, SubheaderRow& subheader)
 {
-    stream >> subheader.title;
-    stream >> subheader.info;
-    return stream;
-}
-
-QDataStream& operator<<(QDataStream& stream, const SubheaderRows& subheaders)
-{
-    stream << subheaders.rows;
-    stream << subheaders.rowHeight;
-    return stream;
-}
-
-QDataStream& operator>>(QDataStream& stream, SubheaderRows& subheaders)
-{
-    stream >> subheaders.rows;
-    stream >> subheaders.rowHeight;
+    stream >> subheader.text;
+    stream >> subheader.rowHeight;
     return stream;
 }
 
@@ -133,7 +128,7 @@ QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset)
     stream << preset.index;
     stream << preset.name;
     stream << preset.header;
-    stream << preset.subHeaders;
+    stream << preset.subHeader;
     stream << preset.track;
     return stream;
 }
@@ -143,7 +138,7 @@ QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset)
     stream >> preset.index;
     stream >> preset.name;
     stream >> preset.header;
-    stream >> preset.subHeaders;
+    stream >> preset.subHeader;
     stream >> preset.track;
     return stream;
 }

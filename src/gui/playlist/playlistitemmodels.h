@@ -24,6 +24,8 @@
 #include <core/models/trackfwd.h>
 
 namespace Fy::Gui::Widgets::Playlist {
+class PlaylistScriptRegistry;
+
 class Container
 {
 public:
@@ -33,35 +35,36 @@ public:
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] uint64_t duration() const;
 
-    [[nodiscard]] TextBlock title() const;
-    [[nodiscard]] TextBlock subtitle() const;
-    [[nodiscard]] TextBlock sideText() const;
-    [[nodiscard]] TextBlock info() const;
+    [[nodiscard]] TextBlockList title() const;
+    [[nodiscard]] TextBlockList subtitle() const;
+    [[nodiscard]] TextBlockList sideText() const;
+    [[nodiscard]] TextBlockList info() const;
 
-    [[nodiscard]] bool hasCover() const;
     [[nodiscard]] QString coverPath() const;
 
     [[nodiscard]] QString genres() const;
 
-    void setTitle(const TextBlock& title);
-    void setSubtitle(const TextBlock& subtitle);
-    void setSideText(const TextBlock& text);
+    void updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptRegistry* registry);
+
+    void setTitle(const TextBlockList& title);
+    void setSubtitle(const TextBlockList& subtitle);
+    void setSideText(const TextBlockList& text);
+    void setInfo(const TextBlockList& info);
     void setCoverPath(const QString& path);
 
     void addTrack(const Core::Track& track);
     void removeTrack(const Core::Track& trackToRemove);
 
-    void modifyInfo(TextBlock info);
 
 private:
     Core::TrackList m_tracks;
     uint64_t m_duration;
     mutable QString m_genres;
 
-    TextBlock m_title;
-    TextBlock m_subtitle;
-    TextBlock m_sideText;
-    TextBlock m_info;
+    TextBlockList m_title;
+    TextBlockList m_subtitle;
+    TextBlockList m_sideText;
+    TextBlockList m_info;
 
     QString m_coverPath;
 };

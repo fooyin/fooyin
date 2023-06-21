@@ -19,7 +19,7 @@
 
 #include "playlistitemmodels.h"
 
-#include <ranges>
+#include "playlistscriptregistry.h"
 
 namespace Fy::Gui::Widgets::Playlist {
 Container::Container()
@@ -41,29 +41,24 @@ uint64_t Container::duration() const
     return m_duration;
 }
 
-TextBlock Container::title() const
+TextBlockList Container::title() const
 {
     return m_title;
 }
 
-TextBlock Container::subtitle() const
+TextBlockList Container::subtitle() const
 {
     return m_subtitle;
 }
 
-TextBlock Container::sideText() const
+TextBlockList Container::sideText() const
 {
     return m_sideText;
 }
 
-TextBlock Container::info() const
+TextBlockList Container::info() const
 {
     return m_info;
-}
-
-bool Container::hasCover() const
-{
-    return !m_coverPath.isEmpty();
 }
 
 QString Container::coverPath() const
@@ -89,19 +84,47 @@ QString Container::genres() const
     return m_genres;
 }
 
-void Container::setTitle(const TextBlock& title)
+void Container::updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptRegistry* registry)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+
+    if(!parser || !registry) {
+        return;
+    }
+
+    registry->changeCurrentContainer(this);
+
+    const Core::Track& track = m_tracks.front();
+
+    for(TextBlock& block : m_subtitle) {
+        block.text = parser->evaluate(block.script, track);
+    }
+
+    for(TextBlock& block : m_info) {
+        block.text = parser->evaluate(block.script, track);
+    }
+}
+
+void Container::setTitle(const TextBlockList& title)
 {
     m_title = title;
 }
 
-void Container::setSubtitle(const TextBlock& subtitle)
+void Container::setSubtitle(const TextBlockList& subtitle)
 {
     m_subtitle = subtitle;
 }
 
-void Container::setSideText(const TextBlock& text)
+void Container::setSideText(const TextBlockList& text)
 {
     m_sideText = text;
+}
+
+void Container::setInfo(const TextBlockList& info)
+{
+    m_info = info;
 }
 
 void Container::setCoverPath(const QString& path)
@@ -124,11 +147,6 @@ void Container::removeTrack(const Core::Track& trackToRemove)
                    m_tracks.end());
 
     m_duration -= trackToRemove.duration();
-}
-
-void Container::modifyInfo(TextBlock info)
-{
-    m_info = std::move(info);
 }
 
 Track::Track(TextBlockList left, TextBlockList right, const Core::Track& track)

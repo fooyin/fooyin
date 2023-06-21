@@ -35,8 +35,8 @@ public:
     static void paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option);
 
     static void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
-    static void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
+    static void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Playlist

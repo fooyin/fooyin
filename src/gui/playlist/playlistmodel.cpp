@@ -55,6 +55,7 @@ struct PlaylistModel::Private : public QObject
 
     PlaylistItem root;
     ItemMap nodes;
+    ItemMap oldNodes;
 
     QPixmap playingIcon;
     QPixmap pausedIcon;
@@ -77,10 +78,16 @@ struct PlaylistModel::Private : public QObject
             nodes.emplace(pair);
         }
 
+        auto insertRow = [](PlaylistItem* parent, PlaylistItem* child) {
+            parent->appendChild(child);
+            child->setParent(parent);
+        };
+
         for(auto& [parentKey, rows] : data.nodes) {
             PlaylistItem* parent = parentKey.isEmpty() ? &root : &nodes.at(parentKey);
             const int baseRow    = parent->childCount();
-            model->beginInsertRows(model->indexForItem(parent), baseRow, baseRow + rows.size() - 1);
+            const int nodeCount  = static_cast<int>(rows.size());
+            model->beginInsertRows(model->indexForItem(parent), baseRow, baseRow + nodeCount - 1);
             for(const QString& row : rows) {
                 PlaylistItem* child = &nodes.at(row);
                 insertRow(parent, child);
@@ -89,15 +96,11 @@ struct PlaylistModel::Private : public QObject
         }
     }
 
-    void insertRow(PlaylistItem* parent, PlaylistItem* child)
-    {
-        parent->appendChild(child);
-        child->setParent(parent);
-    }
-
     void beginReset()
     {
         root = PlaylistItem{};
+        // Acts as a cache in case model hasn't been fully cleared
+        oldNodes = std::move(nodes);
         nodes.clear();
     }
 
@@ -107,10 +110,10 @@ struct PlaylistModel::Private : public QObject
 
         switch(role) {
             case(PlaylistItem::Role::Left): {
-                return QVariant::fromValue(track.left());
+                return track.left();
             }
             case(PlaylistItem::Role::Right): {
-                return QVariant::fromValue(track.right());
+                return track.right();
             }
             case(PlaylistItem::Role::Playing): {
                 return playerManager->currentTrack() == track.track();
@@ -189,16 +192,16 @@ struct PlaylistModel::Private : public QObject
 
         switch(role) {
             case(PlaylistItem::Role::Title): {
-                return QVariant::fromValue(header.title());
+                return header.title();
             }
             case(PlaylistItem::Role::Subtitle): {
-                return QVariant::fromValue(header.info());
+                return header.info();
             }
             case(PlaylistItem::Role::Indentation): {
                 return item->indentation();
             }
             case(Qt::SizeHintRole): {
-                return QSize{0, currentPreset.subHeaders.rowHeight};
+                return QSize{0, currentPreset.subHeader.rowHeight};
             }
             default:
                 return {};
@@ -236,7 +239,7 @@ PlaylistModel::~PlaylistModel()
     p->populator.stopThread();
     p->populatorThread.quit();
     p->populatorThread.wait();
-};
+}
 
 QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
 {

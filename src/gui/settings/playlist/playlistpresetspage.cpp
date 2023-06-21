@@ -128,10 +128,10 @@ private:
     QTableView* m_presetList;
     PresetModel* m_model;
 
-    PresetInput* m_headerTitle;
-    PresetInput* m_headerSubtitle;
-    PresetInput* m_headerSideText;
-    PresetInput* m_headerInfo;
+    PresetInputBox* m_headerTitle;
+    PresetInputBox* m_headerSubtitle;
+    PresetInputBox* m_headerSideText;
+    PresetInputBox* m_headerInfo;
     QSpinBox* m_headerRowHeight;
 
     PresetInputBox* m_subHeaderText;
@@ -153,10 +153,6 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     : m_presetRegistry{presetRegistry}
     , m_presetList{new QTableView(this)}
     , m_model{new PresetModel(presetRegistry, this)}
-    , m_headerTitle{new PresetInput(this)}
-    , m_headerSubtitle{new PresetInput(this)}
-    , m_headerSideText{new PresetInput(this)}
-    , m_headerInfo{new PresetInput(this)}
     , m_headerRowHeight{new QSpinBox(this)}
     , m_subHeaderRowHeight{new QSpinBox(this)}
     , m_trackRowHeight{new QSpinBox(this)}
@@ -191,10 +187,10 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     auto* headerGroup  = new QGroupBox(tr("Header: "), this);
     auto* headerLayout = new QGridLayout(headerGroup);
 
-    auto* headerTitle     = new QLabel(tr("Title: "), this);
-    auto* headerSubtitle  = new QLabel(tr("Subtitle: "), this);
-    auto* headerSideText  = new QLabel(tr("Side text: "), this);
-    auto* headerInfo      = new QLabel(tr("Info: "), this);
+    m_headerTitle         = new PresetInputBox(tr("Title: "), this);
+    m_headerSubtitle      = new PresetInputBox(tr("Subtitle: "), this);
+    m_headerSideText      = new PresetInputBox(tr("Side text: "), this);
+    m_headerInfo          = new PresetInputBox(tr("Info: "), this);
     auto* headerRowHeight = new QLabel(tr("Row height: "), this);
 
     m_headerRowHeight->setMinimumWidth(120);
@@ -204,14 +200,10 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     headerLayout->addWidget(m_headerRowHeight, 1, 0);
     headerLayout->addWidget(m_simpleHeader, 0, 1);
     headerLayout->addWidget(m_showCover, 1, 1);
-    headerLayout->addWidget(headerTitle, 2, 0);
-    headerLayout->addWidget(m_headerTitle, 3, 0, 1, 5);
-    headerLayout->addWidget(headerSubtitle, 4, 0);
-    headerLayout->addWidget(m_headerSubtitle, 5, 0, 1, 5);
-    headerLayout->addWidget(headerSideText, 6, 0);
-    headerLayout->addWidget(m_headerSideText, 7, 0, 1, 5);
-    headerLayout->addWidget(headerInfo, 8, 0);
-    headerLayout->addWidget(m_headerInfo, 9, 0, 1, 5);
+    headerLayout->addWidget(m_headerTitle, 2, 0, 1, 5);
+    headerLayout->addWidget(m_headerSubtitle, 3, 0, 1, 5);
+    headerLayout->addWidget(m_headerSideText, 4, 0, 1, 5);
+    headerLayout->addWidget(m_headerInfo, 5, 0, 1, 5);
 
     headerLayout->setRowStretch(headerLayout->rowCount(), 1);
     headerLayout->setColumnStretch(0, 1);
@@ -312,47 +304,17 @@ void PlaylistPresetsPageWidget::updatePreset()
     const auto* item      = static_cast<PresetItem*>(index.internalPointer());
     PlaylistPreset preset = item->preset();
 
-    updateTextBlock(m_headerTitle, preset.header.title);
-    updateTextBlock(m_headerSubtitle, preset.header.subtitle);
-    updateTextBlock(m_headerSideText, preset.header.sideText);
-    updateTextBlock(m_headerInfo, preset.header.info);
+    updateTextBlocks(m_headerTitle->blocks(), preset.header.title);
+    updateTextBlocks(m_headerSubtitle->blocks(), preset.header.subtitle);
+    updateTextBlocks(m_headerSideText->blocks(), preset.header.sideText);
+    updateTextBlocks(m_headerInfo->blocks(), preset.header.info);
 
     preset.header.rowHeight = m_headerRowHeight->value();
     preset.header.simple    = m_simpleHeader->isChecked();
     preset.header.showCover = m_showCover->isEnabled() && m_showCover->isChecked();
 
-    preset.subHeaders.rows.clear();
-    for(const auto& input : m_subHeaderText->blocks()) {
-        const QStringList subHeader = input->text().split("||", Qt::KeepEmptyParts);
-
-        if(subHeader.empty()) {
-            continue;
-        }
-
-        const auto savePart = [&input](const QString& text) -> TextBlock {
-            TextBlock block;
-            block.text   = text;
-            block.font   = input->font();
-            block.colour = input->colour();
-
-            auto state = input->state();
-
-            block.fontChanged   = state & PresetInput::FontChanged;
-            block.colourChanged = state & PresetInput::ColourChanged;
-
-            return block;
-        };
-
-        Widgets::Playlist::SubheaderRow row;
-        row.title = savePart(subHeader[0]);
-
-        if(subHeader.size() > 1) {
-            row.info = savePart(subHeader[1]);
-        }
-        preset.subHeaders.rows.emplace_back(row);
-    }
-
-    preset.subHeaders.rowHeight = m_subHeaderRowHeight->value();
+    updateTextBlocks(m_subHeaderText->blocks(), preset.subHeader.text);
+    preset.subHeader.rowHeight = m_subHeaderRowHeight->value();
 
     updateTextBlocks(m_trackText->blocks(), preset.track.text);
     preset.track.rowHeight = m_trackRowHeight->value();
@@ -401,39 +363,28 @@ void PlaylistPresetsPageWidget::selectionChanged(const QItemSelection& selected)
 
 void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
 {
-    setupInputBox(preset.header.title, m_headerTitle);
-    setupInputBox(preset.header.subtitle, m_headerSubtitle);
-    setupInputBox(preset.header.sideText, m_headerSideText);
-    setupInputBox(preset.header.info, m_headerInfo);
+    createPresetInputs(preset.header.title, m_headerTitle, this);
+    createPresetInputs(preset.header.subtitle, m_headerSubtitle, this);
+    createPresetInputs(preset.header.sideText, m_headerSideText, this);
+    createPresetInputs(preset.header.info, m_headerInfo, this);
 
     m_headerRowHeight->setValue(preset.header.rowHeight);
     m_showCover->setChecked(preset.header.showCover);
     m_simpleHeader->setChecked(preset.header.simple);
 
-    if(preset.subHeaders.rows.empty()) {
-        createPresetInput({}, m_subHeaderText, this);
-    }
-    else {
-        for(const auto& row : preset.subHeaders.rows) {
-            QString fullText{row.title.text};
-            if(!row.info.text.isEmpty()) {
-                fullText = fullText + "||" + row.info.text;
-            }
-            TextBlock subBlock{row.title};
-            subBlock.text = fullText;
-            createPresetInput(subBlock, m_subHeaderText, this);
-        }
-    }
-
-    m_subHeaderRowHeight->setValue(preset.subHeaders.rowHeight);
+    createPresetInputs(preset.subHeader.text, m_subHeaderText, this);
+    m_subHeaderRowHeight->setValue(preset.subHeader.rowHeight);
 
     createPresetInputs(preset.track.text, m_trackText, this);
-
     m_trackRowHeight->setValue(preset.track.rowHeight);
 }
 
 void PlaylistPresetsPageWidget::clearBlocks()
 {
+    m_headerTitle->clearBlocks();
+    m_headerSubtitle->clearBlocks();
+    m_headerSideText->clearBlocks();
+    m_headerInfo->clearBlocks();
     m_subHeaderText->clearBlocks();
     m_trackText->clearBlocks();
 }
