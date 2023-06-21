@@ -200,17 +200,15 @@ struct PlaylistPopulator::Private : QObject
 
             const QStringList levels = textBlock.text.split("|||");
             for(const QString& level : levels) {
-                if(level.isEmpty()) {
-                    continue;
-                }
-
-                const qsizetype separatorIndex = level.indexOf("||");
-                if(separatorIndex >= 0) {
-                    processBlock(block, level.left(separatorIndex), true);
-                    processBlock(block, level.mid(separatorIndex + 2), true);
-                }
-                else {
-                    processBlock(block, level);
+                if(!level.isEmpty()) {
+                    const qsizetype separatorIndex = level.indexOf("||");
+                    if(separatorIndex >= 0) {
+                        processBlock(block, level.left(separatorIndex), true);
+                        processBlock(block, level.mid(separatorIndex + 2), true);
+                    }
+                    else {
+                        processBlock(block, level);
+                    }
                 }
 
                 if(&level != &levels.back()) {
