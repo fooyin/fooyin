@@ -33,6 +33,8 @@ namespace Fy::Gui::Settings {
 PresetInput::PresetInput(QWidget* parent)
     : QWidget{parent}
     , m_editBlock{new QLineEdit(this)}
+    , m_font{QApplication::font()}
+    , m_colour{QApplication::palette().text().color()}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
