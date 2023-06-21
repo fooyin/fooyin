@@ -36,4 +36,4 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Playlist

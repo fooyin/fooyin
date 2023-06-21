@@ -17,20 +17,17 @@
  *
  */
 
-#include "artist.h"
+#include "stringfuncs.h"
 
-namespace Fy::Core {
-Artist::Artist(QString name)
-    : m_name{std::move(name)}
-{ }
-
-QString Artist::name() const
+namespace Fy::Core::Scripting {
+QString num(const QStringList& vec)
 {
-    return m_name;
+    if(vec.empty() || vec.size() > 2) {
+        return {};
+    }
+    if(vec.size() == 1) {
+        return vec[0];
+    }
+    return QStringLiteral("%1").arg(vec[0].toInt(), vec[1].toInt(), 10, QLatin1Char('0'));
 }
-
-void Artist::setName(const QString& name)
-{
-    m_name = name;
-}
-} // namespace Fy::Core
+} // namespace Fy::Core::Scripting

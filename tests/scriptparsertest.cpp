@@ -26,7 +26,8 @@ namespace Fy::Testing {
 class ScriptParserTest : public ::testing::Test
 {
 protected:
-    Core::Scripting::Parser m_parser;
+    Core::Scripting::Registry m_registry;
+    Core::Scripting::Parser m_parser{&m_registry};
 };
 
 TEST_F(ScriptParserTest, BasicLiteral)

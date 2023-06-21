@@ -32,7 +32,7 @@ class CoverProvider
 {
 public:
     QPixmap trackCover(const Track& track);
-    QPixmap albumThumbnail(const Album& album) const;
+    QPixmap albumThumbnail(const QString& path) const;
 
 private:
     Tagging::TagReader m_tagReader;

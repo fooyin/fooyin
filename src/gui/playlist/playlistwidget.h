@@ -41,6 +41,7 @@ class MusicLibrary;
 
 namespace Gui::Widgets::Playlist {
 class PlaylistController;
+class PresetRegistry;
 
 class PlaylistWidget : public FyWidget
 {
@@ -48,8 +49,8 @@ class PlaylistWidget : public FyWidget
 
 public:
     explicit PlaylistWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-                            PlaylistController* playlistController, Utils::SettingsManager* settings,
-                            QWidget* parent = nullptr);
+                            PlaylistController* playlistController, PresetRegistry* presetRegistry,
+                            Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;

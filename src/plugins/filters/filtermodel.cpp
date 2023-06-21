@@ -35,6 +35,7 @@ FilterModel::FilterModel(FilterField* field, QObject* parent)
     , m_field{field}
     , m_rowHeight{0}
     , m_fontSize{0}
+    , m_parser{&m_registry}
 { }
 
 void FilterModel::setField(FilterField* field)

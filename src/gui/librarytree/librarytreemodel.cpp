@@ -21,9 +21,12 @@
 
 #include <core/constants.h>
 
+#include <ranges>
+
 namespace Fy::Gui::Widgets {
 LibraryTreeModel::LibraryTreeModel(QObject* parent)
     : TreeModel{parent}
+    , m_parser{&m_registry}
 { }
 
 QVariant LibraryTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -99,27 +102,29 @@ void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
 
     const auto parsedField = m_parser.parse(m_groupScipt);
 
-    for(const Core::Track& track : tracks) {
-        if(!track.enabled()) {
-            continue;
-        }
+    auto filteredTracks = tracks | std::views::filter([](const Core::Track& track) {
+                              return track.enabled();
+                          });
+
+    for(const Core::Track& track : filteredTracks) {
         const QString field = m_parser.evaluate(parsedField, track);
         if(field.isNull()) {
             continue;
         }
+
         LibraryTreeItem* parent = rootItem();
 
-        const QStringList values = field.split(Core::Constants::Separator);
+        const QStringList values = field.split(Core::Constants::Separator, Qt::SkipEmptyParts);
         for(const QString& value : values) {
             if(value.isNull()) {
                 continue;
             }
             const QStringList levels = value.split("||");
-            for(auto [it, end, i] = std::tuple{levels.cbegin(), levels.cend(), 0}; it != end; ++it, ++i) {
-                const QString title   = *it;
-                const QString trimmed = title.trimmed();
-                const QString key     = QString{"%1%2%3"}.arg(parent->title(), trimmed).arg(i);
-                createNode(key, parent, trimmed)->addTrack(track);
+
+            for(const QString& level : levels) {
+                const QString title = level.trimmed();
+                const QString key   = QString{"%1%2"}.arg(parent->title(), title);
+                createNode(key, parent, title)->addTrack(track);
                 parent = m_nodes.at(key).get();
             }
         }
@@ -130,11 +135,14 @@ void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
 
 LibraryTreeItem* LibraryTreeModel::createNode(const QString& key, LibraryTreeItem* parent, const QString& title)
 {
-    if(!m_nodes.count(key)) {
+    if(!m_nodes.contains(key)) {
         m_nodes.emplace(key, std::make_unique<LibraryTreeItem>(title, parent));
     }
     LibraryTreeItem* treeItem = m_nodes.at(key).get();
-    parent->appendChild(treeItem);
+    if(treeItem->pending()) {
+        treeItem->setPending(false);
+        parent->appendChild(treeItem);
+    }
     return treeItem;
 }
 } // namespace Fy::Gui::Widgets

@@ -34,9 +34,9 @@ public:
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     static void paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option);
 
-    static void paintAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
-    static void paintSimpleAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
+    static void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
+    static void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
+    static void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
-    static void paintDisc(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Playlist

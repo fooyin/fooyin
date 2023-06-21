@@ -19,59 +19,65 @@
 
 #pragma once
 
-#include <core/models/track.h>
+#include "playlistitemmodels.h"
+
+#include <core/models/trackfwd.h>
 
 #include <utils/treeitem.h>
+#include <utils/utils.h>
 
 #include <QObject>
 
-namespace Fy {
-namespace Core {
-class Album;
-class Container;
-} // namespace Core
-
-namespace Gui::Widgets::Playlist {
-using ItemType = std::variant<Core::Track, Core::Album*, Core::Container*>;
+namespace Fy::Gui::Widgets::Playlist {
+using Data = std::variant<Track, Container>;
 
 class PlaylistItem : public Utils::TreeItem<PlaylistItem>
 {
 public:
-    enum Type
+    enum ItemType
     {
-        Root      = 0,
-        Track     = 1,
-        Container = 2,
-        Album     = 3,
+        Root = Qt::UserRole + 1,
+        Header,
+        Subheader,
+        Track,
     };
 
     enum Role
     {
-        Id        = Qt::UserRole + 6,
-        Artist    = Qt::UserRole + 7,
-        Date      = Qt::UserRole + 8,
-        Duration  = Qt::UserRole + 9,
-        Cover     = Qt::UserRole + 10,
-        Number    = Qt::UserRole + 11,
-        PlayCount = Qt::UserRole + 12,
-        MultiDisk = Qt::UserRole + 13,
-        Playing   = Qt::UserRole + 14,
-        Path      = Qt::UserRole + 15,
-        Data      = Qt::UserRole + 16,
+        Id = Qt::UserRole + 10,
+        Title,
+        Subtitle,
+        Info,
+        Left,
+        Right,
+        Simple,
+        ShowCover,
+        Cover,
+        Playing,
+        Path,
+        ItemData,
+        Type,
+        Indentation
     };
 
-    explicit PlaylistItem(Type type = Type::Root, ItemType data = {}, PlaylistItem* parentItem = nullptr);
+    explicit PlaylistItem(ItemType type = Root, Data data = {}, PlaylistItem* parentItem = nullptr);
 
-    void setKey(const QString& key);
-
-    [[nodiscard]] ItemType data() const;
-    [[nodiscard]] Type type();
+    [[nodiscard]] bool pending() const;
+    [[nodiscard]] ItemType type() const;
+    [[nodiscard]] Data& data() const;
     [[nodiscard]] QString key() const;
+    [[nodiscard]] int indentation() const;
+
+    void setPending(bool pending);
+    void setKey(const QString& key);
+    void setParent(PlaylistItem* parent);
+    void setIndentation(int indentation);
 
 private:
-    ItemType m_data;
-    Type m_type;
+    bool m_pending;
+    ItemType m_type;
+    mutable Data m_data;
     QString m_key;
+    int m_indentation;
 };
-} // namespace Gui::Widgets::Playlist
-} // namespace Fy
+} // namespace Fy::Gui::Widgets::Playlist

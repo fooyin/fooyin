@@ -31,6 +31,7 @@ class TreeItem
 public:
     explicit TreeItem(Item* parent = nullptr)
         : m_parent{parent}
+        , m_row{0}
     { }
 
     virtual ~TreeItem()
@@ -50,9 +51,8 @@ public:
 
     virtual void appendChild(Item* child)
     {
-        if(!Utils::contains(m_children, child)) {
-            m_children.emplace_back(child);
-        }
+        child->m_row = m_children.size();
+        m_children.emplace_back(child);
     }
 
     virtual void removeChild(int index)
@@ -78,10 +78,7 @@ public:
 
     [[nodiscard]] virtual int row() const
     {
-        if(m_parent) {
-            return Utils::findIndex(m_parent->m_children, this);
-        }
-        return 0;
+        return m_row;
     }
 
     [[nodiscard]] virtual int columnCount() const
@@ -99,5 +96,6 @@ private:
 
     Item* m_parent;                // Not owned
     std::vector<Item*> m_children; // Not owned
+    int m_row;
 };
 } // namespace Fy::Utils

@@ -56,10 +56,12 @@
 #include <gui/playlist/playlistcontroller.h>
 #include <gui/playlist/playlisttabs.h>
 #include <gui/playlist/playlistwidget.h>
+#include <gui/playlist/presetregistry.h>
 #include <gui/settings/generalpage.h>
 #include <gui/settings/guigeneralpage.h>
 #include <gui/settings/librarygeneralpage.h>
-#include <gui/settings/playlistguipage.h>
+#include <gui/settings/playlist/playlistguipage.h>
+#include <gui/settings/playlist/playlistpresetspage.h>
 #include <gui/settings/pluginspage.h>
 #include <gui/widgetfactory.h>
 #include <gui/widgets/spacer.h>
@@ -86,6 +88,7 @@ struct Application::Private
     Gui::Settings::GuiSettings guiSettings;
     Gui::LayoutProvider layoutProvider;
     std::unique_ptr<Gui::Widgets::Playlist::PlaylistController> playlistController;
+    Gui::Widgets::Playlist::PresetRegistry presetRegistry;
     std::unique_ptr<Gui::Widgets::EditableLayout> editableLayout;
     std::unique_ptr<Gui::MainWindow> mainWindow;
 
@@ -100,6 +103,7 @@ struct Application::Private
     Gui::Settings::LibraryGeneralPage libraryGeneralPage;
     Gui::Settings::GuiGeneralPage guiGeneralPage;
     Gui::Settings::PlaylistGuiPage playlistGuiPage;
+    Gui::Settings::PlaylistPresetsPage playlistPresetsPage;
     Gui::Settings::LibraryTreePage libraryTreePage;
 
     Plugins::PluginManager* pluginManager;
@@ -121,6 +125,7 @@ struct Application::Private
         , guiSettings{settingsManager}
         , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(playlistHandler,
                                                                                           settingsManager)}
+        , presetRegistry{settingsManager}
         , editableLayout{std::make_unique<Gui::Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,
                                                                         &layoutProvider)}
         , mainWindow{std::make_unique<Gui::MainWindow>(actionManager, settingsManager, editableLayout.get())}
@@ -134,6 +139,7 @@ struct Application::Private
         , libraryGeneralPage{libraryManager, settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , playlistGuiPage{settingsManager}
+        , playlistPresetsPage{&presetRegistry, settingsManager}
         , libraryTreePage{settingsManager}
         , pluginManager{new Plugins::PluginManager(parent)}
         , pluginPage{settingsManager, pluginManager}
@@ -194,7 +200,7 @@ struct Application::Private
 
         widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
             return new Gui::Widgets::Playlist::PlaylistWidget(library, playerManager, playlistController.get(),
-                                                              settingsManager);
+                                                              &presetRegistry, settingsManager);
         });
 
         widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {
@@ -234,6 +240,7 @@ void Application::startup()
     p->settingsManager->loadSettings();
     p->library->loadLibrary();
     p->layoutProvider.findLayouts();
+    p->presetRegistry.loadPresets();
 
     QIcon::setThemeName(p->settingsManager->value<Gui::Settings::IconTheme>());
 
@@ -252,6 +259,7 @@ void Application::shutdown()
 {
     p->playlistHandler->savePlaylists();
     p->editableLayout->saveLayout();
+    p->presetRegistry.savePresets();
     p->playlistController.reset(nullptr);
     p->editableLayout.reset(nullptr);
     p->mainWindow.reset(nullptr);

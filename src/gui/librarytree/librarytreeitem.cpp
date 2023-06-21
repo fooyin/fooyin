@@ -25,8 +25,19 @@ namespace Fy::Gui::Widgets {
 
 LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent)
     : TreeItem{parent}
+    , m_pending{true}
     , m_title{std::move(title)}
 { }
+
+bool LibraryTreeItem::pending() const
+{
+    return m_pending;
+}
+
+void LibraryTreeItem::setPending(bool pending)
+{
+    m_pending = pending;
+}
 
 QString LibraryTreeItem::title() const
 {

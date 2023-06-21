@@ -20,8 +20,6 @@
 #include "coverprovider.h"
 
 #include "core/constants.h"
-#include "core/corepaths.h"
-#include "core/models/album.h"
 #include "core/models/track.h"
 
 #include <utils/utils.h>
@@ -75,13 +73,13 @@ QPixmap CoverProvider::trackCover(const Track& track)
     return cover;
 }
 
-QPixmap CoverProvider::albumThumbnail(const Album& album) const
+QPixmap CoverProvider::albumThumbnail(const QString& path) const
 {
     QString coverKey  = "|NoCoverThumb|";
     QString coverPath = Constants::NoCover;
-    if(album.hasCover()) {
-        coverKey  = QString{"%1 - %2"}.arg(album.artist(), album.title());
-        coverPath = QString{"%1%2.jpg"}.arg(Core::coverPath(), coverKey);
+    if(!path.isEmpty()) {
+        coverKey  = path;
+        coverPath = path;
     }
     QPixmap cover;
     if(!QPixmapCache::find(coverKey, &cover)) {

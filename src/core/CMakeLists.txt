@@ -50,15 +50,7 @@ set(SOURCES
     library/librarythreadhandler.cpp
     library/tracksorter.h
     library/tracksorter.cpp
-    models/container.h
-    models/container.cpp
-    models/album.h
-    models/album.cpp
-    models/artist.h
-    models/artist.cpp
-    models/track.h
     models/track.cpp
-    models/trackfwd.h
     playlist/playlist.h
     playlist/playlist.cpp
     playlist/playlisthandler.h
@@ -73,8 +65,10 @@ set(SOURCES
     scripting/scriptregistry.cpp
     scripting/scriptparser.cpp
     scripting/scriptscanner.cpp
-    scripting/functions/mathfuncs.cpp
     scripting/functions/controlfuncs.cpp
+    scripting/functions/mathfuncs.cpp
+    scripting/functions/stringfuncs.cpp
+    scripting/functions/timefuncs.cpp
     tagging/tagreader.h
     tagging/tagreader.cpp
     tagging/tagutils.h

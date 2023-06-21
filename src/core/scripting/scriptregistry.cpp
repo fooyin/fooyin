@@ -22,9 +22,9 @@
 #include "core/constants.h"
 #include "functions/controlfuncs.h"
 #include "functions/mathfuncs.h"
+#include "functions/stringfuncs.h"
+#include "functions/timefuncs.h"
 #include "models/track.h"
-
-#include <QVariant>
 
 namespace Fy::Core::Scripting {
 Registry::Registry()
@@ -36,66 +36,30 @@ Registry::Registry()
 
 bool Registry::varExists(const QString& var) const
 {
-    return m_vars.count(var) || m_metadata.count(var);
+    return m_metadata.contains(var);
 }
 
 bool Registry::funcExists(const QString& func) const
 {
-    return m_funcs.count(func);
+    return m_funcs.contains(func);
 }
 
-ScriptResult Registry::trackValue(const QString& var) const
+ScriptResult Registry::varValue(const QString& var) const
 {
-    if(var.isEmpty()) {
+    if(var.isEmpty() || !varExists(var)) {
         return {};
     }
-    if(m_metadata.count(var)) {
-        auto trackFunc = m_metadata.at(var);
-        if(std::holds_alternative<StringFunc>(trackFunc)) {
-            const auto f        = std::get<0>(trackFunc);
-            const QString value = (m_currentTrack.*f)();
 
-            ScriptResult result;
-            result.value = value;
-            result.cond  = !value.isEmpty();
-            return result;
-        }
-        if(std::holds_alternative<IntegerFunc>(trackFunc)) {
-            auto f          = std::get<1>(trackFunc);
-            const int value = (m_currentTrack.*f)();
-
-            ScriptResult result;
-            result.value = QStringLiteral("%1").arg(value, 2, 10, QLatin1Char('0'));
-            result.cond  = value >= 0;
-            return result;
-        }
-        if(std::holds_alternative<StringListFunc>(trackFunc)) {
-            const auto f            = std::get<2>(trackFunc);
-            const QStringList value = (m_currentTrack.*f)();
-
-            ScriptResult result;
-            result.value = value.empty() ? "" : value.join(Constants::Separator);
-            result.cond  = !value.isEmpty();
-            return result;
-        }
-        if(std::holds_alternative<U64Func>(trackFunc)) {
-            const auto f         = std::get<3>(trackFunc);
-            const uint64_t value = (m_currentTrack.*f)();
-
-            ScriptResult result;
-            result.value = QString::number(value);
-            result.cond  = true;
-            return result;
-        }
-    }
-    return {};
+    auto funcResult = m_metadata.at(var)(m_currentTrack);
+    return calculateResult(funcResult);
 }
 
 ScriptResult Registry::function(const QString& func, const ValueList& args) const
 {
-    if(func.isEmpty() || !m_funcs.count(func)) {
+    if(func.isEmpty() || !m_funcs.contains(func)) {
         return {};
     }
+
     auto function = m_funcs.at(func);
     if(std::holds_alternative<NativeFunc>(function)) {
         const QString value = std::get<NativeFunc>(function)(containerCast<QStringList>(args));
@@ -116,46 +80,74 @@ void Registry::changeCurrentTrack(const Core::Track& track)
     m_currentTrack = track;
 }
 
+ScriptResult Registry::calculateResult(Registry::FuncRet funcRet)
+{
+    ScriptResult result;
+
+    if(auto* intVal = std::get_if<int>(&funcRet)) {
+        result.value = QString::number(*intVal);
+        result.cond  = (*intVal) >= 0;
+    }
+    else if(auto* uintVal = std::get_if<uint64_t>(&funcRet)) {
+        result.value = QString::number(*uintVal);
+        result.cond  = true;
+    }
+    else if(auto* strVal = std::get_if<QString>(&funcRet)) {
+        result.value = *strVal;
+        result.cond  = !strVal->isEmpty();
+    }
+    else if(auto* strListVal = std::get_if<QStringList>(&funcRet)) {
+        result.value = strListVal->empty() ? "" : strListVal->join(Constants::Separator);
+        result.cond  = !strListVal->isEmpty();
+    }
+
+    return result;
+}
+
 void Registry::addDefaultFunctions()
 {
-    m_funcs.emplace("add", NativeFunc(add));
-    m_funcs.emplace("sub", NativeFunc(sub));
-    m_funcs.emplace("mul", NativeFunc(mul));
-    m_funcs.emplace("div", NativeFunc(div));
-    m_funcs.emplace("min", NativeFunc(min));
-    m_funcs.emplace("max", NativeFunc(max));
-    m_funcs.emplace("mod", NativeFunc(mod));
+    m_funcs.emplace("add", add);
+    m_funcs.emplace("sub", sub);
+    m_funcs.emplace("mul", mul);
+    m_funcs.emplace("div", div);
+    m_funcs.emplace("min", min);
+    m_funcs.emplace("max", max);
+    m_funcs.emplace("mod", mod);
 
-    m_funcs.emplace("if", NativeCondFunc(cif));
-    m_funcs.emplace("ifgreater", NativeCondFunc(ifgreater));
-    m_funcs.emplace("iflonger", NativeCondFunc(iflonger));
-    m_funcs.emplace("ifequal", NativeCondFunc(ifequal));
+    m_funcs.emplace("num", num);
+
+    m_funcs.emplace("timems", msToString);
+
+    m_funcs.emplace("if", cif);
+    m_funcs.emplace("ifgreater", ifgreater);
+    m_funcs.emplace("iflonger", iflonger);
+    m_funcs.emplace("ifequal", ifequal);
 }
 
 void Registry::addDefaultMetadata()
 {
-    m_metadata[Constants::MetaData::Title]        = StringFunc(&Track::title);
-    m_metadata[Constants::MetaData::Artist]       = StringListFunc(&Track::artists);
-    m_metadata[Constants::MetaData::Album]        = StringFunc(&Track::album);
-    m_metadata[Constants::MetaData::AlbumArtist]  = StringFunc(&Track::albumArtist);
-    m_metadata[Constants::MetaData::Track]        = IntegerFunc(&Track::trackNumber);
-    m_metadata[Constants::MetaData::TrackTotal]   = IntegerFunc(&Track::trackTotal);
-    m_metadata[Constants::MetaData::Disc]         = IntegerFunc(&Track::discNumber);
-    m_metadata[Constants::MetaData::DiscTotal]    = IntegerFunc(&Track::discTotal);
-    m_metadata[Constants::MetaData::Genre]        = StringListFunc(&Track::genres);
-    m_metadata[Constants::MetaData::Composer]     = StringFunc(&Track::composer);
-    m_metadata[Constants::MetaData::Performer]    = StringFunc(&Track::performer);
-    m_metadata[Constants::MetaData::Duration]     = U64Func(&Track::duration);
-    m_metadata[Constants::MetaData::Lyrics]       = StringFunc(&Track::lyrics);
-    m_metadata[Constants::MetaData::Comment]      = StringFunc(&Track::comment);
-    m_metadata[Constants::MetaData::Date]         = StringFunc(&Track::date);
-    m_metadata[Constants::MetaData::Year]         = IntegerFunc(&Track::year);
-    m_metadata[Constants::MetaData::Cover]        = StringFunc(&Track::coverPath);
-    m_metadata[Constants::MetaData::FileSize]     = U64Func(&Track::fileSize);
-    m_metadata[Constants::MetaData::Bitrate]      = IntegerFunc(&Track::bitrate);
-    m_metadata[Constants::MetaData::SampleRate]   = IntegerFunc(&Track::sampleRate);
-    m_metadata[Constants::MetaData::PlayCount]    = IntegerFunc(&Track::playCount);
-    m_metadata[Constants::MetaData::AddedTime]    = U64Func(&Track::addedTime);
-    m_metadata[Constants::MetaData::ModifiedTime] = U64Func(&Track::modifiedTime);
+    m_metadata[Constants::MetaData::Title]        = &Track::title;
+    m_metadata[Constants::MetaData::Artist]       = &Track::artists;
+    m_metadata[Constants::MetaData::Album]        = &Track::album;
+    m_metadata[Constants::MetaData::AlbumArtist]  = &Track::albumArtist;
+    m_metadata[Constants::MetaData::Track]        = &Track::trackNumber;
+    m_metadata[Constants::MetaData::TrackTotal]   = &Track::trackTotal;
+    m_metadata[Constants::MetaData::Disc]         = &Track::discNumber;
+    m_metadata[Constants::MetaData::DiscTotal]    = &Track::discTotal;
+    m_metadata[Constants::MetaData::Genre]        = &Track::genres;
+    m_metadata[Constants::MetaData::Composer]     = &Track::composer;
+    m_metadata[Constants::MetaData::Performer]    = &Track::performer;
+    m_metadata[Constants::MetaData::Duration]     = &Track::duration;
+    m_metadata[Constants::MetaData::Lyrics]       = &Track::lyrics;
+    m_metadata[Constants::MetaData::Comment]      = &Track::comment;
+    m_metadata[Constants::MetaData::Date]         = &Track::date;
+    m_metadata[Constants::MetaData::Year]         = &Track::year;
+    m_metadata[Constants::MetaData::Cover]        = &Track::coverPath;
+    m_metadata[Constants::MetaData::FileSize]     = &Track::fileSize;
+    m_metadata[Constants::MetaData::Bitrate]      = &Track::bitrate;
+    m_metadata[Constants::MetaData::SampleRate]   = &Track::sampleRate;
+    m_metadata[Constants::MetaData::PlayCount]    = &Track::playCount;
+    m_metadata[Constants::MetaData::AddedTime]    = &Track::addedTime;
+    m_metadata[Constants::MetaData::ModifiedTime] = &Track::modifiedTime;
 }
 } // namespace Fy::Core::Scripting

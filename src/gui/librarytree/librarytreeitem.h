@@ -29,6 +29,9 @@ class LibraryTreeItem : public Utils::TreeItem<LibraryTreeItem>
 public:
     explicit LibraryTreeItem(QString title = "", LibraryTreeItem* parent = {});
 
+    [[nodiscard]] bool pending() const;
+    void setPending(bool pending);
+
     [[nodiscard]] QString title() const;
     void setTitle(const QString& title);
 
@@ -37,6 +40,7 @@ public:
     void addTrack(const Core::Track& track);
 
 private:
+    bool m_pending;
     QString m_title;
     Core::TrackList m_tracks;
 };

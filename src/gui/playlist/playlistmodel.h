@@ -21,15 +21,9 @@
 
 #include "playlistitem.h"
 
-#include <core/library/coverprovider.h>
-#include <core/models/album.h>
-#include <core/models/container.h>
 #include <core/models/trackfwd.h>
 
-#include <utils/treemodel.h>
-
 #include <QAbstractItemModel>
-#include <QPixmap>
 
 namespace Fy {
 namespace Utils {
@@ -47,13 +41,9 @@ class Playlist;
 } // namespace Core
 
 namespace Gui::Widgets::Playlist {
-enum Role
-{
-    Type = Qt::UserRole + 20,
-    Mode = Qt::UserRole + 21,
-};
+struct PlaylistPreset;
 
-class PlaylistModel : public Utils::TreeModel<PlaylistItem>
+class PlaylistModel : public QAbstractItemModel
 {
     Q_OBJECT
 
@@ -64,13 +54,22 @@ public:
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
+    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+    [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
+    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+
+    [[nodiscard]] QModelIndex indexOfItem(const PlaylistItem& item);
 
     [[nodiscard]] QModelIndex matchTrack(int id) const;
 
     void reset(const Core::Playlist::Playlist&);
-    void setupModelData(const Core::Playlist::Playlist& playlist);
+
     void changeTrackState();
+
+    void changePreset(const PlaylistPreset& preset);
 
     [[nodiscard]] QModelIndex indexForTrack(const Core::Track& track) const;
     [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;

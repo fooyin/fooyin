@@ -19,20 +19,26 @@
 
 #pragma once
 
-#include <QString>
+#include <core/scripting/scriptregistry.h>
 
-namespace Fy::Core {
-class Artist
+namespace Fy::Gui::Widgets::Playlist {
+class Container;
+
+class PlaylistScriptRegistry : public Core::Scripting::Registry
 {
 public:
-    Artist() = default;
-    explicit Artist(QString name);
+    PlaylistScriptRegistry();
 
-    [[nodiscard]] QString name() const;
+    bool varExists(const QString& var) const override;
+    Core::Scripting::ScriptResult varValue(const QString& var) const override;
 
-    void setName(const QString& name);
+    void changeCurrentContainer(Container* container);
 
 private:
-    QString m_name;
+    using ContainerFunc = std::function<FuncRet(const Container&)>;
+    using FuncMap = std::unordered_map<QString, ContainerFunc>;
+
+    Container* m_currentContainer;
+    FuncMap m_vars;
 };
-} // namespace Fy::Core
+} // namespace Fy::Gui::Widgets::Playlist

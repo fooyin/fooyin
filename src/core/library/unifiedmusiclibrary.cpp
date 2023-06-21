@@ -20,7 +20,6 @@
 #include "unifiedmusiclibrary.h"
 
 #include "core/coresettings.h"
-#include "librarydatabasemanager.h"
 #include "libraryinfo.h"
 #include "librarymanager.h"
 #include "libraryscanner.h"
@@ -139,7 +138,7 @@ void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
     TrackList newTracks{tracks};
     for(Track& track : newTracks) {
         m_trackSorter.calcSortField(track);
-        m_tracks.emplace_back(track);
+        m_tracks.push_back(track);
     }
     m_trackSorter.sortTracks(m_tracks);
     emit tracksAdded(newTracks);

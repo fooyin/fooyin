@@ -35,17 +35,25 @@ QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& resu
             listResult.append(value);
         }
         else {
-            for(const QString& retValue : result) {
-                listResult.append(retValue + value);
-            }
+            std::ranges::transform(result, std::back_inserter(listResult), [&](const QString& retValue) -> QString {
+                return retValue % value;
+            });
         }
     }
     return listResult;
 }
 
+Parser::Parser(Registry* registry)
+    : m_scanner{}
+    , m_registry{registry}
+    , m_current{}
+    , m_previous{}
+    , m_hadError{false}
+{ }
+
 ParsedScript Parser::parse(const QString& input)
 {
-    if(input.isEmpty()) {
+    if(input.isEmpty() || !m_registry) {
         return {};
     }
 
@@ -78,7 +86,7 @@ QString Parser::evaluate()
 
 QString Parser::evaluate(const ParsedScript& input)
 {
-    if(!input.valid) {
+    if(!input.valid || !m_registry) {
         return {};
     }
 
@@ -100,12 +108,12 @@ QString Parser::evaluate(const ParsedScript& input)
         }
         else {
             if(m_result.empty()) {
-                m_result.append(evalExpr.value);
+                m_result.push_back(evalExpr.value);
             }
             else {
-                for(QString& value : m_result) {
-                    value.append(evalExpr.value);
-                }
+                std::ranges::transform(m_result, m_result.begin(), [&](const QString& retValue) -> QString {
+                    return retValue % evalExpr.value;
+                });
             }
         }
     }
@@ -128,7 +136,9 @@ QString Parser::evaluate(const ParsedScript& input, const Track& track)
 
 void Parser::setMetadata(const Track& track)
 {
-    m_registry.changeCurrentTrack(track);
+    if(m_registry) {
+        m_registry->changeCurrentTrack(track);
+    }
 }
 
 ScriptResult Parser::evalExpression(const Expression& exp) const
@@ -163,7 +173,7 @@ ScriptResult Parser::evalLiteral(const Expression& exp) const
 ScriptResult Parser::evalVariable(const Expression& exp) const
 {
     const QString var   = std::get<QString>(exp.value);
-    ScriptResult result = m_registry.trackValue(var);
+    ScriptResult result = m_registry->varValue(var);
 
     if(result.value.contains(Constants::Separator)) {
         // TODO: Support custom separators
@@ -175,17 +185,17 @@ ScriptResult Parser::evalVariable(const Expression& exp) const
 ScriptResult Parser::evalVariableList(const Expression& exp) const
 {
     const QString var = std::get<QString>(exp.value);
-    return registry().trackValue(var);
+    return m_registry->varValue(var);
 }
 
 ScriptResult Parser::evalFunction(const Expression& exp) const
 {
     auto func = std::get<FuncValue>(exp.value);
     ValueList args;
-    for(const Expression& arg : func.args) {
-        args.emplace_back(evalExpression(arg));
-    }
-    return m_registry.function(func.name, args);
+    std::ranges::transform(func.args, std::back_inserter(args), [this](const Expression& arg) {
+        return evalExpression(arg);
+    });
+    return m_registry->function(func.name, args);
 }
 
 ScriptResult Parser::evalFunctionArg(const Expression& exp) const
@@ -202,9 +212,9 @@ ScriptResult Parser::evalFunctionArg(const Expression& exp) const
         if(subExpr.value.contains(Core::Constants::Separator)) {
             QStringList newResult;
             const auto values = subExpr.value.split(Core::Constants::Separator);
-            for(const auto& value : values) {
-                newResult.emplace_back(result.value % value);
-            }
+            std::ranges::transform(values, std::back_inserter(newResult), [&](const auto& value) {
+                return result.value % value;
+            });
             result.value = newResult.join(Core::Constants::Separator);
         }
         else {
@@ -245,9 +255,9 @@ ScriptResult Parser::evalConditional(const Expression& exp) const
                 exprResult.append(subExpr.value);
             }
             else {
-                for(QString& value : exprResult) {
-                    value.append(subExpr.value);
-                }
+                std::ranges::transform(exprResult, exprResult.begin(), [&](const QString& retValue) -> QString {
+                    return retValue % subExpr.value;
+                });
             }
         }
     }
@@ -397,7 +407,7 @@ Expression Parser::variable()
         value     = QString{m_previous.value.toString()}.toLower();
     }
 
-    if(!m_registry.varExists(value)) {
+    if(!m_registry->varExists(value)) {
         error("Variable not found");
     }
 
@@ -418,7 +428,7 @@ Expression Parser::function()
     FuncValue funcExpr;
     funcExpr.name = QString{m_previous.value.toString()}.toLower();
 
-    if(!m_registry.funcExists(funcExpr.name)) {
+    if(!m_registry->funcExists(funcExpr.name)) {
         error("Function not found");
     }
 
@@ -461,11 +471,6 @@ Expression Parser::conditional()
     expr.value = condExpr;
     consume(TokRightSquare, "Expected ']' after expression");
     return expr;
-}
-
-const Registry& Parser::registry() const
-{
-    return m_registry;
 }
 
 const ParsedScript& Parser::lastParsedScript() const

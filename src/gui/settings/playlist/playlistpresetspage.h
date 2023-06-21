@@ -19,34 +19,25 @@
 
 #pragma once
 
-#include <QString>
+#include <utils/settings/settingspage.h>
 
-namespace Fy::Core {
-class Track;
-class Container
+namespace Fy {
+
+namespace Utils {
+class SettingsManager;
+class SettingsDialogController;
+} // namespace Utils
+
+namespace Gui {
+namespace Widgets::Playlist {
+class PresetRegistry;
+}
+namespace Settings {
+class PlaylistPresetsPage : public Utils::SettingsPage
 {
 public:
-    Container() = default;
-    explicit Container(QString title);
-
-    [[nodiscard]] QString title() const;
-    [[nodiscard]] QString subTitle() const;
-    [[nodiscard]] int trackCount() const;
-    [[nodiscard]] uint64_t duration() const;
-
-    void setSubTitle(const QString& title);
-    void setTrackCount(int count);
-    void setDuration(uint64_t duration);
-
-    void addTrack(const Track& track);
-    void removeTrack(const Track& track);
-    void reset();
-
-private:
-    QString m_title;
-    QString m_subTitle;
-    uint64_t m_duration;
-    int m_trackCount;
+    PlaylistPresetsPage(Widgets::Playlist::PresetRegistry* presetRegistry, Utils::SettingsManager* settings);
 };
-using ContainerHash = std::unordered_map<QString, Container>;
-} // namespace Fy::Core
+} // namespace Settings
+} // namespace Gui
+} // namespace Fy
