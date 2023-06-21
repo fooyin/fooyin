@@ -139,7 +139,10 @@ LibraryTreeItem* LibraryTreeModel::createNode(const QString& key, LibraryTreeIte
         m_nodes.emplace(key, std::make_unique<LibraryTreeItem>(title, parent));
     }
     LibraryTreeItem* treeItem = m_nodes.at(key).get();
-    parent->appendChild(treeItem);
+    if(treeItem->pending()) {
+        treeItem->setPending(false);
+        parent->appendChild(treeItem);
+    }
     return treeItem;
 }
 } // namespace Fy::Gui::Widgets
