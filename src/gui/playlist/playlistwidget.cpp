@@ -181,31 +181,46 @@ struct PlaylistWidget::Private : QObject
         if(changingSelection) {
             return;
         }
+
         changingSelection = true;
         clearSelection();
 
-        const auto selectedIndexes = playlistView->selectionModel()->selectedIndexes();
-        std::vector<QModelIndex> indexes;
+        QItemSelectionModel* selectionModel = playlistView->selectionModel();
 
-        indexes.insert(indexes.cend(), selectedIndexes.cbegin(), selectedIndexes.cend());
+        QModelIndexList indexes = selectionModel->selectedIndexes();
+        QItemSelection itemsToSelect;
+        QItemSelection itemsToDeselect;
 
         while(!indexes.empty()) {
-            const auto index = indexes.front();
-            indexes.erase(indexes.cbegin());
-            if(index.isValid()) {
-                const auto type = index.data(PlaylistItem::Type);
-                if(type == PlaylistItem::Track) {
-                    selectedTracks.emplace_back(index.data(PlaylistItem::Role::ItemData).value<Core::Track>());
-                }
-                else {
-                    const QItemSelection selectedChildren{model->index(0, 0, index),
-                                                          model->index(model->rowCount(index) - 1, 0, index)};
-                    const auto childIndexes = selectedChildren.indexes();
-                    indexes.insert(indexes.end(), childIndexes.begin(), childIndexes.end());
-                    playlistView->selectionModel()->select(selectedChildren, QItemSelectionModel::Select);
-                }
+            const QModelIndex& index = indexes.front();
+            indexes.pop_front();
+
+            if(!index.isValid()) {
+                continue;
+            }
+
+            const auto type = index.data(PlaylistItem::Type);
+
+            if(type != PlaylistItem::Track) {
+                itemsToDeselect.append({index, index});
+
+                const QItemSelection children{model->index(0, 0, index),
+                                              model->index(model->rowCount(index) - 1, 0, index)};
+
+                auto childrenToSelect = children.indexes() | std::views::filter([&](const QModelIndex& childIndex) {
+                                            return !selectionModel->isSelected(childIndex);
+                                        });
+
+                std::ranges::copy(childrenToSelect, std::back_inserter(indexes));
+                itemsToSelect.append(children);
+            }
+            else {
+                selectedTracks.emplace_back(index.data(PlaylistItem::Role::ItemData).value<Core::Track>());
             }
         }
+        selectionModel->select(itemsToDeselect, QItemSelectionModel::Deselect);
+        selectionModel->select(itemsToSelect, QItemSelectionModel::Select);
+
         emit widget->selectionWasChanged(selectedTracks);
         changingSelection = false;
     }
