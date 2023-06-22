@@ -31,7 +31,7 @@ class ComboIcon;
 
 namespace Core::Player {
 class PlayerManager;
-enum PlayState : uint8_t;
+enum PlayState : int;
 } // namespace Core::Player
 
 namespace Gui::Widgets {

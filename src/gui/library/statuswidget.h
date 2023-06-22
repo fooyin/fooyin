@@ -37,7 +37,7 @@ class MusicLibrary;
 }
 namespace Player {
 class PlayerManager;
-enum PlayState : uint8_t;
+enum PlayState : int;
 } // namespace Player
 } // namespace Core
 

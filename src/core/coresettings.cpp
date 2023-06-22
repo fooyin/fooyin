@@ -19,7 +19,6 @@
 
 #include "coresettings.h"
 
-#include "core/player/playermanager.h"
 #include "corepaths.h"
 #include "version.h"
 
@@ -33,7 +32,7 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::Version, VERSION);
     m_settings->createSetting(Settings::DatabaseVersion, DATABASE_VERSION);
     m_settings->createTempSetting(Settings::FirstRun, true);
-    m_settings->createSetting(Settings::PlayMode, Player::PlayMode::Default, "Player");
+    m_settings->createSetting(Settings::PlayMode, "Default", "Player");
     m_settings->createSetting(Settings::AutoRefresh, false, "Library");
     m_settings->createSetting(Settings::WaitForTracks, true, "Library");
     m_settings->createSetting(Settings::SortScript, "%albumartist% - %album% - %disc% - %track% - %title%", "Library");

@@ -36,7 +36,9 @@ PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* pa
     , m_volume{1.0F}
     , m_counted{false}
 {
-    m_playMode = m_settings->value<Settings::PlayMode>().value<PlayMode>();
+    if(auto mode = Utils::EnumHelper::fromString<PlayMode>(m_settings->value<Settings::PlayMode>())) {
+        m_playMode = mode.value();
+    }
     m_settings->subscribe<Settings::PlayMode>(this, &PlayerController::changePlayMode);
 }
 
@@ -127,7 +129,7 @@ void PlayerController::changeCurrentTrack(const Track& track)
 
 void PlayerController::setPlayMode(PlayMode mode)
 {
-    m_settings->set<Settings::PlayMode>(mode);
+    m_settings->set<Settings::PlayMode>(Utils::EnumHelper::toString(mode));
 }
 
 void PlayerController::volumeUp()
@@ -146,12 +148,12 @@ void PlayerController::setVolume(double value)
     emit volumeChanged(value);
 }
 
-Player::PlayState PlayerController::playState() const
+PlayState PlayerController::playState() const
 {
     return m_playStatus;
 }
 
-Player::PlayMode PlayerController::playMode() const
+PlayMode PlayerController::playMode() const
 {
     return m_playMode;
 }
@@ -173,10 +175,10 @@ double PlayerController::volume() const
 
 void PlayerController::changePlayMode()
 {
-    const auto mode = m_settings->value<Settings::PlayMode>().value<PlayMode>();
-    if(m_playMode != mode) {
-        m_playMode = mode;
-        emit playModeChanged(mode);
+    const auto mode = Utils::EnumHelper::fromString<PlayMode>(m_settings->value<Settings::PlayMode>());
+    if(mode && m_playMode != mode.value()) {
+        m_playMode = mode.value();
+        emit playModeChanged(m_playMode);
     }
 }
 } // namespace Fy::Core::Player

@@ -35,7 +35,7 @@ enum Core : uint32_t
     Version          = 1 | Utils::Settings::String,
     DatabaseVersion  = 2 | Utils::Settings::String,
     FirstRun         = 3 | Utils::Settings::Bool,
-    PlayMode         = 4,
+    PlayMode         = 4 | Utils::Settings::String,
     AutoRefresh      = 5 | Utils::Settings::Bool,
     WaitForTracks    = 6 | Utils::Settings::Bool,
     SortScript       = 7 | Utils::Settings::String,

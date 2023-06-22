@@ -26,20 +26,20 @@ class Track;
 
 namespace Player {
 Q_NAMESPACE
-enum PlayMode : uint8_t
+enum PlayMode : int
 {
-    Default   = 1,
-    RepeatAll = 2,
-    Repeat    = 3,
-    Shuffle   = 4,
+    Default = 0,
+    RepeatAll,
+    Repeat,
+    Shuffle,
 };
 Q_ENUM_NS(PlayMode)
 
-enum PlayState : uint8_t
+enum PlayState : int
 {
-    Playing = 1,
-    Paused  = 2,
-    Stopped = 3,
+    Playing = 0,
+    Paused,
+    Stopped,
 };
 Q_ENUM_NS(PlayState)
 

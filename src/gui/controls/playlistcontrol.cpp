@@ -25,16 +25,15 @@
 #include <core/player/playermanager.h>
 
 #include <utils/comboicon.h>
+#include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
 
 namespace Fy::Gui::Widgets {
-PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                                 QWidget* parent)
+PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, QWidget* parent)
     : QWidget{parent}
     , m_playerManager{playerManager}
-    , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_labelSize{20, 20}
     , m_repeat{new Utils::ComboIcon(Constants::Icons::RepeatAll, Utils::ComboIcon::HasActiveIcon, this)}
@@ -47,6 +46,8 @@ PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Uti
     connect(m_shuffle, &Utils::ComboIcon::clicked, this, &PlaylistControl::shuffleClicked);
 
     connect(m_playerManager, &Core::Player::PlayerManager::playModeChanged, this, &PlaylistControl::setMode);
+
+    setMode(m_playerManager->playMode());
 }
 
 void PlaylistControl::setupUi()
@@ -62,13 +63,12 @@ void PlaylistControl::setupUi()
 
     m_layout->addWidget(m_repeat, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_shuffle, 0, Qt::AlignVCenter);
-
-    setMode(m_settings->value<Core::Settings::PlayMode>().value<Core::Player::PlayMode>());
 }
 
 void PlaylistControl::repeatClicked()
 {
-    const auto mode = m_settings->value<Core::Settings::PlayMode>().value<Core::Player::PlayMode>();
+    const auto mode = m_playerManager->playMode();
+
     switch(mode) {
         case(Core::Player::Repeat):
             m_playerManager->setPlayMode(Core::Player::Default);
@@ -85,7 +85,8 @@ void PlaylistControl::repeatClicked()
 
 void PlaylistControl::shuffleClicked()
 {
-    const auto mode = m_settings->value<Core::Settings::PlayMode>().value<Core::Player::PlayMode>();
+    const auto mode = m_playerManager->playMode();
+
     if(mode == Core::Player::Shuffle) {
         m_playerManager->setPlayMode(Core::Player::Default);
     }
