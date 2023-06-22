@@ -28,20 +28,19 @@ class TreeModel : public QAbstractItemModel
 public:
     explicit TreeModel(QObject* parent = nullptr)
         : QAbstractItemModel{parent}
-        , m_root{std::make_unique<Item>()}
+        , m_root{}
     { }
 
     virtual ~TreeModel() override = default;
 
     [[nodiscard]] virtual Item* rootItem() const
     {
-        return m_root.get();
+        return &m_root;
     }
 
     virtual void resetRoot()
     {
-        m_root.reset();
-        m_root = std::make_unique<Item>();
+        m_root = Item{};
     }
 
     [[nodiscard]] virtual Qt::ItemFlags flags(const QModelIndex& index) const override
@@ -61,7 +60,7 @@ public:
         Item* parentItem;
 
         if(!parent.isValid()) {
-            parentItem = m_root.get();
+            parentItem = &m_root;
         }
         else {
             parentItem = static_cast<Item*>(parent.internalPointer());
@@ -83,7 +82,7 @@ public:
         auto* childItem  = static_cast<Item*>(index.internalPointer());
         Item* parentItem = childItem->parent();
 
-        if(parentItem == m_root.get()) {
+        if(parentItem == &m_root) {
             return {};
         }
 
@@ -95,7 +94,7 @@ public:
         Item* parentItem;
 
         if(!parent.isValid()) {
-            parentItem = m_root.get();
+            parentItem = &m_root;
         }
         else {
             parentItem = static_cast<Item*>(parent.internalPointer());
@@ -109,7 +108,7 @@ public:
         if(parent.isValid()) {
             return static_cast<Item*>(parent.internalPointer())->columnCount();
         }
-        return m_root->columnCount();
+        return m_root.columnCount();
     }
 
     [[nodiscard]] virtual QModelIndex indexOfItem(const Item* item)
@@ -121,6 +120,6 @@ public:
     }
 
 private:
-    std::unique_ptr<Item> m_root;
+    mutable Item m_root;
 };
 } // namespace Fy::Utils
