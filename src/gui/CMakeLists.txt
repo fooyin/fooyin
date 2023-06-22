@@ -96,20 +96,16 @@ set(SOURCES
     settings/generalpage.cpp
     settings/guigeneralpage.h
     settings/guigeneralpage.cpp
-    settings/librarygeneralpage.h
-    settings/librarygeneralpage.cpp
-    settings/librarymodel.h
-    settings/librarymodel.cpp
-    settings/libraryitem.h
-    settings/libraryitem.cpp
-    settings/libraryview.h
-    settings/libraryview.cpp
     settings/pluginitem.h
     settings/pluginitem.cpp
     settings/pluginsmodel.h
     settings/pluginsmodel.cpp
     settings/pluginspage.h
     settings/pluginspage.cpp
+    settings/library/librarygeneralpage.cpp
+    settings/library/librarymodel.cpp
+    settings/library/libraryitem.cpp
+    settings/library/libraryview.cpp
     settings/playlist/playlistguipage.cpp
     settings/playlist/presetinput.cpp
     settings/playlist/presetinputbox.cpp

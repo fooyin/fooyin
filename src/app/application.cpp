@@ -59,7 +59,7 @@
 #include <gui/playlist/presetregistry.h>
 #include <gui/settings/generalpage.h>
 #include <gui/settings/guigeneralpage.h>
-#include <gui/settings/librarygeneralpage.h>
+#include <gui/settings/library/librarygeneralpage.h>
 #include <gui/settings/playlist/playlistguipage.h>
 #include <gui/settings/playlist/playlistpresetspage.h>
 #include <gui/settings/pluginspage.h>
