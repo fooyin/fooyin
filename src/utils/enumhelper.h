@@ -24,7 +24,11 @@
 #include <QString>
 
 namespace Fy::Utils::EnumHelper {
+template <typename Value>
+concept IsEnum = std::is_enum_v<Value>;
+
 template <typename E>
+    requires IsEnum<E>
 std::optional<E> fromString(const QString& text)
 {
     bool ok;
@@ -37,6 +41,7 @@ std::optional<E> fromString(const QString& text)
 }
 
 template <typename E>
+    requires IsEnum<E>
 QString toString(E value)
 {
     const int intValue = static_cast<int>(value);
