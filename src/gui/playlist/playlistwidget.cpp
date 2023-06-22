@@ -206,10 +206,11 @@ struct PlaylistWidget::Private : QObject
 
                 const QItemSelection children{model->index(0, 0, index),
                                               model->index(model->rowCount(index) - 1, 0, index)};
+                const auto childIndexes = children.indexes();
 
-                auto childrenToSelect = children.indexes() | std::views::filter([&](const QModelIndex& childIndex) {
-                                            return !selectionModel->isSelected(childIndex);
-                                        });
+                auto childrenToSelect = std::views::filter(childIndexes, [&](const QModelIndex& childIndex) {
+                    return !selectionModel->isSelected(childIndex);
+                });
 
                 std::ranges::copy(childrenToSelect, std::back_inserter(indexes));
                 itemsToSelect.append(children);
