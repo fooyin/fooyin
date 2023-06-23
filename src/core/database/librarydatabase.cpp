@@ -199,7 +199,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
 
         result.emplace_back(track);
     }
-    return !result.empty();
+    return true;
 }
 
 bool LibraryDatabase::updateTrack(const Track& track)
