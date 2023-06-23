@@ -118,10 +118,10 @@ bool LibraryManager::renameLibrary(int id, const QString& name)
         });
         if(it != m_libraries.cend()) {
             it->get()->name = name;
-        }
 
-        emit libraryRenamed(id, name);
-        return true;
+            emit libraryRenamed(id, name);
+            return true;
+        }
     }
     return false;
 }
