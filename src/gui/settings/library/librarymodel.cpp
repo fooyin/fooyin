@@ -23,17 +23,47 @@
 
 #include <utils/enumhelper.h>
 
+#include <QFont>
 #include <QSize>
 
 namespace Fy::Gui::Settings {
+LibraryItem::LibraryItem()
+    : LibraryItem{nullptr, nullptr}
+{ }
+
+LibraryItem::LibraryItem(Core::Library::LibraryInfo* info, LibraryItem* parent)
+    : TreeItem{parent}
+    , m_info{info}
+{ }
+
+LibraryItem::ItemStatus LibraryItem::status() const
+{
+    return m_status;
+}
+
+void LibraryItem::setStatus(ItemStatus status)
+{
+    m_status = status;
+}
+
+Core::Library::LibraryInfo* LibraryItem::info() const
+{
+    return m_info;
+}
+
+void LibraryItem::changeInfo(Core::Library::LibraryInfo* info)
+{
+    m_info = info;
+}
+
 LibraryModel::LibraryModel(Core::Library::LibraryManager* libraryManager, QObject* parent)
     : TableModel{parent}
     , m_libraryManager{libraryManager}
 {
     setupModelData();
 
-    QObject::connect(
-        m_libraryManager, &Core::Library::LibraryManager::libraryStatusChanged, this, &LibraryModel::updateDisplay);
+    QObject::connect(m_libraryManager, &Core::Library::LibraryManager::libraryStatusChanged, this,
+                     &LibraryModel::updateDisplay);
 }
 
 void LibraryModel::setupModelData()
@@ -41,29 +71,27 @@ void LibraryModel::setupModelData()
     const LibraryInfoList& libraries = m_libraryManager->allLibraries();
 
     for(const auto& library : libraries) {
-        if(!(library->id >= 0)) {
+        if(library->id < 0) {
             continue;
         }
         const QString key   = library->path;
         LibraryItem* parent = rootItem();
 
-        if(!m_nodes.count(key)) {
-            m_nodes.emplace(key, std::make_unique<LibraryItem>(library.get(), parent));
+        if(!m_nodes.contains(key)) {
+            m_nodes.emplace(key, LibraryItem{library.get(), parent});
         }
-        LibraryItem* child = m_nodes.at(key).get();
+        LibraryItem* child = &m_nodes.at(key);
         parent->appendChild(child);
     }
 }
 
 void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
 {
-    LibraryItem* item{nullptr};
-    LibraryItem* parent = rootItem();
-    Core::Library::LibraryInfo* library;
-    QueueEntry operation;
+    const bool exists   = m_nodes.contains(info.path);
+    const bool isQueued = exists && m_nodes.at(info.path).status() == LibraryItem::Removed;
 
-    const bool exists   = m_nodes.count(info.path);
-    const bool isQueued = findInQueue(info.path, Remove, &operation);
+    LibraryItem* parent = rootItem();
+    LibraryItem* item{nullptr};
 
     if(!isQueued) {
         if(exists) {
@@ -71,18 +99,18 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
             return;
         }
         // New library
-        library         = m_librariesToAdd.emplace_back(std::make_unique<Core::Library::LibraryInfo>(info)).get();
+        auto* library   = m_librariesToAdd.emplace_back(std::make_unique<Core::Library::LibraryInfo>(info)).get();
         library->status = Core::Library::Pending;
-        m_nodes.emplace(library->path, std::make_unique<LibraryItem>(library, parent));
-        item = m_nodes.at(library->path).get();
+        m_nodes.emplace(library->path, LibraryItem{library, parent});
+        item = &m_nodes.at(library->path);
+        item->setStatus(LibraryItem::Added);
     }
     else {
         // Library marked for delete
         if(exists) {
-            item    = m_nodes.at(info.path).get();
-            library = item->info();
+            item = &m_nodes.at(info.path);
+            item->setStatus(LibraryItem::None);
         }
-        removeFromQueue(operation);
     }
 
     if(!item) {
@@ -93,133 +121,101 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
     beginInsertRows({}, row, row);
     parent->appendChild(item);
     endInsertRows();
-
-    operation = {Add, library};
-    m_queue.emplace_back(operation);
 }
 
 void LibraryModel::markForRemoval(Core::Library::LibraryInfo* info)
 {
-    if(!info) {
+    if(!info || !m_nodes.contains(info->path)) {
         return;
     }
 
-    LibraryItem* item{nullptr};
-    QueueEntry operation;
+    LibraryItem* item = &m_nodes.at(info->path);
 
-    const bool exists   = m_nodes.count(info->path);
-    const bool isQueued = findInQueue(info->path, Add, &operation);
+    if(item->status() == LibraryItem::Added) {
+        beginRemoveRows({}, item->row(), item->row());
+        rootItem()->removeChild(item->row());
+        endRemoveRows();
 
-    if(!isQueued) {
-        if(!exists) {
-            qInfo() << QString{"Library at %1 doesn't exist!"}.arg(info->path);
-            return;
-        }
-        item = m_nodes.at(info->path).get();
+        m_nodes.erase(info->path);
     }
     else {
-        removeFromQueue(operation);
+        item->setStatus(LibraryItem::Removed);
+        emit dataChanged({}, {}, {Qt::FontRole});
     }
-
-    if(!item) {
-        return;
-    }
-
-    beginRemoveRows({}, item->row(), item->row());
-    rootItem()->removeChild(item->row());
-    endRemoveRows();
-
-    operation = {Remove, info};
-    m_queue.emplace_back(operation);
 }
 
-void LibraryModel::markForRename(Core::Library::LibraryInfo* info)
+void LibraryModel::markForChange(Core::Library::LibraryInfo* info)
 {
-    if(!info) {
+    if(!info || !m_nodes.contains(info->path)) {
         return;
     }
 
-    QueueEntry operation;
+    LibraryItem* item = &m_nodes.at(info->path);
 
-    const bool exists   = m_nodes.count(info->path);
-    const bool isQueued = findInQueue(info->path, Add, &operation);
-
-    if(!exists) {
-        qInfo() << QString{"Library at %1 doesn't exist!"}.arg(info->path);
-        return;
-    }
-
-    if(isQueued && operation.info->name == info->name) {
-        // Name already changed
-        return;
-    }
-
-    LibraryItem* item = m_nodes.at(info->path).get();
     item->changeInfo(info);
-    const QModelIndex index = indexOfItem(item);
+    const QModelIndex index = createIndex(item->row(), 1, item);
     emit dataChanged(index, index, {Qt::DisplayRole});
 
-    operation = {Rename, info};
-    m_queue.emplace_back(operation);
+    if(item->status() == LibraryItem::None) {
+        item->setStatus(LibraryItem::Changed);
+    }
 }
 
 void LibraryModel::processQueue()
 {
-    while(!m_queue.empty()) {
-        const auto library = m_queue.front();
-        const auto type    = library.type;
-        auto* info         = library.info;
+    std::vector<QString> librariesToRemove;
 
-        m_queue.pop_front();
+    for(auto& [path, library] : m_nodes) {
+        const LibraryItem::ItemStatus status = library.status();
+        Core::Library::LibraryInfo* info     = library.info();
 
-        if(type == Add) {
-            if(info->id >= 0) {
-                // Library already added
-                continue;
+        switch(status) {
+            case(LibraryItem::Added): {
+                if(info->id >= 0) {
+                    // Library already added
+                    continue;
+                }
+                const int id = m_libraryManager->addLibrary(info->path, info->name);
+                if(id >= 0) {
+                    info = m_libraryManager->libraryInfo(id);
+                    library.changeInfo(info);
+                    library.setStatus(LibraryItem::None);
+                }
+                else {
+                    qWarning() << QString{"Library (%1) could not be added"}.arg(info->name);
+                }
+                break;
             }
-            const int id = m_libraryManager->addLibrary(info->path, info->name);
-            if(id >= 0) {
-                info = m_libraryManager->libraryInfo(id);
-                m_nodes.at(info->path)->changeInfo(info);
+            case(LibraryItem::Removed): {
+                const QString key = info->path;
+                if(info->id < 0 || m_libraryManager->removeLibrary(info->id)) {
+                    beginRemoveRows({}, library.row(), library.row());
+                    rootItem()->removeChild(library.row());
+                    endRemoveRows();
+                    librariesToRemove.push_back(key);
+                }
+                else {
+                    qWarning() << QString{"Library (%1) could not be removed"}.arg(info->name);
+                }
+                break;
             }
-            else {
-                qWarning() << QString{"Library (%1) could not be added"}.arg(info->name);
-
-                auto* item = m_nodes.at(info->path).get();
-                beginRemoveRows({}, item->row(), item->row());
-                rootItem()->removeChild(item->row());
-                endRemoveRows();
-
-                m_nodes.erase(info->path);
+            case(LibraryItem::Changed): {
+                if(m_libraryManager->renameLibrary(info->id, info->name)) {
+                    library.setStatus(LibraryItem::None);
+                }
+                else {
+                    qWarning() << QString{"Library (%1) could not be renamed"}.arg(info->path);
+                }
+                break;
             }
-        }
-        else if(type == Remove) {
-            const QString key = info->path;
-            if(info->id < 0 || m_libraryManager->removeLibrary(info->id)) {
-                m_nodes.erase(key);
-            }
-            else {
-                qWarning() << QString{"Library (%1) could not be removed"}.arg(info->name);
-
-                auto* item    = m_nodes.at(info->path).get();
-                const int row = rootItem()->childCount();
-                beginInsertRows({}, row, row);
-                rootItem()->appendChild(item);
-                endInsertRows();
-            }
-        }
-        else if(type == Rename) {
-            if(!m_libraryManager->renameLibrary(info->id, info->name)) {
-                qWarning() << QString{"Library (%1) could not be renamed"}.arg(info->path);
-
-                auto* item = m_nodes.at(info->path).get();
-                item->changeInfo(m_libraryManager->libraryInfo(info->id));
-                const QModelIndex index = indexOfItem(item);
-                emit dataChanged(index, index, {Qt::DisplayRole});
-            }
+            case(LibraryItem::None):
+                break;
         }
     }
     m_librariesToAdd.clear();
+    for(const QString& path : librariesToRemove) {
+        m_nodes.erase(path);
+    }
 }
 
 QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -247,18 +243,35 @@ QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int 
 
 QVariant LibraryModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole) {
+    if(role != Qt::DisplayRole && role != Qt::FontRole) {
         return {};
     }
 
-    if(!index.isValid()) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
 
-    const int column = index.column();
-    auto* item       = static_cast<LibraryItem*>(index.internalPointer());
+    auto* item = static_cast<LibraryItem*>(index.internalPointer());
 
-    switch(column) {
+    if(role == Qt::FontRole) {
+        QFont font;
+        switch(item->status()) {
+            case(LibraryItem::Added):
+                font.setItalic(true);
+                break;
+            case(LibraryItem::Removed):
+                font.setStrikeOut(true);
+                break;
+            case(LibraryItem::Changed):
+                font.setBold(true);
+                break;
+            case(LibraryItem::None):
+                break;
+        }
+        return font;
+    }
+
+    switch(index.column()) {
         case(0):
             return item->info()->id;
         case(1):
@@ -287,26 +300,5 @@ int LibraryModel::columnCount(const QModelIndex& parent) const
 void LibraryModel::updateDisplay()
 {
     emit dataChanged({}, {}, {Qt::DisplayRole});
-}
-
-bool LibraryModel::findInQueue(const QString& id, OperationType type, QueueEntry* library) const
-{
-    return std::any_of(m_queue.cbegin(), m_queue.cend(), [id, type, library](const QueueEntry& entry) {
-        if(entry.info->path == id && entry.type == type) {
-            *library = entry;
-            return true;
-        }
-        return false;
-    });
-}
-
-void LibraryModel::removeFromQueue(const QueueEntry& libraryToDelete)
-{
-    m_queue.erase(std::remove_if(m_queue.begin(),
-                                 m_queue.end(),
-                                 [libraryToDelete](const QueueEntry& library) {
-                                     return library == libraryToDelete;
-                                 }),
-                  m_queue.end());
 }
 } // namespace Fy::Gui::Settings

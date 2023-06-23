@@ -113,7 +113,13 @@ bool LibraryManager::renameLibrary(int id, const QString& name)
     }
 
     if(m_libraryConnector->renameLibrary(id, name)) {
-        m_libraries.at(id)->name = name;
+        auto it = std::ranges::find_if(std::as_const(m_libraries), [id](const auto& library) {
+            return library->id == id;
+        });
+        if(it != m_libraries.cend()) {
+            it->get()->name = name;
+        }
+
         emit libraryRenamed(id, name);
         return true;
     }

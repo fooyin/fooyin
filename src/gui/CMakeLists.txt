@@ -104,7 +104,6 @@ set(SOURCES
     settings/pluginspage.cpp
     settings/library/librarygeneralpage.cpp
     settings/library/librarymodel.cpp
-    settings/library/libraryitem.cpp
     settings/library/libraryview.cpp
     settings/playlist/playlistguipage.cpp
     settings/playlist/presetinput.cpp

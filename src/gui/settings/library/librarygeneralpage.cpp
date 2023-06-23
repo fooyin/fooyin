@@ -177,7 +177,7 @@ void LibraryGeneralPageWidget::renameLibrary() const
 
         if(success && !text.isEmpty()) {
             info->name = text;
-            m_model->markForRename(info);
+            m_model->markForChange(info);
         }
     }
 }

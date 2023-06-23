@@ -19,19 +19,41 @@
 
 #pragma once
 
-#include "libraryitem.h"
-
 #include <utils/tablemodel.h>
-
-#include <deque>
+#include <utils/treeitem.h>
 
 namespace Fy {
-
 namespace Core::Library {
 class LibraryManager;
+class LibraryInfo;
 } // namespace Core::Library
 
 namespace Gui::Settings {
+class LibraryItem : public Utils::TreeItem<LibraryItem>
+{
+public:
+    enum ItemStatus
+    {
+        None    = 0,
+        Added   = 1,
+        Removed = 2,
+        Changed = 3
+    };
+
+    LibraryItem();
+    explicit LibraryItem(Core::Library::LibraryInfo* info, LibraryItem* parent);
+
+    [[nodiscard]] ItemStatus status() const;
+    void setStatus(ItemStatus status);
+
+    [[nodiscard]] Core::Library::LibraryInfo* info() const;
+    void changeInfo(Core::Library::LibraryInfo* info);
+
+private:
+    Core::Library::LibraryInfo* m_info;
+    ItemStatus m_status{None};
+};
+
 class LibraryModel : public Utils::TableModel<LibraryItem>
 {
 public:
@@ -40,7 +62,7 @@ public:
     void setupModelData();
     void markForAddition(const Core::Library::LibraryInfo& info);
     void markForRemoval(Core::Library::LibraryInfo* info);
-    void markForRename(Core::Library::LibraryInfo* info);
+    void markForChange(Core::Library::LibraryInfo* info);
     void processQueue();
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -49,41 +71,14 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
 private:
-    enum OperationType
-    {
-        Add    = 1,
-        Remove = 2,
-        Rename = 3
-    };
-
-    struct QueueEntry
-    {
-        QueueEntry() = default;
-        QueueEntry(OperationType type, Core::Library::LibraryInfo* info)
-            : type{type}
-            , info{info}
-        { }
-        OperationType type;
-        Core::Library::LibraryInfo* info;
-
-        bool operator==(const QueueEntry& other) const
-        {
-            return std::tie(type, info) == std::tie(other.type, other.info);
-        }
-    };
-
     void updateDisplay();
-    [[nodiscard]] bool findInQueue(const QString& id, OperationType op, QueueEntry* library = nullptr) const;
-    void removeFromQueue(const QueueEntry& libraryToDelete);
 
     Core::Library::LibraryManager* m_libraryManager;
 
-    using IdLibraryMap    = std::unordered_map<QString, std::unique_ptr<LibraryItem>>;
-    using LibaryQueueMap  = std::deque<QueueEntry>;
+    using IdLibraryMap    = std::unordered_map<QString, LibraryItem>;
     using LibraryInfoList = std::vector<std::unique_ptr<Core::Library::LibraryInfo>>;
 
     IdLibraryMap m_nodes;
-    LibaryQueueMap m_queue;
     LibraryInfoList m_librariesToAdd;
 };
 } // namespace Gui::Settings
