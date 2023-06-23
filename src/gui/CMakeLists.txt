@@ -22,6 +22,7 @@ set(SOURCES
     guisettings.cpp
     layoutprovider.h
     layoutprovider.cpp
+    trackselectionmanager.cpp
     widgetfactory.h
     widgetprovider.h
     widgetprovider.cpp
@@ -35,16 +36,10 @@ set(SOURCES
     controls/progresswidget.cpp
     controls/volumecontrol.h
     controls/volumecontrol.cpp
-    info/itemdelegate.h
-    info/itemdelegate.cpp
-    info/infomodel.h
+    info/infodelegate.cpp
     info/infomodel.cpp
-    info/infoitem.h
-    info/infoitem.cpp
     info/infowidget.h
     info/infowidget.cpp
-    info/infoview.h
-    info/infoview.cpp
     library/coverwidget.h
     library/coverwidget.cpp
     library/statuswidget.h

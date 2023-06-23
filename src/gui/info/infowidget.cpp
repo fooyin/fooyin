@@ -20,8 +20,9 @@
 #include "infowidget.h"
 
 #include "gui/guisettings.h"
-#include "infoitem.h"
-#include "itemdelegate.h"
+#include "gui/trackselectionmanager.h"
+#include "infodelegate.h"
+#include "infomodel.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/models/track.h>
@@ -32,15 +33,17 @@
 
 #include <QHeaderView>
 #include <QMenu>
-#include <QTableWidget>
+#include <QTreeView>
 
-namespace Fy::Gui::Widgets {
-InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings, QWidget* parent)
+namespace Fy::Gui::Widgets::Info {
+InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionManager* selectionManager,
+                       Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerManager{playerManager}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
-    , m_model{playerManager}
+    , m_view{new QTreeView(this)}
+    , m_model{new InfoModel(playerManager, this)}
 {
     setObjectName("Info Panel");
     setupUi();
@@ -49,67 +52,86 @@ InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, Utils::Settin
     setScrollbarHidden(m_settings->value<Settings::InfoScrollBar>());
     setAltRowColors(m_settings->value<Settings::InfoAltColours>());
 
-    connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, &m_model, &InfoModel::reset);
+    QObject::connect(selectionManager, &TrackSelectionManager::selectionChanged, m_model, &InfoModel::resetModel);
+
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
+        spanHeaders();
+        m_view->expandAll();
+    });
 
     m_settings->subscribe<Settings::InfoAltColours>(this, &InfoWidget::setAltRowColors);
     m_settings->subscribe<Settings::InfoHeader>(this, &InfoWidget::setHeaderHidden);
     m_settings->subscribe<Settings::InfoScrollBar>(this, &InfoWidget::setScrollbarHidden);
+
+    m_model->resetModel(selectionManager->selectedTracks());
 }
 
 void InfoWidget::setupUi()
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
 
-    m_view.setItemDelegate(new ItemDelegate(this));
-    m_view.setModel(&m_model);
+    m_view->setRootIsDecorated(false);
+    m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_view->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_view->setMouseTracking(true);
+    m_view->setItemsExpandable(false);
+    m_view->setIndentation(0);
+    m_view->setExpandsOnDoubleClick(false);
+    m_view->setWordWrap(true);
+    m_view->setTextElideMode(Qt::ElideLeft);
+    m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    m_view->setSortingEnabled(false);
+    m_view->setAlternatingRowColors(true);
 
-    m_layout->addWidget(&m_view);
+    m_view->setItemDelegate(new ItemDelegate(this));
+    m_view->setModel(m_model);
 
-    m_view.header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    m_layout->addWidget(m_view);
+
+    m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     spanHeaders();
-
-    m_view.expandAll();
+    m_view->expandAll();
 }
 
 void InfoWidget::spanHeaders()
 {
-    for(int i = 0; i < m_model.rowCount({}); i++) {
-        auto type = m_model.index(i, 0, {}).data(Info::Type).value<InfoItem::Type>();
-        if(type == InfoItem::Header) {
-            m_view.setFirstColumnSpanned(i, {}, true);
+    for(int i = 0; i < m_model->rowCount({}); i++) {
+        auto type = m_model->index(i, 0, {}).data(InfoItem::Type).value<InfoItem::ItemType>();
+        if(type == InfoItem::ItemType::Header) {
+            m_view->setFirstColumnSpanned(i, {}, true);
         }
     }
 }
 
 bool InfoWidget::isHeaderHidden()
 {
-    return m_view.isHeaderHidden();
+    return m_view->isHeaderHidden();
 }
 
 void InfoWidget::setHeaderHidden(bool showHeader)
 {
-    m_view.setHeaderHidden(!showHeader);
+    m_view->setHeaderHidden(!showHeader);
 }
 
 bool InfoWidget::isScrollbarHidden()
 {
-    return m_view.verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
+    return m_view->verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
 }
 
 void InfoWidget::setScrollbarHidden(bool showScrollBar)
 {
-    m_view.setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+    m_view->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 }
 
 bool InfoWidget::altRowColors()
 {
-    return m_view.alternatingRowColors();
+    return m_view->alternatingRowColors();
 }
 
 void InfoWidget::setAltRowColors(bool altColours)
 {
-    m_view.setAlternatingRowColors(altColours);
+    m_view->setAlternatingRowColors(altColours);
 }
 
 QString InfoWidget::name() const
@@ -145,4 +167,4 @@ void InfoWidget::layoutEditingMenu(Utils::ActionContainer* menu)
     menu->addAction(showScrollBar);
     menu->addAction(altColours);
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Info

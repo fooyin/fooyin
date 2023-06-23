@@ -20,11 +20,11 @@
 #pragma once
 
 #include "gui/fywidget.h"
-#include "infomodel.h"
-#include "infoview.h"
 
 #include <QHBoxLayout>
 #include <QWidget>
+
+class QTreeView;
 
 namespace Fy {
 
@@ -40,12 +40,17 @@ class PlayerManager;
 } // namespace Player
 } // namespace Core
 
-namespace Gui::Widgets {
+namespace Gui {
+class TrackSelectionManager;
+
+namespace Widgets::Info {
+class InfoModel;
+
 class InfoWidget : public FyWidget
 {
 public:
-    explicit InfoWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                        QWidget* parent = nullptr);
+    explicit InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionManager* selectionManager,
+                        Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     bool isHeaderHidden();
     void setHeaderHidden(bool showHeader);
@@ -68,8 +73,9 @@ private:
     Utils::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
-    InfoView m_view;
-    InfoModel m_model;
+    QTreeView* m_view;
+    InfoModel* m_model;
 };
-} // namespace Gui::Widgets
+} // namespace Widgets::Info
+} // namespace Gui
 } // namespace Fy

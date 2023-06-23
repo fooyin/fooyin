@@ -63,6 +63,7 @@
 #include <gui/settings/playlist/playlistguipage.h>
 #include <gui/settings/playlist/playlistpresetspage.h>
 #include <gui/settings/pluginspage.h>
+#include <gui/trackselectionmanager.h>
 #include <gui/widgetfactory.h>
 #include <gui/widgets/spacer.h>
 #include <gui/widgets/splitterwidget.h>
@@ -87,6 +88,7 @@ struct Application::Private
     Gui::Widgets::WidgetFactory widgetFactory;
     Gui::Settings::GuiSettings guiSettings;
     Gui::LayoutProvider layoutProvider;
+    Gui::TrackSelectionManager selectionManager;
     std::unique_ptr<Gui::Widgets::Playlist::PlaylistController> playlistController;
     Gui::Widgets::Playlist::PresetRegistry presetRegistry;
     std::unique_ptr<Gui::Widgets::EditableLayout> editableLayout;
@@ -190,8 +192,8 @@ struct Application::Private
             return new Gui::Widgets::ControlWidget(playerManager, settingsManager);
         });
 
-        widgetFactory.registerClass<Gui::Widgets::InfoWidget>("Info", [this]() {
-            return new Gui::Widgets::InfoWidget(playerManager, settingsManager);
+        widgetFactory.registerClass<Gui::Widgets::Info::InfoWidget>("Info", [this]() {
+            return new Gui::Widgets::Info::InfoWidget(playerManager, &selectionManager, settingsManager);
         });
 
         widgetFactory.registerClass<Gui::Widgets::CoverWidget>("Artwork", [this]() {
@@ -199,8 +201,11 @@ struct Application::Private
         });
 
         widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
-            return new Gui::Widgets::Playlist::PlaylistWidget(library, playerManager, playlistController.get(),
-                                                              &presetRegistry, settingsManager);
+            auto* playlist = new Gui::Widgets::Playlist::PlaylistWidget(
+                library, playerManager, playlistController.get(), &presetRegistry, settingsManager);
+            QObject::connect(playlist, &Gui::Widgets::Playlist::PlaylistWidget::selectionWasChanged, &selectionManager,
+                             &Gui::TrackSelectionManager::changeSelectedTracks);
+            return playlist;
         });
 
         widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {

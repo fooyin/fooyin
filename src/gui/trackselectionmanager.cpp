@@ -17,33 +17,17 @@
  *
  */
 
-#include "infoitem.h"
+#include "trackselectionmanager.h"
 
-namespace Fy::Gui::Widgets {
-InfoItem::InfoItem(Type type, Role role, QString title, InfoItem* parent)
-    : TreeItem{parent}
-    , m_type{type}
-    , m_role{role}
-    , m_title{std::move(title)}
-{ }
-
-int InfoItem::columnCount() const
+namespace Fy::Gui {
+const Core::TrackList& TrackSelectionManager::selectedTracks() const
 {
-    return 2;
+    return m_tracks;
 }
 
-QString InfoItem::data() const
+void TrackSelectionManager::changeSelectedTracks(const Core::TrackList& tracks)
 {
-    return m_title;
+    m_tracks = tracks;
+    emit selectionChanged(m_tracks);
 }
-
-InfoItem::Type InfoItem::type() const
-{
-    return m_type;
-}
-
-InfoItem::Role InfoItem::role() const
-{
-    return m_role;
-}
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui

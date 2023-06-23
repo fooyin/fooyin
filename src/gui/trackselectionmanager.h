@@ -17,25 +17,25 @@
  *
  */
 
-#include "infoview.h"
+#pragma once
 
-#include <QHeaderView>
+#include <core/models/trackfwd.h>
 
-namespace Fy::Gui::Widgets {
-InfoView::InfoView(QWidget* parent)
-    : QTreeView(parent)
+#include <QObject>
+
+namespace Fy::Gui {
+class TrackSelectionManager : public QObject
 {
-    setRootIsDecorated(false);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::SingleSelection);
-    setMouseTracking(true);
-    setItemsExpandable(false);
-    setIndentation(0);
-    setExpandsOnDoubleClick(false);
-    setWordWrap(true);
-    setTextElideMode(Qt::ElideLeft);
-    setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    setSortingEnabled(false);
-    setAlternatingRowColors(true);
-}
-} // namespace Fy::Gui::Widgets
+    Q_OBJECT
+
+public:
+    const Core::TrackList& selectedTracks() const;
+    void changeSelectedTracks(const Core::TrackList& tracks);
+
+signals:
+    void selectionChanged(const Core::TrackList& tracks);
+
+private:
+    Core::TrackList m_tracks;
+};
+} // namespace Fy::Gui

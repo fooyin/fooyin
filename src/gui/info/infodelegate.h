@@ -19,12 +19,17 @@
 
 #pragma once
 
-#include <QTreeView>
+#include <QStyledItemDelegate>
 
-namespace Fy::Gui::Widgets {
-class InfoView : public QTreeView
+namespace Fy::Gui::Widgets::Info {
+class ItemDelegate : public QStyledItemDelegate
 {
+    Q_OBJECT
+
 public:
-    explicit InfoView(QWidget* parent = nullptr);
+    explicit ItemDelegate(QObject* parent = nullptr);
+
+    [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Info
