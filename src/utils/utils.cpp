@@ -120,10 +120,35 @@ int randomNumber(int min, int max)
 
 QString msToString(uint64_t ms)
 {
-    const int milliseconds = static_cast<int>(ms);
-    const QTime t(0, 0, 0);
-    auto time = t.addMSecs(milliseconds);
-    return time.toString(time.hour() == 0 ? "mm:ss" : "hh:mm:ss");
+    constexpr auto msPerSecond = 1000;
+    constexpr auto msPerMinute = msPerSecond * 60;
+    constexpr auto msPerHour   = msPerMinute * 60;
+    constexpr auto msPerDay    = msPerHour * 24;
+    constexpr auto msPerWeek   = msPerDay * 7;
+
+    const uint64_t weeks   = ms / msPerWeek;
+    const uint64_t days    = (ms % msPerWeek) / msPerDay;
+    const uint64_t hours   = (ms % msPerDay) / msPerHour;
+    const uint64_t minutes = (ms % msPerHour) / msPerMinute;
+    const uint64_t seconds = (ms % msPerMinute) / msPerSecond;
+
+    QString formattedTime;
+
+    if(weeks > 0) {
+        formattedTime += QString::number(weeks) + "wk ";
+    }
+    if(days > 0) {
+        formattedTime += QString::number(days) + "d ";
+    }
+    if(hours > 0) {
+        formattedTime += QString{"%1:"}.arg(hours, 2, 10, QChar('0'));
+    }
+    if(minutes > 0 || hours > 0) {
+        formattedTime += QString{"%1:"}.arg(minutes, 2, 10, QChar('0'));
+    }
+
+    formattedTime += QString{"%1"}.arg(seconds, 2, 10, QChar('0'));
+    return formattedTime;
 }
 
 QString secsToString(uint64_t secs)
