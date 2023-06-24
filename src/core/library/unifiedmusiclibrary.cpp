@@ -115,7 +115,8 @@ void UnifiedMusicLibrary::removeLibrary(int id)
     auto filtered = m_tracks | std::views::filter([id](const Track& track) {
                         return track.libraryId() != id;
                     });
-    std::ranges::copy(filtered, std::back_inserter(m_tracks));
+
+    m_tracks = TrackList{filtered.begin(), filtered.end()};
 
     emit libraryRemoved(id);
 }
