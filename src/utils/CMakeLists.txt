@@ -20,7 +20,6 @@ set(SOURCES
     simplelistview.cpp
     scrollarea.cpp
     slider.cpp
-    tablemodel.cpp
     utils.cpp
     worker.cpp
     actions/actioncontainer.cpp
