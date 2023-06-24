@@ -62,7 +62,7 @@
 #include <gui/settings/library/librarygeneralpage.h>
 #include <gui/settings/playlist/playlistguipage.h>
 #include <gui/settings/playlist/playlistpresetspage.h>
-#include <gui/settings/pluginspage.h>
+#include <gui/settings/plugins/pluginspage.h>
 #include <gui/trackselectionmanager.h>
 #include <gui/widgetfactory.h>
 #include <gui/widgets/spacer.h>

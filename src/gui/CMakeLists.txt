@@ -91,10 +91,8 @@ set(SOURCES
     settings/generalpage.cpp
     settings/guigeneralpage.h
     settings/guigeneralpage.cpp
-    settings/pluginsmodel.h
-    settings/pluginsmodel.cpp
-    settings/pluginspage.h
-    settings/pluginspage.cpp
+    settings/plugins/pluginsmodel.cpp
+    settings/plugins/pluginspage.cpp
     settings/library/librarygeneralpage.cpp
     settings/library/librarymodel.cpp
     settings/library/libraryview.cpp
