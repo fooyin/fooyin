@@ -42,9 +42,6 @@ public:
     bool deleteTracks(const TrackList& tracks);
 
 private:
-    Module* module();
-    [[nodiscard]] const Module* module() const;
-
     int insertTrack(const Track& track);
 
     QString m_connectionName;

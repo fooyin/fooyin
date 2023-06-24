@@ -54,46 +54,17 @@ int Library::insertLibrary(const QString& path, const QString& name)
         return -1;
     }
 
-    const QString query = "INSERT INTO Libraries "
-                          "(Name, Path) "
-                          "VALUES "
-                          "(:libraryName, :libraryPath);";
+    auto q = module()->insert("Libraries", {{"Name", name}, {"Path", path}},
+                              QString{"Cannot insert library (name: %1, path: %2)"}.arg(name, path));
 
-    Query q(this);
-
-    q.prepareQuery(query);
-    q.bindQueryValue(":libraryName", name);
-    q.bindQueryValue(":libraryPath", path);
-
-    if(!q.execQuery()) {
-        q.error(QString("Cannot insert library (name: %1, path: %2)").arg(name, path));
-        return -1;
-    }
-    return q.lastInsertId().toInt();
+    return (q.hasError()) ? -1 : q.lastInsertId().toInt();
 }
 
 bool Library::removeLibrary(int id)
 {
-    Query delTracks(this);
-    auto delTracksQuery = QStringLiteral("DELETE FROM Tracks WHERE LibraryID=:libraryId;");
-    delTracks.prepareQuery(delTracksQuery);
-    delTracks.bindQueryValue(":libraryId", id);
-
-    if(!delTracks.execQuery()) {
-        delTracks.error(QString{"Cannot delete library (%1) tracks"}.arg(id));
-        return false;
-    }
-
-    Query delLibrary(this);
-    const QString delLibraryQuery = "DELETE FROM Libraries WHERE LibraryID=:libraryId;";
-    delLibrary.prepareQuery(delLibraryQuery);
-    delLibrary.bindQueryValue(":libraryId", id);
-
-    if(!delLibrary.execQuery()) {
-        delLibrary.error(QString{"Cannot remove library %1"}.arg(id));
-        return false;
-    }
-    return true;
+    auto q = module()->remove("Libraries", {{"LibraryID", QString::number(id)}},
+                              QString{"Cannot remove library %1"}.arg(id));
+    return !q.hasError();
 }
 
 bool Library::renameLibrary(int id, const QString& name)
@@ -102,20 +73,8 @@ bool Library::renameLibrary(int id, const QString& name)
         return false;
     }
 
-    const QString query = "UPDATE Libraries "
-                          "SET Name = :libraryName "
-                          "WHERE LibraryID=:libraryId;";
-
-    Query q(this);
-
-    q.prepareQuery(query);
-    q.bindQueryValue(":libraryId", id);
-    q.bindQueryValue(":libraryName", name);
-
-    if(!q.execQuery()) {
-        q.error(QString{"Cannot update library (name: %1)"}.arg(name));
-        return false;
-    }
-    return true;
+    auto q = module()->update("Libraries", {{"Name", name}}, {"LibraryID", QString::number(id)},
+                              QString{"Cannot update library %1"}.arg(id));
+    return !q.hasError();
 }
 } // namespace Fy::Core::DB

@@ -20,10 +20,14 @@
 #pragma once
 
 #include <QSqlDatabase>
-#include <QVariant>
+
+#include <map>
 
 namespace Fy::Core::DB {
 class Query;
+
+using BindingsMap = std::map<QString, QString>;
+
 class Module
 {
 public:
@@ -33,18 +37,20 @@ public:
     [[nodiscard]] QSqlDatabase db() const;
     [[nodiscard]] QString connectionName() const;
 
-    [[nodiscard]] DB::Query runQuery(const QString& query, const QString& errorText) const;
-    [[nodiscard]] DB::Query runQuery(const QString& query, const QPair<QString, QVariant>& bindings,
-                                     const QString& errorText) const;
-    [[nodiscard]] DB::Query runQuery(const QString& query, const QMap<QString, QVariant>& bindings,
-                                     const QString& errorText) const;
+    [[nodiscard]] Query runQuery(const QString& query, const QString& errorText) const;
+    [[nodiscard]] Query runQuery(const QString& query, const std::pair<QString, QString>& bindings,
+                                 const QString& errorText) const;
+    [[nodiscard]] Query runQuery(const QString& query, const BindingsMap& bindings, const QString& errorText) const;
 
-    DB::Query update(const QString& tableName, const QMap<QString, QVariant>& fieldBindings,
-                     const QPair<QString, QVariant>& whereBinding, const QString& errorMessage);
-    DB::Query remove(const QString& tableName, const QList<QPair<QString, QVariant>>& whereBinding,
-                     const QString& errorMessage);
-    DB::Query insert(const QString& tableName, const QMap<QString, QVariant>& fieldBindings,
-                     const QString& errorMessage);
+    Query update(const QString& tableName, const BindingsMap& fieldBindings,
+                 const std::pair<QString, QString>& whereBinding, const QString& errorMessage);
+    Query remove(const QString& tableName, const std::vector<std::pair<QString, QString>>& whereBinding,
+                 const QString& errorMessage);
+    Query insert(const QString& tableName, const BindingsMap& fieldBindings, const QString& errorMessage);
+
+protected:
+    Module* module();
+    [[nodiscard]] const Module* module() const;
 
 private:
     QString m_connectionName;

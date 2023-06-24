@@ -116,7 +116,7 @@ bool Database::createDatabase()
                                "    ExtraTags BLOB,"
                                "    AddedDate INTEGER,"
                                "    ModifiedDate INTEGER,"
-                               "    LibraryID INTEGER REFERENCES Libraries);");
+                               "    LibraryID INTEGER REFERENCES Libraries ON DELETE CASCADE);");
 
     checkInsertTable("Libraries", "CREATE TABLE Libraries ("
                                   "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
