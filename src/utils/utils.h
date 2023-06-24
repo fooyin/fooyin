@@ -36,16 +36,14 @@ QString getParentDirectory(const QString& filename);
 bool createDirectories(const QString& path);
 } // namespace File
 
-namespace Widgets {
-QWidget* indentWidget(QWidget* widget, QWidget* parent);
-} // namespace Widgets
-
 int randomNumber(int min, int max);
 QString msToString(uint64_t ms);
 QString secsToString(uint64_t secs);
+QString formatFileSize(uint64_t bytes);
 void setMinimumWidth(QLabel* label, const QString& text);
 
 uint64_t currentDateToInt();
+QString formatTimeMs(uint64_t time);
 QString capitalise(const QString& s);
 
 QPixmap scaleImage(QPixmap& image, int size);

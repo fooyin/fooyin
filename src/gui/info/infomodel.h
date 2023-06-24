@@ -33,17 +33,18 @@ namespace Gui::Widgets::Info {
 class InfoItem : public Utils::TreeItem<InfoItem>
 {
 public:
-    enum class ItemType
+    enum ItemType
     {
         Header = 0,
         Entry,
     };
 
-    enum class ValueType
+    enum ValueType
     {
         Concat = 0,
         Average,
-        Total
+        Total,
+        Max
     };
 
     enum Role

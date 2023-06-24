@@ -25,6 +25,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QRandomGenerator>
+#include <QStringBuilder>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -99,17 +100,6 @@ bool createDirectories(const QString& path)
 }
 } // namespace File
 
-namespace Widgets {
-QWidget* indentWidget(QWidget* widget, QWidget* parent)
-{
-    auto* indentWidget = new QWidget(parent);
-    indentWidget->setLayout(new QVBoxLayout());
-    indentWidget->layout()->addWidget(widget);
-    indentWidget->layout()->setContentsMargins(25, 0, 0, 0);
-    return indentWidget;
-}
-} // namespace Widgets
-
 int randomNumber(int min, int max)
 {
     if(min == max) {
@@ -163,6 +153,38 @@ uint64_t currentDateToInt()
 {
     const auto str = QDateTime::currentDateTimeUtc().toString("yyyyMMddHHmmss");
     return static_cast<uint64_t>(str.toULongLong());
+}
+
+QString formatTimeMs(uint64_t time)
+{
+    const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(time));
+    QString formattedDateTime = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+    return formattedDateTime;
+}
+
+QString formatFileSize(uint64_t bytes)
+{
+    const QStringList units = {"bytes", "KB", "MB", "GB", "TB"};
+    auto size               = static_cast<double>(bytes);
+    int unitIndex{0};
+
+    while(size >= 1024 && unitIndex < units.size() - 1) {
+        size /= 1024;
+        ++unitIndex;
+    }
+
+    const QString sizeString  = QString::number(size, 'f', 1);
+    const QString& unitString = units[unitIndex];
+    QString formattedSize     = sizeString % " " % unitString;
+
+    if(unitIndex == 0) {
+        return formattedSize;
+    }
+
+    const QString bytesString = QString::number(bytes);
+    formattedSize             = formattedSize % " (" % bytesString % " bytes)";
+
+    return formattedSize;
 }
 
 void setMinimumWidth(QLabel* label, const QString& text)

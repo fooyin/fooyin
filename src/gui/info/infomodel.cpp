@@ -19,7 +19,6 @@
 
 #include "infomodel.h"
 
-#include <core/models/track.h>
 #include <core/player/playermanager.h>
 
 #include <utils/enumhelper.h>
@@ -30,7 +29,7 @@
 
 namespace Fy::Gui::Widgets::Info {
 InfoItem::InfoItem()
-    : InfoItem{ItemType::Header, "", nullptr, ValueType::Concat, {}}
+    : InfoItem{Header, "", nullptr, ValueType::Concat, {}}
 { }
 
 InfoItem::InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType)
@@ -65,16 +64,13 @@ QVariant InfoItem::value() const
             }
             return m_value;
         }
-        case(ValueType::Average): {
+        case(ValueType::Average):
             if(m_numValue == 0) {
-                m_numValue = std::reduce(m_numValues.cbegin(), m_numValues.cend(), 0) / m_numValues.size();
+                m_numValue = std::reduce(m_numValues.cbegin(), m_numValues.cend()) / m_numValues.size();
             }
-            return QVariant::fromValue(m_numValue);
-        }
+            // Fallthrough
         case(ValueType::Total):
-            if(m_numValue == 0) {
-                m_numValue = std::reduce(m_numValues.cbegin(), m_numValues.cend(), 0);
-            }
+        case(ValueType::Max):
             if(m_formatNum) {
                 return m_formatNum(m_numValue);
             }
@@ -92,13 +88,17 @@ void InfoItem::addTrackValue(uint64_t value)
         }
         case(ValueType::Average): {
             m_numValues.push_back(value);
-            m_numValue = std::reduce(m_numValues.cbegin(), m_numValues.cend(), 0) / m_numValues.size();
             break;
         }
         case(ValueType::Total): {
             m_numValue += value;
             break;
         }
+        case(ValueType::Max):
+            if(value > m_numValue) {
+                m_numValue = value;
+            }
+            break;
     }
 }
 
@@ -118,8 +118,8 @@ void InfoItem::addTrackValue(const QString& value)
 
 void InfoItem::addTrackValue(const QStringList& values)
 {
-    for(const auto& value : values) {
-        addTrackValue(value);
+    for(const auto& strValue : values) {
+        addTrackValue(strValue);
     }
 }
 
@@ -141,8 +141,7 @@ struct InfoModel::Private
     }
 
     InfoItem* getOrAddNode(const QString& name, ItemParent parent, InfoItem::ItemType type,
-                           InfoItem::ValueType valueType = InfoItem::ValueType::Concat,
-                           InfoItem::FormatFunc numFunc  = {})
+                           InfoItem::ValueType valueType = InfoItem::Concat, InfoItem::FormatFunc numFunc = {})
     {
         if(name.isEmpty()) {
             return nullptr;
@@ -168,24 +167,58 @@ struct InfoModel::Private
             return nullptr;
         }
 
-        InfoItem* node = &nodes.emplace(name, InfoItem{type, name, parentItem, valueType, numFunc}).first->second;
+        InfoItem item{type, name, parentItem, valueType, std::move(numFunc)};
+        InfoItem* node = &nodes.emplace(name, std::move(item)).first->second;
         parentItem->appendChild(node);
 
         return node;
     }
 
-    template <typename Arg>
-    void checkAddEntryNode(const QString& name, InfoModel::ItemParent parent, Arg&& arg,
+    template <typename Value>
+    void checkAddEntryNode(const QString& name, InfoModel::ItemParent parent, Value&& value,
                            InfoItem::ValueType valueType = InfoItem::ValueType::Concat,
                            InfoItem::FormatFunc numFunc  = {})
     {
-        if constexpr(std::is_same_v<Arg, QString> || std::is_same_v<Arg, QStringList>) {
-            if(arg.isEmpty()) {
+        if constexpr(std::is_same_v<Value, QString> || std::is_same_v<Value, QStringList>) {
+            if(value.isEmpty()) {
                 return;
             }
         }
-        auto* node = getOrAddNode(name, parent, InfoItem::ItemType::Entry, valueType, numFunc);
-        node->addTrackValue(std::forward<Arg>(arg));
+        auto* node = getOrAddNode(name, parent, InfoItem::Entry, valueType, std::move(numFunc));
+        node->addTrackValue(std::forward<Value>(value));
+    }
+
+    void addTrackNodes(int total, const Core::Track& track)
+    {
+        checkAddEntryNode("Artist", ItemParent::Metadata, track.artists());
+        checkAddEntryNode("Title", ItemParent::Metadata, track.title());
+        checkAddEntryNode("Album", ItemParent::Metadata, track.album());
+        checkAddEntryNode("Date", ItemParent::Metadata, track.date());
+        checkAddEntryNode("Genre", ItemParent::Metadata, track.genres());
+        checkAddEntryNode("Album Artist", ItemParent::Metadata, track.albumArtist());
+        checkAddEntryNode("Track Number", ItemParent::Metadata, track.trackNumber());
+
+        const QFileInfo file{track.filepath()};
+
+        checkAddEntryNode(total > 1 ? "File Names" : "File Name", ItemParent::Location, file.fileName());
+        checkAddEntryNode(total > 1 ? "Folder Names" : "Folder Name", ItemParent::Location, file.absolutePath());
+        if(total == 1) {
+            checkAddEntryNode("File Path", ItemParent::Location, track.filepath());
+        }
+        checkAddEntryNode(total > 1 ? "Total Size" : "File Size", ItemParent::Location, track.fileSize(),
+                          InfoItem::Total, Utils::formatFileSize);
+        checkAddEntryNode("Last Modified", ItemParent::Location, track.modifiedTime(), InfoItem::Max,
+                          Utils::formatTimeMs);
+        if(total == 1) {
+            checkAddEntryNode("Added", ItemParent::Location, track.addedTime(), InfoItem::Max, Utils::formatTimeMs);
+        }
+        checkAddEntryNode("Duration", ItemParent::General, track.duration(), InfoItem::ValueType::Total,
+                          Utils::msToString);
+        checkAddEntryNode(total > 1 ? "Avg. Bitrate" : "Bitrate", ItemParent::General, track.bitrate(),
+                          InfoItem::Average, [](uint64_t bitrate) {
+                              return QString{"%1 kbps"}.arg(bitrate);
+                          });
+        checkAddEntryNode("Sample Rate", ItemParent::General, QString{"%1 Hz"}.arg(track.sampleRate()));
     }
 };
 
@@ -213,27 +246,14 @@ void InfoModel::resetModel(const Core::TrackList& tracks)
     beginResetModel();
     p->reset();
 
-    p->getOrAddNode("Metadata", ItemParent::Root, InfoItem::ItemType::Header);
-    p->getOrAddNode("Location", ItemParent::Root, InfoItem::ItemType::Header);
-    p->getOrAddNode("General", ItemParent::Root, InfoItem::ItemType::Header);
+    p->getOrAddNode("Metadata", ItemParent::Root, InfoItem::Header);
+    p->getOrAddNode("Location", ItemParent::Root, InfoItem::Header);
+    p->getOrAddNode("General", ItemParent::Root, InfoItem::Header);
 
     const int total = static_cast<int>(tracks.size());
+
     for(const Core::Track& track : infoTracks) {
-        p->checkAddEntryNode("Artist", ItemParent::Metadata, track.artists());
-        p->checkAddEntryNode("Title", ItemParent::Metadata, track.title());
-        p->checkAddEntryNode("Album", ItemParent::Metadata, track.album());
-        p->checkAddEntryNode("Date", ItemParent::Metadata, track.date());
-        p->checkAddEntryNode("Genre", ItemParent::Metadata, track.genres());
-        p->checkAddEntryNode("Album Artist", ItemParent::Metadata, track.albumArtist());
-        p->checkAddEntryNode("Track Number", ItemParent::Metadata, track.trackNumber());
-        p->checkAddEntryNode(total > 1 ? "File Names" : "File Name", ItemParent::Location,
-                             QFileInfo{track.filepath()}.fileName());
-        p->checkAddEntryNode(total > 1 ? "File Paths" : "File Path", ItemParent::Location, track.filepath());
-        p->checkAddEntryNode("Duration", ItemParent::General, track.duration(), InfoItem::ValueType::Total,
-                             Utils::msToString);
-        p->checkAddEntryNode(total > 1 ? "Avg. Bitrate" : "Bitrate", ItemParent::General, track.bitrate(),
-                             InfoItem::ValueType::Average);
-        p->checkAddEntryNode("Sample Rate", ItemParent::General, track.sampleRate());
+        p->addTrackNodes(total, track);
     }
     endResetModel();
 }
@@ -272,7 +292,7 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
     auto* item                    = static_cast<InfoItem*>(index.internalPointer());
     const InfoItem::ItemType type = item->type();
 
-    if(role == InfoItem::Role::Type) {
+    if(role == InfoItem::Type) {
         return QVariant::fromValue<InfoItem::ItemType>(type);
     }
 

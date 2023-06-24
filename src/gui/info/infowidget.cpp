@@ -98,7 +98,7 @@ void InfoWidget::spanHeaders()
 {
     for(int i = 0; i < m_model->rowCount({}); i++) {
         auto type = m_model->index(i, 0, {}).data(InfoItem::Type).value<InfoItem::ItemType>();
-        if(type == InfoItem::ItemType::Header) {
+        if(type == InfoItem::Header) {
             m_view->setFirstColumnSpanned(i, {}, true);
         }
     }
