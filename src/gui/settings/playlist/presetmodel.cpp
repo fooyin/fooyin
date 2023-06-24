@@ -209,21 +209,7 @@ QVariant PresetModel::data(const QModelIndex& index, int role) const
     auto* item = static_cast<PresetItem*>(index.internalPointer());
 
     if(role == Qt::FontRole) {
-        QFont font;
-        switch(item->status()) {
-            case(PresetItem::Added):
-                font.setItalic(true);
-                break;
-            case(PresetItem::Removed):
-                font.setStrikeOut(true);
-                break;
-            case(PresetItem::Changed):
-                font.setBold(true);
-                break;
-            case(PresetItem::None):
-                break;
-        }
-        return font;
+        return item->font();
     }
 
     switch(index.column()) {

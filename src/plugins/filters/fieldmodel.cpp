@@ -211,21 +211,7 @@ QVariant FieldModel::data(const QModelIndex& index, int role) const
     auto* item = static_cast<FieldItem*>(index.internalPointer());
 
     if(role == Qt::FontRole) {
-        QFont font;
-        switch(item->status()) {
-            case(FieldItem::Added):
-                font.setItalic(true);
-                break;
-            case(FieldItem::Removed):
-                font.setStrikeOut(true);
-                break;
-            case(FieldItem::Changed):
-                font.setBold(true);
-                break;
-            case(FieldItem::None):
-                break;
-        }
-        return font;
+        return item->font();
     }
 
     switch(index.column()) {

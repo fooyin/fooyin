@@ -244,21 +244,7 @@ QVariant LibraryModel::data(const QModelIndex& index, int role) const
     auto* item = static_cast<LibraryItem*>(index.internalPointer());
 
     if(role == Qt::FontRole) {
-        QFont font;
-        switch(item->status()) {
-            case(LibraryItem::Added):
-                font.setItalic(true);
-                break;
-            case(LibraryItem::Removed):
-                font.setStrikeOut(true);
-                break;
-            case(LibraryItem::Changed):
-                font.setBold(true);
-                break;
-            case(LibraryItem::None):
-                break;
-        }
-        return font;
+        return item->font();
     }
 
     switch(index.column()) {

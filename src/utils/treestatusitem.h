@@ -21,6 +21,8 @@
 
 #include <utils/treeitem.h>
 
+#include <QFont>
+
 namespace Fy::Utils {
 template <class Item>
 class TreeStatusItem : public TreeItem<Item>
@@ -28,10 +30,10 @@ class TreeStatusItem : public TreeItem<Item>
 public:
     enum ItemStatus
     {
-        None    = 0,
-        Added   = 1,
-        Removed = 2,
-        Changed = 3
+        None = 0,
+        Added,
+        Removed,
+        Changed
     };
 
     explicit TreeStatusItem(Item* parent)
@@ -47,6 +49,25 @@ public:
     {
         m_status = status;
     };
+
+    [[nodiscard]] QFont font() const
+    {
+        QFont font;
+        switch(m_status) {
+            case(Added):
+                font.setItalic(true);
+                break;
+            case(Removed):
+                font.setStrikeOut(true);
+                break;
+            case(Changed):
+                font.setBold(true);
+                break;
+            case(None):
+                break;
+        }
+        return font;
+    }
 
 private:
     ItemStatus m_status{None};
