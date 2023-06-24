@@ -78,12 +78,8 @@ FiltersFieldsPageWidget::FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry)
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(fieldLayout);
 
-    connect(addButton, &QPushButton::clicked, this, [this]() {
-        addField();
-    });
-    connect(removeButton, &QPushButton::clicked, this, [this]() {
-        removeField();
-    });
+    QObject::connect(addButton, &QPushButton::clicked, this, &FiltersFieldsPageWidget::addField);
+    QObject::connect(removeButton, &QPushButton::clicked, this, &FiltersFieldsPageWidget::removeField);
 }
 
 void FiltersFieldsPageWidget::apply()
