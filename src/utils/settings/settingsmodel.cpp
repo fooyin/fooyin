@@ -74,7 +74,7 @@ void SettingsModel::setPages(const PageList& pages)
     m_pageIds.clear();
 
     for(const auto& page : pages) {
-        if(m_pageIds.count(page->id())) {
+        if(m_pageIds.contains(page->id())) {
             qWarning() << "Duplicate settings page " << page->id().name();
             continue;
         }
@@ -107,11 +107,14 @@ void SettingsModel::setPages(const PageList& pages)
 
 SettingsCategory* SettingsModel::findCategoryById(const Id& id)
 {
-    for(const auto& category : m_categories) {
-        if(category->id == id) {
-            return category;
-        }
+    auto category = std::ranges::find_if(std::as_const(m_categories), [&id](const auto& category) {
+        return category->id == id;
+    });
+
+    if(category != m_categories.end()) {
+        return *category;
     }
+
     return nullptr;
 }
 } // namespace Fy::Utils

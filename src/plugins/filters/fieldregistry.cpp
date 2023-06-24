@@ -67,7 +67,7 @@ bool FieldRegistry::changeField(const FilterField& field)
 
 FilterField FieldRegistry::fieldByIndex(int index) const
 {
-    if(!m_fields.count(index)) {
+    if(!m_fields.contains(index)) {
         return {};
     }
     return m_fields.at(index);
@@ -89,7 +89,7 @@ FilterField FieldRegistry::fieldByName(const QString& name) const
 
 bool FieldRegistry::removeByIndex(int index)
 {
-    if(!m_fields.count(index)) {
+    if(!m_fields.contains(index)) {
         return false;
     }
     m_fields.erase(index);

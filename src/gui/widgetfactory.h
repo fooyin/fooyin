@@ -49,7 +49,7 @@ public:
     {
         static_assert(std::is_base_of<FyWidget, T>::value, "Class must derive from the factory's base class");
 
-        if(widgets.count(key)) {
+        if(widgets.contains(key)) {
             qDebug() << ("Subclass already registered");
             return false;
         }
@@ -66,7 +66,7 @@ public:
 
     [[nodiscard]] FyWidget* make(const QString& key) const
     {
-        if(!widgets.count(key)) {
+        if(!widgets.contains(key)) {
             return nullptr;
         }
 

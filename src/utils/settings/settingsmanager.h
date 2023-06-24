@@ -98,7 +98,7 @@ public:
         const auto mapKey = getMapKey(key);
         const auto type   = findType<key>();
 
-        if(m_settings.count(mapKey)) {
+        if(m_settings.contains(mapKey)) {
             if constexpr(type == Settings::Type::Bool) {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
             }
@@ -125,7 +125,7 @@ public:
     {
         const auto mapKey = getMapKey(key);
 
-        if(m_settings.count(mapKey)) {
+        if(m_settings.contains(mapKey)) {
             QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChanged, obj, func);
         }
     }
@@ -185,7 +185,7 @@ public:
 
         m_lock.lockForRead();
 
-        const auto value = m_settings.count(mapKey) ? m_settings.at(mapKey).value() : -1;
+        const auto value = m_settings.contains(mapKey) ? m_settings.at(mapKey).value() : -1;
         const auto type  = findType<key>();
 
         m_lock.unlock();
@@ -218,7 +218,7 @@ public:
 
         m_lock.lockForWrite();
 
-        if(!m_settings.count(mapKey)) {
+        if(!m_settings.contains(mapKey)) {
             m_lock.unlock();
             return;
         }

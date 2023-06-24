@@ -245,7 +245,7 @@ void FilterModel::setupModelData(const Core::TrackList& tracks)
 FilterItem* FilterModel::createNode(const QString& title, const QString& sortTitle)
 {
     FilterItem* filterItem;
-    if(!m_nodes.count(title)) {
+    if(!m_nodes.contains(title)) {
         filterItem = m_nodes.emplace(title, std::make_unique<FilterItem>(title, sortTitle)).first->second.get();
         m_root->appendChild(filterItem);
     }

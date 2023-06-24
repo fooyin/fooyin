@@ -42,7 +42,7 @@ struct SettingsCategory
 
     bool findPageById(const Id& idToFind, int* pageIndex) const
     {
-        auto it    = std::find_if(pages.begin(), pages.end(), [idToFind](const SettingsPage* page) {
+        auto it    = std::ranges::find_if(std::as_const(pages), [idToFind](const SettingsPage* page) {
             return page->id() == idToFind;
         });
         *pageIndex = it == pages.end() ? -1 : static_cast<int>(std::distance(pages.begin(), it));

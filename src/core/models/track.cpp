@@ -92,10 +92,7 @@ Track& Track::operator=(const Track& other) = default;
 
 QString Track::generateHash()
 {
-    p->hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(p->artists.join(","),
-                                               p->album,
-                                               p->date,
-                                               QString::number(p->discNumber),
+    p->hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(p->artists.join(","), p->album, p->date, QString::number(p->discNumber),
                                                QStringLiteral("%1").arg(p->trackNumber, 2, 10, QLatin1Char('0')),
                                                QString::number(p->duration));
     return p->hash;
@@ -412,7 +409,7 @@ void Track::addExtraTag(const QString& tag, const QString& value)
     if(tag.isEmpty() || value.isEmpty()) {
         return;
     }
-    if(p->extraTags.count(tag)) {
+    if(p->extraTags.contains(tag)) {
         auto entry = p->extraTags[tag];
         entry.emplace_back(value);
         p->extraTags.insert(tag, entry);
