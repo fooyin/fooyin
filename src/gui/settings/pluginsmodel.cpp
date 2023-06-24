@@ -19,13 +19,21 @@
 
 #include "pluginsmodel.h"
 
-#include "pluginitem.h"
-
 #include <core/plugins/pluginmanager.h>
 
 #include <utils/enumhelper.h>
 
 namespace Fy::Gui::Settings {
+PluginItem::PluginItem(Plugins::PluginInfo* info, PluginItem* parent)
+    : TreeItem{parent}
+    , m_info{info}
+{ }
+
+Plugins::PluginInfo* PluginItem::info() const
+{
+    return m_info;
+}
+
 Fy::Gui::Settings::PluginsModel::PluginsModel(Plugins::PluginManager* pluginManager, QObject* parent)
     : TableModel{parent}
     , m_pluginManager{pluginManager}
@@ -41,9 +49,9 @@ void PluginsModel::setupModelData()
         PluginItem* parent = rootItem();
 
         if(!m_nodes.contains(name)) {
-            m_nodes.emplace(name, std::make_unique<PluginItem>(info.get(), parent));
+            m_nodes.emplace(name, PluginItem{info.get(), parent});
         }
-        PluginItem* child = m_nodes.at(name).get();
+        PluginItem* child = &m_nodes.at(name);
         parent->appendChild(child);
     }
 }
@@ -91,7 +99,7 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    if(!index.isValid()) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
 

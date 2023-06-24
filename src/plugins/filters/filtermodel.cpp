@@ -57,7 +57,7 @@ void FilterModel::setFontSize(int size)
 
 QVariant FilterModel::data(const QModelIndex& index, int role) const
 {
-    if(!index.isValid() && !checkIndex(index)) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
 

@@ -20,7 +20,7 @@
 #pragma once
 
 #include <utils/tablemodel.h>
-#include <utils/treeitem.h>
+#include <utils/treestatusitem.h>
 
 namespace Fy {
 namespace Core::Library {
@@ -29,29 +29,17 @@ class LibraryInfo;
 } // namespace Core::Library
 
 namespace Gui::Settings {
-class LibraryItem : public Utils::TreeItem<LibraryItem>
+class LibraryItem : public Utils::TreeStatusItem<LibraryItem>
 {
 public:
-    enum ItemStatus
-    {
-        None    = 0,
-        Added   = 1,
-        Removed = 2,
-        Changed = 3
-    };
-
     LibraryItem();
     explicit LibraryItem(Core::Library::LibraryInfo* info, LibraryItem* parent);
-
-    [[nodiscard]] ItemStatus status() const;
-    void setStatus(ItemStatus status);
 
     [[nodiscard]] Core::Library::LibraryInfo* info() const;
     void changeInfo(Core::Library::LibraryInfo* info);
 
 private:
     Core::Library::LibraryInfo* m_info;
-    ItemStatus m_status{None};
 };
 
 class LibraryModel : public Utils::TableModel<LibraryItem>

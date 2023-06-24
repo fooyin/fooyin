@@ -21,7 +21,27 @@
 
 #include "fieldregistry.h"
 
+#include <QFont>
+
 namespace Fy::Filters::Settings {
+FieldItem::FieldItem()
+    : FieldItem{{}, nullptr}
+{ }
+
+FieldItem::FieldItem(FilterField field, FieldItem* parent)
+    : TreeStatusItem{parent}
+    , m_field{std::move(field)}
+{ }
+
+FilterField FieldItem::field() const
+{
+    return m_field;
+}
+
+void FieldItem::changeField(const FilterField& field)
+{
+    m_field = field;
+}
 
 FieldModel::FieldModel(FieldRegistry* fieldsRegistry, QObject* parent)
     : TableModel{parent}
@@ -46,40 +66,37 @@ void FieldModel::setupModelData()
 
 void FieldModel::addNewField()
 {
-    auto* parent    = rootItem();
     const int index = static_cast<int>(m_nodes.size());
 
     FilterField field;
     field.index = index;
 
+    auto* parent = rootItem();
+
     auto* item = m_nodes.emplace_back(std::make_unique<FieldItem>(field, parent)).get();
+
+    item->setStatus(FieldItem::Added);
 
     const int row = parent->childCount();
     beginInsertRows({}, row, row);
     parent->appendChild(item);
     endInsertRows();
-
-    m_queue.emplace_back(QueueEntry{Add, index});
 }
 
 void FieldModel::markForRemoval(const FilterField& field)
 {
-    QueueEntry operation;
-    const bool isQueued = findInQueue(field.index, Add, &operation);
-
-    if(isQueued) {
-        removeFromQueue(operation);
-    }
-
     FieldItem* item = m_nodes.at(field.index).get();
 
-    beginRemoveRows({}, item->row(), item->row());
-    rootItem()->removeChild(item->row());
-    endRemoveRows();
+    if(item->status() == FieldItem::Added) {
+        beginRemoveRows({}, item->row(), item->row());
+        rootItem()->removeChild(item->row());
+        endRemoveRows();
 
-    if(!isQueued) {
-        operation = {Remove, field.index};
-        m_queue.emplace_back(operation);
+        removeField(field.index);
+    }
+    else {
+        item->setStatus(FieldItem::Removed);
+        emit dataChanged({}, {}, {Qt::FontRole});
     }
 }
 
@@ -90,59 +107,59 @@ void FieldModel::markForChange(const FilterField& field)
     const QModelIndex index = indexOfItem(item);
     emit dataChanged(index, index, {Qt::DisplayRole});
 
-    m_queue.emplace_back(QueueEntry{Change, field.index});
+    if(item->status() == FieldItem::None) {
+        item->setStatus(FieldItem::Changed);
+    }
 }
 
 void FieldModel::processQueue()
 {
-    while(!m_queue.empty()) {
-        const QueueEntry& entry  = m_queue.front();
-        const OperationType type = entry.type;
-        FieldItem* item          = m_nodes.at(entry.index).get();
-        const FilterField field  = item->field();
+    std::vector<FieldItem*> fieldsToRemove;
 
-        m_queue.pop_front();
+    for(auto& node : m_nodes) {
+        FieldItem* item                    = node.get();
+        const FieldItem::ItemStatus status = item->status();
+        const FilterField field            = item->field();
 
-        if(type == Add) {
-            const FilterField addedField = m_fieldsRegistry->addField(field);
-            if(addedField.isValid()) {
-                item->changeField(addedField);
+        switch(status) {
+            case(FieldItem::Added): {
+                const FilterField addedField = m_fieldsRegistry->addField(field);
+                if(addedField.isValid()) {
+                    item->changeField(addedField);
+                    item->setStatus(FieldItem::None);
+                }
+                else {
+                    qWarning() << QString{"Field %1 could not be added"}.arg(field.name);
+                }
+                break;
             }
-            else {
-                qWarning() << QString{"Field %1 could not be added"}.arg(field.name);
-
-                beginRemoveRows({}, item->row(), item->row());
-                rootItem()->removeChild(item->row());
-                endRemoveRows();
+            case(FieldItem::Removed): {
+                if(m_fieldsRegistry->removeByIndex(field.index)) {
+                    beginRemoveRows({}, item->row(), item->row());
+                    rootItem()->removeChild(item->row());
+                    endRemoveRows();
+                    fieldsToRemove.push_back(item);
+                }
+                else {
+                    qWarning() << QString{"Field (%1) could not be removed"}.arg(field.name);
+                }
+                break;
             }
+            case(FieldItem::Changed): {
+                if(m_fieldsRegistry->changeField(field)) {
+                    item->setStatus(FieldItem::None);
+                }
+                else {
+                    qWarning() << QString{"Field (%1) could not be changed"}.arg(field.name);
+                }
+                break;
+            }
+            case(FieldItem::None):
+                break;
         }
-        else if(type == Remove) {
-            if(m_fieldsRegistry->removeByIndex(field.index)) {
-                m_nodes.erase(std::remove_if(m_nodes.begin(),
-                                             m_nodes.end(),
-                                             [field](const auto& item) {
-                                                 return item->field().index == field.index;
-                                             }),
-                              m_nodes.end());
-            }
-            else {
-                qWarning() << QString{"Field (%1) could not be removed"}.arg(field.name);
-
-                const int row = rootItem()->childCount();
-                beginInsertRows({}, row, row);
-                rootItem()->appendChild(item);
-                endInsertRows();
-            }
-        }
-        else if(type == Change) {
-            if(!m_fieldsRegistry->changeField(field)) {
-                qWarning() << QString{"Field (%1) could not be changed"}.arg(field.name);
-
-                item->changeField(m_fieldsRegistry->fieldByIndex(field.index));
-                const QModelIndex index = indexOfItem(item);
-                emit dataChanged(index, index, {Qt::DisplayRole});
-            }
-        }
+    }
+    for(const auto& item : fieldsToRemove) {
+        removeField(item->field().index);
     }
 }
 
@@ -183,18 +200,35 @@ QVariant FieldModel::headerData(int section, Qt::Orientation orientation, int ro
 
 QVariant FieldModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole && role != Qt::EditRole) {
+    if(role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::FontRole) {
         return {};
     }
 
-    if(!index.isValid()) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
 
-    const int column = index.column();
-    auto* item       = static_cast<FieldItem*>(index.internalPointer());
+    auto* item = static_cast<FieldItem*>(index.internalPointer());
 
-    switch(column) {
+    if(role == Qt::FontRole) {
+        QFont font;
+        switch(item->status()) {
+            case(FieldItem::Added):
+                font.setItalic(true);
+                break;
+            case(FieldItem::Removed):
+                font.setStrikeOut(true);
+                break;
+            case(FieldItem::Changed):
+                font.setBold(true);
+                break;
+            case(FieldItem::None):
+                break;
+        }
+        return font;
+    }
+
+    switch(index.column()) {
         case(0):
             return item->field().index;
         case(1): {
@@ -260,24 +294,11 @@ int FieldModel::columnCount(const QModelIndex& parent) const
     return 4;
 }
 
-bool FieldModel::findInQueue(int index, OperationType type, QueueEntry* field) const
+void FieldModel::removeField(int index)
 {
-    return std::any_of(m_queue.cbegin(), m_queue.cend(), [index, type, field](const QueueEntry& entry) {
-        if(entry.index == index && entry.type == type) {
-            *field = entry;
-            return true;
-        }
-        return false;
-    });
-}
-
-void FieldModel::removeFromQueue(const QueueEntry& fieldToDelete)
-{
-    m_queue.erase(std::remove_if(m_queue.begin(),
-                                 m_queue.end(),
-                                 [fieldToDelete](const QueueEntry& field) {
-                                     return field == fieldToDelete;
-                                 }),
-                  m_queue.end());
+    if(index < 0 || index >= static_cast<int>(m_nodes.size())) {
+        return;
+    }
+    m_nodes.erase(m_nodes.begin() + index);
 }
 } // namespace Fy::Filters::Settings

@@ -19,16 +19,27 @@
 
 #pragma once
 
-#include "pluginitem.h"
-
 #include <utils/tablemodel.h>
+#include <utils/treeitem.h>
 
 namespace Fy {
 namespace Plugins {
+class PluginInfo;
 class PluginManager;
-}
+} // namespace Plugins
 
 namespace Gui::Settings {
+class PluginItem : public Utils::TreeItem<PluginItem>
+{
+public:
+    explicit PluginItem(Plugins::PluginInfo* info = nullptr, PluginItem* parent = nullptr);
+
+    [[nodiscard]] Plugins::PluginInfo* info() const;
+
+private:
+    Plugins::PluginInfo* m_info;
+};
+
 class PluginsModel : public Utils::TableModel<PluginItem>
 {
 public:
@@ -42,7 +53,7 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
 private:
-    using PluginNameMap = std::unordered_map<QString, std::unique_ptr<PluginItem>>;
+    using PluginNameMap = std::unordered_map<QString, PluginItem>;
 
     Plugins::PluginManager* m_pluginManager;
 

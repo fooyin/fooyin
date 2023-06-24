@@ -25,20 +25,14 @@ namespace Fy::Gui::Settings {
 using PlaylistPreset = Widgets::Playlist::PlaylistPreset;
 using PresetRegistry = Widgets::Playlist::PresetRegistry;
 
-PresetItem::PresetItem(PlaylistPreset preset, PresetItem* parent)
-    : TreeItem{parent}
-    , m_preset{std::move(preset)}
+PresetItem::PresetItem()
+    : PresetItem{{}, nullptr}
 { }
 
-PresetItem::ItemStatus PresetItem::status() const
-{
-    return m_status;
-}
-
-void PresetItem::setStatus(ItemStatus status)
-{
-    m_status = status;
-}
+PresetItem::PresetItem(PlaylistPreset preset, PresetItem* parent)
+    : TreeStatusItem{parent}
+    , m_preset{std::move(preset)}
+{ }
 
 Widgets::Playlist::PlaylistPreset PresetItem::preset() const
 {
@@ -77,13 +71,15 @@ void PresetModel::addNewPreset(const PlaylistPreset& preset)
     PlaylistPreset newPreset{preset};
     newPreset.index = index;
 
-    auto* item = m_nodes.emplace_back(std::make_unique<PresetItem>(newPreset, rootItem())).get();
+    auto* parent = rootItem();
+
+    auto* item = m_nodes.emplace_back(std::make_unique<PresetItem>(newPreset, parent)).get();
 
     item->setStatus(PresetItem::Added);
 
-    const int row = rootItem()->childCount();
+    const int row = parent->childCount();
     beginInsertRows({}, row, row);
-    rootItem()->appendChild(item);
+    parent->appendChild(item);
     endInsertRows();
 }
 
@@ -206,7 +202,7 @@ QVariant PresetModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    if(!index.isValid()) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
 

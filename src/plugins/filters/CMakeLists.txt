@@ -15,8 +15,6 @@ set(SOURCES
     filtersplugin.cpp
     filterdelegate.h
     filterdelegate.cpp
-    fielditem.h
-    fielditem.cpp
     fieldmodel.h
     fieldmodel.cpp
     filtersappearancepage.h

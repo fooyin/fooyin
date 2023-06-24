@@ -91,8 +91,6 @@ set(SOURCES
     settings/generalpage.cpp
     settings/guigeneralpage.h
     settings/guigeneralpage.cpp
-    settings/pluginitem.h
-    settings/pluginitem.cpp
     settings/pluginsmodel.h
     settings/pluginsmodel.cpp
     settings/pluginspage.h

@@ -22,35 +22,24 @@
 #include "gui/playlist/playlistpreset.h"
 
 #include <utils/tablemodel.h>
-#include <utils/treeitem.h>
+#include <utils/treestatusitem.h>
 
 namespace Fy::Gui {
 namespace Widgets::Playlist {
 class PresetRegistry;
 }
 namespace Settings {
-class PresetItem : public Utils::TreeItem<PresetItem>
+class PresetItem : public Utils::TreeStatusItem<PresetItem>
 {
 public:
-    enum ItemStatus
-    {
-        None    = 0,
-        Added   = 1,
-        Removed = 2,
-        Changed = 3
-    };
-
-    explicit PresetItem(Widgets::Playlist::PlaylistPreset preset = {}, PresetItem* parent = nullptr);
-
-    [[nodiscard]] ItemStatus status() const;
-    void setStatus(ItemStatus status);
+    PresetItem();
+    explicit PresetItem(Widgets::Playlist::PlaylistPreset preset , PresetItem* parent);
 
     [[nodiscard]] Widgets::Playlist::PlaylistPreset preset() const;
     void changePreset(const Widgets::Playlist::PlaylistPreset& preset);
 
 private:
     Widgets::Playlist::PlaylistPreset m_preset;
-    ItemStatus m_status{None};
 };
 
 class PresetModel : public Utils::TableModel<PresetItem>

@@ -32,19 +32,9 @@ LibraryItem::LibraryItem()
 { }
 
 LibraryItem::LibraryItem(Core::Library::LibraryInfo* info, LibraryItem* parent)
-    : TreeItem{parent}
+    : TreeStatusItem{parent}
     , m_info{info}
 { }
-
-LibraryItem::ItemStatus LibraryItem::status() const
-{
-    return m_status;
-}
-
-void LibraryItem::setStatus(ItemStatus status)
-{
-    m_status = status;
-}
 
 Core::Library::LibraryInfo* LibraryItem::info() const
 {

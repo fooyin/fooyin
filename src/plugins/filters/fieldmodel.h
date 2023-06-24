@@ -19,14 +19,28 @@
 
 #pragma once
 
-#include "fielditem.h"
+#include "filterfwd.h"
 
 #include <utils/tablemodel.h>
+#include <utils/treestatusitem.h>
 
 namespace Fy::Filters {
 class FieldRegistry;
 
 namespace Settings {
+class FieldItem : public Utils::TreeStatusItem<FieldItem>
+{
+public:
+    FieldItem();
+    explicit FieldItem(FilterField field, FieldItem* parent);
+
+    [[nodiscard]] FilterField field() const;
+    void changeField(const FilterField& field);
+
+private:
+    FilterField m_field;
+};
+
 class FieldModel : public Utils::TableModel<FieldItem>
 {
 public:
@@ -45,34 +59,13 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
 private:
-    enum OperationType
-    {
-        Add    = 1,
-        Remove = 2,
-        Change = 3
-    };
+    void removeField(int index);
 
-    struct QueueEntry
-    {
-        OperationType type;
-        int index;
-
-        bool operator==(const QueueEntry& other) const
-        {
-            return std::tie(type, index) == std::tie(other.type, other.index);
-        }
-    };
-
-    [[nodiscard]] bool findInQueue(int index, OperationType op, QueueEntry* field = nullptr) const;
-    void removeFromQueue(const QueueEntry& fieldToDelete);
-
-    using FieldQueueMap = std::deque<QueueEntry>;
     using FieldItemList = std::vector<std::unique_ptr<FieldItem>>;
 
     FieldRegistry* m_fieldsRegistry;
 
     FieldItemList m_nodes;
-    FieldQueueMap m_queue;
 };
 } // namespace Settings
 } // namespace Fy::Filters

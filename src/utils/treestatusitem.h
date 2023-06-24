@@ -17,17 +17,38 @@
  *
  */
 
-#include "pluginitem.h"
+#pragma once
 
-namespace Fy::Gui::Settings {
+#include <utils/treeitem.h>
 
-PluginItem::PluginItem(Plugins::PluginInfo* info, PluginItem* parent)
-    : TreeItem{parent}
-    , m_info{info}
-{ }
-
-Plugins::PluginInfo* PluginItem::info() const
+namespace Fy::Utils {
+template <class Item>
+class TreeStatusItem : public TreeItem<Item>
 {
-    return m_info;
-}
-} // namespace Fy::Gui::Settings
+public:
+    enum ItemStatus
+    {
+        None    = 0,
+        Added   = 1,
+        Removed = 2,
+        Changed = 3
+    };
+
+    explicit TreeStatusItem(Item* parent)
+        : TreeItem<Item>{parent}
+    { }
+
+    [[nodiscard]] ItemStatus status() const
+    {
+        return m_status;
+    };
+
+    void setStatus(ItemStatus status)
+    {
+        m_status = status;
+    };
+
+private:
+    ItemStatus m_status{None};
+};
+} // namespace Fy::Utils
