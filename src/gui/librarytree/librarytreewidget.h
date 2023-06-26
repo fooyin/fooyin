@@ -21,8 +21,6 @@
 
 #include "gui/fywidget.h"
 
-class QTreeView;
-class QVBoxLayout;
 class QItemSelection;
 
 namespace Fy {
@@ -30,18 +28,12 @@ namespace Utils {
 class SettingsManager;
 } // namespace Utils
 
-namespace Core {
-namespace Library {
+namespace Core::Library {
 class MusicLibrary;
-} // namespace Library
-
-namespace Playlist {
-class PlaylistHandler;
-} // namespace Playlist
-} // namespace Core
+} // namespace Core::Library
 
 namespace Gui::Widgets {
-class LibraryTreeModel;
+class LibraryTreeGroupRegistry;
 
 namespace Playlist {
 class PlaylistController;
@@ -50,29 +42,22 @@ class PlaylistController;
 class LibraryTreeWidget : public FyWidget
 {
 public:
-    LibraryTreeWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
+    LibraryTreeWidget(Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
                       Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings,
                       QWidget* parent = nullptr);
 
     QString name() const override;
     QString layoutName() const override;
 
+    void saveLayout(QJsonArray& array) override;
+    void loadLayout(const QJsonObject& object) override;
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void groupingChanged(const QString& script);
-    void reset();
-
-    Core::Library::MusicLibrary* m_library;
-    Core::Playlist::PlaylistHandler* m_playlistHandler;
-    Playlist::PlaylistController* m_playlistController;
-    Utils::SettingsManager* m_settings;
-
-    QVBoxLayout* m_layout;
-    QTreeView* m_libraryTree;
-    LibraryTreeModel* m_model;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Gui::Widgets
 } // namespace Fy

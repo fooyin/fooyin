@@ -88,6 +88,11 @@ PlaylistController::~PlaylistController()
     p->settings->set<Settings::LastPlaylistId>(p->currentPlaylistId);
 }
 
+Core::Playlist::PlaylistHandler* PlaylistController::playlistHandler() const
+{
+    return p->handler;
+}
+
 Core::Playlist::PlaylistList PlaylistController::playlists() const
 {
     return p->handler->playlists();

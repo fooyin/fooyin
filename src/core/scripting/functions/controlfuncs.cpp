@@ -35,6 +35,21 @@ ScriptResult cif(const ValueList& vec)
     return {};
 }
 
+ScriptResult cif2(const ValueList& vec)
+{
+    const auto size = vec.size();
+    if(size < 1 || size > 2) {
+        return {};
+    }
+    if(vec[0].cond) {
+        return vec[0];
+    }
+    if(size > 1) {
+        return vec[1];
+    }
+    return {};
+}
+
 ScriptResult ifequal(const ValueList& vec)
 {
     const auto size = vec.size();
@@ -57,7 +72,7 @@ ScriptResult ifgreater(const ValueList& vec)
         return vec[2];
     }
     if(size == 4) {
-       return vec[3];
+        return vec[3];
     }
     return {};
 }
@@ -73,5 +88,4 @@ ScriptResult iflonger(const ValueList& vec)
     }
     return vec[3];
 }
-
 } // namespace Fy::Core::Scripting

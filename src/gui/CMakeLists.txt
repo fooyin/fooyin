@@ -44,13 +44,8 @@ set(SOURCES
     library/coverwidget.cpp
     library/statuswidget.h
     library/statuswidget.cpp
-    librarytree/librarytreeitem.h
-    librarytree/librarytreeitem.cpp
-    librarytree/librarytreemodel.h
+    librarytree/librarytreegroupregistry.cpp
     librarytree/librarytreemodel.cpp
-    librarytree/librarytreepage.h
-    librarytree/librarytreepage.cpp
-    librarytree/librarytreewidget.h
     librarytree/librarytreewidget.cpp
     menu/aboutdialog.h
     menu/aboutdialog.cpp
@@ -96,6 +91,8 @@ set(SOURCES
     settings/library/librarygeneralpage.cpp
     settings/library/librarymodel.cpp
     settings/library/libraryview.cpp
+    settings/librarytree/librarytreepage.cpp
+    settings/librarytree/librarytreegroupmodel.cpp
     settings/playlist/playlistguipage.cpp
     settings/playlist/presetinput.cpp
     settings/playlist/presetinputbox.cpp

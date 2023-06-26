@@ -19,29 +19,26 @@
 
 #pragma once
 
-#include <core/models/trackfwd.h>
+#include <utils/settings/settingspage.h>
 
-#include <utils/treeitem.h>
+namespace Fy {
 
-namespace Fy::Gui::Widgets {
-class LibraryTreeItem : public Utils::TreeItem<LibraryTreeItem>
+namespace Utils {
+class SettingsManager;
+class SettingsDialogController;
+} // namespace Utils
+
+namespace Gui {
+namespace Widgets {
+class LibraryTreeGroupRegistry;
+}
+
+namespace Settings {
+class LibraryTreePage : public Utils::SettingsPage
 {
 public:
-    explicit LibraryTreeItem(QString title = "", LibraryTreeItem* parent = {});
-
-    [[nodiscard]] bool pending() const;
-    void setPending(bool pending);
-
-    [[nodiscard]] QString title() const;
-    void setTitle(const QString& title);
-
-    [[nodiscard]] Core::TrackList tracks() const;
-    [[nodiscard]] int trackCount() const;
-    void addTrack(const Core::Track& track);
-
-private:
-    bool m_pending;
-    QString m_title;
-    Core::TrackList m_tracks;
+    explicit LibraryTreePage(Widgets::LibraryTreeGroupRegistry* groupsRegistry, Utils::SettingsManager* settings);
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Settings
+} // namespace Gui
+} // namespace Fy

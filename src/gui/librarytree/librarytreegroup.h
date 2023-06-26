@@ -17,51 +17,25 @@
  *
  */
 
-#include "librarytreeitem.h"
+#pragma once
 
-#include <QVariant>
+#include <QString>
 
 namespace Fy::Gui::Widgets {
-
-LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent)
-    : TreeItem{parent}
-    , m_pending{true}
-    , m_title{std::move(title)}
-{ }
-
-bool LibraryTreeItem::pending() const
+struct LibraryTreeGrouping
 {
-    return m_pending;
-}
+    int index{-1};
+    QString name;
+    QString script;
 
-void LibraryTreeItem::setPending(bool pending)
-{
-    m_pending = pending;
-}
+    bool operator==(const LibraryTreeGrouping& other) const
+    {
+        return std::tie(index, name, script) == std::tie(other.index, other.name, other.script);
+    }
 
-QString LibraryTreeItem::title() const
-{
-    return m_title;
-}
-
-void LibraryTreeItem::setTitle(const QString& title)
-{
-    m_title = title;
-}
-
-Core::TrackList LibraryTreeItem::tracks() const
-{
-    return m_tracks;
-}
-
-int LibraryTreeItem::trackCount() const
-{
-    return static_cast<int>(m_tracks.size());
-}
-
-void LibraryTreeItem::addTrack(const Core::Track& track)
-{
-    m_tracks.emplace_back(track);
-}
-
+    [[nodiscard]] bool isValid() const
+    {
+        return !name.isEmpty() && !script.isEmpty();
+    }
+};
 } // namespace Fy::Gui::Widgets

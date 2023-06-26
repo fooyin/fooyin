@@ -48,7 +48,7 @@ enum Gui : uint32_t
     EditingMenuLevels   = 14 | Utils::Settings::Int,
     IconTheme           = 15 | Utils::Settings::String,
     LastPlaylistId      = 16 | Utils::Settings::Int,
-    LibraryTreeGrouping = 17 | Utils::Settings::String,
+    LibraryTreeGrouping = 17 | Utils::Settings::ByteArray,
 };
 Q_ENUM_NS(Gui)
 

@@ -21,9 +21,100 @@
 
 #include <core/constants.h>
 
+#include <QCryptographicHash>
+
 #include <ranges>
 
 namespace Fy::Gui::Widgets {
+QString generateKey(const QString& parentKey, const QString& title)
+{
+    QCryptographicHash hash{QCryptographicHash::Md5};
+    hash.addData(parentKey.toUtf8());
+    hash.addData(title.toUtf8());
+
+    QString headerKey = hash.result().toHex();
+    return headerKey;
+}
+
+LibraryTreeItem::LibraryTreeItem()
+    : LibraryTreeItem{"", nullptr}
+{ }
+
+LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent, Type type)
+    : TreeItem{parent}
+    , m_pending{true}
+    , m_type{type}
+    , m_title{std::move(title)}
+{ }
+
+bool LibraryTreeItem::pending() const
+{
+    return m_pending;
+}
+
+QString LibraryTreeItem::title() const
+{
+    return m_title;
+}
+
+Core::TrackList LibraryTreeItem::tracks() const
+{
+    return m_tracks;
+}
+
+int LibraryTreeItem::trackCount() const
+{
+    return static_cast<int>(m_tracks.size());
+}
+
+QString LibraryTreeItem::key() const
+{
+    return m_key;
+}
+
+void LibraryTreeItem::setPending(bool pending)
+{
+    m_pending = pending;
+}
+
+void LibraryTreeItem::setTitle(const QString& title)
+{
+    m_title = title;
+}
+
+void LibraryTreeItem::setKey(const QString& key)
+{
+    m_key = key;
+}
+
+void LibraryTreeItem::addTrack(const Core::Track& track)
+{
+    m_tracks.emplace_back(track);
+}
+
+void LibraryTreeItem::sortChildren()
+{
+    std::vector<LibraryTreeItem*> sortedChildren{m_children};
+    std::sort(sortedChildren.begin(), sortedChildren.end(), [](const LibraryTreeItem* lhs, const LibraryTreeItem* rhs) {
+        if(lhs->m_type == All) {
+            return true;
+        }
+        if(rhs->m_type == All) {
+            return false;
+        }
+        const auto cmp = QString::localeAwareCompare(lhs->m_title, rhs->m_title);
+        if(cmp == 0) {
+            return false;
+        }
+        return cmp < 0;
+    });
+    m_children = sortedChildren;
+
+    for(auto& child : m_children) {
+        child->sortChildren();
+    }
+}
+
 LibraryTreeModel::LibraryTreeModel(QObject* parent)
     : TreeModel{parent}
     , m_parser{&m_registry}
@@ -72,9 +163,9 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
-void LibraryTreeModel::setGroupScript(const QString& script)
+void LibraryTreeModel::changeGrouping(const LibraryTreeGrouping& grouping)
 {
-    m_groupScipt = script;
+    m_grouping = grouping.script;
 }
 
 void LibraryTreeModel::beginReset()
@@ -97,10 +188,11 @@ void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
         return;
     }
 
-    m_rootNode = std::make_unique<LibraryTreeItem>("", rootItem());
-    rootItem()->appendChild(m_rootNode.get());
+    m_allNode = LibraryTreeItem{"", rootItem(), LibraryTreeItem::All};
 
-    const auto parsedField = m_parser.parse(m_groupScipt);
+    rootItem()->appendChild(&m_allNode);
+
+    const auto parsedField = m_parser.parse(m_grouping);
 
     auto filteredTracks = tracks | std::views::filter([](const Core::Track& track) {
                               return track.enabled();
@@ -112,8 +204,6 @@ void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
             continue;
         }
 
-        LibraryTreeItem* parent = rootItem();
-
         const QStringList values = field.split(Core::Constants::Separator, Qt::SkipEmptyParts);
         for(const QString& value : values) {
             if(value.isNull()) {
@@ -121,26 +211,31 @@ void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
             }
             const QStringList levels = value.split("||");
 
+            LibraryTreeItem* parent = rootItem();
+
             for(const QString& level : levels) {
                 const QString title = level.trimmed();
-                const QString key   = QString{"%1%2"}.arg(parent->title(), title);
-                createNode(key, parent, title)->addTrack(track);
-                parent = m_nodes.at(key).get();
+                const QString key   = generateKey(parent->key(), title);
+                auto* node          = createNode(key, parent, title);
+                node->addTrack(track);
+                parent = node;
             }
         }
-        m_rootNode->addTrack(track);
+        m_allNode.addTrack(track);
     }
-    m_rootNode->setTitle(QString{"All Music (%1)"}.arg(m_rootNode->trackCount()));
+    m_allNode.setTitle(QString{"All Music (%1)"}.arg(m_allNode.trackCount()));
+    rootItem()->sortChildren();
 }
 
 LibraryTreeItem* LibraryTreeModel::createNode(const QString& key, LibraryTreeItem* parent, const QString& title)
 {
     if(!m_nodes.contains(key)) {
-        m_nodes.emplace(key, std::make_unique<LibraryTreeItem>(title, parent));
+        m_nodes.emplace(key, LibraryTreeItem{title, parent});
     }
-    LibraryTreeItem* treeItem = m_nodes.at(key).get();
+    LibraryTreeItem* treeItem = &m_nodes.at(key);
     if(treeItem->pending()) {
         treeItem->setPending(false);
+        treeItem->setKey(key);
         parent->appendChild(treeItem);
     }
     return treeItem;

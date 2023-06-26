@@ -19,17 +19,53 @@
 
 #pragma once
 
-#include "librarytreeitem.h"
+#include "librarytreegroup.h"
 
+#include <core/models/trackfwd.h>
 #include <core/scripting/scriptparser.h>
 
+#include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
 namespace Fy::Gui::Widgets {
 enum LibraryTreeRole
 {
-    Title  = Qt::UserRole + 1,
-    Tracks = Qt::UserRole + 2,
+    Title = Qt::UserRole,
+    Tracks,
+};
+
+class LibraryTreeItem : public Utils::TreeItem<LibraryTreeItem>
+{
+public:
+    enum Type
+    {
+        All,
+        Normal
+    };
+
+    LibraryTreeItem();
+    explicit LibraryTreeItem(QString title, LibraryTreeItem* parent, Type type = Normal);
+
+    [[nodiscard]] bool pending() const;
+    [[nodiscard]] QString title() const;
+    [[nodiscard]] Core::TrackList tracks() const;
+    [[nodiscard]] int trackCount() const;
+    [[nodiscard]] QString key() const;
+
+    void setPending(bool pending);
+    void setTitle(const QString& title);
+    void setKey(const QString& key);
+
+    void addTrack(const Core::Track& track);
+
+    void sortChildren();
+
+private:
+    bool m_pending;
+    Type m_type;
+    QString m_key;
+    QString m_title;
+    Core::TrackList m_tracks;
 };
 
 class LibraryTreeModel : public Utils::TreeModel<LibraryTreeItem>
@@ -42,7 +78,7 @@ public:
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
-    void setGroupScript(const QString& script);
+    void changeGrouping(const LibraryTreeGrouping& grouping);
     void beginReset();
     void reload(const Core::TrackList& tracks);
     void setupModelData(const Core::TrackList& tracks);
@@ -52,8 +88,8 @@ private:
 
     Core::Scripting::Registry m_registry;
     Core::Scripting::Parser m_parser;
-    QString m_groupScipt;
-    std::unique_ptr<LibraryTreeItem> m_rootNode;
-    std::unordered_map<QString, std::unique_ptr<LibraryTreeItem>> m_nodes;
+    QString m_grouping;
+    LibraryTreeItem m_allNode;
+    std::unordered_map<QString, LibraryTreeItem> m_nodes;
 };
 } // namespace Fy::Gui::Widgets

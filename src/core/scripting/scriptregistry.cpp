@@ -119,6 +119,7 @@ void Registry::addDefaultFunctions()
     m_funcs.emplace("timems", msToString);
 
     m_funcs.emplace("if", cif);
+    m_funcs.emplace("if2", cif2);
     m_funcs.emplace("ifgreater", ifgreater);
     m_funcs.emplace("iflonger", iflonger);
     m_funcs.emplace("ifequal", ifequal);

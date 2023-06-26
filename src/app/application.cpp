@@ -44,7 +44,7 @@
 #include <gui/layoutprovider.h>
 #include <gui/library/coverwidget.h>
 #include <gui/library/statuswidget.h>
-#include <gui/librarytree/librarytreepage.h>
+#include <gui/librarytree/librarytreegroupregistry.h>
 #include <gui/librarytree/librarytreewidget.h>
 #include <gui/mainwindow.h>
 #include <gui/menu/editmenu.h>
@@ -60,6 +60,7 @@
 #include <gui/settings/generalpage.h>
 #include <gui/settings/guigeneralpage.h>
 #include <gui/settings/library/librarygeneralpage.h>
+#include <gui/settings/librarytree/librarytreepage.h>
 #include <gui/settings/playlist/playlistguipage.h>
 #include <gui/settings/playlist/playlistpresetspage.h>
 #include <gui/settings/plugins/pluginspage.h>
@@ -91,6 +92,7 @@ struct Application::Private
     Gui::TrackSelectionManager selectionManager;
     std::unique_ptr<Gui::Widgets::Playlist::PlaylistController> playlistController;
     Gui::Widgets::Playlist::PresetRegistry presetRegistry;
+    Gui::Widgets::LibraryTreeGroupRegistry treeGroupRegistry;
     std::unique_ptr<Gui::Widgets::EditableLayout> editableLayout;
     std::unique_ptr<Gui::MainWindow> mainWindow;
 
@@ -128,6 +130,7 @@ struct Application::Private
         , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(playlistHandler,
                                                                                           settingsManager)}
         , presetRegistry{settingsManager}
+        , treeGroupRegistry{settingsManager}
         , editableLayout{std::make_unique<Gui::Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,
                                                                         &layoutProvider)}
         , mainWindow{std::make_unique<Gui::MainWindow>(actionManager, settingsManager, editableLayout.get())}
@@ -142,7 +145,7 @@ struct Application::Private
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , playlistGuiPage{settingsManager}
         , playlistPresetsPage{&presetRegistry, settingsManager}
-        , libraryTreePage{settingsManager}
+        , libraryTreePage{&treeGroupRegistry, settingsManager}
         , pluginManager{new Plugins::PluginManager(parent)}
         , pluginPage{settingsManager, pluginManager}
         , corePluginContext{actionManager, playerManager, library, playlistHandler, settingsManager, &database}
@@ -183,7 +186,7 @@ struct Application::Private
         widgetFactory.registerClass<Gui::Widgets::LibraryTreeWidget>(
             "LibraryTree",
             [this]() {
-                return new Gui::Widgets::LibraryTreeWidget(library, playlistHandler, playlistController.get(),
+                return new Gui::Widgets::LibraryTreeWidget(library, &treeGroupRegistry, playlistController.get(),
                                                            settingsManager);
             },
             "Library Tree");
@@ -246,6 +249,7 @@ void Application::startup()
     p->library->loadLibrary();
     p->layoutProvider.findLayouts();
     p->presetRegistry.loadPresets();
+    p->treeGroupRegistry.loadGroupings();
 
     QIcon::setThemeName(p->settingsManager->value<Gui::Settings::IconTheme>());
 
@@ -265,6 +269,7 @@ void Application::shutdown()
     p->playlistHandler->savePlaylists();
     p->editableLayout->saveLayout();
     p->presetRegistry.savePresets();
+    p->treeGroupRegistry.saveGroupings();
     p->playlistController.reset(nullptr);
     p->editableLayout.reset(nullptr);
     p->mainWindow.reset(nullptr);

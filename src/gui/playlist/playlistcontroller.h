@@ -48,6 +48,8 @@ public:
                        QObject* parent = nullptr);
     ~PlaylistController() override;
 
+    Core::Playlist::PlaylistHandler* playlistHandler() const;
+
     Core::Playlist::PlaylistList playlists() const;
 
     void startPlayback(const Core::Track& track) const;
