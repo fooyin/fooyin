@@ -199,8 +199,16 @@ struct LibraryTreeWidget::Private
 
     void sendToPlaylist(const Core::TrackList& tracks, bool current)
     {
-        auto playlist = playlistHandler->createPlaylist(
-            current ? playlistController->currentPlaylist()->name() : AutoPlaylist, tracks);
+        std::optional<Core::Playlist::Playlist> playlist;
+
+        if(current) {
+            if(auto currentPlaylist = playlistController->currentPlaylist()) {
+                playlist = playlistHandler->createPlaylist(currentPlaylist->name(), tracks);
+            }
+        }
+        else {
+            playlist = playlistHandler->createPlaylist(AutoPlaylist, tracks);
+        }
 
         if(playlist && autoplay) {
             playlistHandler->startPlayback(playlist->name());
