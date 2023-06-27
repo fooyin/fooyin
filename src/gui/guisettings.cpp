@@ -47,6 +47,10 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::IconTheme, "light", "Theme");
     m_settings->createSetting(Settings::LastPlaylistId, 0, "Playlist");
     m_settings->createSetting(Settings::LibraryTreeGrouping, "", "LibraryTree");
+    m_settings->createSetting(Settings::LibraryTreeDoubleClick, 1, "LibraryTree");
+    m_settings->createSetting(Settings::LibraryTreeMiddleClick, 0, "LibraryTree");
+    m_settings->createSetting(Settings::LibraryTreeAutoplay, true, "LibraryTree");
+    m_settings->createSetting(Settings::LibraryTreeAutoSend, true, "LibraryTree");
 
     m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(activeLayoutPath()));
 

@@ -216,6 +216,14 @@ struct PlaylistHandler::Private : QObject
         return it != playlists.cend();
     }
 
+    [[nodiscard]] bool validName(QString name) const
+    {
+        auto it = std::ranges::find_if(std::as_const(playlists), [name](const auto& playlist) {
+            return playlist.name() == name;
+        });
+        return it != playlists.cend();
+    }
+
     [[nodiscard]] bool validIndex(int index) const
     {
         return (index >= 0 && index < static_cast<int>(playlists.size()));
@@ -470,6 +478,20 @@ void PlaylistHandler::startPlayback(int playlistId, const Core::Track& track)
     }
     if(auto playlist = playlistById(playlistId)) {
         changeActivePlaylist(playlistId);
+        playlist->changeCurrentTrack(track);
+        p->updatePlaylist(*playlist);
+        p->playerManager->changeCurrentTrack(playlist->currentTrack());
+        p->playerManager->play();
+    }
+}
+
+void PlaylistHandler::startPlayback(QString playlistName, const Track& track)
+{
+    if(!p->validName(playlistName)) {
+        return;
+    }
+    if(auto playlist = playlistByName(playlistName)) {
+        changeActivePlaylist(playlist->id());
         playlist->changeCurrentTrack(track);
         p->updatePlaylist(*playlist);
         p->playerManager->changeCurrentTrack(playlist->currentTrack());

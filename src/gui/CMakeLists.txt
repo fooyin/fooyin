@@ -46,6 +46,7 @@ set(SOURCES
     library/statuswidget.cpp
     librarytree/librarytreegroupregistry.cpp
     librarytree/librarytreemodel.cpp
+    librarytree/librarytreeview.cpp
     librarytree/librarytreewidget.cpp
     menu/aboutdialog.h
     menu/aboutdialog.cpp

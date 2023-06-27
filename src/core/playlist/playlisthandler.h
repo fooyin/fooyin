@@ -76,6 +76,7 @@ public:
     void savePlaylists();
 
     void startPlayback(int playlistId, const Core::Track& track = {});
+    void startPlayback(QString playlistName, const Core::Track& track = {});
 
 signals:
     void playlistsPopulated();

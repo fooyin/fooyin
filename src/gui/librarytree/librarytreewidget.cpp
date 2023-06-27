@@ -19,9 +19,11 @@
 
 #include "librarytreewidget.h"
 
+#include "gui/guisettings.h"
 #include "gui/playlist/playlistcontroller.h"
 #include "librarytreegroupregistry.h"
 #include "librarytreemodel.h"
+#include "librarytreeview.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
@@ -51,8 +53,16 @@ struct LibraryTreeWidget::Private
     LibraryTreeGrouping grouping;
 
     QVBoxLayout* layout;
-    QTreeView* libraryTree;
+    LibraryTreeView* libraryTree;
     LibraryTreeModel* model;
+
+    Core::TrackList selectedTracks;
+
+    ClickAction doubleClickAction;
+    ClickAction middleClickAction;
+
+    bool autoplay;
+    bool autoSend;
 
     Private(LibraryTreeWidget* widget, Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
             Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings)
@@ -63,14 +73,19 @@ struct LibraryTreeWidget::Private
         , playlistHandler{playlistController->playlistHandler()}
         , settings{settings}
         , layout{new QVBoxLayout(widget)}
-        , libraryTree{new QTreeView(widget)}
+        , libraryTree{new LibraryTreeView(widget)}
         , model{new LibraryTreeModel(widget)}
+        , doubleClickAction{static_cast<ClickAction>(settings->value<Settings::LibraryTreeDoubleClick>())}
+        , middleClickAction{static_cast<ClickAction>(settings->value<Settings::LibraryTreeMiddleClick>())}
+        , autoplay{settings->value<Settings::LibraryTreeAutoplay>()}
+        , autoSend{settings->value<Settings::LibraryTreeAutoSend>()}
     {
         layout->setContentsMargins(0, 0, 0, 0);
 
         libraryTree->setUniformRowHeights(true);
         libraryTree->setModel(model);
         libraryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+        libraryTree->setExpandsOnDoubleClick(doubleClickAction == Expand);
         layout->addWidget(libraryTree);
 
         libraryTree->header()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -78,6 +93,13 @@ struct LibraryTreeWidget::Private
         libraryTree->setTextElideMode(Qt::ElideRight);
 
         changeGrouping(groupsRegistry->groupingByName(""));
+
+        QObject::connect(libraryTree, &LibraryTreeView::doubleClicked, widget, [this]() {
+            handleDoubleClick();
+        });
+        QObject::connect(libraryTree, &LibraryTreeView::middleMouseClicked, widget, [this]() {
+            handleMiddleClicked();
+        });
 
         QObject::connect(libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, widget, [this]() {
             selectionChanged();
@@ -106,6 +128,20 @@ struct LibraryTreeWidget::Private
         QObject::connect(library, &Core::Library::MusicLibrary::tracksAdded, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::libraryRemoved, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::libraryChanged, treeReset);
+
+        settings->subscribe<Settings::LibraryTreeDoubleClick>(widget, [this](int action) {
+            doubleClickAction = static_cast<ClickAction>(action);
+            libraryTree->setExpandsOnDoubleClick(doubleClickAction == Expand);
+        });
+        settings->subscribe<Settings::LibraryTreeMiddleClick>(widget, [this](int action) {
+            middleClickAction = static_cast<ClickAction>(action);
+        });
+        settings->subscribe<Settings::LibraryTreeAutoplay>(widget, [this](bool checked) {
+            autoplay = checked;
+        });
+        settings->subscribe<Settings::LibraryTreeAutoSend>(widget, [this](bool checked) {
+            autoSend = checked;
+        });
 
         reset();
     }
@@ -151,12 +187,61 @@ struct LibraryTreeWidget::Private
             return;
         }
 
-        Core::TrackList tracks;
+        selectedTracks.clear();
         for(const auto& index : selectedIndexes) {
             const auto indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
-            tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
+            selectedTracks.insert(selectedTracks.end(), indexTracks.cbegin(), indexTracks.cend());
         }
-        playlistHandler->createPlaylist(AutoPlaylist, tracks);
+        if(autoSend) {
+            sendToPlaylist(selectedTracks, false);
+        }
+    }
+
+    void sendToPlaylist(const Core::TrackList& tracks, bool current)
+    {
+        auto playlist = playlistHandler->createPlaylist(
+            current ? playlistController->currentPlaylist()->name() : AutoPlaylist, tracks);
+
+        if(playlist && autoplay) {
+            playlistHandler->startPlayback(playlist->name());
+        }
+    }
+
+    void addToPlaylist(const Core::TrackList& tracks)
+    {
+        if(auto playlist = playlistController->currentPlaylist()) {
+            playlistHandler->appendToPlaylist(playlist->id(), tracks);
+        }
+    }
+
+    void handleDoubleClick()
+    {
+        switch(doubleClickAction) {
+            case(SendCurrentPlaylist):
+                return sendToPlaylist(selectedTracks, true);
+            case(SendNewPlaylist):
+                return sendToPlaylist(selectedTracks, false);
+            case(AddCurrentPlaylist):
+                return addToPlaylist(selectedTracks);
+            case(Expand):
+            case(None):
+                break;
+        }
+    }
+
+    void handleMiddleClicked()
+    {
+        switch(middleClickAction) {
+            case(SendCurrentPlaylist):
+                return sendToPlaylist(selectedTracks, true);
+            case(SendNewPlaylist):
+                return sendToPlaylist(selectedTracks, false);
+            case(AddCurrentPlaylist):
+                return addToPlaylist(selectedTracks);
+            case(Expand):
+            case(None):
+                break;
+        }
     }
 };
 

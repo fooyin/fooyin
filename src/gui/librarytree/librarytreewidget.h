@@ -42,6 +42,15 @@ class PlaylistController;
 class LibraryTreeWidget : public FyWidget
 {
 public:
+    enum ClickAction : int
+    {
+        None = 0,
+        Expand,
+        AddCurrentPlaylist,
+        SendCurrentPlaylist,
+        SendNewPlaylist,
+    };
+
     LibraryTreeWidget(Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
                       Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings,
                       QWidget* parent = nullptr);
