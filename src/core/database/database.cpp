@@ -131,8 +131,7 @@ bool Database::createDatabase()
     checkInsertTable("PlaylistTracks", "CREATE TABLE PlaylistTracks ("
                                        "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
                                        "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
-                                       "    TrackIndex INTEGER NOT NULL,"
-                                       "    PRIMARY KEY (PlaylistID, TrackID));");
+                                       "    TrackIndex INTEGER NOT NULL);");
 
     checkInsertIndex("PlaylistIndex", "CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);");
     checkInsertIndex("PlaylistTracksIndex",

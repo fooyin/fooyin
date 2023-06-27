@@ -308,7 +308,7 @@ struct PlaylistPopulator::Private : QObject
         }
         Track playlistTrack{trackLeft.text, trackRight.text, track};
 
-        const QString key = generateHeaderKey(parent->key(), track.hash(), "");
+        const QString key = generateHeaderKey(parent->key(), track.hash(), QString::number(data.items.size()));
 
         auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent);
         if(parent->type() != PlaylistItem::Header) {

@@ -9,7 +9,7 @@ project(
   HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
   LANGUAGES CXX)
 
-set(DATABASE_VERSION "0.6.2")
+set(DATABASE_VERSION "0.6.3")
 
 include(cmake/CheckLevel.cmake)
 
