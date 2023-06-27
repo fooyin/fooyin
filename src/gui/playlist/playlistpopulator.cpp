@@ -31,12 +31,16 @@
 namespace Fy::Gui::Widgets::Playlist {
 constexpr int InitialBatchSize = 1000;
 
-QString generateHeaderKey(const QString& titleText, const QString& subtitleText, const QString& sideText)
+QString generateHeaderKey(const QString& titleText, const QString& subtitleText, const QString& sideText,
+                          const QString& index = {})
 {
     QCryptographicHash hash{QCryptographicHash::Md5};
     hash.addData(titleText.toUtf8());
     hash.addData(subtitleText.toUtf8());
     hash.addData(sideText.toUtf8());
+    if(!index.isEmpty()) {
+        hash.addData(index.toUtf8());
+    }
 
     QString headerKey = hash.result().toHex();
     return headerKey;
@@ -50,6 +54,8 @@ struct PlaylistPopulator::Private : QObject
     std::unique_ptr<PlaylistScriptRegistry> registry;
     Core::Scripting::Parser parser;
 
+    QString prevHeaderKey;
+    int headerIndex{0};
     std::vector<Container> subheaders;
 
     PlaylistItem root;
@@ -111,12 +117,9 @@ struct PlaylistPopulator::Private : QObject
             return;
         }
 
-        row.title.clear();
-        row.subtitle.clear();
-        row.sideText.clear();
-
         auto evaluateBlocks = [this, track](const TextBlockList& presetBlocks, TextBlockList& headerBlocks) -> QString {
             QString key;
+            headerBlocks.clear();
             for(const TextBlock& block : presetBlocks) {
                 TextBlock headerBlock{block};
                 headerBlock.text = parser.evaluate(headerBlock.script, track);
@@ -132,7 +135,12 @@ struct PlaylistPopulator::Private : QObject
         const QString subtitleKey = evaluateBlocks(currentPreset.header.subtitle, row.subtitle);
         const QString sideKey     = evaluateBlocks(currentPreset.header.sideText, row.sideText);
 
-        const QString key = generateHeaderKey(titleKey, subtitleKey, sideKey);
+        QString key = generateHeaderKey(titleKey, subtitleKey, sideKey, QString::number(headerIndex));
+        if(!prevHeaderKey.isEmpty() && prevHeaderKey != key) {
+            ++headerIndex;
+            key = generateHeaderKey(titleKey, subtitleKey, sideKey, QString::number(headerIndex));
+        }
+        prevHeaderKey = key;
 
         if(!data.headers.contains(key)) {
             Container header;
