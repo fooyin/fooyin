@@ -60,7 +60,6 @@ public:
     void addMenu(ActionContainer* menu, const Id& group = {});
     void addMenu(ActionContainer* beforeContainer, ActionContainer* menu);
     QAction* addSeparator(const Id& group = {});
-    QAction* addSeparator(const Id& group = {}, QAction** outSeparator = nullptr);
 
     [[nodiscard]] virtual QAction* containerAction() const = 0;
     virtual QAction* actionForItem(QObject* item) const;

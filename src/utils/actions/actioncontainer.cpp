@@ -149,11 +149,6 @@ void ActionContainer::addMenu(ActionContainer* beforeContainer, ActionContainer*
 
 QAction* ActionContainer::addSeparator(const Id& group)
 {
-    return addSeparator(group, {});
-}
-
-QAction* ActionContainer::addSeparator(const Id& group, QAction** outSeparator)
-{
     static int separatorIdCount = 0;
 
     auto* separator = new QAction(this);
@@ -161,9 +156,7 @@ QAction* ActionContainer::addSeparator(const Id& group, QAction** outSeparator)
     const Id sepId = id().append(".Separator.").append(++separatorIdCount);
     emit registerSeperator(separator, sepId);
     addAction(separator, group);
-    if(outSeparator) {
-        *outSeparator = separator;
-    }
+
     return separator;
 }
 
