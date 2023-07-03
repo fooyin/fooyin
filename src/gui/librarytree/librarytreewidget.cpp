@@ -20,7 +20,7 @@
 #include "librarytreewidget.h"
 
 #include "gui/guisettings.h"
-#include "gui/playlist/playlistcontroller.h"
+#include "gui/trackselectioncontroller.h"
 #include "librarytreegroupregistry.h"
 #include "librarytreemodel.h"
 #include "librarytreeview.h"
@@ -38,16 +38,13 @@
 #include <QVBoxLayout>
 
 namespace Fy::Gui::Widgets {
-constexpr auto AutoPlaylist = "Library Selection";
-
 struct LibraryTreeWidget::Private
 {
     LibraryTreeWidget* widget;
 
     Core::Library::MusicLibrary* library;
     LibraryTreeGroupRegistry* groupsRegistry;
-    Playlist::PlaylistController* playlistController;
-    Core::Playlist::PlaylistHandler* playlistHandler;
+    TrackSelectionController* trackSelection;
     Utils::SettingsManager* settings;
 
     LibraryTreeGrouping grouping;
@@ -56,36 +53,28 @@ struct LibraryTreeWidget::Private
     LibraryTreeView* libraryTree;
     LibraryTreeModel* model;
 
-    Core::TrackList selectedTracks;
-
-    ClickAction doubleClickAction;
-    ClickAction middleClickAction;
-
-    bool autoplay;
-    bool autoSend;
+    TrackAction doubleClickAction;
+    TrackAction middleClickAction;
 
     Private(LibraryTreeWidget* widget, Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
-            Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings)
+            TrackSelectionController* trackSelection, Utils::SettingsManager* settings)
         : widget{widget}
         , library{library}
         , groupsRegistry{groupsRegistry}
-        , playlistController{playlistController}
-        , playlistHandler{playlistController->playlistHandler()}
+        , trackSelection{trackSelection}
         , settings{settings}
         , layout{new QVBoxLayout(widget)}
         , libraryTree{new LibraryTreeView(widget)}
         , model{new LibraryTreeModel(widget)}
-        , doubleClickAction{static_cast<ClickAction>(settings->value<Settings::LibraryTreeDoubleClick>())}
-        , middleClickAction{static_cast<ClickAction>(settings->value<Settings::LibraryTreeMiddleClick>())}
-        , autoplay{settings->value<Settings::LibraryTreeAutoplay>()}
-        , autoSend{settings->value<Settings::LibraryTreeAutoSend>()}
+        , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::LibraryTreeDoubleClick>())}
+        , middleClickAction{static_cast<TrackAction>(settings->value<Settings::LibraryTreeMiddleClick>())}
     {
         layout->setContentsMargins(0, 0, 0, 0);
 
         libraryTree->setUniformRowHeights(true);
         libraryTree->setModel(model);
         libraryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
-        libraryTree->setExpandsOnDoubleClick(doubleClickAction == Expand);
+        libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
         layout->addWidget(libraryTree);
 
         libraryTree->header()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -130,17 +119,11 @@ struct LibraryTreeWidget::Private
         QObject::connect(library, &Core::Library::MusicLibrary::libraryChanged, treeReset);
 
         settings->subscribe<Settings::LibraryTreeDoubleClick>(widget, [this](int action) {
-            doubleClickAction = static_cast<ClickAction>(action);
-            libraryTree->setExpandsOnDoubleClick(doubleClickAction == Expand);
+            doubleClickAction = static_cast<TrackAction>(action);
+            libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
         });
         settings->subscribe<Settings::LibraryTreeMiddleClick>(widget, [this](int action) {
-            middleClickAction = static_cast<ClickAction>(action);
-        });
-        settings->subscribe<Settings::LibraryTreeAutoplay>(widget, [this](bool checked) {
-            autoplay = checked;
-        });
-        settings->subscribe<Settings::LibraryTreeAutoSend>(widget, [this](bool checked) {
-            autoSend = checked;
+            middleClickAction = static_cast<TrackAction>(action);
         });
 
         reset();
@@ -187,77 +170,52 @@ struct LibraryTreeWidget::Private
             return;
         }
 
-        selectedTracks.clear();
+        Core::TrackList tracks;
         for(const auto& index : selectedIndexes) {
             const auto indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
-            selectedTracks.insert(selectedTracks.end(), indexTracks.cbegin(), indexTracks.cend());
+            tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
         }
-        if(autoSend) {
-            sendToPlaylist(selectedTracks, false);
+        trackSelection->changeSelectedTracks(tracks, playlistNameFromSelection());
+
+        if(settings->value<Settings::LibraryTreePlaylistEnabled>()) {
+            const QString playlistName = settings->value<Settings::LibraryTreeAutoPlaylist>();
+            const bool autoSwitch      = settings->value<Settings::LibraryTreeAutoSwitch>();
+
+            trackSelection->executeAction(TrackAction::SendNewPlaylist, autoSwitch ? Switch : None, playlistName);
         }
     }
 
-    void sendToPlaylist(const Core::TrackList& tracks, bool current)
+    QString playlistNameFromSelection()
     {
-        std::optional<Core::Playlist::Playlist> playlist;
-
-        if(current) {
-            if(auto currentPlaylist = playlistController->currentPlaylist()) {
-                playlist = playlistHandler->createPlaylist(currentPlaylist->name(), tracks);
+        QString title;
+        const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
+        for(const auto& index : selectedIndexes) {
+            if(!title.isEmpty()) {
+                title.append(", ");
             }
+            title.append(index.data().toString());
         }
-        else {
-            playlist = playlistHandler->createPlaylist(AutoPlaylist, tracks);
-        }
-
-        if(playlist && autoplay) {
-            playlistHandler->startPlayback(playlist->name());
-        }
-    }
-
-    void addToPlaylist(const Core::TrackList& tracks)
-    {
-        if(auto playlist = playlistController->currentPlaylist()) {
-            playlistHandler->appendToPlaylist(playlist->id(), tracks);
-        }
+        return title;
     }
 
     void handleDoubleClick()
     {
-        switch(doubleClickAction) {
-            case(SendCurrentPlaylist):
-                return sendToPlaylist(selectedTracks, true);
-            case(SendNewPlaylist):
-                return sendToPlaylist(selectedTracks, false);
-            case(AddCurrentPlaylist):
-                return addToPlaylist(selectedTracks);
-            case(Expand):
-            case(None):
-                break;
-        }
+        const bool autoSwitch = settings->value<Settings::LibraryTreeAutoSwitch>();
+        trackSelection->executeAction(doubleClickAction, autoSwitch ? Switch : None, playlistNameFromSelection());
     }
 
     void handleMiddleClicked()
     {
-        switch(middleClickAction) {
-            case(SendCurrentPlaylist):
-                return sendToPlaylist(selectedTracks, true);
-            case(SendNewPlaylist):
-                return sendToPlaylist(selectedTracks, false);
-            case(AddCurrentPlaylist):
-                return addToPlaylist(selectedTracks);
-            case(Expand):
-            case(None):
-                break;
-        }
+        const bool autoSwitch = settings->value<Settings::LibraryTreeAutoSwitch>();
+        trackSelection->executeAction(middleClickAction, autoSwitch ? Switch : None, playlistNameFromSelection());
     }
 };
 
 LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
-                                     Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings,
+                                     TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
                                      QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, library, groupsRegistry, playlistController, settings)}
+    , p{std::make_unique<Private>(this, library, groupsRegistry, trackSelection, settings)}
 {
     setObjectName(LibraryTreeWidget::name());
 }
@@ -295,32 +253,8 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const QModelIndexList selected = p->libraryTree->selectionModel()->selection().indexes();
-    if(selected.empty()) {
-        return;
-    }
+    p->trackSelection->addTrackContextMenu(menu, true);
 
-    QStringList playlistName;
-    Core::TrackList tracks;
-    for(const auto& index : selected) {
-        playlistName.emplace_back(index.data().toString());
-        const auto indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
-        tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
-    }
-
-    auto* createPlaylist = new QAction("Send to playlist", menu);
-    QObject::connect(createPlaylist, &QAction::triggered, this, [this, playlistName, tracks]() {
-        p->playlistHandler->createPlaylist(playlistName.join(", "), tracks);
-    });
-    menu->addAction(createPlaylist);
-
-    auto* addToPlaylist = new QAction("Add to current playlist", menu);
-    QObject::connect(addToPlaylist, &QAction::triggered, this, [this, tracks]() {
-        p->playlistHandler->appendToPlaylist(p->playlistController->currentPlaylist()->id(), tracks);
-    });
-    menu->addAction(addToPlaylist);
-
-    menu->addSeparator();
     p->addGroupMenu(menu);
 
     menu->popup(mapToGlobal(event->pos()));

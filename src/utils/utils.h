@@ -25,6 +25,7 @@
 class QString;
 class QLabel;
 class QWidget;
+class QMenu;
 
 namespace Fy::Utils {
 namespace File {
@@ -34,6 +35,7 @@ bool isSubdir(const QString& dir, const QString& parentDir);
 bool exists(const QString& filename);
 QString getParentDirectory(const QString& filename);
 bool createDirectories(const QString& path);
+void openDirectory(const QString& dir);
 } // namespace File
 
 int randomNumber(int min, int max);
@@ -49,4 +51,5 @@ QString capitalise(const QString& s);
 QPixmap scaleImage(QPixmap& image, int size);
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
 void showMessageBox(const QString& text, const QString& infoText);
+void cloneMenu(QMenu* originalMenu, QMenu* clonedMenu);
 } // namespace Fy::Utils

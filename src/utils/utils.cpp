@@ -19,15 +19,19 @@
 
 #include "utils.h"
 
+#include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPixmap>
 #include <QRandomGenerator>
 #include <QStringBuilder>
 #include <QVBoxLayout>
 #include <QWidget>
+
+#include <ranges>
 
 namespace Fy::Utils {
 namespace File {
@@ -97,6 +101,12 @@ QString getParentDirectory(const QString& filename)
 bool createDirectories(const QString& path)
 {
     return QDir().mkpath(path);
+}
+
+void openDirectory(const QString& dir)
+{
+    const QUrl url = QUrl::fromLocalFile(QDir::toNativeSeparators(dir));
+    QDesktopServices::openUrl(url);
 }
 } // namespace File
 
@@ -238,4 +248,35 @@ void showMessageBox(const QString& text, const QString& infoText)
     message.exec();
 }
 
+void cloneMenu(QMenu* originalMenu, QMenu* clonedMenu)
+{
+    auto originalActions = originalMenu->actions();
+    auto filteredActions = originalActions | std::views::filter([](QAction* action) {
+                               return action->isVisible();
+                           });
+
+    auto cloneAction = [](QAction* originalAction, QMenu* menu) -> QAction* {
+        if(QMenu* originalSubMenu = originalAction->menu()) {
+            QMenu* clonedSubMenu = menu->addMenu(originalSubMenu->title());
+            cloneMenu(originalSubMenu, clonedSubMenu);
+            return clonedSubMenu->menuAction();
+        }
+        else if(originalAction->isSeparator()) {
+            return menu->addSeparator();
+        }
+        else {
+            QAction* clonedAction = new QAction(originalAction->icon(), originalAction->text(), menu);
+            clonedAction->setShortcut(originalAction->shortcut());
+            clonedAction->setToolTip(originalAction->toolTip());
+            clonedAction->setEnabled(originalAction->isEnabled());
+            QObject::connect(clonedAction, &QAction::triggered, originalAction, &QAction::trigger);
+            return clonedAction;
+        }
+    };
+
+    for(QAction* originalAction : filteredActions) {
+        QAction* clonedAction = cloneAction(originalAction, clonedMenu);
+        clonedMenu->addAction(clonedAction);
+    }
+}
 } // namespace Fy::Utils

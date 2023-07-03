@@ -32,7 +32,10 @@ namespace Core::Library {
 class MusicLibrary;
 } // namespace Core::Library
 
-namespace Gui::Widgets {
+namespace Gui {
+class TrackSelectionController;
+
+namespace Widgets {
 class LibraryTreeGroupRegistry;
 
 namespace Playlist {
@@ -42,17 +45,8 @@ class PlaylistController;
 class LibraryTreeWidget : public FyWidget
 {
 public:
-    enum ClickAction : int
-    {
-        None = 0,
-        Expand,
-        AddCurrentPlaylist,
-        SendCurrentPlaylist,
-        SendNewPlaylist,
-    };
-
     LibraryTreeWidget(Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
-                      Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings,
+                      TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
                       QWidget* parent = nullptr);
 
     QString name() const override;
@@ -68,5 +62,6 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
+} // namespace Widgets
+} // namespace Gui
 } // namespace Fy

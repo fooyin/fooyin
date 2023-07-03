@@ -22,22 +22,22 @@
 #include "gui/guiconstants.h"
 #include "gui/guisettings.h"
 #include "gui/librarytree/librarytreegroupregistry.h"
-#include "gui/librarytree/librarytreewidget.h"
 #include "gui/settings/librarytree/librarytreegroupmodel.h"
+#include "gui/trackselectioncontroller.h"
 
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QHeaderView>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QTableView>
 
 namespace Fy::Gui::Settings {
-using ClickAction = Widgets::LibraryTreeWidget::ClickAction;
-
 enum ClickType
 {
     Middle,
@@ -61,11 +61,13 @@ private:
     QTableView* m_groupList;
     LibraryTreeGroupModel* m_model;
 
-    QComboBox* m_middleClickBehaviour;
-    QComboBox* m_doubleClickBehaviour;
+    QComboBox* m_middleClick;
+    QComboBox* m_doubleClick;
 
-    QCheckBox* m_autoplay;
-    QCheckBox* m_autoSend;
+    QCheckBox* m_playlistEnabled;
+    QLineEdit* m_playlistName;
+
+    QCheckBox* m_autoSwitch;
 };
 
 LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* groupsRegistry,
@@ -74,10 +76,11 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     , m_settings{settings}
     , m_groupList{new QTableView(this)}
     , m_model{new LibraryTreeGroupModel(m_groupsRegistry, this)}
-    , m_middleClickBehaviour{new QComboBox(this)}
-    , m_doubleClickBehaviour{new QComboBox(this)}
-    , m_autoplay{new QCheckBox("Start playback when sending to playlist", this)}
-    , m_autoSend{new QCheckBox("Auto-send selection to playlist", this)}
+    , m_middleClick{new QComboBox(this)}
+    , m_doubleClick{new QComboBox(this)}
+    , m_playlistEnabled{new QCheckBox("Enabled", this)}
+    , m_playlistName{new QLineEdit(this)}
+    , m_autoSwitch{new QCheckBox("Switch when changed", this)}
 {
     m_groupList->setModel(m_model);
 
@@ -98,64 +101,100 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     buttonsLayout->addWidget(removeButton);
     buttonsLayout->addStretch();
 
-    auto* doubleClickLabel = new QLabel("Double-click behaviour", this);
-    auto* middleClickLabel = new QLabel("Middle-click behaviour", this);
+    auto* clickBehaviour       = new QGroupBox("Click Behaviour", this);
+    auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
+
+    auto* doubleClickLabel = new QLabel("Double-click: ", this);
+    auto* middleClickLabel = new QLabel("Middle-click: ", this);
+
+    auto* selectionPlaylist       = new QGroupBox("Library Selection Playlist", this);
+    auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
+
+    auto* playlistNameLabel = new QLabel("Name: ", this);
+
+    clickBehaviourLayout->addWidget(doubleClickLabel, 0, 0);
+    clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
+    clickBehaviourLayout->addWidget(middleClickLabel, 1, 0);
+    clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
+    selectionPlaylistLayout->setColumnStretch(2, 1);
+
+    selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(playlistNameLabel, 2, 0, 1, 1);
+    selectionPlaylistLayout->addWidget(m_playlistName, 2, 1, 1, 2);
+    selectionPlaylistLayout->setColumnStretch(2, 1);
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_groupList, 0, 0, 1, 3);
     mainLayout->addLayout(buttonsLayout, 0, 3);
-    mainLayout->addWidget(doubleClickLabel, 2, 0);
-    mainLayout->addWidget(m_doubleClickBehaviour, 2, 1);
-    mainLayout->addWidget(middleClickLabel, 3, 0);
-    mainLayout->addWidget(m_middleClickBehaviour, 3, 1);
-    mainLayout->addWidget(m_autoplay, 4, 0);
-    mainLayout->addWidget(m_autoSend, 5, 0);
+    mainLayout->addWidget(clickBehaviour, 1, 0);
+    mainLayout->addWidget(selectionPlaylist, 1, 1);
 
-    m_doubleClickBehaviour->addItem("Expand/Collapse", ClickAction::Expand);
-    m_doubleClickBehaviour->addItem("Add to current playlist", ClickAction::AddCurrentPlaylist);
-    m_doubleClickBehaviour->addItem("Send to current playlist", ClickAction::SendCurrentPlaylist);
-    m_doubleClickBehaviour->addItem("Send to new playlist", ClickAction::SendNewPlaylist);
+    auto addTrackAction = [](QComboBox* box, const QString& text, TrackAction action) {
+        box->addItem(text, QVariant::fromValue(action));
+    };
 
-    m_middleClickBehaviour->addItem("None", ClickAction::None);
-    m_middleClickBehaviour->addItem("Add to current playlist", ClickAction::AddCurrentPlaylist);
-    m_middleClickBehaviour->addItem("Send to current playlist", ClickAction::SendCurrentPlaylist);
-    m_middleClickBehaviour->addItem("Send to new playlist", ClickAction::SendNewPlaylist);
+    addTrackAction(m_doubleClick, "Expand/Collapse", TrackAction::Expand);
+    addTrackAction(m_doubleClick, "Add to current playlist", TrackAction::AddCurrentPlaylist);
+    addTrackAction(m_doubleClick, "Add to active playlist", TrackAction::AddActivePlaylist);
+    addTrackAction(m_doubleClick, "Send to current playlist", TrackAction::SendCurrentPlaylist);
+    addTrackAction(m_doubleClick, "Send to new playlist", TrackAction::SendNewPlaylist);
 
-    mainLayout->setColumnStretch(2, 1);
+    addTrackAction(m_middleClick, "None", TrackAction::None);
+    addTrackAction(m_middleClick, "Add to current playlist", TrackAction::AddCurrentPlaylist);
+    addTrackAction(m_middleClick, "Add to active playlist", TrackAction::AddActivePlaylist);
+    addTrackAction(m_middleClick, "Send to current playlist", TrackAction::SendCurrentPlaylist);
+    addTrackAction(m_middleClick, "Send to new playlist", TrackAction::SendNewPlaylist);
 
     QObject::connect(addButton, &QPushButton::clicked, this, &LibraryTreePageWidget::addGroup);
     QObject::connect(removeButton, &QPushButton::clicked, this, &LibraryTreePageWidget::removeGroup);
 
-    auto clickIndex = [](ClickType type, int action) -> int {
+    auto clickIndex = [](ClickType type, TrackAction action) -> int {
         switch(action) {
-            case(ClickAction::None):
+            case(TrackAction::None):
                 return type == Middle ? 0 : -1;
-            case ClickAction::Expand:
+            case TrackAction::Expand:
                 return type == Double ? 0 : -1;
-            case ClickAction::AddCurrentPlaylist:
+            case TrackAction::AddCurrentPlaylist:
                 return 1;
-            case ClickAction::SendCurrentPlaylist:
+            case TrackAction::AddActivePlaylist:
                 return 2;
-            case ClickAction::SendNewPlaylist:
+            case TrackAction::SendCurrentPlaylist:
                 return 3;
+            case TrackAction::SendNewPlaylist:
+                return 4;
             default:
                 return -1;
         }
     };
 
-    m_doubleClickBehaviour->setCurrentIndex(clickIndex(Double, m_settings->value<Settings::LibraryTreeDoubleClick>()));
-    m_middleClickBehaviour->setCurrentIndex(clickIndex(Middle, m_settings->value<Settings::LibraryTreeMiddleClick>()));
-    m_autoplay->setChecked(m_settings->value<Settings::LibraryTreeAutoplay>());
-    m_autoSend->setChecked(m_settings->value<Settings::LibraryTreeAutoSend>());
+    auto doubleAction = static_cast<TrackAction>(m_settings->value<Settings::LibraryTreeDoubleClick>());
+    m_doubleClick->setCurrentIndex(clickIndex(Double, doubleAction));
+
+    auto middleAction = static_cast<TrackAction>(m_settings->value<Settings::LibraryTreeMiddleClick>());
+    m_middleClick->setCurrentIndex(clickIndex(Middle, middleAction));
+
+    QObject::connect(m_playlistEnabled, &QCheckBox::clicked, this, [this](bool checked) {
+        m_playlistName->setEnabled(checked);
+        m_autoSwitch->setEnabled(checked);
+    });
+
+    m_playlistEnabled->setChecked(m_settings->value<Settings::LibraryTreePlaylistEnabled>());
+    m_autoSwitch->setChecked(m_settings->value<Settings::LibraryTreeAutoSwitch>());
+    m_playlistName->setEnabled(m_playlistEnabled->isChecked());
+    m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
+
+    m_playlistName->setText(m_settings->value<Settings::LibraryTreeAutoPlaylist>());
 }
 
 void LibraryTreePageWidget::apply()
 {
     m_model->processQueue();
-    m_settings->set<Settings::LibraryTreeDoubleClick>(m_doubleClickBehaviour->currentData().toInt());
-    m_settings->set<Settings::LibraryTreeMiddleClick>(m_middleClickBehaviour->currentData().toInt());
-    m_settings->set<Settings::LibraryTreeAutoplay>(m_autoplay->isChecked());
-    m_settings->set<Settings::LibraryTreeAutoSend>(m_autoSend->isChecked());
+    m_settings->set<Settings::LibraryTreeDoubleClick>(m_doubleClick->currentData().toInt());
+    m_settings->set<Settings::LibraryTreeMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Settings::LibraryTreePlaylistEnabled>(m_playlistEnabled->isChecked());
+    m_settings->set<Settings::LibraryTreeAutoSwitch>(m_autoSwitch->isChecked());
+    m_settings->set<Settings::LibraryTreeAutoPlaylist>(m_playlistName->text());
 }
 
 void LibraryTreePageWidget::addGroup() const

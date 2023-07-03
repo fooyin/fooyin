@@ -32,7 +32,6 @@ class SettingsManager;
 namespace Core {
 namespace DB {
 class Database;
-class Playlist;
 } // namespace DB
 
 namespace Player {
@@ -59,9 +58,9 @@ public:
     [[nodiscard]] std::optional<Playlist> playlistByName(const QString& name) const;
     [[nodiscard]] PlaylistList playlists() const;
 
-    std::optional<Playlist> createPlaylist(const QString& name, const TrackList& tracks = {});
+    std::optional<Playlist> createPlaylist(const QString& name, const TrackList& tracks = {}, bool switchTo = false);
     void appendToPlaylist(int id, const TrackList& tracks);
-    void createEmptyPlaylist();
+    void createEmptyPlaylist(bool switchTo = false);
 
     // Replaces tracks and current track index in playlist with those from other
     void exchangePlaylist(Playlist& playlist, const Playlist& other);
@@ -80,8 +79,8 @@ public:
 
 signals:
     void playlistsPopulated();
-    void playlistAdded(const Core::Playlist::Playlist& playlist);
-    void playlistTracksChanged(const Core::Playlist::Playlist& playlist);
+    void playlistAdded(const Core::Playlist::Playlist& playlist, bool switchTo = false);
+    void playlistTracksChanged(const Core::Playlist::Playlist& playlist, bool switchTo = false);
     void playlistRemoved(int id);
     void playlistRenamed(const Core::Playlist::Playlist& playlist);
     void activePlaylistChanged(const Core::Playlist::Playlist& playlist = {});

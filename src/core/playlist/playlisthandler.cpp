@@ -216,7 +216,7 @@ struct PlaylistHandler::Private : QObject
         return it != playlists.cend();
     }
 
-    [[nodiscard]] bool validName(QString name) const
+    [[nodiscard]] bool validName(const QString& name) const
     {
         auto it = std::ranges::find_if(std::as_const(playlists), [name](const auto& playlist) {
             return playlist.name() == name;
@@ -358,7 +358,7 @@ PlaylistList PlaylistHandler::playlists() const
     return p->playlists;
 }
 
-std::optional<Playlist> PlaylistHandler::createPlaylist(const QString& name, const TrackList& tracks)
+std::optional<Playlist> PlaylistHandler::createPlaylist(const QString& name, const TrackList& tracks, bool switchTo)
 {
     const bool isNew = p->indexFromName(name) < 0;
     auto playlist    = p->addNewPlaylist(name);
@@ -366,10 +366,10 @@ std::optional<Playlist> PlaylistHandler::createPlaylist(const QString& name, con
         playlist->replaceTracks(tracks);
         p->updatePlaylist(*playlist);
         if(isNew) {
-            emit playlistAdded(*playlist);
+            emit playlistAdded(*playlist, switchTo);
         }
         else {
-            emit playlistTracksChanged(*playlist);
+            emit playlistTracksChanged(*playlist, switchTo);
         }
     }
     return playlist;
@@ -384,10 +384,10 @@ void PlaylistHandler::appendToPlaylist(int id, const TrackList& tracks)
     }
 }
 
-void PlaylistHandler::createEmptyPlaylist()
+void PlaylistHandler::createEmptyPlaylist(bool switchTo)
 {
     const QString name = p->findUniqueName("Playlist");
-    createPlaylist(name, {});
+    createPlaylist(name, {}, switchTo);
 }
 
 void PlaylistHandler::exchangePlaylist(Playlist& playlist, const Playlist& other)

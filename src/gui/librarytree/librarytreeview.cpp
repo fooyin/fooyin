@@ -28,10 +28,10 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
 
 void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 {
+    QTreeView::mousePressEvent(event);
     if(event->button() == Qt::MiddleButton) {
         emit middleMouseClicked();
     }
-    QTreeView::mousePressEvent(event);
 }
 
 void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)

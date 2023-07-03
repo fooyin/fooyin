@@ -41,7 +41,7 @@ class PlayerManager;
 } // namespace Core
 
 namespace Gui {
-class TrackSelectionManager;
+class TrackSelectionController;
 
 namespace Widgets::Info {
 class InfoModel;
@@ -49,7 +49,7 @@ class InfoModel;
 class InfoWidget : public FyWidget
 {
 public:
-    explicit InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionManager* selectionManager,
+    explicit InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* selectionController,
                         Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     bool isHeaderHidden();

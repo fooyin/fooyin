@@ -20,7 +20,7 @@
 #include "infowidget.h"
 
 #include "gui/guisettings.h"
-#include "gui/trackselectionmanager.h"
+#include "gui/trackselectioncontroller.h"
 #include "infodelegate.h"
 #include "infomodel.h"
 
@@ -36,7 +36,7 @@
 #include <QTreeView>
 
 namespace Fy::Gui::Widgets::Info {
-InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionManager* selectionManager,
+InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* selectionController,
                        Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerManager{playerManager}
@@ -52,7 +52,7 @@ InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectio
     setScrollbarHidden(m_settings->value<Settings::InfoScrollBar>());
     setAltRowColors(m_settings->value<Settings::InfoAltColours>());
 
-    QObject::connect(selectionManager, &TrackSelectionManager::selectionChanged, m_model, &InfoModel::resetModel);
+    QObject::connect(selectionController, &TrackSelectionController::selectionChanged, m_model, &InfoModel::resetModel);
 
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
         spanHeaders();
@@ -63,7 +63,7 @@ InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectio
     m_settings->subscribe<Settings::InfoHeader>(this, &InfoWidget::setHeaderHidden);
     m_settings->subscribe<Settings::InfoScrollBar>(this, &InfoWidget::setScrollbarHidden);
 
-    m_model->resetModel(selectionManager->selectedTracks());
+    m_model->resetModel(selectionController->selectedTracks());
 }
 
 void InfoWidget::setupUi()

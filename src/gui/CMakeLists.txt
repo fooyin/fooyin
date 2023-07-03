@@ -22,7 +22,7 @@ set(SOURCES
     guisettings.cpp
     layoutprovider.h
     layoutprovider.cpp
-    trackselectionmanager.cpp
+    trackselectioncontroller.cpp
     widgetfactory.h
     widgetprovider.h
     widgetprovider.cpp

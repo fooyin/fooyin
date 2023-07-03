@@ -68,10 +68,11 @@ constexpr auto SwitchLibrary = "Fooyin.Menu.Library.Switch";
 constexpr auto Help          = "Fooyin.Menu.Help";
 
 namespace Context {
-constexpr auto Layout        = "Fooyin.Menu.Layout";
-constexpr auto AddWidget     = "Fooyin.Menu.Widget.Add";
-constexpr auto Playlist      = "Fooyin.Menu.Playlist";
-constexpr auto PlaylistAddTo = "Fooyin.Menu.Playlist.AddTo";
+constexpr auto Layout         = "Fooyin.Menu.Layout";
+constexpr auto AddWidget      = "Fooyin.Menu.Widget.Add";
+constexpr auto TrackSelection = "Fooyin.Menu.Tracks";
+constexpr auto Playlist       = "Fooyin.Menu.Playlist";
+constexpr auto PlaylistAddTo  = "Fooyin.Menu.Playlist.AddTo";
 } // namespace Context
 } // namespace Menus
 

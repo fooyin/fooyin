@@ -78,19 +78,20 @@ void PlaylistTabs::setupTabs()
 {
     const auto& playlists = m_playlistHandler->playlists();
     for(const auto& playlist : playlists) {
-        addPlaylist(playlist);
+        addPlaylist(playlist, false);
     }
     // Workaround for issue where QTabBar is scrolled to the right when initialised, hiding tabs before current.
     m_tabs->adjustSize();
 }
 
-int PlaylistTabs::addPlaylist(const Core::Playlist::Playlist& playlist)
+int PlaylistTabs::addPlaylist(const Core::Playlist::Playlist& playlist, bool switchTo)
 {
     const int index = addNewTab(playlist.name());
     if(index >= 0) {
         m_tabs->setTabData(index, playlist.id());
-        m_tabs->setCurrentIndex(index);
-        show();
+        if(switchTo) {
+            m_tabs->setCurrentIndex(index);
+        }
     }
     return index;
 }
@@ -118,8 +119,9 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     auto* createPlaylist = new QAction("Add New Playlist", menu);
-    QObject::connect(createPlaylist, &QAction::triggered, m_playlistHandler,
-                     &Core::Playlist::PlaylistHandler::createEmptyPlaylist);
+    QObject::connect(createPlaylist, &QAction::triggered, this, [this]() {
+        m_playlistHandler->createEmptyPlaylist(true);
+    });
     menu->addAction(createPlaylist);
 
     const QPoint point = event->pos();

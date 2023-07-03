@@ -43,7 +43,7 @@ struct PlaylistController::Private : QObject
         connect(handler, &Core::Playlist::PlaylistHandler::playlistsPopulated, this,
                 &PlaylistController::Private::restoreLastPlaylist);
         connect(handler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
-                &PlaylistController::Private::handlePlaylistAdded);
+                &PlaylistController::Private::handlePlaylistUpdated);
         QObject::connect(handler, &Core::Playlist::PlaylistHandler::playlistAdded, this,
                          &PlaylistController::Private::handlePlaylistAdded);
         QObject::connect(handler, &Core::Playlist::PlaylistHandler::playlistRemoved, this,
@@ -64,9 +64,18 @@ struct PlaylistController::Private : QObject
         }
     }
 
-    void handlePlaylistAdded(const Core::Playlist::Playlist& playlist)
+    void handlePlaylistAdded(const Core::Playlist::Playlist& playlist, bool switchTo)
     {
-        controller->changeCurrentPlaylist(playlist);
+        if(switchTo) {
+            controller->changeCurrentPlaylist(playlist);
+        }
+    }
+
+    void handlePlaylistUpdated(const Core::Playlist::Playlist& playlist, bool switchTo)
+    {
+        if(currentPlaylistId == playlist.id() || switchTo) {
+            controller->changeCurrentPlaylist(playlist);
+        }
     }
 
     void handlePlaylistRemoved(int id)

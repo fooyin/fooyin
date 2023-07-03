@@ -64,7 +64,7 @@
 #include <gui/settings/playlist/playlistguipage.h>
 #include <gui/settings/playlist/playlistpresetspage.h>
 #include <gui/settings/plugins/pluginspage.h>
-#include <gui/trackselectionmanager.h>
+#include <gui/trackselectioncontroller.h>
 #include <gui/widgetfactory.h>
 #include <gui/widgets/spacer.h>
 #include <gui/widgets/splitterwidget.h>
@@ -89,8 +89,8 @@ struct Application::Private
     Gui::Widgets::WidgetFactory widgetFactory;
     Gui::Settings::GuiSettings guiSettings;
     Gui::LayoutProvider layoutProvider;
-    Gui::TrackSelectionManager selectionManager;
     std::unique_ptr<Gui::Widgets::Playlist::PlaylistController> playlistController;
+    Gui::TrackSelectionController selectionController;
     Gui::Widgets::Playlist::PresetRegistry presetRegistry;
     Gui::Widgets::LibraryTreeGroupRegistry treeGroupRegistry;
     std::unique_ptr<Gui::Widgets::EditableLayout> editableLayout;
@@ -129,6 +129,7 @@ struct Application::Private
         , guiSettings{settingsManager}
         , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(playlistHandler,
                                                                                           settingsManager)}
+        , selectionController{actionManager, playlistController.get()}
         , presetRegistry{settingsManager}
         , treeGroupRegistry{settingsManager}
         , editableLayout{std::make_unique<Gui::Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,
@@ -186,7 +187,7 @@ struct Application::Private
         widgetFactory.registerClass<Gui::Widgets::LibraryTreeWidget>(
             "LibraryTree",
             [this]() {
-                return new Gui::Widgets::LibraryTreeWidget(library, &treeGroupRegistry, playlistController.get(),
+                return new Gui::Widgets::LibraryTreeWidget(library, &treeGroupRegistry, &selectionController,
                                                            settingsManager);
             },
             "Library Tree");
@@ -196,7 +197,7 @@ struct Application::Private
         });
 
         widgetFactory.registerClass<Gui::Widgets::Info::InfoWidget>("Info", [this]() {
-            return new Gui::Widgets::Info::InfoWidget(playerManager, &selectionManager, settingsManager);
+            return new Gui::Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager);
         });
 
         widgetFactory.registerClass<Gui::Widgets::CoverWidget>("Artwork", [this]() {
@@ -206,8 +207,10 @@ struct Application::Private
         widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
             auto* playlist = new Gui::Widgets::Playlist::PlaylistWidget(
                 library, playerManager, playlistController.get(), &presetRegistry, settingsManager);
-            QObject::connect(playlist, &Gui::Widgets::Playlist::PlaylistWidget::selectionWasChanged, &selectionManager,
-                             &Gui::TrackSelectionManager::changeSelectedTracks);
+            QObject::connect(playlist, &Gui::Widgets::Playlist::PlaylistWidget::selectionWasChanged, &selectionController,
+                             [this](const Core::TrackList& tracks) {
+                                 selectionController.changeSelectedTracks(tracks);
+                             });
             return playlist;
         });
 
