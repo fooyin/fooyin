@@ -73,22 +73,10 @@ int Playlist::insertPlaylist(const QString& name, int index)
         return -1;
     }
 
-    const QString query = "INSERT INTO Playlists "
-                          "(Name, PlaylistIndex) "
-                          "VALUES "
-                          "(:playlistName, :playlistIndex);";
+    auto q = module()->insert("Playlists", {{"Name", name}, {"PlaylistIndex", QString::number(index)}},
+                              QString{"Cannot insert playlist (name: %1, index: %2)"}.arg(name).arg(index));
 
-    Query q{this};
-
-    q.prepareQuery(query);
-    q.bindQueryValue(":playlistName", name);
-    q.bindQueryValue(":playlistIndex", index);
-
-    if(!q.execQuery()) {
-        q.error(QString("Cannot insert playlist (name: %1, index: %2)").arg(name).arg(index));
-        return -1;
-    }
-    return q.lastInsertId().toInt();
+    return (q.hasError()) ? -1 : q.lastInsertId().toInt();
 }
 
 bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
@@ -102,14 +90,10 @@ bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
         return false;
     }
 
-    // Remove old tracks first
-    Query delTracks{this};
-    const QString delPlaylistQuery = "DELETE FROM PlaylistTracks WHERE PlaylistID=:playlistId;";
-    delTracks.prepareQuery(delPlaylistQuery);
-    delTracks.bindQueryValue(":playlistId", id);
+    auto delTracksQuery = module()->remove("PlaylistTracks", {{"PlaylistID", QString::number(id)}},
+                                           QString{"Cannot remove old playlist %1 tracks"}.arg(id));
 
-    if(!delTracks.execQuery()) {
-        delTracks.error(QString{"Cannot remove old playlist %1 tracks"}.arg(id));
+    if(delTracksQuery.hasError()) {
         return false;
     }
 
@@ -131,26 +115,9 @@ bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
 
 bool Playlist::removePlaylist(int id)
 {
-    //    Query delTracks(this);
-    //    auto delTracksQuery = QStringLiteral("DELETE FROM PlaylistTracks WHERE PlaylistID=:playlistId;");
-    //    delTracks.prepareQuery(delTracksQuery);
-    //    delTracks.bindQueryValue(":playlistId", id);
-
-    //    if(!delTracks.execQuery()) {
-    //        delTracks.error(QString{"Cannot delete playlist (%1) tracks"}.arg(id));
-    //        return false;
-    //    }
-
-    Query delPlaylist{this};
-    const QString delPlaylistQuery = "DELETE FROM Playlists WHERE PlaylistID=:playlistId;";
-    delPlaylist.prepareQuery(delPlaylistQuery);
-    delPlaylist.bindQueryValue(":playlistId", id);
-
-    if(!delPlaylist.execQuery()) {
-        delPlaylist.error(QString{"Cannot remove playlist %1"}.arg(id));
-        return false;
-    }
-    return true;
+    auto q = module()->remove("Playlists", {{"PlaylistID", QString::number(id)}},
+                              QString{"Cannot remove playlist %1"}.arg(id));
+    return !q.hasError();
 }
 
 bool Playlist::renamePlaylist(int id, const QString& name)
@@ -159,20 +126,9 @@ bool Playlist::renamePlaylist(int id, const QString& name)
         return false;
     }
 
-    const QString query = "UPDATE Playlists "
-                          "SET Name = :playlistName "
-                          "WHERE PlaylistID=:playlistId;";
-
-    Query q{this};
-    q.prepareQuery(query);
-    q.bindQueryValue(":playlistId", id);
-    q.bindQueryValue(":playlistName", name);
-
-    if(!q.execQuery()) {
-        q.error(QString{"Cannot update playlist (name: %1)"}.arg(name));
-        return false;
-    }
-    return true;
+    auto q = module()->update("Playlists", {{"Name", name}}, {"PlaylistID", QString::number(id)},
+                              QString{"Cannot update playlist %1"}.arg(id));
+    return !q.hasError();
 }
 
 bool Playlist::insertPlaylistTrack(int playlistId, const Track& track, int index)
@@ -181,21 +137,13 @@ bool Playlist::insertPlaylistTrack(int playlistId, const Track& track, int index
         return false;
     }
 
-    const QString query = "INSERT INTO PlaylistTracks "
-                          "(PlaylistID, TrackID, TrackIndex) "
-                          "VALUES "
-                          "(:playlistId, :trackId, :trackIndex);";
+    auto q = module()->insert(
+        "PlaylistTracks",
+        {{"PlaylistID", QString::number(playlistId)},
+         {"TrackID", QString::number(track.id())},
+         {"TrackIndex", QString::number(index)}},
+        QString{"Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)"}.arg(playlistId).arg(track.id()));
 
-    Query q{this};
-    q.prepareQuery(query);
-    q.bindQueryValue(":playlistId", playlistId);
-    q.bindQueryValue(":trackId", track.id());
-    q.bindQueryValue(":trackIndex", index);
-
-    if(!q.execQuery()) {
-        q.error(QString("Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)").arg(playlistId, track.id()));
-        return false;
-    }
-    return true;
+    return !q.hasError();
 }
 } // namespace Fy::Core::DB
