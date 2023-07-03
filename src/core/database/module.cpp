@@ -194,7 +194,7 @@ Query Module::remove(const QString& tableName, const std::vector<std::pair<QStri
     DB::Query q(this);
     q.prepareQuery(query);
 
-    if(!q.execQuery() || q.numRowsAffected() == 0) {
+    if(!q.execQuery()) {
         q.setError(true);
         q.error(errorMessage);
     }
