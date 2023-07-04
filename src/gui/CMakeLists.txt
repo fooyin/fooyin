@@ -36,6 +36,7 @@ set(SOURCES
     controls/progresswidget.cpp
     controls/volumecontrol.h
     controls/volumecontrol.cpp
+    dialog/propertiesdialog.cpp
     info/infodelegate.cpp
     info/infomodel.cpp
     info/infowidget.h

@@ -22,7 +22,6 @@
 #include "gui/guiconstants.h"
 #include "gui/playlist/playlistcontroller.h"
 
-#include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
 
 #include <utils/actions/actioncontainer.h>
@@ -58,9 +57,9 @@ struct TrackSelectionController::Private
     std::vector<QAction*> trackPlaylistActions;
     QAction* openFolder;
 
-    Private(TrackSelectionController* manager, Utils::ActionManager* actionManager,
+    Private(TrackSelectionController* controller, Utils::ActionManager* actionManager,
             Widgets::Playlist::PlaylistController* playlistController)
-        : controller{manager}
+        : controller{controller}
         , actionManager{actionManager}
         , playlistController{playlistController}
         , playlistHandler{playlistController->playlistHandler()}
@@ -108,6 +107,14 @@ struct TrackSelectionController::Private
         contextMenu->addAction(openFolder);
 
         contextMenu->addSeparator();
+
+        auto* openProperties = new QAction("Properties", contextMenu);
+        QObject::connect(openProperties, &QAction::triggered, controller, [controller]() {
+            emit controller->requestPropertiesDialog();
+        });
+        contextMenu->addAction(openProperties);
+
+        contextMenu->addSeparator();
     }
 
     void sendToPlaylist(PlaylistType type, ActionOptions options = {}, const QString& playlistName = {})
@@ -124,9 +131,9 @@ struct TrackSelectionController::Private
 
     void addToPlaylist(PlaylistType type)
     {
-        auto append = [this](auto playlist) {
-            if(playlist) {
-                playlistHandler->appendToPlaylist(playlist->id(), tracks);
+        auto append = [this](auto playlistToAppend) {
+            if(playlistToAppend) {
+                playlistHandler->appendToPlaylist(playlistToAppend->id(), tracks);
             }
         };
 

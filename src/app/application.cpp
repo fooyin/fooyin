@@ -35,6 +35,7 @@
 #include <core/plugins/pluginmanager.h>
 
 #include <gui/controls/controlwidget.h>
+#include <gui/dialog/propertiesdialog.h>
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guiplugin.h>
@@ -103,6 +104,8 @@ struct Application::Private
     Gui::LibraryMenu* libraryMenu;
     Gui::HelpMenu* helpMenu;
 
+    Gui::PropertiesDialog* propertiesDialog;
+
     Gui::Settings::GeneralPage generalPage;
     Gui::Settings::LibraryGeneralPage libraryGeneralPage;
     Gui::Settings::GuiGeneralPage guiGeneralPage;
@@ -141,6 +144,7 @@ struct Application::Private
         , playbackMenu{new Gui::PlaybackMenu(actionManager, playerManager, parent)}
         , libraryMenu{new Gui::LibraryMenu(actionManager, library, settingsManager, parent)}
         , helpMenu{new Gui::HelpMenu(actionManager, parent)}
+        , propertiesDialog{new Gui::PropertiesDialog(parent)}
         , generalPage{settingsManager}
         , libraryGeneralPage{libraryManager, settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
@@ -154,6 +158,7 @@ struct Application::Private
     {
         registerLayouts();
         registerWidgets();
+        createPropertiesTabs();
         loadPlugins();
     }
 
@@ -207,8 +212,8 @@ struct Application::Private
         widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
             auto* playlist = new Gui::Widgets::Playlist::PlaylistWidget(
                 library, playerManager, playlistController.get(), &presetRegistry, settingsManager);
-            QObject::connect(playlist, &Gui::Widgets::Playlist::PlaylistWidget::selectionWasChanged, &selectionController,
-                             [this](const Core::TrackList& tracks) {
+            QObject::connect(playlist, &Gui::Widgets::Playlist::PlaylistWidget::selectionWasChanged,
+                             &selectionController, [this](const Core::TrackList& tracks) {
                                  selectionController.changeSelectedTracks(tracks);
                              });
             return playlist;
@@ -220,6 +225,13 @@ struct Application::Private
 
         widgetFactory.registerClass<Gui::Widgets::StatusWidget>("Status", [this]() {
             return new Gui::Widgets::StatusWidget(library, playerManager);
+        });
+    }
+
+    void createPropertiesTabs()
+    {
+        propertiesDialog->addTab("Details", [this]() {
+            return new Gui::Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager);
         });
     }
 
@@ -240,6 +252,9 @@ Application::Application(int& argc, char** argv, int flags)
 {
     // Required to ensure plugins are unloaded before main event loop quits
     QObject::connect(this, &QCoreApplication::aboutToQuit, this, &Application::shutdown);
+
+    QObject::connect(&p->selectionController, &Gui::TrackSelectionController::requestPropertiesDialog,
+                     p->propertiesDialog, &Gui::PropertiesDialog::show);
 
     startup();
 }

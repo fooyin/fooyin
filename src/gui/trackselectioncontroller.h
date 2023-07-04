@@ -59,10 +59,10 @@ class TrackSelectionController : public QObject
 
 public:
     TrackSelectionController(Utils::ActionManager* actionManager,
-                          Widgets::Playlist::PlaylistController* playlistController);
-    ~TrackSelectionController();
+                             Widgets::Playlist::PlaylistController* playlistController);
+    ~TrackSelectionController() override;
 
-    const Core::TrackList& selectedTracks() const;
+    [[nodiscard]] const Core::TrackList& selectedTracks() const;
     void changeSelectedTracks(const Core::TrackList& tracks, const QString& title = {});
 
     void addTrackContextMenu(QMenu* menu, bool playlistActions = false) const;
@@ -70,6 +70,7 @@ public:
 
 signals:
     void selectionChanged(const Core::TrackList& tracks);
+    void requestPropertiesDialog();
 
 private:
     struct Private;
