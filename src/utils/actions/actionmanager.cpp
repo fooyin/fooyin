@@ -37,41 +37,30 @@ void ActionManager::setMainWindow(QMainWindow* mainWindow)
 
 ActionContainer* ActionManager::createMenu(const Id& id)
 {
-    for(const auto& [mapId, container] : m_idContainerMap) {
-        if(mapId == id) {
-            return container;
-        }
+    if(m_idContainerMap.contains(id)) {
+        return m_idContainerMap.at(id);
     }
 
-    auto* mActionContainer = new MenuActionContainer(id, this);
-    connect(mActionContainer, &ActionContainer::registerSeperator, this, &ActionManager::registerAction);
-    connect(mActionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
+    auto* container = new MenuActionContainer(id, this);
+    registerContainer(id, container);
 
-    mActionContainer->appendGroup(Groups::Default);
-    m_idContainerMap.emplace(id, mActionContainer);
-
-    return mActionContainer;
+    return container;
 }
 
 ActionContainer* ActionManager::createMenuBar(const Id& id)
 {
-    for(const auto& [mapId, container] : m_idContainerMap) {
-        if(mapId == id) {
-            return container;
-        }
+    if(m_idContainerMap.contains(id)) {
+        return m_idContainerMap.at(id);
     }
 
     auto* menuBar = new QMenuBar(m_mainWindow);
     menuBar->setObjectName(id.name());
 
-    auto* mbActionContainer = new MenuBarActionContainer(id, this);
-    connect(mbActionContainer, &ActionContainer::registerSeperator, this, &ActionManager::registerAction);
-    connect(mbActionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
+    auto* container = new MenuBarActionContainer(id, this);
+    container->setMenuBar(menuBar);
+    registerContainer(id, container);
 
-    mbActionContainer->setMenuBar(menuBar);
-    m_idContainerMap.emplace(id, mbActionContainer);
-
-    return mbActionContainer;
+    return container;
 }
 
 void ActionManager::registerAction(QAction* newAction, const Id& id)
@@ -85,22 +74,27 @@ void ActionManager::registerAction(QAction* newAction, const Id& id)
 
 QAction* ActionManager::action(const Id& id)
 {
-    for(const auto& [mapId, mapAction] : m_idCmdMap) {
-        if(mapId == id) {
-            return mapAction;
-        }
+    if(m_idCmdMap.contains(id)) {
+        return m_idCmdMap.at(id);
     }
     return nullptr;
 }
 
 ActionContainer* ActionManager::actionContainer(const Id& id)
 {
-    for(const auto& [mapId, container] : m_idContainerMap) {
-        if(mapId == id) {
-            return container;
-        }
+    if(m_idContainerMap.contains(id)) {
+        return m_idContainerMap.at(id);
     }
     return nullptr;
+}
+
+void ActionManager::registerContainer(const Id& id, ActionContainer* actionContainer)
+{
+    connect(actionContainer, &ActionContainer::registerSeparator, this, &ActionManager::registerAction);
+    connect(actionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
+
+    actionContainer->appendGroup(Groups::Default);
+    m_idContainerMap.emplace(id, actionContainer);
 }
 
 void ActionManager::containerDestroyed(QObject* sender)

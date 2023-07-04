@@ -23,9 +23,9 @@
 
 #include <QObject>
 
+class QAction;
 class QMenu;
 class QMenuBar;
-class QAction;
 
 namespace Fy::Utils {
 namespace Groups {
@@ -45,6 +45,7 @@ public:
         Id id;
         QList<QObject*> items;
     };
+    using GroupList = std::vector<Group>;
 
     explicit ActionContainer(const Id& id, QObject* parent = nullptr);
     ~ActionContainer() override = default;
@@ -73,18 +74,18 @@ public:
 
 signals:
     void aboutToHide();
-    void registerSeperator(QAction* action, const Id& id);
+    void registerSeparator(QAction* action, const Id& id);
 
 protected:
     virtual bool canBeAddedToContainer(ActionContainer* container) const = 0;
 
-    QList<Group> m_groups;
+    GroupList m_groups;
 
 private:
     void itemDestroyed(QObject* sender);
 
-    [[nodiscard]] QList<Group>::const_iterator findGroup(const Id& groupId) const;
-    [[nodiscard]] QAction* insertLocation(QList<Group>::const_iterator group) const;
+    [[nodiscard]] GroupList::const_iterator findGroup(const Id& groupId) const;
+    [[nodiscard]] QAction* insertLocation(GroupList::const_iterator group) const;
 
     Id m_id;
 };

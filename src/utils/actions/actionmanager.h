@@ -46,6 +46,7 @@ public:
     ActionContainer* actionContainer(const Id& id);
 
 protected:
+    void registerContainer(const Id& id, ActionContainer* actionContainer);
     void containerDestroyed(QObject* sender);
 
 private:
