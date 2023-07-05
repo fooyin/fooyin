@@ -51,7 +51,6 @@ struct TrackSelectionController::Private
 
     QString selectionTitle;
     Core::TrackList tracks;
-    std::optional<Core::Playlist::Playlist> playlist;
 
     Utils::ActionContainer* contextMenu{nullptr};
     std::vector<QAction*> trackPlaylistActions;
@@ -121,11 +120,11 @@ struct TrackSelectionController::Private
     {
         if(type == Current) {
             if(auto currentPlaylist = playlistController->currentPlaylist()) {
-                playlist = playlistHandler->createPlaylist(currentPlaylist->name(), tracks, options & Switch);
+                playlistHandler->createPlaylist(currentPlaylist->name(), tracks, options & Switch);
             }
         }
         else {
-            playlist = playlistHandler->createPlaylist(playlistName, tracks, options & Switch);
+            playlistHandler->createPlaylist(playlistName, tracks, options & Switch);
         }
     }
 
@@ -174,6 +173,11 @@ TrackSelectionController::TrackSelectionController(Utils::ActionManager* actionM
     : p{std::make_unique<Private>(this, actionManager, playlistController)}
 { }
 
+bool TrackSelectionController::hasTracks() const
+{
+    return !p->tracks.empty();
+}
+
 TrackSelectionController::~TrackSelectionController() = default;
 
 const Core::TrackList& TrackSelectionController::selectedTracks() const
@@ -207,8 +211,10 @@ void TrackSelectionController::executeAction(TrackAction action, ActionOptions o
         case(TrackAction::AddActivePlaylist):
             return p->addToPlaylist(Active);
         case(TrackAction::Play):
-            if(auto playlist = p->playlist) {
-                return p->playlistHandler->startPlayback(playlist->name());
+            if(!p->tracks.empty()) {
+                if(auto playlist = p->playlistController->currentPlaylist()) {
+                    return p->playlistHandler->startPlayback(playlist->name(), p->tracks.front());
+                }
             }
         case(TrackAction::Expand):
         case(TrackAction::None):
