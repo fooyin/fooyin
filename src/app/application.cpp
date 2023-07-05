@@ -210,13 +210,9 @@ struct Application::Private
         });
 
         widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
-            auto* playlist = new Gui::Widgets::Playlist::PlaylistWidget(
-                library, playerManager, playlistController.get(), &presetRegistry, settingsManager);
-            QObject::connect(playlist, &Gui::Widgets::Playlist::PlaylistWidget::selectionWasChanged,
-                             &selectionController, [this](const Core::TrackList& tracks) {
-                                 selectionController.changeSelectedTracks(tracks);
-                             });
-            return playlist;
+            return new Gui::Widgets::Playlist::PlaylistWidget(
+                {library, playerManager, playlistController.get(), &presetRegistry, &selectionController},
+                settingsManager);
         });
 
         widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {

@@ -39,24 +39,31 @@ class MusicLibrary;
 } // namespace Library
 } // namespace Core
 
-namespace Gui::Widgets::Playlist {
+namespace Gui {
+class TrackSelectionController;
+
+namespace Widgets::Playlist {
 class PlaylistController;
 class PresetRegistry;
+
+struct PlaylistContext
+{
+    Core::Library::MusicLibrary* library;
+    Core::Player::PlayerManager* playerManager;
+    PlaylistController* playlistController;
+    PresetRegistry* presetRegistry;
+    TrackSelectionController* selectionController;
+};
 
 class PlaylistWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-                            PlaylistController* playlistController, PresetRegistry* presetRegistry,
-                            Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit PlaylistWidget(PlaylistContext context, Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;
-
-signals:
-    void selectionWasChanged(const Core::TrackList& tracks);
 
 protected:
     void keyPressEvent(QKeyEvent* event) override;
@@ -65,5 +72,6 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets::Playlist
+} // namespace Widgets::Playlist
+} // namespace Gui
 } // namespace Fy
