@@ -53,7 +53,6 @@ struct PlaylistModel::Private : public QObject
     QThread populatorThread;
     PlaylistPopulator populator;
 
-    PlaylistItem root;
     ItemMap nodes;
     ItemMap oldNodes;
 
@@ -84,10 +83,10 @@ struct PlaylistModel::Private : public QObject
         };
 
         for(auto& [parentKey, rows] : data.nodes) {
-            PlaylistItem* parent = parentKey.isEmpty() ? &root : &nodes.at(parentKey);
+            PlaylistItem* parent = parentKey.isEmpty() ? model->rootItem() : &nodes.at(parentKey);
             const int baseRow    = parent->childCount();
             const int nodeCount  = static_cast<int>(rows.size());
-            model->beginInsertRows(model->indexOfItem(*parent), baseRow, baseRow + nodeCount - 1);
+            model->beginInsertRows(model->indexOfItem(parent), baseRow, baseRow + nodeCount - 1);
             for(const QString& row : rows) {
                 PlaylistItem* child = &nodes.at(row);
                 insertRow(parent, child);
@@ -98,7 +97,7 @@ struct PlaylistModel::Private : public QObject
 
     void beginReset()
     {
-        root = PlaylistItem{};
+        model->resetRoot();
         // Acts as a cache in case model hasn't been fully cleared
         oldNodes = std::move(nodes);
         nodes.clear();
@@ -220,7 +219,7 @@ struct PlaylistModel::Private : public QObject
 
     void updateNodeChildren(const QModelIndex& index)
     {
-        PlaylistItem* item = &root;
+        PlaylistItem* item = model->rootItem();
         if(index.isValid()) {
             item = static_cast<PlaylistItem*>(index.internalPointer());
         }
@@ -232,7 +231,7 @@ struct PlaylistModel::Private : public QObject
 
 PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                              QObject* parent)
-    : QAbstractItemModel{parent}
+    : TreeModel{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
     p->settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
@@ -306,66 +305,6 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
-QModelIndex PlaylistModel::index(int row, int column, const QModelIndex& parent) const
-{
-    if(!hasIndex(row, column, parent)) {
-        return {};
-    }
-
-    PlaylistItem* parentItem;
-
-    if(!parent.isValid()) {
-        parentItem = &p->root;
-    }
-    else {
-        parentItem = static_cast<PlaylistItem*>(parent.internalPointer());
-    }
-
-    PlaylistItem* childItem = parentItem->child(row);
-    if(childItem) {
-        return createIndex(row, column, childItem);
-    }
-    return {};
-}
-
-QModelIndex PlaylistModel::parent(const QModelIndex& index) const
-{
-    if(!index.isValid()) {
-        return {};
-    }
-
-    auto* childItem          = static_cast<PlaylistItem*>(index.internalPointer());
-    PlaylistItem* parentItem = childItem->parent();
-
-    if(parentItem == &p->root || !parentItem) {
-        return {};
-    }
-
-    return createIndex(parentItem->row(), 0, parentItem);
-}
-
-int PlaylistModel::rowCount(const QModelIndex& parent) const
-{
-    PlaylistItem* parentItem;
-
-    if(!parent.isValid()) {
-        parentItem = &p->root;
-    }
-    else {
-        parentItem = static_cast<PlaylistItem*>(parent.internalPointer());
-    }
-
-    return parentItem->childCount();
-}
-
-int PlaylistModel::columnCount(const QModelIndex& parent) const
-{
-    if(parent.isValid()) {
-        return static_cast<PlaylistItem*>(parent.internalPointer())->columnCount();
-    }
-    return p->root.columnCount();
-}
-
 QHash<int, QByteArray> PlaylistModel::roleNames() const
 {
     auto roles = QAbstractItemModel::roleNames();
@@ -382,7 +321,7 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
 
 bool PlaylistModel::removeRows(int row, int count, const QModelIndex& parent)
 {
-    PlaylistItem* parentItem = &p->root;
+    PlaylistItem* parentItem = rootItem();
     if(parent.isValid()) {
         parentItem = static_cast<PlaylistItem*>(parent.internalPointer());
     }
@@ -427,10 +366,5 @@ void PlaylistModel::changeTrackState()
 void PlaylistModel::changePreset(const PlaylistPreset& preset)
 {
     p->currentPreset = preset;
-}
-
-QModelIndex PlaylistModel::indexOfItem(const PlaylistItem& item) const
-{
-    return createIndex(item.row(), 0, &item);
 }
 } // namespace Fy::Gui::Widgets::Playlist

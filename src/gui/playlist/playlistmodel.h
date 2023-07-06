@@ -23,7 +23,7 @@
 
 #include <core/models/trackfwd.h>
 
-#include <QAbstractItemModel>
+#include <utils/treemodel.h>
 
 namespace Fy {
 namespace Utils {
@@ -43,7 +43,7 @@ class Playlist;
 namespace Gui::Widgets::Playlist {
 struct PlaylistPreset;
 
-class PlaylistModel : public QAbstractItemModel
+class PlaylistModel : public Utils::TreeModel<PlaylistItem>
 {
     Q_OBJECT
 
@@ -54,10 +54,6 @@ public:
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
-    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
-    [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
-    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
     bool removeRows(int row, int count, const QModelIndex& parent) override;
@@ -67,8 +63,6 @@ public:
     void reset(const Core::Playlist::Playlist&);
     void changeTrackState();
     void changePreset(const PlaylistPreset& preset);
-
-    [[nodiscard]] QModelIndex indexOfItem(const PlaylistItem& item) const;
 
 private:
     struct Private;
