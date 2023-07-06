@@ -125,6 +125,21 @@ void PlaylistController::changeCurrentPlaylist(int id)
     }
 }
 
+void PlaylistController::removePlaylistTracks(const Core::TrackList& tracks)
+{
+    auto playlist = currentPlaylist();
+    if(!playlist) {
+        return;
+    }
+    auto playlistTracks = playlist->tracks();
+    playlistTracks.erase(std::remove_if(playlistTracks.begin(), playlistTracks.end(),
+                                        [&tracks](const Core::Track& track) {
+                                            return std::ranges::find(tracks, track) != tracks.end();
+                                        }),
+                         playlistTracks.end());
+    p->handler->replacePlaylistTracks(playlist->id(), playlistTracks);
+}
+
 void PlaylistController::refreshCurrentPlaylist()
 {
     if(auto playlist = p->handler->playlistById(p->currentPlaylistId)) {

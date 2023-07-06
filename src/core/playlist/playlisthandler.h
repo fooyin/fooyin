@@ -64,6 +64,7 @@ public:
 
     // Replaces tracks and current track index in playlist with those from other
     void exchangePlaylist(Playlist& playlist, const Playlist& other);
+    void replacePlaylistTracks(int id, const Core::TrackList& tracks);
     void changeActivePlaylist(int id);
 
     void renamePlaylist(int id, const QString& name);

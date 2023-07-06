@@ -397,6 +397,14 @@ void PlaylistHandler::exchangePlaylist(Playlist& playlist, const Playlist& other
     p->updatePlaylist(playlist);
 }
 
+void PlaylistHandler::replacePlaylistTracks(int id, const TrackList& tracks)
+{
+    if(auto playlist = playlistById(id)) {
+        playlist->replaceTracks(tracks);
+        p->updatePlaylist(*playlist);
+    }
+}
+
 void PlaylistHandler::changeActivePlaylist(int id)
 {
     auto playlist = std::ranges::find_if(std::as_const(p->playlists), [id](const auto& playlist) {

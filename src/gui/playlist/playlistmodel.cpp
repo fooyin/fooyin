@@ -87,7 +87,7 @@ struct PlaylistModel::Private : public QObject
             PlaylistItem* parent = parentKey.isEmpty() ? &root : &nodes.at(parentKey);
             const int baseRow    = parent->childCount();
             const int nodeCount  = static_cast<int>(rows.size());
-            model->beginInsertRows(model->indexForItem(parent), baseRow, baseRow + nodeCount - 1);
+            model->beginInsertRows(model->indexOfItem(*parent), baseRow, baseRow + nodeCount - 1);
             for(const QString& row : rows) {
                 PlaylistItem* child = &nodes.at(row);
                 insertRow(parent, child);
@@ -207,6 +207,27 @@ struct PlaylistModel::Private : public QObject
                 return {};
         }
     }
+
+    void checkDeleteNode(const QModelIndex& index)
+    {
+        auto* item = static_cast<PlaylistItem*>(index.internalPointer());
+        if(item && item->childCount() < 1) {
+            model->removeRows(index.row(), index.row(), index.parent());
+            checkDeleteNode(index.parent());
+        }
+        updateNodeChildren(index.parent());
+    };
+
+    void updateNodeChildren(const QModelIndex& index)
+    {
+        PlaylistItem* item = &root;
+        if(index.isValid()) {
+            item = static_cast<PlaylistItem*>(index.internalPointer());
+        }
+        if(item && item->childCount() > 0) {
+            item->resetChildren();
+        }
+    };
 };
 
 PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
@@ -345,11 +366,6 @@ int PlaylistModel::columnCount(const QModelIndex& parent) const
     return p->root.columnCount();
 }
 
-QModelIndex PlaylistModel::indexOfItem(const PlaylistItem& item)
-{
-    return createIndex(item.row(), 0, &item);
-}
-
 QHash<int, QByteArray> PlaylistModel::roleNames() const
 {
     auto roles = QAbstractItemModel::roleNames();
@@ -364,26 +380,27 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     return roles;
 }
 
-QModelIndex PlaylistModel::matchTrack(int id) const
+bool PlaylistModel::removeRows(int row, int count, const QModelIndex& parent)
 {
-    QModelIndexList stack{};
-    while(!stack.isEmpty()) {
-        const QModelIndex parent = stack.takeFirst();
-        for(int i = 0; i < rowCount(parent); ++i) {
-            const QModelIndex child = index(i, 0, parent);
-            if(rowCount(child) > 0) {
-                stack.append(child);
-            }
-            else {
-                const auto* item = static_cast<PlaylistItem*>(child.internalPointer());
-                const auto track = std::get<Track>(item->data());
-                if(track.track().id() == id) {
-                    return child;
-                }
-            }
-        }
+    PlaylistItem* parentItem = &p->root;
+    if(parent.isValid()) {
+        parentItem = static_cast<PlaylistItem*>(parent.internalPointer());
     }
-    return {};
+    if(!parentItem) {
+        return false;
+    }
+    beginRemoveRows(parent, row, count);
+    parentItem->removeChild(row);
+    endRemoveRows();
+
+    return true;
+}
+
+void PlaylistModel::removeTracks(const QModelIndexList& indexes)
+{
+    for(const auto& index : indexes) {
+        p->checkDeleteNode(index);
+    }
 }
 
 void PlaylistModel::reset(const Core::Playlist::Playlist& playlist)
@@ -412,22 +429,8 @@ void PlaylistModel::changePreset(const PlaylistPreset& preset)
     p->currentPreset = preset;
 }
 
-QModelIndex PlaylistModel::indexForTrack(const Core::Track& track) const
+QModelIndex PlaylistModel::indexOfItem(const PlaylistItem& item) const
 {
-    QModelIndex index;
-    const auto key = track.hash();
-    if(p->nodes.contains(key)) {
-        PlaylistItem* item = &p->nodes.at(key);
-        index              = createIndex(item->row(), 0, item);
-    }
-    return index;
-}
-
-QModelIndex PlaylistModel::indexForItem(PlaylistItem* item) const
-{
-    if(!item) {
-        return {};
-    }
-    return createIndex(item->row(), 0, item);
+    return createIndex(item.row(), 0, &item);
 }
 } // namespace Fy::Gui::Widgets::Playlist

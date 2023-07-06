@@ -56,11 +56,6 @@ void PlaylistView::drawBranches(QPainter* painter, const QRect& rect, const QMod
     Q_UNUSED(index)
 }
 
-void PlaylistView::contextMenuEvent(QContextMenuEvent* e)
-{
-    Q_UNUSED(e)
-}
-
 void PlaylistView::paintEvent(QPaintEvent* event)
 {
     if(model() && model()->rowCount() > 0) {

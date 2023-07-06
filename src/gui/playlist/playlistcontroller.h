@@ -58,7 +58,7 @@ public:
 
     void changeCurrentPlaylist(const Core::Playlist::Playlist& playlist);
     void changeCurrentPlaylist(int id);
-
+    void removePlaylistTracks(const Core::TrackList& tracks);
     void refreshCurrentPlaylist();
 
 signals:

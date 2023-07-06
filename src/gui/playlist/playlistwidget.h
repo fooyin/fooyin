@@ -60,12 +60,14 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(PlaylistContext context, Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit PlaylistWidget(const PlaylistContext& context, Utils::SettingsManager* settings,
+                            QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;
 
 protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
 
 private:

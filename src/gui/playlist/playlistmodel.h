@@ -60,18 +60,15 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-    [[nodiscard]] QModelIndex indexOfItem(const PlaylistItem& item);
+    bool removeRows(int row, int count, const QModelIndex& parent) override;
 
-    [[nodiscard]] QModelIndex matchTrack(int id) const;
+    void removeTracks(const QModelIndexList& indexes);
 
     void reset(const Core::Playlist::Playlist&);
-
     void changeTrackState();
-
     void changePreset(const PlaylistPreset& preset);
 
-    [[nodiscard]] QModelIndex indexForTrack(const Core::Track& track) const;
-    [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;
+    [[nodiscard]] QModelIndex indexOfItem(const PlaylistItem& item) const;
 
 private:
     struct Private;

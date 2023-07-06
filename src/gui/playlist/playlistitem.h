@@ -73,6 +73,8 @@ public:
     void setParent(PlaylistItem* parent);
     void setIndentation(int indentation);
 
+    void resetChildren();
+
 private:
     bool m_pending;
     ItemType m_type;

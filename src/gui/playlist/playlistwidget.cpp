@@ -56,7 +56,6 @@ struct PlaylistWidget::Private : QObject
     Utils::SettingsDialogController* settingsDialog;
 
     PlaylistController* playlistController;
-    //    Core::TrackList selectedTracks;
 
     QHBoxLayout* layout;
     PlaylistModel* model;
@@ -89,7 +88,7 @@ struct PlaylistWidget::Private : QObject
         model->changePreset(presetRegistry->presetByName(settings->value<Settings::CurrentPreset>()));
 
         playlistView->setModel(model);
-        playlistView->setItemDelegate(new PlaylistDelegate(this));
+        playlistView->setItemDelegate(new PlaylistDelegate(widget));
 
         layout->addWidget(playlistView);
 
@@ -134,7 +133,7 @@ struct PlaylistWidget::Private : QObject
         settings->subscribe<Settings::CurrentPreset>(this, &PlaylistWidget::Private::changePreset);
     }
 
-    void onPresetChanged(const PlaylistPreset& preset)
+    void onPresetChanged(const PlaylistPreset& preset) const
     {
         if(preset.name == settings->value<Settings::CurrentPreset>()) {
             changePreset(preset.name);
@@ -245,7 +244,7 @@ struct PlaylistWidget::Private : QObject
             //            if(preset.name != currentPreset.name) {
             const QString name = preset.name;
             auto* switchPreset = new QAction(name, menu);
-            QObject::connect(switchPreset, &QAction::triggered, this, [this, name]() {
+            QObject::connect(switchPreset, &QAction::triggered, widget, [this, name]() {
                 settings->set<Settings::CurrentPreset>(name);
             });
             menu->addAction(switchPreset);
@@ -284,11 +283,11 @@ struct PlaylistWidget::Private : QObject
     void findCurrent() const
     {
         const Core::Track track = playerManager->currentTrack();
-        const QModelIndex index = model->indexForTrack(track);
-        if(index.isValid()) {
-            playlistView->scrollTo(index);
-            playlistView->setCurrentIndex(index);
-        }
+        //        const QModelIndex index = model->indexForTrack(track);
+        //        if(index.isValid()) {
+        //            playlistView->scrollTo(index);
+        //            playlistView->setCurrentIndex(index);
+        //        }
     }
 
     void expandPlaylist(const QModelIndex& parent, int first, int last) const
@@ -311,7 +310,7 @@ struct PlaylistWidget::Private : QObject
         for(const auto& playlist : playlists) {
             auto* switchPl = new QAction(playlist.name(), menu);
             const int id   = playlist.id();
-            QObject::connect(switchPl, &QAction::triggered, this, [this, id]() {
+            QObject::connect(switchPl, &QAction::triggered, widget, [this, id]() {
                 playlistController->changeCurrentPlaylist(id);
             });
             menu->addAction(switchPl);
@@ -320,7 +319,7 @@ struct PlaylistWidget::Private : QObject
     }
 };
 
-PlaylistWidget::PlaylistWidget(PlaylistContext context, Utils::SettingsManager* settings, QWidget* parent)
+PlaylistWidget::PlaylistWidget(const PlaylistContext& context, Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , p{std::make_unique<Private>(this, context.library, context.playerManager, context.playlistController,
                                   context.presetRegistry, context.selectionController, settings)}
@@ -337,6 +336,23 @@ PlaylistWidget::~PlaylistWidget() = default;
 QString PlaylistWidget::name() const
 {
     return "Playlist";
+}
+
+void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* removeRows = new QAction("Remove", menu);
+    QObject::connect(removeRows, &QAction::triggered, this, [this]() {
+        p->playlistController->removePlaylistTracks(p->selectionController->selectedTracks());
+        p->model->removeTracks(p->playlistView->selectionModel()->selectedIndexes());
+    });
+    menu->addAction(removeRows);
+
+    p->selectionController->addTrackContextMenu(menu);
+
+    menu->popup(mapToGlobal(event->pos()));
 }
 
 void PlaylistWidget::keyPressEvent(QKeyEvent* e)
