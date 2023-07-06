@@ -19,96 +19,40 @@
 
 #pragma once
 
-#include <QAbstractItemModel>
+#include "treemodel.h"
 
 namespace Fy::Utils {
-class SimpleTableModel : public QAbstractItemModel
+template <class Item>
+class TableModel : public TreeModel<Item>
 {
 public:
-    explicit SimpleTableModel(QObject* parent = nullptr)
-        : QAbstractItemModel{parent}
+    using TreeModel<Item>::rootItem;
+
+    explicit TableModel(QObject* parent = nullptr)
+        : TreeModel<Item>{parent}
     { }
 
-    [[nodiscard]] virtual Qt::ItemFlags flags(const QModelIndex& index) const override
+    [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent = {}) const override
     {
-        if(!index.isValid()) {
-            return Qt::NoItemFlags;
+        if(!QAbstractItemModel::hasIndex(row, column, parent)) {
+            return {};
         }
-        return QAbstractItemModel::flags(index);
-    }
 
-    [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& /*parent*/) const override
-    {
-        return createIndex(row, column, nullptr);
+        Item* childItem = rootItem()->child(row);
+        if(childItem) {
+            return QAbstractItemModel::createIndex(row, column, childItem);
+        }
+        return {};
     }
 
     [[nodiscard]] virtual QModelIndex parent(const QModelIndex& /*index*/) const override
     {
         return {};
     }
-};
 
-template <class Item>
-class TableModel : public SimpleTableModel
-{
-public:
-    explicit TableModel(QObject* parent = nullptr)
-        : SimpleTableModel{parent}
-        , m_root{}
-    { }
-
-    [[nodiscard]] virtual Item* rootItem() const
+    [[nodiscard]] virtual int rowCount(const QModelIndex& /*parent*/ = {}) const override
     {
-        return &m_root;
+        return rootItem()->childCount();
     }
-
-    virtual void resetRoot()
-    {
-        m_root = Item{};
-    }
-
-    [[nodiscard]] virtual Qt::ItemFlags flags(const QModelIndex& index) const override
-    {
-        if(!index.isValid()) {
-            return Qt::NoItemFlags;
-        }
-        return QAbstractItemModel::flags(index);
-    }
-
-    [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent = {}) const override
-    {
-        if(!hasIndex(row, column, parent)) {
-            return {};
-        }
-
-        Item* childItem = m_root.child(row);
-        if(childItem) {
-            return createIndex(row, column, childItem);
-        }
-        return {};
-    }
-
-    [[nodiscard]] virtual QModelIndex parent(const QModelIndex& index) const override
-    {
-        Q_UNUSED(index)
-        return {};
-    }
-
-    [[nodiscard]] virtual int rowCount(const QModelIndex& parent = {}) const override
-    {
-        Q_UNUSED(parent)
-        return m_root.childCount();
-    }
-
-    [[nodiscard]] virtual QModelIndex indexOfItem(const Item* item)
-    {
-        if(item) {
-            return createIndex(item->row(), 0, item);
-        }
-        return {};
-    }
-
-private:
-    mutable Item m_root;
 };
 } // namespace Fy::Utils
