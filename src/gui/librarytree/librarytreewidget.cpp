@@ -185,7 +185,7 @@ struct LibraryTreeWidget::Private
         }
     }
 
-    QString playlistNameFromSelection()
+    QString playlistNameFromSelection() const
     {
         QString title;
         const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
@@ -198,13 +198,13 @@ struct LibraryTreeWidget::Private
         return title;
     }
 
-    void handleDoubleClick()
+    void handleDoubleClick() const
     {
         const bool autoSwitch = settings->value<Settings::LibraryTreeAutoSwitch>();
         trackSelection->executeAction(doubleClickAction, autoSwitch ? Switch : None, playlistNameFromSelection());
     }
 
-    void handleMiddleClicked()
+    void handleMiddleClicked() const
     {
         const bool autoSwitch = settings->value<Settings::LibraryTreeAutoSwitch>();
         trackSelection->executeAction(middleClickAction, autoSwitch ? Switch : None, playlistNameFromSelection());
@@ -253,9 +253,9 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    p->trackSelection->addTrackContextMenu(menu, true);
-
+    p->trackSelection->addTrackPlaylistContextMenu(menu);
     p->addGroupMenu(menu);
+    p->trackSelection->addTrackContextMenu(menu);
 
     menu->popup(mapToGlobal(event->pos()));
 }

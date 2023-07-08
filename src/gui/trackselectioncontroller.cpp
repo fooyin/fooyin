@@ -52,8 +52,9 @@ struct TrackSelectionController::Private
     QString selectionTitle;
     Core::TrackList tracks;
 
-    Utils::ActionContainer* contextMenu{nullptr};
-    std::vector<QAction*> trackPlaylistActions;
+    Utils::ActionContainer* tracksMenu{nullptr};
+    Utils::ActionContainer* tracksPlaylistMenu{nullptr};
+
     QAction* openFolder;
 
     Private(TrackSelectionController* controller, Utils::ActionManager* actionManager,
@@ -62,58 +63,58 @@ struct TrackSelectionController::Private
         , actionManager{actionManager}
         , playlistController{playlistController}
         , playlistHandler{playlistController->playlistHandler()}
-        , openFolder{new QAction("Open Containing Folder", contextMenu)}
+        , openFolder{new QAction("Open Containing Folder", tracksMenu)}
     {
-        contextMenu = actionManager->createMenu(Constants::Menus::Context::TrackSelection);
+        tracksMenu         = actionManager->createMenu(Constants::Menus::Context::TrackSelection);
+        tracksPlaylistMenu = actionManager->createMenu(Constants::Menus::Context::TracksPlaylist);
 
-        auto addPlaylistAction = [this](QAction* action) {
-            trackPlaylistActions.push_back(action);
-            contextMenu->addAction(action);
-        };
+        tracksPlaylistMenu->addSeparator();
 
-        auto* addCurrent = new QAction("Add to current playlist", contextMenu);
-        QObject::connect(addCurrent, &QAction::triggered, contextMenu, [this]() {
+        auto* addCurrent = new QAction("Add to current playlist", tracksPlaylistMenu);
+        QObject::connect(addCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() {
             addToPlaylist(Current);
         });
-        addPlaylistAction(addCurrent);
+        tracksPlaylistMenu->addAction(addCurrent);
 
-        auto* addActive = new QAction("Add to active playlist", contextMenu);
-        QObject::connect(addActive, &QAction::triggered, contextMenu, [this]() {
+        auto* addActive = new QAction("Add to active playlist", tracksPlaylistMenu);
+        QObject::connect(addActive, &QAction::triggered, tracksPlaylistMenu, [this]() {
             addToPlaylist(Active);
         });
-        addPlaylistAction(addActive);
+        tracksPlaylistMenu->addAction(addActive);
 
-        auto* sendCurrent = new QAction("Send to current playlist", contextMenu);
-        QObject::connect(sendCurrent, &QAction::triggered, contextMenu, [this]() {
+        auto* sendCurrent = new QAction("Send to current playlist", tracksPlaylistMenu);
+        QObject::connect(sendCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() {
             sendToPlaylist(Current);
         });
-        addPlaylistAction(sendCurrent);
+        tracksPlaylistMenu->addAction(sendCurrent);
 
-        auto* sendNew = new QAction("Send to new playlist", contextMenu);
-        QObject::connect(sendNew, &QAction::triggered, contextMenu, [this]() {
+        auto* sendNew = new QAction("Send to new playlist", tracksPlaylistMenu);
+        QObject::connect(sendNew, &QAction::triggered, tracksPlaylistMenu, [this]() {
             sendToPlaylist(New, {}, selectionTitle);
         });
-        addPlaylistAction(sendNew);
+        tracksPlaylistMenu->addAction(sendNew);
 
-        contextMenu->addSeparator();
+        tracksPlaylistMenu->addSeparator();
 
-        QObject::connect(openFolder, &QAction::triggered, contextMenu, [this]() {
+        tracksMenu->addSeparator();
+
+        QObject::connect(openFolder, &QAction::triggered, tracksMenu, [this]() {
             if(!tracks.empty()) {
                 const QString dir = QFileInfo{tracks.front().filepath()}.absolutePath();
                 Utils::File::openDirectory(dir);
             }
         });
-        contextMenu->addAction(openFolder);
+        tracksMenu->addAction(openFolder);
 
-        contextMenu->addSeparator();
+        tracksMenu->addSeparator();
 
-        auto* openProperties = new QAction("Properties", contextMenu);
+        auto* openProperties = new QAction("Properties", tracksMenu);
         QObject::connect(openProperties, &QAction::triggered, controller, [controller]() {
             emit controller->requestPropertiesDialog();
         });
-        contextMenu->addAction(openProperties);
+        tracksMenu->addAction(openProperties);
 
-        contextMenu->addSeparator();
+        tracksMenu->addSeparator();
     }
 
     void sendToPlaylist(PlaylistType type, ActionOptions options = {}, const QString& playlistName = {})
@@ -137,13 +138,6 @@ struct TrackSelectionController::Private
         };
 
         append(type == Active ? playlistHandler->activePlaylist() : playlistController->currentPlaylist());
-    }
-
-    void togglePlaylistActions(bool enable)
-    {
-        for(QAction* action : trackPlaylistActions) {
-            action->setVisible(enable);
-        }
     }
 
     void updateActionState()
@@ -192,11 +186,16 @@ void TrackSelectionController::changeSelectedTracks(const Core::TrackList& track
     emit selectionChanged(p->tracks);
 }
 
-void TrackSelectionController::addTrackContextMenu(QMenu* menu, bool playlistActions) const
+void TrackSelectionController::addTrackContextMenu(QMenu* menu) const
 {
-    p->togglePlaylistActions(playlistActions);
     p->updateActionState();
-    Utils::cloneMenu(p->contextMenu->menu(), menu);
+    Utils::cloneMenu(p->tracksMenu->menu(), menu);
+}
+
+void TrackSelectionController::addTrackPlaylistContextMenu(QMenu* menu) const
+{
+    p->updateActionState();
+    Utils::cloneMenu(p->tracksPlaylistMenu->menu(), menu);
 }
 
 void TrackSelectionController::executeAction(TrackAction action, ActionOptions options, const QString& playlistName)

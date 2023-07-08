@@ -67,7 +67,8 @@ public:
     [[nodiscard]] const Core::TrackList& selectedTracks() const;
     void changeSelectedTracks(const Core::TrackList& tracks, const QString& title = {});
 
-    void addTrackContextMenu(QMenu* menu, bool playlistActions = false) const;
+    void addTrackContextMenu(QMenu* menu) const;
+    void addTrackPlaylistContextMenu(QMenu* menu) const;
     void executeAction(TrackAction action, ActionOptions options = {}, const QString& playlistName = {});
 
 signals:
