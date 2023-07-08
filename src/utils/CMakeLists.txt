@@ -13,6 +13,7 @@ set(SOURCES
     headerview.cpp
     hovermenu.cpp
     id.cpp
+    itemregistry.h
     menuheader.cpp
     overlayfilter.cpp
     overlaywidget.cpp

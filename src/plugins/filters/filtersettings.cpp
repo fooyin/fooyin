@@ -28,12 +28,7 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::FilterAltColours, false, "Filters");
     m_settings->createSetting(Settings::FilterHeader, true, "Filters");
     m_settings->createSetting(Settings::FilterScrollBar, true, "Filters");
-    m_settings->createSetting(
-        Settings::FilterFields,
-        "AAAABAAAAAAAAAAAAAAACgBHAGUAbgByAGUAAAASACUAPABnAGUAbgByAGUAPgAlAAAAAAAAAAEAAAABAAAAGABBAGwAYgB1AG0AIABBAHIAdA"
-        "BpAHMAdAAAABoAJQBhAGwAYgB1AG0AYQByAHQAaQBzAHQAJQAAAAAAAAACAAAAAgAAAAwAQQByAHQAaQBzAHQAAAAUACUAPABhAHIAdABpAHMA"
-        "dAA+ACUAAAAAAAAAAwAAAAMAAAAKAEEAbABiAHUAbQAAAA4AJQBhAGwAYgB1AG0AJQAAAAA=",
-        "Filters");
+    m_settings->createSetting(Settings::FilterFields, "", "Filters");
     m_settings->createSetting(Settings::FilterFontSize, 13, "Filters");
     m_settings->createSetting(Settings::FilterRowHeight, 25, "Filters");
 

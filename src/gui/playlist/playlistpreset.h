@@ -149,6 +149,7 @@ struct TrackRow
 
 struct PlaylistPreset
 {
+    int id{-1};
     int index{-1};
     QString name;
 
@@ -158,13 +159,13 @@ struct PlaylistPreset
 
     inline bool operator==(const PlaylistPreset& other) const
     {
-        return std::tie(index, name, header, subHeader, track)
-            == std::tie(other.index, other.name, other.header, other.subHeader, other.track);
+        return std::tie(id, index, name, header, subHeader, track)
+            == std::tie(other.id, other.index, other.name, other.header, other.subHeader, other.track);
     };
 
     [[nodiscard]] inline bool isValid() const
     {
-        return !name.isEmpty();
+        return id >= 0 && !name.isEmpty();
     };
 };
 

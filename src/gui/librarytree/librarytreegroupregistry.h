@@ -19,7 +19,10 @@
 
 #pragma once
 
+#include "gui/guisettings.h"
 #include "librarytreegroup.h"
+
+#include <utils/itemregistry.h>
 
 #include <QObject>
 
@@ -29,40 +32,17 @@ class SettingsManager;
 }
 
 namespace Gui::Widgets {
-using IndexGroupMap = std::map<int, LibraryTreeGrouping>;
-
-class LibraryTreeGroupRegistry : public QObject
+class LibraryTreeGroupRegistry : public Utils::ItemRegistry<LibraryTreeGrouping, Settings::LibraryTreeGrouping>
 {
     Q_OBJECT
 
 public:
     explicit LibraryTreeGroupRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
 
-    [[nodiscard]] const IndexGroupMap& groupings() const;
-
-    LibraryTreeGrouping addGrouping(const LibraryTreeGrouping& grouping);
-    bool changeGrouping(const LibraryTreeGrouping& grouping);
-
-    [[nodiscard]] LibraryTreeGrouping groupingByIndex(int index) const;
-    [[nodiscard]] LibraryTreeGrouping groupingByName(const QString& name) const;
-
-    bool removeByIndex(int index);
-
-    void saveGroupings();
-    void loadGroupings();
+    void loadItems() override;
 
 signals:
-    void groupingChanged(const LibraryTreeGrouping& oldGroup, const LibraryTreeGrouping& newGroup);
-
-private:
-    Utils::SettingsManager* m_settings;
-
-    IndexGroupMap m_groupings;
+    void groupingChanged(const LibraryTreeGrouping& grouping);
 };
-
-QDataStream& operator<<(QDataStream& stream, const LibraryTreeGrouping& group);
-QDataStream& operator>>(QDataStream& stream, LibraryTreeGrouping& group);
-QDataStream& operator<<(QDataStream& stream, const IndexGroupMap& groupMap);
-QDataStream& operator>>(QDataStream& stream, IndexGroupMap& groupMap);
 } // namespace Gui::Widgets
 } // namespace Fy

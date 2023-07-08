@@ -125,6 +125,7 @@ QDataStream& operator>>(QDataStream& stream, TrackRow& track)
 
 QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset)
 {
+    stream << preset.id;
     stream << preset.index;
     stream << preset.name;
     stream << preset.header;
@@ -135,6 +136,7 @@ QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset)
 
 QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset)
 {
+    stream >> preset.id;
     stream >> preset.index;
     stream >> preset.name;
     stream >> preset.header;

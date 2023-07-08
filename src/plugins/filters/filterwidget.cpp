@@ -204,7 +204,7 @@ void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemS
 
 void FilterWidget::fieldChanged(const FilterField& field)
 {
-    if(m_filter->field.index == field.index) {
+    if(m_filter->field.id == field.id) {
         m_filter->field = field;
         emit typeChanged(m_filter->index);
         m_model->reload(m_manager->tracks());

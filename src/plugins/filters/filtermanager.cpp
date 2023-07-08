@@ -94,7 +94,7 @@ bool FilterManager::hasTracks() const
 
 LibraryFilter* FilterManager::registerFilter(const QString& name)
 {
-    const FilterField filterField = m_fieldsRegistry->fieldByName(name);
+    const FilterField filterField = m_fieldsRegistry->itemByName(name);
     return m_filterStore.addFilter(filterField);
 }
 
@@ -114,7 +114,7 @@ void FilterManager::changeFilter(int index)
 
 FilterField FilterManager::findField(const QString& name) const
 {
-    return m_fieldsRegistry->fieldByName(name);
+    return m_fieldsRegistry->itemByName(name);
 }
 
 void FilterManager::getFilteredTracks()
@@ -154,7 +154,7 @@ QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
 
     auto* filterList = new QActionGroup{menu};
 
-    for(const auto& [filterIndex, registryField] : m_fieldsRegistry->fields()) {
+    for(const auto& [filterIndex, registryField] : m_fieldsRegistry->items()) {
         const QString name = registryField.name;
         auto* fieldAction  = new QAction(menu);
         fieldAction->setText(name);

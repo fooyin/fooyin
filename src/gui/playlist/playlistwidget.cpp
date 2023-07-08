@@ -63,6 +63,8 @@ struct PlaylistWidget::Private : QObject
     Utils::HeaderView* header;
     bool changingSelection{false};
 
+    PlaylistPreset currentPreset;
+
     Private(PlaylistWidget* widget, Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
             PlaylistController* playlistController, PresetRegistry* presetRegistry,
             TrackSelectionController* selectionController, Utils::SettingsManager* settings)
@@ -84,8 +86,6 @@ struct PlaylistWidget::Private : QObject
         header->setStretchLastSection(true);
         playlistView->setHeader(header);
         header->setContextMenuPolicy(Qt::CustomContextMenu);
-
-        model->changePreset(presetRegistry->presetByName(settings->value<Settings::CurrentPreset>()));
 
         playlistView->setModel(model);
         playlistView->setItemDelegate(new PlaylistDelegate(widget));
@@ -130,19 +130,25 @@ struct PlaylistWidget::Private : QObject
         settings->subscribe<Settings::PlaylistHeader>(this, &PlaylistWidget::Private::setHeaderHidden);
         settings->subscribe<Settings::PlaylistScrollBar>(this, &PlaylistWidget::Private::setScrollbarHidden);
 
-        settings->subscribe<Settings::CurrentPreset>(this, &PlaylistWidget::Private::changePreset);
+        settings->subscribe<Settings::CurrentPreset>(this, [&presetRegistry, this](const QString& presetName) {
+            const auto preset = presetRegistry->itemByName(presetName);
+            changePreset(preset);
+        });
+
+        changePreset(presetRegistry->itemByName(settings->value<Settings::CurrentPreset>()));
     }
 
-    void onPresetChanged(const PlaylistPreset& preset) const
+    void onPresetChanged(const PlaylistPreset& preset)
     {
-        if(preset.name == settings->value<Settings::CurrentPreset>()) {
-            changePreset(preset.name);
+        if(currentPreset.id == preset.id) {
+            changePreset(preset);
         }
     }
 
-    void changePreset(const QString& name) const
+    void changePreset(const PlaylistPreset& preset)
     {
-        model->changePreset(presetRegistry->presetByName(name));
+        currentPreset = preset;
+        model->changePreset(currentPreset);
         if(auto playlist = playlistController->currentPlaylist()) {
             model->reset(*playlist);
         }
@@ -237,8 +243,7 @@ struct PlaylistWidget::Private : QObject
         auto* menu = new QMenu(widget);
         menu->setAttribute(Qt::WA_DeleteOnClose);
 
-        const auto& currentPreset = presetRegistry->presetByName(settings->value<Settings::CurrentPreset>());
-        const auto& presets       = presetRegistry->presets();
+        const auto& presets = presetRegistry->items();
 
         for(const auto& [index, preset] : presets) {
             //            if(preset.name != currentPreset.name) {

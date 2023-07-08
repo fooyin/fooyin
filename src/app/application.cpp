@@ -262,8 +262,8 @@ void Application::startup()
     p->settingsManager->loadSettings();
     p->library->loadLibrary();
     p->layoutProvider.findLayouts();
-    p->presetRegistry.loadPresets();
-    p->treeGroupRegistry.loadGroupings();
+    p->presetRegistry.loadItems();
+    p->treeGroupRegistry.loadItems();
 
     QIcon::setThemeName(p->settingsManager->value<Gui::Settings::IconTheme>());
 
@@ -282,8 +282,8 @@ void Application::shutdown()
 {
     p->playlistHandler->savePlaylists();
     p->editableLayout->saveLayout();
-    p->presetRegistry.savePresets();
-    p->treeGroupRegistry.saveGroupings();
+    p->presetRegistry.saveItems();
+    p->treeGroupRegistry.saveItems();
     p->playlistController.reset(nullptr);
     p->editableLayout.reset(nullptr);
     p->mainWindow.reset(nullptr);

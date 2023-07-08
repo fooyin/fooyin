@@ -19,23 +19,43 @@
 
 #pragma once
 
+#include <QDataStream>
 #include <QString>
 
 namespace Fy::Gui::Widgets {
 struct LibraryTreeGrouping
 {
+    int id{-1};
     int index{-1};
     QString name;
     QString script;
 
     bool operator==(const LibraryTreeGrouping& other) const
     {
-        return std::tie(index, name, script) == std::tie(other.index, other.name, other.script);
+        return std::tie(id, index, name, script) == std::tie(other.id, other.index, other.name, other.script);
     }
 
     [[nodiscard]] bool isValid() const
     {
-        return !name.isEmpty() && !script.isEmpty();
+        return id >= 0 && !name.isEmpty() && !script.isEmpty();
+    }
+
+    friend QDataStream& operator<<(QDataStream& stream, const LibraryTreeGrouping& group)
+    {
+        stream << group.id;
+        stream << group.index;
+        stream << group.name;
+        stream << group.script;
+        return stream;
+    }
+
+    friend QDataStream& operator>>(QDataStream& stream, LibraryTreeGrouping& group)
+    {
+        stream >> group.id;
+        stream >> group.index;
+        stream >> group.name;
+        stream >> group.script;
+        return stream;
     }
 };
 } // namespace Fy::Gui::Widgets

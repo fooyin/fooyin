@@ -52,7 +52,7 @@ FieldModel::FieldModel(FieldRegistry* fieldsRegistry, QObject* parent)
 
 void FieldModel::setupModelData()
 {
-    const auto& fields = m_fieldsRegistry->fields();
+    const auto& fields = m_fieldsRegistry->items();
 
     for(const auto& [index, field] : fields) {
         if(field.name.isEmpty()) {
@@ -123,7 +123,7 @@ void FieldModel::processQueue()
 
         switch(status) {
             case(FieldItem::Added): {
-                const FilterField addedField = m_fieldsRegistry->addField(field);
+                const FilterField addedField = m_fieldsRegistry->addItem(field);
                 if(addedField.isValid()) {
                     item->changeField(addedField);
                     item->setStatus(FieldItem::None);
@@ -146,7 +146,7 @@ void FieldModel::processQueue()
                 break;
             }
             case(FieldItem::Changed): {
-                if(m_fieldsRegistry->changeField(field)) {
+                if(m_fieldsRegistry->changeItem(field)) {
                     item->setStatus(FieldItem::None);
                 }
                 else {

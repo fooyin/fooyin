@@ -65,7 +65,7 @@ public:
     QMenu* filterHeaderMenu(int index, FilterField* field);
 
 signals:
-    void fieldChanged(const Fy::Filters::FilterField& field);
+    void fieldChanged(const Filters::FilterField& field);
     void filterChanged(int index, const QString& name);
     void filterTracks(const Core::TrackList& tracks, const QString& search);
     void filteredItems(int index);

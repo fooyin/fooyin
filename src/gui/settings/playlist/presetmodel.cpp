@@ -53,7 +53,7 @@ PresetModel::PresetModel(PresetRegistry* presetRegistry, QObject* parent)
 
 void PresetModel::setupModelData()
 {
-    const auto& presets = m_presetRegistry->presets();
+    const auto& presets = m_presetRegistry->items();
 
     for(const auto& [index, preset] : presets) {
         if(preset.name.isEmpty()) {
@@ -124,7 +124,7 @@ void PresetModel::processQueue()
 
         switch(status) {
             case(PresetItem::Added): {
-                const PlaylistPreset addedPreset = m_presetRegistry->addPreset(preset);
+                const PlaylistPreset addedPreset = m_presetRegistry->addItem(preset);
                 if(addedPreset.isValid()) {
                     item->changePreset(addedPreset);
                     item->setStatus(PresetItem::None);
@@ -147,7 +147,7 @@ void PresetModel::processQueue()
                 break;
             }
             case(PresetItem::Changed): {
-                if(m_presetRegistry->changePreset(preset)) {
+                if(m_presetRegistry->changeItem(preset)) {
                     item->setStatus(PresetItem::None);
                 }
                 else {

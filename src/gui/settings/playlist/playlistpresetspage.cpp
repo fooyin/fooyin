@@ -321,7 +321,7 @@ void PlaylistPresetsPageWidget::updatePreset()
     updateTextBlocks(m_trackText->blocks(), preset.track.text);
     preset.track.rowHeight = m_trackRowHeight->value();
 
-    if(preset != m_presetRegistry->presetByIndex(preset.index)) {
+    if(preset != m_presetRegistry->itemByIndex(preset.index)) {
         m_model->markForChange(preset);
     }
 }

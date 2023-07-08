@@ -50,7 +50,7 @@ LibraryTreeGroupModel::LibraryTreeGroupModel(Widgets::LibraryTreeGroupRegistry* 
 
 void LibraryTreeGroupModel::setupModelData()
 {
-    const auto& groups = m_groupsRegistry->groupings();
+    const auto& groups = m_groupsRegistry->items();
 
     for(const auto& [index, group] : groups) {
         if(!group.isValid()) {
@@ -119,7 +119,7 @@ void LibraryTreeGroupModel::processQueue()
 
         switch(status) {
             case(LibraryTreeGroupItem::Added): {
-                const auto addedField = m_groupsRegistry->addGrouping(group);
+                const auto addedField = m_groupsRegistry->addItem(group);
                 if(addedField.isValid()) {
                     node.changeGroup(addedField);
                     node.setStatus(LibraryTreeGroupItem::None);
@@ -142,7 +142,7 @@ void LibraryTreeGroupModel::processQueue()
                 break;
             }
             case(LibraryTreeGroupItem::Changed): {
-                if(m_groupsRegistry->changeGrouping(group)) {
+                if(m_groupsRegistry->changeItem(group)) {
                     node.setStatus(LibraryTreeGroupItem::None);
                 }
                 else {

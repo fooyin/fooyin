@@ -45,7 +45,7 @@ void FiltersPlugin::initialise(const Core::CorePluginContext& context)
     m_filterManager  = new FilterManager(m_library, m_playlistHandler, m_fieldsRegistry.get(), this);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
 
-    m_fieldsRegistry->loadFields();
+    m_fieldsRegistry->loadItems();
 }
 
 void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
@@ -70,7 +70,7 @@ void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
 
 void FiltersPlugin::shutdown()
 {
-    m_fieldsRegistry->saveFields();
+    m_fieldsRegistry->saveItems();
 }
 
 void FiltersPlugin::registerLayouts()

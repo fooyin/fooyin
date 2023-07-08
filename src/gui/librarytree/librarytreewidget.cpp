@@ -26,9 +26,6 @@
 #include "librarytreeview.h"
 
 #include <core/library/musiclibrary.h>
-#include <core/playlist/playlisthandler.h>
-
-#include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
 #include <QHeaderView>
@@ -81,7 +78,7 @@ struct LibraryTreeWidget::Private
         libraryTree->setWordWrap(true);
         libraryTree->setTextElideMode(Qt::ElideRight);
 
-        changeGrouping(groupsRegistry->groupingByName(""));
+        changeGrouping(groupsRegistry->itemByName(""));
 
         QObject::connect(libraryTree, &LibraryTreeView::doubleClicked, widget, [this]() {
             handleDoubleClick();
@@ -100,9 +97,9 @@ struct LibraryTreeWidget::Private
                          });
 
         QObject::connect(groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, widget,
-                         [this](const LibraryTreeGrouping& oldGroup, const LibraryTreeGrouping& newGroup) {
-                             if(grouping == oldGroup) {
-                                 changeGrouping(newGroup);
+                         [this](const LibraryTreeGrouping& changedGrouping) {
+                             if(grouping.id == changedGrouping.id) {
+                                 changeGrouping(changedGrouping);
                              }
                          });
 
@@ -145,7 +142,7 @@ struct LibraryTreeWidget::Private
     {
         auto* groupMenu = new QMenu("Grouping", parent);
 
-        const auto& groups = groupsRegistry->groupings();
+        const auto& groups = groupsRegistry->items();
         for(const auto& group : groups) {
             auto* switchGroup = new QAction(group.second.name, groupMenu);
             QObject::connect(switchGroup, &QAction::triggered, widget, [this, group]() {
@@ -163,7 +160,7 @@ struct LibraryTreeWidget::Private
         menu->popup(widget->mapToGlobal(pos));
     }
 
-    void selectionChanged()
+    void selectionChanged() const
     {
         const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
         if(selectedIndexes.empty()) {
@@ -242,7 +239,7 @@ void LibraryTreeWidget::saveLayout(QJsonArray& array)
 
 void LibraryTreeWidget::loadLayout(const QJsonObject& object)
 {
-    const LibraryTreeGrouping grouping = p->groupsRegistry->groupingByName(object["Grouping"].toString());
+    const LibraryTreeGrouping grouping = p->groupsRegistry->itemByName(object["Grouping"].toString());
     if(grouping.isValid()) {
         p->changeGrouping(grouping);
     }

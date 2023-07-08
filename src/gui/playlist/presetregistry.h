@@ -19,7 +19,10 @@
 
 #pragma once
 
+#include "gui/guisettings.h"
 #include "playlistpreset.h"
+
+#include <utils/itemregistry.h>
 
 #include <QObject>
 
@@ -29,38 +32,17 @@ class SettingsManager;
 }
 
 namespace Gui::Widgets::Playlist {
-using IndexPresetMap = std::map<int, PlaylistPreset>;
-
-class PresetRegistry : public QObject
+class PresetRegistry : public Utils::ItemRegistry<PlaylistPreset, Settings::PlaylistPresets>
 {
     Q_OBJECT
 
 public:
     explicit PresetRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
 
-    [[nodiscard]] const IndexPresetMap& presets() const;
-
-    PlaylistPreset addPreset(const PlaylistPreset& preset);
-    bool changePreset(const PlaylistPreset& preset);
-
-    [[nodiscard]] PlaylistPreset presetByIndex(int index) const;
-    [[nodiscard]] PlaylistPreset presetByName(const QString& name) const;
-
-    bool removeByIndex(int index);
-
-    void savePresets();
-    void loadPresets();
+    void loadItems() override;
 
 signals:
     void presetChanged(const PlaylistPreset& preset);
-
-private:
-    Utils::SettingsManager* m_settings;
-
-    IndexPresetMap m_presets;
 };
-
-QDataStream& operator<<(QDataStream& stream, const IndexPresetMap& presetMap);
-QDataStream& operator>>(QDataStream& stream, IndexPresetMap& presetMap);
 } // namespace Gui::Widgets::Playlist
 } // namespace Fy
