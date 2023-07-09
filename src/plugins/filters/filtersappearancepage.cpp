@@ -100,11 +100,9 @@ FiltersAppearancePage::FiltersAppearancePage(Utils::SettingsManager* settings)
 {
     setId(Constants::Page::FiltersAppearance);
     setName(tr("Appearance"));
-    setCategory("Category.Filters");
-    setCategoryName(tr("Filters"));
+    setCategory({"Plugins", "Filters"});
     setWidgetCreator([settings] {
         return new FiltersAppearancePageWidget(settings);
     });
-    setCategoryIconPath(Constants::Icons::Category::Filters);
 }
 } // namespace Fy::Filters::Settings

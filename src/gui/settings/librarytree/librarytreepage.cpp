@@ -216,11 +216,9 @@ LibraryTreePage::LibraryTreePage(Widgets::LibraryTreeGroupRegistry* groupsRegist
 {
     setId(Constants::Page::WidgetsLibraryTree);
     setName(tr("Library Tree"));
-    setCategory("Category.Widgets");
-    setCategoryName(tr("Widgets"));
+    setCategory({"Widgets", "Library Tree"});
     setWidgetCreator([groupsRegistry, settings] {
         return new LibraryTreePageWidget(groupsRegistry, settings);
     });
-    setCategoryIconPath(Constants::Icons::Category::Widgets);
 }
 } // namespace Fy::Gui::Settings

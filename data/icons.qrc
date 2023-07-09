@@ -10,11 +10,7 @@
         <file>icons/light/scalable/actions/sc-fooyin-round.svg</file>
         <file>icons/light/scalable/actions/sc-fooyin.svg</file>
         <file>icons/dark/scalable/actions/application-exit.svg</file>
-        <file>icons/dark/scalable/actions/applications-accessories.svg</file>
         <file>icons/dark/scalable/actions/applications-graphics.svg</file>
-        <file>icons/dark/scalable/actions/applications-multimedia.svg</file>
-        <file>icons/dark/scalable/actions/applications-office.svg</file>
-        <file>icons/dark/scalable/actions/applications-system.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-high.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-low.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-medium.svg</file>
@@ -31,11 +27,7 @@
         <file>icons/dark/scalable/actions/preferences-system.svg</file>
         <file>icons/dark/scalable/actions/view-refresh.svg</file>
         <file>icons/light/scalable/actions/application-exit.svg</file>
-        <file>icons/light/scalable/actions/applications-accessories.svg</file>
         <file>icons/light/scalable/actions/applications-graphics.svg</file>
-        <file>icons/light/scalable/actions/applications-multimedia.svg</file>
-        <file>icons/light/scalable/actions/applications-office.svg</file>
-        <file>icons/light/scalable/actions/applications-system.svg</file>
         <file>icons/light/scalable/actions/audio-volume-high.svg</file>
         <file>icons/light/scalable/actions/audio-volume-low.svg</file>
         <file>icons/light/scalable/actions/audio-volume-medium.svg</file>

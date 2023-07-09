@@ -22,48 +22,53 @@
 #include "settingspage.h"
 
 namespace Fy::Utils {
-SettingsModel::SettingsModel()
+SettingsItem::SettingsItem()
+    : SettingsItem{nullptr, nullptr}
+{ }
+
+SettingsItem::SettingsItem(SettingsCategory* data, SettingsItem* parent)
+    : TreeItem{parent}
+    , m_data{data}
+{ }
+
+SettingsCategory* SettingsItem::data() const
 {
-    QPixmap emptyPixmap(24, 24);
-    emptyPixmap.fill(Qt::transparent);
-    m_emptyIcon = QIcon{emptyPixmap};
+    return m_data;
 }
 
-SettingsModel::~SettingsModel()
+void SettingsItem::sortChildren()
 {
-    for(const auto& category : m_categories) {
-        delete category;
+    for(SettingsItem* child : m_children) {
+        child->sortChildren();
+        child->resetRow();
     }
-    m_categories.clear();
+    std::ranges::sort(m_children, [](const SettingsItem* lhs, const SettingsItem* rhs) {
+        return lhs->m_data->name < rhs->m_data->name;
+    });
 }
 
-int SettingsModel::rowCount(const QModelIndex& parent) const
-{
-    return parent.isValid() ? 0 : static_cast<int>(m_categories.size());
-}
+SettingsModel::SettingsModel(QObject* parent)
+    : TreeModel{parent}
+{ }
 
 QVariant SettingsModel::data(const QModelIndex& index, int role) const
 {
-    const int row = index.row();
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return {};
+    }
+
+    const auto* item       = static_cast<SettingsItem*>(index.internalPointer());
+    SettingsCategory* data = item->data();
 
     switch(role) {
-        case Qt::DisplayRole:
-            return m_categories.at(row)->name;
-        case Qt::DecorationRole: {
-            QIcon icon = m_categories.at(row)->icon;
-            if(icon.isNull()) {
-                icon = m_emptyIcon;
-            }
-            return icon;
-        }
+        case(Qt::DisplayRole):
+            return data->name;
+        case(SettingsItem::Data):
+            return QVariant::fromValue(data);
         default:
             return {};
     }
-}
-
-const CategoryList& SettingsModel::categories() const
-{
-    return m_categories;
+    return {};
 }
 
 void SettingsModel::setPages(const PageList& pages)
@@ -75,46 +80,59 @@ void SettingsModel::setPages(const PageList& pages)
 
     for(const auto& page : pages) {
         if(m_pageIds.contains(page->id())) {
-            qWarning() << "Duplicate settings page " << page->id().name();
+            qWarning() << "Duplicate settings page: " << page->id().name();
             continue;
         }
-        m_pageIds.insert(page->id());
 
-        const Id categoryId        = page->category();
-        SettingsCategory* category = findCategoryById(categoryId);
-        if(!category) {
-            category            = new SettingsCategory();
-            category->id        = categoryId;
-            category->tabWidget = nullptr;
-            category->index     = -1;
-            m_categories.emplace_back(category);
+        m_pageIds.insert(page->id());
+        SettingsItem* parent         = rootItem();
+        const QStringList categories = page->category();
+        Id categoryId;
+        SettingsCategory* category = nullptr;
+
+        for(const QString& categoryName : categories) {
+            categoryId = categoryId.append(categoryName);
+
+            if(!m_items.contains(categoryId)) {
+                m_categories.emplace(categoryId, SettingsCategory{.id = categoryId, .name = categoryName});
+                category = &m_categories.at(categoryId);
+                m_items.emplace(categoryId, SettingsItem{category, parent});
+                auto* item = &m_items.at(categoryId);
+                parent->appendChild(item);
+            }
+
+            category   = &m_categories.at(categoryId);
+            auto* item = &m_items.at(categoryId);
+            parent     = item;
         }
-        if(category->name.isEmpty()) {
-            category->name = page->categoryName();
+
+        if(category) {
+            category->pages.emplace_back(page);
         }
-        if(category->icon.isNull()) {
-            category->icon = page->categoryIcon();
-        }
-        category->pages.emplace_back(page);
     }
 
-    std::sort(m_categories.begin(), m_categories.end(), [](const auto* c1, const auto* c2) {
-        return c1->name < c2->name;
-    });
-
+    rootItem()->sortChildren();
     endResetModel();
 }
 
-SettingsCategory* SettingsModel::findCategoryById(const Id& id)
+std::optional<SettingsCategory> SettingsModel::categoryForPage(const Id& page) const
 {
-    auto category = std::ranges::find_if(std::as_const(m_categories), [&id](const auto& category) {
-        return category->id == id;
-    });
-
-    if(category != m_categories.end()) {
-        return *category;
+    for(const auto& [_, category] : m_categories) {
+        const int pageIndex = category.findPageById(page);
+        if(pageIndex >= 0) {
+            return category;
+        }
     }
+    return {};
+}
 
-    return nullptr;
+QModelIndex SettingsModel::indexForCategory(const Id& id) const
+{
+    for(const auto& [_, category] : m_items) {
+        if(category.data()->id == id) {
+            return createIndex(category.row(), 0, &category);
+        }
+    }
+    return {};
 }
 } // namespace Fy::Utils

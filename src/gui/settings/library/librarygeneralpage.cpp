@@ -187,12 +187,10 @@ LibraryGeneralPage::LibraryGeneralPage(Core::Library::LibraryManager* libraryMan
 {
     setId(Constants::Page::LibraryGeneral);
     setName(tr("General"));
-    setCategory("Category.Library");
-    setCategoryName(tr("Library"));
+    setCategory({"Library"});
     setWidgetCreator([libraryManager, settings] {
         return new LibraryGeneralPageWidget(libraryManager, settings);
     });
-    setCategoryIconPath(Constants::Icons::Category::Library);
 }
 
 } // namespace Fy::Gui::Settings

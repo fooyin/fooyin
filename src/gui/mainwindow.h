@@ -40,11 +40,20 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    enum StartupBehaviour
+    {
+        Normal,
+        Maximised,
+        RememberLast
+    };
+    Q_ENUM(StartupBehaviour)
+
     explicit MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
                         Widgets::EditableLayout* editableLayout, QWidget* parent = nullptr);
 
-    ~MainWindow();
+    ~MainWindow() override;
 
+    void open();
     void setupUi();
     void setupMenu();
 

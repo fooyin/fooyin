@@ -19,37 +19,14 @@
 
 #pragma once
 
-#include <QEvent>
-#include <QListView>
-#include <QScrollBar>
-#include <QStyledItemDelegate>
+#include <QTreeView>
 
 namespace Fy::Utils {
-class SimpleListViewDelegate : public QStyledItemDelegate
+class SimpleTreeView : public QTreeView
 {
 public:
-    explicit SimpleListViewDelegate(QObject* parent);
+    explicit SimpleTreeView(QWidget* parent = nullptr);
 
-    void setHeight(int height);
-
-private:
-    [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-
-    int m_height;
-};
-
-class SimpleListView : public QListView
-{
-public:
-    explicit SimpleListView(QWidget* parent = nullptr);
-
-    void setWidth(int width);
-    void setHeight(int height);
-
-private:
     [[nodiscard]] QSize sizeHint() const override;
-
-    SimpleListViewDelegate* m_delegate;
-    int m_width;
 };
 } // namespace Fy::Utils

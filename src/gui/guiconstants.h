@@ -44,15 +44,6 @@ constexpr auto Settings      = "preferences-system";
 constexpr auto RescanLibrary = "view-refresh";
 constexpr auto LayoutEditing = "applications-graphics";
 constexpr auto QuickSetup    = "preferences-desktop";
-
-namespace Category {
-constexpr auto General   = "applications-system";
-constexpr auto Interface = "applications-graphics";
-constexpr auto Library   = "applications-office";
-constexpr auto Playlist  = "applications-multimedia";
-constexpr auto Widgets   = "applications-accessories";
-constexpr auto Plugins   = "applications-accessories";
-} // namespace Category
 } // namespace Icons
 
 constexpr auto MenuBar = "Fooyin.MenuBar";
@@ -114,14 +105,6 @@ constexpr auto Repeat          = "Fooyin.Action.Playback.Repeat";
 constexpr auto RepeatAll       = "Fooyin.Action.Playback.RepeatAll";
 constexpr auto Shuffle         = "Fooyin.Action.Playback.Shuffle";
 } // namespace Actions
-
-namespace Category {
-constexpr auto General   = "Fooyin.Category.General";
-constexpr auto Interface = "Fooyin.Category.Interface";
-constexpr auto Library   = "Fooyin.Category.Library";
-constexpr auto Playlist  = "Fooyin.Category.Playlist";
-constexpr auto Widgets   = "Fooyin.Category.Widgets";
-} // namespace Category
 
 namespace Page {
 constexpr auto GeneralCore        = "Fooyin.Page.General.Core";

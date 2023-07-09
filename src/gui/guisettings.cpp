@@ -31,6 +31,7 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
     m_settings->createTempSetting(Settings::LayoutEditing, false);
+    m_settings->createSetting(Settings::StartupBehaviour, "2", "General");
     m_settings->createSetting(Settings::Geometry, "", "Layout");
     m_settings->createSetting(Settings::SettingsGeometry, "", "Layout");
     m_settings->createSetting(Settings::SplitterHandles, true, "Splitters");

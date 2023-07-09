@@ -56,11 +56,9 @@ FiltersGeneralPage::FiltersGeneralPage(Utils::SettingsManager* settings)
 {
     setId(Constants::Page::FiltersGeneral);
     setName(tr("General"));
-    setCategory("Category.Filters");
-    setCategoryName(tr("Filters"));
+    setCategory({"Filters"});
     setWidgetCreator([settings] {
         return new FiltersGeneralPageWidget(settings);
     });
-    setCategoryIconPath(Constants::Icons::Category::Filters);
 }
 } // namespace Fy::Filters::Settings

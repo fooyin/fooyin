@@ -47,9 +47,7 @@ public:
 
     [[nodiscard]] Id id() const;
     [[nodiscard]] QString name() const;
-    [[nodiscard]] Id category() const;
-    [[nodiscard]] QString categoryName() const;
-    [[nodiscard]] QIcon categoryIcon() const;
+    [[nodiscard]] QStringList category() const;
 
     virtual QWidget* widget();
     virtual void apply();
@@ -58,19 +56,15 @@ public:
 protected:
     void setId(const Id& id);
     void setName(const QString& name);
-    void setCategory(const Id& category);
-    void setCategoryName(const QString& name);
-    void setCategoryIcon(const QIcon& icon);
-    void setCategoryIconPath(const QString& iconPath);
+    void setCategory(const QStringList& category);
 
     using WidgetCreator = std::function<SettingsPageWidget*()>;
     void setWidgetCreator(const WidgetCreator& widgetCreator);
 
 private:
     Id m_id;
-    Id m_category;
+    QStringList m_category;
     QString m_name;
-    QString m_categoryName;
     QIcon m_categoryIcon;
     WidgetCreator m_widgetCreator;
     QWidget* m_widget;

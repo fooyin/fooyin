@@ -271,10 +271,10 @@ void Application::startup()
     p->editableLayout->initialise();
 
     if(p->libraryManager->hasLibrary() && p->settingsManager->value<Core::Settings::WaitForTracks>()) {
-        connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, p->mainWindow.get(), &Gui::MainWindow::show);
+        connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, p->mainWindow.get(), &Gui::MainWindow::open);
     }
     else {
-        p->mainWindow->show();
+        p->mainWindow->open();
     }
 }
 
