@@ -18,7 +18,7 @@ set(SOURCES
     overlayfilter.cpp
     overlaywidget.cpp
     paths.cpp
-    simplelistview.cpp
+    simpletreeview.cpp
     scrollarea.cpp
     slider.cpp
     utils.cpp

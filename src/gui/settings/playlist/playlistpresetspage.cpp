@@ -402,11 +402,9 @@ PlaylistPresetsPage::PlaylistPresetsPage(Widgets::Playlist::PresetRegistry* pres
 {
     setId(Constants::Page::PlaylistPresets);
     setName(tr("Presets"));
-    setCategory("Category.Playlist");
-    setCategoryName(tr("Playlist"));
+    setCategory({"Playlist", "Presets"});
     setWidgetCreator([presetRegistry] {
         return new PlaylistPresetsPageWidget(presetRegistry);
     });
-    setCategoryIconPath(Constants::Icons::Category::Playlist);
 }
 } // namespace Fy::Gui::Settings

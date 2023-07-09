@@ -41,19 +41,9 @@ QString SettingsPage::name() const
     return m_name;
 }
 
-Id SettingsPage::category() const
+QStringList SettingsPage::category() const
 {
     return m_category;
-}
-
-QString SettingsPage::categoryName() const
-{
-    return m_categoryName;
-}
-
-QIcon SettingsPage::categoryIcon() const
-{
-    return m_categoryIcon;
 }
 
 void SettingsPage::setWidgetCreator(const WidgetCreator& widgetCreator)
@@ -101,23 +91,8 @@ void SettingsPage::setName(const QString& name)
     m_name = name;
 }
 
-void SettingsPage::setCategory(const Id& category)
+void SettingsPage::setCategory(const QStringList& category)
 {
     m_category = category;
-}
-
-void SettingsPage::setCategoryName(const QString& name)
-{
-    m_categoryName = name;
-}
-
-void SettingsPage::setCategoryIcon(const QIcon& icon)
-{
-    m_categoryIcon = icon;
-}
-
-void SettingsPage::setCategoryIconPath(const QString& iconPath)
-{
-    m_categoryIcon = QIcon::fromTheme(iconPath);
 }
 } // namespace Fy::Utils

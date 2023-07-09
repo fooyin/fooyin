@@ -106,11 +106,9 @@ FiltersFieldsPage::FiltersFieldsPage(FieldRegistry* fieldsRegistry, Utils::Setti
 {
     setId(Constants::Page::FiltersFields);
     setName(tr("Fields"));
-    setCategory("Category.Filters");
-    setCategoryName(tr("Filters"));
+    setCategory({"Plugins", "Filters"});
     setWidgetCreator([fieldsRegistry] {
         return new FiltersFieldsPageWidget(fieldsRegistry);
     });
-    setCategoryIconPath(Constants::Icons::Category::Filters);
 }
 } // namespace Fy::Filters::Settings

@@ -24,6 +24,7 @@
 #include "guisettings.h"
 #include "mainmenubar.h"
 
+#include <core/constants.h>
 #include <core/coresettings.h>
 
 #include <utils/actions/actioncontainer.h>
@@ -56,18 +57,30 @@ MainWindow::~MainWindow()
     m_settings->set<Settings::SettingsGeometry>(m_settings->settingsDialog()->geometry().toBase64());
 }
 
+void MainWindow::open()
+{
+    const int startup = m_settings->value<Settings::StartupBehaviour>();
+    switch(startup) {
+        case(Maximised):
+            showMaximized();
+            break;
+        case(RememberLast):
+            restoreGeometry(QByteArray::fromBase64(m_settings->value<Settings::Geometry>()));
+            show();
+            break;
+        case(Normal):
+        default:
+            show();
+            break;
+    }
+}
+
 void MainWindow::setupUi()
 {
-    if(objectName().isEmpty()) {
-        setObjectName(QString::fromUtf8("MainWindow"));
-    }
+    setWindowTitle(Core::Constants::AppName);
 
     resize(1280, 720);
-    setMinimumSize(410, 320);
     setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
-
-    const QByteArray mainGeometry = QByteArray::fromBase64(m_settings->value<Settings::Geometry>());
-    restoreGeometry(mainGeometry);
 
     const QByteArray settingsGeometry = QByteArray::fromBase64(m_settings->value<Settings::SettingsGeometry>());
     m_settings->settingsDialog()->updateGeometry(settingsGeometry);

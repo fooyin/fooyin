@@ -128,11 +128,9 @@ GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, Widgets::Editable
 {
     setId(Constants::Page::InterfaceGeneral);
     setName(tr("General"));
-    setCategory("Category.Interface");
-    setCategoryName(tr("Interface"));
+    setCategory({"Interface"});
     setWidgetCreator([layoutProvider, editableLayout, settings] {
         return new GuiGeneralPageWidget(layoutProvider, editableLayout, settings);
     });
-    setCategoryIconPath(Constants::Icons::Category::Interface);
 }
 } // namespace Fy::Gui::Settings

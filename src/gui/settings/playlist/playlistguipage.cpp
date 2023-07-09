@@ -72,11 +72,9 @@ PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsManager* settings)
 {
     setId(Constants::Page::PlaylistInterface);
     setName(tr("Interface"));
-    setCategory("Category.Playlist");
-    setCategoryName(tr("Playlist"));
+    setCategory({"Playlist"});
     setWidgetCreator([settings] {
         return new PlaylistGuiPageWidget(settings);
     });
-    setCategoryIconPath(Constants::Icons::Category::Playlist);
 }
 } // namespace Fy::Gui::Settings
