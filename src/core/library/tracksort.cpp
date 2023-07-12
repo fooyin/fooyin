@@ -17,14 +17,10 @@
  *
  */
 
-#include "tracksorter.h"
+#include "tracksort.h"
 
-namespace Fy::Core::Library {
-TrackSorter::TrackSorter()
-    : m_parser{&m_registry}
-{ }
-
-void TrackSorter::sortTracks(TrackList& tracks)
+namespace Fy::Core::Library::Sorting {
+TrackList sortTracks(const TrackList& tracks)
 {
     TrackList sortedTracks{tracks};
     std::sort(sortedTracks.begin(), sortedTracks.end(), [](const Track& lhs, const Track& rhs) {
@@ -32,28 +28,33 @@ void TrackSorter::sortTracks(TrackList& tracks)
         if(cmp == 0) {
             return false;
         }
-        return QString::localeAwareCompare(lhs.sort(), rhs.sort()) < 0;
+        return cmp < 0;
     });
-    tracks = sortedTracks;
+    return sortedTracks;
 }
 
-void TrackSorter::calcSortField(Track& track)
+Scripting::ParsedScript parseScript(const QString& sort)
 {
-    track.setSort(m_parser.evaluate(m_sortScript, track));
+    Scripting::Registry registry;
+    Scripting::Parser parser{&registry};
+
+    return parser.parse(sort);
 }
 
-void TrackSorter::calcSortFields(TrackList& tracks)
+TrackList calcSortFields(const QString& sort, const TrackList& tracks)
 {
-    for(Track& track : tracks) {
-        track.setSort(m_parser.evaluate(m_sortScript, track));
+    return calcSortFields(parseScript(sort), tracks);
+}
+
+TrackList calcSortFields(const Scripting::ParsedScript& sortScript, const TrackList& tracks)
+{
+    Scripting::Registry registry;
+    Scripting::Parser parser{&registry};
+
+    TrackList calcTracks{tracks};
+    for(Track& track : calcTracks) {
+        track.setSort(parser.evaluate(sortScript, track));
     }
+    return calcTracks;
 }
-
-void TrackSorter::changeSorting(const QString& sort)
-{
-    const auto sortScript = m_parser.parse(sort);
-    if(sortScript.valid) {
-        m_sortScript = sortScript;
-    }
-}
-} // namespace Fy::Core::Library
+} // namespace Fy::Core::Library::Sorting

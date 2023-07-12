@@ -34,6 +34,7 @@ find_package(Qt6Core REQUIRED)
 find_package(Qt6Widgets REQUIRED)
 find_package(Qt6Gui REQUIRED)
 find_package(Qt6Sql REQUIRED)
+find_package(Qt6Concurrent REQUIRED)
 
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(Libmpv REQUIRED)
@@ -63,6 +64,7 @@ target_link_libraries(
          Qt6::Gui
          Qt6::Widgets
          Qt6::Sql
+         Qt6::Concurrent
          fooyin::core
          fooyin::gui
          fooyin::utils

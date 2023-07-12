@@ -19,23 +19,13 @@
 
 #pragma once
 
-#include <utils/settings/settingspage.h>
+#include "core/models/trackfwd.h"
+#include "core/scripting/scriptparser.h"
 
-namespace Fy {
+namespace Fy::Core::Library::Sorting {
+TrackList sortTracks(const TrackList& tracks);
 
-namespace Utils {
-class SettingsManager;
-} // namespace Utils
-
-namespace Core::Library {
-class LibraryManager;
-} // namespace Core::Library
-
-namespace Gui::Settings {
-class LibraryGeneralPage : public Utils::SettingsPage
-{
-public:
-    LibraryGeneralPage(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings);
-};
-} // namespace Gui::Settings
-} // namespace Fy
+Scripting::ParsedScript parseScript(const QString& sort);
+TrackList calcSortFields(const QString& sort, const TrackList& tracks);
+TrackList calcSortFields(const Scripting::ParsedScript& sortScript, const TrackList& tracks);
+} // namespace Fy::Core::Library::Sorting

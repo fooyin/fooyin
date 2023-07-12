@@ -19,24 +19,22 @@
 
 #pragma once
 
-#include "core/models/trackfwd.h"
-#include "core/scripting/scriptparser.h"
+#include <QFuture>
+#include <QFutureWatcher>
+#include <QtConcurrent>
 
-namespace Fy::Core::Library {
-class TrackSorter
+namespace Fy::Utils {
+template <typename Ret, typename Func>
+Ret asyncExec(Func&& func)
 {
-public:
-    TrackSorter();
-    
-    void sortTracks(TrackList& tracks);
-    void calcSortField(Track& track);
-    void calcSortFields(TrackList& tracks);
+    QFuture<Ret> future = QtConcurrent::run(std::forward<Func>(func));
+    QFutureWatcher<Ret> watcher;
+    watcher.setFuture(future);
 
-    void changeSorting(const QString& sort);
+    QEventLoop eventLoop;
+    QObject::connect(&watcher, &QFutureWatcher<Ret>::finished, &eventLoop, &QEventLoop::quit);
+    eventLoop.exec();
 
-private:
-    Scripting::Registry m_registry;
-    Scripting::Parser m_parser;
-    Scripting::ParsedScript m_sortScript;
-};
-} // namespace Fy::Core::Library
+    return future.result();
+}
+} // namespace Fy::Utils

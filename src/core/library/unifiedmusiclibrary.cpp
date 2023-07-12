@@ -23,7 +23,9 @@
 #include "libraryinfo.h"
 #include "librarymanager.h"
 #include "libraryscanner.h"
+#include "tracksort.h"
 
+#include <utils/async.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -34,6 +36,20 @@
 #include <vector>
 
 namespace Fy::Core::Library {
+TrackList recalSortFields(const QString& sort, const TrackList& tracks)
+{
+    return Utils::asyncExec<TrackList>([&sort, &tracks]() {
+        return Sorting::calcSortFields(sort, tracks);
+    });
+}
+
+TrackList resortTracks(const TrackList& tracks)
+{
+    return Utils::asyncExec<TrackList>([&tracks]() {
+        return Sorting::sortTracks(tracks);
+    });
+}
+
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database,
                                          Utils::SettingsManager* settings, QObject* parent)
     : MusicLibrary{parent}
@@ -59,8 +75,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     connect(&m_threadHandler, &LibraryThreadHandler::gotTracks, this, &UnifiedMusicLibrary::loadTracks);
     connect(this, &UnifiedMusicLibrary::loadAllTracks, &m_threadHandler, &LibraryThreadHandler::getAllTracks);
 
-    m_settings->subscribe<Settings::SortScript>(this, &UnifiedMusicLibrary::changeSort);
-    m_trackSorter.changeSorting(m_settings->value<Settings::SortScript>());
+    m_settings->subscribe<Settings::LibrarySortScript>(this, &UnifiedMusicLibrary::changeSort);
 
     if(m_settings->value<Settings::AutoRefresh>()) {
         QTimer::singleShot(3000, this, &Library::UnifiedMusicLibrary::reloadAll);
@@ -104,9 +119,10 @@ TrackList UnifiedMusicLibrary::tracks() const
 
 void UnifiedMusicLibrary::changeSort(const QString& sort)
 {
-    m_trackSorter.changeSorting(sort);
-    m_trackSorter.calcSortFields(m_tracks);
-    m_trackSorter.sortTracks(m_tracks);
+    const TrackList recalTracks  = recalSortFields(sort, m_tracks);
+    const TrackList sortedTracks = resortTracks(recalTracks);
+    m_tracks                     = sortedTracks;
+
     emit tracksSorted(m_tracks);
 }
 
@@ -136,12 +152,12 @@ void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
 {
     m_tracks.reserve(m_tracks.size() + tracks.size());
 
-    TrackList newTracks{tracks};
-    for(Track& track : newTracks) {
-        m_trackSorter.calcSortField(track);
-        m_tracks.push_back(track);
-    }
-    m_trackSorter.sortTracks(m_tracks);
+    const TrackList newTracks = recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
+    std::ranges::copy(newTracks, std::back_inserter(m_tracks));
+
+    const TrackList sortedTracks = resortTracks(m_tracks);
+    m_tracks                     = sortedTracks;
+
     emit tracksAdded(newTracks);
 }
 

@@ -35,7 +35,10 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::PlayMode, "Default", "Player");
     m_settings->createSetting(Settings::AutoRefresh, false, "Library");
     m_settings->createSetting(Settings::WaitForTracks, true, "Library");
-    m_settings->createSetting(Settings::SortScript, "%albumartist% - %album% - %disc% - %track% - %title%", "Library");
+    m_settings->createSetting(Settings::LibrarySorting, "", "Library");
+    m_settings->createSetting(Settings::LibrarySortScript,
+                              "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%",
+                              "Library");
     m_settings->createSetting(Settings::ActivePlaylistId, 0, "Playlist");
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));

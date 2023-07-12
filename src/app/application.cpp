@@ -132,7 +132,7 @@ struct Application::Private
         , guiSettings{settingsManager}
         , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(playlistHandler,
                                                                                           settingsManager)}
-        , selectionController{actionManager, playlistController.get()}
+        , selectionController{actionManager, settingsManager, playlistController.get()}
         , presetRegistry{settingsManager}
         , treeGroupRegistry{settingsManager}
         , editableLayout{std::make_unique<Gui::Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,

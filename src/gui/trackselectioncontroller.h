@@ -28,6 +28,7 @@ class QMenu;
 namespace Fy {
 namespace Utils {
 class ActionManager;
+class SettingsManager;
 }
 
 namespace Gui {
@@ -58,7 +59,7 @@ class TrackSelectionController : public QObject
     Q_OBJECT
 
 public:
-    TrackSelectionController(Utils::ActionManager* actionManager,
+    TrackSelectionController(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
                              Widgets::Playlist::PlaylistController* playlistController);
     ~TrackSelectionController() override;
 

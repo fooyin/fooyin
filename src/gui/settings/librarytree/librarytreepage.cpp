@@ -65,9 +65,8 @@ private:
     QComboBox* m_doubleClick;
 
     QCheckBox* m_playlistEnabled;
-    QLineEdit* m_playlistName;
-
     QCheckBox* m_autoSwitch;
+    QLineEdit* m_playlistName;
 };
 
 LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* groupsRegistry,
@@ -79,8 +78,8 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
     , m_playlistEnabled{new QCheckBox("Enabled", this)}
-    , m_playlistName{new QLineEdit(this)}
     , m_autoSwitch{new QCheckBox("Switch when changed", this)}
+    , m_playlistName{new QLineEdit(this)}
 {
     m_groupList->setModel(m_model);
 

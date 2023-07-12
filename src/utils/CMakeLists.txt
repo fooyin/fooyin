@@ -8,6 +8,7 @@ project(
   LANGUAGES CXX)
 
 set(SOURCES
+    async.h
     clickablelabel.cpp
     comboicon.cpp
     headerview.cpp
@@ -51,7 +52,8 @@ set_target_properties(
              LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_LIBRARY_OUTPUT_DIR}
              INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH})
 
-target_link_libraries(fooyin_utils PRIVATE Qt6::Core Qt6::Widgets)
+target_link_libraries(fooyin_utils PRIVATE Qt6::Core Qt6::Widgets
+                                           Qt6::Concurrent)
 
 target_compile_features(fooyin_utils PUBLIC cxx_std_20)
 target_compile_options(fooyin_utils PRIVATE -Werror -Wall -Wextra -Wpedantic)

@@ -112,7 +112,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     auto* sortScriptLayout = new QHBoxLayout();
     sortScriptLayout->addWidget(sortScriptLabel);
     sortScriptLayout->addWidget(m_sortScript);
-    m_sortScript->setText(m_settings->value<Core::Settings::SortScript>());
+    m_sortScript->setText(m_settings->value<Core::Settings::LibrarySortScript>());
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(libraryLayout);
@@ -129,7 +129,7 @@ void LibraryGeneralPageWidget::apply()
 {
     m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
     m_settings->set<Core::Settings::WaitForTracks>(m_waitForTracks->isChecked());
-    m_settings->set<Core::Settings::SortScript>(m_sortScript->text());
+    m_settings->set<Core::Settings::LibrarySortScript>(m_sortScript->text());
     m_model->processQueue();
 }
 

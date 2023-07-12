@@ -26,6 +26,9 @@
 #include "librarytreeview.h"
 
 #include <core/library/musiclibrary.h>
+#include <core/library/tracksort.h>
+
+#include <utils/async.h>
 
 #include <QContextMenuEvent>
 #include <QHeaderView>
@@ -35,6 +38,24 @@
 #include <QVBoxLayout>
 
 namespace Fy::Gui::Widgets {
+void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QModelIndexList& bottomIndexes)
+{
+    if(!index.isValid()) {
+        return getLowestIndexes(treeView, treeView->rootIndex(), bottomIndexes);
+    }
+
+    const int rowCount = treeView->model()->rowCount(index);
+    if(rowCount == 0) {
+        bottomIndexes.append(index);
+        return;
+    }
+
+    for(int row = 0; row < rowCount; ++row) {
+        const QModelIndex childIndex = treeView->model()->index(row, 0, index);
+        getLowestIndexes(treeView, childIndex, bottomIndexes);
+    }
+}
+
 struct LibraryTreeWidget::Private
 {
     LibraryTreeWidget* widget;
@@ -109,9 +130,9 @@ struct LibraryTreeWidget::Private
 
         // TODO: Support row insertion/deletion
         QObject::connect(library, &Core::Library::MusicLibrary::tracksLoaded, treeReset);
-        QObject::connect(library, &Core::Library::MusicLibrary::tracksSorted, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::tracksDeleted, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::tracksAdded, treeReset);
+        QObject::connect(library, &Core::Library::MusicLibrary::tracksSorted, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::libraryRemoved, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::libraryChanged, treeReset);
 
@@ -160,19 +181,28 @@ struct LibraryTreeWidget::Private
         menu->popup(widget->mapToGlobal(pos));
     }
 
-    void selectionChanged() const
+    void selectionChanged()
     {
         const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
         if(selectedIndexes.empty()) {
             return;
         }
 
+        QModelIndexList trackIndexes;
+        for(const QModelIndex& index : selectedIndexes) {
+            getLowestIndexes(libraryTree, index, trackIndexes);
+        }
+
         Core::TrackList tracks;
-        for(const auto& index : selectedIndexes) {
+        for(const auto& index : trackIndexes) {
             const auto indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
             tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
         }
-        trackSelection->changeSelectedTracks(tracks, playlistNameFromSelection());
+
+        const auto sortedTracks = Utils::asyncExec<Core::TrackList>([&tracks]() {
+            return Core::Library::Sorting::sortTracks(tracks);
+        });
+        trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
 
         if(settings->value<Settings::LibraryTreePlaylistEnabled>()) {
             const QString playlistName = settings->value<Settings::LibraryTreeAutoPlaylist>();

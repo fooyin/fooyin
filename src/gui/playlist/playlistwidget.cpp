@@ -66,12 +66,12 @@ struct PlaylistWidget::Private : QObject
     PlaylistPreset currentPreset;
 
     Private(PlaylistWidget* widget, Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-            PlaylistController* playlistController, PresetRegistry* presetRegistry,
+            PlaylistController* playlistController, PresetRegistry* registry,
             TrackSelectionController* selectionController, Utils::SettingsManager* settings)
         : widget{widget}
         , library{library}
         , playerManager{playerManager}
-        , presetRegistry{presetRegistry}
+        , presetRegistry{registry}
         , selectionController{selectionController}
         , settings{settings}
         , settingsDialog{settings->settingsDialog()}
@@ -103,6 +103,7 @@ struct PlaylistWidget::Private : QObject
         connect(playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidget::Private::doubleClicked);
         connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
                 &PlaylistWidget::Private::changeState);
+
         connect(model, &QAbstractItemModel::rowsInserted, this, &PlaylistWidget::Private::expandPlaylist);
         connect(header, &Utils::HeaderView::leftClicked, this, &PlaylistWidget::Private::switchContextMenu);
 
@@ -130,7 +131,7 @@ struct PlaylistWidget::Private : QObject
         settings->subscribe<Settings::PlaylistHeader>(this, &PlaylistWidget::Private::setHeaderHidden);
         settings->subscribe<Settings::PlaylistScrollBar>(this, &PlaylistWidget::Private::setScrollbarHidden);
 
-        settings->subscribe<Settings::CurrentPreset>(this, [&presetRegistry, this](const QString& presetName) {
+        settings->subscribe<Settings::CurrentPreset>(this, [this](const QString& presetName) {
             const auto preset = presetRegistry->itemByName(presetName);
             changePreset(preset);
         });

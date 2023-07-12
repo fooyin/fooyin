@@ -22,7 +22,6 @@
 #include "libraryscanner.h"
 #include "librarythreadhandler.h"
 #include "musiclibrary.h"
-#include "tracksorter.h"
 
 namespace Fy {
 
@@ -59,10 +58,6 @@ public:
 
     void removeLibrary(int id) override;
 
-signals:
-    void tracksSelChanged();
-    void updateSaveTracks(Core::TrackList tracks);
-
 private:
     void getAllTracks();
     void loadTracks(const TrackList& tracks);
@@ -77,7 +72,6 @@ private:
     Utils::SettingsManager* m_settings;
     LibraryThreadHandler m_threadHandler;
 
-    TrackSorter m_trackSorter;
     TrackList m_tracks;
 };
 } // namespace Library
