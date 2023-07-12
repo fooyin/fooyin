@@ -299,7 +299,11 @@ struct PlaylistWidget::Private : QObject
     void expandPlaylist(const QModelIndex& parent, int first, int last) const
     {
         while(first <= last) {
-            playlistView->expand(model->index(first, 0, parent));
+            const QModelIndex child = model->index(first, 0, parent);
+            playlistView->expand(child);
+            if(model->canFetchMore(child)) {
+                model->fetchMore(child);
+            }
             ++first;
         }
     }

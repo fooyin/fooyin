@@ -30,6 +30,7 @@
 
 namespace Fy::Gui::Widgets::Playlist {
 constexpr int InitialBatchSize = 1000;
+constexpr int BatchSize        = 4000;
 
 QString generateHeaderKey(const QString& titleText, const QString& subtitleText, const QString& sideText,
                           const QString& index = {})
@@ -326,6 +327,10 @@ struct PlaylistPopulator::Private : QObject
 
     void runBatch(int size)
     {
+        if(size <= 0) {
+            return;
+        }
+
         auto tracksBatch = std::ranges::views::take(pendingTracks, size);
 
         for(const Core::Track& track : tracksBatch) {
@@ -354,9 +359,7 @@ struct PlaylistPopulator::Private : QObject
         data.nodes.clear();
 
         const auto remaining = static_cast<int>(pendingTracks.size());
-        if(remaining > 0) {
-            runBatch(remaining);
-        }
+        runBatch(std::min(remaining, BatchSize));
     }
 };
 

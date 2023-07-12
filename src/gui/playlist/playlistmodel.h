@@ -56,6 +56,9 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
+    void fetchMore(const QModelIndex& parent) override;
+    bool canFetchMore(const QModelIndex& parent) const override;
+
     bool removeRows(int row, int count, const QModelIndex& parent) override;
 
     void removeTracks(const QModelIndexList& indexes);

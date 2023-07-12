@@ -36,6 +36,12 @@
 #include <QThread>
 
 namespace Fy::Gui::Widgets::Playlist {
+void appendRow(PlaylistItem* parent, PlaylistItem* child)
+{
+    child->setParent(parent);
+    parent->appendChild(child);
+};
+
 struct PlaylistModel::Private : public QObject
 {
     PlaylistModel* model;
@@ -53,6 +59,7 @@ struct PlaylistModel::Private : public QObject
     QThread populatorThread;
     PlaylistPopulator populator;
 
+    NodeMap pendingNodes;
     ItemMap nodes;
     ItemMap oldNodes;
 
@@ -73,25 +80,22 @@ struct PlaylistModel::Private : public QObject
 
     void populateModel(PendingData& data)
     {
-        for(const auto& pair : data.items) {
-            nodes.emplace(pair);
-        }
+        nodes.merge(data.items);
 
-        auto insertRow = [](PlaylistItem* parent, PlaylistItem* child) {
-            parent->appendChild(child);
-            child->setParent(parent);
-        };
+        if(resetting) {
+            for(const auto& [parentKey, rows] : data.nodes) {
+                auto* parent = parentKey.isEmpty() ? model->rootItem() : &nodes.at(parentKey);
 
-        for(auto& [parentKey, rows] : data.nodes) {
-            PlaylistItem* parent = parentKey.isEmpty() ? model->rootItem() : &nodes.at(parentKey);
-            const int baseRow    = parent->childCount();
-            const int nodeCount  = static_cast<int>(rows.size());
-            model->beginInsertRows(model->indexOfItem(parent), baseRow, baseRow + nodeCount - 1);
-            for(const QString& row : rows) {
-                PlaylistItem* child = &nodes.at(row);
-                insertRow(parent, child);
+                for(const QString& row : rows) {
+                    PlaylistItem* child = &nodes.at(row);
+                    appendRow(parent, child);
+                }
             }
-            model->endInsertRows();
+        }
+        else {
+            for(auto& [parentKey, rows] : data.nodes) {
+                std::ranges::copy(rows, std::back_inserter(pendingNodes[parentKey]));
+            }
         }
     }
 
@@ -101,6 +105,7 @@ struct PlaylistModel::Private : public QObject
         // Acts as a cache in case model hasn't been fully cleared
         oldNodes = std::move(nodes);
         nodes.clear();
+        pendingNodes.clear();
     }
 
     QVariant trackData(PlaylistItem* item, int role) const
@@ -319,6 +324,31 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     return roles;
 }
 
+void PlaylistModel::fetchMore(const QModelIndex& parent)
+{
+    auto* parentItem = parent.isValid() ? static_cast<PlaylistItem*>(parent.internalPointer()) : rootItem();
+    auto& rows       = p->pendingNodes[parentItem->key()];
+
+    const int row      = parentItem->childCount();
+    const int rowCount = std::min(25, static_cast<int>(rows.size()));
+    auto rowsToInsert  = std::ranges::views::take(rows, rowCount);
+
+    beginInsertRows(parent, row, row + rowCount - 1);
+    for(const QString& pendingRow : rowsToInsert) {
+        PlaylistItem* child = &p->nodes.at(pendingRow);
+        appendRow(parentItem, child);
+    }
+    endInsertRows();
+
+    rows.erase(rows.begin(), rows.begin() + rowCount);
+}
+
+bool PlaylistModel::canFetchMore(const QModelIndex& parent) const
+{
+    auto* item = parent.isValid() ? static_cast<PlaylistItem*>(parent.internalPointer()) : rootItem();
+    return p->pendingNodes.contains(item->key()) && !p->pendingNodes[item->key()].empty();
+}
+
 bool PlaylistModel::removeRows(int row, int count, const QModelIndex& parent)
 {
     PlaylistItem* parentItem = rootItem();
@@ -348,10 +378,10 @@ void PlaylistModel::reset(const Core::Playlist::Playlist& playlist)
         return;
     }
 
+    p->populator.stopThread();
+
     p->resetting       = true;
     p->currentPlaylist = playlist;
-
-    p->populator.stopThread();
 
     QMetaObject::invokeMethod(&p->populator, [this, playlist] {
         p->populator.run(p->currentPreset, playlist.tracks());
