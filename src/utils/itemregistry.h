@@ -136,7 +136,7 @@ public:
         if(m_items.empty()) {
             return {};
         }
-        auto it = std::find_if(m_items.cbegin(), m_items.cend(), [name](const auto& item) {
+        auto it = std::ranges::find_if(std::as_const(m_items), [name](const auto& item) {
             return item.second.name == name;
         });
         if(it == m_items.end()) {
