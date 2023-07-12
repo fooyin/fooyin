@@ -252,6 +252,8 @@ void InfoModel::resetModel(const Core::TrackList& tracks)
 
     const int total = static_cast<int>(tracks.size());
 
+    p->checkAddEntryNode("Tracks", ItemParent::General, total, InfoItem::ValueType::Total);
+
     for(const Core::Track& track : infoTracks) {
         p->addTrackNodes(total, track);
     }
