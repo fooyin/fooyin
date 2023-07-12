@@ -114,6 +114,9 @@ public:
     [[nodiscard]] virtual QModelIndex indexOfItem(const Item* item)
     {
         if(item) {
+            if(item == rootItem()) {
+                return {};
+            }
             return createIndex(item->row(), 0, item);
         }
         return {};
