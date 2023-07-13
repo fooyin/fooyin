@@ -310,6 +310,15 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
+bool PlaylistModel::hasChildren(const QModelIndex& parent) const
+{
+    if(!parent.isValid()) {
+        return true;
+    }
+    const auto* item = static_cast<PlaylistItem*>(parent.internalPointer());
+    return (item->type() != PlaylistItem::ItemType::Track);
+}
+
 QHash<int, QByteArray> PlaylistModel::roleNames() const
 {
     auto roles = QAbstractItemModel::roleNames();

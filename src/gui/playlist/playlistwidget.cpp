@@ -301,9 +301,6 @@ struct PlaylistWidget::Private : QObject
         while(first <= last) {
             const QModelIndex child = model->index(first, 0, parent);
             playlistView->expand(child);
-            if(model->canFetchMore(child)) {
-                model->fetchMore(child);
-            }
             ++first;
         }
     }

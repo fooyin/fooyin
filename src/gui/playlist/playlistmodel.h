@@ -54,6 +54,7 @@ public:
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
     void fetchMore(const QModelIndex& parent) override;
