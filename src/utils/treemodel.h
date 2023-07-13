@@ -43,14 +43,6 @@ public:
         m_root = Item{};
     }
 
-    [[nodiscard]] virtual Qt::ItemFlags flags(const QModelIndex& index) const override
-    {
-        if(!index.isValid()) {
-            return Qt::NoItemFlags;
-        }
-        return QAbstractItemModel::flags(index);
-    }
-
     [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent) const override
     {
         if(!hasIndex(row, column, parent)) {
