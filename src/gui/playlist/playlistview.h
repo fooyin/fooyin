@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <QTimer>
 #include <QTreeView>
 
 namespace Fy::Gui::Widgets::Playlist {
@@ -32,7 +33,28 @@ public:
     void setupView();
 
 protected:
+    void dragMoveEvent(QDragMoveEvent* event) override;
+    void dropEvent(QDropEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void drawBranches(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
     void paintEvent(QPaintEvent* event) override;
+
+    [[nodiscard]] QAbstractItemView::DropIndicatorPosition position(const QPoint& pos, const QRect& rect,
+                                                                    const QModelIndex& index) const;
+    [[nodiscard]] bool isIndexDropEnabled(const QModelIndex& index) const;
+    bool droppingOnItself(QDropEvent* event, const QModelIndex& index);
+
+    [[nodiscard]] bool shouldAutoScroll(const QPoint& pos) const;
+    void startAutoScroll();
+    void stopAutoScroll();
+    void doAutoScroll();
+
+    bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
+
+private:
+    QRect dropIndicatorRect;
+    QAbstractItemView::DropIndicatorPosition dropIndicatorPos;
+    QTimer m_autoScrollTimer;
+    int m_autoScrollCount;
 };
 } // namespace Fy::Gui::Widgets::Playlist

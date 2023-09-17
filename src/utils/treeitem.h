@@ -52,6 +52,13 @@ public:
     virtual void appendChild(Item* child)
     {
         m_children.emplace_back(child);
+        child->m_parent = static_cast<Item*>(this);
+    }
+
+    virtual void insertChild(int row, Item* child)
+    {
+        m_children.insert(m_children.begin() + row, child);
+        child->m_parent = static_cast<Item*>(this);
     }
 
     virtual void removeChild(int index)
@@ -60,6 +67,11 @@ public:
             return;
         }
         m_children.erase(m_children.cbegin() + index);
+    }
+
+    virtual void clearChildren()
+    {
+        m_children.clear();
     }
 
     virtual Item* child(int index) const

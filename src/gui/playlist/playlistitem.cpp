@@ -24,11 +24,17 @@
 #include <utility>
 
 namespace Fy::Gui::Widgets::Playlist {
+PlaylistItem::PlaylistItem()
+    : PlaylistItem{Root, {}, nullptr}
+{ }
+
 PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
     : TreeItem{parent}
     , m_pending{true}
     , m_type{type}
     , m_data{std::move(data)}
+    , m_baseKey{"0"}
+    , m_key{"0"}
     , m_indentation{0}
 { }
 
@@ -47,6 +53,11 @@ Data& PlaylistItem::data() const
     return m_data;
 }
 
+QString PlaylistItem::baseKey() const
+{
+    return m_baseKey;
+}
+
 QString PlaylistItem::key() const
 {
     return m_key;
@@ -62,14 +73,14 @@ void PlaylistItem::setPending(bool pending)
     m_pending = pending;
 }
 
+void PlaylistItem::setBaseKey(const QString& key)
+{
+    m_baseKey = key;
+}
+
 void PlaylistItem::setKey(const QString& key)
 {
     m_key = key;
-}
-
-void PlaylistItem::setParent(PlaylistItem* parent)
-{
-    m_parent = parent;
 }
 
 void PlaylistItem::setIndentation(int indentation)
@@ -80,6 +91,7 @@ void PlaylistItem::setIndentation(int indentation)
 void PlaylistItem::resetChildren()
 {
     for(PlaylistItem* child : m_children) {
+        child->resetChildren();
         child->resetRow();
     }
 }

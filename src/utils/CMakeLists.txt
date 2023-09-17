@@ -11,6 +11,7 @@ set(SOURCES
     async.h
     clickablelabel.cpp
     comboicon.cpp
+    crypto.cpp
     headerview.cpp
     hovermenu.cpp
     id.cpp

@@ -19,10 +19,14 @@
 
 #include "playlistview.h"
 
+#include "playlistitem.h"
+
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QPainter>
+#include <QScrollBar>
+#include <QTimer>
 
 namespace Fy::Gui::Widgets::Playlist {
 PlaylistView::PlaylistView(QWidget* parent)
@@ -30,6 +34,8 @@ PlaylistView::PlaylistView(QWidget* parent)
 {
     setObjectName("PlaylistView");
     setupView();
+
+    QObject::connect(&m_autoScrollTimer, &QTimer::timeout, this, &PlaylistView::doAutoScroll);
 }
 
 void PlaylistView::setupView()
@@ -39,6 +45,12 @@ void PlaylistView::setupView()
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setMouseTracking(true);
     setItemsExpandable(false);
+    setAcceptDrops(true);
+    setDragEnabled(true);
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setDefaultDropAction(Qt::MoveAction);
+    setDropIndicatorShown(true);
+    //    setDragDropOverwriteMode(true);
     setIndentation(0);
     setExpandsOnDoubleClick(false);
     setWordWrap(true);
@@ -47,6 +59,114 @@ void PlaylistView::setupView()
     setSortingEnabled(false);
     header()->setSectionsClickable(true);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
+}
+
+void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
+{
+    const QPoint pos        = event->position().toPoint();
+    const QModelIndex index = indexAt(pos);
+
+    event->ignore();
+
+    if(!droppingOnItself(event, index)) {
+        if(index.isValid() && showDropIndicator()) {
+            const QRect rect      = visualRect(index);
+            const QRect rectLeft  = visualRect(index.sibling(index.row(), 0));
+            const QRect rectRight = visualRect(index.sibling(index.row(), 0));
+            dropIndicatorPos      = position(pos, rect, index);
+            switch(dropIndicatorPos) {
+                case(AboveItem):
+                    if(isIndexDropEnabled(index.parent())) {
+                        dropIndicatorRect
+                            = QRect(rectLeft.left(), rectLeft.top(), rectRight.right() - rectLeft.left(), 0);
+                        event->acceptProposedAction();
+                    }
+                    else {
+                        dropIndicatorRect = {};
+                    }
+                    break;
+                case(BelowItem):
+                    if(isIndexDropEnabled(index.parent())) {
+                        dropIndicatorRect
+                            = QRect(rectLeft.left(), rectLeft.bottom(), rectRight.right() - rectLeft.left(), 0);
+                        event->acceptProposedAction();
+                    }
+                    else {
+                        dropIndicatorRect = {};
+                    }
+                    break;
+                case(OnItem):
+                    dropIndicatorRect = {};
+                    event->ignore();
+                    break;
+                case(OnViewport):
+                    dropIndicatorRect = {};
+                    if(isIndexDropEnabled({})) {
+                        event->acceptProposedAction();
+                    }
+                    break;
+            }
+        }
+        else {
+            dropIndicatorRect = {};
+            dropIndicatorPos  = OnViewport;
+            if(isIndexDropEnabled({})) {
+                event->acceptProposedAction();
+            }
+        }
+    }
+
+    viewport()->update();
+
+    if(shouldAutoScroll(pos)) {
+        startAutoScroll();
+    }
+}
+
+void PlaylistView::mousePressEvent(QMouseEvent* event)
+{
+    const QModelIndex index = indexAt(event->position().toPoint());
+    const auto type         = index.data(PlaylistItem::Type).toInt();
+    if(index.isValid()) {
+        if(type != PlaylistItem::Track) {
+            setDragEnabled(true);
+        }
+        else {
+            // Prevent drag-and-drop when first selecting items
+            setDragEnabled(selectionModel()->isSelected(index));
+        }
+    }
+
+    QTreeView::mousePressEvent(event);
+}
+
+void PlaylistView::dropEvent(QDropEvent* event)
+{
+    QModelIndex index = indexAt(event->position().toPoint());
+
+    if(dragDropMode() == InternalMove) {
+        if(event->source() != this || !(event->possibleActions() & Qt::MoveAction)) {
+            return;
+        }
+    }
+
+    int col = -1;
+    int row = -1;
+    if(dropOn(event, row, col, index)) {
+        const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
+        if(model()->dropMimeData(event->mimeData(), action, row, col, index)) {
+            if(action != event->dropAction()) {
+                event->setDropAction(action);
+                event->accept();
+            }
+            else {
+                event->acceptProposedAction();
+            }
+        }
+    }
+    stopAutoScroll();
+    setState(NoState);
+    viewport()->update();
 }
 
 void PlaylistView::drawBranches(QPainter* painter, const QRect& rect, const QModelIndex& index) const
@@ -58,15 +178,165 @@ void PlaylistView::drawBranches(QPainter* painter, const QRect& rect, const QMod
 
 void PlaylistView::paintEvent(QPaintEvent* event)
 {
-    if(model() && model()->rowCount() > 0) {
-        return QTreeView::paintEvent(event);
-    }
-    // Empty playlist
     QPainter painter{viewport()};
-    const QString text{tr("Empty Playlist")};
 
-    QRect textRect = painter.fontMetrics().boundingRect(text);
-    textRect.moveCenter(viewport()->rect().center());
-    painter.drawText(textRect, Qt::AlignCenter, text);
+    if(model() && model()->rowCount() > 0) {
+        drawTree(&painter, event->region());
+        if(state() == QAbstractItemView::DraggingState) {
+            QStyleOptionFrame opt;
+            initStyleOption(&opt);
+            opt.rect = dropIndicatorRect;
+            //            painter.setRenderHint(QPainter::Antialiasing, true);
+            //            const QBrush brush(Qt::green);
+            //            const QPen pen{brush, 4, Qt::DashLine};
+            //            painter.setPen(pen);
+            style()->drawPrimitive(QStyle::PE_IndicatorItemViewItemDrop, &opt, &painter);
+        }
+    }
+    else {
+        // Empty playlist
+        const QString text{tr("Empty Playlist")};
+
+        QRect textRect = painter.fontMetrics().boundingRect(text);
+        textRect.moveCenter(viewport()->rect().center());
+        painter.drawText(textRect, Qt::AlignCenter, text);
+    }
+}
+
+QAbstractItemView::DropIndicatorPosition PlaylistView::position(const QPoint& pos, const QRect& rect,
+                                                                const QModelIndex& index) const
+{
+    auto dropPos    = QAbstractItemView::OnViewport;
+    const int mid   = std::round(static_cast<double>((rect.height())) / 2);
+    const auto type = index.data(PlaylistItem::Type);
+
+    if(type == PlaylistItem::Subheader) {
+        return dropPos;
+    }
+
+    if(pos.y() - rect.top() < mid || type == PlaylistItem::Header) {
+        dropPos = QAbstractItemView::AboveItem;
+    }
+    else if(rect.bottom() - pos.y() < mid) {
+        dropPos = QAbstractItemView::BelowItem;
+    }
+
+    return dropPos;
+}
+
+bool PlaylistView::isIndexDropEnabled(const QModelIndex& index) const
+{
+    return (model()->flags(index) & Qt::ItemIsDropEnabled);
+}
+
+bool PlaylistView::droppingOnItself(QDropEvent* event, const QModelIndex& index)
+{
+    Qt::DropAction dropAction = event->dropAction();
+    if(dragDropMode() == QAbstractItemView::InternalMove) {
+        dropAction = Qt::MoveAction;
+    }
+    if(event->source() == this && event->possibleActions() & Qt::MoveAction && dropAction == Qt::MoveAction) {
+        const auto selectedIndexes = this->selectedIndexes();
+        QModelIndex child          = index;
+        while(child.isValid()) {
+            if(selectedIndexes.contains(child)) {
+                return true;
+            }
+            child = child.parent();
+        }
+    }
+    return false;
+}
+
+bool PlaylistView::shouldAutoScroll(const QPoint& pos) const
+{
+    if(!hasAutoScroll()) {
+        return false;
+    }
+    const QRect area = viewport()->rect();
+    return (pos.y() - area.top() < autoScrollMargin()) || (area.bottom() - pos.y() < autoScrollMargin())
+        || (pos.x() - area.left() < autoScrollMargin()) || (area.right() - pos.x() < autoScrollMargin());
+}
+
+void PlaylistView::startAutoScroll()
+{
+    m_autoScrollTimer.start(50);
+}
+
+void PlaylistView::stopAutoScroll()
+{
+    m_autoScrollTimer.stop();
+    m_autoScrollCount = 0;
+}
+
+void PlaylistView::doAutoScroll()
+{
+    QScrollBar* scroll = verticalScrollBar();
+    if(m_autoScrollCount < scroll->pageStep()) {
+        ++m_autoScrollCount;
+    }
+
+    const int value  = scroll->value();
+    const QPoint pos = viewport()->mapFromGlobal(QCursor::pos());
+    const QRect area = viewport()->rect();
+
+    if(pos.y() - area.top() < autoScrollMargin()) {
+        scroll->setValue(value - m_autoScrollCount);
+    }
+    else if(area.bottom() - pos.y() < autoScrollMargin()) {
+        scroll->setValue(value + m_autoScrollCount);
+    }
+    const bool verticalUnchanged = value == scroll->value();
+    if(verticalUnchanged) {
+        stopAutoScroll();
+    }
+}
+
+bool PlaylistView::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex)
+{
+    if(event->isAccepted()) {
+        return false;
+    }
+    QModelIndex index;
+    const QPoint pos = event->position().toPoint();
+    if(viewport()->rect().contains(pos)) {
+        index = indexAt(pos);
+        if(!index.isValid() || !visualRect(index).contains(pos)) {
+            index = {};
+        }
+    }
+    // If we are allowed to do the drop
+    if(model()->supportedDropActions() & event->dropAction()) {
+        int row = -1;
+        int col = -1;
+        if(index.isValid()) {
+            dropIndicatorPos = position(pos, visualRect(index), index);
+            switch(dropIndicatorPos) {
+                case QAbstractItemView::AboveItem:
+                    row   = index.row();
+                    col   = index.column();
+                    index = index.parent();
+                    break;
+                case QAbstractItemView::BelowItem:
+                    row   = index.row() + 1;
+                    col   = index.column();
+                    index = index.parent();
+                    break;
+                case QAbstractItemView::OnItem:
+                case QAbstractItemView::OnViewport:
+                    break;
+            }
+        }
+        else {
+            dropIndicatorPos = QAbstractItemView::OnViewport;
+        }
+        dropIndex = index;
+        dropRow   = row;
+        dropCol   = col;
+        if(!droppingOnItself(event, index)) {
+            return true;
+        }
+    }
+    return false;
 }
 } // namespace Fy::Gui::Widgets::Playlist

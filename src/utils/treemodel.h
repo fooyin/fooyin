@@ -49,15 +49,7 @@ public:
             return {};
         }
 
-        Item* parentItem;
-
-        if(!parent.isValid()) {
-            parentItem = &m_root;
-        }
-        else {
-            parentItem = static_cast<Item*>(parent.internalPointer());
-        }
-
+        Item* parentItem = itemForIndex(parent);
         Item* childItem = parentItem->child(row);
         if(childItem) {
             return createIndex(row, column, childItem);
@@ -83,24 +75,14 @@ public:
 
     [[nodiscard]] virtual int rowCount(const QModelIndex& parent) const override
     {
-        Item* parentItem;
-
-        if(!parent.isValid()) {
-            parentItem = &m_root;
-        }
-        else {
-            parentItem = static_cast<Item*>(parent.internalPointer());
-        }
-
+        Item* parentItem = itemForIndex(parent);
         return parentItem->childCount();
     }
 
     [[nodiscard]] virtual int columnCount(const QModelIndex& parent) const override
     {
-        if(parent.isValid()) {
-            return static_cast<Item*>(parent.internalPointer())->columnCount();
-        }
-        return m_root.columnCount();
+        Item* parentItem = itemForIndex(parent);
+        return parentItem->columnCount();
     }
 
     [[nodiscard]] virtual QModelIndex indexOfItem(const Item* item)
@@ -112,6 +94,14 @@ public:
             return createIndex(item->row(), 0, item);
         }
         return {};
+    }
+
+    [[nodiscard]] virtual Item* itemForIndex(const QModelIndex& index) const
+    {
+        if(!index.isValid()) {
+            return rootItem();
+        }
+        return static_cast<Item*>(index.internalPointer());
     }
 
 private:

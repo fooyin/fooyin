@@ -29,17 +29,32 @@
 #include <core/player/playermanager.h>
 #include <core/playlist/playlisthandler.h>
 
+#include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QIODevice>
 #include <QIcon>
+#include <QMimeData>
 #include <QPalette>
+#include <QStack>
+#include <QStringBuilder>
 #include <QThread>
 
+#include <queue>
+
 namespace Fy::Gui::Widgets::Playlist {
-void appendRow(PlaylistItem* parent, PlaylistItem* child)
+static constexpr auto MimeType = "application/x-playlistitem-internal-pointer";
+
+using ParentChildMap     = std::map<QModelIndex, std::vector<std::vector<int>>>;
+using ParentChildItemMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>>;
+
+struct SplitParent
 {
-    child->setParent(parent);
-    parent->appendChild(child);
+    QModelIndex source;
+    PlaylistItem* target;
+    int firstRow{0};
+    int finalRow{0};
+    std::vector<PlaylistItem*> children;
 };
 
 struct PlaylistModel::Private : public QObject
@@ -84,11 +99,11 @@ struct PlaylistModel::Private : public QObject
 
         if(resetting) {
             for(const auto& [parentKey, rows] : data.nodes) {
-                auto* parent = parentKey.isEmpty() ? model->rootItem() : &nodes.at(parentKey);
+                auto* parent = parentKey == "0" ? model->rootItem() : &nodes.at(parentKey);
 
                 for(const QString& row : rows) {
                     PlaylistItem* child = &nodes.at(row);
-                    appendRow(parent, child);
+                    parent->appendChild(child);
                 }
             }
         }
@@ -212,26 +227,333 @@ struct PlaylistModel::Private : public QObject
         }
     }
 
-    void checkDeleteNode(const QModelIndex& index)
+    QByteArray saveIndexes(const QModelIndexList& indexes)
     {
-        auto* item = static_cast<PlaylistItem*>(index.internalPointer());
-        if(item && item->childCount() < 1) {
-            model->removeRows(index.row(), index.row(), index.parent());
-            checkDeleteNode(index.parent());
-        }
-        updateNodeChildren(index.parent());
-    };
+        QByteArray result;
+        QDataStream stream(&result, QIODevice::WriteOnly);
 
-    void updateNodeChildren(const QModelIndex& index)
+        for(const QModelIndex& index : indexes) {
+            QModelIndex localIndex = index;
+            QStack<int> indexParentStack;
+            while(localIndex.isValid()) {
+                indexParentStack << localIndex.row();
+                localIndex = localIndex.parent();
+            }
+
+            stream << indexParentStack.size();
+            while(!indexParentStack.isEmpty()) {
+                stream << indexParentStack.pop();
+            }
+        }
+        return result;
+    }
+
+    QModelIndexList restoreIndexes(QByteArray data)
     {
-        PlaylistItem* item = model->rootItem();
-        if(index.isValid()) {
-            item = static_cast<PlaylistItem*>(index.internalPointer());
+        QModelIndexList result;
+        QDataStream stream(&data, QIODevice::ReadOnly);
+
+        while(!stream.atEnd()) {
+            int childDepth = 0;
+            stream >> childDepth;
+
+            QModelIndex currentIndex;
+            for(int i = 0; i < childDepth; ++i) {
+                int row = 0;
+                stream >> row;
+                currentIndex = model->index(row, 0, currentIndex);
+            }
+            if(currentIndex.isValid()) {
+                result << currentIndex;
+            }
         }
-        if(item && item->childCount() > 0) {
-            item->resetChildren();
+        return result;
+    }
+
+    ParentChildMap determineIndexGroups(const QModelIndexList& indexes)
+    {
+        ParentChildMap indexGroups;
+
+        QModelIndexList sortedIndexes{indexes};
+        std::sort(sortedIndexes.begin(), sortedIndexes.end());
+
+        auto startOfSequence = sortedIndexes.cbegin();
+        while(startOfSequence != sortedIndexes.cend()) {
+            auto endOfSequence
+                = std::adjacent_find(startOfSequence, sortedIndexes.cend(), [](const auto& lhs, const auto& rhs) {
+                      return lhs.parent() != rhs.parent() || rhs.row() != lhs.row() + 1;
+                  });
+            if(endOfSequence != sortedIndexes.cend()) {
+                std::advance(endOfSequence, 1);
+            }
+
+            std::vector<int> group;
+            for(auto it = startOfSequence; it != endOfSequence; ++it) {
+                group.push_back(it->row());
+            }
+
+            const QModelIndex parent = startOfSequence->parent();
+            indexGroups[parent].push_back(group);
+
+            startOfSequence = endOfSequence;
         }
-    };
+
+        return indexGroups;
+    }
+
+    ParentChildItemMap determineItemGroups(const QModelIndexList& indexes, const QModelIndex& parent, int row)
+    {
+        const ParentChildMap indexGroups = determineIndexGroups(indexes);
+        ParentChildItemMap indexItemGroups;
+
+        for(const auto& [groupParent, groups] : indexGroups) {
+            std::vector<std::vector<PlaylistItem*>> transformedVector;
+            for(const auto& group : groups) {
+                if(groupParent == parent) {
+                    const int firstRow = group.front();
+                    const int diff     = std::abs(row - firstRow);
+                    if((firstRow < row && diff <= 1) || diff == 0) {
+                        continue;
+                    }
+                }
+                std::vector<PlaylistItem*> transformedInnerVector;
+                for(const int childRow : group) {
+                    if(PlaylistItem* playlistItem
+                       = static_cast<PlaylistItem*>(model->index(childRow, 0, groupParent).internalPointer())) {
+                        transformedInnerVector.push_back(playlistItem);
+                    }
+                }
+                transformedVector.push_back(transformedInnerVector);
+            }
+            indexItemGroups.emplace(groupParent, transformedVector);
+        }
+        return indexItemGroups;
+    }
+
+    template <typename Container>
+    int moveRows(const QModelIndex& source, const Container& rows, const QModelIndex& target, int row)
+    {
+        int currRow{row};
+        auto* targetParent = model->itemForIndex(target);
+        if(!targetParent) {
+            return currRow;
+        }
+
+        auto* sourceParent = model->itemForIndex(source);
+        for(PlaylistItem* childItem : rows) {
+            childItem->resetRow();
+            const int oldRow = childItem->row();
+            if(oldRow < currRow) {
+                targetParent->insertChild(currRow, childItem);
+                sourceParent->removeChild(oldRow);
+                if(source != target) {
+                    ++currRow;
+                }
+            }
+            else {
+                sourceParent->removeChild(oldRow);
+                targetParent->insertChild(currRow, childItem);
+                ++currRow;
+            }
+        }
+        sourceParent->resetChildren();
+        targetParent->resetChildren();
+
+        return currRow;
+    }
+
+    template <typename Container>
+    void copyRows(const QModelIndex& source, const Container& rows, const QModelIndex& target, int row)
+    {
+        int currRow{row};
+        auto* targetParent = model->itemForIndex(target);
+        if(!targetParent) {
+            return;
+        }
+
+        auto* sourceParent = model->itemForIndex(source);
+        for(PlaylistItem* childItem : rows) {
+            childItem->resetRow();
+            auto* newChild = &nodes.emplace(Utils::generateRandomHash(), *childItem).first->second;
+            targetParent->insertChild(currRow, newChild);
+            ++currRow;
+        }
+        sourceParent->resetChildren();
+        targetParent->resetChildren();
+    }
+
+    void removeEmptyHeaders(const QModelIndexList& headers)
+    {
+        std::queue<QModelIndex> headersToCheck;
+        for(const QModelIndex& header : headers) {
+            if(header.isValid()) {
+                headersToCheck.push(header);
+            }
+        }
+
+        while(!headersToCheck.empty()) {
+            const QModelIndex header{headersToCheck.front()};
+            headersToCheck.pop();
+
+            PlaylistItem* headerItem       = model->itemForIndex(header);
+            const QModelIndex headerParent = header.parent();
+            PlaylistItem* headerParentItem = model->itemForIndex(headerParent);
+
+            if(!headerParentItem) {
+                continue;
+            }
+
+            if(headerItem && headerItem->childCount() < 1) {
+                const int headerRow = headerItem->row();
+                model->removePlaylistRows(headerRow, 1, headerParent);
+            }
+            if(headerParent.isValid()) {
+                headersToCheck.push(headerParent);
+            }
+        }
+    }
+
+    void mergeHeaders(const QModelIndex& parentIndex)
+    {
+        PlaylistItem* parentItem = model->itemForIndex(parentIndex);
+        if(!parentItem || parentItem->childCount() < 1) {
+            return;
+        }
+
+        int row = 0;
+        while(row < parentItem->childCount()) {
+            const QModelIndex leftIndex  = model->indexOfItem(parentItem->child(row));
+            const QModelIndex rightIndex = model->indexOfItem(parentItem->child(row + 1));
+
+            PlaylistItem* leftSibling  = model->itemForIndex(leftIndex);
+            PlaylistItem* rightSibling = model->itemForIndex(rightIndex);
+
+            if(leftIndex != rightIndex && leftSibling->baseKey() == rightSibling->baseKey()) {
+                const auto rightChildren = rightSibling->children();
+                const int firstRow       = leftSibling->childCount();
+                const int finalRow       = rightSibling->childCount() - 1;
+
+                model->beginMoveRows(rightIndex, 0, finalRow, leftIndex, firstRow);
+                moveRows(rightIndex, rightChildren, leftIndex, firstRow);
+                model->endMoveRows();
+
+                model->removePlaylistRows(rightSibling->row(), 1, rightIndex.parent());
+            }
+            else {
+                row++;
+            }
+        }
+
+        for(const PlaylistItem* child : parentItem->children()) {
+            const QModelIndex childIndex = model->indexOfItem(child);
+            mergeHeaders(childIndex);
+        }
+    }
+
+    PlaylistItem* cloneParent(PlaylistItem* parent)
+    {
+        const QString parentKey = Utils::generateRandomHash();
+        auto* newParent         = &nodes.emplace(parentKey, *parent).first->second;
+        newParent->setKey(parentKey);
+        newParent->resetRow();
+        newParent->clearChildren();
+
+        return newParent;
+    }
+
+    QModelIndex handleDiffParentDrop(PlaylistItem* source, PlaylistItem* target, int& row)
+    {
+        int targetRow{0};
+        std::vector<PlaylistItem*> sourceParents;
+        std::vector<PlaylistItem*> targetParents;
+
+        PlaylistItem* currSource{source};
+        PlaylistItem* currTarget{target};
+
+        // Find common ancestor
+        while(currSource->baseKey() != currTarget->baseKey()) {
+            if(currSource->type() != PlaylistItem::Root) {
+                sourceParents.push_back(currSource);
+                currSource = currSource->parent();
+            }
+            if(currTarget->type() != PlaylistItem::Root) {
+                targetParents.push_back(currTarget);
+                targetRow  = currTarget->row();
+                currTarget = currTarget->parent();
+            }
+        }
+
+        std::ranges::reverse(sourceParents);
+
+        int newParentRow = targetRow + 1;
+        PlaylistItem* prevParentItem{currTarget};
+
+        // Create parents for tracks after drop index (if any)
+        std::vector<SplitParent> splitParents;
+
+        for(PlaylistItem* parent : targetParents) {
+            const int finalRow = parent->childCount() - 1;
+            if(finalRow > row || (parent->type() == PlaylistItem::Header && !splitParents.empty())) {
+                PlaylistItem* newParent = cloneParent(parent);
+
+                std::vector<PlaylistItem*> children;
+                const auto childrenToMove = parent->children() | std::views::drop(row);
+                std::ranges::copy(childrenToMove, std::back_inserter(children));
+
+                const QModelIndex parentIndex = model->indexOfItem(parent);
+
+                splitParents.push_back({.source   = parentIndex,
+                                        .target   = newParent,
+                                        .firstRow = row,
+                                        .finalRow = finalRow,
+                                        .children = children});
+            }
+            row = parent->row() + 1;
+        }
+
+        std::ranges::reverse(splitParents);
+
+        // Move tracks after drop index to new parents
+        for(const SplitParent& parent : splitParents) {
+            const QModelIndex prevParent = model->indexOfItem(prevParentItem);
+
+            model->beginInsertRows(prevParent, newParentRow, newParentRow);
+            prevParentItem->insertChild(newParentRow, parent.target);
+            model->endInsertRows();
+
+            const QModelIndex newParentIndex = model->indexOfItem(parent.target);
+
+            model->beginMoveRows(parent.source, parent.firstRow, parent.finalRow, newParentIndex, 0);
+            moveRows(parent.source, parent.children, newParentIndex, 0);
+            model->endMoveRows();
+
+            prevParentItem = parent.target;
+            newParentRow   = 0;
+        }
+
+        prevParentItem = currTarget;
+        newParentRow   = targetRow + 1;
+
+        if(currTarget == model->rootItem() && row == 0) {
+            newParentRow = 0;
+        }
+
+        // Create parents for dropped rows
+        for(PlaylistItem* parent : sourceParents) {
+            const QModelIndex prevParent = model->indexOfItem(prevParentItem);
+            PlaylistItem* newParent      = cloneParent(parent);
+
+            model->beginInsertRows(prevParent, newParentRow, newParentRow);
+            prevParentItem->insertChild(newParentRow, newParent);
+            model->endInsertRows();
+
+            prevParentItem = newParent;
+            newParentRow   = 0;
+        }
+
+        row = 0;
+        return model->indexOfItem(prevParentItem);
+    }
 };
 
 PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
@@ -264,6 +586,18 @@ PlaylistModel::~PlaylistModel()
     p->populator.stopThread();
     p->populatorThread.quit();
     p->populatorThread.wait();
+}
+
+Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
+{
+    Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
+    const auto type            = index.data(PlaylistItem::Type).toInt();
+
+    if(type == PlaylistItem::Track) {
+        defaultFlags |= Qt::ItemIsDragEnabled;
+    }
+    defaultFlags |= Qt::ItemIsDropEnabled;
+    return defaultFlags;
 }
 
 QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -333,9 +667,86 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     return roles;
 }
 
+QStringList PlaylistModel::mimeTypes() const
+{
+    return {MimeType};
+}
+
+bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                                    const QModelIndex& parent) const
+{
+    if(action == Qt::MoveAction && data->hasFormat(MimeType)) {
+        return true;
+    }
+    return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);
+}
+
+Qt::DropActions PlaylistModel::supportedDragActions() const
+{
+    return Qt::MoveAction;
+}
+
+Qt::DropActions PlaylistModel::supportedDropActions() const
+{
+    return Qt::MoveAction;
+}
+
+QMimeData* PlaylistModel::mimeData(const QModelIndexList& indexes) const
+{
+    auto* mimeData = new QMimeData();
+    if(mimeData) {
+        mimeData->setData(MimeType, p->saveIndexes(indexes));
+    }
+    return mimeData;
+}
+
+bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                                 const QModelIndex& parent)
+{
+    if(!canDropMimeData(data, action, row, column, parent)) {
+        return false;
+    }
+
+    const QModelIndexList indexes = p->restoreIndexes(data->data(MimeType));
+    if(indexes.isEmpty()) {
+        return false;
+    }
+
+    const ParentChildItemMap indexItemGroups = p->determineItemGroups(indexes, parent, row);
+
+    QModelIndex targetParent{parent};
+
+    for(const auto& [sourceParent, groups] : indexItemGroups) {
+        const QModelIndex src          = indexOfItem(groups.front().front()->parent());
+        PlaylistItem* sourceParentItem = itemForIndex(src);
+        PlaylistItem* targetParentItem = itemForIndex(targetParent);
+
+        const bool sameParents = sourceParentItem->baseKey() == targetParentItem->baseKey();
+
+        if(!sameParents) {
+            targetParent = p->handleDiffParentDrop(sourceParentItem, targetParentItem, row);
+        }
+
+        for(const auto& children : groups) {
+            const int firstRow = children.front()->row();
+            const int lastRow  = children.back()->row();
+            beginMoveRows(src, firstRow, lastRow, targetParent, row);
+            row = p->moveRows(src, children, targetParent, row);
+            endMoveRows();
+        }
+
+        rootItem()->resetChildren();
+        p->removeEmptyHeaders({src});
+        p->mergeHeaders({});
+        rootItem()->resetChildren();
+    }
+
+    return true;
+}
+
 void PlaylistModel::fetchMore(const QModelIndex& parent)
 {
-    auto* parentItem = parent.isValid() ? static_cast<PlaylistItem*>(parent.internalPointer()) : rootItem();
+    auto* parentItem = itemForIndex(parent);
     auto& rows       = p->pendingNodes[parentItem->key()];
 
     const int row           = parentItem->childCount();
@@ -346,7 +757,7 @@ void PlaylistModel::fetchMore(const QModelIndex& parent)
     beginInsertRows(parent, row, row + rowCount - 1);
     for(const QString& pendingRow : rowsToInsert) {
         PlaylistItem* child = &p->nodes.at(pendingRow);
-        appendRow(parentItem, child);
+        parentItem->appendChild(child);
     }
     endInsertRows();
 
@@ -355,21 +766,24 @@ void PlaylistModel::fetchMore(const QModelIndex& parent)
 
 bool PlaylistModel::canFetchMore(const QModelIndex& parent) const
 {
-    auto* item = parent.isValid() ? static_cast<PlaylistItem*>(parent.internalPointer()) : rootItem();
+    auto* item = itemForIndex(parent);
     return p->pendingNodes.contains(item->key()) && !p->pendingNodes[item->key()].empty();
 }
 
-bool PlaylistModel::removeRows(int row, int count, const QModelIndex& parent)
+bool PlaylistModel::removePlaylistRows(int row, int count, const QModelIndex& parent)
 {
-    PlaylistItem* parentItem = rootItem();
-    if(parent.isValid()) {
-        parentItem = static_cast<PlaylistItem*>(parent.internalPointer());
-    }
+    auto* parentItem = itemForIndex(parent);
     if(!parentItem) {
         return false;
     }
-    beginRemoveRows(parent, row, count);
-    parentItem->removeChild(row);
+
+    int lastRow = row + count - 1;
+    beginRemoveRows(parent, row, lastRow);
+    while(lastRow >= row) {
+        parentItem->removeChild(lastRow);
+        --lastRow;
+    }
+    parentItem->resetChildren();
     endRemoveRows();
 
     return true;
@@ -377,9 +791,17 @@ bool PlaylistModel::removeRows(int row, int count, const QModelIndex& parent)
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)
 {
-    for(const auto& index : indexes) {
-        p->checkDeleteNode(index);
+    const ParentChildMap indexGroups = p->determineIndexGroups(indexes);
+
+    QModelIndexList headersToCheck;
+
+    for(const auto& [parent, groups] : indexGroups) {
+        for(const auto& children : groups | std::views::reverse) {
+            removePlaylistRows(children.front(), static_cast<int>(children.size()), parent);
+        }
+        headersToCheck.emplace_back(parent);
     }
+    p->removeEmptyHeaders(headersToCheck);
 }
 
 void PlaylistModel::reset(const Core::Playlist::Playlist& playlist)

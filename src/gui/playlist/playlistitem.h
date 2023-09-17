@@ -57,20 +57,22 @@ public:
         Path,
         ItemData,
         Type,
-        Indentation
+        Indentation,
     };
 
-    explicit PlaylistItem(ItemType type = Root, Data data = {}, PlaylistItem* parentItem = nullptr);
+    PlaylistItem();
+    PlaylistItem(ItemType type, Data data, PlaylistItem* parentItem);
 
     [[nodiscard]] bool pending() const;
     [[nodiscard]] ItemType type() const;
     [[nodiscard]] Data& data() const;
+    [[nodiscard]] QString baseKey() const;
     [[nodiscard]] QString key() const;
     [[nodiscard]] int indentation() const;
 
     void setPending(bool pending);
+    void setBaseKey(const QString& key);
     void setKey(const QString& key);
-    void setParent(PlaylistItem* parent);
     void setIndentation(int indentation);
 
     void resetChildren();
@@ -79,6 +81,7 @@ private:
     bool m_pending;
     ItemType m_type;
     mutable Data m_data;
+    QString m_baseKey;
     QString m_key;
     int m_indentation;
 };

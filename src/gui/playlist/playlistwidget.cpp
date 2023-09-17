@@ -210,10 +210,10 @@ struct PlaylistWidget::Private : QObject
                 continue;
             }
 
-            const auto type = index.data(PlaylistItem::Type);
+            const auto type = index.data(PlaylistItem::Type).toInt();
 
             if(type != PlaylistItem::Track) {
-                itemsToDeselect.append({index, index});
+                itemsToDeselect.emplace_back(index);
 
                 const QItemSelection children{model->index(0, 0, index),
                                               model->index(model->rowCount(index) - 1, 0, index)};
@@ -224,9 +224,9 @@ struct PlaylistWidget::Private : QObject
                 });
 
                 std::ranges::copy(childrenToSelect, std::back_inserter(indexes));
-                itemsToSelect.append(children);
             }
             else {
+                itemsToSelect.emplace_back(index);
                 tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<Core::Track>());
             }
         }
@@ -244,18 +244,24 @@ struct PlaylistWidget::Private : QObject
         auto* menu = new QMenu(widget);
         menu->setAttribute(Qt::WA_DeleteOnClose);
 
+        auto* presetsMenu = new QMenu("Presets", menu);
+
         const auto& presets = presetRegistry->items();
 
         for(const auto& [index, preset] : presets) {
-            //            if(preset.name != currentPreset.name) {
             const QString name = preset.name;
-            auto* switchPreset = new QAction(name, menu);
+            auto* switchPreset = new QAction(name, presetsMenu);
+            if(preset == currentPreset) {
+                presetsMenu->setDefaultAction(switchPreset);
+            }
             QObject::connect(switchPreset, &QAction::triggered, widget, [this, name]() {
                 settings->set<Settings::CurrentPreset>(name);
             });
-            menu->addAction(switchPreset);
+            presetsMenu->addAction(switchPreset);
             //            }
         }
+        menu->addMenu(presetsMenu);
+
         menu->popup(widget->mapToGlobal(pos));
     }
 
@@ -353,7 +359,14 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* removeRows = new QAction("Remove", menu);
     QObject::connect(removeRows, &QAction::triggered, this, [this]() {
         p->playlistController->removePlaylistTracks(p->selectionController->selectedTracks());
-        p->model->removeTracks(p->playlistView->selectionModel()->selectedIndexes());
+
+        QModelIndexList trackSelection;
+        const auto selected = p->playlistView->selectionModel()->selectedIndexes();
+        std::ranges::copy_if(std::as_const(selected), std::back_inserter(trackSelection), [](const QModelIndex& index) {
+            return index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track;
+        });
+
+        p->model->removeTracks(trackSelection);
     });
     menu->addAction(removeRows);
 

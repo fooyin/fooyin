@@ -22,6 +22,8 @@
 #include "playlistpreset.h"
 #include "playlistscriptregistry.h"
 
+#include <utils/crypto.h>
+
 #include <QCryptographicHash>
 #include <QStringBuilder>
 #include <QTimer>
@@ -32,21 +34,6 @@ namespace Fy::Gui::Widgets::Playlist {
 constexpr int InitialBatchSize = 1000;
 constexpr int BatchSize        = 4000;
 
-QString generateHeaderKey(const QString& titleText, const QString& subtitleText, const QString& sideText,
-                          const QString& index = {})
-{
-    QCryptographicHash hash{QCryptographicHash::Md5};
-    hash.addData(titleText.toUtf8());
-    hash.addData(subtitleText.toUtf8());
-    hash.addData(sideText.toUtf8());
-    if(!index.isEmpty()) {
-        hash.addData(index.toUtf8());
-    }
-
-    QString headerKey = hash.result().toHex();
-    return headerKey;
-}
-
 struct PlaylistPopulator::Private : QObject
 {
     PlaylistPopulator* populator;
@@ -55,8 +42,11 @@ struct PlaylistPopulator::Private : QObject
     std::unique_ptr<PlaylistScriptRegistry> registry;
     Core::Scripting::Parser parser;
 
+    QString prevBaseHeaderKey;
     QString prevHeaderKey;
-    int headerIndex{0};
+    QString prevBaseSubheaderKey;
+    QString prevSubheaderKey;
+
     std::vector<Container> subheaders;
 
     PlaylistItem root;
@@ -89,17 +79,18 @@ struct PlaylistPopulator::Private : QObject
     }
 
     PlaylistItem* getOrInsertItem(const QString& key, PlaylistItem::ItemType type, const Data& item,
-                                  PlaylistItem* parent)
+                                  PlaylistItem* parent, const QString& baseKey = {})
     {
         auto [node, inserted] = data.items.try_emplace(key, PlaylistItem{type, item, parent});
         if(inserted) {
+            node->second.setBaseKey(baseKey.isEmpty() ? key : baseKey);
             node->second.setKey(key);
         }
         PlaylistItem* child = &node->second;
 
         if(child->pending()) {
             child->setPending(false);
-            data.nodes[parent->key()].push_back(child->key());
+            data.nodes[parent->key()].push_back(key);
         }
         return child;
     }
@@ -136,12 +127,13 @@ struct PlaylistPopulator::Private : QObject
         const QString subtitleKey = evaluateBlocks(currentPreset.header.subtitle, row.subtitle);
         const QString sideKey     = evaluateBlocks(currentPreset.header.sideText, row.sideText);
 
-        QString key = generateHeaderKey(titleKey, subtitleKey, sideKey, QString::number(headerIndex));
-        if(!prevHeaderKey.isEmpty() && prevHeaderKey != key) {
-            ++headerIndex;
-            key = generateHeaderKey(titleKey, subtitleKey, sideKey, QString::number(headerIndex));
+        const QString baseKey = Utils::generateHash(titleKey, subtitleKey, sideKey);
+        QString key           = Utils::generateRandomHash();
+        if(!prevHeaderKey.isEmpty() && prevBaseHeaderKey == baseKey) {
+            key = prevHeaderKey;
         }
-        prevHeaderKey = key;
+        prevBaseHeaderKey = baseKey;
+        prevHeaderKey     = key;
 
         if(!data.headers.contains(key)) {
             Container header;
@@ -151,7 +143,7 @@ struct PlaylistPopulator::Private : QObject
             header.setCoverPath(track.thumbnailPath());
             header.setInfo(row.info);
 
-            auto* headerItem      = getOrInsertItem(key, PlaylistItem::Header, header, parent);
+            auto* headerItem      = getOrInsertItem(key, PlaylistItem::Header, header, parent, baseKey);
             auto& headerContainer = std::get<1>(headerItem->data());
             data.headers.emplace(key, &headerContainer);
         }
@@ -249,14 +241,20 @@ struct PlaylistPopulator::Private : QObject
                 return;
             }
 
-            const QString key = generateHeaderKey(parent->key(), subheaderKey, "");
+            const QString baseKey = Utils::generateHash(parent->baseKey(), subheaderKey);
+            QString key           = Utils::generateRandomHash();
+            if(!prevSubheaderKey.isEmpty() && prevBaseSubheaderKey == baseKey) {
+                key = prevSubheaderKey;
+            }
+            prevBaseSubheaderKey = baseKey;
+            prevSubheaderKey     = key;
 
             if(!data.headers.contains(key)) {
                 Container subheader;
                 subheader.setTitle(title);
                 subheader.setInfo(container.info());
 
-                auto* subheaderItem      = getOrInsertItem(key, PlaylistItem::Subheader, subheader, parent);
+                auto* subheaderItem      = getOrInsertItem(key, PlaylistItem::Subheader, subheader, parent, baseKey);
                 auto& subheaderContainer = std::get<1>(subheaderItem->data());
                 data.headers.emplace(key, &subheaderContainer);
             }
@@ -317,7 +315,7 @@ struct PlaylistPopulator::Private : QObject
         }
         Track playlistTrack{trackLeft.text, trackRight.text, track};
 
-        const QString key = generateHeaderKey(parent->key(), track.hash(), QString::number(data.items.size()));
+        const QString key = Utils::generateHash(parent->key(), track.hash(), QString::number(data.items.size()));
 
         auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent);
         if(parent->type() != PlaylistItem::Header) {
