@@ -100,7 +100,6 @@ set(SOURCES
     settings/playlist/playlistguipage.cpp
     settings/playlist/presetinput.cpp
     settings/playlist/presetinputbox.cpp
-    settings/playlist/presetmodel.cpp
     settings/playlist/playlistpresetspage.cpp
     widgets/dummy.h
     widgets/dummy.cpp

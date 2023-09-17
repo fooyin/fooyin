@@ -23,17 +23,18 @@
 #include "gui/playlist/playlistpreset.h"
 #include "gui/playlist/presetregistry.h"
 #include "presetinputbox.h"
-#include "presetmodel.h"
 
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QTabWidget>
 #include <QTableView>
 #include <QVBoxLayout>
 
@@ -117,7 +118,7 @@ public:
     void updatePreset();
     void clonePreset();
 
-    void selectionChanged(const QItemSelection& selected);
+    void selectionChanged();
     void setupPreset(const PlaylistPreset& preset);
 
     void clearBlocks();
@@ -125,8 +126,8 @@ public:
 private:
     Widgets::Playlist::PresetRegistry* m_presetRegistry;
 
-    QTableView* m_presetList;
-    PresetModel* m_model;
+    QComboBox* m_presetBox;
+    QTabWidget* m_presetTabs;
 
     PresetInputBox* m_headerTitle;
     PresetInputBox* m_headerSubtitle;
@@ -151,8 +152,8 @@ private:
 
 PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRegistry* presetRegistry)
     : m_presetRegistry{presetRegistry}
-    , m_presetList{new QTableView(this)}
-    , m_model{new PresetModel(presetRegistry, this)}
+    , m_presetBox{new QComboBox(this)}
+    , m_presetTabs{new QTabWidget(this)}
     , m_headerRowHeight{new QSpinBox(this)}
     , m_subHeaderRowHeight{new QSpinBox(this)}
     , m_trackRowHeight{new QSpinBox(this)}
@@ -163,29 +164,18 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     , m_updatePreset{new QPushButton(tr("Update"), this)}
     , m_clonePreset{new QPushButton(tr("Clone"), this)}
 {
-    m_presetList->setModel(m_model);
+    auto* mainLayout = new QGridLayout(this);
 
-    // Hide index column
-    m_presetList->hideColumn(0);
-
-    m_presetList->verticalHeader()->hide();
-    m_presetList->horizontalHeader()->hide();
-    m_presetList->horizontalHeader()->setStretchLastSection(true);
-    m_presetList->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-    auto* mainLayout    = new QGridLayout(this);
-    auto* detailsLayout = new QGridLayout();
-
-    mainLayout->addWidget(m_presetList, 0, 0, 1, 2, Qt::AlignTop);
+    mainLayout->addWidget(m_presetBox, 0, 0, 1, 4, Qt::AlignTop);
     mainLayout->addWidget(m_newPreset, 1, 0, 1, 1, Qt::AlignTop);
     mainLayout->addWidget(m_clonePreset, 1, 1, 1, 1, Qt::AlignTop);
-    mainLayout->addWidget(m_updatePreset, 2, 0, 1, 1, Qt::AlignTop);
-    mainLayout->addWidget(m_deletePreset, 2, 1, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_updatePreset, 1, 2, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_deletePreset, 1, 3, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_presetTabs, 2, 0, 2, 4, Qt::AlignTop);
+    mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
-    mainLayout->addLayout(detailsLayout, 0, 2, 4, 3);
-
-    auto* headerGroup  = new QGroupBox(tr("Header: "), this);
-    auto* headerLayout = new QGridLayout(headerGroup);
+    auto* headerWidget = new QWidget();
+    auto* headerLayout = new QGridLayout(headerWidget);
 
     m_headerTitle         = new PresetInputBox(tr("Title: "), this);
     m_headerSubtitle      = new PresetInputBox(tr("Subtitle: "), this);
@@ -198,8 +188,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
 
     headerLayout->addWidget(headerRowHeight, 0, 0);
     headerLayout->addWidget(m_headerRowHeight, 1, 0);
-    headerLayout->addWidget(m_simpleHeader, 0, 1);
-    headerLayout->addWidget(m_showCover, 1, 1);
+    headerLayout->addWidget(m_simpleHeader, 1, 1);
+    headerLayout->addWidget(m_showCover, 1, 2);
     headerLayout->addWidget(m_headerTitle, 2, 0, 1, 5);
     headerLayout->addWidget(m_headerSubtitle, 3, 0, 1, 5);
     headerLayout->addWidget(m_headerSideText, 4, 0, 1, 5);
@@ -208,10 +198,10 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     headerLayout->setRowStretch(headerLayout->rowCount(), 1);
     headerLayout->setColumnStretch(0, 1);
 
-    mainLayout->addWidget(headerGroup, 3, 0, 1, 2);
+    m_presetTabs->addTab(headerWidget, tr("Header"));
 
-    auto* subHeaderGroup  = new QGroupBox(tr("Sub Header: "), this);
-    auto* subHeaderLayout = new QGridLayout(subHeaderGroup);
+    auto* subheaderWidget = new QWidget();
+    auto* subheaderLayout = new QGridLayout(subheaderWidget);
 
     auto* subHeaderRowHeight = new QLabel(tr("Row height: "), this);
 
@@ -220,16 +210,16 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
 
     m_subHeaderText = new PresetInputBox("Text: ", this);
 
-    subHeaderLayout->addWidget(subHeaderRowHeight, 0, 0);
-    subHeaderLayout->addWidget(m_subHeaderRowHeight, 1, 0);
-    subHeaderLayout->addWidget(m_subHeaderText, 2, 0, 1, 3);
+    subheaderLayout->addWidget(subHeaderRowHeight, 0, 0);
+    subheaderLayout->addWidget(m_subHeaderRowHeight, 1, 0);
+    subheaderLayout->addWidget(m_subHeaderText, 2, 0, 1, 3);
 
-    detailsLayout->addWidget(subHeaderGroup, 1, 0);
+    m_presetTabs->addTab(subheaderWidget, tr("Subheaders"));
 
-    auto* trackGroup  = new QGroupBox(tr("Track: "), this);
-    auto* trackLayout = new QGridLayout(trackGroup);
+    auto* tracksWidget = new QWidget();
+    auto* trackLayout  = new QGridLayout(tracksWidget);
 
-    subHeaderLayout->setRowStretch(subHeaderLayout->rowCount(), 1);
+    subheaderLayout->setRowStretch(subheaderLayout->rowCount(), 1);
 
     auto* trackRowHeight = new QLabel(tr("Row height: "), this);
 
@@ -244,12 +234,9 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
 
     trackLayout->setRowStretch(trackLayout->rowCount(), 1);
 
-    detailsLayout->addWidget(trackGroup, 2, 0);
+    m_presetTabs->addTab(tracksWidget, tr("Tracks"));
 
-    detailsLayout->setRowStretch(detailsLayout->rowCount(), 1);
-
-    QObject::connect(m_presetList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     &PlaylistPresetsPageWidget::selectionChanged);
+    QObject::connect(m_presetBox, &QComboBox::currentIndexChanged, this, &PlaylistPresetsPageWidget::selectionChanged);
 
     QObject::connect(m_newPreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::newPreset);
     QObject::connect(m_deletePreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::deletePreset);
@@ -262,49 +249,41 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
         m_headerInfo->setEnabled(!checked);
     });
 
-    if(m_model->rowCount() > 0) {
-        m_presetList->selectRow(0);
-        m_presetList->setFocus();
+    const auto& presets = m_presetRegistry->items();
+
+    for(const auto& [index, preset] : presets) {
+        m_presetBox->addItem(preset.name, QVariant::fromValue(preset));
     }
 }
 
 void PlaylistPresetsPageWidget::apply()
 {
     updatePreset();
-    m_model->processQueue();
 }
 
 void PlaylistPresetsPageWidget::newPreset()
 {
-    m_model->addNewPreset();
-
-    const int row = m_model->rowCount() - 1;
-    m_presetList->selectRow(row);
-    m_presetList->edit(m_model->index(row, 1, {}));
+    PlaylistPreset preset;
+    preset.name                      = "New preset";
+    const PlaylistPreset addedPreset = m_presetRegistry->addItem(preset);
+    if(addedPreset.isValid()) {
+        m_presetBox->addItem(addedPreset.name, QVariant::fromValue(addedPreset));
+        m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
+    }
 }
 
 void PlaylistPresetsPageWidget::deletePreset()
 {
-    const auto selection = m_presetList->selectionModel()->selectedRows();
-    if(selection.empty() || m_model->rowCount() == 1) {
-        return;
-    }
-    const auto index  = selection.constFirst();
-    const auto* item  = static_cast<PresetItem*>(index.internalPointer());
-    const auto preset = item->preset();
+    const auto preset = m_presetBox->currentData().value<PlaylistPreset>();
 
-    m_model->markForRemoval(preset);
+    if(m_presetRegistry->removeByIndex(preset.index)) {
+        m_presetBox->removeItem(preset.index);
+    }
 }
 
 void PlaylistPresetsPageWidget::updatePreset()
 {
-    const auto selection = m_presetList->selectionModel()->selectedRows();
-    if(selection.empty()) {
-        return;
-    }
-    const auto index      = selection.constFirst();
-    const auto* item      = static_cast<PresetItem*>(index.internalPointer());
-    PlaylistPreset preset = item->preset();
+    auto preset = m_presetBox->currentData().value<PlaylistPreset>();
 
     updateTextBlocks(m_headerTitle->blocks(), preset.header.title);
     updateTextBlocks(m_headerSubtitle->blocks(), preset.header.subtitle);
@@ -322,44 +301,30 @@ void PlaylistPresetsPageWidget::updatePreset()
     preset.track.rowHeight = m_trackRowHeight->value();
 
     if(preset != m_presetRegistry->itemByIndex(preset.index)) {
-        m_model->markForChange(preset);
+        m_presetRegistry->changeItem(preset);
     }
 }
 
 void PlaylistPresetsPageWidget::clonePreset()
 {
-    const auto selection = m_presetList->selectionModel()->selectedRows();
-    if(selection.empty()) {
-        return;
+    const auto preset = m_presetBox->currentData().value<PlaylistPreset>();
+
+    PlaylistPreset clonedPreset{preset};
+    clonedPreset.name                = QString{"Copy of %1"}.arg(preset.name);
+    const PlaylistPreset addedPreset = m_presetRegistry->addItem(clonedPreset);
+    if(addedPreset.isValid()) {
+        m_presetBox->addItem(addedPreset.name, QVariant::fromValue(addedPreset));
+        m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
     }
-    const auto index = selection.constFirst();
-    const auto* item = static_cast<PresetItem*>(index.internalPointer());
-
-    if(!item) {
-        return;
-    }
-
-    PlaylistPreset preset{item->preset()};
-    preset.name = QString{"Copy of %1"}.arg(preset.name);
-
-    m_model->addNewPreset(preset);
-
-    const int row = m_model->rowCount() - 1;
-    m_presetList->selectRow(row);
 }
 
-void PlaylistPresetsPageWidget::selectionChanged(const QItemSelection& selected)
+void PlaylistPresetsPageWidget::selectionChanged()
 {
-    if(selected.empty()) {
-        return;
-    }
-    const auto index = m_presetList->selectionModel()->selectedRows().constFirst();
-    const auto* item = static_cast<PresetItem*>(index.internalPointer());
-    if(!item) {
+    const auto preset = m_presetBox->currentData().value<PlaylistPreset>();
+    if(!preset.isValid()) {
         return;
     }
     clearBlocks();
-    const auto preset = item->preset();
     setupPreset(preset);
 }
 
