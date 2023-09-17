@@ -86,8 +86,11 @@ public:
         };
 
         Item newItem{item};
+        if(newItem.name.isEmpty()) {
+            newItem.name = "New item";
+        }
         if(find(m_items, newItem.name)) {
-            auto count = find(m_items, newItem.name + " (");
+            auto count = std::max(find(m_items, newItem.name + " ("), 1);
             newItem.name += QString{" (%1)"}.arg(count);
         }
         newItem.id    = findValidId();
