@@ -42,11 +42,38 @@
 
 #include <queue>
 
+namespace {
+bool compareIndices(const QModelIndex& index1, const QModelIndex& index2)
+{
+    QModelIndex item1{index1};
+    QModelIndex item2{index2};
+    const QModelIndex root;
+
+    while(item1.parent() != item2.parent()) {
+        if(item1.parent() != root) {
+            item1 = item1.parent();
+        }
+        if(item2.parent() != root) {
+            item2 = item2.parent();
+        }
+    }
+    return item1.row() < item2.row();
+}
+
+struct cmpParents
+{
+    bool operator()(const QModelIndex& index1, const QModelIndex& index2) const
+    {
+        return compareIndices(index1, index2);
+    }
+};
+} // namespace
+
 namespace Fy::Gui::Widgets::Playlist {
 static constexpr auto MimeType = "application/x-playlistitem-internal-pointer";
 
-using ParentChildMap     = std::map<QModelIndex, std::vector<std::vector<int>>>;
-using ParentChildItemMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>>;
+using ParentChildMap     = std::map<QModelIndex, std::vector<std::vector<int>>, cmpParents>;
+using ParentChildItemMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>, cmpParents>;
 
 struct SplitParent
 {
@@ -275,7 +302,7 @@ struct PlaylistModel::Private : public QObject
         ParentChildMap indexGroups;
 
         QModelIndexList sortedIndexes{indexes};
-        std::sort(sortedIndexes.begin(), sortedIndexes.end());
+        std::sort(sortedIndexes.begin(), sortedIndexes.end(), compareIndices);
 
         auto startOfSequence = sortedIndexes.cbegin();
         while(startOfSequence != sortedIndexes.cend()) {
