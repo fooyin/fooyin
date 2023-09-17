@@ -33,6 +33,10 @@ jobs:
       with:
         repository: taglib/taglib
         path: taglib
+    - name: Pull & update submodules recursively
+      run: |
+        git submodule update --init --recursive
+        git submodule update --recursive --remote
     - name: Configure TagLib
       run: cmake -B taglib/build -S taglib -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     - name: Build TagLib
