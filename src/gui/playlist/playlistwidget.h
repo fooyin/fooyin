@@ -29,38 +29,23 @@ namespace Utils {
 class SettingsManager;
 } // namespace Utils
 
-namespace Core {
-namespace Player {
+namespace Core::Player {
 class PlayerManager;
-} // namespace Player
-
-namespace Library {
-class MusicLibrary;
-} // namespace Library
-} // namespace Core
+} // namespace Core::Player
 
 namespace Gui {
 class TrackSelectionController;
 
 namespace Widgets::Playlist {
 class PlaylistController;
-class PresetRegistry;
-
-struct PlaylistContext
-{
-    Core::Library::MusicLibrary* library;
-    Core::Player::PlayerManager* playerManager;
-    PlaylistController* playlistController;
-    PresetRegistry* presetRegistry;
-    TrackSelectionController* selectionController;
-};
 
 class PlaylistWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(const PlaylistContext& context, Utils::SettingsManager* settings,
+    explicit PlaylistWidget(Core::Player::PlayerManager* playerManager, PlaylistController* playlistController,
+                            TrackSelectionController* selectionController, Utils::SettingsManager* settings,
                             QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 

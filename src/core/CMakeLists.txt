@@ -48,6 +48,7 @@ set(SOURCES
     library/unifiedmusiclibrary.cpp
     library/librarythreadhandler.h
     library/librarythreadhandler.cpp
+    library/sortingregistry.cpp
     library/tracksort.cpp
     models/track.cpp
     playlist/playlist.h

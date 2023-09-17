@@ -96,10 +96,10 @@ int PlaylistTabs::addPlaylist(const Core::Playlist::Playlist& playlist, bool swi
     return index;
 }
 
-void PlaylistTabs::removePlaylist(int id)
+void PlaylistTabs::removePlaylist(const Core::Playlist::Playlist& playlist)
 {
     for(int i = 0; i < m_tabs->count(); ++i) {
-        if(m_tabs->tabData(i).toInt() == id) {
+        if(m_tabs->tabData(i).toInt() == playlist.id()) {
             m_tabs->removeTab(i);
         }
     }

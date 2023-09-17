@@ -82,7 +82,7 @@ signals:
     void playlistsPopulated();
     void playlistAdded(const Core::Playlist::Playlist& playlist, bool switchTo = false);
     void playlistTracksChanged(const Core::Playlist::Playlist& playlist, bool switchTo = false);
-    void playlistRemoved(int id);
+    void playlistRemoved(const Core::Playlist::Playlist& playlist);
     void playlistRenamed(const Core::Playlist::Playlist& playlist);
     void activePlaylistChanged(const Core::Playlist::Playlist& playlist = {});
 

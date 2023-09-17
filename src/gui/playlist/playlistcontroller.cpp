@@ -20,7 +20,9 @@
 #include "playlistcontroller.h"
 
 #include "gui/guisettings.h"
+#include "presetregistry.h"
 
+#include <core/library/sortingregistry.h>
 #include <core/playlist/playlisthandler.h>
 
 #include <utils/settings/settingsmanager.h>
@@ -31,13 +33,18 @@ struct PlaylistController::Private : QObject
     PlaylistController* controller;
 
     Core::Playlist::PlaylistHandler* handler;
+    PresetRegistry* presetRegistry;
+    Core::Library::SortingRegistry* sortRegistry;
     Utils::SettingsManager* settings;
 
     int currentPlaylistId{-1};
 
-    Private(PlaylistController* controller, Core::Playlist::PlaylistHandler* handler, Utils::SettingsManager* settings)
+    Private(PlaylistController* controller, Core::Playlist::PlaylistHandler* handler, PresetRegistry* presetRegistry,
+            Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings)
         : controller{controller}
         , handler{handler}
+        , presetRegistry{presetRegistry}
+        , sortRegistry{sortRegistry}
         , settings{settings}
     {
         connect(handler, &Core::Playlist::PlaylistHandler::playlistsPopulated, this,
@@ -78,18 +85,22 @@ struct PlaylistController::Private : QObject
         }
     }
 
-    void handlePlaylistRemoved(int id)
+    void handlePlaylistRemoved(const Core::Playlist::Playlist& playlist)
     {
-        if(currentPlaylistId == id) {
-            emit controller->currentPlaylistChanged(handler->playlists().back());
+        if(currentPlaylistId == playlist.id()) {
+            const int nextIndex = playlist.index() <= 1 ? 0 : playlist.index() - 1;
+            if(auto nextPlaylist = handler->playlistByIndex(nextIndex)) {
+                controller->changeCurrentPlaylist(*nextPlaylist);
+            }
         }
     }
 };
 
-PlaylistController::PlaylistController(Core::Playlist::PlaylistHandler* handler, Utils::SettingsManager* settings,
+PlaylistController::PlaylistController(Core::Playlist::PlaylistHandler* handler, PresetRegistry* presetRegistry,
+                                       Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings,
                                        QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, handler, settings)}
+    , p{std::make_unique<Private>(this, handler, presetRegistry, sortRegistry, settings)}
 { }
 
 PlaylistController::~PlaylistController()
@@ -100,6 +111,16 @@ PlaylistController::~PlaylistController()
 Core::Playlist::PlaylistHandler* PlaylistController::playlistHandler() const
 {
     return p->handler;
+}
+
+PresetRegistry* PlaylistController::presetRegistry() const
+{
+    return p->presetRegistry;
+}
+
+Core::Library::SortingRegistry* PlaylistController::sortRegistry() const
+{
+    return p->sortRegistry;
 }
 
 Core::Playlist::PlaylistList PlaylistController::playlists() const

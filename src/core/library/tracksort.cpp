@@ -20,19 +20,6 @@
 #include "tracksort.h"
 
 namespace Fy::Core::Library::Sorting {
-TrackList sortTracks(const TrackList& tracks)
-{
-    TrackList sortedTracks{tracks};
-    std::sort(sortedTracks.begin(), sortedTracks.end(), [](const Track& lhs, const Track& rhs) {
-        const auto cmp = QString::localeAwareCompare(lhs.sort(), rhs.sort());
-        if(cmp == 0) {
-            return false;
-        }
-        return cmp < 0;
-    });
-    return sortedTracks;
-}
-
 Scripting::ParsedScript parseScript(const QString& sort)
 {
     Scripting::Registry registry;
@@ -56,5 +43,29 @@ TrackList calcSortFields(const Scripting::ParsedScript& sortScript, const TrackL
         track.setSort(parser.evaluate(sortScript, track));
     }
     return calcTracks;
+}
+
+TrackList sortTracks(const TrackList& tracks)
+{
+    TrackList sortedTracks{tracks};
+    std::sort(sortedTracks.begin(), sortedTracks.end(), [](const Track& lhs, const Track& rhs) {
+        const auto cmp = QString::localeAwareCompare(lhs.sort(), rhs.sort());
+        if(cmp == 0) {
+            return false;
+        }
+        return cmp < 0;
+    });
+    return sortedTracks;
+}
+
+TrackList calcSortTracks(const QString& sort, const TrackList& tracks)
+{
+    return calcSortTracks(parseScript(sort), tracks);
+}
+
+TrackList calcSortTracks(const Scripting::ParsedScript& sortScript, const TrackList& tracks)
+{
+    const TrackList calcTracks = calcSortFields(sortScript, tracks);
+    return sortTracks(calcTracks);
 }
 } // namespace Fy::Core::Library::Sorting

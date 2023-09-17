@@ -28,6 +28,7 @@
 #include <core/engine/enginehandler.h>
 #include <core/library/librarymanager.h>
 #include <core/library/libraryscanner.h>
+#include <core/library/sortingregistry.h>
 #include <core/library/unifiedmusiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
@@ -61,6 +62,7 @@
 #include <gui/settings/generalpage.h>
 #include <gui/settings/guigeneralpage.h>
 #include <gui/settings/library/librarygeneralpage.h>
+#include <gui/settings/library/librarysortingpage.h>
 #include <gui/settings/librarytree/librarytreepage.h>
 #include <gui/settings/playlist/playlistguipage.h>
 #include <gui/settings/playlist/playlistpresetspage.h>
@@ -85,6 +87,7 @@ struct Application::Private
     Core::Engine::EngineHandler engine;
     Core::Library::LibraryManager* libraryManager;
     Core::Library::MusicLibrary* library;
+    Core::Library::SortingRegistry sortingRegistry;
     Core::Playlist::PlaylistHandler* playlistHandler;
 
     Gui::Widgets::WidgetFactory widgetFactory;
@@ -108,6 +111,7 @@ struct Application::Private
 
     Gui::Settings::GeneralPage generalPage;
     Gui::Settings::LibraryGeneralPage libraryGeneralPage;
+    Gui::Settings::LibrarySortingPage librarySortingPage;
     Gui::Settings::GuiGeneralPage guiGeneralPage;
     Gui::Settings::PlaylistGuiPage playlistGuiPage;
     Gui::Settings::PlaylistPresetsPage playlistPresetsPage;
@@ -127,11 +131,12 @@ struct Application::Private
         , engine{playerManager}
         , libraryManager{new Core::Library::LibraryManager(&database, settingsManager, parent)}
         , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
+        , sortingRegistry{settingsManager}
         , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, library, settingsManager,
                                                               parent)}
         , guiSettings{settingsManager}
-        , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(playlistHandler,
-                                                                                          settingsManager)}
+        , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(
+              playlistHandler, &presetRegistry, &sortingRegistry, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
         , presetRegistry{settingsManager}
         , treeGroupRegistry{settingsManager}
@@ -147,6 +152,7 @@ struct Application::Private
         , propertiesDialog{new Gui::PropertiesDialog(parent)}
         , generalPage{settingsManager}
         , libraryGeneralPage{libraryManager, settingsManager}
+        , librarySortingPage{&sortingRegistry, settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , playlistGuiPage{settingsManager}
         , playlistPresetsPage{&presetRegistry, settingsManager}
@@ -210,9 +216,8 @@ struct Application::Private
         });
 
         widgetFactory.registerClass<Gui::Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
-            return new Gui::Widgets::Playlist::PlaylistWidget(
-                {library, playerManager, playlistController.get(), &presetRegistry, &selectionController},
-                settingsManager);
+            return new Gui::Widgets::Playlist::PlaylistWidget(playerManager, playlistController.get(),
+                                                              &selectionController, settingsManager);
         });
 
         widgetFactory.registerClass<Gui::Widgets::Spacer>("Spacer", []() {
@@ -262,6 +267,7 @@ void Application::startup()
     p->settingsManager->loadSettings();
     p->library->loadLibrary();
     p->layoutProvider.findLayouts();
+    p->sortingRegistry.loadItems();
     p->presetRegistry.loadItems();
     p->treeGroupRegistry.loadItems();
 
@@ -282,6 +288,7 @@ void Application::shutdown()
 {
     p->playlistHandler->savePlaylists();
     p->editableLayout->saveLayout();
+    p->sortingRegistry.saveItems();
     p->presetRegistry.saveItems();
     p->treeGroupRegistry.saveItems();
     p->playlistController.reset(nullptr);

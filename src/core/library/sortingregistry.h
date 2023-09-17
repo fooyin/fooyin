@@ -19,17 +19,28 @@
 
 #pragma once
 
-#include "core/models/trackfwd.h"
-#include "core/scripting/scriptparser.h"
+#include "core/coresettings.h"
+#include "librarysort.h"
 
-namespace Fy::Core::Library::Sorting {
-Scripting::ParsedScript parseScript(const QString& sort);
+#include <utils/itemregistry.h>
 
-TrackList calcSortFields(const QString& sort, const TrackList& tracks);
-TrackList calcSortFields(const Scripting::ParsedScript& sortScript, const TrackList& tracks);
+namespace Fy {
+namespace Utils {
+class SettingsManager;
+}
 
-TrackList sortTracks(const TrackList& tracks);
+namespace Core::Library {
+class SortingRegistry : public Utils::ItemRegistry<Sorting::SortScript, Settings::LibrarySorting>
+{
+    Q_OBJECT
 
-TrackList calcSortTracks(const QString& sort, const TrackList& tracks);
-TrackList calcSortTracks(const Scripting::ParsedScript& sortScript, const TrackList& tracks);
-} // namespace Fy::Core::Library::Sorting
+public:
+    SortingRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
+
+    void loadItems() override;
+
+signals:
+    void sortChanged(const Sorting::SortScript& preset);
+};
+} // namespace Core::Library
+} // namespace Fy

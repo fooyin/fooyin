@@ -48,7 +48,7 @@ public:
     void setupTabs();
 
     int addPlaylist(const Core::Playlist::Playlist& playlist, bool switchTo);
-    void removePlaylist(int id);
+    void removePlaylist(const Core::Playlist::Playlist& playlist);
     int addNewTab(const QString& name, const QIcon& icon = {});
 
 protected:

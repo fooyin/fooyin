@@ -19,17 +19,24 @@
 
 #pragma once
 
-#include "core/models/trackfwd.h"
-#include "core/scripting/scriptparser.h"
+#include <utils/settings/settingspage.h>
 
-namespace Fy::Core::Library::Sorting {
-Scripting::ParsedScript parseScript(const QString& sort);
+namespace Fy {
 
-TrackList calcSortFields(const QString& sort, const TrackList& tracks);
-TrackList calcSortFields(const Scripting::ParsedScript& sortScript, const TrackList& tracks);
+namespace Utils {
+class SettingsManager;
+class SettingsDialogController;
+} // namespace Utils
 
-TrackList sortTracks(const TrackList& tracks);
+namespace Core::Library {
+class SortingRegistry;
+} // namespace Core::Library
 
-TrackList calcSortTracks(const QString& sort, const TrackList& tracks);
-TrackList calcSortTracks(const Scripting::ParsedScript& sortScript, const TrackList& tracks);
-} // namespace Fy::Core::Library::Sorting
+namespace Gui::Settings {
+class LibrarySortingPage : public Utils::SettingsPage
+{
+public:
+    LibrarySortingPage(Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings);
+};
+} // namespace Gui::Settings
+} // namespace Fy

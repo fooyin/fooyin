@@ -110,6 +110,7 @@ namespace Page {
 constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
 constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
 constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
+constexpr auto LibrarySorting     = "Fooyin.Page.Library.Sorting";
 constexpr auto PlaylistInterface  = "Fooyin.Page.Playlist.Interface";
 constexpr auto PlaylistPresets    = "Fooyin.Page.Playlist.Presets";
 constexpr auto WidgetsLibraryTree = "Fooyin.Page.Widgets.LibraryTree";

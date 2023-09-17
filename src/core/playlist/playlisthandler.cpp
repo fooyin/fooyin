@@ -439,9 +439,6 @@ void PlaylistHandler::renamePlaylist(int id, const QString& name)
 
 void PlaylistHandler::removePlaylist(int id)
 {
-    if(playlistCount() <= 1) {
-        return;
-    }
     auto playlist = playlistById(id);
     if(!playlist) {
         return;
@@ -455,7 +452,12 @@ void PlaylistHandler::removePlaylist(int id)
     }
     const int index = p->indexFromName(playlist->name());
     p->playlists.erase(p->playlists.cbegin() + index);
-    emit playlistRemoved(id);
+    p->updateIndices();
+    emit playlistRemoved(*playlist);
+
+    if(p->playlists.empty()) {
+        createPlaylist("Default", {}, true);
+    }
 }
 
 std::optional<Playlist> PlaylistHandler::activePlaylist() const

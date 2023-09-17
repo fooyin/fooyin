@@ -32,6 +32,10 @@ class SettingsManager;
 namespace Core {
 class Track;
 
+namespace Library {
+class SortingRegistry;
+} // namespace Library
+
 namespace Playlist {
 class Playlist;
 class PlaylistHandler;
@@ -39,16 +43,22 @@ class PlaylistHandler;
 } // namespace Core
 
 namespace Gui::Widgets::Playlist {
+class PresetRegistry;
+struct PlaylistPreset;
+
 class PlaylistController : public QObject
 {
     Q_OBJECT
 
 public:
-    PlaylistController(Core::Playlist::PlaylistHandler* handler, Utils::SettingsManager* settings,
+    PlaylistController(Core::Playlist::PlaylistHandler* handler, PresetRegistry* presetRegistry,
+                       Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings,
                        QObject* parent = nullptr);
     ~PlaylistController() override;
 
     Core::Playlist::PlaylistHandler* playlistHandler() const;
+    PresetRegistry* presetRegistry() const;
+    Core::Library::SortingRegistry* sortRegistry() const;
 
     Core::Playlist::PlaylistList playlists() const;
 

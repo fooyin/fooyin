@@ -93,6 +93,8 @@ set(SOURCES
     settings/library/librarygeneralpage.cpp
     settings/library/librarymodel.cpp
     settings/library/libraryview.cpp
+    settings/library/librarysortingpage.cpp
+    settings/library/sortingmodel.cpp
     settings/librarytree/librarytreepage.cpp
     settings/librarytree/librarytreegroupmodel.cpp
     settings/playlist/playlistguipage.cpp
