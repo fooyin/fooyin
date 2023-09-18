@@ -32,6 +32,9 @@ public:
 
     void setupView();
 
+signals:
+    void playlistChanged();
+
 protected:
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dropEvent(QDropEvent* event) override;

@@ -97,6 +97,7 @@ struct PlaylistWidget::Private : QObject
         connect(playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                 &PlaylistWidget::Private::selectionChanged);
 
+        connect(playlistView, &PlaylistView::playlistChanged, this, &PlaylistWidget::Private::playlistTracksChanged);
         connect(playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidget::Private::doubleClicked);
         connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
                 &PlaylistWidget::Private::changeState);
@@ -271,6 +272,35 @@ struct PlaylistWidget::Private : QObject
             case(Core::Player::Stopped):
             case(Core::Player::Paused):
                 return model->changeTrackState();
+        }
+    }
+
+    void playlistTracksChanged()
+    {
+        QModelIndexList indexes{{}};
+
+        Core::TrackList tracks;
+
+        while(!indexes.empty()) {
+            const QModelIndex& index = indexes.front();
+            indexes.pop_front();
+
+            const auto type = index.data(PlaylistItem::Type).toInt();
+
+            if(type != PlaylistItem::Track) {
+                const QItemSelection children{model->index(0, 0, index),
+                                              model->index(model->rowCount(index) - 1, 0, index)};
+                const auto childIndexes = children.indexes();
+                std::ranges::copy(childIndexes, std::back_inserter(indexes));
+            }
+            else {
+                tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<Core::Track>());
+            }
+        }
+        if(!tracks.empty()) {
+            if(auto playlist = controller->currentPlaylist()) {
+                controller->playlistHandler()->replacePlaylistTracks(playlist->id(), tracks);
+            }
         }
     }
 
