@@ -45,7 +45,6 @@ protected:
     [[nodiscard]] QAbstractItemView::DropIndicatorPosition position(const QPoint& pos, const QRect& rect,
                                                                     const QModelIndex& index) const;
     [[nodiscard]] bool isIndexDropEnabled(const QModelIndex& index) const;
-    bool droppingOnItself(QDropEvent* event, const QModelIndex& index);
 
     [[nodiscard]] bool shouldAutoScroll(const QPoint& pos) const;
     void startAutoScroll();

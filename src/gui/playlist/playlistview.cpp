@@ -68,58 +68,55 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 
     event->ignore();
 
-    if(!droppingOnItself(event, index)) {
-        if(event->modifiers() & Qt::ControlModifier) {
-            event->setDropAction(Qt::CopyAction);
-        }
-        else {
-            event->setDropAction(Qt::MoveAction);
-        }
+    if(event->modifiers() & Qt::ControlModifier) {
+        event->setDropAction(Qt::CopyAction);
+    }
+    else {
+        event->setDropAction(Qt::MoveAction);
+    }
 
-        if(index.isValid() && showDropIndicator()) {
-            const QRect rect      = visualRect(index);
-            const QRect rectLeft  = visualRect(index.sibling(index.row(), 0));
-            const QRect rectRight = visualRect(index.sibling(index.row(), 0));
-            dropIndicatorPos      = position(pos, rect, index);
-            switch(dropIndicatorPos) {
-                case(AboveItem):
-                    if(isIndexDropEnabled(index.parent())) {
-                        dropIndicatorRect
-                            = QRect(rectLeft.left(), rectLeft.top(), rectRight.right() - rectLeft.left(), 0);
-                        event->acceptProposedAction();
-                    }
-                    else {
-                        dropIndicatorRect = {};
-                    }
-                    break;
-                case(BelowItem):
-                    if(isIndexDropEnabled(index.parent())) {
-                        dropIndicatorRect
-                            = QRect(rectLeft.left(), rectLeft.bottom(), rectRight.right() - rectLeft.left(), 0);
-                        event->acceptProposedAction();
-                    }
-                    else {
-                        dropIndicatorRect = {};
-                    }
-                    break;
-                case(OnItem):
+    if(index.isValid() && showDropIndicator()) {
+        const QRect rect      = visualRect(index);
+        const QRect rectLeft  = visualRect(index.sibling(index.row(), 0));
+        const QRect rectRight = visualRect(index.sibling(index.row(), 0));
+        dropIndicatorPos      = position(pos, rect, index);
+        switch(dropIndicatorPos) {
+            case(AboveItem):
+                if(isIndexDropEnabled(index.parent())) {
+                    dropIndicatorRect = QRect(rectLeft.left(), rectLeft.top(), rectRight.right() - rectLeft.left(), 0);
+                    event->acceptProposedAction();
+                }
+                else {
                     dropIndicatorRect = {};
-                    event->ignore();
-                    break;
-                case(OnViewport):
+                }
+                break;
+            case(BelowItem):
+                if(isIndexDropEnabled(index.parent())) {
+                    dropIndicatorRect
+                        = QRect(rectLeft.left(), rectLeft.bottom(), rectRight.right() - rectLeft.left(), 0);
+                    event->acceptProposedAction();
+                }
+                else {
                     dropIndicatorRect = {};
-                    if(isIndexDropEnabled({})) {
-                        event->acceptProposedAction();
-                    }
-                    break;
-            }
+                }
+                break;
+            case(OnItem):
+                dropIndicatorRect = {};
+                event->ignore();
+                break;
+            case(OnViewport):
+                dropIndicatorRect = {};
+                if(isIndexDropEnabled({})) {
+                    event->acceptProposedAction();
+                }
+                break;
         }
-        else {
-            dropIndicatorRect = {};
-            dropIndicatorPos  = OnViewport;
-            if(isIndexDropEnabled({})) {
-                event->acceptProposedAction();
-            }
+    }
+    else {
+        dropIndicatorRect = {};
+        dropIndicatorPos  = OnViewport;
+        if(isIndexDropEnabled({})) {
+            event->acceptProposedAction();
         }
     }
 
@@ -237,25 +234,6 @@ bool PlaylistView::isIndexDropEnabled(const QModelIndex& index) const
     return (model()->flags(index) & Qt::ItemIsDropEnabled);
 }
 
-bool PlaylistView::droppingOnItself(QDropEvent* event, const QModelIndex& index)
-{
-    Qt::DropAction dropAction = event->dropAction();
-    if(dragDropMode() == QAbstractItemView::InternalMove) {
-        dropAction = Qt::MoveAction;
-    }
-    if(event->source() == this && event->possibleActions() & Qt::MoveAction && dropAction == Qt::MoveAction) {
-        const auto selectedIndexes = this->selectedIndexes();
-        QModelIndex child          = index;
-        while(child.isValid()) {
-            if(selectedIndexes.contains(child)) {
-                return true;
-            }
-            child = child.parent();
-        }
-    }
-    return false;
-}
-
 bool PlaylistView::shouldAutoScroll(const QPoint& pos) const
 {
     if(!hasAutoScroll()) {
@@ -341,9 +319,7 @@ bool PlaylistView::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelI
         dropIndex = index;
         dropRow   = row;
         dropCol   = col;
-        if(!droppingOnItself(event, index)) {
-            return true;
-        }
+        return true;
     }
     return false;
 }

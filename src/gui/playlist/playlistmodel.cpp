@@ -328,7 +328,7 @@ struct PlaylistModel::Private : public QObject
         return indexGroups;
     }
 
-    ParentChildItemMap determineItemGroups(const QModelIndexList& indexes, const QModelIndex& parent, int row)
+    ParentChildItemMap determineItemGroups(const QModelIndexList& indexes)
     {
         const ParentChildMap indexGroups = determineIndexGroups(indexes);
         ParentChildItemMap indexItemGroups;
@@ -336,13 +336,6 @@ struct PlaylistModel::Private : public QObject
         for(const auto& [groupParent, groups] : indexGroups) {
             std::vector<std::vector<PlaylistItem*>> transformedVector;
             for(const auto& group : groups) {
-                if(groupParent == parent) {
-                    const int firstRow = group.front();
-                    const int diff     = std::abs(row - firstRow);
-                    if((firstRow < row && diff <= 1) || diff == 0) {
-                        continue;
-                    }
-                }
                 std::vector<PlaylistItem*> transformedInnerVector;
                 for(const int childRow : group) {
                     if(PlaylistItem* playlistItem
@@ -356,6 +349,16 @@ struct PlaylistModel::Private : public QObject
         }
         return indexItemGroups;
     }
+
+    auto groupChildren(const std::vector<PlaylistItem*>& children)
+    {
+        std::map<QModelIndex, std::vector<PlaylistItem*>, cmpParents> groupedChildren;
+        for(PlaylistItem* child : children) {
+            const QModelIndex parent = model->indexOfItem(child->parent());
+            groupedChildren[parent].push_back(child);
+        }
+        return groupedChildren;
+    };
 
     template <typename Container>
     int moveRows(const QModelIndex& source, const Container& rows, const QModelIndex& target, int row)
@@ -744,16 +747,13 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
         return false;
     }
 
-    const ParentChildItemMap indexItemGroups = p->determineItemGroups(indexes, parent, row);
+    const ParentChildItemMap indexItemGroups = p->determineItemGroups(indexes);
 
+    QModelIndexList headersToCheck;
     QModelIndex targetParent{parent};
 
     for(const auto& [sourceParent, groups] : indexItemGroups) {
-        if(groups.empty() || groups.front().empty()) {
-            return false;
-        }
-        const QModelIndex src          = indexOfItem(groups.front().front()->parent());
-        PlaylistItem* sourceParentItem = itemForIndex(src);
+        PlaylistItem* sourceParentItem = itemForIndex(sourceParent);
         PlaylistItem* targetParentItem = itemForIndex(targetParent);
 
         const bool sameParents = sourceParentItem->baseKey() == targetParentItem->baseKey();
@@ -762,26 +762,38 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
             targetParent = p->handleDiffParentDrop(sourceParentItem, targetParentItem, row);
         }
 
-        for(const auto& children : groups) {
-            if(action == Qt::MoveAction) {
-                const int firstRow = children.front()->row();
-                const int lastRow  = children.back()->row();
+        for(const auto& groupChildren : groups) {
+            // If dropped within a group and a previous groups parents were different,
+            // the children will be split and have different parents.
+            // Regroup to prevent issues with beginMoveRows/beginInsertRows.
+            const auto regroupedChildren = p->groupChildren(groupChildren);
+            for(const auto& [parent, children] : regroupedChildren) {
+                if(action == Qt::MoveAction) {
+                    const int firstRow = children.front()->row();
+                    const int lastRow  = children.back()->row();
 
-                beginMoveRows(src, firstRow, lastRow, targetParent, row);
-                row = p->moveRows(src, children, targetParent, row);
-                endMoveRows();
-            }
-            else {
-                const int total = row + children.size() - 1;
+                    if(sameParents && row >= firstRow && row <= lastRow) {
+                        row = lastRow + 1;
+                        continue;
+                    }
 
-                beginInsertRows(targetParent, row, total);
-                row = p->copyRows(src, children, targetParent, row);
-                endInsertRows();
+                    beginMoveRows(parent, firstRow, lastRow, targetParent, row);
+                    row = p->moveRows(parent, children, targetParent, row);
+                    endMoveRows();
+                }
+                else {
+                    const int total = row + static_cast<int>(children.size()) - 1;
+
+                    beginInsertRows(targetParent, row, total);
+                    row = p->copyRows(parent, children, targetParent, row);
+                    endInsertRows();
+                }
+                headersToCheck.emplace_back(parent);
             }
         }
 
         rootItem()->resetChildren();
-        p->removeEmptyHeaders({src});
+        p->removeEmptyHeaders(headersToCheck);
         p->mergeHeaders({});
         rootItem()->resetChildren();
     }
