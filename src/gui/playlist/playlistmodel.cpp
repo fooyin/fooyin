@@ -390,12 +390,12 @@ struct PlaylistModel::Private : public QObject
     }
 
     template <typename Container>
-    void copyRows(const QModelIndex& source, const Container& rows, const QModelIndex& target, int row)
+    int copyRows(const QModelIndex& source, const Container& rows, const QModelIndex& target, int row)
     {
         int currRow{row};
         auto* targetParent = model->itemForIndex(target);
         if(!targetParent) {
-            return;
+            return currRow;
         }
 
         auto* sourceParent = model->itemForIndex(source);
@@ -407,6 +407,8 @@ struct PlaylistModel::Private : public QObject
         }
         sourceParent->resetChildren();
         targetParent->resetChildren();
+
+        return currRow;
     }
 
     void removeEmptyHeaders(const QModelIndexList& headers)
@@ -702,7 +704,7 @@ QStringList PlaylistModel::mimeTypes() const
 bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                                     const QModelIndex& parent) const
 {
-    if(action == Qt::MoveAction && data->hasFormat(MimeType)) {
+    if((action == Qt::MoveAction || action == Qt::CopyAction) && data->hasFormat(MimeType)) {
         return true;
     }
     return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);
@@ -710,12 +712,12 @@ bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action
 
 Qt::DropActions PlaylistModel::supportedDragActions() const
 {
-    return Qt::MoveAction;
+    return Qt::MoveAction | Qt::CopyAction;
 }
 
 Qt::DropActions PlaylistModel::supportedDropActions() const
 {
-    return Qt::MoveAction;
+    return Qt::MoveAction | Qt::CopyAction;
 }
 
 QMimeData* PlaylistModel::mimeData(const QModelIndexList& indexes) const
@@ -755,11 +757,21 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
         }
 
         for(const auto& children : groups) {
-            const int firstRow = children.front()->row();
-            const int lastRow  = children.back()->row();
-            beginMoveRows(src, firstRow, lastRow, targetParent, row);
-            row = p->moveRows(src, children, targetParent, row);
-            endMoveRows();
+            if(action == Qt::MoveAction) {
+                const int firstRow = children.front()->row();
+                const int lastRow  = children.back()->row();
+
+                beginMoveRows(src, firstRow, lastRow, targetParent, row);
+                row = p->moveRows(src, children, targetParent, row);
+                endMoveRows();
+            }
+            else {
+                const int total = row + children.size() - 1;
+
+                beginInsertRows(targetParent, row, total);
+                row = p->copyRows(src, children, targetParent, row);
+                endInsertRows();
+            }
         }
 
         rootItem()->resetChildren();

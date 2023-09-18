@@ -69,6 +69,13 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
     event->ignore();
 
     if(!droppingOnItself(event, index)) {
+        if(event->modifiers() & Qt::ControlModifier) {
+            event->setDropAction(Qt::CopyAction);
+        }
+        else {
+            event->setDropAction(Qt::MoveAction);
+        }
+
         if(index.isValid() && showDropIndicator()) {
             const QRect rect      = visualRect(index);
             const QRect rectLeft  = visualRect(index.sibling(index.row(), 0));
