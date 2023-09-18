@@ -413,8 +413,6 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* removeRows = new QAction("Remove", menu);
     QObject::connect(removeRows, &QAction::triggered, this, [this]() {
-        p->controller->removePlaylistTracks(p->selectionController->selectedTracks());
-
         QModelIndexList trackSelection;
         const auto selected = p->playlistView->selectionModel()->selectedIndexes();
         std::ranges::copy_if(std::as_const(selected), std::back_inserter(trackSelection), [](const QModelIndex& index) {
@@ -422,6 +420,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
         });
 
         p->model->removeTracks(trackSelection);
+        p->playlistTracksChanged();
     });
     menu->addAction(removeRows);
 
