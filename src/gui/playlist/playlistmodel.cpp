@@ -772,7 +772,9 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
                     const int firstRow = children.front()->row();
                     const int lastRow  = children.back()->row();
 
-                    if(sameParents && row >= firstRow && row <= lastRow) {
+                    const bool identicalParents = sourceParentItem->key() == targetParentItem->key();
+
+                    if(identicalParents && row >= firstRow && row <= lastRow + 1) {
                         row = lastRow + 1;
                         continue;
                     }
