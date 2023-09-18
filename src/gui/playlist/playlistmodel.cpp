@@ -457,7 +457,10 @@ struct PlaylistModel::Private : public QObject
             PlaylistItem* leftSibling  = model->itemForIndex(leftIndex);
             PlaylistItem* rightSibling = model->itemForIndex(rightIndex);
 
-            if(leftIndex != rightIndex && leftSibling->baseKey() == rightSibling->baseKey()) {
+            const bool bothHeaders
+                = leftSibling->type() != PlaylistItem::Track && rightSibling->type() != PlaylistItem::Track;
+
+            if(bothHeaders && leftIndex != rightIndex && leftSibling->baseKey() == rightSibling->baseKey()) {
                 const auto rightChildren = rightSibling->children();
                 const int firstRow       = leftSibling->childCount();
                 const int finalRow       = rightSibling->childCount() - 1;
