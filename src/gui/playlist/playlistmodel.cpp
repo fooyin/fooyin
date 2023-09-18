@@ -746,6 +746,9 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
     QModelIndex targetParent{parent};
 
     for(const auto& [sourceParent, groups] : indexItemGroups) {
+        if(groups.empty() || groups.front().empty()) {
+            return false;
+        }
         const QModelIndex src          = indexOfItem(groups.front().front()->parent());
         PlaylistItem* sourceParentItem = itemForIndex(src);
         PlaylistItem* targetParentItem = itemForIndex(targetParent);
