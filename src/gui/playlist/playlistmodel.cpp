@@ -438,6 +438,7 @@ struct PlaylistModel::Private : public QObject
             if(headerItem && headerItem->childCount() < 1) {
                 const int headerRow = headerItem->row();
                 model->removePlaylistRows(headerRow, 1, headerParent);
+                nodes.erase(headerItem->key());
             }
             if(headerParent.isValid()) {
                 headersToCheck.push(headerParent);
@@ -473,6 +474,7 @@ struct PlaylistModel::Private : public QObject
                 model->endMoveRows();
 
                 model->removePlaylistRows(rightSibling->row(), 1, rightIndex.parent());
+                nodes.erase(rightSibling->key());
             }
             else {
                 row++;
@@ -496,9 +498,39 @@ struct PlaylistModel::Private : public QObject
         return newParent;
     }
 
+    QModelIndex canBeMerged(PlaylistItem*& currTarget, int& targetRow, std::vector<PlaylistItem*>& sourceParents,
+                            int targetOffset)
+    {
+        std::vector<PlaylistItem*> newSourceParents;
+
+        PlaylistItem* checkItem = currTarget->child(targetRow + targetOffset);
+        if(checkItem) {
+            if(!sourceParents.empty() && sourceParents.front()->baseKey() == checkItem->baseKey()) {
+                auto parent = sourceParents.cbegin();
+                for(; parent != sourceParents.cend(); ++parent) {
+                    if((*parent)->baseKey() != checkItem->baseKey()) {
+                        newSourceParents.push_back(*parent);
+                        break;
+                    }
+                    currTarget     = checkItem;
+                    targetRow      = targetOffset >= 0 ? -1 : currTarget->childCount() - 1;
+                    auto* nextItem = checkItem->child(targetOffset > 0 ? checkItem->childCount() - 1 : 0);
+                    if(nextItem->type() != PlaylistItem::Track) {
+                        checkItem = nextItem;
+                    }
+                }
+                if(parent == sourceParents.cend()) {
+                    return model->indexOfItem(checkItem);
+                }
+                sourceParents = newSourceParents;
+            }
+        }
+        return {};
+    }
+
     QModelIndex handleDiffParentDrop(PlaylistItem* source, PlaylistItem* target, int& row)
     {
-        int targetRow{0};
+        int targetRow{row};
         std::vector<PlaylistItem*> sourceParents;
         std::vector<PlaylistItem*> targetParents;
 
@@ -520,6 +552,26 @@ struct PlaylistModel::Private : public QObject
 
         std::ranges::reverse(sourceParents);
 
+        const bool targetIsRoot = target->type() == PlaylistItem::Root;
+
+        // Check left
+        if((targetIsRoot && row > 0) || (!targetIsRoot && row == 0)) {
+            QModelIndex leftResult = canBeMerged(currTarget, targetRow, sourceParents, -1);
+            if(leftResult.isValid()) {
+                row = targetRow + 1;
+                return leftResult;
+            }
+        }
+
+        // Check right
+        if((targetIsRoot && row < target->childCount() - 1) || (!targetIsRoot && row == target->childCount())) {
+            QModelIndex rightResult = canBeMerged(currTarget, targetRow, sourceParents, targetIsRoot ? 0 : 1);
+            if(rightResult.isValid()) {
+                row = 0;
+                return rightResult;
+            }
+        }
+
         int newParentRow = targetRow + 1;
         PlaylistItem* prevParentItem{currTarget};
 
@@ -528,7 +580,7 @@ struct PlaylistModel::Private : public QObject
 
         for(PlaylistItem* parent : targetParents) {
             const int finalRow = parent->childCount() - 1;
-            if(finalRow > row || (parent->type() == PlaylistItem::Header && !splitParents.empty())) {
+            if(finalRow >= row || (parent->type() == PlaylistItem::Header && !splitParents.empty())) {
                 PlaylistItem* newParent = cloneParent(parent);
 
                 std::vector<PlaylistItem*> children;
@@ -759,7 +811,8 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
         const bool sameParents = sourceParentItem->baseKey() == targetParentItem->baseKey();
 
         if(!sameParents) {
-            targetParent = p->handleDiffParentDrop(sourceParentItem, targetParentItem, row);
+            targetParent     = p->handleDiffParentDrop(sourceParentItem, targetParentItem, row);
+            targetParentItem = itemForIndex(targetParent);
         }
 
         for(const auto& groupChildren : groups) {
@@ -767,7 +820,7 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
             // the children will be split and have different parents.
             // Regroup to prevent issues with beginMoveRows/beginInsertRows.
             const auto regroupedChildren = p->groupChildren(groupChildren);
-            for(const auto& [parent, children] : regroupedChildren) {
+            for(const auto& [groupParent, children] : regroupedChildren) {
                 if(action == Qt::MoveAction) {
                     const int firstRow = children.front()->row();
                     const int lastRow  = children.back()->row();
@@ -779,18 +832,18 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
                         continue;
                     }
 
-                    beginMoveRows(parent, firstRow, lastRow, targetParent, row);
-                    row = p->moveRows(parent, children, targetParent, row);
+                    beginMoveRows(groupParent, firstRow, lastRow, targetParent, row);
+                    row = p->moveRows(groupParent, children, targetParent, row);
                     endMoveRows();
                 }
                 else {
                     const int total = row + static_cast<int>(children.size()) - 1;
 
                     beginInsertRows(targetParent, row, total);
-                    row = p->copyRows(parent, children, targetParent, row);
+                    row = p->copyRows(groupParent, children, targetParent, row);
                     endInsertRows();
                 }
-                headersToCheck.emplace_back(parent);
+                headersToCheck.emplace_back(groupParent);
             }
         }
 
