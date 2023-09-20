@@ -51,6 +51,7 @@ struct PlaylistPopulator::Private : QObject
 
     PlaylistItem root;
     PendingData data;
+    ContainerKeyMap headers;
     Core::TrackList pendingTracks;
 
     explicit Private(PlaylistPopulator* populator)
@@ -97,7 +98,7 @@ struct PlaylistPopulator::Private : QObject
 
     void updateContainers()
     {
-        for(const auto& [key, container] : data.headers) {
+        for(const auto& [key, container] : headers) {
             container->updateGroupText(&parser, registry.get());
         }
     }
@@ -135,7 +136,7 @@ struct PlaylistPopulator::Private : QObject
         prevBaseHeaderKey = baseKey;
         prevHeaderKey     = key;
 
-        if(!data.headers.contains(key)) {
+        if(!headers.contains(key)) {
             Container header;
             header.setTitle(row.title);
             header.setSubtitle(row.subtitle);
@@ -145,9 +146,9 @@ struct PlaylistPopulator::Private : QObject
 
             auto* headerItem      = getOrInsertItem(key, PlaylistItem::Header, header, parent, baseKey);
             auto& headerContainer = std::get<1>(headerItem->data());
-            data.headers.emplace(key, &headerContainer);
+            headers.emplace(key, &headerContainer);
         }
-        Container* header = data.headers.at(key);
+        Container* header = headers.at(key);
         header->addTrack(track);
 
         auto* headerItem = &data.items.at(key);
@@ -249,16 +250,16 @@ struct PlaylistPopulator::Private : QObject
             prevBaseSubheaderKey = baseKey;
             prevSubheaderKey     = key;
 
-            if(!data.headers.contains(key)) {
+            if(!headers.contains(key)) {
                 Container subheader;
                 subheader.setTitle(title);
                 subheader.setInfo(container.info());
 
                 auto* subheaderItem      = getOrInsertItem(key, PlaylistItem::Subheader, subheader, parent, baseKey);
                 auto& subheaderContainer = std::get<1>(subheaderItem->data());
-                data.headers.emplace(key, &subheaderContainer);
+                headers.emplace(key, &subheaderContainer);
             }
-            Container* subheader = data.headers.at(key);
+            Container* subheader = headers.at(key);
             subheader->addTrack(track);
 
             auto* subheaderItem = &data.items.at(key);
@@ -373,6 +374,7 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const Core::TrackList&
     setState(Running);
 
     p->data.clear();
+    p->headers.clear();
 
     if(std::exchange(p->currentPreset, preset) != preset) {
         p->subheaders.clear();
@@ -382,6 +384,24 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const Core::TrackList&
     p->pendingTracks = tracks;
 
     p->runBatch(InitialBatchSize);
+
+    setState(Idle);
+}
+
+void PlaylistPopulator::updateHeaders(const ItemList& headers)
+{
+    setState(Running);
+
+    ItemKeyMap updatedHeaders;
+
+    for(const PlaylistItem& item : headers) {
+        PlaylistItem newItem{item};
+        Container& header = std::get<1>(newItem.data());
+        header.updateGroupText(&p->parser, p->registry.get());
+        updatedHeaders.emplace(newItem.key(), newItem);
+    }
+
+    emit headersUpdated(updatedHeaders);
 
     setState(Idle);
 }

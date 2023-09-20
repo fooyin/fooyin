@@ -53,13 +53,13 @@ public:
     void setCoverPath(const QString& path);
 
     void addTrack(const Core::Track& track);
-    void removeTrack(const Core::Track& trackToRemove);
-
+    void addTracks(const Core::TrackList& tracks);
+    void clearTracks();
 
 private:
     Core::TrackList m_tracks;
     uint64_t m_duration;
-    mutable QString m_genres;
+    QString m_genres;
 
     TextBlockList m_title;
     TextBlockList m_subtitle;

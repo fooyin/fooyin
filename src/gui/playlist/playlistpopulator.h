@@ -29,20 +29,19 @@
 namespace Fy::Gui::Widgets::Playlist {
 struct PlaylistPreset;
 
-using ItemMap         = std::unordered_map<QString, PlaylistItem>;
-using ContainerPtrMap = std::unordered_map<QString, Container*>;
-using NodeMap         = std::unordered_map<QString, std::vector<QString>>;
+using ItemList        = std::vector<PlaylistItem>;
+using ItemKeyMap      = std::unordered_map<QString, PlaylistItem>;
+using ContainerKeyMap = std::unordered_map<QString, Container*>;
+using NodeKeyMap      = std::unordered_map<QString, std::vector<QString>>;
 
 struct PendingData
 {
-    ItemMap items;
-    ContainerPtrMap headers;
-    NodeMap nodes;
+    ItemKeyMap items;
+    NodeKeyMap nodes;
 
     void clear()
     {
         items.clear();
-        headers.clear();
         nodes.clear();
     }
 };
@@ -56,9 +55,11 @@ public:
     ~PlaylistPopulator() override;
 
     void run(const PlaylistPreset& preset, const Core::TrackList& tracks);
+    void updateHeaders(const ItemList& items);
 
 signals:
     void populated(PendingData data);
+    void headersUpdated(ItemKeyMap headers);
 
 private:
     struct Private;

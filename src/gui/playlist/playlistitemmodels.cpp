@@ -68,19 +68,6 @@ QString Container::coverPath() const
 
 QString Container::genres() const
 {
-    if(!m_genres.isEmpty()) {
-        return m_genres;
-    }
-
-    QStringList genres;
-    for(const auto& track : m_tracks) {
-        for(const auto& genre : track.genres()) {
-            if(!genres.contains(genre)) {
-                genres.emplace_back(genre);
-            }
-        }
-    }
-    m_genres = genres.join(" / ");
     return m_genres;
 }
 
@@ -94,14 +81,29 @@ void Container::updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptR
         return;
     }
 
+    // Update duration
+    m_duration = 0;
+    for(const Core::Track& track : m_tracks) {
+        m_duration += track.duration();
+    }
+
+    // Update genres
+    QStringList genres;
+    for(const auto& track : m_tracks) {
+        for(const auto& genre : track.genres()) {
+            if(!genres.contains(genre)) {
+                genres.emplace_back(genre);
+            }
+        }
+    }
+    m_genres = genres.join(" / ");
+
     registry->changeCurrentContainer(this);
 
     const Core::Track& track = m_tracks.front();
-
     for(TextBlock& block : m_subtitle) {
         block.text = parser->evaluate(block.script, track);
     }
-
     for(TextBlock& block : m_info) {
         block.text = parser->evaluate(block.script, track);
     }
@@ -135,18 +137,16 @@ void Container::setCoverPath(const QString& path)
 void Container::addTrack(const Core::Track& track)
 {
     m_tracks.emplace_back(track);
-    m_duration += track.duration();
 }
 
-void Container::removeTrack(const Core::Track& trackToRemove)
+void Container::addTracks(const Core::TrackList& tracks)
 {
-    m_tracks.erase(std::remove_if(m_tracks.begin(), m_tracks.end(),
-                                  [trackToRemove](const Core::Track& track) {
-                                      return track == trackToRemove;
-                                  }),
-                   m_tracks.end());
+    std::ranges::copy(tracks, std::back_inserter(m_tracks));
+}
 
-    m_duration -= trackToRemove.duration();
+void Container::clearTracks()
+{
+    m_tracks.clear();
 }
 
 Track::Track(TextBlockList left, TextBlockList right, const Core::Track& track)

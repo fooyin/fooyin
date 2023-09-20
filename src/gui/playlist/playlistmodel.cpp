@@ -43,7 +43,7 @@
 #include <queue>
 
 namespace {
-bool compareIndices(const QModelIndex& index1, const QModelIndex& index2)
+bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
 {
     QModelIndex item1{index1};
     QModelIndex item2{index2};
@@ -57,23 +57,119 @@ bool compareIndices(const QModelIndex& index1, const QModelIndex& index2)
             item2 = item2.parent();
         }
     }
+    if(item1.row() == item2.row()) {
+        return false;
+    }
     return item1.row() < item2.row();
 }
+} // namespace
 
-struct cmpParents
+struct cmpIndicies
 {
     bool operator()(const QModelIndex& index1, const QModelIndex& index2) const
     {
-        return compareIndices(index1, index2);
+        return cmpTrackIndices(index1, index2);
     }
 };
-} // namespace
+
+using ParentChildMap = std::map<QModelIndex, std::vector<std::vector<int>>, cmpIndicies>;
+
+ParentChildMap determineIndexGroups(const QModelIndexList& indexes)
+{
+    ParentChildMap indexGroups;
+
+    QModelIndexList sortedIndexes{indexes};
+    std::ranges::sort(sortedIndexes, cmpTrackIndices);
+
+    auto startOfSequence = sortedIndexes.cbegin();
+    while(startOfSequence != sortedIndexes.cend()) {
+        auto endOfSequence
+            = std::adjacent_find(startOfSequence, sortedIndexes.cend(), [](const auto& lhs, const auto& rhs) {
+                  return lhs.parent() != rhs.parent() || rhs.row() != lhs.row() + 1;
+              });
+        if(endOfSequence != sortedIndexes.cend()) {
+            std::advance(endOfSequence, 1);
+        }
+
+        std::vector<int> group;
+        for(auto it = startOfSequence; it != endOfSequence; ++it) {
+            group.push_back(it->row());
+        }
+
+        const QModelIndex parent = startOfSequence->parent();
+        indexGroups[parent].push_back(group);
+
+        startOfSequence = endOfSequence;
+    }
+
+    return indexGroups;
+}
 
 namespace Fy::Gui::Widgets::Playlist {
 static constexpr auto MimeType = "application/x-playlistitem-internal-pointer";
 
-using ParentChildMap     = std::map<QModelIndex, std::vector<std::vector<int>>, cmpParents>;
-using ParentChildItemMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>, cmpParents>;
+using ParentChildItemMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>, cmpIndicies>;
+
+bool cmpItemsReverse(PlaylistItem* pItem1, PlaylistItem* pItem2)
+{
+    PlaylistItem* item1{pItem1};
+    PlaylistItem* item2{pItem2};
+
+    while(item1->parent() != item2->parent()) {
+        if(item1->parent() == item2) {
+            return true;
+        }
+        if(item2->parent() == item1) {
+            return false;
+        }
+        if(item1->parent()->type() != PlaylistItem::Root) {
+            item1 = item1->parent();
+        }
+        if(item2->parent()->type() != PlaylistItem::Root) {
+            item2 = item2->parent();
+        }
+    }
+    if(item1->row() == item2->row()) {
+        return true;
+    }
+    return item1->row() > item2->row();
+};
+
+struct cmpItems
+{
+    bool operator()(PlaylistItem* pItem1, PlaylistItem* pItem2) const
+    {
+        return cmpItemsReverse(pItem1, pItem2);
+    }
+};
+
+using ItemPtrSet = std::set<PlaylistItem*, cmpItems>;
+
+void updateHeaderChildren(PlaylistItem* header)
+{
+    if(!header) {
+        return;
+    }
+
+    const auto type = header->type();
+
+    if(type == PlaylistItem::Header || type == PlaylistItem::Subheader) {
+        Container& container = std::get<1>(header->data());
+        container.clearTracks();
+
+        const auto& children = header->children();
+        for(PlaylistItem* child : children) {
+            if(child->type() == PlaylistItem::Track) {
+                const Core::Track& track = std::get<0>(child->data()).track();
+                container.addTrack(track);
+            }
+            else {
+                const Core::TrackList tracks = std::get<1>(child->data()).tracks();
+                container.addTracks(tracks);
+            }
+        }
+    }
+}
 
 struct SplitParent
 {
@@ -101,9 +197,9 @@ struct PlaylistModel::Private : public QObject
     QThread populatorThread;
     PlaylistPopulator populator;
 
-    NodeMap pendingNodes;
-    ItemMap nodes;
-    ItemMap oldNodes;
+    NodeKeyMap pendingNodes;
+    ItemKeyMap nodes;
+    ItemKeyMap oldNodes;
 
     QPixmap playingIcon;
     QPixmap pausedIcon;
@@ -139,6 +235,43 @@ struct PlaylistModel::Private : public QObject
                 std::ranges::copy(rows, std::back_inserter(pendingNodes[parentKey]));
             }
         }
+    }
+
+    void updateModel(ItemKeyMap& data)
+    {
+        if(!resetting) {
+            for(auto& [key, header] : data) {
+                nodes[key]                    = header;
+                const QModelIndex headerIndex = model->indexOfItem(&nodes[key]);
+                emit model->dataChanged(headerIndex, headerIndex, {});
+            }
+        }
+    }
+
+    void updateHeaders(const ItemPtrSet& headers)
+    {
+        ItemPtrSet items;
+
+        for(PlaylistItem* header : headers) {
+            PlaylistItem* currHeader{header};
+            while(currHeader->type() != PlaylistItem::Root) {
+                if(currHeader->childCount() > 0) {
+                    items.emplace(currHeader);
+                }
+                currHeader = currHeader->parent();
+            }
+        }
+
+        ItemList updatedHeaders;
+
+        for(PlaylistItem* header : items) {
+            updateHeaderChildren(header);
+            updatedHeaders.emplace_back(*header);
+        }
+
+        QMetaObject::invokeMethod(&populator, [this, updatedHeaders] {
+            populator.updateHeaders(updatedHeaders);
+        });
     }
 
     void beginReset()
@@ -254,7 +387,7 @@ struct PlaylistModel::Private : public QObject
         }
     }
 
-    QByteArray saveIndexes(const QModelIndexList& indexes)
+    static QByteArray saveIndexes(const QModelIndexList& indexes)
     {
         QByteArray result;
         QDataStream stream(&result, QIODevice::WriteOnly);
@@ -275,7 +408,7 @@ struct PlaylistModel::Private : public QObject
         return result;
     }
 
-    QModelIndexList restoreIndexes(QByteArray data)
+    QModelIndexList restoreIndexes(QByteArray data) const
     {
         QModelIndexList result;
         QDataStream stream(&data, QIODevice::ReadOnly);
@@ -295,37 +428,6 @@ struct PlaylistModel::Private : public QObject
             }
         }
         return result;
-    }
-
-    ParentChildMap determineIndexGroups(const QModelIndexList& indexes)
-    {
-        ParentChildMap indexGroups;
-
-        QModelIndexList sortedIndexes{indexes};
-        std::sort(sortedIndexes.begin(), sortedIndexes.end(), compareIndices);
-
-        auto startOfSequence = sortedIndexes.cbegin();
-        while(startOfSequence != sortedIndexes.cend()) {
-            auto endOfSequence
-                = std::adjacent_find(startOfSequence, sortedIndexes.cend(), [](const auto& lhs, const auto& rhs) {
-                      return lhs.parent() != rhs.parent() || rhs.row() != lhs.row() + 1;
-                  });
-            if(endOfSequence != sortedIndexes.cend()) {
-                std::advance(endOfSequence, 1);
-            }
-
-            std::vector<int> group;
-            for(auto it = startOfSequence; it != endOfSequence; ++it) {
-                group.push_back(it->row());
-            }
-
-            const QModelIndex parent = startOfSequence->parent();
-            indexGroups[parent].push_back(group);
-
-            startOfSequence = endOfSequence;
-        }
-
-        return indexGroups;
     }
 
     ParentChildItemMap determineItemGroups(const QModelIndexList& indexes)
@@ -350,9 +452,9 @@ struct PlaylistModel::Private : public QObject
         return indexItemGroups;
     }
 
-    auto groupChildren(const std::vector<PlaylistItem*>& children)
+    auto groupChildren(const std::vector<PlaylistItem*>& children) const
     {
-        std::map<QModelIndex, std::vector<PlaylistItem*>, cmpParents> groupedChildren;
+        std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndicies> groupedChildren;
         for(PlaylistItem* child : children) {
             const QModelIndex parent = model->indexOfItem(child->parent());
             groupedChildren[parent].push_back(child);
@@ -446,7 +548,7 @@ struct PlaylistModel::Private : public QObject
         }
     }
 
-    void mergeHeaders(const QModelIndex& parentIndex)
+    void mergeHeaders(const QModelIndex& parentIndex, ItemPtrSet& headersToUpdate)
     {
         PlaylistItem* parentItem = model->itemForIndex(parentIndex);
         if(!parentItem || parentItem->childCount() < 1) {
@@ -474,7 +576,10 @@ struct PlaylistModel::Private : public QObject
                 model->endMoveRows();
 
                 model->removePlaylistRows(rightSibling->row(), 1, rightIndex.parent());
+
+                headersToUpdate.erase(rightSibling);
                 nodes.erase(rightSibling->key());
+                headersToUpdate.emplace(leftSibling);
             }
             else {
                 row++;
@@ -483,7 +588,7 @@ struct PlaylistModel::Private : public QObject
 
         for(const PlaylistItem* child : parentItem->children()) {
             const QModelIndex childIndex = model->indexOfItem(child);
-            mergeHeaders(childIndex);
+            mergeHeaders(childIndex, headersToUpdate);
         }
     }
 
@@ -499,7 +604,7 @@ struct PlaylistModel::Private : public QObject
     }
 
     QModelIndex canBeMerged(PlaylistItem*& currTarget, int& targetRow, std::vector<PlaylistItem*>& sourceParents,
-                            int targetOffset)
+                            int targetOffset) const
     {
         std::vector<PlaylistItem*> newSourceParents;
 
@@ -528,7 +633,7 @@ struct PlaylistModel::Private : public QObject
         return {};
     }
 
-    QModelIndex handleDiffParentDrop(PlaylistItem* source, PlaylistItem* target, int& row)
+    QModelIndex handleDiffParentDrop(PlaylistItem* source, PlaylistItem* target, int& row, ItemPtrSet& headersToUpdate)
     {
         int targetRow{row};
         std::vector<PlaylistItem*> sourceParents;
@@ -618,6 +723,14 @@ struct PlaylistModel::Private : public QObject
             newParentRow   = 0;
         }
 
+        for(const SplitParent& parent : splitParents) {
+            PlaylistItem* sourceItem = model->itemForIndex(parent.source);
+            if(sourceItem->childCount() > 0) {
+                headersToUpdate.emplace(sourceItem);
+            }
+            headersToUpdate.emplace(parent.target);
+        }
+
         prevParentItem = currTarget;
         newParentRow   = targetRow + 1;
 
@@ -665,6 +778,10 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::
             endResetModel();
         }
         p->resetting = false;
+    });
+
+    QObject::connect(&p->populator, &PlaylistPopulator::headersUpdated, this, [this](ItemKeyMap data) {
+        p->updateModel(data);
     });
 }
 
@@ -802,6 +919,7 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
     const ParentChildItemMap indexItemGroups = p->determineItemGroups(indexes);
 
     QModelIndexList headersToCheck;
+    ItemPtrSet headersToUpdate;
     QModelIndex targetParent{parent};
 
     for(const auto& [sourceParent, groups] : indexItemGroups) {
@@ -811,7 +929,7 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
         const bool sameParents = sourceParentItem->baseKey() == targetParentItem->baseKey();
 
         if(!sameParents) {
-            targetParent     = p->handleDiffParentDrop(sourceParentItem, targetParentItem, row);
+            targetParent     = p->handleDiffParentDrop(sourceParentItem, targetParentItem, row, headersToUpdate);
             targetParentItem = itemForIndex(targetParent);
         }
 
@@ -844,14 +962,24 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
                     endInsertRows();
                 }
                 headersToCheck.emplace_back(groupParent);
+
+                PlaylistItem* groupItem = itemForIndex(groupParent);
+                if(groupItem->childCount() > 0) {
+                    headersToUpdate.emplace(groupItem);
+                }
             }
         }
+        headersToUpdate.emplace(targetParentItem);
 
         rootItem()->resetChildren();
+
         p->removeEmptyHeaders(headersToCheck);
-        p->mergeHeaders({});
+        p->mergeHeaders({}, headersToUpdate);
+
         rootItem()->resetChildren();
     }
+
+    p->updateHeaders(headersToUpdate);
 
     return true;
 }
@@ -903,7 +1031,7 @@ bool PlaylistModel::removePlaylistRows(int row, int count, const QModelIndex& pa
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)
 {
-    const ParentChildMap indexGroups = p->determineIndexGroups(indexes);
+    const ParentChildMap indexGroups = determineIndexGroups(indexes);
 
     QModelIndexList headersToCheck;
 
