@@ -23,4 +23,5 @@
 
 namespace Fy::Core::Scripting {
 QString num(const QStringList& vec);
+QString replace(const QStringList& vec);
 }

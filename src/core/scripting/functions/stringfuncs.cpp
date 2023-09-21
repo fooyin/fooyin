@@ -22,12 +22,27 @@
 namespace Fy::Core::Scripting {
 QString num(const QStringList& vec)
 {
-    if(vec.empty() || vec.size() > 2) {
+    const qsizetype count = vec.size();
+
+    if(vec.empty() || count > 2) {
         return {};
     }
-    if(vec.size() == 1) {
+    if(count == 1) {
         return vec[0];
     }
     return QStringLiteral("%1").arg(vec[0].toInt(), vec[1].toInt(), 10, QLatin1Char('0'));
 }
+
+QString replace(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count < 3 || count > 3) {
+        return {};
+    }
+
+    QString origStr{vec[0]};
+    return origStr.replace(vec[1], vec[2]);
+}
+
 } // namespace Fy::Core::Scripting

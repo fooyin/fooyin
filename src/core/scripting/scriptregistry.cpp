@@ -115,6 +115,7 @@ void Registry::addDefaultFunctions()
     m_funcs.emplace("mod", mod);
 
     m_funcs.emplace("num", num);
+    m_funcs.emplace("replace", replace);
 
     m_funcs.emplace("timems", msToString);
 
