@@ -144,7 +144,9 @@ struct LibraryTreeWidget::Private
             middleClickAction = static_cast<TrackAction>(action);
         });
 
-        reset();
+        if(!library->isEmpty()) {
+            reset();
+        }
     }
 
     void reset()

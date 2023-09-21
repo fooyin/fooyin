@@ -112,6 +112,11 @@ bool UnifiedMusicLibrary::hasLibrary() const
     return m_libraryManager->hasLibrary();
 }
 
+bool UnifiedMusicLibrary::isEmpty() const
+{
+    return m_tracks.empty();
+}
+
 TrackList UnifiedMusicLibrary::tracks() const
 {
     return m_tracks;

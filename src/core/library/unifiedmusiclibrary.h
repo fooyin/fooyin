@@ -51,6 +51,7 @@ public:
     void rescan() override;
 
     bool hasLibrary() const override;
+    bool isEmpty() const override;
 
     [[nodiscard]] TrackList tracks() const override;
 

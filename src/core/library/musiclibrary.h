@@ -39,6 +39,8 @@ public:
 
     virtual void loadLibrary() = 0;
 
+    virtual bool isEmpty() const = 0;
+
     virtual void reloadAll()                  = 0;
     virtual void reload(LibraryInfo* library) = 0;
     virtual void rescan()                     = 0;
