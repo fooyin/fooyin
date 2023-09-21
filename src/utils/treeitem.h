@@ -110,6 +110,14 @@ public:
         m_row = -1;
     }
 
+    virtual void resetChildren()
+    {
+        for(Item* child : m_children) {
+            child->resetChildren();
+            child->resetRow();
+        }
+    }
+
 private:
     friend Item;
 

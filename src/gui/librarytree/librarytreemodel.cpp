@@ -18,107 +18,120 @@
  */
 
 #include "librarytreemodel.h"
+#include "librarytreepopulator.h"
 
-#include <core/constants.h>
-
-#include <QCryptographicHash>
+#include <QThread>
 
 #include <ranges>
 
 namespace Fy::Gui::Widgets {
-QString generateKey(const QString& parentKey, const QString& title)
+struct LibraryTreeModel::Private : public QObject
 {
-    QCryptographicHash hash{QCryptographicHash::Md5};
-    hash.addData(parentKey.toUtf8());
-    hash.addData(title.toUtf8());
+    LibraryTreeModel* model;
 
-    QString headerKey = hash.result().toHex();
-    return headerKey;
-}
+    QString grouping;
 
-LibraryTreeItem::LibraryTreeItem()
-    : LibraryTreeItem{"", nullptr}
-{ }
+    bool resetting{false};
 
-LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent, Type type)
-    : TreeItem{parent}
-    , m_pending{true}
-    , m_type{type}
-    , m_title{std::move(title)}
-{ }
+    QThread populatorThread;
+    LibraryTreePopulator populator;
 
-bool LibraryTreeItem::pending() const
-{
-    return m_pending;
-}
+    LibraryTreeItem allNode;
+    NodeKeyMap pendingNodes;
+    ItemKeyMap nodes;
+    ItemKeyMap oldNodes;
 
-QString LibraryTreeItem::title() const
-{
-    return m_title;
-}
-
-Core::TrackList LibraryTreeItem::tracks() const
-{
-    return m_tracks;
-}
-
-int LibraryTreeItem::trackCount() const
-{
-    return static_cast<int>(m_tracks.size());
-}
-
-QString LibraryTreeItem::key() const
-{
-    return m_key;
-}
-
-void LibraryTreeItem::setPending(bool pending)
-{
-    m_pending = pending;
-}
-
-void LibraryTreeItem::setTitle(const QString& title)
-{
-    m_title = title;
-}
-
-void LibraryTreeItem::setKey(const QString& key)
-{
-    m_key = key;
-}
-
-void LibraryTreeItem::addTrack(const Core::Track& track)
-{
-    m_tracks.emplace_back(track);
-}
-
-void LibraryTreeItem::sortChildren()
-{
-    std::vector<LibraryTreeItem*> sortedChildren{m_children};
-    std::sort(sortedChildren.begin(), sortedChildren.end(), [](const LibraryTreeItem* lhs, const LibraryTreeItem* rhs) {
-        if(lhs->m_type == All) {
-            return true;
-        }
-        if(rhs->m_type == All) {
-            return false;
-        }
-        const auto cmp = QString::localeAwareCompare(lhs->m_title, rhs->m_title);
-        if(cmp == 0) {
-            return false;
-        }
-        return cmp < 0;
-    });
-    m_children = sortedChildren;
-
-    for(auto& child : m_children) {
-        child->sortChildren();
+    explicit Private(LibraryTreeModel* model)
+        : model{model}
+    {
+        populator.moveToThread(&populatorThread);
     }
-}
+
+    void sortTree() const
+    {
+        model->rootItem()->sortChildren();
+        model->rootItem()->resetChildren();
+    }
+
+    void batchFinished(PendingTreeData data)
+    {
+        if(resetting) {
+            model->beginResetModel();
+            beginReset();
+        }
+
+        populateModel(data);
+
+        if(resetting) {
+            model->endResetModel();
+        }
+        resetting = false;
+
+        if(model->canFetchMore({})) {
+            model->fetchMore({});
+        }
+    }
+
+    void populateModel(PendingTreeData& data)
+    {
+        nodes.merge(data.items);
+
+        allNode.addTracks(data.tracks);
+        allNode.setTitle(QString{"All Music (%1)"}.arg(allNode.trackCount()));
+
+        const QModelIndex allIndex = model->indexOfItem(&allNode);
+        emit model->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
+
+        if(resetting) {
+            for(const auto& [parentKey, rows] : data.nodes) {
+                auto* parent = parentKey == "0" ? model->rootItem() : &nodes.at(parentKey);
+
+                for(const QString& row : rows) {
+                    LibraryTreeItem* child = &nodes.at(row);
+                    parent->appendChild(child);
+                }
+            }
+            sortTree();
+        }
+        else {
+            for(auto& [parentKey, rows] : data.nodes) {
+                std::ranges::copy(rows, std::back_inserter(pendingNodes[parentKey]));
+            }
+        }
+    }
+
+    void beginReset()
+    {
+        model->resetRoot();
+        // Acts as a cache in case model hasn't been fully cleared
+        oldNodes = std::move(nodes);
+        nodes.clear();
+        pendingNodes.clear();
+
+        allNode = LibraryTreeItem{"", model->rootItem(), -1};
+        model->rootItem()->appendChild(&allNode);
+    }
+};
 
 LibraryTreeModel::LibraryTreeModel(QObject* parent)
     : TreeModel{parent}
-    , m_parser{&m_registry}
-{ }
+    , p{std::make_unique<Private>(this)}
+{
+    QObject::connect(&p->populator, &LibraryTreePopulator::populated, p.get(),
+                     &LibraryTreeModel::Private::batchFinished);
+
+    QObject::connect(&p->populator, &Utils::Worker::finished, this, [this]() {
+        p->populator.stopThread();
+        p->populatorThread.quit();
+    });
+}
+
+LibraryTreeModel::~LibraryTreeModel()
+{
+    p->populator.stopThread();
+    p->populatorThread.quit();
+    p->populatorThread.wait();
+}
 
 QVariant LibraryTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -163,81 +176,71 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
+bool LibraryTreeModel::hasChildren(const QModelIndex& parent) const
+{
+    if(!parent.isValid()) {
+        return true;
+    }
+    LibraryTreeItem* item = itemForIndex(parent);
+    return item->childCount() > 0 || p->pendingNodes.contains(item->key());
+}
+
+void LibraryTreeModel::fetchMore(const QModelIndex& parent)
+{
+    auto* parentItem = itemForIndex(parent);
+    auto& rows       = p->pendingNodes[parentItem->key()];
+
+    const int row           = parentItem->childCount();
+    const int totalRows     = static_cast<int>(rows.size());
+    const int rowCount      = parent.isValid() ? totalRows : std::min(100, totalRows);
+    const auto rowsToInsert = std::ranges::views::take(rows, rowCount);
+
+    beginInsertRows(parent, row, row + rowCount - 1);
+    for(const QString& pendingRow : rowsToInsert) {
+        LibraryTreeItem* child = &p->nodes.at(pendingRow);
+        parentItem->appendChild(child);
+    }
+    endInsertRows();
+
+    emit layoutAboutToBeChanged();
+    p->sortTree();
+    emit layoutChanged();
+
+    rows.erase(rows.begin(), rows.begin() + rowCount);
+
+    if(rows.empty()) {
+        p->pendingNodes.erase(parentItem->key());
+    }
+}
+
+bool LibraryTreeModel::canFetchMore(const QModelIndex& parent) const
+{
+    auto* item = itemForIndex(parent);
+    return p->pendingNodes.contains(item->key()) && !p->pendingNodes[item->key()].empty();
+}
+
 void LibraryTreeModel::changeGrouping(const LibraryTreeGrouping& grouping)
 {
-    m_grouping = grouping.script;
+    p->grouping = grouping.script;
 }
 
-void LibraryTreeModel::beginReset()
-{
-    m_nodes.clear();
-    resetRoot();
-}
-
-void LibraryTreeModel::reload(const Core::TrackList& tracks)
-{
-    beginResetModel();
-    beginReset();
-    setupModelData(tracks);
-    endResetModel();
-}
-
-void LibraryTreeModel::setupModelData(const Core::TrackList& tracks)
+void LibraryTreeModel::reset(const Core::TrackList& tracks)
 {
     if(tracks.empty()) {
         return;
     }
 
-    m_allNode = LibraryTreeItem{"", rootItem(), LibraryTreeItem::All};
-
-    rootItem()->appendChild(&m_allNode);
-
-    const auto parsedField = m_parser.parse(m_grouping);
-
-    auto filteredTracks = tracks | std::views::filter([](const Core::Track& track) {
-                              return track.enabled();
-                          });
-
-    for(const Core::Track& track : filteredTracks) {
-        const QString field = m_parser.evaluate(parsedField, track);
-        if(field.isNull()) {
-            continue;
-        }
-
-        const QStringList values = field.split(Core::Constants::Separator, Qt::SkipEmptyParts);
-        for(const QString& value : values) {
-            if(value.isNull()) {
-                continue;
-            }
-            const QStringList levels = value.split("||");
-
-            LibraryTreeItem* parent = rootItem();
-
-            for(const QString& level : levels) {
-                const QString title = level.trimmed();
-                const QString key   = generateKey(parent->key(), title);
-                auto* node          = createNode(key, parent, title);
-                node->addTrack(track);
-                parent = node;
-            }
-        }
-        m_allNode.addTrack(track);
+    if(p->populatorThread.isRunning()) {
+        p->populator.stopThread();
     }
-    m_allNode.setTitle(QString{"All Music (%1)"}.arg(m_allNode.trackCount()));
-    rootItem()->sortChildren();
-}
+    else {
+        p->populatorThread.start();
+    }
 
-LibraryTreeItem* LibraryTreeModel::createNode(const QString& key, LibraryTreeItem* parent, const QString& title)
-{
-    if(!m_nodes.contains(key)) {
-        m_nodes.emplace(key, LibraryTreeItem{title, parent});
-    }
-    LibraryTreeItem* treeItem = &m_nodes.at(key);
-    if(treeItem->pending()) {
-        treeItem->setPending(false);
-        treeItem->setKey(key);
-        parent->appendChild(treeItem);
-    }
-    return treeItem;
+    p->resetting = true;
+
+    QMetaObject::invokeMethod(&p->populator, [this, tracks] {
+        p->populator.run(p->grouping, tracks);
+    });
 }
 } // namespace Fy::Gui::Widgets

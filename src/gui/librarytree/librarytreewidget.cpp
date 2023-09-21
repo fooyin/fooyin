@@ -149,7 +149,7 @@ struct LibraryTreeWidget::Private
 
     void reset()
     {
-        model->reload(library->tracks());
+        model->reset(library->tracks());
     }
 
     void changeGrouping(const LibraryTreeGrouping& newGrouping)

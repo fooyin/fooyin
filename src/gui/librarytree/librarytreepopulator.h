@@ -19,31 +19,42 @@
 
 #pragma once
 
-#include "librarytreegroup.h"
-#include "librarytreeitem.h"
-
 #include <core/models/trackfwd.h>
-#include <core/scripting/scriptparser.h>
 
-#include <utils/treemodel.h>
+#include <utils/worker.h>
 
 namespace Fy::Gui::Widgets {
-class LibraryTreeModel : public Utils::TreeModel<LibraryTreeItem>
+class LibraryTreeItem;
+
+using ItemKeyMap = std::unordered_map<QString, LibraryTreeItem>;
+using NodeKeyMap = std::unordered_map<QString, std::vector<QString>>;
+
+struct PendingTreeData
+{
+    ItemKeyMap items;
+    NodeKeyMap nodes;
+    Core::TrackList tracks;
+
+    void clear()
+    {
+        items.clear();
+        nodes.clear();
+        tracks.clear();
+    }
+};
+
+class LibraryTreePopulator : public Utils::Worker
 {
     Q_OBJECT
 
 public:
-    explicit LibraryTreeModel(QObject* parent = nullptr);
-    ~LibraryTreeModel() override;
+    explicit LibraryTreePopulator(QObject* parent = nullptr);
+    ~LibraryTreePopulator() override;
 
-    [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
-    [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
-    void fetchMore(const QModelIndex& parent) override;
-    bool canFetchMore(const QModelIndex& parent) const override;
+    void run(const QString& grouping, const Core::TrackList& tracks);
 
-    void changeGrouping(const LibraryTreeGrouping& grouping);
-    void reset(const Core::TrackList& tracks);
+signals:
+    void populated(PendingTreeData data);
 
 private:
     struct Private;
