@@ -87,12 +87,4 @@ void PlaylistItem::setIndentation(int indentation)
 {
     m_indentation = indentation;
 }
-
-void PlaylistItem::resetChildren()
-{
-    for(PlaylistItem* child : m_children) {
-        child->resetChildren();
-        child->resetRow();
-    }
-}
 } // namespace Fy::Gui::Widgets::Playlist

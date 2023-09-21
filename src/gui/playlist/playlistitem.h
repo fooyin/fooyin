@@ -75,8 +75,6 @@ public:
     void setKey(const QString& key);
     void setIndentation(int indentation);
 
-    void resetChildren();
-
 private:
     bool m_pending;
     ItemType m_type;
