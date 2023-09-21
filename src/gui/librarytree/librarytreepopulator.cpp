@@ -18,7 +18,6 @@
  */
 
 #include "librarytreepopulator.h"
-#include "librarytreeitem.h"
 
 #include <core/constants.h>
 #include <core/scripting/scriptparser.h>

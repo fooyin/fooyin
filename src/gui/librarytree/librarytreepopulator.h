@@ -19,13 +19,13 @@
 
 #pragma once
 
+#include "librarytreeitem.h"
+
 #include <core/models/trackfwd.h>
 
 #include <utils/worker.h>
 
 namespace Fy::Gui::Widgets {
-class LibraryTreeItem;
-
 using ItemKeyMap = std::unordered_map<QString, LibraryTreeItem>;
 using NodeKeyMap = std::unordered_map<QString, std::vector<QString>>;
 
