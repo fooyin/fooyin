@@ -41,9 +41,9 @@ public:
 
     virtual bool isEmpty() const = 0;
 
-    virtual void reloadAll()                  = 0;
-    virtual void reload(LibraryInfo* library) = 0;
-    virtual void rescan()                     = 0;
+    virtual void reloadAll()                        = 0;
+    virtual void reload(const LibraryInfo& library) = 0;
+    virtual void rescan()                           = 0;
 
     [[nodiscard]] virtual TrackList tracks() const = 0;
 

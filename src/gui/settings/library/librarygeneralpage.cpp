@@ -150,7 +150,7 @@ void LibraryGeneralPageWidget::addLibrary() const
                                                name, &success);
 
     if(success && !text.isEmpty()) {
-        m_model->markForAddition({name, newDir});
+        m_model->markForAddition({text, newDir});
     }
 }
 
@@ -158,7 +158,7 @@ void LibraryGeneralPageWidget::removeLibrary() const
 {
     const auto selectedItems = m_libraryView->selectionModel()->selectedRows();
     for(const auto& selected : selectedItems) {
-        const auto* item = static_cast<LibraryItem*>(selected.internalPointer());
+        const auto* item = m_model->itemForIndex(selected);
         m_model->markForRemoval(item->info());
     }
     //    m_libraryList->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
@@ -168,15 +168,15 @@ void LibraryGeneralPageWidget::renameLibrary() const
 {
     const auto selectedItems = m_libraryView->selectionModel()->selectedRows();
     for(const auto& selected : selectedItems) {
-        const auto* item = static_cast<LibraryItem*>(selected.internalPointer());
-        auto* info       = item->info();
+        const auto* item                = m_model->itemForIndex(selected);
+        Core::Library::LibraryInfo info = item->info();
 
         bool success       = false;
         const QString text = QInputDialog::getText(m_libraryView, tr("Rename Library"), tr("Library Name:"),
-                                                   QLineEdit::Normal, info->name, &success);
+                                                   QLineEdit::Normal, info.name, &success);
 
         if(success && !text.isEmpty()) {
-            info->name = text;
+            info.name = text;
             m_model->markForChange(info);
         }
     }

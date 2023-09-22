@@ -21,6 +21,8 @@
 
 #include <QString>
 
+#include <map>
+
 namespace Fy::Core::Library {
 Q_NAMESPACE
 enum Status
@@ -44,5 +46,5 @@ struct LibraryInfo
     int id{-1};
     Status status{Idle};
 };
-using LibraryInfoList = std::vector<std::unique_ptr<LibraryInfo>>;
+using LibraryInfoMap = std::map<int, LibraryInfo>;
 } // namespace Fy::Core::Library

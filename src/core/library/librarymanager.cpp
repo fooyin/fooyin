@@ -26,25 +26,22 @@
 #include <utils/utils.h>
 
 namespace Fy::Core::Library {
-bool checkNewPath(const QString& path, const LibraryInfoList& libraries, int libraryId = -1)
+bool checkNewPath(const QString& path, const LibraryInfoMap& libraries, int libraryId = -1)
 {
     if(path.isEmpty()) {
         return false;
     }
 
-    return std::all_of(libraries.cbegin(), libraries.cend(), [libraryId, path](const auto& info) {
-        return (info->id != libraryId && !Utils::File::isSamePath(info->path, path)
-                && !Utils::File::isSubdir(path, info->path));
+    return std::ranges::all_of(std::as_const(libraries), [libraryId, path](const auto& info) {
+        return (info.second.id != libraryId && !Utils::File::isSamePath(info.second.path, path)
+                && !Utils::File::isSubdir(path, info.second.path));
     });
 }
 
-void eraseLibrary(LibraryInfoList& libraries, int id)
+void eraseLibrary(LibraryInfoMap& libraries, int id)
 {
-    auto it = std::find_if(libraries.begin(), libraries.end(), [id](const auto& info) {
-        return info->id == id;
-    });
-    if(it != libraries.end()) {
-        libraries.erase(it);
+    if(libraries.contains(id)) {
+        libraries.erase(id);
     }
 }
 
@@ -60,11 +57,11 @@ LibraryManager::LibraryManager(DB::Database* database, Utils::SettingsManager* s
 void LibraryManager::reset()
 {
     m_libraries.clear();
-    m_libraries.emplace_back(new LibraryInfo("Unified", "", -2));
+    m_libraries.emplace(-2, LibraryInfo{"Unified", "", -2});
     m_libraryConnector->getAllLibraries(m_libraries);
 }
 
-const LibraryInfoList& LibraryManager::allLibraries() const
+const LibraryInfoMap& LibraryManager::allLibraries() const
 {
     return m_libraries;
 }
@@ -84,9 +81,9 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
     const auto id = m_libraryConnector->insertLibrary(path, name);
 
     if(id >= 0) {
-        auto* info = m_libraries.emplace_back(std::make_unique<LibraryInfo>(libraryName, path, id)).get();
+        LibraryInfo& info = m_libraries.emplace(id, LibraryInfo{libraryName, path, id}).first->second;
         emit libraryAdded(info);
-        info->status = Initialised;
+        info.status = Initialised;
         return id;
     }
     return -1;
@@ -113,17 +110,20 @@ bool LibraryManager::renameLibrary(int id, const QString& name)
     }
 
     if(m_libraryConnector->renameLibrary(id, name)) {
-        auto it = std::ranges::find_if(std::as_const(m_libraries), [id](const auto& library) {
-            return library->id == id;
-        });
-        if(it != m_libraries.cend()) {
-            it->get()->name = name;
-
-            emit libraryRenamed(id, name);
-            return true;
-        }
+        m_libraries.at(id).name = name;
+        emit libraryRenamed(id, name);
+        return true;
     }
     return false;
+}
+
+void LibraryManager::updateLibraryStatus(const LibraryInfo& library)
+{
+    if(!hasLibrary(library.id)) {
+        return;
+    }
+    m_libraries.at(library.id).status = library.status;
+    emit libraryStatusChanged(library);
 }
 
 bool LibraryManager::hasLibrary() const
@@ -133,27 +133,25 @@ bool LibraryManager::hasLibrary() const
 
 bool LibraryManager::hasLibrary(int id) const
 {
-    return std::any_of(m_libraries.cbegin(), m_libraries.cend(), [id](const auto& info) {
-        return (info->id == id);
-    });
+    return m_libraries.contains(id);
 }
 
-LibraryInfo* LibraryManager::findLibraryByPath(const QString& path) const
+std::optional<LibraryInfo> LibraryManager::findLibraryByPath(const QString& path) const
 {
-    auto it = std::find_if(m_libraries.cbegin(), m_libraries.cend(), [path](const auto& info) {
-        return info->path == path;
+    auto it = std::ranges::find_if(std::as_const(m_libraries), [path](const auto& info) {
+        return info.second.path == path;
     });
-    return it == m_libraries.end() ? nullptr : it->get();
-}
-
-LibraryInfo* LibraryManager::libraryInfo(int id) const
-{
-    if(!hasLibrary(id)) {
-        return {};
+    if(it != m_libraries.end()) {
+        return it->second;
     }
-    auto it = std::find_if(m_libraries.cbegin(), m_libraries.cend(), [id](const auto& info) {
-        return info->id == id;
-    });
-    return it->get();
+    return {};
+}
+
+std::optional<LibraryInfo> LibraryManager::libraryInfo(int id) const
+{
+    if(hasLibrary(id)) {
+        return m_libraries.at(id);
+    }
+    return {};
 }
 } // namespace Fy::Core::Library

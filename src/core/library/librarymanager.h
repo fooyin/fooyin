@@ -45,20 +45,21 @@ public:
 
     void reset();
 
-    [[nodiscard]] const LibraryInfoList& allLibraries() const;
+    [[nodiscard]] const LibraryInfoMap& allLibraries() const;
 
     int addLibrary(const QString& path, const QString& name);
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
+    void updateLibraryStatus(const Library::LibraryInfo& library);
 
     [[nodiscard]] bool hasLibrary() const;
     [[nodiscard]] bool hasLibrary(int id) const;
 
-    [[nodiscard]] LibraryInfo* findLibraryByPath(const QString& path) const;
-    [[nodiscard]] LibraryInfo* libraryInfo(int id) const;
+    [[nodiscard]] std::optional<LibraryInfo> findLibraryByPath(const QString& path) const;
+    [[nodiscard]] std::optional<LibraryInfo> libraryInfo(int id) const;
 
 signals:
-    void libraryAdded(Library::LibraryInfo* library);
+    void libraryAdded(const Library::LibraryInfo& library);
     void libraryRemoved(int id);
     void libraryRenamed(int id, const QString& name);
     void libraryStatusChanged(const Library::LibraryInfo& info);
@@ -68,7 +69,7 @@ private:
     Utils::SettingsManager* m_settings;
 
     DB::Library* m_libraryConnector;
-    LibraryInfoList m_libraries;
+    LibraryInfoMap m_libraries;
 };
 } // namespace Library
 } // namespace Core

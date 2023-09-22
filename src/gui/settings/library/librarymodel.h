@@ -19,13 +19,14 @@
 
 #pragma once
 
+#include <core/library/libraryinfo.h>
+
 #include <utils/tablemodel.h>
 #include <utils/treestatusitem.h>
 
 namespace Fy {
 namespace Core::Library {
 class LibraryManager;
-class LibraryInfo;
 } // namespace Core::Library
 
 namespace Gui::Settings {
@@ -33,13 +34,13 @@ class LibraryItem : public Utils::TreeStatusItem<LibraryItem>
 {
 public:
     LibraryItem();
-    explicit LibraryItem(Core::Library::LibraryInfo* info, LibraryItem* parent);
+    explicit LibraryItem(Core::Library::LibraryInfo info, LibraryItem* parent);
 
-    [[nodiscard]] Core::Library::LibraryInfo* info() const;
-    void changeInfo(Core::Library::LibraryInfo* info);
+    [[nodiscard]] Core::Library::LibraryInfo info() const;
+    void changeInfo(const Core::Library::LibraryInfo& info);
 
 private:
-    Core::Library::LibraryInfo* m_info;
+    Core::Library::LibraryInfo m_info;
 };
 
 class LibraryModel : public Utils::TableModel<LibraryItem>
@@ -49,8 +50,8 @@ public:
 
     void setupModelData();
     void markForAddition(const Core::Library::LibraryInfo& info);
-    void markForRemoval(Core::Library::LibraryInfo* info);
-    void markForChange(Core::Library::LibraryInfo* info);
+    void markForRemoval(const Core::Library::LibraryInfo& info);
+    void markForChange(const Core::Library::LibraryInfo& info);
     void processQueue();
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -59,14 +60,14 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
 private:
-    void updateDisplay();
+    void updateDisplay(const Core::Library::LibraryInfo& info);
 
     Core::Library::LibraryManager* m_libraryManager;
 
-    using IdLibraryMap    = std::unordered_map<QString, LibraryItem>;
-    using LibraryInfoList = std::vector<std::unique_ptr<Core::Library::LibraryInfo>>;
+    using LibraryPathMap    = std::unordered_map<QString, LibraryItem>;
+    using LibraryInfoList = std::vector<Core::Library::LibraryInfo>;
 
-    IdLibraryMap m_nodes;
+    LibraryPathMap m_nodes;
     LibraryInfoList m_librariesToAdd;
 };
 } // namespace Gui::Settings

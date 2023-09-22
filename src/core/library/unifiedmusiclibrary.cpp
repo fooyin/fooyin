@@ -29,7 +29,6 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QThread>
 #include <QTimer>
 
 #include <ranges>
@@ -66,8 +65,6 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     connect(this, &UnifiedMusicLibrary::runLibraryScan, &m_threadHandler, &LibraryThreadHandler::scanLibrary);
     connect(&m_threadHandler, &LibraryThreadHandler::progressChanged, this, &UnifiedMusicLibrary::scanProgress);
     connect(&m_threadHandler, &LibraryThreadHandler::statusChanged, this, &UnifiedMusicLibrary::libraryStatusChanged);
-    connect(&m_threadHandler, &LibraryThreadHandler::statusChanged, m_libraryManager,
-            &LibraryManager::libraryStatusChanged);
     connect(&m_threadHandler, &LibraryThreadHandler::addedTracks, this, &UnifiedMusicLibrary::addTracks);
     connect(&m_threadHandler, &LibraryThreadHandler::updatedTracks, this, &UnifiedMusicLibrary::updateTracks);
     connect(&m_threadHandler, &LibraryThreadHandler::tracksDeleted, this, &UnifiedMusicLibrary::removeTracks);
@@ -89,17 +86,17 @@ void UnifiedMusicLibrary::loadLibrary()
 
 void UnifiedMusicLibrary::reloadAll()
 {
-    const LibraryInfoList& libraries = m_libraryManager->allLibraries();
+    const LibraryInfoMap& libraries = m_libraryManager->allLibraries();
     for(const auto& library : libraries | std::views::filter([](const auto& lib) {
-                                  return lib->id >= 0;
+                                  return lib.second.id >= 0;
                               })) {
-        reload(library.get());
+        reload(library.second);
     }
 }
 
-void UnifiedMusicLibrary::reload(LibraryInfo* library)
+void UnifiedMusicLibrary::reload(const LibraryInfo& library)
 {
-    emit runLibraryScan(*library, tracks());
+    emit runLibraryScan(library, tracks());
 }
 
 void UnifiedMusicLibrary::rescan()
@@ -194,8 +191,6 @@ void UnifiedMusicLibrary::removeTracks(const TrackList& tracks)
 
 void UnifiedMusicLibrary::libraryStatusChanged(const LibraryInfo& library)
 {
-    if(LibraryInfo* info = m_libraryManager->libraryInfo(library.id)) {
-        *info = library;
-    }
+    m_libraryManager->updateLibraryStatus(library);
 }
 } // namespace Fy::Core::Library

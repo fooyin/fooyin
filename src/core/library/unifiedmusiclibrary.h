@@ -47,7 +47,7 @@ public:
 
     void loadLibrary() override;
     void reloadAll() override;
-    void reload(LibraryInfo* library) override;
+    void reload(const LibraryInfo& library) override;
     void rescan() override;
 
     bool hasLibrary() const override;

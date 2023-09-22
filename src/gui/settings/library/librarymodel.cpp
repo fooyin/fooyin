@@ -28,20 +28,20 @@
 
 namespace Fy::Gui::Settings {
 LibraryItem::LibraryItem()
-    : LibraryItem{nullptr, nullptr}
+    : LibraryItem{{}, nullptr}
 { }
 
-LibraryItem::LibraryItem(Core::Library::LibraryInfo* info, LibraryItem* parent)
+LibraryItem::LibraryItem(Core::Library::LibraryInfo info, LibraryItem* parent)
     : TreeStatusItem{parent}
-    , m_info{info}
+    , m_info{std::move(info)}
 { }
 
-Core::Library::LibraryInfo* LibraryItem::info() const
+Core::Library::LibraryInfo LibraryItem::info() const
 {
     return m_info;
 }
 
-void LibraryItem::changeInfo(Core::Library::LibraryInfo* info)
+void LibraryItem::changeInfo(const Core::Library::LibraryInfo& info)
 {
     m_info = info;
 }
@@ -58,17 +58,17 @@ LibraryModel::LibraryModel(Core::Library::LibraryManager* libraryManager, QObjec
 
 void LibraryModel::setupModelData()
 {
-    const LibraryInfoList& libraries = m_libraryManager->allLibraries();
+    const Core::Library::LibraryInfoMap& libraries = m_libraryManager->allLibraries();
 
-    for(const auto& library : libraries) {
-        if(library->id < 0) {
+    for(const auto& [id, library] : libraries) {
+        if(id < 0) {
             continue;
         }
-        const QString key   = library->path;
+        const QString key   = library.path;
         LibraryItem* parent = rootItem();
 
         if(!m_nodes.contains(key)) {
-            m_nodes.emplace(key, LibraryItem{library.get(), parent});
+            m_nodes.emplace(key, LibraryItem{library, parent});
         }
         LibraryItem* child = &m_nodes.at(key);
         parent->appendChild(child);
@@ -89,10 +89,10 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
             return;
         }
         // New library
-        auto* library   = m_librariesToAdd.emplace_back(std::make_unique<Core::Library::LibraryInfo>(info)).get();
-        library->status = Core::Library::Pending;
-        m_nodes.emplace(library->path, LibraryItem{library, parent});
-        item = &m_nodes.at(library->path);
+        auto library   = m_librariesToAdd.emplace_back(info);
+        library.status = Core::Library::Pending;
+        m_nodes.emplace(library.path, LibraryItem{library, parent});
+        item = &m_nodes.at(library.path);
         item->setStatus(LibraryItem::Added);
     }
     else {
@@ -113,20 +113,20 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
     endInsertRows();
 }
 
-void LibraryModel::markForRemoval(Core::Library::LibraryInfo* info)
+void LibraryModel::markForRemoval(const Core::Library::LibraryInfo& info)
 {
-    if(!info || !m_nodes.contains(info->path)) {
+    if(!m_nodes.contains(info.path)) {
         return;
     }
 
-    LibraryItem* item = &m_nodes.at(info->path);
+    LibraryItem* item = &m_nodes.at(info.path);
 
     if(item->status() == LibraryItem::Added) {
         beginRemoveRows({}, item->row(), item->row());
         rootItem()->removeChild(item->row());
         endRemoveRows();
 
-        m_nodes.erase(info->path);
+        m_nodes.erase(info.path);
     }
     else {
         item->setStatus(LibraryItem::Removed);
@@ -134,13 +134,13 @@ void LibraryModel::markForRemoval(Core::Library::LibraryInfo* info)
     }
 }
 
-void LibraryModel::markForChange(Core::Library::LibraryInfo* info)
+void LibraryModel::markForChange(const Core::Library::LibraryInfo& info)
 {
-    if(!info || !m_nodes.contains(info->path)) {
+    if(!m_nodes.contains(info.path)) {
         return;
     }
 
-    LibraryItem* item = &m_nodes.at(info->path);
+    LibraryItem* item = &m_nodes.at(info.path);
 
     item->changeInfo(info);
     const QModelIndex index = createIndex(item->row(), 1, item);
@@ -157,44 +157,45 @@ void LibraryModel::processQueue()
 
     for(auto& [path, library] : m_nodes) {
         const LibraryItem::ItemStatus status = library.status();
-        Core::Library::LibraryInfo* info     = library.info();
+        Core::Library::LibraryInfo info      = library.info();
 
         switch(status) {
             case(LibraryItem::Added): {
-                if(info->id >= 0) {
+                if(info.id >= 0) {
                     // Library already added
                     continue;
                 }
-                const int id = m_libraryManager->addLibrary(info->path, info->name);
+                const int id = m_libraryManager->addLibrary(info.path, info.name);
                 if(id >= 0) {
-                    info = m_libraryManager->libraryInfo(id);
-                    library.changeInfo(info);
-                    library.setStatus(LibraryItem::None);
+                    if(auto newLibrary = m_libraryManager->libraryInfo(id)) {
+                        library.changeInfo(*newLibrary);
+                        library.setStatus(LibraryItem::None);
+                    }
                 }
                 else {
-                    qWarning() << QString{"Library (%1) could not be added"}.arg(info->name);
+                    qWarning() << QString{"Library (%1) could not be added"}.arg(info.name);
                 }
                 break;
             }
             case(LibraryItem::Removed): {
-                const QString key = info->path;
-                if(info->id < 0 || m_libraryManager->removeLibrary(info->id)) {
+                const QString key = info.path;
+                if(info.id < 0 || m_libraryManager->removeLibrary(info.id)) {
                     beginRemoveRows({}, library.row(), library.row());
                     rootItem()->removeChild(library.row());
                     endRemoveRows();
                     librariesToRemove.push_back(key);
                 }
                 else {
-                    qWarning() << QString{"Library (%1) could not be removed"}.arg(info->name);
+                    qWarning() << QString{"Library (%1) could not be removed"}.arg(info.name);
                 }
                 break;
             }
             case(LibraryItem::Changed): {
-                if(m_libraryManager->renameLibrary(info->id, info->name)) {
+                if(m_libraryManager->renameLibrary(info.id, info.name)) {
                     library.setStatus(LibraryItem::None);
                 }
                 else {
-                    qWarning() << QString{"Library (%1) could not be renamed"}.arg(info->path);
+                    qWarning() << QString{"Library (%1) could not be renamed"}.arg(info.path);
                 }
                 break;
             }
@@ -249,13 +250,13 @@ QVariant LibraryModel::data(const QModelIndex& index, int role) const
 
     switch(index.column()) {
         case(0):
-            return item->info()->id;
+            return item->info().id;
         case(1):
-            return item->info()->name;
+            return item->info().name;
         case(2):
-            return item->info()->path;
+            return item->info().path;
         case(3):
-            return Utils::EnumHelper::toString(item->info()->status);
+            return Utils::EnumHelper::toString(item->info().status);
     }
 
     return {};
@@ -273,8 +274,11 @@ int LibraryModel::columnCount(const QModelIndex& parent) const
     return 4;
 }
 
-void LibraryModel::updateDisplay()
+void LibraryModel::updateDisplay(const Core::Library::LibraryInfo& info)
 {
-    emit dataChanged({}, {}, {Qt::DisplayRole});
+    if(m_nodes.contains(info.path)) {
+        m_nodes.at(info.path).changeInfo(info);
+        emit dataChanged({}, {}, {Qt::DisplayRole});
+    }
 }
 } // namespace Fy::Gui::Settings
