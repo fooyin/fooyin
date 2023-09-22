@@ -151,5 +151,7 @@ void Registry::addDefaultMetadata()
     m_metadata[Constants::MetaData::PlayCount]    = &Track::playCount;
     m_metadata[Constants::MetaData::AddedTime]    = &Track::addedTime;
     m_metadata[Constants::MetaData::ModifiedTime] = &Track::modifiedTime;
+    m_metadata[Constants::MetaData::FilePath]     = &Track::filepath;
+    m_metadata[Constants::MetaData::RelativePath] = &Track::relativePath;
 }
 } // namespace Fy::Core::Scripting

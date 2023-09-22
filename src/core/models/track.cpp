@@ -33,6 +33,7 @@ struct Track::Private : public QSharedData
     int id{-1};
     QString hash;
     QString filepath;
+    QString relativePath;
     QString title;
     QStringList artists;
     QString album;
@@ -131,6 +132,11 @@ QString Track::albumHash() const
 QString Track::filepath() const
 {
     return p->filepath;
+}
+
+QString Track::relativePath() const
+{
+    return p->relativePath;
 }
 
 QString Track::title() const
@@ -317,6 +323,11 @@ void Track::setId(int id)
 void Track::setHash(const QString& hash)
 {
     p->hash = hash;
+}
+
+void Track::setRelativePath(const QString& path)
+{
+    p->relativePath = path;
 }
 
 void Track::setTitle(const QString& title)

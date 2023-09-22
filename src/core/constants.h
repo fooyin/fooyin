@@ -52,5 +52,7 @@ constexpr auto SampleRate   = "samplerate";
 constexpr auto PlayCount    = "playcount";
 constexpr auto AddedTime    = "addedtime";
 constexpr auto ModifiedTime = "modifiedtime";
+constexpr auto FilePath     = "filepath";
+constexpr auto RelativePath = "relativepath";
 } // namespace MetaData
 } // namespace Fy::Core::Constants

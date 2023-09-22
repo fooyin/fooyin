@@ -57,6 +57,7 @@ public:
     [[nodiscard]] QString hash() const;
     [[nodiscard]] QString albumHash() const;
     [[nodiscard]] QString filepath() const;
+    [[nodiscard]] QString relativePath() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] QStringList artists() const;
     [[nodiscard]] QString artist() const;
@@ -99,6 +100,7 @@ public:
     void setEnabled(bool enabled);
     void setId(int id);
     void setHash(const QString& hash);
+    void setRelativePath(const QString& path);
     void setTitle(const QString& title);
     void setArtists(const QStringList& artists);
     void setAlbum(const QString& title);

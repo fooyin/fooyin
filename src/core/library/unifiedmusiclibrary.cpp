@@ -154,7 +154,19 @@ void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
 {
     m_tracks.reserve(m_tracks.size() + tracks.size());
 
-    const TrackList newTracks = recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
+    std::unordered_map<int, QDir> libraryDirs;
+    const auto& libraries = m_libraryManager->allLibraries();
+    for(const auto& [id, info] : libraries) {
+        libraryDirs.emplace(id, QDir{info.path});
+    }
+
+    TrackList newTracks = recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
+    for(Track& track : newTracks) {
+        const int libraryId = track.libraryId();
+        if(libraryDirs.contains(libraryId)) {
+            track.setRelativePath(libraryDirs.at(libraryId).relativeFilePath(track.filepath()));
+        }
+    }
     std::ranges::copy(newTracks, std::back_inserter(m_tracks));
 
     const TrackList sortedTracks = resortTracks(m_tracks);
