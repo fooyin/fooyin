@@ -125,6 +125,8 @@ PropertiesDialogWidget::PropertiesDialogWidget(PropertiesDialog::TabList tabs)
 
     buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
     layout->setSizeConstraint(QLayout::SetMinimumSize);
+
+    tabWidget->setCurrentIndex(0);
 }
 
 void PropertiesDialogWidget::done(int value)
