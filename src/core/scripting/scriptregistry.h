@@ -38,6 +38,7 @@ public:
     virtual bool funcExists(const QString& func) const;
 
     virtual ScriptResult varValue(const QString& var) const;
+    virtual void setVar(const QString& var, const FuncRet& value, Track& track);
     virtual ScriptResult function(const QString& func, const ValueList& args) const;
 
     void changeCurrentTrack(const Core::Track& track);
@@ -56,13 +57,42 @@ private:
     using NativeCondFunc = std::function<ScriptResult(const ValueList&)>;
     using Func           = std::variant<NativeFunc, NativeCondFunc>;
 
-    using TrackFunc = std::function<FuncRet(const Track&)>;
+    using TrackFunc    = std::function<FuncRet(const Track&)>;
+    using TrackSetFunc = std::function<void(Track&, const FuncRet&)>;
+
+    template <typename FuncType>
+    auto generateSetFunc(FuncType func)
+    {
+        return [func](Track& track, FuncRet arg) {
+            if constexpr(std::is_same_v<FuncType, void (Track::*)(int)>) {
+                if(const auto* value = std::get_if<int>(&arg)) {
+                    (track.*func)(*value);
+                }
+            }
+            else if constexpr(std::is_same_v<FuncType, void (Track::*)(uint64_t)>) {
+                if(const auto* value = std::get_if<uint64_t>(&arg)) {
+                    (track.*func)(*value);
+                }
+            }
+            else if constexpr(std::is_same_v<FuncType, void (Track::*)(const QString&)>) {
+                if(const auto* value = std::get_if<QString>(&arg)) {
+                    (track.*func)(*value);
+                }
+            }
+            else if constexpr(std::is_same_v<FuncType, void (Track::*)(const QStringList&)>) {
+                if(const auto* value = std::get_if<QStringList>(&arg)) {
+                    (track.*func)(*value);
+                }
+            }
+        };
+    }
 
     void addDefaultFunctions();
     void addDefaultMetadata();
 
     Track m_currentTrack;
     std::unordered_map<QString, TrackFunc> m_metadata;
+    std::unordered_map<QString, TrackSetFunc> m_setMetadata;
     std::unordered_map<QString, Func> m_funcs;
 };
 } // namespace Fy::Core::Scripting

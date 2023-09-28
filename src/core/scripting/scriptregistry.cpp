@@ -54,6 +54,15 @@ ScriptResult Registry::varValue(const QString& var) const
     return calculateResult(funcResult);
 }
 
+void Registry::setVar(const QString& var, const FuncRet& value, Track& track)
+{
+    if(var.isEmpty() || !varExists(var)) {
+        return;
+    }
+
+    m_setMetadata.at(var)(track, value);
+}
+
 ScriptResult Registry::function(const QString& func, const ValueList& args) const
 {
     if(func.isEmpty() || !m_funcs.contains(func)) {
@@ -153,5 +162,29 @@ void Registry::addDefaultMetadata()
     m_metadata[Constants::MetaData::ModifiedTime] = &Track::modifiedTime;
     m_metadata[Constants::MetaData::FilePath]     = &Track::filepath;
     m_metadata[Constants::MetaData::RelativePath] = &Track::relativePath;
+
+    m_setMetadata[Constants::MetaData::Title]        = generateSetFunc(&Track::setTitle);
+    m_setMetadata[Constants::MetaData::Artist]       = generateSetFunc(&Track::setArtists);
+    m_setMetadata[Constants::MetaData::Album]        = generateSetFunc(&Track::setAlbum);
+    m_setMetadata[Constants::MetaData::AlbumArtist]  = generateSetFunc(&Track::setAlbumArtist);
+    m_setMetadata[Constants::MetaData::Track]        = generateSetFunc(&Track::setTrackNumber);
+    m_setMetadata[Constants::MetaData::TrackTotal]   = generateSetFunc(&Track::setTrackTotal);
+    m_setMetadata[Constants::MetaData::Disc]         = generateSetFunc(&Track::setDiscNumber);
+    m_setMetadata[Constants::MetaData::DiscTotal]    = generateSetFunc(&Track::setDiscTotal);
+    m_setMetadata[Constants::MetaData::Genre]        = generateSetFunc(&Track::setGenres);
+    m_setMetadata[Constants::MetaData::Composer]     = generateSetFunc(&Track::setComposer);
+    m_setMetadata[Constants::MetaData::Performer]    = generateSetFunc(&Track::setPerformer);
+    m_setMetadata[Constants::MetaData::Duration]     = generateSetFunc(&Track::setDuration);
+    m_setMetadata[Constants::MetaData::Lyrics]       = generateSetFunc(&Track::setLyrics);
+    m_setMetadata[Constants::MetaData::Comment]      = generateSetFunc(&Track::setComment);
+    m_setMetadata[Constants::MetaData::Date]         = generateSetFunc(&Track::setDate);
+    m_setMetadata[Constants::MetaData::Year]         = generateSetFunc(&Track::setYear);
+    m_setMetadata[Constants::MetaData::Cover]        = generateSetFunc(&Track::setCoverPath);
+    m_setMetadata[Constants::MetaData::FileSize]     = generateSetFunc(&Track::setFileSize);
+    m_setMetadata[Constants::MetaData::Bitrate]      = generateSetFunc(&Track::setBitrate);
+    m_setMetadata[Constants::MetaData::SampleRate]   = generateSetFunc(&Track::setSampleRate);
+    m_setMetadata[Constants::MetaData::PlayCount]    = generateSetFunc(&Track::setPlayCount);
+    m_setMetadata[Constants::MetaData::AddedTime]    = generateSetFunc(&Track::setAddedTime);
+    m_setMetadata[Constants::MetaData::ModifiedTime] = generateSetFunc(&Track::setModifiedTime);
 }
 } // namespace Fy::Core::Scripting
