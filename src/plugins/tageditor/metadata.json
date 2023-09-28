@@ -1,0 +1,11 @@
+{
+    "Name" : "Tag Editor",
+    "Version" : "1.0.0",
+    "Vendor" : "Luke Taylor",
+    "Copyright" : "Copyright 2022, Luke Taylor <LukeT1@proton.me>",
+    "Category" : "Core",
+    "Description" : [
+        "Enables editing tags."
+    ],
+    "Url" : "https://github.com/ludouzi/fooyin"
+}
