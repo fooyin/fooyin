@@ -27,6 +27,44 @@
 namespace Fy::Core::DB {
 using namespace Qt::Literals::StringLiterals;
 
+QString fetchQueryTracks(const QString& join, const QString& offsetLimit)
+{
+    static const QStringList fields = {
+        u"TrackID"_s,      // 0
+        u"FilePath"_s,     // 1
+        u"Title"_s,        // 2
+        u"TrackNumber"_s,  // 3
+        u"TrackTotal"_s,   // 4
+        u"Artists"_s,      // 5
+        u"AlbumArtist"_s,  // 6
+        u"Album"_s,        // 7
+        u"CoverPath"_s,    // 8
+        u"DiscNumber"_s,   // 9
+        u"DiscTotal"_s,    // 10
+        u"Date"_s,         // 11
+        u"Year"_s,         // 12
+        u"Composer"_s,     // 13
+        u"Performer"_s,    // 14
+        u"Genres"_s,       // 15
+        u"Lyrics"_s,       // 16
+        u"Comment"_s,      // 17
+        u"Duration"_s,     // 18
+        u"PlayCount"_s,    // 19
+        u"Rating"_s,       // 20
+        u"FileSize"_s,     // 21
+        u"BitRate"_s,      // 22
+        u"SampleRate"_s,   // 23
+        u"ExtraTags"_s,    // 24
+        u"AddedDate"_s,    // 25
+        u"ModifiedDate"_s, // 26
+        u"LibraryID"_s     // 27
+    };
+
+    const auto joinedFields = fields.join(", ");
+
+    return QString("SELECT %1 FROM Tracks %2 %5;").arg(joinedFields, join.isEmpty() ? "" : join, offsetLimit);
+}
+
 BindingsMap getTrackBindings(const Track& track)
 {
     return {{u"FilePath"_s, Utils::File::cleanPath(track.filepath())},
@@ -117,45 +155,7 @@ bool LibraryDatabase::getAllTracks(TrackList& result, int offset, int limit)
     return dbFetchTracks(q, result);
 }
 
-QString LibraryDatabase::fetchQueryTracks(const QString& join, const QString& offsetLimit)
-{
-    static const QStringList fields = {
-        u"TrackID"_s,      // 0
-        u"FilePath"_s,     // 1
-        u"Title"_s,        // 2
-        u"TrackNumber"_s,  // 3
-        u"TrackTotal"_s,   // 4
-        u"Artists"_s,      // 5
-        u"AlbumArtist"_s,  // 6
-        u"Album"_s,        // 7
-        u"CoverPath"_s,    // 8
-        u"DiscNumber"_s,   // 9
-        u"DiscTotal"_s,    // 10
-        u"Date"_s,         // 11
-        u"Year"_s,         // 12
-        u"Composer"_s,     // 13
-        u"Performer"_s,    // 14
-        u"Genres"_s,       // 15
-        u"Lyrics"_s,       // 16
-        u"Comment"_s,      // 17
-        u"Duration"_s,     // 18
-        u"PlayCount"_s,    // 19
-        u"Rating"_s,       // 20
-        u"FileSize"_s,     // 21
-        u"BitRate"_s,      // 22
-        u"SampleRate"_s,   // 23
-        u"ExtraTags"_s,    // 24
-        u"AddedDate"_s,    // 25
-        u"ModifiedDate"_s, // 26
-        u"LibraryID"_s     // 27
-    };
-
-    const auto joinedFields = fields.join(", ");
-
-    return QString("SELECT %1 FROM Tracks %2 %5;").arg(joinedFields, join.isEmpty() ? "" : join, offsetLimit);
-}
-
-bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
+bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result) const
 {
     result.clear();
 

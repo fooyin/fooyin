@@ -33,10 +33,8 @@ public:
     bool getAllTracks(TrackList& result);
     bool getAllTracks(TrackList& result, int start, int limit);
 
-    [[nodiscard]] QString fetchQueryTracks(const QString& join, const QString& offsetLimit);
-
-    bool dbFetchTracks(Query& q, TrackList& result);
-    int dbTrackCount() const;
+    [[nodiscard]] bool dbFetchTracks(Query& q, TrackList& result) const;
+    [[nodiscard]] int dbTrackCount() const;
 
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);
