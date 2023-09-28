@@ -160,7 +160,7 @@ struct Application::Private
         , pluginManager{new Plugins::PluginManager(parent)}
         , pluginPage{settingsManager, pluginManager}
         , corePluginContext{actionManager, playerManager, library, playlistHandler, settingsManager, &database}
-        , guiPluginContext{&layoutProvider, &widgetFactory}
+        , guiPluginContext{&layoutProvider, &selectionController, propertiesDialog, &widgetFactory}
     {
         registerLayouts();
         registerWidgets();

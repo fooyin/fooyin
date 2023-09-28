@@ -21,18 +21,26 @@
 
 namespace Fy::Gui {
 class LayoutProvider;
+class TrackSelectionController;
+class PropertiesDialog;
+
 namespace Widgets {
 class WidgetFactory;
 } // namespace Widgets
 
 struct GuiPluginContext
 {
-    GuiPluginContext(Gui::LayoutProvider* layoutProvider, Gui::Widgets::WidgetFactory* widgetFactory)
+    GuiPluginContext(Gui::LayoutProvider* layoutProvider, Gui::TrackSelectionController* trackSelection,
+                     Gui::PropertiesDialog* propertiesDialog, Gui::Widgets::WidgetFactory* widgetFactory)
         : layoutProvider{layoutProvider}
+        , trackSelection{trackSelection}
+        , propertiesDialog{propertiesDialog}
         , widgetFactory{widgetFactory}
     { }
 
     Gui::LayoutProvider* layoutProvider;
+    Gui::TrackSelectionController* trackSelection;
+    Gui::PropertiesDialog* propertiesDialog;
     Gui::Widgets::WidgetFactory* widgetFactory;
 };
 } // namespace Fy::Gui
