@@ -164,6 +164,11 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
         return false;
     }
 
+    const int numRows = dbTrackCount();
+    if(numRows > 0) {
+        result.reserve(numRows);
+    }
+
     while(q.next()) {
         Track track{q.value(1).toString()};
 
@@ -197,9 +202,20 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
 
         track.generateHash();
 
-        result.emplace_back(track);
+        result.push_back(track);
     }
     return true;
+}
+
+int LibraryDatabase::dbTrackCount() const
+{
+    const auto queryText = QStringLiteral("SELECT COUNT(*) FROM Tracks");
+    auto q               = module()->runQuery(queryText, "Cannot fetch track count");
+
+    if(!q.hasError() && q.next()) {
+        return q.value(0).toInt();
+    }
+    return -1;
 }
 
 bool LibraryDatabase::updateTrack(const Track& track)

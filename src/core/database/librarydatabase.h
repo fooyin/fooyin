@@ -36,6 +36,7 @@ public:
     [[nodiscard]] QString fetchQueryTracks(const QString& join, const QString& offsetLimit);
 
     bool dbFetchTracks(Query& q, TrackList& result);
+    int dbTrackCount() const;
 
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);
