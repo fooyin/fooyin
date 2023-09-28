@@ -23,7 +23,6 @@
 #include "filtersappearancepage.h"
 #include "filtersfieldspage.h"
 #include "filtersgeneralpage.h"
-#include "filterwidget.h"
 
 #include <core/coreplugin.h>
 #include <core/plugins/plugin.h>

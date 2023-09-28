@@ -41,9 +41,8 @@ set(SOURCES
     searchwidget.h
     searchwidget.cpp
     trackfilterer.h
-    trackfilterer.cpp)
-
-qt_add_resources(SOURCES data/icons.qrc)
+    trackfilterer.cpp
+)
 
 add_library(fooyin_filters SHARED ${SOURCES})
 target_link_libraries(
