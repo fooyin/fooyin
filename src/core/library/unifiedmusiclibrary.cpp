@@ -169,15 +169,17 @@ void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
     }
     std::ranges::copy(newTracks, std::back_inserter(m_tracks));
 
-    const TrackList sortedTracks = resortTracks(m_tracks);
-    m_tracks                     = sortedTracks;
+    m_tracks = resortTracks(m_tracks);
 
     emit tracksAdded(newTracks);
 }
 
 void UnifiedMusicLibrary::updateTracks(const TrackList& tracks)
 {
-    std::ranges::for_each(tracks, [this](const auto& track) {
+    TrackList updatedTracks = recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
+    updatedTracks           = resortTracks(updatedTracks);
+
+    std::ranges::for_each(updatedTracks, [this](const Track& track) {
         std::ranges::replace_if(
             m_tracks,
             [track](const Track& libraryTrack) {
@@ -186,7 +188,9 @@ void UnifiedMusicLibrary::updateTracks(const TrackList& tracks)
             track);
     });
 
-    emit tracksUpdated(tracks);
+    m_tracks = resortTracks(m_tracks);
+
+    emit tracksUpdated(updatedTracks);
 }
 
 void UnifiedMusicLibrary::removeTracks(const TrackList& tracks)

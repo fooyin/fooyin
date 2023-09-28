@@ -50,8 +50,8 @@ public:
     void reload(const LibraryInfo& library) override;
     void rescan() override;
 
-    bool hasLibrary() const override;
-    bool isEmpty() const override;
+    [[nodiscard]] bool hasLibrary() const override;
+    [[nodiscard]] bool isEmpty() const override;
 
     [[nodiscard]] TrackList tracks() const override;
 
