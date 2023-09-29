@@ -18,6 +18,7 @@ set(SOURCES
     id.cpp
     itemregistry.h
     menuheader.cpp
+    multilinedelegate.cpp
     overlayfilter.cpp
     overlaywidget.cpp
     paths.cpp

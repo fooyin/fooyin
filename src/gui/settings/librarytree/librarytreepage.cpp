@@ -25,7 +25,7 @@
 #include "gui/settings/librarytree/librarytreegroupmodel.h"
 #include "gui/trackselectioncontroller.h"
 
-#include <utils/settings/settingsmanager.h>
+#include <utils/multilinedelegate.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -82,6 +82,9 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     , m_playlistName{new QLineEdit(this)}
 {
     m_groupList->setModel(m_model);
+
+    auto* delegate = new Utils::MultiLineEditDelegate(this);
+    m_groupList->setItemDelegateForColumn(2, delegate);
 
     // Hide index column
     m_groupList->hideColumn(0);
