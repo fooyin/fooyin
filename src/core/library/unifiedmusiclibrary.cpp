@@ -65,7 +65,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     connect(this, &UnifiedMusicLibrary::runLibraryScan, &m_threadHandler, &LibraryThreadHandler::scanLibrary);
     connect(&m_threadHandler, &LibraryThreadHandler::progressChanged, this, &UnifiedMusicLibrary::scanProgress);
     connect(&m_threadHandler, &LibraryThreadHandler::statusChanged, this, &UnifiedMusicLibrary::libraryStatusChanged);
-    connect(&m_threadHandler, &LibraryThreadHandler::addedTracks, this, &UnifiedMusicLibrary::addTracks);
+    connect(&m_threadHandler, &LibraryThreadHandler::addedTracks, this, &UnifiedMusicLibrary::newTracks);
     connect(&m_threadHandler, &LibraryThreadHandler::updatedTracks, this, &UnifiedMusicLibrary::updateTracks);
     connect(&m_threadHandler, &LibraryThreadHandler::tracksDeleted, this, &UnifiedMusicLibrary::removeTracks);
 
@@ -147,10 +147,10 @@ void UnifiedMusicLibrary::getAllTracks()
 void UnifiedMusicLibrary::loadTracks(const TrackList& tracks)
 {
     addTracks(tracks);
-    emit tracksLoaded(tracks);
+    emit tracksLoaded(m_tracks);
 }
 
-void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
+TrackList UnifiedMusicLibrary::addTracks(const TrackList& tracks)
 {
     m_tracks.reserve(m_tracks.size() + tracks.size());
 
@@ -171,6 +171,12 @@ void UnifiedMusicLibrary::addTracks(const TrackList& tracks)
 
     m_tracks = resortTracks(m_tracks);
 
+    return newTracks;
+}
+
+void UnifiedMusicLibrary::newTracks(const TrackList& tracks)
+{
+    TrackList newTracks = addTracks(tracks);
     emit tracksAdded(newTracks);
 }
 

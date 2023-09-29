@@ -30,6 +30,7 @@ namespace Fy::Gui::Widgets {
 enum LibraryTreeRole
 {
     Title = Qt::UserRole,
+    Level,
     Tracks,
 };
 
@@ -52,6 +53,7 @@ public:
 
     void addTrack(const Core::Track& track);
     void addTracks(const Core::TrackList& tracks);
+    void removeTrack(const Core::Track& track);
 
     void sortChildren();
 

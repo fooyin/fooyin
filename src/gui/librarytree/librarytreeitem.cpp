@@ -87,6 +87,16 @@ void LibraryTreeItem::addTracks(const Core::TrackList& tracks)
     std::ranges::copy(tracks, std::back_inserter(m_tracks));
 }
 
+void LibraryTreeItem::removeTrack(const Core::Track& track)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+    m_tracks.erase(std::ranges::find_if(m_tracks, [track](const Core::Track& child) {
+        return child.id() == track.id();
+    }));
+}
+
 void LibraryTreeItem::sortChildren()
 {
     std::vector<LibraryTreeItem*> sortedChildren{m_children};

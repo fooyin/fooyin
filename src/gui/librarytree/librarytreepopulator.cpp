@@ -84,13 +84,15 @@ struct LibraryTreePopulator::Private
             for(const QString& item : items) {
                 const QString title = item.trimmed();
                 const QString key   = Utils::generateHash(parent->key(), title);
-                auto* node          = getOrInsertItem(key, parent, title, level);
+
+                auto* node = getOrInsertItem(key, parent, title, level);
                 node->addTrack(track);
+                data.trackParents[track.id()].push_back(node->key());
+
                 parent = node;
                 ++level;
             }
         }
-        data.tracks.emplace_back(track);
     }
 
     void runBatch(int size)
@@ -115,6 +117,10 @@ struct LibraryTreePopulator::Private
             return;
         }
 
+        for(auto& [_, item] : data.items) {
+            item.setPending(true);
+        }
+
         emit populator->populated(data);
 
         auto tracksToKeep = std::ranges::views::drop(pendingTracks, size);
@@ -122,8 +128,7 @@ struct LibraryTreePopulator::Private
         std::ranges::copy(tracksToKeep, std::back_inserter(tempTracks));
         pendingTracks = std::move(tempTracks);
 
-        data.nodes.clear();
-        data.tracks.clear();
+        data.clear();
 
         const auto remaining = static_cast<int>(pendingTracks.size());
         runBatch(std::min(remaining, BatchSize));

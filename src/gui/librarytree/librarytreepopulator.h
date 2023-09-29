@@ -28,18 +28,19 @@
 namespace Fy::Gui::Widgets {
 using ItemKeyMap = std::unordered_map<QString, LibraryTreeItem>;
 using NodeKeyMap = std::unordered_map<QString, std::vector<QString>>;
+using TrackIdNodeMap = std::unordered_map<int, std::vector<QString>>;
 
 struct PendingTreeData
 {
     ItemKeyMap items;
     NodeKeyMap nodes;
-    Core::TrackList tracks;
+    TrackIdNodeMap trackParents;
 
     void clear()
     {
         items.clear();
         nodes.clear();
-        tracks.clear();
+        trackParents.clear();
     }
 };
 

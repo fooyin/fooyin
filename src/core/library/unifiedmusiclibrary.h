@@ -62,7 +62,8 @@ public:
 private:
     void getAllTracks();
     void loadTracks(const TrackList& tracks);
-    void addTracks(const TrackList& tracks);
+    TrackList addTracks(const TrackList& tracks);
+    void newTracks(const TrackList& tracks);
     void updateTracks(const TrackList& tracks);
     void removeTracks(const TrackList& tracks);
 

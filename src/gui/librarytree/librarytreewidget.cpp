@@ -130,8 +130,9 @@ struct LibraryTreeWidget::Private
 
         // TODO: Support row insertion/deletion
         QObject::connect(library, &Core::Library::MusicLibrary::tracksLoaded, treeReset);
-        QObject::connect(library, &Core::Library::MusicLibrary::tracksDeleted, treeReset);
-        QObject::connect(library, &Core::Library::MusicLibrary::tracksAdded, treeReset);
+        QObject::connect(library, &Core::Library::MusicLibrary::tracksAdded, model, &LibraryTreeModel::addTracks);
+        QObject::connect(library, &Core::Library::MusicLibrary::tracksUpdated, model, &LibraryTreeModel::updateTracks);
+        QObject::connect(library, &Core::Library::MusicLibrary::tracksDeleted, model, &LibraryTreeModel::removeTracks);
         QObject::connect(library, &Core::Library::MusicLibrary::tracksSorted, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::libraryRemoved, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::libraryChanged, treeReset);
@@ -183,7 +184,7 @@ struct LibraryTreeWidget::Private
         menu->popup(widget->mapToGlobal(pos));
     }
 
-    void selectionChanged()
+    void selectionChanged() const
     {
         const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
         if(selectedIndexes.empty()) {
@@ -197,6 +198,12 @@ struct LibraryTreeWidget::Private
 
         Core::TrackList tracks;
         for(const auto& index : trackIndexes) {
+            const int level = index.data(LibraryTreeRole::Level).toInt();
+            if(level < 0) {
+                tracks.clear();
+                tracks = library->tracks();
+                break;
+            }
             const auto indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
             tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
         }

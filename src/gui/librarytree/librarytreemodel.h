@@ -42,6 +42,10 @@ public:
     void fetchMore(const QModelIndex& parent) override;
     bool canFetchMore(const QModelIndex& parent) const override;
 
+    void addTracks(const Core::TrackList& tracks);
+    void updateTracks(const Core::TrackList& tracks);
+    void removeTracks(const Core::TrackList& tracks);
+
     void changeGrouping(const LibraryTreeGrouping& grouping);
     void reset(const Core::TrackList& tracks);
 
