@@ -48,10 +48,7 @@ set(SOURCES
 add_library(fooyin_filters SHARED ${SOURCES})
 target_link_libraries(
     fooyin_filters
-    PRIVATE Qt6::Core
-            Qt6::Widgets
-            Qt6::Sql
-            fooyin::core
+    PRIVATE fooyin::core
             fooyin::gui
             fooyin::utils
 )

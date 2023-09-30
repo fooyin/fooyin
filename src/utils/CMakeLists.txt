@@ -61,9 +61,9 @@ set_target_properties(
 
 target_link_libraries(
     fooyin_utils
-    PRIVATE Qt6::Core
-            Qt6::Widgets
-            Qt6::Concurrent
+    PUBLIC Qt6::Core
+           Qt6::Widgets
+           Qt6::Concurrent
 )
 
 target_compile_features(fooyin_utils PUBLIC cxx_std_20)

@@ -138,11 +138,11 @@ set_target_properties(
 
 target_link_libraries(
     fooyin_gui
-    PRIVATE Qt6::Core
-            Qt6::Widgets
-            Qt6::Sql
-            Qt6::Concurrent
-            fooyin::core
+    PUBLIC Qt6::Core
+           Qt6::Widgets
+           Qt6::Sql
+           Qt6::Concurrent
+    PRIVATE fooyin::core
             fooyin::utils
 )
 

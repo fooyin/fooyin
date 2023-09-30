@@ -13,9 +13,7 @@ set(SOURCES tageditoritem.cpp tageditorplugin.cpp tageditormodel.cpp tageditorwi
 add_library(fooyin_tageditor SHARED ${SOURCES})
 target_link_libraries(
     fooyin_tageditor
-    PRIVATE Qt6::Core
-            Qt6::Widgets
-            fooyin::core
+    PRIVATE fooyin::core
             fooyin::gui
             fooyin::utils
 )

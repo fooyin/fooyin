@@ -98,11 +98,11 @@ set_target_properties(
 
 target_link_libraries(
     fooyin_core
-    PRIVATE Qt6::Core
-            Qt6::Widgets
-            Qt6::Sql
-            Qt6::Concurrent
-            Taglib::Taglib
+    PUBLIC Qt6::Core
+           Qt6::Widgets
+           Qt6::Sql
+           Qt6::Concurrent
+    PRIVATE Taglib::Taglib
             Libmpv::Libmpv
             fooyin::version
             fooyin::utils
