@@ -19,53 +19,24 @@
 
 #include "filteritem.h"
 
-#include "constants.h"
-
-#include <utils/helpers.h>
-
 #include <QVariant>
 
 namespace Fy::Filters {
-FilterItem::FilterItem(QString title, QString sortTitle, bool isAllNode)
-    : m_title{std::move(title)}
+FilterItem::FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode)
+    : TreeItem{parent}
+    , m_title{std::move(title)}
     , m_sortTitle{std::move(sortTitle)}
     , m_isAllNode{isAllNode}
 { }
 
-const ItemChildren& FilterItem::children() const
-{
-    return m_children;
-}
-
-FilterItem* FilterItem::child(int index) const
-{
-    if(index < 0 || index >= childCount()) {
-        return nullptr;
-    }
-    return m_children.at(index);
-}
-
-void FilterItem::appendChild(FilterItem* child)
-{
-    if(Utils::contains(m_children, child)) {
-        return;
-    }
-    m_children.emplace_back(child);
-}
-
-int FilterItem::childCount() const
-{
-    return static_cast<int>(m_children.size());
-}
-
 QVariant FilterItem::data(int role) const
 {
     switch(role) {
-        case FilterItemRole::Title:
+        case(FilterItemRole::Title):
             return m_title;
-        case FilterItemRole::Tracks:
+        case(FilterItemRole::Tracks):
             return QVariant::fromValue(m_tracks);
-        case FilterItemRole::Sorting:
+        case(FilterItemRole::Sorting):
             return m_sortTitle;
         default:
             return {};
@@ -94,7 +65,7 @@ bool FilterItem::hasSortTitle() const
 
 void FilterItem::sortChildren(Qt::SortOrder order)
 {
-    ItemChildren sortedChildren{m_children};
+    std::vector<FilterItem*> sortedChildren{m_children};
     std::sort(sortedChildren.begin(), sortedChildren.end(), [order](const FilterItem* lhs, const FilterItem* rhs) {
         if(lhs->m_isAllNode) {
             return true;

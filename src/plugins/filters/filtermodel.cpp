@@ -23,35 +23,116 @@
 #include "filteritem.h"
 
 #include <core/constants.h>
+#include <core/scripting/scriptparser.h>
 
 #include <utils/helpers.h>
 
 #include <QSize>
 
 namespace Fy::Filters {
+struct FilterModel::Private
+{
+    FilterModel* model;
+
+    FilterItem allNode;
+    std::unordered_map<QString, FilterItem> nodes;
+    FilterField* field;
+
+    int rowHeight{0};
+    int fontSize{0};
+
+    Core::Scripting::Registry registry;
+    Core::Scripting::Parser parser{&registry};
+
+    Private(FilterModel* model, FilterField* field)
+        : model{model}
+        , field{field}
+    { }
+
+    void beginReset()
+    {
+        model->resetRoot();
+        nodes.clear();
+    }
+
+    void setupModelData(const Core::TrackList& tracks)
+    {
+        if(tracks.empty()) {
+            return;
+        }
+
+        const auto parsedField = parser.parse(field->field);
+        const auto parsedSort  = parser.parse(field->sortField);
+
+        allNode = FilterItem{"", "", model->rootItem(), true};
+        model->rootItem()->appendChild(&allNode);
+
+        for(const Core::Track& track : tracks) {
+            if(!track.enabled()) {
+                continue;
+            }
+            const QString field = parser.evaluate(parsedField, track);
+            const QString sort  = parser.evaluate(parsedSort, track);
+            if(field.isNull()) {
+                continue;
+            }
+            if(field.contains(Core::Constants::Separator)) {
+                const QStringList values = field.split(Core::Constants::Separator);
+                const auto nodes         = createNodes(values, sort);
+                for(FilterItem* node : nodes) {
+                    node->addTrack(track);
+                }
+            }
+            else {
+                createNode(field, sort)->addTrack(track);
+            }
+            allNode.addTrack(track);
+        }
+    }
+
+    FilterItem* createNode(const QString& title, const QString& sortTitle)
+    {
+        FilterItem* filterItem;
+        if(!nodes.contains(title)) {
+            filterItem = &nodes.emplace(title, FilterItem{title, sortTitle, model->rootItem()}).first->second;
+            model->rootItem()->appendChild(filterItem);
+        }
+        filterItem = &nodes.at(title);
+        return filterItem;
+    }
+
+    std::vector<FilterItem*> createNodes(const QStringList& titles, const QString& sortTitle)
+    {
+        std::vector<FilterItem*> items;
+        for(const QString& title : titles) {
+            auto* filterItem = createNode(title, sortTitle);
+            items.emplace_back(filterItem);
+        }
+        return items;
+    }
+};
+
 FilterModel::FilterModel(FilterField* field, QObject* parent)
-    : QAbstractListModel{parent}
-    , m_root{std::make_unique<FilterItem>()}
-    , m_field{field}
-    , m_rowHeight{0}
-    , m_fontSize{0}
-    , m_parser{&m_registry}
+    : TableModel{parent}
+    , p{std::make_unique<Private>(this, field)}
 { }
+
+FilterModel::~FilterModel() = default;
 
 void FilterModel::setField(FilterField* field)
 {
-    m_field = field;
+    p->field = field;
 }
 
 void FilterModel::setRowHeight(int height)
 {
-    m_rowHeight = height;
+    p->rowHeight = height;
     emit layoutChanged({}, {});
 }
 
 void FilterModel::setFontSize(int size)
 {
-    m_fontSize = size;
+    p->fontSize = size;
     emit dataChanged({}, {}, {Qt::FontRole});
 }
 
@@ -66,7 +147,7 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
     switch(role) {
         case(Qt::DisplayRole): {
             if(item->isAllNode()) {
-                return QString("All (%1)").arg(m_nodes.size());
+                return QString("All (%1)").arg(p->nodes.size());
             }
             const QString& name = item->data(FilterItemRole::Title).toString();
             return !name.isEmpty() ? name : "?";
@@ -81,10 +162,10 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
             return item->data(FilterItemRole::Sorting);
         }
         case(Qt::SizeHintRole): {
-            return QSize{0, m_rowHeight};
+            return QSize{0, p->rowHeight};
         }
         case(Qt::FontRole): {
-            return m_fontSize;
+            return p->fontSize;
         }
         default: {
             return {};
@@ -98,13 +179,12 @@ Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
         return Qt::NoItemFlags;
     }
 
-    return QAbstractListModel::flags(index);
+    return TableModel::flags(index);
 }
 
-QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant FilterModel::headerData(int /*section*/, Qt::Orientation orientation, int role) const
 {
-    Q_UNUSED(section)
-    if(!m_field) {
+    if(!p->field) {
         return {};
     }
 
@@ -120,38 +200,7 @@ QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int r
         return {};
     }
 
-    return m_field->name;
-}
-
-QModelIndex FilterModel::index(int row, int column, const QModelIndex& parent) const
-{
-    if(!hasIndex(row, column, parent)) {
-        return {};
-    }
-
-    FilterItem* childItem = m_root->child(row);
-    if(childItem) {
-        return createIndex(row, column, childItem);
-    }
-    return {};
-}
-
-QModelIndex FilterModel::parent(const QModelIndex& index) const
-{
-    Q_UNUSED(index)
-    return {};
-}
-
-int FilterModel::rowCount(const QModelIndex& parent) const
-{
-    Q_UNUSED(parent)
-    return m_root->childCount();
-}
-
-int FilterModel::columnCount(const QModelIndex& parent) const
-{
-    Q_UNUSED(parent)
-    return 1;
+    return p->field->name;
 }
 
 QHash<int, QByteArray> FilterModel::roleNames() const
@@ -166,7 +215,7 @@ QHash<int, QByteArray> FilterModel::roleNames() const
 
 void FilterModel::sortFilter(Qt::SortOrder order)
 {
-    m_root->sortChildren(order);
+    rootItem()->sortChildren(order);
     emit layoutChanged({});
 }
 
@@ -188,78 +237,14 @@ void FilterModel::sortFilter(Qt::SortOrder order)
 //    return indexes;
 //}
 
-// TODO: Implement methods to insert/delete rows
 void FilterModel::reload(const Core::TrackList& tracks)
 {
-    if(!m_field) {
+    if(!p->field) {
         return;
     }
     beginResetModel();
-    beginReset();
-    setupModelData(tracks);
+    p->beginReset();
+    p->setupModelData(tracks);
     endResetModel();
-}
-
-void FilterModel::beginReset()
-{
-    m_root.reset();
-    m_nodes.clear();
-    m_root = std::make_unique<FilterItem>();
-}
-
-void FilterModel::setupModelData(const Core::TrackList& tracks)
-{
-    if(tracks.empty()) {
-        return;
-    }
-
-    const auto parsedField = m_parser.parse(m_field->field);
-    const auto parsedSort  = m_parser.parse(m_field->sortField);
-
-    m_allNode = std::make_unique<FilterItem>("", "", true);
-    m_root->appendChild(m_allNode.get());
-
-    for(const Core::Track& track : tracks) {
-        if(!track.enabled()) {
-            continue;
-        }
-        const QString field = m_parser.evaluate(parsedField, track);
-        const QString sort  = m_parser.evaluate(parsedSort, track);
-        if(field.isNull()) {
-            continue;
-        }
-        if(field.contains(Core::Constants::Separator)) {
-            const QStringList values = field.split(Core::Constants::Separator);
-            const auto nodes         = createNodes(values, sort);
-            for(FilterItem* node : nodes) {
-                node->addTrack(track);
-            }
-        }
-        else {
-            createNode(field, sort)->addTrack(track);
-        }
-        m_allNode->addTrack(track);
-    }
-}
-
-FilterItem* FilterModel::createNode(const QString& title, const QString& sortTitle)
-{
-    FilterItem* filterItem;
-    if(!m_nodes.contains(title)) {
-        filterItem = m_nodes.emplace(title, std::make_unique<FilterItem>(title, sortTitle)).first->second.get();
-        m_root->appendChild(filterItem);
-    }
-    filterItem = m_nodes.at(title).get();
-    return filterItem;
-}
-
-std::vector<FilterItem*> FilterModel::createNodes(const QStringList& titles, const QString& sortTitle)
-{
-    std::vector<FilterItem*> items;
-    for(const QString& title : titles) {
-        auto* filterItem = createNode(title, sortTitle);
-        items.emplace_back(filterItem);
-    }
-    return items;
 }
 } // namespace Fy::Filters

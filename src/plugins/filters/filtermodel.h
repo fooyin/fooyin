@@ -19,26 +19,20 @@
 
 #pragma once
 
+#include "filteritem.h"
+
 #include <core/models/trackfwd.h>
-#include <core/scripting/scriptparser.h>
 
-#include <utils/treemodel.h>
+#include <utils/tablemodel.h>
 
-#include <QAbstractListModel>
-
-namespace Fy {
-namespace Core::Scripting {
-class Parser;
-}
-
-namespace Filters {
-class FilterItem;
+namespace Fy::Filters {
 class FilterField;
 
-class FilterModel : public QAbstractListModel
+class FilterModel : public Utils::TableModel<FilterItem>
 {
 public:
     explicit FilterModel(FilterField* field, QObject* parent = nullptr);
+    ~FilterModel() override;
 
     void setField(FilterField* field);
     void setRowHeight(int height);
@@ -47,10 +41,6 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
-    [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
-    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
     void sortFilter(Qt::SortOrder order);
@@ -59,21 +49,7 @@ public:
     void reload(const Core::TrackList& tracks);
 
 private:
-    void beginReset();
-    void setupModelData(const Core::TrackList& tracks);
-    FilterItem* createNode(const QString& title, const QString& sortTitle = {});
-    std::vector<FilterItem*> createNodes(const QStringList& titles, const QString& sortTitle = {});
-
-    std::unique_ptr<FilterItem> m_root;
-    std::unique_ptr<FilterItem> m_allNode;
-    std::unordered_map<QString, std::unique_ptr<FilterItem>> m_nodes;
-    FilterField* m_field;
-
-    int m_rowHeight;
-    int m_fontSize;
-
-    Core::Scripting::Registry m_registry;
-    Core::Scripting::Parser m_parser;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Filters
-} // namespace Fy
+} // namespace Fy::Filters

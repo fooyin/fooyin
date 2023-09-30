@@ -21,6 +21,8 @@
 
 #include <core/models/trackfwd.h>
 
+#include <utils/treeitem.h>
+
 #include <QObject>
 
 namespace Fy::Filters {
@@ -32,18 +34,12 @@ enum FilterItemRole
 };
 
 class FilterItem;
-using ItemChildren = std::vector<FilterItem*>;
 
-class FilterItem
+class FilterItem : public Utils::TreeItem<FilterItem>
 {
 public:
     FilterItem() = default;
-    explicit FilterItem(QString title, QString sortTitle = "", bool isAllNode = false);
-
-    [[nodiscard]] const ItemChildren& children() const;
-    [[nodiscard]] FilterItem* child(int index) const;
-    void appendChild(FilterItem* child);
-    [[nodiscard]] int childCount() const;
+    explicit FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode = false);
 
     [[nodiscard]] QVariant data(int role) const;
     [[nodiscard]] int trackCount() const;
@@ -59,6 +55,5 @@ private:
     QString m_sortTitle;
     Core::TrackList m_tracks;
     bool m_isAllNode;
-    ItemChildren m_children;
 };
 } // namespace Fy::Filters
