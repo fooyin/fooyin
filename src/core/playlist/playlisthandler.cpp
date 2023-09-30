@@ -33,6 +33,29 @@
 #include <ranges>
 
 namespace Fy::Core::Playlist {
+bool replaceCommonTracks(TrackList& tracks, const TrackList& updatedTracks)
+{
+    TrackList result;
+    result.reserve(tracks.size());
+    bool haveCommonTracks{false};
+
+    for(const Track& track : tracks) {
+        auto it = std::ranges::find_if(std::as_const(updatedTracks), [&](const Track& updatedTrack) {
+            return track.id() == updatedTrack.id();
+        });
+        if(it != updatedTracks.end()) {
+            result.push_back(*it);
+            haveCommonTracks = true;
+        }
+        else {
+            result.push_back(track);
+        }
+    }
+
+    tracks = result;
+    return haveCommonTracks;
+}
+
 struct PlaylistHandler::Private : QObject
 {
     PlaylistHandler* handler;
@@ -58,6 +81,7 @@ struct PlaylistHandler::Private : QObject
         connect(library, &Core::Library::MusicLibrary::tracksLoaded, this,
                 &PlaylistHandler::Private::populatePlaylists);
         connect(library, &Core::Library::MusicLibrary::libraryRemoved, this, &PlaylistHandler::Private::libraryRemoved);
+        connect(library, &Core::Library::MusicLibrary::tracksUpdated, this, &PlaylistHandler::Private::tracksUpdated);
         connect(playerManager, &Player::PlayerManager::nextTrack, this, &PlaylistHandler::Private::next);
         connect(playerManager, &Player::PlayerManager::previousTrack, this, &PlaylistHandler::Private::previous);
     }
@@ -287,6 +311,17 @@ struct PlaylistHandler::Private : QObject
                 }
             }
             playlist.replaceTracks(tracks);
+        }
+    }
+
+    void tracksUpdated(const Core::TrackList& tracks)
+    {
+        for(auto& playlist : playlists) {
+            TrackList playlistTracks = playlist.tracks();
+            if(replaceCommonTracks(playlistTracks, tracks)) {
+                playlist.replaceTracks(playlistTracks);
+                emit handler->playlistTracksChanged(playlist);
+            }
         }
     }
 
