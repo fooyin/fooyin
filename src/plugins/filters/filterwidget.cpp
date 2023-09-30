@@ -80,10 +80,13 @@ struct FilterWidget::Private : QObject
 
         Core::TrackList tracks;
         for(const auto& index : indexes) {
-            if(index.isValid()) {
-                const auto newTracks = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
-                std::ranges::copy(newTracks, std::back_inserter(tracks));
+            const bool isAllNode = index.data(FilterItemRole::AllNode).toBool();
+            if(isAllNode) {
+                tracks = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
+                break;
             }
+            const auto newTracks = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
+            std::ranges::copy(newTracks, std::back_inserter(tracks));
         }
 
         const auto sortedTracks = Utils::asyncExec<Core::TrackList>([&tracks]() {

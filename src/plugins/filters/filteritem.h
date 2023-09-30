@@ -29,8 +29,9 @@ namespace Fy::Filters {
 enum FilterItemRole
 {
     Title   = Qt::UserRole + 1,
-    Tracks  = Qt::UserRole + 2,
-    Sorting = Qt::UserRole + 3,
+    Tracks,
+    Sorting,
+    AllNode
 };
 
 class FilterItem;

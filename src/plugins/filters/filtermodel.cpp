@@ -191,6 +191,9 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         case(FilterItemRole::Sorting): {
             return item->sortTitle();
         }
+        case(FilterItemRole::AllNode): {
+            return item->isAllNode();
+        }
         case(Qt::SizeHintRole): {
             return QSize{0, p->rowHeight};
         }
