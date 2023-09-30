@@ -81,7 +81,7 @@ int Playlist::insertPlaylist(const QString& name, int index)
 
 bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
 {
-    if(id < 0 || tracks.empty()) {
+    if(id < 0) {
         return false;
     }
 
