@@ -45,6 +45,7 @@ public:
 
     void setIndex(int index);
     void setName(const QString& name);
+    void setModified(bool modified);
 
     void replaceTracks(const TrackList& tracks);
     void appendTracks(const TrackList& tracks);

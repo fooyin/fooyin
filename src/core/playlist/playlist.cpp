@@ -93,6 +93,11 @@ void Playlist::setName(const QString& name)
     m_name = name;
 }
 
+void Playlist::setModified(bool modified)
+{
+    m_modified = modified;
+}
+
 void Playlist::replaceTracks(const TrackList& tracks)
 {
     m_tracks   = tracks;

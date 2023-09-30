@@ -290,6 +290,9 @@ struct PlaylistHandler::Private : QObject
         };
 
         std::ranges::for_each(playlists, populatePlaylist);
+        std::ranges::for_each(playlists, [](Playlist& playlist) {
+            playlist.setModified(false);
+        });
 
         database->commit();
 
@@ -508,9 +511,11 @@ int PlaylistHandler::playlistCount() const
 void PlaylistHandler::savePlaylists()
 {
     p->updateIndices();
-    for(const auto& playlist : p->playlists) {
+    for(auto& playlist : p->playlists) {
         if(playlist.wasModified()) {
-            p->playlistConnector->insertPlaylistTracks(playlist.id(), playlist.tracks());
+            if(p->playlistConnector->insertPlaylistTracks(playlist.id(), playlist.tracks())) {
+                playlist.setModified(false);
+            }
         }
     }
     p->settings->set<Settings::ActivePlaylistId>(p->activePlaylistId);
