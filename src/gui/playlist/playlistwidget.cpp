@@ -116,13 +116,6 @@ struct PlaylistWidget::Private : QObject
         connect(playlistController, &PlaylistController::refreshPlaylist, this,
                 &PlaylistWidget::Private::changePlaylist);
 
-        //    connect(p->library, &Core::Library::MusicLibrary::tracksSorted, p->model, &PlaylistModel::reset);
-        //    connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, p->model, &PlaylistModel::reset);
-        //    connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, p->model, &PlaylistModel::reset);
-        //    connect(p->library, &Core::Library::MusicLibrary::tracksAdded, p->model, &PlaylistModel::setupModelData);
-        //    connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, p->model, &PlaylistModel::reset);
-        //    connect(p->library, &Core::Library::MusicLibrary::libraryChanged, p->model, &PlaylistModel::reset);
-
         QObject::connect(controller->presetRegistry(), &PresetRegistry::presetChanged, this,
                          &PlaylistWidget::Private::onPresetChanged);
 
