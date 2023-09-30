@@ -22,7 +22,6 @@ set(SOURCES
     trackfilterer.cpp
 
     settings/fieldmodel.cpp
-    settings/filtersappearancepage.cpp
     settings/filtersettings.cpp
     settings/filtersfieldspage.cpp
     settings/filtersgeneralpage.cpp

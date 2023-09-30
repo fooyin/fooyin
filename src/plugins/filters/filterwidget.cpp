@@ -197,6 +197,22 @@ struct FilterWidget::Private : QObject
         model->reload(manager->tracks());
         model->sortFilter();
     }
+
+    void updateFont(const QString& font)
+    {
+        QFont filterFont;
+        filterFont.fromString(font);
+        model->setFont(filterFont);
+    }
+
+    void updateColour(const QByteArray& colourArray)
+    {
+        QByteArray colourData{colourArray};
+        QDataStream colourStream{&colourData, QIODeviceBase::ReadOnly};
+        QColor colour;
+        colourStream >> colour;
+        model->setColour(colour);
+    }
 };
 
 FilterWidget::FilterWidget(FilterManager* manager, Gui::TrackSelectionController* trackSelection,
@@ -220,7 +236,8 @@ FilterWidget::FilterWidget(FilterManager* manager, Gui::TrackSelectionController
     setAltColors(p->settings->value<Settings::FilterAltColours>());
 
     p->model->setRowHeight(p->settings->value<Settings::FilterRowHeight>());
-    p->model->setFontSize(p->settings->value<Settings::FilterFontSize>());
+    p->updateFont(p->settings->value<Settings::FilterFont>());
+    p->updateColour(p->settings->value<Settings::FilterColour>());
 
     p->resetByType();
 }
@@ -236,7 +253,8 @@ void FilterWidget::setupConnections()
     p->settings->subscribe<Settings::FilterHeader>(this, &FilterWidget::setHeaderEnabled);
     p->settings->subscribe<Settings::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
     p->settings->subscribe<Settings::FilterRowHeight>(p->model, &FilterModel::setRowHeight);
-    p->settings->subscribe<Settings::FilterFontSize>(p->model, &FilterModel::setFontSize);
+    p->settings->subscribe<Settings::FilterFont>(p.get(), &FilterWidget::Private::updateFont);
+    p->settings->subscribe<Settings::FilterColour>(p.get(), &FilterWidget::Private::updateColour);
 
     connect(p->view->header(), &FilterView::customContextMenuRequested, this, &FilterWidget::customHeaderMenuRequested);
     connect(p->view, &QTreeView::doubleClicked, this, []() {

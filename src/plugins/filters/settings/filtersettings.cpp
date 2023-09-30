@@ -21,6 +21,10 @@
 
 #include <utils/settings/settingsmanager.h>
 
+#include <QApplication>
+#include <QFont>
+#include <QPalette>
+
 namespace Fy::Filters::Settings {
 FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
@@ -29,7 +33,13 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::FilterHeader, true, "Filters");
     m_settings->createSetting(Settings::FilterScrollBar, true, "Filters");
     m_settings->createSetting(Settings::FilterFields, "", "Filters");
-    m_settings->createSetting(Settings::FilterFontSize, 13, "Filters");
+    m_settings->createSetting(Settings::FilterFont, QApplication::font().toString(), "Filters");
+
+    QByteArray colour;
+    QDataStream colourStream{&colour, QIODeviceBase::WriteOnly};
+    colourStream << QApplication::palette().text().color();
+    m_settings->createSetting(Settings::FilterColour, colour, "Filters");
+
     m_settings->createSetting(Settings::FilterRowHeight, 25, "Filters");
     m_settings->createSetting(Settings::FilterDoubleClick, 1, "Filters");
     m_settings->createSetting(Settings::FilterMiddleClick, 0, "Filters");

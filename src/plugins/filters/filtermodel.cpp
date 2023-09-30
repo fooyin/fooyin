@@ -27,6 +27,8 @@
 
 #include <utils/helpers.h>
 
+#include <QColor>
+#include <QFont>
 #include <QSize>
 
 namespace Fy::Filters {
@@ -44,7 +46,8 @@ struct FilterModel::Private
     Qt::SortOrder sortOrder{Qt::AscendingOrder};
 
     int rowHeight{0};
-    int fontSize{0};
+    QFont font;
+    QColor colour;
 
     Core::Scripting::Registry registry;
     Core::Scripting::Parser parser{&registry};
@@ -160,10 +163,16 @@ void FilterModel::setRowHeight(int height)
     emit layoutChanged({}, {});
 }
 
-void FilterModel::setFontSize(int size)
+void FilterModel::setFont(const QFont& font)
 {
-    p->fontSize = size;
+    p->font = font;
     emit dataChanged({}, {}, {Qt::FontRole});
+}
+
+void FilterModel::setColour(const QColor& colour)
+{
+    p->colour = colour;
+    emit dataChanged({}, {}, {Qt::ForegroundRole});
 }
 
 QVariant FilterModel::data(const QModelIndex& index, int role) const
@@ -198,7 +207,10 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
             return QSize{0, p->rowHeight};
         }
         case(Qt::FontRole): {
-            return p->fontSize;
+            return p->font;
+        }
+        case(Qt::ForegroundRole): {
+            return p->colour;
         }
         default: {
             return {};

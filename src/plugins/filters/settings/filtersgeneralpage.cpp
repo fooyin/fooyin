@@ -22,24 +22,23 @@
 #include "constants.h"
 #include "filtersettings.h"
 
+#include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QColorDialog>
 #include <QComboBox>
+#include <QFontDialog>
 #include <QGroupBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
+#include <QSpinBox>
 #include <QVBoxLayout>
 
 namespace Fy::Filters::Settings {
-enum ClickType
-{
-    Middle,
-    Double
-};
-
 class FiltersGeneralPageWidget : public Utils::SettingsPageWidget
 {
 public:
@@ -48,7 +47,20 @@ public:
     void apply() override;
 
 private:
+    void setValues();
+
     Utils::SettingsManager* m_settings;
+
+    QCheckBox* m_filterHeaders;
+    QCheckBox* m_filterScrollBars;
+    QCheckBox* m_altRowColours;
+
+    QFont m_font;
+    QColor m_colour;
+
+    QPushButton* m_fontButton;
+    QPushButton* m_colourButton;
+    QSpinBox* m_rowHeight;
 
     QComboBox* m_middleClick;
     QComboBox* m_doubleClick;
@@ -60,12 +72,32 @@ private:
 
 FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
+    , m_filterHeaders{new QCheckBox("Show Headers", this)}
+    , m_filterScrollBars{new QCheckBox("Show Scrollbars", this)}
+    , m_altRowColours{new QCheckBox("Alternating Row Colours", this)}
+    , m_fontButton{new QPushButton(QIcon::fromTheme(Gui::Constants::Icons::Font), "Font", this)}
+    , m_colourButton{new QPushButton(QIcon::fromTheme(Gui::Constants::Icons::TextColour), "Colour", this)}
+    , m_rowHeight{new QSpinBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
     , m_playlistEnabled{new QCheckBox("Enabled", this)}
     , m_autoSwitch{new QCheckBox("Switch when changed", this)}
     , m_playlistName{new QLineEdit(this)}
 {
+    auto* appearance       = new QGroupBox("Appearance", this);
+    auto* appearanceLayout = new QGridLayout(appearance);
+
+    auto* rowHeightLabel = new QLabel("Row Height: ", this);
+
+    appearanceLayout->addWidget(m_filterHeaders, 0, 0, 1, 2);
+    appearanceLayout->addWidget(m_filterScrollBars, 1, 0, 1, 2);
+    appearanceLayout->addWidget(m_altRowColours, 2, 0, 1, 2);
+    appearanceLayout->addWidget(rowHeightLabel, 3, 0);
+    appearanceLayout->addWidget(m_rowHeight, 3, 1);
+    appearanceLayout->addWidget(m_fontButton, 4, 0);
+    appearanceLayout->addWidget(m_colourButton, 4, 1);
+    appearanceLayout->setColumnStretch(2, 1);
+
     auto* clickBehaviour       = new QGroupBox("Click Behaviour", this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
@@ -92,8 +124,35 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* setti
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(clickBehaviour, 0, 0);
     mainLayout->addWidget(selectionPlaylist, 0, 1);
-    mainLayout->setRowStretch(1, 1);
+    mainLayout->addWidget(appearance, 1, 0);
+    mainLayout->setColumnStretch(1, 1);
+    mainLayout->setRowStretch(2, 1);
 
+    setValues();
+}
+
+void FiltersGeneralPageWidget::apply()
+{
+    m_settings->set<Settings::FilterHeader>(m_filterHeaders->isChecked());
+    m_settings->set<Settings::FilterScrollBar>(m_filterScrollBars->isChecked());
+    m_settings->set<Settings::FilterAltColours>(m_altRowColours->isChecked());
+    m_settings->set<Settings::FilterFont>(m_font.toString());
+
+    QByteArray colour;
+    QDataStream colourStream{&colour, QIODeviceBase::WriteOnly};
+    colourStream << m_colour;
+    m_settings->set<Settings::FilterColour>(colour);
+
+    m_settings->set<Settings::FilterRowHeight>(m_rowHeight->value());
+    m_settings->set<Settings::FilterDoubleClick>(m_doubleClick->currentData().toInt());
+    m_settings->set<Settings::FilterMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Settings::FilterPlaylistEnabled>(m_playlistEnabled->isChecked());
+    m_settings->set<Settings::FilterAutoSwitch>(m_autoSwitch->isChecked());
+    m_settings->set<Settings::FilterAutoPlaylist>(m_playlistName->text());
+}
+
+void FiltersGeneralPageWidget::setValues()
+{
     using ActionIndexMap = std::map<int, int>;
     ActionIndexMap doubleActions;
     ActionIndexMap middleActions;
@@ -131,21 +190,39 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* setti
         m_autoSwitch->setEnabled(checked);
     });
 
+    m_filterHeaders->setChecked(m_settings->value<Settings::FilterHeader>());
+    m_filterScrollBars->setChecked(m_settings->value<Settings::FilterScrollBar>());
+    m_altRowColours->setChecked(m_settings->value<Settings::FilterAltColours>());
+    m_rowHeight->setValue(m_settings->value<Settings::FilterRowHeight>());
+
     m_playlistEnabled->setChecked(m_settings->value<Settings::FilterPlaylistEnabled>());
     m_autoSwitch->setChecked(m_settings->value<Settings::FilterAutoSwitch>());
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
 
     m_playlistName->setText(m_settings->value<Settings::FilterAutoPlaylist>());
-}
 
-void FiltersGeneralPageWidget::apply()
-{
-    m_settings->set<Settings::FilterDoubleClick>(m_doubleClick->currentData().toInt());
-    m_settings->set<Settings::FilterMiddleClick>(m_middleClick->currentData().toInt());
-    m_settings->set<Settings::FilterPlaylistEnabled>(m_playlistEnabled->isChecked());
-    m_settings->set<Settings::FilterAutoSwitch>(m_autoSwitch->isChecked());
-    m_settings->set<Settings::FilterAutoPlaylist>(m_playlistName->text());
+    m_font.fromString(m_settings->value<Settings::FilterFont>());
+
+    QByteArray colour{m_settings->value<Settings::FilterColour>()};
+    QDataStream colourStream{&colour, QIODeviceBase::ReadOnly};
+    colourStream >> m_colour;
+
+    QObject::connect(m_fontButton, &QPushButton::pressed, this, [this]() {
+        bool ok;
+        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, "Select Font");
+        if(ok && chosenFont != m_font) {
+            m_font = chosenFont;
+        }
+    });
+
+    QObject::connect(m_colourButton, &QPushButton::pressed, this, [this]() {
+        const QColor chosenColour
+            = QColorDialog::getColor(m_colour, this, "Select Colour", QColorDialog::ShowAlphaChannel);
+        if(chosenColour.isValid() && chosenColour != m_colour) {
+            m_colour = chosenColour;
+        }
+    });
 }
 
 FiltersGeneralPage::FiltersGeneralPage(Utils::SettingsManager* settings)

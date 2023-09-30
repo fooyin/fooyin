@@ -39,7 +39,8 @@ public:
     void setField(FilterField* field);
     void setSortOrder(Qt::SortOrder order);
     void setRowHeight(int height);
-    void setFontSize(int size);
+    void setFont(const QFont& font);
+    void setColour(const QColor& colour);
 
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
