@@ -30,6 +30,8 @@
 #include <core/library/tracksort.h>
 #include <core/player/playermanager.h>
 
+#include <gui/trackselectioncontroller.h>
+
 #include <utils/actions/actioncontainer.h>
 #include <utils/async.h>
 #include <utils/enumhelper.h>
@@ -37,6 +39,7 @@
 
 #include <QAction>
 #include <QActionGroup>
+#include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QJsonObject>
@@ -48,15 +51,18 @@ struct FilterWidget::Private : QObject
     FilterWidget* widget;
 
     FilterManager* manager;
+    Gui::TrackSelectionController* trackSelection;
     Utils::SettingsManager* settings;
 
     LibraryFilter* filter;
     FilterView* view;
     FilterModel* model;
 
-    Private(FilterWidget* widget, FilterManager* manager, Utils::SettingsManager* settings)
+    Private(FilterWidget* widget, FilterManager* manager, Gui::TrackSelectionController* trackSelection,
+            Utils::SettingsManager* settings)
         : widget{widget}
         , manager{manager}
+        , trackSelection{trackSelection}
         , settings{settings}
         , filter{manager->registerFilter("")}
         , view{new FilterView(widget)}
@@ -67,6 +73,19 @@ struct FilterWidget::Private : QObject
         connect(manager, &FilterManager::filteredItems, this, &FilterWidget::Private::resetByIndex);
         connect(manager, &FilterManager::filterChanged, this, &FilterWidget::Private::editFilter);
         connect(manager, &FilterManager::fieldChanged, this, &FilterWidget::Private::fieldChanged);
+    }
+
+    QString playlistNameFromSelection() const
+    {
+        QString title;
+        const QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
+        for(const auto& index : selectedIndexes) {
+            if(!title.isEmpty()) {
+                title.append(", ");
+            }
+            title.append(index.data().toString());
+        }
+        return title;
     }
 
     void selectionChanged()
@@ -93,6 +112,7 @@ struct FilterWidget::Private : QObject
             return Core::Library::Sorting::sortTracks(tracks);
         });
 
+        trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
         filter->tracks = sortedTracks;
         manager->selectionChanged(filter->index);
     }
@@ -141,9 +161,10 @@ struct FilterWidget::Private : QObject
     }
 };
 
-FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
+FilterWidget::FilterWidget(FilterManager* manager, Gui::TrackSelectionController* trackSelection,
+                           Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, manager, settings)}
+    , p{std::make_unique<Private>(this, manager, trackSelection, settings)}
 {
     setObjectName(FilterWidget::name());
 
@@ -270,5 +291,16 @@ void FilterWidget::loadLayout(const QJsonObject& object)
         p->model->setSortOrder(order.value());
     }
     setField(object["Type"].toString());
+}
+
+void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    p->trackSelection->addTrackPlaylistContextMenu(menu);
+    p->trackSelection->addTrackContextMenu(menu);
+
+    menu->popup(mapToGlobal(event->pos()));
 }
 } // namespace Fy::Filters

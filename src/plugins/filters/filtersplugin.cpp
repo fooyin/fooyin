@@ -51,9 +51,10 @@ void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
 {
     m_layoutProvider = context.layoutProvider;
     m_factory        = context.widgetFactory;
+    m_trackSelection = context.trackSelection;
 
     m_factory->registerClass<FilterWidget>("Filter", [this]() {
-        return new FilterWidget(m_filterManager, m_settings);
+        return new FilterWidget(m_filterManager, m_trackSelection, m_settings);
     });
 
     m_factory->registerClass<SearchWidget>("Search", [this]() {

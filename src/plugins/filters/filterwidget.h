@@ -28,6 +28,10 @@ namespace Utils {
 class SettingsManager;
 }
 
+namespace Gui {
+class TrackSelectionController;
+}
+
 namespace Filters {
 class FilterManager;
 
@@ -36,7 +40,8 @@ class FilterWidget : public Gui::Widgets::FyWidget
     Q_OBJECT
 
 public:
-    explicit FilterWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit FilterWidget(FilterManager* manager, Gui::TrackSelectionController* trackSelection,
+                          Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();
@@ -61,6 +66,9 @@ public:
 
 signals:
     void typeChanged(int index);
+
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
     struct Private;

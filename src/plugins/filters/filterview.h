@@ -40,7 +40,6 @@ protected:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
-    void contextMenuEvent(QContextMenuEvent* event) override;
 };
 } // namespace Filters
 } // namespace Fy

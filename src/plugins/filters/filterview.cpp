@@ -72,9 +72,4 @@ void FilterView::keyPressEvent(QKeyEvent* e)
     }
     QTreeView::keyPressEvent(e);
 }
-
-void FilterView::contextMenuEvent(QContextMenuEvent* e)
-{
-    Q_UNUSED(e)
-}
 } // namespace Fy::Filters

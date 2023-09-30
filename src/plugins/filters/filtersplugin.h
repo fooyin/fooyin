@@ -62,6 +62,7 @@ private:
     Core::Playlist::PlaylistHandler* m_playlistHandler;
     Gui::LayoutProvider* m_layoutProvider;
     Gui::Widgets::WidgetFactory* m_factory;
+    Gui::TrackSelectionController* m_trackSelection;
 
     FilterManager* m_filterManager;
     std::unique_ptr<FieldRegistry> m_fieldsRegistry;
