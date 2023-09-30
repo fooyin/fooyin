@@ -45,7 +45,7 @@ struct TrackSelectionController::Private : QObject
     Widgets::Playlist::PlaylistController* playlistController;
     Core::Playlist::PlaylistHandler* playlistHandler;
 
-    QString selectionTitle;
+    QString selectionTitle{"New playlist"};
     Core::TrackList tracks;
 
     Utils::ActionContainer* tracksMenu{nullptr};
