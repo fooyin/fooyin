@@ -268,7 +268,7 @@ struct PlaylistWidget::Private : QObject
         }
     }
 
-    void playlistTracksChanged()
+    void playlistTracksChanged() const
     {
         QModelIndexList indexes{{}};
 
@@ -290,10 +290,8 @@ struct PlaylistWidget::Private : QObject
                 tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<Core::Track>());
             }
         }
-        if(!tracks.empty()) {
-            if(auto playlist = controller->currentPlaylist()) {
-                controller->playlistHandler()->replacePlaylistTracks(playlist->id(), tracks);
-            }
+        if(auto playlist = controller->currentPlaylist()) {
+            controller->playlistHandler()->replacePlaylistTracks(playlist->id(), tracks);
         }
     }
 
