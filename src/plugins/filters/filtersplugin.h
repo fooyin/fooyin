@@ -20,9 +20,9 @@
 #pragma once
 
 #include "fieldregistry.h"
-#include "filtersappearancepage.h"
-#include "filtersfieldspage.h"
-#include "filtersgeneralpage.h"
+#include "settings/filtersappearancepage.h"
+#include "settings/filtersfieldspage.h"
+#include "settings/filtersgeneralpage.h"
 
 #include <core/coreplugin.h>
 #include <core/plugins/plugin.h>

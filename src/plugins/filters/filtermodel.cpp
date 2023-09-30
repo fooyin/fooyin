@@ -320,7 +320,5 @@ void FilterModel::removeTracks(const Core::TrackList& tracks)
             p->nodes.erase(item->title());
         }
     }
-
-    //    p->updateAllNode();
 }
 } // namespace Fy::Filters

@@ -9,40 +9,23 @@ project(
 )
 
 set(SOURCES
-    constants.h
-    fieldregistry.h
     fieldregistry.cpp
-    filtersplugin.h
     filtersplugin.cpp
-    filterdelegate.h
     filterdelegate.cpp
-    fieldmodel.h
-    fieldmodel.cpp
-    filtersappearancepage.h
-    filtersappearancepage.cpp
-    filtersfieldspage.h
-    filtersfieldspage.cpp
-    filtersgeneralpage.h
-    filtersgeneralpage.cpp
-    filteritem.h
     filteritem.cpp
-    filtermanager.h
     filtermanager.cpp
-    filtermodel.h
     filtermodel.cpp
-    filtersettings.h
-    filtersettings.cpp
-    filterview.h
     filterview.cpp
-    filterwidget.h
     filterwidget.cpp
-    filterfwd.h
-    filterstore.h
     filterstore.cpp
-    searchwidget.h
     searchwidget.cpp
-    trackfilterer.h
     trackfilterer.cpp
+
+    settings/fieldmodel.cpp
+    settings/filtersappearancepage.cpp
+    settings/filtersettings.cpp
+    settings/filtersfieldspage.cpp
+    settings/filtersgeneralpage.cpp
 )
 
 add_library(fooyin_filters SHARED ${SOURCES})

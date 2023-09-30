@@ -20,15 +20,14 @@
 #include "filtersplugin.h"
 
 #include "filtermanager.h"
-#include "filtersettings.h"
 #include "filterwidget.h"
 #include "searchwidget.h"
+#include "settings/filtersettings.h"
 
 #include <gui/layoutprovider.h>
 #include <gui/widgetfactory.h>
 
 #include <utils/actions/actioncontainer.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <QMenu>
 

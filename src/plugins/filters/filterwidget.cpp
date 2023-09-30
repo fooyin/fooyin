@@ -23,8 +23,8 @@
 #include "filteritem.h"
 #include "filtermanager.h"
 #include "filtermodel.h"
-#include "filtersettings.h"
 #include "filterview.h"
+#include "settings/filtersettings.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>

@@ -20,7 +20,7 @@
 #pragma once
 
 #include "filterfwd.h"
-#include "filtersettings.h"
+#include "settings/filtersettings.h"
 
 #include <utils/itemregistry.h>
 
