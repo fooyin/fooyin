@@ -73,7 +73,8 @@ public:
 
     void removeTracks(const QModelIndexList& indexes);
 
-    void reset(const Core::Playlist::Playlist&);
+    void reset(const Core::Playlist::Playlist& playlist);
+    void updateHeader(const Core::Playlist::Playlist& playlist);
     void changeTrackState();
     void changePreset(const PlaylistPreset& preset);
 

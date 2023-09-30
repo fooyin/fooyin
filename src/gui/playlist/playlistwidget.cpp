@@ -292,6 +292,7 @@ struct PlaylistWidget::Private : QObject
         }
         if(auto playlist = controller->currentPlaylist()) {
             controller->playlistHandler()->replacePlaylistTracks(playlist->id(), tracks);
+            model->updateHeader(*controller->currentPlaylist());
         }
     }
 

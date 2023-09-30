@@ -188,7 +188,6 @@ struct PlaylistModel::Private : public QObject
     Core::Library::CoverProvider coverProvider;
 
     PlaylistPreset currentPreset;
-    Core::Playlist::Playlist currentPlaylist;
 
     bool altColours;
 
@@ -196,6 +195,8 @@ struct PlaylistModel::Private : public QObject
 
     QThread populatorThread;
     PlaylistPopulator populator;
+
+    QString headerText;
 
     NodeKeyMap pendingNodes;
     ItemKeyMap nodes;
@@ -804,9 +805,8 @@ Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
     return defaultFlags;
 }
 
-QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant PlaylistModel::headerData(int /*section*/, Qt::Orientation orientation, int role) const
 {
-    Q_UNUSED(section)
     if(role == Qt::TextAlignmentRole) {
         return (Qt::AlignHCenter);
     }
@@ -815,10 +815,7 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
         return {};
     }
 
-    if(!p->currentPlaylist.isValid()) {
-        return {};
-    }
-    return QString("%1: %2 Tracks").arg(p->currentPlaylist.name()).arg(p->currentPlaylist.trackCount());
+    return p->headerText;
 }
 
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
@@ -1052,12 +1049,19 @@ void PlaylistModel::reset(const Core::Playlist::Playlist& playlist)
 
     p->populator.stopThread();
 
-    p->resetting       = true;
-    p->currentPlaylist = playlist;
+    p->resetting = true;
+    updateHeader(playlist);
 
     QMetaObject::invokeMethod(&p->populator, [this, playlist] {
         p->populator.run(p->currentPreset, playlist.tracks());
     });
+}
+
+void PlaylistModel::updateHeader(const Core::Playlist::Playlist& playlist)
+{
+    if(playlist.isValid()) {
+        p->headerText = QString("%1: %2 Tracks").arg(playlist.name()).arg(playlist.trackCount());
+    }
 }
 
 void PlaylistModel::changeTrackState()
