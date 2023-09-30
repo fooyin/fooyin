@@ -34,9 +34,14 @@ struct FilterModel::Private
 {
     FilterModel* model;
 
+    bool resetting{false};
+
     FilterItem allNode;
     std::unordered_map<QString, FilterItem> nodes;
+    std::unordered_map<int, std::vector<QString>> trackParents;
+
     FilterField* field;
+    Qt::SortOrder sortOrder{Qt::AscendingOrder};
 
     int rowHeight{0};
     int fontSize{0};
@@ -53,41 +58,9 @@ struct FilterModel::Private
     {
         model->resetRoot();
         nodes.clear();
-    }
-
-    void setupModelData(const Core::TrackList& tracks)
-    {
-        if(tracks.empty()) {
-            return;
-        }
-
-        const auto parsedField = parser.parse(field->field);
-        const auto parsedSort  = parser.parse(field->sortField);
 
         allNode = FilterItem{"", "", model->rootItem(), true};
         model->rootItem()->appendChild(&allNode);
-
-        for(const Core::Track& track : tracks) {
-            if(!track.enabled()) {
-                continue;
-            }
-            const QString field = parser.evaluate(parsedField, track);
-            const QString sort  = parser.evaluate(parsedSort, track);
-            if(field.isNull()) {
-                continue;
-            }
-            if(field.contains(Core::Constants::Separator)) {
-                const QStringList values = field.split(Core::Constants::Separator);
-                const auto nodes         = createNodes(values, sort);
-                for(FilterItem* node : nodes) {
-                    node->addTrack(track);
-                }
-            }
-            else {
-                createNode(field, sort)->addTrack(track);
-            }
-            allNode.addTrack(track);
-        }
     }
 
     FilterItem* createNode(const QString& title, const QString& sortTitle)
@@ -95,7 +68,15 @@ struct FilterModel::Private
         FilterItem* filterItem;
         if(!nodes.contains(title)) {
             filterItem = &nodes.emplace(title, FilterItem{title, sortTitle, model->rootItem()}).first->second;
-            model->rootItem()->appendChild(filterItem);
+            if(resetting) {
+                model->rootItem()->appendChild(filterItem);
+            }
+            else {
+                const int row = model->rootItem()->childCount();
+                model->beginInsertRows({}, row, row);
+                model->rootItem()->appendChild(filterItem);
+                model->endInsertRows();
+            }
         }
         filterItem = &nodes.at(title);
         return filterItem;
@@ -110,6 +91,45 @@ struct FilterModel::Private
         }
         return items;
     }
+
+    void addTrackToNode(const Core::Track& track, FilterItem* node)
+    {
+        node->addTrack(track);
+        trackParents[track.id()].push_back(node->title());
+    }
+
+    void populateModel(const Core::TrackList& tracks)
+    {
+        if(tracks.empty()) {
+            return;
+        }
+
+        const auto parsedField = parser.parse(field->field);
+        const auto parsedSort  = parser.parse(field->sortField);
+
+        for(const Core::Track& track : tracks) {
+            if(!track.enabled()) {
+                continue;
+            }
+            const QString field = parser.evaluate(parsedField, track);
+            const QString sort  = parser.evaluate(parsedSort, track);
+            if(field.isNull()) {
+                continue;
+            }
+            if(field.contains(Core::Constants::Separator)) {
+                const QStringList values = field.split(Core::Constants::Separator);
+                const auto nodes         = createNodes(values, sort);
+                for(FilterItem* node : nodes) {
+                    addTrackToNode(track, node);
+                }
+            }
+            else {
+                FilterItem* node = createNode(field, sort);
+                addTrackToNode(track, node);
+            }
+            allNode.addTrack(track);
+        }
+    }
 };
 
 FilterModel::FilterModel(FilterField* field, QObject* parent)
@@ -119,9 +139,19 @@ FilterModel::FilterModel(FilterField* field, QObject* parent)
 
 FilterModel::~FilterModel() = default;
 
+Qt::SortOrder FilterModel::sortOrder() const
+{
+    return p->sortOrder;
+}
+
 void FilterModel::setField(FilterField* field)
 {
     p->field = field;
+}
+
+void FilterModel::setSortOrder(Qt::SortOrder order)
+{
+    p->sortOrder = order;
 }
 
 void FilterModel::setRowHeight(int height)
@@ -149,17 +179,17 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
             if(item->isAllNode()) {
                 return QString("All (%1)").arg(p->nodes.size());
             }
-            const QString& name = item->data(FilterItemRole::Title).toString();
+            const QString& name = item->title();
             return !name.isEmpty() ? name : "?";
         }
         case(FilterItemRole::Title): {
-            return item->data(FilterItemRole::Title);
+            return item->title();
         }
         case(FilterItemRole::Tracks): {
-            return item->data(FilterItemRole::Tracks);
+            return QVariant::fromValue(item->tracks());
         }
         case(FilterItemRole::Sorting): {
-            return item->data(FilterItemRole::Sorting);
+            return item->sortTitle();
         }
         case(Qt::SizeHintRole): {
             return QSize{0, p->rowHeight};
@@ -184,20 +214,16 @@ Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
 
 QVariant FilterModel::headerData(int /*section*/, Qt::Orientation orientation, int role) const
 {
-    if(!p->field) {
+    if(role != Qt::TextAlignmentRole && role != Qt::DisplayRole) {
         return {};
     }
 
-    if(orientation == Qt::Orientation::Vertical) {
+    if(!p->field || orientation == Qt::Orientation::Vertical) {
         return {};
     }
 
     if(role == Qt::TextAlignmentRole) {
         return (Qt::AlignHCenter);
-    }
-
-    if(role != Qt::DisplayRole) {
-        return {};
     }
 
     return p->field->name;
@@ -213,9 +239,10 @@ QHash<int, QByteArray> FilterModel::roleNames() const
     return roles;
 }
 
-void FilterModel::sortFilter(Qt::SortOrder order)
+void FilterModel::sortFilter()
 {
-    rootItem()->sortChildren(order);
+    emit layoutAboutToBeChanged({});
+    rootItem()->sortChildren(p->sortOrder);
     emit layoutChanged({});
 }
 
@@ -242,9 +269,58 @@ void FilterModel::reload(const Core::TrackList& tracks)
     if(!p->field) {
         return;
     }
+
+    p->resetting = true;
+
     beginResetModel();
     p->beginReset();
-    p->setupModelData(tracks);
+    p->populateModel(tracks);
     endResetModel();
+
+    p->resetting = false;
+}
+
+void FilterModel::addTracks(const Core::TrackList& tracks)
+{
+    p->populateModel(tracks);
+    sortFilter();
+}
+
+void FilterModel::updateTracks(const Core::TrackList& tracks)
+{
+    removeTracks(tracks);
+    addTracks(tracks);
+}
+
+void FilterModel::removeTracks(const Core::TrackList& tracks)
+{
+    std::set<FilterItem*> items;
+
+    for(const Core::Track& track : tracks) {
+        const int id = track.id();
+        if(p->trackParents.contains(id)) {
+            const auto trackNodes = p->trackParents[id];
+            for(const QString& node : trackNodes) {
+                FilterItem* item = &p->nodes[node];
+                item->removeTrack(track);
+                items.emplace(item);
+            }
+            p->trackParents.erase(id);
+        }
+    }
+
+    for(FilterItem* item : items) {
+        if(item->trackCount() == 0) {
+            FilterItem* parent = item->parent();
+            const int row      = item->row();
+            beginRemoveRows(indexOfItem(parent), row, row);
+            parent->removeChild(row);
+            parent->resetChildren();
+            endRemoveRows();
+            p->nodes.erase(item->title());
+        }
+    }
+
+    //    p->updateAllNode();
 }
 } // namespace Fy::Filters

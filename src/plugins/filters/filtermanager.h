@@ -70,6 +70,10 @@ signals:
     void filterTracks(const Core::TrackList& tracks, const QString& search);
     void filteredItems(int index);
 
+    void tracksAdded(const Core::TrackList& tracks);
+    void tracksRemoved(const Core::TrackList& tracks);
+    void tracksUpdated(const Core::TrackList& tracks);
+
 private:
     void tracksFiltered(const Core::TrackList& tracks);
     void tracksChanged();

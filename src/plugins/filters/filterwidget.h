@@ -19,13 +19,9 @@
 
 #pragma once
 
-#include "filterfwd.h"
-
 #include <gui/fywidget.h>
 
 #include <QItemSelection>
-
-class QHBoxLayout;
 
 namespace Fy {
 namespace Utils {
@@ -34,8 +30,6 @@ class SettingsManager;
 
 namespace Filters {
 class FilterManager;
-class FilterView;
-class FilterModel;
 
 class FilterWidget : public Gui::Widgets::FyWidget
 {
@@ -68,24 +62,9 @@ public:
 signals:
     void typeChanged(int index);
 
-protected:
-    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
-
 private:
-    void fieldChanged(const FilterField& field);
-    void editFilter(int index, const QString& name);
-    void changeOrder();
-    void resetByIndex(int idx);
-    void resetByType();
-
-    FilterManager* m_manager;
-    Utils::SettingsManager* m_settings;
-
-    QHBoxLayout* m_layout;
-    LibraryFilter* m_filter;
-    FilterView* m_view;
-    FilterModel* m_model;
-    Qt::SortOrder m_sortOrder;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Filters
 } // namespace Fy

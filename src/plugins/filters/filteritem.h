@@ -41,12 +41,15 @@ public:
     FilterItem() = default;
     explicit FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode = false);
 
-    [[nodiscard]] QVariant data(int role) const;
+    [[nodiscard]] QString title() const;
+    [[nodiscard]] QString sortTitle() const;
+    [[nodiscard]] Core::TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
+
     void addTrack(const Core::Track& track);
+    void removeTrack(const Core::Track& track);
 
     [[nodiscard]] bool isAllNode() const;
-    [[nodiscard]] bool hasSortTitle() const;
 
     void sortChildren(Qt::SortOrder order);
 

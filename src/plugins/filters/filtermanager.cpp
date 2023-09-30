@@ -64,9 +64,9 @@ FilterManager::FilterManager(Core::Library::MusicLibrary* library, Core::Playlis
     connect(&m_searchManager, &TrackFilterer::tracksFiltered, this, &FilterManager::tracksFiltered);
 
     connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, this, &FilterManager::tracksChanged);
-    connect(m_library, &Core::Library::MusicLibrary::tracksUpdated, this, &FilterManager::tracksChanged);
-    connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &FilterManager::tracksChanged);
-    connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, this, &FilterManager::tracksChanged);
+    connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &FilterManager::tracksAdded);
+    connect(m_library, &Core::Library::MusicLibrary::tracksUpdated, this, &FilterManager::tracksUpdated);
+    connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, this, &FilterManager::tracksRemoved);
     connect(m_library, &Core::Library::MusicLibrary::tracksSorted, this, &FilterManager::tracksChanged);
     connect(m_library, &Core::Library::MusicLibrary::libraryChanged, this, &FilterManager::tracksChanged);
     connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &FilterManager::tracksChanged);

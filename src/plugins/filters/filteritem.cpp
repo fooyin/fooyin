@@ -29,18 +29,19 @@ FilterItem::FilterItem(QString title, QString sortTitle, FilterItem* parent, boo
     , m_isAllNode{isAllNode}
 { }
 
-QVariant FilterItem::data(int role) const
+QString FilterItem::title() const
 {
-    switch(role) {
-        case(FilterItemRole::Title):
-            return m_title;
-        case(FilterItemRole::Tracks):
-            return QVariant::fromValue(m_tracks);
-        case(FilterItemRole::Sorting):
-            return m_sortTitle;
-        default:
-            return {};
-    }
+    return m_title;
+}
+
+QString FilterItem::sortTitle() const
+{
+    return m_sortTitle;
+}
+
+Core::TrackList FilterItem::tracks() const
+{
+    return m_tracks;
 }
 
 int FilterItem::trackCount() const
@@ -53,14 +54,19 @@ void FilterItem::addTrack(const Core::Track& track)
     m_tracks.emplace_back(track);
 }
 
+void FilterItem::removeTrack(const Core::Track& track)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+    m_tracks.erase(std::ranges::find_if(m_tracks, [track](const Core::Track& child) {
+        return child.id() == track.id();
+    }));
+}
+
 bool FilterItem::isAllNode() const
 {
     return m_isAllNode;
-}
-
-bool FilterItem::hasSortTitle() const
-{
-    return !m_sortTitle.isEmpty();
 }
 
 void FilterItem::sortChildren(Qt::SortOrder order)
@@ -73,8 +79,8 @@ void FilterItem::sortChildren(Qt::SortOrder order)
         if(rhs->m_isAllNode) {
             return false;
         }
-        const auto lTitle = lhs->hasSortTitle() ? lhs->m_sortTitle : lhs->m_title;
-        const auto rTitle = rhs->hasSortTitle() ? rhs->m_sortTitle : rhs->m_title;
+        const auto lTitle = !lhs->m_sortTitle.isEmpty() ? lhs->m_sortTitle : lhs->m_title;
+        const auto rTitle = !rhs->m_sortTitle.isEmpty() ? rhs->m_sortTitle : rhs->m_title;
 
         const auto cmp = QString::localeAwareCompare(lTitle, rTitle);
         if(cmp == 0) {
