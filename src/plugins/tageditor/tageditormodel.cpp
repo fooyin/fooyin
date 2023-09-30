@@ -182,7 +182,12 @@ void TagEditorModel::updateEditorValues()
             p->scriptRegistry.changeCurrentTrack(track);
             const auto result = p->scriptRegistry.varValue(var);
             if(result.cond) {
-                p->tags[field].addTrackValue(result.value);
+                if(result.value.contains(Core::Constants::Separator)) {
+                    p->tags[field].addTrackValue(result.value.split(Core::Constants::Separator));
+                }
+                else {
+                    p->tags[field].addTrackValue(result.value);
+                }
             }
         }
         ++count;
