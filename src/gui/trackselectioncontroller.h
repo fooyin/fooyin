@@ -29,7 +29,7 @@ namespace Fy {
 namespace Utils {
 class ActionManager;
 class SettingsManager;
-}
+} // namespace Utils
 
 namespace Gui {
 namespace Widgets::Playlist {
@@ -49,8 +49,9 @@ enum class TrackAction
 
 enum ActionOption
 {
-    None   = 1 << 0,
-    Switch = 1 << 1,
+    None       = 1 << 0,
+    Switch     = 1 << 1,
+    KeepActive = 1 << 2,
 };
 Q_DECLARE_FLAGS(ActionOptions, ActionOption)
 

@@ -116,6 +116,21 @@ struct TrackSelectionController::Private : QObject
 
     void sendToNewPlaylist(ActionOptions options = {}, const QString& playlistName = {})
     {
+        if(options & KeepActive) {
+            auto activePlaylist = playlistHandler->activePlaylist();
+            if(!activePlaylist || activePlaylist->name() != playlistName) {
+                playlistHandler->createPlaylist(playlistName, tracks, options & Switch);
+                return;
+            }
+            const QString keepActiveName = playlistName + " (Playback)";
+            if(auto keepActivePlaylist = playlistHandler->playlistByName(keepActiveName)) {
+                playlistHandler->exchangePlaylist(*keepActivePlaylist, *activePlaylist);
+                playlistHandler->changeActivePlaylist(keepActivePlaylist->id());
+            }
+            else {
+                playlistHandler->renamePlaylist(activePlaylist->id(), keepActiveName);
+            }
+        }
         playlistHandler->createPlaylist(playlistName, tracks, options & Switch);
     }
 

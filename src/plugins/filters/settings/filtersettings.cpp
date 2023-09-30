@@ -31,6 +31,11 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting(Settings::FilterFields, "", "Filters");
     m_settings->createSetting(Settings::FilterFontSize, 13, "Filters");
     m_settings->createSetting(Settings::FilterRowHeight, 25, "Filters");
+    m_settings->createSetting(Settings::FilterDoubleClick, 1, "Filters");
+    m_settings->createSetting(Settings::FilterMiddleClick, 0, "Filters");
+    m_settings->createSetting(Settings::FilterPlaylistEnabled, true, "Filters");
+    m_settings->createSetting(Settings::FilterAutoSwitch, true, "Filters");
+    m_settings->createSetting(Settings::FilterAutoPlaylist, "Filter Results", "Filters");
 
     m_settings->loadSettings();
 }

@@ -19,16 +19,9 @@
 
 #pragma once
 
-#include <QListView>
 #include <QTreeView>
 
-namespace Fy {
-
-namespace Core::Player {
-class PlayerManager;
-}
-
-namespace Filters {
+namespace Fy::Filters {
 class FilterView : public QTreeView
 {
     Q_OBJECT
@@ -36,10 +29,13 @@ class FilterView : public QTreeView
 public:
     explicit FilterView(QWidget* parent = nullptr);
 
+signals:
+    void middleMouseClicked();
+    void doubleClicked();
+
 protected:
-    void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent* event) override;
 };
-} // namespace Filters
-} // namespace Fy
+} // namespace Fy::Filters

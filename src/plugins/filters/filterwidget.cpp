@@ -58,6 +58,9 @@ struct FilterWidget::Private : QObject
     FilterView* view;
     FilterModel* model;
 
+    Gui::TrackAction doubleClickAction;
+    Gui::TrackAction middleClickAction;
+
     Private(FilterWidget* widget, FilterManager* manager, Gui::TrackSelectionController* trackSelection,
             Utils::SettingsManager* settings)
         : widget{widget}
@@ -68,11 +71,35 @@ struct FilterWidget::Private : QObject
         , view{new FilterView(widget)}
         , model{new FilterModel(&filter->field, widget)}
     {
+        QObject::connect(view, &FilterView::doubleClicked, this, &FilterWidget::Private::handleDoubleClick);
+        QObject::connect(view, &FilterView::middleMouseClicked, this, &FilterWidget::Private::handleMiddleClicked);
+
         connect(view->header(), &QHeaderView::sectionClicked, this, &FilterWidget::Private::changeOrder);
 
         connect(manager, &FilterManager::filteredItems, this, &FilterWidget::Private::resetByIndex);
         connect(manager, &FilterManager::filterChanged, this, &FilterWidget::Private::editFilter);
         connect(manager, &FilterManager::fieldChanged, this, &FilterWidget::Private::fieldChanged);
+
+        settings->subscribe<Settings::FilterDoubleClick>(widget, [this](int action) {
+            doubleClickAction = static_cast<Gui::TrackAction>(action);
+        });
+        settings->subscribe<Settings::FilterMiddleClick>(widget, [this](int action) {
+            middleClickAction = static_cast<Gui::TrackAction>(action);
+        });
+    }
+
+    void handleDoubleClick() const
+    {
+        const bool autoSwitch = settings->value<Settings::FilterAutoSwitch>();
+        trackSelection->executeAction(doubleClickAction, autoSwitch ? Gui::Switch : Gui::None,
+                                      playlistNameFromSelection());
+    }
+
+    void handleMiddleClicked() const
+    {
+        const bool autoSwitch = settings->value<Settings::FilterAutoSwitch>();
+        trackSelection->executeAction(middleClickAction, autoSwitch ? Gui::Switch : Gui::None,
+                                      playlistNameFromSelection());
     }
 
     QString playlistNameFromSelection() const
@@ -115,6 +142,17 @@ struct FilterWidget::Private : QObject
         trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
         filter->tracks = sortedTracks;
         manager->selectionChanged(filter->index);
+
+        if(settings->value<Settings::FilterPlaylistEnabled>()) {
+            const QString playlistName = settings->value<Settings::FilterAutoPlaylist>();
+            const bool autoSwitch      = settings->value<Settings::FilterAutoSwitch>();
+
+            Gui::ActionOptions options = Gui::KeepActive;
+            if(autoSwitch) {
+                options |= Gui::Switch;
+            }
+            trackSelection->executeAction(Gui::TrackAction::SendNewPlaylist, options, playlistName);
+        }
     }
 
     void fieldChanged(const FilterField& field)

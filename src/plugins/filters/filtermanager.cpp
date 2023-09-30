@@ -29,27 +29,6 @@
 #include <QThread>
 
 namespace Fy::Filters {
-constexpr auto FilterPlaylistName       = "Filter Results";
-constexpr auto FilterPlaylistActiveName = "Filter Results (Playback)";
-
-void sendToPlaylist(Core::Playlist::PlaylistHandler* playlistHandler, const Core::TrackList& filteredTracks)
-{
-    auto activePlaylist = playlistHandler->activePlaylist();
-    if(!activePlaylist || activePlaylist->name() != FilterPlaylistName) {
-        playlistHandler->createPlaylist(FilterPlaylistName, filteredTracks);
-        return;
-    }
-
-    if(auto filterPlaylist = playlistHandler->playlistByName(FilterPlaylistActiveName)) {
-        playlistHandler->exchangePlaylist(*filterPlaylist, *activePlaylist);
-        playlistHandler->changeActivePlaylist(filterPlaylist->id());
-    }
-    else {
-        playlistHandler->renamePlaylist(activePlaylist->id(), FilterPlaylistActiveName);
-    }
-    playlistHandler->createPlaylist(FilterPlaylistName, filteredTracks);
-}
-
 FilterManager::FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
                              FieldRegistry* fieldsRegistry, QObject* parent)
     : QObject{parent}
@@ -136,7 +115,6 @@ void FilterManager::selectionChanged(int index)
 {
     m_filterStore.clearActiveFilters(index);
     getFilteredTracks();
-    sendToPlaylist(m_playlistHandler, m_filteredTracks);
     emit filteredItems(index);
 }
 
@@ -176,7 +154,6 @@ QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
 void FilterManager::tracksFiltered(const Core::TrackList& tracks)
 {
     m_filteredTracks = tracks;
-    sendToPlaylist(m_playlistHandler, m_filteredTracks);
     emit filteredItems(-1);
 }
 

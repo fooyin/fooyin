@@ -61,7 +61,7 @@ void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
         return new SearchWidget(m_filterManager, m_settings);
     });
 
-    //    m_generalPage    = std::make_unique<Settings::FiltersGeneralPage>(m_settings);
+    m_generalPage    = std::make_unique<Settings::FiltersGeneralPage>(m_settings);
     m_appearancePage = std::make_unique<Settings::FiltersAppearancePage>(m_settings);
     m_fieldsPage     = std::make_unique<Settings::FiltersFieldsPage>(m_fieldsRegistry.get(), m_settings);
 

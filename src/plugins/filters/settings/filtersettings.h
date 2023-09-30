@@ -33,12 +33,17 @@ namespace Filters::Settings {
 Q_NAMESPACE
 enum Filters : uint32_t
 {
-    FilterAltColours = 1 | Utils::Settings::Bool,
-    FilterHeader     = 2 | Utils::Settings::Bool,
-    FilterScrollBar  = 3 | Utils::Settings::Bool,
-    FilterFields     = 4 | Utils::Settings::ByteArray,
-    FilterFontSize   = 5 | Utils::Settings::Int,
-    FilterRowHeight  = 6 | Utils::Settings::Int,
+    FilterAltColours      = 1 | Utils::Settings::Bool,
+    FilterHeader          = 2 | Utils::Settings::Bool,
+    FilterScrollBar       = 3 | Utils::Settings::Bool,
+    FilterFields          = 4 | Utils::Settings::ByteArray,
+    FilterFontSize        = 5 | Utils::Settings::Int,
+    FilterRowHeight       = 6 | Utils::Settings::Int,
+    FilterDoubleClick     = 7 | Utils::Settings::Int,
+    FilterMiddleClick     = 8 | Utils::Settings::Int,
+    FilterPlaylistEnabled = 9 | Utils::Settings::Bool,
+    FilterAutoSwitch      = 10 | Utils::Settings::Bool,
+    FilterAutoPlaylist    = 11 | Utils::Settings::String,
 
 };
 Q_ENUM_NS(Filters)
