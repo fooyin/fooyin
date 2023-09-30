@@ -135,19 +135,16 @@ QString msToString(uint64_t ms)
     QString formattedTime;
 
     if(weeks > 0) {
-        formattedTime += QString::number(weeks) + "wk ";
+        formattedTime = formattedTime % QString::number(weeks) % "wk ";
     }
     if(days > 0) {
-        formattedTime += QString::number(days) + "d ";
+        formattedTime = formattedTime % QString::number(days) % "d ";
     }
     if(hours > 0) {
-        formattedTime += QString{"%1:"}.arg(hours, 2, 10, QChar('0'));
-    }
-    if(minutes > 0 || hours > 0) {
-        formattedTime += QString{"%1:"}.arg(minutes, 2, 10, QChar('0'));
+        formattedTime = formattedTime % QString{"%1:"}.arg(hours, 2, 10, QChar('0'));
     }
 
-    formattedTime += QString{"%1"}.arg(seconds, 2, 10, QChar('0'));
+    formattedTime = formattedTime % QString{"%1:%2"}.arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0'));
     return formattedTime;
 }
 
