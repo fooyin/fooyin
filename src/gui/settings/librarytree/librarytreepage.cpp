@@ -132,49 +132,40 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     mainLayout->addWidget(clickBehaviour, 1, 0);
     mainLayout->addWidget(selectionPlaylist, 1, 1);
 
-    auto addTrackAction = [](QComboBox* box, const QString& text, TrackAction action) {
-        box->addItem(text, QVariant::fromValue(action));
+    using ActionIndexMap = std::map<int, int>;
+    ActionIndexMap doubleActions;
+    ActionIndexMap middleActions;
+
+    auto addTrackAction = [](QComboBox* box, const QString& text, TrackAction action, ActionIndexMap& actionMap) {
+        const int actionValue = static_cast<int>(action);
+        actionMap.emplace(actionValue, box->count());
+        box->addItem(text, actionValue);
     };
 
-    addTrackAction(m_doubleClick, "Expand/Collapse", TrackAction::Expand);
-    addTrackAction(m_doubleClick, "Add to current playlist", TrackAction::AddCurrentPlaylist);
-    addTrackAction(m_doubleClick, "Add to active playlist", TrackAction::AddActivePlaylist);
-    addTrackAction(m_doubleClick, "Send to current playlist", TrackAction::SendCurrentPlaylist);
-    addTrackAction(m_doubleClick, "Send to new playlist", TrackAction::SendNewPlaylist);
+    addTrackAction(m_doubleClick, "Expand/Collapse", TrackAction::Expand, doubleActions);
+    addTrackAction(m_doubleClick, "Add to current playlist", TrackAction::AddCurrentPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, "Add to active playlist", TrackAction::AddActivePlaylist, doubleActions);
+    addTrackAction(m_doubleClick, "Send to current playlist", TrackAction::SendCurrentPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, "Send to new playlist", TrackAction::SendNewPlaylist, doubleActions);
 
-    addTrackAction(m_middleClick, "None", TrackAction::None);
-    addTrackAction(m_middleClick, "Add to current playlist", TrackAction::AddCurrentPlaylist);
-    addTrackAction(m_middleClick, "Add to active playlist", TrackAction::AddActivePlaylist);
-    addTrackAction(m_middleClick, "Send to current playlist", TrackAction::SendCurrentPlaylist);
-    addTrackAction(m_middleClick, "Send to new playlist", TrackAction::SendNewPlaylist);
+    addTrackAction(m_middleClick, "None", TrackAction::None, middleActions);
+    addTrackAction(m_middleClick, "Add to current playlist", TrackAction::AddCurrentPlaylist, middleActions);
+    addTrackAction(m_middleClick, "Add to active playlist", TrackAction::AddActivePlaylist, middleActions);
+    addTrackAction(m_middleClick, "Send to current playlist", TrackAction::SendCurrentPlaylist, middleActions);
+    addTrackAction(m_middleClick, "Send to new playlist", TrackAction::SendNewPlaylist, middleActions);
 
     QObject::connect(addButton, &QPushButton::clicked, this, &LibraryTreePageWidget::addGroup);
     QObject::connect(removeButton, &QPushButton::clicked, this, &LibraryTreePageWidget::removeGroup);
 
-    auto clickIndex = [](ClickType type, TrackAction action) -> int {
-        switch(action) {
-            case(TrackAction::None):
-                return type == Middle ? 0 : -1;
-            case TrackAction::Expand:
-                return type == Double ? 0 : -1;
-            case TrackAction::AddCurrentPlaylist:
-                return 1;
-            case TrackAction::AddActivePlaylist:
-                return 2;
-            case TrackAction::SendCurrentPlaylist:
-                return 3;
-            case TrackAction::SendNewPlaylist:
-                return 4;
-            default:
-                return -1;
-        }
-    };
+    auto doubleAction = m_settings->value<Settings::LibraryTreeDoubleClick>();
+    if(doubleActions.contains(doubleAction)) {
+        m_doubleClick->setCurrentIndex(doubleActions.at(doubleAction));
+    }
 
-    auto doubleAction = static_cast<TrackAction>(m_settings->value<Settings::LibraryTreeDoubleClick>());
-    m_doubleClick->setCurrentIndex(clickIndex(Double, doubleAction));
-
-    auto middleAction = static_cast<TrackAction>(m_settings->value<Settings::LibraryTreeMiddleClick>());
-    m_middleClick->setCurrentIndex(clickIndex(Middle, middleAction));
+    auto middleAction = m_settings->value<Settings::LibraryTreeMiddleClick>();
+    if(middleActions.contains(middleAction)) {
+        m_middleClick->setCurrentIndex(middleActions.at(middleAction));
+    }
 
     QObject::connect(m_playlistEnabled, &QCheckBox::clicked, this, [this](bool checked) {
         m_playlistName->setEnabled(checked);
