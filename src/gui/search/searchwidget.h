@@ -46,8 +46,6 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
-    void searchBoxContextMenu(bool editing);
-
 private:
     SearchController* m_controller;
     Utils::SettingsManager* m_settings;

@@ -45,11 +45,9 @@ SearchWidget::SearchWidget(SearchController* controller, Utils::SettingsManager*
 
     m_searchBox->setPlaceholderText(Placeholder);
     m_searchBox->setClearButtonEnabled(true);
-    searchBoxContextMenu(m_settings->value<Gui::Settings::LayoutEditing>());
 
     layout->addWidget(m_searchBox);
 
-    m_settings->subscribe<Gui::Settings::LayoutEditing>(this, &SearchWidget::searchBoxContextMenu);
     connect(m_searchBox, &QLineEdit::textChanged, m_controller, &SearchController::searchChanged);
 }
 
@@ -72,16 +70,8 @@ void SearchWidget::keyPressEvent(QKeyEvent* e)
 
 void SearchWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-    Q_UNUSED(event)
-}
-
-void SearchWidget::searchBoxContextMenu(bool editing)
-{
-    if(!editing) {
-        m_searchBox->setContextMenuPolicy(Qt::DefaultContextMenu);
-    }
-    else {
-        m_searchBox->setContextMenuPolicy(Qt::NoContextMenu);
+    if(!m_settings->value<Gui::Settings::LayoutEditing>()) {
+        return QWidget::contextMenuEvent(event);
     }
 }
 } // namespace Fy::Gui::Widgets
