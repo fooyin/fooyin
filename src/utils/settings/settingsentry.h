@@ -38,9 +38,11 @@ public:
     [[nodiscard]] bool writeToDisk() const;
 
     bool setValue(const QVariant& value);
+    bool reset();
 
 signals:
     void settingChanged();
+    void settingChangedNone(QVariant value);
     void settingChangedBool(bool value);
     void settingChangedInt(int value);
     void settingChangedDouble(double value);

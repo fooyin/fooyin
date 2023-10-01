@@ -178,7 +178,7 @@ public:
     }
 
     template <auto key>
-    auto constexpr value()
+    auto value()
     {
         const auto mapKey = getMapKey(key);
 
@@ -211,7 +211,7 @@ public:
 
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
-    void constexpr set(Value value)
+    void set(Value value)
     {
         const auto mapKey = getMapKey(key);
 
@@ -222,31 +222,82 @@ public:
             return;
         }
 
-        if(!m_settings.at(mapKey).setValue(value)) {
+        SettingsEntry& setting = m_settings.at(mapKey);
+
+        if(!setting.setValue(value)) {
             m_lock.unlock();
             return;
         }
 
+        m_lock.unlock();
+
         const auto type = findType<key>();
+
+        if constexpr(type == Settings::Type::None) {
+            emit setting.settingChangedNone(value);
+        }
+        else if constexpr(type == Settings::Type::Bool) {
+            emit setting.settingChangedBool(value);
+        }
+        else if constexpr(type == Settings::Type::Double) {
+            emit setting.settingChangedDouble(value);
+        }
+        else if constexpr(type == Settings::Type::Int) {
+            emit setting.settingChangedInt(value);
+        }
+        else if constexpr(type == Settings::Type::String) {
+            emit setting.settingChangedString(value);
+        }
+        else if constexpr(type == Settings::Type::ByteArray) {
+            emit setting.settingChangedByteArray(value);
+        }
+        emit setting.settingChanged();
+    }
+
+    template <auto key>
+    void reset()
+    {
+        const auto mapKey = getMapKey(key);
+
+        m_lock.lockForWrite();
+
+        if(!m_settings.contains(mapKey)) {
+            m_lock.unlock();
+            return;
+        }
+
+        SettingsEntry& setting = m_settings.at(mapKey);
+
+        if(!setting.reset()) {
+            m_lock.unlock();
+            return;
+        }
+
+        const auto value = setting.value();
 
         m_lock.unlock();
 
-        if constexpr(type == Settings::Type::Bool) {
-            emit m_settings.at(mapKey).settingChangedBool(value);
+        const auto type = findType<key>();
+
+        if constexpr(type == Settings::Type::None) {
+            emit setting.settingChangedNone(value);
+        }
+        else if constexpr(type == Settings::Type::Bool) {
+            emit setting.settingChangedBool(value.toBool());
         }
         else if constexpr(type == Settings::Type::Double) {
-            emit m_settings.at(mapKey).settingChangedDouble(value);
+            emit setting.settingChangedDouble(value.toDouble());
         }
         else if constexpr(type == Settings::Type::Int) {
-            emit m_settings.at(mapKey).settingChangedInt(value);
+            emit setting.settingChangedInt(value.toInt());
         }
         else if constexpr(type == Settings::Type::String) {
-            emit m_settings.at(mapKey).settingChangedString(value);
+            emit setting.settingChangedString(value.toString());
         }
         else if constexpr(type == Settings::Type::ByteArray) {
-            emit m_settings.at(mapKey).settingChangedByteArray(value);
+            emit setting.settingChangedByteArray(value.toByteArray());
         }
-        emit m_settings.at(mapKey).settingChanged();
+        emit setting.settingChanged();
     }
 
 private:

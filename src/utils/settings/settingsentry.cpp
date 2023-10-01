@@ -70,4 +70,9 @@ bool SettingsEntry::setValue(const QVariant& value)
     m_value = value;
     return true;
 }
+
+bool SettingsEntry::reset()
+{
+    return setValue(m_defaultValue);
+}
 } // namespace Fy::Utils
