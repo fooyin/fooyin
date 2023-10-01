@@ -52,7 +52,7 @@ class SortingModel : public Utils::TableModel<SortingItem>
 public:
     explicit SortingModel(Core::Library::SortingRegistry* sortRegistry, QObject* parent = nullptr);
 
-    void setupModelData();
+    void populate();
     void addNewSortScript();
     void markForRemoval(const SortScript& sortScript);
     void markForChange(const SortScript& sortScript);
@@ -65,6 +65,7 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
 private:
+    void reset();
     void removeSortScript(int index);
 
     using SortIndexMap = std::map<int, SortingItem>;

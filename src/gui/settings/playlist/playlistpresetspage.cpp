@@ -20,6 +20,7 @@
 #include "playlistpresetspage.h"
 
 #include "gui/guiconstants.h"
+#include "gui/guisettings.h"
 #include "gui/playlist/playlistpreset.h"
 #include "gui/playlist/presetregistry.h"
 #include "presetinputbox.h"
@@ -37,8 +38,6 @@
 #include <QTabWidget>
 #include <QTableView>
 #include <QVBoxLayout>
-
-#include <deque>
 
 namespace Fy::Gui::Settings {
 using PresetRegistry = Widgets::Playlist::PresetRegistry;
@@ -109,9 +108,13 @@ void createPresetInputs(const TextBlockList& blocks, PresetInputBox* box, QWidge
 class PlaylistPresetsPageWidget : public Utils::SettingsPageWidget
 {
 public:
-    explicit PlaylistPresetsPageWidget(Widgets::Playlist::PresetRegistry* presetRegistry);
+    explicit PlaylistPresetsPageWidget(Widgets::Playlist::PresetRegistry* presetRegistry,
+                                       Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
+
+    void populatePresets();
 
     void newPreset();
     void deletePreset();
@@ -125,6 +128,7 @@ public:
 
 private:
     Widgets::Playlist::PresetRegistry* m_presetRegistry;
+    Utils::SettingsManager* m_settings;
 
     QComboBox* m_presetBox;
     QTabWidget* m_presetTabs;
@@ -150,8 +154,10 @@ private:
     QPushButton* m_clonePreset;
 };
 
-PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRegistry* presetRegistry)
+PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRegistry* presetRegistry,
+                                                     Utils::SettingsManager* settings)
     : m_presetRegistry{presetRegistry}
+    , m_settings{settings}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
     , m_headerRowHeight{new QSpinBox(this)}
@@ -249,16 +255,30 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
         m_headerInfo->setEnabled(!checked);
     });
 
-    const auto& presets = m_presetRegistry->items();
-
-    for(const auto& [index, preset] : presets) {
-        m_presetBox->addItem(preset.name, QVariant::fromValue(preset));
-    }
+    populatePresets();
 }
 
 void PlaylistPresetsPageWidget::apply()
 {
     updatePreset();
+}
+
+void PlaylistPresetsPageWidget::reset()
+{
+    m_settings->reset<Settings::PlaylistPresets>();
+    m_presetRegistry->loadItems();
+    populatePresets();
+}
+
+void PlaylistPresetsPageWidget::populatePresets()
+{
+    m_presetBox->clear();
+
+    const auto& presets = m_presetRegistry->items();
+
+    for(const auto& [index, preset] : presets) {
+        m_presetBox->insertItem(index, preset.name, QVariant::fromValue(preset));
+    }
 }
 
 void PlaylistPresetsPageWidget::newPreset()
@@ -274,6 +294,10 @@ void PlaylistPresetsPageWidget::newPreset()
 
 void PlaylistPresetsPageWidget::deletePreset()
 {
+    if(m_presetBox->count() <= 1) {
+        return;
+    }
+
     const auto preset = m_presetBox->currentData().value<PlaylistPreset>();
 
     if(m_presetRegistry->removeByIndex(preset.index)) {
@@ -368,8 +392,8 @@ PlaylistPresetsPage::PlaylistPresetsPage(Widgets::Playlist::PresetRegistry* pres
     setId(Constants::Page::PlaylistPresets);
     setName(tr("Presets"));
     setCategory({"Playlist", "Presets"});
-    setWidgetCreator([presetRegistry] {
-        return new PlaylistPresetsPageWidget(presetRegistry);
+    setWidgetCreator([presetRegistry, settings] {
+        return new PlaylistPresetsPageWidget(presetRegistry, settings);
     });
 }
 } // namespace Fy::Gui::Settings

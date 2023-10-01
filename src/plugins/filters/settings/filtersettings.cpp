@@ -25,6 +25,17 @@
 #include <QFont>
 #include <QPalette>
 
+namespace {
+QByteArray defaultColour()
+{
+    QByteArray colour;
+    QDataStream colourStream{&colour, QIODeviceBase::WriteOnly};
+    colourStream << QApplication::palette().text().color();
+
+    return colour;
+}
+} // namespace
+
 namespace Fy::Filters::Settings {
 FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
@@ -34,12 +45,7 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::FilterScrollBar>(true, "Filters");
     m_settings->createSetting<Settings::FilterFields>(QByteArray{}, "Filters");
     m_settings->createSetting<Settings::FilterFont>(QApplication::font().toString(), "Filters");
-
-    QByteArray colour;
-    QDataStream colourStream{&colour, QIODeviceBase::WriteOnly};
-    colourStream << QApplication::palette().text().color();
-    m_settings->createSetting<Settings::FilterColour>(colour, "Filters");
-
+    m_settings->createSetting<Settings::FilterColour>(defaultColour(), "Filters");
     m_settings->createSetting<Settings::FilterRowHeight>(25, "Filters");
     m_settings->createSetting<Settings::FilterDoubleClick>(1, "Filters");
     m_settings->createSetting<Settings::FilterMiddleClick>(0, "Filters");

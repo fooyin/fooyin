@@ -36,6 +36,7 @@ public:
     explicit GeneralPageWidget(Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
 
 private:
     Utils::SettingsManager* m_settings;
@@ -71,6 +72,11 @@ GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
 void GeneralPageWidget::apply()
 {
     m_settings->set<Settings::StartupBehaviour>(m_startupBehaviour->currentIndex());
+}
+
+void GeneralPageWidget::reset()
+{
+    m_settings->reset<Settings::StartupBehaviour>();
 }
 
 GeneralPage::GeneralPage(Utils::SettingsManager* settings)

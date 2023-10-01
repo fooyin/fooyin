@@ -36,7 +36,6 @@ struct SettingsDialog::Private : QObject
     SettingsDialog* self;
     SettingsModel* model;
     SimpleTreeView* categoryTree;
-    QGridLayout* mainGridLayout;
     QStackedLayout* stackedLayout;
 
     PageList pages;
@@ -49,7 +48,6 @@ struct SettingsDialog::Private : QObject
         : self{self}
         , model{new SettingsModel(self)}
         , categoryTree{new SimpleTreeView(self)}
-        , mainGridLayout{new QGridLayout(self)}
         , stackedLayout{new QStackedLayout()}
         , pages{std::move(pageList)}
     {
@@ -62,10 +60,11 @@ struct SettingsDialog::Private : QObject
         categoryTree->setFocus();
         categoryTree->expandAll();
 
-        auto* buttonBox
-            = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, self);
+        auto* buttonBox = new QDialogButtonBox(
+            QDialogButtonBox::Reset | QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, self);
         buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
+        auto* mainGridLayout = new QGridLayout(self);
         mainGridLayout->addWidget(categoryTree, 0, 0);
         mainGridLayout->addLayout(stackedLayout, 0, 1);
         mainGridLayout->addWidget(buttonBox, 1, 0, 1, 2);
@@ -76,6 +75,8 @@ struct SettingsDialog::Private : QObject
                 &SettingsDialog::Private::currentChanged);
         connect(buttonBox->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this,
                 &SettingsDialog::Private::apply);
+        connect(buttonBox->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this,
+                &SettingsDialog::Private::reset);
         connect(buttonBox, &QDialogButtonBox::accepted, self, &SettingsDialog::accept);
         connect(buttonBox, &QDialogButtonBox::rejected, self, &SettingsDialog::reject);
     }
@@ -84,6 +85,13 @@ struct SettingsDialog::Private : QObject
     {
         for(const auto& page : visitedPages) {
             page->apply();
+        }
+    }
+
+    void reset()
+    {
+        if(auto page = findPage(currentPage)) {
+            page->reset();
         }
     }
 
@@ -160,6 +168,17 @@ struct SettingsDialog::Private : QObject
         SettingsPage* page = category->pages.at(index);
         currentPage        = page->id();
         visitedPages.emplace(page);
+    }
+
+    SettingsPage* findPage(const Id& id)
+    {
+        auto it = std::ranges::find_if(std::as_const(pages), [&id](SettingsPage* page) {
+            return page->id() == id;
+        });
+        if(it != pages.cend()) {
+            return *it;
+        }
+        return nullptr;
     }
 };
 

@@ -33,6 +33,7 @@ class SettingsPageWidget : public QWidget
 public:
     virtual void apply() = 0;
     virtual void finish() { }
+    virtual void reset() = 0;
 };
 
 class SettingsPage : public QObject
@@ -52,6 +53,7 @@ public:
     virtual QWidget* widget();
     virtual void apply();
     virtual void finish();
+    virtual void reset();
 
 protected:
     void setId(const Id& id);

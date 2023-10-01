@@ -48,7 +48,7 @@ class LibraryTreeGroupModel : public Utils::TableModel<LibraryTreeGroupItem>
 public:
     explicit LibraryTreeGroupModel(Widgets::LibraryTreeGroupRegistry* groupsRegistry, QObject* parent = nullptr);
 
-    void setupModelData();
+    void populate();
     void addNewGroup();
     void markForRemoval(const Widgets::LibraryTreeGrouping& group);
     void markForChange(const Widgets::LibraryTreeGrouping& group);
@@ -61,6 +61,7 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
 private:
+    void reset();
     void removeGroup(int index);
 
     using IndexGroupMap = std::map<int, LibraryTreeGroupItem>;

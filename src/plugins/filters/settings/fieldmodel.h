@@ -46,7 +46,7 @@ class FieldModel : public Utils::TableModel<FieldItem>
 public:
     explicit FieldModel(FieldRegistry* fieldsRegistry, QObject* parent = nullptr);
 
-    void setupModelData();
+    void populate();
     void addNewField();
     void markForRemoval(const FilterField& field);
     void markForChange(const FilterField& field);
@@ -59,13 +59,13 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
 private:
+    void reset();
     void removeField(int index);
 
-    using FieldItemList = std::vector<std::unique_ptr<FieldItem>>;
+    using FieldItemMap = std::map<int, FieldItem>;
 
     FieldRegistry* m_fieldsRegistry;
-
-    FieldItemList m_nodes;
+    FieldItemMap m_nodes;
 };
 } // namespace Settings
 } // namespace Fy::Filters

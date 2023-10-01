@@ -19,6 +19,7 @@
 
 #include "librarysortingpage.h"
 
+#include "core/library/sortingregistry.h"
 #include "gui/guiconstants.h"
 #include "sortingmodel.h"
 
@@ -39,6 +40,7 @@ public:
     explicit LibrarySortingPageWidget(Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
 
 private:
     void addSorting() const;
@@ -58,6 +60,7 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(Core::Library::SortingRegistr
     , m_sortList{new QTableView(this)}
     , m_model{new SortingModel(m_sortRegistry, this)}
 {
+    m_model->populate();
     m_sortList->setModel(m_model);
 
     m_sortList->hideColumn(0);
@@ -87,6 +90,13 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(Core::Library::SortingRegistr
 void LibrarySortingPageWidget::apply()
 {
     m_model->processQueue();
+}
+
+void LibrarySortingPageWidget::reset()
+{
+    m_settings->reset<Core::Settings::LibrarySorting>();
+    m_sortRegistry->loadItems();
+    m_model->populate();
 }
 
 void LibrarySortingPageWidget::addSorting() const

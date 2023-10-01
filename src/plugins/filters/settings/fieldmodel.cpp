@@ -46,12 +46,13 @@ void FieldItem::changeField(const FilterField& field)
 FieldModel::FieldModel(FieldRegistry* fieldsRegistry, QObject* parent)
     : TableModel{parent}
     , m_fieldsRegistry{fieldsRegistry}
-{
-    setupModelData();
-}
+{ }
 
-void FieldModel::setupModelData()
+void FieldModel::populate()
 {
+    beginResetModel();
+    reset();
+
     const auto& fields = m_fieldsRegistry->items();
 
     for(const auto& [index, field] : fields) {
@@ -59,9 +60,11 @@ void FieldModel::setupModelData()
             continue;
         }
         FieldItem* parent = rootItem();
-        FieldItem* child  = m_nodes.emplace_back(std::make_unique<FieldItem>(field, parent)).get();
-        parent->appendChild(child);
+        FieldItem* child  = &m_nodes.emplace(index, FieldItem{field, parent}).first->second;
+        parent->insertChild(index, child);
     }
+
+    endResetModel();
 }
 
 void FieldModel::addNewField()
@@ -71,9 +74,8 @@ void FieldModel::addNewField()
     FilterField field;
     field.index = index;
 
-    auto* parent = rootItem();
-
-    auto* item = m_nodes.emplace_back(std::make_unique<FieldItem>(field, parent)).get();
+    FieldItem* parent = rootItem();
+    FieldItem* item   = &m_nodes.emplace(index, FieldItem{field, parent}).first->second;
 
     item->setStatus(FieldItem::Added);
 
@@ -85,7 +87,7 @@ void FieldModel::addNewField()
 
 void FieldModel::markForRemoval(const FilterField& field)
 {
-    FieldItem* item = m_nodes.at(field.index).get();
+    FieldItem* item = &m_nodes.at(field.index);
 
     if(item->status() == FieldItem::Added) {
         beginRemoveRows({}, item->row(), item->row());
@@ -102,7 +104,8 @@ void FieldModel::markForRemoval(const FilterField& field)
 
 void FieldModel::markForChange(const FilterField& field)
 {
-    FieldItem* item = m_nodes.at(field.index).get();
+    FieldItem* item = &m_nodes.at(field.index);
+
     item->changeField(field);
     const QModelIndex index = indexOfItem(item);
     emit dataChanged(index, index, {Qt::DisplayRole});
@@ -114,19 +117,18 @@ void FieldModel::markForChange(const FilterField& field)
 
 void FieldModel::processQueue()
 {
-    std::vector<FieldItem*> fieldsToRemove;
+    std::vector<int> fieldsToRemove;
 
-    for(auto& node : m_nodes) {
-        FieldItem* item                    = node.get();
-        const FieldItem::ItemStatus status = item->status();
-        const FilterField field            = item->field();
+    for(auto& [index, node] : m_nodes) {
+        const FieldItem::ItemStatus status = node.status();
+        const FilterField field            = node.field();
 
         switch(status) {
             case(FieldItem::Added): {
                 const FilterField addedField = m_fieldsRegistry->addItem(field);
                 if(addedField.isValid()) {
-                    item->changeField(addedField);
-                    item->setStatus(FieldItem::None);
+                    node.changeField(addedField);
+                    node.setStatus(FieldItem::None);
                 }
                 else {
                     qWarning() << QString{"Field %1 could not be added"}.arg(field.name);
@@ -135,10 +137,10 @@ void FieldModel::processQueue()
             }
             case(FieldItem::Removed): {
                 if(m_fieldsRegistry->removeByIndex(field.index)) {
-                    beginRemoveRows({}, item->row(), item->row());
-                    rootItem()->removeChild(item->row());
+                    beginRemoveRows({}, node.row(), node.row());
+                    rootItem()->removeChild(node.row());
                     endRemoveRows();
-                    fieldsToRemove.push_back(item);
+                    fieldsToRemove.push_back(index);
                 }
                 else {
                     qWarning() << QString{"Field (%1) could not be removed"}.arg(field.name);
@@ -147,7 +149,7 @@ void FieldModel::processQueue()
             }
             case(FieldItem::Changed): {
                 if(m_fieldsRegistry->changeItem(field)) {
-                    item->setStatus(FieldItem::None);
+                    node.setStatus(FieldItem::None);
                 }
                 else {
                     qWarning() << QString{"Field (%1) could not be changed"}.arg(field.name);
@@ -158,8 +160,8 @@ void FieldModel::processQueue()
                 break;
         }
     }
-    for(const auto& item : fieldsToRemove) {
-        removeField(item->field().index);
+    for(const auto& index : fieldsToRemove) {
+        removeField(index);
     }
 }
 
@@ -274,17 +276,21 @@ bool FieldModel::setData(const QModelIndex& index, const QVariant& value, int ro
     return true;
 }
 
-int FieldModel::columnCount(const QModelIndex& parent) const
+int FieldModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    Q_UNUSED(parent)
     return 4;
+}
+
+void FieldModel::reset()
+{
+    resetRoot();
+    m_nodes.clear();
 }
 
 void FieldModel::removeField(int index)
 {
-    if(index < 0 || index >= static_cast<int>(m_nodes.size())) {
-        return;
+    if(m_nodes.contains(index)) {
+        m_nodes.erase(index);
     }
-    m_nodes.erase(m_nodes.begin() + index);
 }
 } // namespace Fy::Filters::Settings

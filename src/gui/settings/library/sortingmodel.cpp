@@ -44,12 +44,13 @@ void SortingItem::changeSort(SortScript sortScript)
 SortingModel::SortingModel(Core::Library::SortingRegistry* sortRegistry, QObject* parent)
     : TableModel{parent}
     , m_sortRegistry{sortRegistry}
-{
-    setupModelData();
-}
+{ }
 
-void SortingModel::setupModelData()
+void SortingModel::populate()
 {
+    beginResetModel();
+    reset();
+
     const auto& sortScripts = m_sortRegistry->items();
 
     for(const auto& [index, sortScript] : sortScripts) {
@@ -60,6 +61,8 @@ void SortingModel::setupModelData()
         SortingItem* child  = &m_nodes.emplace(index, SortingItem{sortScript, parent}).first->second;
         parent->appendChild(child);
     }
+
+    endResetModel();
 }
 
 void SortingModel::addNewSortScript()
@@ -264,6 +267,12 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
 int SortingModel::columnCount(const QModelIndex& /*parent*/) const
 {
     return 3;
+}
+
+void SortingModel::reset()
+{
+    resetRoot();
+    m_nodes.clear();
 }
 
 void SortingModel::removeSortScript(int index)

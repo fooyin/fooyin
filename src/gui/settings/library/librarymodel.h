@@ -48,7 +48,7 @@ class LibraryModel : public Utils::TableModel<LibraryItem>
 public:
     explicit LibraryModel(Core::Library::LibraryManager* libraryManager, QObject* parent = nullptr);
 
-    void setupModelData();
+    void populate();
     void markForAddition(const Core::Library::LibraryInfo& info);
     void markForRemoval(const Core::Library::LibraryInfo& info);
     void markForChange(const Core::Library::LibraryInfo& info);
@@ -56,10 +56,10 @@ public:
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
 private:
+    void reset();
     void updateDisplay(const Core::Library::LibraryInfo& info);
 
     Core::Library::LibraryManager* m_libraryManager;

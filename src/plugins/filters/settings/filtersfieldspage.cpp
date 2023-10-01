@@ -19,8 +19,10 @@
 
 #include "filtersfieldspage.h"
 
-#include "constants.h"
 #include "fieldmodel.h"
+#include "filters/constants.h"
+#include "filters/fieldregistry.h"
+#include "filtersettings.h"
 
 #include <utils/settings/settingsmanager.h>
 
@@ -33,25 +35,29 @@ namespace Fy::Filters::Settings {
 class FiltersFieldsPageWidget : public Utils::SettingsPageWidget
 {
 public:
-    explicit FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry);
+    explicit FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry, Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
 
 private:
     void addField() const;
     void removeField() const;
 
     FieldRegistry* m_fieldsRegistry;
+    Utils::SettingsManager* m_settings;
 
     QTableView* m_fieldList;
     FieldModel* m_model;
 };
 
-FiltersFieldsPageWidget::FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry)
+FiltersFieldsPageWidget::FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry, Utils::SettingsManager* settings)
     : m_fieldsRegistry{fieldsRegistry}
+    , m_settings{settings}
     , m_fieldList{new QTableView(this)}
     , m_model{new FieldModel(m_fieldsRegistry, this)}
 {
+    m_model->populate();
     m_fieldList->setModel(m_model);
 
     // Hide index column
@@ -87,6 +93,13 @@ void FiltersFieldsPageWidget::apply()
     m_model->processQueue();
 }
 
+void FiltersFieldsPageWidget::reset()
+{
+    m_settings->reset<Settings::FilterFields>();
+    m_fieldsRegistry->loadItems();
+    m_model->populate();
+}
+
 void FiltersFieldsPageWidget::addField() const
 {
     m_model->addNewField();
@@ -107,8 +120,8 @@ FiltersFieldsPage::FiltersFieldsPage(FieldRegistry* fieldsRegistry, Utils::Setti
     setId(Constants::Page::FiltersFields);
     setName(tr("Fields"));
     setCategory({"Plugins", "Filters"});
-    setWidgetCreator([fieldsRegistry] {
-        return new FiltersFieldsPageWidget(fieldsRegistry);
+    setWidgetCreator([fieldsRegistry, settings] {
+        return new FiltersFieldsPageWidget(fieldsRegistry, settings);
     });
 }
 } // namespace Fy::Filters::Settings

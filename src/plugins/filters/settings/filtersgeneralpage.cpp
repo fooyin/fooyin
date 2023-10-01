@@ -45,6 +45,7 @@ public:
     explicit FiltersGeneralPageWidget(Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
 
 private:
     void setValues();
@@ -128,6 +129,22 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* setti
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(2, 1);
 
+    QObject::connect(m_fontButton, &QPushButton::pressed, this, [this]() {
+        bool ok;
+        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, "Select Font");
+        if(ok && chosenFont != m_font) {
+            m_font = chosenFont;
+        }
+    });
+
+    QObject::connect(m_colourButton, &QPushButton::pressed, this, [this]() {
+        const QColor chosenColour
+            = QColorDialog::getColor(m_colour, this, "Select Colour", QColorDialog::ShowAlphaChannel);
+        if(chosenColour.isValid() && chosenColour != m_colour) {
+            m_colour = chosenColour;
+        }
+    });
+
     setValues();
 }
 
@@ -151,6 +168,23 @@ void FiltersGeneralPageWidget::apply()
     m_settings->set<Settings::FilterAutoPlaylist>(m_playlistName->text());
 }
 
+void FiltersGeneralPageWidget::reset()
+{
+    m_settings->reset<Settings::FilterHeader>();
+    m_settings->reset<Settings::FilterScrollBar>();
+    m_settings->reset<Settings::FilterAltColours>();
+    m_settings->reset<Settings::FilterFont>();
+    m_settings->reset<Settings::FilterColour>();
+    m_settings->reset<Settings::FilterRowHeight>();
+    m_settings->reset<Settings::FilterDoubleClick>();
+    m_settings->reset<Settings::FilterMiddleClick>();
+    m_settings->reset<Settings::FilterPlaylistEnabled>();
+    m_settings->reset<Settings::FilterAutoSwitch>();
+    m_settings->reset<Settings::FilterAutoPlaylist>();
+
+    setValues();
+}
+
 void FiltersGeneralPageWidget::setValues()
 {
     using ActionIndexMap = std::map<int, int>;
@@ -162,6 +196,9 @@ void FiltersGeneralPageWidget::setValues()
         actionMap.emplace(actionValue, box->count());
         box->addItem(text, actionValue);
     };
+
+    m_doubleClick->clear();
+    m_middleClick->clear();
 
     addTrackAction(m_doubleClick, "None", Gui::TrackAction::None, doubleActions);
     addTrackAction(m_doubleClick, "Add to current playlist", Gui::TrackAction::AddCurrentPlaylist, doubleActions);
@@ -207,22 +244,6 @@ void FiltersGeneralPageWidget::setValues()
     QByteArray colour{m_settings->value<Settings::FilterColour>()};
     QDataStream colourStream{&colour, QIODeviceBase::ReadOnly};
     colourStream >> m_colour;
-
-    QObject::connect(m_fontButton, &QPushButton::pressed, this, [this]() {
-        bool ok;
-        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, "Select Font");
-        if(ok && chosenFont != m_font) {
-            m_font = chosenFont;
-        }
-    });
-
-    QObject::connect(m_colourButton, &QPushButton::pressed, this, [this]() {
-        const QColor chosenColour
-            = QColorDialog::getColor(m_colour, this, "Select Colour", QColorDialog::ShowAlphaChannel);
-        if(chosenColour.isValid() && chosenColour != m_colour) {
-            m_colour = chosenColour;
-        }
-    });
 }
 
 FiltersGeneralPage::FiltersGeneralPage(Utils::SettingsManager* settings)

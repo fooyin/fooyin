@@ -38,18 +38,13 @@
 #include <QTableView>
 
 namespace Fy::Gui::Settings {
-enum ClickType
-{
-    Middle,
-    Double
-};
-
 class LibraryTreePageWidget : public Utils::SettingsPageWidget
 {
 public:
     explicit LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* groupsRegistry, Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
 
 private:
     void addGroup() const;
@@ -81,6 +76,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     , m_autoSwitch{new QCheckBox("Switch when changed", this)}
     , m_playlistName{new QLineEdit(this)}
 {
+    m_model->populate();
     m_groupList->setModel(m_model);
 
     auto* delegate = new Utils::MultiLineEditDelegate(this);
@@ -188,6 +184,19 @@ void LibraryTreePageWidget::apply()
     m_settings->set<Settings::LibraryTreePlaylistEnabled>(m_playlistEnabled->isChecked());
     m_settings->set<Settings::LibraryTreeAutoSwitch>(m_autoSwitch->isChecked());
     m_settings->set<Settings::LibraryTreeAutoPlaylist>(m_playlistName->text());
+}
+
+void LibraryTreePageWidget::reset()
+{
+    m_settings->reset<Settings::LibraryTreeGrouping>();
+    m_settings->reset<Settings::LibraryTreeDoubleClick>();
+    m_settings->reset<Settings::LibraryTreeMiddleClick>();
+    m_settings->reset<Settings::LibraryTreePlaylistEnabled>();
+    m_settings->reset<Settings::LibraryTreeAutoSwitch>();
+    m_settings->reset<Settings::LibraryTreeAutoPlaylist>();
+
+    m_groupsRegistry->loadItems();
+    m_model->populate();
 }
 
 void LibraryTreePageWidget::addGroup() const

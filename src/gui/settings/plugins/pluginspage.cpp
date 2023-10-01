@@ -37,6 +37,7 @@ public:
     explicit PluginPageWidget(Plugins::PluginManager* pluginManager);
 
     void apply() override;
+    void reset() override;
 
 private:
     Plugins::PluginManager* m_pluginManager;
@@ -61,6 +62,8 @@ PluginPageWidget::PluginPageWidget(Plugins::PluginManager* pluginManager)
 }
 
 void PluginPageWidget::apply() { }
+
+void PluginPageWidget::reset() { }
 
 PluginPage::PluginPage(Utils::SettingsManager* settings, Plugins::PluginManager* pluginManager)
     : Utils::SettingsPage{settings->settingsDialog()}

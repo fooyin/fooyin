@@ -34,6 +34,7 @@ public:
     explicit PlaylistGuiPageWidget(Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
 
 private:
     Utils::SettingsManager* m_settings;
@@ -65,6 +66,13 @@ void PlaylistGuiPageWidget::apply()
     m_settings->set<Settings::PlaylistScrollBar>(m_scrollBars->isChecked());
     m_settings->set<Settings::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::PlaylistAltColours>(m_altColours->isChecked());
+}
+
+void PlaylistGuiPageWidget::reset()
+{
+    m_settings->reset<Settings::PlaylistScrollBar>();
+    m_settings->reset<Settings::PlaylistHeader>();
+    m_settings->reset<Settings::PlaylistAltColours>();
 }
 
 PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsManager* settings)

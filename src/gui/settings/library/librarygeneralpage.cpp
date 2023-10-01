@@ -49,6 +49,7 @@ public:
     explicit LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
 
 private:
     void addLibrary() const;
@@ -77,6 +78,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     , m_waitForTracks{new QCheckBox("Wait for tracks", this)}
     , m_sortScript{new QLineEdit(this)}
 {
+    m_model->populate();
     m_libraryView->setModel(m_model);
 
     m_libraryView->verticalHeader()->hide();
@@ -130,7 +132,13 @@ void LibraryGeneralPageWidget::apply()
     m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
     m_settings->set<Core::Settings::WaitForTracks>(m_waitForTracks->isChecked());
     m_settings->set<Core::Settings::LibrarySortScript>(m_sortScript->text());
-    m_model->processQueue();
+}
+
+void LibraryGeneralPageWidget::reset()
+{
+    m_settings->reset<Core::Settings::AutoRefresh>();
+    m_settings->reset<Core::Settings::WaitForTracks>();
+    m_settings->reset<Core::Settings::LibrarySortScript>();
 }
 
 void LibraryGeneralPageWidget::addLibrary() const

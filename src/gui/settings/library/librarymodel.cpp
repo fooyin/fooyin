@@ -50,14 +50,15 @@ LibraryModel::LibraryModel(Core::Library::LibraryManager* libraryManager, QObjec
     : TableModel{parent}
     , m_libraryManager{libraryManager}
 {
-    setupModelData();
-
     QObject::connect(m_libraryManager, &Core::Library::LibraryManager::libraryStatusChanged, this,
                      &LibraryModel::updateDisplay);
 }
 
-void LibraryModel::setupModelData()
+void LibraryModel::populate()
 {
+    beginResetModel();
+    reset();
+
     const Core::Library::LibraryInfoMap& libraries = m_libraryManager->allLibraries();
 
     for(const auto& [id, library] : libraries) {
@@ -73,6 +74,8 @@ void LibraryModel::setupModelData()
         LibraryItem* child = &m_nodes.at(key);
         parent->appendChild(child);
     }
+
+    endResetModel();
 }
 
 void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
@@ -262,16 +265,16 @@ QVariant LibraryModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
-int LibraryModel::rowCount(const QModelIndex& parent) const
+int LibraryModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    Q_UNUSED(parent)
-    return rootItem()->childCount();
+    return 4;
 }
 
-int LibraryModel::columnCount(const QModelIndex& parent) const
+void LibraryModel::reset()
 {
-    Q_UNUSED(parent)
-    return 4;
+    resetRoot();
+    m_nodes.clear();
+    m_librariesToAdd.clear();
 }
 
 void LibraryModel::updateDisplay(const Core::Library::LibraryInfo& info)

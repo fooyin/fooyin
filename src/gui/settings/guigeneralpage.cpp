@@ -41,6 +41,7 @@ public:
                                   Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
 
 private:
     void showQuickSetup();
@@ -112,6 +113,12 @@ void GuiGeneralPageWidget::apply()
 {
     m_settings->set<Settings::IconTheme>(m_lightTheme->isChecked() ? "light" : "dark");
     m_settings->set<Settings::SplitterHandles>(m_splitterHandles->isChecked());
+}
+
+void GuiGeneralPageWidget::reset()
+{
+    m_settings->reset<Settings::IconTheme>();
+    m_settings->reset<Settings::SplitterHandles>();
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

@@ -44,12 +44,13 @@ void LibraryTreeGroupItem::changeGroup(const Widgets::LibraryTreeGrouping& group
 LibraryTreeGroupModel::LibraryTreeGroupModel(Widgets::LibraryTreeGroupRegistry* groupsRegistry, QObject* parent)
     : TableModel{parent}
     , m_groupsRegistry{groupsRegistry}
-{
-    setupModelData();
-}
+{ }
 
-void LibraryTreeGroupModel::setupModelData()
+void LibraryTreeGroupModel::populate()
 {
+    beginResetModel();
+    reset();
+
     const auto& groups = m_groupsRegistry->items();
 
     for(const auto& [index, group] : groups) {
@@ -60,6 +61,8 @@ void LibraryTreeGroupModel::setupModelData()
         LibraryTreeGroupItem* child  = &m_nodes.emplace(index, LibraryTreeGroupItem{group, parent}).first->second;
         parent->appendChild(child);
     }
+
+    endResetModel();
 }
 
 void LibraryTreeGroupModel::addNewGroup()
@@ -259,6 +262,12 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
 int LibraryTreeGroupModel::columnCount(const QModelIndex& /*parent*/) const
 {
     return 3;
+}
+
+void LibraryTreeGroupModel::reset()
+{
+    resetRoot();
+    m_nodes.clear();
 }
 
 void LibraryTreeGroupModel::removeGroup(int index)

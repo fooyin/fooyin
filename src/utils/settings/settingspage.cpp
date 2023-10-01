@@ -81,6 +81,15 @@ void SettingsPage::finish()
     }
 }
 
+void SettingsPage::reset()
+{
+    if(m_widget) {
+        if(auto* pageWidget = qobject_cast<SettingsPageWidget*>(m_widget)) {
+            pageWidget->reset();
+        }
+    }
+}
+
 void SettingsPage::setId(const Id& id)
 {
     m_id = id;
