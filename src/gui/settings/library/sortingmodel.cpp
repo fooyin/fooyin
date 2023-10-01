@@ -126,6 +126,8 @@ void SortingModel::processQueue()
                 if(addedSort.isValid()) {
                     node.changeSort(addedSort);
                     node.setStatus(SortingItem::None);
+
+                    emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
                     qWarning() << QString{"Sorting %1 could not be added"}.arg(sortScript.name);
@@ -147,6 +149,8 @@ void SortingModel::processQueue()
             case(SortingItem::Changed): {
                 if(m_sortRegistry->changeItem(sortScript)) {
                     node.setStatus(SortingItem::None);
+
+                    emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
                     qWarning() << QString{"Sorting (%1) could not be changed"}.arg(sortScript.name);

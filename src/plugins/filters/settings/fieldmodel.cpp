@@ -129,6 +129,8 @@ void FieldModel::processQueue()
                 if(addedField.isValid()) {
                     node.changeField(addedField);
                     node.setStatus(FieldItem::None);
+
+                    emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
                     qWarning() << QString{"Field %1 could not be added"}.arg(field.name);
@@ -150,6 +152,8 @@ void FieldModel::processQueue()
             case(FieldItem::Changed): {
                 if(m_fieldsRegistry->changeItem(field)) {
                     node.setStatus(FieldItem::None);
+
+                    emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
                     qWarning() << QString{"Field (%1) could not be changed"}.arg(field.name);
