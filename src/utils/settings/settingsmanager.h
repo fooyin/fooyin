@@ -30,12 +30,12 @@ namespace Fy::Utils {
 class SettingsDialogController;
 
 template <auto key>
+concept IsEnumType = std::is_enum_v<decltype(key)> && std::is_same_v<std::underlying_type_t<decltype(key)>, uint32_t>;
+
+template <auto key>
+    requires IsEnumType<key>
 constexpr int findType()
 {
-    using E = decltype(key);
-    static_assert(std::is_enum_v<E>, "The template parameter is not an enum!");
-    static_assert(std::is_same_v<std::underlying_type_t<E>, uint32_t>, "Enum should be of type 'uint32_t'");
-
     // Use last 4 bits to determine type
     const auto type = (key & 0xF0'00'00'00);
     return static_cast<int>(type);
