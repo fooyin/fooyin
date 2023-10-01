@@ -159,8 +159,8 @@ void LibraryModel::processQueue()
     std::vector<QString> librariesToRemove;
 
     for(auto& [path, library] : m_nodes) {
-        const LibraryItem::ItemStatus status = library.status();
-        Core::Library::LibraryInfo info      = library.info();
+        const LibraryItem::ItemStatus status  = library.status();
+        const Core::Library::LibraryInfo info = library.info();
 
         switch(status) {
             case(LibraryItem::Added): {
@@ -173,6 +173,8 @@ void LibraryModel::processQueue()
                     if(auto newLibrary = m_libraryManager->libraryInfo(id)) {
                         library.changeInfo(*newLibrary);
                         library.setStatus(LibraryItem::None);
+
+                        emit dataChanged({}, {}, {Qt::FontRole});
                     }
                 }
                 else {
@@ -196,6 +198,8 @@ void LibraryModel::processQueue()
             case(LibraryItem::Changed): {
                 if(m_libraryManager->renameLibrary(info.id, info.name)) {
                     library.setStatus(LibraryItem::None);
+
+                    emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
                     qWarning() << QString{"Library (%1) could not be renamed"}.arg(info.path);
@@ -210,6 +214,20 @@ void LibraryModel::processQueue()
     for(const QString& path : librariesToRemove) {
         m_nodes.erase(path);
     }
+}
+
+Qt::ItemFlags LibraryModel::flags(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return Qt::NoItemFlags;
+    }
+
+    auto flags = TableModel::flags(index);
+    if(index.column() == 1) {
+        flags |= Qt::ItemIsEditable;
+    }
+
+    return flags;
 }
 
 QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -237,7 +255,7 @@ QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int 
 
 QVariant LibraryModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole && role != Qt::FontRole) {
+    if(role != Qt::DisplayRole && role != Qt::FontRole && role != Qt::EditRole) {
         return {};
     }
 
@@ -263,6 +281,26 @@ QVariant LibraryModel::data(const QModelIndex& index, int role) const
     }
 
     return {};
+}
+
+bool LibraryModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+    if(role != Qt::EditRole || index.column() != 1) {
+        return false;
+    }
+
+    const auto* item = static_cast<LibraryItem*>(index.internalPointer());
+
+    Core::Library::LibraryInfo info = item->info();
+
+    if(info.name == value.toString()) {
+        return false;
+    }
+    info.name = value.toString();
+
+    markForChange(info);
+
+    return true;
 }
 
 int LibraryModel::columnCount(const QModelIndex& /*parent*/) const

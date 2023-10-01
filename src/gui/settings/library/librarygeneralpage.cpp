@@ -54,7 +54,6 @@ public:
 private:
     void addLibrary() const;
     void removeLibrary() const;
-    void renameLibrary() const;
 
     Core::Library::LibraryManager* m_libraryManager;
     Utils::SettingsManager* m_settings;
@@ -94,11 +93,9 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
 
     auto* addButton    = new QPushButton("Add", this);
     auto* removeButton = new QPushButton("Remove", this);
-    auto* renameButton = new QPushButton("Rename", this);
 
     buttonsLayout->addWidget(addButton);
     buttonsLayout->addWidget(removeButton);
-    buttonsLayout->addWidget(renameButton);
 
     auto* libraryLayout = new QHBoxLayout();
     libraryLayout->addWidget(m_libraryView);
@@ -124,7 +121,6 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
 
     connect(addButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::addLibrary);
     connect(removeButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::removeLibrary);
-    connect(renameButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::renameLibrary);
 }
 
 void LibraryGeneralPageWidget::apply()
@@ -132,6 +128,8 @@ void LibraryGeneralPageWidget::apply()
     m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
     m_settings->set<Core::Settings::WaitForTracks>(m_waitForTracks->isChecked());
     m_settings->set<Core::Settings::LibrarySortScript>(m_sortScript->text());
+
+    m_model->processQueue();
 }
 
 void LibraryGeneralPageWidget::reset()
@@ -170,24 +168,6 @@ void LibraryGeneralPageWidget::removeLibrary() const
         m_model->markForRemoval(item->info());
     }
     //    m_libraryList->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-}
-
-void LibraryGeneralPageWidget::renameLibrary() const
-{
-    const auto selectedItems = m_libraryView->selectionModel()->selectedRows();
-    for(const auto& selected : selectedItems) {
-        const auto* item                = m_model->itemForIndex(selected);
-        Core::Library::LibraryInfo info = item->info();
-
-        bool success       = false;
-        const QString text = QInputDialog::getText(m_libraryView, tr("Rename Library"), tr("Library Name:"),
-                                                   QLineEdit::Normal, info.name, &success);
-
-        if(success && !text.isEmpty()) {
-            info.name = text;
-            m_model->markForChange(info);
-        }
-    }
 }
 
 LibraryGeneralPage::LibraryGeneralPage(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings)
