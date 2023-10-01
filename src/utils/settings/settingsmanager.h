@@ -42,7 +42,7 @@ constexpr int findType()
 }
 
 template <auto key, typename Value>
-concept IsNone = findType<key>() == Settings::Type::None;
+concept IsVariant = findType<key>() == Settings::Type::Variant;
 
 template <auto key, typename Value>
 concept IsBool = findType<key>() == Settings::Type::Bool && std::same_as<Value, bool>;
@@ -61,7 +61,7 @@ template <auto key, typename Value>
 concept IsByteArray = findType<key>() == Settings::Type::ByteArray && std::same_as<Value, QByteArray>;
 
 template <auto key, typename Value>
-concept ValidValueType = IsNone<key, Value> || IsBool<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
+concept ValidValueType = IsVariant<key, Value> || IsBool<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
                       || IsString<key, Value> || IsByteArray<key, Value>;
 
 class SettingsManager : public QObject
@@ -94,8 +94,8 @@ public:
         const auto type   = findType<key>();
 
         if(m_settings.contains(mapKey)) {
-            if constexpr(type == Settings::Type::None) {
-                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedNone, obj, func);
+            if constexpr(type == Settings::Type::Variant) {
+                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
             }
             else if constexpr(type == Settings::Type::Bool) {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
@@ -236,8 +236,8 @@ public:
 
         const auto type = findType<key>();
 
-        if constexpr(type == Settings::Type::None) {
-            emit setting.settingChangedNone(value);
+        if constexpr(type == Settings::Type::Variant) {
+            emit setting.settingChangedVariant(value);
         }
         else if constexpr(type == Settings::Type::Bool) {
             emit setting.settingChangedBool(value);
@@ -282,8 +282,8 @@ public:
 
         const auto type = findType<key>();
 
-        if constexpr(type == Settings::Type::None) {
-            emit setting.settingChangedNone(value);
+        if constexpr(type == Settings::Type::Variant) {
+            emit setting.settingChangedVariant(value);
         }
         else if constexpr(type == Settings::Type::Bool) {
             emit setting.settingChangedBool(value.toBool());

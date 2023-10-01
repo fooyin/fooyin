@@ -37,7 +37,7 @@ enum Filters : uint32_t
     FilterHeader          = 2 | Utils::Settings::Bool,
     FilterScrollBar       = 3 | Utils::Settings::Bool,
     FilterFields          = 4 | Utils::Settings::ByteArray,
-    FilterAppearance      = 5 | Utils::Settings::None,
+    FilterAppearance      = 5 | Utils::Settings::Variant,
     FilterDoubleClick     = 6 | Utils::Settings::Int,
     FilterMiddleClick     = 7 | Utils::Settings::Int,
     FilterPlaylistEnabled = 8 | Utils::Settings::Bool,

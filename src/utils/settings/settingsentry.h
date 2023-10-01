@@ -42,7 +42,7 @@ public:
 
 signals:
     void settingChanged();
-    void settingChangedNone(QVariant value);
+    void settingChangedVariant(QVariant value);
     void settingChangedBool(bool value);
     void settingChangedInt(int value);
     void settingChangedDouble(double value);

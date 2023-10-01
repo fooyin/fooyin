@@ -24,7 +24,7 @@
 namespace Fy::Utils::Settings {
 enum Type : uint32_t
 {
-    None      = 0 << 28,
+    Variant   = 0 << 28,
     Bool      = 1 << 28,
     Int       = 2 << 28,
     Double    = 3 << 28,
