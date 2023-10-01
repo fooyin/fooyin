@@ -33,16 +33,6 @@ public:
 
     virtual ~TreeModel() override = default;
 
-    [[nodiscard]] virtual Item* rootItem() const
-    {
-        return &m_root;
-    }
-
-    virtual void resetRoot()
-    {
-        m_root = Item{};
-    }
-
     [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent) const override
     {
         if(!hasIndex(row, column, parent)) {
@@ -102,6 +92,17 @@ public:
             return rootItem();
         }
         return static_cast<Item*>(index.internalPointer());
+    }
+
+protected:
+    [[nodiscard]] virtual Item* rootItem() const
+    {
+        return &m_root;
+    }
+
+    virtual void resetRoot()
+    {
+        m_root = Item{};
     }
 
 private:
