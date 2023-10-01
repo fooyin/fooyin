@@ -60,6 +60,7 @@ private:
     Core::Player::PlayerManager* m_playerManager;
     Core::Playlist::PlaylistHandler* m_playlistHandler;
     Gui::LayoutProvider* m_layoutProvider;
+    Gui::Widgets::SearchController* m_searchController;
     Gui::Widgets::WidgetFactory* m_factory;
     Gui::TrackSelectionController* m_trackSelection;
 

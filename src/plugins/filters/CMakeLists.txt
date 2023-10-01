@@ -18,8 +18,6 @@ set(SOURCES
     filterview.cpp
     filterwidget.cpp
     filterstore.cpp
-    searchwidget.cpp
-    trackfilterer.cpp
 
     settings/fieldmodel.cpp
     settings/filtersettings.cpp

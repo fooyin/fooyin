@@ -59,6 +59,8 @@
 #include <gui/playlist/playlisttabs.h>
 #include <gui/playlist/playlistwidget.h>
 #include <gui/playlist/presetregistry.h>
+#include <gui/search/searchcontroller.h>
+#include <gui/search/searchwidget.h>
 #include <gui/settings/generalpage.h>
 #include <gui/settings/guigeneralpage.h>
 #include <gui/settings/library/librarygeneralpage.h>
@@ -95,6 +97,7 @@ struct Application::Private
     Gui::LayoutProvider layoutProvider;
     std::unique_ptr<Gui::Widgets::Playlist::PlaylistController> playlistController;
     Gui::TrackSelectionController selectionController;
+    Gui::Widgets::SearchController searchController;
     Gui::Widgets::Playlist::PresetRegistry presetRegistry;
     Gui::Widgets::LibraryTreeGroupRegistry treeGroupRegistry;
     std::unique_ptr<Gui::Widgets::EditableLayout> editableLayout;
@@ -160,7 +163,7 @@ struct Application::Private
         , pluginManager{new Plugins::PluginManager(parent)}
         , pluginPage{settingsManager, pluginManager}
         , corePluginContext{actionManager, playerManager, library, playlistHandler, settingsManager, &database}
-        , guiPluginContext{&layoutProvider, &selectionController, propertiesDialog, &widgetFactory}
+        , guiPluginContext{&layoutProvider, &selectionController, &searchController, propertiesDialog, &widgetFactory}
     {
         registerLayouts();
         registerWidgets();
@@ -226,6 +229,10 @@ struct Application::Private
 
         widgetFactory.registerClass<Gui::Widgets::StatusWidget>("Status", [this]() {
             return new Gui::Widgets::StatusWidget(library, playerManager);
+        });
+
+        widgetFactory.registerClass<Gui::Widgets::SearchWidget>("Search", [this]() {
+            return new Gui::Widgets::SearchWidget(&searchController, settingsManager);
         });
     }
 

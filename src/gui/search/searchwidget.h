@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <gui/fywidget.h>
+#include "gui/fywidget.h"
 
 class QHBoxLayout;
 class QLineEdit;
@@ -30,37 +30,29 @@ namespace Utils {
 class SettingsManager;
 }
 
-namespace Filters {
-class FilterManager;
+namespace Gui::Widgets {
+class SearchController;
 
 class SearchWidget : public Gui::Widgets::FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit SearchWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit SearchWidget(SearchController* controller, Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
 
-signals:
-    void searchChanged(const QString& search);
-
 protected:
-    void setupUi();
     void keyPressEvent(QKeyEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
     void searchBoxContextMenu(bool editing);
 
 private:
-    void textChanged(const QString& text);
-
-    FilterManager* m_manager;
+    SearchController* m_controller;
     Utils::SettingsManager* m_settings;
 
-    QHBoxLayout* m_layout;
     QLineEdit* m_searchBox;
-    QString m_defaultText;
 };
-} // namespace Filters
+} // namespace Gui::Widgets
 } // namespace Fy

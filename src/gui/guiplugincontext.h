@@ -25,21 +25,25 @@ class TrackSelectionController;
 class PropertiesDialog;
 
 namespace Widgets {
+class SearchController;
 class WidgetFactory;
 } // namespace Widgets
 
 struct GuiPluginContext
 {
     GuiPluginContext(Gui::LayoutProvider* layoutProvider, Gui::TrackSelectionController* trackSelection,
-                     Gui::PropertiesDialog* propertiesDialog, Gui::Widgets::WidgetFactory* widgetFactory)
+                     Gui::Widgets::SearchController* searchController, Gui::PropertiesDialog* propertiesDialog,
+                     Gui::Widgets::WidgetFactory* widgetFactory)
         : layoutProvider{layoutProvider}
         , trackSelection{trackSelection}
+        , searchController{searchController}
         , propertiesDialog{propertiesDialog}
         , widgetFactory{widgetFactory}
     { }
 
     Gui::LayoutProvider* layoutProvider;
     Gui::TrackSelectionController* trackSelection;
+    Gui::Widgets::SearchController* searchController;
     Gui::PropertiesDialog* propertiesDialog;
     Gui::Widgets::WidgetFactory* widgetFactory;
 };

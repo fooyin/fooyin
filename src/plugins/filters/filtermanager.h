@@ -20,7 +20,6 @@
 #pragma once
 
 #include "filterstore.h"
-#include "trackfilterer.h"
 
 #include <core/models/trackfwd.h>
 
@@ -36,6 +35,10 @@ class MusicLibrary;
 }
 } // namespace Core
 
+namespace Gui::Widgets {
+class SearchController;
+}
+
 namespace Filters {
 class FieldRegistry;
 
@@ -45,8 +48,8 @@ class FilterManager : public QObject
 
 public:
     explicit FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-                           FieldRegistry* fieldsRegistry, QObject* parent = nullptr);
-    ~FilterManager() override;
+                           Gui::Widgets::SearchController* searchController, FieldRegistry* fieldsRegistry,
+                           QObject* parent = nullptr);
 
     [[nodiscard]] Core::TrackList tracks() const;
     [[nodiscard]] bool hasTracks() const;
@@ -60,14 +63,12 @@ public:
     void getFilteredTracks();
 
     void selectionChanged(int index);
-    void searchChanged(const QString& search);
 
     QMenu* filterHeaderMenu(int index, FilterField* field);
 
 signals:
     void fieldChanged(const Filters::FilterField& field);
     void filterChanged(int index, const QString& name);
-    void filterTracks(const Core::TrackList& tracks, const QString& search);
     void filteredItems(int index);
 
     void tracksAdded(const Core::TrackList& tracks);
@@ -75,14 +76,12 @@ signals:
     void tracksUpdated(const Core::TrackList& tracks);
 
 private:
-    void tracksFiltered(const Core::TrackList& tracks);
+    void searchChanged(const QString& search);
     void tracksChanged();
 
     Core::Library::MusicLibrary* m_library;
     Core::Playlist::PlaylistHandler* m_playlistHandler;
-
-    QThread* m_searchThread;
-    TrackFilterer m_searchManager;
+    Gui::Widgets::SearchController* m_searchController;
 
     FieldRegistry* m_fieldsRegistry;
     Core::TrackList m_filteredTracks;

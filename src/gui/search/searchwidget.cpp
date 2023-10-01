@@ -19,9 +19,9 @@
 
 #include "searchwidget.h"
 
-#include "filtermanager.h"
+#include "gui/guisettings.h"
+#include "searchcontroller.h"
 
-#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
@@ -29,20 +29,28 @@
 #include <QLineEdit>
 #include <QMenu>
 
-namespace Fy::Filters {
-SearchWidget::SearchWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
+namespace Fy::Gui::Widgets {
+constexpr auto Placeholder = "Search library...";
+
+SearchWidget::SearchWidget(SearchController* controller, Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , m_manager{manager}
+    , m_controller{controller}
     , m_settings{settings}
-    , m_defaultText{"Search library..."}
+    , m_searchBox{new QLineEdit(this)}
 {
     setObjectName("Search Bar");
 
-    setupUi();
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    m_searchBox->setPlaceholderText(Placeholder);
+    m_searchBox->setClearButtonEnabled(true);
+    searchBoxContextMenu(m_settings->value<Gui::Settings::LayoutEditing>());
+
+    layout->addWidget(m_searchBox);
 
     m_settings->subscribe<Gui::Settings::LayoutEditing>(this, &SearchWidget::searchBoxContextMenu);
-    connect(m_searchBox, &QLineEdit::textChanged, this, &SearchWidget::textChanged);
-    connect(this, &SearchWidget::searchChanged, m_manager, &FilterManager::searchChanged);
+    connect(m_searchBox, &QLineEdit::textChanged, m_controller, &SearchController::searchChanged);
 }
 
 QString SearchWidget::name() const
@@ -50,28 +58,15 @@ QString SearchWidget::name() const
     return "Search";
 }
 
-void SearchWidget::setupUi()
-{
-    m_layout = new QHBoxLayout(this);
-    m_layout->setContentsMargins(0, 0, 0, 0);
-
-    m_searchBox = new QLineEdit(this);
-    m_searchBox->setPlaceholderText(m_defaultText);
-    m_searchBox->setClearButtonEnabled(true);
-    searchBoxContextMenu(m_settings->value<Gui::Settings::LayoutEditing>());
-
-    m_layout->addWidget(m_searchBox);
-}
-
 void SearchWidget::keyPressEvent(QKeyEvent* e)
 {
-    const auto key = e->key();
-    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        //            m_library->prepareTracks();
-    }
+    //    const auto key = e->key();
+    //    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+    //            m_library->prepareTracks();
+    //    }
     // m_searchBox->setFocusPolicy(Qt::StrongFocus);
-    m_searchBox->setFocus();
-    m_searchBox->setText(e->text());
+    //    m_searchBox->setFocus();
+    //    m_searchBox->setText(e->text());
     QWidget::keyPressEvent(e);
 }
 
@@ -89,9 +84,4 @@ void SearchWidget::searchBoxContextMenu(bool editing)
         m_searchBox->setContextMenuPolicy(Qt::NoContextMenu);
     }
 }
-
-void SearchWidget::textChanged(const QString& text)
-{
-    emit searchChanged(text);
-}
-} // namespace Fy::Filters
+} // namespace Fy::Gui::Widgets

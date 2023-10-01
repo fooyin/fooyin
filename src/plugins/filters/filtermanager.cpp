@@ -24,23 +24,55 @@
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
 
+#include <gui/search/searchcontroller.h>
+
+#include <utils/async.h>
+
 #include <QActionGroup>
 #include <QMenu>
-#include <QThread>
 
 namespace Fy::Filters {
+bool containsSearch(const QString& text, const QString& search)
+{
+    return text.contains(search, Qt::CaseInsensitive);
+}
+
+// TODO: Support user-defined tags
+bool matchSearch(const Core::Track& track, const QString& search)
+{
+    if(search.isEmpty()) {
+        return true;
+    }
+
+    const auto artists = track.artists();
+    for(const QString& artist : artists) {
+        if(artist.contains(search, Qt::CaseInsensitive)) {
+            return true;
+        }
+    }
+
+    return (containsSearch(track.title(), search) || containsSearch(track.album(), search)
+            || containsSearch(track.albumArtist(), search));
+}
+
+Core::TrackList filterTracks(const Core::TrackList& tracks, const QString& search)
+{
+    auto filteredTracks = Utils::filter(tracks, [search](const Core::Track& track) {
+        return matchSearch(track, search);
+    });
+    return filteredTracks;
+}
+
 FilterManager::FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-                             FieldRegistry* fieldsRegistry, QObject* parent)
+                             Gui::Widgets::SearchController* searchController, FieldRegistry* fieldsRegistry,
+                             QObject* parent)
     : QObject{parent}
     , m_library{library}
     , m_playlistHandler{playlistHandler}
-    , m_searchThread{new QThread(this)}
+    , m_searchController{searchController}
     , m_fieldsRegistry{fieldsRegistry}
 {
-    m_searchManager.moveToThread(m_searchThread);
-
-    connect(this, &FilterManager::filterTracks, &m_searchManager, &TrackFilterer::filterTracks);
-    connect(&m_searchManager, &TrackFilterer::tracksFiltered, this, &FilterManager::tracksFiltered);
+    connect(m_searchController, &Gui::Widgets::SearchController::searchChanged, this, &FilterManager::searchChanged);
 
     connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, this, &FilterManager::tracksChanged);
     connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &FilterManager::tracksAdded);
@@ -51,14 +83,6 @@ FilterManager::FilterManager(Core::Library::MusicLibrary* library, Core::Playlis
     connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &FilterManager::tracksChanged);
 
     connect(m_fieldsRegistry, &FieldRegistry::fieldChanged, this, &FilterManager::fieldChanged);
-
-    m_searchThread->start();
-}
-
-FilterManager::~FilterManager()
-{
-    m_searchThread->quit();
-    m_searchThread->wait();
 }
 
 Core::TrackList FilterManager::tracks() const
@@ -118,13 +142,6 @@ void FilterManager::selectionChanged(int index)
     emit filteredItems(index);
 }
 
-void FilterManager::searchChanged(const QString& search)
-{
-    const bool reset = m_searchFilter.length() > search.length();
-    m_searchFilter   = search;
-    emit filterTracks(!reset && !m_filteredTracks.empty() ? m_filteredTracks : m_library->tracks(), m_searchFilter);
-}
-
 QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
 {
     auto* menu = new QMenu();
@@ -151,8 +168,16 @@ QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
     return menu;
 }
 
-void FilterManager::tracksFiltered(const Core::TrackList& tracks)
+void FilterManager::searchChanged(const QString& search)
 {
+    const bool reset = m_searchFilter.length() > search.length();
+    m_searchFilter   = search;
+
+    const auto tracks = Utils::asyncExec<Core::TrackList>([this, reset]() {
+        return filterTracks(!reset && !m_filteredTracks.empty() ? m_filteredTracks : m_library->tracks(),
+                            m_searchFilter);
+    });
+
     m_filteredTracks = tracks;
     emit filteredItems(-1);
 }

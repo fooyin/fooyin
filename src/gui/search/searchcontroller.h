@@ -19,29 +19,21 @@
 
 #pragma once
 
-#include <core/models/trackfwd.h>
+#include <QObject>
 
-#include <utils/worker.h>
-
-namespace Fy {
-namespace Core::DB {
-class Database;
-}
-
-namespace Filters {
-class FilterDatabase;
-
-class TrackFilterer : public Utils::Worker
+namespace Fy::Gui::Widgets {
+class SearchController : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit TrackFilterer(QObject* parent = nullptr);
-
-    void filterTracks(const Core::TrackList& tracks, const QString& search);
+    [[nodiscard]] QString searchText() const;
+    void changeSearch(const QString& search);
 
 signals:
-    void tracksFiltered(const Core::TrackList& result);
+    void searchChanged(const QString& search);
+
+private:
+    QString m_searchText;
 };
-} // namespace Filters
-} // namespace Fy
+} // namespace Fy::Gui::Widgets
