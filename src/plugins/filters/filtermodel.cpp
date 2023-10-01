@@ -157,22 +157,12 @@ void FilterModel::setSortOrder(Qt::SortOrder order)
     p->sortOrder = order;
 }
 
-void FilterModel::setRowHeight(int height)
+void FilterModel::setAppearance(const FilterOptions& options)
 {
-    p->rowHeight = height;
-    emit layoutChanged({}, {});
-}
-
-void FilterModel::setFont(const QFont& font)
-{
-    p->font = font;
-    emit dataChanged({}, {}, {Qt::FontRole});
-}
-
-void FilterModel::setColour(const QColor& colour)
-{
-    p->colour = colour;
-    emit dataChanged({}, {}, {Qt::ForegroundRole});
+    p->font      = options.font;
+    p->colour    = options.colour;
+    p->rowHeight = options.rowHeight;
+    emit dataChanged({}, {});
 }
 
 QVariant FilterModel::data(const QModelIndex& index, int role) const

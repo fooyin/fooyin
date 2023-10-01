@@ -37,14 +37,12 @@ enum Filters : uint32_t
     FilterHeader          = 2 | Utils::Settings::Bool,
     FilterScrollBar       = 3 | Utils::Settings::Bool,
     FilterFields          = 4 | Utils::Settings::ByteArray,
-    FilterFont            = 5 | Utils::Settings::String,
-    FilterColour          = 6 | Utils::Settings::ByteArray,
-    FilterRowHeight       = 7 | Utils::Settings::Int,
-    FilterDoubleClick     = 8 | Utils::Settings::Int,
-    FilterMiddleClick     = 9 | Utils::Settings::Int,
-    FilterPlaylistEnabled = 10 | Utils::Settings::Bool,
-    FilterAutoSwitch      = 11 | Utils::Settings::Bool,
-    FilterAutoPlaylist    = 12 | Utils::Settings::String,
+    FilterAppearance      = 5 | Utils::Settings::None,
+    FilterDoubleClick     = 6 | Utils::Settings::Int,
+    FilterMiddleClick     = 7 | Utils::Settings::Int,
+    FilterPlaylistEnabled = 8 | Utils::Settings::Bool,
+    FilterAutoSwitch      = 9 | Utils::Settings::Bool,
+    FilterAutoPlaylist    = 10 | Utils::Settings::String,
 
 };
 Q_ENUM_NS(Filters)

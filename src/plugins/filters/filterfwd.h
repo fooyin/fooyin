@@ -21,11 +21,68 @@
 
 #include <core/models/trackfwd.h>
 
+#include <QApplication>
+#include <QColor>
+#include <QDataStream>
+#include <QFont>
 #include <QObject>
+#include <QPalette>
+#include <QDataStream>
 
 #include <deque>
 
 namespace Fy::Filters {
+struct FilterOptions
+{
+    bool fontChanged{false};
+    QFont font;
+
+    bool colourChanged{false};
+    QColor colour;
+
+    int rowHeight{25};
+
+    FilterOptions()
+        : font{QApplication::font()}
+        , colour{QApplication::palette().text().color()}
+    {
+    }
+
+    friend QDataStream& operator<<(QDataStream& stream, const FilterOptions& options)
+    {
+        stream << options.fontChanged;
+        stream << options.font;
+        stream << options.colourChanged;
+        stream << options.colour;
+        stream << options.rowHeight;
+        return stream;
+    }
+
+    friend QDataStream& operator>>(QDataStream& stream, FilterOptions& options)
+    {
+        stream >> options.fontChanged;
+        stream >> options.font;
+        if(!options.fontChanged) {
+            QFont defaultFont;
+            if(options.font.pixelSize() >= 0) {
+                defaultFont.setPixelSize(options.font.pixelSize());
+            }
+            defaultFont.setBold(options.font.bold());
+            defaultFont.setItalic(options.font.italic());
+            defaultFont.setStrikeOut(options.font.strikeOut());
+            defaultFont.setUnderline(options.font.underline());
+            options.font = defaultFont;
+        }
+        stream >> options.colourChanged;
+        stream >> options.colour;
+        if(!options.colourChanged) {
+            options.colour = QApplication::palette().text().color();
+        }
+        stream >> options.rowHeight;
+        return stream;
+    }
+};
+
 struct FilterField
 {
     int id{-1};

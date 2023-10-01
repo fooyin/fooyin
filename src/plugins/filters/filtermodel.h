@@ -27,6 +27,7 @@
 
 namespace Fy::Filters {
 class FilterField;
+struct FilterOptions;
 
 class FilterModel : public Utils::TableModel<FilterItem>
 {
@@ -38,9 +39,7 @@ public:
 
     void setField(FilterField* field);
     void setSortOrder(Qt::SortOrder order);
-    void setRowHeight(int height);
-    void setFont(const QFont& font);
-    void setColour(const QColor& colour);
+    void setAppearance(const FilterOptions& options);
 
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

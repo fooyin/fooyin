@@ -19,22 +19,11 @@
 
 #include "filtersettings.h"
 
+#include "filterfwd.h"
+
 #include <utils/settings/settingsmanager.h>
 
-#include <QApplication>
 #include <QFont>
-#include <QPalette>
-
-namespace {
-QByteArray defaultColour()
-{
-    QByteArray colour;
-    QDataStream colourStream{&colour, QIODeviceBase::WriteOnly};
-    colourStream << QApplication::palette().text().color();
-
-    return colour;
-}
-} // namespace
 
 namespace Fy::Filters::Settings {
 FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
@@ -44,9 +33,7 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::FilterHeader>(true, "Filters");
     m_settings->createSetting<Settings::FilterScrollBar>(true, "Filters");
     m_settings->createSetting<Settings::FilterFields>(QByteArray{}, "Filters");
-    m_settings->createSetting<Settings::FilterFont>(QApplication::font().toString(), "Filters");
-    m_settings->createSetting<Settings::FilterColour>(defaultColour(), "Filters");
-    m_settings->createSetting<Settings::FilterRowHeight>(25, "Filters");
+    m_settings->createSetting<Settings::FilterAppearance>(QVariant::fromValue(FilterOptions{}), "Filters");
     m_settings->createSetting<Settings::FilterDoubleClick>(1, "Filters");
     m_settings->createSetting<Settings::FilterMiddleClick>(0, "Filters");
     m_settings->createSetting<Settings::FilterPlaylistEnabled>(true, "Filters");
