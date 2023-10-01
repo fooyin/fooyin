@@ -163,8 +163,8 @@ public:
         QDataStream out(&byteArray, QIODevice::WriteOnly);
 
         out << m_items;
+        byteArray = qCompress(byteArray, 9);
 
-        byteArray = byteArray.toBase64();
         m_settings->set<SettingKey>(byteArray);
     };
 
@@ -172,10 +172,10 @@ public:
     {
         m_items.clear();
 
-        QByteArray currentFields = m_settings->value<SettingKey>();
-        currentFields            = QByteArray::fromBase64(currentFields);
+        QByteArray byteArray = m_settings->value<SettingKey>();
+        byteArray            = qUncompress(byteArray);
 
-        QDataStream in(&currentFields, QIODevice::ReadOnly);
+        QDataStream in(&byteArray, QIODevice::ReadOnly);
 
         in >> m_items;
     };
