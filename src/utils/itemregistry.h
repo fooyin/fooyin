@@ -159,6 +159,10 @@ public:
 
     virtual void saveItems()
     {
+        if(m_items.empty()) {
+            return;
+        }
+
         QByteArray byteArray;
         QDataStream out(&byteArray, QIODevice::WriteOnly);
 
@@ -173,11 +177,14 @@ public:
         m_items.clear();
 
         QByteArray byteArray = m_settings->value<SettingKey>();
-        byteArray            = qUncompress(byteArray);
 
-        QDataStream in(&byteArray, QIODevice::ReadOnly);
+        if(!byteArray.isEmpty()) {
+            byteArray = qUncompress(byteArray);
 
-        in >> m_items;
+            QDataStream in(&byteArray, QIODevice::ReadOnly);
+
+            in >> m_items;
+        }
     };
 
 protected:
