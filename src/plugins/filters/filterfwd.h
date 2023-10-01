@@ -43,8 +43,7 @@ struct FilterOptions
     int rowHeight{25};
 
     FilterOptions()
-        : font{QApplication::font()}
-        , colour{QApplication::palette().text().color()}
+        : colour{QApplication::palette().text().color()}
     {
     }
 
@@ -63,15 +62,7 @@ struct FilterOptions
         stream >> options.fontChanged;
         stream >> options.font;
         if(!options.fontChanged) {
-            QFont defaultFont;
-            if(options.font.pixelSize() >= 0) {
-                defaultFont.setPixelSize(options.font.pixelSize());
-            }
-            defaultFont.setBold(options.font.bold());
-            defaultFont.setItalic(options.font.italic());
-            defaultFont.setStrikeOut(options.font.strikeOut());
-            defaultFont.setUnderline(options.font.underline());
-            options.font = defaultFont;
+            options.font = QFont{};
         }
         stream >> options.colourChanged;
         stream >> options.colour;

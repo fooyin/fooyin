@@ -29,7 +29,6 @@ TextBlock::TextBlock()
 
 TextBlock::TextBlock(QString text, int fontSize)
     : text{std::move(text)}
-    , font{QApplication::font()}
     , colour{QApplication::palette().text().color()}
 {
     if(fontSize > 0 && font.pixelSize() >= 0) {
@@ -53,15 +52,7 @@ QDataStream& operator>>(QDataStream& stream, TextBlock& block)
     stream >> block.fontChanged;
     stream >> block.font;
     if(!block.fontChanged) {
-        QFont defaultFont;
-        if(block.font.pixelSize() >= 0) {
-            defaultFont.setPixelSize(block.font.pixelSize());
-        }
-        defaultFont.setBold(block.font.bold());
-        defaultFont.setItalic(block.font.italic());
-        defaultFont.setStrikeOut(block.font.strikeOut());
-        defaultFont.setUnderline(block.font.underline());
-        block.font = defaultFont;
+        block.font = QFont{};
     }
     stream >> block.colourChanged;
     stream >> block.colour;
