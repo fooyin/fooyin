@@ -94,7 +94,10 @@ public:
         const auto type   = findType<key>();
 
         if(m_settings.contains(mapKey)) {
-            if constexpr(type == Settings::Type::Bool) {
+            if constexpr(type == Settings::Type::None) {
+                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedNone, obj, func);
+            }
+            else if constexpr(type == Settings::Type::Bool) {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
             }
             else if constexpr(type == Settings::Type::Double) {
