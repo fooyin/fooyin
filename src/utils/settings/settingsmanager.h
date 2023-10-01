@@ -42,28 +42,23 @@ constexpr int findType()
 }
 
 template <auto key, typename Value>
-concept IsNone = findType<key>() ==
-Settings::Type::None;
+concept IsNone = findType<key>() == Settings::Type::None;
 
 template <auto key, typename Value>
-concept IsBool = findType<key>() ==
-Settings::Type::Bool&& std::same_as<Value, bool>;
+concept IsBool = findType<key>() == Settings::Type::Bool && std::same_as<Value, bool>;
 
 template <auto key, typename Value>
-concept IsDouble = findType<key>() ==
-Settings::Type::Double&& std::same_as<Value, double>;
+concept IsDouble = findType<key>() == Settings::Type::Double && std::same_as<Value, double>;
 
 template <auto key, typename Value>
-concept IsInt = findType<key>() ==
-Settings::Type::Int&& std::same_as<Value, int>;
+concept IsInt = findType<key>() == Settings::Type::Int && std::same_as<Value, int>;
 
 template <auto key, typename Value>
-concept IsString = findType<key>() ==
-Settings::Type::String && (std::same_as<Value, QString> || std::same_as<Value, const char*>);
+concept IsString
+    = findType<key>() == Settings::Type::String && (std::same_as<Value, QString> || std::same_as<Value, const char*>);
 
 template <auto key, typename Value>
-concept IsByteArray = findType<key>() ==
-Settings::Type::ByteArray&& std::same_as<Value, QByteArray>;
+concept IsByteArray = findType<key>() == Settings::Type::ByteArray && std::same_as<Value, QByteArray>;
 
 template <auto key, typename Value>
 concept ValidValueType = IsNone<key, Value> || IsBool<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
@@ -152,10 +147,12 @@ public:
         }
     }
 
-    template <typename E>
-    void constexpr createSetting(E key, const QVariant& value, const QString& group = {})
+    template <auto key, typename Value>
+        requires ValidValueType<key, Value>
+    void constexpr createSetting(Value value, const QString& group = {})
     {
-        const auto meta      = QMetaEnum::fromType<E>();
+        using Enum           = decltype(key);
+        const auto meta      = QMetaEnum::fromType<Enum>();
         const auto enumName  = meta.name();
         const auto keyString = QString::fromLatin1(meta.valueToKey(key));
         const auto mapKey    = enumName + keyString;
@@ -165,10 +162,12 @@ public:
         }
     }
 
-    template <typename E>
-    void constexpr createTempSetting(E key, const QVariant& value, const QString& group = {})
+    template <auto key, typename Value>
+        requires ValidValueType<key, Value>
+    void constexpr createTempSetting(const Value& value, const QString& group = {})
     {
-        const auto meta      = QMetaEnum::fromType<E>();
+        using Enum           = decltype(key);
+        const auto meta      = QMetaEnum::fromType<Enum>();
         const auto enumName  = meta.name();
         const auto keyString = QString::fromLatin1(meta.valueToKey(key));
         const auto mapKey    = enumName + keyString;
