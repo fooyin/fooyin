@@ -170,6 +170,8 @@ public:
 
     virtual void loadItems()
     {
+        m_items.clear();
+
         QByteArray currentFields = m_settings->value<SettingKey>();
         currentFields            = QByteArray::fromBase64(currentFields);
 
