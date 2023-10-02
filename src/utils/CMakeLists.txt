@@ -65,7 +65,6 @@ target_link_libraries(
     PUBLIC Qt6::Core
            Qt6::Widgets
            Qt6::Concurrent
-           QCoro::Core
 )
 
 target_compile_features(fooyin_utils PUBLIC cxx_std_20)
