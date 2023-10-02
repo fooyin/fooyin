@@ -45,6 +45,7 @@ public:
 
 private:
     Utils::ActionManager* m_actionManager;
+    Core::Library::MusicLibrary* m_library;
     Gui::TrackSelectionController* m_trackSelection;
     Gui::PropertiesDialog* m_propertiesDialog;
     Gui::Widgets::WidgetFactory* m_factory;

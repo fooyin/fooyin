@@ -55,6 +55,8 @@ public:
 
     [[nodiscard]] TrackList tracks() const override;
 
+    void saveTracks(const Core::TrackList& tracks) override;
+
     void changeSort(const QString& sort);
 
     void removeLibrary(int id) override;

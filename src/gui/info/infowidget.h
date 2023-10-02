@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
+#include "gui/dialog/propertiesdialog.h"
 
 #include <QHBoxLayout>
 #include <QWidget>
@@ -46,7 +46,7 @@ class TrackSelectionController;
 namespace Widgets::Info {
 class InfoModel;
 
-class InfoWidget : public FyWidget
+class InfoWidget : public PropertiesTabWidget
 {
 public:
     explicit InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* selectionController,

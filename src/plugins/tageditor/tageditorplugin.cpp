@@ -38,6 +38,7 @@ void TagEditorPlugin::initialise(const Core::CorePluginContext& context)
 {
     m_actionManager = context.actionManager;
     m_settings      = context.settingsManager;
+    m_library       = context.library;
 }
 
 void TagEditorPlugin::initialise(const Gui::GuiPluginContext& context)
@@ -49,12 +50,12 @@ void TagEditorPlugin::initialise(const Gui::GuiPluginContext& context)
     //    m_factory->registerClass<TagEditorWidget>(
     //        "TagEditor",
     //        [this]() {
-    //            return new TagEditorWidget(m_trackSelection, m_settings);
+    //            return new TagEditorWidget(m_trackSelection, m_library, m_settings);
     //        },
     //        "Tag Editor");
 
     m_propertiesDialog->insertTab(0, "Metadata", [this]() {
-        return new TagEditorWidget(m_trackSelection, m_settings);
+        return new TagEditorWidget(m_trackSelection, m_library, m_settings);
     });
 }
 

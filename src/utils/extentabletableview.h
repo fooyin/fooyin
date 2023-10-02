@@ -19,30 +19,26 @@
 
 #pragma once
 
-#include <utils/treestatusitem.h>
+#include <QTableView>
 
-#include <QList>
-
-namespace Fy::TagEditor {
-class TagEditorItem : public Utils::TreeStatusItem<TagEditorItem>
+namespace Fy::Utils {
+class ExtendableTableView : public QTableView
 {
+    Q_OBJECT
+
 public:
-    explicit TagEditorItem(QString title = {}, TagEditorItem* parent = nullptr);
+    explicit ExtendableTableView(QWidget* parent);
 
-    void reset();
+signals:
+    void newRowClicked();
 
-    void addTrackValue(const QString& value);
-    void addTrackValue(const QStringList& values);
-    void setValue(const QStringList& values);
-
-    void valuesToString();
-
-    [[nodiscard]] QString name() const;
-    [[nodiscard]] QString value() const;
+protected:
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 
 private:
-    QString m_name;
-    QStringList m_values;
-    QString m_value;
+    QRect m_buttonRect;
+    bool m_mouseOverButton;
 };
-} // namespace Fy::TagEditor
+} // namespace Fy::Utils

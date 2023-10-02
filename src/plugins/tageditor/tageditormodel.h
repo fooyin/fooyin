@@ -21,6 +21,8 @@
 
 #include "tageditoritem.h"
 
+#include <core/models/trackfwd.h>
+
 #include <utils/tablemodel.h>
 
 namespace Fy {
@@ -42,7 +44,9 @@ public:
     TagEditorModel(Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~TagEditorModel() override;
 
-    void setupModel();
+    void populate();
+    void addNewRow();
+    void processQueue();
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
@@ -51,7 +55,9 @@ public:
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     void updateEditorValues();
-    void setTrackValue(const QString& name, const QVariant& value);
+
+signals:
+    void trackMetadataChanged(const Core::TrackList& tracks);
 
 private:
     struct Private;

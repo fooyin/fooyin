@@ -119,6 +119,23 @@ TrackList UnifiedMusicLibrary::tracks() const
     return m_tracks;
 }
 
+void UnifiedMusicLibrary::saveTracks(const TrackList& tracks)
+{
+    TrackList result{m_tracks};
+
+    for(const Track& track : tracks) {
+        auto it = std::ranges::find_if(result, [&](const Track& originalTrack) {
+            return track.id() == originalTrack.id();
+        });
+        if(it != tracks.end()) {
+            *it = track;
+        }
+    }
+    m_tracks = result;
+
+    emit tracksUpdated(tracks);
+}
+
 void UnifiedMusicLibrary::changeSort(const QString& sort)
 {
     const TrackList recalTracks  = recalSortFields(sort, m_tracks);

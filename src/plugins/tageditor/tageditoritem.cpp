@@ -22,8 +22,9 @@
 #include <utils/helpers.h>
 
 namespace Fy::TagEditor {
-TagEditorItem::TagEditorItem(QString title)
-    : m_name{std::move(title)}
+TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent)
+    : TreeStatusItem{parent}
+    , m_name{std::move(title)}
 { }
 
 void TagEditorItem::reset()
@@ -55,6 +56,7 @@ void TagEditorItem::addTrackValue(const QStringList& values)
 void TagEditorItem::setValue(const QStringList& values)
 {
     m_values = values;
+    valuesToString();
 }
 
 void TagEditorItem::valuesToString()

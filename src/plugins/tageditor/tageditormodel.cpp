@@ -55,6 +55,48 @@ struct TagEditorModel::Private
         : trackSelection{trackSelection}
         , settings{settings}
     { }
+
+    QString findField(const QString& name)
+    {
+        const auto field = std::ranges::find_if(std::as_const(fields), [name](const EditorPair& pair) {
+            return pair.displayName == name;
+        });
+        if(field == fields.cend()) {
+            return {};
+        }
+        return field->metadata;
+    }
+
+    void removeField(const QString& name)
+    {
+        if(tags.contains(name)) {
+            tags.erase(name);
+        }
+    }
+
+    void updateTrackMetadata(const QString& name, const QVariant& value, Core::TrackList& tracks)
+    {
+        if(tracks.empty()) {
+            return;
+        }
+
+        const QString metadata = findField(name);
+
+        for(Core::Track& track : tracks) {
+            if(metadata == Core::Constants::MetaData::Artist || metadata == Core::Constants::MetaData::Genre) {
+                scriptRegistry.setVar(metadata, value.toString().split("; "), track);
+            }
+            else if(metadata == Core::Constants::MetaData::Track || metadata == Core::Constants::MetaData::TrackTotal
+                    || metadata == Core::Constants::MetaData::Disc
+                    || metadata == Core::Constants::MetaData::DiscTotal) {
+                scriptRegistry.setVar(metadata, value.toInt(), track);
+            }
+            else {
+                scriptRegistry.setVar(metadata, value.toString(), track);
+            }
+        }
+        // TODO: Set custom tags
+    }
 };
 
 TagEditorModel::TagEditorModel(Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
@@ -62,19 +104,75 @@ TagEditorModel::TagEditorModel(Gui::TrackSelectionController* trackSelection, Ut
     : TableModel{parent}
     , p{std::make_unique<Private>(trackSelection, settings)}
 {
-    setupModel();
+    populate();
+    updateEditorValues();
 
     connect(p->trackSelection, &Gui::TrackSelectionController::selectionChanged, this,
             &TagEditorModel::updateEditorValues);
-
-    updateEditorValues();
 }
 
-void TagEditorModel::setupModel()
+void TagEditorModel::populate()
 {
     for(const auto& [field, _] : p->fields) {
         auto* item = &p->tags.emplace(field, TagEditorItem{field}).first->second;
         rootItem()->appendChild(item);
+    }
+}
+
+void TagEditorModel::addNewRow()
+{
+    //    TagEditorItem newItem{"<input field name>", rootItem()};
+    //    newItem.setStatus(TagEditorItem::Added);
+    //    auto* item = &p->tags.emplace("<input field name>", newItem).first->second;
+
+    //    const int row = rootItem()->childCount();
+    //    beginInsertRows({}, row, row);
+    //    rootItem()->appendChild(item);
+    //    endInsertRows();
+}
+
+void TagEditorModel::processQueue()
+{
+    Core::TrackList tracks = p->trackSelection->selectedTracks();
+    std::vector<QString> fieldsToRemove;
+
+    auto tagsToCheck = p->tags | std::views::filter([](const auto& tag) {
+                           return tag.second.status() != TagEditorItem::None;
+                       });
+
+    for(auto& [index, node] : tagsToCheck) {
+        const TagEditorItem::ItemStatus status = node.status();
+
+        switch(status) {
+            case(TagEditorItem::Added): {
+                p->updateTrackMetadata(node.name(), node.value(), tracks);
+                node.setStatus(TagEditorItem::None);
+                emit dataChanged({}, {}, {Qt::FontRole});
+                break;
+            }
+            case(TagEditorItem::Removed): {
+                beginRemoveRows({}, node.row(), node.row());
+                rootItem()->removeChild(node.row());
+                endRemoveRows();
+                fieldsToRemove.push_back(node.name());
+                break;
+            }
+            case(TagEditorItem::Changed): {
+                p->updateTrackMetadata(node.name(), node.value(), tracks);
+                node.setStatus(TagEditorItem::None);
+                emit dataChanged({}, {}, {Qt::FontRole});
+                break;
+            }
+            case(TagEditorItem::None):
+                break;
+        }
+    }
+    for(const auto& field : fieldsToRemove) {
+        p->removeField(field);
+    }
+
+    if(!tagsToCheck.empty()) {
+        emit trackMetadataChanged(tracks);
     }
 }
 
@@ -106,15 +204,21 @@ int TagEditorModel::columnCount(const QModelIndex& /*parent*/) const
 
 QVariant TagEditorModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole && role != Qt::EditRole) {
+    if(role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::FontRole) {
+        return {};
+    }
+
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
 
     auto* item = static_cast<TagEditorItem*>(index.internalPointer());
 
-    const int col = index.column();
+    if(role == Qt::FontRole) {
+        return item->font();
+    }
 
-    switch(col) {
+    switch(index.column()) {
         case(0):
             return item->name();
         case(1):
@@ -140,8 +244,8 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
         return false;
     }
 
-    setTrackValue(item->name(), value);
     item->setValue(value.toStringList());
+    item->setStatus(TagEditorItem::Changed);
 
     emit dataChanged(index, index);
 
@@ -194,38 +298,5 @@ void TagEditorModel::updateEditorValues()
     }
     emit dataChanged({}, {}, {Qt::DisplayRole});
     // TODO: Return custom tags
-}
-
-// TODO: Update tracks in library & on disk
-void TagEditorModel::setTrackValue(const QString& name, const QVariant& value)
-{
-    auto tracks = p->trackSelection->selectedTracks();
-
-    if(tracks.empty()) {
-        return;
-    }
-
-    const auto field = std::ranges::find_if(std::as_const(p->fields), [name](const EditorPair& pair) {
-        return pair.displayName == name;
-    });
-    if(field == p->fields.cend()) {
-        return;
-    }
-
-    const QString metadata = field->metadata;
-
-    for(Core::Track& track : tracks) {
-        if(metadata == Core::Constants::MetaData::Artist || metadata == Core::Constants::MetaData::Genre) {
-            p->scriptRegistry.setVar(metadata, value.toString().split("; "), track);
-        }
-        else if(metadata == Core::Constants::MetaData::Track || metadata == Core::Constants::MetaData::TrackTotal
-                || metadata == Core::Constants::MetaData::Disc || metadata == Core::Constants::MetaData::DiscTotal) {
-            p->scriptRegistry.setVar(metadata, value.toInt(), track);
-        }
-        else {
-            p->scriptRegistry.setVar(metadata, value.toString(), track);
-        }
-    }
-    // TODO: Set custom tags
 }
 } // namespace Fy::TagEditor

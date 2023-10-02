@@ -47,6 +47,8 @@ public:
 
     [[nodiscard]] virtual TrackList tracks() const = 0;
 
+    virtual void saveTracks(const Core::TrackList& tracks) = 0;
+
     virtual void removeLibrary(int id) = 0;
 
 signals:

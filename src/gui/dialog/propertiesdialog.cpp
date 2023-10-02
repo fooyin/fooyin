@@ -44,7 +44,7 @@ QString PropertiesTab::title() const
     return m_title;
 }
 
-QWidget* PropertiesTab::widget()
+PropertiesTabWidget* PropertiesTab::widget()
 {
     if(!m_widget) {
         if(m_widgetBuilder) {
@@ -69,7 +69,12 @@ void PropertiesTab::setVisited(bool visited)
     m_visited = visited;
 }
 
-void PropertiesTab::apply() { }
+void PropertiesTab::apply()
+{
+    if(m_widget) {
+        m_widget->apply();
+    }
+}
 
 void PropertiesTab::finish()
 {
@@ -200,7 +205,12 @@ void PropertiesDialog::addTab(const PropertiesTab& tab)
 
 void PropertiesDialog::insertTab(int index, const QString& title, const WidgetBuilder& widgetBuilder)
 {
-    m_tabs.emplace_back(title, widgetBuilder, index);
+    m_tabs.insert(m_tabs.begin() + index, {title, widgetBuilder, index});
+
+    const int count = static_cast<int>(m_tabs.size());
+    for(int i = 0; i < count; ++i) {
+        m_tabs[i].updateIndex(i);
+    }
 }
 
 void PropertiesDialog::show()
@@ -210,18 +220,5 @@ void PropertiesDialog::show()
 
     dialog->resize(600, 700);
     dialog->show();
-}
-
-void PropertiesDialog::done() { }
-
-void PropertiesDialog::accept()
-{
-    emit apply();
-    done();
-}
-
-void PropertiesDialog::reject()
-{
-    done();
 }
 } // namespace Fy::Gui

@@ -190,7 +190,7 @@ bool TrackSelectionController::hasTracks() const
 
 TrackSelectionController::~TrackSelectionController() = default;
 
-const Core::TrackList& TrackSelectionController::selectedTracks() const
+Core::TrackList TrackSelectionController::selectedTracks() const
 {
     return p->tracks;
 }

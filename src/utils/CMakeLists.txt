@@ -13,6 +13,7 @@ set(SOURCES
     clickablelabel.cpp
     comboicon.cpp
     crypto.cpp
+    extentabletableview.cpp
     headerview.cpp
     hovermenu.cpp
     id.cpp
@@ -64,6 +65,7 @@ target_link_libraries(
     PUBLIC Qt6::Core
            Qt6::Widgets
            Qt6::Concurrent
+           QCoro::Core
 )
 
 target_compile_features(fooyin_utils PUBLIC cxx_std_20)

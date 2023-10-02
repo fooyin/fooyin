@@ -38,7 +38,7 @@
 namespace Fy::Gui::Widgets::Info {
 InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* selectionController,
                        Utils::SettingsManager* settings, QWidget* parent)
-    : FyWidget{parent}
+    : PropertiesTabWidget{parent}
     , m_playerManager{playerManager}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}

@@ -23,6 +23,7 @@
 
 #include <core/library/musiclibrary.h>
 
+#include <utils/extentabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
@@ -30,12 +31,13 @@
 #include <QTableView>
 
 namespace Fy::TagEditor {
-TagEditorWidget::TagEditorWidget(Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
-                                 QWidget* parent)
-    : FyWidget{parent}
+TagEditorWidget::TagEditorWidget(Gui::TrackSelectionController* trackSelection, Core::Library::MusicLibrary* library,
+                                 Utils::SettingsManager* settings, QWidget* parent)
+    : PropertiesTabWidget{parent}
     , m_trackSelection{trackSelection}
+    , m_library{library}
     , m_settings{settings}
-    , m_view{new QTableView(this)}
+    , m_view{new Utils::ExtendableTableView(this)}
     , m_model{new TagEditorModel(m_trackSelection, m_settings, this)}
 {
     setObjectName(TagEditorWidget::name());
@@ -55,6 +57,10 @@ TagEditorWidget::TagEditorWidget(Gui::TrackSelectionController* trackSelection, 
     m_view->verticalHeader()->setVisible(false);
     m_view->resizeColumnsToContents();
     m_view->resizeRowsToContents();
+
+    QObject::connect(m_model, &TagEditorModel::trackMetadataChanged, m_library,
+                     &Core::Library::MusicLibrary::saveTracks);
+    QObject::connect(m_view, &Utils::ExtendableTableView::newRowClicked, m_model, &TagEditorModel::addNewRow);
 }
 
 QString TagEditorWidget::name() const
@@ -65,5 +71,10 @@ QString TagEditorWidget::name() const
 QString TagEditorWidget::layoutName() const
 {
     return "TagEditor";
+}
+
+void TagEditorWidget::apply()
+{
+    m_model->processQueue();
 }
 } // namespace Fy::TagEditor

@@ -66,7 +66,7 @@ public:
 
     [[nodiscard]] bool hasTracks() const;
 
-    [[nodiscard]] const Core::TrackList& selectedTracks() const;
+    [[nodiscard]] Core::TrackList selectedTracks() const;
     void changeSelectedTracks(const Core::TrackList& tracks, const QString& title = {});
 
     void addTrackContextMenu(QMenu* menu) const;

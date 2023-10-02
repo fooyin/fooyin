@@ -19,20 +19,34 @@
 
 #pragma once
 
+#include "gui/fywidget.h"
+
 #include <QDialog>
 
 namespace Fy::Gui {
+class PropertiesTabWidget : public Gui::Widgets::FyWidget
+{
+    Q_OBJECT
+
+public:
+    explicit PropertiesTabWidget(QWidget* parent)
+        : FyWidget{parent}
+    { }
+
+    virtual void apply() {};
+};
+
+using WidgetBuilder = std::function<PropertiesTabWidget*()>;
+
 class PropertiesTab
 {
 public:
-    using WidgetBuilder = std::function<QWidget*()>;
-
     PropertiesTab(QString title, WidgetBuilder widgetBuilder, int index = -1);
     virtual ~PropertiesTab() = default;
 
     [[nodiscard]] int index() const;
     [[nodiscard]] QString title() const;
-    QWidget* widget();
+    PropertiesTabWidget* widget();
     [[nodiscard]] bool hasVisited() const;
 
     void updateIndex(int index);
@@ -45,7 +59,7 @@ private:
     int m_index;
     QString m_title;
     WidgetBuilder m_widgetBuilder;
-    QWidget* m_widget{nullptr};
+    PropertiesTabWidget* m_widget{nullptr};
     bool m_visited{false};
 };
 
@@ -54,8 +68,7 @@ class PropertiesDialog : public QObject
     Q_OBJECT
 
 public:
-    using TabList       = std::vector<PropertiesTab>;
-    using WidgetBuilder = std::function<QWidget*()>;
+    using TabList = std::vector<PropertiesTab>;
 
     explicit PropertiesDialog(QObject* parent = nullptr);
     ~PropertiesDialog() override;
@@ -66,14 +79,7 @@ public:
 
     void show();
 
-signals:
-    void apply();
-
 private:
-    void done();
-    void accept();
-    void reject();
-
     TabList m_tabs;
 };
 } // namespace Fy::Gui

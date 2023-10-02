@@ -20,6 +20,7 @@
 #pragma once
 
 #include <gui/fywidget.h>
+#include <gui/dialog/propertiesdialog.h>
 
 #include <QWidget>
 
@@ -29,7 +30,12 @@ class QTableView;
 namespace Fy {
 
 namespace Utils {
+class ExtendableTableView;
 class SettingsManager;
+}
+
+namespace Core::Library {
+class MusicLibrary;
 }
 
 namespace Gui {
@@ -39,22 +45,25 @@ class TrackSelectionController;
 namespace TagEditor {
 class TagEditorModel;
 
-class TagEditorWidget : public Gui::Widgets::FyWidget
+class TagEditorWidget : public Gui::PropertiesTabWidget
 {
     Q_OBJECT
 
 public:
-    explicit TagEditorWidget(Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
-                             QWidget* parent = nullptr);
+    explicit TagEditorWidget(Gui::TrackSelectionController* trackSelection, Core::Library::MusicLibrary* library,
+                             Utils::SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    void apply() override;
+
 private:
     Gui::TrackSelectionController* m_trackSelection;
+    Core::Library::MusicLibrary* m_library;
     Utils::SettingsManager* m_settings;
 
-    QTableView* m_view;
+    Utils::ExtendableTableView* m_view;
     TagEditorModel* m_model;
 };
 } // namespace TagEditor
