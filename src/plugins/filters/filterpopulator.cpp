@@ -45,6 +45,7 @@ struct FilterPopulator::Private
     explicit Private(FilterPopulator* populator)
         : populator{populator}
         , parser{&registry}
+        , allNode{nullptr}
         , data{}
     { }
 
@@ -114,7 +115,9 @@ struct FilterPopulator::Private
             return;
         }
 
-        allNode->setTitle(QString{"All (%1)"}.arg(data.items.size()));
+        if(allNode) {
+            allNode->setTitle(QString{"All (%1)"}.arg(data.items.size()));
+        }
 
         emit populator->populated(data);
 
