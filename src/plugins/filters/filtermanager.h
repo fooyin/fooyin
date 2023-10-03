@@ -19,13 +19,17 @@
 
 #pragma once
 
-#include "filterstore.h"
-
 #include <core/models/trackfwd.h>
+
+#include <QObject>
 
 class QMenu;
 
 namespace Fy {
+namespace Utils {
+class SettingsManager;
+}
+
 namespace Core {
 namespace Playlist {
 class PlaylistHandler;
@@ -35,12 +39,15 @@ class MusicLibrary;
 }
 } // namespace Core
 
-namespace Gui::Widgets {
-class SearchController;
-}
+namespace Gui {
+class TrackSelectionController;
+} // namespace Gui
 
 namespace Filters {
 class FieldRegistry;
+class LibraryFilter;
+struct FilterField;
+class FilterWidget;
 
 class FilterManager : public QObject
 {
@@ -48,12 +55,18 @@ class FilterManager : public QObject
 
 public:
     explicit FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-                           Gui::Widgets::SearchController* searchController, FieldRegistry* fieldsRegistry,
+                           Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
                            QObject* parent = nullptr);
+    ~FilterManager() override;
+
+    void shutdown();
+
+    FilterWidget* createFilter();
 
     [[nodiscard]] Core::TrackList tracks() const;
     [[nodiscard]] bool hasTracks() const;
 
+    [[nodiscard]] FieldRegistry* fieldRegistry() const;
     LibraryFilter* registerFilter(const QString& name);
     void unregisterFilter(int index);
     void changeFilter(int index);
@@ -63,6 +76,7 @@ public:
     void getFilteredTracks();
 
     void selectionChanged(int index);
+    void searchChanged(const QString& search);
 
     QMenu* filterHeaderMenu(int index, FilterField* field);
 
@@ -76,17 +90,8 @@ signals:
     void tracksUpdated(const Core::TrackList& tracks);
 
 private:
-    void searchChanged(const QString& search);
-    void tracksChanged();
-
-    Core::Library::MusicLibrary* m_library;
-    Core::Playlist::PlaylistHandler* m_playlistHandler;
-    Gui::Widgets::SearchController* m_searchController;
-
-    FieldRegistry* m_fieldsRegistry;
-    Core::TrackList m_filteredTracks;
-    FilterStore m_filterStore;
-    QString m_searchFilter;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Filters
 } // namespace Fy

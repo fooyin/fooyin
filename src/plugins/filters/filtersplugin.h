@@ -65,7 +65,6 @@ private:
     Gui::TrackSelectionController* m_trackSelection;
 
     FilterManager* m_filterManager;
-    std::unique_ptr<FieldRegistry> m_fieldsRegistry;
     std::unique_ptr<Settings::FiltersSettings> m_filterSettings;
 
     std::unique_ptr<Settings::FiltersGeneralPage> m_generalPage;

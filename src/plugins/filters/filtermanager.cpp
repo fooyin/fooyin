@@ -20,11 +20,11 @@
 #include "filtermanager.h"
 
 #include "fieldregistry.h"
+#include "filterstore.h"
+#include "filterwidget.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
-
-#include <gui/search/searchcontroller.h>
 
 #include <utils/async.h>
 
@@ -63,83 +63,142 @@ Core::TrackList filterTracks(const Core::TrackList& tracks, const QString& searc
     return filteredTracks;
 }
 
+struct FilterManager::Private : QObject
+{
+    Core::Library::MusicLibrary* library;
+    Core::Playlist::PlaylistHandler* playlistHandler;
+    Gui::TrackSelectionController* trackSelection;
+    Utils::SettingsManager* settings;
+
+    FieldRegistry fieldsRegistry;
+    Core::TrackList filteredTracks;
+    FilterStore filterStore;
+    QString searchFilter;
+
+    Private(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
+            Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings)
+        : library{library}
+        , playlistHandler{playlistHandler}
+        , trackSelection{trackSelection}
+        , settings{settings}
+        , fieldsRegistry{settings}
+    {
+        fieldsRegistry.loadItems();
+    }
+};
+
 FilterManager::FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-                             Gui::Widgets::SearchController* searchController, FieldRegistry* fieldsRegistry,
+                             Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
                              QObject* parent)
     : QObject{parent}
-    , m_library{library}
-    , m_playlistHandler{playlistHandler}
-    , m_searchController{searchController}
-    , m_fieldsRegistry{fieldsRegistry}
+    , p{std::make_unique<Private>(library, playlistHandler, trackSelection, settings)}
 {
-    connect(m_searchController, &Gui::Widgets::SearchController::searchChanged, this, &FilterManager::searchChanged);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksAdded, this, &FilterManager::tracksAdded);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, this, &FilterManager::tracksUpdated);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, this, &FilterManager::tracksRemoved);
 
-    connect(m_library, &Core::Library::MusicLibrary::tracksLoaded, this, &FilterManager::tracksChanged);
-    connect(m_library, &Core::Library::MusicLibrary::tracksAdded, this, &FilterManager::tracksAdded);
-    connect(m_library, &Core::Library::MusicLibrary::tracksUpdated, this, &FilterManager::tracksUpdated);
-    connect(m_library, &Core::Library::MusicLibrary::tracksDeleted, this, &FilterManager::tracksRemoved);
-    connect(m_library, &Core::Library::MusicLibrary::tracksSorted, this, &FilterManager::tracksChanged);
-    connect(m_library, &Core::Library::MusicLibrary::libraryChanged, this, &FilterManager::tracksChanged);
-    connect(m_library, &Core::Library::MusicLibrary::libraryRemoved, this, &FilterManager::tracksChanged);
+    const auto tracksChanged = [this]() {
+        getFilteredTracks();
+        emit filteredItems(-1);
+    };
 
-    connect(m_fieldsRegistry, &FieldRegistry::fieldChanged, this, &FilterManager::fieldChanged);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, this, tracksChanged);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksSorted, this, tracksChanged);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::libraryChanged, this, tracksChanged);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, this, tracksChanged);
+
+    QObject::connect(&p->fieldsRegistry, &FieldRegistry::fieldChanged, this, &FilterManager::fieldChanged);
 }
+
+FilterWidget* FilterManager::createFilter()
+{
+    return new FilterWidget(this, p->trackSelection, p->settings);
+}
+
+FilterManager::~FilterManager()
+{
+    p->fieldsRegistry.saveItems();
+}
+
+void FilterManager::shutdown()
+{
+    p->fieldsRegistry.saveItems();
+};
 
 Core::TrackList FilterManager::tracks() const
 {
-    return hasTracks() ? m_filteredTracks : m_library->tracks();
+    return hasTracks() ? p->filteredTracks : p->library->tracks();
 }
 
 bool FilterManager::hasTracks() const
 {
-    return !m_filteredTracks.empty() || !m_searchFilter.isEmpty() || m_filterStore.hasActiveFilters();
+    return !p->filteredTracks.empty() || !p->searchFilter.isEmpty() || p->filterStore.hasActiveFilters();
+}
+
+FieldRegistry* FilterManager::fieldRegistry() const
+{
+    return &p->fieldsRegistry;
 }
 
 LibraryFilter* FilterManager::registerFilter(const QString& name)
 {
-    const FilterField filterField = m_fieldsRegistry->itemByName(name);
-    return m_filterStore.addFilter(filterField);
+    const FilterField filterField = p->fieldsRegistry.itemByName(name);
+    return p->filterStore.addFilter(filterField);
 }
 
 void FilterManager::unregisterFilter(int index)
 {
-    m_filterStore.removeFilter(index);
+    p->filterStore.removeFilter(index);
     emit filteredItems(-1);
     getFilteredTracks();
 }
 
 void FilterManager::changeFilter(int index)
 {
-    m_filterStore.clearActiveFilters(index, true);
+    p->filterStore.clearActiveFilters(index, true);
     getFilteredTracks();
     emit filteredItems(index - 1);
 }
 
 FilterField FilterManager::findField(const QString& name) const
 {
-    return m_fieldsRegistry->itemByName(name);
+    return p->fieldsRegistry.itemByName(name);
 }
 
 void FilterManager::getFilteredTracks()
 {
-    m_filteredTracks.clear();
+    p->filteredTracks.clear();
 
-    for(auto& filter : m_filterStore.activeFilters()) {
-        if(m_filteredTracks.empty()) {
-            std::ranges::copy(filter.tracks, std::back_inserter(m_filteredTracks));
+    for(auto& filter : p->filterStore.activeFilters()) {
+        if(p->filteredTracks.empty()) {
+            std::ranges::copy(filter.tracks, std::back_inserter(p->filteredTracks));
         }
         else {
-            m_filteredTracks
-                = Utils::intersection<Core::Track, Core::Track::TrackHash>(filter.tracks, m_filteredTracks);
+            p->filteredTracks
+                = Utils::intersection<Core::Track, Core::Track::TrackHash>(filter.tracks, p->filteredTracks);
         }
     }
 }
 
 void FilterManager::selectionChanged(int index)
 {
-    m_filterStore.clearActiveFilters(index);
+    p->filterStore.clearActiveFilters(index);
     getFilteredTracks();
     emit filteredItems(index);
+}
+
+void FilterManager::searchChanged(const QString& search)
+{
+    const bool reset = p->searchFilter.length() > search.length();
+    p->searchFilter  = search;
+
+    const auto tracks = Utils::asyncExec<Core::TrackList>([this, reset]() {
+        return filterTracks(!reset && !p->filteredTracks.empty() ? p->filteredTracks : p->library->tracks(),
+                            p->searchFilter);
+    });
+
+    p->filteredTracks = tracks;
+    emit filteredItems(-1);
 }
 
 QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
@@ -149,7 +208,7 @@ QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
 
     auto* filterList = new QActionGroup{menu};
 
-    for(const auto& [filterIndex, registryField] : m_fieldsRegistry->items()) {
+    for(const auto& [filterIndex, registryField] : p->fieldsRegistry.items()) {
         const QString name = registryField.name;
         auto* fieldAction  = new QAction(menu);
         fieldAction->setText(name);
@@ -166,25 +225,5 @@ QMenu* FilterManager::filterHeaderMenu(int index, FilterField* field)
     });
 
     return menu;
-}
-
-void FilterManager::searchChanged(const QString& search)
-{
-    const bool reset = m_searchFilter.length() > search.length();
-    m_searchFilter   = search;
-
-    const auto tracks = Utils::asyncExec<Core::TrackList>([this, reset]() {
-        return filterTracks(!reset && !m_filteredTracks.empty() ? m_filteredTracks : m_library->tracks(),
-                            m_searchFilter);
-    });
-
-    m_filteredTracks = tracks;
-    emit filteredItems(-1);
-}
-
-void FilterManager::tracksChanged()
-{
-    getFilteredTracks();
-    emit filteredItems(-1);
 }
 } // namespace Fy::Filters
