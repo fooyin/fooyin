@@ -21,140 +21,120 @@
 
 #include "filterfwd.h"
 #include "filteritem.h"
-
-#include <core/constants.h>
-#include <core/scripting/scriptparser.h>
-
-#include <utils/helpers.h>
+#include "filterpopulator.h"
 
 #include <QColor>
 #include <QFont>
 #include <QSize>
+#include <QThread>
+#include <utility>
 
 namespace Fy::Filters {
-struct FilterModel::Private
+struct FilterModel::Private : QObject
 {
-    FilterModel* model;
+    FilterModel* self;
 
     bool resetting{false};
 
-    FilterItem allNode;
-    std::unordered_map<QString, FilterItem> nodes;
-    std::unordered_map<int, std::vector<QString>> trackParents;
+    QThread populatorThread;
+    FilterPopulator populator;
 
-    FilterField* field;
+    ItemKeyMap nodes;
+    TrackIdNodeMap trackParents;
+
+    FilterField field;
     Qt::SortOrder sortOrder{Qt::AscendingOrder};
 
     int rowHeight{0};
     QFont font;
     QColor colour;
 
-    Core::Scripting::Registry registry;
-    Core::Scripting::Parser parser{&registry};
+    Private(FilterModel* self, FilterField field)
+        : self{self}
+        , field{std::move(field)}
+    {
+        populator.moveToThread(&populatorThread);
+    }
 
-    Private(FilterModel* model, FilterField* field)
-        : model{model}
-        , field{field}
-    { }
+    void sortNodes() const
+    {
+        emit self->layoutAboutToBeChanged({});
+        self->rootItem()->sortChildren(sortOrder);
+        emit self->layoutChanged({});
+    }
 
     void beginReset()
     {
-        model->resetRoot();
+        self->resetRoot();
         nodes.clear();
-
-        allNode = FilterItem{"", "", model->rootItem(), true};
-        model->rootItem()->appendChild(&allNode);
+        trackParents.clear();
     }
 
-    FilterItem* createNode(const QString& title, const QString& sortTitle)
+    void batchFinished(PendingTreeData data)
     {
-        FilterItem* filterItem;
-        if(!nodes.contains(title)) {
-            filterItem = &nodes.emplace(title, FilterItem{title, sortTitle, model->rootItem()}).first->second;
-            if(resetting) {
-                model->rootItem()->appendChild(filterItem);
+        if(resetting) {
+            self->beginResetModel();
+            beginReset();
+        }
+
+        populateModel(data);
+
+        if(resetting) {
+            self->endResetModel();
+        }
+        resetting = false;
+    }
+
+    void populateModel(PendingTreeData& data)
+    {
+        for(const auto& [key, item] : data.items) {
+            if(nodes.contains(key)) {
+                nodes[key].addTracks(item.tracks());
             }
             else {
-                const int row = model->rootItem()->childCount();
-                model->beginInsertRows({}, row, row);
-                model->rootItem()->appendChild(filterItem);
-                model->endInsertRows();
+                nodes[key] = item;
+
+                FilterItem* child = &nodes.at(key);
+                self->rootItem()->appendChild(child);
             }
         }
-        filterItem = &nodes.at(title);
-        return filterItem;
-    }
+        trackParents.merge(data.trackParents);
 
-    std::vector<FilterItem*> createNodes(const QStringList& titles, const QString& sortTitle)
-    {
-        std::vector<FilterItem*> items;
-        for(const QString& title : titles) {
-            auto* filterItem = createNode(title, sortTitle);
-            items.emplace_back(filterItem);
-        }
-        return items;
-    }
-
-    void addTrackToNode(const Core::Track& track, FilterItem* node)
-    {
-        node->addTrack(track);
-        trackParents[track.id()].push_back(node->title());
-    }
-
-    void populateModel(const Core::TrackList& tracks)
-    {
-        if(tracks.empty()) {
-            return;
-        }
-
-        const auto parsedField = parser.parse(field->field);
-        const auto parsedSort  = parser.parse(field->sortField);
-
-        for(const Core::Track& track : tracks) {
-            if(!track.enabled()) {
-                continue;
-            }
-            const QString field = parser.evaluate(parsedField, track);
-            const QString sort  = parser.evaluate(parsedSort, track);
-            if(field.isNull()) {
-                continue;
-            }
-            if(field.contains(Core::Constants::Separator)) {
-                const QStringList values = field.split(Core::Constants::Separator);
-                const auto nodes         = createNodes(values, sort);
-                for(FilterItem* node : nodes) {
-                    addTrackToNode(track, node);
-                }
-            }
-            else {
-                FilterItem* node = createNode(field, sort);
-                addTrackToNode(track, node);
-            }
-            allNode.addTrack(track);
-        }
+        sortNodes();
     }
 };
 
-FilterModel::FilterModel(FilterField* field, QObject* parent)
+FilterModel::FilterModel(const FilterField& field, QObject* parent)
     : TableModel{parent}
     , p{std::make_unique<Private>(this, field)}
-{ }
+{
+    QObject::connect(&p->populator, &FilterPopulator::populated, p.get(), &FilterModel::Private::batchFinished);
 
-FilterModel::~FilterModel() = default;
+    QObject::connect(&p->populator, &Utils::Worker::finished, this, [this]() {
+        p->populator.stopThread();
+        p->populatorThread.quit();
+    });
+}
+
+FilterModel::~FilterModel()
+{
+    p->populator.stopThread();
+    p->populatorThread.quit();
+    p->populatorThread.wait();
+};
 
 Qt::SortOrder FilterModel::sortOrder() const
 {
     return p->sortOrder;
 }
 
-void FilterModel::setField(FilterField* field)
-{
-    p->field = field;
-}
-
 void FilterModel::setSortOrder(Qt::SortOrder order)
 {
     p->sortOrder = order;
+
+    emit layoutAboutToBeChanged();
+    p->sortNodes();
+    emit layoutChanged();
 }
 
 void FilterModel::setAppearance(const FilterOptions& options)
@@ -175,9 +155,6 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
 
     switch(role) {
         case(Qt::DisplayRole): {
-            if(item->isAllNode()) {
-                return QString("All (%1)").arg(p->nodes.size());
-            }
             const QString& name = item->title();
             return !name.isEmpty() ? name : "?";
         }
@@ -223,7 +200,7 @@ QVariant FilterModel::headerData(int /*section*/, Qt::Orientation orientation, i
         return {};
     }
 
-    if(!p->field || orientation == Qt::Orientation::Vertical) {
+    if(orientation == Qt::Orientation::Vertical) {
         return {};
     }
 
@@ -231,7 +208,7 @@ QVariant FilterModel::headerData(int /*section*/, Qt::Orientation orientation, i
         return (Qt::AlignHCenter);
     }
 
-    return p->field->name;
+    return p->field.name;
 }
 
 QHash<int, QByteArray> FilterModel::roleNames() const
@@ -242,13 +219,6 @@ QHash<int, QByteArray> FilterModel::roleNames() const
     roles.insert(+FilterItemRole::Sorting, "Sorting");
 
     return roles;
-}
-
-void FilterModel::sortFilter()
-{
-    emit layoutAboutToBeChanged({});
-    rootItem()->sortChildren(p->sortOrder);
-    emit layoutChanged({});
 }
 
 // QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
@@ -269,26 +239,13 @@ void FilterModel::sortFilter()
 //    return indexes;
 //}
 
-void FilterModel::reload(const Core::TrackList& tracks)
-{
-    if(!p->field) {
-        return;
-    }
-
-    p->resetting = true;
-
-    beginResetModel();
-    p->beginReset();
-    p->populateModel(tracks);
-    endResetModel();
-
-    p->resetting = false;
-}
-
 void FilterModel::addTracks(const Core::TrackList& tracks)
 {
-    p->populateModel(tracks);
-    sortFilter();
+    p->populatorThread.start();
+
+    QMetaObject::invokeMethod(&p->populator, [this, tracks] {
+        p->populator.run(p->field.field, p->field.sortField, tracks);
+    });
 }
 
 void FilterModel::updateTracks(const Core::TrackList& tracks)
@@ -325,5 +282,23 @@ void FilterModel::removeTracks(const Core::TrackList& tracks)
             p->nodes.erase(item->title());
         }
     }
+}
+
+void FilterModel::reset(const FilterField& field, const Core::TrackList& tracks)
+{
+    if(p->populatorThread.isRunning()) {
+        p->populator.stopThread();
+    }
+    else {
+        p->populatorThread.start();
+    }
+
+    p->field = field;
+
+    p->resetting = true;
+
+    QMetaObject::invokeMethod(&p->populator, [this, tracks] {
+        p->populator.run(p->field.field, p->field.sortField, tracks);
+    });
 }
 } // namespace Fy::Filters

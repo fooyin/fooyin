@@ -26,18 +26,17 @@
 #include <utils/tablemodel.h>
 
 namespace Fy::Filters {
-class FilterField;
 struct FilterOptions;
+struct FilterField;
 
 class FilterModel : public Utils::TableModel<FilterItem>
 {
 public:
-    explicit FilterModel(FilterField* field, QObject* parent = nullptr);
+    explicit FilterModel(const FilterField& field, QObject* parent = nullptr);
     ~FilterModel() override;
 
     [[nodiscard]] Qt::SortOrder sortOrder() const;
 
-    void setField(FilterField* field);
     void setSortOrder(Qt::SortOrder order);
     void setAppearance(const FilterOptions& options);
 
@@ -46,14 +45,14 @@ public:
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-    void sortFilter();
     //    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
     //                                        Qt::MatchFlags flags) const override;
-    void reload(const Core::TrackList& tracks);
 
     void addTracks(const Core::TrackList& tracks);
     void updateTracks(const Core::TrackList& tracks);
     void removeTracks(const Core::TrackList& tracks);
+
+    void reset(const FilterField& field, const Core::TrackList& tracks);
 
 private:
     struct Private;

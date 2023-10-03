@@ -20,24 +20,19 @@
 #include "filterwidget.h"
 
 #include "filterdelegate.h"
+#include "filterfwd.h"
 #include "filteritem.h"
-#include "filtermanager.h"
 #include "filtermodel.h"
 #include "filterview.h"
 #include "settings/filtersettings.h"
 
-#include <core/library/musiclibrary.h>
-#include <core/library/tracksort.h>
 #include <core/player/playermanager.h>
-
-#include <gui/trackselectioncontroller.h>
 
 #include <utils/actions/actioncontainer.h>
 #include <utils/async.h>
 #include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QAction>
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
@@ -46,63 +41,44 @@
 #include <QMenu>
 
 namespace Fy::Filters {
+Core::TrackList fetchAllTracks(QTreeView* view)
+{
+    std::set<int> ids;
+    Core::TrackList tracks;
+
+    const int rowCount = view->model()->rowCount({});
+    for(int row = 0; row < rowCount; ++row) {
+        const QModelIndex index = view->model()->index(row, 0, {});
+        const auto indexTracks  = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
+        for(const Core::Track& track : indexTracks) {
+            const int id = track.id();
+            if(!ids.contains(id)) {
+                ids.emplace(id);
+                tracks.push_back(track);
+            }
+        }
+    }
+    return tracks;
+}
+
 struct FilterWidget::Private : QObject
 {
     FilterWidget* widget;
 
-    FilterManager* manager;
-    Gui::TrackSelectionController* trackSelection;
     Utils::SettingsManager* settings;
 
-    LibraryFilter* filter;
+    LibraryFilter filter;
     FilterView* view;
     FilterModel* model;
 
-    Gui::TrackAction doubleClickAction;
-    Gui::TrackAction middleClickAction;
-
-    Private(FilterWidget* widget, FilterManager* manager, Gui::TrackSelectionController* trackSelection,
-            Utils::SettingsManager* settings)
+    Private(FilterWidget* widget, Utils::SettingsManager* settings)
         : widget{widget}
-        , manager{manager}
-        , trackSelection{trackSelection}
         , settings{settings}
-        , filter{manager->registerFilter("")}
         , view{new FilterView(widget)}
-        , model{new FilterModel(&filter->field, widget)}
-    {
-        QObject::connect(view, &FilterView::doubleClicked, this, &FilterWidget::Private::handleDoubleClick);
-        QObject::connect(view, &FilterView::middleMouseClicked, this, &FilterWidget::Private::handleMiddleClicked);
+        , model{new FilterModel(filter.field, widget)}
+    { }
 
-        connect(view->header(), &QHeaderView::sectionClicked, this, &FilterWidget::Private::changeOrder);
-
-        connect(manager, &FilterManager::filteredItems, this, &FilterWidget::Private::resetByIndex);
-        connect(manager, &FilterManager::filterChanged, this, &FilterWidget::Private::editFilter);
-        connect(manager, &FilterManager::fieldChanged, this, &FilterWidget::Private::fieldChanged);
-
-        settings->subscribe<Settings::FilterDoubleClick>(widget, [this](int action) {
-            doubleClickAction = static_cast<Gui::TrackAction>(action);
-        });
-        settings->subscribe<Settings::FilterMiddleClick>(widget, [this](int action) {
-            middleClickAction = static_cast<Gui::TrackAction>(action);
-        });
-    }
-
-    void handleDoubleClick() const
-    {
-        const bool autoSwitch = settings->value<Settings::FilterAutoSwitch>();
-        trackSelection->executeAction(doubleClickAction, autoSwitch ? Gui::Switch : Gui::None,
-                                      playlistNameFromSelection());
-    }
-
-    void handleMiddleClicked() const
-    {
-        const bool autoSwitch = settings->value<Settings::FilterAutoSwitch>();
-        trackSelection->executeAction(middleClickAction, autoSwitch ? Gui::Switch : Gui::None,
-                                      playlistNameFromSelection());
-    }
-
-    QString playlistNameFromSelection() const
+    [[nodiscard]] QString playlistNameFromSelection() const
     {
         QString title;
         const QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
@@ -117,7 +93,7 @@ struct FilterWidget::Private : QObject
 
     void selectionChanged()
     {
-        filter->tracks.clear();
+        filter.tracks.clear();
 
         const QModelIndexList indexes = view->selectionModel()->selectedIndexes();
         if(indexes.isEmpty()) {
@@ -128,51 +104,18 @@ struct FilterWidget::Private : QObject
         for(const auto& index : indexes) {
             const bool isAllNode = index.data(FilterItemRole::AllNode).toBool();
             if(isAllNode) {
-                tracks = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
+                tracks = fetchAllTracks(view);
                 break;
             }
             const auto newTracks = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
             std::ranges::copy(newTracks, std::back_inserter(tracks));
         }
 
-        const auto sortedTracks = Utils::asyncExec<Core::TrackList>([&tracks]() {
-            return Core::Library::Sorting::sortTracks(tracks);
-        });
-
-        trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
-        filter->tracks = sortedTracks;
-        manager->selectionChanged(filter->index);
-
-        if(settings->value<Settings::FilterPlaylistEnabled>()) {
-            const QString playlistName = settings->value<Settings::FilterAutoPlaylist>();
-            const bool autoSwitch      = settings->value<Settings::FilterAutoSwitch>();
-
-            Gui::ActionOptions options = Gui::KeepActive;
-            if(autoSwitch) {
-                options |= Gui::Switch;
-            }
-            trackSelection->executeAction(Gui::TrackAction::SendNewPlaylist, options, playlistName);
-        }
+        filter.tracks = tracks;
+        emit widget->selectionChanged(filter, playlistNameFromSelection());
     }
 
-    void fieldChanged(const FilterField& field)
-    {
-        if(filter->field.id == field.id) {
-            filter->field = field;
-            emit widget->typeChanged(filter->index);
-            model->reload(manager->tracks());
-            model->sortFilter();
-        }
-    }
-
-    void editFilter(int index, const QString& name)
-    {
-        if(filter->index == index) {
-            widget->setField(name);
-        }
-    }
-
-    void changeOrder()
+    void changeOrder() const
     {
         const auto sortOrder = model->sortOrder();
         if(sortOrder == Qt::AscendingOrder) {
@@ -181,34 +124,18 @@ struct FilterWidget::Private : QObject
         else {
             model->setSortOrder(Qt::AscendingOrder);
         }
-        model->sortFilter();
     }
 
-    void resetByIndex(int idx)
-    {
-        if(idx < filter->index) {
-            model->reload(manager->tracks());
-            model->sortFilter();
-        }
-    }
-
-    void resetByType()
-    {
-        model->reload(manager->tracks());
-        model->sortFilter();
-    }
-
-    void updateAppearance(const QVariant& optionsVar)
+    void updateAppearance(const QVariant& optionsVar) const
     {
         const auto options = optionsVar.value<FilterOptions>();
         model->setAppearance(options);
     }
 };
 
-FilterWidget::FilterWidget(FilterManager* manager, Gui::TrackSelectionController* trackSelection,
-                           Utils::SettingsManager* settings, QWidget* parent)
+FilterWidget::FilterWidget(Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, manager, trackSelection, settings)}
+    , p{std::make_unique<Private>(this, settings)}
 {
     setObjectName(FilterWidget::name());
 
@@ -221,77 +148,54 @@ FilterWidget::FilterWidget(FilterManager* manager, Gui::TrackSelectionController
     layout->addWidget(p->view);
 
     setupConnections();
-    setHeaderEnabled(p->settings->value<Settings::FilterHeader>());
+
+    p->view->setHeaderHidden(!p->settings->value<Settings::FilterHeader>());
     setScrollbarEnabled(p->settings->value<Settings::FilterScrollBar>());
-    setAltColors(p->settings->value<Settings::FilterAltColours>());
+    p->view->setAlternatingRowColors(p->settings->value<Settings::FilterAltColours>());
 
     p->updateAppearance(p->settings->value<Settings::FilterAppearance>());
-
-    p->resetByType();
 }
 
 FilterWidget::~FilterWidget()
 {
-    p->manager->unregisterFilter(p->filter->index);
+    emit filterDeleted(p->filter);
 }
 
 void FilterWidget::setupConnections()
 {
-    p->settings->subscribe<Settings::FilterAltColours>(this, &FilterWidget::setAltColors);
-    p->settings->subscribe<Settings::FilterHeader>(this, &FilterWidget::setHeaderEnabled);
+    p->settings->subscribe<Settings::FilterAltColours>(p->view, &QAbstractItemView::setAlternatingRowColors);
+    p->settings->subscribe<Settings::FilterHeader>(this, [this](bool enabled) {
+        p->view->setHeaderHidden(!enabled);
+    });
     p->settings->subscribe<Settings::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
     p->settings->subscribe<Settings::FilterAppearance>(p.get(), &FilterWidget::Private::updateAppearance);
 
+    connect(p->view->header(), &QHeaderView::sectionClicked, p.get(), &FilterWidget::Private::changeOrder);
     connect(p->view->header(), &FilterView::customContextMenuRequested, this, &FilterWidget::customHeaderMenuRequested);
-    connect(p->view, &QTreeView::doubleClicked, this, []() {
-        //        p->library->prepareTracks();
-    });
     connect(p->view->selectionModel(), &QItemSelectionModel::selectionChanged, p.get(),
             &FilterWidget::Private::selectionChanged);
-    connect(this, &FilterWidget::typeChanged, p->manager, &FilterManager::changeFilter);
 
-    connect(p->manager, &FilterManager::tracksAdded, p->model, &FilterModel::addTracks);
-    connect(p->manager, &FilterManager::tracksUpdated, p->model, &FilterModel::updateTracks);
-    connect(p->manager, &FilterManager::tracksRemoved, p->model, &FilterModel::removeTracks);
+    QObject::connect(p->view, &FilterView::doubleClicked, this, [this]() {
+        emit doubleClicked(p->playlistNameFromSelection());
+    });
+    QObject::connect(p->view, &FilterView::middleClicked, this, [this]() {
+        emit middleClicked(p->playlistNameFromSelection());
+    });
 }
 
-void FilterWidget::setField(const QString& name)
+void FilterWidget::changeFilter(const LibraryFilter& filter)
 {
-    p->filter->field = p->manager->findField(name);
-    p->model->setField(&p->filter->field);
-    emit typeChanged(p->filter->index);
-    p->view->clearSelection();
-    p->view->scrollToTop();
+    p->filter = filter;
 }
 
-bool FilterWidget::isHeaderEnabled()
+void FilterWidget::reset(const Core::TrackList& tracks)
 {
-    return !p->view->isHeaderHidden();
-}
-
-void FilterWidget::setHeaderEnabled(bool enabled)
-{
-    p->view->setHeaderHidden(!enabled);
-}
-
-bool FilterWidget::isScrollbarEnabled()
-{
-    return p->view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff;
+    p->model->reset(p->filter.field, tracks);
 }
 
 void FilterWidget::setScrollbarEnabled(bool enabled)
 {
     p->view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-}
-
-bool FilterWidget::hasAltColors()
-{
-    return p->view->alternatingRowColors();
-}
-
-void FilterWidget::setAltColors(bool enabled)
-{
-    p->view->setAlternatingRowColors(enabled);
 }
 
 QString FilterWidget::name() const
@@ -301,25 +205,13 @@ QString FilterWidget::name() const
 
 void FilterWidget::customHeaderMenuRequested(QPoint pos)
 {
-    if(!p->filter) {
-        return;
-    }
-    auto* menu = p->manager->filterHeaderMenu(p->filter->index, &p->filter->field);
-
-    if(!menu) {
-        return;
-    }
-
-    menu->popup(mapToGlobal(pos));
+    emit requestHeaderMenu(p->filter, mapToGlobal(pos));
 }
 
 void FilterWidget::saveLayout(QJsonArray& array)
 {
-    if(!p->filter) {
-        return;
-    }
     QJsonObject options;
-    options["Type"] = p->filter->field.name;
+    options["Type"] = p->filter.field.name;
     options["Sort"] = Utils::EnumHelper::toString(p->model->sortOrder());
 
     QJsonObject filter;
@@ -332,17 +224,11 @@ void FilterWidget::loadLayout(const QJsonObject& object)
     if(auto order = Utils::EnumHelper::fromString<Qt::SortOrder>(object["Sort"].toString())) {
         p->model->setSortOrder(order.value());
     }
-    setField(object["Type"].toString());
+    emit requestFieldChange(p->filter, object["Type"].toString());
 }
 
 void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    p->trackSelection->addTrackPlaylistContextMenu(menu);
-    p->trackSelection->addTrackContextMenu(menu);
-
-    menu->popup(mapToGlobal(event->pos()));
+    emit requestContextMenu(p->filter, mapToGlobal(event->pos()));
 }
 } // namespace Fy::Filters

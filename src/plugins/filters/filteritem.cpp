@@ -19,8 +19,6 @@
 
 #include "filteritem.h"
 
-#include <QVariant>
-
 namespace Fy::Filters {
 FilterItem::FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode)
     : TreeItem{parent}
@@ -49,9 +47,19 @@ int FilterItem::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
+void FilterItem::setTitle(const QString& title)
+{
+    m_title = title;
+}
+
 void FilterItem::addTrack(const Core::Track& track)
 {
     m_tracks.emplace_back(track);
+}
+
+void FilterItem::addTracks(const Core::TrackList& tracks)
+{
+    std::ranges::copy(tracks, std::back_inserter(m_tracks));
 }
 
 void FilterItem::removeTrack(const Core::Track& track)

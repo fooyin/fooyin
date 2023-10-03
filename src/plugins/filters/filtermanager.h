@@ -23,8 +23,6 @@
 
 #include <QObject>
 
-class QMenu;
-
 namespace Fy {
 namespace Utils {
 class SettingsManager;
@@ -45,8 +43,6 @@ class TrackSelectionController;
 
 namespace Filters {
 class FieldRegistry;
-class LibraryFilter;
-struct FilterField;
 class FilterWidget;
 
 class FilterManager : public QObject
@@ -63,31 +59,15 @@ public:
 
     FilterWidget* createFilter();
 
-    [[nodiscard]] Core::TrackList tracks() const;
-    [[nodiscard]] bool hasTracks() const;
-
     [[nodiscard]] FieldRegistry* fieldRegistry() const;
-    LibraryFilter* registerFilter(const QString& name);
-    void unregisterFilter(int index);
-    void changeFilter(int index);
-
-    [[nodiscard]] FilterField findField(const QString& name) const;
-
-    void getFilteredTracks();
-
-    void selectionChanged(int index);
-    void searchChanged(const QString& search);
-
-    QMenu* filterHeaderMenu(int index, FilterField* field);
 
 signals:
-    void fieldChanged(const Filters::FilterField& field);
-    void filterChanged(int index, const QString& name);
-    void filteredItems(int index);
-
     void tracksAdded(const Core::TrackList& tracks);
     void tracksRemoved(const Core::TrackList& tracks);
     void tracksUpdated(const Core::TrackList& tracks);
+
+public slots:
+    void searchChanged(const QString& search);
 
 private:
     struct Private;

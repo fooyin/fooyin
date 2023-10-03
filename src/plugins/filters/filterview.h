@@ -30,7 +30,7 @@ public:
     explicit FilterView(QWidget* parent = nullptr);
 
 signals:
-    void middleMouseClicked();
+    void middleClicked();
     void doubleClicked();
 
 protected:

@@ -15,6 +15,7 @@ set(SOURCES
     filteritem.cpp
     filtermanager.cpp
     filtermodel.cpp
+    filterpopulator.cpp
     filterview.cpp
     filterwidget.cpp
     filterstore.cpp
