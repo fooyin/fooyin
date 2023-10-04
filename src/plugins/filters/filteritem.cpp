@@ -80,7 +80,10 @@ bool FilterItem::isAllNode() const
 void FilterItem::sortChildren(Qt::SortOrder order)
 {
     std::vector<FilterItem*> sortedChildren{m_children};
-    std::sort(sortedChildren.begin(), sortedChildren.end(), [order](const FilterItem* lhs, const FilterItem* rhs) {
+    std::ranges::sort(sortedChildren, [order](const FilterItem* lhs, const FilterItem* rhs) {
+        if(!lhs || !rhs) {
+            return false;
+        }
         if(lhs->m_isAllNode) {
             return true;
         }
