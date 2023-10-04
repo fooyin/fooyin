@@ -27,7 +27,6 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
-
 #include <utils/async.h>
 
 #include <QContextMenuEvent>
@@ -36,6 +35,8 @@
 #include <QMenu>
 #include <QTreeView>
 #include <QVBoxLayout>
+
+#include <QCoroCore>
 
 namespace Fy::Gui::Widgets {
 void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QModelIndexList& bottomIndexes)
@@ -184,11 +185,11 @@ struct LibraryTreeWidget::Private
         menu->popup(widget->mapToGlobal(pos));
     }
 
-    void selectionChanged() const
+    QCoro::Task<void> selectionChanged() const
     {
         const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
         if(selectedIndexes.empty()) {
-            return;
+            co_return;
         }
 
         QModelIndexList trackIndexes;
@@ -208,7 +209,7 @@ struct LibraryTreeWidget::Private
             tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
         }
 
-        const auto sortedTracks = Utils::asyncExec<Core::TrackList>([&tracks]() {
+        const auto sortedTracks = co_await Utils::asyncExec([&tracks]() {
             return Core::Library::Sorting::sortTracks(tracks);
         });
         trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());

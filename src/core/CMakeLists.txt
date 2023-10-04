@@ -102,6 +102,7 @@ target_link_libraries(
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
+           QCoro::Core
     PRIVATE Taglib::Taglib
             Libmpv::Libmpv
             fooyin::version

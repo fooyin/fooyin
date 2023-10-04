@@ -29,7 +29,6 @@
 #include <core/player/playermanager.h>
 
 #include <utils/actions/actioncontainer.h>
-#include <utils/async.h>
 #include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
 

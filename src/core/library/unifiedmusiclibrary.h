@@ -23,6 +23,8 @@
 #include "librarythreadhandler.h"
 #include "musiclibrary.h"
 
+#include <QCoroTask>
+
 namespace Fy {
 
 namespace Utils {
@@ -57,16 +59,16 @@ public:
 
     void saveTracks(const Core::TrackList& tracks) override;
 
-    void changeSort(const QString& sort);
+    QCoro::Task<void> changeSort(QString sort);
 
     void removeLibrary(int id) override;
 
 private:
     void getAllTracks();
-    void loadTracks(const TrackList& tracks);
-    TrackList addTracks(const TrackList& tracks);
-    void newTracks(const TrackList& tracks);
-    void updateTracks(const TrackList& tracks);
+    QCoro::Task<void> loadTracks(TrackList tracks);
+    QCoro::Task<TrackList> addTracks(TrackList tracks);
+    QCoro::Task<void> newTracks(TrackList tracks);
+    QCoro::Task<void> updateTracks(TrackList tracks);
     void removeTracks(const TrackList& tracks);
 
     void libraryStatusChanged(const LibraryInfo& library);

@@ -149,29 +149,29 @@ struct FilterManager::Private : QObject
         }
     }
 
-    void selectionChanged(const LibraryFilter& filter, const QString& playlistName)
+    QCoro::Task<void> selectionChanged(LibraryFilter filter, QString playlistName)
     {
-        const auto sortedTracks = Utils::asyncExec<Core::TrackList>([&filter]() {
-            return Core::Library::Sorting::sortTracks(filter.tracks);
-        });
-
         LibraryFilter updatedFilter{filter};
+
+        Core::TrackList sortedTracks = co_await Utils::asyncExec([&updatedFilter]() {
+            return Core::Library::Sorting::sortTracks(updatedFilter.tracks);
+        });
 
         trackSelection->changeSelectedTracks(sortedTracks, playlistName);
         updatedFilter.tracks = sortedTracks;
 
         if(settings->value<Settings::FilterPlaylistEnabled>()) {
-            const QString playlistName = settings->value<Settings::FilterAutoPlaylist>();
+            const QString autoPlaylist = settings->value<Settings::FilterAutoPlaylist>();
             const bool autoSwitch      = settings->value<Settings::FilterAutoSwitch>();
 
             Gui::ActionOptions options = Gui::KeepActive;
             if(autoSwitch) {
                 options |= Gui::Switch;
             }
-            trackSelection->executeAction(Gui::TrackAction::SendNewPlaylist, options, playlistName);
+            trackSelection->executeAction(Gui::TrackAction::SendNewPlaylist, options, autoPlaylist);
         }
 
-        filterStore.updateFilter(filter);
+        filterStore.updateFilter(updatedFilter);
 
         const int resetIndex = filter.index;
         filterStore.clearActiveFilters(resetIndex);
@@ -201,7 +201,7 @@ struct FilterManager::Private : QObject
             if(index == filter.index) {
                 filterWidget->changeFilter(updatedFilter);
             }
-            if(index >= resetIndex) {
+            if(index > resetIndex) {
                 filterWidget->reset(tracks());
             }
         }
@@ -293,6 +293,8 @@ FilterManager::FilterManager(Core::Library::MusicLibrary* library, Core::Playlis
     QObject::connect(&p->fieldsRegistry, &FieldRegistry::fieldChanged, p.get(), &FilterManager::Private::fieldChanged);
 }
 
+FilterManager::~FilterManager() = default;
+
 FilterWidget* FilterManager::createFilter()
 {
     auto* filter = new FilterWidget(p->settings);
@@ -324,11 +326,6 @@ FilterWidget* FilterManager::createFilter()
     return filter;
 }
 
-FilterManager::~FilterManager()
-{
-    p->fieldsRegistry.saveItems();
-}
-
 void FilterManager::shutdown()
 {
     p->fieldsRegistry.saveItems();
@@ -339,17 +336,17 @@ FieldRegistry* FilterManager::fieldRegistry() const
     return &p->fieldsRegistry;
 }
 
-void FilterManager::searchChanged(const QString& search)
+QCoro::Task<void> FilterManager::searchChanged(QString search)
 {
     const bool reset = p->searchFilter.length() > search.length();
     p->searchFilter  = search;
 
-    const auto tracks = Utils::asyncExec<Core::TrackList>([this, reset]() {
-        return filterTracks(!reset && !p->filteredTracks.empty() ? p->filteredTracks : p->library->tracks(),
-                            p->searchFilter);
+    Core::TrackList tracksToFilter{!reset && !p->filteredTracks.empty() ? p->filteredTracks : p->library->tracks()};
+
+    p->filteredTracks = co_await Utils::asyncExec([&search, &tracksToFilter]() {
+        return filterTracks(tracksToFilter, search);
     });
 
-    p->filteredTracks = tracks;
     p->resetFiltersAfterIndex(-1);
 }
 } // namespace Fy::Filters

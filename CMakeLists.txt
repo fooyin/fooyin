@@ -38,6 +38,9 @@ find_package(Qt6Gui REQUIRED)
 find_package(Qt6Sql REQUIRED)
 find_package(Qt6Concurrent REQUIRED)
 
+find_package(QCoro6 REQUIRED COMPONENTS Core)
+qcoro_enable_coroutines()
+
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(Libmpv REQUIRED)
 
@@ -70,12 +73,7 @@ add_subdirectory(src)
 
 target_link_libraries(
     fooyin_lib
-    PUBLIC Qt6::Core
-           Qt6::Gui
-           Qt6::Widgets
-           Qt6::Sql
-           Qt6::Concurrent
-           fooyin::core
+    PUBLIC fooyin::core
            fooyin::gui
            fooyin::utils
     # ${SDL2_LIBRARIES} ${FFMPEG_LIBRARIES}
