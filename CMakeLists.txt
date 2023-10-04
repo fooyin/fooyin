@@ -40,7 +40,10 @@ CPMFindPackage(
   VERSION 1.12
   GITHUB_REPOSITORY taglib/taglib
   GIT_TAG master
-  OPTIONS "BUILD_TESTING OFF"
+  OPTIONS "CMAKE_BUILD_TYPE Release"
+          "BUILD_TESTING OFF"
+          "BUILD_EXAMPLES OFF"
+          "BUILD_BINDINGS OFF"
           "CMAKE_POSITION_INDEPENDENT_CODE ON"
 )
 
@@ -96,7 +99,14 @@ target_compile_options(fooyin_lib PRIVATE -Werror -Wall -Wextra -Wpedantic)
 # ---- Fooyin testing ----
 
 if(BUILD_TESTS)
-    find_package(GTest)
+    CPMFindPackage(
+            NAME GTest
+            VERSION 1.13.0
+            GITHUB_REPOSITORY google/googletest
+            GIT_TAG v1.14.0
+            OPTIONS "gtest_force_shared_crt ON"
+                    "BUILD_TESTING OFF"
+    )
     add_subdirectory(tests)
 endif()
 
