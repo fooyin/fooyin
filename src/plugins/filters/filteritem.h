@@ -47,7 +47,10 @@ public:
     [[nodiscard]] Core::TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
 
+    void setTitle(const QString& title);
+
     void addTrack(const Core::Track& track);
+    void addTracks(const Core::TrackList& tracks);
     void removeTrack(const Core::Track& track);
 
     [[nodiscard]] bool isAllNode() const;

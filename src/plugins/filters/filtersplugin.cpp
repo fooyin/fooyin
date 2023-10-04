@@ -24,6 +24,7 @@
 #include "settings/filtersettings.h"
 
 #include <gui/layoutprovider.h>
+#include <gui/search/searchcontroller.h>
 #include <gui/widgetfactory.h>
 
 #include <utils/actions/actioncontainer.h>
@@ -39,10 +40,7 @@ void FiltersPlugin::initialise(const Core::CorePluginContext& context)
     m_playlistHandler = context.playlistHandler;
     m_settings        = context.settingsManager;
 
-    m_fieldsRegistry = std::make_unique<FieldRegistry>(m_settings);
     m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
-
-    m_fieldsRegistry->loadItems();
 }
 
 void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
@@ -52,21 +50,24 @@ void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
     m_factory          = context.widgetFactory;
     m_trackSelection   = context.trackSelection;
 
-    m_filterManager = new FilterManager(m_library, m_playlistHandler, m_searchController, m_fieldsRegistry.get(), this);
+    m_filterManager = new FilterManager(m_library, m_playlistHandler, m_trackSelection, m_settings, this);
+
+    connect(m_searchController, &Gui::Widgets::SearchController::searchChanged, m_filterManager,
+            &FilterManager::searchChanged);
 
     m_factory->registerClass<FilterWidget>("Filter", [this]() {
-        return new FilterWidget(m_filterManager, m_trackSelection, m_settings);
+        return m_filterManager->createFilter();
     });
 
     m_generalPage = std::make_unique<Settings::FiltersGeneralPage>(m_settings);
-    m_fieldsPage  = std::make_unique<Settings::FiltersFieldsPage>(m_fieldsRegistry.get(), m_settings);
+    m_fieldsPage  = std::make_unique<Settings::FiltersFieldsPage>(m_filterManager->fieldRegistry(), m_settings);
 
     registerLayouts();
 }
 
 void FiltersPlugin::shutdown()
 {
-    m_fieldsRegistry->saveItems();
+    m_filterManager->shutdown();
 }
 
 void FiltersPlugin::registerLayouts()

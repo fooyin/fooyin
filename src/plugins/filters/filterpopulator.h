@@ -19,28 +19,43 @@
 
 #pragma once
 
-#include "filterfwd.h"
+#include "filteritem.h"
 
-#include <utils/helpers.h>
+#include <core/models/trackfwd.h>
+
+#include <utils/worker.h>
 
 namespace Fy::Filters {
-class FilterStore
+using ItemKeyMap = std::map<QString, FilterItem>;
+using TrackIdNodeMap = std::unordered_map<int, std::vector<QString>>;
+
+struct PendingTreeData
 {
+    ItemKeyMap items;
+    TrackIdNodeMap trackParents;
+
+    void clear()
+    {
+        items.clear();
+        trackParents.clear();
+    }
+};
+
+class FilterPopulator : public Utils::Worker
+{
+    Q_OBJECT
+
 public:
-    [[nodiscard]] FilterList filters() const;
+    FilterPopulator(QObject* parent = nullptr);
+    ~FilterPopulator() override;
 
-    LibraryFilter filterByIndex(int index) const;
+    void run(const QString& field, const QString& sort, const Core::TrackList& tracks);
 
-    LibraryFilter addFilter(const FilterField& field);
-    void updateFilter(const LibraryFilter& filter);
-    void removeFilter(int index);
-
-    [[nodiscard]] bool hasActiveFilters() const;
-    [[nodiscard]] FilterList activeFilters() const;
-
-    void clearActiveFilters(int index);
+signals:
+    void populated(PendingTreeData data);
 
 private:
-    FilterList m_filters;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fy::Filters

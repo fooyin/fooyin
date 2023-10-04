@@ -19,13 +19,15 @@
 
 #pragma once
 
-#include "filterstore.h"
-
 #include <core/models/trackfwd.h>
 
-class QMenu;
+#include <QObject>
 
 namespace Fy {
+namespace Utils {
+class SettingsManager;
+}
+
 namespace Core {
 namespace Playlist {
 class PlaylistHandler;
@@ -35,12 +37,13 @@ class MusicLibrary;
 }
 } // namespace Core
 
-namespace Gui::Widgets {
-class SearchController;
-}
+namespace Gui {
+class TrackSelectionController;
+} // namespace Gui
 
 namespace Filters {
 class FieldRegistry;
+class FilterWidget;
 
 class FilterManager : public QObject
 {
@@ -48,45 +51,27 @@ class FilterManager : public QObject
 
 public:
     explicit FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-                           Gui::Widgets::SearchController* searchController, FieldRegistry* fieldsRegistry,
+                           Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
                            QObject* parent = nullptr);
+    ~FilterManager() override;
 
-    [[nodiscard]] Core::TrackList tracks() const;
-    [[nodiscard]] bool hasTracks() const;
+    void shutdown();
 
-    LibraryFilter* registerFilter(const QString& name);
-    void unregisterFilter(int index);
-    void changeFilter(int index);
+    FilterWidget* createFilter();
 
-    [[nodiscard]] FilterField findField(const QString& name) const;
-
-    void getFilteredTracks();
-
-    void selectionChanged(int index);
-
-    QMenu* filterHeaderMenu(int index, FilterField* field);
+    [[nodiscard]] FieldRegistry* fieldRegistry() const;
 
 signals:
-    void fieldChanged(const Filters::FilterField& field);
-    void filterChanged(int index, const QString& name);
-    void filteredItems(int index);
-
     void tracksAdded(const Core::TrackList& tracks);
     void tracksRemoved(const Core::TrackList& tracks);
     void tracksUpdated(const Core::TrackList& tracks);
 
-private:
+public slots:
     void searchChanged(const QString& search);
-    void tracksChanged();
 
-    Core::Library::MusicLibrary* m_library;
-    Core::Playlist::PlaylistHandler* m_playlistHandler;
-    Gui::Widgets::SearchController* m_searchController;
-
-    FieldRegistry* m_fieldsRegistry;
-    Core::TrackList m_filteredTracks;
-    FilterStore m_filterStore;
-    QString m_searchFilter;
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Filters
 } // namespace Fy

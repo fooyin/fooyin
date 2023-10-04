@@ -29,8 +29,6 @@
 #include <QPalette>
 #include <QDataStream>
 
-#include <deque>
-
 namespace Fy::Filters {
 struct FilterOptions
 {
@@ -121,5 +119,5 @@ struct LibraryFilter
     Core::TrackList tracks;
 };
 
-using FilterList = std::deque<LibraryFilter>;
+using FilterList = std::vector<LibraryFilter>;
 } // namespace Fy::Filters
