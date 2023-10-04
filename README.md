@@ -23,24 +23,24 @@ allowing for a wide range of visualisations to be built.
 
 ## Features
 
-  - [x] Fully customisable layout
-  - [x] Filter and search collection
-  - [x] Plugin system
-  - [x] Playlist support
-  - [ ] Tag editing
-  - [ ] FFmpeg backend
-  - [ ] Visualisations
-  - [ ] Lyrics support
-  - [ ] Lyric querying
-  - [ ] Last.fm integration
-  - [ ] Discogs integration
+-  [x] Fully customisable layout
+-  [x] Filter and search collection
+-  [x] Plugin system
+-  [x] Playlist support
+-  [ ] Tag editing
+-  [ ] FFmpeg backend
+-  [ ] Visualisations
+-  [ ] Lyrics support
+-  [ ] Lyric querying
+-  [ ] Last.fm integration
+-  [ ] Discogs integration
 
 ## Requirements
 
-  - Qt6
-  - QCoro
-  - Taglib (>=1.12)
-  - Libmpv (mpv)
+-  Qt6
+-  QCoro
+-  Taglib (>=1.12)
+-  Libmpv (mpv)
 
 ## Setup
 
