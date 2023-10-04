@@ -48,7 +48,7 @@ TrackList calcSortFields(const Scripting::ParsedScript& sortScript, const TrackL
 TrackList sortTracks(const TrackList& tracks)
 {
     TrackList sortedTracks{tracks};
-    std::sort(sortedTracks.begin(), sortedTracks.end(), [](const Track& lhs, const Track& rhs) {
+    std::ranges::sort(sortedTracks, [](const Track& lhs, const Track& rhs) {
         const auto cmp = QString::localeAwareCompare(lhs.sort(), rhs.sort());
         if(cmp == 0) {
             return false;
