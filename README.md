@@ -30,9 +30,9 @@ The engine backend is currently based on mpv, though this will change to ffmpeg 
 - [ ] Discogs integration
 
 ## Requirements
-- Compiler with support for C++20
 - Qt6
-- Taglib (1.12)
+- QCoro
+- Taglib (>=1.12)
 - Libmpv (mpv)
 
 ## Setup
