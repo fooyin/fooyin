@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+#include <QCoroTask>
+
 namespace Fy {
 namespace Utils {
 class SettingsManager;
@@ -67,7 +69,7 @@ signals:
     void tracksUpdated(const Core::TrackList& tracks);
 
 public slots:
-    void searchChanged(const QString& search);
+    QCoro::Task<void> searchChanged(QString search);
 
 private:
     struct Private;

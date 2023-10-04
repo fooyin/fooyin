@@ -29,22 +29,25 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QDir>
 #include <QTimer>
+
+#include <QCoroCore>
 
 #include <ranges>
 #include <vector>
 
 namespace Fy::Core::Library {
-TrackList recalSortFields(const QString& sort, const TrackList& tracks)
+QCoro::Task<TrackList> recalSortFields(QString sort, TrackList tracks)
 {
-    return Utils::asyncExec<TrackList>([&sort, &tracks]() {
+    co_return co_await Utils::asyncExec([&sort, &tracks]() {
         return Sorting::calcSortFields(sort, tracks);
     });
 }
 
-TrackList resortTracks(const TrackList& tracks)
+QCoro::Task<TrackList> resortTracks(TrackList tracks)
 {
-    return Utils::asyncExec<TrackList>([&tracks]() {
+    co_return co_await Utils::asyncExec([&tracks]() {
         return Sorting::sortTracks(tracks);
     });
 }
@@ -136,10 +139,10 @@ void UnifiedMusicLibrary::saveTracks(const TrackList& tracks)
     emit tracksUpdated(tracks);
 }
 
-void UnifiedMusicLibrary::changeSort(const QString& sort)
+QCoro::Task<void> UnifiedMusicLibrary::changeSort(QString sort)
 {
-    const TrackList recalTracks  = recalSortFields(sort, m_tracks);
-    const TrackList sortedTracks = resortTracks(recalTracks);
+    const TrackList recalTracks  = co_await recalSortFields(sort, m_tracks);
+    const TrackList sortedTracks = co_await resortTracks(recalTracks);
     m_tracks                     = sortedTracks;
 
     emit tracksSorted(m_tracks);
@@ -161,13 +164,13 @@ void UnifiedMusicLibrary::getAllTracks()
     emit loadAllTracks();
 }
 
-void UnifiedMusicLibrary::loadTracks(const TrackList& tracks)
+QCoro::Task<void> UnifiedMusicLibrary::loadTracks(TrackList tracks)
 {
-    addTracks(tracks);
+    co_await addTracks(tracks);
     emit tracksLoaded(m_tracks);
 }
 
-TrackList UnifiedMusicLibrary::addTracks(const TrackList& tracks)
+QCoro::Task<TrackList> UnifiedMusicLibrary::addTracks(TrackList tracks)
 {
     m_tracks.reserve(m_tracks.size() + tracks.size());
 
@@ -177,7 +180,7 @@ TrackList UnifiedMusicLibrary::addTracks(const TrackList& tracks)
         libraryDirs.emplace(id, QDir{info.path});
     }
 
-    TrackList newTracks = recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
+    TrackList newTracks = co_await recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
     for(Track& track : newTracks) {
         const int libraryId = track.libraryId();
         if(libraryDirs.contains(libraryId)) {
@@ -186,21 +189,21 @@ TrackList UnifiedMusicLibrary::addTracks(const TrackList& tracks)
     }
     std::ranges::copy(newTracks, std::back_inserter(m_tracks));
 
-    m_tracks = resortTracks(m_tracks);
+    m_tracks = co_await resortTracks(m_tracks);
 
-    return newTracks;
+    co_return newTracks;
 }
 
-void UnifiedMusicLibrary::newTracks(const TrackList& tracks)
+QCoro::Task<void> UnifiedMusicLibrary::newTracks(TrackList tracks)
 {
-    TrackList newTracks = addTracks(tracks);
+    TrackList newTracks = co_await addTracks(tracks);
     emit tracksAdded(newTracks);
 }
 
-void UnifiedMusicLibrary::updateTracks(const TrackList& tracks)
+QCoro::Task<void> UnifiedMusicLibrary::updateTracks(TrackList tracks)
 {
-    TrackList updatedTracks = recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
-    updatedTracks           = resortTracks(updatedTracks);
+    TrackList updatedTracks = co_await recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
+    updatedTracks           = co_await resortTracks(updatedTracks);
 
     std::ranges::for_each(updatedTracks, [this](const Track& track) {
         std::ranges::replace_if(
@@ -211,7 +214,7 @@ void UnifiedMusicLibrary::updateTracks(const TrackList& tracks)
             track);
     });
 
-    m_tracks = resortTracks(m_tracks);
+    m_tracks = co_await resortTracks(m_tracks);
 
     emit tracksUpdated(updatedTracks);
 }

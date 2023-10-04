@@ -19,22 +19,12 @@
 
 #pragma once
 
-#include <QFuture>
-#include <QFutureWatcher>
 #include <QtConcurrent>
 
 namespace Fy::Utils {
-template <typename Ret, typename Func>
-Ret asyncExec(Func&& func)
+template <typename Func>
+auto asyncExec(Func&& func)
 {
-    QFuture<Ret> future = QtConcurrent::run(std::forward<Func>(func));
-    QFutureWatcher<Ret> watcher;
-    watcher.setFuture(future);
-
-    QEventLoop eventLoop;
-    QObject::connect(&watcher, &QFutureWatcher<Ret>::finished, &eventLoop, &QEventLoop::quit);
-    eventLoop.exec();
-
-    return future.result();
+    return QtConcurrent::run(std::forward<Func>(func));
 }
 } // namespace Fy::Utils

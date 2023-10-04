@@ -87,6 +87,7 @@ set(SOURCES
     quicksetup/quicksetupdialog.cpp
     quicksetup/quicksetupmodel.h
     quicksetup/quicksetupmodel.cpp
+    search/searchcontroller.cpp
     search/searchwidget.cpp
     settings/generalpage.h
     settings/generalpage.cpp
@@ -117,8 +118,7 @@ set(SOURCES
     widgets/splitterwidget.cpp
 )
 
-add_library(fooyin_gui ${FOOYIN_LIBRARY_TYPE} ${SOURCES}
-    search/searchcontroller.h search/searchcontroller.cpp)
+add_library(fooyin_gui ${FOOYIN_LIBRARY_TYPE} ${SOURCES})
 add_library(fooyin::gui ALIAS fooyin_gui)
 
 target_include_directories(

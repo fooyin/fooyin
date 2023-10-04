@@ -35,9 +35,9 @@
 #include <core/playlist/playlisthandler.h>
 
 #include <utils/actions/actioncontainer.h>
+#include <utils/async.h>
 #include <utils/headerview.h>
 #include <utils/settings/settingsdialogcontroller.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <QActionGroup>
 #include <QHBoxLayout>
@@ -45,6 +45,8 @@
 #include <QKeyEvent>
 #include <QMenu>
 #include <QScrollBar>
+
+#include <QCoro/QCoroCore>
 
 namespace Fy::Gui::Widgets::Playlist {
 struct PlaylistWidget::Private : QObject
@@ -352,12 +354,14 @@ struct PlaylistWidget::Private : QObject
         menu->popup(widget->mapToGlobal(pos));
     }
 
-    void changeSort(const QString& script)
+    QCoro::Task<void> changeSort(QString script) const
     {
         /* if(playlistView->selectionModel()->hasSelection()) { }
          else*/
         if(auto playlist = controller->currentPlaylist()) {
-            const auto sortedTracks = Core::Library::Sorting::calcSortTracks(script, playlist->tracks());
+            const auto sortedTracks = co_await Utils::asyncExec([&script, &playlist]() {
+                return Core::Library::Sorting::calcSortTracks(script, playlist->tracks());
+            });
             playlist->replaceTracks(sortedTracks);
             controller->playlistHandler()->replacePlaylistTracks(playlist->id(), sortedTracks);
             changePlaylist(*playlist);
