@@ -46,7 +46,7 @@
 #include <QMenu>
 #include <QScrollBar>
 
-#include <QCoroCore>
+#include <QCoro/QCoroCore>
 
 namespace Fy::Gui::Widgets::Playlist {
 struct PlaylistWidget::Private : QObject

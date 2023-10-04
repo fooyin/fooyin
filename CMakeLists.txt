@@ -12,15 +12,16 @@ project(
 
 set(DATABASE_VERSION "0.6.3")
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 include(cmake/CheckLevel.cmake)
+include(cmake/CPM.cmake)
+include(cmake/Fooyin.cmake)
 
 include(FeatureSummary)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Fooyin.cmake)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE
@@ -32,16 +33,30 @@ endif()
 fooyin_option(FOOYIN_STATIC "Build fooyin libraries as static." OFF)
 fooyin_option(BUILD_TESTS "Build fooyin tests." OFF)
 
-find_package(Qt6Core REQUIRED)
-find_package(Qt6Widgets REQUIRED)
-find_package(Qt6Gui REQUIRED)
-find_package(Qt6Sql REQUIRED)
-find_package(Qt6Concurrent REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Sql Concurrent)
 
-find_package(QCoro6 REQUIRED COMPONENTS Core)
+CPMFindPackage(
+  NAME Taglib
+  VERSION 1.12
+  GITHUB_REPOSITORY taglib/taglib
+  GIT_TAG master
+  OPTIONS "BUILD_TESTING OFF"
+          "CMAKE_POSITION_INDEPENDENT_CODE ON"
+)
+
+CPMFindPackage(
+  NAME QCoro6
+  VERSION 0.9
+  GITHUB_REPOSITORY danvratil/qcoro
+  GIT_TAG v0.9.0
+  FIND_PACKAGE_ARGUMENTS "COMPONENTS Core"
+  OPTIONS "BUILD_TESTING OFF"
+          "BUILD_SHARED_LIBS ON"
+          "QCORO_WITH_QTWEBSOCKETS OFF"
+          "QCORO_DISABLE_DEPRECATED_TASK_H ON"
+)
 qcoro_enable_coroutines()
 
-find_package(Taglib REQUIRED taglib>=1.12)
 find_package(Libmpv REQUIRED)
 
 # find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL AVDEVICE AVFILTER
@@ -57,11 +72,7 @@ target_include_directories(
     PUBLIC "${PROJECT_BINARY_DIR}/app"
 )
 
-add_library(
-    fooyin_lib
-    OBJECT src/app/application.cpp
-           src/app/singleinstance.cpp
-)
+add_library(fooyin_lib OBJECT src/app/application.cpp src/app/singleinstance.cpp)
 add_library(fooyin::lib ALIAS fooyin_lib)
 
 target_include_directories(

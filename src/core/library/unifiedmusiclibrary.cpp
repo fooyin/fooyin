@@ -29,9 +29,10 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QCoroCore>
 #include <QDir>
 #include <QTimer>
+
+#include <QCoro/QCoroCore>
 
 #include <ranges>
 #include <vector>

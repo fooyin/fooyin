@@ -34,6 +34,8 @@
 #include <QActionGroup>
 #include <QMenu>
 
+#include <QCoro/QCoroCore>
+
 namespace Fy::Filters {
 bool containsSearch(const QString& text, const QString& search)
 {

@@ -23,7 +23,7 @@
 #include "librarythreadhandler.h"
 #include "musiclibrary.h"
 
-#include <QCoroCore>
+#include <QCoro/QCoroTask>
 
 namespace Fy {
 

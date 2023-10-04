@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2006 Laurent Montel <montel@kde.org>
 # SPDX-FileCopyrightText: 2019 Heiko Becker <heirecka@exherbo.org>
 # SPDX-FileCopyrightText: 2020 Elvis Angelaccio <elvis.angelaccio@kde.org>
-# SPDX-FileCopyrightText: 2022 Luke Taylor <LukeT1@proton.me>
+# SPDX-FileCopyrightText: 2023 Luke Taylor <LukeT1@proton.me>
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
@@ -79,10 +79,10 @@ find_package_handle_standard_args(
   REQUIRED_VARS TAGLIB_LIBRARIES TAGLIB_INCLUDE_DIRS
   VERSION_VAR TAGLIB_VERSION)
 
-if(TAGLIB_FOUND AND NOT TARGET Taglib::Taglib)
-  add_library(Taglib::Taglib UNKNOWN IMPORTED)
+if(TAGLIB_FOUND AND NOT TARGET tag)
+  add_library(tag UNKNOWN IMPORTED)
   set_target_properties(
-    Taglib::Taglib
+    tag
     PROPERTIES IMPORTED_LOCATION "${TAGLIB_LIBRARIES}"
                INTERFACE_INCLUDE_DIRECTORIES "${TAGLIB_INCLUDE_DIRS}")
 endif()

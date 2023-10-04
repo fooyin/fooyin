@@ -22,7 +22,8 @@
 #include <core/models/trackfwd.h>
 
 #include <QObject>
-#include <QCoroCore>
+
+#include <QCoro/QCoroTask>
 
 namespace Fy {
 namespace Utils {

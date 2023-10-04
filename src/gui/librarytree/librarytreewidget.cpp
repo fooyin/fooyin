@@ -36,7 +36,7 @@
 #include <QTreeView>
 #include <QVBoxLayout>
 
-#include <QCoroCore>
+#include <QCoro/QCoroCore>
 
 namespace Fy::Gui::Widgets {
 void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QModelIndexList& bottomIndexes)
