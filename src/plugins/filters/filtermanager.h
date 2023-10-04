@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-#include <QCoro/QCoroTask>
+#include <QCoroTask>
 
 namespace Fy {
 namespace Utils {

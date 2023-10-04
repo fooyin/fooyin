@@ -15,7 +15,6 @@ set(DATABASE_VERSION "0.6.3")
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(cmake/CheckLevel.cmake)
-include(cmake/CPM.cmake)
 include(cmake/Fooyin.cmake)
 
 include(FeatureSummary)
@@ -33,35 +32,19 @@ endif()
 fooyin_option(FOOYIN_STATIC "Build fooyin libraries as static." OFF)
 fooyin_option(BUILD_TESTS "Build fooyin tests." OFF)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Sql Concurrent)
-
-CPMFindPackage(
-  NAME Taglib
-  VERSION 1.12
-  GITHUB_REPOSITORY taglib/taglib
-  GIT_TAG master
-  OPTIONS "CMAKE_BUILD_TYPE Release"
-          "BUILD_SHARED_LIBS ON"
-          "BUILD_TESTING OFF"
-          "BUILD_EXAMPLES OFF"
-          "BUILD_BINDINGS OFF"
-          "CMAKE_POSITION_INDEPENDENT_CODE ON"
+find_package(
+    Qt6 REQUIRED
+    COMPONENTS Core
+               Widgets
+               Gui
+               Sql
+               Concurrent
 )
-add_library(Taglib::Taglib ALIAS tag)
 
-CPMFindPackage(
-  NAME QCoro6
-  VERSION 0.9
-  GITHUB_REPOSITORY danvratil/qcoro
-  GIT_TAG v0.9.0
-  FIND_PACKAGE_ARGUMENTS "COMPONENTS Core"
-  OPTIONS "BUILD_TESTING OFF"
-          "BUILD_SHARED_LIBS ON"
-          "QCORO_WITH_QTWEBSOCKETS OFF"
-          "QCORO_DISABLE_DEPRECATED_TASK_H ON"
-)
+find_package(QCoro6 REQUIRED COMPONENTS Core)
 qcoro_enable_coroutines()
 
+find_package(Taglib REQUIRED taglib>=1.12)
 find_package(Libmpv REQUIRED)
 
 # find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL AVDEVICE AVFILTER
@@ -101,14 +84,7 @@ target_compile_options(fooyin_lib PRIVATE -Werror -Wall -Wextra -Wpedantic)
 # ---- Fooyin testing ----
 
 if(BUILD_TESTS)
-    CPMFindPackage(
-            NAME GTest
-            VERSION 1.13.0
-            GITHUB_REPOSITORY google/googletest
-            GIT_TAG v1.14.0
-            OPTIONS "gtest_force_shared_crt ON"
-                    "BUILD_TESTING OFF"
-    )
+    find_package(GTest)
     add_subdirectory(tests)
 endif()
 
@@ -165,3 +141,5 @@ install(
 # ---- Fooyin install ----
 
 install(TARGETS fooyin_exe RUNTIME COMPONENT fooyin_runtime)
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

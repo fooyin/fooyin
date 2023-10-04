@@ -32,7 +32,7 @@
 #include <QDir>
 #include <QTimer>
 
-#include <QCoro/QCoroCore>
+#include <QCoroCore>
 
 #include <ranges>
 #include <vector>

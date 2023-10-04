@@ -79,10 +79,10 @@ find_package_handle_standard_args(
   REQUIRED_VARS TAGLIB_LIBRARIES TAGLIB_INCLUDE_DIRS
   VERSION_VAR TAGLIB_VERSION)
 
-if(TAGLIB_FOUND AND NOT TARGET tag)
-  add_library(tag UNKNOWN IMPORTED)
+if(TAGLIB_FOUND AND NOT TARGET Taglib::Taglib)
+  add_library(Taglib::Taglib UNKNOWN IMPORTED)
   set_target_properties(
-    tag
+    Taglib::Taglib
     PROPERTIES IMPORTED_LOCATION "${TAGLIB_LIBRARIES}"
                INTERFACE_INCLUDE_DIRECTORIES "${TAGLIB_INCLUDE_DIRS}")
 endif()
