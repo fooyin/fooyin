@@ -46,6 +46,7 @@ CPMFindPackage(
           "BUILD_BINDINGS OFF"
           "CMAKE_POSITION_INDEPENDENT_CODE ON"
 )
+add_library(Taglib::Taglib ALIAS tag)
 
 CPMFindPackage(
   NAME QCoro6
@@ -163,5 +164,3 @@ install(
 # ---- Fooyin install ----
 
 install(TARGETS fooyin_exe RUNTIME COMPONENT fooyin_runtime)
-
-feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
