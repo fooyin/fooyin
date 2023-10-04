@@ -36,8 +36,7 @@ class FilterWidget : public Gui::Widgets::FyWidget
     Q_OBJECT
 
 public:
-    explicit FilterWidget(Utils::SettingsManager* settings,
-                          QWidget* parent = nullptr);
+    explicit FilterWidget(Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();

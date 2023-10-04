@@ -12,15 +12,15 @@ project(
 
 set(DATABASE_VERSION "0.6.3")
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 include(cmake/CheckLevel.cmake)
+include(cmake/Fooyin.cmake)
 
 include(FeatureSummary)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Fooyin.cmake)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE
@@ -32,11 +32,17 @@ endif()
 fooyin_option(FOOYIN_STATIC "Build fooyin libraries as static." OFF)
 fooyin_option(BUILD_TESTS "Build fooyin tests." OFF)
 
-find_package(Qt6Core REQUIRED)
-find_package(Qt6Widgets REQUIRED)
-find_package(Qt6Gui REQUIRED)
-find_package(Qt6Sql REQUIRED)
-find_package(Qt6Concurrent REQUIRED)
+find_package(
+    Qt6 REQUIRED
+    COMPONENTS Core
+               Widgets
+               Gui
+               Sql
+               Concurrent
+)
+
+find_package(QCoro6 REQUIRED COMPONENTS Core)
+qcoro_enable_coroutines()
 
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(Libmpv REQUIRED)
@@ -54,11 +60,7 @@ target_include_directories(
     PUBLIC "${PROJECT_BINARY_DIR}/app"
 )
 
-add_library(
-    fooyin_lib
-    OBJECT src/app/application.cpp
-           src/app/singleinstance.cpp
-)
+add_library(fooyin_lib OBJECT src/app/application.cpp src/app/singleinstance.cpp)
 add_library(fooyin::lib ALIAS fooyin_lib)
 
 target_include_directories(
@@ -70,12 +72,7 @@ add_subdirectory(src)
 
 target_link_libraries(
     fooyin_lib
-    PUBLIC Qt6::Core
-           Qt6::Gui
-           Qt6::Widgets
-           Qt6::Sql
-           Qt6::Concurrent
-           fooyin::core
+    PUBLIC fooyin::core
            fooyin::gui
            fooyin::utils
     # ${SDL2_LIBRARIES} ${FFMPEG_LIBRARIES}

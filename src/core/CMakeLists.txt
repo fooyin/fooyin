@@ -85,6 +85,7 @@ target_include_directories(
             "${CMAKE_BINARY_DIR}/src"
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
     PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
+           "${Taglib_SOURCE_DIR}/taglib"
 )
 
 set_target_properties(
@@ -102,6 +103,7 @@ target_link_libraries(
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
+           QCoro::Core
     PRIVATE Taglib::Taglib
             Libmpv::Libmpv
             fooyin::version

@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2006 Laurent Montel <montel@kde.org>
 # SPDX-FileCopyrightText: 2019 Heiko Becker <heirecka@exherbo.org>
 # SPDX-FileCopyrightText: 2020 Elvis Angelaccio <elvis.angelaccio@kde.org>
-# SPDX-FileCopyrightText: 2022 Luke Taylor <LukeT1@proton.me>
+# SPDX-FileCopyrightText: 2023 Luke Taylor <LukeT1@proton.me>
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
