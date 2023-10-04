@@ -56,13 +56,6 @@ struct FilterModel::Private : QObject
         populator.moveToThread(&populatorThread);
     }
 
-    void sortNodes() const
-    {
-        emit self->layoutAboutToBeChanged({});
-        self->rootItem()->sortChildren(sortOrder);
-        emit self->layoutChanged({});
-    }
-
     void beginReset()
     {
         self->resetRoot();
@@ -100,7 +93,7 @@ struct FilterModel::Private : QObject
         }
         trackParents.merge(data.trackParents);
 
-        sortNodes();
+        self->rootItem()->sortChildren(sortOrder);
     }
 };
 
@@ -133,7 +126,7 @@ void FilterModel::setSortOrder(Qt::SortOrder order)
     p->sortOrder = order;
 
     emit layoutAboutToBeChanged();
-    p->sortNodes();
+    rootItem()->sortChildren(order);
     emit layoutChanged();
 }
 
