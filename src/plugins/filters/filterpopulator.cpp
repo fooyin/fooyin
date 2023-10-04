@@ -97,10 +97,6 @@ struct FilterPopulator::Private
 
     void runBatch(const Core::TrackList& tracks)
     {
-        if(tracks.empty()) {
-            return;
-        }
-
         for(const Core::Track& track : tracks) {
             if(!populator->mayRun()) {
                 return;
@@ -116,7 +112,7 @@ struct FilterPopulator::Private
         }
 
         if(allNode) {
-            allNode->setTitle(QString{"All (%1)"}.arg(data.items.size()));
+            allNode->setTitle(QString{"All (%1)"}.arg(data.items.size() - 1));
         }
 
         emit populator->populated(data);
@@ -148,6 +144,8 @@ void FilterPopulator::run(const QString& field, const QString& sort, const Core:
     p->allNode = &p->data.items.emplace(Utils::generateRandomHash(), FilterItem{"", "", &p->root, true}).first->second;
 
     p->runBatch(tracks);
+
+    emit finished();
 
     setState(Idle);
 }
