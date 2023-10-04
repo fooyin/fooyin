@@ -41,6 +41,7 @@ CPMFindPackage(
   GITHUB_REPOSITORY taglib/taglib
   GIT_TAG master
   OPTIONS "CMAKE_BUILD_TYPE Release"
+          "BUILD_SHARED_LIBS ON"
           "BUILD_TESTING OFF"
           "BUILD_EXAMPLES OFF"
           "BUILD_BINDINGS OFF"
