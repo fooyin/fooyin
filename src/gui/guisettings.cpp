@@ -19,12 +19,7 @@
 
 #include "guisettings.h"
 
-#include "guipaths.h"
-
-#include <core/coresettings.h>
-
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 namespace Fy::Gui::Settings {
 GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
@@ -54,8 +49,6 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::LibraryTreePlaylistEnabled>(false, "LibraryTree");
     m_settings->createSetting<Settings::LibraryTreeAutoSwitch>(true, "LibraryTree");
     m_settings->createSetting<Settings::LibraryTreeAutoPlaylist>("Library Selection", "LibraryTree");
-
-    m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(activeLayoutPath()));
 
     m_settings->loadSettings();
 }

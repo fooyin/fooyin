@@ -37,9 +37,8 @@ enum Core : uint32_t
     FirstRun          = 3 | Utils::Settings::Bool,
     PlayMode          = 4 | Utils::Settings::String,
     AutoRefresh       = 5 | Utils::Settings::Bool,
-    WaitForTracks     = 6 | Utils::Settings::Bool,
-    LibrarySorting    = 7 | Utils::Settings::ByteArray,
-    LibrarySortScript = 8 | Utils::Settings::String,
+    LibrarySorting    = 6 | Utils::Settings::ByteArray,
+    LibrarySortScript = 7 | Utils::Settings::String,
     ActivePlaylistId  = 8 | Utils::Settings::Int,
 };
 Q_ENUM_NS(Core)
