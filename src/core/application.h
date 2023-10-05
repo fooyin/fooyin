@@ -30,12 +30,10 @@ class Application : public QObject
 
 public:
     explicit Application(QObject* parent = nullptr);
-
     ~Application() override;
 
     void shutdown();
-
-    [[nodiscard]] CorePluginContext context() const;
+    CorePluginContext context() const;
 
 private:
     struct Private;

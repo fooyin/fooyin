@@ -34,7 +34,6 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createTempSetting<Settings::FirstRun>(true);
     m_settings->createSetting<Settings::PlayMode>("Default", "Player");
     m_settings->createSetting<Settings::AutoRefresh>(false, "Library");
-    m_settings->createSetting<Settings::WaitForTracks>(true, "Library");
     m_settings->createSetting<Settings::LibrarySorting>(QByteArray{}, "Library");
     m_settings->createSetting<Settings::LibrarySortScript>(
         "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", "Library");
