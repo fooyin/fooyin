@@ -21,6 +21,10 @@
 
 namespace Fy {
 
+namespace Plugins {
+class PluginManager;
+}
+
 namespace Utils {
 class SettingsManager;
 class ActionManager;
@@ -40,28 +44,38 @@ class PlaylistHandler;
 }
 
 namespace Library {
+class LibraryManager;
 class MusicLibrary;
-}
+class SortingRegistry;
+} // namespace Library
 
 struct CorePluginContext
 {
-    CorePluginContext(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
+    CorePluginContext(Plugins::PluginManager* pluginManager, Utils::ActionManager* actionManager,
+                      Core::Player::PlayerManager* playerManager, Core::Library::LibraryManager* libraryManager,
                       Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-                      Utils::SettingsManager* settingsManager, Core::DB::Database* database)
-        : actionManager{actionManager}
+                      Utils::SettingsManager* settingsManager, Core::DB::Database* database,
+                      Core::Library::SortingRegistry* sortingRegistry)
+        : pluginManager{pluginManager}
+        , actionManager{actionManager}
         , playerManager{playerManager}
+        , libraryManager{libraryManager}
         , library{library}
         , playlistHandler{playlistHandler}
         , settingsManager{settingsManager}
         , database{database}
+        , sortingRegistry{sortingRegistry}
     { }
 
+    Plugins::PluginManager* pluginManager;
     Utils::ActionManager* actionManager;
     Core::Player::PlayerManager* playerManager;
+    Core::Library::LibraryManager* libraryManager;
     Core::Library::MusicLibrary* library;
     Core::Playlist::PlaylistHandler* playlistHandler;
     Utils::SettingsManager* settingsManager;
     Core::DB::Database* database;
+    Core::Library::SortingRegistry* sortingRegistry;
 };
 } // namespace Core
 } // namespace Fy

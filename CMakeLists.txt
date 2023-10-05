@@ -41,6 +41,12 @@ find_package(
                Concurrent
 )
 
+set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Concurrent PROPERTIES TYPE REQUIRED)
+
 find_package(QCoro6 REQUIRED COMPONENTS Core)
 qcoro_enable_coroutines()
 
@@ -60,7 +66,7 @@ target_include_directories(
     PUBLIC "${PROJECT_BINARY_DIR}/app"
 )
 
-add_library(fooyin_lib OBJECT src/app/application.cpp src/app/singleinstance.cpp)
+add_library(fooyin_lib OBJECT src/app/singleinstance.cpp)
 add_library(fooyin::lib ALIAS fooyin_lib)
 
 target_include_directories(

@@ -19,22 +19,26 @@
 
 #pragma once
 
-#include <QApplication>
+#include "coreplugincontext.h"
 
-namespace Fy {
-class Application : public QApplication
+#include <QObject>
+
+namespace Fy::Core {
+class Application : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit Application(int& argc, char** argv, int flags = ApplicationFlags);
+    explicit Application(QObject* parent = nullptr);
+
     ~Application() override;
 
-    void startup();
     void shutdown();
+
+    [[nodiscard]] CorePluginContext context() const;
 
 private:
     struct Private;
     std::unique_ptr<Application::Private> p;
 };
-} // namespace Fy
+} // namespace Fy::Core

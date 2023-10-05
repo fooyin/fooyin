@@ -9,6 +9,7 @@ project(
 )
 
 set(SOURCES
+    application.cpp
     coreplugin.h
     coreplugincontext.h
     corepaths.h

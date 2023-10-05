@@ -11,6 +11,7 @@ project(
 set(SOURCES
     fywidget.h
     fywidget.cpp
+    guiapplication.cpp
     mainmenubar.h
     mainmenubar.cpp
     mainwindow.h

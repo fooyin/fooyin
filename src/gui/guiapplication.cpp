@@ -17,79 +17,65 @@
  *
  */
 
-#include "application.h"
+#include "guiapplication.h"
 
-#include <core/constants.h>
-#include <core/corepaths.h>
-#include <core/coreplugin.h>
 #include <core/coreplugincontext.h>
 #include <core/coresettings.h>
-#include <core/database/database.h>
-#include <core/engine/enginehandler.h>
 #include <core/library/librarymanager.h>
-#include <core/library/libraryscanner.h>
-#include <core/library/sortingregistry.h>
-#include <core/library/unifiedmusiclibrary.h>
-#include <core/player/playercontroller.h>
-#include <core/playlist/playlisthandler.h>
-#include <core/plugins/plugin.h>
+#include <core/library/musiclibrary.h>
 #include <core/plugins/pluginmanager.h>
 
-#include <gui/controls/controlwidget.h>
-#include <gui/dialog/propertiesdialog.h>
-#include <gui/editablelayout.h>
-#include <gui/guiconstants.h>
-#include <gui/guiplugin.h>
-#include <gui/guiplugincontext.h>
-#include <gui/guisettings.h>
-#include <gui/info/infowidget.h>
-#include <gui/layoutprovider.h>
-#include <gui/library/coverwidget.h>
-#include <gui/library/statuswidget.h>
-#include <gui/librarytree/librarytreegroupregistry.h>
-#include <gui/librarytree/librarytreewidget.h>
-#include <gui/mainwindow.h>
-#include <gui/menu/editmenu.h>
-#include <gui/menu/filemenu.h>
-#include <gui/menu/helpmenu.h>
-#include <gui/menu/librarymenu.h>
-#include <gui/menu/playbackmenu.h>
-#include <gui/menu/viewmenu.h>
-#include <gui/playlist/playlistcontroller.h>
-#include <gui/playlist/playlisttabs.h>
-#include <gui/playlist/playlistwidget.h>
-#include <gui/playlist/presetregistry.h>
-#include <gui/search/searchcontroller.h>
-#include <gui/search/searchwidget.h>
-#include <gui/settings/generalpage.h>
-#include <gui/settings/guigeneralpage.h>
-#include <gui/settings/library/librarygeneralpage.h>
-#include <gui/settings/library/librarysortingpage.h>
-#include <gui/settings/librarytree/librarytreepage.h>
-#include <gui/settings/playlist/playlistguipage.h>
-#include <gui/settings/playlist/playlistpresetspage.h>
-#include <gui/settings/plugins/pluginspage.h>
-#include <gui/trackselectioncontroller.h>
-#include <gui/widgetfactory.h>
-#include <gui/widgets/spacer.h>
-#include <gui/widgets/splitterwidget.h>
-
-#include <utils/actions/actioncontainer.h>
-#include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 
-namespace Fy {
-struct Application::Private
+#include "editablelayout.h"
+#include "gui/controls/controlwidget.h"
+#include "gui/dialog/propertiesdialog.h"
+#include "gui/guiplugincontext.h"
+#include "gui/info/infowidget.h"
+#include "gui/library/coverwidget.h"
+#include "gui/library/statuswidget.h"
+#include "gui/librarytree/librarytreegroupregistry.h"
+#include "gui/librarytree/librarytreewidget.h"
+#include "gui/menu/editmenu.h"
+#include "gui/menu/filemenu.h"
+#include "gui/menu/helpmenu.h"
+#include "gui/menu/librarymenu.h"
+#include "gui/menu/playbackmenu.h"
+#include "gui/menu/viewmenu.h"
+#include "gui/playlist/playlistcontroller.h"
+#include "gui/playlist/playlisttabs.h"
+#include "gui/playlist/playlistwidget.h"
+#include "gui/playlist/presetregistry.h"
+#include "gui/search/searchcontroller.h"
+#include "gui/search/searchwidget.h"
+#include "gui/settings/generalpage.h"
+#include "gui/settings/guigeneralpage.h"
+#include "gui/settings/library/librarygeneralpage.h"
+#include "gui/settings/library/librarysortingpage.h"
+#include "gui/settings/librarytree/librarytreepage.h"
+#include "gui/settings/playlist/playlistguipage.h"
+#include "gui/settings/playlist/playlistpresetspage.h"
+#include "gui/settings/plugins/pluginspage.h"
+#include "gui/widgets/spacer.h"
+#include "guiplugin.h"
+#include "layoutprovider.h"
+#include "mainwindow.h"
+#include "trackselectioncontroller.h"
+#include "widgetfactory.h"
+
+namespace Fy::Gui {
+struct GuiApplication::Private
 {
+    GuiApplication* self;
+
     Utils::ActionManager* actionManager;
     Utils::SettingsManager* settingsManager;
-    Core::Settings::CoreSettings coreSettings;
-    Core::DB::Database database;
+
+    Plugins::PluginManager* pluginManager;
     Core::Player::PlayerManager* playerManager;
-    Core::Engine::EngineHandler engine;
     Core::Library::LibraryManager* libraryManager;
     Core::Library::MusicLibrary* library;
-    Core::Library::SortingRegistry sortingRegistry;
+    Core::Library::SortingRegistry* sortingRegistry;
     Core::Playlist::PlaylistHandler* playlistHandler;
 
     Gui::Widgets::WidgetFactory widgetFactory;
@@ -119,56 +105,51 @@ struct Application::Private
     Gui::Settings::PlaylistGuiPage playlistGuiPage;
     Gui::Settings::PlaylistPresetsPage playlistPresetsPage;
     Gui::Settings::LibraryTreePage libraryTreePage;
-
-    Plugins::PluginManager* pluginManager;
     Gui::Settings::PluginPage pluginPage;
-    Core::CorePluginContext corePluginContext;
+
     Gui::GuiPluginContext guiPluginContext;
 
-    explicit Private(QObject* parent)
-        : actionManager{new Utils::ActionManager(parent)}
-        , settingsManager{new Utils::SettingsManager(Core::settingsPath(), parent)}
-        , coreSettings{settingsManager}
-        , database{settingsManager}
-        , playerManager{new Core::Player::PlayerController(settingsManager, parent)}
-        , engine{playerManager}
-        , libraryManager{new Core::Library::LibraryManager(&database, settingsManager, parent)}
-        , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
-        , sortingRegistry{settingsManager}
-        , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, library, settingsManager,
-                                                              parent)}
+    explicit Private(GuiApplication* self, const Core::CorePluginContext& core)
+        : self{self}
+        , actionManager{core.actionManager}
+        , settingsManager{core.settingsManager}
+        , pluginManager{core.pluginManager}
+        , playerManager{core.playerManager}
+        , libraryManager{core.libraryManager}
+        , library{core.library}
+        , sortingRegistry{core.sortingRegistry}
+        , playlistHandler{core.playlistHandler}
         , guiSettings{settingsManager}
         , playlistController{std::make_unique<Gui::Widgets::Playlist::PlaylistController>(
-              playlistHandler, &presetRegistry, &sortingRegistry, settingsManager)}
+              playlistHandler, &presetRegistry, sortingRegistry, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
         , presetRegistry{settingsManager}
         , treeGroupRegistry{settingsManager}
         , editableLayout{std::make_unique<Gui::Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,
                                                                         &layoutProvider)}
         , mainWindow{std::make_unique<Gui::MainWindow>(actionManager, settingsManager, editableLayout.get())}
-        , fileMenu{new Gui::FileMenu(actionManager, settingsManager, parent)}
-        , editMenu{new Gui::EditMenu(actionManager, parent)}
-        , viewMenu{new Gui::ViewMenu(actionManager, editableLayout.get(), settingsManager, parent)}
-        , playbackMenu{new Gui::PlaybackMenu(actionManager, playerManager, parent)}
-        , libraryMenu{new Gui::LibraryMenu(actionManager, library, settingsManager, parent)}
-        , helpMenu{new Gui::HelpMenu(actionManager, parent)}
-        , propertiesDialog{new Gui::PropertiesDialog(parent)}
+        , fileMenu{new Gui::FileMenu(actionManager, settingsManager, self)}
+        , editMenu{new Gui::EditMenu(actionManager, self)}
+        , viewMenu{new Gui::ViewMenu(actionManager, editableLayout.get(), settingsManager, self)}
+        , playbackMenu{new Gui::PlaybackMenu(actionManager, playerManager, self)}
+        , libraryMenu{new Gui::LibraryMenu(actionManager, library, settingsManager, self)}
+        , helpMenu{new Gui::HelpMenu(actionManager, self)}
+        , propertiesDialog{new Gui::PropertiesDialog(self)}
         , generalPage{settingsManager}
         , libraryGeneralPage{libraryManager, settingsManager}
-        , librarySortingPage{&sortingRegistry, settingsManager}
+        , librarySortingPage{sortingRegistry, settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , playlistGuiPage{settingsManager}
         , playlistPresetsPage{&presetRegistry, settingsManager}
         , libraryTreePage{&treeGroupRegistry, settingsManager}
-        , pluginManager{new Plugins::PluginManager(parent)}
         , pluginPage{settingsManager, pluginManager}
-        , corePluginContext{actionManager, playerManager, library, playlistHandler, settingsManager, &database}
         , guiPluginContext{&layoutProvider, &selectionController, &searchController, propertiesDialog, &widgetFactory}
     {
         registerLayouts();
         registerWidgets();
         createPropertiesTabs();
-        loadPlugins();
+
+        pluginManager->initialisePlugins<Gui::GuiPlugin>(guiPluginContext);
     }
 
     void registerLayouts()
@@ -242,39 +223,15 @@ struct Application::Private
             return new Gui::Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager);
         });
     }
-
-    void loadPlugins() const
-    {
-        const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin";
-        pluginManager->findPlugins(pluginsPath);
-        pluginManager->loadPlugins();
-
-        pluginManager->initialisePlugins<Core::CorePlugin>(corePluginContext);
-        pluginManager->initialisePlugins<Gui::GuiPlugin>(guiPluginContext);
-    }
 };
 
-Application::Application(int& argc, char** argv, int flags)
-    : QApplication{argc, argv, flags}
-    , p{std::make_unique<Private>(this)}
+GuiApplication::GuiApplication(const Core::CorePluginContext& core)
+    : p{std::make_unique<Private>(this, core)}
 {
-    // Required to ensure plugins are unloaded before main event loop quits
-    QObject::connect(this, &QCoreApplication::aboutToQuit, this, &Application::shutdown);
-
     QObject::connect(&p->selectionController, &Gui::TrackSelectionController::requestPropertiesDialog,
                      p->propertiesDialog, &Gui::PropertiesDialog::show);
 
-    startup();
-}
-
-Application::~Application() = default;
-
-void Application::startup()
-{
-    p->settingsManager->loadSettings();
-    p->library->loadLibrary();
     p->layoutProvider.findLayouts();
-    p->sortingRegistry.loadItems();
     p->presetRegistry.loadItems();
     p->treeGroupRegistry.loadItems();
 
@@ -291,18 +248,15 @@ void Application::startup()
     }
 }
 
-void Application::shutdown()
+GuiApplication::~GuiApplication() = default;
+
+void GuiApplication::shutdown()
 {
-    p->playlistHandler->savePlaylists();
     p->editableLayout->saveLayout();
-    p->sortingRegistry.saveItems();
     p->presetRegistry.saveItems();
     p->treeGroupRegistry.saveItems();
     p->playlistController.reset(nullptr);
     p->editableLayout.reset(nullptr);
     p->mainWindow.reset(nullptr);
-    p->pluginManager->shutdown();
-    p->settingsManager->storeSettings();
-    p->database.closeDatabase();
 }
-} // namespace Fy
+} // namespace Fy::Gui
