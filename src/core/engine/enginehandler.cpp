@@ -28,7 +28,7 @@ struct EngineHandler::Private : QObject
 
     Engine* engine;
 
-    Private(EngineHandler* self)
+    explicit Private(EngineHandler* self)
         : self{self}
         , engine{new EngineMpv(self)}
     { }

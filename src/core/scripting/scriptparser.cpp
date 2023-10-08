@@ -57,8 +57,9 @@ struct Parser::Private
     QStringList result;
     bool hadError{false};
 
-    Private(Registry* registry)
-        : registry{registry}
+    explicit Private(Registry* registry)
+        : scanner{}
+        , registry{registry}
     { }
 
     void advance()
