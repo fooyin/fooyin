@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "core/playlist/playlist.h"
 #include "module.h"
+
+#include <core/playlist/playlist.h>
 
 namespace Fy::Core::DB {
 class Playlist : private Module
@@ -35,7 +36,7 @@ public:
     bool insertPlaylistTracks(int id, const TrackList& tracks);
 
     bool removePlaylist(int id);
-    
+
     bool renamePlaylist(int id, const QString& name);
 
 private:

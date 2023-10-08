@@ -17,7 +17,7 @@
  *
  */
 
-#include "sortingregistry.h"
+#include <core/library/sortingregistry.h>
 
 namespace Fy::Core::Library {
 void loadDefaults(SortingRegistry* registry)

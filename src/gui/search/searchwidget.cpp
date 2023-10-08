@@ -19,9 +19,8 @@
 
 #include "searchwidget.h"
 
-#include "gui/guisettings.h"
-#include "searchcontroller.h"
-
+#include <gui/guisettings.h>
+#include <gui/searchcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>

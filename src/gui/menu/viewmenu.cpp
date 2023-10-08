@@ -19,10 +19,10 @@
 
 #include "viewmenu.h"
 
-#include "gui/editablelayout.h"
-#include "gui/guiconstants.h"
-#include "gui/guisettings.h"
+#include "editablelayout.h"
 
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>

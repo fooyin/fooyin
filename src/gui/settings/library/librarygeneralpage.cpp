@@ -22,12 +22,10 @@
 #include "librarymodel.h"
 #include "libraryview.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/librarymanager.h>
-
+#include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>

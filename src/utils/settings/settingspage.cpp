@@ -17,9 +17,9 @@
  *
  */
 
-#include "settingspage.h"
+#include <utils/settings/settingspage.h>
 
-#include "settingsdialogcontroller.h"
+#include <utils/settings/settingsdialogcontroller.h>
 
 namespace Fy::Utils {
 SettingsPage::SettingsPage(SettingsDialogController* controller, QObject* parent)

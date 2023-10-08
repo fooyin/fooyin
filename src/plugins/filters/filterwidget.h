@@ -19,8 +19,7 @@
 
 #pragma once
 
-#include <core/models/trackfwd.h>
-
+#include <core/track.h>
 #include <gui/fywidget.h>
 
 namespace Fy {
@@ -52,6 +51,10 @@ public:
     void saveLayout(QJsonArray& array) override;
     void loadLayout(const QJsonObject& object) override;
 
+    void tracksAdded(const Core::TrackList& tracks);
+    void tracksUpdated(const Core::TrackList& tracks);
+    void tracksRemoved(const Core::TrackList& tracks);
+
 signals:
     void doubleClicked(const QString& playlistName);
     void middleClicked(const QString& playlistName);
@@ -61,10 +64,6 @@ signals:
     void requestFieldChange(const LibraryFilter& filter, const QString& field);
     void requestHeaderMenu(const LibraryFilter& filter, QPoint pos);
     void requestContextMenu(const LibraryFilter& filter, QPoint pos);
-
-    void tracksAdded(const Core::TrackList& tracks);
-    void tracksUpdated(const Core::TrackList& tracks);
-    void tracksRemoved(const Core::TrackList& tracks);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

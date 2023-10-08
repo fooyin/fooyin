@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "settingspage.h"
-#include "utils/id.h"
+#include <utils/settings/settingspage.h>
+#include <utils/id.h>
 
 #include <QIcon>
 

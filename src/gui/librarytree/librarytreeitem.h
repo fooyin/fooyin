@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <core/models/trackfwd.h>
+#include <core/track.h>
 
 #include <utils/treeitem.h>
 

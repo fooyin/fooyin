@@ -22,7 +22,7 @@
 #include "librarytreegroup.h"
 #include "librarytreeitem.h"
 
-#include <core/models/trackfwd.h>
+#include <core/track.h>
 #include <core/scripting/scriptparser.h>
 
 #include <utils/treemodel.h>

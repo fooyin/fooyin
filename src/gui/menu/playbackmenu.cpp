@@ -19,10 +19,8 @@
 
 #include "playbackmenu.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/player/playermanager.h>
-
+#include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 
@@ -130,13 +128,13 @@ void PlaybackMenu::updatePlayPause(Core::Player::PlayState state)
 void PlaybackMenu::updatePlayMode(Core::Player::PlayMode mode)
 {
     switch(mode) {
-        case(Core::Player::Default):
+        case(Core::Player::PlayMode::Default):
             return m_default->setChecked(true);
-        case(Core::Player::Repeat):
+        case(Core::Player::PlayMode::Repeat):
             return m_repeat->setChecked(true);
-        case(Core::Player::RepeatAll):
+        case(Core::Player::PlayMode::RepeatAll):
             return m_repeatAll->setChecked(true);
-        case(Core::Player::Shuffle):
+        case(Core::Player::PlayMode::Shuffle):
             return m_shuffle->setChecked(true);
     }
 }

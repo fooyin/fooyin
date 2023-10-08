@@ -19,7 +19,7 @@
 
 #include "settingsmodel.h"
 
-#include "settingspage.h"
+#include <utils/settings/settingspage.h>
 
 namespace Fy::Utils {
 SettingsItem::SettingsItem()

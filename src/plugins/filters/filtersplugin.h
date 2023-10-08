@@ -19,22 +19,12 @@
 
 #pragma once
 
-#include "fieldregistry.h"
-#include "settings/filtersfieldspage.h"
-#include "settings/filtersgeneralpage.h"
-
-#include <core/coreplugin.h>
+#include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
 
-#include <gui/guiplugin.h>
+#include <gui/plugins/guiplugin.h>
 
 namespace Fy::Filters {
-class FilterManager;
-
-namespace Settings {
-class FiltersSettings;
-} // namespace Settings
-
 class FiltersPlugin : public QObject,
                       public Plugins::Plugin,
                       public Core::CorePlugin,
@@ -47,27 +37,15 @@ class FiltersPlugin : public QObject,
     Q_INTERFACES(Fy::Gui::GuiPlugin)
 
 public:
+    FiltersPlugin();
+    ~FiltersPlugin() override;
+
     void initialise(const Core::CorePluginContext& context) override;
     void initialise(const Gui::GuiPluginContext& context) override;
     void shutdown() override;
 
 private:
-    void registerLayouts();
-
-    Utils::ActionManager* m_actionManager;
-    Utils::SettingsManager* m_settings;
-    Core::Library::MusicLibrary* m_library;
-    Core::Player::PlayerManager* m_playerManager;
-    Core::Playlist::PlaylistHandler* m_playlistHandler;
-    Gui::LayoutProvider* m_layoutProvider;
-    Gui::Widgets::SearchController* m_searchController;
-    Gui::Widgets::WidgetFactory* m_factory;
-    Gui::TrackSelectionController* m_trackSelection;
-
-    FilterManager* m_filterManager;
-    std::unique_ptr<Settings::FiltersSettings> m_filterSettings;
-
-    std::unique_ptr<Settings::FiltersGeneralPage> m_generalPage;
-    std::unique_ptr<Settings::FiltersFieldsPage> m_fieldsPage;
+    struct Private;
+    std::unique_ptr<Private>p;
 };
 } // namespace Fy::Filters

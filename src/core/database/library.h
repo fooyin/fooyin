@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "core/library/libraryinfo.h"
 #include "module.h"
+
+#include <core/library/libraryinfo.h>
 
 namespace Fy::Core::DB {
 class Library : public Module

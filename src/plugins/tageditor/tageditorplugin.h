@@ -19,12 +19,9 @@
 
 #pragma once
 
-#include <core/coreplugin.h>
+#include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
-
-#include <gui/guiplugin.h>
-
-class QAction;
+#include <gui/plugins/guiplugin.h>
 
 namespace Fy::TagEditor {
 class TagEditorPlugin : public QObject,
@@ -39,16 +36,15 @@ class TagEditorPlugin : public QObject,
     Q_INTERFACES(Fy::Gui::GuiPlugin)
 
 public:
+    TagEditorPlugin();
+    ~TagEditorPlugin() override;
+
     void initialise(const Core::CorePluginContext& context) override;
     void initialise(const Gui::GuiPluginContext& context) override;
     void shutdown() override;
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Core::Library::MusicLibrary* m_library;
-    Gui::TrackSelectionController* m_trackSelection;
-    Gui::PropertiesDialog* m_propertiesDialog;
-    Gui::Widgets::WidgetFactory* m_factory;
-    Utils::SettingsManager* m_settings;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fy::TagEditor

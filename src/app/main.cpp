@@ -21,7 +21,6 @@
 #include "version.h"
 
 #include <core/application.h>
-
 #include <gui/guiapplication.h>
 
 #include <QApplication>

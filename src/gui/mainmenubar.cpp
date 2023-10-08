@@ -19,8 +19,7 @@
 
 #include "mainmenubar.h"
 
-#include "guiconstants.h"
-
+#include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 

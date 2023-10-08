@@ -19,11 +19,9 @@
 
 #include "playlistcontrol.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/coresettings.h>
 #include <core/player/playermanager.h>
-
+#include <gui/guiconstants.h>
 #include <utils/comboicon.h>
 #include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
@@ -70,15 +68,15 @@ void PlaylistControl::repeatClicked()
     const auto mode = m_playerManager->playMode();
 
     switch(mode) {
-        case(Core::Player::Repeat):
-            m_playerManager->setPlayMode(Core::Player::Default);
+        case(Core::Player::PlayMode::Repeat):
+            m_playerManager->setPlayMode(Core::Player::PlayMode::Default);
             break;
-        case(Core::Player::RepeatAll):
-            m_playerManager->setPlayMode(Core::Player::Repeat);
+        case(Core::Player::PlayMode::RepeatAll):
+            m_playerManager->setPlayMode(Core::Player::PlayMode::Repeat);
             break;
-        case(Core::Player::Shuffle):
-        case(Core::Player::Default):
-            m_playerManager->setPlayMode(Core::Player::RepeatAll);
+        case(Core::Player::PlayMode::Shuffle):
+        case(Core::Player::PlayMode::Default):
+            m_playerManager->setPlayMode(Core::Player::PlayMode::RepeatAll);
             break;
     }
 }
@@ -87,30 +85,30 @@ void PlaylistControl::shuffleClicked()
 {
     const auto mode = m_playerManager->playMode();
 
-    if(mode == Core::Player::Shuffle) {
-        m_playerManager->setPlayMode(Core::Player::Default);
+    if(mode == Core::Player::PlayMode::Shuffle) {
+        m_playerManager->setPlayMode(Core::Player::PlayMode::Default);
     }
     else {
-        m_playerManager->setPlayMode(Core::Player::Shuffle);
+        m_playerManager->setPlayMode(Core::Player::PlayMode::Shuffle);
     }
 }
 
 void PlaylistControl::setMode(Core::Player::PlayMode mode) const
 {
     switch(mode) {
-        case(Core::Player::Repeat):
+        case(Core::Player::PlayMode::Repeat):
             m_repeat->setIcon(Constants::Icons::Repeat, true);
             m_shuffle->setIcon(Constants::Icons::Shuffle);
             break;
-        case(Core::Player::RepeatAll):
+        case(Core::Player::PlayMode::RepeatAll):
             m_repeat->setIcon(Constants::Icons::RepeatAll, true);
             m_shuffle->setIcon(Constants::Icons::Shuffle);
             break;
-        case(Core::Player::Shuffle):
+        case(Core::Player::PlayMode::Shuffle):
             m_shuffle->setIcon(Constants::Icons::Shuffle, true);
             m_repeat->setIcon(Constants::Icons::RepeatAll);
             break;
-        case(Core::Player::Default):
+        case(Core::Player::PlayMode::Default):
             m_repeat->setIcon(Constants::Icons::RepeatAll);
             m_shuffle->setIcon(Constants::Icons::Shuffle);
             break;

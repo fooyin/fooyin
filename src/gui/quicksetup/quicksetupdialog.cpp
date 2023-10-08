@@ -19,7 +19,7 @@
 
 #include "quicksetupdialog.h"
 
-#include "gui/quicksetup/quicksetupmodel.h"
+#include "quicksetupmodel.h"
 
 #include <utils/paths.h>
 
@@ -42,8 +42,8 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* pare
     setupUi();
     m_layoutList->setModel(m_model);
 
-    connect(
-        m_layoutList->selectionModel(), &QItemSelectionModel::selectionChanged, this, &QuickSetupDialog::changeLayout);
+    connect(m_layoutList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+            &QuickSetupDialog::changeLayout);
     connect(m_accept, &QPushButton::pressed, this, &QuickSetupDialog::close);
 }
 

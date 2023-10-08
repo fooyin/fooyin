@@ -19,39 +19,51 @@
 
 #include "enginehandler.h"
 
-#include "core/models/track.h"
 #include "enginempv.h"
 
 namespace Fy::Core::Engine {
+struct EngineHandler::Private : QObject
+{
+    EngineHandler* self;
+
+    Engine* engine;
+
+    Private(EngineHandler* self)
+        : self{self}
+        , engine{new EngineMpv(self)}
+    { }
+
+    void playStateChanged(Player::PlayState state)
+    {
+        switch(state) {
+            case Player::PlayState::Playing:
+                return emit self->play();
+            case Player::PlayState::Paused:
+                return emit self->pause();
+            case Player::PlayState::Stopped:
+                return emit self->stop();
+            default:
+                return;
+        }
+    }
+};
+
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, QObject* parent)
     : QObject{parent}
-    , m_engine{new EngineMpv(this)}
+    , p{std::make_unique<Private>(this)}
 {
-    connect(playerManager, &Player::PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
-    connect(playerManager, &Player::PlayerManager::volumeChanged, m_engine, &Engine::setVolume);
-    connect(playerManager, &Player::PlayerManager::currentTrackChanged, m_engine, &Engine::changeTrack);
-    connect(m_engine, &Engine::currentPositionChanged, playerManager, &Player::PlayerManager::setCurrentPosition);
-    connect(m_engine, &Engine::trackFinished, playerManager, &Player::PlayerManager::next);
-    connect(playerManager, &Player::PlayerManager::positionMoved, m_engine, &Engine::seek);
+    connect(playerManager, &Player::PlayerManager::playStateChanged, p.get(),
+            &EngineHandler::Private::playStateChanged);
+    connect(playerManager, &Player::PlayerManager::volumeChanged, p->engine, &Engine::setVolume);
+    connect(playerManager, &Player::PlayerManager::currentTrackChanged, p->engine, &Engine::changeTrack);
+    connect(p->engine, &Engine::currentPositionChanged, playerManager, &Player::PlayerManager::setCurrentPosition);
+    connect(p->engine, &Engine::trackFinished, playerManager, &Player::PlayerManager::next);
+    connect(playerManager, &Player::PlayerManager::positionMoved, p->engine, &Engine::seek);
 
-    connect(this, &EngineHandler::play, m_engine, &Engine::play);
-    connect(this, &EngineHandler::pause, m_engine, &Engine::pause);
-    connect(this, &EngineHandler::stop, m_engine, &Engine::stop);
+    connect(this, &EngineHandler::play, p->engine, &Engine::play);
+    connect(this, &EngineHandler::pause, p->engine, &Engine::pause);
+    connect(this, &EngineHandler::stop, p->engine, &Engine::stop);
 }
 
 EngineHandler::~EngineHandler() = default;
-
-void EngineHandler::playStateChanged(Player::PlayState state)
-{
-    switch(state) {
-        case Player::PlayState::Playing:
-            return emit play();
-        case Player::PlayState::Paused:
-            return emit pause();
-        case Player::PlayState::Stopped:
-            return emit stop();
-        default:
-            return;
-    }
-}
 } // namespace Fy::Core::Engine

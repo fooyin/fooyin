@@ -17,7 +17,7 @@
  *
  */
 
-#include "worker.h"
+#include <utils/worker.h>
 
 #include <QAbstractEventDispatcher>
 #include <QThread>

@@ -20,7 +20,8 @@
 #pragma once
 
 #include "settingscategory.h"
-#include "utils/id.h"
+
+#include <utils/id.h>
 
 #include <QDialog>
 

@@ -19,11 +19,10 @@
 
 #include "statuswidget.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/library/musiclibrary.h>
-#include <core/models/track.h>
 #include <core/player/playermanager.h>
+#include <core/track.h>
+#include <gui/guiconstants.h>
 #include <utils/clickablelabel.h>
 #include <utils/utils.h>
 
@@ -86,20 +85,17 @@ void StatusWidget::labelClicked()
 void StatusWidget::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
-        case(Core::Player::Stopped):
+        case(Core::Player::PlayState::Stopped):
             m_playing->setText("Waiting for track...");
             break;
-        case(Core::Player::Playing): {
+        case(Core::Player::PlayState::Playing): {
             const Core::Track track = m_playerManager->currentTrack();
             const auto playingText  = QString{"%1. %2 (%3) \u2022 %4 \u2022 %5"}.arg(
-                QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0')),
-                track.title(),
-                Utils::msToString(track.duration()),
-                track.albumArtist(),
-                track.album());
+                QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0')), track.title(),
+                Utils::msToString(track.duration()), track.albumArtist(), track.album());
             m_playing->setText(playingText);
         }
-        case(Core::Player::Paused):
+        case(Core::Player::PlayState::Paused):
             break;
     }
 }

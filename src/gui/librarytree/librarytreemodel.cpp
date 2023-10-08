@@ -24,6 +24,7 @@
 
 #include <queue>
 #include <ranges>
+#include <set>
 
 namespace Fy::Gui::Widgets {
 bool cmpItemsReverse(LibraryTreeItem* pItem1, LibraryTreeItem* pItem2)

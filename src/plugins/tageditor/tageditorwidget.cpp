@@ -22,7 +22,6 @@
 #include "tageditormodel.h"
 
 #include <core/library/musiclibrary.h>
-
 #include <utils/extentabletableview.h>
 #include <utils/settings/settingsmanager.h>
 

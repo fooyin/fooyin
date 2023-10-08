@@ -17,7 +17,7 @@
  *
  */
 
-#include "settingsentry.h"
+#include <utils/settings/settingsentry.h>
 
 namespace Fy::Utils {
 SettingsEntry::SettingsEntry(QString name, const QVariant& value, bool writeToDisk, QString group)

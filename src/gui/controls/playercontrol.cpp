@@ -19,10 +19,8 @@
 
 #include "playercontrol.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/player/playermanager.h>
-
+#include <gui/guiconstants.h>
 #include <utils/comboicon.h>
 
 #include <QHBoxLayout>
@@ -74,13 +72,13 @@ void PlayerControl::setupUi()
 void PlayerControl::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
-        case(Core::Player::Stopped):
+        case(Core::Player::PlayState::Stopped):
             m_playPause->setIcon(Constants::Icons::Play);
             return setEnabled(false);
-        case(Core::Player::Playing):
+        case(Core::Player::PlayState::Playing):
             m_playPause->setIcon(Constants::Icons::Pause);
             return setEnabled(true);
-        case(Core::Player::Paused):
+        case(Core::Player::PlayState::Paused):
             return m_playPause->setIcon(Constants::Icons::Play);
     }
 }

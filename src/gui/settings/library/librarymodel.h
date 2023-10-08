@@ -20,7 +20,6 @@
 #pragma once
 
 #include <core/library/libraryinfo.h>
-
 #include <utils/tablemodel.h>
 #include <utils/treestatusitem.h>
 

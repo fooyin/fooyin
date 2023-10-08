@@ -19,13 +19,12 @@
 
 #include "playlisthandler.h"
 
-#include "core/coresettings.h"
-#include "core/database/database.h"
-#include "core/database/playlistdatabase.h"
-#include "core/library/musiclibrary.h"
-#include "core/player/playermanager.h"
-#include "playlist.h"
+#include "database/database.h"
+#include "database/playlistdatabase.h"
 
+#include <core/coresettings.h>
+#include <core/player/playermanager.h>
+#include <core/playlist/playlist.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -33,7 +32,13 @@
 #include <ranges>
 
 namespace Fy::Core::Playlist {
-bool replaceCommonTracks(TrackList& tracks, const TrackList& updatedTracks)
+enum class CommonOperation
+{
+    Update,
+    Remove
+};
+
+bool updateCommonTracks(TrackList& tracks, const TrackList& updatedTracks, CommonOperation operation)
 {
     TrackList result;
     result.reserve(tracks.size());
@@ -44,8 +49,10 @@ bool replaceCommonTracks(TrackList& tracks, const TrackList& updatedTracks)
             return track.id() == updatedTrack.id();
         });
         if(it != updatedTracks.end()) {
-            result.push_back(*it);
             haveCommonTracks = true;
+            if(operation == CommonOperation::Update) {
+                result.push_back(*it);
+            }
         }
         else {
             result.push_back(track);
@@ -62,26 +69,20 @@ struct PlaylistHandler::Private : QObject
 
     DB::Database* database;
     Player::PlayerManager* playerManager;
-    Core::Library::MusicLibrary* library;
     Utils::SettingsManager* settings;
-    DB::Playlist* playlistConnector;
+    DB::Playlist playlistConnector;
 
     PlaylistList playlists;
     int activePlaylistId{-1};
 
     Private(PlaylistHandler* handler, DB::Database* database, Player::PlayerManager* playerManager,
-            Core::Library::MusicLibrary* library, Utils::SettingsManager* settings)
+            Utils::SettingsManager* settings)
         : handler{handler}
         , database{database}
         , playerManager{playerManager}
-        , library{library}
         , settings{settings}
-        , playlistConnector{database->playlistConnector()}
+        , playlistConnector{database->connectionName()}
     {
-        connect(library, &Core::Library::MusicLibrary::tracksLoaded, this,
-                &PlaylistHandler::Private::populatePlaylists);
-        connect(library, &Core::Library::MusicLibrary::libraryRemoved, this, &PlaylistHandler::Private::libraryRemoved);
-        connect(library, &Core::Library::MusicLibrary::tracksUpdated, this, &PlaylistHandler::Private::tracksUpdated);
         connect(playerManager, &Player::PlayerManager::nextTrack, this, &PlaylistHandler::Private::next);
         connect(playerManager, &Player::PlayerManager::previousTrack, this, &PlaylistHandler::Private::previous);
     }
@@ -105,19 +106,19 @@ struct PlaylistHandler::Private : QObject
         const bool isLastTrack      = index == activePlaylist->trackCount() - 1;
         const Player::PlayMode mode = playerManager->playMode();
         switch(mode) {
-            case(Player::Shuffle):
+            case(Player::PlayMode::Shuffle):
                 // TODO: Implement full shuffle functionality
                 index = Utils::randomNumber(0, static_cast<int>(activePlaylist->trackCount() - 1));
                 break;
-            case(Player::Repeat):
+            case(Player::PlayMode::Repeat):
                 break;
-            case(Player::RepeatAll):
+            case(Player::PlayMode::RepeatAll):
                 ++index;
                 if(isLastTrack) {
                     index = 0;
                 }
                 break;
-            case(Player::Default):
+            case(Player::PlayMode::Default):
                 index = isLastTrack ? -1 : index + 1;
         }
         if(index < 0) {
@@ -151,19 +152,19 @@ struct PlaylistHandler::Private : QObject
         const bool isFirstTrack     = index == 0;
         const Player::PlayMode mode = playerManager->playMode();
         switch(mode) {
-            case(Player::Shuffle):
+            case(Player::PlayMode::Shuffle):
                 // TODO: Implement full shuffle functionality
                 index = Utils::randomNumber(0, static_cast<int>(activePlaylist->trackCount() - 1));
                 break;
-            case(Player::Repeat):
+            case(Player::PlayMode::Repeat):
                 break;
-            case(Player::RepeatAll):
+            case(Player::PlayMode::RepeatAll):
                 --index;
                 if(isFirstTrack) {
                     index = activePlaylist->trackCount() - 1;
                 }
                 break;
-            case(Player::Default):
+            case(Player::PlayMode::Default):
                 index = isFirstTrack ? -1 : index - 1;
         }
         if(index < 0) {
@@ -176,9 +177,9 @@ struct PlaylistHandler::Private : QObject
 
     void updateIndices()
     {
-        for(auto pl = playlists.begin(); pl != playlists.end(); ++pl) {
-            const auto index = static_cast<int>(std::ranges::distance(playlists.cbegin(), pl));
-            pl->setIndex(index);
+        for(auto playlist = playlists.begin(); playlist != playlists.end(); ++playlist) {
+            const auto index = static_cast<int>(std::ranges::distance(playlists.cbegin(), playlist));
+            playlist->setIndex(index);
         }
     }
 
@@ -260,72 +261,12 @@ struct PlaylistHandler::Private : QObject
             return playlists.at(index);
         }
         index        = nextValidIndex();
-        const int id = playlistConnector->insertPlaylist(name, index);
+        const int id = playlistConnector.insertPlaylist(name, index);
         if(id >= 0) {
             auto playlist = playlists.emplace_back(name, index, id);
             return playlist;
         }
         return {};
-    }
-
-    void populatePlaylists(const TrackList& tracks)
-    {
-        TrackIdMap idTracks;
-        for(const Track& track : tracks) {
-            idTracks.emplace(track.id(), track);
-        }
-
-        database->transaction();
-
-        auto populatePlaylist = [&](Playlist& playlist) {
-            std::vector<int> trackIds;
-            playlistConnector->getPlaylistTracks(playlist.id(), trackIds);
-            TrackList playlistTracks;
-            for(const int id : trackIds) {
-                if(idTracks.contains(id)) {
-                    playlistTracks.push_back(idTracks.at(id));
-                }
-            }
-            playlist.appendTracks(playlistTracks);
-        };
-
-        std::ranges::for_each(playlists, populatePlaylist);
-        std::ranges::for_each(playlists, [](Playlist& playlist) {
-            playlist.setModified(false);
-        });
-
-        database->commit();
-
-        const int lastId = settings->value<Settings::ActivePlaylistId>();
-        if(lastId >= 0) {
-            handler->changeActivePlaylist(lastId);
-        }
-
-        emit handler->playlistsPopulated();
-    }
-
-    void libraryRemoved(int id)
-    {
-        for(auto& playlist : playlists) {
-            TrackList tracks = playlist.tracks();
-            for(Track& track : tracks) {
-                if(track.libraryId() == id) {
-                    track.setEnabled(false);
-                }
-            }
-            playlist.replaceTracks(tracks);
-        }
-    }
-
-    void tracksUpdated(const Core::TrackList& tracks)
-    {
-        for(auto& playlist : playlists) {
-            TrackList playlistTracks = playlist.tracks();
-            if(replaceCommonTracks(playlistTracks, tracks)) {
-                playlist.replaceTracks(playlistTracks);
-                emit handler->playlistTracksChanged(playlist);
-            }
-        }
     }
 
     void updatePlaylist(const Playlist& playlist)
@@ -340,13 +281,12 @@ struct PlaylistHandler::Private : QObject
 };
 
 PlaylistHandler::PlaylistHandler(DB::Database* database, Player::PlayerManager* playerManager,
-                                 Core::Library::MusicLibrary* library, Utils::SettingsManager* settings,
-                                 QObject* parent)
-    : QObject{parent}
-    , p{std::make_unique<Private>(this, database, playerManager, library, settings)}
+                                 Utils::SettingsManager* settings, QObject* parent)
+    : PlaylistManager{parent}
+    , p{std::make_unique<Private>(this, database, playerManager, settings)}
 {
     p->playlists.clear();
-    p->playlistConnector->getAllPlaylists(p->playlists);
+    p->playlistConnector.getAllPlaylists(p->playlists);
 
     if(p->playlists.empty()) {
         createPlaylist("Default", {});
@@ -465,7 +405,7 @@ void PlaylistHandler::renamePlaylist(int id, const QString& name)
         return;
     }
     const QString newName = p->findUniqueName(name);
-    if(!p->playlistConnector->renamePlaylist(playlist->id(), newName)) {
+    if(!p->playlistConnector.renamePlaylist(playlist->id(), newName)) {
         qDebug() << QString{"Playlist %1 could not be renamed to %2"}.arg(id).arg("name");
         return;
     }
@@ -481,12 +421,12 @@ void PlaylistHandler::removePlaylist(int id)
     if(!playlist) {
         return;
     }
-    if(!p->playlistConnector->removePlaylist(id)) {
+    if(!p->playlistConnector.removePlaylist(id)) {
         return;
     }
     if(playlist->id() == p->activePlaylistId) {
         p->activePlaylistId = -1;
-        emit activePlaylistChanged();
+        emit activePlaylistChanged({});
     }
     const int index = p->indexFromName(playlist->name());
     p->playlists.erase(p->playlists.cbegin() + index);
@@ -513,7 +453,7 @@ void PlaylistHandler::savePlaylists()
     p->updateIndices();
     for(auto& playlist : p->playlists) {
         if(playlist.wasModified()) {
-            if(p->playlistConnector->insertPlaylistTracks(playlist.id(), playlist.tracks())) {
+            if(p->playlistConnector.insertPlaylistTracks(playlist.id(), playlist.tracks())) {
                 playlist.setModified(false);
             }
         }
@@ -546,6 +486,77 @@ void PlaylistHandler::startPlayback(QString playlistName, const Track& track)
         p->updatePlaylist(*playlist);
         p->playerManager->changeCurrentTrack(playlist->currentTrack());
         p->playerManager->play();
+    }
+}
+
+void PlaylistHandler::populatePlaylists(const TrackList& tracks)
+{
+    TrackIdMap idTracks;
+    for(const Track& track : tracks) {
+        idTracks.emplace(track.id(), track);
+    }
+
+    p->database->transaction();
+
+    auto populatePlaylist = [&](Playlist& playlist) {
+        std::vector<int> trackIds;
+        p->playlistConnector.getPlaylistTracks(playlist.id(), trackIds);
+        TrackList playlistTracks;
+        for(const int id : trackIds) {
+            if(idTracks.contains(id)) {
+                playlistTracks.push_back(idTracks.at(id));
+            }
+        }
+        playlist.appendTracks(playlistTracks);
+    };
+
+    std::ranges::for_each(p->playlists, populatePlaylist);
+    std::ranges::for_each(p->playlists, [](Playlist& playlist) {
+        playlist.setModified(false);
+    });
+
+    p->database->commit();
+
+    const int lastId = p->settings->value<Settings::ActivePlaylistId>();
+    if(lastId >= 0) {
+        changeActivePlaylist(lastId);
+    }
+
+    emit playlistsPopulated();
+}
+
+void PlaylistHandler::libraryRemoved(int id)
+{
+    for(auto& playlist : p->playlists) {
+        TrackList tracks = playlist.tracks();
+        for(Track& track : tracks) {
+            if(track.libraryId() == id) {
+                track.setEnabled(false);
+            }
+        }
+        playlist.replaceTracks(tracks);
+    }
+}
+
+void PlaylistHandler::tracksUpdated(const TrackList& tracks)
+{
+    for(auto& playlist : p->playlists) {
+        TrackList playlistTracks = playlist.tracks();
+        if(updateCommonTracks(playlistTracks, tracks, CommonOperation::Update)) {
+            playlist.replaceTracks(playlistTracks);
+            emit playlistTracksChanged(playlist);
+        }
+    }
+}
+
+void PlaylistHandler::tracksRemoved(const TrackList& tracks)
+{
+    for(auto& playlist : p->playlists) {
+        TrackList playlistTracks = playlist.tracks();
+        if(updateCommonTracks(playlistTracks, tracks, CommonOperation::Remove)) {
+            playlist.replaceTracks(playlistTracks);
+            emit playlistTracksChanged(playlist);
+        }
     }
 }
 } // namespace Fy::Core::Playlist

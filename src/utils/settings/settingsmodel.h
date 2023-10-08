@@ -21,9 +21,9 @@
 
 #include "settingscategory.h"
 
-#include "utils/id.h"
-#include "utils/treeitem.h"
-#include "utils/treemodel.h"
+#include <utils/id.h>
+#include <utils/treeitem.h>
+#include <utils/treemodel.h>
 
 #include <QAbstractListModel>
 #include <QIcon>

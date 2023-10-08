@@ -31,7 +31,7 @@ class ComboIcon;
 namespace Core {
 namespace Player {
 class PlayerManager;
-enum PlayMode : int;
+enum class PlayMode;
 } // namespace Player
 } // namespace Core
 

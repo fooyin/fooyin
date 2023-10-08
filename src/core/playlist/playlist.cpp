@@ -17,11 +17,18 @@
  *
  */
 
-#include "playlist.h"
-
-#include <QMessageBox>
+#include <core/playlist/playlist.h>
 
 namespace Fy::Core::Playlist {
+int findTrack(const Track& trackTofind, const TrackList& tracks)
+{
+    auto it = std::ranges::find(std::as_const(tracks), trackTofind);
+    if(it != tracks.end()) {
+        return static_cast<int>(std::distance(tracks.cbegin(), it));
+    }
+    return -1;
+}
+
 Playlist::Playlist()
     : Playlist{{}, -1, -1}
 { }
@@ -123,18 +130,9 @@ void Playlist::changeCurrentTrack(int index)
 
 void Playlist::changeCurrentTrack(const Track& track)
 {
-    const int index = findTrack(track);
+    const int index = findTrack(track, m_tracks);
     if(index >= 0) {
         m_currentTrackIndex = index;
     }
-}
-
-int Playlist::findTrack(const Track& track)
-{
-    auto it = std::ranges::find(std::as_const(m_tracks), track);
-    if(it != m_tracks.end()) {
-        return static_cast<int>(std::distance(m_tracks.cbegin(), it));
-    }
-    return -1;
 }
 } // namespace Fy::Core::Playlist

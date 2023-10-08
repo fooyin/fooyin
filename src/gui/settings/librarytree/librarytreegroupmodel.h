@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "gui/librarytree/librarytreegroup.h"
+#include "librarytree/librarytreegroup.h"
 
 #include <utils/tablemodel.h>
 #include <utils/treestatusitem.h>

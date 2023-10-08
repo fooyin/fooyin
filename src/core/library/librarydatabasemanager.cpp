@@ -19,8 +19,8 @@
 
 #include "librarydatabasemanager.h"
 
-#include "core/database/database.h"
-#include "core/database/librarydatabase.h"
+#include "database/database.h"
+#include "database/librarydatabase.h"
 
 namespace Fy::Core::Library {
 LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, QObject* parent)

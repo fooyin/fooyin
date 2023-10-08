@@ -17,7 +17,7 @@
  *
  */
 
-#include "id.h"
+#include <utils/id.h>
 
 namespace Fy::Utils {
 unsigned int idFromString(const QString& str)

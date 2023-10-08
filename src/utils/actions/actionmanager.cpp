@@ -17,9 +17,9 @@
  *
  */
 
-#include "actionmanager.h"
+#include <utils/actions/actionmanager.h>
 
-#include "actioncontainer.h"
+#include <utils/actions/actioncontainer.h>
 
 #include <QMainWindow>
 #include <QMenuBar>

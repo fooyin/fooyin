@@ -25,16 +25,16 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
-#include <core/playlist/playlisthandler.h>
-
+#include <core/playlist/playlistmanager.h>
 #include <gui/trackselectioncontroller.h>
-
 #include <utils/async.h>
 
 #include <QActionGroup>
 #include <QMenu>
 
 #include <QCoroCore>
+
+#include <set>
 
 namespace Fy::Filters {
 bool containsSearch(const QString& text, const QString& search)
@@ -65,7 +65,6 @@ struct FilterManager::Private : QObject
     FilterManager* self;
 
     Core::Library::MusicLibrary* library;
-    Core::Playlist::PlaylistHandler* playlistHandler;
     Gui::TrackSelectionController* trackSelection;
     Utils::SettingsManager* settings;
 
@@ -79,11 +78,10 @@ struct FilterManager::Private : QObject
     FilterStore filterStore;
     QString searchFilter;
 
-    Private(FilterManager* self, Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-            Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings)
+    Private(FilterManager* self, Core::Library::MusicLibrary* library, Gui::TrackSelectionController* trackSelection,
+            Utils::SettingsManager* settings)
         : self{self}
         , library{library}
-        , playlistHandler{playlistHandler}
         , trackSelection{trackSelection}
         , settings{settings}
         , doubleClickAction{static_cast<Gui::TrackAction>(settings->value<Settings::FilterDoubleClick>())}
@@ -272,11 +270,10 @@ struct FilterManager::Private : QObject
     }
 };
 
-FilterManager::FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-                             Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
-                             QObject* parent)
+FilterManager::FilterManager(Core::Library::MusicLibrary* library, Gui::TrackSelectionController* trackSelection,
+                             Utils::SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, library, playlistHandler, trackSelection, settings)}
+    , p{std::make_unique<Private>(this, library, trackSelection, settings)}
 {
     QObject::connect(p->library, &Core::Library::MusicLibrary::tracksAdded, this, &FilterManager::tracksAdded);
     QObject::connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, this, &FilterManager::tracksUpdated);

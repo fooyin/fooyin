@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/simpletreeview.h>
+#include "simpletreeview.h"
 
 namespace Fy::Utils {
 int calculateMaxItemWidth(const SimpleTreeView* view, QAbstractItemModel* model, const QModelIndex& index)

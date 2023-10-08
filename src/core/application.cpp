@@ -19,26 +19,25 @@
 
 #include "application.h"
 
-#include "core/database/database.h"
-#include "core/engine/enginehandler.h"
-#include "core/library/librarymanager.h"
-#include "core/library/sortingregistry.h"
-#include "core/library/unifiedmusiclibrary.h"
-#include "core/player/playercontroller.h"
-#include "core/playlist/playlisthandler.h"
-#include "core/plugins/pluginmanager.h"
-#include "corepaths.h"
-#include "coreplugin.h"
-#include "coresettings.h"
+#include "config.h"
 
-#include <utils/actions/actioncontainer.h>
-#include <utils/actions/actionmanager.h>
+#include "database/database.h"
+#include "engine/enginehandler.h"
+#include "library/unifiedmusiclibrary.h"
+#include "player/playercontroller.h"
+#include "playlist/playlisthandler.h"
+
+#include <core/corepaths.h>
+#include <core/coresettings.h>
+#include <core/library/librarymanager.h>
+#include <core/library/sortingregistry.h>
+#include <core/plugins/coreplugin.h>
+#include <core/plugins/pluginmanager.h>
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::Core {
 struct Application::Private
 {
-    Utils::ActionManager* actionManager;
     Utils::SettingsManager* settingsManager;
     Core::Settings::CoreSettings coreSettings;
     Core::DB::Database database;
@@ -49,12 +48,11 @@ struct Application::Private
     Core::Library::SortingRegistry sortingRegistry;
     Core::Playlist::PlaylistHandler* playlistHandler;
 
-    Plugins::PluginManager* pluginManager;
+    Plugins::PluginManager pluginManager;
     Core::CorePluginContext corePluginContext;
 
     explicit Private(QObject* parent)
-        : actionManager{new Utils::ActionManager(parent)}
-        , settingsManager{new Utils::SettingsManager(Core::settingsPath(), parent)}
+        : settingsManager{new Utils::SettingsManager(Core::settingsPath(), parent)}
         , coreSettings{settingsManager}
         , database{settingsManager}
         , playerManager{new Core::Player::PlayerController(settingsManager, parent)}
@@ -62,22 +60,20 @@ struct Application::Private
         , libraryManager{new Core::Library::LibraryManager(&database, settingsManager, parent)}
         , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
         , sortingRegistry{settingsManager}
-        , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, library, settingsManager,
-                                                              parent)}
-        , pluginManager{new Plugins::PluginManager(parent)}
-        , corePluginContext{pluginManager,   actionManager,   playerManager, libraryManager,  library,
-                            playlistHandler, settingsManager, &database,     &sortingRegistry}
+        , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, settingsManager, parent)}
+        , corePluginContext{&pluginManager,  playerManager,   libraryManager,  library,
+                            playlistHandler, settingsManager, &sortingRegistry}
     {
         loadPlugins();
     }
 
-    void loadPlugins() const
+    void loadPlugins()
     {
-        const QString pluginsPath = QCoreApplication::applicationDirPath() + "/../lib/fooyin";
-        pluginManager->findPlugins(pluginsPath);
-        pluginManager->loadPlugins();
+        const QString pluginsPath = PLUGIN_DIR;
+        pluginManager.findPlugins(pluginsPath);
+        pluginManager.loadPlugins();
 
-        pluginManager->initialisePlugins<Core::CorePlugin>(corePluginContext);
+        pluginManager.initialisePlugins<Core::CorePlugin>(corePluginContext);
     }
 };
 
@@ -85,6 +81,15 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
+    connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, p->playlistHandler,
+            &Core::Playlist::PlaylistHandler::populatePlaylists);
+    connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, p->playlistHandler,
+            &Core::Playlist::PlaylistHandler::libraryRemoved);
+    connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, p->playlistHandler,
+            &Core::Playlist::PlaylistHandler::tracksUpdated);
+    connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, p->playlistHandler,
+            &Core::Playlist::PlaylistHandler::tracksRemoved);
+
     p->settingsManager->loadSettings();
     p->library->loadLibrary();
     p->sortingRegistry.loadItems();
@@ -101,7 +106,7 @@ void Application::shutdown()
 {
     p->playlistHandler->savePlaylists();
     p->sortingRegistry.saveItems();
-    p->pluginManager->shutdown();
+    p->pluginManager.shutdown();
     p->settingsManager->storeSettings();
     p->database.closeDatabase();
 }

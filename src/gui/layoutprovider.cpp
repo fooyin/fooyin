@@ -17,12 +17,14 @@
  *
  */
 
-#include "layoutprovider.h"
+#include <gui/layoutprovider.h>
 
-#include "guipaths.h"
+#include <gui/guipaths.h>
 
 #include <QDir>
+#include <QFile>
 #include <QFileDialog>
+#include <QString>
 
 namespace Fy::Gui {
 bool checkFile(const QFileInfo& file)
@@ -31,11 +33,41 @@ bool checkFile(const QFileInfo& file)
         && file.completeSuffix().compare("fyl", Qt::CaseInsensitive) == 0;
 }
 
+struct LayoutProvider::Private
+{
+    LayoutList layouts;
+    Layout currentLayout;
+    QFile layoutFile{Gui::activeLayoutPath()};
+
+    void addLayout(const QString& file)
+    {
+        QFile layoutFile{file};
+        const QFileInfo fileInfo{file};
+        if(!checkFile(fileInfo)) {
+            qInfo() << "Layout file is not valid.";
+            return;
+        }
+        if(!layoutFile.open(QIODevice::ReadOnly)) {
+            qCritical() << "Couldn't open layout file.";
+            return;
+        }
+        const QByteArray json = layoutFile.readAll();
+        layoutFile.close();
+
+        if(!json.isEmpty()) {
+            const Layout layout{fileInfo.baseName(), json};
+            layouts.emplace_back(layout);
+        }
+    }
+};
+
 LayoutProvider::LayoutProvider()
-    : m_layoutFile{Gui::activeLayoutPath()}
+    : p{std::make_unique<Private>()}
 {
     loadCurrentLayout();
 }
+
+LayoutProvider::~LayoutProvider() = default;
 
 void Gui::LayoutProvider::findLayouts()
 {
@@ -53,46 +85,46 @@ void Gui::LayoutProvider::findLayouts()
     }
 
     for(const auto& file : files) {
-        addLayout(file);
+        p->addLayout(file);
     }
 }
 
 Layout LayoutProvider::currentLayout() const
 {
-    return m_currentLayout;
+    return p->currentLayout;
 }
 
 void LayoutProvider::loadCurrentLayout()
 {
-    if(!m_layoutFile.exists()) {
+    if(!p->layoutFile.exists()) {
         return;
     }
 
-    if(!m_layoutFile.open(QIODevice::ReadOnly)) {
+    if(!p->layoutFile.open(QIODevice::ReadOnly)) {
         qCritical() << "Couldn't open layout file.";
         return;
     }
 
-    const QByteArray layout = m_layoutFile.readAll();
-    m_layoutFile.close();
+    const QByteArray layout = p->layoutFile.readAll();
+    p->layoutFile.close();
 
-    m_currentLayout = {"Default", layout};
+    p->currentLayout = {"Default", layout};
 }
 
 void LayoutProvider::saveCurrentLayout(const QByteArray& json)
 {
-    if(!m_layoutFile.open(QIODevice::WriteOnly)) {
+    if(!p->layoutFile.open(QIODevice::WriteOnly)) {
         qCritical() << "Couldn't open layout file.";
         return;
     }
 
-    m_layoutFile.write(json);
-    m_layoutFile.close();
+    p->layoutFile.write(json);
+    p->layoutFile.close();
 }
 
 LayoutList LayoutProvider::layouts() const
 {
-    return m_layouts;
+    return p->layouts;
 }
 
 void LayoutProvider::registerLayout(const QString& name, const QByteArray& json)
@@ -102,12 +134,12 @@ void LayoutProvider::registerLayout(const QString& name, const QByteArray& json)
         return;
     }
     const Layout layout{name, json};
-    m_layouts.emplace_back(layout);
+    p->layouts.emplace_back(layout);
 }
 
 void LayoutProvider::registerLayout(const QString& file)
 {
-    addLayout(file);
+    p->addLayout(file);
 }
 
 void LayoutProvider::importLayout()
@@ -155,26 +187,5 @@ void LayoutProvider::exportLayout(const QByteArray& json)
     }
     file.write(json);
     file.close();
-}
-
-void LayoutProvider::addLayout(const QString& file)
-{
-    QFile layoutFile{file};
-    const QFileInfo fileInfo{file};
-    if(!checkFile(fileInfo)) {
-        qInfo() << "Layout file is not valid.";
-        return;
-    }
-    if(!layoutFile.open(QIODevice::ReadOnly)) {
-        qCritical() << "Couldn't open layout file.";
-        return;
-    }
-    const QByteArray json = layoutFile.readAll();
-    layoutFile.close();
-
-    if(!json.isEmpty()) {
-        const Layout layout{fileInfo.baseName(), json};
-        m_layouts.emplace_back(layout);
-    }
 }
 } // namespace Fy::Gui

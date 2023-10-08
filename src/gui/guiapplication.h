@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <QObject>
 
 namespace Fy {
@@ -27,7 +29,7 @@ struct CorePluginContext;
 }
 
 namespace Gui {
-class GuiApplication : public QObject
+class FYGUI_EXPORT GuiApplication : public QObject
 {
     Q_OBJECT
 

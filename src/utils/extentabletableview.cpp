@@ -17,7 +17,7 @@
  *
  */
 
-#include "extentabletableview.h"
+#include <utils/extentabletableview.h>
 
 #include <QMouseEvent>
 #include <QPainter>

@@ -27,7 +27,7 @@ class QTabBar;
 namespace Fy {
 
 namespace Core::Playlist {
-class PlaylistHandler;
+class PlaylistManager;
 class Playlist;
 } // namespace Core::Playlist
 
@@ -39,7 +39,7 @@ class PlaylistTabs : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistTabs(Core::Playlist::PlaylistHandler* playlistHandler, PlaylistController* controller,
+    explicit PlaylistTabs(Core::Playlist::PlaylistManager* playlistHandler, PlaylistController* controller,
                           QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
@@ -59,7 +59,7 @@ private:
     void playlistChanged(const Core::Playlist::Playlist& playlist);
     void playlistRenamed(const Core::Playlist::Playlist& playlist);
 
-    Core::Playlist::PlaylistHandler* m_playlistHandler;
+    Core::Playlist::PlaylistManager* m_playlistHandler;
     PlaylistController* m_controller;
 
     QVBoxLayout* m_layout;

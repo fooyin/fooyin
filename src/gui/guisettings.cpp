@@ -17,7 +17,7 @@
  *
  */
 
-#include "guisettings.h"
+#include <gui/guisettings.h>
 
 #include <utils/settings/settingsmanager.h>
 

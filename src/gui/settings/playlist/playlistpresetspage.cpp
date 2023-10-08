@@ -19,12 +19,12 @@
 
 #include "playlistpresetspage.h"
 
-#include "gui/guiconstants.h"
-#include "gui/guisettings.h"
-#include "gui/playlist/playlistpreset.h"
-#include "gui/playlist/presetregistry.h"
+#include "playlist/playlistpreset.h"
+#include "playlist/presetregistry.h"
 #include "presetinputbox.h"
 
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>

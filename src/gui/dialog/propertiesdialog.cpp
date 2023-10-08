@@ -17,9 +17,12 @@
  *
  */
 
-#include "propertiesdialog.h"
+#include "qdialog.h"
+
+#include <gui/propertiesdialog.h>
 
 #include <QAbstractButton>
+#include <QDialog>
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QPushButton>

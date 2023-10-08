@@ -17,9 +17,10 @@
  *
  */
 
-#include "comboicon.h"
+#include <utils/comboicon.h>
 
-#include "utils.h"
+#include <utils/clickablelabel.h>
+#include <utils/utils.h>
 
 #include <QEvent>
 #include <QVBoxLayout>
@@ -27,50 +28,109 @@
 namespace Fy::Utils {
 constexpr int IconSize = 128;
 
-ComboIcon::ComboIcon(const QString& path, Attributes attributes, QWidget* parent)
-    : QWidget{parent}
-    , m_layout{new QVBoxLayout(this)}
-    , m_label{new ClickableLabel(this)}
-    , m_attributes{attributes}
-    , m_currentIndex{0}
+struct Icon
 {
-    addAttribute(Enabled);
-    addIcon(path);
+    QPixmap icon;
+    QPixmap iconActive;
+    QPixmap iconDisabled;
+};
 
-    if(!m_icons.empty()) {
-        m_label->setPixmap(m_icons.front().second.icon);
+using PathIconPair      = std::pair<QString, Icon>;
+using PathIconContainer = std::vector<PathIconPair>;
+
+struct ComboIcon::Private : QObject
+{
+    ComboIcon* self;
+
+    ClickableLabel* label;
+    Attributes attributes;
+    int currentIndex{0};
+    PathIconContainer icons;
+
+    Private(ComboIcon* self, Attributes attributes)
+        : self{self}
+        , label{new ClickableLabel(self)}
+        , attributes{attributes}
+    { }
+
+    void labelClicked()
+    {
+        if(hasAttribute(AutoShift)) {
+            if(hasAttribute(Active)) {
+                ++currentIndex;
+            }
+            if(currentIndex >= static_cast<int>(icons.size())) {
+                currentIndex = 0;
+                removeAttribute(Active);
+                label->setPixmap(icons.at(currentIndex).second.icon);
+            }
+            else {
+                addAttribute(Active);
+                label->setPixmap(icons.at(currentIndex).second.iconActive);
+            }
+        }
+        emit self->clicked(icons.at(currentIndex).first);
     }
 
-    m_label->setScaledContents(true);
+    bool hasAttribute(Attribute attribute)
+    {
+        return (attributes & attribute);
+    }
 
-    m_layout->addWidget(m_label);
-    m_layout->setSpacing(10);
-    m_layout->setContentsMargins(0, 0, 0, 0);
+    void addAttribute(Attribute attribute)
+    {
+        attributes |= attribute;
+    }
 
-    setLayout(m_layout);
+    void removeAttribute(Attribute attribute)
+    {
+        attributes &= ~attribute;
+    }
+};
 
-    connect(m_label, &ClickableLabel::clicked, this, &ComboIcon::labelClicked);
-    connect(m_label, &ClickableLabel::entered, this, &ComboIcon::entered);
+ComboIcon::ComboIcon(const QString& path, Attributes attributes, QWidget* parent)
+    : QWidget{parent}
+    , p{std::make_unique<Private>(this, attributes)}
+{
+    p->addAttribute(Enabled);
+    addIcon(path);
+
+    if(!p->icons.empty()) {
+        p->label->setPixmap(p->icons.front().second.icon);
+    }
+
+    p->label->setScaledContents(true);
+
+    auto* layout = new QVBoxLayout(this);
+    layout->addWidget(p->label);
+    layout->setSpacing(10);
+    layout->setContentsMargins(0, 0, 0, 0);
+    setLayout(layout);
+
+    connect(p->label, &ClickableLabel::clicked, p.get(), &ComboIcon::Private::labelClicked);
+    connect(p->label, &ClickableLabel::entered, this, &ComboIcon::entered);
 }
 
 ComboIcon::ComboIcon(const QString& path, QWidget* parent)
     : ComboIcon{path, {}, parent}
 { }
 
+ComboIcon::~ComboIcon() = default;
+
 void ComboIcon::addIcon(const QString& path, const QPixmap& icon)
 {
-    const QPalette palette = m_label->palette();
+    const QPalette palette = p->label->palette();
     Icon ico;
     ico.icon = icon;
 
-    if(hasAttribute(HasActiveIcon)) {
+    if(p->hasAttribute(HasActiveIcon)) {
         ico.iconActive = Utils::changePixmapColour(icon, palette.highlight().color());
     }
-    if(hasAttribute(HasDisabledIcon)) {
+    if(p->hasAttribute(HasDisabledIcon)) {
         ico.iconDisabled = Utils::changePixmapColour(icon, palette.color(QPalette::Disabled, QPalette::Base));
     }
 
-    m_icons.emplace_back(path, ico);
+    p->icons.emplace_back(path, ico);
 }
 
 void ComboIcon::addIcon(const QString& path)
@@ -87,87 +147,53 @@ void ComboIcon::setIcon(const QString& path, bool active)
     }
 
     if(active) {
-        addAttribute(Active);
+        p->addAttribute(Active);
     }
     else {
-        removeAttribute(Active);
+        p->removeAttribute(Active);
     }
 
-    auto it = std::ranges::find_if(std::as_const(m_icons), [path](const PathIconPair& icon) {
+    auto it = std::ranges::find_if(std::as_const(p->icons), [path](const PathIconPair& icon) {
         return icon.first == path;
     });
 
-    if(it == m_icons.cend()) {
+    if(it == p->icons.cend()) {
         return;
     }
 
-    m_currentIndex = static_cast<int>(std::distance(m_icons.cbegin(), it));
+    p->currentIndex = static_cast<int>(std::distance(p->icons.cbegin(), it));
 
-    if(hasAttribute(HasActiveIcon) && hasAttribute(Active)) {
-        m_label->setPixmap(m_icons.at(m_currentIndex).second.iconActive);
+    if(p->hasAttribute(HasActiveIcon) && p->hasAttribute(Active)) {
+        p->label->setPixmap(p->icons.at(p->currentIndex).second.iconActive);
     }
     else {
-        m_label->setPixmap(m_icons.at(m_currentIndex).second.icon);
+        p->label->setPixmap(p->icons.at(p->currentIndex).second.icon);
     }
 }
 
 void ComboIcon::setIconEnabled(bool enable)
 {
     if(enable) {
-        addAttribute(Enabled);
+        p->addAttribute(Enabled);
     }
     else {
-        removeAttribute(Enabled);
+        p->removeAttribute(Enabled);
     }
 
-    if(hasAttribute(Enabled)) {
-        if(hasAttribute(HasActiveIcon) && hasAttribute(Active)) {
-            return m_label->setPixmap(m_icons.at(m_currentIndex).second.iconActive);
+    if(p->hasAttribute(Enabled)) {
+        if(p->hasAttribute(HasActiveIcon) && p->hasAttribute(Active)) {
+            return p->label->setPixmap(p->icons.at(p->currentIndex).second.iconActive);
         }
-        return m_label->setPixmap(m_icons.at(m_currentIndex).second.icon);
+        return p->label->setPixmap(p->icons.at(p->currentIndex).second.icon);
     }
-    return m_label->setPixmap(m_icons.at(m_currentIndex).second.iconDisabled);
+    return p->label->setPixmap(p->icons.at(p->currentIndex).second.iconDisabled);
 }
 
 void ComboIcon::changeEvent(QEvent* event)
 {
-    if(event->type() == QEvent::EnabledChange && hasAttribute(HasDisabledIcon)) {
+    if(event->type() == QEvent::EnabledChange && p->hasAttribute(HasDisabledIcon)) {
         setIconEnabled(isEnabled());
     }
     QWidget::changeEvent(event);
-}
-
-void ComboIcon::labelClicked()
-{
-    if(hasAttribute(AutoShift)) {
-        if(hasAttribute(Active)) {
-            ++m_currentIndex;
-        }
-        if(m_currentIndex >= static_cast<int>(m_icons.size())) {
-            m_currentIndex = 0;
-            removeAttribute(Active);
-            m_label->setPixmap(m_icons.at(m_currentIndex).second.icon);
-        }
-        else {
-            addAttribute(Active);
-            m_label->setPixmap(m_icons.at(m_currentIndex).second.iconActive);
-        }
-    }
-    emit clicked(m_icons.at(m_currentIndex).first);
-}
-
-bool ComboIcon::hasAttribute(Attribute attribute)
-{
-    return (m_attributes & attribute);
-}
-
-void ComboIcon::addAttribute(Attribute attribute)
-{
-    m_attributes |= attribute;
-}
-
-void ComboIcon::removeAttribute(Attribute attribute)
-{
-    m_attributes &= ~attribute;
 }
 } // namespace Fy::Utils

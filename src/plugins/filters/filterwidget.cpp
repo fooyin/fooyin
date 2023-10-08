@@ -27,7 +27,6 @@
 #include "settings/filtersettings.h"
 
 #include <core/player/playermanager.h>
-
 #include <utils/actions/actioncontainer.h>
 #include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
@@ -38,6 +37,8 @@
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QMenu>
+
+#include <set>
 
 namespace Fy::Filters {
 Core::TrackList fetchAllTracks(QTreeView* view)
@@ -224,6 +225,21 @@ void FilterWidget::loadLayout(const QJsonObject& object)
         p->model->setSortOrder(order.value());
     }
     emit requestFieldChange(p->filter, object["Type"].toString());
+}
+
+void FilterWidget::tracksAdded(const Core::TrackList& tracks)
+{
+    p->model->addTracks(tracks);
+}
+
+void FilterWidget::tracksUpdated(const Core::TrackList& tracks)
+{
+    p->model->updateTracks(tracks);
+}
+
+void FilterWidget::tracksRemoved(const Core::TrackList& tracks)
+{
+    p->model->removeTracks(tracks);
 }
 
 void FilterWidget::contextMenuEvent(QContextMenuEvent* event)

@@ -17,14 +17,15 @@
  *
  */
 
-#include "scriptregistry.h"
+#include <core/scripting/scriptregistry.h>
 
-#include "core/constants.h"
 #include "functions/controlfuncs.h"
 #include "functions/mathfuncs.h"
 #include "functions/stringfuncs.h"
 #include "functions/timefuncs.h"
-#include "models/track.h"
+
+#include <core/constants.h>
+#include <core/track.h>
 
 namespace Fy::Core::Scripting {
 Registry::Registry()

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "gui/dialog/propertiesdialog.h"
+#include <gui/propertiesdialog.h>
 
 #include <QHBoxLayout>
 #include <QWidget>

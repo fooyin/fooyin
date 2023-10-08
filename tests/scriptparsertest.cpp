@@ -17,8 +17,8 @@
  *
  */
 
-#include <core/models/track.h>
 #include <core/scripting/scriptparser.h>
+#include <core/track.h>
 
 #include <gtest/gtest.h>
 

@@ -19,10 +19,11 @@
 
 #include "settingsdialog.h"
 
-#include "settings/settingsmodel.h"
-#include "settingspage.h"
-#include "utils/scrollarea.h"
-#include "utils/simpletreeview.h"
+#include "scrollarea.h"
+#include "settingsmodel.h"
+#include "simpletreeview.h"
+
+#include <utils/settings/settingspage.h>
 
 #include <QDialogButtonBox>
 #include <QPushButton>

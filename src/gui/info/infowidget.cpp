@@ -25,9 +25,8 @@
 #include "infomodel.h"
 
 #include <core/library/musiclibrary.h>
-#include <core/models/track.h>
 #include <core/player/playermanager.h>
-
+#include <core/track.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/settings/settingsmanager.h>
 

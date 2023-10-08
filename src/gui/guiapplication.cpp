@@ -19,49 +19,49 @@
 
 #include "guiapplication.h"
 
-#include <core/coreplugincontext.h>
+#include "controls/controlwidget.h"
+#include "editablelayout.h"
+#include "info/infowidget.h"
+#include "library/coverwidget.h"
+#include "library/statuswidget.h"
+#include "librarytree/librarytreegroupregistry.h"
+#include "librarytree/librarytreewidget.h"
+#include "mainwindow.h"
+#include "menu/editmenu.h"
+#include "menu/filemenu.h"
+#include "menu/helpmenu.h"
+#include "menu/librarymenu.h"
+#include "menu/playbackmenu.h"
+#include "menu/viewmenu.h"
+#include "playlist/playlistcontroller.h"
+#include "playlist/playlisttabs.h"
+#include "playlist/playlistwidget.h"
+#include "playlist/presetregistry.h"
+#include "search/searchwidget.h"
+#include "settings/generalpage.h"
+#include "settings/guigeneralpage.h"
+#include "settings/library/librarygeneralpage.h"
+#include "settings/library/librarysortingpage.h"
+#include "settings/librarytree/librarytreepage.h"
+#include "settings/playlist/playlistguipage.h"
+#include "settings/playlist/playlistpresetspage.h"
+#include "settings/plugins/pluginspage.h"
+#include "widgets/spacer.h"
+
 #include <core/coresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
+#include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
-
+#include <gui/layoutprovider.h>
+#include <gui/plugins/guiplugin.h>
+#include <gui/plugins/guiplugincontext.h>
+#include <gui/propertiesdialog.h>
+#include <gui/searchcontroller.h>
+#include <gui/trackselectioncontroller.h>
+#include <gui/widgetfactory.h>
+#include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
-
-#include "editablelayout.h"
-#include "gui/controls/controlwidget.h"
-#include "gui/dialog/propertiesdialog.h"
-#include "gui/guiplugincontext.h"
-#include "gui/info/infowidget.h"
-#include "gui/library/coverwidget.h"
-#include "gui/library/statuswidget.h"
-#include "gui/librarytree/librarytreegroupregistry.h"
-#include "gui/librarytree/librarytreewidget.h"
-#include "gui/menu/editmenu.h"
-#include "gui/menu/filemenu.h"
-#include "gui/menu/helpmenu.h"
-#include "gui/menu/librarymenu.h"
-#include "gui/menu/playbackmenu.h"
-#include "gui/menu/viewmenu.h"
-#include "gui/playlist/playlistcontroller.h"
-#include "gui/playlist/playlisttabs.h"
-#include "gui/playlist/playlistwidget.h"
-#include "gui/playlist/presetregistry.h"
-#include "gui/search/searchcontroller.h"
-#include "gui/search/searchwidget.h"
-#include "gui/settings/generalpage.h"
-#include "gui/settings/guigeneralpage.h"
-#include "gui/settings/library/librarygeneralpage.h"
-#include "gui/settings/library/librarysortingpage.h"
-#include "gui/settings/librarytree/librarytreepage.h"
-#include "gui/settings/playlist/playlistguipage.h"
-#include "gui/settings/playlist/playlistpresetspage.h"
-#include "gui/settings/plugins/pluginspage.h"
-#include "gui/widgets/spacer.h"
-#include "guiplugin.h"
-#include "layoutprovider.h"
-#include "mainwindow.h"
-#include "trackselectioncontroller.h"
-#include "widgetfactory.h"
 
 namespace Fy::Gui {
 struct GuiApplication::Private
@@ -76,7 +76,7 @@ struct GuiApplication::Private
     Core::Library::LibraryManager* libraryManager;
     Core::Library::MusicLibrary* library;
     Core::Library::SortingRegistry* sortingRegistry;
-    Core::Playlist::PlaylistHandler* playlistHandler;
+    Core::Playlist::PlaylistManager* playlistHandler;
 
     Widgets::WidgetFactory widgetFactory;
     Settings::GuiSettings guiSettings;
@@ -111,7 +111,7 @@ struct GuiApplication::Private
 
     explicit Private(GuiApplication* self, const Core::CorePluginContext& core)
         : self{self}
-        , actionManager{core.actionManager}
+        , actionManager{new Utils::ActionManager(self)}
         , settingsManager{core.settingsManager}
         , pluginManager{core.pluginManager}
         , playerManager{core.playerManager}
@@ -143,7 +143,8 @@ struct GuiApplication::Private
         , playlistPresetsPage{&presetRegistry, settingsManager}
         , libraryTreePage{&treeGroupRegistry, settingsManager}
         , pluginPage{settingsManager, pluginManager}
-        , guiPluginContext{&layoutProvider, &selectionController, &searchController, propertiesDialog, &widgetFactory}
+        , guiPluginContext{actionManager,     &layoutProvider,  &selectionController,
+                           &searchController, propertiesDialog, &widgetFactory}
     {
         registerLayouts();
         registerWidgets();

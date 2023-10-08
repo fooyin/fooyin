@@ -19,11 +19,10 @@
 
 #include "tagreader.h"
 
-#include "core/constants.h"
-#include "core/corepaths.h"
-#include "core/models/track.h"
 #include "tagutils.h"
 
+#include <core/constants.h>
+#include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -91,8 +90,8 @@ bool TagReader::readMetaData(Track& track, Quality quality)
     }
 
     const auto readingProperties = getReadingProperties(quality);
-    auto fileRef                 = TagLib::FileRef(
-        TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties, readingProperties.readStyle);
+    auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties,
+                                   readingProperties.readStyle);
 
     if(!isValidFile(fileRef)) {
         qDebug() << "Cannot open tags for " << filepath << ": Err 1";
@@ -105,8 +104,8 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         return false;
     }
 
-    const QStringList baseTags{
-        "TITLE", "ARTIST", "ALBUMARTIST", "GENRE", "TRACKNUMBER", "ALBUM", "DISCNUMBER", "DATE", "COMMENT", "LYRICS"};
+    const QStringList baseTags{"TITLE", "ARTIST",     "ALBUMARTIST", "GENRE",   "TRACKNUMBER",
+                               "ALBUM", "DISCNUMBER", "DATE",        "COMMENT", "LYRICS"};
 
     const auto artists     = convertStringList(parsedTag.map.value("ARTIST"));
     const QString album    = convertString(parsedTag.tag->album());
@@ -248,8 +247,8 @@ bool TagReader::writeMetaData(const Track& track)
 QPixmap TagReader::readCover(const QString& filepath)
 {
     const auto readingProperties = getReadingProperties(Quality::Quality);
-    auto fileRef                 = TagLib::FileRef(
-        TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties, readingProperties.readStyle);
+    auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties,
+                                   readingProperties.readStyle);
 
     return coverFromFile(fileRef);
 }
@@ -295,8 +294,7 @@ QString TagReader::storeCover(const TagLib::FileRef& file, const Track& track)
 QString TagReader::storeCover(const Track& track)
 {
     const auto readingProperties = getReadingProperties(Quality::Quality);
-    auto fileRef                 = TagLib::FileRef(TagLib::FileName(track.filepath().toUtf8()),
-                                   readingProperties.readAudioProperties,
+    auto fileRef = TagLib::FileRef(TagLib::FileName(track.filepath().toUtf8()), readingProperties.readAudioProperties,
                                    readingProperties.readStyle);
 
     return storeCover(fileRef, track);

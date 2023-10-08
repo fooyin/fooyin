@@ -39,13 +39,11 @@ struct FilterPopulator::Private
     Core::Scripting::ParsedScript sortScript;
 
     FilterItem root;
-    FilterItem* allNode;
     PendingTreeData data;
 
     explicit Private(FilterPopulator* populator)
         : populator{populator}
         , parser{&registry}
-        , allNode{nullptr}
         , data{}
     { }
 
@@ -111,10 +109,6 @@ struct FilterPopulator::Private
             return;
         }
 
-        if(allNode) {
-            allNode->setTitle(QString{"All (%1)"}.arg(data.items.size() - 1));
-        }
-
         emit populator->populated(data);
 
         data.clear();
@@ -140,8 +134,6 @@ void FilterPopulator::run(const QString& field, const QString& sort, const Core:
     if(std::exchange(p->currentSort, sort) != sort) {
         p->fieldScript = p->parser.parse(p->currentSort);
     }
-
-    p->allNode = &p->data.items.emplace(Utils::generateRandomHash(), FilterItem{"", "", &p->root, true}).first->second;
 
     p->runBatch(tracks);
 
