@@ -7,7 +7,7 @@ install(TARGETS fooyin_exe RUNTIME COMPONENT fooyin_runtime)
 set(package Fooyin)
 
 install(
-    TARGETS fooyin_lib
+    TARGETS fooyin_lib fooyin_version fooyin_config
     EXPORT FooyinTargets
     RUNTIME COMPONENT fooyin_runtime
     LIBRARY COMPONENT fooyin_runtime NAMELINK_COMPONENT fooyin_development

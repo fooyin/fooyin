@@ -79,10 +79,10 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
 configure_file(src/app/version.h.in app/version.h @ONLY)
 add_library(fooyin_version OBJECT)
-target_include_directories(fooyin_version PUBLIC "${PROJECT_BINARY_DIR}/app")
+target_include_directories(fooyin_version PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>)
 configure_file(src/app/config.h.in app/config.h @ONLY)
 add_library(fooyin_config OBJECT)
-target_include_directories(fooyin_config PUBLIC "${PROJECT_BINARY_DIR}/app")
+target_include_directories(fooyin_config PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>)
 
 add_library(fooyin_lib OBJECT src/app/singleinstance.cpp)
 
