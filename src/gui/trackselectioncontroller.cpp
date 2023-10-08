@@ -17,14 +17,13 @@
  *
  */
 
-#include "trackselectioncontroller.h"
+#include <gui/trackselectioncontroller.h>
 
-#include "gui/guiconstants.h"
-#include "gui/playlist/playlistcontroller.h"
+#include "playlist/playlistcontroller.h"
 
 #include <core/coresettings.h>
-#include <core/playlist/playlisthandler.h>
-
+#include <core/playlist/playlistmanager.h>
+#include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
@@ -43,7 +42,7 @@ struct TrackSelectionController::Private : QObject
     Utils::ActionManager* actionManager;
     Utils::SettingsManager* settings;
     Widgets::Playlist::PlaylistController* playlistController;
-    Core::Playlist::PlaylistHandler* playlistHandler;
+    Core::Playlist::PlaylistManager* playlistHandler;
 
     QString selectionTitle{"New playlist"};
     Core::TrackList tracks;

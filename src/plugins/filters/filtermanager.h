@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <core/models/trackfwd.h>
+#include <core/track.h>
 
 #include <QObject>
 
@@ -31,9 +31,6 @@ class SettingsManager;
 }
 
 namespace Core {
-namespace Playlist {
-class PlaylistHandler;
-}
 namespace Library {
 class MusicLibrary;
 }
@@ -52,9 +49,8 @@ class FilterManager : public QObject
     Q_OBJECT
 
 public:
-    explicit FilterManager(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-                           Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
-                           QObject* parent = nullptr);
+    explicit FilterManager(Core::Library::MusicLibrary* library, Gui::TrackSelectionController* trackSelection,
+                           Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~FilterManager() override;
 
     void shutdown();

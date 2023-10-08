@@ -19,10 +19,8 @@
 
 #include "volumecontrol.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/player/playermanager.h>
-
+#include <gui/guiconstants.h>
 #include <utils/comboicon.h>
 #include <utils/hovermenu.h>
 #include <utils/slider.h>

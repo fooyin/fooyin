@@ -19,10 +19,8 @@
 
 #include "playercontroller.h"
 
-#include "core/coresettings.h"
-#include "core/models/track.h"
-
-#include <utils/enumhelper.h>
+#include <core/coresettings.h>
+#include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::Core::Player {
@@ -30,28 +28,26 @@ PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* pa
     : PlayerManager{parent}
     , m_settings{settings}
     , m_totalDuration{0}
-    , m_playStatus{Stopped}
-    , m_playMode{Default}
+    , m_playStatus{PlayState::Stopped}
+    , m_playMode{PlayMode::Default}
     , m_position{0}
     , m_volume{1.0F}
     , m_counted{false}
 {
-    if(auto mode = Utils::EnumHelper::fromString<PlayMode>(m_settings->value<Settings::PlayMode>())) {
-        m_playMode = mode.value();
-    }
+    m_playMode = static_cast<PlayMode>(m_settings->value<Settings::PlayMode>());
     m_settings->subscribe<Settings::PlayMode>(this, &PlayerController::changePlayMode);
 }
 
 void PlayerController::reset()
 {
-    m_playStatus   = Stopped;
+    m_playStatus   = PlayState::Stopped;
     m_position     = 0;
     m_currentTrack = {};
 }
 
 void PlayerController::play()
 {
-    m_playStatus = Playing;
+    m_playStatus = PlayState::Playing;
     emit playStateChanged(m_playStatus);
 }
 
@@ -63,9 +59,9 @@ void PlayerController::wakeUp()
 void PlayerController::playPause()
 {
     switch(m_playStatus) {
-        case(Playing):
+        case(PlayState::Playing):
             return pause();
-        case(Stopped):
+        case(PlayState::Stopped):
             return wakeUp();
         default:
             return play();
@@ -74,7 +70,7 @@ void PlayerController::playPause()
 
 void PlayerController::pause()
 {
-    m_playStatus = Paused;
+    m_playStatus = PlayState::Paused;
     emit playStateChanged(m_playStatus);
 }
 
@@ -129,7 +125,7 @@ void PlayerController::changeCurrentTrack(const Track& track)
 
 void PlayerController::setPlayMode(PlayMode mode)
 {
-    m_settings->set<Settings::PlayMode>(Utils::EnumHelper::toString(mode));
+    m_settings->set<Settings::PlayMode>(static_cast<int>(mode));
 }
 
 void PlayerController::volumeUp()
@@ -175,9 +171,8 @@ double PlayerController::volume() const
 
 void PlayerController::changePlayMode()
 {
-    const auto mode = Utils::EnumHelper::fromString<PlayMode>(m_settings->value<Settings::PlayMode>());
-    if(mode && m_playMode != mode.value()) {
-        m_playMode = mode.value();
+    const auto mode = static_cast<PlayMode>(m_settings->value<Settings::PlayMode>());
+    if(std::exchange(m_playMode, mode) != mode) {
         emit playModeChanged(m_playMode);
     }
 }

@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include "layoutprovider.h"
+#include <gui/layoutprovider.h>
+
 #include "widgetprovider.h"
 
 #include <QWidget>

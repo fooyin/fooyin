@@ -19,20 +19,24 @@
 
 #include "database.h"
 
-#include "core/coresettings.h"
-#include "library.h"
-#include "playlistdatabase.h"
 #include "query.h"
-#include "version.h"
 
+#include <core/coresettings.h>
+#include <utils/paths.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QFile>
 #include <QSqlQuery>
 
+static constexpr auto DatabaseVersion = "0.1.0";
+
 namespace Fy::Core::DB {
-Database::Database(Utils::SettingsManager* settings, const QString& directory, const QString& filename)
+Database::Database(Utils::SettingsManager* settings)
+    : Database{Utils::sharePath(), "fooyin.db", settings}
+{ }
+
+Database::Database(const QString& directory, const QString& filename, Utils::SettingsManager* settings)
     : Module{directory + "/" + filename}
     , m_settings{settings}
 {
@@ -54,28 +58,10 @@ Database::Database(Utils::SettingsManager* settings, const QString& directory, c
     }
 }
 
-Database::~Database() = default;
-
-Library* Database::libraryConnector()
-{
-    if(!m_libraryConnector) {
-        m_libraryConnector = std::make_unique<Library>(connectionName());
-    }
-    return m_libraryConnector.get();
-}
-
-Playlist* Database::playlistConnector()
-{
-    if(!m_playlistConnector) {
-        m_playlistConnector = std::make_unique<Playlist>(connectionName());
-    }
-    return m_playlistConnector.get();
-}
-
 bool Database::update()
 {
-    if(m_settings->value<Settings::DatabaseVersion>() < DATABASE_VERSION) {
-        m_settings->set<Settings::DatabaseVersion>(DATABASE_VERSION);
+    if(m_settings->value<Settings::DatabaseVersion>() < DatabaseVersion) {
+        m_settings->set<Settings::DatabaseVersion>(DatabaseVersion);
         return true;
     }
     return true;

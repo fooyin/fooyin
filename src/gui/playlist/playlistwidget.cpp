@@ -32,8 +32,7 @@
 #include <core/library/sortingregistry.h>
 #include <core/library/tracksort.h>
 #include <core/player/playermanager.h>
-#include <core/playlist/playlisthandler.h>
-
+#include <core/playlist/playlistmanager.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/async.h>
 #include <utils/headerview.h>
@@ -261,11 +260,11 @@ struct PlaylistWidget::Private : QObject
     void changeState(Core::Player::PlayState state) const
     {
         switch(state) {
-            case(Core::Player::Playing):
+            case(Core::Player::PlayState::Playing):
                 model->changeTrackState();
                 return findCurrent();
-            case(Core::Player::Stopped):
-            case(Core::Player::Paused):
+            case(Core::Player::PlayState::Stopped):
+            case(Core::Player::PlayState::Paused):
                 return model->changeTrackState();
         }
     }

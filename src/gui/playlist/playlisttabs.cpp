@@ -21,8 +21,7 @@
 
 #include "playlistcontroller.h"
 
-#include <core/playlist/playlisthandler.h>
-
+#include <core/playlist/playlistmanager.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 
@@ -33,7 +32,7 @@
 #include <QTabBar>
 
 namespace Fy::Gui::Widgets::Playlist {
-PlaylistTabs::PlaylistTabs(Core::Playlist::PlaylistHandler* playlistHandler, PlaylistController* controller,
+PlaylistTabs::PlaylistTabs(Core::Playlist::PlaylistManager* playlistHandler, PlaylistController* controller,
                            QWidget* parent)
     : FyWidget{parent}
     , m_playlistHandler{playlistHandler}
@@ -54,11 +53,11 @@ PlaylistTabs::PlaylistTabs(Core::Playlist::PlaylistHandler* playlistHandler, Pla
     QObject::connect(m_controller, &PlaylistController::currentPlaylistChanged, this, &PlaylistTabs::playlistChanged);
     //    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
     //                     &PlaylistTabs::playlistChanged);
-    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistAdded, this,
+    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistManager::playlistAdded, this,
                      &PlaylistTabs::addPlaylist);
-    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistRemoved, this,
+    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistManager::playlistRemoved, this,
                      &PlaylistTabs::removePlaylist);
-    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistHandler::playlistRenamed, this,
+    QObject::connect(m_playlistHandler, &Core::Playlist::PlaylistManager::playlistRenamed, this,
                      &PlaylistTabs::playlistRenamed);
 
     setupTabs();

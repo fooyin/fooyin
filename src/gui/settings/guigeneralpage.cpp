@@ -19,11 +19,11 @@
 
 #include "guigeneralpage.h"
 
-#include "gui/editablelayout.h"
-#include "gui/guiconstants.h"
-#include "gui/guisettings.h"
-#include "gui/quicksetup/quicksetupdialog.h"
+#include "editablelayout.h"
+#include "quicksetup/quicksetupdialog.h"
 
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>

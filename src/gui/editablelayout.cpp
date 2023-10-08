@@ -19,15 +19,15 @@
 
 #include "editablelayout.h"
 
-#include "gui/quicksetup/quicksetupdialog.h"
-#include "gui/widgets/dummy.h"
-#include "gui/widgets/splitterwidget.h"
-#include "guiconstants.h"
-#include "guisettings.h"
-#include "layoutprovider.h"
-#include "widgetfactory.h"
+#include "quicksetup/quicksetupdialog.h"
 #include "widgetprovider.h"
+#include "widgets/dummy.h"
+#include "widgets/splitterwidget.h"
 
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
+#include <gui/layoutprovider.h>
+#include <gui/widgetfactory.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/enumhelper.h>

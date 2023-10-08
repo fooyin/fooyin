@@ -19,7 +19,10 @@
 
 #pragma once
 
-#include "playlist.h"
+#include "fycore_export.h"
+
+#include <core/playlist/playlistmanager.h>
+#include <core/track.h>
 
 #include <QObject>
 
@@ -38,53 +41,48 @@ namespace Player {
 class PlayerManager;
 }
 
-namespace Library {
-class MusicLibrary;
-}
-
 namespace Playlist {
-class PlaylistHandler : public QObject
+class Playlist;
+
+class FYCORE_EXPORT PlaylistHandler : public PlaylistManager
 {
     Q_OBJECT
 
 public:
     explicit PlaylistHandler(DB::Database* database, Player::PlayerManager* playerManager,
-                             Core::Library::MusicLibrary* library, Utils::SettingsManager* settings,
-                             QObject* parent = nullptr);
+                             Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
-    [[nodiscard]] std::optional<Playlist> playlistById(int id) const;
-    [[nodiscard]] std::optional<Playlist> playlistByIndex(int index) const;
-    [[nodiscard]] std::optional<Playlist> playlistByName(const QString& name) const;
-    [[nodiscard]] PlaylistList playlists() const;
+    [[nodiscard]] std::optional<Playlist> playlistById(int id) const override;
+    [[nodiscard]] std::optional<Playlist> playlistByIndex(int index) const override;
+    [[nodiscard]] std::optional<Playlist> playlistByName(const QString& name) const override;
+    [[nodiscard]] PlaylistList playlists() const override;
 
-    std::optional<Playlist> createPlaylist(const QString& name, const TrackList& tracks = {}, bool switchTo = false);
-    void appendToPlaylist(int id, const TrackList& tracks);
-    void createEmptyPlaylist(bool switchTo = false);
+    std::optional<Playlist> createPlaylist(const QString& name, const TrackList& tracks = {},
+                                           bool switchTo = false) override;
+    void appendToPlaylist(int id, const TrackList& tracks) override;
+    void createEmptyPlaylist(bool switchTo = false) override;
 
     // Replaces tracks and current track index in playlist with those from other
-    void exchangePlaylist(Playlist& playlist, const Playlist& other);
-    void replacePlaylistTracks(int id, const Core::TrackList& tracks);
-    void changeActivePlaylist(int id);
+    void exchangePlaylist(Playlist& playlist, const Playlist& other) override;
+    void replacePlaylistTracks(int id, const Core::TrackList& tracks) override;
+    void changeActivePlaylist(int id) override;
 
-    void renamePlaylist(int id, const QString& name);
-    void removePlaylist(int id);
+    void renamePlaylist(int id, const QString& name) override;
+    void removePlaylist(int id) override;
 
-    [[nodiscard]] std::optional<Playlist> activePlaylist() const;
-    [[nodiscard]] int playlistCount() const;
+    [[nodiscard]] std::optional<Playlist> activePlaylist() const override;
+    [[nodiscard]] int playlistCount() const override;
 
     void savePlaylists();
 
-    void startPlayback(int playlistId, const Core::Track& track = {});
-    void startPlayback(QString playlistName, const Core::Track& track = {});
+    void startPlayback(int playlistId, const Core::Track& track = {}) override;
+    void startPlayback(QString playlistName, const Core::Track& track = {}) override;
 
-signals:
-    void playlistsPopulated();
-    void playlistAdded(const Core::Playlist::Playlist& playlist, bool switchTo = false);
-    void playlistTracksChanged(const Core::Playlist::Playlist& playlist, bool switchTo = false);
-    void playlistRemoved(const Core::Playlist::Playlist& playlist);
-    void playlistRenamed(const Core::Playlist::Playlist& playlist);
-    void activePlaylistChanged(const Core::Playlist::Playlist& playlist = {});
+    void populatePlaylists(const TrackList& tracks);
+    void libraryRemoved(int id);
+    void tracksUpdated(const Core::TrackList& tracks);
+    void tracksRemoved(const Core::TrackList& tracks);
 
 private:
     struct Private;

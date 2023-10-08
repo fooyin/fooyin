@@ -17,9 +17,13 @@
  *
  */
 
-#include "headerview.h"
+#include <utils/headerview.h>
 
 namespace Fy::Utils {
+HeaderView::HeaderView(Qt::Orientation orientation, QWidget* parent)
+    : QHeaderView{orientation, parent}
+{ }
+
 void HeaderView::mousePressEvent(QMouseEvent* event)
 {
     if(event->buttons() == Qt::LeftButton) {

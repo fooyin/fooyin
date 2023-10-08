@@ -19,12 +19,12 @@
 
 #include "unifiedmusiclibrary.h"
 
-#include "core/coresettings.h"
-#include "libraryinfo.h"
-#include "librarymanager.h"
 #include "libraryscanner.h"
-#include "tracksort.h"
 
+#include <core/coresettings.h>
+#include <core/library/libraryinfo.h>
+#include <core/library/librarymanager.h>
+#include <core/library/tracksort.h>
 #include <utils/async.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>

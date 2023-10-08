@@ -19,14 +19,14 @@
 
 #include "librarytreewidget.h"
 
-#include "gui/guisettings.h"
-#include "gui/trackselectioncontroller.h"
 #include "librarytreegroupregistry.h"
 #include "librarytreemodel.h"
 #include "librarytreeview.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
+#include <gui/guisettings.h>
+#include <gui/trackselectioncontroller.h>
 #include <utils/async.h>
 
 #include <QContextMenuEvent>

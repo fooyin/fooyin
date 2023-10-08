@@ -19,12 +19,12 @@
 
 #include "librarytreepage.h"
 
-#include "gui/guiconstants.h"
-#include "gui/guisettings.h"
-#include "gui/librarytree/librarytreegroupregistry.h"
-#include "gui/settings/librarytree/librarytreegroupmodel.h"
-#include "gui/trackselectioncontroller.h"
+#include "librarytree/librarytreegroupregistry.h"
+#include "librarytreegroupmodel.h"
 
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
+#include <gui/trackselectioncontroller.h>
 #include <utils/multilinedelegate.h>
 
 #include <QCheckBox>

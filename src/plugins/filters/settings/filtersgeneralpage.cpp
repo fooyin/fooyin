@@ -20,12 +20,11 @@
 #include "filtersgeneralpage.h"
 
 #include "constants.h"
-#include "filters/filterfwd.h"
+#include "filterfwd.h"
 #include "filtersettings.h"
 
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
-
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>

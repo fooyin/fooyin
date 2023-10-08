@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "engine.h"
+#include <core/engine/engine.h>
 
 class mpv_event;
 class mpv_handle;

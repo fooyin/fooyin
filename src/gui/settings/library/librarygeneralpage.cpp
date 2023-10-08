@@ -22,12 +22,10 @@
 #include "librarymodel.h"
 #include "libraryview.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/librarymanager.h>
-
+#include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -62,7 +60,6 @@ private:
     LibraryModel* m_model;
 
     QCheckBox* m_autoRefresh;
-    QCheckBox* m_waitForTracks;
 
     QLineEdit* m_sortScript;
 };
@@ -74,7 +71,6 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     , m_libraryView{new LibraryView(this)}
     , m_model{new LibraryModel(m_libraryManager, this)}
     , m_autoRefresh{new QCheckBox("Auto refresh on startup", this)}
-    , m_waitForTracks{new QCheckBox("Wait for tracks", this)}
     , m_sortScript{new QLineEdit(this)}
 {
     m_model->populate();
@@ -104,9 +100,6 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
     m_autoRefresh->setChecked(m_settings->value<Core::Settings::AutoRefresh>());
 
-    m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded."));
-    m_waitForTracks->setChecked(m_settings->value<Core::Settings::WaitForTracks>());
-
     auto* sortScriptLabel  = new QLabel("Sort tracks by:", this);
     auto* sortScriptLayout = new QHBoxLayout();
     sortScriptLayout->addWidget(sortScriptLabel);
@@ -116,7 +109,6 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(libraryLayout);
     mainLayout->addWidget(m_autoRefresh);
-    mainLayout->addWidget(m_waitForTracks);
     mainLayout->addLayout(sortScriptLayout);
 
     connect(addButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::addLibrary);
@@ -126,7 +118,6 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
 void LibraryGeneralPageWidget::apply()
 {
     m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
-    m_settings->set<Core::Settings::WaitForTracks>(m_waitForTracks->isChecked());
     m_settings->set<Core::Settings::LibrarySortScript>(m_sortScript->text());
 
     m_model->processQueue();
@@ -135,7 +126,6 @@ void LibraryGeneralPageWidget::apply()
 void LibraryGeneralPageWidget::reset()
 {
     m_settings->reset<Core::Settings::AutoRefresh>();
-    m_settings->reset<Core::Settings::WaitForTracks>();
     m_settings->reset<Core::Settings::LibrarySortScript>();
 }
 

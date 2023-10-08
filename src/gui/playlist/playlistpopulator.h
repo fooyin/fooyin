@@ -22,8 +22,7 @@
 #include "playlistitem.h"
 #include "playlistitemmodels.h"
 
-#include <core/models/trackfwd.h>
-
+#include <core/track.h>
 #include <utils/worker.h>
 
 namespace Fy::Gui::Widgets::Playlist {

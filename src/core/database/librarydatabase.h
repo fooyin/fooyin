@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "core/models/trackfwd.h"
 #include "module.h"
+
+#include <core/track.h>
 
 namespace Fy::Core::DB {
 class LibraryDatabase : public Module

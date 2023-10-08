@@ -93,7 +93,7 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
         }
         // New library
         auto library   = m_librariesToAdd.emplace_back(info);
-        library.status = Core::Library::Pending;
+        library.status = Core::Library::LibraryInfo::Status::Pending;
         m_nodes.emplace(library.path, LibraryItem{library, parent});
         item = &m_nodes.at(library.path);
         item->setStatus(LibraryItem::Added);

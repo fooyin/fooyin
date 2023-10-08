@@ -21,7 +21,7 @@
 
 #include "playlistpreset.h"
 
-#include <core/models/trackfwd.h>
+#include <core/track.h>
 
 namespace Fy::Gui::Widgets::Playlist {
 class PlaylistScriptRegistry;

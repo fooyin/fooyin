@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/database/librarydatabase.h"
+#include "database/librarydatabase.h"
 
 #include <utils/worker.h>
 

@@ -20,7 +20,6 @@
 #include "infomodel.h"
 
 #include <core/player/playermanager.h>
-
 #include <utils/enumhelper.h>
 #include <utils/utils.h>
 

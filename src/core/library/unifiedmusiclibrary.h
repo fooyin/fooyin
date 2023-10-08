@@ -21,7 +21,8 @@
 
 #include "libraryscanner.h"
 #include "librarythreadhandler.h"
-#include "musiclibrary.h"
+
+#include <core/library/musiclibrary.h>
 
 #include <QCoro/QCoroTask>
 

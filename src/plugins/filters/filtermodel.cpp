@@ -27,6 +27,8 @@
 #include <QFont>
 #include <QSize>
 #include <QThread>
+
+#include <set>
 #include <utility>
 
 namespace Fy::Filters {
@@ -39,6 +41,7 @@ struct FilterModel::Private : QObject
     QThread populatorThread;
     FilterPopulator populator;
 
+    FilterItem allNode;
     ItemKeyMap nodes;
     TrackIdNodeMap trackParents;
 
@@ -61,6 +64,9 @@ struct FilterModel::Private : QObject
         self->resetRoot();
         nodes.clear();
         trackParents.clear();
+
+        allNode = FilterItem{"", "", self->rootItem(), true};
+        self->rootItem()->appendChild(&allNode);
     }
 
     void batchFinished(PendingTreeData data)
@@ -85,15 +91,26 @@ struct FilterModel::Private : QObject
                 nodes[key].addTracks(item.tracks());
             }
             else {
-                nodes[key] = item;
-
+                nodes[key]        = item;
                 FilterItem* child = &nodes.at(key);
+
+                if(!resetting) {
+                    const int row = self->rootItem()->childCount();
+                    self->beginInsertRows({}, row, row);
+                }
+
                 self->rootItem()->appendChild(child);
+
+                if(!resetting) {
+                    self->endInsertRows();
+                }
             }
         }
         trackParents.merge(data.trackParents);
 
         self->rootItem()->sortChildren(sortOrder);
+
+        allNode.setTitle(QString{"All (%1)"}.arg(self->rootItem()->childCount() - 1));
     }
 };
 

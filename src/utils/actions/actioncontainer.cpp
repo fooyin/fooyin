@@ -17,7 +17,7 @@
  *
  */
 
-#include "actioncontainer.h"
+#include <utils/actions/actioncontainer.h>
 
 #include <QAction>
 #include <QMenu>

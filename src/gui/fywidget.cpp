@@ -17,9 +17,7 @@
  *
  */
 
-#include "fywidget.h"
-
-#include <QJsonArray>
+#include <gui/fywidget.h>
 
 namespace Fy::Gui::Widgets {
 FyWidget::FyWidget(QWidget* parent)
@@ -43,18 +41,12 @@ FyWidget* FyWidget::findParent()
     return qobject_cast<FyWidget*>(parent);
 }
 
-void FyWidget::layoutEditingMenu(Utils::ActionContainer* menu)
-{
-    Q_UNUSED(menu)
-}
+void FyWidget::layoutEditingMenu(Utils::ActionContainer* /*menu*/) { }
 
 void FyWidget::saveLayout(QJsonArray& array)
 {
     array.append(layoutName());
 }
 
-void FyWidget::loadLayout(const QJsonObject& object)
-{
-    Q_UNUSED(object)
-}
+void FyWidget::loadLayout(const QJsonObject& /*object*/) { }
 } // namespace Fy::Gui::Widgets

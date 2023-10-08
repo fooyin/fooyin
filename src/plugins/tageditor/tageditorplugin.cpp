@@ -23,8 +23,8 @@
 
 #include <core/constants.h>
 
-#include <gui/dialog/propertiesdialog.h>
-#include <gui/guiconstants.h>
+#include <gui/plugins/guiplugincontext.h>
+#include <gui/propertiesdialog.h>
 #include <gui/widgetfactory.h>
 
 #include <utils/actions/actioncontainer.h>
@@ -34,28 +34,44 @@
 #include <QMenu>
 
 namespace Fy::TagEditor {
+struct TagEditorPlugin::Private
+{
+    Utils::ActionManager* actionManager;
+    Core::Library::MusicLibrary* library;
+    Gui::TrackSelectionController* trackSelection;
+    Gui::PropertiesDialog* propertiesDialog;
+    Gui::Widgets::WidgetFactory* factory;
+    Utils::SettingsManager* settings;
+};
+
+TagEditorPlugin::TagEditorPlugin()
+    : p{std::make_unique<Private>()}
+{ }
+
+TagEditorPlugin::~TagEditorPlugin() = default;
+
 void TagEditorPlugin::initialise(const Core::CorePluginContext& context)
 {
-    m_actionManager = context.actionManager;
-    m_settings      = context.settingsManager;
-    m_library       = context.library;
+    p->settings = context.settingsManager;
+    p->library  = context.library;
 }
 
 void TagEditorPlugin::initialise(const Gui::GuiPluginContext& context)
 {
-    m_trackSelection   = context.trackSelection;
-    m_propertiesDialog = context.propertiesDialog;
-    m_factory          = context.widgetFactory;
+    p->actionManager    = context.actionManager;
+    p->trackSelection   = context.trackSelection;
+    p->propertiesDialog = context.propertiesDialog;
+    p->factory          = context.widgetFactory;
 
-    //    m_factory->registerClass<TagEditorWidget>(
+    //    p->factory->registerClass<TagEditorWidget>(
     //        "TagEditor",
     //        [this]() {
-    //            return new TagEditorWidget(m_trackSelection, m_library, m_settings);
+    //            return new TagEditorWidget(p->trackSelection, p->library, p->settings);
     //        },
     //        "Tag Editor");
 
-    m_propertiesDialog->insertTab(0, "Metadata", [this]() {
-        return new TagEditorWidget(m_trackSelection, m_library, m_settings);
+    p->propertiesDialog->insertTab(0, "Metadata", [this]() {
+        return new TagEditorWidget(p->trackSelection, p->library, p->settings);
     });
 }
 

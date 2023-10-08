@@ -17,23 +17,20 @@
  *
  */
 
-#include "guisettings.h"
-
-#include "guipaths.h"
-
-#include <core/coresettings.h>
+#include <gui/guisettings.h>
 
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 namespace Fy::Gui::Settings {
 GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
     m_settings->createTempSetting<Settings::LayoutEditing>(false);
-    m_settings->createSetting<Settings::StartupBehaviour>(2, "Layout");
-    m_settings->createSetting<Settings::Geometry>(QByteArray{}, "Layout");
-    m_settings->createSetting<Settings::SettingsGeometry>(QByteArray{}, "Layout");
+    m_settings->createSetting<Settings::StartupBehaviour>(2, "Interface");
+    m_settings->createSetting<Settings::WaitForTracks>(true, "Interface");
+    m_settings->createSetting<Settings::Geometry>(QByteArray{}, "Interface");
+    m_settings->createSetting<Settings::SettingsGeometry>(QByteArray{}, "Interface");
+    m_settings->createSetting<Settings::EditingMenuLevels>(2, "Interface");
     m_settings->createSetting<Settings::SplitterHandles>(true, "Splitters");
     m_settings->createSetting<Settings::PlaylistAltColours>(true, "Playlist");
     m_settings->createSetting<Settings::PlaylistHeader>(true, "Playlist");
@@ -44,7 +41,6 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::InfoAltColours>(true, "Info");
     m_settings->createSetting<Settings::InfoHeader>(true, "Info");
     m_settings->createSetting<Settings::InfoScrollBar>(true, "Info");
-    m_settings->createSetting<Settings::EditingMenuLevels>(2, "Layout");
     m_settings->createSetting<Settings::IconTheme>("light", "Theme");
     m_settings->createSetting<Settings::LastPlaylistId>(0, "Playlist");
     m_settings->createSetting<Settings::LibraryTreeGrouping>(QByteArray{}, "LibraryTree");
@@ -53,8 +49,6 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::LibraryTreePlaylistEnabled>(false, "LibraryTree");
     m_settings->createSetting<Settings::LibraryTreeAutoSwitch>(true, "LibraryTree");
     m_settings->createSetting<Settings::LibraryTreeAutoPlaylist>("Library Selection", "LibraryTree");
-
-    m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(activeLayoutPath()));
 
     m_settings->loadSettings();
 }

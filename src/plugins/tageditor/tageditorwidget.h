@@ -20,7 +20,7 @@
 #pragma once
 
 #include <gui/fywidget.h>
-#include <gui/dialog/propertiesdialog.h>
+#include <gui/propertiesdialog.h>
 
 #include <QWidget>
 

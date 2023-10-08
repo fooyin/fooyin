@@ -17,7 +17,7 @@
  *
  */
 
-#include "crypto.h"
+#include <utils/crypto.h>
 
 #include <QDateTime>
 #include <QRandomGenerator>

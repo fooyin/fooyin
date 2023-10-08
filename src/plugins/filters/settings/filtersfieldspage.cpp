@@ -19,9 +19,9 @@
 
 #include "filtersfieldspage.h"
 
+#include "constants.h"
 #include "fieldmodel.h"
-#include "filters/constants.h"
-#include "filters/fieldregistry.h"
+#include "fieldregistry.h"
 #include "filtersettings.h"
 
 #include <utils/settings/settingsmanager.h>

@@ -17,7 +17,7 @@
  *
  */
 
-#include "multilinedelegate.h"
+#include <utils/multilinedelegate.h>
 
 #include <QPainter>
 #include <QTextEdit>

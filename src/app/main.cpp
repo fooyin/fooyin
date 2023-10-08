@@ -17,26 +17,37 @@
  *
  */
 
-#include "application.h"
 #include "singleinstance.h"
 #include "version.h"
 
-#include <core/constants.h>
+#include <core/application.h>
+#include <gui/guiapplication.h>
+
+#include <QApplication>
 
 int main(int argc, char** argv)
 {
     Q_INIT_RESOURCE(icons);
 
-    QCoreApplication::setApplicationName(Fy::Core::Constants::AppName);
+    QCoreApplication::setApplicationName("fooyin");
     QCoreApplication::setApplicationVersion(VERSION);
 
     // Prevent additional instances
     Fy::SingleInstance instance("fooyin");
     if(!instance.tryRunning()) {
-        qInfo() << "Fooyin already running";
+        qInfo() << "fooyin already running";
         return 0;
     }
 
-    const Fy::Application app{argc, argv};
+    const QApplication app{argc, argv};
+
+    Fy::Core::Application coreApp;
+    Fy::Gui::GuiApplication guiApp{coreApp.context()};
+
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, &coreApp, [&coreApp, &guiApp]() {
+        guiApp.shutdown();
+        coreApp.shutdown();
+    });
+
     return QCoreApplication::exec();
 }

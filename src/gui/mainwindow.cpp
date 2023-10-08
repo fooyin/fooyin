@@ -20,13 +20,12 @@
 #include "mainwindow.h"
 
 #include "editablelayout.h"
-#include "guiconstants.h"
-#include "guisettings.h"
 #include "mainmenubar.h"
 
 #include <core/constants.h>
 #include <core/coresettings.h>
-
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsdialogcontroller.h>

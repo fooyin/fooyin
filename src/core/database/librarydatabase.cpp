@@ -19,9 +19,9 @@
 
 #include "librarydatabase.h"
 
-#include "core/constants.h"
 #include "query.h"
 
+#include <core/constants.h>
 #include <utils/utils.h>
 
 namespace Fy::Core::DB {

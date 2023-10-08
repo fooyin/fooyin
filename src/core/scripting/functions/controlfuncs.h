@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/scripting/scriptvalue.h"
+#include <core/scripting/scriptvalue.h>
 
 namespace Fy::Core::Scripting {
 ScriptResult cif(const ValueList& vec);

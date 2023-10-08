@@ -17,7 +17,9 @@
  *
  */
 
-#include "tracksort.h"
+#include <core/library/tracksort.h>
+
+#include <core/scripting/scriptparser.h>
 
 namespace Fy::Core::Library::Sorting {
 Scripting::ParsedScript parseScript(const QString& sort)

@@ -19,12 +19,13 @@
 
 #include "generalpage.h"
 
-#include "gui/guiconstants.h"
-#include "gui/guisettings.h"
-#include "gui/mainwindow.h"
+#include "mainwindow.h"
 
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
 #include <QLabel>
@@ -42,20 +43,25 @@ private:
     Utils::SettingsManager* m_settings;
 
     QComboBox* m_startupBehaviour;
+    QCheckBox* m_waitForTracks;
 };
 
 GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
     , m_startupBehaviour{new QComboBox(this)}
+    , m_waitForTracks{new QCheckBox("Wait for tracks", this)}
 {
     auto* startupBehaviourLabel = new QLabel("Startup behaviour: ", this);
 
-    auto* mainLayout = new QGridLayout(this);
+    m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
+    m_waitForTracks->setChecked(m_settings->value<Settings::WaitForTracks>());
 
+    auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(startupBehaviourLabel, 0, 0);
     mainLayout->addWidget(m_startupBehaviour, 0, 1);
+    mainLayout->addWidget(m_waitForTracks, 1, 0);
     mainLayout->setColumnStretch(2, 1);
-    mainLayout->setRowStretch(1, 1);
+    mainLayout->setRowStretch(2, 1);
 
     auto addStartupBehaviour = [this](const QString& text, MainWindow::StartupBehaviour action) {
         m_startupBehaviour->addItem(text, QVariant::fromValue(action));
@@ -72,11 +78,13 @@ GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
 void GeneralPageWidget::apply()
 {
     m_settings->set<Settings::StartupBehaviour>(m_startupBehaviour->currentIndex());
+    m_settings->set<Settings::WaitForTracks>(m_waitForTracks->isChecked());
 }
 
 void GeneralPageWidget::reset()
 {
     m_settings->reset<Settings::StartupBehaviour>();
+    m_settings->reset<Settings::WaitForTracks>();
 }
 
 GeneralPage::GeneralPage(Utils::SettingsManager* settings)

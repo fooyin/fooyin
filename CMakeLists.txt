@@ -1,6 +1,25 @@
+#
+# Fooyin Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+#
+# Fooyin is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Fooyin is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 cmake_minimum_required(VERSION 3.16)
 
-include(cmake/CheckBuildDir.cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+
+include(CheckBuildDir)
 
 project(
     fooyin
@@ -10,13 +29,11 @@ project(
     LANGUAGES CXX
 )
 
-set(DATABASE_VERSION "0.6.3")
+include(CheckLevel)
+include(Fooyin)
+include(FooyinMacros)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(cmake/CheckLevel.cmake)
-include(cmake/Fooyin.cmake)
-
+include(GenerateExportHeader)
 include(FeatureSummary)
 
 set(CMAKE_AUTOMOC ON)
@@ -29,8 +46,8 @@ if(NOT CMAKE_BUILD_TYPE)
     )
 endif()
 
-fooyin_option(FOOYIN_STATIC "Build fooyin libraries as static." OFF)
-fooyin_option(BUILD_TESTS "Build fooyin tests." OFF)
+fooyin_option(BUILD_SHARED_LIBS "Build fooyin libraries as shared" ON)
+fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 
 find_package(
     Qt6 REQUIRED
@@ -40,6 +57,11 @@ find_package(
                Sql
                Concurrent
 )
+set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Concurrent PROPERTIES TYPE REQUIRED)
 
 find_package(QCoro6 REQUIRED COMPONENTS Core)
 qcoro_enable_coroutines()
@@ -52,38 +74,43 @@ find_package(Libmpv REQUIRED)
 
 # ---- Fooyin library ----
 
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+
 configure_file(src/app/version.h.in app/version.h @ONLY)
 add_library(fooyin_version OBJECT)
-add_library(fooyin::version ALIAS fooyin_version)
+target_include_directories(fooyin_version PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>)
+configure_file(src/app/config.h.in app/config.h @ONLY)
+add_library(fooyin_config OBJECT)
+target_include_directories(fooyin_config PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>)
+
+add_library(fooyin_lib OBJECT src/app/singleinstance.cpp)
+
 target_include_directories(
-    fooyin_version
-    PUBLIC "${PROJECT_BINARY_DIR}/app"
+    fooyin_lib PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
+                      "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/app>"
 )
 
-add_library(fooyin_lib OBJECT src/app/application.cpp src/app/singleinstance.cpp)
-add_library(fooyin::lib ALIAS fooyin_lib)
-
-target_include_directories(
-    fooyin_lib
-    PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/app>"
+set_target_properties(
+    fooyin_lib PROPERTIES VERSION "${PROJECT_VERSION}" EXPORT_NAME Fooyin
 )
 
 add_subdirectory(src)
 
-target_link_libraries(
-    fooyin_lib
-    PUBLIC fooyin::core
-           fooyin::gui
-           fooyin::utils
-    # ${SDL2_LIBRARIES} ${FFMPEG_LIBRARIES}
-)
+target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
 
 target_compile_features(fooyin_lib PUBLIC cxx_std_20)
-target_compile_options(fooyin_lib PRIVATE -Werror -Wall -Wextra -Wpedantic)
+target_compile_options(
+    fooyin_lib
+    PUBLIC -Werror
+           -Wall
+           -Wextra
+           -Wpedantic
+)
 
 # ---- Fooyin testing ----
 
-if(BUILD_TESTS)
+if(BUILD_TESTING)
     find_package(GTest)
     add_subdirectory(tests)
 endif()
@@ -95,25 +122,30 @@ set(SOURCES src/app/main.cpp)
 qt_add_resources(SOURCES data/icons.qrc)
 
 add_executable(fooyin_exe ${SOURCES})
-add_executable(fooyin::exe ALIAS fooyin_exe)
 
 set_target_properties(
     fooyin_exe
     PROPERTIES OUTPUT_NAME fooyin
                RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
-               INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH}
+               INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_DIR}
 )
 target_compile_features(fooyin_exe PUBLIC cxx_std_20)
-target_link_libraries(
+target_compile_options(
     fooyin_exe
-    PRIVATE fooyin_version
-            fooyin_lib
+    PRIVATE -Werror
+            -Wall
+            -Wextra
+            -Wpedantic
 )
+
+target_link_libraries(fooyin_exe PRIVATE fooyin_version fooyin_lib)
 
 # ---- Fooyin data ----
 
 set(SHARE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/share)
-install(FILES ${CMAKE_SOURCE_DIR}/dist/fooyin.desktop DESTINATION ${SHARE_INSTALL_PREFIX}/applications)
+install(FILES ${CMAKE_SOURCE_DIR}/dist/fooyin.desktop
+        DESTINATION ${SHARE_INSTALL_PREFIX}/applications
+)
 set(ICON_SRC_PATH ${CMAKE_SOURCE_DIR}/data/icons)
 set(ICON_SIZE
     16
@@ -132,6 +164,7 @@ foreach(SIZE ${ICON_SIZE})
         RENAME fooyin.png
     )
 endforeach(SIZE)
+
 install(
     FILES ${ICON_SRC_PATH}/sc-fooyin.svg
     DESTINATION ${SHARE_INSTALL_PREFIX}/icons/hicolor/scalable/apps
@@ -140,6 +173,8 @@ install(
 
 # ---- Fooyin install ----
 
-install(TARGETS fooyin_exe RUNTIME COMPONENT fooyin_runtime)
+if(NOT CMAKE_SKIP_INSTALL_RULES)
+    include(FooyinInstall)
+endif()
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

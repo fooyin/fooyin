@@ -19,7 +19,7 @@
 
 #include "widgetprovider.h"
 
-#include "widgetfactory.h"
+#include <gui/widgetfactory.h>
 
 namespace Fy::Gui::Widgets {
 WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent)

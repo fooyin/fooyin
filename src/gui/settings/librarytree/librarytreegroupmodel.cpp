@@ -19,7 +19,7 @@
 
 #include "librarytreegroupmodel.h"
 
-#include "gui/librarytree/librarytreegroupregistry.h"
+#include "librarytree/librarytreegroupregistry.h"
 
 namespace Fy::Gui::Settings {
 LibraryTreeGroupItem::LibraryTreeGroupItem()

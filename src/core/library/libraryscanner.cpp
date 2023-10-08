@@ -19,9 +19,9 @@
 
 #include "libraryscanner.h"
 
-#include "core/database/database.h"
-#include "core/database/librarydatabase.h"
-#include "core/tagging/tagreader.h"
+#include "database/database.h"
+#include "database/librarydatabase.h"
+#include "tagging/tagreader.h"
 
 #include <utils/utils.h>
 
@@ -60,7 +60,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
     m_mayRun  = true;
     m_library = library;
 
-    changeLibraryStatus(Status::Scanning);
+    changeLibraryStatus(LibraryInfo::Status::Scanning);
 
     TrackPathMap trackMap{};
     TrackList tracksToDelete{};
@@ -90,7 +90,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
     getAndSaveAllFiles(trackMap);
 
     setState(Idle);
-    changeLibraryStatus(Status::Idle);
+    changeLibraryStatus(LibraryInfo::Status::Idle);
 
     emit finished();
 }
@@ -110,7 +110,7 @@ LibraryInfo LibraryScanner::currentLibrary() const
     return m_library;
 }
 
-void LibraryScanner::changeLibraryStatus(Status status)
+void LibraryScanner::changeLibraryStatus(LibraryInfo::Status status)
 {
     m_library.status = status;
     emit statusChanged(m_library);

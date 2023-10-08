@@ -17,7 +17,7 @@
  *
  */
 
-#include "searchcontroller.h"
+#include <gui/searchcontroller.h>
 
 namespace Fy::Gui::Widgets {
 QString SearchController::searchText() const

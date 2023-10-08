@@ -17,7 +17,7 @@
  *
  */
 
-#include "clickablelabel.h"
+#include <utils/clickablelabel.h>
 
 #include <QHBoxLayout>
 

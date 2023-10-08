@@ -19,8 +19,10 @@
 
 #pragma once
 
-#include "core/models/track.h"
-#include "playermanager.h"
+#include "fycore_export.h"
+
+#include <core/player/playermanager.h>
+#include <core/track.h>
 
 #include <QObject>
 
@@ -30,7 +32,7 @@ class SettingsManager;
 }
 
 namespace Core::Player {
-class PlayerController : public PlayerManager
+class FYCORE_EXPORT PlayerController : public PlayerManager
 {
     Q_OBJECT
 

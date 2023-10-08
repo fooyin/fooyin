@@ -17,16 +17,12 @@
  *
  */
 
-#include "pluginmanager.h"
+#include <core/plugins/pluginmanager.h>
 
 #include <QDir>
 #include <QLibrary>
 
 namespace Fy::Plugins {
-PluginManager::PluginManager(QObject* parent)
-    : QObject{parent}
-{ }
-
 const PluginInfoMap& PluginManager::allPluginInfo() const
 {
     return m_plugins;

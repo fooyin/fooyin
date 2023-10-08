@@ -19,16 +19,16 @@
 
 #include "playlistmodel.h"
 
-#include "gui/guiconstants.h"
-#include "gui/guisettings.h"
 #include "playlistitem.h"
 #include "playlistpopulator.h"
 #include "playlistpreset.h"
 
 #include <core/library/coverprovider.h>
 #include <core/player/playermanager.h>
-#include <core/playlist/playlisthandler.h>
-
+#include <core/playlist/playlist.h>
+#include <core/playlist/playlistmanager.h>
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -41,6 +41,7 @@
 #include <QThread>
 
 #include <queue>
+#include <set>
 
 namespace {
 bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)

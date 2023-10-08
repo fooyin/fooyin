@@ -17,7 +17,7 @@
  *
  */
 
-#include "utils.h"
+#include <utils/utils.h>
 
 #include <QDesktopServices>
 #include <QDir>

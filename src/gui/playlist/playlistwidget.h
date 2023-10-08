@@ -21,7 +21,7 @@
 
 #include "gui/fywidget.h"
 
-#include <core/models/trackfwd.h>
+#include <core/track.h>
 
 namespace Fy {
 

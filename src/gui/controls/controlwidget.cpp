@@ -24,8 +24,8 @@
 #include "progresswidget.h"
 #include "volumecontrol.h"
 
-#include <core/models/track.h>
 #include <core/player/playermanager.h>
+#include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>

@@ -19,10 +19,8 @@
 
 #include "librarymenu.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/library/musiclibrary.h>
-
+#include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsdialogcontroller.h>
