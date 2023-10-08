@@ -44,7 +44,7 @@ struct Token
 {
     TokenType type;
     QStringView value;
-    int position;
+    int position{0};
 };
 
 class Scanner
