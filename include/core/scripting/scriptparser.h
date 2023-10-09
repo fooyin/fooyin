@@ -55,6 +55,7 @@ public:
     ParsedScript parse(const QString& input);
 
     QString evaluate();
+    QString evaluate(const Expression& input, const Core::Track& track);
     QString evaluate(const ParsedScript& input, const Core::Track& track);
     QString evaluate(const ParsedScript& input);
 

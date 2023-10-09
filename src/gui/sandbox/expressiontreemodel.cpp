@@ -19,29 +19,127 @@
 
 #include "expressiontreemodel.h"
 
-namespace Fy::Sandbox {
+#include <gui/guiconstants.h>
+#include <utils/crypto.h>
+
+#include <QIcon>
+
+namespace Fy::Gui::Sandbox {
+constexpr auto FullName        = " ... ";
+constexpr auto ConditionalName = "[ ... ]";
+
 ExpressionTreeItem::ExpressionTreeItem()
-    : ExpressionTreeItem{""}
+    : ExpressionTreeItem{"", "", {}}
 { }
 
-ExpressionTreeItem::ExpressionTreeItem(QString expression)
-    : m_expression{std::move(expression)}
+ExpressionTreeItem::ExpressionTreeItem(QString key, QString name, const Core::Scripting::Expression& expression)
+    : m_key{std::move(key)}
+    , m_name{name}
+    , m_expression{expression}
 { }
 
-QString ExpressionTreeItem::expression() const
+QString ExpressionTreeItem::key() const
+{
+    return m_key;
+}
+
+Core::Scripting::ExprType ExpressionTreeItem::type() const
+{
+    return m_expression.type;
+}
+
+QString ExpressionTreeItem::name() const
+{
+    return m_name;
+}
+
+Core::Scripting::Expression ExpressionTreeItem::expression() const
 {
     return m_expression;
 }
 
+struct ExpressionTreeModel::Private
+{
+    std::unordered_map<QString, ExpressionTreeItem> nodes;
+
+    QIcon iconExpression{QIcon::fromTheme(Gui::Constants::Icons::ScriptExpression)};
+    QIcon iconLiteral{QIcon::fromTheme(Gui::Constants::Icons::ScriptLiteral)};
+    QIcon iconVariable{QIcon::fromTheme(Gui::Constants::Icons::ScriptVariable)};
+    QIcon iconFunction{QIcon::fromTheme(Gui::Constants::Icons::ScriptFunction)};
+
+    ExpressionTreeItem* insertNode(const QString& key, const QString& name,
+                                   const Core::Scripting::Expression& expression, ExpressionTreeItem* parent)
+    {
+        if(!nodes.contains(key)) {
+            auto* item = nodes.contains(key)
+                           ? &nodes.at(key)
+                           : &nodes.emplace(key, ExpressionTreeItem{key, name, expression}).first->second;
+            parent->appendChild(item);
+        }
+        return &nodes.at(key);
+    }
+
+    QString generateKey(const QString& parentKey, const QString& name)
+    {
+        return Utils::generateHash(parentKey, name, QString::number(nodes.size()));
+    }
+
+    void iterateExpression(const Core::Scripting::Expression& expression, ExpressionTreeItem* parent)
+    {
+        QString name;
+
+        if(auto* value = std::get_if<QString>(&expression.value)) {
+            name = *value;
+            insertNode(generateKey(parent->key(), name), name, expression, parent);
+        }
+
+        else if(auto* value = std::get_if<Core::Scripting::FuncValue>(&expression.value)) {
+            name       = value->name;
+            auto* node = insertNode(generateKey(parent->key(), name), name, expression, parent);
+
+            for(const auto& expression : value->args) {
+                iterateExpression(expression, node);
+            }
+        }
+
+        else if(auto* value = std::get_if<Core::Scripting::ExpressionList>(&expression.value)) {
+            if(expression.type == Core::Scripting::ExprType::Conditional) {
+                name   = ConditionalName;
+                parent = insertNode(generateKey(parent->key(), name), name, expression, parent);
+            }
+
+            for(const auto& expression : *value) {
+                iterateExpression(expression, parent);
+            }
+        }
+    }
+};
+
 ExpressionTreeModel::ExpressionTreeModel(QObject* parent)
     : TreeModel{parent}
+    , p{std::make_unique<Private>()}
 { }
+
+ExpressionTreeModel::~ExpressionTreeModel() = default;
 
 void ExpressionTreeModel::populate(const Core::Scripting::ExpressionList& expressions)
 {
-    for(const auto& expression : expressions) {
-        Q_UNUSED(expression)
+    beginResetModel();
+
+    resetRoot();
+    p->nodes.clear();
+
+    ExpressionTreeItem* parent = rootItem();
+
+    if(expressions.size() > 1) {
+        Core::Scripting::Expression fullExpression{Core::Scripting::ExprType::FunctionArg, expressions};
+        parent = p->insertNode(p->generateKey(parent->key(), FullName), FullName, fullExpression, parent);
     }
+
+    for(const auto& expression : expressions) {
+        p->iterateExpression(expression, parent);
+    }
+    endResetModel();
 }
 
 QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
@@ -50,16 +148,33 @@ QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    if(checkIndex(index, CheckIndexOption::IndexIsValid)) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
 
     auto* item = static_cast<ExpressionTreeItem*>(index.internalPointer());
 
     if(role == Qt::DisplayRole) {
-        return item->expression();
+        return item->name();
+    }
+
+    if(role == Qt::DecorationRole) {
+        switch(item->type()) {
+            case(Core::Scripting::Literal):
+                return p->iconLiteral;
+            case(Core::Scripting::Variable):
+                return p->iconVariable;
+            case(Core::Scripting::Function):
+                return p->iconFunction;
+            case(Core::Scripting::FunctionArg):
+                return p->iconExpression;
+            case(Core::Scripting::Null):
+            case(Core::Scripting::Conditional):
+            case(Core::Scripting::VariableList):
+                break;
+        }
     }
 
     return {};
 }
-} // namespace Fy::Sandbox
+} // namespace Fy::Gui::Sandbox

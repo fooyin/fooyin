@@ -23,29 +23,36 @@
 #include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
-namespace Fy::Sandbox {
+namespace Fy::Gui::Sandbox {
 class ExpressionTreeItem : public Utils::TreeItem<ExpressionTreeItem>
 {
 public:
     ExpressionTreeItem();
-    explicit ExpressionTreeItem(QString expression);
+    explicit ExpressionTreeItem(QString key, QString name, const Core::Scripting::Expression& expression);
 
-    QString expression() const;
+    QString key() const;
+    Core::Scripting::ExprType type() const;
+    QString name() const;
+    Core::Scripting::Expression expression() const;
 
 private:
-    QString m_expression;
+    QString m_key;
+    QString m_name;
+    Core::Scripting::Expression m_expression;
 };
 
 class ExpressionTreeModel : public Utils::TreeModel<ExpressionTreeItem>
 {
 public:
     ExpressionTreeModel(QObject* parent = nullptr);
+    ~ExpressionTreeModel();
 
     void populate(const Core::Scripting::ExpressionList& expressions);
 
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
 private:
-    std::unordered_map<QString, ExpressionTreeItem> m_nodes;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Fy::Sandbox
+} // namespace Fy::Gui::Sandbox

@@ -161,6 +161,16 @@ QString Parser::evaluate()
     return evaluate(p->parsedScript);
 }
 
+QString Parser::evaluate(const Expression& input, const Track& track)
+{
+    ParsedScript script;
+    script.expressions = {input};
+
+    setMetadata(track);
+
+    return evaluate(script);
+}
+
 QString Parser::evaluate(const ParsedScript& input)
 {
     if(!input.isValid() || !p->registry) {

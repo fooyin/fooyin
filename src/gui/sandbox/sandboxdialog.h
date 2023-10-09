@@ -19,39 +19,30 @@
 
 #pragma once
 
-#include "scripthighlighter.h"
-
 #include <QDialog>
 
-class QTreeView;
-class QGridLayout;
-class QSplitter;
-class QTextEdit;
-class QTimer;
+namespace Fy {
+namespace Utils {
+class SettingsManager;
+}
 
-namespace Fy::Sandbox {
+namespace Gui {
+class TrackSelectionController;
 
+namespace Sandbox {
 class SandboxDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SandboxDialog(QWidget* parent = nullptr);
+    explicit SandboxDialog(TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
+                           QWidget* parent = nullptr);
+    ~SandboxDialog();
 
 private:
-    void resetTimer();
-    void textChanged();
-
-    QGridLayout* m_mainLayout;
-    QSplitter* m_mainSplitter;
-    QSplitter* m_documentSplitter;
-
-    QTextEdit* m_editor;
-    QTextEdit* m_results;
-    QTreeView* m_expressiontree;
-    ScriptHighlighter m_highlighter;
-    QTimer* m_errorTimer;
-    Core::Scripting::Registry m_registry;
-    Core::Scripting::Parser m_parser;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Fy::Sandbox
+} // namespace Sandbox
+} // namespace Gui
+} // namespace Fy

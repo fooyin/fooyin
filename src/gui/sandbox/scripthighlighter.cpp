@@ -19,12 +19,12 @@
 
 #include "scripthighlighter.h"
 
-namespace Fy::Sandbox {
+namespace Fy::Gui::Sandbox {
 ScriptHighlighter::ScriptHighlighter(QTextDocument* parent)
     : QSyntaxHighlighter{parent}
 {
     m_varFormat.setForeground(Qt::cyan);
-    m_keywordFormat.setForeground(Qt::red);
+    m_keywordFormat.setForeground(Qt::blue);
     m_errorFormat.setBackground(Qt::red);
 }
 
@@ -147,4 +147,4 @@ bool ScriptHighlighter::match(Core::Scripting::TokenType type)
     advance();
     return true;
 }
-} // namespace Fy::Sandbox
+} // namespace Fy::Gui::Sandbox

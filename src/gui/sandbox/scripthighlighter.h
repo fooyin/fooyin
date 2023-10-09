@@ -25,8 +25,7 @@
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>
 
-namespace Fy::Sandbox {
-
+namespace Fy::Gui::Sandbox {
 class ScriptHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
@@ -59,4 +58,4 @@ private:
     Core::Scripting::Token m_current;
     Core::Scripting::Token m_previous;
 };
-} // namespace Fy::Sandbox
+} // namespace Fy::Gui::Sandbox

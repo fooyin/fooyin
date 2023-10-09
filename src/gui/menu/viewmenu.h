@@ -31,16 +31,14 @@ class SettingsManager;
 } // namespace Utils
 
 namespace Gui {
-namespace Widgets {
-class EditableLayout;
-}
+class TrackSelectionController;
 
 class ViewMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ViewMenu(Utils::ActionManager* actionManager, Widgets::EditableLayout* editableLayout,
+    explicit ViewMenu(Utils::ActionManager* actionManager, TrackSelectionController* trackSelection,
                       Utils::SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
@@ -48,11 +46,12 @@ signals:
 
 private:
     Utils::ActionManager* m_actionManager;
-    Widgets::EditableLayout* m_editableLayout;
+    TrackSelectionController* m_trackSelection;
     Utils::SettingsManager* m_settings;
 
     QAction* m_layoutEditing;
     QAction* m_openQuickSetup;
+    QAction* m_showSandbox;
 };
 } // namespace Gui
 } // namespace Fy

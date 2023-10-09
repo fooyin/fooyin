@@ -19,9 +19,6 @@
 
 #include "editmenu.h"
 
-#include "sandbox/sandboxdialog.h"
-
-#include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 
@@ -31,16 +28,5 @@ namespace Fy::Gui {
 EditMenu::EditMenu(Utils::ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
-{
-    auto* editMenu = m_actionManager->actionContainer(Gui::Constants::Menus::Edit);
-
-    m_showSandbox = new QAction(tr("Open &Script Sandbox"), this);
-    m_actionManager->registerAction(m_showSandbox, Gui::Constants::Actions::Rescan);
-    editMenu->addAction(m_showSandbox, Gui::Constants::Groups::Two);
-    connect(m_showSandbox, &QAction::triggered, this, []() {
-        auto* sandboxDialog = new Sandbox::SandboxDialog();
-        sandboxDialog->setAttribute(Qt::WA_DeleteOnClose);
-        sandboxDialog->show();
-    });
-}
+{ }
 } // namespace Fy::Gui
