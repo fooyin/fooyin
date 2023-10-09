@@ -51,27 +51,27 @@ class SortingRegistry;
 
 struct FYCORE_EXPORT CorePluginContext
 {
-    CorePluginContext(Plugins::PluginManager* pluginManager, /*Core::Engine::EngineHandler* engineHandler,*/
+    CorePluginContext(Plugins::PluginManager* pluginManager, Core::Engine::EngineHandler* engineHandler,
                       Core::Player::PlayerManager* playerManager, Core::Library::LibraryManager* libraryManager,
                       Core::Library::MusicLibrary* library, Core::Playlist::PlaylistManager* playlistHandler,
                       Utils::SettingsManager* settingsManager, Core::Library::SortingRegistry* sortingRegistry)
         : pluginManager{pluginManager}
-//        , engineHandler{engineHandler}
         , playerManager{playerManager}
         , libraryManager{libraryManager}
         , library{library}
         , playlistHandler{playlistHandler}
         , settingsManager{settingsManager}
+        , engineHandler{engineHandler}
         , sortingRegistry{sortingRegistry}
     { }
 
     Plugins::PluginManager* pluginManager;
-//    Core::Engine::EngineHandler* engineHandler;
     Core::Player::PlayerManager* playerManager;
     Core::Library::LibraryManager* libraryManager;
     Core::Library::MusicLibrary* library;
     Core::Playlist::PlaylistManager* playlistHandler;
     Utils::SettingsManager* settingsManager;
+    Core::Engine::EngineHandler* engineHandler;
     Core::Library::SortingRegistry* sortingRegistry;
 };
 } // namespace Core

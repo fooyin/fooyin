@@ -66,9 +66,8 @@ struct Application::Private
         , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
         , sortingRegistry{settingsManager}
         , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, settingsManager, parent)}
-        , corePluginContext{
-              &pluginManager,  /*&engine,*/ playerManager, libraryManager, library, playlistHandler, settingsManager,
-              &sortingRegistry}
+        , corePluginContext{&pluginManager, &engine,         playerManager,   libraryManager,
+                            library,        playlistHandler, settingsManager, &sortingRegistry}
     {
         registerOutputs();
         loadPlugins();
@@ -96,14 +95,14 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
-    connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, p->playlistHandler,
-            &Core::Playlist::PlaylistHandler::populatePlaylists);
-    connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, p->playlistHandler,
-            &Core::Playlist::PlaylistHandler::libraryRemoved);
-    connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, p->playlistHandler,
-            &Core::Playlist::PlaylistHandler::tracksUpdated);
-    connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, p->playlistHandler,
-            &Core::Playlist::PlaylistHandler::tracksRemoved);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, p->playlistHandler,
+                     &Core::Playlist::PlaylistHandler::populatePlaylists);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, p->playlistHandler,
+                     &Core::Playlist::PlaylistHandler::libraryRemoved);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, p->playlistHandler,
+                     &Core::Playlist::PlaylistHandler::tracksUpdated);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, p->playlistHandler,
+                     &Core::Playlist::PlaylistHandler::tracksRemoved);
 
     p->settingsManager->loadSettings();
     p->library->loadLibrary();
