@@ -17,16 +17,21 @@
  *
  */
 
-#include "utils.h"
+#include <utils/utils.h>
 
+#include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPixmap>
 #include <QRandomGenerator>
+#include <QStringBuilder>
 #include <QVBoxLayout>
 #include <QWidget>
+
+#include <ranges>
 
 namespace Fy::Utils {
 namespace File {
@@ -97,18 +102,13 @@ bool createDirectories(const QString& path)
 {
     return QDir().mkpath(path);
 }
-} // namespace File
 
-namespace Widgets {
-QWidget* indentWidget(QWidget* widget, QWidget* parent)
+void openDirectory(const QString& dir)
 {
-    auto* indentWidget = new QWidget(parent);
-    indentWidget->setLayout(new QVBoxLayout());
-    indentWidget->layout()->addWidget(widget);
-    indentWidget->layout()->setContentsMargins(25, 0, 0, 0);
-    return indentWidget;
+    const QUrl url = QUrl::fromLocalFile(QDir::toNativeSeparators(dir));
+    QDesktopServices::openUrl(url);
 }
-} // namespace Widgets
+} // namespace File
 
 int randomNumber(int min, int max)
 {
@@ -120,10 +120,32 @@ int randomNumber(int min, int max)
 
 QString msToString(uint64_t ms)
 {
-    const int milliseconds = static_cast<int>(ms);
-    const QTime t(0, 0, 0);
-    auto time = t.addMSecs(milliseconds);
-    return time.toString(time.hour() == 0 ? "mm:ss" : "hh:mm:ss");
+    constexpr auto msPerSecond = 1000;
+    constexpr auto msPerMinute = msPerSecond * 60;
+    constexpr auto msPerHour   = msPerMinute * 60;
+    constexpr auto msPerDay    = msPerHour * 24;
+    constexpr auto msPerWeek   = msPerDay * 7;
+
+    const uint64_t weeks   = ms / msPerWeek;
+    const uint64_t days    = (ms % msPerWeek) / msPerDay;
+    const uint64_t hours   = (ms % msPerDay) / msPerHour;
+    const uint64_t minutes = (ms % msPerHour) / msPerMinute;
+    const uint64_t seconds = (ms % msPerMinute) / msPerSecond;
+
+    QString formattedTime;
+
+    if(weeks > 0) {
+        formattedTime = formattedTime % QString::number(weeks) % "wk ";
+    }
+    if(days > 0) {
+        formattedTime = formattedTime % QString::number(days) % "d ";
+    }
+    if(hours > 0) {
+        formattedTime = formattedTime % QString{"%1:"}.arg(hours, 2, 10, QChar('0'));
+    }
+
+    formattedTime = formattedTime % QString{"%1:%2"}.arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0'));
+    return formattedTime;
 }
 
 QString secsToString(uint64_t secs)
@@ -138,6 +160,38 @@ uint64_t currentDateToInt()
 {
     const auto str = QDateTime::currentDateTimeUtc().toString("yyyyMMddHHmmss");
     return static_cast<uint64_t>(str.toULongLong());
+}
+
+QString formatTimeMs(uint64_t time)
+{
+    const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(time));
+    QString formattedDateTime = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+    return formattedDateTime;
+}
+
+QString formatFileSize(uint64_t bytes)
+{
+    const QStringList units = {"bytes", "KB", "MB", "GB", "TB"};
+    auto size               = static_cast<double>(bytes);
+    int unitIndex{0};
+
+    while(size >= 1024 && unitIndex < units.size() - 1) {
+        size /= 1024;
+        ++unitIndex;
+    }
+
+    const QString sizeString  = QString::number(size, 'f', 1);
+    const QString& unitString = units[unitIndex];
+    QString formattedSize     = sizeString % " " % unitString;
+
+    if(unitIndex == 0) {
+        return formattedSize;
+    }
+
+    const QString bytesString = QString::number(bytes);
+    formattedSize             = formattedSize % " (" % bytesString % " bytes)";
+
+    return formattedSize;
 }
 
 void setMinimumWidth(QLabel* label, const QString& text)
@@ -191,4 +245,35 @@ void showMessageBox(const QString& text, const QString& infoText)
     message.exec();
 }
 
+void cloneMenu(QMenu* originalMenu, QMenu* clonedMenu)
+{
+    auto originalActions = originalMenu->actions();
+    auto filteredActions = originalActions | std::views::filter([](QAction* action) {
+                               return action->isVisible();
+                           });
+
+    auto cloneAction = [](QAction* originalAction, QMenu* menu) -> QAction* {
+        if(QMenu* originalSubMenu = originalAction->menu()) {
+            QMenu* clonedSubMenu = menu->addMenu(originalSubMenu->title());
+            cloneMenu(originalSubMenu, clonedSubMenu);
+            return clonedSubMenu->menuAction();
+        }
+        else if(originalAction->isSeparator()) {
+            return menu->addSeparator();
+        }
+        else {
+            QAction* clonedAction = new QAction(originalAction->icon(), originalAction->text(), menu);
+            clonedAction->setShortcut(originalAction->shortcut());
+            clonedAction->setToolTip(originalAction->toolTip());
+            clonedAction->setEnabled(originalAction->isEnabled());
+            QObject::connect(clonedAction, &QAction::triggered, originalAction, &QAction::trigger);
+            return clonedAction;
+        }
+    };
+
+    for(QAction* originalAction : filteredActions) {
+        QAction* clonedAction = cloneAction(originalAction, clonedMenu);
+        clonedMenu->addAction(clonedAction);
+    }
+}
 } // namespace Fy::Utils

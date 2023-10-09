@@ -22,13 +22,9 @@
 #include <Qt>
 
 namespace Fy::Filters::Constants {
-namespace Icons::Category {
-constexpr auto Filters = "://icons/category-filters.svg";
-} // namespace Icons::Category
-
 namespace Page {
-constexpr auto FiltersAppearance = "Fooyin.Page.Filters.Appearance";
 constexpr auto FiltersGeneral    = "Fooyin.Page.Filters.General";
+constexpr auto FiltersAppearance = "Fooyin.Page.Filters.Appearance";
 constexpr auto FiltersFields     = "Fooyin.Page.Filters.Fields";
 } // namespace Page
 } // namespace Fy::Filters::Constants

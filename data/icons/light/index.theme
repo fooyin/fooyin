@@ -1,0 +1,12 @@
+[Icon Theme]
+Name=fylight
+Comment=Fooyin light theme
+
+Directories=scalable/actions
+
+[scalable/actions]
+Size=24
+Type=Scalable
+MinSize=1
+MaxSize=256
+Context=Actions

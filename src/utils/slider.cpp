@@ -17,7 +17,7 @@
  *
  */
 
-#include "slider.h"
+#include <utils/slider.h>
 
 #include <QMouseEvent>
 #include <QProxyStyle>
@@ -25,7 +25,7 @@
 
 namespace Fy::Utils {
 Slider::Slider(Qt::Orientation type, QWidget* parent)
-    : QSlider(type, parent)
+    : QSlider{type, parent}
 {
     setMouseTracking(true);
 }

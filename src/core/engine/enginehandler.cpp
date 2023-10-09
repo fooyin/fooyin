@@ -17,13 +17,14 @@
  *
  */
 
-#include "enginehandler.h"
+#include <core/engine/enginehandler.h>
 
-#include "audioengine.h"
-#include "audiooutput.h"
-#include "core/coresettings.h"
-#include "core/engine/ffmpeg/ffmpegengine.h"
-#include "core/models/track.h"
+#include "engine/ffmpeg/ffmpegengine.h"
+
+#include <core/coresettings.h>
+#include <core/engine/audioengine.h>
+#include <core/engine/audiooutput.h>
+#include <core/track.h>
 
 #include <utils/settings/settingsmanager.h>
 
@@ -100,11 +101,11 @@ void EngineHandler::addOutput(std::unique_ptr<AudioOutput> output)
 void EngineHandler::playStateChanged(Player::PlayState state)
 {
     switch(state) {
-        case(Player::Playing):
+        case(Player::PlayState::Playing):
             return emit play();
-        case(Player::Paused):
+        case(Player::PlayState::Paused):
             return emit pause();
-        case(Player::Stopped):
+        case(Player::PlayState::Stopped):
             return emit stop();
         default:
             return;

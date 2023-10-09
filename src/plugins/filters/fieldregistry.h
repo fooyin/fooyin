@@ -20,6 +20,9 @@
 #pragma once
 
 #include "filterfwd.h"
+#include "settings/filtersettings.h"
+
+#include <utils/itemregistry.h>
 
 namespace Fy {
 namespace Utils {
@@ -27,42 +30,17 @@ class SettingsManager;
 }
 
 namespace Filters {
-class FieldRegistry : public QObject
+class FieldRegistry : public Utils::ItemRegistry<FilterField, Settings::FilterFields>
 {
     Q_OBJECT
 
 public:
     explicit FieldRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
 
-    [[nodiscard]] const IndexFieldMap& fields() const;
-
-    FilterField addField(const FilterField& field);
-    bool changeField(const FilterField& field);
-
-    [[nodiscard]] FilterField fieldByIndex(int index) const;
-    [[nodiscard]] FilterField fieldByName(const QString& name) const;
-
-    bool removeByIndex(int index);
-
-    void saveFields();
-    void loadFields();
+    void loadItems() override;
 
 signals:
     void fieldChanged(const FilterField& field);
-
-private:
-    [[nodiscard]] int find(const QString& name) const;
-    [[nodiscard]] int findAll(const QString& name) const;
-
-    Utils::SettingsManager* m_settings;
-
-    IndexFieldMap m_fields;
 };
-
-QDataStream& operator<<(QDataStream& stream, const FilterField& field);
-QDataStream& operator>>(QDataStream& stream, FilterField& field);
-
-QDataStream& operator<<(QDataStream& stream, const IndexFieldMap& fieldMap);
-QDataStream& operator>>(QDataStream& stream, IndexFieldMap& fieldMap);
 } // namespace Filters
 } // namespace Fy

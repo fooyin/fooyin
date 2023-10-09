@@ -17,17 +17,17 @@
  *
  */
 
-#include "menuheader.h"
+#include <utils/menuheader.h>
 
 #include <QPainter>
 
 namespace Fy::Utils {
 MenuHeader::MenuHeader(QString text, QWidget* parent)
-    : QWidget(parent)
-    , m_minWidth(0)
-    , m_text(std::move(text))
-    , m_textHeight(0)
-    , m_margin(0)
+    : QWidget{parent}
+    , m_minWidth{0}
+    , m_text{std::move(text)}
+    , m_textHeight{0}
+    , m_margin{0}
 {
     const int textMinWidth = fontMetrics().boundingRect(m_text).width();
     m_textHeight           = fontMetrics().height();
@@ -47,9 +47,8 @@ QSize MenuHeader::sizeHint() const
     return {m_minWidth, m_textHeight + m_margin};
 }
 
-void MenuHeader::paintEvent(QPaintEvent* e)
+void MenuHeader::paintEvent(QPaintEvent* /*event*/)
 {
-    Q_UNUSED(e)
     QPainter painter(this);
     const QPalette palette        = this->palette();
     const QColor headerBackground = palette.color(QPalette::AlternateBase);

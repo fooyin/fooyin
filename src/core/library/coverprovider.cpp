@@ -17,13 +17,12 @@
  *
  */
 
-#include "coverprovider.h"
+#include <core/library/coverprovider.h>
 
-#include "core/constants.h"
-#include "core/corepaths.h"
-#include "core/models/album.h"
-#include "core/models/track.h"
+#include "tagging/tagreader.h"
 
+#include <core/constants.h>
+#include <core/track.h>
 #include <utils/utils.h>
 
 #include <QPixmapCache>
@@ -47,6 +46,17 @@ QPixmap getCover(const QString& path, int size)
     return {};
 }
 
+struct CoverProvider::Private
+{
+    Tagging::TagReader tagReader;
+};
+
+CoverProvider::CoverProvider()
+    : p{std::make_unique<Private>()}
+{ }
+
+CoverProvider::~CoverProvider() = default;
+
 QPixmap CoverProvider::trackCover(const Track& track)
 {
     QPixmap cover;
@@ -55,7 +65,7 @@ QPixmap CoverProvider::trackCover(const Track& track)
     if(!QPixmapCache::find(coverKey, &cover)) {
         if(track.hasCover()) {
             if(track.hasEmbeddedCover()) {
-                const QPixmap embeddedCover = m_tagReader.readCover(track.filepath());
+                const QPixmap embeddedCover = p->tagReader.readCover(track.filepath());
                 if(!embeddedCover.isNull()) {
                     cover = embeddedCover;
                 }
@@ -75,13 +85,13 @@ QPixmap CoverProvider::trackCover(const Track& track)
     return cover;
 }
 
-QPixmap CoverProvider::albumThumbnail(const Album& album) const
+QPixmap CoverProvider::albumThumbnail(const QString& path) const
 {
     QString coverKey  = "|NoCoverThumb|";
     QString coverPath = Constants::NoCover;
-    if(album.hasCover()) {
-        coverKey  = QString{"%1 - %2"}.arg(album.artist(), album.title());
-        coverPath = QString{"%1%2.jpg"}.arg(Core::coverPath(), coverKey);
+    if(!path.isEmpty()) {
+        coverKey  = path;
+        coverPath = path;
     }
     QPixmap cover;
     if(!QPixmapCache::find(coverKey, &cover)) {

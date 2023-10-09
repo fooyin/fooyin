@@ -85,7 +85,7 @@ bool SplitterWidget::restoreState(const QByteArray& state)
     return m_splitter->restoreState(state);
 }
 
-QWidget* SplitterWidget::widget(int index) const
+QWidget* SplitterWidget::widgetAtIndex(int index) const
 {
     return m_splitter->widget(index);
 }
@@ -130,12 +130,15 @@ void SplitterWidget::setupAddWidgetMenu(Utils::ActionContainer* menu)
     if(!menu->isEmpty()) {
         return;
     }
-    auto widgets = m_widgetFactory->registeredWidgets();
+
+    const auto widgets = m_widgetFactory->registeredWidgets();
     for(const auto& widget : widgets) {
         auto* parentMenu = menu;
+
         for(const auto& subMenu : widget.second.subMenus) {
             const Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
             auto* childMenu    = m_actionManager->actionContainer(id);
+
             if(!childMenu) {
                 childMenu = m_actionManager->createMenu(id);
                 childMenu->menu()->setTitle(subMenu);
@@ -144,7 +147,7 @@ void SplitterWidget::setupAddWidgetMenu(Utils::ActionContainer* menu)
             parentMenu = childMenu;
         }
         auto* addWidgetAction = new QAction(widget.second.name, parentMenu);
-        QAction::connect(addWidgetAction, &QAction::triggered, this, [this, widget] {
+        QObject::connect(addWidgetAction, &QAction::triggered, this, [this, widget] {
             FyWidget* newWidget = m_widgetFactory->make(widget.first);
             addWidget(newWidget);
         });
@@ -240,18 +243,18 @@ void SplitterWidget::saveLayout(QJsonArray& array)
     array.append(splitter);
 }
 
-void SplitterWidget::loadLayout(QJsonObject& object)
+void SplitterWidget::loadLayout(const QJsonObject& object)
 {
     const auto state    = QByteArray::fromBase64(object["State"].toString().toUtf8());
     const auto children = object["Children"].toArray();
 
     for(const auto& widget : children) {
-        const QJsonObject object = widget.toObject();
-        if(!object.isEmpty()) {
-            const auto name = object.constBegin().key();
-            if(auto* childWidget = m_widgetFactory->make(name)) {
+        const QJsonObject jsonObject = widget.toObject();
+        if(!jsonObject.isEmpty()) {
+            const auto widgetName = jsonObject.constBegin().key();
+            if(auto* childWidget = m_widgetFactory->make(widgetName)) {
                 addWidget(childWidget);
-                auto widgetObject = object.value(name).toObject();
+                const QJsonObject widgetObject = jsonObject.value(widgetName).toObject();
                 childWidget->loadLayout(widgetObject);
             }
         }

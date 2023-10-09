@@ -21,15 +21,8 @@
 
 #include "playlistitem.h"
 
-#include <core/library/coverprovider.h>
-#include <core/models/album.h>
-#include <core/models/container.h>
-#include <core/models/trackfwd.h>
-
+#include <core/track.h>
 #include <utils/treemodel.h>
-
-#include <QAbstractItemModel>
-#include <QPixmap>
 
 namespace Fy {
 namespace Utils {
@@ -42,74 +35,51 @@ class PlayerManager;
 }
 
 namespace Playlist {
-class PlaylistHandler;
-}
+class Playlist;
+} // namespace Playlist
 } // namespace Core
 
-namespace Gui::Widgets {
-namespace Playlist {
-enum Role
-{
-    Type = Qt::UserRole + 20,
-    Mode = Qt::UserRole + 21,
-};
-}
+namespace Gui::Widgets::Playlist {
+struct PlaylistPreset;
 
 class PlaylistModel : public Utils::TreeModel<PlaylistItem>
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistModel(Core::Player::PlayerManager* playerManager, Core::Playlist::PlaylistHandler* playlistHandler,
-                           Utils::SettingsManager* settings, QObject* parent = nullptr);
+    PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
+                  QObject* parent = nullptr);
+    ~PlaylistModel() override;
 
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+    [[nodiscard]] QStringList mimeTypes() const override;
+    [[nodiscard]] bool canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                                       const QModelIndex& parent) const override;
+    [[nodiscard]] Qt::DropActions supportedDragActions() const override;
+    [[nodiscard]] Qt::DropActions supportedDropActions() const override;
+    [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
+    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                      const QModelIndex& parent) override;
 
-    [[nodiscard]] QModelIndex matchTrack(int id) const;
+    void fetchMore(const QModelIndex& parent) override;
+    bool canFetchMore(const QModelIndex& parent) const override;
 
-    void reset();
-    void setupModelData();
+    bool removePlaylistRows(int row, int count, const QModelIndex& parent);
+
+    void removeTracks(const QModelIndexList& indexes);
+
+    void reset(const Core::Playlist::Playlist& playlist);
+    void updateHeader(const Core::Playlist::Playlist& playlist);
     void changeTrackState();
-
-    [[nodiscard]] QModelIndex indexForTrack(const Core::Track& track) const;
-    [[nodiscard]] QModelIndex indexForItem(PlaylistItem* item) const;
+    void changePreset(const PlaylistPreset& preset);
 
 private:
-    using PlaylistItemHash = std::unordered_map<QString, std::unique_ptr<PlaylistItem>>;
-
-    void createAlbums(const Core::TrackList& tracks);
-    PlaylistItem* iterateTrack(const Core::Track& track, bool discHeaders, bool splitDiscs);
-
-    PlaylistItem* checkInsertKey(const QString& key, PlaylistItem::Type type, const ItemType& item,
-                                 PlaylistItem* parent);
-
-    void insertRow(PlaylistItem* parent, PlaylistItem* child);
-
-    void beginReset();
-
-    [[nodiscard]] QVariant trackData(PlaylistItem* item, int role) const;
-    [[nodiscard]] QVariant albumData(PlaylistItem* item, int role) const;
-    [[nodiscard]] QVariant containerData(PlaylistItem* item, int role) const;
-
-    Core::Player::PlayerManager* m_playerManager;
-    Core::Playlist::PlaylistHandler* m_playlistHandler;
-    Utils::SettingsManager* m_settings;
-    Core::Library::CoverProvider m_coverProvider;
-
-    bool m_discHeaders;
-    bool m_splitDiscs;
-    bool m_altColours;
-    bool m_simplePlaylist;
-
-    bool m_resetting;
-
-    PlaylistItemHash m_nodes;
-    Core::AlbumHash m_albums;
-    Core::ContainerHash m_containers;
-    QPixmap m_playingIcon;
-    QPixmap m_pausedIcon;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
+} // namespace Gui::Widgets::Playlist
 } // namespace Fy

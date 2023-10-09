@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/engine/audiooutput.h"
+#include <core/engine/audiooutput.h>
 
 #include <SDL2/SDL_audio.h>
 

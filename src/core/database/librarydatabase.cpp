@@ -19,41 +19,79 @@
 
 #include "librarydatabase.h"
 
-#include "core/constants.h"
 #include "query.h"
 
+#include <core/constants.h>
 #include <utils/utils.h>
 
 namespace Fy::Core::DB {
-QMap<QString, QVariant> getTrackBindings(const Track& track)
+using namespace Qt::Literals::StringLiterals;
+
+QString fetchQueryTracks(const QString& join, const QString& offsetLimit)
 {
-    return QMap<QString, QVariant>{
-        {QStringLiteral("FilePath"),     Utils::File::cleanPath(track.filepath())  },
-        {QStringLiteral("Title"),        track.title()                             },
-        {QStringLiteral("TrackNumber"),  track.trackNumber()                       },
-        {QStringLiteral("TrackTotal"),   track.trackTotal()                        },
-        {QStringLiteral("Artists"),      track.artists().join(Constants::Separator)},
-        {QStringLiteral("AlbumArtist"),  track.albumArtist()                       },
-        {QStringLiteral("Album"),        track.album()                             },
-        {QStringLiteral("CoverPath"),    track.coverPath()                         },
-        {QStringLiteral("DiscNumber"),   track.discNumber()                        },
-        {QStringLiteral("DiscTotal"),    track.discTotal()                         },
-        {QStringLiteral("Date"),         track.date()                              },
-        {QStringLiteral("Year"),         track.year()                              },
-        {QStringLiteral("Composer"),     track.composer()                          },
-        {QStringLiteral("Performer"),    track.performer()                         },
-        {QStringLiteral("Genres"),       track.genres().join(Constants::Separator) },
-        {QStringLiteral("Lyrics"),       track.lyrics()                            },
-        {QStringLiteral("Comment"),      track.comment()                           },
-        {QStringLiteral("Duration"),     QVariant::fromValue(track.duration())     },
-        {QStringLiteral("FileSize"),     QVariant::fromValue(track.fileSize())     },
-        {QStringLiteral("BitRate"),      track.bitrate()                           },
-        {QStringLiteral("SampleRate"),   track.sampleRate()                        },
-        {QStringLiteral("ExtraTags"),    track.serialiseExtrasTags()               },
-        {QStringLiteral("AddedDate"),    QVariant::fromValue(track.addedTime())    },
-        {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime()) },
-        {QStringLiteral("LibraryID"),    track.libraryId()                         },
+    static const QStringList fields = {
+        u"TrackID"_s,      // 0
+        u"FilePath"_s,     // 1
+        u"Title"_s,        // 2
+        u"TrackNumber"_s,  // 3
+        u"TrackTotal"_s,   // 4
+        u"Artists"_s,      // 5
+        u"AlbumArtist"_s,  // 6
+        u"Album"_s,        // 7
+        u"CoverPath"_s,    // 8
+        u"DiscNumber"_s,   // 9
+        u"DiscTotal"_s,    // 10
+        u"Date"_s,         // 11
+        u"Year"_s,         // 12
+        u"Composer"_s,     // 13
+        u"Performer"_s,    // 14
+        u"Genres"_s,       // 15
+        u"Lyrics"_s,       // 16
+        u"Comment"_s,      // 17
+        u"Duration"_s,     // 18
+        u"PlayCount"_s,    // 19
+        u"Rating"_s,       // 20
+        u"FileSize"_s,     // 21
+        u"BitRate"_s,      // 22
+        u"SampleRate"_s,   // 23
+        u"ExtraTags"_s,    // 24
+        u"AddedDate"_s,    // 25
+        u"ModifiedDate"_s, // 26
+        u"LibraryID"_s     // 27
     };
+
+    const auto joinedFields = fields.join(", ");
+
+    return QString("SELECT %1 FROM Tracks %2 %5;").arg(joinedFields, join.isEmpty() ? "" : join, offsetLimit);
+}
+
+BindingsMap getTrackBindings(const Track& track)
+{
+    return {{u"FilePath"_s, Utils::File::cleanPath(track.filepath())},
+            {u"Title"_s, track.title()},
+            {u"TrackNumber"_s, QString::number(track.trackNumber())},
+            {u"TrackTotal"_s, QString::number(track.trackTotal())},
+            {u"Artists"_s, track.artists().join(Constants::Separator)},
+            {u"AlbumArtist"_s, track.albumArtist()},
+            {u"Album"_s, track.album()},
+            {u"CoverPath"_s, track.coverPath()},
+            {u"DiscNumber"_s, QString::number(track.discNumber())},
+            {u"DiscTotal"_s, QString::number(track.discTotal())},
+            {u"Date"_s, track.date()},
+            {u"Year"_s, QString::number(track.year())},
+            {u"Composer"_s, track.composer()},
+            {u"Performer"_s, track.performer()},
+            {u"Genres"_s, track.genres().join(Constants::Separator)},
+            {u"Lyrics"_s, track.lyrics()},
+            {u"Comment"_s, track.comment()},
+            {u"Duration"_s, QString::number(track.duration())},
+            {u"FileSize"_s, QString::number(track.fileSize())},
+            {u"BitRate"_s, QString::number(track.bitrate())},
+            {u"SampleRate"_s, QString::number(track.sampleRate())},
+            {u"ExtraTags"_s, track.serialiseExtrasTags()},
+            {u"AddedDate"_s, QString::number(track.addedTime())},
+            {u"ModifiedDate"_s, QString::number(track.modifiedTime())},
+            {u"LibraryID"_s, QString::number(track.libraryId())}};
 }
 
 LibraryDatabase::LibraryDatabase(const QString& connectionName)
@@ -67,7 +105,10 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
         return true;
     }
 
-    db().transaction();
+    if(!db().transaction()) {
+        qDebug() << "Transaction could not be started";
+        return false;
+    }
 
     for(auto& track : tracks) {
         if(track.id() >= 0) {
@@ -79,7 +120,12 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
         }
     }
 
-    return db().commit();
+    if(!db().commit()) {
+        qDebug() << "Transaction could not be commited";
+        return false;
+    }
+
+    return true;
 }
 
 bool LibraryDatabase::getAllTracks(TrackList& result)
@@ -109,51 +155,18 @@ bool LibraryDatabase::getAllTracks(TrackList& result, int offset, int limit)
     return dbFetchTracks(q, result);
 }
 
-QString LibraryDatabase::fetchQueryTracks(const QString& join, const QString& offsetLimit)
-{
-    static const auto fields = QStringList{
-        QStringLiteral("TrackID"),      // 0
-        QStringLiteral("FilePath"),     // 1
-        QStringLiteral("Title"),        // 2
-        QStringLiteral("TrackNumber"),  // 3
-        QStringLiteral("TrackTotal"),   // 4
-        QStringLiteral("Artists"),      // 5
-        QStringLiteral("AlbumArtist"),  // 6
-        QStringLiteral("Album"),        // 7
-        QStringLiteral("CoverPath"),    // 8
-        QStringLiteral("DiscNumber"),   // 9
-        QStringLiteral("DiscTotal"),    // 10
-        QStringLiteral("Date"),         // 11
-        QStringLiteral("Year"),         // 12
-        QStringLiteral("Composer"),     // 13
-        QStringLiteral("Performer"),    // 14
-        QStringLiteral("Genres"),       // 15
-        QStringLiteral("Lyrics"),       // 16
-        QStringLiteral("Comment"),      // 17
-        QStringLiteral("Duration"),     // 18
-        QStringLiteral("PlayCount"),    // 19
-        QStringLiteral("Rating"),       // 20
-        QStringLiteral("FileSize"),     // 21
-        QStringLiteral("BitRate"),      // 22
-        QStringLiteral("SampleRate"),   // 23
-        QStringLiteral("ExtraTags"),    // 24
-        QStringLiteral("AddedDate"),    // 25
-        QStringLiteral("ModifiedDate"), // 26
-        QStringLiteral("LibraryID"),    // 27
-    };
-
-    const auto joinedFields = fields.join(", ");
-
-    return QString("SELECT %1 FROM Tracks %2 %5;").arg(joinedFields, join.isEmpty() ? "" : join, offsetLimit);
-}
-
-bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
+bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result) const
 {
     result.clear();
 
     if(!q.execQuery()) {
         q.error("Cannot fetch tracks from database");
         return false;
+    }
+
+    const int numRows = dbTrackCount();
+    if(numRows > 0) {
+        result.reserve(numRows);
     }
 
     while(q.next()) {
@@ -189,9 +202,20 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result)
 
         track.generateHash();
 
-        result.emplace_back(track);
+        result.push_back(track);
     }
-    return !result.empty();
+    return true;
+}
+
+int LibraryDatabase::dbTrackCount() const
+{
+    const auto queryText = QStringLiteral("SELECT COUNT(*) FROM Tracks");
+    auto q               = module()->runQuery(queryText, "Cannot fetch track count");
+
+    if(!q.hasError() && q.next()) {
+        return q.value(0).toInt();
+    }
+    return -1;
 }
 
 bool LibraryDatabase::updateTrack(const Track& track)
@@ -204,8 +228,8 @@ bool LibraryDatabase::updateTrack(const Track& track)
 
     auto bindings = getTrackBindings(track);
 
-    const auto q = module()->update(
-        "Tracks", bindings, {"TrackID", track.id()}, QString("Cannot update track %1").arg(track.filepath()));
+    const auto q = module()->update("Tracks", bindings, {"TrackID", QString::number(track.id())},
+                                    QString("Cannot update track %1").arg(track.filepath()));
 
     return !q.hasError();
 }
@@ -213,7 +237,8 @@ bool LibraryDatabase::updateTrack(const Track& track)
 bool LibraryDatabase::deleteTrack(int id)
 {
     const auto queryText = QStringLiteral("DELETE FROM Tracks WHERE TrackID = :TrackID;");
-    const auto q         = module()->runQuery(queryText, {":TrackID", id}, QString("Cannot delete track %1").arg(id));
+    const auto q
+        = module()->runQuery(queryText, {":TrackID", QString::number(id)}, QString{"Cannot delete track %1"}.arg(id));
 
     return (!q.hasError());
 }
@@ -224,25 +249,18 @@ bool LibraryDatabase::deleteTracks(const TrackList& tracks)
         return true;
     }
 
-    module()->db().transaction();
+    if(!module()->db().transaction()) {
+        qDebug() << "Transaction could not be started";
+        return false;
+    }
 
-    const int fileCount = static_cast<int>(std::count_if(tracks.cbegin(), tracks.cend(), [&](const Track& track) {
+    const int fileCount = static_cast<int>(std::ranges::count_if(std::as_const(tracks), [this](const Track& track) {
         return deleteTrack(track.id());
     }));
 
     const auto success = module()->db().commit();
 
     return (success && (fileCount == static_cast<int>(tracks.size())));
-}
-
-Module* LibraryDatabase::module()
-{
-    return this;
-}
-
-const Module* LibraryDatabase::module() const
-{
-    return this;
 }
 
 int LibraryDatabase::insertTrack(const Track& track)

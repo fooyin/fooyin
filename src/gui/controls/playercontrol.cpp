@@ -19,11 +19,8 @@
 
 #include "playercontrol.h"
 
-#include "gui/guiconstants.h"
-
-#include <core/models/track.h>
 #include <core/player/playermanager.h>
-
+#include <gui/guiconstants.h>
 #include <utils/comboicon.h>
 
 #include <QHBoxLayout>
@@ -49,8 +46,6 @@ PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, QWidget
     connect(m_next, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::next);
 
     connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlayerControl::stateChanged);
-
-    setEnabled(m_playerManager->currentTrack().isValid());
 }
 
 void PlayerControl::setupUi()
@@ -59,7 +54,7 @@ void PlayerControl::setupUi()
     m_layout->setSpacing(10);
     m_layout->setContentsMargins(10, 0, 0, 0);
 
-    m_playPause->addPixmap(Constants::Icons::Pause);
+    m_playPause->addIcon(Constants::Icons::Pause);
 
     m_stop->setMaximumSize(m_labelSize);
     m_prev->setMaximumSize(m_labelSize);
@@ -77,13 +72,13 @@ void PlayerControl::setupUi()
 void PlayerControl::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
-        case(Core::Player::Stopped):
+        case(Core::Player::PlayState::Stopped):
             m_playPause->setIcon(Constants::Icons::Play);
             return setEnabled(false);
-        case(Core::Player::Playing):
+        case(Core::Player::PlayState::Playing):
             m_playPause->setIcon(Constants::Icons::Pause);
             return setEnabled(true);
-        case(Core::Player::Paused):
+        case(Core::Player::PlayState::Paused):
             return m_playPause->setIcon(Constants::Icons::Play);
     }
 }

@@ -17,7 +17,7 @@
  *
  */
 
-#include "worker.h"
+#include <utils/worker.h>
 
 #include <QAbstractEventDispatcher>
 #include <QThread>
@@ -30,7 +30,7 @@ Worker::Worker(QObject* parent)
 
 void Worker::stopThread()
 {
-    m_state = Idle;
+    setState(Idle);
 }
 
 void Worker::closeThread()
@@ -40,12 +40,12 @@ void Worker::closeThread()
 
 Worker::State Worker::state() const
 {
-    return m_state;
+    return m_state.load(std::memory_order_acquire);
 }
 
 void Worker::setState(State state)
 {
-    m_state = state;
+    m_state.store(state, std::memory_order_release);
 }
 
 bool Worker::isRunning()

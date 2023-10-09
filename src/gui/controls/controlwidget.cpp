@@ -24,8 +24,8 @@
 #include "progresswidget.h"
 #include "volumecontrol.h"
 
-#include <core/models/track.h>
 #include <core/player/playermanager.h>
+#include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
@@ -40,7 +40,7 @@ ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Utils::
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_playerControls{new PlayerControl(m_playerManager, this)}
-    , m_playlistControls{new PlaylistControl(m_playerManager, m_settings, this)}
+    , m_playlistControls{new PlaylistControl(m_playerManager, this)}
     , m_volumeControls{new VolumeControl(m_playerManager, this)}
     , m_progress{new ProgressWidget(m_playerManager, m_settings, this)}
 {

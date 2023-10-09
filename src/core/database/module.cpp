@@ -23,9 +23,18 @@
 
 #include <QApplication>
 #include <QSqlError>
+#include <QStringBuilder>
 #include <QThread>
 
+#include <ranges>
+
 namespace Fy::Core::DB {
+void execPragma(const QSqlDatabase& db, const QString& key, const QString& value)
+{
+    const auto q = QString{"PRAGMA %1 = %2;"}.arg(key, value);
+    db.exec(q);
+}
+
 Module::Module(QString connectionName)
     : m_connectionName(std::move(connectionName))
 { }
@@ -35,10 +44,15 @@ QString Module::connectionName() const
     return m_connectionName;
 }
 
-static void execPragma(const QSqlDatabase& db, const QString& key, const QString& value)
+Query Module::runQuery(const QString& query, const QString& errorText) const
 {
-    const QString q = QString("PRAGMA %1 = %2;").arg(key, value);
-    db.exec(q);
+    return runQuery(query, BindingsMap{}, errorText);
+}
+
+Query Module::runQuery(const QString& query, const std::pair<QString, QString>& bindings,
+                       const QString& errorText) const
+{
+    return runQuery(query, {{bindings.first, bindings.second}}, errorText);
 }
 
 QSqlDatabase Module::db() const
@@ -48,13 +62,13 @@ QSqlDatabase Module::db() const
     }
 
     QThread* currentThread = QThread::currentThread();
+    auto threadId          = reinterpret_cast<intptr_t>(currentThread);
 
-    auto id = reinterpret_cast<intptr_t>(currentThread);
     if(QApplication::instance() && (currentThread == QApplication::instance()->thread())) {
-        id = 0;
+        threadId = 0;
     }
 
-    const QString threadConnectionName = QString("%1-%2").arg(m_connectionName).arg(id);
+    const auto threadConnectionName = QString("%1-%2").arg(m_connectionName).arg(threadId);
 
     const QStringList connections = QSqlDatabase::connectionNames();
     if(connections.contains(threadConnectionName)) {
@@ -78,30 +92,13 @@ QSqlDatabase Module::db() const
     return db;
 }
 
-DB::Query Module::runQuery(const QString& query, const QString& errorText) const
-{
-    return runQuery(query, QMap<QString, QVariant>(), errorText);
-}
-
-DB::Query Module::runQuery(const QString& query, const QPair<QString, QVariant>& bindings,
-                           const QString& errorText) const
-{
-    return runQuery(query,
-                    {
-                        {bindings.first, bindings.second}
-    },
-                    errorText);
-}
-
-DB::Query Module::runQuery(const QString& query, const QMap<QString, QVariant>& bindings,
-                           const QString& errorText) const
+DB::Query Module::runQuery(const QString& query, const BindingsMap& bindings, const QString& errorText) const
 {
     DB::Query q(this);
     q.prepareQuery(query);
 
-    const QList<QString> keys = bindings.keys();
-    for(const auto& k : keys) {
-        q.bindQueryValue(k, bindings[k]);
+    for(const auto& [key, value] : bindings) {
+        q.bindQueryValue(key, value);
     }
 
     if(!q.execQuery()) {
@@ -111,22 +108,31 @@ DB::Query Module::runQuery(const QString& query, const QMap<QString, QVariant>& 
     return q;
 }
 
-DB::Query Module::insert(const QString& tableName, const QMap<QString, QVariant>& fieldBindings,
-                         const QString& errorMessage)
+DB::Query Module::insert(const QString& tableName, const BindingsMap& fieldBindings, const QString& errorMessage)
 {
-    const QStringList fieldNames = fieldBindings.keys();
-    const QString fields         = fieldNames.join(", ");
-    const QString bindings       = ":" + fieldNames.join(", :");
-
-    QString query = "INSERT INTO " + tableName;
-    query += " (" + fields + ") ";
-    query += "VALUES (" + bindings + ");";
+    QString query = "INSERT INTO " % tableName;
 
     DB::Query q(this);
+
+    QString fields;
+    QString values;
+    for(const auto& [field, _] : fieldBindings) {
+        if(!fields.isEmpty()) {
+            fields = fields % ", ";
+        }
+        fields = fields % field;
+        if(!values.isEmpty()) {
+            values = values % ", ";
+        }
+        values = values % ":" % field;
+    }
+    query = query % "( " % fields % ")";
+    query = query % "VALUES ( " % values % ");";
+
     q.prepareQuery(query);
 
-    for(const auto& field : fieldNames) {
-        q.bindQueryValue(":" + field, fieldBindings[field]);
+    for(const auto& [field, value] : fieldBindings) {
+        q.bindQueryValue(":" % field, value);
     }
 
     if(!q.execQuery()) {
@@ -135,27 +141,29 @@ DB::Query Module::insert(const QString& tableName, const QMap<QString, QVariant>
 
     return q;
 }
-
-DB::Query Module::update(const QString& tableName, const QMap<QString, QVariant>& fieldBindings,
-                         const QPair<QString, QVariant>& whereBinding, const QString& errorMessage)
+Query Module::update(const QString& tableName, const BindingsMap& fieldBindings,
+                     const std::pair<QString, QString>& whereBinding, const QString& errorMessage)
 {
-    const QStringList fieldNames = fieldBindings.keys();
-
-    QStringList updateCommands;
-    for(const auto& field : fieldNames) {
-        updateCommands << field + " = :" + field;
-    }
-
-    QString query = "UPDATE " + tableName + " SET ";
-    query += updateCommands.join(", ");
-    query += " WHERE ";
-    query += whereBinding.first + " = :W" + whereBinding.first + ";";
+    QString query = "UPDATE " % tableName % " SET ";
 
     DB::Query q(this);
+
+    QString fields;
+    for(const auto& [field, value] : fieldBindings) {
+        if(!fields.isEmpty()) {
+            fields = fields % ", ";
+        }
+        fields = fields % field % " = :" % field;
+    }
+    query = query % fields;
+
+    query = query % " WHERE ";
+    query = query % whereBinding.first + " = :W" + whereBinding.first + ";";
+
     q.prepareQuery(query);
 
-    for(const auto& field : fieldNames) {
-        q.bindQueryValue(":" + field, fieldBindings.value(field));
+    for(const auto& [field, value] : fieldBindings) {
+        q.bindQueryValue(":" % field, value);
     }
 
     q.bindQueryValue(":W" + whereBinding.first, whereBinding.second);
@@ -168,27 +176,39 @@ DB::Query Module::update(const QString& tableName, const QMap<QString, QVariant>
     return q;
 }
 
-Query Module::remove(const QString& tableName, const QList<QPair<QString, QVariant>>& whereBinding,
+Query Module::remove(const QString& tableName, const std::vector<std::pair<QString, QString>>& whereBinding,
                      const QString& errorMessage)
 {
-    QString query = "DELETE FROM " + tableName;
-    query += " WHERE (";
-    int i = static_cast<int>(whereBinding.size());
-    for(const auto& binding : whereBinding) {
-        --i;
-        query += binding.first + " = " + binding.second.toString();
-        query += i != 0 ? " AND " : "";
+    QString query = "DELETE FROM " % tableName % " WHERE (";
+
+    bool firstIteration{true};
+    for(const auto& [field, binding] : whereBinding) {
+        if(!firstIteration) {
+            query = query % " AND ";
+        }
+        query          = query % field % " = " % binding;
+        firstIteration = false;
     }
-    query += ");";
+    query = query % ");";
 
     DB::Query q(this);
     q.prepareQuery(query);
 
-    if(!q.execQuery() || q.numRowsAffected() == 0) {
+    if(!q.execQuery()) {
         q.setError(true);
         q.error(errorMessage);
     }
 
     return q;
+}
+
+Module* Module::module()
+{
+    return this;
+}
+
+const Module* Module::module() const
+{
+    return this;
 }
 } // namespace Fy::Core::DB

@@ -19,57 +19,27 @@
 
 #include "filteritem.h"
 
-#include "constants.h"
-
-#include <utils/helpers.h>
-
-#include <QVariant>
-
 namespace Fy::Filters {
-FilterItem::FilterItem(QString title, QString sortTitle, bool isAllNode)
-    : m_title{std::move(title)}
+FilterItem::FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode)
+    : TreeItem{parent}
+    , m_title{std::move(title)}
     , m_sortTitle{std::move(sortTitle)}
     , m_isAllNode{isAllNode}
 { }
 
-const ItemChildren& FilterItem::children() const
+QString FilterItem::title() const
 {
-    return m_children;
+    return m_title;
 }
 
-FilterItem* FilterItem::child(int index) const
+QString FilterItem::sortTitle() const
 {
-    if(index < 0 || index >= childCount()) {
-        return nullptr;
-    }
-    return m_children.at(index);
+    return m_sortTitle;
 }
 
-void FilterItem::appendChild(FilterItem* child)
+Core::TrackList FilterItem::tracks() const
 {
-    if(Utils::contains(m_children, child)) {
-        return;
-    }
-    m_children.emplace_back(child);
-}
-
-int FilterItem::childCount() const
-{
-    return static_cast<int>(m_children.size());
-}
-
-QVariant FilterItem::data(int role) const
-{
-    switch(role) {
-        case FilterItemRole::Title:
-            return m_title;
-        case FilterItemRole::Tracks:
-            return QVariant::fromValue(m_tracks);
-        case FilterItemRole::Sorting:
-            return m_sortTitle;
-        default:
-            return {};
-    }
+    return m_tracks;
 }
 
 int FilterItem::trackCount() const
@@ -77,9 +47,29 @@ int FilterItem::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
+void FilterItem::setTitle(const QString& title)
+{
+    m_title = title;
+}
+
 void FilterItem::addTrack(const Core::Track& track)
 {
     m_tracks.emplace_back(track);
+}
+
+void FilterItem::addTracks(const Core::TrackList& tracks)
+{
+    std::ranges::copy(tracks, std::back_inserter(m_tracks));
+}
+
+void FilterItem::removeTrack(const Core::Track& track)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+    m_tracks.erase(std::ranges::find_if(m_tracks, [track](const Core::Track& child) {
+        return child.id() == track.id();
+    }));
 }
 
 bool FilterItem::isAllNode() const
@@ -87,23 +77,21 @@ bool FilterItem::isAllNode() const
     return m_isAllNode;
 }
 
-bool FilterItem::hasSortTitle() const
-{
-    return !m_sortTitle.isEmpty();
-}
-
 void FilterItem::sortChildren(Qt::SortOrder order)
 {
-    ItemChildren sortedChildren{m_children};
-    std::sort(sortedChildren.begin(), sortedChildren.end(), [order](const FilterItem* lhs, const FilterItem* rhs) {
+    std::vector<FilterItem*> sortedChildren{m_children};
+    std::ranges::sort(sortedChildren, [order](const FilterItem* lhs, const FilterItem* rhs) {
+        if(!lhs || !rhs) {
+            return false;
+        }
         if(lhs->m_isAllNode) {
             return true;
         }
         if(rhs->m_isAllNode) {
             return false;
         }
-        const auto lTitle = lhs->hasSortTitle() ? lhs->m_sortTitle : lhs->m_title;
-        const auto rTitle = rhs->hasSortTitle() ? rhs->m_sortTitle : rhs->m_title;
+        const auto lTitle = !lhs->m_sortTitle.isEmpty() ? lhs->m_sortTitle : lhs->m_title;
+        const auto rTitle = !rhs->m_sortTitle.isEmpty() ? rhs->m_sortTitle : rhs->m_title;
 
         const auto cmp = QString::localeAwareCompare(lTitle, rTitle);
         if(cmp == 0) {

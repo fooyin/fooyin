@@ -17,7 +17,7 @@
  *
  */
 
-#include "audioengine.h"
+#include <core/engine/audioengine.h>
 
 namespace Fy::Core::Engine {
 AudioEngine::AudioEngine(QObject* parent)

@@ -1,0 +1,64 @@
+name: CMake
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  BUILD_TYPE: Release
+  BUILD_TESTS: On
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - name: Update repositories
+        run: sudo apt update -y
+      - name: Install packages
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: >
+          sudo apt install -y
+          libcppunit-dev
+          libmpv-dev
+          libgtest-dev
+      - name: Checkout TagLib
+        uses: actions/checkout@v3
+        with:
+          repository: taglib/taglib
+          path: taglib
+          submodules: recursive
+      - name: Configure TagLib
+        run: cmake -B taglib/build -S taglib -DBUILD_TESTING=OFF -DWITH_ZLIB=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+      - name: Build TagLib
+        run: cmake --build taglib/build
+      - name: Install TagLib
+        run: sudo cmake --install taglib/build
+      - name: Install GTest
+        run: cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3.2.1
+        with:
+          version: '6.5.1'
+      - name: Checkout QCoro
+        uses: actions/checkout@v3
+        with:
+          repository: danvratil/qcoro
+          path: qcoro
+      - name: Configure QCoro
+        run: cmake -B qcoro/build -S qcoro -DBUILD_TESTING=OFF -DQCORO_BUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OM -DUSE_QT_VERSION=6 -DQCORO_WITH_QTWEBSOCKETS=OFF -DQCORO_DISABLE_DEPRECATED_TASK_H=ON
+      - name: Build QCoro
+        run: cmake --build qcoro/build
+      - name: Install QCoro
+        run: sudo cmake --install qcoro/build
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}  -DBUILD_TESTING=${{env.BUILD_TESTS}}
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Run GTest
+        run: ${{github.workspace}}/build/tests/test_scriptparser

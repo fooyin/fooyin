@@ -20,77 +20,98 @@
 #include "filtersplugin.h"
 
 #include "filtermanager.h"
-#include "filtersettings.h"
 #include "filterwidget.h"
-#include "searchwidget.h"
+#include "settings/filtersettings.h"
+#include "settings/filtersfieldspage.h"
+#include "settings/filtersgeneralpage.h"
 
+#include <gui/plugins/guiplugincontext.h>
 #include <gui/layoutprovider.h>
+#include <gui/searchcontroller.h>
 #include <gui/widgetfactory.h>
-
 #include <utils/actions/actioncontainer.h>
-#include <utils/settings/settingsmanager.h>
-
-#include <QMenu>
 
 namespace Fy::Filters {
+struct FiltersPlugin::Private
+{
+    Utils::ActionManager* actionManager;
+    Utils::SettingsManager* settings;
+    Core::Library::MusicLibrary* library;
+    Core::Player::PlayerManager* playerManager;
+    Gui::LayoutProvider* layoutProvider;
+    Gui::Widgets::SearchController* searchController;
+    Gui::Widgets::WidgetFactory* factory;
+    Gui::TrackSelectionController* trackSelection;
+
+    FilterManager* filterManager;
+    std::unique_ptr<Settings::FiltersSettings> filterSettings;
+
+    std::unique_ptr<Settings::FiltersGeneralPage> generalPage;
+    std::unique_ptr<Settings::FiltersFieldsPage> fieldsPage;
+
+    void registerLayouts()
+    {
+        layoutProvider->registerLayout(
+            "Stone",
+            R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{"SplitterHorizontal":{
+                         "Children":[{"Filter":{"Type":"Album Artist","Sort":"AscendingOrder"}},"Playlist"],
+                         "State":"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP////8BAAAAAQA="}},"Controls"],
+                         "State":"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////
+                         wEAAAACAA=="}}]})");
+
+        layoutProvider->registerLayout(
+            "Ember",
+            R"({"Layout":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"Filter":{"Type":"Genre","Sort":"AscendingOrder"}},
+            {"Filter":{"Type":"Album
+            Artist","Sort":"AscendingOrder"}},{"Filter":{"Type":"Artist","Sort":"AscendingOrder"}},
+            {"Filter":{"Type":"Album","Sort":"AscendingOrder"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
+            {"SplitterHorizontal":{"Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAFfgAAAdIAAAC1AP////8BAAAAAQA="}},
+            {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["Artwork","Info"],
+            "State":"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAUAP////8BAAAAAgA="}},"Playlist"],"State":"AAAA/wAAAAEAAAADAAABdQAABdsAAAC1AP////8BAAAAAQA="}},
+            "Status"],"State":"AAAA/wAAAAEAAAAFAAAA/wAAAB4AAALRAAAAGQAAAAAA/////wEAAAACAA=="}}]})");
+    }
+};
+
+FiltersPlugin::FiltersPlugin()
+    : p{std::make_unique<Private>()}
+{ }
+
+FiltersPlugin::~FiltersPlugin() = default;
+
 void FiltersPlugin::initialise(const Core::CorePluginContext& context)
 {
-    m_actionManager   = context.actionManager;
-    m_library         = context.library;
-    m_playerManager   = context.playerManager;
-    m_playlistHandler = context.playlistHandler;
-    m_settings        = context.settingsManager;
+    p->library       = context.library;
+    p->playerManager = context.playerManager;
+    p->settings      = context.settingsManager;
 
-    m_fieldsRegistry = std::make_unique<FieldRegistry>(m_settings);
-    m_filterManager  = new FilterManager(m_library, m_playlistHandler, m_fieldsRegistry.get(), this);
-    m_filterSettings = std::make_unique<Settings::FiltersSettings>(m_settings);
-
-    m_fieldsRegistry->loadFields();
+    p->filterSettings = std::make_unique<Settings::FiltersSettings>(p->settings);
 }
 
 void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
 {
-    m_layoutProvider = context.layoutProvider;
-    m_factory        = context.widgetFactory;
+    p->actionManager    = context.actionManager;
+    p->layoutProvider   = context.layoutProvider;
+    p->searchController = context.searchController;
+    p->factory          = context.widgetFactory;
+    p->trackSelection   = context.trackSelection;
 
-    m_factory->registerClass<FilterWidget>("Filter", [this]() {
-        return new FilterWidget(m_filterManager, m_settings);
+    p->filterManager = new FilterManager(p->library, p->trackSelection, p->settings, this);
+
+    connect(p->searchController, &Gui::Widgets::SearchController::searchChanged, p->filterManager,
+            &FilterManager::searchChanged);
+
+    p->factory->registerClass<FilterWidget>("Filter", [this]() {
+        return p->filterManager->createFilter();
     });
 
-    m_factory->registerClass<SearchWidget>("Search", [this]() {
-        return new SearchWidget(m_filterManager, m_settings);
-    });
+    p->generalPage = std::make_unique<Settings::FiltersGeneralPage>(p->settings);
+    p->fieldsPage  = std::make_unique<Settings::FiltersFieldsPage>(p->filterManager->fieldRegistry(), p->settings);
 
-    //    m_generalPage    = std::make_unique<Settings::FiltersGeneralPage>(m_settings);
-    m_appearancePage = std::make_unique<Settings::FiltersAppearancePage>(m_settings);
-    m_fieldsPage     = std::make_unique<Settings::FiltersFieldsPage>(m_fieldsRegistry.get(), m_settings);
-
-    registerLayouts();
+    p->registerLayouts();
 }
 
 void FiltersPlugin::shutdown()
 {
-    m_fieldsRegistry->saveFields();
-}
-
-void FiltersPlugin::registerLayouts()
-{
-    m_layoutProvider->registerLayout(
-        "Stone",
-        R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{"SplitterHorizontal":{
-                     "Children":[{"Filter":{"Type":"Album Artist","Sort":"AscendingOrder"}},"Playlist"],
-                     "State":"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP////8BAAAAAQA="}},"Controls"],
-                     "State":"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////
-                     wEAAAACAA=="}}]})");
-
-    m_layoutProvider->registerLayout(
-        "Ember",
-        R"({"Layout":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"Filter":{"Type":"Genre","Sort":"AscendingOrder"}},
-        {"Filter":{"Type":"Album Artist","Sort":"AscendingOrder"}},{"Filter":{"Type":"Artist","Sort":"AscendingOrder"}},
-        {"Filter":{"Type":"Album","Sort":"AscendingOrder"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
-        {"SplitterHorizontal":{"Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAFfgAAAdIAAAC1AP////8BAAAAAQA="}},
-        {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["Artwork","Info"],
-        "State":"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAUAP////8BAAAAAgA="}},"Playlist"],"State":"AAAA/wAAAAEAAAADAAABdQAABdsAAAC1AP////8BAAAAAQA="}},
-        "Status"],"State":"AAAA/wAAAAEAAAAFAAAA/wAAAB4AAALRAAAAGQAAAAAA/////wEAAAACAA=="}}]})");
+    p->filterManager->shutdown();
 }
 } // namespace Fy::Filters

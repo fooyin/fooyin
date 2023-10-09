@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "settingspage.h"
-#include "utils/id.h"
+#include <utils/settings/settingspage.h>
+#include <utils/id.h>
 
 #include <QIcon>
 
@@ -28,25 +28,27 @@ class QTabWidget;
 
 namespace Fy::Utils {
 class SettingsPage;
-
 using PageList = std::vector<SettingsPage*>;
 
 struct SettingsCategory
 {
     Id id;
-    int index;
     QString name;
-    QIcon icon;
-    PageList pages;
-    QTabWidget* tabWidget;
+    QTabWidget* tabWidget{nullptr};
+    PageList pages{};
+    int index{-1};
 
-    bool findPageById(const Id& idToFind, int* pageIndex) const
+    bool operator==(const SettingsCategory& other) const
     {
-        auto it    = std::find_if(pages.begin(), pages.end(), [idToFind](const SettingsPage* page) {
+        return id == other.id;
+    }
+
+    int findPageById(const Id& idToFind) const
+    {
+        auto it = std::ranges::find_if(std::as_const(pages), [idToFind](const SettingsPage* page) {
             return page->id() == idToFind;
         });
-        *pageIndex = it == pages.end() ? -1 : static_cast<int>(std::distance(pages.begin(), it));
-        return *pageIndex != -1;
+        return it == pages.end() ? -1 : static_cast<int>(std::distance(pages.begin(), it));
     }
 };
 } // namespace Fy::Utils

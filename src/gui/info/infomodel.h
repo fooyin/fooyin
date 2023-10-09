@@ -19,45 +19,94 @@
 
 #pragma once
 
-#include "infoitem.h"
+#include <core/track.h>
 
+#include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
 namespace Fy {
-
-namespace Core {
-class Track;
-
-namespace Player {
+namespace Core::Player {
 class PlayerManager;
 }
-} // namespace Core
 
-namespace Gui::Widgets {
-namespace Info {
-enum Role
+namespace Gui::Widgets::Info {
+class InfoItem : public Utils::TreeItem<InfoItem>
 {
-    Type = Qt::UserRole + 20,
+public:
+    enum ItemType
+    {
+        Header = 0,
+        Entry,
+    };
+
+    enum ValueType
+    {
+        Concat = 0,
+        Average,
+        Total,
+        Max
+    };
+
+    enum Role
+    {
+        Type = Qt::UserRole,
+        Value
+    };
+
+    using FormatFunc = std::function<QString(uint64_t)>;
+
+    InfoItem();
+    InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType);
+    InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType, FormatFunc numFunc);
+
+    [[nodiscard]] ItemType type() const;
+    [[nodiscard]] QString name() const;
+    [[nodiscard]] QVariant value() const;
+
+    void addTrackValue(uint64_t value);
+    void addTrackValue(int value);
+    void addTrackValue(const QString& value);
+    void addTrackValue(const QStringList& values);
+
+private:
+    ItemType m_type;
+    ValueType m_valueType;
+
+    QString m_name;
+    std::vector<uint64_t> m_numValues;
+    mutable uint64_t m_numValue;
+    QStringList m_values;
+    mutable QString m_value;
+
+    FormatFunc m_formatNum;
 };
-}
 
 class InfoModel : public Utils::TreeModel<InfoItem>
 {
-public:
-    explicit InfoModel(Core::Player::PlayerManager* playerManager, QObject* parent = nullptr);
+    Q_OBJECT
 
-    void setupModel();
-    InfoItem* addNode(const QString& title, InfoItem* parent, InfoItem::Role role = InfoItem::None,
-                      InfoItem::Type type = InfoItem::Entry);
-    void reset();
+public:
+    enum class ItemParent
+    {
+        Root,
+        Metadata,
+        Location,
+        General
+    };
+    Q_ENUM(ItemParent)
+
+    explicit InfoModel(Core::Player::PlayerManager* playerManager, QObject* parent = nullptr);
+    ~InfoModel() override;
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
+    void resetModel(const Core::TrackList& tracks);
+
 private:
-    Core::Player::PlayerManager* m_playerManager;
-    std::vector<std::unique_ptr<InfoItem>> m_nodes;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
+} // namespace Gui::Widgets::Info
 } // namespace Fy

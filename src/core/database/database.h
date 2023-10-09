@@ -21,8 +21,6 @@
 
 #include "module.h"
 
-#include <utils/paths.h>
-
 class QSqlDatabase;
 
 namespace Fy {
@@ -32,15 +30,11 @@ class SettingsManager;
 }
 
 namespace Core::DB {
-class Library;
-class Playlist;
-
 class Database : public Module
 {
 public:
-    explicit Database(Utils::SettingsManager* settings, const QString& directory = Utils::sharePath(),
-                      const QString& filename = "fooyin.db");
-    ~Database() override;
+    explicit Database(Utils::SettingsManager* settings);
+    Database(const QString& directory, const QString& filename, Utils::SettingsManager* settings);
 
     virtual bool closeDatabase();
     virtual bool isInitialized();
@@ -48,9 +42,6 @@ public:
     virtual void transaction();
     virtual void commit();
     virtual void rollback();
-
-    Library* libraryConnector();
-    Playlist* playlistConnector();
 
     bool update();
 
@@ -63,9 +54,6 @@ private:
     Utils::SettingsManager* m_settings;
 
     bool m_initialized;
-
-    std::unique_ptr<Library> m_libraryConnector;
-    std::unique_ptr<Playlist> m_playlistConnector;
 };
 } // namespace Core::DB
 } // namespace Fy

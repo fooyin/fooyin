@@ -1,3 +1,21 @@
+#
+# Fooyin
+# Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+#
+# Fooyin is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Fooyin is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 cmake_minimum_required(VERSION 3.14)
 
 project(
@@ -8,34 +26,31 @@ project(
     LANGUAGES CXX
 )
 
+set(HEADERS
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audioengine.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/enginehandler.h
+    ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/librarymanager.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/sortingregistry.h
+    ${CMAKE_SOURCE_DIR}/include/core/player/playermanager.h
+    ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
+    ${CMAKE_SOURCE_DIR}/include/core/plugins/plugininfo.h
+)
+
 set(SOURCES
-    coreplugin.h
-    coreplugincontext.h
-    corepaths.h
+    application.cpp
     corepaths.cpp
-    coresettings.h
     coresettings.cpp
-    constants.h
-    typedefs.h
-
-    database/database.h
     database/database.cpp
-    database/library.h
     database/library.cpp
-    database/librarydatabase.h
     database/librarydatabase.cpp
-    database/module.h
     database/module.cpp
-    database/playlistdatabase.h
     database/playlistdatabase.cpp
-    database/query.h
     database/query.cpp
-
-    engine/enginehandler.h
     engine/enginehandler.cpp
     engine/audioengine.cpp
-    engine/audiooutput.h
-
     engine/ffmpeg/ffmpegclock.cpp
     engine/ffmpeg/ffmpegrenderer.cpp
     engine/ffmpeg/ffmpegworker.cpp
@@ -46,105 +61,54 @@ set(SOURCES
     engine/ffmpeg/ffmpegstream.cpp
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegutils.cpp
-
     engine/output/alsaoutput.cpp
-
-    library/coverprovider.h
     library/coverprovider.cpp
-    library/librarydatabasemanager.h
     library/librarydatabasemanager.cpp
-    library/libraryinfo.h
-    library/libraryinteractor.h
-    library/librarymanager.h
     library/librarymanager.cpp
-    library/libraryscanner.h
     library/libraryscanner.cpp
-    library/musiclibrary.h
-    library/unifiedmusiclibrary.h
     library/unifiedmusiclibrary.cpp
-    library/librarythreadhandler.h
     library/librarythreadhandler.cpp
-    library/tracksorter.h
-    library/tracksorter.cpp
-
-    models/container.h
-    models/container.cpp
-    models/album.h
-    models/album.cpp
-    models/artist.h
-    models/artist.cpp
-    models/track.h
-    models/track.cpp
-    models/trackfwd.h
-
-    playlist/playlist.h
+    library/sortingregistry.cpp
+    library/tracksort.cpp
     playlist/playlist.cpp
-    playlist/playlisthandler.h
     playlist/playlisthandler.cpp
-
-    player/playercontroller.h
     player/playercontroller.cpp
-    player/playermanager.h
-
-    plugins/plugininfo.h
     plugins/plugininfo.cpp
-    plugins/pluginmanager.h
     plugins/pluginmanager.cpp
-
     scripting/scriptregistry.cpp
     scripting/scriptparser.cpp
     scripting/scriptscanner.cpp
-    scripting/functions/mathfuncs.cpp
     scripting/functions/controlfuncs.cpp
-
-    tagging/tagreader.h
+    scripting/functions/mathfuncs.cpp
+    scripting/functions/stringfuncs.cpp
+    scripting/functions/timefuncs.cpp
     tagging/tagreader.cpp
-    tagging/tagutils.h
     tagging/tagutils.cpp
+    track.cpp
 )
 
 if(SDL2_FOUND)
     set(SOURCES ${SOURCES} engine/output/sdloutput.cpp)
 endif()
 
-add_library(
+create_fooyin_library(
     fooyin_core
-    ${FOOYIN_LIBRARY_TYPE}
-    ${SOURCES}
-)
-add_library(fooyin::core ALIAS fooyin_core)
-
-target_include_directories(fooyin_core
-  PRIVATE
-    "${CMAKE_CURRENT_BINARY_DIR}"
-    "${CMAKE_BINARY_DIR}/src"
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-  PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
+    EXPORT_NAME Core
+    SOURCES ${HEADERS} ${SOURCES}
 )
 
-set_target_properties(fooyin_core PROPERTIES
-    VERSION "${PROJECT_VERSION}"
-    EXPORT_NAME fooyin_core
-    OUTPUT_NAME fooyin_core
-    LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_LIBRARY_OUTPUT_DIR}
-    INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_PATH}
+target_link_libraries(
+    fooyin_core
+    PRIVATE fooyin_version
+            fooyin_config
+    PUBLIC Qt6::Core
+           Qt6::Widgets
+           Qt6::Sql
+           Qt6::Concurrent
+           QCoro::Core
+           Taglib::Taglib
+           ${SDL2_LIBRARIES}
+           ${FFMPEG_LIBRARIES}
+           ${ALSA_LIBRARIES}
+           Fooyin::Utils
 )
-
-target_link_libraries(fooyin_core
-   PRIVATE
-     Qt6::Core
-     Qt6::Widgets
-     Qt6::Sql
-     Taglib::Taglib
-     ${SDL2_LIBRARIES}
-     ${FFMPEG_LIBRARIES}
-     ${ALSA_LIBRARIES}
-     fooyin::config
-     fooyin::utils
-)
-
-target_compile_features(fooyin_core PUBLIC cxx_std_20)
-target_compile_options(fooyin_core PRIVATE -Werror -Wall -Wextra -Wpedantic)
-
-install(TARGETS fooyin_core LIBRARY DESTINATION ${FOOYIN_LIBRARY_DIR})

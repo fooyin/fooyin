@@ -19,11 +19,9 @@
 
 #include "enginepage.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
-
+#include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QComboBox>
@@ -37,6 +35,7 @@ public:
     explicit EnginePageWidget(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler);
 
     void apply() override;
+    void reset() override;
 
     //    void setupDevices(const QString& output);
 
@@ -96,6 +95,11 @@ void EnginePageWidget::apply()
     //    m_settings->set<Core::Settings::OutputDevice>(device);
 }
 
+void EnginePageWidget::reset()
+{
+    m_settings->reset<Core::Settings::AudioOutput>();
+}
+
 // void EnginePageWidget::setupDevices(const QString& output)
 //{
 //     if(output.isEmpty()) {
@@ -124,11 +128,9 @@ EnginePage::EnginePage(Utils::SettingsManager* settings, Core::Engine::EngineHan
 {
     setId(Constants::Page::Engine);
     setName(tr("Engine"));
-    setCategory("Category.Engine");
-    setCategoryName(tr("Engine"));
+    setCategory({tr("Engine")});
     setWidgetCreator([settings, engineHandler] {
         return new EnginePageWidget(settings, engineHandler);
     });
-    setCategoryIconPath(Constants::Icons::Category::Engine);
 }
 } // namespace Fy::Gui::Settings

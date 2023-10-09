@@ -29,13 +29,16 @@ class FilterStore
 public:
     [[nodiscard]] FilterList filters() const;
 
-    LibraryFilter* addFilter(const FilterField& field);
+    LibraryFilter filterByIndex(int index) const;
+
+    LibraryFilter addFilter(const FilterField& field);
+    void updateFilter(const LibraryFilter& filter);
     void removeFilter(int index);
 
     [[nodiscard]] bool hasActiveFilters() const;
     [[nodiscard]] FilterList activeFilters() const;
 
-    void clearActiveFilters(int index, bool includeIndex = false);
+    void clearActiveFilters(int index);
 
 private:
     FilterList m_filters;

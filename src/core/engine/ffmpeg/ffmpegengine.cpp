@@ -19,13 +19,14 @@
 
 #include "ffmpegengine.h"
 
-#include "core/engine/audiooutput.h"
-#include "core/models/track.h"
 #include "ffmpegclock.h"
 #include "ffmpegcodec.h"
 #include "ffmpegdecoder.h"
 #include "ffmpegrenderer.h"
 #include "ffmpegstream.h"
+
+#include <core/engine/audiooutput.h>
+#include <core/track.h>
 
 extern "C"
 {

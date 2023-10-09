@@ -21,7 +21,9 @@
 
 #include "settingscategory.h"
 
-#include "utils/id.h"
+#include <utils/id.h>
+#include <utils/treeitem.h>
+#include <utils/treemodel.h>
 
 #include <QAbstractListModel>
 #include <QIcon>
@@ -29,26 +31,43 @@
 #include <set>
 
 namespace Fy::Utils {
-using CategoryList = std::vector<SettingsCategory*>;
-
-class SettingsModel : public QAbstractListModel
+class SettingsItem : public Utils::TreeItem<SettingsItem>
 {
 public:
-    SettingsModel();
-    ~SettingsModel() override;
+    enum Role
+    {
+        Data = Qt::UserRole,
+    };
 
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
+    SettingsItem();
+    SettingsItem(SettingsCategory* data, SettingsItem* parent);
+
+    SettingsCategory* data() const;
+
+    void sortChildren();
+
+private:
+    SettingsCategory* m_data;
+};
+
+class SettingsModel : public Utils::TreeModel<SettingsItem>
+{
+public:
+    explicit SettingsModel(QObject* parent = nullptr);
+
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
-
-    [[nodiscard]] const CategoryList& categories() const;
 
     void setPages(const PageList& pages);
 
-private:
-    SettingsCategory* findCategoryById(const Id& id);
+    std::optional<SettingsCategory> categoryForPage(const Id& page) const;
+    QModelIndex indexForCategory(const Id& category) const;
 
-    CategoryList m_categories;
+private:
+    using CategoryIdMap = std::map<Id, SettingsCategory>;
+    using ItemIdMap     = std::map<Id, SettingsItem>;
+
+    CategoryIdMap m_categories;
+    ItemIdMap m_items;
     std::set<Id> m_pageIds;
-    QIcon m_emptyIcon;
 };
 } // namespace Fy::Utils

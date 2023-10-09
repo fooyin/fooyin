@@ -23,7 +23,7 @@
 
 namespace Fy::Filters {
 FilterDelegate::FilterDelegate(QObject* parent)
-    : QStyledItemDelegate(parent)
+    : QStyledItemDelegate{parent}
 { }
 
 void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -33,19 +33,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    const int fontSize = index.data(Qt::FontRole).toInt();
-
-    if(fontSize > 0) {
-        QFont font = painter->font();
-        font.setPixelSize(fontSize);
-        painter->setFont(font);
-        //    painter->setPen(Qt::white);
-    }
-
-    const QString title = index.data(Qt::DisplayRole).toString();
-
-    const auto rect = opt.rect;
-
+    const auto rect       = opt.rect;
     const QRect titleRect = QRect(rect.x() + 5, rect.y(), rect.width(), rect.height());
 
     if((opt.state & QStyle::State_Selected)) {
@@ -58,11 +46,17 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         painter->fillRect(rect, hoverCol);
     }
 
-    opt.widget->style()->drawItemText(painter,
-                                      titleRect,
-                                      Qt::AlignLeft | Qt::AlignVCenter,
-                                      opt.palette,
-                                      true,
+    const QString title = index.data(Qt::DisplayRole).toString();
+    const auto font     = index.data(Qt::FontRole).value<QFont>();
+    if(font.pixelSize() > 0 || font.pointSize() > 0) {
+        painter->setFont(font);
+    }
+    const auto colour = index.data(Qt::ForegroundRole).value<QColor>();
+    if(colour.isValid()) {
+        painter->setPen(colour);
+    }
+
+    opt.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, opt.palette, true,
                                       painter->fontMetrics().elidedText(title, Qt::ElideRight, rect.width()));
     painter->restore();
 }

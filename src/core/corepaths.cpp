@@ -17,7 +17,7 @@
  *
  */
 
-#include "corepaths.h"
+#include <core/corepaths.h>
 
 #include <utils/paths.h>
 

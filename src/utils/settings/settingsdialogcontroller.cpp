@@ -17,32 +17,64 @@
  *
  */
 
-#include "settingsdialogcontroller.h"
+#include <utils/settings/settingsdialogcontroller.h>
+
+#include <utils/id.h>
 
 #include "settingsdialog.h"
 
 namespace Fy::Utils {
+struct SettingsDialogController::Private
+{
+    QByteArray geometry;
+    PageList pages;
+};
+
 SettingsDialogController::SettingsDialogController(QObject* parent)
     : QObject{parent}
+    , p{std::make_unique<Private>()}
 { }
+
+SettingsDialogController::~SettingsDialogController() = default;
 
 void SettingsDialogController::open()
 {
-    auto* settingsDialog = new SettingsDialog{m_pages};
-    settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
-    settingsDialog->openSettings();
+    openAtPage({});
 }
 
 void SettingsDialogController::openAtPage(const Id& page)
 {
-    auto* settingsDialog = new SettingsDialog{m_pages};
+    auto* settingsDialog = new SettingsDialog{p->pages};
+    QObject::connect(settingsDialog, &QDialog::destroyed, this, [this, settingsDialog]() {
+        p->geometry = settingsDialog->saveGeometry();
+    });
     settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+
+    if(p->geometry.isEmpty()) {
+        settingsDialog->resize(750, 450);
+    }
+    else {
+        settingsDialog->restoreGeometry(p->geometry);
+    }
     settingsDialog->openSettings();
-    settingsDialog->openPage(page);
+
+    if(page.isValid()) {
+        settingsDialog->openPage(page);
+    }
 }
 
 void SettingsDialogController::addPage(SettingsPage* page)
 {
-    m_pages.emplace_back(page);
+    p->pages.push_back(page);
+}
+
+QByteArray SettingsDialogController::geometry() const
+{
+    return p->geometry;
+}
+
+void SettingsDialogController::updateGeometry(const QByteArray& geometry)
+{
+    p->geometry = geometry;
 }
 } // namespace Fy::Utils

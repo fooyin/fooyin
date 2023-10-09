@@ -17,13 +17,18 @@
  *
  */
 
-#include "settingsmanager.h"
+#include <utils/settings/settingsmanager.h>
 
 #include <utils/settings/settingsdialogcontroller.h>
 
 #include <QSettings>
 
 namespace Fy::Utils {
+QString getKeyString(const SettingsEntry& setting)
+{
+    return setting.group() + "/" + setting.name();
+}
+
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
     , m_settingsFile{settingsPath, QSettings::IniFormat, this}
@@ -64,10 +69,5 @@ void SettingsManager::storeSettings()
 SettingsDialogController* SettingsManager::settingsDialog() const
 {
     return m_settingsDialog;
-}
-
-QString SettingsManager::getKeyString(const SettingsEntry& setting)
-{
-    return setting.group() + "/" + setting.name();
 }
 } // namespace Fy::Utils

@@ -17,35 +17,38 @@
  *
  */
 
-#include "guisettings.h"
-
-#include "guipaths.h"
-
-#include <core/coresettings.h>
+#include <gui/guisettings.h>
 
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 namespace Fy::Gui::Settings {
 GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
-    m_settings->createTempSetting(Settings::LayoutEditing, false);
-    m_settings->createSetting(Settings::Geometry, "", "Layout");
-    m_settings->createSetting(Settings::SplitterHandles, true, "Splitters");
-    m_settings->createSetting(Settings::DiscHeaders, true, "Playlist");
-    m_settings->createSetting(Settings::SplitDiscs, false, "Playlist");
-    m_settings->createSetting(Settings::SimplePlaylist, false, "Playlist");
-    m_settings->createSetting(Settings::PlaylistAltColours, true, "Playlist");
-    m_settings->createSetting(Settings::PlaylistHeader, true, "Playlist");
-    m_settings->createSetting(Settings::PlaylistScrollBar, true, "Playlist");
-    m_settings->createSetting(Settings::ElapsedTotal, false, "Player");
-    m_settings->createSetting(Settings::InfoAltColours, true, "Info");
-    m_settings->createSetting(Settings::InfoHeader, true, "Info");
-    m_settings->createSetting(Settings::InfoScrollBar, true, "Info");
-    m_settings->createSetting(Settings::EditingMenuLevels, 2, "Layout");
-
-    m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(activeLayoutPath()));
+    m_settings->createTempSetting<Settings::LayoutEditing>(false);
+    m_settings->createSetting<Settings::StartupBehaviour>(2, "Interface");
+    m_settings->createSetting<Settings::WaitForTracks>(true, "Interface");
+    m_settings->createSetting<Settings::Geometry>(QByteArray{}, "Interface");
+    m_settings->createSetting<Settings::SettingsGeometry>(QByteArray{}, "Interface");
+    m_settings->createSetting<Settings::EditingMenuLevels>(2, "Interface");
+    m_settings->createSetting<Settings::SplitterHandles>(true, "Splitters");
+    m_settings->createSetting<Settings::PlaylistAltColours>(true, "Playlist");
+    m_settings->createSetting<Settings::PlaylistHeader>(true, "Playlist");
+    m_settings->createSetting<Settings::PlaylistScrollBar>(true, "Playlist");
+    m_settings->createSetting<Settings::PlaylistPresets>(QByteArray{}, "Playlist");
+    m_settings->createSetting<Settings::CurrentPreset>("Default", "Playlist");
+    m_settings->createSetting<Settings::ElapsedTotal>(false, "Player");
+    m_settings->createSetting<Settings::InfoAltColours>(true, "Info");
+    m_settings->createSetting<Settings::InfoHeader>(true, "Info");
+    m_settings->createSetting<Settings::InfoScrollBar>(true, "Info");
+    m_settings->createSetting<Settings::IconTheme>("light", "Theme");
+    m_settings->createSetting<Settings::LastPlaylistId>(0, "Playlist");
+    m_settings->createSetting<Settings::LibraryTreeGrouping>(QByteArray{}, "LibraryTree");
+    m_settings->createSetting<Settings::LibraryTreeDoubleClick>(1, "LibraryTree");
+    m_settings->createSetting<Settings::LibraryTreeMiddleClick>(0, "LibraryTree");
+    m_settings->createSetting<Settings::LibraryTreePlaylistEnabled>(false, "LibraryTree");
+    m_settings->createSetting<Settings::LibraryTreeAutoSwitch>(true, "LibraryTree");
+    m_settings->createSetting<Settings::LibraryTreeAutoPlaylist>("Library Selection", "LibraryTree");
 
     m_settings->loadSettings();
 }

@@ -19,10 +19,11 @@
 
 #pragma once
 
-#include "core/scripting/scriptvalue.h"
+#include <core/scripting/scriptvalue.h>
 
 namespace Fy::Core::Scripting {
 ScriptResult cif(const ValueList& vec);
+ScriptResult cif2(const ValueList& vec);
 ScriptResult ifequal(const ValueList& vec);
 ScriptResult ifgreater(const ValueList& vec);
 ScriptResult iflonger(const ValueList& vec);

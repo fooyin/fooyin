@@ -49,7 +49,7 @@ public:
     [[nodiscard]] QByteArray saveState() const;
     bool restoreState(const QByteArray& state);
 
-    [[nodiscard]] QWidget* widget(int index) const;
+    [[nodiscard]] QWidget* widgetAtIndex(int index) const;
     [[nodiscard]] bool hasChildren();
 
     void addWidget(QWidget* widget);
@@ -63,7 +63,7 @@ public:
     [[nodiscard]] QString layoutName() const override;
     void layoutEditingMenu(Utils::ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
-    void loadLayout(QJsonObject& object) override;
+    void loadLayout(const QJsonObject& object) override;
 
 protected:
     void insertWidget(int index, FyWidget* widget);

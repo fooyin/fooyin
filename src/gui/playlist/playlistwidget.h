@@ -21,92 +21,44 @@
 
 #include "gui/fywidget.h"
 
-#include <core/models/trackfwd.h>
-
-class QHBoxLayout;
+#include <core/track.h>
 
 namespace Fy {
 
 namespace Utils {
-class OverlayWidget;
-class SettingsDialogController;
 class SettingsManager;
-class HeaderView;
 } // namespace Utils
 
-namespace Core {
-namespace Player {
+namespace Core::Player {
 class PlayerManager;
-enum PlayState : uint8_t;
-} // namespace Player
+} // namespace Core::Player
 
-namespace Library {
-class LibraryManager;
-class MusicLibrary;
-} // namespace Library
+namespace Gui {
+class TrackSelectionController;
 
-namespace Playlist {
-class PlaylistHandler;
-} // namespace Playlist
-} // namespace Core
-
-namespace Gui::Widgets {
-class PlaylistModel;
-class PlaylistView;
+namespace Widgets::Playlist {
+class PlaylistController;
 
 class PlaylistWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Core::Library::MusicLibrary* library, Core::Playlist::PlaylistHandler* playlistHandler,
-                            Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
+    explicit PlaylistWidget(Core::Player::PlayerManager* playerManager, PlaylistController* playlistController,
+                            TrackSelectionController* selectionController, Utils::SettingsManager* settings,
                             QWidget* parent = nullptr);
-
-    void setup();
-    void reset();
-
-    void setupConnections();
-
-    bool isHeaderHidden();
-    void setHeaderHidden(bool showHeader);
-
-    bool isScrollbarHidden();
-    void setScrollbarHidden(bool showScrollBar);
+    ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;
 
-signals:
-    void selectionWasChanged(const Core::TrackList& tracks);
-
 protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
-    void selectionChanged();
-    void customHeaderMenuRequested(QPoint pos);
-    void changeState(Core::Player::PlayState state);
-    void playTrack(const QModelIndex& index);
-    void findCurrent();
-    void prepareTracks(int idx);
-    void expandPlaylist(const QModelIndex& parent, int first, int last);
-    void clearSelection(bool clearView = false);
-    void switchContextMenu(int section, QPoint pos);
-
-    Core::Library::MusicLibrary* m_library;
-    Core::Player::PlayerManager* m_playerManager;
-    Utils::SettingsManager* m_settings;
-    Utils::SettingsDialogController* m_settingsDialog;
-
-    Core::Playlist::PlaylistHandler* m_playlistHandler;
-
-    Core::TrackList m_selectedTracks;
-
-    QHBoxLayout* m_layout;
-    PlaylistModel* m_model;
-    PlaylistView* m_playlist;
-    Utils::HeaderView* m_header;
-    bool m_changingSelection;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
+} // namespace Widgets::Playlist
+} // namespace Gui
 } // namespace Fy

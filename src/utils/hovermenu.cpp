@@ -17,7 +17,7 @@
  *
  */
 
-#include "hovermenu.h"
+#include <utils/hovermenu.h>
 
 namespace Fy::Utils {
 HoverMenu::HoverMenu(QWidget* parent)

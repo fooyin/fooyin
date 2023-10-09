@@ -19,50 +19,30 @@
 
 #pragma once
 
-#include "settingsmodel.h"
+#include "settingscategory.h"
+
+#include <utils/id.h>
 
 #include <QDialog>
 
-class QGridLayout;
-class QStackedLayout;
-
 namespace Fy::Utils {
-class SimpleListView;
-
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(PageList pages, QWidget* parent = nullptr);
+    explicit SettingsDialog(const PageList& pages, QWidget* parent = nullptr);
     ~SettingsDialog() override;
-
-    void setupUi();
 
     void openSettings();
     void openPage(const Id& id);
 
-private:
     void done(int value) override;
     void accept() override;
     void reject() override;
 
-    void apply();
-    void currentChanged(const QModelIndex& current);
-    void currentTabChanged(int index);
-
-    void showCategory(int index);
-    void checkCategoryWidget(SettingsCategory* category);
-
-    SettingsModel m_model;
-    SimpleListView* m_categoryList;
-    QGridLayout* m_mainGridLayout;
-    QStackedLayout* m_stackedLayout;
-
-    PageList m_pages;
-    std::set<SettingsPage*> m_visitedPages;
-
-    Id m_currentCategory;
-    Id m_currentPage;
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fy::Utils

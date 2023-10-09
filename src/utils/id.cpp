@@ -17,7 +17,7 @@
  *
  */
 
-#include "id.h"
+#include <utils/id.h>
 
 namespace Fy::Utils {
 unsigned int idFromString(const QString& str)
@@ -56,14 +56,12 @@ QString Id::name() const
 
 Id Id::append(const Id& id)
 {
-    const QString name = m_name.append(id.name());
-    return Id{name};
+    return Id{m_name.append(id.name())};
 }
 
 Id Id::append(const QString& str)
 {
-    const QString name = m_name.append(str);
-    return Id{name};
+    return Id{m_name.append(str)};
 }
 
 Id Id::append(const char* const str)
@@ -73,14 +71,12 @@ Id Id::append(const char* const str)
 
 Id Id::append(int num)
 {
-    const QString name = m_name.append(QString::number(num));
-    return Id{name};
+    return Id{m_name.append(QString::number(num))};
 }
 
 Id Id::append(quintptr addr)
 {
-    const QString name = m_name.append(QString::number(addr));
-    return Id{name};
+    return Id{m_name.append(QString::number(addr))};
 }
 
 bool Id::operator==(const Id& id) const
