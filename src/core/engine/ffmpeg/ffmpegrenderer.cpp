@@ -55,6 +55,9 @@ struct Renderer::Private
 
     bool updateOutput()
     {
+        if(!audioOutput || !codec->context()) {
+            return false;
+        }
         outputContext.format        = interleaveFormat(codec->context()->sample_fmt);
         outputContext.sampleRate    = codec->context()->sample_rate;
         outputContext.channelLayout = codec->context()->ch_layout;
