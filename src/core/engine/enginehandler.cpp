@@ -26,57 +26,93 @@
 #include <core/engine/audiooutput.h>
 #include <core/track.h>
 
+#include <core/player/playermanager.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QThread>
+
 namespace Fy::Core::Engine {
+struct EngineHandler::Private : QObject
+{
+    EngineHandler* self;
+
+    Player::PlayerManager* playerManager;
+    Utils::SettingsManager* settings;
+
+    QThread engineThread;
+    AudioEngine* engine;
+
+    std::map<QString, std::unique_ptr<AudioOutput>> outputs;
+    AudioOutput* output;
+
+    Private(EngineHandler* self, Player::PlayerManager* playerManager, Utils::SettingsManager* settings)
+        : self{self}
+        , playerManager{playerManager}
+        , settings{settings}
+        , engine(new FFmpeg::FFmpegEngine())
+        , output{nullptr}
+    {
+        engine->moveToThread(&engineThread);
+        engineThread.start();
+
+        QObject::connect(playerManager, &Player::PlayerManager::playStateChanged, this,
+                         &EngineHandler::Private::playStateChanged);
+        QObject::connect(playerManager, &Player::PlayerManager::volumeChanged, engine, &AudioEngine::setVolume);
+        QObject::connect(playerManager, &Player::PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
+        QObject::connect(engine, &AudioEngine::positionChanged, playerManager,
+                         &Player::PlayerManager::setCurrentPosition);
+        QObject::connect(engine, &AudioEngine::trackFinished, playerManager, &Player::PlayerManager::next);
+        QObject::connect(playerManager, &Player::PlayerManager::positionMoved, engine, &AudioEngine::seek);
+
+        connect(self, &EngineHandler::outputChanged, engine, &AudioEngine::setAudioOutput);
+        //    connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
+    }
+
+    void playStateChanged(Player::PlayState state)
+    {
+        QMetaObject::invokeMethod(engine, [this, state]() {
+            switch(state) {
+                case(Player::PlayState::Playing):
+                    return engine->play();
+                case(Player::PlayState::Paused):
+                    return engine->pause();
+                case(Player::PlayState::Stopped):
+                    return engine->stop();
+            }
+        });
+    }
+};
+
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, Utils::SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , m_playerManager{playerManager}
-    , m_settings{settings}
-    , m_engineThread{new QThread(this)}
-    , m_engine(new FFmpeg::FFmpegEngine())
-    , m_output{nullptr}
-{
-    m_engine->moveToThread(m_engineThread);
-    m_engineThread->start();
-
-    connect(m_playerManager, &Player::PlayerManager::playStateChanged, this, &EngineHandler::playStateChanged);
-    connect(m_playerManager, &Player::PlayerManager::volumeChanged, m_engine, &AudioEngine::setVolume);
-    connect(m_playerManager, &Player::PlayerManager::currentTrackChanged, m_engine, &AudioEngine::changeTrack);
-    connect(m_engine, &AudioEngine::positionChanged, m_playerManager, &Player::PlayerManager::setCurrentPosition);
-    connect(m_engine, &AudioEngine::trackFinished, m_playerManager, &Player::PlayerManager::next);
-    connect(m_playerManager, &Player::PlayerManager::positionMoved, m_engine, &AudioEngine::seek);
-
-    connect(this, &EngineHandler::outputChanged, m_engine, &AudioEngine::setAudioOutput);
-    //    connect(this, &EngineHandler::deviceChanged, m_engine, &AudioEngine::setOutputDevice);
-    connect(this, &EngineHandler::shutdown, m_engine, &AudioEngine::shutdown);
-    connect(this, &EngineHandler::shutdown, m_engine, &QObject::deleteLater);
-    connect(this, &EngineHandler::play, m_engine, &AudioEngine::play);
-    connect(this, &EngineHandler::pause, m_engine, &AudioEngine::pause);
-    connect(this, &EngineHandler::stop, m_engine, &AudioEngine::stop);
-}
+    , p{std::make_unique<Private>(this, playerManager, settings)}
+{ }
 
 EngineHandler::~EngineHandler()
 {
-    emit shutdown();
-    m_engineThread->quit();
-    m_engineThread->wait();
+    QMetaObject::invokeMethod(p->engine, [this]() {
+        p->engine->shutdown();
+        p->engine->deleteLater();
+    });
+
+    p->engineThread.quit();
+    p->engineThread.wait();
 }
 
 void EngineHandler::setup()
 {
-    m_settings->subscribe<Settings::AudioOutput>(this, &EngineHandler::changeOutput);
-    m_settings->subscribe<Settings::OutputDevice>(this, &EngineHandler::changeOutputDevice);
+    p->settings->subscribe<Settings::AudioOutput>(this, &EngineHandler::changeOutput);
+    p->settings->subscribe<Settings::OutputDevice>(this, &EngineHandler::changeOutputDevice);
 
-    changeOutput(m_settings->value<Settings::AudioOutput>());
-    changeOutputDevice(m_settings->value<Settings::OutputDevice>());
+    changeOutput(p->settings->value<Settings::AudioOutput>());
+    changeOutputDevice(p->settings->value<Settings::OutputDevice>());
 }
 
 OutputNames EngineHandler::getAllOutputs() const
 {
     OutputNames outputs;
 
-    for(const auto& [name, output] : m_outputs) {
+    for(const auto& [name, output] : p->outputs) {
         outputs.emplace_back(name);
     }
 
@@ -85,60 +121,46 @@ OutputNames EngineHandler::getAllOutputs() const
 
 std::optional<OutputDevices> EngineHandler::getOutputDevices(const QString& output) const
 {
-    if(!m_outputs.count(output)) {
+    if(!p->outputs.count(output)) {
         qDebug() << "Output not found: " << output;
         return {};
     }
-    const auto devices = m_outputs.at(output)->getAllDevices();
+    const auto devices = p->outputs.at(output)->getAllDevices();
     return devices;
 }
 
 void EngineHandler::addOutput(std::unique_ptr<AudioOutput> output)
 {
-    m_outputs.emplace(output->name(), std::move(output));
-}
-
-void EngineHandler::playStateChanged(Player::PlayState state)
-{
-    switch(state) {
-        case(Player::PlayState::Playing):
-            return emit play();
-        case(Player::PlayState::Paused):
-            return emit pause();
-        case(Player::PlayState::Stopped):
-            return emit stop();
-        default:
-            return;
-    }
+    p->outputs.emplace(output->name(), std::move(output));
 }
 
 void EngineHandler::changeOutput(const QString& output)
 {
-    if(m_outputs.empty()) {
+    if(p->outputs.empty()) {
         qWarning() << "No Outputs have been registered";
         return;
     }
 
-    if(m_output && m_output->name() == output) {
+    if(p->output && p->output->name() == output) {
         return;
     }
 
-    if(!m_outputs.count(output)) {
+    if(!p->outputs.count(output)) {
         qDebug() << "Output not found: " << output;
-        m_output = m_outputs.cbegin()->second.get();
+        p->output = p->outputs.cbegin()->second.get();
     }
     else {
-        m_output = m_outputs.at(output).get();
+        p->output = p->outputs.at(output).get();
     }
 
-    qDebug() << "Output changed: " << m_output->name();
+    qDebug() << "Output changed: " << p->output->name();
 
-    emit outputChanged(m_output);
+    emit outputChanged(p->output);
 }
 
 void EngineHandler::changeOutputDevice(const QString& device)
 {
-    if(m_outputs.empty()) {
+    if(p->outputs.empty()) {
         qWarning() << "No Outputs have been registered";
         return;
     }

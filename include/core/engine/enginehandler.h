@@ -21,17 +21,18 @@
 
 #include "fycore_export.h"
 
-#include <core/player/playermanager.h>
-
 #include <QObject>
-#include <QThread>
 
 namespace Fy {
 namespace Utils {
 class SettingsManager;
 }
-namespace Core::Engine {
-class AudioEngine;
+namespace Core {
+namespace Player {
+class PlayerManager;
+}
+
+namespace Engine {
 class AudioOutput;
 
 using OutputNames   = std::vector<QString>;
@@ -59,26 +60,13 @@ public:
     void changeOutputDevice(const QString& device);
 
 signals:
-    void shutdown();
-
     void outputChanged(Engine::AudioOutput* output);
     void deviceChanged(const QString& device);
 
-    void play();
-    void pause();
-    void stop();
-
 private:
-    void playStateChanged(Player::PlayState state);
-
-    Player::PlayerManager* m_playerManager;
-    Utils::SettingsManager* m_settings;
-
-    QThread* m_engineThread;
-    AudioEngine* m_engine;
-
-    std::map<QString, std::unique_ptr<AudioOutput>> m_outputs;
-    AudioOutput* m_output;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Core::Engine
+} // namespace Engine
+} // namespace Core
 } // namespace Fy
