@@ -291,7 +291,9 @@ void FFmpegEngine::shutdown()
     p->rendererThread->quit();
     p->rendererThread->wait();
 
-    p->positionUpdateTimer->deleteLater();
+    if(p->positionUpdateTimer) {
+        p->positionUpdateTimer->deleteLater();
+    }
 }
 
 void FFmpegEngine::seek(uint64_t pos)
