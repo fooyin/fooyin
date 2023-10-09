@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+class QAction;
+
 namespace Fy {
 
 namespace Utils {
@@ -35,6 +37,8 @@ public:
 
 private:
     Utils::ActionManager* m_actionManager;
+
+    QAction* m_showSandbox;
 };
 } // namespace Gui
 } // namespace Fy

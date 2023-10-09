@@ -19,10 +19,33 @@
 
 #pragma once
 
+#include <core/scripting/expression.h>
+#include <utils/treeitem.h>
+#include <utils/treemodel.h>
+
 namespace Fy::Sandbox {
-class ExpressionTreeModel
+class ExpressionTreeItem : public Utils::TreeItem<ExpressionTreeItem>
 {
 public:
-    ExpressionTreeModel();
+    ExpressionTreeItem();
+    explicit ExpressionTreeItem(QString expression);
+
+    QString expression() const;
+
+private:
+    QString m_expression;
 };
-}
+
+class ExpressionTreeModel : public Utils::TreeModel<ExpressionTreeItem>
+{
+public:
+    ExpressionTreeModel(QObject* parent = nullptr);
+
+    void populate(const Core::Scripting::ExpressionList& expressions);
+
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+
+private:
+    std::unordered_map<QString, ExpressionTreeItem> m_nodes;
+};
+} // namespace Fy::Sandbox

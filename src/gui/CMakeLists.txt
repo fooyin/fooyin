@@ -85,6 +85,10 @@ set(SOURCES
     quicksetup/quicksetupmodel.h
     quicksetup/quicksetupmodel.cpp
 
+    sandbox/expressiontreemodel.cpp
+    sandbox/sandboxdialog.cpp
+    sandbox/scripthighlighter.cpp
+
     settings/generalpage.h
     settings/generalpage.cpp
     settings/guigeneralpage.h
