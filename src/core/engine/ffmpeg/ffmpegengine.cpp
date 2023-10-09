@@ -376,7 +376,7 @@ void FFmpegEngine::setState(PlaybackState state)
 
 void FFmpegEngine::play()
 {
-    if(trackStatus() == NoTrack) {
+    if(!p->audioOutput || trackStatus() == NoTrack) {
         return;
     }
     if(trackStatus() == EndOfTrack && state() == StoppedState) {
