@@ -28,6 +28,7 @@ jobs:
           libmpv-dev
           libgtest-dev
           libasound2-dev
+          ffmpeg
       - name: Checkout TagLib
         uses: actions/checkout@v3
         with:
