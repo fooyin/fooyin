@@ -36,7 +36,7 @@ class Track;
 
 namespace Player {
 class PlayerManager;
-enum PlayState : uint8_t;
+enum class PlayState;
 } // namespace Player
 } // namespace Core
 

@@ -17,9 +17,9 @@
  *
  */
 
-#include "paths.h"
+#include <utils/paths.h>
 
-#include "utils.h"
+#include <utils/utils.h>
 
 #include <QApplication>
 #include <QDir>

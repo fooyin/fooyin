@@ -1,3 +1,21 @@
+#
+# Fooyin
+# Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+#
+# Fooyin is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Fooyin is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 cmake_minimum_required(VERSION 3.14)
 
 project(
@@ -8,78 +26,30 @@ project(
     LANGUAGES CXX
 )
 
-set(SOURCES
-    constants.h
-    fieldregistry.h
-    fieldregistry.cpp
-    filtersplugin.h
-    filtersplugin.cpp
-    filterdelegate.h
-    filterdelegate.cpp
-    fielditem.h
-    fielditem.cpp
-    fieldmodel.h
-    fieldmodel.cpp
-    filtersappearancepage.h
-    filtersappearancepage.cpp
-    filtersfieldspage.h
-    filtersfieldspage.cpp
-    filtersgeneralpage.h
-    filtersgeneralpage.cpp
-    filteritem.h
-    filteritem.cpp
-    filtermanager.h
-    filtermanager.cpp
-    filtermodel.h
-    filtermodel.cpp
-    filtersettings.h
-    filtersettings.cpp
-    filterview.h
-    filterview.cpp
-    filterwidget.h
-    filterwidget.cpp
-    filterfwd.h
-    filterstore.h
-    filterstore.cpp
-    searchwidget.h
-    searchwidget.cpp
-    trackfilterer.h
-    trackfilterer.cpp
+create_fooyin_plugin(
+    fooyin_filters
+    SOURCES fieldregistry.cpp
+            filtersplugin.cpp
+            filterdelegate.cpp
+            filteritem.cpp
+            filtermanager.cpp
+            filtermodel.cpp
+            filterpopulator.cpp
+            filterview.cpp
+            filterwidget.cpp
+            filterstore.cpp
+            settings/fieldmodel.cpp
+            settings/filtersettings.cpp
+            settings/filtersfieldspage.cpp
+            settings/filtersgeneralpage.cpp
 )
 
-qt_add_resources(
-    SOURCES
-    data/icons.qrc
+target_link_libraries(
+    fooyin_filters
+    PRIVATE Fooyin::Gui
 )
 
-add_library(fooyin_filters SHARED ${SOURCES})
-target_link_libraries(fooyin_filters
-    PRIVATE
-      Qt6::Core
-      Qt6::Widgets
-      Qt6::Sql
-      fooyin::core
-      fooyin::gui
-      fooyin::utils
+target_include_directories(
+    fooyin_filters
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-set_target_properties(fooyin_filters PROPERTIES
-  VERSION "${PROJECT_VERSION}"
-  EXPORT_NAME fooyin_filters
-  OUTPUT_NAME fooyin_filters
-  LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
-  INSTALL_RPATH "${FOOYIN_PLUGIN_INSTALL_PATH}"
-)
-
-target_include_directories(fooyin_filters
-  PRIVATE
-    "${CMAKE_CURRENT_BINARY_DIR}"
-    "${CMAKE_BINARY_DIR}/src"
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-  PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
-)
-
-target_compile_options(fooyin_filters PRIVATE -Werror -Wall -Wextra -Wpedantic)
-
-install(TARGETS fooyin_filters DESTINATION ${FOOYIN_PLUGIN_DIR})

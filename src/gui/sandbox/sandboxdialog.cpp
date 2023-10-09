@@ -36,6 +36,7 @@ SandboxDialog::SandboxDialog(QWidget* parent)
     , m_expressiontree{new QTreeView(this)}
     , m_highlighter{m_editor->document()}
     , m_errorTimer{new QTimer(this)}
+    , m_parser{&m_registry}
 {
     setWindowTitle(tr("Script Sandbox"));
     m_mainLayout->setContentsMargins(0, 0, 0, 0);

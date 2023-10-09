@@ -19,10 +19,9 @@
 
 #pragma once
 
-#include "core/player/playermanager.h"
+#include <core/player/playermanager.h>
 
 #include <QObject>
-#include <QThread>
 
 namespace Fy::Core::Engine {
 class Engine;
@@ -40,10 +39,8 @@ signals:
     void pause();
     void stop();
 
-protected:
-    void playStateChanged(Player::PlayState state);
-
 private:
-    Engine* m_engine;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fy::Core::Engine

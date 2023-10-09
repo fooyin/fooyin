@@ -19,10 +19,8 @@
 
 #include "volumecontrol.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/player/playermanager.h>
-
+#include <gui/guiconstants.h>
 #include <utils/comboicon.h>
 #include <utils/hovermenu.h>
 #include <utils/slider.h>
@@ -66,10 +64,9 @@ void VolumeControl::setupUi()
 
     m_layout->setSpacing(10);
 
-    m_volumeIcon->addPixmap(Constants::Icons::VolumeMin);
-    m_volumeIcon->addPixmap(Constants::Icons::VolumeLow);
-    m_volumeIcon->addPixmap(Constants::Icons::VolumeMed);
-    m_volumeIcon->addPixmap(Constants::Icons::VolumeMax);
+    m_volumeIcon->addIcon(Constants::Icons::VolumeLow);
+    m_volumeIcon->addIcon(Constants::Icons::VolumeMed);
+    m_volumeIcon->addIcon(Constants::Icons::VolumeHigh);
 
     m_volumeLayout->addWidget(m_volumeSlider);
 
@@ -80,7 +77,7 @@ void VolumeControl::setupUi()
 
     m_volumeIcon->setMaximumSize(m_labelSize);
 
-    m_volumeIcon->setIcon(Constants::Icons::VolumeMax);
+    m_volumeIcon->setIcon(Constants::Icons::VolumeHigh);
 }
 
 void VolumeControl::updateVolume(double value)
@@ -88,17 +85,14 @@ void VolumeControl::updateVolume(double value)
     const double vol = value;
     emit volumeChanged(vol);
 
-    if(vol <= 100 && vol >= 75) {
-        m_volumeIcon->setIcon(Constants::Icons::VolumeMax);
+    if(vol <= 100 && vol >= 66) {
+        m_volumeIcon->setIcon(Constants::Icons::VolumeHigh);
     }
-    else if(vol < 75 && vol >= 50) {
+    else if(vol < 66 && vol >= 33) {
         m_volumeIcon->setIcon(Constants::Icons::VolumeMed);
     }
-    else if(vol < 50 && vol >= 25) {
+    else if(vol < 33 && vol >= 1) {
         m_volumeIcon->setIcon(Constants::Icons::VolumeLow);
-    }
-    else if(vol < 25 && vol >= 1) {
-        m_volumeIcon->setIcon(Constants::Icons::VolumeMin);
     }
     else {
         m_volumeIcon->setIcon(Constants::Icons::VolumeMute);

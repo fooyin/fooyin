@@ -19,13 +19,11 @@
 
 #pragma once
 
-#include <utility>
+#include "database/librarydatabase.h"
+#include "tagging/tagreader.h"
 
-#include "core/database/librarydatabase.h"
-#include "core/models/trackfwd.h"
-#include "core/tagging/tagreader.h"
-#include "libraryinfo.h"
-
+#include <core/track.h>
+#include <core/library/libraryinfo.h>
 #include <utils/worker.h>
 
 class QDir;
@@ -61,7 +59,7 @@ signals:
     void tracksDeleted(const Core::TrackList& tracks);
 
 private:
-    void changeLibraryStatus(Status status);
+    void changeLibraryStatus(LibraryInfo::Status status);
 
     void storeTracks(TrackList& tracks);
     QStringList getFiles(QDir& baseDirectory);

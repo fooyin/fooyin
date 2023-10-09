@@ -17,9 +17,13 @@
  *
  */
 
-#include "scriptparser.h"
+#include <core/scripting/scriptparser.h>
 
-#include "core/constants.h"
+#include <core/constants.h>
+#include <core/scripting/scriptscanner.h>
+
+#include <QDebug>
+#include <QStringBuilder>
 
 namespace Fy::Core::Scripting {
 QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& result)
@@ -33,51 +37,137 @@ QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& resu
             listResult.append(value);
         }
         else {
-            for(const QString& retValue : result) {
-                listResult.append(retValue + value);
-            }
+            std::ranges::transform(result, std::back_inserter(listResult), [&](const QString& retValue) -> QString {
+                return retValue % value;
+            });
         }
     }
     return listResult;
 }
 
+struct Parser::Private
+{
+    Scanner scanner;
+    Registry* registry;
+
+    Token current;
+    Token previous;
+    ParsedScript parsedScript;
+    QStringList result;
+
+    explicit Private(Registry* registry)
+        : scanner{}
+        , registry{registry}
+    { }
+
+    void advance()
+    {
+        previous = current;
+
+        current = scanner.scanNext();
+        if(current.type == TokError) {
+            errorAtCurrent(current.value.toString());
+        }
+    }
+
+    void consume(TokenType type, const QString& message)
+    {
+        if(current.type == type) {
+            advance();
+            return;
+        }
+        errorAtCurrent(message);
+    }
+
+    bool currentToken(TokenType type) const
+    {
+        return current.type == type;
+    }
+
+    bool match(TokenType type)
+    {
+        if(!currentToken(type)) {
+            return false;
+        }
+        advance();
+        return true;
+    }
+
+    void errorAtCurrent(const QString& message)
+    {
+        errorAt(current, message);
+    }
+
+    void errorAt(const Token& token, const QString& message)
+    {
+        auto errorMsg = QString{"[%1] Error"}.arg(token.position);
+
+        if(token.type == TokEos) {
+            errorMsg += " at end of string";
+        }
+        else {
+            errorMsg += QString(": '%1'").arg(token.value);
+        }
+
+        errorMsg += QString(" (%1)").arg(message);
+
+        Error error;
+        error.value    = token.value.toString();
+        error.position = token.position;
+        error.message  = errorMsg;
+
+        parsedScript.errors.emplace_back(error);
+    }
+
+    void error(const QString& message)
+    {
+        errorAt(previous, message);
+    }
+};
+
+Parser::Parser(Registry* registry)
+    : p{std::make_unique<Private>(registry)}
+{ }
+
+Parser::~Parser() = default;
+
 ParsedScript Parser::parse(const QString& input)
 {
-    if(input.isEmpty()) {
+    if(input.isEmpty() || !p->registry) {
         return {};
     }
 
-    m_parsedScript.errors.clear();
-    m_parsedScript.expressions.clear();
-    m_parsedScript.input = input;
+    p->parsedScript.errors.clear();
+    p->parsedScript.expressions.clear();
+    p->parsedScript.input = input;
 
-    m_scanner.setup(input);
+    p->scanner.setup(input);
 
-    advance();
-    while(m_current.type != TokEos) {
-        m_parsedScript.expressions.emplace_back(expression());
+    p->advance();
+    while(p->current.type != TokEos) {
+        p->parsedScript.expressions.emplace_back(expression());
     }
 
-    consume(TokEos, "Expected end of expression");
+    p->consume(TokEos, "Expected end of expression");
 
-    return m_parsedScript;
+    return p->parsedScript;
 }
 
 QString Parser::evaluate()
 {
-    if(!m_parsedScript.isValid()) {
+    if(!p->parsedScript.isValid()) {
         return {};
     }
-    return evaluate(m_parsedScript);
+    return evaluate(p->parsedScript);
 }
 
 QString Parser::evaluate(const ParsedScript& input)
 {
-    if(!input.isValid()) {
+    if(!input.isValid() || !p->registry) {
         return {};
     }
 
-    m_result.clear();
+    p->result.clear();
 
     const ExpressionList expressions = input.expressions;
     for(const auto& expr : expressions) {
@@ -88,29 +178,29 @@ QString Parser::evaluate(const ParsedScript& input)
         }
 
         if(evalExpr.value.contains(Constants::Separator)) {
-            const QStringList evalList = evalStringList(evalExpr, m_result);
+            const QStringList evalList = evalStringList(evalExpr, p->result);
             if(!evalList.empty()) {
-                m_result = evalList;
+                p->result = evalList;
             }
         }
         else {
-            if(m_result.empty()) {
-                m_result.append(evalExpr.value);
+            if(p->result.empty()) {
+                p->result.push_back(evalExpr.value);
             }
             else {
-                for(QString& value : m_result) {
-                    value.append(evalExpr.value);
-                }
+                std::ranges::transform(p->result, p->result.begin(), [&](const QString& retValue) -> QString {
+                    return retValue % evalExpr.value;
+                });
             }
         }
     }
-    if(m_result.size() == 1) {
+    if(p->result.size() == 1) {
         // Calling join on a QStringList with a single empty string will return a null QString, so return the first
         // result.
-        return m_result.constFirst();
+        return p->result.constFirst();
     }
-    if(m_result.size() > 1) {
-        return m_result.join(Constants::Separator);
+    if(p->result.size() > 1) {
+        return p->result.join(Constants::Separator);
     }
     return {};
 }
@@ -123,7 +213,9 @@ QString Parser::evaluate(const ParsedScript& input, const Track& track)
 
 void Parser::setMetadata(const Track& track)
 {
-    m_registry.changeCurrentTrack(track);
+    if(p->registry) {
+        p->registry->changeCurrentTrack(track);
+    }
 }
 
 ScriptResult Parser::evalExpression(const Expression& exp) const
@@ -142,9 +234,9 @@ ScriptResult Parser::evalExpression(const Expression& exp) const
         case(Conditional):
             return evalConditional(exp);
         case(Null):
-            break;
+        default:
+            return {};
     }
-    return {};
 }
 
 ScriptResult Parser::evalLiteral(const Expression& exp) const
@@ -158,7 +250,7 @@ ScriptResult Parser::evalLiteral(const Expression& exp) const
 ScriptResult Parser::evalVariable(const Expression& exp) const
 {
     const QString var   = std::get<QString>(exp.value);
-    ScriptResult result = m_registry.trackValue(var);
+    ScriptResult result = p->registry->varValue(var);
 
     if(result.value.contains(Constants::Separator)) {
         // TODO: Support custom separators
@@ -170,17 +262,17 @@ ScriptResult Parser::evalVariable(const Expression& exp) const
 ScriptResult Parser::evalVariableList(const Expression& exp) const
 {
     const QString var = std::get<QString>(exp.value);
-    return registry().trackValue(var);
+    return p->registry->varValue(var);
 }
 
 ScriptResult Parser::evalFunction(const Expression& exp) const
 {
-    auto function = std::get<FuncValue>(exp.value);
+    auto func = std::get<FuncValue>(exp.value);
     ValueList args;
-    for(auto& arg : function.args) {
-        args.emplace_back(evalExpression(arg));
-    }
-    return m_registry.function(function.name, args);
+    std::ranges::transform(func.args, std::back_inserter(args), [this](const Expression& arg) {
+        return evalExpression(arg);
+    });
+    return p->registry->function(func.name, args);
 }
 
 ScriptResult Parser::evalFunctionArg(const Expression& exp) const
@@ -189,7 +281,7 @@ ScriptResult Parser::evalFunctionArg(const Expression& exp) const
     bool allPassed{true};
 
     auto arg = std::get<ExpressionList>(exp.value);
-    for(auto& subArg : arg) {
+    for(const Expression& subArg : arg) {
         const auto subExpr = evalExpression(subArg);
         if(!subExpr.cond) {
             allPassed = false;
@@ -197,13 +289,13 @@ ScriptResult Parser::evalFunctionArg(const Expression& exp) const
         if(subExpr.value.contains(Core::Constants::Separator)) {
             QStringList newResult;
             const auto values = subExpr.value.split(Core::Constants::Separator);
-            for(const auto& value : values) {
-                newResult.emplace_back(result.value + value);
-            }
+            std::ranges::transform(values, std::back_inserter(newResult), [&](const auto& value) {
+                return result.value % value;
+            });
             result.value = newResult.join(Core::Constants::Separator);
         }
         else {
-            result.value += subExpr.value;
+            result.value = result.value % subExpr.value;
         }
     }
     result.cond = allPassed;
@@ -217,7 +309,7 @@ ScriptResult Parser::evalConditional(const Expression& exp) const
     result.cond = true;
 
     auto arg = std::get<ExpressionList>(exp.value);
-    for(auto& subArg : arg) {
+    for(const Expression& subArg : arg) {
         const auto subExpr = evalExpression(subArg);
 
         // Literals return false
@@ -240,9 +332,9 @@ ScriptResult Parser::evalConditional(const Expression& exp) const
                 exprResult.append(subExpr.value);
             }
             else {
-                for(QString& value : exprResult) {
-                    value.append(subExpr.value);
-                }
+                std::ranges::transform(exprResult, exprResult.begin(), [&](const QString& retValue) -> QString {
+                    return retValue % subExpr.value;
+                });
             }
         }
     }
@@ -255,74 +347,10 @@ ScriptResult Parser::evalConditional(const Expression& exp) const
     return result;
 }
 
-void Parser::advance()
-{
-    m_previous = m_current;
-
-    m_current = m_scanner.scanNext();
-    if(m_current.type == TokError) {
-        errorAtCurrent(m_current.value.toString());
-    }
-}
-
-void Parser::consume(TokenType type, const QString& message)
-{
-    if(m_current.type == type) {
-        advance();
-        return;
-    }
-    errorAtCurrent(message);
-}
-
-bool Parser::currentToken(TokenType type) const
-{
-    return m_current.type == type;
-}
-
-bool Parser::match(TokenType type)
-{
-    if(!currentToken(type)) {
-        return false;
-    }
-    advance();
-    return true;
-}
-
-void Parser::errorAtCurrent(const QString& message)
-{
-    errorAt(m_current, message);
-}
-
-void Parser::errorAt(const Token& token, const QString& message)
-{
-    auto errorMsg = QString{"[%1] Error"}.arg(token.position);
-
-    if(token.type == TokEos) {
-        errorMsg += " at end of string";
-    }
-    else {
-        errorMsg += QString(": '%1'").arg(token.value);
-    }
-
-    errorMsg += QString(" (%1)").arg(message);
-
-    Error error;
-    error.value    = token.value.toString();
-    error.position = token.position;
-    error.message  = errorMsg;
-
-    m_parsedScript.errors.emplace_back(error);
-}
-
-void Parser::error(const QString& message)
-{
-    errorAt(m_previous, message);
-}
-
 Expression Parser::expression()
 {
-    advance();
-    switch(m_previous.type) {
+    p->advance();
+    switch(p->previous.type) {
         case(TokVar):
             return variable();
         case(TokFunc):
@@ -332,7 +360,7 @@ Expression Parser::expression()
         case(TokLeftSquare):
             return conditional();
         case(TokEscape):
-            advance();
+            p->advance();
             return literal();
         case(TokLeftAngle):
         case(TokRightAngle):
@@ -352,7 +380,7 @@ Expression Parser::expression()
 
 Expression Parser::literal() const
 {
-    return {Literal, m_previous.value.toString()};
+    return {Literal, p->previous.value.toString()};
 }
 
 Expression Parser::quote()
@@ -360,75 +388,75 @@ Expression Parser::quote()
     Expression expr{Literal};
     QString val;
 
-    while(!currentToken(TokQuote)) {
-        advance();
-        val.append(m_previous.value.toString());
-        if(currentToken(TokEscape)) {
-            advance();
-            val.append(m_current.value.toString());
-            advance();
+    while(!p->currentToken(TokQuote)) {
+        p->advance();
+        val.append(p->previous.value.toString());
+        if(p->currentToken(TokEscape)) {
+            p->advance();
+            val.append(p->current.value.toString());
+            p->advance();
         }
     }
 
     expr.value = val;
-    consume(TokQuote, "Expected '\"' after expression");
+    p->consume(TokQuote, "Expected '\"' after expression");
     return expr;
 }
 
 Expression Parser::variable()
 {
-    advance();
+    p->advance();
 
     Expression expr;
     QString value;
 
-    if(m_previous.type == TokLeftAngle) {
-        advance();
+    if(p->previous.type == TokLeftAngle) {
+        p->advance();
         expr.type = VariableList;
-        value     = QString{m_previous.value.toString()}.toLower();
-        consume(TokRightAngle, "Expected '>' after expression");
+        value     = QString{p->previous.value.toString()}.toLower();
+        p->consume(TokRightAngle, "Expected '>' after expression");
     }
     else {
         expr.type = Variable;
-        value     = QString{m_previous.value.toString()}.toLower();
+        value     = QString{p->previous.value.toString()}.toLower();
     }
 
-    if(!m_registry.varExists(value)) {
-        error("Variable not found");
+    if(!p->registry->varExists(value)) {
+        p->error("Variable not found");
     }
 
     expr.value = value;
-    consume(TokVar, "Expected '%' after expression");
+    p->consume(TokVar, "Expected '%' after expression");
     return expr;
 }
 
 Expression Parser::function()
 {
-    advance();
+    p->advance();
 
-    if(m_previous.type != TokLiteral) {
-        error("Expected function name");
+    if(p->previous.type != TokLiteral) {
+        p->error("Expected function name");
     }
 
     Expression expr{Function};
     FuncValue funcExpr;
-    funcExpr.name = QString{m_previous.value.toString()}.toLower();
+    funcExpr.name = QString{p->previous.value.toString()}.toLower();
 
-    if(!m_registry.funcExists(funcExpr.name)) {
-        error("Function not found");
+    if(!p->registry->funcExists(funcExpr.name)) {
+        p->error("Function not found");
     }
 
-    consume(TokLeftParen, "Expected '(' after function call");
+    p->consume(TokLeftParen, "Expected '(' after function call");
 
-    if(!currentToken(TokRightParen)) {
+    if(!p->currentToken(TokRightParen)) {
         funcExpr.args.emplace_back(functionArgs());
-        while(match(TokComma)) {
+        while(p->match(TokComma)) {
             funcExpr.args.emplace_back(functionArgs());
         }
     }
 
     expr.value = funcExpr;
-    consume(TokRightParen, "Expected ')' after function call");
+    p->consume(TokRightParen, "Expected ')' after function call");
     return expr;
 }
 
@@ -437,7 +465,7 @@ Expression Parser::functionArgs()
     Expression expr{FunctionArg};
     ExpressionList funcExpr;
 
-    while(!currentToken(TokComma) && !currentToken(TokRightParen) && !currentToken(TokEos)) {
+    while(!p->currentToken(TokComma) && !p->currentToken(TokRightParen) && !p->currentToken(TokEos)) {
         funcExpr.emplace_back(expression());
     }
 
@@ -450,22 +478,17 @@ Expression Parser::conditional()
     Expression expr{Conditional};
     ExpressionList condExpr;
 
-    while(!currentToken(TokRightSquare) && !currentToken(TokEos)) {
+    while(!p->currentToken(TokRightSquare) && !p->currentToken(TokEos)) {
         condExpr.emplace_back(expression());
     }
 
     expr.value = condExpr;
-    consume(TokRightSquare, "Expected ']' after expression");
+    p->consume(TokRightSquare, "Expected ']' after expression");
     return expr;
-}
-
-const Registry& Parser::registry() const
-{
-    return m_registry;
 }
 
 const ParsedScript& Parser::lastParsedScript() const
 {
-    return m_parsedScript;
+    return p->parsedScript;
 }
 } // namespace Fy::Core::Scripting

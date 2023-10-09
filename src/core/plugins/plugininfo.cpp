@@ -17,9 +17,9 @@
  *
  */
 
-#include "plugininfo.h"
+#include <core/plugins/plugininfo.h>
 
-#include "plugin.h"
+#include <core/plugins/plugin.h>
 
 #include <QPluginLoader>
 #include <utility>
@@ -39,7 +39,7 @@ PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJson
     , m_isRequired{false}
     , m_isLoaded{false}
     , m_isDisabled{false}
-    , m_status{Invalid}
+    , m_status{Status::Invalid}
     , m_root{nullptr}
     , m_plugin{nullptr}
 {
@@ -65,7 +65,7 @@ void PluginInfo::load()
         return;
     }
 
-    m_status   = Loaded;
+    m_status   = Status::Loaded;
     m_isLoaded = true;
 }
 
@@ -84,7 +84,7 @@ void PluginInfo::unload()
 void PluginInfo::initialise()
 {
     if(isLoaded()) {
-        m_status = Initialised;
+        m_status = Status::Initialised;
     }
 }
 
@@ -123,7 +123,7 @@ bool PluginInfo::isDisabled() const
     return m_isDisabled;
 }
 
-PluginStatus PluginInfo::status() const
+PluginInfo::Status PluginInfo::status() const
 {
     return m_status;
 }

@@ -19,10 +19,8 @@
 
 #include "playercontroller.h"
 
-#include "core/coresettings.h"
-#include "core/models/track.h"
-
-#include <utils/enumhelper.h>
+#include <core/coresettings.h>
+#include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::Core::Player {
@@ -30,26 +28,26 @@ PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* pa
     : PlayerManager{parent}
     , m_settings{settings}
     , m_totalDuration{0}
-    , m_playStatus{Stopped}
-    , m_playMode{Default}
+    , m_playStatus{PlayState::Stopped}
+    , m_playMode{PlayMode::Default}
     , m_position{0}
     , m_volume{1.0F}
     , m_counted{false}
 {
-    m_playMode = m_settings->value<Settings::PlayMode>().value<PlayMode>();
+    m_playMode = static_cast<PlayMode>(m_settings->value<Settings::PlayMode>());
     m_settings->subscribe<Settings::PlayMode>(this, &PlayerController::changePlayMode);
 }
 
 void PlayerController::reset()
 {
-    m_playStatus   = Stopped;
+    m_playStatus   = PlayState::Stopped;
     m_position     = 0;
     m_currentTrack = {};
 }
 
 void PlayerController::play()
 {
-    m_playStatus = Playing;
+    m_playStatus = PlayState::Playing;
     emit playStateChanged(m_playStatus);
 }
 
@@ -61,9 +59,9 @@ void PlayerController::wakeUp()
 void PlayerController::playPause()
 {
     switch(m_playStatus) {
-        case(Playing):
+        case(PlayState::Playing):
             return pause();
-        case(Stopped):
+        case(PlayState::Stopped):
             return wakeUp();
         default:
             return play();
@@ -72,7 +70,7 @@ void PlayerController::playPause()
 
 void PlayerController::pause()
 {
-    m_playStatus = Paused;
+    m_playStatus = PlayState::Paused;
     emit playStateChanged(m_playStatus);
 }
 
@@ -127,7 +125,7 @@ void PlayerController::changeCurrentTrack(const Track& track)
 
 void PlayerController::setPlayMode(PlayMode mode)
 {
-    m_settings->set<Settings::PlayMode>(mode);
+    m_settings->set<Settings::PlayMode>(static_cast<int>(mode));
 }
 
 void PlayerController::volumeUp()
@@ -146,12 +144,12 @@ void PlayerController::setVolume(double value)
     emit volumeChanged(value);
 }
 
-Player::PlayState PlayerController::playState() const
+PlayState PlayerController::playState() const
 {
     return m_playStatus;
 }
 
-Player::PlayMode PlayerController::playMode() const
+PlayMode PlayerController::playMode() const
 {
     return m_playMode;
 }
@@ -173,10 +171,9 @@ double PlayerController::volume() const
 
 void PlayerController::changePlayMode()
 {
-    const auto mode = m_settings->value<Settings::PlayMode>().value<PlayMode>();
-    if(m_playMode != mode) {
-        m_playMode = mode;
-        emit playModeChanged(mode);
+    const auto mode = static_cast<PlayMode>(m_settings->value<Settings::PlayMode>());
+    if(std::exchange(m_playMode, mode) != mode) {
+        emit playModeChanged(m_playMode);
     }
 }
 } // namespace Fy::Core::Player

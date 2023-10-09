@@ -17,9 +17,9 @@
  *
  */
 
-#include "settingspage.h"
+#include <utils/settings/settingspage.h>
 
-#include "settingsdialogcontroller.h"
+#include <utils/settings/settingsdialogcontroller.h>
 
 namespace Fy::Utils {
 SettingsPage::SettingsPage(SettingsDialogController* controller, QObject* parent)
@@ -41,19 +41,9 @@ QString SettingsPage::name() const
     return m_name;
 }
 
-Id SettingsPage::category() const
+QStringList SettingsPage::category() const
 {
     return m_category;
-}
-
-QString SettingsPage::categoryName() const
-{
-    return m_categoryName;
-}
-
-QIcon SettingsPage::categoryIcon() const
-{
-    return m_categoryIcon;
 }
 
 void SettingsPage::setWidgetCreator(const WidgetCreator& widgetCreator)
@@ -74,8 +64,8 @@ QWidget* SettingsPage::widget()
 void SettingsPage::apply()
 {
     if(m_widget) {
-        if(auto* widget = qobject_cast<SettingsPageWidget*>(m_widget)) {
-            widget->apply();
+        if(auto* pageWidget = qobject_cast<SettingsPageWidget*>(m_widget)) {
+            pageWidget->apply();
         }
     }
 }
@@ -83,11 +73,20 @@ void SettingsPage::apply()
 void SettingsPage::finish()
 {
     if(m_widget) {
-        if(auto* widget = qobject_cast<SettingsPageWidget*>(m_widget)) {
-            widget->finish();
+        if(auto* pageWidget = qobject_cast<SettingsPageWidget*>(m_widget)) {
+            pageWidget->finish();
         }
         delete m_widget;
         m_widget = nullptr;
+    }
+}
+
+void SettingsPage::reset()
+{
+    if(m_widget) {
+        if(auto* pageWidget = qobject_cast<SettingsPageWidget*>(m_widget)) {
+            pageWidget->reset();
+        }
     }
 }
 
@@ -101,23 +100,8 @@ void SettingsPage::setName(const QString& name)
     m_name = name;
 }
 
-void SettingsPage::setCategory(const Id& category)
+void SettingsPage::setCategory(const QStringList& category)
 {
     m_category = category;
-}
-
-void SettingsPage::setCategoryName(const QString& name)
-{
-    m_categoryName = name;
-}
-
-void SettingsPage::setCategoryIcon(const QIcon& icon)
-{
-    m_categoryIcon = icon;
-}
-
-void SettingsPage::setCategoryIconPath(const QString& iconPath)
-{
-    m_categoryIcon = QIcon{iconPath};
 }
 } // namespace Fy::Utils

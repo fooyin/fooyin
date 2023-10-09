@@ -17,7 +17,7 @@
  *
  */
 
-#include "actioncontainer.h"
+#include <utils/actions/actioncontainer.h>
 
 #include <QAction>
 #include <QMenu>
@@ -63,7 +63,7 @@ QAction* ActionContainer::actionForItem(QObject* item) const
 
 void ActionContainer::appendGroup(const Id& group)
 {
-    m_groups.append(Group{group});
+    m_groups.emplace_back(group);
 }
 
 void ActionContainer::insertGroup(const Id& beforeGroup, const Id& group)
@@ -84,12 +84,12 @@ void ActionContainer::addAction(QAction* action, const Id& group)
 
     const Id actualGroupId = group.isValid() ? group : Id{Groups::Default};
 
-    const QList<Group>::const_iterator groupIt = findGroup(actualGroupId);
-    if(groupIt == m_groups.constEnd()) {
+    const auto groupIt = findGroup(actualGroupId);
+    if(groupIt == m_groups.cend()) {
         qDebug() << "Can't find group" << group.name() << "in container" << id().name();
         return;
     }
-    m_groups[groupIt - m_groups.constBegin()].items.append(action);
+    m_groups[groupIt - m_groups.cbegin()].items.push_back(action);
     connect(action, &QObject::destroyed, this, &ActionContainer::itemDestroyed);
 
     QAction* beforeAction = insertLocation(groupIt);
@@ -109,7 +109,7 @@ void ActionContainer::addMenu(ActionContainer* menu, const Id& group)
     if(groupIt == m_groups.cend()) {
         return;
     }
-    m_groups[groupIt - m_groups.cbegin()].items.append(menu);
+    m_groups[groupIt - m_groups.cbegin()].items.push_back(menu);
     connect(menu, &QObject::destroyed, this, &ActionContainer::itemDestroyed);
 
     QAction* beforeAction = insertLocation(groupIt);
@@ -149,40 +149,33 @@ void ActionContainer::addMenu(ActionContainer* beforeContainer, ActionContainer*
 
 QAction* ActionContainer::addSeparator(const Id& group)
 {
-    return addSeparator(group, {});
-}
-
-QAction* ActionContainer::addSeparator(const Id& group, QAction** outSeparator)
-{
     static int separatorIdCount = 0;
 
     auto* separator = new QAction(this);
     separator->setSeparator(true);
     const Id sepId = id().append(".Separator.").append(++separatorIdCount);
-    emit registerSeperator(separator, sepId);
+    emit registerSeparator(separator, sepId);
     addAction(separator, group);
-    if(outSeparator) {
-        *outSeparator = separator;
-    }
+
     return separator;
 }
 
-QList<ActionContainer::Group>::const_iterator ActionContainer::findGroup(const Id& groupId) const
+ActionContainer::GroupList::const_iterator ActionContainer::findGroup(const Id& groupId) const
 {
     return std::find_if(m_groups.cbegin(), m_groups.cend(), [&](const auto& group) {
         return (group.id == groupId);
     });
 }
 
-QAction* ActionContainer::insertLocation(QList<Group>::const_iterator group) const
+QAction* ActionContainer::insertLocation(GroupList::const_iterator group) const
 {
     if(group == m_groups.cend()) {
         return nullptr;
     }
     ++group;
     while(group != m_groups.cend()) {
-        if(!group->items.isEmpty()) {
-            QObject* item   = group->items.first();
+        if(!group->items.empty()) {
+            QObject* item   = group->items.front();
             QAction* action = actionForItem(item);
             if(action) {
                 return action;
@@ -225,11 +218,9 @@ void MenuBarActionContainer::insertAction(QAction* beforeAction, QAction* action
 
 void MenuBarActionContainer::insertMenu(QAction* beforeAction, ActionContainer* container)
 {
-    QMenu* menu = container->menu();
-    if(!menu) {
-        return;
+    if(QMenu* currentMenu = container->menu()) {
+        m_menuBar->insertMenu(beforeAction, currentMenu);
     }
-    m_menuBar->insertMenu(beforeAction, menu);
 }
 
 bool MenuBarActionContainer::isEmpty()
@@ -282,11 +273,9 @@ void MenuActionContainer::insertAction(QAction* beforeAction, QAction* action)
 
 void MenuActionContainer::insertMenu(QAction* beforeAction, ActionContainer* container)
 {
-    QMenu* menu = container->menu();
-    if(!menu) {
-        return;
+    if(QMenu* currentMenu = container->menu()) {
+        m_menu->insertMenu(beforeAction, currentMenu);
     }
-    m_menu->insertMenu(beforeAction, menu);
 }
 
 bool MenuActionContainer::isEmpty()

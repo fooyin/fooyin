@@ -47,34 +47,32 @@ FilterView::FilterView(QWidget* parent)
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
-void FilterView::mouseMoveEvent(QMouseEvent* e)
+void FilterView::mousePressEvent(QMouseEvent* event)
 {
-    QTreeView::mouseMoveEvent(e);
-}
-
-void FilterView::mousePressEvent(QMouseEvent* e)
-{
-    auto pressedKey = e->modifiers();
-
-    if(e->button() == Qt::LeftButton && pressedKey == Qt::NoModifier) {
+    if(event->button() == Qt::LeftButton && event->modifiers() == Qt::NoModifier) {
         selectionModel()->clear();
     }
+    QTreeView::mousePressEvent(event);
 
-    QTreeView::mousePressEvent(e);
-}
-
-void FilterView::keyPressEvent(QKeyEvent* e)
-{
-    const auto key = e->key();
-
-    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        //        m_library->prepareTracks();
+    if(event->button() == Qt::MiddleButton) {
+        emit middleClicked();
     }
-    QTreeView::keyPressEvent(e);
 }
 
-void FilterView::contextMenuEvent(QContextMenuEvent* e)
+void FilterView::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    Q_UNUSED(e)
+    if(event->button() == Qt::MiddleButton) {
+        return;
+    }
+    emit doubleClicked();
+    QTreeView::mouseDoubleClickEvent(event);
+}
+
+void FilterView::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) { }
+    QTreeView::keyPressEvent(event);
 }
 } // namespace Fy::Filters

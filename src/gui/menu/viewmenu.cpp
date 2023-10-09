@@ -19,10 +19,10 @@
 
 #include "viewmenu.h"
 
-#include "gui/editablelayout.h"
-#include "gui/guiconstants.h"
-#include "gui/guisettings.h"
+#include "editablelayout.h"
 
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
@@ -40,7 +40,7 @@ ViewMenu::ViewMenu(Utils::ActionManager* actionManager, Widgets::EditableLayout*
 {
     auto* viewMenu = m_actionManager->actionContainer(Constants::Menus::View);
 
-    const QIcon layoutEditingIcon = QIcon(Constants::Icons::LayoutEditing);
+    const QIcon layoutEditingIcon = QIcon::fromTheme(Constants::Icons::LayoutEditing);
     m_layoutEditing               = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
     m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing);
     viewMenu->addAction(m_layoutEditing, Constants::Groups::Three);
@@ -51,9 +51,9 @@ ViewMenu::ViewMenu(Utils::ActionManager* actionManager, Widgets::EditableLayout*
     m_layoutEditing->setCheckable(true);
     m_layoutEditing->setChecked(m_settings->value<Settings::LayoutEditing>());
 
-    const QIcon quickSetupIcon = QIcon(Constants::Icons::QuickSetup);
+    const QIcon quickSetupIcon = QIcon::fromTheme(Constants::Icons::QuickSetup);
     m_openQuickSetup           = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
-    m_actionManager->registerAction(m_openQuickSetup, Constants::Actions::LayoutEditing);
+    m_actionManager->registerAction(m_openQuickSetup, Constants::Actions::QuickSetup);
     viewMenu->addAction(m_openQuickSetup, Constants::Groups::Three);
     connect(m_openQuickSetup, &QAction::triggered, m_editableLayout, &Widgets::EditableLayout::showQuickSetup);
 }

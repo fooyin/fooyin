@@ -31,6 +31,8 @@
 #include <QSysInfo>
 
 namespace Fy::Gui {
+constexpr int IconSize = 256;
+
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog{parent}
 {
@@ -48,8 +50,8 @@ AboutDialog::AboutDialog(QWidget* parent)
     buttonBox->addButton(closeButton, QDialogButtonBox::AcceptRole);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 
-    auto* logo = new QLabel();
-    logo->setPixmap({Constants::Icons::FooyinLarge});
+    auto* logo = new QLabel(this);
+    logo->setPixmap(QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
 
     layout->addWidget(logo, 0, 0);
     layout->addWidget(aboutLabel, 0, 1);
@@ -73,7 +75,9 @@ QString AboutDialog::copyright()
               "<br/>"
               "You should have received a copy of the GNU General Public License along with this program.  If not, see "
               "%5")
-        .arg(QLatin1String("2023"), QLatin1String("Luke Taylor"), QLatin1String(Core::Constants::DisplayName),
+        .arg(QLatin1String("2023"),
+             QLatin1String("Luke Taylor"),
+             QLatin1String(Core::Constants::DisplayName),
              QLatin1String("<a href=\"https://github.com/ludouzi/fooyin\">GitHub</a>."),
              QLatin1String("<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>."));
 }

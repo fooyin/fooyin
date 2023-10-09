@@ -20,14 +20,15 @@
 #include "mainwindow.h"
 
 #include "editablelayout.h"
-#include "guiconstants.h"
-#include "guisettings.h"
 #include "mainmenubar.h"
 
+#include <core/constants.h>
 #include <core/coresettings.h>
-
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QActionGroup>
@@ -52,21 +53,36 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
 MainWindow::~MainWindow()
 {
     m_settings->set<Settings::Geometry>(saveGeometry().toBase64());
+    m_settings->set<Settings::SettingsGeometry>(m_settings->settingsDialog()->geometry().toBase64());
+}
+
+void MainWindow::open()
+{
+    const int startup = m_settings->value<Settings::StartupBehaviour>();
+    switch(startup) {
+        case(Maximised):
+            showMaximized();
+            break;
+        case(RememberLast):
+            restoreGeometry(QByteArray::fromBase64(m_settings->value<Settings::Geometry>()));
+            show();
+            break;
+        case(Normal):
+        default:
+            show();
+            break;
+    }
 }
 
 void MainWindow::setupUi()
 {
-    if(objectName().isEmpty()) {
-        setObjectName(QString::fromUtf8("MainWindow"));
-    }
+    setWindowTitle(Core::Constants::AppName);
 
     resize(1280, 720);
-    setMinimumSize(410, 320);
-    setWindowIcon(QIcon(Constants::Icons::Fooyin));
+    setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
 
-    const QByteArray geometryArray = m_settings->value<Settings::Geometry>();
-    const QByteArray geometry      = QByteArray::fromBase64(geometryArray);
-    restoreGeometry(geometry);
+    const QByteArray settingsGeometry = QByteArray::fromBase64(m_settings->value<Settings::SettingsGeometry>());
+    m_settings->settingsDialog()->updateGeometry(settingsGeometry);
 
     setCentralWidget(m_editableLayout);
 

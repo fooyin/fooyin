@@ -21,30 +21,70 @@
 
 #include <utils/helpers.h>
 
-namespace Fy::Gui::Widgets {
-PlaylistItem::PlaylistItem(Type type, const ItemType& data, PlaylistItem* parent)
-    : TreeItem{parent}
-    , m_data{data}
-    , m_type{type}
+#include <utility>
+
+namespace Fy::Gui::Widgets::Playlist {
+PlaylistItem::PlaylistItem()
+    : PlaylistItem{Root, {}, nullptr}
 { }
 
-void PlaylistItem::setKey(const QString& key)
+PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
+    : TreeItem{parent}
+    , m_pending{true}
+    , m_type{type}
+    , m_data{std::move(data)}
+    , m_baseKey{"0"}
+    , m_key{"0"}
+    , m_indentation{0}
+{ }
+
+bool PlaylistItem::pending() const
 {
-    m_key = key;
+    return m_pending;
 }
 
-ItemType PlaylistItem::data() const
+PlaylistItem::ItemType PlaylistItem::type() const
+{
+    return m_type;
+}
+
+Data& PlaylistItem::data() const
 {
     return m_data;
 }
 
-PlaylistItem::Type PlaylistItem::type()
+QString PlaylistItem::baseKey() const
 {
-    return m_type;
+    return m_baseKey;
 }
 
 QString PlaylistItem::key() const
 {
     return m_key;
 }
-} // namespace Fy::Gui::Widgets
+
+int PlaylistItem::indentation() const
+{
+    return m_indentation;
+}
+
+void PlaylistItem::setPending(bool pending)
+{
+    m_pending = pending;
+}
+
+void PlaylistItem::setBaseKey(const QString& key)
+{
+    m_baseKey = key;
+}
+
+void PlaylistItem::setKey(const QString& key)
+{
+    m_key = key;
+}
+
+void PlaylistItem::setIndentation(int indentation)
+{
+    m_indentation = indentation;
+}
+} // namespace Fy::Gui::Widgets::Playlist

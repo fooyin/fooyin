@@ -19,15 +19,62 @@
 
 #pragma once
 
-#include <core/models/trackfwd.h>
+#include <core/track.h>
 
+#include <QApplication>
+#include <QColor>
+#include <QDataStream>
+#include <QFont>
 #include <QObject>
-
-#include <deque>
+#include <QPalette>
+#include <QDataStream>
 
 namespace Fy::Filters {
+struct FilterOptions
+{
+    bool fontChanged{false};
+    QFont font;
+
+    bool colourChanged{false};
+    QColor colour;
+
+    int rowHeight{25};
+
+    FilterOptions()
+        : colour{QApplication::palette().text().color()}
+    {
+    }
+
+    friend QDataStream& operator<<(QDataStream& stream, const FilterOptions& options)
+    {
+        stream << options.fontChanged;
+        stream << options.font;
+        stream << options.colourChanged;
+        stream << options.colour;
+        stream << options.rowHeight;
+        return stream;
+    }
+
+    friend QDataStream& operator>>(QDataStream& stream, FilterOptions& options)
+    {
+        stream >> options.fontChanged;
+        stream >> options.font;
+        if(!options.fontChanged) {
+            options.font = QFont{};
+        }
+        stream >> options.colourChanged;
+        stream >> options.colour;
+        if(!options.colourChanged) {
+            options.colour = QApplication::palette().text().color();
+        }
+        stream >> options.rowHeight;
+        return stream;
+    }
+};
+
 struct FilterField
 {
+    int id{-1};
     int index{-1};
     QString name;
     QString field;
@@ -35,13 +82,33 @@ struct FilterField
 
     bool operator==(const FilterField& other) const
     {
-        return std::tie(index, name, field, sortField)
-            == std::tie(other.index, other.name, other.field, other.sortField);
+        return std::tie(id, index, name, field, sortField)
+            == std::tie(other.id, other.index, other.name, other.field, other.sortField);
     }
 
     [[nodiscard]] bool isValid() const
     {
-        return !name.isEmpty() && !field.isEmpty();
+        return id >= 0 && !name.isEmpty() && !field.isEmpty();
+    }
+
+    friend QDataStream& operator<<(QDataStream& stream, const FilterField& field)
+    {
+        stream << field.id;
+        stream << field.index;
+        stream << field.name;
+        stream << field.field;
+        stream << field.sortField;
+        return stream;
+    }
+
+    friend QDataStream& operator>>(QDataStream& stream, FilterField& field)
+    {
+        stream >> field.id;
+        stream >> field.index;
+        stream >> field.name;
+        stream >> field.field;
+        stream >> field.sortField;
+        return stream;
     }
 };
 
@@ -52,6 +119,5 @@ struct LibraryFilter
     Core::TrackList tracks;
 };
 
-using IndexFieldMap = std::map<int, FilterField>;
-using FilterList    = std::deque<LibraryFilter>;
+using FilterList = std::vector<LibraryFilter>;
 } // namespace Fy::Filters

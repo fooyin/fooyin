@@ -17,13 +17,27 @@
  *
  */
 
-#include "scriptscanner.h"
+#include <core/scripting/scriptscanner.h>
 
 namespace Fy::Core::Scripting {
 bool isLiteral(QChar ch)
 {
-    return (ch != TokComma && ch != TokQuote && ch != TokLeftParen && ch != TokRightParen && ch != TokLeftSquare
-            && ch != TokFunc && ch != TokVar && ch != TokLeftAngle && ch != TokRightAngle && ch != TokEscape);
+    switch(ch.cell()) {
+        case(TokComma):
+        case(TokQuote):
+        case(TokLeftParen):
+        case(TokRightParen):
+        case(TokLeftSquare):
+        case(TokRightSquare):
+        case(TokFunc):
+        case(TokVar):
+        case(TokLeftAngle):
+        case(TokRightAngle):
+        case(TokEscape):
+            return false;
+        default:
+            return true;
+    }
 }
 
 void Scanner::setup(const QString& input)

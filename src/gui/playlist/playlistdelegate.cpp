@@ -20,81 +20,44 @@
 #include "playlistdelegate.h"
 
 #include "playlistitem.h"
-#include "playlistmodel.h"
 
 #include <QPainter>
 
-namespace Fy::Gui::Widgets {
-PlaylistDelegate::PlaylistDelegate(QObject* parent)
-    : QStyledItemDelegate(parent)
-{ }
-
-QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+namespace Fy::Gui::Widgets::Playlist {
+struct DrawTextResult
 {
-    const auto width = index.data(Qt::SizeHintRole).toSize().width();
-    auto height      = option.fontMetrics.height();
+    QRect bound;
+    int totalWidth{0};
+};
 
-    const auto type   = index.data(Playlist::Type).value<PlaylistItem::Type>();
-    const auto simple = index.data(Playlist::Mode).toBool();
+template <typename Range>
+DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect& rect, const Range& blocks,
+                              Qt::AlignmentFlag alignment)
+{
+    DrawTextResult result;
 
-    switch(type) {
-        case(PlaylistItem::Album): {
-            height += !simple ? 60 : 10;
-            break;
+    for(const auto& block : blocks) {
+        painter->setFont(block.font);
+        painter->setPen(block.colour);
+        result.bound = painter->boundingRect(rect, alignment | Qt::AlignVCenter | Qt::TextWrapAnywhere, block.text);
+        option.widget->style()->drawItemText(
+            painter, rect, alignment | Qt::AlignVCenter, option.palette, true,
+            painter->fontMetrics().elidedText(block.text, Qt::ElideRight, rect.width()));
+
+        if(alignment & Qt::AlignRight) {
+            rect.moveRight((rect.x() + rect.width()) - result.bound.width());
         }
-        case(PlaylistItem::Track): {
-            height += 7;
-            break;
+        else {
+            rect.setWidth(rect.width() - result.bound.width());
+            rect.moveLeft(rect.x() + result.bound.width());
         }
-        case(PlaylistItem::Container): {
-            height += 3;
-            break;
-        }
-        default: {
-        }
+        result.totalWidth += result.bound.width();
     }
-    return {width, height};
+
+    return result;
 }
 
-void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    painter->save();
-
-    QStyleOptionViewItem opt = option;
-    const auto type          = index.data(Playlist::Type).value<PlaylistItem::Type>();
-    const auto simple        = index.data(Playlist::Mode).toBool();
-    auto* item               = static_cast<PlaylistItem*>(index.internalPointer());
-    const auto container     = item->data();
-    Q_UNUSED(container)
-
-    initStyleOption(&opt, index);
-
-    QFont font = painter->font();
-    font.setBold(true);
-    font.setPixelSize(11);
-    painter->setFont(font);
-
-    switch(type) {
-        case(PlaylistItem::Album): {
-            simple ? paintSimpleAlbum(painter, option, index) : paintAlbum(painter, option, index);
-            break;
-        }
-        case(PlaylistItem::Track): {
-            paintTrack(painter, option, index);
-            break;
-        }
-        case(PlaylistItem::Container): {
-            paintDisc(painter, option, index);
-            break;
-        }
-        default: {
-            break;
-        }
-    }
-    painter->restore();
-}
-
-void PlaylistDelegate::paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option)
+void paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option)
 {
     const QColor selectColour = option.palette.highlight().color();
     const QColor hoverColour  = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
@@ -108,310 +71,250 @@ void PlaylistDelegate::paintSelectionBackground(QPainter* painter, const QStyleO
     }
 }
 
-void PlaylistDelegate::paintAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-    const int x      = option.rect.x();
-    const int y      = option.rect.y();
-    const int width  = option.rect.width();
-    const int height = option.rect.height();
-    const int right  = x + width;
+    const int x         = option.rect.x();
+    const int y         = option.rect.y();
+    const int width     = option.rect.width();
+    const int height    = option.rect.height();
+    const int right     = x + width;
+    const int semiWidth = width / 2;
+    const int offset    = 10;
 
     QPen linePen = painter->pen();
     linePen.setWidth(1);
-    QColor lineColour = option.palette.color(QPalette::BrightText);
+    QColor lineColour = option.palette.color(QPalette::Text);
     lineColour.setAlpha(40);
     linePen.setColor(lineColour);
 
-    const QString albumTitle    = index.data(Qt::DisplayRole).toString();
-    const QString albumArtist   = index.data(PlaylistItem::Role::Artist).toString();
-    const QString albumDate     = index.data(PlaylistItem::Role::Date).toString();
-    const QString albumDuration = index.data(PlaylistItem::Role::Duration).toString();
-    const auto albumCover       = index.data(PlaylistItem::Role::Cover).value<QPixmap>();
-
-    QFont artistFont = painter->font();
-    artistFont.setPixelSize(15);
-    QFont titleFont = painter->font();
-    titleFont.setPixelSize(14);
-    QFont yearFont = painter->font();
-    yearFont.setPixelSize(14);
-    QFont totalFont = painter->font();
-    totalFont.setPixelSize(10);
+    const auto title     = index.data(PlaylistItem::Role::Title).value<TextBlockList>();
+    const auto subtitle  = index.data(PlaylistItem::Role::Subtitle).value<TextBlockList>();
+    const auto side      = index.data(PlaylistItem::Role::Right).value<TextBlockList>();
+    const auto info      = index.data(PlaylistItem::Role::Info).value<TextBlockList>();
+    const auto showCover = index.data(PlaylistItem::Role::ShowCover).toBool();
+    const auto cover     = index.data(PlaylistItem::Role::Cover).value<QPixmap>();
 
     paintSelectionBackground(painter, option);
 
-    const auto coverFrameWidth  = 2;
-    const auto coverFrameOffset = coverFrameWidth / 2;
+    const int coverSize        = 58;
+    const int coverMargin      = 10;
+    const int coverFrameWidth  = 2;
+    const int coverFrameOffset = coverFrameWidth / 2;
 
-    const QRect coverRect{x + 10, y + 10, 58, height - 19};
-    const QRect coverFrameRect{coverRect.x() - coverFrameOffset,
-                               coverRect.y() - coverFrameOffset,
-                               coverRect.width() + coverFrameWidth,
-                               coverRect.height() + coverFrameWidth};
-    const QRect artistRect{coverFrameRect.right() + 10, y - 20, ((right - 80) - (x + 80)), height};
-    const QRect titleRect{coverFrameRect.right() + 10, y, ((right - 80) - (x + 80)), height};
-    const QRect subRect{coverFrameRect.right() + 10, y + 20, ((right - 80) - (x + 80)), height};
-    const QRect yearRect{right - 110, y, 100, height};
+    const int lineMargin = 8;
 
-    QPen coverPen     = painter->pen();
-    QColor coverColor = option.palette.color(QPalette::Shadow);
-    coverColor.setAlpha(65);
-    coverPen.setColor(coverColor);
-    coverPen.setWidth(coverFrameWidth);
+    const QRect coverRect{x + coverMargin, y + coverMargin, coverSize, height - 2 * coverMargin};
+    const auto coverFrameRect = showCover
+                                  ? QRect{coverRect.x() - coverFrameOffset, coverRect.y() - coverFrameOffset,
+                                          coverRect.width() + coverFrameWidth, coverRect.height() + coverFrameWidth}
+                                  : QRect{};
 
-    painter->drawPixmap(coverRect, albumCover);
+    const auto drawCover = [&painter, &option, &coverFrameRect, &coverRect, &cover]() {
+        QPen coverPen     = painter->pen();
+        QColor coverColor = option.palette.color(QPalette::Shadow);
+        coverColor.setAlpha(65);
+        coverPen.setColor(coverColor);
+        coverPen.setWidth(coverFrameWidth);
 
-    painter->setFont(artistFont);
-    option.widget->style()->drawItemText(
-        painter,
-        artistRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
-        painter->fontMetrics().elidedText(albumArtist, Qt::ElideRight, artistRect.width()));
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->drawRect(coverFrameRect);
+        painter->drawPixmap(coverRect, cover);
+    };
 
-    painter->setPen(option.palette.color(QPalette::Text));
-    painter->setFont(titleFont);
-    const QRect titleBound
-        = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumTitle);
-    option.widget->style()->drawItemText(
-        painter,
-        titleRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
-        painter->fontMetrics().elidedText(albumTitle, Qt::ElideRight, titleRect.width()));
+    QRect rightRect{(right - semiWidth), y, semiWidth - offset, height};
+    const auto [rightBound, totalRightWidth]
+        = drawTextBlocks(painter, option, rightRect, side | std::views::reverse, Qt::AlignRight);
 
-    painter->setFont(yearFont);
-    const QRect yearBound = painter->boundingRect(yearRect, Qt::AlignRight | Qt::AlignVCenter, albumDate);
-    if(width > 160) {
-        option.widget->style()->drawItemText(
-            painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, albumDate);
-    }
+    const int leftWidth = width - coverFrameRect.right() - totalRightWidth - (offset * 2) - 20;
+    QRect subtitleRect{coverFrameRect.right() + offset, y, leftWidth, height};
+    const auto [subtitleBound, _] = drawTextBlocks(painter, option, subtitleRect, subtitle, Qt::AlignLeft);
 
-    painter->setFont(totalFont);
-    option.widget->style()->drawItemText(
-        painter,
-        subRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
-        painter->fontMetrics().elidedText(albumDuration, Qt::ElideRight, subRect.width()));
+    QRect titleRect{coverFrameRect.right() + offset, y - 20, width - 2 * offset - coverFrameRect.right(), height};
+    drawTextBlocks(painter, option, titleRect, title, Qt::AlignLeft);
+
+    QRect infoRect{coverFrameRect.right() + offset, y + 20, width - 2 * offset - coverFrameRect.right(), height};
+    drawTextBlocks(painter, option, infoRect, info, Qt::AlignLeft);
 
     painter->setPen(linePen);
-    const QLineF yearLine((titleBound.x() + titleBound.width() + 10),
-                          (titleBound.y() + (titleBound.height() / 2)),
-                          (yearBound.x() - 10),
-                          (yearBound.y()) + (yearBound.height() / 2));
-    const QLineF headerLine(x + 77, (y + height) - 8, (right)-10, (y + height) - 8);
-    if(!albumTitle.isEmpty() && width > 160) {
-        painter->drawLine(yearLine);
+    const QLineF rightLine((subtitleBound.x() + subtitleBound.width() + offset),
+                           (subtitleBound.y() + (subtitleBound.height() / 2)), (rightBound.x() - offset),
+                           (rightBound.y()) + (rightBound.height() / 2));
+    const QLineF headerLine(x + coverSize + 2 * coverMargin, (y + height) - lineMargin, (x + width) - offset,
+                            (y + height) - lineMargin);
+    if(!subtitle.empty() && !side.empty() && width > 160) {
+        painter->drawLine(rightLine);
     }
     painter->drawLine(headerLine);
 
-    painter->setPen(coverPen);
-    painter->setRenderHint(QPainter::Antialiasing);
-    painter->drawRect(coverFrameRect);
+    if(showCover) {
+        drawCover();
+    }
 }
 
-void PlaylistDelegate::paintSimpleAlbum(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-    const int x      = option.rect.x();
-    const int y      = option.rect.y();
-    const int width  = option.rect.width();
-    const int height = option.rect.height();
-    const int right  = x + width;
+    const int x         = option.rect.x();
+    const int y         = option.rect.y();
+    const int width     = option.rect.width();
+    const int height    = option.rect.height();
+    const int right     = x + width;
+    const int semiWidth = width / 2;
+    const int offset    = 10;
 
     QPen linePen = painter->pen();
     linePen.setWidth(1);
-    QColor lineColour = option.palette.color(QPalette::BrightText);
+    QColor lineColour = option.palette.color(QPalette::Text);
     lineColour.setAlpha(40);
     linePen.setColor(lineColour);
 
-    const QString albumTitle  = index.data(Qt::DisplayRole).toString();
-    const QString albumArtist = index.data(PlaylistItem::Role::Artist).toString();
-    const QString albumYear   = index.data(PlaylistItem::Role::Date).toString();
-
-    QFont artistFont = painter->font();
-    artistFont.setPixelSize(15);
-    QFont titleFont = painter->font();
-    titleFont.setPixelSize(14);
-    QFont dateFont = painter->font();
-    dateFont.setPixelSize(14);
-    QFont totalFont = painter->font();
-    totalFont.setPixelSize(10);
+    const auto title = index.data(PlaylistItem::Role::Title).value<TextBlockList>();
+    const auto side  = index.data(PlaylistItem::Role::Right).value<TextBlockList>();
 
     paintSelectionBackground(painter, option);
 
-    artistFont.setPixelSize(13);
-    titleFont.setPixelSize(12);
-    dateFont.setPixelSize(12);
+    const int lineSpacing = 10;
 
-    const QRect artistRect{x + 10, y, ((right - 80) - (x + 80)), height};
-    const QRect yearRect{right - 60, y, 50, height};
+    QRect rightRect{(right - semiWidth), y, semiWidth - offset, height};
+    const auto [rightBound, totalRightWidth]
+        = drawTextBlocks(painter, option, rightRect, side | std::views::reverse, Qt::AlignRight);
 
-    const QString titleSpacing = !albumTitle.isEmpty() && !albumArtist.isEmpty() ? "  -  " : "";
-
-    painter->setFont(artistFont);
-    option.widget->style()->drawItemText(
-        painter,
-        artistRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
-        painter->fontMetrics().elidedText(albumArtist + titleSpacing, Qt::ElideRight, artistRect.width()));
-
-    const QRect artistBound = painter->boundingRect(
-        artistRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumArtist + titleSpacing);
-
-    const QRect titleRect = QRect(artistBound.right(), y, ((right - 80) - (x + 80)), height);
-
-    painter->setPen(option.palette.color(QPalette::Text));
-    painter->setFont(titleFont);
-    const QRect titleBound
-        = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, albumTitle);
-    option.widget->style()->drawItemText(
-        painter,
-        titleRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
-        painter->fontMetrics().elidedText(albumTitle, Qt::ElideRight, titleRect.width()));
-
-    painter->setFont(dateFont);
-    const QRect yearBound = painter->boundingRect(yearRect, Qt::AlignRight | Qt::AlignVCenter, albumYear);
-    option.widget->style()->drawItemText(
-        painter, yearRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, albumYear);
+    const int leftWidth = width - totalRightWidth - (offset * 2) - 20;
+    QRect titleRect{x + offset, y, leftWidth, height};
+    auto [titleBound, _] = drawTextBlocks(painter, option, titleRect, title, Qt::AlignLeft);
 
     painter->setPen(lineColour);
-    const QLineF yearLine((titleBound.x() + titleBound.width() + 10),
-                          (titleBound.y() + (titleBound.height() / 2)),
-                          (yearBound.x() - 10),
-                          (yearBound.y()) + (yearBound.height() / 2));
+    if(side.empty()) {
+        titleBound = {(right - 5), y, 5, height};
+    }
+    const QLineF rightLine((titleBound.x() + titleBound.width() + lineSpacing),
+                           (titleBound.y() + (titleBound.height() / 2)), (rightBound.x() - lineSpacing),
+                           (rightBound.y()) + (rightBound.height() / 2));
 
-    if(!albumTitle.isEmpty()) {
-        painter->drawLine(yearLine);
+    if(!title.empty()) {
+        painter->drawLine(rightLine);
     }
 }
 
-void PlaylistDelegate::paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-    const int x      = option.rect.x();
-    const int y      = option.rect.y();
-    const int width  = option.rect.width();
-    const int height = option.rect.height();
-    const int right  = x + width;
+    const int x         = option.rect.x();
+    const int y         = option.rect.y();
+    const int width     = option.rect.width();
+    const int height    = option.rect.height();
+    const int right     = x + width;
+    const int semiWidth = width / 2;
+    const int offset    = 10;
 
-    const auto background        = index.data(Qt::BackgroundRole).value<QPalette::ColorRole>();
-    const QString trackNumber    = index.data(PlaylistItem::Role::Number).toString();
-    const QString trackTitle     = index.data(Qt::DisplayRole).toString();
-    const QString trackArtists   = index.data(PlaylistItem::Role::Artist).toString();
-    const QString trackPlayCount = index.data(PlaylistItem::Role::PlayCount).toString();
-    const QString trackDuration  = index.data(PlaylistItem::Role::Duration).toString();
-    const bool multiDiscs        = index.data(PlaylistItem::Role::MultiDisk).toBool();
-    const bool isPlaying         = index.data(PlaylistItem::Role::Playing).toBool();
-    const auto pixmap            = index.data(Qt::DecorationRole).value<QPixmap>();
+    const auto title  = index.data(PlaylistItem::Role::Title).value<TextBlockList>();
+    const auto info   = index.data(PlaylistItem::Role::Subtitle).value<TextBlockList>();
+    const auto indent = index.data(PlaylistItem::Role::Indentation).toInt();
 
-    const QColor textColour{option.palette.text().color()};
-    QColor subTextColour{textColour};
-    subTextColour.setAlpha(90);
+    paintSelectionBackground(painter, option);
+
+    if(title.empty()) {
+        return;
+    }
+
+    QPen linePen = painter->pen();
+    linePen.setWidth(1);
+    QColor lineColour = option.palette.color(QPalette::Text);
+    lineColour.setAlpha(40);
+    linePen.setColor(lineColour);
+
+    QRect rightRect{(right - semiWidth), y, semiWidth - offset, height};
+    auto [rightBound, totalRightWidth]
+        = drawTextBlocks(painter, option, rightRect, info | std::views::reverse, Qt::AlignRight);
+
+    const int leftWidth = width - totalRightWidth - (offset * 2) - 20;
+    QRect titleRect{(x + offset + indent), y, leftWidth, height};
+    auto [titleBound, _] = drawTextBlocks(painter, option, titleRect, title, Qt::AlignLeft);
+
+    if(info.empty()) {
+        rightBound = {(right - 5), y, 5, height};
+    }
+    painter->setPen(linePen);
+    const QLineF titleLine((titleBound.x() + titleBound.width() + 5), (titleBound.y() + (titleBound.height() / 2)),
+                           (rightBound.x() - 5), (rightBound.y()) + (rightBound.height() / 2));
+    painter->drawLine(titleLine);
+}
+
+void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+{
+    const int x         = option.rect.x();
+    const int y         = option.rect.y();
+    const int width     = option.rect.width();
+    const int height    = option.rect.height();
+    const int right     = x + width;
+    const int semiWidth = width / 2;
+    const int offset    = 10;
+
+    const auto background = index.data(Qt::BackgroundRole).value<QPalette::ColorRole>();
+    const auto leftSide   = index.data(PlaylistItem::Role::Left).value<TextBlockList>();
+    const auto rightSide  = index.data(PlaylistItem::Role::Right).value<TextBlockList>();
+    const bool isPlaying  = index.data(PlaylistItem::Role::Playing).toBool();
+    const auto pixmap     = index.data(Qt::DecorationRole).value<QPixmap>();
+    int indent            = index.data(PlaylistItem::Role::Indentation).toInt();
+
     QColor playColour{option.palette.highlight().color()};
     playColour.setAlpha(45);
 
-    int offset = 0;
-
-    if(multiDiscs) {
-        offset += 20;
-    }
-
     if(isPlaying) {
-        offset += 30;
+        indent += 30;
     }
-
-    const QRect playRect{x + 10, y, 20, height};
-    QRect titleRect{(x + 45 + offset), y, ((right - 80) - (x + 45 + offset)), height};
-    const QRect numRect{(x + 10 + offset), y, 15, height};
-    const QRect countRect{(right - 110), y, 35, height};
-    const QRect durRect{(right - 60), y, 50, height};
-
-    const QRect titleBound
-        = painter->boundingRect(titleRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, trackTitle);
 
     painter->fillRect(option.rect, isPlaying ? playColour : option.palette.color(background));
     paintSelectionBackground(painter, option);
 
-    option.widget->style()->drawItemText(
-        painter, numRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true, trackNumber);
+    QRect rightRect{(right - semiWidth), y, semiWidth - offset, height};
+    auto [_, totalRightWidth]
+        = drawTextBlocks(painter, option, rightRect, rightSide | std::views::reverse, Qt::AlignRight);
 
-    option.widget->style()->drawItemText(
-        painter,
-        titleRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
-        painter->fontMetrics().elidedText(trackTitle, Qt::ElideRight, titleRect.width()));
-
-    titleRect.setWidth(titleRect.width() - titleBound.width());
-    titleRect.moveLeft(titleRect.x() + titleBound.width());
-
-    painter->setPen(subTextColour);
-
-    option.widget->style()->drawItemText(
-        painter,
-        titleRect,
-        Qt::AlignLeft | Qt::AlignVCenter,
-        option.palette,
-        true,
-        painter->fontMetrics().elidedText(trackArtists, Qt::ElideRight, titleRect.width()));
-
-    painter->setPen(textColour);
-
-    option.widget->style()->drawItemText(
-        painter, countRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, trackPlayCount);
-
-    option.widget->style()->drawItemText(
-        painter, durRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, trackDuration);
+    const int leftWidth = width - totalRightWidth - indent - (offset * 2) - 20;
+    QRect leftRect{(x + offset + indent), y, leftWidth, height};
+    drawTextBlocks(painter, option, leftRect, leftSide, Qt::AlignLeft);
 
     if(isPlaying) {
+        const QRect playRect{x + offset, y, 20, height};
         option.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
     }
 }
 
-void PlaylistDelegate::paintDisc(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+PlaylistDelegate::PlaylistDelegate(QObject* parent)
+    : QStyledItemDelegate(parent)
+{ }
+
+QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    const int x      = option.rect.x();
-    const int y      = option.rect.y();
-    const int width  = option.rect.width();
-    const int height = option.rect.height();
-    const int right  = x + width;
-
-    const QString discNumber   = index.data(Qt::DisplayRole).toString();
-    const QString discDuration = index.data(PlaylistItem::Role::Duration).toString();
-
-    paintSelectionBackground(painter, option);
-
-    const QRect discRect{x + 10, y, 50, height};
-    const QRect durationRect{right - 60, y, 50, height};
-
-    QColor lineColour = option.palette.color(QPalette::BrightText);
-    lineColour.setAlpha(50);
-
-    const QRect discBound
-        = painter->boundingRect(discRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWrapAnywhere, discNumber);
-    const QRect durationBound
-        = painter->boundingRect(durationRect, Qt::AlignRight | Qt::AlignVCenter | Qt::TextWrapAnywhere, discDuration);
-
-    painter->setPen(option.palette.color(QPalette::Text));
-    option.widget->style()->drawItemText(
-        painter, discRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true, discNumber);
-
-    option.widget->style()->drawItemText(
-        painter, durationRect, Qt::AlignRight | Qt::AlignVCenter, option.palette, true, discDuration);
-
-    painter->setPen(lineColour);
-    const QLineF discLine((discBound.x() + discBound.width() + 5),
-                          (discBound.y() + (discBound.height() / 2)),
-                          (durationBound.x() - 5),
-                          (durationBound.y()) + (durationBound.height() / 2));
-    painter->drawLine(discLine);
+    Q_UNUSED(option)
+    return index.data(Qt::SizeHintRole).toSize();
 }
-} // namespace Fy::Gui::Widgets
+
+void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    painter->save();
+
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    const auto type = index.data(PlaylistItem::Type).toInt();
+    switch(type) {
+        case(PlaylistItem::Header): {
+            const auto simple = index.data(PlaylistItem::Simple).toBool();
+            simple ? paintSimpleHeader(painter, option, index) : paintHeader(painter, option, index);
+            break;
+        }
+        case(PlaylistItem::Track): {
+            paintTrack(painter, option, index);
+            break;
+        }
+        case(PlaylistItem::Subheader): {
+            paintSubheader(painter, option, index);
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+    painter->restore();
+}
+} // namespace Fy::Gui::Widgets::Playlist

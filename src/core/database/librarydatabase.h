@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "core/models/trackfwd.h"
 #include "module.h"
+
+#include <core/track.h>
 
 namespace Fy::Core::DB {
 class LibraryDatabase : public Module
@@ -33,18 +34,14 @@ public:
     bool getAllTracks(TrackList& result);
     bool getAllTracks(TrackList& result, int start, int limit);
 
-    [[nodiscard]] QString fetchQueryTracks(const QString& join, const QString& offsetLimit);
-
-    bool dbFetchTracks(Query& q, TrackList& result);
+    [[nodiscard]] bool dbFetchTracks(Query& q, TrackList& result) const;
+    [[nodiscard]] int dbTrackCount() const;
 
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);
     bool deleteTracks(const TrackList& tracks);
 
 private:
-    Module* module();
-    [[nodiscard]] const Module* module() const;
-
     int insertTrack(const Track& track);
 
     QString m_connectionName;

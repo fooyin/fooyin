@@ -51,6 +51,7 @@ private:
     QTreeView* m_expressiontree;
     ScriptHighlighter m_highlighter;
     QTimer* m_errorTimer;
+    Core::Scripting::Registry m_registry;
     Core::Scripting::Parser m_parser;
 };
 } // namespace Fy::Sandbox

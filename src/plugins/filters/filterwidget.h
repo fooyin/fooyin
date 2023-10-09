@@ -19,13 +19,8 @@
 
 #pragma once
 
-#include "filterfwd.h"
-
+#include <core/track.h>
 #include <gui/fywidget.h>
-
-#include <QItemSelection>
-
-class QHBoxLayout;
 
 namespace Fy {
 namespace Utils {
@@ -33,59 +28,49 @@ class SettingsManager;
 }
 
 namespace Filters {
-class FilterManager;
-class FilterView;
-class FilterModel;
+struct LibraryFilter;
 
 class FilterWidget : public Gui::Widgets::FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit FilterWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit FilterWidget(Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void setupConnections();
 
-    void setField(const QString& name);
+    void changeFilter(const LibraryFilter& filter);
+    void reset(const Core::TrackList& tracks);
 
-    bool isHeaderEnabled();
-    void setHeaderEnabled(bool enabled);
-
-    bool isScrollbarEnabled();
     void setScrollbarEnabled(bool enabled);
-
-    bool hasAltColors();
-    void setAltColors(bool enabled);
-
-    [[nodiscard]] QString name() const override;
 
     void customHeaderMenuRequested(QPoint pos);
 
+    [[nodiscard]] QString name() const override;
     void saveLayout(QJsonArray& array) override;
-    void loadLayout(QJsonObject& object) override;
+    void loadLayout(const QJsonObject& object) override;
+
+    void tracksAdded(const Core::TrackList& tracks);
+    void tracksUpdated(const Core::TrackList& tracks);
+    void tracksRemoved(const Core::TrackList& tracks);
 
 signals:
-    void typeChanged(int index);
+    void doubleClicked(const QString& playlistName);
+    void middleClicked(const QString& playlistName);
+
+    void selectionChanged(const LibraryFilter& filter, const QString& playlistName);
+    void filterDeleted(const LibraryFilter& filter);
+    void requestFieldChange(const LibraryFilter& filter, const QString& field);
+    void requestHeaderMenu(const LibraryFilter& filter, QPoint pos);
+    void requestContextMenu(const LibraryFilter& filter, QPoint pos);
 
 protected:
-    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    void fieldChanged(const FilterField& field);
-    void editFilter(int index, const QString& name);
-    void changeOrder();
-    void resetByIndex(int idx);
-    void resetByType();
-
-    FilterManager* m_manager;
-    Utils::SettingsManager* m_settings;
-
-    QHBoxLayout* m_layout;
-    LibraryFilter* m_filter;
-    FilterView* m_view;
-    FilterModel* m_model;
-    Qt::SortOrder m_sortOrder;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Filters
 } // namespace Fy

@@ -19,9 +19,10 @@
 
 #pragma once
 
+#include <QTimer>
 #include <QTreeView>
 
-namespace Fy::Gui::Widgets {
+namespace Fy::Gui::Widgets::Playlist {
 class PlaylistView : public QTreeView
 {
     Q_OBJECT
@@ -31,9 +32,31 @@ public:
 
     void setupView();
 
+signals:
+    void playlistChanged();
+
 protected:
+    void dragMoveEvent(QDragMoveEvent* event) override;
+    void dropEvent(QDropEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void drawBranches(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
-    void contextMenuEvent(QContextMenuEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
+
+    [[nodiscard]] QAbstractItemView::DropIndicatorPosition position(const QPoint& pos, const QRect& rect,
+                                                                    const QModelIndex& index) const;
+    [[nodiscard]] bool isIndexDropEnabled(const QModelIndex& index) const;
+
+    [[nodiscard]] bool shouldAutoScroll(const QPoint& pos) const;
+    void startAutoScroll();
+    void stopAutoScroll();
+    void doAutoScroll();
+
+    bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
+
+private:
+    QRect dropIndicatorRect;
+    QAbstractItemView::DropIndicatorPosition dropIndicatorPos;
+    QTimer m_autoScrollTimer;
+    int m_autoScrollCount;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fy::Gui::Widgets::Playlist

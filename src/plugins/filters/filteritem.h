@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include <core/models/trackfwd.h>
+#include <core/track.h>
+#include <utils/treeitem.h>
 
 #include <QObject>
 
@@ -27,30 +28,31 @@ namespace Fy::Filters {
 enum FilterItemRole
 {
     Title   = Qt::UserRole + 1,
-    Tracks  = Qt::UserRole + 2,
-    Sorting = Qt::UserRole + 3,
+    Tracks,
+    Sorting,
+    AllNode
 };
 
 class FilterItem;
-using ItemChildren = std::vector<FilterItem*>;
 
-class FilterItem
+class FilterItem : public Utils::TreeItem<FilterItem>
 {
 public:
     FilterItem() = default;
-    explicit FilterItem(QString title, QString sortTitle = "", bool isAllNode = false);
+    explicit FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode = false);
 
-    [[nodiscard]] const ItemChildren& children() const;
-    [[nodiscard]] FilterItem* child(int index) const;
-    void appendChild(FilterItem* child);
-    [[nodiscard]] int childCount() const;
-
-    [[nodiscard]] QVariant data(int role) const;
+    [[nodiscard]] QString title() const;
+    [[nodiscard]] QString sortTitle() const;
+    [[nodiscard]] Core::TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
+
+    void setTitle(const QString& title);
+
     void addTrack(const Core::Track& track);
+    void addTracks(const Core::TrackList& tracks);
+    void removeTrack(const Core::Track& track);
 
     [[nodiscard]] bool isAllNode() const;
-    [[nodiscard]] bool hasSortTitle() const;
 
     void sortChildren(Qt::SortOrder order);
 
@@ -59,6 +61,5 @@ private:
     QString m_sortTitle;
     Core::TrackList m_tracks;
     bool m_isAllNode;
-    ItemChildren m_children;
 };
 } // namespace Fy::Filters

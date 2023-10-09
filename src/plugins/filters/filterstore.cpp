@@ -20,24 +20,43 @@
 #include "filterstore.h"
 
 namespace Fy::Filters {
-
 FilterList FilterStore::filters() const
 {
     return m_filters;
 }
 
-LibraryFilter* FilterStore::addFilter(const FilterField& field)
+LibraryFilter FilterStore::filterByIndex(int index) const
+{
+    const auto currentFilter = std::ranges::find_if(std::as_const(m_filters), [index](const LibraryFilter& filter) {
+        return filter.index == index;
+    });
+    if(currentFilter != m_filters.cend()) {
+        return *currentFilter;
+    }
+    return {};
+}
+
+LibraryFilter FilterStore::addFilter(const FilterField& field)
 {
     LibraryFilter& filter = m_filters.emplace_back();
     filter.field          = field;
     filter.index          = static_cast<int>(m_filters.size() - 1);
-    return &filter;
+    return filter;
+}
+
+void FilterStore::updateFilter(const LibraryFilter& filter)
+{
+    auto currentFilter = std::ranges::find_if(m_filters, [filter](LibraryFilter& libFilter) {
+        return libFilter.index == filter.index;
+    });
+    if(currentFilter != m_filters.end()) {
+        *currentFilter = filter;
+    }
 }
 
 void FilterStore::removeFilter(int index)
 {
-    m_filters.erase(std::remove_if(m_filters.begin(),
-                                   m_filters.end(),
+    m_filters.erase(std::remove_if(m_filters.begin(), m_filters.end(),
                                    [index](const LibraryFilter& filter) {
                                        return filter.index == index;
                                    }),
@@ -46,7 +65,7 @@ void FilterStore::removeFilter(int index)
 
 [[nodiscard]] bool FilterStore::hasActiveFilters() const
 {
-    return std::any_of(m_filters.cbegin(), m_filters.cend(), [](const LibraryFilter& filter) {
+    return std::ranges::any_of(std::as_const(m_filters), [](const LibraryFilter& filter) {
         return !filter.tracks.empty();
     });
 };
@@ -58,11 +77,10 @@ FilterList FilterStore::activeFilters() const
     });
 }
 
-void FilterStore::clearActiveFilters(int index, bool includeIndex)
+void FilterStore::clearActiveFilters(int index)
 {
-    const int fromIndex = includeIndex ? index - 1 : index;
     for(LibraryFilter& filter : m_filters) {
-        if(filter.index > fromIndex) {
+        if(filter.index > index) {
             filter.tracks.clear();
         }
     }

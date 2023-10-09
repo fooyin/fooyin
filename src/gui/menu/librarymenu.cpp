@@ -19,10 +19,8 @@
 
 #include "librarymenu.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/library/musiclibrary.h>
-
+#include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -41,8 +39,8 @@ LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::Mus
 {
     auto* libraryMenu = m_actionManager->actionContainer(Gui::Constants::Menus::Library);
 
-    const QIcon rescanIcon   = QIcon(Gui::Constants::Icons::RescanLibrary);
-    const QIcon settingsIcon = QIcon(Gui::Constants::Icons::Settings);
+    const auto rescanIcon   = QIcon::fromTheme(Gui::Constants::Icons::RescanLibrary);
+    const auto settingsIcon = QIcon::fromTheme(Gui::Constants::Icons::Settings);
 
     m_rescanLibrary = new QAction(rescanIcon, tr("&Rescan Library"), this);
     m_actionManager->registerAction(m_rescanLibrary, Gui::Constants::Actions::Rescan);

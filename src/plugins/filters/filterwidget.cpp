@@ -20,120 +20,182 @@
 #include "filterwidget.h"
 
 #include "filterdelegate.h"
+#include "filterfwd.h"
 #include "filteritem.h"
-#include "filtermanager.h"
 #include "filtermodel.h"
-#include "filtersettings.h"
 #include "filterview.h"
+#include "settings/filtersettings.h"
 
-#include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
-
 #include <utils/actions/actioncontainer.h>
 #include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QAction>
 #include <QActionGroup>
+#include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QMenu>
 
+#include <set>
+
 namespace Fy::Filters {
-FilterWidget::FilterWidget(FilterManager* manager, Utils::SettingsManager* settings, QWidget* parent)
+Core::TrackList fetchAllTracks(QTreeView* view)
+{
+    std::set<int> ids;
+    Core::TrackList tracks;
+
+    const int rowCount = view->model()->rowCount({});
+    for(int row = 0; row < rowCount; ++row) {
+        const QModelIndex index = view->model()->index(row, 0, {});
+        const auto indexTracks  = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
+        for(const Core::Track& track : indexTracks) {
+            const int id = track.id();
+            if(!ids.contains(id)) {
+                ids.emplace(id);
+                tracks.push_back(track);
+            }
+        }
+    }
+    return tracks;
+}
+
+struct FilterWidget::Private : QObject
+{
+    FilterWidget* widget;
+
+    Utils::SettingsManager* settings;
+
+    LibraryFilter filter;
+    FilterView* view;
+    FilterModel* model;
+
+    Private(FilterWidget* widget, Utils::SettingsManager* settings)
+        : widget{widget}
+        , settings{settings}
+        , view{new FilterView(widget)}
+        , model{new FilterModel(filter.field, widget)}
+    { }
+
+    [[nodiscard]] QString playlistNameFromSelection() const
+    {
+        QString title;
+        const QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
+        for(const auto& index : selectedIndexes) {
+            if(!title.isEmpty()) {
+                title.append(", ");
+            }
+            title.append(index.data().toString());
+        }
+        return title;
+    }
+
+    void selectionChanged()
+    {
+        filter.tracks.clear();
+
+        const QModelIndexList indexes = view->selectionModel()->selectedIndexes();
+        if(indexes.isEmpty()) {
+            return;
+        }
+
+        Core::TrackList tracks;
+        for(const auto& index : indexes) {
+            const bool isAllNode = index.data(FilterItemRole::AllNode).toBool();
+            if(isAllNode) {
+                tracks = fetchAllTracks(view);
+                break;
+            }
+            const auto newTracks = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
+            std::ranges::copy(newTracks, std::back_inserter(tracks));
+        }
+
+        filter.tracks = tracks;
+        emit widget->selectionChanged(filter, playlistNameFromSelection());
+    }
+
+    void changeOrder() const
+    {
+        const auto sortOrder = model->sortOrder();
+        if(sortOrder == Qt::AscendingOrder) {
+            model->setSortOrder(Qt::DescendingOrder);
+        }
+        else {
+            model->setSortOrder(Qt::AscendingOrder);
+        }
+    }
+
+    void updateAppearance(const QVariant& optionsVar) const
+    {
+        const auto options = optionsVar.value<FilterOptions>();
+        model->setAppearance(options);
+    }
+};
+
+FilterWidget::FilterWidget(Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , m_manager{manager}
-    , m_settings{settings}
-    , m_layout{new QHBoxLayout(this)}
-    , m_filter{m_manager->registerFilter("")}
-    , m_view{new FilterView(this)}
-    , m_model{new FilterModel(&m_filter->field, this)}
-    , m_sortOrder{Qt::AscendingOrder}
+    , p{std::make_unique<Private>(this, settings)}
 {
     setObjectName(FilterWidget::name());
 
-    m_layout->setContentsMargins(0, 0, 0, 0);
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
 
-    m_view->setModel(m_model);
-    m_view->setItemDelegate(new FilterDelegate(this));
+    p->view->setModel(p->model);
+    p->view->setItemDelegate(new FilterDelegate(this));
 
-    m_layout->addWidget(m_view);
+    layout->addWidget(p->view);
 
     setupConnections();
-    setHeaderEnabled(m_settings->value<Settings::FilterHeader>());
-    setScrollbarEnabled(m_settings->value<Settings::FilterScrollBar>());
-    setAltColors(m_settings->value<Settings::FilterAltColours>());
 
-    m_model->setRowHeight(m_settings->value<Settings::FilterRowHeight>());
-    m_model->setFontSize(m_settings->value<Settings::FilterFontSize>());
+    p->view->setHeaderHidden(!p->settings->value<Settings::FilterHeader>());
+    setScrollbarEnabled(p->settings->value<Settings::FilterScrollBar>());
+    p->view->setAlternatingRowColors(p->settings->value<Settings::FilterAltColours>());
 
-    resetByType();
+    p->updateAppearance(p->settings->value<Settings::FilterAppearance>());
 }
 
 FilterWidget::~FilterWidget()
 {
-    m_manager->unregisterFilter(m_filter->index);
+    emit filterDeleted(p->filter);
 }
 
 void FilterWidget::setupConnections()
 {
-    m_settings->subscribe<Settings::FilterAltColours>(this, &FilterWidget::setAltColors);
-    m_settings->subscribe<Settings::FilterHeader>(this, &FilterWidget::setHeaderEnabled);
-    m_settings->subscribe<Settings::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
-    m_settings->subscribe<Settings::FilterRowHeight>(m_model, &FilterModel::setRowHeight);
-    m_settings->subscribe<Settings::FilterFontSize>(m_model, &FilterModel::setFontSize);
-
-    connect(m_view->header(), &FilterView::customContextMenuRequested, this, &FilterWidget::customHeaderMenuRequested);
-    connect(m_view, &QTreeView::doubleClicked, this, []() {
-        //        m_library->prepareTracks();
+    p->settings->subscribe<Settings::FilterAltColours>(p->view, &QAbstractItemView::setAlternatingRowColors);
+    p->settings->subscribe<Settings::FilterHeader>(this, [this](bool enabled) {
+        p->view->setHeaderHidden(!enabled);
     });
-    connect(m_view->header(), &QHeaderView::sectionClicked, this, &FilterWidget::changeOrder);
-    connect(this, &FilterWidget::typeChanged, m_manager, &FilterManager::changeFilter);
-    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &FilterWidget::selectionChanged);
+    p->settings->subscribe<Settings::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
+    p->settings->subscribe<Settings::FilterAppearance>(p.get(), &FilterWidget::Private::updateAppearance);
 
-    connect(m_manager, &FilterManager::filteredItems, this, &FilterWidget::resetByIndex);
-    connect(m_manager, &FilterManager::filterChanged, this, &FilterWidget::editFilter);
-    connect(m_manager, &FilterManager::fieldChanged, this, &FilterWidget::fieldChanged);
+    connect(p->view->header(), &QHeaderView::sectionClicked, p.get(), &FilterWidget::Private::changeOrder);
+    connect(p->view->header(), &FilterView::customContextMenuRequested, this, &FilterWidget::customHeaderMenuRequested);
+    connect(p->view->selectionModel(), &QItemSelectionModel::selectionChanged, p.get(),
+            &FilterWidget::Private::selectionChanged);
+
+    QObject::connect(p->view, &FilterView::doubleClicked, this, [this]() {
+        emit doubleClicked(p->playlistNameFromSelection());
+    });
+    QObject::connect(p->view, &FilterView::middleClicked, this, [this]() {
+        emit middleClicked(p->playlistNameFromSelection());
+    });
 }
 
-void FilterWidget::setField(const QString& name)
+void FilterWidget::changeFilter(const LibraryFilter& filter)
 {
-    m_filter->field = m_manager->findField(name);
-    m_model->setField(&m_filter->field);
-    emit typeChanged(m_filter->index);
-    m_view->clearSelection();
-    m_view->scrollToTop();
+    p->filter = filter;
 }
 
-bool FilterWidget::isHeaderEnabled()
+void FilterWidget::reset(const Core::TrackList& tracks)
 {
-    return !m_view->isHeaderHidden();
-}
-
-void FilterWidget::setHeaderEnabled(bool enabled)
-{
-    m_view->setHeaderHidden(!enabled);
-}
-
-bool FilterWidget::isScrollbarEnabled()
-{
-    return m_view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff;
+    p->model->reset(p->filter.field, tracks);
 }
 
 void FilterWidget::setScrollbarEnabled(bool enabled)
 {
-    m_view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-}
-
-bool FilterWidget::hasAltColors()
-{
-    return m_view->alternatingRowColors();
-}
-
-void FilterWidget::setAltColors(bool enabled)
-{
-    m_view->setAlternatingRowColors(enabled);
+    p->view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 }
 
 QString FilterWidget::name() const
@@ -143,105 +205,45 @@ QString FilterWidget::name() const
 
 void FilterWidget::customHeaderMenuRequested(QPoint pos)
 {
-    if(!m_filter) {
-        return;
-    }
-    auto* menu = m_manager->filterHeaderMenu(m_filter->index, &m_filter->field);
-
-    if(!menu) {
-        return;
-    }
-
-    menu->popup(mapToGlobal(pos));
+    emit requestHeaderMenu(p->filter, mapToGlobal(pos));
 }
 
 void FilterWidget::saveLayout(QJsonArray& array)
 {
-    if(!m_filter) {
-        return;
-    }
     QJsonObject options;
-    options["Type"] = m_filter->field.name;
-    options["Sort"] = Utils::EnumHelper::toString(m_sortOrder);
+    options["Type"] = p->filter.field.name;
+    options["Sort"] = Utils::EnumHelper::toString(p->model->sortOrder());
 
     QJsonObject filter;
     filter[name()] = options;
     array.append(filter);
 }
 
-void FilterWidget::loadLayout(QJsonObject& object)
+void FilterWidget::loadLayout(const QJsonObject& object)
 {
-    m_sortOrder = Utils::EnumHelper::fromString<Qt::SortOrder>(object["Sort"].toString());
-    setField(object["Type"].toString());
+    if(auto order = Utils::EnumHelper::fromString<Qt::SortOrder>(object["Sort"].toString())) {
+        p->model->setSortOrder(order.value());
+    }
+    emit requestFieldChange(p->filter, object["Type"].toString());
 }
 
-void FilterWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void FilterWidget::tracksAdded(const Core::TrackList& tracks)
 {
-    Q_UNUSED(selected)
-    Q_UNUSED(deselected)
-
-    m_filter->tracks.clear();
-
-    const QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
-
-    if(indexes.isEmpty()) {
-        return;
-    }
-
-    if(!m_model) {
-        return;
-    }
-
-    Core::TrackList tracks;
-    for(const auto& index : indexes) {
-        if(index.isValid()) {
-            const auto newTracks = index.data(FilterItemRole::Tracks).value<Core::TrackList>();
-            tracks.insert(tracks.end(), newTracks.cbegin(), newTracks.cend());
-        }
-    }
-    m_filter->tracks = tracks;
-    m_manager->selectionChanged(m_filter->index);
+    p->model->addTracks(tracks);
 }
 
-void FilterWidget::fieldChanged(const FilterField& field)
+void FilterWidget::tracksUpdated(const Core::TrackList& tracks)
 {
-    if(m_filter->field.index == field.index) {
-        m_filter->field = field;
-        emit typeChanged(m_filter->index);
-        m_model->reload(m_manager->tracks());
-        m_model->sortFilter(m_sortOrder);
-    }
+    p->model->updateTracks(tracks);
 }
 
-void FilterWidget::editFilter(int index, const QString& name)
+void FilterWidget::tracksRemoved(const Core::TrackList& tracks)
 {
-    if(m_filter->index == index) {
-        setField(name);
-    }
+    p->model->removeTracks(tracks);
 }
 
-void FilterWidget::changeOrder()
+void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-    if(m_sortOrder == Qt::AscendingOrder) {
-        m_sortOrder = Qt::DescendingOrder;
-    }
-    else {
-        m_sortOrder = Qt::AscendingOrder;
-    }
-    m_model->sortFilter(m_sortOrder);
-}
-
-void FilterWidget::resetByIndex(int idx)
-{
-    if(idx < m_filter->index) {
-        m_model->reload(m_manager->tracks());
-        m_model->sortFilter(m_sortOrder);
-    }
-}
-
-void FilterWidget::resetByType()
-{
-    m_model->reload(m_manager->tracks());
-    m_model->sortFilter(m_sortOrder);
+    emit requestContextMenu(p->filter, mapToGlobal(event->pos()));
 }
 } // namespace Fy::Filters

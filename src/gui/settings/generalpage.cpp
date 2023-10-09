@@ -19,12 +19,16 @@
 
 #include "generalpage.h"
 
-#include "gui/guiconstants.h"
+#include "mainwindow.h"
 
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
-#include <QVBoxLayout>
+#include <QComboBox>
+#include <QGridLayout>
+#include <QLabel>
 
 namespace Fy::Gui::Settings {
 class GeneralPageWidget : public Utils::SettingsPageWidget
@@ -33,33 +37,65 @@ public:
     explicit GeneralPageWidget(Utils::SettingsManager* settings);
 
     void apply() override;
+    void reset() override;
 
 private:
     Utils::SettingsManager* m_settings;
 
-    QVBoxLayout* m_mainLayout;
+    QComboBox* m_startupBehaviour;
+    QCheckBox* m_waitForTracks;
 };
 
 GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
-    , m_mainLayout{new QVBoxLayout(this)}
+    , m_startupBehaviour{new QComboBox(this)}
+    , m_waitForTracks{new QCheckBox("Wait for tracks", this)}
 {
-    Q_UNUSED(m_settings)
+    auto* startupBehaviourLabel = new QLabel("Startup behaviour: ", this);
+
+    m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
+    m_waitForTracks->setChecked(m_settings->value<Settings::WaitForTracks>());
+
+    auto* mainLayout = new QGridLayout(this);
+    mainLayout->addWidget(startupBehaviourLabel, 0, 0);
+    mainLayout->addWidget(m_startupBehaviour, 0, 1);
+    mainLayout->addWidget(m_waitForTracks, 1, 0);
+    mainLayout->setColumnStretch(2, 1);
+    mainLayout->setRowStretch(2, 1);
+
+    auto addStartupBehaviour = [this](const QString& text, MainWindow::StartupBehaviour action) {
+        m_startupBehaviour->addItem(text, QVariant::fromValue(action));
+    };
+
+    addStartupBehaviour("Show main window", MainWindow::Normal);
+    addStartupBehaviour("Show main window maximised", MainWindow::Maximised);
+    addStartupBehaviour("Remember from last run", MainWindow::RememberLast);
+
+    const int currentBehaviour = m_settings->value<Settings::StartupBehaviour>();
+    m_startupBehaviour->setCurrentIndex(currentBehaviour);
 }
 
-void GeneralPageWidget::apply() { }
+void GeneralPageWidget::apply()
+{
+    m_settings->set<Settings::StartupBehaviour>(m_startupBehaviour->currentIndex());
+    m_settings->set<Settings::WaitForTracks>(m_waitForTracks->isChecked());
+}
+
+void GeneralPageWidget::reset()
+{
+    m_settings->reset<Settings::StartupBehaviour>();
+    m_settings->reset<Settings::WaitForTracks>();
+}
 
 GeneralPage::GeneralPage(Utils::SettingsManager* settings)
     : Utils::SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::GeneralCore);
     setName(tr("General"));
-    setCategory("Category.General");
-    setCategoryName(tr("General"));
+    setCategory({"General"});
     setWidgetCreator([settings] {
         return new GeneralPageWidget(settings);
     });
-    setCategoryIconPath(Constants::Icons::Category::General);
 }
 
 } // namespace Fy::Gui::Settings

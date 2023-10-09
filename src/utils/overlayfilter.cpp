@@ -17,23 +17,22 @@
  *
  */
 
-#include "overlayfilter.h"
+#include <utils/overlayfilter.h>
 
 #include <QPaintEvent>
 #include <QPainter>
 
 namespace Fy::Utils {
 OverlayFilter::OverlayFilter(QWidget* parent)
-    : QWidget(parent)
+    : QWidget{parent}
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setAttribute(Qt::WA_NoSystemBackground);
     hide();
 }
 
-void OverlayFilter::paintEvent(QPaintEvent* e)
+void OverlayFilter::paintEvent(QPaintEvent* /*event*/)
 {
-    Q_UNUSED(e)
     QPainter painter(this);
 
     QColor colour = palette().color(QPalette::Highlight);

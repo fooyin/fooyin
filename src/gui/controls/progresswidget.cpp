@@ -19,11 +19,9 @@
 
 #include "progresswidget.h"
 
-#include "gui/guisettings.h"
-
-#include <core/models/track.h>
 #include <core/player/playermanager.h>
-
+#include <core/track.h>
+#include <gui/guisettings.h>
 #include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/slider.h>
@@ -117,12 +115,12 @@ void ProgressWidget::reset()
 void ProgressWidget::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
-        case(Core::Player::Stopped):
+        case(Core::Player::PlayState::Stopped):
             reset();
             return setEnabled(false);
-        case(Core::Player::Playing):
+        case(Core::Player::PlayState::Playing):
             return setEnabled(true);
-        case(Core::Player::Paused):
+        case(Core::Player::PlayState::Paused):
             return;
     }
 }

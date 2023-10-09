@@ -35,10 +35,10 @@ int QuickSetupModel::rowCount(const QModelIndex& parent) const
 
 QVariant QuickSetupModel::data(const QModelIndex& index, int role) const
 {
-    Q_UNUSED(role)
-    if(!index.isValid() && !checkIndex(index)) {
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
+
     const auto layouts = m_layoutProvider->layouts();
     const auto& layout = layouts.at(index.row());
 

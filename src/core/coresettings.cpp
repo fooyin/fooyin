@@ -17,12 +17,11 @@
  *
  */
 
-#include "coresettings.h"
+#include <core/coresettings.h>
 
-#include "core/player/playermanager.h"
-#include "corepaths.h"
 #include "version.h"
 
+#include <core/corepaths.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -30,14 +29,15 @@ namespace Fy::Core::Settings {
 CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
-    m_settings->createSetting(Settings::Version, VERSION);
-    m_settings->createSetting(Settings::DatabaseVersion, DATABASE_VERSION);
-    m_settings->createTempSetting(Settings::FirstRun, true);
-    m_settings->createSetting(Settings::PlayMode, Player::PlayMode::Default, "Player");
-    m_settings->createSetting(Settings::AutoRefresh, false, "Library");
-    m_settings->createSetting(Settings::WaitForTracks, true, "Library");
-    m_settings->createSetting(Settings::SortScript, "%albumartist% - %album% - %disc% - %track% - %title%", "Library");
-    m_settings->createSetting(Settings::LastPlaylistId, 0, "Playlist");
+    m_settings->createSetting<Settings::Version>(VERSION);
+    m_settings->createSetting<Settings::DatabaseVersion>("0.1.0");
+    m_settings->createTempSetting<Settings::FirstRun>(true);
+    m_settings->createSetting<Settings::PlayMode>(0, "Player");
+    m_settings->createSetting<Settings::AutoRefresh>(false, "Library");
+    m_settings->createSetting<Settings::LibrarySorting>(QByteArray{}, "Library");
+    m_settings->createSetting<Settings::LibrarySortScript>(
+        "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", "Library");
+    m_settings->createSetting<Settings::ActivePlaylistId>(0, "Playlist");
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 

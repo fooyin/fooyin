@@ -17,11 +17,22 @@
  *
  */
 
-#include "playlist.h"
-
-#include <QMessageBox>
+#include <core/playlist/playlist.h>
 
 namespace Fy::Core::Playlist {
+int findTrack(const Track& trackTofind, const TrackList& tracks)
+{
+    auto it = std::ranges::find(std::as_const(tracks), trackTofind);
+    if(it != tracks.end()) {
+        return static_cast<int>(std::distance(tracks.cbegin(), it));
+    }
+    return -1;
+}
+
+Playlist::Playlist()
+    : Playlist{{}, -1, -1}
+{ }
+
 Playlist::Playlist(QString name, int index, int id)
     : m_id{id}
     , m_index{index}
@@ -29,6 +40,11 @@ Playlist::Playlist(QString name, int index, int id)
     , m_currentTrackIndex{-1}
     , m_modified{false}
 { }
+
+bool Playlist::isValid() const
+{
+    return m_id >= 0 && m_index >= 0 && !m_name.isEmpty();
+}
 
 int Playlist::id() const
 {
@@ -40,24 +56,19 @@ int Playlist::index() const
     return m_index;
 }
 
-void Playlist::setIndex(int index)
-{
-    m_index = index;
-}
-
 QString Playlist::name() const
 {
     return m_name;
 }
 
-void Playlist::setName(const QString& name)
-{
-    m_name = name;
-}
-
 TrackList Playlist::tracks() const
 {
     return m_tracks;
+}
+
+int Playlist::trackCount() const
+{
+    return static_cast<int>(m_tracks.size());
 }
 
 int Playlist::currentTrackIndex() const
@@ -79,6 +90,21 @@ bool Playlist::wasModified() const
     return m_modified;
 }
 
+void Playlist::setIndex(int index)
+{
+    m_index = index;
+}
+
+void Playlist::setName(const QString& name)
+{
+    m_name = name;
+}
+
+void Playlist::setModified(bool modified)
+{
+    m_modified = modified;
+}
+
 void Playlist::replaceTracks(const TrackList& tracks)
 {
     m_tracks   = tracks;
@@ -87,7 +113,7 @@ void Playlist::replaceTracks(const TrackList& tracks)
 
 void Playlist::appendTracks(const TrackList& tracks)
 {
-    m_tracks.insert(m_tracks.end(), tracks.begin(), tracks.end());
+    std::ranges::copy(tracks, std::back_inserter(m_tracks));
     m_modified = true;
 }
 
@@ -104,25 +130,9 @@ void Playlist::changeCurrentTrack(int index)
 
 void Playlist::changeCurrentTrack(const Track& track)
 {
-    const int index = findTrack(track);
+    const int index = findTrack(track, m_tracks);
     if(index >= 0) {
         m_currentTrackIndex = index;
     }
-}
-
-int Playlist::findTrack(const Track& track)
-{
-    auto it = std::find_if(m_tracks.cbegin(), m_tracks.cend(), [track](const Track& playlistTrack) {
-        return playlistTrack == track;
-    });
-    if(it != m_tracks.cend()) {
-        return static_cast<int>(std::distance(m_tracks.cbegin(), it));
-    }
-    return -1;
-}
-
-int Playlist::trackCount() const
-{
-    return static_cast<int>(m_tracks.size());
 }
 } // namespace Fy::Core::Playlist

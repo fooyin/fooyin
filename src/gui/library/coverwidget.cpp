@@ -20,8 +20,8 @@
 #include "coverwidget.h"
 
 #include <core/library/musiclibrary.h>
-#include <core/models/track.h>
 #include <core/player/playermanager.h>
+#include <core/track.h>
 
 #include <QHBoxLayout>
 #include <QLabel>
