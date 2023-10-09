@@ -22,7 +22,6 @@
 #include "fycore_export.h"
 
 #include <core/player/playermanager.h>
-#include <core/track.h>
 
 #include <QObject>
 
@@ -31,15 +30,24 @@ namespace Utils {
 class SettingsManager;
 }
 
-namespace Core::Player {
+namespace Core {
+class Track;
+
+namespace Player {
 class FYCORE_EXPORT PlayerController : public PlayerManager
 {
     Q_OBJECT
 
 public:
     explicit PlayerController(Utils::SettingsManager* settings, QObject* parent = nullptr);
+    ~PlayerController();
 
-protected:
+    [[nodiscard]] PlayState playState() const override;
+    [[nodiscard]] PlayMode playMode() const override;
+    [[nodiscard]] uint64_t currentPosition() const override;
+    [[nodiscard]] Track currentTrack() const override;
+    [[nodiscard]] double volume() const override;
+
     void reset() override;
     void play() override;
     void wakeUp() override;
@@ -56,24 +64,10 @@ protected:
     void volumeDown() override;
     void setVolume(double value) override;
 
-    [[nodiscard]] PlayState playState() const override;
-    [[nodiscard]] PlayMode playMode() const override;
-    [[nodiscard]] uint64_t currentPosition() const override;
-    [[nodiscard]] Track currentTrack() const override;
-    [[nodiscard]] double volume() const override;
-
 private:
-    void changePlayMode();
-
-    Utils::SettingsManager* m_settings;
-
-    Track m_currentTrack;
-    uint64_t m_totalDuration;
-    PlayState m_playStatus;
-    PlayMode m_playMode;
-    uint64_t m_position;
-    double m_volume;
-    bool m_counted;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Core::Player
+} // namespace Player
+} // namespace Core
 } // namespace Fy

@@ -56,19 +56,6 @@ public:
     [[nodiscard]] virtual Track currentTrack() const       = 0;
     [[nodiscard]] virtual double volume() const            = 0;
 
-signals:
-    void playStateChanged(Core::Player::PlayState);
-    void playModeChanged(Core::Player::PlayMode);
-    void nextTrack();
-    void wakeup();
-    void previousTrack();
-    void positionChanged(uint64_t ms);
-    void positionMoved(uint64_t ms);
-    void currentTrackChanged(const Core::Track& track);
-    void volumeChanged(double value);
-    void muteChanged(bool b);
-
-public:
     virtual void play()                                       = 0;
     virtual void wakeUp()                                     = 0;
     virtual void playPause()                                  = 0;
@@ -84,6 +71,18 @@ public:
     virtual void volumeUp()                                   = 0;
     virtual void volumeDown()                                 = 0;
     virtual void setVolume(double vol)                        = 0;
+
+signals:
+    void playStateChanged(Core::Player::PlayState);
+    void playModeChanged(Core::Player::PlayMode);
+    void nextTrack();
+    void wakeup();
+    void previousTrack();
+    void positionChanged(uint64_t ms);
+    void positionMoved(uint64_t ms);
+    void currentTrackChanged(const Core::Track& track);
+    void volumeChanged(double value);
+    void muteChanged(bool b);
 };
 } // namespace Player
 } // namespace Fy::Core
