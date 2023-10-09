@@ -19,39 +19,30 @@
 
 #pragma once
 
-#include <QObject>
-
-class QAction;
+#include <QDialog>
 
 namespace Fy {
-
 namespace Utils {
-class ActionManager;
 class SettingsManager;
-} // namespace Utils
+}
 
 namespace Gui {
 class TrackSelectionController;
 
-class ViewMenu : public QObject
+namespace Sandbox {
+class SandboxDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ViewMenu(Utils::ActionManager* actionManager, TrackSelectionController* trackSelection,
-                      Utils::SettingsManager* settings, QObject* parent = nullptr);
-
-signals:
-    void openQuickSetup();
+    explicit SandboxDialog(TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
+                           QWidget* parent = nullptr);
+    ~SandboxDialog();
 
 private:
-    Utils::ActionManager* m_actionManager;
-    TrackSelectionController* m_trackSelection;
-    Utils::SettingsManager* m_settings;
-
-    QAction* m_layoutEditing;
-    QAction* m_openQuickSetup;
-    QAction* m_showSandbox;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
+} // namespace Sandbox
 } // namespace Gui
 } // namespace Fy

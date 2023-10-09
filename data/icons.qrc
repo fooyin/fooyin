@@ -51,5 +51,13 @@
         <file>icons/dark/scalable/actions/list-remove.svg</file>
         <file>icons/light/scalable/actions/format-text-bold.svg</file>
         <file>icons/light/scalable/actions/list-remove.svg</file>
+        <file>icons/light/scalable/actions/script-variable.svg</file>
+        <file>icons/light/scalable/actions/script-literal.svg</file>
+        <file>icons/light/scalable/actions/script-function.svg</file>
+        <file>icons/light/scalable/actions/script-expression.svg</file>
+        <file>icons/dark/scalable/actions/script-expression.svg</file>
+        <file>icons/dark/scalable/actions/script-function.svg</file>
+        <file>icons/dark/scalable/actions/script-literal.svg</file>
+        <file>icons/dark/scalable/actions/script-variable.svg</file>
     </qresource>
 </RCC>

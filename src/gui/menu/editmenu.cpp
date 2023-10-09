@@ -19,6 +19,11 @@
 
 #include "editmenu.h"
 
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
+
+#include <QAction>
+
 namespace Fy::Gui {
 EditMenu::EditMenu(Utils::ActionManager* actionManager, QObject* parent)
     : QObject{parent}
