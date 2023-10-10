@@ -52,18 +52,11 @@ jobs:
           wget
           yasm
           zlib1g-dev
-      - name: Checkout FFmpeg
-        uses: actions/checkout@v3
-        with:
-          repository: FFmpeg/FFmpeg
-          path: ffmpeg
-      - name: Build FFmpeg
+      - name: Download and extract FFmpeg
         run: |
-          mkdir build
-          cd build
-          ../ffmpeg/configure --enable-gpl
-          make -j$(nproc)
-          sudo make install
+          wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl-shared.tar.xz -O ffmpeg.tar.xz
+          tar -xf ffmpeg.tar.xz
+          mv ffmpeg-master-latest-linux64-lgpl-shared/* /usr/local
       - name: Checkout TagLib
         uses: actions/checkout@v3
         with:
