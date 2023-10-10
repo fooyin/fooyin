@@ -34,7 +34,7 @@ jobs:
           libavdevice-dev
           libavfilter-dev
           libswscale-dev
-          libavresample-dev
+          libswresample-dev
       - name: Checkout TagLib
         uses: actions/checkout@v3
         with:
