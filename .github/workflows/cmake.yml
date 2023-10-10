@@ -24,21 +24,41 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: >
           sudo apt install -y
+          autoconf
+          automake
           build-essential
-          nasm
-          pkg-config
-          libcppunit-dev
-          libmpv-dev
-          libgtest-dev
+          cmake
+          git-core
           libasound2-dev
+          libass-dev
+          libcppunit-dev
+          libfreetype6-dev
+          libgnutls28-dev
+          libgtest-dev
+          libmp3lame-dev
           libsdl2-dev
+          libtool
+          libva-dev
+          libvdpau-dev
+          libvorbis-dev
+          libxcb1-dev
+          libxcb-shm0-dev
+          libxcb-xfixes0-dev
+          meson
+          nasm
+          ninja-build
+          pkg-config
+          texinfo
+          wget
+          yasm
+          zlib1g-dev
       - name: Checkout FFmpeg
         uses: actions/checkout@v3
         with:
           repository: FFmpeg/FFmpeg
           path: ffmpeg
       - name: Configure FFmpeg
-        run:  ffmpeg/configure --enable-shared --disable-static --enable-gpl --enable-libx264 --enable-libx265
+        run:  ffmpeg/configure --enable-shared --disable-static --enable-gpl
       - name: Build FFmpeg
         run: make -C ffmpeg -j$(nproc)
       - name: Install FFmpeg
