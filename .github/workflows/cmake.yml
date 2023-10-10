@@ -28,7 +28,13 @@ jobs:
           libmpv-dev
           libgtest-dev
           libasound2-dev
-          ffmpeg
+          libavcodec-dev
+          libavformat-dev
+          libavutil-dev
+          libavdevice-dev
+          libavfilter-dev
+          libswscale-dev
+          libswsresample-dev
       - name: Checkout TagLib
         uses: actions/checkout@v3
         with:
