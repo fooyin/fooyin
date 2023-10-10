@@ -38,7 +38,7 @@ jobs:
           repository: FFmpeg/FFmpeg
           path: ffmpeg
       - name: Configure FFmpeg
-        run:  ffmpeg/configure --enable-shared --disable-static --enable-gpl --enable-libx264 --enable-libx265 --enable-libfdk-aac
+        run:  ffmpeg/configure --enable-shared --disable-static --enable-gpl --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-nonfree
       - name: Build FFmpeg
         run: make -C ffmpeg -j$(nproc)
       - name: Install FFmpeg
