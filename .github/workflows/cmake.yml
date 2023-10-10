@@ -24,34 +24,13 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: >
           sudo apt install -y
-          autoconf
-          automake
           build-essential
-          cmake
-          git-core
           libasound2-dev
-          libass-dev
           libcppunit-dev
-          libfreetype6-dev
-          libgnutls28-dev
           libgtest-dev
-          libmp3lame-dev
           libsdl2-dev
-          libtool
-          libva-dev
-          libvdpau-dev
-          libvorbis-dev
-          libxcb1-dev
-          libxcb-shm0-dev
-          libxcb-xfixes0-dev
-          meson
-          nasm
-          ninja-build
           pkg-config
-          texinfo
           wget
-          yasm
-          zlib1g-dev
       - name: Download and extract FFmpeg
         run: |
           wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl-shared.tar.xz -O ffmpeg.tar.xz
