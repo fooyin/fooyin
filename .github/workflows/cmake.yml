@@ -56,7 +56,7 @@ jobs:
         run: |
           wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl-shared.tar.xz -O ffmpeg.tar.xz
           tar -xf ffmpeg.tar.xz
-          sudo cp ffmpeg-master-latest-linux64-lgpl-shared/* /usr/local
+          sudo cp -r ffmpeg-master-latest-linux64-lgpl-shared/* /usr/local
       - name: Checkout TagLib
         uses: actions/checkout@v3
         with:
