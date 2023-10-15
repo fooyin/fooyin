@@ -56,12 +56,14 @@ find_package(
                Gui
                Sql
                Concurrent
+               Network
 )
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Concurrent PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Network PROPERTIES TYPE REQUIRED)
 
 find_package(QCoro6 REQUIRED COMPONENTS Core)
 qcoro_enable_coroutines()
@@ -69,8 +71,8 @@ qcoro_enable_coroutines()
 find_package(Taglib REQUIRED taglib>=1.12)
 
 find_package(ALSA REQUIRED)
-find_package(SDL2 QUIET)
-find_package(PipeWire QUIET)
+find_package(SDL2)
+find_package(PipeWire)
 
 find_package(
     FFmpeg REQUIRED
@@ -82,6 +84,18 @@ find_package(
                SWSCALE
                SWRESAMPLE
 )
+
+find_package(KDSingleApplication-qt6 QUIET)
+if(TARGET KDAB::kdsingleapplication)
+    set(KDSINGLEAPPLICATION_LIBRARIES KDAB::kdsingleapplication)
+else()
+    add_subdirectory(3rdparty/kdsingleapplication)
+    set(KDSINGLEAPPLICATION_INCLUDE_DIRS
+        ${CMAKE_SOURCE_DIR}/3rdparty/kdsingleapplication
+    )
+    set(KDSINGLEAPPLICATION_LIBRARIES kdsingleapplication)
+    add_definitions(-DKDSINGLEAPPLICATION_STATIC_BUILD)
+endif()
 
 # ---- Fooyin library ----
 
@@ -95,7 +109,7 @@ configure_file(src/app/config.h.in app/config.h @ONLY)
 add_library(fooyin_config OBJECT)
 target_include_directories(fooyin_config PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>)
 
-add_library(fooyin_lib OBJECT src/app/singleinstance.cpp)
+add_library(fooyin_lib OBJECT)
 
 target_include_directories(
     fooyin_lib PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
@@ -149,7 +163,7 @@ target_compile_options(
             -Wpedantic
 )
 
-target_link_libraries(fooyin_exe PRIVATE fooyin_version fooyin_lib)
+target_link_libraries(fooyin_exe PRIVATE KDAB::kdsingleapplication fooyin_version fooyin_lib)
 
 # ---- Fooyin data ----
 
