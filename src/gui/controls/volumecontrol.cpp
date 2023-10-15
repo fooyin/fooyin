@@ -63,6 +63,7 @@ struct VolumeControl::Private : QObject
         volumeSlider->setNaturalValue(settings->value<Core::Settings::OutputVolume>());
 
         connect(volumeSlider, &Utils::LogSlider::logValueChanged, this, &VolumeControl::Private::volumeChanged);
+        settings->subscribe<Core::Settings::OutputVolume>(volumeSlider, &Utils::LogSlider::setNaturalValue);
 
         const int menuWidth  = volumeMenu->sizeHint().width();
         const int menuHeight = volumeMenu->sizeHint().height();
