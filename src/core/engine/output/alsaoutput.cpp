@@ -126,12 +126,6 @@ struct AlsaOutput::Private
         dir = 0;
     }
 
-    bool handleInitError()
-    {
-        reset();
-        return false;
-    }
-
     bool recoverState(OutputState* state = nullptr)
     {
         if(!pcmHandle) {
@@ -251,10 +245,15 @@ bool AlsaOutput::init(const OutputContext& oc)
     snd_pcm_hw_params_t* hwParams;
     snd_pcm_hw_params_alloca(&hwParams);
 
+    const auto handleInitError = [this]() {
+        p->reset();
+        return !p->pcmHandle;
+    };
+
     err = snd_pcm_hw_params_any(handle, hwParams);
     if(err < 0) {
         qDebug() << "Failed to initialize ALSA hardware parameters: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     p->pausable = snd_pcm_hw_params_can_pause(hwParams);
@@ -262,24 +261,24 @@ bool AlsaOutput::init(const OutputContext& oc)
     err = snd_pcm_hw_params_set_access(handle, hwParams, SND_PCM_ACCESS_RW_INTERLEAVED);
     if(err < 0) {
         qDebug() << "Failed to set ALSA access mode: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     snd_pcm_format_t format = findAlsaFormat(oc.format);
     if(format < 0) {
         qWarning() << "Format not supported by ALSA";
-        return p->handleInitError();
+        return handleInitError();
     }
 
     // TODO: Handle resampling
     if(!formatSupported(format, hwParams)) {
-        return p->handleInitError();
+        return handleInitError();
     }
 
     err = snd_pcm_hw_params_set_format(handle, hwParams, format);
     if(err < 0) {
         qDebug() << "Failed to set ALSA audio format: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     uint32_t sampleRate = oc.sampleRate;
@@ -287,7 +286,7 @@ bool AlsaOutput::init(const OutputContext& oc)
     err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &sampleRate, &p->dir);
     if(err < 0) {
         qDebug() << "Failed to set ALSA sample rate: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     uint32_t channelCount = oc.channelLayout.nb_channels;
@@ -295,37 +294,37 @@ bool AlsaOutput::init(const OutputContext& oc)
     err = snd_pcm_hw_params_set_channels_near(handle, hwParams, &channelCount);
     if(err < 0) {
         qDebug() << "Failed to set ALSA channel count: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     err = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &p->bufferTime, nullptr);
     if(err < 0) {
         qDebug() << "Failed to set ALSA buffer time: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     err = snd_pcm_hw_params_set_periods_near(handle, hwParams, &p->periods, nullptr);
     if(err < 0) {
         qDebug() << "Failed to set ALSA periods: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     err = snd_pcm_hw_params(handle, hwParams);
     if(err < 0) {
         qDebug() << "Failed to apply ALSA hardware parameters: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     err = snd_pcm_hw_params_get_buffer_size(hwParams, &p->bufferSize);
     if(err < 0) {
         qDebug() << "Unable to get buffer size: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     err = snd_pcm_hw_params_get_period_size(hwParams, &p->periodSize, nullptr);
     if(err < 0) {
         qDebug() << "Unable to get period size: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     snd_pcm_sw_params_t* swParams;
@@ -334,39 +333,39 @@ bool AlsaOutput::init(const OutputContext& oc)
     err = snd_pcm_sw_params_current(handle, swParams);
     if(err < 0) {
         qDebug() << "Unable to get sw-parameters: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     snd_pcm_uframes_t boundary;
     err = snd_pcm_sw_params_get_boundary(swParams, &boundary);
     if(err < 0) {
         qDebug() << "Unable to get boundary: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     // Play silence when underrun
     err = snd_pcm_sw_params_set_silence_size(handle, swParams, boundary);
     if(err < 0) {
         qDebug() << "Unable to set silence size: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     err = snd_pcm_sw_params_set_start_threshold(handle, swParams, INT_MAX);
     if(err < 0) {
         qDebug() << "Unable to set start threshold: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     err = snd_pcm_sw_params(handle, swParams);
     if(err < 0) {
         qDebug() << "Failed to apply ALSA soctware parameters: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     err = snd_pcm_prepare(p->pcmHandle.get());
     if(err < 0) {
         qDebug() << "Alsa prepare error: " << snd_strerror(err);
-        return p->handleInitError();
+        return handleInitError();
     }
 
     p->initialised = true;

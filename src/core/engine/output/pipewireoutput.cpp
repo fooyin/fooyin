@@ -156,7 +156,7 @@ struct PipewireContext
 
 void onError(void* /*data*/, uint32_t /*id*/, int /*seq*/, int res, const char* message)
 {
-    qWarning() << QString{"Error during playback: %1, %2"}.arg(spa_strerror(res), message);
+    qWarning() << QString{"PW: Error during playback: %1, %2"}.arg(spa_strerror(res), message);
 }
 
 void onCoreDone(void* data, uint32_t id, int seq)
@@ -227,12 +227,12 @@ void onParamChanged(void* userdata, uint32_t id, const struct spa_pod* param)
         SPA_POD_Int(pc->outputContext.sstride)));
 
     if(!params[0]) {
-        qWarning() << "Could not build parameter pod";
+        qWarning() << "PW: Could not build parameter pod";
         return;
     }
 
     if(pw_stream_update_params(pc->stream.get(), params, 1) < 0) {
-        qWarning() << "Could not update stream parameters";
+        qWarning() << "PW: Could not update stream parameters";
         return;
     }
 }
@@ -270,7 +270,7 @@ void onProcess(void* userData)
         frameCount = std::min(b->requested, frameCount);
     }
 
-    const int samples = pc->outputContext.writeAudioToBuffer((uint8_t*)buf->datas[0].data, frameCount);
+    const int samples = pc->outputContext.writeAudioToBuffer(std::bit_cast<uint8_t*>(buf->datas[0].data), frameCount);
 
     b->size                     = samples;
     buf->datas[0].chunk->size   = samples * sstride;
@@ -325,38 +325,38 @@ struct PipeWireOutput::Private
     {
         pc.loop = PwThreadLoopUPtr{pw_thread_loop_new("fooyin/audioouput/pipewire", nullptr)};
         if(!pc.loop) {
-            qWarning() << "Could not create main loop";
+            qWarning() << "PW: Could not create main loop";
             return false;
         }
 
         context = PwContextUPtr{pw_context_new(pw_thread_loop_get_loop(pc.loop.get()),
                                                pw_properties_new(PW_KEY_CONFIG_NAME, "client-rt.conf", nullptr), 0)};
         if(!context) {
-            qWarning() << "Could not create context";
+            qWarning() << "PW: Could not create context";
             return false;
         }
 
         pc.core
             = PwCoreUPtr{pw_context_connect(context.get(), pw_properties_new(PW_KEY_REMOTE_NAME, remote, nullptr), 0)};
         if(!pc.core) {
-            qWarning() << "Could not connect to context";
+            qWarning() << "PW: Could not connect to context";
             return false;
         }
 
         static const pw_core_events coreEvents = {
             .version = PW_VERSION_CORE_EVENTS,
-            .done  = onCoreDone,
-            .error = onError,
+            .done    = onCoreDone,
+            .error   = onError,
         };
 
         if(pw_core_add_listener(pc.core.get(), &pc.coreListener, &coreEvents, &pc) < 0) {
-            qWarning() << "Could not add core listener";
+            qWarning() << "PW: Could not add core listener";
             return false;
         }
 
         pc.registry = PwRegistryUPtr{pw_core_get_registry(pc.core.get(), PW_VERSION_REGISTRY, 0)};
         if(!pc.registry) {
-            qWarning() << "Could not retrieve registry";
+            qWarning() << "PW: Could not retrieve registry";
             return false;
         }
 
@@ -366,12 +366,12 @@ struct PipeWireOutput::Private
         };
 
         if(pw_registry_add_listener(pc.registry.get(), &pc.registryListener, &registryEvents, &pc) < 0) {
-            qWarning() << "Could not add registry listener";
+            qWarning() << "PW: Could not add registry listener";
             return false;
         }
 
         if(pw_thread_loop_start(pc.loop.get()) != 0) {
-            qWarning() << "Could not start thread loop";
+            qWarning() << "PW: Could not start thread loop";
             return false;
         }
 
@@ -384,7 +384,7 @@ struct PipeWireOutput::Private
         pw_thread_loop_unlock(pc.loop.get());
 
         if(!pc.initialised) {
-            qWarning() << "Could not initialise loop";
+            qWarning() << "PW: Could not initialise loop";
             return false;
         }
 
@@ -404,7 +404,7 @@ struct PipeWireOutput::Private
 
         auto properties = PwPropertiesUPtr{pw_properties_new(PW_KEY_MEDIA_TYPE, "Audio", nullptr)};
         if(!properties) {
-            qWarning() << "Could not create properties";
+            qWarning() << "PW: Could not create properties";
             pw_thread_loop_unlock(pc.loop.get());
             return false;
         }
@@ -425,7 +425,7 @@ struct PipeWireOutput::Private
         // Stream takes ownership of properties
         pc.stream = PwStreamUPtr{pw_stream_new(pc.core.get(), "audio-src", properties.release())};
         if(!pc.stream) {
-            qWarning() << "Could not create stream";
+            qWarning() << "PW: Could not create stream";
             pw_thread_loop_unlock(pc.loop.get());
             return false;
         }
@@ -434,7 +434,7 @@ struct PipeWireOutput::Private
 
         spa_audio_format spaFormat = findSpaFormat(pc.outputContext.format);
         if(spaFormat == SPA_AUDIO_FORMAT_UNKNOWN) {
-            qWarning() << "Unknown audio format";
+            qWarning() << "PW: Unknown audio format";
             pw_thread_loop_unlock(pc.loop.get());
             return false;
         }
@@ -583,8 +583,19 @@ void PipeWireOutput::setVolume(double volume)
     pw_thread_loop_lock(p->pc.loop.get());
 
     float vol = volume;
-    if(pw_stream_set_control(p->pc.stream.get(), SPA_PROP_volume, 1, &vol, 0) < 0) {
-        qDebug() << "Could not set volume";
+
+    if(p->muted || vol == 0.0) {
+        float mute = p->muted ? 0.0F : 1.0F;
+        p->muted   = !p->muted;
+        if(pw_stream_set_control(p->pc.stream.get(), SPA_PROP_mute, 1, &mute, 0) < 0) {
+            qDebug() << "PW: Could not mute";
+        }
+    }
+
+    if(vol > 0.0) {
+        if(pw_stream_set_control(p->pc.stream.get(), SPA_PROP_volume, 1, &vol, 0) < 0) {
+            qDebug() << "PW: Could not set volume";
+        }
     }
 
     pw_thread_loop_unlock(p->pc.loop.get());
