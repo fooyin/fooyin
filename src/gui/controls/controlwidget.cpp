@@ -41,7 +41,7 @@ ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Utils::
     , m_layout{new QHBoxLayout(this)}
     , m_playerControls{new PlayerControl(m_playerManager, this)}
     , m_playlistControls{new PlaylistControl(m_playerManager, this)}
-    , m_volumeControls{new VolumeControl(m_playerManager, this)}
+    , m_volumeControls{new VolumeControl(m_settings, this)}
     , m_progress{new ProgressWidget(m_playerManager, m_settings, this)}
 {
     setObjectName("Control Bar");

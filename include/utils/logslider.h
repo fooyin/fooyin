@@ -19,25 +19,26 @@
 
 #pragma once
 
-#include <QWidget>
+#include "fyutils_export.h"
 
-namespace Fy {
-namespace Utils {
-class SettingsManager;
-} // namespace Utils
+#include <utils/slider.h>
 
-namespace Gui::Widgets {
-class VolumeControl : public QWidget
+namespace Fy::Utils {
+class FYUTILS_EXPORT LogSlider : public Slider
 {
     Q_OBJECT
 
 public:
-    explicit VolumeControl(Utils::SettingsManager* settings, QWidget* parent = nullptr);
-    ~VolumeControl() override;
+    explicit LogSlider(Qt::Orientation type, QWidget* parent = nullptr);
+
+    void setRange(double min, double max);
+    void setScale(double scale);
+    void setNaturalValue(double value);
+
+signals:
+    void logValueChanged(double value);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    double m_scale;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fy::Utils

@@ -19,112 +19,133 @@
 
 #include "volumecontrol.h"
 
+#include <core/coresettings.h>
 #include <core/player/playermanager.h>
 #include <gui/guiconstants.h>
 #include <utils/comboicon.h>
 #include <utils/hovermenu.h>
-#include <utils/slider.h>
+#include <utils/logslider.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
+#include <QLabel>
+
+constexpr double MinVolume = 0.01;
+constexpr QSize LabelSize  = {20, 20};
 
 namespace Fy::Gui::Widgets {
-VolumeControl::VolumeControl(Core::Player::PlayerManager* playerManager, QWidget* parent)
+struct VolumeControl::Private : QObject
+{
+    VolumeControl* self;
+    Utils::SettingsManager* settings;
+    Utils::ComboIcon* volumeIcon;
+    double prevValue{-1.0};
+
+    Private(VolumeControl* self, Utils::SettingsManager* settings)
+        : self{self}
+        , settings{settings}
+        , volumeIcon{new Utils::ComboIcon(Constants::Icons::VolumeMute, self)}
+    {
+        settings->subscribe<Core::Settings::OutputVolume>(this, &VolumeControl::Private::updateDisplay);
+    }
+
+    void showVolumeMenu() const
+    {
+        auto* volumeMenu = new Utils::HoverMenu(self);
+        volumeMenu->setAttribute(Qt::WA_DeleteOnClose);
+
+        auto* volumeSlider = new Utils::LogSlider(Qt::Vertical, self);
+        auto* volumeLayout = new QVBoxLayout(volumeMenu);
+        volumeLayout->addWidget(volumeSlider);
+
+        volumeSlider->setMinimumHeight(100);
+        volumeSlider->setRange(MinVolume, 1.0);
+        volumeSlider->setNaturalValue(settings->value<Core::Settings::OutputVolume>());
+
+        connect(volumeSlider, &Utils::LogSlider::logValueChanged, this, &VolumeControl::Private::volumeChanged);
+
+        const int menuWidth  = volumeMenu->sizeHint().width();
+        const int menuHeight = volumeMenu->sizeHint().height();
+
+        const int yPosToWindow = self->parentWidget()->mapToParent(QPoint(0, 0)).y();
+
+        // Only display volume slider above icon if it won't clip above the main window.
+        const bool displayAbove = (yPosToWindow - menuHeight) > 0;
+
+        const int x = !menuWidth - 15;
+        const int y = displayAbove ? (!self->height() - menuHeight - 10) : (self->height() + 10);
+
+        const QPoint pos{self->mapToGlobal(QPoint(x, y))};
+
+        volumeMenu->move(pos);
+        volumeMenu->show();
+    }
+
+    void volumeChanged(double volume) const
+    {
+        if(volume == MinVolume) {
+            volume = 0;
+        }
+
+        settings->set<Core::Settings::OutputVolume>(volume);
+    }
+
+    void mute()
+    {
+        const double volume = settings->value<Core::Settings::OutputVolume>();
+
+        if(volume != 0) {
+            prevValue = volume;
+            settings->set<Core::Settings::OutputVolume>(0.0);
+        }
+        else {
+            settings->set<Core::Settings::OutputVolume>(prevValue < 0 ? 1 : prevValue);
+        }
+    }
+
+    void updateDisplay(double volume) const
+    {
+        if(!volumeIcon) {
+            return;
+        }
+
+        if(volume <= 1.0 && volume >= 0.66) {
+            volumeIcon->setIcon(Constants::Icons::VolumeHigh);
+        }
+        else if(volume < 0.66 && volume >= 0.33) {
+            volumeIcon->setIcon(Constants::Icons::VolumeMed);
+        }
+        else if(volume < 0.33 && volume >= MinVolume) {
+            volumeIcon->setIcon(Constants::Icons::VolumeLow);
+        }
+        else {
+            volumeIcon->setIcon(Constants::Icons::VolumeMute);
+        }
+    }
+};
+
+VolumeControl::VolumeControl(Utils::SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
-    , m_playerManager{playerManager}
-    , m_layout{new QHBoxLayout(this)}
-    , m_volumeIcon{new Utils::ComboIcon(Constants::Icons::VolumeMute, this)}
-    , m_volumeSlider{new Utils::Slider(Qt::Vertical, this)}
-    , m_volumeLayout{new QHBoxLayout()}
-    , m_volumeMenu{new Utils::HoverMenu(this)}
-    , m_labelSize{20, 20}
-    , m_prevValue{0}
+    , p{std::make_unique<Private>(this, settings)}
 {
-    m_volumeMenu->setLayout(m_volumeLayout);
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 5, 0);
+    layout->setSizeConstraint(QLayout::SetFixedSize);
+    layout->setSpacing(10);
 
-    setupUi();
+    p->volumeIcon->addIcon(Constants::Icons::VolumeLow);
+    p->volumeIcon->addIcon(Constants::Icons::VolumeMed);
+    p->volumeIcon->addIcon(Constants::Icons::VolumeHigh);
 
-    connect(m_volumeSlider, &QSlider::valueChanged, this, &VolumeControl::updateVolume);
-    connect(m_volumeIcon, &Utils::ComboIcon::entered, this, &VolumeControl::showVolumeMenu);
-    connect(m_volumeIcon, &Utils::ComboIcon::clicked, this, &VolumeControl::mute);
+    layout->addWidget(p->volumeIcon, 0, Qt::AlignRight | Qt::AlignVCenter);
 
-    connect(this, &VolumeControl::volumeUp, m_playerManager, &Core::Player::PlayerManager::volumeUp);
-    connect(this, &VolumeControl::volumeDown, m_playerManager, &Core::Player::PlayerManager::volumeDown);
-    connect(this, &VolumeControl::volumeChanged, m_playerManager, &Core::Player::PlayerManager::setVolume);
+    p->volumeIcon->setMaximumSize(LabelSize);
+
+    p->updateDisplay(settings->value<Core::Settings::OutputVolume>());
+
+    connect(p->volumeIcon, &Utils::ComboIcon::entered, p.get(), &VolumeControl::Private::showVolumeMenu);
+    connect(p->volumeIcon, &Utils::ComboIcon::clicked, p.get(), &VolumeControl::Private::mute);
 }
 
-VolumeControl::~VolumeControl()
-{
-    delete m_volumeMenu;
-}
-
-void VolumeControl::setupUi()
-{
-    m_layout->setContentsMargins(0, 0, 5, 0);
-    m_layout->setSizeConstraint(QLayout::SetFixedSize);
-
-    m_layout->setSpacing(10);
-
-    m_volumeIcon->addIcon(Constants::Icons::VolumeLow);
-    m_volumeIcon->addIcon(Constants::Icons::VolumeMed);
-    m_volumeIcon->addIcon(Constants::Icons::VolumeHigh);
-
-    m_volumeLayout->addWidget(m_volumeSlider);
-
-    m_layout->addWidget(m_volumeIcon, 0, Qt::AlignRight | Qt::AlignVCenter);
-
-    m_volumeSlider->setMaximum(100);
-    m_volumeSlider->setValue(100);
-
-    m_volumeIcon->setMaximumSize(m_labelSize);
-
-    m_volumeIcon->setIcon(Constants::Icons::VolumeHigh);
-}
-
-void VolumeControl::updateVolume(double value)
-{
-    const double vol = value;
-    emit volumeChanged(vol);
-
-    if(vol <= 100 && vol >= 66) {
-        m_volumeIcon->setIcon(Constants::Icons::VolumeHigh);
-    }
-    else if(vol < 66 && vol >= 33) {
-        m_volumeIcon->setIcon(Constants::Icons::VolumeMed);
-    }
-    else if(vol < 33 && vol >= 1) {
-        m_volumeIcon->setIcon(Constants::Icons::VolumeLow);
-    }
-    else {
-        m_volumeIcon->setIcon(Constants::Icons::VolumeMute);
-    }
-}
-
-void VolumeControl::mute()
-{
-    if(m_volumeSlider->value() != 0) {
-        m_prevValue = m_volumeSlider->value();
-        m_volumeSlider->setValue(0);
-        return updateVolume(0);
-    }
-    m_volumeSlider->setValue(m_prevValue);
-    return updateVolume(m_prevValue);
-}
-
-void VolumeControl::showVolumeMenu()
-{
-    const int menuWidth  = m_volumeMenu->sizeHint().width();
-    const int menuHeight = m_volumeMenu->sizeHint().height();
-
-    const int yPosToWindow = this->parentWidget()->mapToParent(QPoint(0, 0)).y();
-
-    // Only display volume slider above icon if it won't clip above the main window.
-    const bool displayAbove = (yPosToWindow - menuHeight) > 0;
-
-    const int x = !menuWidth - 15;
-    const int y = displayAbove ? (!this->height() - menuHeight - 10) : (this->height() + 10);
-
-    const QPoint pos(mapToGlobal(QPoint(x, y)));
-    m_volumeMenu->move(pos);
-    m_volumeMenu->show();
-}
+VolumeControl::~VolumeControl() = default;
 } // namespace Fy::Gui::Widgets

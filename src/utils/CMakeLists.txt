@@ -34,6 +34,7 @@ set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/utils/headerview.h
     ${CMAKE_SOURCE_DIR}/include/utils/hovermenu.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
+    ${CMAKE_SOURCE_DIR}/include/utils/logslider.h
     ${CMAKE_SOURCE_DIR}/include/utils/menuheader.h
     ${CMAKE_SOURCE_DIR}/include/utils/multilinedelegate.h
     ${CMAKE_SOURCE_DIR}/include/utils/overlayfilter.h
@@ -56,6 +57,7 @@ set(SOURCES
     headerview.cpp
     hovermenu.cpp
     id.cpp
+    logslider.cpp
     menuheader.cpp
     multilinedelegate.cpp
     overlayfilter.cpp
