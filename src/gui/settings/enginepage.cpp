@@ -107,11 +107,10 @@ void EnginePageWidget::setupDevices(const QString& output)
     m_deviceBox->clear();
 
     const QString currentDevice = m_settings->value<Core::Settings::OutputDevice>();
-    auto outputDevices    = m_engineHandler->getOutputDevices(output);
+    const auto outputDevices    = m_engineHandler->getOutputDevices(output);
 
-    for(auto& [name, desc] : outputDevices) {
-        const QString displayName = desc.replace('\n', " - ");
-        m_deviceBox->addItem(displayName, name);
+    for(const auto& [name, desc] : outputDevices) {
+        m_deviceBox->addItem(desc, name);
         const int index = m_deviceBox->count() - 1;
         if(name == currentDevice) {
             m_deviceBox->setCurrentIndex(index);
