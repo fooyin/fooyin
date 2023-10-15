@@ -62,7 +62,6 @@ struct EngineHandler::Private : QObject
 
         QObject::connect(playerManager, &Player::PlayerManager::playStateChanged, this,
                          &EngineHandler::Private::playStateChanged);
-        QObject::connect(playerManager, &Player::PlayerManager::volumeChanged, engine, &AudioEngine::setVolume);
         QObject::connect(playerManager, &Player::PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
         QObject::connect(engine, &AudioEngine::positionChanged, playerManager,
                          &Player::PlayerManager::setCurrentPosition);
@@ -112,6 +111,7 @@ void EngineHandler::setup()
 {
     p->settings->subscribe<Settings::AudioOutput>(this, &EngineHandler::changeOutput);
     p->settings->subscribe<Settings::OutputDevice>(this, &EngineHandler::changeOutputDevice);
+    p->settings->subscribe<Settings::OutputVolume>(p->engine, &AudioEngine::setVolume);
 
     changeOutput(p->settings->value<Settings::AudioOutput>());
     if(p->currentOutput.output) {

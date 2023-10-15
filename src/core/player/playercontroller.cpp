@@ -35,7 +35,6 @@ struct PlayerController::Private : QObject
     PlayState playStatus;
     PlayMode playMode;
     uint64_t position;
-    double volume;
     bool counted;
 
     Private(PlayerController* self, Utils::SettingsManager* settings)
@@ -43,12 +42,10 @@ struct PlayerController::Private : QObject
         , settings{settings}
         , totalDuration{0}
         , playStatus{PlayState::Stopped}
-        , playMode{PlayMode::Default}
+        , playMode{static_cast<PlayMode>(settings->value<Settings::PlayMode>())}
         , position{0}
-        , volume{1.0F}
         , counted{false}
     {
-        playMode = static_cast<PlayMode>(settings->value<Settings::PlayMode>());
         settings->subscribe<Settings::PlayMode>(this, &PlayerController::Private::changePlayMode);
     }
 
@@ -150,28 +147,11 @@ void PlayerController::changeCurrentTrack(const Track& track)
     p->counted       = false;
 
     emit currentTrackChanged(p->currentTrack);
-    play();
 }
 
 void PlayerController::setPlayMode(PlayMode mode)
 {
     p->settings->set<Settings::PlayMode>(static_cast<int>(mode));
-}
-
-void PlayerController::volumeUp()
-{
-    setVolume(volume() + 5);
-}
-
-void PlayerController::volumeDown()
-{
-    setVolume(volume() - 0.05F);
-}
-
-void PlayerController::setVolume(double value)
-{
-    p->volume = value;
-    emit volumeChanged(value);
 }
 
 PlayState PlayerController::playState() const
@@ -192,10 +172,5 @@ uint64_t PlayerController::currentPosition() const
 Track PlayerController::currentTrack() const
 {
     return p->currentTrack;
-}
-
-double PlayerController::volume() const
-{
-    return p->volume;
 }
 } // namespace Fy::Core::Player

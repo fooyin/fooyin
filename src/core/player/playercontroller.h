@@ -46,7 +46,6 @@ public:
     [[nodiscard]] PlayMode playMode() const override;
     [[nodiscard]] uint64_t currentPosition() const override;
     [[nodiscard]] Track currentTrack() const override;
-    [[nodiscard]] double volume() const override;
 
     void reset() override;
     void play() override;
@@ -60,9 +59,6 @@ public:
     void changePosition(uint64_t ms) override;
     void changeCurrentTrack(const Track& track) override;
     void setPlayMode(PlayMode mode) override;
-    void volumeUp() override;
-    void volumeDown() override;
-    void setVolume(double value) override;
 
 private:
     struct Private;
