@@ -109,13 +109,13 @@ struct VolumeControl::Private : QObject
             return;
         }
 
-        if(volume <= 1.0 && volume >= 0.66) {
+        if(volume <= 1.0 && volume >= 0.40) {
             volumeIcon->setIcon(Constants::Icons::VolumeHigh);
         }
-        else if(volume < 0.66 && volume >= 0.33) {
+        else if(volume < 0.40 && volume >= 0.20) {
             volumeIcon->setIcon(Constants::Icons::VolumeMed);
         }
-        else if(volume < 0.33 && volume >= MinVolume) {
+        else if(volume < 0.20 && volume >= MinVolume) {
             volumeIcon->setIcon(Constants::Icons::VolumeLow);
         }
         else {
