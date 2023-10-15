@@ -23,4 +23,5 @@ namespace Fy {
 #define PLUGIN_DIR "@FOOYIN_PLUGIN_INSTALL_DIR@"
 
 #cmakedefine SDL2_FOUND
+#cmakedefine PIPEWIRE_FOUND
 }

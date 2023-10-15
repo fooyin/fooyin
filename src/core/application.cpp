@@ -31,6 +31,10 @@
 #include "engine/output/sdloutput.h"
 #endif
 
+#ifdef PIPEWIRE_FOUND
+#include "engine/output/pipewireoutput.h"
+#endif
+
 #include <core/corepaths.h>
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
@@ -81,6 +85,11 @@ struct Application::Private
 #ifdef SDL2_FOUND
         engine.addOutput(Core::Engine::SdlOutput::name(), []() {
             return std::make_unique<Core::Engine::SdlOutput>();
+        });
+#endif
+#ifdef PIPEWIRE_FOUND
+        engine.addOutput(Core::Engine::PipeWireOutput::name(), []() {
+            return std::make_unique<Core::Engine::PipeWireOutput>();
         });
 #endif
     }

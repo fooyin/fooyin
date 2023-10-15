@@ -70,6 +70,7 @@ find_package(Taglib REQUIRED taglib>=1.12)
 
 find_package(ALSA REQUIRED)
 find_package(SDL2)
+find_package(PipeWire)
 
 find_package(
     FFmpeg REQUIRED

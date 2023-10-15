@@ -92,6 +92,10 @@ if(SDL2_FOUND)
     set(SOURCES ${SOURCES} engine/output/sdloutput.cpp)
 endif()
 
+if(PIPEWIRE_FOUND)
+    set(SOURCES ${SOURCES} engine/output/pipewireoutput.cpp)
+endif()
+
 create_fooyin_library(
     fooyin_core
     EXPORT_NAME Core
@@ -111,5 +115,6 @@ target_link_libraries(
            ${SDL2_LIBRARIES}
            ${FFMPEG_LIBRARIES}
            ${ALSA_LIBRARIES}
+           PipeWire::PipeWire
            Fooyin::Utils
 )
