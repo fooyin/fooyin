@@ -283,28 +283,28 @@ void onProcess(void* userData)
 void updateChannelMap(spa_audio_info_raw* info, int channels)
 {
     switch(channels) {
-        case 9:
+        case(9):
             info->position[8] = SPA_AUDIO_CHANNEL_RC;
             // Fall through
-        case 8:
+        case(8):
             info->position[6] = SPA_AUDIO_CHANNEL_FLC;
             info->position[7] = SPA_AUDIO_CHANNEL_FRC;
             // Fall through
-        case 6:
+        case(6):
             info->position[4] = SPA_AUDIO_CHANNEL_RL;
             info->position[5] = SPA_AUDIO_CHANNEL_RR;
             // Fall through
-        case 4:
+        case(4):
             info->position[3] = SPA_AUDIO_CHANNEL_LFE;
             // Fall through
-        case 3:
+        case(3):
             info->position[2] = SPA_AUDIO_CHANNEL_FC;
             // Fall through
-        case 2:
+        case(2):
             info->position[0] = SPA_AUDIO_CHANNEL_FL;
             info->position[1] = SPA_AUDIO_CHANNEL_FR;
             break;
-        case 1:
+        case(1):
             info->position[0] = SPA_AUDIO_CHANNEL_MONO;
             break;
     }
