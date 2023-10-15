@@ -106,23 +106,6 @@ target_link_libraries(
     fooyin_core
     PRIVATE fooyin_version
             fooyin_config
-    PUBLIC Qt6::Core
-           Qt6::Widgets
-           Qt6::Sql
-           Qt6::Concurrent
-           QCoro::Core
-           Taglib::Taglib
-           ${SDL2_LIBRARIES}
-           ${FFMPEG_LIBRARIES}
-           ${ALSA_LIBRARIES}
-           PipeWire::PipeWire
-           Fooyin::Utils
-)
-
-target_link_libraries(
-    fooyin_core
-    PRIVATE fooyin_version
-            fooyin_config
             ${ALSA_LIBRARIES}
     PUBLIC Qt6::Core
            Qt6::Widgets
