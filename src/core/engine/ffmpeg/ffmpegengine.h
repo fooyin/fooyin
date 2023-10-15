@@ -51,17 +51,6 @@ public:
     void setAudioOutput(AudioOutput* output) override;
     void setOutputDevice(const QString& device) override;
 
-signals:
-    void resetWorkers();
-    void killWorkers();
-
-    void pauseOutput(bool pause);
-    void updateOutput(AudioOutput* output);
-    void updateDevice(const QString& output);
-
-    void startDecoder(AVFormatContext* context, Codec* codec);
-    void startRenderer(Codec* codec, AudioOutput* output);
-
 private:
     struct Private;
     std::unique_ptr<Private> p;

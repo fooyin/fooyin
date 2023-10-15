@@ -32,13 +32,11 @@ class EngineWorker : public QObject
 public:
     explicit EngineWorker(QObject* parent = nullptr);
 
+    void setPaused(bool isPaused);
+
+public slots:
     virtual void reset();
     virtual void kill();
-
-    [[nodiscard]] bool isPaused() const;
-    [[nodiscard]] bool isAtEnd() const;
-
-    void setPaused(bool isPaused);
 
 signals:
     void atEnd();
@@ -48,9 +46,12 @@ protected:
 
     virtual bool canDoNextStep() const;
     virtual int timerInterval() const;
+    void scheduleNextStep(bool immediate = true);
     virtual void doNextStep() = 0;
 
-    void scheduleNextStep(bool immediate = true);
+    [[nodiscard]] bool isPaused() const;
+    [[nodiscard]] bool isAtEnd() const;
+
     void setAtEnd(bool isAtEnd);
 
 private:

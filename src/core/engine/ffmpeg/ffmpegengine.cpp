@@ -39,9 +39,9 @@ extern "C"
 #include <QTime>
 #include <QTimer>
 
-namespace Fy::Core::Engine::FFmpeg {
-constexpr int AudioBufferSize = 9;
+using namespace std::chrono_literals;
 
+namespace Fy::Core::Engine::FFmpeg {
 struct FormatContextDeleter
 {
     void operator()(AVFormatContext* context) const
@@ -60,7 +60,7 @@ struct FFmpegEngine::Private
     FFmpegEngine* engine;
 
     AudioClock clock;
-    QTimer* positionUpdateTimer;
+    QTimer* positionUpdateTimer{nullptr};
     uint64_t lastPos{0};
 
     uint64_t duration{0};
@@ -70,7 +70,7 @@ struct FFmpegEngine::Private
 
     PlaybackState state{StoppedState};
 
-    AudioOutput* audioOutput;
+    AudioOutput* audioOutput{nullptr};
 
     QThread* decoderThread;
     QThread* rendererThread;
@@ -81,21 +81,32 @@ struct FFmpegEngine::Private
 
     explicit Private(FFmpegEngine* engine)
         : engine{engine}
-        , positionUpdateTimer{nullptr}
-        , audioOutput{nullptr}
         , decoderThread{new QThread(engine)}
         , rendererThread{new QThread(engine)}
         , renderer{&clock}
     {
         decoder.moveToThread(decoderThread);
         renderer.moveToThread(rendererThread);
+
+        QObject::connect(decoderThread, &QThread::finished, &decoder, &EngineWorker::kill);
+        QObject::connect(rendererThread, &QThread::finished, &renderer, &EngineWorker::kill);
+
+        QObject::connect(&decoder, &Decoder::requestHandleFrame, &renderer, &Renderer::render);
+        QObject::connect(&renderer, &Renderer::frameProcessed, &decoder, &Decoder::onFrameProcessed);
+
+        QObject::connect(&renderer, &Renderer::atEnd, engine, [this]() {
+            onRendererFinished();
+        });
+
+        decoderThread->start();
+        rendererThread->start();
     }
 
     QTimer* positionTimer()
     {
         if(!positionUpdateTimer) {
             positionUpdateTimer = new QTimer(engine);
-            positionUpdateTimer->setInterval(50);
+            positionUpdateTimer->setInterval(50ms);
             positionUpdateTimer->setTimerType(Qt::PreciseTimer);
             QObject::connect(positionUpdateTimer, &QTimer::timeout, engine, [this]() {
                 updatePosition();
@@ -198,7 +209,7 @@ struct FFmpegEngine::Private
         }
     }
 
-    void createWorkers()
+    void startWorkers()
     {
         if(!codec) {
             createCodec(stream.avStream());
@@ -210,32 +221,23 @@ struct FFmpegEngine::Private
 
         decoderThread->start();
         rendererThread->start();
-
-        QObject::connect(decoderThread, &QThread::finished, &decoder, &EngineWorker::kill);
-        QObject::connect(engine, &FFmpegEngine::resetWorkers, &decoder, &EngineWorker::reset);
-        QObject::connect(engine, &FFmpegEngine::killWorkers, &decoder, &EngineWorker::kill);
-        QObject::connect(engine, &FFmpegEngine::startDecoder, &decoder, &Decoder::run);
-
-        QObject::connect(rendererThread, &QThread::finished, &renderer, &EngineWorker::kill);
-        QObject::connect(engine, &FFmpegEngine::resetWorkers, &renderer, &EngineWorker::reset);
-        QObject::connect(engine, &FFmpegEngine::killWorkers, &renderer, &EngineWorker::kill);
-        QObject::connect(engine, &FFmpegEngine::startRenderer, &renderer, &Renderer::run);
-        QObject::connect(engine, &FFmpegEngine::pauseOutput, &renderer, &Renderer::pauseOutput);
-        QObject::connect(engine, &FFmpegEngine::updateOutput, &renderer, &Renderer::updateOutput);
-        QObject::connect(engine, &FFmpegEngine::updateDevice, &renderer, &Renderer::updateDevice);
-
-        QObject::connect(&decoder, &Decoder::requestHandleFrame, &renderer, &Renderer::render);
-        QObject::connect(&renderer, &Renderer::frameProcessed, &decoder, &Decoder::onFrameProcessed);
-
-        QObject::connect(&renderer, &Renderer::atEnd, engine, [this]() {
-            onRendererFinished();
-        });
     }
 
     void startPlayback()
     {
-        emit engine->startDecoder(context.get(), &codec.value());
-        emit engine->startRenderer(&codec.value(), audioOutput);
+        QMetaObject::invokeMethod(
+            &decoder,
+            [this] {
+                decoder.run(context.get(), &codec.value());
+            },
+            Qt::QueuedConnection);
+
+        QMetaObject::invokeMethod(
+            &renderer,
+            [this] {
+                renderer.run(&codec.value(), audioOutput);
+            },
+            Qt::QueuedConnection);
     }
 
     void pauseWorkers(bool pause)
@@ -247,10 +249,6 @@ struct FFmpegEngine::Private
 
     void onRendererFinished()
     {
-        if(!renderer.isAtEnd()) {
-            return;
-        }
-
         if(std::exchange(state, StoppedState) == StoppedState) {
             return;
         }
@@ -262,16 +260,37 @@ struct FFmpegEngine::Private
         emit engine->trackFinished();
     }
 
+    void pauseOutput(bool pause)
+    {
+        QMetaObject::invokeMethod(&renderer, [this, pause] {
+            renderer.pauseOutput(pause);
+        });
+    }
+
     void resetWorkers()
     {
         pauseWorkers(true);
-        emit engine->resetWorkers();
+
+        QMetaObject::invokeMethod(&decoder, [this] {
+            decoder.reset();
+        });
+
+        QMetaObject::invokeMethod(&renderer, [this] {
+            renderer.reset();
+        });
     }
 
     void killWorkers()
     {
         pauseWorkers(true);
-        emit engine->killWorkers();
+
+        QMetaObject::invokeMethod(&decoder, [this] {
+            decoder.kill();
+        });
+
+        QMetaObject::invokeMethod(&renderer, [this] {
+            renderer.kill();
+        });
     }
 };
 
@@ -284,7 +303,7 @@ FFmpegEngine::~FFmpegEngine() = default;
 
 void FFmpegEngine::shutdown()
 {
-    //    p->killWorkers();
+    p->killWorkers();
 
     p->decoderThread->quit();
     p->decoderThread->wait();
@@ -304,7 +323,7 @@ void FFmpegEngine::seek(uint64_t pos)
 
     p->resetWorkers();
 
-    const uint64_t timestamp = av_rescale_q(pos, {1, 1000}, p->stream.avStream()->time_base);
+    const int64_t timestamp = av_rescale_q(static_cast<int64_t>(pos), {1, 1000}, p->stream.avStream()->time_base);
 
     const int flags = pos < p->clock.currentPosition() ? AVSEEK_FLAG_BACKWARD : 0;
     if(av_seek_frame(p->context.get(), p->stream.index(), timestamp, flags) < 0) {
@@ -315,6 +334,7 @@ void FFmpegEngine::seek(uint64_t pos)
 
     p->clock.sync(pos);
     p->startPlayback();
+    p->clock.setPaused(false);
 }
 
 uint64_t FFmpegEngine::currentPosition() const
@@ -345,7 +365,7 @@ void FFmpegEngine::changeTrack(const Track& track)
     p->clock.setPaused(true);
     p->clock.sync();
 
-    p->createWorkers();
+    p->startWorkers();
 
     trackStatusChanged(LoadedTrack);
 }
@@ -365,12 +385,12 @@ void FFmpegEngine::setState(PlaybackState state)
     }
     else if(state == PlayingState) {
         if(prevState == PausedState) {
-            emit pauseOutput(false);
+            p->pauseOutput(false);
         }
         p->startPlayback();
     }
     else if(state == PausedState) {
-        emit pauseOutput(true);
+        p->pauseOutput(true);
     }
 }
 
@@ -413,7 +433,12 @@ void FFmpegEngine::stop()
     trackStatusChanged(NoTrack);
 }
 
-void FFmpegEngine::setVolume(double /*volume*/) { }
+void FFmpegEngine::setVolume(double volume)
+{
+    QMetaObject::invokeMethod(&p->renderer, [this, volume] {
+        p->renderer.updateVolume(volume);
+    });
+}
 
 void FFmpegEngine::setAudioOutput(AudioOutput* output)
 {
@@ -427,7 +452,9 @@ void FFmpegEngine::setAudioOutput(AudioOutput* output)
         p->pauseWorkers(true);
     }
 
-    emit updateOutput(p->audioOutput);
+    QMetaObject::invokeMethod(&p->renderer, [this] {
+        p->renderer.updateOutput(p->audioOutput);
+    });
 
     if(playing) {
         p->startPlayback();
@@ -446,7 +473,9 @@ void FFmpegEngine::setOutputDevice(const QString& device)
         p->pauseWorkers(true);
     }
 
-    emit updateDevice(device);
+    QMetaObject::invokeMethod(&p->renderer, [this, device] {
+        p->renderer.updateDevice(device);
+    });
 
     if(playing) {
         p->startPlayback();

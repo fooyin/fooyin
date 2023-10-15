@@ -24,6 +24,8 @@ extern "C"
 #include <libavutil/frame.h>
 }
 
+#include <QDebug>
+
 namespace Fy::Core::Engine::FFmpeg {
 AVSampleFormat interleaveFormat(AVSampleFormat planarFormat)
 {
@@ -69,6 +71,77 @@ void skipSamples(AVFrame* frame, int samples)
     frame->nb_samples -= samples;
     if(frame->pts > 0) {
         frame->pts += samples / frame->sample_rate;
+    }
+}
+
+void fillSilence(uint8_t* dst, int bytes, int format)
+{
+    const bool unsignedFormat = format == AV_SAMPLE_FMT_U8 || format == AV_SAMPLE_FMT_U8P;
+    memset(dst, unsignedFormat ? 0x80 : 0, bytes);
+}
+
+void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, double volume)
+{
+    if(volume == 1.0) {
+        return;
+    }
+
+    if(volume == 0.0) {
+        fillSilence(data, bytes, format);
+        return;
+    }
+
+    const int bps  = av_get_bytes_per_sample(format) * 8;
+    const auto vol = static_cast<float>(volume);
+
+    switch(bps) {
+        case(8): {
+            for(int i{0}; i < bytes; ++i) {
+                const int8_t sample = data[i];
+                data[i]             = static_cast<int8_t>(sample * vol);
+            }
+            break;
+        }
+        case(16): {
+            auto* adjustedData = std::bit_cast<int16_t*>(data);
+            const int count    = bytes / 2;
+            for(int i{0}; i < count; ++i) {
+                const int16_t sample = adjustedData[i];
+                adjustedData[i]      = static_cast<int16_t>(sample * vol);
+            }
+            break;
+        }
+        case(24): {
+            const int count = bytes / 3;
+            for(int i{0}; i < count; ++i) {
+                const int32_t sample = (static_cast<int8_t>(data[i * 3]) | static_cast<int8_t>(data[i * 3 + 1] << 8)
+                                        | static_cast<int8_t>(data[i * 3 + 2] << 16));
+                auto newSample       = static_cast<int32_t>(sample * vol);
+                data[i * 3]          = static_cast<uint8_t>(newSample & 0x0000ff);
+                data[i * 3 + 1]      = static_cast<uint8_t>((newSample & 0x00ff00) >> 8);
+                data[i * 3 + 2]      = static_cast<uint8_t>((newSample & 0xff0000) >> 16);
+            }
+            break;
+        }
+        case(32): {
+            const int count = bytes / 4;
+            if(format == AV_SAMPLE_FMT_FLT) {
+                auto* adjustedData = std::bit_cast<float*>(data);
+                for(int i = 0; i < count; ++i) {
+                    adjustedData[i] = adjustedData[i] * vol;
+                }
+            }
+            else {
+                auto* adjustedData = std::bit_cast<int32_t*>(data);
+                for(int i = 0; i < count; ++i) {
+                    const int32_t sample = adjustedData[i];
+                    adjustedData[i]      = static_cast<int32_t>(sample * vol);
+                }
+            }
+            break;
+        }
+        default:
+            qDebug() << "Unable to adjust volume of unsupported bps: " << bps;
     }
 }
 } // namespace Fy::Core::Engine::FFmpeg

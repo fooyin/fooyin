@@ -50,8 +50,7 @@ class FYCORE_EXPORT AudioEngine : public QObject
     Q_OBJECT
 
 public:
-    AudioEngine(QObject* parent = nullptr);
-    virtual ~AudioEngine() = default;
+    explicit AudioEngine(QObject* parent = nullptr);
 
     virtual void shutdown();
 

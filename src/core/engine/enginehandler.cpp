@@ -23,7 +23,6 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioengine.h>
-#include <core/engine/audiooutput.h>
 #include <core/track.h>
 
 #include <core/player/playermanager.h>
@@ -32,6 +31,13 @@
 #include <QThread>
 
 namespace Fy::Core::Engine {
+struct CurrentOutput
+{
+    QString name;
+    std::unique_ptr<AudioOutput> output;
+    std::unique_ptr<AudioOutput> prevOutput;
+};
+
 struct EngineHandler::Private : QObject
 {
     EngineHandler* self;
@@ -42,15 +48,14 @@ struct EngineHandler::Private : QObject
     QThread engineThread;
     AudioEngine* engine;
 
-    std::map<QString, std::unique_ptr<AudioOutput>> outputs;
-    AudioOutput* output;
+    std::map<QString, OutputCreator> outputs;
+    CurrentOutput currentOutput;
 
     Private(EngineHandler* self, Player::PlayerManager* playerManager, Utils::SettingsManager* settings)
         : self{self}
         , playerManager{playerManager}
         , settings{settings}
-        , engine(new FFmpeg::FFmpegEngine())
-        , output{nullptr}
+        , engine{new FFmpeg::FFmpegEngine()}
     {
         engine->moveToThread(&engineThread);
         engineThread.start();
@@ -65,7 +70,11 @@ struct EngineHandler::Private : QObject
         QObject::connect(playerManager, &Player::PlayerManager::positionMoved, engine, &AudioEngine::seek);
 
         connect(self, &EngineHandler::outputChanged, engine, &AudioEngine::setAudioOutput);
-        //    connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
+        connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
+
+        QMetaObject::invokeMethod(engine, [this]() {
+            engine->setVolume(this->settings->value<Settings::OutputVolume>());
+        });
     }
 
     void playStateChanged(Player::PlayState state)
@@ -105,7 +114,9 @@ void EngineHandler::setup()
     p->settings->subscribe<Settings::OutputDevice>(this, &EngineHandler::changeOutputDevice);
 
     changeOutput(p->settings->value<Settings::AudioOutput>());
-    changeOutputDevice(p->settings->value<Settings::OutputDevice>());
+    if(p->currentOutput.output) {
+        p->currentOutput.output->setDevice(p->settings->value<Settings::OutputDevice>());
+    }
 }
 
 OutputNames EngineHandler::getAllOutputs() const
@@ -119,19 +130,27 @@ OutputNames EngineHandler::getAllOutputs() const
     return outputs;
 }
 
-std::optional<OutputDevices> EngineHandler::getOutputDevices(const QString& output) const
+OutputDevices EngineHandler::getOutputDevices(const QString& output) const
 {
-    if(!p->outputs.count(output)) {
+    if(!p->outputs.contains(output)) {
         qDebug() << "Output not found: " << output;
         return {};
     }
-    const auto devices = p->outputs.at(output)->getAllDevices();
-    return devices;
+
+    if(p->currentOutput.name == output) {
+        return p->currentOutput.output->getAllDevices();
+    }
+
+    if(auto out = p->outputs.at(output)()) {
+        return out->getAllDevices();
+    }
+
+    return {};
 }
 
-void EngineHandler::addOutput(std::unique_ptr<AudioOutput> output)
+void EngineHandler::addOutput(const QString& name, OutputCreator output)
 {
-    p->outputs.emplace(output->name(), std::move(output));
+    p->outputs.emplace(name, std::move(output));
 }
 
 void EngineHandler::changeOutput(const QString& output)
@@ -141,21 +160,19 @@ void EngineHandler::changeOutput(const QString& output)
         return;
     }
 
-    if(p->output && p->output->name() == output) {
+    if(p->currentOutput.output && p->currentOutput.name == output) {
         return;
     }
 
-    if(!p->outputs.count(output)) {
+    if(!p->outputs.contains(output)) {
         qDebug() << "Output not found: " << output;
-        p->output = p->outputs.cbegin()->second.get();
-    }
-    else {
-        p->output = p->outputs.at(output).get();
+        return;
     }
 
-    qDebug() << "Output changed: " << p->output->name();
+    p->currentOutput = {output, p->outputs.at(output)(), std::move(p->currentOutput.output)};
+    qDebug() << "Output changed: " << p->currentOutput.name;
 
-    emit outputChanged(p->output);
+    emit outputChanged(p->currentOutput.output.get());
 }
 
 void EngineHandler::changeOutputDevice(const QString& device)

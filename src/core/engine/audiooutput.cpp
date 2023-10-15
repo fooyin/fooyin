@@ -17,20 +17,41 @@
  *
  */
 
-#pragma once
+#include <core/engine/audiooutput.h>
 
-extern "C"
+namespace Fy::Core::Engine {
+OutputType AudioPushOutput::type() const
 {
-#include <libavutil/samplefmt.h>
+    return OutputType::Push;
 }
 
-class AVFrame;
+void AudioPushOutput::setPaused(bool /*pause*/) { }
 
-namespace Fy::Core::Engine::FFmpeg {
-AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
-// Set data in an interleaved frame to the audio
-// after the given number of samples
-void skipSamples(AVFrame* frame, int samples);
-void fillSilence(uint8_t* dst, int bytes, int format);
-void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, double volume);
-} // namespace Fy::Core::Engine::FFmpeg
+void AudioPushOutput::setVolume(double /*volume*/) { }
+
+void AudioPullOutput::reset() { }
+
+OutputType AudioPullOutput::type() const
+{
+    return OutputType::Pull;
+}
+
+OutputState AudioPullOutput::currentState()
+{
+    return {};
+}
+
+int AudioPullOutput::bufferSize() const
+{
+    return 0;
+}
+
+int AudioPullOutput::write(const uint8_t* /*data*/, int /*samples*/)
+{
+    return 0;
+}
+
+void AudioPullOutput::setPaused(bool /*pause*/) { }
+
+void AudioPullOutput::setVolume(double /*volume*/) { }
+} // namespace Fy::Core::Engine

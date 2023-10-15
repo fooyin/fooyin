@@ -23,7 +23,9 @@
 
 #include <QDebug>
 
-namespace Fy::Core::Engine {
+namespace {
+constexpr auto BufferSize = 1024;
+
 SDL_AudioFormat findFormat(AVSampleFormat format)
 {
     switch(format) {
@@ -50,65 +52,79 @@ SDL_AudioFormat findFormat(AVSampleFormat format)
     }
 }
 
+void audioCallback(void* userData, uint8_t* stream, int len)
+{
+    auto* outputContext = static_cast<Fy::Core::Engine::OutputContext*>(userData);
+
+    if(len % outputContext->sstride) {
+        qWarning() << "SDL audio callback not sample aligned";
+    }
+
+    const int samples = len / outputContext->sstride;
+
+    outputContext->writeAudioToBuffer(stream, samples);
+}
+} // namespace
+
+namespace Fy::Core::Engine {
+struct SdlOutput::Private
+{
+    OutputContext outputContext;
+
+    bool initialised{false};
+
+    SDL_AudioSpec desiredSpec;
+    SDL_AudioSpec obtainedSpec;
+    SDL_AudioDeviceID audioDeviceId;
+
+    QString device{"default"};
+};
+
 SdlOutput::SdlOutput()
-    : m_bufferSize{0}
-    , m_device{"default"}
+    : p{std::make_unique<Private>()}
 { }
 
-SdlOutput::~SdlOutput()
-{
-    uninit();
-}
+SdlOutput::~SdlOutput() = default;
 
-QString SdlOutput::name() const
+QString SdlOutput::name()
 {
     return "SDL2";
 }
 
-QString SdlOutput::device() const
-{
-    return m_device;
-}
-
-void SdlOutput::setDevice(const QString& device)
-{
-    if(!device.isEmpty()) {
-        m_device = device;
-    }
-}
-
-bool SdlOutput::init(OutputContext* oc)
+bool SdlOutput::init(const OutputContext& oc)
 {
     if(SDL_WasInit(SDL_INIT_AUDIO)) {
         return false;
     }
 
+    p->outputContext = oc;
+
     SDL_Init(SDL_INIT_AUDIO);
 
-    m_desiredSpec.freq     = oc->sampleRate;
-    m_desiredSpec.format   = findFormat(oc->format);
-    m_desiredSpec.channels = oc->channelLayout.nb_channels;
-    m_desiredSpec.samples  = 2048;
-    m_desiredSpec.callback = nullptr;
+    p->desiredSpec.freq     = oc.sampleRate;
+    p->desiredSpec.format   = findFormat(oc.format);
+    p->desiredSpec.channels = oc.channelLayout.nb_channels;
+    p->desiredSpec.samples  = BufferSize;
+    p->desiredSpec.callback = audioCallback;
+    p->desiredSpec.userdata = &p->outputContext;
 
-    if(m_device == "default") {
-        m_audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &m_desiredSpec, &m_obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
+    if(p->device == "default") {
+        p->audioDeviceId
+            = SDL_OpenAudioDevice(nullptr, 0, &p->desiredSpec, &p->obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
     }
     else {
-        m_audioDeviceId = SDL_OpenAudioDevice(
-            m_device.toLocal8Bit(), 0, &m_desiredSpec, &m_obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
+        p->audioDeviceId = SDL_OpenAudioDevice(p->device.toLocal8Bit(), 0, &p->desiredSpec, &p->obtainedSpec,
+                                               SDL_AUDIO_ALLOW_ANY_CHANGE);
     }
 
-    if(m_audioDeviceId == 0) {
+    if(p->audioDeviceId == 0) {
         qDebug() << "SDL Error opening audio device: " << SDL_GetError();
         return false;
     }
 
-    oc->bufferSize = 3 * m_obtainedSpec.samples;
-    oc->sampleRate = m_obtainedSpec.freq;
+    p->outputContext.sampleRate = p->obtainedSpec.freq;
 
-    m_bufferSize = oc->bufferSize;
-
+    p->initialised = true;
     return true;
 }
 
@@ -117,8 +133,10 @@ void SdlOutput::uninit()
     if(!SDL_WasInit(SDL_INIT_AUDIO)) {
         return;
     }
-    SDL_CloseAudioDevice(m_audioDeviceId);
+    SDL_CloseAudioDevice(p->audioDeviceId);
     SDL_Quit();
+
+    p->initialised = false;
 }
 
 void SdlOutput::reset()
@@ -126,8 +144,8 @@ void SdlOutput::reset()
     if(!SDL_WasInit(SDL_INIT_AUDIO)) {
         return;
     }
-    SDL_PauseAudioDevice(m_audioDeviceId, 1);
-    SDL_ClearQueuedAudio(m_audioDeviceId);
+    SDL_PauseAudioDevice(p->audioDeviceId, 1);
+    SDL_ClearQueuedAudio(p->audioDeviceId);
 }
 
 void SdlOutput::start()
@@ -136,34 +154,23 @@ void SdlOutput::start()
         return;
     }
     if(SDL_GetAudioStatus() != SDL_AUDIO_PLAYING) {
-        SDL_PauseAudioDevice(m_audioDeviceId, 0);
+        SDL_PauseAudioDevice(p->audioDeviceId, 0);
     }
 }
 
-int SdlOutput::write(OutputContext* oc, const uint8_t* data, int samples)
+bool SdlOutput::initialised() const
 {
-    if(!SDL_WasInit(SDL_INIT_AUDIO)) {
-        return 0;
-    }
-    const int err = SDL_QueueAudio(m_audioDeviceId, data, samples * oc->sstride);
-    if(err < 0) {
-        qWarning() << "SDL write error: " << SDL_GetError();
-        return 0;
-    }
-    return samples;
+    return p->initialised;
 }
 
-void SdlOutput::setPaused(bool pause)
+QString SdlOutput::device() const
 {
-    SDL_PauseAudioDevice(m_audioDeviceId, pause);
+    return p->device;
 }
 
-OutputState SdlOutput::currentState(OutputContext* oc)
+bool SdlOutput::canHandleVolume() const
 {
-    OutputState state;
-    state.queuedSamples = SDL_GetQueuedAudioSize(m_audioDeviceId) / oc->sstride;
-    state.freeSamples   = m_bufferSize - state.queuedSamples;
-    return state;
+    return false;
 }
 
 OutputDevices SdlOutput::getAllDevices() const
@@ -176,13 +183,13 @@ OutputDevices SdlOutput::getAllDevices() const
         SDL_Init(SDL_INIT_AUDIO);
     }
 
-    devices.emplace("default", "Default");
+    devices.emplace_back("default", "Default");
 
     const int num = SDL_GetNumAudioDevices(0);
     for(int i = 0; i < num; ++i) {
         const QString devName = SDL_GetAudioDeviceName(i, 0);
         if(!devName.isNull()) {
-            devices.emplace(devName, devName);
+            devices.emplace_back(devName, devName);
         }
     }
 
@@ -191,5 +198,17 @@ OutputDevices SdlOutput::getAllDevices() const
     }
 
     return devices;
+}
+
+void SdlOutput::setPaused(bool pause)
+{
+    SDL_PauseAudioDevice(p->audioDeviceId, pause);
+}
+
+void SdlOutput::setDevice(const QString& device)
+{
+    if(!device.isEmpty()) {
+        p->device = device;
+    }
 }
 } // namespace Fy::Core::Engine

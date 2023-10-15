@@ -22,13 +22,17 @@
 #include <QDebug>
 
 namespace Fy::Core::Engine::FFmpeg {
-
 EngineWorker::EngineWorker(QObject* parent)
     : QObject{parent}
     , m_timer{nullptr}
     , m_paused{false}
     , m_atEnd{false}
 { }
+
+void EngineWorker::setPaused(bool isPaused)
+{
+    m_paused.store(isPaused, std::memory_order_release);
+}
 
 void EngineWorker::reset()
 {
@@ -44,21 +48,6 @@ void EngineWorker::kill()
         m_timer->deleteLater();
         m_timer = nullptr;
     }
-}
-
-bool EngineWorker::isPaused() const
-{
-    return m_paused.load(std::memory_order_acquire);
-}
-
-bool EngineWorker::isAtEnd() const
-{
-    return m_atEnd;
-}
-
-void EngineWorker::setPaused(bool isPaused)
-{
-    m_paused.store(isPaused, std::memory_order_release);
 }
 
 QTimer* EngineWorker::timer()
@@ -103,6 +92,16 @@ void EngineWorker::scheduleNextStep(bool immediate)
     }
 }
 
+bool EngineWorker::isPaused() const
+{
+    return m_paused.load(std::memory_order_acquire);
+}
+
+bool EngineWorker::isAtEnd() const
+{
+    return m_atEnd;
+}
+
 void EngineWorker::setAtEnd(bool isAtEnd)
 {
     if(m_atEnd != isAtEnd) {
@@ -110,5 +109,4 @@ void EngineWorker::setAtEnd(bool isAtEnd)
         emit atEnd();
     }
 }
-
 } // namespace Fy::Core::Engine::FFmpeg

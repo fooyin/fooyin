@@ -21,6 +21,8 @@
 
 #include "fycore_export.h"
 
+#include <core/engine/audiooutput.h>
+
 #include <QObject>
 
 namespace Fy {
@@ -36,7 +38,7 @@ namespace Engine {
 class AudioOutput;
 
 using OutputNames   = std::vector<QString>;
-using OutputDevices = std::map<QString, QString>;
+using OutputCreator = std::function<std::unique_ptr<AudioOutput>()>;
 
 class FYCORE_EXPORT EngineHandler : public QObject
 {
@@ -49,11 +51,10 @@ public:
 
     void setup();
 
-    OutputNames getAllOutputs() const;
-    std::optional<OutputDevices> getOutputDevices(const QString& output) const;
+    [[nodiscard]] OutputNames getAllOutputs() const;
+    [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const;
 
-    // Takes ownership of AudioOutput
-    void addOutput(std::unique_ptr<AudioOutput> output);
+    void addOutput(const QString& name, OutputCreator output);
     void changeOutput(const QString& output);
 
     // Changes device of currently active output

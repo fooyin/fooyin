@@ -75,9 +75,13 @@ struct Application::Private
 
     void registerOutputs()
     {
-        engine.addOutput(std::make_unique<Core::Engine::AlsaOutput>());
+        engine.addOutput(Core::Engine::AlsaOutput::name(), []() {
+            return std::make_unique<Core::Engine::AlsaOutput>();
+        });
 #ifdef SDL2_FOUND
-        engine.addOutput(std::make_unique<Core::Engine::SdlOutput>());
+        engine.addOutput(Core::Engine::SdlOutput::name(), []() {
+            return std::make_unique<Core::Engine::SdlOutput>();
+        });
 #endif
     }
 

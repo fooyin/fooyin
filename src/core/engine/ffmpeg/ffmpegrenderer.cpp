@@ -19,66 +19,72 @@
 
 #include "ffmpegrenderer.h"
 
-#include "core/engine/audiooutput.h"
 #include "ffmpegclock.h"
 #include "ffmpegcodec.h"
 #include "ffmpegframe.h"
 #include "ffmpegutils.h"
 
+#include <core/engine/audiooutput.h>
+#include <utils/threadqueue.h>
+
 #include <QDebug>
 #include <QTimer>
-
-#include <queue>
+#include <utility>
 
 namespace Fy::Core::Engine::FFmpeg {
 struct Renderer::Private
 {
     Renderer* renderer;
 
-    Codec* codec;
+    Codec* codec{nullptr};
     AudioClock* clock;
 
-    AudioOutput* audioOutput;
+    AudioOutput* audioOutput{nullptr};
     OutputContext outputContext;
 
     bool bufferPrefilled{false};
 
-    std::queue<Frame> frameQueue;
+    Utils::ThreadQueue<Frame> frameQueue{false};
     std::vector<uint8_t> tempBuffer;
+
+    double volume{1.0};
 
     Private(Renderer* renderer, AudioClock* clock)
         : renderer{renderer}
-        , codec{nullptr}
         , clock{clock}
-        , audioOutput{nullptr}
-    { }
+    {
+        outputContext.writeAudioToBuffer = [this](uint8_t* data, int samples) {
+            return writeAudioToBuffer(data, samples);
+        };
+    }
 
     bool updateOutput()
     {
-        if(!audioOutput || !codec->context()) {
+        if(!audioOutput) {
             return false;
         }
+
+        if(!codec || !codec->context()) {
+            return false;
+        }
+
         outputContext.format        = interleaveFormat(codec->context()->sample_fmt);
         outputContext.sampleRate    = codec->context()->sample_rate;
         outputContext.channelLayout = codec->context()->ch_layout;
         outputContext.sstride = av_get_bytes_per_sample(outputContext.format) * outputContext.channelLayout.nb_channels;
+        outputContext.volume  = volume;
 
-        return audioOutput->init(&outputContext);
+        return audioOutput->init(outputContext);
     }
 
-    int renderAudio(int samples)
+    int writeAudioSamples(int samples)
     {
-        if(renderer->isPaused()) {
-            return 0;
-        }
+        int samplesBuffered = 0;
 
-        int samplesBuffered{0};
+        const int sstride = outputContext.sstride;
+        tempBuffer.reserve(samples * sstride);
 
-        while(samplesBuffered < samples) {
-            if(renderer->isPaused()) {
-                return samplesBuffered;
-            }
-
+        while(!renderer->isPaused() && samplesBuffered < samples) {
             const Frame& frame = frameQueue.front();
 
             if(!frame.isValid()) {
@@ -87,29 +93,56 @@ struct Renderer::Private
             }
 
             if(frame.avFrame()->nb_samples <= 0) {
-                const uint64_t pos = frame.ptsMs();
-                if(pos > 0) {
-                    clock->sync(frame.ptsMs());
-                }
-                frameQueue.pop();
+                // const uint64_t pos = frame.ptsMs();
+                // if(pos > 0) {
+                //     clock->sync(frame.ptsMs());
+                // }
+                frameQueue.dequeue();
                 emit renderer->frameProcessed();
                 continue;
             }
 
             uint8_t** fdata       = frame.avFrame()->data;
-            const int sstride     = outputContext.sstride;
             const int sampleCount = std::min(frame.sampleCount(), samples - samplesBuffered);
 
-            tempBuffer.reserve(sampleCount * sstride);
-            std::copy(fdata[0], fdata[0] + sampleCount * sstride, std::back_inserter(tempBuffer));
+            std::copy_n(fdata[0], sampleCount * sstride, std::back_inserter(tempBuffer));
 
             samplesBuffered += sampleCount;
             skipSamples(frame.avFrame(), sampleCount);
         }
-        audioOutput->write(&outputContext, tempBuffer.data(), samples);
-        tempBuffer.clear();
 
-        return samples;
+        fillSilence(tempBuffer.data() + samplesBuffered * sstride, (samples - samplesBuffered) * sstride,
+                    outputContext.format);
+
+        return samplesBuffered;
+    }
+
+    int renderAudio(int samples)
+    {
+        const int samplesWritten = writeAudioSamples(samples);
+
+        if(!audioOutput->canHandleVolume()) {
+            adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride, volume);
+        }
+
+        audioOutput->write(tempBuffer.data(), samplesWritten);
+
+        tempBuffer.clear();
+        return samplesWritten;
+    }
+
+    int writeAudioToBuffer(uint8_t* data, int samples)
+    {
+        const int samplesWritten = writeAudioSamples(samples);
+
+        if(!audioOutput->canHandleVolume()) {
+            adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride, volume);
+        }
+
+        std::copy_n(tempBuffer.data(), samples * outputContext.sstride, data);
+
+        tempBuffer.clear();
+        return samplesWritten;
     }
 };
 
@@ -140,7 +173,7 @@ void Renderer::reset()
     }
 
     p->bufferPrefilled = false;
-    p->frameQueue      = {};
+    p->frameQueue.clear();
     p->tempBuffer.clear();
 }
 
@@ -148,18 +181,18 @@ void Renderer::kill()
 {
     EngineWorker::kill();
 
-    if(p->audioOutput) {
+    if(p->audioOutput && p->audioOutput->initialised()) {
         p->audioOutput->uninit();
     }
 
     p->bufferPrefilled = false;
-    p->frameQueue      = {};
+    p->frameQueue.clear();
     p->tempBuffer.clear();
 }
 
 void Renderer::render(Frame frame)
 {
-    p->frameQueue.emplace(frame);
+    p->frameQueue.enque(std::move(frame));
 
     if(p->frameQueue.size() == 1) {
         scheduleNextStep();
@@ -173,16 +206,37 @@ void Renderer::pauseOutput(bool isPaused)
 
 void Renderer::updateOutput(AudioOutput* output)
 {
-    if(isPaused()) {
-        if(AudioOutput* prevOutput = std::exchange(p->audioOutput, output)) {
+    if(AudioOutput* prevOutput = std::exchange(p->audioOutput, output)) {
+        if(prevOutput->initialised()) {
             prevOutput->uninit();
+        }
+    }
+    p->bufferPrefilled = false;
+    p->updateOutput();
+}
+
+void Renderer::updateDevice(const QString& device)
+{
+    if(p->audioOutput) {
+        if(p->audioOutput->initialised()) {
+            p->audioOutput->setDevice(device);
+            p->audioOutput->uninit();
+            p->audioOutput->init(p->outputContext);
             p->bufferPrefilled = false;
-            p->updateOutput();
+        }
+        else {
+            p->audioOutput->setDevice(device);
         }
     }
 }
 
-void Renderer::updateDevice(const QString& /*device*/) { }
+void Renderer::updateVolume(double volume)
+{
+    p->volume = volume;
+    if(p->audioOutput) {
+        p->audioOutput->setVolume(volume);
+    }
+}
 
 bool Renderer::canDoNextStep() const
 {
@@ -191,7 +245,7 @@ bool Renderer::canDoNextStep() const
 
 int Renderer::timerInterval() const
 {
-    return ((p->outputContext.bufferSize / static_cast<double>(p->outputContext.sampleRate)) * 0.25) * 1000;
+    return ((p->audioOutput->bufferSize() / static_cast<double>(p->outputContext.sampleRate)) * 0.25) * 1000;
 }
 
 void Renderer::doNextStep()
@@ -199,14 +253,19 @@ void Renderer::doNextStep()
     if(isPaused()) {
         return;
     }
-    const int samples = p->audioOutput->currentState(&p->outputContext).freeSamples;
-    if(samples > 0) {
-        if(p->renderAudio(samples) == samples) {
+
+    if(p->audioOutput->type() == OutputType::Push) {
+        const int samples = p->audioOutput->currentState().freeSamples;
+        if(samples > 0 && p->renderAudio(samples) == samples) {
             if(!p->bufferPrefilled) {
                 p->bufferPrefilled = true;
                 p->audioOutput->start();
             }
         }
+    }
+    else if(!p->bufferPrefilled) {
+        p->bufferPrefilled = true;
+        p->audioOutput->start();
     }
     scheduleNextStep(false);
 }

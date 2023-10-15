@@ -24,31 +24,32 @@
 #include <memory>
 
 namespace Fy::Core::Engine {
-class AlsaOutput : public AudioOutput
+class AlsaOutput : public AudioPushOutput
 {
 public:
     AlsaOutput();
     ~AlsaOutput() override;
 
-    QString name() const override;
+    static QString name();
 
-    QString device() const override;
-    void setDevice(const QString& device) override;
-
-    bool init(OutputContext* oc) override;
+    bool init(const OutputContext& oc) override;
     void uninit() override;
     void reset() override;
-
     void start() override;
-    int write(OutputContext* oc, const uint8_t* data, int size) override;
 
+    [[nodiscard]] bool initialised() const override;
+    [[nodiscard]] QString device() const override;
+    [[nodiscard]] bool canHandleVolume() const override;
+    [[nodiscard]] int bufferSize() const override;
+    OutputState currentState() override;
+    [[nodiscard]] OutputDevices getAllDevices() const override;
+
+    int write(const uint8_t* data, int size) override;
     void setPaused(bool pause) override;
-    OutputState currentState(OutputContext* oc) override;
-
-    OutputDevices getAllDevices() const override;
+    void setDevice(const QString& device) override;
 
 private:
     struct Private;
-    std::unique_ptr<AlsaOutput::Private> p;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fy::Core::Engine

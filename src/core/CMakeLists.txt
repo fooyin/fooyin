@@ -51,6 +51,7 @@ set(SOURCES
     database/query.cpp
     engine/enginehandler.cpp
     engine/audioengine.cpp
+    engine/audiooutput.cpp
     engine/ffmpeg/ffmpegclock.cpp
     engine/ffmpeg/ffmpegrenderer.cpp
     engine/ffmpeg/ffmpegworker.cpp

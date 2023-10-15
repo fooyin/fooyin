@@ -44,6 +44,7 @@ enum Core : uint32_t
     ActivePlaylistId  = 8 | Utils::Settings::Int,
     AudioOutput       = 9 | Utils::Settings::String,
     OutputDevice      = 10 | Utils::Settings::String,
+    OutputVolume      = 11 | Utils::Settings::Double,
 };
 Q_ENUM_NS(Core)
 

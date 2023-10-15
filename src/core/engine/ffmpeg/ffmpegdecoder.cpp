@@ -19,7 +19,6 @@
 
 #include "ffmpegdecoder.h"
 
-// #include "ffmpegaudiobuffer.h"
 #include "ffmpegcodec.h"
 #include "ffmpegframe.h"
 #include "ffmpegpacket.h"
@@ -56,15 +55,13 @@ Frame copyFrame(const Frame& frame, AVSampleFormat format)
 struct Decoder::Private
 {
     Decoder* decoder;
-    AVFormatContext* context;
-    Codec* codec;
+    AVFormatContext* context{nullptr};
+    Codec* codec{nullptr};
 
     int pendingFrameCount{0};
 
-    Private(Decoder* decoder)
+    explicit Private(Decoder* decoder)
         : decoder{decoder}
-        , context{nullptr}
-        , codec{nullptr}
     { }
 
     void decodeAudio(const Packet& packet)
@@ -89,14 +86,26 @@ struct Decoder::Private
         }
     }
 
+    bool checkCodecContext() const
+    {
+        return context && codec && codec->context();
+    }
+
     int sendAVPacket(const Packet& packet) const
     {
-        return avcodec_send_packet(codec->context(), packet.avPacket());
+        if(checkCodecContext()) {
+            return avcodec_send_packet(codec->context(), packet.avPacket());
+        }
+        return -1;
     }
 
     void receiveAVFrames()
     {
         if(decoder->isPaused()) {
+            return;
+        }
+
+        if(!checkCodecContext()) {
             return;
         }
 
@@ -124,8 +133,8 @@ struct Decoder::Private
     void interleaveSamples(uint8_t** in, int channels, uint8_t* out, int frames)
     {
         for(int ch = 0; ch < channels; ++ch) {
-            auto pSamples = std::bit_cast<const T*>(in[ch]);
-            auto iSamples = std::bit_cast<T*>(out) + ch;
+            const auto *pSamples = std::bit_cast<const T*>(in[ch]);
+            auto *iSamples = std::bit_cast<T*>(out) + ch;
             auto end      = pSamples + frames;
             while(pSamples < end) {
                 *iSamples = *pSamples++;
@@ -226,9 +235,10 @@ int Decoder::timerInterval() const
 
 void Decoder::doNextStep()
 {
-    if(isPaused()) {
+    if(isPaused() || !p->checkCodecContext()) {
         return;
     }
+
     const Packet packet(PacketPtr{av_packet_alloc()});
     if(av_read_frame(p->context, packet.avPacket()) < 0) {
         // Invalid EOF frame

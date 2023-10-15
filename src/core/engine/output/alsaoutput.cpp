@@ -32,7 +32,7 @@ namespace Fy::Core::Engine {
 void checkError(int error, const QString& message)
 {
     if(error < 0) {
-        qWarning() << message;
+        qWarning() << QString{"[%1]: "}.arg(snd_strerror(error)).arg(message);
     }
 }
 
@@ -103,7 +103,10 @@ using PcmHandleUPtr = std::unique_ptr<snd_pcm_t, PcmHandleDeleter>;
 
 struct AlsaOutput::Private
 {
+    OutputContext outputContext;
+
     bool initialised{false};
+
     PcmHandleUPtr pcmHandle{nullptr};
     snd_pcm_uframes_t bufferSize{2048};
     uint32_t bufferTime{100000};
@@ -120,8 +123,7 @@ struct AlsaOutput::Private
             snd_pcm_drop(pcmHandle.get());
             pcmHandle.reset();
         }
-        dir         = 0;
-        initialised = false;
+        dir = 0;
     }
 
     bool handleInitError()
@@ -130,7 +132,7 @@ struct AlsaOutput::Private
         return false;
     }
 
-    bool recoverState(OutputContext* oc = nullptr, OutputState* state = nullptr)
+    bool recoverState(OutputState* state = nullptr)
     {
         if(!pcmHandle) {
             return false;
@@ -198,9 +200,9 @@ struct AlsaOutput::Private
             qWarning() << "ALSA could not recover";
         }
 
-        if(oc && state) {
+        if(state) {
             auto delay         = snd_pcm_status_get_delay(st);
-            state->delay       = std::max(delay, 0l) / static_cast<double>(oc->sampleRate);
+            state->delay       = std::max(delay, 0L) / static_cast<double>(outputContext.sampleRate);
             state->freeSamples = snd_pcm_status_get_avail(st);
             state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(bufferSize));
             // Align to period size.
@@ -221,28 +223,18 @@ AlsaOutput::~AlsaOutput()
     p->reset();
 }
 
-QString AlsaOutput::name() const
+QString AlsaOutput::name()
 {
     return "ALSA";
 }
 
-QString AlsaOutput::device() const
-{
-    return p->device;
-}
-
-void AlsaOutput::setDevice(const QString& device)
-{
-    if(!device.isEmpty()) {
-        p->device = device;
-    }
-}
-
-bool AlsaOutput::init(OutputContext* oc)
+bool AlsaOutput::init(const OutputContext& oc)
 {
     if(p->initialised) {
         return false;
     }
+
+    p->outputContext = oc;
 
     int err{-1};
     {
@@ -273,7 +265,7 @@ bool AlsaOutput::init(OutputContext* oc)
         return p->handleInitError();
     }
 
-    snd_pcm_format_t format = findAlsaFormat(oc->format);
+    snd_pcm_format_t format = findAlsaFormat(oc.format);
     if(format < 0) {
         qWarning() << "Format not supported by ALSA";
         return p->handleInitError();
@@ -290,7 +282,7 @@ bool AlsaOutput::init(OutputContext* oc)
         return p->handleInitError();
     }
 
-    uint32_t sampleRate = oc->sampleRate;
+    uint32_t sampleRate = oc.sampleRate;
 
     err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &sampleRate, &p->dir);
     if(err < 0) {
@@ -298,7 +290,7 @@ bool AlsaOutput::init(OutputContext* oc)
         return p->handleInitError();
     }
 
-    uint32_t channelCount = oc->channelLayout.nb_channels;
+    uint32_t channelCount = oc.channelLayout.nb_channels;
 
     err = snd_pcm_hw_params_set_channels_near(handle, hwParams, &channelCount);
     if(err < 0) {
@@ -371,8 +363,6 @@ bool AlsaOutput::init(OutputContext* oc)
         return p->handleInitError();
     }
 
-    oc->bufferSize = p->bufferSize;
-
     err = snd_pcm_prepare(p->pcmHandle.get());
     if(err < 0) {
         qDebug() << "Alsa prepare error: " << snd_strerror(err);
@@ -385,9 +375,8 @@ bool AlsaOutput::init(OutputContext* oc)
 
 void AlsaOutput::uninit()
 {
-    if(p->initialised) {
-        p->reset();
-    }
+    p->reset();
+    p->initialised = false;
 }
 
 void AlsaOutput::reset()
@@ -397,10 +386,10 @@ void AlsaOutput::reset()
     }
 
     int err = snd_pcm_drop(p->pcmHandle.get());
-    checkError(err, QString{"ALSA drop error: %1"}.arg(snd_strerror(err)));
+    checkError(err, "ALSA drop error");
 
     err = snd_pcm_prepare(p->pcmHandle.get());
-    checkError(err, QString{"ALSA prepare error: %1"}.arg(snd_strerror(err)));
+    checkError(err, "ALSA prepare error");
 
     p->recoverState();
 }
@@ -415,9 +404,77 @@ void AlsaOutput::start()
     snd_pcm_start(p->pcmHandle.get());
 }
 
-int AlsaOutput::write(OutputContext* oc, const uint8_t* data, int samples)
+bool AlsaOutput::initialised() const
 {
-    if(!p->pcmHandle || !p->recoverState(oc)) {
+    return p->initialised;
+}
+
+QString AlsaOutput::device() const
+{
+    return p->device;
+}
+
+bool AlsaOutput::canHandleVolume() const
+{
+    return false;
+}
+
+int AlsaOutput::bufferSize() const
+{
+    return p->bufferSize;
+}
+
+OutputState AlsaOutput::currentState()
+{
+    OutputState state;
+    p->recoverState(&state);
+    return state;
+}
+
+OutputDevices AlsaOutput::getAllDevices() const
+{
+    OutputDevices devices;
+
+    void** hints;
+    const int err = snd_device_name_hint(-1, "pcm", &hints);
+    if(err < 0) {
+        return {};
+    }
+
+    for(int n = 0; hints[n]; ++n) {
+        char* devName = snd_device_name_get_hint(hints[n], "NAME");
+        char* desc    = snd_device_name_get_hint(hints[n], "DESC");
+        char* io      = snd_device_name_get_hint(hints[n], "IOID");
+
+        if(devName && desc) {
+            if(!io || strcmp(io, "Output") == 0) {
+                if(strcmp(devName, "default") == 0) {
+                    devices.insert(devices.begin(), {devName, desc});
+                }
+                else {
+                    devices.emplace_back(devName, desc);
+                }
+            }
+        }
+
+        if(devName) {
+            std::free(devName);
+        }
+        if(desc) {
+            std::free(desc);
+        }
+        if(io) {
+            std::free(io);
+        }
+    }
+    snd_device_name_free_hint(hints);
+
+    return devices;
+}
+
+int AlsaOutput::write(const uint8_t* data, int samples)
+{
+    if(!p->pcmHandle || !p->recoverState()) {
         return 0;
     }
 
@@ -435,7 +492,7 @@ int AlsaOutput::write(OutputContext* oc, const uint8_t* data, int samples)
 
 void AlsaOutput::setPaused(bool pause)
 {
-    if(!p->pausable) {
+    if(!p->pausable || !initialised()) {
         return;
     }
 
@@ -453,46 +510,10 @@ void AlsaOutput::setPaused(bool pause)
     }
 }
 
-OutputState AlsaOutput::currentState(OutputContext* oc)
+void AlsaOutput::setDevice(const QString& device)
 {
-    OutputState state;
-    p->recoverState(oc, &state);
-    return state;
-}
-
-OutputDevices AlsaOutput::getAllDevices() const
-{
-    OutputDevices devices;
-
-    void** hints;
-    int err = snd_device_name_hint(-1, "pcm", &hints);
-    if(err < 0) {
-        return {};
+    if(!device.isEmpty()) {
+        p->device = device;
     }
-
-    devices.emplace("default", "Default");
-
-    for(int n = 0; hints[n]; ++n) {
-        char* devName = snd_device_name_get_hint(hints[n], "NAME");
-        char* desc    = snd_device_name_get_hint(hints[n], "DESC");
-        char* io      = snd_device_name_get_hint(hints[n], "IOID");
-        if(devName && desc) {
-            if(!io || strcmp(io, "Output") == 0) {
-                devices.emplace(devName, desc);
-            }
-        }
-        if(devName) {
-            free(devName);
-        }
-        if(desc) {
-            free(desc);
-        }
-        if(io) {
-            free(io);
-        }
-    }
-    snd_device_name_free_hint(hints);
-
-    return devices;
 }
 } // namespace Fy::Core::Engine

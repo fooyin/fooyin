@@ -19,8 +19,10 @@
 
 #pragma once
 
-#include "ffmpegworker.h"
 #include "ffmpegframe.h"
+#include "ffmpegworker.h"
+
+#include <utils/threadqueue.h>
 
 class AVFormatContext;
 
@@ -35,6 +37,7 @@ public:
     Decoder(QObject* parent = nullptr);
     ~Decoder() override;
 
+public slots:
     void run(AVFormatContext* context, Codec* codec);
     void reset() override;
     void kill() override;
@@ -44,11 +47,12 @@ public:
 signals:
     void requestHandleFrame(Frame frame);
 
-private:
+protected:
     bool canDoNextStep() const override;
     int timerInterval() const override;
     void doNextStep() override;
 
+private:
     struct Private;
     std::unique_ptr<Private> p;
 };

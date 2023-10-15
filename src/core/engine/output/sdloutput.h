@@ -26,34 +26,29 @@
 #include <QString>
 
 namespace Fy::Core::Engine {
-class SdlOutput : public AudioOutput
+class SdlOutput : public AudioPullOutput
 {
 public:
     SdlOutput();
     ~SdlOutput() override;
 
-    QString name() const override;
+    static QString name();
 
-    QString device() const override;
-    void setDevice(const QString& device) override;
-
-    bool init(OutputContext* oc) override;
+    bool init(const OutputContext& oc) override;
     void uninit() override;
     void reset() override;
-
     void start() override;
-    int write(OutputContext* oc, const uint8_t* data, int samples) override;
+
+    [[nodiscard]] bool initialised() const override;
+    [[nodiscard]] QString device() const override;
+    [[nodiscard]] bool canHandleVolume() const override;
+    [[nodiscard]] OutputDevices getAllDevices() const override;
 
     void setPaused(bool pause) override;
-    OutputState currentState(OutputContext* oc) override;
-
-    OutputDevices getAllDevices() const override;
+    void setDevice(const QString& device) override;
 
 private:
-    int m_bufferSize;
-    SDL_AudioSpec m_desiredSpec;
-    SDL_AudioSpec m_obtainedSpec;
-    SDL_AudioDeviceID m_audioDeviceId;
-    QString m_device;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fy::Core::Engine

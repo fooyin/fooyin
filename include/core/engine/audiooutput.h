@@ -28,16 +28,18 @@ extern "C"
 #include <libavutil/samplefmt.h>
 }
 
-#include <map>
-
 namespace Fy::Core::Engine {
+using WriteFunction = std::function<int(uint8_t*, int)>;
+
 struct OutputContext
 {
     int sampleRate;
     AVChannelLayout channelLayout;
     AVSampleFormat format;
     int sstride; // Size of a sample
-    int bufferSize{2048};
+    double volume{1.0};
+
+    WriteFunction writeAudioToBuffer;
 };
 
 struct OutputState
@@ -47,28 +49,64 @@ struct OutputState
     double delay{0.0};
 };
 
-using OutputDevices = std::map<QString, QString>;
+enum class OutputType
+{
+    Push,
+    Pull
+};
+
+struct OutputDevice
+{
+    QString name;
+    QString desc;
+};
+
+using OutputDevices = std::vector<OutputDevice>;
 
 class FYCORE_EXPORT AudioOutput
 {
 public:
     virtual ~AudioOutput() = default;
 
-    virtual QString name() const = 0;
+    virtual bool init(const OutputContext& oc) = 0;
+    virtual void uninit()                      = 0;
+    virtual void reset()                       = 0;
+    virtual void start()                       = 0;
 
-    virtual QString device() const                = 0;
-    virtual void setDevice(const QString& device) = 0;
-
-    virtual bool init(OutputContext* oc) = 0;
-    virtual void uninit()                = 0;
-    virtual void reset()                 = 0;
-    virtual void start()                 = 0;
-
-    virtual int write(OutputContext* oc, const uint8_t* data, int samples) = 0;
-
-    virtual void setPaused(bool pause)                  = 0;
-    virtual OutputState currentState(OutputContext* oc) = 0;
-
+    virtual OutputType type() const             = 0;
+    virtual bool initialised() const            = 0;
+    virtual QString device() const              = 0;
+    virtual bool canHandleVolume()  const               = 0;
+    virtual OutputState currentState()          = 0;
+    virtual int bufferSize() const              = 0;
     virtual OutputDevices getAllDevices() const = 0;
+
+    virtual int write(const uint8_t* data, int samples) = 0;
+    virtual void setPaused(bool pause)                  = 0;
+    virtual void setVolume(double volume)               = 0;
+    virtual void setDevice(const QString& device)       = 0;
+};
+
+class FYCORE_EXPORT AudioPushOutput : public AudioOutput
+{
+public:
+    OutputType type() const override;
+
+    void setPaused(bool pause) override;
+    void setVolume(double volume) override;
+};
+
+class FYCORE_EXPORT AudioPullOutput : public AudioOutput
+{
+public:
+    void reset() override;
+
+    OutputType type() const override;
+    OutputState currentState() override;
+    int bufferSize() const override;
+
+    int write(const uint8_t* data, int samples) override;
+    void setPaused(bool pause) override;
+    void setVolume(double volume) override;
 };
 } // namespace Fy::Core::Engine
