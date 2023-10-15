@@ -22,11 +22,13 @@
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
 #include <gui/guiconstants.h>
+#include <utils/expandingcombobox.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QComboBox>
+#include <QGridLayout>
 #include <QLabel>
-#include <QVBoxLayout>
+#include <QListView>
 
 namespace Fy::Gui::Settings {
 class EnginePageWidget : public Utils::SettingsPageWidget
@@ -37,25 +39,22 @@ public:
     void apply() override;
     void reset() override;
 
-    //    void setupDevices(const QString& output);
+    void setupDevices(const QString& output);
 
 private:
     Utils::SettingsManager* m_settings;
     Core::Engine::EngineHandler* m_engineHandler;
 
-    QComboBox* m_outputBox;
-    //    QComboBox* m_deviceBox;
+    Utils::ExpandingComboBox* m_outputBox;
+    Utils::ExpandingComboBox* m_deviceBox;
 };
 
 EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler)
     : m_settings{settings}
     , m_engineHandler{engineHandler}
-    , m_outputBox{new QComboBox(this)}
-//    , m_deviceBox{new QComboBox(this)}
+    , m_outputBox{new Utils::ExpandingComboBox(this)}
+    , m_deviceBox{new Utils::ExpandingComboBox(this)}
 {
-    // TODO: Create custom delegate to support multiline rows in popup
-    //    m_deviceBox->setMinimumHeight(50);
-
     const QString currentOutput = m_settings->value<Core::Settings::AudioOutput>();
     const auto outputs          = m_engineHandler->getAllOutputs();
 
@@ -66,24 +65,22 @@ EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engin
         }
     }
 
-    //    setupDevices(currentOutput);
+    setupDevices(currentOutput);
+    m_deviceBox->resizeToFitCurrent();
 
-    auto* outputLabel  = new QLabel("Output: ", this);
-    auto* outputLayout = new QHBoxLayout();
-    outputLayout->addWidget(outputLabel);
-    outputLayout->addWidget(m_outputBox, 1);
+    auto* outputLabel = new QLabel("Output:", this);
+    auto* deviceLabel = new QLabel("Device:", this);
 
-    //    auto* deviceLabel  = new QLabel("Device: ", this);
-    //    auto* deviceLayout = new QHBoxLayout();
-    //    deviceLayout->addWidget(deviceLabel);
-    //    deviceLayout->addWidget(m_deviceBox, 1);
+    auto mainLayout = new QGridLayout(this);
+    mainLayout->addWidget(outputLabel, 0, 0);
+    mainLayout->addWidget(m_outputBox, 0, 1);
+    mainLayout->addWidget(deviceLabel, 1, 0);
+    mainLayout->addWidget(m_deviceBox, 1, 1);
 
-    auto mainLayout = new QVBoxLayout(this);
-    mainLayout->addLayout(outputLayout);
-    //    mainLayout->addLayout(deviceLayout);
-    mainLayout->addStretch();
+    mainLayout->setColumnStretch(1, 1);
+    mainLayout->setRowStretch(2, 1);
 
-    //    QObject::connect(m_outputBox, &QComboBox::currentTextChanged, this, &EnginePageWidget::setupDevices);
+    QObject::connect(m_outputBox, &QComboBox::currentTextChanged, this, &EnginePageWidget::setupDevices);
 }
 
 void EnginePageWidget::apply()
@@ -91,37 +88,37 @@ void EnginePageWidget::apply()
     const QString output = m_outputBox->currentText();
     m_settings->set<Core::Settings::AudioOutput>(output);
 
-    //    const QString device = m_deviceBox->currentData().toString();
-    //    m_settings->set<Core::Settings::OutputDevice>(device);
+    const QString device = m_deviceBox->currentData().toString();
+    m_settings->set<Core::Settings::OutputDevice>(device);
 }
 
 void EnginePageWidget::reset()
 {
     m_settings->reset<Core::Settings::AudioOutput>();
+    m_settings->reset<Core::Settings::OutputDevice>();
 }
 
-// void EnginePageWidget::setupDevices(const QString& output)
-//{
-//     if(output.isEmpty()) {
-//         return;
-//     }
+void EnginePageWidget::setupDevices(const QString& output)
+{
+    if(output.isEmpty()) {
+        return;
+    }
 
-//    m_deviceBox->clear();
+    m_deviceBox->clear();
 
-//    const QString currentDevice = m_settings->value<Core::Settings::OutputDevice>();
-//    const auto outputDevices    = m_engineHandler->getOutputDevices(output);
+    const QString currentDevice = m_settings->value<Core::Settings::OutputDevice>();
+    auto outputDevices    = m_engineHandler->getOutputDevices(output);
 
-//    if(outputDevices) {
-//        const auto devices = outputDevices.value();
-//        for(const auto& [name, desc] : devices) {
-//            m_deviceBox->addItem(desc, name);
-//            const int index = m_deviceBox->count() - 1;
-//            if(name == currentDevice) {
-//                m_deviceBox->setCurrentIndex(index);
-//            }
-//        }
-//    }
-//}
+    for(auto& [name, desc] : outputDevices) {
+        const QString displayName = desc.replace('\n', " - ");
+        m_deviceBox->addItem(displayName, name);
+        const int index = m_deviceBox->count() - 1;
+        if(name == currentDevice) {
+            m_deviceBox->setCurrentIndex(index);
+        }
+    }
+    m_deviceBox->resizeDropDown();
+}
 
 EnginePage::EnginePage(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler)
     : Utils::SettingsPage{settings->settingsDialog()}

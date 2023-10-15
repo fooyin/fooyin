@@ -27,14 +27,9 @@ project(
 )
 
 set(HEADERS
-    ${CMAKE_SOURCE_DIR}/include/utils/actions/actioncontainer.h
-    ${CMAKE_SOURCE_DIR}/include/utils/actions/actionmanager.h
-    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
-    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
-    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
-    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingspage.h
     ${CMAKE_SOURCE_DIR}/include/utils/clickablelabel.h
     ${CMAKE_SOURCE_DIR}/include/utils/comboicon.h
+    ${CMAKE_SOURCE_DIR}/include/utils/expandingcombobox.h
     ${CMAKE_SOURCE_DIR}/include/utils/extentabletableview.h
     ${CMAKE_SOURCE_DIR}/include/utils/headerview.h
     ${CMAKE_SOURCE_DIR}/include/utils/hovermenu.h
@@ -44,12 +39,19 @@ set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/utils/overlayfilter.h
     ${CMAKE_SOURCE_DIR}/include/utils/slider.h
     ${CMAKE_SOURCE_DIR}/include/utils/worker.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/actioncontainer.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/actionmanager.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingspage.h
 )
 
 set(SOURCES
     clickablelabel.cpp
     comboicon.cpp
     crypto.cpp
+    expandingcombobox.cpp
     extentabletableview.cpp
     headerview.cpp
     hovermenu.cpp
