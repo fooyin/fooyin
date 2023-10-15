@@ -118,3 +118,26 @@ target_link_libraries(
            PipeWire::PipeWire
            Fooyin::Utils
 )
+
+target_link_libraries(
+    fooyin_core
+    PRIVATE fooyin_version
+            fooyin_config
+            ${ALSA_LIBRARIES}
+    PUBLIC Qt6::Core
+           Qt6::Widgets
+           Qt6::Sql
+           Qt6::Concurrent
+           QCoro::Core
+           Taglib::Taglib
+           ${FFMPEG_LIBRARIES}
+           Fooyin::Utils
+)
+
+if(SDL2_FOUND)
+    target_link_libraries(fooyin_core PRIVATE ${SDL2_LIBRARIES})
+endif()
+
+if(PIPEWIRE_FOUND)
+    target_link_libraries(fooyin_core PRIVATE PipeWire::PipeWire)
+endif()
