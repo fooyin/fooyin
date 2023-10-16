@@ -55,17 +55,23 @@ EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engin
     , m_outputBox{new Utils::ExpandingComboBox(this)}
     , m_deviceBox{new Utils::ExpandingComboBox(this)}
 {
-    const QString currentOutput = m_settings->value<Core::Settings::AudioOutput>();
-    const auto outputs          = m_engineHandler->getAllOutputs();
+    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split("|");
+
+    const QString outName = !currentOutput.empty() ? currentOutput.at(0) : "";
+    const auto outputs    = m_engineHandler->getAllOutputs();
 
     for(const auto& output : outputs) {
         m_outputBox->addItem(output);
-        if(output == currentOutput) {
+        if(output == outName) {
             m_outputBox->setCurrentIndex(m_outputBox->count() - 1);
         }
     }
 
-    setupDevices(currentOutput);
+    if(!outputs.empty() && outName.isEmpty()) {
+        m_outputBox->setCurrentIndex(0);
+    }
+
+    setupDevices(m_outputBox->currentText());
     m_deviceBox->resizeToFitCurrent();
 
     auto* outputLabel = new QLabel("Output:", this);
@@ -85,17 +91,13 @@ EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engin
 
 void EnginePageWidget::apply()
 {
-    const QString output = m_outputBox->currentText();
+    const auto output = QString{"%1|%2"}.arg(m_outputBox->currentText(), m_deviceBox->currentData().toString());
     m_settings->set<Core::Settings::AudioOutput>(output);
-
-    const QString device = m_deviceBox->currentData().toString();
-    m_settings->set<Core::Settings::OutputDevice>(device);
 }
 
 void EnginePageWidget::reset()
 {
     m_settings->reset<Core::Settings::AudioOutput>();
-    m_settings->reset<Core::Settings::OutputDevice>();
 }
 
 void EnginePageWidget::setupDevices(const QString& output)
@@ -106,7 +108,13 @@ void EnginePageWidget::setupDevices(const QString& output)
 
     m_deviceBox->clear();
 
-    const QString currentDevice = m_settings->value<Core::Settings::OutputDevice>();
+    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split("|");
+
+    if(currentOutput.empty()) {
+        return;
+    }
+
+    const QString currentDevice = currentOutput.size() > 1 ? currentOutput.at(1) : "";
     const auto outputDevices    = m_engineHandler->getOutputDevices(output);
 
     for(const auto& [name, desc] : outputDevices) {
@@ -116,6 +124,11 @@ void EnginePageWidget::setupDevices(const QString& output)
             m_deviceBox->setCurrentIndex(index);
         }
     }
+
+    if(!outputDevices.empty() && currentDevice.isEmpty()) {
+        m_deviceBox->setCurrentIndex(0);
+    }
+
     m_deviceBox->resizeDropDown();
 }
 

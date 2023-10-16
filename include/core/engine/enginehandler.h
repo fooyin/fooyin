@@ -55,10 +55,6 @@ public:
     [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const;
 
     void addOutput(const QString& name, OutputCreator output);
-    void changeOutput(const QString& output);
-
-    // Changes device of currently active output
-    void changeOutputDevice(const QString& device);
 
 signals:
     void outputChanged(Engine::AudioOutput* output);

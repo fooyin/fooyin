@@ -35,6 +35,7 @@ struct CurrentOutput
 {
     QString name;
     std::unique_ptr<AudioOutput> output;
+    QString device;
     std::unique_ptr<AudioOutput> prevOutput;
 };
 
@@ -89,12 +90,53 @@ struct EngineHandler::Private : QObject
             }
         });
     }
+
+    void changeOutput(const QString& output)
+    {
+        const QStringList newOutput = output.split("|");
+
+        if(newOutput.empty() || newOutput.size() < 2) {
+            return;
+        }
+
+        const QString newName = newOutput[0];
+        const QString device  = newOutput[1];
+
+        if(outputs.empty()) {
+            qWarning() << "No Outputs have been registered";
+            return;
+        }
+
+        const auto changeCurrentOutput = [this, newName, device]() {
+            currentOutput = {newName, outputs.at(newName)(), device, std::move(currentOutput.output)};
+            currentOutput.output->setDevice(device);
+            emit self->outputChanged(currentOutput.output.get());
+        };
+
+        if(!currentOutput.output) {
+            changeCurrentOutput();
+        }
+        else if(currentOutput.name != newName) {
+            if(!outputs.contains(newName)) {
+                qDebug() << "Output not found: " << newName;
+                return;
+            }
+            changeCurrentOutput();
+        }
+        else if(currentOutput.device != device) {
+            currentOutput.device = device;
+            emit self->deviceChanged(device);
+        }
+    }
 };
 
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, Utils::SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
-{ }
+{
+    p->settings->subscribe<Settings::AudioOutput>(this, &EngineHandler::Private::changeOutput);
+    p->settings->subscribe<Settings::OutputVolume>(p->engine, &AudioEngine::setVolume);
+}
 
 EngineHandler::~EngineHandler()
 {
@@ -109,14 +151,7 @@ EngineHandler::~EngineHandler()
 
 void EngineHandler::setup()
 {
-    p->settings->subscribe<Settings::AudioOutput>(this, &EngineHandler::changeOutput);
-    p->settings->subscribe<Settings::OutputDevice>(this, &EngineHandler::changeOutputDevice);
-    p->settings->subscribe<Settings::OutputVolume>(p->engine, &AudioEngine::setVolume);
-
-    changeOutput(p->settings->value<Settings::AudioOutput>());
-    if(p->currentOutput.output) {
-        p->currentOutput.output->setDevice(p->settings->value<Settings::OutputDevice>());
-    }
+    p->changeOutput(p->settings->value<Settings::AudioOutput>());
 }
 
 OutputNames EngineHandler::getAllOutputs() const
@@ -151,36 +186,5 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
 void EngineHandler::addOutput(const QString& name, OutputCreator output)
 {
     p->outputs.emplace(name, std::move(output));
-}
-
-void EngineHandler::changeOutput(const QString& output)
-{
-    if(p->outputs.empty()) {
-        qWarning() << "No Outputs have been registered";
-        return;
-    }
-
-    if(p->currentOutput.output && p->currentOutput.name == output) {
-        return;
-    }
-
-    if(!p->outputs.contains(output)) {
-        qDebug() << "Output not found: " << output;
-        return;
-    }
-
-    p->currentOutput = {output, p->outputs.at(output)(), std::move(p->currentOutput.output)};
-    qDebug() << "Output changed: " << p->currentOutput.name;
-
-    emit outputChanged(p->currentOutput.output.get());
-}
-
-void EngineHandler::changeOutputDevice(const QString& device)
-{
-    if(p->outputs.empty()) {
-        qWarning() << "No Outputs have been registered";
-        return;
-    }
-    emit deviceChanged(device);
 }
 } // namespace Fy::Core::Engine
