@@ -103,7 +103,7 @@ struct PlaylistHandler::Private : QObject
             return playerManager->stop();
         }
 
-        const bool isLastTrack      = index == activePlaylist->trackCount() - 1;
+        const bool isLastTrack      = index >= activePlaylist->trackCount() - 1;
         const Player::PlayMode mode = playerManager->playMode();
         switch(mode) {
             case(Player::PlayMode::Shuffle):
