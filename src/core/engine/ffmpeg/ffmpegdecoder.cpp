@@ -94,7 +94,7 @@ struct Decoder::Private
     int sendAVPacket(const Packet& packet) const
     {
         if(checkCodecContext()) {
-            return avcodec_send_packet(codec->context(), draining ? nullptr : packet.avPacket());
+            return avcodec_send_packet(codec->context(), !packet.isValid() || draining ? nullptr : packet.avPacket());
         }
         return -1;
     }
@@ -241,13 +241,14 @@ void Decoder::doNextStep()
     }
 
     const Packet packet(PacketPtr{av_packet_alloc()});
-    const int readResult = av_read_frame(p->context, packet.avPacket());
+    int readResult = av_read_frame(p->context, packet.avPacket());
     if(readResult < 0) {
         if(readResult != AVERROR_EOF) {
             printError(readResult);
         }
         else if(!p->draining) {
             p->draining = true;
+            p->decodeAudio(packet);
             scheduleNextStep(false);
             return;
         }
