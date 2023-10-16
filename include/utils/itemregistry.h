@@ -28,6 +28,19 @@
 
 #include <ranges>
 
+template <typename T>
+concept ValidRegistry = requires(T t) {
+    {
+        t.id
+    } -> std::convertible_to<int>;
+    {
+        t.name
+    } -> std::convertible_to<QString>;
+    {
+        t.index
+    } -> std::convertible_to<int>;
+};
+
 namespace Fy::Utils {
 class FYUTILS_EXPORT RegistryBase : public QObject
 {
@@ -49,6 +62,7 @@ signals:
  * @tparam SettingKey An enum value for a setting stored in SettingsManager.
  */
 template <typename Item, auto SettingKey>
+    requires ValidRegistry<Item>
 class ItemRegistry : public RegistryBase
 {
 public:
