@@ -26,15 +26,7 @@
 #include <QStringBuilder>
 #include <QThread>
 
-#include <ranges>
-
 namespace Fy::Core::DB {
-void execPragma(const QSqlDatabase& db, const QString& key, const QString& value)
-{
-    const auto q = QString{"PRAGMA %1 = %2;"}.arg(key, value);
-    db.exec(q);
-}
-
 Module::Module(QString connectionName)
     : m_connectionName(std::move(connectionName))
 { }
@@ -85,9 +77,6 @@ QSqlDatabase Module::db() const
         qDebug() << er.driverText();
         qDebug() << er.databaseText();
     }
-
-    execPragma(db, "foreign_keys", "ON");
-    execPragma(db, "case_sensitive_like", "OFF");
 
     return db;
 }
