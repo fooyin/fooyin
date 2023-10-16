@@ -133,7 +133,7 @@ struct GuiApplication::Private
         , mainWindow{std::make_unique<MainWindow>(actionManager, settingsManager, editableLayout.get())}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
         , editMenu{new EditMenu(actionManager, self)}
-        , viewMenu{new ViewMenu(actionManager, editableLayout.get(), settingsManager, self)}
+        , viewMenu{new ViewMenu(actionManager, &selectionController, settingsManager, self)}
         , playbackMenu{new PlaybackMenu(actionManager, playerManager, self)}
         , libraryMenu{new LibraryMenu(actionManager, library, settingsManager, self)}
         , helpMenu{new HelpMenu(actionManager, self)}
@@ -235,6 +235,8 @@ GuiApplication::GuiApplication(const Core::CorePluginContext& core)
 {
     QObject::connect(&p->selectionController, &TrackSelectionController::requestPropertiesDialog, p->propertiesDialog,
                      &PropertiesDialog::show);
+    QObject::connect(p->viewMenu, &ViewMenu::openQuickSetup, p->editableLayout.get(),
+                     &Widgets::EditableLayout::showQuickSetup);
 
     p->layoutProvider.findLayouts();
     p->presetRegistry.loadItems();

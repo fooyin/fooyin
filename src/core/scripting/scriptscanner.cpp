@@ -17,7 +17,7 @@
  *
  */
 
-#include "scriptscanner.h"
+#include <core/scripting/scriptscanner.h>
 
 namespace Fy::Core::Scripting {
 bool isLiteral(QChar ch)

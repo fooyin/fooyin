@@ -19,9 +19,8 @@
 
 #include <core/scripting/scriptparser.h>
 
-#include "scriptscanner.h"
-
 #include <core/constants.h>
+#include <core/scripting/scriptscanner.h>
 
 #include <QDebug>
 #include <QStringBuilder>
@@ -55,7 +54,6 @@ struct Parser::Private
     Token previous;
     ParsedScript parsedScript;
     QStringList result;
-    bool hadError{false};
 
     explicit Private(Registry* registry)
         : scanner{}
@@ -102,10 +100,6 @@ struct Parser::Private
 
     void errorAt(const Token& token, const QString& message)
     {
-        if(hadError) {
-            return;
-        }
-        hadError      = true;
         auto errorMsg = QString{"[%1] Error"}.arg(token.position);
 
         if(token.type == TokEos) {
@@ -117,7 +111,12 @@ struct Parser::Private
 
         errorMsg += QString(" (%1)").arg(message);
 
-        qDebug() << errorMsg;
+        Error error;
+        error.value    = token.value.toString();
+        error.position = token.position;
+        error.message  = errorMsg;
+
+        parsedScript.errors.emplace_back(error);
     }
 
     void error(const QString& message)
@@ -138,36 +137,43 @@ ParsedScript Parser::parse(const QString& input)
         return {};
     }
 
-    p->hadError = false;
-
-    ParsedScript result;
-    result.input = input;
+    p->parsedScript.errors.clear();
+    p->parsedScript.expressions.clear();
+    p->parsedScript.input = input;
 
     p->scanner.setup(input);
 
     p->advance();
     while(p->current.type != TokEos) {
-        result.expressions.emplace_back(expression());
+        p->parsedScript.expressions.emplace_back(expression());
     }
 
     p->consume(TokEos, "Expected end of expression");
-    result.valid    = !p->hadError;
-    p->parsedScript = result;
 
-    return result;
+    return p->parsedScript;
 }
 
 QString Parser::evaluate()
 {
-    if(!p->parsedScript.valid) {
+    if(!p->parsedScript.isValid()) {
         return {};
     }
     return evaluate(p->parsedScript);
 }
 
+QString Parser::evaluate(const Expression& input, const Track& track)
+{
+    ParsedScript script;
+    script.expressions = {input};
+
+    setMetadata(track);
+
+    return evaluate(script);
+}
+
 QString Parser::evaluate(const ParsedScript& input)
 {
-    if(!input.valid || !p->registry) {
+    if(!input.isValid() || !p->registry) {
         return {};
     }
 

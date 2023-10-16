@@ -127,6 +127,7 @@ struct PlaylistHandler::Private : QObject
         activePlaylist->changeCurrentTrack(index);
         updatePlaylist(*activePlaylist);
         playerManager->changeCurrentTrack(activePlaylist->currentTrack());
+        playerManager->play();
     }
 
     void previous()
@@ -173,6 +174,7 @@ struct PlaylistHandler::Private : QObject
         activePlaylist->changeCurrentTrack(index);
         updatePlaylist(*activePlaylist);
         playerManager->changeCurrentTrack(activePlaylist->currentTrack());
+        playerManager->play();
     }
 
     void updateIndices()

@@ -1,0 +1,61 @@
+/*
+ * Fooyin
+ * Copyright 2022-2023, Luke Taylor <LukeT1@proton.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#pragma once
+
+#include <core/scripting/scriptparser.h>
+#include <core/scripting/scriptscanner.h>
+
+#include <QRegularExpression>
+#include <QSyntaxHighlighter>
+
+namespace Fy::Gui::Sandbox {
+class ScriptHighlighter : public QSyntaxHighlighter
+{
+    Q_OBJECT
+
+public:
+    ScriptHighlighter(QTextDocument* parent = nullptr);
+
+protected:
+    void highlightBlock(const QString& text) override;
+
+private:
+    void expression();
+    void quote();
+    void variable();
+    void function();
+    void functionArgs();
+    void conditional();
+
+    void setTokenFormat(const QTextCharFormat& format);
+
+    void advance();
+    bool currentToken(Core::Scripting::TokenType type) const;
+    bool match(Core::Scripting::TokenType type);
+
+    QTextCharFormat m_varFormat;
+    QTextCharFormat m_keywordFormat;
+    QTextCharFormat m_errorFormat;
+
+    Core::Scripting::Scanner m_scanner;
+    Core::Scripting::Token m_current;
+    Core::Scripting::Token m_previous;
+};
+} // namespace Fy::Gui::Sandbox

@@ -26,11 +26,24 @@
 #include <QObject>
 
 namespace Fy::Core::Scripting {
+struct Error
+{
+    int position;
+    QString value;
+    QString message;
+};
+using ErrorList = std::vector<Error>;
+
 struct ParsedScript
 {
     QString input;
     ExpressionList expressions;
-    bool valid{false};
+    ErrorList errors;
+
+    bool isValid() const
+    {
+        return errors.empty();
+    }
 };
 
 class FYCORE_EXPORT Parser
@@ -42,6 +55,7 @@ public:
     ParsedScript parse(const QString& input);
 
     QString evaluate();
+    QString evaluate(const Expression& input, const Core::Track& track);
     QString evaluate(const ParsedScript& input, const Core::Track& track);
     QString evaluate(const ParsedScript& input);
 

@@ -26,8 +26,8 @@
 #include <utils/worker.h>
 
 namespace Fy::Gui::Widgets {
-using ItemKeyMap = std::unordered_map<QString, LibraryTreeItem>;
-using NodeKeyMap = std::unordered_map<QString, std::vector<QString>>;
+using ItemKeyMap     = std::unordered_map<QString, LibraryTreeItem>;
+using NodeKeyMap     = std::unordered_map<QString, std::vector<QString>>;
 using TrackIdNodeMap = std::unordered_map<int, std::vector<QString>>;
 
 struct PendingTreeData

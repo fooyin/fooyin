@@ -17,11 +17,12 @@
  *
  */
 
-#include "singleinstance.h"
 #include "version.h"
 
 #include <core/application.h>
 #include <gui/guiapplication.h>
+
+#include <kdsingleapplication.h>
 
 #include <QApplication>
 
@@ -32,14 +33,14 @@ int main(int argc, char** argv)
     QCoreApplication::setApplicationName("fooyin");
     QCoreApplication::setApplicationVersion(VERSION);
 
+    const QApplication app{argc, argv};
+
     // Prevent additional instances
-    Fy::SingleInstance instance("fooyin");
-    if(!instance.tryRunning()) {
+    KDSingleApplication instance{QCoreApplication::applicationName()};
+    if(!instance.isPrimaryInstance()) {
         qInfo() << "fooyin already running";
         return 0;
     }
-
-    const QApplication app{argc, argv};
 
     Fy::Core::Application coreApp;
     Fy::Gui::GuiApplication guiApp{coreApp.context()};

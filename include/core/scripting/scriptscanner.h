@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <QString>
 
 namespace Fy::Core::Scripting {
@@ -47,7 +49,7 @@ struct Token
     int position{0};
 };
 
-class Scanner
+class FYCORE_EXPORT Scanner
 {
 public:
     void setup(const QString& input);

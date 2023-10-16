@@ -31,15 +31,14 @@ allowing for a wide range of visualisations to be built.
 -  [ ] FFmpeg backend
 -  [ ] Visualisations
 -  [ ] Lyrics support
--  [ ] Lyric querying
 -  [ ] Last.fm integration
 -  [ ] Discogs integration
 
 ## Requirements
 
--  Qt6
--  QCoro
--  Taglib (>=1.12)
+-  Qt6.5+
+-  QCoro 0.9.0+
+-  TagLib 1.12+
 -  Libmpv (mpv)
 
 ## Setup

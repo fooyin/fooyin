@@ -39,6 +39,11 @@ constexpr auto Add        = "list-add";
 constexpr auto Remove     = "list-remove";
 constexpr auto TextColour = "format-text-bold";
 
+constexpr auto ScriptExpression = "script-expression";
+constexpr auto ScriptVariable   = "script-variable";
+constexpr auto ScriptFunction   = "script-function";
+constexpr auto ScriptLiteral    = "script-literal";
+
 constexpr auto Quit          = "application-exit";
 constexpr auto Settings      = "preferences-system";
 constexpr auto RescanLibrary = "view-refresh";
@@ -104,6 +109,7 @@ constexpr auto PlaybackDefault = "Fooyin.Action.Playback.Default";
 constexpr auto Repeat          = "Fooyin.Action.Playback.Repeat";
 constexpr auto RepeatAll       = "Fooyin.Action.Playback.RepeatAll";
 constexpr auto Shuffle         = "Fooyin.Action.Playback.Shuffle";
+constexpr auto ScriptSandbox   = "Fooyin.Action.ScriptSandbox";
 } // namespace Actions
 
 namespace Page {

@@ -19,28 +19,30 @@
 
 #pragma once
 
-#include <QSharedMemory>
-#include <QSystemSemaphore>
+#include <QDialog>
 
 namespace Fy {
-class SingleInstance
+namespace Utils {
+class SettingsManager;
+}
+
+namespace Gui {
+class TrackSelectionController;
+
+namespace Sandbox {
+class SandboxDialog : public QDialog
 {
+    Q_OBJECT
+
 public:
-    explicit SingleInstance(const QString& key);
-    ~SingleInstance();
-
-    SingleInstance(const SingleInstance&)            = delete;
-    SingleInstance& operator=(const SingleInstance&) = delete;
-
-    bool isRunning();
-    bool tryRunning();
-    void release();
+    explicit SandboxDialog(TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
+                           QWidget* parent = nullptr);
+    ~SandboxDialog();
 
 private:
-    QString key;
-    QString memoryKey;
-    QString lockKey;
-    QSharedMemory memory;
-    QSystemSemaphore lock;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
+} // namespace Sandbox
+} // namespace Gui
 } // namespace Fy

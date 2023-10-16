@@ -141,7 +141,7 @@ void LibraryManager::updateLibraryStatus(const LibraryInfo& library)
 
 bool LibraryManager::hasLibrary() const
 {
-    return p->libraries.size() > 1;
+    return p->libraries.size() > 0;
 }
 
 bool LibraryManager::hasLibrary(int id) const

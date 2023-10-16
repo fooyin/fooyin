@@ -165,6 +165,7 @@ public:
 
         QByteArray byteArray;
         QDataStream out(&byteArray, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_6_5);
 
         out << m_items;
         byteArray = qCompress(byteArray, 9);
@@ -182,6 +183,7 @@ public:
             byteArray = qUncompress(byteArray);
 
             QDataStream in(&byteArray, QIODevice::ReadOnly);
+            in.setVersion(QDataStream::Qt_6_5);
 
             in >> m_items;
         }

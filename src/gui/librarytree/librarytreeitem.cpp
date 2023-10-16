@@ -26,7 +26,7 @@ LibraryTreeItem::LibraryTreeItem()
 
 LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent, int level)
     : TreeItem{parent}
-    , m_pending{true}
+    , m_pending{false}
     , m_level{level}
     , m_key{"0"}
     , m_title{std::move(title)}

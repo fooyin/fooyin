@@ -51,14 +51,14 @@ struct LibraryTreePopulator::Private
 
     LibraryTreeItem* getOrInsertItem(const QString& key, LibraryTreeItem* parent, const QString& title, int level)
     {
-        auto [node, inserted] = data.items.try_emplace(key, LibraryTreeItem{title, parent, level});
+        auto [node, inserted] = data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
         if(inserted) {
             node->second.setKey(key);
         }
         LibraryTreeItem* child = &node->second;
 
-        if(child->pending()) {
-            child->setPending(false);
+        if(!child->pending()) {
+            child->setPending(true);
             data.nodes[parent->key()].push_back(key);
         }
         return child;
@@ -115,10 +115,6 @@ struct LibraryTreePopulator::Private
 
         if(!populator->mayRun()) {
             return;
-        }
-
-        for(auto& [_, item] : data.items) {
-            item.setPending(true);
         }
 
         emit populator->populated(data);

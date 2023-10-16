@@ -83,6 +83,9 @@ set(SOURCES
     playlist/playlistscriptregistry.cpp
     quicksetup/quicksetupdialog.cpp
     quicksetup/quicksetupmodel.cpp
+    sandbox/expressiontreemodel.cpp
+    sandbox/sandboxdialog.cpp
+    sandbox/scripthighlighter.cpp
     search/searchcontroller.cpp
     search/searchwidget.cpp
     settings/enginepage.cpp
