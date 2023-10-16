@@ -134,7 +134,7 @@ EngineHandler::EngineHandler(Player::PlayerManager* playerManager, Utils::Settin
     : QObject{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
-    p->settings->subscribe<Settings::AudioOutput>(this, &EngineHandler::Private::changeOutput);
+    p->settings->subscribe<Settings::AudioOutput>(p.get(), &EngineHandler::Private::changeOutput);
     p->settings->subscribe<Settings::OutputVolume>(p->engine, &AudioEngine::setVolume);
 }
 
