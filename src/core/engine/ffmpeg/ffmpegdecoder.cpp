@@ -27,7 +27,6 @@
 #include <QDebug>
 
 #include <bit>
-#include <deque>
 
 namespace Fy::Core::Engine::FFmpeg {
 constexpr int MaxFrameQueue = 9;
@@ -59,6 +58,7 @@ struct Decoder::Private
     Codec* codec{nullptr};
 
     int pendingFrameCount{0};
+    bool draining{false};
 
     explicit Private(Decoder* decoder)
         : decoder{decoder}
@@ -94,7 +94,7 @@ struct Decoder::Private
     int sendAVPacket(const Packet& packet) const
     {
         if(checkCodecContext()) {
-            return avcodec_send_packet(codec->context(), packet.avPacket());
+            return avcodec_send_packet(codec->context(), draining ? nullptr : packet.avPacket());
         }
         return -1;
     }
@@ -133,9 +133,9 @@ struct Decoder::Private
     void interleaveSamples(uint8_t** in, int channels, uint8_t* out, int frames)
     {
         for(int ch = 0; ch < channels; ++ch) {
-            const auto *pSamples = std::bit_cast<const T*>(in[ch]);
-            auto *iSamples = std::bit_cast<T*>(out) + ch;
-            auto end      = pSamples + frames;
+            const auto* pSamples = std::bit_cast<const T*>(in[ch]);
+            auto* iSamples       = std::bit_cast<T*>(out) + ch;
+            auto end             = pSamples + frames;
             while(pSamples < end) {
                 *iSamples = *pSamples++;
                 iSamples += channels;
@@ -206,15 +206,16 @@ void Decoder::reset()
 {
     EngineWorker::reset();
     p->pendingFrameCount = 0;
+    p->draining          = false;
 }
 
 void Decoder::kill()
 {
     EngineWorker::kill();
     p->pendingFrameCount = 0;
-
-    p->context = nullptr;
-    p->codec   = nullptr;
+    p->draining          = false;
+    p->context           = nullptr;
+    p->codec             = nullptr;
 }
 
 void Decoder::onFrameProcessed()
@@ -240,8 +241,17 @@ void Decoder::doNextStep()
     }
 
     const Packet packet(PacketPtr{av_packet_alloc()});
-    if(av_read_frame(p->context, packet.avPacket()) < 0) {
-        // Invalid EOF frame
+    const int readResult = av_read_frame(p->context, packet.avPacket());
+    if(readResult < 0) {
+        if(readResult != AVERROR_EOF) {
+            printError(readResult);
+        }
+        else if(!p->draining) {
+            p->draining = true;
+            scheduleNextStep(false);
+            return;
+        }
+
         emit requestHandleFrame({});
         p->decoder->setAtEnd(true);
         return;

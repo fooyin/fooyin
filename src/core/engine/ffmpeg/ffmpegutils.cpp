@@ -21,12 +21,20 @@
 
 extern "C"
 {
+#include <libavcodec/avcodec.h>
 #include <libavutil/frame.h>
 }
 
 #include <QDebug>
 
 namespace Fy::Core::Engine::FFmpeg {
+void printError(int error)
+{
+    char errStr[1024];
+    av_strerror(error, errStr, 1024);
+    qDebug() << "[FFmpeg] " << errStr;
+}
+
 AVSampleFormat interleaveFormat(AVSampleFormat planarFormat)
 {
     switch(planarFormat) {

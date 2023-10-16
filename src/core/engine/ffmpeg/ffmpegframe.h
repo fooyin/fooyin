@@ -27,7 +27,6 @@ extern "C"
 #include <QSharedDataPointer>
 
 #include <memory>
-#include <vector>
 
 namespace Fy::Core::Engine::FFmpeg {
 struct FrameDeleter

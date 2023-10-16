@@ -26,7 +26,6 @@ extern "C"
 }
 
 #include <memory>
-#include <optional>
 
 namespace Fy::Core::Engine::FFmpeg {
 struct CodecContextDeleter

@@ -27,6 +27,7 @@ extern "C"
 class AVFrame;
 
 namespace Fy::Core::Engine::FFmpeg {
+void printError(int error);
 AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
 // Set data in an interleaved frame to the audio
 // after the given number of samples
