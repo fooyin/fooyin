@@ -19,15 +19,13 @@
 
 #pragma once
 
-#include "ffmpegworker.h"
 #include "ffmpegframe.h"
+#include "ffmpegworker.h"
 
 namespace Fy::Core::Engine {
 class AudioOutput;
 
 namespace FFmpeg {
-class AudioClock;
-class AudioBuffer;
 class Codec;
 
 class Renderer : public EngineWorker
@@ -35,7 +33,7 @@ class Renderer : public EngineWorker
     Q_OBJECT
 
 public:
-    Renderer(AudioClock* clock, QObject* parent = nullptr);
+    Renderer(QObject* parent = nullptr);
     ~Renderer() override;
 
 public slots:
@@ -50,7 +48,7 @@ public slots:
     void updateVolume(double volume);
 
 signals:
-    void frameProcessed();
+    void frameProcessed(Frame frame);
 
 private:
     bool canDoNextStep() const override;

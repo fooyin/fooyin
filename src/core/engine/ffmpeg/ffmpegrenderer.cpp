@@ -19,7 +19,6 @@
 
 #include "ffmpegrenderer.h"
 
-#include "ffmpegclock.h"
 #include "ffmpegcodec.h"
 #include "ffmpegframe.h"
 #include "ffmpegutils.h"
@@ -37,7 +36,6 @@ struct Renderer::Private
     Renderer* renderer;
 
     Codec* codec{nullptr};
-    AudioClock* clock;
 
     AudioOutput* audioOutput{nullptr};
     OutputContext outputContext;
@@ -49,9 +47,8 @@ struct Renderer::Private
 
     double volume{1.0};
 
-    Private(Renderer* renderer, AudioClock* clock)
+    Private(Renderer* renderer)
         : renderer{renderer}
-        , clock{clock}
     {
         outputContext.writeAudioToBuffer = [this](uint8_t* data, int samples) {
             return writeAudioToBuffer(data, samples);
@@ -93,12 +90,7 @@ struct Renderer::Private
             }
 
             if(frame.avFrame()->nb_samples <= 0) {
-                // const uint64_t pos = frame.ptsMs();
-                // if(pos > 0) {
-                //     clock->sync(frame.ptsMs());
-                // }
-                frameQueue.dequeue();
-                emit renderer->frameProcessed();
+                emit renderer->frameProcessed(frameQueue.dequeue());
                 continue;
             }
 
@@ -146,9 +138,9 @@ struct Renderer::Private
     }
 };
 
-Renderer::Renderer(AudioClock* clock, QObject* parent)
+Renderer::Renderer(QObject* parent)
     : EngineWorker{parent}
-    , p{std::make_unique<Private>(this, clock)}
+    , p{std::make_unique<Private>(this)}
 {
     setObjectName("Renderer");
 }

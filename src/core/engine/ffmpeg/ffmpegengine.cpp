@@ -84,7 +84,6 @@ struct FFmpegEngine::Private
         : engine{engine}
         , decoderThread{new QThread(engine)}
         , rendererThread{new QThread(engine)}
-        , renderer{&clock}
     {
         decoder.moveToThread(decoderThread);
         renderer.moveToThread(rendererThread);
@@ -95,6 +94,12 @@ struct FFmpegEngine::Private
         QObject::connect(&decoder, &Decoder::requestHandleFrame, &renderer, &Renderer::render);
         QObject::connect(&renderer, &Renderer::frameProcessed, &decoder, &Decoder::onFrameProcessed);
 
+        QObject::connect(&renderer, &Renderer::frameProcessed, engine, [this](Frame frame) {
+            const uint64_t pos = frame.ptsMs();
+            if(pos > clock.currentPosition()) {
+                clock.sync(pos);
+            }
+        });
         QObject::connect(&renderer, &Renderer::atEnd, engine, [this]() {
             onRendererFinished();
         });
