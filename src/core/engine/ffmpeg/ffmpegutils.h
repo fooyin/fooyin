@@ -24,10 +24,12 @@ extern "C"
 #include <libavutil/samplefmt.h>
 }
 
+class QString;
 class AVFrame;
 
 namespace Fy::Core::Engine::FFmpeg {
 void printError(int error);
+void printError(const QString& error);
 AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
 // Set data in an interleaved frame to the audio
 // after the given number of samples

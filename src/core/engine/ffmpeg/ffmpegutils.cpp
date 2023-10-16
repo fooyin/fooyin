@@ -35,6 +35,11 @@ void printError(int error)
     qDebug() << "[FFmpeg] " << errStr;
 }
 
+void printError(const QString& error)
+{
+    qDebug() << "[FFmpeg] " << error;
+}
+
 AVSampleFormat interleaveFormat(AVSampleFormat planarFormat)
 {
     switch(planarFormat) {

@@ -24,6 +24,7 @@
 #include "ffmpegdecoder.h"
 #include "ffmpegrenderer.h"
 #include "ffmpegstream.h"
+#include "ffmpegutils.h"
 
 #include <core/engine/audiooutput.h>
 #include <core/track.h>
@@ -130,9 +131,9 @@ struct FFmpegEngine::Private
             return false;
         }
 
-        ret = avformat_find_stream_info(avContext, nullptr);
-        if(ret < 0) {
+        if(avformat_find_stream_info(avContext, nullptr) < 0) {
             avformat_close_input(&avContext);
+            printError("Could not find stream info");
             return false;
         }
 
@@ -154,11 +155,13 @@ struct FFmpegEngine::Private
 
         const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
         if(!avCodec) {
+            printError("Could not find a decoder for stream");
             return;
         }
 
-        CodecContextPtr avCodecContext(avcodec_alloc_context3(avCodec));
+        CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
         if(!avCodecContext) {
+            printError("Could not allocate context");
             return;
         }
 
@@ -167,16 +170,14 @@ struct FFmpegEngine::Private
         }
 
         if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
+            printError("Could not obtain codec parameters");
             return;
         }
 
         avCodecContext.get()->pkt_timebase = avStream->time_base;
 
-        AVDictionary* opts{nullptr};
-        av_dict_set(&opts, "refcounted_frames", "1", 0);
-        av_dict_set(&opts, "threads", "auto", 0);
-
-        if(avcodec_open2(avCodecContext.get(), avCodec, &opts) < 0) {
+        if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
+            printError("Could not initialise codec context");
             return;
         }
 
@@ -214,7 +215,6 @@ struct FFmpegEngine::Private
         if(!codec) {
             createCodec(stream.avStream());
             if(!codec) {
-                qWarning() << "Cannot create codec";
                 return;
             }
         }
