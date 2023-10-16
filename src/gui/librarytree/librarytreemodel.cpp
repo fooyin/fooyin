@@ -75,6 +75,7 @@ struct LibraryTreeModel::Private : public QObject
     NodeKeyMap pendingNodes;
     ItemKeyMap nodes;
     TrackIdNodeMap trackParents;
+    std::unordered_set<QString> addedNodes;
 
     explicit Private(LibraryTreeModel* model)
         : model{model}
@@ -141,18 +142,20 @@ struct LibraryTreeModel::Private : public QObject
             auto* parent = parentKey == "0"          ? model->rootItem()
                          : nodes.contains(parentKey) ? &nodes.at(parentKey)
                                                      : nullptr;
+            if(!parent) {
+                continue;
+            }
 
-            if(parent) {
-                for(const QString& row : rows) {
-                    auto* node = nodes.contains(row) ? &nodes.at(row) : nullptr;
+            for(const QString& row : rows) {
+                auto* node = nodes.contains(row) ? &nodes.at(row) : nullptr;
 
-                    if(node && node->pending()) {
-                        if(!parent->pending() && !pendingNodes.contains(parentKey)) {
-                            // Parent is expanded/visible
-                            nodesToCheck.emplace(model->indexOfItem(parent));
-                        }
-                        pendingNodes[parentKey].push_back(row);
+                if(node && node->pending() && !addedNodes.contains(row)) {
+                    if(!parent->pending() && !pendingNodes.contains(parentKey) && parent->parent()) {
+                        // Parent is expanded/visible
+                        nodesToCheck.emplace(model->indexOfItem(parent));
                     }
+                    pendingNodes[parentKey].push_back(row);
+                    addedNodes.insert(row);
                 }
             }
         }
@@ -297,6 +300,7 @@ void LibraryTreeModel::fetchMore(const QModelIndex& parent)
         LibraryTreeItem* child = &p->nodes.at(pendingRow);
         parentItem->appendChild(child);
         child->setPending(false);
+        p->addedNodes.erase(pendingRow);
     }
     endInsertRows();
 
