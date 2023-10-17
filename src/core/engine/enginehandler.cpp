@@ -66,12 +66,11 @@ struct EngineHandler::Private : QObject
         QObject::connect(playerManager, &Player::PlayerManager::playStateChanged, this,
                          &EngineHandler::Private::playStateChanged);
         QObject::connect(playerManager, &Player::PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
+        QObject::connect(playerManager, &Player::PlayerManager::positionMoved, engine, &AudioEngine::seek);
+        QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
         QObject::connect(engine, &AudioEngine::positionChanged, playerManager,
                          &Player::PlayerManager::setCurrentPosition);
-        QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
-        QObject::connect(playerManager, &Player::PlayerManager::positionMoved, engine, &AudioEngine::seek);
-        QObject::connect(playerManager, &Player::PlayerManager::positionMoved, engine, &AudioEngine::seek);
-
+        QObject::connect(engine, &AudioEngine::trackFinished, playerManager, &Player::PlayerManager::next);
         QObject::connect(self, &EngineHandler::outputChanged, engine, &AudioEngine::setAudioOutput);
         QObject::connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
 
