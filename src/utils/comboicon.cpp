@@ -109,6 +109,7 @@ ComboIcon::ComboIcon(const QString& path, Attributes attributes, QWidget* parent
 
     connect(p->label, &ClickableLabel::clicked, p.get(), &ComboIcon::Private::labelClicked);
     connect(p->label, &ClickableLabel::entered, this, &ComboIcon::entered);
+    connect(p->label, &ClickableLabel::mouseLeft, this, &ComboIcon::mouseLeft);
 }
 
 ComboIcon::ComboIcon(const QString& path, QWidget* parent)
