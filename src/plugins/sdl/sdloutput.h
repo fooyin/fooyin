@@ -32,8 +32,6 @@ public:
     SdlOutput();
     ~SdlOutput() override;
 
-    static QString name();
-
     bool init(const OutputContext& oc) override;
     void uninit() override;
     void reset() override;

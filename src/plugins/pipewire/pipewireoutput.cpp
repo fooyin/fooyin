@@ -494,11 +494,6 @@ PipeWireOutput::PipeWireOutput()
 
 PipeWireOutput::~PipeWireOutput() = default;
 
-QString PipeWireOutput::name()
-{
-    return "Pipewire";
-}
-
 bool PipeWireOutput::init(const OutputContext& oc)
 {
     if(p->pc.initialised) {

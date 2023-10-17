@@ -24,11 +24,11 @@
 #include <memory>
 
 namespace Fy::Core::Engine {
-class AlsaOutput : public AudioPushOutput
+class PipeWireOutput : public AudioPullOutput
 {
 public:
-    AlsaOutput();
-    ~AlsaOutput() override;
+    PipeWireOutput();
+    ~PipeWireOutput() override;
 
     bool init(const OutputContext& oc) override;
     void uninit() override;
@@ -38,12 +38,9 @@ public:
     [[nodiscard]] bool initialised() const override;
     [[nodiscard]] QString device() const override;
     [[nodiscard]] bool canHandleVolume() const override;
-    [[nodiscard]] int bufferSize() const override;
-    OutputState currentState() override;
     [[nodiscard]] OutputDevices getAllDevices() const override;
 
-    int write(const uint8_t* data, int size) override;
-    void setPaused(bool pause) override;
+    void setVolume(double volume) override;
     void setDevice(const QString& device) override;
 
 private:

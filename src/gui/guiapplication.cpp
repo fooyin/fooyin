@@ -154,7 +154,9 @@ struct GuiApplication::Private
         registerWidgets();
         createPropertiesTabs();
 
-        pluginManager->initialisePlugins<GuiPlugin>(guiPluginContext);
+        pluginManager->initialisePlugins<GuiPlugin>([this](GuiPlugin* plugin) {
+            plugin->initialise(guiPluginContext);
+        });
     }
 
     void registerLayouts()

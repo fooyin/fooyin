@@ -217,11 +217,6 @@ AlsaOutput::~AlsaOutput()
     p->reset();
 }
 
-QString AlsaOutput::name()
-{
-    return "ALSA";
-}
-
 bool AlsaOutput::init(const OutputContext& oc)
 {
     if(p->initialised) {

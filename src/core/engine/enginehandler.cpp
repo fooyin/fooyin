@@ -23,6 +23,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioengine.h>
+#include <core/engine/outputplugin.h>
 #include <core/track.h>
 
 #include <core/player/playermanager.h>
@@ -195,8 +196,12 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
     return {};
 }
 
-void EngineHandler::addOutput(const QString& name, OutputCreator output)
+void EngineHandler::addOutput(const AudioOutputBuilder& output)
 {
-    p->outputs.emplace(name, std::move(output));
+    if(p->outputs.contains(output.name)) {
+        qDebug() << QString{"Output '%1' already registered"}.arg(output.name);
+        return;
+    }
+    p->outputs.emplace(output.name, std::move(output.creator));
 }
 } // namespace Fy::Core::Engine

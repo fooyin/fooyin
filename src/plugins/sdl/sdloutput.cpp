@@ -86,11 +86,6 @@ SdlOutput::SdlOutput()
 
 SdlOutput::~SdlOutput() = default;
 
-QString SdlOutput::name()
-{
-    return "SDL2";
-}
-
 bool SdlOutput::init(const OutputContext& oc)
 {
     if(SDL_WasInit(SDL_INIT_AUDIO)) {

@@ -76,7 +76,7 @@ public:
     virtual OutputType type() const             = 0;
     virtual bool initialised() const            = 0;
     virtual QString device() const              = 0;
-    virtual bool canHandleVolume()  const               = 0;
+    virtual bool canHandleVolume() const        = 0;
     virtual OutputState currentState()          = 0;
     virtual int bufferSize() const              = 0;
     virtual OutputDevices getAllDevices() const = 0;

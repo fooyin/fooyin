@@ -17,10 +17,17 @@
  *
  */
 
-#pragma once
+#include "pipewireplugin.h"
 
-namespace Fy {
-#define PLUGIN_DIR "@FOOYIN_PLUGIN_DIR@"
+#include "pipewireoutput.h"
 
-#cmakedefine SDL2_FOUND
+namespace Fy::Pipewire {
+Core::Engine::AudioOutputBuilder PipeWirePlugin::registerOutput()
+{
+    return {.name = "PipeWire", .creator = []() {
+                return std::make_unique<Core::Engine::PipeWireOutput>();
+            }};
 }
+
+void PipeWirePlugin::shutdown() { }
+} // namespace Fy::Pipewire

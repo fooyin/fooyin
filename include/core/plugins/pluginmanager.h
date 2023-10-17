@@ -32,12 +32,12 @@ public:
     void findPlugins(const QString& pluginDir);
     void loadPlugins();
 
-    template <typename T, typename Context>
-    void initialisePlugins(const Context& context)
+    template <typename T, typename Function>
+    void initialisePlugins(Function function)
     {
         for(auto& [name, plugin] : m_plugins) {
             if(const auto& pluginInstance = qobject_cast<T*>(plugin->root())) {
-                pluginInstance->initialise(context);
+                function(pluginInstance);
                 plugin->initialise();
             }
         }

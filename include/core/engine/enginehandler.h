@@ -36,9 +36,9 @@ class PlayerManager;
 
 namespace Engine {
 class AudioOutput;
+struct AudioOutputBuilder;
 
 using OutputNames   = std::vector<QString>;
-using OutputCreator = std::function<std::unique_ptr<AudioOutput>()>;
 
 class FYCORE_EXPORT EngineHandler : public QObject
 {
@@ -55,7 +55,7 @@ public:
     [[nodiscard]] OutputNames getAllOutputs() const;
     [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const;
 
-    void addOutput(const QString& name, OutputCreator output);
+    void addOutput(const AudioOutputBuilder& output);
 
 signals:
     void outputChanged(Engine::AudioOutput* output);

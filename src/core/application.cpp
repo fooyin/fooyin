@@ -27,17 +27,10 @@
 #include "player/playercontroller.h"
 #include "playlist/playlisthandler.h"
 
-#ifdef SDL2_FOUND
-#include "engine/output/sdloutput.h"
-#endif
-
-#ifdef PIPEWIRE_FOUND
-#include "engine/output/pipewireoutput.h"
-#endif
-
 #include <core/corepaths.h>
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
+#include <core/engine/outputplugin.h>
 #include <core/library/librarymanager.h>
 #include <core/library/sortingregistry.h>
 #include <core/plugins/coreplugin.h>
@@ -79,19 +72,9 @@ struct Application::Private
 
     void registerOutputs()
     {
-        engine.addOutput(Core::Engine::AlsaOutput::name(), []() {
-            return std::make_unique<Core::Engine::AlsaOutput>();
-        });
-#ifdef SDL2_FOUND
-        engine.addOutput(Core::Engine::SdlOutput::name(), []() {
-            return std::make_unique<Core::Engine::SdlOutput>();
-        });
-#endif
-#ifdef PIPEWIRE_FOUND
-        engine.addOutput(Core::Engine::PipeWireOutput::name(), []() {
-            return std::make_unique<Core::Engine::PipeWireOutput>();
-        });
-#endif
+        engine.addOutput({.name = "ALSA", .creator = []() {
+                              return std::make_unique<Core::Engine::AlsaOutput>();
+                          }});
     }
 
     void loadPlugins()
@@ -100,7 +83,14 @@ struct Application::Private
         pluginManager.findPlugins(pluginsPath);
         pluginManager.loadPlugins();
 
-        pluginManager.initialisePlugins<Core::CorePlugin>(corePluginContext);
+        pluginManager.initialisePlugins<Core::CorePlugin>([this](Core::CorePlugin* plugin) {
+            plugin->initialise(corePluginContext);
+        });
+
+        pluginManager.initialisePlugins<Engine::OutputPlugin>([this](Engine::OutputPlugin* plugin) {
+            Engine::AudioOutputBuilder builder = plugin->registerOutput();
+            engine.addOutput(builder);
+        });
     }
 };
 

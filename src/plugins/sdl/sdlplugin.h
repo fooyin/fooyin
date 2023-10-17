@@ -19,8 +19,21 @@
 
 #pragma once
 
-namespace Fy {
-#define PLUGIN_DIR "@FOOYIN_PLUGIN_DIR@"
+#include <core/engine/outputplugin.h>
+#include <core/plugins/plugin.h>
 
-#cmakedefine SDL2_FOUND
-}
+namespace Fy::Sdl {
+class SdlPlugin : public QObject,
+                  public Plugins::Plugin,
+                  public Core::Engine::OutputPlugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
+    Q_INTERFACES(Fy::Plugins::Plugin)
+    Q_INTERFACES(Fy::Core::Engine::OutputPlugin)
+
+public:
+    Core::Engine::AudioOutputBuilder registerOutput() override;
+    void shutdown() override;
+};
+} // namespace Fy::Sdl

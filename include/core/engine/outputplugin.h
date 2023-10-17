@@ -19,34 +19,28 @@
 
 #pragma once
 
-#include "core/engine/audiooutput.h"
+#include "fycore_export.h"
 
-#include <memory>
+#include <core/engine/audiooutput.h>
+
+#include <QtPlugin>
 
 namespace Fy::Core::Engine {
-class PipeWireOutput : public AudioPullOutput
+using OutputCreator = std::function<std::unique_ptr<AudioOutput>()>;
+
+struct AudioOutputBuilder
+{
+    QString name;
+    OutputCreator creator;
+};
+
+class FYCORE_EXPORT OutputPlugin
 {
 public:
-    PipeWireOutput();
-    ~PipeWireOutput() override;
+    virtual ~OutputPlugin() = default;
 
-    static QString name();
-
-    bool init(const OutputContext& oc) override;
-    void uninit() override;
-    void reset() override;
-    void start() override;
-
-    [[nodiscard]] bool initialised() const override;
-    [[nodiscard]] QString device() const override;
-    [[nodiscard]] bool canHandleVolume() const override;
-    [[nodiscard]] OutputDevices getAllDevices() const override;
-
-    void setVolume(double volume) override;
-    void setDevice(const QString& device) override;
-
-private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    virtual AudioOutputBuilder registerOutput() = 0;
 };
 } // namespace Fy::Core::Engine
+
+Q_DECLARE_INTERFACE(Fy::Core::Engine::OutputPlugin, "com.fooyin.plugin.engine.output")

@@ -17,10 +17,17 @@
  *
  */
 
-#pragma once
+#include "sdlplugin.h"
 
-namespace Fy {
-#define PLUGIN_DIR "@FOOYIN_PLUGIN_DIR@"
+#include "sdloutput.h"
 
-#cmakedefine SDL2_FOUND
+namespace Fy::Sdl {
+Core::Engine::AudioOutputBuilder SdlPlugin::registerOutput()
+{
+    return {.name = "SDL2", .creator = []() {
+                return std::make_unique<Core::Engine::SdlOutput>();
+            }};
 }
+
+void SdlPlugin::shutdown() { }
+} // namespace Fy::Sdl
