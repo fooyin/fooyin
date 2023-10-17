@@ -36,16 +36,17 @@ public:
     Renderer(QObject* parent = nullptr);
     ~Renderer() override;
 
-public slots:
     void run(Codec* codec, AudioOutput* output);
     void reset() override;
     void kill() override;
 
-    void render(Frame frame);
     void pauseOutput(bool isPaused);
     void updateOutput(AudioOutput* output);
     void updateDevice(const QString& device);
     void updateVolume(double volume);
+
+public slots:
+    void render(Frame frame);
 
 signals:
     void frameProcessed(Frame frame);

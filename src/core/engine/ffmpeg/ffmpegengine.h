@@ -34,8 +34,6 @@ public:
     explicit FFmpegEngine(QObject* parent = nullptr);
     ~FFmpegEngine() override;
 
-    void shutdown() override;
-
     void seek(uint64_t pos) override;
     [[nodiscard]] uint64_t currentPosition() const;
 
@@ -50,6 +48,10 @@ public:
 
     void setAudioOutput(AudioOutput* output) override;
     void setOutputDevice(const QString& device) override;
+
+public slots:
+    void startup() override;
+    void shutdown() override;
 
 private:
     struct Private;

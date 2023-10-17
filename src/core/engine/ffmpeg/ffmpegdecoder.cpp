@@ -93,7 +93,7 @@ struct Decoder::Private
 
     int sendAVPacket(const Packet& packet) const
     {
-        if(checkCodecContext()) {
+        if(checkCodecContext() && !decoder->isPaused()) {
             return avcodec_send_packet(codec->context(), !packet.isValid() || draining ? nullptr : packet.avPacket());
         }
         return -1;

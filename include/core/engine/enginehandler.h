@@ -50,6 +50,7 @@ public:
     ~EngineHandler() override;
 
     void setup();
+    void shutdown();
 
     [[nodiscard]] OutputNames getAllOutputs() const;
     [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const;

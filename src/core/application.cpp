@@ -132,6 +132,7 @@ CorePluginContext Application::context() const
 
 void Application::shutdown()
 {
+    p->engine.shutdown();
     p->playlistHandler->savePlaylists();
     p->sortingRegistry.saveItems();
     p->pluginManager.shutdown();

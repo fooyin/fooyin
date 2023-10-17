@@ -22,8 +22,6 @@
 #include "ffmpegframe.h"
 #include "ffmpegworker.h"
 
-#include <utils/threadqueue.h>
-
 class AVFormatContext;
 
 namespace Fy::Core::Engine::FFmpeg {
@@ -37,11 +35,11 @@ public:
     Decoder(QObject* parent = nullptr);
     ~Decoder() override;
 
-public slots:
     void run(AVFormatContext* context, Codec* codec);
     void reset() override;
     void kill() override;
 
+public slots:
     void onFrameProcessed();
 
 signals:

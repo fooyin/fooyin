@@ -27,8 +27,6 @@ AudioEngine::AudioEngine(QObject* parent)
     , m_position{0}
 { }
 
-void AudioEngine::shutdown() { }
-
 PlaybackState AudioEngine::state() const
 {
     return m_state;
@@ -59,4 +57,8 @@ void AudioEngine::trackStatusChanged(TrackStatus status)
     }
     m_status = status;
 }
+
+void AudioEngine::startup() { }
+
+void AudioEngine::shutdown() { }
 } // namespace Fy::Core::Engine

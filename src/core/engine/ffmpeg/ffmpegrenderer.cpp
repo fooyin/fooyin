@@ -44,6 +44,7 @@ struct Renderer::Private
 
     Utils::ThreadQueue<Frame> frameQueue{false};
     std::vector<uint8_t> tempBuffer;
+    int totalSamplesWritten{0};
 
     double volume{1.0};
 
@@ -81,7 +82,7 @@ struct Renderer::Private
         const int sstride = outputContext.sstride;
         tempBuffer.reserve(samples * sstride);
 
-        while(!renderer->isPaused() && samplesBuffered < samples) {
+        while(!renderer->isPaused() && !frameQueue.empty() && samplesBuffered < samples) {
             const Frame& frame = frameQueue.front();
 
             if(!frame.isValid()) {
@@ -90,7 +91,8 @@ struct Renderer::Private
             }
 
             if(frame.avFrame()->nb_samples <= 0) {
-                emit renderer->frameProcessed(frameQueue.dequeue());
+                emit renderer->frameProcessed(frame);
+                frameQueue.dequeue();
                 continue;
             }
 
@@ -111,13 +113,14 @@ struct Renderer::Private
 
     int renderAudio(int samples)
     {
-        const int samplesWritten = writeAudioSamples(samples);
+        int samplesWritten = writeAudioSamples(samples);
 
         if(!audioOutput->canHandleVolume()) {
             adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride, volume);
         }
 
-        audioOutput->write(tempBuffer.data(), samplesWritten);
+        samplesWritten = audioOutput->write(tempBuffer.data(), samplesWritten);
+        totalSamplesWritten += samplesWritten;
 
         tempBuffer.clear();
         return samplesWritten;
@@ -165,6 +168,7 @@ void Renderer::reset()
     }
 
     p->bufferPrefilled = false;
+    p->totalSamplesWritten = 0;
     p->frameQueue.clear();
     p->tempBuffer.clear();
 }
@@ -178,17 +182,9 @@ void Renderer::kill()
     }
 
     p->bufferPrefilled = false;
+    p->totalSamplesWritten = 0;
     p->frameQueue.clear();
     p->tempBuffer.clear();
-}
-
-void Renderer::render(Frame frame)
-{
-    p->frameQueue.enque(std::move(frame));
-
-    if(p->frameQueue.size() == 1) {
-        scheduleNextStep();
-    }
 }
 
 void Renderer::pauseOutput(bool isPaused)
@@ -230,6 +226,16 @@ void Renderer::updateVolume(double volume)
     }
 }
 
+void Renderer::render(Frame frame)
+{
+    p->frameQueue.enque(std::move(frame));
+
+    if(p->frameQueue.size() == 1) {
+        scheduleNextStep();
+    }
+}
+
+
 bool Renderer::canDoNextStep() const
 {
     return !p->frameQueue.empty() && EngineWorker::canDoNextStep();
@@ -248,7 +254,7 @@ void Renderer::doNextStep()
 
     if(p->audioOutput->type() == OutputType::Push) {
         const int samples = p->audioOutput->currentState().freeSamples;
-        if(samples > 0 && p->renderAudio(samples) == samples) {
+        if((samples == 0 && p->totalSamplesWritten > 0) || (samples > 0 && p->renderAudio(samples) == samples)) {
             if(!p->bufferPrefilled) {
                 p->bufferPrefilled = true;
                 p->audioOutput->start();

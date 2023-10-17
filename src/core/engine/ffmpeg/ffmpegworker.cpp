@@ -31,7 +31,7 @@ EngineWorker::EngineWorker(QObject* parent)
 
 void EngineWorker::setPaused(bool isPaused)
 {
-    m_paused.store(isPaused, std::memory_order_release);
+    m_paused = isPaused;
 }
 
 void EngineWorker::reset()
@@ -45,6 +45,7 @@ void EngineWorker::kill()
     setPaused(true);
     m_atEnd = false;
     if(m_timer) {
+        m_timer->stop();
         m_timer->deleteLater();
         m_timer = nullptr;
     }
@@ -94,7 +95,7 @@ void EngineWorker::scheduleNextStep(bool immediate)
 
 bool EngineWorker::isPaused() const
 {
-    return m_paused.load(std::memory_order_acquire);
+    return m_paused;
 }
 
 bool EngineWorker::isAtEnd() const
@@ -104,8 +105,7 @@ bool EngineWorker::isAtEnd() const
 
 void EngineWorker::setAtEnd(bool isAtEnd)
 {
-    if(m_atEnd != isAtEnd) {
-        m_atEnd = isAtEnd;
+    if(std::exchange(m_atEnd, isAtEnd) != isAtEnd) {
         emit atEnd();
     }
 }

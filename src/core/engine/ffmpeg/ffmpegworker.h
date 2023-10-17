@@ -23,8 +23,6 @@
 #include <QTimer>
 
 namespace Fy::Core::Engine::FFmpeg {
-class Codec;
-
 class EngineWorker : public QObject
 {
     Q_OBJECT
@@ -34,7 +32,6 @@ public:
 
     void setPaused(bool isPaused);
 
-public slots:
     virtual void reset();
     virtual void kill();
 
@@ -56,7 +53,7 @@ protected:
 
 private:
     QTimer* m_timer;
-    std::atomic<bool> m_paused;
+    bool m_paused;
     bool m_atEnd;
 };
 } // namespace Fy::Core::Engine::FFmpeg

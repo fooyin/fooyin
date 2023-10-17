@@ -61,34 +61,38 @@ struct EngineHandler::Private : QObject
         engine->moveToThread(&engineThread);
         engineThread.start();
 
+        QMetaObject::invokeMethod(engine, &AudioEngine::startup);
+
         QObject::connect(playerManager, &Player::PlayerManager::playStateChanged, this,
                          &EngineHandler::Private::playStateChanged);
         QObject::connect(playerManager, &Player::PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
         QObject::connect(engine, &AudioEngine::positionChanged, playerManager,
                          &Player::PlayerManager::setCurrentPosition);
-        QObject::connect(engine, &AudioEngine::trackFinished, playerManager, &Player::PlayerManager::next);
+        QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
+        QObject::connect(playerManager, &Player::PlayerManager::positionMoved, engine, &AudioEngine::seek);
         QObject::connect(playerManager, &Player::PlayerManager::positionMoved, engine, &AudioEngine::seek);
 
-        connect(self, &EngineHandler::outputChanged, engine, &AudioEngine::setAudioOutput);
-        connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
+        QObject::connect(self, &EngineHandler::outputChanged, engine, &AudioEngine::setAudioOutput);
+        QObject::connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
 
-        QMetaObject::invokeMethod(engine, [this]() {
-            engine->setVolume(this->settings->value<Settings::OutputVolume>());
-        });
+        updateVolume(settings->value<Settings::OutputVolume>());
     }
 
     void playStateChanged(Player::PlayState state)
     {
-        QMetaObject::invokeMethod(engine, [this, state]() {
-            switch(state) {
-                case(Player::PlayState::Playing):
-                    return engine->play();
-                case(Player::PlayState::Paused):
-                    return engine->pause();
-                case(Player::PlayState::Stopped):
-                    return engine->stop();
-            }
-        });
+        QMetaObject::invokeMethod(
+            engine,
+            [this, state]() {
+                switch(state) {
+                    case(Player::PlayState::Playing):
+                        return engine->play();
+                    case(Player::PlayState::Paused):
+                        return engine->pause();
+                    case(Player::PlayState::Stopped):
+                        return engine->stop();
+                }
+            },
+            Qt::QueuedConnection);
     }
 
     void changeOutput(const QString& output)
@@ -128,6 +132,16 @@ struct EngineHandler::Private : QObject
             emit self->deviceChanged(device);
         }
     }
+
+    void updateVolume(double volume)
+    {
+        QMetaObject::invokeMethod(
+            engine,
+            [this, volume]() {
+                engine->setVolume(volume);
+            },
+            Qt::QueuedConnection);
+    }
 };
 
 EngineHandler::EngineHandler(Player::PlayerManager* playerManager, Utils::SettingsManager* settings, QObject* parent)
@@ -135,23 +149,22 @@ EngineHandler::EngineHandler(Player::PlayerManager* playerManager, Utils::Settin
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
     p->settings->subscribe<Settings::AudioOutput>(p.get(), &EngineHandler::Private::changeOutput);
-    p->settings->subscribe<Settings::OutputVolume>(p->engine, &AudioEngine::setVolume);
+    p->settings->subscribe<Settings::OutputVolume>(p.get(), &EngineHandler::Private::updateVolume);
 }
 
-EngineHandler::~EngineHandler()
-{
-    QMetaObject::invokeMethod(p->engine, [this]() {
-        p->engine->shutdown();
-        p->engine->deleteLater();
-    });
-
-    p->engineThread.quit();
-    p->engineThread.wait();
-}
+EngineHandler::~EngineHandler() = default;
 
 void EngineHandler::setup()
 {
     p->changeOutput(p->settings->value<Settings::AudioOutput>());
+}
+
+void EngineHandler::shutdown()
+{
+    QMetaObject::invokeMethod(p->engine, &AudioEngine::shutdown);
+
+    p->engineThread.quit();
+    p->engineThread.wait();
 }
 
 OutputNames EngineHandler::getAllOutputs() const

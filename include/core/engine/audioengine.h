@@ -52,8 +52,6 @@ class FYCORE_EXPORT AudioEngine : public QObject
 public:
     explicit AudioEngine(QObject* parent = nullptr);
 
-    virtual void shutdown();
-
     [[nodiscard]] virtual PlaybackState state() const;
     [[nodiscard]] virtual TrackStatus trackStatus() const;
     [[nodiscard]] virtual uint64_t position() const;
@@ -73,6 +71,10 @@ public:
 
     void stateChanged(PlaybackState state);
     void trackStatusChanged(TrackStatus status);
+
+public slots:
+    virtual void startup();
+    virtual void shutdown();
 
 signals:
     void trackFinished();
