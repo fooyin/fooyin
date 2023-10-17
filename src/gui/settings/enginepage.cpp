@@ -39,6 +39,7 @@ public:
     void apply() override;
     void reset() override;
 
+    void setupOutputs();
     void setupDevices(const QString& output);
 
 private:
@@ -55,24 +56,8 @@ EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engin
     , m_outputBox{new Utils::ExpandingComboBox(this)}
     , m_deviceBox{new Utils::ExpandingComboBox(this)}
 {
-    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split("|");
-
-    const QString outName = !currentOutput.empty() ? currentOutput.at(0) : "";
-    const auto outputs    = m_engineHandler->getAllOutputs();
-
-    for(const auto& output : outputs) {
-        m_outputBox->addItem(output);
-        if(output == outName) {
-            m_outputBox->setCurrentIndex(m_outputBox->count() - 1);
-        }
-    }
-
-    if(!outputs.empty() && outName.isEmpty()) {
-        m_outputBox->setCurrentIndex(0);
-    }
-
+    setupOutputs();
     setupDevices(m_outputBox->currentText());
-    m_deviceBox->resizeToFitCurrent();
 
     auto* outputLabel = new QLabel("Output:", this);
     auto* deviceLabel = new QLabel("Device:", this);
@@ -98,6 +83,29 @@ void EnginePageWidget::apply()
 void EnginePageWidget::reset()
 {
     m_settings->reset<Core::Settings::AudioOutput>();
+    setupOutputs();
+    setupDevices(m_outputBox->currentText());
+}
+
+void EnginePageWidget::setupOutputs()
+{
+    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split("|");
+
+    const QString outName = !currentOutput.empty() ? currentOutput.at(0) : "";
+    const auto outputs    = m_engineHandler->getAllOutputs();
+
+    m_outputBox->clear();
+
+    for(const auto& output : outputs) {
+        m_outputBox->addItem(output);
+        if(output == outName) {
+            m_outputBox->setCurrentIndex(m_outputBox->count() - 1);
+        }
+    }
+
+    if(!outputs.empty() && outName.isEmpty()) {
+        m_outputBox->setCurrentIndex(0);
+    }
 }
 
 void EnginePageWidget::setupDevices(const QString& output)
@@ -130,6 +138,7 @@ void EnginePageWidget::setupDevices(const QString& output)
     }
 
     m_deviceBox->resizeDropDown();
+    m_deviceBox->resizeToFitCurrent();
 }
 
 EnginePage::EnginePage(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler)
