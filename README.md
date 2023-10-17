@@ -23,31 +23,31 @@ allowing for a wide range of visualisations to be built.
 
 ## Features
 
--  [x] Fully customisable layout
--  [x] Filter and search collection
--  [x] Plugin system
--  [x] Playlist support
--  [ ] Tag editing
--  [ ] FFmpeg backend
--  [ ] Visualisations
--  [ ] Lyrics support
--  [ ] Last.fm integration
--  [ ] Discogs integration
+* [x] Fully customisable layout
+* [x] Filter and search collection
+* [x] Plugin system
+* [x] Playlist support
+* [ ] Tag editing
+* [ ] FFmpeg backend
+* [ ] Visualisations
+* [ ] Lyrics support
+* [ ] Last.fm integration
+* [ ] Discogs integration
 
 ## Dependencies
 
 ### Required
 
--  Qt6 (6.5+)
--  QCoro (0.9.0+)
--  TagLib (1.12+)
--  FFmpeg (6.0+)
--  ALSA
+* [Qt6](https://www.qt.io) (6.5+)
+* [QCoro](https://github.com/danvratil/qcoro) (0.9.0+)
+* [TagLib](https://taglib.org) (1.12+)
+* [FFmpeg](https://ffmpeg.org) (6.0+)
+* [ALSA](https://alsa-project.org)
 
 ### Optional
 
--  SDL2
--  PipeWire
+* [SDL2](https://www.libsdl.org)
+* [PipeWire](https://pipewire.org)
 
 ## Setup
 
