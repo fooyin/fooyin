@@ -52,6 +52,7 @@ public:
 signals:
     void clicked(const QString& path = {});
     void entered();
+    void mouseLeft();
 
 protected:
     void changeEvent(QEvent* event) override;

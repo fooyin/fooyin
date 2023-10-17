@@ -20,5 +20,7 @@
 #pragma once
 
 namespace Fy {
-#define PLUGIN_DIR "@FOOYIN_PLUGIN_INSTALL_DIR@"
+#define PLUGIN_DIR "@FOOYIN_PLUGIN_DIR@"
+
+#cmakedefine SDL2_FOUND
 }

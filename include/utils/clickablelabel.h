@@ -35,9 +35,11 @@ public:
 signals:
     void clicked();
     void entered();
+    void mouseLeft();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void enterEvent(QEnterEvent* event) override;
+    void leaveEvent(QEvent* event) override;
 };
 } // namespace Fy::Utils

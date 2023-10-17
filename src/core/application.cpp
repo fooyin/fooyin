@@ -22,13 +22,15 @@
 #include "config.h"
 
 #include "database/database.h"
-#include "engine/enginehandler.h"
+#include "engine/output/alsaoutput.h"
 #include "library/unifiedmusiclibrary.h"
 #include "player/playercontroller.h"
 #include "playlist/playlisthandler.h"
 
 #include <core/corepaths.h>
 #include <core/coresettings.h>
+#include <core/engine/enginehandler.h>
+#include <core/engine/outputplugin.h>
 #include <core/library/librarymanager.h>
 #include <core/library/sortingregistry.h>
 #include <core/plugins/coreplugin.h>
@@ -56,15 +58,23 @@ struct Application::Private
         , coreSettings{settingsManager}
         , database{settingsManager}
         , playerManager{new Core::Player::PlayerController(settingsManager, parent)}
-        , engine{playerManager}
+        , engine{playerManager, settingsManager}
         , libraryManager{new Core::Library::LibraryManager(&database, settingsManager, parent)}
         , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
         , sortingRegistry{settingsManager}
         , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, settingsManager, parent)}
-        , corePluginContext{&pluginManager,  playerManager,   libraryManager,  library,
-                            playlistHandler, settingsManager, &sortingRegistry}
+        , corePluginContext{&pluginManager, &engine,         playerManager,   libraryManager,
+                            library,        playlistHandler, settingsManager, &sortingRegistry}
     {
+        registerOutputs();
         loadPlugins();
+    }
+
+    void registerOutputs()
+    {
+        engine.addOutput({.name = "ALSA", .creator = []() {
+                              return std::make_unique<Core::Engine::AlsaOutput>();
+                          }});
     }
 
     void loadPlugins()
@@ -73,7 +83,14 @@ struct Application::Private
         pluginManager.findPlugins(pluginsPath);
         pluginManager.loadPlugins();
 
-        pluginManager.initialisePlugins<Core::CorePlugin>(corePluginContext);
+        pluginManager.initialisePlugins<Core::CorePlugin>([this](Core::CorePlugin* plugin) {
+            plugin->initialise(corePluginContext);
+        });
+
+        pluginManager.initialisePlugins<Engine::OutputPlugin>([this](Engine::OutputPlugin* plugin) {
+            Engine::AudioOutputBuilder builder = plugin->registerOutput();
+            engine.addOutput(builder);
+        });
     }
 };
 
@@ -81,18 +98,19 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
-    connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, p->playlistHandler,
-            &Core::Playlist::PlaylistHandler::populatePlaylists);
-    connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, p->playlistHandler,
-            &Core::Playlist::PlaylistHandler::libraryRemoved);
-    connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, p->playlistHandler,
-            &Core::Playlist::PlaylistHandler::tracksUpdated);
-    connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, p->playlistHandler,
-            &Core::Playlist::PlaylistHandler::tracksRemoved);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, p->playlistHandler,
+                     &Core::Playlist::PlaylistHandler::populatePlaylists);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, p->playlistHandler,
+                     &Core::Playlist::PlaylistHandler::libraryRemoved);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, p->playlistHandler,
+                     &Core::Playlist::PlaylistHandler::tracksUpdated);
+    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, p->playlistHandler,
+                     &Core::Playlist::PlaylistHandler::tracksRemoved);
 
     p->settingsManager->loadSettings();
     p->library->loadLibrary();
     p->sortingRegistry.loadItems();
+    p->engine.setup();
 }
 
 Application::~Application() = default;
@@ -104,6 +122,7 @@ CorePluginContext Application::context() const
 
 void Application::shutdown()
 {
+    p->engine.shutdown();
     p->playlistHandler->savePlaylists();
     p->sortingRegistry.saveItems();
     p->pluginManager.shutdown();

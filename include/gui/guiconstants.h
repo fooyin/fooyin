@@ -114,6 +114,7 @@ constexpr auto ScriptSandbox   = "Fooyin.Action.ScriptSandbox";
 
 namespace Page {
 constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
+constexpr auto Engine             = "Fooyin.Page.Engine";
 constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
 constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
 constexpr auto LibrarySorting     = "Fooyin.Page.Library.Sorting";

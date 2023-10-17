@@ -41,16 +41,11 @@ ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Utils::
     , m_layout{new QHBoxLayout(this)}
     , m_playerControls{new PlayerControl(m_playerManager, this)}
     , m_playlistControls{new PlaylistControl(m_playerManager, this)}
-    , m_volumeControls{new VolumeControl(m_playerManager, this)}
+    , m_volumeControls{new VolumeControl(m_settings, this)}
     , m_progress{new ProgressWidget(m_playerManager, m_settings, this)}
 {
     setObjectName("Control Bar");
 
-    setupUi();
-}
-
-void ControlWidget::setupUi()
-{
     m_layout->addWidget(m_playerControls, 0, Qt::AlignLeft | Qt::AlignVCenter);
     m_layout->addWidget(m_progress, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_playlistControls, 0, Qt::AlignVCenter);
@@ -58,10 +53,6 @@ void ControlWidget::setupUi()
 
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(15);
-
-    m_playerControls->setEnabled(m_playerManager->currentTrack().id());
-    m_progress->setEnabled(m_playerManager->currentTrack().id());
-    m_progress->changeTrack(m_playerManager->currentTrack());
 }
 
 QString ControlWidget::name() const

@@ -27,7 +27,8 @@ project(
 )
 
 set(HEADERS
-    ${CMAKE_SOURCE_DIR}/include/core/engine/engine.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audioengine.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/enginehandler.h
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
     ${CMAKE_SOURCE_DIR}/include/core/library/librarymanager.h
@@ -44,14 +45,24 @@ set(SOURCES
     coresettings.cpp
     database/database.cpp
     database/library.cpp
-    database/librarydatabase.h
     database/librarydatabase.cpp
     database/module.cpp
-    database/playlistdatabase.h
     database/playlistdatabase.cpp
     database/query.cpp
-    engine/enginempv.cpp
     engine/enginehandler.cpp
+    engine/audioengine.cpp
+    engine/audiooutput.cpp
+    engine/ffmpeg/ffmpegclock.cpp
+    engine/ffmpeg/ffmpegrenderer.cpp
+    engine/ffmpeg/ffmpegworker.cpp
+    engine/ffmpeg/ffmpegcodec.cpp
+    engine/ffmpeg/ffmpegdecoder.cpp
+    engine/ffmpeg/ffmpegengine.cpp
+    engine/ffmpeg/ffmpegpacket.cpp
+    engine/ffmpeg/ffmpegstream.cpp
+    engine/ffmpeg/ffmpegframe.cpp
+    engine/ffmpeg/ffmpegutils.cpp
+    engine/output/alsaoutput.cpp
     library/coverprovider.cpp
     library/librarydatabasemanager.cpp
     library/librarymanager.cpp
@@ -87,12 +98,13 @@ target_link_libraries(
     fooyin_core
     PRIVATE fooyin_version
             fooyin_config
+            ${ALSA_LIBRARIES}
     PUBLIC Qt6::Core
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
            QCoro::Core
            Taglib::Taglib
-           Libmpv::Libmpv
+           ${FFMPEG_LIBRARIES}
            Fooyin::Utils
 )

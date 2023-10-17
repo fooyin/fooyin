@@ -24,31 +24,58 @@
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::Core::Player {
+struct PlayerController::Private : QObject
+{
+    PlayerController* self;
+
+    Utils::SettingsManager* settings;
+
+    Track currentTrack;
+    uint64_t totalDuration;
+    PlayState playStatus;
+    PlayMode playMode;
+    uint64_t position;
+    bool counted;
+
+    Private(PlayerController* self, Utils::SettingsManager* settings)
+        : self{self}
+        , settings{settings}
+        , totalDuration{0}
+        , playStatus{PlayState::Stopped}
+        , playMode{static_cast<PlayMode>(settings->value<Settings::PlayMode>())}
+        , position{0}
+        , counted{false}
+    {
+        settings->subscribe<Settings::PlayMode>(this, &PlayerController::Private::changePlayMode);
+    }
+
+    void changePlayMode()
+    {
+        const auto mode = static_cast<PlayMode>(settings->value<Settings::PlayMode>());
+        if(std::exchange(playMode, mode) != mode) {
+            emit self->playModeChanged(playMode);
+        }
+    }
+};
+
 PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* parent)
     : PlayerManager{parent}
-    , m_settings{settings}
-    , m_totalDuration{0}
-    , m_playStatus{PlayState::Stopped}
-    , m_playMode{PlayMode::Default}
-    , m_position{0}
-    , m_volume{1.0F}
-    , m_counted{false}
-{
-    m_playMode = static_cast<PlayMode>(m_settings->value<Settings::PlayMode>());
-    m_settings->subscribe<Settings::PlayMode>(this, &PlayerController::changePlayMode);
-}
+    , p{std::make_unique<Private>(this, settings)}
+{ }
+
+PlayerController::~PlayerController() = default;
 
 void PlayerController::reset()
 {
-    m_playStatus   = PlayState::Stopped;
-    m_position     = 0;
-    m_currentTrack = {};
+    p->playStatus   = PlayState::Stopped;
+    p->position     = 0;
+    p->currentTrack = {};
 }
 
 void PlayerController::play()
 {
-    m_playStatus = PlayState::Playing;
-    emit playStateChanged(m_playStatus);
+    p->playStatus = PlayState::Playing;
+    emit playStateChanged(p->playStatus);
 }
 
 void PlayerController::wakeUp()
@@ -58,7 +85,7 @@ void PlayerController::wakeUp()
 
 void PlayerController::playPause()
 {
-    switch(m_playStatus) {
+    switch(p->playStatus) {
         case(PlayState::Playing):
             return pause();
         case(PlayState::Stopped):
@@ -70,8 +97,8 @@ void PlayerController::playPause()
 
 void PlayerController::pause()
 {
-    m_playStatus = PlayState::Paused;
-    emit playStateChanged(m_playStatus);
+    p->playStatus = PlayState::Paused;
+    emit playStateChanged(p->playStatus);
 }
 
 void PlayerController::previous()
@@ -87,93 +114,63 @@ void PlayerController::next()
 void PlayerController::stop()
 {
     reset();
-    emit playStateChanged(m_playStatus);
+    emit playStateChanged(p->playStatus);
 }
 
 void PlayerController::setCurrentPosition(uint64_t ms)
 {
-    m_position = ms;
+    p->position = ms;
     // TODO: Only increment playCount based on total time listened excluding seeking.
-    if(!m_counted && ms >= m_totalDuration / 2) {
+    if(!p->counted && ms >= p->totalDuration / 2) {
         // TODO: Save playCounts to db.
-        int playCount = m_currentTrack.playCount();
-        m_currentTrack.setPlayCount(++playCount);
-        m_counted = true;
+        int playCount = p->currentTrack.playCount();
+        p->currentTrack.setPlayCount(++playCount);
+        p->counted = true;
     }
     emit positionChanged(ms);
 }
 
 void PlayerController::changePosition(uint64_t ms)
 {
-    if(ms >= m_totalDuration - 100) {
+    if(ms >= p->totalDuration - 100) {
         return next();
     }
-    m_position = ms;
+    p->position = ms;
     emit positionMoved(ms);
 }
 
 void PlayerController::changeCurrentTrack(const Track& track)
 {
-    m_currentTrack  = track;
-    m_totalDuration = track.duration();
-    m_position      = 0;
-    m_counted       = false;
+    p->currentTrack  = track;
+    p->totalDuration = track.duration();
+    p->position      = 0;
+    p->counted       = false;
 
-    emit currentTrackChanged(m_currentTrack);
-    play();
+    emit currentTrackChanged(p->currentTrack);
 }
 
 void PlayerController::setPlayMode(PlayMode mode)
 {
-    m_settings->set<Settings::PlayMode>(static_cast<int>(mode));
-}
-
-void PlayerController::volumeUp()
-{
-    setVolume(volume() + 5);
-}
-
-void PlayerController::volumeDown()
-{
-    setVolume(volume() - 0.05F);
-}
-
-void PlayerController::setVolume(double value)
-{
-    m_volume = value;
-    emit volumeChanged(value);
+    p->settings->set<Settings::PlayMode>(static_cast<int>(mode));
 }
 
 PlayState PlayerController::playState() const
 {
-    return m_playStatus;
+    return p->playStatus;
 }
 
 PlayMode PlayerController::playMode() const
 {
-    return m_playMode;
+    return p->playMode;
 }
 
 uint64_t PlayerController::currentPosition() const
 {
-    return m_position;
+    return p->position;
 }
 
 Track PlayerController::currentTrack() const
 {
-    return m_currentTrack;
-}
-
-double PlayerController::volume() const
-{
-    return m_volume;
-}
-
-void PlayerController::changePlayMode()
-{
-    const auto mode = static_cast<PlayMode>(m_settings->value<Settings::PlayMode>());
-    if(std::exchange(m_playMode, mode) != mode) {
-        emit playModeChanged(m_playMode);
-    }
+    return p->currentTrack;
 }
 } // namespace Fy::Core::Player

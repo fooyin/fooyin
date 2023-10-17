@@ -38,6 +38,8 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::LibrarySortScript>(
         "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", "Library");
     m_settings->createSetting<Settings::ActivePlaylistId>(0, "Playlist");
+    m_settings->createSetting<Settings::AudioOutput>("ALSA|default", "Engine");
+    m_settings->createSetting<Settings::OutputVolume>(1.0, "Engine");
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 

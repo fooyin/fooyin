@@ -69,10 +69,16 @@ find_package(QCoro6 REQUIRED COMPONENTS Core)
 qcoro_enable_coroutines()
 
 find_package(Taglib REQUIRED taglib>=1.12)
-find_package(Libmpv REQUIRED)
+find_package(ALSA REQUIRED)
 
-# find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL AVDEVICE AVFILTER
-# SWSCALE SWRESAMPLE )
+find_package(
+    FFmpeg REQUIRED
+    COMPONENTS AVCODEC
+               AVFORMAT
+               AVUTIL
+               AVFILTER
+               SWRESAMPLE
+)
 
 find_package(KDSingleApplication-qt6 QUIET)
 if(TARGET KDAB::kdsingleapplication)

@@ -19,44 +19,41 @@
 
 #pragma once
 
-#include <core/engine/engine.h>
+#include <QObject>
+#include <QTimer>
 
-class mpv_event;
-class mpv_handle;
-
-namespace Fy::Core {
-class Track;
-
-namespace Engine {
-class EngineMpv : public Engine
+namespace Fy::Core::Engine::FFmpeg {
+class EngineWorker : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit EngineMpv(QObject* parent = nullptr);
-    ~EngineMpv() override;
+    explicit EngineWorker(QObject* parent = nullptr);
 
-    void engineSetup();
-    void processEvents();
+    void setPaused(bool isPaused);
 
-    void play() override;
-    void stop() override;
-    void pause() override;
-    void seek(uint64_t pos) override;
-    void changeTrack(const Track& track) override;
-    void setVolume(float value) override;
+    virtual void reset();
+    virtual void kill();
 
 signals:
-    void mpvEvent();
+    void atEnd();
+
+protected:
+    QTimer* timer();
+
+    virtual bool canDoNextStep() const;
+    virtual int timerInterval() const;
+    void scheduleNextStep(bool immediate = true);
+    virtual void doNextStep() = 0;
+
+    [[nodiscard]] bool isPaused() const;
+    [[nodiscard]] bool isAtEnd() const;
+
+    void setAtEnd(bool isAtEnd);
 
 private:
-    void handleEvent(mpv_event* event);
-    void handlePropertyChange(mpv_event* event);
-
-    int m_posInterval;
-    int m_ms;
-    uint64_t m_lastTick;
-    mpv_handle* m_mpv;
+    QTimer* m_timer;
+    bool m_paused;
+    bool m_atEnd;
 };
-} // namespace Engine
-} // namespace Fy::Core
+} // namespace Fy::Core::Engine::FFmpeg

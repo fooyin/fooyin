@@ -19,32 +19,17 @@
 
 #pragma once
 
-#include "fycore_export.h"
+#include "fyutils_export.h"
 
-#include <QObject>
+#include <QComboBox>
 
-namespace Fy::Core {
-class Track;
-
-namespace Engine {
-class FYCORE_EXPORT Engine : public QObject
+namespace Fy::Utils {
+class FYUTILS_EXPORT ExpandingComboBox : public QComboBox
 {
-    Q_OBJECT
-
 public:
-    explicit Engine(QObject* parent = nullptr)
-        : QObject{parent} {};
+    ExpandingComboBox(QWidget* parent = nullptr);
 
-    virtual void play()                          = 0;
-    virtual void stop()                          = 0;
-    virtual void pause()                         = 0;
-    virtual void seek(uint64_t pos)              = 0;
-    virtual void changeTrack(const Track& track) = 0;
-    virtual void setVolume(float value)          = 0;
-
-signals:
-    void currentPositionChanged(uint64_t ms);
-    void trackFinished();
+    void resizeToFitCurrent();
+    void resizeDropDown();
 };
-} // namespace Engine
-} // namespace Fy::Core
+} // namespace Fy::Utils

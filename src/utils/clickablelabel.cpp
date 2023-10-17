@@ -37,4 +37,10 @@ void ClickableLabel::enterEvent(QEnterEvent* event)
     emit entered();
     QLabel::enterEvent(event);
 }
+
+void ClickableLabel::leaveEvent(QEvent* event)
+{
+    emit mouseLeft();
+    QLabel::leaveEvent(event);
+}
 } // namespace Fy::Utils

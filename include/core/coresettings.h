@@ -42,6 +42,8 @@ enum Core : uint32_t
     LibrarySorting    = 6 | Utils::Settings::ByteArray,
     LibrarySortScript = 7 | Utils::Settings::String,
     ActivePlaylistId  = 8 | Utils::Settings::Int,
+    AudioOutput       = 9 | Utils::Settings::String,
+    OutputVolume      = 10 | Utils::Settings::Double,
 };
 Q_ENUM_NS(Core)
 

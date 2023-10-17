@@ -24,9 +24,18 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: >
           sudo apt install -y
+          build-essential
+          libasound2-dev
           libcppunit-dev
-          libmpv-dev
           libgtest-dev
+          libsdl2-dev
+          pkg-config
+          wget
+      - name: Download and extract FFmpeg
+        run: |
+          wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl-shared.tar.xz -O ffmpeg.tar.xz
+          tar -xf ffmpeg.tar.xz
+          sudo cp -r ffmpeg-master-latest-linux64-lgpl-shared/* /usr/local
       - name: Checkout TagLib
         uses: actions/checkout@v3
         with:

@@ -38,6 +38,7 @@
 #include "playlist/playlistwidget.h"
 #include "playlist/presetregistry.h"
 #include "search/searchwidget.h"
+#include "settings/enginepage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
 #include "settings/library/librarygeneralpage.h"
@@ -48,7 +49,6 @@
 #include "settings/plugins/pluginspage.h"
 #include "widgets/spacer.h"
 
-#include <core/coresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/plugins/coreplugincontext.h>
@@ -72,6 +72,7 @@ struct GuiApplication::Private
     Utils::SettingsManager* settingsManager;
 
     Plugins::PluginManager* pluginManager;
+    Core::Engine::EngineHandler* engineHandler;
     Core::Player::PlayerManager* playerManager;
     Core::Library::LibraryManager* libraryManager;
     Core::Library::MusicLibrary* library;
@@ -99,6 +100,7 @@ struct GuiApplication::Private
     PropertiesDialog* propertiesDialog;
 
     Settings::GeneralPage generalPage;
+    Settings::EnginePage enginePage;
     Settings::LibraryGeneralPage libraryGeneralPage;
     Settings::LibrarySortingPage librarySortingPage;
     Settings::GuiGeneralPage guiGeneralPage;
@@ -114,6 +116,7 @@ struct GuiApplication::Private
         , actionManager{new Utils::ActionManager(self)}
         , settingsManager{core.settingsManager}
         , pluginManager{core.pluginManager}
+        , engineHandler{core.engineHandler}
         , playerManager{core.playerManager}
         , libraryManager{core.libraryManager}
         , library{core.library}
@@ -136,6 +139,7 @@ struct GuiApplication::Private
         , helpMenu{new HelpMenu(actionManager, self)}
         , propertiesDialog{new PropertiesDialog(self)}
         , generalPage{settingsManager}
+        , enginePage{settingsManager, engineHandler}
         , libraryGeneralPage{libraryManager, settingsManager}
         , librarySortingPage{sortingRegistry, settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
@@ -150,7 +154,9 @@ struct GuiApplication::Private
         registerWidgets();
         createPropertiesTabs();
 
-        pluginManager->initialisePlugins<GuiPlugin>(guiPluginContext);
+        pluginManager->initialisePlugins<GuiPlugin>([this](GuiPlugin* plugin) {
+            plugin->initialise(guiPluginContext);
+        });
     }
 
     void registerLayouts()

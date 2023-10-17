@@ -49,20 +49,18 @@ public:
     explicit ProgressWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                             QWidget* parent = nullptr);
 
-    void setupUi();
-
-    void changeTrack(const Core::Track& track);
-    void setCurrentPosition(int ms);
-    void updateTime(int elapsed);
-    void reset();
-    void stateChanged(Core::Player::PlayState state);
-    void changeElapsedTotal(bool enabled);
-
 signals:
     void movedSlider(int pos);
 
-protected:
 private:
+    void reset();
+
+    void changeTrack(const Core::Track& track);
+
+    void setCurrentPosition(uint64_t ms);
+    void updateTime(uint64_t elapsed);
+
+    void stateChanged(Core::Player::PlayState state);
     void toggleRemaining();
     void sliderDropped();
 
@@ -73,7 +71,7 @@ private:
     Utils::Slider* m_slider;
     Utils::ClickableLabel* m_elapsed;
     Utils::ClickableLabel* m_total;
-    int m_max;
+    uint64_t m_max;
     bool m_elapsedTotal;
 };
 } // namespace Gui::Widgets

@@ -19,25 +19,31 @@
 
 #pragma once
 
-#include <core/player/playermanager.h>
+#include <core/engine/audiooutput.h>
 
-#include <QObject>
+#include <SDL2/SDL_audio.h>
+
+#include <QString>
 
 namespace Fy::Core::Engine {
-class Engine;
-
-class EngineHandler : public QObject
+class SdlOutput : public AudioPullOutput
 {
-    Q_OBJECT
-
 public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, QObject* parent = nullptr);
-    ~EngineHandler() override;
+    SdlOutput();
+    ~SdlOutput() override;
 
-signals:
-    void play();
-    void pause();
-    void stop();
+    bool init(const OutputContext& oc) override;
+    void uninit() override;
+    void reset() override;
+    void start() override;
+
+    [[nodiscard]] bool initialised() const override;
+    [[nodiscard]] QString device() const override;
+    [[nodiscard]] bool canHandleVolume() const override;
+    [[nodiscard]] OutputDevices getAllDevices() const override;
+
+    void setPaused(bool pause) override;
+    void setDevice(const QString& device) override;
 
 private:
     struct Private;

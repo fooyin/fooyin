@@ -88,6 +88,7 @@ set(SOURCES
     sandbox/scripthighlighter.cpp
     search/searchcontroller.cpp
     search/searchwidget.cpp
+    settings/enginepage.cpp
     settings/generalpage.cpp
     settings/guigeneralpage.cpp
     settings/plugins/pluginsmodel.cpp

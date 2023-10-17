@@ -21,19 +21,10 @@
 
 #include <QWidget>
 
-class QHBoxLayout;
-
 namespace Fy {
-
 namespace Utils {
-class ComboIcon;
-class Slider;
-class HoverMenu;
+class SettingsManager;
 } // namespace Utils
-
-namespace Core::Player {
-class PlayerManager;
-}
 
 namespace Gui::Widgets {
 class VolumeControl : public QWidget
@@ -41,32 +32,12 @@ class VolumeControl : public QWidget
     Q_OBJECT
 
 public:
-    explicit VolumeControl(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
+    explicit VolumeControl(Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~VolumeControl() override;
 
-    void setupUi();
-
-    void updateVolume(double value);
-    void mute();
-
-signals:
-    void volumeUp();
-    void volumeDown();
-    void volumeChanged(double value);
-
-protected:
-    void showVolumeMenu();
-
 private:
-    Core::Player::PlayerManager* m_playerManager;
-
-    QHBoxLayout* m_layout;
-    Utils::ComboIcon* m_volumeIcon;
-    Utils::Slider* m_volumeSlider;
-    QHBoxLayout* m_volumeLayout;
-    Utils::HoverMenu* m_volumeMenu;
-    QSize m_labelSize;
-    int m_prevValue;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Gui::Widgets
 } // namespace Fy

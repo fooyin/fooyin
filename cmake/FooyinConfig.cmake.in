@@ -5,7 +5,18 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/modules)
 find_package(Qt6 NO_MODULE REQUIRED COMPONENTS Core Widgets Sql Concurrent)
 find_package(QCoro6 @QCoro6_VERSION_MAJOR@.@QCoro6_VERSION_MINOR@ REQUIRED COMPONENTS Core)
 find_package(Taglib REQUIRED taglib>=1.12)
-find_package(Libmpv REQUIRED)
+find_package(ALSA REQUIRED)
+find_package(SDL2)
+find_package(
+    FFmpeg REQUIRED
+    COMPONENTS AVCODEC
+               AVFORMAT
+               AVUTIL
+               AVDEVICE
+               AVFILTER
+               SWSCALE
+               SWRESAMPLE
+)
 
 set(FOOYIN_PLUGIN_TYPE @FOOYIN_PLUGIN_TYPE@)
 set(FOOYIN_PLUGIN_INSTALL_DIR @FOOYIN_PLUGIN_INSTALL_DIR@)
