@@ -11,11 +11,8 @@
 Fooyin is a customisable music player for linux.
 
 Fooyin features a _layout editing mode_
-in which the entire user interface can be customised,
-starting from a blank state or a default layout.
-The engine backend is currently based on mpv,
-though this will change to ffmpeg at a later date,
-allowing for a wide range of visualisations to be built.
+in which the entire user interface can be customised, 
+starting from a blank state or a default layout. _FooScript_ takes this further by extending the customisation to individual widgets themselves.
 
 <p align="center">
 <img src="data/images/editing.png" width="70%" style="vertical-align:middle">
