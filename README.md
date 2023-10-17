@@ -25,10 +25,10 @@ allowing for a wide range of visualisations to be built.
 
 * [x] Fully customisable layout
 * [x] Filter and search collection
+* [x] Create and manage playlists
 * [x] Plugin system
-* [x] Playlist support
+* [x] FFmpeg backend
 * [ ] Tag editing
-* [ ] FFmpeg backend
 * [ ] Visualisations
 * [ ] Lyrics support
 * [ ] Last.fm integration
