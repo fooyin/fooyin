@@ -76,9 +76,7 @@ find_package(
     COMPONENTS AVCODEC
                AVFORMAT
                AVUTIL
-               AVDEVICE
                AVFILTER
-               SWSCALE
                SWRESAMPLE
 )
 
