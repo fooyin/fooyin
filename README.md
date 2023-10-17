@@ -34,12 +34,20 @@ allowing for a wide range of visualisations to be built.
 -  [ ] Last.fm integration
 -  [ ] Discogs integration
 
-## Requirements
+## Dependencies
 
--  Qt6.5+
--  QCoro 0.9.0+
--  TagLib 1.12+
--  Libmpv (mpv)
+### Required
+
+-  Qt6 (6.5+)
+-  QCoro (0.9.0+)
+-  TagLib (1.12+)
+-  FFmpeg (6.0+)
+-  ALSA
+
+### Optional
+
+-  SDL2
+-  PipeWire
 
 ## Setup
 
