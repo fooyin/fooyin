@@ -24,6 +24,7 @@
 #include <utils/id.h>
 
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QWidget>
 
 namespace Fy {

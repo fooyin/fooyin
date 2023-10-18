@@ -17,19 +17,27 @@
  *
  */
 
-#include "widgetprovider.h"
+#pragma once
 
-#include <gui/widgetfactory.h>
+#include <gui/fywidget.h>
 
 namespace Fy::Gui::Widgets {
-WidgetProvider::WidgetProvider(Widgets::WidgetFactory* widgetFactory, QObject* parent)
-    : QObject{parent}
-    , m_widgetFactory{widgetFactory}
-{ }
+class WidgetProvider;
 
-FyWidget* WidgetProvider::createWidget(const QString& widget)
+class WidgetContainer : public FyWidget
 {
-    FyWidget* createdWidget = m_widgetFactory->make(widget);
-    return createdWidget;
-}
+    Q_OBJECT
+
+public:
+    explicit WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+
+    virtual void addWidget(FyWidget* widget)                             = 0;
+    virtual void removeWidget(FyWidget* widget)                          = 0;
+    virtual void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) = 0;
+
+    void loadWidgets(const QJsonArray& widgets);
+
+private:
+    WidgetProvider* m_widgetProvider;
+};
 } // namespace Fy::Gui::Widgets

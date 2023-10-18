@@ -80,9 +80,9 @@ struct PlaylistTabs::Private : QObject
     }
 };
 
-PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
+PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
                            PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent)
-    : VerticalSplitterWidget{actionManager, widgetFactory, settings, parent}
+    : VerticalSplitterWidget{actionManager, widgetProvider, settings, parent}
     , p{std::make_unique<Private>(this, controller)}
 {
     QObject::setObjectName(PlaylistTabs::name());

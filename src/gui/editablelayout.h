@@ -20,17 +20,12 @@
 #pragma once
 
 #include <gui/layoutprovider.h>
-
-#include "widgetprovider.h"
+#include <gui/widgetprovider.h>
 
 #include <QWidget>
 
-class QHBoxLayout;
-
 namespace Fy {
-
 namespace Utils {
-class OverlayFilter;
 class ActionManager;
 class ActionContainer;
 class SettingsManager;
@@ -39,15 +34,16 @@ class SettingsManager;
 namespace Gui::Widgets {
 class FyWidget;
 class WidgetFactory;
-class SplitterWidget;
 
 class EditableLayout : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit EditableLayout(Utils::SettingsManager* settings, Utils::ActionManager* actionManager,
-                            WidgetFactory* widgetFactory, LayoutProvider* layoutProvider, QWidget* parent = nullptr);
+    explicit EditableLayout(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
+                            LayoutProvider* layoutProvider, Utils::SettingsManager* settings,
+                            QWidget* parent = nullptr);
+    ~EditableLayout() override;
 
     void initialise();
 
@@ -69,17 +65,8 @@ public:
     void showQuickSetup();
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Utils::SettingsManager* m_settings;
-    Widgets::WidgetFactory* m_widgetFactory;
-    Widgets::WidgetProvider m_widgetProvider;
-    LayoutProvider* m_layoutProvider;
-
-    Utils::ActionContainer* m_menu;
-    QHBoxLayout* m_box;
-    Utils::OverlayFilter* m_overlay;
-    SplitterWidget* m_splitter;
-    bool m_layoutEditing;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Gui::Widgets
 } // namespace Fy

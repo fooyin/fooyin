@@ -48,6 +48,7 @@
 #include "settings/playlist/playlistpresetspage.h"
 #include "settings/plugins/pluginspage.h"
 #include "widgets/spacer.h"
+#include "widgets/tabstackwidget.h"
 
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
@@ -79,7 +80,7 @@ struct GuiApplication::Private
     Core::Library::SortingRegistry* sortingRegistry;
     Core::Playlist::PlaylistManager* playlistHandler;
 
-    Widgets::WidgetFactory widgetFactory;
+    Widgets::WidgetProvider widgetProvider;
     Settings::GuiSettings guiSettings;
     LayoutProvider layoutProvider;
     std::unique_ptr<Widgets::Playlist::PlaylistController> playlistController;
@@ -122,14 +123,15 @@ struct GuiApplication::Private
         , library{core.library}
         , sortingRegistry{core.sortingRegistry}
         , playlistHandler{core.playlistHandler}
+        , widgetProvider{actionManager}
         , guiSettings{settingsManager}
         , playlistController{std::make_unique<Widgets::Playlist::PlaylistController>(playlistHandler, &presetRegistry,
                                                                                      sortingRegistry, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
         , presetRegistry{settingsManager}
         , treeGroupRegistry{settingsManager}
-        , editableLayout{std::make_unique<Widgets::EditableLayout>(settingsManager, actionManager, &widgetFactory,
-                                                                   &layoutProvider)}
+        , editableLayout{std::make_unique<Widgets::EditableLayout>(actionManager, &widgetProvider, &layoutProvider,
+                                                                   settingsManager)}
         , mainWindow{std::make_unique<MainWindow>(actionManager, settingsManager, editableLayout.get())}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
         , editMenu{new EditMenu(actionManager, self)}
@@ -148,7 +150,7 @@ struct GuiApplication::Private
         , libraryTreePage{&treeGroupRegistry, settingsManager}
         , pluginPage{settingsManager, pluginManager}
         , guiPluginContext{actionManager,     &layoutProvider,  &selectionController,
-                           &searchController, propertiesDialog, &widgetFactory}
+                           &searchController, propertiesDialog, widgetProvider.widgetFactory()}
     {
         registerLayouts();
         registerWidgets();
@@ -179,35 +181,44 @@ struct GuiApplication::Private
 
     void registerWidgets()
     {
-        widgetFactory.registerClass<Widgets::VerticalSplitterWidget>(
+        auto* factory = widgetProvider.widgetFactory();
+
+        factory->registerClass<Widgets::VerticalSplitterWidget>(
             "SplitterVertical",
             [this]() {
-                auto* splitter = new Widgets::VerticalSplitterWidget(actionManager, &widgetFactory, settingsManager,
+                auto* splitter = new Widgets::VerticalSplitterWidget(actionManager, &widgetProvider, settingsManager,
                                                                      mainWindow.get());
                 splitter->showPlaceholder(true);
                 return splitter;
             },
             "Vertical Splitter", {"Splitters"});
 
-        widgetFactory.registerClass<Widgets::HorizontalSplitterWidget>(
+        factory->registerClass<Widgets::HorizontalSplitterWidget>(
             "SplitterHorizontal",
             [this]() {
-                auto* splitter = new Widgets::HorizontalSplitterWidget(actionManager, &widgetFactory, settingsManager,
+                auto* splitter = new Widgets::HorizontalSplitterWidget(actionManager, &widgetProvider, settingsManager,
                                                                        mainWindow.get());
                 splitter->showPlaceholder(true);
                 return splitter;
             },
             "Horizontal Splitter", {"Splitters"});
 
-        widgetFactory.registerClass<Widgets::Playlist::PlaylistTabs>(
+        factory->registerClass<Widgets::Playlist::PlaylistTabs>(
             "PlaylistTabs",
             [this]() {
-                return new Widgets::Playlist::PlaylistTabs(actionManager, &widgetFactory, playlistController.get(),
+                return new Widgets::Playlist::PlaylistTabs(actionManager, &widgetProvider, playlistController.get(),
                                                            settingsManager, mainWindow.get());
             },
             "Playlist Tabs", {"Splitters"});
 
-        widgetFactory.registerClass<Widgets::LibraryTreeWidget>(
+        factory->registerClass<Widgets::TabStackWidget>("TabStack",
+                                                        [this]() {
+                                                            return new Widgets::TabStackWidget(
+                                                                actionManager, &widgetProvider, mainWindow.get());
+                                                        },
+                                                        "Tab Stack", {"Splitters"});
+
+        factory->registerClass<Widgets::LibraryTreeWidget>(
             "LibraryTree",
             [this]() {
                 return new Widgets::LibraryTreeWidget(library, &treeGroupRegistry, &selectionController,
@@ -215,33 +226,33 @@ struct GuiApplication::Private
             },
             "Library Tree");
 
-        widgetFactory.registerClass<Widgets::ControlWidget>("Controls", [this]() {
+        factory->registerClass<Widgets::ControlWidget>("Controls", [this]() {
             return new Widgets::ControlWidget(playerManager, settingsManager, mainWindow.get());
         });
 
-        widgetFactory.registerClass<Widgets::Info::InfoWidget>("Info", [this]() {
+        factory->registerClass<Widgets::Info::InfoWidget>("Info", [this]() {
             return new Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager,
                                                  mainWindow.get());
         });
 
-        widgetFactory.registerClass<Widgets::CoverWidget>("Artwork", [this]() {
+        factory->registerClass<Widgets::CoverWidget>("Artwork", [this]() {
             return new Widgets::CoverWidget(library, playerManager, mainWindow.get());
         });
 
-        widgetFactory.registerClass<Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
+        factory->registerClass<Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
             return new Widgets::Playlist::PlaylistWidget(playerManager, playlistController.get(), &selectionController,
                                                          settingsManager, mainWindow.get());
         });
 
-        widgetFactory.registerClass<Widgets::Spacer>("Spacer", [this]() {
+        factory->registerClass<Widgets::Spacer>("Spacer", [this]() {
             return new Widgets::Spacer(mainWindow.get());
         });
 
-        widgetFactory.registerClass<Widgets::StatusWidget>("Status", [this]() {
+        factory->registerClass<Widgets::StatusWidget>("Status", [this]() {
             return new Widgets::StatusWidget(library, playerManager, settingsManager, mainWindow.get());
         });
 
-        widgetFactory.registerClass<Widgets::SearchWidget>("Search", [this]() {
+        factory->registerClass<Widgets::SearchWidget>("Search", [this]() {
             return new Widgets::SearchWidget(&searchController, settingsManager, mainWindow.get());
         });
     }

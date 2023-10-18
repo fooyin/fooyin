@@ -19,47 +19,38 @@
 
 #pragma once
 
-#include <gui/fywidget.h>
-#include <gui/splitterwidget.h>
+#include <gui/widgetcontainer.h>
 
 namespace Fy {
 
 namespace Utils {
 class ActionManager;
-class SettingsManager;
-} // namespace Utils
+}
 
-namespace Core::Playlist {
-class Playlist;
-} // namespace Core::Playlist
+namespace Gui::Widgets {
+class WidgetProvider;
 
-namespace Gui::Widgets::Playlist {
-class PlaylistController;
-
-class PlaylistTabs : public VerticalSplitterWidget
+class TabStackWidget : public WidgetContainer
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                          PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent = nullptr);
-    ~PlaylistTabs() override;
-
-    void setupTabs();
-
-    int addPlaylist(const Core::Playlist::Playlist& playlist, bool switchTo);
-    void removePlaylist(const Core::Playlist::Playlist& playlist);
-    int addNewTab(const QString& name, const QIcon& icon = {});
+    TabStackWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    ~TabStackWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+    void layoutEditingMenu(Utils::ActionContainer* menu) override;
+    void saveLayout(QJsonArray& array) override;
+    void loadLayout(const QJsonObject& object) override;
 
-protected:
-    void contextMenuEvent(QContextMenuEvent* event) override;
+    void addWidget(FyWidget *widget) override;
+    void removeWidget(FyWidget *widget) override;
+    void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets::Playlist
+} // namespace Gui::Widgets
 } // namespace Fy

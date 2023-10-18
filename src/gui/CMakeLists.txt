@@ -33,6 +33,8 @@ set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/gui/searchcontroller.h
     ${CMAKE_SOURCE_DIR}/include/gui/splitterwidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgetcontainer.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
 )
 
 set(SOURCES
@@ -45,7 +47,6 @@ set(SOURCES
     guisettings.cpp
     layoutprovider.cpp
     trackselectioncontroller.cpp
-    widgetprovider.cpp
     controls/controlwidget.cpp
     controls/playercontrol.cpp
     controls/playlistcontrol.cpp
@@ -108,6 +109,8 @@ set(SOURCES
     widgets/dummy.cpp
     widgets/spacer.cpp
     widgets/splitterwidget.cpp
+    widgets/tabstackwidget.cpp
+    widgets/widgetcontainer.cpp
 )
 
 create_fooyin_library(

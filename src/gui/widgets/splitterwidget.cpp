@@ -22,7 +22,7 @@
 #include "dummy.h"
 
 #include <gui/guisettings.h>
-#include <gui/widgetfactory.h>
+#include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/enumhelper.h>
@@ -104,7 +104,7 @@ struct SplitterWidget::Private
 
     Utils::SettingsManager* settings;
     Utils::ActionManager* actionManager;
-    Widgets::WidgetFactory* widgetFactory;
+    WidgetProvider* widgetProvider;
 
     Splitter* splitter;
     QList<FyWidget*> children;
@@ -115,12 +115,12 @@ struct SplitterWidget::Private
     int widgetCount{0};
     int baseWidgetCount{0};
 
-    Private(SplitterWidget* self, Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
+    Private(SplitterWidget* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
             Utils::SettingsManager* settings)
         : self{self}
         , settings{settings}
         , actionManager{actionManager}
-        , widgetFactory{widgetFactory}
+        , widgetProvider{widgetProvider}
         , splitter{new Splitter(Qt::Vertical, settings, self)}
         , dummy{nullptr}
     { }
@@ -138,10 +138,10 @@ struct SplitterWidget::Private
     }
 };
 
-SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
+SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
                                Utils::SettingsManager* settings, QWidget* parent)
-    : FyWidget{parent}
-    , p{std::make_unique<Private>(this, actionManager, widgetFactory, settings)}
+    : WidgetContainer{widgetProvider, parent}
+    , p{std::make_unique<Private>(this, actionManager, widgetProvider, settings)}
 {
     setObjectName(SplitterWidget::name());
 
@@ -197,7 +197,7 @@ int SplitterWidget::childCount()
     return static_cast<int>(p->children.size());
 }
 
-void SplitterWidget::addWidget(QWidget* newWidget)
+void SplitterWidget::addWidget(FyWidget* newWidget)
 {
     if(p->limit > 0 && p->widgetCount >= p->limit) {
         return;
@@ -239,36 +239,6 @@ void SplitterWidget::insertWidget(int index, FyWidget* widget)
 
     p->children.insert(index, widget);
     p->splitter->insertWidget(index, widget);
-}
-
-void SplitterWidget::setupAddWidgetMenu(Utils::ActionContainer* menu)
-{
-    if(!menu->isEmpty()) {
-        return;
-    }
-
-    const auto widgets = p->widgetFactory->registeredWidgets();
-    for(const auto& widget : widgets) {
-        auto* parentMenu = menu;
-
-        for(const auto& subMenu : widget.second.subMenus) {
-            const Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
-            auto* childMenu    = p->actionManager->actionContainer(id);
-
-            if(!childMenu) {
-                childMenu = p->actionManager->createMenu(id);
-                childMenu->menu()->setTitle(subMenu);
-                parentMenu->addMenu(childMenu);
-            }
-            parentMenu = childMenu;
-        }
-        auto* addWidgetAction = new QAction(widget.second.name, parentMenu);
-        QObject::connect(addWidgetAction, &QAction::triggered, this, [this, widget] {
-            FyWidget* newWidget = p->widgetFactory->make(widget.first);
-            addWidget(newWidget);
-        });
-        parentMenu->addAction(addWidgetAction);
-    }
 }
 
 void SplitterWidget::replaceWidget(int index, FyWidget* widget)
@@ -350,7 +320,10 @@ void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
     }
 
     auto* addMenu = createNewMenu(p->actionManager, this, tr("&Add"));
-    setupAddWidgetMenu(addMenu);
+
+    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) {
+        addWidget(newWidget);
+    });
     menu->addMenu(addMenu);
 }
 
@@ -376,21 +349,8 @@ void SplitterWidget::loadLayout(const QJsonObject& object)
     const auto state    = QByteArray::fromBase64(object["State"].toString().toUtf8());
     const auto children = object["Children"].toArray();
 
-    for(const auto& widget : children) {
-        const QJsonObject jsonObject = widget.toObject();
-        if(!jsonObject.isEmpty()) {
-            const auto widgetName = jsonObject.constBegin().key();
-            if(auto* childWidget = p->widgetFactory->make(widgetName)) {
-                addWidget(childWidget);
-                const QJsonObject widgetObject = jsonObject.value(widgetName).toObject();
-                childWidget->loadLayout(widgetObject);
-            }
-        }
-        else {
-            auto* childWidget = p->widgetFactory->make(widget.toString());
-            addWidget(childWidget);
-        }
-    }
+    WidgetContainer::loadWidgets(children);
+
     restoreState(state);
 
     p->checkShowDummy();

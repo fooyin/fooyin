@@ -21,7 +21,7 @@
 
 #include "fygui_export.h"
 
-#include <gui/fywidget.h>
+#include <gui/widgetcontainer.h>
 
 namespace Fy {
 namespace Utils {
@@ -30,14 +30,14 @@ class SettingsManager;
 } // namespace Utils
 
 namespace Gui::Widgets {
-class WidgetFactory;
+class WidgetProvider;
 
-class FYGUI_EXPORT SplitterWidget : public FyWidget
+class FYGUI_EXPORT SplitterWidget : public WidgetContainer
 {
     Q_OBJECT
 
 public:
-    SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
+    SplitterWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
                    Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~SplitterWidget() override;
 
@@ -53,10 +53,10 @@ public:
     [[nodiscard]] QWidget* widgetAtIndex(int index) const;
     [[nodiscard]] int childCount();
 
-    void addWidget(QWidget* widget);
+    void addWidget(FyWidget* widget) override;
     void replaceWidget(int index, FyWidget* widget);
-    void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget);
-    void removeWidget(FyWidget* widget);
+    void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
+    void removeWidget(FyWidget* widget) override;
 
     int findIndex(FyWidget* widgetToFind);
 
@@ -69,7 +69,6 @@ public:
 protected:
     void addBaseWidget(QWidget* widget);
     void insertWidget(int index, FyWidget* widget);
-    void setupAddWidgetMenu(Utils::ActionContainer* menu);
 
 private:
     struct Private;
@@ -79,7 +78,7 @@ private:
 class FYGUI_EXPORT VerticalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit VerticalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
+    explicit VerticalSplitterWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetFactory,
                                     Utils::SettingsManager* settings, QWidget* parent = nullptr)
         : SplitterWidget(actionManager, widgetFactory, settings, parent)
     {
@@ -90,7 +89,7 @@ public:
 class FYGUI_EXPORT HorizontalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit HorizontalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
+    explicit HorizontalSplitterWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetFactory,
                                       Utils::SettingsManager* settings, QWidget* parent = nullptr)
         : SplitterWidget(actionManager, widgetFactory, settings, parent)
     {
