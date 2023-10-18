@@ -105,29 +105,29 @@ void TabStackWidget::addWidget(FyWidget* widget)
 
 void TabStackWidget::removeWidget(FyWidget* widget)
 {
-    int removeIndex{-1};
-    for(const auto& [index, cntrWidget] : p->widgets) {
-        if(widget == cntrWidget) {
-            removeIndex = index;
-        }
-    }
-    if(removeIndex >= 0) {
+    const auto widgetIt = std::ranges::find_if(p->widgets, [&widget](const auto& pair) {
+        return pair.second == widget;
+    });
+
+    if(widgetIt != p->widgets.end()) {
+        const int removeIndex = widgetIt->first;
         p->tabs->removeTab(removeIndex);
-        p->widgets.erase(removeIndex);
+        p->widgets.erase(widgetIt);
     }
 }
 
 void TabStackWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
 {
-    int replaceIndex{-1};
-    for(const auto& [index, widget] : p->widgets) {
-        if(widget == oldWidget) {
-            replaceIndex = index;
-        }
-    }
-    if(replaceIndex >= 0) {
+    const auto widgetIt = std::ranges::find_if(p->widgets, [&oldWidget](const auto& pair) {
+        return pair.second == oldWidget;
+    });
+
+    if(widgetIt != p->widgets.end()) {
+        const int replaceIndex = widgetIt->first;
+
         p->tabs->removeTab(replaceIndex);
         p->tabs->insertTab(replaceIndex, newWidget, newWidget->name());
+        p->widgets.erase(widgetIt);
         p->widgets.emplace(replaceIndex, newWidget);
     }
 }
