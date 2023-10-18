@@ -95,24 +95,6 @@ EditableLayout::EditableLayout(Utils::SettingsManager* settings, Utils::ActionMa
     m_menu->appendGroup(Constants::Groups::Three);
 
     m_box->setContentsMargins(5, 5, 5, 5);
-
-    m_widgetFactory->registerClass<Widgets::VerticalSplitterWidget>(
-        "SplitterVertical",
-        [this]() {
-            auto* splitter = new Widgets::VerticalSplitterWidget(m_actionManager, m_widgetFactory, m_settings, this);
-            splitter->showPlaceholder(true);
-            return splitter;
-        },
-        "Vertical Splitter", {"Splitter"});
-
-    m_widgetFactory->registerClass<Widgets::HorizontalSplitterWidget>(
-        "SplitterHorizontal",
-        [this]() {
-            auto* splitter = new Widgets::HorizontalSplitterWidget(m_actionManager, m_widgetFactory, m_settings, this);
-            splitter->showPlaceholder(true);
-            return splitter;
-        },
-        "Horizontal Splitter", {"Splitter"});
 }
 
 void EditableLayout::initialise()

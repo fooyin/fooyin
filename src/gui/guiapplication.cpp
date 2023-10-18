@@ -179,49 +179,70 @@ struct GuiApplication::Private
 
     void registerWidgets()
     {
+        widgetFactory.registerClass<Widgets::VerticalSplitterWidget>(
+            "SplitterVertical",
+            [this]() {
+                auto* splitter = new Widgets::VerticalSplitterWidget(actionManager, &widgetFactory, settingsManager,
+                                                                     mainWindow.get());
+                splitter->showPlaceholder(true);
+                return splitter;
+            },
+            "Vertical Splitter", {"Splitters"});
+
+        widgetFactory.registerClass<Widgets::HorizontalSplitterWidget>(
+            "SplitterHorizontal",
+            [this]() {
+                auto* splitter = new Widgets::HorizontalSplitterWidget(actionManager, &widgetFactory, settingsManager,
+                                                                       mainWindow.get());
+                splitter->showPlaceholder(true);
+                return splitter;
+            },
+            "Horizontal Splitter", {"Splitters"});
+
         widgetFactory.registerClass<Widgets::Playlist::PlaylistTabs>(
             "PlaylistTabs",
             [this]() {
                 return new Widgets::Playlist::PlaylistTabs(actionManager, &widgetFactory, playlistController.get(),
-                                                           settingsManager);
+                                                           settingsManager, mainWindow.get());
             },
-            "Playlist Tabs");
+            "Playlist Tabs", {"Splitters"});
 
         widgetFactory.registerClass<Widgets::LibraryTreeWidget>(
             "LibraryTree",
             [this]() {
                 return new Widgets::LibraryTreeWidget(library, &treeGroupRegistry, &selectionController,
-                                                      settingsManager);
+                                                      settingsManager, mainWindow.get());
             },
             "Library Tree");
 
         widgetFactory.registerClass<Widgets::ControlWidget>("Controls", [this]() {
-            return new Widgets::ControlWidget(playerManager, settingsManager);
+            return new Widgets::ControlWidget(playerManager, settingsManager, mainWindow.get());
         });
 
         widgetFactory.registerClass<Widgets::Info::InfoWidget>("Info", [this]() {
-            return new Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager);
+            return new Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager,
+                                                 mainWindow.get());
         });
 
         widgetFactory.registerClass<Widgets::CoverWidget>("Artwork", [this]() {
-            return new Widgets::CoverWidget(library, playerManager);
+            return new Widgets::CoverWidget(library, playerManager, mainWindow.get());
         });
 
         widgetFactory.registerClass<Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
             return new Widgets::Playlist::PlaylistWidget(playerManager, playlistController.get(), &selectionController,
-                                                         settingsManager);
+                                                         settingsManager, mainWindow.get());
         });
 
-        widgetFactory.registerClass<Widgets::Spacer>("Spacer", []() {
-            return new Widgets::Spacer();
+        widgetFactory.registerClass<Widgets::Spacer>("Spacer", [this]() {
+            return new Widgets::Spacer(mainWindow.get());
         });
 
         widgetFactory.registerClass<Widgets::StatusWidget>("Status", [this]() {
-            return new Widgets::StatusWidget(library, playerManager, settingsManager);
+            return new Widgets::StatusWidget(library, playerManager, settingsManager, mainWindow.get());
         });
 
         widgetFactory.registerClass<Widgets::SearchWidget>("Search", [this]() {
-            return new Widgets::SearchWidget(&searchController, settingsManager);
+            return new Widgets::SearchWidget(&searchController, settingsManager, mainWindow.get());
         });
     }
 
