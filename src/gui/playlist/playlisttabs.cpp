@@ -41,20 +41,14 @@ struct PlaylistTabs::Private : QObject
     Core::Playlist::PlaylistManager* playlistHandler;
     PlaylistController* controller;
 
-    SplitterWidget* tabSplitter;
     QTabBar* tabs;
 
-    Private(PlaylistTabs* self, Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
-            PlaylistController* controller, Utils::SettingsManager* settings)
+    Private(PlaylistTabs* self, PlaylistController* controller)
         : self{self}
         , playlistHandler{controller->playlistHandler()}
         , controller{controller}
-        , tabSplitter{new VerticalSplitterWidget(actionManager, widgetFactory, settings)}
         , tabs{new QTabBar(self)}
     {
-        tabSplitter->setWidgetLimit(1);
-        tabSplitter->showPlaceholder(false);
-
         tabs->setMovable(false);
         tabs->setExpanding(false);
     }
@@ -88,16 +82,14 @@ struct PlaylistTabs::Private : QObject
 
 PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
                            PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent)
-    : FyWidget{parent}
-    , p{std::make_unique<Private>(this, actionManager, widgetFactory, controller, settings)}
+    : VerticalSplitterWidget{actionManager, widgetFactory, settings, parent}
+    , p{std::make_unique<Private>(this, controller)}
 {
-    setObjectName(PlaylistTabs::name());
+    QObject::setObjectName(PlaylistTabs::name());
 
-    auto* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    layout->addWidget(p->tabs);
-    layout->addWidget(p->tabSplitter);
+    SplitterWidget::setWidgetLimit(1);
+    SplitterWidget::showPlaceholder(false);
+    SplitterWidget::addBaseWidget(p->tabs);
 
     setupTabs();
 
@@ -203,25 +195,5 @@ QString PlaylistTabs::name() const
 QString PlaylistTabs::layoutName() const
 {
     return "PlaylistTabs";
-}
-
-void PlaylistTabs::saveLayout(QJsonArray& array)
-{
-    QJsonArray splitter;
-    p->tabSplitter->saveLayout(splitter);
-
-    if(splitter.empty()) {
-        return;
-    }
-
-    QJsonObject tabs;
-    tabs[layoutName()] = splitter[0].toObject();
-    array.append(tabs);
-}
-
-void PlaylistTabs::loadLayout(const QJsonObject& object)
-{
-    const auto splitterLayout = object["SplitterVertical"].toObject();
-    p->tabSplitter->loadLayout(splitterLayout);
 }
 } // namespace Fy::Gui::Widgets::Playlist

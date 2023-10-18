@@ -111,8 +111,9 @@ struct SplitterWidget::Private
     Dummy* dummy;
 
     int limit{0};
-    bool showDummy{true};
+    bool showDummy{false};
     int widgetCount{0};
+    int baseWidgetCount{0};
 
     Private(SplitterWidget* self, Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
             Utils::SettingsManager* settings)
@@ -129,6 +130,10 @@ struct SplitterWidget::Private
         if(!dummy && showDummy && widgetCount == 0) {
             dummy = new Dummy(self);
             splitter->addWidget(dummy);
+        }
+        else if(dummy && !showDummy && widgetCount > 0) {
+            dummy->deleteLater();
+            dummy = nullptr;
         }
     }
 };
@@ -156,10 +161,7 @@ void SplitterWidget::showPlaceholder(bool show)
 {
     p->showDummy = show;
 
-    if(p->dummy && !show) {
-        p->dummy->deleteLater();
-        p->dummy = nullptr;
-    }
+    p->checkShowDummy();
 }
 
 SplitterWidget::~SplitterWidget() = default;
@@ -213,14 +215,14 @@ void SplitterWidget::addWidget(QWidget* newWidget)
         p->dummy = nullptr;
     }
 
-    const int index = static_cast<int>(p->children.size());
+    const int index = childCount() + p->baseWidgetCount;
     p->children.push_back(widget);
-    return p->splitter->insertWidget(index, widget);
+    p->splitter->insertWidget(index, widget);
 }
 
 void SplitterWidget::insertWidget(int index, FyWidget* widget)
 {
-    if(index > static_cast<int>(p->children.size())) {
+    if(index > childCount() + p->baseWidgetCount) {
         return;
     }
 
@@ -233,6 +235,7 @@ void SplitterWidget::insertWidget(int index, FyWidget* widget)
     }
 
     p->widgetCount += 1;
+    index += p->baseWidgetCount;
 
     p->children.insert(index, widget);
     p->splitter->insertWidget(index, widget);
@@ -277,6 +280,8 @@ void SplitterWidget::replaceWidget(int index, FyWidget* widget)
     if(index < 0 || index >= childCount()) {
         return;
     }
+
+    index += p->baseWidgetCount;
 
     FyWidget* oldWidget = p->children.takeAt(index);
     oldWidget->deleteLater();
@@ -389,6 +394,17 @@ void SplitterWidget::loadLayout(const QJsonObject& object)
     restoreState(state);
 
     p->checkShowDummy();
+}
+
+void SplitterWidget::addBaseWidget(QWidget* widget)
+{
+    if(!widget) {
+        return;
+    }
+
+    p->baseWidgetCount += 1;
+
+    p->splitter->addWidget(widget);
 }
 } // namespace Fy::Gui::Widgets
 

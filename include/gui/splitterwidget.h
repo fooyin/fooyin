@@ -67,6 +67,7 @@ public:
     void loadLayout(const QJsonObject& object) override;
 
 protected:
+    void addBaseWidget(QWidget* widget);
     void insertWidget(int index, FyWidget* widget);
     void setupAddWidgetMenu(Utils::ActionContainer* menu);
 

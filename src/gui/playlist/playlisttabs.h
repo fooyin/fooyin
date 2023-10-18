@@ -20,6 +20,7 @@
 #pragma once
 
 #include <gui/fywidget.h>
+#include <gui/splitterwidget.h>
 
 namespace Fy {
 
@@ -38,7 +39,7 @@ class WidgetFactory;
 namespace Playlist {
 class PlaylistController;
 
-class PlaylistTabs : public FyWidget
+class PlaylistTabs : public VerticalSplitterWidget
 {
     Q_OBJECT
 
@@ -55,8 +56,6 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
-    void saveLayout(QJsonArray& array) override;
-    void loadLayout(const QJsonObject& object) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
