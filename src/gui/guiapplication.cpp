@@ -182,7 +182,8 @@ struct GuiApplication::Private
         widgetFactory.registerClass<Widgets::Playlist::PlaylistTabs>(
             "PlaylistTabs",
             [this]() {
-                return new Widgets::Playlist::PlaylistTabs(playlistHandler, playlistController.get());
+                return new Widgets::Playlist::PlaylistTabs(actionManager, &widgetFactory, playlistController.get(),
+                                                           settingsManager);
             },
             "Playlist Tabs");
 

@@ -19,19 +19,23 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
-
-class QVBoxLayout;
-class QTabBar;
+#include <gui/fywidget.h>
 
 namespace Fy {
 
+namespace Utils {
+class ActionManager;
+class SettingsManager;
+} // namespace Utils
+
 namespace Core::Playlist {
-class PlaylistManager;
 class Playlist;
 } // namespace Core::Playlist
 
-namespace Gui::Widgets::Playlist {
+namespace Gui::Widgets {
+class WidgetFactory;
+
+namespace Playlist {
 class PlaylistController;
 
 class PlaylistTabs : public FyWidget
@@ -39,11 +43,9 @@ class PlaylistTabs : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistTabs(Core::Playlist::PlaylistManager* playlistHandler, PlaylistController* controller,
-                          QWidget* parent = nullptr);
-
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QString layoutName() const override;
+    explicit PlaylistTabs(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
+                          PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    ~PlaylistTabs() override;
 
     void setupTabs();
 
@@ -51,19 +53,18 @@ public:
     void removePlaylist(const Core::Playlist::Playlist& playlist);
     int addNewTab(const QString& name, const QIcon& icon = {});
 
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
+    void saveLayout(QJsonArray& array) override;
+    void loadLayout(const QJsonObject& object) override;
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    void tabChanged(int index);
-    void playlistChanged(const Core::Playlist::Playlist& playlist);
-    void playlistRenamed(const Core::Playlist::Playlist& playlist);
-
-    Core::Playlist::PlaylistManager* m_playlistHandler;
-    PlaylistController* m_controller;
-
-    QVBoxLayout* m_layout;
-    QTabBar* m_tabs;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets::Playlist
+} // namespace Playlist
+} // namespace Gui::Widgets
 } // namespace Fy
