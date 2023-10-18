@@ -19,6 +19,7 @@
 
 #include <utils/overlayfilter.h>
 
+#include <QApplication>
 #include <QPaintEvent>
 #include <QPainter>
 
@@ -35,7 +36,7 @@ void OverlayFilter::paintEvent(QPaintEvent* /*event*/)
 {
     QPainter painter(this);
 
-    QColor colour = palette().color(QPalette::Highlight);
+    QColor colour = QApplication::palette().color(QPalette::Highlight);
     colour.setAlpha(30);
 
     painter.fillRect(rect(), colour);

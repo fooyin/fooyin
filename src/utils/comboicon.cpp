@@ -24,6 +24,7 @@
 
 #include <QEvent>
 #include <QVBoxLayout>
+#include <QApplication>
 
 namespace Fy::Utils {
 constexpr int IconSize = 128;
@@ -120,7 +121,7 @@ ComboIcon::~ComboIcon() = default;
 
 void ComboIcon::addIcon(const QString& path, const QPixmap& icon)
 {
-    const QPalette palette = p->label->palette();
+    const QPalette palette = QApplication::palette();
     Icon ico;
     ico.icon = icon;
 

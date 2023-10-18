@@ -19,6 +19,7 @@
 
 #include "dummy.h"
 
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QLabel>
 
@@ -35,7 +36,7 @@ Dummy::Dummy(QWidget* parent)
     m_label->setText("Right-Click to add a new widget.");
     m_label->setAutoFillBackground(true);
 
-    QPalette palette = m_label->palette();
+    QPalette palette = QApplication::palette();
     palette.setColor(m_label->backgroundRole(), palette.base().color());
     m_label->setPalette(palette);
 

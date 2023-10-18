@@ -19,6 +19,7 @@
 
 #include <utils/menuheader.h>
 
+#include <QApplication>
 #include <QPainter>
 
 namespace Fy::Utils {
@@ -50,7 +51,7 @@ QSize MenuHeader::sizeHint() const
 void MenuHeader::paintEvent(QPaintEvent* /*event*/)
 {
     QPainter painter(this);
-    const QPalette palette        = this->palette();
+    const QPalette palette        = QApplication::palette();
     const QColor headerBackground = palette.color(QPalette::AlternateBase);
     const QColor headerText       = palette.color(QPalette::Text);
 
