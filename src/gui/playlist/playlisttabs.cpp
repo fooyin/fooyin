@@ -22,7 +22,7 @@
 #include "playlistcontroller.h"
 
 #include <core/playlist/playlistmanager.h>
-#include <gui/splitterwidget.h>
+#include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 
@@ -38,17 +38,28 @@ struct PlaylistTabs::Private : QObject
 {
     PlaylistTabs* self;
 
+    Utils::ActionManager* actionManager;
+    WidgetProvider* widgetProvider;
     Core::Playlist::PlaylistManager* playlistHandler;
     PlaylistController* controller;
 
+    QVBoxLayout* layout;
     QTabBar* tabs;
+    FyWidget* tabsWidget{nullptr};
 
-    Private(PlaylistTabs* self, PlaylistController* controller)
+    Private(PlaylistTabs* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
+            PlaylistController* controller)
         : self{self}
+        , actionManager{actionManager}
+        , widgetProvider{widgetProvider}
         , playlistHandler{controller->playlistHandler()}
         , controller{controller}
+        , layout{new QVBoxLayout(self)}
         , tabs{new QTabBar(self)}
     {
+        layout->addWidget(tabs);
+        layout->setContentsMargins(0, 0, 0, 0);
+
         tabs->setMovable(false);
         tabs->setExpanding(false);
     }
@@ -81,15 +92,11 @@ struct PlaylistTabs::Private : QObject
 };
 
 PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                           PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent)
-    : VerticalSplitterWidget{actionManager, widgetProvider, settings, parent}
-    , p{std::make_unique<Private>(this, controller)}
+                           PlaylistController* controller, QWidget* parent)
+    : WidgetContainer{widgetProvider, parent}
+    , p{std::make_unique<Private>(this, actionManager, widgetProvider, controller)}
 {
     QObject::setObjectName(PlaylistTabs::name());
-
-    SplitterWidget::setWidgetLimit(1);
-    SplitterWidget::showPlaceholder(false);
-    SplitterWidget::addBaseWidget(p->tabs);
 
     setupTabs();
 
@@ -195,5 +202,64 @@ QString PlaylistTabs::name() const
 QString PlaylistTabs::layoutName() const
 {
     return "PlaylistTabs";
+}
+
+void PlaylistTabs::layoutEditingMenu(Utils::ActionContainer* menu)
+{
+    if(p->tabsWidget) {
+        // Can only contain 1 widget
+        return;
+    }
+
+    const QString addTitle{tr("&Add")};
+    auto addMenuId = id().append(addTitle);
+
+    auto* addMenu = p->actionManager->createMenu(addMenuId);
+    addMenu->menu()->setTitle(addTitle);
+
+    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) {
+        addWidget(newWidget);
+    });
+    menu->addMenu(addMenu);
+}
+
+void PlaylistTabs::saveLayout(QJsonArray& array)
+{
+    QJsonArray widget;
+    p->tabsWidget->saveLayout(widget);
+
+    QJsonObject tabsObject;
+    tabsObject[layoutName()] = widget;
+    array.append(tabsObject);
+}
+
+void PlaylistTabs::loadLayout(const QJsonObject& object)
+{
+    const auto widget = object[layoutName()].toArray();
+
+    WidgetContainer::loadWidgets(widget);
+}
+
+void PlaylistTabs::addWidget(FyWidget* widget)
+{
+    p->tabsWidget = widget;
+    p->layout->addWidget(p->tabsWidget);
+}
+
+void PlaylistTabs::removeWidget(FyWidget* widget)
+{
+    if(widget == p->tabsWidget) {
+        p->tabsWidget->deleteLater();
+        p->tabsWidget = nullptr;
+    }
+}
+
+void PlaylistTabs::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
+{
+    if(oldWidget == p->tabsWidget) {
+        oldWidget->deleteLater();
+        p->tabsWidget = newWidget;
+        p->layout->addWidget(p->tabsWidget);
+    }
 }
 } // namespace Fy::Gui::Widgets::Playlist

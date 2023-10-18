@@ -19,14 +19,12 @@
 
 #pragma once
 
-#include <gui/fywidget.h>
-#include <gui/splitterwidget.h>
+#include <gui/widgetcontainer.h>
 
 namespace Fy {
 
 namespace Utils {
 class ActionManager;
-class SettingsManager;
 } // namespace Utils
 
 namespace Core::Playlist {
@@ -36,13 +34,13 @@ class Playlist;
 namespace Gui::Widgets::Playlist {
 class PlaylistController;
 
-class PlaylistTabs : public VerticalSplitterWidget
+class PlaylistTabs : public WidgetContainer
 {
     Q_OBJECT
 
 public:
     explicit PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                          PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent = nullptr);
+                          PlaylistController* controller, QWidget* parent = nullptr);
     ~PlaylistTabs() override;
 
     void setupTabs();
@@ -53,6 +51,13 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+    void layoutEditingMenu(Utils::ActionContainer* menu) override;
+    void saveLayout(QJsonArray& array) override;
+    void loadLayout(const QJsonObject& object) override;
+
+    void addWidget(FyWidget* widget) override;
+    void removeWidget(FyWidget* widget) override;
+    void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

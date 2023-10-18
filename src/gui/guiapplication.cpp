@@ -59,8 +59,8 @@
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/propertiesdialog.h>
 #include <gui/searchcontroller.h>
+#include <gui/splitterwidget.h>
 #include <gui/trackselectioncontroller.h>
-#include <gui/widgetfactory.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -203,13 +203,13 @@ struct GuiApplication::Private
             },
             "Horizontal Splitter", {"Splitters"});
 
-        factory->registerClass<Widgets::Playlist::PlaylistTabs>(
-            "PlaylistTabs",
-            [this]() {
-                return new Widgets::Playlist::PlaylistTabs(actionManager, &widgetProvider, playlistController.get(),
-                                                           settingsManager, mainWindow.get());
-            },
-            "Playlist Tabs", {"Splitters"});
+        factory->registerClass<Widgets::Playlist::PlaylistTabs>("PlaylistTabs",
+                                                                [this]() {
+                                                                    return new Widgets::Playlist::PlaylistTabs(
+                                                                        actionManager, &widgetProvider,
+                                                                        playlistController.get(), mainWindow.get());
+                                                                },
+                                                                "Playlist Tabs", {"Splitters"});
 
         factory->registerClass<Widgets::TabStackWidget>("TabStack",
                                                         [this]() {

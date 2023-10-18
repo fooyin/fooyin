@@ -136,6 +136,29 @@ struct SplitterWidget::Private
             dummy = nullptr;
         }
     }
+
+    int findIndex(FyWidget* widgetToFind) const
+    {
+        const auto it = std::ranges::find(std::as_const(children), widgetToFind);
+        return (it != children.end()) ? std::distance(children.cbegin(), it) : -1;
+    }
+
+    void replaceWidget(int index, FyWidget* widget)
+    {
+        if(!widget || children.empty()) {
+            return;
+        }
+
+        if(index < 0 || index >= self->childCount()) {
+            return;
+        }
+
+        FyWidget* oldWidget = children.takeAt(index);
+        oldWidget->deleteLater();
+
+        children.insert(index, widget);
+        splitter->insertWidget(index, widget);
+    }
 };
 
 SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
@@ -187,11 +210,6 @@ bool SplitterWidget::restoreState(const QByteArray& state)
     return p->splitter->restoreState(state);
 }
 
-QWidget* SplitterWidget::widgetAtIndex(int index) const
-{
-    return p->splitter->widget(index);
-}
-
 int SplitterWidget::childCount()
 {
     return static_cast<int>(p->children.size());
@@ -220,59 +238,19 @@ void SplitterWidget::addWidget(FyWidget* newWidget)
     p->splitter->insertWidget(index, widget);
 }
 
-void SplitterWidget::insertWidget(int index, FyWidget* widget)
-{
-    if(index > childCount() + p->baseWidgetCount) {
-        return;
-    }
-
-    if(p->limit > 0 && p->widgetCount >= p->limit) {
-        return;
-    }
-
-    if(!widget) {
-        return;
-    }
-
-    p->widgetCount += 1;
-    index += p->baseWidgetCount;
-
-    p->children.insert(index, widget);
-    p->splitter->insertWidget(index, widget);
-}
-
-void SplitterWidget::replaceWidget(int index, FyWidget* widget)
-{
-    if(!widget || p->children.empty()) {
-        return;
-    }
-
-    if(index < 0 || index >= childCount()) {
-        return;
-    }
-
-    index += p->baseWidgetCount;
-
-    FyWidget* oldWidget = p->children.takeAt(index);
-    oldWidget->deleteLater();
-
-    p->children.insert(index, widget);
-    p->splitter->insertWidget(index, widget);
-}
-
 void SplitterWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
 {
     if(!oldWidget || !newWidget || p->children.empty()) {
         return;
     }
 
-    const int index = findIndex(oldWidget);
-    replaceWidget(index, newWidget);
+    const int index = p->findIndex(oldWidget);
+    p->replaceWidget(index, newWidget);
 }
 
 void SplitterWidget::removeWidget(FyWidget* widget)
 {
-    const int index = findIndex(widget);
+    const int index = p->findIndex(widget);
     if(index < 0) {
         return;
     }
@@ -283,17 +261,6 @@ void SplitterWidget::removeWidget(FyWidget* widget)
     p->children.remove(index);
 
     p->checkShowDummy();
-}
-
-int SplitterWidget::findIndex(FyWidget* widgetToFind)
-{
-    for(int i = 0; i < p->children.size(); ++i) {
-        FyWidget* widget = p->children.value(i);
-        if(widget == widgetToFind) {
-            return i;
-        }
-    }
-    return -1;
 }
 
 QString SplitterWidget::name() const
@@ -354,17 +321,6 @@ void SplitterWidget::loadLayout(const QJsonObject& object)
     restoreState(state);
 
     p->checkShowDummy();
-}
-
-void SplitterWidget::addBaseWidget(QWidget* widget)
-{
-    if(!widget) {
-        return;
-    }
-
-    p->baseWidgetCount += 1;
-
-    p->splitter->addWidget(widget);
 }
 } // namespace Fy::Gui::Widgets
 

@@ -50,25 +50,17 @@ public:
     [[nodiscard]] QByteArray saveState() const;
     bool restoreState(const QByteArray& state);
 
-    [[nodiscard]] QWidget* widgetAtIndex(int index) const;
     [[nodiscard]] int childCount();
 
     void addWidget(FyWidget* widget) override;
-    void replaceWidget(int index, FyWidget* widget);
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
     void removeWidget(FyWidget* widget) override;
-
-    int findIndex(FyWidget* widgetToFind);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void layoutEditingMenu(Utils::ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
     void loadLayout(const QJsonObject& object) override;
-
-protected:
-    void addBaseWidget(QWidget* widget);
-    void insertWidget(int index, FyWidget* widget);
 
 private:
     struct Private;
