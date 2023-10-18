@@ -47,7 +47,7 @@ public:
         return name();
     };
 
-    [[nodiscard]] FyWidget* findParent();
+    [[nodiscard]] FyWidget* findParent() const;
 
     virtual void layoutEditingMenu(Utils::ActionContainer* menu);
     virtual void saveLayout(QJsonArray& array);

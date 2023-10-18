@@ -32,7 +32,7 @@ Utils::Id FyWidget::id() const
     return m_id;
 }
 
-FyWidget* FyWidget::findParent()
+FyWidget* FyWidget::findParent() const
 {
     QWidget* parent = parentWidget();
     while(parent && !qobject_cast<FyWidget*>(parent)) {
