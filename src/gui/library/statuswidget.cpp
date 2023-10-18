@@ -23,7 +23,9 @@
 #include <core/player/playermanager.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/clickablelabel.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QContextMenuEvent>
@@ -31,81 +33,104 @@
 #include <QMenu>
 #include <QTimer>
 
-namespace Fy::Gui::Widgets {
 constexpr int IconSize = 50;
 
+namespace Fy::Gui::Widgets {
+struct StatusWidget::Private : QObject
+{
+    StatusWidget* self;
+
+    Core::Library::MusicLibrary* library;
+    Core::Player::PlayerManager* playerManager;
+    Utils::SettingsManager* settings;
+
+    Utils::ClickableLabel* iconLabel;
+    QPixmap icon;
+    Utils::ClickableLabel* playing;
+
+    Private(StatusWidget* self, Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
+            Utils::SettingsManager* settings)
+        : self{self}
+        , library{library}
+        , playerManager{playerManager}
+        , settings{settings}
+        , iconLabel{new Utils::ClickableLabel(self)}
+        , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
+        , playing{new Utils::ClickableLabel(self)}
+    {
+        connect(playing, &Utils::ClickableLabel::clicked, this, &StatusWidget::Private::labelClicked);
+        connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
+                &StatusWidget::Private::stateChanged);
+        connect(library, &Core::Library::MusicLibrary::scanProgress, this, &StatusWidget::Private::scanProgressChanged);
+
+        settings->subscribe<Settings::IconTheme>(this, [this]() {
+            icon = QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
+            iconLabel->setPixmap(icon);
+        });
+    }
+
+    void labelClicked()
+    {
+        const Core::Player::PlayState ps = playerManager->playState();
+        if(ps == Core::Player::PlayState::Playing || ps == Core::Player::PlayState::Paused) {
+            emit self->clicked();
+        }
+    }
+
+    void stateChanged(Core::Player::PlayState state)
+    {
+        switch(state) {
+            case(Core::Player::PlayState::Stopped):
+                playing->setText("Waiting for track...");
+                break;
+            case(Core::Player::PlayState::Playing): {
+                const Core::Track track = playerManager->currentTrack();
+                const auto playingText  = QString{"%1. %2 (%3) \u2022 %4 \u2022 %5"}.arg(
+                    QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0')), track.title(),
+                    Utils::msToString(track.duration()), track.albumArtist(), track.album());
+                playing->setText(playingText);
+            }
+            case(Core::Player::PlayState::Paused):
+                break;
+        }
+    }
+
+    void scanProgressChanged(int progress)
+    {
+        if(progress == 100) {
+            QTimer::singleShot(2000, playing, &QLabel::clear);
+        }
+        const auto scanText = QString{"Scanning library: %1%"}.arg(progress);
+        playing->setText(scanText);
+    }
+};
+
 StatusWidget::StatusWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-                           QWidget* parent)
+                           Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , m_library{library}
-    , m_playerManager{playerManager}
-    , m_layout{new QHBoxLayout(this)}
-    , m_iconLabel{new Utils::ClickableLabel(this)}
-    , m_icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
-    , m_playing{new Utils::ClickableLabel(this)}
+    , p{std::make_unique<Private>(this, library, playerManager, settings)}
 {
     setObjectName("Status Bar");
 
-    m_layout->setContentsMargins(5, 0, 0, 0);
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(5, 0, 0, 0);
 
-    m_iconLabel->setPixmap(m_icon);
-    m_iconLabel->setScaledContents(true);
+    p->iconLabel->setPixmap(p->icon);
+    p->iconLabel->setScaledContents(true);
 
-    m_iconLabel->setMaximumHeight(22);
-    m_iconLabel->setMaximumWidth(22);
+    p->iconLabel->setMaximumHeight(22);
+    p->iconLabel->setMaximumWidth(22);
 
-    m_layout->addWidget(m_iconLabel);
-    m_layout->addWidget(m_playing);
+    layout->addWidget(p->iconLabel);
+    layout->addWidget(p->playing);
 
     setMinimumHeight(25);
-
-    connect(m_playing, &Utils::ClickableLabel::clicked, this, &StatusWidget::labelClicked);
-    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &StatusWidget::stateChanged);
-    connect(m_library, &Core::Library::MusicLibrary::scanProgress, this, &StatusWidget::scanProgressChanged);
 }
+
+StatusWidget::~StatusWidget() = default;
 
 QString StatusWidget::name() const
 {
     return "Status";
-}
-
-void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
-{
-    Q_UNUSED(event)
-}
-
-void StatusWidget::labelClicked()
-{
-    const Core::Player::PlayState ps = m_playerManager->playState();
-    if(ps == Core::Player::PlayState::Playing || ps == Core::Player::PlayState::Paused) {
-        emit clicked();
-    }
-}
-
-void StatusWidget::stateChanged(Core::Player::PlayState state)
-{
-    switch(state) {
-        case(Core::Player::PlayState::Stopped):
-            m_playing->setText("Waiting for track...");
-            break;
-        case(Core::Player::PlayState::Playing): {
-            const Core::Track track = m_playerManager->currentTrack();
-            const auto playingText  = QString{"%1. %2 (%3) \u2022 %4 \u2022 %5"}.arg(
-                QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0')), track.title(),
-                Utils::msToString(track.duration()), track.albumArtist(), track.album());
-            m_playing->setText(playingText);
-        }
-        case(Core::Player::PlayState::Paused):
-            break;
-    }
-}
-
-void StatusWidget::scanProgressChanged(int progress)
-{
-    if(progress == 100) {
-        QTimer::singleShot(2000, m_playing, &QLabel::clear);
-    }
-    const auto scanText = QString{"Scanning library: %1%"}.arg(progress);
-    m_playing->setText(scanText);
 }
 } // namespace Fy::Gui::Widgets

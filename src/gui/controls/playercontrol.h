@@ -21,17 +21,13 @@
 
 #include <QWidget>
 
-class QHBoxLayout;
-
 namespace Fy {
-
 namespace Utils {
-class ComboIcon;
-}
+class SettingsManager;
+} // namespace Utils
 
 namespace Core::Player {
 class PlayerManager;
-enum class PlayState;
 } // namespace Core::Player
 
 namespace Gui::Widgets {
@@ -40,21 +36,13 @@ class PlayerControl : public QWidget
     Q_OBJECT
 
 public:
-    explicit PlayerControl(Core::Player::PlayerManager* playerManager, QWidget* parent = nullptr);
-
-    void setupUi();
-
-    void stateChanged(Core::Player::PlayState state);
+    PlayerControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
+                  QWidget* parent = nullptr);
+    ~PlayerControl();
 
 private:
-    Core::Player::PlayerManager* m_playerManager;
-
-    QHBoxLayout* m_layout;
-    Utils::ComboIcon* m_stop;
-    Utils::ComboIcon* m_prev;
-    Utils::ComboIcon* m_playPause;
-    Utils::ComboIcon* m_next;
-    QSize m_labelSize;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Gui::Widgets
 } // namespace Fy

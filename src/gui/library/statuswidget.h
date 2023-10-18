@@ -23,13 +23,10 @@
 
 #include <QWidget>
 
-class QHBoxLayout;
-
 namespace Fy {
-
 namespace Utils {
-class ClickableLabel;
-}
+class SettingsManager;
+} // namespace Utils
 
 namespace Core {
 namespace Library {
@@ -37,7 +34,6 @@ class MusicLibrary;
 }
 namespace Player {
 class PlayerManager;
-enum class PlayState;
 } // namespace Player
 } // namespace Core
 
@@ -48,28 +44,17 @@ class StatusWidget : public FyWidget
 
 public:
     explicit StatusWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-                          QWidget* parent = nullptr);
+                          Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    ~StatusWidget();
 
     [[nodiscard]] QString name() const override;
 
 signals:
     void clicked();
 
-protected:
-    void contextMenuEvent(QContextMenuEvent* event) override;
-
 private:
-    void labelClicked();
-    void stateChanged(Core::Player::PlayState state);
-    void scanProgressChanged(int progress);
-
-    Core::Library::MusicLibrary* m_library;
-    Core::Player::PlayerManager* m_playerManager;
-
-    QHBoxLayout* m_layout;
-    Utils::ClickableLabel* m_iconLabel;
-    QPixmap m_icon;
-    Utils::ClickableLabel* m_playing;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Gui::Widgets
 } // namespace Fy

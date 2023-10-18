@@ -33,27 +33,47 @@
 #include <QMenu>
 
 namespace Fy::Gui::Widgets {
+struct ControlWidget::Private
+{
+    ControlWidget* self;
+
+    Core::Player::PlayerManager* playerManager;
+    Utils::SettingsManager* settings;
+
+    PlayerControl* playerControls;
+    PlaylistControl* playlistControls;
+    VolumeControl* volumeControls;
+    ProgressWidget* progress;
+
+    Private(ControlWidget* self, Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings)
+        : self{self}
+        , playerManager{playerManager}
+        , settings{settings}
+        , playerControls{new PlayerControl(playerManager, settings, self)}
+        , playlistControls{new PlaylistControl(playerManager, settings, self)}
+        , volumeControls{new VolumeControl(settings, self)}
+        , progress{new ProgressWidget(playerManager, settings, self)}
+    { }
+};
+
 ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                              QWidget* parent)
     : FyWidget{parent}
-    , m_playerManager{playerManager}
-    , m_settings{settings}
-    , m_layout{new QHBoxLayout(this)}
-    , m_playerControls{new PlayerControl(m_playerManager, this)}
-    , m_playlistControls{new PlaylistControl(m_playerManager, this)}
-    , m_volumeControls{new VolumeControl(m_settings, this)}
-    , m_progress{new ProgressWidget(m_playerManager, m_settings, this)}
+    , p{std::make_unique<Private>(this, playerManager, settings)}
 {
     setObjectName("Control Bar");
 
-    m_layout->addWidget(m_playerControls, 0, Qt::AlignLeft | Qt::AlignVCenter);
-    m_layout->addWidget(m_progress, 0, Qt::AlignVCenter);
-    m_layout->addWidget(m_playlistControls, 0, Qt::AlignVCenter);
-    m_layout->addWidget(m_volumeControls, 0, Qt::AlignVCenter);
+    auto* layout = new QHBoxLayout(this);
+    layout->addWidget(p->playerControls, 0, Qt::AlignLeft | Qt::AlignVCenter);
+    layout->addWidget(p->progress, 0, Qt::AlignVCenter);
+    layout->addWidget(p->playlistControls, 0, Qt::AlignVCenter);
+    layout->addWidget(p->volumeControls, 0, Qt::AlignVCenter);
 
-    m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->setSpacing(15);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(15);
 }
+
+ControlWidget::~ControlWidget() = default;
 
 QString ControlWidget::name() const
 {

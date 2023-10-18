@@ -39,7 +39,7 @@ public:
     };
     Q_DECLARE_FLAGS(Attributes, Attribute)
 
-    explicit ComboIcon(const QString& path, Attributes attributes, QWidget* parent = nullptr);
+    ComboIcon(const QString& path, Attributes attributes, QWidget* parent = nullptr);
     explicit ComboIcon(const QString& path, QWidget* parent = nullptr);
     ~ComboIcon() override;
 
@@ -48,6 +48,8 @@ public:
 
     void setIcon(const QString& path, bool active = false);
     void setIconEnabled(bool enable = true);
+
+    void updateIcons();
 
 signals:
     void clicked(const QString& path = {});

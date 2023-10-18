@@ -216,7 +216,7 @@ struct GuiApplication::Private
         });
 
         widgetFactory.registerClass<Widgets::StatusWidget>("Status", [this]() {
-            return new Widgets::StatusWidget(library, playerManager);
+            return new Widgets::StatusWidget(library, playerManager, settingsManager);
         });
 
         widgetFactory.registerClass<Widgets::SearchWidget>("Search", [this]() {

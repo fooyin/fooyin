@@ -22,6 +22,7 @@
 #include <core/coresettings.h>
 #include <core/player/playermanager.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/comboicon.h>
 #include <utils/hovermenu.h>
 #include <utils/logslider.h>
@@ -59,9 +60,12 @@ struct VolumeControl::Private : QObject
         connect(&hideTimer, &QTimer::timeout, this, &VolumeControl::Private::closeVolumeMenu);
 
         connect(volumeSlider, &Utils::LogSlider::logValueChanged, this, &VolumeControl::Private::volumeChanged);
-        settings->subscribe<Core::Settings::OutputVolume>(volumeSlider, &Utils::LogSlider::setNaturalValue);
 
+        settings->subscribe<Core::Settings::OutputVolume>(volumeSlider, &Utils::LogSlider::setNaturalValue);
         settings->subscribe<Core::Settings::OutputVolume>(this, &VolumeControl::Private::updateDisplay);
+        settings->subscribe<Settings::IconTheme>(this, [this]() {
+            volumeIcon->updateIcons();
+        });
     }
 
     void showVolumeMenu()

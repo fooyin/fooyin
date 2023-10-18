@@ -22,96 +22,116 @@
 #include <core/coresettings.h>
 #include <core/player/playermanager.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/comboicon.h>
 #include <utils/enumhelper.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
 
+constexpr QSize IconSize = {20, 20};
+
 namespace Fy::Gui::Widgets {
-PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, QWidget* parent)
+struct PlaylistControl::Private : QObject
+{
+    PlaylistControl* self;
+
+    Core::Player::PlayerManager* playerManager;
+    Utils::SettingsManager* settings;
+
+    Utils::ComboIcon* repeat;
+    Utils::ComboIcon* shuffle;
+
+    Private(PlaylistControl* self, Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings)
+        : playerManager{playerManager}
+        , settings{settings}
+        , repeat{new Utils::ComboIcon(Constants::Icons::RepeatAll, Utils::ComboIcon::HasActiveIcon, self)}
+        , shuffle{new Utils::ComboIcon(Constants::Icons::Shuffle, Utils::ComboIcon::HasActiveIcon, self)}
+    {
+        connect(repeat, &Utils::ComboIcon::clicked, this, &PlaylistControl::Private::repeatClicked);
+        connect(shuffle, &Utils::ComboIcon::clicked, this, &PlaylistControl::Private::shuffleClicked);
+        connect(playerManager, &Core::Player::PlayerManager::playModeChanged, this, &PlaylistControl::Private::setMode);
+
+        settings->subscribe<Settings::IconTheme>(this, [this]() {
+            repeat->updateIcons();
+            shuffle->updateIcons();
+        });
+    }
+
+    void repeatClicked()
+    {
+        const auto mode = playerManager->playMode();
+
+        switch(mode) {
+            case(Core::Player::PlayMode::Repeat):
+                playerManager->setPlayMode(Core::Player::PlayMode::Default);
+                break;
+            case(Core::Player::PlayMode::RepeatAll):
+                playerManager->setPlayMode(Core::Player::PlayMode::Repeat);
+                break;
+            case(Core::Player::PlayMode::Shuffle):
+            case(Core::Player::PlayMode::Default):
+                playerManager->setPlayMode(Core::Player::PlayMode::RepeatAll);
+                break;
+        }
+    }
+
+    void shuffleClicked()
+    {
+        const auto mode = playerManager->playMode();
+
+        if(mode == Core::Player::PlayMode::Shuffle) {
+            playerManager->setPlayMode(Core::Player::PlayMode::Default);
+        }
+        else {
+            playerManager->setPlayMode(Core::Player::PlayMode::Shuffle);
+        }
+    }
+
+    void setMode(Core::Player::PlayMode mode) const
+    {
+        switch(mode) {
+            case(Core::Player::PlayMode::Repeat):
+                repeat->setIcon(Constants::Icons::Repeat, true);
+                shuffle->setIcon(Constants::Icons::Shuffle);
+                break;
+            case(Core::Player::PlayMode::RepeatAll):
+                repeat->setIcon(Constants::Icons::RepeatAll, true);
+                shuffle->setIcon(Constants::Icons::Shuffle);
+                break;
+            case(Core::Player::PlayMode::Shuffle):
+                shuffle->setIcon(Constants::Icons::Shuffle, true);
+                repeat->setIcon(Constants::Icons::RepeatAll);
+                break;
+            case(Core::Player::PlayMode::Default):
+                repeat->setIcon(Constants::Icons::RepeatAll);
+                shuffle->setIcon(Constants::Icons::Shuffle);
+                break;
+        }
+    }
+};
+
+PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
+                                 QWidget* parent)
     : QWidget{parent}
-    , m_playerManager{playerManager}
-    , m_layout{new QHBoxLayout(this)}
-    , m_labelSize{20, 20}
-    , m_repeat{new Utils::ComboIcon(Constants::Icons::RepeatAll, Utils::ComboIcon::HasActiveIcon, this)}
-    , m_shuffle{new Utils::ComboIcon(Constants::Icons::Shuffle, Utils::ComboIcon::HasActiveIcon, this)}
+    , p{std::make_unique<Private>(this, playerManager, settings)}
 
 {
-    setupUi();
+    auto* layout = new QHBoxLayout(this);
+    layout->setSizeConstraint(QLayout::SetFixedSize);
+    layout->setSpacing(10);
+    layout->setContentsMargins(0, 0, 0, 0);
 
-    connect(m_repeat, &Utils::ComboIcon::clicked, this, &PlaylistControl::repeatClicked);
-    connect(m_shuffle, &Utils::ComboIcon::clicked, this, &PlaylistControl::shuffleClicked);
+    p->repeat->addIcon(Constants::Icons::Repeat);
 
-    connect(m_playerManager, &Core::Player::PlayerManager::playModeChanged, this, &PlaylistControl::setMode);
+    p->repeat->setMaximumSize(IconSize);
+    p->shuffle->setMaximumSize(IconSize);
 
-    setMode(m_playerManager->playMode());
+    layout->addWidget(p->repeat, 0, Qt::AlignVCenter);
+    layout->addWidget(p->shuffle, 0, Qt::AlignVCenter);
+
+    p->setMode(p->playerManager->playMode());
 }
 
-void PlaylistControl::setupUi()
-{
-    m_layout->setSizeConstraint(QLayout::SetFixedSize);
-    m_layout->setSpacing(10);
-    m_layout->setContentsMargins(0, 0, 0, 0);
-
-    m_repeat->addIcon(Constants::Icons::Repeat);
-
-    m_repeat->setMaximumSize(m_labelSize);
-    m_shuffle->setMaximumSize(m_labelSize);
-
-    m_layout->addWidget(m_repeat, 0, Qt::AlignVCenter);
-    m_layout->addWidget(m_shuffle, 0, Qt::AlignVCenter);
-}
-
-void PlaylistControl::repeatClicked()
-{
-    const auto mode = m_playerManager->playMode();
-
-    switch(mode) {
-        case(Core::Player::PlayMode::Repeat):
-            m_playerManager->setPlayMode(Core::Player::PlayMode::Default);
-            break;
-        case(Core::Player::PlayMode::RepeatAll):
-            m_playerManager->setPlayMode(Core::Player::PlayMode::Repeat);
-            break;
-        case(Core::Player::PlayMode::Shuffle):
-        case(Core::Player::PlayMode::Default):
-            m_playerManager->setPlayMode(Core::Player::PlayMode::RepeatAll);
-            break;
-    }
-}
-
-void PlaylistControl::shuffleClicked()
-{
-    const auto mode = m_playerManager->playMode();
-
-    if(mode == Core::Player::PlayMode::Shuffle) {
-        m_playerManager->setPlayMode(Core::Player::PlayMode::Default);
-    }
-    else {
-        m_playerManager->setPlayMode(Core::Player::PlayMode::Shuffle);
-    }
-}
-
-void PlaylistControl::setMode(Core::Player::PlayMode mode) const
-{
-    switch(mode) {
-        case(Core::Player::PlayMode::Repeat):
-            m_repeat->setIcon(Constants::Icons::Repeat, true);
-            m_shuffle->setIcon(Constants::Icons::Shuffle);
-            break;
-        case(Core::Player::PlayMode::RepeatAll):
-            m_repeat->setIcon(Constants::Icons::RepeatAll, true);
-            m_shuffle->setIcon(Constants::Icons::Shuffle);
-            break;
-        case(Core::Player::PlayMode::Shuffle):
-            m_shuffle->setIcon(Constants::Icons::Shuffle, true);
-            m_repeat->setIcon(Constants::Icons::RepeatAll);
-            break;
-        case(Core::Player::PlayMode::Default):
-            m_repeat->setIcon(Constants::Icons::RepeatAll);
-            m_shuffle->setIcon(Constants::Icons::Shuffle);
-            break;
-    }
-}
+PlaylistControl::~PlaylistControl() = default;
 } // namespace Fy::Gui::Widgets

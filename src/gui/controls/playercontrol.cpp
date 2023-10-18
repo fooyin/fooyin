@@ -21,65 +21,92 @@
 
 #include <core/player/playermanager.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/comboicon.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
+
+constexpr QSize IconSize = {20, 20};
 
 namespace Fy::Gui::Widgets {
 using Utils::ComboIcon;
 
-PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, QWidget* parent)
-    : QWidget{parent}
-    , m_playerManager{playerManager}
-    , m_layout{new QHBoxLayout(this)}
-    , m_stop{new ComboIcon(Constants::Icons::Stop, ComboIcon::HasDisabledIcon, this)}
-    , m_prev{new ComboIcon(Constants::Icons::Prev, ComboIcon::HasDisabledIcon, this)}
-    , m_playPause{new ComboIcon(Constants::Icons::Play, ComboIcon::HasDisabledIcon, this)}
-    , m_next{new ComboIcon(Constants::Icons::Next, ComboIcon::HasDisabledIcon, this)}
-    , m_labelSize{20, 20}
+struct PlayerControl::Private : QObject
 {
-    setupUi();
+    PlayerControl* self;
 
-    connect(m_stop, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::stop);
-    connect(m_prev, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::previous);
-    connect(m_playPause, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::playPause);
-    connect(m_next, &ComboIcon::clicked, m_playerManager, &Core::Player::PlayerManager::next);
+    Core::Player::PlayerManager* playerManager;
+    Utils::SettingsManager* settings;
 
-    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &PlayerControl::stateChanged);
-}
+    Utils::ComboIcon* stop;
+    Utils::ComboIcon* prev;
+    Utils::ComboIcon* playPause;
+    Utils::ComboIcon* next;
 
-void PlayerControl::setupUi()
-{
-    m_layout->setSizeConstraint(QLayout::SetFixedSize);
-    m_layout->setSpacing(10);
-    m_layout->setContentsMargins(10, 0, 0, 0);
+    Private(PlayerControl* self, Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings)
+        : self{self}
+        , playerManager{playerManager}
+        , settings{settings}
+        , stop{new ComboIcon(Constants::Icons::Stop, ComboIcon::HasDisabledIcon, self)}
+        , prev{new ComboIcon(Constants::Icons::Prev, ComboIcon::HasDisabledIcon, self)}
+        , playPause{new ComboIcon(Constants::Icons::Play, ComboIcon::HasDisabledIcon, self)}
+        , next{new ComboIcon(Constants::Icons::Next, ComboIcon::HasDisabledIcon, self)}
+    {
+        connect(stop, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::stop);
+        connect(prev, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::previous);
+        connect(playPause, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::playPause);
+        connect(next, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::next);
+        connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
+                &PlayerControl::Private::stateChanged);
 
-    m_playPause->addIcon(Constants::Icons::Pause);
+        settings->subscribe<Settings::IconTheme>(this, [this]() {
+            stop->updateIcons();
+            prev->updateIcons();
+            playPause->updateIcons();
+            next->updateIcons();
+        });
 
-    m_stop->setMaximumSize(m_labelSize);
-    m_prev->setMaximumSize(m_labelSize);
-    m_playPause->setMaximumSize(m_labelSize);
-    m_next->setMaximumSize(m_labelSize);
-
-    m_layout->addWidget(m_stop, 0, Qt::AlignVCenter);
-    m_layout->addWidget(m_prev, 0, Qt::AlignVCenter);
-    m_layout->addWidget(m_playPause, 0, Qt::AlignVCenter);
-    m_layout->addWidget(m_next, 0, Qt::AlignVCenter);
-
-    stateChanged(m_playerManager->playState());
-}
-
-void PlayerControl::stateChanged(Core::Player::PlayState state)
-{
-    switch(state) {
-        case(Core::Player::PlayState::Stopped):
-            m_playPause->setIcon(Constants::Icons::Play);
-            return setEnabled(false);
-        case(Core::Player::PlayState::Playing):
-            m_playPause->setIcon(Constants::Icons::Pause);
-            return setEnabled(true);
-        case(Core::Player::PlayState::Paused):
-            return m_playPause->setIcon(Constants::Icons::Play);
+        stateChanged(playerManager->playState());
     }
+
+    void stateChanged(Core::Player::PlayState state)
+    {
+        switch(state) {
+            case(Core::Player::PlayState::Stopped):
+                playPause->setIcon(Constants::Icons::Play);
+                return self->setEnabled(false);
+            case(Core::Player::PlayState::Playing):
+                playPause->setIcon(Constants::Icons::Pause);
+                return self->setEnabled(true);
+            case(Core::Player::PlayState::Paused):
+                return playPause->setIcon(Constants::Icons::Play);
+        }
+    }
+};
+
+PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
+                             QWidget* parent)
+    : QWidget{parent}
+    , p{std::make_unique<Private>(this, playerManager, settings)}
+{
+    auto* layout = new QHBoxLayout(this);
+    layout->setSizeConstraint(QLayout::SetFixedSize);
+    layout->setSpacing(10);
+    layout->setContentsMargins(10, 0, 0, 0);
+
+    p->playPause->addIcon(Constants::Icons::Pause);
+
+    p->stop->setMaximumSize(IconSize);
+    p->prev->setMaximumSize(IconSize);
+    p->playPause->setMaximumSize(IconSize);
+    p->next->setMaximumSize(IconSize);
+
+    layout->addWidget(p->stop, 0, Qt::AlignVCenter);
+    layout->addWidget(p->prev, 0, Qt::AlignVCenter);
+    layout->addWidget(p->playPause, 0, Qt::AlignVCenter);
+    layout->addWidget(p->next, 0, Qt::AlignVCenter);
 }
+
+PlayerControl::~PlayerControl() = default;
 } // namespace Fy::Gui::Widgets

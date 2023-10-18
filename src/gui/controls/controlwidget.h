@@ -23,28 +23,16 @@
 
 #include <QWidget>
 
-class QHBoxLayout;
-
 namespace Fy {
-
 namespace Utils {
 class SettingsManager;
 }
 
-namespace Core {
-class Track;
-
-namespace Player {
+namespace Core::Player {
 class PlayerManager;
 }
-} // namespace Core
 
 namespace Gui::Widgets {
-class PlayerControl;
-class PlaylistControl;
-class VolumeControl;
-class ProgressWidget;
-
 class ControlWidget : public FyWidget
 {
     Q_OBJECT
@@ -52,18 +40,13 @@ class ControlWidget : public FyWidget
 public:
     explicit ControlWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                            QWidget* parent = nullptr);
+    ~ControlWidget();
 
     [[nodiscard]] QString name() const override;
 
 private:
-    Core::Player::PlayerManager* m_playerManager;
-    Utils::SettingsManager* m_settings;
-
-    QHBoxLayout* m_layout;
-    PlayerControl* m_playerControls;
-    PlaylistControl* m_playlistControls;
-    VolumeControl* m_volumeControls;
-    ProgressWidget* m_progress;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Gui::Widgets
 } // namespace Fy

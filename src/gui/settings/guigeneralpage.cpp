@@ -29,6 +29,7 @@
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QVBoxLayout>
@@ -52,6 +53,8 @@ private:
 
     QRadioButton* m_lightTheme;
     QRadioButton* m_darkTheme;
+    QRadioButton* m_customTheme;
+    QLineEdit* m_customThemeName;
     QCheckBox* m_splitterHandles;
 };
 
@@ -62,16 +65,13 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     , m_settings{settings}
     , m_lightTheme{new QRadioButton(tr("Light"), this)}
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
+    , m_customTheme{new QRadioButton(tr("Custom"), this)}
+    , m_customThemeName{new QLineEdit(this)}
     , m_splitterHandles{new QCheckBox(tr("Show Splitter Handles"), this)}
 {
     m_splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
 
-    if(m_settings->value<Settings::IconTheme>() == "light") {
-        m_lightTheme->setChecked(true);
-    }
-    else {
-        m_darkTheme->setChecked(true);
-    }
+    m_customThemeName->setVisible(false);
 
     auto* splitterBox       = new QGroupBox(tr("Splitters"));
     auto* splitterBoxLayout = new QVBoxLayout(splitterBox);
@@ -85,10 +85,10 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
 
     auto* iconThemeBox       = new QGroupBox(tr("Icon Theme"), this);
     auto* iconThemeBoxLayout = new QVBoxLayout(iconThemeBox);
-    auto* iconThemeLabel     = new QLabel(tr("Requires restart"), this);
     iconThemeBoxLayout->addWidget(m_lightTheme);
     iconThemeBoxLayout->addWidget(m_darkTheme);
-    iconThemeBoxLayout->addWidget(iconThemeLabel);
+    iconThemeBoxLayout->addWidget(m_customTheme);
+    iconThemeBoxLayout->addWidget(m_customThemeName);
 
     setupBoxLayout->addWidget(quickSetup);
     setupBoxLayout->addWidget(importLayout);
@@ -100,6 +100,18 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     mainLayout->addWidget(iconThemeBox);
     mainLayout->addStretch();
 
+    const QString currentTheme = m_settings->value<Settings::IconTheme>();
+    if(currentTheme == "light") {
+        m_lightTheme->setChecked(true);
+    }
+    else if(currentTheme == "dark") {
+        m_darkTheme->setChecked(true);
+    }
+    else {
+        m_customTheme->setChecked(true);
+        m_customThemeName->setVisible(true);
+    }
+
     QObject::connect(quickSetup, &QPushButton::clicked, this, &GuiGeneralPageWidget::showQuickSetup);
     QObject::connect(importLayout, &QPushButton::clicked, this, [this]() {
         m_layoutProvider->importLayout();
@@ -107,11 +119,29 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     QObject::connect(exportLayout, &QPushButton::clicked, this, [this]() {
         m_layoutProvider->exportLayout(m_editableLayout->currentLayout());
     });
+
+    QObject::connect(m_lightTheme, &QRadioButton::clicked, this, [this]() {
+        m_customThemeName->setVisible(false);
+    });
+    QObject::connect(m_darkTheme, &QRadioButton::clicked, this, [this]() {
+        m_customThemeName->setVisible(false);
+    });
+    QObject::connect(m_customTheme, &QRadioButton::clicked, this, [this]() {
+        m_customThemeName->setVisible(true);
+    });
 }
 
 void GuiGeneralPageWidget::apply()
 {
-    m_settings->set<Settings::IconTheme>(m_lightTheme->isChecked() ? "light" : "dark");
+    const QString theme = m_customTheme->isChecked() ? m_customThemeName->text()
+                        : m_lightTheme->isChecked()  ? "light"
+                                                     : "dark";
+
+    if(theme != m_settings->value<Settings::IconTheme>()) {
+        QIcon::setThemeName(theme);
+        m_settings->set<Settings::IconTheme>(theme);
+    }
+
     m_settings->set<Settings::SplitterHandles>(m_splitterHandles->isChecked());
 }
 

@@ -190,6 +190,22 @@ void ComboIcon::setIconEnabled(bool enable)
     return p->label->setPixmap(p->icons.at(p->currentIndex).second.iconDisabled);
 }
 
+void ComboIcon::updateIcons()
+{
+    PathIconContainer prevIcons = std::move(p->icons);
+
+    for(auto& [path, _] : prevIcons) {
+        addIcon(path);
+    }
+
+    if(p->hasAttribute(HasActiveIcon) && p->hasAttribute(Active)) {
+        p->label->setPixmap(p->icons.at(p->currentIndex).second.iconActive);
+    }
+    else {
+        p->label->setPixmap(p->icons.at(p->currentIndex).second.icon);
+    }
+}
+
 void ComboIcon::changeEvent(QEvent* event)
 {
     if(event->type() == QEvent::EnabledChange && p->hasAttribute(HasDisabledIcon)) {
