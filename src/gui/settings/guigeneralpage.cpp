@@ -69,13 +69,12 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     , m_customThemeName{new QLineEdit(this)}
     , m_splitterHandles{new QCheckBox(tr("Show Splitter Handles"), this)}
 {
-    m_splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
-
     m_customThemeName->setVisible(false);
 
     auto* splitterBox       = new QGroupBox(tr("Splitters"));
-    auto* splitterBoxLayout = new QVBoxLayout(splitterBox);
-    splitterBoxLayout->addWidget(m_splitterHandles);
+    auto* splitterBoxLayout = new QGridLayout(splitterBox);
+    splitterBoxLayout->addWidget(m_splitterHandles, 0, 0, 1, 2);
+    splitterBoxLayout->setColumnStretch(2, 1);
 
     auto* setupBox       = new QGroupBox(tr("Setup"));
     auto* setupBoxLayout = new QHBoxLayout(setupBox);
@@ -99,6 +98,8 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     mainLayout->addWidget(splitterBox);
     mainLayout->addWidget(iconThemeBox);
     mainLayout->addStretch();
+
+    m_splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
 
     const QString currentTheme = m_settings->value<Settings::IconTheme>();
     if(currentTheme == "light") {
@@ -149,6 +150,8 @@ void GuiGeneralPageWidget::reset()
 {
     m_settings->reset<Settings::IconTheme>();
     m_settings->reset<Settings::SplitterHandles>();
+
+    m_splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
 }
 
 void GuiGeneralPageWidget::showQuickSetup()
