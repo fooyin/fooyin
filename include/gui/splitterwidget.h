@@ -42,6 +42,7 @@ public:
     ~SplitterWidget() override;
 
     void setWidgetLimit(int count);
+    void showPlaceholder(bool show);
 
     [[nodiscard]] Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orientation);
@@ -50,7 +51,7 @@ public:
     bool restoreState(const QByteArray& state);
 
     [[nodiscard]] QWidget* widgetAtIndex(int index) const;
-    [[nodiscard]] bool hasChildren();
+    [[nodiscard]] int childCount();
 
     void addWidget(QWidget* widget);
     void replaceWidget(int index, FyWidget* widget);

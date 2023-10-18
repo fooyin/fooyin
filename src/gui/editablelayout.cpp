@@ -22,15 +22,14 @@
 #include "quicksetup/quicksetupdialog.h"
 #include "widgetprovider.h"
 #include "widgets/dummy.h"
-#include "widgets/splitterwidget.h"
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
+#include <gui/splitterwidget.h>
 #include <gui/widgetfactory.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
-#include <utils/enumhelper.h>
 #include <utils/menuheader.h>
 #include <utils/overlayfilter.h>
 #include <utils/paths.h>
@@ -125,7 +124,7 @@ void EditableLayout::initialise()
         m_splitter->setParent(this);
         m_box->addWidget(m_splitter);
     }
-    if(m_splitter && !m_splitter->hasChildren()) {
+    if(m_splitter && m_splitter->childCount() < 1) {
         m_settings->set<Settings::LayoutEditing>(true);
     }
     qApp->installEventFilter(this);
@@ -241,7 +240,7 @@ void EditableLayout::changeLayout(const Layout& layout)
     // Delete all current widgets
     delete m_splitter;
     const bool success = loadLayout(layout.json);
-    if(success && m_splitter->hasChildren()) {
+    if(success && m_splitter->childCount() > 0) {
         m_settings->set<Settings::LayoutEditing>(false);
     }
     else {
