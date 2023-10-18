@@ -19,29 +19,29 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
-#include "splitter.h"
+#include "fygui_export.h"
 
-class QHBoxLayout;
+#include <gui/fywidget.h>
 
 namespace Fy {
-
 namespace Utils {
 class ActionManager;
 class SettingsManager;
 } // namespace Utils
 
 namespace Gui::Widgets {
-class Dummy;
 class WidgetFactory;
 
-class SplitterWidget : public FyWidget
+class FYGUI_EXPORT SplitterWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
-                            Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
+                   Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    ~SplitterWidget() override;
+
+    void setWidgetLimit(int count);
 
     [[nodiscard]] Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orientation);
@@ -67,23 +67,14 @@ public:
 
 protected:
     void insertWidget(int index, FyWidget* widget);
-
-private:
     void setupAddWidgetMenu(Utils::ActionContainer* menu);
 
-    Utils::SettingsManager* m_settings;
-    Utils::ActionManager* m_actionManager;
-    Widgets::WidgetFactory* m_widgetFactory;
-
-    QHBoxLayout* m_layout;
-    Splitter* m_splitter;
-    QList<FyWidget*> m_children;
-    Dummy* m_dummy;
-    int m_widgetCount;
-    bool m_isRoot;
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 
-class VerticalSplitterWidget : public SplitterWidget
+class FYGUI_EXPORT VerticalSplitterWidget : public SplitterWidget
 {
 public:
     explicit VerticalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
@@ -94,7 +85,7 @@ public:
     }
 };
 
-class HorizontalSplitterWidget : public SplitterWidget
+class FYGUI_EXPORT HorizontalSplitterWidget : public SplitterWidget
 {
 public:
     explicit HorizontalSplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,

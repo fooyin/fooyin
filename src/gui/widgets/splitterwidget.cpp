@@ -17,86 +17,176 @@
  *
  */
 
-#include "splitterwidget.h"
+#include <gui/splitterwidget.h>
 
 #include "dummy.h"
-#include "gui/widgetfactory.h"
-#include "splitter.h"
 
+#include <gui/guisettings.h>
+#include <gui/widgetfactory.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/enumhelper.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
+#include <QSplitter>
 
-namespace Fy::Gui::Widgets {
-Utils::ActionContainer* createNewMenu(Utils::ActionManager* actionManager, FyWidget* parent, const QString& title)
+namespace {
+Fy::Utils::ActionContainer* createNewMenu(Fy::Utils::ActionManager* actionManager, Fy::Gui::Widgets::FyWidget* parent,
+                                          const QString& title)
 {
     auto id       = parent->id().append(title);
     auto* newMenu = actionManager->createMenu(id);
     newMenu->menu()->setTitle(title);
     return newMenu;
 }
+} // namespace
+
+namespace Fy::Gui::Widgets {
+class SplitterHandle : public QSplitterHandle
+{
+    Q_OBJECT
+
+public:
+    explicit SplitterHandle(Qt::Orientation type, QSplitter* parent = nullptr)
+        : QSplitterHandle{type, parent}
+    { }
+
+    void showHandle(bool show)
+    {
+        m_showHandle = show;
+        update();
+    }
+
+protected:
+    void paintEvent(QPaintEvent* event) override
+    {
+        if(m_showHandle) {
+            return QSplitterHandle::paintEvent(event);
+        }
+    };
+
+private:
+    bool m_showHandle{true};
+};
+
+class Splitter : public QSplitter
+{
+    Q_OBJECT
+
+public:
+    explicit Splitter(Qt::Orientation type, Utils::SettingsManager* settings, QWidget* parent = nullptr)
+        : QSplitter{type, parent}
+        , m_settings{settings}
+    {
+        setObjectName("Splitter");
+        setChildrenCollapsible(false);
+    }
+
+protected:
+    QSplitterHandle* createHandle() override
+    {
+        auto* handle = new SplitterHandle(orientation(), this);
+        handle->showHandle(m_settings->value<Settings::SplitterHandles>());
+        m_settings->subscribe<Settings::SplitterHandles>(handle, &SplitterHandle::showHandle);
+        return handle;
+    };
+
+private:
+    Utils::SettingsManager* m_settings;
+};
+
+struct SplitterWidget::Private
+{
+    SplitterWidget* self;
+
+    Utils::SettingsManager* settings;
+    Utils::ActionManager* actionManager;
+    Widgets::WidgetFactory* widgetFactory;
+
+    Splitter* splitter;
+    QList<FyWidget*> children;
+    Dummy* dummy;
+
+    int limit{0};
+    int widgetCount{0};
+    bool isRoot{false};
+
+    Private(SplitterWidget* self, Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
+            Utils::SettingsManager* settings)
+        : self{self}
+        , settings{settings}
+        , actionManager{actionManager}
+        , widgetFactory{widgetFactory}
+        , splitter{new Splitter(Qt::Vertical, settings, self)}
+        , dummy{new Dummy(self)}
+    { }
+};
 
 SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, Widgets::WidgetFactory* widgetFactory,
                                Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , m_settings{settings}
-    , m_actionManager{actionManager}
-    , m_widgetFactory{widgetFactory}
-    , m_layout{new QHBoxLayout(this)}
-    , m_splitter{new Splitter(Qt::Vertical, settings, this)}
-    , m_dummy{new Dummy(this)}
-    , m_widgetCount{0}
-    , m_isRoot{false}
+    , p{std::make_unique<Private>(this, actionManager, widgetFactory, settings)}
 {
     setObjectName(SplitterWidget::name());
 
     if(!qobject_cast<SplitterWidget*>(findParent())) {
-        m_isRoot = true;
+        p->isRoot = true;
     }
 
-    m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->addWidget(m_splitter);
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(p->splitter);
 
-    m_splitter->addWidget(m_dummy);
+    p->splitter->addWidget(p->dummy);
 }
+
+void SplitterWidget::setWidgetLimit(int count)
+{
+    p->limit = count;
+}
+
+SplitterWidget::~SplitterWidget() = default;
 
 Qt::Orientation SplitterWidget::orientation() const
 {
-    return m_splitter->orientation();
+    return p->splitter->orientation();
 }
 
 void SplitterWidget::setOrientation(Qt::Orientation orientation)
 {
-    m_splitter->setOrientation(orientation);
+    p->splitter->setOrientation(orientation);
     setObjectName(SplitterWidget::name());
 }
 
 QByteArray SplitterWidget::saveState() const
 {
-    return m_splitter->saveState();
+    return p->splitter->saveState();
 }
 
 bool SplitterWidget::restoreState(const QByteArray& state)
 {
-    return m_splitter->restoreState(state);
+    return p->splitter->restoreState(state);
 }
 
 QWidget* SplitterWidget::widgetAtIndex(int index) const
 {
-    return m_splitter->widget(index);
+    return p->splitter->widget(index);
 }
 
 bool SplitterWidget::hasChildren()
 {
-    return !m_children.isEmpty();
+    return !p->children.isEmpty();
 }
 
 void SplitterWidget::addWidget(QWidget* newWidget)
 {
+    if(p->limit > 0 && p->widgetCount >= p->limit) {
+        return;
+    }
+
     auto* widget = qobject_cast<FyWidget*>(newWidget);
     if(!widget) {
         return;
@@ -104,25 +194,30 @@ void SplitterWidget::addWidget(QWidget* newWidget)
 
     const auto* newSplitter = qobject_cast<SplitterWidget*>(newWidget);
 
-    if((m_isRoot && newSplitter) || !newSplitter) {
-        ++m_widgetCount;
+    if((p->isRoot && newSplitter) || !newSplitter) {
+        ++p->widgetCount;
     }
-    if(m_widgetCount > 0) {
-        m_dummy->hide();
+    if(p->widgetCount > 0) {
+        p->dummy->hide();
     }
 
-    const int index = static_cast<int>(m_children.count());
-    m_children.append(widget);
-    return m_splitter->insertWidget(index, widget);
+    const int index = static_cast<int>(p->children.count());
+    p->children.append(widget);
+    return p->splitter->insertWidget(index, widget);
 }
 
 void SplitterWidget::insertWidget(int index, FyWidget* widget)
 {
+    if(p->limit > 0 && p->widgetCount >= p->limit) {
+        return;
+    }
+
     if(!widget) {
         return;
     }
-    m_children.insert(index, widget);
-    m_splitter->insertWidget(index, widget);
+
+    p->children.insert(index, widget);
+    p->splitter->insertWidget(index, widget);
 }
 
 void SplitterWidget::setupAddWidgetMenu(Utils::ActionContainer* menu)
@@ -131,16 +226,16 @@ void SplitterWidget::setupAddWidgetMenu(Utils::ActionContainer* menu)
         return;
     }
 
-    const auto widgets = m_widgetFactory->registeredWidgets();
+    const auto widgets = p->widgetFactory->registeredWidgets();
     for(const auto& widget : widgets) {
         auto* parentMenu = menu;
 
         for(const auto& subMenu : widget.second.subMenus) {
             const Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
-            auto* childMenu    = m_actionManager->actionContainer(id);
+            auto* childMenu    = p->actionManager->actionContainer(id);
 
             if(!childMenu) {
-                childMenu = m_actionManager->createMenu(id);
+                childMenu = p->actionManager->createMenu(id);
                 childMenu->menu()->setTitle(subMenu);
                 parentMenu->addMenu(childMenu);
             }
@@ -148,7 +243,7 @@ void SplitterWidget::setupAddWidgetMenu(Utils::ActionContainer* menu)
         }
         auto* addWidgetAction = new QAction(widget.second.name, parentMenu);
         QObject::connect(addWidgetAction, &QAction::triggered, this, [this, widget] {
-            FyWidget* newWidget = m_widgetFactory->make(widget.first);
+            FyWidget* newWidget = p->widgetFactory->make(widget.first);
             addWidget(newWidget);
         });
         parentMenu->addAction(addWidgetAction);
@@ -157,18 +252,18 @@ void SplitterWidget::setupAddWidgetMenu(Utils::ActionContainer* menu)
 
 void SplitterWidget::replaceWidget(int index, FyWidget* widget)
 {
-    if(!widget || m_children.isEmpty()) {
+    if(!widget || p->children.isEmpty()) {
         return;
     }
-    FyWidget* oldWidget = m_children.takeAt(index);
+    FyWidget* oldWidget = p->children.takeAt(index);
     oldWidget->deleteLater();
-    m_children.insert(index, widget);
-    m_splitter->insertWidget(index, widget);
+    p->children.insert(index, widget);
+    p->splitter->insertWidget(index, widget);
 }
 
 void SplitterWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
 {
-    if(!oldWidget || !newWidget || m_children.isEmpty()) {
+    if(!oldWidget || !newWidget || p->children.isEmpty()) {
         return;
     }
     const int index = findIndex(oldWidget);
@@ -180,21 +275,21 @@ void SplitterWidget::removeWidget(FyWidget* widget)
     const int index = findIndex(widget);
     if(index != -1) {
         const auto* removeSplitter = qobject_cast<SplitterWidget*>(widget);
-        if((m_isRoot && removeSplitter) || !removeSplitter) {
-            --m_widgetCount;
+        if((p->isRoot && removeSplitter) || !removeSplitter) {
+            --p->widgetCount;
         }
         widget->deleteLater();
-        m_children.remove(index);
+        p->children.remove(index);
     }
-    if(m_widgetCount < 2) {
-        m_dummy->show();
+    if(p->widgetCount < 2) {
+        p->dummy->show();
     }
 }
 
 int SplitterWidget::findIndex(FyWidget* widgetToFind)
 {
-    for(int i = 0; i < m_children.size(); ++i) {
-        FyWidget* widget = m_children.value(i);
+    for(int i = 0; i < p->children.size(); ++i) {
+        FyWidget* widget = p->children.value(i);
         if(widget == widgetToFind) {
             return i;
         }
@@ -216,12 +311,16 @@ void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 {
     QAction* changeSplitter = new QAction("Change Splitter", this);
     QAction::connect(changeSplitter, &QAction::triggered, this, [this] {
-        setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
-        setObjectName(QString("%1 Splitter").arg(Utils::EnumHelper::toString(m_splitter->orientation())));
+        setOrientation(p->splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
+        setObjectName(QString("%1 Splitter").arg(Utils::EnumHelper::toString(p->splitter->orientation())));
     });
     menu->addAction(changeSplitter);
 
-    auto* addMenu = createNewMenu(m_actionManager, this, tr("&Add"));
+    if(p->limit > 0 && p->widgetCount >= p->limit) {
+        return;
+    }
+
+    auto* addMenu = createNewMenu(p->actionManager, this, tr("&Add"));
     setupAddWidgetMenu(addMenu);
     menu->addMenu(addMenu);
 }
@@ -229,7 +328,7 @@ void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 void SplitterWidget::saveLayout(QJsonArray& array)
 {
     QJsonArray children;
-    for(const auto& widget : m_children) {
+    for(const auto& widget : p->children) {
         widget->saveLayout(children);
     }
     const QString state = QString::fromUtf8(saveState().toBase64());
@@ -252,17 +351,19 @@ void SplitterWidget::loadLayout(const QJsonObject& object)
         const QJsonObject jsonObject = widget.toObject();
         if(!jsonObject.isEmpty()) {
             const auto widgetName = jsonObject.constBegin().key();
-            if(auto* childWidget = m_widgetFactory->make(widgetName)) {
+            if(auto* childWidget = p->widgetFactory->make(widgetName)) {
                 addWidget(childWidget);
                 const QJsonObject widgetObject = jsonObject.value(widgetName).toObject();
                 childWidget->loadLayout(widgetObject);
             }
         }
         else {
-            auto* childWidget = m_widgetFactory->make(widget.toString());
+            auto* childWidget = p->widgetFactory->make(widget.toString());
             addWidget(childWidget);
         }
     }
     restoreState(state);
 }
 } // namespace Fy::Gui::Widgets
+
+#include "splitterwidget.moc"

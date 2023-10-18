@@ -31,6 +31,7 @@ set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
     ${CMAKE_SOURCE_DIR}/include/gui/propertiesdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/searchcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/splitterwidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
 )
 
@@ -106,9 +107,6 @@ set(SOURCES
     settings/playlist/playlistpresetspage.cpp
     widgets/dummy.cpp
     widgets/spacer.cpp
-    widgets/splitter.cpp
-    widgets/splitterhandle.cpp
-    widgets/splitterwidget.h
     widgets/splitterwidget.cpp
 )
 
