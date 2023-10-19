@@ -322,6 +322,8 @@ FilterWidget* FilterManager::createFilter()
     QObject::connect(this, &FilterManager::tracksUpdated, filter, &FilterWidget::tracksUpdated);
     QObject::connect(this, &FilterManager::tracksRemoved, filter, &FilterWidget::tracksRemoved);
 
+    filter->reset(p->tracks());
+
     return filter;
 }
 
