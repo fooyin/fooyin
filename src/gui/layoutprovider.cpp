@@ -39,10 +39,24 @@ struct LayoutProvider::Private
     Layout currentLayout;
     QFile layoutFile{Gui::activeLayoutPath()};
 
+    bool layoutExists(const QString& name)
+    {
+        const auto layoutIt = std::ranges::find_if(std::as_const(layouts), [name](const Layout& layout) {
+            return layout.name == name;
+        });
+
+        return layoutIt != layouts.cend();
+    }
+
     void addLayout(const QString& file)
     {
         QFile layoutFile{file};
         const QFileInfo fileInfo{file};
+
+        if(layoutExists(fileInfo.baseName())) {
+            qInfo() << "A layout with the same name already exists";
+            return;
+        }
         if(!checkFile(fileInfo)) {
             qInfo() << "Layout file is not valid.";
             return;
@@ -51,6 +65,7 @@ struct LayoutProvider::Private
             qCritical() << "Couldn't open layout file.";
             return;
         }
+
         const QByteArray json = layoutFile.readAll();
         layoutFile.close();
 
@@ -114,7 +129,7 @@ void LayoutProvider::loadCurrentLayout()
 void LayoutProvider::saveCurrentLayout(const QByteArray& json)
 {
     if(!p->layoutFile.open(QIODevice::WriteOnly)) {
-        qCritical() << "Couldn't open layout file.";
+        qCritical() << "Couldn't open layout file";
         return;
     }
 
@@ -130,9 +145,15 @@ LayoutList LayoutProvider::layouts() const
 void LayoutProvider::registerLayout(const QString& name, const QByteArray& json)
 {
     if(name.isEmpty() || json.isEmpty()) {
-        qInfo() << "Layout name or json empty.";
+        qInfo() << "Layout name or json empty";
         return;
     }
+
+    if(p->layoutExists(name)) {
+        qInfo() << "A layout with the same name already exists";
+        return;
+    }
+
     const Layout layout{name, json};
     p->layouts.emplace_back(layout);
 }
@@ -161,12 +182,8 @@ void LayoutProvider::importLayout()
     if(!json.isEmpty()) {
         const QFileInfo fileInfo{file};
         const QString newFile = Gui::layoutsPath() + fileInfo.fileName();
-        if(file.copy(newFile)) {
-            registerLayout(fileInfo.fileName(), json);
-        }
-        else {
-            qDebug() << "Could not copy layout to " << newFile;
-        }
+        file.copy(newFile);
+        registerLayout(fileInfo.fileName(), json);
     }
 }
 
@@ -185,6 +202,7 @@ void LayoutProvider::exportLayout(const QByteArray& json)
     if(!file.open(QIODevice::WriteOnly)) {
         return;
     }
+
     file.write(json);
     file.close();
 }
