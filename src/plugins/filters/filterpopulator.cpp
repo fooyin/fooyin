@@ -137,7 +137,9 @@ void FilterPopulator::run(const QString& field, const QString& sort, const Core:
 
     p->runBatch(tracks);
 
-    emit finished();
+    if(Worker::mayRun()) {
+        emit finished();
+    }
 
     setState(Idle);
 }
