@@ -24,7 +24,6 @@
 #include <utils/utils.h>
 
 #include <QFileInfo>
-#include <utility>
 
 namespace Fy::Gui::Widgets::Info {
 InfoItem::InfoItem()
@@ -64,7 +63,7 @@ QVariant InfoItem::value() const
             return m_value;
         }
         case(ValueType::Average):
-            if(m_numValue == 0) {
+            if(m_numValue == 0 && !m_numValues.empty()) {
                 m_numValue = std::reduce(m_numValues.cbegin(), m_numValues.cend()) / m_numValues.size();
             }
             // Fallthrough
@@ -173,6 +172,11 @@ struct InfoModel::Private
         return node;
     }
 
+    void checkAddEntryNode(const QString& name, InfoModel::ItemParent parent)
+    {
+        getOrAddNode(name, parent, InfoItem::Entry);
+    }
+
     template <typename Value>
     void checkAddEntryNode(const QString& name, InfoModel::ItemParent parent, Value&& value,
                            InfoItem::ValueType valueType = InfoItem::ValueType::Concat,
@@ -185,6 +189,26 @@ struct InfoModel::Private
         }
         auto* node = getOrAddNode(name, parent, InfoItem::Entry, valueType, std::move(numFunc));
         node->addTrackValue(std::forward<Value>(value));
+    }
+
+    void addTrackNodes()
+    {
+        checkAddEntryNode("Artist", ItemParent::Metadata);
+        checkAddEntryNode("Title", ItemParent::Metadata);
+        checkAddEntryNode("Album", ItemParent::Metadata);
+        checkAddEntryNode("Date", ItemParent::Metadata);
+        checkAddEntryNode("Genre", ItemParent::Metadata);
+        checkAddEntryNode("Album Artist", ItemParent::Metadata);
+        checkAddEntryNode("Track Number", ItemParent::Metadata);
+        checkAddEntryNode("File Name", ItemParent::Location);
+        checkAddEntryNode("Folder Name", ItemParent::Location);
+        checkAddEntryNode("File Path", ItemParent::Location);
+        checkAddEntryNode("File Size", ItemParent::Location);
+        checkAddEntryNode("Last Modified", ItemParent::Location);
+        checkAddEntryNode("Added", ItemParent::Location);
+        checkAddEntryNode("Duration", ItemParent::General);
+        checkAddEntryNode("Bitrate", ItemParent::General);
+        checkAddEntryNode("Sample Rate", ItemParent::General);
     }
 
     void addTrackNodes(int total, const Core::Track& track)
@@ -237,9 +261,6 @@ void InfoModel::resetModel(const Core::TrackList& tracks)
         if(playingTrack.isValid()) {
             infoTracks.push_back(std::move(playingTrack));
         }
-        else {
-            return;
-        }
     }
 
     beginResetModel();
@@ -249,13 +270,19 @@ void InfoModel::resetModel(const Core::TrackList& tracks)
     p->getOrAddNode("Location", ItemParent::Root, InfoItem::Header);
     p->getOrAddNode("General", ItemParent::Root, InfoItem::Header);
 
-    const int total = static_cast<int>(tracks.size());
+    const int total = static_cast<int>(infoTracks.size());
 
-    p->checkAddEntryNode("Tracks", ItemParent::General, total, InfoItem::ValueType::Total);
+    if(total > 0) {
+        p->checkAddEntryNode("Tracks", ItemParent::General, total, InfoItem::ValueType::Total);
 
-    for(const Core::Track& track : infoTracks) {
-        p->addTrackNodes(total, track);
+        for(const Core::Track& track : infoTracks) {
+            p->addTrackNodes(total, track);
+        }
     }
+    else {
+        p->addTrackNodes();
+    }
+
     endResetModel();
 }
 
