@@ -390,10 +390,6 @@ PlaylistWidget::PlaylistWidget(Core::Player::PlayerManager* playerManager, Playl
     , p{std::make_unique<Private>(this, playerManager, playlistController, selectionController, settings)}
 {
     setObjectName("Playlist");
-
-    if(auto playlist = p->controller->currentPlaylist()) {
-        p->changePlaylist(*playlist);
-    }
 }
 
 PlaylistWidget::~PlaylistWidget() = default;
