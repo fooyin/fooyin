@@ -43,6 +43,7 @@
 #include "settings/guigeneralpage.h"
 #include "settings/library/librarygeneralpage.h"
 #include "settings/library/librarysortingpage.h"
+#include "settings/librarytree/librarytreeguipage.h"
 #include "settings/librarytree/librarytreepage.h"
 #include "settings/playlist/playlistguipage.h"
 #include "settings/playlist/playlistpresetspage.h"
@@ -108,6 +109,7 @@ struct GuiApplication::Private
     Settings::PlaylistGuiPage playlistGuiPage;
     Settings::PlaylistPresetsPage playlistPresetsPage;
     Settings::LibraryTreePage libraryTreePage;
+    Settings::LibraryTreeGuiPage libraryTreeGuiPage;
     Settings::PluginPage pluginPage;
 
     GuiPluginContext guiPluginContext;
@@ -148,6 +150,7 @@ struct GuiApplication::Private
         , playlistGuiPage{settingsManager}
         , playlistPresetsPage{&presetRegistry, settingsManager}
         , libraryTreePage{&treeGroupRegistry, settingsManager}
+        , libraryTreeGuiPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
         , guiPluginContext{actionManager,     &layoutProvider,  &selectionController,
                            &searchController, propertiesDialog, widgetProvider.widgetFactory()}

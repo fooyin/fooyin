@@ -57,7 +57,7 @@ void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QMode
     }
 }
 
-struct LibraryTreeWidget::Private
+struct LibraryTreeWidget::Private : QObject
 {
     LibraryTreeWidget* widget;
 
@@ -100,23 +100,20 @@ struct LibraryTreeWidget::Private
         libraryTree->setWordWrap(true);
         libraryTree->setTextElideMode(Qt::ElideRight);
 
+        libraryTree->setHeaderHidden(!settings->value<Settings::LibraryTreeHeader>());
+        setScrollbarEnabled(settings->value<Settings::LibraryTreeScrollBar>());
+        libraryTree->setAlternatingRowColors(settings->value<Settings::LibraryTreeAltColours>());
+
         changeGrouping(groupsRegistry->itemByName(""));
 
-        QObject::connect(libraryTree, &LibraryTreeView::doubleClicked, widget, [this]() {
-            handleDoubleClick();
-        });
-        QObject::connect(libraryTree, &LibraryTreeView::middleMouseClicked, widget, [this]() {
-            handleMiddleClicked();
-        });
-
-        QObject::connect(libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, widget, [this]() {
-            selectionChanged();
-        });
-
-        QObject::connect(libraryTree->header(), &QHeaderView::customContextMenuRequested, widget,
-                         [this](const QPoint& pos) {
-                             setupHeaderContextMenu(pos);
-                         });
+        QObject::connect(libraryTree, &LibraryTreeView::doubleClicked, this,
+                         &LibraryTreeWidget::Private::handleDoubleClick);
+        QObject::connect(libraryTree, &LibraryTreeView::middleMouseClicked, this,
+                         &LibraryTreeWidget::Private::handleMiddleClicked);
+        QObject::connect(libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                         &LibraryTreeWidget::Private::selectionChanged);
+        QObject::connect(libraryTree->header(), &QHeaderView::customContextMenuRequested, this,
+                         &LibraryTreeWidget::Private::setupHeaderContextMenu);
 
         QObject::connect(groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, widget,
                          [this](const LibraryTreeGrouping& changedGrouping) {
@@ -129,7 +126,6 @@ struct LibraryTreeWidget::Private
             reset();
         };
 
-        // TODO: Support row insertion/deletion
         QObject::connect(library, &Core::Library::MusicLibrary::tracksLoaded, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::tracksAdded, model, &LibraryTreeModel::addTracks);
         QObject::connect(library, &Core::Library::MusicLibrary::tracksUpdated, model, &LibraryTreeModel::updateTracks);
@@ -144,6 +140,15 @@ struct LibraryTreeWidget::Private
         });
         settings->subscribe<Settings::LibraryTreeMiddleClick>(widget, [this](int action) {
             middleClickAction = static_cast<TrackAction>(action);
+        });
+        settings->subscribe<Settings::LibraryTreeHeader>(widget, [this](bool show) {
+            libraryTree->setHeaderHidden(!show);
+        });
+        settings->subscribe<Settings::LibraryTreeScrollBar>(widget, [this](bool show) {
+            setScrollbarEnabled(show);
+        });
+        settings->subscribe<Settings::LibraryTreeAltColours>(widget, [this](bool enable) {
+            libraryTree->setAlternatingRowColors(enable);
         });
 
         if(!library->isEmpty()) {
@@ -176,6 +181,11 @@ struct LibraryTreeWidget::Private
             groupMenu->addAction(switchGroup);
         }
         parent->addMenu(groupMenu);
+    }
+
+    void setScrollbarEnabled(bool enabled)
+    {
+        libraryTree->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     }
 
     void setupHeaderContextMenu(const QPoint& pos)

@@ -101,6 +101,7 @@ set(SOURCES
     settings/library/librarysortingpage.cpp
     settings/library/sortingmodel.cpp
     settings/librarytree/librarytreepage.cpp
+    settings/librarytree/librarytreeguipage.cpp
     settings/librarytree/librarytreegroupmodel.cpp
     settings/playlist/playlistguipage.cpp
     settings/playlist/presetinput.cpp

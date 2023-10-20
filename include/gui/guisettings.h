@@ -56,7 +56,10 @@ enum Gui : uint32_t
     LibraryTreePlaylistEnabled = 22 | Utils::Settings::Bool,
     LibraryTreeAutoSwitch      = 23 | Utils::Settings::Bool,
     LibraryTreeAutoPlaylist    = 24 | Utils::Settings::String,
-    ScriptSandboxState         = 25 | Utils::Settings::ByteArray,
+    LibraryTreeHeader          = 25 | Utils::Settings::Bool,
+    LibraryTreeScrollBar       = 26 | Utils::Settings::Bool,
+    LibraryTreeAltColours      = 27 | Utils::Settings::Bool,
+    ScriptSandboxState         = 28 | Utils::Settings::ByteArray,
 };
 Q_ENUM_NS(Gui)
 

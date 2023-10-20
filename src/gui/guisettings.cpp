@@ -49,6 +49,9 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::LibraryTreePlaylistEnabled>(false, "LibraryTree");
     m_settings->createSetting<Settings::LibraryTreeAutoSwitch>(true, "LibraryTree");
     m_settings->createSetting<Settings::LibraryTreeAutoPlaylist>("Library Selection", "LibraryTree");
+    m_settings->createSetting<Settings::LibraryTreeHeader>(true, "LibraryTree");
+    m_settings->createSetting<Settings::LibraryTreeScrollBar>(true, "LibraryTree");
+    m_settings->createSetting<Settings::LibraryTreeAltColours>(false, "LibraryTree");
     m_settings->createSetting<Settings::ScriptSandboxState>(QByteArray{}, "Interface");
 
     m_settings->loadSettings();

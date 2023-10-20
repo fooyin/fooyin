@@ -216,8 +216,8 @@ void LibraryTreePageWidget::removeGroup() const
 LibraryTreePage::LibraryTreePage(Widgets::LibraryTreeGroupRegistry* groupsRegistry, Utils::SettingsManager* settings)
     : Utils::SettingsPage{settings->settingsDialog()}
 {
-    setId(Constants::Page::WidgetsLibraryTree);
-    setName(tr("Library Tree"));
+    setId(Constants::Page::LibraryTreeGeneral);
+    setName(tr("General"));
     setCategory({"Widgets", "Library Tree"});
     setWidgetCreator([groupsRegistry, settings] {
         return new LibraryTreePageWidget(groupsRegistry, settings);

@@ -113,14 +113,15 @@ constexpr auto ScriptSandbox   = "Fooyin.Action.ScriptSandbox";
 } // namespace Actions
 
 namespace Page {
-constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
-constexpr auto Engine             = "Fooyin.Page.Engine";
-constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
-constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
-constexpr auto LibrarySorting     = "Fooyin.Page.Library.Sorting";
-constexpr auto PlaylistInterface  = "Fooyin.Page.Playlist.Interface";
-constexpr auto PlaylistPresets    = "Fooyin.Page.Playlist.Presets";
-constexpr auto WidgetsLibraryTree = "Fooyin.Page.Widgets.LibraryTree";
-constexpr auto Plugins            = "Fooyin.Page.Plugins";
+constexpr auto GeneralCore           = "Fooyin.Page.General.Core";
+constexpr auto Engine                = "Fooyin.Page.Engine";
+constexpr auto InterfaceGeneral      = "Fooyin.Page.Interface.General";
+constexpr auto LibraryGeneral        = "Fooyin.Page.Library.General";
+constexpr auto LibrarySorting        = "Fooyin.Page.Library.Sorting";
+constexpr auto PlaylistInterface     = "Fooyin.Page.Playlist.Interface";
+constexpr auto PlaylistPresets       = "Fooyin.Page.Playlist.Presets";
+constexpr auto LibraryTreeGeneral    = "Fooyin.Page.Widgets.LibraryTree.General";
+constexpr auto LibraryTreeAppearance = "Fooyin.Page.Widgets.LibraryTree.Appearance";
+constexpr auto Plugins               = "Fooyin.Page.Plugins";
 } // namespace Page
 } // namespace Fy::Gui::Constants

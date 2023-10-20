@@ -21,8 +21,6 @@
 
 #include "gui/fywidget.h"
 
-class QItemSelection;
-
 namespace Fy {
 namespace Utils {
 class SettingsManager;
@@ -37,10 +35,6 @@ class TrackSelectionController;
 
 namespace Widgets {
 class LibraryTreeGroupRegistry;
-
-namespace Playlist {
-class PlaylistController;
-}
 
 class LibraryTreeWidget : public FyWidget
 {
