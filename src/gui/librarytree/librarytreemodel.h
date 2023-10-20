@@ -23,11 +23,12 @@
 #include "librarytreeitem.h"
 
 #include <core/track.h>
-#include <core/scripting/scriptparser.h>
 
 #include <utils/treemodel.h>
 
 namespace Fy::Gui::Widgets {
+struct LibraryTreeAppearance;
+
 class LibraryTreeModel : public Utils::TreeModel<LibraryTreeItem>
 {
     Q_OBJECT
@@ -35,6 +36,8 @@ class LibraryTreeModel : public Utils::TreeModel<LibraryTreeItem>
 public:
     explicit LibraryTreeModel(QObject* parent = nullptr);
     ~LibraryTreeModel() override;
+
+    void setAppearance(const LibraryTreeAppearance& options);
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;

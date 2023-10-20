@@ -19,6 +19,8 @@
 
 #include <gui/guisettings.h>
 
+#include "librarytree/librarytreeappearance.h"
+
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::Gui::Settings {
@@ -52,6 +54,8 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::LibraryTreeHeader>(true, "LibraryTree");
     m_settings->createSetting<Settings::LibraryTreeScrollBar>(true, "LibraryTree");
     m_settings->createSetting<Settings::LibraryTreeAltColours>(false, "LibraryTree");
+    m_settings->createSetting<Settings::LibraryTreeAppearance>(QVariant::fromValue(Widgets::LibraryTreeAppearance{}),
+                                                               "LibraryTree");
     m_settings->createSetting<Settings::ScriptSandboxState>(QByteArray{}, "Interface");
 
     m_settings->loadSettings();

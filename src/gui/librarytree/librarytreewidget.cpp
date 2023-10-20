@@ -19,6 +19,7 @@
 
 #include "librarytreewidget.h"
 
+#include "librarytreeappearance.h"
 #include "librarytreegroupregistry.h"
 #include "librarytreemodel.h"
 #include "librarytreeview.h"
@@ -59,7 +60,7 @@ void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QMode
 
 struct LibraryTreeWidget::Private : QObject
 {
-    LibraryTreeWidget* widget;
+    LibraryTreeWidget* self;
 
     Core::Library::MusicLibrary* library;
     LibraryTreeGroupRegistry* groupsRegistry;
@@ -75,23 +76,23 @@ struct LibraryTreeWidget::Private : QObject
     TrackAction doubleClickAction;
     TrackAction middleClickAction;
 
-    Private(LibraryTreeWidget* widget, Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
+    Private(LibraryTreeWidget* self, Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
             TrackSelectionController* trackSelection, Utils::SettingsManager* settings)
-        : widget{widget}
+        : self{self}
         , library{library}
         , groupsRegistry{groupsRegistry}
         , trackSelection{trackSelection}
         , settings{settings}
-        , layout{new QVBoxLayout(widget)}
-        , libraryTree{new LibraryTreeView(widget)}
-        , model{new LibraryTreeModel(widget)}
+        , layout{new QVBoxLayout(self)}
+        , libraryTree{new LibraryTreeView(self)}
+        , model{new LibraryTreeModel(self)}
         , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::LibraryTreeDoubleClick>())}
         , middleClickAction{static_cast<TrackAction>(settings->value<Settings::LibraryTreeMiddleClick>())}
     {
         layout->setContentsMargins(0, 0, 0, 0);
 
-        libraryTree->setUniformRowHeights(true);
         libraryTree->setModel(model);
+        libraryTree->setUniformRowHeights(true);
         libraryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
         libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
         layout->addWidget(libraryTree);
@@ -115,7 +116,7 @@ struct LibraryTreeWidget::Private : QObject
         QObject::connect(libraryTree->header(), &QHeaderView::customContextMenuRequested, this,
                          &LibraryTreeWidget::Private::setupHeaderContextMenu);
 
-        QObject::connect(groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, widget,
+        QObject::connect(groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, self,
                          [this](const LibraryTreeGrouping& changedGrouping) {
                              if(grouping.id == changedGrouping.id) {
                                  changeGrouping(changedGrouping);
@@ -134,26 +135,29 @@ struct LibraryTreeWidget::Private : QObject
         QObject::connect(library, &Core::Library::MusicLibrary::libraryRemoved, treeReset);
         QObject::connect(library, &Core::Library::MusicLibrary::libraryChanged, treeReset);
 
-        settings->subscribe<Settings::LibraryTreeDoubleClick>(widget, [this](int action) {
+        settings->subscribe<Settings::LibraryTreeDoubleClick>(self, [this](int action) {
             doubleClickAction = static_cast<TrackAction>(action);
             libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
         });
-        settings->subscribe<Settings::LibraryTreeMiddleClick>(widget, [this](int action) {
+        settings->subscribe<Settings::LibraryTreeMiddleClick>(self, [this](int action) {
             middleClickAction = static_cast<TrackAction>(action);
         });
-        settings->subscribe<Settings::LibraryTreeHeader>(widget, [this](bool show) {
+        settings->subscribe<Settings::LibraryTreeHeader>(self, [this](bool show) {
             libraryTree->setHeaderHidden(!show);
         });
-        settings->subscribe<Settings::LibraryTreeScrollBar>(widget, [this](bool show) {
+        settings->subscribe<Settings::LibraryTreeScrollBar>(self, [this](bool show) {
             setScrollbarEnabled(show);
         });
-        settings->subscribe<Settings::LibraryTreeAltColours>(widget, [this](bool enable) {
+        settings->subscribe<Settings::LibraryTreeAltColours>(self, [this](bool enable) {
             libraryTree->setAlternatingRowColors(enable);
         });
+        settings->subscribe<Settings::LibraryTreeAppearance>(this, &LibraryTreeWidget::Private::updateAppearance);
 
         if(!library->isEmpty()) {
             reset();
         }
+
+        updateAppearance(settings->value<Settings::LibraryTreeAppearance>());
     }
 
     void reset()
@@ -175,7 +179,7 @@ struct LibraryTreeWidget::Private : QObject
         const auto& groups = groupsRegistry->items();
         for(const auto& group : groups) {
             auto* switchGroup = new QAction(group.second.name, groupMenu);
-            QObject::connect(switchGroup, &QAction::triggered, widget, [this, group]() {
+            QObject::connect(switchGroup, &QAction::triggered, self, [this, group]() {
                 changeGrouping(group.second);
             });
             groupMenu->addAction(switchGroup);
@@ -188,11 +192,18 @@ struct LibraryTreeWidget::Private : QObject
         libraryTree->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     }
 
+    void updateAppearance(const QVariant& optionsVar) const
+    {
+        const auto options = optionsVar.value<LibraryTreeAppearance>();
+        model->setAppearance(options);
+        QMetaObject::invokeMethod(libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+    }
+
     void setupHeaderContextMenu(const QPoint& pos)
     {
-        auto* menu = new QMenu(widget);
+        auto* menu = new QMenu(self);
         addGroupMenu(menu);
-        menu->popup(widget->mapToGlobal(pos));
+        menu->popup(self->mapToGlobal(pos));
     }
 
     QCoro::Task<void> selectionChanged() const

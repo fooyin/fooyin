@@ -18,8 +18,13 @@
  */
 
 #include "librarytreemodel.h"
+
+#include "librarytreeappearance.h"
 #include "librarytreepopulator.h"
 
+#include <QColor>
+#include <QFont>
+#include <QSize>
 #include <QThread>
 
 #include <queue>
@@ -76,6 +81,10 @@ struct LibraryTreeModel::Private : public QObject
     ItemKeyMap nodes;
     TrackIdNodeMap trackParents;
     std::unordered_set<QString> addedNodes;
+
+    int rowHeight{0};
+    QFont font;
+    QColor colour;
 
     explicit Private(LibraryTreeModel* model)
         : model{model}
@@ -231,10 +240,16 @@ LibraryTreeModel::~LibraryTreeModel()
     p->populatorThread.wait();
 }
 
-QVariant LibraryTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
+void LibraryTreeModel::setAppearance(const LibraryTreeAppearance& options)
 {
-    Q_UNUSED(section)
+    p->font      = options.font;
+    p->colour    = options.colour;
+    p->rowHeight = options.rowHeight;
+    emit dataChanged({}, {});
+}
 
+QVariant LibraryTreeModel::headerData(int /*section*/, Qt::Orientation orientation, int role) const
+{
     if(orientation == Qt::Orientation::Vertical) {
         return {};
     }
@@ -258,22 +273,33 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
 
     auto* item = static_cast<LibraryTreeItem*>(index.internalPointer());
 
-    if(role == Qt::DisplayRole) {
-        const QString& name = item->title();
-        return !name.isEmpty() ? name : "?";
-    }
-
-    const auto type = static_cast<LibraryTreeRole>(role);
-    switch(type) {
-        case(Title):
+    switch(role) {
+        case(Qt::DisplayRole): {
+            const QString& name = item->title();
+            return !name.isEmpty() ? name : "?";
+        }
+        case(LibraryTreeRole::Title): {
             return item->title();
-        case(Level):
+        }
+        case(LibraryTreeRole::Level): {
             return item->level();
-        case(Tracks):
+        }
+        case(LibraryTreeRole::Tracks): {
             return QVariant::fromValue(item->tracks());
+        }
+        case(Qt::SizeHintRole): {
+            return QSize{0, p->rowHeight};
+        }
+        case(Qt::FontRole): {
+            return p->font;
+        }
+        case(Qt::ForegroundRole): {
+            return p->colour;
+        }
+        default: {
+            return {};
+        }
     }
-
-    return {};
 }
 
 bool LibraryTreeModel::hasChildren(const QModelIndex& parent) const

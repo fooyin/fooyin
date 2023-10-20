@@ -59,7 +59,8 @@ enum Gui : uint32_t
     LibraryTreeHeader          = 25 | Utils::Settings::Bool,
     LibraryTreeScrollBar       = 26 | Utils::Settings::Bool,
     LibraryTreeAltColours      = 27 | Utils::Settings::Bool,
-    ScriptSandboxState         = 28 | Utils::Settings::ByteArray,
+    LibraryTreeAppearance      = 28 | Utils::Settings::Variant,
+    ScriptSandboxState         = 29 | Utils::Settings::ByteArray,
 };
 Q_ENUM_NS(Gui)
 
