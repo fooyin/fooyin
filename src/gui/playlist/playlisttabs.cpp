@@ -59,6 +59,7 @@ struct PlaylistTabs::Private : QObject
     {
         layout->addWidget(tabs);
         layout->setContentsMargins(0, 0, 0, 0);
+        layout->setAlignment(Qt::AlignTop);
 
         tabs->setMovable(false);
         tabs->setExpanding(false);
