@@ -130,6 +130,7 @@ struct FilterWidget::Private : QObject
     {
         const auto options = optionsVar.value<FilterOptions>();
         model->setAppearance(options);
+        QMetaObject::invokeMethod(view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
     }
 };
 
