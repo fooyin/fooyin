@@ -49,6 +49,7 @@ public:
     Query insert(const QString& tableName, const BindingsMap& fieldBindings, const QString& errorMessage);
 
 protected:
+    void runPragma(const QString& pragma, const QString& value) const;
     Module* module();
     [[nodiscard]] const Module* module() const;
 

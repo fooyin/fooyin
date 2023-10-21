@@ -28,7 +28,7 @@
 
 namespace Fy::Core::DB {
 Module::Module(QString connectionName)
-    : m_connectionName(std::move(connectionName))
+    : m_connectionName{std::move(connectionName)}
 { }
 
 QString Module::connectionName() const
@@ -77,6 +77,8 @@ QSqlDatabase Module::db() const
         qDebug() << er.driverText();
         qDebug() << er.databaseText();
     }
+
+    runPragma("foreign_keys", "ON");
 
     return db;
 }
@@ -130,6 +132,19 @@ DB::Query Module::insert(const QString& tableName, const BindingsMap& fieldBindi
 
     return q;
 }
+
+void Module::runPragma(const QString& pragma, const QString& value) const
+{
+    DB::Query q(this);
+
+    const QString query = QString{"PRAGMA %1 = %2"}.arg(pragma, value);
+    q.prepareQuery(query);
+
+    if(!q.execQuery()) {
+        q.error(QString{"Could not set pragma '%1' to '%2'"}.arg(pragma, value));
+    }
+}
+
 Query Module::update(const QString& tableName, const BindingsMap& fieldBindings,
                      const std::pair<QString, QString>& whereBinding, const QString& errorMessage)
 {
