@@ -58,8 +58,29 @@ void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QMode
     }
 }
 
-struct LibraryTreeWidget::Private : QObject
+class LibraryTreeWidgetPrivate
 {
+public:
+    LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Core::Library::MusicLibrary* library,
+                             LibraryTreeGroupRegistry* groupsRegistry, TrackSelectionController* trackSelection,
+                             Utils::SettingsManager* settings);
+
+    void reset();
+
+    void changeGrouping(const LibraryTreeGrouping& newGrouping);
+    void addGroupMenu(QMenu* parent);
+
+    void setScrollbarEnabled(bool enabled);
+    void updateAppearance(const QVariant& optionsVar) const;
+
+    void setupHeaderContextMenu(const QPoint& pos);
+
+    QCoro::Task<void> selectionChanged() const;
+    QString playlistNameFromSelection() const;
+
+    void handleDoubleClick() const;
+    void handleMiddleClick() const;
+
     LibraryTreeWidget* self;
 
     Core::Library::MusicLibrary* library;
@@ -75,207 +96,214 @@ struct LibraryTreeWidget::Private : QObject
 
     TrackAction doubleClickAction;
     TrackAction middleClickAction;
+};
 
-    Private(LibraryTreeWidget* self, Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
-            TrackSelectionController* trackSelection, Utils::SettingsManager* settings)
-        : self{self}
-        , library{library}
-        , groupsRegistry{groupsRegistry}
-        , trackSelection{trackSelection}
-        , settings{settings}
-        , layout{new QVBoxLayout(self)}
-        , libraryTree{new LibraryTreeView(self)}
-        , model{new LibraryTreeModel(self)}
-        , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::LibraryTreeDoubleClick>())}
-        , middleClickAction{static_cast<TrackAction>(settings->value<Settings::LibraryTreeMiddleClick>())}
-    {
-        layout->setContentsMargins(0, 0, 0, 0);
+LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Core::Library::MusicLibrary* library,
+                                                   LibraryTreeGroupRegistry* groupsRegistry,
+                                                   TrackSelectionController* trackSelection,
+                                                   Utils::SettingsManager* settings)
+    : self{self}
+    , library{library}
+    , groupsRegistry{groupsRegistry}
+    , trackSelection{trackSelection}
+    , settings{settings}
+    , layout{new QVBoxLayout(self)}
+    , libraryTree{new LibraryTreeView(self)}
+    , model{new LibraryTreeModel(self)}
+    , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::LibraryTreeDoubleClick>())}
+    , middleClickAction{static_cast<TrackAction>(settings->value<Settings::LibraryTreeMiddleClick>())}
+{
+    layout->setContentsMargins(0, 0, 0, 0);
 
-        libraryTree->setModel(model);
-        libraryTree->setUniformRowHeights(true);
-        libraryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
-        libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
-        layout->addWidget(libraryTree);
+    libraryTree->setModel(model);
+    libraryTree->setUniformRowHeights(true);
+    libraryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
+    layout->addWidget(libraryTree);
 
-        libraryTree->header()->setContextMenuPolicy(Qt::CustomContextMenu);
-        libraryTree->setWordWrap(true);
-        libraryTree->setTextElideMode(Qt::ElideRight);
+    libraryTree->header()->setContextMenuPolicy(Qt::CustomContextMenu);
+    libraryTree->setWordWrap(true);
+    libraryTree->setTextElideMode(Qt::ElideRight);
 
-        libraryTree->setHeaderHidden(!settings->value<Settings::LibraryTreeHeader>());
-        setScrollbarEnabled(settings->value<Settings::LibraryTreeScrollBar>());
-        libraryTree->setAlternatingRowColors(settings->value<Settings::LibraryTreeAltColours>());
+    libraryTree->setHeaderHidden(!settings->value<Settings::LibraryTreeHeader>());
+    setScrollbarEnabled(settings->value<Settings::LibraryTreeScrollBar>());
+    libraryTree->setAlternatingRowColors(settings->value<Settings::LibraryTreeAltColours>());
 
-        changeGrouping(groupsRegistry->itemByName(""));
+    changeGrouping(groupsRegistry->itemByName(""));
 
-        QObject::connect(libraryTree, &LibraryTreeView::doubleClicked, this,
-                         &LibraryTreeWidget::Private::handleDoubleClick);
-        QObject::connect(libraryTree, &LibraryTreeView::middleMouseClicked, this,
-                         &LibraryTreeWidget::Private::handleMiddleClicked);
-        QObject::connect(libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                         &LibraryTreeWidget::Private::selectionChanged);
-        QObject::connect(libraryTree->header(), &QHeaderView::customContextMenuRequested, this,
-                         &LibraryTreeWidget::Private::setupHeaderContextMenu);
-
-        QObject::connect(groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, self,
-                         [this](const LibraryTreeGrouping& changedGrouping) {
-                             if(grouping.id == changedGrouping.id) {
-                                 changeGrouping(changedGrouping);
-                             }
-                         });
-
-        auto treeReset = [this]() {
-            reset();
-        };
-
-        QObject::connect(library, &Core::Library::MusicLibrary::tracksLoaded, treeReset);
-        QObject::connect(library, &Core::Library::MusicLibrary::tracksAdded, model, &LibraryTreeModel::addTracks);
-        QObject::connect(library, &Core::Library::MusicLibrary::tracksUpdated, model, &LibraryTreeModel::updateTracks);
-        QObject::connect(library, &Core::Library::MusicLibrary::tracksDeleted, model, &LibraryTreeModel::removeTracks);
-        QObject::connect(library, &Core::Library::MusicLibrary::tracksSorted, treeReset);
-        QObject::connect(library, &Core::Library::MusicLibrary::libraryRemoved, treeReset);
-        QObject::connect(library, &Core::Library::MusicLibrary::libraryChanged, treeReset);
-
-        settings->subscribe<Settings::LibraryTreeDoubleClick>(self, [this](int action) {
-            doubleClickAction = static_cast<TrackAction>(action);
-            libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
-        });
-        settings->subscribe<Settings::LibraryTreeMiddleClick>(self, [this](int action) {
-            middleClickAction = static_cast<TrackAction>(action);
-        });
-        settings->subscribe<Settings::LibraryTreeHeader>(self, [this](bool show) {
-            libraryTree->setHeaderHidden(!show);
-        });
-        settings->subscribe<Settings::LibraryTreeScrollBar>(self, [this](bool show) {
-            setScrollbarEnabled(show);
-        });
-        settings->subscribe<Settings::LibraryTreeAltColours>(self, [this](bool enable) {
-            libraryTree->setAlternatingRowColors(enable);
-        });
-        settings->subscribe<Settings::LibraryTreeAppearance>(this, &LibraryTreeWidget::Private::updateAppearance);
-
-        if(!library->isEmpty()) {
-            reset();
-        }
-
-        updateAppearance(settings->value<Settings::LibraryTreeAppearance>());
-    }
-
-    void reset()
-    {
-        model->reset(library->tracks());
-    }
-
-    void changeGrouping(const LibraryTreeGrouping& newGrouping)
-    {
-        grouping = newGrouping;
-        model->changeGrouping(grouping);
+    if(!library->isEmpty()) {
         reset();
     }
 
-    void addGroupMenu(QMenu* parent)
-    {
-        auto* groupMenu = new QMenu("Grouping", parent);
+    updateAppearance(settings->value<Settings::LibraryTreeAppearance>());
+}
 
-        const auto& groups = groupsRegistry->items();
-        for(const auto& group : groups) {
-            auto* switchGroup = new QAction(group.second.name, groupMenu);
-            QObject::connect(switchGroup, &QAction::triggered, self, [this, group]() {
-                changeGrouping(group.second);
-            });
-            groupMenu->addAction(switchGroup);
-        }
-        parent->addMenu(groupMenu);
-    }
+void LibraryTreeWidgetPrivate::reset()
+{
+    model->reset(library->tracks());
+}
 
-    void setScrollbarEnabled(bool enabled)
-    {
-        libraryTree->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-    }
+void LibraryTreeWidgetPrivate::changeGrouping(const LibraryTreeGrouping& newGrouping)
+{
+    grouping = newGrouping;
+    model->changeGrouping(grouping);
+    reset();
+}
 
-    void updateAppearance(const QVariant& optionsVar) const
-    {
-        const auto options = optionsVar.value<LibraryTreeAppearance>();
-        model->setAppearance(options);
-        QMetaObject::invokeMethod(libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
-    }
+void LibraryTreeWidgetPrivate::addGroupMenu(QMenu* parent)
+{
+    auto* groupMenu = new QMenu("Grouping", parent);
 
-    void setupHeaderContextMenu(const QPoint& pos)
-    {
-        auto* menu = new QMenu(self);
-        addGroupMenu(menu);
-        menu->popup(self->mapToGlobal(pos));
-    }
-
-    QCoro::Task<void> selectionChanged() const
-    {
-        const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
-        if(selectedIndexes.empty()) {
-            co_return;
-        }
-
-        QModelIndexList trackIndexes;
-        for(const QModelIndex& index : selectedIndexes) {
-            getLowestIndexes(libraryTree, index, trackIndexes);
-        }
-
-        Core::TrackList tracks;
-        for(const auto& index : trackIndexes) {
-            const int level = index.data(LibraryTreeRole::Level).toInt();
-            if(level < 0) {
-                tracks.clear();
-                tracks = library->tracks();
-                break;
-            }
-            const auto indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
-            tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
-        }
-
-        const auto sortedTracks = co_await Utils::asyncExec([&tracks]() {
-            return Core::Library::Sorting::sortTracks(tracks);
+    const auto& groups = groupsRegistry->items();
+    for(const auto& group : groups) {
+        auto* switchGroup = new QAction(group.second.name, groupMenu);
+        QObject::connect(switchGroup, &QAction::triggered, self, [this, group]() {
+            changeGrouping(group.second);
         });
-        trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
+        groupMenu->addAction(switchGroup);
+    }
+    parent->addMenu(groupMenu);
+}
 
-        if(settings->value<Settings::LibraryTreePlaylistEnabled>()) {
-            const QString playlistName = settings->value<Settings::LibraryTreeAutoPlaylist>();
-            const bool autoSwitch      = settings->value<Settings::LibraryTreeAutoSwitch>();
+void LibraryTreeWidgetPrivate::setScrollbarEnabled(bool enabled)
+{
+    libraryTree->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+}
 
-            trackSelection->executeAction(TrackAction::SendNewPlaylist, autoSwitch ? Switch : None, playlistName);
+void LibraryTreeWidgetPrivate::updateAppearance(const QVariant& optionsVar) const
+{
+    const auto options = optionsVar.value<LibraryTreeAppearance>();
+    model->setAppearance(options);
+    QMetaObject::invokeMethod(libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+}
+
+void LibraryTreeWidgetPrivate::setupHeaderContextMenu(const QPoint& pos)
+{
+    auto* menu = new QMenu(self);
+    addGroupMenu(menu);
+    menu->popup(self->mapToGlobal(pos));
+}
+
+QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
+{
+    const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
+    if(selectedIndexes.empty()) {
+        co_return;
+    }
+
+    QModelIndexList trackIndexes;
+    for(const QModelIndex& index : selectedIndexes) {
+        getLowestIndexes(libraryTree, index, trackIndexes);
+    }
+
+    Core::TrackList tracks;
+    for(const auto& index : trackIndexes) {
+        const int level = index.data(LibraryTreeRole::Level).toInt();
+        if(level < 0) {
+            tracks.clear();
+            tracks = library->tracks();
+            break;
         }
+        const auto indexTracks = index.data(LibraryTreeRole::Tracks).value<Core::TrackList>();
+        tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
     }
 
-    QString playlistNameFromSelection() const
-    {
-        QString title;
-        const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
-        for(const auto& index : selectedIndexes) {
-            if(!title.isEmpty()) {
-                title.append(", ");
-            }
-            title.append(index.data().toString());
+    const auto sortedTracks = co_await Utils::asyncExec([&tracks]() {
+        return Core::Library::Sorting::sortTracks(tracks);
+    });
+    trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
+
+    if(settings->value<Settings::LibraryTreePlaylistEnabled>()) {
+        const QString playlistName = settings->value<Settings::LibraryTreeAutoPlaylist>();
+        const bool autoSwitch      = settings->value<Settings::LibraryTreeAutoSwitch>();
+
+        trackSelection->executeAction(TrackAction::SendNewPlaylist, autoSwitch ? Switch : None, playlistName);
+    }
+}
+
+QString LibraryTreeWidgetPrivate::playlistNameFromSelection() const
+{
+    QString title;
+    const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
+    for(const auto& index : selectedIndexes) {
+        if(!title.isEmpty()) {
+            title.append(", ");
         }
-        return title;
+        title.append(index.data().toString());
     }
+    return title;
+}
 
-    void handleDoubleClick() const
-    {
-        const bool autoSwitch = settings->value<Settings::LibraryTreeAutoSwitch>();
-        trackSelection->executeAction(doubleClickAction, autoSwitch ? Switch : None, playlistNameFromSelection());
-    }
+void LibraryTreeWidgetPrivate::handleDoubleClick() const
+{
+    const bool autoSwitch = settings->value<Settings::LibraryTreeAutoSwitch>();
+    trackSelection->executeAction(doubleClickAction, autoSwitch ? Switch : None, playlistNameFromSelection());
+}
 
-    void handleMiddleClicked() const
-    {
-        const bool autoSwitch = settings->value<Settings::LibraryTreeAutoSwitch>();
-        trackSelection->executeAction(middleClickAction, autoSwitch ? Switch : None, playlistNameFromSelection());
-    }
-};
+void LibraryTreeWidgetPrivate::handleMiddleClick() const
+{
+    const bool autoSwitch = settings->value<Settings::LibraryTreeAutoSwitch>();
+    trackSelection->executeAction(middleClickAction, autoSwitch ? Switch : None, playlistNameFromSelection());
+}
 
 LibraryTreeWidget::LibraryTreeWidget(Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
                                      TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
                                      QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, library, groupsRegistry, trackSelection, settings)}
+    , p{std::make_unique<LibraryTreeWidgetPrivate>(this, library, groupsRegistry, trackSelection, settings)}
 {
     setObjectName(LibraryTreeWidget::name());
+
+    connect(p->libraryTree, &LibraryTreeView::doubleClicked, this, [this]() {
+        p->handleDoubleClick();
+    });
+    connect(p->libraryTree, &LibraryTreeView::middleMouseClicked, this, [this]() {
+        p->handleMiddleClick();
+    });
+    connect(p->libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
+        p->selectionChanged();
+    });
+    connect(p->libraryTree->header(), &QHeaderView::customContextMenuRequested, this, [this](const QPoint& pos) {
+        p->setupHeaderContextMenu(pos);
+    });
+    connect(groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, this,
+            [this](const LibraryTreeGrouping& changedGrouping) {
+                if(p->grouping.id == changedGrouping.id) {
+                    p->changeGrouping(changedGrouping);
+                }
+            });
+
+    auto treeReset = [this]() {
+        p->reset();
+    };
+
+    connect(library, &Core::Library::MusicLibrary::tracksLoaded, this, treeReset);
+    connect(library, &Core::Library::MusicLibrary::tracksAdded, p->model, &LibraryTreeModel::addTracks);
+    connect(library, &Core::Library::MusicLibrary::tracksUpdated, p->model, &LibraryTreeModel::updateTracks);
+    connect(library, &Core::Library::MusicLibrary::tracksDeleted, p->model, &LibraryTreeModel::removeTracks);
+    connect(library, &Core::Library::MusicLibrary::tracksSorted, this, treeReset);
+    connect(library, &Core::Library::MusicLibrary::libraryRemoved, this, treeReset);
+    connect(library, &Core::Library::MusicLibrary::libraryChanged, this, treeReset);
+
+    settings->subscribe<Settings::LibraryTreeDoubleClick>(this, [this](int action) {
+        p->doubleClickAction = static_cast<TrackAction>(action);
+        p->libraryTree->setExpandsOnDoubleClick(p->doubleClickAction == TrackAction::Expand);
+    });
+    settings->subscribe<Settings::LibraryTreeMiddleClick>(this, [this](int action) {
+        p->middleClickAction = static_cast<TrackAction>(action);
+    });
+    settings->subscribe<Settings::LibraryTreeHeader>(this, [this](bool show) {
+        p->libraryTree->setHeaderHidden(!show);
+    });
+    settings->subscribe<Settings::LibraryTreeScrollBar>(this, [this](bool show) {
+        p->setScrollbarEnabled(show);
+    });
+    settings->subscribe<Settings::LibraryTreeAltColours>(this, [this](bool enable) {
+        p->libraryTree->setAlternatingRowColors(enable);
+    });
+    settings->subscribe<Settings::LibraryTreeAppearance>(this, [this](const QVariant& var) {
+        p->updateAppearance(var);
+    });
 }
 
 QString LibraryTreeWidget::name() const

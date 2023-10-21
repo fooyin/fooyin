@@ -35,6 +35,7 @@ class TrackSelectionController;
 
 namespace Widgets {
 class LibraryTreeGroupRegistry;
+class LibraryTreeWidgetPrivate;
 
 class LibraryTreeWidget : public FyWidget
 {
@@ -53,8 +54,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<LibraryTreeWidgetPrivate> p;
 };
 } // namespace Widgets
 } // namespace Gui
