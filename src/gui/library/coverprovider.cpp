@@ -170,4 +170,12 @@ QPixmap CoverProvider::trackCover(const Core::Track& track, const QSize& size, b
 
     return loadNoCover();
 }
+
+void CoverProvider::clearCache()
+{
+    QDir cache{Fy::Core::coverPath()};
+    cache.removeRecursively();
+
+    QPixmapCache::clear();
+}
 } // namespace Fy::Gui::Library

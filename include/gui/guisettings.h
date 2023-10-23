@@ -61,6 +61,7 @@ enum Gui : uint32_t
     LibraryTreeAltColours      = 27 | Utils::Settings::Bool,
     LibraryTreeAppearance      = 28 | Utils::Settings::Variant,
     ScriptSandboxState         = 29 | Utils::Settings::ByteArray,
+    PlaylistThumbnailSize      = 30 | Utils::Settings::Int,
 };
 Q_ENUM_NS(Gui)
 

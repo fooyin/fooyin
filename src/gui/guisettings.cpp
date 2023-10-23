@@ -57,6 +57,7 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::LibraryTreeAppearance>(QVariant::fromValue(Widgets::LibraryTreeAppearance{}),
                                                                "LibraryTree");
     m_settings->createSetting<Settings::ScriptSandboxState>(QByteArray{}, "Interface");
+    m_settings->createSetting<Settings::PlaylistThumbnailSize>(100, "Playlist");
 
     m_settings->loadSettings();
 }

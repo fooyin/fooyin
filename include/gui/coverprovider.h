@@ -47,6 +47,8 @@ public:
     QPixmap trackCover(const Core::Track& track, bool saveToDisk = false) const;
     QPixmap trackCover(const Core::Track& track, const QSize& size, bool saveToDisk = false) const;
 
+    void clearCache();
+
 signals:
     void coverAdded(const Fy::Core::Track& track);
 

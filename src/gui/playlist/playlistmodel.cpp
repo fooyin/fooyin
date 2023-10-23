@@ -43,9 +43,6 @@
 #include <set>
 
 namespace {
-// TODO: Add as setting
-constexpr QSize CoverSize = {100, 100};
-
 bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
 {
     QModelIndex item1{index1};
@@ -194,6 +191,7 @@ struct PlaylistModel::Private : public QObject
     PlaylistPreset currentPreset;
 
     bool altColours;
+    QSize coverSize;
 
     bool resetting{false};
 
@@ -219,6 +217,9 @@ struct PlaylistModel::Private : public QObject
         , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
         , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
     {
+        const int thumbSize = settings->value<Settings::PlaylistThumbnailSize>();
+        coverSize           = {thumbSize, thumbSize};
+
         populator.moveToThread(&populatorThread);
         populatorThread.start();
     }
@@ -351,10 +352,10 @@ struct PlaylistModel::Private : public QObject
                 return currentPreset.header.simple;
             }
             case(PlaylistItem::Role::Cover): {
-                if(!currentPreset.header.showCover) {
+                if(!currentPreset.header.showCover || !header.trackCount()) {
                     return {};
                 }
-                return coverProvider->trackCover(header.tracks().front(), CoverSize, true);
+                return coverProvider->trackCover(header.tracks().front(), coverSize, true);
             }
             case(PlaylistItem::Role::Subtitle): {
                 return header.subtitle();
@@ -790,6 +791,11 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::
     p->settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
         p->altColours = enabled;
         emit dataChanged({}, {}, {Qt::BackgroundRole});
+    });
+    p->settings->subscribe<Settings::PlaylistThumbnailSize>(this, [this](int size) {
+        p->coverSize = {size, size};
+        p->coverProvider->clearCache();
+        emit dataChanged({}, {}, {PlaylistItem::Role::Cover});
     });
 
     QObject::connect(&p->populator, &PlaylistPopulator::populated, this, [this](PendingData data) {
