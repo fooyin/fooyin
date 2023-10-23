@@ -52,6 +52,7 @@
 #include <QFileInfo>
 #include <QMimeDatabase>
 #include <QPixmap>
+#include <QStringBuilder>
 
 #include <set>
 
