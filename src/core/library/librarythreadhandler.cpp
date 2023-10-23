@@ -71,10 +71,9 @@ void LibraryThreadHandler::libraryRemoved(int id)
         stopScanner();
     }
     else {
-        m_scanRequests.erase(
-            std::find_if(m_scanRequests.begin(), m_scanRequests.end(), [id](const ScanRequest& request) {
-                return request.library.id == id;
-            }));
+        std::erase_if(m_scanRequests, [id](const ScanRequest& request) {
+            return request.library.id == id;
+        });
     }
 }
 
