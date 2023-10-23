@@ -32,16 +32,19 @@ using ItemList        = std::vector<PlaylistItem>;
 using ItemKeyMap      = std::unordered_map<QString, PlaylistItem>;
 using ContainerKeyMap = std::unordered_map<QString, Container*>;
 using NodeKeyMap      = std::unordered_map<QString, std::vector<QString>>;
+using TrackIdNodeMap = std::unordered_map<int, std::vector<QString>>;
 
 struct PendingData
 {
     ItemKeyMap items;
     NodeKeyMap nodes;
+    TrackIdNodeMap trackParents;
 
     void clear()
     {
         items.clear();
         nodes.clear();
+        trackParents.clear();
     }
 };
 

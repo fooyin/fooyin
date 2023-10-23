@@ -21,13 +21,11 @@
 
 #include "database/database.h"
 #include "database/librarydatabase.h"
-#include "tagging/tagreader.h"
 
+#include <core/tagging/tagreader.h>
 #include <utils/utils.h>
 
 #include <QDir>
-
-using namespace Fy::Utils;
 
 namespace Fy::Core::Library {
 LibraryScanner::LibraryScanner(DB::Database* database, QObject* parent)
@@ -70,14 +68,11 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         return;
     }
     for(const Track& track : tracks) {
-        if(!File::exists(track.filepath())) {
+        if(!Utils::File::exists(track.filepath())) {
             tracksToDelete.emplace_back(track);
         }
         else {
             trackMap.emplace(track.filepath(), track);
-            if(track.hasCover() && !File::exists(track.thumbnailPath())) {
-                m_tagReader.storeCover(track);
-            }
         }
     }
 
@@ -95,14 +90,14 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
     emit finished();
 }
 
-void LibraryScanner::updateTracks(const TrackList& tracks)
+void LibraryScanner::updateTracks(const TrackList& /*tracks*/)
 {
-    for(const Track& track : tracks) {
-        const bool saved = m_tagReader.writeMetaData(track);
-        if(saved) {
-            m_libraryDatabase.updateTrack(track);
-        }
-    }
+    //    for(const Track& track : tracks) {
+    //        const bool saved = m_tagReader.writeMetaData(track);
+    //        if(saved) {
+    //            m_libraryDatabase.updateTrack(track);
+    //        }
+    //    }
 }
 
 LibraryInfo LibraryScanner::currentLibrary() const
@@ -134,8 +129,8 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
     QStringList ret;
     QList<QDir> stack{baseDirectory};
 
-    const QStringList soundFileExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga",  "*.m4a", "*.wav",  "*.flac",
-                                          "*.aac", "*.wma", "*.mpc",  "*.aiff", "*.ape", "*.webm", "*.mp4"};
+    static const QStringList SupportedExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga", "*.m4a",  "*.wav", "*.flac",
+                                                 "*.wma", "*.mpc", "*.aiff", "*.ape", "*.webm", "*.mp4"};
 
     while(!stack.isEmpty()) {
         const QDir dir              = stack.takeFirst();
@@ -146,7 +141,7 @@ QStringList LibraryScanner::getFiles(QDir& baseDirectory)
             }
             stack.append(QDir{subDir.absoluteFilePath()});
         }
-        const QFileInfoList files = dir.entryInfoList(soundFileExtensions, QDir::Files);
+        const QFileInfoList files = dir.entryInfoList(SupportedExtensions, QDir::Files);
         for(const auto& file : files) {
             if(!m_mayRun) {
                 return {};
@@ -193,7 +188,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
                 }
 
                 Track changedTrack{libraryTrack};
-                fileWasRead = m_tagReader.readMetaData(changedTrack, Tagging::Quality::Fast);
+                fileWasRead = m_tagReader.readMetaData(changedTrack);
                 if(fileWasRead) {
                     // Regenerate hash
                     changedTrack.generateHash();
@@ -206,7 +201,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
         Track track{filepath};
         track.setLibraryId(m_library.id);
 
-        fileWasRead = m_tagReader.readMetaData(track, Tagging::Quality::Quality);
+        fileWasRead = m_tagReader.readMetaData(track);
         if(fileWasRead) {
             track.generateHash();
             tracksToStore.push_back(track);
@@ -218,10 +213,11 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
                 emit progressChanged(currentProgress);
             }
 
-            // if(tracksToStore.size() >= 250) {
-            //     emit addedTracks(tracksToStore);
-            //     tracksToStore.clear();
-            // }
+            if(tracksToStore.size() >= 250) {
+                storeTracks(tracksToStore);
+                emit addedTracks(tracksToStore);
+                tracksToStore.clear();
+            }
         }
     }
 

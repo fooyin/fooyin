@@ -17,286 +17,540 @@
  *
  */
 
-#include "tagreader.h"
-
-#include "tagutils.h"
+#include <core/tagging/tagreader.h>
 
 #include <core/constants.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
+#include <taglib/aifffile.h>
+#include <taglib/apefile.h>
+#include <taglib/apetag.h>
+#include <taglib/asffile.h>
+#include <taglib/asfpicture.h>
+#include <taglib/asftag.h>
+#include <taglib/attachedpictureframe.h>
 #include <taglib/fileref.h>
+#include <taglib/flacfile.h>
+#include <taglib/id3v2framefactory.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/mp4file.h>
+#include <taglib/mp4tag.h>
+#include <taglib/mpcfile.h>
+#include <taglib/mpegfile.h>
+#include <taglib/oggfile.h>
+#include <taglib/opusfile.h>
+#include <taglib/tag.h>
 #include <taglib/tfilestream.h>
+#include <taglib/tpropertymap.h>
+#include <taglib/vorbisfile.h>
+#include <taglib/wavfile.h>
+#include <taglib/wavpackfile.h>
 
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFileInfo>
+#include <QMimeDatabase>
 #include <QPixmap>
+#include <QStringBuilder>
 
-namespace Fy::Core::Tagging {
-struct ReadingProperties
+#include <set>
+
+namespace {
+QString convertString(const TagLib::String& str)
 {
-    TagLib::AudioProperties::ReadStyle readStyle{TagLib::AudioProperties::ReadStyle::Fast};
-    bool readAudioProperties{true};
-};
+    return QString::fromStdString(str.to8Bit(true));
+}
 
-ReadingProperties getReadingProperties(Quality quality)
+QStringList convertStringList(const TagLib::StringList& strList)
 {
-    ReadingProperties readingProperties;
+    QStringList list;
+    list.reserve(strList.size());
 
+    for(const auto& string : strList) {
+        list.push_back(convertString(string));
+    }
+
+    return list;
+}
+
+TagLib::AudioProperties::ReadStyle readStyle(Fy::Core::Tagging::TagReader::Quality quality)
+{
     switch(quality) {
-        case(Quality::Quality):
-            readingProperties.readStyle = TagLib::AudioProperties::Accurate;
-            break;
-        case(Quality::Standard):
-            readingProperties.readStyle = TagLib::AudioProperties::Average;
-            break;
-        case(Quality::Fast):
-            readingProperties.readStyle = TagLib::AudioProperties::Fast;
-            break;
+        case(Fy::Core::Tagging::TagReader::Quality::Fast):
+            return TagLib::AudioProperties::Fast;
+        case(Fy::Core::Tagging::TagReader::Quality::Average):
+            return TagLib::AudioProperties::Average;
+        case(Fy::Core::Tagging::TagReader::Quality::Accurate):
+            return TagLib::AudioProperties::Accurate;
+        default:
+            return TagLib::AudioProperties::Average;
     }
-
-    return readingProperties;
 }
 
-QString coverInDirectory(const QString& directory)
+void readAudioProperties(const TagLib::File& file, Fy::Core::Track& track)
 {
-    const QDir baseDirectory = QDir(directory);
-    const QStringList fileExtensions{"*.jpg", "*.jpeg", "*.png", "*.gif", "*.tiff", "*.bmp"};
-    // Use first image found as album cover
-    const QStringList fileList = baseDirectory.entryList(fileExtensions, QDir::Files);
-    if(!fileList.isEmpty()) {
-        QString cover = baseDirectory.absolutePath() + "/" + fileList.constFirst();
-        return cover;
+    if(TagLib::AudioProperties* props = file.audioProperties()) {
+        if(props->lengthInMilliseconds()) {
+            track.setDuration(props->lengthInMilliseconds());
+        }
+        if(props->bitrate()) {
+            track.setBitrate(props->bitrate());
+        }
+        if(props->sampleRate()) {
+            track.setSampleRate(props->sampleRate());
+        }
     }
-    return {};
 }
 
-// TODO: Handle different filetypes separately
-bool TagReader::readMetaData(Track& track, Quality quality)
+void readGeneralProperties(const TagLib::PropertyMap& props, Fy::Core::Track& track)
 {
-    const auto filepath = track.filepath();
-    const auto fileInfo = QFileInfo(filepath);
-
-    const QDateTime md   = fileInfo.lastModified();
-    const qint64 timeNow = QDateTime::currentMSecsSinceEpoch();
-
-    track.setAddedTime(timeNow);
-    track.setModifiedTime(md.isValid() ? md.toMSecsSinceEpoch() : 0);
-
-    if(fileInfo.size() <= 0) {
-        return false;
+    if(props.isEmpty()) {
+        return;
     }
 
-    const auto readingProperties = getReadingProperties(quality);
-    auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties,
-                                   readingProperties.readStyle);
+    if(props.contains("TITLE")) {
+        track.setTitle(convertString(props["TITLE"].toString()));
+    }
+    if(props.contains("ARTIST")) {
+        track.setArtists(convertStringList(props["ARTIST"]));
+    }
+    if(props.contains("ALBUM")) {
+        track.setAlbum(convertString(props["ALBUM"].toString()));
+    }
+    if(props.contains("ALBUMARTIST")) {
+        // TODO: Support multiple album artists
+        track.setAlbumArtist(convertString(props["ALBUMARTIST"].toString()));
+    }
+    if(props.contains("TRACKNUMBER")) {
+        // TODO: Handle in separate methods based on type
+        const auto trackNums = convertString(props["TRACKNUMBER"].toString()).split('/');
+        if(trackNums.empty()) {
+            return;
+        }
 
-    if(!isValidFile(fileRef)) {
-        qDebug() << "Cannot open tags for " << filepath << ": Err 1";
-        return false;
+        track.setTrackNumber(trackNums.constFirst().toInt());
+
+        if(trackNums.size() > 1) {
+            track.setTrackTotal(trackNums.at(1).toInt());
+        }
+    }
+    if(props.contains("TRACKTOTAL")) {
+        track.setTrackTotal(props["TRACKTOTAL"].toString().toInt());
+    }
+    if(props.contains("DISCNUMBER")) {
+        // TODO: Handle in separate methods based on type
+        const auto discNums = convertString(props["DISCNUMBER"].toString()).split('/');
+        if(discNums.empty()) {
+            return;
+        }
+
+        track.setDiscNumber(discNums.constFirst().toInt());
+
+        if(discNums.size() > 1) {
+            track.setDiscTotal(discNums.at(1).toInt());
+        }
+    }
+    if(props.contains("DISCTOTAL")) {
+        track.setDiscTotal(props["DISCTOTAL"].toString().toInt());
+    }
+    if(props.contains("GENRE")) {
+        track.setGenres(convertStringList(props["GENRE"]));
+    }
+    if(props.contains("COMPOSER")) {
+        track.setComposer(convertString(props["COMPOSER"].toString()));
+    }
+    if(props.contains("PERFORMER")) {
+        track.setPerformer(convertString(props["PERFORMER"].toString()));
+    }
+    if(props.contains("COMMENT")) {
+        track.setComment(convertString(props["COMMENT"].toString()));
+    }
+    if(props.contains("LYRICS")) {
+        track.setLyrics(convertString(props["LYRICS"].toString()));
+    }
+    if(props.contains("DATE")) {
+        track.setDate(convertString(props["DATE"].toString()));
+        track.setYear(track.date().toInt());
+    }
+    if(props.contains("RATING")) {
+        // TODO
     }
 
-    auto parsedTag = tagsFromFile(fileRef);
-    parsedTag.map  = fileRef.file()->properties();
-    if(!parsedTag.tag) {
-        return false;
-    }
+    static const std::set<TagLib::String> baseTags
+        = {"TITLE",    "ARTIST",    "ALBUM",   "ALBUMARTIST", "TRACKNUMBER", "DISCNUMBER", "GENRE",
+           "COMPOSER", "PERFORMER", "COMMENT", "LYRICS",      "DATE",        "RATING"};
 
-    const QStringList baseTags{"TITLE", "ARTIST",     "ALBUMARTIST", "GENRE",   "TRACKNUMBER",
-                               "ALBUM", "DISCNUMBER", "DATE",        "COMMENT", "LYRICS"};
-
-    const auto artists     = convertStringList(parsedTag.map.value("ARTIST"));
-    const QString album    = convertString(parsedTag.tag->album());
-    const auto albumArtist = convertString(parsedTag.map.value("ALBUMARTIST").toString());
-    const QString title    = convertString(parsedTag.tag->title());
-    const auto genres      = convertStringList(parsedTag.map.value("GENRE"));
-    const QString comment  = convertString(parsedTag.tag->comment());
-    const auto date        = convertString(parsedTag.map.value("DATE").toString());
-    const int year         = parsedTag.tag->year();
-    const auto lyrics      = convertString(parsedTag.map.value("LYRICS").toString());
-
-    auto trackNum           = 0;
-    auto trackTotal         = 0;
-    const auto trackNumData = convertString(parsedTag.map.value("TRACKNUMBER").toString());
-
-    if(trackNumData.contains("/")) {
-        trackNum   = trackNumData.split("/")[0].toInt();
-        trackTotal = trackNumData.split("/")[1].toInt();
-    }
-    else {
-        trackNum = trackNumData.toInt();
-    }
-
-    if(parsedTag.map.contains("TRACKTOTAL")) {
-        trackTotal = convertString(parsedTag.map.value("TRACKTOTAL").toString()).toInt();
-    }
-
-    int disc            = 0;
-    int discTotal       = 0;
-    const auto discData = convertString(parsedTag.map.value("DISCNUMBER").toString());
-
-    if(discData.contains("/")) {
-        disc      = discData.split("/")[0].toInt();
-        discTotal = discData.split("/")[1].toInt();
-    }
-    else {
-        disc = discData.toInt();
-    }
-
-    if(parsedTag.map.contains("DISCTOTAL")) {
-        discTotal = convertString(parsedTag.map.value("DISCTOTAL").toString()).toInt();
-    }
-
-    const auto bitrate    = fileRef.audioProperties()->bitrate();
-    const auto sampleRate = fileRef.audioProperties()->sampleRate();
-    const auto length     = fileRef.audioProperties()->lengthInMilliseconds();
-
-    for(const auto& [tag, values] : parsedTag.map) {
-        for(const auto& value : values) {
+    for(const auto& [tag, values] : props) {
+        if(!baseTags.contains(tag)) {
             const auto tagEntry = QString::fromStdString(tag.to8Bit(true));
-            if(!baseTags.contains(tagEntry)) {
+            for(const auto& value : values) {
                 track.addExtraTag(tagEntry, QString::fromStdString(value.to8Bit(true)));
             }
         }
     }
-
-    track.setAlbum(album);
-    track.setArtists(artists);
-    track.setAlbumArtist(albumArtist);
-    track.setTitle(title);
-    track.setDuration(length);
-    track.setDate(date);
-    track.setYear(year);
-    track.setGenres(genres);
-    track.setTrackNumber(trackNum);
-    track.setTrackTotal(trackTotal);
-    track.setDiscNumber(disc);
-    track.setDiscTotal(discTotal);
-    track.setBitrate(bitrate);
-    track.setSampleRate(sampleRate);
-    track.setFileSize(fileInfo.size());
-    track.setLyrics(lyrics);
-    track.setComment(comment);
-
-    track.setCoverPath(storeCover(fileRef, track));
-
-    return true;
 }
 
-bool TagReader::writeMetaData(const Track& track)
+QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags)
+{
+    if(id3Tags->isEmpty()) {
+        return {};
+    }
+
+    TagLib::ID3v2::FrameList frames = id3Tags->frameListMap()["APIC"];
+
+    using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
+
+    for(const auto& frame : std::as_const(frames)) {
+        const auto* coverFrame        = static_cast<PictureFrame*>(frame);
+        const PictureFrame::Type type = coverFrame->type();
+
+        if(type == PictureFrame::FrontCover || type == PictureFrame::Other) {
+            const auto picture = coverFrame->picture();
+            return {picture.data(), picture.size()};
+        }
+    }
+    return {};
+}
+
+QByteArray readApeCover(const TagLib::APE::Tag* apeTags)
+{
+    if(apeTags->isEmpty()) {
+        return {};
+    }
+
+    const TagLib::APE::ItemListMap& items          = apeTags->itemListMap();
+    TagLib::APE::ItemListMap::ConstIterator itemIt = items.find("COVER ART (FRONT)");
+
+    if(itemIt != items.end()) {
+        const auto& picture = itemIt->second.binaryData();
+        int position        = picture.find('\0');
+        if(position >= 0) {
+            position += 1;
+            return {picture.data() + position, picture.size() - position};
+        }
+    }
+    return {};
+}
+
+QByteArray readMp4Cover(const TagLib::MP4::Tag* mp4Tags)
+{
+    TagLib::MP4::Item coverArtItem = mp4Tags->item("covr");
+    if(!coverArtItem.isValid()) {
+        return {};
+    }
+
+    const TagLib::MP4::CoverArtList coverArtList = coverArtItem.toCoverArtList();
+
+    if(!coverArtList.isEmpty()) {
+        const TagLib::MP4::CoverArt& coverArt = coverArtList.front();
+        return {coverArt.data().data(), coverArt.data().size()};
+    }
+    return {};
+}
+
+QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*> pictures)
+{
+    if(pictures.isEmpty()) {
+        return {};
+    }
+
+    using FlacPicture = TagLib::FLAC::Picture;
+
+    for(const auto& picture : std::as_const(pictures)) {
+        const auto type = picture->type();
+        if(type == FlacPicture::FrontCover || type == FlacPicture::Other) {
+            return {picture->data().data(), picture->data().size()};
+        }
+    }
+    return {};
+}
+
+QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags)
+{
+    if(asfTags->isEmpty()) {
+        return {};
+    }
+
+    TagLib::ASF::AttributeList pictures = asfTags->attribute("WM/Picture");
+
+    using Picture = TagLib::ASF::Picture;
+
+    for(const auto& attribute : std::as_const(pictures)) {
+        const Picture picture = attribute.toPicture();
+        const auto imageType  = picture.type();
+        if(imageType == Picture::FrontCover) {
+            const auto& pictureData = picture.picture();
+            return {pictureData.data(), pictureData.size()};
+        }
+    }
+    return {};
+}
+
+QString coverInDirectory(const QString& directory)
+{
+    static const QStringList CoverFileTypes{"*.jpg", "*.jpeg", "*.png", "*.gif", "*.tiff", "*.bmp"};
+
+    const QDir baseDirectory{directory};
+    const QStringList fileList = baseDirectory.entryList(CoverFileTypes, QDir::Files);
+    if(!fileList.isEmpty()) {
+        // Use first image found as album cover
+        return baseDirectory.absolutePath() % "/" % fileList.constFirst();
+    }
+    return {};
+}
+
+void handleCover(const QByteArray& cover, Fy::Core::Track& track)
+{
+    QString coverPath = coverInDirectory(track.filepath());
+
+    if(!cover.isEmpty()) {
+        coverPath = Fy::Core::Constants::EmbeddedCover;
+    }
+
+    track.setCoverPath(coverPath);
+}
+} // namespace
+
+namespace Fy::Core::Tagging {
+struct TagReader::Private
+{
+    QMimeDatabase mimeDb;
+};
+
+TagReader::TagReader()
+    : p{std::make_unique<Private>()}
+{ }
+
+TagReader::~TagReader() = default;
+
+// TODO: Implement a file/mime type resolver
+bool TagReader::readMetaData(Track& track, Quality quality)
 {
     const auto filepath = track.filepath();
-    const auto fileInfo = QFileInfo(filepath);
+    const QFileInfo fileInfo{filepath};
+
     if(fileInfo.size() <= 0) {
         return false;
     }
 
-    auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()));
+    track.setFileSize(fileInfo.size());
 
-    const auto album       = convertString(track.album());
-    const auto artist      = convertStringList(track.artists());
-    const auto albumArtist = convertString(track.albumArtist());
-    const auto title       = convertString(track.title());
-    const auto composer    = convertString(track.composer());
-    const auto performer   = convertString(track.performer());
-    const auto genre       = convertStringList(track.genres());
-    const auto year        = convertString(track.year());
-    const auto comment     = convertString(track.comment());
+    track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+    const QDateTime modifiedTime = fileInfo.lastModified();
+    track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
 
-    // TODO: Add option for saving to TRACKTOTAL and DISCTOTAL tags when X/Y not standard i.e. FLAC
-    auto trackNumber = convertString(track.trackNumber());
-    auto disc        = convertString(track.discNumber());
-
-    const auto trackTotal = track.trackTotal();
-    const auto discTotal  = track.discTotal();
-
-    if(trackTotal > 0) {
-        trackNumber += "/";
-        trackNumber.append(convertString(trackTotal));
-    }
-
-    if(discTotal > 0) {
-        disc += "/";
-        disc.append(convertString(discTotal));
-    }
-
-    auto parsedTag = tagsFromFile(fileRef);
-    parsedTag.map  = fileRef.file()->properties();
-    if(!parsedTag.tag) {
+    TagLib::FileStream stream(filepath.toUtf8().constData(), true);
+    if(!stream.isOpen()) {
+        qWarning() << u"Unable to open file readonly: " << filepath;
         return false;
     }
 
-    parsedTag.map.replace("ALBUM", album);
-    parsedTag.map.replace("ARTIST", artist);
-    parsedTag.map.replace("ALBUMARTIST", albumArtist);
-    parsedTag.map.replace("TITLE", title);
-    parsedTag.map.replace("GENRE", genre);
-    parsedTag.map.replace("DATE", year);
-    parsedTag.map.replace("TRACKNUMBER", trackNumber);
-    parsedTag.map.replace("DISCNUMBER", disc);
-    parsedTag.map.replace("COMPOSER", composer);
-    parsedTag.map.replace("PERFORMER", performer);
-    parsedTag.map.replace("COMMENT", comment);
+    const QString mimeType                         = p->mimeDb.mimeTypeForFile(filepath).name();
+    const TagLib::AudioProperties::ReadStyle style = readStyle(quality);
 
-    fileRef.file()->setProperties(parsedTag.map);
-    return fileRef.save();
-}
+    const auto readProperties = [](const TagLib::File& file, Track& track) {
+        readAudioProperties(file, track);
+        readGeneralProperties(file.properties(), track);
+    };
 
-QPixmap TagReader::readCover(const QString& filepath)
-{
-    const auto readingProperties = getReadingProperties(Quality::Quality);
-    auto fileRef = TagLib::FileRef(TagLib::FileName(filepath.toUtf8()), readingProperties.readAudioProperties,
-                                   readingProperties.readStyle);
-
-    return coverFromFile(fileRef);
-}
-
-QString TagReader::storeCover(const TagLib::FileRef& file, const Track& track)
-{
-    QString coverPath;
-    bool hasEmbedded;
-
-    const QString folderCover = coverInDirectory(Utils::File::getParentDirectory(track.filepath()));
-    if(!folderCover.isEmpty()) {
-        coverPath = folderCover;
-    }
-    else if(hasEmbeddedCover(file)) {
-        hasEmbedded = true;
-        coverPath   = Constants::EmbeddedCover;
-    }
-    if(coverPath.isEmpty()) {
-        // Assume no cover
-        return {};
-    }
-
-    const QString thumbnailPath = track.thumbnailPath();
-    if(!Utils::File::exists(thumbnailPath)) {
-        QPixmap cover;
-        if(hasEmbedded) {
-            cover = coverFromFile(file);
-        }
-        else {
-            cover.load(coverPath);
-        }
-        if(!cover.isNull()) {
-            const QPixmap thumb = Utils::scaleImage(cover, 300);
-            const bool saved    = Tagging::saveCover(thumb, thumbnailPath);
-            if(!saved) {
-                qDebug() << "Thumbnail could not be saved: " << thumbnailPath;
+    if(mimeType == u"audio/mpeg" || mimeType == u"audio/mpeg3" || mimeType == u"audio/x-mpeg") {
+        TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            if(file.hasID3v2Tag()) {
+                handleCover(readId3Cover(file.ID3v2Tag()), track);
             }
         }
     }
-    return coverPath;
+    else if(mimeType == u"audio/x-aiff" || mimeType == u"audio/x-aifc") {
+        TagLib::RIFF::AIFF::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            if(file.hasID3v2Tag()) {
+                handleCover(readId3Cover(file.tag()), track);
+            }
+        }
+    }
+    else if(mimeType == u"audio/vnd.wave" || mimeType == u"audio/wav" || mimeType == u"audio/x-wav") {
+        TagLib::RIFF::WAV::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            if(file.hasID3v2Tag()) {
+                handleCover(readId3Cover(file.tag()), track);
+            }
+        }
+    }
+    else if(mimeType == u"audio/x-musepack") {
+        TagLib::MPC::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            if(file.APETag()) {
+                handleCover(readApeCover(file.APETag()), track);
+            }
+        }
+    }
+    else if(mimeType == u"audio/x-ape") {
+        TagLib::APE::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            if(file.APETag()) {
+                handleCover(readApeCover(file.APETag()), track);
+            }
+        }
+    }
+    else if(mimeType == u"audio/x-wavpack") {
+        TagLib::WavPack::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            if(file.APETag()) {
+                handleCover(readApeCover(file.APETag()), track);
+            }
+        }
+    }
+    else if(mimeType == u"audio/mp4" || mimeType == u"audio/vnd.audible.aax") {
+        TagLib::MP4::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            handleCover(readMp4Cover(file.tag()), track);
+        }
+    }
+    else if(mimeType == u"audio/flac") {
+        TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            handleCover(readFlacCover(file.pictureList()), track);
+        }
+    }
+    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
+        // Workaround for opus files with ogg suffix returning incorrect type
+        const QString accurateType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+        if(accurateType == u"audio/opus" || accurateType == u"audio/x-opus+ogg") {
+            TagLib::Ogg::Opus::File file(&stream, true, style);
+            if(file.isValid()) {
+                readProperties(file, track);
+                if(file.tag()) {
+                    handleCover(readFlacCover(file.tag()->pictureList()), track);
+                }
+            }
+        }
+        else {
+            TagLib::Ogg::Vorbis::File file(&stream, true, style);
+            if(file.isValid()) {
+                readProperties(file, track);
+                if(file.tag()) {
+                    handleCover(readFlacCover(file.tag()->pictureList()), track);
+                }
+            }
+        }
+    }
+    else if(mimeType == u"audio/opus" || mimeType == u"audio/x-opus+ogg") {
+        TagLib::Ogg::Opus::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            if(file.tag()) {
+                handleCover(readFlacCover(file.tag()->pictureList()), track);
+            }
+        }
+    }
+    else if(mimeType == u"audio/x-ms-wma") {
+        TagLib::ASF::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            handleCover(readAsfCover(file.tag()), track);
+        }
+    }
+    else {
+        qDebug() << "Unsupported mime type: " << mimeType;
+    }
+
+    return true;
 }
 
-QString TagReader::storeCover(const Track& track)
+QByteArray TagReader::readCover(const Track& track)
 {
-    const auto readingProperties = getReadingProperties(Quality::Quality);
-    auto fileRef = TagLib::FileRef(TagLib::FileName(track.filepath().toUtf8()), readingProperties.readAudioProperties,
-                                   readingProperties.readStyle);
+    const auto filepath = track.filepath();
+    const QFileInfo fileInfo{filepath};
 
-    return storeCover(fileRef, track);
+    if(fileInfo.size() <= 0) {
+        return {};
+    }
+
+    TagLib::FileStream stream(filepath.toUtf8().constData(), true);
+    if(!stream.isOpen()) {
+        qWarning() << u"Unable to open file readonly: " << filepath;
+        return {};
+    }
+
+    const QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
+
+    if(mimeType == u"audio/mpeg" || mimeType == u"audio/mpeg3" || mimeType == u"audio/x-mpeg") {
+        TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true);
+        if(file.isValid() && file.hasID3v2Tag()) {
+            return readId3Cover(file.ID3v2Tag());
+        }
+    }
+    else if(mimeType == u"audio/x-aiff" || mimeType == u"audio/x-aifc") {
+        TagLib::RIFF::AIFF::File file(&stream, true);
+        if(file.isValid() && file.hasID3v2Tag()) {
+            return readId3Cover(file.tag());
+        }
+    }
+    else if(mimeType == u"audio/vnd.wave" || mimeType == u"audio/wav" || mimeType == u"audio/x-wav") {
+        TagLib::RIFF::WAV::File file(&stream, true);
+        if(file.isValid() && file.hasID3v2Tag()) {
+            return readId3Cover(file.tag());
+        }
+    }
+    else if(mimeType == u"audio/x-musepack") {
+        TagLib::MPC::File file(&stream, true);
+        if(file.isValid() && file.APETag()) {
+            return readApeCover(file.APETag());
+        }
+    }
+    else if(mimeType == u"audio/x-ape") {
+        TagLib::APE::File file(&stream, true);
+        if(file.isValid() && file.APETag()) {
+            return readApeCover(file.APETag());
+        }
+    }
+    else if(mimeType == u"audio/x-wavpack") {
+        TagLib::WavPack::File file(&stream, true);
+        if(file.isValid() && file.APETag()) {
+            return readApeCover(file.APETag());
+        }
+    }
+    else if(mimeType == u"audio/mp4" || mimeType == u"audio/vnd.audible.aax") {
+        TagLib::MP4::File file(&stream, true);
+        if(file.isValid()) {
+            return readMp4Cover(file.tag());
+        }
+    }
+    else if(mimeType == u"audio/flac") {
+        TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true);
+        if(file.isValid()) {
+            return readFlacCover(file.pictureList());
+        }
+    }
+    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
+        TagLib::Ogg::Vorbis::File file(&stream, true);
+        if(file.isValid() && file.tag()) {
+            return readFlacCover(file.tag()->pictureList());
+        }
+    }
+    else if(mimeType == u"audio/opus" || mimeType == u"audio/x-opus+ogg") {
+        TagLib::Ogg::Opus::File file(&stream, true);
+        if(file.isValid() && file.tag()) {
+            return readFlacCover(file.tag()->pictureList());
+        }
+    }
+    else if(mimeType == u"audio/x-ms-wma") {
+        TagLib::ASF::File file(&stream, true);
+        if(file.isValid()) {
+            return readAsfCover(file.tag());
+        }
+    }
+
+    return {};
 }
 } // namespace Fy::Core::Tagging

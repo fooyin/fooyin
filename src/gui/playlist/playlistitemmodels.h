@@ -40,8 +40,6 @@ public:
     [[nodiscard]] TextBlockList sideText() const;
     [[nodiscard]] TextBlockList info() const;
 
-    [[nodiscard]] QString coverPath() const;
-
     [[nodiscard]] QString genres() const;
 
     void updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptRegistry* registry);
@@ -50,7 +48,6 @@ public:
     void setSubtitle(const TextBlockList& subtitle);
     void setSideText(const TextBlockList& text);
     void setInfo(const TextBlockList& info);
-    void setCoverPath(const QString& path);
 
     void addTrack(const Core::Track& track);
     void addTracks(const Core::TrackList& tracks);
@@ -65,8 +62,6 @@ private:
     TextBlockList m_subtitle;
     TextBlockList m_sideText;
     TextBlockList m_info;
-
-    QString m_coverPath;
 };
 
 class Track

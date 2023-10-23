@@ -21,28 +21,40 @@
 
 #include "fycore_export.h"
 
+#include <QObject>
+
 #include <memory>
 
 class QPixmap;
 class QString;
+class QSize;
 
-namespace Fy::Core {
-class Album;
+namespace Fy {
+
+namespace Core {
 class Track;
+}
 
-namespace Library {
-class FYCORE_EXPORT CoverProvider
+namespace Gui::Library {
+class FYCORE_EXPORT CoverProvider : public QObject
 {
+    Q_OBJECT
+
 public:
-    CoverProvider();
+    CoverProvider(QObject* parent = nullptr);
     virtual ~CoverProvider();
 
-    QPixmap trackCover(const Track& track);
-    QPixmap albumThumbnail(const QString& path) const;
+    QPixmap trackCover(const Core::Track& track, bool saveToDisk = false) const;
+    QPixmap trackCover(const Core::Track& track, const QSize& size, bool saveToDisk = false) const;
+
+    void clearCache();
+
+signals:
+    void coverAdded(const Fy::Core::Track& track);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Library
-} // namespace Fy::Core
+} // namespace Gui::Library
+} // namespace Fy

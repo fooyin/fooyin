@@ -141,7 +141,6 @@ struct PlaylistPopulator::Private : QObject
             header.setTitle(row.title);
             header.setSubtitle(row.subtitle);
             header.setSideText(row.sideText);
-            header.setCoverPath(track.thumbnailPath());
             header.setInfo(row.info);
 
             auto* headerItem      = getOrInsertItem(key, PlaylistItem::Header, header, parent, baseKey);
@@ -150,6 +149,7 @@ struct PlaylistPopulator::Private : QObject
         }
         Container* header = headers.at(key);
         header->addTrack(track);
+        data.trackParents[track.id()].push_back(key);
 
         auto* headerItem = &data.items.at(key);
         parent           = headerItem;
@@ -261,6 +261,7 @@ struct PlaylistPopulator::Private : QObject
             }
             Container* subheader = headers.at(key);
             subheader->addTrack(track);
+            data.trackParents[track.id()].push_back(key);
 
             auto* subheaderItem = &data.items.at(key);
             if(subheaderItem->parent()->type() != PlaylistItem::Header) {
@@ -319,6 +320,8 @@ struct PlaylistPopulator::Private : QObject
         const QString key = Utils::generateHash(parent->key(), track.hash(), QString::number(data.items.size()));
 
         auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent);
+        data.trackParents[track.id()].push_back(key);
+
         if(parent->type() != PlaylistItem::Header) {
             trackItem->setIndentation(parent->indentation() + 20);
         }

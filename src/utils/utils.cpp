@@ -216,15 +216,13 @@ QString capitalise(const QString& s)
     return parts.join(" ");
 }
 
-QPixmap scaleImage(QPixmap& image, int size)
+QPixmap scalePixmap(QPixmap& image, const QSize& size)
 {
-    static const int maximumSize = size;
-    static const int scale       = 4 * maximumSize;
-    const int width              = image.size().width();
-    const int height             = image.size().height();
-    if(width > maximumSize || height > maximumSize) {
-        return image.scaled(scale, scale)
-            .scaled(maximumSize, maximumSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    const QSize scale = 4 * size;
+    const int width   = image.size().width();
+    const int height  = image.size().height();
+    if(width > size.width() || height > size.height()) {
+        return image.scaled(scale).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
     return image;
 }

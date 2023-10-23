@@ -19,9 +19,13 @@
 
 #pragma once
 
-#include "tagutils.h"
+#include "fycore_export.h"
+
+#include <taglib/audioproperties.h>
 
 #include <QString>
+
+#include <memory>
 
 class QPixmap;
 
@@ -29,14 +33,25 @@ namespace Fy::Core {
 class Track;
 
 namespace Tagging {
-class TagReader
+class FYCORE_EXPORT TagReader
 {
 public:
-    bool readMetaData(Track& track, Quality quality);
-    bool writeMetaData(const Track& track);
-    QPixmap readCover(const QString& filepath);
-    QString storeCover(const TagLib::FileRef& file, const Track& track);
-    QString storeCover(const Track& track);
+    enum class Quality
+    {
+        Fast     = TagLib::AudioProperties::Fast,
+        Average  = TagLib::AudioProperties::Average,
+        Accurate = TagLib::AudioProperties::Accurate,
+    };
+
+    TagReader();
+    ~TagReader();
+
+    bool readMetaData(Track& track, Quality quality = Quality::Average);
+    QByteArray readCover(const Track& track);
+
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Tagging
 } // namespace Fy::Core

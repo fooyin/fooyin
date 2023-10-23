@@ -63,7 +63,6 @@ set(SOURCES
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegutils.cpp
     engine/output/alsaoutput.cpp
-    library/coverprovider.cpp
     library/librarydatabasemanager.cpp
     library/librarymanager.cpp
     library/libraryscanner.cpp
@@ -84,7 +83,6 @@ set(SOURCES
     scripting/functions/stringfuncs.cpp
     scripting/functions/timefuncs.cpp
     tagging/tagreader.cpp
-    tagging/tagutils.cpp
     track.cpp
 )
 
