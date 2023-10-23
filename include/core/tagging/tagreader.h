@@ -21,28 +21,37 @@
 
 #include "fycore_export.h"
 
+#include <taglib/audioproperties.h>
+
+#include <QString>
+
 #include <memory>
 
 class QPixmap;
-class QString;
 
 namespace Fy::Core {
-class Album;
 class Track;
 
-namespace Library {
-class FYCORE_EXPORT CoverProvider
+namespace Tagging {
+class FYCORE_EXPORT TagReader
 {
 public:
-    CoverProvider();
-    virtual ~CoverProvider();
+    enum class Quality
+    {
+        Fast     = TagLib::AudioProperties::Fast,
+        Average  = TagLib::AudioProperties::Average,
+        Accurate = TagLib::AudioProperties::Accurate,
+    };
 
-    QPixmap trackCover(const Track& track);
-    QPixmap albumThumbnail(const QString& path) const;
+    TagReader();
+    ~TagReader();
+
+    bool readMetaData(Track& track, Quality quality = Quality::Average);
+    QByteArray readCover(const Track& track);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Library
+} // namespace Tagging
 } // namespace Fy::Core

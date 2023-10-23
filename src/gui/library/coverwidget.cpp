@@ -19,64 +19,95 @@
 
 #include "coverwidget.h"
 
-#include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <core/track.h>
+#include <gui/coverprovider.h>
+#include <gui/guiconstants.h>
+#include <gui/trackselectioncontroller.h>
 
 #include <QHBoxLayout>
 #include <QLabel>
 
 namespace Fy::Gui::Widgets {
-CoverWidget::CoverWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
+struct CoverWidget::Private
+{
+    CoverWidget* self;
+
+    Core::Player::PlayerManager* playerManager;
+    TrackSelectionController* trackSelection;
+    Library::CoverProvider* coverProvider;
+
+    QLabel* coverLabel;
+    QString coverPath;
+    QPixmap cover;
+
+    Private(CoverWidget* self, Core::Player::PlayerManager* playerManager, TrackSelectionController* trackSelection)
+        : self{self}
+        , playerManager{playerManager}
+        , trackSelection{trackSelection}
+        , coverProvider{new Library::CoverProvider(self)}
+        , coverLabel{new QLabel(self)}
+    {
+        coverLabel->setMinimumSize(100, 100);
+    }
+
+    void rescaleCover()
+    {
+        const QSize scale = self->size() * 4;
+        coverLabel->setPixmap(cover.scaled(scale, Qt::KeepAspectRatio)
+                                  .scaled(self->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+
+    void reloadCover(Core::Track track)
+    {
+        if(track.isValid()) {
+            cover = coverProvider->trackCover(track);
+            if(!cover.isNull()) {
+                rescaleCover();
+            }
+        }
+        else {
+            cover.load(Constants::NoCover);
+            rescaleCover();
+        }
+    }
+};
+
+CoverWidget::CoverWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* trackSelection,
                          QWidget* parent)
     : FyWidget{parent}
-    , m_library{library}
-    , m_playerManager{playerManager}
-    , m_layout{new QHBoxLayout(this)}
-    , m_coverLabel{new QLabel(this)}
+    , p{std::make_unique<Private>(this, playerManager, trackSelection)}
 {
     setObjectName("Artwork");
 
-    m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->setAlignment(Qt::AlignCenter);
-    m_coverLabel->setMinimumSize(100, 100);
-    m_layout->addWidget(m_coverLabel);
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setAlignment(Qt::AlignCenter);
+    layout->addWidget(p->coverLabel);
 
-    connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &CoverWidget::reloadCover);
-    //    connect(m_library, &Core::Library::MusicLibrary::tracksChanged, this, &CoverWidget::reloadCover);
+    connect(p->playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
+            [this](const Core::Track& track) {
+                p->reloadCover(track);
+            });
+    connect(p->coverProvider, &Library::CoverProvider::coverAdded, this, [this](const Core::Track& track) {
+        p->reloadCover(track);
+    });
 
-    reloadCover({});
+    p->reloadCover(p->playerManager->currentTrack());
 }
+
+CoverWidget::~CoverWidget() = default;
 
 QString CoverWidget::name() const
 {
     return "Artwork";
 }
 
-void CoverWidget::resizeEvent(QResizeEvent* e)
+void CoverWidget::resizeEvent(QResizeEvent* event)
 {
-    if(!m_cover.isNull()) {
-        rescaleCover();
+    if(!p->cover.isNull()) {
+        p->rescaleCover();
     }
-    QWidget::resizeEvent(e);
-}
-
-void CoverWidget::reloadCover(const Core::Track& track)
-{
-    if(track.isValid()) {
-        m_cover = m_coverProvider.trackCover(track);
-        if(!m_cover.isNull()) {
-            rescaleCover();
-        }
-    }
-}
-
-void CoverWidget::rescaleCover()
-{
-    const int w       = width();
-    const int h       = height();
-    const QSize scale = {w * 4, h * 4};
-    m_coverLabel->setPixmap(
-        m_cover.scaled(scale, Qt::KeepAspectRatio).scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    QWidget::resizeEvent(event);
 }
 } // namespace Fy::Gui::Widgets

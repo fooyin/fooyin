@@ -20,6 +20,8 @@
 #pragma once
 
 namespace Fy::Gui::Constants {
+constexpr auto NoCover = "://images/nocover.png";
+
 namespace Icons {
 constexpr auto Fooyin     = "sc-fooyin";
 constexpr auto Play       = "media-playback-start";

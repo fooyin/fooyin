@@ -27,6 +27,7 @@ project(
 )
 
 set(HEADERS
+    ${CMAKE_SOURCE_DIR}/include/gui/coverprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
     ${CMAKE_SOURCE_DIR}/include/gui/propertiesdialog.h
@@ -56,6 +57,7 @@ set(SOURCES
     info/infodelegate.cpp
     info/infomodel.cpp
     info/infowidget.cpp
+    library/coverprovider.cpp
     library/coverwidget.cpp
     library/statuswidget.cpp
     librarytree/librarytreegroupregistry.cpp

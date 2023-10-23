@@ -61,11 +61,6 @@ TextBlockList Container::info() const
     return m_info;
 }
 
-QString Container::coverPath() const
-{
-    return m_coverPath;
-}
-
 QString Container::genres() const
 {
     return m_genres;
@@ -127,11 +122,6 @@ void Container::setSideText(const TextBlockList& text)
 void Container::setInfo(const TextBlockList& info)
 {
     m_info = info;
-}
-
-void Container::setCoverPath(const QString& path)
-{
-    m_coverPath = path;
 }
 
 void Container::addTrack(const Core::Track& track)

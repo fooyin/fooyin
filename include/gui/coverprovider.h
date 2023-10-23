@@ -19,24 +19,40 @@
 
 #pragma once
 
-#include "tagutils.h"
+#include "fycore_export.h"
 
-#include <QString>
+#include <QObject>
+
+#include <memory>
 
 class QPixmap;
+class QString;
+class QSize;
 
-namespace Fy::Core {
+namespace Fy {
+
+namespace Core {
 class Track;
+}
 
-namespace Tagging {
-class TagReader
+namespace Gui::Library {
+class FYCORE_EXPORT CoverProvider : public QObject
 {
+    Q_OBJECT
+
 public:
-    bool readMetaData(Track& track, Quality quality);
-    bool writeMetaData(const Track& track);
-    QPixmap readCover(const QString& filepath);
-    QString storeCover(const TagLib::FileRef& file, const Track& track);
-    QString storeCover(const Track& track);
+    CoverProvider(QObject* parent = nullptr);
+    virtual ~CoverProvider();
+
+    QPixmap trackCover(const Core::Track& track, bool saveToDisk = false) const;
+    QPixmap trackCover(const Core::Track& track, const QSize& size, bool saveToDisk = false) const;
+
+signals:
+    void coverAdded(const Fy::Core::Track& track);
+
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Tagging
-} // namespace Fy::Core
+} // namespace Gui::Library
+} // namespace Fy

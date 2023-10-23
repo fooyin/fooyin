@@ -244,16 +244,6 @@ bool Track::hasEmbeddedCover() const
     return p->coverPath == Constants::EmbeddedCover;
 }
 
-QString Track::thumbnailPath() const
-{
-    return QString{"%1%2 - %3.jpg"}.arg(Core::coverPath(), p->albumArtist, p->album);
-}
-
-bool Track::isSingleDiscAlbum() const
-{
-    return p->discTotal <= 1;
-}
-
 ExtraTags Track::extraTags() const
 {
     return p->extraTags;

@@ -20,10 +20,10 @@
 #pragma once
 
 #include "database/librarydatabase.h"
-#include "tagging/tagreader.h"
 
-#include <core/track.h>
 #include <core/library/libraryinfo.h>
+#include <core/tagging/tagreader.h>
+#include <core/track.h>
 #include <utils/worker.h>
 
 class QDir;

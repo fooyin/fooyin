@@ -21,16 +21,9 @@
 
 #include "gui/fywidget.h"
 
-#include <core/library/coverprovider.h>
-
-class QHBoxLayout;
-class QLabel;
-
 namespace Fy {
 
 namespace Core {
-class Track;
-
 namespace Library {
 class MusicLibrary;
 }
@@ -39,14 +32,18 @@ class PlayerManager;
 }
 } // namespace Core
 
-namespace Gui::Widgets {
+namespace Gui {
+class TrackSelectionController;
+
+namespace Widgets {
 class CoverWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit CoverWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
+    explicit CoverWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* trackSelection,
                          QWidget* parent = nullptr);
+    ~CoverWidget();
 
     [[nodiscard]] QString name() const override;
 
@@ -54,18 +51,9 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
-    void reloadCover(const Core::Track& track);
-    void rescaleCover();
-
-    Core::Library::MusicLibrary* m_library;
-    Core::Player::PlayerManager* m_playerManager;
-
-    Core::Library::CoverProvider m_coverProvider;
-
-    QHBoxLayout* m_layout;
-    QLabel* m_coverLabel;
-    QString m_coverPath;
-    QPixmap m_cover;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
+} // namespace Widgets
+} // namespace Gui
 } // namespace Fy

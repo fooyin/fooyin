@@ -81,8 +81,6 @@ public:
     [[nodiscard]] QString coverPath() const;
     [[nodiscard]] bool hasCover() const;
     [[nodiscard]] bool hasEmbeddedCover() const;
-    [[nodiscard]] QString thumbnailPath() const;
-    [[nodiscard]] bool isSingleDiscAlbum() const;
 
     [[nodiscard]] ExtraTags extraTags() const;
     [[nodiscard]] QByteArray serialiseExtrasTags() const;

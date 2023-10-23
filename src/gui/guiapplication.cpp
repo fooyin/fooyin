@@ -239,7 +239,7 @@ struct GuiApplication::Private
         });
 
         factory->registerClass<Widgets::CoverWidget>("Artwork", [this]() {
-            return new Widgets::CoverWidget(library, playerManager, mainWindow.get());
+            return new Widgets::CoverWidget(playerManager, &selectionController, mainWindow.get());
         });
 
         factory->registerClass<Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {

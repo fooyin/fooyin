@@ -21,13 +21,15 @@
 
 #include "fyutils_export.h"
 
-#include <QPixmap>
-#include <QtGlobal>
+#include <cstdint>
 
+class QPixmap;
 class QString;
 class QLabel;
 class QWidget;
 class QMenu;
+class QSize;
+class QColor;
 
 namespace Fy::Utils {
 namespace File {
@@ -50,7 +52,7 @@ FYUTILS_EXPORT uint64_t currentDateToInt();
 FYUTILS_EXPORT QString formatTimeMs(uint64_t time);
 FYUTILS_EXPORT QString capitalise(const QString& s);
 
-FYUTILS_EXPORT QPixmap scaleImage(QPixmap& image, int size);
+FYUTILS_EXPORT QPixmap scalePixmap(QPixmap& image, const QSize& size);
 FYUTILS_EXPORT QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
 FYUTILS_EXPORT void showMessageBox(const QString& text, const QString& infoText);
 FYUTILS_EXPORT void cloneMenu(QMenu* originalMenu, QMenu* clonedMenu);
