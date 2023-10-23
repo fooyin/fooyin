@@ -152,11 +152,9 @@ void PlaylistController::removePlaylistTracks(const Core::TrackList& tracks)
         return;
     }
     auto playlistTracks = playlist->tracks();
-    playlistTracks.erase(std::remove_if(playlistTracks.begin(), playlistTracks.end(),
-                                        [&tracks](const Core::Track& track) {
-                                            return std::ranges::find(tracks, track) != tracks.end();
-                                        }),
-                         playlistTracks.end());
+    std::erase_if(playlistTracks, [&tracks](const Core::Track& track) {
+        return std::ranges::find(tracks, track) != tracks.end();
+    });
     p->handler->replacePlaylistTracks(playlist->id(), playlistTracks);
 }
 

@@ -221,12 +221,11 @@ QCoro::Task<void> UnifiedMusicLibrary::updateTracks(TrackList tracks)
 
 void UnifiedMusicLibrary::removeTracks(const TrackList& tracks)
 {
-    auto [begin, end] = std::ranges::remove_if(m_tracks, [tracks](const Track& libraryTrack) {
+    std::erase_if(m_tracks, [tracks](const Track& libraryTrack) {
         return std::ranges::any_of(tracks, [libraryTrack](const Track& track) {
             return libraryTrack.id() == track.id();
         });
     });
-    m_tracks.erase(begin, end);
 
     emit tracksDeleted(tracks);
 }

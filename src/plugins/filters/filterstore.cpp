@@ -56,11 +56,9 @@ void FilterStore::updateFilter(const LibraryFilter& filter)
 
 void FilterStore::removeFilter(int index)
 {
-    m_filters.erase(std::remove_if(m_filters.begin(), m_filters.end(),
-                                   [index](const LibraryFilter& filter) {
-                                       return filter.index == index;
-                                   }),
-                    m_filters.end());
+    std::erase_if(m_filters, [index](const LibraryFilter& filter) {
+        return filter.index == index;
+    });
 }
 
 [[nodiscard]] bool FilterStore::hasActiveFilters() const

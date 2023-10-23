@@ -92,9 +92,9 @@ void LibraryTreeItem::removeTrack(const Core::Track& track)
     if(m_tracks.empty()) {
         return;
     }
-    m_tracks.erase(std::ranges::find_if(m_tracks, [track](const Core::Track& child) {
+    std::erase_if(m_tracks, [track](const Core::Track& child) {
         return child.id() == track.id();
-    }));
+    });
 }
 
 void LibraryTreeItem::sortChildren()
