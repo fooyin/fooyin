@@ -162,7 +162,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
     const QStringList files = getFiles(dir);
 
     int tracksProcessed{0};
-    const auto totalTracks = static_cast<double>(files.size());
+    auto totalTracks = static_cast<double>(files.size());
     int currentProgress{-1};
 
     for(const auto& filepath : files) {
@@ -184,6 +184,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
             const Track& libraryTrack = tracks.at(filepath);
             if(libraryTrack.id() >= 0) {
                 if(libraryTrack.modifiedTime() == lastModified) {
+                    totalTracks -= 1;
                     continue;
                 }
 
