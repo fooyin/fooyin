@@ -283,9 +283,8 @@ PlaylistDelegate::PlaylistDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 { }
 
-QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& /*option*/, const QModelIndex& index) const
 {
-    Q_UNUSED(option)
     return index.data(Qt::SizeHintRole).toSize();
 }
 

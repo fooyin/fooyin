@@ -56,15 +56,13 @@ void PluginsModel::setupModelData()
     }
 }
 
-int PluginsModel::rowCount(const QModelIndex& parent) const
+int PluginsModel::rowCount(const QModelIndex& /*parent*/) const
 {
-    Q_UNUSED(parent)
     return rootItem()->childCount();
 }
 
-int PluginsModel::columnCount(const QModelIndex& parent) const
+int PluginsModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    Q_UNUSED(parent)
     return 5;
 }
 

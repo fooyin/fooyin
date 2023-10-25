@@ -314,9 +314,8 @@ QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int rol
     return {};
 }
 
-int InfoModel::columnCount(const QModelIndex& parent) const
+int InfoModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    Q_UNUSED(parent)
     return 2;
 }
 
