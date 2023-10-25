@@ -43,8 +43,10 @@
 #include <QMenu>
 #include <QMouseEvent>
 
-namespace Fy::Gui::Widgets {
-QRect widgetGeometry(FyWidget* widget)
+using namespace Qt::Literals::StringLiterals;
+
+namespace {
+QRect widgetGeometry(Fy::Gui::Widgets::FyWidget* widget)
 {
     const int w = widget->width();
     const int h = widget->height();
@@ -59,22 +61,24 @@ QRect widgetGeometry(FyWidget* widget)
     return {x, y, w, h};
 }
 
-FyWidget* splitterChild(QWidget* widget)
+Fy::Gui::Widgets::FyWidget* splitterChild(QWidget* widget)
 {
     if(!widget) {
         return {};
     }
     QWidget* child = widget;
 
-    while(!qobject_cast<FyWidget*>(child)) {
+    while(!qobject_cast<Fy::Gui::Widgets::FyWidget*>(child)) {
         child = child->parentWidget();
         if(!child) {
             return {};
         }
     }
-    return qobject_cast<FyWidget*>(child);
+    return qobject_cast<Fy::Gui::Widgets::FyWidget*>(child);
 }
+} // namespace
 
+namespace Fy::Gui::Widgets {
 struct EditableLayout::Private
 {
     EditableLayout* self;
@@ -87,8 +91,8 @@ struct EditableLayout::Private
     Utils::ActionContainer* menu;
     QHBoxLayout* box;
     Utils::OverlayFilter* overlay;
-    SplitterWidget* splitter;
-    bool layoutEditing;
+    SplitterWidget* splitter{nullptr};
+    bool layoutEditing{false};
 
     Private(EditableLayout* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
             LayoutProvider* layoutProvider, Utils::SettingsManager* settings)
@@ -100,8 +104,6 @@ struct EditableLayout::Private
         , menu{actionManager->createMenu(Constants::Menus::Context::Layout)}
         , box{new QHBoxLayout(self)}
         , overlay{new Utils::OverlayFilter(self)}
-        , splitter{nullptr}
-        , layoutEditing{false}
     { }
 };
 
@@ -122,14 +124,12 @@ EditableLayout::~EditableLayout() = default;
 
 void EditableLayout::initialise()
 {
-    connect(p->menu, &Utils::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
-    p->settings->subscribe<Settings::LayoutEditing>(this, [this](bool enabled) {
-        p->layoutEditing = enabled;
-    });
+    QObject::connect(p->menu, &Utils::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
+    p->settings->subscribe<Settings::LayoutEditing>(this, [this](bool enabled) { p->layoutEditing = enabled; });
 
     const bool loaded = loadLayout();
     if(!loaded) {
-        p->splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget("SplitterVertical"));
+        p->splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget(u"SplitterVertical"_s));
         p->splitter->setParent(this);
         p->box->addWidget(p->splitter);
     }
@@ -159,9 +159,8 @@ void EditableLayout::setupReplaceWidgetMenu(Utils::ActionContainer* menu, FyWidg
         return;
     }
 
-    p->widgetProvider->setupWidgetMenu(menu, [parent, current](FyWidget* newWidget) {
-        parent->replaceWidget(current, newWidget);
-    });
+    p->widgetProvider->setupWidgetMenu(
+        menu, [parent, current](FyWidget* newWidget) { parent->replaceWidget(current, newWidget); });
 }
 
 void EditableLayout::setupContextMenu(FyWidget* widget, Utils::ActionContainer* menu)
@@ -183,10 +182,8 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Utils::ActionContainer* 
             setupReplaceWidgetMenu(changeMenu, currentWidget);
             menu->addMenu(changeMenu);
 
-            auto* remove = new QAction("Remove", menu);
-            QAction::connect(remove, &QAction::triggered, parent, [parent, widget] {
-                parent->removeWidget(widget);
-            });
+            auto* remove = new QAction(tr("Remove"), menu);
+            QObject::connect(remove, &QAction::triggered, parent, [parent, widget] { parent->removeWidget(widget); });
             menu->addAction(remove);
         }
         currentWidget = parent;
@@ -250,7 +247,7 @@ QByteArray EditableLayout::currentLayout()
 
     p->splitter->saveLayout(array);
 
-    root["Layout"] = array;
+    root["Layout"_L1] = array;
 
     return QJsonDocument(root).toJson();
 }
@@ -263,11 +260,11 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
     }
 
     const QJsonObject json = jsonDoc.object();
-    if(!json.contains("Layout") || !json["Layout"].isArray()) {
+    if(!json.contains("Layout"_L1) || !json["Layout"_L1].isArray()) {
         return false;
     }
 
-    const QJsonArray layoutArray = json["Layout"].toArray();
+    const QJsonArray layoutArray = json["Layout"_L1].toArray();
     if(layoutArray.isEmpty() || layoutArray.size() != 1) {
         return false;
     }
@@ -311,7 +308,7 @@ void EditableLayout::showQuickSetup()
 {
     auto* quickSetup = new QuickSetupDialog(p->layoutProvider, this);
     quickSetup->setAttribute(Qt::WA_DeleteOnClose);
-    connect(quickSetup, &QuickSetupDialog::layoutChanged, this, &Widgets::EditableLayout::changeLayout);
+    QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, this, &Widgets::EditableLayout::changeLayout);
     quickSetup->show();
 }
 } // namespace Fy::Gui::Widgets

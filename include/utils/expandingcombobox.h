@@ -27,7 +27,7 @@ namespace Fy::Utils {
 class FYUTILS_EXPORT ExpandingComboBox : public QComboBox
 {
 public:
-    ExpandingComboBox(QWidget* parent = nullptr);
+    explicit ExpandingComboBox(QWidget* parent = nullptr);
 
     void resizeToFitCurrent();
     void resizeDropDown();

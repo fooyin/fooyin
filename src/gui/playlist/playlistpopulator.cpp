@@ -25,18 +25,20 @@
 #include <utils/crypto.h>
 
 #include <QCryptographicHash>
-#include <QStringBuilder>
 #include <QTimer>
 
 #include <ranges>
 
-namespace Fy::Gui::Widgets::Playlist {
+using namespace Qt::Literals::StringLiterals;
+
 constexpr int InitialBatchSize = 1000;
 constexpr int BatchSize        = 4000;
 
-struct PlaylistPopulator::Private : QObject
+namespace Fy::Gui::Widgets::Playlist {
+struct PlaylistPopulator::Private
 {
-    PlaylistPopulator* populator;
+    PlaylistPopulator* self;
+
     PlaylistPreset currentPreset;
 
     std::unique_ptr<PlaylistScriptRegistry> registry;
@@ -54,8 +56,8 @@ struct PlaylistPopulator::Private : QObject
     ContainerKeyMap headers;
     Core::TrackList pendingTracks;
 
-    explicit Private(PlaylistPopulator* populator)
-        : populator{populator}
+    explicit Private(PlaylistPopulator* self)
+        : self{self}
         , registry{std::make_unique<PlaylistScriptRegistry>()}
         , parser{registry.get()}
         , data{}
@@ -119,7 +121,7 @@ struct PlaylistPopulator::Private : QObject
                 if(!headerBlock.text.isEmpty()) {
                     headerBlocks.push_back(headerBlock);
                 }
-                key = key % headerBlock.text;
+                key = key + headerBlock.text;
             }
             return key;
         };
@@ -200,10 +202,10 @@ struct PlaylistPopulator::Private : QObject
             TextBlock block;
             block.cloneProperties(textBlock);
 
-            const QStringList levels = textBlock.text.split("|||");
+            const QStringList levels = textBlock.text.split(u"|||"_s);
             for(const QString& level : levels) {
                 if(!level.isEmpty()) {
-                    const qsizetype separatorIndex = level.indexOf("||");
+                    const qsizetype separatorIndex = level.indexOf("||"_L1);
                     if(separatorIndex >= 0) {
                         processBlock(block, level.left(separatorIndex), true);
                         processBlock(block, level.mid(separatorIndex + 2), true);
@@ -235,7 +237,7 @@ struct PlaylistPopulator::Private : QObject
             QString subheaderKey;
             for(TextBlock& block : title) {
                 block.text   = parser.evaluate(block.script, track);
-                subheaderKey = subheaderKey % block.text;
+                subheaderKey = subheaderKey + block.text;
             }
 
             if(subheaderKey.isEmpty()) {
@@ -297,10 +299,10 @@ struct PlaylistPopulator::Private : QObject
             if(result.isEmpty()) {
                 continue;
             }
-            if(result.contains("||") && !leftFilled) {
+            if(result.contains("||"_L1) && !leftFilled) {
                 leftFilled          = true;
-                const QString left  = result.section("||", 0, 0);
-                const QString right = result.section("||", 1);
+                const QString left  = result.section(u"||"_s, 0, 0);
+                const QString right = result.section(u"||"_s, 1);
                 if(!left.isEmpty()) {
                     trackBlock.text = left;
                     trackLeft.text.push_back(trackBlock);
@@ -336,7 +338,7 @@ struct PlaylistPopulator::Private : QObject
         auto tracksBatch = std::ranges::views::take(pendingTracks, size);
 
         for(const Core::Track& track : tracksBatch) {
-            if(!populator->mayRun()) {
+            if(!self->mayRun()) {
                 return;
             }
             if(!track.enabled()) {
@@ -347,11 +349,11 @@ struct PlaylistPopulator::Private : QObject
 
         updateContainers();
 
-        if(!populator->mayRun()) {
+        if(!self->mayRun()) {
             return;
         }
 
-        emit populator->populated(data);
+        QMetaObject::invokeMethod(self, "populated", Q_ARG(PendingData, data));
 
         auto tracksToKeep = std::ranges::views::drop(pendingTracks, size);
         Core::TrackList tempTracks;
@@ -398,10 +400,9 @@ void PlaylistPopulator::updateHeaders(const ItemList& headers)
     ItemKeyMap updatedHeaders;
 
     for(const PlaylistItem& item : headers) {
-        PlaylistItem newItem{item};
-        Container& header = std::get<1>(newItem.data());
+        Container& header = std::get<1>(item.data());
         header.updateGroupText(&p->parser, p->registry.get());
-        updatedHeaders.emplace(newItem.key(), newItem);
+        updatedHeaders.emplace(item.key(), item);
     }
 
     emit headersUpdated(updatedHeaders);

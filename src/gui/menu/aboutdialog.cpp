@@ -30,9 +30,56 @@
 #include <QPushButton>
 #include <QSysInfo>
 
-namespace Fy::Gui {
+using namespace Qt::Literals::StringLiterals;
+
 constexpr int IconSize = 256;
 
+namespace {
+QString compilerVersion()
+{
+#if defined(Q_CC_CLANG)
+    QString platformSpecific;
+#if defined(Q_CC_MSVC)
+    platformSpecific = QLatin1String(" (clang-cl)");
+#endif
+    return QStringLiteral("Clang ") + QString::number(__clang_major__) + QChar('.') + QString::number(__clang_minor__)
+         + platformSpecific;
+#elif defined(Q_CC_GNU)
+    return QLatin1String("GCC ") + QLatin1String(__VERSION__);
+#endif
+    return QStringLiteral("<unknown compiler>");
+}
+
+QString copyright()
+{
+    return QString{"Copyright 2022-%1 %2. All rights reserved.<br/>"
+                   "<br/>"
+                   "%3 is free software released under GPL. The source code is available on %4<br/>"
+                   "<br/>"
+                   "You should have received a copy of the GNU General Public License along with this program.  If "
+                   "not, see "
+                   "%5"}
+        .arg("2023", "Luke Taylor", Fy::Core::Constants::DisplayName,
+             "<a href=\"https://github.com/ludouzi/fooyin\">GitHub</a>.",
+             "<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>.");
+}
+
+QString qtVersion()
+{
+    return QString{u"Based on Qt %1 (%2, %3)"_s}.arg(qVersion(), compilerVersion(), QSysInfo::buildCpuArchitecture());
+}
+
+QString description()
+{
+    return QString{"<h3>%1</h3>"
+                   "Version: %2<br/>"
+                   "%3<br/>"
+                   "<br/>"}
+        .arg(Fy::Core::Constants::DisplayName, QCoreApplication::applicationVersion(), qtVersion());
+}
+} // namespace
+
+namespace Fy::Gui {
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog{parent}
 {
@@ -48,7 +95,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     auto* buttonBox          = new QDialogButtonBox(QDialogButtonBox::Close);
     QPushButton* closeButton = buttonBox->button(QDialogButtonBox::Close);
     buttonBox->addButton(closeButton, QDialogButtonBox::AcceptRole);
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 
     auto* logo = new QLabel(this);
     logo->setPixmap(QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
@@ -56,50 +103,5 @@ AboutDialog::AboutDialog(QWidget* parent)
     layout->addWidget(logo, 0, 0);
     layout->addWidget(aboutLabel, 0, 1);
     layout->addWidget(buttonBox, 4, 1);
-}
-
-QString AboutDialog::description()
-{
-    return tr("<h3>%1</h3>"
-              "Version: %2<br/>"
-              "%3<br/>"
-              "<br/>")
-        .arg(QLatin1String(Core::Constants::DisplayName), QCoreApplication::applicationVersion(), qtVersion());
-}
-
-QString AboutDialog::copyright()
-{
-    return tr("Copyright 2022-%1 %2. All rights reserved.<br/>"
-              "<br/>"
-              "%3 is free software released under GPL. The source code is available on %4<br/>"
-              "<br/>"
-              "You should have received a copy of the GNU General Public License along with this program.  If not, see "
-              "%5")
-        .arg(QLatin1String("2023"),
-             QLatin1String("Luke Taylor"),
-             QLatin1String(Core::Constants::DisplayName),
-             QLatin1String("<a href=\"https://github.com/ludouzi/fooyin\">GitHub</a>."),
-             QLatin1String("<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>."));
-}
-
-QString AboutDialog::qtVersion()
-{
-    return tr("Based on Qt %1 (%2, %3)")
-        .arg(QLatin1String(qVersion()), compilerVersion(), QSysInfo::buildCpuArchitecture());
-}
-
-QString AboutDialog::compilerVersion()
-{
-#if defined(Q_CC_CLANG)
-    QString platformSpecific;
-#if defined(Q_CC_MSVC)
-    platformSpecific = QLatin1String(" (clang-cl)");
-#endif
-    return QLatin1String("Clang ") + QString::number(__clang_major__) + QLatin1Char('.')
-         + QString::number(__clang_minor__) + platformSpecific;
-#elif defined(Q_CC_GNU)
-    return QLatin1String("GCC ") + QLatin1String(__VERSION__);
-#endif
-    return QLatin1String("<unknown compiler>");
 }
 } // namespace Fy::Gui

@@ -46,13 +46,17 @@ void ScriptHighlighter::expression()
     advance();
     switch(m_previous.type) {
         case(Core::Scripting::TokVar):
-            return variable();
+            variable();
+            break;
         case(Core::Scripting::TokFunc):
-            return function();
+            function();
+            break;
         case(Core::Scripting::TokQuote):
-            return quote();
+            quote();
+            break;
         case(Core::Scripting::TokLeftSquare):
-            return conditional();
+            conditional();
+            break;
         case(Core::Scripting::TokEscape):
         case(Core::Scripting::TokLeftAngle):
         case(Core::Scripting::TokRightAngle):
@@ -125,7 +129,7 @@ void ScriptHighlighter::conditional()
 
 void ScriptHighlighter::setTokenFormat(const QTextCharFormat& format)
 {
-    setFormat(m_previous.position, m_previous.value.length(), format);
+    setFormat(m_previous.position, static_cast<int>(m_previous.value.length()), format);
 }
 
 void ScriptHighlighter::advance()

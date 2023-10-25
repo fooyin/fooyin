@@ -107,7 +107,7 @@ ScriptResult Registry::calculateResult(Registry::FuncRet funcRet)
         result.cond  = !strVal->isEmpty();
     }
     else if(auto* strListVal = std::get_if<QStringList>(&funcRet)) {
-        result.value = strListVal->empty() ? "" : strListVal->join(Constants::Separator);
+        result.value = strListVal->empty() ? QStringLiteral("") : strListVal->join(Constants::Separator);
         result.cond  = !strListVal->isEmpty();
     }
 

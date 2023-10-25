@@ -25,10 +25,10 @@
 
 #include <utils/crypto.h>
 
-namespace Fy::Gui::Widgets {
 constexpr int InitialBatchSize = 3000;
 constexpr int BatchSize        = 4000;
 
+namespace Fy::Gui::Widgets {
 struct LibraryTreePopulator::Private
 {
     LibraryTreePopulator* populator;
@@ -49,7 +49,7 @@ struct LibraryTreePopulator::Private
         , data{}
     { }
 
-    LibraryTreeItem* getOrInsertItem(const QString& key, LibraryTreeItem* parent, const QString& title, int level)
+    LibraryTreeItem* getOrInsertItem(const QString& key, const LibraryTreeItem* parent, const QString& title, int level)
     {
         auto [node, inserted] = data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
         if(inserted) {
@@ -78,7 +78,7 @@ struct LibraryTreePopulator::Private
             if(value.isNull()) {
                 continue;
             }
-            const QStringList items = value.split("||");
+            const QStringList items = value.split(QStringLiteral("||"));
 
             int level{0};
             for(const QString& item : items) {

@@ -38,7 +38,6 @@ struct CoverWidget::Private
     Library::CoverProvider* coverProvider;
 
     QLabel* coverLabel;
-    QString coverPath;
     QPixmap cover;
 
     Private(CoverWidget* self, Core::Player::PlayerManager* playerManager, TrackSelectionController* trackSelection)
@@ -51,14 +50,14 @@ struct CoverWidget::Private
         coverLabel->setMinimumSize(100, 100);
     }
 
-    void rescaleCover()
+    void rescaleCover() const
     {
         const QSize scale = self->size() * 4;
         coverLabel->setPixmap(cover.scaled(scale, Qt::KeepAspectRatio)
                                   .scaled(self->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 
-    void reloadCover(Core::Track track)
+    void reloadCover(const Core::Track& track)
     {
         if(track.isValid()) {
             cover = coverProvider->trackCover(track);
@@ -85,13 +84,10 @@ CoverWidget::CoverWidget(Core::Player::PlayerManager* playerManager, TrackSelect
     layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(p->coverLabel);
 
-    connect(p->playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
-            [this](const Core::Track& track) {
-                p->reloadCover(track);
-            });
-    connect(p->coverProvider, &Library::CoverProvider::coverAdded, this, [this](const Core::Track& track) {
-        p->reloadCover(track);
-    });
+    QObject::connect(p->playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
+                     [this](const Core::Track& track) { p->reloadCover(track); });
+    QObject::connect(p->coverProvider, &Library::CoverProvider::coverAdded, this,
+                     [this](const Core::Track& track) { p->reloadCover(track); });
 
     p->reloadCover(p->playerManager->currentTrack());
 }
@@ -100,7 +96,7 @@ CoverWidget::~CoverWidget() = default;
 
 QString CoverWidget::name() const
 {
-    return "Artwork";
+    return QStringLiteral("Artwork");
 }
 
 void CoverWidget::resizeEvent(QResizeEvent* event)

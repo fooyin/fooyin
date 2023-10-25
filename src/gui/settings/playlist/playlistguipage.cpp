@@ -51,18 +51,18 @@ private:
 
 PlaylistGuiPageWidget::PlaylistGuiPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
-    , m_scrollBars{new QCheckBox("Show Scrollbar", this)}
-    , m_header{new QCheckBox("Show Header", this)}
-    , m_altColours{new QCheckBox("Alternate Row Colours", this)}
+    , m_scrollBars{new QCheckBox(tr("Show Scrollbar"), this)}
+    , m_header{new QCheckBox(tr("Show Header"), this)}
+    , m_altColours{new QCheckBox(tr("Alternate Row Colours"), this)}
     , m_thumbnailSize{new QSpinBox(this)}
 {
     auto* layout = new QGridLayout(this);
 
-    auto* rowHeightLabel = new QLabel("Thumbnail Size:", this);
+    auto* rowHeightLabel = new QLabel(tr("Thumbnail Size:"), this);
 
     m_thumbnailSize->setMinimum(1);
     m_thumbnailSize->setMaximum(300);
-    m_thumbnailSize->setSuffix("px");
+    m_thumbnailSize->setSuffix(QStringLiteral("px"));
 
     layout->addWidget(m_scrollBars, 0, 0, 1, 2);
     layout->addWidget(m_header, 1, 0, 1, 2);
@@ -106,9 +106,7 @@ PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsManager* settings)
 {
     setId(Constants::Page::PlaylistInterface);
     setName(tr("Interface"));
-    setCategory({"Playlist"});
-    setWidgetCreator([settings] {
-        return new PlaylistGuiPageWidget(settings);
-    });
+    setCategory({tr("Playlist")});
+    setWidgetCreator([settings] { return new PlaylistGuiPageWidget(settings); });
 }
 } // namespace Fy::Gui::Settings

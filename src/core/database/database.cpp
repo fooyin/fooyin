@@ -29,11 +29,13 @@
 #include <QFile>
 #include <QSqlQuery>
 
+using namespace Qt::Literals::StringLiterals;
+
 static constexpr auto DatabaseVersion = "0.1.0";
 
 namespace Fy::Core::DB {
 Database::Database(Utils::SettingsManager* settings)
-    : Database{Utils::sharePath(), "fooyin.db", settings}
+    : Database{Utils::sharePath(), u"fooyin.db"_s, settings}
 { }
 
 Database::Database(const QString& directory, const QString& filename, Utils::SettingsManager* settings)
@@ -64,7 +66,7 @@ bool Database::update()
         m_settings->set<Settings::DatabaseVersion>(DatabaseVersion);
         return true;
     }
-    return true;
+    return false;
 }
 
 bool Database::createDatabase()
@@ -74,54 +76,54 @@ bool Database::createDatabase()
         return false;
     }
 
-    checkInsertTable("Tracks", "CREATE TABLE Tracks ("
-                               "    TrackID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                               "    FilePath TEXT UNIQUE NOT NULL,"
-                               "    Title TEXT,"
-                               "    TrackNumber INTEGER,"
-                               "    TrackTotal INTEGER,"
-                               "    Artists TEXT,"
-                               "    AlbumArtist TEXT,"
-                               "    Album TEXT,"
-                               "    CoverPath TEXT,"
-                               "    DiscNumber INTEGER,"
-                               "    DiscTotal INTEGER,"
-                               "    Date TEXT,"
-                               "    Year INTEGER,"
-                               "    Composer TEXT,"
-                               "    Performer TEXT,"
-                               "    Genres TEXT,"
-                               "    Lyrics TEXT,"
-                               "    Comment TEXT,"
-                               "    Duration INTEGER DEFAULT 0,"
-                               "    PlayCount INTEGER DEFAULT 0,"
-                               "    Rating INTEGER DEFAULT 0,"
-                               "    FileSize INTEGER DEFAULT 0,"
-                               "    BitRate INTEGER DEFAULT 0,"
-                               "    SampleRate INTEGER DEFAULT 0,"
-                               "    ExtraTags BLOB,"
-                               "    AddedDate INTEGER,"
-                               "    ModifiedDate INTEGER,"
-                               "    LibraryID INTEGER REFERENCES Libraries ON DELETE CASCADE);");
+    checkInsertTable(u"Tracks"_s, u"CREATE TABLE Tracks ("
+                                  "    TrackID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                  "    FilePath TEXT UNIQUE NOT NULL,"
+                                  "    Title TEXT,"
+                                  "    TrackNumber INTEGER,"
+                                  "    TrackTotal INTEGER,"
+                                  "    Artists TEXT,"
+                                  "    AlbumArtist TEXT,"
+                                  "    Album TEXT,"
+                                  "    CoverPath TEXT,"
+                                  "    DiscNumber INTEGER,"
+                                  "    DiscTotal INTEGER,"
+                                  "    Date TEXT,"
+                                  "    Year INTEGER,"
+                                  "    Composer TEXT,"
+                                  "    Performer TEXT,"
+                                  "    Genres TEXT,"
+                                  "    Lyrics TEXT,"
+                                  "    Comment TEXT,"
+                                  "    Duration INTEGER DEFAULT 0,"
+                                  "    PlayCount INTEGER DEFAULT 0,"
+                                  "    Rating INTEGER DEFAULT 0,"
+                                  "    FileSize INTEGER DEFAULT 0,"
+                                  "    BitRate INTEGER DEFAULT 0,"
+                                  "    SampleRate INTEGER DEFAULT 0,"
+                                  "    ExtraTags BLOB,"
+                                  "    AddedDate INTEGER,"
+                                  "    ModifiedDate INTEGER,"
+                                  "    LibraryID INTEGER REFERENCES Libraries ON DELETE CASCADE);"_s);
 
-    checkInsertTable("Libraries", "CREATE TABLE Libraries ("
-                                  "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                  "    Name TEXT NOT NULL UNIQUE,"
-                                  "    Path TEXT NOT NULL UNIQUE);");
+    checkInsertTable(u"Libraries"_s, u"CREATE TABLE Libraries ("
+                                     "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                     "    Name TEXT NOT NULL UNIQUE,"
+                                     "    Path TEXT NOT NULL UNIQUE);"_s);
 
-    checkInsertTable("Playlists", "CREATE TABLE Playlists ("
-                                  "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                  "    Name TEXT NOT NULL UNIQUE,"
-                                  "    PlaylistIndex INTEGER);");
+    checkInsertTable(u"Playlists"_s, u"CREATE TABLE Playlists ("
+                                     "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                     "    Name TEXT NOT NULL UNIQUE,"
+                                     "    PlaylistIndex INTEGER);"_s);
 
-    checkInsertTable("PlaylistTracks", "CREATE TABLE PlaylistTracks ("
-                                       "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
-                                       "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
-                                       "    TrackIndex INTEGER NOT NULL);");
+    checkInsertTable(u"PlaylistTracks"_s, u"CREATE TABLE PlaylistTracks ("
+                                          "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
+                                          "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
+                                          "    TrackIndex INTEGER NOT NULL);"_s);
 
-    checkInsertIndex("PlaylistIndex", "CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);");
-    checkInsertIndex("PlaylistTracksIndex",
-                     "CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);");
+    checkInsertIndex(u"PlaylistIndex"_s, u"CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);"_s);
+    checkInsertIndex(u"PlaylistTracksIndex"_s,
+                     u"CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);"_s);
 
     return true;
 }
@@ -133,7 +135,7 @@ bool Database::isInitialized()
 
 bool Database::closeDatabase()
 {
-    if(!QSqlDatabase::isDriverAvailable("QSQLITE")) {
+    if(!QSqlDatabase::isDriverAvailable(u"QSQLITE"_s)) {
         return false;
     }
 

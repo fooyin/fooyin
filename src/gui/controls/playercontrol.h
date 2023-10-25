@@ -38,7 +38,7 @@ class PlayerControl : public QWidget
 public:
     PlayerControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                   QWidget* parent = nullptr);
-    ~PlayerControl();
+    ~PlayerControl() override;
 
 private:
     struct Private;

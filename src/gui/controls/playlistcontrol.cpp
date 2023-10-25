@@ -32,10 +32,8 @@
 constexpr QSize IconSize = {20, 20};
 
 namespace Fy::Gui::Widgets {
-struct PlaylistControl::Private : QObject
+struct PlaylistControl::Private
 {
-    PlaylistControl* self;
-
     Core::Player::PlayerManager* playerManager;
     Utils::SettingsManager* settings;
 
@@ -47,18 +45,9 @@ struct PlaylistControl::Private : QObject
         , settings{settings}
         , repeat{new Utils::ComboIcon(Constants::Icons::RepeatAll, Utils::ComboIcon::HasActiveIcon, self)}
         , shuffle{new Utils::ComboIcon(Constants::Icons::Shuffle, Utils::ComboIcon::HasActiveIcon, self)}
-    {
-        connect(repeat, &Utils::ComboIcon::clicked, this, &PlaylistControl::Private::repeatClicked);
-        connect(shuffle, &Utils::ComboIcon::clicked, this, &PlaylistControl::Private::shuffleClicked);
-        connect(playerManager, &Core::Player::PlayerManager::playModeChanged, this, &PlaylistControl::Private::setMode);
+    { }
 
-        settings->subscribe<Settings::IconTheme>(this, [this]() {
-            repeat->updateIcons();
-            shuffle->updateIcons();
-        });
-    }
-
-    void repeatClicked()
+    void repeatClicked() const
     {
         const auto mode = playerManager->playMode();
 
@@ -76,7 +65,7 @@ struct PlaylistControl::Private : QObject
         }
     }
 
-    void shuffleClicked()
+    void shuffleClicked() const
     {
         const auto mode = playerManager->playMode();
 
@@ -131,6 +120,16 @@ PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Uti
     layout->addWidget(p->shuffle, 0, Qt::AlignVCenter);
 
     p->setMode(p->playerManager->playMode());
+
+    QObject::connect(p->repeat, &Utils::ComboIcon::clicked, this, [this]() { p->repeatClicked(); });
+    QObject::connect(p->shuffle, &Utils::ComboIcon::clicked, this, [this]() { p->shuffleClicked(); });
+    QObject::connect(playerManager, &Core::Player::PlayerManager::playModeChanged, this,
+                     [this](Core::Player::PlayMode mode) { p->setMode(mode); });
+
+    settings->subscribe<Settings::IconTheme>(this, [this]() {
+        p->repeat->updateIcons();
+        p->shuffle->updateIcons();
+    });
 }
 
 PlaylistControl::~PlaylistControl() = default;

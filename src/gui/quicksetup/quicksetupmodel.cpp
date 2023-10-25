@@ -27,9 +27,8 @@ QuickSetupModel::QuickSetupModel(LayoutProvider* layoutProvider, QObject* parent
     , m_layoutProvider{layoutProvider}
 { }
 
-int QuickSetupModel::rowCount(const QModelIndex& parent) const
+int QuickSetupModel::rowCount(const QModelIndex& /*parent*/) const
 {
-    Q_UNUSED(parent)
     return static_cast<int>(m_layoutProvider->layouts().size());
 }
 
@@ -53,7 +52,5 @@ QVariant QuickSetupModel::data(const QModelIndex& index, int role) const
             return {};
         }
     }
-
-    return {};
 }
 } // namespace Fy::Gui

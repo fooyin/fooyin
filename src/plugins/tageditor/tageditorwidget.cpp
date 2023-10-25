@@ -64,12 +64,12 @@ TagEditorWidget::TagEditorWidget(Gui::TrackSelectionController* trackSelection, 
 
 QString TagEditorWidget::name() const
 {
-    return "Tag Editor";
+    return QStringLiteral("Tag Editor");
 }
 
 QString TagEditorWidget::layoutName() const
 {
-    return "TagEditor";
+    return QStringLiteral("TagEditor");
 }
 
 void TagEditorWidget::apply()

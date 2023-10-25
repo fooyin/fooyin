@@ -32,7 +32,7 @@ class Decoder : public EngineWorker
     Q_OBJECT
 
 public:
-    Decoder(QObject* parent = nullptr);
+    explicit Decoder(QObject* parent = nullptr);
     ~Decoder() override;
 
     void run(AVFormatContext* context, Codec* codec);

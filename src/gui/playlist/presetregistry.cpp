@@ -24,7 +24,7 @@ void loadDefaults(PresetRegistry* registry)
 {
     PlaylistPreset preset;
 
-    preset.name = "Album - Disc";
+    preset.name = QStringLiteral("Album - Disc");
 
     preset.header.rowHeight = 76;
     preset.header.title.emplace_back("$if(%albumartist%,%albumartist%,Unknown Artist)", 16);
@@ -42,7 +42,7 @@ void loadDefaults(PresetRegistry* registry)
 
     registry->addItem(preset);
 
-    preset.name = "Split Discs";
+    preset.name = QStringLiteral("Split Discs");
 
     preset.subHeader.text.clear();
     preset.header.subtitle.clear();
@@ -51,7 +51,7 @@ void loadDefaults(PresetRegistry* registry)
 
     registry->addItem(preset);
 
-    preset.name = "Simple Header";
+    preset.name = QStringLiteral("Simple Header");
 
     preset.header.simple    = true;
     preset.header.rowHeight = 30;

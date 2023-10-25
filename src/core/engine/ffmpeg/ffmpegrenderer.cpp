@@ -48,7 +48,7 @@ struct Renderer::Private
 
     double volume{1.0};
 
-    Private(Renderer* renderer)
+    explicit Private(Renderer* renderer)
         : renderer{renderer}
     {
         outputContext.writeAudioToBuffer = [this](uint8_t* data, int samples) {
@@ -80,7 +80,7 @@ struct Renderer::Private
         int samplesBuffered = 0;
 
         const int sstride = outputContext.sstride;
-        tempBuffer.reserve(samples * sstride);
+        tempBuffer.reserve(static_cast<int>(samples * sstride));
 
         while(!renderer->isPaused() && !frameQueue.empty() && samplesBuffered < samples) {
             const Frame& frame = frameQueue.front();
@@ -105,8 +105,8 @@ struct Renderer::Private
             skipSamples(frame.avFrame(), sampleCount);
         }
 
-        fillSilence(tempBuffer.data() + samplesBuffered * sstride, (samples - samplesBuffered) * sstride,
-                    outputContext.format);
+        fillSilence(tempBuffer.data() + static_cast<int>(samplesBuffered * sstride),
+                    (samples - samplesBuffered) * sstride, outputContext.format);
 
         return samplesBuffered;
     }
@@ -167,7 +167,7 @@ void Renderer::reset()
         p->audioOutput->reset();
     }
 
-    p->bufferPrefilled = false;
+    p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
     p->frameQueue.clear();
     p->tempBuffer.clear();
@@ -181,7 +181,7 @@ void Renderer::kill()
         p->audioOutput->uninit();
     }
 
-    p->bufferPrefilled = false;
+    p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
     p->frameQueue.clear();
     p->tempBuffer.clear();
@@ -228,13 +228,12 @@ void Renderer::updateVolume(double volume)
 
 void Renderer::render(Frame frame)
 {
-    p->frameQueue.enque(std::move(frame));
+    p->frameQueue.enqueue(std::move(frame));
 
     if(p->frameQueue.size() == 1) {
         scheduleNextStep();
     }
 }
-
 
 bool Renderer::canDoNextStep() const
 {
@@ -243,7 +242,8 @@ bool Renderer::canDoNextStep() const
 
 int Renderer::timerInterval() const
 {
-    return ((p->audioOutput->bufferSize() / static_cast<double>(p->outputContext.sampleRate)) * 0.25) * 1000;
+    return static_cast<int>(((p->audioOutput->bufferSize() / static_cast<double>(p->outputContext.sampleRate)) * 0.25)
+                            * 1000);
 }
 
 void Renderer::doNextStep()

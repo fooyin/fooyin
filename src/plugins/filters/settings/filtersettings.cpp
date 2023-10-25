@@ -23,22 +23,22 @@
 
 #include <utils/settings/settingsmanager.h>
 
-#include <QFont>
+using namespace Qt::Literals::StringLiterals;
 
 namespace Fy::Filters::Settings {
 FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
-    m_settings->createSetting<Settings::FilterAltColours>(false, "Filters");
-    m_settings->createSetting<Settings::FilterHeader>(true, "Filters");
-    m_settings->createSetting<Settings::FilterScrollBar>(true, "Filters");
-    m_settings->createSetting<Settings::FilterFields>(QByteArray{}, "Filters");
-    m_settings->createSetting<Settings::FilterAppearance>(QVariant::fromValue(FilterOptions{}), "Filters");
-    m_settings->createSetting<Settings::FilterDoubleClick>(1, "Filters");
-    m_settings->createSetting<Settings::FilterMiddleClick>(0, "Filters");
-    m_settings->createSetting<Settings::FilterPlaylistEnabled>(true, "Filters");
-    m_settings->createSetting<Settings::FilterAutoSwitch>(true, "Filters");
-    m_settings->createSetting<Settings::FilterAutoPlaylist>("Filter Results", "Filters");
+    m_settings->createSetting<Settings::FilterAltColours>(false, u"Filters"_s);
+    m_settings->createSetting<Settings::FilterHeader>(true, u"Filters"_s);
+    m_settings->createSetting<Settings::FilterScrollBar>(true, u"Filters"_s);
+    m_settings->createSetting<Settings::FilterFields>(QByteArray{}, u"Filters"_s);
+    m_settings->createSetting<Settings::FilterAppearance>(QVariant::fromValue(FilterOptions{}), u"Filters"_s);
+    m_settings->createSetting<Settings::FilterDoubleClick>(1, u"Filters"_s);
+    m_settings->createSetting<Settings::FilterMiddleClick>(0, u"Filters"_s);
+    m_settings->createSetting<Settings::FilterPlaylistEnabled>(true, u"Filters"_s);
+    m_settings->createSetting<Settings::FilterAutoSwitch>(true, u"Filters"_s);
+    m_settings->createSetting<Settings::FilterAutoPlaylist>("Filter Results", u"Filters"_s);
 
     m_settings->loadSettings();
 }

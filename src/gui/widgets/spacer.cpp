@@ -21,7 +21,7 @@
 
 namespace Fy::Gui::Widgets {
 Spacer::Spacer(QWidget* parent)
-    : FyWidget(parent)
+    : FyWidget{parent}
 {
     setObjectName(Spacer::name());
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -29,6 +29,6 @@ Spacer::Spacer(QWidget* parent)
 
 QString Spacer::name() const
 {
-    return "Spacer";
+    return QStringLiteral("Spacer");
 }
 } // namespace Fy::Gui::Widgets

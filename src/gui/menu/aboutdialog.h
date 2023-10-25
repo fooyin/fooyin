@@ -28,11 +28,5 @@ class AboutDialog : public QDialog
 
 public:
     explicit AboutDialog(QWidget* parent = nullptr);
-
-private:
-    QString description();
-    QString copyright();
-    QString qtVersion();
-    QString compilerVersion();
 };
 } // namespace Fy::Gui

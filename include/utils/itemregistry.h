@@ -81,9 +81,8 @@ public:
     virtual Item addItem(const Item& item)
     {
         auto find = [](const IndexItemMap& items, const QString& name) -> int {
-            return static_cast<int>(std::count_if(items.cbegin(), items.cend(), [name](const auto& item) {
-                return item.second.name == name;
-            }));
+            return static_cast<int>(std::count_if(items.cbegin(), items.cend(),
+                                                  [name](const auto& item) { return item.second.name == name; }));
         };
 
         auto findValidId = [this]() -> int {
@@ -91,9 +90,7 @@ public:
                 return 0;
             }
 
-            auto ids = m_items | std::views::values | std::views::transform([](const Item& item) {
-                           return item.id;
-                       });
+            auto ids = m_items | std::views::values | std::views::transform([](const Item& item) { return item.id; });
 
             const int nextId = *std::ranges::max_element(ids) + 1;
             return nextId;
@@ -105,7 +102,7 @@ public:
         }
         if(find(m_items, newItem.name)) {
             auto count = std::max(find(m_items, newItem.name + " ("), 1);
-            newItem.name += QString{" (%1)"}.arg(count);
+            newItem.name += QString{QStringLiteral(" (%1)")}.arg(count);
         }
         newItem.id    = findValidId();
         newItem.index = static_cast<int>(m_items.size());
@@ -115,9 +112,8 @@ public:
 
     virtual bool changeItem(const Item& item)
     {
-        auto itemIt = std::find_if(m_items.begin(), m_items.end(), [item](const auto& regItem) {
-            return regItem.first == item.index;
-        });
+        auto itemIt = std::find_if(m_items.begin(), m_items.end(),
+                                   [item](const auto& regItem) { return regItem.first == item.index; });
         if(itemIt != m_items.end()) {
             const Item oldItem = std::exchange(itemIt->second, item);
             emit itemChanged(item.id);
@@ -131,9 +127,8 @@ public:
         if(m_items.empty()) {
             return {};
         }
-        auto it = std::find_if(m_items.cbegin(), m_items.cend(), [id](const auto& item) {
-            return item.second.id == id;
-        });
+        auto it
+            = std::find_if(m_items.cbegin(), m_items.cend(), [id](const auto& item) { return item.second.id == id; });
         if(it == m_items.end()) {
             return m_items.at(0);
         }
@@ -153,9 +148,8 @@ public:
         if(m_items.empty()) {
             return {};
         }
-        auto it = std::ranges::find_if(std::as_const(m_items), [name](const auto& item) {
-            return item.second.name == name;
-        });
+        auto it = std::ranges::find_if(std::as_const(m_items),
+                                       [name](const auto& item) { return item.second.name == name; });
         if(it == m_items.end()) {
             return m_items.at(0);
         }

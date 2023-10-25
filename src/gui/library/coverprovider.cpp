@@ -38,10 +38,15 @@ constexpr auto NoCoverKey   = "|NoCover|";
 constexpr QSize NoCoverSize = {60, 60};
 
 namespace {
+QString coverThumbnailPath(const QString& key)
+{
+    return Fy::Core::coverPath() + key + ".jpg";
+}
+
 QCoro::Task<void> saveThumbnail(QPixmap cover, QString key)
 {
     co_return co_await Fy::Utils::asyncExec([&cover, &key]() {
-        QFile file{QString{"%1%2.jpg"}.arg(Fy::Core::coverPath(), key)};
+        QFile file{coverThumbnailPath(key)};
         file.open(QIODevice::WriteOnly);
         cover.save(&file, "JPG", 85);
     });
@@ -69,7 +74,7 @@ QPixmap loadCachedCover(const QString& key)
         return cover;
     }
 
-    const QString cachePath = QString{"%1%2.jpg"}.arg(Fy::Core::coverPath(), key);
+    const QString cachePath = coverThumbnailPath(key);
 
     if(Fy::Utils::File::exists(cachePath)) {
         cover.load(cachePath);
@@ -96,7 +101,7 @@ struct CoverProvider::Private
     Core::Tagging::TagReader tagReader;
     std::set<QString> pendingCovers;
 
-    Private(CoverProvider* self)
+    explicit Private(CoverProvider* self)
         : self{self}
     { }
 
@@ -105,9 +110,8 @@ struct CoverProvider::Private
         QPixmap cover;
 
         if(track.hasEmbeddedCover()) {
-            const QByteArray coverData = co_await Utils::asyncExec([this, &track]() {
-                return tagReader.readCover(track);
-            });
+            const QByteArray coverData
+                = co_await Utils::asyncExec([this, &track]() { return tagReader.readCover(track); });
             if(!cover.loadFromData(coverData)) {
                 co_return;
             }
@@ -126,7 +130,7 @@ struct CoverProvider::Private
         QPixmapCache::insert(key, cover);
 
         if(saveToDisk) {
-            const QString cachePath = QString{"%1%2.jpg"}.arg(Core::coverPath(), key);
+            const QString cachePath = coverThumbnailPath(key);
             if(!Utils::File::exists(cachePath)) {
                 co_await saveThumbnail(cover, key);
             }
@@ -156,7 +160,7 @@ QPixmap CoverProvider::trackCover(const Core::Track& track, const QSize& size, b
         return loadNoCover();
     }
 
-    QString coverKey = generateCoverKey(track, size);
+    const QString coverKey = generateCoverKey(track, size);
 
     QPixmap cover = loadCachedCover(coverKey);
     if(!cover.isNull()) {

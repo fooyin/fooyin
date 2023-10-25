@@ -133,7 +133,7 @@ void FieldModel::processQueue()
                     emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
-                    qWarning() << QString{"Field %1 could not be added"}.arg(field.name);
+                    qWarning() << "Field " + field.name + " could not be added";
                 }
                 break;
             }
@@ -145,7 +145,7 @@ void FieldModel::processQueue()
                     fieldsToRemove.push_back(index);
                 }
                 else {
-                    qWarning() << QString{"Field (%1) could not be removed"}.arg(field.name);
+                    qWarning() << "Field " + field.name + " could not be removed";
                 }
                 break;
             }
@@ -156,7 +156,7 @@ void FieldModel::processQueue()
                     emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
-                    qWarning() << QString{"Field (%1) could not be changed"}.arg(field.name);
+                    qWarning() << "Field " + field.name + " could not be changed";
                 }
                 break;
             }
@@ -225,15 +225,16 @@ QVariant FieldModel::data(const QModelIndex& index, int role) const
             return item->field().index;
         case(1): {
             const QString& name = item->field().name;
-            return !name.isEmpty() ? name : "<enter name here>";
+            return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
         }
         case(2): {
             const QString& field = item->field().field;
-            return !field.isEmpty() ? field : "<enter field here>";
+            return !field.isEmpty() ? field : QStringLiteral("<enter field here>");
         }
         case(3): {
             const QString& sortField = item->field().sortField;
-            return !sortField.isEmpty() || item->field().isValid() ? sortField : "<enter sort field here>";
+            return !sortField.isEmpty() || item->field().isValid() ? sortField
+                                                                   : QStringLiteral("<enter sort field here>");
         }
     }
     return {};
@@ -245,7 +246,7 @@ bool FieldModel::setData(const QModelIndex& index, const QVariant& value, int ro
         return false;
     }
 
-    auto* item        = static_cast<FieldItem*>(index.internalPointer());
+    const auto* item  = static_cast<FieldItem*>(index.internalPointer());
     const int col     = index.column();
     FilterField field = item->field();
 

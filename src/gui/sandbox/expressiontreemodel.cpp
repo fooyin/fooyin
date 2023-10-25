@@ -23,19 +23,20 @@
 #include <utils/crypto.h>
 
 #include <QIcon>
+#include <utility>
 
 namespace Fy::Gui::Sandbox {
 constexpr auto FullName        = " ... ";
 constexpr auto ConditionalName = "[ ... ]";
 
 ExpressionTreeItem::ExpressionTreeItem()
-    : ExpressionTreeItem{"", "", {}}
+    : ExpressionTreeItem{QStringLiteral(""), QStringLiteral(""), {}}
 { }
 
-ExpressionTreeItem::ExpressionTreeItem(QString key, QString name, const Core::Scripting::Expression& expression)
+ExpressionTreeItem::ExpressionTreeItem(QString key, QString name, Core::Scripting::Expression expression)
     : m_key{std::move(key)}
-    , m_name{name}
-    , m_expression{expression}
+    , m_name{std::move(name)}
+    , m_expression{std::move(expression)}
 { }
 
 QString ExpressionTreeItem::key() const
@@ -79,7 +80,7 @@ struct ExpressionTreeModel::Private
         return &nodes.at(key);
     }
 
-    QString generateKey(const QString& parentKey, const QString& name)
+    QString generateKey(const QString& parentKey, const QString& name) const
     {
         return Utils::generateHash(parentKey, name, QString::number(nodes.size()));
     }
@@ -88,28 +89,28 @@ struct ExpressionTreeModel::Private
     {
         QString name;
 
-        if(auto* value = std::get_if<QString>(&expression.value)) {
+        if(const auto* value = std::get_if<QString>(&expression.value)) {
             name = *value;
             insertNode(generateKey(parent->key(), name), name, expression, parent);
         }
 
-        else if(auto* value = std::get_if<Core::Scripting::FuncValue>(&expression.value)) {
+        else if(const auto* value = std::get_if<Core::Scripting::FuncValue>(&expression.value)) {
             name       = value->name;
             auto* node = insertNode(generateKey(parent->key(), name), name, expression, parent);
 
-            for(const auto& expression : value->args) {
-                iterateExpression(expression, node);
+            for(const auto& argExpr : value->args) {
+                iterateExpression(argExpr, node);
             }
         }
 
-        else if(auto* value = std::get_if<Core::Scripting::ExpressionList>(&expression.value)) {
+        else if(const auto* value = std::get_if<Core::Scripting::ExpressionList>(&expression.value)) {
             if(expression.type == Core::Scripting::ExprType::Conditional) {
                 name   = ConditionalName;
                 parent = insertNode(generateKey(parent->key(), name), name, expression, parent);
             }
 
-            for(const auto& expression : *value) {
-                iterateExpression(expression, parent);
+            for(const auto& listExpr : *value) {
+                iterateExpression(listExpr, parent);
             }
         }
     }
@@ -132,7 +133,7 @@ void ExpressionTreeModel::populate(const Core::Scripting::ExpressionList& expres
     ExpressionTreeItem* parent = rootItem();
 
     if(expressions.size() > 1) {
-        Core::Scripting::Expression fullExpression{Core::Scripting::ExprType::FunctionArg, expressions};
+        Core::Scripting::Expression const fullExpression{Core::Scripting::ExprType::FunctionArg, expressions};
         parent = p->insertNode(p->generateKey(parent->key(), FullName), FullName, fullExpression, parent);
     }
 
@@ -152,29 +153,26 @@ QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    auto* item = static_cast<ExpressionTreeItem*>(index.internalPointer());
+    const auto* item = static_cast<ExpressionTreeItem*>(index.internalPointer());
 
     if(role == Qt::DisplayRole) {
         return item->name();
     }
 
-    if(role == Qt::DecorationRole) {
-        switch(item->type()) {
-            case(Core::Scripting::Literal):
-                return p->iconLiteral;
-            case(Core::Scripting::Variable):
-                return p->iconVariable;
-            case(Core::Scripting::Function):
-                return p->iconFunction;
-            case(Core::Scripting::FunctionArg):
-                return p->iconExpression;
-            case(Core::Scripting::Null):
-            case(Core::Scripting::Conditional):
-            case(Core::Scripting::VariableList):
-                break;
-        }
+    switch(item->type()) {
+        case(Core::Scripting::Literal):
+            return p->iconLiteral;
+        case(Core::Scripting::Variable):
+            return p->iconVariable;
+        case(Core::Scripting::Function):
+            return p->iconFunction;
+        case(Core::Scripting::FunctionArg):
+            return p->iconExpression;
+        case(Core::Scripting::Null):
+        case(Core::Scripting::Conditional):
+        case(Core::Scripting::VariableList):
+        default:
+            return {};
     }
-
-    return {};
 }
 } // namespace Fy::Gui::Sandbox

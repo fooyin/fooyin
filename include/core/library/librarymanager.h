@@ -42,7 +42,7 @@ class FYCORE_EXPORT LibraryManager : public QObject
 
 public:
     LibraryManager(DB::Database* database, Utils::SettingsManager* settings, QObject* parent = nullptr);
-    ~LibraryManager();
+    ~LibraryManager() override;
 
     void reset();
 

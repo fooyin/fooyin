@@ -72,8 +72,8 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     , m_model{new LibraryTreeGroupModel(m_groupsRegistry, this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
-    , m_playlistEnabled{new QCheckBox("Enabled", this)}
-    , m_autoSwitch{new QCheckBox("Switch when changed", this)}
+    , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
+    , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
     , m_playlistName{new QLineEdit(this)}
 {
     m_model->populate();
@@ -92,23 +92,23 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     auto* buttonsLayout = new QVBoxLayout();
     buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    auto* addButton    = new QPushButton("Add", this);
-    auto* removeButton = new QPushButton("Remove", this);
+    auto* addButton    = new QPushButton(tr("Add"), this);
+    auto* removeButton = new QPushButton(tr("Remove"), this);
 
     buttonsLayout->addWidget(addButton);
     buttonsLayout->addWidget(removeButton);
     buttonsLayout->addStretch();
 
-    auto* clickBehaviour       = new QGroupBox("Click Behaviour", this);
+    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    auto* doubleClickLabel = new QLabel("Double-click: ", this);
-    auto* middleClickLabel = new QLabel("Middle-click: ", this);
+    auto* doubleClickLabel = new QLabel(tr("Double-click: "), this);
+    auto* middleClickLabel = new QLabel(tr("Middle-click: "), this);
 
-    auto* selectionPlaylist       = new QGroupBox("Library Selection Playlist", this);
+    auto* selectionPlaylist       = new QGroupBox(tr("Library Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    auto* playlistNameLabel = new QLabel("Name: ", this);
+    auto* playlistNameLabel = new QLabel(tr("Name: "), this);
 
     clickBehaviourLayout->addWidget(doubleClickLabel, 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
@@ -138,17 +138,17 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
         box->addItem(text, actionValue);
     };
 
-    addTrackAction(m_doubleClick, "Expand/Collapse", TrackAction::Expand, doubleActions);
-    addTrackAction(m_doubleClick, "Add to current playlist", TrackAction::AddCurrentPlaylist, doubleActions);
-    addTrackAction(m_doubleClick, "Add to active playlist", TrackAction::AddActivePlaylist, doubleActions);
-    addTrackAction(m_doubleClick, "Send to current playlist", TrackAction::SendCurrentPlaylist, doubleActions);
-    addTrackAction(m_doubleClick, "Send to new playlist", TrackAction::SendNewPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Expand/Collapse"), TrackAction::Expand, doubleActions);
+    addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, doubleActions);
 
-    addTrackAction(m_middleClick, "None", TrackAction::None, middleActions);
-    addTrackAction(m_middleClick, "Add to current playlist", TrackAction::AddCurrentPlaylist, middleActions);
-    addTrackAction(m_middleClick, "Add to active playlist", TrackAction::AddActivePlaylist, middleActions);
-    addTrackAction(m_middleClick, "Send to current playlist", TrackAction::SendCurrentPlaylist, middleActions);
-    addTrackAction(m_middleClick, "Send to new playlist", TrackAction::SendNewPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("None"), TrackAction::None, middleActions);
+    addTrackAction(m_middleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, middleActions);
 
     QObject::connect(addButton, &QPushButton::clicked, this, &LibraryTreePageWidget::addGroup);
     QObject::connect(removeButton, &QPushButton::clicked, this, &LibraryTreePageWidget::removeGroup);
@@ -218,9 +218,7 @@ LibraryTreePage::LibraryTreePage(Widgets::LibraryTreeGroupRegistry* groupsRegist
 {
     setId(Constants::Page::LibraryTreeGeneral);
     setName(tr("General"));
-    setCategory({"Widgets", "Library Tree"});
-    setWidgetCreator([groupsRegistry, settings] {
-        return new LibraryTreePageWidget(groupsRegistry, settings);
-    });
+    setCategory({tr("Widgets"), tr("Library Tree")});
+    setWidgetCreator([groupsRegistry, settings] { return new LibraryTreePageWidget(groupsRegistry, settings); });
 }
 } // namespace Fy::Gui::Settings

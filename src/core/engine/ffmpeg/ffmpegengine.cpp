@@ -40,6 +40,7 @@ extern "C"
 #include <QTimer>
 
 using namespace std::chrono_literals;
+using namespace Qt::Literals::StringLiterals;
 
 namespace Fy::Core::Engine::FFmpeg {
 struct FormatContextDeleter
@@ -72,8 +73,8 @@ struct FFmpegEngine::Private
 
     AudioOutput* audioOutput{nullptr};
 
-    Decoder* decoder;
-    Renderer* renderer;
+    Decoder* decoder{nullptr};
+    Renderer* renderer{nullptr};
 
     std::optional<Codec> codec;
 
@@ -87,9 +88,7 @@ struct FFmpegEngine::Private
             positionUpdateTimer = new QTimer(engine);
             positionUpdateTimer->setInterval(50ms);
             positionUpdateTimer->setTimerType(Qt::PreciseTimer);
-            QObject::connect(positionUpdateTimer, &QTimer::timeout, engine, [this]() {
-                updatePosition();
-            });
+            QObject::connect(positionUpdateTimer, &QTimer::timeout, engine, [this]() { updatePosition(); });
         }
         return positionUpdateTimer;
     }
@@ -98,7 +97,7 @@ struct FFmpegEngine::Private
     {
         AVFormatContext* avContext{nullptr};
 
-        int ret = avformat_open_input(&avContext, track.toUtf8().constData(), nullptr, nullptr);
+        const int ret = avformat_open_input(&avContext, track.toUtf8().constData(), nullptr, nullptr);
         if(ret < 0) {
             if(ret == AVERROR(EACCES)) {
                 qWarning() << "Invalid format: " << track;
@@ -111,7 +110,7 @@ struct FFmpegEngine::Private
 
         if(avformat_find_stream_info(avContext, nullptr) < 0) {
             avformat_close_input(&avContext);
-            printError("Could not find stream info");
+            printError(u"Could not find stream info"_s);
             return false;
         }
 
@@ -133,13 +132,13 @@ struct FFmpegEngine::Private
 
         const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
         if(!avCodec) {
-            printError("Could not find a decoder for stream");
+            printError(u"Could not find a decoder for stream"_s);
             return;
         }
 
         CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
         if(!avCodecContext) {
-            printError("Could not allocate context");
+            printError(u"Could not allocate context"_s);
             return;
         }
 
@@ -148,14 +147,14 @@ struct FFmpegEngine::Private
         }
 
         if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
-            printError("Could not obtain codec parameters");
+            printError(u"Could not obtain codec parameters"_s);
             return;
         }
 
         avCodecContext.get()->pkt_timebase = avStream->time_base;
 
         if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
-            printError("Could not initialise codec context");
+            printError(u"Could not initialise codec context"_s);
             return;
         }
 
@@ -240,7 +239,7 @@ struct FFmpegEngine::Private
         emit engine->trackFinished();
     }
 
-    void pauseOutput(bool pause)
+    void pauseOutput(bool pause) const
     {
         if(renderer) {
             renderer->pauseOutput(pause);
@@ -294,7 +293,10 @@ void FFmpegEngine::seek(uint64_t pos)
         qWarning() << "Could not seek to position: " << pos;
         return;
     }
-    avcodec_flush_buffers(p->codec->context());
+
+    if(p->codec) {
+        avcodec_flush_buffers(p->codec->context());
+    }
 
     p->clock.sync(pos);
     p->startPlayback();
@@ -455,15 +457,13 @@ void FFmpegEngine::startup()
 
     QObject::connect(p->decoder, &Decoder::requestHandleFrame, p->renderer, &Renderer::render);
     QObject::connect(p->renderer, &Renderer::frameProcessed, p->decoder, &Decoder::onFrameProcessed);
-    QObject::connect(p->renderer, &Renderer::frameProcessed, p->engine, [this](Frame frame) {
+    QObject::connect(p->renderer, &Renderer::frameProcessed, p->engine, [this](const Frame& frame) {
         const uint64_t pos = frame.ptsMs();
         if(pos > p->clock.currentPosition()) {
             p->clock.sync(pos);
         }
     });
-    QObject::connect(p->renderer, &Renderer::atEnd, this, [this]() {
-        p->onRendererFinished();
-    });
+    QObject::connect(p->renderer, &Renderer::atEnd, this, [this]() { p->onRendererFinished(); });
 }
 
 void FFmpegEngine::shutdown()

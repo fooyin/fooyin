@@ -30,7 +30,7 @@ Codec::Codec(Codec&& other) noexcept
     , m_stream{other.m_stream}
 { }
 
-Codec& Codec::operator=(Codec&& other)
+Codec& Codec::operator=(Codec&& other) noexcept
 {
     m_context = std::move(other.m_context);
     m_stream  = other.m_stream;

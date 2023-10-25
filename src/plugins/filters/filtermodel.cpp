@@ -32,7 +32,7 @@
 #include <utility>
 
 namespace Fy::Filters {
-struct FilterModel::Private : QObject
+struct FilterModel::Private
 {
     FilterModel* self;
 
@@ -65,7 +65,7 @@ struct FilterModel::Private : QObject
         nodes.clear();
         trackParents.clear();
 
-        allNode = FilterItem{"", "", self->rootItem(), true};
+        allNode = FilterItem{QStringLiteral(""), QStringLiteral(""), self->rootItem(), true};
         self->rootItem()->appendChild(&allNode);
     }
 
@@ -110,7 +110,7 @@ struct FilterModel::Private : QObject
 
         self->rootItem()->sortChildren(sortOrder);
 
-        allNode.setTitle(QString{"All (%1)"}.arg(self->rootItem()->childCount() - 1));
+        allNode.setTitle(QString{QStringLiteral("All (%1)")}.arg(self->rootItem()->childCount() - 1));
     }
 };
 
@@ -118,7 +118,8 @@ FilterModel::FilterModel(const FilterField& field, QObject* parent)
     : TableModel{parent}
     , p{std::make_unique<Private>(this, field)}
 {
-    QObject::connect(&p->populator, &FilterPopulator::populated, p.get(), &FilterModel::Private::batchFinished);
+    QObject::connect(&p->populator, &FilterPopulator::populated, this,
+                     [this](const PendingTreeData& data) { p->batchFinished(data); });
 
     QObject::connect(&p->populator, &Utils::Worker::finished, this, [this]() {
         p->populator.stopThread();
@@ -161,12 +162,12 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    auto* item = static_cast<FilterItem*>(index.internalPointer());
+    const auto* item = static_cast<FilterItem*>(index.internalPointer());
 
     switch(role) {
         case(Qt::DisplayRole): {
             const QString& name = item->title();
-            return !name.isEmpty() ? name : "?";
+            return !name.isEmpty() ? name : QStringLiteral("?");
         }
         case(FilterItemRole::Title): {
             return item->title();
@@ -253,9 +254,8 @@ void FilterModel::addTracks(const Core::TrackList& tracks)
 {
     p->populatorThread.start();
 
-    QMetaObject::invokeMethod(&p->populator, [this, tracks] {
-        p->populator.run(p->field.field, p->field.sortField, tracks);
-    });
+    QMetaObject::invokeMethod(&p->populator,
+                              [this, tracks] { p->populator.run(p->field.field, p->field.sortField, tracks); });
 }
 
 void FilterModel::updateTracks(const Core::TrackList& tracks)
@@ -307,8 +307,7 @@ void FilterModel::reset(const FilterField& field, const Core::TrackList& tracks)
 
     p->resetting = true;
 
-    QMetaObject::invokeMethod(&p->populator, [this, tracks] {
-        p->populator.run(p->field.field, p->field.sortField, tracks);
-    });
+    QMetaObject::invokeMethod(&p->populator,
+                              [this, tracks] { p->populator.run(p->field.field, p->field.sortField, tracks); });
 }
 } // namespace Fy::Filters

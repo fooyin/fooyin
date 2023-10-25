@@ -39,7 +39,7 @@
 namespace Fy::Gui::Sandbox {
 using namespace std::chrono_literals;
 
-struct SandboxDialog::Private : QObject
+struct SandboxDialog::Private
 {
     SandboxDialog* self;
 
@@ -81,15 +81,6 @@ struct SandboxDialog::Private : QObject
         expressiontree->setSelectionMode(QAbstractItemView::SingleSelection);
 
         textChangeTimer->setSingleShot(true);
-
-        QObject::connect(editor, &QPlainTextEdit::textChanged, this, &SandboxDialog::Private::textChanged);
-        QObject::connect(textChangeTimer, &QTimer::timeout, this, &SandboxDialog::Private::showErrors);
-
-        QObject::connect(&model, &QAbstractItemModel::modelReset, expressiontree, &QTreeView::expandAll);
-        QObject::connect(expressiontree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                         &SandboxDialog::Private::selectionChanged);
-        QObject::connect(trackSelection, &TrackSelectionController::selectionChanged, this,
-                         &SandboxDialog::Private::selectionChanged);
     }
 
     void selectionChanged()
@@ -105,7 +96,7 @@ struct SandboxDialog::Private : QObject
 
         const auto track           = trackSelection->selectedTracks().front();
         const QModelIndex selected = indexes.front();
-        auto* item                 = static_cast<ExpressionTreeItem*>(selected.internalPointer());
+        const auto* item           = static_cast<ExpressionTreeItem*>(selected.internalPointer());
 
         const auto result = parser.evaluate(item->expression(), track);
         results->setText(result);
@@ -121,7 +112,7 @@ struct SandboxDialog::Private : QObject
         model.populate(currentScript.expressions);
     }
 
-    void showErrors()
+    void showErrors() const
     {
         const auto errors = currentScript.errors;
         for(const Core::Scripting::Error& error : errors) {
@@ -129,7 +120,7 @@ struct SandboxDialog::Private : QObject
         }
     }
 
-    void restoreState()
+    void restoreState() const
     {
         QByteArray byteArray = settings->value<Settings::ScriptSandboxState>();
 
@@ -156,7 +147,7 @@ struct SandboxDialog::Private : QObject
         }
     }
 
-    void saveState()
+    void saveState() const
     {
         QByteArray byteArray;
         QDataStream out(&byteArray, QIODevice::WriteOnly);
@@ -197,6 +188,14 @@ SandboxDialog::SandboxDialog(TrackSelectionController* trackSelection, Utils::Se
     mainLayout->addWidget(p->mainSplitter);
 
     p->restoreState();
+
+    QObject::connect(p->editor, &QPlainTextEdit::textChanged, this, [this]() { p->textChanged(); });
+    QObject::connect(p->textChangeTimer, &QTimer::timeout, this, [this]() { p->showErrors(); });
+    QObject::connect(&p->model, &QAbstractItemModel::modelReset, p->expressiontree, &QTreeView::expandAll);
+    QObject::connect(p->expressiontree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     [this]() { p->selectionChanged(); });
+    QObject::connect(p->trackSelection, &TrackSelectionController::selectionChanged, this,
+                     [this]() { p->selectionChanged(); });
 }
 
 SandboxDialog::~SandboxDialog()

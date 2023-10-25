@@ -46,7 +46,7 @@ public:
 
 protected:
     template <typename NewCntr, typename Cntr>
-    NewCntr containerCast(Cntr&& from) const
+    NewCntr containerCast(const Cntr& from) const
     {
         return NewCntr(from.cbegin(), from.cend());
     }

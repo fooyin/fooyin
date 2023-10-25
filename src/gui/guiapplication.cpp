@@ -65,6 +65,8 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Gui {
 struct GuiApplication::Private
 {
@@ -159,22 +161,21 @@ struct GuiApplication::Private
         registerWidgets();
         createPropertiesTabs();
 
-        pluginManager->initialisePlugins<GuiPlugin>([this](GuiPlugin* plugin) {
-            plugin->initialise(guiPluginContext);
-        });
+        pluginManager->initialisePlugins<GuiPlugin>(
+            [this](GuiPlugin* plugin) { plugin->initialise(guiPluginContext); });
     }
 
     void registerLayouts()
     {
-        layoutProvider.registerLayout("Empty",
+        layoutProvider.registerLayout(u"Empty"_s,
                                       R"({"Layout":[{"SplitterVertical":{"Children":[],
                                      "State":"AAAA/wAAAAEAAAABAAACLwD/////AQAAAAIA"}}]})");
 
-        layoutProvider.registerLayout("Simple",
+        layoutProvider.registerLayout(u"Simple"_s,
                                       R"({"Layout":[{"SplitterVertical":{"Children":["Status","Playlist","Controls"],
                                      "State":"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA"}}]})");
 
-        layoutProvider.registerLayout("Vision",
+        layoutProvider.registerLayout(u"Vision"_s,
                                       R"({"Layout":[{"SplitterVertical":{"Children":["Status",{"SplitterHorizontal":{
                                      "Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////
                                      8BAAAAAQA="}},{"SplitterHorizontal":{"Children":["Artwork","Playlist"],"State":
@@ -187,82 +188,79 @@ struct GuiApplication::Private
         auto* factory = widgetProvider.widgetFactory();
 
         factory->registerClass<Widgets::VerticalSplitterWidget>(
-            "SplitterVertical",
+            u"SplitterVertical"_s,
             [this]() {
                 auto* splitter = new Widgets::VerticalSplitterWidget(actionManager, &widgetProvider, settingsManager,
                                                                      mainWindow.get());
                 splitter->showPlaceholder(true);
                 return splitter;
             },
-            "Vertical Splitter", {"Splitters"});
+            u"Vertical Splitter"_s, {"Splitters"});
 
         factory->registerClass<Widgets::HorizontalSplitterWidget>(
-            "SplitterHorizontal",
+            u"SplitterHorizontal"_s,
             [this]() {
                 auto* splitter = new Widgets::HorizontalSplitterWidget(actionManager, &widgetProvider, settingsManager,
                                                                        mainWindow.get());
                 splitter->showPlaceholder(true);
                 return splitter;
             },
-            "Horizontal Splitter", {"Splitters"});
+            u"Horizontal Splitter"_s, {"Splitters"});
 
-        factory->registerClass<Widgets::Playlist::PlaylistTabs>("PlaylistTabs",
+        factory->registerClass<Widgets::Playlist::PlaylistTabs>(u"PlaylistTabs"_s,
                                                                 [this]() {
                                                                     return new Widgets::Playlist::PlaylistTabs(
                                                                         actionManager, &widgetProvider,
                                                                         playlistController.get(), mainWindow.get());
                                                                 },
-                                                                "Playlist Tabs", {"Splitters"});
+                                                                u"Playlist Tabs"_s, {"Splitters"});
 
-        factory->registerClass<Widgets::TabStackWidget>("TabStack",
-                                                        [this]() {
-                                                            return new Widgets::TabStackWidget(
-                                                                actionManager, &widgetProvider, mainWindow.get());
-                                                        },
-                                                        "Tab Stack", {"Splitters"});
+        factory->registerClass<Widgets::TabStackWidget>(
+            u"TabStack"_s,
+            [this]() { return new Widgets::TabStackWidget(actionManager, &widgetProvider, mainWindow.get()); },
+            u"Tab Stack"_s, {"Splitters"});
 
         factory->registerClass<Widgets::LibraryTreeWidget>(
-            "LibraryTree",
+            u"LibraryTree"_s,
             [this]() {
                 return new Widgets::LibraryTreeWidget(library, &treeGroupRegistry, &selectionController,
                                                       settingsManager, mainWindow.get());
             },
-            "Library Tree");
+            u"Library Tree"_s);
 
-        factory->registerClass<Widgets::ControlWidget>("Controls", [this]() {
+        factory->registerClass<Widgets::ControlWidget>(u"Controls"_s, [this]() {
             return new Widgets::ControlWidget(playerManager, settingsManager, mainWindow.get());
         });
 
-        factory->registerClass<Widgets::Info::InfoWidget>("Info", [this]() {
+        factory->registerClass<Widgets::Info::InfoWidget>(u"Info"_s, [this]() {
             return new Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager,
                                                  mainWindow.get());
         });
 
-        factory->registerClass<Widgets::CoverWidget>("Artwork", [this]() {
+        factory->registerClass<Widgets::CoverWidget>(u"Artwork"_s, [this]() {
             return new Widgets::CoverWidget(playerManager, &selectionController, mainWindow.get());
         });
 
-        factory->registerClass<Widgets::Playlist::PlaylistWidget>("Playlist", [this]() {
+        factory->registerClass<Widgets::Playlist::PlaylistWidget>(u"Playlist"_s, [this]() {
             return new Widgets::Playlist::PlaylistWidget(playerManager, playlistController.get(), &selectionController,
                                                          settingsManager, mainWindow.get());
         });
 
-        factory->registerClass<Widgets::Spacer>("Spacer", [this]() {
-            return new Widgets::Spacer(mainWindow.get());
-        });
+        factory->registerClass<Widgets::Spacer>(u"Spacer"_s,
+                                                [this]() { return new Widgets::Spacer(mainWindow.get()); });
 
-        factory->registerClass<Widgets::StatusWidget>("Status", [this]() {
+        factory->registerClass<Widgets::StatusWidget>(u"Status"_s, [this]() {
             return new Widgets::StatusWidget(library, playerManager, settingsManager, mainWindow.get());
         });
 
-        factory->registerClass<Widgets::SearchWidget>("Search", [this]() {
+        factory->registerClass<Widgets::SearchWidget>(u"Search"_s, [this]() {
             return new Widgets::SearchWidget(&searchController, settingsManager, mainWindow.get());
         });
     }
 
     void createPropertiesTabs()
     {
-        propertiesDialog->addTab("Details", [this]() {
+        propertiesDialog->addTab(u"Details"_s, [this]() {
             return new Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager);
         });
     }

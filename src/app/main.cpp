@@ -26,17 +26,19 @@
 
 #include <QApplication>
 
+using namespace Qt::Literals::StringLiterals;
+
 int main(int argc, char** argv)
 {
-    Q_INIT_RESOURCE(icons);
+    Q_INIT_RESOURCE(icons); // NOLINT
 
-    QCoreApplication::setApplicationName("fooyin");
-    QCoreApplication::setApplicationVersion(VERSION);
+    QCoreApplication::setApplicationName(u"fooyin"_s);
+    QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
 
     const QApplication app{argc, argv};
 
     // Prevent additional instances
-    KDSingleApplication instance{QCoreApplication::applicationName()};
+    const KDSingleApplication instance{QCoreApplication::applicationName()};
     if(!instance.isPrimaryInstance()) {
         qInfo() << "fooyin already running";
         return 0;

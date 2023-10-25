@@ -21,6 +21,8 @@
 
 #include "playlistscriptregistry.h"
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Gui::Widgets::Playlist {
 Container::Container()
     : m_duration{0}
@@ -77,21 +79,17 @@ void Container::updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptR
     }
 
     // Update duration
-    m_duration = 0;
-    for(const Core::Track& track : m_tracks) {
-        m_duration += track.duration();
-    }
+    m_duration = std::accumulate(m_tracks.cbegin(), m_tracks.cend(), 0,
+                                 [](int sum, const Core::Track& track) { return sum + track.duration(); });
 
     // Update genres
-    QStringList genres;
+    QStringList uniqueGenres;
     for(const auto& track : m_tracks) {
-        for(const auto& genre : track.genres()) {
-            if(!genres.contains(genre)) {
-                genres.emplace_back(genre);
-            }
-        }
+        const auto trackGenres = track.genres();
+        std::ranges::copy_if(trackGenres, std::back_inserter(uniqueGenres),
+                             [&uniqueGenres](const QString& genre) { return !uniqueGenres.contains(genre); });
     }
-    m_genres = genres.join(" / ");
+    m_genres = uniqueGenres.join(" / "_L1);
 
     registry->changeCurrentContainer(this);
 

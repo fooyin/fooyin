@@ -21,13 +21,11 @@
 
 #include <QAbstractListModel>
 
-namespace Fy {
-
-namespace Gui {
+namespace Fy::Gui {
 class LayoutProvider;
 
 namespace QuickSetupRole {
-const int Layout = Qt::UserRole + 50;
+constexpr int Layout = Qt::UserRole + 50;
 } // namespace QuickSetupRole
 
 class QuickSetupModel : public QAbstractListModel
@@ -41,5 +39,4 @@ public:
 private:
     LayoutProvider* m_layoutProvider;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fy::Gui

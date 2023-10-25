@@ -41,7 +41,7 @@ public:
 
     virtual void loadLibrary() = 0;
 
-    virtual bool isEmpty() const = 0;
+    [[nodiscard]] virtual bool isEmpty() const = 0;
 
     virtual void reloadAll()                        = 0;
     virtual void reload(const LibraryInfo& library) = 0;

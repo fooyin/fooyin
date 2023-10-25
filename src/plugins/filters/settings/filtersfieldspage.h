@@ -24,7 +24,6 @@
 namespace Fy {
 namespace Utils {
 class SettingsManager;
-class SettingsDialogController;
 } // namespace Utils
 
 namespace Filters {

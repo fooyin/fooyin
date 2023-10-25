@@ -21,6 +21,8 @@
 
 #include "query.h"
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Core::DB {
 Library::Library(const QString& connectionName)
     : Module{connectionName}
@@ -28,13 +30,13 @@ Library::Library(const QString& connectionName)
 
 bool Library::getAllLibraries(Core::Library::LibraryInfoMap& libraries)
 {
-    const QString query = "SELECT LibraryID, Name, Path FROM Libraries;";
+    const QString query = u"SELECT LibraryID, Name, Path FROM Libraries;"_s;
 
     Query q(this);
     q.prepareQuery(query);
 
     if(!q.execQuery()) {
-        q.error("Cannot fetch all libraries");
+        q.error(u"Cannot fetch all libraries"_s);
         return false;
     }
 
@@ -54,16 +56,16 @@ int Library::insertLibrary(const QString& path, const QString& name)
         return -1;
     }
 
-    auto q = module()->insert("Libraries", {{"Name", name}, {"Path", path}},
-                              QString{"Cannot insert library (name: %1, path: %2)"}.arg(name, path));
+    auto q = module()->insert(u"Libraries"_s, {{"Name", name}, {"Path", path}},
+                              QString{u"Cannot insert library (name: %1, path: %2)"_s}.arg(name, path));
 
     return (q.hasError()) ? -1 : q.lastInsertId().toInt();
 }
 
 bool Library::removeLibrary(int id)
 {
-    auto q = module()->remove("Libraries", {{"LibraryID", QString::number(id)}},
-                              QString{"Cannot remove library %1"}.arg(id));
+    auto q = module()->remove(u"Libraries"_s, {{"LibraryID", QString::number(id)}},
+                              "Cannot remove library " + QString::number(id));
     return !q.hasError();
 }
 
@@ -73,8 +75,8 @@ bool Library::renameLibrary(int id, const QString& name)
         return false;
     }
 
-    auto q = module()->update("Libraries", {{"Name", name}}, {"LibraryID", QString::number(id)},
-                              QString{"Cannot update library %1"}.arg(id));
+    auto q = module()->update(u"Libraries"_s, {{"Name", name}}, {"LibraryID", QString::number(id)},
+                              "Cannot update library " + QString::number(id));
     return !q.hasError();
 }
 } // namespace Fy::Core::DB

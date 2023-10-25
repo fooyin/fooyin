@@ -34,17 +34,18 @@ LibraryThreadHandler::LibraryThreadHandler(DB::Database* database, QObject* pare
     m_scanner.moveToThread(m_thread);
     m_libraryDatabaseManager.moveToThread(m_thread);
 
-    connect(this, &LibraryThreadHandler::scanLibrary, this, &LibraryThreadHandler::addScanRequest);
-    connect(this, &LibraryThreadHandler::scanNext, &m_scanner, &LibraryScanner::scanLibrary);
-    connect(this, &LibraryThreadHandler::getAllTracks, &m_libraryDatabaseManager,
-            &LibraryDatabaseManager::getAllTracks);
-    connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this, &LibraryThreadHandler::gotTracks);
-    connect(&m_scanner, &Utils::Worker::finished, this, &LibraryThreadHandler::finishScanRequest);
-    connect(&m_scanner, &LibraryScanner::progressChanged, this, &LibraryThreadHandler::progressChanged);
-    connect(&m_scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
-    connect(&m_scanner, &LibraryScanner::addedTracks, this, &LibraryThreadHandler::addedTracks);
-    connect(&m_scanner, &LibraryScanner::updatedTracks, this, &LibraryThreadHandler::updatedTracks);
-    connect(&m_scanner, &LibraryScanner::tracksDeleted, this, &LibraryThreadHandler::tracksDeleted);
+    QObject::connect(this, &LibraryThreadHandler::scanLibrary, this, &LibraryThreadHandler::addScanRequest);
+    QObject::connect(this, &LibraryThreadHandler::scanNext, &m_scanner, &LibraryScanner::scanLibrary);
+    QObject::connect(this, &LibraryThreadHandler::getAllTracks, &m_libraryDatabaseManager,
+                     &LibraryDatabaseManager::getAllTracks);
+    QObject::connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this,
+                     &LibraryThreadHandler::gotTracks);
+    QObject::connect(&m_scanner, &Utils::Worker::finished, this, &LibraryThreadHandler::finishScanRequest);
+    QObject::connect(&m_scanner, &LibraryScanner::progressChanged, this, &LibraryThreadHandler::progressChanged);
+    QObject::connect(&m_scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
+    QObject::connect(&m_scanner, &LibraryScanner::addedTracks, this, &LibraryThreadHandler::addedTracks);
+    QObject::connect(&m_scanner, &LibraryScanner::updatedTracks, this, &LibraryThreadHandler::updatedTracks);
+    QObject::connect(&m_scanner, &LibraryScanner::tracksDeleted, this, &LibraryThreadHandler::tracksDeleted);
 
     m_thread->start();
 }
@@ -71,15 +72,13 @@ void LibraryThreadHandler::libraryRemoved(int id)
         stopScanner();
     }
     else {
-        std::erase_if(m_scanRequests, [id](const ScanRequest& request) {
-            return request.library.id == id;
-        });
+        std::erase_if(m_scanRequests, [id](const ScanRequest& request) { return request.library.id == id; });
     }
 }
 
 void LibraryThreadHandler::addScanRequest(const LibraryInfo& library, const TrackList& tracks)
 {
-    ScanRequest request{library, tracks};
+    const ScanRequest request{library, tracks};
     m_scanRequests.emplace_back(request);
 
     if(m_scanRequests.size() == 1) {
@@ -91,7 +90,7 @@ void LibraryThreadHandler::finishScanRequest()
 {
     m_scanRequests.pop_front();
     if(!m_scanRequests.empty()) {
-        ScanRequest request = m_scanRequests.front();
+        const ScanRequest request = m_scanRequests.front();
         emit scanNext(request.library, request.tracks);
     }
 }

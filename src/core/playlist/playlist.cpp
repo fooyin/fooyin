@@ -19,8 +19,8 @@
 
 #include <core/playlist/playlist.h>
 
-namespace Fy::Core::Playlist {
-int findTrack(const Track& trackTofind, const TrackList& tracks)
+namespace {
+int findTrack(const Fy::Core::Track& trackTofind, const Fy::Core::TrackList& tracks)
 {
     auto it = std::ranges::find(std::as_const(tracks), trackTofind);
     if(it != tracks.end()) {
@@ -28,7 +28,9 @@ int findTrack(const Track& trackTofind, const TrackList& tracks)
     }
     return -1;
 }
+} // namespace
 
+namespace Fy::Core::Playlist {
 Playlist::Playlist()
     : Playlist{{}, -1, -1}
 { }

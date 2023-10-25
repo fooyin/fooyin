@@ -33,11 +33,11 @@
 #include <QMenu>
 #include <QTabBar>
 
-namespace Fy::Gui::Widgets::Playlist {
-struct PlaylistTabs::Private : QObject
-{
-    PlaylistTabs* self;
+using namespace Qt::Literals::StringLiterals;
 
+namespace Fy::Gui::Widgets::Playlist {
+struct PlaylistTabs::Private
+{
     Utils::ActionManager* actionManager;
     WidgetProvider* widgetProvider;
     Core::Playlist::PlaylistManager* playlistHandler;
@@ -49,8 +49,7 @@ struct PlaylistTabs::Private : QObject
 
     Private(PlaylistTabs* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
             PlaylistController* controller)
-        : self{self}
-        , actionManager{actionManager}
+        : actionManager{actionManager}
         , widgetProvider{widgetProvider}
         , playlistHandler{controller->playlistHandler()}
         , controller{controller}
@@ -65,7 +64,7 @@ struct PlaylistTabs::Private : QObject
         tabs->setExpanding(false);
     }
 
-    void tabChanged(int index)
+    void tabChanged(int index) const
     {
         const int id = tabs->tabData(index).toInt();
         if(id >= 0) {
@@ -73,7 +72,7 @@ struct PlaylistTabs::Private : QObject
         }
     }
 
-    void playlistChanged(const Core::Playlist::Playlist& playlist)
+    void playlistChanged(const Core::Playlist::Playlist& playlist) const
     {
         for(int i = 0; i < tabs->count(); ++i) {
             if(tabs->tabData(i).toInt() == playlist.id()) {
@@ -82,7 +81,7 @@ struct PlaylistTabs::Private : QObject
         }
     }
 
-    void playlistRenamed(const Core::Playlist::Playlist& playlist)
+    void playlistRenamed(const Core::Playlist::Playlist& playlist) const
     {
         for(int i = 0; i < tabs->count(); ++i) {
             if(tabs->tabData(i).toInt() == playlist.id()) {
@@ -101,17 +100,17 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* 
 
     setupTabs();
 
-    QObject::connect(p->tabs, &QTabBar::tabBarClicked, p.get(), &PlaylistTabs::Private::tabChanged);
-    QObject::connect(p->controller, &PlaylistController::currentPlaylistChanged, p.get(),
-                     &PlaylistTabs::Private::playlistChanged);
+    QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
+    QObject::connect(p->controller, &PlaylistController::currentPlaylistChanged, this,
+                     [this](const Core::Playlist::Playlist& playlist) { p->playlistChanged(playlist); });
     //    QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
     //                     &PlaylistTabs::playlistChanged);
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistAdded, this,
                      &PlaylistTabs::addPlaylist);
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistRemoved, this,
                      &PlaylistTabs::removePlaylist);
-    QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistRenamed, p.get(),
-                     &PlaylistTabs::Private::playlistRenamed);
+    QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistRenamed, this,
+                     [this](const Core::Playlist::Playlist& playlist) { p->playlistRenamed(playlist); });
 }
 
 PlaylistTabs::~PlaylistTabs() = default;
@@ -160,10 +159,9 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* createPlaylist = new QAction("Add New Playlist", menu);
-    QObject::connect(createPlaylist, &QAction::triggered, this, [this]() {
-        p->playlistHandler->createEmptyPlaylist(true);
-    });
+    auto* createPlaylist = new QAction(u"Add New Playlist"_s, menu);
+    QObject::connect(createPlaylist, &QAction::triggered, this,
+                     [this]() { p->playlistHandler->createEmptyPlaylist(true); });
     menu->addAction(createPlaylist);
 
     const QPoint point = event->pos();
@@ -171,7 +169,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     if(index >= 0) {
         const int id = p->tabs->tabData(index).toInt();
 
-        auto* renamePlAction = new QAction("Rename Playlist", menu);
+        auto* renamePlAction = new QAction(u"Rename Playlist"_s, menu);
         QObject::connect(renamePlAction, &QAction::triggered, this, [this, index, id]() {
             bool success       = false;
             const QString text = QInputDialog::getText(this, tr("Rename Playlist"), tr("Playlist Name:"),
@@ -182,10 +180,9 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
             }
         });
 
-        auto* removePlAction = new QAction("Remove Playlist", menu);
-        QObject::connect(removePlAction, &QAction::triggered, this, [this, id]() {
-            p->playlistHandler->removePlaylist(id);
-        });
+        auto* removePlAction = new QAction(u"Remove Playlist"_s, menu);
+        QObject::connect(removePlAction, &QAction::triggered, this,
+                         [this, id]() { p->playlistHandler->removePlaylist(id); });
 
         menu->addAction(renamePlAction);
         menu->addAction(removePlAction);
@@ -197,12 +194,12 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
 QString PlaylistTabs::name() const
 {
-    return "Playlist Tabs";
+    return u"Playlist Tabs"_s;
 }
 
 QString PlaylistTabs::layoutName() const
 {
-    return "PlaylistTabs";
+    return u"PlaylistTabs"_s;
 }
 
 void PlaylistTabs::layoutEditingMenu(Utils::ActionContainer* menu)
@@ -218,9 +215,7 @@ void PlaylistTabs::layoutEditingMenu(Utils::ActionContainer* menu)
     auto* addMenu = p->actionManager->createMenu(addMenuId);
     addMenu->menu()->setTitle(addTitle);
 
-    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) {
-        addWidget(newWidget);
-    });
+    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) { addWidget(newWidget); });
     menu->addMenu(addMenu);
 }
 

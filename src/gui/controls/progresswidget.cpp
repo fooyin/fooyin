@@ -30,6 +30,8 @@
 #include <QHBoxLayout>
 #include <QSlider>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Gui::Widgets {
 ProgressWidget::ProgressWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
                                QWidget* parent)
@@ -47,8 +49,8 @@ ProgressWidget::ProgressWidget(Core::Player::PlayerManager* playerManager, Utils
 
     m_slider->setFocusPolicy(Qt::NoFocus);
 
-    m_elapsed->setText("00:00");
-    m_total->setText(m_elapsedTotal ? "-00:00" : "00:00");
+    m_elapsed->setText(u"00:00"_s);
+    m_total->setText(m_elapsedTotal ? u"-00:00"_s : u"00:00"_s);
 
     m_layout->addWidget(m_elapsed, 0, Qt::AlignVCenter | Qt::AlignLeft);
     m_layout->addWidget(m_slider, 0, Qt::AlignVCenter);
@@ -56,21 +58,24 @@ ProgressWidget::ProgressWidget(Core::Player::PlayerManager* playerManager, Utils
 
     setEnabled(m_playerManager->currentTrack().isValid());
 
-    connect(m_total, &Utils::ClickableLabel::clicked, this, &ProgressWidget::toggleRemaining);
-    connect(m_slider, &Utils::Slider::sliderReleased, this, &ProgressWidget::sliderDropped);
+    QObject::connect(m_total, &Utils::ClickableLabel::clicked, this, &ProgressWidget::toggleRemaining);
+    QObject::connect(m_slider, &Utils::Slider::sliderReleased, this, &ProgressWidget::sliderDropped);
 
-    connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this, &ProgressWidget::stateChanged);
-    connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this, &ProgressWidget::changeTrack);
-    connect(m_playerManager, &Core::Player::PlayerManager::positionChanged, this, &ProgressWidget::setCurrentPosition);
-    connect(this, &ProgressWidget::movedSlider, m_playerManager, &Core::Player::PlayerManager::changePosition);
+    QObject::connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this,
+                     &ProgressWidget::stateChanged);
+    QObject::connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
+                     &ProgressWidget::changeTrack);
+    QObject::connect(m_playerManager, &Core::Player::PlayerManager::positionChanged, this,
+                     &ProgressWidget::setCurrentPosition);
+    QObject::connect(this, &ProgressWidget::movedSlider, m_playerManager, &Core::Player::PlayerManager::changePosition);
 
     changeTrack(m_playerManager->currentTrack());
 }
 
 void ProgressWidget::reset()
 {
-    m_elapsed->setText("00:00");
-    m_total->setText(m_elapsedTotal ? "-00:00" : "00:00");
+    m_elapsed->setText(u"00:00"_s);
+    m_total->setText(m_elapsedTotal ? u"-00:00"_s : u"00:00"_s);
     m_slider->setValue(0);
     m_max = 0;
 }
@@ -79,14 +84,15 @@ void ProgressWidget::changeTrack(const Core::Track& track)
 {
     reset();
     m_max = track.duration();
-    m_slider->setMaximum(m_max);
-    m_total->setText(m_elapsedTotal ? "-" : "" + Utils::msToString(m_max));
+    m_slider->setMaximum(static_cast<int>(m_max));
+    const QString totalText = m_elapsedTotal ? u"-"_s : u""_s + Utils::msToString(m_max);
+    m_total->setText(totalText);
 }
 
 void ProgressWidget::setCurrentPosition(uint64_t ms)
 {
     if(!m_slider->isSliderDown()) {
-        m_slider->setValue(ms);
+        m_slider->setValue(static_cast<int>(ms));
         updateTime(ms);
     }
 }
@@ -96,7 +102,7 @@ void ProgressWidget::updateTime(uint64_t elapsed)
     m_elapsed->setText(Utils::msToString(elapsed));
 
     if(m_elapsedTotal) {
-        const int remaining = m_max - elapsed;
+        const int remaining = static_cast<int>(m_max - elapsed);
         m_total->setText("-" + Utils::msToString(remaining < 0 ? 0 : remaining));
     }
     else {
@@ -109,13 +115,18 @@ void ProgressWidget::updateTime(uint64_t elapsed)
 void ProgressWidget::stateChanged(Core::Player::PlayState state)
 {
     switch(state) {
-        case(Core::Player::PlayState::Stopped):
+        case(Core::Player::PlayState::Stopped): {
             reset();
-            return setEnabled(false);
-        case(Core::Player::PlayState::Playing):
-            return setEnabled(true);
-        case(Core::Player::PlayState::Paused):
+            setEnabled(false);
+            break;
+        }
+        case(Core::Player::PlayState::Playing): {
+            setEnabled(true);
+            break;
+        }
+        case(Core::Player::PlayState::Paused): {
             return;
+        }
     }
 }
 

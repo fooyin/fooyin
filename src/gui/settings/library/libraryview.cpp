@@ -30,8 +30,8 @@ LibraryView::LibraryView(QWidget* parent)
 void LibraryView::resizeEvent(QResizeEvent* event)
 {
     const int width = event->size().width();
-    setColumnWidth(1, width * 0.30);
-    setColumnWidth(2, width * 0.55);
-    setColumnWidth(3, width * 0.15);
+    setColumnWidth(1, static_cast<int>(width * 0.30));
+    setColumnWidth(2, static_cast<int>(width * 0.55));
+    setColumnWidth(3, static_cast<int>(width * 0.15));
 }
 } // namespace Fy::Gui::Settings

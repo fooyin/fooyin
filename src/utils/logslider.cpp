@@ -26,9 +26,8 @@ LogSlider::LogSlider(Qt::Orientation type, QWidget* parent)
     : Slider{type, parent}
     , m_scale{100.0}
 {
-    QObject::connect(this, &QSlider::valueChanged, this, [this](double value) {
-        emit logValueChanged(std::pow(10, (value / m_scale)));
-    });
+    QObject::connect(this, &QSlider::valueChanged, this,
+                     [this](double value) { emit logValueChanged(std::pow(10, (value / m_scale))); });
 }
 
 void LogSlider::setRange(double min, double max)
@@ -46,6 +45,6 @@ void LogSlider::setScale(double scale)
 
 void LogSlider::setNaturalValue(double value)
 {
-    QSlider::setValue(static_cast<int>(log10(value) * m_scale));
+    QSlider::setValue(static_cast<int>(std::log10(value) * m_scale));
 }
 } // namespace Fy::Utils

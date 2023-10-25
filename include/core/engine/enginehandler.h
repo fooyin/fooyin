@@ -38,7 +38,7 @@ namespace Engine {
 class AudioOutput;
 struct AudioOutputBuilder;
 
-using OutputNames   = std::vector<QString>;
+using OutputNames = std::vector<QString>;
 
 class FYCORE_EXPORT EngineHandler : public QObject
 {

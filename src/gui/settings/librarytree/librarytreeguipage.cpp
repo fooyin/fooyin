@@ -54,8 +54,8 @@ private:
     QFont m_font;
     QColor m_colour;
 
-    bool m_fontChanged;
-    bool m_colourChanged;
+    bool m_fontChanged{false};
+    bool m_colourChanged{false};
 
     QPushButton* m_fontButton;
     QPushButton* m_colourButton;
@@ -67,15 +67,13 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(Utils::SettingsManager* setti
     , m_showHeader{new QCheckBox(tr("Show Header"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_altColours{new QCheckBox(tr("Alternating Row Colours"), this)}
-    , m_fontChanged{false}
-    , m_colourChanged{false}
-    , m_fontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "Font", this)}
-    , m_colourButton{new QPushButton(QIcon::fromTheme(Constants::Icons::TextColour), "Colour", this)}
+    , m_fontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), tr("Font"), this)}
+    , m_colourButton{new QPushButton(QIcon::fromTheme(Constants::Icons::TextColour), tr("Colour"), this)}
     , m_rowHeight{new QSpinBox(this)}
 {
     auto* layout = new QGridLayout(this);
 
-    auto* rowHeightLabel = new QLabel("Row Height:", this);
+    auto* rowHeightLabel = new QLabel(tr("Row Height:"), this);
 
     layout->addWidget(m_showHeader, 0, 0, 1, 2);
     layout->addWidget(m_showScrollbar, 1, 0, 1, 2);
@@ -89,7 +87,7 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(Utils::SettingsManager* setti
 
     QObject::connect(m_fontButton, &QPushButton::pressed, this, [this]() {
         bool ok;
-        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, "Select Font");
+        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, tr("Select Font"));
         if(ok && chosenFont != m_font) {
             m_fontChanged = true;
             m_font        = chosenFont;
@@ -98,7 +96,7 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(Utils::SettingsManager* setti
 
     QObject::connect(m_colourButton, &QPushButton::pressed, this, [this]() {
         const QColor chosenColour
-            = QColorDialog::getColor(m_colour, this, "Select Colour", QColorDialog::ShowAlphaChannel);
+            = QColorDialog::getColor(m_colour, this, tr("Select Colour"), QColorDialog::ShowAlphaChannel);
         if(chosenColour.isValid() && chosenColour != m_colour) {
             m_colourChanged = true;
             m_colour        = chosenColour;
@@ -152,9 +150,7 @@ LibraryTreeGuiPage::LibraryTreeGuiPage(Utils::SettingsManager* settings)
 {
     setId(Constants::Page::LibraryTreeAppearance);
     setName(tr("Appearance"));
-    setCategory({"Widgets", "Library Tree"});
-    setWidgetCreator([settings] {
-        return new LibraryTreeGuiPageWidget(settings);
-    });
+    setCategory({tr("Widgets"), tr("Library Tree")});
+    setWidgetCreator([settings] { return new LibraryTreeGuiPageWidget(settings); });
 }
 } // namespace Fy::Gui::Settings

@@ -43,7 +43,7 @@ struct SettingsCategory
         return id == other.id;
     }
 
-    int findPageById(const Id& idToFind) const
+    [[nodiscard]] int findPageById(const Id& idToFind) const
     {
         auto it = std::ranges::find_if(std::as_const(pages), [idToFind](const SettingsPage* page) {
             return page->id() == idToFind;

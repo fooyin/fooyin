@@ -33,7 +33,6 @@ class SettingsManager;
 
 namespace Gui::Widgets {
 class FyWidget;
-class WidgetFactory;
 
 class EditableLayout : public QWidget
 {

@@ -22,7 +22,7 @@
 namespace Fy::Utils {
 unsigned int idFromString(const QString& str)
 {
-    unsigned int result{0};
+    uint32_t result{0};
     if(!str.isEmpty()) {
         result = std::hash<QString>{}(str);
     }

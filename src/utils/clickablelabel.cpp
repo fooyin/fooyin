@@ -23,7 +23,7 @@
 
 namespace Fy::Utils {
 ClickableLabel::ClickableLabel(QWidget* parent)
-    : QLabel(parent)
+    : QLabel{parent}
 { }
 
 void ClickableLabel::mousePressEvent(QMouseEvent* event)

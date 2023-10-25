@@ -28,9 +28,9 @@
 #include <QLineEdit>
 #include <QMenu>
 
-namespace Fy::Gui::Widgets {
 constexpr auto Placeholder = "Search library...";
 
+namespace Fy::Gui::Widgets {
 SearchWidget::SearchWidget(SearchController* controller, Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_controller{controller}
@@ -47,15 +47,15 @@ SearchWidget::SearchWidget(SearchController* controller, Utils::SettingsManager*
 
     layout->addWidget(m_searchBox);
 
-    connect(m_searchBox, &QLineEdit::textChanged, m_controller, &SearchController::searchChanged);
+    QObject::connect(m_searchBox, &QLineEdit::textChanged, m_controller, &SearchController::searchChanged);
 }
 
 QString SearchWidget::name() const
 {
-    return "Search";
+    return QStringLiteral("Search");
 }
 
-void SearchWidget::keyPressEvent(QKeyEvent* e)
+void SearchWidget::keyPressEvent(QKeyEvent* event)
 {
     //    const auto key = e->key();
     //    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
@@ -64,13 +64,13 @@ void SearchWidget::keyPressEvent(QKeyEvent* e)
     // m_searchBox->setFocusPolicy(Qt::StrongFocus);
     //    m_searchBox->setFocus();
     //    m_searchBox->setText(e->text());
-    QWidget::keyPressEvent(e);
+    QWidget::keyPressEvent(event);
 }
 
 void SearchWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     if(!m_settings->value<Gui::Settings::LayoutEditing>()) {
-        return QWidget::contextMenuEvent(event);
+        QWidget::contextMenuEvent(event);
     }
 }
 } // namespace Fy::Gui::Widgets

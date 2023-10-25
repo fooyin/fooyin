@@ -58,4 +58,4 @@ struct SortScript
         return stream;
     }
 };
-} // namespace Fy::Core::Library
+} // namespace Fy::Core::Library::Sorting

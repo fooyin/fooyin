@@ -34,22 +34,21 @@
 
 #include <QCoroCore>
 
+#include <chrono>
 #include <ranges>
 #include <vector>
+
+using namespace std::chrono_literals;
 
 namespace Fy::Core::Library {
 QCoro::Task<TrackList> recalSortFields(QString sort, TrackList tracks)
 {
-    co_return co_await Utils::asyncExec([&sort, &tracks]() {
-        return Sorting::calcSortFields(sort, tracks);
-    });
+    co_return co_await Utils::asyncExec([&sort, &tracks]() { return Sorting::calcSortFields(sort, tracks); });
 }
 
 QCoro::Task<TrackList> resortTracks(TrackList tracks)
 {
-    co_return co_await Utils::asyncExec([&tracks]() {
-        return Sorting::sortTracks(tracks);
-    });
+    co_return co_await Utils::asyncExec([&tracks]() { return Sorting::sortTracks(tracks); });
 }
 
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database,
@@ -78,7 +77,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     m_settings->subscribe<Settings::LibrarySortScript>(this, &UnifiedMusicLibrary::changeSort);
 
     if(m_settings->value<Settings::AutoRefresh>()) {
-        QTimer::singleShot(3000, this, &Library::UnifiedMusicLibrary::reloadAll);
+        QTimer::singleShot(3s, this, &Library::UnifiedMusicLibrary::reloadAll);
     }
 }
 
@@ -90,9 +89,7 @@ void UnifiedMusicLibrary::loadLibrary()
 void UnifiedMusicLibrary::reloadAll()
 {
     const LibraryInfoMap& libraries = m_libraryManager->allLibraries();
-    for(const auto& library : libraries | std::views::filter([](const auto& lib) {
-                                  return lib.second.id >= 0;
-                              })) {
+    for(const auto& library : libraries | std::views::filter([](const auto& lib) { return lib.second.id >= 0; })) {
         reload(library.second);
     }
 }
@@ -127,9 +124,8 @@ void UnifiedMusicLibrary::saveTracks(const TrackList& tracks)
     TrackList result{m_tracks};
 
     for(const Track& track : tracks) {
-        auto it = std::ranges::find_if(result, [&](const Track& originalTrack) {
-            return track.id() == originalTrack.id();
-        });
+        auto it = std::ranges::find_if(
+            result, [track](const Track& originalTrack) { return track.id() == originalTrack.id(); });
         if(it != tracks.end()) {
             *it = track;
         }
@@ -150,9 +146,7 @@ QCoro::Task<void> UnifiedMusicLibrary::changeSort(QString sort)
 
 void UnifiedMusicLibrary::removeLibrary(int id)
 {
-    auto filtered = m_tracks | std::views::filter([id](const Track& track) {
-                        return track.libraryId() != id;
-                    });
+    auto filtered = m_tracks | std::views::filter([id](const Track& track) { return track.libraryId() != id; });
 
     m_tracks = TrackList{filtered.begin(), filtered.end()};
 
@@ -180,18 +174,18 @@ QCoro::Task<TrackList> UnifiedMusicLibrary::addTracks(TrackList tracks)
         libraryDirs.emplace(id, QDir{info.path});
     }
 
-    TrackList newTracks = co_await recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
-    for(Track& track : newTracks) {
+    TrackList presortedTracks = co_await recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
+    for(Track& track : presortedTracks) {
         const int libraryId = track.libraryId();
         if(libraryDirs.contains(libraryId)) {
             track.setRelativePath(libraryDirs.at(libraryId).relativeFilePath(track.filepath()));
         }
     }
-    std::ranges::copy(newTracks, std::back_inserter(m_tracks));
+    std::ranges::copy(presortedTracks, std::back_inserter(m_tracks));
 
     m_tracks = co_await resortTracks(m_tracks);
 
-    co_return newTracks;
+    co_return presortedTracks;
 }
 
 QCoro::Task<void> UnifiedMusicLibrary::newTracks(TrackList tracks)
@@ -205,13 +199,9 @@ QCoro::Task<void> UnifiedMusicLibrary::updateTracks(TrackList tracks)
     TrackList updatedTracks = co_await recalSortFields(m_settings->value<Settings::LibrarySortScript>(), tracks);
     updatedTracks           = co_await resortTracks(updatedTracks);
 
-    std::ranges::for_each(updatedTracks, [this](const Track& track) {
+    std::ranges::for_each(updatedTracks, [this](Track track) {
         std::ranges::replace_if(
-            m_tracks,
-            [track](const Track& libraryTrack) {
-                return libraryTrack.id() == track.id();
-            },
-            track);
+            m_tracks, [track](Track libraryTrack) { return libraryTrack.id() == track.id(); }, track);
     });
 
     m_tracks = co_await resortTracks(m_tracks);
@@ -222,9 +212,8 @@ QCoro::Task<void> UnifiedMusicLibrary::updateTracks(TrackList tracks)
 void UnifiedMusicLibrary::removeTracks(const TrackList& tracks)
 {
     std::erase_if(m_tracks, [tracks](const Track& libraryTrack) {
-        return std::ranges::any_of(tracks, [libraryTrack](const Track& track) {
-            return libraryTrack.id() == track.id();
-        });
+        return std::ranges::any_of(tracks,
+                                   [libraryTrack](const Track& track) { return libraryTrack.id() == track.id(); });
     });
 
     emit tracksDeleted(tracks);

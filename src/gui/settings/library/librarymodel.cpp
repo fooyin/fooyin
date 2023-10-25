@@ -88,7 +88,7 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
 
     if(!isQueued) {
         if(exists) {
-            qInfo() << QString{"Library at %1 already exists!"}.arg(info.path);
+            qInfo() << "Library at " + info.path + " already exists!";
             return;
         }
         // New library
@@ -178,7 +178,7 @@ void LibraryModel::processQueue()
                     }
                 }
                 else {
-                    qWarning() << QString{"Library (%1) could not be added"}.arg(info.name);
+                    qWarning() << "Library " + info.name + " could not be added";
                 }
                 break;
             }
@@ -191,7 +191,7 @@ void LibraryModel::processQueue()
                     librariesToRemove.push_back(key);
                 }
                 else {
-                    qWarning() << QString{"Library (%1) could not be removed"}.arg(info.name);
+                    qWarning() << "Library " + info.name + " could not be removed";
                 }
                 break;
             }
@@ -202,7 +202,7 @@ void LibraryModel::processQueue()
                     emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
-                    qWarning() << QString{"Library (%1) could not be renamed"}.arg(info.path);
+                    qWarning() << "Library " + info.name + " could not be renamed";
                 }
                 break;
             }
@@ -242,13 +242,13 @@ QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int 
 
     switch(section) {
         case(0):
-            return "ID";
+            return QStringLiteral("ID");
         case(1):
-            return "Name";
+            return QStringLiteral("Name");
         case(2):
-            return "Path";
+            return QStringLiteral("Path");
         case(3):
-            return "Status";
+            return QStringLiteral("Status");
     }
     return {};
 }

@@ -90,8 +90,8 @@ ActionContainer* ActionManager::actionContainer(const Id& id)
 
 void ActionManager::registerContainer(const Id& id, ActionContainer* actionContainer)
 {
-    connect(actionContainer, &ActionContainer::registerSeparator, this, &ActionManager::registerAction);
-    connect(actionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
+    QObject::connect(actionContainer, &ActionContainer::registerSeparator, this, &ActionManager::registerAction);
+    QObject::connect(actionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
 
     actionContainer->appendGroup(Groups::Default);
     m_idContainerMap.emplace(id, actionContainer);

@@ -28,9 +28,11 @@
 
 #include <bit>
 
-namespace Fy::Core::Engine::FFmpeg {
 constexpr int MaxFrameQueue = 9;
 
+namespace {
+using Fy::Core::Engine::FFmpeg::Frame;
+using Fy::Core::Engine::FFmpeg::FramePtr;
 // Copies input frame's metadata and properties and assigns empty buffers for the data
 Frame copyFrame(const Frame& frame, AVSampleFormat format)
 {
@@ -51,6 +53,63 @@ Frame copyFrame(const Frame& frame, AVSampleFormat format)
     return newFrame;
 }
 
+template <typename T>
+void interleaveSamples(uint8_t** in, int channels, uint8_t* out, int frames)
+{
+    for(int ch = 0; ch < channels; ++ch) {
+        const auto* pSamples = std::bit_cast<const T*>(in[ch]);
+        auto* iSamples       = std::bit_cast<T*>(out) + ch;
+        auto end             = pSamples + frames;
+        while(pSamples < end) {
+            *iSamples = *pSamples++;
+            iSamples += channels;
+        }
+    }
+}
+
+Frame interleave(const Frame& inputFrame)
+{
+    uint8_t** in                 = inputFrame.avFrame()->data;
+    const int channels           = inputFrame.channelCount();
+    const int samples            = inputFrame.sampleCount();
+    const auto interleavedFormat = Fy::Core::Engine::FFmpeg::interleaveFormat(inputFrame.format());
+
+    Frame frame  = copyFrame(inputFrame, interleavedFormat);
+    uint8_t* out = frame.avFrame()->data[0];
+
+    switch(inputFrame.format()) {
+        case AV_SAMPLE_FMT_FLTP:
+            interleaveSamples<float>(in, channels, out, samples);
+            break;
+        case AV_SAMPLE_FMT_U8P:
+            interleaveSamples<int8_t>(in, channels, out, samples);
+            break;
+        case AV_SAMPLE_FMT_S16P:
+            interleaveSamples<int16_t>(in, channels, out, samples);
+            break;
+        case AV_SAMPLE_FMT_S32P:
+            interleaveSamples<int32_t>(in, channels, out, samples);
+            break;
+        case AV_SAMPLE_FMT_S64P:
+        case AV_SAMPLE_FMT_DBLP:
+            interleaveSamples<int64_t>(in, channels, out, samples);
+            break;
+        case AV_SAMPLE_FMT_NONE:
+        case AV_SAMPLE_FMT_U8:
+        case AV_SAMPLE_FMT_S16:
+        case AV_SAMPLE_FMT_S32:
+        case AV_SAMPLE_FMT_FLT:
+        case AV_SAMPLE_FMT_DBL:
+        case AV_SAMPLE_FMT_S64:
+        case AV_SAMPLE_FMT_NB:
+            break;
+    }
+    frame.avFrame()->format = interleavedFormat;
+    return frame;
+}
+} // namespace
+
+namespace Fy::Core::Engine::FFmpeg {
 struct Decoder::Private
 {
     Decoder* decoder;
@@ -128,61 +187,6 @@ struct Decoder::Private
         ++pendingFrameCount;
         emit decoder->requestHandleFrame(frame);
     }
-
-    template <typename T>
-    void interleaveSamples(uint8_t** in, int channels, uint8_t* out, int frames)
-    {
-        for(int ch = 0; ch < channels; ++ch) {
-            const auto* pSamples = std::bit_cast<const T*>(in[ch]);
-            auto* iSamples       = std::bit_cast<T*>(out) + ch;
-            auto end             = pSamples + frames;
-            while(pSamples < end) {
-                *iSamples = *pSamples++;
-                iSamples += channels;
-            }
-        }
-    }
-
-    Frame interleave(const Frame& inputFrame)
-    {
-        uint8_t** in                 = inputFrame.avFrame()->data;
-        const int channels           = inputFrame.channelCount();
-        const int samples            = inputFrame.sampleCount();
-        const auto interleavedFormat = interleaveFormat(inputFrame.format());
-
-        Frame frame  = copyFrame(inputFrame, interleavedFormat);
-        uint8_t* out = frame.avFrame()->data[0];
-
-        switch(inputFrame.format()) {
-            case AV_SAMPLE_FMT_FLTP:
-                interleaveSamples<float>(in, channels, out, samples);
-                break;
-            case AV_SAMPLE_FMT_U8P:
-                interleaveSamples<int8_t>(in, channels, out, samples);
-                break;
-            case AV_SAMPLE_FMT_S16P:
-                interleaveSamples<int16_t>(in, channels, out, samples);
-                break;
-            case AV_SAMPLE_FMT_S32P:
-                interleaveSamples<int32_t>(in, channels, out, samples);
-                break;
-            case AV_SAMPLE_FMT_S64P:
-            case AV_SAMPLE_FMT_DBLP:
-                interleaveSamples<int64_t>(in, channels, out, samples);
-                break;
-            case AV_SAMPLE_FMT_NONE:
-            case AV_SAMPLE_FMT_U8:
-            case AV_SAMPLE_FMT_S16:
-            case AV_SAMPLE_FMT_S32:
-            case AV_SAMPLE_FMT_FLT:
-            case AV_SAMPLE_FMT_DBL:
-            case AV_SAMPLE_FMT_S64:
-            case AV_SAMPLE_FMT_NB:
-                break;
-        }
-        frame.avFrame()->format = interleavedFormat;
-        return frame;
-    }
 };
 
 Decoder::Decoder(QObject* parent)
@@ -241,7 +245,7 @@ void Decoder::doNextStep()
     }
 
     const Packet packet(PacketPtr{av_packet_alloc()});
-    int readResult = av_read_frame(p->context, packet.avPacket());
+    const int readResult = av_read_frame(p->context, packet.avPacket());
     if(readResult < 0) {
         if(readResult != AVERROR_EOF) {
             printError(readResult);
@@ -259,7 +263,8 @@ void Decoder::doNextStep()
     }
 
     if(packet.avPacket()->stream_index != p->codec->streamIndex()) {
-        return scheduleNextStep(false);
+        scheduleNextStep(false);
+        return;
     }
 
     packet.avPacket()->time_base = p->codec->stream()->time_base;

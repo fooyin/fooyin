@@ -24,36 +24,30 @@
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::Core::Player {
-struct PlayerController::Private : QObject
+struct PlayerController::Private
 {
     PlayerController* self;
 
     Utils::SettingsManager* settings;
 
     Track currentTrack;
-    uint64_t totalDuration;
-    PlayState playStatus;
+    uint64_t totalDuration{0};
+    PlayState playStatus{PlayState::Stopped};
     PlayMode playMode;
-    uint64_t position;
-    bool counted;
+    uint64_t position{0};
+    bool counted{false};
 
     Private(PlayerController* self, Utils::SettingsManager* settings)
         : self{self}
         , settings{settings}
-        , totalDuration{0}
-        , playStatus{PlayState::Stopped}
         , playMode{static_cast<PlayMode>(settings->value<Settings::PlayMode>())}
-        , position{0}
-        , counted{false}
-    {
-        settings->subscribe<Settings::PlayMode>(this, &PlayerController::Private::changePlayMode);
-    }
+    { }
 
     void changePlayMode()
     {
         const auto mode = static_cast<PlayMode>(settings->value<Settings::PlayMode>());
         if(std::exchange(playMode, mode) != mode) {
-            emit self->playModeChanged(playMode);
+            QMetaObject::invokeMethod(self, "playModeChanged", Q_ARG(PlayMode, playMode));
         }
     }
 };
@@ -61,7 +55,9 @@ struct PlayerController::Private : QObject
 PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* parent)
     : PlayerManager{parent}
     , p{std::make_unique<Private>(this, settings)}
-{ }
+{
+    settings->subscribe<Settings::PlayMode>(this, [this]() { p->changePlayMode(); });
+}
 
 PlayerController::~PlayerController() = default;
 
@@ -86,12 +82,18 @@ void PlayerController::wakeUp()
 void PlayerController::playPause()
 {
     switch(p->playStatus) {
-        case(PlayState::Playing):
-            return pause();
-        case(PlayState::Stopped):
-            return wakeUp();
-        default:
-            return play();
+        case(PlayState::Playing): {
+            pause();
+            break;
+        }
+        case(PlayState::Stopped): {
+            wakeUp();
+            break;
+        }
+        default: {
+            play();
+            break;
+        }
     }
 }
 
@@ -133,7 +135,8 @@ void PlayerController::setCurrentPosition(uint64_t ms)
 void PlayerController::changePosition(uint64_t ms)
 {
     if(ms >= p->totalDuration - 100) {
-        return next();
+        next();
+        return;
     }
     p->position = ms;
     emit positionMoved(ms);

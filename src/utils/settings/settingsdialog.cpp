@@ -32,12 +32,14 @@
 #include <QTreeView>
 
 namespace Fy::Utils {
-struct SettingsDialog::Private : QObject
+struct SettingsDialog::Private
 {
     SettingsDialog* self;
+
     SettingsModel* model;
     SimpleTreeView* categoryTree;
     QStackedLayout* stackedLayout;
+    QDialogButtonBox* buttonBox;
 
     PageList pages;
     std::set<SettingsPage*> visitedPages;
@@ -50,6 +52,9 @@ struct SettingsDialog::Private : QObject
         , model{new SettingsModel(self)}
         , categoryTree{new SimpleTreeView(self)}
         , stackedLayout{new QStackedLayout()}
+        , buttonBox{new QDialogButtonBox(QDialogButtonBox::Reset | QDialogButtonBox::Ok | QDialogButtonBox::Apply
+                                             | QDialogButtonBox::Cancel,
+                                         self)}
         , pages{std::move(pageList)}
     {
         stackedLayout->setContentsMargins(0, 0, 0, 0);
@@ -61,8 +66,6 @@ struct SettingsDialog::Private : QObject
         categoryTree->setFocus();
         categoryTree->expandAll();
 
-        auto* buttonBox = new QDialogButtonBox(
-            QDialogButtonBox::Reset | QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, self);
         buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
         auto* mainGridLayout = new QGridLayout(self);
@@ -71,15 +74,6 @@ struct SettingsDialog::Private : QObject
         mainGridLayout->addWidget(buttonBox, 1, 0, 1, 2);
         mainGridLayout->setColumnStretch(1, 4);
         mainGridLayout->setSizeConstraint(QLayout::SetMinimumSize);
-
-        connect(categoryTree->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
-                &SettingsDialog::Private::currentChanged);
-        connect(buttonBox->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this,
-                &SettingsDialog::Private::apply);
-        connect(buttonBox->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this,
-                &SettingsDialog::Private::reset);
-        connect(buttonBox, &QDialogButtonBox::accepted, self, &SettingsDialog::accept);
-        connect(buttonBox, &QDialogButtonBox::rejected, self, &SettingsDialog::reject);
     }
 
     void apply()
@@ -91,7 +85,7 @@ struct SettingsDialog::Private : QObject
 
     void reset()
     {
-        if(auto page = findPage(currentPage)) {
+        if(auto* page = findPage(currentPage)) {
             page->reset();
         }
     }
@@ -138,7 +132,7 @@ struct SettingsDialog::Private : QObject
 
         std::ranges::for_each(category->pages, addPageToTabWidget);
 
-        connect(tabWidget, &QTabWidget::currentChanged, this, &SettingsDialog::Private::currentTabChanged);
+        QObject::connect(tabWidget, &QTabWidget::currentChanged, self, [this](int index) { currentTabChanged(index); });
 
         category->tabWidget = tabWidget;
         category->index     = stackedLayout->addWidget(tabWidget);
@@ -173,9 +167,7 @@ struct SettingsDialog::Private : QObject
 
     SettingsPage* findPage(const Id& id)
     {
-        auto it = std::ranges::find_if(std::as_const(pages), [&id](SettingsPage* page) {
-            return page->id() == id;
-        });
+        auto it = std::ranges::find_if(std::as_const(pages), [&id](SettingsPage* page) { return page->id() == id; });
         if(it != pages.cend()) {
             return *it;
         }
@@ -188,6 +180,15 @@ SettingsDialog::SettingsDialog(const PageList& pages, QWidget* parent)
     , p{std::make_unique<Private>(this, pages)}
 {
     setWindowTitle(tr("Settings"));
+
+    QObject::connect(p->categoryTree->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
+                     [this](const QModelIndex& index) { p->currentChanged(index); });
+    QObject::connect(p->buttonBox->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this,
+                     [this]() { p->apply(); });
+    QObject::connect(p->buttonBox->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this,
+                     [this]() { p->reset(); });
+    QObject::connect(p->buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::accept);
+    QObject::connect(p->buttonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
 }
 
 SettingsDialog::~SettingsDialog() = default;

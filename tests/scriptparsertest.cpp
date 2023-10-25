@@ -22,6 +22,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Testing {
 class ScriptParserTest : public ::testing::Test
 {
@@ -32,82 +34,82 @@ protected:
 
 TEST_F(ScriptParserTest, BasicLiteral)
 {
-    m_parser.parse("I am a test.");
+    m_parser.parse(u"I am a test."_s);
     EXPECT_EQ("I am a test.", m_parser.evaluate());
 }
 
 TEST_F(ScriptParserTest, EscapeComment)
 {
-    m_parser.parse(R"("I am a \% test.")");
+    m_parser.parse(uR"("I am a \% test.")"_s);
     EXPECT_EQ("I am a % test.", m_parser.evaluate());
 
-    m_parser.parse(R"("I am an \"escape test.")");
+    m_parser.parse(uR"("I am an \"escape test.")"_s);
     EXPECT_EQ("I am an \"escape test.", m_parser.evaluate());
 }
 
 TEST_F(ScriptParserTest, Quote)
 {
-    m_parser.parse(R"("I %am% a $test$.")");
+    m_parser.parse(uR"("I %am% a $test$.")"_s);
     EXPECT_EQ("I %am% a $test$.", m_parser.evaluate());
 }
 
 TEST_F(ScriptParserTest, MathTest)
 {
-    m_parser.parse("$add(1,2)");
+    m_parser.parse(u"$add(1,2)"_s);
     EXPECT_EQ(3, m_parser.evaluate().toInt());
 
-    m_parser.parse("$sub(10,8)");
+    m_parser.parse(u"$sub(10,8)"_s);
     EXPECT_EQ(2, m_parser.evaluate().toInt());
 
-    m_parser.parse("$mul(3,33)");
+    m_parser.parse(u"$mul(3,33)"_s);
     EXPECT_EQ(99, m_parser.evaluate().toInt());
 
-    m_parser.parse("$div(33,3)");
+    m_parser.parse(u"$div(33,3)"_s);
     EXPECT_EQ(11, m_parser.evaluate().toInt());
 
-    m_parser.parse("$mod(10,3)");
+    m_parser.parse(u"$mod(10,3)"_s);
     EXPECT_EQ(1, m_parser.evaluate().toInt());
 
-    m_parser.parse("$min(3,2,3,9,23,100,4)");
+    m_parser.parse(u"$min(3,2,3,9,23,100,4)"_s);
     EXPECT_EQ(2, m_parser.evaluate().toInt());
 
-    m_parser.parse("$max(3,2,3,9,23,100,4)");
+    m_parser.parse(u"$max(3,2,3,9,23,100,4)"_s);
     EXPECT_EQ(100, m_parser.evaluate().toInt());
 }
 
 TEST_F(ScriptParserTest, MetadataTest)
 {
     Core::Track track;
-    track.setTitle("A Test");
+    track.setTitle(u"A Test"_s);
     m_parser.setMetadata(track);
 
-    m_parser.parse("%title%");
+    m_parser.parse(u"%title%"_s);
     EXPECT_EQ("A Test", m_parser.evaluate());
 
-    m_parser.parse("%title%[ - %album%]");
+    m_parser.parse(u"%title%[ - %album%]"_s);
     EXPECT_EQ("A Test", m_parser.evaluate());
 
-    track.setAlbum("A Test Album");
+    track.setAlbum(u"A Test Album"_s);
     m_parser.setMetadata(track);
     EXPECT_EQ("A Test - A Test Album", m_parser.evaluate());
 
     track.setGenres({"Pop", "Rock"});
     m_parser.setMetadata(track);
-    m_parser.parse("%genre%");
+    m_parser.parse(u"%genre%"_s);
     EXPECT_EQ("Pop, Rock", m_parser.evaluate());
 
-    m_parser.parse("%<genre>%");
+    m_parser.parse(u"%<genre>%"_s);
     EXPECT_EQ("Pop\037Rock", m_parser.evaluate());
 
     track.setArtists({"Me", "You"});
     m_parser.setMetadata(track);
-    m_parser.parse("%genre% - %artist%");
+    m_parser.parse(u"%genre% - %artist%"_s);
     EXPECT_EQ("Pop, Rock - Me, You", m_parser.evaluate());
 
-    m_parser.parse("%<genre>% - %<artist>%");
+    m_parser.parse(u"%<genre>% - %<artist>%"_s);
     EXPECT_EQ("Pop - Me\037Rock - Me\037Pop - You\037Rock - You", m_parser.evaluate());
 
-    m_parser.parse("[%disc% - %track%]");
+    m_parser.parse(u"[%disc% - %track%]"_s);
     EXPECT_EQ("", m_parser.evaluate());
 }
 } // namespace Fy::Testing

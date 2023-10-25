@@ -41,11 +41,11 @@ class FYCORE_EXPORT CoverProvider : public QObject
     Q_OBJECT
 
 public:
-    CoverProvider(QObject* parent = nullptr);
-    virtual ~CoverProvider();
+    explicit CoverProvider(QObject* parent = nullptr);
+    ~CoverProvider() override;
 
-    QPixmap trackCover(const Core::Track& track, bool saveToDisk = false) const;
-    QPixmap trackCover(const Core::Track& track, const QSize& size, bool saveToDisk = false) const;
+    [[nodiscard]] QPixmap trackCover(const Core::Track& track, bool saveToDisk = false) const;
+    [[nodiscard]] QPixmap trackCover(const Core::Track& track, const QSize& size, bool saveToDisk = false) const;
 
     void clearCache();
 

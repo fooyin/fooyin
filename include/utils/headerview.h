@@ -30,7 +30,7 @@ class FYUTILS_EXPORT HeaderView : public QHeaderView
     Q_OBJECT
 
 public:
-    HeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
+    explicit HeaderView(Qt::Orientation orientation, QWidget* parent = nullptr);
 
 signals:
     void leftClicked(int section, QPoint pos);
@@ -38,4 +38,4 @@ signals:
 protected:
     void mousePressEvent(QMouseEvent* event);
 };
-}
+} // namespace Fy::Utils

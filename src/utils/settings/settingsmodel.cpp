@@ -68,7 +68,6 @@ QVariant SettingsModel::data(const QModelIndex& index, int role) const
         default:
             return {};
     }
-    return {};
 }
 
 void SettingsModel::setPages(const PageList& pages)
@@ -126,10 +125,10 @@ std::optional<SettingsCategory> SettingsModel::categoryForPage(const Id& page) c
     return {};
 }
 
-QModelIndex SettingsModel::indexForCategory(const Id& id) const
+QModelIndex SettingsModel::indexForCategory(const Id& categoryId) const
 {
     for(const auto& [_, category] : m_items) {
-        if(category.data()->id == id) {
+        if(category.data()->id == categoryId) {
             return createIndex(category.row(), 0, &category);
         }
     }

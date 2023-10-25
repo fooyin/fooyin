@@ -28,11 +28,13 @@ extern "C"
 
 #include <QDebug>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Core::Engine {
 void checkError(int error, const QString& message)
 {
     if(error < 0) {
-        qWarning() << QString{"[%1]: "}.arg(snd_strerror(error)).arg(message);
+        qWarning() << "[ " + QString{snd_strerror(error)} + "]: " + message;
     }
 }
 
@@ -56,7 +58,7 @@ bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwPa
 
     if(!isSupported) {
         qInfo() << "Format not supported: " << snd_pcm_format_name(requestedFormat);
-        qInfo() << "Supported Formats: " << supportedFormats.join(", ");
+        qInfo() << "Supported Formats: " << supportedFormats.join(", "_L1);
     }
 
     return isSupported;
@@ -114,7 +116,7 @@ struct AlsaOutput::Private
     snd_pcm_uframes_t periodSize{0};
     bool pausable{true};
     int dir{0};
-    QString device{"default"};
+    QString device{u"default"_s};
     bool deviceLost;
 
     void reset()
@@ -153,7 +155,7 @@ struct AlsaOutput::Private
                 break;
             }
 
-            qDebug() << QString{"(%1) Attempting to recover from state '%2'..."}.arg(n + 1).arg(
+            qDebug() << QString{u"(%1) Attempting to recover from state '%2'..."_s}.arg(n + 1).arg(
                 snd_pcm_state_name(pcmst));
 
             switch(pcmst) {
@@ -161,7 +163,7 @@ struct AlsaOutput::Private
                 case SND_PCM_STATE_DRAINING:
                 case SND_PCM_STATE_XRUN:
                     err = snd_pcm_prepare(pcmHandle.get());
-                    checkError(err, "ALSA prepare error");
+                    checkError(err, u"ALSA prepare error"_s);
                     continue;
                 // Hardware suspend
                 case SND_PCM_STATE_SUSPENDED:
@@ -175,7 +177,7 @@ struct AlsaOutput::Private
                         qWarning() << "ALSA resume not supported. Trying prepare...";
                         err = snd_pcm_prepare(pcmHandle.get());
                     }
-                    checkError(err, QString{"ALSA could not be resumed: %1"}.arg(snd_strerror(err)));
+                    checkError(err, "ALSA could not be resumed: " + QString{snd_strerror(err)});
                     continue;
                 // Device lost
                 case SND_PCM_STATE_DISCONNECTED:
@@ -195,13 +197,13 @@ struct AlsaOutput::Private
         }
 
         if(state) {
-            auto delay         = snd_pcm_status_get_delay(st);
-            state->delay       = std::max(delay, 0L) / static_cast<double>(outputContext.sampleRate);
-            state->freeSamples = snd_pcm_status_get_avail(st);
+            auto delay   = snd_pcm_status_get_delay(st);
+            state->delay = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(outputContext.sampleRate);
+            state->freeSamples = static_cast<int>(snd_pcm_status_get_avail(st));
             state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(bufferSize));
-            // Align to period size.
-            state->freeSamples   = state->freeSamples / periodSize * periodSize;
-            state->queuedSamples = bufferSize - state->freeSamples;
+            // Align to period size
+            state->freeSamples   = static_cast<int>(state->freeSamples / periodSize * periodSize);
+            state->queuedSamples = static_cast<int>(bufferSize) - state->freeSamples;
         }
 
         return recovered;
@@ -259,7 +261,7 @@ bool AlsaOutput::init(const OutputContext& oc)
         return handleInitError();
     }
 
-    snd_pcm_format_t format = findAlsaFormat(oc.format);
+    const snd_pcm_format_t format = findAlsaFormat(oc.format);
     if(format < 0) {
         qWarning() << "Format not supported by ALSA";
         return handleInitError();
@@ -380,10 +382,10 @@ void AlsaOutput::reset()
     }
 
     int err = snd_pcm_drop(p->pcmHandle.get());
-    checkError(err, "ALSA drop error");
+    checkError(err, u"ALSA drop error"_s);
 
     err = snd_pcm_prepare(p->pcmHandle.get());
-    checkError(err, "ALSA prepare error");
+    checkError(err, u"ALSA prepare error"_s);
 
     p->recoverState();
 }
@@ -415,7 +417,7 @@ bool AlsaOutput::canHandleVolume() const
 
 int AlsaOutput::bufferSize() const
 {
-    return p->bufferSize;
+    return static_cast<int>(p->bufferSize);
 }
 
 OutputState AlsaOutput::currentState()
@@ -475,13 +477,13 @@ int AlsaOutput::write(const uint8_t* data, int samples)
     snd_pcm_sframes_t err{0};
     err = snd_pcm_writei(p->pcmHandle.get(), data, samples);
     if(err < 0) {
-        qWarning() << "ALSA write error: " << snd_strerror(err);
+        qWarning() << "ALSA write error";
         return 0;
     }
     if(err != samples) {
-        qWarning() << QString{"Unexpected partial write (%1 of %2 frames)"}.arg(static_cast<int>(err)).arg(samples);
+        qWarning() << QString{u"Unexpected partial write (%1 of %2 frames)"_s}.arg(static_cast<int>(err)).arg(samples);
     }
-    return err;
+    return static_cast<int>(err);
 }
 
 void AlsaOutput::setPaused(bool pause)
@@ -496,11 +498,11 @@ void AlsaOutput::setPaused(bool pause)
     const auto state = snd_pcm_state(p->pcmHandle.get());
     if(state == SND_PCM_STATE_RUNNING && pause) {
         err = snd_pcm_pause(p->pcmHandle.get(), 1);
-        checkError(err, "Couldn't pause ALSA device");
+        checkError(err, u"Couldn't pause ALSA device"_s);
     }
     else if(state == SND_PCM_STATE_PAUSED && !pause) {
         err = snd_pcm_pause(p->pcmHandle.get(), 0);
-        checkError(err, "Couldn't unpause ALSA device");
+        checkError(err, u"Couldn't unpause ALSA device"_s);
     }
 }
 

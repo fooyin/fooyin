@@ -31,6 +31,8 @@
 
 #include <QThread>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Core::Engine {
 struct CurrentOutput
 {
@@ -40,7 +42,7 @@ struct CurrentOutput
     std::unique_ptr<AudioOutput> prevOutput;
 };
 
-struct EngineHandler::Private : QObject
+struct EngineHandler::Private
 {
     EngineHandler* self;
 
@@ -64,8 +66,6 @@ struct EngineHandler::Private : QObject
 
         QMetaObject::invokeMethod(engine, &AudioEngine::startup);
 
-        QObject::connect(playerManager, &Player::PlayerManager::playStateChanged, this,
-                         &EngineHandler::Private::playStateChanged);
         QObject::connect(playerManager, &Player::PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
         QObject::connect(playerManager, &Player::PlayerManager::positionMoved, engine, &AudioEngine::seek);
         QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
@@ -84,12 +84,18 @@ struct EngineHandler::Private : QObject
             engine,
             [this, state]() {
                 switch(state) {
-                    case(Player::PlayState::Playing):
-                        return engine->play();
-                    case(Player::PlayState::Paused):
-                        return engine->pause();
-                    case(Player::PlayState::Stopped):
-                        return engine->stop();
+                    case(Player::PlayState::Playing): {
+                        engine->play();
+                        break;
+                    }
+                    case(Player::PlayState::Paused): {
+                        engine->pause();
+                        break;
+                    }
+                    case(Player::PlayState::Stopped): {
+                        engine->stop();
+                        break;
+                    }
                 }
             },
             Qt::QueuedConnection);
@@ -97,14 +103,14 @@ struct EngineHandler::Private : QObject
 
     void changeOutput(const QString& output)
     {
-        const QStringList newOutput = output.split("|");
+        const QStringList newOutput = output.split(u"|"_s);
 
         if(newOutput.empty() || newOutput.size() < 2) {
             return;
         }
 
-        const QString newName = newOutput[0];
-        const QString device  = newOutput[1];
+        const QString& newName = newOutput.at(0);
+        const QString& device  = newOutput.at(1);
 
         if(outputs.empty()) {
             qWarning() << "No Outputs have been registered";
@@ -136,11 +142,7 @@ struct EngineHandler::Private : QObject
     void updateVolume(double volume)
     {
         QMetaObject::invokeMethod(
-            engine,
-            [this, volume]() {
-                engine->setVolume(volume);
-            },
-            Qt::QueuedConnection);
+            engine, [this, volume]() { engine->setVolume(volume); }, Qt::QueuedConnection);
     }
 };
 
@@ -148,8 +150,11 @@ EngineHandler::EngineHandler(Player::PlayerManager* playerManager, Utils::Settin
     : QObject{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
-    p->settings->subscribe<Settings::AudioOutput>(p.get(), &EngineHandler::Private::changeOutput);
-    p->settings->subscribe<Settings::OutputVolume>(p.get(), &EngineHandler::Private::updateVolume);
+    QObject::connect(playerManager, &Player::PlayerManager::playStateChanged, this,
+                     [this](Player::PlayState state) { p->playStateChanged(state); });
+
+    p->settings->subscribe<Settings::AudioOutput>(this, [this](const QString& output) { p->changeOutput(output); });
+    p->settings->subscribe<Settings::OutputVolume>(this, [this](double volume) { p->updateVolume(volume); });
 }
 
 EngineHandler::~EngineHandler() = default;
@@ -199,9 +204,9 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
 void EngineHandler::addOutput(const AudioOutputBuilder& output)
 {
     if(p->outputs.contains(output.name)) {
-        qDebug() << QString{"Output '%1' already registered"}.arg(output.name);
+        qDebug() << "Output '" + output.name + "' already registered";
         return;
     }
-    p->outputs.emplace(output.name, std::move(output.creator));
+    p->outputs.emplace(output.name, output.creator);
 }
 } // namespace Fy::Core::Engine

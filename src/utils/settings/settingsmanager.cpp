@@ -23,12 +23,14 @@
 
 #include <QSettings>
 
-namespace Fy::Utils {
-QString getKeyString(const SettingsEntry& setting)
+namespace {
+QString getKeyString(const Fy::Utils::SettingsEntry& setting)
 {
-    return setting.group() + "/" + setting.name();
+    return setting.group() + QStringLiteral("/") + setting.name();
 }
+} // namespace
 
+namespace Fy::Utils {
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
     , m_settingsFile{settingsPath, QSettings::IniFormat, this}

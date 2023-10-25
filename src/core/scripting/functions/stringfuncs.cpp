@@ -19,6 +19,8 @@
 
 #include "stringfuncs.h"
 
+#include <utils/utils.h>
+
 namespace Fy::Core::Scripting {
 QString num(const QStringList& vec)
 {
@@ -30,7 +32,7 @@ QString num(const QStringList& vec)
     if(count == 1) {
         return vec[0];
     }
-    return QStringLiteral("%1").arg(vec[0].toInt(), vec[1].toInt(), 10, QLatin1Char('0'));
+    return Utils::addLeadingZero(vec[0].toInt(), vec[1].toInt());
 }
 
 QString replace(const QStringList& vec)

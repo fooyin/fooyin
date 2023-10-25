@@ -25,6 +25,8 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Core::Settings {
 CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
@@ -32,14 +34,14 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::Version>(VERSION);
     m_settings->createSetting<Settings::DatabaseVersion>("0.1.0");
     m_settings->createTempSetting<Settings::FirstRun>(true);
-    m_settings->createSetting<Settings::PlayMode>(0, "Player");
-    m_settings->createSetting<Settings::AutoRefresh>(false, "Library");
-    m_settings->createSetting<Settings::LibrarySorting>(QByteArray{}, "Library");
+    m_settings->createSetting<Settings::PlayMode>(0, u"Player"_s);
+    m_settings->createSetting<Settings::AutoRefresh>(false, u"Library"_s);
+    m_settings->createSetting<Settings::LibrarySorting>(QByteArray{}, u"Library"_s);
     m_settings->createSetting<Settings::LibrarySortScript>(
-        "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", "Library");
-    m_settings->createSetting<Settings::ActivePlaylistId>(0, "Playlist");
-    m_settings->createSetting<Settings::AudioOutput>("ALSA|default", "Engine");
-    m_settings->createSetting<Settings::OutputVolume>(1.0, "Engine");
+        "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", u"Library"_s);
+    m_settings->createSetting<Settings::ActivePlaylistId>(0, u"Playlist"_s);
+    m_settings->createSetting<Settings::AudioOutput>("ALSA|default", u"Engine"_s);
+    m_settings->createSetting<Settings::OutputVolume>(1.0, u"Engine"_s);
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 

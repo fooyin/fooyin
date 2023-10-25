@@ -32,7 +32,7 @@ MenuHeader::MenuHeader(QString text, QWidget* parent)
 {
     const int textMinWidth = fontMetrics().boundingRect(m_text).width();
     m_textHeight           = fontMetrics().height();
-    m_margin               = fontMetrics().horizontalAdvance("...");
+    m_margin               = fontMetrics().horizontalAdvance(QStringLiteral("..."));
     m_minWidth             = 2 * m_margin + textMinWidth;
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     updateGeometry();

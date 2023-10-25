@@ -44,8 +44,8 @@ class Codec
 public:
     Codec(CodecContextPtr context, AVStream* stream);
 
-    Codec(Codec&& other) noexcept ;
-    Codec& operator=(Codec&& other);
+    Codec(Codec&& other) noexcept;
+    Codec& operator=(Codec&& other) noexcept;
 
     Codec(const Codec& other)            = delete;
     Codec& operator=(const Codec& other) = delete;

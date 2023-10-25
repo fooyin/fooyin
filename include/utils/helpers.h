@@ -49,9 +49,7 @@ Ctnr intersection(Ctnr& v1, const Ctnr& v2)
     Ctnr result;
     std::unordered_set<T, Hash> first{v1.cbegin(), v1.cend()};
 
-    auto commonElements = v2 | std::views::filter([&first](const auto& elem) {
-                                    return first.contains(elem);
-                                });
+    auto commonElements = v2 | std::views::filter([&first](const auto& elem) { return first.contains(elem); });
 
     for(const auto& entry : commonElements) {
         result.push_back(entry);

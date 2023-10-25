@@ -32,7 +32,6 @@ public:
 
 signals:
     void middleMouseClicked();
-    void doubleClicked();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

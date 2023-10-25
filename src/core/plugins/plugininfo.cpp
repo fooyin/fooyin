@@ -25,8 +25,8 @@
 #include <utility>
 
 namespace Fy::Plugins {
-PluginInfo::PluginInfo(const QString& name, const QString& filename, const QJsonObject& allMetadata)
-    : m_name{name}
+PluginInfo::PluginInfo(QString name, const QString& filename, const QJsonObject& allMetadata)
+    : m_name{std::move(name)}
     , m_filename{filename}
     , m_metadata{allMetadata.value("MetaData").toObject()}
     , m_version{m_metadata.value("Version").toString()}
@@ -53,7 +53,7 @@ void PluginInfo::load()
     }
 
     if(!m_loader.load()) {
-        m_error = QString("Plugin %1 couldn't be loaded (%2)").arg(m_name, m_error);
+        m_error = "Plugin " + m_name + " couldn't be loaded: " + m_error;
         return;
     }
 
@@ -61,7 +61,7 @@ void PluginInfo::load()
     m_plugin = qobject_cast<Plugin*>(m_root);
 
     if(!m_plugin) {
-        m_error = QString("Plugin %1 couldn't be loaded").arg(m_name);
+        m_error = "Plugin " + m_name + " couldn't be loaded";
         return;
     }
 

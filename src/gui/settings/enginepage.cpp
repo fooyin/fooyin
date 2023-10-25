@@ -30,6 +30,8 @@
 #include <QLabel>
 #include <QListView>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Gui::Settings {
 class EnginePageWidget : public Utils::SettingsPageWidget
 {
@@ -59,10 +61,10 @@ EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engin
     setupOutputs();
     setupDevices(m_outputBox->currentText());
 
-    auto* outputLabel = new QLabel("Output:", this);
-    auto* deviceLabel = new QLabel("Device:", this);
+    auto* outputLabel = new QLabel(tr("Output:"), this);
+    auto* deviceLabel = new QLabel(tr("Device:"), this);
 
-    auto mainLayout = new QGridLayout(this);
+    auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(outputLabel, 0, 0);
     mainLayout->addWidget(m_outputBox, 0, 1);
     mainLayout->addWidget(deviceLabel, 1, 0);
@@ -76,7 +78,7 @@ EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engin
 
 void EnginePageWidget::apply()
 {
-    const auto output = QString{"%1|%2"}.arg(m_outputBox->currentText(), m_deviceBox->currentData().toString());
+    const QString output = m_outputBox->currentText() + u"|"_s + m_deviceBox->currentData().toString();
     m_settings->set<Core::Settings::AudioOutput>(output);
 }
 
@@ -89,9 +91,9 @@ void EnginePageWidget::reset()
 
 void EnginePageWidget::setupOutputs()
 {
-    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split("|");
+    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split(u"|"_s);
 
-    const QString outName = !currentOutput.empty() ? currentOutput.at(0) : "";
+    const QString outName = !currentOutput.empty() ? currentOutput.at(0) : u""_s;
     const auto outputs    = m_engineHandler->getAllOutputs();
 
     m_outputBox->clear();
@@ -116,13 +118,13 @@ void EnginePageWidget::setupDevices(const QString& output)
 
     m_deviceBox->clear();
 
-    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split("|");
+    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split(u"|"_s);
 
     if(currentOutput.empty()) {
         return;
     }
 
-    const QString currentDevice = currentOutput.size() > 1 ? currentOutput.at(1) : "";
+    const QString currentDevice = currentOutput.size() > 1 ? currentOutput.at(1) : u""_s;
     const auto outputDevices    = m_engineHandler->getOutputDevices(output);
 
     for(const auto& [name, desc] : outputDevices) {
@@ -147,8 +149,6 @@ EnginePage::EnginePage(Utils::SettingsManager* settings, Core::Engine::EngineHan
     setId(Constants::Page::Engine);
     setName(tr("Engine"));
     setCategory({tr("Engine")});
-    setWidgetCreator([settings, engineHandler] {
-        return new EnginePageWidget(settings, engineHandler);
-    });
+    setWidgetCreator([settings, engineHandler] { return new EnginePageWidget(settings, engineHandler); });
 }
 } // namespace Fy::Gui::Settings

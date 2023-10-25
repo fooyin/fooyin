@@ -26,6 +26,8 @@ class QLineEdit;
 namespace Fy::Gui::Settings {
 class PresetInput : public QWidget
 {
+    Q_OBJECT
+
 public:
     enum StateFlag
     {

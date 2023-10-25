@@ -71,8 +71,8 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(Core::Library::SortingRegistr
     auto* buttonsLayout = new QVBoxLayout();
     buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    auto* addButton    = new QPushButton("Add", this);
-    auto* removeButton = new QPushButton("Remove", this);
+    auto* addButton    = new QPushButton(tr("Add"), this);
+    auto* removeButton = new QPushButton(tr("Remove"), this);
 
     buttonsLayout->addWidget(addButton);
     buttonsLayout->addWidget(removeButton);
@@ -117,9 +117,7 @@ LibrarySortingPage::LibrarySortingPage(Core::Library::SortingRegistry* sortRegis
 {
     setId(Constants::Page::LibrarySorting);
     setName(tr("Sorting"));
-    setCategory({"Library", "Sorting"});
-    setWidgetCreator([sortRegistry, settings] {
-        return new LibrarySortingPageWidget(sortRegistry, settings);
-    });
+    setCategory({tr("Library"), tr("Sorting")});
+    setWidgetCreator([sortRegistry, settings] { return new LibrarySortingPageWidget(sortRegistry, settings); });
 }
 } // namespace Fy::Gui::Settings

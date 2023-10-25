@@ -19,13 +19,17 @@
 
 #include <utils/hovermenu.h>
 
+#include <chrono>
+
+using namespace std::chrono_literals;
+
 namespace Fy::Utils {
 HoverMenu::HoverMenu(QWidget* parent)
-    : QDialog(parent)
+    : QDialog{parent}
 {
     setWindowFlags(Qt::CustomizeWindowHint | Qt::ToolTip);
 
-    connect(&m_timer, &QTimer::timeout, this, &HoverMenu::closeMenu);
+    QObject::connect(&m_timer, &QTimer::timeout, this, &HoverMenu::closeMenu);
 }
 
 void HoverMenu::leaveEvent(QEvent* event)
@@ -37,7 +41,7 @@ void HoverMenu::leaveEvent(QEvent* event)
 void HoverMenu::showEvent(QShowEvent* event)
 {
     // Close after 1 second
-    m_timer.start(1000);
+    m_timer.start(1s);
     QDialog::showEvent(event);
 }
 
@@ -45,7 +49,8 @@ void HoverMenu::closeMenu()
 {
     if(this->underMouse() || parentWidget()->underMouse()) {
         // Close as soon as mouse leaves
-        return m_timer.start();
+        m_timer.start();
+        return;
     }
     m_timer.stop();
     accept();

@@ -79,16 +79,15 @@ struct Application::Private
 
     void loadPlugins()
     {
-        const QString pluginsPath = PLUGIN_DIR;
+        const QString pluginsPath = QStringLiteral(PLUGIN_DIR);
         pluginManager.findPlugins(pluginsPath);
         pluginManager.loadPlugins();
 
-        pluginManager.initialisePlugins<Core::CorePlugin>([this](Core::CorePlugin* plugin) {
-            plugin->initialise(corePluginContext);
-        });
+        pluginManager.initialisePlugins<Core::CorePlugin>(
+            [this](Core::CorePlugin* plugin) { plugin->initialise(corePluginContext); });
 
         pluginManager.initialisePlugins<Engine::OutputPlugin>([this](Engine::OutputPlugin* plugin) {
-            Engine::AudioOutputBuilder builder = plugin->registerOutput();
+            const Engine::AudioOutputBuilder builder = plugin->registerOutput();
             engine.addOutput(builder);
         });
     }

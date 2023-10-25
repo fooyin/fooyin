@@ -28,25 +28,25 @@ template <typename QueueItem>
 class ThreadQueue
 {
 public:
-    ThreadQueue(bool blocking = true);
+    explicit ThreadQueue(bool blocking = true);
 
-    ThreadQueue(ThreadQueue&& other);
+    ThreadQueue(ThreadQueue&& other) noexcept;
     ThreadQueue& operator=(ThreadQueue const& other);
-    ThreadQueue& operator=(ThreadQueue&& other);
+    ThreadQueue& operator=(ThreadQueue&& other) noexcept;
 
     void clear();
 
     bool empty() const;
     std::size_t size() const;
 
-    void enque(QueueItem item);
+    void enqueue(QueueItem item);
     QueueItem& front();
     QueueItem dequeue();
 
 private:
     mutable std::mutex m_mtx;
     std::condition_variable m_cv;
-    std::deque<QueueItem> m_queue;
+    std::deque<QueueItem> m_queue{};
     bool m_blocking;
 };
 
@@ -56,7 +56,7 @@ ThreadQueue<QueueItem>::ThreadQueue(bool blocking)
 { }
 
 template <typename QueueItem>
-ThreadQueue<QueueItem>::ThreadQueue(ThreadQueue&& other)
+ThreadQueue<QueueItem>::ThreadQueue(ThreadQueue&& other) noexcept
 {
     std::lock_guard lock(other.m_mtx);
     m_queue = std::move(other.m_queue);
@@ -81,7 +81,7 @@ void ThreadQueue<QueueItem>::clear()
 }
 
 template <typename QueueItem>
-ThreadQueue<QueueItem>& ThreadQueue<QueueItem>::ThreadQueue::operator=(ThreadQueue&& other)
+ThreadQueue<QueueItem>& ThreadQueue<QueueItem>::ThreadQueue::operator=(ThreadQueue&& other) noexcept
 {
     std::lock_guard lock(m_mtx);
     std::lock_guard otherLock(other.m_mtx);
@@ -106,7 +106,7 @@ std::size_t ThreadQueue<QueueItem>::ThreadQueue::size() const
 }
 
 template <typename QueueItem>
-void ThreadQueue<QueueItem>::ThreadQueue::enque(QueueItem item)
+void ThreadQueue<QueueItem>::ThreadQueue::enqueue(QueueItem item)
 {
     {
         std::lock_guard lock(m_mtx);

@@ -46,7 +46,7 @@ public:
     };
     Q_ENUM(Status)
 
-    PluginInfo(const QString& name, const QString& filename, const QJsonObject& metadata);
+    PluginInfo(QString name, const QString& filename, const QJsonObject& metadata);
 
     void load();
     void unload();

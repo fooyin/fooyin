@@ -27,17 +27,21 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QRandomGenerator>
-#include <QStringBuilder>
 #include <QVBoxLayout>
 #include <QWidget>
 
 #include <ranges>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Utils {
 namespace File {
 QString cleanPath(const QString& path)
 {
-    return (path.trimmed().isEmpty()) ? QString("") : QDir::cleanPath(path);
+    if(path.trimmed().isEmpty()) {
+        return {};
+    }
+    return QDir::cleanPath(path);
 }
 
 bool isSamePath(const QString& filename1, const QString& filename2)
@@ -70,13 +74,13 @@ bool isSubdir(const QString& dir, const QString& parentDir)
             return true;
         }
 
-        d1 = QDir(d1String);
+        d1.setPath(d1String);
     }
 
     const QDir d2(cleanedParentDir);
 
     while(!d1.isRoot()) {
-        d1 = QDir(getParentDirectory(d1.absolutePath()));
+        d1.setPath(getParentDirectory(d1.absolutePath()));
         if(isSamePath(d1.absolutePath(), d2.absolutePath())) {
             return true;
         }
@@ -135,16 +139,17 @@ QString msToString(uint64_t ms)
     QString formattedTime;
 
     if(weeks > 0) {
-        formattedTime = formattedTime % QString::number(weeks) % "wk ";
+        formattedTime = formattedTime + QString::number(weeks) + u"wk "_s;
     }
     if(days > 0) {
-        formattedTime = formattedTime % QString::number(days) % "d ";
+        formattedTime = formattedTime + QString::number(days) + u"d "_s;
     }
     if(hours > 0) {
-        formattedTime = formattedTime % QString{"%1:"}.arg(hours, 2, 10, QChar('0'));
+        formattedTime = formattedTime + addLeadingZero(static_cast<int>(hours), 2) + u":"_s;
     }
 
-    formattedTime = formattedTime % QString{"%1:%2"}.arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0'));
+    formattedTime = formattedTime + addLeadingZero(static_cast<int>(minutes), 2) + u":"_s
+                  + addLeadingZero(static_cast<int>(seconds), 2);
     return formattedTime;
 }
 
@@ -153,26 +158,26 @@ QString secsToString(uint64_t secs)
     const int seconds = static_cast<int>(secs);
     const QTime t(0, 0, 0);
     auto time = t.addSecs(seconds);
-    return time.toString(time.hour() == 0 ? "mm:ss" : "hh:mm:ss");
+    return time.toString(time.hour() == 0 ? u"mm:ss"_s : u"hh:mm:ss"_s);
 }
 
 uint64_t currentDateToInt()
 {
-    const auto str = QDateTime::currentDateTimeUtc().toString("yyyyMMddHHmmss");
+    const auto str = QDateTime::currentDateTimeUtc().toString(u"yyyyMMddHHmmss"_s);
     return static_cast<uint64_t>(str.toULongLong());
 }
 
 QString formatTimeMs(uint64_t time)
 {
     const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(time));
-    QString formattedDateTime = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+    QString formattedDateTime = dateTime.toString(u"yyyy-MM-dd HH:mm:ss"_s);
     return formattedDateTime;
 }
 
 QString formatFileSize(uint64_t bytes)
 {
-    const QStringList units = {"bytes", "KB", "MB", "GB", "TB"};
-    auto size               = static_cast<double>(bytes);
+    static const QStringList units = {"bytes", "KB", "MB", "GB", "TB"};
+    auto size                      = static_cast<double>(bytes);
     int unitIndex{0};
 
     while(size >= 1024 && unitIndex < units.size() - 1) {
@@ -182,16 +187,21 @@ QString formatFileSize(uint64_t bytes)
 
     const QString sizeString  = QString::number(size, 'f', 1);
     const QString& unitString = units[unitIndex];
-    QString formattedSize     = sizeString % " " % unitString;
+    QString formattedSize     = sizeString + " " + unitString;
 
     if(unitIndex == 0) {
         return formattedSize;
     }
 
     const QString bytesString = QString::number(bytes);
-    formattedSize             = formattedSize % " (" % bytesString % " bytes)";
+    formattedSize             = formattedSize + " (" + bytesString + " bytes)";
 
     return formattedSize;
+}
+
+QString addLeadingZero(int number, int leadingCount)
+{
+    return QString{u"%1"_s}.arg(number, leadingCount, 10, QChar('0'));
 }
 
 void setMinimumWidth(QLabel* label, const QString& text)
@@ -213,7 +223,7 @@ QString capitalise(const QString& s)
         part.replace(0, 1, part[0].toUpper());
     }
 
-    return parts.join(" ");
+    return parts.join(" "_L1);
 }
 
 QPixmap scalePixmap(QPixmap& image, const QSize& size)
@@ -246,27 +256,25 @@ void showMessageBox(const QString& text, const QString& infoText)
 void cloneMenu(QMenu* originalMenu, QMenu* clonedMenu)
 {
     auto originalActions = originalMenu->actions();
-    auto filteredActions = originalActions | std::views::filter([](QAction* action) {
-                               return action->isVisible();
-                           });
+    auto filteredActions = originalActions | std::views::filter([](QAction* action) { return action->isVisible(); });
 
-    auto cloneAction = [](QAction* originalAction, QMenu* menu) -> QAction* {
+    const auto cloneAction = [](QAction* originalAction, QMenu* menu) -> QAction* {
         if(QMenu* originalSubMenu = originalAction->menu()) {
             QMenu* clonedSubMenu = menu->addMenu(originalSubMenu->title());
             cloneMenu(originalSubMenu, clonedSubMenu);
             return clonedSubMenu->menuAction();
         }
-        else if(originalAction->isSeparator()) {
+
+        if(originalAction->isSeparator()) {
             return menu->addSeparator();
         }
-        else {
-            QAction* clonedAction = new QAction(originalAction->icon(), originalAction->text(), menu);
-            clonedAction->setShortcut(originalAction->shortcut());
-            clonedAction->setToolTip(originalAction->toolTip());
-            clonedAction->setEnabled(originalAction->isEnabled());
-            QObject::connect(clonedAction, &QAction::triggered, originalAction, &QAction::trigger);
-            return clonedAction;
-        }
+
+        auto* clonedAction = new QAction(originalAction->icon(), originalAction->text(), menu);
+        clonedAction->setShortcut(originalAction->shortcut());
+        clonedAction->setToolTip(originalAction->toolTip());
+        clonedAction->setEnabled(originalAction->isEnabled());
+        QObject::connect(clonedAction, &QAction::triggered, originalAction, &QAction::trigger);
+        return clonedAction;
     };
 
     for(QAction* originalAction : filteredActions) {

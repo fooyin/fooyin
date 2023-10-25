@@ -46,10 +46,11 @@ FYUTILS_EXPORT int randomNumber(int min, int max);
 FYUTILS_EXPORT QString msToString(uint64_t ms);
 FYUTILS_EXPORT QString secsToString(uint64_t secs);
 FYUTILS_EXPORT QString formatFileSize(uint64_t bytes);
-FYUTILS_EXPORT void setMinimumWidth(QLabel* label, const QString& text);
+FYUTILS_EXPORT QString addLeadingZero(int number, int leadingCount);
 
 FYUTILS_EXPORT uint64_t currentDateToInt();
 FYUTILS_EXPORT QString formatTimeMs(uint64_t time);
+FYUTILS_EXPORT QString capitalise(const QString& s);
 FYUTILS_EXPORT QString capitalise(const QString& s);
 
 FYUTILS_EXPORT QPixmap scalePixmap(QPixmap& image, const QSize& size);

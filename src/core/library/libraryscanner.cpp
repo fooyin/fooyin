@@ -176,7 +176,7 @@ bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
 
         if(lastModifiedTime.isValid()) {
             lastModified = static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch());
-        };
+        }
 
         bool fileWasRead;
 

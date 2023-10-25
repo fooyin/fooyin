@@ -41,8 +41,8 @@ PresetInput::PresetInput(QWidget* parent)
 
     layout->addWidget(m_editBlock);
 
-    auto* blockFontButton   = new QAction(QIcon::fromTheme(Constants::Icons::Font), "", this);
-    auto* blockColourButton = new QAction(QIcon::fromTheme(Constants::Icons::TextColour), "", this);
+    auto* blockFontButton   = new QAction(QIcon::fromTheme(Constants::Icons::Font), QStringLiteral(""), this);
+    auto* blockColourButton = new QAction(QIcon::fromTheme(Constants::Icons::TextColour), QStringLiteral(""), this);
 
     QObject::connect(blockFontButton, &QAction::triggered, this, &PresetInput::showFontDialog);
     QObject::connect(blockColourButton, &QAction::triggered, this, &PresetInput::showColourDialog);
@@ -132,7 +132,7 @@ void PresetInput::showContextMenu(const QPoint& pos)
 void PresetInput::showFontDialog()
 {
     bool ok;
-    const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, "Select Font");
+    const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, tr("Select Font"));
     if(ok && chosenFont != m_font) {
         m_font = chosenFont;
         m_state |= FontChanged;
@@ -141,7 +141,8 @@ void PresetInput::showFontDialog()
 
 void PresetInput::showColourDialog()
 {
-    const QColor chosenColour = QColorDialog::getColor(m_colour, this, "Select Colour", QColorDialog::ShowAlphaChannel);
+    const QColor chosenColour
+        = QColorDialog::getColor(m_colour, this, tr("Select Colour"), QColorDialog::ShowAlphaChannel);
     if(chosenColour.isValid() && chosenColour != m_colour) {
         m_colour = chosenColour;
         m_state |= ColourChanged;

@@ -33,6 +33,8 @@
 #include <QMenu>
 #include <QSplitter>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace {
 Fy::Utils::ActionContainer* createNewMenu(Fy::Utils::ActionManager* actionManager, Fy::Gui::Widgets::FyWidget* parent,
                                           const QString& title)
@@ -64,7 +66,7 @@ protected:
     void paintEvent(QPaintEvent* event) override
     {
         if(m_showHandle) {
-            return QSplitterHandle::paintEvent(event);
+            QSplitterHandle::paintEvent(event);
         }
     };
 
@@ -108,7 +110,7 @@ struct SplitterWidget::Private
 
     Splitter* splitter;
     QList<FyWidget*> children;
-    Dummy* dummy;
+    Dummy* dummy{nullptr};
 
     int limit{0};
     bool showDummy{false};
@@ -122,7 +124,6 @@ struct SplitterWidget::Private
         , actionManager{actionManager}
         , widgetProvider{widgetProvider}
         , splitter{new Splitter(Qt::Vertical, settings, self)}
-        , dummy{nullptr}
     { }
 
     void checkShowDummy()
@@ -140,7 +141,10 @@ struct SplitterWidget::Private
     int findIndex(FyWidget* widgetToFind) const
     {
         const auto it = std::ranges::find(std::as_const(children), widgetToFind);
-        return (it != children.end()) ? std::distance(children.cbegin(), it) : -1;
+        if(it != children.end()) {
+            return static_cast<int>(std::distance(children.cbegin(), it));
+        }
+        return -1;
     }
 
     void replaceWidget(int index, FyWidget* widget)
@@ -215,13 +219,12 @@ int SplitterWidget::childCount()
     return static_cast<int>(p->children.size());
 }
 
-void SplitterWidget::addWidget(FyWidget* newWidget)
+void SplitterWidget::addWidget(FyWidget* widget)
 {
     if(p->limit > 0 && p->widgetCount >= p->limit) {
         return;
     }
 
-    auto* widget = qobject_cast<FyWidget*>(newWidget);
     if(!widget) {
         return;
     }
@@ -265,20 +268,20 @@ void SplitterWidget::removeWidget(FyWidget* widget)
 
 QString SplitterWidget::name() const
 {
-    return QString("%1 Splitter").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical");
+    return Utils::EnumHelper::toString(p->splitter->orientation()) + u" Splitter"_s;
 }
 
 QString SplitterWidget::layoutName() const
 {
-    return QString("Splitter%1").arg(orientation() == Qt::Horizontal ? "Horizontal" : "Vertical");
+    return u"Splitter"_s + Utils::EnumHelper::toString(p->splitter->orientation());
 }
 
 void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 {
-    QAction* changeSplitter = new QAction("Change Splitter", this);
-    QAction::connect(changeSplitter, &QAction::triggered, this, [this] {
+    auto* changeSplitter = new QAction(tr("Change Splitter"), this);
+    QObject::connect(changeSplitter, &QAction::triggered, this, [this] {
         setOrientation(p->splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
-        setObjectName(QString("%1 Splitter").arg(Utils::EnumHelper::toString(p->splitter->orientation())));
+        setObjectName(Utils::EnumHelper::toString(p->splitter->orientation()) + u" Splitter"_s);
     });
     menu->addAction(changeSplitter);
 
@@ -288,9 +291,7 @@ void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 
     auto* addMenu = createNewMenu(p->actionManager, this, tr("&Add"));
 
-    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) {
-        addWidget(newWidget);
-    });
+    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) { addWidget(newWidget); });
     menu->addMenu(addMenu);
 }
 
@@ -303,8 +304,8 @@ void SplitterWidget::saveLayout(QJsonArray& array)
     const QString state = QString::fromUtf8(saveState().toBase64());
 
     QJsonObject options;
-    options["State"]    = state;
-    options["Children"] = children;
+    options["State"_L1]    = state;
+    options["Children"_L1] = children;
 
     QJsonObject splitter;
     splitter[layoutName()] = options;
@@ -313,8 +314,8 @@ void SplitterWidget::saveLayout(QJsonArray& array)
 
 void SplitterWidget::loadLayout(const QJsonObject& object)
 {
-    const auto state    = QByteArray::fromBase64(object["State"].toString().toUtf8());
-    const auto children = object["Children"].toArray();
+    const auto state    = QByteArray::fromBase64(object["State"_L1].toString().toUtf8());
+    const auto children = object["Children"_L1].toArray();
 
     WidgetContainer::loadWidgets(children);
 

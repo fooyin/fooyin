@@ -77,6 +77,6 @@ ControlWidget::~ControlWidget() = default;
 
 QString ControlWidget::name() const
 {
-    return "Controls";
+    return QStringLiteral("Controls");
 }
 } // namespace Fy::Gui::Widgets

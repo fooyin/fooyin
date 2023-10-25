@@ -23,7 +23,7 @@
 
 #include <QPainter>
 
-namespace Fy::Gui::Widgets::Info {
+namespace {
 void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
     const int x       = option.rect.x();
@@ -77,9 +77,11 @@ void paintEntry(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     option.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, option.palette, true,
                                          painter->fontMetrics().elidedText(title, Qt::ElideRight, titleRect.width()));
 }
+} // namespace
 
+namespace Fy::Gui::Widgets::Info {
 ItemDelegate::ItemDelegate(QObject* parent)
-    : QStyledItemDelegate(parent)
+    : QStyledItemDelegate{parent}
 { }
 
 QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const

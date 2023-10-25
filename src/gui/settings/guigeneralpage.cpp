@@ -34,6 +34,8 @@
 #include <QRadioButton>
 #include <QVBoxLayout>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Gui::Settings {
 class GuiGeneralPageWidget : public Utils::SettingsPageWidget
 {
@@ -102,10 +104,10 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     m_splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
 
     const QString currentTheme = m_settings->value<Settings::IconTheme>();
-    if(currentTheme == "light") {
+    if(currentTheme == "light"_L1) {
         m_lightTheme->setChecked(true);
     }
-    else if(currentTheme == "dark") {
+    else if(currentTheme == "dark"_L1) {
         m_darkTheme->setChecked(true);
     }
     else {
@@ -114,29 +116,20 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     }
 
     QObject::connect(quickSetup, &QPushButton::clicked, this, &GuiGeneralPageWidget::showQuickSetup);
-    QObject::connect(importLayout, &QPushButton::clicked, this, [this]() {
-        m_layoutProvider->importLayout();
-    });
-    QObject::connect(exportLayout, &QPushButton::clicked, this, [this]() {
-        m_layoutProvider->exportLayout(m_editableLayout->currentLayout());
-    });
+    QObject::connect(importLayout, &QPushButton::clicked, this, [this]() { m_layoutProvider->importLayout(); });
+    QObject::connect(exportLayout, &QPushButton::clicked, this,
+                     [this]() { m_layoutProvider->exportLayout(m_editableLayout->currentLayout()); });
 
-    QObject::connect(m_lightTheme, &QRadioButton::clicked, this, [this]() {
-        m_customThemeName->setVisible(false);
-    });
-    QObject::connect(m_darkTheme, &QRadioButton::clicked, this, [this]() {
-        m_customThemeName->setVisible(false);
-    });
-    QObject::connect(m_customTheme, &QRadioButton::clicked, this, [this]() {
-        m_customThemeName->setVisible(true);
-    });
+    QObject::connect(m_lightTheme, &QRadioButton::clicked, this, [this]() { m_customThemeName->setVisible(false); });
+    QObject::connect(m_darkTheme, &QRadioButton::clicked, this, [this]() { m_customThemeName->setVisible(false); });
+    QObject::connect(m_customTheme, &QRadioButton::clicked, this, [this]() { m_customThemeName->setVisible(true); });
 }
 
 void GuiGeneralPageWidget::apply()
 {
     const QString theme = m_customTheme->isChecked() ? m_customThemeName->text()
-                        : m_lightTheme->isChecked()  ? "light"
-                                                     : "dark";
+                        : m_lightTheme->isChecked()  ? u"light"_s
+                                                     : u"dark"_s;
 
     if(theme != m_settings->value<Settings::IconTheme>()) {
         QIcon::setThemeName(theme);
@@ -158,7 +151,8 @@ void GuiGeneralPageWidget::showQuickSetup()
 {
     auto* quickSetup = new QuickSetupDialog(m_layoutProvider, this);
     quickSetup->setAttribute(Qt::WA_DeleteOnClose);
-    connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout, &Widgets::EditableLayout::changeLayout);
+    QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout,
+                     &Widgets::EditableLayout::changeLayout);
     quickSetup->show();
 }
 

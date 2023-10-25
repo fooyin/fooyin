@@ -33,6 +33,7 @@ OverlayWidget::OverlayWidget(bool button, QWidget* parent)
     setAutoFillBackground(true);
     m_layout->setAlignment(Qt::AlignCenter);
     m_layout->addWidget(m_text);
+
     if(button) {
         m_button = new QPushButton(this);
         QObject::connect(m_button, &QPushButton::pressed, this, &OverlayWidget::settingsClicked);

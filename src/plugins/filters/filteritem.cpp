@@ -67,9 +67,7 @@ void FilterItem::removeTrack(const Core::Track& track)
     if(m_tracks.empty()) {
         return;
     }
-    std::erase_if(m_tracks, [track](const Core::Track& child) {
-        return child.id() == track.id();
-    });
+    std::erase_if(m_tracks, [track](const Core::Track& child) { return child.id() == track.id(); });
 }
 
 bool FilterItem::isAllNode() const

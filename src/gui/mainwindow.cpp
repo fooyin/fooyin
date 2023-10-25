@@ -60,17 +60,20 @@ void MainWindow::open()
 {
     const int startup = m_settings->value<Settings::StartupBehaviour>();
     switch(startup) {
-        case(Maximised):
+        case(Maximised): {
             showMaximized();
             break;
-        case(RememberLast):
+        }
+        case(RememberLast): {
             restoreGeometry(QByteArray::fromBase64(m_settings->value<Settings::Geometry>()));
             show();
             break;
+        }
         case(Normal):
-        default:
+        default: {
             show();
             break;
+        }
     }
 }
 

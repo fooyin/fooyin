@@ -130,7 +130,7 @@ void SortingModel::processQueue()
                     emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
-                    qWarning() << QString{"Sorting %1 could not be added"}.arg(sortScript.name);
+                    qWarning() << "Sorting " + sortScript.name + " could not be added";
                 }
                 break;
             }
@@ -142,7 +142,7 @@ void SortingModel::processQueue()
                     sortScriptsToRemove.push_back(node);
                 }
                 else {
-                    qWarning() << QString{"Sorting (%1) could not be removed"}.arg(sortScript.name);
+                    qWarning() << "Sorting " + sortScript.name + " could not be removed";
                 }
                 break;
             }
@@ -153,7 +153,7 @@ void SortingModel::processQueue()
                     emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
-                    qWarning() << QString{"Sorting (%1) could not be changed"}.arg(sortScript.name);
+                    qWarning() << "Sorting " + sortScript.name + " could not be changed";
                 }
                 break;
             }
@@ -224,11 +224,11 @@ QVariant SortingModel::data(const QModelIndex& index, int role) const
             return item->sortScript().index;
         case(1): {
             const QString& name = item->sortScript().name;
-            return !name.isEmpty() ? name : "<enter name here>";
+            return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
         }
         case(2): {
             const QString& field = item->sortScript().script;
-            return !field.isEmpty() ? field : "<enter sort script here>";
+            return !field.isEmpty() ? field : QStringLiteral("<enter sort script here>");
         }
     }
 

@@ -25,8 +25,8 @@
 #include "settings/filtersfieldspage.h"
 #include "settings/filtersgeneralpage.h"
 
-#include <gui/plugins/guiplugincontext.h>
 #include <gui/layoutprovider.h>
+#include <gui/plugins/guiplugincontext.h>
 #include <gui/searchcontroller.h>
 #include <gui/widgetfactory.h>
 #include <utils/actions/actioncontainer.h>
@@ -49,10 +49,10 @@ struct FiltersPlugin::Private
     std::unique_ptr<Settings::FiltersGeneralPage> generalPage;
     std::unique_ptr<Settings::FiltersFieldsPage> fieldsPage;
 
-    void registerLayouts()
+    void registerLayouts() const
     {
         layoutProvider->registerLayout(
-            "Stone",
+            QStringLiteral("Stone"),
             R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{"SplitterHorizontal":{
                          "Children":[{"Filter":{"Type":"Album Artist","Sort":"AscendingOrder"}},"Playlist"],
                          "State":"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP////8BAAAAAQA="}},"Controls"],
@@ -60,7 +60,7 @@ struct FiltersPlugin::Private
                          wEAAAACAA=="}}]})");
 
         layoutProvider->registerLayout(
-            "Ember",
+            QStringLiteral("Ember"),
             R"({"Layout":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"Filter":{"Type":"Genre","Sort":"AscendingOrder"}},
             {"Filter":{"Type":"Album
             Artist","Sort":"AscendingOrder"}},{"Filter":{"Type":"Artist","Sort":"AscendingOrder"}},
@@ -97,12 +97,11 @@ void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
 
     p->filterManager = new FilterManager(p->library, p->trackSelection, p->settings, this);
 
-    connect(p->searchController, &Gui::Widgets::SearchController::searchChanged, p->filterManager,
-            &FilterManager::searchChanged);
+    QObject::connect(p->searchController, &Gui::Widgets::SearchController::searchChanged, p->filterManager,
+                     &FilterManager::searchChanged);
 
-    p->factory->registerClass<FilterWidget>("Filter", [this]() {
-        return p->filterManager->createFilter();
-    });
+    p->factory->registerClass<FilterWidget>(QStringLiteral("Filter"),
+                                            [this]() { return p->filterManager->createFilter(); });
 
     p->generalPage = std::make_unique<Settings::FiltersGeneralPage>(p->settings);
     p->fieldsPage  = std::make_unique<Settings::FiltersFieldsPage>(p->filterManager->fieldRegistry(), p->settings);

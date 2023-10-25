@@ -31,11 +31,15 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
+#include <chrono>
+
+using namespace std::chrono_literals;
+
 constexpr double MinVolume = 0.01;
 constexpr QSize LabelSize  = {20, 20};
 
 namespace Fy::Gui::Widgets {
-struct VolumeControl::Private : QObject
+struct VolumeControl::Private
 {
     VolumeControl* self;
     Utils::SettingsManager* settings;
@@ -56,21 +60,11 @@ struct VolumeControl::Private : QObject
         volumeSlider->setNaturalValue(settings->value<Core::Settings::OutputVolume>());
 
         volumeSlider->hide();
-
-        connect(&hideTimer, &QTimer::timeout, this, &VolumeControl::Private::closeVolumeMenu);
-
-        connect(volumeSlider, &Utils::LogSlider::logValueChanged, this, &VolumeControl::Private::volumeChanged);
-
-        settings->subscribe<Core::Settings::OutputVolume>(volumeSlider, &Utils::LogSlider::setNaturalValue);
-        settings->subscribe<Core::Settings::OutputVolume>(this, &VolumeControl::Private::updateDisplay);
-        settings->subscribe<Settings::IconTheme>(this, [this]() {
-            volumeIcon->updateIcons();
-        });
     }
 
     void showVolumeMenu()
     {
-        hideTimer.start(1000);
+        hideTimer.start(1s);
         volumeSlider->show();
     }
 
@@ -78,7 +72,8 @@ struct VolumeControl::Private : QObject
     {
         if(self->underMouse() /* || self->parentWidget()->underMouse()*/) {
             // Close as soon as mouse leaves
-            return hideTimer.start();
+            hideTimer.start();
+            return;
         }
         hideTimer.stop();
         volumeSlider->hide();
@@ -99,10 +94,12 @@ struct VolumeControl::Private : QObject
 
         if(volume != 0) {
             prevValue = volume;
+            volumeSlider->setNaturalValue(0.0);
             settings->set<Core::Settings::OutputVolume>(0.0);
         }
         else {
             settings->set<Core::Settings::OutputVolume>(prevValue < 0 ? 1 : prevValue);
+            volumeSlider->setNaturalValue(prevValue < 0 ? 1 : prevValue);
         }
     }
 
@@ -147,9 +144,17 @@ VolumeControl::VolumeControl(Utils::SettingsManager* settings, QWidget* parent)
 
     p->updateDisplay(settings->value<Core::Settings::OutputVolume>());
 
-    connect(p->volumeIcon, &Utils::ComboIcon::entered, p.get(), &VolumeControl::Private::showVolumeMenu);
-    connect(p->volumeIcon, &Utils::ComboIcon::clicked, p.get(), &VolumeControl::Private::mute);
-    connect(p->volumeIcon, &Utils::ComboIcon::mouseLeft, p.get(), &VolumeControl::Private::closeVolumeMenu);
+    QObject::connect(p->volumeIcon, &Utils::ComboIcon::entered, this, [this]() { p->showVolumeMenu(); });
+    QObject::connect(p->volumeIcon, &Utils::ComboIcon::clicked, this, [this]() { p->mute(); });
+    QObject::connect(p->volumeIcon, &Utils::ComboIcon::mouseLeft, this, [this]() { p->closeVolumeMenu(); });
+
+    QObject::connect(&p->hideTimer, &QTimer::timeout, this, [this]() { p->closeVolumeMenu(); });
+
+    QObject::connect(p->volumeSlider, &Utils::LogSlider::logValueChanged, this,
+                     [this](double volume) { p->volumeChanged(volume); });
+
+    settings->subscribe<Core::Settings::OutputVolume>(this, [this](double volume) { p->updateDisplay(volume); });
+    settings->subscribe<Settings::IconTheme>(this, [this]() { p->volumeIcon->updateIcons(); });
 }
 
 VolumeControl::~VolumeControl() = default;

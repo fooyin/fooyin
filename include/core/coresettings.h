@@ -25,13 +25,13 @@
 
 #include <QObject>
 
-namespace FYCORE_EXPORT Fy {
+namespace Fy {
 namespace Utils {
 class SettingsManager;
 }
 
 namespace Core::Settings {
-Q_NAMESPACE
+Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 enum Core : uint32_t
 {
     Version           = 1 | Utils::Settings::String,
@@ -56,4 +56,4 @@ private:
     Utils::SettingsManager* m_settings;
 };
 } // namespace Core::Settings
-} // namespace FYCORE_EXPORT Fy
+} // namespace Fy

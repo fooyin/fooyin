@@ -88,7 +88,7 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
     QString libraryName = name;
 
     if(libraryName.isEmpty()) {
-        libraryName = QString{"Library %1"}.arg(p->libraries.size());
+        libraryName = "Library " + QString::number(p->libraries.size());
     }
 
     const auto id = p->libraryConnector.insertLibrary(path, name);
@@ -141,7 +141,7 @@ void LibraryManager::updateLibraryStatus(const LibraryInfo& library)
 
 bool LibraryManager::hasLibrary() const
 {
-    return p->libraries.size() > 0;
+    return !p->libraries.empty();
 }
 
 bool LibraryManager::hasLibrary(int id) const
@@ -151,9 +151,8 @@ bool LibraryManager::hasLibrary(int id) const
 
 std::optional<LibraryInfo> LibraryManager::findLibraryByPath(const QString& path) const
 {
-    auto it = std::ranges::find_if(std::as_const(p->libraries), [path](const auto& info) {
-        return info.second.path == path;
-    });
+    auto it = std::ranges::find_if(std::as_const(p->libraries),
+                                   [path](const auto& info) { return info.second.path == path; });
     if(it != p->libraries.end()) {
         return it->second;
     }

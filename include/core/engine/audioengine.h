@@ -72,13 +72,13 @@ public:
     void stateChanged(PlaybackState state);
     void trackStatusChanged(TrackStatus status);
 
-public slots:
-    virtual void startup();
-    virtual void shutdown();
-
 signals:
     void trackFinished();
     void positionChanged(uint64_t ms);
+
+public slots:
+    virtual void startup();
+    virtual void shutdown();
 
 private:
     TrackStatus m_status;

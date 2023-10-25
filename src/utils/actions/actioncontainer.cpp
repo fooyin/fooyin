@@ -68,9 +68,8 @@ void ActionContainer::appendGroup(const Id& group)
 
 void ActionContainer::insertGroup(const Id& beforeGroup, const Id& group)
 {
-    auto it = std::find_if(m_groups.cbegin(), m_groups.cend(), [&](const auto& group) {
-        return (group.id == beforeGroup);
-    });
+    auto it = std::find_if(m_groups.cbegin(), m_groups.cend(),
+                           [&](const auto& group) { return (group.id == beforeGroup); });
     if(it != m_groups.cend()) {
         m_groups.insert(it, Group{group});
     }
@@ -90,7 +89,7 @@ void ActionContainer::addAction(QAction* action, const Id& group)
         return;
     }
     m_groups[groupIt - m_groups.cbegin()].items.push_back(action);
-    connect(action, &QObject::destroyed, this, &ActionContainer::itemDestroyed);
+    QObject::connect(action, &QObject::destroyed, this, &ActionContainer::itemDestroyed);
 
     QAction* beforeAction = insertLocation(groupIt);
     insertAction(beforeAction, action);
@@ -98,8 +97,7 @@ void ActionContainer::addAction(QAction* action, const Id& group)
 
 void ActionContainer::addMenu(ActionContainer* menu, const Id& group)
 {
-    auto* container = static_cast<ActionContainer*>(menu);
-    if(!container->canBeAddedToContainer(this)) {
+    if(!menu->canBeAddedToContainer(this)) {
         return;
     }
 
@@ -110,7 +108,7 @@ void ActionContainer::addMenu(ActionContainer* menu, const Id& group)
         return;
     }
     m_groups[groupIt - m_groups.cbegin()].items.push_back(menu);
-    connect(menu, &QObject::destroyed, this, &ActionContainer::itemDestroyed);
+    QObject::connect(menu, &QObject::destroyed, this, &ActionContainer::itemDestroyed);
 
     QAction* beforeAction = insertLocation(groupIt);
     insertMenu(beforeAction, menu);
@@ -127,8 +125,7 @@ void ActionContainer::itemDestroyed(QObject* sender)
 
 void ActionContainer::addMenu(ActionContainer* beforeContainer, ActionContainer* menu)
 {
-    auto* container = static_cast<ActionContainer*>(menu);
-    if(container->canBeAddedToContainer(this)) {
+    if(!menu->canBeAddedToContainer(this)) {
         return;
     }
 
@@ -139,7 +136,7 @@ void ActionContainer::addMenu(ActionContainer* beforeContainer, ActionContainer*
             break;
         }
     }
-    connect(menu, &QObject::destroyed, this, &ActionContainer::itemDestroyed);
+    QObject::connect(menu, &QObject::destroyed, this, &ActionContainer::itemDestroyed);
 
     QAction* beforeAction = beforeContainer->containerAction();
     if(beforeAction) {
@@ -162,9 +159,7 @@ QAction* ActionContainer::addSeparator(const Id& group)
 
 ActionContainer::GroupList::const_iterator ActionContainer::findGroup(const Id& groupId) const
 {
-    return std::find_if(m_groups.cbegin(), m_groups.cend(), [&](const auto& group) {
-        return (group.id == groupId);
-    });
+    return std::find_if(m_groups.cbegin(), m_groups.cend(), [&](const auto& group) { return (group.id == groupId); });
 }
 
 QAction* ActionContainer::insertLocation(GroupList::const_iterator group) const
@@ -238,9 +233,8 @@ void MenuBarActionContainer::clear()
     m_menuBar->clear();
 }
 
-bool MenuBarActionContainer::canBeAddedToContainer(ActionContainer* container) const
+bool MenuBarActionContainer::canBeAddedToContainer(ActionContainer* /*container*/) const
 {
-    Q_UNUSED(container)
     return false;
 }
 
@@ -248,7 +242,7 @@ MenuActionContainer::MenuActionContainer(const Id& id, QObject* parent)
     : ActionContainer{id, parent}
     , m_menu{new QMenu()}
 {
-    connect(m_menu, &QMenu::aboutToHide, this, &MenuActionContainer::aboutToHide);
+    QObject::connect(m_menu, &QMenu::aboutToHide, this, &MenuActionContainer::aboutToHide);
 }
 
 MenuActionContainer::~MenuActionContainer()

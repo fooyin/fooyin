@@ -23,9 +23,11 @@
 
 #include <QDebug>
 
-namespace {
+using namespace Qt::Literals::StringLiterals;
+
 constexpr auto BufferSize = 1024;
 
+namespace {
 SDL_AudioFormat findFormat(AVSampleFormat format)
 {
     switch(format) {
@@ -77,7 +79,7 @@ struct SdlOutput::Private
     SDL_AudioSpec obtainedSpec;
     SDL_AudioDeviceID audioDeviceId;
 
-    QString device{"default"};
+    QString device{u"default"_s};
 };
 
 SdlOutput::SdlOutput()
@@ -103,7 +105,7 @@ bool SdlOutput::init(const OutputContext& oc)
     p->desiredSpec.callback = audioCallback;
     p->desiredSpec.userdata = &p->outputContext;
 
-    if(p->device == "default") {
+    if(p->device == "default"_L1) {
         p->audioDeviceId
             = SDL_OpenAudioDevice(nullptr, 0, &p->desiredSpec, &p->obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
     }

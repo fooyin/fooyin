@@ -22,13 +22,13 @@
 #include <utils/clickablelabel.h>
 #include <utils/utils.h>
 
+#include <QApplication>
 #include <QEvent>
 #include <QVBoxLayout>
-#include <QApplication>
 
-namespace Fy::Utils {
 constexpr int IconSize = 128;
 
+namespace Fy::Utils {
 struct Icon
 {
     QPixmap icon;
@@ -39,7 +39,7 @@ struct Icon
 using PathIconPair      = std::pair<QString, Icon>;
 using PathIconContainer = std::vector<PathIconPair>;
 
-struct ComboIcon::Private : QObject
+struct ComboIcon::Private
 {
     ComboIcon* self;
 
@@ -70,10 +70,10 @@ struct ComboIcon::Private : QObject
                 label->setPixmap(icons.at(currentIndex).second.iconActive);
             }
         }
-        emit self->clicked(icons.at(currentIndex).first);
+        QMetaObject::invokeMethod(self, "clicked", Q_ARG(const QString&, icons.at(currentIndex).first));
     }
 
-    bool hasAttribute(Attribute attribute)
+    [[nodiscard]] bool hasAttribute(Attribute attribute) const
     {
         return (attributes & attribute);
     }
@@ -108,9 +108,9 @@ ComboIcon::ComboIcon(const QString& path, Attributes attributes, QWidget* parent
     layout->setContentsMargins(0, 0, 0, 0);
     setLayout(layout);
 
-    connect(p->label, &ClickableLabel::clicked, p.get(), &ComboIcon::Private::labelClicked);
-    connect(p->label, &ClickableLabel::entered, this, &ComboIcon::entered);
-    connect(p->label, &ClickableLabel::mouseLeft, this, &ComboIcon::mouseLeft);
+    QObject::connect(p->label, &ClickableLabel::clicked, this, [this]() { p->labelClicked(); });
+    QObject::connect(p->label, &ClickableLabel::entered, this, &ComboIcon::entered);
+    QObject::connect(p->label, &ClickableLabel::mouseLeft, this, &ComboIcon::mouseLeft);
 }
 
 ComboIcon::ComboIcon(const QString& path, QWidget* parent)
@@ -155,9 +155,8 @@ void ComboIcon::setIcon(const QString& path, bool active)
         p->removeAttribute(Active);
     }
 
-    auto it = std::ranges::find_if(std::as_const(p->icons), [path](const PathIconPair& icon) {
-        return icon.first == path;
-    });
+    auto it = std::ranges::find_if(std::as_const(p->icons),
+                                   [path](const PathIconPair& icon) { return icon.first == path; });
 
     if(it == p->icons.cend()) {
         return;
@@ -184,27 +183,26 @@ void ComboIcon::setIconEnabled(bool enable)
 
     if(p->hasAttribute(Enabled)) {
         if(p->hasAttribute(HasActiveIcon) && p->hasAttribute(Active)) {
-            return p->label->setPixmap(p->icons.at(p->currentIndex).second.iconActive);
+            p->label->setPixmap(p->icons.at(p->currentIndex).second.iconActive);
+            return;
         }
-        return p->label->setPixmap(p->icons.at(p->currentIndex).second.icon);
+        p->label->setPixmap(p->icons.at(p->currentIndex).second.icon);
+        return;
     }
-    return p->label->setPixmap(p->icons.at(p->currentIndex).second.iconDisabled);
+
+    p->label->setPixmap(p->icons.at(p->currentIndex).second.iconDisabled);
 }
 
 void ComboIcon::updateIcons()
 {
-    PathIconContainer prevIcons = std::move(p->icons);
+    const PathIconContainer prevIcons = p->icons;
+    p->icons.clear();
 
-    for(auto& [path, _] : prevIcons) {
+    for(const auto& [path, _] : prevIcons) {
         addIcon(path);
     }
 
-    if(p->hasAttribute(HasActiveIcon) && p->hasAttribute(Active)) {
-        p->label->setPixmap(p->icons.at(p->currentIndex).second.iconActive);
-    }
-    else {
-        p->label->setPixmap(p->icons.at(p->currentIndex).second.icon);
-    }
+    setIconEnabled(p->hasAttribute(Enabled));
 }
 
 void ComboIcon::changeEvent(QEvent* event)

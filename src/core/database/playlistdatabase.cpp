@@ -21,6 +21,8 @@
 
 #include "query.h"
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Core::DB {
 Playlist::Playlist(const QString& connectionName)
     : Module{connectionName}
@@ -28,13 +30,13 @@ Playlist::Playlist(const QString& connectionName)
 
 bool Playlist::getAllPlaylists(Core::Playlist::PlaylistList& playlists)
 {
-    const QString query = "SELECT PlaylistID, Name, PlaylistIndex FROM Playlists;";
+    const QString query = u"SELECT PlaylistID, Name, PlaylistIndex FROM Playlists;"_s;
 
     Query q{this};
     q.prepareQuery(query);
 
     if(!q.execQuery()) {
-        q.error("Cannot fetch all playlists");
+        q.error(u"Cannot fetch all playlists"_s);
         return false;
     }
 
@@ -50,14 +52,14 @@ bool Playlist::getAllPlaylists(Core::Playlist::PlaylistList& playlists)
 
 bool Playlist::getPlaylistTracks(int id, std::vector<int>& ids)
 {
-    const QString query = "SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;";
+    const QString query = u"SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;"_s;
 
     Query q{this};
     q.prepareQuery(query);
-    q.bindQueryValue(":playlistId", id);
+    q.bindQueryValue(u":playlistId"_s, id);
 
     if(!q.execQuery()) {
-        q.error("Cannot fetch playlist tracks");
+        q.error(u"Cannot fetch playlist tracks"_s);
         return false;
     }
 
@@ -73,8 +75,8 @@ int Playlist::insertPlaylist(const QString& name, int index)
         return -1;
     }
 
-    auto q = module()->insert("Playlists", {{"Name", name}, {"PlaylistIndex", QString::number(index)}},
-                              QString{"Cannot insert playlist (name: %1, index: %2)"}.arg(name).arg(index));
+    auto q = module()->insert(u"Playlists"_s, {{"Name", name}, {u"PlaylistIndex"_s, QString::number(index)}},
+                              QString{u"Cannot insert playlist (name: %1, index: %2)"_s}.arg(name).arg(index));
 
     return (q.hasError()) ? -1 : q.lastInsertId().toInt();
 }
@@ -90,8 +92,8 @@ bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
         return false;
     }
 
-    auto delTracksQuery = module()->remove("PlaylistTracks", {{"PlaylistID", QString::number(id)}},
-                                           QString{"Cannot remove old playlist %1 tracks"}.arg(id));
+    auto delTracksQuery = module()->remove(u"PlaylistTracks"_s, {{u"PlaylistID"_s, QString::number(id)}},
+                                           QString{u"Cannot remove old playlist %1 tracks"_s}.arg(id));
 
     if(delTracksQuery.hasError()) {
         return false;
@@ -115,8 +117,8 @@ bool Playlist::insertPlaylistTracks(int id, const TrackList& tracks)
 
 bool Playlist::removePlaylist(int id)
 {
-    auto q = module()->remove("Playlists", {{"PlaylistID", QString::number(id)}},
-                              QString{"Cannot remove playlist %1"}.arg(id));
+    auto q = module()->remove(u"Playlists"_s, {{u"PlaylistID"_s, QString::number(id)}},
+                              "Cannot remove playlist " + QString::number(id));
     return !q.hasError();
 }
 
@@ -126,8 +128,8 @@ bool Playlist::renamePlaylist(int id, const QString& name)
         return false;
     }
 
-    auto q = module()->update("Playlists", {{"Name", name}}, {"PlaylistID", QString::number(id)},
-                              QString{"Cannot update playlist %1"}.arg(id));
+    auto q = module()->update(u"Playlists"_s, {{u"Name"_s, name}}, {u"PlaylistID"_s, QString::number(id)},
+                              "Cannot update playlist " + QString::number(id));
     return !q.hasError();
 }
 
@@ -138,11 +140,11 @@ bool Playlist::insertPlaylistTrack(int playlistId, const Track& track, int index
     }
 
     auto q = module()->insert(
-        "PlaylistTracks",
-        {{"PlaylistID", QString::number(playlistId)},
-         {"TrackID", QString::number(track.id())},
-         {"TrackIndex", QString::number(index)}},
-        QString{"Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)"}.arg(playlistId).arg(track.id()));
+        u"PlaylistTracks"_s,
+        {{u"PlaylistID"_s, QString::number(playlistId)},
+         {u"TrackID"_s, QString::number(track.id())},
+         {u"TrackIndex"_s, QString::number(index)}},
+        QString{u"Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)"_s}.arg(playlistId).arg(track.id()));
 
     return !q.hasError();
 }

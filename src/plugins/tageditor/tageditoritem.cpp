@@ -21,6 +21,8 @@
 
 #include <utils/helpers.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::TagEditor {
 TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent)
     : TreeStatusItem{parent}
@@ -48,8 +50,8 @@ void TagEditorItem::addTrackValue(const QString& value)
 
 void TagEditorItem::addTrackValue(const QStringList& values)
 {
-    for(const auto& value : values) {
-        addTrackValue(value);
+    for(const auto& trackValue : values) {
+        addTrackValue(trackValue);
     }
 }
 
@@ -61,12 +63,12 @@ void TagEditorItem::setValue(const QStringList& values)
 
 void TagEditorItem::valuesToString()
 {
-    QString value;
-    value = m_values.join("; ");
+    QString values;
+    values = m_values.join("; "_L1);
     if(m_values.size() > 1) {
-        value.prepend("<<multiple items>> ");
+        values.prepend("<<multiple items>> ");
     }
-    m_value = value;
+    m_value = values;
 }
 
 QString TagEditorItem::name() const

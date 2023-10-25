@@ -34,17 +34,17 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* pare
     , m_layout{new QVBoxLayout(this)}
     , m_layoutList{new QListView(this)}
     , m_model{new QuickSetupModel(layoutProvider, parent)}
-    , m_accept{new QPushButton("OK", this)}
+    , m_accept{new QPushButton(tr("OK"), this)}
 {
     setObjectName("Quick Setup");
-    setWindowTitle("Quick Setup");
+    setWindowTitle(tr("Quick Setup"));
 
     setupUi();
     m_layoutList->setModel(m_model);
 
-    connect(m_layoutList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-            &QuickSetupDialog::changeLayout);
-    connect(m_accept, &QPushButton::pressed, this, &QuickSetupDialog::close);
+    QObject::connect(m_layoutList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     &QuickSetupDialog::changeLayout);
+    QObject::connect(m_accept, &QPushButton::pressed, this, &QuickSetupDialog::close);
 }
 
 void QuickSetupDialog::setupUi()
@@ -54,9 +54,8 @@ void QuickSetupDialog::setupUi()
     m_layout->addWidget(m_accept);
 }
 
-void QuickSetupDialog::changeLayout(const QItemSelection& selected, const QItemSelection& deselected)
+void QuickSetupDialog::changeLayout(const QItemSelection& selected, const QItemSelection& /*deselected*/)
 {
-    Q_UNUSED(deselected)
     if(selected.isEmpty()) {
         return;
     }

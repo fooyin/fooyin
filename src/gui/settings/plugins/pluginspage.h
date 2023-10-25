@@ -28,7 +28,6 @@ class PluginManager;
 
 namespace Utils {
 class SettingsManager;
-class SettingsDialogController;
 } // namespace Utils
 
 namespace Gui::Settings {

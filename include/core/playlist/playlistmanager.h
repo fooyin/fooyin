@@ -37,10 +37,10 @@ public:
     explicit PlaylistManager(QObject* parent = nullptr)
         : QObject{parent} {};
 
-    virtual std::optional<Playlist> playlistById(int id) const                = 0;
-    virtual std::optional<Playlist> playlistByIndex(int index) const          = 0;
-    virtual std::optional<Playlist> playlistByName(const QString& name) const = 0;
-    virtual PlaylistList playlists() const                                    = 0;
+    [[nodiscard]] virtual std::optional<Playlist> playlistById(int id) const                = 0;
+    [[nodiscard]] virtual std::optional<Playlist> playlistByIndex(int index) const          = 0;
+    [[nodiscard]] virtual std::optional<Playlist> playlistByName(const QString& name) const = 0;
+    [[nodiscard]] virtual PlaylistList playlists() const                                    = 0;
 
     virtual std::optional<Playlist> createPlaylist(const QString& name, const TrackList& tracks = {},
                                                    bool switchTo = false)
@@ -55,8 +55,8 @@ public:
     virtual void renamePlaylist(int id, const QString& name) = 0;
     virtual void removePlaylist(int id)                      = 0;
 
-    virtual std::optional<Playlist> activePlaylist() const = 0;
-    virtual int playlistCount() const                      = 0;
+    [[nodiscard]] virtual std::optional<Playlist> activePlaylist() const = 0;
+    [[nodiscard]] virtual int playlistCount() const                      = 0;
 
     virtual void startPlayback(int playlistId, const Core::Track& track = {})       = 0;
     virtual void startPlayback(QString playlistName, const Core::Track& track = {}) = 0;

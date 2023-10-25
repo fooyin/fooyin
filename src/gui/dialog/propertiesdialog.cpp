@@ -161,9 +161,7 @@ void PropertiesDialogWidget::reject()
 
 void PropertiesDialogWidget::apply()
 {
-    auto visitedTabs = std::views::filter(m_tabs, [&](const PropertiesTab& tab) {
-        return tab.hasVisited();
-    });
+    auto visitedTabs = std::views::filter(m_tabs, [&](const PropertiesTab& tab) { return tab.hasVisited(); });
     for(PropertiesTab& tab : visitedTabs) {
         tab.apply();
     }
@@ -175,9 +173,7 @@ void PropertiesDialogWidget::currentTabChanged(int index)
         return;
     }
 
-    auto tabIt = std::ranges::find_if(m_tabs, [index](const PropertiesTab& tab) {
-        return tab.index() == index;
-    });
+    auto tabIt = std::ranges::find_if(m_tabs, [index](const PropertiesTab& tab) { return tab.index() == index; });
     if(tabIt != m_tabs.cend()) {
         tabIt->setVisited(true);
     }

@@ -28,6 +28,10 @@
 #include <QScrollBar>
 #include <QTimer>
 
+#include <chrono>
+
+using namespace std::chrono_literals;
+
 namespace Fy::Gui::Widgets::Playlist {
 PlaylistView::PlaylistView(QWidget* parent)
     : QTreeView{parent}
@@ -174,12 +178,7 @@ void PlaylistView::dropEvent(QDropEvent* event)
     viewport()->update();
 }
 
-void PlaylistView::drawBranches(QPainter* painter, const QRect& rect, const QModelIndex& index) const
-{
-    Q_UNUSED(painter)
-    Q_UNUSED(rect)
-    Q_UNUSED(index)
-}
+void PlaylistView::drawBranches(QPainter* /*painter*/, const QRect& /*rect*/, const QModelIndex& /*index*/) const { }
 
 void PlaylistView::paintEvent(QPaintEvent* event)
 {
@@ -212,7 +211,7 @@ QAbstractItemView::DropIndicatorPosition PlaylistView::position(const QPoint& po
                                                                 const QModelIndex& index) const
 {
     auto dropPos    = QAbstractItemView::OnViewport;
-    const int mid   = std::round(static_cast<double>((rect.height())) / 2);
+    const int mid   = static_cast<int>(std::round(static_cast<double>((rect.height())) / 2));
     const auto type = index.data(PlaylistItem::Type);
 
     if(type == PlaylistItem::Subheader) {
@@ -246,7 +245,7 @@ bool PlaylistView::shouldAutoScroll(const QPoint& pos) const
 
 void PlaylistView::startAutoScroll()
 {
-    m_autoScrollTimer.start(50);
+    m_autoScrollTimer.start(50ms);
 }
 
 void PlaylistView::stopAutoScroll()

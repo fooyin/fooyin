@@ -35,7 +35,7 @@ public:
     explicit PresetInputBox(const QString& name, QWidget* parent = nullptr);
 
     void addEmptyBlock();
-    void addInput(PresetInput* block);
+    void addInput(PresetInput* input);
 
     void deleteBlock();
     void clearBlocks();

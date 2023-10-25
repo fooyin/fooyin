@@ -123,6 +123,6 @@ private:
 
     Item* m_parent;                // Not owned
     std::vector<Item*> m_children; // Not owned
-    mutable int m_row;
+    mutable int m_row{-1};
 };
 } // namespace Fy::Utils

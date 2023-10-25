@@ -27,9 +27,8 @@ FilterList FilterStore::filters() const
 
 LibraryFilter FilterStore::filterByIndex(int index) const
 {
-    const auto currentFilter = std::ranges::find_if(std::as_const(m_filters), [index](const LibraryFilter& filter) {
-        return filter.index == index;
-    });
+    const auto currentFilter = std::ranges::find_if(
+        std::as_const(m_filters), [index](const LibraryFilter& filter) { return filter.index == index; });
     if(currentFilter != m_filters.cend()) {
         return *currentFilter;
     }
@@ -46,9 +45,8 @@ LibraryFilter FilterStore::addFilter(const FilterField& field)
 
 void FilterStore::updateFilter(const LibraryFilter& filter)
 {
-    auto currentFilter = std::ranges::find_if(m_filters, [filter](LibraryFilter& libFilter) {
-        return libFilter.index == filter.index;
-    });
+    auto currentFilter = std::ranges::find_if(
+        m_filters, [filter](const LibraryFilter& libFilter) { return libFilter.index == filter.index; });
     if(currentFilter != m_filters.end()) {
         *currentFilter = filter;
     }
@@ -56,23 +54,18 @@ void FilterStore::updateFilter(const LibraryFilter& filter)
 
 void FilterStore::removeFilter(int index)
 {
-    std::erase_if(m_filters, [index](const LibraryFilter& filter) {
-        return filter.index == index;
-    });
+    std::erase_if(m_filters, [index](const LibraryFilter& filter) { return filter.index == index; });
 }
 
 [[nodiscard]] bool FilterStore::hasActiveFilters() const
 {
-    return std::ranges::any_of(std::as_const(m_filters), [](const LibraryFilter& filter) {
-        return !filter.tracks.empty();
-    });
+    return std::ranges::any_of(std::as_const(m_filters),
+                               [](const LibraryFilter& filter) { return !filter.tracks.empty(); });
 };
 
 FilterList FilterStore::activeFilters() const
 {
-    return Utils::filter(m_filters, [](const LibraryFilter& filter) {
-        return !filter.tracks.empty();
-    });
+    return Utils::filter(m_filters, [](const LibraryFilter& filter) { return !filter.tracks.empty(); });
 }
 
 void FilterStore::clearActiveFilters(int index)

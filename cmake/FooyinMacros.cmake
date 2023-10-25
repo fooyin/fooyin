@@ -41,6 +41,7 @@ function(create_fooyin_plugin name)
     )
 
     target_compile_features(${name} PUBLIC cxx_std_20)
+    target_compile_definitions(${name} PRIVATE QT_USE_QSTRINGBUILDER)
     target_compile_options(
         ${name}
         PRIVATE -Werror

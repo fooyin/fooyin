@@ -32,7 +32,7 @@ constexpr QSize IconSize = {20, 20};
 namespace Fy::Gui::Widgets {
 using Utils::ComboIcon;
 
-struct PlayerControl::Private : QObject
+struct PlayerControl::Private
 {
     PlayerControl* self;
 
@@ -53,34 +53,31 @@ struct PlayerControl::Private : QObject
         , playPause{new ComboIcon(Constants::Icons::Play, ComboIcon::HasDisabledIcon, self)}
         , next{new ComboIcon(Constants::Icons::Next, ComboIcon::HasDisabledIcon, self)}
     {
-        connect(stop, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::stop);
-        connect(prev, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::previous);
-        connect(playPause, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::playPause);
-        connect(next, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::next);
-        connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
-                &PlayerControl::Private::stateChanged);
-
-        settings->subscribe<Settings::IconTheme>(this, [this]() {
-            stop->updateIcons();
-            prev->updateIcons();
-            playPause->updateIcons();
-            next->updateIcons();
-        });
+        QObject::connect(stop, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::stop);
+        QObject::connect(prev, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::previous);
+        QObject::connect(playPause, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::playPause);
+        QObject::connect(next, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::next);
 
         stateChanged(playerManager->playState());
     }
 
-    void stateChanged(Core::Player::PlayState state)
+    void stateChanged(Core::Player::PlayState state) const
     {
         switch(state) {
-            case(Core::Player::PlayState::Stopped):
+            case(Core::Player::PlayState::Stopped): {
                 playPause->setIcon(Constants::Icons::Play);
-                return self->setEnabled(false);
-            case(Core::Player::PlayState::Playing):
+                self->setEnabled(false);
+                break;
+            }
+            case(Core::Player::PlayState::Playing): {
                 playPause->setIcon(Constants::Icons::Pause);
-                return self->setEnabled(true);
-            case(Core::Player::PlayState::Paused):
-                return playPause->setIcon(Constants::Icons::Play);
+                self->setEnabled(true);
+                break;
+            }
+            case(Core::Player::PlayState::Paused): {
+                playPause->setIcon(Constants::Icons::Play);
+                break;
+            }
         }
     }
 };
@@ -106,6 +103,16 @@ PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, Utils::
     layout->addWidget(p->prev, 0, Qt::AlignVCenter);
     layout->addWidget(p->playPause, 0, Qt::AlignVCenter);
     layout->addWidget(p->next, 0, Qt::AlignVCenter);
+
+    QObject::connect(p->playerManager, &Core::Player::PlayerManager::playStateChanged, this,
+                     [this](Core::Player::PlayState state) { p->stateChanged(state); });
+
+    settings->subscribe<Settings::IconTheme>(this, [this]() {
+        p->stop->updateIcons();
+        p->prev->updateIcons();
+        p->playPause->updateIcons();
+        p->next->updateIcons();
+    });
 }
 
 PlayerControl::~PlayerControl() = default;

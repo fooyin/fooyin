@@ -22,6 +22,8 @@
 #include <QDir>
 #include <QLibrary>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Plugins {
 const PluginInfoMap& PluginManager::allPluginInfo() const
 {
@@ -51,10 +53,10 @@ void PluginManager::findPlugins(const QString& pluginDir)
             continue;
         }
 
-        auto pluginMetadata = metaData.value("MetaData");
-        auto version        = metaData.value("version");
+        auto pluginMetadata = metaData.value("MetaData"_L1);
+        auto version        = metaData.value("Version"_L1);
 
-        auto name = pluginMetadata.toObject().value("Name");
+        auto name = pluginMetadata.toObject().value("Name"_L1);
 
         if(name.isNull()) {
             continue;
@@ -67,7 +69,6 @@ void PluginManager::findPlugins(const QString& pluginDir)
 void PluginManager::loadPlugins()
 {
     for(const auto& [name, plugin] : m_plugins) {
-        auto metadata = plugin->metadata();
         loadPlugin(plugin.get());
         if(!plugin->isLoaded()) {
             continue;

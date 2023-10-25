@@ -24,7 +24,7 @@
 
 namespace Fy::Gui::Widgets::Playlist {
 TextBlock::TextBlock()
-    : TextBlock{"", 0}
+    : TextBlock{QStringLiteral(""), 0}
 { }
 
 TextBlock::TextBlock(QString text, int fontSize)

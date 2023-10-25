@@ -36,7 +36,7 @@
 constexpr int IconSize = 50;
 
 namespace Fy::Gui::Widgets {
-struct StatusWidget::Private : QObject
+struct StatusWidget::Private
 {
     StatusWidget* self;
 
@@ -57,50 +57,47 @@ struct StatusWidget::Private : QObject
         , iconLabel{new Utils::ClickableLabel(self)}
         , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
         , playing{new Utils::ClickableLabel(self)}
-    {
-        connect(playing, &Utils::ClickableLabel::clicked, this, &StatusWidget::Private::labelClicked);
-        connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
-                &StatusWidget::Private::stateChanged);
-        connect(library, &Core::Library::MusicLibrary::scanProgress, this, &StatusWidget::Private::scanProgressChanged);
+    { }
 
-        settings->subscribe<Settings::IconTheme>(this, [this]() {
-            icon = QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
-            iconLabel->setPixmap(icon);
-        });
-    }
-
-    void labelClicked()
+    void labelClicked() const
     {
         const Core::Player::PlayState ps = playerManager->playState();
         if(ps == Core::Player::PlayState::Playing || ps == Core::Player::PlayState::Paused) {
-            emit self->clicked();
+            QMetaObject::invokeMethod(self, &StatusWidget::clicked);
         }
     }
 
-    void stateChanged(Core::Player::PlayState state)
+    // TODO: Make scriptable
+    void updatePlayingText() const
+    {
+        const Core::Track track   = playerManager->currentTrack();
+        const QString playingText = Utils::addLeadingZero(track.trackNumber(), 2) + ". " + track.title() + "("
+                                  + Utils::msToString(track.duration()) + ")" + " \u2022 " + track.albumArtist()
+                                  + " \u2022 " + track.album();
+        playing->setText(playingText);
+    }
+
+    void stateChanged(Core::Player::PlayState state) const
     {
         switch(state) {
             case(Core::Player::PlayState::Stopped):
-                playing->setText("Waiting for track...");
+                playing->setText(tr("Waiting for track..."));
                 break;
             case(Core::Player::PlayState::Playing): {
-                const Core::Track track = playerManager->currentTrack();
-                const auto playingText  = QString{"%1. %2 (%3) \u2022 %4 \u2022 %5"}.arg(
-                    QStringLiteral("%1").arg(track.trackNumber(), 2, 10, QLatin1Char('0')), track.title(),
-                    Utils::msToString(track.duration()), track.albumArtist(), track.album());
-                playing->setText(playingText);
+                updatePlayingText();
+                break;
             }
             case(Core::Player::PlayState::Paused):
                 break;
         }
     }
 
-    void scanProgressChanged(int progress)
+    void scanProgressChanged(int progress) const
     {
         if(progress == 100) {
             QTimer::singleShot(2000, playing, &QLabel::clear);
         }
-        const auto scanText = QString{"Scanning library: %1%"}.arg(progress);
+        const QString scanText = QStringLiteral("Scanning library: ") + QString::number(progress);
         playing->setText(scanText);
     }
 };
@@ -125,12 +122,23 @@ StatusWidget::StatusWidget(Core::Library::MusicLibrary* library, Core::Player::P
     layout->addWidget(p->playing);
 
     setMinimumHeight(25);
+
+    QObject::connect(p->playing, &Utils::ClickableLabel::clicked, this, [this]() { p->labelClicked(); });
+    QObject::connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
+                     [this](Core::Player::PlayState state) { p->stateChanged(state); });
+    QObject::connect(library, &Core::Library::MusicLibrary::scanProgress, this,
+                     [this](int progress) { p->scanProgressChanged(progress); });
+
+    settings->subscribe<Settings::IconTheme>(this, [this]() {
+        p->icon = QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
+        p->iconLabel->setPixmap(p->icon);
+    });
 }
 
 StatusWidget::~StatusWidget() = default;
 
 QString StatusWidget::name() const
 {
-    return "Status";
+    return QStringLiteral("Status");
 }
 } // namespace Fy::Gui::Widgets

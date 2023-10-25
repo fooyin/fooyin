@@ -26,7 +26,6 @@
 namespace Fy::Gui::Widgets {
 struct TabStackWidget::Private
 {
-    TabStackWidget* self;
     Utils::ActionManager* actionManager;
     WidgetProvider* widgetProvider;
 
@@ -56,12 +55,12 @@ TabStackWidget::~TabStackWidget() = default;
 
 QString TabStackWidget::name() const
 {
-    return "Tab Stack";
+    return QStringLiteral("Tab Stack");
 }
 
 QString TabStackWidget::layoutName() const
 {
-    return "TabStack";
+    return QStringLiteral("TabStack");
 }
 
 void TabStackWidget::layoutEditingMenu(Utils::ActionContainer* menu)
@@ -72,9 +71,7 @@ void TabStackWidget::layoutEditingMenu(Utils::ActionContainer* menu)
     auto* addMenu = p->actionManager->createMenu(addMenuId);
     addMenu->menu()->setTitle(addTitle);
 
-    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) {
-        addWidget(newWidget);
-    });
+    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) { addWidget(newWidget); });
     menu->addMenu(addMenu);
 }
 
@@ -105,9 +102,8 @@ void TabStackWidget::addWidget(FyWidget* widget)
 
 void TabStackWidget::removeWidget(FyWidget* widget)
 {
-    const auto widgetIt = std::ranges::find_if(p->widgets, [&widget](const auto& pair) {
-        return pair.second == widget;
-    });
+    const auto widgetIt
+        = std::ranges::find_if(p->widgets, [&widget](const auto& pair) { return pair.second == widget; });
 
     if(widgetIt != p->widgets.end()) {
         const int removeIndex = widgetIt->first;
@@ -118,9 +114,8 @@ void TabStackWidget::removeWidget(FyWidget* widget)
 
 void TabStackWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
 {
-    const auto widgetIt = std::ranges::find_if(p->widgets, [&oldWidget](const auto& pair) {
-        return pair.second == oldWidget;
-    });
+    const auto widgetIt
+        = std::ranges::find_if(p->widgets, [&oldWidget](const auto& pair) { return pair.second == oldWidget; });
 
     if(widgetIt != p->widgets.end()) {
         const int replaceIndex = widgetIt->first;

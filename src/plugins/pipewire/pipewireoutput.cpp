@@ -33,8 +33,14 @@ extern "C"
 
 #include <QDebug>
 
-// Ignore warnings for pipewire structs
-_Pragma("GCC diagnostic ignored \"-Wmissing-field-initializers\"")
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
+
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wgnu-statement-expression-from-macro-expansion"
+#pragma clang diagnostic ignored "-Wc99-extensions"
+#endif
 
 constexpr auto DefaultDevice = "default";
 
@@ -156,7 +162,7 @@ struct PipewireContext
 
 void onError(void* /*data*/, uint32_t /*id*/, int /*seq*/, int res, const char* message)
 {
-    qWarning() << QString{"PW: Error during playback: %1, %2"}.arg(spa_strerror(res), message);
+    qWarning() << "PW: Error during playback: " << spa_strerror(res) << ", " << message; // NOLINT
 }
 
 void onCoreDone(void* data, uint32_t id, int seq)
@@ -200,7 +206,7 @@ void onRegistryEvent(void* data, uint32_t /*id*/, uint32_t /*permissions*/, cons
 
     pc->sinks.emplace_back(name, desc);
 
-    pc->coreInitSeq = pw_core_sync(pc->core.get(), PW_ID_CORE, pc->coreInitSeq);
+    pc->coreInitSeq = pw_core_sync(pc->core.get(), PW_ID_CORE, pc->coreInitSeq); // NOLINT
 }
 
 void onParamChanged(void* userdata, uint32_t id, const struct spa_pod* param)
@@ -239,7 +245,7 @@ void onParamChanged(void* userdata, uint32_t id, const struct spa_pod* param)
 
 void onStateChanged(void* userdata, enum pw_stream_state old, enum pw_stream_state state, const char* /*error*/)
 {
-    auto* pc = static_cast<PipewireContext*>(userdata);
+    const auto* pc = static_cast<PipewireContext*>(userdata);
     if(!pc) {
         return;
     }
@@ -270,7 +276,8 @@ void onProcess(void* userData)
         frameCount = std::min(b->requested, frameCount);
     }
 
-    const int samples = pc->outputContext.writeAudioToBuffer(std::bit_cast<uint8_t*>(buf->datas[0].data), frameCount);
+    const int samples = pc->outputContext.writeAudioToBuffer(std::bit_cast<uint8_t*>(buf->datas[0].data),
+                                                             static_cast<int>(frameCount));
 
     b->size                     = samples;
     buf->datas[0].chunk->size   = samples * sstride;
@@ -349,7 +356,8 @@ struct PipeWireOutput::Private
             .error   = onError,
         };
 
-        if(pw_core_add_listener(pc.core.get(), &pc.coreListener, &coreEvents, &pc) < 0) {
+        int err = pw_core_add_listener(pc.core.get(), &pc.coreListener, &coreEvents, &pc); // NOLINT
+        if(err < 0) {
             qWarning() << "PW: Could not add core listener";
             return false;
         }
@@ -365,7 +373,8 @@ struct PipeWireOutput::Private
             .global  = onRegistryEvent,
         };
 
-        if(pw_registry_add_listener(pc.registry.get(), &pc.registryListener, &registryEvents, &pc) < 0) {
+        err = pw_registry_add_listener(pc.registry.get(), &pc.registryListener, &registryEvents, &pc); // NOLINT
+        if(err < 0) {
             qWarning() << "PW: Could not add registry listener";
             return false;
         }
@@ -432,7 +441,7 @@ struct PipeWireOutput::Private
 
         pw_stream_add_listener(pc.stream.get(), &pc.streamListener, &streamEvents, &pc);
 
-        spa_audio_format spaFormat = findSpaFormat(pc.outputContext.format);
+        const spa_audio_format spaFormat = findSpaFormat(pc.outputContext.format);
         if(spaFormat == SPA_AUDIO_FORMAT_UNKNOWN) {
             qWarning() << "PW: Unknown audio format";
             pw_thread_loop_unlock(pc.loop.get());
@@ -577,7 +586,7 @@ void PipeWireOutput::setVolume(double volume)
 
     pw_thread_loop_lock(p->pc.loop.get());
 
-    float vol = volume;
+    auto vol = static_cast<float>(volume);
 
     if(p->muted || vol == 0.0) {
         float mute = p->muted ? 0.0F : 1.0F;

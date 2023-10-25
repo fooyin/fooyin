@@ -36,14 +36,14 @@
 
 #include <set>
 
-namespace Fy::Filters {
+namespace {
 bool containsSearch(const QString& text, const QString& search)
 {
     return text.contains(search, Qt::CaseInsensitive);
 }
 
 // TODO: Support user-defined tags
-bool matchSearch(const Core::Track& track, const QString& search)
+bool matchSearch(const Fy::Core::Track& track, const QString& search)
 {
     if(search.isEmpty()) {
         return true;
@@ -53,14 +53,14 @@ bool matchSearch(const Core::Track& track, const QString& search)
         || containsSearch(track.album(), search) || containsSearch(track.albumArtist(), search);
 }
 
-Core::TrackList filterTracks(const Core::TrackList& tracks, const QString& search)
+Fy::Core::TrackList filterTracks(const Fy::Core::TrackList& tracks, const QString& search)
 {
-    return Utils::filter(tracks, [search](const Core::Track& track) {
-        return matchSearch(track, search);
-    });
+    return Fy::Utils::filter(tracks, [search](const Fy::Core::Track& track) { return matchSearch(track, search); });
 }
+} // namespace
 
-struct FilterManager::Private : QObject
+namespace Fy::Filters {
+struct FilterManager::Private
 {
     FilterManager* self;
 
@@ -89,13 +89,6 @@ struct FilterManager::Private : QObject
         , fieldsRegistry{settings}
     {
         fieldsRegistry.loadItems();
-
-        settings->subscribe<Settings::FilterDoubleClick>(this, [this](int action) {
-            doubleClickAction = static_cast<Gui::TrackAction>(action);
-        });
-        settings->subscribe<Settings::FilterMiddleClick>(this, [this](int action) {
-            middleClickAction = static_cast<Gui::TrackAction>(action);
-        });
     }
 
     void handleAction(const Gui::TrackAction& action, const QString& playlistName) const
@@ -153,9 +146,8 @@ struct FilterManager::Private : QObject
     {
         LibraryFilter updatedFilter{filter};
 
-        Core::TrackList sortedTracks = co_await Utils::asyncExec([&updatedFilter]() {
-            return Core::Library::Sorting::sortTracks(updatedFilter.tracks);
-        });
+        Core::TrackList sortedTracks = co_await Utils::asyncExec(
+            [&updatedFilter]() { return Core::Library::Sorting::sortTracks(updatedFilter.tracks); });
 
         trackSelection->changeSelectedTracks(sortedTracks, playlistName);
         updatedFilter.tracks = sortedTracks;
@@ -226,9 +218,8 @@ struct FilterManager::Private : QObject
         }
 
         menu->setDefaultAction(filterList->checkedAction());
-        QObject::connect(filterList, &QActionGroup::triggered, this, [this, &filter](QAction* action) {
-            changeFilterField(filter, action->data().toString());
-        });
+        QObject::connect(filterList, &QActionGroup::triggered, self,
+                         [this, &filter](QAction* action) { changeFilterField(filter, action->data().toString()); });
 
         menu->popup(pos);
     }
@@ -289,7 +280,13 @@ FilterManager::FilterManager(Core::Library::MusicLibrary* library, Gui::TrackSel
     QObject::connect(p->library, &Core::Library::MusicLibrary::libraryChanged, this, tracksChanged);
     QObject::connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, this, tracksChanged);
 
-    QObject::connect(&p->fieldsRegistry, &FieldRegistry::fieldChanged, p.get(), &FilterManager::Private::fieldChanged);
+    QObject::connect(&p->fieldsRegistry, &FieldRegistry::fieldChanged, this,
+                     [this](const Filters::FilterField& field) { p->fieldChanged(field); });
+
+    settings->subscribe<Settings::FilterDoubleClick>(
+        this, [this](int action) { p->doubleClickAction = static_cast<Gui::TrackAction>(action); });
+    settings->subscribe<Settings::FilterMiddleClick>(
+        this, [this](int action) { p->middleClickAction = static_cast<Gui::TrackAction>(action); });
 }
 
 FilterManager::~FilterManager() = default;
@@ -298,25 +295,30 @@ FilterWidget* FilterManager::createFilter()
 {
     auto* filter = new FilterWidget(p->settings);
 
-    const FilterField filterField = p->fieldsRegistry.itemByName("");
+    const FilterField filterField = p->fieldsRegistry.itemByName(QStringLiteral(""));
     const LibraryFilter libFilter = p->filterStore.addFilter(filterField);
 
     filter->changeFilter(libFilter);
 
     p->filterWidgets.emplace(libFilter.index, filter);
 
-    QObject::connect(filter, &FilterWidget::doubleClicked, this, [this](const QString& playlistName) {
-        p->handleAction(p->doubleClickAction, playlistName);
-    });
-    QObject::connect(filter, &FilterWidget::middleClicked, this, [this](const QString& playlistName) {
-        p->handleAction(p->middleClickAction, playlistName);
-    });
-
-    QObject::connect(filter, &FilterWidget::requestFieldChange, p.get(), &FilterManager::Private::changeFilterField);
-    QObject::connect(filter, &FilterWidget::requestHeaderMenu, p.get(), &FilterManager::Private::filterHeaderMenu);
-    QObject::connect(filter, &FilterWidget::requestContextMenu, p.get(), &FilterManager::Private::filterContextMenu);
-    QObject::connect(filter, &FilterWidget::selectionChanged, p.get(), &FilterManager::Private::selectionChanged);
-    QObject::connect(filter, &FilterWidget::filterDeleted, p.get(), &FilterManager::Private::deleteFilter);
+    QObject::connect(filter, &FilterWidget::doubleClicked, this,
+                     [this](const QString& playlistName) { p->handleAction(p->doubleClickAction, playlistName); });
+    QObject::connect(filter, &FilterWidget::middleClicked, this,
+                     [this](const QString& playlistName) { p->handleAction(p->middleClickAction, playlistName); });
+    QObject::connect(
+        filter, &FilterWidget::requestFieldChange, this,
+        [this](const LibraryFilter& filter, const QString& field) { p->changeFilterField(filter, field); });
+    QObject::connect(filter, &FilterWidget::requestHeaderMenu, this,
+                     [this](const LibraryFilter& filter, QPoint pos) { p->filterHeaderMenu(filter, pos); });
+    QObject::connect(filter, &FilterWidget::requestContextMenu, this,
+                     [this](const LibraryFilter& filter, QPoint pos) { p->filterContextMenu(filter, pos); });
+    QObject::connect(filter, &FilterWidget::selectionChanged, this,
+                     [this](const LibraryFilter& filter, const QString& playlistName) {
+                         p->selectionChanged(filter, playlistName);
+                     });
+    QObject::connect(filter, &FilterWidget::filterDeleted, this,
+                     [this](const LibraryFilter& filter) { p->deleteFilter(filter); });
 
     QObject::connect(this, &FilterManager::tracksAdded, filter, &FilterWidget::tracksAdded);
     QObject::connect(this, &FilterManager::tracksUpdated, filter, &FilterWidget::tracksUpdated);
@@ -344,9 +346,8 @@ QCoro::Task<void> FilterManager::searchChanged(QString search)
 
     Core::TrackList tracksToFilter{!reset && !p->filteredTracks.empty() ? p->filteredTracks : p->library->tracks()};
 
-    p->filteredTracks = co_await Utils::asyncExec([&search, &tracksToFilter]() {
-        return filterTracks(tracksToFilter, search);
-    });
+    p->filteredTracks
+        = co_await Utils::asyncExec([&search, &tracksToFilter]() { return filterTracks(tracksToFilter, search); });
 
     p->resetFiltersAfterIndex(-1);
 }

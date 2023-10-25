@@ -21,14 +21,14 @@
 
 namespace Fy::Gui::Widgets {
 LibraryTreeItem::LibraryTreeItem()
-    : LibraryTreeItem{"", nullptr, -1}
+    : LibraryTreeItem{QStringLiteral(""), nullptr, -1}
 { }
 
 LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent, int level)
     : TreeItem{parent}
     , m_pending{false}
     , m_level{level}
-    , m_key{"0"}
+    , m_key{QStringLiteral("0")}
     , m_title{std::move(title)}
 { }
 
@@ -92,9 +92,7 @@ void LibraryTreeItem::removeTrack(const Core::Track& track)
     if(m_tracks.empty()) {
         return;
     }
-    std::erase_if(m_tracks, [track](const Core::Track& child) {
-        return child.id() == track.id();
-    });
+    std::erase_if(m_tracks, [track](const Core::Track& child) { return child.id() == track.id(); });
 }
 
 void LibraryTreeItem::sortChildren()

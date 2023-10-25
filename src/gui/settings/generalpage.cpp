@@ -49,9 +49,9 @@ private:
 GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
     , m_startupBehaviour{new QComboBox(this)}
-    , m_waitForTracks{new QCheckBox("Wait for tracks", this)}
+    , m_waitForTracks{new QCheckBox(tr("Wait for tracks"), this)}
 {
-    auto* startupBehaviourLabel = new QLabel("Startup behaviour: ", this);
+    auto* startupBehaviourLabel = new QLabel(tr("Startup behaviour: "), this);
 
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
     m_waitForTracks->setChecked(m_settings->value<Settings::WaitForTracks>());
@@ -67,9 +67,9 @@ GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
         m_startupBehaviour->addItem(text, QVariant::fromValue(action));
     };
 
-    addStartupBehaviour("Show main window", MainWindow::Normal);
-    addStartupBehaviour("Show main window maximised", MainWindow::Maximised);
-    addStartupBehaviour("Remember from last run", MainWindow::RememberLast);
+    addStartupBehaviour(tr("Show main window"), MainWindow::Normal);
+    addStartupBehaviour(tr("Show main window maximised"), MainWindow::Maximised);
+    addStartupBehaviour(tr("Remember from last run"), MainWindow::RememberLast);
 
     const int currentBehaviour = m_settings->value<Settings::StartupBehaviour>();
     m_startupBehaviour->setCurrentIndex(currentBehaviour);
@@ -92,10 +92,8 @@ GeneralPage::GeneralPage(Utils::SettingsManager* settings)
 {
     setId(Constants::Page::GeneralCore);
     setName(tr("General"));
-    setCategory({"General"});
-    setWidgetCreator([settings] {
-        return new GeneralPageWidget(settings);
-    });
+    setCategory({tr("General")});
+    setWidgetCreator([settings] { return new GeneralPageWidget(settings); });
 }
 
 } // namespace Fy::Gui::Settings

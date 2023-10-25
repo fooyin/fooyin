@@ -23,6 +23,8 @@
 
 #include <QSqlError>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fy::Core::DB {
 Query::Query(const Module* module)
     : QSqlQuery{module->db()}
@@ -39,12 +41,12 @@ bool Query::prepareQuery(const QString& query)
 
 void Query::bindQueryValue(const QString& placeholder, const QVariant& val, QSql::ParamType paramType)
 {
-    const QString replaceString = QString("'") + val.toString() + "'";
+    const QString replaceString = u"'"_s + val.toString() + u"'"_s;
 
-    m_queryString.replace(placeholder + " ", replaceString + " ");
-    m_queryString.replace(placeholder + ",", replaceString + ",");
-    m_queryString.replace(placeholder + ";", replaceString + ";");
-    m_queryString.replace(placeholder + ")", replaceString + ")");
+    m_queryString.replace(placeholder + " "_L1, replaceString + " "_L1);
+    m_queryString.replace(placeholder + ","_L1, replaceString + ","_L1);
+    m_queryString.replace(placeholder + ";"_L1, replaceString + ";"_L1);
+    m_queryString.replace(placeholder + ")"_L1, replaceString + ")"_L1);
 
     QSqlQuery::bindValue(placeholder, val, paramType);
 }

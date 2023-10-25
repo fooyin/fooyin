@@ -39,11 +39,14 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-namespace Fy::Gui::Settings {
-using PresetRegistry = Widgets::Playlist::PresetRegistry;
-using PlaylistPreset = Widgets::Playlist::PlaylistPreset;
-using TextBlock      = Widgets::Playlist::TextBlock;
-using TextBlockList  = Widgets::Playlist::TextBlockList;
+namespace {
+using PresetRegistry  = Fy::Gui::Widgets::Playlist::PresetRegistry;
+using PlaylistPreset  = Fy::Gui::Widgets::Playlist::PlaylistPreset;
+using TextBlock       = Fy::Gui::Widgets::Playlist::TextBlock;
+using TextBlockList   = Fy::Gui::Widgets::Playlist::TextBlockList;
+using PresetInput     = Fy::Gui::Settings::PresetInput;
+using PresetInputList = Fy::Gui::Settings::PresetInputList;
+using PresetInputBox  = Fy::Gui::Settings::PresetInputBox;
 
 void setupInputBox(const TextBlock& preset, PresetInput* block)
 {
@@ -61,7 +64,7 @@ void setupInputBox(const TextBlock& preset, PresetInput* block)
     block->setState(state);
 }
 
-void updateTextBlock(PresetInput* presetInput, TextBlock& textBlock)
+void updateTextBlock(const PresetInput* presetInput, TextBlock& textBlock)
 {
     textBlock.text   = presetInput->text();
     textBlock.font   = presetInput->font();
@@ -104,7 +107,9 @@ void createPresetInputs(const TextBlockList& blocks, PresetInputBox* box, QWidge
         }
     }
 }
+} // namespace
 
+namespace Fy::Gui::Settings {
 class PlaylistPresetsPageWidget : public Utils::SettingsPageWidget
 {
 public:
@@ -214,7 +219,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     m_subHeaderRowHeight->setMinimumWidth(120);
     m_subHeaderRowHeight->setMaximumWidth(120);
 
-    m_subHeaderText = new PresetInputBox("Text: ", this);
+    m_subHeaderText = new PresetInputBox(tr("Text: "), this);
 
     subheaderLayout->addWidget(subHeaderRowHeight, 0, 0);
     subheaderLayout->addWidget(m_subHeaderRowHeight, 1, 0);
@@ -232,7 +237,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     m_trackRowHeight->setMinimumWidth(120);
     m_trackRowHeight->setMaximumWidth(120);
 
-    m_trackText = new PresetInputBox("Text: ", this);
+    m_trackText = new PresetInputBox(tr("Text: "), this);
 
     trackLayout->addWidget(trackRowHeight, 0, 0);
     trackLayout->addWidget(m_trackRowHeight, 1, 0);
@@ -284,7 +289,7 @@ void PlaylistPresetsPageWidget::populatePresets()
 void PlaylistPresetsPageWidget::newPreset()
 {
     PlaylistPreset preset;
-    preset.name                      = "New preset";
+    preset.name                      = tr("New preset");
     const PlaylistPreset addedPreset = m_presetRegistry->addItem(preset);
     if(addedPreset.isValid()) {
         m_presetBox->addItem(addedPreset.name, QVariant::fromValue(addedPreset));
@@ -334,7 +339,7 @@ void PlaylistPresetsPageWidget::clonePreset()
     const auto preset = m_presetBox->currentData().value<PlaylistPreset>();
 
     PlaylistPreset clonedPreset{preset};
-    clonedPreset.name                = QString{"Copy of %1"}.arg(preset.name);
+    clonedPreset.name                = tr("Copy of ") + preset.name;
     const PlaylistPreset addedPreset = m_presetRegistry->addItem(clonedPreset);
     if(addedPreset.isValid()) {
         m_presetBox->addItem(addedPreset.name, QVariant::fromValue(addedPreset));
@@ -391,9 +396,7 @@ PlaylistPresetsPage::PlaylistPresetsPage(Widgets::Playlist::PresetRegistry* pres
 {
     setId(Constants::Page::PlaylistPresets);
     setName(tr("Presets"));
-    setCategory({"Playlist", "Presets"});
-    setWidgetCreator([presetRegistry, settings] {
-        return new PlaylistPresetsPageWidget(presetRegistry, settings);
-    });
+    setCategory({tr("Playlist"), tr("Presets")});
+    setWidgetCreator([presetRegistry, settings] { return new PlaylistPresetsPageWidget(presetRegistry, settings); });
 }
 } // namespace Fy::Gui::Settings

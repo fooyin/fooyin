@@ -31,9 +31,9 @@ public:
         , m_root{}
     { }
 
-    virtual ~TreeModel() override = default;
+    ~TreeModel() override = default;
 
-    [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent) const override
+    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override
     {
         if(!hasIndex(row, column, parent)) {
             return {};
@@ -47,7 +47,7 @@ public:
         return {};
     }
 
-    [[nodiscard]] virtual QModelIndex parent(const QModelIndex& index) const override
+    [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override
     {
         if(!index.isValid()) {
             return {};
@@ -63,19 +63,19 @@ public:
         return createIndex(parentItem->row(), 0, parentItem);
     }
 
-    [[nodiscard]] virtual int rowCount(const QModelIndex& parent) const override
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override
     {
         Item* parentItem = itemForIndex(parent);
         return parentItem->childCount();
     }
 
-    [[nodiscard]] virtual int columnCount(const QModelIndex& parent) const override
+    [[nodiscard]] int columnCount(const QModelIndex& parent) const override
     {
         Item* parentItem = itemForIndex(parent);
         return parentItem->columnCount();
     }
 
-    [[nodiscard]] virtual QModelIndex indexOfItem(const Item* item)
+    [[nodiscard]] QModelIndex indexOfItem(const Item* item)
     {
         if(item) {
             if(item == rootItem()) {
@@ -86,7 +86,7 @@ public:
         return {};
     }
 
-    [[nodiscard]] virtual Item* itemForIndex(const QModelIndex& index) const
+    [[nodiscard]] Item* itemForIndex(const QModelIndex& index) const
     {
         if(!index.isValid()) {
             return rootItem();
@@ -95,7 +95,7 @@ public:
     }
 
 protected:
-    [[nodiscard]] virtual Item* rootItem() const
+    [[nodiscard]] Item* rootItem() const
     {
         return &m_root;
     }

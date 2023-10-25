@@ -39,7 +39,6 @@ void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
     if(event->button() == Qt::MiddleButton) {
         return;
     }
-    emit doubleClicked();
     QTreeView::mouseDoubleClickEvent(event);
 }
 } // namespace Fy::Gui::Widgets

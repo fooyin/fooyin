@@ -120,6 +120,7 @@ add_subdirectory(src)
 target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
 
 target_compile_features(fooyin_lib PUBLIC cxx_std_20)
+target_compile_definitions(fooyin_lib PRIVATE QT_USE_QSTRINGBUILDER)
 target_compile_options(
     fooyin_lib
     PUBLIC -Werror
@@ -150,6 +151,7 @@ set_target_properties(
                INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_DIR}
 )
 target_compile_features(fooyin_exe PUBLIC cxx_std_20)
+target_compile_definitions(fooyin_exe PRIVATE QT_USE_QSTRINGBUILDER)
 target_compile_options(
     fooyin_exe
     PRIVATE -Werror

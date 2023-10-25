@@ -33,8 +33,8 @@ PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
     , m_pending{true}
     , m_type{type}
     , m_data{std::move(data)}
-    , m_baseKey{"0"}
-    , m_key{"0"}
+    , m_baseKey{QStringLiteral("0")}
+    , m_key{QStringLiteral("0")}
     , m_indentation{0}
 { }
 

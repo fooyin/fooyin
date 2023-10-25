@@ -70,7 +70,7 @@ void TagEditorPlugin::initialise(const Gui::GuiPluginContext& context)
     //        },
     //        "Tag Editor");
 
-    p->propertiesDialog->insertTab(0, "Metadata", [this]() {
+    p->propertiesDialog->insertTab(0, QStringLiteral("Metadata"), [this]() {
         return new TagEditorWidget(p->trackSelection, p->library, p->settings);
     });
 }

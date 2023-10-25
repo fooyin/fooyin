@@ -45,13 +45,12 @@ LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::Mus
     m_rescanLibrary = new QAction(rescanIcon, tr("&Rescan Library"), this);
     m_actionManager->registerAction(m_rescanLibrary, Gui::Constants::Actions::Rescan);
     libraryMenu->addAction(m_rescanLibrary, Gui::Constants::Groups::Two);
-    connect(m_rescanLibrary, &QAction::triggered, m_library, &Core::Library::MusicLibrary::reloadAll);
+    QObject::connect(m_rescanLibrary, &QAction::triggered, m_library, &Core::Library::MusicLibrary::reloadAll);
 
     m_openSettings = new QAction(settingsIcon, tr("&Settings"), this);
     actionManager->registerAction(m_openSettings, Gui::Constants::Actions::Settings);
     libraryMenu->addAction(m_openSettings, Gui::Constants::Groups::Three);
-    connect(m_openSettings, &QAction::triggered, this, [this]() {
-        m_settings->settingsDialog()->openAtPage(Gui::Constants::Page::LibraryGeneral);
-    });
+    QObject::connect(m_openSettings, &QAction::triggered, this,
+                     [this]() { m_settings->settingsDialog()->openAtPage(Gui::Constants::Page::LibraryGeneral); });
 }
 } // namespace Fy::Gui

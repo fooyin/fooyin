@@ -57,7 +57,7 @@ public:
     ~PlaylistPopulator() override;
 
     void run(const PlaylistPreset& preset, const Core::TrackList& tracks);
-    void updateHeaders(const ItemList& items);
+    void updateHeaders(const ItemList& headers);
 
 signals:
     void populated(PendingData data);

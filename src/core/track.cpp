@@ -21,9 +21,14 @@
 
 #include <core/constants.h>
 #include <core/corepaths.h>
+#include <utils/utils.h>
 
 #include <QIODevice>
 #include <QMap>
+
+using namespace Qt::Literals::StringLiterals;
+
+constexpr auto Separator = "|";
 
 namespace Fy::Core {
 struct Track::Private : public QSharedData
@@ -70,7 +75,7 @@ struct Track::Private : public QSharedData
 };
 
 Track::Track()
-    : Track{""}
+    : Track{u""_s}
 { }
 
 Track::Track(QString filepath)
@@ -93,9 +98,9 @@ Track& Track::operator=(const Track& other) = default;
 
 QString Track::generateHash()
 {
-    p->hash = QString{"%1|%2|%3|%4.%5|%6"}.arg(p->artists.join(","), p->album, p->date, QString::number(p->discNumber),
-                                               QStringLiteral("%1").arg(p->trackNumber, 2, 10, QLatin1Char('0')),
-                                               QString::number(p->duration));
+    p->hash = p->artists.join(","_L1) + Separator + p->album + Separator + p->date + Separator
+            + QString::number(p->discNumber) + Separator + Utils::addLeadingZero(p->trackNumber, 2) + Separator
+            + QString::number(p->duration);
     return p->hash;
 }
 
@@ -126,7 +131,7 @@ QString Track::hash() const
 
 QString Track::albumHash() const
 {
-    return QString{"%1|%2|%3"}.arg(p->date, !p->albumArtist.isEmpty() ? p->albumArtist : p->artists.join(""), p->album);
+    return u"%1|%2|%3"_s.arg(p->date, !p->albumArtist.isEmpty() ? p->albumArtist : p->artists.join(""_L1), p->album);
 }
 
 QString Track::filepath() const
@@ -415,7 +420,7 @@ void Track::addExtraTag(const QString& tag, const QString& value)
         return;
     }
     if(p->extraTags.contains(tag)) {
-        auto entry = p->extraTags[tag];
+        auto entry = p->extraTags.value(tag);
         entry.emplace_back(value);
         p->extraTags.insert(tag, entry);
     }

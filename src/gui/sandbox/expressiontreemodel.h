@@ -28,7 +28,7 @@ class ExpressionTreeItem : public Utils::TreeItem<ExpressionTreeItem>
 {
 public:
     ExpressionTreeItem();
-    explicit ExpressionTreeItem(QString key, QString name, const Core::Scripting::Expression& expression);
+    explicit ExpressionTreeItem(QString key, QString name, Core::Scripting::Expression expression);
 
     QString key() const;
     Core::Scripting::ExprType type() const;
@@ -44,8 +44,8 @@ private:
 class ExpressionTreeModel : public Utils::TreeModel<ExpressionTreeItem>
 {
 public:
-    ExpressionTreeModel(QObject* parent = nullptr);
-    ~ExpressionTreeModel();
+    explicit ExpressionTreeModel(QObject* parent = nullptr);
+    ~ExpressionTreeModel() override;
 
     void populate(const Core::Scripting::ExpressionList& expressions);
 

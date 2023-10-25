@@ -41,6 +41,7 @@ class Playlist;
 
 namespace Gui::Widgets::Playlist {
 struct PlaylistPreset;
+class PlaylistModelPrivate;
 
 class PlaylistModel : public Utils::TreeModel<PlaylistItem>
 {
@@ -68,6 +69,10 @@ public:
     void fetchMore(const QModelIndex& parent) override;
     bool canFetchMore(const QModelIndex& parent) const override;
 
+    bool insertPlaylistRows(const QModelIndex& target, int firstRow, int lastRow,
+                            const std::vector<PlaylistItem*>& children);
+    bool movePlaylistRows(const QModelIndex& source, int firstRow, int lastRow, const QModelIndex& target, int row,
+                          const std::vector<PlaylistItem*>& children);
     bool removePlaylistRows(int row, int count, const QModelIndex& parent);
 
     void removeTracks(const QModelIndexList& indexes);
@@ -78,8 +83,7 @@ public:
     void changePreset(const PlaylistPreset& preset);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<PlaylistModelPrivate> p;
 };
 } // namespace Gui::Widgets::Playlist
 } // namespace Fy

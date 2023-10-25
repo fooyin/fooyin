@@ -45,9 +45,8 @@ void SettingsDialogController::open()
 void SettingsDialogController::openAtPage(const Id& page)
 {
     auto* settingsDialog = new SettingsDialog{p->pages};
-    QObject::connect(settingsDialog, &QDialog::destroyed, this, [this, settingsDialog]() {
-        p->geometry = settingsDialog->saveGeometry();
-    });
+    QObject::connect(settingsDialog, &QDialog::destroyed, this,
+                     [this, settingsDialog]() { p->geometry = settingsDialog->saveGeometry(); });
     settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
 
     if(p->geometry.isEmpty()) {

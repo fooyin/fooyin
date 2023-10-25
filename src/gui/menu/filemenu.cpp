@@ -43,12 +43,13 @@ FileMenu::FileMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* 
     m_openSettings = new QAction(settingsIcon, tr("&Settings"), this);
     actionManager->registerAction(m_openSettings, Gui::Constants::Actions::Settings);
     fileMenu->addAction(m_openSettings, Gui::Constants::Groups::Three);
-    connect(m_openSettings, &QAction::triggered, m_settings->settingsDialog(), &Utils::SettingsDialogController::open);
+    QObject::connect(m_openSettings, &QAction::triggered, m_settings->settingsDialog(),
+                     &Utils::SettingsDialogController::open);
 
     m_quit = new QAction(quitIcon, tr("E&xit"), this);
     m_actionManager->registerAction(m_quit, Gui::Constants::Actions::Exit);
     fileMenu->addAction(m_quit, Gui::Constants::Groups::Three);
-    connect(m_quit, &QAction::triggered, qApp, &QApplication::quit);
+    QObject::connect(m_quit, &QAction::triggered, qApp, &QApplication::quit);
 }
 
 } // namespace Fy::Gui

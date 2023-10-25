@@ -71,8 +71,8 @@ FiltersFieldsPageWidget::FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry, 
     auto* buttonsLayout = new QVBoxLayout(buttons);
     buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    auto* addButton    = new QPushButton("Add", this);
-    auto* removeButton = new QPushButton("Remove", this);
+    auto* addButton    = new QPushButton(tr("Add"), this);
+    auto* removeButton = new QPushButton(tr("Remove"), this);
 
     buttonsLayout->addWidget(addButton);
     buttonsLayout->addWidget(removeButton);
@@ -119,9 +119,7 @@ FiltersFieldsPage::FiltersFieldsPage(FieldRegistry* fieldsRegistry, Utils::Setti
 {
     setId(Constants::Page::FiltersFields);
     setName(tr("Fields"));
-    setCategory({"Plugins", "Filters"});
-    setWidgetCreator([fieldsRegistry, settings] {
-        return new FiltersFieldsPageWidget(fieldsRegistry, settings);
-    });
+    setCategory({tr("Plugins"), tr("Filters")});
+    setWidgetCreator([fieldsRegistry, settings] { return new FiltersFieldsPageWidget(fieldsRegistry, settings); });
 }
 } // namespace Fy::Filters::Settings

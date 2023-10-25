@@ -79,7 +79,7 @@ void skipSamples(AVFrame* frame, int samples)
     const int stride  = av_get_bytes_per_sample(format) * frame->ch_layout.nb_channels;
     const int size    = (frame->nb_samples - samples) * stride;
 
-    memmove(fdata[0], fdata[0] + samples * stride, size);
+    memmove(fdata[0], fdata[0] + static_cast<int>(samples * stride), size);
 
     frame->nb_samples -= samples;
     if(frame->pts > 0) {
@@ -110,8 +110,8 @@ void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, doub
     switch(bps) {
         case(8): {
             for(int i{0}; i < bytes; ++i) {
-                const int8_t sample = data[i];
-                data[i]             = static_cast<int8_t>(sample * vol);
+                const auto sample = std::bit_cast<int8_t>(data[i]);
+                data[i]           = static_cast<int8_t>(static_cast<float>(sample) * vol);
             }
             break;
         }
@@ -120,19 +120,20 @@ void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, doub
             const int count    = bytes / 2;
             for(int i{0}; i < count; ++i) {
                 const int16_t sample = adjustedData[i];
-                adjustedData[i]      = static_cast<int16_t>(sample * vol);
+                adjustedData[i]      = static_cast<int16_t>(static_cast<float>(sample) * vol);
             }
             break;
         }
         case(24): {
             const int count = bytes / 3;
             for(int i{0}; i < count; ++i) {
-                const int32_t sample = (static_cast<int8_t>(data[i * 3]) | static_cast<int8_t>(data[i * 3 + 1] << 8)
-                                        | static_cast<int8_t>(data[i * 3 + 2] << 16));
-                auto newSample       = static_cast<int32_t>(sample * vol);
-                data[i * 3]          = static_cast<uint8_t>(newSample & 0x0000ff);
-                data[i * 3 + 1]      = static_cast<uint8_t>((newSample & 0x00ff00) >> 8);
-                data[i * 3 + 2]      = static_cast<uint8_t>((newSample & 0xff0000) >> 16);
+                const int32_t sample              = (static_cast<int8_t>(data[static_cast<int>(i * 3)])
+                                        | static_cast<int8_t>(data[static_cast<int>(i * 3 + 1)] << 8)
+                                        | static_cast<int8_t>(data[static_cast<int>(i * 3 + 2)] << 16));
+                auto newSample                    = static_cast<int32_t>(static_cast<float>(sample) * vol);
+                data[static_cast<int>(i * 3)]     = static_cast<uint8_t>(newSample & 0x0000FF);
+                data[static_cast<int>(i * 3 + 1)] = static_cast<uint8_t>((newSample & 0x00FF00) >> 8);
+                data[static_cast<int>(i * 3 + 2)] = static_cast<uint8_t>((newSample & 0xFF0000) >> 16);
             }
             break;
         }
@@ -148,7 +149,7 @@ void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, doub
                 auto* adjustedData = std::bit_cast<int32_t*>(data);
                 for(int i = 0; i < count; ++i) {
                     const int32_t sample = adjustedData[i];
-                    adjustedData[i]      = static_cast<int32_t>(sample * vol);
+                    adjustedData[i]      = static_cast<int32_t>(static_cast<float>(sample) * vol);
                 }
             }
             break;

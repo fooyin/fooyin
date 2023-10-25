@@ -70,9 +70,7 @@ PluginPage::PluginPage(Utils::SettingsManager* settings, Plugins::PluginManager*
 {
     setId(Constants::Page::Plugins);
     setName(tr("General"));
-    setCategory({"Plugins"});
-    setWidgetCreator([pluginManager] {
-        return new PluginPageWidget(pluginManager);
-    });
+    setCategory({tr("Plugins")});
+    setWidgetCreator([pluginManager] { return new PluginPageWidget(pluginManager); });
 }
 } // namespace Fy::Gui::Settings

@@ -109,7 +109,7 @@ struct FilterPopulator::Private
             return;
         }
 
-        emit populator->populated(data);
+        QMetaObject::invokeMethod(populator, "populated", Q_ARG(PendingTreeData, data));
 
         data.clear();
     }

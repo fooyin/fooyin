@@ -59,8 +59,8 @@ private:
     QFont m_font;
     QColor m_colour;
 
-    bool m_fontChanged;
-    bool m_colourChanged;
+    bool m_fontChanged{false};
+    bool m_colourChanged{false};
 
     QPushButton* m_fontButton;
     QPushButton* m_colourButton;
@@ -76,24 +76,22 @@ private:
 
 FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* settings)
     : m_settings{settings}
-    , m_filterHeaders{new QCheckBox("Show Headers", this)}
-    , m_filterScrollBars{new QCheckBox("Show Scrollbars", this)}
-    , m_altRowColours{new QCheckBox("Alternating Row Colours", this)}
-    , m_fontChanged{false}
-    , m_colourChanged{false}
-    , m_fontButton{new QPushButton(QIcon::fromTheme(Gui::Constants::Icons::Font), "Font", this)}
-    , m_colourButton{new QPushButton(QIcon::fromTheme(Gui::Constants::Icons::TextColour), "Colour", this)}
+    , m_filterHeaders{new QCheckBox(tr("Show Headers"), this)}
+    , m_filterScrollBars{new QCheckBox(tr("Show Scrollbars"), this)}
+    , m_altRowColours{new QCheckBox(tr("Alternating Row Colours"), this)}
+    , m_fontButton{new QPushButton(QIcon::fromTheme(Gui::Constants::Icons::Font), tr("Font"), this)}
+    , m_colourButton{new QPushButton(QIcon::fromTheme(Gui::Constants::Icons::TextColour), tr("Colour"), this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
-    , m_playlistEnabled{new QCheckBox("Enabled", this)}
-    , m_autoSwitch{new QCheckBox("Switch when changed", this)}
+    , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
+    , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
     , m_playlistName{new QLineEdit(this)}
 {
-    auto* appearance       = new QGroupBox("Appearance", this);
+    auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
-    auto* rowHeightLabel = new QLabel("Row Height: ", this);
+    auto* rowHeightLabel = new QLabel(tr("Row Height: "), this);
 
     appearanceLayout->addWidget(m_filterHeaders, 0, 0, 1, 2);
     appearanceLayout->addWidget(m_filterScrollBars, 1, 0, 1, 2);
@@ -104,11 +102,11 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* setti
     appearanceLayout->addWidget(m_colourButton, 4, 1);
     appearanceLayout->setColumnStretch(2, 1);
 
-    auto* clickBehaviour       = new QGroupBox("Click Behaviour", this);
+    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    auto* doubleClickLabel = new QLabel("Double-click: ", this);
-    auto* middleClickLabel = new QLabel("Middle-click: ", this);
+    auto* doubleClickLabel = new QLabel(tr("Double-click: "), this);
+    auto* middleClickLabel = new QLabel(tr("Middle-click: "), this);
 
     clickBehaviourLayout->addWidget(doubleClickLabel, 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
@@ -116,10 +114,10 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* setti
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
     clickBehaviourLayout->setColumnStretch(2, 1);
 
-    auto* selectionPlaylist       = new QGroupBox("Filter Selection Playlist", this);
+    auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    auto* playlistNameLabel = new QLabel("Name: ", this);
+    auto* playlistNameLabel = new QLabel(tr("Name: "), this);
 
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
@@ -136,7 +134,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* setti
 
     QObject::connect(m_fontButton, &QPushButton::pressed, this, [this]() {
         bool ok;
-        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, "Select Font");
+        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, tr("Select Font"));
         if(ok && chosenFont != m_font) {
             m_fontChanged = true;
             m_font        = chosenFont;
@@ -145,7 +143,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* setti
 
     QObject::connect(m_colourButton, &QPushButton::pressed, this, [this]() {
         const QColor chosenColour
-            = QColorDialog::getColor(m_colour, this, "Select Colour", QColorDialog::ShowAlphaChannel);
+            = QColorDialog::getColor(m_colour, this, tr("Select Colour"), QColorDialog::ShowAlphaChannel);
         if(chosenColour.isValid() && chosenColour != m_colour) {
             m_colourChanged = true;
             m_colour        = chosenColour;
@@ -206,17 +204,17 @@ void FiltersGeneralPageWidget::setValues()
     m_doubleClick->clear();
     m_middleClick->clear();
 
-    addTrackAction(m_doubleClick, "None", Gui::TrackAction::None, doubleActions);
-    addTrackAction(m_doubleClick, "Add to current playlist", Gui::TrackAction::AddCurrentPlaylist, doubleActions);
-    addTrackAction(m_doubleClick, "Add to active playlist", Gui::TrackAction::AddActivePlaylist, doubleActions);
-    addTrackAction(m_doubleClick, "Send to current playlist", Gui::TrackAction::SendCurrentPlaylist, doubleActions);
-    addTrackAction(m_doubleClick, "Send to new playlist", Gui::TrackAction::SendNewPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("None"), Gui::TrackAction::None, doubleActions);
+    addTrackAction(m_doubleClick, tr("Add to current playlist"), Gui::TrackAction::AddCurrentPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Add to active playlist"), Gui::TrackAction::AddActivePlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Send to current playlist"), Gui::TrackAction::SendCurrentPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Send to new playlist"), Gui::TrackAction::SendNewPlaylist, doubleActions);
 
-    addTrackAction(m_middleClick, "None", Gui::TrackAction::None, middleActions);
-    addTrackAction(m_middleClick, "Add to current playlist", Gui::TrackAction::AddCurrentPlaylist, middleActions);
-    addTrackAction(m_middleClick, "Add to active playlist", Gui::TrackAction::AddActivePlaylist, middleActions);
-    addTrackAction(m_middleClick, "Send to current playlist", Gui::TrackAction::SendCurrentPlaylist, middleActions);
-    addTrackAction(m_middleClick, "Send to new playlist", Gui::TrackAction::SendNewPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("None"), Gui::TrackAction::None, middleActions);
+    addTrackAction(m_middleClick, tr("Add to current playlist"), Gui::TrackAction::AddCurrentPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Add to active playlist"), Gui::TrackAction::AddActivePlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Send to current playlist"), Gui::TrackAction::SendCurrentPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Send to new playlist"), Gui::TrackAction::SendNewPlaylist, middleActions);
 
     auto doubleAction = m_settings->value<Settings::FilterDoubleClick>();
     if(doubleActions.contains(doubleAction)) {
@@ -257,9 +255,7 @@ FiltersGeneralPage::FiltersGeneralPage(Utils::SettingsManager* settings)
 {
     setId(Constants::Page::FiltersGeneral);
     setName(tr("General"));
-    setCategory({"Plugins", "Filters"});
-    setWidgetCreator([settings] {
-        return new FiltersGeneralPageWidget(settings);
-    });
+    setCategory({tr("Plugins"), tr("Filters")});
+    setWidgetCreator([settings] { return new FiltersGeneralPageWidget(settings); });
 }
 } // namespace Fy::Filters::Settings

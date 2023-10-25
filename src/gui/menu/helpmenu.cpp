@@ -28,6 +28,15 @@
 #include <QAction>
 #include <QIcon>
 
+namespace {
+void showAboutDialog()
+{
+    auto* aboutDialog = new Fy::Gui::AboutDialog();
+    QObject::connect(aboutDialog, &QDialog::finished, aboutDialog, &QObject::deleteLater);
+    aboutDialog->show();
+}
+} // namespace
+
 namespace Fy::Gui {
 HelpMenu::HelpMenu(Utils::ActionManager* actionManager, QObject* parent)
     : QObject{parent}
@@ -39,13 +48,6 @@ HelpMenu::HelpMenu(Utils::ActionManager* actionManager, QObject* parent)
     m_about              = new QAction(aboutIcon, tr("&About"), this);
     m_actionManager->registerAction(m_about, Constants::Actions::About);
     helpMenu->addAction(m_about, Constants::Groups::Three);
-    connect(m_about, &QAction::triggered, this, &HelpMenu::showAboutDialog);
-}
-
-void HelpMenu::showAboutDialog()
-{
-    auto* aboutDialog = new AboutDialog();
-    connect(aboutDialog, &QDialog::finished, aboutDialog, &QObject::deleteLater);
-    aboutDialog->show();
+    QObject::connect(m_about, &QAction::triggered, this, showAboutDialog);
 }
 } // namespace Fy::Gui

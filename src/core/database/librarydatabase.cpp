@@ -24,9 +24,9 @@
 #include <core/constants.h>
 #include <utils/utils.h>
 
-namespace Fy::Core::DB {
 using namespace Qt::Literals::StringLiterals;
 
+namespace Fy::Core::DB {
 QString fetchQueryTracks(const QString& join, const QString& offsetLimit)
 {
     static const QStringList fields = {
@@ -60,9 +60,9 @@ QString fetchQueryTracks(const QString& join, const QString& offsetLimit)
         u"LibraryID"_s     // 27
     };
 
-    const auto joinedFields = fields.join(", ");
+    const auto joinedFields = fields.join(", "_L1);
 
-    return QString("SELECT %1 FROM Tracks %2 %5;").arg(joinedFields, join.isEmpty() ? "" : join, offsetLimit);
+    return QString(u"SELECT %1 FROM Tracks %2 %5;"_s).arg(joinedFields, join.isEmpty() ? ""_L1 : join, offsetLimit);
 }
 
 BindingsMap getTrackBindings(const Track& track)
@@ -130,7 +130,7 @@ bool LibraryDatabase::storeTracks(TrackList& tracks)
 
 bool LibraryDatabase::getAllTracks(TrackList& result)
 {
-    auto q           = Query(module());
+    Query q{module()};
     const auto query = fetchQueryTracks({}, {});
     q.prepareQuery(query);
 
@@ -139,13 +139,13 @@ bool LibraryDatabase::getAllTracks(TrackList& result)
 
 bool LibraryDatabase::getAllTracks(TrackList& result, int offset, int limit)
 {
-    auto q = Query(module());
+    Query q{module()};
 
     QString offsetLimit;
     if(limit > 0) {
-        offsetLimit.append(QString("LIMIT %1").arg(limit));
+        offsetLimit = offsetLimit + "LIMIT " + QString::number(limit);
         if(offset > 0) {
-            offsetLimit.append(QString(" OFFSET %1").arg(offset));
+            offsetLimit = offsetLimit + "OFFSET " + QString::number(offset);
         }
     }
 
@@ -160,7 +160,7 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result) const
     result.clear();
 
     if(!q.execQuery()) {
-        q.error("Cannot fetch tracks from database");
+        q.error(u"Cannot fetch tracks from database"_s);
         return false;
     }
 
@@ -189,15 +189,15 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result) const
         track.setGenres(q.value(15).toString().split(Constants::Separator, Qt::SkipEmptyParts));
         track.setLyrics(q.value(16).toString());
         track.setComment(q.value(17).toString());
-        track.setDuration(q.value(18).value<uint64_t>());
+        track.setDuration(q.value(18).toULongLong());
         track.setPlayCount(q.value(19).toInt());
         // 20 - Rating
         track.setFileSize(q.value(21).toInt());
         track.setBitrate(q.value(22).toInt());
         track.setSampleRate(q.value(23).toInt());
         track.storeExtraTags(q.value(24).toByteArray());
-        track.setAddedTime(q.value(25).value<uint64_t>());
-        track.setModifiedTime(q.value(26).value<uint64_t>());
+        track.setAddedTime(q.value(25).toULongLong());
+        track.setModifiedTime(q.value(26).toULongLong());
         track.setLibraryId(q.value(27).toInt());
 
         track.generateHash();
@@ -209,8 +209,8 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result) const
 
 int LibraryDatabase::dbTrackCount() const
 {
-    const auto queryText = QStringLiteral("SELECT COUNT(*) FROM Tracks");
-    auto q               = module()->runQuery(queryText, "Cannot fetch track count");
+    const QString queryText = u"SELECT COUNT(*) FROM Tracks"_s;
+    auto q                  = module()->runQuery(queryText, u"Cannot fetch track count"_s);
 
     if(!q.hasError() && q.next()) {
         return q.value(0).toInt();
@@ -228,17 +228,17 @@ bool LibraryDatabase::updateTrack(const Track& track)
 
     auto bindings = getTrackBindings(track);
 
-    const auto q = module()->update("Tracks", bindings, {"TrackID", QString::number(track.id())},
-                                    QString("Cannot update track %1").arg(track.filepath()));
+    const auto q = module()->update(u"Tracks"_s, bindings, {u"TrackID"_s, QString::number(track.id())},
+                                    "Cannot update track " + track.filepath());
 
     return !q.hasError();
 }
 
 bool LibraryDatabase::deleteTrack(int id)
 {
-    const auto queryText = QStringLiteral("DELETE FROM Tracks WHERE TrackID = :TrackID;");
-    const auto q
-        = module()->runQuery(queryText, {":TrackID", QString::number(id)}, QString{"Cannot delete track %1"}.arg(id));
+    const QString queryText = u"DELETE FROM Tracks WHERE TrackID = :TrackID;"_s;
+    const auto q            = module()->runQuery(queryText, {":TrackID", QString::number(id)},
+                                                 "Cannot delete track " + QString::number(id));
 
     return (!q.hasError());
 }
@@ -254,9 +254,8 @@ bool LibraryDatabase::deleteTracks(const TrackList& tracks)
         return false;
     }
 
-    const int fileCount = static_cast<int>(std::ranges::count_if(std::as_const(tracks), [this](const Track& track) {
-        return deleteTrack(track.id());
-    }));
+    const int fileCount = static_cast<int>(
+        std::ranges::count_if(std::as_const(tracks), [this](const Track& track) { return deleteTrack(track.id()); }));
 
     const auto success = module()->db().commit();
 
@@ -267,7 +266,7 @@ int LibraryDatabase::insertTrack(const Track& track)
 {
     auto bindings = getTrackBindings(track);
 
-    const auto query = module()->insert("Tracks", bindings, QString("Cannot insert track %1").arg(track.filepath()));
+    const auto query = module()->insert(u"Tracks"_s, bindings, "Cannot insert track " + track.filepath());
 
     return (query.hasError()) ? -1 : query.lastInsertId().toInt();
 }

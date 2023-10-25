@@ -32,7 +32,7 @@ public:
         : TreeModel<Item>{parent}
     { }
 
-    [[nodiscard]] virtual QModelIndex index(int row, int column, const QModelIndex& parent = {}) const override
+    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent = {}) const override
     {
         if(!QAbstractItemModel::hasIndex(row, column, parent)) {
             return {};
@@ -45,12 +45,12 @@ public:
         return {};
     }
 
-    [[nodiscard]] virtual QModelIndex parent(const QModelIndex& /*index*/) const override
+    [[nodiscard]] QModelIndex parent(const QModelIndex& /*index*/) const override
     {
         return {};
     }
 
-    [[nodiscard]] virtual int rowCount(const QModelIndex& /*parent*/ = {}) const override
+    [[nodiscard]] int rowCount(const QModelIndex& /*parent*/ = {}) const override
     {
         return rootItem()->childCount();
     }

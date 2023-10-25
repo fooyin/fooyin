@@ -60,7 +60,7 @@ public:
     void setPages(const PageList& pages);
 
     std::optional<SettingsCategory> categoryForPage(const Id& page) const;
-    QModelIndex indexForCategory(const Id& category) const;
+    QModelIndex indexForCategory(const Id& categoryId) const;
 
 private:
     using CategoryIdMap = std::map<Id, SettingsCategory>;

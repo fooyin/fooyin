@@ -33,7 +33,7 @@ Dummy::Dummy(QWidget* parent)
 
     m_layout->setContentsMargins(0, 0, 0, 0);
 
-    m_label->setText("Right-Click to add a new widget.");
+    m_label->setText(tr("Right-Click to add a new widget"));
     m_label->setAutoFillBackground(true);
 
     QPalette palette = QApplication::palette();
@@ -48,6 +48,6 @@ Dummy::Dummy(QWidget* parent)
 
 QString Dummy::name() const
 {
-    return "Dummy";
+    return QStringLiteral("Dummy");
 }
 } // namespace Fy::Gui::Widgets

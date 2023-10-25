@@ -7,7 +7,7 @@ IndentWidth:     4
 UseTab:          Never
 ColumnLimit:     120
 Language:        Cpp
-Standard:        Cpp11
+Standard:        Cpp20
 
 AlignAfterOpenBracket:                          true
 AlignOperands:                                  AlignAfterOperator
@@ -21,7 +21,7 @@ AlwaysBreakTemplateDeclarations:                Yes
 BreakBeforeBraces:                              Custom
 BraceWrapping:
     AfterClass:                                 true
-    AfterControlStatement:                      false
+    AfterControlStatement:                      Never
     AfterEnum:                                  true
     AfterFunction:                              true
     AfterNamespace:                             false
@@ -40,7 +40,7 @@ BreakInheritanceList:                           AfterComma
 BreakStringLiterals:                            true
 
 AllowAllConstructorInitializersOnNextLine:      false
-AllowShortLambdasOnASingleLine:                 Empty
+AllowShortLambdasOnASingleLine:                 Inline
 Cpp11BracedListStyle:                           true
 SpaceBeforeCpp11BracedList:                     false
 IndentCaseLabels:                               true

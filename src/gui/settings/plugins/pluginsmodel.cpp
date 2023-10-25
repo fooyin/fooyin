@@ -80,15 +80,15 @@ QVariant PluginsModel::headerData(int section, Qt::Orientation orientation, int 
 
     switch(section) {
         case(0):
-            return "Name";
+            return QStringLiteral("Name");
         case(1):
-            return "Version";
+            return QStringLiteral("Version");
         case(2):
-            return "Category";
+            return QStringLiteral("Category");
         case(3):
-            return "Author";
+            return QStringLiteral("Author");
         case(4):
-            return "Status";
+            return QStringLiteral("Status");
     }
     return {};
 }
@@ -104,7 +104,7 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
     }
 
     const int column = index.column();
-    auto* item       = static_cast<PluginItem*>(index.internalPointer());
+    const auto* item = static_cast<PluginItem*>(index.internalPointer());
 
     if(role == Qt::DisplayRole) {
         switch(column) {

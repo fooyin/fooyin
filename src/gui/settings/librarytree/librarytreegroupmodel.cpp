@@ -130,7 +130,7 @@ void LibraryTreeGroupModel::processQueue()
                     emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
-                    qWarning() << QString{"Group %1 could not be added"}.arg(group.name);
+                    qWarning() << "Group " + group.name + " could not be added";
                 }
                 break;
             }
@@ -142,7 +142,7 @@ void LibraryTreeGroupModel::processQueue()
                     groupsToRemove.push_back(node);
                 }
                 else {
-                    qWarning() << QString{"Field (%1) could not be removed"}.arg(group.name);
+                    qWarning() << "Group " + group.name + " could not be removed";
                 }
                 break;
             }
@@ -153,7 +153,7 @@ void LibraryTreeGroupModel::processQueue()
                     emit dataChanged({}, {}, {Qt::FontRole});
                 }
                 else {
-                    qWarning() << QString{"Field (%1) could not be changed"}.arg(group.name);
+                    qWarning() << "Group " + group.name + " could not be changed";
                 }
                 break;
             }
@@ -190,11 +190,11 @@ QVariant LibraryTreeGroupModel::headerData(int section, Qt::Orientation orientat
 
     switch(section) {
         case(0):
-            return "Index";
+            return QStringLiteral("Index");
         case(1):
-            return "Name";
+            return QStringLiteral("Name");
         case(2):
-            return "Grouping";
+            return QStringLiteral("Grouping");
     }
     return {};
 }
@@ -220,11 +220,11 @@ QVariant LibraryTreeGroupModel::data(const QModelIndex& index, int role) const
             return item->group().index;
         case(1): {
             const QString& name = item->group().name;
-            return !name.isEmpty() ? name : "<enter name here>";
+            return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
         }
         case(2): {
             const QString& field = item->group().script;
-            return !field.isEmpty() ? field : "<enter grouping here>";
+            return !field.isEmpty() ? field : QStringLiteral("<enter grouping here>");
         }
     }
     return {};
@@ -236,8 +236,8 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
         return false;
     }
 
-    auto* item = static_cast<LibraryTreeGroupItem*>(index.internalPointer());
-    auto group = item->group();
+    const auto* item = static_cast<LibraryTreeGroupItem*>(index.internalPointer());
+    auto group       = item->group();
 
     switch(index.column()) {
         case(1): {

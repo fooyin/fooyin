@@ -21,8 +21,8 @@
 
 #include "fycore_export.h"
 
-#include <core/library/librarysort.h>
 #include <core/coresettings.h>
+#include <core/library/librarysort.h>
 #include <utils/itemregistry.h>
 
 namespace Fy {
@@ -36,7 +36,7 @@ class FYCORE_EXPORT SortingRegistry : public Utils::ItemRegistry<Sorting::SortSc
     Q_OBJECT
 
 public:
-    SortingRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit SortingRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
 
     void loadItems() override;
 

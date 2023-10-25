@@ -70,7 +70,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     , m_settings{settings}
     , m_libraryView{new LibraryView(this)}
     , m_model{new LibraryModel(m_libraryManager, this)}
-    , m_autoRefresh{new QCheckBox("Auto refresh on startup", this)}
+    , m_autoRefresh{new QCheckBox(tr("Auto refresh on startup"), this)}
     , m_sortScript{new QLineEdit(this)}
 {
     m_model->populate();
@@ -87,8 +87,8 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     auto* buttonsLayout = new QVBoxLayout(buttons);
     buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    auto* addButton    = new QPushButton("Add", this);
-    auto* removeButton = new QPushButton("Remove", this);
+    auto* addButton    = new QPushButton(tr("Add"), this);
+    auto* removeButton = new QPushButton(tr("Remove"), this);
 
     buttonsLayout->addWidget(addButton);
     buttonsLayout->addWidget(removeButton);
@@ -100,7 +100,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
     m_autoRefresh->setChecked(m_settings->value<Core::Settings::AutoRefresh>());
 
-    auto* sortScriptLabel  = new QLabel("Sort tracks by:", this);
+    auto* sortScriptLabel  = new QLabel(tr("Sort tracks by:"), this);
     auto* sortScriptLayout = new QHBoxLayout();
     sortScriptLayout->addWidget(sortScriptLabel);
     sortScriptLayout->addWidget(m_sortScript);
@@ -111,8 +111,8 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     mainLayout->addWidget(m_autoRefresh);
     mainLayout->addLayout(sortScriptLayout);
 
-    connect(addButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::addLibrary);
-    connect(removeButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::removeLibrary);
+    QObject::connect(addButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::addLibrary);
+    QObject::connect(removeButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::removeLibrary);
 }
 
 void LibraryGeneralPageWidget::apply()
@@ -165,10 +165,8 @@ LibraryGeneralPage::LibraryGeneralPage(Core::Library::LibraryManager* libraryMan
 {
     setId(Constants::Page::LibraryGeneral);
     setName(tr("General"));
-    setCategory({"Library"});
-    setWidgetCreator([libraryManager, settings] {
-        return new LibraryGeneralPageWidget(libraryManager, settings);
-    });
+    setCategory({tr("Library")});
+    setWidgetCreator([libraryManager, settings] { return new LibraryGeneralPageWidget(libraryManager, settings); });
 }
 
 } // namespace Fy::Gui::Settings

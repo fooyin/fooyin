@@ -25,6 +25,8 @@
 namespace Fy::Utils {
 class ScrollArea : public QScrollArea
 {
+    Q_OBJECT
+
 public:
     explicit ScrollArea(QWidget* parent);
 

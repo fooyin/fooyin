@@ -23,13 +23,14 @@
 #include <core/scripting/scriptscanner.h>
 
 #include <QDebug>
-#include <QStringBuilder>
 
-namespace Fy::Core::Scripting {
-QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& result)
+using namespace Qt::Literals::StringLiterals;
+
+namespace {
+QStringList evalStringList(const Fy::Core::Scripting::ScriptResult& evalExpr, const QStringList& result)
 {
     QStringList listResult;
-    const QStringList values = evalExpr.value.split(Constants::Separator);
+    const QStringList values = evalExpr.value.split(Fy::Core::Constants::Separator);
     const bool isEmpty       = result.empty();
 
     for(const QString& value : values) {
@@ -37,14 +38,15 @@ QStringList evalStringList(const ScriptResult& evalExpr, const QStringList& resu
             listResult.append(value);
         }
         else {
-            std::ranges::transform(result, std::back_inserter(listResult), [&](const QString& retValue) -> QString {
-                return retValue % value;
-            });
+            std::ranges::transform(result, std::back_inserter(listResult),
+                                   [&](const QString& retValue) -> QString { return retValue + value; });
         }
     }
     return listResult;
 }
+} // namespace
 
+namespace Fy::Core::Scripting {
 struct Parser::Private
 {
     Scanner scanner;
@@ -79,7 +81,7 @@ struct Parser::Private
         errorAtCurrent(message);
     }
 
-    bool currentToken(TokenType type) const
+    [[nodiscard]] bool currentToken(TokenType type) const
     {
         return current.type == type;
     }
@@ -100,23 +102,23 @@ struct Parser::Private
 
     void errorAt(const Token& token, const QString& message)
     {
-        auto errorMsg = QString{"[%1] Error"}.arg(token.position);
+        QString errorMsg = "[" + QString::number(token.position) + "] Error";
 
         if(token.type == TokEos) {
-            errorMsg += " at end of string";
+            errorMsg += u" at end of string"_s;
         }
         else {
-            errorMsg += QString(": '%1'").arg(token.value);
+            errorMsg += ": '" + token.value + "'";
         }
 
-        errorMsg += QString(" (%1)").arg(message);
+        errorMsg += " (" + message + ")";
 
-        Error error;
-        error.value    = token.value.toString();
-        error.position = token.position;
-        error.message  = errorMsg;
+        Error currentError;
+        currentError.value    = token.value.toString();
+        currentError.position = token.position;
+        currentError.message  = errorMsg;
 
-        parsedScript.errors.emplace_back(error);
+        parsedScript.errors.emplace_back(currentError);
     }
 
     void error(const QString& message)
@@ -148,7 +150,7 @@ ParsedScript Parser::parse(const QString& input)
         p->parsedScript.expressions.emplace_back(expression());
     }
 
-    p->consume(TokEos, "Expected end of expression");
+    p->consume(TokEos, u"Expected end of expression"_s);
 
     return p->parsedScript;
 }
@@ -198,9 +200,8 @@ QString Parser::evaluate(const ParsedScript& input)
                 p->result.push_back(evalExpr.value);
             }
             else {
-                std::ranges::transform(p->result, p->result.begin(), [&](const QString& retValue) -> QString {
-                    return retValue % evalExpr.value;
-                });
+                std::ranges::transform(p->result, p->result.begin(),
+                                       [&](const QString& retValue) -> QString { return retValue + evalExpr.value; });
             }
         }
     }
@@ -264,7 +265,7 @@ ScriptResult Parser::evalVariable(const Expression& exp) const
 
     if(result.value.contains(Constants::Separator)) {
         // TODO: Support custom separators
-        result.value = result.value.replace(Constants::Separator, ", ");
+        result.value = result.value.replace(Constants::Separator, ", "_L1);
     }
     return result;
 }
@@ -279,9 +280,8 @@ ScriptResult Parser::evalFunction(const Expression& exp) const
 {
     auto func = std::get<FuncValue>(exp.value);
     ValueList args;
-    std::ranges::transform(func.args, std::back_inserter(args), [this](const Expression& arg) {
-        return evalExpression(arg);
-    });
+    std::ranges::transform(func.args, std::back_inserter(args),
+                           [this](const Expression& arg) { return evalExpression(arg); });
     return p->registry->function(func.name, args);
 }
 
@@ -299,13 +299,12 @@ ScriptResult Parser::evalFunctionArg(const Expression& exp) const
         if(subExpr.value.contains(Core::Constants::Separator)) {
             QStringList newResult;
             const auto values = subExpr.value.split(Core::Constants::Separator);
-            std::ranges::transform(values, std::back_inserter(newResult), [&](const auto& value) {
-                return result.value % value;
-            });
+            std::ranges::transform(values, std::back_inserter(newResult),
+                                   [&](const auto& value) { return result.value + value; });
             result.value = newResult.join(Core::Constants::Separator);
         }
         else {
-            result.value = result.value % subExpr.value;
+            result.value = result.value + subExpr.value;
         }
     }
     result.cond = allPassed;
@@ -342,9 +341,8 @@ ScriptResult Parser::evalConditional(const Expression& exp) const
                 exprResult.append(subExpr.value);
             }
             else {
-                std::ranges::transform(exprResult, exprResult.begin(), [&](const QString& retValue) -> QString {
-                    return retValue % subExpr.value;
-                });
+                std::ranges::transform(exprResult, exprResult.begin(),
+                                       [&](const QString& retValue) -> QString { return retValue + subExpr.value; });
             }
         }
     }
@@ -398,7 +396,7 @@ Expression Parser::quote()
     Expression expr{Literal};
     QString val;
 
-    while(!p->currentToken(TokQuote)) {
+    while(!p->currentToken(TokQuote) && !p->currentToken(TokEos)) {
         p->advance();
         val.append(p->previous.value.toString());
         if(p->currentToken(TokEscape)) {
@@ -409,7 +407,7 @@ Expression Parser::quote()
     }
 
     expr.value = val;
-    p->consume(TokQuote, "Expected '\"' after expression");
+    p->consume(TokQuote, uR"(Expected '"' after expression)"_s);
     return expr;
 }
 
@@ -424,7 +422,7 @@ Expression Parser::variable()
         p->advance();
         expr.type = VariableList;
         value     = QString{p->previous.value.toString()}.toLower();
-        p->consume(TokRightAngle, "Expected '>' after expression");
+        p->consume(TokRightAngle, u"Expected '>' after expression"_s);
     }
     else {
         expr.type = Variable;
@@ -432,11 +430,11 @@ Expression Parser::variable()
     }
 
     if(!p->registry->varExists(value)) {
-        p->error("Variable not found");
+        p->error(u"Variable not found"_s);
     }
 
     expr.value = value;
-    p->consume(TokVar, "Expected '%' after expression");
+    p->consume(TokVar, u"Expected '%' after expression"_s);
     return expr;
 }
 
@@ -445,7 +443,7 @@ Expression Parser::function()
     p->advance();
 
     if(p->previous.type != TokLiteral) {
-        p->error("Expected function name");
+        p->error(u"Expected function name"_s);
     }
 
     Expression expr{Function};
@@ -453,10 +451,10 @@ Expression Parser::function()
     funcExpr.name = QString{p->previous.value.toString()}.toLower();
 
     if(!p->registry->funcExists(funcExpr.name)) {
-        p->error("Function not found");
+        p->error(u"Function not found"_s);
     }
 
-    p->consume(TokLeftParen, "Expected '(' after function call");
+    p->consume(TokLeftParen, u"Expected '(' after function call"_s);
 
     if(!p->currentToken(TokRightParen)) {
         funcExpr.args.emplace_back(functionArgs());
@@ -466,7 +464,7 @@ Expression Parser::function()
     }
 
     expr.value = funcExpr;
-    p->consume(TokRightParen, "Expected ')' after function call");
+    p->consume(TokRightParen, u"Expected ')' after function call"_s);
     return expr;
 }
 
@@ -493,7 +491,7 @@ Expression Parser::conditional()
     }
 
     expr.value = condExpr;
-    p->consume(TokRightSquare, "Expected ']' after expression");
+    p->consume(TokRightSquare, u"Expected ']' after expression"_s);
     return expr;
 }
 

@@ -44,7 +44,7 @@ protected:
 
 public:
     template <typename T, typename Factory>
-    bool registerClass(const QString& key, Factory factory, const QString& displayName = "",
+    bool registerClass(const QString& key, Factory factory, const QString& displayName = QStringLiteral(""),
                        const QStringList& subMenus = {})
     {
         static_assert(std::is_base_of<FyWidget, T>::value, "Class must derive from the factory's base class");

@@ -38,8 +38,6 @@ public:
     explicit FilterWidget(Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
-    void setupConnections();
-
     void changeFilter(const LibraryFilter& filter);
     void reset(const Core::TrackList& tracks);
 

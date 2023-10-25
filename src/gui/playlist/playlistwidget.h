@@ -38,6 +38,7 @@ class TrackSelectionController;
 
 namespace Widgets::Playlist {
 class PlaylistController;
+class PlaylistWidgetPrivate;
 
 class PlaylistWidget : public FyWidget
 {
@@ -56,8 +57,7 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<PlaylistWidgetPrivate> p;
 };
 } // namespace Widgets::Playlist
 } // namespace Gui

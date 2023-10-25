@@ -32,7 +32,7 @@ public:
     bool storeTracks(TrackList& tracksToStore);
 
     bool getAllTracks(TrackList& result);
-    bool getAllTracks(TrackList& result, int start, int limit);
+    bool getAllTracks(TrackList& result, int offset, int limit);
 
     [[nodiscard]] bool dbFetchTracks(Query& q, TrackList& result) const;
     [[nodiscard]] int dbTrackCount() const;

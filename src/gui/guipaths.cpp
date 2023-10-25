@@ -26,10 +26,11 @@
 namespace Fy::Gui {
 QString layoutsPath()
 {
-    return Utils::configPath("layouts").append("/");
+    return Utils::configPath(QStringLiteral("layouts")).append(QStringLiteral("/"));
 }
+
 QString activeLayoutPath()
 {
-    return Utils::configPath().append("/layout.fyl");
+    return Utils::configPath().append(QStringLiteral("/layout.fyl"));
 }
 } // namespace Fy::Gui

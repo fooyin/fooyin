@@ -23,9 +23,9 @@
 #include <QPainter>
 #include <QTextEdit>
 
-namespace Fy::Utils {
 constexpr auto ButtonText = "+ add new";
 
+namespace Fy::Utils {
 ExtendableTableView::ExtendableTableView(QWidget* parent)
     : QTableView{parent}
     , m_mouseOverButton{false}

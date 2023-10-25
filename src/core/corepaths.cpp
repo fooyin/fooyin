@@ -24,11 +24,11 @@
 namespace Fy::Core {
 QString coverPath()
 {
-    return Utils::cachePath("covers").append("/");
+    return Utils::cachePath(QStringLiteral("covers")).append(QStringLiteral("/"));
 }
 
 QString settingsPath()
 {
-    return Utils::configPath().append("/fooyin.conf");
+    return Utils::configPath().append(QStringLiteral("/fooyin.conf"));
 }
 } // namespace Fy::Core

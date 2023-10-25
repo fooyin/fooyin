@@ -22,7 +22,6 @@
 #include <QObject>
 
 class QMenuBar;
-class QAction;
 
 namespace Fy {
 

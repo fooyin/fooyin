@@ -37,7 +37,8 @@ class WidgetProvider : public QObject
 public:
     explicit WidgetProvider(Utils::ActionManager* actionManager, QObject* parent = nullptr)
         : QObject{parent}
-        , m_actionManager{actionManager}, m_widgetFactory{std::make_unique<WidgetFactory>()}
+        , m_actionManager{actionManager}
+        , m_widgetFactory{std::make_unique<WidgetFactory>()}
     { }
 
     Widgets::WidgetFactory* widgetFactory()

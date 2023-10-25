@@ -58,9 +58,8 @@ struct TagEditorModel::Private
 
     QString findField(const QString& name)
     {
-        const auto field = std::ranges::find_if(std::as_const(fields), [name](const EditorPair& pair) {
-            return pair.displayName == name;
-        });
+        const auto field = std::ranges::find_if(std::as_const(fields),
+                                                [name](const EditorPair& pair) { return pair.displayName == name; });
         if(field == fields.cend()) {
             return {};
         }
@@ -84,7 +83,7 @@ struct TagEditorModel::Private
 
         for(Core::Track& track : tracks) {
             if(metadata == Core::Constants::MetaData::Artist || metadata == Core::Constants::MetaData::Genre) {
-                scriptRegistry.setVar(metadata, value.toString().split("; "), track);
+                scriptRegistry.setVar(metadata, value.toString().split(QStringLiteral("; ")), track);
             }
             else if(metadata == Core::Constants::MetaData::Track || metadata == Core::Constants::MetaData::TrackTotal
                     || metadata == Core::Constants::MetaData::Disc
@@ -107,8 +106,8 @@ TagEditorModel::TagEditorModel(Gui::TrackSelectionController* trackSelection, Ut
     populate();
     updateEditorValues();
 
-    connect(p->trackSelection, &Gui::TrackSelectionController::selectionChanged, this,
-            &TagEditorModel::updateEditorValues);
+    QObject::connect(p->trackSelection, &Gui::TrackSelectionController::selectionChanged, this,
+                     &TagEditorModel::updateEditorValues);
 }
 
 void TagEditorModel::populate()
@@ -136,9 +135,8 @@ void TagEditorModel::processQueue()
     Core::TrackList tracks = p->trackSelection->selectedTracks();
     std::vector<QString> fieldsToRemove;
 
-    auto tagsToCheck = p->tags | std::views::filter([](const auto& tag) {
-                           return tag.second.status() != TagEditorItem::None;
-                       });
+    auto tagsToCheck
+        = p->tags | std::views::filter([](const auto& tag) { return tag.second.status() != TagEditorItem::None; });
 
     for(auto& [index, node] : tagsToCheck) {
         const TagEditorItem::ItemStatus status = node.status();

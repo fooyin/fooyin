@@ -57,7 +57,7 @@ void AudioClock::setPaused(bool paused)
 
 uint64_t AudioClock::positionFromTime(TimePoint tp, bool ignorePause) const
 {
-    tp            = m_paused && !ignorePause ? m_timePoint : tp;
+    tp                  = m_paused && !ignorePause ? m_timePoint : tp;
     const TrackTime pos = m_position + toTrackTime(tp - m_timePoint);
     return pos.count();
 }
