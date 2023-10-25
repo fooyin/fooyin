@@ -25,7 +25,6 @@
 #include "infomodel.h"
 
 #include <core/library/musiclibrary.h>
-#include <core/player/playermanager.h>
 #include <core/track.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/settings/settingsmanager.h>
@@ -38,7 +37,6 @@ namespace Fy::Gui::Widgets::Info {
 InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* selectionController,
                        Utils::SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
-    , m_playerManager{playerManager}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
     , m_view{new QTreeView(this)}

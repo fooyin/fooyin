@@ -19,6 +19,7 @@
 
 #include "editmenu.h"
 
+#include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 
@@ -28,5 +29,8 @@ namespace Fy::Gui {
 EditMenu::EditMenu(Utils::ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
-{ }
+{
+    auto* editMenu = m_actionManager->actionContainer(Gui::Constants::Menus::File);
+    Q_UNUSED(editMenu)
+}
 } // namespace Fy::Gui

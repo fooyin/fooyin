@@ -94,13 +94,13 @@ function(create_fooyin_library name)
 
     target_compile_features(${name} PUBLIC cxx_std_20)
     target_compile_definitions(${name} PRIVATE QT_USE_QSTRINGBUILDER)
-#    target_compile_options(
-#        ${name}
-#        PRIVATE -Werror
-#                -Wall
-#                -Wextra
-#                -Wpedantic
-#    )
+    target_compile_options(
+        ${name}
+        PRIVATE -Werror
+                -Wall
+                -Wextra
+                -Wpedantic
+    )
 
     if(NOT CMAKE_SKIP_INSTALL_RULES)
         install(

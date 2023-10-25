@@ -69,7 +69,6 @@ protected:
     void spanHeaders();
 
 private:
-    Core::Player::PlayerManager* m_playerManager;
     Utils::SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
