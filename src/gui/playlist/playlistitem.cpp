@@ -30,12 +30,13 @@ PlaylistItem::PlaylistItem()
 
 PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
     : TreeItem{parent}
-    , m_pending{true}
+    , m_pending{false}
     , m_type{type}
     , m_data{std::move(data)}
     , m_baseKey{QStringLiteral("0")}
     , m_key{QStringLiteral("0")}
     , m_indentation{0}
+    , m_index{-1}
 { }
 
 bool PlaylistItem::pending() const
@@ -68,6 +69,11 @@ int PlaylistItem::indentation() const
     return m_indentation;
 }
 
+int PlaylistItem::index() const
+{
+    return m_index;
+}
+
 void PlaylistItem::setPending(bool pending)
 {
     m_pending = pending;
@@ -86,5 +92,10 @@ void PlaylistItem::setKey(const QString& key)
 void PlaylistItem::setIndentation(int indentation)
 {
     m_indentation = indentation;
+}
+
+void PlaylistItem::setIndex(int index)
+{
+    m_index = index;
 }
 } // namespace Fy::Gui::Widgets::Playlist

@@ -169,7 +169,6 @@ void PlaylistView::dropEvent(QDropEvent* event)
             }
             else {
                 event->acceptProposedAction();
-                emit playlistChanged();
             }
         }
     }

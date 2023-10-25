@@ -75,12 +75,16 @@ public:
                           const std::vector<PlaylistItem*>& children);
     bool removePlaylistRows(int row, int count, const QModelIndex& parent);
 
+    QModelIndex indexForTrackIndex(const Core::Track& track, int index);
     void removeTracks(const QModelIndexList& indexes);
 
     void reset(const Core::Playlist::Playlist& playlist);
     void updateHeader(const Core::Playlist::Playlist& playlist);
     void changeTrackState();
     void changePreset(const PlaylistPreset& preset);
+
+signals:
+    void tracksChanged();
 
 private:
     std::unique_ptr<PlaylistModelPrivate> p;

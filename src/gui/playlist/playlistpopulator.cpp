@@ -55,6 +55,7 @@ struct PlaylistPopulator::Private
     PendingData data;
     ContainerKeyMap headers;
     Core::TrackList pendingTracks;
+    int currentIndex{0};
 
     explicit Private(PlaylistPopulator* self)
         : self{self}
@@ -91,8 +92,8 @@ struct PlaylistPopulator::Private
         }
         PlaylistItem* child = &node->second;
 
-        if(child->pending()) {
-            child->setPending(false);
+        if(!child->pending()) {
+            child->setPending(true);
             data.nodes[parent->key()].push_back(key);
         }
         return child;
@@ -322,6 +323,7 @@ struct PlaylistPopulator::Private
         const QString key = Utils::generateHash(parent->key(), track.hash(), QString::number(data.items.size()));
 
         auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent);
+        trackItem->setIndex(currentIndex++);
         data.trackParents[track.id()].push_back(key);
 
         if(parent->type() != PlaylistItem::Header) {
@@ -380,6 +382,7 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const Core::TrackList&
 
     p->data.clear();
     p->headers.clear();
+    p->currentIndex = 0;
 
     if(std::exchange(p->currentPreset, preset) != preset) {
         p->subheaders.clear();

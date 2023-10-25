@@ -56,6 +56,24 @@ void expandTree(QTreeView* view, QAbstractItemModel* model, const QModelIndex& p
         ++first;
     }
 }
+
+void getTracksUnderIndex(QAbstractItemModel* model, const QModelIndex& index, Fy::Core::TrackList& tracks)
+{
+    while(model->canFetchMore(index)) {
+        model->fetchMore(index);
+    }
+
+    const int rowCount = model->rowCount(index);
+    if(rowCount == 0) {
+        tracks.push_back(index.data(Fy::Gui::Widgets::Playlist::PlaylistItem::Role::ItemData).value<Fy::Core::Track>());
+        return;
+    }
+
+    for(int row = 0; row < rowCount; ++row) {
+        const QModelIndex childIndex = model->index(row, 0, index);
+        getTracksUnderIndex(model, childIndex, tracks);
+    }
+}
 } // namespace
 
 namespace Fy::Gui::Widgets::Playlist {
@@ -88,7 +106,7 @@ public:
 
     void doubleClicked(const QModelIndex& index) const;
 
-    void findCurrent() const;
+    void followCurrentTrack() const;
 
     void switchContextMenu(QPoint pos);
     QCoro::Task<void> changeSort(QString script) const;
@@ -273,42 +291,11 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(QPoint pos)
     menu->popup(self->mapToGlobal(pos));
 }
 
-void PlaylistWidgetPrivate::changeState(Core::Player::PlayState state) const
-{
-    switch(state) {
-        case(Core::Player::PlayState::Playing):
-            model->changeTrackState();
-            findCurrent();
-            break;
-        case(Core::Player::PlayState::Stopped):
-        case(Core::Player::PlayState::Paused):
-            model->changeTrackState();
-            break;
-    }
-}
-
 void PlaylistWidgetPrivate::playlistTracksChanged() const
 {
-    QModelIndexList indexes{{}};
-
     Core::TrackList tracks;
+    getTracksUnderIndex(model, {}, tracks);
 
-    while(!indexes.empty()) {
-        const QModelIndex& index = indexes.front();
-        indexes.pop_front();
-
-        const auto type = index.data(PlaylistItem::Type).toInt();
-
-        if(type != PlaylistItem::Track) {
-            const QItemSelection children{model->index(0, 0, index),
-                                          model->index(model->rowCount(index) - 1, 0, index)};
-            const auto childIndexes = children.indexes();
-            std::ranges::copy(childIndexes, std::back_inserter(indexes));
-        }
-        else {
-            tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<Core::Track>());
-        }
-    }
     if(auto playlist = controller->currentPlaylist()) {
         controller->playlistHandler()->replacePlaylistTracks(playlist->id(), tracks);
         if(auto updatedPlaylist = controller->currentPlaylist()) {
@@ -332,14 +319,30 @@ void PlaylistWidgetPrivate::doubleClicked(const QModelIndex& index) const
     playlistView->clearSelection();
 }
 
-void PlaylistWidgetPrivate::findCurrent() const
+void PlaylistWidgetPrivate::followCurrentTrack() const
 {
     const Core::Track track = playerManager->currentTrack();
-    //        const QModelIndex index = model->indexForTrack(track);
-    //        if(index.isValid()) {
-    //            playlistView->scrollTo(index);
-    //            playlistView->setCurrentIndex(index);
-    //        }
+    if(!track.isValid()) {
+        return;
+    }
+
+    auto playlist = controller->currentPlaylist();
+    if(!playlist) {
+        return;
+    }
+
+    const QModelIndex index = model->indexForTrackIndex(track, playlist->currentTrackIndex());
+    if(!index.isValid()) {
+        return;
+    }
+
+    const QRect indexRect    = playlistView->visualRect(index);
+    const QRect viewportRect = playlistView->viewport()->rect();
+
+    if((indexRect.top() < 0) || (viewportRect.bottom() - indexRect.bottom() < 0)) {
+        playlistView->scrollTo(index, QAbstractItemView::PositionAtCenter);
+    }
+    //        playlistView->setCurrentIndex(index);
 }
 
 void PlaylistWidgetPrivate::switchContextMenu(QPoint pos)
@@ -399,11 +402,11 @@ PlaylistWidget::PlaylistWidget(Core::Player::PlayerManager* playerManager, Playl
     QObject::connect(p->playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this]() { p->selectionChanged(); });
 
-    QObject::connect(p->playlistView, &PlaylistView::playlistChanged, this, [this]() { p->playlistTracksChanged(); });
+    QObject::connect(p->model, &PlaylistModel::tracksChanged, this, [this]() { p->playlistTracksChanged(); });
     QObject::connect(p->playlistView, &QAbstractItemView::doubleClicked, this,
                      [this](const QModelIndex& index) { p->doubleClicked(index); });
     QObject::connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
-                     [this](Core::Player::PlayState state) { p->changeState(state); });
+                     [this]() { p->model->changeTrackState(); });
 
     QObject::connect(p->model, &QAbstractItemModel::rowsInserted, this,
                      [this](const QModelIndex& parent, int first, int last) {
@@ -418,6 +421,11 @@ PlaylistWidget::PlaylistWidget(Core::Player::PlayerManager* playerManager, Playl
                      [this](const Core::Playlist::Playlist& playlist) { p->changePlaylist(playlist); });
     QObject::connect(playlistController, &PlaylistController::refreshPlaylist, this,
                      [this](const Core::Playlist::Playlist& playlist) { p->changePlaylist(playlist); });
+
+    QObject::connect(playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
+                     [this]() { p->followCurrentTrack(); });
+    //    QObject::connect(playerManager, &Core::Player::PlayerManager::previousTrack, this, [this]() {
+    //    p->findCurrent(); });
 
     QObject::connect(p->controller->presetRegistry(), &PresetRegistry::presetChanged, this,
                      [this](const PlaylistPreset& preset) { p->onPresetChanged(preset); });

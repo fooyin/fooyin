@@ -314,6 +314,7 @@ void PlaylistModelPrivate::populateModel(PendingData& data)
             for(const QString& row : rows) {
                 PlaylistItem* child = &nodes.at(row);
                 parent->appendChild(child);
+                child->setPending(false);
             }
         }
     }
@@ -356,7 +357,7 @@ void PlaylistModelPrivate::updateHeaders(const ItemPtrSet& headers)
         updatedHeaders.emplace_back(*header);
     }
 
-    QMetaObject::invokeMethod(&populator, "updateHeaders", Q_ARG(ItemList&, updatedHeaders));
+    QMetaObject::invokeMethod(&populator, [this, updatedHeaders]() { populator.updateHeaders(updatedHeaders); });
 }
 
 void PlaylistModelPrivate::beginReset()
@@ -365,6 +366,7 @@ void PlaylistModelPrivate::beginReset()
     oldNodes = std::move(nodes);
     nodes.clear();
     pendingNodes.clear();
+    trackParents.clear();
 }
 
 QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
@@ -1037,6 +1039,7 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
 
     p->updateHeaders(headersToUpdate);
 
+    emit tracksChanged();
     return true;
 }
 
@@ -1054,6 +1057,7 @@ void PlaylistModel::fetchMore(const QModelIndex& parent)
     for(const QString& pendingRow : rowsToInsert) {
         PlaylistItem* child = &p->nodes.at(pendingRow);
         parentItem->appendChild(child);
+        child->setPending(false);
     }
     endInsertRows();
 
@@ -1118,6 +1122,39 @@ bool PlaylistModel::removePlaylistRows(int row, int count, const QModelIndex& pa
     endRemoveRows();
 
     return true;
+}
+
+QModelIndex PlaylistModel::indexForTrackIndex(const Core::Track& track, int index)
+{
+    if(!p->trackParents.contains(track.id())) {
+        return {};
+    }
+
+    const auto parents = p->trackParents.at(track.id());
+
+    for(const QString& parentKey : parents) {
+        if(!p->nodes.contains(parentKey)) {
+            return {};
+        }
+
+        PlaylistItem* parent        = &p->nodes.at(parentKey);
+        PlaylistItem* currentParent = parent;
+
+        while(currentParent->pending()) {
+            const QString key = currentParent->parent()->key();
+            currentParent     = p->nodes.contains(key) ? &p->nodes.at(key) : rootItem();
+        }
+
+        const QModelIndex parentIndex = indexOfItem(currentParent);
+        while(parent->pending() && canFetchMore(parentIndex)) {
+            fetchMore(parentIndex);
+        }
+
+        if(parent->type() == PlaylistItem::Track && parent->index() == index) {
+            return indexOfItem(parent);
+        }
+    }
+    return {};
 }
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)
