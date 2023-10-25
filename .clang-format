@@ -7,7 +7,7 @@ IndentWidth:     4
 UseTab:          Never
 ColumnLimit:     120
 Language:        Cpp
-Standard:        Cpp20
+Standard:        c++20
 
 AlignAfterOpenBracket:                          true
 AlignOperands:                                  AlignAfterOperator
