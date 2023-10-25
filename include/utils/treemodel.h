@@ -75,7 +75,7 @@ public:
         return parentItem->columnCount();
     }
 
-    [[nodiscard]] QModelIndex indexOfItem(const Item* item)
+    [[nodiscard]] QModelIndex indexOfItem(const Item* item) const
     {
         if(item) {
             if(item == rootItem()) {
