@@ -67,9 +67,9 @@ struct cmpItems
     }
 };
 
-struct LibraryTreeModel::Private : public QObject
+struct LibraryTreeModel::Private
 {
-    LibraryTreeModel* model;
+    LibraryTreeModel* self;
 
     QString grouping;
 
@@ -88,23 +88,23 @@ struct LibraryTreeModel::Private : public QObject
     QFont font;
     QColor colour;
 
-    explicit Private(LibraryTreeModel* model)
-        : model{model}
+    explicit Private(LibraryTreeModel* self)
+        : self{self}
     {
         populator.moveToThread(&populatorThread);
     }
 
     void sortTree() const
     {
-        model->rootItem()->sortChildren();
-        model->rootItem()->resetChildren();
+        self->rootItem()->sortChildren();
+        self->rootItem()->resetChildren();
     }
 
     int totalTrackCount() const
     {
         std::set<int> ids;
         std::queue<LibraryTreeItem*> trackNodes;
-        trackNodes.emplace(model->rootItem());
+        trackNodes.emplace(self->rootItem());
 
         while(!trackNodes.empty()) {
             LibraryTreeItem* node = trackNodes.front();
@@ -129,19 +129,19 @@ struct LibraryTreeModel::Private : public QObject
     void batchFinished(PendingTreeData data)
     {
         if(resetting) {
-            model->beginResetModel();
+            self->beginResetModel();
             beginReset();
         }
 
         populateModel(data);
 
         if(resetting) {
-            model->endResetModel();
+            self->endResetModel();
         }
         resetting = false;
 
-        if(model->canFetchMore({})) {
-            model->fetchMore({});
+        if(self->canFetchMore({})) {
+            self->fetchMore({});
         }
     }
 
@@ -150,7 +150,7 @@ struct LibraryTreeModel::Private : public QObject
         std::set<QModelIndex> nodesToCheck;
 
         for(const auto& [parentKey, rows] : data.nodes) {
-            auto* parent = parentKey == "0"_L1       ? model->rootItem()
+            auto* parent = parentKey == "0"_L1       ? self->rootItem()
                          : nodes.contains(parentKey) ? &nodes.at(parentKey)
                                                      : nullptr;
             if(!parent) {
@@ -163,7 +163,7 @@ struct LibraryTreeModel::Private : public QObject
                 if(node && node->pending() && !addedNodes.contains(row)) {
                     if(!parent->pending() && !pendingNodes.contains(parentKey) && parent->parent()) {
                         // Parent is expanded/visible
-                        nodesToCheck.emplace(model->indexOfItem(parent));
+                        nodesToCheck.emplace(self->indexOfItem(parent));
                     }
                     pendingNodes[parentKey].push_back(row);
                     addedNodes.insert(row);
@@ -172,8 +172,8 @@ struct LibraryTreeModel::Private : public QObject
         }
 
         for(const QModelIndex& index : nodesToCheck) {
-            if(model->canFetchMore(index)) {
-                model->fetchMore(index);
+            if(self->canFetchMore(index)) {
+                self->fetchMore(index);
             }
         }
     }
@@ -190,12 +190,13 @@ struct LibraryTreeModel::Private : public QObject
         }
         trackParents.merge(data.trackParents);
 
-        const QModelIndex allIndex = model->indexOfItem(&allNode);
-        emit model->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
+        const QModelIndex allIndex = self->indexOfItem(&allNode);
+        QMetaObject::invokeMethod(self, "dataChanged", Q_ARG(const QModelIndex&, allIndex),
+                                  Q_ARG(const QModelIndex&, allIndex), Q_ARG(const QList<int>&, {Qt::DisplayRole}));
 
         if(resetting) {
             for(const auto& [parentKey, rows] : data.nodes) {
-                auto* parent = parentKey == "0"_L1 ? model->rootItem() : &nodes.at(parentKey);
+                auto* parent = parentKey == "0"_L1 ? self->rootItem() : &nodes.at(parentKey);
 
                 for(const QString& row : rows) {
                     LibraryTreeItem* child = &nodes.at(row);
@@ -213,12 +214,12 @@ struct LibraryTreeModel::Private : public QObject
 
     void beginReset()
     {
-        model->resetRoot();
+        self->resetRoot();
         nodes.clear();
         pendingNodes.clear();
 
-        allNode = LibraryTreeItem{u"All Music"_s, model->rootItem(), -1};
-        model->rootItem()->appendChild(&allNode);
+        allNode = LibraryTreeItem{u"All Music"_s, self->rootItem(), -1};
+        self->rootItem()->appendChild(&allNode);
     }
 };
 
@@ -226,8 +227,8 @@ LibraryTreeModel::LibraryTreeModel(QObject* parent)
     : TreeModel{parent}
     , p{std::make_unique<Private>(this)}
 {
-    QObject::connect(&p->populator, &LibraryTreePopulator::populated, p.get(),
-                     &LibraryTreeModel::Private::batchFinished);
+    QObject::connect(&p->populator, &LibraryTreePopulator::populated, this,
+                     [this](const PendingTreeData& data) { p->batchFinished(data); });
 
     QObject::connect(&p->populator, &Utils::Worker::finished, this, [this]() {
         p->updateAllNode();
