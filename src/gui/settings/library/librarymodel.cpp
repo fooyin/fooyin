@@ -103,6 +103,7 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
         if(exists) {
             item = &m_nodes.at(info.path);
             item->setStatus(LibraryItem::None);
+            return;
         }
     }
 
@@ -174,7 +175,7 @@ void LibraryModel::processQueue()
                         library.changeInfo(*newLibrary);
                         library.setStatus(LibraryItem::None);
 
-                        emit dataChanged({}, {}, {Qt::FontRole});
+                        emit dataChanged({}, {});
                     }
                 }
                 else {
@@ -199,7 +200,7 @@ void LibraryModel::processQueue()
                 if(m_libraryManager->renameLibrary(info.id, info.name)) {
                     library.setStatus(LibraryItem::None);
 
-                    emit dataChanged({}, {}, {Qt::FontRole});
+                    emit dataChanged({}, {});
                 }
                 else {
                     qWarning() << "Library " + info.name + " could not be renamed";

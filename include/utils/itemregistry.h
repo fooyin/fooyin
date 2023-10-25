@@ -80,11 +80,6 @@ public:
 
     virtual Item addItem(const Item& item)
     {
-        auto find = [](const IndexItemMap& items, const QString& name) -> int {
-            return static_cast<int>(std::count_if(items.cbegin(), items.cend(),
-                                                  [name](const auto& item) { return item.second.name == name; }));
-        };
-
         auto findValidId = [this]() -> int {
             if(m_items.empty()) {
                 return 0;
@@ -97,13 +92,7 @@ public:
         };
 
         Item newItem{item};
-        if(newItem.name.isEmpty()) {
-            newItem.name = "New item";
-        }
-        if(find(m_items, newItem.name)) {
-            auto count = std::max(find(m_items, newItem.name + " ("), 1);
-            newItem.name += QString{QStringLiteral(" (%1)")}.arg(count);
-        }
+        newItem.name  = findUniqueName(newItem.name);
         newItem.id    = findValidId();
         newItem.index = static_cast<int>(m_items.size());
 
@@ -112,11 +101,14 @@ public:
 
     virtual bool changeItem(const Item& item)
     {
-        auto itemIt = std::find_if(m_items.begin(), m_items.end(),
-                                   [item](const auto& regItem) { return regItem.first == item.index; });
+        auto itemIt
+            = std::ranges::find_if(m_items, [item](const auto& regItem) { return regItem.second.id == item.id; });
+
         if(itemIt != m_items.end()) {
-            const Item oldItem = std::exchange(itemIt->second, item);
-            emit itemChanged(item.id);
+            Item changedItem{item};
+            changedItem.name = findUniqueName(changedItem.name);
+            itemIt->second   = changedItem;
+            emit itemChanged(changedItem.id);
             return true;
         }
         return false;
@@ -127,8 +119,7 @@ public:
         if(m_items.empty()) {
             return {};
         }
-        auto it
-            = std::find_if(m_items.cbegin(), m_items.cend(), [id](const auto& item) { return item.second.id == id; });
+        auto it = std::ranges::find_if(std::as_const(m_items), [id](const auto& item) { return item.second.id == id; });
         if(it == m_items.end()) {
             return m_items.at(0);
         }
@@ -198,8 +189,41 @@ public:
     };
 
 protected:
-    Utils::SettingsManager* m_settings;
     IndexItemMap m_items;
+
+private:
+    enum class FindType
+    {
+        Match,
+        Contains
+    };
+
+    [[nodiscard]] int find(const QString& name, FindType type) const
+    {
+        return static_cast<int>(std::ranges::count_if(std::as_const(m_items), [name, type](const auto& item) {
+            if(type == FindType::Contains) {
+                return item.second.name.contains(name);
+            }
+            return item.second.name == name;
+        }));
+    };
+
+    QString findUniqueName(const QString& name)
+    {
+        QString uniqueName{name};
+
+        if(uniqueName.isEmpty()) {
+            uniqueName = "New item";
+        }
+
+        if(find(name, FindType::Match)) {
+            const int count = find(name + " (", FindType::Contains) + 1;
+            uniqueName += " (" + QString::number(count) + ")";
+        }
+        return uniqueName;
+    }
+
+    Utils::SettingsManager* m_settings;
 };
 } // namespace Fy::Utils
 

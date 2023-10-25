@@ -127,7 +127,7 @@ void SortingModel::processQueue()
                     node.changeSort(addedSort);
                     node.setStatus(SortingItem::None);
 
-                    emit dataChanged({}, {}, {Qt::FontRole});
+                    emit dataChanged({}, {});
                 }
                 else {
                     qWarning() << "Sorting " + sortScript.name + " could not be added";
@@ -148,9 +148,10 @@ void SortingModel::processQueue()
             }
             case(SortingItem::Changed): {
                 if(m_sortRegistry->changeItem(sortScript)) {
+                    node.changeSort(m_sortRegistry->itemById(sortScript.id));
                     node.setStatus(SortingItem::None);
 
-                    emit dataChanged({}, {}, {Qt::FontRole});
+                    emit dataChanged({}, {});
                 }
                 else {
                     qWarning() << "Sorting " + sortScript.name + " could not be changed";

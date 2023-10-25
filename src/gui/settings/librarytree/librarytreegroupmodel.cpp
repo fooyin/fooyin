@@ -127,7 +127,7 @@ void LibraryTreeGroupModel::processQueue()
                     node.changeGroup(addedField);
                     node.setStatus(LibraryTreeGroupItem::None);
 
-                    emit dataChanged({}, {}, {Qt::FontRole});
+                    emit dataChanged({}, {});
                 }
                 else {
                     qWarning() << "Group " + group.name + " could not be added";
@@ -148,9 +148,10 @@ void LibraryTreeGroupModel::processQueue()
             }
             case(LibraryTreeGroupItem::Changed): {
                 if(m_groupsRegistry->changeItem(group)) {
+                    node.changeGroup(m_groupsRegistry->itemById(group.id));
                     node.setStatus(LibraryTreeGroupItem::None);
 
-                    emit dataChanged({}, {}, {Qt::FontRole});
+                    emit dataChanged({}, {});
                 }
                 else {
                     qWarning() << "Group " + group.name + " could not be changed";
