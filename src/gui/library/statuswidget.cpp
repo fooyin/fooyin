@@ -97,7 +97,7 @@ struct StatusWidget::Private
         if(progress == 100) {
             QTimer::singleShot(2000, playing, &QLabel::clear);
         }
-        const QString scanText = QStringLiteral("Scanning library: ") + QString::number(progress);
+        const QString scanText = QStringLiteral("Scanning library: ") + QString::number(progress) + QStringLiteral("%");
         playing->setText(scanText);
     }
 };
