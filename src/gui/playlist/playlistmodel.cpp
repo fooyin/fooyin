@@ -825,6 +825,12 @@ PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::
         emit dataChanged({}, {}, {PlaylistItem::Role::Cover});
     });
 
+    p->settings->subscribe<Settings::IconTheme>(this, [this]() {
+        p->playingIcon = QIcon::fromTheme(Constants::Icons::Play).pixmap(20);
+        p->pausedIcon  = QIcon::fromTheme(Constants::Icons::Pause).pixmap(20);
+        emit dataChanged({}, {}, {Qt::DecorationRole});
+    });
+
     QObject::connect(&p->populator, &PlaylistPopulator::populated, this, [this](PendingData data) {
         if(p->resetting) {
             beginResetModel();
