@@ -415,10 +415,6 @@ void LibraryTreeModel::changeGrouping(const LibraryTreeGrouping& grouping)
 
 void LibraryTreeModel::reset(const Core::TrackList& tracks)
 {
-    if(tracks.empty()) {
-        return;
-    }
-
     if(p->populatorThread.isRunning()) {
         p->populator.stopThread();
     }
