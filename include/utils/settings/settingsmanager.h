@@ -155,11 +155,13 @@ public:
 
         SettingsEntry& setting = m_settings.at(mapKey);
 
-        if(setting.setValue(value)) {
-            settingChanged<key>(setting);
-        }
+        const bool success = setting.setValue(value);
 
         m_lock.unlock();
+
+        if(success) {
+            settingChanged<key>(setting);
+        }
     }
 
     template <auto key>
@@ -176,11 +178,13 @@ public:
 
         SettingsEntry& setting = m_settings.at(mapKey);
 
-        if(setting.reset()) {
-            settingChanged<key>(setting);
-        }
+        const bool success = setting.reset();
 
         m_lock.unlock();
+
+        if(success) {
+            settingChanged<key>(setting);
+        }
     }
 
     template <auto key, typename T>
