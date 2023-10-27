@@ -1194,8 +1194,10 @@ void PlaylistModel::removeTracks(const QModelIndexList& indexes)
         headersToUpdate.emplace(itemForIndex(parent));
         headersToCheck.emplace_back(parent);
     }
-    p->updateHeaders(headersToUpdate);
+
     p->removeEmptyHeaders(headersToCheck);
+    p->mergeHeaders({}, headersToUpdate);
+    p->updateHeaders(headersToUpdate);
 }
 
 void PlaylistModel::reset(const Core::Playlist::Playlist* playlist)
