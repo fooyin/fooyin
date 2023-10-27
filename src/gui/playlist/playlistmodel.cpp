@@ -19,12 +19,14 @@
 
 #include "playlistmodel.h"
 
+#include "playlist/playlistcontroller.h"
 #include "playlistitem.h"
 #include "playlistpopulator.h"
 #include "playlistpreset.h"
 
 #include <core/player/playermanager.h>
 #include <core/playlist/playlist.h>
+#include <core/playlist/playlistmanager.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -40,6 +42,7 @@
 
 #include <queue>
 #include <set>
+#include <stack>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -228,7 +231,7 @@ class PlaylistModelPrivate
 {
 public:
     PlaylistModelPrivate(PlaylistModel* self, Core::Player::PlayerManager* playerManager,
-                         Utils::SettingsManager* settings);
+                         Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings);
 
     void populateModel(PendingData& data);
     void updateModel(ItemKeyMap& data);
@@ -263,6 +266,7 @@ public:
     PlaylistModel* self;
 
     Core::Player::PlayerManager* playerManager;
+    Playlist::PlaylistController* playlistController;
     Utils::SettingsManager* settings;
     Library::CoverProvider* coverProvider;
 
@@ -283,14 +287,18 @@ public:
     ItemKeyMap oldNodes;
     TrackIdNodeMap trackParents;
 
+    int playingIndex{-1};
+
     QPixmap playingIcon;
     QPixmap pausedIcon;
 };
 
 PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* self, Core::Player::PlayerManager* playerManager,
+                                           Playlist::PlaylistController* playlistController,
                                            Utils::SettingsManager* settings)
     : self{self}
     , playerManager{playerManager}
+    , playlistController{playlistController}
     , settings{settings}
     , coverProvider{new Library::CoverProvider(self)}
     , altColours{settings->value<Settings::PlaylistAltColours>()}
@@ -381,7 +389,10 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
             return track.right();
         }
         case(PlaylistItem::Role::Playing): {
-            return playerManager->currentTrack() == track.track();
+            if(playlistController->currentIsActive()) {
+                return playerManager->currentTrack() == track.track() && playingIndex == item->index();
+            }
+            return false;
         }
         case(PlaylistItem::Role::ItemData): {
             return QVariant::fromValue<Core::Track>(track.track());
@@ -810,10 +821,11 @@ int PlaylistModelPrivate::copyRows(const QModelIndex& source, const Container& r
     return currRow;
 }
 
-PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
+PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager,
+                             Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings,
                              QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<PlaylistModelPrivate>(this, playerManager, settings)}
+    , p{std::make_unique<PlaylistModelPrivate>(this, playerManager, playlistController, settings)}
 {
     p->settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
         p->altColours = enabled;
@@ -897,6 +909,10 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 
     if(role == PlaylistItem::Type) {
         return type;
+    }
+
+    if(role == PlaylistItem::Index) {
+        return item->index();
     }
 
     switch(type) {
@@ -1046,6 +1062,7 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
     p->updateHeaders(headersToUpdate);
 
     emit tracksChanged();
+    updateTrackIndicies();
     return true;
 }
 
@@ -1178,9 +1195,9 @@ void PlaylistModel::removeTracks(const QModelIndexList& indexes)
     p->removeEmptyHeaders(headersToCheck);
 }
 
-void PlaylistModel::reset(const Core::Playlist::Playlist& playlist)
+void PlaylistModel::reset(const Core::Playlist::Playlist* playlist)
 {
-    if(!playlist.isValid()) {
+    if(!playlist) {
         return;
     }
 
@@ -1190,13 +1207,43 @@ void PlaylistModel::reset(const Core::Playlist::Playlist& playlist)
     updateHeader(playlist);
 
     QMetaObject::invokeMethod(&p->populator,
-                              [this, playlist] { p->populator.run(p->currentPreset, playlist.tracks()); });
+                              [this, playlist] { p->populator.run(p->currentPreset, playlist->tracks()); });
 }
 
-void PlaylistModel::updateHeader(const Core::Playlist::Playlist& playlist)
+void PlaylistModel::updateHeader(const Core::Playlist::Playlist* playlist)
 {
-    if(playlist.isValid()) {
-        p->headerText = playlist.name() + ": " + QString::number(playlist.trackCount()) + " Tracks";
+    if(playlist) {
+        p->headerText = playlist->name() + ": " + QString::number(playlist->trackCount()) + " Tracks";
+    }
+}
+
+void PlaylistModel::updateCurrentTrackIndex(int index)
+{
+    p->playingIndex = index;
+}
+
+void PlaylistModel::updateTrackIndicies()
+{
+    std::stack<PlaylistItem*> nodes;
+    nodes.push(rootItem());
+    int currentIndex{0};
+
+    while(!nodes.empty()) {
+        PlaylistItem* node = nodes.top();
+        nodes.pop();
+
+        if(!node) {
+            continue;
+        }
+
+        if(node->type() == PlaylistItem::Track) {
+            node->setIndex(currentIndex++);
+        }
+
+        const auto children = node->children();
+        for(PlaylistItem* child : children) {
+            nodes.push(child);
+        }
     }
 }
 

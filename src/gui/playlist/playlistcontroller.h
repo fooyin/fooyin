@@ -60,20 +60,18 @@ public:
     PresetRegistry* presetRegistry() const;
     Core::Library::SortingRegistry* sortRegistry() const;
 
-    Core::Playlist::PlaylistList playlists() const;
+    const Core::Playlist::PlaylistList& playlists() const;
 
-    void startPlayback(const Core::Track& track) const;
+    void startPlayback() const;
 
-    [[nodiscard]] std::optional<Core::Playlist::Playlist> currentPlaylist() const;
+    [[nodiscard]] bool currentIsActive() const;
+    [[nodiscard]] Core::Playlist::Playlist* currentPlaylist() const;
 
-    void changeCurrentPlaylist(const Core::Playlist::Playlist& playlist);
+    void changeCurrentPlaylist(Core::Playlist::Playlist* playlist);
     void changeCurrentPlaylist(int id);
-    void removePlaylistTracks(const Core::TrackList& tracks);
-    void refreshCurrentPlaylist();
 
 signals:
-    void refreshPlaylist(const Core::Playlist::Playlist& playlist);
-    void currentPlaylistChanged(const Core::Playlist::Playlist& playlist);
+    void currentPlaylistChanged(const Core::Playlist::Playlist* playlist);
 
 private:
     struct Private;

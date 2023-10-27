@@ -60,6 +60,8 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
                                                                u"LibraryTree"_s);
     m_settings->createSetting<Settings::ScriptSandboxState>(QByteArray{}, u"Interface"_s);
     m_settings->createSetting<Settings::PlaylistThumbnailSize>(100, u"Playlist"_s);
+    m_settings->createSetting<Settings::CursorFollowsPlayback>(false, u"Playlist"_s);
+    m_settings->createSetting<Settings::PlaybackFollowsCursor>(false, u"Playlist"_s);
 
     m_settings->loadSettings();
 }

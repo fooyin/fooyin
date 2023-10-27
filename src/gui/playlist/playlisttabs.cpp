@@ -72,20 +72,20 @@ struct PlaylistTabs::Private
         }
     }
 
-    void playlistChanged(const Core::Playlist::Playlist& playlist) const
+    void playlistChanged(const Core::Playlist::Playlist* playlist) const
     {
         for(int i = 0; i < tabs->count(); ++i) {
-            if(tabs->tabData(i).toInt() == playlist.id()) {
+            if(tabs->tabData(i).toInt() == playlist->id()) {
                 tabs->setCurrentIndex(i);
             }
         }
     }
 
-    void playlistRenamed(const Core::Playlist::Playlist& playlist) const
+    void playlistRenamed(const Core::Playlist::Playlist* playlist) const
     {
         for(int i = 0; i < tabs->count(); ++i) {
-            if(tabs->tabData(i).toInt() == playlist.id()) {
-                tabs->setTabText(i, playlist.name());
+            if(tabs->tabData(i).toInt() == playlist->id()) {
+                tabs->setTabText(i, playlist->name());
             }
         }
     }
@@ -102,7 +102,7 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* 
 
     QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
     QObject::connect(p->controller, &PlaylistController::currentPlaylistChanged, this,
-                     [this](const Core::Playlist::Playlist& playlist) { p->playlistChanged(playlist); });
+                     [this](const Core::Playlist::Playlist* playlist) { p->playlistChanged(playlist); });
     //    QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
     //                     &PlaylistTabs::playlistChanged);
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistAdded, this,
@@ -110,7 +110,7 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* 
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistRemoved, this,
                      &PlaylistTabs::removePlaylist);
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistRenamed, this,
-                     [this](const Core::Playlist::Playlist& playlist) { p->playlistRenamed(playlist); });
+                     [this](const Core::Playlist::Playlist* playlist) { p->playlistRenamed(playlist); });
 }
 
 PlaylistTabs::~PlaylistTabs() = default;
@@ -119,28 +119,25 @@ void PlaylistTabs::setupTabs()
 {
     const auto& playlists = p->playlistHandler->playlists();
     for(const auto& playlist : playlists) {
-        addPlaylist(playlist, false);
+        addPlaylist(playlist.get());
     }
     // Workaround for issue where QTabBar is scrolled to the right when initialised, hiding tabs before current.
     p->tabs->adjustSize();
 }
 
-int PlaylistTabs::addPlaylist(const Core::Playlist::Playlist& playlist, bool switchTo)
+int PlaylistTabs::addPlaylist(const Core::Playlist::Playlist* playlist)
 {
-    const int index = addNewTab(playlist.name());
+    const int index = addNewTab(playlist->name());
     if(index >= 0) {
-        p->tabs->setTabData(index, playlist.id());
-        if(switchTo) {
-            p->tabs->setCurrentIndex(index);
-        }
+        p->tabs->setTabData(index, playlist->id());
     }
     return index;
 }
 
-void PlaylistTabs::removePlaylist(const Core::Playlist::Playlist& playlist)
+void PlaylistTabs::removePlaylist(const Core::Playlist::Playlist* playlist)
 {
     for(int i = 0; i < p->tabs->count(); ++i) {
-        if(p->tabs->tabData(i).toInt() == playlist.id()) {
+        if(p->tabs->tabData(i).toInt() == playlist->id()) {
             p->tabs->removeTab(i);
         }
     }
@@ -161,7 +158,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
     auto* createPlaylist = new QAction(u"Add New Playlist"_s, menu);
     QObject::connect(createPlaylist, &QAction::triggered, this,
-                     [this]() { p->playlistHandler->createEmptyPlaylist(true); });
+                     [this]() { p->playlistHandler->createEmptyPlaylist(); });
     menu->addAction(createPlaylist);
 
     const QPoint point = event->pos();

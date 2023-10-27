@@ -27,7 +27,7 @@ namespace Fy::Core {
 class Track;
 
 namespace Player {
-enum class PlayMode
+enum class PlayMode : int
 {
     Default = 0,
     RepeatAll,

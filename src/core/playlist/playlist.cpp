@@ -19,6 +19,9 @@
 
 #include <core/playlist/playlist.h>
 
+#include <core/player/playermanager.h>
+#include <utils/utils.h>
+
 namespace {
 int findTrack(const Fy::Core::Track& trackTofind, const Fy::Core::TrackList& tracks)
 {
@@ -40,7 +43,9 @@ Playlist::Playlist(QString name, int index, int id)
     , m_index{index}
     , m_name{std::move(name)}
     , m_currentTrackIndex{-1}
+    , m_nextTrackIndex{-1}
     , m_modified{false}
+    , m_tracksModified{false}
 { }
 
 bool Playlist::isValid() const
@@ -80,49 +85,132 @@ int Playlist::currentTrackIndex() const
 
 Track Playlist::currentTrack() const
 {
-    if(m_currentTrackIndex >= trackCount() || m_currentTrackIndex < 0) {
-        return {};
+    if(m_nextTrackIndex >= 0 && m_nextTrackIndex < trackCount()) {
+        return m_tracks.at(m_nextTrackIndex);
     }
-    return m_tracks.at(m_currentTrackIndex);
+    if(m_currentTrackIndex >= 0 && m_currentTrackIndex < trackCount()) {
+        return m_tracks.at(m_currentTrackIndex);
+    }
+    return {};
 }
 
-// Playlist tracks were changed
-bool Playlist::wasModified() const
+bool Playlist::modified() const
 {
     return m_modified;
 }
 
+bool Playlist::tracksModified() const
+{
+    return m_tracksModified;
+}
+
+void Playlist::scheduleNextIndex(int index)
+{
+    if(index >= 0 && index < trackCount()) {
+        m_nextTrackIndex = index;
+    }
+}
+
+Track Playlist::nextTrack(Player::PlayMode mode, int delta)
+{
+    int index = m_currentTrackIndex;
+
+    if(m_nextTrackIndex >= 0) {
+        index            = m_nextTrackIndex;
+        m_nextTrackIndex = -1;
+    }
+    else {
+        const int count = trackCount();
+
+        switch(mode) {
+            case(Player::PlayMode::Shuffle): {
+                // TODO: Implement full shuffle functionality
+                index = Utils::randomNumber(0, static_cast<int>(count - 1));
+                break;
+            }
+            case(Player::PlayMode::RepeatAll): {
+                index += delta;
+                if(index < 0) {
+                    index = count - 1;
+                }
+                else if(index >= count) {
+                    index = 0;
+                }
+                break;
+            }
+            case(Player::PlayMode::Default): {
+                index += delta;
+                if(index < 0 || index >= count) {
+                    index = -1;
+                }
+            }
+            case(Player::PlayMode::Repeat):
+                break;
+        }
+
+        if(index < 0) {
+            return {};
+        }
+    }
+
+    changeCurrentTrack(index);
+
+    return currentTrack();
+}
+
 void Playlist::setIndex(int index)
 {
-    m_index = index;
+    if(std::exchange(m_index, index) != index) {
+        m_modified = true;
+    }
 }
 
 void Playlist::setName(const QString& name)
 {
-    m_name = name;
-}
-
-void Playlist::setModified(bool modified)
-{
-    m_modified = modified;
+    if(std::exchange(m_name, name) != name) {
+        m_modified = true;
+    }
 }
 
 void Playlist::replaceTracks(const TrackList& tracks)
 {
-    m_tracks   = tracks;
-    m_modified = true;
+    if(std::exchange(m_tracks, tracks) != tracks) {
+        m_tracksModified = true;
+    }
+}
+
+void Playlist::replaceTracksSilently(const TrackList& tracks)
+{
+    m_tracks = tracks;
 }
 
 void Playlist::appendTracks(const TrackList& tracks)
 {
+    if(tracks.empty()) {
+        return;
+    }
+
     std::ranges::copy(tracks, std::back_inserter(m_tracks));
     m_modified = true;
 }
 
+void Playlist::appendTracksSilently(const TrackList& tracks)
+{
+    std::ranges::copy(tracks, std::back_inserter(m_tracks));
+}
+
 void Playlist::clear()
 {
-    m_tracks.clear();
-    m_modified = true;
+    if(!m_tracks.empty()) {
+        m_tracks.clear();
+        m_tracksModified = true;
+    }
+}
+
+void Playlist::resetFlags()
+{
+    m_modified       = false;
+    m_tracksModified = false;
 }
 
 void Playlist::changeCurrentTrack(int index)

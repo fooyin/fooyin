@@ -25,7 +25,13 @@
 
 #include <QObject>
 
-namespace Fy::Core::Playlist {
+namespace Fy::Core {
+
+namespace Player {
+enum class PlayMode;
+}
+
+namespace Playlist {
 class FYCORE_EXPORT Playlist
 {
 public:
@@ -43,16 +49,22 @@ public:
 
     [[nodiscard]] int currentTrackIndex() const;
     [[nodiscard]] Track currentTrack() const;
-    [[nodiscard]] bool wasModified() const;
+    [[nodiscard]] bool modified() const;
+    [[nodiscard]] bool tracksModified() const;
+
+    void scheduleNextIndex(int index);
+    Track nextTrack(Player::PlayMode mode, int delta);
 
     void setIndex(int index);
     void setName(const QString& name);
-    void setModified(bool modified);
 
     void replaceTracks(const TrackList& tracks);
+    void replaceTracksSilently(const TrackList& tracks);
     void appendTracks(const TrackList& tracks);
+    void appendTracksSilently(const TrackList& tracks);
 
     void clear();
+    void resetFlags();
 
     void changeCurrentTrack(int index);
     void changeCurrentTrack(const Core::Track& track);
@@ -64,8 +76,11 @@ private:
 
     TrackList m_tracks;
     int m_currentTrackIndex;
+    int m_nextTrackIndex;
 
     bool m_modified;
+    bool m_tracksModified;
 };
-using PlaylistList = std::vector<Playlist>;
-} // namespace Fy::Core::Playlist
+using PlaylistList = std::vector<std::unique_ptr<Playlist>>;
+} // namespace Playlist
+} // namespace Fy::Core

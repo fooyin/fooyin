@@ -42,6 +42,7 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::ActivePlaylistId>(0, u"Playlist"_s);
     m_settings->createSetting<Settings::AudioOutput>("ALSA|default", u"Engine"_s);
     m_settings->createSetting<Settings::OutputVolume>(1.0, u"Engine"_s);
+    m_settings->createSetting<Settings::RewindPreviousTrack>(false, u"Playlist"_s);
 
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 

@@ -41,6 +41,7 @@ class Playlist;
 
 namespace Gui::Widgets::Playlist {
 struct PlaylistPreset;
+class PlaylistController;
 class PlaylistModelPrivate;
 
 class PlaylistModel : public Utils::TreeModel<PlaylistItem>
@@ -48,8 +49,8 @@ class PlaylistModel : public Utils::TreeModel<PlaylistItem>
     Q_OBJECT
 
 public:
-    PlaylistModel(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                  QObject* parent = nullptr);
+    PlaylistModel(Core::Player::PlayerManager* playerManager, Playlist::PlaylistController* playlistController,
+                  Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -78,8 +79,10 @@ public:
     QModelIndex indexForTrackIndex(const Core::Track& track, int index);
     void removeTracks(const QModelIndexList& indexes);
 
-    void reset(const Core::Playlist::Playlist& playlist);
-    void updateHeader(const Core::Playlist::Playlist& playlist);
+    void reset(const Core::Playlist::Playlist* playlist);
+    void updateHeader(const Core::Playlist::Playlist* playlist);
+    void updateCurrentTrackIndex(int index);
+    void updateTrackIndicies();
     void changeTrackState();
     void changePreset(const PlaylistPreset& preset);
 

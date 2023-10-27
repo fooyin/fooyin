@@ -19,23 +19,20 @@
 
 #pragma once
 
-#include "module.h"
+#include <utils/settings/settingspage.h>
 
-#include <core/playlist/playlist.h>
+namespace Fy {
 
-namespace Fy::Core::DB {
-class PlaylistDatabase : private Module
+namespace Utils {
+class SettingsManager;
+} // namespace Utils
+
+namespace Gui::Settings {
+
+class PlaylistGeneralPage : public Utils::SettingsPage
 {
 public:
-    explicit PlaylistDatabase(const QString& connectionName);
-
-    bool getAllPlaylists(Playlist::PlaylistList& playlists);
-    bool getPlaylistTracks(const Playlist::PlaylistList& playlists, const TrackIdMap& tracks);
-
-    int insertPlaylist(const QString& name, int index);
-
-    bool saveModifiedPlaylists(const Playlist::PlaylistList& playlists);
-    bool removePlaylist(int id);
-    bool renamePlaylist(int id, const QString& name);
+    explicit PlaylistGeneralPage(Utils::SettingsManager* settings);
 };
-} // namespace Fy::Core::DB
+} // namespace Gui::Settings
+} // namespace Fy

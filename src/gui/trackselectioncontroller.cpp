@@ -21,9 +21,9 @@
 
 #include "playlist/playlistcontroller.h"
 
-#include <core/coresettings.h>
 #include <core/playlist/playlistmanager.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
@@ -107,43 +107,62 @@ struct TrackSelectionController::Private
         tracksMenu->addSeparator();
     }
 
+    void handleActions(Core::Playlist::Playlist* playlist, ActionOptions options) const
+    {
+        if(!playlist) {
+            return;
+        }
+
+        if(options & Switch) {
+            playlistController->changeCurrentPlaylist(playlist);
+        }
+    }
+
     void sendToNewPlaylist(ActionOptions options = {}, const QString& playlistName = {}) const
     {
         if(options & KeepActive) {
-            auto activePlaylist = playlistHandler->activePlaylist();
+            auto* activePlaylist = playlistHandler->activePlaylist();
+
             if(!activePlaylist || activePlaylist->name() != playlistName) {
-                playlistHandler->createPlaylist(playlistName, tracks, options & Switch);
+                auto* playlist = playlistHandler->createPlaylist(playlistName, tracks);
+                handleActions(playlist, options);
                 return;
             }
             const QString keepActiveName = playlistName + tr(" (Playback)");
-            if(auto keepActivePlaylist = playlistHandler->playlistByName(keepActiveName)) {
-                playlistHandler->exchangePlaylist(*keepActivePlaylist, *activePlaylist);
+
+            if(auto* keepActivePlaylist = playlistHandler->playlistByName(keepActiveName)) {
+                keepActivePlaylist->changeCurrentTrack(activePlaylist->currentTrackIndex());
+                keepActivePlaylist->replaceTracks(activePlaylist->tracks());
+
                 playlistHandler->changeActivePlaylist(keepActivePlaylist->id());
             }
             else {
                 playlistHandler->renamePlaylist(activePlaylist->id(), keepActiveName);
             }
         }
-        playlistHandler->createPlaylist(playlistName, tracks, options & Switch);
+
+        auto* playlist = playlistHandler->createPlaylist(playlistName, tracks);
+        handleActions(playlist, options);
     }
 
     void sendToCurrentPlaylist(ActionOptions options = {}) const
     {
-        if(auto currentPlaylist = playlistController->currentPlaylist()) {
-            playlistHandler->createPlaylist(currentPlaylist->name(), tracks, options & Switch);
+        if(auto* currentPlaylist = playlistController->currentPlaylist()) {
+            playlistHandler->createPlaylist(currentPlaylist->name(), tracks);
+            handleActions(currentPlaylist, options);
         }
     }
 
     void addToCurrentPlaylist() const
     {
-        if(auto playlist = playlistController->currentPlaylist()) {
+        if(auto* playlist = playlistController->currentPlaylist()) {
             playlistHandler->appendToPlaylist(playlist->id(), tracks);
         }
     }
 
     void addToActivePlaylist() const
     {
-        if(auto playlist = playlistHandler->activePlaylist()) {
+        if(auto* playlist = playlistHandler->activePlaylist()) {
             playlistHandler->appendToPlaylist(playlist->id(), tracks);
         }
     }
@@ -188,8 +207,11 @@ Core::TrackList TrackSelectionController::selectedTracks() const
 
 void TrackSelectionController::changeSelectedTracks(const Core::TrackList& tracks, const QString& title)
 {
-    p->tracks         = tracks;
     p->selectionTitle = title;
+    if(std::exchange(p->tracks, tracks) == tracks) {
+        return;
+    }
+
     emit selectionChanged(p->tracks);
 }
 
@@ -226,8 +248,8 @@ void TrackSelectionController::executeAction(TrackAction action, ActionOptions o
         }
         case(TrackAction::Play): {
             if(!p->tracks.empty()) {
-                if(auto playlist = p->playlistController->currentPlaylist()) {
-                    p->playlistHandler->startPlayback(playlist->name(), p->tracks.front());
+                if(auto* playlist = p->playlistController->currentPlaylist()) {
+                    p->playlistHandler->startPlayback(playlist->id());
                 }
             }
             break;

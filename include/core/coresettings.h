@@ -34,16 +34,17 @@ namespace Core::Settings {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 enum Core : uint32_t
 {
-    Version           = 1 | Utils::Settings::String,
-    DatabaseVersion   = 2 | Utils::Settings::String,
-    FirstRun          = 3 | Utils::Settings::Bool,
-    PlayMode          = 4 | Utils::Settings::Int,
-    AutoRefresh       = 5 | Utils::Settings::Bool,
-    LibrarySorting    = 6 | Utils::Settings::ByteArray,
-    LibrarySortScript = 7 | Utils::Settings::String,
-    ActivePlaylistId  = 8 | Utils::Settings::Int,
-    AudioOutput       = 9 | Utils::Settings::String,
-    OutputVolume      = 10 | Utils::Settings::Double,
+    Version             = 1 | Utils::Settings::String,
+    DatabaseVersion     = 2 | Utils::Settings::String,
+    FirstRun            = 3 | Utils::Settings::Bool,
+    PlayMode            = 4 | Utils::Settings::Int,
+    AutoRefresh         = 5 | Utils::Settings::Bool,
+    LibrarySorting      = 6 | Utils::Settings::ByteArray,
+    LibrarySortScript   = 7 | Utils::Settings::String,
+    ActivePlaylistId    = 8 | Utils::Settings::Int,
+    AudioOutput         = 9 | Utils::Settings::String,
+    OutputVolume        = 10 | Utils::Settings::Double,
+    RewindPreviousTrack = 11 | Utils::Settings::Bool,
 };
 Q_ENUM_NS(Core)
 

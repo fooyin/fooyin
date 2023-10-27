@@ -105,6 +105,7 @@ set(SOURCES
     settings/librarytree/librarytreepage.cpp
     settings/librarytree/librarytreeguipage.cpp
     settings/librarytree/librarytreegroupmodel.cpp
+    settings/playlist/playlistgeneralpage.cpp
     settings/playlist/playlistguipage.cpp
     settings/playlist/presetinput.cpp
     settings/playlist/presetinputbox.cpp

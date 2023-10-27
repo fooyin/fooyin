@@ -19,9 +19,8 @@
 
 #include "playlistguipage.h"
 
-#include "gui/guiconstants.h"
-#include "gui/guisettings.h"
-
+#include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>

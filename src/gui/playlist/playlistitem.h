@@ -57,6 +57,7 @@ public:
         ItemData,
         Type,
         Indentation,
+        Index,
     };
 
     PlaylistItem();

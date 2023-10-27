@@ -53,36 +53,31 @@ public:
                              Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
-    [[nodiscard]] std::optional<Playlist> playlistById(int id) const override;
-    [[nodiscard]] std::optional<Playlist> playlistByIndex(int index) const override;
-    [[nodiscard]] std::optional<Playlist> playlistByName(const QString& name) const override;
-    [[nodiscard]] PlaylistList playlists() const override;
+    [[nodiscard]] Playlist* playlistById(int id) const override;
+    [[nodiscard]] Playlist* playlistByIndex(int index) const override;
+    [[nodiscard]] Playlist* playlistByName(const QString& name) const override;
+    [[nodiscard]] const PlaylistList& playlists() const override;
 
-    std::optional<Playlist> createPlaylist(const QString& name, const TrackList& tracks = {},
-                                           bool switchTo = false) override;
+    void createEmptyPlaylist() override;
+    Playlist* createPlaylist(const QString& name, const TrackList& tracks = {}) override;
     void appendToPlaylist(int id, const TrackList& tracks) override;
-    void createEmptyPlaylist(bool switchTo = false) override;
 
-    // Replaces tracks and current track index in playlist with those from other
-    void exchangePlaylist(Playlist& playlist, const Playlist& other) override;
-    void replacePlaylistTracks(int id, const Core::TrackList& tracks) override;
     void changeActivePlaylist(int id) override;
 
     void renamePlaylist(int id, const QString& name) override;
     void removePlaylist(int id) override;
 
-    [[nodiscard]] std::optional<Playlist> activePlaylist() const override;
+    [[nodiscard]] Playlist* activePlaylist() const override;
     [[nodiscard]] int playlistCount() const override;
 
     void savePlaylists();
 
-    void startPlayback(int playlistId, const Core::Track& track = {}) override;
-    void startPlayback(QString playlistName, const Core::Track& track = {}) override;
+    void startPlayback(int playlistId) override;
 
     void populatePlaylists(const TrackList& tracks);
     void libraryRemoved(int id);
-    void tracksUpdated(const Core::TrackList& tracks);
-    void tracksRemoved(const Core::TrackList& tracks);
+    void tracksUpdated(const TrackList& tracks);
+    void tracksRemoved(const TrackList& tracks);
 
 private:
     struct Private;

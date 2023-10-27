@@ -120,6 +120,7 @@ constexpr auto Engine                = "Fooyin.Page.Engine";
 constexpr auto InterfaceGeneral      = "Fooyin.Page.Interface.General";
 constexpr auto LibraryGeneral        = "Fooyin.Page.Library.General";
 constexpr auto LibrarySorting        = "Fooyin.Page.Library.Sorting";
+constexpr auto PlaylistGeneral       = "Fooyin.Page.Playlist.General";
 constexpr auto PlaylistInterface     = "Fooyin.Page.Playlist.Interface";
 constexpr auto PlaylistPresets       = "Fooyin.Page.Playlist.Presets";
 constexpr auto LibraryTreeGeneral    = "Fooyin.Page.Widgets.LibraryTree.General";

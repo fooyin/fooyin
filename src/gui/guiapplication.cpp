@@ -45,6 +45,7 @@
 #include "settings/library/librarysortingpage.h"
 #include "settings/librarytree/librarytreeguipage.h"
 #include "settings/librarytree/librarytreepage.h"
+#include "settings/playlist/playlistgeneralpage.h"
 #include "settings/playlist/playlistguipage.h"
 #include "settings/playlist/playlistpresetspage.h"
 #include "settings/plugins/pluginspage.h"
@@ -108,6 +109,7 @@ struct GuiApplication::Private
     Settings::LibraryGeneralPage libraryGeneralPage;
     Settings::LibrarySortingPage librarySortingPage;
     Settings::GuiGeneralPage guiGeneralPage;
+    Settings::PlaylistGeneralPage playlistGeneralPage;
     Settings::PlaylistGuiPage playlistGuiPage;
     Settings::PlaylistPresetsPage playlistPresetsPage;
     Settings::LibraryTreePage libraryTreePage;
@@ -149,6 +151,7 @@ struct GuiApplication::Private
         , libraryGeneralPage{libraryManager, settingsManager}
         , librarySortingPage{sortingRegistry, settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
+        , playlistGeneralPage{settingsManager}
         , playlistGuiPage{settingsManager}
         , playlistPresetsPage{&presetRegistry, settingsManager}
         , libraryTreePage{&treeGroupRegistry, settingsManager}
