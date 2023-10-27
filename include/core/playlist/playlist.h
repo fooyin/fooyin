@@ -35,8 +35,8 @@ namespace Playlist {
 class FYCORE_EXPORT Playlist
 {
 public:
-    Playlist();
-    explicit Playlist(QString name, int index, int id);
+    Playlist(int id, QString name, int index);
+    ~Playlist();
 
     [[nodiscard]] bool isValid() const;
 
@@ -67,19 +67,10 @@ public:
     void resetFlags();
 
     void changeCurrentTrack(int index);
-    void changeCurrentTrack(const Core::Track& track);
 
 private:
-    int m_id;
-    int m_index;
-    QString m_name;
-
-    TrackList m_tracks;
-    int m_currentTrackIndex;
-    int m_nextTrackIndex;
-
-    bool m_modified;
-    bool m_tracksModified;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 using PlaylistList = std::vector<std::unique_ptr<Playlist>>;
 } // namespace Playlist

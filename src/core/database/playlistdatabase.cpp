@@ -88,7 +88,7 @@ bool populatePlaylistTracks(Fy::Core::DB::Module* module, const auto& playlist, 
     }
     playlist->appendTracksSilently(playlistTracks);
     return true;
-};
+}
 
 bool savePlaylist(Fy::Core::DB::Module* module, const auto& playlist)
 {
@@ -145,7 +145,7 @@ bool PlaylistDatabase::getAllPlaylists(Playlist::PlaylistList& playlists)
         const QString name = q.value(1).toString();
         const int index    = q.value(2).toInt();
 
-        playlists.emplace_back(std::make_unique<Playlist::Playlist>(name, index, id));
+        playlists.emplace_back(std::make_unique<Playlist::Playlist>(id, name, index));
     }
     return true;
 }

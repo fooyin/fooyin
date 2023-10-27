@@ -22,109 +22,151 @@
 #include <core/player/playermanager.h>
 #include <utils/utils.h>
 
-namespace {
-int findTrack(const Fy::Core::Track& trackTofind, const Fy::Core::TrackList& tracks)
-{
-    auto it = std::ranges::find(std::as_const(tracks), trackTofind);
-    if(it != tracks.end()) {
-        return static_cast<int>(std::distance(tracks.cbegin(), it));
-    }
-    return -1;
-}
-} // namespace
+#include <random>
 
 namespace Fy::Core::Playlist {
-Playlist::Playlist()
-    : Playlist{{}, -1, -1}
+struct Playlist::Private
+{
+    int id;
+    int index;
+    QString name;
+    TrackList tracks;
+
+    int currentTrackIndex{-1};
+    int nextTrackIndex{-1};
+
+    int shuffleIndex{-1};
+    std::vector<int> shuffleOrder;
+
+    bool modified{false};
+    bool tracksModified{false};
+
+    Private(int id, QString name, int index)
+        : id{id}
+        , index{index}
+        , name{std::move(name)}
+    { }
+
+    void createShuffleOrder()
+    {
+        shuffleOrder.resize(tracks.size());
+        std::iota(shuffleOrder.begin(), shuffleOrder.end(), 0);
+        std::ranges::shuffle(shuffleOrder, std::mt19937{std::random_device{}()});
+
+        // Move current track to end
+        auto it = std::ranges::find(shuffleOrder, currentTrackIndex);
+        if(it != shuffleOrder.end()) {
+            std::rotate(it, it + 1, shuffleOrder.end());
+        }
+        shuffleIndex = 0;
+    }
+
+    int getRandomIndex()
+    {
+        if(shuffleOrder.empty()) {
+            createShuffleOrder();
+        }
+
+        if(shuffleIndex > static_cast<int>(shuffleOrder.size() - 1)) {
+            shuffleIndex = 0;
+        }
+        else if(shuffleIndex < 0) {
+            shuffleIndex = static_cast<int>(shuffleOrder.size() - 1);
+        }
+
+        if(shuffleIndex >= 0 && shuffleIndex < static_cast<int>(shuffleOrder.size())) {
+            return shuffleOrder.at(shuffleIndex++);
+        }
+
+        return -1;
+    }
+};
+
+Playlist::Playlist(int id, QString name, int index)
+    : p{std::make_unique<Private>(id, std::move(name), index)}
 { }
 
-Playlist::Playlist(QString name, int index, int id)
-    : m_id{id}
-    , m_index{index}
-    , m_name{std::move(name)}
-    , m_currentTrackIndex{-1}
-    , m_nextTrackIndex{-1}
-    , m_modified{false}
-    , m_tracksModified{false}
-{ }
+Playlist::~Playlist() = default;
 
 bool Playlist::isValid() const
 {
-    return m_id >= 0 && m_index >= 0 && !m_name.isEmpty();
+    return p->id >= 0 && p->index >= 0 && !p->name.isEmpty();
 }
 
 int Playlist::id() const
 {
-    return m_id;
+    return p->id;
 }
 
 int Playlist::index() const
 {
-    return m_index;
+    return p->index;
 }
 
 QString Playlist::name() const
 {
-    return m_name;
+    return p->name;
 }
 
 TrackList Playlist::tracks() const
 {
-    return m_tracks;
+    return p->tracks;
 }
 
 int Playlist::trackCount() const
 {
-    return static_cast<int>(m_tracks.size());
+    return static_cast<int>(p->tracks.size());
 }
 
 int Playlist::currentTrackIndex() const
 {
-    return m_currentTrackIndex;
+    return p->currentTrackIndex;
 }
 
 Track Playlist::currentTrack() const
 {
-    if(m_nextTrackIndex >= 0 && m_nextTrackIndex < trackCount()) {
-        return m_tracks.at(m_nextTrackIndex);
+    if(p->nextTrackIndex >= 0 && p->nextTrackIndex < trackCount()) {
+        return p->tracks.at(p->nextTrackIndex);
     }
-    if(m_currentTrackIndex >= 0 && m_currentTrackIndex < trackCount()) {
-        return m_tracks.at(m_currentTrackIndex);
+    if(p->currentTrackIndex >= 0 && p->currentTrackIndex < trackCount()) {
+        return p->tracks.at(p->currentTrackIndex);
     }
     return {};
 }
 
 bool Playlist::modified() const
 {
-    return m_modified;
+    return p->modified;
 }
 
 bool Playlist::tracksModified() const
 {
-    return m_tracksModified;
+    return p->tracksModified;
 }
 
 void Playlist::scheduleNextIndex(int index)
 {
     if(index >= 0 && index < trackCount()) {
-        m_nextTrackIndex = index;
+        p->nextTrackIndex = index;
     }
 }
 
 Track Playlist::nextTrack(Player::PlayMode mode, int delta)
 {
-    int index = m_currentTrackIndex;
+    int index = p->currentTrackIndex;
 
-    if(m_nextTrackIndex >= 0) {
-        index = m_nextTrackIndex;
+    if(p->nextTrackIndex >= 0) {
+        index = p->nextTrackIndex;
     }
     else {
         const int count = trackCount();
 
         switch(mode) {
             case(Player::PlayMode::Shuffle): {
-                // TODO: Implement full shuffle functionality
-                index = Utils::randomNumber(0, static_cast<int>(count - 1));
+                if(delta == -1) {
+                    p->shuffleIndex -= 2;
+                }
+                index = p->getRandomIndex();
                 break;
             }
             case(Player::PlayMode::RepeatAll): {
@@ -159,28 +201,29 @@ Track Playlist::nextTrack(Player::PlayMode mode, int delta)
 
 void Playlist::setIndex(int index)
 {
-    if(std::exchange(m_index, index) != index) {
-        m_modified = true;
+    if(std::exchange(p->index, index) != index) {
+        p->modified = true;
     }
 }
 
 void Playlist::setName(const QString& name)
 {
-    if(std::exchange(m_name, name) != name) {
-        m_modified = true;
+    if(std::exchange(p->name, name) != name) {
+        p->modified = true;
     }
 }
 
 void Playlist::replaceTracks(const TrackList& tracks)
 {
-    if(std::exchange(m_tracks, tracks) != tracks) {
-        m_tracksModified = true;
+    if(std::exchange(p->tracks, tracks) != tracks) {
+        p->tracksModified = true;
+        p->shuffleOrder.clear();
     }
 }
 
 void Playlist::replaceTracksSilently(const TrackList& tracks)
 {
-    m_tracks = tracks;
+    p->tracks = tracks;
 }
 
 void Playlist::appendTracks(const TrackList& tracks)
@@ -189,40 +232,35 @@ void Playlist::appendTracks(const TrackList& tracks)
         return;
     }
 
-    std::ranges::copy(tracks, std::back_inserter(m_tracks));
-    m_modified = true;
+    std::ranges::copy(tracks, std::back_inserter(p->tracks));
+    p->modified = true;
+    p->shuffleOrder.clear();
 }
 
 void Playlist::appendTracksSilently(const TrackList& tracks)
 {
-    std::ranges::copy(tracks, std::back_inserter(m_tracks));
+    std::ranges::copy(tracks, std::back_inserter(p->tracks));
+    p->shuffleOrder.clear();
 }
 
 void Playlist::clear()
 {
-    if(!m_tracks.empty()) {
-        m_tracks.clear();
-        m_tracksModified = true;
+    if(!p->tracks.empty()) {
+        p->tracks.clear();
+        p->tracksModified = true;
+        p->shuffleOrder.clear();
     }
 }
 
 void Playlist::resetFlags()
 {
-    m_modified       = false;
-    m_tracksModified = false;
+    p->modified       = false;
+    p->tracksModified = false;
 }
 
 void Playlist::changeCurrentTrack(int index)
 {
-    m_currentTrackIndex = index;
-    m_nextTrackIndex    = -1;
-}
-
-void Playlist::changeCurrentTrack(const Track& track)
-{
-    const int index = findTrack(track, m_tracks);
-    if(index >= 0) {
-        m_currentTrackIndex = index;
-    }
+    p->currentTrackIndex = index;
+    p->nextTrackIndex    = -1;
 }
 } // namespace Fy::Core::Playlist

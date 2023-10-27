@@ -27,7 +27,6 @@
 #include <core/playlist/playlist.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 #include <ranges>
 
@@ -208,7 +207,7 @@ struct PlaylistHandler::Private
         index        = nextValidIndex();
         const int id = playlistConnector.insertPlaylist(name, index);
         if(id >= 0) {
-            auto* playlist = playlists.emplace_back(std::make_unique<Playlist>(name, index, id)).get();
+            auto* playlist = playlists.emplace_back(std::make_unique<Playlist>(id, name, index)).get();
             return playlist;
         }
         return nullptr;
