@@ -116,8 +116,7 @@ Track Playlist::nextTrack(Player::PlayMode mode, int delta)
     int index = m_currentTrackIndex;
 
     if(m_nextTrackIndex >= 0) {
-        index            = m_nextTrackIndex;
-        m_nextTrackIndex = -1;
+        index = m_nextTrackIndex;
     }
     else {
         const int count = trackCount();
@@ -216,6 +215,7 @@ void Playlist::resetFlags()
 void Playlist::changeCurrentTrack(int index)
 {
     m_currentTrackIndex = index;
+    m_nextTrackIndex    = -1;
 }
 
 void Playlist::changeCurrentTrack(const Track& track)
