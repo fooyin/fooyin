@@ -138,6 +138,11 @@ void PlaylistController::changeCurrentPlaylist(int id)
     }
 }
 
+void PlaylistController::changePlaylistIndex(int playlistId, int index)
+{
+    p->handler->changePlaylistIndex(playlistId, index);
+}
+
 void PlaylistController::startPlayback() const
 {
     if(p->currentPlaylist) {

@@ -130,7 +130,7 @@ PlaylistDatabase::PlaylistDatabase(const QString& connectionName)
 
 bool PlaylistDatabase::getAllPlaylists(Playlist::PlaylistList& playlists)
 {
-    const QString query = u"SELECT PlaylistID, Name, PlaylistIndex FROM Playlists;"_s;
+    const QString query = u"SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;"_s;
 
     Query q{this};
     q.prepareQuery(query);

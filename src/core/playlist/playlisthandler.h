@@ -62,6 +62,7 @@ public:
     Playlist* createPlaylist(const QString& name, const TrackList& tracks = {}) override;
     void appendToPlaylist(int id, const TrackList& tracks) override;
 
+    void changePlaylistIndex(int id, int index) override;
     void changeActivePlaylist(int id) override;
 
     void renamePlaylist(int id, const QString& name) override;

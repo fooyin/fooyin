@@ -64,4 +64,15 @@ Ctnr filter(const Ctnr& container, Pred pred)
     std::ranges::copy_if(std::as_const(container), std::back_inserter(result), pred);
     return result;
 }
+
+template <typename T>
+void move(std::vector<T>& v, size_t from, size_t to)
+{
+    if(from > to) {
+        std::rotate(v.rend() - from - 1, v.rend() - from, v.rend() - to);
+    }
+    else {
+        std::rotate(v.begin() + from, v.begin() + from + 1, v.begin() + to + 1);
+    }
+}
 } // namespace Fy::Utils

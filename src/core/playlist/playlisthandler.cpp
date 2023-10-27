@@ -292,6 +292,14 @@ void PlaylistHandler::appendToPlaylist(int id, const TrackList& tracks)
     }
 }
 
+void PlaylistHandler::changePlaylistIndex(int id, int index)
+{
+    if(auto* playlist = playlistById(id)) {
+        Utils::move(p->playlists, playlist->index(), index);
+        p->updateIndices();
+    }
+}
+
 void PlaylistHandler::createEmptyPlaylist()
 {
     const QString name = p->findUniqueName(QStringLiteral("Playlist"));

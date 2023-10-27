@@ -69,6 +69,7 @@ public:
 
     void changeCurrentPlaylist(Core::Playlist::Playlist* playlist);
     void changeCurrentPlaylist(int id);
+    void changePlaylistIndex(int playlistId, int index);
 
 signals:
     void currentPlaylistChanged(const Core::Playlist::Playlist* playlist);

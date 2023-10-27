@@ -80,9 +80,19 @@ struct PlaylistTabs::Private
         }
     }
 
+    void tabMoved(int /*from*/, int to) const
+    {
+        const int id = tabs->tabData(to).toInt();
+        if(id >= 0) {
+            controller->changePlaylistIndex(id, to);
+        }
+    }
+
     void playlistChanged(const Core::Playlist::Playlist* playlist) const
     {
-        for(int i = 0; i < tabs->count(); ++i) {
+        const int count = tabs->count();
+
+        for(int i = 0; i < count; ++i) {
             if(tabs->tabData(i).toInt() == playlist->id()) {
                 tabs->setCurrentIndex(i);
             }
@@ -91,7 +101,9 @@ struct PlaylistTabs::Private
 
     void playlistRenamed(const Core::Playlist::Playlist* playlist) const
     {
-        for(int i = 0; i < tabs->count(); ++i) {
+        const int count = tabs->count();
+
+        for(int i = 0; i < count; ++i) {
             if(tabs->tabData(i).toInt() == playlist->id()) {
                 tabs->setTabText(i, playlist->name());
             }
@@ -109,6 +121,7 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* 
     setupTabs();
 
     QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
+    QObject::connect(p->tabs, &QTabBar::tabMoved, this, [this](int from, int to) { p->tabMoved(from, to); });
     QObject::connect(p->controller, &PlaylistController::currentPlaylistChanged, this,
                      [this](const Core::Playlist::Playlist* playlist) { p->playlistChanged(playlist); });
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistAdded, this,
