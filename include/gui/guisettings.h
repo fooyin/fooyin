@@ -64,6 +64,7 @@ enum Gui : uint32_t
     PlaylistThumbnailSize      = 30 | Utils::Settings::Int,
     CursorFollowsPlayback      = 31 | Utils::Settings::Bool,
     PlaybackFollowsCursor      = 32 | Utils::Settings::Bool,
+    PlaylistTabsSingleHide     = 33 | Utils::Settings::Bool,
 };
 Q_ENUM_NS(Gui)
 

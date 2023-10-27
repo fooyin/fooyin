@@ -210,13 +210,13 @@ struct GuiApplication::Private
             },
             u"Horizontal Splitter"_s, {"Splitters"});
 
-        factory->registerClass<Widgets::Playlist::PlaylistTabs>(u"PlaylistTabs"_s,
-                                                                [this]() {
-                                                                    return new Widgets::Playlist::PlaylistTabs(
-                                                                        actionManager, &widgetProvider,
-                                                                        playlistController.get(), mainWindow.get());
-                                                                },
-                                                                u"Playlist Tabs"_s, {"Splitters"});
+        factory->registerClass<Widgets::Playlist::PlaylistTabs>(
+            u"PlaylistTabs"_s,
+            [this]() {
+                return new Widgets::Playlist::PlaylistTabs(actionManager, &widgetProvider, playlistController.get(),
+                                                           settingsManager, mainWindow.get());
+            },
+            u"Playlist Tabs"_s, {"Splitters"});
 
         factory->registerClass<Widgets::TabStackWidget>(
             u"TabStack"_s,

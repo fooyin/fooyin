@@ -25,6 +25,7 @@ namespace Fy {
 
 namespace Utils {
 class ActionManager;
+class SettingsManager;
 } // namespace Utils
 
 namespace Core::Playlist {
@@ -40,7 +41,7 @@ class PlaylistTabs : public WidgetContainer
 
 public:
     explicit PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                          PlaylistController* controller, QWidget* parent = nullptr);
+                          PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistTabs() override;
 
     void setupTabs();

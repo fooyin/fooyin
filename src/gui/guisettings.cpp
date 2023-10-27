@@ -62,6 +62,7 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::PlaylistThumbnailSize>(100, u"Playlist"_s);
     m_settings->createSetting<Settings::CursorFollowsPlayback>(false, u"Playlist"_s);
     m_settings->createSetting<Settings::PlaybackFollowsCursor>(false, u"Playlist"_s);
+    m_settings->createSetting<Settings::PlaylistTabsSingleHide>(false, u"Playlist Tabs"_s);
 
     m_settings->loadSettings();
 }

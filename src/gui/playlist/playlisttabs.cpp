@@ -22,9 +22,11 @@
 #include "playlistcontroller.h"
 
 #include <core/playlist/playlistmanager.h>
+#include <gui/guisettings.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
 #include <QInputDialog>
@@ -42,17 +44,19 @@ struct PlaylistTabs::Private
     WidgetProvider* widgetProvider;
     Core::Playlist::PlaylistManager* playlistHandler;
     PlaylistController* controller;
+    Utils::SettingsManager* settings;
 
     QVBoxLayout* layout;
     QTabBar* tabs;
     FyWidget* tabsWidget{nullptr};
 
     Private(PlaylistTabs* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-            PlaylistController* controller)
+            PlaylistController* controller, Utils::SettingsManager* settings)
         : actionManager{actionManager}
         , widgetProvider{widgetProvider}
         , playlistHandler{controller->playlistHandler()}
         , controller{controller}
+        , settings{settings}
         , layout{new QVBoxLayout(self)}
         , tabs{new QTabBar(self)}
     {
@@ -60,8 +64,12 @@ struct PlaylistTabs::Private
         layout->setContentsMargins(0, 0, 0, 0);
         layout->setAlignment(Qt::AlignTop);
 
-        tabs->setMovable(false);
+        tabs->setMovable(true);
         tabs->setExpanding(false);
+
+        if(settings->value<Settings::PlaylistTabsSingleHide>()) {
+            tabs->hide();
+        }
     }
 
     void tabChanged(int index) const
@@ -92,9 +100,9 @@ struct PlaylistTabs::Private
 };
 
 PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                           PlaylistController* controller, QWidget* parent)
+                           PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
-    , p{std::make_unique<Private>(this, actionManager, widgetProvider, controller)}
+    , p{std::make_unique<Private>(this, actionManager, widgetProvider, controller, settings)}
 {
     QObject::setObjectName(PlaylistTabs::name());
 
@@ -103,14 +111,14 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* 
     QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
     QObject::connect(p->controller, &PlaylistController::currentPlaylistChanged, this,
                      [this](const Core::Playlist::Playlist* playlist) { p->playlistChanged(playlist); });
-    //    QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistHandler::playlistTracksChanged, this,
-    //                     &PlaylistTabs::playlistChanged);
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistAdded, this,
                      &PlaylistTabs::addPlaylist);
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistRemoved, this,
                      &PlaylistTabs::removePlaylist);
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistRenamed, this,
                      [this](const Core::Playlist::Playlist* playlist) { p->playlistRenamed(playlist); });
+
+    p->settings->subscribe<Settings::PlaylistTabsSingleHide>(this, [this](bool hide) { p->tabs->setVisible(!hide); });
 }
 
 PlaylistTabs::~PlaylistTabs() = default;
@@ -141,6 +149,10 @@ void PlaylistTabs::removePlaylist(const Core::Playlist::Playlist* playlist)
             p->tabs->removeTab(i);
         }
     }
+
+    if(p->settings->value<Settings::PlaylistTabsSingleHide>() && p->tabs->count() < 2) {
+        p->tabs->hide();
+    }
 }
 
 int PlaylistTabs::addNewTab(const QString& name, const QIcon& icon)
@@ -148,7 +160,14 @@ int PlaylistTabs::addNewTab(const QString& name, const QIcon& icon)
     if(name.isEmpty()) {
         return -1;
     }
-    return p->tabs->addTab(icon, name);
+
+    const int index = p->tabs->addTab(icon, name);
+
+    if(p->settings->value<Settings::PlaylistTabsSingleHide>() && p->tabs->count() > 1) {
+        p->tabs->show();
+    }
+
+    return index;
 }
 
 void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
