@@ -33,30 +33,27 @@ struct PlayerController::Private
     Track currentTrack;
     uint64_t totalDuration{0};
     PlayState playStatus{PlayState::Stopped};
-    PlayMode playMode;
+    Playlist::PlayModes playMode;
     uint64_t position{0};
     bool counted{false};
 
     Private(PlayerController* self, Utils::SettingsManager* settings)
         : self{self}
         , settings{settings}
-        , playMode{static_cast<PlayMode>(settings->value<Settings::PlayMode>())}
+        , playMode{static_cast<Playlist::PlayModes>(settings->value<Settings::PlayMode>())}
     { }
-
-    void changePlayMode()
-    {
-        const auto mode = static_cast<PlayMode>(settings->value<Settings::PlayMode>());
-        if(std::exchange(playMode, mode) != mode) {
-            QMetaObject::invokeMethod(self, "playModeChanged", Q_ARG(PlayMode, playMode));
-        }
-    }
 };
 
 PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* parent)
     : PlayerManager{parent}
     , p{std::make_unique<Private>(this, settings)}
 {
-    settings->subscribe<Settings::PlayMode>(this, [this]() { p->changePlayMode(); });
+    settings->subscribe<Settings::PlayMode>(this, [this]() {
+        const auto mode = static_cast<Playlist::PlayModes>(p->settings->value<Settings::PlayMode>());
+        if(std::exchange(p->playMode, mode) != mode) {
+            emit playModeChanged(mode);
+        }
+    });
 }
 
 PlayerController::~PlayerController() = default;
@@ -152,7 +149,7 @@ void PlayerController::changeCurrentTrack(const Track& track)
     emit currentTrackChanged(p->currentTrack);
 }
 
-void PlayerController::setPlayMode(PlayMode mode)
+void PlayerController::setPlayMode(Playlist::PlayModes mode)
 {
     p->settings->set<Settings::PlayMode>(static_cast<int>(mode));
 }
@@ -162,7 +159,7 @@ PlayState PlayerController::playState() const
     return p->playStatus;
 }
 
-PlayMode PlayerController::playMode() const
+Playlist::PlayModes PlayerController::playMode() const
 {
     return p->playMode;
 }

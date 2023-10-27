@@ -98,7 +98,7 @@ struct PlaylistHandler::Private
             return;
         }
 
-        const Track nextTrack = activePlaylist->nextTrack(playerManager->playMode(), delta);
+        const Track nextTrack = activePlaylist->nextTrack(delta, playerManager->playMode());
 
         if(!nextTrack.isValid()) {
             playerManager->stop();
@@ -392,6 +392,7 @@ void PlaylistHandler::startPlayback(int playlistId)
     }
     if(auto* playlist = playlistById(playlistId)) {
         changeActivePlaylist(playlistId);
+        playlist->reset();
         p->startNextTrack(playlist->currentTrack(), playlist->currentTrackIndex());
     }
 }

@@ -43,7 +43,7 @@ public:
     ~PlayerController();
 
     [[nodiscard]] PlayState playState() const override;
-    [[nodiscard]] PlayMode playMode() const override;
+    [[nodiscard]] Playlist::PlayModes playMode() const override;
     [[nodiscard]] uint64_t currentPosition() const override;
     [[nodiscard]] Track currentTrack() const override;
 
@@ -58,7 +58,7 @@ public:
     void setCurrentPosition(uint64_t ms) override;
     void changePosition(uint64_t ms) override;
     void changeCurrentTrack(const Track& track) override;
-    void setPlayMode(PlayMode mode) override;
+    void setPlayMode(Playlist::PlayModes mode) override;
 
 private:
     struct Private;

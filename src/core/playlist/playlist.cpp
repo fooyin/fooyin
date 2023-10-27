@@ -19,9 +19,6 @@
 
 #include <core/playlist/playlist.h>
 
-#include <core/player/playermanager.h>
-#include <utils/utils.h>
-
 #include <random>
 
 namespace Fy::Core::Playlist {
@@ -53,29 +50,32 @@ struct Playlist::Private
         std::iota(shuffleOrder.begin(), shuffleOrder.end(), 0);
         std::ranges::shuffle(shuffleOrder, std::mt19937{std::random_device{}()});
 
-        // Move current track to end
+        // Move current track to start
         auto it = std::ranges::find(shuffleOrder, currentTrackIndex);
         if(it != shuffleOrder.end()) {
-            std::rotate(it, it + 1, shuffleOrder.end());
+            std::rotate(shuffleOrder.begin(), it, it + 1);
         }
-        shuffleIndex = 0;
     }
 
-    int getRandomIndex()
+    int getRandomIndex(PlayModes mode)
     {
         if(shuffleOrder.empty()) {
             createShuffleOrder();
+
+            shuffleIndex = (mode & Repeat) ? 0 : 1;
         }
 
-        if(shuffleIndex > static_cast<int>(shuffleOrder.size() - 1)) {
-            shuffleIndex = 0;
-        }
-        else if(shuffleIndex < 0) {
-            shuffleIndex = static_cast<int>(shuffleOrder.size() - 1);
+        else if(mode & RepeatAll) {
+            if(shuffleIndex > static_cast<int>(shuffleOrder.size() - 1)) {
+                shuffleIndex = 0;
+            }
+            else if(shuffleIndex < 0) {
+                shuffleIndex = static_cast<int>(shuffleOrder.size() - 1);
+            }
         }
 
         if(shuffleIndex >= 0 && shuffleIndex < static_cast<int>(shuffleOrder.size())) {
-            return shuffleOrder.at(shuffleIndex++);
+            return shuffleOrder.at(shuffleIndex);
         }
 
         return -1;
@@ -151,7 +151,7 @@ void Playlist::scheduleNextIndex(int index)
     }
 }
 
-Track Playlist::nextTrack(Player::PlayMode mode, int delta)
+Track Playlist::nextTrack(int delta, PlayModes mode)
 {
     int index = p->currentTrackIndex;
 
@@ -161,32 +161,26 @@ Track Playlist::nextTrack(Player::PlayMode mode, int delta)
     else {
         const int count = trackCount();
 
-        switch(mode) {
-            case(Player::PlayMode::Shuffle): {
-                if(delta == -1) {
-                    p->shuffleIndex -= 2;
-                }
-                index = p->getRandomIndex();
-                break;
+        if(mode & Shuffle) {
+            if(!(mode & Repeat)) {
+                p->shuffleIndex += delta;
             }
-            case(Player::PlayMode::RepeatAll): {
-                index += delta;
-                if(index < 0) {
-                    index = count - 1;
-                }
-                else if(index >= count) {
-                    index = 0;
-                }
-                break;
+            index = p->getRandomIndex(mode);
+        }
+        else if(mode & RepeatAll) {
+            index += delta;
+            if(index < 0) {
+                index = count - 1;
             }
-            case(Player::PlayMode::Default): {
-                index += delta;
-                if(index < 0 || index >= count) {
-                    index = -1;
-                }
+            else if(index >= count) {
+                index = 0;
             }
-            case(Player::PlayMode::Repeat):
-                break;
+        }
+        else if(mode == Default) {
+            index += delta;
+            if(index < 0 || index >= count) {
+                index = -1;
+            }
         }
 
         if(index < 0) {
@@ -250,6 +244,11 @@ void Playlist::clear()
         p->tracksModified = true;
         p->shuffleOrder.clear();
     }
+}
+
+void Playlist::reset()
+{
+    p->shuffleOrder.clear();
 }
 
 void Playlist::resetFlags()

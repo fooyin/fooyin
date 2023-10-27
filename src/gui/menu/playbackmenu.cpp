@@ -30,119 +30,162 @@
 #include <QMenu>
 
 namespace Fy::Gui {
+struct PlaybackMenu::Private
+{
+    PlaybackMenu* self;
+
+    Utils::ActionManager* actionManager;
+    Core::Player::PlayerManager* playerManager;
+
+    QAction* stop{nullptr};
+    QAction* playPause{nullptr};
+    QAction* previous{nullptr};
+    QAction* next{nullptr};
+
+    QAction* defaultPlayback{nullptr};
+    QAction* repeat{nullptr};
+    QAction* repeatAll{nullptr};
+    QAction* shuffle{nullptr};
+
+    QIcon playIcon;
+    QIcon pauseIcon;
+
+    Private(PlaybackMenu* self, Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager)
+        : self{self}
+        , actionManager{actionManager}
+        , playerManager{playerManager}
+        , playIcon{QIcon::fromTheme(Gui::Constants::Icons::Play)}
+        , pauseIcon{QIcon::fromTheme(Gui::Constants::Icons::Pause)}
+    { }
+
+    void updatePlayPause(Core::Player::PlayState state) const
+    {
+        if(state == Core::Player::PlayState::Playing) {
+            playPause->setText(tr("&Pause"));
+            playPause->setIcon(pauseIcon);
+        }
+        else {
+            playPause->setText(tr("&Play"));
+            playPause->setIcon(playIcon);
+        }
+    }
+
+    void updatePlayMode(Core::Playlist::PlayModes mode) const
+    {
+        repeat->setChecked(mode & Core::Playlist::Repeat);
+        repeatAll->setChecked(mode & Core::Playlist::RepeatAll);
+        shuffle->setChecked(mode & Core::Playlist::Shuffle);
+
+        if(mode == 0) {
+            defaultPlayback->setChecked(true);
+            repeat->setChecked(false);
+            repeatAll->setChecked(false);
+            shuffle->setChecked(false);
+        }
+        else {
+            defaultPlayback->setChecked(false);
+        }
+    }
+
+    void setPlayMode(Core::Playlist::PlayMode mode) const
+    {
+        auto currentMode    = playerManager->playMode();
+        const bool noChange = currentMode == mode;
+
+        if(mode == Core::Playlist::Default) {
+            currentMode = mode;
+        }
+        else if(mode & Core::Playlist::Repeat) {
+            currentMode |= Core::Playlist::Repeat;
+            currentMode &= ~Core::Playlist::RepeatAll;
+        }
+        else if(mode & Core::Playlist::RepeatAll) {
+            currentMode |= Core::Playlist::RepeatAll;
+            currentMode &= ~Core::Playlist::Repeat;
+        }
+        else {
+            currentMode |= mode;
+        }
+        playerManager->setPlayMode(currentMode);
+
+        if(noChange) {
+            updatePlayMode(playerManager->playMode());
+        }
+    }
+};
+
 PlaybackMenu::PlaybackMenu(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
                            QObject* parent)
     : QObject{parent}
-    , m_actionManager{actionManager}
-    , m_playerManager{playerManager}
-    , m_playbackGroup{new QActionGroup(this)}
-    , m_playIcon{QIcon::fromTheme(Gui::Constants::Icons::Play)}
-    , m_pauseIcon{QIcon::fromTheme(Gui::Constants::Icons::Pause)}
+    , p{std::make_unique<Private>(this, actionManager, playerManager)}
 {
-    auto* playbackMenu = m_actionManager->actionContainer(Gui::Constants::Menus::Playback);
+    auto* playbackMenu = p->actionManager->actionContainer(Gui::Constants::Menus::Playback);
 
     const auto stopIcon = QIcon::fromTheme(Gui::Constants::Icons::Stop);
     const auto prevIcon = QIcon::fromTheme(Gui::Constants::Icons::Prev);
     const auto nextIcon = QIcon::fromTheme(Gui::Constants::Icons::Next);
 
-    QObject::connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this,
-                     &PlaybackMenu::updatePlayPause);
-    QObject::connect(m_playerManager, &Core::Player::PlayerManager::playModeChanged, this,
-                     &PlaybackMenu::updatePlayMode);
+    QObject::connect(p->playerManager, &Core::Player::PlayerManager::playStateChanged, this,
+                     [this](Core::Player::PlayState state) { p->updatePlayPause(state); });
+    QObject::connect(p->playerManager, &Core::Player::PlayerManager::playModeChanged, this,
+                     [this](Core::Playlist::PlayModes mode) { p->updatePlayMode(mode); });
 
-    m_stop = new QAction(stopIcon, tr("&Stop"), this);
-    actionManager->registerAction(m_stop, Gui::Constants::Actions::Stop);
-    playbackMenu->addAction(m_stop, Gui::Constants::Groups::One);
-    QObject::connect(m_stop, &QAction::triggered, playerManager, &Core::Player::PlayerManager::stop);
+    p->stop = new QAction(stopIcon, tr("&Stop"), this);
+    actionManager->registerAction(p->stop, Gui::Constants::Actions::Stop);
+    playbackMenu->addAction(p->stop, Gui::Constants::Groups::One);
+    QObject::connect(p->stop, &QAction::triggered, playerManager, &Core::Player::PlayerManager::stop);
 
-    m_playPause = new QAction(m_playIcon, tr("&Play"), this);
-    m_actionManager->registerAction(m_playPause, Gui::Constants::Actions::PlayPause);
-    playbackMenu->addAction(m_playPause, Gui::Constants::Groups::One);
-    QObject::connect(m_playPause, &QAction::triggered, playerManager, &Core::Player::PlayerManager::playPause);
+    p->playPause = new QAction(p->playIcon, tr("&Play"), this);
+    p->actionManager->registerAction(p->playPause, Gui::Constants::Actions::PlayPause);
+    playbackMenu->addAction(p->playPause, Gui::Constants::Groups::One);
+    QObject::connect(p->playPause, &QAction::triggered, playerManager, &Core::Player::PlayerManager::playPause);
 
-    m_next = new QAction(nextIcon, tr("&Next"), this);
-    actionManager->registerAction(m_next, Gui::Constants::Actions::Next);
-    playbackMenu->addAction(m_next, Gui::Constants::Groups::One);
-    QObject::connect(m_next, &QAction::triggered, playerManager, &Core::Player::PlayerManager::next);
+    p->next = new QAction(nextIcon, tr("&Next"), this);
+    actionManager->registerAction(p->next, Gui::Constants::Actions::Next);
+    playbackMenu->addAction(p->next, Gui::Constants::Groups::One);
+    QObject::connect(p->next, &QAction::triggered, playerManager, &Core::Player::PlayerManager::next);
 
-    m_previous = new QAction(prevIcon, tr("Pre&vious"), this);
-    actionManager->registerAction(m_previous, Gui::Constants::Actions::Previous);
-    playbackMenu->addAction(m_previous, Gui::Constants::Groups::One);
-    QObject::connect(m_previous, &QAction::triggered, playerManager, &Core::Player::PlayerManager::previous);
+    p->previous = new QAction(prevIcon, tr("Pre&vious"), this);
+    actionManager->registerAction(p->previous, Gui::Constants::Actions::Previous);
+    playbackMenu->addAction(p->previous, Gui::Constants::Groups::One);
+    QObject::connect(p->previous, &QAction::triggered, playerManager, &Core::Player::PlayerManager::previous);
 
-    auto* orderMenu = m_actionManager->createMenu(Gui::Constants::Menus::PlaybackOrder);
+    auto* orderMenu = p->actionManager->createMenu(Gui::Constants::Menus::PlaybackOrder);
     orderMenu->menu()->setTitle(tr("&Order"));
     orderMenu->appendGroup(Gui::Constants::Groups::One);
     playbackMenu->addMenu(orderMenu, Gui::Constants::Groups::Two);
 
-    m_default = new QAction(tr("&Default"), this);
-    m_default->setCheckable(true);
-    actionManager->registerAction(m_default, Gui::Constants::Actions::PlaybackDefault);
-    orderMenu->addAction(m_default, Gui::Constants::Groups::One);
-    m_playbackGroup->addAction(m_default);
-    QObject::connect(m_default, &QAction::triggered, this,
-                     [this]() { m_playerManager->setPlayMode(Core::Player::PlayMode::Default); });
+    p->defaultPlayback = new QAction(tr("&Default"), this);
+    p->defaultPlayback->setCheckable(true);
+    actionManager->registerAction(p->defaultPlayback, Gui::Constants::Actions::PlaybackDefault);
+    orderMenu->addAction(p->defaultPlayback, Gui::Constants::Groups::One);
+    QObject::connect(p->defaultPlayback, &QAction::triggered, this,
+                     [this]() { p->setPlayMode(Core::Playlist::Default); });
 
-    m_repeat = new QAction(tr("&Repeat"), this);
-    m_repeat->setCheckable(true);
-    m_actionManager->registerAction(m_repeat, Gui::Constants::Actions::Repeat);
-    orderMenu->addAction(m_repeat, Gui::Constants::Groups::One);
-    m_playbackGroup->addAction(m_repeat);
-    QObject::connect(m_repeat, &QAction::triggered, this,
-                     [this]() { m_playerManager->setPlayMode(Core::Player::PlayMode::Repeat); });
+    p->repeat = new QAction(tr("&Repeat"), this);
+    p->repeat->setCheckable(true);
+    p->actionManager->registerAction(p->repeat, Gui::Constants::Actions::Repeat);
+    orderMenu->addAction(p->repeat, Gui::Constants::Groups::One);
+    QObject::connect(p->repeat, &QAction::triggered, this,
+                     [this]() { p->setPlayMode(Core::Playlist::PlayMode::Repeat); });
 
-    m_repeatAll = new QAction(tr("Repeat &All"), this);
-    m_repeatAll->setCheckable(true);
-    actionManager->registerAction(m_repeatAll, Gui::Constants::Actions::RepeatAll);
-    orderMenu->addAction(m_repeatAll, Gui::Constants::Groups::One);
-    m_playbackGroup->addAction(m_repeatAll);
-    QObject::connect(m_repeatAll, &QAction::triggered, this,
-                     [this]() { m_playerManager->setPlayMode(Core::Player::PlayMode::RepeatAll); });
+    p->repeatAll = new QAction(tr("Repeat &All"), this);
+    p->repeatAll->setCheckable(true);
+    actionManager->registerAction(p->repeatAll, Gui::Constants::Actions::RepeatAll);
+    orderMenu->addAction(p->repeatAll, Gui::Constants::Groups::One);
+    QObject::connect(p->repeatAll, &QAction::triggered, this,
+                     [this]() { p->setPlayMode(Core::Playlist::PlayMode::RepeatAll); });
 
-    m_shuffle = new QAction(tr("&Shuffle"), this);
-    m_shuffle->setCheckable(true);
-    actionManager->registerAction(m_shuffle, Gui::Constants::Actions::Shuffle);
-    orderMenu->addAction(m_shuffle, Gui::Constants::Groups::One);
-    m_playbackGroup->addAction(m_shuffle);
-    QObject::connect(m_shuffle, &QAction::triggered, this,
-                     [this]() { m_playerManager->setPlayMode(Core::Player::PlayMode::Shuffle); });
+    p->shuffle = new QAction(tr("&Shuffle"), this);
+    p->shuffle->setCheckable(true);
+    actionManager->registerAction(p->shuffle, Gui::Constants::Actions::Shuffle);
+    orderMenu->addAction(p->shuffle, Gui::Constants::Groups::One);
+    QObject::connect(p->shuffle, &QAction::triggered, this,
+                     [this]() { p->setPlayMode(Core::Playlist::PlayMode::Shuffle); });
 
-    updatePlayPause(m_playerManager->playState());
-    updatePlayMode(m_playerManager->playMode());
+    p->updatePlayPause(p->playerManager->playState());
+    p->updatePlayMode(p->playerManager->playMode());
 }
 
-void PlaybackMenu::updatePlayPause(Core::Player::PlayState state)
-{
-    if(state == Core::Player::PlayState::Playing) {
-        m_playPause->setText(tr("&Pause"));
-        m_playPause->setIcon(m_pauseIcon);
-    }
-    else {
-        m_playPause->setText(tr("&Play"));
-        m_playPause->setIcon(m_playIcon);
-    }
-}
-
-void PlaybackMenu::updatePlayMode(Core::Player::PlayMode mode)
-{
-    switch(mode) {
-        case(Core::Player::PlayMode::Default): {
-            m_default->setChecked(true);
-            break;
-        }
-        case(Core::Player::PlayMode::Repeat): {
-            m_repeat->setChecked(true);
-            break;
-        }
-        case(Core::Player::PlayMode::RepeatAll): {
-            m_repeatAll->setChecked(true);
-            break;
-        }
-        case(Core::Player::PlayMode::Shuffle): {
-            m_shuffle->setChecked(true);
-            break;
-        }
-    }
-}
-
+PlaybackMenu::~PlaybackMenu() = default;
 } // namespace Fy::Gui

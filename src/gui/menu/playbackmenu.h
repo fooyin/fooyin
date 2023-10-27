@@ -21,17 +21,12 @@
 
 #include <core/player/playermanager.h>
 
-#include <QIcon>
 #include <QObject>
-
-class QAction;
-class QActionGroup;
 
 namespace Fy {
 
 namespace Utils {
 class ActionManager;
-class ActionContainer;
 class SettingsManager;
 } // namespace Utils
 
@@ -49,28 +44,11 @@ class PlaybackMenu : public QObject
 public:
     PlaybackMenu(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
                  QObject* parent = nullptr);
+    ~PlaybackMenu();
 
 private:
-    void updatePlayPause(Core::Player::PlayState state);
-    void updatePlayMode(Core::Player::PlayMode mode);
-
-    Utils::ActionManager* m_actionManager;
-    Core::Player::PlayerManager* m_playerManager;
-
-    QAction* m_stop;
-    QAction* m_playPause;
-    QAction* m_previous;
-    QAction* m_next;
-
-    QActionGroup* m_playbackGroup;
-
-    QAction* m_default;
-    QAction* m_repeat;
-    QAction* m_repeatAll;
-    QAction* m_shuffle;
-
-    QIcon m_playIcon;
-    QIcon m_pauseIcon;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Gui
 } // namespace Fy

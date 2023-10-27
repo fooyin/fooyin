@@ -49,53 +49,53 @@ struct PlaylistControl::Private
 
     void repeatClicked() const
     {
-        const auto mode = playerManager->playMode();
+        Core::Playlist::PlayModes mode = playerManager->playMode();
 
-        switch(mode) {
-            case(Core::Player::PlayMode::Repeat):
-                playerManager->setPlayMode(Core::Player::PlayMode::Default);
-                break;
-            case(Core::Player::PlayMode::RepeatAll):
-                playerManager->setPlayMode(Core::Player::PlayMode::Repeat);
-                break;
-            case(Core::Player::PlayMode::Shuffle):
-            case(Core::Player::PlayMode::Default):
-                playerManager->setPlayMode(Core::Player::PlayMode::RepeatAll);
-                break;
+        if(mode & Core::Playlist::RepeatAll) {
+            mode &= ~Core::Playlist::RepeatAll;
+            mode |= Core::Playlist::Repeat;
         }
+        else if(mode & Core::Playlist::Repeat) {
+            mode &= ~Core::Playlist::Repeat;
+        }
+        else {
+            mode |= Core::Playlist::RepeatAll;
+        }
+
+        playerManager->setPlayMode(mode);
     }
 
     void shuffleClicked() const
     {
-        const auto mode = playerManager->playMode();
+        Core::Playlist::PlayModes mode = playerManager->playMode();
 
-        if(mode == Core::Player::PlayMode::Shuffle) {
-            playerManager->setPlayMode(Core::Player::PlayMode::Default);
+        if(mode & Core::Playlist::Shuffle) {
+            mode &= ~Core::Playlist::Shuffle;
         }
         else {
-            playerManager->setPlayMode(Core::Player::PlayMode::Shuffle);
+            mode |= Core::Playlist::Shuffle;
         }
+
+        playerManager->setPlayMode(mode);
     }
 
-    void setMode(Core::Player::PlayMode mode) const
+    void setMode(Core::Playlist::PlayModes mode) const
     {
-        switch(mode) {
-            case(Core::Player::PlayMode::Repeat):
-                repeat->setIcon(Constants::Icons::Repeat, true);
-                shuffle->setIcon(Constants::Icons::Shuffle);
-                break;
-            case(Core::Player::PlayMode::RepeatAll):
-                repeat->setIcon(Constants::Icons::RepeatAll, true);
-                shuffle->setIcon(Constants::Icons::Shuffle);
-                break;
-            case(Core::Player::PlayMode::Shuffle):
-                shuffle->setIcon(Constants::Icons::Shuffle, true);
-                repeat->setIcon(Constants::Icons::RepeatAll);
-                break;
-            case(Core::Player::PlayMode::Default):
-                repeat->setIcon(Constants::Icons::RepeatAll);
-                shuffle->setIcon(Constants::Icons::Shuffle);
-                break;
+        if(mode & Core::Playlist::Repeat) {
+            repeat->setIcon(Constants::Icons::Repeat, true);
+        }
+        else if(mode & Core::Playlist::RepeatAll) {
+            repeat->setIcon(Constants::Icons::RepeatAll, true);
+        }
+        else {
+            repeat->setIcon(Constants::Icons::RepeatAll, false);
+        }
+
+        if(mode & Core::Playlist::Shuffle) {
+            shuffle->setIcon(Constants::Icons::Shuffle, true);
+        }
+        else {
+            shuffle->setIcon(Constants::Icons::Shuffle, false);
         }
     }
 };
@@ -124,7 +124,7 @@ PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Uti
     QObject::connect(p->repeat, &Utils::ComboIcon::clicked, this, [this]() { p->repeatClicked(); });
     QObject::connect(p->shuffle, &Utils::ComboIcon::clicked, this, [this]() { p->shuffleClicked(); });
     QObject::connect(playerManager, &Core::Player::PlayerManager::playModeChanged, this,
-                     [this](Core::Player::PlayMode mode) { p->setMode(mode); });
+                     [this](Core::Playlist::PlayModes mode) { p->setMode(mode); });
 
     settings->subscribe<Settings::IconTheme>(this, [this]() {
         p->repeat->updateIcons();

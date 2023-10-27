@@ -25,13 +25,17 @@
 
 #include <QObject>
 
-namespace Fy::Core {
+namespace Fy::Core::Playlist {
+enum PlayMode
+{
+    Default   = 0,
+    RepeatAll = 1 << 0,
+    Repeat    = 1 << 1,
+    Shuffle   = 1 << 2,
+};
 
-namespace Player {
-enum class PlayMode;
-}
+Q_DECLARE_FLAGS(PlayModes, PlayMode)
 
-namespace Playlist {
 class FYCORE_EXPORT Playlist
 {
 public:
@@ -53,7 +57,7 @@ public:
     [[nodiscard]] bool tracksModified() const;
 
     void scheduleNextIndex(int index);
-    Track nextTrack(Player::PlayMode mode, int delta);
+    Track nextTrack(int delta, PlayModes mode);
 
     void setIndex(int index);
     void setName(const QString& name);
@@ -64,6 +68,7 @@ public:
     void appendTracksSilently(const TrackList& tracks);
 
     void clear();
+    void reset();
     void resetFlags();
 
     void changeCurrentTrack(int index);
@@ -73,5 +78,6 @@ private:
     std::unique_ptr<Private> p;
 };
 using PlaylistList = std::vector<std::unique_ptr<Playlist>>;
-} // namespace Playlist
-} // namespace Fy::Core
+} // namespace Fy::Core::Playlist
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Core::Playlist::PlayModes)

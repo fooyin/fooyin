@@ -21,20 +21,14 @@
 
 #include "fycore_export.h"
 
+#include <core/playlist/playlist.h>
+
 #include <QObject>
 
 namespace Fy::Core {
 class Track;
 
 namespace Player {
-enum class PlayMode : int
-{
-    Default = 0,
-    RepeatAll,
-    Repeat,
-    Shuffle,
-};
-
 enum class PlayState
 {
     Playing = 0,
@@ -50,10 +44,10 @@ public:
     explicit PlayerManager(QObject* parent = nullptr)
         : QObject{parent} {};
 
-    [[nodiscard]] virtual PlayState playState() const      = 0;
-    [[nodiscard]] virtual PlayMode playMode() const        = 0;
-    [[nodiscard]] virtual uint64_t currentPosition() const = 0;
-    [[nodiscard]] virtual Track currentTrack() const       = 0;
+    [[nodiscard]] virtual PlayState playState() const          = 0;
+    [[nodiscard]] virtual Playlist::PlayModes playMode() const = 0;
+    [[nodiscard]] virtual uint64_t currentPosition() const     = 0;
+    [[nodiscard]] virtual Track currentTrack() const           = 0;
 
     virtual void play()                                       = 0;
     virtual void wakeUp()                                     = 0;
@@ -63,14 +57,14 @@ public:
     virtual void next()                                       = 0;
     virtual void stop()                                       = 0;
     virtual void reset()                                      = 0;
-    virtual void setPlayMode(PlayMode mode)                   = 0;
+    virtual void setPlayMode(Playlist::PlayModes mode)        = 0;
     virtual void setCurrentPosition(uint64_t ms)              = 0;
     virtual void changePosition(uint64_t ms)                  = 0;
     virtual void changeCurrentTrack(const Core::Track& track) = 0;
 
 signals:
-    void playStateChanged(Core::Player::PlayState);
-    void playModeChanged(Core::Player::PlayMode);
+    void playStateChanged(Core::Player::PlayState state);
+    void playModeChanged(Core::Playlist::PlayModes mode);
     void nextTrack();
     void wakeup();
     void previousTrack();
