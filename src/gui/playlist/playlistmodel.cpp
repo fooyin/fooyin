@@ -1185,13 +1185,16 @@ void PlaylistModel::removeTracks(const QModelIndexList& indexes)
     const ParentChildMap indexGroups = determineIndexGroups(indexes);
 
     QModelIndexList headersToCheck;
+    ItemPtrSet headersToUpdate;
 
     for(const auto& [parent, groups] : indexGroups) {
         for(const auto& children : groups | std::views::reverse) {
             removePlaylistRows(children.front(), static_cast<int>(children.size()), parent);
         }
+        headersToUpdate.emplace(itemForIndex(parent));
         headersToCheck.emplace_back(parent);
     }
+    p->updateHeaders(headersToUpdate);
     p->removeEmptyHeaders(headersToCheck);
 }
 
