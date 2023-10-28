@@ -79,10 +79,9 @@ public:
     QModelIndex indexForTrackIndex(const Core::Track& track, int index);
     void removeTracks(const QModelIndexList& indexes);
 
-    void reset(const Core::Playlist::Playlist* playlist);
-    void updateHeader(const Core::Playlist::Playlist* playlist);
-    void updateCurrentTrackIndex(int index);
-    void updateTrackIndicies();
+    void reset(Core::Playlist::Playlist* playlist);
+    void updateHeader(Core::Playlist::Playlist* playlist);
+    void updateTrackIndexes();
     void changeTrackState();
     void changePreset(const PlaylistPreset& preset);
 

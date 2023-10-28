@@ -25,7 +25,11 @@
 
 #include <QObject>
 
+#include <set>
+
 namespace Fy::Core::Playlist {
+using IndexSet = std::set<int>;
+
 enum PlayMode
 {
     Default   = 0,
@@ -66,6 +70,7 @@ public:
     void replaceTracksSilently(const TrackList& tracks);
     void appendTracks(const TrackList& tracks);
     void appendTracksSilently(const TrackList& tracks);
+    void removeTracks(const IndexSet& indexes);
 
     void clear();
     void reset();

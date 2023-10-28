@@ -53,8 +53,7 @@ struct PlaylistController::Private
         if(lastId >= 0) {
             if(auto* playlist = handler->playlistById(lastId)) {
                 currentPlaylist = playlist;
-                QMetaObject::invokeMethod(self, "currentPlaylistChanged",
-                                          Q_ARG(const Core::Playlist::Playlist*, playlist));
+                QMetaObject::invokeMethod(self, "currentPlaylistChanged", Q_ARG(Core::Playlist::Playlist*, playlist));
             }
         }
     }

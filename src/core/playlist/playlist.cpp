@@ -20,6 +20,7 @@
 #include <core/playlist/playlist.h>
 
 #include <random>
+#include <ranges>
 
 namespace Fy::Core::Playlist {
 struct Playlist::Private
@@ -212,6 +213,7 @@ void Playlist::replaceTracks(const TrackList& tracks)
     if(std::exchange(p->tracks, tracks) != tracks) {
         p->tracksModified = true;
         p->shuffleOrder.clear();
+        p->nextTrackIndex = -1;
     }
 }
 
@@ -235,6 +237,36 @@ void Playlist::appendTracksSilently(const TrackList& tracks)
 {
     std::ranges::copy(tracks, std::back_inserter(p->tracks));
     p->shuffleOrder.clear();
+}
+
+void Playlist::removeTracks(const IndexSet& indexes)
+{
+    auto prevHistory = p->shuffleOrder | std::views::take(p->shuffleIndex + 1);
+    for(const int index : prevHistory) {
+        if(indexes.contains(index)) {
+            p->shuffleIndex -= 1;
+        }
+    }
+
+    int adjustedTrackIndex = p->currentTrackIndex;
+
+    for(const int index : indexes | std::views::reverse) {
+        if(index <= p->currentTrackIndex) {
+            adjustedTrackIndex = std::max(adjustedTrackIndex - 1, 0);
+        }
+        p->tracks.erase(p->tracks.begin() + index);
+        std::erase_if(p->shuffleOrder, [index](int num) { return num == index; });
+        std::ranges::transform(p->shuffleOrder, p->shuffleOrder.begin(),
+                               [index](int num) { return num > index ? num - 1 : num; });
+    }
+
+    std::erase_if(p->shuffleOrder, [](int num) { return num < 0; });
+
+    p->currentTrackIndex = adjustedTrackIndex;
+
+    if(indexes.contains(p->nextTrackIndex)) {
+        p->nextTrackIndex = -1;
+    }
 }
 
 void Playlist::clear()

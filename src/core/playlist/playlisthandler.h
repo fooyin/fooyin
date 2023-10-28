@@ -75,6 +75,7 @@ public:
 
     void startPlayback(int playlistId) override;
 
+public slots:
     void populatePlaylists(const TrackList& tracks);
     void libraryRemoved(int id);
     void tracksUpdated(const TrackList& tracks);

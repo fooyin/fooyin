@@ -72,7 +72,7 @@ public:
     void changePlaylistIndex(int playlistId, int index);
 
 signals:
-    void currentPlaylistChanged(const Core::Playlist::Playlist* playlist);
+    void currentPlaylistChanged(Core::Playlist::Playlist* playlist);
 
 private:
     struct Private;

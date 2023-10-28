@@ -42,7 +42,6 @@
 
 #include <queue>
 #include <set>
-#include <stack>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -111,7 +110,7 @@ bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
 }
 } // namespace
 
-struct cmpIndicies
+struct cmpIndexes
 {
     bool operator()(const QModelIndex& index1, const QModelIndex& index2) const
     {
@@ -119,7 +118,7 @@ struct cmpIndicies
     }
 };
 
-using ParentChildMap = std::map<QModelIndex, std::vector<std::vector<int>>, cmpIndicies>;
+using ParentChildMap = std::map<QModelIndex, std::vector<std::vector<int>>, cmpIndexes>;
 
 ParentChildMap determineIndexGroups(const QModelIndexList& indexes)
 {
@@ -155,7 +154,7 @@ ParentChildMap determineIndexGroups(const QModelIndexList& indexes)
 namespace Fy::Gui::Widgets::Playlist {
 static constexpr auto MimeType = "application/x-playlistitem-internal-pointer";
 
-using ParentChildItemMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>, cmpIndicies>;
+using ParentChildItemMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>, cmpIndexes>;
 
 bool cmpItemsReverse(PlaylistItem* pItem1, PlaylistItem* pItem2)
 {
@@ -244,7 +243,7 @@ public:
     QVariant subheaderData(PlaylistItem* item, int role) const;
 
     ParentChildItemMap determineItemGroups(const QModelIndexList& indexes) const;
-    std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndicies>
+    std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndexes>
     groupChildren(const std::vector<PlaylistItem*>& children) const;
 
     template <typename Container>
@@ -287,7 +286,7 @@ public:
     ItemKeyMap oldNodes;
     TrackIdNodeMap trackParents;
 
-    int playingIndex{-1};
+    Core::Playlist::Playlist* currentPlaylist{nullptr};
 
     QPixmap playingIcon;
     QPixmap pausedIcon;
@@ -390,7 +389,8 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
         }
         case(PlaylistItem::Role::Playing): {
             if(playlistController->currentIsActive()) {
-                return playerManager->currentTrack() == track.track() && playingIndex == item->index();
+                return playerManager->currentTrack().id() == track.track().id()
+                    && currentPlaylist->currentTrackIndex() == item->index();
             }
             return false;
         }
@@ -506,10 +506,10 @@ ParentChildItemMap PlaylistModelPrivate::determineItemGroups(const QModelIndexLi
     return indexItemGroups;
 }
 
-std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndicies>
+std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndexes>
 PlaylistModelPrivate::groupChildren(const std::vector<PlaylistItem*>& children) const
 {
-    std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndicies> groupedChildren;
+    std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndexes> groupedChildren;
     for(PlaylistItem* child : children) {
         const QModelIndex parent = self->indexOfItem(child->parent());
         groupedChildren[parent].push_back(child);
@@ -1062,7 +1062,7 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
     p->updateHeaders(headersToUpdate);
 
     emit tracksChanged();
-    updateTrackIndicies();
+    updateTrackIndexes();
     return true;
 }
 
@@ -1198,9 +1198,10 @@ void PlaylistModel::removeTracks(const QModelIndexList& indexes)
     p->removeEmptyHeaders(headersToCheck);
     p->mergeHeaders({}, headersToUpdate);
     p->updateHeaders(headersToUpdate);
+    updateTrackIndexes();
 }
 
-void PlaylistModel::reset(const Core::Playlist::Playlist* playlist)
+void PlaylistModel::reset(Core::Playlist::Playlist* playlist)
 {
     if(!playlist) {
         return;
@@ -1208,33 +1209,29 @@ void PlaylistModel::reset(const Core::Playlist::Playlist* playlist)
 
     p->populator.stopThread();
 
-    p->resetting = true;
+    p->resetting       = true;
+    p->currentPlaylist = playlist;
     updateHeader(playlist);
 
     QMetaObject::invokeMethod(&p->populator,
                               [this, playlist] { p->populator.run(p->currentPreset, playlist->tracks()); });
 }
 
-void PlaylistModel::updateHeader(const Core::Playlist::Playlist* playlist)
+void PlaylistModel::updateHeader(Core::Playlist::Playlist* playlist)
 {
     if(playlist) {
         p->headerText = playlist->name() + ": " + QString::number(playlist->trackCount()) + " Tracks";
     }
 }
 
-void PlaylistModel::updateCurrentTrackIndex(int index)
+void PlaylistModel::updateTrackIndexes()
 {
-    p->playingIndex = index;
-}
-
-void PlaylistModel::updateTrackIndicies()
-{
-    std::stack<PlaylistItem*> nodes;
+    std::queue<PlaylistItem*> nodes;
     nodes.push(rootItem());
     int currentIndex{0};
 
     while(!nodes.empty()) {
-        PlaylistItem* node = nodes.top();
+        PlaylistItem* node = nodes.front();
         nodes.pop();
 
         if(!node) {
