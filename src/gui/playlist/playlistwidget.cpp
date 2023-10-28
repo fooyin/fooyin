@@ -297,17 +297,16 @@ void PlaylistWidgetPrivate::playlistTracksChanged() const
 
 void PlaylistWidgetPrivate::tracksRemoved() const
 {
-    auto selected
-        = playlistView->selectionModel()->selectedIndexes() | std::views::filter([](const QModelIndex& index) {
-              return index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track;
-          });
+    const auto selected = playlistView->selectionModel()->selectedIndexes();
 
     QModelIndexList trackSelection;
     Core::Playlist::IndexSet indexes;
 
     for(const QModelIndex& index : selected) {
-        trackSelection.push_back(index);
-        indexes.emplace(index.data(PlaylistItem::Index).toInt());
+        if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+            trackSelection.push_back(index);
+            indexes.emplace(index.data(PlaylistItem::Index).toInt());
+        }
     }
 
     model->removeTracks(trackSelection);
