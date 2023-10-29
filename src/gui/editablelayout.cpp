@@ -32,7 +32,6 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/menuheader.h>
 #include <utils/overlayfilter.h>
-#include <utils/paths.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCoreApplication>
@@ -183,7 +182,8 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Utils::ActionContainer* 
             menu->addMenu(changeMenu);
 
             auto* remove = new QAction(tr("Remove"), menu);
-            QObject::connect(remove, &QAction::triggered, parent, [parent, widget] { parent->removeWidget(widget); });
+            QObject::connect(remove, &QAction::triggered, parent,
+                             [parent, currentWidget] { parent->removeWidget(currentWidget); });
             menu->addAction(remove);
         }
         currentWidget = parent;
@@ -193,33 +193,35 @@ void EditableLayout::setupContextMenu(FyWidget* widget, Utils::ActionContainer* 
 
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 {
-    if(!p->layoutEditing) {
+    if(!p->layoutEditing || event->type() != QEvent::MouseButtonPress) {
         return QWidget::eventFilter(watched, event);
     }
 
-    if(event->type() == QEvent::MouseButtonPress) {
-        auto* mouseEvent = dynamic_cast<QMouseEvent*>(event);
-        if(mouseEvent->button() == Qt::RightButton && p->menu->isHidden()) {
-            p->menu->clear();
-
-            const QPoint pos = mouseEvent->position().toPoint();
-            QWidget* widget  = parentWidget()->childAt(pos);
-            FyWidget* child  = splitterChild(widget);
-
-            if(child) {
-                if(qobject_cast<Dummy*>(child)) {
-                    setupContextMenu(child->findParent(), p->menu);
-                }
-                else {
-                    setupContextMenu(child, p->menu);
-                }
-                showOverlay(child);
-                p->menu->menu()->popup(mapToGlobal(pos));
-                return true;
-            }
-        }
+    auto* mouseEvent = dynamic_cast<QMouseEvent*>(event);
+    if(mouseEvent->button() != Qt::RightButton || !p->menu->isHidden()) {
+        return QWidget::eventFilter(watched, event);
     }
-    return QWidget::eventFilter(watched, event);
+
+    p->menu->clear();
+
+    const QPoint pos = mouseEvent->position().toPoint();
+    QWidget* widget  = parentWidget()->childAt(pos);
+    FyWidget* child  = splitterChild(widget);
+
+    if(!child) {
+        return QWidget::eventFilter(watched, event);
+    }
+
+    if(qobject_cast<Dummy*>(child)) {
+        setupContextMenu(child->findParent(), p->menu);
+    }
+    else {
+        setupContextMenu(child, p->menu);
+    }
+    showOverlay(child);
+    p->menu->menu()->popup(mapToGlobal(pos));
+
+    return true;
 }
 
 void EditableLayout::changeLayout(const Layout& layout)
