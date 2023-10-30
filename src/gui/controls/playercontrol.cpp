@@ -66,12 +66,10 @@ struct PlayerControl::Private
         switch(state) {
             case(Core::Player::PlayState::Stopped): {
                 playPause->setIcon(Constants::Icons::Play);
-                self->setEnabled(false);
                 break;
             }
             case(Core::Player::PlayState::Playing): {
                 playPause->setIcon(Constants::Icons::Pause);
-                self->setEnabled(true);
                 break;
             }
             case(Core::Player::PlayState::Paused): {
