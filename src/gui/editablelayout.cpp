@@ -104,6 +104,17 @@ struct EditableLayout::Private
         , box{new QHBoxLayout(self)}
         , overlay{new Utils::OverlayFilter(self)}
     { }
+
+    void changeEditingState(bool editing)
+    {
+        layoutEditing = editing;
+        if(editing) {
+            qApp->installEventFilter(self);
+        }
+        else {
+            qApp->removeEventFilter(self);
+        }
+    }
 };
 
 EditableLayout::EditableLayout(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
@@ -123,19 +134,19 @@ EditableLayout::~EditableLayout() = default;
 
 void EditableLayout::initialise()
 {
-    QObject::connect(p->menu, &Utils::ActionContainer::aboutToHide, this, &EditableLayout::hideOverlay);
-    p->settings->subscribe<Settings::LayoutEditing>(this, [this](bool enabled) { p->layoutEditing = enabled; });
-
-    const bool loaded = loadLayout();
-    if(!loaded) {
+    if(!loadLayout()) {
         p->splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget(u"SplitterVertical"_s));
         p->splitter->setParent(this);
         p->box->addWidget(p->splitter);
     }
+
+    p->settings->subscribe<Settings::LayoutEditing>(this, [this](bool enabled) { p->changeEditingState(enabled); });
+
     if(p->splitter && p->splitter->childCount() < 1) {
         p->settings->set<Settings::LayoutEditing>(true);
     }
-    qApp->installEventFilter(this);
+
+    QObject::connect(p->menu->menu(), &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
 }
 
 Utils::ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QString& title) const
