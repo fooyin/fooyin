@@ -24,7 +24,7 @@ FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
     , m_id{"FyWidget"}
 {
-    m_id.append(reinterpret_cast<quintptr>(this));
+    m_id.append(std::bit_cast<uintptr_t>(this));
 }
 
 Utils::Id FyWidget::id() const

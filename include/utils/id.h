@@ -52,7 +52,7 @@ public:
     Id append(const QString& str);
     Id append(const char* str);
     Id append(int num);
-    Id append(quintptr addr);
+    Id append(uintptr_t addr);
 
 private:
     uint32_t m_id;

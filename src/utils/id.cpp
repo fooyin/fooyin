@@ -74,7 +74,7 @@ Id Id::append(int num)
     return Id{m_name.append(QString::number(num))};
 }
 
-Id Id::append(quintptr addr)
+Id Id::append(uintptr_t addr)
 {
     return Id{m_name.append(QString::number(addr))};
 }

@@ -55,7 +55,7 @@ QSqlDatabase Module::db() const
     }
 
     QThread* currentThread = QThread::currentThread();
-    auto threadId          = reinterpret_cast<intptr_t>(currentThread);
+    auto threadId          = std::bit_cast<intptr_t>(currentThread);
 
     if(QApplication::instance() && (currentThread == QApplication::instance()->thread())) {
         threadId = 0;
