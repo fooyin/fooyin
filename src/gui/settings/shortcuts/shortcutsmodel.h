@@ -54,6 +54,8 @@ public:
 
     void updateShortcuts(const Utils::ShortcutList& shortcuts);
 
+    void sortChildren();
+
 private:
     QString m_title;
     QString m_shortcut;

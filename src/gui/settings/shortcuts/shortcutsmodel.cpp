@@ -37,6 +37,20 @@ QString shortcutsToString(const Fy::Utils::ShortcutList& sequence)
                            [](const QKeySequence& k) { return k.toString(QKeySequence::NativeText); });
     return keys.join("|"_L1);
 }
+
+bool sortShortcutItems(const Fy::Gui::Settings::ShortcutItem* lhs, const Fy::Gui::Settings::ShortcutItem* rhs)
+{
+    if(lhs->parent()->parent() && rhs->parent()->parent()) {
+        if(lhs->childCount() != rhs->childCount()) {
+            return lhs->childCount() < rhs->childCount();
+        }
+    }
+    const auto cmp = QString::localeAwareCompare(lhs->title(), rhs->title());
+    if(cmp == 0) {
+        return false;
+    }
+    return cmp < 0;
+}
 } // namespace
 
 namespace Fy::Gui::Settings {
@@ -86,6 +100,14 @@ void ShortcutItem::updateShortcuts(const Utils::ShortcutList& shortcuts)
     m_shortcut  = shortcutsToString(m_shortcuts);
 }
 
+void ShortcutItem::sortChildren()
+{
+    std::vector<ShortcutItem*> sortedChildren{m_children};
+    std::ranges::sort(sortedChildren, sortShortcutItems);
+    m_children = sortedChildren;
+    std::ranges::for_each(m_children, &ShortcutItem::sortChildren);
+}
+
 ShortcutsModel::ShortcutsModel(QObject* parent)
     : TreeModel{parent}
 { }
@@ -106,22 +128,27 @@ void ShortcutsModel::populate(Utils::ActionManager* actionManager)
             continue;
         }
 
-        const QString identifier = command->id().name();
-        const int pos            = identifier.indexOf(QLatin1Char('.'));
-        const QString section    = identifier.left(pos);
+        const auto parts      = command->id().name().split('.');
+        const auto categories = parts | std::views::take(parts.size() - 1);
 
-        if(!sections.contains(section)) {
-            ShortcutItem* categoryItem
-                = &m_nodes.emplace(section, ShortcutItem{section, nullptr, rootItem()}).first->second;
-            sections.emplace(section, categoryItem);
-            rootItem()->appendChild(categoryItem);
+        ShortcutItem* parent = rootItem();
+
+        for(const QString& category : categories) {
+            if(!sections.contains(category)) {
+                auto* categoryItem
+                    = &m_nodes.emplace(category, ShortcutItem{category, nullptr, rootItem()}).first->second;
+                sections.emplace(category, categoryItem);
+                parent->appendChild(categoryItem);
+            }
+            parent = sections.at(category);
         }
 
-        ShortcutItem* parent = sections.at(section);
         ShortcutItem* child
             = &m_nodes.emplace(command->id(), ShortcutItem{command->description(), command, parent}).first->second;
         parent->appendChild(child);
     }
+
+    rootItem()->sortChildren();
 
     endResetModel();
 }

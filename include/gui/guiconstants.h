@@ -98,21 +98,21 @@ constexpr auto LibraryTree = "Fooyin.Context.LibraryTree";
 } // namespace Context
 
 namespace Actions {
-constexpr auto Exit            = "Fooyin.Exit";
-constexpr auto Settings        = "Dialog.Settings";
-constexpr auto LayoutEditing   = "Fooyin.LayoutEditing";
-constexpr auto QuickSetup      = "Dialog.QuickSetup";
-constexpr auto About           = "Dialog.About";
+constexpr auto Exit            = "File.Exit";
+constexpr auto Settings        = "Edit.Settings";
+constexpr auto LayoutEditing   = "View.LayoutEditing";
+constexpr auto QuickSetup      = "View.QuickSetup";
+constexpr auto About           = "Help.About";
 constexpr auto Rescan          = "Library.Rescan";
-constexpr auto Stop            = "Player.Stop";
-constexpr auto PlayPause       = "Player.PlayPause";
-constexpr auto Next            = "Player.Next";
-constexpr auto Previous        = "Player.Previous";
-constexpr auto PlaybackDefault = "Player.Default";
-constexpr auto Repeat          = "Player.Repeat";
-constexpr auto RepeatAll       = "Player.RepeatAll";
-constexpr auto Shuffle         = "Player.Shuffle";
-constexpr auto ScriptSandbox   = "Dialog.ScriptSandbox";
+constexpr auto Stop            = "Playback.Stop";
+constexpr auto PlayPause       = "Playback.PlayPause";
+constexpr auto Next            = "Playback.Next";
+constexpr auto Previous        = "Playback.Previous";
+constexpr auto PlaybackDefault = "Playback.Order.Default";
+constexpr auto Repeat          = "Playback.Order.Repeat";
+constexpr auto RepeatAll       = "Playback.Order.RepeatAll";
+constexpr auto Shuffle         = "Playback.Order.Shuffle";
+constexpr auto ScriptSandbox   = "View.ScriptSandbox";
 constexpr auto SelectAll       = "Edit.SelectAll";
 constexpr auto Clear           = "Edit.Clear";
 } // namespace Actions
