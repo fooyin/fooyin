@@ -20,6 +20,7 @@
 #include "tabstackwidget.h"
 #include "gui/widgetprovider.h"
 
+#include <QTabBar>
 #include <QTabWidget>
 #include <QVBoxLayout>
 
@@ -29,14 +30,25 @@ struct TabStackWidget::Private
     Utils::ActionManager* actionManager;
     WidgetProvider* widgetProvider;
 
-    std::map<int, FyWidget*> widgets;
+    std::vector<FyWidget*> widgets;
     QTabWidget* tabs;
 
     Private(TabStackWidget* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider)
         : actionManager{actionManager}
         , widgetProvider{widgetProvider}
         , tabs{new QTabWidget(self)}
-    { }
+    {
+        tabs->setMovable(true);
+    }
+
+    int indexOfWidget(FyWidget* widget)
+    {
+        auto it = std::ranges::find(std::as_const(widgets), widget);
+        if(it != widgets.cend()) {
+            return static_cast<int>(std::distance(widgets.cbegin(), it));
+        }
+        return -1;
+    }
 };
 
 TabStackWidget::TabStackWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent)
@@ -49,6 +61,14 @@ TabStackWidget::TabStackWidget(Utils::ActionManager* actionManager, WidgetProvid
     layout->setContentsMargins(0, 0, 0, 0);
 
     layout->addWidget(p->tabs);
+
+    QObject::connect(p->tabs->tabBar(), &QTabBar::tabMoved, this, [this](int from, int to) {
+        if(from >= 0 && from < static_cast<int>(p->widgets.size())) {
+            auto* widget = p->widgets.at(from);
+            p->widgets.erase(p->widgets.begin() + from);
+            p->widgets.insert(p->widgets.begin() + to, widget);
+        }
+    });
 }
 
 TabStackWidget::~TabStackWidget() = default;
@@ -78,7 +98,7 @@ void TabStackWidget::layoutEditingMenu(Utils::ActionContainer* menu)
 void TabStackWidget::saveLayout(QJsonArray& array)
 {
     QJsonArray widgets;
-    for(const auto& [_, widget] : p->widgets) {
+    for(FyWidget* widget : p->widgets) {
         widget->saveLayout(widgets);
     }
 
@@ -97,33 +117,29 @@ void TabStackWidget::loadLayout(const QJsonObject& object)
 void TabStackWidget::addWidget(FyWidget* widget)
 {
     const int index = p->tabs->addTab(widget, widget->name());
-    p->widgets.emplace(index, widget);
+    p->widgets.insert(p->widgets.begin() + index, widget);
 }
 
 void TabStackWidget::removeWidget(FyWidget* widget)
 {
-    const auto widgetIt
-        = std::ranges::find_if(p->widgets, [&widget](const auto& pair) { return pair.second == widget; });
-
-    if(widgetIt != p->widgets.end()) {
-        const int removeIndex = widgetIt->first;
-        p->tabs->removeTab(removeIndex);
-        p->widgets.erase(widgetIt);
+    const int index = p->indexOfWidget(widget);
+    if(index >= 0) {
+        p->tabs->removeTab(index);
+        p->widgets.erase(p->widgets.begin() + index);
     }
 }
 
 void TabStackWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
 {
-    const auto widgetIt
-        = std::ranges::find_if(p->widgets, [&oldWidget](const auto& pair) { return pair.second == oldWidget; });
+    const int index = p->indexOfWidget(oldWidget);
+    if(index >= 0) {
+        p->tabs->removeTab(index);
+        p->tabs->insertTab(index, newWidget, newWidget->name());
 
-    if(widgetIt != p->widgets.end()) {
-        const int replaceIndex = widgetIt->first;
+        p->widgets.erase(p->widgets.begin() + index);
+        p->widgets.insert(p->widgets.begin() + index, newWidget);
 
-        p->tabs->removeTab(replaceIndex);
-        p->tabs->insertTab(replaceIndex, newWidget, newWidget->name());
-        p->widgets.erase(widgetIt);
-        p->widgets.emplace(replaceIndex, newWidget);
+        p->tabs->setCurrentIndex(index);
     }
 }
 } // namespace Fy::Gui::Widgets
