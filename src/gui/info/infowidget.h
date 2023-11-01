@@ -21,10 +21,7 @@
 
 #include <gui/propertiesdialog.h>
 
-#include <QHBoxLayout>
 #include <QWidget>
-
-class QTreeView;
 
 namespace Fy {
 
@@ -32,20 +29,14 @@ namespace Utils {
 class SettingsManager;
 }
 
-namespace Core {
-class Track;
-
-namespace Player {
+namespace Core::Player {
 class PlayerManager;
-} // namespace Player
-} // namespace Core
+} // namespace Core::Player
 
 namespace Gui {
 class TrackSelectionController;
 
 namespace Widgets::Info {
-class InfoModel;
-
 class InfoWidget : public PropertiesTabWidget
 {
 public:

@@ -19,18 +19,18 @@
 
 #include "infowidget.h"
 
-#include "gui/guisettings.h"
 #include "infodelegate.h"
 #include "infomodel.h"
 
-#include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <core/track.h>
+#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
+#include <QHBoxLayout>
 #include <QHeaderView>
 #include <QMenu>
 #include <QTreeView>
