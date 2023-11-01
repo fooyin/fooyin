@@ -43,8 +43,7 @@ ViewMenu::ViewMenu(Utils::ActionManager* actionManager, TrackSelectionController
 
     const QIcon layoutEditingIcon = QIcon::fromTheme(Constants::Icons::LayoutEditing);
     m_layoutEditing               = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
-    m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing);
-    viewMenu->addAction(m_layoutEditing, Constants::Groups::Two);
+    viewMenu->addAction(m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing));
     QObject::connect(m_layoutEditing, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<Settings::LayoutEditing>(checked); });
     m_settings->subscribe<Settings::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
@@ -53,13 +52,12 @@ ViewMenu::ViewMenu(Utils::ActionManager* actionManager, TrackSelectionController
 
     const QIcon quickSetupIcon = QIcon::fromTheme(Constants::Icons::QuickSetup);
     m_openQuickSetup           = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
-    m_actionManager->registerAction(m_openQuickSetup, Constants::Actions::QuickSetup);
-    viewMenu->addAction(m_openQuickSetup, Constants::Groups::Two);
+    viewMenu->addAction(m_actionManager->registerAction(m_openQuickSetup, Constants::Actions::QuickSetup));
     QObject::connect(m_openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
 
-    m_showSandbox = new QAction(tr("Open &Script Sandbox"), this);
-    m_actionManager->registerAction(m_showSandbox, Gui::Constants::Actions::ScriptSandbox);
-    viewMenu->addAction(m_showSandbox, Gui::Constants::Groups::Three);
+    m_showSandbox = new QAction(tr("&Script Sandbox"), this);
+    viewMenu->addAction(m_actionManager->registerAction(m_showSandbox, Gui::Constants::Actions::ScriptSandbox),
+                        Utils::Actions::Groups::Three);
     QObject::connect(m_showSandbox, &QAction::triggered, this, [this]() {
         auto* sandboxDialog = new Sandbox::SandboxDialog(m_trackSelection, m_settings);
         sandboxDialog->setAttribute(Qt::WA_DeleteOnClose);

@@ -19,40 +19,20 @@
 
 #pragma once
 
-#include "presetinput.h"
+#include <utils/settings/settingspage.h>
 
-#include <QLabel>
-#include <QPushButton>
-#include <QWidget>
+namespace Fy {
 
-class QGridLayout;
-class QVBoxLayout;
+namespace Utils {
+class ActionManager;
+class SettingsManager;
+} // namespace Utils
 
-namespace Fy::Gui::Settings {
-class PresetInputBox : public QWidget
+namespace Gui::Settings {
+class ShortcutsPage : public Utils::SettingsPage
 {
 public:
-    explicit PresetInputBox(const QString& name, QWidget* parent = nullptr);
-
-    void addEmptyBlock();
-    void addInput(PresetInput* input);
-
-    void deleteBlock();
-    void clearBlocks();
-
-    [[nodiscard]] PresetInputList blocks() const;
-    [[nodiscard]] int blockCount() const;
-
-private:
-    void updateButtonState();
-
-    QGridLayout* m_layout;
-    QVBoxLayout* m_blockLayout;
-
-    QLabel* m_name;
-    QPushButton* m_addBlock;
-    QPushButton* m_deleteBlock;
-
-    PresetInputList m_blocks;
+    ShortcutsPage(Utils::ActionManager* actionManager, Utils::SettingsManager* settings);
 };
-} // namespace Fy::Gui::Settings
+} // namespace Gui::Settings
+} // namespace Fy

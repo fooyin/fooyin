@@ -26,7 +26,8 @@
 
 #include <QMetaEnum>
 #include <QReadWriteLock>
-#include <QSettings>
+
+class QSettings;
 
 namespace Fy::Utils {
 class SettingsDialogController;
@@ -76,6 +77,7 @@ public:
     void loadSettings();
     void storeSettings();
 
+    [[nodiscard]] QSettings* settingsFile() const;
     [[nodiscard]] SettingsDialogController* settingsDialog() const;
 
     template <auto key, typename Value>
@@ -291,7 +293,7 @@ private:
         }
     }
 
-    QSettings m_settingsFile;
+    QSettings* m_settingsFile;
     std::map<QString, SettingsEntry> m_settings;
     QReadWriteLock m_lock;
 

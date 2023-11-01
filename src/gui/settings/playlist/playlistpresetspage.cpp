@@ -21,22 +21,24 @@
 
 #include "playlist/playlistpreset.h"
 #include "playlist/presetregistry.h"
-#include "presetinputbox.h"
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/customisableinput.h>
+#include <utils/enumhelper.h>
+#include <utils/expandableinputbox.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QGroupBox>
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMenu>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QTabWidget>
-#include <QTableView>
 #include <QVBoxLayout>
 
 namespace {
@@ -44,9 +46,9 @@ using PresetRegistry  = Fy::Gui::Widgets::Playlist::PresetRegistry;
 using PlaylistPreset  = Fy::Gui::Widgets::Playlist::PlaylistPreset;
 using TextBlock       = Fy::Gui::Widgets::Playlist::TextBlock;
 using TextBlockList   = Fy::Gui::Widgets::Playlist::TextBlockList;
-using PresetInput     = Fy::Gui::Settings::PresetInput;
-using PresetInputList = Fy::Gui::Settings::PresetInputList;
-using PresetInputBox  = Fy::Gui::Settings::PresetInputBox;
+using PresetInput     = Fy::Gui::Widgets::CustomisableInput;
+using PresetInputList = Fy::Utils::ExpandableInputList;
+using PresetInputBox  = Fy::Utils::ExpandableInputBox;
 
 void setupInputBox(const TextBlock& preset, PresetInput* block)
 {
@@ -54,7 +56,7 @@ void setupInputBox(const TextBlock& preset, PresetInput* block)
     block->setFont(preset.font);
     block->setColour(preset.colour);
 
-    PresetInput::State state;
+    Fy::Gui::Widgets::CustomisableInput::State state;
     if(preset.colourChanged) {
         state |= PresetInput::ColourChanged;
     }
@@ -82,9 +84,11 @@ void updateTextBlocks(const PresetInputList& presetInputs, TextBlockList& textBl
 
     for(const auto& input : presetInputs) {
         if(!input->text().isEmpty()) {
-            TextBlock block;
-            updateTextBlock(input, block);
-            textBlocks.emplace_back(block);
+            if(auto presetInput = qobject_cast<Fy::Gui::Widgets::CustomisableInput*>(input)) {
+                TextBlock block;
+                updateTextBlock(presetInput, block);
+                textBlocks.emplace_back(block);
+            }
         }
     }
 }

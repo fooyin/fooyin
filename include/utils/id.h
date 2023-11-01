@@ -41,6 +41,8 @@ public:
     Id(const char* name);
     ~Id() = default;
 
+    std::strong_ordering operator<=>(const Id& id) const = default;
+
     [[nodiscard]] bool isValid() const;
 
     [[nodiscard]] unsigned int id() const;
@@ -52,12 +54,9 @@ public:
     Id append(int num);
     Id append(quintptr addr);
 
-    bool operator==(const Id& id) const;
-    bool operator!=(const Id& id) const;
-    bool operator<(const Id& id) const;
-
 private:
-    unsigned int m_id;
+    uint32_t m_id;
     QString m_name;
 };
+using IdList = std::vector<Id>;
 } // namespace Fy::Utils

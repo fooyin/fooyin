@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <QAction>
 #include <QObject>
 
 namespace Fy {
@@ -40,9 +39,6 @@ public:
 private:
     Utils::ActionManager* m_actionManager;
     Utils::SettingsManager* m_settings;
-
-    QAction* m_openSettings;
-    QAction* m_quit;
 };
 } // namespace Gui
 } // namespace Fy

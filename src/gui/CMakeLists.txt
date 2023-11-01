@@ -36,6 +36,7 @@ set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgetcontainer.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
 )
 
 set(SOURCES
@@ -107,11 +108,12 @@ set(SOURCES
     settings/librarytree/librarytreegroupmodel.cpp
     settings/playlist/playlistgeneralpage.cpp
     settings/playlist/playlistguipage.cpp
-    settings/playlist/presetinput.cpp
-    settings/playlist/presetinputbox.cpp
     settings/playlist/playlistpresetspage.cpp
+    settings/shortcuts/shortcutsmodel.cpp
+    settings/shortcuts/shortcutspage.cpp
     widgets/dummy.cpp
     widgets/spacer.cpp
+    widgets/customisableinput.cpp
     widgets/splitterwidget.cpp
     widgets/tabstackwidget.cpp
     widgets/widgetcontainer.cpp

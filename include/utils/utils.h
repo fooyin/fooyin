@@ -30,6 +30,7 @@ class QWidget;
 class QMenu;
 class QSize;
 class QColor;
+class QKeySequence;
 
 namespace Fy::Utils {
 namespace File {
@@ -47,6 +48,7 @@ FYUTILS_EXPORT QString msToString(uint64_t ms);
 FYUTILS_EXPORT QString secsToString(uint64_t secs);
 FYUTILS_EXPORT QString formatFileSize(uint64_t bytes);
 FYUTILS_EXPORT QString addLeadingZero(int number, int leadingCount);
+FYUTILS_EXPORT QString appendShortcut(const QString& str, const QKeySequence& shortcut);
 
 FYUTILS_EXPORT uint64_t currentDateToInt();
 FYUTILS_EXPORT QString formatTimeMs(uint64_t time);

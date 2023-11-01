@@ -23,9 +23,11 @@
 
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QAction>
 #include <QApplication>
 
 namespace Fy::Gui {
@@ -37,19 +39,11 @@ FileMenu::FileMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* 
 {
     auto* fileMenu = m_actionManager->actionContainer(Gui::Constants::Menus::File);
 
-    const auto settingsIcon = QIcon::fromTheme(Gui::Constants::Icons::Settings);
-    const auto quitIcon     = QIcon::fromTheme(Gui::Constants::Icons::Quit);
-
-    m_openSettings = new QAction(settingsIcon, tr("&Settings"), this);
-    actionManager->registerAction(m_openSettings, Gui::Constants::Actions::Settings);
-    fileMenu->addAction(m_openSettings, Gui::Constants::Groups::Three);
-    QObject::connect(m_openSettings, &QAction::triggered, m_settings->settingsDialog(),
-                     &Utils::SettingsDialogController::open);
-
-    m_quit = new QAction(quitIcon, tr("E&xit"), this);
-    m_actionManager->registerAction(m_quit, Gui::Constants::Actions::Exit);
-    fileMenu->addAction(m_quit, Gui::Constants::Groups::Three);
-    QObject::connect(m_quit, &QAction::triggered, qApp, &QApplication::quit);
+    auto* quit        = new QAction(QIcon::fromTheme(Gui::Constants::Icons::Quit), tr("E&xit"), this);
+    auto* quitCommand = m_actionManager->registerAction(quit, Gui::Constants::Actions::Exit);
+    quitCommand->setDefaultShortcut(QKeySequence::Quit);
+    fileMenu->addAction(quitCommand, Utils::Actions::Groups::Three);
+    QObject::connect(quit, &QAction::triggered, qApp, &QApplication::quit);
 }
 
 } // namespace Fy::Gui

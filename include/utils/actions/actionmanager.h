@@ -21,6 +21,7 @@
 
 #include "fyutils_export.h"
 
+#include <utils/actions/widgetcontext.h>
 #include <utils/id.h>
 
 #include <QObject>
@@ -29,33 +30,45 @@ class QAction;
 class QMainWindow;
 
 namespace Fy::Utils {
+class SettingsManager;
+
 class ActionContainer;
+class Command;
+using CommandList = std::vector<Command*>;
 
 class FYUTILS_EXPORT ActionManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ActionManager(QObject* parent = nullptr);
-    ~ActionManager() override = default;
+    explicit ActionManager(Utils::SettingsManager* settingsManager, QObject* parent = nullptr);
+    ~ActionManager() override;
 
     void setMainWindow(QMainWindow* mainWindow);
 
+    void saveSettings();
+
+    [[nodiscard]] WidgetContext* currentContextObject() const;
+    [[nodiscard]] QWidget* currentContextWidget() const;
+    [[nodiscard]] WidgetContext* contextObject(QWidget* widget) const;
+    void addContextObject(WidgetContext* context);
+    void removeContextObject(WidgetContext* context);
+
     ActionContainer* createMenu(const Id& id);
     ActionContainer* createMenuBar(const Id& id);
-    void registerAction(QAction* newAction, const Id& id);
+    Command* registerAction(QAction* action, const Id& id,
+                            const Context& context = Context{Constants::Context::Global});
 
-    QAction* action(const Id& id);
-    ActionContainer* actionContainer(const Id& id);
+    [[nodiscard]] Command* command(const Id& id) const;
+    [[nodiscard]] CommandList commands() const;
+    [[nodiscard]] ActionContainer* actionContainer(const Id& id) const;
 
-protected:
-    void registerContainer(const Id& id, ActionContainer* actionContainer);
-    void containerDestroyed(QObject* sender);
+signals:
+    void commandsChanged();
+    void contextChanged(const Context& context);
 
 private:
-    QMainWindow* m_mainWindow;
-
-    std::unordered_map<Id, QAction*, Id::IdHash> m_idCmdMap;
-    std::unordered_map<Id, ActionContainer*, Id::IdHash> m_idContainerMap;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fy::Utils

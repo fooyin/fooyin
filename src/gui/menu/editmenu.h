@@ -25,16 +25,18 @@ namespace Fy {
 
 namespace Utils {
 class ActionManager;
+class SettingsManager;
 } // namespace Utils
 
 namespace Gui {
 class EditMenu : public QObject
 {
 public:
-    explicit EditMenu(Utils::ActionManager* actionManager, QObject* parent = nullptr);
+    explicit EditMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, QObject* parent = nullptr);
 
 private:
     Utils::ActionManager* m_actionManager;
+    Utils::SettingsManager* m_settings;
 };
 } // namespace Gui
 } // namespace Fy

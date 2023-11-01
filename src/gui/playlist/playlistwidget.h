@@ -26,6 +26,7 @@
 namespace Fy {
 
 namespace Utils {
+class ActionManager;
 class SettingsManager;
 } // namespace Utils
 
@@ -45,9 +46,9 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Core::Player::PlayerManager* playerManager, PlaylistController* playlistController,
-                            TrackSelectionController* selectionController, Utils::SettingsManager* settings,
-                            QWidget* parent = nullptr);
+    explicit PlaylistWidget(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
+                            PlaylistController* playlistController, TrackSelectionController* selectionController,
+                            Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;

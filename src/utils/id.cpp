@@ -78,19 +78,4 @@ Id Id::append(quintptr addr)
 {
     return Id{m_name.append(QString::number(addr))};
 }
-
-bool Id::operator==(const Id& id) const
-{
-    return (m_id == id.m_id) && (m_name == id.m_name);
-}
-
-bool Id::operator!=(const Id& id) const
-{
-    return m_id != id.m_id;
-}
-
-bool Id::operator<(const Id& id) const
-{
-    return m_id < id.m_id;
-}
 } // namespace Fy::Utils

@@ -19,6 +19,7 @@
 
 #include "playlistwidget.h"
 
+#include "gui/guiconstants.h"
 #include "gui/guisettings.h"
 #include "gui/trackselectioncontroller.h"
 #include "playlistcontroller.h"
@@ -34,6 +35,7 @@
 #include <core/player/playermanager.h>
 #include <core/playlist/playlistmanager.h>
 #include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
 #include <utils/async.h>
 #include <utils/headerview.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -80,9 +82,9 @@ namespace Fy::Gui::Widgets::Playlist {
 class PlaylistWidgetPrivate
 {
 public:
-    PlaylistWidgetPrivate(PlaylistWidget* self, Core::Player::PlayerManager* playerManager,
-                          PlaylistController* playlistController, TrackSelectionController* selectionController,
-                          Utils::SettingsManager* settings);
+    PlaylistWidgetPrivate(PlaylistWidget* self, Utils::ActionManager* actionManager,
+                          Core::Player::PlayerManager* playerManager, PlaylistController* playlistController,
+                          TrackSelectionController* selectionController, Utils::SettingsManager* settings);
 
     void onPresetChanged(const PlaylistPreset& preset);
     void changePreset(const PlaylistPreset& preset);
@@ -115,6 +117,7 @@ public:
 
     PlaylistWidget* self;
 
+    Utils::ActionManager* actionManager;
     Core::Player::PlayerManager* playerManager;
     TrackSelectionController* selectionController;
     Utils::SettingsManager* settings;
@@ -129,13 +132,17 @@ public:
     bool changingSelection{false};
 
     PlaylistPreset currentPreset;
+
+    Utils::WidgetContext* playlistContext;
 };
 
-PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, Core::Player::PlayerManager* playerManager,
+PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, Utils::ActionManager* actionManager,
+                                             Core::Player::PlayerManager* playerManager,
                                              PlaylistController* playlistController,
                                              TrackSelectionController* selectionController,
                                              Utils::SettingsManager* settings)
     : self{self}
+    , actionManager{actionManager}
     , playerManager{playerManager}
     , selectionController{selectionController}
     , settings{settings}
@@ -145,6 +152,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, Core::Player:
     , model{new PlaylistModel(playerManager, controller, settings, self)}
     , playlistView{new PlaylistView(self)}
     , header{new Utils::HeaderView(Qt::Horizontal, self)}
+    , playlistContext{new Utils::WidgetContext(self, Utils::Context{Constants::Context::Playlist}, self)}
 {
     layout->setContentsMargins(0, 0, 0, 0);
 
@@ -166,6 +174,15 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, Core::Player:
     QObject::connect(model, &QAbstractItemModel::modelAboutToBeReset, playlistView, &QAbstractItemView::clearSelection);
 
     changePreset(controller->presetRegistry()->itemByName(settings->value<Settings::CurrentPreset>()));
+
+    actionManager->addContextObject(playlistContext);
+
+    auto* editMenu  = actionManager->actionContainer(Constants::Menus::Edit);
+    auto* selectAll = new QAction(PlaylistWidget::tr("Select All"), self);
+    editMenu->addAction(
+        actionManager->registerAction(selectAll, Constants::Actions::SelectAll, playlistContext->context()));
+
+    QObject::connect(selectAll, &QAction::triggered, self, [this]() { playlistView->selectAll(); });
 }
 
 void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)
@@ -433,11 +450,12 @@ void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
     parent->addMenu(sortMenu);
 }
 
-PlaylistWidget::PlaylistWidget(Core::Player::PlayerManager* playerManager, PlaylistController* playlistController,
-                               TrackSelectionController* selectionController, Utils::SettingsManager* settings,
-                               QWidget* parent)
+PlaylistWidget::PlaylistWidget(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
+                               PlaylistController* playlistController, TrackSelectionController* selectionController,
+                               Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<PlaylistWidgetPrivate>(this, playerManager, playlistController, selectionController, settings)}
+    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playerManager, playlistController,
+                                                selectionController, settings)}
 {
     setObjectName("Playlist");
 

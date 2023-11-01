@@ -26,8 +26,7 @@
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QActionGroup>
-#include <QMenu>
+#include <QAction>
 
 namespace Fy::Gui {
 LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::MusicLibrary* library,
@@ -39,18 +38,14 @@ LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::Mus
 {
     auto* libraryMenu = m_actionManager->actionContainer(Gui::Constants::Menus::Library);
 
-    const auto rescanIcon   = QIcon::fromTheme(Gui::Constants::Icons::RescanLibrary);
-    const auto settingsIcon = QIcon::fromTheme(Gui::Constants::Icons::Settings);
+    auto* rescanLibrary
+        = new QAction(QIcon::fromTheme(Gui::Constants::Icons::RescanLibrary), tr("&Rescan Library"), this);
+    libraryMenu->addAction(m_actionManager->registerAction(rescanLibrary, Gui::Constants::Actions::Rescan));
+    QObject::connect(rescanLibrary, &QAction::triggered, m_library, &Core::Library::MusicLibrary::reloadAll);
 
-    m_rescanLibrary = new QAction(rescanIcon, tr("&Rescan Library"), this);
-    m_actionManager->registerAction(m_rescanLibrary, Gui::Constants::Actions::Rescan);
-    libraryMenu->addAction(m_rescanLibrary, Gui::Constants::Groups::Two);
-    QObject::connect(m_rescanLibrary, &QAction::triggered, m_library, &Core::Library::MusicLibrary::reloadAll);
-
-    m_openSettings = new QAction(settingsIcon, tr("&Settings"), this);
-    actionManager->registerAction(m_openSettings, Gui::Constants::Actions::Settings);
-    libraryMenu->addAction(m_openSettings, Gui::Constants::Groups::Three);
-    QObject::connect(m_openSettings, &QAction::triggered, this,
+    auto* openSettings = new QAction(QIcon::fromTheme(Gui::Constants::Icons::Settings), tr("&Settings"), this);
+    libraryMenu->addAction(actionManager->registerAction(openSettings, "Library.Settings"));
+    QObject::connect(openSettings, &QAction::triggered, this,
                      [this]() { m_settings->settingsDialog()->openAtPage(Gui::Constants::Page::LibraryGeneral); });
 }
 } // namespace Fy::Gui

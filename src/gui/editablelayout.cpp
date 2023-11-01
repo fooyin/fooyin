@@ -103,7 +103,9 @@ struct EditableLayout::Private
         , menu{actionManager->createMenu(Constants::Menus::Context::Layout)}
         , box{new QHBoxLayout(self)}
         , overlay{new Utils::OverlayFilter(self)}
-    { }
+    {
+        box->setContentsMargins(5, 5, 5, 5);
+    }
 
     void changeEditingState(bool editing)
     {
@@ -123,11 +125,6 @@ EditableLayout::EditableLayout(Utils::ActionManager* actionManager, WidgetProvid
     , p{std::make_unique<Private>(this, actionManager, widgetProvider, layoutProvider, settings)}
 {
     setObjectName("EditableLayout");
-
-    p->menu->appendGroup(Constants::Groups::Two);
-    p->menu->appendGroup(Constants::Groups::Three);
-
-    p->box->setContentsMargins(5, 5, 5, 5);
 }
 
 EditableLayout::~EditableLayout() = default;

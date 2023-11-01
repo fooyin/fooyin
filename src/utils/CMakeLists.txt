@@ -29,6 +29,7 @@ project(
 set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/utils/clickablelabel.h
     ${CMAKE_SOURCE_DIR}/include/utils/comboicon.h
+    ${CMAKE_SOURCE_DIR}/include/utils/expandableinputbox.h
     ${CMAKE_SOURCE_DIR}/include/utils/expandingcombobox.h
     ${CMAKE_SOURCE_DIR}/include/utils/extentabletableview.h
     ${CMAKE_SOURCE_DIR}/include/utils/headerview.h
@@ -40,8 +41,11 @@ set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/utils/overlayfilter.h
     ${CMAKE_SOURCE_DIR}/include/utils/slider.h
     ${CMAKE_SOURCE_DIR}/include/utils/worker.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/actioncontainer.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/widgetcontext.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/actionmanager.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/proxyaction.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
@@ -52,6 +56,7 @@ set(SOURCES
     clickablelabel.cpp
     comboicon.cpp
     crypto.cpp
+    expandableinputbox.cpp
     expandingcombobox.cpp
     extentabletableview.cpp
     headerview.cpp
@@ -68,8 +73,11 @@ set(SOURCES
     slider.cpp
     utils.cpp
     worker.cpp
-    actions/actioncontainer.cpp
+    actions/actioncommand.cpp
+    actions/menucontainer.cpp
+    actions/widgetcontext.cpp
     actions/actionmanager.cpp
+    actions/proxyaction.cpp
     settings/settingsdialog.cpp
     settings/settingsdialogcontroller.cpp
     settings/settingspage.cpp
