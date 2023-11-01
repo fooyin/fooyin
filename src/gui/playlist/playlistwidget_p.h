@@ -67,6 +67,9 @@ public:
                           Core::Player::PlayerManager* playerManager, PlaylistController* playlistController,
                           TrackSelectionController* selectionController, Utils::SettingsManager* settings);
 
+    void setupConnections();
+    void setupActions();
+
     void onPresetChanged(const PlaylistPreset& preset);
     void changePreset(const PlaylistPreset& preset);
 
@@ -105,7 +108,7 @@ public:
     Utils::SettingsManager* settings;
     Utils::SettingsDialogController* settingsDialog;
 
-    PlaylistController* controller;
+    PlaylistController* playlistController;
 
     QHBoxLayout* layout;
     PlaylistModel* model;

@@ -60,13 +60,16 @@ SearchWidget::SearchWidget(Utils::ActionManager* actionManager, SearchController
 
     auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
-    auto* selectAll = new QAction(tr("Select All"), this);
+    auto* clear = new QAction(tr("&Clear"), this);
+    editMenu->addAction(actionManager->registerAction(clear, Constants::Actions::Clear, m_searchContext->context()));
+    QObject::connect(clear, &QAction::triggered, m_searchBox, &QLineEdit::clear);
+
+    auto* selectAll = new QAction(tr("&Select All"), this);
     auto* selectAllCommand
         = m_actionManager->registerAction(selectAll, Constants::Actions::SelectAll, m_searchContext->context());
     selectAllCommand->setDefaultShortcut(QKeySequence::SelectAll);
     editMenu->addAction(selectAllCommand, Utils::Actions::Groups::Two);
-
-    QObject::connect(selectAll, &QAction::triggered, this, [this]() { m_searchBox->selectAll(); });
+    QObject::connect(selectAll, &QAction::triggered, m_searchBox, &QLineEdit::selectAll);
 }
 
 QString SearchWidget::name() const
