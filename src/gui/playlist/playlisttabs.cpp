@@ -250,6 +250,11 @@ void PlaylistTabs::layoutEditingMenu(Utils::ActionContainer* menu)
 
 void PlaylistTabs::saveLayout(QJsonArray& array)
 {
+    if(!p->tabsWidget) {
+        FyWidget::saveLayout(array);
+        return;
+    }
+
     QJsonArray widget;
     p->tabsWidget->saveLayout(widget);
 
