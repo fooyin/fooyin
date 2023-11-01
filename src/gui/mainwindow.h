@@ -54,8 +54,6 @@ public:
     ~MainWindow() override;
 
     void open();
-    void setupUi();
-    void setupMenu();
 
 signals:
     void closing();

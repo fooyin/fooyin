@@ -141,7 +141,7 @@ struct SplitterWidget::Private
     int findIndex(FyWidget* widgetToFind) const
     {
         const auto it = std::ranges::find(std::as_const(children), widgetToFind);
-        if(it != children.end()) {
+        if(it != children.cend()) {
             return static_cast<int>(std::distance(children.cbegin(), it));
         }
         return -1;
@@ -283,7 +283,7 @@ void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
         setOrientation(p->splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
         setObjectName(Utils::EnumHelper::toString(p->splitter->orientation()) + u" Splitter"_s);
     });
-    menu->addAction(changeSplitter);
+    menu->addAction(p->actionManager->registerAction(changeSplitter, id().append("Change")));
 
     if(p->limit > 0 && p->widgetCount >= p->limit) {
         return;

@@ -22,15 +22,26 @@
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
+#include <utils/settings/settingsdialogcontroller.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QAction>
 
 namespace Fy::Gui {
-EditMenu::EditMenu(Utils::ActionManager* actionManager, QObject* parent)
+EditMenu::EditMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
+    , m_settings{settings}
 {
-    auto* editMenu = m_actionManager->actionContainer(Gui::Constants::Menus::File);
-    Q_UNUSED(editMenu)
+    auto* editMenu = m_actionManager->actionContainer(Gui::Constants::Menus::Edit);
+
+    auto* openSettings    = new QAction(QIcon::fromTheme(Gui::Constants::Icons::Settings), tr("&Settings"), this);
+    auto* settingsCommand = actionManager->registerAction(openSettings, Gui::Constants::Actions::Settings);
+    settingsCommand->setDefaultShortcut(Qt::CTRL | Qt::Key_P);
+    editMenu->addSeparator(Utils::Actions::Groups::Three);
+    editMenu->addAction(settingsCommand, Utils::Actions::Groups::Three);
+    QObject::connect(openSettings, &QAction::triggered, m_settings->settingsDialog(),
+                     &Utils::SettingsDialogController::open);
 }
 } // namespace Fy::Gui

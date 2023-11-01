@@ -26,7 +26,6 @@
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
@@ -43,11 +42,26 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
     : QMainWindow{parent}
     , m_actionManager{actionManager}
     , m_settings{settings}
+    , m_mainMenu{new MainMenuBar(m_actionManager, this)}
     , m_editableLayout{editableLayout}
 {
     actionManager->setMainWindow(this);
+    setMenuBar(m_mainMenu->menuBar());
 
-    setupMenu();
+    setWindowTitle(Core::Constants::AppName);
+
+    resize(1280, 720);
+    setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
+
+    const QByteArray settingsGeometry = QByteArray::fromBase64(m_settings->value<Settings::SettingsGeometry>());
+    m_settings->settingsDialog()->updateGeometry(settingsGeometry);
+
+    setCentralWidget(m_editableLayout);
+
+    if(m_settings->value<Core::Settings::FirstRun>()) {
+        // Delay showing until size of parent widget (this) is set.
+        QTimer::singleShot(1000, m_editableLayout, &Widgets::EditableLayout::showQuickSetup);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -75,30 +89,6 @@ void MainWindow::open()
             break;
         }
     }
-}
-
-void MainWindow::setupUi()
-{
-    setWindowTitle(Core::Constants::AppName);
-
-    resize(1280, 720);
-    setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
-
-    const QByteArray settingsGeometry = QByteArray::fromBase64(m_settings->value<Settings::SettingsGeometry>());
-    m_settings->settingsDialog()->updateGeometry(settingsGeometry);
-
-    setCentralWidget(m_editableLayout);
-
-    if(m_settings->value<Core::Settings::FirstRun>()) {
-        // Delay showing until size of parent widget (this) is set.
-        QTimer::singleShot(1000, m_editableLayout, &Widgets::EditableLayout::showQuickSetup);
-    }
-}
-
-void MainWindow::setupMenu()
-{
-    m_mainMenu = new MainMenuBar(m_actionManager, this);
-    setMenuBar(m_mainMenu->menuBar());
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

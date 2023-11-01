@@ -19,87 +19,346 @@
 
 #include <utils/actions/actionmanager.h>
 
-#include <utils/actions/actioncontainer.h>
+#include "actions/actioncommand.h"
+#include "menucontainer.h"
 
+#include <utils/actions/command.h>
+#include <utils/settings/settingsmanager.h>
+
+#include <QAction>
+#include <QApplication>
+#include <QIODevice>
 #include <QMainWindow>
 #include <QMenuBar>
+#include <QSettings>
+
+#include <set>
+
+constexpr auto ShortcutCategory = "KeyboardShortcuts";
 
 namespace Fy::Utils {
-ActionManager::ActionManager(QObject* parent)
+struct ActionManager::Private
+{
+    ActionManager* self;
+
+    Utils::SettingsManager* settingsManager;
+    QMainWindow* mainWindow{nullptr};
+
+    Context currentContext;
+
+    std::unordered_map<Id, std::unique_ptr<ActionCommand>, Id::IdHash> idCmdMap;
+    std::unordered_map<Id, std::unique_ptr<MenuContainer>, Id::IdHash> idContainerMap;
+    std::set<MenuContainer*> scheduledContainerUpdates;
+
+    WidgetContextList activeContext;
+    std::unordered_map<QWidget*, WidgetContext*> contextWidgets;
+
+    explicit Private(ActionManager* self, Utils::SettingsManager* settingsManager)
+        : self{self}
+        , settingsManager{settingsManager}
+    { }
+
+    ActionCommand* overridableAction(const Id& id)
+    {
+        if(idCmdMap.contains(id)) {
+            return idCmdMap.at(id).get();
+        }
+
+        auto* command = idCmdMap.emplace(id, std::make_unique<ActionCommand>(id)).first->second.get();
+        loadSetting(id, command);
+        QAction* action = command->action();
+        mainWindow->addAction(action);
+        action->setObjectName(id.name());
+        action->setShortcutContext(Qt::ApplicationShortcut);
+        command->setCurrentContext(currentContext);
+
+        return command;
+    }
+
+    void loadSetting(const Id& id, Command* command) const
+    {
+        QSettings* settings = settingsManager->settingsFile();
+
+        settings->beginGroup(ShortcutCategory);
+
+        if(settings->contains(id.name())) {
+            const QVariant var = settings->value(id.name());
+            if(QMetaType::Type(var.typeId()) == QMetaType::QStringList) {
+                ShortcutList shortcuts;
+                std::ranges::transform(var.toStringList(), std::back_inserter(shortcuts),
+                                       [](const QKeySequence& k) { return k.toString(); });
+                command->setShortcut(shortcuts);
+            }
+            else {
+                command->setShortcut({QKeySequence::fromString(var.toString())});
+            }
+        }
+
+        settings->endGroup();
+    }
+
+    void containerDestroyed(QObject* sender)
+    {
+        auto* container = qobject_cast<MenuContainer*>(sender);
+        idContainerMap.erase(container->id());
+        scheduledContainerUpdates.erase(container);
+    }
+
+    void updateContainer()
+    {
+        for(MenuContainer* c : scheduledContainerUpdates) {
+            c->update();
+        }
+        scheduledContainerUpdates.clear();
+    }
+
+    void scheduleContainerUpdate(MenuContainer* actionContainer)
+    {
+        const bool needsSchedule = scheduledContainerUpdates.empty();
+        scheduledContainerUpdates.emplace(actionContainer);
+        if(needsSchedule) {
+            QMetaObject::invokeMethod(
+                self, [this]() { updateContainer(); }, Qt::QueuedConnection);
+        }
+    }
+
+    void updateContextObject(const WidgetContextList& context)
+    {
+        activeContext = context;
+
+        Context uniqueContexts;
+        for(WidgetContext* ctx : activeContext) {
+            for(const Id& id : ctx->context()) {
+                uniqueContexts.append(id);
+            }
+        }
+
+        uniqueContexts.append(Constants::Context::Global);
+
+        setContext(uniqueContexts);
+        QMetaObject::invokeMethod(self, "contextChanged", Q_ARG(const Context&, uniqueContexts));
+    }
+
+    void updateFocusWidget(QWidget* widget)
+    {
+        if(qobject_cast<QMenuBar*>(widget) || qobject_cast<QMenu*>(widget)) {
+            return;
+        }
+
+        WidgetContextList newContext;
+
+        if(QWidget* focusedWidget = QApplication::focusWidget()) {
+            WidgetContext* widgetContext{nullptr};
+            while(focusedWidget) {
+                widgetContext = self->contextObject(focusedWidget);
+                if(widgetContext) {
+                    newContext.push_back(widgetContext);
+                }
+                focusedWidget = focusedWidget->parentWidget();
+            }
+        }
+
+        if(!newContext.empty() || QApplication::focusWidget() == mainWindow->focusWidget()) {
+            updateContextObject(newContext);
+        }
+    }
+
+    void setContext(const Context& updatedContext)
+    {
+        currentContext = updatedContext;
+        for(const auto& [id, command] : idCmdMap) {
+            command->setCurrentContext(currentContext);
+        }
+    }
+};
+
+ActionManager::ActionManager(Utils::SettingsManager* settingsManager, QObject* parent)
     : QObject{parent}
-    , m_mainWindow{nullptr}
-{ }
+    , p{std::make_unique<Private>(this, settingsManager)}
+{
+    connect(qApp, &QApplication::focusChanged, this,
+            [this](QWidget* /*old*/, QWidget* now) { p->updateFocusWidget(now); });
+}
+
+ActionManager::~ActionManager()
+{
+    QObject::disconnect(qApp, &QApplication::focusChanged, this, nullptr);
+
+    for(auto [_, context] : p->contextWidgets) {
+        context->disconnect();
+    }
+
+    p->contextWidgets.clear();
+    p->activeContext.clear();
+
+    for(const auto& [_, container] : p->idContainerMap) {
+        container->disconnect();
+    }
+
+    p->idContainerMap.clear();
+    p->idCmdMap.clear();
+}
 
 void ActionManager::setMainWindow(QMainWindow* mainWindow)
 {
-    m_mainWindow = mainWindow;
+    p->mainWindow = mainWindow;
+}
+
+void ActionManager::saveSettings()
+{
+    QSettings* settings = p->settingsManager->settingsFile();
+
+    settings->beginGroup(ShortcutCategory);
+
+    for(const auto& [_, command] : p->idCmdMap) {
+        const QString settingsKey           = command->id().name();
+        const ShortcutList commandShortcuts = command->shortcuts();
+        const ShortcutList defaultShortcuts = command->defaultShortcuts();
+        if(commandShortcuts != defaultShortcuts) {
+            // Only save user changes
+            QStringList keys;
+            std::ranges::transform(commandShortcuts, std::back_inserter(keys),
+                                   [](const QKeySequence& k) { return k.toString(); });
+            settings->setValue(settingsKey, keys);
+        }
+        else {
+            settings->remove(settingsKey);
+        }
+    }
+
+    settings->endGroup();
+}
+
+WidgetContext* ActionManager::currentContextObject() const
+{
+    return p->activeContext.empty() ? nullptr : p->activeContext.front();
+}
+
+QWidget* ActionManager::currentContextWidget() const
+{
+    WidgetContext* context = currentContextObject();
+    return context ? context->widget() : nullptr;
+}
+
+WidgetContext* ActionManager::contextObject(QWidget* widget) const
+{
+    if(p->contextWidgets.contains(widget)) {
+        return p->contextWidgets.at(widget);
+    }
+    return nullptr;
+}
+
+void ActionManager::addContextObject(WidgetContext* context)
+{
+    if(!context) {
+        return;
+    }
+
+    QWidget* widget = context->widget();
+    if(p->contextWidgets.contains(widget)) {
+        return;
+    }
+
+    p->contextWidgets.emplace(widget, context);
+    QObject::connect(context, &QObject::destroyed, this, [this, context] { removeContextObject(context); });
+}
+
+void ActionManager::removeContextObject(WidgetContext* context)
+{
+    if(!context) {
+        return;
+    }
+
+    QObject::disconnect(context, &QObject::destroyed, this, nullptr);
+
+    if(!std::erase_if(p->contextWidgets, [context](const auto& v) { return v.second == context; })) {
+        return;
+    }
+
+    if(std::erase_if(p->activeContext, [context](WidgetContext* wc) { return wc == context; }) > 0) {
+        p->updateContextObject(p->activeContext);
+    }
 }
 
 ActionContainer* ActionManager::createMenu(const Id& id)
 {
-    if(m_idContainerMap.contains(id)) {
-        return m_idContainerMap.at(id);
+    if(p->idContainerMap.contains(id)) {
+        return p->idContainerMap.at(id).get();
     }
 
-    auto* container = new MenuActionContainer(id, this);
-    registerContainer(id, container);
+    auto* container
+        = p->idContainerMap.emplace(id, std::make_unique<MenuActionContainer>(id, this)).first->second.get();
+
+    QObject::connect(container, &QObject::destroyed, this, [this](QObject* sender) { p->containerDestroyed(sender); });
+    QObject::connect(container, &MenuContainer::requestUpdate, this,
+                     [this](MenuContainer* container) { p->scheduleContainerUpdate(container); });
+
+    container->appendGroup(Actions::Groups::One);
+    container->appendGroup(Actions::Groups::Two);
+    container->appendGroup(Actions::Groups::Three);
 
     return container;
 }
 
 ActionContainer* ActionManager::createMenuBar(const Id& id)
 {
-    if(m_idContainerMap.contains(id)) {
-        return m_idContainerMap.at(id);
+    if(p->idContainerMap.contains(id)) {
+        return p->idContainerMap.at(id).get();
     }
 
-    auto* menuBar = new QMenuBar(m_mainWindow);
-    menuBar->setObjectName(id.name());
+    {
+        auto* menuBar = new QMenuBar(p->mainWindow);
+        menuBar->setObjectName(id.name());
 
-    auto* container = new MenuBarActionContainer(id, this);
-    container->setMenuBar(menuBar);
-    registerContainer(id, container);
+        auto container = std::make_unique<MenuBarActionContainer>(id, this);
+        container->setMenuBar(menuBar);
+        p->idContainerMap.emplace(id, std::move(container));
+    }
+
+    auto* container = p->idContainerMap.at(id).get();
+
+    QObject::connect(container, &QObject::destroyed, this, [this](QObject* sender) { p->containerDestroyed(sender); });
+    QObject::connect(container, &MenuContainer::requestUpdate, this,
+                     [this](MenuContainer* container) { p->scheduleContainerUpdate(container); });
+
+    container->appendGroup(Actions::Groups::One);
+    container->appendGroup(Actions::Groups::Two);
+    container->appendGroup(Actions::Groups::Three);
 
     return container;
 }
 
-void ActionManager::registerAction(QAction* newAction, const Id& id)
+Command* ActionManager::registerAction(QAction* action, const Id& id, const Context& context)
 {
-    if(m_mainWindow) {
-        m_idCmdMap.emplace(id, newAction);
-        m_mainWindow->addAction(newAction);
-        newAction->setObjectName(id.name());
+    ActionCommand* command = p->overridableAction(id);
+    if(command) {
+        command->addOverrideAction(action, context);
+        emit commandsChanged();
     }
+    return command;
 }
 
-QAction* ActionManager::action(const Id& id)
+Command* ActionManager::command(const Id& id) const
 {
-    if(m_idCmdMap.contains(id)) {
-        return m_idCmdMap.at(id);
-    }
-    return nullptr;
-}
-
-ActionContainer* ActionManager::actionContainer(const Id& id)
-{
-    if(m_idContainerMap.contains(id)) {
-        return m_idContainerMap.at(id);
+    if(p->idCmdMap.contains(id)) {
+        return p->idCmdMap.at(id).get();
     }
     return nullptr;
 }
 
-void ActionManager::registerContainer(const Id& id, ActionContainer* actionContainer)
+CommandList ActionManager::commands() const
 {
-    QObject::connect(actionContainer, &ActionContainer::registerSeparator, this, &ActionManager::registerAction);
-    QObject::connect(actionContainer, &QObject::destroyed, this, &ActionManager::containerDestroyed);
-
-    actionContainer->appendGroup(Groups::Default);
-    m_idContainerMap.emplace(id, actionContainer);
+    CommandList commands;
+    std::ranges::transform(std::as_const(p->idCmdMap), std::back_inserter(commands),
+                           [&](const auto& idCommand) { return idCommand.second.get(); });
+    return commands;
 }
 
-void ActionManager::containerDestroyed(QObject* sender)
+ActionContainer* ActionManager::actionContainer(const Id& id) const
 {
-    auto* container = static_cast<ActionContainer*>(sender);
-    m_idContainerMap.erase(container->id());
+    if(p->idContainerMap.contains(id)) {
+        return p->idContainerMap.at(id).get();
+    }
+    return nullptr;
 }
 } // namespace Fy::Utils

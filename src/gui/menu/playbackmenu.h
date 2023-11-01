@@ -24,11 +24,9 @@
 #include <QObject>
 
 namespace Fy {
-
 namespace Utils {
 class ActionManager;
-class SettingsManager;
-} // namespace Utils
+}
 
 namespace Core {
 namespace Player {

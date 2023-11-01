@@ -33,7 +33,7 @@ QString getKeyString(const Fy::Utils::SettingsEntry& setting)
 namespace Fy::Utils {
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
-    , m_settingsFile{settingsPath, QSettings::IniFormat, this}
+    , m_settingsFile{new QSettings(settingsPath, QSettings::IniFormat, this)}
     , m_settingsDialog{new SettingsDialogController(this)}
 { }
 
@@ -45,7 +45,7 @@ void SettingsManager::loadSettings()
         }
         const auto keyString = getKeyString(setting);
         if(!keyString.isEmpty()) {
-            const auto diskValue = m_settingsFile.value(keyString);
+            const auto diskValue = m_settingsFile->value(keyString);
             if(!diskValue.isNull() && diskValue != setting.value()) {
                 setting.setValue(diskValue);
             }
@@ -61,11 +61,16 @@ void SettingsManager::storeSettings()
         }
         const auto keyString = getKeyString(setting);
         if(!keyString.isEmpty()) {
-            m_settingsFile.setValue(keyString, setting.value());
+            m_settingsFile->setValue(keyString, setting.value());
         }
     }
 
-    m_settingsFile.sync();
+    m_settingsFile->sync();
+}
+
+QSettings* SettingsManager::settingsFile() const
+{
+    return m_settingsFile;
 }
 
 SettingsDialogController* SettingsManager::settingsDialog() const

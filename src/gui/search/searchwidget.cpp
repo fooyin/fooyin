@@ -19,8 +19,12 @@
 
 #include "searchwidget.h"
 
+#include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/searchcontroller.h>
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
@@ -31,11 +35,14 @@
 constexpr auto Placeholder = "Search library...";
 
 namespace Fy::Gui::Widgets {
-SearchWidget::SearchWidget(SearchController* controller, Utils::SettingsManager* settings, QWidget* parent)
+SearchWidget::SearchWidget(Utils::ActionManager* actionManager, SearchController* controller,
+                           Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
+    , m_actionManager{actionManager}
     , m_controller{controller}
     , m_settings{settings}
     , m_searchBox{new QLineEdit(this)}
+    , m_searchContext{new Utils::WidgetContext(this, Utils::Context{Constants::Context::Search}, this)}
 {
     setObjectName("Search Bar");
 
@@ -48,6 +55,18 @@ SearchWidget::SearchWidget(SearchController* controller, Utils::SettingsManager*
     layout->addWidget(m_searchBox);
 
     QObject::connect(m_searchBox, &QLineEdit::textChanged, m_controller, &SearchController::searchChanged);
+
+    m_actionManager->addContextObject(m_searchContext);
+
+    auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
+
+    auto* selectAll = new QAction(tr("Select All"), this);
+    auto* selectAllCommand
+        = m_actionManager->registerAction(selectAll, Constants::Actions::SelectAll, m_searchContext->context());
+    selectAllCommand->setDefaultShortcut(QKeySequence::SelectAll);
+    editMenu->addAction(selectAllCommand, Utils::Actions::Groups::Two);
+
+    QObject::connect(selectAll, &QAction::triggered, this, [this]() { m_searchBox->selectAll(); });
 }
 
 QString SearchWidget::name() const

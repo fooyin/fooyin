@@ -46,8 +46,8 @@ HelpMenu::HelpMenu(Utils::ActionManager* actionManager, QObject* parent)
 
     const auto aboutIcon = QIcon::fromTheme(Constants::Icons::Fooyin);
     m_about              = new QAction(aboutIcon, tr("&About"), this);
-    m_actionManager->registerAction(m_about, Constants::Actions::About);
-    helpMenu->addAction(m_about, Constants::Groups::Three);
+    helpMenu->addAction(m_actionManager->registerAction(m_about, Constants::Actions::About),
+                        Utils::Actions::Groups::Three);
     QObject::connect(m_about, &QAction::triggered, this, showAboutDialog);
 }
 } // namespace Fy::Gui

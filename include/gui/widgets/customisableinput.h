@@ -19,12 +19,10 @@
 
 #pragma once
 
-#include <QWidget>
+#include <utils/expandableinputbox.h>
 
-class QLineEdit;
-
-namespace Fy::Gui::Settings {
-class PresetInput : public QWidget
+namespace Fy::Gui::Widgets {
+class CustomisableInput : public Utils::ExpandableInput
 {
     Q_OBJECT
 
@@ -36,16 +34,14 @@ public:
     };
     Q_DECLARE_FLAGS(State, StateFlag)
 
-    explicit PresetInput(QWidget* parent = nullptr);
+    explicit CustomisableInput(QWidget* parent = nullptr);
+    explicit CustomisableInput(Attributes attributes, QWidget* parent = nullptr);
+    ~CustomisableInput() override;
 
-    [[nodiscard]] QString text() const;
     [[nodiscard]] QFont font() const;
     [[nodiscard]] QColor colour() const;
     [[nodiscard]] State state() const;
 
-    void setReadOnly(bool readOnly);
-
-    void setText(const QString& text);
     void setFont(const QFont& font);
     void setColour(const QColor& colour);
     void setState(State state);
@@ -53,18 +49,7 @@ public:
     void resetState();
 
 private:
-    void showContextMenu(const QPoint& pos);
-    void showFontDialog();
-    void showColourDialog();
-
-    QLineEdit* m_editBlock;
-
-    QFont m_font;
-    QColor m_colour;
-
-    State m_state;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
-using PresetInputList = std::vector<PresetInput*>;
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(PresetInput::State)
-} // namespace Fy::Gui::Settings
+} // namespace Fy::Gui::Widgets

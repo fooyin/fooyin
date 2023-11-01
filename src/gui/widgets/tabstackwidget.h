@@ -45,8 +45,8 @@ public:
     void saveLayout(QJsonArray& array) override;
     void loadLayout(const QJsonObject& object) override;
 
-    void addWidget(FyWidget *widget) override;
-    void removeWidget(FyWidget *widget) override;
+    void addWidget(FyWidget* widget) override;
+    void removeWidget(FyWidget* widget) override;
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
 
 private:

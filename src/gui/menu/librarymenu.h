@@ -19,14 +19,11 @@
 
 #pragma once
 
-#include <QActionGroup>
 #include <QObject>
 
 namespace Fy {
-
 namespace Utils {
 class ActionManager;
-class ActionContainer;
 class SettingsManager;
 } // namespace Utils
 
@@ -44,14 +41,9 @@ public:
                 Utils::SettingsManager* settings, QObject* parent = nullptr);
 
 private:
-    void setupSwitchMenu();
-
     Utils::ActionManager* m_actionManager;
     Core::Library::MusicLibrary* m_library;
     Utils::SettingsManager* m_settings;
-
-    QAction* m_openSettings;
-    QAction* m_rescanLibrary;
 };
 } // namespace Gui
 } // namespace Fy

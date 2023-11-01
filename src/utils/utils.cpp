@@ -204,6 +204,15 @@ QString addLeadingZero(int number, int leadingCount)
     return QString{u"%1"_s}.arg(number, leadingCount, 10, QChar('0'));
 }
 
+QString appendShortcut(const QString& str, const QKeySequence& shortcut)
+{
+    QString string = str;
+    string.remove('&');
+    return QString::fromLatin1("<div style=\"white-space:pre\">%1 "
+                               "<span style=\"color: gray; font-size: small\">%2</span></div>")
+        .arg(string, shortcut.toString(QKeySequence::NativeText));
+}
+
 void setMinimumWidth(QLabel* label, const QString& text)
 {
     const QString oldText = label->text();
