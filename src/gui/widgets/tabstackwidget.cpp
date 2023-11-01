@@ -18,11 +18,17 @@
  */
 
 #include "tabstackwidget.h"
-#include "gui/widgetprovider.h"
 
+#include <core/constants.h>
+#include <gui/widgetprovider.h>
+
+#include <QContextMenuEvent>
+#include <QInputDialog>
 #include <QTabBar>
 #include <QTabWidget>
 #include <QVBoxLayout>
+
+using namespace Qt::Literals::StringLiterals;
 
 namespace Fy::Gui::Widgets {
 struct TabStackWidget::Private
@@ -102,16 +108,37 @@ void TabStackWidget::saveLayout(QJsonArray& array)
         widget->saveLayout(widgets);
     }
 
+    QString state;
+    for(int i{0}; i < p->tabs->count(); ++i) {
+        if(!state.isEmpty()) {
+            state.append(Core::Constants::Separator);
+        }
+        state.append(p->tabs->tabText(i));
+    }
+
+    QJsonObject options;
+    options["Children"_L1] = widgets;
+    options["State"_L1]    = state;
+
     QJsonObject tabStack;
-    tabStack[layoutName()] = widgets;
+    tabStack[layoutName()] = options;
     array.append(tabStack);
 }
 
 void TabStackWidget::loadLayout(const QJsonObject& object)
 {
-    const auto widgets = object[layoutName()].toArray();
+    const auto widgets = object.value("Children"_L1).toArray();
 
     WidgetContainer::loadWidgets(widgets);
+
+    const auto state         = object.value("State"_L1).toString();
+    const QStringList titles = state.split(Core::Constants::Separator);
+
+    for(int i{0}; const QString& title : titles) {
+        if(i < p->tabs->count()) {
+            p->tabs->setTabText(i++, title);
+        }
+    }
 }
 
 void TabStackWidget::addWidget(FyWidget* widget)
@@ -141,5 +168,41 @@ void TabStackWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
 
         p->tabs->setCurrentIndex(index);
     }
+}
+
+void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    const QPoint point = event->pos();
+    const int index    = p->tabs->tabBar()->tabAt(point);
+
+    if(index < 0 || index >= p->tabs->count()) {
+        FyWidget::contextMenuEvent(event);
+        return;
+    }
+
+    auto* widget = p->widgets.at(index);
+
+    auto* rename = new QAction(u"Rename"_s, menu);
+    QObject::connect(rename, &QAction::triggered, this, [this, index]() {
+        bool success{false};
+        const QString text = QInputDialog::getText(this, tr("Rename"), tr("Tab Name:"), QLineEdit::Normal,
+                                                   p->tabs->tabText(index), &success);
+
+        if(success && !text.isEmpty()) {
+            p->tabs->setTabText(index, text);
+        }
+    });
+
+    auto* remove = new QAction(u"Remove"_s, menu);
+    QObject::connect(remove, &QAction::triggered, this, [this, widget]() { removeWidget(widget); });
+
+    menu->addAction(rename);
+    menu->addSeparator();
+    menu->addAction(remove);
+
+    menu->popup(mapToGlobal(point));
 }
 } // namespace Fy::Gui::Widgets

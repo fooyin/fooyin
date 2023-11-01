@@ -49,6 +49,9 @@ public:
     void removeWidget(FyWidget* widget) override;
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
 
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
+
 private:
     struct Private;
     std::unique_ptr<Private> p;
