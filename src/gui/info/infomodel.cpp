@@ -125,18 +125,17 @@ void InfoItem::addTrackValue(const QStringList& values)
 
 struct InfoModel::Private
 {
-    InfoModel* model;
-    Core::Player::PlayerManager* playerManager;
+    InfoModel* self;
+
     std::unordered_map<QString, InfoItem> nodes;
 
-    Private(InfoModel* model, Core::Player::PlayerManager* playerManager)
-        : model{model}
-        , playerManager{playerManager}
+    Private(InfoModel* self)
+        : self{self}
     { }
 
     void reset()
     {
-        model->resetRoot();
+        self->resetRoot();
         nodes.clear();
     }
 
@@ -154,7 +153,7 @@ struct InfoModel::Private
         InfoItem* parentItem{nullptr};
 
         if(parent == ItemParent::Root) {
-            parentItem = model->rootItem();
+            parentItem = self->rootItem();
         }
         else {
             const QString parentKey = Utils::EnumHelper::toString(parent);
@@ -254,19 +253,18 @@ struct InfoModel::Private
     }
 };
 
-InfoModel::InfoModel(Core::Player::PlayerManager* playerManager, QObject* parent)
+InfoModel::InfoModel(QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<Private>(this, playerManager)}
+    , p{std::make_unique<Private>(this)}
 { }
 
 InfoModel::~InfoModel() = default;
 
-void InfoModel::resetModel(const Core::TrackList& tracks)
+void InfoModel::resetModel(const Core::TrackList& tracks, const Core::Track& playingTrack)
 {
     Core::TrackList infoTracks{tracks};
 
     if(infoTracks.empty()) {
-        Core::Track playingTrack = p->playerManager->currentTrack();
         if(playingTrack.isValid()) {
             infoTracks.push_back(std::move(playingTrack));
         }

@@ -20,147 +20,162 @@
 #include "infowidget.h"
 
 #include "gui/guisettings.h"
-#include "gui/trackselectioncontroller.h"
 #include "infodelegate.h"
 #include "infomodel.h"
 
 #include <core/library/musiclibrary.h>
+#include <core/player/playermanager.h>
 #include <core/track.h>
+#include <gui/trackselectioncontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QMenu>
 #include <QTreeView>
 
 namespace Fy::Gui::Widgets::Info {
+struct InfoWidget::Private
+{
+    InfoWidget* self;
+
+    TrackSelectionController* selectionController;
+    Core::Player::PlayerManager* playerManager;
+    Utils::SettingsManager* settings;
+
+    QTreeView* view;
+    InfoModel* model;
+
+    Private(InfoWidget* self, TrackSelectionController* selectionController, Core::Player::PlayerManager* playerManager,
+            Utils::SettingsManager* settings)
+        : self{self}
+        , selectionController{selectionController}
+        , playerManager{playerManager}
+        , settings{settings}
+        , view{new QTreeView(self)}
+        , model{new InfoModel(self)}
+    {
+        auto* layout = new QHBoxLayout(self);
+        layout->setContentsMargins(0, 0, 0, 0);
+
+        view->setRootIsDecorated(false);
+        view->setSelectionBehavior(QAbstractItemView::SelectRows);
+        view->setSelectionMode(QAbstractItemView::SingleSelection);
+        view->setMouseTracking(true);
+        view->setItemsExpandable(false);
+        view->setIndentation(0);
+        view->setExpandsOnDoubleClick(false);
+        view->setWordWrap(true);
+        view->setTextElideMode(Qt::ElideLeft);
+        view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+        view->setSortingEnabled(false);
+        view->setAlternatingRowColors(true);
+        view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+        view->setItemDelegate(new ItemDelegate(self));
+        view->setModel(model);
+
+        layout->addWidget(view);
+
+        spanHeaders();
+        view->expandAll();
+
+        setHeaderHidden(settings->value<Settings::InfoHeader>());
+        setScrollbarHidden(settings->value<Settings::InfoScrollBar>());
+        setAltRowColors(settings->value<Settings::InfoAltColours>());
+    }
+
+    void spanHeaders()
+    {
+        const int rowCount = model->rowCount({});
+
+        for(int i = 0; i < rowCount; ++i) {
+            auto type = model->index(i, 0, {}).data(InfoItem::Type).value<InfoItem::ItemType>();
+            if(type == InfoItem::Header) {
+                view->setFirstColumnSpanned(i, {}, true);
+            }
+        }
+    }
+
+    void setHeaderHidden(bool showHeader)
+    {
+        view->setHeaderHidden(!showHeader);
+    }
+
+    void setScrollbarHidden(bool showScrollBar)
+    {
+        view->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+    }
+
+    void setAltRowColors(bool altColours)
+    {
+        view->setAlternatingRowColors(altColours);
+    }
+
+    void resetModel()
+    {
+        model->resetModel(selectionController->selectedTracks(), playerManager->currentTrack());
+    }
+};
+
 InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* selectionController,
                        Utils::SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
-    , m_settings{settings}
-    , m_layout{new QHBoxLayout(this)}
-    , m_view{new QTreeView(this)}
-    , m_model{new InfoModel(playerManager, this)}
+    , p{std::make_unique<Private>(this, selectionController, playerManager, settings)}
 {
     setObjectName("Info Panel");
-    setupUi();
 
-    setHeaderHidden(m_settings->value<Settings::InfoHeader>());
-    setScrollbarHidden(m_settings->value<Settings::InfoScrollBar>());
-    setAltRowColors(m_settings->value<Settings::InfoAltColours>());
+    QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
+                     [this]() { p->resetModel(); });
 
-    QObject::connect(selectionController, &TrackSelectionController::selectionChanged, m_model, &InfoModel::resetModel);
-
-    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
-        spanHeaders();
-        m_view->expandAll();
+    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() {
+        p->spanHeaders();
+        p->view->expandAll();
     });
 
-    m_settings->subscribe<Settings::InfoAltColours>(this, &InfoWidget::setAltRowColors);
-    m_settings->subscribe<Settings::InfoHeader>(this, &InfoWidget::setHeaderHidden);
-    m_settings->subscribe<Settings::InfoScrollBar>(this, &InfoWidget::setScrollbarHidden);
+    p->settings->subscribe<Settings::InfoHeader>(this, [this](bool enabled) { p->setHeaderHidden(enabled); });
+    p->settings->subscribe<Settings::InfoScrollBar>(this, [this](bool enabled) { p->setScrollbarHidden(enabled); });
+    p->settings->subscribe<Settings::InfoAltColours>(this, [this](bool enabled) { p->setAltRowColors(enabled); });
 
-    m_model->resetModel(selectionController->selectedTracks());
+    p->resetModel();
 }
 
-void InfoWidget::setupUi()
-{
-    m_layout->setContentsMargins(0, 0, 0, 0);
-
-    m_view->setRootIsDecorated(false);
-    m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_view->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_view->setMouseTracking(true);
-    m_view->setItemsExpandable(false);
-    m_view->setIndentation(0);
-    m_view->setExpandsOnDoubleClick(false);
-    m_view->setWordWrap(true);
-    m_view->setTextElideMode(Qt::ElideLeft);
-    m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    m_view->setSortingEnabled(false);
-    m_view->setAlternatingRowColors(true);
-
-    m_view->setItemDelegate(new ItemDelegate(this));
-    m_view->setModel(m_model);
-
-    m_layout->addWidget(m_view);
-
-    m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-
-    spanHeaders();
-    m_view->expandAll();
-}
-
-void InfoWidget::spanHeaders()
-{
-    const int rowCount = m_model->rowCount({});
-
-    for(int i = 0; i < rowCount; ++i) {
-        auto type = m_model->index(i, 0, {}).data(InfoItem::Type).value<InfoItem::ItemType>();
-        if(type == InfoItem::Header) {
-            m_view->setFirstColumnSpanned(i, {}, true);
-        }
-    }
-}
-
-bool InfoWidget::isHeaderHidden()
-{
-    return m_view->isHeaderHidden();
-}
-
-void InfoWidget::setHeaderHidden(bool showHeader)
-{
-    m_view->setHeaderHidden(!showHeader);
-}
-
-bool InfoWidget::isScrollbarHidden()
-{
-    return m_view->verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
-}
-
-void InfoWidget::setScrollbarHidden(bool showScrollBar)
-{
-    m_view->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
-}
-
-bool InfoWidget::altRowColors()
-{
-    return m_view->alternatingRowColors();
-}
-
-void InfoWidget::setAltRowColors(bool altColours)
-{
-    m_view->setAlternatingRowColors(altColours);
-}
+InfoWidget::~InfoWidget() = default;
 
 QString InfoWidget::name() const
 {
     return QStringLiteral("Info");
 }
 
-void InfoWidget::layoutEditingMenu(Utils::ActionContainer* menu)
+void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
 {
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
     auto* showHeaders = new QAction(QStringLiteral("Show Header"), this);
     showHeaders->setCheckable(true);
-    showHeaders->setChecked(!isHeaderHidden());
+    showHeaders->setChecked(!p->view->isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this,
-                     [this](bool checked) { m_settings->set<Settings::InfoHeader>(checked); });
+                     [this](bool checked) { p->settings->set<Settings::InfoHeader>(checked); });
 
     auto* showScrollBar = new QAction(QStringLiteral("Show Scrollbar"), menu);
     showScrollBar->setCheckable(true);
-    showScrollBar->setChecked(!isScrollbarHidden());
+    showScrollBar->setChecked(p->view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
     QAction::connect(showScrollBar, &QAction::triggered, this,
-                     [this](bool checked) { m_settings->set<Settings::InfoScrollBar>(checked); });
+                     [this](bool checked) { p->settings->set<Settings::InfoScrollBar>(checked); });
     menu->addAction(showScrollBar);
 
     auto* altColours = new QAction(QStringLiteral("Alternate Row Colours"), this);
     altColours->setCheckable(true);
-    altColours->setChecked(altRowColors());
+    altColours->setChecked(p->view->alternatingRowColors());
     QAction::connect(altColours, &QAction::triggered, this,
-                     [this](bool checked) { m_settings->set<Settings::InfoAltColours>(checked); });
+                     [this](bool checked) { p->settings->set<Settings::InfoAltColours>(checked); });
 
     menu->addAction(showHeaders);
     menu->addAction(showScrollBar);
     menu->addAction(altColours);
+
+    menu->popup(event->globalPos());
 }
 } // namespace Fy::Gui::Widgets::Info

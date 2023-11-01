@@ -24,12 +24,7 @@
 #include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
-namespace Fy {
-namespace Core::Player {
-class PlayerManager;
-}
-
-namespace Gui::Widgets::Info {
+namespace Fy::Gui::Widgets::Info {
 class InfoItem : public Utils::TreeItem<InfoItem>
 {
 public:
@@ -95,18 +90,17 @@ public:
     };
     Q_ENUM(ItemParent)
 
-    explicit InfoModel(Core::Player::PlayerManager* playerManager, QObject* parent = nullptr);
+    explicit InfoModel(QObject* parent = nullptr);
     ~InfoModel() override;
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
-    void resetModel(const Core::TrackList& tracks);
+    void resetModel(const Core::TrackList& tracks, const Core::Track& playingTrack);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets::Info
-} // namespace Fy
+} // namespace Fy::Gui::Widgets::Info

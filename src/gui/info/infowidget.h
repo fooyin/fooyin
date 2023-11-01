@@ -51,29 +51,16 @@ class InfoWidget : public PropertiesTabWidget
 public:
     explicit InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* selectionController,
                         Utils::SettingsManager* settings, QWidget* parent = nullptr);
-
-    bool isHeaderHidden();
-    void setHeaderHidden(bool showHeader);
-
-    bool isScrollbarHidden();
-    void setScrollbarHidden(bool showScrollBar);
-
-    bool altRowColors();
-    void setAltRowColors(bool altColours);
+    ~InfoWidget();
 
     [[nodiscard]] QString name() const override;
-    void layoutEditingMenu(Utils::ActionContainer* menu) override;
 
 protected:
-    void setupUi();
-    void spanHeaders();
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    Utils::SettingsManager* m_settings;
-
-    QHBoxLayout* m_layout;
-    QTreeView* m_view;
-    InfoModel* m_model;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Widgets::Info
 } // namespace Gui
