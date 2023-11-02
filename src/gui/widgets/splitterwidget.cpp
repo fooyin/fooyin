@@ -283,7 +283,7 @@ void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
         setOrientation(p->splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
         setObjectName(Utils::EnumHelper::toString(p->splitter->orientation()) + u" Splitter"_s);
     });
-    menu->addAction(p->actionManager->registerAction(changeSplitter, id().append("Change")));
+    menu->addAction(changeSplitter);
 
     if(p->limit > 0 && p->widgetCount >= p->limit) {
         return;
