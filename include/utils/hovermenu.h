@@ -21,11 +21,11 @@
 
 #include "fyutils_export.h"
 
-#include <QDialog>
 #include <QTimer>
+#include <QWidget>
 
 namespace Fy::Utils {
-class FYUTILS_EXPORT HoverMenu : public QDialog
+class FYUTILS_EXPORT HoverMenu : public QWidget
 {
     Q_OBJECT
 
@@ -33,11 +33,10 @@ public:
     explicit HoverMenu(QWidget* parent = nullptr);
     ~HoverMenu() override = default;
 
+    void start(std::chrono::milliseconds ms);
+
 protected:
     void leaveEvent(QEvent* event) override;
-    void showEvent(QShowEvent* event) override;
-
-    void closeMenu();
 
 private:
     QTimer m_timer;

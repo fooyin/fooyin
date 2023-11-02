@@ -21,38 +21,37 @@
 
 #include <chrono>
 
-using namespace std::chrono_literals;
+namespace {
+void closeMenu(QTimer& timer, QWidget* self)
+{
+    if(self->underMouse() || self->parentWidget()->underMouse()) {
+        // Close as soon as mouse leaves
+        timer.start();
+        return;
+    }
+    timer.stop();
+    self->hide();
+}
+} // namespace
 
 namespace Fy::Utils {
 HoverMenu::HoverMenu(QWidget* parent)
-    : QDialog{parent}
+    : QWidget{parent}
 {
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::ToolTip);
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::Tool);
 
-    QObject::connect(&m_timer, &QTimer::timeout, this, &HoverMenu::closeMenu);
+    QObject::connect(&m_timer, &QTimer::timeout, this, [this]() { closeMenu(m_timer, this); });
+}
+
+void HoverMenu::start(std::chrono::milliseconds ms)
+{
+    m_timer.setInterval(ms);
+    m_timer.start(ms);
 }
 
 void HoverMenu::leaveEvent(QEvent* event)
 {
-    accept();
+    hide();
     QWidget::leaveEvent(event);
-}
-
-void HoverMenu::showEvent(QShowEvent* event)
-{
-    // Close after 1 second
-    m_timer.start(1s);
-    QDialog::showEvent(event);
-}
-
-void HoverMenu::closeMenu()
-{
-    if(this->underMouse() || parentWidget()->underMouse()) {
-        // Close as soon as mouse leaves
-        m_timer.start();
-        return;
-    }
-    m_timer.stop();
-    accept();
 }
 } // namespace Fy::Utils

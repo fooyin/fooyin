@@ -43,40 +43,45 @@ struct VolumeControl::Private
 {
     VolumeControl* self;
     Utils::SettingsManager* settings;
-
     Utils::ComboIcon* volumeIcon;
+    Utils::HoverMenu* volumeMenu;
     Utils::LogSlider* volumeSlider;
-    QTimer hideTimer;
+
     double prevValue{-1.0};
 
     Private(VolumeControl* self, Utils::SettingsManager* settings)
         : self{self}
         , settings{settings}
         , volumeIcon{new Utils::ComboIcon(Constants::Icons::VolumeMute, self)}
-        , volumeSlider{new Utils::LogSlider(Qt::Horizontal, self)}
+        , volumeMenu{new Utils::HoverMenu(self)}
+        , volumeSlider{new Utils::LogSlider(Qt::Vertical, self)}
     {
-        // volumeSlider->setMinimumHeight(100);
+        auto* volumeLayout = new QVBoxLayout(volumeMenu);
+        volumeLayout->addWidget(volumeSlider);
+
+        volumeSlider->setMinimumHeight(100);
         volumeSlider->setRange(MinVolume, 1.0);
         volumeSlider->setNaturalValue(settings->value<Core::Settings::OutputVolume>());
-
-        volumeSlider->hide();
     }
 
-    void showVolumeMenu()
+    void showVolumeMenu() const
     {
-        hideTimer.start(1s);
-        volumeSlider->show();
-    }
+        const int menuWidth  = volumeMenu->sizeHint().width();
+        const int menuHeight = volumeMenu->sizeHint().height();
 
-    void closeVolumeMenu()
-    {
-        if(self->underMouse() /* || self->parentWidget()->underMouse()*/) {
-            // Close as soon as mouse leaves
-            hideTimer.start();
-            return;
-        }
-        hideTimer.stop();
-        volumeSlider->hide();
+        const int yPosToWindow = self->mapToGlobal(QPoint{0, 0}).y();
+
+        // Only display volume slider above icon if it won't clip above the main window.
+        const bool displayAbove = (yPosToWindow - menuHeight) > 0;
+
+        const int x = !menuWidth - 15;
+        const int y = displayAbove ? (!self->height() - menuHeight - 10) : (self->height() + 10);
+
+        const QPoint pos(self->mapToGlobal(QPoint(x, y)));
+        volumeMenu->move(pos);
+        volumeMenu->show();
+
+        volumeMenu->start(1s);
     }
 
     void volumeChanged(double volume) const
@@ -137,7 +142,6 @@ VolumeControl::VolumeControl(Utils::SettingsManager* settings, QWidget* parent)
     p->volumeIcon->addIcon(Constants::Icons::VolumeMed);
     p->volumeIcon->addIcon(Constants::Icons::VolumeHigh);
 
-    layout->addWidget(p->volumeSlider, 0, Qt::AlignRight | Qt::AlignVCenter);
     layout->addWidget(p->volumeIcon, 0, Qt::AlignRight | Qt::AlignVCenter);
 
     p->volumeIcon->setMaximumSize(LabelSize);
@@ -146,9 +150,6 @@ VolumeControl::VolumeControl(Utils::SettingsManager* settings, QWidget* parent)
 
     QObject::connect(p->volumeIcon, &Utils::ComboIcon::entered, this, [this]() { p->showVolumeMenu(); });
     QObject::connect(p->volumeIcon, &Utils::ComboIcon::clicked, this, [this]() { p->mute(); });
-    QObject::connect(p->volumeIcon, &Utils::ComboIcon::mouseLeft, this, [this]() { p->closeVolumeMenu(); });
-
-    QObject::connect(&p->hideTimer, &QTimer::timeout, this, [this]() { p->closeVolumeMenu(); });
 
     QObject::connect(p->volumeSlider, &Utils::LogSlider::logValueChanged, this,
                      [this](double volume) { p->volumeChanged(volume); });
