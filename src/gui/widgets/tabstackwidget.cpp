@@ -21,7 +21,9 @@
 
 #include <core/constants.h>
 #include <gui/widgetprovider.h>
+#include <utils/enumhelper.h>
 
+#include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QInputDialog>
 #include <QTabBar>
@@ -33,6 +35,8 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fy::Gui::Widgets {
 struct TabStackWidget::Private
 {
+    TabStackWidget* self;
+
     Utils::ActionManager* actionManager;
     WidgetProvider* widgetProvider;
 
@@ -40,7 +44,8 @@ struct TabStackWidget::Private
     QTabWidget* tabs;
 
     Private(TabStackWidget* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider)
-        : actionManager{actionManager}
+        : self{self}
+        , actionManager{actionManager}
         , widgetProvider{widgetProvider}
         , tabs{new QTabWidget(self)}
     {
@@ -119,6 +124,7 @@ void TabStackWidget::saveLayout(QJsonArray& array)
     QJsonObject options;
     options["Children"_L1] = widgets;
     options["State"_L1]    = state;
+    options["Position"_L1] = Utils::EnumHelper::toString(p->tabs->tabPosition());
 
     QJsonObject tabStack;
     tabStack[layoutName()] = options;
@@ -127,6 +133,12 @@ void TabStackWidget::saveLayout(QJsonArray& array)
 
 void TabStackWidget::loadLayout(const QJsonObject& object)
 {
+    const auto position
+        = Utils::EnumHelper::fromString<QTabWidget::TabPosition>(object.value("Position"_L1).toString());
+    if(position) {
+        p->tabs->setTabPosition(*position);
+    }
+
     const auto widgets = object.value("Children"_L1).toArray();
 
     WidgetContainer::loadWidgets(widgets);
@@ -175,7 +187,7 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const QPoint point = event->pos();
+    const QPoint point = p->tabs->tabBar()->mapFrom(this, event->pos());
     const int index    = p->tabs->tabBar()->tabAt(point);
 
     if(index < 0 || index >= p->tabs->count()) {
@@ -185,7 +197,53 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* widget = p->widgets.at(index);
 
-    auto* rename = new QAction(u"Rename"_s, menu);
+    auto* posMenu = new QMenu(tr("&Position"), menu);
+
+    auto* positionGroup = new QActionGroup(menu);
+
+    auto* north = new QAction(tr("&North"), posMenu);
+    auto* east  = new QAction(tr("&East"), posMenu);
+    auto* south = new QAction(tr("&South"), posMenu);
+    auto* west  = new QAction(tr("&West"), posMenu);
+
+    north->setCheckable(true);
+    east->setCheckable(true);
+    south->setCheckable(true);
+    west->setCheckable(true);
+
+    const auto tabPos = p->tabs->tabPosition();
+
+    switch(tabPos) {
+        case(QTabWidget::North):
+            north->setChecked(true);
+            break;
+        case(QTabWidget::East):
+            east->setChecked(true);
+            break;
+        case(QTabWidget::South):
+            south->setChecked(true);
+            break;
+        case(QTabWidget::West):
+            west->setChecked(true);
+            break;
+    }
+
+    QObject::connect(north, &QAction::triggered, this, [this]() { p->tabs->setTabPosition(QTabWidget::North); });
+    QObject::connect(east, &QAction::triggered, this, [this]() { p->tabs->setTabPosition(QTabWidget::East); });
+    QObject::connect(south, &QAction::triggered, this, [this]() { p->tabs->setTabPosition(QTabWidget::South); });
+    QObject::connect(west, &QAction::triggered, this, [this]() { p->tabs->setTabPosition(QTabWidget::West); });
+
+    positionGroup->addAction(north);
+    positionGroup->addAction(east);
+    positionGroup->addAction(south);
+    positionGroup->addAction(west);
+
+    posMenu->addAction(north);
+    posMenu->addAction(east);
+    posMenu->addAction(south);
+    posMenu->addAction(west);
+
+    auto* rename = new QAction(tr("&Rename"), menu);
     QObject::connect(rename, &QAction::triggered, this, [this, index]() {
         bool success{false};
         const QString text = QInputDialog::getText(this, tr("Rename"), tr("Tab Name:"), QLineEdit::Normal,
@@ -196,13 +254,14 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
         }
     });
 
-    auto* remove = new QAction(u"Remove"_s, menu);
+    auto* remove = new QAction(tr("Re&move"), menu);
     QObject::connect(remove, &QAction::triggered, this, [this, widget]() { removeWidget(widget); });
 
-    menu->addAction(rename);
+    menu->addMenu(posMenu);
     menu->addSeparator();
+    menu->addAction(rename);
     menu->addAction(remove);
 
-    menu->popup(mapToGlobal(point));
+    menu->popup(p->tabs->tabBar()->mapToGlobal(point));
 }
 } // namespace Fy::Gui::Widgets
