@@ -143,11 +143,17 @@ struct PlaylistHandler::Private
     [[nodiscard]] QString findUniqueName(const QString& name) const
     {
         QString newName{name};
+
+        if(newName.isEmpty()) {
+            newName = QStringLiteral("Playlist");
+        }
+
         int count{1};
         while(nameCount(newName) >= 1) {
-            newName = name + " (" + QString::number(count) + ")";
+            newName = newName + " (" + QString::number(count) + ")";
             ++count;
         }
+
         return newName;
     }
 
