@@ -60,6 +60,12 @@ struct TabStackWidget::Private
         }
         return -1;
     }
+
+    void changeTabPosition(QTabWidget::TabPosition position) const
+    {
+        tabs->setTabPosition(position);
+        tabs->adjustSize();
+    };
 };
 
 TabStackWidget::TabStackWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent)
@@ -228,10 +234,10 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
             break;
     }
 
-    QObject::connect(north, &QAction::triggered, this, [this]() { p->tabs->setTabPosition(QTabWidget::North); });
-    QObject::connect(east, &QAction::triggered, this, [this]() { p->tabs->setTabPosition(QTabWidget::East); });
-    QObject::connect(south, &QAction::triggered, this, [this]() { p->tabs->setTabPosition(QTabWidget::South); });
-    QObject::connect(west, &QAction::triggered, this, [this]() { p->tabs->setTabPosition(QTabWidget::West); });
+    QObject::connect(north, &QAction::triggered, this, [this]() { p->changeTabPosition(QTabWidget::North); });
+    QObject::connect(east, &QAction::triggered, this, [this]() { p->changeTabPosition(QTabWidget::East); });
+    QObject::connect(south, &QAction::triggered, this, [this]() { p->changeTabPosition(QTabWidget::South); });
+    QObject::connect(west, &QAction::triggered, this, [this]() { p->changeTabPosition(QTabWidget::West); });
 
     positionGroup->addAction(north);
     positionGroup->addAction(east);
