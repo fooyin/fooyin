@@ -50,6 +50,9 @@ set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingspage.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabbar.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabwidget.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/popuplineedit.h
 )
 
 set(SOURCES
@@ -84,6 +87,9 @@ set(SOURCES
     settings/settingsmodel.cpp
     settings/settingsmanager.cpp
     settings/settingsentry.cpp
+    widgets/editabletabbar.cpp
+    widgets/editabletabwidget.cpp
+    widgets/popuplineedit.cpp
 )
 
 create_fooyin_library(

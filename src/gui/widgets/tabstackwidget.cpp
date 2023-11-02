@@ -22,12 +22,14 @@
 #include <core/constants.h>
 #include <gui/widgetprovider.h>
 #include <utils/enumhelper.h>
+#include <utils/widgets/editabletabbar.h>
+#include <utils/widgets/editabletabwidget.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QInputDialog>
+#include <QStyleOptionViewItem>
 #include <QTabBar>
-#include <QTabWidget>
 #include <QVBoxLayout>
 
 using namespace Qt::Literals::StringLiterals;
@@ -41,16 +43,14 @@ struct TabStackWidget::Private
     WidgetProvider* widgetProvider;
 
     std::vector<FyWidget*> widgets;
-    QTabWidget* tabs;
+    Utils::EditableTabWidget* tabs;
 
     Private(TabStackWidget* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider)
         : self{self}
         , actionManager{actionManager}
         , widgetProvider{widgetProvider}
-        , tabs{new QTabWidget(self)}
-    {
-        tabs->setMovable(true);
-    }
+        , tabs{new Utils::EditableTabWidget(self)}
+    { }
 
     int indexOfWidget(FyWidget* widget)
     {
@@ -244,15 +244,7 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     posMenu->addAction(west);
 
     auto* rename = new QAction(tr("&Rename"), menu);
-    QObject::connect(rename, &QAction::triggered, this, [this, index]() {
-        bool success{false};
-        const QString text = QInputDialog::getText(this, tr("Rename"), tr("Tab Name:"), QLineEdit::Normal,
-                                                   p->tabs->tabText(index), &success);
-
-        if(success && !text.isEmpty()) {
-            p->tabs->setTabText(index, text);
-        }
-    });
+    QObject::connect(rename, &QAction::triggered, p->tabs->editableTabBar(), &Utils::EditableTabBar::showEditor);
 
     auto* remove = new QAction(tr("Re&move"), menu);
     QObject::connect(remove, &QAction::triggered, this, [this, widget]() { removeWidget(widget); });

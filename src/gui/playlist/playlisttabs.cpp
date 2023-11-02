@@ -27,6 +27,7 @@
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/widgets/editabletabbar.h>
 
 #include <QContextMenuEvent>
 #include <QInputDialog>
@@ -34,6 +35,7 @@
 #include <QLayout>
 #include <QMenu>
 #include <QTabBar>
+#include <QTimer>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -47,7 +49,7 @@ struct PlaylistTabs::Private
     Utils::SettingsManager* settings;
 
     QVBoxLayout* layout;
-    QTabBar* tabs;
+    Utils::EditableTabBar* tabs;
     FyWidget* tabsWidget{nullptr};
 
     Private(PlaylistTabs* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
@@ -58,7 +60,7 @@ struct PlaylistTabs::Private
         , controller{controller}
         , settings{settings}
         , layout{new QVBoxLayout(self)}
-        , tabs{new QTabBar(self)}
+        , tabs{new Utils::EditableTabBar(self)}
     {
         layout->addWidget(tabs);
         layout->setContentsMargins(0, 0, 0, 0);
@@ -120,6 +122,10 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* 
 
     setupTabs();
 
+    QObject::connect(p->tabs, &Utils::EditableTabBar::tabTextChanged, this, [this](int index, const QString& text) {
+        const int id = p->tabs->tabData(index).toInt();
+        p->playlistHandler->renamePlaylist(id, text);
+    });
     QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
     QObject::connect(p->tabs, &QTabBar::tabMoved, this, [this](int from, int to) { p->tabMoved(from, to); });
     QObject::connect(p->controller, &PlaylistController::currentPlaylistChanged, this,
@@ -199,15 +205,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         const int id = p->tabs->tabData(index).toInt();
 
         auto* renamePlAction = new QAction(u"Rename Playlist"_s, menu);
-        QObject::connect(renamePlAction, &QAction::triggered, this, [this, index, id]() {
-            bool success       = false;
-            const QString text = QInputDialog::getText(this, tr("Rename Playlist"), tr("Playlist Name:"),
-                                                       QLineEdit::Normal, p->tabs->tabText(index), &success);
-
-            if(success && !text.isEmpty()) {
-                p->playlistHandler->renamePlaylist(id, text);
-            }
-        });
+        QObject::connect(renamePlAction, &QAction::triggered, p->tabs, &Utils::EditableTabBar::showEditor);
 
         auto* removePlAction = new QAction(u"Remove Playlist"_s, menu);
         QObject::connect(removePlAction, &QAction::triggered, this,
