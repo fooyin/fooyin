@@ -49,7 +49,7 @@ void PlaylistView::setupView()
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setMouseTracking(true);
     setItemsExpandable(false);
-    setAcceptDrops(true);
+    viewport()->setAcceptDrops(true);
     setDragEnabled(true);
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::MoveAction);

@@ -117,6 +117,11 @@ constexpr auto SelectAll       = "Edit.SelectAll";
 constexpr auto Clear           = "Edit.Clear";
 } // namespace Actions
 
+namespace Mime {
+constexpr auto PlaylistItems = "application/x-fooyin-playlistitems";
+constexpr auto TrackList     = "application/x-fooyin-tracks";
+} // namespace Mime
+
 namespace Page {
 constexpr auto GeneralCore           = "Fooyin.Page.General.Core";
 constexpr auto Engine                = "Fooyin.Page.Engine";

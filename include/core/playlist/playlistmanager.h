@@ -44,8 +44,12 @@ public:
     virtual Playlist* createPlaylist(const QString& name, const TrackList& tracks = {}) = 0;
     virtual void appendToPlaylist(int id, const TrackList& tracks)                      = 0;
 
-    virtual void changePlaylistIndex(int id, int index) = 0;
-    virtual void changeActivePlaylist(int id)           = 0;
+    virtual void changePlaylistIndex(int id, int index)                   = 0;
+    virtual void changeActivePlaylist(int id)                             = 0;
+    virtual void changeActivePlaylist(Core::Playlist::Playlist* playlist) = 0;
+    virtual void schedulePlaylist(int id)                                 = 0;
+    virtual void schedulePlaylist(Core::Playlist::Playlist* playlist)     = 0;
+    virtual void clearSchedulePlaylist()                                  = 0;
 
     virtual void renamePlaylist(int id, const QString& name) = 0;
     virtual void removePlaylist(int id)                      = 0;

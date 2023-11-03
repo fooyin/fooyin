@@ -134,13 +134,17 @@ public:
     void setSort(const QString& sort);
 
 private:
+    FYCORE_EXPORT friend QDataStream& operator<<(QDataStream& stream, const Track& track);
+    FYCORE_EXPORT friend QDataStream& operator>>(QDataStream& stream, Track& track);
+
     struct Private;
     QSharedDataPointer<Private> p;
 };
-
-size_t qHash(const Track& track);
-
 using TrackList    = std::vector<Track>;
 using TrackIdMap   = std::unordered_map<int, Track>;
 using TrackPathMap = std::unordered_map<QString, Track>;
+
+size_t qHash(const Track& track);
+FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fy::Core::TrackList& tracks);
+FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fy::Core::TrackList& tracks);
 } // namespace Fy::Core

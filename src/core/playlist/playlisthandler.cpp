@@ -75,7 +75,9 @@ struct PlaylistHandler::Private
 
     PlaylistList playlists;
     PlaylistList removedPlaylists;
+
     Playlist* activePlaylist{nullptr};
+    Playlist* scheduledPlaylist{nullptr};
 
     Private(PlaylistHandler* self, DB::Database* database, Player::PlayerManager* playerManager,
             Utils::SettingsManager* settings)
@@ -92,8 +94,13 @@ struct PlaylistHandler::Private
         playerManager->play();
     }
 
-    void nextTrack(int delta) const
+    void nextTrack(int delta)
     {
+        if(scheduledPlaylist) {
+            activePlaylist    = scheduledPlaylist;
+            scheduledPlaylist = nullptr;
+        }
+
         if(!activePlaylist) {
             return;
         }
@@ -108,12 +115,12 @@ struct PlaylistHandler::Private
         startNextTrack(nextTrack, activePlaylist->currentTrackIndex());
     }
 
-    void next() const
+    void next()
     {
         nextTrack(1);
     }
 
-    void previous() const
+    void previous()
     {
         if(settings->value<Settings::RewindPreviousTrack>() && playerManager->currentPosition() > 5000) {
             playerManager->changePosition(0);
@@ -319,6 +326,31 @@ void PlaylistHandler::changeActivePlaylist(int id)
         p->activePlaylist = playlist->get();
         emit activePlaylistChanged(playlist->get());
     }
+}
+
+void PlaylistHandler::changeActivePlaylist(Playlist* playlist)
+{
+    p->activePlaylist = playlist;
+    emit activePlaylistChanged(playlist);
+}
+
+void PlaylistHandler::schedulePlaylist(int id)
+{
+    auto playlist = std::ranges::find_if(std::as_const(p->playlists),
+                                         [id](const auto& playlist) { return playlist->id() == id; });
+    if(playlist != p->playlists.cend()) {
+        p->scheduledPlaylist = playlist->get();
+    }
+}
+
+void PlaylistHandler::schedulePlaylist(Playlist* playlist)
+{
+    p->scheduledPlaylist = playlist;
+}
+
+void PlaylistHandler::clearSchedulePlaylist()
+{
+    p->scheduledPlaylist = nullptr;
 }
 
 void PlaylistHandler::renamePlaylist(int id, const QString& name)

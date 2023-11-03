@@ -22,6 +22,7 @@
 #include "playlistcontroller.h"
 
 #include <core/playlist/playlistmanager.h>
+#include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
@@ -34,10 +35,14 @@
 #include <QJsonObject>
 #include <QLayout>
 #include <QMenu>
+#include <QMimeData>
 #include <QTabBar>
 #include <QTimer>
 
+#include <chrono>
+
 using namespace Qt::Literals::StringLiterals;
+using namespace std::chrono_literals;
 
 namespace Fy::Gui::Widgets::Playlist {
 struct PlaylistTabs::Private
@@ -51,6 +56,9 @@ struct PlaylistTabs::Private
     QVBoxLayout* layout;
     Utils::EditableTabBar* tabs;
     FyWidget* tabsWidget{nullptr};
+
+    QBasicTimer hoverTimer;
+    int currentHoverIndex{-1};
 
     Private(PlaylistTabs* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
             PlaylistController* controller, Utils::SettingsManager* settings)
@@ -119,6 +127,8 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* 
     , p{std::make_unique<Private>(this, actionManager, widgetProvider, controller, settings)}
 {
     QObject::setObjectName(PlaylistTabs::name());
+
+    setAcceptDrops(true);
 
     setupTabs();
 
@@ -217,6 +227,48 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(createPlaylist);
 
     menu->popup(mapToGlobal(point));
+}
+
+void PlaylistTabs::dragEnterEvent(QDragEnterEvent* event)
+{
+    if(event->mimeData()->hasUrls() || event->mimeData()->hasFormat(Constants::Mime::TrackList)) {
+        event->acceptProposedAction();
+    }
+}
+
+void PlaylistTabs::dragMoveEvent(QDragMoveEvent* event)
+{
+    p->currentHoverIndex = p->tabs->tabAt(event->position().toPoint());
+
+    if(p->currentHoverIndex >= 0) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept(p->tabs->tabRect(p->currentHoverIndex));
+
+        if(!p->hoverTimer.isActive()) {
+            p->hoverTimer.start(1s, this);
+        }
+    }
+    else {
+        p->hoverTimer.stop();
+    }
+}
+
+void PlaylistTabs::dragLeaveEvent(QDragLeaveEvent* /*event*/)
+{
+    p->hoverTimer.stop();
+}
+
+void PlaylistTabs::timerEvent(QTimerEvent* event)
+{
+    QWidget::timerEvent(event);
+
+    if(event->timerId() == p->hoverTimer.timerId()) {
+        p->hoverTimer.stop();
+        if(p->currentHoverIndex >= 0) {
+            p->tabs->setCurrentIndex(p->currentHoverIndex);
+            p->tabChanged(p->currentHoverIndex);
+        }
+    }
 }
 
 QString PlaylistTabs::name() const

@@ -84,7 +84,7 @@ public:
     void setScrollbarHidden(bool showScrollBar) const;
 
     void selectionChanged();
-    void playlistTracksChanged() const;
+    void playlistTracksChanged(int index) const;
     void tracksRemoved() const;
 
     void customHeaderMenuRequested(QPoint pos);

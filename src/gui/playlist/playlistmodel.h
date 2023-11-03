@@ -86,9 +86,11 @@ public:
     void changePreset(const PlaylistPreset& preset);
 
 signals:
-    void tracksChanged();
+    void tracksChanged(int index);
 
 private:
+    friend PlaylistModelPrivate;
+
     std::unique_ptr<PlaylistModelPrivate> p;
 };
 } // namespace Gui::Widgets::Playlist

@@ -286,7 +286,7 @@ void PlaylistWidgetPrivate::selectionChanged()
                     else {
                         currentPlaylist->scheduleNextIndex(firstIndex);
                     }
-                    playlistController->playlistHandler()->changeActivePlaylist(currentPlaylist->id());
+                    playlistController->playlistHandler()->schedulePlaylist(currentPlaylist);
                 }
             }
         }
@@ -294,13 +294,18 @@ void PlaylistWidgetPrivate::selectionChanged()
     changingSelection = false;
 }
 
-void PlaylistWidgetPrivate::playlistTracksChanged() const
+void PlaylistWidgetPrivate::playlistTracksChanged(int index) const
 {
     Core::TrackList tracks;
     getTracksUnderIndex(model, {}, tracks);
 
+    playlistController->playlistHandler()->clearSchedulePlaylist();
+
     if(auto* playlist = playlistController->currentPlaylist()) {
         playlist->replaceTracks(tracks);
+        if(index >= 0) {
+            playlist->changeCurrentTrack(index);
+        }
         model->updateHeader(playlist);
     }
 }

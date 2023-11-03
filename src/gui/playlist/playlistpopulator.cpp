@@ -95,6 +95,9 @@ struct PlaylistPopulator::Private
         if(!child->pending()) {
             child->setPending(true);
             data.nodes[parent->key()].push_back(key);
+            if(type != PlaylistItem::Track) {
+                data.containerOrder.push_back(key);
+            }
         }
         return child;
     }
@@ -367,6 +370,27 @@ struct PlaylistPopulator::Private
         const auto remaining = static_cast<int>(pendingTracks.size());
         runBatch(std::min(remaining, BatchSize));
     }
+
+    void runTracks()
+    {
+        for(const Core::Track& track : pendingTracks) {
+            if(!self->mayRun()) {
+                return;
+            }
+            if(!track.enabled()) {
+                continue;
+            }
+            iterateTrack(track);
+        }
+
+        updateContainers();
+
+        if(!self->mayRun()) {
+            return;
+        }
+
+        QMetaObject::invokeMethod(self, "populatedTracks", Q_ARG(PendingData, data));
+    }
 };
 
 PlaylistPopulator::PlaylistPopulator(QObject* parent)
@@ -392,6 +416,29 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const Core::TrackList&
     p->pendingTracks = tracks;
 
     p->runBatch(InitialBatchSize);
+
+    setState(Idle);
+}
+
+void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const Core::TrackList& tracks, const QString& parent,
+                                  int row)
+{
+    setState(Running);
+
+    p->data.clear();
+    p->headers.clear();
+    p->currentIndex = 0;
+    p->data.parent  = parent;
+    p->data.row     = row;
+
+    if(std::exchange(p->currentPreset, preset) != preset) {
+        p->subheaders.clear();
+    }
+
+    p->updateScripts();
+    p->pendingTracks = tracks;
+
+    p->runTracks();
 
     setState(Idle);
 }
