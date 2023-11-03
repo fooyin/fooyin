@@ -42,15 +42,13 @@
 #include <QVBoxLayout>
 
 namespace {
-using PresetRegistry  = Fy::Gui::Widgets::Playlist::PresetRegistry;
-using PlaylistPreset  = Fy::Gui::Widgets::Playlist::PlaylistPreset;
-using TextBlock       = Fy::Gui::Widgets::Playlist::TextBlock;
-using TextBlockList   = Fy::Gui::Widgets::Playlist::TextBlockList;
-using PresetInput     = Fy::Gui::Widgets::CustomisableInput;
-using PresetInputList = Fy::Utils::ExpandableInputList;
-using PresetInputBox  = Fy::Utils::ExpandableInputBox;
+using PresetRegistry    = Fy::Gui::Widgets::Playlist::PresetRegistry;
+using PlaylistPreset    = Fy::Gui::Widgets::Playlist::PlaylistPreset;
+using TextBlock         = Fy::Gui::Widgets::Playlist::TextBlock;
+using TextBlockList     = Fy::Gui::Widgets::Playlist::TextBlockList;
+using CustomisableInput = Fy::Gui::Widgets::CustomisableInput;
 
-void setupInputBox(const TextBlock& preset, PresetInput* block)
+void setupInputBox(const TextBlock& preset, CustomisableInput* block)
 {
     block->setText(preset.text);
     block->setFont(preset.font);
@@ -58,15 +56,15 @@ void setupInputBox(const TextBlock& preset, PresetInput* block)
 
     Fy::Gui::Widgets::CustomisableInput::State state;
     if(preset.colourChanged) {
-        state |= PresetInput::ColourChanged;
+        state |= CustomisableInput::ColourChanged;
     }
     if(preset.fontChanged) {
-        state |= PresetInput::FontChanged;
+        state |= CustomisableInput::FontChanged;
     }
     block->setState(state);
 }
 
-void updateTextBlock(const PresetInput* presetInput, TextBlock& textBlock)
+void updateTextBlock(const CustomisableInput* presetInput, TextBlock& textBlock)
 {
     textBlock.text   = presetInput->text();
     textBlock.font   = presetInput->font();
@@ -74,11 +72,11 @@ void updateTextBlock(const PresetInput* presetInput, TextBlock& textBlock)
 
     auto state = presetInput->state();
 
-    textBlock.fontChanged   = state & PresetInput::FontChanged;
-    textBlock.colourChanged = state & PresetInput::ColourChanged;
+    textBlock.fontChanged   = state & CustomisableInput::FontChanged;
+    textBlock.colourChanged = state & CustomisableInput::ColourChanged;
 }
 
-void updateTextBlocks(const PresetInputList& presetInputs, TextBlockList& textBlocks)
+void updateTextBlocks(const Fy::Utils::ExpandableInputList& presetInputs, TextBlockList& textBlocks)
 {
     textBlocks.clear();
 
@@ -93,14 +91,14 @@ void updateTextBlocks(const PresetInputList& presetInputs, TextBlockList& textBl
     }
 }
 
-void createPresetInput(const TextBlock& block, PresetInputBox* box, QWidget* parent)
+void createPresetInput(const TextBlock& block, Fy::Utils::ExpandableInputBox* box, QWidget* parent)
 {
-    auto* input = new PresetInput(parent);
+    auto* input = new CustomisableInput(parent);
     setupInputBox(block, input);
     box->addInput(input);
 }
 
-void createPresetInputs(const TextBlockList& blocks, PresetInputBox* box, QWidget* parent)
+void createPresetInputs(const TextBlockList& blocks, Fy::Utils::ExpandableInputBox* box, QWidget* parent)
 {
     if(blocks.empty()) {
         createPresetInput({}, box, parent);
@@ -142,16 +140,16 @@ private:
     QComboBox* m_presetBox;
     QTabWidget* m_presetTabs;
 
-    PresetInputBox* m_headerTitle;
-    PresetInputBox* m_headerSubtitle;
-    PresetInputBox* m_headerSideText;
-    PresetInputBox* m_headerInfo;
+    Utils::ExpandableInputBox* m_headerTitle;
+    Utils::ExpandableInputBox* m_headerSubtitle;
+    Utils::ExpandableInputBox* m_headerSideText;
+    Utils::ExpandableInputBox* m_headerInfo;
     QSpinBox* m_headerRowHeight;
 
-    PresetInputBox* m_subHeaderText;
+    Utils::ExpandableInputBox* m_subHeaderText;
     QSpinBox* m_subHeaderRowHeight;
 
-    PresetInputBox* m_trackText;
+    Utils::ExpandableInputBox* m_trackText;
     QSpinBox* m_trackRowHeight;
 
     QCheckBox* m_showCover;
@@ -192,10 +190,18 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     auto* headerWidget = new QWidget();
     auto* headerLayout = new QGridLayout(headerWidget);
 
-    m_headerTitle         = new PresetInputBox(tr("Title: "), this);
-    m_headerSubtitle      = new PresetInputBox(tr("Subtitle: "), this);
-    m_headerSideText      = new PresetInputBox(tr("Side text: "), this);
-    m_headerInfo          = new PresetInputBox(tr("Info: "), this);
+    const auto inputAttributes = Utils::ExpandableInput::CustomWidget;
+
+    m_headerTitle    = new Utils::ExpandableInputBox(tr("Title: "), inputAttributes, this);
+    m_headerSubtitle = new Utils::ExpandableInputBox(tr("Subtitle: "), inputAttributes, this);
+    m_headerSideText = new Utils::ExpandableInputBox(tr("Side text: "), inputAttributes, this);
+    m_headerInfo     = new Utils::ExpandableInputBox(tr("Info: "), inputAttributes, this);
+
+    m_headerTitle->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
+    m_headerSideText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
+    m_headerSideText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
+    m_headerInfo->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
+
     auto* headerRowHeight = new QLabel(tr("Row height: "), this);
 
     m_headerRowHeight->setMinimumWidth(120);
@@ -223,7 +229,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     m_subHeaderRowHeight->setMinimumWidth(120);
     m_subHeaderRowHeight->setMaximumWidth(120);
 
-    m_subHeaderText = new PresetInputBox(tr("Text: "), this);
+    m_subHeaderText = new Utils::ExpandableInputBox(tr("Text: "), inputAttributes, this);
+    m_subHeaderText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
 
     subheaderLayout->addWidget(subHeaderRowHeight, 0, 0);
     subheaderLayout->addWidget(m_subHeaderRowHeight, 1, 0);
@@ -241,7 +248,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     m_trackRowHeight->setMinimumWidth(120);
     m_trackRowHeight->setMaximumWidth(120);
 
-    m_trackText = new PresetInputBox(tr("Text: "), this);
+    m_trackText = new Utils::ExpandableInputBox(tr("Text: "), inputAttributes, this);
+    m_trackText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
 
     trackLayout->addWidget(trackRowHeight, 0, 0);
     trackLayout->addWidget(m_trackRowHeight, 1, 0);
