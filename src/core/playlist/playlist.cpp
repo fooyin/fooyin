@@ -267,6 +267,7 @@ void Playlist::removeTracks(const IndexSet& indexes)
     if(indexes.contains(p->nextTrackIndex)) {
         p->nextTrackIndex = -1;
     }
+    p->tracksModified = true;
 }
 
 void Playlist::clear()
