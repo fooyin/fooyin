@@ -526,6 +526,8 @@ void PlaylistModelPrivate::removeEmptyHeaders(const QModelIndexList& headers)
         }
     }
 
+    std::set<QString> removedHeaderKeys;
+
     while(!headersToCheck.empty()) {
         const QModelIndex header{headersToCheck.front()};
         headersToCheck.pop();
@@ -534,13 +536,14 @@ void PlaylistModelPrivate::removeEmptyHeaders(const QModelIndexList& headers)
         const QModelIndex headerParent       = header.parent();
         const PlaylistItem* headerParentItem = self->itemForIndex(headerParent);
 
-        if(!headerParentItem) {
+        if(!headerParentItem || removedHeaderKeys.contains(headerItem->key())) {
             continue;
         }
 
         if(headerItem && headerItem->childCount() < 1) {
             const int headerRow = headerItem->row();
             self->removePlaylistRows(headerRow, 1, headerParent);
+            removedHeaderKeys.emplace(headerItem->key());
             nodes.erase(headerItem->key());
         }
         if(headerParent.isValid()) {
