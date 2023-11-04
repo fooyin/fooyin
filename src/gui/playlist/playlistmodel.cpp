@@ -657,7 +657,7 @@ void PlaylistModelPrivate::mergeHeaders(QModelIndexList& headersToUpdate)
 
         PlaylistItem* parentItem = self->itemForIndex(parent);
         if(!parentItem || parentItem->childCount() < 1) {
-            return;
+            continue;
         }
 
         int row{0};
