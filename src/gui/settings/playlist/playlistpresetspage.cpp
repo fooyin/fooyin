@@ -128,7 +128,7 @@ public:
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(m_groupBox);
 
-        auto* groupLayout = new QVBoxLayout(m_groupBox);
+        auto* groupLayout = new QGridLayout(m_groupBox);
 
         m_rowHeight->setValue(rowHeight);
 
@@ -136,13 +136,13 @@ public:
         m_rightBox->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
 
         auto* rowHeightLabel = new QLabel(tr("Row height: "), this);
-        m_rowHeight->setMinimumWidth(120);
-        m_rowHeight->setMaximumWidth(120);
 
-        groupLayout->addWidget(rowHeightLabel);
-        groupLayout->addWidget(m_rowHeight);
-        groupLayout->addWidget(m_leftBox);
-        groupLayout->addWidget(m_rightBox);
+        groupLayout->addWidget(rowHeightLabel, 0, 0);
+        groupLayout->addWidget(m_rowHeight, 0, 1);
+        groupLayout->addWidget(m_leftBox, 1, 0, 1, 3);
+        groupLayout->addWidget(m_rightBox, 2, 0, 1, 3);
+
+        groupLayout->setColumnStretch(2, 1);
     }
 
     void addLeftInput(const TextBlock& preset)
@@ -338,20 +338,17 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
 
     auto* headerRowHeight = new QLabel(tr("Row height: "), this);
 
-    m_headerRowHeight->setMinimumWidth(120);
-    m_headerRowHeight->setMaximumWidth(120);
-
     headerLayout->addWidget(headerRowHeight, 0, 0);
-    headerLayout->addWidget(m_headerRowHeight, 1, 0);
-    headerLayout->addWidget(m_simpleHeader, 1, 1);
-    headerLayout->addWidget(m_showCover, 1, 2);
-    headerLayout->addWidget(m_headerTitle, 2, 0, 1, 5);
-    headerLayout->addWidget(m_headerSubtitle, 3, 0, 1, 5);
-    headerLayout->addWidget(m_headerSideText, 4, 0, 1, 5);
-    headerLayout->addWidget(m_headerInfo, 5, 0, 1, 5);
+    headerLayout->addWidget(m_headerRowHeight, 0, 1);
+    headerLayout->addWidget(m_simpleHeader, 1, 0, 1, 2);
+    headerLayout->addWidget(m_showCover, 2, 0, 1, 2);
+    headerLayout->addWidget(m_headerTitle, 3, 0, 1, 5);
+    headerLayout->addWidget(m_headerSubtitle, 4, 0, 1, 5);
+    headerLayout->addWidget(m_headerSideText, 5, 0, 1, 5);
+    headerLayout->addWidget(m_headerInfo, 6, 0, 1, 5);
 
+    headerLayout->setColumnStretch(4, 1);
     headerLayout->setRowStretch(headerLayout->rowCount(), 1);
-    headerLayout->setColumnStretch(0, 1);
 
     m_presetTabs->addTab(headerWidget, tr("Header"));
 
@@ -378,19 +375,17 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
 
     auto* trackRowHeight = new QLabel(tr("Row height: "), this);
 
-    m_trackRowHeight->setMinimumWidth(120);
-    m_trackRowHeight->setMaximumWidth(120);
-
     m_trackLeftText = new Utils::ExpandableInputBox(tr("Left-aligned text: "), inputAttributes, this);
     m_trackLeftText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
     m_trackRightText = new Utils::ExpandableInputBox(tr("Right-aligned text: "), inputAttributes, this);
     m_trackRightText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
 
     trackLayout->addWidget(trackRowHeight, 0, 0);
-    trackLayout->addWidget(m_trackRowHeight, 1, 0);
-    trackLayout->addWidget(m_trackLeftText, 2, 0, 1, 2);
-    trackLayout->addWidget(m_trackRightText, 3, 0, 1, 2);
+    trackLayout->addWidget(m_trackRowHeight, 0, 1);
+    trackLayout->addWidget(m_trackLeftText, 1, 0, 1, 3);
+    trackLayout->addWidget(m_trackRightText, 2, 0, 1, 3);
 
+    trackLayout->setColumnStretch(2, 1);
     trackLayout->setRowStretch(trackLayout->rowCount(), 1);
 
     m_presetTabs->addTab(tracksWidget, tr("Tracks"));
