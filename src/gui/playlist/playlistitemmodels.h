@@ -39,6 +39,7 @@ public:
     [[nodiscard]] TextBlockList subtitle() const;
     [[nodiscard]] TextBlockList sideText() const;
     [[nodiscard]] TextBlockList info() const;
+    [[nodiscard]] int rowHeight() const;
 
     [[nodiscard]] QString genres() const;
 
@@ -48,6 +49,7 @@ public:
     void setSubtitle(const TextBlockList& subtitle);
     void setSideText(const TextBlockList& text);
     void setInfo(const TextBlockList& info);
+    void setRowHeight(int height);
 
     void addTrack(const Core::Track& track);
     void addTracks(const Core::TrackList& tracks);
@@ -62,6 +64,8 @@ private:
     TextBlockList m_subtitle;
     TextBlockList m_sideText;
     TextBlockList m_info;
+
+    int m_rowHeight;
 };
 
 class Track

@@ -63,6 +63,11 @@ TextBlockList Container::info() const
     return m_info;
 }
 
+int Container::rowHeight() const
+{
+    return m_rowHeight;
+}
+
 QString Container::genres() const
 {
     return m_genres;
@@ -120,6 +125,11 @@ void Container::setSideText(const TextBlockList& text)
 void Container::setInfo(const TextBlockList& info)
 {
     m_info = info;
+}
+
+void Container::setRowHeight(int height)
+{
+    m_rowHeight = height;
 }
 
 void Container::addTrack(const Core::Track& track)

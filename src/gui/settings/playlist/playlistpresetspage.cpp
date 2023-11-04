@@ -32,6 +32,7 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QGroupBox>
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
@@ -42,7 +43,6 @@
 #include <QVBoxLayout>
 
 namespace {
-using PresetRegistry    = Fy::Gui::Widgets::Playlist::PresetRegistry;
 using PlaylistPreset    = Fy::Gui::Widgets::Playlist::PlaylistPreset;
 using TextBlock         = Fy::Gui::Widgets::Playlist::TextBlock;
 using TextBlockList     = Fy::Gui::Widgets::Playlist::TextBlockList;
@@ -112,6 +112,141 @@ void createPresetInputs(const TextBlockList& blocks, Fy::Utils::ExpandableInputB
 } // namespace
 
 namespace Fy::Gui::Settings {
+class ExpandableGroupBox : public Utils::ExpandableInput
+{
+    Q_OBJECT
+
+public:
+    explicit ExpandableGroupBox(int rowHeight, QWidget* parent = nullptr)
+        : ExpandableInput{Utils::ExpandableInput::CustomWidget, parent}
+        , m_groupBox{new QGroupBox(this)}
+        , m_rowHeight{new QSpinBox(this)}
+        , m_leftBox{new Utils::ExpandableInputBox(tr("Left-aligned text: "), ExpandableInput::CustomWidget, this)}
+        , m_rightBox{new Utils::ExpandableInputBox(tr("Right-aligned text: "), ExpandableInput::CustomWidget, this)}
+    {
+        auto* layout = new QVBoxLayout(this);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->addWidget(m_groupBox);
+
+        auto* groupLayout = new QVBoxLayout(m_groupBox);
+
+        m_rowHeight->setValue(rowHeight);
+
+        m_leftBox->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
+        m_rightBox->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
+
+        auto* rowHeightLabel = new QLabel(tr("Row height: "), this);
+        m_rowHeight->setMinimumWidth(120);
+        m_rowHeight->setMaximumWidth(120);
+
+        groupLayout->addWidget(rowHeightLabel);
+        groupLayout->addWidget(m_rowHeight);
+        groupLayout->addWidget(m_leftBox);
+        groupLayout->addWidget(m_rightBox);
+    }
+
+    void addLeftInput(const TextBlock& preset)
+    {
+        addInput(preset, m_leftBox);
+    }
+
+    void addRightInput(const TextBlock& preset)
+    {
+        addInput(preset, m_rightBox);
+    }
+
+    Utils::ExpandableInputList leftBlocks() const
+    {
+        return m_leftBox->blocks();
+    }
+
+    Utils::ExpandableInputList rightBlocks() const
+    {
+        return m_rightBox->blocks();
+    }
+
+    int rowHeight() const
+    {
+        return m_rowHeight->value();
+    }
+
+private:
+    void addInput(const TextBlock& preset, Utils::ExpandableInputBox* box)
+    {
+        auto* block = new CustomisableInput(this);
+        block->setText(preset.text);
+        block->setFont(preset.font);
+        block->setColour(preset.colour);
+
+        CustomisableInput::State state;
+        if(preset.colourChanged) {
+            state |= CustomisableInput::ColourChanged;
+        }
+        if(preset.fontChanged) {
+            state |= CustomisableInput::FontChanged;
+        }
+        block->setState(state);
+
+        box->addInput(block);
+    }
+
+    QGroupBox* m_groupBox;
+    QSpinBox* m_rowHeight;
+    Utils::ExpandableInputBox* m_leftBox;
+    Utils::ExpandableInputBox* m_rightBox;
+};
+
+void createGroupPresetInputs(const Widgets::Playlist::SubheaderRow& subheader, Fy::Utils::ExpandableInputBox* box,
+                             QWidget* parent)
+{
+    if(!subheader.isValid()) {
+        return;
+    }
+
+    auto* input = new ExpandableGroupBox(subheader.rowHeight, parent);
+
+    if(subheader.leftText.empty()) {
+        input->addLeftInput({});
+    }
+    else {
+        for(const auto& block : subheader.leftText) {
+            input->addLeftInput(block);
+        }
+    }
+
+    if(subheader.rightText.empty()) {
+        input->addRightInput({});
+    }
+    else {
+        for(const auto& block : subheader.rightText) {
+            input->addRightInput(block);
+        }
+    }
+
+    box->addInput(input);
+}
+
+void updateGroupTextBlocks(const Fy::Utils::ExpandableInputList& presetInputs,
+                           Fy::Gui::Widgets::Playlist::SubheaderRows& textBlocks)
+{
+    textBlocks.clear();
+
+    for(const auto& input : presetInputs) {
+        if(auto presetInput = qobject_cast<ExpandableGroupBox*>(input)) {
+            Widgets::Playlist::SubheaderRow block;
+
+            auto leftBlocks  = presetInput->leftBlocks();
+            auto rightBlocks = presetInput->rightBlocks();
+
+            updateTextBlocks(leftBlocks, block.leftText);
+            updateTextBlocks(rightBlocks, block.rightText);
+            block.rowHeight = presetInput->rowHeight();
+
+            textBlocks.emplace_back(block);
+        }
+    }
+}
+
 class PlaylistPresetsPageWidget : public Utils::SettingsPageWidget
 {
 public:
@@ -125,7 +260,7 @@ public:
 
     void newPreset();
     void deletePreset();
-    void updatePreset();
+    void updatePreset(bool force = false);
     void clonePreset();
 
     void selectionChanged();
@@ -146,10 +281,10 @@ private:
     Utils::ExpandableInputBox* m_headerInfo;
     QSpinBox* m_headerRowHeight;
 
-    Utils::ExpandableInputBox* m_subHeaderText;
-    QSpinBox* m_subHeaderRowHeight;
+    Utils::ExpandableInputBox* m_subHeaders;
 
-    Utils::ExpandableInputBox* m_trackText;
+    Utils::ExpandableInputBox* m_trackLeftText;
+    Utils::ExpandableInputBox* m_trackRightText;
     QSpinBox* m_trackRowHeight;
 
     QCheckBox* m_showCover;
@@ -168,7 +303,6 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
     , m_headerRowHeight{new QSpinBox(this)}
-    , m_subHeaderRowHeight{new QSpinBox(this)}
     , m_trackRowHeight{new QSpinBox(this)}
     , m_showCover{new QCheckBox(tr("Show Cover"), this)}
     , m_simpleHeader{new QCheckBox(tr("Simple Header"), this)}
@@ -224,17 +358,16 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     auto* subheaderWidget = new QWidget();
     auto* subheaderLayout = new QGridLayout(subheaderWidget);
 
-    auto* subHeaderRowHeight = new QLabel(tr("Row height: "), this);
+    m_subHeaders = new Utils::ExpandableInputBox(tr("Subheaders: "), inputAttributes, this);
+    m_subHeaders->setInputWidget([](QWidget* parent) {
+        Widgets::Playlist::SubheaderRow subheader;
+        auto* groupBox = new ExpandableGroupBox(subheader.rowHeight, parent);
+        groupBox->addLeftInput({});
+        groupBox->addRightInput({});
+        return groupBox;
+    });
 
-    m_subHeaderRowHeight->setMinimumWidth(120);
-    m_subHeaderRowHeight->setMaximumWidth(120);
-
-    m_subHeaderText = new Utils::ExpandableInputBox(tr("Text: "), inputAttributes, this);
-    m_subHeaderText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
-
-    subheaderLayout->addWidget(subHeaderRowHeight, 0, 0);
-    subheaderLayout->addWidget(m_subHeaderRowHeight, 1, 0);
-    subheaderLayout->addWidget(m_subHeaderText, 2, 0, 1, 3);
+    subheaderLayout->addWidget(m_subHeaders, 0, 0, 1, 3);
 
     m_presetTabs->addTab(subheaderWidget, tr("Subheaders"));
 
@@ -248,12 +381,15 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     m_trackRowHeight->setMinimumWidth(120);
     m_trackRowHeight->setMaximumWidth(120);
 
-    m_trackText = new Utils::ExpandableInputBox(tr("Text: "), inputAttributes, this);
-    m_trackText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
+    m_trackLeftText = new Utils::ExpandableInputBox(tr("Left-aligned text: "), inputAttributes, this);
+    m_trackLeftText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
+    m_trackRightText = new Utils::ExpandableInputBox(tr("Right-aligned text: "), inputAttributes, this);
+    m_trackRightText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
 
     trackLayout->addWidget(trackRowHeight, 0, 0);
     trackLayout->addWidget(m_trackRowHeight, 1, 0);
-    trackLayout->addWidget(m_trackText, 2, 0, 1, 2);
+    trackLayout->addWidget(m_trackLeftText, 2, 0, 1, 2);
+    trackLayout->addWidget(m_trackRightText, 3, 0, 1, 2);
 
     trackLayout->setRowStretch(trackLayout->rowCount(), 1);
 
@@ -283,8 +419,11 @@ void PlaylistPresetsPageWidget::apply()
 void PlaylistPresetsPageWidget::reset()
 {
     m_settings->reset<Settings::PlaylistPresets>();
+
     m_presetRegistry->loadItems();
     populatePresets();
+
+    updatePreset(true);
 }
 
 void PlaylistPresetsPageWidget::populatePresets()
@@ -322,7 +461,7 @@ void PlaylistPresetsPageWidget::deletePreset()
     }
 }
 
-void PlaylistPresetsPageWidget::updatePreset()
+void PlaylistPresetsPageWidget::updatePreset(bool force)
 {
     auto preset = m_presetBox->currentData().value<PlaylistPreset>();
 
@@ -335,13 +474,13 @@ void PlaylistPresetsPageWidget::updatePreset()
     preset.header.simple    = m_simpleHeader->isChecked();
     preset.header.showCover = m_showCover->isEnabled() && m_showCover->isChecked();
 
-    updateTextBlocks(m_subHeaderText->blocks(), preset.subHeader.text);
-    preset.subHeader.rowHeight = m_subHeaderRowHeight->value();
+    updateGroupTextBlocks(m_subHeaders->blocks(), preset.subHeaders);
 
-    updateTextBlocks(m_trackText->blocks(), preset.track.text);
+    updateTextBlocks(m_trackLeftText->blocks(), preset.track.leftText);
+    updateTextBlocks(m_trackRightText->blocks(), preset.track.rightText);
     preset.track.rowHeight = m_trackRowHeight->value();
 
-    if(preset != m_presetRegistry->itemByIndex(preset.index)) {
+    if(force || preset != m_presetRegistry->itemByIndex(preset.index)) {
         m_presetRegistry->changeItem(preset);
     }
 }
@@ -382,13 +521,15 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_showCover->setChecked(preset.header.showCover);
     m_showCover->setEnabled(!preset.header.simple);
 
-    createPresetInputs(preset.subHeader.text, m_subHeaderText, this);
-    m_subHeaderRowHeight->setValue(preset.subHeader.rowHeight);
+    for(const auto& subheader : preset.subHeaders) {
+        createGroupPresetInputs(subheader, m_subHeaders, this);
+    }
 
     m_headerSubtitle->setEnabled(!preset.header.simple);
     m_headerInfo->setEnabled(!preset.header.simple);
 
-    createPresetInputs(preset.track.text, m_trackText, this);
+    createPresetInputs(preset.track.leftText, m_trackLeftText, this);
+    createPresetInputs(preset.track.rightText, m_trackRightText, this);
     m_trackRowHeight->setValue(preset.track.rowHeight);
 }
 
@@ -398,8 +539,9 @@ void PlaylistPresetsPageWidget::clearBlocks()
     m_headerSubtitle->clearBlocks();
     m_headerSideText->clearBlocks();
     m_headerInfo->clearBlocks();
-    m_subHeaderText->clearBlocks();
-    m_trackText->clearBlocks();
+    m_subHeaders->clearBlocks();
+    m_trackLeftText->clearBlocks();
+    m_trackRightText->clearBlocks();
 }
 
 PlaylistPresetsPage::PlaylistPresetsPage(Widgets::Playlist::PresetRegistry* presetRegistry,
@@ -412,3 +554,5 @@ PlaylistPresetsPage::PlaylistPresetsPage(Widgets::Playlist::PresetRegistry* pres
     setWidgetCreator([presetRegistry, settings] { return new PlaylistPresetsPageWidget(presetRegistry, settings); });
 }
 } // namespace Fy::Gui::Settings
+
+#include "playlistpresetspage.moc"

@@ -115,35 +115,38 @@ struct HeaderRow
 
 struct SubheaderRow
 {
-    TextBlockList text;
+    TextBlockList leftText;
+    TextBlockList rightText;
 
     int rowHeight{22};
 
     inline bool operator==(const SubheaderRow& other) const
     {
-        return std::tie(text, rowHeight) == std::tie(other.text, other.rowHeight);
+        return std::tie(leftText, rightText, rowHeight) == std::tie(other.leftText, other.rightText, other.rowHeight);
     };
 
     [[nodiscard]] inline bool isValid() const
     {
-        return !text.isEmpty();
+        return !leftText.isEmpty();
     }
 };
+using SubheaderRows = QList<SubheaderRow>;
 
 struct TrackRow
 {
-    TextBlockList text;
+    TextBlockList leftText;
+    TextBlockList rightText;
 
     int rowHeight{22};
 
     inline bool operator==(const TrackRow& other) const
     {
-        return std::tie(text, rowHeight) == std::tie(other.text, other.rowHeight);
+        return std::tie(leftText, rightText, rowHeight) == std::tie(other.leftText, other.rightText, other.rowHeight);
     };
 
     [[nodiscard]] inline bool isValid() const
     {
-        return !text.isEmpty();
+        return !leftText.isEmpty() || !rightText.isEmpty();
     }
 };
 
@@ -154,13 +157,13 @@ struct PlaylistPreset
     QString name;
 
     HeaderRow header;
-    SubheaderRow subHeader;
+    SubheaderRows subHeaders;
     TrackRow track;
 
     inline bool operator==(const PlaylistPreset& other) const
     {
-        return std::tie(id, index, name, header, subHeader, track)
-            == std::tie(other.id, other.index, other.name, other.header, other.subHeader, other.track);
+        return std::tie(id, index, name, header, subHeaders, track)
+            == std::tie(other.id, other.index, other.name, other.header, other.subHeaders, other.track);
     };
 
     [[nodiscard]] inline bool isValid() const

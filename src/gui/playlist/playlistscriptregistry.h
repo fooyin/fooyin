@@ -31,6 +31,7 @@ public:
 
     bool varExists(const QString& var) const override;
     Core::Scripting::ScriptResult varValue(const QString& var) const override;
+    Core::Scripting::ScriptResult function(const QString &func, const Core::Scripting::ValueList &args) const override;
 
     void changeCurrentContainer(Container* container);
 

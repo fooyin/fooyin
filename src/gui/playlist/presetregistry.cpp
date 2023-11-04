@@ -32,19 +32,21 @@ void loadDefaults(PresetRegistry* registry)
     preset.header.sideText.emplace_back("%year%", 14);
     preset.header.info.emplace_back(
         "$if(%ggenres%,%ggenres% | )$ifgreater(%gcount%,1,%gcount% Tracks,%gcount% Track) | $timems(%gduration%)", 12);
-    preset.subHeader.rowHeight = 19;
-    preset.subHeader.text.emplace_back("$ifgreater(%disctotal%,1,Disc #%disc%)||$timems(%gduration%)", 13);
+    SubheaderRow subheader;
+    subheader.rowHeight = 19;
+    subheader.leftText.emplace_back("$ifgreater(%disctotal%,1,Disc #%disc%)", 13);
+    subheader.rightText.emplace_back("$timems(%gduration%)", 13);
+    preset.subHeaders.push_back(subheader);
     preset.track.rowHeight = 23;
-    preset.track.text.emplace_back("$num(%track%,2).   ", 13);
-    preset.track.text.emplace_back("%title%", 13);
-    preset.track.text.emplace_back("||$ifgreater(%playcount%,0,| %playcount%)   ", 10);
-    preset.track.text.emplace_back("$timems(%duration%)", 13);
+    preset.track.leftText.emplace_back("$num(%track%,2).   ", 13);
+    preset.track.leftText.emplace_back("%title%", 13);
+    preset.track.rightText.emplace_back("$ifgreater(%playcount%,0,| %playcount%)   ", 10);
+    preset.track.rightText.emplace_back("$timems(%duration%)", 13);
 
     registry->addItem(preset);
 
     preset.name = QStringLiteral("Split Discs");
 
-    preset.subHeader.text.clear();
     preset.header.subtitle.clear();
     preset.header.subtitle.emplace_back("$if(%album%,%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)",
                                         14);

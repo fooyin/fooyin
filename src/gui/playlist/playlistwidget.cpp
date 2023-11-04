@@ -20,7 +20,6 @@
 #include "playlistwidget.h"
 
 #include "gui/guiconstants.h"
-#include "gui/guisettings.h"
 #include "gui/trackselectioncontroller.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
@@ -29,8 +28,6 @@
 #include "playlistwidget_p.h"
 #include "presetregistry.h"
 
-#include <core/library/librarymanager.h>
-#include <core/library/musiclibrary.h>
 #include <core/library/sortingregistry.h>
 #include <core/library/tracksort.h>
 #include <core/player/playermanager.h>
@@ -325,6 +322,7 @@ void PlaylistWidgetPrivate::tracksRemoved() const
     }
 
     model->removeTracks(trackSelection);
+    playlistController->playlistHandler()->clearSchedulePlaylist();
 
     if(auto* playlist = playlistController->currentPlaylist()) {
         playlist->removeTracks(indexes);

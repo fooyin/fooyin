@@ -88,28 +88,32 @@ QDataStream& operator>>(QDataStream& stream, HeaderRow& header)
 
 QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader)
 {
-    stream << subheader.text;
+    stream << subheader.leftText;
+    stream << subheader.rightText;
     stream << subheader.rowHeight;
     return stream;
 }
 
 QDataStream& operator>>(QDataStream& stream, SubheaderRow& subheader)
 {
-    stream >> subheader.text;
+    stream >> subheader.leftText;
+    stream >> subheader.rightText;
     stream >> subheader.rowHeight;
     return stream;
 }
 
 QDataStream& operator<<(QDataStream& stream, const TrackRow& track)
 {
-    stream << track.text;
+    stream << track.leftText;
+    stream << track.rightText;
     stream << track.rowHeight;
     return stream;
 }
 
 QDataStream& operator>>(QDataStream& stream, TrackRow& track)
 {
-    stream >> track.text;
+    stream >> track.leftText;
+    stream >> track.rightText;
     stream >> track.rowHeight;
     return stream;
 }
@@ -120,7 +124,7 @@ QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset)
     stream << preset.index;
     stream << preset.name;
     stream << preset.header;
-    stream << preset.subHeader;
+    stream << preset.subHeaders;
     stream << preset.track;
     return stream;
 }
@@ -131,7 +135,7 @@ QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset)
     stream >> preset.index;
     stream >> preset.name;
     stream >> preset.header;
-    stream >> preset.subHeader;
+    stream >> preset.subHeaders;
     stream >> preset.track;
     return stream;
 }
