@@ -45,6 +45,8 @@ void loadDefaults(PresetRegistry* registry)
 
     registry->addItem(preset);
 
+    preset.subHeaders.clear();
+
     preset.name = QStringLiteral("Split Discs");
 
     preset.header.subtitle.clear();
