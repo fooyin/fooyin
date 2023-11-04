@@ -106,8 +106,10 @@ public:
 
         if(itemIt != m_items.end()) {
             Item changedItem{item};
-            changedItem.name = findUniqueName(changedItem.name);
-            itemIt->second   = changedItem;
+            if(itemIt->second.name != changedItem.name) {
+                changedItem.name = findUniqueName(changedItem.name);
+            }
+            itemIt->second = changedItem;
             emit itemChanged(changedItem.id);
             return true;
         }
