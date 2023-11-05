@@ -428,7 +428,7 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fy::Core::Track& track)
     }
 
     if(map.contains("WM/PartOfSet")) {
-        const TagLib::ASF::AttributeList& discNumber = map["WM/TrackNumber"];
+        const TagLib::ASF::AttributeList& discNumber = map["WM/PartOfSet"];
         if(!discNumber.isEmpty()) {
             const TagLib::ASF::Attribute& num = discNumber.front();
             if(num.type() == TagLib::ASF::Attribute::UnicodeType) {
