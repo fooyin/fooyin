@@ -21,6 +21,7 @@ Checks: >
   -cppcoreguidelines-avoid-c-arrays,
   -misc-non-private-member-variables-in-classes,
   -misc-no-recursion,
+  -misc-include-cleaner,
   -modernize-use-trailing-return-type,
   -modernize-avoid-c-arrays,
   -readability-implicit-bool-conversion,
