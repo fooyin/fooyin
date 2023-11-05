@@ -160,38 +160,6 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fy::Core::Track& tr
         // TODO: Support multiple album artists
         track.setAlbumArtist(convertString(props["ALBUMARTIST"].toString()));
     }
-    if(props.contains("TRACKNUMBER")) {
-        // TODO: Handle in separate methods based on type
-        const auto trackNums = convertString(props["TRACKNUMBER"].toString()).split('/');
-        if(trackNums.empty()) {
-            return;
-        }
-
-        track.setTrackNumber(trackNums.constFirst().toInt());
-
-        if(trackNums.size() > 1) {
-            track.setTrackTotal(trackNums.at(1).toInt());
-        }
-    }
-    if(props.contains("TRACKTOTAL")) {
-        track.setTrackTotal(props["TRACKTOTAL"].toString().toInt());
-    }
-    if(props.contains("DISCNUMBER")) {
-        // TODO: Handle in separate methods based on type
-        const auto discNums = convertString(props["DISCNUMBER"].toString()).split('/');
-        if(discNums.empty()) {
-            return;
-        }
-
-        track.setDiscNumber(discNums.constFirst().toInt());
-
-        if(discNums.size() > 1) {
-            track.setDiscTotal(discNums.at(1).toInt());
-        }
-    }
-    if(props.contains("DISCTOTAL")) {
-        track.setDiscTotal(props["DISCTOTAL"].toString().toInt());
-    }
     if(props.contains("GENRE")) {
         track.setGenres(convertStringList(props["GENRE"]));
     }
@@ -216,8 +184,8 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fy::Core::Track& tr
     }
 
     static const std::set<TagLib::String> baseTags
-        = {"TITLE",    "ARTIST",    "ALBUM",   "ALBUMARTIST", "TRACKNUMBER", "DISCNUMBER", "GENRE",
-           "COMPOSER", "PERFORMER", "COMMENT", "LYRICS",      "DATE",        "RATING"};
+        = {"TITLE", "ARTIST",   "ALBUM",     "ALBUMARTIST", "TRACKNUMBER", "TRACKTOTAL", "DISCNUMBER", "DISCTOTAL",
+           "GENRE", "COMPOSER", "PERFORMER", "COMMENT",     "LYRICS",      "DATE",       "RATING"};
 
     for(const auto& [tag, values] : props) {
         if(!baseTags.contains(tag)) {
@@ -229,13 +197,61 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fy::Core::Track& tr
     }
 }
 
+void readTrackTotalPair(const QString& trackNumbers, Fy::Core::Track& track)
+{
+    const qsizetype splitIdx = trackNumbers.indexOf("/"_L1);
+    if(splitIdx >= 0) {
+        track.setTrackNumber(trackNumbers.first(splitIdx).toInt());
+        track.setTrackTotal(trackNumbers.sliced(splitIdx + 1).toInt());
+    }
+    else if(trackNumbers.size() > 0) {
+        track.setTrackNumber(trackNumbers.toInt());
+    }
+}
+void readDiscTotalPair(const QString& discNumbers, Fy::Core::Track& track)
+{
+    const qsizetype splitIdx = discNumbers.indexOf("/"_L1);
+    if(splitIdx >= 0) {
+        track.setDiscNumber(discNumbers.first(splitIdx).toInt());
+        track.setDiscTotal(discNumbers.sliced(splitIdx + 1).toInt());
+    }
+    else if(discNumbers.size() > 0) {
+        track.setDiscNumber(discNumbers.toInt());
+    }
+}
+
+void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Fy::Core::Track& track)
+{
+    if(id3Tags->isEmpty()) {
+        return;
+    }
+
+    const TagLib::ID3v2::FrameListMap& frames = id3Tags->frameListMap();
+
+    if(frames.contains("TRCK")) {
+        const TagLib::ID3v2::FrameList& trackFrame = frames["TRCK"];
+        if(!trackFrame.isEmpty()) {
+            const QString trackNumbers = convertString(trackFrame.front()->toString());
+            readTrackTotalPair(trackNumbers, track);
+        }
+    }
+
+    if(frames.contains("TPOS")) {
+        const TagLib::ID3v2::FrameList& discFrame = frames["TPOS"];
+        if(!discFrame.isEmpty()) {
+            const QString discNumbers = convertString(discFrame.front()->toString());
+            readDiscTotalPair(discNumbers, track);
+        }
+    }
+}
+
 QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags)
 {
     if(id3Tags->isEmpty()) {
         return {};
     }
 
-    TagLib::ID3v2::FrameList frames = id3Tags->frameListMap()["APIC"];
+    const TagLib::ID3v2::FrameList& frames = id3Tags->frameListMap()["APIC"];
 
     using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
 
@@ -249,6 +265,31 @@ QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags)
         }
     }
     return {};
+}
+
+void readApeTags(const TagLib::APE::Tag* apeTags, Fy::Core::Track& track)
+{
+    if(apeTags->isEmpty()) {
+        return;
+    }
+
+    const TagLib::APE::ItemListMap& items = apeTags->itemListMap();
+
+    if(items.contains("TRACK")) {
+        const TagLib::APE::Item& trackItem = items["TRACK"];
+        if(!trackItem.isEmpty() && !trackItem.values().isEmpty()) {
+            const QString trackNumbers = convertString(trackItem.values().front());
+            readTrackTotalPair(trackNumbers, track);
+        }
+    }
+
+    if(items.contains("DISC")) {
+        const TagLib::APE::Item& discItem = items["DISC"];
+        if(!discItem.isEmpty() && !discItem.values().isEmpty()) {
+            const QString discNumbers = convertString(discItem.values().front());
+            readDiscTotalPair(discNumbers, track);
+        }
+    }
 }
 
 QByteArray readApeCover(const TagLib::APE::Tag* apeTags)
@@ -271,6 +312,33 @@ QByteArray readApeCover(const TagLib::APE::Tag* apeTags)
     return {};
 }
 
+void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fy::Core::Track& track)
+{
+    if(mp4Tags->isEmpty()) {
+        return;
+    }
+
+    if(mp4Tags->contains("TRKN")) {
+        const TagLib::MP4::Item::IntPair& trackNumbers = mp4Tags->item("TRKN").toIntPair();
+        if(trackNumbers.first > 0) {
+            track.setTrackNumber(trackNumbers.first);
+        }
+        if(trackNumbers.second > 0) {
+            track.setTrackTotal(trackNumbers.second);
+        }
+    }
+
+    if(mp4Tags->contains("DISK")) {
+        const TagLib::MP4::Item::IntPair& discNumbers = mp4Tags->item("DISK").toIntPair();
+        if(discNumbers.first > 0) {
+            track.setDiscNumber(discNumbers.first);
+        }
+        if(discNumbers.second > 0) {
+            track.setDiscTotal(discNumbers.second);
+        }
+    }
+}
+
 QByteArray readMp4Cover(const TagLib::MP4::Tag* mp4Tags)
 {
     const TagLib::MP4::Item coverArtItem = mp4Tags->item("covr");
@@ -285,6 +353,43 @@ QByteArray readMp4Cover(const TagLib::MP4::Tag* mp4Tags)
         return {coverArt.data().data(), coverArt.data().size()};
     }
     return {};
+}
+
+void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fy::Core::Track& track)
+{
+    if(xiphTags->isEmpty()) {
+        return;
+    }
+
+    const TagLib::Ogg::FieldListMap& fields = xiphTags->fieldListMap();
+
+    if(fields.contains("TRACKNUMBER")) {
+        const TagLib::StringList& trackNumber = fields["TRACKNUMBER"];
+        if(!trackNumber.isEmpty() && !trackNumber.front().isEmpty()) {
+            track.setTrackNumber(trackNumber.front().toInt());
+        }
+    }
+
+    if(fields.contains("TRACKTOTAL")) {
+        const TagLib::StringList& trackTotal = fields["TRACKTOTAL"];
+        if(!trackTotal.isEmpty() && !trackTotal.front().isEmpty()) {
+            track.setTrackTotal(trackTotal.front().toInt());
+        }
+    }
+
+    if(fields.contains("DISCNUMBER")) {
+        const TagLib::StringList& discNumber = fields["DISCNUMBER"];
+        if(!discNumber.isEmpty() && !discNumber.front().isEmpty()) {
+            track.setDiscNumber(discNumber.front().toInt());
+        }
+    }
+
+    if(fields.contains("DISCTOTAL")) {
+        const TagLib::StringList& discTotal = fields["DISCTOTAL"];
+        if(!discTotal.isEmpty() && !discTotal.front().isEmpty()) {
+            track.setDiscTotal(discTotal.front().toInt());
+        }
+    }
 }
 
 QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures)
@@ -302,6 +407,35 @@ QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures)
         }
     }
     return {};
+}
+
+void readAsfTags(const TagLib::ASF::Tag* asfTags, Fy::Core::Track& track)
+{
+    if(asfTags->isEmpty()) {
+        return;
+    }
+
+    const TagLib::ASF::AttributeListMap& map = asfTags->attributeListMap();
+
+    if(map.contains("WM/TrackNumber")) {
+        const TagLib::ASF::AttributeList& trackNumber = map["WM/TrackNumber"];
+        if(!trackNumber.isEmpty()) {
+            const TagLib::ASF::Attribute& num = trackNumber.front();
+            if(num.type() == TagLib::ASF::Attribute::UnicodeType) {
+                track.setTrackNumber(num.toString().toInt());
+            }
+        }
+    }
+
+    if(map.contains("WM/PartOfSet")) {
+        const TagLib::ASF::AttributeList& discNumber = map["WM/TrackNumber"];
+        if(!discNumber.isEmpty()) {
+            const TagLib::ASF::Attribute& num = discNumber.front();
+            if(num.type() == TagLib::ASF::Attribute::UnicodeType) {
+                track.setDiscNumber(num.toString().toInt());
+            }
+        }
+    }
 }
 
 QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags)
@@ -397,6 +531,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         if(file.isValid()) {
             readProperties(file, track);
             if(file.hasID3v2Tag()) {
+                readId3Tags(file.ID3v2Tag(), track);
                 handleCover(readId3Cover(file.ID3v2Tag()), track);
             }
         }
@@ -406,6 +541,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         if(file.isValid()) {
             readProperties(file, track);
             if(file.hasID3v2Tag()) {
+                readId3Tags(file.tag(), track);
                 handleCover(readId3Cover(file.tag()), track);
             }
         }
@@ -415,6 +551,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         if(file.isValid()) {
             readProperties(file, track);
             if(file.hasID3v2Tag()) {
+                readId3Tags(file.tag(), track);
                 handleCover(readId3Cover(file.tag()), track);
             }
         }
@@ -424,6 +561,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         if(file.isValid()) {
             readProperties(file, track);
             if(file.APETag()) {
+                readApeTags(file.APETag(), track);
                 handleCover(readApeCover(file.APETag()), track);
             }
         }
@@ -433,6 +571,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         if(file.isValid()) {
             readProperties(file, track);
             if(file.APETag()) {
+                readApeTags(file.APETag(), track);
                 handleCover(readApeCover(file.APETag()), track);
             }
         }
@@ -442,6 +581,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         if(file.isValid()) {
             readProperties(file, track);
             if(file.APETag()) {
+                readApeTags(file.APETag(), track);
                 handleCover(readApeCover(file.APETag()), track);
             }
         }
@@ -450,6 +590,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         const TagLib::MP4::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file, track);
+            readMp4Tags(file.tag(), track);
             handleCover(readMp4Cover(file.tag()), track);
         }
     }
@@ -457,6 +598,9 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
         if(file.isValid()) {
             readProperties(file, track);
+            if(file.hasXiphComment()) {
+                readXiphComment(file.xiphComment(), track);
+            }
             handleCover(readFlacCover(file.pictureList()), track);
         }
     }
@@ -487,6 +631,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         if(file.isValid()) {
             readProperties(file, track);
             if(file.tag()) {
+                readXiphComment(file.tag(), track);
                 handleCover(readFlacCover(file.tag()->pictureList()), track);
             }
         }
@@ -495,6 +640,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         const TagLib::ASF::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file, track);
+            readAsfTags(file.tag(), track);
             handleCover(readAsfCover(file.tag()), track);
         }
     }
