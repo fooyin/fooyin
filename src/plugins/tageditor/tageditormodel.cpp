@@ -189,8 +189,9 @@ QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, in
             return "Name";
         case(1):
             return "Value";
+        default:
+            return {};
     }
-    return {};
 }
 
 TagEditorModel::~TagEditorModel() = default;
@@ -221,9 +222,9 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
             return item->name();
         case(1):
             return item->value();
+        default:
+            return {};
     }
-
-    return {};
 }
 
 bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, int role)
