@@ -612,6 +612,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
             if(file.isValid()) {
                 readProperties(file, track);
                 if(file.tag()) {
+                    readXiphComment(file.tag(), track);
                     handleCover(readFlacCover(file.tag()->pictureList()), track);
                 }
             }
@@ -621,6 +622,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
             if(file.isValid()) {
                 readProperties(file, track);
                 if(file.tag()) {
+                    readXiphComment(file.tag(), track);
                     handleCover(readFlacCover(file.tag()->pictureList()), track);
                 }
             }
