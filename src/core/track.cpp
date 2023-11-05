@@ -36,6 +36,7 @@ struct Track::Private : public QSharedData
     bool enabled{true};
     int id{-1};
     QString hash;
+    Type type{0};
     QString filepath;
     QString relativePath;
     QString title;
@@ -131,6 +132,42 @@ QString Track::hash() const
 QString Track::albumHash() const
 {
     return u"%1|%2|%3"_s.arg(p->date, !p->albumArtist.isEmpty() ? p->albumArtist : p->artists.join(""_L1), p->album);
+}
+
+Track::Type Track::type() const
+{
+    return p->type;
+}
+
+QString Track::typeString() const
+{
+    switch(p->type) {
+        case(Type::MPEG):
+            return u"MPEG"_s;
+        case(Type::AIFF):
+            return u"AIFF"_s;
+        case(Type::WAV):
+            return u"WAV"_s;
+        case(Type::MPC):
+            return u"MPC"_s;
+        case(Type::APE):
+            return u"APE"_s;
+        case(Type::WavPack):
+            return u"WavPack"_s;
+        case(Type::MP4):
+            return u"MP4"_s;
+        case(Type::FLAC):
+            return u"FLAC"_s;
+        case(Type::OggOpus):
+            return u"OggOpus"_s;
+        case(Type::OggVorbis):
+            return u"OggVorbis"_s;
+        case(Type::ASF):
+            return u"ASF"_s;
+        case(Type::Unknown):
+        default:
+            return u"Unknown"_s;
+    }
 }
 
 QString Track::filepath() const
@@ -321,6 +358,11 @@ void Track::setId(int id)
 void Track::setHash(const QString& hash)
 {
     p->hash = hash;
+}
+
+void Track::setType(Type type)
+{
+    p->type = type;
 }
 
 void Track::setRelativePath(const QString& path)

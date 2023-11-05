@@ -159,6 +159,7 @@ void Registry::addDefaultMetadata()
     m_metadata[Constants::MetaData::Bitrate]      = &Track::bitrate;
     m_metadata[Constants::MetaData::SampleRate]   = &Track::sampleRate;
     m_metadata[Constants::MetaData::PlayCount]    = &Track::playCount;
+    m_metadata[Constants::MetaData::FileType]     = &Track::typeString;
     m_metadata[Constants::MetaData::AddedTime]    = &Track::addedTime;
     m_metadata[Constants::MetaData::ModifiedTime] = &Track::modifiedTime;
     m_metadata[Constants::MetaData::FilePath]     = &Track::filepath;

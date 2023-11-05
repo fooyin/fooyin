@@ -73,6 +73,11 @@ QString Container::genres() const
     return m_genres;
 }
 
+QString Container::filetypes() const
+{
+    return m_filetypes;
+}
+
 void Container::updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptRegistry* registry)
 {
     if(m_tracks.empty()) {
@@ -87,14 +92,19 @@ void Container::updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptR
     m_duration = std::accumulate(m_tracks.cbegin(), m_tracks.cend(), 0,
                                  [](int sum, const Core::Track& track) { return sum + track.duration(); });
 
-    // Update genres
+    // Update genres, types
     QStringList uniqueGenres;
+    QStringList uniqueTypes;
     for(const auto& track : m_tracks) {
         const auto trackGenres = track.genres();
         std::ranges::copy_if(trackGenres, std::back_inserter(uniqueGenres),
                              [&uniqueGenres](const QString& genre) { return !uniqueGenres.contains(genre); });
+        if(!uniqueTypes.contains(track.typeString())) {
+            uniqueTypes.push_back(track.typeString());
+        }
     }
-    m_genres = uniqueGenres.join(" / "_L1);
+    m_genres    = uniqueGenres.join(" / "_L1);
+    m_filetypes = uniqueTypes.join(" / "_L1);
 
     registry->changeCurrentContainer(this);
 

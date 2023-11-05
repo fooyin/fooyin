@@ -40,6 +40,22 @@ public:
         }
     };
 
+    enum class Type : int
+    {
+        Unknown   = 0,
+        MPEG      = 1,
+        AIFF      = 2,
+        WAV       = 3,
+        MPC       = 4,
+        APE       = 5,
+        WavPack   = 6,
+        MP4       = 7,
+        FLAC      = 8,
+        OggOpus   = 9,
+        OggVorbis = 10,
+        ASF       = 11,
+    };
+
     Track();
     explicit Track(QString filepath);
     ~Track();
@@ -58,6 +74,8 @@ public:
     [[nodiscard]] int id() const;
     [[nodiscard]] QString hash() const;
     [[nodiscard]] QString albumHash() const;
+    [[nodiscard]] Type type() const;
+    [[nodiscard]] QString typeString() const;
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString relativePath() const;
     [[nodiscard]] QString title() const;
@@ -100,6 +118,7 @@ public:
     void setEnabled(bool enabled);
     void setId(int id);
     void setHash(const QString& hash);
+    void setType(Type type);
     void setRelativePath(const QString& path);
     void setTitle(const QString& title);
     void setArtists(const QStringList& artists);

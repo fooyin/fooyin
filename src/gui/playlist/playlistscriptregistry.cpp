@@ -44,6 +44,7 @@ PlaylistScriptRegistry::PlaylistScriptRegistry()
     m_vars.emplace(u"gduration"_s, &Container::duration);
     m_vars.emplace(u"gcount"_s, &Container::trackCount);
     m_vars.emplace(u"ggenres"_s, &Container::genres);
+    m_vars.emplace(u"gfiletypes"_s, &Container::filetypes);
 }
 
 bool PlaylistScriptRegistry::varExists(const QString& var) const
@@ -57,8 +58,7 @@ Core::Scripting::ScriptResult PlaylistScriptRegistry::varValue(const QString& va
         return Core::Scripting::Registry::varValue(var);
     }
     if(!m_currentContainer) {
-        QString tmpResult = "%"_L1 + var + "%"_L1;
-        return {tmpResult};
+        return {"%"_L1 + var + "%"_L1};
     }
     const FuncRet funcResult = m_vars.at(var)(*m_currentContainer);
     return calculateResult(funcResult);

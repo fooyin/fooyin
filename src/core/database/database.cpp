@@ -102,6 +102,7 @@ bool Database::createDatabase()
                                   "    BitRate INTEGER DEFAULT 0,"
                                   "    SampleRate INTEGER DEFAULT 0,"
                                   "    ExtraTags BLOB,"
+                                  "    Type INTEGER DEFAULT 0,"
                                   "    AddedDate INTEGER,"
                                   "    ModifiedDate INTEGER,"
                                   "    LibraryID INTEGER REFERENCES Libraries ON DELETE CASCADE);"_s);

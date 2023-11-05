@@ -73,6 +73,45 @@ QStringList convertStringList(const TagLib::StringList& strList)
     return list;
 }
 
+Fy::Core::Track::Type typeForMime(const QString& mimeType)
+{
+    if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
+        return Fy::Core::Track::Type::MPEG;
+    }
+    if(mimeType == "audio/x-aiff"_L1 || mimeType == "audio/x-aifc"_L1) {
+        return Fy::Core::Track::Type::AIFF;
+    }
+    if(mimeType == "audio/vnd.wave"_L1 || mimeType == "audio/wav"_L1 || mimeType == "audio/x-wav"_L1) {
+        return Fy::Core::Track::Type::WAV;
+    }
+    if(mimeType == "audio/x-musepack"_L1) {
+        return Fy::Core::Track::Type::MPC;
+    }
+    if(mimeType == "audio/x-ape"_L1) {
+        return Fy::Core::Track::Type::APE;
+    }
+    if(mimeType == "audio/x-wavpack"_L1) {
+        return Fy::Core::Track::Type::WavPack;
+    }
+    if(mimeType == "audio/mp4"_L1 || mimeType == "audio/vnd.audible.aax"_L1) {
+        return Fy::Core::Track::Type::MP4;
+    }
+    if(mimeType == "audio/flac"_L1) {
+        return Fy::Core::Track::Type::FLAC;
+    }
+    if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
+        return Fy::Core::Track::Type::OggVorbis;
+    }
+    if(mimeType == "audio/opus"_L1 || mimeType == "audio/x-opus+ogg"_L1) {
+        return Fy::Core::Track::Type::OggOpus;
+    }
+    if(mimeType == "audio/x-ms-wma"_L1) {
+        return Fy::Core::Track::Type::ASF;
+    }
+
+    return Fy::Core::Track::Type::Unknown;
+}
+
 TagLib::AudioProperties::ReadStyle readStyle(Fy::Core::Tagging::TagReader::Quality quality)
 {
     switch(quality) {
@@ -345,8 +384,8 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         return false;
     }
 
-    const QString mimeType                         = p->mimeDb.mimeTypeForFile(filepath).name();
-    const TagLib::AudioProperties::ReadStyle style = readStyle(quality);
+    QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
+    const auto style = readStyle(quality);
 
     const auto readProperties = [](const TagLib::File& file, Track& track) {
         readAudioProperties(file, track);
@@ -423,8 +462,8 @@ bool TagReader::readMetaData(Track& track, Quality quality)
     }
     else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
         // Workaround for opus files with ogg suffix returning incorrect type
-        const QString accurateType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
-        if(accurateType == "audio/opus"_L1 || accurateType == "audio/x-opus+ogg"_L1) {
+        mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+        if(mimeType == "audio/opus"_L1 || mimeType == "audio/x-opus+ogg"_L1) {
             const TagLib::Ogg::Opus::File file(&stream, true, style);
             if(file.isValid()) {
                 readProperties(file, track);
@@ -462,6 +501,8 @@ bool TagReader::readMetaData(Track& track, Quality quality)
     else {
         qDebug() << "Unsupported mime type: " << mimeType;
     }
+
+    track.setType(typeForMime(mimeType));
 
     return true;
 }

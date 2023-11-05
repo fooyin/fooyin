@@ -42,6 +42,7 @@ public:
     [[nodiscard]] int rowHeight() const;
 
     [[nodiscard]] QString genres() const;
+    [[nodiscard]] QString filetypes() const;
 
     void updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptRegistry* registry);
 
@@ -59,6 +60,7 @@ private:
     Core::TrackList m_tracks;
     uint64_t m_duration;
     QString m_genres;
+    QString m_filetypes;
 
     TextBlockList m_title;
     TextBlockList m_subtitle;

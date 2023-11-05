@@ -55,9 +55,10 @@ QString fetchQueryTracks(const QString& join, const QString& offsetLimit)
         u"BitRate"_s,      // 22
         u"SampleRate"_s,   // 23
         u"ExtraTags"_s,    // 24
-        u"AddedDate"_s,    // 25
-        u"ModifiedDate"_s, // 26
-        u"LibraryID"_s     // 27
+        u"Type"_s,         // 25
+        u"AddedDate"_s,    // 26
+        u"ModifiedDate"_s, // 27
+        u"LibraryID"_s     // 28
     };
 
     const auto joinedFields = fields.join(", "_L1);
@@ -89,6 +90,7 @@ BindingsMap getTrackBindings(const Track& track)
             {u"BitRate"_s, QString::number(track.bitrate())},
             {u"SampleRate"_s, QString::number(track.sampleRate())},
             {u"ExtraTags"_s, track.serialiseExtrasTags()},
+            {u"Type"_s, QString::number(static_cast<int>(track.type()))},
             {u"AddedDate"_s, QString::number(track.addedTime())},
             {u"ModifiedDate"_s, QString::number(track.modifiedTime())},
             {u"LibraryID"_s, QString::number(track.libraryId())}};
@@ -196,9 +198,10 @@ bool LibraryDatabase::dbFetchTracks(Query& q, TrackList& result) const
         track.setBitrate(q.value(22).toInt());
         track.setSampleRate(q.value(23).toInt());
         track.storeExtraTags(q.value(24).toByteArray());
-        track.setAddedTime(q.value(25).toULongLong());
-        track.setModifiedTime(q.value(26).toULongLong());
-        track.setLibraryId(q.value(27).toInt());
+        track.setType(static_cast<Track::Type>(q.value(25).toInt()));
+        track.setAddedTime(q.value(26).toULongLong());
+        track.setModifiedTime(q.value(27).toULongLong());
+        track.setLibraryId(q.value(28).toInt());
 
         track.generateHash();
 
