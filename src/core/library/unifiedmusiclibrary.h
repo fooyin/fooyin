@@ -20,7 +20,6 @@
 #pragma once
 
 #include "libraryscanner.h"
-#include "librarythreadhandler.h"
 
 #include <core/library/musiclibrary.h>
 
@@ -47,6 +46,7 @@ class UnifiedMusicLibrary : public MusicLibrary
 public:
     UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database, Utils::SettingsManager* settings,
                         QObject* parent = nullptr);
+    ~UnifiedMusicLibrary() override;
 
     void loadLibrary() override;
     void reloadAll() override;
@@ -58,28 +58,15 @@ public:
 
     [[nodiscard]] TrackList tracks() const override;
 
-    void saveTracks(const Core::TrackList& tracks) override;
+    void updateTrackMetadata(const Core::TrackList& tracks) override;
 
     QCoro::Task<void> changeSort(QString sort);
 
     void removeLibrary(int id) override;
 
 private:
-    void getAllTracks();
-    QCoro::Task<void> loadTracks(TrackList tracks);
-    QCoro::Task<TrackList> addTracks(TrackList tracks);
-    QCoro::Task<void> newTracks(TrackList tracks);
-    QCoro::Task<void> updateTracks(TrackList tracks);
-    void removeTracks(const TrackList& tracks);
-
-    void libraryStatusChanged(const LibraryInfo& library);
-
-    LibraryManager* m_libraryManager;
-    DB::Database* m_database;
-    Utils::SettingsManager* m_settings;
-    LibraryThreadHandler m_threadHandler;
-
-    TrackList m_tracks;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Library
 } // namespace Core

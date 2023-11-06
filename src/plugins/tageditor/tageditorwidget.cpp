@@ -58,7 +58,7 @@ TagEditorWidget::TagEditorWidget(Gui::TrackSelectionController* trackSelection, 
     m_view->resizeRowsToContents();
 
     QObject::connect(m_model, &TagEditorModel::trackMetadataChanged, m_library,
-                     &Core::Library::MusicLibrary::saveTracks);
+                     &Core::Library::MusicLibrary::updateTrackMetadata);
     QObject::connect(m_view, &Utils::ExtendableTableView::newRowClicked, m_model, &TagEditorModel::addNewRow);
 }
 

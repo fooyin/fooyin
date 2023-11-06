@@ -21,7 +21,7 @@
 
 #include "fycore_export.h"
 
-#include "core/track.h"
+#include <core/track.h>
 
 #include <QObject>
 
@@ -49,13 +49,11 @@ public:
 
     [[nodiscard]] virtual TrackList tracks() const = 0;
 
-    virtual void saveTracks(const Core::TrackList& tracks) = 0;
+    virtual void updateTrackMetadata(const Core::TrackList& tracks) = 0;
 
     virtual void removeLibrary(int id) = 0;
 
 signals:
-    void loadAllTracks();
-    void runLibraryScan(const Library::LibraryInfo& library, const Core::TrackList& tracks);
     void scanProgress(int percent);
 
     void tracksLoaded(const Core::TrackList& tracks);
