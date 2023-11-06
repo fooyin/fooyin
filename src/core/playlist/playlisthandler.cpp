@@ -283,6 +283,22 @@ const PlaylistList& PlaylistHandler::playlists() const
     return p->playlists;
 }
 
+void PlaylistHandler::createEmptyPlaylist()
+{
+    const QString name = p->findUniqueName(QStringLiteral("Playlist"));
+    createPlaylist(name, {});
+}
+
+Playlist* PlaylistHandler::createPlaylist(const QString& name)
+{
+    const bool isNew = p->indexFromName(name) < 0;
+    auto* playlist   = p->addNewPlaylist(name);
+    if(playlist && isNew) {
+        emit playlistAdded(playlist);
+    }
+    return playlist;
+}
+
 Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& tracks)
 {
     const bool isNew = p->indexFromName(name) < 0;
@@ -310,22 +326,6 @@ void PlaylistHandler::changePlaylistIndex(int id, int index)
         Utils::move(p->playlists, playlist->index(), index);
         p->updateIndices();
     }
-}
-
-void PlaylistHandler::createEmptyPlaylist()
-{
-    const QString name = p->findUniqueName(QStringLiteral("Playlist"));
-    createPlaylist(name, {});
-}
-
-Playlist* PlaylistHandler::createPlaylist(const QString& name)
-{
-    const bool isNew = p->indexFromName(name) < 0;
-    auto* playlist   = p->addNewPlaylist(name);
-    if(playlist && isNew) {
-        emit playlistAdded(playlist);
-    }
-    return playlist;
 }
 
 void PlaylistHandler::changeActivePlaylist(int id)
