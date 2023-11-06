@@ -19,7 +19,12 @@
 
 #include <core/corepaths.h>
 
+#include "config.h"
+
 #include <utils/paths.h>
+
+#include <QCoreApplication>
+#include <QDir>
 
 namespace Fy::Core {
 QString coverPath()
@@ -30,5 +35,10 @@ QString coverPath()
 QString settingsPath()
 {
     return Utils::configPath().append(QStringLiteral("/fooyin.conf"));
+}
+
+QString pluginsPath()
+{
+    return QDir::cleanPath(QCoreApplication::applicationDirPath() + '/' + RELATIVE_PLUGIN_DIR);
 }
 } // namespace Fy::Core

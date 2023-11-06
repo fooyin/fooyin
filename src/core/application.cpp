@@ -19,8 +19,6 @@
 
 #include "application.h"
 
-#include "config.h"
-
 #include "database/database.h"
 #include "engine/output/alsaoutput.h"
 #include "library/unifiedmusiclibrary.h"
@@ -79,7 +77,7 @@ struct Application::Private
 
     void loadPlugins()
     {
-        const QString pluginsPath = QStringLiteral(PLUGIN_DIR);
+        const QString pluginsPath = Core::pluginsPath();
         pluginManager.findPlugins(pluginsPath);
         pluginManager.loadPlugins();
 
