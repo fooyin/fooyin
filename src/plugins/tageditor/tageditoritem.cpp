@@ -40,7 +40,7 @@ void TagEditorItem::reset()
 
 void TagEditorItem::addTrackValue(const QString& value)
 {
-    if(m_values.contains(value) || value.isEmpty()) {
+    if(m_values.contains(value)) {
         return;
     }
     m_values.append(value);
@@ -64,7 +64,11 @@ void TagEditorItem::setValue(const QStringList& values)
 void TagEditorItem::valuesToString()
 {
     QString values;
-    values = m_values.join("; "_L1);
+
+    QStringList nonEmptyValues{m_values};
+    nonEmptyValues.removeAll(QStringLiteral(""));
+
+    values = nonEmptyValues.join("; "_L1);
     if(m_values.size() > 1) {
         values.prepend("<<multiple items>> ");
     }

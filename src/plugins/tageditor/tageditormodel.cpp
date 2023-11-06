@@ -290,6 +290,9 @@ void TagEditorModel::updateEditorValues()
                     p->tags[field].addTrackValue(result.value);
                 }
             }
+            else {
+                p->tags[field].addTrackValue(QStringLiteral(""));
+            }
         }
         ++count;
     }
