@@ -59,7 +59,8 @@ public:
     [[nodiscard]] const PlaylistList& playlists() const override;
 
     void createEmptyPlaylist() override;
-    Playlist* createPlaylist(const QString& name, const TrackList& tracks = {}) override;
+    Playlist* createPlaylist(const QString& name) override;
+    Playlist* createPlaylist(const QString& name, const TrackList& tracks) override;
     void appendToPlaylist(int id, const TrackList& tracks) override;
 
     void changePlaylistIndex(int id, int index) override;

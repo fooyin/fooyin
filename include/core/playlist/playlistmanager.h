@@ -40,9 +40,10 @@ public:
     [[nodiscard]] virtual Playlist* playlistByName(const QString& name) const = 0;
     [[nodiscard]] virtual const PlaylistList& playlists() const               = 0;
 
-    virtual void createEmptyPlaylist()                                                  = 0;
-    virtual Playlist* createPlaylist(const QString& name, const TrackList& tracks = {}) = 0;
-    virtual void appendToPlaylist(int id, const TrackList& tracks)                      = 0;
+    virtual void createEmptyPlaylist()                                             = 0;
+    virtual Playlist* createPlaylist(const QString& name)                          = 0;
+    virtual Playlist* createPlaylist(const QString& name, const TrackList& tracks) = 0;
+    virtual void appendToPlaylist(int id, const TrackList& tracks)                 = 0;
 
     virtual void changePlaylistIndex(int id, int index)                   = 0;
     virtual void changeActivePlaylist(int id)                             = 0;

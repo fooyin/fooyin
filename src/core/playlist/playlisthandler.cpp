@@ -318,6 +318,16 @@ void PlaylistHandler::createEmptyPlaylist()
     createPlaylist(name, {});
 }
 
+Playlist* PlaylistHandler::createPlaylist(const QString& name)
+{
+    const bool isNew = p->indexFromName(name) < 0;
+    auto* playlist   = p->addNewPlaylist(name);
+    if(playlist && isNew) {
+        emit playlistAdded(playlist);
+    }
+    return playlist;
+}
+
 void PlaylistHandler::changeActivePlaylist(int id)
 {
     auto playlist = std::ranges::find_if(std::as_const(p->playlists),
