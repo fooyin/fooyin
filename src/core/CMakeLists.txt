@@ -83,6 +83,7 @@ set(SOURCES
     scripting/functions/stringfuncs.cpp
     scripting/functions/timefuncs.cpp
     tagging/tagreader.cpp
+    tagging/tagwriter.cpp
     track.cpp
 )
 
