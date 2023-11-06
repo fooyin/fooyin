@@ -146,6 +146,15 @@ struct UnifiedMusicLibrary::Private
     {
         libraryManager->updateLibraryStatus(library);
     }
+
+    QCoro::Task<void> changeSort(QString sort)
+    {
+        const TrackList recalTracks  = co_await recalSortFields(sort, tracks);
+        const TrackList sortedTracks = co_await resortTracks(recalTracks);
+        tracks                       = sortedTracks;
+
+        QMetaObject::invokeMethod(self, "tracksSorted", Q_ARG(const Core::TrackList&, tracks));
+    }
 };
 
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database,
@@ -172,7 +181,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     connect(&p->threadHandler, &LibraryThreadHandler::gotTracks, this,
             [this](const TrackList& tracks) { p->loadTracks(tracks); });
 
-    p->settings->subscribe<Settings::LibrarySortScript>(this, &UnifiedMusicLibrary::changeSort);
+    p->settings->subscribe<Settings::LibrarySortScript>(this, [this](const QString& sort) { p->changeSort(sort); });
 
     if(p->settings->value<Settings::AutoRefresh>()) {
         QTimer::singleShot(3s, this, &Library::UnifiedMusicLibrary::reloadAll);
@@ -234,15 +243,6 @@ void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
     p->tracks = result;
 
     emit tracksUpdated(tracks);
-}
-
-QCoro::Task<void> UnifiedMusicLibrary::changeSort(QString sort)
-{
-    const TrackList recalTracks  = co_await recalSortFields(sort, p->tracks);
-    const TrackList sortedTracks = co_await resortTracks(recalTracks);
-    p->tracks                    = sortedTracks;
-
-    emit tracksSorted(p->tracks);
 }
 
 void UnifiedMusicLibrary::removeLibrary(int id)

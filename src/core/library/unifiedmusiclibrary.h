@@ -23,8 +23,6 @@
 
 #include <core/library/musiclibrary.h>
 
-#include <QCoro/QCoroTask>
-
 namespace Fy {
 
 namespace Utils {
@@ -59,8 +57,6 @@ public:
     [[nodiscard]] TrackList tracks() const override;
 
     void updateTrackMetadata(const Core::TrackList& tracks) override;
-
-    QCoro::Task<void> changeSort(QString sort);
 
     void removeLibrary(int id) override;
 
