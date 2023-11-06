@@ -75,11 +75,6 @@ struct UnifiedMusicLibrary::Private
         , threadHandler{database}
     { }
 
-    void getAllTracks()
-    {
-        QMetaObject::invokeMethod(&threadHandler, &LibraryThreadHandler::getAllTracks);
-    }
-
     QCoro::Task<void> loadTracks(TrackList trackToLoad)
     {
         co_await addTracks(trackToLoad);
@@ -113,7 +108,7 @@ struct UnifiedMusicLibrary::Private
     QCoro::Task<void> newTracks(TrackList newTracks)
     {
         TrackList addedTracks = co_await addTracks(newTracks);
-        QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const Core::TrackList&, addedTracks));
+        QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const Core::TrackList&, addedTracks));
     }
 
     QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
@@ -192,7 +187,7 @@ UnifiedMusicLibrary::~UnifiedMusicLibrary() = default;
 
 void UnifiedMusicLibrary::loadLibrary()
 {
-    p->getAllTracks();
+    p->threadHandler.getAllTracks();
 }
 
 void UnifiedMusicLibrary::reloadAll()
@@ -205,13 +200,13 @@ void UnifiedMusicLibrary::reloadAll()
 
 void UnifiedMusicLibrary::reload(const LibraryInfo& library)
 {
-    QMetaObject::invokeMethod(&p->threadHandler, "scanLibrary", Q_ARG(const LibraryInfo&, library),
-                              Q_ARG(const Core::TrackList&, tracks()));
+    p->threadHandler.scanLibrary(library, tracks());
 }
 
 void UnifiedMusicLibrary::rescan()
 {
-    p->getAllTracks();
+    p->threadHandler.getAllTracks();
+    ;
 }
 
 bool UnifiedMusicLibrary::hasLibrary() const
@@ -242,7 +237,7 @@ void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
     }
     p->tracks = result;
 
-    QMetaObject::invokeMethod(&p->threadHandler, "saveUpdatedTracks", Q_ARG(const TrackList&, tracks));
+    p->threadHandler.saveUpdatedTracks(tracks);
 
     emit tracksUpdated(tracks);
 }

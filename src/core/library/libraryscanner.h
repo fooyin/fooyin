@@ -42,17 +42,16 @@ public:
     void closeThread() override;
     void stopThread() override;
 
-    void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
-    void updateTracks(const TrackList& tracks);
-
-    [[nodiscard]] LibraryInfo currentLibrary() const;
-
 signals:
     void progressChanged(int percent);
     void statusChanged(const Fy::Core::Library::LibraryInfo& library);
     void updatedTracks(const Core::TrackList& tracks);
     void addedTracks(const Core::TrackList& tracks);
     void tracksDeleted(const Core::TrackList& tracks);
+
+public slots:
+    void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
+    void updateTracks(const TrackList& tracks);
 
 private:
     struct Private;

@@ -24,8 +24,8 @@
 
 #include <core/library/libraryinfo.h>
 #include <core/tagging/tagreader.h>
-#include <utils/utils.h>
 #include <core/track.h>
+#include <utils/utils.h>
 
 #include <QDir>
 
@@ -57,7 +57,7 @@ struct LibraryScanner::Private
         }
     }
 
-    QStringList getFiles(QDir& baseDirectory)
+    QStringList getFiles(QDir& baseDirectory) const
     {
         QStringList ret;
         QList<QDir> stack{baseDirectory};
@@ -247,10 +247,5 @@ void LibraryScanner::updateTracks(const TrackList& /*tracks*/)
     //            p->libraryDatabase.updateTrack(track);
     //        }
     //    }
-}
-
-LibraryInfo LibraryScanner::currentLibrary() const
-{
-    return p->library;
 }
 } // namespace Fy::Core::Library

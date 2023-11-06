@@ -37,15 +37,16 @@ class LibraryThreadHandler : public QObject
 
 public:
     explicit LibraryThreadHandler(DB::Database* database, QObject* parent = nullptr);
-    ~LibraryThreadHandler();
+    ~LibraryThreadHandler() override;
 
     void stopScanner();
 
+    void getAllTracks();
+    void scanLibrary(const Library::LibraryInfo& library, const Core::TrackList& tracks);
     void libraryRemoved(int id);
+    void saveUpdatedTracks(const Core::TrackList& tracks);
 
 signals:
-    void scanLibrary(const Library::LibraryInfo& library, const Core::TrackList& tracks);
-
     void progressChanged(int percent);
     void statusChanged(const Library::LibraryInfo& library);
 
@@ -53,10 +54,7 @@ signals:
     void updatedTracks(const Core::TrackList& tracks);
     void tracksDeleted(const Core::TrackList& tracks);
 
-    void getAllTracks();
     void gotTracks(const Core::TrackList& result);
-
-    void saveUpdatedTracks(const Core::TrackList& tracks);
 
 private:
     struct Private;
