@@ -21,7 +21,6 @@
 
 #include <core/constants.h>
 #include <core/track.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <taglib/aifffile.h>
 #include <taglib/apefile.h>

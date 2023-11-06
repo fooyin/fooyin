@@ -20,7 +20,6 @@
 #include <core/tagging/tagwriter.h>
 
 #include <core/track.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <taglib/aifffile.h>
 #include <taglib/apefile.h>
@@ -44,10 +43,8 @@
 #include <taglib/wavfile.h>
 #include <taglib/wavpackfile.h>
 
-#include <QDir>
 #include <QFileInfo>
 #include <QMimeDatabase>
-#include <QPixmap>
 
 using namespace Qt::Literals::StringLiterals;
 
