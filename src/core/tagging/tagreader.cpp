@@ -526,6 +526,10 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         readGeneralProperties(file.properties(), track);
     };
 
+    if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
+        // Workaround for opus files with ogg suffix returning incorrect type
+        mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+    }
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
         TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
         if(file.isValid()) {
@@ -607,26 +611,12 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         }
     }
     else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
-        // Workaround for opus files with ogg suffix returning incorrect type
-        mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
-        if(mimeType == "audio/opus"_L1 || mimeType == "audio/x-opus+ogg"_L1) {
-            const TagLib::Ogg::Opus::File file(&stream, true, style);
-            if(file.isValid()) {
-                readProperties(file, track);
-                if(file.tag()) {
-                    readXiphComment(file.tag(), track);
-                    handleCover(readFlacCover(file.tag()->pictureList()), track);
-                }
-            }
-        }
-        else {
-            const TagLib::Ogg::Vorbis::File file(&stream, true, style);
-            if(file.isValid()) {
-                readProperties(file, track);
-                if(file.tag()) {
-                    readXiphComment(file.tag(), track);
-                    handleCover(readFlacCover(file.tag()->pictureList()), track);
-                }
+        const TagLib::Ogg::Vorbis::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file, track);
+            if(file.tag()) {
+                readXiphComment(file.tag(), track);
+                handleCover(readFlacCover(file.tag()->pictureList()), track);
             }
         }
     }
@@ -674,8 +664,12 @@ QByteArray TagReader::readCover(const Track& track)
         return {};
     }
 
-    const QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
+    QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
 
+    if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
+        // Workaround for opus files with ogg suffix returning incorrect type
+        mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+    }
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
         TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true);
         if(file.isValid() && file.hasID3v2Tag()) {
@@ -714,7 +708,7 @@ QByteArray TagReader::readCover(const Track& track)
     }
     else if(mimeType == "audio/mp4"_L1 || mimeType == "audio/vnd.audible.aax"_L1) {
         const TagLib::MP4::File file(&stream, true);
-        if(file.isValid()) {
+        if(file.isValid() && file.tag()) {
             return readMp4Cover(file.tag());
         }
     }
@@ -738,7 +732,7 @@ QByteArray TagReader::readCover(const Track& track)
     }
     else if(mimeType == "audio/x-ms-wma"_L1) {
         const TagLib::ASF::File file(&stream, true);
-        if(file.isValid()) {
+        if(file.isValid() && file.tag()) {
             return readAsfCover(file.tag());
         }
     }
