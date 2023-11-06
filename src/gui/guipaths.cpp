@@ -33,4 +33,9 @@ QString activeLayoutPath()
 {
     return Utils::configPath().append(QStringLiteral("/layout.fyl"));
 }
+
+QString coverPath()
+{
+    return Utils::cachePath(QStringLiteral("covers")).append(QStringLiteral("/"));
+}
 } // namespace Fy::Gui

@@ -27,11 +27,6 @@
 #include <QDir>
 
 namespace Fy::Core {
-QString coverPath()
-{
-    return Utils::cachePath(QStringLiteral("covers")).append(QStringLiteral("/"));
-}
-
 QString settingsPath()
 {
     return Utils::configPath().append(QStringLiteral("/fooyin.conf"));

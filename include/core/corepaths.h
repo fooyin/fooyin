@@ -24,7 +24,6 @@
 class QString;
 
 namespace Fy::Core {
-FYCORE_EXPORT QString coverPath();
 FYCORE_EXPORT QString settingsPath();
 FYCORE_EXPORT QString pluginsPath();
 } // namespace Fy::Core

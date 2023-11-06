@@ -17,14 +17,14 @@
  *
  */
 
-#include "core/corepaths.h"
-#include "utils/crypto.h"
 #include <gui/coverprovider.h>
 
 #include <core/tagging/tagreader.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
+#include <gui/guipaths.h>
 #include <utils/async.h>
+#include <utils/crypto.h>
 #include <utils/utils.h>
 
 #include <QCoroCore>
@@ -40,7 +40,7 @@ constexpr QSize NoCoverSize = {60, 60};
 namespace {
 QString coverThumbnailPath(const QString& key)
 {
-    return Fy::Core::coverPath() + key + ".jpg";
+    return Fy::Gui::coverPath() + key + ".jpg";
 }
 
 QCoro::Task<void> saveThumbnail(QPixmap cover, QString key)
@@ -177,7 +177,7 @@ QPixmap CoverProvider::trackCover(const Core::Track& track, const QSize& size, b
 
 void CoverProvider::clearCache()
 {
-    QDir cache{Fy::Core::coverPath()};
+    QDir cache{Fy::Gui::coverPath()};
     cache.removeRecursively();
 
     QPixmapCache::clear();

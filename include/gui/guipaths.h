@@ -19,9 +19,12 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 class QString;
 
 namespace Fy::Gui {
-QString layoutsPath();
-QString activeLayoutPath();
+FYGUI_EXPORT QString layoutsPath();
+FYGUI_EXPORT QString activeLayoutPath();
+FYGUI_EXPORT QString coverPath();
 } // namespace Fy::Gui
