@@ -66,24 +66,24 @@ auto generateSetFunc(FuncType func)
 
 void addDefaultFunctions(std::unordered_map<QString, Func>& funcs)
 {
-    funcs.emplace("add", add);
-    funcs.emplace("sub", sub);
-    funcs.emplace("mul", mul);
-    // funcs.emplace("div", div);
-    funcs.emplace("min", min);
-    funcs.emplace("max", max);
-    funcs.emplace("mod", mod);
+    funcs.emplace("add", Fy::Core::Scripting::add);
+    funcs.emplace("sub", Fy::Core::Scripting::sub);
+    funcs.emplace("mul", Fy::Core::Scripting::mul);
+    funcs.emplace("div", Fy::Core::Scripting::div);
+    funcs.emplace("min", Fy::Core::Scripting::min);
+    funcs.emplace("max", Fy::Core::Scripting::max);
+    funcs.emplace("mod", Fy::Core::Scripting::mod);
 
-    funcs.emplace("num", num);
-    funcs.emplace("replace", replace);
+    funcs.emplace("num", Fy::Core::Scripting::num);
+    funcs.emplace("replace", Fy::Core::Scripting::replace);
 
-    funcs.emplace("timems", msToString);
+    funcs.emplace("timems", Fy::Core::Scripting::msToString);
 
-    funcs.emplace("if", cif);
-    funcs.emplace("if2", cif2);
-    funcs.emplace("ifgreater", ifgreater);
-    funcs.emplace("iflonger", iflonger);
-    funcs.emplace("ifequal", ifequal);
+    funcs.emplace("if", Fy::Core::Scripting::cif);
+    funcs.emplace("if2", Fy::Core::Scripting::cif2);
+    funcs.emplace("ifgreater", Fy::Core::Scripting::ifgreater);
+    funcs.emplace("iflonger", Fy::Core::Scripting::iflonger);
+    funcs.emplace("ifequal", Fy::Core::Scripting::ifequal);
 }
 
 void addDefaultMetadata(std::unordered_map<QString, TrackFunc>& metadata,
