@@ -23,9 +23,7 @@
 
 #include <core/constants.h>
 #include <core/scripting/scriptregistry.h>
-
 #include <gui/trackselectioncontroller.h>
-
 #include <utils/settings/settingsmanager.h>
 
 namespace Fy::TagEditor {

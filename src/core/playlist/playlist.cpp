@@ -19,6 +19,8 @@
 
 #include <core/playlist/playlist.h>
 
+#include <core/track.h>
+
 #include <random>
 #include <ranges>
 

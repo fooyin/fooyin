@@ -19,12 +19,9 @@
 
 #pragma once
 
-#include "librarydatabasemanager.h"
-#include "libraryscanner.h"
+#include <core/trackfwd.h>
 
 #include <QObject>
-
-#include <deque>
 
 namespace Fy::Core {
 namespace DB {
@@ -33,12 +30,6 @@ class Database;
 
 namespace Library {
 struct LibraryInfo;
-
-struct ScanRequest
-{
-    LibraryInfo library;
-    Core::TrackList tracks;
-};
 
 class LibraryThreadHandler : public QObject
 {
@@ -54,29 +45,22 @@ public:
 
 signals:
     void scanLibrary(const Library::LibraryInfo& library, const Core::TrackList& tracks);
-    void scanNext(const Library::LibraryInfo& library, const Core::TrackList& tracks);
 
     void progressChanged(int percent);
     void statusChanged(const Library::LibraryInfo& library);
 
-    void addedTracks(Core::TrackList tracks);
-    void updatedTracks(Core::TrackList tracks);
+    void addedTracks(const Core::TrackList& tracks);
+    void updatedTracks(const Core::TrackList& tracks);
     void tracksDeleted(const Core::TrackList& tracks);
 
     void getAllTracks();
     void gotTracks(const Core::TrackList& result);
 
+    void saveUpdatedTracks(const Core::TrackList& tracks);
+
 private:
-    void addScanRequest(const Library::LibraryInfo& library, const Core::TrackList& tracks);
-    void finishScanRequest();
-
-    DB::Database* m_database;
-
-    QThread* m_thread;
-    LibraryScanner m_scanner;
-    LibraryDatabaseManager m_libraryDatabaseManager;
-
-    std::deque<ScanRequest> m_scanRequests;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Library
 } // namespace Fy::Core

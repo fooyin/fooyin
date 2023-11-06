@@ -21,7 +21,7 @@
 
 #include "playlistitemmodels.h"
 
-#include <core/track.h>
+#include <core/trackfwd.h>
 #include <utils/treeitem.h>
 #include <utils/utils.h>
 

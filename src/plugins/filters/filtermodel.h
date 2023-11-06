@@ -21,7 +21,7 @@
 
 #include "filteritem.h"
 
-#include <core/track.h>
+#include <core/trackfwd.h>
 #include <utils/tablemodel.h>
 
 namespace Fy::Filters {

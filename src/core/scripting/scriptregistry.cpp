@@ -27,22 +27,154 @@
 #include <core/constants.h>
 #include <core/track.h>
 
-namespace Fy::Core::Scripting {
-Registry::Registry()
-    : m_currentTrack{nullptr}
+namespace {
+using namespace Fy::Core::Scripting;
+
+using NativeFunc     = std::function<QString(const QStringList&)>;
+using NativeCondFunc = std::function<ScriptResult(const ValueList&)>;
+using Func           = std::variant<NativeFunc, NativeCondFunc>;
+
+using TrackFunc    = std::function<Registry::FuncRet(const Fy::Core::Track&)>;
+using TrackSetFunc = std::function<void(Fy::Core::Track&, const Registry::FuncRet&)>;
+
+template <typename FuncType>
+auto generateSetFunc(FuncType func)
 {
-    addDefaultFunctions();
-    addDefaultMetadata();
+    return [func](Fy::Core::Track& track, Registry::FuncRet arg) {
+        if constexpr(std::is_same_v<FuncType, void (Fy::Core::Track::*)(int)>) {
+            if(const auto* value = std::get_if<int>(&arg)) {
+                (track.*func)(*value);
+            }
+        }
+        else if constexpr(std::is_same_v<FuncType, void (Fy::Core::Track::*)(uint64_t)>) {
+            if(const auto* value = std::get_if<uint64_t>(&arg)) {
+                (track.*func)(*value);
+            }
+        }
+        else if constexpr(std::is_same_v<FuncType, void (Fy::Core::Track::*)(const QString&)>) {
+            if(const auto* value = std::get_if<QString>(&arg)) {
+                (track.*func)(*value);
+            }
+        }
+        else if constexpr(std::is_same_v<FuncType, void (Fy::Core::Track::*)(const QStringList&)>) {
+            if(const auto* value = std::get_if<QStringList>(&arg)) {
+                (track.*func)(*value);
+            }
+        }
+    };
 }
+
+void addDefaultFunctions(std::unordered_map<QString, Func>& funcs)
+{
+    funcs.emplace("add", add);
+    funcs.emplace("sub", sub);
+    funcs.emplace("mul", mul);
+    // funcs.emplace("div", div);
+    funcs.emplace("min", min);
+    funcs.emplace("max", max);
+    funcs.emplace("mod", mod);
+
+    funcs.emplace("num", num);
+    funcs.emplace("replace", replace);
+
+    funcs.emplace("timems", msToString);
+
+    funcs.emplace("if", cif);
+    funcs.emplace("if2", cif2);
+    funcs.emplace("ifgreater", ifgreater);
+    funcs.emplace("iflonger", iflonger);
+    funcs.emplace("ifequal", ifequal);
+}
+
+void addDefaultMetadata(std::unordered_map<QString, TrackFunc>& metadata,
+                        std::unordered_map<QString, TrackSetFunc>& setMetadata)
+{
+    using namespace Fy::Core::Constants;
+    using Fy::Core::Track;
+
+    metadata[MetaData::Title]        = &Track::title;
+    metadata[MetaData::Artist]       = &Track::artists;
+    metadata[MetaData::Album]        = &Track::album;
+    metadata[MetaData::AlbumArtist]  = &Track::albumArtist;
+    metadata[MetaData::Track]        = &Track::trackNumber;
+    metadata[MetaData::TrackTotal]   = &Track::trackTotal;
+    metadata[MetaData::Disc]         = &Track::discNumber;
+    metadata[MetaData::DiscTotal]    = &Track::discTotal;
+    metadata[MetaData::Genre]        = &Track::genres;
+    metadata[MetaData::Composer]     = &Track::composer;
+    metadata[MetaData::Performer]    = &Track::performer;
+    metadata[MetaData::Duration]     = &Track::duration;
+    metadata[MetaData::Lyrics]       = &Track::lyrics;
+    metadata[MetaData::Comment]      = &Track::comment;
+    metadata[MetaData::Date]         = &Track::date;
+    metadata[MetaData::Year]         = &Track::year;
+    metadata[MetaData::Cover]        = &Track::coverPath;
+    metadata[MetaData::FileSize]     = &Track::fileSize;
+    metadata[MetaData::Bitrate]      = &Track::bitrate;
+    metadata[MetaData::SampleRate]   = &Track::sampleRate;
+    metadata[MetaData::PlayCount]    = &Track::playCount;
+    metadata[MetaData::FileType]     = &Track::typeString;
+    metadata[MetaData::AddedTime]    = &Track::addedTime;
+    metadata[MetaData::ModifiedTime] = &Track::modifiedTime;
+    metadata[MetaData::FilePath]     = &Track::filepath;
+    metadata[MetaData::RelativePath] = &Track::relativePath;
+
+    setMetadata[MetaData::Title]        = generateSetFunc(&Track::setTitle);
+    setMetadata[MetaData::Artist]       = generateSetFunc(&Track::setArtists);
+    setMetadata[MetaData::Album]        = generateSetFunc(&Track::setAlbum);
+    setMetadata[MetaData::AlbumArtist]  = generateSetFunc(&Track::setAlbumArtist);
+    setMetadata[MetaData::Track]        = generateSetFunc(&Track::setTrackNumber);
+    setMetadata[MetaData::TrackTotal]   = generateSetFunc(&Track::setTrackTotal);
+    setMetadata[MetaData::Disc]         = generateSetFunc(&Track::setDiscNumber);
+    setMetadata[MetaData::DiscTotal]    = generateSetFunc(&Track::setDiscTotal);
+    setMetadata[MetaData::Genre]        = generateSetFunc(&Track::setGenres);
+    setMetadata[MetaData::Composer]     = generateSetFunc(&Track::setComposer);
+    setMetadata[MetaData::Performer]    = generateSetFunc(&Track::setPerformer);
+    setMetadata[MetaData::Duration]     = generateSetFunc(&Track::setDuration);
+    setMetadata[MetaData::Lyrics]       = generateSetFunc(&Track::setLyrics);
+    setMetadata[MetaData::Comment]      = generateSetFunc(&Track::setComment);
+    setMetadata[MetaData::Date]         = generateSetFunc(&Track::setDate);
+    setMetadata[MetaData::Year]         = generateSetFunc(&Track::setYear);
+    setMetadata[MetaData::Cover]        = generateSetFunc(&Track::setCoverPath);
+    setMetadata[MetaData::FileSize]     = generateSetFunc(&Track::setFileSize);
+    setMetadata[MetaData::Bitrate]      = generateSetFunc(&Track::setBitrate);
+    setMetadata[MetaData::SampleRate]   = generateSetFunc(&Track::setSampleRate);
+    setMetadata[MetaData::PlayCount]    = generateSetFunc(&Track::setPlayCount);
+    setMetadata[MetaData::AddedTime]    = generateSetFunc(&Track::setAddedTime);
+    setMetadata[MetaData::ModifiedTime] = generateSetFunc(&Track::setModifiedTime);
+}
+} // namespace
+
+namespace Fy::Core::Scripting {
+struct Registry::Private
+{
+    Track currentTrack;
+
+    std::unordered_map<QString, TrackFunc> metadata;
+    std::unordered_map<QString, TrackSetFunc> setMetadata;
+    std::unordered_map<QString, Func> funcs;
+
+    Private()
+    {
+        addDefaultFunctions(funcs);
+        addDefaultMetadata(metadata, setMetadata);
+    }
+};
+
+Registry::Registry()
+    : p{std::make_unique<Private>()}
+{ }
+
+Registry::~Registry() = default;
 
 bool Registry::varExists(const QString& var) const
 {
-    return m_metadata.contains(var);
+    return p->metadata.contains(var);
 }
 
 bool Registry::funcExists(const QString& func) const
 {
-    return m_funcs.contains(func);
+    return p->funcs.contains(func);
 }
 
 ScriptResult Registry::varValue(const QString& var) const
@@ -51,7 +183,7 @@ ScriptResult Registry::varValue(const QString& var) const
         return {};
     }
 
-    auto funcResult = m_metadata.at(var)(m_currentTrack);
+    auto funcResult = p->metadata.at(var)(p->currentTrack);
     return calculateResult(funcResult);
 }
 
@@ -61,16 +193,16 @@ void Registry::setVar(const QString& var, const FuncRet& value, Track& track)
         return;
     }
 
-    m_setMetadata.at(var)(track, value);
+    p->setMetadata.at(var)(track, value);
 }
 
 ScriptResult Registry::function(const QString& func, const ValueList& args) const
 {
-    if(func.isEmpty() || !m_funcs.contains(func)) {
+    if(func.isEmpty() || !p->funcs.contains(func)) {
         return {};
     }
 
-    auto function = m_funcs.at(func);
+    auto function = p->funcs.at(func);
     if(std::holds_alternative<NativeFunc>(function)) {
         const QString value = std::get<NativeFunc>(function)(containerCast<QStringList>(args));
 
@@ -87,7 +219,7 @@ ScriptResult Registry::function(const QString& func, const ValueList& args) cons
 
 void Registry::changeCurrentTrack(const Core::Track& track)
 {
-    m_currentTrack = track;
+    p->currentTrack = track;
 }
 
 ScriptResult Registry::calculateResult(Registry::FuncRet funcRet)
@@ -112,81 +244,5 @@ ScriptResult Registry::calculateResult(Registry::FuncRet funcRet)
     }
 
     return result;
-}
-
-void Registry::addDefaultFunctions()
-{
-    m_funcs.emplace("add", add);
-    m_funcs.emplace("sub", sub);
-    m_funcs.emplace("mul", mul);
-    m_funcs.emplace("div", div);
-    m_funcs.emplace("min", min);
-    m_funcs.emplace("max", max);
-    m_funcs.emplace("mod", mod);
-
-    m_funcs.emplace("num", num);
-    m_funcs.emplace("replace", replace);
-
-    m_funcs.emplace("timems", msToString);
-
-    m_funcs.emplace("if", cif);
-    m_funcs.emplace("if2", cif2);
-    m_funcs.emplace("ifgreater", ifgreater);
-    m_funcs.emplace("iflonger", iflonger);
-    m_funcs.emplace("ifequal", ifequal);
-}
-
-void Registry::addDefaultMetadata()
-{
-    m_metadata[Constants::MetaData::Title]        = &Track::title;
-    m_metadata[Constants::MetaData::Artist]       = &Track::artists;
-    m_metadata[Constants::MetaData::Album]        = &Track::album;
-    m_metadata[Constants::MetaData::AlbumArtist]  = &Track::albumArtist;
-    m_metadata[Constants::MetaData::Track]        = &Track::trackNumber;
-    m_metadata[Constants::MetaData::TrackTotal]   = &Track::trackTotal;
-    m_metadata[Constants::MetaData::Disc]         = &Track::discNumber;
-    m_metadata[Constants::MetaData::DiscTotal]    = &Track::discTotal;
-    m_metadata[Constants::MetaData::Genre]        = &Track::genres;
-    m_metadata[Constants::MetaData::Composer]     = &Track::composer;
-    m_metadata[Constants::MetaData::Performer]    = &Track::performer;
-    m_metadata[Constants::MetaData::Duration]     = &Track::duration;
-    m_metadata[Constants::MetaData::Lyrics]       = &Track::lyrics;
-    m_metadata[Constants::MetaData::Comment]      = &Track::comment;
-    m_metadata[Constants::MetaData::Date]         = &Track::date;
-    m_metadata[Constants::MetaData::Year]         = &Track::year;
-    m_metadata[Constants::MetaData::Cover]        = &Track::coverPath;
-    m_metadata[Constants::MetaData::FileSize]     = &Track::fileSize;
-    m_metadata[Constants::MetaData::Bitrate]      = &Track::bitrate;
-    m_metadata[Constants::MetaData::SampleRate]   = &Track::sampleRate;
-    m_metadata[Constants::MetaData::PlayCount]    = &Track::playCount;
-    m_metadata[Constants::MetaData::FileType]     = &Track::typeString;
-    m_metadata[Constants::MetaData::AddedTime]    = &Track::addedTime;
-    m_metadata[Constants::MetaData::ModifiedTime] = &Track::modifiedTime;
-    m_metadata[Constants::MetaData::FilePath]     = &Track::filepath;
-    m_metadata[Constants::MetaData::RelativePath] = &Track::relativePath;
-
-    m_setMetadata[Constants::MetaData::Title]        = generateSetFunc(&Track::setTitle);
-    m_setMetadata[Constants::MetaData::Artist]       = generateSetFunc(&Track::setArtists);
-    m_setMetadata[Constants::MetaData::Album]        = generateSetFunc(&Track::setAlbum);
-    m_setMetadata[Constants::MetaData::AlbumArtist]  = generateSetFunc(&Track::setAlbumArtist);
-    m_setMetadata[Constants::MetaData::Track]        = generateSetFunc(&Track::setTrackNumber);
-    m_setMetadata[Constants::MetaData::TrackTotal]   = generateSetFunc(&Track::setTrackTotal);
-    m_setMetadata[Constants::MetaData::Disc]         = generateSetFunc(&Track::setDiscNumber);
-    m_setMetadata[Constants::MetaData::DiscTotal]    = generateSetFunc(&Track::setDiscTotal);
-    m_setMetadata[Constants::MetaData::Genre]        = generateSetFunc(&Track::setGenres);
-    m_setMetadata[Constants::MetaData::Composer]     = generateSetFunc(&Track::setComposer);
-    m_setMetadata[Constants::MetaData::Performer]    = generateSetFunc(&Track::setPerformer);
-    m_setMetadata[Constants::MetaData::Duration]     = generateSetFunc(&Track::setDuration);
-    m_setMetadata[Constants::MetaData::Lyrics]       = generateSetFunc(&Track::setLyrics);
-    m_setMetadata[Constants::MetaData::Comment]      = generateSetFunc(&Track::setComment);
-    m_setMetadata[Constants::MetaData::Date]         = generateSetFunc(&Track::setDate);
-    m_setMetadata[Constants::MetaData::Year]         = generateSetFunc(&Track::setYear);
-    m_setMetadata[Constants::MetaData::Cover]        = generateSetFunc(&Track::setCoverPath);
-    m_setMetadata[Constants::MetaData::FileSize]     = generateSetFunc(&Track::setFileSize);
-    m_setMetadata[Constants::MetaData::Bitrate]      = generateSetFunc(&Track::setBitrate);
-    m_setMetadata[Constants::MetaData::SampleRate]   = generateSetFunc(&Track::setSampleRate);
-    m_setMetadata[Constants::MetaData::PlayCount]    = generateSetFunc(&Track::setPlayCount);
-    m_setMetadata[Constants::MetaData::AddedTime]    = generateSetFunc(&Track::setAddedTime);
-    m_setMetadata[Constants::MetaData::ModifiedTime] = generateSetFunc(&Track::setModifiedTime);
 }
 } // namespace Fy::Core::Scripting

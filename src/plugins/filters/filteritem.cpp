@@ -19,6 +19,8 @@
 
 #include "filteritem.h"
 
+#include <core/track.h>
+
 namespace Fy::Filters {
 FilterItem::FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode)
     : TreeItem{parent}

@@ -25,6 +25,7 @@
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
+#include <core/track.h>
 
 #include <QApplication>
 #include <QGridLayout>

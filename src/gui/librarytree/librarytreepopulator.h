@@ -21,7 +21,7 @@
 
 #include "librarytreeitem.h"
 
-#include <core/track.h>
+#include <core/trackfwd.h>
 
 #include <utils/worker.h>
 

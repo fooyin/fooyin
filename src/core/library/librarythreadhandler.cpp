@@ -18,80 +18,114 @@
  */
 
 #include "librarythreadhandler.h"
+
 #include "database/database.h"
+#include "librarydatabasemanager.h"
+#include "libraryscanner.h"
+
+#include <core/library/libraryinfo.h>
+#include <core/track.h>
 
 #include <QThread>
 
+#include <deque>
+
 namespace Fy::Core::Library {
+struct ScanRequest
+{
+    LibraryInfo library;
+    Core::TrackList tracks;
+};
+
+struct LibraryThreadHandler::Private
+{
+    LibraryThreadHandler* self;
+
+    DB::Database* database;
+
+    QThread* thread;
+    LibraryScanner scanner;
+    LibraryDatabaseManager libraryDatabaseManager;
+
+    std::deque<ScanRequest> scanRequests;
+
+    Private(LibraryThreadHandler* self, DB::Database* database)
+        : self{self}
+        , database{database}
+        , thread{new QThread(self)}
+        , scanner{database}
+        , libraryDatabaseManager{database}
+    {
+        scanner.moveToThread(thread);
+        libraryDatabaseManager.moveToThread(thread);
+
+        thread->start();
+    }
+
+    void addScanRequest(const LibraryInfo& library, const TrackList& tracks)
+    {
+        const ScanRequest request{library, tracks};
+        scanRequests.emplace_back(request);
+
+        if(scanRequests.size() == 1) {
+            QMetaObject::invokeMethod(&scanner, "scanLibrary", Q_ARG(const LibraryInfo&, library),
+                                      Q_ARG(const TrackList&, tracks));
+        }
+    }
+
+    void finishScanRequest()
+    {
+        scanRequests.pop_front();
+        if(!scanRequests.empty()) {
+            const ScanRequest request = scanRequests.front();
+            QMetaObject::invokeMethod(&scanner, "scanLibrary", Q_ARG(const LibraryInfo&, request.library),
+                                      Q_ARG(const TrackList&, request.tracks));
+        }
+    }
+};
 
 LibraryThreadHandler::LibraryThreadHandler(DB::Database* database, QObject* parent)
     : QObject{parent}
-    , m_database{database}
-    , m_thread{new QThread(this)}
-    , m_scanner{m_database}
-    , m_libraryDatabaseManager{database}
+    , p{std::make_unique<Private>(this, database)}
 {
-    m_scanner.moveToThread(m_thread);
-    m_libraryDatabaseManager.moveToThread(m_thread);
-
-    QObject::connect(this, &LibraryThreadHandler::scanLibrary, this, &LibraryThreadHandler::addScanRequest);
-    QObject::connect(this, &LibraryThreadHandler::scanNext, &m_scanner, &LibraryScanner::scanLibrary);
-    QObject::connect(this, &LibraryThreadHandler::getAllTracks, &m_libraryDatabaseManager,
+    QObject::connect(
+        this, &LibraryThreadHandler::scanLibrary, this,
+        [this](const LibraryInfo& library, const TrackList& tracks) { p->addScanRequest(library, tracks); });
+    QObject::connect(this, &LibraryThreadHandler::getAllTracks, &p->libraryDatabaseManager,
                      &LibraryDatabaseManager::getAllTracks);
-    QObject::connect(&m_libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this,
+    QObject::connect(&p->libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);
-    QObject::connect(&m_scanner, &Utils::Worker::finished, this, &LibraryThreadHandler::finishScanRequest);
-    QObject::connect(&m_scanner, &LibraryScanner::progressChanged, this, &LibraryThreadHandler::progressChanged);
-    QObject::connect(&m_scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
-    QObject::connect(&m_scanner, &LibraryScanner::addedTracks, this, &LibraryThreadHandler::addedTracks);
-    QObject::connect(&m_scanner, &LibraryScanner::updatedTracks, this, &LibraryThreadHandler::updatedTracks);
-    QObject::connect(&m_scanner, &LibraryScanner::tracksDeleted, this, &LibraryThreadHandler::tracksDeleted);
-
-    m_thread->start();
+    QObject::connect(&p->scanner, &Utils::Worker::finished, this, [this]() { p->finishScanRequest(); });
+    QObject::connect(&p->scanner, &LibraryScanner::progressChanged, this, &LibraryThreadHandler::progressChanged);
+    QObject::connect(&p->scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
+    QObject::connect(&p->scanner, &LibraryScanner::addedTracks, this, &LibraryThreadHandler::addedTracks);
+    QObject::connect(&p->scanner, &LibraryScanner::updatedTracks, this, &LibraryThreadHandler::updatedTracks);
+    QObject::connect(&p->scanner, &LibraryScanner::tracksDeleted, this, &LibraryThreadHandler::tracksDeleted);
 }
 
 LibraryThreadHandler::~LibraryThreadHandler()
 {
     stopScanner();
-    m_thread->quit();
-    m_thread->wait();
+    p->thread->quit();
+    p->thread->wait();
 }
 
 void LibraryThreadHandler::stopScanner()
 {
-    m_scanner.stopThread();
+    p->scanner.stopThread();
 }
 
 void LibraryThreadHandler::libraryRemoved(int id)
 {
-    if(m_scanRequests.empty()) {
+    if(p->scanRequests.empty()) {
         return;
     }
-    if(m_scanner.currentLibrary().id == id) {
+    if(p->scanner.currentLibrary().id == id) {
         // Scanner will emit finished signal which will remove library from front of queue
         stopScanner();
     }
     else {
-        std::erase_if(m_scanRequests, [id](const ScanRequest& request) { return request.library.id == id; });
-    }
-}
-
-void LibraryThreadHandler::addScanRequest(const LibraryInfo& library, const TrackList& tracks)
-{
-    const ScanRequest request{library, tracks};
-    m_scanRequests.emplace_back(request);
-
-    if(m_scanRequests.size() == 1) {
-        emit scanNext(library, tracks);
-    }
-}
-
-void LibraryThreadHandler::finishScanRequest()
-{
-    m_scanRequests.pop_front();
-    if(!m_scanRequests.empty()) {
-        const ScanRequest request = m_scanRequests.front();
-        emit scanNext(request.library, request.tracks);
+        std::erase_if(p->scanRequests, [id](const ScanRequest& request) { return request.library.id == id; });
     }
 }
 } // namespace Fy::Core::Library

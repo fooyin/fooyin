@@ -22,29 +22,179 @@
 #include "database/database.h"
 #include "database/librarydatabase.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/tagging/tagreader.h>
 #include <utils/utils.h>
+#include <core/track.h>
 
 #include <QDir>
 
 namespace Fy::Core::Library {
+struct LibraryScanner::Private
+{
+    LibraryScanner* self;
+    LibraryInfo library;
+    DB::Database* database;
+    DB::LibraryDatabase libraryDatabase;
+    Tagging::TagReader tagReader;
+
+    Private(LibraryScanner* self, DB::Database* database)
+        : self{self}
+        , database{database}
+        , libraryDatabase{database->connectionName()}
+    { }
+
+    void storeTracks(TrackList& tracks)
+    {
+        if(!self->mayRun()) {
+            return;
+        }
+
+        libraryDatabase.storeTracks(tracks);
+
+        if(!self->mayRun()) {
+            return;
+        }
+    }
+
+    QStringList getFiles(QDir& baseDirectory)
+    {
+        QStringList ret;
+        QList<QDir> stack{baseDirectory};
+
+        static const QStringList SupportedExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga", "*.m4a",  "*.wav", "*.flac",
+                                                     "*.wma", "*.mpc", "*.aiff", "*.ape", "*.webm", "*.mp4"};
+
+        while(!stack.isEmpty()) {
+            const QDir dir              = stack.takeFirst();
+            const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+            for(const auto& subDir : subDirs) {
+                if(!self->mayRun()) {
+                    return {};
+                }
+                stack.append(QDir{subDir.absoluteFilePath()});
+            }
+            const QFileInfoList files = dir.entryInfoList(SupportedExtensions, QDir::Files);
+            for(const auto& file : files) {
+                if(!self->mayRun()) {
+                    return {};
+                }
+                ret.append(file.absoluteFilePath());
+            }
+        }
+        return ret;
+    }
+
+    bool getAndSaveAllFiles(const TrackPathMap& tracks)
+    {
+        QDir dir{library.path};
+
+        TrackList tracksToStore{};
+        TrackList tracksToUpdate{};
+
+        const QStringList files = getFiles(dir);
+
+        int tracksProcessed{0};
+        auto totalTracks = static_cast<double>(files.size());
+        int currentProgress{-1};
+
+        for(const auto& filepath : files) {
+            if(!self->mayRun()) {
+                return false;
+            }
+
+            const QFileInfo info{filepath};
+            const QDateTime lastModifiedTime{info.lastModified()};
+            uint64_t lastModified{0};
+
+            if(lastModifiedTime.isValid()) {
+                lastModified = static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch());
+            }
+
+            bool fileWasRead;
+
+            if(tracks.contains(filepath)) {
+                const Track& libraryTrack = tracks.at(filepath);
+                if(libraryTrack.id() >= 0) {
+                    if(libraryTrack.modifiedTime() == lastModified) {
+                        totalTracks -= 1;
+                        continue;
+                    }
+
+                    Track changedTrack{libraryTrack};
+                    fileWasRead = tagReader.readMetaData(changedTrack);
+                    if(fileWasRead) {
+                        // Regenerate hash
+                        changedTrack.generateHash();
+                        tracksToUpdate.push_back(changedTrack);
+                        continue;
+                    }
+                }
+            }
+
+            Track track{filepath};
+            track.setLibraryId(library.id);
+
+            fileWasRead = tagReader.readMetaData(track);
+            if(fileWasRead) {
+                track.generateHash();
+                tracksToStore.push_back(track);
+
+                ++tracksProcessed;
+                const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);
+                if(currentProgress != progress) {
+                    currentProgress = progress;
+                    QMetaObject::invokeMethod(self, "progressChanged", Q_ARG(int, currentProgress));
+                }
+
+                if(tracksToStore.size() >= 250) {
+                    storeTracks(tracksToStore);
+                    QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const Core::TrackList&, tracksToStore));
+                    tracksToStore.clear();
+                }
+            }
+        }
+
+        storeTracks(tracksToStore);
+        storeTracks(tracksToUpdate);
+
+        if(!tracksToStore.empty()) {
+            QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const Core::TrackList&, tracksToStore));
+        }
+        if(!tracksToUpdate.empty()) {
+            QMetaObject::invokeMethod(self, "updatedTracks", Q_ARG(const Core::TrackList&, tracksToUpdate));
+        }
+
+        tracksToStore.clear();
+        tracksToUpdate.clear();
+
+        return true;
+    }
+
+    void changeLibraryStatus(LibraryInfo::Status status)
+    {
+        library.status = status;
+        QMetaObject::invokeMethod(self, "statusChanged", Q_ARG(const Fy::Core::Library::LibraryInfo&, library));
+    }
+};
+
 LibraryScanner::LibraryScanner(DB::Database* database, QObject* parent)
     : Worker{parent}
-    , m_database{database}
-    , m_libraryDatabase{database->connectionName()}
-    , m_mayRun{true}
+    , p{std::make_unique<Private>(this, database)}
 { }
+
+LibraryScanner::~LibraryScanner() = default;
 
 void LibraryScanner::closeThread()
 {
     stopThread();
-    m_database->closeDatabase();
+    p->database->closeDatabase();
 }
 
 void LibraryScanner::stopThread()
 {
     emit progressChanged(100);
-    m_mayRun = false;
+    setState(Idle);
     setState(State::Idle);
 }
 
@@ -55,15 +205,14 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
     }
     setState(Running);
 
-    m_mayRun  = true;
-    m_library = library;
+    p->library = library;
 
-    changeLibraryStatus(LibraryInfo::Status::Scanning);
+    p->changeLibraryStatus(LibraryInfo::Status::Scanning);
 
     TrackPathMap trackMap{};
     TrackList tracksToDelete{};
 
-    if(!Utils::File::exists(m_library.path)) {
+    if(!Utils::File::exists(p->library.path)) {
         // Root dir doesn't exist so leave to user to delete
         return;
     }
@@ -76,16 +225,16 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         }
     }
 
-    const bool deletedSuccess = m_libraryDatabase.deleteTracks(tracksToDelete);
+    const bool deletedSuccess = p->libraryDatabase.deleteTracks(tracksToDelete);
 
     if(deletedSuccess && !tracksToDelete.empty()) {
         emit tracksDeleted(tracksToDelete);
     }
 
-    getAndSaveAllFiles(trackMap);
+    p->getAndSaveAllFiles(trackMap);
 
     setState(Idle);
-    changeLibraryStatus(LibraryInfo::Status::Idle);
+    p->changeLibraryStatus(LibraryInfo::Status::Idle);
 
     emit finished();
 }
@@ -93,148 +242,15 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
 void LibraryScanner::updateTracks(const TrackList& /*tracks*/)
 {
     //    for(const Track& track : tracks) {
-    //        const bool saved = m_tagReader.writeMetaData(track);
+    //        const bool saved = p->tagReader.writeMetaData(track);
     //        if(saved) {
-    //            m_libraryDatabase.updateTrack(track);
+    //            p->libraryDatabase.updateTrack(track);
     //        }
     //    }
 }
 
 LibraryInfo LibraryScanner::currentLibrary() const
 {
-    return m_library;
-}
-
-void LibraryScanner::changeLibraryStatus(LibraryInfo::Status status)
-{
-    m_library.status = status;
-    emit statusChanged(m_library);
-}
-
-void LibraryScanner::storeTracks(TrackList& tracks)
-{
-    if(!m_mayRun) {
-        return;
-    }
-
-    m_libraryDatabase.storeTracks(tracks);
-
-    if(!m_mayRun) {
-        return;
-    }
-}
-
-QStringList LibraryScanner::getFiles(QDir& baseDirectory)
-{
-    QStringList ret;
-    QList<QDir> stack{baseDirectory};
-
-    static const QStringList SupportedExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga", "*.m4a",  "*.wav", "*.flac",
-                                                 "*.wma", "*.mpc", "*.aiff", "*.ape", "*.webm", "*.mp4"};
-
-    while(!stack.isEmpty()) {
-        const QDir dir              = stack.takeFirst();
-        const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-        for(const auto& subDir : subDirs) {
-            if(!m_mayRun) {
-                return {};
-            }
-            stack.append(QDir{subDir.absoluteFilePath()});
-        }
-        const QFileInfoList files = dir.entryInfoList(SupportedExtensions, QDir::Files);
-        for(const auto& file : files) {
-            if(!m_mayRun) {
-                return {};
-            }
-            ret.append(file.absoluteFilePath());
-        }
-    }
-    return ret;
-}
-
-bool LibraryScanner::getAndSaveAllFiles(const TrackPathMap& tracks)
-{
-    QDir dir(m_library.path);
-
-    TrackList tracksToStore{};
-    TrackList tracksToUpdate{};
-
-    const QStringList files = getFiles(dir);
-
-    int tracksProcessed{0};
-    auto totalTracks = static_cast<double>(files.size());
-    int currentProgress{-1};
-
-    for(const auto& filepath : files) {
-        if(!m_mayRun) {
-            return false;
-        }
-
-        const QFileInfo info{filepath};
-        const QDateTime lastModifiedTime{info.lastModified()};
-        uint64_t lastModified{0};
-
-        if(lastModifiedTime.isValid()) {
-            lastModified = static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch());
-        }
-
-        bool fileWasRead;
-
-        if(tracks.contains(filepath)) {
-            const Track& libraryTrack = tracks.at(filepath);
-            if(libraryTrack.id() >= 0) {
-                if(libraryTrack.modifiedTime() == lastModified) {
-                    totalTracks -= 1;
-                    continue;
-                }
-
-                Track changedTrack{libraryTrack};
-                fileWasRead = m_tagReader.readMetaData(changedTrack);
-                if(fileWasRead) {
-                    // Regenerate hash
-                    changedTrack.generateHash();
-                    tracksToUpdate.push_back(changedTrack);
-                    continue;
-                }
-            }
-        }
-
-        Track track{filepath};
-        track.setLibraryId(m_library.id);
-
-        fileWasRead = m_tagReader.readMetaData(track);
-        if(fileWasRead) {
-            track.generateHash();
-            tracksToStore.push_back(track);
-
-            ++tracksProcessed;
-            const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);
-            if(currentProgress != progress) {
-                currentProgress = progress;
-                emit progressChanged(currentProgress);
-            }
-
-            if(tracksToStore.size() >= 250) {
-                storeTracks(tracksToStore);
-                emit addedTracks(tracksToStore);
-                tracksToStore.clear();
-            }
-        }
-    }
-
-    storeTracks(tracksToStore);
-    storeTracks(tracksToUpdate);
-
-    if(!tracksToStore.empty()) {
-        emit addedTracks(tracksToStore);
-    }
-    if(!tracksToUpdate.empty()) {
-        emit updatedTracks(tracksToUpdate);
-    }
-
-    tracksToStore.clear();
-    tracksToUpdate.clear();
-
-    return true;
+    return p->library;
 }
 } // namespace Fy::Core::Library

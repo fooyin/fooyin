@@ -22,6 +22,7 @@
 #include "query.h"
 
 #include <core/constants.h>
+#include <core/track.h>
 #include <utils/utils.h>
 
 using namespace Qt::Literals::StringLiterals;

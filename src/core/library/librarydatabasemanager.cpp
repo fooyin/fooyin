@@ -22,6 +22,8 @@
 #include "database/database.h"
 #include "database/librarydatabase.h"
 
+#include <core/track.h>
+
 namespace Fy::Core::Library {
 LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, QObject* parent)
     : Worker{parent}

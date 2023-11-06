@@ -40,7 +40,8 @@ class TagEditorModel : public Utils::TableModel<TagEditorItem>
     Q_OBJECT
 
 public:
-    TagEditorModel(Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings, QObject* parent = nullptr);
+    TagEditorModel(Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
+                   QObject* parent = nullptr);
     ~TagEditorModel() override;
 
     void populate();
@@ -60,7 +61,7 @@ signals:
 
 private:
     struct Private;
-    std::unique_ptr<TagEditorModel::Private> p;
+    std::unique_ptr<Private> p;
 };
 } // namespace TagEditor
 } // namespace Fy

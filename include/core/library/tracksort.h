@@ -21,7 +21,9 @@
 
 #include "fycore_export.h"
 
-#include <core/track.h>
+#include <core/trackfwd.h>
+
+class QString;
 
 namespace Fy::Core {
 namespace Scripting {

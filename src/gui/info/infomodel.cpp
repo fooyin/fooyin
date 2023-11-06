@@ -22,6 +22,7 @@
 #include <core/player/playermanager.h>
 #include <utils/enumhelper.h>
 #include <utils/utils.h>
+#include <core/track.h>
 
 #include <QFileInfo>
 

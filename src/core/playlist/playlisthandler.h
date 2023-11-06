@@ -22,7 +22,7 @@
 #include "fycore_export.h"
 
 #include <core/playlist/playlistmanager.h>
-#include <core/track.h>
+#include <core/trackfwd.h>
 
 #include <QObject>
 
@@ -64,9 +64,9 @@ public:
 
     void changePlaylistIndex(int id, int index) override;
     void changeActivePlaylist(int id) override;
-    void changeActivePlaylist(Playlist *playlist) override;
+    void changeActivePlaylist(Playlist* playlist) override;
     void schedulePlaylist(int id) override;
-    void schedulePlaylist(Playlist *playlist) override;
+    void schedulePlaylist(Playlist* playlist) override;
     void clearSchedulePlaylist() override;
 
     void renamePlaylist(int id, const QString& name) override;

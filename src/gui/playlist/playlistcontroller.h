@@ -24,14 +24,11 @@
 #include <core/playlist/playlist.h>
 
 namespace Fy {
-
 namespace Utils {
 class SettingsManager;
 }
 
 namespace Core {
-class Track;
-
 namespace Library {
 class SortingRegistry;
 } // namespace Library
@@ -44,7 +41,6 @@ class PlaylistManager;
 
 namespace Gui::Widgets::Playlist {
 class PresetRegistry;
-struct PlaylistPreset;
 
 class PlaylistController : public QObject
 {

@@ -242,6 +242,8 @@ void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
     }
     p->tracks = result;
 
+    QMetaObject::invokeMethod(&p->threadHandler, "saveUpdatedTracks", Q_ARG(const TrackList&, tracks));
+
     emit tracksUpdated(tracks);
 }
 

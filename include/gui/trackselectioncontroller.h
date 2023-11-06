@@ -21,7 +21,7 @@
 
 #include "fygui_export.h"
 
-#include <core/track.h>
+#include <core/trackfwd.h>
 
 #include <QObject>
 

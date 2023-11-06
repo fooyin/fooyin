@@ -21,7 +21,7 @@
 
 #include "module.h"
 
-#include <core/track.h>
+#include <core/trackfwd.h>
 
 namespace Fy::Core::DB {
 class LibraryDatabase : public Module

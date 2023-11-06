@@ -55,12 +55,6 @@ bool Worker::isRunning()
 
 bool Worker::mayRun() const
 {
-    // Process event queue to check for stop signals
-    auto* dispatcher = QThread::currentThread()->eventDispatcher();
-    if(!dispatcher) {
-        return false;
-    }
-    dispatcher->processEvents(QEventLoop::AllEvents);
     return m_state == Running;
 }
 } // namespace Fy::Utils

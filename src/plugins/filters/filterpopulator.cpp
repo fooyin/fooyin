@@ -22,6 +22,7 @@
 #include <core/constants.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
+#include <core/track.h>
 
 #include <utils/crypto.h>
 

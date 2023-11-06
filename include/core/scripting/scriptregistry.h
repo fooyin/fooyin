@@ -22,7 +22,7 @@
 #include "fycore_export.h"
 
 #include <core/scripting/scriptvalue.h>
-#include <core/track.h>
+#include <core/trackfwd.h>
 
 #include <QObject>
 
@@ -33,7 +33,7 @@ public:
     using FuncRet = std::variant<int, uint64_t, QString, QStringList>;
 
     Registry();
-    virtual ~Registry() = default;
+    virtual ~Registry();
 
     virtual bool varExists(const QString& var) const;
     virtual bool funcExists(const QString& func) const;
@@ -54,46 +54,7 @@ protected:
     static ScriptResult calculateResult(FuncRet funcRet);
 
 private:
-    using NativeFunc     = std::function<QString(const QStringList&)>;
-    using NativeCondFunc = std::function<ScriptResult(const ValueList&)>;
-    using Func           = std::variant<NativeFunc, NativeCondFunc>;
-
-    using TrackFunc    = std::function<FuncRet(const Track&)>;
-    using TrackSetFunc = std::function<void(Track&, const FuncRet&)>;
-
-    template <typename FuncType>
-    auto generateSetFunc(FuncType func)
-    {
-        return [func](Track& track, FuncRet arg) {
-            if constexpr(std::is_same_v<FuncType, void (Track::*)(int)>) {
-                if(const auto* value = std::get_if<int>(&arg)) {
-                    (track.*func)(*value);
-                }
-            }
-            else if constexpr(std::is_same_v<FuncType, void (Track::*)(uint64_t)>) {
-                if(const auto* value = std::get_if<uint64_t>(&arg)) {
-                    (track.*func)(*value);
-                }
-            }
-            else if constexpr(std::is_same_v<FuncType, void (Track::*)(const QString&)>) {
-                if(const auto* value = std::get_if<QString>(&arg)) {
-                    (track.*func)(*value);
-                }
-            }
-            else if constexpr(std::is_same_v<FuncType, void (Track::*)(const QStringList&)>) {
-                if(const auto* value = std::get_if<QStringList>(&arg)) {
-                    (track.*func)(*value);
-                }
-            }
-        };
-    }
-
-    void addDefaultFunctions();
-    void addDefaultMetadata();
-
-    Track m_currentTrack;
-    std::unordered_map<QString, TrackFunc> m_metadata;
-    std::unordered_map<QString, TrackSetFunc> m_setMetadata;
-    std::unordered_map<QString, Func> m_funcs;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fy::Core::Scripting

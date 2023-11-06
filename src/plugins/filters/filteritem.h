@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <core/track.h>
+#include <core/trackfwd.h>
 #include <utils/treeitem.h>
 
 #include <QObject>
@@ -27,7 +27,7 @@
 namespace Fy::Filters {
 enum FilterItemRole
 {
-    Title   = Qt::UserRole + 1,
+    Title = Qt::UserRole + 1,
     Tracks,
     Sorting,
     AllNode

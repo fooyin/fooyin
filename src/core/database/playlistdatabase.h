@@ -22,6 +22,7 @@
 #include "module.h"
 
 #include <core/playlist/playlist.h>
+#include <core/track.h>
 
 namespace Fy::Core::DB {
 class PlaylistDatabase : private Module

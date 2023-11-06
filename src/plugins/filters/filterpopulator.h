@@ -21,11 +21,11 @@
 
 #include "filteritem.h"
 
-#include <core/track.h>
+#include <core/trackfwd.h>
 #include <utils/worker.h>
 
 namespace Fy::Filters {
-using ItemKeyMap = std::map<QString, FilterItem>;
+using ItemKeyMap     = std::map<QString, FilterItem>;
 using TrackIdNodeMap = std::unordered_map<int, std::vector<QString>>;
 
 struct PendingTreeData

@@ -27,7 +27,6 @@
 #include <QFont>
 #include <QObject>
 #include <QPalette>
-#include <QDataStream>
 
 namespace Fy::Filters {
 struct FilterOptions
@@ -42,8 +41,7 @@ struct FilterOptions
 
     FilterOptions()
         : colour{QApplication::palette().text().color()}
-    {
-    }
+    { }
 
     friend QDataStream& operator<<(QDataStream& stream, const FilterOptions& options)
     {

@@ -21,7 +21,7 @@
 
 #include "playlistitem.h"
 
-#include <core/track.h>
+#include <core/trackfwd.h>
 #include <utils/treemodel.h>
 
 namespace Fy {

@@ -19,14 +19,8 @@
 
 #pragma once
 
-#include "database/librarydatabase.h"
-
-#include <core/library/libraryinfo.h>
-#include <core/tagging/tagreader.h>
-#include <core/track.h>
+#include <core/trackfwd.h>
 #include <utils/worker.h>
-
-class QDir;
 
 namespace Fy::Core {
 namespace DB {
@@ -35,6 +29,7 @@ class Database;
 
 namespace Library {
 class LibraryManager;
+struct LibraryInfo;
 
 class LibraryScanner : public Utils::Worker
 {
@@ -42,6 +37,7 @@ class LibraryScanner : public Utils::Worker
 
 public:
     explicit LibraryScanner(DB::Database* database, QObject* parent = nullptr);
+    ~LibraryScanner() override;
 
     void closeThread() override;
     void stopThread() override;
@@ -59,18 +55,8 @@ signals:
     void tracksDeleted(const Core::TrackList& tracks);
 
 private:
-    void changeLibraryStatus(LibraryInfo::Status status);
-
-    void storeTracks(TrackList& tracks);
-    QStringList getFiles(QDir& baseDirectory);
-    bool getAndSaveAllFiles(const TrackPathMap& tracks);
-
-    LibraryInfo m_library;
-    DB::Database* m_database;
-    DB::LibraryDatabase m_libraryDatabase;
-    Tagging::TagReader m_tagReader;
-
-    std::atomic<bool> m_mayRun;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Library
 } // namespace Fy::Core

@@ -28,6 +28,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
+#include <core/track.h>
 
 #include <QAction>
 #include <QFileInfo>
