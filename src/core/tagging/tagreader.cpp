@@ -318,8 +318,8 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fy::Core::Track& track)
         return;
     }
 
-    if(mp4Tags->contains("TRKN")) {
-        const TagLib::MP4::Item::IntPair& trackNumbers = mp4Tags->item("TRKN").toIntPair();
+    if(mp4Tags->contains("trkn")) {
+        const TagLib::MP4::Item::IntPair& trackNumbers = mp4Tags->item("trkn").toIntPair();
         if(trackNumbers.first > 0) {
             track.setTrackNumber(trackNumbers.first);
         }
@@ -328,8 +328,8 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fy::Core::Track& track)
         }
     }
 
-    if(mp4Tags->contains("DISK")) {
-        const TagLib::MP4::Item::IntPair& discNumbers = mp4Tags->item("DISK").toIntPair();
+    if(mp4Tags->contains("disk")) {
+        const TagLib::MP4::Item::IntPair& discNumbers = mp4Tags->item("disk").toIntPair();
         if(discNumbers.first > 0) {
             track.setDiscNumber(discNumbers.first);
         }
@@ -590,8 +590,10 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         const TagLib::MP4::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file, track);
-            readMp4Tags(file.tag(), track);
-            handleCover(readMp4Cover(file.tag()), track);
+            if(file.tag()) {
+                readMp4Tags(file.tag(), track);
+                handleCover(readMp4Cover(file.tag()), track);
+            }
         }
     }
     else if(mimeType == "audio/flac"_L1) {
@@ -642,8 +644,10 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         const TagLib::ASF::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file, track);
-            readAsfTags(file.tag(), track);
-            handleCover(readAsfCover(file.tag()), track);
+            if(file.tag()) {
+                readAsfTags(file.tag(), track);
+                handleCover(readAsfCover(file.tag()), track);
+            }
         }
     }
     else {
