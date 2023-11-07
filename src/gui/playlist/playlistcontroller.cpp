@@ -41,8 +41,8 @@ struct PlaylistController::Private
 
     Core::Playlist::Playlist* currentPlaylist{nullptr};
 
-    int currentHistoryIndex{-1};
-    std::vector<Core::TrackList> history;
+    std::map<int, int> historyIndex;
+    std::map<int, std::vector<Core::TrackList>> history;
 
     Private(PlaylistController* self, Core::Playlist::PlaylistManager* handler,
             Core::Player::PlayerManager* playerManager, PresetRegistry* presetRegistry,
@@ -158,6 +158,7 @@ void PlaylistController::changeCurrentPlaylist(int id)
 {
     if(auto* playlist = p->handler->playlistById(id)) {
         changeCurrentPlaylist(playlist);
+        emit playlistHistoryChanged();
     }
 }
 
@@ -172,21 +173,47 @@ void PlaylistController::saveCurrentPlaylist()
         return;
     }
 
-    p->currentHistoryIndex++;
+    const int currentId = p->currentPlaylist->id();
 
-    p->history.push_back(p->currentPlaylist->tracks());
+    if(!p->historyIndex.contains(currentId)) {
+        p->historyIndex.emplace(currentId, -1);
+    }
+
+    p->historyIndex[currentId]++;
+
+    p->history[currentId].push_back(p->currentPlaylist->tracks());
 
     emit playlistHistoryChanged();
 }
 
 bool PlaylistController::canUndo() const
 {
-    return !p->history.empty() && p->currentHistoryIndex > 0;
+    if(!p->currentPlaylist || p->history.empty()) {
+        return false;
+    }
+
+    const int currentId = p->currentPlaylist->id();
+
+    if(!p->history.contains(currentId) || !p->historyIndex.contains(currentId)) {
+        return false;
+    }
+
+    return p->historyIndex.at(p->currentPlaylist->id()) > 0;
 }
 
 bool PlaylistController::canRedo() const
 {
-    return !p->history.empty() && p->currentHistoryIndex < static_cast<int>(p->history.size() - 1);
+    if(!p->currentPlaylist || p->history.empty()) {
+        return false;
+    }
+
+    const int currentId = p->currentPlaylist->id();
+
+    if(!p->history.contains(currentId) || !p->historyIndex.contains(currentId)) {
+        return false;
+    }
+
+    return p->historyIndex.at(currentId) < static_cast<int>(p->history.at(currentId).size() - 1);
 }
 
 void PlaylistController::undoPlaylistChanges()
@@ -196,8 +223,9 @@ void PlaylistController::undoPlaylistChanges()
     }
 
     if(canUndo()) {
-        p->currentHistoryIndex--;
-        p->currentPlaylist->replaceTracks(p->history.at(p->currentHistoryIndex));
+        const int currentId = p->currentPlaylist->id();
+        p->historyIndex[currentId]--;
+        p->currentPlaylist->replaceTracks(p->history.at(currentId).at(p->historyIndex.at(currentId)));
         p->handlePlaylistUpdated(p->currentPlaylist);
         emit playlistHistoryChanged();
     }
@@ -210,8 +238,9 @@ void PlaylistController::redoPlaylistChanges()
     }
 
     if(canRedo()) {
-        p->currentHistoryIndex++;
-        p->currentPlaylist->replaceTracks(p->history.at(p->currentHistoryIndex));
+        const int currentId = p->currentPlaylist->id();
+        p->historyIndex[currentId]++;
+        p->currentPlaylist->replaceTracks(p->history.at(currentId).at(p->historyIndex.at(currentId)));
         p->handlePlaylistUpdated(p->currentPlaylist);
         emit playlistHistoryChanged();
     }
