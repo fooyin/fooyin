@@ -74,10 +74,17 @@ public:
     void changeCurrentPlaylist(int id);
     void changePlaylistIndex(int playlistId, int index);
 
+    void saveCurrentPlaylist();
+    [[nodiscard]] bool canUndo() const;
+    [[nodiscard]] bool canRedo() const;
+    void undoPlaylistChanges();
+    void redoPlaylistChanges();
+
 signals:
     void currentPlaylistChanged(Core::Playlist::Playlist* playlist);
     void currentTrackChanged(const Core::Track& track);
     void playStateChanged(Core::Player::PlayState state);
+    void playlistHistoryChanged();
 
 private:
     struct Private;

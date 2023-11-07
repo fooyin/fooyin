@@ -115,6 +115,8 @@ constexpr auto Shuffle         = "Playback.Order.Shuffle";
 constexpr auto ScriptSandbox   = "View.ScriptSandbox";
 constexpr auto SelectAll       = "Edit.SelectAll";
 constexpr auto Clear           = "Edit.Clear";
+constexpr auto Undo            = "Edit.Undo";
+constexpr auto Redo            = "Edit.Redo";
 } // namespace Actions
 
 namespace Mime {

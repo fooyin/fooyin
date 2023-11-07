@@ -41,6 +41,9 @@ struct PlaylistController::Private
 
     Core::Playlist::Playlist* currentPlaylist{nullptr};
 
+    int currentHistoryIndex{-1};
+    std::vector<Core::TrackList> history;
+
     Private(PlaylistController* self, Core::Playlist::PlaylistManager* handler,
             Core::Player::PlayerManager* playerManager, PresetRegistry* presetRegistry,
             Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings)
@@ -161,6 +164,57 @@ void PlaylistController::changeCurrentPlaylist(int id)
 void PlaylistController::changePlaylistIndex(int playlistId, int index)
 {
     p->handler->changePlaylistIndex(playlistId, index);
+}
+
+void PlaylistController::saveCurrentPlaylist()
+{
+    if(!p->currentPlaylist) {
+        return;
+    }
+
+    p->currentHistoryIndex++;
+
+    p->history.push_back(p->currentPlaylist->tracks());
+
+    emit playlistHistoryChanged();
+}
+
+bool PlaylistController::canUndo() const
+{
+    return !p->history.empty() && p->currentHistoryIndex > 0;
+}
+
+bool PlaylistController::canRedo() const
+{
+    return !p->history.empty() && p->currentHistoryIndex < static_cast<int>(p->history.size() - 1);
+}
+
+void PlaylistController::undoPlaylistChanges()
+{
+    if(!p->currentPlaylist) {
+        return;
+    }
+
+    if(canUndo()) {
+        p->currentHistoryIndex--;
+        p->currentPlaylist->replaceTracks(p->history.at(p->currentHistoryIndex));
+        p->handlePlaylistUpdated(p->currentPlaylist);
+        emit playlistHistoryChanged();
+    }
+}
+
+void PlaylistController::redoPlaylistChanges()
+{
+    if(!p->currentPlaylist) {
+        return;
+    }
+
+    if(canRedo()) {
+        p->currentHistoryIndex++;
+        p->currentPlaylist->replaceTracks(p->history.at(p->currentHistoryIndex));
+        p->handlePlaylistUpdated(p->currentPlaylist);
+        emit playlistHistoryChanged();
+    }
 }
 
 void PlaylistController::startPlayback() const

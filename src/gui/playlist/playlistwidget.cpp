@@ -357,7 +357,7 @@ void PlaylistWidgetPrivate::tracksRemoved() const
         }
     }
 
-    //    playlistController->saveCurrentPlaylist();
+    playlistController->saveCurrentPlaylist();
 
     model->removeTracks(trackSelection);
     playlistController->playlistHandler()->clearSchedulePlaylist();
@@ -367,7 +367,7 @@ void PlaylistWidgetPrivate::tracksRemoved() const
         model->updateHeader(playlist);
     }
 
-    //    playlistController->saveCurrentPlaylist();
+    playlistController->saveCurrentPlaylist();
 }
 
 void PlaylistWidgetPrivate::customHeaderMenuRequested(QPoint pos)
