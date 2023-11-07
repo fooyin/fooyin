@@ -63,12 +63,13 @@ class FYGUI_EXPORT TrackSelectionController : public QObject
 
 public:
     TrackSelectionController(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
-                             Widgets::Playlist::PlaylistController* playlistController);
+                             Widgets::Playlist::PlaylistController* playlistController, QObject* parent = nullptr);
     ~TrackSelectionController() override;
 
     [[nodiscard]] bool hasTracks() const;
 
     [[nodiscard]] Core::TrackList selectedTracks() const;
+    void changeSelectedTracks(int index, const Core::TrackList& tracks, const QString& title = {});
     void changeSelectedTracks(const Core::TrackList& tracks, const QString& title = {});
 
     void addTrackContextMenu(QMenu* menu) const;

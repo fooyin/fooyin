@@ -40,14 +40,9 @@ class HeaderView;
 class WidgetContext;
 } // namespace Utils
 
-namespace Core {
-namespace Player {
-class PlayerManager;
-}
-namespace Playlist {
+namespace Core::Playlist {
 class Playlist;
 }
-} // namespace Core
 
 namespace Gui {
 class TrackSelectionController;
@@ -64,8 +59,8 @@ class PlaylistWidgetPrivate : public QObject
 
 public:
     PlaylistWidgetPrivate(PlaylistWidget* self, Utils::ActionManager* actionManager,
-                          Core::Player::PlayerManager* playerManager, PlaylistController* playlistController,
-                          TrackSelectionController* selectionController, Utils::SettingsManager* settings);
+                          PlaylistController* playlistController, TrackSelectionController* selectionController,
+                          Utils::SettingsManager* settings);
 
     void setupConnections();
     void setupActions();
@@ -99,11 +94,9 @@ public:
     QCoro::Task<void> changeSort(QString script) const;
     void addSortMenu(QMenu* parent);
 
-
     PlaylistWidget* self;
 
     Utils::ActionManager* actionManager;
-    Core::Player::PlayerManager* playerManager;
     TrackSelectionController* selectionController;
     Utils::SettingsManager* settings;
     Utils::SettingsDialogController* settingsDialog;

@@ -31,8 +31,8 @@ class SettingsManager;
 
 namespace Core {
 namespace Player {
-class PlayerManager;
-}
+enum class PlayState;
+} // namespace Player
 
 namespace Playlist {
 class Playlist;
@@ -41,7 +41,6 @@ class Playlist;
 
 namespace Gui::Widgets::Playlist {
 struct PlaylistPreset;
-class PlaylistController;
 class PlaylistModelPrivate;
 
 class PlaylistModel : public Utils::TreeModel<PlaylistItem>
@@ -49,15 +48,17 @@ class PlaylistModel : public Utils::TreeModel<PlaylistItem>
     Q_OBJECT
 
 public:
-    PlaylistModel(Core::Player::PlayerManager* playerManager, Playlist::PlaylistController* playlistController,
-                  Utils::SettingsManager* settings, QObject* parent = nullptr);
+    PlaylistModel(Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    void fetchMore(const QModelIndex& parent) override;
+    bool canFetchMore(const QModelIndex& parent) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+
     [[nodiscard]] QStringList mimeTypes() const override;
     [[nodiscard]] bool canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                                        const QModelIndex& parent) const override;
@@ -67,30 +68,22 @@ public:
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
 
-    void fetchMore(const QModelIndex& parent) override;
-    bool canFetchMore(const QModelIndex& parent) const override;
-
-    bool insertPlaylistRows(const QModelIndex& target, int firstRow, int lastRow,
-                            const std::vector<PlaylistItem*>& children);
-    bool movePlaylistRows(const QModelIndex& source, int firstRow, int lastRow, const QModelIndex& target, int row,
-                          const std::vector<PlaylistItem*>& children);
-    bool removePlaylistRows(int row, int count, const QModelIndex& parent);
+    void reset(const PlaylistPreset& preset, Core::Playlist::Playlist* playlist);
 
     QModelIndex indexForTrackIndex(const Core::Track& track, int index);
     void removeTracks(const QModelIndexList& indexes);
-
-    void reset(Core::Playlist::Playlist* playlist);
     void updateHeader(Core::Playlist::Playlist* playlist);
-    void updateTrackIndexes();
-    void changeTrackState();
-    void changePreset(const PlaylistPreset& preset);
+    void setCurrentPlaylistIsActive(bool active);
 
 signals:
     void tracksChanged(int index);
 
+public slots:
+    void currentTrackChanged(const Core::Track& track);
+    void playStateChanged(Core::Player::PlayState state);
+
 private:
     friend PlaylistModelPrivate;
-
     std::unique_ptr<PlaylistModelPrivate> p;
 };
 } // namespace Gui::Widgets::Playlist

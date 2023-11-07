@@ -19,14 +19,13 @@
 
 #include "playlistmodel.h"
 
-#include "playlist/playlistcontroller.h"
 #include "playlistitem.h"
+#include "playlistmodel_p.h"
 #include "playlistpopulator.h"
 #include "playlistpreset.h"
 
 #include <core/player/playermanager.h>
 #include <core/playlist/playlist.h>
-#include <core/playlist/playlistmanager.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
@@ -34,995 +33,15 @@
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QIODevice>
 #include <QIcon>
 #include <QMimeData>
-#include <QPalette>
-#include <QStack>
-#include <QThread>
 
 #include <queue>
-#include <set>
-
-using namespace Qt::Literals::StringLiterals;
-
-namespace {
-QByteArray saveTracks(const QModelIndexList& indexes)
-{
-    QByteArray result;
-    QDataStream stream(&result, QIODevice::WriteOnly);
-
-    Fy::Core::TrackList tracks;
-    tracks.reserve(indexes.size());
-
-    std::ranges::transform(indexes, std::back_inserter(tracks), [](const QModelIndex& index) {
-        return index.data(Fy::Gui::Widgets::Playlist::PlaylistItem::Role::ItemData).value<Fy::Core::Track>();
-    });
-
-    stream << tracks;
-
-    return result;
-}
-
-Fy::Core::TrackList restoreTracks(QByteArray data)
-{
-    Fy::Core::TrackList result;
-    QDataStream stream(&data, QIODevice::ReadOnly);
-
-    stream >> result;
-
-    return result;
-}
-
-QByteArray saveIndexes(const QModelIndexList& indexes, Fy::Core::Playlist::Playlist* playlist)
-{
-    if(!playlist) {
-        return {};
-    }
-
-    QByteArray result;
-    QDataStream stream(&result, QIODevice::WriteOnly);
-
-    stream << playlist->id();
-
-    for(const QModelIndex& index : indexes) {
-        QModelIndex localIndex = index;
-        QStack<int> indexParentStack;
-        while(localIndex.isValid()) {
-            indexParentStack << localIndex.row();
-            localIndex = localIndex.parent();
-        }
-
-        stream << indexParentStack.size();
-        while(!indexParentStack.isEmpty()) {
-            stream << indexParentStack.pop();
-        }
-    }
-    return result;
-}
-
-QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Fy::Core::Playlist::Playlist* playlist)
-{
-    if(!playlist) {
-        return {};
-    }
-
-    QModelIndexList result;
-    QDataStream stream(&data, QIODevice::ReadOnly);
-
-    int playlistId;
-    stream >> playlistId;
-
-    if(playlistId != playlist->id()) {
-        return {};
-    }
-
-    while(!stream.atEnd()) {
-        int childDepth = 0;
-        stream >> childDepth;
-
-        QModelIndex currentIndex;
-        for(int i = 0; i < childDepth; ++i) {
-            int row = 0;
-            stream >> row;
-            currentIndex = model->index(row, 0, currentIndex);
-        }
-        if(currentIndex.isValid()) {
-            result << currentIndex;
-        }
-    }
-    return result;
-}
-
-bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
-{
-    QModelIndex item1{index1};
-    QModelIndex item2{index2};
-    const QModelIndex root;
-
-    while(item1.parent() != item2.parent()) {
-        if(item1.parent() != root) {
-            item1 = item1.parent();
-        }
-        if(item2.parent() != root) {
-            item2 = item2.parent();
-        }
-    }
-    if(item1.row() == item2.row()) {
-        return false;
-    }
-    return item1.row() < item2.row();
-}
-} // namespace
-
-struct cmpIndexes
-{
-    bool operator()(const QModelIndex& index1, const QModelIndex& index2) const
-    {
-        return cmpTrackIndices(index1, index2);
-    }
-};
-
-using ParentChildMap = std::map<QModelIndex, std::vector<std::vector<int>>, cmpIndexes>;
-
-ParentChildMap determineIndexGroups(const QModelIndexList& indexes)
-{
-    ParentChildMap indexGroups;
-
-    QModelIndexList sortedIndexes{indexes};
-    std::ranges::sort(sortedIndexes, cmpTrackIndices);
-
-    auto startOfSequence = sortedIndexes.cbegin();
-    while(startOfSequence != sortedIndexes.cend()) {
-        auto endOfSequence
-            = std::adjacent_find(startOfSequence, sortedIndexes.cend(), [](const auto& lhs, const auto& rhs) {
-                  return lhs.parent() != rhs.parent() || rhs.row() != lhs.row() + 1;
-              });
-        if(endOfSequence != sortedIndexes.cend()) {
-            std::advance(endOfSequence, 1);
-        }
-
-        std::vector<int> group;
-        for(auto it = startOfSequence; it != endOfSequence; ++it) {
-            group.push_back(it->row());
-        }
-
-        const QModelIndex parent = startOfSequence->parent();
-        indexGroups[parent].push_back(group);
-
-        startOfSequence = endOfSequence;
-    }
-
-    return indexGroups;
-}
 
 namespace Fy::Gui::Widgets::Playlist {
-using ParentChildItemMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>, cmpIndexes>;
-
-bool cmpItemsReverse(PlaylistItem* pItem1, PlaylistItem* pItem2)
-{
-    PlaylistItem* item1{pItem1};
-    PlaylistItem* item2{pItem2};
-
-    while(item1->parent() != item2->parent()) {
-        if(item1->parent() == item2) {
-            return true;
-        }
-        if(item2->parent() == item1) {
-            return false;
-        }
-        if(item1->parent()->type() != PlaylistItem::Root) {
-            item1 = item1->parent();
-        }
-        if(item2->parent()->type() != PlaylistItem::Root) {
-            item2 = item2->parent();
-        }
-    }
-    if(item1->row() == item2->row()) {
-        return true;
-    }
-    return item1->row() > item2->row();
-};
-
-struct cmpItems
-{
-    bool operator()(PlaylistItem* pItem1, PlaylistItem* pItem2) const
-    {
-        return cmpItemsReverse(pItem1, pItem2);
-    }
-};
-
-using ItemPtrSet = std::set<PlaylistItem*, cmpItems>;
-
-void updateHeaderChildren(PlaylistItem* header)
-{
-    if(!header) {
-        return;
-    }
-
-    const auto type = header->type();
-
-    if(type == PlaylistItem::Header || type == PlaylistItem::Subheader) {
-        Container& container = std::get<1>(header->data());
-        container.clearTracks();
-
-        const auto& children = header->children();
-        for(PlaylistItem* child : children) {
-            if(child->type() == PlaylistItem::Track) {
-                const Core::Track& track = std::get<0>(child->data()).track();
-                container.addTrack(track);
-            }
-            else {
-                const Core::TrackList tracks = std::get<1>(child->data()).tracks();
-                container.addTracks(tracks);
-            }
-        }
-    }
-}
-
-struct SplitParent
-{
-    QModelIndex source;
-    PlaylistItem* target;
-    int firstRow{0};
-    int finalRow{0};
-    std::vector<PlaylistItem*> children;
-};
-
-class PlaylistModelPrivate
-{
-public:
-    PlaylistModelPrivate(PlaylistModel* self, Core::Player::PlayerManager* playerManager,
-                         Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings);
-
-    void populateModel(PendingData& data);
-    void populateTracks(PendingData& data);
-    void updateModel(ItemKeyMap& data);
-    void updateHeaders(const QModelIndexList& headers);
-
-    void beginReset();
-
-    QVariant trackData(PlaylistItem* item, int role) const;
-    QVariant headerData(PlaylistItem* item, int role) const;
-    QVariant subheaderData(PlaylistItem* item, int role) const;
-
-    ParentChildItemMap determineItemGroups(const QModelIndexList& indexes) const;
-    std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndexes>
-    groupChildren(const std::vector<PlaylistItem*>& children) const;
-
-    PlaylistItem* itemForKey(const QString& key);
-
-    template <typename Container>
-    int moveRows(const QModelIndex& source, const Container& rows, const QModelIndex& target, int row);
-    template <typename Container>
-    int copyRows(const QModelIndex& source, const Container& rows, const QModelIndex& target, int row);
-    template <typename Container>
-    int insertRows(const Container& rows, const QModelIndex& target, int row);
-
-    void removeEmptyHeaders(QModelIndexList& headers);
-    void mergeHeaders(QModelIndexList& headersToUpdate);
-
-    PlaylistItem* cloneParent(PlaylistItem* parent);
-    QModelIndex canBeMerged(PlaylistItem*& currTarget, int& targetRow, std::vector<PlaylistItem*>& sourceParents,
-                            int targetOffset) const;
-
-    QModelIndex handleDiffParentDrop(PlaylistItem* source, PlaylistItem* target, int& row,
-                                     QModelIndexList& headersToUpdate);
-    void handleExternalDrop(const PendingData& data);
-
-    void coverUpdated(const Core::Track& track);
-
-    PlaylistModel* self;
-
-    Core::Player::PlayerManager* playerManager;
-    Playlist::PlaylistController* playlistController;
-    Utils::SettingsManager* settings;
-    Library::CoverProvider* coverProvider;
-
-    PlaylistPreset currentPreset;
-
-    bool altColours;
-    QSize coverSize;
-
-    bool resetting{false};
-
-    QThread populatorThread;
-    PlaylistPopulator populator;
-
-    QString headerText;
-
-    NodeKeyMap pendingNodes;
-    ItemKeyMap nodes;
-    ItemKeyMap oldNodes;
-    TrackIdNodeMap trackParents;
-
-    Core::Playlist::Playlist* currentPlaylist{nullptr};
-
-    QPixmap playingIcon;
-    QPixmap pausedIcon;
-};
-
-PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* self, Core::Player::PlayerManager* playerManager,
-                                           Playlist::PlaylistController* playlistController,
-                                           Utils::SettingsManager* settings)
-    : self{self}
-    , playerManager{playerManager}
-    , playlistController{playlistController}
-    , settings{settings}
-    , coverProvider{new Library::CoverProvider(self)}
-    , altColours{settings->value<Settings::PlaylistAltColours>()}
-    , coverSize{settings->value<Settings::PlaylistThumbnailSize>(), settings->value<Settings::PlaylistThumbnailSize>()}
-    , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
-    , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
-{
-    populator.moveToThread(&populatorThread);
-    populatorThread.start();
-}
-
-void PlaylistModelPrivate::populateModel(PendingData& data)
-{
-    nodes.merge(data.items);
-    trackParents.merge(data.trackParents);
-
-    if(resetting) {
-        for(const auto& [parentKey, rows] : data.nodes) {
-            auto* parent = parentKey == "0"_L1 ? self->itemForIndex({}) : &nodes.at(parentKey);
-
-            for(const QString& row : rows) {
-                PlaylistItem* child = &nodes.at(row);
-                parent->appendChild(child);
-                child->setPending(false);
-            }
-        }
-    }
-    else {
-        for(auto& [parentKey, rows] : data.nodes) {
-            std::ranges::copy(rows, std::back_inserter(pendingNodes[parentKey]));
-        }
-    }
-}
-
-void PlaylistModelPrivate::populateTracks(PendingData& data)
-{
-    nodes.merge(data.items);
-    trackParents.merge(data.trackParents);
-
-    handleExternalDrop(data);
-}
-
-void PlaylistModelPrivate::updateModel(ItemKeyMap& data)
-{
-    if(!resetting) {
-        for(auto& [key, header] : data) {
-            nodes[key]                    = header;
-            const QModelIndex headerIndex = self->indexOfItem(&nodes[key]);
-            emit self->dataChanged(headerIndex, headerIndex, {});
-        }
-    }
-}
-
-void PlaylistModelPrivate::updateHeaders(const QModelIndexList& headers)
-{
-    ItemPtrSet items;
-
-    for(const QModelIndex& header : headers) {
-        if(header.isValid()) {
-            PlaylistItem* currHeader{self->itemForIndex(header)};
-            while(currHeader->type() != PlaylistItem::Root) {
-                if(currHeader->childCount() > 0) {
-                    items.emplace(currHeader);
-                }
-                currHeader = currHeader->parent();
-            }
-        }
-    }
-
-    ItemList updatedHeaders;
-
-    for(PlaylistItem* header : items) {
-        updateHeaderChildren(header);
-        updatedHeaders.emplace_back(*header);
-    }
-
-    QMetaObject::invokeMethod(&populator, [this, updatedHeaders]() { populator.updateHeaders(updatedHeaders); });
-}
-
-void PlaylistModelPrivate::beginReset()
-{
-    // Acts as a cache in case model hasn't been fully cleared
-    oldNodes = std::move(nodes);
-    nodes.clear();
-    pendingNodes.clear();
-    trackParents.clear();
-}
-
-QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
-{
-    const auto track = std::get<Track>(item->data());
-
-    switch(role) {
-        case(PlaylistItem::Role::Left): {
-            return track.left();
-        }
-        case(PlaylistItem::Role::Right): {
-            return track.right();
-        }
-        case(PlaylistItem::Role::Playing): {
-            if(playlistController->currentIsActive()) {
-                return playerManager->currentTrack().id() == track.track().id()
-                    && currentPlaylist->currentTrackIndex() == item->index();
-            }
-            return false;
-        }
-        case(PlaylistItem::Role::ItemData): {
-            return QVariant::fromValue<Core::Track>(track.track());
-        }
-        case(PlaylistItem::Role::Indentation): {
-            return item->indentation();
-        }
-        case(Qt::BackgroundRole): {
-            if(!altColours) {
-                return QPalette::Base;
-            }
-            return item->row() & 1 ? QPalette::Base : QPalette::AlternateBase;
-        }
-        case(Qt::SizeHintRole): {
-            return QSize{0, currentPreset.track.rowHeight};
-        }
-        case(Qt::DecorationRole): {
-            switch(playerManager->playState()) {
-                case(Core::Player::PlayState::Playing):
-                    return playingIcon;
-                case(Core::Player::PlayState::Paused):
-                    return pausedIcon;
-                case(Core::Player::PlayState::Stopped):
-                default:
-                    return {};
-            }
-        }
-        default:
-            return {};
-    }
-}
-
-QVariant PlaylistModelPrivate::headerData(PlaylistItem* item, int role) const
-{
-    const auto& header = std::get<Container>(item->data());
-
-    switch(role) {
-        case(PlaylistItem::Role::Title): {
-            return header.title();
-        }
-        case(PlaylistItem::Role::ShowCover): {
-            return currentPreset.header.showCover;
-        }
-        case(PlaylistItem::Role::Simple): {
-            return currentPreset.header.simple;
-        }
-        case(PlaylistItem::Role::Cover): {
-            if(!currentPreset.header.showCover || !header.trackCount()) {
-                return {};
-            }
-            return coverProvider->trackCover(header.tracks().front(), coverSize, true);
-        }
-        case(PlaylistItem::Role::Subtitle): {
-            return header.subtitle();
-        }
-        case(PlaylistItem::Role::Info): {
-            return header.info();
-        }
-        case(PlaylistItem::Role::Right): {
-            return header.sideText();
-        }
-        case(Qt::SizeHintRole): {
-            return QSize{0, header.rowHeight()};
-        }
-        default:
-            return {};
-    }
-}
-
-QVariant PlaylistModelPrivate::subheaderData(PlaylistItem* item, int role) const
-{
-    const auto& header = std::get<Container>(item->data());
-
-    switch(role) {
-        case(PlaylistItem::Role::Title): {
-            return header.title();
-        }
-        case(PlaylistItem::Role::Subtitle): {
-            return header.info();
-        }
-        case(PlaylistItem::Role::Indentation): {
-            return item->indentation();
-        }
-        case(Qt::SizeHintRole): {
-            return QSize{0, header.rowHeight()};
-        }
-        default:
-            return {};
-    }
-}
-
-ParentChildItemMap PlaylistModelPrivate::determineItemGroups(const QModelIndexList& indexes) const
-{
-    const ParentChildMap indexGroups = determineIndexGroups(indexes);
-    ParentChildItemMap indexItemGroups;
-
-    for(const auto& [groupParent, groups] : indexGroups) {
-        std::vector<std::vector<PlaylistItem*>> transformedVector;
-        for(const auto& group : groups) {
-            std::vector<PlaylistItem*> transformedInnerVector;
-            for(const int childRow : group) {
-                if(PlaylistItem* playlistItem
-                   = static_cast<PlaylistItem*>(self->index(childRow, 0, groupParent).internalPointer())) {
-                    transformedInnerVector.push_back(playlistItem);
-                }
-            }
-            transformedVector.push_back(transformedInnerVector);
-        }
-        indexItemGroups.emplace(groupParent, transformedVector);
-    }
-    return indexItemGroups;
-}
-
-std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndexes>
-PlaylistModelPrivate::groupChildren(const std::vector<PlaylistItem*>& children) const
-{
-    std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndexes> groupedChildren;
-    for(PlaylistItem* child : children) {
-        const QModelIndex parent = self->indexOfItem(child->parent());
-        groupedChildren[parent].push_back(child);
-    }
-    return groupedChildren;
-}
-
-PlaylistItem* PlaylistModelPrivate::itemForKey(const QString& key)
-{
-    if(key == "0"_L1) {
-        return self->rootItem();
-    }
-    if(nodes.contains(key)) {
-        return &nodes.at(key);
-    }
-    return nullptr;
-}
-
-void PlaylistModelPrivate::removeEmptyHeaders(QModelIndexList& headers)
-{
-    std::queue<QModelIndex> headersToCheck;
-    for(const QModelIndex& header : headers) {
-        if(header.isValid()) {
-            headersToCheck.push(header);
-        }
-    }
-
-    std::set<QString> removedHeaderKeys;
-
-    while(!headersToCheck.empty()) {
-        const QModelIndex header{headersToCheck.front()};
-        headersToCheck.pop();
-
-        PlaylistItem* headerItem             = self->itemForIndex(header);
-        const QModelIndex headerParent       = header.parent();
-        const PlaylistItem* headerParentItem = self->itemForIndex(headerParent);
-
-        if(!headerParentItem || removedHeaderKeys.contains(headerItem->key())) {
-            continue;
-        }
-
-        if(headerItem && headerItem->childCount() < 1) {
-            const QModelIndex leftSibling  = header.siblingAtRow(header.row() - 1);
-            const QModelIndex rightSibling = header.siblingAtRow(header.row() + 1);
-
-            if(leftSibling.isValid()) {
-                headers.push_back(leftSibling);
-            }
-            if(rightSibling.isValid()) {
-                headers.push_back(rightSibling);
-            }
-
-            QModelIndex currentParent = header.isValid() ? header.parent() : header;
-            while(currentParent.isValid()) {
-                headers.push_back(currentParent);
-                currentParent = currentParent.parent();
-            }
-            headers.push_back(currentParent);
-
-            const int headerRow = headerItem->row();
-            self->removePlaylistRows(headerRow, 1, headerParent);
-            removedHeaderKeys.emplace(headerItem->key());
-            nodes.erase(headerItem->key());
-            headers.removeAll(header);
-        }
-        if(headerParent.isValid()) {
-            headersToCheck.push(headerParent);
-        }
-    }
-    if(!removedHeaderKeys.empty()) {
-        self->rootItem()->resetChildren();
-    }
-}
-
-void PlaylistModelPrivate::mergeHeaders(QModelIndexList& headersToUpdate)
-{
-    std::queue<QModelIndex> headers;
-    for(const QModelIndex& header : headersToUpdate) {
-        headers.push(header);
-    }
-
-    while(!headers.empty()) {
-        const QModelIndex parent = headers.front();
-        headers.pop();
-
-        PlaylistItem* parentItem = self->itemForIndex(parent);
-        if(!parentItem || parentItem->childCount() < 1) {
-            continue;
-        }
-
-        int row{0};
-
-        while(row < parentItem->childCount()) {
-            const QModelIndex leftIndex  = self->indexOfItem(parentItem->child(row));
-            const QModelIndex rightIndex = self->indexOfItem(parentItem->child(row + 1));
-
-            PlaylistItem* leftSibling  = self->itemForIndex(leftIndex);
-            PlaylistItem* rightSibling = self->itemForIndex(rightIndex);
-
-            const bool bothHeaders
-                = leftSibling->type() != PlaylistItem::Track && rightSibling->type() != PlaylistItem::Track;
-
-            if(bothHeaders && leftIndex != rightIndex && leftSibling->baseKey() == rightSibling->baseKey()) {
-                const auto rightChildren = rightSibling->children();
-                const int targetRow      = leftSibling->childCount();
-                const int lastRow        = rightSibling->childCount() - 1;
-
-                headersToUpdate.removeAll(rightIndex);
-
-                self->movePlaylistRows(rightIndex, 0, lastRow, leftIndex, targetRow, rightChildren);
-                self->removePlaylistRows(rightSibling->row(), 1, rightIndex.parent());
-
-                nodes.erase(rightSibling->key());
-
-                int childCount = self->rowCount(leftIndex);
-                for(int child{0}; child < childCount; ++child) {
-                    QModelIndex childIndex = self->index(child, 0, leftIndex);
-                    headers.push(childIndex);
-                }
-
-                if(!headersToUpdate.contains(leftIndex)) {
-                    headersToUpdate.push_back(leftIndex);
-                }
-            }
-            else {
-                row++;
-            }
-        }
-    }
-
-    self->rootItem()->resetChildren();
-}
-
-PlaylistItem* PlaylistModelPrivate::cloneParent(PlaylistItem* parent)
-{
-    const QString parentKey = Utils::generateRandomHash();
-    auto* newParent         = &nodes.emplace(parentKey, *parent).first->second;
-    newParent->setKey(parentKey);
-    newParent->resetRow();
-    newParent->clearChildren();
-
-    return newParent;
-}
-
-QModelIndex PlaylistModelPrivate::canBeMerged(PlaylistItem*& currTarget, int& targetRow,
-                                              std::vector<PlaylistItem*>& sourceParents, int targetOffset) const
-{
-    PlaylistItem* checkItem = currTarget->child(targetRow + targetOffset);
-
-    if(!checkItem) {
-        return {};
-    }
-
-    if(sourceParents.empty() || sourceParents.front()->baseKey() != checkItem->baseKey()) {
-        return {};
-    }
-
-    std::vector<PlaylistItem*> newSourceParents;
-    bool diffFound{false};
-
-    for(PlaylistItem* parent : sourceParents) {
-        if(diffFound || parent->baseKey() != checkItem->baseKey()) {
-            diffFound = true;
-            newSourceParents.push_back(parent);
-            continue;
-        }
-
-        currTarget     = checkItem;
-        targetRow      = targetOffset >= 0 ? -1 : currTarget->childCount() - 1;
-        auto* nextItem = checkItem->child(targetOffset >= 0 ? 0 : checkItem->childCount() - 1);
-
-        if(nextItem->type() != PlaylistItem::Track) {
-            checkItem = nextItem;
-        }
-    }
-
-    if(!diffFound) {
-        return self->indexOfItem(checkItem);
-    }
-
-    sourceParents = newSourceParents;
-    return {};
-}
-
-QModelIndex PlaylistModelPrivate::handleDiffParentDrop(PlaylistItem* source, PlaylistItem* target, int& row,
-                                                       QModelIndexList& headersToUpdate)
-{
-    int targetRow{row};
-    std::vector<PlaylistItem*> sourceParents;
-    std::vector<PlaylistItem*> targetParents;
-
-    PlaylistItem* currSource{source};
-    PlaylistItem* currTarget{target};
-
-    // Find common ancestor
-    while(currSource->baseKey() != currTarget->baseKey()) {
-        if(currSource->type() != PlaylistItem::Root) {
-            sourceParents.push_back(currSource);
-            currSource = currSource->parent();
-        }
-        if(currTarget->type() != PlaylistItem::Root) {
-            targetParents.push_back(currTarget);
-            targetRow  = currTarget->row();
-            currTarget = currTarget->parent();
-        }
-    }
-
-    std::ranges::reverse(sourceParents);
-
-    const bool targetIsRoot = target->type() == PlaylistItem::Root;
-
-    // Check left
-    if((targetIsRoot && row > 0) || (!targetIsRoot && row == 0)) {
-        QModelIndex leftResult = canBeMerged(currTarget, targetRow, sourceParents, -1);
-        if(leftResult.isValid()) {
-            row = targetRow + 1;
-            return leftResult;
-        }
-    }
-
-    // Check right
-    if((targetIsRoot && row <= target->childCount() - 1) || (!targetIsRoot && row == target->childCount())) {
-        QModelIndex rightResult = canBeMerged(currTarget, targetRow, sourceParents, targetIsRoot ? 0 : 1);
-        if(rightResult.isValid()) {
-            row = 0;
-            return rightResult;
-        }
-    }
-
-    int newParentRow = targetRow + 1;
-    PlaylistItem* prevParentItem{currTarget};
-
-    // Create parents for tracks after drop index (if any)
-    std::vector<SplitParent> splitParents;
-
-    for(PlaylistItem* parent : targetParents) {
-        const int finalRow = parent->childCount() - 1;
-        if(finalRow >= row || !splitParents.empty()) {
-            PlaylistItem* newParent = cloneParent(parent);
-
-            std::vector<PlaylistItem*> children;
-            const auto childrenToMove = parent->children() | std::views::drop(row);
-            std::ranges::copy(childrenToMove, std::back_inserter(children));
-
-            const QModelIndex parentIndex = self->indexOfItem(parent);
-
-            splitParents.emplace_back(parentIndex, newParent, row, finalRow, children);
-        }
-        row = parent->row() + 1;
-    }
-
-    std::ranges::reverse(splitParents);
-
-    // Move tracks after drop index to new parents
-    for(const SplitParent& parent : splitParents) {
-        const QModelIndex prevParent = self->indexOfItem(prevParentItem);
-
-        self->insertPlaylistRows(prevParent, newParentRow, newParentRow, {parent.target});
-
-        const QModelIndex newParentIndex = self->indexOfItem(parent.target);
-
-        self->movePlaylistRows(parent.source, parent.firstRow, parent.finalRow, newParentIndex, 0, parent.children);
-
-        prevParentItem = parent.target;
-        newParentRow   = 0;
-    }
-
-    for(const SplitParent& parent : splitParents) {
-        headersToUpdate.append(parent.source);
-        headersToUpdate.append(self->indexOfItem(parent.target));
-    }
-
-    prevParentItem = currTarget;
-    newParentRow   = targetRow + 1;
-
-    if(currTarget == self->itemForIndex({}) && row == 0) {
-        newParentRow = 0;
-    }
-
-    // Create parents for dropped rows
-    for(PlaylistItem* parent : sourceParents) {
-        const QModelIndex prevParent = self->indexOfItem(prevParentItem);
-        PlaylistItem* newParent      = cloneParent(parent);
-
-        self->insertPlaylistRows(prevParent, newParentRow, newParentRow, {newParent});
-
-        prevParentItem = newParent;
-        newParentRow   = 0;
-    }
-
-    row = 0;
-    return self->indexOfItem(prevParentItem);
-}
-
-void PlaylistModelPrivate::handleExternalDrop(const PendingData& data)
-{
-    const QModelIndex currentIndex
-        = self->indexForTrackIndex(playerManager->currentTrack(), currentPlaylist->currentTrackIndex());
-
-    QModelIndexList headersToCheck;
-
-    auto* parentItem = itemForKey(data.parent);
-    int row          = data.row;
-
-    QModelIndex targetParent{self->indexOfItem(parentItem)};
-
-    std::vector<std::pair<PlaylistItem*, std::vector<PlaylistItem*>>> itemData;
-
-    std::ranges::transform(data.containerOrder, std::inserter(itemData, itemData.end()),
-                           [this, &data](const QString& containerKey) {
-                               PlaylistItem* item = itemForKey(containerKey);
-                               std::vector<PlaylistItem*> children;
-                               std::ranges::transform(data.nodes.at(containerKey), std::back_inserter(children),
-                                                      [this](const QString& child) { return itemForKey(child); });
-                               return std::pair{item, children};
-                           });
-
-    // We only care about the immediate track parents
-    auto containers = std::views::filter(itemData, [](const auto& entry) {
-        return !entry.second.empty() && entry.second.front()->type() == PlaylistItem::Track;
-    });
-
-    for(const auto& [sourceParentItem, children] : containers) {
-        if(!sourceParentItem) {
-            continue;
-        }
-
-        PlaylistItem* targetParentItem = self->itemForIndex(targetParent);
-
-        const bool sameParents = sourceParentItem->baseKey() == targetParentItem->baseKey();
-
-        if(!sameParents) {
-            targetParent     = handleDiffParentDrop(sourceParentItem, targetParentItem, row, headersToCheck);
-            targetParentItem = self->itemForIndex(targetParent);
-        }
-
-        const int total = row + static_cast<int>(children.size()) - 1;
-
-        self->beginInsertRows(targetParent, row, total);
-        row = insertRows(children, targetParent, row);
-        self->endInsertRows();
-
-        headersToCheck.emplace_back(targetParent);
-    }
-
-    self->rootItem()->resetChildren();
-
-    removeEmptyHeaders(headersToCheck);
-    mergeHeaders(headersToCheck);
-    updateHeaders(headersToCheck);
-
-    self->updateTrackIndexes();
-    const int playingIndex = currentIndex.isValid() ? currentIndex.data(PlaylistItem::Index).toInt() : -1;
-    QMetaObject::invokeMethod(self, "tracksChanged", Q_ARG(int, playingIndex));
-}
-
-void PlaylistModelPrivate::coverUpdated(const Core::Track& track)
-{
-    if(!trackParents.contains(track.id())) {
-        return;
-    }
-
-    const auto parents = trackParents.at(track.id());
-    for(const QString& parentKey : parents) {
-        if(nodes.contains(parentKey)) {
-            auto* parentItem = &nodes.at(parentKey);
-            if(parentItem->type() == PlaylistItem::Header) {
-                const QModelIndex nodeIndex = self->indexOfItem(parentItem);
-                emit self->dataChanged(nodeIndex, nodeIndex, {PlaylistItem::Role::Cover});
-            }
-        }
-    }
-}
-
-template <typename Container>
-int PlaylistModelPrivate::moveRows(const QModelIndex& source, const Container& rows, const QModelIndex& target, int row)
-{
-    int currRow{row};
-    auto* targetParent = self->itemForIndex(target);
-    if(!targetParent) {
-        return currRow;
-    }
-
-    auto* sourceParent = self->itemForIndex(source);
-    for(PlaylistItem* childItem : rows) {
-        childItem->resetRow();
-        const int oldRow = childItem->row();
-        if(oldRow < currRow) {
-            targetParent->insertChild(currRow, childItem);
-            sourceParent->removeChild(oldRow);
-            if(source != target) {
-                ++currRow;
-            }
-        }
-        else {
-            sourceParent->removeChild(oldRow);
-            targetParent->insertChild(currRow, childItem);
-            ++currRow;
-        }
-    }
-    sourceParent->resetChildren();
-    targetParent->resetChildren();
-
-    return currRow;
-}
-
-template <typename Container>
-int PlaylistModelPrivate::copyRows(const QModelIndex& source, const Container& rows, const QModelIndex& target, int row)
-{
-    int currRow{row};
-    auto* targetParent = self->itemForIndex(target);
-    if(!targetParent) {
-        return currRow;
-    }
-
-    auto* sourceParent = self->itemForIndex(source);
-    for(PlaylistItem* childItem : rows) {
-        childItem->resetRow();
-        auto* newChild = &nodes.emplace(Utils::generateRandomHash(), *childItem).first->second;
-        targetParent->insertChild(currRow, newChild);
-        ++currRow;
-    }
-    sourceParent->resetChildren();
-    targetParent->resetChildren();
-
-    return currRow;
-}
-
-template <typename Container>
-int PlaylistModelPrivate::insertRows(const Container& rows, const QModelIndex& target, int row)
-{
-    auto* targetParent = self->itemForIndex(target);
-    if(!targetParent) {
-        return row;
-    }
-
-    for(PlaylistItem* childItem : rows) {
-        childItem->resetRow();
-        auto* newChild = &nodes.emplace(childItem->key(), *childItem).first->second;
-        targetParent->insertChild(row, newChild);
-        newChild->setPending(false);
-        row++;
-    }
-    targetParent->resetChildren();
-
-    return row;
-}
-
-PlaylistModel::PlaylistModel(Core::Player::PlayerManager* playerManager,
-                             Playlist::PlaylistController* playlistController, Utils::SettingsManager* settings,
-                             QObject* parent)
+PlaylistModel::PlaylistModel(Utils::SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<PlaylistModelPrivate>(this, playerManager, playlistController, settings)}
+    , p{std::make_unique<PlaylistModelPrivate>(this, settings)}
 {
     p->settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
         p->altColours = enabled;
@@ -1131,6 +150,33 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
+void PlaylistModel::fetchMore(const QModelIndex& parent)
+{
+    auto* parentItem = itemForIndex(parent);
+    auto& rows       = p->pendingNodes[parentItem->key()];
+
+    const int row           = parentItem->childCount();
+    const int totalRows     = static_cast<int>(rows.size());
+    const int rowCount      = parent.isValid() ? totalRows : std::min(50, totalRows);
+    const auto rowsToInsert = std::ranges::views::take(rows, rowCount);
+
+    beginInsertRows(parent, row, row + rowCount - 1);
+    for(const QString& pendingRow : rowsToInsert) {
+        PlaylistItem* child = &p->nodes.at(pendingRow);
+        parentItem->appendChild(child);
+        child->setPending(false);
+    }
+    endInsertRows();
+
+    rows.erase(rows.begin(), rows.begin() + rowCount);
+}
+
+bool PlaylistModel::canFetchMore(const QModelIndex& parent) const
+{
+    auto* item = itemForIndex(parent);
+    return p->pendingNodes.contains(item->key()) && !p->pendingNodes[item->key()].empty();
+}
+
 bool PlaylistModel::hasChildren(const QModelIndex& parent) const
 {
     if(!parent.isValid()) {
@@ -1182,12 +228,7 @@ Qt::DropActions PlaylistModel::supportedDropActions() const
 QMimeData* PlaylistModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    if(mimeData) {
-        QModelIndexList sortedIndexes{indexes};
-        std::ranges::sort(sortedIndexes, cmpTrackIndices);
-        mimeData->setData(Constants::Mime::PlaylistItems, saveIndexes(sortedIndexes, p->currentPlaylist));
-        mimeData->setData(Constants::Mime::TrackList, saveTracks(sortedIndexes));
-    }
+    p->storeMimeData(indexes, mimeData);
     return mimeData;
 }
 
@@ -1198,171 +239,36 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
         return false;
     }
 
-    const QModelIndex currentIndex
-        = indexForTrackIndex(p->playerManager->currentTrack(), p->currentPlaylist->currentTrackIndex());
+    const QPersistentModelIndex currentIndex
+        = indexForTrackIndex(p->currentPlayingTrack, p->currentPlaylist->currentTrackIndex());
 
-    if(!parent.isValid() && row < 0) {
-        row = 0;
+    const bool successfulDrop = p->handleDrop(data, action, row, column, parent);
+
+    if(successfulDrop) {
+        p->updateTrackIndexes();
+        const int playingIndex = currentIndex.isValid() ? currentIndex.data(PlaylistItem::Index).toInt() : -1;
+        emit tracksChanged(playingIndex);
     }
 
-    const QModelIndexList indexes
-        = restoreIndexes(this, data->data(Constants::Mime::PlaylistItems), p->currentPlaylist);
-    if(indexes.isEmpty()) {
-        const Core::TrackList tracks = restoreTracks(data->data(Constants::Mime::TrackList));
-        if(tracks.empty()) {
-            return false;
-        }
-        QMetaObject::invokeMethod(&p->populator, [this, tracks, parent, row] {
-            p->populator.runTracks(p->currentPreset, tracks, itemForIndex(parent)->key(), row);
-        });
-        return true;
-    }
-
-    const ParentChildItemMap indexItemGroups = p->determineItemGroups(indexes);
-
-    QModelIndexList headersToCheck;
-    QModelIndex targetParent{parent};
-
-    for(const auto& [sourceParent, groups] : indexItemGroups) {
-        PlaylistItem* sourceParentItem = itemForIndex(sourceParent);
-        PlaylistItem* targetParentItem = itemForIndex(targetParent);
-
-        const bool sameParents = sourceParentItem->baseKey() == targetParentItem->baseKey();
-
-        if(!sameParents) {
-            targetParent     = p->handleDiffParentDrop(sourceParentItem, targetParentItem, row, headersToCheck);
-            targetParentItem = itemForIndex(targetParent);
-        }
-
-        for(const auto& groupChildren : groups) {
-            // If dropped within a group and a previous groups parents were different,
-            // the children will be split and have different parents.
-            // Regroup to prevent issues with beginMoveRows/beginInsertRows.
-            const auto regroupedChildren = p->groupChildren(groupChildren);
-            for(const auto& [groupParent, children] : regroupedChildren) {
-                if(action == Qt::MoveAction) {
-                    const int firstRow = children.front()->row();
-                    const int lastRow  = children.back()->row();
-
-                    auto* groupParentItem = itemForIndex(groupParent);
-
-                    const bool identicalParents = groupParentItem->key() == targetParentItem->key();
-
-                    if(identicalParents && row >= firstRow && row <= lastRow + 1) {
-                        row = lastRow + 1;
-                        continue;
-                    }
-
-                    beginMoveRows(groupParent, firstRow, lastRow, targetParent, row);
-                    row = p->moveRows(groupParent, children, targetParent, row);
-                    endMoveRows();
-                }
-                else {
-                    const int total = row + static_cast<int>(children.size()) - 1;
-
-                    beginInsertRows(targetParent, row, total);
-                    row = p->copyRows(groupParent, children, targetParent, row);
-                    endInsertRows();
-                }
-                headersToCheck.emplace_back(groupParent);
-            }
-        }
-        headersToCheck.append(targetParent);
-
-        rootItem()->resetChildren();
-
-        p->removeEmptyHeaders(headersToCheck);
-        p->mergeHeaders(headersToCheck);
-    }
-
-    p->updateHeaders(headersToCheck);
-
-    updateTrackIndexes();
-    const int playingIndex = currentIndex.isValid() ? currentIndex.data(PlaylistItem::Index).toInt() : -1;
-    emit tracksChanged(playingIndex);
-    return true;
+    return successfulDrop;
 }
 
-void PlaylistModel::fetchMore(const QModelIndex& parent)
+void PlaylistModel::reset(const PlaylistPreset& preset, Core::Playlist::Playlist* playlist)
 {
-    auto* parentItem = itemForIndex(parent);
-    auto& rows       = p->pendingNodes[parentItem->key()];
-
-    const int row           = parentItem->childCount();
-    const int totalRows     = static_cast<int>(rows.size());
-    const int rowCount      = parent.isValid() ? totalRows : std::min(50, totalRows);
-    const auto rowsToInsert = std::ranges::views::take(rows, rowCount);
-
-    beginInsertRows(parent, row, row + rowCount - 1);
-    for(const QString& pendingRow : rowsToInsert) {
-        PlaylistItem* child = &p->nodes.at(pendingRow);
-        parentItem->appendChild(child);
-        child->setPending(false);
-    }
-    endInsertRows();
-
-    rows.erase(rows.begin(), rows.begin() + rowCount);
-}
-
-bool PlaylistModel::canFetchMore(const QModelIndex& parent) const
-{
-    auto* item = itemForIndex(parent);
-    return p->pendingNodes.contains(item->key()) && !p->pendingNodes[item->key()].empty();
-}
-
-bool PlaylistModel::insertPlaylistRows(const QModelIndex& target, int firstRow, int lastRow,
-                                       const std::vector<PlaylistItem*>& children)
-{
-    const int diff = firstRow == lastRow ? 1 : lastRow - firstRow + 1;
-    if(static_cast<int>(children.size()) != diff) {
-        return false;
+    if(!playlist) {
+        return;
     }
 
-    auto* parent = itemForIndex(target);
+    p->populator.stopThread();
 
-    beginInsertRows(target, firstRow, lastRow);
-    for(PlaylistItem* child : children) {
-        parent->insertChild(firstRow, child);
-        child->setPending(false);
-        firstRow += 1;
-    }
-    endInsertRows();
+    p->resetting       = true;
+    p->currentPlaylist = playlist;
+    p->currentPreset   = preset;
 
-    return true;
-}
+    updateHeader(playlist);
 
-bool PlaylistModel::movePlaylistRows(const QModelIndex& source, int firstRow, int lastRow, const QModelIndex& target,
-                                     int row, const std::vector<PlaylistItem*>& children)
-{
-    const int diff = firstRow == lastRow ? 1 : lastRow - firstRow + 1;
-    if(static_cast<int>(children.size()) != diff) {
-        return false;
-    }
-
-    beginMoveRows(source, firstRow, lastRow, target, row);
-    p->moveRows(source, children, target, row);
-    endMoveRows();
-
-    return true;
-}
-
-bool PlaylistModel::removePlaylistRows(int row, int count, const QModelIndex& parent)
-{
-    auto* parentItem = itemForIndex(parent);
-    if(!parentItem) {
-        return false;
-    }
-
-    int lastRow = row + count - 1;
-    beginRemoveRows(parent, row, lastRow);
-    while(lastRow >= row) {
-        parentItem->removeChild(lastRow);
-        --lastRow;
-    }
-    parentItem->resetChildren();
-    endRemoveRows();
-
-    return true;
+    QMetaObject::invokeMethod(&p->populator,
+                              [this, playlist] { p->populator.run(p->currentPreset, playlist->tracks()); });
 }
 
 QModelIndex PlaylistModel::indexForTrackIndex(const Core::Track& track, int index)
@@ -1400,38 +306,7 @@ QModelIndex PlaylistModel::indexForTrackIndex(const Core::Track& track, int inde
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)
 {
-    const ParentChildMap indexGroups = determineIndexGroups(indexes);
-
-    QModelIndexList headersToCheck;
-
-    for(const auto& [parent, groups] : indexGroups) {
-        for(const auto& children : groups | std::views::reverse) {
-            removePlaylistRows(children.front(), static_cast<int>(children.size()), parent);
-        }
-        headersToCheck.emplace_back(parent);
-    }
-
-    p->removeEmptyHeaders(headersToCheck);
-    p->mergeHeaders(headersToCheck);
-    p->updateHeaders(headersToCheck);
-
-    updateTrackIndexes();
-}
-
-void PlaylistModel::reset(Core::Playlist::Playlist* playlist)
-{
-    if(!playlist) {
-        return;
-    }
-
-    p->populator.stopThread();
-
-    p->resetting       = true;
-    p->currentPlaylist = playlist;
-    updateHeader(playlist);
-
-    QMetaObject::invokeMethod(&p->populator,
-                              [this, playlist] { p->populator.run(p->currentPreset, playlist->tracks()); });
+    p->removeTracks(indexes);
 }
 
 void PlaylistModel::updateHeader(Core::Playlist::Playlist* playlist)
@@ -1441,38 +316,24 @@ void PlaylistModel::updateHeader(Core::Playlist::Playlist* playlist)
     }
 }
 
-void PlaylistModel::updateTrackIndexes()
+void PlaylistModel::setCurrentPlaylistIsActive(bool active)
 {
-    std::queue<PlaylistItem*> nodes;
-    nodes.push(rootItem());
-    int currentIndex{0};
-
-    while(!nodes.empty()) {
-        PlaylistItem* node = nodes.front();
-        nodes.pop();
-
-        if(!node) {
-            continue;
-        }
-
-        if(node->type() == PlaylistItem::Track) {
-            node->setIndex(currentIndex++);
-        }
-
-        const auto children = node->children();
-        for(PlaylistItem* child : children) {
-            nodes.push(child);
-        }
-    }
-}
-
-void PlaylistModel::changeTrackState()
-{
+    p->isActivePlaylist = active;
     emit dataChanged({}, {}, {PlaylistItem::Role::Playing});
 }
 
-void PlaylistModel::changePreset(const PlaylistPreset& preset)
+void PlaylistModel::currentTrackChanged(const Core::Track& track)
 {
-    p->currentPreset = preset;
+    p->currentPlayingTrack = track;
+    emit dataChanged({}, {}, {Qt::DecorationRole, PlaylistItem::Role::Playing});
+}
+
+void PlaylistModel::playStateChanged(Core::Player::PlayState state)
+{
+    p->currentPlayState = state;
+    if(state == Core::Player::PlayState::Stopped) {
+        currentTrackChanged({});
+    }
+    emit dataChanged({}, {}, {Qt::DecorationRole, PlaylistItem::Role::Playing});
 }
 } // namespace Fy::Gui::Widgets::Playlist

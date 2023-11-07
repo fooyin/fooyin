@@ -30,7 +30,6 @@
 
 #include <core/library/sortingregistry.h>
 #include <core/library/tracksort.h>
-#include <core/player/playermanager.h>
 #include <core/playlist/playlistmanager.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -47,6 +46,8 @@
 
 #include <QCoro/QCoroCore>
 
+#include <stack>
+
 namespace {
 void expandTree(QTreeView* view, QAbstractItemModel* model, const QModelIndex& parent, int first, int last)
 {
@@ -57,40 +58,52 @@ void expandTree(QTreeView* view, QAbstractItemModel* model, const QModelIndex& p
     }
 }
 
-void getTracksUnderIndex(QAbstractItemModel* model, const QModelIndex& index, Fy::Core::TrackList& tracks)
+Fy::Core::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList& indexes)
 {
-    while(model->canFetchMore(index)) {
-        model->fetchMore(index);
+    Fy::Core::TrackList tracks;
+
+    std::stack<QModelIndex> indexStack;
+    for(const QModelIndex& index : indexes | std::views::reverse) {
+        indexStack.push(index);
     }
 
-    const int rowCount = model->rowCount(index);
-    if(rowCount == 0) {
-        tracks.push_back(index.data(Fy::Gui::Widgets::Playlist::PlaylistItem::Role::ItemData).value<Fy::Core::Track>());
-        return;
-    }
+    while(!indexStack.empty()) {
+        const QModelIndex currentIndex = indexStack.top();
+        indexStack.pop();
 
-    for(int row = 0; row < rowCount; ++row) {
-        const QModelIndex childIndex = model->index(row, 0, index);
-        getTracksUnderIndex(model, childIndex, tracks);
+        while(model->canFetchMore(currentIndex)) {
+            model->fetchMore(currentIndex);
+        }
+
+        const int rowCount = model->rowCount(currentIndex);
+        if(rowCount == 0) {
+            tracks.push_back(
+                currentIndex.data(Fy::Gui::Widgets::Playlist::PlaylistItem::Role::ItemData).value<Fy::Core::Track>());
+        }
+        else {
+            for(int row{rowCount - 1}; row >= 0; --row) {
+                const QModelIndex childIndex = model->index(row, 0, currentIndex);
+                indexStack.push(childIndex);
+            }
+        }
     }
+    return tracks;
 }
 } // namespace
 
 namespace Fy::Gui::Widgets::Playlist {
 PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, Utils::ActionManager* actionManager,
-                                             Core::Player::PlayerManager* playerManager,
                                              PlaylistController* playlistController,
                                              TrackSelectionController* selectionController,
                                              Utils::SettingsManager* settings)
     : self{self}
     , actionManager{actionManager}
-    , playerManager{playerManager}
     , selectionController{selectionController}
     , settings{settings}
     , settingsDialog{settings->settingsDialog()}
     , playlistController{playlistController}
     , layout{new QHBoxLayout(self)}
-    , model{new PlaylistModel(playerManager, playlistController, settings, self)}
+    , model{new PlaylistModel(settings, self)}
     , playlistView{new PlaylistView(self)}
     , header{new Utils::HeaderView(Qt::Horizontal, self)}
     , playlistContext{new Utils::WidgetContext(self, Utils::Context{Constants::Context::Playlist}, self)}
@@ -113,6 +126,8 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, Utils::Action
 
     setupConnections();
     setupActions();
+
+    model->setCurrentPlaylistIsActive(playlistController->currentIsActive());
 }
 
 void PlaylistWidgetPrivate::setupConnections()
@@ -133,16 +148,14 @@ void PlaylistWidgetPrivate::setupConnections()
 
     QObject::connect(header, &Utils::HeaderView::leftClicked, this, &PlaylistWidgetPrivate::switchContextMenu);
 
-    QObject::connect(playerManager, &Core::Player::PlayerManager::currentTrackChanged, model,
-                     &PlaylistModel::changeTrackState);
-    QObject::connect(playerManager, &Core::Player::PlayerManager::playStateChanged, model,
-                     &PlaylistModel::changeTrackState);
-
     QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this,
                      &PlaylistWidgetPrivate::changePlaylist);
+    QObject::connect(playlistController, &PlaylistController::currentTrackChanged, model,
+                     &PlaylistModel::currentTrackChanged);
+    QObject::connect(playlistController, &PlaylistController::playStateChanged, model,
+                     &PlaylistModel::playStateChanged);
     QObject::connect(playlistController->playlistHandler(), &Core::Playlist::PlaylistManager::activeTrackChanged, this,
                      &PlaylistWidgetPrivate::followCurrentTrack);
-
     QObject::connect(playlistController->presetRegistry(), &PresetRegistry::presetChanged, this,
                      &PlaylistWidgetPrivate::onPresetChanged);
 
@@ -160,12 +173,28 @@ void PlaylistWidgetPrivate::setupActions()
 
     auto* editMenu = actionManager->actionContainer(Constants::Menus::Edit);
 
+    auto* undo = new QAction(PlaylistWidget::tr("&Undo"), self);
+    editMenu->addAction(actionManager->registerAction(undo, Constants::Actions::Undo, playlistContext->context()));
+    QObject::connect(undo, &QAction::triggered, this, [this]() { playlistController->undoPlaylistChanges(); });
+    QObject::connect(playlistController, &PlaylistController::playlistHistoryChanged, this,
+                     [this, undo]() { undo->setEnabled(playlistController->canUndo()); });
+    undo->setEnabled(playlistController->canUndo());
+
+    auto* redo = new QAction(PlaylistWidget::tr("&Redo"), self);
+    editMenu->addAction(actionManager->registerAction(redo, Constants::Actions::Redo, playlistContext->context()));
+    QObject::connect(redo, &QAction::triggered, this, [this]() { playlistController->redoPlaylistChanges(); });
+    QObject::connect(playlistController, &PlaylistController::playlistHistoryChanged, this,
+                     [this, redo]() { redo->setEnabled(playlistController->canRedo()); });
+    redo->setEnabled(playlistController->canRedo());
+
+    editMenu->addSeparator();
+
     auto* clear = new QAction(PlaylistWidget::tr("&Clear"), self);
     editMenu->addAction(actionManager->registerAction(clear, Constants::Actions::Clear, playlistContext->context()));
     QObject::connect(clear, &QAction::triggered, this, [this]() {
         if(auto* playlist = playlistController->currentPlaylist()) {
             playlist->clear();
-            model->reset(playlist);
+            model->reset(currentPreset, playlist);
         }
     });
 
@@ -185,15 +214,14 @@ void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)
 void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
 {
     currentPreset = preset;
-    model->changePreset(currentPreset);
     if(auto* playlist = playlistController->currentPlaylist()) {
-        model->reset(playlist);
+        model->reset(currentPreset, playlist);
     }
 }
 
 void PlaylistWidgetPrivate::changePlaylist(Core::Playlist::Playlist* playlist) const
 {
-    model->reset(playlist);
+    model->reset(currentPreset, playlist);
 }
 
 void PlaylistWidgetPrivate::resetTree() const
@@ -272,12 +300,12 @@ void PlaylistWidgetPrivate::selectionChanged()
     selectionModel->select(itemsToSelect, QItemSelectionModel::Select);
 
     if(!tracks.empty()) {
-        selectionController->changeSelectedTracks(tracks);
+        selectionController->changeSelectedTracks(firstIndex, tracks);
 
         if(settings->value<Settings::PlaybackFollowsCursor>()) {
             if(auto* currentPlaylist = playlistController->currentPlaylist()) {
                 if(currentPlaylist->currentTrackIndex() != firstIndex) {
-                    if(playerManager->playState() != Core::Player::PlayState::Playing) {
+                    if(playlistController->playState() != Core::Player::PlayState::Playing) {
                         currentPlaylist->changeCurrentTrack(firstIndex);
                     }
                     else {
@@ -293,8 +321,16 @@ void PlaylistWidgetPrivate::selectionChanged()
 
 void PlaylistWidgetPrivate::playlistTracksChanged(int index) const
 {
-    Core::TrackList tracks;
-    getTracksUnderIndex(model, {}, tracks);
+    const Core::TrackList tracks = getAllTracks(model, {QModelIndex{}});
+
+    if(!tracks.empty()) {
+        const QModelIndexList selected = playlistView->selectionModel()->selectedIndexes();
+        if(!selected.empty()) {
+            const int firstIndex                 = selected.front().data(PlaylistItem::Role::Index).toInt();
+            const Core::TrackList selectedTracks = getAllTracks(model, selected);
+            selectionController->changeSelectedTracks(firstIndex, selectedTracks);
+        }
+    }
 
     playlistController->playlistHandler()->clearSchedulePlaylist();
 
@@ -321,6 +357,8 @@ void PlaylistWidgetPrivate::tracksRemoved() const
         }
     }
 
+    //    playlistController->saveCurrentPlaylist();
+
     model->removeTracks(trackSelection);
     playlistController->playlistHandler()->clearSchedulePlaylist();
 
@@ -328,6 +366,8 @@ void PlaylistWidgetPrivate::tracksRemoved() const
         playlist->removeTracks(indexes);
         model->updateHeader(playlist);
     }
+
+    //    playlistController->saveCurrentPlaylist();
 }
 
 void PlaylistWidgetPrivate::customHeaderMenuRequested(QPoint pos)
@@ -355,22 +395,10 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(QPoint pos)
     menu->popup(self->mapToGlobal(pos));
 }
 
-void PlaylistWidgetPrivate::doubleClicked(const QModelIndex& index) const
+void PlaylistWidgetPrivate::doubleClicked(const QModelIndex& /*index*/) const
 {
-    const auto type = index.data(PlaylistItem::Type);
-
-    if(type != PlaylistItem::Track) {
-        selectionController->executeAction(TrackAction::Play);
-    }
-    else {
-        const auto track     = index.data(PlaylistItem::Role::ItemData).value<Core::Track>();
-        const int trackIndex = index.data(PlaylistItem::Role::Index).toInt();
-        if(auto* playlist = playlistController->currentPlaylist()) {
-            playlist->changeCurrentTrack(trackIndex);
-            playlistController->startPlayback();
-        }
-    }
-    model->changeTrackState();
+    selectionController->executeAction(TrackAction::Play);
+    model->currentTrackChanged(playlistController->currentTrack());
     playlistView->clearSelection();
 }
 
@@ -380,7 +408,7 @@ void PlaylistWidgetPrivate::followCurrentTrack(const Core::Track& track, int ind
         return;
     }
 
-    if(playerManager->playState() != Core::Player::PlayState::Playing) {
+    if(playlistController->playState() != Core::Player::PlayState::Playing) {
         return;
     }
 
@@ -447,12 +475,11 @@ void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
     parent->addMenu(sortMenu);
 }
 
-PlaylistWidget::PlaylistWidget(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                               PlaylistController* playlistController, TrackSelectionController* selectionController,
-                               Utils::SettingsManager* settings, QWidget* parent)
+PlaylistWidget::PlaylistWidget(Utils::ActionManager* actionManager, PlaylistController* playlistController,
+                               TrackSelectionController* selectionController, Utils::SettingsManager* settings,
+                               QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playerManager, playlistController,
-                                                selectionController, settings)}
+    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistController, selectionController, settings)}
 {
     setObjectName("Playlist");
 }
@@ -481,18 +508,16 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(mapToGlobal(event->pos()));
 }
 
-void PlaylistWidget::keyPressEvent(QKeyEvent* e)
+void PlaylistWidget::keyPressEvent(QKeyEvent* event)
 {
-    const auto key = e->key();
+    const auto key = event->key();
 
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
         if(p->selectionController->hasTracks()) {
             p->selectionController->executeAction(TrackAction::Play);
-
-            p->model->changeTrackState();
-            p->playlistView->clearSelection();
         }
+        p->playlistView->clearSelection();
     }
-    QWidget::keyPressEvent(e);
+    QWidget::keyPressEvent(event);
 }
 } // namespace Fy::Gui::Widgets::Playlist

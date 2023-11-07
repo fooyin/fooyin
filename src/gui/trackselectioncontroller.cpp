@@ -22,13 +22,13 @@
 #include "playlist/playlistcontroller.h"
 
 #include <core/playlist/playlistmanager.h>
+#include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
-#include <core/track.h>
 
 #include <QAction>
 #include <QFileInfo>
@@ -48,6 +48,7 @@ struct TrackSelectionController::Private
 
     QString selectionTitle{tr("New playlist")};
     Core::TrackList tracks;
+    int firstIndex{-1};
 
     Utils::ActionContainer* tracksMenu{nullptr};
     Utils::ActionContainer* tracksPlaylistMenu{nullptr};
@@ -189,8 +190,10 @@ struct TrackSelectionController::Private
 
 TrackSelectionController::TrackSelectionController(Utils::ActionManager* actionManager,
                                                    Utils::SettingsManager* settings,
-                                                   Widgets::Playlist::PlaylistController* playlistController)
-    : p{std::make_unique<Private>(this, actionManager, settings, playlistController)}
+                                                   Widgets::Playlist::PlaylistController* playlistController,
+                                                   QObject* parent)
+    : QObject{parent}
+    , p{std::make_unique<Private>(this, actionManager, settings, playlistController)}
 { }
 
 bool TrackSelectionController::hasTracks() const
@@ -205,14 +208,20 @@ Core::TrackList TrackSelectionController::selectedTracks() const
     return p->tracks;
 }
 
-void TrackSelectionController::changeSelectedTracks(const Core::TrackList& tracks, const QString& title)
+void TrackSelectionController::changeSelectedTracks(int index, const Core::TrackList& tracks, const QString& title)
 {
+    p->firstIndex     = index;
     p->selectionTitle = title;
     if(std::exchange(p->tracks, tracks) == tracks) {
         return;
     }
 
     emit selectionChanged(p->tracks);
+}
+
+void TrackSelectionController::changeSelectedTracks(const Core::TrackList& tracks, const QString& title)
+{
+    changeSelectedTracks(-1, tracks, title);
 }
 
 void TrackSelectionController::addTrackContextMenu(QMenu* menu) const
@@ -249,6 +258,9 @@ void TrackSelectionController::executeAction(TrackAction action, ActionOptions o
         case(TrackAction::Play): {
             if(!p->tracks.empty()) {
                 if(auto* playlist = p->playlistController->currentPlaylist()) {
+                    if(p->firstIndex >= 0) {
+                        playlist->changeCurrentTrack(p->firstIndex);
+                    }
                     p->playlistHandler->startPlayback(playlist->id());
                 }
             }

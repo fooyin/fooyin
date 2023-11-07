@@ -28,10 +28,6 @@ class ActionManager;
 class SettingsManager;
 } // namespace Utils
 
-namespace Core::Player {
-class PlayerManager;
-} // namespace Core::Player
-
 namespace Gui {
 class TrackSelectionController;
 
@@ -44,9 +40,9 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                            PlaylistController* playlistController, TrackSelectionController* selectionController,
-                            Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit PlaylistWidget(Utils::ActionManager* actionManager, PlaylistController* playlistController,
+                            TrackSelectionController* selectionController, Utils::SettingsManager* settings,
+                            QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;

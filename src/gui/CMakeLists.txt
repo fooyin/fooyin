@@ -77,6 +77,7 @@ set(SOURCES
     playlist/playlistcontroller.cpp
     playlist/playlistview.cpp
     playlist/playlistmodel.cpp
+    playlist/playlistmodel_p.cpp
     playlist/playlistitem.cpp
     playlist/playlistitemmodels.cpp
     playlist/playlistdelegate.cpp

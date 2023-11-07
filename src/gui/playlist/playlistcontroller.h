@@ -33,6 +33,11 @@ namespace Library {
 class SortingRegistry;
 } // namespace Library
 
+namespace Player {
+class PlayerManager;
+enum class PlayState;
+} // namespace Player
+
 namespace Playlist {
 class Playlist;
 class PlaylistManager;
@@ -47,16 +52,18 @@ class PlaylistController : public QObject
     Q_OBJECT
 
 public:
-    PlaylistController(Core::Playlist::PlaylistManager* handler, PresetRegistry* presetRegistry,
-                       Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings,
-                       QObject* parent = nullptr);
+    PlaylistController(Core::Playlist::PlaylistManager* handler, Core::Player::PlayerManager* playerManager,
+                       PresetRegistry* presetRegistry, Core::Library::SortingRegistry* sortRegistry,
+                       Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistController() override;
 
-    Core::Playlist::PlaylistManager* playlistHandler() const;
-    PresetRegistry* presetRegistry() const;
-    Core::Library::SortingRegistry* sortRegistry() const;
+    [[nodiscard]] Core::Playlist::PlaylistManager* playlistHandler() const;
+    [[nodiscard]] PresetRegistry* presetRegistry() const;
+    [[nodiscard]] Core::Library::SortingRegistry* sortRegistry() const;
 
-    const Core::Playlist::PlaylistList& playlists() const;
+    [[nodiscard]] const Core::Playlist::PlaylistList& playlists() const;
+    [[nodiscard]] Core::Track currentTrack() const;
+    [[nodiscard]] Core::Player::PlayState playState() const;
 
     void startPlayback() const;
 
@@ -69,6 +76,8 @@ public:
 
 signals:
     void currentPlaylistChanged(Core::Playlist::Playlist* playlist);
+    void currentTrackChanged(const Core::Track& track);
+    void playStateChanged(Core::Player::PlayState state);
 
 private:
     struct Private;
