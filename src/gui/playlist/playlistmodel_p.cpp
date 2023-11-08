@@ -931,7 +931,7 @@ QModelIndex PlaylistModelPrivate::canBeMerged(PlaylistItem*& currTarget, int& ta
         targetRow      = targetOffset >= 0 ? -1 : currTarget->childCount() - 1;
         auto* nextItem = checkItem->child(targetOffset >= 0 ? 0 : checkItem->childCount() - 1);
 
-        if(nextItem->type() != PlaylistItem::Track) {
+        if(nextItem && nextItem->type() != PlaylistItem::Track) {
             checkItem = nextItem;
         }
     }
