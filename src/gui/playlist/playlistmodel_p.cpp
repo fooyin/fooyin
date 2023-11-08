@@ -796,9 +796,8 @@ void PlaylistModelPrivate::removeEmptyHeaders(QModelIndexList& headers)
             headers.push_back(currentParent);
 
             const int headerRow = headerItem->row();
-            removePlaylistRows(headerRow, 1, headerParent);
             removedHeaderKeys.emplace(headerItem->key());
-            nodes.erase(headerItem->key());
+            removePlaylistRows(headerRow, 1, headerParent);
             headers.removeAll(header);
         }
         if(headerParent.isValid()) {
