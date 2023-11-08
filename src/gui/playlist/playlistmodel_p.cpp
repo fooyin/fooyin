@@ -847,8 +847,6 @@ void PlaylistModelPrivate::mergeHeaders(QModelIndexList& headersToUpdate)
                 movePlaylistRows(rightIndex, 0, lastRow, leftIndex, targetRow, rightChildren);
                 removePlaylistRows(rightSibling->row(), 1, rightIndex.parent());
 
-                nodes.erase(rightSibling->key());
-
                 int childCount = model->rowCount(leftIndex);
                 for(int child{0}; child < childCount; ++child) {
                     const QModelIndex childIndex = model->index(child, 0, leftIndex);
