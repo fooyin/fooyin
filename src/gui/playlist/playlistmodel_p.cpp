@@ -870,13 +870,13 @@ void PlaylistModelPrivate::mergeHeaders(QModelIndexList& headersToUpdate)
 
 void PlaylistModelPrivate::updateTrackIndexes()
 {
-    std::queue<PlaylistItem*> nodes;
-    nodes.push(model->rootItem());
+    std::stack<PlaylistItem*> trackNodes;
+    trackNodes.push(model->rootItem());
     int currentIndex{0};
 
-    while(!nodes.empty()) {
-        PlaylistItem* node = nodes.front();
-        nodes.pop();
+    while(!trackNodes.empty()) {
+        PlaylistItem* node = trackNodes.top();
+        trackNodes.pop();
 
         if(!node) {
             continue;
@@ -887,8 +887,8 @@ void PlaylistModelPrivate::updateTrackIndexes()
         }
 
         const auto children = node->children();
-        for(PlaylistItem* child : children) {
-            nodes.push(child);
+        for(PlaylistItem* child : children | std::views::reverse) {
+            trackNodes.push(child);
         }
     }
 }
