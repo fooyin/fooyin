@@ -81,6 +81,7 @@ set(SOURCES
     playlist/playlistitem.cpp
     playlist/playlistitemmodels.cpp
     playlist/playlistdelegate.cpp
+    playlist/playlisthistory.cpp
     playlist/playlistpopulator.cpp
     playlist/playlistpreset.cpp
     playlist/playlisttabs.cpp

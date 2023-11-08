@@ -315,8 +315,9 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
 void PlaylistHandler::appendToPlaylist(int id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
+        const int index = playlist->trackCount();
         playlist->appendTracks(tracks);
-        emit playlistTracksChanged(playlist);
+        emit playlistTracksAdded(playlist, tracks, index);
     }
 }
 

@@ -19,6 +19,7 @@
 
 #include "playlistcontroller.h"
 
+#include "playlist/playlisthistory.h"
 #include "presetregistry.h"
 
 #include <core/library/sortingregistry.h>
@@ -27,6 +28,8 @@
 #include <core/track.h>
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
+
+#include <QUndoStack>
 
 namespace Fy::Gui::Widgets::Playlist {
 struct PlaylistController::Private
@@ -41,8 +44,7 @@ struct PlaylistController::Private
 
     Core::Playlist::Playlist* currentPlaylist{nullptr};
 
-    std::map<int, int> historyIndex;
-    std::map<int, std::vector<Core::TrackList>> history;
+    std::map<int, QUndoStack> histories;
 
     Private(PlaylistController* self, Core::Playlist::PlaylistManager* handler,
             Core::Player::PlayerManager* playerManager, PresetRegistry* presetRegistry,
@@ -66,8 +68,11 @@ struct PlaylistController::Private
         }
     }
 
-    void handlePlaylistUpdated(Core::Playlist::Playlist* playlist) const
+    void handlePlaylistUpdated(Core::Playlist::Playlist* playlist)
     {
+        if(playlist) {
+            histories.erase(playlist->id());
+        }
         if(currentPlaylist == playlist) {
             self->changeCurrentPlaylist(playlist);
         }
@@ -150,15 +155,17 @@ Core::Playlist::Playlist* PlaylistController::currentPlaylist() const
 
 void PlaylistController::changeCurrentPlaylist(Core::Playlist::Playlist* playlist)
 {
-    p->currentPlaylist = playlist;
+    if(std::exchange(p->currentPlaylist, playlist) == playlist) {
+        p->histories.erase(playlist->id());
+    }
     emit currentPlaylistChanged(playlist);
+    emit playlistHistoryChanged();
 }
 
 void PlaylistController::changeCurrentPlaylist(int id)
 {
     if(auto* playlist = p->handler->playlistById(id)) {
         changeCurrentPlaylist(playlist);
-        emit playlistHistoryChanged();
     }
 }
 
@@ -167,53 +174,43 @@ void PlaylistController::changePlaylistIndex(int playlistId, int index)
     p->handler->changePlaylistIndex(playlistId, index);
 }
 
-void PlaylistController::saveCurrentPlaylist()
+void PlaylistController::addToHistory(QUndoCommand* command)
 {
     if(!p->currentPlaylist) {
         return;
     }
-
-    const int currentId = p->currentPlaylist->id();
-
-    if(!p->historyIndex.contains(currentId)) {
-        p->historyIndex.emplace(currentId, -1);
-    }
-
-    p->historyIndex[currentId]++;
-
-    p->history[currentId].push_back(p->currentPlaylist->tracks());
-
+    p->histories[p->currentPlaylist->id()].push(command);
     emit playlistHistoryChanged();
 }
 
 bool PlaylistController::canUndo() const
 {
-    if(!p->currentPlaylist || p->history.empty()) {
+    if(!p->currentPlaylist || p->histories.empty()) {
         return false;
     }
 
     const int currentId = p->currentPlaylist->id();
 
-    if(!p->history.contains(currentId) || !p->historyIndex.contains(currentId)) {
+    if(!p->histories.contains(currentId)) {
         return false;
     }
 
-    return p->historyIndex.at(p->currentPlaylist->id()) > 0;
+    return p->histories.at(currentId).canUndo();
 }
 
 bool PlaylistController::canRedo() const
 {
-    if(!p->currentPlaylist || p->history.empty()) {
+    if(!p->currentPlaylist || p->histories.empty()) {
         return false;
     }
 
     const int currentId = p->currentPlaylist->id();
 
-    if(!p->history.contains(currentId) || !p->historyIndex.contains(currentId)) {
+    if(!p->histories.contains(currentId)) {
         return false;
     }
 
-    return p->historyIndex.at(currentId) < static_cast<int>(p->history.at(currentId).size() - 1);
+    return p->histories.at(currentId).canRedo();
 }
 
 void PlaylistController::undoPlaylistChanges()
@@ -224,9 +221,7 @@ void PlaylistController::undoPlaylistChanges()
 
     if(canUndo()) {
         const int currentId = p->currentPlaylist->id();
-        p->historyIndex[currentId]--;
-        p->currentPlaylist->replaceTracks(p->history.at(currentId).at(p->historyIndex.at(currentId)));
-        p->handlePlaylistUpdated(p->currentPlaylist);
+        p->histories.at(currentId).undo();
         emit playlistHistoryChanged();
     }
 }
@@ -239,9 +234,7 @@ void PlaylistController::redoPlaylistChanges()
 
     if(canRedo()) {
         const int currentId = p->currentPlaylist->id();
-        p->historyIndex[currentId]++;
-        p->currentPlaylist->replaceTracks(p->history.at(currentId).at(p->historyIndex.at(currentId)));
-        p->handlePlaylistUpdated(p->currentPlaylist);
+        p->histories.at(currentId).redo();
         emit playlistHistoryChanged();
     }
 }

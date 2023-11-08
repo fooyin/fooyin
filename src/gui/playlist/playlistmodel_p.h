@@ -48,6 +48,61 @@ class CoverProvider;
 namespace Widgets::Playlist {
 class PlaylistModel;
 
+inline bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
+{
+    QModelIndex item1{index1};
+    QModelIndex item2{index2};
+    const QModelIndex root;
+
+    while(item1.parent() != item2.parent()) {
+        if(item1.parent() != root) {
+            item1 = item1.parent();
+        }
+        if(item2.parent() != root) {
+            item2 = item2.parent();
+        }
+    }
+    if(item1.row() == item2.row()) {
+        return false;
+    }
+    return item1.row() < item2.row();
+}
+
+struct cmpIndexes
+{
+    bool operator()(const QModelIndex& index1, const QModelIndex& index2) const
+    {
+        return cmpTrackIndices(index1, index2);
+    }
+};
+
+struct IndexRange
+{
+    int first{0};
+    int last{0};
+
+    [[nodiscard]] int count() const
+    {
+        return last - first + 1;
+    }
+};
+
+struct TrackIndexResult {
+    QModelIndex index;
+    bool endOfPlaylist{false};
+};
+
+using ParentChildIndexMap     = std::vector<std::vector<QModelIndex>>;
+using ParentChildRowMap       = std::map<QModelIndex, std::vector<IndexRange>, cmpIndexes>;
+using ParentChildItemGroupMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>, cmpIndexes>;
+using ParentChildItemMap      = std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndexes>;
+
+struct MergeResult
+{
+    QModelIndex fullMergeTarget;
+    QModelIndex partMergeTarget;
+};
+
 class PlaylistModelPrivate
 {
 public:
@@ -55,6 +110,7 @@ public:
 
     void populateModel(PendingData& data);
     void populateTracks(PendingData& data);
+    void populateTrackGroup(PendingData& data);
     void updateModel(ItemKeyMap& data);
     void updateHeaders(const QModelIndexList& headers);
 
@@ -65,11 +121,15 @@ public:
     QVariant subheaderData(PlaylistItem* item, int role) const;
 
     PlaylistItem* itemForKey(const QString& key);
+    PlaylistItem* cloneParent(PlaylistItem* parent);
+    MergeResult canBeMerged(PlaylistItem*& currTarget, int& targetRow, std::vector<PlaylistItem*>& sourceParents,
+                            int targetOffset) const;
 
     bool handleDrop(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent);
     QModelIndex handleDiffParentDrop(PlaylistItem* source, PlaylistItem* target, int& row,
                                      QModelIndexList& headersToUpdate);
     void handleExternalDrop(const PendingData& data);
+    void handleTrackGroup(const PendingData& data);
     void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData);
 
     bool insertPlaylistRows(const QModelIndex& target, int firstRow, int lastRow,
@@ -81,13 +141,16 @@ public:
     void removeEmptyHeaders(QModelIndexList& headers);
     void mergeHeaders(QModelIndexList& headersToUpdate);
     void updateTrackIndexes();
-
-    PlaylistItem* cloneParent(PlaylistItem* parent);
-    QModelIndex canBeMerged(PlaylistItem*& currTarget, int& targetRow, std::vector<PlaylistItem*>& sourceParents,
-                            int targetOffset) const;
+    void deleteNodes(PlaylistItem* parent);
 
     void removeTracks(const QModelIndexList& indexes);
     void coverUpdated(const Core::Track& track);
+
+    ParentChildIndexMap determineIndexGroups(const QModelIndexList& indexes);
+    ParentChildRowMap determineRowGroups(const QModelIndexList& indexes);
+    ParentChildItemGroupMap determineItemGroups(PlaylistModel* model, const QModelIndexList& indexes);
+    ParentChildItemMap groupChildren(PlaylistModel* model, const std::vector<PlaylistItem*>& children);
+    TrackIndexResult indexForTrackIndex(int index);
 
     PlaylistModel* model;
 
@@ -107,12 +170,14 @@ public:
     ItemKeyMap nodes;
     ItemKeyMap oldNodes;
     TrackIdNodeMap trackParents;
+    std::unordered_map<int, QString> trackIndexes;
 
     PlaylistPreset currentPreset;
     bool isActivePlaylist;
     Core::Playlist::Playlist* currentPlaylist;
     Core::Player::PlayState currentPlayState;
     Core::Track currentPlayingTrack;
+    QPersistentModelIndex currentPlayingIndex;
 };
 } // namespace Widgets::Playlist
 } // namespace Gui

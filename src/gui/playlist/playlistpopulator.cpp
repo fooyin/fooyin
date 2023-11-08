@@ -64,6 +64,18 @@ struct PlaylistPopulator::Private
         , data{}
     { }
 
+    void reset()
+    {
+        data.clear();
+        headers.clear();
+        currentIndex = 0;
+        prevBaseSubheaderKey.clear();
+        prevSubheaderKey.clear();
+        prevBaseHeaderKey = {};
+        prevHeaderKey     = {};
+        registry->changeCurrentContainer(nullptr);
+    }
+
     void updateScripts()
     {
         auto parseBlockList = [this](TextBlockList& blocks) {
@@ -187,7 +199,7 @@ struct PlaylistPopulator::Private
         prevBaseSubheaderKey.resize(subheaderCount);
 
         for(int i{0}; const Container& subheader : subheaders) {
-            TextBlockList title = subheader.title();
+            const TextBlockList title = subheader.title();
             QString subheaderKey;
             for(const TextBlock& block : title) {
                 subheaderKey += block.text;
@@ -223,7 +235,7 @@ struct PlaylistPopulator::Private
         subheaders.clear();
     }
 
-    void iterateTrack(const Core::Track& track)
+    PlaylistItem* iterateTrack(const Core::Track& track)
     {
         PlaylistItem* parent = &root;
 
@@ -231,7 +243,7 @@ struct PlaylistPopulator::Private
         iterateSubheaders(track, parent);
 
         if(!currentPreset.track.isValid()) {
-            return;
+            return nullptr;
         }
 
         auto evaluateTrack = [this, &track](const TextBlockList& blocks, TextBlockList& trackRow) {
@@ -251,12 +263,12 @@ struct PlaylistPopulator::Private
         const QString key = Utils::generateHash(parent->key(), track.hash(), QString::number(data.items.size()));
 
         auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent);
-        trackItem->setIndex(currentIndex++);
         data.trackParents[track.id()].push_back(key);
 
         if(parent->type() != PlaylistItem::Header) {
             trackItem->setIndentation(parent->indentation() + 20);
         }
+        return trackItem;
     }
 
     void runBatch(int size)
@@ -274,7 +286,9 @@ struct PlaylistPopulator::Private
             if(!track.enabled()) {
                 continue;
             }
-            iterateTrack(track);
+            if(auto* trackItem = iterateTrack(track)) {
+                trackItem->setIndex(currentIndex++);
+            }
         }
 
         updateContainers();
@@ -316,6 +330,35 @@ struct PlaylistPopulator::Private
 
         QMetaObject::invokeMethod(self, "populatedTracks", Q_ARG(PendingData, data));
     }
+
+    void runTracksGroup(const std::map<int, std::vector<Core::Track>>& tracks)
+    {
+        for(const auto& [index, trackGroup] : tracks) {
+            currentIndex = index;
+            std::vector<QString> trackKeys;
+
+            for(const Core::Track& track : trackGroup) {
+                if(!self->mayRun()) {
+                    return;
+                }
+                if(!track.enabled()) {
+                    continue;
+                }
+                auto* trackItem = iterateTrack(track);
+                trackItem->setIndex(currentIndex++);
+                trackKeys.push_back(trackItem->key());
+            }
+            data.indexNodes.emplace(index, trackKeys);
+        }
+
+        updateContainers();
+
+        if(!self->mayRun()) {
+            return;
+        }
+
+        QMetaObject::invokeMethod(self, "populatedTrackGroup", Q_ARG(PendingData, data));
+    }
 };
 
 PlaylistPopulator::PlaylistPopulator(QObject* parent)
@@ -329,10 +372,7 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const Core::TrackList&
 {
     setState(Running);
 
-    p->data.clear();
-    p->headers.clear();
-    p->currentIndex = 0;
-    p->registry->changeCurrentContainer(nullptr);
+    p->reset();
 
     p->currentPreset = preset;
     p->pendingTracks = tracks;
@@ -348,10 +388,7 @@ void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const Core::Trac
 {
     setState(Running);
 
-    p->data.clear();
-    p->headers.clear();
-    p->currentIndex = 0;
-    p->registry->changeCurrentContainer(nullptr);
+    p->reset();
 
     p->data.parent   = parent;
     p->data.row      = row;
@@ -360,6 +397,20 @@ void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const Core::Trac
 
     p->updateScripts();
     p->runTracks();
+
+    setState(Idle);
+}
+
+void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const std::map<int, std::vector<Core::Track>>& tracks)
+{
+    setState(Running);
+
+    p->reset();
+
+    p->currentPreset = preset;
+
+    p->updateScripts();
+    p->runTracksGroup(tracks);
 
     setState(Idle);
 }

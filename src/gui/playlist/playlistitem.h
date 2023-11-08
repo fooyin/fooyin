@@ -25,8 +25,6 @@
 #include <utils/treeitem.h>
 #include <utils/utils.h>
 
-#include <QObject>
-
 namespace Fy::Gui::Widgets::Playlist {
 using Data = std::variant<Track, Container>;
 
@@ -58,6 +56,7 @@ public:
         Type,
         Indentation,
         Index,
+        BaseKey,
     };
 
     PlaylistItem();
