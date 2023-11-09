@@ -1111,6 +1111,8 @@ void PlaylistModelPrivate::mergeHeaders(QModelIndexList& headersToUpdate)
                     headers.push(childIndex);
                 }
 
+                headers.push(leftIndex);
+
                 if(!headersToUpdate.contains(leftIndex)) {
                     headersToUpdate.push_back(leftIndex);
                 }
