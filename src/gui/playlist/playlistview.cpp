@@ -214,10 +214,9 @@ QAbstractItemView::DropIndicatorPosition PlaylistView::position(const QPoint& po
     const auto type = index.data(PlaylistItem::Type);
 
     if(type == PlaylistItem::Subheader) {
-        return dropPos;
+        dropPos = QAbstractItemView::OnItem;
     }
-
-    if(pos.y() - rect.top() < mid || type == PlaylistItem::Header) {
+    else if(pos.y() - rect.top() < mid || type == PlaylistItem::Header) {
         dropPos = QAbstractItemView::AboveItem;
     }
     else if(rect.bottom() - pos.y() < mid) {
