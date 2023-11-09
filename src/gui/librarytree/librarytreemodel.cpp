@@ -242,8 +242,7 @@ struct LibraryTreeModel::Private
     void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData)
     {
         if(mimeData) {
-            QModelIndexList sortedIndexes{indexes};
-            mimeData->setData(Constants::Mime::TrackList, saveTracks(sortedIndexes));
+            mimeData->setData(Constants::Mime::TrackList, saveTracks(indexes));
         }
     }
 
