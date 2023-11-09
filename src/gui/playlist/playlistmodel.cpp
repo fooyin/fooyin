@@ -59,22 +59,14 @@ PlaylistModel::PlaylistModel(Utils::SettingsManager* settings, QObject* parent)
         emit dataChanged({}, {}, {Qt::DecorationRole});
     });
 
-    QObject::connect(&p->populator, &PlaylistPopulator::populated, this, [this](PendingData data) {
-        if(p->resetting) {
-            beginResetModel();
-            resetRoot();
-            p->beginReset();
-        }
+    QObject::connect(&p->populator, &PlaylistPopulator::populated, this,
+                     [this](PendingData data) { p->populateModel(data); });
 
-        p->populateModel(data);
-
-        if(p->resetting) {
-            endResetModel();
-        }
-        p->resetting = false;
-    });
     QObject::connect(&p->populator, &PlaylistPopulator::populatedTracks, this,
                      [this](PendingData data) { p->populateTracks(data); });
+
+    QObject::connect(&p->populator, &PlaylistPopulator::populatedTrackGroup, this,
+                     [this](PendingData data) { p->populateTrackGroup(data); });
 
     QObject::connect(&p->populator, &PlaylistPopulator::headersUpdated, this,
                      [this](ItemKeyMap data) { p->updateModel(data); });
@@ -137,6 +129,10 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
         return item->index();
     }
 
+    if(role == PlaylistItem::BaseKey) {
+        return item->baseKey();
+    }
+
     switch(type) {
         case(PlaylistItem::Header):
             return p->headerData(item, role);
@@ -169,6 +165,7 @@ void PlaylistModel::fetchMore(const QModelIndex& parent)
     endInsertRows();
 
     rows.erase(rows.begin(), rows.begin() + rowCount);
+    p->updateTrackIndexes();
 }
 
 bool PlaylistModel::canFetchMore(const QModelIndex& parent) const
@@ -239,18 +236,7 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
         return false;
     }
 
-    const QPersistentModelIndex currentIndex
-        = indexForTrackIndex(p->currentPlayingTrack, p->currentPlaylist->currentTrackIndex());
-
-    const bool successfulDrop = p->handleDrop(data, action, row, column, parent);
-
-    if(successfulDrop) {
-        p->updateTrackIndexes();
-        const int playingIndex = currentIndex.isValid() ? currentIndex.data(PlaylistItem::Index).toInt() : -1;
-        emit tracksChanged(playingIndex);
-    }
-
-    return successfulDrop;
+    return p->handleDrop(data, action, row, column, parent);
 }
 
 void PlaylistModel::reset(const PlaylistPreset& preset, Core::Playlist::Playlist* playlist)
@@ -271,42 +257,37 @@ void PlaylistModel::reset(const PlaylistPreset& preset, Core::Playlist::Playlist
                               [this, playlist] { p->populator.run(p->currentPreset, playlist->tracks()); });
 }
 
-QModelIndex PlaylistModel::indexForTrackIndex(const Core::Track& track, int index)
+QModelIndex PlaylistModel::indexAtTrackIndex(int index)
 {
-    if(!p->trackParents.contains(track.id())) {
-        return {};
-    }
+    return p->indexForTrackIndex(index).index;
+}
 
-    const auto parents = p->trackParents.at(track.id());
-
-    for(const QString& parentKey : parents) {
-        if(!p->nodes.contains(parentKey)) {
-            return {};
-        }
-
-        PlaylistItem* parent        = &p->nodes.at(parentKey);
-        PlaylistItem* currentParent = parent;
-
-        while(currentParent->pending()) {
-            const QString key = currentParent->parent()->key();
-            currentParent     = p->nodes.contains(key) ? &p->nodes.at(key) : rootItem();
-        }
-
-        const QModelIndex parentIndex = indexOfItem(currentParent);
-        while(parent->pending() && canFetchMore(parentIndex)) {
-            fetchMore(parentIndex);
-        }
-
-        if(parent->type() == PlaylistItem::Track && parent->index() == index) {
-            return indexOfItem(parent);
-        }
-    }
-    return {};
+void PlaylistModel::insertTracks(const TrackGroups& tracks)
+{
+    QMetaObject::invokeMethod(&p->populator, [this, tracks] { p->populator.runTracks(p->currentPreset, tracks); });
 }
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)
 {
     p->removeTracks(indexes);
+}
+
+void PlaylistModel::removeTracks(const TrackGroups& groups)
+{
+    QModelIndexList rows;
+
+    for(const auto& [index, tracks] : groups) {
+        int currIndex   = index;
+        const int total = index + static_cast<int>(tracks.size()) - 1;
+
+        while(currIndex <= total) {
+            auto [trackIndex, _] = p->indexForTrackIndex(currIndex);
+            rows.push_back(trackIndex);
+            currIndex++;
+        }
+    }
+
+    p->removeTracks(rows);
 }
 
 void PlaylistModel::updateHeader(Core::Playlist::Playlist* playlist)
@@ -320,6 +301,34 @@ void PlaylistModel::setCurrentPlaylistIsActive(bool active)
 {
     p->isActivePlaylist = active;
     emit dataChanged({}, {}, {PlaylistItem::Role::Playing});
+}
+
+TrackGroups PlaylistModel::saveTrackGroups(const QModelIndexList& indexes) const
+{
+    TrackGroups result;
+
+    const ParentChildIndexMap indexGroups = p->determineIndexGroups(indexes);
+
+    for(const auto& group : indexGroups) {
+        const int index = group.front().data(Fy::Gui::Widgets::Playlist::PlaylistItem::Role::Index).toInt();
+        std::ranges::transform(std::as_const(group), std::back_inserter(result[index]), [](const QModelIndex& index) {
+            return index.data(Fy::Gui::Widgets::Playlist::PlaylistItem::Role::ItemData).value<Fy::Core::Track>();
+        });
+    }
+    return result;
+}
+
+void PlaylistModel::tracksAboutToBeChanged()
+{
+    p->currentPlayingIndex = indexAtTrackIndex(p->currentPlaylist->currentTrackIndex());
+}
+
+void PlaylistModel::tracksChanged()
+{
+    const int playingIndex
+        = p->currentPlayingIndex.isValid() ? p->currentPlayingIndex.data(PlaylistItem::Index).toInt() : -1;
+    emit playlistTracksChanged(playingIndex);
+    p->currentPlayingIndex = QPersistentModelIndex{};
 }
 
 void PlaylistModel::currentTrackChanged(const Core::Track& track)

@@ -26,6 +26,7 @@
 #include <QCoroTask>
 
 #include <QString>
+#include <QUndoStack>
 
 class QHBoxLayout;
 class QMenu;
@@ -68,7 +69,7 @@ public:
     void onPresetChanged(const PlaylistPreset& preset);
     void changePreset(const PlaylistPreset& preset);
 
-    void changePlaylist(Core::Playlist::Playlist* playlist) const;
+    void changePlaylist(Core::Playlist::Playlist* playlist);
 
     void resetTree() const;
 
@@ -80,7 +81,8 @@ public:
 
     void selectionChanged();
     void playlistTracksChanged(int index) const;
-    void tracksRemoved() const;
+    void tracksRemoved();
+    void playlistTracksAdded(Core::Playlist::Playlist* playlist, const Core::TrackList& tracks, int index);
 
     void customHeaderMenuRequested(QPoint pos);
 
@@ -91,7 +93,7 @@ public:
     void followCurrentTrack(const Core::Track& track, int index) const;
 
     void switchContextMenu(int section, QPoint pos);
-    QCoro::Task<void> changeSort(QString script) const;
+    QCoro::Task<void> changeSort(QString script);
     void addSortMenu(QMenu* parent);
 
     PlaylistWidget* self;

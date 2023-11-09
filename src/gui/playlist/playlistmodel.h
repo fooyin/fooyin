@@ -43,6 +43,8 @@ namespace Gui::Widgets::Playlist {
 struct PlaylistPreset;
 class PlaylistModelPrivate;
 
+using TrackGroups = std::map<int, std::vector<Core::Track>>;
+
 class PlaylistModel : public Utils::TreeModel<PlaylistItem>
 {
     Q_OBJECT
@@ -70,13 +72,20 @@ public:
 
     void reset(const PlaylistPreset& preset, Core::Playlist::Playlist* playlist);
 
-    QModelIndex indexForTrackIndex(const Core::Track& track, int index);
+    QModelIndex indexAtTrackIndex(int index);
+    void insertTracks(const TrackGroups& tracks);
     void removeTracks(const QModelIndexList& indexes);
+    void removeTracks(const TrackGroups& groups);
     void updateHeader(Core::Playlist::Playlist* playlist);
     void setCurrentPlaylistIsActive(bool active);
 
+    TrackGroups saveTrackGroups(const QModelIndexList& indexes) const;
+
+    void tracksAboutToBeChanged();
+    void tracksChanged();
+
 signals:
-    void tracksChanged(int index);
+    void playlistTracksChanged(int index);
 
 public slots:
     void currentTrackChanged(const Core::Track& track);

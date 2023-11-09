@@ -19,9 +19,13 @@
 
 #pragma once
 
-#include <QObject>
+#include "playlist/playlistmodel.h"
 
 #include <core/playlist/playlist.h>
+
+#include <QObject>
+
+class QUndoCommand;
 
 namespace Fy {
 namespace Utils {
@@ -74,7 +78,7 @@ public:
     void changeCurrentPlaylist(int id);
     void changePlaylistIndex(int playlistId, int index);
 
-    void saveCurrentPlaylist();
+    void addToHistory(QUndoCommand* command);
     [[nodiscard]] bool canUndo() const;
     [[nodiscard]] bool canRedo() const;
     void undoPlaylistChanges();

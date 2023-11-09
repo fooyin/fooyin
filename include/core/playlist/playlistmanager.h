@@ -63,6 +63,7 @@ public:
 signals:
     void playlistsPopulated();
     void playlistAdded(Core::Playlist::Playlist* playlist);
+    void playlistTracksAdded(Core::Playlist::Playlist* playlist, const Core::TrackList& tracks, int index);
     void playlistTracksChanged(Core::Playlist::Playlist* playlist);
     void playlistRemoved(Core::Playlist::Playlist* playlist);
     void playlistRenamed(Core::Playlist::Playlist* playlist);

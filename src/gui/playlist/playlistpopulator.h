@@ -33,6 +33,7 @@ using ItemKeyMap      = std::unordered_map<QString, PlaylistItem>;
 using ContainerKeyMap = std::unordered_map<QString, Container*>;
 using NodeKeyMap      = std::unordered_map<QString, std::vector<QString>>;
 using TrackIdNodeMap  = std::unordered_map<int, std::vector<QString>>;
+using IndexGroupMap   = std::map<int, std::vector<QString>>;
 
 struct PendingData
 {
@@ -44,6 +45,8 @@ struct PendingData
     QString parent;
     int row{-1};
 
+    IndexGroupMap indexNodes;
+
     void clear()
     {
         items.clear();
@@ -51,6 +54,7 @@ struct PendingData
         containerOrder.clear();
         trackParents.clear();
         row = -1;
+        indexNodes.clear();
     }
 };
 
@@ -64,11 +68,13 @@ public:
 
     void run(const PlaylistPreset& preset, const Core::TrackList& tracks);
     void runTracks(const PlaylistPreset& preset, const Core::TrackList& tracks, const QString& parent, int row);
+    void runTracks(const PlaylistPreset& preset, const std::map<int, std::vector<Core::Track>>& tracks);
     void updateHeaders(const ItemList& headers);
 
 signals:
     void populated(PendingData data);
     void populatedTracks(PendingData data);
+    void populatedTrackGroup(PendingData data);
     void headersUpdated(ItemKeyMap headers);
 
 private:
