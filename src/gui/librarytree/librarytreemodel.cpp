@@ -239,13 +239,6 @@ struct LibraryTreeModel::Private
         updateAllNode();
     }
 
-    void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData)
-    {
-        if(mimeData) {
-            mimeData->setData(Constants::Mime::TrackList, saveTracks(indexes));
-        }
-    }
-
     void beginReset()
     {
         self->resetRoot();
@@ -405,7 +398,7 @@ Qt::DropActions LibraryTreeModel::supportedDragActions() const
 QMimeData* LibraryTreeModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    p->storeMimeData(indexes, mimeData);
+    mimeData->setData(Constants::Mime::TrackList, saveTracks(indexes));
     return mimeData;
 }
 
