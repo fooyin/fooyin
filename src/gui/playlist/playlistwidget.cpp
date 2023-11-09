@@ -20,7 +20,6 @@
 #include "playlistwidget.h"
 
 #include "gui/guiconstants.h"
-#include "gui/trackselectioncontroller.h"
 #include "playlist/playlisthistory.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
@@ -32,6 +31,7 @@
 #include <core/library/sortingregistry.h>
 #include <core/library/tracksort.h>
 #include <core/playlist/playlistmanager.h>
+#include <gui/trackselectioncontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/async.h>
@@ -95,12 +95,10 @@ Fy::Core::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexLis
 
 namespace Fy::Gui::Widgets::Playlist {
 PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, Utils::ActionManager* actionManager,
-                                             PlaylistController* playlistController,
-                                             TrackSelectionController* selectionController,
-                                             Utils::SettingsManager* settings)
+                                             PlaylistController* playlistController, Utils::SettingsManager* settings)
     : self{self}
     , actionManager{actionManager}
-    , selectionController{selectionController}
+    , selectionController{playlistController->selectionController()}
     , settings{settings}
     , settingsDialog{settings->settingsDialog()}
     , playlistController{playlistController}
@@ -378,7 +376,8 @@ void PlaylistWidgetPrivate::tracksRemoved()
     }
 }
 
-void PlaylistWidgetPrivate::playlistTracksAdded(Core::Playlist::Playlist* playlist, const Core::TrackList& tracks, int index)
+void PlaylistWidgetPrivate::playlistTracksAdded(Core::Playlist::Playlist* playlist, const Core::TrackList& tracks,
+                                                int index)
 {
     if(playlistController->currentPlaylist() == playlist) {
         auto* insertCmd = new InsertTracks(model, {{index, tracks}});
@@ -492,10 +491,9 @@ void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
 }
 
 PlaylistWidget::PlaylistWidget(Utils::ActionManager* actionManager, PlaylistController* playlistController,
-                               TrackSelectionController* selectionController, Utils::SettingsManager* settings,
-                               QWidget* parent)
+                               Utils::SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistController, selectionController, settings)}
+    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistController, settings)}
 {
     setObjectName("Playlist");
 }

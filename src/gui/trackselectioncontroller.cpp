@@ -121,15 +121,20 @@ struct TrackSelectionController::Private
 
     void sendToNewPlaylist(ActionOptions options = {}, const QString& playlistName = {}) const
     {
+        QString newName{playlistName};
+        if(newName.isEmpty()) {
+            newName = selectionTitle;
+        }
+
         if(options & KeepActive) {
             auto* activePlaylist = playlistHandler->activePlaylist();
 
-            if(!activePlaylist || activePlaylist->name() != playlistName) {
-                auto* playlist = playlistHandler->createPlaylist(playlistName, tracks);
+            if(!activePlaylist || activePlaylist->name() != newName) {
+                auto* playlist = playlistHandler->createPlaylist(newName, tracks);
                 handleActions(playlist, options);
                 return;
             }
-            const QString keepActiveName = playlistName + tr(" (Playback)");
+            const QString keepActiveName = newName + tr(" (Playback)");
 
             if(auto* keepActivePlaylist = playlistHandler->playlistByName(keepActiveName)) {
                 keepActivePlaylist->changeCurrentTrack(activePlaylist->currentTrackIndex());
@@ -142,7 +147,7 @@ struct TrackSelectionController::Private
             }
         }
 
-        auto* playlist = playlistHandler->createPlaylist(playlistName, tracks);
+        auto* playlist = playlistHandler->createPlaylist(newName, tracks);
         handleActions(playlist, options);
     }
 

@@ -41,7 +41,8 @@ class PlaylistTabs : public WidgetContainer
 
 public:
     explicit PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                          PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent = nullptr);
+                          PlaylistController* playlistController, Utils::SettingsManager* settings,
+                          QWidget* parent = nullptr);
     ~PlaylistTabs() override;
 
     void setupTabs();
@@ -65,7 +66,8 @@ protected:
     void dragEnterEvent(QDragEnterEvent* event) override;
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dragLeaveEvent(QDragLeaveEvent* event) override;
-    void timerEvent(QTimerEvent *event) override;
+    void timerEvent(QTimerEvent* event) override;
+    void dropEvent(QDropEvent* event) override;
 
 private:
     struct Private;

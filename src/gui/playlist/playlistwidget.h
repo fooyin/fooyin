@@ -28,10 +28,7 @@ class ActionManager;
 class SettingsManager;
 } // namespace Utils
 
-namespace Gui {
-class TrackSelectionController;
-
-namespace Widgets::Playlist {
+namespace Gui::Widgets::Playlist {
 class PlaylistController;
 class PlaylistWidgetPrivate;
 
@@ -41,8 +38,7 @@ class PlaylistWidget : public FyWidget
 
 public:
     explicit PlaylistWidget(Utils::ActionManager* actionManager, PlaylistController* playlistController,
-                            TrackSelectionController* selectionController, Utils::SettingsManager* settings,
-                            QWidget* parent = nullptr);
+                            Utils::SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -54,6 +50,5 @@ protected:
 private:
     std::unique_ptr<PlaylistWidgetPrivate> p;
 };
-} // namespace Widgets::Playlist
-} // namespace Gui
+} // namespace Gui::Widgets::Playlist
 } // namespace Fy

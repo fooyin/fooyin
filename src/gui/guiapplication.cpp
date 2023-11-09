@@ -139,7 +139,7 @@ struct GuiApplication::Private
         , mainWindow{std::make_unique<MainWindow>(actionManager, settingsManager, editableLayout.get())}
         , mainContext{new Utils::WidgetContext(mainWindow.get(), Utils::Context{"Fooyin.MainWindow"}, self)}
         , playlistController{std::make_unique<Widgets::Playlist::PlaylistController>(
-              playlistHandler, playerManager, &presetRegistry, sortingRegistry, settingsManager)}
+              playlistHandler, playerManager, &presetRegistry, sortingRegistry, &selectionController, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
         , presetRegistry{settingsManager}
         , treeGroupRegistry{settingsManager}
@@ -252,8 +252,8 @@ struct GuiApplication::Private
         });
 
         factory->registerClass<Widgets::Playlist::PlaylistWidget>(u"Playlist"_s, [this]() {
-            return new Widgets::Playlist::PlaylistWidget(actionManager, playlistController.get(), &selectionController,
-                                                         settingsManager, mainWindow.get());
+            return new Widgets::Playlist::PlaylistWidget(actionManager, playlistController.get(), settingsManager,
+                                                         mainWindow.get());
         });
 
         factory->registerClass<Widgets::Spacer>(u"Spacer"_s,

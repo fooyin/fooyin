@@ -40,6 +40,7 @@ struct PlaylistController::Private
     Core::Player::PlayerManager* playerManager;
     PresetRegistry* presetRegistry;
     Core::Library::SortingRegistry* sortRegistry;
+    TrackSelectionController* selectionController;
     Utils::SettingsManager* settings;
 
     Core::Playlist::Playlist* currentPlaylist{nullptr};
@@ -48,12 +49,14 @@ struct PlaylistController::Private
 
     Private(PlaylistController* self, Core::Playlist::PlaylistManager* handler,
             Core::Player::PlayerManager* playerManager, PresetRegistry* presetRegistry,
-            Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings)
+            Core::Library::SortingRegistry* sortRegistry, TrackSelectionController* selectionController,
+            Utils::SettingsManager* settings)
         : self{self}
         , handler{handler}
         , playerManager{playerManager}
         , presetRegistry{presetRegistry}
         , sortRegistry{sortRegistry}
+        , selectionController{selectionController}
         , settings{settings}
     { }
 
@@ -91,10 +94,12 @@ struct PlaylistController::Private
 
 PlaylistController::PlaylistController(Core::Playlist::PlaylistManager* handler,
                                        Core::Player::PlayerManager* playerManager, PresetRegistry* presetRegistry,
-                                       Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings,
+                                       Core::Library::SortingRegistry* sortRegistry,
+                                       TrackSelectionController* selectionController, Utils::SettingsManager* settings,
                                        QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, handler, playerManager, presetRegistry, sortRegistry, settings)}
+    , p{std::make_unique<Private>(this, handler, playerManager, presetRegistry, sortRegistry, selectionController,
+                                  settings)}
 {
     QObject::connect(handler, &Core::Playlist::PlaylistManager::playlistsPopulated, this,
                      [this]() { p->restoreLastPlaylist(); });
@@ -131,6 +136,11 @@ PresetRegistry* PlaylistController::presetRegistry() const
 Core::Library::SortingRegistry* PlaylistController::sortRegistry() const
 {
     return p->sortRegistry;
+}
+
+TrackSelectionController* PlaylistController::selectionController() const
+{
+    return p->selectionController;
 }
 
 const Core::Playlist::PlaylistList& PlaylistController::playlists() const

@@ -24,6 +24,7 @@
 #include <core/playlist/playlistmanager.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -50,7 +51,8 @@ struct PlaylistTabs::Private
     Utils::ActionManager* actionManager;
     WidgetProvider* widgetProvider;
     Core::Playlist::PlaylistManager* playlistHandler;
-    PlaylistController* controller;
+    PlaylistController* playlistController;
+    TrackSelectionController* selectionController;
     Utils::SettingsManager* settings;
 
     QVBoxLayout* layout;
@@ -61,11 +63,12 @@ struct PlaylistTabs::Private
     int currentHoverIndex{-1};
 
     Private(PlaylistTabs* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-            PlaylistController* controller, Utils::SettingsManager* settings)
+            PlaylistController* playlistController, Utils::SettingsManager* settings)
         : actionManager{actionManager}
         , widgetProvider{widgetProvider}
-        , playlistHandler{controller->playlistHandler()}
-        , controller{controller}
+        , playlistHandler{playlistController->playlistHandler()}
+        , playlistController{playlistController}
+        , selectionController{playlistController->selectionController()}
         , settings{settings}
         , layout{new QVBoxLayout(self)}
         , tabs{new Utils::EditableTabBar(self)}
@@ -86,7 +89,7 @@ struct PlaylistTabs::Private
     {
         const int id = tabs->tabData(index).toInt();
         if(id >= 0) {
-            controller->changeCurrentPlaylist(id);
+            playlistController->changeCurrentPlaylist(id);
         }
     }
 
@@ -94,7 +97,7 @@ struct PlaylistTabs::Private
     {
         const int id = tabs->tabData(to).toInt();
         if(id >= 0) {
-            controller->changePlaylistIndex(id, to);
+            playlistController->changePlaylistIndex(id, to);
         }
     }
 
@@ -122,9 +125,9 @@ struct PlaylistTabs::Private
 };
 
 PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                           PlaylistController* controller, Utils::SettingsManager* settings, QWidget* parent)
+                           PlaylistController* playlistController, Utils::SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
-    , p{std::make_unique<Private>(this, actionManager, widgetProvider, controller, settings)}
+    , p{std::make_unique<Private>(this, actionManager, widgetProvider, playlistController, settings)}
 {
     QObject::setObjectName(PlaylistTabs::name());
 
@@ -138,7 +141,7 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* 
     });
     QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
     QObject::connect(p->tabs, &QTabBar::tabMoved, this, [this](int from, int to) { p->tabMoved(from, to); });
-    QObject::connect(p->controller, &PlaylistController::currentPlaylistChanged, this,
+    QObject::connect(p->playlistController, &PlaylistController::currentPlaylistChanged, this,
                      [this](const Core::Playlist::Playlist* playlist) { p->playlistChanged(playlist); });
     QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistAdded, this,
                      &PlaylistTabs::addPlaylist);
@@ -269,6 +272,22 @@ void PlaylistTabs::timerEvent(QTimerEvent* event)
             p->tabChanged(p->currentHoverIndex);
         }
     }
+}
+
+void PlaylistTabs::dropEvent(QDropEvent* event)
+{
+    if(!event->mimeData()->hasFormat(Constants::Mime::TrackList)) {
+        event->ignore();
+    }
+
+    if(p->currentHoverIndex < 0) {
+        p->selectionController->executeAction(TrackAction::SendNewPlaylist, ActionOption::Switch);
+    }
+    else {
+        p->selectionController->executeAction(TrackAction::AddCurrentPlaylist);
+    }
+
+    event->acceptProposedAction();
 }
 
 QString PlaylistTabs::name() const

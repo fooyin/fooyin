@@ -48,7 +48,10 @@ class PlaylistManager;
 } // namespace Playlist
 } // namespace Core
 
-namespace Gui::Widgets::Playlist {
+namespace Gui {
+class TrackSelectionController;
+
+namespace Widgets::Playlist {
 class PresetRegistry;
 
 class PlaylistController : public QObject
@@ -58,12 +61,14 @@ class PlaylistController : public QObject
 public:
     PlaylistController(Core::Playlist::PlaylistManager* handler, Core::Player::PlayerManager* playerManager,
                        PresetRegistry* presetRegistry, Core::Library::SortingRegistry* sortRegistry,
-                       Utils::SettingsManager* settings, QObject* parent = nullptr);
+                       TrackSelectionController* selectionController, Utils::SettingsManager* settings,
+                       QObject* parent = nullptr);
     ~PlaylistController() override;
 
     [[nodiscard]] Core::Playlist::PlaylistManager* playlistHandler() const;
     [[nodiscard]] PresetRegistry* presetRegistry() const;
     [[nodiscard]] Core::Library::SortingRegistry* sortRegistry() const;
+    [[nodiscard]] TrackSelectionController* selectionController() const;
 
     [[nodiscard]] const Core::Playlist::PlaylistList& playlists() const;
     [[nodiscard]] Core::Track currentTrack() const;
@@ -94,5 +99,6 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets::Playlist
+} // namespace Widgets::Playlist
+} // namespace Gui
 } // namespace Fy

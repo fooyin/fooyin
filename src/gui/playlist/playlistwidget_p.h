@@ -60,8 +60,7 @@ class PlaylistWidgetPrivate : public QObject
 
 public:
     PlaylistWidgetPrivate(PlaylistWidget* self, Utils::ActionManager* actionManager,
-                          PlaylistController* playlistController, TrackSelectionController* selectionController,
-                          Utils::SettingsManager* settings);
+                          PlaylistController* playlistController, Utils::SettingsManager* settings);
 
     void setupConnections();
     void setupActions();
