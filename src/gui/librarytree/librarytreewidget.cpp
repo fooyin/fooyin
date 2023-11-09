@@ -117,17 +117,10 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Core
     , middleClickAction{static_cast<TrackAction>(settings->value<Settings::LibraryTreeMiddleClick>())}
 {
     layout->setContentsMargins(0, 0, 0, 0);
-
-    libraryTree->setModel(model);
-    libraryTree->setUniformRowHeights(true);
-    libraryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
     layout->addWidget(libraryTree);
+    libraryTree->setModel(model);
 
-    libraryTree->header()->setContextMenuPolicy(Qt::CustomContextMenu);
-    libraryTree->setWordWrap(true);
-    libraryTree->setTextElideMode(Qt::ElideRight);
-
+    libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
     libraryTree->setHeaderHidden(!settings->value<Settings::LibraryTreeHeader>());
     setScrollbarEnabled(settings->value<Settings::LibraryTreeScrollBar>());
     libraryTree->setAlternatingRowColors(settings->value<Settings::LibraryTreeAltColours>());

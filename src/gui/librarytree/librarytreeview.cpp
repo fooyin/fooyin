@@ -19,12 +19,24 @@
 
 #include "librarytreeview.h"
 
+#include <QHeaderView>
 #include <QMouseEvent>
 
 namespace Fy::Gui::Widgets {
 LibraryTreeView::LibraryTreeView(QWidget* parent)
     : QTreeView{parent}
-{ }
+{
+    setUniformRowHeights(true);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setDragEnabled(true);
+    setDragDropMode(QAbstractItemView::DragOnly);
+    setDefaultDropAction(Qt::CopyAction);
+    setDropIndicatorShown(true);
+
+    header()->setContextMenuPolicy(Qt::CustomContextMenu);
+    setWordWrap(true);
+    setTextElideMode(Qt::ElideRight);
+}
 
 void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 {

@@ -22,8 +22,12 @@
 #include "librarytreeappearance.h"
 #include "librarytreepopulator.h"
 
+#include <gui/guiconstants.h>
+
 #include <QColor>
 #include <QFont>
+#include <QIODevice>
+#include <QMimeData>
 #include <QSize>
 #include <QThread>
 
@@ -33,7 +37,9 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Gui::Widgets {
+namespace {
+using Fy::Gui::Widgets::LibraryTreeItem;
+
 bool cmpItemsReverse(LibraryTreeItem* pItem1, LibraryTreeItem* pItem2)
 {
     LibraryTreeItem* item1{pItem1};
@@ -66,6 +72,27 @@ struct cmpItems
         return cmpItemsReverse(pItem1, pItem2);
     }
 };
+
+QByteArray saveTracks(const QModelIndexList& indexes)
+{
+    QByteArray result;
+    QDataStream stream(&result, QIODevice::WriteOnly);
+
+    Fy::Core::TrackList tracks;
+    tracks.reserve(indexes.size());
+
+    for(const QModelIndex& index : indexes) {
+        std::ranges::copy(index.data(Fy::Gui::Widgets::LibraryTreeRole::Tracks).value<Fy::Core::TrackList>(),
+                          std::back_inserter(tracks));
+    }
+
+    stream << tracks;
+
+    return result;
+}
+} // namespace
+
+namespace Fy::Gui::Widgets {
 
 struct LibraryTreeModel::Private
 {
@@ -212,6 +239,14 @@ struct LibraryTreeModel::Private
         updateAllNode();
     }
 
+    void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData)
+    {
+        if(mimeData) {
+            QModelIndexList sortedIndexes{indexes};
+            mimeData->setData(Constants::Mime::TrackList, saveTracks(sortedIndexes));
+        }
+    }
+
     void beginReset()
     {
         self->resetRoot();
@@ -250,6 +285,13 @@ void LibraryTreeModel::setAppearance(const LibraryTreeAppearance& options)
     p->colour    = options.colour;
     p->rowHeight = options.rowHeight;
     emit dataChanged({}, {});
+}
+
+Qt::ItemFlags LibraryTreeModel::flags(const QModelIndex& index) const
+{
+    Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
+    defaultFlags |= Qt::ItemIsDragEnabled;
+    return defaultFlags;
 }
 
 QVariant LibraryTreeModel::headerData(int /*section*/, Qt::Orientation orientation, int role) const
@@ -349,6 +391,23 @@ bool LibraryTreeModel::canFetchMore(const QModelIndex& parent) const
 {
     auto* item = itemForIndex(parent);
     return p->pendingNodes.contains(item->key()) && !p->pendingNodes[item->key()].empty();
+}
+
+QStringList LibraryTreeModel::mimeTypes() const
+{
+    return {Constants::Mime::TrackList};
+}
+
+Qt::DropActions LibraryTreeModel::supportedDragActions() const
+{
+    return Qt::CopyAction;
+}
+
+QMimeData* LibraryTreeModel::mimeData(const QModelIndexList& indexes) const
+{
+    auto* mimeData = new QMimeData();
+    p->storeMimeData(indexes, mimeData);
+    return mimeData;
 }
 
 void LibraryTreeModel::addTracks(const Core::TrackList& tracks)

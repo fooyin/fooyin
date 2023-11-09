@@ -38,11 +38,16 @@ public:
 
     void setAppearance(const LibraryTreeAppearance& options);
 
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     void fetchMore(const QModelIndex& parent) override;
     bool canFetchMore(const QModelIndex& parent) const override;
+
+    [[nodiscard]] QStringList mimeTypes() const override;
+    [[nodiscard]] Qt::DropActions supportedDragActions() const override;
+    [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
     void addTracks(const Core::TrackList& tracks);
     void updateTracks(const Core::TrackList& tracks);
