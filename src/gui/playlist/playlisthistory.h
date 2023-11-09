@@ -78,19 +78,5 @@ private:
     TrackGroups m_trackGroups;
     int m_row;
 };
-
-// class SortTracks : public PlaylistCommand
-// {
-// public:
-//     explicit SortTracks(PlaylistModel* model, int column,
-//                         Qt::SortOrder order /*, const PlaylistItemPtrList &new_items*/);
-
-//     void undo() override;
-//     void redo() override;
-
-// private:
-// PlaylistItemPtrList old_items_;
-// PlaylistItemPtrList new_items_;
-// };
 } // namespace Gui::Widgets::Playlist
 } // namespace Fy
