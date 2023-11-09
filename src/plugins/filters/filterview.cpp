@@ -40,6 +40,10 @@ FilterView::FilterView(QWidget* parent)
     setExpandsOnDoubleClick(false);
     setWordWrap(true);
     setTextElideMode(Qt::ElideLeft);
+    setDragEnabled(true);
+    setDragDropMode(QAbstractItemView::DragOnly);
+    setDefaultDropAction(Qt::CopyAction);
+    setDropIndicatorShown(true);
     setSortingEnabled(false);
     setUniformRowHeights(true);
 

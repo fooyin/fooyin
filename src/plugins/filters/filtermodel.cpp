@@ -23,13 +23,37 @@
 #include "filteritem.h"
 #include "filterpopulator.h"
 
+#include <gui/guiconstants.h>
+
 #include <QColor>
 #include <QFont>
+#include <QIODevice>
+#include <QMimeData>
 #include <QSize>
 #include <QThread>
 
 #include <set>
 #include <utility>
+
+namespace {
+QByteArray saveTracks(const QModelIndexList& indexes)
+{
+    QByteArray result;
+    QDataStream stream(&result, QIODevice::WriteOnly);
+
+    Fy::Core::TrackList tracks;
+    tracks.reserve(indexes.size());
+
+    for(const QModelIndex& index : indexes) {
+        std::ranges::copy(index.data(Fy::Filters::FilterItemRole::Tracks).value<Fy::Core::TrackList>(),
+                          std::back_inserter(tracks));
+    }
+
+    stream << tracks;
+
+    return result;
+}
+} // namespace
 
 namespace Fy::Filters {
 struct FilterModel::Private
@@ -57,6 +81,13 @@ struct FilterModel::Private
         , field{std::move(field)}
     {
         populator.moveToThread(&populatorThread);
+    }
+
+    void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData)
+    {
+        if(mimeData) {
+            mimeData->setData(Gui::Constants::Mime::TrackList, saveTracks(indexes));
+        }
     }
 
     void beginReset()
@@ -156,6 +187,13 @@ void FilterModel::setAppearance(const FilterOptions& options)
     emit dataChanged({}, {});
 }
 
+Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
+{
+    Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
+    defaultFlags |= Qt::ItemIsDragEnabled;
+    return defaultFlags;
+}
+
 QVariant FilterModel::data(const QModelIndex& index, int role) const
 {
     if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
@@ -196,15 +234,6 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
     }
 }
 
-Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
-{
-    if(!index.isValid()) {
-        return Qt::NoItemFlags;
-    }
-
-    return TableModel::flags(index);
-}
-
 QVariant FilterModel::headerData(int /*section*/, Qt::Orientation orientation, int role) const
 {
     if(role != Qt::TextAlignmentRole && role != Qt::DisplayRole) {
@@ -230,6 +259,23 @@ QHash<int, QByteArray> FilterModel::roleNames() const
     roles.insert(+FilterItemRole::Sorting, "Sorting");
 
     return roles;
+}
+
+QStringList FilterModel::mimeTypes() const
+{
+    return {Gui::Constants::Mime::TrackList};
+}
+
+Qt::DropActions FilterModel::supportedDragActions() const
+{
+    return Qt::CopyAction;
+}
+
+QMimeData* FilterModel::mimeData(const QModelIndexList& indexes) const
+{
+    auto* mimeData = new QMimeData();
+    p->storeMimeData(indexes, mimeData);
+    return mimeData;
 }
 
 // QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,

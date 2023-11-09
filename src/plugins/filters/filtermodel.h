@@ -39,10 +39,14 @@ public:
     void setSortOrder(Qt::SortOrder order);
     void setAppearance(const FilterOptions& options);
 
-    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+
+    [[nodiscard]] QStringList mimeTypes() const override;
+    [[nodiscard]] Qt::DropActions supportedDragActions() const override;
+    [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
     //    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
     //                                        Qt::MatchFlags flags) const override;
