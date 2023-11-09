@@ -364,15 +364,14 @@ void PlaylistModelPrivate::populateModel(PendingData& data)
 
 void PlaylistModelPrivate::populateTracks(PendingData& data)
 {
-    if(nodes.empty()) {
-        resetting = true;
-        populateModel(data);
-    }
+    model->tracksAboutToBeChanged();
 
     nodes.merge(data.items);
     trackParents.merge(data.trackParents);
 
     handleExternalDrop(data);
+
+    model->tracksChanged();
 }
 
 void PlaylistModelPrivate::populateTrackGroup(PendingData& data)
@@ -390,6 +389,7 @@ void PlaylistModelPrivate::populateTrackGroup(PendingData& data)
     trackParents.merge(data.trackParents);
 
     handleTrackGroup(data);
+
     model->tracksChanged();
 }
 
@@ -827,8 +827,6 @@ QModelIndex PlaylistModelPrivate::handleDiffParentDrop(PlaylistItem* source, Pla
 
 void PlaylistModelPrivate::handleExternalDrop(const PendingData& data)
 {
-    model->tracksAboutToBeChanged();
-
     QModelIndexList headersToCheck;
 
     auto* parentItem = itemForKey(data.parent);
@@ -880,8 +878,6 @@ void PlaylistModelPrivate::handleExternalDrop(const PendingData& data)
     mergeHeaders(headersToCheck);
     updateHeaders(headersToCheck);
     updateTrackIndexes();
-
-    model->tracksChanged();
 }
 
 void PlaylistModelPrivate::handleTrackGroup(const PendingData& data)
