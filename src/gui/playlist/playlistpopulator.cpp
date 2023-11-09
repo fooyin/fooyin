@@ -206,6 +206,8 @@ struct PlaylistPopulator::Private
             }
 
             if(subheaderKey.isEmpty()) {
+                prevBaseSubheaderKey[i] = {};
+                prevSubheaderKey[i]     = {};
                 continue;
             }
 
