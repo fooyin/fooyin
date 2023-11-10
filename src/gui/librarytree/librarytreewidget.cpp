@@ -182,6 +182,8 @@ void LibraryTreeWidgetPrivate::updateAppearance(const QVariant& optionsVar) cons
 void LibraryTreeWidgetPrivate::setupHeaderContextMenu(const QPoint& pos)
 {
     auto* menu = new QMenu(self);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
     addGroupMenu(menu);
     menu->popup(self->mapToGlobal(pos));
 }
