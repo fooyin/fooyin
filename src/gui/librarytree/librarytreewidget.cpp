@@ -30,6 +30,7 @@
 #include <gui/trackselectioncontroller.h>
 #include <utils/async.h>
 
+#include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QJsonObject>
@@ -151,12 +152,18 @@ void LibraryTreeWidgetPrivate::addGroupMenu(QMenu* parent)
 {
     auto* groupMenu = new QMenu(u"Grouping"_s, parent);
 
+    auto* treeGroups = new QActionGroup(groupMenu);
+
     const auto& groups = groupsRegistry->items();
-    for(const auto& group : groups) {
-        auto* switchGroup = new QAction(group.second.name, groupMenu);
-        QObject::connect(switchGroup, &QAction::triggered, self, [this, group]() { changeGrouping(group.second); });
+    for(const auto& [_, group] : groups) {
+        auto* switchGroup = new QAction(group.name, groupMenu);
+        QObject::connect(switchGroup, &QAction::triggered, self, [this, group]() { changeGrouping(group); });
+        switchGroup->setCheckable(true);
+        switchGroup->setChecked(grouping.id == group.id);
         groupMenu->addAction(switchGroup);
+        treeGroups->addAction(switchGroup);
     }
+
     parent->addMenu(groupMenu);
 }
 
