@@ -19,7 +19,6 @@
 
 #include "playlistwidget.h"
 
-#include "gui/guiconstants.h"
 #include "playlist/playlisthistory.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
@@ -31,9 +30,11 @@
 #include <core/library/sortingregistry.h>
 #include <core/library/tracksort.h>
 #include <core/playlist/playlistmanager.h>
+#include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/async.h>
 #include <utils/headerview.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -175,15 +176,19 @@ void PlaylistWidgetPrivate::setupActions()
 
     auto* editMenu = actionManager->actionContainer(Constants::Menus::Edit);
 
-    auto* undo = new QAction(tr("Undo"), this);
-    editMenu->addAction(actionManager->registerAction(undo, Constants::Actions::Undo, playlistContext->context()));
+    auto* undo    = new QAction(tr("Undo"), this);
+    auto* undoCmd = actionManager->registerAction(undo, Constants::Actions::Undo, playlistContext->context());
+    undoCmd->setDefaultShortcut(QKeySequence::Undo);
+    editMenu->addAction(undoCmd);
     QObject::connect(undo, &QAction::triggered, this, [this]() { playlistController->undoPlaylistChanges(); });
     QObject::connect(playlistController, &PlaylistController::playlistHistoryChanged, this,
                      [this, undo]() { undo->setEnabled(playlistController->canUndo()); });
     undo->setEnabled(playlistController->canUndo());
 
-    auto* redo = new QAction(tr("Redo"), this);
-    editMenu->addAction(actionManager->registerAction(redo, Constants::Actions::Redo, playlistContext->context()));
+    auto* redo    = new QAction(tr("Redo"), this);
+    auto* redoCmd = actionManager->registerAction(redo, Constants::Actions::Redo, playlistContext->context());
+    redoCmd->setDefaultShortcut(QKeySequence::Redo);
+    editMenu->addAction(redoCmd);
     QObject::connect(redo, &QAction::triggered, this, [this]() { playlistController->redoPlaylistChanges(); });
     QObject::connect(playlistController, &PlaylistController::playlistHistoryChanged, this,
                      [this, redo]() { redo->setEnabled(playlistController->canRedo()); });
@@ -201,14 +206,29 @@ void PlaylistWidgetPrivate::setupActions()
     });
 
     auto* selectAll = new QAction(PlaylistWidget::tr("&Select All"), self);
-    editMenu->addAction(
-        actionManager->registerAction(selectAll, Constants::Actions::SelectAll, playlistContext->context()));
+    auto* selectAllCmd
+        = actionManager->registerAction(selectAll, Constants::Actions::SelectAll, playlistContext->context());
+    selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);
+    editMenu->addAction(selectAllCmd);
     QObject::connect(selectAll, &QAction::triggered, this, [this]() {
         while(model->canFetchMore({})) {
             model->fetchMore({});
         }
         playlistView->selectAll();
     });
+
+    auto* menu = actionManager->createMenu(Constants::Menus::Context::Playlist);
+
+    auto* remove    = new QAction(PlaylistWidget::tr("&Remove"), menu);
+    auto* removeCmd = actionManager->registerAction(remove, Constants::Actions::Remove, playlistContext->context());
+    removeCmd->setDefaultShortcut(QKeySequence::Delete);
+    menu->addAction(removeCmd);
+    QObject::connect(remove, &QAction::triggered, this, [this]() { tracksRemoved(); });
+
+    menu->addSeparator();
+
+    addSortMenu(menu->menu());
+    selectionController->addTrackContextMenu(menu->menu());
 }
 
 void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)
@@ -507,19 +527,14 @@ QString PlaylistWidget::name() const
 
 void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
+    auto* menu = p->actionManager->actionContainer(Constants::Menus::Context::Playlist);
 
-    auto* removeRows = new QAction(tr("Remove"), menu);
-    QObject::connect(removeRows, &QAction::triggered, this, [this]() { p->tracksRemoved(); });
-    menu->addAction(removeRows);
+    if(!menu) {
+        QWidget::contextMenuEvent(event);
+        return;
+    }
 
-    menu->addSeparator();
-
-    p->addSortMenu(menu);
-    p->selectionController->addTrackContextMenu(menu);
-
-    menu->popup(mapToGlobal(event->pos()));
+    menu->menu()->popup(event->globalPos());
 }
 
 void PlaylistWidget::keyPressEvent(QKeyEvent* event)

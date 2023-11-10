@@ -117,6 +117,7 @@ constexpr auto SelectAll       = "Edit.SelectAll";
 constexpr auto Clear           = "Edit.Clear";
 constexpr auto Undo            = "Edit.Undo";
 constexpr auto Redo            = "Edit.Redo";
+constexpr auto Remove          = "Edit.Remove";
 } // namespace Actions
 
 namespace Mime {
