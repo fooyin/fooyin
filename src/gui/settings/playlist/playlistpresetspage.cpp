@@ -463,7 +463,7 @@ void PlaylistPresetsPageWidget::renamePreset()
 
     bool success{false};
     const QString text
-        = QInputDialog::getText(this, tr("Add Preset"), tr("Preset Name:"), QLineEdit::Normal, preset.name, &success);
+        = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name:"), QLineEdit::Normal, preset.name, &success);
 
     if(success && !text.isEmpty()) {
         preset.name = text;
