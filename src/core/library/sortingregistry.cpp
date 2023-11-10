@@ -22,14 +22,10 @@
 namespace Fy::Core::Library {
 void loadDefaults(SortingRegistry* registry)
 {
-    registry->addItem({.id     = 0,
-                       .index  = 0,
-                       .name   = "Album Artist/Year/Album/Disc/Track/Title",
-                       .script = "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%"});
-    registry->addItem({.id = 1, .index = 1, .name = "Album Artist", .script = "%albumartist%"});
-    registry->addItem({.id = 2, .index = 2, .name = "Album", .script = "%album%"});
-    registry->addItem({.id = 3, .index = 3, .name = "Title", .script = "%title%"});
-    registry->addItem({.id = 4, .index = 4, .name = "Track Number", .script = "%track%"});
+    registry->addItem({.id = 0, .index = 0, .name = "Album", .script = "%album% - $num(%disc%,2) - $num(%track%,2)"});
+    registry->addItem({.id = 1, .index = 1, .name = "Artist", .script = "%artist% - %date% - $num(%disc%,2) - $num(%track%,2)"});
+    registry->addItem({.id = 2, .index = 2, .name = "Title", .script = "%title%"});
+    registry->addItem({.id = 3, .index = 3, .name = "Track Number", .script = "$num(%disc%,2) - $num(%track%,2)"});
 }
 
 SortingRegistry::SortingRegistry(Utils::SettingsManager* settings, QObject* parent)
