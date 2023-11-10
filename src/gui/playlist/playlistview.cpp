@@ -295,23 +295,24 @@ bool PlaylistView::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelI
         if(index.isValid()) {
             dropIndicatorPos = position(pos, visualRect(index), index);
             switch(dropIndicatorPos) {
-                case QAbstractItemView::AboveItem:
+                case(QAbstractItemView::AboveItem):
                     row   = index.row();
                     col   = index.column();
                     index = index.parent();
                     break;
-                case QAbstractItemView::BelowItem:
+                case(QAbstractItemView::BelowItem):
                     row   = index.row() + 1;
                     col   = index.column();
                     index = index.parent();
                     break;
-                case QAbstractItemView::OnItem:
-                case QAbstractItemView::OnViewport:
+                case(QAbstractItemView::OnItem):
+                case(QAbstractItemView::OnViewport):
                     break;
             }
         }
         else {
             dropIndicatorPos = QAbstractItemView::OnViewport;
+            row              = model()->rowCount({});
         }
         dropIndex = index;
         dropRow   = row;
