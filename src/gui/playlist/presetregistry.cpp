@@ -19,10 +19,10 @@
 
 #include "presetregistry.h"
 
-namespace Fy::Gui::Widgets::Playlist {
-void loadDefaults(PresetRegistry* registry)
+namespace {
+void loadDefaults(Fy::Gui::Widgets::Playlist::PresetRegistry* registry)
 {
-    PlaylistPreset preset;
+    Fy::Gui::Widgets::Playlist::PlaylistPreset preset;
 
     preset.name = QStringLiteral("Album - Disc");
 
@@ -32,7 +32,7 @@ void loadDefaults(PresetRegistry* registry)
     preset.header.sideText.emplace_back("%year%", 14);
     preset.header.info.emplace_back(
         "$if(%ggenres%,%ggenres% | )$ifgreater(%gcount%,1,%gcount% Tracks,%gcount% Track) | $timems(%gduration%)", 12);
-    SubheaderRow subheader;
+    Fy::Gui::Widgets::Playlist::SubheaderRow subheader;
     subheader.rowHeight = 19;
     subheader.leftText.emplace_back("$ifgreater(%disctotal%,1,Disc #%disc%)", 13);
     subheader.rightText.emplace_back("$timems(%gduration%)", 13);
@@ -66,7 +66,9 @@ void loadDefaults(PresetRegistry* registry)
 
     registry->addItem(preset);
 }
+} // namespace
 
+namespace Fy::Gui::Widgets::Playlist {
 PresetRegistry::PresetRegistry(Utils::SettingsManager* settings, QObject* parent)
     : ItemRegistry{settings, parent}
 {

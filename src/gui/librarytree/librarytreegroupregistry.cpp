@@ -19,8 +19,8 @@
 
 #include "librarytreegroupregistry.h"
 
-namespace Fy::Gui::Widgets {
-void loadDefaults(LibraryTreeGroupRegistry* registry)
+namespace {
+void loadDefaults(Fy::Gui::Widgets::LibraryTreeGroupRegistry* registry)
 {
     registry->addItem({.id     = 0,
                        .index  = 0,
@@ -30,7 +30,9 @@ void loadDefaults(LibraryTreeGroupRegistry* registry)
         {.id = 1, .index = 1, .name = "Album", .script = "%album% (%year%)||%disc%.$num(%track%,2). %title%"});
     registry->addItem({.id = 2, .index = 2, .name = "Folder Structure", .script = "$replace(%relativepath%,/,||)"});
 }
+} // namespace
 
+namespace Fy::Gui::Widgets {
 LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(Utils::SettingsManager* settings, QObject* parent)
     : ItemRegistry{settings, parent}
 {

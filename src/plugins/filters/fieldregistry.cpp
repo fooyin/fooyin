@@ -19,15 +19,17 @@
 
 #include "fieldregistry.h"
 
-namespace Fy::Filters {
-void loadDefaults(FieldRegistry* registry)
+namespace {
+void loadDefaults(Fy::Filters::FieldRegistry* registry)
 {
     registry->addItem({.id = 0, .index = 0, .name = "Genre", .field = "%<genre>%", .sortField = ""});
     registry->addItem({.id = 1, .index = 1, .name = "Album Artist", .field = "%albumartist%", .sortField = ""});
     registry->addItem({.id = 2, .index = 2, .name = "Artist", .field = "%<artist>%", .sortField = ""});
     registry->addItem({.id = 3, .index = 3, .name = "Album", .field = "%album%", .sortField = ""});
 }
+} // namespace
 
+namespace Fy::Filters {
 FieldRegistry::FieldRegistry(Utils::SettingsManager* settings, QObject* parent)
     : ItemRegistry{settings, parent}
 {
