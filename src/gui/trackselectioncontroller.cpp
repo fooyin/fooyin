@@ -221,6 +221,7 @@ void TrackSelectionController::changeSelectedTracks(int index, const Core::Track
         return;
     }
 
+    p->updateActionState();
     emit selectionChanged(p->tracks);
 }
 
@@ -231,14 +232,12 @@ void TrackSelectionController::changeSelectedTracks(const Core::TrackList& track
 
 void TrackSelectionController::addTrackContextMenu(QMenu* menu) const
 {
-    p->updateActionState();
-    Utils::cloneMenu(p->tracksMenu->menu(), menu);
+    Utils::appendMenuActions(p->tracksMenu->menu(), menu);
 }
 
 void TrackSelectionController::addTrackPlaylistContextMenu(QMenu* menu) const
 {
-    p->updateActionState();
-    Utils::cloneMenu(p->tracksPlaylistMenu->menu(), menu);
+    Utils::appendMenuActions(p->tracksPlaylistMenu->menu(), menu);
 }
 
 void TrackSelectionController::executeAction(TrackAction action, ActionOptions options, const QString& playlistName)

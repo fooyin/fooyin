@@ -217,18 +217,10 @@ void PlaylistWidgetPrivate::setupActions()
         playlistView->selectAll();
     });
 
-    auto* menu = actionManager->createMenu(Constants::Menus::Context::Playlist);
-
-    auto* remove    = new QAction(PlaylistWidget::tr("&Remove"), menu);
-    auto* removeCmd = actionManager->registerAction(remove, Constants::Actions::Remove, playlistContext->context());
+    auto* removeRows = new QAction(tr("Remove"), self);
+    auto* removeCmd = actionManager->registerAction(removeRows, Constants::Actions::Remove, playlistContext->context());
     removeCmd->setDefaultShortcut(QKeySequence::Delete);
-    menu->addAction(removeCmd);
-    QObject::connect(remove, &QAction::triggered, this, [this]() { tracksRemoved(); });
-
-    menu->addSeparator();
-
-    addSortMenu(menu->menu());
-    selectionController->addTrackContextMenu(menu->menu());
+    QObject::connect(removeRows, &QAction::triggered, this, [this]() { tracksRemoved(); });
 }
 
 void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)
@@ -527,14 +519,19 @@ QString PlaylistWidget::name() const
 
 void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-    auto* menu = p->actionManager->actionContainer(Constants::Menus::Context::Playlist);
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    if(!menu) {
-        QWidget::contextMenuEvent(event);
-        return;
+    if(auto* removeCmd = p->actionManager->command(Constants::Actions::Remove)) {
+        menu->addAction(removeCmd->action());
     }
 
-    menu->menu()->popup(event->globalPos());
+    menu->addSeparator();
+
+    p->addSortMenu(menu);
+    p->selectionController->addTrackContextMenu(menu);
+
+    menu->popup(event->globalPos());
 }
 
 void PlaylistWidget::keyPressEvent(QKeyEvent* event)

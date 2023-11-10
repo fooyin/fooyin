@@ -262,33 +262,12 @@ void showMessageBox(const QString& text, const QString& infoText)
     message.exec();
 }
 
-void cloneMenu(QMenu* originalMenu, QMenu* clonedMenu)
+void appendMenuActions(QMenu* originalMenu, QMenu* menu)
 {
-    auto originalActions = originalMenu->actions();
-    auto filteredActions = originalActions | std::views::filter([](QAction* action) { return action->isVisible(); });
-
-    const auto cloneAction = [](QAction* originalAction, QMenu* menu) -> QAction* {
-        if(QMenu* originalSubMenu = originalAction->menu()) {
-            QMenu* clonedSubMenu = menu->addMenu(originalSubMenu->title());
-            cloneMenu(originalSubMenu, clonedSubMenu);
-            return clonedSubMenu->menuAction();
-        }
-
-        if(originalAction->isSeparator()) {
-            return menu->addSeparator();
-        }
-
-        auto* clonedAction = new QAction(originalAction->icon(), originalAction->text(), menu);
-        clonedAction->setShortcut(originalAction->shortcut());
-        clonedAction->setToolTip(originalAction->toolTip());
-        clonedAction->setEnabled(originalAction->isEnabled());
-        QObject::connect(clonedAction, &QAction::triggered, originalAction, &QAction::trigger);
-        return clonedAction;
-    };
-
-    for(QAction* originalAction : filteredActions) {
-        QAction* clonedAction = cloneAction(originalAction, clonedMenu);
-        clonedMenu->addAction(clonedAction);
+    const QList<QAction*> actions = originalMenu->actions();
+    for(QAction* action : actions) {
+        menu->addAction(action);
     }
 }
+
 } // namespace Fy::Utils
