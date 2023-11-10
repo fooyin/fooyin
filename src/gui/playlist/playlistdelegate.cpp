@@ -32,9 +32,11 @@ struct DrawTextResult
 
 template <typename Range>
 DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRect& rect, const Range& blocks,
-                              Qt::AlignmentFlag alignment)
+                              Qt::AlignmentFlag alignment, bool isPlaying = false)
 {
     DrawTextResult result;
+
+    const auto colour = option.state & QStyle::State_Selected || isPlaying ? QPalette::HighlightedText : QPalette::NoRole;
 
     for(const auto& block : blocks) {
         painter->setFont(block.font);
@@ -42,7 +44,7 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
         result.bound = painter->boundingRect(rect, alignment | Qt::AlignVCenter | Qt::TextWrapAnywhere, block.text);
         option.widget->style()->drawItemText(
             painter, rect, alignment | Qt::AlignVCenter, option.palette, true,
-            painter->fontMetrics().elidedText(block.text, Qt::ElideRight, rect.width()));
+            painter->fontMetrics().elidedText(block.text, Qt::ElideRight, rect.width()), colour);
 
         if(alignment & Qt::AlignRight) {
             rect.moveRight((rect.x() + rect.width()) - result.bound.width());
@@ -55,20 +57,6 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
     }
 
     return result;
-}
-
-void paintSelectionBackground(QPainter* painter, const QStyleOptionViewItem& option)
-{
-    const QColor selectColour = option.palette.highlight().color();
-    const QColor hoverColour  = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
-
-    if((option.state & QStyle::State_Selected)) {
-        painter->fillRect(option.rect, option.palette.highlight());
-    }
-
-    if((option.state & QStyle::State_MouseOver)) {
-        painter->fillRect(option.rect, hoverColour);
-    }
 }
 
 void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
@@ -94,7 +82,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     const auto showCover = index.data(PlaylistItem::Role::ShowCover).toBool();
     const auto cover     = index.data(PlaylistItem::Role::Cover).value<QPixmap>();
 
-    paintSelectionBackground(painter, option);
+    option.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
 
     const int coverSize        = 58;
     const int coverMargin      = 10;
@@ -170,7 +158,7 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
     const auto title = index.data(PlaylistItem::Role::Title).value<TextBlockList>();
     const auto side  = index.data(PlaylistItem::Role::Right).value<TextBlockList>();
 
-    paintSelectionBackground(painter, option);
+    option.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
 
     const int lineSpacing = 10;
 
@@ -209,7 +197,7 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const
     const auto info   = index.data(PlaylistItem::Role::Subtitle).value<TextBlockList>();
     const auto indent = index.data(PlaylistItem::Role::Indentation).toInt();
 
-    paintSelectionBackground(painter, option);
+    option.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
 
     if(title.empty()) {
         return;
@@ -240,10 +228,12 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const
 
 void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-    const int x         = option.rect.x();
-    const int y         = option.rect.y();
-    const int width     = option.rect.width();
-    const int height    = option.rect.height();
+    QStyleOptionViewItem opt = option;
+
+    const int x         = opt.rect.x();
+    const int y         = opt.rect.y();
+    const int width     = opt.rect.width();
+    const int height    = opt.rect.height();
     const int right     = x + width;
     const int semiWidth = width / 2;
     const int offset    = 10;
@@ -255,27 +245,27 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     const auto pixmap     = index.data(Qt::DecorationRole).value<QPixmap>();
     int indent            = index.data(PlaylistItem::Role::Indentation).toInt();
 
-    QColor playColour{option.palette.highlight().color()};
-    playColour.setAlpha(45);
+    QColor playColour{opt.palette.highlight().color()};
+    playColour.setAlpha(90);
 
     if(isPlaying) {
         indent += 30;
     }
 
     painter->fillRect(option.rect, isPlaying ? playColour : option.palette.color(background));
-    paintSelectionBackground(painter, option);
+    opt.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter);
 
     QRect rightRect{(right - semiWidth), y, semiWidth - offset, height};
     auto [_, totalRightWidth]
-        = drawTextBlocks(painter, option, rightRect, rightSide | std::views::reverse, Qt::AlignRight);
+        = drawTextBlocks(painter, opt, rightRect, rightSide | std::views::reverse, Qt::AlignRight, isPlaying);
 
     const int leftWidth = width - totalRightWidth - indent - (offset * 2) - 20;
     QRect leftRect{(x + offset + indent), y, leftWidth, height};
-    drawTextBlocks(painter, option, leftRect, leftSide, Qt::AlignLeft);
+    drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignLeft, isPlaying);
 
     if(isPlaying) {
         const QRect playRect{x + offset, y, 20, height};
-        option.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
+        opt.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
     }
 }
 
@@ -299,15 +289,15 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     switch(type) {
         case(PlaylistItem::Header): {
             const auto simple = index.data(PlaylistItem::Simple).toBool();
-            simple ? paintSimpleHeader(painter, option, index) : paintHeader(painter, option, index);
+            simple ? paintSimpleHeader(painter, opt, index) : paintHeader(painter, opt, index);
             break;
         }
         case(PlaylistItem::Track): {
-            paintTrack(painter, option, index);
+            paintTrack(painter, opt, index);
             break;
         }
         case(PlaylistItem::Subheader): {
-            paintSubheader(painter, option, index);
+            paintSubheader(painter, opt, index);
             break;
         }
         default: {
