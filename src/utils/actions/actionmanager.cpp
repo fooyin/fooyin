@@ -99,15 +99,16 @@ struct ActionManager::Private
 
     void containerDestroyed(QObject* sender)
     {
-        auto* container = qobject_cast<MenuContainer*>(sender);
-        idContainerMap.erase(container->id());
-        scheduledContainerUpdates.erase(container);
+        if(auto* container = qobject_cast<MenuContainer*>(sender)) {
+            idContainerMap.erase(container->id());
+            scheduledContainerUpdates.erase(container);
+        }
     }
 
     void updateContainer()
     {
-        for(MenuContainer* c : scheduledContainerUpdates) {
-            c->update();
+        for(MenuContainer* container : scheduledContainerUpdates) {
+            container->update();
         }
         scheduledContainerUpdates.clear();
     }
@@ -176,8 +177,8 @@ ActionManager::ActionManager(Utils::SettingsManager* settingsManager, QObject* p
     : QObject{parent}
     , p{std::make_unique<Private>(this, settingsManager)}
 {
-    connect(qApp, &QApplication::focusChanged, this,
-            [this](QWidget* /*old*/, QWidget* now) { p->updateFocusWidget(now); });
+    QObject::connect(qApp, &QApplication::focusChanged, this,
+                     [this](QWidget* /*old*/, QWidget* now) { p->updateFocusWidget(now); });
 }
 
 ActionManager::~ActionManager()
