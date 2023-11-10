@@ -278,6 +278,7 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
 {
     if(!event->mimeData()->hasFormat(Constants::Mime::TrackList)) {
         event->ignore();
+        return;
     }
 
     if(p->currentHoverIndex < 0) {
