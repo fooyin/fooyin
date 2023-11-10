@@ -167,7 +167,7 @@ struct LibraryTreeModel::Private
         }
         resetting = false;
 
-        if(self->canFetchMore({})) {
+        while(self->canFetchMore({})) {
             self->fetchMore({});
         }
     }
