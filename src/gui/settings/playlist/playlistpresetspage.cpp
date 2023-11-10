@@ -34,6 +34,7 @@
 #include <QComboBox>
 #include <QGroupBox>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
@@ -259,6 +260,7 @@ public:
     void populatePresets();
 
     void newPreset();
+    void renamePreset();
     void deletePreset();
     void updatePreset(bool force = false);
     void clonePreset();
@@ -291,6 +293,7 @@ private:
     QCheckBox* m_simpleHeader;
 
     QPushButton* m_newPreset;
+    QPushButton* m_renamePreset;
     QPushButton* m_deletePreset;
     QPushButton* m_updatePreset;
     QPushButton* m_clonePreset;
@@ -307,18 +310,20 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     , m_showCover{new QCheckBox(tr("Show Cover"), this)}
     , m_simpleHeader{new QCheckBox(tr("Simple Header"), this)}
     , m_newPreset{new QPushButton(tr("New"), this)}
+    , m_renamePreset{new QPushButton(tr("Rename"), this)}
     , m_deletePreset{new QPushButton(tr("Delete"), this)}
     , m_updatePreset{new QPushButton(tr("Update"), this)}
     , m_clonePreset{new QPushButton(tr("Clone"), this)}
 {
     auto* mainLayout = new QGridLayout(this);
 
-    mainLayout->addWidget(m_presetBox, 0, 0, 1, 4, Qt::AlignTop);
+    mainLayout->addWidget(m_presetBox, 0, 0, 1, 5, Qt::AlignTop);
     mainLayout->addWidget(m_newPreset, 1, 0, 1, 1, Qt::AlignTop);
-    mainLayout->addWidget(m_clonePreset, 1, 1, 1, 1, Qt::AlignTop);
-    mainLayout->addWidget(m_updatePreset, 1, 2, 1, 1, Qt::AlignTop);
-    mainLayout->addWidget(m_deletePreset, 1, 3, 1, 1, Qt::AlignTop);
-    mainLayout->addWidget(m_presetTabs, 2, 0, 2, 4, Qt::AlignTop);
+    mainLayout->addWidget(m_renamePreset, 1, 1, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_clonePreset, 1, 2, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_updatePreset, 1, 3, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_deletePreset, 1, 4, 1, 1, Qt::AlignTop);
+    mainLayout->addWidget(m_presetTabs, 2, 0, 2, 5, Qt::AlignTop);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     auto* headerWidget = new QWidget();
@@ -393,6 +398,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     QObject::connect(m_presetBox, &QComboBox::currentIndexChanged, this, &PlaylistPresetsPageWidget::selectionChanged);
 
     QObject::connect(m_newPreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::newPreset);
+    QObject::connect(m_renamePreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::renamePreset);
     QObject::connect(m_deletePreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::deletePreset);
     QObject::connect(m_updatePreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::updatePreset);
     QObject::connect(m_clonePreset, &QPushButton::clicked, this, &PlaylistPresetsPageWidget::clonePreset);
@@ -435,11 +441,36 @@ void PlaylistPresetsPageWidget::populatePresets()
 void PlaylistPresetsPageWidget::newPreset()
 {
     PlaylistPreset preset;
-    preset.name                      = tr("New preset");
-    const PlaylistPreset addedPreset = m_presetRegistry->addItem(preset);
-    if(addedPreset.isValid()) {
-        m_presetBox->addItem(addedPreset.name, QVariant::fromValue(addedPreset));
-        m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
+    preset.name = tr("New preset");
+
+    bool success{false};
+    const QString text
+        = QInputDialog::getText(this, tr("Add Preset"), tr("Preset Name:"), QLineEdit::Normal, preset.name, &success);
+
+    if(success && !text.isEmpty()) {
+        preset.name = text;
+        const PlaylistPreset addedPreset = m_presetRegistry->addItem(preset);
+        if(addedPreset.isValid()) {
+            m_presetBox->addItem(addedPreset.name, QVariant::fromValue(addedPreset));
+            m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
+        }
+    }
+}
+
+void PlaylistPresetsPageWidget::renamePreset()
+{
+    auto preset = m_presetBox->currentData().value<PlaylistPreset>();
+
+    bool success{false};
+    const QString text
+        = QInputDialog::getText(this, tr("Add Preset"), tr("Preset Name:"), QLineEdit::Normal, preset.name, &success);
+
+    if(success && !text.isEmpty()) {
+        preset.name = text;
+        if(m_presetRegistry->changeItem(preset)) {
+            m_presetBox->setItemText(m_presetBox->currentIndex(), preset.name);
+            m_presetBox->setItemData(m_presetBox->currentIndex(), QVariant::fromValue(preset));
+        }
     }
 }
 
