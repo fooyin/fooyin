@@ -244,6 +244,7 @@ struct LibraryTreeModel::Private
         self->resetRoot();
         nodes.clear();
         pendingNodes.clear();
+        addedNodes.clear();
 
         allNode = LibraryTreeItem{u"All Music"_s, self->rootItem(), -1};
         self->rootItem()->appendChild(&allNode);
