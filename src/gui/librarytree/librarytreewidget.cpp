@@ -141,9 +141,10 @@ void LibraryTreeWidgetPrivate::reset() const
 
 void LibraryTreeWidgetPrivate::changeGrouping(const LibraryTreeGrouping& newGrouping)
 {
-    grouping = newGrouping;
-    model->changeGrouping(grouping);
-    reset();
+    if(std::exchange(grouping, newGrouping) != newGrouping) {
+        model->changeGrouping(grouping);
+        reset();
+    }
 }
 
 void LibraryTreeWidgetPrivate::addGroupMenu(QMenu* parent)
