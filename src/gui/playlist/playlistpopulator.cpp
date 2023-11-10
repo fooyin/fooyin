@@ -55,7 +55,6 @@ struct PlaylistPopulator::Private
     PendingData data;
     ContainerKeyMap headers;
     Core::TrackList pendingTracks;
-    int currentIndex{0};
 
     explicit Private(PlaylistPopulator* self)
         : self{self}
@@ -68,7 +67,6 @@ struct PlaylistPopulator::Private
     {
         data.clear();
         headers.clear();
-        currentIndex = 0;
         prevBaseSubheaderKey.clear();
         prevSubheaderKey.clear();
         prevBaseHeaderKey = {};
@@ -288,9 +286,7 @@ struct PlaylistPopulator::Private
             if(!track.enabled()) {
                 continue;
             }
-            if(auto* trackItem = iterateTrack(track)) {
-                trackItem->setIndex(currentIndex++);
-            }
+            iterateTrack(track);
         }
 
         updateContainers();
@@ -336,7 +332,6 @@ struct PlaylistPopulator::Private
     void runTracksGroup(const std::map<int, std::vector<Core::Track>>& tracks)
     {
         for(const auto& [index, trackGroup] : tracks) {
-            currentIndex = index;
             std::vector<QString> trackKeys;
 
             for(const Core::Track& track : trackGroup) {
@@ -346,9 +341,9 @@ struct PlaylistPopulator::Private
                 if(!track.enabled()) {
                     continue;
                 }
-                auto* trackItem = iterateTrack(track);
-                trackItem->setIndex(currentIndex++);
-                trackKeys.push_back(trackItem->key());
+                if(const auto* trackItem = iterateTrack(track)) {
+                    trackKeys.push_back(trackItem->key());
+                }
             }
             data.indexNodes.emplace(index, trackKeys);
         }
