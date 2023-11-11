@@ -78,6 +78,7 @@ public:
 
     void setMaximum(int max);
 
+    void addBoxWidget(QWidget* widget);
     void setInputWidget(std::function<ExpandableInput*(QWidget*)> widget);
     void setSideWidget(std::function<QWidget*(ExpandableInput*)> widget);
 

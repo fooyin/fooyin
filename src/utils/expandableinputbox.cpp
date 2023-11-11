@@ -19,11 +19,7 @@
 
 #include <utils/expandableinputbox.h>
 
-#include <gui/guiconstants.h>
-
 #include <QApplication>
-#include <QColorDialog>
-#include <QFontDialog>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -116,6 +112,7 @@ struct ExpandableInputBox::Private
 
     ExpandableInput::Attributes attributes;
 
+    QHBoxLayout* widgetLayout;
     QGridLayout* blockLayout;
     QPushButton* addBlock;
     QPushButton* deleteBlock;
@@ -130,6 +127,7 @@ struct ExpandableInputBox::Private
     Private(ExpandableInputBox* self, const QString& title, ExpandableInput::Attributes attributes)
         : self{self}
         , attributes{attributes}
+        , widgetLayout{new QHBoxLayout()}
         , blockLayout{new QGridLayout()}
         , addBlock{new QPushButton(QIcon::fromTheme(AddIcon), "", self)}
         , deleteBlock{new QPushButton(QIcon::fromTheme(RemoveIcon), "", self)}
@@ -143,9 +141,12 @@ struct ExpandableInputBox::Private
         auto* titleLabel = new QLabel(title, self);
 
         layout->addWidget(titleLabel, 0, 0);
-        layout->addWidget(deleteBlock, 0, 1);
-        layout->addWidget(addBlock, 0, 2);
-        layout->addLayout(blockLayout, 1, 0, 1, 3);
+        layout->addLayout(widgetLayout, 0, 1);
+        layout->addWidget(deleteBlock, 0, 2);
+        layout->addWidget(addBlock, 0, 3);
+        layout->addLayout(blockLayout, 1, 0, 1, 4);
+
+        layout->setColumnStretch(0, 1);
     }
 
     void updateButtonState() const
@@ -226,6 +227,11 @@ int ExpandableInputBox::blockCount() const
 void ExpandableInputBox::setMaximum(int max)
 {
     p->maxBlocks = max;
+}
+
+void ExpandableInputBox::addBoxWidget(QWidget* widget)
+{
+    p->widgetLayout->addWidget(widget);
 }
 
 void ExpandableInputBox::setInputWidget(std::function<ExpandableInput*(QWidget*)> widget)

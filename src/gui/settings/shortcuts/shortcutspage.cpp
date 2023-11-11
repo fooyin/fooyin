@@ -78,9 +78,11 @@ public:
     void reset() override;
 
 private:
+    void updateCurrentShortcuts(const Utils::ShortcutList& shortcuts);
     void selectionChanged();
     void shortcutChanged();
     void shortcutDeleted(const QString& text);
+    void resetCurrentShortcut();
 
     Utils::ActionManager* m_actionManager;
 
@@ -114,6 +116,8 @@ ShortcutsPageWidget::ShortcutsPageWidget(Utils::ActionManager* actionManager)
     auto* groupLayout = new QVBoxLayout(m_shortcutBox);
 
     m_inputBox->setMaximum(3);
+    auto* resetShortcut = new QPushButton(tr("Reset"), this);
+    m_inputBox->addBoxWidget(resetShortcut);
     m_inputBox->setInputWidget([this](QWidget* parent) {
         auto* input = new ShortcutInput(parent);
         QObject::connect(input, &Utils::ExpandableInput::textChanged, this, &ShortcutsPageWidget::shortcutChanged);
@@ -124,6 +128,7 @@ ShortcutsPageWidget::ShortcutsPageWidget(Utils::ActionManager* actionManager)
 
     layout->addWidget(m_shortcutBox, 1, 0);
 
+    QObject::connect(resetShortcut, &QAbstractButton::clicked, this, &ShortcutsPageWidget::resetCurrentShortcut);
     QObject::connect(m_shortcutTable->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &ShortcutsPageWidget::selectionChanged);
     QObject::connect(m_inputBox, &Utils::ExpandableInputBox::blockDeleted, this, &ShortcutsPageWidget::shortcutDeleted);
@@ -136,12 +141,41 @@ void ShortcutsPageWidget::apply()
     m_model->processQueue();
 }
 
-void ShortcutsPageWidget::reset() { }
+void ShortcutsPageWidget::reset()
+{
+    const auto commands = m_actionManager->commands();
+    for(Utils::Command* command : commands) {
+        m_model->shortcutChanged(command, command->defaultShortcuts());
+    }
 
-void ShortcutsPageWidget::selectionChanged()
+    const auto selected = m_shortcutTable->selectionModel()->selectedIndexes();
+    if(!selected.empty()) {
+        const QModelIndex index = selected.front();
+        auto* command           = index.data(ShortcutItem::Command).value<Utils::Command*>();
+        updateCurrentShortcuts(command->defaultShortcuts());
+    }
+
+    apply();
+}
+
+void ShortcutsPageWidget::updateCurrentShortcuts(const Utils::ShortcutList& shortcuts)
 {
     m_inputBox->clearBlocks();
 
+    for(const auto& shortcut : shortcuts) {
+        auto* input = new ShortcutInput(this);
+        input->setShortcut(shortcut);
+        QObject::connect(input, &Utils::ExpandableInput::textChanged, this, &ShortcutsPageWidget::shortcutChanged);
+        m_inputBox->addInput(input);
+    }
+
+    if(shortcuts.empty()) {
+        m_inputBox->addEmptyBlock();
+    }
+}
+
+void ShortcutsPageWidget::selectionChanged()
+{
     const auto selected = m_shortcutTable->selectionModel()->selectedIndexes();
 
     if(selected.empty()) {
@@ -159,16 +193,7 @@ void ShortcutsPageWidget::selectionChanged()
     auto* command        = index.data(ShortcutItem::Command).value<Utils::Command*>();
     const auto shortcuts = command->shortcuts();
 
-    for(const auto& shortcut : shortcuts) {
-        auto* input = new ShortcutInput(this);
-        input->setShortcut(shortcut);
-        QObject::connect(input, &Utils::ExpandableInput::textChanged, this, &ShortcutsPageWidget::shortcutChanged);
-        m_inputBox->addInput(input);
-    }
-
-    if(shortcuts.empty()) {
-        m_inputBox->addEmptyBlock();
-    }
+    updateCurrentShortcuts(shortcuts);
 
     m_shortcutBox->setDisabled(false);
 }
@@ -207,6 +232,21 @@ void ShortcutsPageWidget::shortcutDeleted(const QString& text)
     const QModelIndex index = selected.front();
     auto* command           = index.data(ShortcutItem::Command).value<Utils::Command*>();
     m_model->shortcutDeleted(command, text);
+}
+
+void ShortcutsPageWidget::resetCurrentShortcut()
+{
+    const auto selected = m_shortcutTable->selectionModel()->selectedIndexes();
+
+    if(selected.empty()) {
+        return;
+    }
+
+    const QModelIndex index = selected.front();
+    auto* command           = index.data(ShortcutItem::Command).value<Utils::Command*>();
+
+    m_model->shortcutChanged(command, command->defaultShortcuts());
+    updateCurrentShortcuts(command->defaultShortcuts());
 }
 
 ShortcutsPage::ShortcutsPage(Utils::ActionManager* actionManager, Utils::SettingsManager* settings)
