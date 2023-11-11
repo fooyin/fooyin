@@ -31,6 +31,10 @@ class LayoutProvider;
 class TrackSelectionController;
 class PropertiesDialog;
 
+namespace Settings {
+class GuiSettings;
+}
+
 namespace Widgets {
 class SearchController;
 class WidgetFactory;
@@ -38,23 +42,26 @@ class WidgetFactory;
 
 struct FYGUI_EXPORT GuiPluginContext
 {
-    GuiPluginContext(Utils::ActionManager* actionManager, Gui::LayoutProvider* layoutProvider,
-                     Gui::TrackSelectionController* trackSelection, Gui::Widgets::SearchController* searchController,
-                     Gui::PropertiesDialog* propertiesDialog, Gui::Widgets::WidgetFactory* widgetFactory)
+    GuiPluginContext(Utils::ActionManager* actionManager, LayoutProvider* layoutProvider,
+                     TrackSelectionController* trackSelection, Widgets::SearchController* searchController,
+                     PropertiesDialog* propertiesDialog, Widgets::WidgetFactory* widgetFactory,
+                     Settings::GuiSettings* guiSettings)
         : actionManager{actionManager}
         , layoutProvider{layoutProvider}
         , trackSelection{trackSelection}
         , searchController{searchController}
         , propertiesDialog{propertiesDialog}
         , widgetFactory{widgetFactory}
+        , guiSettings{guiSettings}
     { }
 
     Utils::ActionManager* actionManager;
     Gui::LayoutProvider* layoutProvider;
-    Gui::TrackSelectionController* trackSelection;
-    Gui::Widgets::SearchController* searchController;
-    Gui::PropertiesDialog* propertiesDialog;
-    Gui::Widgets::WidgetFactory* widgetFactory;
+    TrackSelectionController* trackSelection;
+    Widgets::SearchController* searchController;
+    PropertiesDialog* propertiesDialog;
+    Widgets::WidgetFactory* widgetFactory;
+    Settings::GuiSettings* guiSettings;
 };
 } // namespace Gui
 } // namespace Fy

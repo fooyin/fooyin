@@ -22,6 +22,7 @@
 #include "version.h"
 
 #include <core/corepaths.h>
+#include <core/library/sortingregistry.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -30,6 +31,7 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fy::Core::Settings {
 CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
+    , m_sortingRegistry{new Library::SortingRegistry(settingsManager)}
 {
     m_settings->createSetting<Settings::Version>(VERSION);
     m_settings->createSetting<Settings::DatabaseVersion>("0.1.0");
@@ -47,5 +49,17 @@ CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
     m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
 
     m_settings->loadSettings();
+    m_sortingRegistry->loadItems();
+}
+
+CoreSettings::~CoreSettings()
+{
+    m_sortingRegistry->saveItems();
+    m_settings->storeSettings();
+}
+
+Library::SortingRegistry* CoreSettings::sortingRegistry() const
+{
+    return m_sortingRegistry;
 }
 } // namespace Fy::Core::Settings

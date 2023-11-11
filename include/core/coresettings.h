@@ -30,7 +30,12 @@ namespace Utils {
 class SettingsManager;
 }
 
-namespace Core::Settings {
+namespace Core {
+namespace Library {
+class SortingRegistry;
+}
+
+namespace Settings {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 enum Core : uint32_t
 {
@@ -48,13 +53,18 @@ enum Core : uint32_t
 };
 Q_ENUM_NS(Core)
 
-class CoreSettings
+class FYCORE_EXPORT CoreSettings
 {
 public:
     explicit CoreSettings(Utils::SettingsManager* settingsManager);
+    ~CoreSettings();
+
+    [[nodiscard]] Library::SortingRegistry* sortingRegistry() const;
 
 private:
     Utils::SettingsManager* m_settings;
+    Library::SortingRegistry* m_sortingRegistry;
 };
-} // namespace Core::Settings
+} // namespace Settings
+} // namespace Core
 } // namespace Fy

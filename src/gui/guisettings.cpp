@@ -20,6 +20,8 @@
 #include <gui/guisettings.h>
 
 #include "librarytree/librarytreeappearance.h"
+#include "librarytree/librarytreegroupregistry.h"
+#include "playlist/presetregistry.h"
 
 #include <utils/settings/settingsmanager.h>
 
@@ -28,6 +30,8 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fy::Gui::Settings {
 GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     : m_settings{settingsManager}
+    , m_libraryTreeGroupRegistry{new Widgets::LibraryTreeGroupRegistry(m_settings)}
+    , m_playlistPresetRegistry{new Widgets::Playlist::PresetRegistry(m_settings)}
 {
     m_settings->createTempSetting<Settings::LayoutEditing>(false);
     m_settings->createSetting<Settings::StartupBehaviour>(2, u"Interface"_s);
@@ -65,5 +69,24 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::PlaylistTabsSingleHide>(false, u"Playlist Tabs"_s);
 
     m_settings->loadSettings();
+    m_libraryTreeGroupRegistry->loadItems();
+    m_playlistPresetRegistry->loadItems();
+}
+
+GuiSettings::~GuiSettings()
+{
+    m_libraryTreeGroupRegistry->saveItems();
+    m_playlistPresetRegistry->saveItems();
+    m_settings->storeSettings();
+}
+
+Widgets::LibraryTreeGroupRegistry* GuiSettings::libraryTreeGroupRegistry() const
+{
+    return m_libraryTreeGroupRegistry;
+}
+
+Widgets::Playlist::PresetRegistry* GuiSettings::playlistPresetRegistry() const
+{
+    return m_playlistPresetRegistry;
 }
 } // namespace Fy::Gui::Settings

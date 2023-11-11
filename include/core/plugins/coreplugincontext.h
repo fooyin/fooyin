@@ -46,15 +46,18 @@ class PlaylistManager;
 namespace Library {
 class LibraryManager;
 class MusicLibrary;
-class SortingRegistry;
 } // namespace Library
+
+namespace Settings {
+class CoreSettings;
+}
 
 struct FYCORE_EXPORT CorePluginContext
 {
     CorePluginContext(Plugins::PluginManager* pluginManager, Core::Engine::EngineHandler* engineHandler,
                       Core::Player::PlayerManager* playerManager, Core::Library::LibraryManager* libraryManager,
                       Core::Library::MusicLibrary* library, Core::Playlist::PlaylistManager* playlistHandler,
-                      Utils::SettingsManager* settingsManager, Core::Library::SortingRegistry* sortingRegistry)
+                      Utils::SettingsManager* settingsManager, Core::Settings::CoreSettings* coreSettings)
         : pluginManager{pluginManager}
         , playerManager{playerManager}
         , libraryManager{libraryManager}
@@ -62,7 +65,7 @@ struct FYCORE_EXPORT CorePluginContext
         , playlistHandler{playlistHandler}
         , settingsManager{settingsManager}
         , engineHandler{engineHandler}
-        , sortingRegistry{sortingRegistry}
+        , coreSettings{coreSettings}
     { }
 
     Plugins::PluginManager* pluginManager;
@@ -72,7 +75,7 @@ struct FYCORE_EXPORT CorePluginContext
     Core::Playlist::PlaylistManager* playlistHandler;
     Utils::SettingsManager* settingsManager;
     Core::Engine::EngineHandler* engineHandler;
-    Core::Library::SortingRegistry* sortingRegistry;
+    Core::Settings::CoreSettings* coreSettings;
 };
 } // namespace Core
 } // namespace Fy

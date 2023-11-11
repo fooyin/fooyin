@@ -53,6 +53,7 @@
 #include "widgets/spacer.h"
 #include "widgets/tabstackwidget.h"
 
+#include <core/coresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/plugins/coreplugincontext.h>
@@ -82,7 +83,7 @@ struct GuiApplication::Private
     Core::Player::PlayerManager* playerManager;
     Core::Library::LibraryManager* libraryManager;
     Core::Library::MusicLibrary* library;
-    Core::Library::SortingRegistry* sortingRegistry;
+    Core::Settings::CoreSettings* coreSettings;
     Core::Playlist::PlaylistManager* playlistHandler;
 
     Widgets::WidgetProvider widgetProvider;
@@ -94,8 +95,6 @@ struct GuiApplication::Private
     std::unique_ptr<Widgets::Playlist::PlaylistController> playlistController;
     TrackSelectionController selectionController;
     Widgets::SearchController searchController;
-    Widgets::Playlist::PresetRegistry presetRegistry;
-    Widgets::LibraryTreeGroupRegistry treeGroupRegistry;
 
     FileMenu* fileMenu;
     EditMenu* editMenu;
@@ -130,7 +129,7 @@ struct GuiApplication::Private
         , playerManager{core.playerManager}
         , libraryManager{core.libraryManager}
         , library{core.library}
-        , sortingRegistry{core.sortingRegistry}
+        , coreSettings{core.coreSettings}
         , playlistHandler{core.playlistHandler}
         , widgetProvider{actionManager}
         , guiSettings{settingsManager}
@@ -139,10 +138,9 @@ struct GuiApplication::Private
         , mainWindow{std::make_unique<MainWindow>(actionManager, settingsManager, editableLayout.get())}
         , mainContext{new Utils::WidgetContext(mainWindow.get(), Utils::Context{"Fooyin.MainWindow"}, self)}
         , playlistController{std::make_unique<Widgets::Playlist::PlaylistController>(
-              playlistHandler, playerManager, &presetRegistry, sortingRegistry, &selectionController, settingsManager)}
+              playlistHandler, playerManager, guiSettings.playlistPresetRegistry(), coreSettings->sortingRegistry(),
+              &selectionController, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
-        , presetRegistry{settingsManager}
-        , treeGroupRegistry{settingsManager}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
         , editMenu{new EditMenu(actionManager, settingsManager, self)}
         , viewMenu{new ViewMenu(actionManager, &selectionController, settingsManager, self)}
@@ -153,17 +151,18 @@ struct GuiApplication::Private
         , generalPage{settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , libraryGeneralPage{libraryManager, settingsManager}
-        , librarySortingPage{sortingRegistry, settingsManager}
+        , librarySortingPage{coreSettings->sortingRegistry(), settingsManager}
         , shortcutsPage{actionManager, settingsManager}
         , playlistGeneralPage{settingsManager}
         , playlistGuiPage{settingsManager}
-        , playlistPresetsPage{&presetRegistry, settingsManager}
+        , playlistPresetsPage{guiSettings.playlistPresetRegistry(), settingsManager}
         , enginePage{settingsManager, engineHandler}
-        , libraryTreePage{&treeGroupRegistry, settingsManager}
+        , libraryTreePage{guiSettings.libraryTreeGroupRegistry(), settingsManager}
         , libraryTreeGuiPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
         , guiPluginContext{actionManager,     &layoutProvider,  &selectionController,
-                           &searchController, propertiesDialog, widgetProvider.widgetFactory()}
+                           &searchController, propertiesDialog, widgetProvider.widgetFactory(),
+                           &guiSettings}
     {
         registerLayouts();
         registerWidgets();
@@ -233,7 +232,7 @@ struct GuiApplication::Private
         factory->registerClass<Widgets::LibraryTreeWidget>(
             u"LibraryTree"_s,
             [this]() {
-                return new Widgets::LibraryTreeWidget(library, &treeGroupRegistry, &selectionController,
+                return new Widgets::LibraryTreeWidget(library, guiSettings.libraryTreeGroupRegistry(), &selectionController,
                                                       settingsManager, mainWindow.get());
             },
             u"Library Tree"_s);
@@ -284,8 +283,6 @@ GuiApplication::GuiApplication(const Core::CorePluginContext& core)
     QObject::connect(p->viewMenu, &ViewMenu::openQuickSetup, p->editableLayout.get(),
                      &Widgets::EditableLayout::showQuickSetup);
 
-    p->presetRegistry.loadItems();
-    p->treeGroupRegistry.loadItems();
     p->layoutProvider.findLayouts();
 
     QIcon::setThemeName(p->settingsManager->value<Settings::IconTheme>());
@@ -306,8 +303,6 @@ void GuiApplication::shutdown()
 {
     p->actionManager->saveSettings();
     p->editableLayout->saveLayout();
-    p->presetRegistry.saveItems();
-    p->treeGroupRegistry.saveItems();
     p->playlistController.reset(nullptr);
     p->editableLayout.reset(nullptr);
     p->mainWindow.reset(nullptr);

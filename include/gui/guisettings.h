@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <utils/settings/settingtypes.h>
 
 #include <QObject>
@@ -28,8 +30,17 @@ namespace Utils {
 class SettingsManager;
 }
 
-namespace Gui::Settings {
-Q_NAMESPACE
+namespace Gui {
+namespace Widgets {
+class LibraryTreeGroupRegistry;
+
+namespace Playlist {
+class PresetRegistry;
+}
+} // namespace Widgets
+
+namespace Settings {
+Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
 enum Gui : uint32_t
 {
     LayoutEditing              = 1 | Utils::Settings::Bool,
@@ -68,13 +79,20 @@ enum Gui : uint32_t
 };
 Q_ENUM_NS(Gui)
 
-class GuiSettings
+class FYGUI_EXPORT GuiSettings
 {
 public:
     explicit GuiSettings(Utils::SettingsManager* settingsManager);
+    ~GuiSettings();
+
+    [[nodiscard]] Widgets::LibraryTreeGroupRegistry* libraryTreeGroupRegistry() const;
+    [[nodiscard]] Widgets::Playlist::PresetRegistry* playlistPresetRegistry() const;
 
 private:
     Utils::SettingsManager* m_settings;
+    Widgets::LibraryTreeGroupRegistry* m_libraryTreeGroupRegistry;
+    Widgets::Playlist::PresetRegistry* m_playlistPresetRegistry;
 };
-} // namespace Gui::Settings
+} // namespace Settings
+} // namespace Gui
 } // namespace Fy

@@ -45,7 +45,6 @@ struct Application::Private
     Core::Engine::EngineHandler engine;
     Core::Library::LibraryManager* libraryManager;
     Core::Library::MusicLibrary* library;
-    Core::Library::SortingRegistry sortingRegistry;
     Core::Playlist::PlaylistHandler* playlistHandler;
 
     Plugins::PluginManager pluginManager;
@@ -59,10 +58,9 @@ struct Application::Private
         , engine{playerManager, settingsManager}
         , libraryManager{new Core::Library::LibraryManager(&database, settingsManager, parent)}
         , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
-        , sortingRegistry{settingsManager}
         , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, settingsManager, parent)}
         , corePluginContext{&pluginManager, &engine,         playerManager,   libraryManager,
-                            library,        playlistHandler, settingsManager, &sortingRegistry}
+                            library,        playlistHandler, settingsManager, &coreSettings}
     {
         registerOutputs();
         loadPlugins();
@@ -104,9 +102,7 @@ Application::Application(QObject* parent)
     QObject::connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, p->playlistHandler,
                      &Core::Playlist::PlaylistHandler::tracksRemoved);
 
-    p->settingsManager->loadSettings();
     p->library->loadLibrary();
-    p->sortingRegistry.loadItems();
     p->engine.setup();
 }
 
@@ -121,9 +117,7 @@ void Application::shutdown()
 {
     p->engine.shutdown();
     p->playlistHandler->savePlaylists();
-    p->sortingRegistry.saveItems();
     p->pluginManager.shutdown();
-    p->settingsManager->storeSettings();
     p->database.closeDatabase();
 }
 } // namespace Fy::Core
