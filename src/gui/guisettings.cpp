@@ -33,7 +33,7 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::StartupBehaviour>(2, u"Interface"_s);
     m_settings->createSetting<Settings::WaitForTracks>(true, u"Interface"_s);
     m_settings->createSetting<Settings::Geometry>(QByteArray{}, u"Interface"_s);
-    m_settings->createSetting<Settings::SettingsGeometry>(QByteArray{}, u"Interface"_s);
+    m_settings->createSetting<Settings::SettingsDialogState>(QByteArray{}, u"Interface"_s);
     m_settings->createSetting<Settings::EditingMenuLevels>(2, u"Interface"_s);
     m_settings->createSetting<Settings::SplitterHandles>(true, u"Splitters"_s);
     m_settings->createSetting<Settings::PlaylistAltColours>(true, u"Playlist"_s);

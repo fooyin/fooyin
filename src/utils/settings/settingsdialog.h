@@ -37,6 +37,8 @@ public:
     void openSettings();
     void openPage(const Id& id);
 
+    [[nodiscard]] Id currentPage() const;
+
     void done(int value) override;
     void accept() override;
     void reject() override;

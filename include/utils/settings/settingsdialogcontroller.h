@@ -40,8 +40,8 @@ public:
 
     void addPage(SettingsPage* page);
 
-    [[nodiscard]] QByteArray geometry() const;
-    void updateGeometry(const QByteArray& geometry);
+    [[nodiscard]] QByteArray saveState() const;
+    void loadState(const QByteArray& state);
 
 private:
     struct Private;

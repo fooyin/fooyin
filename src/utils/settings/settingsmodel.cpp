@@ -114,15 +114,15 @@ void SettingsModel::setPages(const PageList& pages)
     endResetModel();
 }
 
-std::optional<SettingsCategory> SettingsModel::categoryForPage(const Id& page) const
+SettingsCategory* SettingsModel::categoryForPage(const Id& page)
 {
-    for(const auto& [_, category] : m_categories) {
+    for(auto& [_, category] : m_categories) {
         const int pageIndex = category.findPageById(page);
         if(pageIndex >= 0) {
-            return category;
+            return &category;
         }
     }
-    return {};
+    return nullptr;
 }
 
 QModelIndex SettingsModel::indexForCategory(const Id& categoryId) const

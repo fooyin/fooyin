@@ -205,7 +205,7 @@ void SettingsDialog::openPage(const Id& id)
         return;
     }
 
-    auto category = p->model->categoryForPage(id);
+    auto* category = p->model->categoryForPage(id);
     if(!category) {
         qWarning() << "Page not found: " << id.name();
         return;
@@ -220,6 +220,11 @@ void SettingsDialog::openPage(const Id& id)
             widget->setCurrentIndex(pageIndex);
         }
     }
+}
+
+Id SettingsDialog::currentPage() const
+{
+    return p->currentPage;
 }
 
 void SettingsDialog::done(int value)

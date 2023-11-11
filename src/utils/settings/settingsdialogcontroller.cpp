@@ -19,15 +19,18 @@
 
 #include <utils/settings/settingsdialogcontroller.h>
 
+#include "settingsdialog.h"
+
 #include <utils/id.h>
 
-#include "settingsdialog.h"
+#include <QIODevice>
 
 namespace Fy::Utils {
 struct SettingsDialogController::Private
 {
     QByteArray geometry;
     PageList pages;
+    Id lastOpenPage;
 };
 
 SettingsDialogController::SettingsDialogController(QObject* parent)
@@ -39,15 +42,17 @@ SettingsDialogController::~SettingsDialogController() = default;
 
 void SettingsDialogController::open()
 {
-    openAtPage({});
+    openAtPage(p->lastOpenPage);
 }
 
 void SettingsDialogController::openAtPage(const Id& page)
 {
     auto* settingsDialog = new SettingsDialog{p->pages};
-    QObject::connect(settingsDialog, &QDialog::destroyed, this,
-                     [this, settingsDialog]() { p->geometry = settingsDialog->saveGeometry(); });
-    settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(settingsDialog, &QDialog::finished, this, [this, settingsDialog]() {
+        p->geometry     = settingsDialog->saveGeometry();
+        p->lastOpenPage = settingsDialog->currentPage();
+        settingsDialog->deleteLater();
+    });
 
     if(p->geometry.isEmpty()) {
         settingsDialog->resize(750, 450);
@@ -67,13 +72,28 @@ void SettingsDialogController::addPage(SettingsPage* page)
     p->pages.push_back(page);
 }
 
-QByteArray SettingsDialogController::geometry() const
+QByteArray SettingsDialogController::saveState() const
 {
-    return p->geometry;
+    QByteArray state;
+    QDataStream stream(&state, QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_6_5);
+
+    stream << p->geometry;
+    stream << p->lastOpenPage;
+
+    return state;
 }
 
-void SettingsDialogController::updateGeometry(const QByteArray& geometry)
+void SettingsDialogController::loadState(const QByteArray& state)
 {
-    p->geometry = geometry;
+    if(!state.isEmpty()) {
+        QByteArray stateData{state};
+
+        QDataStream stream(&stateData, QIODevice::ReadOnly);
+        stream.setVersion(QDataStream::Qt_6_5);
+
+        stream >> p->geometry;
+        stream >> p->lastOpenPage;
+    }
 }
 } // namespace Fy::Utils

@@ -78,4 +78,21 @@ Id Id::append(uintptr_t addr)
 {
     return Id{m_name.append(QString::number(addr))};
 }
+
+QDataStream& operator<<(QDataStream& stream, Id id)
+{
+    stream << id.name();
+
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream& stream, Id& id)
+{
+    QString name;
+
+    stream >> name;
+    id = Id{name};
+
+    return stream;
+}
 } // namespace Fy::Utils

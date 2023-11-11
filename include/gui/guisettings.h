@@ -36,7 +36,7 @@ enum Gui : uint32_t
     StartupBehaviour           = 2 | Utils::Settings::Int,
     WaitForTracks              = 3 | Utils::Settings::Bool,
     Geometry                   = 4 | Utils::Settings::ByteArray,
-    SettingsGeometry           = 5 | Utils::Settings::ByteArray,
+    SettingsDialogState        = 5 | Utils::Settings::ByteArray,
     EditingMenuLevels          = 6 | Utils::Settings::Int,
     SplitterHandles            = 7 | Utils::Settings::Bool,
     PlaylistAltColours         = 8 | Utils::Settings::Bool,

@@ -53,8 +53,8 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
     resize(1280, 720);
     setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
 
-    const QByteArray settingsGeometry = QByteArray::fromBase64(m_settings->value<Settings::SettingsGeometry>());
-    m_settings->settingsDialog()->updateGeometry(settingsGeometry);
+    const QByteArray settingsState = QByteArray::fromBase64(m_settings->value<Settings::SettingsDialogState>());
+    m_settings->settingsDialog()->loadState(settingsState);
 
     setCentralWidget(m_editableLayout);
 
@@ -67,7 +67,7 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
 MainWindow::~MainWindow()
 {
     m_settings->set<Settings::Geometry>(saveGeometry().toBase64());
-    m_settings->set<Settings::SettingsGeometry>(m_settings->settingsDialog()->geometry().toBase64());
+    m_settings->set<Settings::SettingsDialogState>(m_settings->settingsDialog()->saveState().toBase64());
 }
 
 void MainWindow::open()
