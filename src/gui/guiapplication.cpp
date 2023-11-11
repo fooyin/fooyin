@@ -107,17 +107,17 @@ struct GuiApplication::Private
     PropertiesDialog* propertiesDialog;
 
     Settings::GeneralPage generalPage;
-    Settings::EnginePage enginePage;
+    Settings::GuiGeneralPage guiGeneralPage;
     Settings::LibraryGeneralPage libraryGeneralPage;
     Settings::LibrarySortingPage librarySortingPage;
-    Settings::GuiGeneralPage guiGeneralPage;
+    Settings::ShortcutsPage shortcutsPage;
     Settings::PlaylistGeneralPage playlistGeneralPage;
     Settings::PlaylistGuiPage playlistGuiPage;
     Settings::PlaylistPresetsPage playlistPresetsPage;
+    Settings::EnginePage enginePage;
     Settings::LibraryTreePage libraryTreePage;
     Settings::LibraryTreeGuiPage libraryTreeGuiPage;
     Settings::PluginPage pluginPage;
-    Settings::ShortcutsPage shortcutsPage;
 
     GuiPluginContext guiPluginContext;
 
@@ -151,17 +151,17 @@ struct GuiApplication::Private
         , helpMenu{new HelpMenu(actionManager, self)}
         , propertiesDialog{new PropertiesDialog(self)}
         , generalPage{settingsManager}
-        , enginePage{settingsManager, engineHandler}
+        , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , libraryGeneralPage{libraryManager, settingsManager}
         , librarySortingPage{sortingRegistry, settingsManager}
-        , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
+        , shortcutsPage{actionManager, settingsManager}
         , playlistGeneralPage{settingsManager}
         , playlistGuiPage{settingsManager}
         , playlistPresetsPage{&presetRegistry, settingsManager}
+        , enginePage{settingsManager, engineHandler}
         , libraryTreePage{&treeGroupRegistry, settingsManager}
         , libraryTreeGuiPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
-        , shortcutsPage{actionManager, settingsManager}
         , guiPluginContext{actionManager,     &layoutProvider,  &selectionController,
                            &searchController, propertiesDialog, widgetProvider.widgetFactory()}
     {
