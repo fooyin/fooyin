@@ -139,6 +139,7 @@ public:
                           const std::vector<PlaylistItem*>& children);
     bool removePlaylistRows(int row, int count, const QModelIndex& parent);
 
+    void cleanupHeaders(const QModelIndexList& headers);
     void removeEmptyHeaders(QModelIndexList& headers);
     void mergeHeaders(QModelIndexList& headersToUpdate);
     void updateTrackIndexes();

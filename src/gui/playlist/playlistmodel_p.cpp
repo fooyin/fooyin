@@ -44,6 +44,17 @@ namespace {
 using Fy::Gui::Widgets::Playlist::PlaylistItem;
 using Fy::Gui::Widgets::Playlist::PlaylistModel;
 
+QModelIndexList removeDuplicates(const QModelIndexList& indexList)
+{
+    QSet<QModelIndex> uniqueIndices;
+
+    for(const QModelIndex& index : indexList) {
+        uniqueIndices.insert(index);
+    }
+
+    return uniqueIndices.values();
+}
+
 void optimiseSelection(QAbstractItemModel* model, QModelIndexList& selection)
 {
     QModelIndexList optimisedSelection;
@@ -705,13 +716,10 @@ bool PlaylistModelPrivate::handleDrop(const QMimeData* data, Qt::DropAction acti
         headersToCheck.append(targetParent);
 
         model->rootItem()->resetChildren();
-
-        removeEmptyHeaders(headersToCheck);
-        mergeHeaders(headersToCheck);
     }
 
+    cleanupHeaders(headersToCheck);
     updateTrackIndexes();
-    updateHeaders(headersToCheck);
 
     model->tracksChanged();
 
@@ -904,9 +912,7 @@ void PlaylistModelPrivate::handleExternalDrop(const PendingData& data)
 
     model->rootItem()->resetChildren();
 
-    removeEmptyHeaders(headersToCheck);
-    mergeHeaders(headersToCheck);
-    updateHeaders(headersToCheck);
+    cleanupHeaders(headersToCheck);
     updateTrackIndexes();
 }
 
@@ -969,9 +975,7 @@ void PlaylistModelPrivate::handleTrackGroup(const PendingData& data)
 
     model->rootItem()->resetChildren();
 
-    removeEmptyHeaders(headersToCheck);
-    mergeHeaders(headersToCheck);
-    updateHeaders(headersToCheck);
+    cleanupHeaders(headersToCheck);
     updateTrackIndexes();
 }
 
@@ -1040,6 +1044,16 @@ bool PlaylistModelPrivate::removePlaylistRows(int row, int count, const QModelIn
     model->endRemoveRows();
 
     return true;
+}
+
+void PlaylistModelPrivate::cleanupHeaders(const QModelIndexList& headers)
+{
+    QModelIndexList cleanedHeaders{headers};
+
+    removeEmptyHeaders(cleanedHeaders);
+    mergeHeaders(cleanedHeaders);
+    cleanedHeaders = removeDuplicates(cleanedHeaders);
+    updateHeaders(cleanedHeaders);
 }
 
 void PlaylistModelPrivate::removeEmptyHeaders(QModelIndexList& headers)
@@ -1214,9 +1228,7 @@ void PlaylistModelPrivate::removeTracks(const QModelIndexList& indexes)
         headersToCheck.emplace_back(parent);
     }
 
-    removeEmptyHeaders(headersToCheck);
-    mergeHeaders(headersToCheck);
-    updateHeaders(headersToCheck);
+    cleanupHeaders(headersToCheck);
     updateTrackIndexes();
 
     model->tracksChanged();
