@@ -108,7 +108,6 @@ public:
     PlaylistModel* model;
     PlaylistView* playlistView;
     Utils::HeaderView* header;
-    bool changingSelection{false};
 
     PlaylistPreset currentPreset;
 

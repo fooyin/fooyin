@@ -87,15 +87,16 @@ struct IndexRange
     }
 };
 
-struct TrackIndexResult {
+struct TrackIndexResult
+{
     QModelIndex index;
     bool endOfPlaylist{false};
 };
 
 using ParentChildIndexMap     = std::vector<std::vector<QModelIndex>>;
-using ParentChildRowMap       = std::map<QModelIndex, std::vector<IndexRange>, cmpIndexes>;
-using ParentChildItemGroupMap = std::map<QModelIndex, std::vector<std::vector<PlaylistItem*>>, cmpIndexes>;
-using ParentChildItemMap      = std::map<QModelIndex, std::vector<PlaylistItem*>, cmpIndexes>;
+using ParentChildRowMap       = std::vector<std::pair<QModelIndex, std::vector<IndexRange>>>;
+using ParentChildItemGroupMap = std::vector<std::pair<QModelIndex, std::vector<std::vector<PlaylistItem*>>>>;
+using ParentChildItemMap      = std::vector<std::pair<QModelIndex, std::vector<PlaylistItem*>>>;
 
 struct MergeResult
 {

@@ -179,8 +179,7 @@ bool PlaylistModel::hasChildren(const QModelIndex& parent) const
     if(!parent.isValid()) {
         return true;
     }
-    const auto* item = static_cast<PlaylistItem*>(parent.internalPointer());
-    return (item->type() != PlaylistItem::ItemType::Track);
+    return parent.data(PlaylistItem::Type).toInt() != PlaylistItem::ItemType::Track;
 }
 
 QHash<int, QByteArray> PlaylistModel::roleNames() const

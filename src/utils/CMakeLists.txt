@@ -39,6 +39,7 @@ set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/utils/menuheader.h
     ${CMAKE_SOURCE_DIR}/include/utils/multilinedelegate.h
     ${CMAKE_SOURCE_DIR}/include/utils/overlayfilter.h
+    ${CMAKE_SOURCE_DIR}/include/utils/recursiveselectionmodel.h
     ${CMAKE_SOURCE_DIR}/include/utils/slider.h
     ${CMAKE_SOURCE_DIR}/include/utils/worker.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
@@ -71,6 +72,7 @@ set(SOURCES
     overlayfilter.cpp
     overlaywidget.cpp
     paths.cpp
+    recursiveselectionmodel.cpp
     simpletreeview.cpp
     scrollarea.cpp
     slider.cpp

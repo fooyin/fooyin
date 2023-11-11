@@ -37,6 +37,7 @@
 #include <utils/actions/command.h>
 #include <utils/async.h>
 #include <utils/headerview.h>
+#include <utils/recursiveselectionmodel.h>
 #include <utils/settings/settingsdialogcontroller.h>
 
 #include <QActionGroup>
@@ -56,6 +57,12 @@ void expandTree(QTreeView* view, QAbstractItemModel* model, const QModelIndex& p
     while(first <= last) {
         const QModelIndex child = model->index(first, 0, parent);
         view->expand(child);
+
+        const int childCount = model->rowCount(child);
+        if(childCount > 0) {
+            expandTree(view, model, child, 0, childCount - 1);
+        }
+
         ++first;
     }
 }
@@ -117,6 +124,8 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, Utils::Action
 
     playlistView->setModel(model);
     playlistView->setItemDelegate(new PlaylistDelegate(self));
+
+    playlistView->setSelectionModel(new Utils::RecursiveSelectionModel(model, this));
 
     layout->addWidget(playlistView);
 
@@ -271,71 +280,39 @@ void PlaylistWidgetPrivate::setScrollbarHidden(bool showScrollBar) const
 
 void PlaylistWidgetPrivate::selectionChanged()
 {
-    if(changingSelection) {
-        return;
-    }
-
-    changingSelection = true;
-
-    QItemSelectionModel* selectionModel = playlistView->selectionModel();
-
-    QModelIndexList indexes = selectionModel->selectedIndexes();
-    QItemSelection itemsToSelect;
-    QItemSelection itemsToDeselect;
-
     Core::TrackList tracks;
     int firstIndex{-1};
 
-    while(!indexes.empty()) {
-        const QModelIndex& index = indexes.front();
-        indexes.pop_front();
+    const QModelIndexList indexes = playlistView->selectionModel()->selectedIndexes();
 
-        if(!index.isValid()) {
-            continue;
-        }
-
+    for(const QModelIndex& index : indexes) {
         const auto type = index.data(PlaylistItem::Type).toInt();
-
-        if(type != PlaylistItem::Track) {
-            itemsToDeselect.emplace_back(index);
-
-            const QItemSelection children{model->index(0, 0, index),
-                                          model->index(model->rowCount(index) - 1, 0, index)};
-            const auto childIndexes = children.indexes();
-
-            auto childrenToSelect = std::views::filter(
-                childIndexes, [&](const QModelIndex& childIndex) { return !selectionModel->isSelected(childIndex); });
-
-            std::ranges::copy(childrenToSelect, std::back_inserter(indexes));
-        }
-        else {
-            itemsToSelect.emplace_back(index);
+        if(type == PlaylistItem::Track) {
             tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<Core::Track>());
             const int trackIndex = index.data(PlaylistItem::Role::Index).toInt();
             firstIndex           = firstIndex >= 0 ? std::min(firstIndex, trackIndex) : trackIndex;
         }
     }
-    selectionModel->select(itemsToDeselect, QItemSelectionModel::Deselect);
-    selectionModel->select(itemsToSelect, QItemSelectionModel::Select);
 
-    if(!tracks.empty()) {
-        selectionController->changeSelectedTracks(firstIndex, tracks);
+    if(tracks.empty()) {
+        return;
+    }
 
-        if(settings->value<Settings::PlaybackFollowsCursor>()) {
-            if(auto* currentPlaylist = playlistController->currentPlaylist()) {
-                if(currentPlaylist->currentTrackIndex() != firstIndex) {
-                    if(playlistController->playState() != Core::Player::PlayState::Playing) {
-                        currentPlaylist->changeCurrentTrack(firstIndex);
-                    }
-                    else {
-                        currentPlaylist->scheduleNextIndex(firstIndex);
-                    }
-                    playlistController->playlistHandler()->schedulePlaylist(currentPlaylist);
+    selectionController->changeSelectedTracks(firstIndex, tracks);
+
+    if(settings->value<Settings::PlaybackFollowsCursor>()) {
+        if(auto* currentPlaylist = playlistController->currentPlaylist()) {
+            if(currentPlaylist->currentTrackIndex() != firstIndex) {
+                if(playlistController->playState() != Core::Player::PlayState::Playing) {
+                    currentPlaylist->changeCurrentTrack(firstIndex);
                 }
+                else {
+                    currentPlaylist->scheduleNextIndex(firstIndex);
+                }
+                playlistController->playlistHandler()->schedulePlaylist(currentPlaylist);
             }
         }
     }
-    changingSelection = false;
 }
 
 void PlaylistWidgetPrivate::playlistTracksChanged(int index) const
