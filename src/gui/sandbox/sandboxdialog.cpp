@@ -22,10 +22,10 @@
 #include "expressiontreemodel.h"
 #include "scripthighlighter.h"
 
+#include <core/track.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
-#include <core/track.h>
 
 #include <QApplication>
 #include <QGridLayout>
@@ -37,9 +37,9 @@
 
 #include <chrono>
 
-namespace Fy::Gui::Sandbox {
 using namespace std::chrono_literals;
 
+namespace Fy::Gui::Sandbox {
 struct SandboxDialog::Private
 {
     SandboxDialog* self;
@@ -54,7 +54,7 @@ struct SandboxDialog::Private
     QTextEdit* results;
     ScriptHighlighter highlighter;
 
-    QTreeView* expressiontree;
+    QTreeView* expressionTree;
     ExpressionTreeModel model;
 
     QTimer* textChangeTimer;
@@ -73,34 +73,48 @@ struct SandboxDialog::Private
         , editor{new QPlainTextEdit(self)}
         , results{new QTextEdit(self)}
         , highlighter{editor->document()}
-        , expressiontree{new QTreeView(self)}
+        , expressionTree{new QTreeView(self)}
         , textChangeTimer{new QTimer(self)}
         , parser{&registry}
     {
-        expressiontree->setModel(&model);
-        expressiontree->setHeaderHidden(true);
-        expressiontree->setSelectionMode(QAbstractItemView::SingleSelection);
+        expressionTree->setModel(&model);
+        expressionTree->setHeaderHidden(true);
+        expressionTree->setSelectionMode(QAbstractItemView::SingleSelection);
 
         textChangeTimer->setSingleShot(true);
     }
 
-    void selectionChanged()
+    void updateResults()
+    {
+        if(model.rowCount({}) > 0) {
+            if(const auto* item = static_cast<ExpressionTreeItem*>(model.index(0, 0, {}).internalPointer())) {
+                updateResults(item->expression());
+            }
+        }
+    }
+
+    void updateResults(const Core::Scripting::Expression& expression)
     {
         if(!trackSelection->hasTracks()) {
             return;
         }
 
-        const auto indexes = expressiontree->selectionModel()->selectedIndexes();
+        const auto track  = trackSelection->selectedTracks().front();
+        const auto result = parser.evaluate(expression, track);
+
+        results->setText(result);
+    }
+
+    void selectionChanged()
+    {
+        const auto indexes = expressionTree->selectionModel()->selectedIndexes();
         if(indexes.empty()) {
             return;
         }
 
-        const auto track           = trackSelection->selectedTracks().front();
-        const QModelIndex selected = indexes.front();
-        const auto* item           = static_cast<ExpressionTreeItem*>(selected.internalPointer());
+        const auto* item = static_cast<ExpressionTreeItem*>(indexes.front().internalPointer());
 
-        const auto result = parser.evaluate(item->expression(), track);
-        results->setText(result);
+        updateResults(item->expression());
     }
 
     void textChanged()
@@ -121,31 +135,38 @@ struct SandboxDialog::Private
         }
     }
 
-    void restoreState() const
+    void restoreState()
     {
         QByteArray byteArray = settings->value<Settings::ScriptSandboxState>();
 
-        if(!byteArray.isEmpty()) {
-            byteArray = qUncompress(byteArray);
-
-            QDataStream in(&byteArray, QIODevice::ReadOnly);
-
-            QByteArray dialogGeometry;
-            QByteArray mainSplitterState;
-            QByteArray documentSplitterState;
-            QString editorText;
-
-            in >> dialogGeometry;
-            in >> mainSplitterState;
-            in >> documentSplitterState;
-            in >> editorText;
-
-            self->restoreGeometry(dialogGeometry);
-            mainSplitter->restoreState(mainSplitterState);
-            documentSplitter->restoreState(documentSplitterState);
-            editor->setPlainText(editorText);
-            editor->moveCursor(QTextCursor::End);
+        if(byteArray.isEmpty()) {
+            return;
         }
+
+        byteArray = qUncompress(byteArray);
+
+        QDataStream in(&byteArray, QIODevice::ReadOnly);
+
+        QByteArray dialogGeometry;
+        QByteArray mainSplitterState;
+        QByteArray documentSplitterState;
+        QString editorText;
+
+        in >> dialogGeometry;
+        in >> mainSplitterState;
+        in >> documentSplitterState;
+        in >> editorText;
+
+        self->restoreGeometry(dialogGeometry);
+        mainSplitter->restoreState(mainSplitterState);
+        documentSplitter->restoreState(documentSplitterState);
+        editor->setPlainText(editorText);
+        editor->moveCursor(QTextCursor::End);
+
+        textChanged();
+        expressionTree->expandAll();
+
+        updateResults();
     }
 
     void saveState() const
@@ -178,7 +199,7 @@ SandboxDialog::SandboxDialog(TrackSelectionController* trackSelection, Utils::Se
     p->documentSplitter->addWidget(p->results);
 
     p->mainSplitter->addWidget(p->documentSplitter);
-    p->mainSplitter->addWidget(p->expressiontree);
+    p->mainSplitter->addWidget(p->expressionTree);
 
     p->documentSplitter->setStretchFactor(0, 3);
     p->documentSplitter->setStretchFactor(1, 1);
@@ -192,11 +213,11 @@ SandboxDialog::SandboxDialog(TrackSelectionController* trackSelection, Utils::Se
 
     QObject::connect(p->editor, &QPlainTextEdit::textChanged, this, [this]() { p->textChanged(); });
     QObject::connect(p->textChangeTimer, &QTimer::timeout, this, [this]() { p->showErrors(); });
-    QObject::connect(&p->model, &QAbstractItemModel::modelReset, p->expressiontree, &QTreeView::expandAll);
-    QObject::connect(p->expressiontree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+    QObject::connect(&p->model, &QAbstractItemModel::modelReset, p->expressionTree, &QTreeView::expandAll);
+    QObject::connect(p->expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this]() { p->selectionChanged(); });
     QObject::connect(p->trackSelection, &TrackSelectionController::selectionChanged, this,
-                     [this]() { p->selectionChanged(); });
+                     [this]() { p->updateResults(); });
 }
 
 SandboxDialog::~SandboxDialog()
