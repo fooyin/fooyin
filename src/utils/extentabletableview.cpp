@@ -65,11 +65,11 @@ void ExtendableTableView::paintEvent(QPaintEvent* event)
 
     const QFontMetrics fontMetrics{font()};
 
-    static int buttonHeight = 15;
-    static int leftMargin   = 50;
-    static int topMargin    = 8;
-    static int padding      = 15;
-    const int width         = fontMetrics.horizontalAdvance(ButtonText) + padding;
+    static const int buttonHeight = 15;
+    static const int leftMargin   = 50;
+    static const int topMargin    = 8;
+    static const int padding      = 15;
+    const int width               = fontMetrics.horizontalAdvance(ButtonText) + padding;
 
     m_buttonRect = {rect().left() + leftMargin, lastRect.bottom() + topMargin, width, buttonHeight};
 
