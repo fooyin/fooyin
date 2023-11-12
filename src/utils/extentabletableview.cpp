@@ -63,11 +63,15 @@ void ExtendableTableView::paintEvent(QPaintEvent* event)
     const int lastRow    = model()->rowCount() - 1;
     const QRect lastRect = visualRect(model()->index(lastRow, 0));
 
-    const int buttonHeight = 15;
-    const int leftMargin   = 50;
-    const int topMargin    = 8;
+    const QFontMetrics fontMetrics{font()};
 
-    m_buttonRect = {lastRect.left() + leftMargin, lastRect.bottom() + topMargin, lastRect.width(), buttonHeight};
+    static int buttonHeight = 15;
+    static int leftMargin   = 50;
+    static int topMargin    = 8;
+    static int padding      = 15;
+    const int width         = fontMetrics.horizontalAdvance(ButtonText) + padding;
+
+    m_buttonRect = {rect().left() + leftMargin, lastRect.bottom() + topMargin, width, buttonHeight};
 
     if(m_mouseOverButton) {
         painter.fillRect(m_buttonRect, palette().button());
