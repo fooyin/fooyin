@@ -125,6 +125,7 @@ struct SandboxDialog::Private
         currentScript = parser.parse(editor->toPlainText());
 
         model.populate(currentScript.expressions);
+        updateResults();
     }
 
     void showErrors() const
