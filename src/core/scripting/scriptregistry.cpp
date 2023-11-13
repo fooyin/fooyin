@@ -189,11 +189,13 @@ ScriptResult Registry::varValue(const QString& var) const
 
 void Registry::setVar(const QString& var, const FuncRet& value, Track& track)
 {
-    if(var.isEmpty() || !varExists(var)) {
+    if(var.isEmpty()) {
         return;
     }
 
-    p->setMetadata.at(var)(track, value);
+    if(varExists(var)) {
+        p->setMetadata.at(var)(track, value);
+    }
 }
 
 ScriptResult Registry::function(const QString& func, const ValueList& args) const

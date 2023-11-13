@@ -29,8 +29,14 @@ namespace Fy::Utils {
 ExtendableTableView::ExtendableTableView(QWidget* parent)
     : QTableView{parent}
     , m_mouseOverButton{false}
+    , m_pendingRow{false}
 {
     setMouseTracking(true);
+}
+
+void ExtendableTableView::rowAdded()
+{
+    m_pendingRow = false;
 }
 
 void ExtendableTableView::mouseMoveEvent(QMouseEvent* event)
@@ -49,6 +55,7 @@ void ExtendableTableView::mousePressEvent(QMouseEvent* event)
 {
     if(m_buttonRect.contains(event->pos())) {
         emit newRowClicked();
+        m_pendingRow = true;
     }
 
     QTableView::mousePressEvent(event);
@@ -57,6 +64,10 @@ void ExtendableTableView::mousePressEvent(QMouseEvent* event)
 void ExtendableTableView::paintEvent(QPaintEvent* event)
 {
     QTableView::paintEvent(event);
+
+    if(m_pendingRow) {
+        return;
+    }
 
     QPainter painter{viewport()};
 

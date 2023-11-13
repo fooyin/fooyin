@@ -24,6 +24,7 @@
 
 #include <core/library/libraryinfo.h>
 #include <core/tagging/tagreader.h>
+#include <core/tagging/tagwriter.h>
 #include <core/track.h>
 #include <utils/utils.h>
 
@@ -37,6 +38,7 @@ struct LibraryScanner::Private
     DB::Database* database;
     DB::LibraryDatabase libraryDatabase;
     Tagging::TagReader tagReader;
+    Tagging::TagWriter tagWriter;
 
     Private(LibraryScanner* self, DB::Database* database)
         : self{self}
@@ -239,13 +241,13 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
     emit finished();
 }
 
-void LibraryScanner::updateTracks(const TrackList& /*tracks*/)
+void LibraryScanner::updateTracks(const TrackList& tracks)
 {
-    //    for(const Track& track : tracks) {
-    //        const bool saved = p->tagReader.writeMetaData(track);
-    //        if(saved) {
-    //            p->libraryDatabase.updateTrack(track);
-    //        }
-    //    }
+    for(const Track& track : tracks) {
+        const bool saved = p->tagWriter.writeMetaData(track);
+        if(saved) {
+            p->libraryDatabase.updateTrack(track);
+        }
+    }
 }
 } // namespace Fy::Core::Library

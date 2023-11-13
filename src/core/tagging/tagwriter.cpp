@@ -46,6 +46,8 @@
 #include <QFileInfo>
 #include <QMimeDatabase>
 
+#include <set>
+
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
@@ -113,6 +115,10 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fy::Core::
         oldProperties.replace("COMPOSER", convertString(track.composer()));
     }
 
+    if(!track.performer().isEmpty()) {
+        oldProperties.replace("PERFORMER", convertString(track.performer()));
+    }
+
     if(!track.comment().isEmpty()) {
         oldProperties.replace("COMMENT", convertString(track.comment()));
     }
@@ -125,6 +131,27 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fy::Core::
         if(track.year() >= 0) {
             oldProperties.replace("DATE", convertString(track.date()));
         }
+    }
+
+    static const std::set<TagLib::String> baseTags
+        = {"TITLE", "ARTIST",   "ALBUM",     "ALBUMARTIST", "TRACKNUMBER", "TRACKTOTAL", "DISCNUMBER", "DISCTOTAL",
+           "GENRE", "COMPOSER", "PERFORMER", "COMMENT",     "LYRICS",      "DATE",       "RATING"};
+
+    const auto customTags = track.extraTags();
+    for(const auto& [tag, values] : customTags) {
+        oldProperties.replace(convertString(tag), convertStringList(values));
+    }
+
+    TagLib::StringList tagsToRemove;
+
+    for(const auto& [tag, values] : oldProperties) {
+        if(!baseTags.contains(tag) && !customTags.contains(TStringToQString(tag))) {
+            tagsToRemove.append(tag);
+        }
+    }
+
+    for(const TagLib::String& tag : tagsToRemove) {
+        oldProperties.erase(tag);
     }
 }
 
@@ -299,18 +326,18 @@ bool TagWriter::writeMetaData(const Track& track)
         TagLib::RIFF::AIFF::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
-            if(file.tag()) {
+            if(file.hasID3v2Tag()) {
                 writeID3v2Tags(file.tag(), track);
             }
             file.save();
         }
     }
-    else if(mimeType == "audio/wav"_L1 || mimeType == "audio/x-wav"_L1) {
+    else if(mimeType == "audio/vnd.wave"_L1 || mimeType == "audio/wav"_L1 || mimeType == "audio/x-wav"_L1) {
         TagLib::RIFF::WAV::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
-            if(file.tag()) {
-                writeID3v2Tags(file.tag(), track);
+            if(file.hasID3v2Tag()) {
+                writeID3v2Tags(file.ID3v2Tag(), track);
             }
             file.save();
         }
@@ -349,7 +376,7 @@ bool TagWriter::writeMetaData(const Track& track)
         TagLib::MP4::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
-            if(file.tag()) {
+            if(file.hasMP4Tag()) {
                 writeMp4Tags(file.tag(), track);
             }
             file.save();

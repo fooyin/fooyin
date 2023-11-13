@@ -25,13 +25,8 @@
 #include <utils/tablemodel.h>
 
 namespace Fy {
-
 namespace Utils {
 class SettingsManager;
-}
-
-namespace Gui {
-class TrackSelectionController;
 }
 
 namespace TagEditor {
@@ -40,12 +35,12 @@ class TagEditorModel : public Utils::TableModel<TagEditorItem>
     Q_OBJECT
 
 public:
-    TagEditorModel(Gui::TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
-                   QObject* parent = nullptr);
+    explicit TagEditorModel(Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~TagEditorModel() override;
 
-    void populate();
+    void reset(const Core::TrackList& tracks);
     void addNewRow();
+    void removeRow(int row);
     void processQueue();
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -54,9 +49,13 @@ public:
     [[nodiscard]] bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
 
-    void updateEditorValues();
+    [[nodiscard]] QString defaultFieldText() const;
+    void removePendingRow();
 
 signals:
+    void newPendingRow();
+    void pendingRowAdded();
+    void pendingRowCancelled();
     void trackMetadataChanged(const Core::TrackList& tracks);
 
 private:

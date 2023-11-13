@@ -19,52 +19,57 @@
 
 #pragma once
 
+#include <core/trackfwd.h>
 #include <gui/fywidget.h>
 #include <gui/propertiesdialog.h>
+#include <utils/extentabletableview.h>
 
 #include <QWidget>
 
-class QHBoxLayout;
-class QTableView;
-
 namespace Fy {
-
 namespace Utils {
-class ExtendableTableView;
+class ActionManager;
 class SettingsManager;
-}
-
-namespace Core::Library {
-class MusicLibrary;
-}
+} // namespace Utils
 
 namespace Gui {
 class TrackSelectionController;
 }
 
 namespace TagEditor {
-class TagEditorModel;
+class TagEditorView : public Utils::ExtendableTableView
+{
+    Q_OBJECT
+
+public:
+    explicit TagEditorView(QWidget* parent = nullptr);
+
+    [[nodiscard]] int sizeHintForRow(int row) const override;
+};
 
 class TagEditorWidget : public Gui::PropertiesTabWidget
 {
     Q_OBJECT
 
 public:
-    explicit TagEditorWidget(Gui::TrackSelectionController* trackSelection, Core::Library::MusicLibrary* library,
+    explicit TagEditorWidget(Utils::ActionManager* actionManager, Gui::TrackSelectionController* trackSelection,
                              Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    ~TagEditorWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
     void apply() override;
 
-private:
-    Gui::TrackSelectionController* m_trackSelection;
-    Core::Library::MusicLibrary* m_library;
-    Utils::SettingsManager* m_settings;
+signals:
+    void trackMetadataChanged(const Core::TrackList& tracks);
 
-    Utils::ExtendableTableView* m_view;
-    TagEditorModel* m_model;
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
+
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace TagEditor
 } // namespace Fy

@@ -24,18 +24,42 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace Fy::TagEditor {
-TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent)
-    : TreeStatusItem{parent}
-    , m_name{std::move(title)}
+TagEditorItem::TagEditorItem()
+    : TagEditorItem{u""_s, nullptr, true}
 { }
 
-void TagEditorItem::reset()
+TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent, bool isDefault)
+    : TreeStatusItem{parent}
+    , m_isDefault{isDefault}
+    , m_name{std::move(title)}
+    , m_trackCount{0}
+{ }
+
+QString TagEditorItem::name() const
 {
-    m_values.clear();
-    m_value.clear();
-    for(auto* const child : m_children) {
-        child->reset();
+    return m_name;
+}
+
+QString TagEditorItem::value() const
+{
+    if(m_value.isEmpty()) {
+        QString values;
+
+        QStringList nonEmptyValues{m_values};
+        nonEmptyValues.removeAll(u""_s);
+
+        values = nonEmptyValues.join("; "_L1);
+        if(m_trackCount > 1 && m_values.size() > 1) {
+            values.prepend("<<multiple items>> ");
+        }
+        m_value = values;
     }
+    return m_value;
+}
+
+bool TagEditorItem::isDefault() const
+{
+    return m_isDefault;
 }
 
 void TagEditorItem::addTrackValue(const QString& value)
@@ -45,43 +69,30 @@ void TagEditorItem::addTrackValue(const QString& value)
     }
     m_values.append(value);
     m_values.sort();
-    valuesToString();
+
+    m_trackCount++;
 }
 
 void TagEditorItem::addTrackValue(const QStringList& values)
 {
     for(const auto& trackValue : values) {
-        addTrackValue(trackValue);
+        if(m_values.contains(trackValue)) {
+            return;
+        }
+        m_values.append(trackValue);
+        m_values.sort();
     }
+    m_trackCount++;
 }
 
 void TagEditorItem::setValue(const QStringList& values)
 {
     m_values = values;
-    valuesToString();
+    m_value = {};
 }
 
-void TagEditorItem::valuesToString()
+void TagEditorItem::setTitle(const QString& title)
 {
-    QString values;
-
-    QStringList nonEmptyValues{m_values};
-    nonEmptyValues.removeAll(QStringLiteral(""));
-
-    values = nonEmptyValues.join("; "_L1);
-    if(m_values.size() > 1) {
-        values.prepend("<<multiple items>> ");
-    }
-    m_value = values;
-}
-
-QString TagEditorItem::name() const
-{
-    return m_name;
-}
-
-QString TagEditorItem::value() const
-{
-    return m_value;
+    m_name = title;
 }
 } // namespace Fy::TagEditor

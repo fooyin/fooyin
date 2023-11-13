@@ -31,6 +31,8 @@ class FYUTILS_EXPORT ExtendableTableView : public QTableView
 public:
     explicit ExtendableTableView(QWidget* parent = nullptr);
 
+    void rowAdded();
+
 signals:
     void newRowClicked();
 
@@ -42,5 +44,6 @@ protected:
 private:
     QRect m_buttonRect;
     bool m_mouseOverButton;
+    bool m_pendingRow;
 };
 } // namespace Fy::Utils

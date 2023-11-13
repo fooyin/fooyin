@@ -27,22 +27,28 @@ namespace Fy::TagEditor {
 class TagEditorItem : public Utils::TreeStatusItem<TagEditorItem>
 {
 public:
-    explicit TagEditorItem(QString title = {}, TagEditorItem* parent = nullptr);
+    enum Role
+    {
+        IsDefault = Qt::UserRole,
+    };
 
-    void reset();
+    TagEditorItem();
+    TagEditorItem(QString title, TagEditorItem* parent, bool isDefault);
+
+    [[nodiscard]] QString name() const;
+    [[nodiscard]] QString value() const;
+    [[nodiscard]] bool isDefault() const;
 
     void addTrackValue(const QString& value);
     void addTrackValue(const QStringList& values);
     void setValue(const QStringList& values);
-
-    void valuesToString();
-
-    [[nodiscard]] QString name() const;
-    [[nodiscard]] QString value() const;
+    void setTitle(const QString& title);
 
 private:
+    bool m_isDefault;
     QString m_name;
     QStringList m_values;
-    QString m_value;
+    mutable QString m_value;
+    int m_trackCount;
 };
 } // namespace Fy::TagEditor

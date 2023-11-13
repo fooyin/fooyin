@@ -139,5 +139,8 @@ void LibraryThreadHandler::libraryRemoved(int id)
     }
 }
 
-void LibraryThreadHandler::saveUpdatedTracks(const TrackList& /*tracks*/) { }
+void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
+{
+    QMetaObject::invokeMethod(&p->scanner, "updateTracks", Q_ARG(const TrackList&, tracks));
+}
 } // namespace Fy::Core::Library
