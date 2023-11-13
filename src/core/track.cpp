@@ -285,6 +285,14 @@ bool Track::hasEmbeddedCover() const
     return p->coverPath == Constants::EmbeddedCover;
 }
 
+QStringList Track::extraTag(const QString& tag) const
+{
+    if(p->extraTags.contains(tag)) {
+        return p->extraTags.at(tag);
+    }
+    return {};
+}
+
 ExtraTags Track::extraTags() const
 {
     return p->extraTags;
@@ -460,14 +468,20 @@ void Track::addExtraTag(const QString& tag, const QString& value)
     if(tag.isEmpty() || value.isEmpty()) {
         return;
     }
-    if(p->extraTags.contains(tag)) {
-        auto entry = p->extraTags.value(tag);
-        entry.emplace_back(value);
-        p->extraTags.insert(tag, entry);
+    p->extraTags[tag].push_back(value);
+}
+
+void Track::removeExtraTag(const QString& tag)
+{
+    p->extraTags.erase(tag);
+}
+
+void Track::replaceExtraTag(const QString& tag, const QString& value)
+{
+    if(tag.isEmpty() || value.isEmpty()) {
+        return;
     }
-    else {
-        p->extraTags.insert(tag, {value});
-    }
+    p->extraTags[tag] = {value};
 }
 
 void Track::storeExtraTags(const QByteArray& tags)
@@ -625,4 +639,33 @@ QDataStream& operator>>(QDataStream& stream, TrackList& tracks)
     return stream;
 }
 
+QDataStream& operator<<(QDataStream& stream, const ExtraTags& tags)
+{
+    stream << static_cast<int>(tags.size());
+
+    for(const auto& [field, values] : tags) {
+        stream << field;
+        stream << values;
+    }
+
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream& stream, ExtraTags& tags)
+{
+    int size;
+    stream >> size;
+
+    for(int i{0}; i < size; ++i) {
+        QString field;
+        stream >> field;
+
+        QStringList values;
+        stream >> values;
+
+        tags.emplace(field, values);
+    }
+
+    return stream;
+}
 } // namespace Fy::Core

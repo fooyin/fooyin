@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>audio/audiotest.aiff</file>
+        <file>audio/audiotest.flac</file>
+        <file>audio/audiotest.m4a</file>
+        <file>audio/audiotest.mp3</file>
+        <file>audio/audiotest.ogg</file>
+        <file>audio/audiotest.opus</file>
+        <file>audio/audiotest.wav</file>
+    </qresource>
+</RCC>

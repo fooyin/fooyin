@@ -554,7 +554,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         if(file.isValid()) {
             readProperties(file, track);
             if(file.hasID3v2Tag()) {
-                readId3Tags(file.tag(), track);
+                readId3Tags(file.ID3v2Tag(), track);
                 handleCover(readId3Cover(file.tag()), track);
             }
         }
@@ -593,7 +593,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         const TagLib::MP4::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file, track);
-            if(file.tag()) {
+            if(file.hasMP4Tag()) {
                 readMp4Tags(file.tag(), track);
                 handleCover(readMp4Cover(file.tag()), track);
             }

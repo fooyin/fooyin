@@ -3,14 +3,18 @@ enable_testing(true)
 include(GoogleTest)
 
 function(fooyin_add_test name)
-add_executable(${name} ${ARGN})
-    target_link_libraries(${name} PRIVATE GTest::gtest_main)
-    gtest_discover_tests(test_scriptparser)
+add_executable(${name} ${ARGN} testutils.cpp)
+    target_link_libraries(${name} PRIVATE Fooyin::Core GTest::gtest_main)
+    gtest_discover_tests(${name})
 endfunction()
 
 fooyin_add_test(test_scriptparser scriptparsertest.cpp)
+
+qt_add_resources(TEST_SOURCES data/audio.qrc)
+add_library(fooyin_test_data ${TEST_SOURCES})
+
+fooyin_add_test(test_tagreader tagreadertest.cpp)
 target_link_libraries(
-    test_scriptparser
-    PRIVATE Qt6::Core
-            Fooyin::Core
+    test_tagreader
+    PRIVATE fooyin_test_data
 )

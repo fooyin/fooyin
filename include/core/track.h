@@ -27,7 +27,7 @@
 #include <map>
 
 namespace Fy::Core {
-using ExtraTags = QMap<QString, QList<QString>>;
+using ExtraTags = std::map<QString, QStringList>;
 
 class FYCORE_EXPORT Track
 {
@@ -100,6 +100,7 @@ public:
     [[nodiscard]] bool hasCover() const;
     [[nodiscard]] bool hasEmbeddedCover() const;
 
+    [[nodiscard]] QStringList extraTag(const QString& tag) const;
     [[nodiscard]] ExtraTags extraTags() const;
     [[nodiscard]] QByteArray serialiseExtrasTags() const;
 
@@ -139,6 +140,8 @@ public:
     void setCoverPath(const QString& path);
 
     void addExtraTag(const QString& tag, const QString& value);
+    void removeExtraTag(const QString& tag);
+    void replaceExtraTag(const QString& tag, const QString& value);
     void storeExtraTags(const QByteArray& json);
 
     void setFileSize(uint64_t fileSize);
@@ -166,4 +169,7 @@ using TrackPathMap = std::unordered_map<QString, Track>;
 size_t qHash(const Track& track);
 FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fy::Core::TrackList& tracks);
 FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fy::Core::TrackList& tracks);
+
+FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const ExtraTags& tags);
+FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, ExtraTags& ExtraTags);
 } // namespace Fy::Core
