@@ -23,6 +23,8 @@
 
 #include <QSettings>
 
+constexpr auto SettingsDialogState = "Interface/SettingsDialogState";
+
 namespace {
 QString getKeyString(const Fy::Utils::SettingsEntry& setting)
 {
@@ -35,7 +37,9 @@ SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
     , m_settingsFile{new QSettings(settingsPath, QSettings::IniFormat, this)}
     , m_settingsDialog{new SettingsDialogController(this)}
-{ }
+{
+    m_settingsDialog->loadState(m_settingsFile->value(SettingsDialogState).toByteArray());
+}
 
 void SettingsManager::loadSettings()
 {
@@ -64,6 +68,8 @@ void SettingsManager::storeSettings()
             m_settingsFile->setValue(keyString, setting.value());
         }
     }
+
+    m_settingsFile->setValue(SettingsDialogState, m_settingsDialog->saveState());
 
     m_settingsFile->sync();
 }

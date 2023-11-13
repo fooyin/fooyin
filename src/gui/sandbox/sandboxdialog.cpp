@@ -23,13 +23,13 @@
 #include "scripthighlighter.h"
 
 #include <core/track.h>
-#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
 #include <QGridLayout>
 #include <QPlainTextEdit>
+#include <QSettings>
 #include <QSplitter>
 #include <QTextEdit>
 #include <QTimer>
@@ -38,6 +38,8 @@
 #include <chrono>
 
 using namespace std::chrono_literals;
+
+constexpr auto SandboxState = "Interface/ScriptSandboxState";
 
 namespace Fy::Gui::Sandbox {
 struct SandboxDialog::Private
@@ -138,7 +140,7 @@ struct SandboxDialog::Private
 
     void restoreState()
     {
-        QByteArray byteArray = settings->value<Settings::ScriptSandboxState>();
+        QByteArray byteArray = settings->settingsFile()->value(SandboxState).toByteArray();
 
         if(byteArray.isEmpty()) {
             return;
@@ -182,7 +184,7 @@ struct SandboxDialog::Private
 
         byteArray = qCompress(byteArray, 9);
 
-        settings->set<Settings::ScriptSandboxState>(byteArray);
+        settings->settingsFile()->setValue(SandboxState, byteArray);
     }
 };
 

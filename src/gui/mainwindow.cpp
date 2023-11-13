@@ -33,8 +33,11 @@
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QMenuBar>
+#include <QSettings>
 #include <QTextEdit>
 #include <QTimer>
+
+constexpr auto MainWindowGeometry = "Interface/Geometry";
 
 namespace Fy::Gui {
 MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
@@ -53,9 +56,6 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
     resize(1280, 720);
     setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
 
-    const QByteArray settingsState = QByteArray::fromBase64(m_settings->value<Settings::SettingsDialogState>());
-    m_settings->settingsDialog()->loadState(settingsState);
-
     setCentralWidget(m_editableLayout);
 
     if(m_settings->value<Core::Settings::FirstRun>()) {
@@ -66,8 +66,7 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
 
 MainWindow::~MainWindow()
 {
-    m_settings->set<Settings::Geometry>(saveGeometry().toBase64());
-    m_settings->set<Settings::SettingsDialogState>(m_settings->settingsDialog()->saveState().toBase64());
+    m_settings->settingsFile()->setValue(MainWindowGeometry, saveGeometry());
 }
 
 void MainWindow::open()
@@ -79,7 +78,7 @@ void MainWindow::open()
             break;
         }
         case(RememberLast): {
-            restoreGeometry(QByteArray::fromBase64(m_settings->value<Settings::Geometry>()));
+            restoreGeometry(m_settings->settingsFile()->value(MainWindowGeometry).toByteArray());
             show();
             break;
         }

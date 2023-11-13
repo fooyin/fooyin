@@ -36,8 +36,6 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createTempSetting<Settings::LayoutEditing>(false);
     m_settings->createSetting<Settings::StartupBehaviour>(2, u"Interface"_s);
     m_settings->createSetting<Settings::WaitForTracks>(true, u"Interface"_s);
-    m_settings->createSetting<Settings::Geometry>(QByteArray{}, u"Interface"_s);
-    m_settings->createSetting<Settings::SettingsDialogState>(QByteArray{}, u"Interface"_s);
     m_settings->createSetting<Settings::EditingMenuLevels>(2, u"Interface"_s);
     m_settings->createSetting<Settings::SplitterHandles>(true, u"Splitters"_s);
     m_settings->createSetting<Settings::PlaylistAltColours>(true, u"Playlist"_s);
@@ -62,11 +60,10 @@ GuiSettings::GuiSettings(Utils::SettingsManager* settingsManager)
     m_settings->createSetting<Settings::LibraryTreeAltColours>(false, u"LibraryTree"_s);
     m_settings->createSetting<Settings::LibraryTreeAppearance>(QVariant::fromValue(Widgets::LibraryTreeAppearance{}),
                                                                u"LibraryTree"_s);
-    m_settings->createSetting<Settings::ScriptSandboxState>(QByteArray{}, u"Interface"_s);
     m_settings->createSetting<Settings::PlaylistThumbnailSize>(100, u"Playlist"_s);
     m_settings->createSetting<Settings::CursorFollowsPlayback>(false, u"Playlist"_s);
     m_settings->createSetting<Settings::PlaybackFollowsCursor>(false, u"Playlist"_s);
-    m_settings->createSetting<Settings::PlaylistTabsSingleHide>(false, u"Playlist Tabs"_s);
+    m_settings->createSetting<Settings::PlaylistTabsSingleHide>(false, u"PlaylistTabs"_s);
 
     m_settings->loadSettings();
     m_libraryTreeGroupRegistry->loadItems();
