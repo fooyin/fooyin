@@ -18,6 +18,7 @@
  */
 
 #include "qdialog.h"
+#include "utils/settings/settingsmanager.h"
 
 #include <gui/propertiesdialog.h>
 
@@ -26,9 +27,12 @@
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QSettings>
 #include <QTabWidget>
 
 #include <ranges>
+
+constexpr auto PropertiesDialogState = "Interface/PropertiesDialogState";
 
 namespace Fy::Gui {
 PropertiesTab::PropertiesTab(QString title, WidgetBuilder widgetBuilder, int index)
@@ -92,6 +96,23 @@ class PropertiesDialogWidget : public QDialog
 {
 public:
     explicit PropertiesDialogWidget(PropertiesDialog::TabList tabs);
+
+    void saveState(QSettings* settings)
+    {
+        QByteArray state = saveGeometry();
+        state            = qCompress(state, 9);
+        settings->setValue(PropertiesDialogState, state);
+    }
+
+    void restoreState(QSettings* settings)
+    {
+        QByteArray state = settings->value(PropertiesDialogState).toByteArray();
+
+        if(!state.isEmpty()) {
+            state = qUncompress(state);
+            restoreGeometry(state);
+        }
+    }
 
 private:
     void done(int value) override;
@@ -179,8 +200,9 @@ void PropertiesDialogWidget::currentTabChanged(int index)
     }
 }
 
-PropertiesDialog::PropertiesDialog(QObject* parent)
+PropertiesDialog::PropertiesDialog(Utils::SettingsManager* settings, QObject* parent)
     : QObject{parent}
+    , m_settings{settings}
 { }
 
 PropertiesDialog::~PropertiesDialog()
@@ -217,7 +239,12 @@ void PropertiesDialog::show()
     auto* dialog = new PropertiesDialogWidget(m_tabs);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
 
+    QObject::connect(dialog, &QDialog::finished, this,
+                     [this, dialog]() { dialog->saveState(m_settings->settingsFile()); });
+
     dialog->resize(600, 700);
     dialog->show();
+
+    dialog->restoreState(m_settings->settingsFile());
 }
 } // namespace Fy::Gui

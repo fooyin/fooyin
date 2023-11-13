@@ -23,7 +23,12 @@
 
 #include <gui/fywidget.h>
 
-namespace Fy::Gui {
+namespace Fy {
+namespace Utils {
+class SettingsManager;
+}
+
+namespace Gui {
 class FYGUI_EXPORT PropertiesTabWidget : public Gui::Widgets::FyWidget
 {
     Q_OBJECT
@@ -70,7 +75,7 @@ class FYGUI_EXPORT PropertiesDialog : public QObject
 public:
     using TabList = std::vector<PropertiesTab>;
 
-    explicit PropertiesDialog(QObject* parent = nullptr);
+    explicit PropertiesDialog(Utils::SettingsManager* settings, QObject* parent = nullptr);
     ~PropertiesDialog() override;
 
     void addTab(const QString& title, const WidgetBuilder& widgetBuilder);
@@ -80,6 +85,9 @@ public:
     void show();
 
 private:
+    Utils::SettingsManager* m_settings;
+
     TabList m_tabs;
 };
-} // namespace Fy::Gui
+} // namespace Gui
+} // namespace Fy

@@ -147,7 +147,7 @@ struct GuiApplication::Private
         , playbackMenu{new PlaybackMenu(actionManager, playerManager, self)}
         , libraryMenu{new LibraryMenu(actionManager, library, settingsManager, self)}
         , helpMenu{new HelpMenu(actionManager, self)}
-        , propertiesDialog{new PropertiesDialog(self)}
+        , propertiesDialog{new PropertiesDialog(settingsManager, self)}
         , generalPage{settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , libraryGeneralPage{libraryManager, settingsManager}
