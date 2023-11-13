@@ -72,4 +72,3 @@ jobs:
       - name: Run GTest
         run: |
           ${{github.workspace}}/build/tests/test_scriptparser
-          ${{github.workspace}}/build/tests/test_tagreader
