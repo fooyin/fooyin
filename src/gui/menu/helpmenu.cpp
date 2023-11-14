@@ -51,3 +51,5 @@ HelpMenu::HelpMenu(Utils::ActionManager* actionManager, QObject* parent)
     QObject::connect(m_about, &QAction::triggered, this, showAboutDialog);
 }
 } // namespace Fy::Gui
+
+#include "moc_helpmenu.cpp"

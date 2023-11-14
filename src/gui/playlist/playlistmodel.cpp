@@ -345,3 +345,5 @@ void PlaylistModel::playStateChanged(Core::Player::PlayState state)
     emit dataChanged({}, {}, {Qt::DecorationRole, PlaylistItem::Role::Playing});
 }
 } // namespace Fy::Gui::Widgets::Playlist
+
+#include "moc_playlistmodel.cpp"

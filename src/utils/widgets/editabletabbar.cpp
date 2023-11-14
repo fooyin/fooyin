@@ -68,3 +68,5 @@ void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
     QTabBar::mouseDoubleClickEvent(event);
 }
 } // namespace Fy::Utils
+
+#include "utils/widgets/moc_editabletabbar.cpp"

@@ -96,3 +96,5 @@ void SearchWidget::contextMenuEvent(QContextMenuEvent* event)
     }
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_searchwidget.cpp"

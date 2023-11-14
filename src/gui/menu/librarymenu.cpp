@@ -49,3 +49,5 @@ LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::Mus
                      [this]() { m_settings->settingsDialog()->openAtPage(Gui::Constants::Page::LibraryGeneral); });
 }
 } // namespace Fy::Gui
+
+#include "moc_librarymenu.cpp"

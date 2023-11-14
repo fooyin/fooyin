@@ -55,3 +55,5 @@ void OverlayWidget::setButtonText(const QString& text)
     }
 }
 } // namespace Fy::Utils
+
+#include "moc_overlaywidget.cpp"

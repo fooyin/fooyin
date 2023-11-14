@@ -31,3 +31,5 @@ Core::Engine::AudioOutputBuilder SdlPlugin::registerOutput()
 
 void SdlPlugin::shutdown() { }
 } // namespace Fy::Sdl
+
+#include "moc_sdlplugin.cpp"

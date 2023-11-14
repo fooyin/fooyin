@@ -114,3 +114,5 @@ void FiltersPlugin::shutdown()
     p->filterManager->shutdown();
 }
 } // namespace Fy::Filters
+
+#include "moc_filtersplugin.cpp"

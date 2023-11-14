@@ -115,3 +115,5 @@ PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, Utils::
 
 PlayerControl::~PlayerControl() = default;
 } // namespace Fy::Gui::Widgets
+
+#include "moc_playercontrol.cpp"

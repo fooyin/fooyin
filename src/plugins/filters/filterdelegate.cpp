@@ -61,3 +61,5 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     painter->restore();
 }
 } // namespace Fy::Filters
+
+#include "moc_filterdelegate.cpp"

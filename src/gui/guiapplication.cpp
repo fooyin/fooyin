@@ -308,3 +308,5 @@ void GuiApplication::shutdown()
     p->mainWindow.reset(nullptr);
 }
 } // namespace Fy::Gui
+
+#include "moc_guiapplication.cpp"

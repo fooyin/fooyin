@@ -345,3 +345,5 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
     return {};
 }
 } // namespace Fy::Gui::Widgets::Info
+
+#include "moc_infomodel.cpp"

@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/extentabletableview.h>
+#include <utils/extendabletableview.h>
 
 #include <QMouseEvent>
 #include <QPainter>
@@ -91,3 +91,5 @@ void ExtendableTableView::paintEvent(QPaintEvent* event)
     painter.drawText(m_buttonRect, Qt::AlignCenter, ButtonText);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_extendabletableview.cpp"

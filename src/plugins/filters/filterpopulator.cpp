@@ -145,3 +145,5 @@ void FilterPopulator::run(const QString& field, const QString& sort, const Core:
     setState(Idle);
 }
 } // namespace Fy::Filters
+
+#include "moc_filterpopulator.cpp"

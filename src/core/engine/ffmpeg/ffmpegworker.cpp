@@ -110,3 +110,5 @@ void EngineWorker::setAtEnd(bool isAtEnd)
     }
 }
 } // namespace Fy::Core::Engine::FFmpeg
+
+#include "moc_ffmpegworker.cpp"

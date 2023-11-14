@@ -138,3 +138,5 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     painter->restore();
 }
 } // namespace Fy::Gui::Widgets::Info
+
+#include "moc_infodelegate.cpp"

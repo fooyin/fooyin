@@ -79,3 +79,5 @@ void FilterView::keyPressEvent(QKeyEvent* event)
     QTreeView::keyPressEvent(event);
 }
 } // namespace Fy::Filters
+
+#include "moc_filterview.cpp"

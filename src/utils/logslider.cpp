@@ -48,3 +48,5 @@ void LogSlider::setNaturalValue(double value)
     QSlider::setValue(static_cast<int>(std::log10(value) * m_scale));
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_logslider.cpp"

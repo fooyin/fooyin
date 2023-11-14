@@ -432,3 +432,5 @@ bool MenuActionContainer::canBeAddedToContainer(ActionContainer* container) cons
     return qobject_cast<MenuActionContainer*>(container) || qobject_cast<MenuBarActionContainer*>(container);
 }
 } // namespace Fy::Utils
+
+#include "moc_menucontainer.cpp"

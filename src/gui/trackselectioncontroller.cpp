@@ -276,3 +276,5 @@ void TrackSelectionController::executeAction(TrackAction action, ActionOptions o
     }
 }
 } // namespace Fy::Gui
+
+#include "gui/moc_trackselectioncontroller.cpp"

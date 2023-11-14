@@ -50,3 +50,5 @@ void Slider::mousePressEvent(QMouseEvent* e)
     QSlider::mousePressEvent(&event);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_slider.cpp"

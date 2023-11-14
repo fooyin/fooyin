@@ -363,3 +363,5 @@ ActionContainer* ActionManager::actionContainer(const Id& id) const
     return nullptr;
 }
 } // namespace Fy::Utils
+
+#include "utils/actions/moc_actionmanager.cpp"

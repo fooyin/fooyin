@@ -31,3 +31,5 @@ void SearchController::changeSearch(const QString& search)
     emit searchChanged(m_searchText);
 }
 } // namespace Fy::Gui::Widgets
+
+#include "gui/moc_searchcontroller.cpp"

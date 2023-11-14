@@ -210,3 +210,5 @@ void EngineHandler::addOutput(const AudioOutputBuilder& output)
     p->outputs.emplace(output.name, output.creator);
 }
 } // namespace Fy::Core::Engine
+
+#include "core/engine/moc_enginehandler.cpp"

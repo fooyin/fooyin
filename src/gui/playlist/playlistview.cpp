@@ -322,3 +322,5 @@ bool PlaylistView::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelI
     return false;
 }
 } // namespace Fy::Gui::Widgets::Playlist
+
+#include "moc_playlistview.cpp"

@@ -307,3 +307,5 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     painter->restore();
 }
 } // namespace Fy::Gui::Widgets::Playlist
+
+#include "moc_playlistdelegate.cpp"

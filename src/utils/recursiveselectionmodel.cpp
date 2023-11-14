@@ -61,3 +61,5 @@ void RecursiveSelectionModel::select(const QItemSelection& selection, SelectionF
     QItemSelectionModel::select(newSelection, command);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_recursiveselectionmodel.cpp"

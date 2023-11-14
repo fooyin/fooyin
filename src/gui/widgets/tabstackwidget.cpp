@@ -263,3 +263,5 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(p->tabs->tabBar()->mapToGlobal(point));
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_tabstackwidget.cpp"

@@ -183,3 +183,5 @@ void CoverProvider::clearCache()
     QPixmapCache::clear();
 }
 } // namespace Fy::Gui::Library
+
+#include "gui/moc_coverprovider.cpp"

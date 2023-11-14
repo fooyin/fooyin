@@ -249,3 +249,5 @@ void SettingsDialog::reject()
     done(Rejected);
 }
 } // namespace Fy::Utils
+
+#include "moc_settingsdialog.cpp"

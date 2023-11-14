@@ -134,3 +134,5 @@ PlaylistControl::PlaylistControl(Core::Player::PlayerManager* playerManager, Uti
 
 PlaylistControl::~PlaylistControl() = default;
 } // namespace Fy::Gui::Widgets
+
+#include "moc_playlistcontrol.cpp"

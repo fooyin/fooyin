@@ -152,3 +152,5 @@ bool ScriptHighlighter::match(Core::Scripting::TokenType type)
     return true;
 }
 } // namespace Fy::Gui::Sandbox
+
+#include "moc_scripthighlighter.cpp"

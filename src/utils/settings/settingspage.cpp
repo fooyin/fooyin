@@ -105,3 +105,5 @@ void SettingsPage::setCategory(const QStringList& category)
     m_category = category;
 }
 } // namespace Fy::Utils
+
+#include "utils/settings/moc_settingspage.cpp"

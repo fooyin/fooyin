@@ -49,3 +49,5 @@ void SortingRegistry::loadItems()
     }
 }
 } // namespace Fy::Core::Library
+
+#include "core/library/moc_sortingregistry.cpp"

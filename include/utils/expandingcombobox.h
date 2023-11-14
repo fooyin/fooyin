@@ -26,6 +26,8 @@
 namespace Fy::Utils {
 class FYUTILS_EXPORT ExpandingComboBox : public QComboBox
 {
+    Q_OBJECT
+
 public:
     explicit ExpandingComboBox(QWidget* parent = nullptr);
 

@@ -32,3 +32,5 @@ void HeaderView::mousePressEvent(QMouseEvent* event)
     QHeaderView::mousePressEvent(event);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_headerview.cpp"

@@ -87,3 +87,5 @@ void PresetRegistry::loadItems()
     }
 }
 } // namespace Fy::Gui::Widgets::Playlist
+
+#include "moc_presetregistry.cpp"

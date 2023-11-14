@@ -213,3 +213,5 @@ void ComboIcon::changeEvent(QEvent* event)
     QWidget::changeEvent(event);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_comboicon.cpp"

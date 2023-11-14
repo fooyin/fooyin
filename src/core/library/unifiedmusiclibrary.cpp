@@ -251,3 +251,5 @@ void UnifiedMusicLibrary::removeLibrary(int id)
     emit libraryRemoved(id);
 }
 } // namespace Fy::Core::Library
+
+#include "moc_unifiedmusiclibrary.cpp"

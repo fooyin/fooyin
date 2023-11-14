@@ -58,3 +58,5 @@ bool Worker::mayRun() const
     return m_state == Running;
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_worker.cpp"

@@ -34,3 +34,5 @@ EditableTabBar* EditableTabWidget::editableTabBar() const
     return m_tabBar;
 }
 } // namespace Fy::Utils
+
+#include "utils/widgets/moc_editabletabwidget.cpp"

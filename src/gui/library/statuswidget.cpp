@@ -142,3 +142,5 @@ QString StatusWidget::name() const
     return QStringLiteral("Status");
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_statuswidget.cpp"

@@ -204,3 +204,5 @@ ProxyAction* ProxyAction::actionWithIcon(QAction* original, const QIcon& icon)
     return proxyAction;
 }
 } // namespace Fy::Utils
+
+#include "utils/actions/moc_proxyaction.cpp"

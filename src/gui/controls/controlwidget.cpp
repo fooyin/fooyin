@@ -80,3 +80,5 @@ QString ControlWidget::name() const
     return QStringLiteral("Controls");
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_controlwidget.cpp"

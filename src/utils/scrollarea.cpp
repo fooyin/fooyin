@@ -83,3 +83,5 @@ int ScrollArea::scrollBarWidth() const
     return list.first()->sizeHint().width();
 }
 } // namespace Fy::Utils
+
+#include "moc_scrollarea.cpp"

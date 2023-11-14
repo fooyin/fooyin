@@ -475,3 +475,5 @@ void FFmpegEngine::shutdown()
     }
 }
 } // namespace Fy::Core::Engine::FFmpeg
+
+#include "moc_ffmpegengine.cpp"

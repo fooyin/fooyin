@@ -325,4 +325,5 @@ void SplitterWidget::loadLayout(const QJsonObject& object)
 }
 } // namespace Fy::Gui::Widgets
 
+#include "gui/moc_splitterwidget.cpp"
 #include "splitterwidget.moc"

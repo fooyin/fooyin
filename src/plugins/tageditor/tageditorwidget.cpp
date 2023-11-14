@@ -26,7 +26,6 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
-#include <utils/extentabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
@@ -214,3 +213,5 @@ void TagEditorWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 } // namespace Fy::TagEditor
+
+#include "moc_tageditorwidget.cpp"

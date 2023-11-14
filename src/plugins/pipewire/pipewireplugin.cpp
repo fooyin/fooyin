@@ -31,3 +31,5 @@ Core::Engine::AudioOutputBuilder PipeWirePlugin::registerOutput()
 
 void PipeWirePlugin::shutdown() { }
 } // namespace Fy::Pipewire
+
+#include "moc_pipewireplugin.cpp"

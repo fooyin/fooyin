@@ -167,3 +167,5 @@ std::optional<LibraryInfo> LibraryManager::libraryInfo(int id) const
     return {};
 }
 } // namespace Fy::Core::Library
+
+#include "core/library/moc_librarymanager.cpp"

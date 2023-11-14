@@ -367,3 +367,5 @@ void PlaylistTabs::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
     }
 }
 } // namespace Fy::Gui::Widgets::Playlist
+
+#include "moc_playlisttabs.cpp"

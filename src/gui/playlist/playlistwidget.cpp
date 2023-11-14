@@ -525,3 +525,5 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* event)
     QWidget::keyPressEvent(event);
 }
 } // namespace Fy::Gui::Widgets::Playlist
+
+#include "moc_playlistwidget.cpp"

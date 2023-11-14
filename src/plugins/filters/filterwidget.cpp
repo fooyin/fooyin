@@ -246,3 +246,5 @@ void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
     emit requestContextMenu(p->filter, mapToGlobal(event->pos()));
 }
 } // namespace Fy::Filters
+
+#include "moc_filterwidget.cpp"

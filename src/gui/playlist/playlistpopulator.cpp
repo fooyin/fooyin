@@ -431,3 +431,5 @@ void PlaylistPopulator::updateHeaders(const ItemList& headers)
 
 PlaylistPopulator::~PlaylistPopulator() = default;
 } // namespace Fy::Gui::Widgets::Playlist
+
+#include "moc_playlistpopulator.cpp"

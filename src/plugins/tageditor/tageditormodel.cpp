@@ -477,3 +477,5 @@ void TagEditorModel::removePendingRow()
     endRemoveRows();
 }
 } // namespace Fy::TagEditor
+
+#include "moc_tageditormodel.cpp"

@@ -67,3 +67,5 @@ QWidget* MultiLineEditDelegate::createEditor(QWidget* parent, const QStyleOption
     return editor;
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_multilinedelegate.cpp"

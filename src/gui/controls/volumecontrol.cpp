@@ -162,3 +162,5 @@ VolumeControl::VolumeControl(Utils::SettingsManager* settings, QWidget* parent)
 
 VolumeControl::~VolumeControl() = default;
 } // namespace Fy::Gui::Widgets
+
+#include "moc_volumecontrol.cpp"

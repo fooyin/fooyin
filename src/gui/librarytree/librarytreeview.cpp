@@ -54,3 +54,5 @@ void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
     QTreeView::mouseDoubleClickEvent(event);
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_librarytreeview.cpp"

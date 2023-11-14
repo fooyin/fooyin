@@ -47,3 +47,5 @@ FileMenu::FileMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* 
 }
 
 } // namespace Fy::Gui
+
+#include "moc_filemenu.cpp"

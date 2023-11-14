@@ -21,6 +21,8 @@
 
 #include "fycore_export.h"
 
+#include <core/track.h>
+
 #include <QObject>
 
 #include <memory>
@@ -29,13 +31,7 @@ class QPixmap;
 class QString;
 class QSize;
 
-namespace Fy {
-
-namespace Core {
-class Track;
-}
-
-namespace Gui::Library {
+namespace Fy::Gui::Library {
 class FYCORE_EXPORT CoverProvider : public QObject
 {
     Q_OBJECT
@@ -56,5 +52,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Library
-} // namespace Fy
+} // namespace Fy::Gui::Library

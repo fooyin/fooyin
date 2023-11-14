@@ -65,3 +65,5 @@ ViewMenu::ViewMenu(Utils::ActionManager* actionManager, TrackSelectionController
     });
 }
 } // namespace Fy::Gui
+
+#include "moc_viewmenu.cpp"

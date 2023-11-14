@@ -46,3 +46,5 @@ void PopupLineEdit::focusOutEvent(QFocusEvent* event)
     emit editingFinished();
 }
 } // namespace Fy::Utils
+
+#include "utils/widgets/moc_popuplineedit.cpp"

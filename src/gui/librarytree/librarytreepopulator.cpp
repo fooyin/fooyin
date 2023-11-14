@@ -158,3 +158,5 @@ void LibraryTreePopulator::run(const QString& grouping, const Core::TrackList& t
     setState(Idle);
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_librarytreepopulator.cpp"
