@@ -143,6 +143,10 @@ TEST_F(TagReaderTest, M4aRead)
     EXPECT_EQ(track.genre(), "Testing");
     EXPECT_EQ(track.composer(), "Fooyin");
     EXPECT_EQ(track.comment(), "A fooyin test");
+
+    const auto testTag = track.extraTag(u"TEST"_s);
+    ASSERT_TRUE(!testTag.isEmpty());
+    EXPECT_EQ(testTag.front(), "A custom tag");
 }
 
 TEST_F(TagReaderTest, Mp3Read)
