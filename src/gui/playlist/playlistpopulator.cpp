@@ -170,6 +170,7 @@ struct PlaylistPopulator::Private
         }
         Container* header = headers.at(key);
         header->addTrack(track);
+        data.trackParents[track.id()].push_back(key);
 
         auto* headerItem = &data.items.at(key);
         parent           = headerItem;
@@ -224,6 +225,7 @@ struct PlaylistPopulator::Private
             }
             Container* subheaderContainer = headers.at(key);
             subheaderContainer->addTrack(track);
+            data.trackParents[track.id()].push_back(key);
 
             auto* subheaderItem = &data.items.at(key);
             if(subheaderItem->parent()->type() != PlaylistItem::Header) {
