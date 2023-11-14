@@ -28,9 +28,7 @@ PopupLineEdit::PopupLineEdit(QWidget* parent)
 
 PopupLineEdit::PopupLineEdit(const QString& contents, QWidget* parent)
     : QLineEdit{contents, parent}
-{
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::Tool);
-}
+{ }
 
 void PopupLineEdit::keyPressEvent(QKeyEvent* event)
 {

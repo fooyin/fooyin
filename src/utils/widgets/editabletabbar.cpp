@@ -24,39 +24,47 @@
 namespace Fy::Utils {
 EditableTabBar::EditableTabBar(QWidget* parent)
     : QTabBar{parent}
+    , m_lineEdit{nullptr}
 {
     setMovable(true);
 }
 
 void EditableTabBar::showEditor()
 {
-    auto* lineEdit = new PopupLineEdit(tabText(currentIndex()), this);
-    lineEdit->setAttribute(Qt::WA_DeleteOnClose);
+    m_lineEdit = new PopupLineEdit(tabText(currentIndex()), this);
+    m_lineEdit->setAttribute(Qt::WA_DeleteOnClose);
 
-    QObject::connect(lineEdit, &PopupLineEdit::editingCancelled, lineEdit, &QWidget::close);
-    QObject::connect(lineEdit, &PopupLineEdit::editingFinished, this, [this, lineEdit]() {
-        const QString text = lineEdit->text();
-        if(text != tabText(currentIndex())) {
-            setTabText(currentIndex(), lineEdit->text());
-            emit tabTextChanged(currentIndex(), lineEdit->text());
+    const int currIndex = currentIndex();
+
+    QObject::connect(m_lineEdit, &QObject::destroyed, this, [this]() { m_lineEdit = nullptr; });
+    QObject::connect(m_lineEdit, &PopupLineEdit::editingCancelled, m_lineEdit, &QWidget::close);
+    QObject::connect(m_lineEdit, &PopupLineEdit::editingFinished, this, [this, currIndex]() {
+        const QString text = m_lineEdit->text();
+        if(text != tabText(currIndex)) {
+            setTabText(currIndex, m_lineEdit->text());
+            emit tabTextChanged(currIndex, m_lineEdit->text());
         }
-        lineEdit->close();
+        m_lineEdit->close();
     });
 
-    const QRect rect = tabRect(currentIndex());
-    lineEdit->setFixedSize(rect.size());
+    const QRect rect = tabRect(currIndex);
+    m_lineEdit->setGeometry(rect);
 
-    lineEdit->move(mapToGlobal(rect.topLeft()));
-    lineEdit->setText(tabText(currentIndex()));
-
-    lineEdit->show();
-    lineEdit->selectAll();
-    lineEdit->activateWindow();
-    lineEdit->setFocus(Qt::ActiveWindowFocusReason);
+    m_lineEdit->show();
+    m_lineEdit->selectAll();
+    m_lineEdit->setFocus(Qt::ActiveWindowFocusReason);
 }
 
-void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* /*event*/)
+void EditableTabBar::closeEditor()
+{
+    if(m_lineEdit) {
+        m_lineEdit->close();
+    }
+}
+
+void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
 {
     showEditor();
+    QTabBar::mouseDoubleClickEvent(event);
 }
 } // namespace Fy::Utils

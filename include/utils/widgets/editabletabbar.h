@@ -24,6 +24,8 @@
 #include <QTabBar>
 
 namespace Fy::Utils {
+class PopupLineEdit;
+
 class FYUTILS_EXPORT EditableTabBar : public QTabBar
 {
     Q_OBJECT
@@ -32,11 +34,15 @@ public:
     explicit EditableTabBar(QWidget* parent = nullptr);
 
     void showEditor();
+    void closeEditor();
 
 signals:
     void tabTextChanged(int index, const QString& text);
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent* event) override;
+
+private:
+    PopupLineEdit* m_lineEdit;
 };
 } // namespace Fy::Utils
