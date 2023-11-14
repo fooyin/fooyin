@@ -21,14 +21,6 @@ function(fooyin_option option description)
     add_feature_info("Option ${option}" ${option} "${description}")
 endfunction()
 
-if(BUILD_SHARED_LIBS)
-    set(FOOYIN_LIBRARY_TYPE SHARED)
-    set(FOOYIN_PLUGIN_TYPE MODULE)
-else()
-    set(FOOYIN_LIBRARY_TYPE STATIC)
-    set(FOOYIN_PLUGIN_TYPE STATIC)
-endif()
-
 function(create_fooyin_library name)
     cmake_parse_arguments(
         LIB
