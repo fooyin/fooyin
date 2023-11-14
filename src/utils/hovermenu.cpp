@@ -38,7 +38,7 @@ namespace Fy::Utils {
 HoverMenu::HoverMenu(QWidget* parent)
     : QWidget{parent}
 {
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::Tool);
+    setWindowFlags(Qt::ToolTip | Qt::FramelessWindowHint);
 
     QObject::connect(&m_timer, &QTimer::timeout, this, [this]() { closeMenu(m_timer, this); });
 }

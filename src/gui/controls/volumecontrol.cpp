@@ -20,7 +20,6 @@
 #include "volumecontrol.h"
 
 #include <core/coresettings.h>
-#include <core/player/playermanager.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/comboicon.h>
@@ -62,6 +61,8 @@ struct VolumeControl::Private
         volumeSlider->setMinimumHeight(100);
         volumeSlider->setRange(MinVolume, 1.0);
         volumeSlider->setNaturalValue(settings->value<Core::Settings::OutputVolume>());
+
+        volumeMenu->hide();
     }
 
     void showVolumeMenu() const
@@ -80,6 +81,7 @@ struct VolumeControl::Private
         const QPoint pos(self->mapToGlobal(QPoint(x, y)));
         volumeMenu->move(pos);
         volumeMenu->show();
+        volumeMenu->setFocus(Qt::ActiveWindowFocusReason);
 
         volumeMenu->start(1s);
     }
