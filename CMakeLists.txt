@@ -47,6 +47,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 fooyin_option(BUILD_SHARED_LIBS "Build fooyin libraries as shared" ON)
+fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
 fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 
 find_package(
@@ -149,8 +150,6 @@ set(SOURCES src/app/main.cpp)
 qt_add_resources(SOURCES data/icons.qrc)
 
 add_executable(fooyin_exe ${SOURCES})
-
-qt_import_plugins(fooyin_exe INCLUDE fooyin_filters)
 
 set_target_properties(
     fooyin_exe
