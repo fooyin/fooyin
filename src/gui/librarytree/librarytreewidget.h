@@ -39,6 +39,8 @@ class LibraryTreeWidgetPrivate;
 
 class LibraryTreeWidget : public FyWidget
 {
+    Q_OBJECT
+
 public:
     LibraryTreeWidget(Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
                       TrackSelectionController* trackSelection, Utils::SettingsManager* settings,

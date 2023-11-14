@@ -338,3 +338,5 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(mapToGlobal(event->pos()));
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_librarytreewidget.cpp"
