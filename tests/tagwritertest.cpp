@@ -78,7 +78,6 @@ TEST_F(TagWriterTest, AiffWrite)
         m_tagReader.readMetaData(track);
 
         track.setId(0);
-        track.setType(Core::Track::Type::FLAC);
         track.setTitle(u"TestTitle"_s);
         track.setAlbum({u"TestAlbum"_s});
         track.setAlbumArtist(u"TestAArtist"_s);
@@ -135,7 +134,6 @@ TEST_F(TagWriterTest, FlacWrite)
         m_tagReader.readMetaData(track);
 
         track.setId(0);
-        track.setType(Core::Track::Type::FLAC);
         track.setTitle(u"TestTitle"_s);
         track.setAlbum({u"TestAlbum"_s});
         track.setAlbumArtist(u"TestAArtist"_s);
@@ -192,7 +190,6 @@ TEST_F(TagWriterTest, M4aWrite)
         m_tagReader.readMetaData(track);
 
         track.setId(0);
-        track.setType(Core::Track::Type::FLAC);
         track.setTitle(u"TestTitle"_s);
         track.setAlbum({u"TestAlbum"_s});
         track.setAlbumArtist(u"TestAArtist"_s);
@@ -249,7 +246,6 @@ TEST_F(TagWriterTest, Mp3Write)
         m_tagReader.readMetaData(track);
 
         track.setId(0);
-        track.setType(Core::Track::Type::FLAC);
         track.setTitle(u"TestTitle"_s);
         track.setAlbum({u"TestAlbum"_s});
         track.setAlbumArtist(u"TestAArtist"_s);
@@ -306,7 +302,6 @@ TEST_F(TagWriterTest, OggWrite)
         m_tagReader.readMetaData(track);
 
         track.setId(0);
-        track.setType(Core::Track::Type::FLAC);
         track.setTitle(u"TestTitle"_s);
         track.setAlbum({u"TestAlbum"_s});
         track.setAlbumArtist(u"TestAArtist"_s);
@@ -363,7 +358,6 @@ TEST_F(TagWriterTest, OpusWrite)
         m_tagReader.readMetaData(track);
 
         track.setId(0);
-        track.setType(Core::Track::Type::FLAC);
         track.setTitle(u"TestTitle"_s);
         track.setAlbum({u"TestAlbum"_s});
         track.setAlbumArtist(u"TestAArtist"_s);
@@ -420,7 +414,6 @@ TEST_F(TagWriterTest, WavWrite)
         m_tagReader.readMetaData(track);
 
         track.setId(0);
-        track.setType(Core::Track::Type::FLAC);
         track.setTitle(u"TestTitle"_s);
         track.setAlbum({u"TestAlbum"_s});
         track.setAlbumArtist(u"TestAArtist"_s);
