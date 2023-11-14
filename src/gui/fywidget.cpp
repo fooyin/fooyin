@@ -50,3 +50,5 @@ void FyWidget::saveLayout(QJsonArray& array)
 
 void FyWidget::loadLayout(const QJsonObject& /*object*/) { }
 } // namespace Fy::Gui::Widgets
+
+#include "gui/moc_fywidget.cpp"

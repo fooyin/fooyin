@@ -234,3 +234,5 @@ SandboxDialog::~SandboxDialog()
     p->saveState();
 }
 } // namespace Fy::Gui::Sandbox
+
+#include "moc_sandboxdialog.cpp"

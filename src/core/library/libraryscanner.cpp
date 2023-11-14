@@ -251,3 +251,5 @@ void LibraryScanner::updateTracks(const TrackList& tracks)
     }
 }
 } // namespace Fy::Core::Library
+
+#include "moc_libraryscanner.cpp"

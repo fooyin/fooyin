@@ -180,3 +180,5 @@ PlaybackMenu::PlaybackMenu(Utils::ActionManager* actionManager, Core::Player::Pl
 
 PlaybackMenu::~PlaybackMenu() = default;
 } // namespace Fy::Gui
+
+#include "moc_playbackmenu.cpp"

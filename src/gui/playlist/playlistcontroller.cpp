@@ -261,3 +261,5 @@ bool PlaylistController::currentIsActive() const
     return p->currentPlaylist == p->handler->activePlaylist();
 }
 } // namespace Fy::Gui::Widgets::Playlist
+
+#include "moc_playlistcontroller.cpp"

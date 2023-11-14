@@ -78,3 +78,5 @@ void TagEditorPlugin::initialise(const Gui::GuiPluginContext& context)
 
 void TagEditorPlugin::shutdown() { }
 } // namespace Fy::TagEditor
+
+#include "moc_tageditorplugin.cpp"

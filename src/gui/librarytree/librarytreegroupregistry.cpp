@@ -51,3 +51,5 @@ void LibraryTreeGroupRegistry::loadItems()
     }
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_librarytreegroupregistry.cpp"

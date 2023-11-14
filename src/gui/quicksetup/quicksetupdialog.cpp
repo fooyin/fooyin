@@ -72,3 +72,5 @@ void QuickSetupDialog::showEvent(QShowEvent* event)
     QDialog::showEvent(event);
 }
 } // namespace Fy::Gui
+
+#include "moc_quicksetupdialog.cpp"

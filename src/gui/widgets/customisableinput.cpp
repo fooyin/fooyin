@@ -149,3 +149,5 @@ void CustomisableInput::resetState()
     p->state &= ~ColourChanged;
 }
 } // namespace Fy::Gui::Widgets
+
+#include "gui/widgets/moc_customisableinput.cpp"

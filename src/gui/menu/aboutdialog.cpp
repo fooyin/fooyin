@@ -105,3 +105,5 @@ AboutDialog::AboutDialog(QWidget* parent)
     layout->addWidget(buttonBox, 4, 1);
 }
 } // namespace Fy::Gui
+
+#include "moc_aboutdialog.cpp"

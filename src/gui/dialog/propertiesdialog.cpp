@@ -248,3 +248,5 @@ void PropertiesDialog::show()
     dialog->restoreState(m_settings->settingsFile());
 }
 } // namespace Fy::Gui
+
+#include "gui/moc_propertiesdialog.cpp"

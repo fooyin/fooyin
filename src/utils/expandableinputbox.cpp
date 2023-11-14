@@ -276,3 +276,5 @@ void ExpandableInputBox::clearBlocks()
     p->blocks.clear();
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_expandableinputbox.cpp"

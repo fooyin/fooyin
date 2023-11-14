@@ -268,3 +268,5 @@ void Renderer::doNextStep()
     scheduleNextStep(false);
 }
 } // namespace Fy::Core::Engine::FFmpeg
+
+#include "moc_ffmpegrenderer.cpp"

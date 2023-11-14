@@ -148,3 +148,5 @@ void ProgressWidget::sliderDropped()
     emit movedSlider(pos);
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_progresswidget.cpp"

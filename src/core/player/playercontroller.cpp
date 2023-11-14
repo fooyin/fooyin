@@ -174,3 +174,5 @@ Track PlayerController::currentTrack() const
     return p->currentTrack;
 }
 } // namespace Fy::Core::Player
+
+#include "moc_playercontroller.cpp"

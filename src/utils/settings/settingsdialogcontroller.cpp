@@ -97,3 +97,5 @@ void SettingsDialogController::loadState(const QByteArray& state)
     }
 }
 } // namespace Fy::Utils
+
+#include "utils/settings/moc_settingsdialogcontroller.cpp"

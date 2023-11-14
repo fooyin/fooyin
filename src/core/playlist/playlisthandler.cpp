@@ -498,3 +498,5 @@ void PlaylistHandler::tracksRemoved(const TrackList& tracks)
     }
 }
 } // namespace Fy::Core::Playlist
+
+#include "moc_playlisthandler.cpp"

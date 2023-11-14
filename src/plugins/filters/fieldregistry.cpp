@@ -48,3 +48,5 @@ void FieldRegistry::loadItems()
     }
 }
 } // namespace Fy::Filters
+
+#include "moc_fieldregistry.cpp"

@@ -322,3 +322,5 @@ void EditableLayout::showQuickSetup()
     quickSetup->show();
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_editablelayout.cpp"

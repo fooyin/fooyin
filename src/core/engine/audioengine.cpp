@@ -62,3 +62,5 @@ void AudioEngine::startup() { }
 
 void AudioEngine::shutdown() { }
 } // namespace Fy::Core::Engine
+
+#include "core/engine/moc_audioengine.cpp"

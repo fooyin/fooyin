@@ -63,3 +63,5 @@ void ExpandingComboBox::resizeDropDown()
     }
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_expandingcombobox.cpp"

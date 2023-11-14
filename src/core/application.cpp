@@ -121,3 +121,5 @@ void Application::shutdown()
     p->database.closeDatabase();
 }
 } // namespace Fy::Core
+
+#include "moc_application.cpp"

@@ -68,3 +68,5 @@ QMenuBar* MainMenuBar::menuBar() const
     return m_menubar->menuBar();
 }
 } // namespace Fy::Gui
+
+#include "moc_mainmenubar.cpp"

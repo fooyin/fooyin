@@ -273,3 +273,5 @@ void Decoder::doNextStep()
     scheduleNextStep(false);
 }
 } // namespace Fy::Core::Engine::FFmpeg
+
+#include "moc_ffmpegdecoder.cpp"

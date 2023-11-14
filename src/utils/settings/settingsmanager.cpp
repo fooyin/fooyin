@@ -84,3 +84,5 @@ SettingsDialogController* SettingsManager::settingsDialog() const
     return m_settingsDialog;
 }
 } // namespace Fy::Utils
+
+#include "utils/settings/moc_settingsmanager.cpp"

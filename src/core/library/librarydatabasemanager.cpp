@@ -45,3 +45,5 @@ void LibraryDatabaseManager::getAllTracks()
     }
 }
 } // namespace Fy::Core::Library
+
+#include "moc_librarydatabasemanager.cpp"

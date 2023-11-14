@@ -44,3 +44,5 @@ void ClickableLabel::leaveEvent(QEvent* event)
     QLabel::leaveEvent(event);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_clickablelabel.cpp"

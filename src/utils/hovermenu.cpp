@@ -55,3 +55,5 @@ void HoverMenu::leaveEvent(QEvent* event)
     QWidget::leaveEvent(event);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_hovermenu.cpp"

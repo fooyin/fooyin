@@ -352,3 +352,5 @@ QCoro::Task<void> FilterManager::searchChanged(QString search)
     p->resetFiltersAfterIndex(-1);
 }
 } // namespace Fy::Filters
+
+#include "moc_filtermanager.cpp"

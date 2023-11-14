@@ -51,3 +51,5 @@ QString Dummy::name() const
     return QStringLiteral("Dummy");
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_dummy.cpp"

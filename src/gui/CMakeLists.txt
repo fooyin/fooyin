@@ -27,16 +27,8 @@ project(
 )
 
 set(HEADERS
-    ${CMAKE_SOURCE_DIR}/include/gui/coverprovider.h
-    ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
-    ${CMAKE_SOURCE_DIR}/include/gui/propertiesdialog.h
-    ${CMAKE_SOURCE_DIR}/include/gui/searchcontroller.h
-    ${CMAKE_SOURCE_DIR}/include/gui/splitterwidget.h
-    ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
-    ${CMAKE_SOURCE_DIR}/include/gui/widgetcontainer.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
-    ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
 )
 
 set(SOURCES

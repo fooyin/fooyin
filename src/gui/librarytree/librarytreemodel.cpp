@@ -480,3 +480,5 @@ void LibraryTreeModel::reset(const Core::TrackList& tracks)
     QMetaObject::invokeMethod(&p->populator, [this, tracks] { p->populator.run(p->grouping, tracks); });
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_librarytreemodel.cpp"

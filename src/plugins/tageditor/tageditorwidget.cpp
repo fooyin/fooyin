@@ -214,3 +214,5 @@ void TagEditorWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 } // namespace Fy::TagEditor
+
+#include "moc_tageditorwidget.cpp"

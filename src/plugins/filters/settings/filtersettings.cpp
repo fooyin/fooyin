@@ -43,3 +43,5 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
     m_settings->loadSettings();
 }
 } // namespace Fy::Filters::Settings
+
+#include "moc_filtersettings.cpp"

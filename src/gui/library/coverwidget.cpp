@@ -107,3 +107,5 @@ void CoverWidget::resizeEvent(QResizeEvent* event)
     QWidget::resizeEvent(event);
 }
 } // namespace Fy::Gui::Widgets
+
+#include "moc_coverwidget.cpp"

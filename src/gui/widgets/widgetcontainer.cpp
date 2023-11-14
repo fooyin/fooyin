@@ -55,3 +55,5 @@ void WidgetContainer::loadWidgets(const QJsonArray& widgets)
     }
 }
 } // namespace Fy::Gui::Widgets
+
+#include "gui/moc_widgetcontainer.cpp"

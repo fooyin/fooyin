@@ -96,3 +96,5 @@ void MainWindow::closeEvent(QCloseEvent* event)
     QMainWindow::closeEvent(event);
 }
 } // namespace Fy::Gui
+
+#include "moc_mainwindow.cpp"

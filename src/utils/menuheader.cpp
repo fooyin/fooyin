@@ -72,3 +72,5 @@ MenuHeaderAction::MenuHeaderAction(const QString& text, QObject* parent)
     setDefaultWidget(header);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_menuheader.cpp"

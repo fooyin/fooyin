@@ -247,3 +247,5 @@ void ActionCommand::addOverrideAction(QAction* action, const Context& context)
     setCurrentContext(context);
 }
 } // namespace Fy::Utils
+
+#include "moc_actioncommand.cpp"

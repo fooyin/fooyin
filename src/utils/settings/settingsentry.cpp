@@ -76,3 +76,5 @@ bool SettingsEntry::reset()
     return setValue(m_defaultValue);
 }
 } // namespace Fy::Utils
+
+#include "utils/settings/moc_settingsentry.cpp"

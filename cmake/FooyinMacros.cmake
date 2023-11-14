@@ -25,8 +25,6 @@ function(create_fooyin_plugin name)
         ${ARGN}
     )
 
-    set(CMAKE_AUTOMOC ON)
-
     add_library(${name} MODULE ${LIB_SOURCES})
 
     string(TOLOWER ${name} base_name)

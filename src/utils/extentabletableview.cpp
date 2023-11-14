@@ -91,3 +91,5 @@ void ExtendableTableView::paintEvent(QPaintEvent* event)
     painter.drawText(m_buttonRect, Qt::AlignCenter, ButtonText);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_extentabletableview.cpp"

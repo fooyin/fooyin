@@ -42,3 +42,5 @@ void OverlayFilter::paintEvent(QPaintEvent* /*event*/)
     painter.fillRect(rect(), colour);
 }
 } // namespace Fy::Utils
+
+#include "utils/moc_overlayfilter.cpp"

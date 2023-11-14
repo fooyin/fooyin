@@ -27,13 +27,9 @@ project(
 )
 
 set(HEADERS
-    ${CMAKE_SOURCE_DIR}/include/core/engine/audioengine.h
-    ${CMAKE_SOURCE_DIR}/include/core/engine/enginehandler.h
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
-    ${CMAKE_SOURCE_DIR}/include/core/library/librarymanager.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
-    ${CMAKE_SOURCE_DIR}/include/core/library/sortingregistry.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playermanager.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
     ${CMAKE_SOURCE_DIR}/include/core/plugins/plugininfo.h

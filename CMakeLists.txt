@@ -49,6 +49,7 @@ endif()
 fooyin_option(BUILD_SHARED_LIBS "Build fooyin libraries as shared" ON)
 fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
 fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
+fooyin_option(USE_CCACHE "Use ccache if found" ON)
 
 find_package(
     Qt6 REQUIRED
@@ -91,6 +92,14 @@ else()
     )
     set(KDSINGLEAPPLICATION_LIBRARIES kdsingleapplication)
     add_definitions(-DKDSINGLEAPPLICATION_STATIC_BUILD)
+endif()
+
+if(USE_CCACHE)
+    find_program(CCACHE_EXECUTABLE ccache)
+    if(CCACHE_EXECUTABLE)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_EXECUTABLE})
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ${CCACHE_EXECUTABLE})
+    endif()
 endif()
 
 # ---- Fooyin library ----
