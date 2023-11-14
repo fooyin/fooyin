@@ -18,3 +18,9 @@ target_link_libraries(
     test_tagreader
     PRIVATE fooyin_test_data
 )
+
+fooyin_add_test(test_tagwriter tagwritertest.cpp)
+target_link_libraries(
+    test_tagwriter
+    PRIVATE fooyin_test_data
+)
