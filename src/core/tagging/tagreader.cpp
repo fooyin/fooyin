@@ -19,6 +19,8 @@
 
 #include <core/tagging/tagreader.h>
 
+#include "tagdefs.h"
+
 #include <core/constants.h>
 #include <core/track.h>
 
@@ -57,6 +59,96 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
+using namespace Fy::Core::Tagging;
+
+constexpr std::array supportedMp4Tags{
+    std::pair(Mp4::Title, Tag::Title),
+    std::pair(Mp4::Artist, Tag::Artist),
+    std::pair(Mp4::Album, Tag::Album),
+    std::pair(Mp4::AlbumArtist, Tag::AlbumArtist),
+    std::pair(Mp4::Genre, Tag::Genre),
+    std::pair(Mp4::Composer, Tag::Composer),
+    std::pair(Mp4::Performer, Tag::Performer),
+    std::pair(Mp4::Comment, Tag::Comment),
+    std::pair(Mp4::Lyrics, Tag::Lyrics),
+    std::pair(Mp4::Date, Tag::Date),
+    std::pair(Mp4::Rating, Tag::Rating),
+    std::pair(Mp4::TrackNumber, Tag::TrackNumber),
+    std::pair(Mp4::DiscNumber, Tag::DiscNumber),
+    std::pair("cpil", "COMPILATION"),
+    std::pair("tmpo", "BPM"),
+    std::pair("cprt", "COPYRIGHT"),
+    std::pair("\251too", "ENCODEDBY"),
+    std::pair("\251grp", "GROUPING"),
+    std::pair("soal", "ALBUMSORT"),
+    std::pair("soaa", "ALBUMARTISTSORT"),
+    std::pair("soar", "ARTISTSORT"),
+    std::pair("sonm", "TITLESORT"),
+    std::pair("soco", "COMPOSERSORT"),
+    std::pair("sosn", "SHOWSORT"),
+    std::pair("shwm", "SHOWWORKMOVEMENT"),
+    std::pair("pgap", "GAPLESSPLAYBACK"),
+    std::pair("pcst", "PODCAST"),
+    std::pair("catg", "PODCASTCATEGORY"),
+    std::pair("desc", "PODCASTDESC"),
+    std::pair("egid", "PODCASTID"),
+    std::pair("purl", "PODCASTURL"),
+    std::pair("tves", "TVEPISODE"),
+    std::pair("tven", "TVEPISODEID"),
+    std::pair("tvnn", "TVNETWORK"),
+    std::pair("tvsn", "TVSEASON"),
+    std::pair("tvsh", "TVSHOW"),
+    std::pair("\251wrk", "WORK"),
+    std::pair("\251mvn", "MOVEMENTNAME"),
+    std::pair("\251mvi", "MOVEMENTNUMBER"),
+    std::pair("\251mvc", "MOVEMENTCOUNT"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Track Id", "MUSICBRAINZ_TRACKID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Artist Id", "MUSICBRAINZ_ARTISTID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Album Id", "MUSICBRAINZ_ALBUMID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Album Artist Id", "MUSICBRAINZ_ALBUMARTISTID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Release Group Id", "MUSICBRAINZ_RELEASEGROUPID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Release Track Id", "MUSICBRAINZ_RELEASETRACKID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Work Id", "MUSICBRAINZ_WORKID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Album Release Country", "RELEASECOUNTRY"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Album Status", "RELEASESTATUS"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Album Type", "RELEASETYPE"),
+    std::pair("----:com.apple.iTunes:ARTISTS", "ARTISTS"),
+    std::pair("----:com.apple.iTunes:originaldate", "ORIGINALDATE"),
+    std::pair("----:com.apple.iTunes:ASIN", "ASIN"),
+    std::pair("----:com.apple.iTunes:LABEL", "LABEL"),
+    std::pair("----:com.apple.iTunes:LYRICIST", "LYRICIST"),
+    std::pair("----:com.apple.iTunes:CONDUCTOR", "CONDUCTOR"),
+    std::pair("----:com.apple.iTunes:REMIXER", "REMIXER"),
+    std::pair("----:com.apple.iTunes:ENGINEER", "ENGINEER"),
+    std::pair("----:com.apple.iTunes:PRODUCER", "PRODUCER"),
+    std::pair("----:com.apple.iTunes:DJMIXER", "DJMIXER"),
+    std::pair("----:com.apple.iTunes:MIXER", "MIXER"),
+    std::pair("----:com.apple.iTunes:SUBTITLE", "SUBTITLE"),
+    std::pair("----:com.apple.iTunes:DISCSUBTITLE", "DISCSUBTITLE"),
+    std::pair("----:com.apple.iTunes:MOOD", "MOOD"),
+    std::pair("----:com.apple.iTunes:ISRC", "ISRC"),
+    std::pair("----:com.apple.iTunes:CATALOGNUMBER", "CATALOGNUMBER"),
+    std::pair("----:com.apple.iTunes:BARCODE", "BARCODE"),
+    std::pair("----:com.apple.iTunes:SCRIPT", "SCRIPT"),
+    std::pair("----:com.apple.iTunes:LANGUAGE", "LANGUAGE"),
+    std::pair("----:com.apple.iTunes:LICENSE", "LICENSE"),
+    std::pair("----:com.apple.iTunes:MEDIA", "MEDIA"),
+    std::pair("----:com.apple.iTunes:replaygain_album_gain", "REPLAYGAIN_ALBUM_GAIN"),
+    std::pair("----:com.apple.iTunes:replaygain_album_peak", "REPLAYGAIN_ALBUM_PEAK"),
+    std::pair("----:com.apple.iTunes:replaygain_track_gain", "REPLAYGAIN_TRACK_GAIN"),
+    std::pair("----:com.apple.iTunes:replaygain_track_peak", "REPLAYGAIN_TRACK_PEAK"),
+};
+
+QString findMp4Tag(const TagLib::String& tag)
+{
+    for(const auto& [key, value] : supportedMp4Tags) {
+        if(tag == key) {
+            return value;
+        }
+    }
+    return {};
+}
+
 QString convertString(const TagLib::String& str)
 {
     return QString::fromStdString(str.to8Bit(true));
@@ -140,57 +232,62 @@ void readAudioProperties(const TagLib::File& file, Fy::Core::Track& track)
     }
 }
 
-void readGeneralProperties(const TagLib::PropertyMap& props, Fy::Core::Track& track)
+void readGeneralProperties(const TagLib::PropertyMap& props, Fy::Core::Track& track, bool skipExtra = false)
 {
     if(props.isEmpty()) {
         return;
     }
 
-    if(props.contains("TITLE")) {
-        track.setTitle(convertString(props["TITLE"].toString()));
+    if(props.contains(Tag::Title)) {
+        track.setTitle(convertString(props[Tag::Title].toString()));
     }
-    if(props.contains("ARTIST")) {
-        track.setArtists(convertStringList(props["ARTIST"]));
+    if(props.contains(Tag::Artist)) {
+        track.setArtists(convertStringList(props[Tag::Artist]));
     }
-    if(props.contains("ALBUM")) {
-        track.setAlbum(convertString(props["ALBUM"].toString()));
+    if(props.contains(Tag::Album)) {
+        track.setAlbum(convertString(props[Tag::Album].toString()));
     }
-    if(props.contains("ALBUMARTIST")) {
+    if(props.contains(Tag::AlbumArtist)) {
         // TODO: Support multiple album artists
-        track.setAlbumArtist(convertString(props["ALBUMARTIST"].toString()));
+        track.setAlbumArtist(convertString(props[Tag::AlbumArtist].toString()));
     }
-    if(props.contains("GENRE")) {
-        track.setGenres(convertStringList(props["GENRE"]));
+    if(props.contains(Tag::Genre)) {
+        track.setGenres(convertStringList(props[Tag::Genre]));
     }
-    if(props.contains("COMPOSER")) {
-        track.setComposer(convertString(props["COMPOSER"].toString()));
+    if(props.contains(Tag::Composer)) {
+        track.setComposer(convertString(props[Tag::Composer].toString()));
     }
-    if(props.contains("PERFORMER")) {
-        track.setPerformer(convertString(props["PERFORMER"].toString()));
+    if(props.contains(Tag::Performer)) {
+        track.setPerformer(convertString(props[Tag::Performer].toString()));
     }
-    if(props.contains("COMMENT")) {
-        track.setComment(convertString(props["COMMENT"].toString()));
+    if(props.contains(Tag::Comment)) {
+        track.setComment(convertString(props[Tag::Comment].toString()));
     }
-    if(props.contains("LYRICS")) {
-        track.setLyrics(convertString(props["LYRICS"].toString()));
+    if(props.contains(Tag::Lyrics)) {
+        track.setLyrics(convertString(props[Tag::Lyrics].toString()));
     }
-    if(props.contains("DATE")) {
-        track.setDate(convertString(props["DATE"].toString()));
+    if(props.contains(Tag::Date)) {
+        track.setDate(convertString(props[Tag::Date].toString()));
         track.setYear(track.date().toInt());
     }
-    if(props.contains("RATING")) {
+    if(props.contains(Tag::Rating)) {
         // TODO
     }
 
-    static const std::set<TagLib::String> baseTags
-        = {"TITLE", "ARTIST",   "ALBUM",     "ALBUMARTIST", "TRACKNUMBER", "TRACKTOTAL", "DISCNUMBER", "DISCTOTAL",
-           "GENRE", "COMPOSER", "PERFORMER", "COMMENT",     "LYRICS",      "DATE",       "RATING"};
+    if(!skipExtra) {
+        static const std::set<TagLib::String> baseTags
+            = {Tag::Title,      Tag::Artist,     Tag::Album,     Tag::AlbumArtist, Tag::TrackNumber,
+               Tag::TrackTotal, Tag::DiscNumber, Tag::DiscTotal, Tag::Genre,       Tag::Composer,
+               Tag::Performer,  Tag::Comment,    Tag::Lyrics,    Tag::Date,        Tag::Rating};
 
-    for(const auto& [tag, values] : props) {
-        if(!baseTags.contains(tag)) {
-            const auto tagEntry = QString::fromStdString(tag.to8Bit(true));
-            for(const auto& value : values) {
-                track.addExtraTag(tagEntry, QString::fromStdString(value.to8Bit(true)));
+        track.clearExtraTags();
+
+        for(const auto& [tag, values] : props) {
+            if(!baseTags.contains(tag)) {
+                const auto tagEntry = QString::fromStdString(tag.to8Bit(true));
+                for(const auto& value : values) {
+                    track.addExtraTag(tagEntry, QString::fromStdString(value.to8Bit(true)));
+                }
             }
         }
     }
@@ -311,14 +408,46 @@ QByteArray readApeCover(const TagLib::APE::Tag* apeTags)
     return {};
 }
 
-void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fy::Core::Track& track)
+QString stripMp4FreeFormName(const TagLib::String& name)
+{
+    QString freeFormName = convertString(name);
+
+    if(freeFormName.startsWith("----"_L1)) {
+        qsizetype nameStart = freeFormName.lastIndexOf(":"_L1);
+        if(nameStart == -1) {
+            nameStart = 5;
+        }
+        else {
+            ++nameStart;
+        }
+        freeFormName = freeFormName.sliced(nameStart);
+    }
+
+    return freeFormName;
+}
+
+void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fy::Core::Track& track, bool skipExtra = false)
 {
     if(mp4Tags->isEmpty()) {
         return;
     }
 
-    if(mp4Tags->contains("trkn")) {
-        const TagLib::MP4::Item::IntPair& trackNumbers = mp4Tags->item("trkn").toIntPair();
+    const auto& items = mp4Tags->itemMap();
+
+    if(items.contains(Mp4::PerformerAlt)) {
+        const auto performer = items[Mp4::PerformerAlt].toStringList();
+        if(performer.size() > 0) {
+            track.setPerformer(convertString(performer.toString()));
+        }
+    }
+
+    if(items.contains(Mp4::Rating)) {
+        const auto rating = items[Mp4::Rating].toStringList();
+        if(rating.size() > 0) { }
+    }
+
+    if(items.contains(Mp4::TrackNumber)) {
+        const TagLib::MP4::Item::IntPair& trackNumbers = items[Mp4::TrackNumber].toIntPair();
         if(trackNumbers.first > 0) {
             track.setTrackNumber(trackNumbers.first);
         }
@@ -327,8 +456,8 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fy::Core::Track& track)
         }
     }
 
-    if(mp4Tags->contains("disk")) {
-        const TagLib::MP4::Item::IntPair& discNumbers = mp4Tags->item("disk").toIntPair();
+    if(items.contains(Mp4::DiscNumber)) {
+        const TagLib::MP4::Item::IntPair& discNumbers = items[Mp4::DiscNumber].toIntPair();
         if(discNumbers.first > 0) {
             track.setDiscNumber(discNumbers.first);
         }
@@ -336,11 +465,33 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fy::Core::Track& track)
             track.setDiscTotal(discNumbers.second);
         }
     }
+
+    if(!skipExtra) {
+        static const std::set<TagLib::String> baseMp4Tags
+            = {Mp4::Title,    Mp4::Artist,    Mp4::Album,        Mp4::AlbumArtist, Mp4::Genre,
+               Mp4::Composer, Mp4::Performer, Mp4::PerformerAlt, Mp4::Comment,     Mp4::Lyrics,
+               Mp4::Date,     Mp4::Rating,    Mp4::TrackNumber,  Mp4::DiscNumber};
+
+        track.clearExtraTags();
+
+        for(const auto& [key, item] : items) {
+            if(!baseMp4Tags.contains(key)) {
+                QString tagName = findMp4Tag(key);
+                if(tagName.isEmpty()) {
+                    tagName = stripMp4FreeFormName(key);
+                }
+                const auto values = convertStringList(item.toStringList());
+                for(const auto& value : values) {
+                    track.addExtraTag(tagName, value);
+                }
+            }
+        }
+    }
 }
 
 QByteArray readMp4Cover(const TagLib::MP4::Tag* mp4Tags)
 {
-    const TagLib::MP4::Item coverArtItem = mp4Tags->item("covr");
+    const TagLib::MP4::Item coverArtItem = mp4Tags->item(Mp4::Cover);
     if(!coverArtItem.isValid()) {
         return {};
     }
@@ -362,29 +513,29 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fy::Core::Track& 
 
     const TagLib::Ogg::FieldListMap& fields = xiphTags->fieldListMap();
 
-    if(fields.contains("TRACKNUMBER")) {
-        const TagLib::StringList& trackNumber = fields["TRACKNUMBER"];
+    if(fields.contains(Tag::TrackNumber)) {
+        const TagLib::StringList& trackNumber = fields[Tag::TrackNumber];
         if(!trackNumber.isEmpty() && !trackNumber.front().isEmpty()) {
             track.setTrackNumber(trackNumber.front().toInt());
         }
     }
 
-    if(fields.contains("TRACKTOTAL")) {
-        const TagLib::StringList& trackTotal = fields["TRACKTOTAL"];
+    if(fields.contains(Tag::TrackTotal)) {
+        const TagLib::StringList& trackTotal = fields[Tag::TrackTotal];
         if(!trackTotal.isEmpty() && !trackTotal.front().isEmpty()) {
             track.setTrackTotal(trackTotal.front().toInt());
         }
     }
 
-    if(fields.contains("DISCNUMBER")) {
-        const TagLib::StringList& discNumber = fields["DISCNUMBER"];
+    if(fields.contains(Tag::DiscNumber)) {
+        const TagLib::StringList& discNumber = fields[Tag::DiscNumber];
         if(!discNumber.isEmpty() && !discNumber.front().isEmpty()) {
             track.setDiscNumber(discNumber.front().toInt());
         }
     }
 
-    if(fields.contains("DISCTOTAL")) {
-        const TagLib::StringList& discTotal = fields["DISCTOTAL"];
+    if(fields.contains(Tag::DiscTotal)) {
+        const TagLib::StringList& discTotal = fields[Tag::DiscTotal];
         if(!discTotal.isEmpty() && !discTotal.front().isEmpty()) {
             track.setDiscTotal(discTotal.front().toInt());
         }
@@ -520,9 +671,9 @@ bool TagReader::readMetaData(Track& track, Quality quality)
     QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
     const auto style = readStyle(quality);
 
-    const auto readProperties = [](const TagLib::File& file, Track& track) {
+    const auto readProperties = [](const TagLib::File& file, Track& track, bool skipExtra = false) {
         readAudioProperties(file, track);
-        readGeneralProperties(file.properties(), track);
+        readGeneralProperties(file.properties(), track, skipExtra);
     };
 
     if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
@@ -592,7 +743,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
     else if(mimeType == "audio/mp4"_L1 || mimeType == "audio/vnd.audible.aax"_L1) {
         const TagLib::MP4::File file(&stream, true, style);
         if(file.isValid()) {
-            readProperties(file, track);
+            readProperties(file, track, true);
             if(file.hasMP4Tag()) {
                 readMp4Tags(file.tag(), track);
                 handleCover(readMp4Cover(file.tag()), track);

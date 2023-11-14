@@ -142,6 +142,7 @@ public:
     void addExtraTag(const QString& tag, const QString& value);
     void removeExtraTag(const QString& tag);
     void replaceExtraTag(const QString& tag, const QString& value);
+    void clearExtraTags();
     void storeExtraTags(const QByteArray& json);
 
     void setFileSize(uint64_t fileSize);

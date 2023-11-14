@@ -90,11 +90,16 @@ struct TagEditorModel::Private
             const auto trackTags = track.extraTags();
 
             for(const auto& [field, values] : trackTags) {
+                if(values.empty()) {
+                    continue;
+                }
+
                 if(!customTags.contains(field)) {
                     auto* item
                         = &customTags.emplace(field, TagEditorItem{field, self->rootItem(), false}).first->second;
                     self->rootItem()->appendChild(item);
                 }
+
                 auto* fieldItem = &customTags.at(field);
                 fieldItem->addTrackValue(values);
             }
@@ -150,9 +155,6 @@ struct TagEditorModel::Private
                     || metadata == Core::Constants::MetaData::DiscTotal) {
                 scriptRegistry.setVar(metadata, value.toInt(), track);
             }
-            else if(metadata == Core::Constants::MetaData::Performer && track.type() != Core::Track::Type::MP4) {
-                scriptRegistry.setVar(metadata, value.toString(), track);
-            }
             else {
                 scriptRegistry.setVar(metadata, value.toString(), track);
             }
@@ -166,9 +168,7 @@ struct TagEditorModel::Private
         }
 
         for(Core::Track& track : tracks) {
-            if(track.type() != Core::Track::Type::MP4) {
-                track.addExtraTag(name, value);
-            }
+            track.addExtraTag(name, value);
         }
     }
 
@@ -179,9 +179,7 @@ struct TagEditorModel::Private
         }
 
         for(Core::Track& track : tracks) {
-            if(track.type() != Core::Track::Type::MP4) {
-                track.replaceExtraTag(name, value);
-            }
+            track.replaceExtraTag(name, value);
         }
     }
 

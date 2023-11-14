@@ -473,7 +473,9 @@ void Track::addExtraTag(const QString& tag, const QString& value)
 
 void Track::removeExtraTag(const QString& tag)
 {
-    p->extraTags.erase(tag);
+    if(p->extraTags.contains(tag)) {
+        p->extraTags[tag] = {};
+    }
 }
 
 void Track::replaceExtraTag(const QString& tag, const QString& value)
@@ -482,6 +484,11 @@ void Track::replaceExtraTag(const QString& tag, const QString& value)
         return;
     }
     p->extraTags[tag] = {value};
+}
+
+void Track::clearExtraTags()
+{
+    p->extraTags.clear();
 }
 
 void Track::storeExtraTags(const QByteArray& tags)
@@ -644,8 +651,10 @@ QDataStream& operator<<(QDataStream& stream, const ExtraTags& tags)
     stream << static_cast<int>(tags.size());
 
     for(const auto& [field, values] : tags) {
-        stream << field;
-        stream << values;
+        if(!values.isEmpty()) {
+            stream << field;
+            stream << values;
+        }
     }
 
     return stream;

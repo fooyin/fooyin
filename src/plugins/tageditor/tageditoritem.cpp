@@ -88,7 +88,7 @@ void TagEditorItem::addTrackValue(const QStringList& values)
 void TagEditorItem::setValue(const QStringList& values)
 {
     m_values = values;
-    m_value = {};
+    m_value  = {};
 }
 
 void TagEditorItem::setTitle(const QString& title)
