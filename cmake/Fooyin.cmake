@@ -50,6 +50,7 @@ function(create_fooyin_library name)
         target_compile_definitions(
             ${name} PUBLIC FY${static_name}_STATIC_DEFINE
         )
+        set_target_properties(${name} PROPERTIES POSITION_INDEPENDENT_CODE ON)
     endif()
 
     set(${base_name}_paths
