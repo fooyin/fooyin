@@ -99,10 +99,8 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
 if(BUILD_SHARED_LIBS)
     set(FOOYIN_LIBRARY_TYPE SHARED)
-    set(FOOYIN_PLUGIN_TYPE MODULE)
 else()
     set(FOOYIN_LIBRARY_TYPE STATIC)
-    set(FOOYIN_PLUGIN_TYPE STATIC)
 endif()
 
 configure_file(src/app/version.h.in app/version.h @ONLY)
@@ -151,6 +149,8 @@ set(SOURCES src/app/main.cpp)
 qt_add_resources(SOURCES data/icons.qrc)
 
 add_executable(fooyin_exe ${SOURCES})
+
+qt_import_plugins(fooyin_exe INCLUDE fooyin_filters)
 
 set_target_properties(
     fooyin_exe
