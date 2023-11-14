@@ -451,6 +451,11 @@ void Track::setComment(const QString& comment)
 void Track::setDate(const QString& date)
 {
     p->date = date;
+
+    const QStringList dateParts = date.split('-');
+    if(!dateParts.empty()) {
+        p->year = dateParts.front().toInt();
+    }
 }
 
 void Track::setYear(int year)

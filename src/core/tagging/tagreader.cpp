@@ -268,7 +268,6 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fy::Core::Track& tr
     }
     if(props.contains(Tag::Date)) {
         track.setDate(convertString(props[Tag::Date].toString()));
-        track.setYear(track.date().toInt());
     }
     if(props.contains(Tag::Rating)) {
         // TODO

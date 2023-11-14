@@ -220,9 +220,7 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fy::Core::
     }
 
     if(!track.date().isEmpty()) {
-        if(track.year() >= 0) {
-            oldProperties.replace("DATE", convertString(track.date()));
-        }
+        oldProperties.replace(Tag::Date, convertString(track.date()));
     }
 
     if(!skipExtra) {
