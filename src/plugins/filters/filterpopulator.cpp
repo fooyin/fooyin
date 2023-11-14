@@ -133,7 +133,7 @@ void FilterPopulator::run(const QString& field, const QString& sort, const Core:
         p->fieldScript = p->parser.parse(p->currentField);
     }
     if(std::exchange(p->currentSort, sort) != sort) {
-        p->fieldScript = p->parser.parse(p->currentSort);
+        p->sortScript = p->parser.parse(p->currentSort);
     }
 
     p->runBatch(tracks);
