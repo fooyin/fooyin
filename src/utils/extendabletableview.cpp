@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/extentabletableview.h>
+#include <utils/extendabletableview.h>
 
 #include <QMouseEvent>
 #include <QPainter>
@@ -92,4 +92,4 @@ void ExtendableTableView::paintEvent(QPaintEvent* event)
 }
 } // namespace Fy::Utils
 
-#include "utils/moc_extentabletableview.cpp"
+#include "utils/moc_extendabletableview.cpp"

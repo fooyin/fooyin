@@ -39,7 +39,7 @@ set(SOURCES
     crypto.cpp
     expandableinputbox.cpp
     expandingcombobox.cpp
-    extentabletableview.cpp
+    extendabletableview.cpp
     headerview.cpp
     hovermenu.cpp
     id.cpp

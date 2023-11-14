@@ -26,7 +26,6 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
-#include <utils/extentabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
