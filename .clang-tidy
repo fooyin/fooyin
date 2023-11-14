@@ -27,6 +27,7 @@ Checks: >
   -readability-implicit-bool-conversion,
   -readability-magic-numbers,
   -readability-identifier-length,
+  -bugprone-suspicious-include,
 
 CheckOptions:
   - key: readability-function-cognitive-complexity.Threshold
