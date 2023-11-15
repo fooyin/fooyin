@@ -21,9 +21,10 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo apt update -y
-          sudo apt install -y \ 
+          sudo apt-get update
+          sudo apt-get -y install \ 
             build-essential \
+            cmake \
             libasound2-dev \
             libcppunit-dev \
             libgtest-dev \
