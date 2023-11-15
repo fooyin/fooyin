@@ -90,6 +90,7 @@ struct PlaylistTabs::Private
     void tabChanged(int index)
     {
         if(std::exchange(currentTab, index) != index) {
+            tabs->closeEditor();
             const int id = tabs->tabData(index).toInt();
             if(id >= 0) {
                 playlistController->changeCurrentPlaylist(id);

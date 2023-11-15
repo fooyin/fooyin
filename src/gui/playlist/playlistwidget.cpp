@@ -250,7 +250,7 @@ void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
 void PlaylistWidgetPrivate::changePlaylist(Core::Playlist::Playlist* playlist)
 {
     model->reset(currentPreset, playlist);
-    playlistView->setFocus(Qt::ActiveWindowFocusReason);
+    //    playlistView->setFocus(Qt::ActiveWindowFocusReason);
 }
 
 void PlaylistWidgetPrivate::resetTree() const
