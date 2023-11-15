@@ -19,61 +19,80 @@ jobs:
         type: [ 'Release' ]
         os: [ 'ubuntu-latest' ]
     steps:
-      - name: Update repositories
-        run: sudo apt update -y
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
       - name: Install dependencies
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        run: >
-          sudo apt install -y
-          build-essential
-          libasound2-dev
-          libcppunit-dev
-          libgtest-dev
-          libsdl2-dev
-          pkg-config
-          wget
+        run: |
+          sudo apt update -qq
+          sudo apt install -y build-essential libasound2-dev libcppunit-dev libgtest-dev libsdl2-dev pkg-config wget
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3.3.0
+        with:
+          version: '6.5.*'
+          cache: true
+
+      - name: Get latest CMake and Ninja
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: latestrc
+          ninjaVersion: latest
+
       - name: Download and install FFmpeg
         run: |
           wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl-shared.tar.xz -O ffmpeg.tar.xz
           tar -xf ffmpeg.tar.xz
           sudo cp -r ffmpeg-master-latest-linux64-lgpl-shared/* /usr/local
+
       - name: Checkout TagLib
         uses: actions/checkout@v4
         with:
           repository: taglib/taglib
           path: taglib
           submodules: recursive
+
       - name: Install TagLib
         run: |
           cmake -B taglib/build -S taglib -DBUILD_TESTING=OFF -DWITH_ZLIB=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON
           cmake --build taglib/build
           sudo cmake --install taglib/build
+
       - name: Install GTest
         run: cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3.3.0
-        with:
-          version: '6.5.*'
-          cache: true
+
       - name: Checkout QCoro
         uses: actions/checkout@v4
         with:
           repository: danvratil/qcoro
           path: qcoro
+
       - name: Install QCoro
         run: |
           cmake -B qcoro/build -S qcoro -DBUILD_TESTING=OFF -DQCORO_BUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OM -DUSE_QT_VERSION=6 -DQCORO_WITH_QTWEBSOCKETS=OFF -DQCORO_DISABLE_DEPRECATED_TASK_H=ON
           cmake --build qcoro/build
           sudo cmake --install qcoro/build
+
       - name: CCache
         uses: hendrikmuhs/ccache-action@v1.1
         with:
           key: ${{matrix.os}}-${{matrix.type}}
-      - name: Build
-        run: |
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.type}} -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DBUILD_TESTING=${{env.BUILD_TESTS}}
-          cmake --build ${{github.workspace}}/build --config ${{matrix.type}}
+
+      - name: Create build directory
+        run: mkdir build
+
+      - name: Configure project
+        run: >
+          cmake -S . -B ./build -G Ninja
+          -DCMAKE_BUILD_TYPE=${{matrix.type}}
+          -DBUILD_TESTING=${{env.BUILD_TESTS}}
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: Build Project
+        run: cmake --build ./build
+
       - name: Run GTest
         run: |
           ${{github.workspace}}/build/tests/test_scriptparser
