@@ -54,6 +54,7 @@ jobs:
         uses: jurplel/install-qt-action@v3.2.1
         with:
           version: '6.5.1'
+          cache: true
       - name: Checkout QCoro
         uses: actions/checkout@v3
         with:
