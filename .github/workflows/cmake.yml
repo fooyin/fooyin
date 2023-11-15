@@ -7,69 +7,70 @@ on:
     branches: [ "master" ]
 
 env:
-  BUILD_TYPE: Release
   BUILD_TESTS: On
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
+    name: Build ${{matrix.type}} on ${{matrix.os}}
     strategy:
       fail-fast: false
+      matrix:
+        type: [ 'Release' ]
+        os: [ 'ubuntu-latest' ]
     steps:
-      - uses: actions/checkout@v3
-      - name: Update repositories
-        run: sudo apt update -y
-      - name: Install packages
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        run: >
-          sudo apt install -y
-          build-essential
-          libasound2-dev
-          libcppunit-dev
-          libgtest-dev
-          libsdl2-dev
-          pkg-config
-          wget
-      - name: Download and extract FFmpeg
+      - name: Install dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y \ 
+            build-essential \
+            libasound2-dev \
+            libcppunit-dev \
+            libgtest-dev \
+            libsdl2-dev \
+            pkg-config \
+            wget
+      - name: Download and install FFmpeg
         run: |
           wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl-shared.tar.xz -O ffmpeg.tar.xz
           tar -xf ffmpeg.tar.xz
           sudo cp -r ffmpeg-master-latest-linux64-lgpl-shared/* /usr/local
       - name: Checkout TagLib
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: taglib/taglib
           path: taglib
           submodules: recursive
-      - name: Configure TagLib
-        run: cmake -B taglib/build -S taglib -DBUILD_TESTING=OFF -DWITH_ZLIB=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-      - name: Build TagLib
-        run: cmake --build taglib/build
       - name: Install TagLib
-        run: sudo cmake --install taglib/build
+        run: |
+          cmake -B taglib/build -S taglib -DBUILD_TESTING=OFF -DWITH_ZLIB=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+          cmake --build taglib/build
+          sudo cmake --install taglib/build
       - name: Install GTest
         run: cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3.2.1
+        uses: jurplel/install-qt-action@v3.3.0
         with:
-          version: '6.5.1'
+          version: '6.5.*'
           cache: true
       - name: Checkout QCoro
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: danvratil/qcoro
           path: qcoro
-      - name: Configure QCoro
-        run: cmake -B qcoro/build -S qcoro -DBUILD_TESTING=OFF -DQCORO_BUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OM -DUSE_QT_VERSION=6 -DQCORO_WITH_QTWEBSOCKETS=OFF -DQCORO_DISABLE_DEPRECATED_TASK_H=ON
-      - name: Build QCoro
-        run: cmake --build qcoro/build
       - name: Install QCoro
-        run: sudo cmake --install qcoro/build
-      - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}  -DBUILD_TESTING=${{env.BUILD_TESTS}}
+        run: |
+          cmake -B qcoro/build -S qcoro -DBUILD_TESTING=OFF -DQCORO_BUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OM -DUSE_QT_VERSION=6 -DQCORO_WITH_QTWEBSOCKETS=OFF -DQCORO_DISABLE_DEPRECATED_TASK_H=ON
+          cmake --build qcoro/build
+          sudo cmake --install qcoro/build
+      - name: CCache
+        uses: hendrikmuhs/ccache-action@v1.1
+        with:
+          key: ${{matrix.os}}-${{matrix.type}}
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        run: |
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.type}} -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DBUILD_TESTING=${{env.BUILD_TESTS}}
+          cmake --build ${{github.workspace}}/build --config ${{matrix.type}}
       - name: Run GTest
         run: |
           ${{github.workspace}}/build/tests/test_scriptparser
