@@ -46,10 +46,15 @@ if(NOT CMAKE_BUILD_TYPE)
     )
 endif()
 
+set(FOOYIN_REQUIRED_CXX_FEATURES
+    cxx_std_20
+)
+
 fooyin_option(BUILD_SHARED_LIBS "Build fooyin libraries as shared" ON)
 fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
 fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
-fooyin_option(USE_CCACHE "Use ccache if found" ON)
+fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
+fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
 
 find_package(
     Qt6 REQUIRED
@@ -94,7 +99,7 @@ else()
     add_definitions(-DKDSINGLEAPPLICATION_STATIC_BUILD)
 endif()
 
-if(USE_CCACHE)
+if(BUILD_CCACHE)
     find_program(CCACHE_EXECUTABLE ccache)
     if(CCACHE_EXECUTABLE)
         set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_EXECUTABLE})
@@ -111,6 +116,22 @@ if(BUILD_SHARED_LIBS)
     set(FOOYIN_LIBRARY_TYPE SHARED)
 else()
     set(FOOYIN_LIBRARY_TYPE STATIC)
+endif()
+
+if(BUILD_PCH)
+    file(
+        GENERATE
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp
+        CONTENT "/*dummy pch file*/"
+    )
+    add_library(fooyin_pch STATIC ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp)
+    target_precompile_headers(fooyin_pch PRIVATE ${CMAKE_SOURCE_DIR}/src/app/pch.h)
+    set_target_properties(fooyin_pch PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    target_link_libraries(fooyin_pch PRIVATE Qt::Core Qt::Gui Qt::Widgets)
+    target_compile_features(fooyin_pch PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
+    if(CMAKE_VERSION GREATER_EQUAL 3.19)
+        set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
+    endif()
 endif()
 
 configure_file(src/app/version.h.in app/version.h @ONLY)
@@ -135,7 +156,7 @@ add_subdirectory(src)
 
 target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
 
-target_compile_features(fooyin_lib PUBLIC cxx_std_20)
+target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin_lib PRIVATE QT_USE_QSTRINGBUILDER)
 target_compile_options(
     fooyin_lib
@@ -166,7 +187,7 @@ set_target_properties(
                RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
                INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_DIR}
 )
-target_compile_features(fooyin_exe PUBLIC cxx_std_20)
+target_compile_features(fooyin_exe PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin_exe PRIVATE QT_USE_QSTRINGBUILDER)
 target_compile_options(
     fooyin_exe

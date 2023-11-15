@@ -108,7 +108,7 @@ struct Parser::Private
             errorMsg += u" at end of string"_s;
         }
         else {
-            errorMsg += ": '" + token.value + "'";
+            errorMsg += ": '" + token.value.toString() + "'";
         }
 
         errorMsg += " (" + message + ")";

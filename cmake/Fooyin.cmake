@@ -82,7 +82,7 @@ function(create_fooyin_library name)
                    INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_DIR}
     )
 
-    target_compile_features(${name} PUBLIC cxx_std_20)
+    target_compile_features(${name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
     target_compile_definitions(${name} PRIVATE QT_USE_QSTRINGBUILDER)
     target_compile_options(
         ${name}
@@ -91,6 +91,10 @@ function(create_fooyin_library name)
                 -Wextra
                 -Wpedantic
     )
+
+    if(BUILD_PCH)
+        target_precompile_headers(${name} REUSE_FROM fooyin_pch)
+    endif()
 
     if(NOT CMAKE_SKIP_INSTALL_RULES)
         install(
