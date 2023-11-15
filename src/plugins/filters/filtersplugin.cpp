@@ -51,13 +51,14 @@ struct FiltersPlugin::Private
 
     void registerLayouts() const
     {
-        layoutProvider->registerLayout(
-            QStringLiteral("Stone"),
-            R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{"SplitterHorizontal":{
-                         "Children":[{"Filter":{"Type":"Album Artist","Sort":"AscendingOrder"}},"Playlist"],
-                         "State":"AAAA/wAAAAEAAAADAAAA/wAABlEAAAAAAP////8BAAAAAQA="}},"Controls"],
-                         "State":"AAAA/wAAAAEAAAAFAAAAGQAAAB4AAAO8AAAAFAAAAAAA/////
-                         wEAAAACAA=="}}]})");
+        layoutProvider->registerLayout(QStringLiteral("Obsidian"),
+                                       R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{
+            "SplitterHorizontal":{"Children":[{"Filter":{"Sort":"AscendingOrder","Type":"Album Artist"}},
+            {"Filter":{"Sort":"AscendingOrder","Type":"Album"}},"Playlist",{
+            "SplitterVertical":{"Children":["Artwork","Info"],
+            "State":"AAAA/wAAAAEAAAACAAABcgAAAg4A/////wEAAAACAA=="}}],
+            "State":"AAAA/wAAAAEAAAAEAAAA+wAAAVoAAAN6AAABcwD/////AQAAAAEA"}},"Controls"],
+            "State":"AAAA/wAAAAEAAAAEAAAAGQAAABwAAAOEAAAAFAD/////AQAAAAIA"}}]})");
 
         layoutProvider->registerLayout(
             QStringLiteral("Ember"),

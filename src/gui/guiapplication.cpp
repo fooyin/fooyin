@@ -184,6 +184,12 @@ struct GuiApplication::Private
                                       R"({"Layout":[{"SplitterVertical":{"Children":["Status","Playlist","Controls"],
                                      "State":"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA"}}]})");
 
+        layoutProvider.registerLayout(u"Stone"_s,
+                                      R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{
+            "SplitterHorizontal":{"Children":[{"LibraryTree":{"Grouping":"Artist/Album"}},{
+            "PlaylistTabs":["Playlist"]}],"State":"AAAA/wAAAAEAAAACAAABQgAABggA/////wEAAAABAA=="}},"Controls"],
+            "State":"AAAA/wAAAAEAAAAEAAAAGQAAAB4AAAO8AAAAFAD/////AQAAAAIA"}}]})");
+
         layoutProvider.registerLayout(u"Vision"_s,
                                       R"({"Layout":[{"SplitterVertical":{"Children":["Status",{"SplitterHorizontal":{
                                      "Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////
@@ -232,8 +238,8 @@ struct GuiApplication::Private
         factory->registerClass<Widgets::LibraryTreeWidget>(
             u"LibraryTree"_s,
             [this]() {
-                return new Widgets::LibraryTreeWidget(library, guiSettings.libraryTreeGroupRegistry(), &selectionController,
-                                                      settingsManager, mainWindow.get());
+                return new Widgets::LibraryTreeWidget(library, guiSettings.libraryTreeGroupRegistry(),
+                                                      &selectionController, settingsManager, mainWindow.get());
             },
             u"Library Tree"_s);
 
