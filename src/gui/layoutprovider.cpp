@@ -192,11 +192,8 @@ void LayoutProvider::importLayout()
 
 void LayoutProvider::exportLayout(const QByteArray& json)
 {
-    QFileDialog dialog;
-    dialog.setFileMode(QFileDialog::AnyFile);
-
     QString saveFile
-        = dialog.getSaveFileName(nullptr, u"Save Layout"_s, Gui::layoutsPath(), u"Fooyin Layout (*.fyl)"_s);
+        = QFileDialog::getSaveFileName(nullptr, u"Save Layout"_s, Gui::layoutsPath(), u"Fooyin Layout (*.fyl)"_s);
     if(saveFile.isEmpty()) {
         return;
     }
