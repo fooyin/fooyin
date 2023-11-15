@@ -48,10 +48,6 @@ function(create_fooyin_plugin name)
                 -Wpedantic
     )
 
-    if(BUILD_PCH)
-        target_precompile_headers(${name} REUSE_FROM fooyin_pch)
-    endif()
-
     if(NOT CMAKE_SKIP_INSTALL_RULES)
         install(TARGETS ${name} DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR})
     endif()

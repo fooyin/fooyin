@@ -109,9 +109,6 @@ endif()
 
 # ---- Fooyin library ----
 
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
-
 if(BUILD_SHARED_LIBS)
     set(FOOYIN_LIBRARY_TYPE SHARED)
 else()
@@ -126,9 +123,22 @@ if(BUILD_PCH)
     )
     add_library(fooyin_pch STATIC ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp)
     target_precompile_headers(fooyin_pch PRIVATE ${CMAKE_SOURCE_DIR}/src/app/pch.h)
-    set_target_properties(fooyin_pch PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    target_compile_definitions(fooyin_pch PRIVATE QT_USE_QSTRINGBUILDER)
+    set_target_properties(
+        fooyin_pch
+        PROPERTIES POSITION_INDEPENDENT_CODE ON
+                   CXX_VISIBILITY_PRESET hidden
+                   VISIBILITY_INLINES_HIDDEN YES
+    )
     target_link_libraries(fooyin_pch PRIVATE Qt::Core Qt::Gui Qt::Widgets)
     target_compile_features(fooyin_pch PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
+    target_compile_options(
+        fooyin_pch
+        PRIVATE -Werror
+                -Wall
+                -Wextra
+                -Wpedantic
+    )
     if(CMAKE_VERSION GREATER_EQUAL 3.19)
         set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
     endif()
@@ -188,15 +198,6 @@ set_target_properties(
                INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_DIR}
 )
 target_compile_features(fooyin_exe PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
-target_compile_definitions(fooyin_exe PRIVATE QT_USE_QSTRINGBUILDER)
-target_compile_options(
-    fooyin_exe
-    PRIVATE -Werror
-            -Wall
-            -Wextra
-            -Wpedantic
-)
-
 target_link_libraries(fooyin_exe PRIVATE KDAB::kdsingleapplication fooyin_version fooyin_lib)
 
 # ---- Fooyin data ----
