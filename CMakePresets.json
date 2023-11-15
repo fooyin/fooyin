@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 16,
@@ -7,24 +7,76 @@
   },
   "configurePresets": [
     {
-      "name": "debug",
-      "displayName": "debug",
+      "name": "base",
+      "displayName": "base preset",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build-fooyin-dev",
+      "binaryDir": "${sourceDir}/build-${presetName}",
+      "hidden": true
+    },
+    {
+      "name": "dev",
+      "displayName": "Build as debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "BUILD_TESTING" : "ON"
-      }
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "BUILD_TESTING": "ON"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "dev-clang",
+      "displayName": "dev-clang",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "BUILD_TESTING": "ON"
+      },
+      "environment": {
+        "CXX": "clang++",
+        "CCACHE_DISABLE": "ON"
+      },
+      "inherits": [
+        "base"
+      ]
     },
     {
       "name": "release",
-      "displayName": "release",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build-fooyin-dev",
+      "displayName": "Build as release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "BUILD_TESTING" : "OFF"
-      }
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "profile",
+      "displayName": "profile",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      },
+      "inherits": [
+        "base"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "dev",
+      "configurePreset": "dev",
+      "targets": [
+        "all"
+      ]
+    },
+    {
+      "name": "dev-clang",
+      "configurePreset": "dev-clang"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
     }
   ]
 }
