@@ -236,7 +236,7 @@ void EditableLayout::changeLayout(const Layout& layout)
 {
     // Delete all current widgets
     delete p->splitter;
-    const bool success = loadLayout(layout.json);
+    const bool success = loadLayout(layout);
     if(success && p->splitter->childCount() > 0) {
         p->settings->set<Settings::LayoutEditing>(false);
     }
@@ -247,47 +247,30 @@ void EditableLayout::changeLayout(const Layout& layout)
 
 void EditableLayout::saveLayout()
 {
-    p->layoutProvider->saveCurrentLayout(currentLayout());
-}
-
-QByteArray EditableLayout::currentLayout()
-{
     QJsonObject root;
     QJsonArray array;
 
     p->splitter->saveLayout(array);
 
-    root["Layout"_L1] = array;
+    root["Default"_L1] = array;
 
-    return QJsonDocument(root).toJson();
+    const QByteArray json = QJsonDocument(root).toJson();
+
+    if(auto layout = p->layoutProvider->readLayout(json)) {
+        p->layoutProvider->changeLayout(layout.value());
+    }
 }
 
-bool EditableLayout::loadLayout(const QByteArray& layout)
+bool EditableLayout::loadLayout(const Layout& layout)
 {
-    const auto jsonDoc = QJsonDocument::fromJson(layout);
-    if(jsonDoc.isNull() || jsonDoc.isEmpty()) {
+    if(layout.json.isEmpty()) {
         return false;
     }
 
-    const QJsonObject json = jsonDoc.object();
-    if(!json.contains("Layout"_L1) || !json["Layout"_L1].isArray()) {
-        return false;
-    }
-
-    const QJsonArray layoutArray = json["Layout"_L1].toArray();
-    if(layoutArray.isEmpty() || layoutArray.size() != 1) {
-        return false;
-    }
-
-    const QJsonObject widget = layoutArray[0].toObject();
-    if(widget.isEmpty()) {
-        return false;
-    }
-
-    const auto name = widget.constBegin().key();
+    const auto name = layout.json.constBegin().key();
     if(auto* splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget(name))) {
         p->splitter               = splitter;
-        const QJsonObject options = widget.value(name).toObject();
+        const QJsonObject options = layout.json.constBegin()->toObject();
         p->splitter->loadLayout(options);
         p->box->addWidget(p->splitter);
         return true;
@@ -299,7 +282,7 @@ bool EditableLayout::loadLayout(const QByteArray& layout)
 bool EditableLayout::loadLayout()
 {
     const Layout layout = p->layoutProvider->currentLayout();
-    return loadLayout(layout.json);
+    return loadLayout(layout);
 }
 
 void EditableLayout::showOverlay(FyWidget* widget)

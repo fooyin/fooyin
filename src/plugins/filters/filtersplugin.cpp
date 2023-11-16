@@ -51,8 +51,7 @@ struct FiltersPlugin::Private
 
     void registerLayouts() const
     {
-        layoutProvider->registerLayout(QStringLiteral("Obsidian"),
-                                       R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{
+        layoutProvider->registerLayout(R"({"Obsidian":[{"SplitterVertical":{"Children":["Status","Search",{
             "SplitterHorizontal":{"Children":[{"Filter":{"Sort":"AscendingOrder","Type":"Album Artist"}},
             {"Filter":{"Sort":"AscendingOrder","Type":"Album"}},"Playlist",{
             "SplitterVertical":{"Children":["Artwork","Info"],
@@ -61,8 +60,7 @@ struct FiltersPlugin::Private
             "State":"AAAA/wAAAAEAAAAEAAAAGQAAABwAAAOEAAAAFAD/////AQAAAAIA"}}]})");
 
         layoutProvider->registerLayout(
-            QStringLiteral("Ember"),
-            R"({"Layout":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"Filter":{"Type":"Genre","Sort":"AscendingOrder"}},
+            R"({"Ember":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"Filter":{"Type":"Genre","Sort":"AscendingOrder"}},
             {"Filter":{"Type":"Album
             Artist","Sort":"AscendingOrder"}},{"Filter":{"Type":"Artist","Sort":"AscendingOrder"}},
             {"Filter":{"Type":"Album","Sort":"AscendingOrder"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},

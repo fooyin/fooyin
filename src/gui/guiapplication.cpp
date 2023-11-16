@@ -176,22 +176,18 @@ struct GuiApplication::Private
 
     void registerLayouts()
     {
-        layoutProvider.registerLayout(u"Empty"_s,
-                                      R"({"Layout":[{"SplitterVertical":{"Children":[],
+        layoutProvider.registerLayout(R"({"Empty":[{"SplitterVertical":{"Children":[],
                                      "State":"AAAA/wAAAAEAAAABAAACLwD/////AQAAAAIA"}}]})");
 
-        layoutProvider.registerLayout(u"Simple"_s,
-                                      R"({"Layout":[{"SplitterVertical":{"Children":["Status","Playlist","Controls"],
+        layoutProvider.registerLayout(R"({"Simple":[{"SplitterVertical":{"Children":["Status","Playlist","Controls"],
                                      "State":"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA"}}]})");
 
-        layoutProvider.registerLayout(u"Stone"_s,
-                                      R"({"Layout":[{"SplitterVertical":{"Children":["Status","Search",{
+        layoutProvider.registerLayout(R"({"Stone":[{"SplitterVertical":{"Children":["Status","Search",{
             "SplitterHorizontal":{"Children":[{"LibraryTree":{"Grouping":"Artist/Album"}},{
             "PlaylistTabs":["Playlist"]}],"State":"AAAA/wAAAAEAAAACAAABQgAABggA/////wEAAAABAA=="}},"Controls"],
             "State":"AAAA/wAAAAEAAAAEAAAAGQAAAB4AAAO8AAAAFAD/////AQAAAAIA"}}]})");
 
-        layoutProvider.registerLayout(u"Vision"_s,
-                                      R"({"Layout":[{"SplitterVertical":{"Children":["Status",{"SplitterHorizontal":{
+        layoutProvider.registerLayout(R"({"Vision":[{"SplitterVertical":{"Children":["Status",{"SplitterHorizontal":{
                                      "Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////
                                      8BAAAAAQA="}},{"SplitterHorizontal":{"Children":["Artwork","Playlist"],"State":
                                      "AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA="}}],"State":"AAAA/

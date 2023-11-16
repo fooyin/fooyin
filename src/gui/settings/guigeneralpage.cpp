@@ -23,11 +23,14 @@
 #include "quicksetup/quicksetupdialog.h"
 
 #include <gui/guiconstants.h>
+#include <gui/guipaths.h>
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QFileDialog>
 #include <QGroupBox>
+#include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -48,6 +51,8 @@ public:
 
 private:
     void showQuickSetup();
+    void importLayout();
+    void exportLayout();
 
     LayoutProvider* m_layoutProvider;
     Widgets::EditableLayout* m_editableLayout;
@@ -78,11 +83,11 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     splitterBoxLayout->addWidget(m_splitterHandles, 0, 0, 1, 2);
     splitterBoxLayout->setColumnStretch(2, 1);
 
-    auto* setupBox       = new QGroupBox(tr("Setup"));
-    auto* setupBoxLayout = new QHBoxLayout(setupBox);
-    auto* quickSetup     = new QPushButton(tr("Quick Setup"), this);
-    auto* importLayout   = new QPushButton(tr("Import Layout"), this);
-    auto* exportLayout   = new QPushButton(tr("Export Layout"), this);
+    auto* setupBox        = new QGroupBox(tr("Setup"));
+    auto* setupBoxLayout  = new QHBoxLayout(setupBox);
+    auto* quickSetup      = new QPushButton(tr("Quick Setup"), this);
+    auto* importLayoutBtn = new QPushButton(tr("Import Layout"), this);
+    auto* exportLayoutBtn = new QPushButton(tr("Export Layout"), this);
 
     auto* iconThemeBox       = new QGroupBox(tr("Icon Theme"), this);
     auto* iconThemeBoxLayout = new QVBoxLayout(iconThemeBox);
@@ -92,8 +97,8 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     iconThemeBoxLayout->addWidget(m_customThemeName);
 
     setupBoxLayout->addWidget(quickSetup);
-    setupBoxLayout->addWidget(importLayout);
-    setupBoxLayout->addWidget(exportLayout);
+    setupBoxLayout->addWidget(importLayoutBtn);
+    setupBoxLayout->addWidget(exportLayoutBtn);
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(setupBox);
@@ -116,9 +121,8 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     }
 
     QObject::connect(quickSetup, &QPushButton::clicked, this, &GuiGeneralPageWidget::showQuickSetup);
-    QObject::connect(importLayout, &QPushButton::clicked, this, [this]() { m_layoutProvider->importLayout(); });
-    QObject::connect(exportLayout, &QPushButton::clicked, this,
-                     [this]() { m_layoutProvider->exportLayout(m_editableLayout->currentLayout()); });
+    QObject::connect(importLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::importLayout);
+    QObject::connect(exportLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::exportLayout);
 
     QObject::connect(m_lightTheme, &QRadioButton::clicked, this, [this]() { m_customThemeName->setVisible(false); });
     QObject::connect(m_darkTheme, &QRadioButton::clicked, this, [this]() { m_customThemeName->setVisible(false); });
@@ -154,6 +158,34 @@ void GuiGeneralPageWidget::showQuickSetup()
     QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout,
                      &Widgets::EditableLayout::changeLayout);
     quickSetup->show();
+}
+
+void GuiGeneralPageWidget::importLayout()
+{
+    const QString layoutFile = QFileDialog::getOpenFileName(this, u"Open Layout"_s, u""_s, u"Fooyin Layout (*.fyl)"_s);
+
+    if(layoutFile.isEmpty()) {
+        return;
+    }
+
+    m_layoutProvider->importLayout(layoutFile);
+}
+
+void GuiGeneralPageWidget::exportLayout()
+{
+    bool success{false};
+    const QString name
+        = QInputDialog::getText(this, tr("Export layout"), tr("Layout Name:"), QLineEdit::Normal, u""_s, &success);
+
+    if(success && !name.isEmpty()) {
+        const QString saveFile
+            = QFileDialog::getSaveFileName(this, u"Save Layout"_s, layoutsPath() + name, u"Fooyin Layout (*.fyl)"_s);
+        if(!saveFile.isEmpty()) {
+            Layout layout = m_layoutProvider->currentLayout();
+            layout.name   = name;
+            m_layoutProvider->exportLayout(layout, saveFile);
+        }
+    }
 }
 
 GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,

@@ -54,8 +54,7 @@ public:
 
     void changeLayout(const Layout& layout);
     void saveLayout();
-    QByteArray currentLayout();
-    bool loadLayout(const QByteArray& layout);
+    bool loadLayout(const Layout& layout);
     bool loadLayout();
 
     void showOverlay(FyWidget* widget);

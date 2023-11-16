@@ -24,13 +24,14 @@
 namespace Fy::Gui {
 class LayoutProvider;
 
-namespace QuickSetupRole {
-constexpr int Layout = Qt::UserRole + 50;
-} // namespace QuickSetupRole
-
 class QuickSetupModel : public QAbstractListModel
 {
 public:
+    enum Role
+    {
+        Layout = Qt::UserRole
+    };
+
     explicit QuickSetupModel(LayoutProvider* layoutProvider, QObject* parent = nullptr);
 
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;

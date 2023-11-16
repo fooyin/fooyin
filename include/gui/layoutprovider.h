@@ -27,12 +27,12 @@ namespace Fy::Gui {
 struct Layout
 {
     Layout() = default;
-    Layout(QString name, QByteArray json)
+    Layout(QString name, QJsonObject json)
         : name{std::move(name)}
         , json{std::move(json)}
     { }
     QString name;
-    QByteArray json;
+    QJsonObject json;
 };
 using LayoutList = std::vector<Layout>;
 
@@ -42,18 +42,20 @@ public:
     explicit LayoutProvider();
     ~LayoutProvider();
 
-    void findLayouts();
-
     [[nodiscard]] Layout currentLayout() const;
-    void loadCurrentLayout();
-    void saveCurrentLayout(const QByteArray& json);
-
     [[nodiscard]] LayoutList layouts() const;
-    void registerLayout(const QString& name, const QByteArray& json);
-    void registerLayout(const QString& file);
 
-    void importLayout();
-    void exportLayout(const QByteArray& json);
+    void findLayouts();
+    void loadCurrentLayout();
+    void saveCurrentLayout();
+
+    void registerLayout(const QByteArray& file);
+    void changeLayout(const Layout& layout);
+
+    static std::optional<Layout> readLayout(const QByteArray& json);
+
+    void importLayout(const QString& path);
+    void exportLayout(const Layout& layout, const QString path);
 
 private:
     struct Private;
