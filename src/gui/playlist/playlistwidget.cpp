@@ -85,7 +85,8 @@ Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList&
         }
 
         const int rowCount = model->rowCount(currentIndex);
-        if(rowCount == 0 && currentIndex.data(Fooyin::PlaylistItem::Role::Type).toInt() == Fooyin::PlaylistItem::Track) {
+        if(rowCount == 0
+           && currentIndex.data(Fooyin::PlaylistItem::Role::Type).toInt() == Fooyin::PlaylistItem::Track) {
             tracks.push_back(currentIndex.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>());
         }
         else {
@@ -127,10 +128,10 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
 
     layout->addWidget(playlistView);
 
-    setHeaderHidden(settings->value<Gui::Settings::PlaylistHeader>());
-    setScrollbarHidden(settings->value<Gui::Settings::PlaylistScrollBar>());
+    setHeaderHidden(settings->value<Settings::Gui::PlaylistHeader>());
+    setScrollbarHidden(settings->value<Settings::Gui::PlaylistScrollBar>());
 
-    changePreset(playlistController->presetRegistry()->itemByName(settings->value<Gui::Settings::CurrentPreset>()));
+    changePreset(playlistController->presetRegistry()->itemByName(settings->value<Settings::Gui::CurrentPreset>()));
 
     setupConnections();
     setupActions();
@@ -169,9 +170,9 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(playlistController->presetRegistry(), &PresetRegistry::presetChanged, this,
                      &PlaylistWidgetPrivate::onPresetChanged);
 
-    settings->subscribe<Gui::Settings::PlaylistHeader>(this, &PlaylistWidgetPrivate::setHeaderHidden);
-    settings->subscribe<Gui::Settings::PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
-    settings->subscribe<Gui::Settings::CurrentPreset>(this, [this](const QString& presetName) {
+    settings->subscribe<Settings::Gui::PlaylistHeader>(this, &PlaylistWidgetPrivate::setHeaderHidden);
+    settings->subscribe<Settings::Gui::PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
+    settings->subscribe<Settings::Gui::CurrentPreset>(this, [this](const QString& presetName) {
         const auto preset = playlistController->presetRegistry()->itemByName(presetName);
         changePreset(preset);
     });
@@ -299,7 +300,7 @@ void PlaylistWidgetPrivate::selectionChanged()
 
     selectionController->changeSelectedTracks(firstIndex, tracks);
 
-    if(settings->value<Gui::Settings::PlaybackFollowsCursor>()) {
+    if(settings->value<Settings::Gui::PlaybackFollowsCursor>()) {
         if(auto* currentPlaylist = playlistController->currentPlaylist()) {
             if(currentPlaylist->currentTrackIndex() != firstIndex) {
                 if(playlistController->playState() != PlayState::Playing) {
@@ -388,7 +389,7 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(QPoint pos)
             presetsMenu->setDefaultAction(switchPreset);
         }
         QObject::connect(switchPreset, &QAction::triggered, self,
-                         [this, name]() { settings->set<Gui::Settings::CurrentPreset>(name); });
+                         [this, name]() { settings->set<Settings::Gui::CurrentPreset>(name); });
         presetsMenu->addAction(switchPreset);
         //            }
     }
@@ -406,7 +407,7 @@ void PlaylistWidgetPrivate::doubleClicked(const QModelIndex& /*index*/) const
 
 void PlaylistWidgetPrivate::followCurrentTrack(const Track& track, int index) const
 {
-    if(!settings->value<Gui::Settings::CursorFollowsPlayback>()) {
+    if(!settings->value<Settings::Gui::CursorFollowsPlayback>()) {
         return;
     }
 

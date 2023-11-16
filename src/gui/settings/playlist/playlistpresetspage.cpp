@@ -410,7 +410,7 @@ void PlaylistPresetsPageWidget::apply()
 
 void PlaylistPresetsPageWidget::reset()
 {
-    m_settings->reset<Gui::Settings::PlaylistPresets>();
+    m_settings->reset<Settings::Gui::PlaylistPresets>();
 
     m_presetRegistry->loadItems();
     populatePresets();

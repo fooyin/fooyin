@@ -43,17 +43,17 @@ PlaylistModel::PlaylistModel(SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
     , p{std::make_unique<PlaylistModelPrivate>(this, settings)}
 {
-    p->settings->subscribe<Gui::Settings::PlaylistAltColours>(this, [this](bool enabled) {
+    p->settings->subscribe<Settings::Gui::PlaylistAltColours>(this, [this](bool enabled) {
         p->altColours = enabled;
         emit dataChanged({}, {}, {Qt::BackgroundRole});
     });
-    p->settings->subscribe<Gui::Settings::PlaylistThumbnailSize>(this, [this](int size) {
+    p->settings->subscribe<Settings::Gui::PlaylistThumbnailSize>(this, [this](int size) {
         p->coverSize = {size, size};
         p->coverProvider->clearCache();
         emit dataChanged({}, {}, {PlaylistItem::Role::Cover});
     });
 
-    p->settings->subscribe<Gui::Settings::IconTheme>(this, [this]() {
+    p->settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         p->playingIcon = QIcon::fromTheme(Constants::Icons::Play).pixmap(20);
         p->pausedIcon  = QIcon::fromTheme(Constants::Icons::Pause).pixmap(20);
         emit dataChanged({}, {}, {Qt::DecorationRole});

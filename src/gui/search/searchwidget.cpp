@@ -91,7 +91,7 @@ void SearchWidget::keyPressEvent(QKeyEvent* event)
 
 void SearchWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-    if(!m_settings->value<Gui::Settings::LayoutEditing>()) {
+    if(!m_settings->value<Settings::Gui::LayoutEditing>()) {
         QWidget::contextMenuEvent(event);
     }
 }

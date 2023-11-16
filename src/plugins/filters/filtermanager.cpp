@@ -84,8 +84,8 @@ struct FilterManager::Private
         , library{library}
         , trackSelection{trackSelection}
         , settings{settings}
-        , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::FilterDoubleClick>())}
-        , middleClickAction{static_cast<TrackAction>(settings->value<Settings::FilterMiddleClick>())}
+        , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterDoubleClick>())}
+        , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterMiddleClick>())}
         , fieldsRegistry{settings}
     {
         fieldsRegistry.loadItems();
@@ -93,7 +93,7 @@ struct FilterManager::Private
 
     void handleAction(const TrackAction& action, const QString& playlistName) const
     {
-        const bool autoSwitch = settings->value<Settings::FilterAutoSwitch>();
+        const bool autoSwitch = settings->value<Settings::Filters::FilterAutoSwitch>();
         trackSelection->executeAction(action, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None, playlistName);
     }
 
@@ -152,9 +152,9 @@ struct FilterManager::Private
         trackSelection->changeSelectedTracks(sortedTracks, playlistName);
         updatedFilter.tracks = sortedTracks;
 
-        if(settings->value<Settings::FilterPlaylistEnabled>()) {
-            const QString autoPlaylist = settings->value<Settings::FilterAutoPlaylist>();
-            const bool autoSwitch      = settings->value<Settings::FilterAutoSwitch>();
+        if(settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
+            const QString autoPlaylist = settings->value<Settings::Filters::FilterAutoPlaylist>();
+            const bool autoSwitch      = settings->value<Settings::Filters::FilterAutoSwitch>();
 
             PlaylistAction::ActionOptions options = PlaylistAction::KeepActive;
             if(autoSwitch) {
@@ -282,9 +282,9 @@ FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* tr
     QObject::connect(&p->fieldsRegistry, &FieldRegistry::fieldChanged, this,
                      [this](const Filters::FilterField& field) { p->fieldChanged(field); });
 
-    settings->subscribe<Settings::FilterDoubleClick>(
+    settings->subscribe<Settings::Filters::FilterDoubleClick>(
         this, [this](int action) { p->doubleClickAction = static_cast<TrackAction>(action); });
-    settings->subscribe<Settings::FilterMiddleClick>(
+    settings->subscribe<Settings::Filters::FilterMiddleClick>(
         this, [this](int action) { p->middleClickAction = static_cast<TrackAction>(action); });
 }
 

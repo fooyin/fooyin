@@ -61,8 +61,8 @@ Database::Database(const QString& directory, const QString& filename, SettingsMa
 
 bool Database::update()
 {
-    if(m_settings->value<Core::Settings::DatabaseVersion>() < DatabaseVersion) {
-        m_settings->set<Core::Settings::DatabaseVersion>(DatabaseVersion);
+    if(m_settings->value<Settings::Core::DatabaseVersion>() < DatabaseVersion) {
+        m_settings->set<Settings::Core::DatabaseVersion>(DatabaseVersion);
         return true;
     }
     return false;

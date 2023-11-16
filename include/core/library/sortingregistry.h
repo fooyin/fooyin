@@ -28,7 +28,7 @@
 namespace Fooyin {
 class SettingsManager;
 
-class FYCORE_EXPORT SortingRegistry : public ItemRegistry<SortScript, Core::Settings::LibrarySorting>
+class FYCORE_EXPORT SortingRegistry : public ItemRegistry<SortScript, Settings::Core::LibrarySorting>
 {
     Q_OBJECT
 

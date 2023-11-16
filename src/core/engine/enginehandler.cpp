@@ -74,7 +74,7 @@ struct EngineHandler::Private
         QObject::connect(self, &EngineHandler::outputChanged, engine, &AudioEngine::setAudioOutput);
         QObject::connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
 
-        updateVolume(settings->value<Core::Settings::OutputVolume>());
+        updateVolume(settings->value<Settings::Core::OutputVolume>());
     }
 
     void playStateChanged(PlayState state)
@@ -152,16 +152,16 @@ EngineHandler::EngineHandler(PlayerManager* playerManager, SettingsManager* sett
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->playStateChanged(state); });
 
-    p->settings->subscribe<Core::Settings::AudioOutput>(this,
+    p->settings->subscribe<Settings::Core::AudioOutput>(this,
                                                         [this](const QString& output) { p->changeOutput(output); });
-    p->settings->subscribe<Core::Settings::OutputVolume>(this, [this](double volume) { p->updateVolume(volume); });
+    p->settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateVolume(volume); });
 }
 
 EngineHandler::~EngineHandler() = default;
 
 void EngineHandler::setup()
 {
-    p->changeOutput(p->settings->value<Core::Settings::AudioOutput>());
+    p->changeOutput(p->settings->value<Settings::Core::AudioOutput>());
 }
 
 void EngineHandler::shutdown()

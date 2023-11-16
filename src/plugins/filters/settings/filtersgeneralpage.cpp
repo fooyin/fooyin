@@ -155,9 +155,9 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
 
 void FiltersGeneralPageWidget::apply()
 {
-    m_settings->set<Settings::FilterHeader>(m_filterHeaders->isChecked());
-    m_settings->set<Settings::FilterScrollBar>(m_filterScrollBars->isChecked());
-    m_settings->set<Settings::FilterAltColours>(m_altRowColours->isChecked());
+    m_settings->set<Settings::Filters::FilterHeader>(m_filterHeaders->isChecked());
+    m_settings->set<Settings::Filters::FilterScrollBar>(m_filterScrollBars->isChecked());
+    m_settings->set<Settings::Filters::FilterAltColours>(m_altRowColours->isChecked());
 
     FilterOptions options;
     options.fontChanged   = m_fontChanged;
@@ -165,26 +165,26 @@ void FiltersGeneralPageWidget::apply()
     options.colourChanged = m_colourChanged;
     options.colour        = m_colour;
     options.rowHeight     = m_rowHeight->value();
-    m_settings->set<Settings::FilterAppearance>(QVariant::fromValue(options));
+    m_settings->set<Settings::Filters::FilterAppearance>(QVariant::fromValue(options));
 
-    m_settings->set<Settings::FilterDoubleClick>(m_doubleClick->currentData().toInt());
-    m_settings->set<Settings::FilterMiddleClick>(m_middleClick->currentData().toInt());
-    m_settings->set<Settings::FilterPlaylistEnabled>(m_playlistEnabled->isChecked());
-    m_settings->set<Settings::FilterAutoSwitch>(m_autoSwitch->isChecked());
-    m_settings->set<Settings::FilterAutoPlaylist>(m_playlistName->text());
+    m_settings->set<Settings::Filters::FilterDoubleClick>(m_doubleClick->currentData().toInt());
+    m_settings->set<Settings::Filters::FilterMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Settings::Filters::FilterPlaylistEnabled>(m_playlistEnabled->isChecked());
+    m_settings->set<Settings::Filters::FilterAutoSwitch>(m_autoSwitch->isChecked());
+    m_settings->set<Settings::Filters::FilterAutoPlaylist>(m_playlistName->text());
 }
 
 void FiltersGeneralPageWidget::reset()
 {
-    m_settings->reset<Settings::FilterHeader>();
-    m_settings->reset<Settings::FilterScrollBar>();
-    m_settings->reset<Settings::FilterAltColours>();
-    m_settings->reset<Settings::FilterAppearance>();
-    m_settings->reset<Settings::FilterDoubleClick>();
-    m_settings->reset<Settings::FilterMiddleClick>();
-    m_settings->reset<Settings::FilterPlaylistEnabled>();
-    m_settings->reset<Settings::FilterAutoSwitch>();
-    m_settings->reset<Settings::FilterAutoPlaylist>();
+    m_settings->reset<Settings::Filters::FilterHeader>();
+    m_settings->reset<Settings::Filters::FilterScrollBar>();
+    m_settings->reset<Settings::Filters::FilterAltColours>();
+    m_settings->reset<Settings::Filters::FilterAppearance>();
+    m_settings->reset<Settings::Filters::FilterDoubleClick>();
+    m_settings->reset<Settings::Filters::FilterMiddleClick>();
+    m_settings->reset<Settings::Filters::FilterPlaylistEnabled>();
+    m_settings->reset<Settings::Filters::FilterAutoSwitch>();
+    m_settings->reset<Settings::Filters::FilterAutoPlaylist>();
 
     setValues();
 }
@@ -216,12 +216,12 @@ void FiltersGeneralPageWidget::setValues()
     addTrackAction(m_middleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, middleActions);
     addTrackAction(m_middleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, middleActions);
 
-    auto doubleAction = m_settings->value<Settings::FilterDoubleClick>();
+    auto doubleAction = m_settings->value<Settings::Filters::FilterDoubleClick>();
     if(doubleActions.contains(doubleAction)) {
         m_doubleClick->setCurrentIndex(doubleActions.at(doubleAction));
     }
 
-    auto middleAction = m_settings->value<Settings::FilterMiddleClick>();
+    auto middleAction = m_settings->value<Settings::Filters::FilterMiddleClick>();
     if(middleActions.contains(middleAction)) {
         m_middleClick->setCurrentIndex(middleActions.at(middleAction));
     }
@@ -231,23 +231,23 @@ void FiltersGeneralPageWidget::setValues()
         m_autoSwitch->setEnabled(checked);
     });
 
-    m_filterHeaders->setChecked(m_settings->value<Settings::FilterHeader>());
-    m_filterScrollBars->setChecked(m_settings->value<Settings::FilterScrollBar>());
-    m_altRowColours->setChecked(m_settings->value<Settings::FilterAltColours>());
+    m_filterHeaders->setChecked(m_settings->value<Settings::Filters::FilterHeader>());
+    m_filterScrollBars->setChecked(m_settings->value<Settings::Filters::FilterScrollBar>());
+    m_altRowColours->setChecked(m_settings->value<Settings::Filters::FilterAltColours>());
 
-    const auto options = m_settings->value<Settings::FilterAppearance>().value<FilterOptions>();
+    const auto options = m_settings->value<Settings::Filters::FilterAppearance>().value<FilterOptions>();
     m_fontChanged      = options.fontChanged;
     m_font             = options.font;
     m_colourChanged    = options.colourChanged;
     m_colour           = options.colour;
     m_rowHeight->setValue(options.rowHeight);
 
-    m_playlistEnabled->setChecked(m_settings->value<Settings::FilterPlaylistEnabled>());
-    m_autoSwitch->setChecked(m_settings->value<Settings::FilterAutoSwitch>());
+    m_playlistEnabled->setChecked(m_settings->value<Settings::Filters::FilterPlaylistEnabled>());
+    m_autoSwitch->setChecked(m_settings->value<Settings::Filters::FilterAutoSwitch>());
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
 
-    m_playlistName->setText(m_settings->value<Settings::FilterAutoPlaylist>());
+    m_playlistName->setText(m_settings->value<Settings::Filters::FilterAutoPlaylist>());
 }
 
 FiltersGeneralPage::FiltersGeneralPage(SettingsManager* settings)

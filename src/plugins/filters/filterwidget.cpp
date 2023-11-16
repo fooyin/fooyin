@@ -153,16 +153,17 @@ FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
 
     layout->addWidget(p->view);
 
-    p->view->setHeaderHidden(!p->settings->value<Settings::FilterHeader>());
-    setScrollbarEnabled(p->settings->value<Settings::FilterScrollBar>());
-    p->view->setAlternatingRowColors(p->settings->value<Settings::FilterAltColours>());
+    p->view->setHeaderHidden(!p->settings->value<Settings::Filters::FilterHeader>());
+    setScrollbarEnabled(p->settings->value<Settings::Filters::FilterScrollBar>());
+    p->view->setAlternatingRowColors(p->settings->value<Settings::Filters::FilterAltColours>());
 
-    p->updateAppearance(p->settings->value<Settings::FilterAppearance>());
+    p->updateAppearance(p->settings->value<Settings::Filters::FilterAppearance>());
 
-    p->settings->subscribe<Settings::FilterAltColours>(p->view, &QAbstractItemView::setAlternatingRowColors);
-    p->settings->subscribe<Settings::FilterHeader>(this, [this](bool enabled) { p->view->setHeaderHidden(!enabled); });
-    p->settings->subscribe<Settings::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
-    p->settings->subscribe<Settings::FilterAppearance>(
+    p->settings->subscribe<Settings::Filters::FilterAltColours>(p->view, &QAbstractItemView::setAlternatingRowColors);
+    p->settings->subscribe<Settings::Filters::FilterHeader>(
+        this, [this](bool enabled) { p->view->setHeaderHidden(!enabled); });
+    p->settings->subscribe<Settings::Filters::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
+    p->settings->subscribe<Settings::Filters::FilterAppearance>(
         this, [this](const QVariant& appearance) { p->updateAppearance(appearance); });
 
     QObject::connect(p->view->header(), &QHeaderView::sectionClicked, this, [this]() { p->changeOrder(); });

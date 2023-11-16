@@ -45,10 +45,10 @@ ViewMenu::ViewMenu(ActionManager* actionManager, TrackSelectionController* track
     m_layoutEditing               = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
     viewMenu->addAction(m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing));
     QObject::connect(m_layoutEditing, &QAction::triggered, this,
-                     [this](bool checked) { m_settings->set<Gui::Settings::LayoutEditing>(checked); });
-    m_settings->subscribe<Gui::Settings::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
+                     [this](bool checked) { m_settings->set<Settings::Gui::LayoutEditing>(checked); });
+    m_settings->subscribe<Settings::Gui::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
     m_layoutEditing->setCheckable(true);
-    m_layoutEditing->setChecked(m_settings->value<Gui::Settings::LayoutEditing>());
+    m_layoutEditing->setChecked(m_settings->value<Settings::Gui::LayoutEditing>());
 
     const QIcon quickSetupIcon = QIcon::fromTheme(Constants::Icons::QuickSetup);
     m_openQuickSetup           = new QAction(quickSetupIcon, tr("&Quick Setup"), this);

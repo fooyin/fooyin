@@ -30,9 +30,9 @@ class SettingsManager;
 class LibraryTreeGroupRegistry;
 class PresetRegistry;
 
-namespace Gui::Settings {
+namespace Settings::Gui {
 Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
-enum Gui : uint32_t
+enum Settings : uint32_t
 {
     LayoutEditing              = 1 | SettingsType::Bool,
     StartupBehaviour           = 2 | SettingsType::Int,
@@ -65,8 +65,8 @@ enum Gui : uint32_t
     PlaybackFollowsCursor      = 29 | SettingsType::Bool,
     PlaylistTabsSingleHide     = 30 | SettingsType::Bool,
 };
-Q_ENUM_NS(Gui)
-} // namespace Gui::Settings
+Q_ENUM_NS(Settings)
+} // namespace Settings::Gui
 
 class FYGUI_EXPORT GuiSettings
 {

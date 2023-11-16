@@ -33,20 +33,20 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
     , m_sortingRegistry{new SortingRegistry(settingsManager)}
 {
-    m_settings->createSetting<Core::Settings::Version>(VERSION);
-    m_settings->createSetting<Core::Settings::DatabaseVersion>("0.1.0");
-    m_settings->createTempSetting<Core::Settings::FirstRun>(true);
-    m_settings->createSetting<Core::Settings::PlayMode>(0, u"Player"_s);
-    m_settings->createSetting<Core::Settings::AutoRefresh>(false, u"Library"_s);
-    m_settings->createSetting<Core::Settings::LibrarySorting>(QByteArray{}, u"Library"_s);
-    m_settings->createSetting<Core::Settings::LibrarySortScript>(
+    m_settings->createSetting<Settings::Core::Version>(VERSION);
+    m_settings->createSetting<Settings::Core::DatabaseVersion>("0.1.0");
+    m_settings->createTempSetting<Settings::Core::FirstRun>(true);
+    m_settings->createSetting<Settings::Core::PlayMode>(0, u"Player"_s);
+    m_settings->createSetting<Settings::Core::AutoRefresh>(false, u"Library"_s);
+    m_settings->createSetting<Settings::Core::LibrarySorting>(QByteArray{}, u"Library"_s);
+    m_settings->createSetting<Settings::Core::LibrarySortScript>(
         "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", u"Library"_s);
-    m_settings->createSetting<Core::Settings::ActivePlaylistId>(0, u"Playlist"_s);
-    m_settings->createSetting<Core::Settings::AudioOutput>("ALSA|default", u"Engine"_s);
-    m_settings->createSetting<Core::Settings::OutputVolume>(1.0, u"Engine"_s);
-    m_settings->createSetting<Core::Settings::RewindPreviousTrack>(false, u"Playlist"_s);
+    m_settings->createSetting<Settings::Core::ActivePlaylistId>(0, u"Playlist"_s);
+    m_settings->createSetting<Settings::Core::AudioOutput>("ALSA|default", u"Engine"_s);
+    m_settings->createSetting<Settings::Core::OutputVolume>(1.0, u"Engine"_s);
+    m_settings->createSetting<Settings::Core::RewindPreviousTrack>(false, u"Playlist"_s);
 
-    m_settings->set<Core::Settings::FirstRun>(!Utils::File::exists(Core::settingsPath()));
+    m_settings->set<Settings::Core::FirstRun>(!Utils::File::exists(Core::settingsPath()));
 
     m_settings->loadSettings();
     m_sortingRegistry->loadItems();

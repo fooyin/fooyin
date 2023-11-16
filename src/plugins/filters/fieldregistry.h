@@ -28,7 +28,7 @@ namespace Fooyin {
 class SettingsManager;
 
 namespace Filters {
-class FieldRegistry : public ItemRegistry<FilterField, Settings::FilterFields>
+class FieldRegistry : public ItemRegistry<FilterField, Settings::Filters::FilterFields>
 {
     Q_OBJECT
 

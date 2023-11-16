@@ -40,7 +40,7 @@ struct PlayerController::Private
     Private(PlayerController* self, SettingsManager* settings)
         : self{self}
         , settings{settings}
-        , playMode{static_cast<Playlist::PlayModes>(settings->value<Core::Settings::PlayMode>())}
+        , playMode{static_cast<Playlist::PlayModes>(settings->value<Settings::Core::PlayMode>())}
     { }
 };
 
@@ -48,8 +48,8 @@ PlayerController::PlayerController(SettingsManager* settings, QObject* parent)
     : PlayerManager{parent}
     , p{std::make_unique<Private>(this, settings)}
 {
-    settings->subscribe<Core::Settings::PlayMode>(this, [this]() {
-        const auto mode = static_cast<Playlist::PlayModes>(p->settings->value<Core::Settings::PlayMode>());
+    settings->subscribe<Settings::Core::PlayMode>(this, [this]() {
+        const auto mode = static_cast<Playlist::PlayModes>(p->settings->value<Settings::Core::PlayMode>());
         if(std::exchange(p->playMode, mode) != mode) {
             emit playModeChanged(mode);
         }
@@ -151,7 +151,7 @@ void PlayerController::changeCurrentTrack(const Track& track)
 
 void PlayerController::setPlayMode(Playlist::PlayModes mode)
 {
-    p->settings->set<Core::Settings::PlayMode>(static_cast<int>(mode));
+    p->settings->set<Settings::Core::PlayMode>(static_cast<int>(mode));
 }
 
 PlayState PlayerController::playState() const

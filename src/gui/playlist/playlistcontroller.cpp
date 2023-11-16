@@ -61,7 +61,7 @@ struct PlaylistController::Private
 
     void restoreLastPlaylist()
     {
-        const int lastId = settings->value<Gui::Settings::LastPlaylistId>();
+        const int lastId = settings->value<Settings::Gui::LastPlaylistId>();
         if(lastId >= 0) {
             if(auto* playlist = handler->playlistById(lastId)) {
                 currentPlaylist = playlist;
@@ -115,7 +115,7 @@ PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* 
 PlaylistController::~PlaylistController()
 {
     if(p->currentPlaylist) {
-        p->settings->set<Gui::Settings::LastPlaylistId>(p->currentPlaylist->id());
+        p->settings->set<Settings::Gui::LastPlaylistId>(p->currentPlaylist->id());
     }
 }
 

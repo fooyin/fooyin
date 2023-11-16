@@ -76,28 +76,28 @@ PlaylistGuiPageWidget::PlaylistGuiPageWidget(SettingsManager* settings)
 
 void PlaylistGuiPageWidget::apply()
 {
-    m_settings->set<Gui::Settings::PlaylistScrollBar>(m_scrollBars->isChecked());
-    m_settings->set<Gui::Settings::PlaylistHeader>(m_header->isChecked());
-    m_settings->set<Gui::Settings::PlaylistAltColours>(m_altColours->isChecked());
-    m_settings->set<Gui::Settings::PlaylistThumbnailSize>(m_thumbnailSize->value());
+    m_settings->set<Settings::Gui::PlaylistScrollBar>(m_scrollBars->isChecked());
+    m_settings->set<Settings::Gui::PlaylistHeader>(m_header->isChecked());
+    m_settings->set<Settings::Gui::PlaylistAltColours>(m_altColours->isChecked());
+    m_settings->set<Settings::Gui::PlaylistThumbnailSize>(m_thumbnailSize->value());
 }
 
 void PlaylistGuiPageWidget::reset()
 {
-    m_settings->reset<Gui::Settings::PlaylistScrollBar>();
-    m_settings->reset<Gui::Settings::PlaylistHeader>();
-    m_settings->reset<Gui::Settings::PlaylistAltColours>();
-    m_settings->reset<Gui::Settings::PlaylistThumbnailSize>();
+    m_settings->reset<Settings::Gui::PlaylistScrollBar>();
+    m_settings->reset<Settings::Gui::PlaylistHeader>();
+    m_settings->reset<Settings::Gui::PlaylistAltColours>();
+    m_settings->reset<Settings::Gui::PlaylistThumbnailSize>();
 
     setValues();
 }
 
 void PlaylistGuiPageWidget::setValues()
 {
-    m_scrollBars->setChecked(m_settings->value<Gui::Settings::PlaylistScrollBar>());
-    m_header->setChecked(m_settings->value<Gui::Settings::PlaylistHeader>());
-    m_altColours->setChecked(m_settings->value<Gui::Settings::PlaylistAltColours>());
-    m_thumbnailSize->setValue(m_settings->value<Gui::Settings::PlaylistThumbnailSize>());
+    m_scrollBars->setChecked(m_settings->value<Settings::Gui::PlaylistScrollBar>());
+    m_header->setChecked(m_settings->value<Settings::Gui::PlaylistHeader>());
+    m_altColours->setChecked(m_settings->value<Settings::Gui::PlaylistAltColours>());
+    m_thumbnailSize->setValue(m_settings->value<Settings::Gui::PlaylistThumbnailSize>());
 }
 
 PlaylistGuiPage::PlaylistGuiPage(SettingsManager* settings)

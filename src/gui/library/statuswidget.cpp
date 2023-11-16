@@ -128,7 +128,7 @@ StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, 
     QObject::connect(library, &MusicLibrary::scanProgress, this,
                      [this](int progress) { p->scanProgressChanged(progress); });
 
-    settings->subscribe<Gui::Settings::IconTheme>(this, [this]() {
+    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         p->icon = QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
         p->iconLabel->setPixmap(p->icon);
     });

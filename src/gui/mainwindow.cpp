@@ -58,7 +58,7 @@ MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, 
 
     setCentralWidget(m_editableLayout);
 
-    if(m_settings->value<Core::Settings::FirstRun>()) {
+    if(m_settings->value<Settings::Core::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
         QTimer::singleShot(1000, m_editableLayout, &EditableLayout::showQuickSetup);
     }
@@ -71,7 +71,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::open()
 {
-    const int startup = m_settings->value<Gui::Settings::StartupBehaviour>();
+    const int startup = m_settings->value<Settings::Gui::StartupBehaviour>();
     switch(startup) {
         case(Maximised): {
             showMaximized();

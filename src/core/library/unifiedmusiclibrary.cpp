@@ -43,7 +43,8 @@ using namespace std::chrono_literals;
 namespace {
 QCoro::Task<Fooyin::TrackList> recalSortFields(QString sort, Fooyin::TrackList tracks)
 {
-    co_return co_await Fooyin::Utils::asyncExec([&sort, &tracks]() { return Fooyin::Sorting::calcSortFields(sort, tracks); });
+    co_return co_await Fooyin::Utils::asyncExec(
+        [&sort, &tracks]() { return Fooyin::Sorting::calcSortFields(sort, tracks); });
 }
 
 QCoro::Task<Fooyin::TrackList> resortTracks(Fooyin::TrackList tracks)
@@ -90,7 +91,7 @@ struct UnifiedMusicLibrary::Private
         }
 
         TrackList presortedTracks
-            = co_await recalSortFields(settings->value<Core::Settings::LibrarySortScript>(), newTracks);
+            = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), newTracks);
         for(Track& track : presortedTracks) {
             const int libraryId = track.libraryId();
             if(libraryDirs.contains(libraryId)) {
@@ -113,7 +114,7 @@ struct UnifiedMusicLibrary::Private
     QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
     {
         TrackList updatedTracks
-            = co_await recalSortFields(settings->value<Core::Settings::LibrarySortScript>(), tracksToUpdate);
+            = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
         updatedTracks = co_await resortTracks(updatedTracks);
 
         std::ranges::for_each(updatedTracks, [this](Track track) {
@@ -175,10 +176,10 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
     connect(&p->threadHandler, &LibraryThreadHandler::gotTracks, this,
             [this](const TrackList& tracks) { p->loadTracks(tracks); });
 
-    p->settings->subscribe<Core::Settings::LibrarySortScript>(this,
+    p->settings->subscribe<Settings::Core::LibrarySortScript>(this,
                                                               [this](const QString& sort) { p->changeSort(sort); });
 
-    if(p->settings->value<Core::Settings::AutoRefresh>()) {
+    if(p->settings->value<Settings::Core::AutoRefresh>()) {
         QTimer::singleShot(3s, this, &UnifiedMusicLibrary::reloadAll);
     }
 }

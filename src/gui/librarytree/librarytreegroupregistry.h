@@ -27,7 +27,7 @@
 #include <QObject>
 
 namespace Fooyin {
-class LibraryTreeGroupRegistry : public ItemRegistry<LibraryTreeGrouping, Gui::Settings::LibraryTreeGrouping>
+class LibraryTreeGroupRegistry : public ItemRegistry<LibraryTreeGrouping, Settings::Gui::LibraryTreeGrouping>
 {
     Q_OBJECT
 

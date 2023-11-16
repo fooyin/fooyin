@@ -137,11 +137,11 @@ void EditableLayout::initialise()
         p->box->addWidget(p->splitter);
     }
 
-    p->settings->subscribe<Gui::Settings::LayoutEditing>(this,
+    p->settings->subscribe<Settings::Gui::LayoutEditing>(this,
                                                          [this](bool enabled) { p->changeEditingState(enabled); });
 
     if(p->splitter && p->splitter->childCount() < 1) {
-        p->settings->set<Gui::Settings::LayoutEditing>(true);
+        p->settings->set<Settings::Gui::LayoutEditing>(true);
     }
 
     QObject::connect(p->menu->menu(), &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
@@ -178,7 +178,7 @@ void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
     }
 
     FyWidget* currentWidget = widget;
-    int level               = p->settings->value<Gui::Settings::EditingMenuLevels>();
+    int level               = p->settings->value<Settings::Gui::EditingMenuLevels>();
 
     while(level > 0 && currentWidget) {
         menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));
@@ -239,10 +239,10 @@ void EditableLayout::changeLayout(const Layout& layout)
     delete p->splitter;
     const bool success = loadLayout(layout);
     if(success && p->splitter->childCount() > 0) {
-        p->settings->set<Gui::Settings::LayoutEditing>(false);
+        p->settings->set<Settings::Gui::LayoutEditing>(false);
     }
     else {
-        p->settings->set<Gui::Settings::LayoutEditing>(true);
+        p->settings->set<Settings::Gui::LayoutEditing>(true);
     }
 }
 

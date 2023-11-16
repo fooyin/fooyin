@@ -82,7 +82,7 @@ struct PlaylistTabs::Private
         tabs->setMovable(true);
         tabs->setExpanding(false);
 
-        if(settings->value<Gui::Settings::PlaylistTabsSingleHide>()) {
+        if(settings->value<Settings::Gui::PlaylistTabsSingleHide>()) {
             tabs->hide();
         }
     }
@@ -153,7 +153,7 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
     QObject::connect(p->playlistHandler, &PlaylistManager::playlistRenamed, this,
                      [this](const Playlist* playlist) { p->playlistRenamed(playlist); });
 
-    p->settings->subscribe<Gui::Settings::PlaylistTabsSingleHide>(this,
+    p->settings->subscribe<Settings::Gui::PlaylistTabsSingleHide>(this,
                                                                   [this](bool hide) { p->tabs->setVisible(!hide); });
 }
 
@@ -186,7 +186,7 @@ void PlaylistTabs::removePlaylist(const Playlist* playlist)
         }
     }
 
-    if(p->settings->value<Gui::Settings::PlaylistTabsSingleHide>() && p->tabs->count() < 2) {
+    if(p->settings->value<Settings::Gui::PlaylistTabsSingleHide>() && p->tabs->count() < 2) {
         p->tabs->hide();
     }
 }
@@ -199,7 +199,7 @@ int PlaylistTabs::addNewTab(const QString& name, const QIcon& icon)
 
     const int index = p->tabs->addTab(icon, name);
 
-    if(p->settings->value<Gui::Settings::PlaylistTabsSingleHide>() && p->tabs->count() > 1) {
+    if(p->settings->value<Settings::Gui::PlaylistTabsSingleHide>() && p->tabs->count() > 1) {
         p->tabs->show();
     }
 

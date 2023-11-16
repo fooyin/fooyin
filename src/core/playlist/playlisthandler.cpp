@@ -44,8 +44,9 @@ bool updateCommonTracks(Fooyin::TrackList& tracks, const Fooyin::TrackList& upda
     bool haveCommonTracks{false};
 
     for(const Fooyin::Track& track : tracks) {
-        auto it = std::ranges::find_if(std::as_const(updatedTracks),
-                                       [&](const Fooyin::Track& updatedTrack) { return track.id() == updatedTrack.id(); });
+        auto it = std::ranges::find_if(std::as_const(updatedTracks), [&](const Fooyin::Track& updatedTrack) {
+            return track.id() == updatedTrack.id();
+        });
         if(it != updatedTracks.end()) {
             haveCommonTracks = true;
             if(operation == CommonOperation::Update) {
@@ -119,7 +120,7 @@ struct PlaylistHandler::Private
 
     void previous()
     {
-        if(settings->value<Core::Settings::RewindPreviousTrack>() && playerManager->currentPosition() > 5000) {
+        if(settings->value<Settings::Core::RewindPreviousTrack>() && playerManager->currentPosition() > 5000) {
             playerManager->changePosition(0);
         }
         else {
@@ -427,7 +428,7 @@ void PlaylistHandler::savePlaylists()
     p->playlistConnector.saveModifiedPlaylists(p->playlists);
 
     if(p->activePlaylist) {
-        p->settings->set<Core::Settings::ActivePlaylistId>(p->activePlaylist->id());
+        p->settings->set<Settings::Core::ActivePlaylistId>(p->activePlaylist->id());
     }
 }
 
@@ -452,7 +453,7 @@ void PlaylistHandler::populatePlaylists(const TrackList& tracks)
 
     p->playlistConnector.getPlaylistTracks(p->playlists, idTracks);
 
-    const int lastId = p->settings->value<Core::Settings::ActivePlaylistId>();
+    const int lastId = p->settings->value<Settings::Core::ActivePlaylistId>();
     if(lastId >= 0) {
         changeActivePlaylist(lastId);
     }

@@ -54,7 +54,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     auto* startupBehaviourLabel = new QLabel(tr("Startup behaviour: "), this);
 
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
-    m_waitForTracks->setChecked(m_settings->value<Gui::Settings::WaitForTracks>());
+    m_waitForTracks->setChecked(m_settings->value<Settings::Gui::WaitForTracks>());
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(startupBehaviourLabel, 0, 0);
@@ -71,20 +71,20 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     addStartupBehaviour(tr("Show main window maximised"), MainWindow::Maximised);
     addStartupBehaviour(tr("Remember from last run"), MainWindow::RememberLast);
 
-    const int currentBehaviour = m_settings->value<Gui::Settings::StartupBehaviour>();
+    const int currentBehaviour = m_settings->value<Settings::Gui::StartupBehaviour>();
     m_startupBehaviour->setCurrentIndex(currentBehaviour);
 }
 
 void GeneralPageWidget::apply()
 {
-    m_settings->set<Gui::Settings::StartupBehaviour>(m_startupBehaviour->currentIndex());
-    m_settings->set<Gui::Settings::WaitForTracks>(m_waitForTracks->isChecked());
+    m_settings->set<Settings::Gui::StartupBehaviour>(m_startupBehaviour->currentIndex());
+    m_settings->set<Settings::Gui::WaitForTracks>(m_waitForTracks->isChecked());
 }
 
 void GeneralPageWidget::reset()
 {
-    m_settings->reset<Gui::Settings::StartupBehaviour>();
-    m_settings->reset<Gui::Settings::WaitForTracks>();
+    m_settings->reset<Settings::Gui::StartupBehaviour>();
+    m_settings->reset<Settings::Gui::WaitForTracks>();
 }
 
 GeneralPage::GeneralPage(SettingsManager* settings)

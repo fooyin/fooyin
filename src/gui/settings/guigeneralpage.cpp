@@ -106,9 +106,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     mainLayout->addWidget(iconThemeBox);
     mainLayout->addStretch();
 
-    m_splitterHandles->setChecked(m_settings->value<Gui::Settings::SplitterHandles>());
+    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::SplitterHandles>());
 
-    const QString currentTheme = m_settings->value<Gui::Settings::IconTheme>();
+    const QString currentTheme = m_settings->value<Settings::Gui::IconTheme>();
     if(currentTheme == "light"_L1) {
         m_lightTheme->setChecked(true);
     }
@@ -135,20 +135,20 @@ void GuiGeneralPageWidget::apply()
                         : m_lightTheme->isChecked()  ? u"light"_s
                                                      : u"dark"_s;
 
-    if(theme != m_settings->value<Gui::Settings::IconTheme>()) {
+    if(theme != m_settings->value<Settings::Gui::IconTheme>()) {
         QIcon::setThemeName(theme);
-        m_settings->set<Gui::Settings::IconTheme>(theme);
+        m_settings->set<Settings::Gui::IconTheme>(theme);
     }
 
-    m_settings->set<Gui::Settings::SplitterHandles>(m_splitterHandles->isChecked());
+    m_settings->set<Settings::Gui::SplitterHandles>(m_splitterHandles->isChecked());
 }
 
 void GuiGeneralPageWidget::reset()
 {
-    m_settings->reset<Gui::Settings::IconTheme>();
-    m_settings->reset<Gui::Settings::SplitterHandles>();
+    m_settings->reset<Settings::Gui::IconTheme>();
+    m_settings->reset<Settings::Gui::SplitterHandles>();
 
-    m_splitterHandles->setChecked(m_settings->value<Gui::Settings::SplitterHandles>());
+    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::SplitterHandles>());
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

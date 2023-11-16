@@ -26,10 +26,9 @@
 namespace Fooyin {
 class SettingsManager;
 
-namespace Filters {
-namespace Settings {
+namespace Settings::Filters {
 Q_NAMESPACE
-enum Filters : uint32_t
+enum Settings : uint32_t
 {
     FilterAltColours      = 1 | SettingsType::Bool,
     FilterHeader          = 2 | SettingsType::Bool,
@@ -43,9 +42,10 @@ enum Filters : uint32_t
     FilterAutoPlaylist    = 10 | SettingsType::String,
 
 };
-Q_ENUM_NS(Filters)
-} // namespace Settings
+Q_ENUM_NS(Settings)
+} // namespace Settings::Filters
 
+namespace Filters {
 class FiltersSettings
 {
 public:

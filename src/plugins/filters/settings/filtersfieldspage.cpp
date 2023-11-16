@@ -95,7 +95,7 @@ void FiltersFieldsPageWidget::apply()
 
 void FiltersFieldsPageWidget::reset()
 {
-    m_settings->reset<Settings::FilterFields>();
+    m_settings->reset<Settings::Filters::FilterFields>();
     m_fieldsRegistry->loadItems();
     m_model->populate();
 }

@@ -33,37 +33,37 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     , m_libraryTreeGroupRegistry{new LibraryTreeGroupRegistry(m_settings)}
     , m_playlistPresetRegistry{new PresetRegistry(m_settings)}
 {
-    m_settings->createTempSetting<Gui::Settings::LayoutEditing>(false);
-    m_settings->createSetting<Gui::Settings::StartupBehaviour>(2, u"Interface"_s);
-    m_settings->createSetting<Gui::Settings::WaitForTracks>(true, u"Interface"_s);
-    m_settings->createSetting<Gui::Settings::EditingMenuLevels>(2, u"Interface"_s);
-    m_settings->createSetting<Gui::Settings::SplitterHandles>(true, u"Splitters"_s);
-    m_settings->createSetting<Gui::Settings::PlaylistAltColours>(true, u"Playlist"_s);
-    m_settings->createSetting<Gui::Settings::PlaylistHeader>(true, u"Playlist"_s);
-    m_settings->createSetting<Gui::Settings::PlaylistScrollBar>(true, u"Playlist"_s);
-    m_settings->createSetting<Gui::Settings::PlaylistPresets>(QByteArray{}, u"Playlist"_s);
-    m_settings->createSetting<Gui::Settings::CurrentPreset>("Default", u"Playlist"_s);
-    m_settings->createSetting<Gui::Settings::ElapsedTotal>(false, u"Player"_s);
-    m_settings->createSetting<Gui::Settings::InfoAltColours>(true, u"Info"_s);
-    m_settings->createSetting<Gui::Settings::InfoHeader>(true, u"Info"_s);
-    m_settings->createSetting<Gui::Settings::InfoScrollBar>(true, u"Info"_s);
-    m_settings->createSetting<Gui::Settings::IconTheme>("light", u"Theme"_s);
-    m_settings->createSetting<Gui::Settings::LastPlaylistId>(0, u"Playlist"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreeGrouping>(QByteArray{}, u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreeDoubleClick>(1, u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreeMiddleClick>(0, u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreePlaylistEnabled>(false, u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreeAutoSwitch>(true, u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreeAutoPlaylist>("Library Selection", u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreeHeader>(true, u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreeScrollBar>(true, u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreeAltColours>(false, u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::LibraryTreeAppearance>(QVariant::fromValue(LibraryTreeAppearance{}),
+    m_settings->createTempSetting<Settings::Gui::LayoutEditing>(false);
+    m_settings->createSetting<Settings::Gui::StartupBehaviour>(2, u"Interface"_s);
+    m_settings->createSetting<Settings::Gui::WaitForTracks>(true, u"Interface"_s);
+    m_settings->createSetting<Settings::Gui::EditingMenuLevels>(2, u"Interface"_s);
+    m_settings->createSetting<Settings::Gui::SplitterHandles>(true, u"Splitters"_s);
+    m_settings->createSetting<Settings::Gui::PlaylistAltColours>(true, u"Playlist"_s);
+    m_settings->createSetting<Settings::Gui::PlaylistHeader>(true, u"Playlist"_s);
+    m_settings->createSetting<Settings::Gui::PlaylistScrollBar>(true, u"Playlist"_s);
+    m_settings->createSetting<Settings::Gui::PlaylistPresets>(QByteArray{}, u"Playlist"_s);
+    m_settings->createSetting<Settings::Gui::CurrentPreset>("Default", u"Playlist"_s);
+    m_settings->createSetting<Settings::Gui::ElapsedTotal>(false, u"Player"_s);
+    m_settings->createSetting<Settings::Gui::InfoAltColours>(true, u"Info"_s);
+    m_settings->createSetting<Settings::Gui::InfoHeader>(true, u"Info"_s);
+    m_settings->createSetting<Settings::Gui::InfoScrollBar>(true, u"Info"_s);
+    m_settings->createSetting<Settings::Gui::IconTheme>("light", u"Theme"_s);
+    m_settings->createSetting<Settings::Gui::LastPlaylistId>(0, u"Playlist"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreeGrouping>(QByteArray{}, u"LibraryTree"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreeDoubleClick>(1, u"LibraryTree"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreeMiddleClick>(0, u"LibraryTree"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreePlaylistEnabled>(false, u"LibraryTree"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreeAutoSwitch>(true, u"LibraryTree"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreeAutoPlaylist>("Library Selection", u"LibraryTree"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreeHeader>(true, u"LibraryTree"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreeScrollBar>(true, u"LibraryTree"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreeAltColours>(false, u"LibraryTree"_s);
+    m_settings->createSetting<Settings::Gui::LibraryTreeAppearance>(QVariant::fromValue(LibraryTreeAppearance{}),
                                                                     u"LibraryTree"_s);
-    m_settings->createSetting<Gui::Settings::PlaylistThumbnailSize>(100, u"Playlist"_s);
-    m_settings->createSetting<Gui::Settings::CursorFollowsPlayback>(false, u"Playlist"_s);
-    m_settings->createSetting<Gui::Settings::PlaybackFollowsCursor>(false, u"Playlist"_s);
-    m_settings->createSetting<Gui::Settings::PlaylistTabsSingleHide>(false, u"PlaylistTabs"_s);
+    m_settings->createSetting<Settings::Gui::PlaylistThumbnailSize>(100, u"Playlist"_s);
+    m_settings->createSetting<Settings::Gui::CursorFollowsPlayback>(false, u"Playlist"_s);
+    m_settings->createSetting<Settings::Gui::PlaybackFollowsCursor>(false, u"Playlist"_s);
+    m_settings->createSetting<Settings::Gui::PlaylistTabsSingleHide>(false, u"PlaylistTabs"_s);
 
     m_settings->loadSettings();
     m_libraryTreeGroupRegistry->loadItems();

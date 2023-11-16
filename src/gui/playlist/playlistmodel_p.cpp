@@ -211,8 +211,8 @@ int moveRows(Fooyin::PlaylistModel* model, const QModelIndex& source, const Cont
 }
 
 template <typename Container>
-int copyRowsRecursive(Fooyin::PlaylistModel* model, Fooyin::ItemKeyMap& nodes, const QModelIndex& source, const Container& rows,
-                      const QModelIndex& target, int row)
+int copyRowsRecursive(Fooyin::PlaylistModel* model, Fooyin::ItemKeyMap& nodes, const QModelIndex& source,
+                      const Container& rows, const QModelIndex& target, int row)
 {
     int currRow{row};
     auto* targetParent = model->itemForIndex(target);
@@ -251,8 +251,8 @@ int copyRows(Fooyin::PlaylistModel* model, Fooyin::ItemKeyMap& nodes, const QMod
 }
 
 template <typename Container>
-int insertRows(Fooyin::PlaylistModel* model, Fooyin::ItemKeyMap& nodes, const Container& rows, const QModelIndex& target,
-               int row)
+int insertRows(Fooyin::PlaylistModel* model, Fooyin::ItemKeyMap& nodes, const Container& rows,
+               const QModelIndex& target, int row)
 {
     auto* targetParent = model->itemForIndex(target);
     if(!targetParent) {
@@ -351,9 +351,9 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, SettingsManager
     , resetting{false}
     , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
     , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
-    , altColours{settings->value<Gui::Settings::PlaylistAltColours>()}
-    , coverSize{settings->value<Gui::Settings::PlaylistThumbnailSize>(),
-                settings->value<Gui::Settings::PlaylistThumbnailSize>()}
+    , altColours{settings->value<Settings::Gui::PlaylistAltColours>()}
+    , coverSize{settings->value<Settings::Gui::PlaylistThumbnailSize>(),
+                settings->value<Settings::Gui::PlaylistThumbnailSize>()}
     , isActivePlaylist{false}
     , currentPlaylist{nullptr}
     , currentPlayState{PlayState::Stopped}

@@ -97,13 +97,13 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManage
     libraryLayout->addWidget(buttons);
 
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
-    m_autoRefresh->setChecked(m_settings->value<Core::Settings::AutoRefresh>());
+    m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
 
     auto* sortScriptLabel  = new QLabel(tr("Sort tracks by:"), this);
     auto* sortScriptLayout = new QHBoxLayout();
     sortScriptLayout->addWidget(sortScriptLabel);
     sortScriptLayout->addWidget(m_sortScript);
-    m_sortScript->setText(m_settings->value<Core::Settings::LibrarySortScript>());
+    m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(libraryLayout);
@@ -116,16 +116,16 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManage
 
 void LibraryGeneralPageWidget::apply()
 {
-    m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
-    m_settings->set<Core::Settings::LibrarySortScript>(m_sortScript->text());
+    m_settings->set<Settings::Core::AutoRefresh>(m_autoRefresh->isChecked());
+    m_settings->set<Settings::Core::LibrarySortScript>(m_sortScript->text());
 
     m_model->processQueue();
 }
 
 void LibraryGeneralPageWidget::reset()
 {
-    m_settings->reset<Core::Settings::AutoRefresh>();
-    m_settings->reset<Core::Settings::LibrarySortScript>();
+    m_settings->reset<Settings::Core::AutoRefresh>();
+    m_settings->reset<Settings::Core::LibrarySortScript>();
 }
 
 void LibraryGeneralPageWidget::addLibrary() const

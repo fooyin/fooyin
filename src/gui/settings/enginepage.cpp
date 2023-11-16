@@ -79,19 +79,19 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineHandler* eng
 void EnginePageWidget::apply()
 {
     const QString output = m_outputBox->currentText() + u"|"_s + m_deviceBox->currentData().toString();
-    m_settings->set<Core::Settings::AudioOutput>(output);
+    m_settings->set<Settings::Core::AudioOutput>(output);
 }
 
 void EnginePageWidget::reset()
 {
-    m_settings->reset<Core::Settings::AudioOutput>();
+    m_settings->reset<Settings::Core::AudioOutput>();
     setupOutputs();
     setupDevices(m_outputBox->currentText());
 }
 
 void EnginePageWidget::setupOutputs()
 {
-    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split(u"|"_s);
+    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(u"|"_s);
 
     const QString outName = !currentOutput.empty() ? currentOutput.at(0) : u""_s;
     const auto outputs    = m_engineHandler->getAllOutputs();
@@ -118,7 +118,7 @@ void EnginePageWidget::setupDevices(const QString& output)
 
     m_deviceBox->clear();
 
-    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split(u"|"_s);
+    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(u"|"_s);
 
     if(currentOutput.empty()) {
         return;

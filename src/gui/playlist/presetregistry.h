@@ -29,7 +29,7 @@
 namespace Fooyin {
 class SettingsManager;
 
-class PresetRegistry : public ItemRegistry<PlaylistPreset, Gui::Settings::PlaylistPresets>
+class PresetRegistry : public ItemRegistry<PlaylistPreset, Settings::Gui::PlaylistPresets>
 {
     Q_OBJECT
 

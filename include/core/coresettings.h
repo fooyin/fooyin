@@ -29,9 +29,9 @@ namespace Fooyin {
 class SettingsManager;
 class SortingRegistry;
 
-namespace Core::Settings {
+namespace Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
-enum Core : uint32_t
+enum Settings : uint32_t
 {
     Version             = 1 | SettingsType::String,
     DatabaseVersion     = 2 | SettingsType::String,
@@ -45,8 +45,8 @@ enum Core : uint32_t
     OutputVolume        = 10 | SettingsType::Double,
     RewindPreviousTrack = 11 | SettingsType::Bool,
 };
-Q_ENUM_NS(Core)
-} // namespace Core::Settings
+Q_ENUM_NS(Settings)
+} // namespace Settings::Core
 
 class FYCORE_EXPORT CoreSettings
 {

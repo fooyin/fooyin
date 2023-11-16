@@ -102,7 +102,7 @@ PlayerControl::PlayerControl(PlayerManager* playerManager, SettingsManager* sett
     QObject::connect(p->playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
 
-    settings->subscribe<Gui::Settings::IconTheme>(this, [this]() {
+    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         p->stop->updateIcons();
         p->prev->updateIcons();
         p->playPause->updateIcons();

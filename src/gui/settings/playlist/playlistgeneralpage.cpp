@@ -77,28 +77,28 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
 
 void PlaylistGeneralPageWidget::apply()
 {
-    m_settings->set<Gui::Settings::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
-    m_settings->set<Gui::Settings::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
-    m_settings->set<Core::Settings::RewindPreviousTrack>(m_rewindPrevious->isChecked());
-    m_settings->set<Gui::Settings::PlaylistTabsSingleHide>(m_hideSinglePlaylistTab->isChecked());
+    m_settings->set<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
+    m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
+    m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
+    m_settings->set<Settings::Gui::PlaylistTabsSingleHide>(m_hideSinglePlaylistTab->isChecked());
 }
 
 void PlaylistGeneralPageWidget::reset()
 {
-    m_settings->reset<Gui::Settings::CursorFollowsPlayback>();
-    m_settings->reset<Gui::Settings::PlaybackFollowsCursor>();
-    m_settings->reset<Core::Settings::RewindPreviousTrack>();
-    m_settings->reset<Gui::Settings::PlaylistTabsSingleHide>();
+    m_settings->reset<Settings::Gui::CursorFollowsPlayback>();
+    m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
+    m_settings->reset<Settings::Core::RewindPreviousTrack>();
+    m_settings->reset<Settings::Gui::PlaylistTabsSingleHide>();
 
     setValues();
 }
 
 void PlaylistGeneralPageWidget::setValues()
 {
-    m_cursorFollowsPlayback->setChecked(m_settings->value<Gui::Settings::CursorFollowsPlayback>());
-    m_playbackFollowsCursor->setChecked(m_settings->value<Gui::Settings::PlaybackFollowsCursor>());
-    m_rewindPrevious->setChecked(m_settings->value<Core::Settings::RewindPreviousTrack>());
-    m_hideSinglePlaylistTab->setChecked(m_settings->value<Gui::Settings::PlaylistTabsSingleHide>());
+    m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
+    m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
+    m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
+    m_hideSinglePlaylistTab->setChecked(m_settings->value<Settings::Gui::PlaylistTabsSingleHide>());
 }
 
 PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings)

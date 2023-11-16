@@ -279,11 +279,11 @@ GuiApplication::GuiApplication(const CorePluginContext& core)
 
     p->layoutProvider.findLayouts();
 
-    QIcon::setThemeName(p->settingsManager->value<Gui::Settings::IconTheme>());
+    QIcon::setThemeName(p->settingsManager->value<Settings::Gui::IconTheme>());
 
     p->editableLayout->initialise();
 
-    if(p->libraryManager->hasLibrary() && p->settingsManager->value<Gui::Settings::WaitForTracks>()) {
+    if(p->libraryManager->hasLibrary() && p->settingsManager->value<Settings::Gui::WaitForTracks>()) {
         connect(p->library, &MusicLibrary::tracksLoaded, p->mainWindow.get(), &MainWindow::open);
     }
     else {

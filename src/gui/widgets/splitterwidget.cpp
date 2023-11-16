@@ -36,7 +36,8 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-Fooyin::ActionContainer* createNewMenu(Fooyin::ActionManager* actionManager, Fooyin::FyWidget* parent, const QString& title)
+Fooyin::ActionContainer* createNewMenu(Fooyin::ActionManager* actionManager, Fooyin::FyWidget* parent,
+                                       const QString& title)
 {
     auto id       = parent->id().append(title);
     auto* newMenu = actionManager->createMenu(id);
@@ -90,8 +91,8 @@ protected:
     QSplitterHandle* createHandle() override
     {
         auto* handle = new SplitterHandle(orientation(), this);
-        handle->showHandle(m_settings->value<Gui::Settings::SplitterHandles>());
-        m_settings->subscribe<Gui::Settings::SplitterHandles>(handle, &SplitterHandle::showHandle);
+        handle->showHandle(m_settings->value<Settings::Gui::SplitterHandles>());
+        m_settings->subscribe<Settings::Gui::SplitterHandles>(handle, &SplitterHandle::showHandle);
         return handle;
     };
 

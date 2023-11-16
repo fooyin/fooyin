@@ -125,7 +125,7 @@ PlaylistControl::PlaylistControl(PlayerManager* playerManager, SettingsManager* 
     QObject::connect(playerManager, &PlayerManager::playModeChanged, this,
                      [this](Playlist::PlayModes mode) { p->setMode(mode); });
 
-    settings->subscribe<Gui::Settings::IconTheme>(this, [this]() {
+    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         p->repeat->updateIcons();
         p->shuffle->updateIcons();
     });
