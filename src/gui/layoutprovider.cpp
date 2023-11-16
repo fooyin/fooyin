@@ -199,11 +199,7 @@ std::optional<Layout> LayoutProvider::readLayout(const QByteArray& json)
 {
     const auto doc = QJsonDocument::fromJson(json);
 
-    if(doc.isEmpty()) {
-        return {};
-    }
-
-    if(!doc.isObject()) {
+    if(doc.isEmpty() || !doc.isObject()) {
         return {};
     }
 
