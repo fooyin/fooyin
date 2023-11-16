@@ -22,6 +22,7 @@
 #include "fygui_export.h"
 
 #include <QString>
+#include <QJsonObject>
 
 namespace Fy::Gui {
 struct Layout
