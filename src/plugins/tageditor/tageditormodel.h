@@ -24,21 +24,19 @@
 #include <core/track.h>
 #include <utils/tablemodel.h>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
 
 namespace TagEditor {
-class TagEditorModel : public Utils::TableModel<TagEditorItem>
+class TagEditorModel : public TableModel<TagEditorItem>
 {
     Q_OBJECT
 
 public:
-    explicit TagEditorModel(Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit TagEditorModel(SettingsManager* settings, QObject* parent = nullptr);
     ~TagEditorModel() override;
 
-    void reset(const Core::TrackList& tracks);
+    void reset(const TrackList& tracks);
     void addNewRow();
     void removeRow(int row);
     void processQueue();
@@ -56,11 +54,11 @@ signals:
     void newPendingRow();
     void pendingRowAdded();
     void pendingRowCancelled();
-    void trackMetadataChanged(const Core::TrackList& tracks);
+    void trackMetadataChanged(const TrackList& tracks);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
 } // namespace TagEditor
-} // namespace Fy
+} // namespace Fooyin

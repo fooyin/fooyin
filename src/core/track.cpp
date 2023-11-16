@@ -29,7 +29,7 @@ using namespace Qt::Literals::StringLiterals;
 
 constexpr auto Separator = "|";
 
-namespace Fy::Core {
+namespace Fooyin {
 struct Track::Private : public QSharedData
 {
     int libraryId{-1};
@@ -631,7 +631,7 @@ QDataStream& operator>>(QDataStream& stream, Track& track)
 QDataStream& operator<<(QDataStream& stream, const TrackList& tracks)
 {
     stream << static_cast<int>(tracks.size());
-    for(const Fy::Core::Track& track : tracks) {
+    for(const Fooyin::Track& track : tracks) {
         stream << track;
     }
     return stream;
@@ -644,7 +644,7 @@ QDataStream& operator>>(QDataStream& stream, TrackList& tracks)
 
     tracks.reserve(size);
     for(int i{0}; i < size; ++i) {
-        Fy::Core::Track track;
+        Fooyin::Track track;
         stream >> track;
         tracks.push_back(track);
     }
@@ -682,4 +682,4 @@ QDataStream& operator>>(QDataStream& stream, ExtraTags& tags)
 
     return stream;
 }
-} // namespace Fy::Core
+} // namespace Fooyin

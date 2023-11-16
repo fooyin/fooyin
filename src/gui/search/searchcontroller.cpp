@@ -19,7 +19,7 @@
 
 #include <gui/searchcontroller.h>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 QString SearchController::searchText() const
 {
     return m_searchText;
@@ -30,6 +30,6 @@ void SearchController::changeSearch(const QString& search)
     m_searchText = search;
     emit searchChanged(m_searchText);
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "gui/moc_searchcontroller.cpp"

@@ -23,7 +23,7 @@
 
 #include <QStringList>
 
-namespace Fy::Core::Scripting {
+namespace Fooyin::Scripting {
 QString msToString(const QStringList& vec)
 {
     if(vec.size() > 1 || vec[0].isEmpty()) {
@@ -31,4 +31,4 @@ QString msToString(const QStringList& vec)
     }
     return Utils::msToString(vec[0].toULongLong());
 }
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin::Scripting

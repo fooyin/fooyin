@@ -25,20 +25,16 @@
 
 class QString;
 
-namespace Fy::Core {
-namespace Scripting {
+namespace Fooyin {
 struct ParsedScript;
-}
 
-namespace Library::Sorting {
-Scripting::ParsedScript parseScript(const QString& sort);
-
+namespace Sorting {
 TrackList FYCORE_EXPORT calcSortFields(const QString& sort, const TrackList& tracks);
-TrackList FYCORE_EXPORT calcSortFields(const Scripting::ParsedScript& sortScript, const TrackList& tracks);
+TrackList FYCORE_EXPORT calcSortFields(const ParsedScript& sortScript, const TrackList& tracks);
 
 TrackList FYCORE_EXPORT sortTracks(const TrackList& tracks);
 
 TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tracks);
-TrackList FYCORE_EXPORT calcSortTracks(const Scripting::ParsedScript& sortScript, const TrackList& tracks);
-} // namespace Library::Sorting
-} // namespace Fy::Core
+TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks);
+} // namespace Sorting
+} // namespace Fooyin

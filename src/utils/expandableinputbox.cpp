@@ -29,7 +29,7 @@
 constexpr auto AddIcon    = "list-add";
 constexpr auto RemoveIcon = "list-remove";
 
-namespace Fy::Utils {
+namespace Fooyin {
 struct ExpandableInput::Private
 {
     Attributes attributes;
@@ -275,6 +275,6 @@ void ExpandableInputBox::clearBlocks()
 
     p->blocks.clear();
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_expandableinputbox.cpp"

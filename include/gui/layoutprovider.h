@@ -21,10 +21,10 @@
 
 #include "fygui_export.h"
 
-#include <QString>
 #include <QJsonObject>
+#include <QString>
 
-namespace Fy::Gui {
+namespace Fooyin {
 struct Layout
 {
     Layout() = default;
@@ -62,4 +62,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Gui
+} // namespace Fooyin

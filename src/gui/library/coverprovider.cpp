@@ -40,12 +40,12 @@ constexpr QSize NoCoverSize = {60, 60};
 namespace {
 QString coverThumbnailPath(const QString& key)
 {
-    return Fy::Gui::coverPath() + key + ".jpg";
+    return Fooyin::Gui::coverPath() + key + ".jpg";
 }
 
 QCoro::Task<void> saveThumbnail(QPixmap cover, QString key)
 {
-    co_return co_await Fy::Utils::asyncExec([&cover, &key]() {
+    co_return co_await Fooyin::Utils::asyncExec([&cover, &key]() {
         QFile file{coverThumbnailPath(key)};
         file.open(QIODevice::WriteOnly);
         cover.save(&file, "JPG", 85);
@@ -58,8 +58,8 @@ QPixmap loadNoCover()
     if(QPixmapCache::find(NoCoverKey, &cover)) {
         return cover;
     }
-    if(cover.load(Fy::Gui::Constants::NoCover)) {
-        cover = Fy::Utils::scalePixmap(cover, NoCoverSize);
+    if(cover.load(Fooyin::Constants::NoCover)) {
+        cover = Fooyin::Utils::scalePixmap(cover, NoCoverSize);
         QPixmapCache::insert(NoCoverKey, cover);
         return cover;
     }
@@ -76,7 +76,7 @@ QPixmap loadCachedCover(const QString& key)
 
     const QString cachePath = coverThumbnailPath(key);
 
-    if(Fy::Utils::File::exists(cachePath)) {
+    if(Fooyin::Utils::File::exists(cachePath)) {
         cover.load(cachePath);
         if(!cover.isNull()) {
             return cover;
@@ -87,25 +87,25 @@ QPixmap loadCachedCover(const QString& key)
     return {};
 }
 
-QString generateCoverKey(const Fy::Core::Track& track, const QSize& size)
+QString generateCoverKey(const Fooyin::Track& track, const QSize& size)
 {
-    return Fy::Utils::generateHash(track.albumHash(), QString::number(size.width()), QString::number(size.height()));
+    return Fooyin::Utils::generateHash(track.albumHash(), QString::number(size.width()), QString::number(size.height()));
 }
 } // namespace
 
-namespace Fy::Gui::Library {
+namespace Fooyin {
 struct CoverProvider::Private
 {
     CoverProvider* self;
 
-    Core::Tagging::TagReader tagReader;
+    TagReader tagReader;
     std::set<QString> pendingCovers;
 
     explicit Private(CoverProvider* self)
         : self{self}
     { }
 
-    QCoro::Task<void> fetchCover(QString key, Fy::Core::Track track, QSize size, bool saveToDisk)
+    QCoro::Task<void> fetchCover(QString key, Fooyin::Track track, QSize size, bool saveToDisk)
     {
         QPixmap cover;
 
@@ -116,7 +116,7 @@ struct CoverProvider::Private
                 co_return;
             }
         }
-        else if(Fy::Utils::File::exists(track.coverPath())) {
+        else if(Fooyin::Utils::File::exists(track.coverPath())) {
             cover.load(track.coverPath());
             if(cover.isNull()) {
                 co_return;
@@ -137,7 +137,7 @@ struct CoverProvider::Private
         }
 
         pendingCovers.erase(key);
-        QMetaObject::invokeMethod(self, "coverAdded", Q_ARG(Fy::Core::Track, track));
+        QMetaObject::invokeMethod(self, "coverAdded", Q_ARG(Fooyin::Track, track));
         co_return;
     }
 };
@@ -149,12 +149,12 @@ CoverProvider::CoverProvider(QObject* parent)
 
 CoverProvider::~CoverProvider() = default;
 
-QPixmap CoverProvider::trackCover(const Core::Track& track, bool saveToDisk) const
+QPixmap CoverProvider::trackCover(const Track& track, bool saveToDisk) const
 {
     return trackCover(track, {}, saveToDisk);
 }
 
-QPixmap CoverProvider::trackCover(const Core::Track& track, const QSize& size, bool saveToDisk) const
+QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, bool saveToDisk) const
 {
     if(!track.hasCover()) {
         return loadNoCover();
@@ -177,11 +177,11 @@ QPixmap CoverProvider::trackCover(const Core::Track& track, const QSize& size, b
 
 void CoverProvider::clearCache()
 {
-    QDir cache{Fy::Gui::coverPath()};
+    QDir cache{Fooyin::Gui::coverPath()};
     cache.removeRecursively();
 
     QPixmapCache::clear();
 }
-} // namespace Fy::Gui::Library
+} // namespace Fooyin
 
 #include "gui/moc_coverprovider.cpp"

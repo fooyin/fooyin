@@ -21,7 +21,7 @@
 
 #include <QString>
 
-namespace Fy::Core::Scripting {
+namespace Fooyin {
 struct ScriptResult
 {
     explicit operator QString() const
@@ -31,5 +31,5 @@ struct ScriptResult
     QString value;
     bool cond{false};
 };
-using ValueList = std::vector<ScriptResult>;
-} // namespace Fy::Core::Scripting
+using ScriptValueList = std::vector<ScriptResult>;
+} // namespace Fooyin

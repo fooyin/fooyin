@@ -25,12 +25,12 @@
 #include <core/trackfwd.h>
 #include <utils/worker.h>
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 struct PlaylistPreset;
 
 using ItemList        = std::vector<PlaylistItem>;
 using ItemKeyMap      = std::unordered_map<QString, PlaylistItem>;
-using ContainerKeyMap = std::unordered_map<QString, Container*>;
+using ContainerKeyMap = std::unordered_map<QString, PlaylistContainerItem*>;
 using NodeKeyMap      = std::unordered_map<QString, std::vector<QString>>;
 using TrackIdNodeMap  = std::unordered_map<int, std::vector<QString>>;
 using IndexGroupMap   = std::map<int, std::vector<QString>>;
@@ -58,7 +58,7 @@ struct PendingData
     }
 };
 
-class PlaylistPopulator : public Utils::Worker
+class PlaylistPopulator : public Worker
 {
     Q_OBJECT
 
@@ -66,9 +66,9 @@ public:
     explicit PlaylistPopulator(QObject* parent = nullptr);
     ~PlaylistPopulator() override;
 
-    void run(const PlaylistPreset& preset, const Core::TrackList& tracks);
-    void runTracks(const PlaylistPreset& preset, const Core::TrackList& tracks, const QString& parent, int row);
-    void runTracks(const PlaylistPreset& preset, const std::map<int, std::vector<Core::Track>>& tracks);
+    void run(const PlaylistPreset& preset, const TrackList& tracks);
+    void runTracks(const PlaylistPreset& preset, const TrackList& tracks, const QString& parent, int row);
+    void runTracks(const PlaylistPreset& preset, const std::map<int, std::vector<Track>>& tracks);
     void updateHeaders(const ItemList& headers);
 
 signals:
@@ -81,4 +81,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

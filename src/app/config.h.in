@@ -19,7 +19,7 @@
 
 #pragma once
 
-namespace Fy {
+namespace Fooyin {
 #define RELATIVE_PLUGIN_DIR "@FOOYIN_RELATIVE_PLUGIN_DIR@"
 
 #cmakedefine SDL2_FOUND

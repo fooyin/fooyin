@@ -26,23 +26,23 @@
 
 #include <QObject>
 
-namespace Fy::Core::Scripting {
-class FYCORE_EXPORT Registry
+namespace Fooyin {
+class FYCORE_EXPORT ScriptRegistry
 {
 public:
     using FuncRet = std::variant<int, uint64_t, QString, QStringList>;
 
-    Registry();
-    virtual ~Registry();
+    ScriptRegistry();
+    virtual ~ScriptRegistry();
 
     virtual bool varExists(const QString& var) const;
     virtual bool funcExists(const QString& func) const;
 
     virtual ScriptResult varValue(const QString& var) const;
     virtual void setVar(const QString& var, const FuncRet& value, Track& track);
-    virtual ScriptResult function(const QString& func, const ValueList& args) const;
+    virtual ScriptResult function(const QString& func, const ScriptValueList& args) const;
 
-    void changeCurrentTrack(const Core::Track& track);
+    void changeCurrentTrack(const Track& track);
 
 protected:
     template <typename NewCntr, typename Cntr>
@@ -57,4 +57,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin

@@ -31,11 +31,11 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-namespace Fy::Filters::Settings {
-class FiltersFieldsPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin::Filters {
+class FiltersFieldsPageWidget : public SettingsPageWidget
 {
 public:
-    explicit FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry, Utils::SettingsManager* settings);
+    explicit FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -45,13 +45,13 @@ private:
     void removeField() const;
 
     FieldRegistry* m_fieldsRegistry;
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 
     QTableView* m_fieldList;
     FieldModel* m_model;
 };
 
-FiltersFieldsPageWidget::FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry, Utils::SettingsManager* settings)
+FiltersFieldsPageWidget::FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry, SettingsManager* settings)
     : m_fieldsRegistry{fieldsRegistry}
     , m_settings{settings}
     , m_fieldList{new QTableView(this)}
@@ -95,7 +95,7 @@ void FiltersFieldsPageWidget::apply()
 
 void FiltersFieldsPageWidget::reset()
 {
-    m_settings->reset<Settings::FilterFields>();
+    m_settings->reset<Settings::Filters::FilterFields>();
     m_fieldsRegistry->loadItems();
     m_model->populate();
 }
@@ -114,12 +114,12 @@ void FiltersFieldsPageWidget::removeField() const
     }
 }
 
-FiltersFieldsPage::FiltersFieldsPage(FieldRegistry* fieldsRegistry, Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+FiltersFieldsPage::FiltersFieldsPage(FieldRegistry* fieldsRegistry, SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::FiltersFields);
     setName(tr("Fields"));
     setCategory({tr("Plugins"), tr("Filters")});
     setWidgetCreator([fieldsRegistry, settings] { return new FiltersFieldsPageWidget(fieldsRegistry, settings); });
 }
-} // namespace Fy::Filters::Settings
+} // namespace Fooyin::Filters

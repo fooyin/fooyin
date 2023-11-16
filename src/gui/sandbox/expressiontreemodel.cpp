@@ -25,15 +25,15 @@
 #include <QIcon>
 #include <utility>
 
-namespace Fy::Gui::Sandbox {
 constexpr auto FullName        = " ... ";
 constexpr auto ConditionalName = "[ ... ]";
 
+namespace Fooyin {
 ExpressionTreeItem::ExpressionTreeItem()
     : ExpressionTreeItem{QStringLiteral(""), QStringLiteral(""), {}}
 { }
 
-ExpressionTreeItem::ExpressionTreeItem(QString key, QString name, Core::Scripting::Expression expression)
+ExpressionTreeItem::ExpressionTreeItem(QString key, QString name, Expression expression)
     : m_key{std::move(key)}
     , m_name{std::move(name)}
     , m_expression{std::move(expression)}
@@ -44,7 +44,7 @@ QString ExpressionTreeItem::key() const
     return m_key;
 }
 
-Core::Scripting::ExprType ExpressionTreeItem::type() const
+Expr::Type ExpressionTreeItem::type() const
 {
     return m_expression.type;
 }
@@ -54,7 +54,7 @@ QString ExpressionTreeItem::name() const
     return m_name;
 }
 
-Core::Scripting::Expression ExpressionTreeItem::expression() const
+Expression ExpressionTreeItem::expression() const
 {
     return m_expression;
 }
@@ -63,13 +63,13 @@ struct ExpressionTreeModel::Private
 {
     std::unordered_map<QString, ExpressionTreeItem> nodes;
 
-    QIcon iconExpression{QIcon::fromTheme(Gui::Constants::Icons::ScriptExpression)};
-    QIcon iconLiteral{QIcon::fromTheme(Gui::Constants::Icons::ScriptLiteral)};
-    QIcon iconVariable{QIcon::fromTheme(Gui::Constants::Icons::ScriptVariable)};
-    QIcon iconFunction{QIcon::fromTheme(Gui::Constants::Icons::ScriptFunction)};
+    QIcon iconExpression{QIcon::fromTheme(Constants::Icons::ScriptExpression)};
+    QIcon iconLiteral{QIcon::fromTheme(Constants::Icons::ScriptLiteral)};
+    QIcon iconVariable{QIcon::fromTheme(Constants::Icons::ScriptVariable)};
+    QIcon iconFunction{QIcon::fromTheme(Constants::Icons::ScriptFunction)};
 
-    ExpressionTreeItem* insertNode(const QString& key, const QString& name,
-                                   const Core::Scripting::Expression& expression, ExpressionTreeItem* parent)
+    ExpressionTreeItem* insertNode(const QString& key, const QString& name, const Expression& expression,
+                                   ExpressionTreeItem* parent)
     {
         if(!nodes.contains(key)) {
             auto* item = nodes.contains(key)
@@ -85,7 +85,7 @@ struct ExpressionTreeModel::Private
         return Utils::generateHash(parentKey, name, QString::number(nodes.size()));
     }
 
-    void iterateExpression(const Core::Scripting::Expression& expression, ExpressionTreeItem* parent)
+    void iterateExpression(const Expression& expression, ExpressionTreeItem* parent)
     {
         QString name;
 
@@ -94,7 +94,7 @@ struct ExpressionTreeModel::Private
             insertNode(generateKey(parent->key(), name), name, expression, parent);
         }
 
-        else if(const auto* value = std::get_if<Core::Scripting::FuncValue>(&expression.value)) {
+        else if(const auto* value = std::get_if<FuncValue>(&expression.value)) {
             name       = value->name;
             auto* node = insertNode(generateKey(parent->key(), name), name, expression, parent);
 
@@ -103,8 +103,8 @@ struct ExpressionTreeModel::Private
             }
         }
 
-        else if(const auto* value = std::get_if<Core::Scripting::ExpressionList>(&expression.value)) {
-            if(expression.type == Core::Scripting::ExprType::Conditional) {
+        else if(const auto* value = std::get_if<ExpressionList>(&expression.value)) {
+            if(expression.type == Expr::Conditional) {
                 name   = ConditionalName;
                 parent = insertNode(generateKey(parent->key(), name), name, expression, parent);
             }
@@ -123,7 +123,7 @@ ExpressionTreeModel::ExpressionTreeModel(QObject* parent)
 
 ExpressionTreeModel::~ExpressionTreeModel() = default;
 
-void ExpressionTreeModel::populate(const Core::Scripting::ExpressionList& expressions)
+void ExpressionTreeModel::populate(const ExpressionList& expressions)
 {
     beginResetModel();
 
@@ -133,7 +133,7 @@ void ExpressionTreeModel::populate(const Core::Scripting::ExpressionList& expres
     ExpressionTreeItem* parent = rootItem();
 
     if(expressions.size() > 1) {
-        Core::Scripting::Expression const fullExpression{Core::Scripting::ExprType::FunctionArg, expressions};
+        Expression const fullExpression{Expr::FunctionArg, expressions};
         parent = p->insertNode(p->generateKey(parent->key(), FullName), FullName, fullExpression, parent);
     }
 
@@ -160,19 +160,19 @@ QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
     }
 
     switch(item->type()) {
-        case(Core::Scripting::Literal):
+        case(Expr::Literal):
             return p->iconLiteral;
-        case(Core::Scripting::Variable):
+        case(Expr::Variable):
             return p->iconVariable;
-        case(Core::Scripting::Function):
+        case(Expr::Function):
             return p->iconFunction;
-        case(Core::Scripting::FunctionArg):
+        case(Expr::FunctionArg):
             return p->iconExpression;
-        case(Core::Scripting::Null):
-        case(Core::Scripting::Conditional):
-        case(Core::Scripting::VariableList):
+        case(Expr::Null):
+        case(Expr::Conditional):
+        case(Expr::VariableList):
         default:
             return {};
     }
 }
-} // namespace Fy::Gui::Sandbox
+} // namespace Fooyin

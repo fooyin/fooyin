@@ -24,7 +24,7 @@
 #include <QWidget>
 #include <QWidgetAction>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT MenuHeader : public QWidget
 {
     Q_OBJECT
@@ -52,4 +52,4 @@ class FYUTILS_EXPORT MenuHeaderAction : public QWidgetAction
 public:
     explicit MenuHeaderAction(const QString& text, QObject* parent = nullptr);
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

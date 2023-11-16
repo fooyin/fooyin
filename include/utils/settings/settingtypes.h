@@ -23,8 +23,8 @@
 
 #include <cstdint>
 
-namespace Fy {
-namespace Utils::Settings {
+namespace Fooyin {
+namespace SettingsType {
 enum FYUTILS_EXPORT Type : uint32_t
 {
     Variant   = 0 << 28,
@@ -34,5 +34,5 @@ enum FYUTILS_EXPORT Type : uint32_t
     String    = 4 << 28,
     ByteArray = 5 << 28,
 };
-} // namespace Utils::Settings
-} // namespace Fy
+} // namespace SettingsType
+} // namespace Fooyin

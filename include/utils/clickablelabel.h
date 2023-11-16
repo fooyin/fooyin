@@ -23,7 +23,7 @@
 
 #include <QLabel>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT ClickableLabel : public QLabel
 {
     Q_OBJECT
@@ -42,4 +42,4 @@ protected:
     void enterEvent(QEnterEvent* event) override;
     void leaveEvent(QEvent* event) override;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

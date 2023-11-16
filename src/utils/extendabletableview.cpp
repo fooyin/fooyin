@@ -25,7 +25,7 @@
 
 constexpr auto ButtonText = "+ add new";
 
-namespace Fy::Utils {
+namespace Fooyin {
 ExtendableTableView::ExtendableTableView(QWidget* parent)
     : QTableView{parent}
     , m_mouseOverButton{false}
@@ -90,6 +90,6 @@ void ExtendableTableView::paintEvent(QPaintEvent* event)
     }
     painter.drawText(m_buttonRect, Qt::AlignCenter, ButtonText);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_extendabletableview.cpp"

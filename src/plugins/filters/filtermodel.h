@@ -24,11 +24,11 @@
 #include <core/trackfwd.h>
 #include <utils/tablemodel.h>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 struct FilterOptions;
 struct FilterField;
 
-class FilterModel : public Utils::TableModel<FilterItem>
+class FilterModel : public TableModel<FilterItem>
 {
 public:
     explicit FilterModel(const FilterField& field, QObject* parent = nullptr);
@@ -51,14 +51,14 @@ public:
     //    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
     //                                        Qt::MatchFlags flags) const override;
 
-    void addTracks(const Core::TrackList& tracks);
-    void updateTracks(const Core::TrackList& tracks);
-    void removeTracks(const Core::TrackList& tracks);
+    void addTracks(const TrackList& tracks);
+    void updateTracks(const TrackList& tracks);
+    void removeTracks(const TrackList& tracks);
 
-    void reset(const FilterField& field, const Core::TrackList& tracks);
+    void reset(const FilterField& field, const TrackList& tracks);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

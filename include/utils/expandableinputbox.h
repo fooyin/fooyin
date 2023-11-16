@@ -25,7 +25,7 @@
 
 class QLineEdit;
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT ExpandableInput : public QWidget
 {
     Q_OBJECT
@@ -94,4 +94,4 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ExpandableInput::Attributes)
-} // namespace Fy::Utils
+} // namespace Fooyin

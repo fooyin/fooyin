@@ -25,7 +25,7 @@
 #include <utility>
 #include <vector>
 
-namespace Fy::Utils {
+namespace Fooyin::Utils {
 template <typename Ctnr, typename Element>
 int findIndex(const Ctnr& c, const Element& e)
 {
@@ -75,4 +75,4 @@ void move(std::vector<T>& v, size_t from, size_t to)
         std::rotate(v.begin() + from, v.begin() + from + 1, v.begin() + to + 1);
     }
 }
-} // namespace Fy::Utils
+} // namespace Fooyin::Utils

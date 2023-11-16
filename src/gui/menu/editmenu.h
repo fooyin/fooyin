@@ -21,22 +21,17 @@
 
 #include <QObject>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-} // namespace Utils
 
-namespace Gui {
 class EditMenu : public QObject
 {
 public:
-    explicit EditMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit EditMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Utils::SettingsManager* m_settings;
+    ActionManager* m_actionManager;
+    SettingsManager* m_settings;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

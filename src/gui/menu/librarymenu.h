@@ -21,29 +21,22 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-} // namespace Utils
-
-namespace Core::Library {
 class MusicLibrary;
-} // namespace Core::Library
 
-namespace Gui {
 class LibraryMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    LibraryMenu(Utils::ActionManager* actionManager, Core::Library::MusicLibrary* library,
-                Utils::SettingsManager* settings, QObject* parent = nullptr);
+    LibraryMenu(ActionManager* actionManager, MusicLibrary* library, SettingsManager* settings,
+                QObject* parent = nullptr);
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Core::Library::MusicLibrary* m_library;
-    Utils::SettingsManager* m_settings;
+    ActionManager* m_actionManager;
+    MusicLibrary* m_library;
+    SettingsManager* m_settings;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

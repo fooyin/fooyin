@@ -17,33 +17,33 @@
  *
  */
 
-#include "librarydatabasemanager.h"
+#pragma once
 
-#include "database/database.h"
-#include "database/librarydatabase.h"
+#include "databasemodule.h"
 
-#include <core/track.h>
+#include <core/trackfwd.h>
 
-namespace Fy::Core::Library {
-LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, QObject* parent)
-    : Worker{parent}
-    , m_database{database}
-    , m_libraryDatabase{database->connectionName()}
-{ }
-
-void LibraryDatabaseManager::closeThread()
+namespace Fooyin {
+class TrackDatabase : public DatabaseModule
 {
-    m_database->closeDatabase();
-}
+public:
+    explicit TrackDatabase(const QString& connectionName);
 
-void LibraryDatabaseManager::getAllTracks()
-{
-    TrackList tracks;
+    bool storeTracks(TrackList& tracksToStore);
 
-    if(m_libraryDatabase.getAllTracks(tracks)) {
-        emit gotTracks(tracks);
-    }
-}
-} // namespace Fy::Core::Library
+    bool getAllTracks(TrackList& result);
+    bool getAllTracks(TrackList& result, int offset, int limit);
 
-#include "moc_librarydatabasemanager.cpp"
+    [[nodiscard]] bool dbFetchTracks(DatabaseQuery& q, TrackList& result) const;
+    [[nodiscard]] int dbTrackCount() const;
+
+    bool updateTrack(const Track& track);
+    bool deleteTrack(int id);
+    bool deleteTracks(const TrackList& tracks);
+
+private:
+    int insertTrack(const Track& track);
+
+    QString m_connectionName;
+};
+} // namespace Fooyin

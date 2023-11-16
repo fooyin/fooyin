@@ -31,23 +31,23 @@
 #include <gui/widgetfactory.h>
 #include <utils/actions/actioncontainer.h>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 struct FiltersPlugin::Private
 {
-    Utils::ActionManager* actionManager;
-    Utils::SettingsManager* settings;
-    Core::Library::MusicLibrary* library;
-    Core::Player::PlayerManager* playerManager;
-    Gui::LayoutProvider* layoutProvider;
-    Gui::Widgets::SearchController* searchController;
-    Gui::Widgets::WidgetFactory* factory;
-    Gui::TrackSelectionController* trackSelection;
+    ActionManager* actionManager;
+    SettingsManager* settings;
+    MusicLibrary* library;
+    PlayerManager* playerManager;
+    LayoutProvider* layoutProvider;
+    SearchController* searchController;
+    WidgetFactory* factory;
+    TrackSelectionController* trackSelection;
 
     FilterManager* filterManager;
-    std::unique_ptr<Settings::FiltersSettings> filterSettings;
+    std::unique_ptr<FiltersSettings> filterSettings;
 
-    std::unique_ptr<Settings::FiltersGeneralPage> generalPage;
-    std::unique_ptr<Settings::FiltersFieldsPage> fieldsPage;
+    std::unique_ptr<FiltersGeneralPage> generalPage;
+    std::unique_ptr<FiltersFieldsPage> fieldsPage;
 
     void registerLayouts() const
     {
@@ -77,16 +77,16 @@ FiltersPlugin::FiltersPlugin()
 
 FiltersPlugin::~FiltersPlugin() = default;
 
-void FiltersPlugin::initialise(const Core::CorePluginContext& context)
+void FiltersPlugin::initialise(const CorePluginContext& context)
 {
     p->library       = context.library;
     p->playerManager = context.playerManager;
     p->settings      = context.settingsManager;
 
-    p->filterSettings = std::make_unique<Settings::FiltersSettings>(p->settings);
+    p->filterSettings = std::make_unique<FiltersSettings>(p->settings);
 }
 
-void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
+void FiltersPlugin::initialise(const GuiPluginContext& context)
 {
     p->actionManager    = context.actionManager;
     p->layoutProvider   = context.layoutProvider;
@@ -96,14 +96,14 @@ void FiltersPlugin::initialise(const Gui::GuiPluginContext& context)
 
     p->filterManager = new FilterManager(p->library, p->trackSelection, p->settings, this);
 
-    QObject::connect(p->searchController, &Gui::Widgets::SearchController::searchChanged, p->filterManager,
+    QObject::connect(p->searchController, &SearchController::searchChanged, p->filterManager,
                      &FilterManager::searchChanged);
 
     p->factory->registerClass<FilterWidget>(QStringLiteral("Filter"),
                                             [this]() { return p->filterManager->createFilter(); });
 
-    p->generalPage = std::make_unique<Settings::FiltersGeneralPage>(p->settings);
-    p->fieldsPage  = std::make_unique<Settings::FiltersFieldsPage>(p->filterManager->fieldRegistry(), p->settings);
+    p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
+    p->fieldsPage  = std::make_unique<FiltersFieldsPage>(p->filterManager->fieldRegistry(), p->settings);
 
     p->registerLayouts();
 }
@@ -112,6 +112,6 @@ void FiltersPlugin::shutdown()
 {
     p->filterManager->shutdown();
 }
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters
 
 #include "moc_filtersplugin.cpp"

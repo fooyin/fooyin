@@ -28,7 +28,7 @@
 
 constexpr int IconSize = 128;
 
-namespace Fy::Utils {
+namespace Fooyin {
 struct Icon
 {
     QPixmap icon;
@@ -212,6 +212,6 @@ void ComboIcon::changeEvent(QEvent* event)
     }
     QWidget::changeEvent(event);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_comboicon.cpp"

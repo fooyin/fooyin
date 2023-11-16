@@ -25,23 +25,23 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Filters::Settings {
-FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
+namespace Fooyin::Filters {
+FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
-    m_settings->createSetting<Settings::FilterAltColours>(false, u"Filters"_s);
-    m_settings->createSetting<Settings::FilterHeader>(true, u"Filters"_s);
-    m_settings->createSetting<Settings::FilterScrollBar>(true, u"Filters"_s);
-    m_settings->createSetting<Settings::FilterFields>(QByteArray{}, u"Filters"_s);
-    m_settings->createSetting<Settings::FilterAppearance>(QVariant::fromValue(FilterOptions{}), u"Filters"_s);
-    m_settings->createSetting<Settings::FilterDoubleClick>(1, u"Filters"_s);
-    m_settings->createSetting<Settings::FilterMiddleClick>(0, u"Filters"_s);
-    m_settings->createSetting<Settings::FilterPlaylistEnabled>(true, u"Filters"_s);
-    m_settings->createSetting<Settings::FilterAutoSwitch>(true, u"Filters"_s);
-    m_settings->createSetting<Settings::FilterAutoPlaylist>("Filter Results", u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterAltColours>(false, u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterHeader>(true, u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterScrollBar>(true, u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterFields>(QByteArray{}, u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterAppearance>(QVariant::fromValue(FilterOptions{}), u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterDoubleClick>(1, u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterMiddleClick>(0, u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterPlaylistEnabled>(true, u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterAutoSwitch>(true, u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterAutoPlaylist>("Filter Results", u"Filters"_s);
 
     m_settings->loadSettings();
 }
-} // namespace Fy::Filters::Settings
+} // namespace Fooyin::Filters
 
 #include "moc_filtersettings.cpp"

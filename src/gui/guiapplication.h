@@ -23,18 +23,15 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Core {
+namespace Fooyin {
 struct CorePluginContext;
-}
 
-namespace Gui {
 class FYGUI_EXPORT GuiApplication : public QObject
 {
     Q_OBJECT
 
 public:
-    GuiApplication(const Core::CorePluginContext& core);
+    GuiApplication(const CorePluginContext& core);
     ~GuiApplication() override;
 
     void shutdown();
@@ -43,5 +40,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

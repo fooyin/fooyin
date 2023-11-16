@@ -21,7 +21,7 @@
 
 #include <QAbstractListModel>
 
-namespace Fy::Gui {
+namespace Fooyin {
 class LayoutProvider;
 
 class QuickSetupModel : public QAbstractListModel
@@ -40,4 +40,4 @@ public:
 private:
     LayoutProvider* m_layoutProvider;
 };
-} // namespace Fy::Gui
+} // namespace Fooyin

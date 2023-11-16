@@ -21,18 +21,19 @@
 
 #include <QSqlQuery>
 
-namespace Fy::Core::DB {
-class Module;
-class Query : public QSqlQuery
+namespace Fooyin {
+class DatabaseModule;
+
+class DatabaseQuery : public QSqlQuery
 {
 public:
-    explicit Query(const Module* module);
+    explicit DatabaseQuery(const DatabaseModule* module);
 
-    explicit Query(QSqlResult* result)                           = delete;
-    explicit Query(const QString& query, const QSqlDatabase& db) = delete;
-    Query(const Query& other)                                    = delete;
+    explicit DatabaseQuery(QSqlResult* result)                           = delete;
+    explicit DatabaseQuery(const QString& query, const QSqlDatabase& db) = delete;
+    DatabaseQuery(const DatabaseQuery& other)                            = delete;
 
-    Query(Query&& other) noexcept = default;
+    DatabaseQuery(DatabaseQuery&& other) noexcept = default;
 
     bool prepareQuery(const QString& query);
     void bindQueryValue(const QString& placeholder, const QVariant& val, QSql::ParamType paramType = QSql::In);
@@ -47,4 +48,4 @@ private:
     QString m_queryString;
     bool m_success;
 };
-} // namespace Fy::Core::DB
+} // namespace Fooyin

@@ -23,14 +23,9 @@
 
 class QAction;
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-} // namespace Utils
-
-namespace Gui {
 class TrackSelectionController;
 
 class ViewMenu : public QObject
@@ -38,20 +33,19 @@ class ViewMenu : public QObject
     Q_OBJECT
 
 public:
-    explicit ViewMenu(Utils::ActionManager* actionManager, TrackSelectionController* trackSelection,
-                      Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit ViewMenu(ActionManager* actionManager, TrackSelectionController* trackSelection, SettingsManager* settings,
+                      QObject* parent = nullptr);
 
 signals:
     void openQuickSetup();
 
 private:
-    Utils::ActionManager* m_actionManager;
+    ActionManager* m_actionManager;
     TrackSelectionController* m_trackSelection;
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 
     QAction* m_layoutEditing;
     QAction* m_openQuickSetup;
     QAction* m_showSandbox;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

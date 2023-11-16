@@ -20,9 +20,9 @@
 #include "presetregistry.h"
 
 namespace {
-void loadDefaults(Fy::Gui::Widgets::Playlist::PresetRegistry* registry)
+void loadDefaults(Fooyin::PresetRegistry* registry)
 {
-    Fy::Gui::Widgets::Playlist::PlaylistPreset preset;
+    Fooyin::PlaylistPreset preset;
 
     preset.name = QStringLiteral("Album - Disc");
 
@@ -32,7 +32,7 @@ void loadDefaults(Fy::Gui::Widgets::Playlist::PresetRegistry* registry)
     preset.header.sideText.emplace_back("%year%", 14);
     preset.header.info.emplace_back(
         "$if(%ggenres%,%ggenres% | )$ifgreater(%gcount%,1,%gcount% Tracks,%gcount% Track) | $timems(%gduration%)", 12);
-    Fy::Gui::Widgets::Playlist::SubheaderRow subheader;
+    Fooyin::SubheaderRow subheader;
     subheader.rowHeight = 19;
     subheader.leftText.emplace_back("$ifgreater(%disctotal%,1,Disc #%disc%)", 13);
     subheader.rightText.emplace_back("$timems(%gduration%)", 13);
@@ -68,11 +68,11 @@ void loadDefaults(Fy::Gui::Widgets::Playlist::PresetRegistry* registry)
 }
 } // namespace
 
-namespace Fy::Gui::Widgets::Playlist {
-PresetRegistry::PresetRegistry(Utils::SettingsManager* settings, QObject* parent)
+namespace Fooyin {
+PresetRegistry::PresetRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{settings, parent}
 {
-    QObject::connect(this, &Utils::RegistryBase::itemChanged, this, [this](int id) {
+    QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto preset = itemById(id);
         emit presetChanged(preset);
     });
@@ -86,6 +86,6 @@ void PresetRegistry::loadItems()
         loadDefaults(this);
     }
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin
 
 #include "moc_presetregistry.cpp"

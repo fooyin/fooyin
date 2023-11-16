@@ -19,7 +19,7 @@
 
 #include "librarytreeitem.h"
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 LibraryTreeItem::LibraryTreeItem()
     : LibraryTreeItem{QStringLiteral(""), nullptr, -1}
 { }
@@ -47,7 +47,7 @@ QString LibraryTreeItem::title() const
     return m_title;
 }
 
-Core::TrackList LibraryTreeItem::tracks() const
+TrackList LibraryTreeItem::tracks() const
 {
     return m_tracks;
 }
@@ -77,22 +77,22 @@ void LibraryTreeItem::setKey(const QString& key)
     m_key = key;
 }
 
-void LibraryTreeItem::addTrack(const Core::Track& track)
+void LibraryTreeItem::addTrack(const Track& track)
 {
     m_tracks.emplace_back(track);
 }
 
-void LibraryTreeItem::addTracks(const Core::TrackList& tracks)
+void LibraryTreeItem::addTracks(const TrackList& tracks)
 {
     std::ranges::copy(tracks, std::back_inserter(m_tracks));
 }
 
-void LibraryTreeItem::removeTrack(const Core::Track& track)
+void LibraryTreeItem::removeTrack(const Track& track)
 {
     if(m_tracks.empty()) {
         return;
     }
-    std::erase_if(m_tracks, [track](const Core::Track& child) { return child.id() == track.id(); });
+    std::erase_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); });
 }
 
 void LibraryTreeItem::sortChildren()
@@ -117,4 +117,4 @@ void LibraryTreeItem::sortChildren()
         child->sortChildren();
     }
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

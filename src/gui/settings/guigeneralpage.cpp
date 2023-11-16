@@ -39,12 +39,12 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Gui::Settings {
-class GuiGeneralPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class GuiGeneralPageWidget : public SettingsPageWidget
 {
 public:
-    explicit GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,
-                                  Utils::SettingsManager* settings);
+    explicit GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
+                                  SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -55,8 +55,8 @@ private:
     void exportLayout();
 
     LayoutProvider* m_layoutProvider;
-    Widgets::EditableLayout* m_editableLayout;
-    Utils::SettingsManager* m_settings;
+    EditableLayout* m_editableLayout;
+    SettingsManager* m_settings;
 
     QRadioButton* m_lightTheme;
     QRadioButton* m_darkTheme;
@@ -65,8 +65,8 @@ private:
     QCheckBox* m_splitterHandles;
 };
 
-GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,
-                                           Utils::SettingsManager* settings)
+GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
+                                           SettingsManager* settings)
     : m_layoutProvider{layoutProvider}
     , m_editableLayout{editableLayout}
     , m_settings{settings}
@@ -106,9 +106,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Widge
     mainLayout->addWidget(iconThemeBox);
     mainLayout->addStretch();
 
-    m_splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
+    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::SplitterHandles>());
 
-    const QString currentTheme = m_settings->value<Settings::IconTheme>();
+    const QString currentTheme = m_settings->value<Settings::Gui::IconTheme>();
     if(currentTheme == "light"_L1) {
         m_lightTheme->setChecked(true);
     }
@@ -135,28 +135,27 @@ void GuiGeneralPageWidget::apply()
                         : m_lightTheme->isChecked()  ? u"light"_s
                                                      : u"dark"_s;
 
-    if(theme != m_settings->value<Settings::IconTheme>()) {
+    if(theme != m_settings->value<Settings::Gui::IconTheme>()) {
         QIcon::setThemeName(theme);
-        m_settings->set<Settings::IconTheme>(theme);
+        m_settings->set<Settings::Gui::IconTheme>(theme);
     }
 
-    m_settings->set<Settings::SplitterHandles>(m_splitterHandles->isChecked());
+    m_settings->set<Settings::Gui::SplitterHandles>(m_splitterHandles->isChecked());
 }
 
 void GuiGeneralPageWidget::reset()
 {
-    m_settings->reset<Settings::IconTheme>();
-    m_settings->reset<Settings::SplitterHandles>();
+    m_settings->reset<Settings::Gui::IconTheme>();
+    m_settings->reset<Settings::Gui::SplitterHandles>();
 
-    m_splitterHandles->setChecked(m_settings->value<Settings::SplitterHandles>());
+    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::SplitterHandles>());
 }
 
 void GuiGeneralPageWidget::showQuickSetup()
 {
     auto* quickSetup = new QuickSetupDialog(m_layoutProvider, this);
     quickSetup->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout,
-                     &Widgets::EditableLayout::changeLayout);
+    QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, m_editableLayout, &EditableLayout::changeLayout);
     quickSetup->show();
 }
 
@@ -178,8 +177,8 @@ void GuiGeneralPageWidget::exportLayout()
         = QInputDialog::getText(this, tr("Export layout"), tr("Layout Name:"), QLineEdit::Normal, u""_s, &success);
 
     if(success && !name.isEmpty()) {
-        const QString saveFile
-            = QFileDialog::getSaveFileName(this, u"Save Layout"_s, layoutsPath() + name, u"Fooyin Layout (*.fyl)"_s);
+        const QString saveFile = QFileDialog::getSaveFileName(this, u"Save Layout"_s, Gui::layoutsPath() + name,
+                                                              u"Fooyin Layout (*.fyl)"_s);
         if(!saveFile.isEmpty()) {
             Layout layout = m_layoutProvider->currentLayout();
             layout.name   = name;
@@ -188,9 +187,9 @@ void GuiGeneralPageWidget::exportLayout()
     }
 }
 
-GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,
-                               Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
+                               SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::InterfaceGeneral);
     setName(tr("General"));
@@ -199,4 +198,4 @@ GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, Widgets::Editable
         return new GuiGeneralPageWidget(layoutProvider, editableLayout, settings);
     });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

@@ -23,7 +23,7 @@
 
 #include <stack>
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 PlaylistCommand::PlaylistCommand(PlaylistModel* model)
     : QUndoCommand{nullptr}
     , m_model{model}
@@ -71,4 +71,4 @@ void MoveTracks::undo() { }
 
 void MoveTracks::redo() { }
 
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

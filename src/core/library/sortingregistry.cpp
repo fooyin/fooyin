@@ -20,7 +20,7 @@
 #include <core/library/sortingregistry.h>
 
 namespace {
-void loadDefaults(Fy::Core::Library::SortingRegistry* registry)
+void loadDefaults(Fooyin::SortingRegistry* registry)
 {
     registry->addItem({.id = 0, .index = 0, .name = "Album", .script = "%album% - $num(%disc%,2) - $num(%track%,2)"});
     registry->addItem(
@@ -30,11 +30,11 @@ void loadDefaults(Fy::Core::Library::SortingRegistry* registry)
 }
 } // namespace
 
-namespace Fy::Core::Library {
-SortingRegistry::SortingRegistry(Utils::SettingsManager* settings, QObject* parent)
+namespace Fooyin {
+SortingRegistry::SortingRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{settings, parent}
 {
-    QObject::connect(this, &Utils::RegistryBase::itemChanged, this, [this](int id) {
+    QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto sort = itemById(id);
         emit sortChanged(sort);
     });
@@ -48,6 +48,6 @@ void SortingRegistry::loadItems()
         loadDefaults(this);
     }
 }
-} // namespace Fy::Core::Library
+} // namespace Fooyin
 
 #include "core/library/moc_sortingregistry.cpp"

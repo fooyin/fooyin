@@ -25,23 +25,19 @@
 #include <core/library/librarysort.h>
 #include <utils/itemregistry.h>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
 
-namespace Core::Library {
-class FYCORE_EXPORT SortingRegistry : public Utils::ItemRegistry<Sorting::SortScript, Settings::LibrarySorting>
+class FYCORE_EXPORT SortingRegistry : public ItemRegistry<SortScript, Settings::Core::LibrarySorting>
 {
     Q_OBJECT
 
 public:
-    explicit SortingRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit SortingRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
     void loadItems() override;
 
 signals:
-    void sortChanged(const Sorting::SortScript& preset);
+    void sortChanged(const SortScript& preset);
 };
-} // namespace Core::Library
-} // namespace Fy
+} // namespace Fooyin

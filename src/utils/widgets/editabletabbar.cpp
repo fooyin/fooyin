@@ -21,7 +21,7 @@
 
 #include <utils/widgets/popuplineedit.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 EditableTabBar::EditableTabBar(QWidget* parent)
     : QTabBar{parent}
     , m_lineEdit{nullptr}
@@ -67,6 +67,6 @@ void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
     showEditor();
     QTabBar::mouseDoubleClickEvent(event);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/widgets/moc_editabletabbar.cpp"

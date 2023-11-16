@@ -26,23 +26,17 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Utils {
-class SettingsManager;
-}
-
-namespace Gui::Widgets {
-class LibraryTreeGroupRegistry : public Utils::ItemRegistry<LibraryTreeGrouping, Settings::LibraryTreeGrouping>
+namespace Fooyin {
+class LibraryTreeGroupRegistry : public ItemRegistry<LibraryTreeGrouping, Settings::Gui::LibraryTreeGrouping>
 {
     Q_OBJECT
 
 public:
-    explicit LibraryTreeGroupRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit LibraryTreeGroupRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
     void loadItems() override;
 
 signals:
     void groupingChanged(const LibraryTreeGrouping& grouping);
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

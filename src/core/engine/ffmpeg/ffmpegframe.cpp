@@ -21,7 +21,7 @@
 
 #include <QDebug>
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 Frame::Frame(FramePtr frame)
     : p{new Private(std::move(frame))}
 { }
@@ -82,4 +82,4 @@ uint64_t Frame::end() const
     }
     return p->frame->pts + p->frame->duration;
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

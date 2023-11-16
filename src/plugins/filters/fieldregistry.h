@@ -24,18 +24,16 @@
 
 #include <utils/itemregistry.h>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
 
 namespace Filters {
-class FieldRegistry : public Utils::ItemRegistry<FilterField, Settings::FilterFields>
+class FieldRegistry : public ItemRegistry<FilterField, Settings::Filters::FilterFields>
 {
     Q_OBJECT
 
 public:
-    explicit FieldRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit FieldRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
     void loadItems() override;
 
@@ -43,4 +41,4 @@ signals:
     void fieldChanged(const FilterField& field);
 };
 } // namespace Filters
-} // namespace Fy
+} // namespace Fooyin

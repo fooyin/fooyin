@@ -21,20 +21,20 @@
 
 #include <core/plugins/pluginmanager.h>
 
-#include <utils/enumhelper.h>
+#include <utils/enum.h>
 
-namespace Fy::Gui::Settings {
-PluginItem::PluginItem(Plugins::PluginInfo* info, PluginItem* parent)
+namespace Fooyin {
+PluginItem::PluginItem(PluginInfo* info, PluginItem* parent)
     : TreeItem{parent}
     , m_info{info}
 { }
 
-Plugins::PluginInfo* PluginItem::info() const
+PluginInfo* PluginItem::info() const
 {
     return m_info;
 }
 
-Fy::Gui::Settings::PluginsModel::PluginsModel(Plugins::PluginManager* pluginManager, QObject* parent)
+PluginsModel::PluginsModel(PluginManager* pluginManager, QObject* parent)
     : TableModel{parent}
     , m_pluginManager{pluginManager}
 {
@@ -115,7 +115,7 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
             case(3):
                 return item->info()->vendor();
             case(4):
-                return Utils::EnumHelper::toString(item->info()->status());
+                return Utils::Enum::toString(item->info()->status());
         }
     }
 
@@ -125,4 +125,4 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
 
     return {};
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

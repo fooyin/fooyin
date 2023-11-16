@@ -23,26 +23,21 @@
 
 class QMenuBar;
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class ActionContainer;
-} // namespace Utils
 
-namespace Gui {
 class MainMenuBar : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit MainMenuBar(Utils::ActionManager* actionManager, QObject* parent = nullptr);
+    explicit MainMenuBar(ActionManager* actionManager, QObject* parent = nullptr);
 
     [[nodiscard]] QMenuBar* menuBar() const;
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Utils::ActionContainer* m_menubar;
+    ActionManager* m_actionManager;
+    ActionContainer* m_menubar;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

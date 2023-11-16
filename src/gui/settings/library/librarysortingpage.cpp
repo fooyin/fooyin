@@ -33,11 +33,11 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-namespace Fy::Gui::Settings {
-class LibrarySortingPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class LibrarySortingPageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibrarySortingPageWidget(Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings);
+    explicit LibrarySortingPageWidget(SortingRegistry* sortRegistry, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -46,15 +46,14 @@ private:
     void addSorting() const;
     void removeSorting() const;
 
-    Core::Library::SortingRegistry* m_sortRegistry;
-    Utils::SettingsManager* m_settings;
+    SortingRegistry* m_sortRegistry;
+    SettingsManager* m_settings;
 
     QTableView* m_sortList;
     SortingModel* m_model;
 };
 
-LibrarySortingPageWidget::LibrarySortingPageWidget(Core::Library::SortingRegistry* sortRegistry,
-                                                   Utils::SettingsManager* settings)
+LibrarySortingPageWidget::LibrarySortingPageWidget(SortingRegistry* sortRegistry, SettingsManager* settings)
     : m_sortRegistry{sortRegistry}
     , m_settings{settings}
     , m_sortList{new QTableView(this)}
@@ -94,7 +93,7 @@ void LibrarySortingPageWidget::apply()
 
 void LibrarySortingPageWidget::reset()
 {
-    m_settings->reset<Core::Settings::LibrarySorting>();
+    m_settings->reset<Settings::Core::LibrarySorting>();
     m_sortRegistry->loadItems();
     m_model->populate();
 }
@@ -108,16 +107,16 @@ void LibrarySortingPageWidget::removeSorting() const
 {
     const auto selectedIndexes = m_sortList->selectionModel()->selectedRows();
     for(const auto& index : selectedIndexes) {
-        m_model->markForRemoval(index.data(Qt::UserRole).value<Core::Library::Sorting::SortScript>());
+        m_model->markForRemoval(index.data(Qt::UserRole).value<SortScript>());
     }
 }
 
-LibrarySortingPage::LibrarySortingPage(Core::Library::SortingRegistry* sortRegistry, Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+LibrarySortingPage::LibrarySortingPage(SortingRegistry* sortRegistry, SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibrarySorting);
     setName(tr("Sorting"));
     setCategory({tr("Library"), tr("Sorting")});
     setWidgetCreator([sortRegistry, settings] { return new LibrarySortingPageWidget(sortRegistry, settings); });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

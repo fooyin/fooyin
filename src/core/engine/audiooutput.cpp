@@ -19,7 +19,7 @@
 
 #include <core/engine/audiooutput.h>
 
-namespace Fy::Core::Engine {
+namespace Fooyin {
 OutputType AudioPushOutput::type() const
 {
     return OutputType::Push;
@@ -54,4 +54,4 @@ int AudioPullOutput::write(const uint8_t* /*data*/, int /*samples*/)
 void AudioPullOutput::setPaused(bool /*pause*/) { }
 
 void AudioPullOutput::setVolume(double /*volume*/) { }
-} // namespace Fy::Core::Engine
+} // namespace Fooyin

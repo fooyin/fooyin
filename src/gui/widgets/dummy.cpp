@@ -23,7 +23,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 Dummy::Dummy(QWidget* parent)
     : FyWidget{parent}
     , m_layout{new QHBoxLayout(this)}
@@ -50,6 +50,6 @@ QString Dummy::name() const
 {
     return QStringLiteral("Dummy");
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_dummy.cpp"

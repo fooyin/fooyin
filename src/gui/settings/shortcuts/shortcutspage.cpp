@@ -35,14 +35,14 @@
 #include <QPushButton>
 #include <QTreeView>
 
-namespace Fy::Gui::Settings {
-class ShortcutInput : public Utils::ExpandableInput
+namespace Fooyin {
+class ShortcutInput : public ExpandableInput
 {
     Q_OBJECT
 
 public:
     explicit ShortcutInput(QWidget* parent = nullptr)
-        : ExpandableInput{Utils::ExpandableInput::ClearButton | Utils::ExpandableInput::CustomWidget, parent}
+        : ExpandableInput{ExpandableInput::ClearButton | ExpandableInput::CustomWidget, parent}
         , m_shortcut{new QKeySequenceEdit(this)}
     {
         auto* layout = new QVBoxLayout(this);
@@ -69,36 +69,36 @@ private:
     QKeySequenceEdit* m_shortcut;
 };
 
-class ShortcutsPageWidget : public Utils::SettingsPageWidget
+class ShortcutsPageWidget : public SettingsPageWidget
 {
 public:
-    explicit ShortcutsPageWidget(Utils::ActionManager* actionManager);
+    explicit ShortcutsPageWidget(ActionManager* actionManager);
 
     void apply() override;
     void reset() override;
 
 private:
-    void updateCurrentShortcuts(const Utils::ShortcutList& shortcuts);
+    void updateCurrentShortcuts(const ShortcutList& shortcuts);
     void selectionChanged();
     void shortcutChanged();
     void shortcutDeleted(const QString& text);
     void resetCurrentShortcut();
 
-    Utils::ActionManager* m_actionManager;
+    ActionManager* m_actionManager;
 
     QTreeView* m_shortcutTable;
     ShortcutsModel* m_model;
     QGroupBox* m_shortcutBox;
-    Utils::ExpandableInputBox* m_inputBox;
+    ExpandableInputBox* m_inputBox;
 };
 
-ShortcutsPageWidget::ShortcutsPageWidget(Utils::ActionManager* actionManager)
+ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
     : m_actionManager{actionManager}
     , m_shortcutTable{new QTreeView(this)}
     , m_model{new ShortcutsModel(this)}
     , m_shortcutBox{new QGroupBox(this)}
-    , m_inputBox{new Utils::ExpandableInputBox(
-          tr("Shortcuts"), Utils::ExpandableInput::ClearButton | Utils::ExpandableInput::CustomWidget, this)}
+    , m_inputBox{
+          new ExpandableInputBox(tr("Shortcuts"), ExpandableInput::ClearButton | ExpandableInput::CustomWidget, this)}
 {
     m_shortcutTable->setModel(m_model);
     m_shortcutTable->hideColumn(1);
@@ -120,7 +120,7 @@ ShortcutsPageWidget::ShortcutsPageWidget(Utils::ActionManager* actionManager)
     m_inputBox->addBoxWidget(resetShortcut);
     m_inputBox->setInputWidget([this](QWidget* parent) {
         auto* input = new ShortcutInput(parent);
-        QObject::connect(input, &Utils::ExpandableInput::textChanged, this, &ShortcutsPageWidget::shortcutChanged);
+        QObject::connect(input, &ExpandableInput::textChanged, this, &ShortcutsPageWidget::shortcutChanged);
         return input;
     });
 
@@ -131,7 +131,7 @@ ShortcutsPageWidget::ShortcutsPageWidget(Utils::ActionManager* actionManager)
     QObject::connect(resetShortcut, &QAbstractButton::clicked, this, &ShortcutsPageWidget::resetCurrentShortcut);
     QObject::connect(m_shortcutTable->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &ShortcutsPageWidget::selectionChanged);
-    QObject::connect(m_inputBox, &Utils::ExpandableInputBox::blockDeleted, this, &ShortcutsPageWidget::shortcutDeleted);
+    QObject::connect(m_inputBox, &ExpandableInputBox::blockDeleted, this, &ShortcutsPageWidget::shortcutDeleted);
 
     m_shortcutBox->setDisabled(true);
 }
@@ -144,28 +144,28 @@ void ShortcutsPageWidget::apply()
 void ShortcutsPageWidget::reset()
 {
     const auto commands = m_actionManager->commands();
-    for(Utils::Command* command : commands) {
+    for(Command* command : commands) {
         m_model->shortcutChanged(command, command->defaultShortcuts());
     }
 
     const auto selected = m_shortcutTable->selectionModel()->selectedIndexes();
     if(!selected.empty()) {
         const QModelIndex index = selected.front();
-        auto* command           = index.data(ShortcutItem::Command).value<Utils::Command*>();
+        auto* command           = index.data(ShortcutItem::ActionCommand).value<Command*>();
         updateCurrentShortcuts(command->defaultShortcuts());
     }
 
     apply();
 }
 
-void ShortcutsPageWidget::updateCurrentShortcuts(const Utils::ShortcutList& shortcuts)
+void ShortcutsPageWidget::updateCurrentShortcuts(const ShortcutList& shortcuts)
 {
     m_inputBox->clearBlocks();
 
     for(const auto& shortcut : shortcuts) {
         auto* input = new ShortcutInput(this);
         input->setShortcut(shortcut);
-        QObject::connect(input, &Utils::ExpandableInput::textChanged, this, &ShortcutsPageWidget::shortcutChanged);
+        QObject::connect(input, &ExpandableInput::textChanged, this, &ShortcutsPageWidget::shortcutChanged);
         m_inputBox->addInput(input);
     }
 
@@ -190,7 +190,7 @@ void ShortcutsPageWidget::selectionChanged()
         return;
     }
 
-    auto* command        = index.data(ShortcutItem::Command).value<Utils::Command*>();
+    auto* command        = index.data(ShortcutItem::ActionCommand).value<Command*>();
     const auto shortcuts = command->shortcuts();
 
     updateCurrentShortcuts(shortcuts);
@@ -206,10 +206,10 @@ void ShortcutsPageWidget::shortcutChanged()
         return;
     }
 
-    Utils::ShortcutList shortcuts;
+    ShortcutList shortcuts;
 
     const auto inputs = m_inputBox->blocks();
-    for(Utils::ExpandableInput* input : inputs) {
+    for(ExpandableInput* input : inputs) {
         const QString text = input->text();
         if(!text.isEmpty() && !shortcuts.contains(text)) {
             shortcuts.append(text);
@@ -217,7 +217,7 @@ void ShortcutsPageWidget::shortcutChanged()
     }
 
     const QModelIndex index = selected.front();
-    auto* command           = index.data(ShortcutItem::Command).value<Utils::Command*>();
+    auto* command           = index.data(ShortcutItem::ActionCommand).value<Command*>();
     m_model->shortcutChanged(command, shortcuts);
 }
 
@@ -230,7 +230,7 @@ void ShortcutsPageWidget::shortcutDeleted(const QString& text)
     }
 
     const QModelIndex index = selected.front();
-    auto* command           = index.data(ShortcutItem::Command).value<Utils::Command*>();
+    auto* command           = index.data(ShortcutItem::ActionCommand).value<Command*>();
     m_model->shortcutDeleted(command, text);
 }
 
@@ -243,20 +243,20 @@ void ShortcutsPageWidget::resetCurrentShortcut()
     }
 
     const QModelIndex index = selected.front();
-    auto* command           = index.data(ShortcutItem::Command).value<Utils::Command*>();
+    auto* command           = index.data(ShortcutItem::ActionCommand).value<Command*>();
 
     m_model->shortcutChanged(command, command->defaultShortcuts());
     updateCurrentShortcuts(command->defaultShortcuts());
 }
 
-ShortcutsPage::ShortcutsPage(Utils::ActionManager* actionManager, Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+ShortcutsPage::ShortcutsPage(ActionManager* actionManager, SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::Shortcuts);
     setName(tr("Shortcuts"));
     setCategory({tr("Shortcuts")});
     setWidgetCreator([actionManager] { return new ShortcutsPageWidget(actionManager); });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin
 
 #include "shortcutspage.moc"

@@ -23,9 +23,8 @@
 
 #include <QObject>
 
-namespace Fy::Core {
+namespace Fooyin {
 class Track;
-namespace Engine {
 class AudioOutput;
 
 enum PlaybackState
@@ -85,5 +84,4 @@ private:
     PlaybackState m_state;
     uint64_t m_position;
 };
-} // namespace Engine
-} // namespace Fy::Core
+} // namespace Fooyin

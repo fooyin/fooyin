@@ -44,8 +44,8 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    Fy::Core::Application coreApp;
-    Fy::Gui::GuiApplication guiApp{coreApp.context()};
+    Fooyin::Application coreApp;
+    Fooyin::GuiApplication guiApp{coreApp.context()};
 
     QObject::connect(&app, &QCoreApplication::aboutToQuit, &coreApp, [&coreApp, &guiApp]() {
         guiApp.shutdown();

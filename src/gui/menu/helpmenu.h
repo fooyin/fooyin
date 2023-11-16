@@ -23,24 +23,19 @@
 
 class QAction;
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
-} // namespace Utils
 
-namespace Gui {
 class HelpMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit HelpMenu(Utils::ActionManager* actionManager, QObject* parent = nullptr);
+    explicit HelpMenu(ActionManager* actionManager, QObject* parent = nullptr);
 
 private:
-    Utils::ActionManager* m_actionManager;
+    ActionManager* m_actionManager;
 
     QAction* m_about;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

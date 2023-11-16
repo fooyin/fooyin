@@ -31,15 +31,15 @@
 
 #include <QMenu>
 
-namespace Fy::TagEditor {
+namespace Fooyin::TagEditor {
 struct TagEditorPlugin::Private
 {
-    Utils::ActionManager* actionManager;
-    Core::Library::MusicLibrary* library;
-    Gui::TrackSelectionController* trackSelection;
-    Gui::PropertiesDialog* propertiesDialog;
-    Gui::Widgets::WidgetFactory* factory;
-    Utils::SettingsManager* settings;
+    ActionManager* actionManager;
+    MusicLibrary* library;
+    TrackSelectionController* trackSelection;
+    PropertiesDialog* propertiesDialog;
+    WidgetFactory* factory;
+    SettingsManager* settings;
 };
 
 TagEditorPlugin::TagEditorPlugin()
@@ -48,13 +48,13 @@ TagEditorPlugin::TagEditorPlugin()
 
 TagEditorPlugin::~TagEditorPlugin() = default;
 
-void TagEditorPlugin::initialise(const Core::CorePluginContext& context)
+void TagEditorPlugin::initialise(const CorePluginContext& context)
 {
     p->settings = context.settingsManager;
     p->library  = context.library;
 }
 
-void TagEditorPlugin::initialise(const Gui::GuiPluginContext& context)
+void TagEditorPlugin::initialise(const GuiPluginContext& context)
 {
     p->actionManager    = context.actionManager;
     p->trackSelection   = context.trackSelection;
@@ -71,12 +71,12 @@ void TagEditorPlugin::initialise(const Gui::GuiPluginContext& context)
     p->propertiesDialog->insertTab(0, QStringLiteral("Metadata"), [this]() {
         auto* tagEditor = new TagEditorWidget(p->actionManager, p->trackSelection, p->settings);
         QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, p->library,
-                         &Core::Library::MusicLibrary::updateTrackMetadata);
+                         &MusicLibrary::updateTrackMetadata);
         return tagEditor;
     });
 }
 
 void TagEditorPlugin::shutdown() { }
-} // namespace Fy::TagEditor
+} // namespace Fooyin::TagEditor
 
 #include "moc_tageditorplugin.cpp"

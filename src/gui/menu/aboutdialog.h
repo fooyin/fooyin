@@ -21,7 +21,7 @@
 
 #include <QDialog>
 
-namespace Fy::Gui {
+namespace Fooyin {
 class AboutDialog : public QDialog
 {
     Q_OBJECT
@@ -29,4 +29,4 @@ class AboutDialog : public QDialog
 public:
     explicit AboutDialog(QWidget* parent = nullptr);
 };
-} // namespace Fy::Gui
+} // namespace Fooyin

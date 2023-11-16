@@ -32,7 +32,7 @@
 
 using namespace std::chrono_literals;
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 PlaylistView::PlaylistView(QWidget* parent)
     : QTreeView{parent}
 {
@@ -321,6 +321,6 @@ bool PlaylistView::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelI
     }
     return false;
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin
 
 #include "moc_playlistview.cpp"

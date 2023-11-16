@@ -25,10 +25,9 @@
 
 #include <QObject>
 
-namespace Fy::Core {
+namespace Fooyin {
 class Track;
 
-namespace Player {
 enum class PlayState
 {
     Playing = 0,
@@ -49,28 +48,27 @@ public:
     [[nodiscard]] virtual uint64_t currentPosition() const     = 0;
     [[nodiscard]] virtual Track currentTrack() const           = 0;
 
-    virtual void play()                                       = 0;
-    virtual void wakeUp()                                     = 0;
-    virtual void playPause()                                  = 0;
-    virtual void pause()                                      = 0;
-    virtual void previous()                                   = 0;
-    virtual void next()                                       = 0;
-    virtual void stop()                                       = 0;
-    virtual void reset()                                      = 0;
-    virtual void setPlayMode(Playlist::PlayModes mode)        = 0;
-    virtual void setCurrentPosition(uint64_t ms)              = 0;
-    virtual void changePosition(uint64_t ms)                  = 0;
-    virtual void changeCurrentTrack(const Core::Track& track) = 0;
+    virtual void play()                                 = 0;
+    virtual void wakeUp()                               = 0;
+    virtual void playPause()                            = 0;
+    virtual void pause()                                = 0;
+    virtual void previous()                             = 0;
+    virtual void next()                                 = 0;
+    virtual void stop()                                 = 0;
+    virtual void reset()                                = 0;
+    virtual void setPlayMode(Playlist::PlayModes mode)  = 0;
+    virtual void setCurrentPosition(uint64_t ms)        = 0;
+    virtual void changePosition(uint64_t ms)            = 0;
+    virtual void changeCurrentTrack(const Track& track) = 0;
 
 signals:
-    void playStateChanged(Core::Player::PlayState state);
-    void playModeChanged(Core::Playlist::PlayModes mode);
+    void playStateChanged(PlayState state);
+    void playModeChanged(Playlist::PlayModes mode);
     void nextTrack();
     void wakeup();
     void previousTrack();
     void positionChanged(uint64_t ms);
     void positionMoved(uint64_t ms);
-    void currentTrackChanged(const Core::Track& track);
+    void currentTrackChanged(const Track& track);
 };
-} // namespace Player
-} // namespace Fy::Core
+} // namespace Fooyin

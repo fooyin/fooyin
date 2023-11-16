@@ -23,7 +23,7 @@
 
 #include <QPainter>
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 struct DrawTextResult
 {
     QRect bound;
@@ -36,7 +36,8 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
 {
     DrawTextResult result;
 
-    const auto colour = option.state & QStyle::State_Selected || isPlaying ? QPalette::HighlightedText : QPalette::NoRole;
+    const auto colour
+        = option.state & QStyle::State_Selected || isPlaying ? QPalette::HighlightedText : QPalette::NoRole;
 
     for(const auto& block : blocks) {
         painter->setFont(block.font);
@@ -306,6 +307,6 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     }
     painter->restore();
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin
 
 #include "moc_playlistdelegate.cpp"

@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-namespace Fy::Core::Library {
+namespace Fooyin {
 struct LibraryInfo;
 
 class FYCORE_EXPORT MusicLibrary : public QObject
@@ -49,21 +49,21 @@ public:
 
     [[nodiscard]] virtual TrackList tracks() const = 0;
 
-    virtual void updateTrackMetadata(const Core::TrackList& tracks) = 0;
+    virtual void updateTrackMetadata(const TrackList& tracks) = 0;
 
     virtual void removeLibrary(int id) = 0;
 
 signals:
     void scanProgress(int percent);
 
-    void tracksLoaded(const Core::TrackList& tracks);
-    void tracksAdded(const Core::TrackList& tracks);
-    void tracksUpdated(const Core::TrackList& tracks);
-    void tracksDeleted(const Core::TrackList& tracks);
-    void tracksSorted(const Core::TrackList& tracks);
+    void tracksLoaded(const TrackList& tracks);
+    void tracksAdded(const TrackList& tracks);
+    void tracksUpdated(const TrackList& tracks);
+    void tracksDeleted(const TrackList& tracks);
+    void tracksSorted(const TrackList& tracks);
 
     void libraryAdded();
     void libraryRemoved(int id);
     void libraryChanged();
 };
-} // namespace Fy::Core::Library
+} // namespace Fooyin

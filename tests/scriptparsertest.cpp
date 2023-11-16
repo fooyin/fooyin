@@ -24,12 +24,12 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Testing {
+namespace Fooyin::Testing {
 class ScriptParserTest : public ::testing::Test
 {
 protected:
-    Core::Scripting::Registry m_registry;
-    Core::Scripting::Parser m_parser{&m_registry};
+    ScriptRegistry m_registry;
+    ScriptParser m_parser{&m_registry};
 };
 
 TEST_F(ScriptParserTest, BasicLiteral)
@@ -79,7 +79,7 @@ TEST_F(ScriptParserTest, MathTest)
 
 TEST_F(ScriptParserTest, MetadataTest)
 {
-    Core::Track track;
+    Track track;
     track.setTitle(u"A Test"_s);
     m_parser.setMetadata(track);
 
@@ -112,4 +112,4 @@ TEST_F(ScriptParserTest, MetadataTest)
     m_parser.parse(u"[%disc% - %track%]"_s);
     EXPECT_EQ("", m_parser.evaluate());
 }
-} // namespace Fy::Testing
+} // namespace Fooyin::Testing

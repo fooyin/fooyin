@@ -23,7 +23,7 @@
 
 class QString;
 
-namespace Fy::Core {
+namespace Fooyin::Core {
 FYCORE_EXPORT QString settingsPath();
 FYCORE_EXPORT QString pluginsPath();
-} // namespace Fy::Core
+} // namespace Fooyin::Core

@@ -25,7 +25,7 @@
 
 class QAbstractItemModel;
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT RecursiveSelectionModel : public QItemSelectionModel
 {
     Q_OBJECT
@@ -36,4 +36,4 @@ public:
 protected:
     void select(const QItemSelection& selection, QItemSelectionModel::SelectionFlags command) override;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

@@ -26,18 +26,18 @@
 
 #include <utils/crypto.h>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 struct FilterPopulator::Private
 {
     FilterPopulator* populator;
 
-    Core::Scripting::Registry registry;
-    Core::Scripting::Parser parser;
+    ScriptRegistry registry;
+    ScriptParser parser;
 
     QString currentField;
     QString currentSort;
-    Core::Scripting::ParsedScript fieldScript;
-    Core::Scripting::ParsedScript sortScript;
+    ParsedScript fieldScript;
+    ParsedScript sortScript;
 
     FilterItem root;
     PendingTreeData data;
@@ -66,13 +66,13 @@ struct FilterPopulator::Private
         return items;
     }
 
-    void addTrackToNode(const Core::Track& track, FilterItem* node)
+    void addTrackToNode(const Track& track, FilterItem* node)
     {
         node->addTrack(track);
         data.trackParents[track.id()].push_back(node->title());
     }
 
-    void iterateTrack(const Core::Track& track)
+    void iterateTrack(const Track& track)
     {
         const QString field = parser.evaluate(fieldScript, track);
         const QString sort  = parser.evaluate(sortScript, track);
@@ -81,8 +81,8 @@ struct FilterPopulator::Private
             return;
         }
 
-        if(field.contains(Core::Constants::Separator)) {
-            const QStringList values = field.split(Core::Constants::Separator);
+        if(field.contains(Constants::Separator)) {
+            const QStringList values = field.split(Constants::Separator);
             const auto nodes         = getOrInsertItems(values, sort);
             for(FilterItem* node : nodes) {
                 addTrackToNode(track, node);
@@ -94,9 +94,9 @@ struct FilterPopulator::Private
         }
     }
 
-    void runBatch(const Core::TrackList& tracks)
+    void runBatch(const TrackList& tracks)
     {
-        for(const Core::Track& track : tracks) {
+        for(const Track& track : tracks) {
             if(!populator->mayRun()) {
                 return;
             }
@@ -117,13 +117,13 @@ struct FilterPopulator::Private
 };
 
 FilterPopulator::FilterPopulator(QObject* parent)
-    : Utils::Worker{parent}
+    : Worker{parent}
     , p{std::make_unique<Private>(this)}
 { }
 
 FilterPopulator::~FilterPopulator() = default;
 
-void FilterPopulator::run(const QString& field, const QString& sort, const Core::TrackList& tracks)
+void FilterPopulator::run(const QString& field, const QString& sort, const TrackList& tracks)
 {
     setState(Running);
 
@@ -144,6 +144,6 @@ void FilterPopulator::run(const QString& field, const QString& sort, const Core:
 
     setState(Idle);
 }
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters
 
 #include "moc_filterpopulator.cpp"

@@ -25,7 +25,7 @@
 
 #include <map>
 
-namespace Fy::Core::Library {
+namespace Fooyin {
 struct FYCORE_EXPORT LibraryInfo
 {
     Q_GADGET
@@ -51,4 +51,4 @@ public:
     Status status{Status::Idle};
 };
 using LibraryInfoMap = std::map<int, LibraryInfo>;
-} // namespace Fy::Core::Library
+} // namespace Fooyin

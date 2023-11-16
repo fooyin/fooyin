@@ -25,7 +25,7 @@
 
 #include <QtPlugin>
 
-namespace Fy::Core {
+namespace Fooyin {
 class FYCORE_EXPORT CorePlugin
 {
 public:
@@ -33,6 +33,6 @@ public:
 
     virtual void initialise(const CorePluginContext& context) = 0;
 };
-} // namespace Fy::Core
+} // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fy::Core::CorePlugin, "com.fooyin.plugin.core")
+Q_DECLARE_INTERFACE(Fooyin::CorePlugin, "com.fooyin.plugin.core")

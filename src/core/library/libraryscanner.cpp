@@ -20,7 +20,7 @@
 #include "libraryscanner.h"
 
 #include "database/database.h"
-#include "database/librarydatabase.h"
+#include "database/trackdatabase.h"
 
 #include <core/library/libraryinfo.h>
 #include <core/tagging/tagreader.h>
@@ -30,20 +30,20 @@
 
 #include <QDir>
 
-namespace Fy::Core::Library {
+namespace Fooyin {
 struct LibraryScanner::Private
 {
     LibraryScanner* self;
     LibraryInfo library;
-    DB::Database* database;
-    DB::LibraryDatabase libraryDatabase;
-    Tagging::TagReader tagReader;
-    Tagging::TagWriter tagWriter;
+    Database* database;
+    TrackDatabase trackDatabase;
+    TagReader tagReader;
+    TagWriter tagWriter;
 
-    Private(LibraryScanner* self, DB::Database* database)
+    Private(LibraryScanner* self, Database* database)
         : self{self}
         , database{database}
-        , libraryDatabase{database->connectionName()}
+        , trackDatabase{database->connectionName()}
     { }
 
     void storeTracks(TrackList& tracks)
@@ -52,7 +52,7 @@ struct LibraryScanner::Private
             return;
         }
 
-        libraryDatabase.storeTracks(tracks);
+        trackDatabase.storeTracks(tracks);
 
         if(!self->mayRun()) {
             return;
@@ -151,7 +151,7 @@ struct LibraryScanner::Private
 
                 if(tracksToStore.size() >= 250) {
                     storeTracks(tracksToStore);
-                    QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const Core::TrackList&, tracksToStore));
+                    QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const TrackList&, tracksToStore));
                     tracksToStore.clear();
                 }
             }
@@ -161,10 +161,10 @@ struct LibraryScanner::Private
         storeTracks(tracksToUpdate);
 
         if(!tracksToStore.empty()) {
-            QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const Core::TrackList&, tracksToStore));
+            QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const TrackList&, tracksToStore));
         }
         if(!tracksToUpdate.empty()) {
-            QMetaObject::invokeMethod(self, "updatedTracks", Q_ARG(const Core::TrackList&, tracksToUpdate));
+            QMetaObject::invokeMethod(self, "updatedTracks", Q_ARG(const TrackList&, tracksToUpdate));
         }
 
         tracksToStore.clear();
@@ -176,11 +176,11 @@ struct LibraryScanner::Private
     void changeLibraryStatus(LibraryInfo::Status status)
     {
         library.status = status;
-        QMetaObject::invokeMethod(self, "statusChanged", Q_ARG(const Fy::Core::Library::LibraryInfo&, library));
+        QMetaObject::invokeMethod(self, "statusChanged", Q_ARG(const Fooyin::LibraryInfo&, library));
     }
 };
 
-LibraryScanner::LibraryScanner(DB::Database* database, QObject* parent)
+LibraryScanner::LibraryScanner(Database* database, QObject* parent)
     : Worker{parent}
     , p{std::make_unique<Private>(this, database)}
 { }
@@ -227,7 +227,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         }
     }
 
-    const bool deletedSuccess = p->libraryDatabase.deleteTracks(tracksToDelete);
+    const bool deletedSuccess = p->trackDatabase.deleteTracks(tracksToDelete);
 
     if(deletedSuccess && !tracksToDelete.empty()) {
         emit tracksDeleted(tracksToDelete);
@@ -246,10 +246,10 @@ void LibraryScanner::updateTracks(const TrackList& tracks)
     for(const Track& track : tracks) {
         const bool saved = p->tagWriter.writeMetaData(track);
         if(saved) {
-            p->libraryDatabase.updateTrack(track);
+            p->trackDatabase.updateTrack(track);
         }
     }
 }
-} // namespace Fy::Core::Library
+} // namespace Fooyin
 
 #include "moc_libraryscanner.cpp"

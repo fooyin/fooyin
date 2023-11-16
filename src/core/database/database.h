@@ -19,22 +19,18 @@
 
 #pragma once
 
-#include "module.h"
+#include "databasemodule.h"
 
 class QSqlDatabase;
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
 
-namespace Core::DB {
-class Database : public Module
+class Database : public DatabaseModule
 {
 public:
-    explicit Database(Utils::SettingsManager* settings);
-    Database(const QString& directory, const QString& filename, Utils::SettingsManager* settings);
+    explicit Database(SettingsManager* settings);
+    Database(const QString& directory, const QString& filename, SettingsManager* settings);
 
     virtual bool closeDatabase();
     virtual bool isInitialized();
@@ -51,9 +47,7 @@ protected:
     bool checkInsertIndex(const QString& indexName, const QString& createString);
 
 private:
-    Utils::SettingsManager* m_settings;
-
+    SettingsManager* m_settings;
     bool m_initialized;
 };
-} // namespace Core::DB
-} // namespace Fy
+} // namespace Fooyin

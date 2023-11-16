@@ -19,7 +19,7 @@
 
 #include <core/engine/audioengine.h>
 
-namespace Fy::Core::Engine {
+namespace Fooyin {
 AudioEngine::AudioEngine(QObject* parent)
     : QObject{parent}
     , m_status{NoTrack}
@@ -61,6 +61,6 @@ void AudioEngine::trackStatusChanged(TrackStatus status)
 void AudioEngine::startup() { }
 
 void AudioEngine::shutdown() { }
-} // namespace Fy::Core::Engine
+} // namespace Fooyin
 
 #include "core/engine/moc_audioengine.cpp"

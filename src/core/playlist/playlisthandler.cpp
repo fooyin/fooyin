@@ -37,15 +37,14 @@ enum class CommonOperation
     Remove
 };
 
-bool updateCommonTracks(Fy::Core::TrackList& tracks, const Fy::Core::TrackList& updatedTracks,
-                        CommonOperation operation)
+bool updateCommonTracks(Fooyin::TrackList& tracks, const Fooyin::TrackList& updatedTracks, CommonOperation operation)
 {
-    Fy::Core::TrackList result;
+    Fooyin::TrackList result;
     result.reserve(tracks.size());
     bool haveCommonTracks{false};
 
-    for(const Fy::Core::Track& track : tracks) {
-        auto it = std::ranges::find_if(std::as_const(updatedTracks), [&](const Fy::Core::Track& updatedTrack) {
+    for(const Fooyin::Track& track : tracks) {
+        auto it = std::ranges::find_if(std::as_const(updatedTracks), [&](const Fooyin::Track& updatedTrack) {
             return track.id() == updatedTrack.id();
         });
         if(it != updatedTracks.end()) {
@@ -64,14 +63,14 @@ bool updateCommonTracks(Fy::Core::TrackList& tracks, const Fy::Core::TrackList& 
 }
 } // namespace
 
-namespace Fy::Core::Playlist {
+namespace Fooyin {
 struct PlaylistHandler::Private
 {
     PlaylistHandler* self;
 
-    Player::PlayerManager* playerManager;
-    Utils::SettingsManager* settings;
-    DB::PlaylistDatabase playlistConnector;
+    PlayerManager* playerManager;
+    SettingsManager* settings;
+    PlaylistDatabase playlistConnector;
 
     PlaylistList playlists;
     PlaylistList removedPlaylists;
@@ -79,8 +78,7 @@ struct PlaylistHandler::Private
     Playlist* activePlaylist{nullptr};
     Playlist* scheduledPlaylist{nullptr};
 
-    Private(PlaylistHandler* self, DB::Database* database, Player::PlayerManager* playerManager,
-            Utils::SettingsManager* settings)
+    Private(PlaylistHandler* self, Database* database, PlayerManager* playerManager, SettingsManager* settings)
         : self{self}
         , playerManager{playerManager}
         , settings{settings}
@@ -122,7 +120,7 @@ struct PlaylistHandler::Private
 
     void previous()
     {
-        if(settings->value<Settings::RewindPreviousTrack>() && playerManager->currentPosition() > 5000) {
+        if(settings->value<Settings::Core::RewindPreviousTrack>() && playerManager->currentPosition() > 5000) {
             playerManager->changePosition(0);
         }
         else {
@@ -227,8 +225,8 @@ struct PlaylistHandler::Private
     }
 };
 
-PlaylistHandler::PlaylistHandler(DB::Database* database, Player::PlayerManager* playerManager,
-                                 Utils::SettingsManager* settings, QObject* parent)
+PlaylistHandler::PlaylistHandler(Database* database, PlayerManager* playerManager, SettingsManager* settings,
+                                 QObject* parent)
     : PlaylistManager{parent}
     , p{std::make_unique<Private>(this, database, playerManager, settings)}
 {
@@ -239,8 +237,8 @@ PlaylistHandler::PlaylistHandler(DB::Database* database, Player::PlayerManager* 
         PlaylistHandler::createPlaylist(QStringLiteral("Default"), {});
     }
 
-    QObject::connect(p->playerManager, &Player::PlayerManager::nextTrack, this, [this]() { p->next(); });
-    QObject::connect(p->playerManager, &Player::PlayerManager::previousTrack, this, [this]() { p->previous(); });
+    QObject::connect(p->playerManager, &PlayerManager::nextTrack, this, [this]() { p->next(); });
+    QObject::connect(p->playerManager, &PlayerManager::previousTrack, this, [this]() { p->previous(); });
 }
 
 PlaylistHandler::~PlaylistHandler()
@@ -430,7 +428,7 @@ void PlaylistHandler::savePlaylists()
     p->playlistConnector.saveModifiedPlaylists(p->playlists);
 
     if(p->activePlaylist) {
-        p->settings->set<Settings::ActivePlaylistId>(p->activePlaylist->id());
+        p->settings->set<Settings::Core::ActivePlaylistId>(p->activePlaylist->id());
     }
 }
 
@@ -455,7 +453,7 @@ void PlaylistHandler::populatePlaylists(const TrackList& tracks)
 
     p->playlistConnector.getPlaylistTracks(p->playlists, idTracks);
 
-    const int lastId = p->settings->value<Settings::ActivePlaylistId>();
+    const int lastId = p->settings->value<Settings::Core::ActivePlaylistId>();
     if(lastId >= 0) {
         changeActivePlaylist(lastId);
     }
@@ -497,6 +495,6 @@ void PlaylistHandler::tracksRemoved(const TrackList& tracks)
         }
     }
 }
-} // namespace Fy::Core::Playlist
+} // namespace Fooyin
 
 #include "moc_playlisthandler.cpp"

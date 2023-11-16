@@ -39,9 +39,9 @@
 
 constexpr auto MainWindowGeometry = "Interface/Geometry";
 
-namespace Fy::Gui {
-MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
-                       Widgets::EditableLayout* editableLayout, QWidget* parent)
+namespace Fooyin {
+MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, EditableLayout* editableLayout,
+                       QWidget* parent)
     : QMainWindow{parent}
     , m_actionManager{actionManager}
     , m_settings{settings}
@@ -51,16 +51,16 @@ MainWindow::MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManag
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
 
-    setWindowTitle(Core::Constants::AppName);
+    setWindowTitle(Constants::AppName);
 
     resize(1280, 720);
     setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
 
     setCentralWidget(m_editableLayout);
 
-    if(m_settings->value<Core::Settings::FirstRun>()) {
+    if(m_settings->value<Settings::Core::FirstRun>()) {
         // Delay showing until size of parent widget (this) is set.
-        QTimer::singleShot(1000, m_editableLayout, &Widgets::EditableLayout::showQuickSetup);
+        QTimer::singleShot(1000, m_editableLayout, &EditableLayout::showQuickSetup);
     }
 }
 
@@ -71,7 +71,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::open()
 {
-    const int startup = m_settings->value<Settings::StartupBehaviour>();
+    const int startup = m_settings->value<Settings::Gui::StartupBehaviour>();
     switch(startup) {
         case(Maximised): {
             showMaximized();
@@ -95,6 +95,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
     emit closing();
     QMainWindow::closeEvent(event);
 }
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "moc_mainwindow.cpp"

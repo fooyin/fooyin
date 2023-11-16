@@ -22,7 +22,7 @@
 #include <QApplication>
 #include <QPalette>
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 TextBlock::TextBlock()
     : TextBlock{QStringLiteral(""), 0}
 { }
@@ -139,4 +139,4 @@ QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset)
     stream >> preset.track;
     return stream;
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

@@ -23,34 +23,31 @@
 #include <utils/tablemodel.h>
 #include <utils/treestatusitem.h>
 
-namespace Fy {
-namespace Core::Library {
+namespace Fooyin {
 class LibraryManager;
-} // namespace Core::Library
 
-namespace Gui::Settings {
-class LibraryItem : public Utils::TreeStatusItem<LibraryItem>
+class LibraryItem : public TreeStatusItem<LibraryItem>
 {
 public:
     LibraryItem();
-    explicit LibraryItem(Core::Library::LibraryInfo info, LibraryItem* parent);
+    explicit LibraryItem(LibraryInfo info, LibraryItem* parent);
 
-    [[nodiscard]] Core::Library::LibraryInfo info() const;
-    void changeInfo(const Core::Library::LibraryInfo& info);
+    [[nodiscard]] LibraryInfo info() const;
+    void changeInfo(const LibraryInfo& info);
 
 private:
-    Core::Library::LibraryInfo m_info;
+    LibraryInfo m_info;
 };
 
-class LibraryModel : public Utils::TableModel<LibraryItem>
+class LibraryModel : public TableModel<LibraryItem>
 {
 public:
-    explicit LibraryModel(Core::Library::LibraryManager* libraryManager, QObject* parent = nullptr);
+    explicit LibraryModel(LibraryManager* libraryManager, QObject* parent = nullptr);
 
     void populate();
-    void markForAddition(const Core::Library::LibraryInfo& info);
-    void markForRemoval(const Core::Library::LibraryInfo& info);
-    void markForChange(const Core::Library::LibraryInfo& info);
+    void markForAddition(const LibraryInfo& info);
+    void markForRemoval(const LibraryInfo& info);
+    void markForChange(const LibraryInfo& info);
     void processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -61,15 +58,14 @@ public:
 
 private:
     void reset();
-    void updateDisplay(const Core::Library::LibraryInfo& info);
+    void updateDisplay(const LibraryInfo& info);
 
-    Core::Library::LibraryManager* m_libraryManager;
+    LibraryManager* m_libraryManager;
 
-    using LibraryPathMap    = std::unordered_map<QString, LibraryItem>;
-    using LibraryInfoList = std::vector<Core::Library::LibraryInfo>;
+    using LibraryPathMap  = std::unordered_map<QString, LibraryItem>;
+    using LibraryInfoList = std::vector<LibraryInfo>;
 
     LibraryPathMap m_nodes;
     LibraryInfoList m_librariesToAdd;
 };
-} // namespace Gui::Settings
-} // namespace Fy
+} // namespace Fooyin

@@ -24,7 +24,7 @@
 #include <random>
 #include <ranges>
 
-namespace Fy::Core::Playlist {
+namespace Fooyin {
 struct Playlist::Private
 {
     int id;
@@ -297,4 +297,4 @@ void Playlist::changeCurrentTrack(int index)
     p->currentTrackIndex = index;
     p->nextTrackIndex    = -1;
 }
-} // namespace Fy::Core::Playlist
+} // namespace Fooyin

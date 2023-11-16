@@ -31,9 +31,9 @@
 #include <QAction>
 #include <QIcon>
 
-namespace Fy::Gui {
-ViewMenu::ViewMenu(Utils::ActionManager* actionManager, TrackSelectionController* trackSelection,
-                   Utils::SettingsManager* settings, QObject* parent)
+namespace Fooyin {
+ViewMenu::ViewMenu(ActionManager* actionManager, TrackSelectionController* trackSelection, SettingsManager* settings,
+                   QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
     , m_trackSelection{trackSelection}
@@ -45,10 +45,10 @@ ViewMenu::ViewMenu(Utils::ActionManager* actionManager, TrackSelectionController
     m_layoutEditing               = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
     viewMenu->addAction(m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing));
     QObject::connect(m_layoutEditing, &QAction::triggered, this,
-                     [this](bool checked) { m_settings->set<Settings::LayoutEditing>(checked); });
-    m_settings->subscribe<Settings::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
+                     [this](bool checked) { m_settings->set<Settings::Gui::LayoutEditing>(checked); });
+    m_settings->subscribe<Settings::Gui::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
     m_layoutEditing->setCheckable(true);
-    m_layoutEditing->setChecked(m_settings->value<Settings::LayoutEditing>());
+    m_layoutEditing->setChecked(m_settings->value<Settings::Gui::LayoutEditing>());
 
     const QIcon quickSetupIcon = QIcon::fromTheme(Constants::Icons::QuickSetup);
     m_openQuickSetup           = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
@@ -56,14 +56,14 @@ ViewMenu::ViewMenu(Utils::ActionManager* actionManager, TrackSelectionController
     QObject::connect(m_openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
 
     m_showSandbox = new QAction(tr("&Script Sandbox"), this);
-    viewMenu->addAction(m_actionManager->registerAction(m_showSandbox, Gui::Constants::Actions::ScriptSandbox),
-                        Utils::Actions::Groups::Three);
+    viewMenu->addAction(m_actionManager->registerAction(m_showSandbox, Constants::Actions::ScriptSandbox),
+                        Actions::Groups::Three);
     QObject::connect(m_showSandbox, &QAction::triggered, this, [this]() {
-        auto* sandboxDialog = new Sandbox::SandboxDialog(m_trackSelection, m_settings);
+        auto* sandboxDialog = new SandboxDialog(m_trackSelection, m_settings);
         sandboxDialog->setAttribute(Qt::WA_DeleteOnClose);
         sandboxDialog->show();
     });
 }
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "moc_viewmenu.cpp"

@@ -17,9 +17,9 @@
  *
  */
 
-#include "module.h"
+#include "databasemodule.h"
 
-#include "query.h"
+#include "databasequery.h"
 
 #include <QApplication>
 #include <QSqlError>
@@ -27,28 +27,28 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Core::DB {
-Module::Module(QString connectionName)
+namespace Fooyin {
+DatabaseModule::DatabaseModule(QString connectionName)
     : m_connectionName{std::move(connectionName)}
 { }
 
-QString Module::connectionName() const
+QString DatabaseModule::connectionName() const
 {
     return m_connectionName;
 }
 
-Query Module::runQuery(const QString& query, const QString& errorText) const
+DatabaseQuery DatabaseModule::runQuery(const QString& query, const QString& errorText) const
 {
     return runQuery(query, BindingsMap{}, errorText);
 }
 
-Query Module::runQuery(const QString& query, const std::pair<QString, QString>& bindings,
-                       const QString& errorText) const
+DatabaseQuery DatabaseModule::runQuery(const QString& query, const std::pair<QString, QString>& bindings,
+                                       const QString& errorText) const
 {
     return runQuery(query, {{bindings.first, bindings.second}}, errorText);
 }
 
-QSqlDatabase Module::db() const
+QSqlDatabase DatabaseModule::db() const
 {
     if(!QSqlDatabase::isDriverAvailable(u"QSQLITE"_s)) {
         return {};
@@ -84,9 +84,10 @@ QSqlDatabase Module::db() const
     return db;
 }
 
-DB::Query Module::runQuery(const QString& query, const BindingsMap& bindings, const QString& errorText) const
+DatabaseQuery DatabaseModule::runQuery(const QString& query, const BindingsMap& bindings,
+                                       const QString& errorText) const
 {
-    DB::Query q(this);
+    DatabaseQuery q(this);
     q.prepareQuery(query);
 
     for(const auto& [key, value] : bindings) {
@@ -100,11 +101,12 @@ DB::Query Module::runQuery(const QString& query, const BindingsMap& bindings, co
     return q;
 }
 
-DB::Query Module::insert(const QString& tableName, const BindingsMap& fieldBindings, const QString& errorMessage)
+DatabaseQuery DatabaseModule::insert(const QString& tableName, const BindingsMap& fieldBindings,
+                                     const QString& errorMessage)
 {
     QString query = "INSERT INTO " + tableName;
 
-    DB::Query q(this);
+    DatabaseQuery q(this);
 
     QString fields;
     QString values;
@@ -134,9 +136,9 @@ DB::Query Module::insert(const QString& tableName, const BindingsMap& fieldBindi
     return q;
 }
 
-void Module::runPragma(const QString& pragma, const QString& value) const
+void DatabaseModule::runPragma(const QString& pragma, const QString& value) const
 {
-    DB::Query q(this);
+    DatabaseQuery q(this);
 
     const QString query = "PRAGMA " + pragma + " = " + value;
     q.prepareQuery(query);
@@ -146,12 +148,12 @@ void Module::runPragma(const QString& pragma, const QString& value) const
     }
 }
 
-Query Module::update(const QString& tableName, const BindingsMap& fieldBindings,
-                     const std::pair<QString, QString>& whereBinding, const QString& errorMessage)
+DatabaseQuery DatabaseModule::update(const QString& tableName, const BindingsMap& fieldBindings,
+                                     const std::pair<QString, QString>& whereBinding, const QString& errorMessage)
 {
     QString query = "UPDATE " + tableName + " SET ";
 
-    DB::Query q(this);
+    DatabaseQuery q(this);
 
     QString fields;
     for(const auto& [field, value] : fieldBindings) {
@@ -181,8 +183,9 @@ Query Module::update(const QString& tableName, const BindingsMap& fieldBindings,
     return q;
 }
 
-Query Module::remove(const QString& tableName, const std::vector<std::pair<QString, QString>>& whereBinding,
-                     const QString& errorMessage)
+DatabaseQuery DatabaseModule::remove(const QString& tableName,
+                                     const std::vector<std::pair<QString, QString>>& whereBinding,
+                                     const QString& errorMessage)
 {
     QString query = "DELETE FROM " + tableName + " WHERE (";
 
@@ -196,7 +199,7 @@ Query Module::remove(const QString& tableName, const std::vector<std::pair<QStri
     }
     query = query + ");";
 
-    DB::Query q(this);
+    DatabaseQuery q(this);
     q.prepareQuery(query);
 
     if(!q.execQuery()) {
@@ -207,13 +210,13 @@ Query Module::remove(const QString& tableName, const std::vector<std::pair<QStri
     return q;
 }
 
-Module* Module::module()
+DatabaseModule* DatabaseModule::module()
 {
     return this;
 }
 
-const Module* Module::module() const
+const DatabaseModule* DatabaseModule::module() const
 {
     return this;
 }
-} // namespace Fy::Core::DB
+} // namespace Fooyin

@@ -21,7 +21,7 @@
 
 #include <core/track.h>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 FilterItem::FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode)
     : TreeItem{parent}
     , m_title{std::move(title)}
@@ -39,7 +39,7 @@ QString FilterItem::sortTitle() const
     return m_sortTitle;
 }
 
-Core::TrackList FilterItem::tracks() const
+TrackList FilterItem::tracks() const
 {
     return m_tracks;
 }
@@ -54,22 +54,22 @@ void FilterItem::setTitle(const QString& title)
     m_title = title;
 }
 
-void FilterItem::addTrack(const Core::Track& track)
+void FilterItem::addTrack(const Track& track)
 {
     m_tracks.emplace_back(track);
 }
 
-void FilterItem::addTracks(const Core::TrackList& tracks)
+void FilterItem::addTracks(const TrackList& tracks)
 {
     std::ranges::copy(tracks, std::back_inserter(m_tracks));
 }
 
-void FilterItem::removeTrack(const Core::Track& track)
+void FilterItem::removeTrack(const Track& track)
 {
     if(m_tracks.empty()) {
         return;
     }
-    std::erase_if(m_tracks, [track](const Core::Track& child) { return child.id() == track.id(); });
+    std::erase_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); });
 }
 
 bool FilterItem::isAllNode() const
@@ -104,4 +104,4 @@ void FilterItem::sortChildren(Qt::SortOrder order)
     });
     m_children = sortedChildren;
 }
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

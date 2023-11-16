@@ -25,21 +25,16 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Core {
 class Track;
 
-namespace Player {
 class FYCORE_EXPORT PlayerController : public PlayerManager
 {
     Q_OBJECT
 
 public:
-    explicit PlayerController(Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit PlayerController(SettingsManager* settings, QObject* parent = nullptr);
     ~PlayerController();
 
     [[nodiscard]] PlayState playState() const override;
@@ -64,6 +59,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Player
-} // namespace Core
-} // namespace Fy
+} // namespace Fooyin

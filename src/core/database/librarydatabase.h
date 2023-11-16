@@ -19,31 +19,19 @@
 
 #pragma once
 
-#include "module.h"
+#include "databasemodule.h"
 
-#include <core/trackfwd.h>
+#include <core/library/libraryinfo.h>
 
-namespace Fy::Core::DB {
-class LibraryDatabase : public Module
+namespace Fooyin {
+class LibraryDatabase : public DatabaseModule
 {
 public:
     explicit LibraryDatabase(const QString& connectionName);
 
-    bool storeTracks(TrackList& tracksToStore);
-
-    bool getAllTracks(TrackList& result);
-    bool getAllTracks(TrackList& result, int offset, int limit);
-
-    [[nodiscard]] bool dbFetchTracks(Query& q, TrackList& result) const;
-    [[nodiscard]] int dbTrackCount() const;
-
-    bool updateTrack(const Track& track);
-    bool deleteTrack(int id);
-    bool deleteTracks(const TrackList& tracks);
-
-private:
-    int insertTrack(const Track& track);
-
-    QString m_connectionName;
+    bool getAllLibraries(LibraryInfoMap& libraries);
+    int insertLibrary(const QString& path, const QString& name);
+    bool removeLibrary(int id);
+    bool renameLibrary(int id, const QString& name);
 };
-} // namespace Fy::Core::DB
+} // namespace Fooyin

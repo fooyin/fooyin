@@ -23,7 +23,7 @@
 
 #include <QString>
 
-namespace Fy::Gui {
+namespace Fooyin::Gui {
 QString layoutsPath()
 {
     return Utils::configPath(QStringLiteral("layouts")).append(QStringLiteral("/"));
@@ -38,4 +38,4 @@ QString coverPath()
 {
     return Utils::cachePath(QStringLiteral("covers")).append(QStringLiteral("/"));
 }
-} // namespace Fy::Gui
+} // namespace Fooyin::Gui

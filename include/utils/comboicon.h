@@ -23,7 +23,7 @@
 
 #include <QWidget>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT ComboIcon : public QWidget
 {
     Q_OBJECT
@@ -63,6 +63,6 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Utils::ComboIcon::Attributes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::ComboIcon::Attributes)

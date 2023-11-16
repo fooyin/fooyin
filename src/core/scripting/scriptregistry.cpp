@@ -28,35 +28,33 @@
 #include <core/track.h>
 
 namespace {
-using namespace Fy::Core::Scripting;
-
 using NativeFunc     = std::function<QString(const QStringList&)>;
-using NativeCondFunc = std::function<ScriptResult(const ValueList&)>;
+using NativeCondFunc = std::function<Fooyin::ScriptResult(const Fooyin::ScriptValueList&)>;
 using Func           = std::variant<NativeFunc, NativeCondFunc>;
 
-using TrackFunc    = std::function<Registry::FuncRet(const Fy::Core::Track&)>;
-using TrackSetFunc = std::function<void(Fy::Core::Track&, const Registry::FuncRet&)>;
+using TrackFunc    = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::Track&)>;
+using TrackSetFunc = std::function<void(Fooyin::Track&, const Fooyin::ScriptRegistry::FuncRet&)>;
 
 template <typename FuncType>
 auto generateSetFunc(FuncType func)
 {
-    return [func](Fy::Core::Track& track, Registry::FuncRet arg) {
-        if constexpr(std::is_same_v<FuncType, void (Fy::Core::Track::*)(int)>) {
+    return [func](Fooyin::Track& track, Fooyin::ScriptRegistry::FuncRet arg) {
+        if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(int)>) {
             if(const auto* value = std::get_if<int>(&arg)) {
                 (track.*func)(*value);
             }
         }
-        else if constexpr(std::is_same_v<FuncType, void (Fy::Core::Track::*)(uint64_t)>) {
+        else if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(uint64_t)>) {
             if(const auto* value = std::get_if<uint64_t>(&arg)) {
                 (track.*func)(*value);
             }
         }
-        else if constexpr(std::is_same_v<FuncType, void (Fy::Core::Track::*)(const QString&)>) {
+        else if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(const QString&)>) {
             if(const auto* value = std::get_if<QString>(&arg)) {
                 (track.*func)(*value);
             }
         }
-        else if constexpr(std::is_same_v<FuncType, void (Fy::Core::Track::*)(const QStringList&)>) {
+        else if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(const QStringList&)>) {
             if(const auto* value = std::get_if<QStringList>(&arg)) {
                 (track.*func)(*value);
             }
@@ -66,31 +64,31 @@ auto generateSetFunc(FuncType func)
 
 void addDefaultFunctions(std::unordered_map<QString, Func>& funcs)
 {
-    funcs.emplace("add", Fy::Core::Scripting::add);
-    funcs.emplace("sub", Fy::Core::Scripting::sub);
-    funcs.emplace("mul", Fy::Core::Scripting::mul);
-    funcs.emplace("div", Fy::Core::Scripting::div);
-    funcs.emplace("min", Fy::Core::Scripting::min);
-    funcs.emplace("max", Fy::Core::Scripting::max);
-    funcs.emplace("mod", Fy::Core::Scripting::mod);
+    funcs.emplace("add", Fooyin::Scripting::add);
+    funcs.emplace("sub", Fooyin::Scripting::sub);
+    funcs.emplace("mul", Fooyin::Scripting::mul);
+    funcs.emplace("div", Fooyin::Scripting::div);
+    funcs.emplace("min", Fooyin::Scripting::min);
+    funcs.emplace("max", Fooyin::Scripting::max);
+    funcs.emplace("mod", Fooyin::Scripting::mod);
 
-    funcs.emplace("num", Fy::Core::Scripting::num);
-    funcs.emplace("replace", Fy::Core::Scripting::replace);
+    funcs.emplace("num", Fooyin::Scripting::num);
+    funcs.emplace("replace", Fooyin::Scripting::replace);
 
-    funcs.emplace("timems", Fy::Core::Scripting::msToString);
+    funcs.emplace("timems", Fooyin::Scripting::msToString);
 
-    funcs.emplace("if", Fy::Core::Scripting::cif);
-    funcs.emplace("if2", Fy::Core::Scripting::cif2);
-    funcs.emplace("ifgreater", Fy::Core::Scripting::ifgreater);
-    funcs.emplace("iflonger", Fy::Core::Scripting::iflonger);
-    funcs.emplace("ifequal", Fy::Core::Scripting::ifequal);
+    funcs.emplace("if", Fooyin::Scripting::cif);
+    funcs.emplace("if2", Fooyin::Scripting::cif2);
+    funcs.emplace("ifgreater", Fooyin::Scripting::ifgreater);
+    funcs.emplace("iflonger", Fooyin::Scripting::iflonger);
+    funcs.emplace("ifequal", Fooyin::Scripting::ifequal);
 }
 
 void addDefaultMetadata(std::unordered_map<QString, TrackFunc>& metadata,
                         std::unordered_map<QString, TrackSetFunc>& setMetadata)
 {
-    using namespace Fy::Core::Constants;
-    using Fy::Core::Track;
+    using namespace Fooyin::Constants;
+    using Fooyin::Track;
 
     metadata[MetaData::Title]        = &Track::title;
     metadata[MetaData::Artist]       = &Track::artists;
@@ -145,8 +143,8 @@ void addDefaultMetadata(std::unordered_map<QString, TrackFunc>& metadata,
 }
 } // namespace
 
-namespace Fy::Core::Scripting {
-struct Registry::Private
+namespace Fooyin {
+struct ScriptRegistry::Private
 {
     Track currentTrack;
 
@@ -161,23 +159,23 @@ struct Registry::Private
     }
 };
 
-Registry::Registry()
+ScriptRegistry::ScriptRegistry()
     : p{std::make_unique<Private>()}
 { }
 
-Registry::~Registry() = default;
+ScriptRegistry::~ScriptRegistry() = default;
 
-bool Registry::varExists(const QString& var) const
+bool ScriptRegistry::varExists(const QString& var) const
 {
     return p->metadata.contains(var);
 }
 
-bool Registry::funcExists(const QString& func) const
+bool ScriptRegistry::funcExists(const QString& func) const
 {
     return p->funcs.contains(func);
 }
 
-ScriptResult Registry::varValue(const QString& var) const
+ScriptResult ScriptRegistry::varValue(const QString& var) const
 {
     if(var.isEmpty() || !varExists(var)) {
         return {};
@@ -187,7 +185,7 @@ ScriptResult Registry::varValue(const QString& var) const
     return calculateResult(funcResult);
 }
 
-void Registry::setVar(const QString& var, const FuncRet& value, Track& track)
+void ScriptRegistry::setVar(const QString& var, const FuncRet& value, Track& track)
 {
     if(var.isEmpty()) {
         return;
@@ -198,7 +196,7 @@ void Registry::setVar(const QString& var, const FuncRet& value, Track& track)
     }
 }
 
-ScriptResult Registry::function(const QString& func, const ValueList& args) const
+ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args) const
 {
     if(func.isEmpty() || !p->funcs.contains(func)) {
         return {};
@@ -219,12 +217,12 @@ ScriptResult Registry::function(const QString& func, const ValueList& args) cons
     return {};
 }
 
-void Registry::changeCurrentTrack(const Core::Track& track)
+void ScriptRegistry::changeCurrentTrack(const Track& track)
 {
     p->currentTrack = track;
 }
 
-ScriptResult Registry::calculateResult(Registry::FuncRet funcRet)
+ScriptResult ScriptRegistry::calculateResult(ScriptRegistry::FuncRet funcRet)
 {
     ScriptResult result;
 
@@ -247,4 +245,4 @@ ScriptResult Registry::calculateResult(Registry::FuncRet funcRet)
 
     return result;
 }
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin

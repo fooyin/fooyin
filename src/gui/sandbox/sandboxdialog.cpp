@@ -41,13 +41,13 @@ using namespace std::chrono_literals;
 
 constexpr auto SandboxState = "Interface/ScriptSandboxState";
 
-namespace Fy::Gui::Sandbox {
+namespace Fooyin {
 struct SandboxDialog::Private
 {
     SandboxDialog* self;
 
     TrackSelectionController* trackSelection;
-    Utils::SettingsManager* settings;
+    SettingsManager* settings;
 
     QSplitter* mainSplitter;
     QSplitter* documentSplitter;
@@ -61,12 +61,12 @@ struct SandboxDialog::Private
 
     QTimer* textChangeTimer;
 
-    Core::Scripting::Registry registry;
-    Core::Scripting::Parser parser;
+    ScriptRegistry registry;
+    ScriptParser parser;
 
-    Core::Scripting::ParsedScript currentScript;
+    ParsedScript currentScript;
 
-    explicit Private(SandboxDialog* self, TrackSelectionController* trackSelection, Utils::SettingsManager* settings)
+    explicit Private(SandboxDialog* self, TrackSelectionController* trackSelection, SettingsManager* settings)
         : self{self}
         , trackSelection{trackSelection}
         , settings{settings}
@@ -95,7 +95,7 @@ struct SandboxDialog::Private
         }
     }
 
-    void updateResults(const Core::Scripting::Expression& expression)
+    void updateResults(const Expression& expression)
     {
         if(!trackSelection->hasTracks()) {
             return;
@@ -133,7 +133,7 @@ struct SandboxDialog::Private
     void showErrors() const
     {
         const auto errors = currentScript.errors;
-        for(const Core::Scripting::Error& error : errors) {
+        for(const ScriptError& error : errors) {
             results->append(error.message);
         }
     }
@@ -188,8 +188,7 @@ struct SandboxDialog::Private
     }
 };
 
-SandboxDialog::SandboxDialog(TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
-                             QWidget* parent)
+SandboxDialog::SandboxDialog(TrackSelectionController* trackSelection, SettingsManager* settings, QWidget* parent)
     : QDialog{parent}
     , p{std::make_unique<Private>(this, trackSelection, settings)}
 {
@@ -233,6 +232,6 @@ SandboxDialog::~SandboxDialog()
 
     p->saveState();
 }
-} // namespace Fy::Gui::Sandbox
+} // namespace Fooyin
 
 #include "moc_sandboxdialog.cpp"

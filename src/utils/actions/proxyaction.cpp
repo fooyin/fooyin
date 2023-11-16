@@ -23,7 +23,7 @@
 
 #include <QPointer>
 
-namespace Fy::Utils {
+namespace Fooyin {
 struct ProxyAction::Private
 {
     ProxyAction* self;
@@ -203,6 +203,6 @@ ProxyAction* ProxyAction::actionWithIcon(QAction* original, const QIcon& icon)
     proxyAction->setAttribute(UpdateText);
     return proxyAction;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/actions/moc_proxyaction.cpp"

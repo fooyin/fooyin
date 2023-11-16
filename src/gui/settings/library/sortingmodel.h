@@ -26,15 +26,10 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Core::Library {
+namespace Fooyin {
 class SortingRegistry;
-}
 
-namespace Gui::Settings {
-using SortScript = Core::Library::Sorting::SortScript;
-
-class SortingItem : public Utils::TreeStatusItem<SortingItem>
+class SortingItem : public TreeStatusItem<SortingItem>
 {
 public:
     SortingItem();
@@ -44,13 +39,13 @@ public:
     void changeSort(SortScript sortScript);
 
 private:
-    Core::Library::Sorting::SortScript m_sortScript;
+    SortScript m_sortScript;
 };
 
-class SortingModel : public Utils::TableModel<SortingItem>
+class SortingModel : public TableModel<SortingItem>
 {
 public:
-    explicit SortingModel(Core::Library::SortingRegistry* sortRegistry, QObject* parent = nullptr);
+    explicit SortingModel(SortingRegistry* sortRegistry, QObject* parent = nullptr);
 
     void populate();
     void addNewSortScript();
@@ -70,9 +65,8 @@ private:
 
     using SortIndexMap = std::map<int, SortingItem>;
 
-    Core::Library::SortingRegistry* m_sortRegistry;
+    SortingRegistry* m_sortRegistry;
 
     SortIndexMap m_nodes;
 };
-} // namespace Gui::Settings
-} // namespace Fy
+} // namespace Fooyin

@@ -21,7 +21,7 @@
 
 #include <utils/settings/settingsdialogcontroller.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 SettingsPage::SettingsPage(SettingsDialogController* controller, QObject* parent)
     : QObject{parent}
     , m_widget{nullptr}
@@ -104,6 +104,6 @@ void SettingsPage::setCategory(const QStringList& category)
 {
     m_category = category;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/settings/moc_settingspage.cpp"

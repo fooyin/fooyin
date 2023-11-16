@@ -25,7 +25,7 @@
 #include <QPluginLoader>
 #include <QString>
 
-namespace Fy::Plugins {
+namespace Fooyin {
 class Plugin;
 
 class FYCORE_EXPORT PluginInfo
@@ -94,4 +94,4 @@ private:
     Plugin* m_plugin;
     QPluginLoader m_loader;
 };
-} // namespace Fy::Plugins
+} // namespace Fooyin

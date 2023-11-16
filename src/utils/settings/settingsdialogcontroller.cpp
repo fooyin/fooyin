@@ -25,7 +25,7 @@
 
 #include <QIODevice>
 
-namespace Fy::Utils {
+namespace Fooyin {
 struct SettingsDialogController::Private
 {
     QByteArray geometry;
@@ -96,6 +96,6 @@ void SettingsDialogController::loadState(const QByteArray& state)
         stream >> p->lastOpenPage;
     }
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/settings/moc_settingsdialogcontroller.cpp"

@@ -21,20 +21,13 @@
 
 #include <utils/settings/settingspage.h>
 
-namespace Fy {
-namespace Plugins {
+namespace Fooyin {
 class PluginManager;
-}
-
-namespace Utils {
 class SettingsManager;
-} // namespace Utils
 
-namespace Gui::Settings {
-class PluginPage : public Utils::SettingsPage
+class PluginPage : public SettingsPage
 {
 public:
-    PluginPage(Utils::SettingsManager* settings, Plugins::PluginManager* pluginManager);
+    PluginPage(SettingsManager* settings, PluginManager* pluginManager);
 };
-} // namespace Gui::Settings
-} // namespace Fy
+} // namespace Fooyin

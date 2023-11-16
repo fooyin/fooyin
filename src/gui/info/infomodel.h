@@ -23,19 +23,19 @@
 #include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
-namespace Fy::Gui::Widgets::Info {
-class InfoItem : public Utils::TreeItem<InfoItem>
+namespace Fooyin {
+class InfoItem : public TreeItem<InfoItem>
 {
 public:
     enum ItemType
     {
-        Header = 0,
+        Header = Qt::UserRole,
         Entry,
     };
 
     enum ValueType
     {
-        Concat = 0,
+        Concat = Qt::UserRole + 5,
         Average,
         Total,
         Max
@@ -43,7 +43,7 @@ public:
 
     enum Role
     {
-        Type = Qt::UserRole,
+        Type = Qt::UserRole + 10,
         Value
     };
 
@@ -75,7 +75,7 @@ private:
     FormatFunc m_formatNum;
 };
 
-class InfoModel : public Utils::TreeModel<InfoItem>
+class InfoModel : public TreeModel<InfoItem>
 {
     Q_OBJECT
 
@@ -96,10 +96,10 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
-    void resetModel(const Core::TrackList& tracks, const Core::Track& playingTrack);
+    void resetModel(const TrackList& tracks, const Track& playingTrack);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Gui::Widgets::Info
+} // namespace Fooyin

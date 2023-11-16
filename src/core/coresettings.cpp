@@ -28,25 +28,25 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Core::Settings {
-CoreSettings::CoreSettings(Utils::SettingsManager* settingsManager)
+namespace Fooyin {
+CoreSettings::CoreSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
-    , m_sortingRegistry{new Library::SortingRegistry(settingsManager)}
+    , m_sortingRegistry{new SortingRegistry(settingsManager)}
 {
-    m_settings->createSetting<Settings::Version>(VERSION);
-    m_settings->createSetting<Settings::DatabaseVersion>("0.1.0");
-    m_settings->createTempSetting<Settings::FirstRun>(true);
-    m_settings->createSetting<Settings::PlayMode>(0, u"Player"_s);
-    m_settings->createSetting<Settings::AutoRefresh>(false, u"Library"_s);
-    m_settings->createSetting<Settings::LibrarySorting>(QByteArray{}, u"Library"_s);
-    m_settings->createSetting<Settings::LibrarySortScript>(
+    m_settings->createSetting<Settings::Core::Version>(VERSION);
+    m_settings->createSetting<Settings::Core::DatabaseVersion>("0.1.0");
+    m_settings->createTempSetting<Settings::Core::FirstRun>(true);
+    m_settings->createSetting<Settings::Core::PlayMode>(0, u"Player"_s);
+    m_settings->createSetting<Settings::Core::AutoRefresh>(false, u"Library"_s);
+    m_settings->createSetting<Settings::Core::LibrarySorting>(QByteArray{}, u"Library"_s);
+    m_settings->createSetting<Settings::Core::LibrarySortScript>(
         "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", u"Library"_s);
-    m_settings->createSetting<Settings::ActivePlaylistId>(0, u"Playlist"_s);
-    m_settings->createSetting<Settings::AudioOutput>("ALSA|default", u"Engine"_s);
-    m_settings->createSetting<Settings::OutputVolume>(1.0, u"Engine"_s);
-    m_settings->createSetting<Settings::RewindPreviousTrack>(false, u"Playlist"_s);
+    m_settings->createSetting<Settings::Core::ActivePlaylistId>(0, u"Playlist"_s);
+    m_settings->createSetting<Settings::Core::AudioOutput>("ALSA|default", u"Engine"_s);
+    m_settings->createSetting<Settings::Core::OutputVolume>(1.0, u"Engine"_s);
+    m_settings->createSetting<Settings::Core::RewindPreviousTrack>(false, u"Playlist"_s);
 
-    m_settings->set<Settings::FirstRun>(!Utils::File::exists(settingsPath()));
+    m_settings->set<Settings::Core::FirstRun>(!Utils::File::exists(Core::settingsPath()));
 
     m_settings->loadSettings();
     m_sortingRegistry->loadItems();
@@ -58,8 +58,8 @@ CoreSettings::~CoreSettings()
     m_settings->storeSettings();
 }
 
-Library::SortingRegistry* CoreSettings::sortingRegistry() const
+SortingRegistry* CoreSettings::sortingRegistry() const
 {
     return m_sortingRegistry;
 }
-} // namespace Fy::Core::Settings
+} // namespace Fooyin

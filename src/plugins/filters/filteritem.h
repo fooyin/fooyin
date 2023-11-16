@@ -24,33 +24,33 @@
 
 #include <QObject>
 
-namespace Fy::Filters {
-enum FilterItemRole
-{
-    Title = Qt::UserRole + 1,
-    Tracks,
-    Sorting,
-    AllNode
-};
-
+namespace Fooyin::Filters {
 class FilterItem;
 
-class FilterItem : public Utils::TreeItem<FilterItem>
+class FilterItem : public TreeItem<FilterItem>
 {
 public:
+    enum FilterItemRole
+    {
+        Title = Qt::UserRole,
+        Tracks,
+        Sorting,
+        AllNode
+    };
+
     FilterItem() = default;
     explicit FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode = false);
 
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString sortTitle() const;
-    [[nodiscard]] Core::TrackList tracks() const;
+    [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
 
     void setTitle(const QString& title);
 
-    void addTrack(const Core::Track& track);
-    void addTracks(const Core::TrackList& tracks);
-    void removeTrack(const Core::Track& track);
+    void addTrack(const Track& track);
+    void addTracks(const TrackList& tracks);
+    void removeTrack(const Track& track);
 
     [[nodiscard]] bool isAllNode() const;
 
@@ -59,7 +59,7 @@ public:
 private:
     QString m_title;
     QString m_sortTitle;
-    Core::TrackList m_tracks;
+    TrackList m_tracks;
     bool m_isAllNode;
 };
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

@@ -19,7 +19,7 @@
 
 #include <utils/headerview.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 HeaderView::HeaderView(Qt::Orientation orientation, QWidget* parent)
     : QHeaderView{orientation, parent}
 { }
@@ -31,6 +31,6 @@ void HeaderView::mousePressEvent(QMouseEvent* event)
     }
     QHeaderView::mousePressEvent(event);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_headerview.cpp"

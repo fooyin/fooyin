@@ -22,7 +22,7 @@
 #include <QObject>
 #include <QTreeView>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 class LibraryTreeView : public QTreeView
 {
     Q_OBJECT
@@ -34,7 +34,7 @@ signals:
     void middleMouseClicked();
 
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseDoubleClickEvent(QMouseEvent* event) override;
 };
-}
+} // namespace Fooyin

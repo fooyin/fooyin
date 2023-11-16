@@ -21,27 +21,17 @@
 
 #include "gui/fywidget.h"
 
-namespace Fy {
-
-namespace Core {
-namespace Library {
+namespace Fooyin {
 class MusicLibrary;
-}
-namespace Player {
 class PlayerManager;
-}
-} // namespace Core
-
-namespace Gui {
 class TrackSelectionController;
 
-namespace Widgets {
 class CoverWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit CoverWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* trackSelection,
+    explicit CoverWidget(PlayerManager* playerManager, TrackSelectionController* trackSelection,
                          QWidget* parent = nullptr);
     ~CoverWidget();
 
@@ -54,6 +44,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Widgets
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

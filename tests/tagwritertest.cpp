@@ -30,7 +30,7 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-void fileValid(const Fy::Testing::TempResource& resource, const QString& file)
+void fileValid(const Fooyin::Testing::TempResource& resource, const QString& file)
 {
     QByteArray origFileData;
     QByteArray tmpFileData;
@@ -60,12 +60,12 @@ void fileValid(const Fy::Testing::TempResource& resource, const QString& file)
 }
 } // namespace
 
-namespace Fy::Testing {
+namespace Fooyin::Testing {
 class TagWriterTest : public ::testing::Test
 {
 protected:
-    Core::Tagging::TagReader m_tagReader;
-    Core::Tagging::TagWriter m_tagWriter;
+    TagReader m_tagReader;
+    TagWriter m_tagWriter;
 };
 
 TEST_F(TagWriterTest, AiffWrite)
@@ -74,7 +74,7 @@ TEST_F(TagWriterTest, AiffWrite)
     fileValid(file, u":/audio/audiotest.aiff"_s);
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         track.setId(0);
@@ -98,7 +98,7 @@ TEST_F(TagWriterTest, AiffWrite)
     }
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         EXPECT_EQ(track.title(), "TestTitle");
@@ -130,7 +130,7 @@ TEST_F(TagWriterTest, FlacWrite)
     fileValid(file, u":/audio/audiotest.flac"_s);
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         track.setId(0);
@@ -154,7 +154,7 @@ TEST_F(TagWriterTest, FlacWrite)
     }
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         EXPECT_EQ(track.title(), "TestTitle");
@@ -186,7 +186,7 @@ TEST_F(TagWriterTest, M4aWrite)
     fileValid(file, u":/audio/audiotest.m4a"_s);
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         track.setId(0);
@@ -210,7 +210,7 @@ TEST_F(TagWriterTest, M4aWrite)
     }
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         EXPECT_EQ(track.title(), "TestTitle");
@@ -242,7 +242,7 @@ TEST_F(TagWriterTest, Mp3Write)
     fileValid(file, u":/audio/audiotest.mp3"_s);
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         track.setId(0);
@@ -266,7 +266,7 @@ TEST_F(TagWriterTest, Mp3Write)
     }
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         EXPECT_EQ(track.title(), "TestTitle");
@@ -298,7 +298,7 @@ TEST_F(TagWriterTest, OggWrite)
     fileValid(file, u":/audio/audiotest.ogg"_s);
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         track.setId(0);
@@ -322,7 +322,7 @@ TEST_F(TagWriterTest, OggWrite)
     }
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         EXPECT_EQ(track.title(), "TestTitle");
@@ -354,7 +354,7 @@ TEST_F(TagWriterTest, OpusWrite)
     fileValid(file, u":/audio/audiotest.opus"_s);
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         track.setId(0);
@@ -378,7 +378,7 @@ TEST_F(TagWriterTest, OpusWrite)
     }
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         EXPECT_EQ(track.title(), "TestTitle");
@@ -410,7 +410,7 @@ TEST_F(TagWriterTest, WavWrite)
     fileValid(file, u":/audio/audiotest.wav"_s);
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         track.setId(0);
@@ -434,7 +434,7 @@ TEST_F(TagWriterTest, WavWrite)
     }
 
     {
-        Core::Track track{file.fileName()};
+        Track track{file.fileName()};
         m_tagReader.readMetaData(track);
 
         EXPECT_EQ(track.title(), "TestTitle");
@@ -459,4 +459,4 @@ TEST_F(TagWriterTest, WavWrite)
         EXPECT_EQ(writeTag.front(), "Success");
     }
 }
-} // namespace Fy::Testing
+} // namespace Fooyin::Testing

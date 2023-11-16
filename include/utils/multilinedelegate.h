@@ -23,7 +23,7 @@
 
 #include <QStyledItemDelegate>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT MultiLineEditDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -36,4 +36,4 @@ public:
     QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                           const QModelIndex& /*index*/) const override;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

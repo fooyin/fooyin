@@ -31,24 +31,14 @@
 class QHBoxLayout;
 class QMenu;
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
 class SettingsDialogController;
 class HeaderView;
 class WidgetContext;
-} // namespace Utils
-
-namespace Core::Playlist {
 class Playlist;
-}
-
-namespace Gui {
 class TrackSelectionController;
-
-namespace Widgets::Playlist {
 class PlaylistWidget;
 class PlaylistController;
 class PlaylistModel;
@@ -59,8 +49,8 @@ class PlaylistWidgetPrivate : public QObject
     Q_OBJECT
 
 public:
-    PlaylistWidgetPrivate(PlaylistWidget* self, Utils::ActionManager* actionManager,
-                          PlaylistController* playlistController, Utils::SettingsManager* settings);
+    PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistController* playlistController,
+                          SettingsManager* settings);
 
     void setupConnections();
     void setupActions();
@@ -68,7 +58,7 @@ public:
     void onPresetChanged(const PlaylistPreset& preset);
     void changePreset(const PlaylistPreset& preset);
 
-    void changePlaylist(Core::Playlist::Playlist* playlist);
+    void changePlaylist(Playlist* playlist);
 
     void resetTree() const;
 
@@ -81,15 +71,15 @@ public:
     void selectionChanged();
     void playlistTracksChanged(int index) const;
     void tracksRemoved();
-    void playlistTracksAdded(Core::Playlist::Playlist* playlist, const Core::TrackList& tracks, int index);
+    void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index);
 
     void customHeaderMenuRequested(QPoint pos);
 
-    void changeState(Core::Player::PlayState state) const;
+    void changeState(PlayState state) const;
 
     void doubleClicked(const QModelIndex& index) const;
 
-    void followCurrentTrack(const Core::Track& track, int index) const;
+    void followCurrentTrack(const Track& track, int index) const;
 
     void switchContextMenu(int section, QPoint pos);
     QCoro::Task<void> changeSort(QString script);
@@ -97,22 +87,20 @@ public:
 
     PlaylistWidget* self;
 
-    Utils::ActionManager* actionManager;
+    ActionManager* actionManager;
     TrackSelectionController* selectionController;
-    Utils::SettingsManager* settings;
-    Utils::SettingsDialogController* settingsDialog;
+    SettingsManager* settings;
+    SettingsDialogController* settingsDialog;
 
     PlaylistController* playlistController;
 
     QHBoxLayout* layout;
     PlaylistModel* model;
     PlaylistView* playlistView;
-    Utils::HeaderView* header;
+    HeaderView* header;
 
     PlaylistPreset currentPreset;
 
-    Utils::WidgetContext* playlistContext;
+    WidgetContext* playlistContext;
 };
-} // namespace Widgets::Playlist
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

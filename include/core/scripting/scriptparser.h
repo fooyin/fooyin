@@ -25,14 +25,14 @@
 
 #include <QObject>
 
-namespace Fy::Core::Scripting {
-struct Error
+namespace Fooyin {
+struct ScriptError
 {
     int position;
     QString value;
     QString message;
 };
-using ErrorList = std::vector<Error>;
+using ErrorList = std::vector<ScriptError>;
 
 struct ParsedScript
 {
@@ -40,26 +40,26 @@ struct ParsedScript
     ExpressionList expressions;
     ErrorList errors;
 
-    bool isValid() const
+    [[nodiscard]] bool isValid() const
     {
         return errors.empty();
     }
 };
 
-class FYCORE_EXPORT Parser
+class FYCORE_EXPORT ScriptParser
 {
 public:
-    explicit Parser(Registry* registry);
-    virtual ~Parser();
+    explicit ScriptParser(ScriptRegistry* registry);
+    virtual ~ScriptParser();
 
     ParsedScript parse(const QString& input);
 
     QString evaluate();
-    QString evaluate(const Expression& input, const Core::Track& track);
-    QString evaluate(const ParsedScript& input, const Core::Track& track);
+    QString evaluate(const Expression& input, const Track& track);
+    QString evaluate(const ParsedScript& input, const Track& track);
     QString evaluate(const ParsedScript& input);
 
-    void setMetadata(const Core::Track& track);
+    void setMetadata(const Track& track);
 
 protected:
     ScriptResult evalExpression(const Expression& exp) const;
@@ -85,4 +85,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin

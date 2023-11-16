@@ -23,35 +23,35 @@
 
 #include <QString>
 
-namespace Fy::Core::Scripting {
-enum TokenType : char
-{
-    TokVar         = '%',
-    TokLeftAngle   = '<',
-    TokRightAngle  = '>',
-    TokFunc        = '$',
-    TokComma       = ',',
-    TokQuote       = '"',
-    TokLeftParen   = '(',
-    TokRightParen  = ')',
-    TokLeftSquare  = '[',
-    TokRightSquare = ']',
-    TokEscape      = '\\',
-    TokEos         = '\0',
-    TokError,
-    TokLiteral,
-};
-
-struct Token
-{
-    TokenType type;
-    QStringView value;
-    int position{0};
-};
-
-class FYCORE_EXPORT Scanner
+namespace Fooyin {
+class FYCORE_EXPORT ScriptScanner
 {
 public:
+    enum TokenType : char
+    {
+        TokVar         = '%',
+        TokLeftAngle   = '<',
+        TokRightAngle  = '>',
+        TokFunc        = '$',
+        TokComma       = ',',
+        TokQuote       = '"',
+        TokLeftParen   = '(',
+        TokRightParen  = ')',
+        TokLeftSquare  = '[',
+        TokRightSquare = ']',
+        TokEscape      = '\\',
+        TokEos         = '\0',
+        TokError,
+        TokLiteral,
+    };
+
+    struct Token
+    {
+        TokenType type;
+        QStringView value;
+        int position{0};
+    };
+
     void setup(const QString& input);
     Token scanNext();
 
@@ -67,4 +67,4 @@ private:
     const QChar* m_start;
     const QChar* m_current;
 };
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin

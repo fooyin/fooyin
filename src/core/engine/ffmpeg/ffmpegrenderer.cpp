@@ -30,7 +30,7 @@
 #include <QTimer>
 #include <utility>
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 struct Renderer::Private
 {
     Renderer* renderer;
@@ -42,7 +42,7 @@ struct Renderer::Private
 
     bool bufferPrefilled{false};
 
-    Utils::ThreadQueue<Frame> frameQueue{false};
+    ThreadQueue<Frame> frameQueue{false};
     std::vector<uint8_t> tempBuffer;
     int totalSamplesWritten{0};
 
@@ -66,7 +66,7 @@ struct Renderer::Private
             return false;
         }
 
-        outputContext.format        = interleaveFormat(codec->context()->sample_fmt);
+        outputContext.format        = Utils::interleaveFormat(codec->context()->sample_fmt);
         outputContext.sampleRate    = codec->context()->sample_rate;
         outputContext.channelLayout = codec->context()->ch_layout;
         outputContext.sstride = av_get_bytes_per_sample(outputContext.format) * outputContext.channelLayout.nb_channels;
@@ -102,11 +102,11 @@ struct Renderer::Private
             std::copy_n(fdata[0], sampleCount * sstride, std::back_inserter(tempBuffer));
 
             samplesBuffered += sampleCount;
-            skipSamples(frame.avFrame(), sampleCount);
+            Utils::skipSamples(frame.avFrame(), sampleCount);
         }
 
-        fillSilence(tempBuffer.data() + static_cast<int>(samplesBuffered * sstride),
-                    (samples - samplesBuffered) * sstride, outputContext.format);
+        Utils::fillSilence(tempBuffer.data() + static_cast<int>(samplesBuffered * sstride),
+                           (samples - samplesBuffered) * sstride, outputContext.format);
 
         return samplesBuffered;
     }
@@ -116,7 +116,8 @@ struct Renderer::Private
         int samplesWritten = writeAudioSamples(samples);
 
         if(!audioOutput->canHandleVolume()) {
-            adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride, volume);
+            Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride,
+                                         volume);
         }
 
         samplesWritten = audioOutput->write(tempBuffer.data(), samplesWritten);
@@ -131,7 +132,8 @@ struct Renderer::Private
         const int samplesWritten = writeAudioSamples(samples);
 
         if(!audioOutput->canHandleVolume()) {
-            adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride, volume);
+            Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride,
+                                         volume);
         }
 
         std::copy_n(tempBuffer.data(), samples * outputContext.sstride, data);
@@ -267,6 +269,6 @@ void Renderer::doNextStep()
     }
     scheduleNextStep(false);
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin
 
 #include "moc_ffmpegrenderer.cpp"

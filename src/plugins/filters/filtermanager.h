@@ -25,20 +25,10 @@
 
 #include <QCoroTask>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Core {
-namespace Library {
 class MusicLibrary;
-}
-} // namespace Core
-
-namespace Gui {
 class TrackSelectionController;
-} // namespace Gui
 
 namespace Filters {
 class FieldRegistry;
@@ -49,8 +39,8 @@ class FilterManager : public QObject
     Q_OBJECT
 
 public:
-    explicit FilterManager(Core::Library::MusicLibrary* library, Gui::TrackSelectionController* trackSelection,
-                           Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit FilterManager(MusicLibrary* library, TrackSelectionController* trackSelection, SettingsManager* settings,
+                           QObject* parent = nullptr);
     ~FilterManager() override;
 
     void shutdown();
@@ -60,9 +50,9 @@ public:
     [[nodiscard]] FieldRegistry* fieldRegistry() const;
 
 signals:
-    void tracksAdded(const Core::TrackList& tracks);
-    void tracksRemoved(const Core::TrackList& tracks);
-    void tracksUpdated(const Core::TrackList& tracks);
+    void tracksAdded(const TrackList& tracks);
+    void tracksRemoved(const TrackList& tracks);
+    void tracksUpdated(const TrackList& tracks);
 
 public slots:
     QCoro::Task<void> searchChanged(QString search);
@@ -72,4 +62,4 @@ private:
     std::unique_ptr<Private> p;
 };
 } // namespace Filters
-} // namespace Fy
+} // namespace Fooyin

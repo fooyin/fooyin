@@ -21,7 +21,7 @@
 
 #include <QAbstractItemView>
 
-namespace Fy::Utils {
+namespace Fooyin {
 ExpandingComboBox::ExpandingComboBox(QWidget* parent)
     : QComboBox{parent}
 {
@@ -62,6 +62,6 @@ void ExpandingComboBox::resizeDropDown()
         view()->setMinimumWidth(maxWidth);
     }
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_expandingcombobox.cpp"

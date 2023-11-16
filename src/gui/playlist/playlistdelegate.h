@@ -21,7 +21,7 @@
 
 #include <QStyledItemDelegate>
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 class PlaylistDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -32,4 +32,4 @@ public:
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 };
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

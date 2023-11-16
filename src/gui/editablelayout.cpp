@@ -45,7 +45,7 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-QRect widgetGeometry(Fy::Gui::Widgets::FyWidget* widget)
+QRect widgetGeometry(Fooyin::FyWidget* widget)
 {
     const int w = widget->width();
     const int h = widget->height();
@@ -60,41 +60,41 @@ QRect widgetGeometry(Fy::Gui::Widgets::FyWidget* widget)
     return {x, y, w, h};
 }
 
-Fy::Gui::Widgets::FyWidget* splitterChild(QWidget* widget)
+Fooyin::FyWidget* splitterChild(QWidget* widget)
 {
     if(!widget) {
         return {};
     }
     QWidget* child = widget;
 
-    while(!qobject_cast<Fy::Gui::Widgets::FyWidget*>(child)) {
+    while(!qobject_cast<Fooyin::FyWidget*>(child)) {
         child = child->parentWidget();
         if(!child) {
             return {};
         }
     }
-    return qobject_cast<Fy::Gui::Widgets::FyWidget*>(child);
+    return qobject_cast<Fooyin::FyWidget*>(child);
 }
 } // namespace
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct EditableLayout::Private
 {
     EditableLayout* self;
 
-    Utils::ActionManager* actionManager;
-    Utils::SettingsManager* settings;
-    Widgets::WidgetProvider* widgetProvider;
+    ActionManager* actionManager;
+    SettingsManager* settings;
+    WidgetProvider* widgetProvider;
     LayoutProvider* layoutProvider;
 
-    Utils::ActionContainer* menu;
+    ActionContainer* menu;
     QHBoxLayout* box;
-    Utils::OverlayFilter* overlay;
+    OverlayFilter* overlay;
     SplitterWidget* splitter{nullptr};
     bool layoutEditing{false};
 
-    Private(EditableLayout* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-            LayoutProvider* layoutProvider, Utils::SettingsManager* settings)
+    Private(EditableLayout* self, ActionManager* actionManager, WidgetProvider* widgetProvider,
+            LayoutProvider* layoutProvider, SettingsManager* settings)
         : self{self}
         , actionManager{actionManager}
         , settings{settings}
@@ -102,7 +102,7 @@ struct EditableLayout::Private
         , layoutProvider{layoutProvider}
         , menu{actionManager->createMenu(Constants::Menus::Context::Layout)}
         , box{new QHBoxLayout(self)}
-        , overlay{new Utils::OverlayFilter(self)}
+        , overlay{new OverlayFilter(self)}
     {
         box->setContentsMargins(5, 5, 5, 5);
     }
@@ -119,8 +119,8 @@ struct EditableLayout::Private
     }
 };
 
-EditableLayout::EditableLayout(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                               LayoutProvider* layoutProvider, Utils::SettingsManager* settings, QWidget* parent)
+EditableLayout::EditableLayout(ActionManager* actionManager, WidgetProvider* widgetProvider,
+                               LayoutProvider* layoutProvider, SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
     , p{std::make_unique<Private>(this, actionManager, widgetProvider, layoutProvider, settings)}
 {
@@ -137,16 +137,17 @@ void EditableLayout::initialise()
         p->box->addWidget(p->splitter);
     }
 
-    p->settings->subscribe<Settings::LayoutEditing>(this, [this](bool enabled) { p->changeEditingState(enabled); });
+    p->settings->subscribe<Settings::Gui::LayoutEditing>(this,
+                                                         [this](bool enabled) { p->changeEditingState(enabled); });
 
     if(p->splitter && p->splitter->childCount() < 1) {
-        p->settings->set<Settings::LayoutEditing>(true);
+        p->settings->set<Settings::Gui::LayoutEditing>(true);
     }
 
     QObject::connect(p->menu->menu(), &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
 }
 
-Utils::ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QString& title) const
+ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QString& title) const
 {
     auto id       = parent->id().append(title);
     auto* newMenu = p->actionManager->createMenu(id);
@@ -155,7 +156,7 @@ Utils::ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QS
     return newMenu;
 }
 
-void EditableLayout::setupReplaceWidgetMenu(Utils::ActionContainer* menu, FyWidget* current)
+void EditableLayout::setupReplaceWidgetMenu(ActionContainer* menu, FyWidget* current)
 {
     if(!menu->isEmpty()) {
         return;
@@ -170,17 +171,17 @@ void EditableLayout::setupReplaceWidgetMenu(Utils::ActionContainer* menu, FyWidg
         menu, [parent, current](FyWidget* newWidget) { parent->replaceWidget(current, newWidget); });
 }
 
-void EditableLayout::setupContextMenu(FyWidget* widget, Utils::ActionContainer* menu)
+void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
 {
     if(!widget || !menu) {
         return;
     }
 
     FyWidget* currentWidget = widget;
-    int level               = p->settings->value<Settings::EditingMenuLevels>();
+    int level               = p->settings->value<Settings::Gui::EditingMenuLevels>();
 
     while(level > 0 && currentWidget) {
-        menu->addAction(new Utils::MenuHeaderAction(currentWidget->name(), menu));
+        menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));
         currentWidget->layoutEditingMenu(menu);
 
         auto* parent = qobject_cast<WidgetContainer*>(currentWidget->findParent());
@@ -238,10 +239,10 @@ void EditableLayout::changeLayout(const Layout& layout)
     delete p->splitter;
     const bool success = loadLayout(layout);
     if(success && p->splitter->childCount() > 0) {
-        p->settings->set<Settings::LayoutEditing>(false);
+        p->settings->set<Settings::Gui::LayoutEditing>(false);
     }
     else {
-        p->settings->set<Settings::LayoutEditing>(true);
+        p->settings->set<Settings::Gui::LayoutEditing>(true);
     }
 }
 
@@ -301,9 +302,9 @@ void EditableLayout::showQuickSetup()
 {
     auto* quickSetup = new QuickSetupDialog(p->layoutProvider, this);
     quickSetup->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, this, &Widgets::EditableLayout::changeLayout);
+    QObject::connect(quickSetup, &QuickSetupDialog::layoutChanged, this, &EditableLayout::changeLayout);
     quickSetup->show();
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_editablelayout.cpp"

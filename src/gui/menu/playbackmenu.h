@@ -23,30 +23,20 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
-}
-
-namespace Core {
-namespace Player {
 class PlayerManager;
-}
-} // namespace Core
 
-namespace Gui {
 class PlaybackMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    PlaybackMenu(Utils::ActionManager* actionManager, Core::Player::PlayerManager* playerManager,
-                 QObject* parent = nullptr);
+    PlaybackMenu(ActionManager* actionManager, PlayerManager* playerManager, QObject* parent = nullptr);
     ~PlaybackMenu();
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

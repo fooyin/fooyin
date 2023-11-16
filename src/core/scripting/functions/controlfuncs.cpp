@@ -19,8 +19,8 @@
 
 #include "controlfuncs.h"
 
-namespace Fy::Core::Scripting {
-ScriptResult cif(const ValueList& vec)
+namespace Fooyin::Scripting {
+ScriptResult cif(const ScriptValueList& vec)
 {
     const auto size = vec.size();
     if(size < 2 || size > 3) {
@@ -35,7 +35,7 @@ ScriptResult cif(const ValueList& vec)
     return {};
 }
 
-ScriptResult cif2(const ValueList& vec)
+ScriptResult cif2(const ScriptValueList& vec)
 {
     const auto size = vec.size();
     if(size < 1 || size > 2) {
@@ -50,7 +50,7 @@ ScriptResult cif2(const ValueList& vec)
     return {};
 }
 
-ScriptResult ifequal(const ValueList& vec)
+ScriptResult ifequal(const ScriptValueList& vec)
 {
     const auto size = vec.size();
     if(size != 4) {
@@ -62,7 +62,7 @@ ScriptResult ifequal(const ValueList& vec)
     return vec[3];
 }
 
-ScriptResult ifgreater(const ValueList& vec)
+ScriptResult ifgreater(const ScriptValueList& vec)
 {
     const auto size = vec.size();
     if(size < 3 || size > 4) {
@@ -77,7 +77,7 @@ ScriptResult ifgreater(const ValueList& vec)
     return {};
 }
 
-ScriptResult iflonger(const ValueList& vec)
+ScriptResult iflonger(const ScriptValueList& vec)
 {
     const auto size = vec.size();
     if(size != 4) {
@@ -88,4 +88,4 @@ ScriptResult iflonger(const ValueList& vec)
     }
     return vec[3];
 }
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin::Scripting

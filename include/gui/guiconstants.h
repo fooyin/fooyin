@@ -19,7 +19,7 @@
 
 #pragma once
 
-namespace Fy::Gui::Constants {
+namespace Fooyin::Constants {
 constexpr auto NoCover = "://images/nocover.png";
 
 namespace Icons {
@@ -139,4 +139,4 @@ constexpr auto LibraryTreeAppearance = "Fooyin.Page.Widgets.LibraryTree.Appearan
 constexpr auto Plugins               = "Fooyin.Page.Plugins";
 constexpr auto Shortcuts             = "Fooyin.Page.Shortcuts";
 } // namespace Page
-} // namespace Fy::Gui::Constants
+} // namespace Fooyin::Constants

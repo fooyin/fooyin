@@ -23,7 +23,7 @@
 
 #include <utility>
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 PlaylistItem::PlaylistItem()
     : PlaylistItem{Root, {}, nullptr}
 { }
@@ -98,4 +98,4 @@ void PlaylistItem::setIndex(int index)
 {
     m_index = index;
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

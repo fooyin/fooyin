@@ -21,43 +21,21 @@
 
 #include "fycore_export.h"
 
-namespace Fy {
-namespace Plugins {
+namespace Fooyin {
 class PluginManager;
-}
-
-namespace Utils {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core {
-namespace Engine {
 class EngineHandler;
-}
-
-namespace Player {
 class PlayerManager;
-}
-
-namespace Playlist {
 class PlaylistManager;
-}
-
-namespace Library {
 class LibraryManager;
 class MusicLibrary;
-} // namespace Library
-
-namespace Settings {
 class CoreSettings;
-}
 
 struct FYCORE_EXPORT CorePluginContext
 {
-    CorePluginContext(Plugins::PluginManager* pluginManager, Core::Engine::EngineHandler* engineHandler,
-                      Core::Player::PlayerManager* playerManager, Core::Library::LibraryManager* libraryManager,
-                      Core::Library::MusicLibrary* library, Core::Playlist::PlaylistManager* playlistHandler,
-                      Utils::SettingsManager* settingsManager, Core::Settings::CoreSettings* coreSettings)
+    CorePluginContext(PluginManager* pluginManager, EngineHandler* engineHandler, PlayerManager* playerManager,
+                      LibraryManager* libraryManager, MusicLibrary* library, PlaylistManager* playlistHandler,
+                      SettingsManager* settingsManager, CoreSettings* coreSettings)
         : pluginManager{pluginManager}
         , playerManager{playerManager}
         , libraryManager{libraryManager}
@@ -68,14 +46,13 @@ struct FYCORE_EXPORT CorePluginContext
         , coreSettings{coreSettings}
     { }
 
-    Plugins::PluginManager* pluginManager;
-    Core::Player::PlayerManager* playerManager;
-    Core::Library::LibraryManager* libraryManager;
-    Core::Library::MusicLibrary* library;
-    Core::Playlist::PlaylistManager* playlistHandler;
-    Utils::SettingsManager* settingsManager;
-    Core::Engine::EngineHandler* engineHandler;
-    Core::Settings::CoreSettings* coreSettings;
+    PluginManager* pluginManager;
+    PlayerManager* playerManager;
+    LibraryManager* libraryManager;
+    MusicLibrary* library;
+    PlaylistManager* playlistHandler;
+    SettingsManager* settingsManager;
+    EngineHandler* engineHandler;
+    CoreSettings* coreSettings;
 };
-} // namespace Core
-} // namespace Fy
+} // namespace Fooyin

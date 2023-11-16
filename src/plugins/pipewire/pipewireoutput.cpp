@@ -141,7 +141,7 @@ using PwContextUPtr = std::unique_ptr<pw_context, PwContextDeleter>;
 
 struct PipewireContext
 {
-    Fy::Core::Engine::OutputContext outputContext;
+    Fooyin::OutputContext outputContext;
 
     PwCoreUPtr core;
     PwThreadLoopUPtr loop;
@@ -157,7 +157,7 @@ struct PipewireContext
 
     int coreInitSeq{0};
 
-    Fy::Core::Engine::OutputDevices sinks;
+    Fooyin::OutputDevices sinks;
 };
 
 void onError(void* /*data*/, uint32_t /*id*/, int /*seq*/, int res, const char* message)
@@ -319,7 +319,7 @@ void updateChannelMap(spa_audio_info_raw* info, int channels)
 
 } // namespace
 
-namespace Fy::Core::Engine {
+namespace Fooyin::Pipewire {
 struct PipeWireOutput::Private
 {
     PipewireContext pc;
@@ -611,4 +611,4 @@ void PipeWireOutput::setDevice(const QString& device)
         p->device = device;
     }
 }
-} // namespace Fy::Core::Engine
+} // namespace Fooyin::Pipewire

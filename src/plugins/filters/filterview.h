@@ -21,7 +21,7 @@
 
 #include <QTreeView>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 class FilterView : public QTreeView
 {
     Q_OBJECT
@@ -37,4 +37,4 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent* event) override;
 };
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

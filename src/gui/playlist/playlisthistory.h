@@ -26,13 +26,9 @@
 #include <QModelIndexList>
 #include <QUndoCommand>
 
-namespace Fy {
-
-namespace Core::Playlist {
+namespace Fooyin {
 class Playlist;
-} // namespace Core::Playlist
 
-namespace Gui::Widgets::Playlist {
 class PlaylistCommand : public QUndoCommand
 {
 public:
@@ -78,5 +74,4 @@ private:
     TrackGroups m_trackGroups;
     int m_row;
 };
-} // namespace Gui::Widgets::Playlist
-} // namespace Fy
+} // namespace Fooyin

@@ -42,7 +42,7 @@ extern "C"
 using namespace std::chrono_literals;
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 struct FormatContextDeleter
 {
     void operator()(AVFormatContext* context) const
@@ -110,7 +110,7 @@ struct FFmpegEngine::Private
 
         if(avformat_find_stream_info(avContext, nullptr) < 0) {
             avformat_close_input(&avContext);
-            printError(u"Could not find stream info"_s);
+            Utils::printError(u"Could not find stream info"_s);
             return false;
         }
 
@@ -132,13 +132,13 @@ struct FFmpegEngine::Private
 
         const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
         if(!avCodec) {
-            printError(u"Could not find a decoder for stream"_s);
+            Utils::printError(u"Could not find a decoder for stream"_s);
             return;
         }
 
         CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
         if(!avCodecContext) {
-            printError(u"Could not allocate context"_s);
+            Utils::printError(u"Could not allocate context"_s);
             return;
         }
 
@@ -147,14 +147,14 @@ struct FFmpegEngine::Private
         }
 
         if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
-            printError(u"Could not obtain codec parameters"_s);
+            Utils::printError(u"Could not obtain codec parameters"_s);
             return;
         }
 
         avCodecContext.get()->pkt_timebase = avStream->time_base;
 
         if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
-            printError(u"Could not initialise codec context"_s);
+            Utils::printError(u"Could not initialise codec context"_s);
             return;
         }
 
@@ -474,6 +474,6 @@ void FFmpegEngine::shutdown()
         p->positionUpdateTimer->deleteLater();
     }
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin
 
 #include "moc_ffmpegengine.cpp"

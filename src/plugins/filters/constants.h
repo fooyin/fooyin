@@ -21,10 +21,10 @@
 
 #include <Qt>
 
-namespace Fy::Filters::Constants {
+namespace Fooyin::Filters::Constants {
 namespace Page {
 constexpr auto FiltersGeneral    = "Fooyin.Page.Filters.General";
 constexpr auto FiltersAppearance = "Fooyin.Page.Filters.Appearance";
 constexpr auto FiltersFields     = "Fooyin.Page.Filters.Fields";
 } // namespace Page
-} // namespace Fy::Filters::Constants
+} // namespace Fooyin::Filters::Constants

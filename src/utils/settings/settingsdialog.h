@@ -25,7 +25,7 @@
 
 #include <QDialog>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
@@ -47,4 +47,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

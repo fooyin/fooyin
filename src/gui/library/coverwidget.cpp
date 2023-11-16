@@ -28,23 +28,23 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct CoverWidget::Private
 {
     CoverWidget* self;
 
-    Core::Player::PlayerManager* playerManager;
+    PlayerManager* playerManager;
     TrackSelectionController* trackSelection;
-    Library::CoverProvider* coverProvider;
+    CoverProvider* coverProvider;
 
     QLabel* coverLabel;
     QPixmap cover;
 
-    Private(CoverWidget* self, Core::Player::PlayerManager* playerManager, TrackSelectionController* trackSelection)
+    Private(CoverWidget* self, PlayerManager* playerManager, TrackSelectionController* trackSelection)
         : self{self}
         , playerManager{playerManager}
         , trackSelection{trackSelection}
-        , coverProvider{new Library::CoverProvider(self)}
+        , coverProvider{new CoverProvider(self)}
         , coverLabel{new QLabel(self)}
     {
         coverLabel->setMinimumSize(100, 100);
@@ -57,7 +57,7 @@ struct CoverWidget::Private
                                   .scaled(self->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 
-    void reloadCover(const Core::Track& track)
+    void reloadCover(const Track& track)
     {
         if(track.isValid()) {
             cover = coverProvider->trackCover(track);
@@ -72,8 +72,7 @@ struct CoverWidget::Private
     }
 };
 
-CoverWidget::CoverWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* trackSelection,
-                         QWidget* parent)
+CoverWidget::CoverWidget(PlayerManager* playerManager, TrackSelectionController* trackSelection, QWidget* parent)
     : FyWidget{parent}
     , p{std::make_unique<Private>(this, playerManager, trackSelection)}
 {
@@ -84,10 +83,10 @@ CoverWidget::CoverWidget(Core::Player::PlayerManager* playerManager, TrackSelect
     layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(p->coverLabel);
 
-    QObject::connect(p->playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
-                     [this](const Core::Track& track) { p->reloadCover(track); });
-    QObject::connect(p->coverProvider, &Library::CoverProvider::coverAdded, this,
-                     [this](const Core::Track& track) { p->reloadCover(track); });
+    QObject::connect(p->playerManager, &PlayerManager::currentTrackChanged, this,
+                     [this](const Track& track) { p->reloadCover(track); });
+    QObject::connect(p->coverProvider, &CoverProvider::coverAdded, this,
+                     [this](const Track& track) { p->reloadCover(track); });
 
     p->reloadCover(p->playerManager->currentTrack());
 }
@@ -106,6 +105,6 @@ void CoverWidget::resizeEvent(QResizeEvent* event)
     }
     QWidget::resizeEvent(event);
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_coverwidget.cpp"

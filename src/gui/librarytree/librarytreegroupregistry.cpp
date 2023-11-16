@@ -20,7 +20,7 @@
 #include "librarytreegroupregistry.h"
 
 namespace {
-void loadDefaults(Fy::Gui::Widgets::LibraryTreeGroupRegistry* registry)
+void loadDefaults(Fooyin::LibraryTreeGroupRegistry* registry)
 {
     registry->addItem({.id     = 0,
                        .index  = 0,
@@ -32,11 +32,11 @@ void loadDefaults(Fy::Gui::Widgets::LibraryTreeGroupRegistry* registry)
 }
 } // namespace
 
-namespace Fy::Gui::Widgets {
-LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(Utils::SettingsManager* settings, QObject* parent)
+namespace Fooyin {
+LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{settings, parent}
 {
-    QObject::connect(this, &Utils::RegistryBase::itemChanged, this, [this](int id) {
+    QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto grouping = itemById(id);
         emit groupingChanged(grouping);
     });
@@ -50,6 +50,6 @@ void LibraryTreeGroupRegistry::loadItems()
         loadDefaults(this);
     }
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_librarytreegroupregistry.cpp"

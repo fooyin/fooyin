@@ -21,7 +21,7 @@
 
 #include <core/constants.h>
 #include <gui/widgetprovider.h>
-#include <utils/enumhelper.h>
+#include <utils/enum.h>
 #include <utils/widgets/editabletabbar.h>
 #include <utils/widgets/editabletabwidget.h>
 
@@ -34,22 +34,22 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct TabStackWidget::Private
 {
     TabStackWidget* self;
 
-    Utils::ActionManager* actionManager;
+    ActionManager* actionManager;
     WidgetProvider* widgetProvider;
 
     std::vector<FyWidget*> widgets;
-    Utils::EditableTabWidget* tabs;
+    EditableTabWidget* tabs;
 
-    Private(TabStackWidget* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider)
+    Private(TabStackWidget* self, ActionManager* actionManager, WidgetProvider* widgetProvider)
         : self{self}
         , actionManager{actionManager}
         , widgetProvider{widgetProvider}
-        , tabs{new Utils::EditableTabWidget(self)}
+        , tabs{new EditableTabWidget(self)}
     { }
 
     int indexOfWidget(FyWidget* widget)
@@ -68,7 +68,7 @@ struct TabStackWidget::Private
     };
 };
 
-TabStackWidget::TabStackWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent)
+TabStackWidget::TabStackWidget(ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
     , p{std::make_unique<Private>(this, actionManager, widgetProvider)}
 {
@@ -100,7 +100,7 @@ QString TabStackWidget::layoutName() const
     return QStringLiteral("TabStack");
 }
 
-void TabStackWidget::layoutEditingMenu(Utils::ActionContainer* menu)
+void TabStackWidget::layoutEditingMenu(ActionContainer* menu)
 {
     const QString addTitle{tr("&Add")};
     auto addMenuId = id().append(addTitle);
@@ -122,7 +122,7 @@ void TabStackWidget::saveLayout(QJsonArray& array)
     QString state;
     for(int i{0}; i < p->tabs->count(); ++i) {
         if(!state.isEmpty()) {
-            state.append(Core::Constants::Separator);
+            state.append(Constants::Separator);
         }
         state.append(p->tabs->tabText(i));
     }
@@ -130,7 +130,7 @@ void TabStackWidget::saveLayout(QJsonArray& array)
     QJsonObject options;
     options["Children"_L1] = widgets;
     options["State"_L1]    = state;
-    options["Position"_L1] = Utils::EnumHelper::toString(p->tabs->tabPosition());
+    options["Position"_L1] = Utils::Enum::toString(p->tabs->tabPosition());
 
     QJsonObject tabStack;
     tabStack[layoutName()] = options;
@@ -139,8 +139,7 @@ void TabStackWidget::saveLayout(QJsonArray& array)
 
 void TabStackWidget::loadLayout(const QJsonObject& object)
 {
-    const auto position
-        = Utils::EnumHelper::fromString<QTabWidget::TabPosition>(object.value("Position"_L1).toString());
+    const auto position = Utils::Enum::fromString<QTabWidget::TabPosition>(object.value("Position"_L1).toString());
     if(position) {
         p->tabs->setTabPosition(*position);
     }
@@ -150,7 +149,7 @@ void TabStackWidget::loadLayout(const QJsonObject& object)
     WidgetContainer::loadWidgets(widgets);
 
     const auto state         = object.value("State"_L1).toString();
-    const QStringList titles = state.split(Core::Constants::Separator);
+    const QStringList titles = state.split(Constants::Separator);
 
     for(int i{0}; const QString& title : titles) {
         if(i < p->tabs->count()) {
@@ -250,7 +249,7 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     posMenu->addAction(west);
 
     auto* rename = new QAction(tr("&Rename"), menu);
-    QObject::connect(rename, &QAction::triggered, p->tabs->editableTabBar(), &Utils::EditableTabBar::showEditor);
+    QObject::connect(rename, &QAction::triggered, p->tabs->editableTabBar(), &EditableTabBar::showEditor);
 
     auto* remove = new QAction(tr("Re&move"), menu);
     QObject::connect(remove, &QAction::triggered, this, [this, widget]() { removeWidget(widget); });
@@ -262,6 +261,6 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
 
     menu->popup(p->tabs->tabBar()->mapToGlobal(point));
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_tabstackwidget.cpp"

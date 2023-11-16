@@ -59,7 +59,7 @@ QString copyright()
                    "You should have received a copy of the GNU General Public License along with this program.  If "
                    "not, see "
                    "%5"}
-        .arg("2023", "Luke Taylor", Fy::Core::Constants::DisplayName,
+        .arg("2023", "Luke Taylor", Fooyin::Constants::DisplayName,
              "<a href=\"https://github.com/ludouzi/fooyin\">GitHub</a>.",
              "<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>.");
 }
@@ -75,15 +75,15 @@ QString description()
                    "Version: %2<br/>"
                    "%3<br/>"
                    "<br/>"}
-        .arg(Fy::Core::Constants::DisplayName, QCoreApplication::applicationVersion(), qtVersion());
+        .arg(Fooyin::Constants::DisplayName, QCoreApplication::applicationVersion(), qtVersion());
 }
 } // namespace
 
-namespace Fy::Gui {
+namespace Fooyin {
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog{parent}
 {
-    setWindowTitle(tr("About %1").arg(Core::Constants::DisplayName));
+    setWindowTitle(tr("About %1").arg(Constants::DisplayName));
     auto* layout = new QGridLayout(this);
     layout->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -104,6 +104,6 @@ AboutDialog::AboutDialog(QWidget* parent)
     layout->addWidget(aboutLabel, 0, 1);
     layout->addWidget(buttonBox, 4, 1);
 }
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "moc_aboutdialog.cpp"

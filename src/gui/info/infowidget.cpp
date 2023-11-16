@@ -35,20 +35,20 @@
 #include <QMenu>
 #include <QTreeView>
 
-namespace Fy::Gui::Widgets::Info {
+namespace Fooyin {
 struct InfoWidget::Private
 {
     InfoWidget* self;
 
     TrackSelectionController* selectionController;
-    Core::Player::PlayerManager* playerManager;
-    Utils::SettingsManager* settings;
+    PlayerManager* playerManager;
+    SettingsManager* settings;
 
     QTreeView* view;
     InfoModel* model;
 
-    Private(InfoWidget* self, TrackSelectionController* selectionController, Core::Player::PlayerManager* playerManager,
-            Utils::SettingsManager* settings)
+    Private(InfoWidget* self, TrackSelectionController* selectionController, PlayerManager* playerManager,
+            SettingsManager* settings)
         : self{self}
         , selectionController{selectionController}
         , playerManager{playerManager}
@@ -81,9 +81,9 @@ struct InfoWidget::Private
         spanHeaders();
         view->expandAll();
 
-        setHeaderHidden(settings->value<Settings::InfoHeader>());
-        setScrollbarHidden(settings->value<Settings::InfoScrollBar>());
-        setAltRowColors(settings->value<Settings::InfoAltColours>());
+        setHeaderHidden(settings->value<Settings::Gui::InfoHeader>());
+        setScrollbarHidden(settings->value<Settings::Gui::InfoScrollBar>());
+        setAltRowColors(settings->value<Settings::Gui::InfoAltColours>());
     }
 
     void spanHeaders()
@@ -119,8 +119,8 @@ struct InfoWidget::Private
     }
 };
 
-InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* selectionController,
-                       Utils::SettingsManager* settings, QWidget* parent)
+InfoWidget::InfoWidget(PlayerManager* playerManager, TrackSelectionController* selectionController,
+                       SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
     , p{std::make_unique<Private>(this, selectionController, playerManager, settings)}
 {
@@ -134,9 +134,10 @@ InfoWidget::InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectio
         p->view->expandAll();
     });
 
-    p->settings->subscribe<Settings::InfoHeader>(this, [this](bool enabled) { p->setHeaderHidden(enabled); });
-    p->settings->subscribe<Settings::InfoScrollBar>(this, [this](bool enabled) { p->setScrollbarHidden(enabled); });
-    p->settings->subscribe<Settings::InfoAltColours>(this, [this](bool enabled) { p->setAltRowColors(enabled); });
+    p->settings->subscribe<Settings::Gui::InfoHeader>(this, [this](bool enabled) { p->setHeaderHidden(enabled); });
+    p->settings->subscribe<Settings::Gui::InfoScrollBar>(this,
+                                                         [this](bool enabled) { p->setScrollbarHidden(enabled); });
+    p->settings->subscribe<Settings::Gui::InfoAltColours>(this, [this](bool enabled) { p->setAltRowColors(enabled); });
 
     p->resetModel();
 }
@@ -157,20 +158,20 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!p->view->isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this,
-                     [this](bool checked) { p->settings->set<Settings::InfoHeader>(checked); });
+                     [this](bool checked) { p->settings->set<Settings::Gui::InfoHeader>(checked); });
 
     auto* showScrollBar = new QAction(QStringLiteral("Show Scrollbar"), menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(p->view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
     QAction::connect(showScrollBar, &QAction::triggered, this,
-                     [this](bool checked) { p->settings->set<Settings::InfoScrollBar>(checked); });
+                     [this](bool checked) { p->settings->set<Settings::Gui::InfoScrollBar>(checked); });
     menu->addAction(showScrollBar);
 
     auto* altColours = new QAction(QStringLiteral("Alternate Row Colours"), this);
     altColours->setCheckable(true);
     altColours->setChecked(p->view->alternatingRowColors());
     QAction::connect(altColours, &QAction::triggered, this,
-                     [this](bool checked) { p->settings->set<Settings::InfoAltColours>(checked); });
+                     [this](bool checked) { p->settings->set<Settings::Gui::InfoAltColours>(checked); });
 
     menu->addAction(showHeaders);
     menu->addAction(showScrollBar);
@@ -178,4 +179,4 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
 
     menu->popup(event->globalPos());
 }
-} // namespace Fy::Gui::Widgets::Info
+} // namespace Fooyin

@@ -25,7 +25,7 @@
 
 #include <QString>
 
-namespace Fy::Core::Engine {
+namespace Fooyin::Sdl {
 class SdlOutput : public AudioPullOutput
 {
 public:
@@ -49,4 +49,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Core::Engine
+} // namespace Fooyin::Sdl

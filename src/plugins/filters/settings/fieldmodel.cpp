@@ -23,7 +23,7 @@
 
 #include <QFont>
 
-namespace Fy::Filters::Settings {
+namespace Fooyin::Filters {
 FieldItem::FieldItem()
     : FieldItem{{}, nullptr}
 { }
@@ -299,4 +299,4 @@ void FieldModel::removeField(int index)
         m_nodes.erase(index);
     }
 }
-} // namespace Fy::Filters::Settings
+} // namespace Fooyin::Filters

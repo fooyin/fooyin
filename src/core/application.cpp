@@ -35,30 +35,30 @@
 #include <core/plugins/pluginmanager.h>
 #include <utils/settings/settingsmanager.h>
 
-namespace Fy::Core {
+namespace Fooyin {
 struct Application::Private
 {
-    Utils::SettingsManager* settingsManager;
-    Core::Settings::CoreSettings coreSettings;
-    Core::DB::Database database;
-    Core::Player::PlayerManager* playerManager;
-    Core::Engine::EngineHandler engine;
-    Core::Library::LibraryManager* libraryManager;
-    Core::Library::MusicLibrary* library;
-    Core::Playlist::PlaylistHandler* playlistHandler;
+    SettingsManager* settingsManager;
+    CoreSettings coreSettings;
+    Database database;
+    PlayerManager* playerManager;
+    EngineHandler engine;
+    LibraryManager* libraryManager;
+    MusicLibrary* library;
+    PlaylistHandler* playlistHandler;
 
-    Plugins::PluginManager pluginManager;
-    Core::CorePluginContext corePluginContext;
+    PluginManager pluginManager;
+    CorePluginContext corePluginContext;
 
     explicit Private(QObject* parent)
-        : settingsManager{new Utils::SettingsManager(Core::settingsPath(), parent)}
+        : settingsManager{new SettingsManager(Core::settingsPath(), parent)}
         , coreSettings{settingsManager}
         , database{settingsManager}
-        , playerManager{new Core::Player::PlayerController(settingsManager, parent)}
+        , playerManager{new PlayerController(settingsManager, parent)}
         , engine{playerManager, settingsManager}
-        , libraryManager{new Core::Library::LibraryManager(&database, settingsManager, parent)}
-        , library{new Core::Library::UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
-        , playlistHandler{new Core::Playlist::PlaylistHandler(&database, playerManager, settingsManager, parent)}
+        , libraryManager{new LibraryManager(&database, settingsManager, parent)}
+        , library{new UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
+        , playlistHandler{new PlaylistHandler(&database, playerManager, settingsManager, parent)}
         , corePluginContext{&pluginManager, &engine,         playerManager,   libraryManager,
                             library,        playlistHandler, settingsManager, &coreSettings}
     {
@@ -69,7 +69,7 @@ struct Application::Private
     void registerOutputs()
     {
         engine.addOutput({.name = "ALSA", .creator = []() {
-                              return std::make_unique<Core::Engine::AlsaOutput>();
+                              return std::make_unique<AlsaOutput>();
                           }});
     }
 
@@ -79,11 +79,11 @@ struct Application::Private
         pluginManager.findPlugins(pluginsPath);
         pluginManager.loadPlugins();
 
-        pluginManager.initialisePlugins<Core::CorePlugin>(
-            [this](Core::CorePlugin* plugin) { plugin->initialise(corePluginContext); });
+        pluginManager.initialisePlugins<CorePlugin>(
+            [this](CorePlugin* plugin) { plugin->initialise(corePluginContext); });
 
-        pluginManager.initialisePlugins<Engine::OutputPlugin>([this](Engine::OutputPlugin* plugin) {
-            const Engine::AudioOutputBuilder builder = plugin->registerOutput();
+        pluginManager.initialisePlugins<OutputPlugin>([this](OutputPlugin* plugin) {
+            const AudioOutputBuilder builder = plugin->registerOutput();
             engine.addOutput(builder);
         });
     }
@@ -93,14 +93,10 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
-    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, p->playlistHandler,
-                     &Core::Playlist::PlaylistHandler::populatePlaylists);
-    QObject::connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, p->playlistHandler,
-                     &Core::Playlist::PlaylistHandler::libraryRemoved);
-    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, p->playlistHandler,
-                     &Core::Playlist::PlaylistHandler::tracksUpdated);
-    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, p->playlistHandler,
-                     &Core::Playlist::PlaylistHandler::tracksRemoved);
+    QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
+    QObject::connect(p->library, &MusicLibrary::libraryRemoved, p->playlistHandler, &PlaylistHandler::libraryRemoved);
+    QObject::connect(p->library, &MusicLibrary::tracksUpdated, p->playlistHandler, &PlaylistHandler::tracksUpdated);
+    QObject::connect(p->library, &MusicLibrary::tracksDeleted, p->playlistHandler, &PlaylistHandler::tracksRemoved);
 
     p->library->loadLibrary();
     p->engine.setup();
@@ -120,6 +116,6 @@ void Application::shutdown()
     p->pluginManager.shutdown();
     p->database.closeDatabase();
 }
-} // namespace Fy::Core
+} // namespace Fooyin
 
 #include "moc_application.cpp"

@@ -23,7 +23,7 @@
 
 #include <QFrame>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT OverlayFilter : public QWidget
 {
     Q_OBJECT
@@ -34,4 +34,4 @@ public:
 protected:
     void paintEvent(QPaintEvent* event) override;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

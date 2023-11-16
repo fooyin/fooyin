@@ -21,18 +21,12 @@
 
 #include <utils/settings/settingspage.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
 
-namespace Gui::Settings {
-
-class PlaylistGeneralPage : public Utils::SettingsPage
+class PlaylistGeneralPage : public SettingsPage
 {
 public:
-    explicit PlaylistGeneralPage(Utils::SettingsManager* settings);
+    explicit PlaylistGeneralPage(SettingsManager* settings);
 };
-} // namespace Gui::Settings
-} // namespace Fy
+} // namespace Fooyin

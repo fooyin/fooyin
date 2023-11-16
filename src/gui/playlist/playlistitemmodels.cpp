@@ -23,62 +23,63 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Gui::Widgets::Playlist {
-Container::Container()
+namespace Fooyin {
+PlaylistContainerItem::PlaylistContainerItem()
     : m_duration{0}
+    , m_rowHeight{-1}
 { }
 
-Core::TrackList Container::tracks() const
+TrackList PlaylistContainerItem::tracks() const
 {
     return m_tracks;
 }
 
-int Container::trackCount() const
+int PlaylistContainerItem::trackCount() const
 {
     return static_cast<int>(m_tracks.size());
 }
 
-uint64_t Container::duration() const
+uint64_t PlaylistContainerItem::duration() const
 {
     return m_duration;
 }
 
-TextBlockList Container::title() const
+TextBlockList PlaylistContainerItem::title() const
 {
     return m_title;
 }
 
-TextBlockList Container::subtitle() const
+TextBlockList PlaylistContainerItem::subtitle() const
 {
     return m_subtitle;
 }
 
-TextBlockList Container::sideText() const
+TextBlockList PlaylistContainerItem::sideText() const
 {
     return m_sideText;
 }
 
-TextBlockList Container::info() const
+TextBlockList PlaylistContainerItem::info() const
 {
     return m_info;
 }
 
-int Container::rowHeight() const
+int PlaylistContainerItem::rowHeight() const
 {
     return m_rowHeight;
 }
 
-QString Container::genres() const
+QString PlaylistContainerItem::genres() const
 {
     return m_genres;
 }
 
-QString Container::filetypes() const
+QString PlaylistContainerItem::filetypes() const
 {
     return m_filetypes;
 }
 
-void Container::updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptRegistry* registry)
+void PlaylistContainerItem::updateGroupText(ScriptParser* parser, PlaylistScriptRegistry* registry)
 {
     if(m_tracks.empty()) {
         return;
@@ -90,7 +91,7 @@ void Container::updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptR
 
     // Update duration
     m_duration = std::accumulate(m_tracks.cbegin(), m_tracks.cend(), 0,
-                                 [](int sum, const Core::Track& track) { return sum + track.duration(); });
+                                 [](int sum, const Track& track) { return sum + track.duration(); });
 
     // Update genres, types
     QStringList uniqueGenres;
@@ -108,7 +109,7 @@ void Container::updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptR
 
     registry->changeCurrentContainer(this);
 
-    const Core::Track& track = m_tracks.front();
+    const Track& track = m_tracks.front();
     for(TextBlock& block : m_subtitle) {
         block.text = parser->evaluate(block.script, track);
     }
@@ -117,64 +118,64 @@ void Container::updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptR
     }
 }
 
-void Container::setTitle(const TextBlockList& title)
+void PlaylistContainerItem::setTitle(const TextBlockList& title)
 {
     m_title = title;
 }
 
-void Container::setSubtitle(const TextBlockList& subtitle)
+void PlaylistContainerItem::setSubtitle(const TextBlockList& subtitle)
 {
     m_subtitle = subtitle;
 }
 
-void Container::setSideText(const TextBlockList& text)
+void PlaylistContainerItem::setSideText(const TextBlockList& text)
 {
     m_sideText = text;
 }
 
-void Container::setInfo(const TextBlockList& info)
+void PlaylistContainerItem::setInfo(const TextBlockList& info)
 {
     m_info = info;
 }
 
-void Container::setRowHeight(int height)
+void PlaylistContainerItem::setRowHeight(int height)
 {
     m_rowHeight = height;
 }
 
-void Container::addTrack(const Core::Track& track)
+void PlaylistContainerItem::addTrack(const Track& track)
 {
     m_tracks.emplace_back(track);
 }
 
-void Container::addTracks(const Core::TrackList& tracks)
+void PlaylistContainerItem::addTracks(const TrackList& tracks)
 {
     std::ranges::copy(tracks, std::back_inserter(m_tracks));
 }
 
-void Container::clearTracks()
+void PlaylistContainerItem::clearTracks()
 {
     m_tracks.clear();
 }
 
-Track::Track(TextBlockList left, TextBlockList right, const Core::Track& track)
+PlaylistTrackItem::PlaylistTrackItem(TextBlockList left, TextBlockList right, const Track& track)
     : m_left{std::move(left)}
     , m_right{std::move(right)}
     , m_track{track}
 { }
 
-TextBlockList Track::left() const
+TextBlockList PlaylistTrackItem::left() const
 {
     return m_left;
 }
 
-TextBlockList Track::right() const
+TextBlockList PlaylistTrackItem::right() const
 {
     return m_right;
 }
 
-Core::Track Track::track() const
+Track PlaylistTrackItem::track() const
 {
     return m_track;
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

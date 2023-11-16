@@ -19,35 +19,35 @@
 
 #include <core/scripting/scriptscanner.h>
 
-namespace Fy::Core::Scripting {
+namespace Fooyin {
 bool isLiteral(QChar ch)
 {
     switch(ch.cell()) {
-        case(TokComma):
-        case(TokQuote):
-        case(TokLeftParen):
-        case(TokRightParen):
-        case(TokLeftSquare):
-        case(TokRightSquare):
-        case(TokFunc):
-        case(TokVar):
-        case(TokLeftAngle):
-        case(TokRightAngle):
-        case(TokEscape):
+        case(ScriptScanner::TokComma):
+        case(ScriptScanner::TokQuote):
+        case(ScriptScanner::TokLeftParen):
+        case(ScriptScanner::TokRightParen):
+        case(ScriptScanner::TokLeftSquare):
+        case(ScriptScanner::TokRightSquare):
+        case(ScriptScanner::TokFunc):
+        case(ScriptScanner::TokVar):
+        case(ScriptScanner::TokLeftAngle):
+        case(ScriptScanner::TokRightAngle):
+        case(ScriptScanner::TokEscape):
             return false;
         default:
             return true;
     }
 }
 
-void Scanner::setup(const QString& input)
+void ScriptScanner::setup(const QString& input)
 {
     m_input   = input;
     m_start   = m_input.cbegin();
     m_current = m_start;
 }
 
-Token Scanner::scanNext()
+ScriptScanner::Token ScriptScanner::scanNext()
 {
     m_start = m_current;
 
@@ -85,7 +85,7 @@ Token Scanner::scanNext()
     }
 }
 
-Token Scanner::makeToken(TokenType type) const
+ScriptScanner::Token ScriptScanner::makeToken(TokenType type) const
 {
     Token token;
     token.type     = type;
@@ -94,7 +94,7 @@ Token Scanner::makeToken(TokenType type) const
     return token;
 }
 
-Token Scanner::literal()
+ScriptScanner::Token ScriptScanner::literal()
 {
     while(isLiteral(peek()) && !isAtEnd()) {
         advance();
@@ -103,19 +103,19 @@ Token Scanner::literal()
     return makeToken(TokLiteral);
 }
 
-bool Scanner::isAtEnd() const
+bool ScriptScanner::isAtEnd() const
 {
     return *m_current == '\0';
 }
 
-QChar Scanner::advance()
+QChar ScriptScanner::advance()
 {
     std::advance(m_current, 1);
     return *std::prev(m_current);
 }
 
-QChar Scanner::peek() const
+QChar ScriptScanner::peek() const
 {
     return *m_current;
 }
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin

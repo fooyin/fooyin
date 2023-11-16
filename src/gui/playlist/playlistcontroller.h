@@ -27,31 +27,14 @@
 
 class QUndoCommand;
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Core {
-namespace Library {
 class SortingRegistry;
-} // namespace Library
-
-namespace Player {
 class PlayerManager;
 enum class PlayState;
-} // namespace Player
-
-namespace Playlist {
 class Playlist;
 class PlaylistManager;
-} // namespace Playlist
-} // namespace Core
-
-namespace Gui {
 class TrackSelectionController;
-
-namespace Widgets::Playlist {
 class PresetRegistry;
 
 class PlaylistController : public QObject
@@ -59,27 +42,26 @@ class PlaylistController : public QObject
     Q_OBJECT
 
 public:
-    PlaylistController(Core::Playlist::PlaylistManager* handler, Core::Player::PlayerManager* playerManager,
-                       PresetRegistry* presetRegistry, Core::Library::SortingRegistry* sortRegistry,
-                       TrackSelectionController* selectionController, Utils::SettingsManager* settings,
-                       QObject* parent = nullptr);
+    PlaylistController(PlaylistManager* handler, PlayerManager* playerManager, PresetRegistry* presetRegistry,
+                       SortingRegistry* sortRegistry, TrackSelectionController* selectionController,
+                       SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistController() override;
 
-    [[nodiscard]] Core::Playlist::PlaylistManager* playlistHandler() const;
+    [[nodiscard]] PlaylistManager* playlistHandler() const;
     [[nodiscard]] PresetRegistry* presetRegistry() const;
-    [[nodiscard]] Core::Library::SortingRegistry* sortRegistry() const;
+    [[nodiscard]] SortingRegistry* sortRegistry() const;
     [[nodiscard]] TrackSelectionController* selectionController() const;
 
-    [[nodiscard]] const Core::Playlist::PlaylistList& playlists() const;
-    [[nodiscard]] Core::Track currentTrack() const;
-    [[nodiscard]] Core::Player::PlayState playState() const;
+    [[nodiscard]] const PlaylistList& playlists() const;
+    [[nodiscard]] Track currentTrack() const;
+    [[nodiscard]] PlayState playState() const;
 
     void startPlayback() const;
 
     [[nodiscard]] bool currentIsActive() const;
-    [[nodiscard]] Core::Playlist::Playlist* currentPlaylist() const;
+    [[nodiscard]] Playlist* currentPlaylist() const;
 
-    void changeCurrentPlaylist(Core::Playlist::Playlist* playlist);
+    void changeCurrentPlaylist(Playlist* playlist);
     void changeCurrentPlaylist(int id);
     void changePlaylistIndex(int playlistId, int index);
 
@@ -90,15 +72,13 @@ public:
     void redoPlaylistChanges();
 
 signals:
-    void currentPlaylistChanged(Core::Playlist::Playlist* playlist);
-    void currentTrackChanged(const Core::Track& track);
-    void playStateChanged(Core::Player::PlayState state);
+    void currentPlaylistChanged(Playlist* playlist);
+    void currentTrackChanged(const Track& track);
+    void playStateChanged(PlayState state);
     void playlistHistoryChanged();
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Widgets::Playlist
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

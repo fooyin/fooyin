@@ -23,28 +23,26 @@
 #include <core/plugins/plugin.h>
 #include <gui/plugins/guiplugin.h>
 
-namespace Fy::TagEditor {
+namespace Fooyin::TagEditor {
 class TagEditorPlugin : public QObject,
-                        public Plugins::Plugin,
-                        public Core::CorePlugin,
-                        public Gui::GuiPlugin
+                        public Plugin,
+                        public CorePlugin,
+                        public GuiPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
-    Q_INTERFACES(Fy::Plugins::Plugin)
-    Q_INTERFACES(Fy::Core::CorePlugin)
-    Q_INTERFACES(Fy::Gui::GuiPlugin)
+    Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
     TagEditorPlugin();
     ~TagEditorPlugin() override;
 
-    void initialise(const Core::CorePluginContext& context) override;
-    void initialise(const Gui::GuiPluginContext& context) override;
+    void initialise(const CorePluginContext& context) override;
+    void initialise(const GuiPluginContext& context) override;
     void shutdown() override;
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::TagEditor
+} // namespace Fooyin::TagEditor

@@ -19,7 +19,7 @@
 
 #include "ffmpegcodec.h"
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 Codec::Codec(CodecContextPtr context, AVStream* stream)
     : m_context{std::move(context)}
     , m_stream{stream}
@@ -51,4 +51,4 @@ int Codec::streamIndex() const
 {
     return m_stream->index;
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

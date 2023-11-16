@@ -24,7 +24,7 @@
 #include <memory>
 #include <vector>
 
-namespace Fy::Utils {
+namespace Fooyin {
 template <class Item>
 class TreeItem
 {
@@ -125,4 +125,4 @@ private:
     std::vector<Item*> m_children; // Not owned
     mutable int m_row{-1};
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

@@ -21,10 +21,10 @@
 
 #include <QTemporaryFile>
 
-namespace Fy::Testing {
+namespace Fooyin::Testing {
 class TempResource : public QTemporaryFile
 {
 public:
     explicit TempResource(const QString& filename, QObject* parent = nullptr);
 };
-} // namespace Fy::Testing
+} // namespace Fooyin::Testing

@@ -19,7 +19,7 @@
 
 #include "scripthighlighter.h"
 
-namespace Fy::Gui::Sandbox {
+namespace Fooyin {
 ScriptHighlighter::ScriptHighlighter(QTextDocument* parent)
     : QSyntaxHighlighter{parent}
 {
@@ -36,7 +36,7 @@ void ScriptHighlighter::highlightBlock(const QString& text)
     m_scanner.setup(text);
 
     advance();
-    while(m_current.type != Core::Scripting::TokEos) {
+    while(m_current.type != ScriptScanner::TokEos) {
         expression();
     }
 }
@@ -45,28 +45,28 @@ void ScriptHighlighter::expression()
 {
     advance();
     switch(m_previous.type) {
-        case(Core::Scripting::TokVar):
+        case(ScriptScanner::TokVar):
             variable();
             break;
-        case(Core::Scripting::TokFunc):
+        case(ScriptScanner::TokFunc):
             function();
             break;
-        case(Core::Scripting::TokQuote):
+        case(ScriptScanner::TokQuote):
             quote();
             break;
-        case(Core::Scripting::TokLeftSquare):
+        case(ScriptScanner::TokLeftSquare):
             conditional();
             break;
-        case(Core::Scripting::TokEscape):
-        case(Core::Scripting::TokLeftAngle):
-        case(Core::Scripting::TokRightAngle):
-        case(Core::Scripting::TokComma):
-        case(Core::Scripting::TokLeftParen):
-        case(Core::Scripting::TokRightParen):
-        case(Core::Scripting::TokRightSquare):
-        case(Core::Scripting::TokLiteral):
-        case(Core::Scripting::TokEos):
-        case(Core::Scripting::TokError):
+        case(ScriptScanner::TokEscape):
+        case(ScriptScanner::TokLeftAngle):
+        case(ScriptScanner::TokRightAngle):
+        case(ScriptScanner::TokComma):
+        case(ScriptScanner::TokLeftParen):
+        case(ScriptScanner::TokRightParen):
+        case(ScriptScanner::TokRightSquare):
+        case(ScriptScanner::TokLiteral):
+        case(ScriptScanner::TokEos):
+        case(ScriptScanner::TokError):
             break;
     }
 }
@@ -79,7 +79,7 @@ void ScriptHighlighter::variable()
 
     advance();
 
-    if(m_previous.type == Core::Scripting::TokLeftAngle) {
+    if(m_previous.type == ScriptScanner::TokLeftAngle) {
         setTokenFormat(m_varFormat);
         advance();
         advance();
@@ -97,9 +97,9 @@ void ScriptHighlighter::function()
     advance();
     setTokenFormat(m_keywordFormat);
     advance();
-    if(!currentToken(Core::Scripting::TokRightParen)) {
+    if(!currentToken(ScriptScanner::TokRightParen)) {
         functionArgs();
-        while(match(Core::Scripting::TokComma)) {
+        while(match(ScriptScanner::TokComma)) {
             functionArgs();
         }
     }
@@ -108,8 +108,8 @@ void ScriptHighlighter::function()
 
 void ScriptHighlighter::functionArgs()
 {
-    while(!currentToken(Core::Scripting::TokComma) && !currentToken(Core::Scripting::TokRightParen)
-          && !currentToken(Core::Scripting::TokEos)) {
+    while(!currentToken(ScriptScanner::TokComma) && !currentToken(ScriptScanner::TokRightParen)
+          && !currentToken(ScriptScanner::TokEos)) {
         expression();
     }
 }
@@ -118,7 +118,7 @@ void ScriptHighlighter::conditional()
 {
     setTokenFormat(m_varFormat);
 
-    while(!currentToken(Core::Scripting::TokRightSquare) && !currentToken(Core::Scripting::TokEos)) {
+    while(!currentToken(ScriptScanner::TokRightSquare) && !currentToken(ScriptScanner::TokEos)) {
         expression();
     }
 
@@ -138,12 +138,12 @@ void ScriptHighlighter::advance()
     m_current  = m_scanner.scanNext();
 }
 
-bool ScriptHighlighter::currentToken(Core::Scripting::TokenType type) const
+bool ScriptHighlighter::currentToken(ScriptScanner::TokenType type) const
 {
     return m_current.type == type;
 }
 
-bool ScriptHighlighter::match(Core::Scripting::TokenType type)
+bool ScriptHighlighter::match(ScriptScanner::TokenType type)
 {
     if(!currentToken(type)) {
         return false;
@@ -151,6 +151,6 @@ bool ScriptHighlighter::match(Core::Scripting::TokenType type)
     advance();
     return true;
 }
-} // namespace Fy::Gui::Sandbox
+} // namespace Fooyin
 
 #include "moc_scripthighlighter.cpp"

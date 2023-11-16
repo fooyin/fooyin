@@ -24,34 +24,31 @@
 #include <utils/tablemodel.h>
 #include <utils/treestatusitem.h>
 
-namespace Fy::Gui {
-namespace Widgets {
+namespace Fooyin {
 class LibraryTreeGroupRegistry;
-}
 
-namespace Settings {
-class LibraryTreeGroupItem : public Utils::TreeStatusItem<LibraryTreeGroupItem>
+class LibraryTreeGroupItem : public TreeStatusItem<LibraryTreeGroupItem>
 {
 public:
     LibraryTreeGroupItem();
-    explicit LibraryTreeGroupItem(Widgets::LibraryTreeGrouping group, LibraryTreeGroupItem* parent);
+    explicit LibraryTreeGroupItem(LibraryTreeGrouping group, LibraryTreeGroupItem* parent);
 
-    [[nodiscard]] Widgets::LibraryTreeGrouping group() const;
-    void changeGroup(const Widgets::LibraryTreeGrouping& group);
+    [[nodiscard]] LibraryTreeGrouping group() const;
+    void changeGroup(const LibraryTreeGrouping& group);
 
 private:
-    Widgets::LibraryTreeGrouping m_group;
+    LibraryTreeGrouping m_group;
 };
 
-class LibraryTreeGroupModel : public Utils::TableModel<LibraryTreeGroupItem>
+class LibraryTreeGroupModel : public TableModel<LibraryTreeGroupItem>
 {
 public:
-    explicit LibraryTreeGroupModel(Widgets::LibraryTreeGroupRegistry* groupsRegistry, QObject* parent = nullptr);
+    explicit LibraryTreeGroupModel(LibraryTreeGroupRegistry* groupsRegistry, QObject* parent = nullptr);
 
     void populate();
     void addNewGroup();
-    void markForRemoval(const Widgets::LibraryTreeGrouping& group);
-    void markForChange(const Widgets::LibraryTreeGrouping& group);
+    void markForRemoval(const LibraryTreeGrouping& group);
+    void markForChange(const LibraryTreeGrouping& group);
     void processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -66,9 +63,8 @@ private:
 
     using IndexGroupMap = std::map<int, LibraryTreeGroupItem>;
 
-    Widgets::LibraryTreeGroupRegistry* m_groupsRegistry;
+    LibraryTreeGroupRegistry* m_groupsRegistry;
 
     IndexGroupMap m_nodes;
 };
-} // namespace Settings
-} // namespace Fy::Gui
+} // namespace Fooyin

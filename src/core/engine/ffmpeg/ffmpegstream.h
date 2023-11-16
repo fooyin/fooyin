@@ -25,7 +25,7 @@
 
 struct AVStream;
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 class Stream
 {
 public:
@@ -40,4 +40,4 @@ public:
 private:
     AVStream* m_stream;
 };
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

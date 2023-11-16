@@ -22,7 +22,7 @@
 #include <QDataStream>
 #include <QString>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct LibraryTreeGrouping
 {
     int id{-1};
@@ -58,4 +58,4 @@ struct LibraryTreeGrouping
         return stream;
     }
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

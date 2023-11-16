@@ -21,21 +21,16 @@
 
 #include <QDialog>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Gui {
 class TrackSelectionController;
 
-namespace Sandbox {
 class SandboxDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SandboxDialog(TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
+    explicit SandboxDialog(TrackSelectionController* trackSelection, SettingsManager* settings,
                            QWidget* parent = nullptr);
     ~SandboxDialog() override;
 
@@ -43,6 +38,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Sandbox
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

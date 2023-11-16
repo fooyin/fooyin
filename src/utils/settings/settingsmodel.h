@@ -30,8 +30,8 @@
 
 #include <set>
 
-namespace Fy::Utils {
-class SettingsItem : public Utils::TreeItem<SettingsItem>
+namespace Fooyin {
+class SettingsItem : public TreeItem<SettingsItem>
 {
 public:
     enum Role
@@ -50,7 +50,7 @@ private:
     SettingsCategory* m_data;
 };
 
-class SettingsModel : public Utils::TreeModel<SettingsItem>
+class SettingsModel : public TreeModel<SettingsItem>
 {
 public:
     explicit SettingsModel(QObject* parent = nullptr);
@@ -70,4 +70,4 @@ private:
     ItemIdMap m_items;
     std::set<Id> m_pageIds;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

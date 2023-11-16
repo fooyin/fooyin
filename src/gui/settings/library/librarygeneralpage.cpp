@@ -40,11 +40,11 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-namespace Fy::Gui::Settings {
-class LibraryGeneralPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class LibraryGeneralPageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings);
+    explicit LibraryGeneralPageWidget(LibraryManager* libraryManager, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -53,8 +53,8 @@ private:
     void addLibrary() const;
     void removeLibrary() const;
 
-    Core::Library::LibraryManager* m_libraryManager;
-    Utils::SettingsManager* m_settings;
+    LibraryManager* m_libraryManager;
+    SettingsManager* m_settings;
 
     LibraryView* m_libraryView;
     LibraryModel* m_model;
@@ -64,8 +64,7 @@ private:
     QLineEdit* m_sortScript;
 };
 
-LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager,
-                                                   Utils::SettingsManager* settings)
+LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManager, SettingsManager* settings)
     : m_libraryManager{libraryManager}
     , m_settings{settings}
     , m_libraryView{new LibraryView(this)}
@@ -98,13 +97,13 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
     libraryLayout->addWidget(buttons);
 
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
-    m_autoRefresh->setChecked(m_settings->value<Core::Settings::AutoRefresh>());
+    m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
 
     auto* sortScriptLabel  = new QLabel(tr("Sort tracks by:"), this);
     auto* sortScriptLayout = new QHBoxLayout();
     sortScriptLayout->addWidget(sortScriptLabel);
     sortScriptLayout->addWidget(m_sortScript);
-    m_sortScript->setText(m_settings->value<Core::Settings::LibrarySortScript>());
+    m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(libraryLayout);
@@ -117,16 +116,16 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager
 
 void LibraryGeneralPageWidget::apply()
 {
-    m_settings->set<Core::Settings::AutoRefresh>(m_autoRefresh->isChecked());
-    m_settings->set<Core::Settings::LibrarySortScript>(m_sortScript->text());
+    m_settings->set<Settings::Core::AutoRefresh>(m_autoRefresh->isChecked());
+    m_settings->set<Settings::Core::LibrarySortScript>(m_sortScript->text());
 
     m_model->processQueue();
 }
 
 void LibraryGeneralPageWidget::reset()
 {
-    m_settings->reset<Core::Settings::AutoRefresh>();
-    m_settings->reset<Core::Settings::LibrarySortScript>();
+    m_settings->reset<Settings::Core::AutoRefresh>();
+    m_settings->reset<Settings::Core::LibrarySortScript>();
 }
 
 void LibraryGeneralPageWidget::addLibrary() const
@@ -160,8 +159,8 @@ void LibraryGeneralPageWidget::removeLibrary() const
     //    m_libraryList->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
-LibraryGeneralPage::LibraryGeneralPage(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+LibraryGeneralPage::LibraryGeneralPage(LibraryManager* libraryManager, SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryGeneral);
     setName(tr("General"));
@@ -169,4 +168,4 @@ LibraryGeneralPage::LibraryGeneralPage(Core::Library::LibraryManager* libraryMan
     setWidgetCreator([libraryManager, settings] { return new LibraryGeneralPageWidget(libraryManager, settings); });
 }
 
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

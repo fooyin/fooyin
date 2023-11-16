@@ -21,20 +21,16 @@
 
 #include <utils/settings/settingspage.h>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
 
 namespace Filters {
 class FieldRegistry;
 
-namespace Settings {
-class FiltersFieldsPage : public Utils::SettingsPage
+class FiltersFieldsPage : public SettingsPage
 {
 public:
-    explicit FiltersFieldsPage(FieldRegistry* fieldsRegistry, Utils::SettingsManager* settings);
+    explicit FiltersFieldsPage(FieldRegistry* fieldsRegistry, SettingsManager* settings);
 };
-} // namespace Settings
 } // namespace Filters
-} // namespace Fy
+} // namespace Fooyin

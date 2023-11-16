@@ -23,7 +23,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Testing {
+namespace Fooyin::Testing {
 TempResource::TempResource(const QString& filename, QObject* parent)
     : QTemporaryFile{parent}
 {
@@ -37,4 +37,4 @@ TempResource::TempResource(const QString& filename, QObject* parent)
 
     reset();
 }
-} // namespace Fy::Testing
+} // namespace Fooyin::Testing

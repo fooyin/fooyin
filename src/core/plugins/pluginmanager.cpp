@@ -24,7 +24,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Plugins {
+namespace Fooyin {
 const PluginInfoMap& PluginManager::allPluginInfo() const
 {
     return m_plugins;
@@ -100,4 +100,4 @@ void PluginManager::shutdown()
     unloadPlugins();
 }
 
-} // namespace Fy::Plugins
+} // namespace Fooyin

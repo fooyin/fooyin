@@ -79,7 +79,7 @@ void paintEntry(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 }
 } // namespace
 
-namespace Fy::Gui::Widgets::Info {
+namespace Fooyin {
 ItemDelegate::ItemDelegate(QObject* parent)
     : QStyledItemDelegate{parent}
 { }
@@ -137,6 +137,6 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     }
     painter->restore();
 }
-} // namespace Fy::Gui::Widgets::Info
+} // namespace Fooyin
 
 #include "moc_infodelegate.cpp"

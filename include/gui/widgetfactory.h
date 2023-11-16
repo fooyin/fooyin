@@ -25,7 +25,7 @@
 
 #include <map>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 class FYGUI_EXPORT WidgetFactory
 {
     using Instantiator = std::function<FyWidget*()>;
@@ -82,4 +82,4 @@ public:
         return widgets;
     }
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

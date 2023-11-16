@@ -19,24 +19,24 @@
 
 #pragma once
 
-#include "module.h"
+#include "databasemodule.h"
 
 #include <core/playlist/playlist.h>
 #include <core/track.h>
 
-namespace Fy::Core::DB {
-class PlaylistDatabase : private Module
+namespace Fooyin {
+class PlaylistDatabase : private DatabaseModule
 {
 public:
     explicit PlaylistDatabase(const QString& connectionName);
 
-    bool getAllPlaylists(Playlist::PlaylistList& playlists);
-    bool getPlaylistTracks(const Playlist::PlaylistList& playlists, const TrackIdMap& tracks);
+    bool getAllPlaylists(PlaylistList& playlists);
+    bool getPlaylistTracks(const PlaylistList& playlists, const TrackIdMap& tracks);
 
     int insertPlaylist(const QString& name, int index);
 
-    bool saveModifiedPlaylists(const Playlist::PlaylistList& playlists);
+    bool saveModifiedPlaylists(const PlaylistList& playlists);
     bool removePlaylist(int id);
     bool renamePlaylist(int id, const QString& name);
 };
-} // namespace Fy::Core::DB
+} // namespace Fooyin

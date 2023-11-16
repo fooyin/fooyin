@@ -21,10 +21,10 @@
 
 #include <utils/widgets/editabletabbar.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 EditableTabWidget::EditableTabWidget(QWidget* parent)
     : QTabWidget{parent}
-    , m_tabBar{new Utils::EditableTabBar(this)}
+    , m_tabBar{new EditableTabBar(this)}
 {
     setTabBar(m_tabBar);
 }
@@ -33,6 +33,6 @@ EditableTabBar* EditableTabWidget::editableTabBar() const
 {
     return m_tabBar;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/widgets/moc_editabletabwidget.cpp"

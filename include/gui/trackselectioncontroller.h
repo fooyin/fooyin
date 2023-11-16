@@ -27,16 +27,10 @@
 
 class QMenu;
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-} // namespace Utils
-
-namespace Gui {
-namespace Widgets::Playlist {
 class PlaylistController;
-}
 
 enum class TrackAction
 {
@@ -49,6 +43,7 @@ enum class TrackAction
     Play
 };
 
+namespace PlaylistAction {
 enum ActionOption
 {
     None       = 1 << 0,
@@ -56,35 +51,36 @@ enum ActionOption
     KeepActive = 1 << 2,
 };
 Q_DECLARE_FLAGS(ActionOptions, ActionOption)
+} // namespace PlaylistAction
 
 class FYGUI_EXPORT TrackSelectionController : public QObject
 {
     Q_OBJECT
 
 public:
-    TrackSelectionController(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
-                             Widgets::Playlist::PlaylistController* playlistController, QObject* parent = nullptr);
+    TrackSelectionController(ActionManager* actionManager, SettingsManager* settings,
+                             PlaylistController* playlistController, QObject* parent = nullptr);
     ~TrackSelectionController() override;
 
     [[nodiscard]] bool hasTracks() const;
 
-    [[nodiscard]] Core::TrackList selectedTracks() const;
-    void changeSelectedTracks(int index, const Core::TrackList& tracks, const QString& title = {});
-    void changeSelectedTracks(const Core::TrackList& tracks, const QString& title = {});
+    [[nodiscard]] TrackList selectedTracks() const;
+    void changeSelectedTracks(int index, const TrackList& tracks, const QString& title = {});
+    void changeSelectedTracks(const TrackList& tracks, const QString& title = {});
 
     void addTrackContextMenu(QMenu* menu) const;
     void addTrackPlaylistContextMenu(QMenu* menu) const;
-    void executeAction(TrackAction action, ActionOptions options = {}, const QString& playlistName = {});
+    void executeAction(TrackAction action, PlaylistAction::ActionOptions options = {},
+                       const QString& playlistName = {});
 
 signals:
-    void selectionChanged(const Core::TrackList& tracks);
+    void selectionChanged(const TrackList& tracks);
     void requestPropertiesDialog();
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Gui::ActionOptions)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::PlaylistAction::ActionOptions)

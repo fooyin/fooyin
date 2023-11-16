@@ -24,7 +24,7 @@
 #include <QTimer>
 #include <QWidget>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT HoverMenu : public QWidget
 {
     Q_OBJECT
@@ -41,4 +41,4 @@ protected:
 private:
     QTimer m_timer;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

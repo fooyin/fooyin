@@ -21,23 +21,13 @@
 
 #include <utils/settings/settingspage.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Gui {
-namespace Widgets {
 class LibraryTreeGroupRegistry;
-}
 
-namespace Settings {
-class LibraryTreePage : public Utils::SettingsPage
+class LibraryTreePage : public SettingsPage
 {
 public:
-    explicit LibraryTreePage(Widgets::LibraryTreeGroupRegistry* groupsRegistry, Utils::SettingsManager* settings);
+    explicit LibraryTreePage(LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings);
 };
-} // namespace Settings
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

@@ -23,28 +23,18 @@
 
 #include <QWidget>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core {
-namespace Library {
 class MusicLibrary;
-}
-namespace Player {
 class PlayerManager;
-} // namespace Player
-} // namespace Core
 
-namespace Gui::Widgets {
 class StatusWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit StatusWidget(Core::Library::MusicLibrary* library, Core::Player::PlayerManager* playerManager,
-                          Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit StatusWidget(MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings,
+                          QWidget* parent = nullptr);
     ~StatusWidget();
 
     [[nodiscard]] QString name() const override;
@@ -56,5 +46,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

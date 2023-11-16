@@ -21,7 +21,7 @@
 
 #include <utils/actions/command.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class ActionCommand : public Command
 {
     Q_OBJECT
@@ -33,7 +33,7 @@ public:
     Id id() const override;
 
     QAction* action() const override;
-    QAction* actionForContext(const Utils::Id& context) const override;
+    QAction* actionForContext(const Id& context) const override;
 
     Context context() const override;
 
@@ -63,4 +63,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

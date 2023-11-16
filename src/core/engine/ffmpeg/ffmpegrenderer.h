@@ -22,10 +22,8 @@
 #include "ffmpegframe.h"
 #include "ffmpegworker.h"
 
-namespace Fy::Core::Engine {
+namespace Fooyin {
 class AudioOutput;
-
-namespace FFmpeg {
 class Codec;
 
 class Renderer : public EngineWorker
@@ -59,5 +57,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace FFmpeg
-} // namespace Fy::Core::Engine
+} // namespace Fooyin

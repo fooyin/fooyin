@@ -21,31 +21,20 @@
 
 #include "fygui_export.h"
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
-} // namespace Utils
-
-namespace Gui {
 class LayoutProvider;
 class TrackSelectionController;
 class PropertiesDialog;
-
-namespace Settings {
 class GuiSettings;
-}
-
-namespace Widgets {
 class SearchController;
 class WidgetFactory;
-} // namespace Widgets
 
 struct FYGUI_EXPORT GuiPluginContext
 {
-    GuiPluginContext(Utils::ActionManager* actionManager, LayoutProvider* layoutProvider,
-                     TrackSelectionController* trackSelection, Widgets::SearchController* searchController,
-                     PropertiesDialog* propertiesDialog, Widgets::WidgetFactory* widgetFactory,
-                     Settings::GuiSettings* guiSettings)
+    GuiPluginContext(ActionManager* actionManager, LayoutProvider* layoutProvider,
+                     TrackSelectionController* trackSelection, SearchController* searchController,
+                     PropertiesDialog* propertiesDialog, WidgetFactory* widgetFactory, GuiSettings* guiSettings)
         : actionManager{actionManager}
         , layoutProvider{layoutProvider}
         , trackSelection{trackSelection}
@@ -55,13 +44,12 @@ struct FYGUI_EXPORT GuiPluginContext
         , guiSettings{guiSettings}
     { }
 
-    Utils::ActionManager* actionManager;
-    Gui::LayoutProvider* layoutProvider;
+    ActionManager* actionManager;
+    LayoutProvider* layoutProvider;
     TrackSelectionController* trackSelection;
-    Widgets::SearchController* searchController;
+    SearchController* searchController;
     PropertiesDialog* propertiesDialog;
-    Widgets::WidgetFactory* widgetFactory;
-    Settings::GuiSettings* guiSettings;
+    WidgetFactory* widgetFactory;
+    GuiSettings* guiSettings;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

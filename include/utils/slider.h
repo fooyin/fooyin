@@ -23,7 +23,7 @@
 
 #include <QSlider>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT Slider : public QSlider
 {
     Q_OBJECT
@@ -34,4 +34,4 @@ public:
 protected:
     void mousePressEvent(QMouseEvent* event) override;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

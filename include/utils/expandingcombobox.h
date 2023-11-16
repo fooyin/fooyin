@@ -23,7 +23,7 @@
 
 #include <QComboBox>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT ExpandingComboBox : public QComboBox
 {
     Q_OBJECT
@@ -34,4 +34,4 @@ public:
     void resizeToFitCurrent();
     void resizeDropDown();
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

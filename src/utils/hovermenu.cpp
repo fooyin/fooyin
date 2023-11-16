@@ -34,7 +34,7 @@ void closeMenu(QTimer& timer, QWidget* self)
 }
 } // namespace
 
-namespace Fy::Utils {
+namespace Fooyin {
 HoverMenu::HoverMenu(QWidget* parent)
     : QWidget{parent}
 {
@@ -54,6 +54,6 @@ void HoverMenu::leaveEvent(QEvent* event)
     hide();
     QWidget::leaveEvent(event);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_hovermenu.cpp"

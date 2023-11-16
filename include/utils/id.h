@@ -24,7 +24,7 @@
 #include <QMetaType>
 #include <QString>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT Id
 {
 public:
@@ -62,4 +62,4 @@ private:
     QString m_name;
 };
 using IdList = std::vector<Id>;
-} // namespace Fy::Utils
+} // namespace Fooyin

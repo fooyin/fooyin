@@ -33,11 +33,11 @@
 #include <QPushButton>
 #include <QSpinBox>
 
-namespace Fy::Gui::Settings {
-class LibraryTreeGuiPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class LibraryTreeGuiPageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibraryTreeGuiPageWidget(Utils::SettingsManager* settings);
+    explicit LibraryTreeGuiPageWidget(SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -45,7 +45,7 @@ public:
 private:
     void setup();
 
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 
     QCheckBox* m_showHeader;
     QCheckBox* m_showScrollbar;
@@ -62,7 +62,7 @@ private:
     QSpinBox* m_rowHeight;
 };
 
-LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(Utils::SettingsManager* settings)
+LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_showHeader{new QCheckBox(tr("Show Header"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show Scrollbar"), this)}
@@ -108,36 +108,36 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(Utils::SettingsManager* setti
 
 void LibraryTreeGuiPageWidget::apply()
 {
-    m_settings->set<Settings::LibraryTreeHeader>(m_showHeader->isChecked());
-    m_settings->set<Settings::LibraryTreeScrollBar>(m_showScrollbar->isChecked());
-    m_settings->set<Settings::LibraryTreeAltColours>(m_altColours->isChecked());
+    m_settings->set<Settings::Gui::LibraryTreeHeader>(m_showHeader->isChecked());
+    m_settings->set<Settings::Gui::LibraryTreeScrollBar>(m_showScrollbar->isChecked());
+    m_settings->set<Settings::Gui::LibraryTreeAltColours>(m_altColours->isChecked());
 
-    Widgets::LibraryTreeAppearance options;
+    LibraryTreeAppearance options;
     options.fontChanged   = m_fontChanged;
     options.font          = m_font;
     options.colourChanged = m_colourChanged;
     options.colour        = m_colour;
     options.rowHeight     = m_rowHeight->value();
-    m_settings->set<Settings::LibraryTreeAppearance>(QVariant::fromValue(options));
+    m_settings->set<Settings::Gui::LibraryTreeAppearance>(QVariant::fromValue(options));
 }
 
 void LibraryTreeGuiPageWidget::reset()
 {
-    m_settings->reset<Settings::LibraryTreeHeader>();
-    m_settings->reset<Settings::LibraryTreeScrollBar>();
-    m_settings->reset<Settings::LibraryTreeAltColours>();
-    m_settings->reset<Settings::LibraryTreeAppearance>();
+    m_settings->reset<Settings::Gui::LibraryTreeHeader>();
+    m_settings->reset<Settings::Gui::LibraryTreeScrollBar>();
+    m_settings->reset<Settings::Gui::LibraryTreeAltColours>();
+    m_settings->reset<Settings::Gui::LibraryTreeAppearance>();
 
     setup();
 }
 
 void LibraryTreeGuiPageWidget::setup()
 {
-    m_showHeader->setChecked(m_settings->value<Settings::LibraryTreeHeader>());
-    m_showScrollbar->setChecked(m_settings->value<Settings::LibraryTreeScrollBar>());
-    m_altColours->setChecked(m_settings->value<Settings::LibraryTreeAltColours>());
+    m_showHeader->setChecked(m_settings->value<Settings::Gui::LibraryTreeHeader>());
+    m_showScrollbar->setChecked(m_settings->value<Settings::Gui::LibraryTreeScrollBar>());
+    m_altColours->setChecked(m_settings->value<Settings::Gui::LibraryTreeAltColours>());
 
-    const auto options = m_settings->value<Settings::LibraryTreeAppearance>().value<Widgets::LibraryTreeAppearance>();
+    const auto options = m_settings->value<Settings::Gui::LibraryTreeAppearance>().value<LibraryTreeAppearance>();
     m_fontChanged      = options.fontChanged;
     m_font             = options.font;
     m_colourChanged    = options.colourChanged;
@@ -145,12 +145,12 @@ void LibraryTreeGuiPageWidget::setup()
     m_rowHeight->setValue(options.rowHeight);
 }
 
-LibraryTreeGuiPage::LibraryTreeGuiPage(Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+LibraryTreeGuiPage::LibraryTreeGuiPage(SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryTreeAppearance);
     setName(tr("Appearance"));
     setCategory({tr("Widgets"), tr("Library Tree")});
     setWidgetCreator([settings] { return new LibraryTreeGuiPageWidget(settings); });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

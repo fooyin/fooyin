@@ -21,10 +21,10 @@
 
 #include <QtConcurrent>
 
-namespace Fy::Utils {
+namespace Fooyin::Utils {
 template <typename Func>
 auto asyncExec(Func&& func)
 {
     return QtConcurrent::run(std::forward<Func>(func));
 }
-} // namespace Fy::Utils
+} // namespace Fooyin::Utils

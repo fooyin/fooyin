@@ -29,9 +29,8 @@
 class QAction;
 class QMainWindow;
 
-namespace Fy::Utils {
+namespace Fooyin {
 class SettingsManager;
-
 class ActionContainer;
 class Command;
 using CommandList = std::vector<Command*>;
@@ -41,7 +40,7 @@ class FYUTILS_EXPORT ActionManager : public QObject
     Q_OBJECT
 
 public:
-    explicit ActionManager(Utils::SettingsManager* settingsManager, QObject* parent = nullptr);
+    explicit ActionManager(SettingsManager* settingsManager, QObject* parent = nullptr);
     ~ActionManager() override;
 
     void setMainWindow(QMainWindow* mainWindow);
@@ -71,4 +70,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

@@ -25,7 +25,7 @@
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>
 
-namespace Fy::Gui::Sandbox {
+namespace Fooyin {
 class ScriptHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
@@ -47,15 +47,15 @@ private:
     void setTokenFormat(const QTextCharFormat& format);
 
     void advance();
-    bool currentToken(Core::Scripting::TokenType type) const;
-    bool match(Core::Scripting::TokenType type);
+    bool currentToken(ScriptScanner::TokenType type) const;
+    bool match(ScriptScanner::TokenType type);
 
     QTextCharFormat m_varFormat;
     QTextCharFormat m_keywordFormat;
     QTextCharFormat m_errorFormat;
 
-    Core::Scripting::Scanner m_scanner;
-    Core::Scripting::Token m_current;
-    Core::Scripting::Token m_previous;
+    ScriptScanner m_scanner;
+    ScriptScanner::Token m_current;
+    ScriptScanner::Token m_previous;
 };
-} // namespace Fy::Gui::Sandbox
+} // namespace Fooyin

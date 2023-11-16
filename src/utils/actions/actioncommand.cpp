@@ -27,7 +27,7 @@
 #include <QKeySequence>
 #include <QPointer>
 
-namespace Fy::Utils {
+namespace Fooyin {
 struct ActionCommand::Private
 {
     ActionCommand* self;
@@ -41,7 +41,7 @@ struct ActionCommand::Private
 
     ProxyAction* action{nullptr};
 
-    std::map<Utils::Id, QPointer<QAction>> contextActionMap;
+    std::map<Id, QPointer<QAction>> contextActionMap;
 
     bool active{false};
 
@@ -246,6 +246,6 @@ void ActionCommand::addOverrideAction(QAction* action, const Context& context)
     }
     setCurrentContext(context);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "moc_actioncommand.cpp"

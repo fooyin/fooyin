@@ -29,7 +29,7 @@
 
 class QSettings;
 
-namespace Fy::Utils {
+namespace Fooyin {
 class SettingsDialogController;
 
 template <auto key>
@@ -45,23 +45,23 @@ constexpr int findType()
 }
 
 template <auto key, typename Value>
-concept IsVariant = findType<key>() == Settings::Type::Variant;
+concept IsVariant = findType<key>() == SettingsType::Variant;
 
 template <auto key, typename Value>
-concept IsBool = findType<key>() == Settings::Type::Bool && std::same_as<Value, bool>;
+concept IsBool = findType<key>() == SettingsType::Bool && std::same_as<Value, bool>;
 
 template <auto key, typename Value>
-concept IsDouble = findType<key>() == Settings::Type::Double && std::same_as<Value, double>;
+concept IsDouble = findType<key>() == SettingsType::Double && std::same_as<Value, double>;
 
 template <auto key, typename Value>
-concept IsInt = findType<key>() == Settings::Type::Int && std::same_as<Value, int>;
+concept IsInt = findType<key>() == SettingsType::Int && std::same_as<Value, int>;
 
 template <auto key, typename Value>
 concept IsString
-    = findType<key>() == Settings::Type::String && (std::same_as<Value, QString> || std::same_as<Value, const char*>);
+    = findType<key>() == SettingsType::String && (std::same_as<Value, QString> || std::same_as<Value, const char*>);
 
 template <auto key, typename Value>
-concept IsByteArray = findType<key>() == Settings::Type::ByteArray && std::same_as<Value, QByteArray>;
+concept IsByteArray = findType<key>() == SettingsType::ByteArray && std::same_as<Value, QByteArray>;
 
 template <auto key, typename Value>
 concept ValidValueType = IsVariant<key, Value> || IsBool<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
@@ -122,19 +122,19 @@ public:
 
         m_lock.unlock();
 
-        if constexpr(type == Settings::Type::Bool) {
+        if constexpr(type == SettingsType::Bool) {
             return value.toBool();
         }
-        else if constexpr(type == Settings::Type::Double) {
+        else if constexpr(type == SettingsType::Double) {
             return value.toDouble();
         }
-        else if constexpr(type == Settings::Type::Int) {
+        else if constexpr(type == SettingsType::Int) {
             return value.toInt();
         }
-        else if constexpr(type == Settings::Type::String) {
+        else if constexpr(type == SettingsType::String) {
             return value.toString();
         }
-        else if constexpr(type == Settings::Type::ByteArray) {
+        else if constexpr(type == SettingsType::ByteArray) {
             return value.toByteArray();
         }
         else {
@@ -229,22 +229,22 @@ private:
 
         const QVariant settingValue = setting.value();
 
-        if constexpr(type == Settings::Type::Variant) {
+        if constexpr(type == SettingsType::Variant) {
             QMetaObject::invokeMethod(&setting, "settingChangedVariant", Q_ARG(QVariant, settingValue));
         }
-        else if constexpr(type == Settings::Type::Bool) {
+        else if constexpr(type == SettingsType::Bool) {
             QMetaObject::invokeMethod(&setting, "settingChangedBool", Q_ARG(bool, settingValue.toBool()));
         }
-        else if constexpr(type == Settings::Type::Double) {
+        else if constexpr(type == SettingsType::Double) {
             QMetaObject::invokeMethod(&setting, "settingChangedDouble", Q_ARG(double, settingValue.toDouble()));
         }
-        else if constexpr(type == Settings::Type::Int) {
+        else if constexpr(type == SettingsType::Int) {
             QMetaObject::invokeMethod(&setting, "settingChangedInt", Q_ARG(int, settingValue.toInt()));
         }
-        else if constexpr(type == Settings::Type::String) {
+        else if constexpr(type == SettingsType::String) {
             QMetaObject::invokeMethod(&setting, "settingChangedString", Q_ARG(QString, settingValue.toString()));
         }
-        else if constexpr(type == Settings::Type::ByteArray) {
+        else if constexpr(type == SettingsType::ByteArray) {
             QMetaObject::invokeMethod(&setting, "settingChangedByteArray",
                                       Q_ARG(QByteArray, settingValue.toByteArray()));
         }
@@ -269,22 +269,22 @@ private:
         const auto type   = findType<key>();
 
         if(m_settings.contains(mapKey)) {
-            if constexpr(type == Settings::Type::Variant) {
+            if constexpr(type == SettingsType::Variant) {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
             }
-            else if constexpr(type == Settings::Type::Bool) {
+            else if constexpr(type == SettingsType::Bool) {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
             }
-            else if constexpr(type == Settings::Type::Double) {
+            else if constexpr(type == SettingsType::Double) {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, obj, func);
             }
-            else if constexpr(type == Settings::Type::Int) {
+            else if constexpr(type == SettingsType::Int) {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedInt, obj, func);
             }
-            else if constexpr(type == Settings::Type::String) {
+            else if constexpr(type == SettingsType::String) {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj, func);
             }
-            else if constexpr(type == Settings::Type::ByteArray) {
+            else if constexpr(type == SettingsType::ByteArray) {
                 QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, obj, func);
             }
             else {
@@ -299,4 +299,4 @@ private:
 
     SettingsDialogController* m_settingsDialog;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

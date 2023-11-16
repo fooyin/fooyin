@@ -31,26 +31,25 @@
 
 #include <QUndoStack>
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 struct PlaylistController::Private
 {
     PlaylistController* self;
 
-    Core::Playlist::PlaylistManager* handler;
-    Core::Player::PlayerManager* playerManager;
+    PlaylistManager* handler;
+    PlayerManager* playerManager;
     PresetRegistry* presetRegistry;
-    Core::Library::SortingRegistry* sortRegistry;
+    SortingRegistry* sortRegistry;
     TrackSelectionController* selectionController;
-    Utils::SettingsManager* settings;
+    SettingsManager* settings;
 
-    Core::Playlist::Playlist* currentPlaylist{nullptr};
+    Playlist* currentPlaylist{nullptr};
 
     std::map<int, QUndoStack> histories;
 
-    Private(PlaylistController* self, Core::Playlist::PlaylistManager* handler,
-            Core::Player::PlayerManager* playerManager, PresetRegistry* presetRegistry,
-            Core::Library::SortingRegistry* sortRegistry, TrackSelectionController* selectionController,
-            Utils::SettingsManager* settings)
+    Private(PlaylistController* self, PlaylistManager* handler, PlayerManager* playerManager,
+            PresetRegistry* presetRegistry, SortingRegistry* sortRegistry,
+            TrackSelectionController* selectionController, SettingsManager* settings)
         : self{self}
         , handler{handler}
         , playerManager{playerManager}
@@ -62,16 +61,16 @@ struct PlaylistController::Private
 
     void restoreLastPlaylist()
     {
-        const int lastId = settings->value<Settings::LastPlaylistId>();
+        const int lastId = settings->value<Settings::Gui::LastPlaylistId>();
         if(lastId >= 0) {
             if(auto* playlist = handler->playlistById(lastId)) {
                 currentPlaylist = playlist;
-                QMetaObject::invokeMethod(self, "currentPlaylistChanged", Q_ARG(Core::Playlist::Playlist*, playlist));
+                QMetaObject::invokeMethod(self, "currentPlaylistChanged", Q_ARG(Playlist*, playlist));
             }
         }
     }
 
-    void handlePlaylistUpdated(Core::Playlist::Playlist* playlist)
+    void handlePlaylistUpdated(Playlist* playlist)
     {
         if(playlist) {
             histories.erase(playlist->id());
@@ -81,7 +80,7 @@ struct PlaylistController::Private
         }
     }
 
-    void handlePlaylistRemoved(const Core::Playlist::Playlist* playlist) const
+    void handlePlaylistRemoved(const Playlist* playlist) const
     {
         if(currentPlaylist == playlist) {
             const int nextIndex = playlist->index() <= 1 ? 0 : playlist->index() - 1;
@@ -92,38 +91,35 @@ struct PlaylistController::Private
     }
 };
 
-PlaylistController::PlaylistController(Core::Playlist::PlaylistManager* handler,
-                                       Core::Player::PlayerManager* playerManager, PresetRegistry* presetRegistry,
-                                       Core::Library::SortingRegistry* sortRegistry,
-                                       TrackSelectionController* selectionController, Utils::SettingsManager* settings,
+PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* playerManager,
+                                       PresetRegistry* presetRegistry, SortingRegistry* sortRegistry,
+                                       TrackSelectionController* selectionController, SettingsManager* settings,
                                        QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this, handler, playerManager, presetRegistry, sortRegistry, selectionController,
                                   settings)}
 {
-    QObject::connect(handler, &Core::Playlist::PlaylistManager::playlistsPopulated, this,
-                     [this]() { p->restoreLastPlaylist(); });
-    QObject::connect(handler, &Core::Playlist::PlaylistManager::playlistTracksChanged, this,
-                     [this](Core::Playlist::Playlist* playlist) { p->handlePlaylistUpdated(playlist); });
-    QObject::connect(handler, &Core::Playlist::PlaylistManager::playlistRemoved, this,
-                     [this](const Core::Playlist::Playlist* playlist) { p->handlePlaylistRemoved(playlist); });
-    QObject::connect(handler, &Core::Playlist::PlaylistManager::playlistRenamed, this,
-                     [this](Core::Playlist::Playlist* playlist) { p->handlePlaylistUpdated(playlist); });
+    QObject::connect(handler, &PlaylistManager::playlistsPopulated, this, [this]() { p->restoreLastPlaylist(); });
+    QObject::connect(handler, &PlaylistManager::playlistTracksChanged, this,
+                     [this](Playlist* playlist) { p->handlePlaylistUpdated(playlist); });
+    QObject::connect(handler, &PlaylistManager::playlistRemoved, this,
+                     [this](const Playlist* playlist) { p->handlePlaylistRemoved(playlist); });
+    QObject::connect(handler, &PlaylistManager::playlistRenamed, this,
+                     [this](Playlist* playlist) { p->handlePlaylistUpdated(playlist); });
 
-    QObject::connect(playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
+    QObject::connect(playerManager, &PlayerManager::currentTrackChanged, this,
                      &PlaylistController::currentTrackChanged);
-    QObject::connect(playerManager, &Core::Player::PlayerManager::playStateChanged, this,
-                     &PlaylistController::playStateChanged);
+    QObject::connect(playerManager, &PlayerManager::playStateChanged, this, &PlaylistController::playStateChanged);
 }
 
 PlaylistController::~PlaylistController()
 {
     if(p->currentPlaylist) {
-        p->settings->set<Settings::LastPlaylistId>(p->currentPlaylist->id());
+        p->settings->set<Settings::Gui::LastPlaylistId>(p->currentPlaylist->id());
     }
 }
 
-Core::Playlist::PlaylistManager* PlaylistController::playlistHandler() const
+PlaylistManager* PlaylistController::playlistHandler() const
 {
     return p->handler;
 }
@@ -133,7 +129,7 @@ PresetRegistry* PlaylistController::presetRegistry() const
     return p->presetRegistry;
 }
 
-Core::Library::SortingRegistry* PlaylistController::sortRegistry() const
+SortingRegistry* PlaylistController::sortRegistry() const
 {
     return p->sortRegistry;
 }
@@ -143,27 +139,27 @@ TrackSelectionController* PlaylistController::selectionController() const
     return p->selectionController;
 }
 
-const Core::Playlist::PlaylistList& PlaylistController::playlists() const
+const PlaylistList& PlaylistController::playlists() const
 {
     return p->handler->playlists();
 }
 
-Core::Track PlaylistController::currentTrack() const
+Track PlaylistController::currentTrack() const
 {
     return p->playerManager->currentTrack();
 }
 
-Core::Player::PlayState PlaylistController::playState() const
+PlayState PlaylistController::playState() const
 {
     return p->playerManager->playState();
 }
 
-Core::Playlist::Playlist* PlaylistController::currentPlaylist() const
+Playlist* PlaylistController::currentPlaylist() const
 {
     return p->currentPlaylist;
 }
 
-void PlaylistController::changeCurrentPlaylist(Core::Playlist::Playlist* playlist)
+void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
 {
     if(std::exchange(p->currentPlaylist, playlist) == playlist) {
         p->histories.erase(playlist->id());
@@ -260,6 +256,6 @@ bool PlaylistController::currentIsActive() const
 {
     return p->currentPlaylist == p->handler->activePlaylist();
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin
 
 #include "moc_playlistcontroller.cpp"

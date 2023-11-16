@@ -26,13 +26,13 @@
 constexpr auto SettingsDialogState = "Interface/SettingsDialogState";
 
 namespace {
-QString getKeyString(const Fy::Utils::SettingsEntry& setting)
+QString getKeyString(const Fooyin::SettingsEntry& setting)
 {
     return setting.group() + QStringLiteral("/") + setting.name();
 }
 } // namespace
 
-namespace Fy::Utils {
+namespace Fooyin {
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
     , m_settingsFile{new QSettings(settingsPath, QSettings::IniFormat, this)}
@@ -83,6 +83,6 @@ SettingsDialogController* SettingsManager::settingsDialog() const
 {
     return m_settingsDialog;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/settings/moc_settingsmanager.cpp"

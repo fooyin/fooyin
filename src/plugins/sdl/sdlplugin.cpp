@@ -21,15 +21,15 @@
 
 #include "sdloutput.h"
 
-namespace Fy::Sdl {
-Core::Engine::AudioOutputBuilder SdlPlugin::registerOutput()
+namespace Fooyin::Sdl {
+AudioOutputBuilder SdlPlugin::registerOutput()
 {
     return {.name = "SDL2", .creator = []() {
-                return std::make_unique<Core::Engine::SdlOutput>();
+                return std::make_unique<SdlOutput>();
             }};
 }
 
 void SdlPlugin::shutdown() { }
-} // namespace Fy::Sdl
+} // namespace Fooyin::Sdl
 
 #include "moc_sdlplugin.cpp"

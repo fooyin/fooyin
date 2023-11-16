@@ -25,7 +25,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/customisableinput.h>
-#include <utils/enumhelper.h>
+#include <utils/enum.h>
 #include <utils/expandableinputbox.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -44,28 +44,23 @@
 #include <QVBoxLayout>
 
 namespace {
-using PlaylistPreset    = Fy::Gui::Widgets::Playlist::PlaylistPreset;
-using TextBlock         = Fy::Gui::Widgets::Playlist::TextBlock;
-using TextBlockList     = Fy::Gui::Widgets::Playlist::TextBlockList;
-using CustomisableInput = Fy::Gui::Widgets::CustomisableInput;
-
-void setupInputBox(const TextBlock& preset, CustomisableInput* block)
+void setupInputBox(const Fooyin::TextBlock& preset, Fooyin::CustomisableInput* block)
 {
     block->setText(preset.text);
     block->setFont(preset.font);
     block->setColour(preset.colour);
 
-    Fy::Gui::Widgets::CustomisableInput::State state;
+    Fooyin::CustomisableInput::State state;
     if(preset.colourChanged) {
-        state |= CustomisableInput::ColourChanged;
+        state |= Fooyin::CustomisableInput::ColourChanged;
     }
     if(preset.fontChanged) {
-        state |= CustomisableInput::FontChanged;
+        state |= Fooyin::CustomisableInput::FontChanged;
     }
     block->setState(state);
 }
 
-void updateTextBlock(const CustomisableInput* presetInput, TextBlock& textBlock)
+void updateTextBlock(const Fooyin::CustomisableInput* presetInput, Fooyin::TextBlock& textBlock)
 {
     textBlock.text   = presetInput->text();
     textBlock.font   = presetInput->font();
@@ -73,18 +68,18 @@ void updateTextBlock(const CustomisableInput* presetInput, TextBlock& textBlock)
 
     auto state = presetInput->state();
 
-    textBlock.fontChanged   = state & CustomisableInput::FontChanged;
-    textBlock.colourChanged = state & CustomisableInput::ColourChanged;
+    textBlock.fontChanged   = state & Fooyin::CustomisableInput::FontChanged;
+    textBlock.colourChanged = state & Fooyin::CustomisableInput::ColourChanged;
 }
 
-void updateTextBlocks(const Fy::Utils::ExpandableInputList& presetInputs, TextBlockList& textBlocks)
+void updateTextBlocks(const Fooyin::ExpandableInputList& presetInputs, Fooyin::TextBlockList& textBlocks)
 {
     textBlocks.clear();
 
     for(const auto& input : presetInputs) {
         if(!input->text().isEmpty()) {
-            if(auto presetInput = qobject_cast<Fy::Gui::Widgets::CustomisableInput*>(input)) {
-                TextBlock block;
+            if(auto presetInput = qobject_cast<Fooyin::CustomisableInput*>(input)) {
+                Fooyin::TextBlock block;
                 updateTextBlock(presetInput, block);
                 textBlocks.emplace_back(block);
             }
@@ -92,14 +87,14 @@ void updateTextBlocks(const Fy::Utils::ExpandableInputList& presetInputs, TextBl
     }
 }
 
-void createPresetInput(const TextBlock& block, Fy::Utils::ExpandableInputBox* box, QWidget* parent)
+void createPresetInput(const Fooyin::TextBlock& block, Fooyin::ExpandableInputBox* box, QWidget* parent)
 {
-    auto* input = new CustomisableInput(parent);
+    auto* input = new Fooyin::CustomisableInput(parent);
     setupInputBox(block, input);
     box->addInput(input);
 }
 
-void createPresetInputs(const TextBlockList& blocks, Fy::Utils::ExpandableInputBox* box, QWidget* parent)
+void createPresetInputs(const Fooyin::TextBlockList& blocks, Fooyin::ExpandableInputBox* box, QWidget* parent)
 {
     if(blocks.empty()) {
         createPresetInput({}, box, parent);
@@ -112,18 +107,18 @@ void createPresetInputs(const TextBlockList& blocks, Fy::Utils::ExpandableInputB
 }
 } // namespace
 
-namespace Fy::Gui::Settings {
-class ExpandableGroupBox : public Utils::ExpandableInput
+namespace Fooyin {
+class ExpandableGroupBox : public ExpandableInput
 {
     Q_OBJECT
 
 public:
     explicit ExpandableGroupBox(int rowHeight, QWidget* parent = nullptr)
-        : ExpandableInput{Utils::ExpandableInput::CustomWidget, parent}
+        : ExpandableInput{ExpandableInput::CustomWidget, parent}
         , m_groupBox{new QGroupBox(this)}
         , m_rowHeight{new QSpinBox(this)}
-        , m_leftBox{new Utils::ExpandableInputBox(tr("Left-aligned text: "), ExpandableInput::CustomWidget, this)}
-        , m_rightBox{new Utils::ExpandableInputBox(tr("Right-aligned text: "), ExpandableInput::CustomWidget, this)}
+        , m_leftBox{new ExpandableInputBox(tr("Left-aligned text: "), ExpandableInput::CustomWidget, this)}
+        , m_rightBox{new ExpandableInputBox(tr("Right-aligned text: "), ExpandableInput::CustomWidget, this)}
     {
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
@@ -156,12 +151,12 @@ public:
         addInput(preset, m_rightBox);
     }
 
-    Utils::ExpandableInputList leftBlocks() const
+    ExpandableInputList leftBlocks() const
     {
         return m_leftBox->blocks();
     }
 
-    Utils::ExpandableInputList rightBlocks() const
+    ExpandableInputList rightBlocks() const
     {
         return m_rightBox->blocks();
     }
@@ -172,7 +167,7 @@ public:
     }
 
 private:
-    void addInput(const TextBlock& preset, Utils::ExpandableInputBox* box)
+    void addInput(const TextBlock& preset, ExpandableInputBox* box)
     {
         auto* block = new CustomisableInput(this);
         block->setText(preset.text);
@@ -193,12 +188,11 @@ private:
 
     QGroupBox* m_groupBox;
     QSpinBox* m_rowHeight;
-    Utils::ExpandableInputBox* m_leftBox;
-    Utils::ExpandableInputBox* m_rightBox;
+    ExpandableInputBox* m_leftBox;
+    ExpandableInputBox* m_rightBox;
 };
 
-void createGroupPresetInputs(const Widgets::Playlist::SubheaderRow& subheader, Fy::Utils::ExpandableInputBox* box,
-                             QWidget* parent)
+void createGroupPresetInputs(const SubheaderRow& subheader, ExpandableInputBox* box, QWidget* parent)
 {
     if(!subheader.isValid()) {
         return;
@@ -227,14 +221,13 @@ void createGroupPresetInputs(const Widgets::Playlist::SubheaderRow& subheader, F
     box->addInput(input);
 }
 
-void updateGroupTextBlocks(const Fy::Utils::ExpandableInputList& presetInputs,
-                           Fy::Gui::Widgets::Playlist::SubheaderRows& textBlocks)
+void updateGroupTextBlocks(const ExpandableInputList& presetInputs, SubheaderRows& textBlocks)
 {
     textBlocks.clear();
 
     for(const auto& input : presetInputs) {
         if(auto presetInput = qobject_cast<ExpandableGroupBox*>(input)) {
-            Widgets::Playlist::SubheaderRow block;
+            SubheaderRow block;
 
             auto leftBlocks  = presetInput->leftBlocks();
             auto rightBlocks = presetInput->rightBlocks();
@@ -248,11 +241,10 @@ void updateGroupTextBlocks(const Fy::Utils::ExpandableInputList& presetInputs,
     }
 }
 
-class PlaylistPresetsPageWidget : public Utils::SettingsPageWidget
+class PlaylistPresetsPageWidget : public SettingsPageWidget
 {
 public:
-    explicit PlaylistPresetsPageWidget(Widgets::Playlist::PresetRegistry* presetRegistry,
-                                       Utils::SettingsManager* settings);
+    explicit PlaylistPresetsPageWidget(PresetRegistry* presetRegistry, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -271,22 +263,22 @@ public:
     void clearBlocks();
 
 private:
-    Widgets::Playlist::PresetRegistry* m_presetRegistry;
-    Utils::SettingsManager* m_settings;
+    PresetRegistry* m_presetRegistry;
+    SettingsManager* m_settings;
 
     QComboBox* m_presetBox;
     QTabWidget* m_presetTabs;
 
-    Utils::ExpandableInputBox* m_headerTitle;
-    Utils::ExpandableInputBox* m_headerSubtitle;
-    Utils::ExpandableInputBox* m_headerSideText;
-    Utils::ExpandableInputBox* m_headerInfo;
+    ExpandableInputBox* m_headerTitle;
+    ExpandableInputBox* m_headerSubtitle;
+    ExpandableInputBox* m_headerSideText;
+    ExpandableInputBox* m_headerInfo;
     QSpinBox* m_headerRowHeight;
 
-    Utils::ExpandableInputBox* m_subHeaders;
+    ExpandableInputBox* m_subHeaders;
 
-    Utils::ExpandableInputBox* m_trackLeftText;
-    Utils::ExpandableInputBox* m_trackRightText;
+    ExpandableInputBox* m_trackLeftText;
+    ExpandableInputBox* m_trackRightText;
     QSpinBox* m_trackRowHeight;
 
     QCheckBox* m_showCover;
@@ -299,8 +291,7 @@ private:
     QPushButton* m_clonePreset;
 };
 
-PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRegistry* presetRegistry,
-                                                     Utils::SettingsManager* settings)
+PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegistry, SettingsManager* settings)
     : m_presetRegistry{presetRegistry}
     , m_settings{settings}
     , m_presetBox{new QComboBox(this)}
@@ -329,17 +320,17 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     auto* headerWidget = new QWidget();
     auto* headerLayout = new QGridLayout(headerWidget);
 
-    const auto inputAttributes = Utils::ExpandableInput::CustomWidget;
+    const auto inputAttributes = ExpandableInput::CustomWidget;
 
-    m_headerTitle    = new Utils::ExpandableInputBox(tr("Title: "), inputAttributes, this);
-    m_headerSubtitle = new Utils::ExpandableInputBox(tr("Subtitle: "), inputAttributes, this);
-    m_headerSideText = new Utils::ExpandableInputBox(tr("Side text: "), inputAttributes, this);
-    m_headerInfo     = new Utils::ExpandableInputBox(tr("Info: "), inputAttributes, this);
+    m_headerTitle    = new ExpandableInputBox(tr("Title: "), inputAttributes, this);
+    m_headerSubtitle = new ExpandableInputBox(tr("Subtitle: "), inputAttributes, this);
+    m_headerSideText = new ExpandableInputBox(tr("Side text: "), inputAttributes, this);
+    m_headerInfo     = new ExpandableInputBox(tr("Info: "), inputAttributes, this);
 
-    m_headerTitle->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
-    m_headerSideText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
-    m_headerSideText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
-    m_headerInfo->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
+    m_headerTitle->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
+    m_headerSideText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
+    m_headerSideText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
+    m_headerInfo->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
 
     auto* headerRowHeight = new QLabel(tr("Row height: "), this);
 
@@ -360,9 +351,9 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
     auto* subheaderWidget = new QWidget();
     auto* subheaderLayout = new QGridLayout(subheaderWidget);
 
-    m_subHeaders = new Utils::ExpandableInputBox(tr("Subheaders: "), inputAttributes, this);
+    m_subHeaders = new ExpandableInputBox(tr("Subheaders: "), inputAttributes, this);
     m_subHeaders->setInputWidget([](QWidget* parent) {
-        Widgets::Playlist::SubheaderRow subheader;
+        SubheaderRow subheader;
         auto* groupBox = new ExpandableGroupBox(subheader.rowHeight, parent);
         groupBox->addLeftInput({});
         groupBox->addRightInput({});
@@ -380,10 +371,10 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(Widgets::Playlist::PresetRe
 
     auto* trackRowHeight = new QLabel(tr("Row height: "), this);
 
-    m_trackLeftText = new Utils::ExpandableInputBox(tr("Left-aligned text: "), inputAttributes, this);
-    m_trackLeftText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
-    m_trackRightText = new Utils::ExpandableInputBox(tr("Right-aligned text: "), inputAttributes, this);
-    m_trackRightText->setInputWidget([](QWidget* parent) { return new Widgets::CustomisableInput(parent); });
+    m_trackLeftText = new ExpandableInputBox(tr("Left-aligned text: "), inputAttributes, this);
+    m_trackLeftText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
+    m_trackRightText = new ExpandableInputBox(tr("Right-aligned text: "), inputAttributes, this);
+    m_trackRightText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
 
     trackLayout->addWidget(trackRowHeight, 0, 0);
     trackLayout->addWidget(m_trackRowHeight, 0, 1);
@@ -419,7 +410,7 @@ void PlaylistPresetsPageWidget::apply()
 
 void PlaylistPresetsPageWidget::reset()
 {
-    m_settings->reset<Settings::PlaylistPresets>();
+    m_settings->reset<Settings::Gui::PlaylistPresets>();
 
     m_presetRegistry->loadItems();
     populatePresets();
@@ -448,7 +439,7 @@ void PlaylistPresetsPageWidget::newPreset()
         = QInputDialog::getText(this, tr("Add Preset"), tr("Preset Name:"), QLineEdit::Normal, preset.name, &success);
 
     if(success && !text.isEmpty()) {
-        preset.name = text;
+        preset.name                      = text;
         const PlaylistPreset addedPreset = m_presetRegistry->addItem(preset);
         if(addedPreset.isValid()) {
             m_presetBox->addItem(addedPreset.name, QVariant::fromValue(addedPreset));
@@ -462,8 +453,8 @@ void PlaylistPresetsPageWidget::renamePreset()
     auto preset = m_presetBox->currentData().value<PlaylistPreset>();
 
     bool success{false};
-    const QString text
-        = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name:"), QLineEdit::Normal, preset.name, &success);
+    const QString text = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name:"), QLineEdit::Normal,
+                                               preset.name, &success);
 
     if(success && !text.isEmpty()) {
         preset.name = text;
@@ -570,15 +561,14 @@ void PlaylistPresetsPageWidget::clearBlocks()
     m_trackRightText->clearBlocks();
 }
 
-PlaylistPresetsPage::PlaylistPresetsPage(Widgets::Playlist::PresetRegistry* presetRegistry,
-                                         Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+PlaylistPresetsPage::PlaylistPresetsPage(PresetRegistry* presetRegistry, SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::PlaylistPresets);
     setName(tr("Presets"));
     setCategory({tr("Playlist"), tr("Presets")});
     setWidgetCreator([presetRegistry, settings] { return new PlaylistPresetsPageWidget(presetRegistry, settings); });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin
 
 #include "playlistpresetspage.moc"

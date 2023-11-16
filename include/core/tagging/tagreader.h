@@ -29,10 +29,9 @@
 
 class QPixmap;
 
-namespace Fy::Core {
+namespace Fooyin {
 class Track;
 
-namespace Tagging {
 class FYCORE_EXPORT TagReader
 {
 public:
@@ -53,5 +52,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Tagging
-} // namespace Fy::Core
+} // namespace Fooyin

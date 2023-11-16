@@ -26,7 +26,7 @@
 
 #include <map>
 
-namespace Fy::Core {
+namespace Fooyin {
 using ExtraTags = std::map<QString, QStringList>;
 
 class FYCORE_EXPORT Track
@@ -168,9 +168,9 @@ using TrackIdMap   = std::unordered_map<int, Track>;
 using TrackPathMap = std::unordered_map<QString, Track>;
 
 size_t qHash(const Track& track);
-FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fy::Core::TrackList& tracks);
-FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fy::Core::TrackList& tracks);
+FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackList& tracks);
+FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fooyin::TrackList& tracks);
 
 FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const ExtraTags& tags);
 FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, ExtraTags& ExtraTags);
-} // namespace Fy::Core
+} // namespace Fooyin

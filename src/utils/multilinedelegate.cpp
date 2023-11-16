@@ -22,7 +22,7 @@
 #include <QPainter>
 #include <QTextEdit>
 
-namespace Fy::Utils {
+namespace Fooyin {
 MultiLineEditDelegate::MultiLineEditDelegate(QWidget* parent)
     : QStyledItemDelegate{parent}
 { }
@@ -66,6 +66,6 @@ QWidget* MultiLineEditDelegate::createEditor(QWidget* parent, const QStyleOption
     editor->setFixedSize(size);
     return editor;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_multilinedelegate.cpp"

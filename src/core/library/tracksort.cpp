@@ -22,24 +22,26 @@
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 
-namespace Fy::Core::Library::Sorting {
-Scripting::ParsedScript parseScript(const QString& sort)
+namespace {
+Fooyin::ParsedScript parseScript(const QString& sort)
 {
-    Scripting::Registry registry;
-    Scripting::Parser parser{&registry};
+    static Fooyin::ScriptRegistry registry;
+    static Fooyin::ScriptParser parser{&registry};
 
     return parser.parse(sort);
 }
+} // namespace
 
+namespace Fooyin::Sorting {
 TrackList calcSortFields(const QString& sort, const TrackList& tracks)
 {
     return calcSortFields(parseScript(sort), tracks);
 }
 
-TrackList calcSortFields(const Scripting::ParsedScript& sortScript, const TrackList& tracks)
+TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks)
 {
-    Scripting::Registry registry;
-    Scripting::Parser parser{&registry};
+    static ScriptRegistry registry;
+    static ScriptParser parser{&registry};
 
     TrackList calcTracks{tracks};
     for(Track& track : calcTracks) {
@@ -66,9 +68,9 @@ TrackList calcSortTracks(const QString& sort, const TrackList& tracks)
     return calcSortTracks(parseScript(sort), tracks);
 }
 
-TrackList calcSortTracks(const Scripting::ParsedScript& sortScript, const TrackList& tracks)
+TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks)
 {
     const TrackList calcTracks = calcSortFields(sortScript, tracks);
     return sortTracks(calcTracks);
 }
-} // namespace Fy::Core::Library::Sorting
+} // namespace Fooyin::Sorting

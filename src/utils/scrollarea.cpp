@@ -19,7 +19,7 @@
 
 #include "scrollarea.h"
 
-namespace Fy::Utils {
+namespace Fooyin {
 ScrollArea::ScrollArea(QWidget* parent)
     : QScrollArea{parent}
 {
@@ -82,6 +82,6 @@ int ScrollArea::scrollBarWidth() const
     }
     return list.first()->sizeHint().width();
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "moc_scrollarea.cpp"

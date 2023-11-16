@@ -24,7 +24,7 @@
 class QHBoxLayout;
 class QLabel;
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 class Dummy : public FyWidget
 {
     Q_OBJECT
@@ -38,4 +38,4 @@ private:
     QHBoxLayout* m_layout;
     QLabel* m_label;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

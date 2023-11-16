@@ -28,7 +28,7 @@
 #include <QLineEdit>
 #include <QMenu>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct CustomisableInput::Private
 {
     CustomisableInput* self;
@@ -148,6 +148,6 @@ void CustomisableInput::resetState()
     p->state &= ~FontChanged;
     p->state &= ~ColourChanged;
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "gui/widgets/moc_customisableinput.cpp"

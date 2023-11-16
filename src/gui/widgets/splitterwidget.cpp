@@ -25,7 +25,7 @@
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
-#include <utils/enumhelper.h>
+#include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
@@ -36,8 +36,8 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-Fy::Utils::ActionContainer* createNewMenu(Fy::Utils::ActionManager* actionManager, Fy::Gui::Widgets::FyWidget* parent,
-                                          const QString& title)
+Fooyin::ActionContainer* createNewMenu(Fooyin::ActionManager* actionManager, Fooyin::FyWidget* parent,
+                                       const QString& title)
 {
     auto id       = parent->id().append(title);
     auto* newMenu = actionManager->createMenu(id);
@@ -46,7 +46,7 @@ Fy::Utils::ActionContainer* createNewMenu(Fy::Utils::ActionManager* actionManage
 }
 } // namespace
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 class SplitterHandle : public QSplitterHandle
 {
     Q_OBJECT
@@ -79,7 +79,7 @@ class Splitter : public QSplitter
     Q_OBJECT
 
 public:
-    explicit Splitter(Qt::Orientation type, Utils::SettingsManager* settings, QWidget* parent = nullptr)
+    explicit Splitter(Qt::Orientation type, SettingsManager* settings, QWidget* parent = nullptr)
         : QSplitter{type, parent}
         , m_settings{settings}
     {
@@ -91,21 +91,21 @@ protected:
     QSplitterHandle* createHandle() override
     {
         auto* handle = new SplitterHandle(orientation(), this);
-        handle->showHandle(m_settings->value<Settings::SplitterHandles>());
-        m_settings->subscribe<Settings::SplitterHandles>(handle, &SplitterHandle::showHandle);
+        handle->showHandle(m_settings->value<Settings::Gui::SplitterHandles>());
+        m_settings->subscribe<Settings::Gui::SplitterHandles>(handle, &SplitterHandle::showHandle);
         return handle;
     };
 
 private:
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 };
 
 struct SplitterWidget::Private
 {
     SplitterWidget* self;
 
-    Utils::SettingsManager* settings;
-    Utils::ActionManager* actionManager;
+    SettingsManager* settings;
+    ActionManager* actionManager;
     WidgetProvider* widgetProvider;
 
     Splitter* splitter;
@@ -117,8 +117,8 @@ struct SplitterWidget::Private
     int widgetCount{0};
     int baseWidgetCount{0};
 
-    Private(SplitterWidget* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-            Utils::SettingsManager* settings)
+    Private(SplitterWidget* self, ActionManager* actionManager, WidgetProvider* widgetProvider,
+            SettingsManager* settings)
         : self{self}
         , settings{settings}
         , actionManager{actionManager}
@@ -165,8 +165,8 @@ struct SplitterWidget::Private
     }
 };
 
-SplitterWidget::SplitterWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                               Utils::SettingsManager* settings, QWidget* parent)
+SplitterWidget::SplitterWidget(ActionManager* actionManager, WidgetProvider* widgetProvider, SettingsManager* settings,
+                               QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
     , p{std::make_unique<Private>(this, actionManager, widgetProvider, settings)}
 {
@@ -268,20 +268,20 @@ void SplitterWidget::removeWidget(FyWidget* widget)
 
 QString SplitterWidget::name() const
 {
-    return Utils::EnumHelper::toString(p->splitter->orientation()) + u" Splitter"_s;
+    return Utils::Enum::toString(p->splitter->orientation()) + u" Splitter"_s;
 }
 
 QString SplitterWidget::layoutName() const
 {
-    return u"Splitter"_s + Utils::EnumHelper::toString(p->splitter->orientation());
+    return u"Splitter"_s + Utils::Enum::toString(p->splitter->orientation());
 }
 
-void SplitterWidget::layoutEditingMenu(Utils::ActionContainer* menu)
+void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
 {
     auto* changeSplitter = new QAction(tr("Change Splitter"), this);
     QObject::connect(changeSplitter, &QAction::triggered, this, [this] {
         setOrientation(p->splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
-        setObjectName(Utils::EnumHelper::toString(p->splitter->orientation()) + u" Splitter"_s);
+        setObjectName(Utils::Enum::toString(p->splitter->orientation()) + u" Splitter"_s);
     });
     menu->addAction(changeSplitter);
 
@@ -323,7 +323,7 @@ void SplitterWidget::loadLayout(const QJsonObject& object)
 
     p->checkShowDummy();
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "gui/moc_splitterwidget.cpp"
 #include "splitterwidget.moc"

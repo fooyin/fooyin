@@ -28,7 +28,7 @@
 
 class QAction;
 
-namespace Fy::Utils {
+namespace Fooyin {
 class Id;
 
 using ShortcutList = QList<QKeySequence>;
@@ -40,8 +40,8 @@ class FYUTILS_EXPORT Command : public QObject
 public:
     [[nodiscard]] virtual Id id() const = 0;
 
-    [[nodiscard]] virtual QAction* action() const                                   = 0;
-    [[nodiscard]] virtual QAction* actionForContext(const Utils::Id& context) const = 0;
+    [[nodiscard]] virtual QAction* action() const                            = 0;
+    [[nodiscard]] virtual QAction* actionForContext(const Id& context) const = 0;
 
     [[nodiscard]] virtual Context context() const = 0;
 
@@ -68,4 +68,4 @@ signals:
     void shortcutChanged();
     void activeStateChanged();
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

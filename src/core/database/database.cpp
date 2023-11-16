@@ -19,7 +19,7 @@
 
 #include "database.h"
 
-#include "query.h"
+#include "databasequery.h"
 
 #include <core/coresettings.h>
 #include <utils/paths.h>
@@ -27,19 +27,18 @@
 #include <utils/utils.h>
 
 #include <QFile>
-#include <QSqlQuery>
 
 using namespace Qt::Literals::StringLiterals;
 
 static constexpr auto DatabaseVersion = "0.1.0";
 
-namespace Fy::Core::DB {
-Database::Database(Utils::SettingsManager* settings)
+namespace Fooyin {
+Database::Database(SettingsManager* settings)
     : Database{Utils::sharePath(), u"fooyin.db"_s, settings}
 { }
 
-Database::Database(const QString& directory, const QString& filename, Utils::SettingsManager* settings)
-    : Module{directory + "/" + filename}
+Database::Database(const QString& directory, const QString& filename, SettingsManager* settings)
+    : DatabaseModule{directory + "/" + filename}
     , m_settings{settings}
 {
     if(!Utils::File::exists(directory)) {
@@ -62,8 +61,8 @@ Database::Database(const QString& directory, const QString& filename, Utils::Set
 
 bool Database::update()
 {
-    if(m_settings->value<Settings::DatabaseVersion>() < DatabaseVersion) {
-        m_settings->set<Settings::DatabaseVersion>(DatabaseVersion);
+    if(m_settings->value<Settings::Core::DatabaseVersion>() < DatabaseVersion) {
+        m_settings->set<Settings::Core::DatabaseVersion>(DatabaseVersion);
         return true;
     }
     return false;
@@ -182,12 +181,12 @@ void Database::rollback()
 
 bool Database::checkInsertTable(const QString& tableName, const QString& createString)
 {
-    Query q(this);
+    DatabaseQuery q(this);
     const QString queryText = "SELECT * FROM " + tableName + ";";
     q.prepareQuery(queryText);
 
     if(!q.execQuery()) {
-        Query q2(this);
+        DatabaseQuery q2(this);
         q2.prepareQuery(createString);
 
         if(!q2.execQuery()) {
@@ -200,7 +199,7 @@ bool Database::checkInsertTable(const QString& tableName, const QString& createS
 
 bool Database::checkInsertIndex(const QString& indexName, const QString& createString)
 {
-    Query q(this);
+    DatabaseQuery q(this);
     q.prepareQuery(createString);
 
     if(!q.execQuery()) {
@@ -209,4 +208,4 @@ bool Database::checkInsertIndex(const QString& indexName, const QString& createS
     }
     return true;
 }
-} // namespace Fy::Core::DB
+} // namespace Fooyin

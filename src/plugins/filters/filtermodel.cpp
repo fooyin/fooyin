@@ -41,11 +41,11 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     QByteArray result;
     QDataStream stream(&result, QIODevice::WriteOnly);
 
-    Fy::Core::TrackList tracks;
+    Fooyin::TrackList tracks;
     tracks.reserve(indexes.size());
 
     for(const QModelIndex& index : indexes) {
-        std::ranges::copy(index.data(Fy::Filters::FilterItemRole::Tracks).value<Fy::Core::TrackList>(),
+        std::ranges::copy(index.data(Fooyin::Filters::FilterItem::Tracks).value<Fooyin::TrackList>(),
                           std::back_inserter(tracks));
     }
 
@@ -55,7 +55,7 @@ QByteArray saveTracks(const QModelIndexList& indexes)
 }
 } // namespace
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 struct FilterModel::Private
 {
     FilterModel* self;
@@ -145,7 +145,7 @@ FilterModel::FilterModel(const FilterField& field, QObject* parent)
     QObject::connect(&p->populator, &FilterPopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
 
-    QObject::connect(&p->populator, &Utils::Worker::finished, this, [this]() {
+    QObject::connect(&p->populator, &Worker::finished, this, [this]() {
         p->populator.stopThread();
         p->populatorThread.quit();
     });
@@ -200,16 +200,16 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
             const QString& name = item->title();
             return !name.isEmpty() ? name : QStringLiteral("?");
         }
-        case(FilterItemRole::Title): {
+        case(FilterItem::Title): {
             return item->title();
         }
-        case(FilterItemRole::Tracks): {
+        case(FilterItem::Tracks): {
             return QVariant::fromValue(item->tracks());
         }
-        case(FilterItemRole::Sorting): {
+        case(FilterItem::Sorting): {
             return item->sortTitle();
         }
-        case(FilterItemRole::AllNode): {
+        case(FilterItem::AllNode): {
             return item->isAllNode();
         }
         case(Qt::SizeHintRole): {
@@ -248,15 +248,15 @@ QHash<int, QByteArray> FilterModel::roleNames() const
 {
     auto roles = QAbstractItemModel::roleNames();
 
-    roles.insert(+FilterItemRole::Title, "Title");
-    roles.insert(+FilterItemRole::Sorting, "Sorting");
+    roles.insert(+FilterItem::Title, "Title");
+    roles.insert(+FilterItem::Sorting, "Sorting");
 
     return roles;
 }
 
 QStringList FilterModel::mimeTypes() const
 {
-    return {Gui::Constants::Mime::TrackList};
+    return {Constants::Mime::TrackList};
 }
 
 Qt::DropActions FilterModel::supportedDragActions() const
@@ -267,7 +267,7 @@ Qt::DropActions FilterModel::supportedDragActions() const
 QMimeData* FilterModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    mimeData->setData(Fy::Gui::Constants::Mime::TrackList, saveTracks(indexes));
+    mimeData->setData(Constants::Mime::TrackList, saveTracks(indexes));
     return mimeData;
 }
 
@@ -289,7 +289,7 @@ QMimeData* FilterModel::mimeData(const QModelIndexList& indexes) const
 //    return indexes;
 //}
 
-void FilterModel::addTracks(const Core::TrackList& tracks)
+void FilterModel::addTracks(const TrackList& tracks)
 {
     p->populatorThread.start();
 
@@ -297,17 +297,17 @@ void FilterModel::addTracks(const Core::TrackList& tracks)
                               [this, tracks] { p->populator.run(p->field.field, p->field.sortField, tracks); });
 }
 
-void FilterModel::updateTracks(const Core::TrackList& tracks)
+void FilterModel::updateTracks(const TrackList& tracks)
 {
     removeTracks(tracks);
     addTracks(tracks);
 }
 
-void FilterModel::removeTracks(const Core::TrackList& tracks)
+void FilterModel::removeTracks(const TrackList& tracks)
 {
     std::set<FilterItem*> items;
 
-    for(const Core::Track& track : tracks) {
+    for(const Track& track : tracks) {
         const int id = track.id();
         if(p->trackParents.contains(id)) {
             const auto trackNodes = p->trackParents[id];
@@ -333,7 +333,7 @@ void FilterModel::removeTracks(const Core::TrackList& tracks)
     }
 }
 
-void FilterModel::reset(const FilterField& field, const Core::TrackList& tracks)
+void FilterModel::reset(const FilterField& field, const TrackList& tracks)
 {
     if(p->populatorThread.isRunning()) {
         p->populator.stopThread();
@@ -349,4 +349,4 @@ void FilterModel::reset(const FilterField& field, const Core::TrackList& tracks)
     QMetaObject::invokeMethod(&p->populator,
                               [this, tracks] { p->populator.run(p->field.field, p->field.sortField, tracks); });
 }
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

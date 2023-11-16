@@ -28,20 +28,20 @@
 constexpr int InitialBatchSize = 3000;
 constexpr int BatchSize        = 4000;
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct LibraryTreePopulator::Private
 {
     LibraryTreePopulator* populator;
 
-    Core::Scripting::Registry registry;
-    Core::Scripting::Parser parser;
+    ScriptRegistry registry;
+    ScriptParser parser;
 
     QString currentGrouping;
-    Core::Scripting::ParsedScript script;
+    ParsedScript script;
 
     LibraryTreeItem root;
     PendingTreeData data;
-    Core::TrackList pendingTracks;
+    TrackList pendingTracks;
 
     explicit Private(LibraryTreePopulator* populator)
         : populator{populator}
@@ -64,7 +64,7 @@ struct LibraryTreePopulator::Private
         return child;
     }
 
-    void iterateTrack(const Core::Track& track)
+    void iterateTrack(const Track& track)
     {
         LibraryTreeItem* parent = &root;
 
@@ -73,7 +73,7 @@ struct LibraryTreePopulator::Private
             return;
         }
 
-        const QStringList values = field.split(Core::Constants::Separator, Qt::SkipEmptyParts);
+        const QStringList values = field.split(Constants::Separator, Qt::SkipEmptyParts);
         for(const QString& value : values) {
             if(value.isNull()) {
                 continue;
@@ -103,7 +103,7 @@ struct LibraryTreePopulator::Private
 
         auto tracksBatch = std::ranges::views::take(pendingTracks, size);
 
-        for(const Core::Track& track : tracksBatch) {
+        for(const Track& track : tracksBatch) {
             if(!populator->mayRun()) {
                 return;
             }
@@ -120,7 +120,7 @@ struct LibraryTreePopulator::Private
         emit populator->populated(data);
 
         auto tracksToKeep = std::ranges::views::drop(pendingTracks, size);
-        Core::TrackList tempTracks;
+        TrackList tempTracks;
         std::ranges::copy(tracksToKeep, std::back_inserter(tempTracks));
         pendingTracks = std::move(tempTracks);
 
@@ -136,13 +136,13 @@ struct LibraryTreePopulator::Private
 };
 
 LibraryTreePopulator::LibraryTreePopulator(QObject* parent)
-    : Utils::Worker{parent}
+    : Worker{parent}
     , p{std::make_unique<Private>(this)}
 { }
 
 LibraryTreePopulator::~LibraryTreePopulator() = default;
 
-void LibraryTreePopulator::run(const QString& grouping, const Core::TrackList& tracks)
+void LibraryTreePopulator::run(const QString& grouping, const TrackList& tracks)
 {
     setState(Running);
 
@@ -157,6 +157,6 @@ void LibraryTreePopulator::run(const QString& grouping, const Core::TrackList& t
 
     setState(Idle);
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_librarytreepopulator.cpp"

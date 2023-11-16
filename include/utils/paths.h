@@ -23,10 +23,10 @@
 
 #include <QString>
 
-namespace Fy {
+namespace Fooyin {
 namespace Utils {
 FYUTILS_EXPORT QString configPath(const QString& appendPath = {});
 FYUTILS_EXPORT QString sharePath(const QString& appendPath = {});
 FYUTILS_EXPORT QString cachePath(const QString& appendPath = {});
 } // namespace Utils
-} // namespace FYUTILS_EXPORT Fy
+} // namespace FYUTILS_EXPORT Fooyin

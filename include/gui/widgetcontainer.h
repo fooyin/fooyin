@@ -21,7 +21,7 @@
 
 #include <gui/fywidget.h>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 class WidgetProvider;
 
 class WidgetContainer : public FyWidget
@@ -40,4 +40,4 @@ public:
 private:
     WidgetProvider* m_widgetProvider;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

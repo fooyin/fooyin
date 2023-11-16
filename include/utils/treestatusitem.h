@@ -23,14 +23,14 @@
 
 #include <QFont>
 
-namespace Fy::Utils {
+namespace Fooyin {
 template <class Item>
 class TreeStatusItem : public TreeItem<Item>
 {
 public:
     enum ItemStatus
     {
-        None = 0,
+        None = Qt::UserRole + 50,
         Added,
         Removed,
         Changed
@@ -72,4 +72,4 @@ public:
 private:
     ItemStatus m_status{None};
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

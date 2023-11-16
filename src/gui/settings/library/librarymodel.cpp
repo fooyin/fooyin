@@ -21,37 +21,36 @@
 
 #include <core/library/librarymanager.h>
 
-#include <utils/enumhelper.h>
+#include <utils/enum.h>
 
 #include <QFont>
 #include <QSize>
 
-namespace Fy::Gui::Settings {
+namespace Fooyin {
 LibraryItem::LibraryItem()
     : LibraryItem{{}, nullptr}
 { }
 
-LibraryItem::LibraryItem(Core::Library::LibraryInfo info, LibraryItem* parent)
+LibraryItem::LibraryItem(LibraryInfo info, LibraryItem* parent)
     : TreeStatusItem{parent}
     , m_info{std::move(info)}
 { }
 
-Core::Library::LibraryInfo LibraryItem::info() const
+LibraryInfo LibraryItem::info() const
 {
     return m_info;
 }
 
-void LibraryItem::changeInfo(const Core::Library::LibraryInfo& info)
+void LibraryItem::changeInfo(const LibraryInfo& info)
 {
     m_info = info;
 }
 
-LibraryModel::LibraryModel(Core::Library::LibraryManager* libraryManager, QObject* parent)
+LibraryModel::LibraryModel(LibraryManager* libraryManager, QObject* parent)
     : TableModel{parent}
     , m_libraryManager{libraryManager}
 {
-    QObject::connect(m_libraryManager, &Core::Library::LibraryManager::libraryStatusChanged, this,
-                     &LibraryModel::updateDisplay);
+    QObject::connect(m_libraryManager, &LibraryManager::libraryStatusChanged, this, &LibraryModel::updateDisplay);
 }
 
 void LibraryModel::populate()
@@ -59,7 +58,7 @@ void LibraryModel::populate()
     beginResetModel();
     reset();
 
-    const Core::Library::LibraryInfoMap& libraries = m_libraryManager->allLibraries();
+    const LibraryInfoMap& libraries = m_libraryManager->allLibraries();
 
     for(const auto& [id, library] : libraries) {
         if(id < 0) {
@@ -78,7 +77,7 @@ void LibraryModel::populate()
     endResetModel();
 }
 
-void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
+void LibraryModel::markForAddition(const LibraryInfo& info)
 {
     const bool exists   = m_nodes.contains(info.path);
     const bool isQueued = exists && m_nodes.at(info.path).status() == LibraryItem::Removed;
@@ -93,7 +92,7 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
         }
         // New library
         auto library   = m_librariesToAdd.emplace_back(info);
-        library.status = Core::Library::LibraryInfo::Status::Pending;
+        library.status = LibraryInfo::Status::Pending;
         m_nodes.emplace(library.path, LibraryItem{library, parent});
         item = &m_nodes.at(library.path);
         item->setStatus(LibraryItem::Added);
@@ -117,7 +116,7 @@ void LibraryModel::markForAddition(const Core::Library::LibraryInfo& info)
     endInsertRows();
 }
 
-void LibraryModel::markForRemoval(const Core::Library::LibraryInfo& info)
+void LibraryModel::markForRemoval(const LibraryInfo& info)
 {
     if(!m_nodes.contains(info.path)) {
         return;
@@ -138,7 +137,7 @@ void LibraryModel::markForRemoval(const Core::Library::LibraryInfo& info)
     }
 }
 
-void LibraryModel::markForChange(const Core::Library::LibraryInfo& info)
+void LibraryModel::markForChange(const LibraryInfo& info)
 {
     if(!m_nodes.contains(info.path)) {
         return;
@@ -160,8 +159,8 @@ void LibraryModel::processQueue()
     std::vector<QString> librariesToRemove;
 
     for(auto& [path, library] : m_nodes) {
-        const LibraryItem::ItemStatus status  = library.status();
-        const Core::Library::LibraryInfo info = library.info();
+        const LibraryItem::ItemStatus status = library.status();
+        const LibraryInfo info               = library.info();
 
         switch(status) {
             case(LibraryItem::Added): {
@@ -278,7 +277,7 @@ QVariant LibraryModel::data(const QModelIndex& index, int role) const
         case(2):
             return item->info().path;
         case(3):
-            return Utils::EnumHelper::toString(item->info().status);
+            return Utils::Enum::toString(item->info().status);
     }
 
     return {};
@@ -292,7 +291,7 @@ bool LibraryModel::setData(const QModelIndex& index, const QVariant& value, int 
 
     const auto* item = static_cast<LibraryItem*>(index.internalPointer());
 
-    Core::Library::LibraryInfo info = item->info();
+    LibraryInfo info = item->info();
 
     if(info.name == value.toString()) {
         return false;
@@ -316,11 +315,11 @@ void LibraryModel::reset()
     m_librariesToAdd.clear();
 }
 
-void LibraryModel::updateDisplay(const Core::Library::LibraryInfo& info)
+void LibraryModel::updateDisplay(const LibraryInfo& info)
 {
     if(m_nodes.contains(info.path)) {
         m_nodes.at(info.path).changeInfo(info);
         emit dataChanged({}, {}, {Qt::DisplayRole});
     }
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

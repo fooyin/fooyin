@@ -23,18 +23,9 @@
 
 #include <core/library/musiclibrary.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core {
-namespace DB {
 class Database;
-}
-
-namespace Library {
 struct LibraryInfo;
 
 class UnifiedMusicLibrary : public MusicLibrary
@@ -42,7 +33,7 @@ class UnifiedMusicLibrary : public MusicLibrary
     Q_OBJECT
 
 public:
-    UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database, Utils::SettingsManager* settings,
+    UnifiedMusicLibrary(LibraryManager* libraryManager, Database* database, SettingsManager* settings,
                         QObject* parent = nullptr);
     ~UnifiedMusicLibrary() override;
 
@@ -56,7 +47,7 @@ public:
 
     [[nodiscard]] TrackList tracks() const override;
 
-    void updateTrackMetadata(const Core::TrackList& tracks) override;
+    void updateTrackMetadata(const TrackList& tracks) override;
 
     void removeLibrary(int id) override;
 
@@ -64,6 +55,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Library
-} // namespace Core
-} // namespace Fy
+} // namespace Fooyin

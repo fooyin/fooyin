@@ -43,7 +43,7 @@ bool containsSearch(const QString& text, const QString& search)
 }
 
 // TODO: Support user-defined tags
-bool matchSearch(const Fy::Core::Track& track, const QString& search)
+bool matchSearch(const Fooyin::Track& track, const QString& search)
 {
     if(search.isEmpty()) {
         return true;
@@ -53,48 +53,48 @@ bool matchSearch(const Fy::Core::Track& track, const QString& search)
         || containsSearch(track.album(), search) || containsSearch(track.albumArtist(), search);
 }
 
-Fy::Core::TrackList filterTracks(const Fy::Core::TrackList& tracks, const QString& search)
+Fooyin::TrackList filterTracks(const Fooyin::TrackList& tracks, const QString& search)
 {
-    return Fy::Utils::filter(tracks, [search](const Fy::Core::Track& track) { return matchSearch(track, search); });
+    return Fooyin::Utils::filter(tracks, [search](const Fooyin::Track& track) { return matchSearch(track, search); });
 }
 } // namespace
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 struct FilterManager::Private
 {
     FilterManager* self;
 
-    Core::Library::MusicLibrary* library;
-    Gui::TrackSelectionController* trackSelection;
-    Utils::SettingsManager* settings;
+    MusicLibrary* library;
+    TrackSelectionController* trackSelection;
+    SettingsManager* settings;
 
     std::map<int, FilterWidget*> filterWidgets;
 
-    Gui::TrackAction doubleClickAction;
-    Gui::TrackAction middleClickAction;
+    TrackAction doubleClickAction;
+    TrackAction middleClickAction;
 
     FieldRegistry fieldsRegistry;
-    Core::TrackList filteredTracks;
+    TrackList filteredTracks;
     FilterStore filterStore;
     QString searchFilter;
 
-    Private(FilterManager* self, Core::Library::MusicLibrary* library, Gui::TrackSelectionController* trackSelection,
-            Utils::SettingsManager* settings)
+    Private(FilterManager* self, MusicLibrary* library, TrackSelectionController* trackSelection,
+            SettingsManager* settings)
         : self{self}
         , library{library}
         , trackSelection{trackSelection}
         , settings{settings}
-        , doubleClickAction{static_cast<Gui::TrackAction>(settings->value<Settings::FilterDoubleClick>())}
-        , middleClickAction{static_cast<Gui::TrackAction>(settings->value<Settings::FilterMiddleClick>())}
+        , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterDoubleClick>())}
+        , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterMiddleClick>())}
         , fieldsRegistry{settings}
     {
         fieldsRegistry.loadItems();
     }
 
-    void handleAction(const Gui::TrackAction& action, const QString& playlistName) const
+    void handleAction(const TrackAction& action, const QString& playlistName) const
     {
-        const bool autoSwitch = settings->value<Settings::FilterAutoSwitch>();
-        trackSelection->executeAction(action, autoSwitch ? Gui::Switch : Gui::None, playlistName);
+        const bool autoSwitch = settings->value<Settings::Filters::FilterAutoSwitch>();
+        trackSelection->executeAction(action, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None, playlistName);
     }
 
     void resetFiltersAfterIndex(int resetIndex)
@@ -146,21 +146,21 @@ struct FilterManager::Private
     {
         LibraryFilter updatedFilter{filter};
 
-        Core::TrackList sortedTracks = co_await Utils::asyncExec(
-            [&updatedFilter]() { return Core::Library::Sorting::sortTracks(updatedFilter.tracks); });
+        TrackList sortedTracks
+            = co_await Utils::asyncExec([&updatedFilter]() { return Sorting::sortTracks(updatedFilter.tracks); });
 
         trackSelection->changeSelectedTracks(sortedTracks, playlistName);
         updatedFilter.tracks = sortedTracks;
 
-        if(settings->value<Settings::FilterPlaylistEnabled>()) {
-            const QString autoPlaylist = settings->value<Settings::FilterAutoPlaylist>();
-            const bool autoSwitch      = settings->value<Settings::FilterAutoSwitch>();
+        if(settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
+            const QString autoPlaylist = settings->value<Settings::Filters::FilterAutoPlaylist>();
+            const bool autoSwitch      = settings->value<Settings::Filters::FilterAutoSwitch>();
 
-            Gui::ActionOptions options = Gui::KeepActive;
+            PlaylistAction::ActionOptions options = PlaylistAction::KeepActive;
             if(autoSwitch) {
-                options |= Gui::Switch;
+                options |= PlaylistAction::Switch;
             }
-            trackSelection->executeAction(Gui::TrackAction::SendNewPlaylist, options, autoPlaylist);
+            trackSelection->executeAction(TrackAction::SendNewPlaylist, options, autoPlaylist);
         }
 
         filterStore.updateFilter(updatedFilter);
@@ -240,7 +240,7 @@ struct FilterManager::Private
         return !filteredTracks.empty() || !searchFilter.isEmpty() || filterStore.hasActiveFilters();
     }
 
-    [[nodiscard]] Core::TrackList tracks() const
+    [[nodiscard]] TrackList tracks() const
     {
         return hasTracks() ? filteredTracks : library->tracks();
     }
@@ -254,39 +254,38 @@ struct FilterManager::Private
                 std::ranges::copy(filter.tracks, std::back_inserter(filteredTracks));
             }
             else {
-                filteredTracks
-                    = Utils::intersection<Core::Track, Core::Track::TrackHash>(filter.tracks, filteredTracks);
+                filteredTracks = Utils::intersection<Track, Track::TrackHash>(filter.tracks, filteredTracks);
             }
         }
     }
 };
 
-FilterManager::FilterManager(Core::Library::MusicLibrary* library, Gui::TrackSelectionController* trackSelection,
-                             Utils::SettingsManager* settings, QObject* parent)
+FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* trackSelection, SettingsManager* settings,
+                             QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this, library, trackSelection, settings)}
 {
-    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksAdded, this, &FilterManager::tracksAdded);
-    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksUpdated, this, &FilterManager::tracksUpdated);
-    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksDeleted, this, &FilterManager::tracksRemoved);
+    QObject::connect(p->library, &MusicLibrary::tracksAdded, this, &FilterManager::tracksAdded);
+    QObject::connect(p->library, &MusicLibrary::tracksUpdated, this, &FilterManager::tracksUpdated);
+    QObject::connect(p->library, &MusicLibrary::tracksDeleted, this, &FilterManager::tracksRemoved);
 
     const auto tracksChanged = [this]() {
         p->getFilteredTracks();
         p->resetFiltersAfterIndex(-1);
     };
 
-    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, this, tracksChanged);
-    QObject::connect(p->library, &Core::Library::MusicLibrary::tracksSorted, this, tracksChanged);
-    QObject::connect(p->library, &Core::Library::MusicLibrary::libraryChanged, this, tracksChanged);
-    QObject::connect(p->library, &Core::Library::MusicLibrary::libraryRemoved, this, tracksChanged);
+    QObject::connect(p->library, &MusicLibrary::tracksLoaded, this, tracksChanged);
+    QObject::connect(p->library, &MusicLibrary::tracksSorted, this, tracksChanged);
+    QObject::connect(p->library, &MusicLibrary::libraryChanged, this, tracksChanged);
+    QObject::connect(p->library, &MusicLibrary::libraryRemoved, this, tracksChanged);
 
     QObject::connect(&p->fieldsRegistry, &FieldRegistry::fieldChanged, this,
                      [this](const Filters::FilterField& field) { p->fieldChanged(field); });
 
-    settings->subscribe<Settings::FilterDoubleClick>(
-        this, [this](int action) { p->doubleClickAction = static_cast<Gui::TrackAction>(action); });
-    settings->subscribe<Settings::FilterMiddleClick>(
-        this, [this](int action) { p->middleClickAction = static_cast<Gui::TrackAction>(action); });
+    settings->subscribe<Settings::Filters::FilterDoubleClick>(
+        this, [this](int action) { p->doubleClickAction = static_cast<TrackAction>(action); });
+    settings->subscribe<Settings::Filters::FilterMiddleClick>(
+        this, [this](int action) { p->middleClickAction = static_cast<TrackAction>(action); });
 }
 
 FilterManager::~FilterManager() = default;
@@ -344,13 +343,13 @@ QCoro::Task<void> FilterManager::searchChanged(QString search)
     const bool reset = p->searchFilter.length() > search.length();
     p->searchFilter  = search;
 
-    Core::TrackList tracksToFilter{!reset && !p->filteredTracks.empty() ? p->filteredTracks : p->library->tracks()};
+    TrackList tracksToFilter{!reset && !p->filteredTracks.empty() ? p->filteredTracks : p->library->tracks()};
 
     p->filteredTracks
         = co_await Utils::asyncExec([&search, &tracksToFilter]() { return filterTracks(tracksToFilter, search); });
 
     p->resetFiltersAfterIndex(-1);
 }
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters
 
 #include "moc_filtermanager.cpp"

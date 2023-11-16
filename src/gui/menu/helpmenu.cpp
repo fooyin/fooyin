@@ -31,14 +31,14 @@
 namespace {
 void showAboutDialog()
 {
-    auto* aboutDialog = new Fy::Gui::AboutDialog();
+    auto* aboutDialog = new Fooyin::AboutDialog();
     QObject::connect(aboutDialog, &QDialog::finished, aboutDialog, &QObject::deleteLater);
     aboutDialog->show();
 }
 } // namespace
 
-namespace Fy::Gui {
-HelpMenu::HelpMenu(Utils::ActionManager* actionManager, QObject* parent)
+namespace Fooyin {
+HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
 {
@@ -46,10 +46,9 @@ HelpMenu::HelpMenu(Utils::ActionManager* actionManager, QObject* parent)
 
     const auto aboutIcon = QIcon::fromTheme(Constants::Icons::Fooyin);
     m_about              = new QAction(aboutIcon, tr("&About"), this);
-    helpMenu->addAction(m_actionManager->registerAction(m_about, Constants::Actions::About),
-                        Utils::Actions::Groups::Three);
+    helpMenu->addAction(m_actionManager->registerAction(m_about, Constants::Actions::About), Actions::Groups::Three);
     QObject::connect(m_about, &QAction::triggered, this, showAboutDialog);
 }
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "moc_helpmenu.cpp"

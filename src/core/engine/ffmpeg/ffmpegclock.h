@@ -21,7 +21,7 @@
 
 #include <chrono>
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 class AudioClock
 {
 public:
@@ -59,4 +59,4 @@ private:
     TrackTime m_position;
     TimePoint m_timePoint;
 };
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

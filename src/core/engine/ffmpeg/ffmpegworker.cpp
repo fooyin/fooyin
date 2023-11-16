@@ -21,7 +21,7 @@
 
 #include <QDebug>
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 EngineWorker::EngineWorker(QObject* parent)
     : QObject{parent}
     , m_timer{nullptr}
@@ -109,6 +109,6 @@ void EngineWorker::setAtEnd(bool isAtEnd)
         emit atEnd();
     }
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin
 
 #include "moc_ffmpegworker.cpp"

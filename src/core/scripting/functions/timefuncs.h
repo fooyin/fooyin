@@ -21,6 +21,6 @@
 
 #include <QString>
 
-namespace Fy::Core::Scripting {
+namespace Fooyin::Scripting {
 QString msToString(const QStringList& vec);
 }

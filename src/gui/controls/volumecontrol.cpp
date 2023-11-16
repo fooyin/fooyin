@@ -37,30 +37,30 @@ using namespace std::chrono_literals;
 constexpr double MinVolume = 0.01;
 constexpr QSize LabelSize  = {20, 20};
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct VolumeControl::Private
 {
     VolumeControl* self;
-    Utils::SettingsManager* settings;
-    Utils::ComboIcon* volumeIcon;
-    Utils::HoverMenu* volumeMenu;
-    Utils::LogSlider* volumeSlider;
+    SettingsManager* settings;
+    ComboIcon* volumeIcon;
+    HoverMenu* volumeMenu;
+    LogSlider* volumeSlider;
 
     double prevValue{-1.0};
 
-    Private(VolumeControl* self, Utils::SettingsManager* settings)
+    Private(VolumeControl* self, SettingsManager* settings)
         : self{self}
         , settings{settings}
-        , volumeIcon{new Utils::ComboIcon(Constants::Icons::VolumeMute, self)}
-        , volumeMenu{new Utils::HoverMenu(self)}
-        , volumeSlider{new Utils::LogSlider(Qt::Vertical, self)}
+        , volumeIcon{new ComboIcon(Constants::Icons::VolumeMute, self)}
+        , volumeMenu{new HoverMenu(self)}
+        , volumeSlider{new LogSlider(Qt::Vertical, self)}
     {
         auto* volumeLayout = new QVBoxLayout(volumeMenu);
         volumeLayout->addWidget(volumeSlider);
 
         volumeSlider->setMinimumHeight(100);
         volumeSlider->setRange(MinVolume, 1.0);
-        volumeSlider->setNaturalValue(settings->value<Core::Settings::OutputVolume>());
+        volumeSlider->setNaturalValue(settings->value<Settings::Core::OutputVolume>());
 
         volumeMenu->hide();
     }
@@ -92,20 +92,20 @@ struct VolumeControl::Private
             volume = 0;
         }
 
-        settings->set<Core::Settings::OutputVolume>(volume);
+        settings->set<Settings::Core::OutputVolume>(volume);
     }
 
     void mute()
     {
-        const double volume = settings->value<Core::Settings::OutputVolume>();
+        const double volume = settings->value<Settings::Core::OutputVolume>();
 
         if(volume != 0) {
             prevValue = volume;
             volumeSlider->setNaturalValue(0.0);
-            settings->set<Core::Settings::OutputVolume>(0.0);
+            settings->set<Settings::Core::OutputVolume>(0.0);
         }
         else {
-            settings->set<Core::Settings::OutputVolume>(prevValue < 0 ? 1 : prevValue);
+            settings->set<Settings::Core::OutputVolume>(prevValue < 0 ? 1 : prevValue);
             volumeSlider->setNaturalValue(prevValue < 0 ? 1 : prevValue);
         }
     }
@@ -131,7 +131,7 @@ struct VolumeControl::Private
     }
 };
 
-VolumeControl::VolumeControl(Utils::SettingsManager* settings, QWidget* parent)
+VolumeControl::VolumeControl(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
     , p{std::make_unique<Private>(this, settings)}
 {
@@ -148,19 +148,19 @@ VolumeControl::VolumeControl(Utils::SettingsManager* settings, QWidget* parent)
 
     p->volumeIcon->setMaximumSize(LabelSize);
 
-    p->updateDisplay(settings->value<Core::Settings::OutputVolume>());
+    p->updateDisplay(settings->value<Settings::Core::OutputVolume>());
 
-    QObject::connect(p->volumeIcon, &Utils::ComboIcon::entered, this, [this]() { p->showVolumeMenu(); });
-    QObject::connect(p->volumeIcon, &Utils::ComboIcon::clicked, this, [this]() { p->mute(); });
+    QObject::connect(p->volumeIcon, &ComboIcon::entered, this, [this]() { p->showVolumeMenu(); });
+    QObject::connect(p->volumeIcon, &ComboIcon::clicked, this, [this]() { p->mute(); });
 
-    QObject::connect(p->volumeSlider, &Utils::LogSlider::logValueChanged, this,
+    QObject::connect(p->volumeSlider, &LogSlider::logValueChanged, this,
                      [this](double volume) { p->volumeChanged(volume); });
 
-    settings->subscribe<Core::Settings::OutputVolume>(this, [this](double volume) { p->updateDisplay(volume); });
-    settings->subscribe<Settings::IconTheme>(this, [this]() { p->volumeIcon->updateIcons(); });
+    settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateDisplay(volume); });
+    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->volumeIcon->updateIcons(); });
 }
 
 VolumeControl::~VolumeControl() = default;
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_volumecontrol.cpp"

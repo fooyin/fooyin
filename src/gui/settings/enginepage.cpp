@@ -32,11 +32,11 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Gui::Settings {
-class EnginePageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class EnginePageWidget : public SettingsPageWidget
 {
 public:
-    explicit EnginePageWidget(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler);
+    explicit EnginePageWidget(SettingsManager* settings, EngineHandler* engineHandler);
 
     void apply() override;
     void reset() override;
@@ -45,18 +45,18 @@ public:
     void setupDevices(const QString& output);
 
 private:
-    Utils::SettingsManager* m_settings;
-    Core::Engine::EngineHandler* m_engineHandler;
+    SettingsManager* m_settings;
+    EngineHandler* m_engineHandler;
 
-    Utils::ExpandingComboBox* m_outputBox;
-    Utils::ExpandingComboBox* m_deviceBox;
+    ExpandingComboBox* m_outputBox;
+    ExpandingComboBox* m_deviceBox;
 };
 
-EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler)
+EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineHandler* engineHandler)
     : m_settings{settings}
     , m_engineHandler{engineHandler}
-    , m_outputBox{new Utils::ExpandingComboBox(this)}
-    , m_deviceBox{new Utils::ExpandingComboBox(this)}
+    , m_outputBox{new ExpandingComboBox(this)}
+    , m_deviceBox{new ExpandingComboBox(this)}
 {
     setupOutputs();
     setupDevices(m_outputBox->currentText());
@@ -79,19 +79,19 @@ EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engin
 void EnginePageWidget::apply()
 {
     const QString output = m_outputBox->currentText() + u"|"_s + m_deviceBox->currentData().toString();
-    m_settings->set<Core::Settings::AudioOutput>(output);
+    m_settings->set<Settings::Core::AudioOutput>(output);
 }
 
 void EnginePageWidget::reset()
 {
-    m_settings->reset<Core::Settings::AudioOutput>();
+    m_settings->reset<Settings::Core::AudioOutput>();
     setupOutputs();
     setupDevices(m_outputBox->currentText());
 }
 
 void EnginePageWidget::setupOutputs()
 {
-    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split(u"|"_s);
+    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(u"|"_s);
 
     const QString outName = !currentOutput.empty() ? currentOutput.at(0) : u""_s;
     const auto outputs    = m_engineHandler->getAllOutputs();
@@ -118,7 +118,7 @@ void EnginePageWidget::setupDevices(const QString& output)
 
     m_deviceBox->clear();
 
-    const QStringList currentOutput = m_settings->value<Core::Settings::AudioOutput>().split(u"|"_s);
+    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(u"|"_s);
 
     if(currentOutput.empty()) {
         return;
@@ -143,12 +143,12 @@ void EnginePageWidget::setupDevices(const QString& output)
     m_deviceBox->resizeToFitCurrent();
 }
 
-EnginePage::EnginePage(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler)
-    : Utils::SettingsPage{settings->settingsDialog()}
+EnginePage::EnginePage(SettingsManager* settings, EngineHandler* engineHandler)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::Engine);
     setName(tr("Engine"));
     setCategory({tr("Engine")});
     setWidgetCreator([settings, engineHandler] { return new EnginePageWidget(settings, engineHandler); });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

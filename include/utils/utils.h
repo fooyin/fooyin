@@ -32,7 +32,7 @@ class QSize;
 class QColor;
 class QKeySequence;
 
-namespace Fy::Utils {
+namespace Fooyin::Utils {
 namespace File {
 FYUTILS_EXPORT QString cleanPath(const QString& path);
 FYUTILS_EXPORT bool isSamePath(const QString& filename1, const QString& filename2);
@@ -59,4 +59,4 @@ FYUTILS_EXPORT QPixmap scalePixmap(QPixmap& image, const QSize& size);
 FYUTILS_EXPORT QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
 FYUTILS_EXPORT void showMessageBox(const QString& text, const QString& infoText);
 FYUTILS_EXPORT void appendMenuActions(QMenu* originalMenu, QMenu* menu);
-} // namespace Fy::Utils
+} // namespace Fooyin::Utils

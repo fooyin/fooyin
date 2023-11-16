@@ -21,7 +21,7 @@
 
 #include "treemodel.h"
 
-namespace Fy::Utils {
+namespace Fooyin {
 template <class Item>
 class TableModel : public TreeModel<Item>
 {
@@ -55,4 +55,4 @@ public:
         return rootItem()->childCount();
     }
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

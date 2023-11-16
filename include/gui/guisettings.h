@@ -25,71 +25,61 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Gui {
-namespace Widgets {
 class LibraryTreeGroupRegistry;
-
-namespace Playlist {
 class PresetRegistry;
-}
-} // namespace Widgets
 
-namespace Settings {
+namespace Settings::Gui {
 Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
-enum Gui : uint32_t
+enum Settings : uint32_t
 {
-    LayoutEditing              = 1 | Utils::Settings::Bool,
-    StartupBehaviour           = 2 | Utils::Settings::Int,
-    WaitForTracks              = 3 | Utils::Settings::Bool,
-    EditingMenuLevels          = 4 | Utils::Settings::Int,
-    SplitterHandles            = 5 | Utils::Settings::Bool,
-    PlaylistAltColours         = 6 | Utils::Settings::Bool,
-    PlaylistHeader             = 7 | Utils::Settings::Bool,
-    PlaylistScrollBar          = 8 | Utils::Settings::Bool,
-    PlaylistPresets            = 9 | Utils::Settings::ByteArray,
-    CurrentPreset              = 10 | Utils::Settings::String,
-    ElapsedTotal               = 11 | Utils::Settings::Bool,
-    InfoAltColours             = 12 | Utils::Settings::Bool,
-    InfoHeader                 = 13 | Utils::Settings::Bool,
-    InfoScrollBar              = 14 | Utils::Settings::Bool,
-    IconTheme                  = 15 | Utils::Settings::String,
-    LastPlaylistId             = 16 | Utils::Settings::Int,
-    LibraryTreeGrouping        = 17 | Utils::Settings::ByteArray,
-    LibraryTreeDoubleClick     = 18 | Utils::Settings::Int,
-    LibraryTreeMiddleClick     = 19 | Utils::Settings::Int,
-    LibraryTreePlaylistEnabled = 20 | Utils::Settings::Bool,
-    LibraryTreeAutoSwitch      = 21 | Utils::Settings::Bool,
-    LibraryTreeAutoPlaylist    = 22 | Utils::Settings::String,
-    LibraryTreeHeader          = 23 | Utils::Settings::Bool,
-    LibraryTreeScrollBar       = 24 | Utils::Settings::Bool,
-    LibraryTreeAltColours      = 25 | Utils::Settings::Bool,
-    LibraryTreeAppearance      = 26 | Utils::Settings::Variant,
-    PlaylistThumbnailSize      = 27 | Utils::Settings::Int,
-    CursorFollowsPlayback      = 28 | Utils::Settings::Bool,
-    PlaybackFollowsCursor      = 29 | Utils::Settings::Bool,
-    PlaylistTabsSingleHide     = 30 | Utils::Settings::Bool,
+    LayoutEditing              = 1 | SettingsType::Bool,
+    StartupBehaviour           = 2 | SettingsType::Int,
+    WaitForTracks              = 3 | SettingsType::Bool,
+    EditingMenuLevels          = 4 | SettingsType::Int,
+    SplitterHandles            = 5 | SettingsType::Bool,
+    PlaylistAltColours         = 6 | SettingsType::Bool,
+    PlaylistHeader             = 7 | SettingsType::Bool,
+    PlaylistScrollBar          = 8 | SettingsType::Bool,
+    PlaylistPresets            = 9 | SettingsType::ByteArray,
+    CurrentPreset              = 10 | SettingsType::String,
+    ElapsedTotal               = 11 | SettingsType::Bool,
+    InfoAltColours             = 12 | SettingsType::Bool,
+    InfoHeader                 = 13 | SettingsType::Bool,
+    InfoScrollBar              = 14 | SettingsType::Bool,
+    IconTheme                  = 15 | SettingsType::String,
+    LastPlaylistId             = 16 | SettingsType::Int,
+    LibraryTreeGrouping        = 17 | SettingsType::ByteArray,
+    LibraryTreeDoubleClick     = 18 | SettingsType::Int,
+    LibraryTreeMiddleClick     = 19 | SettingsType::Int,
+    LibraryTreePlaylistEnabled = 20 | SettingsType::Bool,
+    LibraryTreeAutoSwitch      = 21 | SettingsType::Bool,
+    LibraryTreeAutoPlaylist    = 22 | SettingsType::String,
+    LibraryTreeHeader          = 23 | SettingsType::Bool,
+    LibraryTreeScrollBar       = 24 | SettingsType::Bool,
+    LibraryTreeAltColours      = 25 | SettingsType::Bool,
+    LibraryTreeAppearance      = 26 | SettingsType::Variant,
+    PlaylistThumbnailSize      = 27 | SettingsType::Int,
+    CursorFollowsPlayback      = 28 | SettingsType::Bool,
+    PlaybackFollowsCursor      = 29 | SettingsType::Bool,
+    PlaylistTabsSingleHide     = 30 | SettingsType::Bool,
 };
-Q_ENUM_NS(Gui)
+Q_ENUM_NS(Settings)
+} // namespace Settings::Gui
 
 class FYGUI_EXPORT GuiSettings
 {
 public:
-    explicit GuiSettings(Utils::SettingsManager* settingsManager);
+    explicit GuiSettings(SettingsManager* settingsManager);
     ~GuiSettings();
 
-    [[nodiscard]] Widgets::LibraryTreeGroupRegistry* libraryTreeGroupRegistry() const;
-    [[nodiscard]] Widgets::Playlist::PresetRegistry* playlistPresetRegistry() const;
+    [[nodiscard]] LibraryTreeGroupRegistry* libraryTreeGroupRegistry() const;
+    [[nodiscard]] PresetRegistry* playlistPresetRegistry() const;
 
 private:
-    Utils::SettingsManager* m_settings;
-    Widgets::LibraryTreeGroupRegistry* m_libraryTreeGroupRegistry;
-    Widgets::Playlist::PresetRegistry* m_playlistPresetRegistry;
+    SettingsManager* m_settings;
+    LibraryTreeGroupRegistry* m_libraryTreeGroupRegistry;
+    PresetRegistry* m_playlistPresetRegistry;
 };
-} // namespace Settings
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

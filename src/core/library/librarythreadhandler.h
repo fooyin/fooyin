@@ -23,12 +23,8 @@
 
 #include <QObject>
 
-namespace Fy::Core {
-namespace DB {
+namespace Fooyin {
 class Database;
-}
-
-namespace Library {
 struct LibraryInfo;
 
 class LibraryThreadHandler : public QObject
@@ -36,29 +32,28 @@ class LibraryThreadHandler : public QObject
     Q_OBJECT
 
 public:
-    explicit LibraryThreadHandler(DB::Database* database, QObject* parent = nullptr);
+    explicit LibraryThreadHandler(Database* database, QObject* parent = nullptr);
     ~LibraryThreadHandler() override;
 
     void stopScanner();
 
     void getAllTracks();
-    void scanLibrary(const Library::LibraryInfo& library, const Core::TrackList& tracks);
+    void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
     void libraryRemoved(int id);
-    void saveUpdatedTracks(const Core::TrackList& tracks);
+    void saveUpdatedTracks(const TrackList& tracks);
 
 signals:
     void progressChanged(int percent);
-    void statusChanged(const Library::LibraryInfo& library);
+    void statusChanged(const LibraryInfo& library);
 
-    void addedTracks(const Core::TrackList& tracks);
-    void updatedTracks(const Core::TrackList& tracks);
-    void tracksDeleted(const Core::TrackList& tracks);
+    void addedTracks(const TrackList& tracks);
+    void updatedTracks(const TrackList& tracks);
+    void tracksDeleted(const TrackList& tracks);
 
-    void gotTracks(const Core::TrackList& result);
+    void gotTracks(const TrackList& result);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Library
-} // namespace Fy::Core
+} // namespace Fooyin

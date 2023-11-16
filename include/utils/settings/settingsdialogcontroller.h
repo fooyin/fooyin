@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class SettingsPage;
 class Id;
 
@@ -47,4 +47,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

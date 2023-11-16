@@ -21,7 +21,7 @@
 
 #include <QTreeView>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class SimpleTreeView : public QTreeView
 {
 public:
@@ -29,4 +29,4 @@ public:
 
     [[nodiscard]] QSize sizeHint() const override;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

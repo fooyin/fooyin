@@ -25,23 +25,16 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core {
-namespace DB {
 class Database;
-} // namespace DB
 
-namespace Library {
 class FYCORE_EXPORT LibraryManager : public QObject
 {
     Q_OBJECT
 
 public:
-    LibraryManager(DB::Database* database, Utils::SettingsManager* settings, QObject* parent = nullptr);
+    LibraryManager(Database* database, SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryManager() override;
 
     void reset();
@@ -51,7 +44,7 @@ public:
     int addLibrary(const QString& path, const QString& name);
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
-    void updateLibraryStatus(const Library::LibraryInfo& library);
+    void updateLibraryStatus(const LibraryInfo& library);
 
     [[nodiscard]] bool hasLibrary() const;
     [[nodiscard]] bool hasLibrary(int id) const;
@@ -60,15 +53,13 @@ public:
     [[nodiscard]] std::optional<LibraryInfo> libraryInfo(int id) const;
 
 signals:
-    void libraryAdded(const Library::LibraryInfo& library);
+    void libraryAdded(const LibraryInfo& library);
     void libraryRemoved(int id);
     void libraryRenamed(int id, const QString& name);
-    void libraryStatusChanged(const Library::LibraryInfo& info);
+    void libraryStatusChanged(const LibraryInfo& info);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Library
-} // namespace Core
-} // namespace Fy
+} // namespace Fooyin

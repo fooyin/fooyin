@@ -21,7 +21,7 @@
 
 #include <QTableView>
 
-namespace Fy::Gui::Settings {
+namespace Fooyin {
 class LibraryView : public QTableView
 {
 public:
@@ -29,4 +29,4 @@ public:
 
     void resizeEvent(QResizeEvent* event) override;
 };
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

@@ -28,11 +28,11 @@
 #include <QLabel>
 #include <QSpinBox>
 
-namespace Fy::Gui::Settings {
-class PlaylistGuiPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class PlaylistGuiPageWidget : public SettingsPageWidget
 {
 public:
-    explicit PlaylistGuiPageWidget(Utils::SettingsManager* settings);
+    explicit PlaylistGuiPageWidget(SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -40,7 +40,7 @@ public:
 private:
     void setValues();
 
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
@@ -48,7 +48,7 @@ private:
     QSpinBox* m_thumbnailSize;
 };
 
-PlaylistGuiPageWidget::PlaylistGuiPageWidget(Utils::SettingsManager* settings)
+PlaylistGuiPageWidget::PlaylistGuiPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_scrollBars{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show Header"), this)}
@@ -76,36 +76,36 @@ PlaylistGuiPageWidget::PlaylistGuiPageWidget(Utils::SettingsManager* settings)
 
 void PlaylistGuiPageWidget::apply()
 {
-    m_settings->set<Settings::PlaylistScrollBar>(m_scrollBars->isChecked());
-    m_settings->set<Settings::PlaylistHeader>(m_header->isChecked());
-    m_settings->set<Settings::PlaylistAltColours>(m_altColours->isChecked());
-    m_settings->set<Settings::PlaylistThumbnailSize>(m_thumbnailSize->value());
+    m_settings->set<Settings::Gui::PlaylistScrollBar>(m_scrollBars->isChecked());
+    m_settings->set<Settings::Gui::PlaylistHeader>(m_header->isChecked());
+    m_settings->set<Settings::Gui::PlaylistAltColours>(m_altColours->isChecked());
+    m_settings->set<Settings::Gui::PlaylistThumbnailSize>(m_thumbnailSize->value());
 }
 
 void PlaylistGuiPageWidget::reset()
 {
-    m_settings->reset<Settings::PlaylistScrollBar>();
-    m_settings->reset<Settings::PlaylistHeader>();
-    m_settings->reset<Settings::PlaylistAltColours>();
-    m_settings->reset<Settings::PlaylistThumbnailSize>();
+    m_settings->reset<Settings::Gui::PlaylistScrollBar>();
+    m_settings->reset<Settings::Gui::PlaylistHeader>();
+    m_settings->reset<Settings::Gui::PlaylistAltColours>();
+    m_settings->reset<Settings::Gui::PlaylistThumbnailSize>();
 
     setValues();
 }
 
 void PlaylistGuiPageWidget::setValues()
 {
-    m_scrollBars->setChecked(m_settings->value<Settings::PlaylistScrollBar>());
-    m_header->setChecked(m_settings->value<Settings::PlaylistHeader>());
-    m_altColours->setChecked(m_settings->value<Settings::PlaylistAltColours>());
-    m_thumbnailSize->setValue(m_settings->value<Settings::PlaylistThumbnailSize>());
+    m_scrollBars->setChecked(m_settings->value<Settings::Gui::PlaylistScrollBar>());
+    m_header->setChecked(m_settings->value<Settings::Gui::PlaylistHeader>());
+    m_altColours->setChecked(m_settings->value<Settings::Gui::PlaylistAltColours>());
+    m_thumbnailSize->setValue(m_settings->value<Settings::Gui::PlaylistThumbnailSize>());
 }
 
-PlaylistGuiPage::PlaylistGuiPage(Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+PlaylistGuiPage::PlaylistGuiPage(SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::PlaylistInterface);
     setName(tr("Interface"));
     setCategory({tr("Playlist")});
     setWidgetCreator([settings] { return new PlaylistGuiPageWidget(settings); });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

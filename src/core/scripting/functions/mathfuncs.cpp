@@ -19,7 +19,7 @@
 
 #include "mathfuncs.h"
 
-namespace Fy::Core::Scripting {
+namespace Fooyin::Scripting {
 QString baseOperation(const QStringList& vec, const QChar op)
 {
     if(vec.size() < 2) {
@@ -98,4 +98,4 @@ QString mod(const QStringList& vec)
     }
     return QString::number(total);
 }
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin::Scripting
