@@ -161,9 +161,14 @@ Playlist* PlaylistController::currentPlaylist() const
 
 void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
 {
+    if(!playlist) {
+        return;
+    }
+
     if(std::exchange(p->currentPlaylist, playlist) == playlist) {
         p->histories.erase(playlist->id());
     }
+
     emit currentPlaylistChanged(playlist);
     emit playlistHistoryChanged();
 }
