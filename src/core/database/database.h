@@ -19,14 +19,14 @@
 
 #pragma once
 
-#include "module.h"
+#include "databasemodule.h"
 
 class QSqlDatabase;
 
 namespace Fooyin {
 class SettingsManager;
 
-class Database : public Module
+class Database : public DatabaseModule
 {
 public:
     explicit Database(SettingsManager* settings);

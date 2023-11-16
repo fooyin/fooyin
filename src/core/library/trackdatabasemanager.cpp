@@ -17,31 +17,33 @@
  *
  */
 
-#pragma once
+#include "trackdatabasemanager.h"
 
-#include "database/librarydatabase.h"
+#include "database/database.h"
+#include "database/trackdatabase.h"
 
-#include <utils/worker.h>
+#include <core/track.h>
 
 namespace Fooyin {
-class Database;
+TrackDatabaseManager::TrackDatabaseManager(Database* database, QObject* parent)
+    : Worker{parent}
+    , m_database{database}
+    , m_trackDatabase{database->connectionName()}
+{ }
 
-class LibraryDatabaseManager : public Worker
+void TrackDatabaseManager::closeThread()
 {
-    Q_OBJECT
+    m_database->closeDatabase();
+}
 
-public:
-    explicit LibraryDatabaseManager(Database* database, QObject* parent = nullptr);
+void TrackDatabaseManager::getAllTracks()
+{
+    TrackList tracks;
 
-    void closeThread() override;
-
-    void getAllTracks();
-
-signals:
-    void gotTracks(const TrackList& result);
-
-private:
-    Database* m_database;
-    LibraryDatabase m_libraryDatabase;
-};
+    if(m_trackDatabase.getAllTracks(tracks)) {
+        emit gotTracks(tracks);
+    }
+}
 } // namespace Fooyin
+
+#include "moc_trackdatabasemanager.cpp"

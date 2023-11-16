@@ -20,7 +20,7 @@
 #include "libraryscanner.h"
 
 #include "database/database.h"
-#include "database/librarydatabase.h"
+#include "database/trackdatabase.h"
 
 #include <core/library/libraryinfo.h>
 #include <core/tagging/tagreader.h>
@@ -36,14 +36,14 @@ struct LibraryScanner::Private
     LibraryScanner* self;
     LibraryInfo library;
     Database* database;
-    LibraryDatabase libraryDatabase;
+    TrackDatabase trackDatabase;
     TagReader tagReader;
     TagWriter tagWriter;
 
     Private(LibraryScanner* self, Database* database)
         : self{self}
         , database{database}
-        , libraryDatabase{database->connectionName()}
+        , trackDatabase{database->connectionName()}
     { }
 
     void storeTracks(TrackList& tracks)
@@ -52,7 +52,7 @@ struct LibraryScanner::Private
             return;
         }
 
-        libraryDatabase.storeTracks(tracks);
+        trackDatabase.storeTracks(tracks);
 
         if(!self->mayRun()) {
             return;
@@ -227,7 +227,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         }
     }
 
-    const bool deletedSuccess = p->libraryDatabase.deleteTracks(tracksToDelete);
+    const bool deletedSuccess = p->trackDatabase.deleteTracks(tracksToDelete);
 
     if(deletedSuccess && !tracksToDelete.empty()) {
         emit tracksDeleted(tracksToDelete);
@@ -246,7 +246,7 @@ void LibraryScanner::updateTracks(const TrackList& tracks)
     for(const Track& track : tracks) {
         const bool saved = p->tagWriter.writeMetaData(track);
         if(saved) {
-            p->libraryDatabase.updateTrack(track);
+            p->trackDatabase.updateTrack(track);
         }
     }
 }

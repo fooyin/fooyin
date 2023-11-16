@@ -19,33 +19,29 @@
 
 #pragma once
 
-#include <QSqlQuery>
+#include "database/trackdatabase.h"
+
+#include <utils/worker.h>
 
 namespace Fooyin {
-class Module;
+class Database;
 
-class Query : public QSqlQuery
+class TrackDatabaseManager : public Worker
 {
+    Q_OBJECT
+
 public:
-    explicit Query(const Module* module);
+    explicit TrackDatabaseManager(Database* database, QObject* parent = nullptr);
 
-    explicit Query(QSqlResult* result)                           = delete;
-    explicit Query(const QString& query, const QSqlDatabase& db) = delete;
-    Query(const Query& other)                                    = delete;
+    void closeThread() override;
 
-    Query(Query&& other) noexcept = default;
+    void getAllTracks();
 
-    bool prepareQuery(const QString& query);
-    void bindQueryValue(const QString& placeholder, const QVariant& val, QSql::ParamType paramType = QSql::In);
-    bool execQuery();
-    void setError(bool b);
-    [[nodiscard]] bool hasError() const;
-
-    void showQuery() const;
-    void error(const QString& error) const;
+signals:
+    void gotTracks(const TrackList& result);
 
 private:
-    QString m_queryString;
-    bool m_success;
+    Database* m_database;
+    TrackDatabase m_trackDatabase;
 };
 } // namespace Fooyin

@@ -19,7 +19,7 @@
 
 #include "database.h"
 
-#include "query.h"
+#include "databasequery.h"
 
 #include <core/coresettings.h>
 #include <utils/paths.h>
@@ -27,7 +27,6 @@
 #include <utils/utils.h>
 
 #include <QFile>
-#include <QSqlQuery>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -39,7 +38,7 @@ Database::Database(SettingsManager* settings)
 { }
 
 Database::Database(const QString& directory, const QString& filename, SettingsManager* settings)
-    : Module{directory + "/" + filename}
+    : DatabaseModule{directory + "/" + filename}
     , m_settings{settings}
 {
     if(!Utils::File::exists(directory)) {
@@ -182,12 +181,12 @@ void Database::rollback()
 
 bool Database::checkInsertTable(const QString& tableName, const QString& createString)
 {
-    Query q(this);
+    DatabaseQuery q(this);
     const QString queryText = "SELECT * FROM " + tableName + ";";
     q.prepareQuery(queryText);
 
     if(!q.execQuery()) {
-        Query q2(this);
+        DatabaseQuery q2(this);
         q2.prepareQuery(createString);
 
         if(!q2.execQuery()) {
@@ -200,7 +199,7 @@ bool Database::checkInsertTable(const QString& tableName, const QString& createS
 
 bool Database::checkInsertIndex(const QString& indexName, const QString& createString)
 {
-    Query q(this);
+    DatabaseQuery q(this);
     q.prepareQuery(createString);
 
     if(!q.execQuery()) {

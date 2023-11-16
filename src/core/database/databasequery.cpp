@@ -17,29 +17,29 @@
  *
  */
 
-#include "query.h"
+#include "databasequery.h"
 
-#include "module.h"
+#include "databasemodule.h"
 
 #include <QSqlError>
 
 using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
-Query::Query(const Module* module)
+DatabaseQuery::DatabaseQuery(const DatabaseModule* module)
     : QSqlQuery{module->db()}
     , m_success{false}
 {
     setForwardOnly(true);
 }
 
-bool Query::prepareQuery(const QString& query)
+bool DatabaseQuery::prepareQuery(const QString& query)
 {
     m_queryString = query;
     return QSqlQuery::prepare(query);
 }
 
-void Query::bindQueryValue(const QString& placeholder, const QVariant& val, QSql::ParamType paramType)
+void DatabaseQuery::bindQueryValue(const QString& placeholder, const QVariant& val, QSql::ParamType paramType)
 {
     const QString replaceString = u"'"_s + val.toString() + u"'"_s;
 
@@ -51,28 +51,28 @@ void Query::bindQueryValue(const QString& placeholder, const QVariant& val, QSql
     QSqlQuery::bindValue(placeholder, val, paramType);
 }
 
-bool Query::execQuery()
+bool DatabaseQuery::execQuery()
 {
     m_success = QSqlQuery::exec();
     return m_success;
 }
 
-void Query::setError(bool b)
+void DatabaseQuery::setError(bool b)
 {
     m_success = (!b);
 }
 
-bool Query::hasError() const
+bool DatabaseQuery::hasError() const
 {
     return !m_success;
 }
 
-void Query::showQuery() const
+void DatabaseQuery::showQuery() const
 {
     qDebug() << m_queryString;
 }
 
-void Query::error(const QString& error) const
+void DatabaseQuery::error(const QString& error) const
 {
     qDebug() << "SQL ERROR: " << error << ": " << static_cast<int>(lastError().type());
 

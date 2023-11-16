@@ -19,13 +19,13 @@
 
 #pragma once
 
-#include "module.h"
+#include "databasemodule.h"
 
 #include <core/playlist/playlist.h>
 #include <core/track.h>
 
 namespace Fooyin {
-class PlaylistDatabase : private Module
+class PlaylistDatabase : private DatabaseModule
 {
 public:
     explicit PlaylistDatabase(const QString& connectionName);

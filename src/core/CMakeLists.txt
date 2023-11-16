@@ -40,11 +40,11 @@ set(SOURCES
     corepaths.cpp
     coresettings.cpp
     database/database.cpp
-    database/library.cpp
     database/librarydatabase.cpp
-    database/module.cpp
+    database/trackdatabase.cpp
+    database/databasemodule.cpp
     database/playlistdatabase.cpp
-    database/query.cpp
+    database/databasequery.cpp
     engine/enginehandler.cpp
     engine/audioengine.cpp
     engine/audiooutput.cpp
@@ -59,7 +59,7 @@ set(SOURCES
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegutils.cpp
     engine/output/alsaoutput.cpp
-    library/librarydatabasemanager.cpp
+        library/trackdatabasemanager.cpp
     library/librarymanager.cpp
     library/libraryscanner.cpp
     library/unifiedmusiclibrary.cpp

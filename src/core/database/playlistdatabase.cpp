@@ -19,12 +19,12 @@
 
 #include "playlistdatabase.h"
 
-#include "query.h"
+#include "databasequery.h"
 
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-bool insertPlaylistTrack(Fooyin::Module* module, int playlistId, const Fooyin::Track& track, int index)
+bool insertPlaylistTrack(Fooyin::DatabaseModule* module, int playlistId, const Fooyin::Track& track, int index)
 {
     if(playlistId < 0 || !track.isValid()) {
         return false;
@@ -40,7 +40,7 @@ bool insertPlaylistTrack(Fooyin::Module* module, int playlistId, const Fooyin::T
     return !q.hasError();
 }
 
-bool insertPlaylistTracks(Fooyin::Module* module, int id, const Fooyin::TrackList& tracks)
+bool insertPlaylistTracks(Fooyin::DatabaseModule* module, int id, const Fooyin::TrackList& tracks)
 {
     if(id < 0) {
         return false;
@@ -64,12 +64,12 @@ bool insertPlaylistTracks(Fooyin::Module* module, int id, const Fooyin::TrackLis
     return true;
 }
 
-bool populatePlaylistTracks(Fooyin::Module* module, const auto& playlist, const Fooyin::TrackIdMap& tracks)
+bool populatePlaylistTracks(Fooyin::DatabaseModule* module, const auto& playlist, const Fooyin::TrackIdMap& tracks)
 {
     const static QString query
         = u"SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;"_s;
 
-    Fooyin::Query q{module};
+    Fooyin::DatabaseQuery q{module};
     q.prepareQuery(query);
     q.bindQueryValue(u":playlistId"_s, playlist->id());
 
@@ -90,7 +90,7 @@ bool populatePlaylistTracks(Fooyin::Module* module, const auto& playlist, const 
     return true;
 }
 
-bool savePlaylist(Fooyin::Module* module, const auto& playlist)
+bool savePlaylist(Fooyin::DatabaseModule* module, const auto& playlist)
 {
     if(!playlist->modified() && !playlist->tracksModified()) {
         return true;
@@ -125,14 +125,14 @@ bool savePlaylist(Fooyin::Module* module, const auto& playlist)
 
 namespace Fooyin {
 PlaylistDatabase::PlaylistDatabase(const QString& connectionName)
-    : Module{connectionName}
+    : DatabaseModule{connectionName}
 { }
 
 bool PlaylistDatabase::getAllPlaylists(PlaylistList& playlists)
 {
     const QString query = u"SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;"_s;
 
-    Query q{this};
+    DatabaseQuery q{this};
     q.prepareQuery(query);
 
     if(!q.execQuery()) {

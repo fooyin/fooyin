@@ -20,8 +20,8 @@
 #include "librarythreadhandler.h"
 
 #include "database/database.h"
-#include "librarydatabasemanager.h"
 #include "libraryscanner.h"
+#include "trackdatabasemanager.h"
 
 #include <core/library/libraryinfo.h>
 #include <core/track.h>
@@ -45,7 +45,7 @@ struct LibraryThreadHandler::Private
 
     QThread* thread;
     LibraryScanner scanner;
-    LibraryDatabaseManager libraryDatabaseManager;
+    TrackDatabaseManager trackDatabaseManager;
 
     std::deque<ScanRequest> scanRequests;
     int currentLibraryRequest{-1};
@@ -55,10 +55,10 @@ struct LibraryThreadHandler::Private
         , database{database}
         , thread{new QThread(self)}
         , scanner{database}
-        , libraryDatabaseManager{database}
+        , trackDatabaseManager{database}
     {
         scanner.moveToThread(thread);
-        libraryDatabaseManager.moveToThread(thread);
+        trackDatabaseManager.moveToThread(thread);
 
         thread->start();
     }
@@ -93,7 +93,7 @@ LibraryThreadHandler::LibraryThreadHandler(Database* database, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this, database)}
 {
-    QObject::connect(&p->libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this,
+    QObject::connect(&p->trackDatabaseManager, &TrackDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);
     QObject::connect(&p->scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
     QObject::connect(&p->scanner, &LibraryScanner::progressChanged, this, &LibraryThreadHandler::progressChanged);
@@ -117,7 +117,7 @@ void LibraryThreadHandler::stopScanner()
 
 void LibraryThreadHandler::getAllTracks()
 {
-    QMetaObject::invokeMethod(&p->libraryDatabaseManager, &LibraryDatabaseManager::getAllTracks);
+    QMetaObject::invokeMethod(&p->trackDatabaseManager, &TrackDatabaseManager::getAllTracks);
 }
 
 void LibraryThreadHandler::scanLibrary(const LibraryInfo& library, const TrackList& tracks)

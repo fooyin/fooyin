@@ -20,7 +20,7 @@
 #include <core/library/librarymanager.h>
 
 #include "database/database.h"
-#include "database/library.h"
+#include "database/librarydatabase.h"
 
 #include <core/library/libraryinfo.h>
 #include <utils/utils.h>
@@ -49,7 +49,7 @@ struct LibraryManager::Private
 {
     Database* database;
     SettingsManager* settings;
-    Library libraryConnector;
+    LibraryDatabase libraryConnector;
     LibraryInfoMap libraries;
 
     explicit Private(Database* database, SettingsManager* settings)
