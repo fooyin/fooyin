@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-namespace Fy::Core {
+namespace Fooyin {
 class FYCORE_EXPORT Application : public QObject
 {
     Q_OBJECT
@@ -41,4 +41,4 @@ private:
     struct Private;
     std::unique_ptr<Application::Private> p;
 };
-} // namespace Fy::Core
+} // namespace Fooyin

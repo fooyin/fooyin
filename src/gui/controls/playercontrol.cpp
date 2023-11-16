@@ -29,22 +29,20 @@
 
 constexpr QSize IconSize = {20, 20};
 
-namespace Fy::Gui::Widgets {
-using Utils::ComboIcon;
-
+namespace Fooyin {
 struct PlayerControl::Private
 {
     PlayerControl* self;
 
-    Core::Player::PlayerManager* playerManager;
-    Utils::SettingsManager* settings;
+    PlayerManager* playerManager;
+    SettingsManager* settings;
 
-    Utils::ComboIcon* stop;
-    Utils::ComboIcon* prev;
-    Utils::ComboIcon* playPause;
-    Utils::ComboIcon* next;
+    ComboIcon* stop;
+    ComboIcon* prev;
+    ComboIcon* playPause;
+    ComboIcon* next;
 
-    Private(PlayerControl* self, Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings)
+    Private(PlayerControl* self, PlayerManager* playerManager, SettingsManager* settings)
         : self{self}
         , playerManager{playerManager}
         , settings{settings}
@@ -53,26 +51,26 @@ struct PlayerControl::Private
         , playPause{new ComboIcon(Constants::Icons::Play, ComboIcon::HasDisabledIcon, self)}
         , next{new ComboIcon(Constants::Icons::Next, ComboIcon::HasDisabledIcon, self)}
     {
-        QObject::connect(stop, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::stop);
-        QObject::connect(prev, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::previous);
-        QObject::connect(playPause, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::playPause);
-        QObject::connect(next, &ComboIcon::clicked, playerManager, &Core::Player::PlayerManager::next);
+        QObject::connect(stop, &ComboIcon::clicked, playerManager, &PlayerManager::stop);
+        QObject::connect(prev, &ComboIcon::clicked, playerManager, &PlayerManager::previous);
+        QObject::connect(playPause, &ComboIcon::clicked, playerManager, &PlayerManager::playPause);
+        QObject::connect(next, &ComboIcon::clicked, playerManager, &PlayerManager::next);
 
         stateChanged(playerManager->playState());
     }
 
-    void stateChanged(Core::Player::PlayState state) const
+    void stateChanged(PlayState state) const
     {
         switch(state) {
-            case(Core::Player::PlayState::Stopped): {
+            case(PlayState::Stopped): {
                 playPause->setIcon(Constants::Icons::Play);
                 break;
             }
-            case(Core::Player::PlayState::Playing): {
+            case(PlayState::Playing): {
                 playPause->setIcon(Constants::Icons::Pause);
                 break;
             }
-            case(Core::Player::PlayState::Paused): {
+            case(PlayState::Paused): {
                 playPause->setIcon(Constants::Icons::Play);
                 break;
             }
@@ -80,8 +78,7 @@ struct PlayerControl::Private
     }
 };
 
-PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                             QWidget* parent)
+PlayerControl::PlayerControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
@@ -102,10 +99,10 @@ PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, Utils::
     layout->addWidget(p->playPause, 0, Qt::AlignVCenter);
     layout->addWidget(p->next, 0, Qt::AlignVCenter);
 
-    QObject::connect(p->playerManager, &Core::Player::PlayerManager::playStateChanged, this,
-                     [this](Core::Player::PlayState state) { p->stateChanged(state); });
+    QObject::connect(p->playerManager, &PlayerManager::playStateChanged, this,
+                     [this](PlayState state) { p->stateChanged(state); });
 
-    settings->subscribe<Settings::IconTheme>(this, [this]() {
+    settings->subscribe<Gui::Settings::IconTheme>(this, [this]() {
         p->stop->updateIcons();
         p->prev->updateIcons();
         p->playPause->updateIcons();
@@ -114,6 +111,6 @@ PlayerControl::PlayerControl(Core::Player::PlayerManager* playerManager, Utils::
 }
 
 PlayerControl::~PlayerControl() = default;
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_playercontrol.cpp"

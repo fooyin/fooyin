@@ -23,29 +23,25 @@
 
 #include <utils/worker.h>
 
-namespace Fy::Core {
-namespace DB {
+namespace Fooyin {
 class Database;
-} // namespace DB
 
-namespace Library {
-class LibraryDatabaseManager : public Utils::Worker
+class LibraryDatabaseManager : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit LibraryDatabaseManager(DB::Database* database, QObject* parent = nullptr);
+    explicit LibraryDatabaseManager(Database* database, QObject* parent = nullptr);
 
     void closeThread() override;
 
     void getAllTracks();
 
 signals:
-    void gotTracks(const Core::TrackList& result);
+    void gotTracks(const TrackList& result);
 
 private:
-    DB::Database* m_database;
-    DB::LibraryDatabase m_libraryDatabase;
+    Database* m_database;
+    LibraryDatabase m_libraryDatabase;
 };
-} // namespace Library
-} // namespace Fy::Core
+} // namespace Fooyin

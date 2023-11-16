@@ -21,23 +21,19 @@
 
 #include <QWidget>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
 
-namespace Gui::Widgets {
 class VolumeControl : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit VolumeControl(Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit VolumeControl(SettingsManager* settings, QWidget* parent = nullptr);
     ~VolumeControl() override;
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

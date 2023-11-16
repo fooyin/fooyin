@@ -23,7 +23,7 @@
 
 #include <QLineEdit>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT PopupLineEdit : public QLineEdit
 {
     Q_OBJECT
@@ -39,4 +39,4 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
     void focusOutEvent(QFocusEvent* event) override;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

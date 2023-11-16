@@ -41,9 +41,6 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-using Fy::Gui::Widgets::Playlist::PlaylistItem;
-using Fy::Gui::Widgets::Playlist::PlaylistModel;
-
 QModelIndexList removeDuplicates(const QModelIndexList& indexList)
 {
     QSet<QModelIndex> uniqueIndices;
@@ -93,11 +90,11 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     QByteArray result;
     QDataStream stream(&result, QIODevice::WriteOnly);
 
-    Fy::Core::TrackList tracks;
+    Fooyin::TrackList tracks;
     tracks.reserve(indexes.size());
 
     std::ranges::transform(indexes, std::back_inserter(tracks), [](const QModelIndex& index) {
-        return index.data(Fy::Gui::Widgets::Playlist::PlaylistItem::Role::ItemData).value<Fy::Core::Track>();
+        return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>();
     });
 
     stream << tracks;
@@ -105,9 +102,9 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     return result;
 }
 
-Fy::Core::TrackList restoreTracks(QByteArray data)
+Fooyin::TrackList restoreTracks(QByteArray data)
 {
-    Fy::Core::TrackList result;
+    Fooyin::TrackList result;
     QDataStream stream(&data, QIODevice::ReadOnly);
 
     stream >> result;
@@ -115,7 +112,7 @@ Fy::Core::TrackList restoreTracks(QByteArray data)
     return result;
 }
 
-QByteArray saveIndexes(const QModelIndexList& indexes, Fy::Core::Playlist::Playlist* playlist)
+QByteArray saveIndexes(const QModelIndexList& indexes, Fooyin::Playlist* playlist)
 {
     if(!playlist) {
         return {};
@@ -145,7 +142,7 @@ QByteArray saveIndexes(const QModelIndexList& indexes, Fy::Core::Playlist::Playl
     return result;
 }
 
-QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Fy::Core::Playlist::Playlist* playlist)
+QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Fooyin::Playlist* playlist)
 {
     if(!playlist) {
         return {};
@@ -179,7 +176,8 @@ QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Fy::C
 }
 
 template <typename Container>
-int moveRows(PlaylistModel* model, const QModelIndex& source, const Container& rows, const QModelIndex& target, int row)
+int moveRows(Fooyin::PlaylistModel* model, const QModelIndex& source, const Container& rows, const QModelIndex& target,
+             int row)
 {
     int currRow{row};
     auto* targetParent = model->itemForIndex(target);
@@ -188,7 +186,7 @@ int moveRows(PlaylistModel* model, const QModelIndex& source, const Container& r
     }
 
     auto* sourceParent = model->itemForIndex(source);
-    for(PlaylistItem* childItem : rows) {
+    for(Fooyin::PlaylistItem* childItem : rows) {
         childItem->resetRow();
         const int oldRow = childItem->row();
         if(oldRow < currRow) {
@@ -213,8 +211,8 @@ int moveRows(PlaylistModel* model, const QModelIndex& source, const Container& r
 }
 
 template <typename Container>
-int copyRowsRecursive(PlaylistModel* model, Fy::Gui::Widgets::Playlist::ItemKeyMap& nodes, const QModelIndex& source,
-                      const Container& rows, const QModelIndex& target, int row)
+int copyRowsRecursive(Fooyin::PlaylistModel* model, Fooyin::ItemKeyMap& nodes, const QModelIndex& source, const Container& rows,
+                      const QModelIndex& target, int row)
 {
     int currRow{row};
     auto* targetParent = model->itemForIndex(target);
@@ -223,9 +221,9 @@ int copyRowsRecursive(PlaylistModel* model, Fy::Gui::Widgets::Playlist::ItemKeyM
     }
 
     auto* sourceParent = model->itemForIndex(source);
-    for(PlaylistItem* childItem : rows) {
+    for(Fooyin::PlaylistItem* childItem : rows) {
         childItem->resetRow();
-        const QString newKey = Fy::Utils::generateRandomHash();
+        const QString newKey = Fooyin::Utils::generateRandomHash();
         auto* newChild       = &nodes.emplace(newKey, *childItem).first->second;
         newChild->clearChildren();
         newChild->setKey(newKey);
@@ -246,22 +244,22 @@ int copyRowsRecursive(PlaylistModel* model, Fy::Gui::Widgets::Playlist::ItemKeyM
 }
 
 template <typename Container>
-int copyRows(PlaylistModel* model, Fy::Gui::Widgets::Playlist::ItemKeyMap& nodes, const QModelIndex& source,
-             const Container& rows, const QModelIndex& target, int row)
+int copyRows(Fooyin::PlaylistModel* model, Fooyin::ItemKeyMap& nodes, const QModelIndex& source, const Container& rows,
+             const QModelIndex& target, int row)
 {
     return copyRowsRecursive(model, nodes, source, rows, target, row);
 }
 
 template <typename Container>
-int insertRows(PlaylistModel* model, Fy::Gui::Widgets::Playlist::ItemKeyMap& nodes, const Container& rows,
-               const QModelIndex& target, int row)
+int insertRows(Fooyin::PlaylistModel* model, Fooyin::ItemKeyMap& nodes, const Container& rows, const QModelIndex& target,
+               int row)
 {
     auto* targetParent = model->itemForIndex(target);
     if(!targetParent) {
         return row;
     }
 
-    for(PlaylistItem* childItem : rows) {
+    for(Fooyin::PlaylistItem* childItem : rows) {
         childItem->resetRow();
         auto* newChild = &nodes.emplace(childItem->key(), *childItem).first->second;
 
@@ -274,10 +272,10 @@ int insertRows(PlaylistModel* model, Fy::Gui::Widgets::Playlist::ItemKeyMap& nod
     return row;
 }
 
-bool cmpItemsReverse(PlaylistItem* pItem1, PlaylistItem* pItem2)
+bool cmpItemsReverse(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* pItem2)
 {
-    PlaylistItem* item1{pItem1};
-    PlaylistItem* item2{pItem2};
+    Fooyin::PlaylistItem* item1{pItem1};
+    Fooyin::PlaylistItem* item2{pItem2};
 
     while(item1->parent() != item2->parent()) {
         if(item1->parent() == item2) {
@@ -286,10 +284,10 @@ bool cmpItemsReverse(PlaylistItem* pItem1, PlaylistItem* pItem2)
         if(item2->parent() == item1) {
             return false;
         }
-        if(item1->parent()->type() != PlaylistItem::Root) {
+        if(item1->parent()->type() != Fooyin::PlaylistItem::Root) {
             item1 = item1->parent();
         }
-        if(item2->parent()->type() != PlaylistItem::Root) {
+        if(item2->parent()->type() != Fooyin::PlaylistItem::Root) {
             item2 = item2->parent();
         }
     }
@@ -301,15 +299,15 @@ bool cmpItemsReverse(PlaylistItem* pItem1, PlaylistItem* pItem2)
 
 struct cmpItems
 {
-    bool operator()(PlaylistItem* pItem1, PlaylistItem* pItem2) const
+    bool operator()(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* pItem2) const
     {
         return cmpItemsReverse(pItem1, pItem2);
     }
 };
 
-using ItemPtrSet = std::set<PlaylistItem*, cmpItems>;
+using ItemPtrSet = std::set<Fooyin::PlaylistItem*, cmpItems>;
 
-void updateHeaderChildren(PlaylistItem* header)
+void updateHeaderChildren(Fooyin::PlaylistItem* header)
 {
     if(!header) {
         return;
@@ -317,18 +315,18 @@ void updateHeaderChildren(PlaylistItem* header)
 
     const auto type = header->type();
 
-    if(type == PlaylistItem::Header || type == PlaylistItem::Subheader) {
-        Fy::Gui::Widgets::Playlist::Container& container = std::get<1>(header->data());
+    if(type == Fooyin::PlaylistItem::Header || type == Fooyin::PlaylistItem::Subheader) {
+        Fooyin::PlaylistContainerItem& container = std::get<1>(header->data());
         container.clearTracks();
 
         const auto& children = header->children();
-        for(PlaylistItem* child : children) {
-            if(child->type() == PlaylistItem::Track) {
-                const Fy::Core::Track& track = std::get<0>(child->data()).track();
+        for(Fooyin::PlaylistItem* child : children) {
+            if(child->type() == Fooyin::PlaylistItem::Track) {
+                const Fooyin::Track& track = std::get<0>(child->data()).track();
                 container.addTrack(track);
             }
             else {
-                const Fy::Core::TrackList tracks = std::get<1>(child->data()).tracks();
+                const Fooyin::TrackList tracks = std::get<1>(child->data()).tracks();
                 container.addTracks(tracks);
             }
         }
@@ -338,26 +336,27 @@ void updateHeaderChildren(PlaylistItem* header)
 struct SplitParent
 {
     QModelIndex source;
-    PlaylistItem* target;
+    Fooyin::PlaylistItem* target;
     int firstRow{0};
     int finalRow{0};
-    std::vector<PlaylistItem*> children;
+    std::vector<Fooyin::PlaylistItem*> children;
 };
 } // namespace
 
-namespace Fy::Gui::Widgets::Playlist {
-PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, Utils::SettingsManager* settings)
+namespace Fooyin {
+PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, SettingsManager* settings)
     : model{model}
     , settings{settings}
-    , coverProvider{new Library::CoverProvider(model)}
+    , coverProvider{new CoverProvider(model)}
     , resetting{false}
     , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
     , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
-    , altColours{settings->value<Settings::PlaylistAltColours>()}
-    , coverSize{settings->value<Settings::PlaylistThumbnailSize>(), settings->value<Settings::PlaylistThumbnailSize>()}
+    , altColours{settings->value<Gui::Settings::PlaylistAltColours>()}
+    , coverSize{settings->value<Gui::Settings::PlaylistThumbnailSize>(),
+                settings->value<Gui::Settings::PlaylistThumbnailSize>()}
     , isActivePlaylist{false}
     , currentPlaylist{nullptr}
-    , currentPlayState{Core::Player::PlayState::Stopped}
+    , currentPlayState{PlayState::Stopped}
 {
     populator.moveToThread(&populatorThread);
     populatorThread.start();
@@ -474,7 +473,7 @@ void PlaylistModelPrivate::beginReset()
 
 QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
 {
-    const auto track = std::get<Track>(item->data());
+    const auto track = std::get<PlaylistTrackItem>(item->data());
 
     switch(role) {
         case(PlaylistItem::Role::Left): {
@@ -491,7 +490,7 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
             return false;
         }
         case(PlaylistItem::Role::ItemData): {
-            return QVariant::fromValue<Core::Track>(track.track());
+            return QVariant::fromValue<Track>(track.track());
         }
         case(PlaylistItem::Role::Indentation): {
             return item->indentation();
@@ -507,11 +506,11 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
         }
         case(Qt::DecorationRole): {
             switch(currentPlayState) {
-                case(Core::Player::PlayState::Playing):
+                case(PlayState::Playing):
                     return playingIcon;
-                case(Core::Player::PlayState::Paused):
+                case(PlayState::Paused):
                     return pausedIcon;
-                case(Core::Player::PlayState::Stopped):
+                case(PlayState::Stopped):
                 default:
                     return {};
             }
@@ -523,7 +522,7 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
 
 QVariant PlaylistModelPrivate::headerData(PlaylistItem* item, int role) const
 {
-    const auto& header = std::get<Container>(item->data());
+    const auto& header = std::get<PlaylistContainerItem>(item->data());
 
     switch(role) {
         case(PlaylistItem::Role::Title): {
@@ -560,7 +559,7 @@ QVariant PlaylistModelPrivate::headerData(PlaylistItem* item, int role) const
 
 QVariant PlaylistModelPrivate::subheaderData(PlaylistItem* item, int role) const
 {
-    const auto& header = std::get<Container>(item->data());
+    const auto& header = std::get<PlaylistContainerItem>(item->data());
 
     switch(role) {
         case(PlaylistItem::Role::Title): {
@@ -653,7 +652,7 @@ bool PlaylistModelPrivate::handleDrop(const QMimeData* data, Qt::DropAction acti
 
     const QModelIndexList indexes = restoreIndexes(model, data->data(Constants::Mime::PlaylistItems), currentPlaylist);
     if(indexes.isEmpty()) {
-        const Core::TrackList tracks = restoreTracks(data->data(Constants::Mime::TrackList));
+        const TrackList tracks = restoreTracks(data->data(Constants::Mime::TrackList));
         if(tracks.empty()) {
             return false;
         }
@@ -1234,7 +1233,7 @@ void PlaylistModelPrivate::removeTracks(const QModelIndexList& indexes)
     model->tracksChanged();
 }
 
-void PlaylistModelPrivate::coverUpdated(const Core::Track& track)
+void PlaylistModelPrivate::coverUpdated(const Track& track)
 {
     if(!trackParents.contains(track.id())) {
         return;
@@ -1380,4 +1379,4 @@ TrackIndexResult PlaylistModelPrivate::indexForTrackIndex(int index)
     }
     return {model->indexOfItem(parent), true};
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

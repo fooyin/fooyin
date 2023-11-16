@@ -41,33 +41,31 @@
 using namespace std::chrono_literals;
 
 namespace {
-QCoro::Task<Fy::Core::TrackList> recalSortFields(QString sort, Fy::Core::TrackList tracks)
+QCoro::Task<Fooyin::TrackList> recalSortFields(QString sort, Fooyin::TrackList tracks)
 {
-    co_return co_await Fy::Utils::asyncExec(
-        [&sort, &tracks]() { return Fy::Core::Library::Sorting::calcSortFields(sort, tracks); });
+    co_return co_await Fooyin::Utils::asyncExec([&sort, &tracks]() { return Fooyin::Sorting::calcSortFields(sort, tracks); });
 }
 
-QCoro::Task<Fy::Core::TrackList> resortTracks(Fy::Core::TrackList tracks)
+QCoro::Task<Fooyin::TrackList> resortTracks(Fooyin::TrackList tracks)
 {
-    co_return co_await Fy::Utils::asyncExec([&tracks]() { return Fy::Core::Library::Sorting::sortTracks(tracks); });
+    co_return co_await Fooyin::Utils::asyncExec([&tracks]() { return Fooyin::Sorting::sortTracks(tracks); });
 }
 } // namespace
 
-namespace Fy::Core::Library {
+namespace Fooyin {
 struct UnifiedMusicLibrary::Private
 {
     UnifiedMusicLibrary* self;
 
     LibraryManager* libraryManager;
-    DB::Database* database;
-    Utils::SettingsManager* settings;
+    Database* database;
+    SettingsManager* settings;
 
     LibraryThreadHandler threadHandler;
 
     TrackList tracks;
 
-    Private(UnifiedMusicLibrary* self, LibraryManager* libraryManager, DB::Database* database,
-            Utils::SettingsManager* settings)
+    Private(UnifiedMusicLibrary* self, LibraryManager* libraryManager, Database* database, SettingsManager* settings)
         : self{self}
         , libraryManager{libraryManager}
         , database{database}
@@ -78,7 +76,7 @@ struct UnifiedMusicLibrary::Private
     QCoro::Task<void> loadTracks(TrackList trackToLoad)
     {
         co_await addTracks(trackToLoad);
-        QMetaObject::invokeMethod(self, "tracksLoaded", Q_ARG(const Core::TrackList&, trackToLoad));
+        QMetaObject::invokeMethod(self, "tracksLoaded", Q_ARG(const TrackList&, trackToLoad));
     }
 
     QCoro::Task<TrackList> addTracks(TrackList newTracks)
@@ -91,7 +89,8 @@ struct UnifiedMusicLibrary::Private
             libraryDirs.emplace(id, QDir{info.path});
         }
 
-        TrackList presortedTracks = co_await recalSortFields(settings->value<Settings::LibrarySortScript>(), newTracks);
+        TrackList presortedTracks
+            = co_await recalSortFields(settings->value<Core::Settings::LibrarySortScript>(), newTracks);
         for(Track& track : presortedTracks) {
             const int libraryId = track.libraryId();
             if(libraryDirs.contains(libraryId)) {
@@ -108,13 +107,13 @@ struct UnifiedMusicLibrary::Private
     QCoro::Task<void> newTracks(TrackList newTracks)
     {
         TrackList addedTracks = co_await addTracks(newTracks);
-        QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const Core::TrackList&, addedTracks));
+        QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, addedTracks));
     }
 
     QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
     {
         TrackList updatedTracks
-            = co_await recalSortFields(settings->value<Settings::LibrarySortScript>(), tracksToUpdate);
+            = co_await recalSortFields(settings->value<Core::Settings::LibrarySortScript>(), tracksToUpdate);
         updatedTracks = co_await resortTracks(updatedTracks);
 
         std::ranges::for_each(updatedTracks, [this](Track track) {
@@ -124,7 +123,7 @@ struct UnifiedMusicLibrary::Private
 
         tracks = co_await resortTracks(tracks);
 
-        QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const Core::TrackList&, updatedTracks));
+        QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, updatedTracks));
     }
 
     void removeTracks(const TrackList& tracksToRemove)
@@ -134,7 +133,7 @@ struct UnifiedMusicLibrary::Private
                                        [libraryTrack](const Track& track) { return libraryTrack.id() == track.id(); });
         });
 
-        QMetaObject::invokeMethod(self, "tracksDeleted", Q_ARG(const Core::TrackList&, tracksToRemove));
+        QMetaObject::invokeMethod(self, "tracksDeleted", Q_ARG(const TrackList&, tracksToRemove));
     }
 
     void libraryStatusChanged(const LibraryInfo& library) const
@@ -148,12 +147,12 @@ struct UnifiedMusicLibrary::Private
         const TrackList sortedTracks = co_await resortTracks(recalTracks);
         tracks                       = sortedTracks;
 
-        QMetaObject::invokeMethod(self, "tracksSorted", Q_ARG(const Core::TrackList&, tracks));
+        QMetaObject::invokeMethod(self, "tracksSorted", Q_ARG(const TrackList&, tracks));
     }
 };
 
-UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Database* database,
-                                         Utils::SettingsManager* settings, QObject* parent)
+UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Database* database, SettingsManager* settings,
+                                         QObject* parent)
     : MusicLibrary{parent}
     , p{std::make_unique<Private>(this, libraryManager, database, settings)}
 {
@@ -176,10 +175,11 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DB::Dat
     connect(&p->threadHandler, &LibraryThreadHandler::gotTracks, this,
             [this](const TrackList& tracks) { p->loadTracks(tracks); });
 
-    p->settings->subscribe<Settings::LibrarySortScript>(this, [this](const QString& sort) { p->changeSort(sort); });
+    p->settings->subscribe<Core::Settings::LibrarySortScript>(this,
+                                                              [this](const QString& sort) { p->changeSort(sort); });
 
-    if(p->settings->value<Settings::AutoRefresh>()) {
-        QTimer::singleShot(3s, this, &Library::UnifiedMusicLibrary::reloadAll);
+    if(p->settings->value<Core::Settings::AutoRefresh>()) {
+        QTimer::singleShot(3s, this, &UnifiedMusicLibrary::reloadAll);
     }
 }
 
@@ -250,6 +250,6 @@ void UnifiedMusicLibrary::removeLibrary(int id)
 
     emit libraryRemoved(id);
 }
-} // namespace Fy::Core::Library
+} // namespace Fooyin
 
 #include "moc_unifiedmusiclibrary.cpp"

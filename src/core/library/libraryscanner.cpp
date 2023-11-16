@@ -30,17 +30,17 @@
 
 #include <QDir>
 
-namespace Fy::Core::Library {
+namespace Fooyin {
 struct LibraryScanner::Private
 {
     LibraryScanner* self;
     LibraryInfo library;
-    DB::Database* database;
-    DB::LibraryDatabase libraryDatabase;
-    Tagging::TagReader tagReader;
-    Tagging::TagWriter tagWriter;
+    Database* database;
+    LibraryDatabase libraryDatabase;
+    TagReader tagReader;
+    TagWriter tagWriter;
 
-    Private(LibraryScanner* self, DB::Database* database)
+    Private(LibraryScanner* self, Database* database)
         : self{self}
         , database{database}
         , libraryDatabase{database->connectionName()}
@@ -151,7 +151,7 @@ struct LibraryScanner::Private
 
                 if(tracksToStore.size() >= 250) {
                     storeTracks(tracksToStore);
-                    QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const Core::TrackList&, tracksToStore));
+                    QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const TrackList&, tracksToStore));
                     tracksToStore.clear();
                 }
             }
@@ -161,10 +161,10 @@ struct LibraryScanner::Private
         storeTracks(tracksToUpdate);
 
         if(!tracksToStore.empty()) {
-            QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const Core::TrackList&, tracksToStore));
+            QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const TrackList&, tracksToStore));
         }
         if(!tracksToUpdate.empty()) {
-            QMetaObject::invokeMethod(self, "updatedTracks", Q_ARG(const Core::TrackList&, tracksToUpdate));
+            QMetaObject::invokeMethod(self, "updatedTracks", Q_ARG(const TrackList&, tracksToUpdate));
         }
 
         tracksToStore.clear();
@@ -176,11 +176,11 @@ struct LibraryScanner::Private
     void changeLibraryStatus(LibraryInfo::Status status)
     {
         library.status = status;
-        QMetaObject::invokeMethod(self, "statusChanged", Q_ARG(const Fy::Core::Library::LibraryInfo&, library));
+        QMetaObject::invokeMethod(self, "statusChanged", Q_ARG(const Fooyin::LibraryInfo&, library));
     }
 };
 
-LibraryScanner::LibraryScanner(DB::Database* database, QObject* parent)
+LibraryScanner::LibraryScanner(Database* database, QObject* parent)
     : Worker{parent}
     , p{std::make_unique<Private>(this, database)}
 { }
@@ -250,6 +250,6 @@ void LibraryScanner::updateTracks(const TrackList& tracks)
         }
     }
 }
-} // namespace Fy::Core::Library
+} // namespace Fooyin
 
 #include "moc_libraryscanner.cpp"

@@ -25,13 +25,13 @@
 #include <QMenuBar>
 
 namespace {
-bool canAddAction(Fy::Utils::Command* action)
+bool canAddAction(Fooyin::Command* action)
 {
     return action && action->action();
 }
 } // namespace
 
-namespace Fy::Utils {
+namespace Fooyin {
 struct MenuContainer::Private
 {
     MenuContainer* self;
@@ -431,6 +431,6 @@ bool MenuActionContainer::canBeAddedToContainer(ActionContainer* container) cons
 {
     return qobject_cast<MenuActionContainer*>(container) || qobject_cast<MenuBarActionContainer*>(container);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "moc_menucontainer.cpp"

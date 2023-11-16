@@ -25,7 +25,7 @@
 
 #include <QtPlugin>
 
-namespace Fy::Gui {
+namespace Fooyin {
 class FYGUI_EXPORT GuiPlugin
 {
 public:
@@ -33,6 +33,6 @@ public:
 
     virtual void initialise(const GuiPluginContext& context) = 0;
 };
-} // namespace Fy::Gui
+} // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fy::Gui::GuiPlugin, "com.fooyin.plugin.gui")
+Q_DECLARE_INTERFACE(Fooyin::GuiPlugin, "com.fooyin.plugin.gui")

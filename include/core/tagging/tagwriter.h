@@ -25,7 +25,7 @@
 
 #include <memory>
 
-namespace Fy::Core::Tagging {
+namespace Fooyin {
 class FYCORE_EXPORT TagWriter
 {
 public:
@@ -38,4 +38,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Core::Tagging
+} // namespace Fooyin

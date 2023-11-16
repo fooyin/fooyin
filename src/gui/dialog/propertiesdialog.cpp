@@ -34,7 +34,7 @@
 
 constexpr auto PropertiesDialogState = "Interface/PropertiesDialogState";
 
-namespace Fy::Gui {
+namespace Fooyin {
 PropertiesTab::PropertiesTab(QString title, WidgetBuilder widgetBuilder, int index)
     : m_index{index}
     , m_title{std::move(title)}
@@ -200,7 +200,7 @@ void PropertiesDialogWidget::currentTabChanged(int index)
     }
 }
 
-PropertiesDialog::PropertiesDialog(Utils::SettingsManager* settings, QObject* parent)
+PropertiesDialog::PropertiesDialog(SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_settings{settings}
 { }
@@ -247,6 +247,6 @@ void PropertiesDialog::show()
 
     dialog->restoreState(m_settings->settingsFile());
 }
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "gui/moc_propertiesdialog.cpp"

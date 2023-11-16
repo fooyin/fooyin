@@ -27,7 +27,7 @@ extern "C"
 
 #include <QDebug>
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin::Utils {
 void printError(int error)
 {
     char errStr[1024];
@@ -158,4 +158,4 @@ void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, doub
             qDebug() << "Unable to adjust volume of unsupported bps: " << bps;
     }
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin::Utils

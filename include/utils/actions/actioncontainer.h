@@ -30,7 +30,7 @@ class QAction;
 class QMenu;
 class QMenuBar;
 
-namespace Fy::Utils {
+namespace Fooyin {
 class Command;
 
 namespace Actions::Groups {
@@ -76,4 +76,4 @@ public:
     virtual bool isHidden() = 0;
     virtual void clear()    = 0;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

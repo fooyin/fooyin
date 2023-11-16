@@ -24,7 +24,7 @@
 #include <QCryptographicHash>
 #include <QString>
 
-namespace Fy::Utils {
+namespace Fooyin::Utils {
 template <typename... Args>
 QString generateHash(const Args&... args)
 {
@@ -36,4 +36,4 @@ QString generateHash(const Args&... args)
 }
 
 FYUTILS_EXPORT QString generateRandomHash();
-} // namespace Fy::Utils
+} // namespace Fooyin::Utils

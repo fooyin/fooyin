@@ -23,7 +23,7 @@
 
 #include <QTableView>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT ExtendableTableView : public QTableView
 {
     Q_OBJECT
@@ -46,4 +46,4 @@ private:
     bool m_mouseOverButton;
     bool m_pendingRow;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

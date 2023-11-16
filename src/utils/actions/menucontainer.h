@@ -21,7 +21,7 @@
 
 #include <utils/actions/actioncontainer.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class ActionManager;
 
 class MenuContainer : public ActionContainer
@@ -147,4 +147,4 @@ protected:
 private:
     std::unique_ptr<QMenu> m_menu;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

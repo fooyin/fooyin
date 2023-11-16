@@ -21,19 +21,11 @@
 
 #include <QMainWindow>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-} // namespace Utils
-
-namespace Gui {
 class MainMenuBar;
-
-namespace Widgets {
 class EditableLayout;
-} // namespace Widgets
 
 class MainWindow : public QMainWindow
 {
@@ -48,8 +40,8 @@ public:
     };
     Q_ENUM(StartupBehaviour)
 
-    explicit MainWindow(Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
-                        Widgets::EditableLayout* editableLayout, QWidget* parent = nullptr);
+    explicit MainWindow(ActionManager* actionManager, SettingsManager* settings, EditableLayout* editableLayout,
+                        QWidget* parent = nullptr);
 
     ~MainWindow() override;
 
@@ -62,12 +54,11 @@ protected:
     void closeEvent(QCloseEvent* event) override;
 
 private:
-    Utils::ActionManager* m_actionManager;
-    Utils::SettingsManager* m_settings;
+    ActionManager* m_actionManager;
+    SettingsManager* m_settings;
 
     MainMenuBar* m_mainMenu;
 
-    Widgets::EditableLayout* m_editableLayout;
+    EditableLayout* m_editableLayout;
 };
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

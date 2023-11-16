@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-namespace Fy::Core::Playlist {
+namespace Fooyin {
 class FYCORE_EXPORT PlaylistManager : public QObject
 {
     Q_OBJECT
@@ -45,12 +45,12 @@ public:
     virtual Playlist* createPlaylist(const QString& name, const TrackList& tracks) = 0;
     virtual void appendToPlaylist(int id, const TrackList& tracks)                 = 0;
 
-    virtual void changePlaylistIndex(int id, int index)                   = 0;
-    virtual void changeActivePlaylist(int id)                             = 0;
-    virtual void changeActivePlaylist(Core::Playlist::Playlist* playlist) = 0;
-    virtual void schedulePlaylist(int id)                                 = 0;
-    virtual void schedulePlaylist(Core::Playlist::Playlist* playlist)     = 0;
-    virtual void clearSchedulePlaylist()                                  = 0;
+    virtual void changePlaylistIndex(int id, int index)   = 0;
+    virtual void changeActivePlaylist(int id)             = 0;
+    virtual void changeActivePlaylist(Playlist* playlist) = 0;
+    virtual void schedulePlaylist(int id)                 = 0;
+    virtual void schedulePlaylist(Playlist* playlist)     = 0;
+    virtual void clearSchedulePlaylist()                  = 0;
 
     virtual void renamePlaylist(int id, const QString& name) = 0;
     virtual void removePlaylist(int id)                      = 0;
@@ -62,12 +62,12 @@ public:
 
 signals:
     void playlistsPopulated();
-    void playlistAdded(Core::Playlist::Playlist* playlist);
-    void playlistTracksAdded(Core::Playlist::Playlist* playlist, const Core::TrackList& tracks, int index);
-    void playlistTracksChanged(Core::Playlist::Playlist* playlist);
-    void playlistRemoved(Core::Playlist::Playlist* playlist);
-    void playlistRenamed(Core::Playlist::Playlist* playlist);
-    void activePlaylistChanged(Core::Playlist::Playlist* playlist);
+    void playlistAdded(Playlist* playlist);
+    void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index);
+    void playlistTracksChanged(Playlist* playlist);
+    void playlistRemoved(Playlist* playlist);
+    void playlistRenamed(Playlist* playlist);
+    void activePlaylistChanged(Playlist* playlist);
     void activeTrackChanged(const Track& track, int index);
 };
-} // namespace Fy::Core::Playlist
+} // namespace Fooyin

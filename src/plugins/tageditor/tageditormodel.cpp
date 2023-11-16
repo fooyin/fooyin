@@ -28,7 +28,7 @@
 
 constexpr auto DefaultFieldText = "<input field name>";
 
-namespace Fy::TagEditor {
+namespace Fooyin::TagEditor {
 using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
 
 struct EditorPair
@@ -41,23 +41,23 @@ struct TagEditorModel::Private
 {
     TagEditorModel* self;
 
-    Utils::SettingsManager* settings;
-    Core::Scripting::Registry scriptRegistry;
+    SettingsManager* settings;
+    ScriptRegistry scriptRegistry;
 
-    Core::TrackList tracks;
+    TrackList tracks;
 
     std::vector<EditorPair> fields{
-        {"Artist Name", Core::Constants::MetaData::Artist},  {"Track Title", Core::Constants::MetaData::Title},
-        {"Album Title", Core::Constants::MetaData::Album},   {"Date", Core::Constants::MetaData::Date},
-        {"Genre", Core::Constants::MetaData::Genre},         {"Composer", Core::Constants::MetaData::Composer},
-        {"Performer", Core::Constants::MetaData::Performer}, {"Album Artist", Core::Constants::MetaData::AlbumArtist},
-        {"Track Number", Core::Constants::MetaData::Track},  {"Total Tracks", Core::Constants::MetaData::TrackTotal},
-        {"Disc Number", Core::Constants::MetaData::Disc},    {"Total Discs", Core::Constants::MetaData::DiscTotal},
-        {"Comment", Core::Constants::MetaData::Comment}};
+        {"Artist Name", Constants::MetaData::Artist},  {"Track Title", Constants::MetaData::Title},
+        {"Album Title", Constants::MetaData::Album},   {"Date", Constants::MetaData::Date},
+        {"Genre", Constants::MetaData::Genre},         {"Composer", Constants::MetaData::Composer},
+        {"Performer", Constants::MetaData::Performer}, {"Album Artist", Constants::MetaData::AlbumArtist},
+        {"Track Number", Constants::MetaData::Track},  {"Total Tracks", Constants::MetaData::TrackTotal},
+        {"Disc Number", Constants::MetaData::Disc},    {"Total Discs", Constants::MetaData::DiscTotal},
+        {"Comment", Constants::MetaData::Comment}};
     TagFieldMap tags;
     TagFieldMap customTags;
 
-    explicit Private(TagEditorModel* self, Utils::SettingsManager* settings)
+    explicit Private(TagEditorModel* self, SettingsManager* settings)
         : self{self}
         , settings{settings}
     { }
@@ -86,7 +86,7 @@ struct TagEditorModel::Private
 
     void updateFields()
     {
-        for(const Core::Track& track : tracks) {
+        for(const Track& track : tracks) {
             const auto trackTags = track.extraTags();
 
             for(const auto& [field, values] : trackTags) {
@@ -123,8 +123,8 @@ struct TagEditorModel::Private
                 scriptRegistry.changeCurrentTrack(track);
                 const auto result = scriptRegistry.varValue(var);
                 if(result.cond) {
-                    if(result.value.contains(Core::Constants::Separator)) {
-                        tags[field].addTrackValue(result.value.split(Core::Constants::Separator));
+                    if(result.value.contains(Constants::Separator)) {
+                        tags[field].addTrackValue(result.value.split(Constants::Separator));
                     }
                     else {
                         tags[field].addTrackValue(result.value);
@@ -146,13 +146,12 @@ struct TagEditorModel::Private
 
         const QString metadata = findField(name);
 
-        for(Core::Track& track : tracks) {
-            if(metadata == Core::Constants::MetaData::Artist || metadata == Core::Constants::MetaData::Genre) {
+        for(Track& track : tracks) {
+            if(metadata == Constants::MetaData::Artist || metadata == Constants::MetaData::Genre) {
                 scriptRegistry.setVar(metadata, value.toString().split(QStringLiteral("; ")), track);
             }
-            else if(metadata == Core::Constants::MetaData::Track || metadata == Core::Constants::MetaData::TrackTotal
-                    || metadata == Core::Constants::MetaData::Disc
-                    || metadata == Core::Constants::MetaData::DiscTotal) {
+            else if(metadata == Constants::MetaData::Track || metadata == Constants::MetaData::TrackTotal
+                    || metadata == Constants::MetaData::Disc || metadata == Constants::MetaData::DiscTotal) {
                 scriptRegistry.setVar(metadata, value.toInt(), track);
             }
             else {
@@ -167,7 +166,7 @@ struct TagEditorModel::Private
             return;
         }
 
-        for(Core::Track& track : tracks) {
+        for(Track& track : tracks) {
             track.addExtraTag(name, value);
         }
     }
@@ -178,7 +177,7 @@ struct TagEditorModel::Private
             return;
         }
 
-        for(Core::Track& track : tracks) {
+        for(Track& track : tracks) {
             track.replaceExtraTag(name, value);
         }
     }
@@ -189,18 +188,18 @@ struct TagEditorModel::Private
             return;
         }
 
-        for(Core::Track& track : tracks) {
+        for(Track& track : tracks) {
             track.removeExtraTag(name);
         }
     }
 };
 
-TagEditorModel::TagEditorModel(Utils::SettingsManager* settings, QObject* parent)
+TagEditorModel::TagEditorModel(SettingsManager* settings, QObject* parent)
     : TableModel{parent}
     , p{std::make_unique<Private>(this, settings)}
 { }
 
-void TagEditorModel::reset(const Core::TrackList& tracks)
+void TagEditorModel::reset(const TrackList& tracks)
 {
     beginResetModel();
     resetRoot();
@@ -476,6 +475,6 @@ void TagEditorModel::removePendingRow()
     rootItem()->removeChild(row);
     endRemoveRows();
 }
-} // namespace Fy::TagEditor
+} // namespace Fooyin::TagEditor
 
 #include "moc_tageditormodel.cpp"

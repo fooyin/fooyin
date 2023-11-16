@@ -23,25 +23,16 @@
 
 #include <QWidget>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Core::Player {
 class PlayerManager;
-} // namespace Core::Player
-
-namespace Gui {
 class TrackSelectionController;
 
-namespace Widgets::Info {
 class InfoWidget : public PropertiesTabWidget
 {
 public:
-    explicit InfoWidget(Core::Player::PlayerManager* playerManager, TrackSelectionController* selectionController,
-                        Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit InfoWidget(PlayerManager* playerManager, TrackSelectionController* selectionController,
+                        SettingsManager* settings, QWidget* parent = nullptr);
     ~InfoWidget();
 
     [[nodiscard]] QString name() const override;
@@ -53,6 +44,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Widgets::Info
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

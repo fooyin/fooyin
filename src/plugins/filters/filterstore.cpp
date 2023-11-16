@@ -19,7 +19,7 @@
 
 #include "filterstore.h"
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 FilterList FilterStore::filters() const
 {
     return m_filters;
@@ -76,4 +76,4 @@ void FilterStore::clearActiveFilters(int index)
         }
     }
 }
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

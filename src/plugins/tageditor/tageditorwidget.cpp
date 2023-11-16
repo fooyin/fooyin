@@ -54,9 +54,9 @@ void handleNewRow(QTableView* view)
 };
 } // namespace
 
-namespace Fy::TagEditor {
+namespace Fooyin::TagEditor {
 TagEditorView::TagEditorView(QWidget* parent)
-    : Utils::ExtendableTableView{parent}
+    : ExtendableTableView{parent}
 { }
 
 int TagEditorView::sizeHintForRow(int row) const
@@ -73,27 +73,27 @@ struct TagEditorWidget::Private
 {
     TagEditorWidget* self;
 
-    Utils::ActionManager* actionManager;
-    Gui::TrackSelectionController* trackSelection;
-    Utils::SettingsManager* settings;
+    ActionManager* actionManager;
+    TrackSelectionController* trackSelection;
+    SettingsManager* settings;
 
-    Utils::WidgetContext* context;
+    WidgetContext* context;
 
     QAction* remove;
-    Utils::Command* removeCommand;
+    Command* removeCommand;
 
     TagEditorView* view;
     TagEditorModel* model;
 
-    Private(TagEditorWidget* self, Utils::ActionManager* actionManager, Gui::TrackSelectionController* trackSelection,
-            Utils::SettingsManager* settings)
+    Private(TagEditorWidget* self, ActionManager* actionManager, TrackSelectionController* trackSelection,
+            SettingsManager* settings)
         : self{self}
         , actionManager{actionManager}
         , trackSelection{trackSelection}
         , settings{settings}
-        , context{new Utils::WidgetContext(self, Utils::Context{"Context.TagEditor"}, self)}
+        , context{new WidgetContext(self, Context{"Context.TagEditor"}, self)}
         , remove{new QAction(tr("Remove"), self)}
-        , removeCommand{actionManager->registerAction(remove, Gui::Constants::Actions::Remove, context->context())}
+        , removeCommand{actionManager->registerAction(remove, Constants::Actions::Remove, context->context())}
         , view{new TagEditorView(self)}
         , model{new TagEditorModel(settings, self)}
     {
@@ -130,8 +130,8 @@ struct TagEditorWidget::Private
     };
 };
 
-TagEditorWidget::TagEditorWidget(Utils::ActionManager* actionManager, Gui::TrackSelectionController* trackSelection,
-                                 Utils::SettingsManager* settings, QWidget* parent)
+TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TrackSelectionController* trackSelection,
+                                 SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
     , p{std::make_unique<Private>(this, actionManager, trackSelection, settings)}
 {
@@ -146,13 +146,13 @@ TagEditorWidget::TagEditorWidget(Utils::ActionManager* actionManager, Gui::Track
     p->view->setColumnWidth(0, width);
     resizeTable(p->view);
 
-    QObject::connect(p->trackSelection, &Gui::TrackSelectionController::selectionChanged, this,
-                     [this](const Core::TrackList& tracks) { p->model->reset(tracks); });
-    QObject::connect(p->view, &Utils::ExtendableTableView::newRowClicked, p->model, &TagEditorModel::addNewRow);
+    QObject::connect(p->trackSelection, &TrackSelectionController::selectionChanged, this,
+                     [this](const TrackList& tracks) { p->model->reset(tracks); });
+    QObject::connect(p->view, &ExtendableTableView::newRowClicked, p->model, &TagEditorModel::addNewRow);
     QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { resizeTable(p->view); });
     QObject::connect(p->model, &TagEditorModel::trackMetadataChanged, this, &TagEditorWidget::trackMetadataChanged);
     QObject::connect(p->model, &TagEditorModel::newPendingRow, this, [this]() { handleNewRow(p->view); });
-    QObject::connect(p->model, &TagEditorModel::pendingRowAdded, p->view, &Utils::ExtendableTableView::rowAdded);
+    QObject::connect(p->model, &TagEditorModel::pendingRowAdded, p->view, &ExtendableTableView::rowAdded);
     QObject::connect(
         p->model, &TagEditorModel::pendingRowCancelled, this,
         [this]() {
@@ -212,6 +212,6 @@ void TagEditorWidget::contextMenuEvent(QContextMenuEvent* event)
 
     menu->popup(event->globalPos());
 }
-} // namespace Fy::TagEditor
+} // namespace Fooyin::TagEditor
 
 #include "moc_tageditorwidget.cpp"

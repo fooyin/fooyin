@@ -21,7 +21,7 @@
 
 #include "gui/layoutprovider.h"
 
-namespace Fy::Gui {
+namespace Fooyin {
 QuickSetupModel::QuickSetupModel(LayoutProvider* layoutProvider, QObject* parent)
     : QAbstractListModel{parent}
     , m_layoutProvider{layoutProvider}
@@ -53,4 +53,4 @@ QVariant QuickSetupModel::data(const QModelIndex& index, int role) const
         }
     }
 }
-} // namespace Fy::Gui
+} // namespace Fooyin

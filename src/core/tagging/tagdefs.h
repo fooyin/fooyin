@@ -19,7 +19,7 @@
 
 #pragma once
 
-namespace Fy::Core::Tagging {
+namespace Fooyin {
 namespace Tag {
 constexpr auto Title       = "TITLE";
 constexpr auto Artist      = "ARTIST";
@@ -55,4 +55,4 @@ constexpr auto TrackNumber  = "trkn";
 constexpr auto DiscNumber   = "disk";
 constexpr auto Cover        = "covr";
 } // namespace Mp4
-} // namespace Fy::Core::Tagging
+} // namespace Fooyin

@@ -22,7 +22,7 @@
 #include <QAbstractEventDispatcher>
 #include <QThread>
 
-namespace Fy::Utils {
+namespace Fooyin {
 Worker::Worker(QObject* parent)
     : QObject{parent}
     , m_state{Idle}
@@ -57,6 +57,6 @@ bool Worker::mayRun() const
 {
     return m_state == Running;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_worker.cpp"

@@ -25,27 +25,11 @@
 #include <QPixmap>
 #include <QThread>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Core {
-namespace Player {
-enum class PlayState;
-}
-namespace Playlist {
 class Playlist;
-}
-} // namespace Core
-
-namespace Gui {
-namespace Library {
 class CoverProvider;
-}
-
-namespace Widgets::Playlist {
+enum class PlayState;
 class PlaylistModel;
 
 inline bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
@@ -107,7 +91,7 @@ struct MergeResult
 class PlaylistModelPrivate
 {
 public:
-    PlaylistModelPrivate(PlaylistModel* self, Utils::SettingsManager* settings);
+    PlaylistModelPrivate(PlaylistModel* self, SettingsManager* settings);
 
     void populateModel(PendingData& data);
     void populateTracks(PendingData& data);
@@ -146,7 +130,7 @@ public:
     void deleteNodes(PlaylistItem* parent);
 
     void removeTracks(const QModelIndexList& indexes);
-    void coverUpdated(const Core::Track& track);
+    void coverUpdated(const Track& track);
 
     ParentChildIndexMap determineIndexGroups(const QModelIndexList& indexes);
     ParentChildRowMap determineRowGroups(const QModelIndexList& indexes);
@@ -156,8 +140,8 @@ public:
 
     PlaylistModel* model;
 
-    Utils::SettingsManager* settings;
-    Library::CoverProvider* coverProvider;
+    SettingsManager* settings;
+    CoverProvider* coverProvider;
 
     bool resetting;
     QString headerText;
@@ -176,11 +160,9 @@ public:
 
     PlaylistPreset currentPreset;
     bool isActivePlaylist;
-    Core::Playlist::Playlist* currentPlaylist;
-    Core::Player::PlayState currentPlayState;
-    Core::Track currentPlayingTrack;
+    Playlist* currentPlaylist;
+    PlayState currentPlayState;
+    Track currentPlayingTrack;
     QPersistentModelIndex currentPlayingIndex;
 };
-} // namespace Widgets::Playlist
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

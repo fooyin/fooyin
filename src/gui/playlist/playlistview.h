@@ -22,7 +22,7 @@
 #include <QTimer>
 #include <QTreeView>
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 class PlaylistView : public QTreeView
 {
     Q_OBJECT
@@ -56,4 +56,4 @@ private:
     QTimer m_autoScrollTimer;
     int m_autoScrollCount;
 };
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

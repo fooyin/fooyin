@@ -33,12 +33,12 @@ using namespace Qt::Literals::StringLiterals;
 
 static constexpr auto DatabaseVersion = "0.1.0";
 
-namespace Fy::Core::DB {
-Database::Database(Utils::SettingsManager* settings)
+namespace Fooyin {
+Database::Database(SettingsManager* settings)
     : Database{Utils::sharePath(), u"fooyin.db"_s, settings}
 { }
 
-Database::Database(const QString& directory, const QString& filename, Utils::SettingsManager* settings)
+Database::Database(const QString& directory, const QString& filename, SettingsManager* settings)
     : Module{directory + "/" + filename}
     , m_settings{settings}
 {
@@ -62,8 +62,8 @@ Database::Database(const QString& directory, const QString& filename, Utils::Set
 
 bool Database::update()
 {
-    if(m_settings->value<Settings::DatabaseVersion>() < DatabaseVersion) {
-        m_settings->set<Settings::DatabaseVersion>(DatabaseVersion);
+    if(m_settings->value<Core::Settings::DatabaseVersion>() < DatabaseVersion) {
+        m_settings->set<Core::Settings::DatabaseVersion>(DatabaseVersion);
         return true;
     }
     return false;
@@ -209,4 +209,4 @@ bool Database::checkInsertIndex(const QString& indexName, const QString& createS
     }
     return true;
 }
-} // namespace Fy::Core::DB
+} // namespace Fooyin

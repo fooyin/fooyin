@@ -25,10 +25,10 @@
 #include <core/trackfwd.h>
 #include <utils/treemodel.h>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct LibraryTreeAppearance;
 
-class LibraryTreeModel : public Utils::TreeModel<LibraryTreeItem>
+class LibraryTreeModel : public TreeModel<LibraryTreeItem>
 {
     Q_OBJECT
 
@@ -49,15 +49,15 @@ public:
     [[nodiscard]] Qt::DropActions supportedDragActions() const override;
     [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
-    void addTracks(const Core::TrackList& tracks);
-    void updateTracks(const Core::TrackList& tracks);
-    void removeTracks(const Core::TrackList& tracks);
+    void addTracks(const TrackList& tracks);
+    void updateTracks(const TrackList& tracks);
+    void removeTracks(const TrackList& tracks);
 
     void changeGrouping(const LibraryTreeGrouping& grouping);
-    void reset(const Core::TrackList& tracks);
+    void reset(const TrackList& tracks);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

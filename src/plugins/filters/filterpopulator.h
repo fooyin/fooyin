@@ -24,7 +24,7 @@
 #include <core/trackfwd.h>
 #include <utils/worker.h>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 using ItemKeyMap     = std::map<QString, FilterItem>;
 using TrackIdNodeMap = std::unordered_map<int, std::vector<QString>>;
 
@@ -40,7 +40,7 @@ struct PendingTreeData
     }
 };
 
-class FilterPopulator : public Utils::Worker
+class FilterPopulator : public Worker
 {
     Q_OBJECT
 
@@ -48,7 +48,7 @@ public:
     FilterPopulator(QObject* parent = nullptr);
     ~FilterPopulator() override;
 
-    void run(const QString& field, const QString& sort, const Core::TrackList& tracks);
+    void run(const QString& field, const QString& sort, const TrackList& tracks);
 
 signals:
     void populated(PendingTreeData data);
@@ -57,4 +57,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

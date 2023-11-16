@@ -21,7 +21,7 @@
 
 #include <QStringList>
 
-namespace Fy::Core::Scripting {
+namespace Fooyin::Scripting {
 QString num(const QStringList& vec);
 QString replace(const QStringList& vec);
-}
+} // namespace Fooyin

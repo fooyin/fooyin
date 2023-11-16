@@ -21,7 +21,7 @@
 
 #include <cmath>
 
-namespace Fy::Utils {
+namespace Fooyin {
 LogSlider::LogSlider(Qt::Orientation type, QWidget* parent)
     : Slider{type, parent}
     , m_scale{100.0}
@@ -47,6 +47,6 @@ void LogSlider::setNaturalValue(double value)
 {
     QSlider::setValue(static_cast<int>(std::log10(value) * m_scale));
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_logslider.cpp"

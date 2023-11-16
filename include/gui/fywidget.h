@@ -27,13 +27,9 @@
 #include <QJsonObject>
 #include <QWidget>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionContainer;
-}
 
-namespace Gui::Widgets {
 class FYGUI_EXPORT FyWidget : public QWidget
 {
     Q_OBJECT
@@ -41,7 +37,7 @@ class FYGUI_EXPORT FyWidget : public QWidget
 public:
     explicit FyWidget(QWidget* parent);
 
-    [[nodiscard]] Utils::Id id() const;
+    [[nodiscard]] Id id() const;
     [[nodiscard]] virtual QString name() const = 0;
     [[nodiscard]] virtual QString layoutName() const
     {
@@ -50,12 +46,11 @@ public:
 
     [[nodiscard]] FyWidget* findParent() const;
 
-    virtual void layoutEditingMenu(Utils::ActionContainer* menu);
+    virtual void layoutEditingMenu(ActionContainer* menu);
     virtual void saveLayout(QJsonArray& array);
     virtual void loadLayout(const QJsonObject& object);
 
 private:
-    Utils::Id m_id;
+    Id m_id;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

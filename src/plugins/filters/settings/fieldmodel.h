@@ -24,11 +24,10 @@
 #include <utils/tablemodel.h>
 #include <utils/treestatusitem.h>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 class FieldRegistry;
 
-namespace Settings {
-class FieldItem : public Utils::TreeStatusItem<FieldItem>
+class FieldItem : public TreeStatusItem<FieldItem>
 {
 public:
     FieldItem();
@@ -41,7 +40,7 @@ private:
     FilterField m_field;
 };
 
-class FieldModel : public Utils::TableModel<FieldItem>
+class FieldModel : public TableModel<FieldItem>
 {
 public:
     explicit FieldModel(FieldRegistry* fieldsRegistry, QObject* parent = nullptr);
@@ -67,5 +66,4 @@ private:
     FieldRegistry* m_fieldsRegistry;
     FieldItemMap m_nodes;
 };
-} // namespace Settings
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

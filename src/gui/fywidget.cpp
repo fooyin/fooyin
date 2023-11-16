@@ -19,7 +19,7 @@
 
 #include <gui/fywidget.h>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
     , m_id{"FyWidget"}
@@ -27,7 +27,7 @@ FyWidget::FyWidget(QWidget* parent)
     m_id.append(std::bit_cast<uintptr_t>(this));
 }
 
-Utils::Id FyWidget::id() const
+Id FyWidget::id() const
 {
     return m_id;
 }
@@ -41,7 +41,7 @@ FyWidget* FyWidget::findParent() const
     return qobject_cast<FyWidget*>(parent);
 }
 
-void FyWidget::layoutEditingMenu(Utils::ActionContainer* /*menu*/) { }
+void FyWidget::layoutEditingMenu(ActionContainer* /*menu*/) { }
 
 void FyWidget::saveLayout(QJsonArray& array)
 {
@@ -49,6 +49,6 @@ void FyWidget::saveLayout(QJsonArray& array)
 }
 
 void FyWidget::loadLayout(const QJsonObject& /*object*/) { }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "gui/moc_fywidget.cpp"

@@ -23,7 +23,7 @@
 
 #include <QAction>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT ProxyAction : public QAction
 {
     Q_OBJECT
@@ -63,4 +63,4 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ProxyAction::Attributes)
-} // namespace Fy::Utils
+} // namespace Fooyin

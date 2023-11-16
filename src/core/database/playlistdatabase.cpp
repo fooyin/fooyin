@@ -24,7 +24,7 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-bool insertPlaylistTrack(Fy::Core::DB::Module* module, int playlistId, const Fy::Core::Track& track, int index)
+bool insertPlaylistTrack(Fooyin::Module* module, int playlistId, const Fooyin::Track& track, int index)
 {
     if(playlistId < 0 || !track.isValid()) {
         return false;
@@ -40,7 +40,7 @@ bool insertPlaylistTrack(Fy::Core::DB::Module* module, int playlistId, const Fy:
     return !q.hasError();
 }
 
-bool insertPlaylistTracks(Fy::Core::DB::Module* module, int id, const Fy::Core::TrackList& tracks)
+bool insertPlaylistTracks(Fooyin::Module* module, int id, const Fooyin::TrackList& tracks)
 {
     if(id < 0) {
         return false;
@@ -64,12 +64,12 @@ bool insertPlaylistTracks(Fy::Core::DB::Module* module, int id, const Fy::Core::
     return true;
 }
 
-bool populatePlaylistTracks(Fy::Core::DB::Module* module, const auto& playlist, const Fy::Core::TrackIdMap& tracks)
+bool populatePlaylistTracks(Fooyin::Module* module, const auto& playlist, const Fooyin::TrackIdMap& tracks)
 {
     const static QString query
         = u"SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;"_s;
 
-    Fy::Core::DB::Query q{module};
+    Fooyin::Query q{module};
     q.prepareQuery(query);
     q.bindQueryValue(u":playlistId"_s, playlist->id());
 
@@ -78,7 +78,7 @@ bool populatePlaylistTracks(Fy::Core::DB::Module* module, const auto& playlist, 
         return false;
     }
 
-    Fy::Core::TrackList playlistTracks;
+    Fooyin::TrackList playlistTracks;
 
     while(q.next()) {
         const int trackId = q.value(0).toInt();
@@ -90,7 +90,7 @@ bool populatePlaylistTracks(Fy::Core::DB::Module* module, const auto& playlist, 
     return true;
 }
 
-bool savePlaylist(Fy::Core::DB::Module* module, const auto& playlist)
+bool savePlaylist(Fooyin::Module* module, const auto& playlist)
 {
     if(!playlist->modified() && !playlist->tracksModified()) {
         return true;
@@ -123,12 +123,12 @@ bool savePlaylist(Fy::Core::DB::Module* module, const auto& playlist)
 }
 } // namespace
 
-namespace Fy::Core::DB {
+namespace Fooyin {
 PlaylistDatabase::PlaylistDatabase(const QString& connectionName)
     : Module{connectionName}
 { }
 
-bool PlaylistDatabase::getAllPlaylists(Playlist::PlaylistList& playlists)
+bool PlaylistDatabase::getAllPlaylists(PlaylistList& playlists)
 {
     const QString query = u"SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;"_s;
 
@@ -145,12 +145,12 @@ bool PlaylistDatabase::getAllPlaylists(Playlist::PlaylistList& playlists)
         const QString name = q.value(1).toString();
         const int index    = q.value(2).toInt();
 
-        playlists.emplace_back(std::make_unique<Playlist::Playlist>(id, name, index));
+        playlists.emplace_back(std::make_unique<Playlist>(id, name, index));
     }
     return true;
 }
 
-bool PlaylistDatabase::getPlaylistTracks(const Playlist::PlaylistList& playlists, const TrackIdMap& tracks)
+bool PlaylistDatabase::getPlaylistTracks(const PlaylistList& playlists, const TrackIdMap& tracks)
 {
     if(!db().transaction()) {
         qDebug() << "Transaction could not be started";
@@ -181,7 +181,7 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index)
     return (q.hasError()) ? -1 : q.lastInsertId().toInt();
 }
 
-bool PlaylistDatabase::saveModifiedPlaylists(const Playlist::PlaylistList& playlists)
+bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
 {
     if(!db().transaction()) {
         qDebug() << "Transaction could not be started";
@@ -217,4 +217,4 @@ bool PlaylistDatabase::renamePlaylist(int id, const QString& name)
                               "Cannot update playlist " + QString::number(id));
     return !q.hasError();
 }
-} // namespace Fy::Core::DB
+} // namespace Fooyin

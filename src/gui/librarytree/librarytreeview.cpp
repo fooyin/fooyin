@@ -22,7 +22,7 @@
 #include <QHeaderView>
 #include <QMouseEvent>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 LibraryTreeView::LibraryTreeView(QWidget* parent)
     : QTreeView{parent}
 {
@@ -53,6 +53,6 @@ void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
     }
     QTreeView::mouseDoubleClickEvent(event);
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_librarytreeview.cpp"

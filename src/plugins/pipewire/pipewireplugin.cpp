@@ -21,15 +21,15 @@
 
 #include "pipewireoutput.h"
 
-namespace Fy::Pipewire {
-Core::Engine::AudioOutputBuilder PipeWirePlugin::registerOutput()
+namespace Fooyin::Pipewire {
+AudioOutputBuilder PipeWirePlugin::registerOutput()
 {
     return {.name = "PipeWire", .creator = []() {
-                return std::make_unique<Core::Engine::PipeWireOutput>();
+                return std::make_unique<PipeWireOutput>();
             }};
 }
 
 void PipeWirePlugin::shutdown() { }
-} // namespace Fy::Pipewire
+} // namespace Fooyin::Pipewire
 
 #include "moc_pipewireplugin.cpp"

@@ -19,7 +19,7 @@
 
 #include "simpletreeview.h"
 
-namespace Fy::Utils {
+namespace Fooyin {
 int calculateMaxItemWidth(const SimpleTreeView* view, QAbstractItemModel* model, const QModelIndex& index)
 {
     int maxItemWidth{0};
@@ -49,4 +49,4 @@ QSize SimpleTreeView::sizeHint() const
     const int maxWidth = calculateMaxItemWidth(this, model(), {});
     return {maxWidth, 100};
 }
-} // namespace Fy::Utils
+} // namespace Fooyin

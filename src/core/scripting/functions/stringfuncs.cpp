@@ -21,7 +21,7 @@
 
 #include <utils/utils.h>
 
-namespace Fy::Core::Scripting {
+namespace Fooyin::Scripting {
 QString num(const QStringList& vec)
 {
     const qsizetype count = vec.size();
@@ -47,4 +47,4 @@ QString replace(const QStringList& vec)
     return origStr.replace(vec[1], vec[2]);
 }
 
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin::Scripting

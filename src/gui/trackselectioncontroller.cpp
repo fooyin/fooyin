@@ -36,27 +36,27 @@
 
 #include <ranges>
 
-namespace Fy::Gui {
+namespace Fooyin {
 struct TrackSelectionController::Private
 {
     TrackSelectionController* self;
 
-    Utils::ActionManager* actionManager;
-    Utils::SettingsManager* settings;
-    Widgets::Playlist::PlaylistController* playlistController;
-    Core::Playlist::PlaylistManager* playlistHandler;
+    ActionManager* actionManager;
+    SettingsManager* settings;
+    PlaylistController* playlistController;
+    PlaylistManager* playlistHandler;
 
     QString selectionTitle{tr("New playlist")};
-    Core::TrackList tracks;
+    TrackList tracks;
     int firstIndex{-1};
 
-    Utils::ActionContainer* tracksMenu{nullptr};
-    Utils::ActionContainer* tracksPlaylistMenu{nullptr};
+    ActionContainer* tracksMenu{nullptr};
+    ActionContainer* tracksPlaylistMenu{nullptr};
 
     QAction* openFolder;
 
-    Private(TrackSelectionController* self, Utils::ActionManager* actionManager, Utils::SettingsManager* settings,
-            Widgets::Playlist::PlaylistController* playlistController)
+    Private(TrackSelectionController* self, ActionManager* actionManager, SettingsManager* settings,
+            PlaylistController* playlistController)
         : self{self}
         , actionManager{actionManager}
         , settings{settings}
@@ -108,25 +108,25 @@ struct TrackSelectionController::Private
         tracksMenu->addSeparator();
     }
 
-    void handleActions(Core::Playlist::Playlist* playlist, ActionOptions options) const
+    void handleActions(Playlist* playlist, PlaylistAction::ActionOptions options) const
     {
         if(!playlist) {
             return;
         }
 
-        if(options & Switch) {
+        if(options & PlaylistAction::Switch) {
             playlistController->changeCurrentPlaylist(playlist);
         }
     }
 
-    void sendToNewPlaylist(ActionOptions options = {}, const QString& playlistName = {}) const
+    void sendToNewPlaylist(PlaylistAction::ActionOptions options = {}, const QString& playlistName = {}) const
     {
         QString newName{playlistName};
         if(newName.isEmpty()) {
             newName = selectionTitle;
         }
 
-        if(options & KeepActive) {
+        if(options & PlaylistAction::KeepActive) {
             auto* activePlaylist = playlistHandler->activePlaylist();
 
             if(!activePlaylist || activePlaylist->name() != newName) {
@@ -151,7 +151,7 @@ struct TrackSelectionController::Private
         handleActions(playlist, options);
     }
 
-    void sendToCurrentPlaylist(ActionOptions options = {}) const
+    void sendToCurrentPlaylist(PlaylistAction::ActionOptions options = {}) const
     {
         if(auto* currentPlaylist = playlistController->currentPlaylist()) {
             playlistHandler->createPlaylist(currentPlaylist->name(), tracks);
@@ -186,17 +186,15 @@ struct TrackSelectionController::Private
 
         const QString firstPath = QFileInfo{tracks[0].filepath()}.absolutePath();
 
-        return std::ranges::all_of(tracks | std::ranges::views::transform([](const Core::Track& track) {
+        return std::ranges::all_of(tracks | std::ranges::views::transform([](const Track& track) {
                                        return QFileInfo{track.filepath()}.absolutePath();
                                    }),
                                    [&firstPath](const QString& folderPath) { return folderPath == firstPath; });
     }
 };
 
-TrackSelectionController::TrackSelectionController(Utils::ActionManager* actionManager,
-                                                   Utils::SettingsManager* settings,
-                                                   Widgets::Playlist::PlaylistController* playlistController,
-                                                   QObject* parent)
+TrackSelectionController::TrackSelectionController(ActionManager* actionManager, SettingsManager* settings,
+                                                   PlaylistController* playlistController, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this, actionManager, settings, playlistController)}
 { }
@@ -208,12 +206,12 @@ bool TrackSelectionController::hasTracks() const
 
 TrackSelectionController::~TrackSelectionController() = default;
 
-Core::TrackList TrackSelectionController::selectedTracks() const
+TrackList TrackSelectionController::selectedTracks() const
 {
     return p->tracks;
 }
 
-void TrackSelectionController::changeSelectedTracks(int index, const Core::TrackList& tracks, const QString& title)
+void TrackSelectionController::changeSelectedTracks(int index, const TrackList& tracks, const QString& title)
 {
     p->firstIndex     = index;
     p->selectionTitle = title;
@@ -225,7 +223,7 @@ void TrackSelectionController::changeSelectedTracks(int index, const Core::Track
     emit selectionChanged(p->tracks);
 }
 
-void TrackSelectionController::changeSelectedTracks(const Core::TrackList& tracks, const QString& title)
+void TrackSelectionController::changeSelectedTracks(const TrackList& tracks, const QString& title)
 {
     changeSelectedTracks(-1, tracks, title);
 }
@@ -240,7 +238,8 @@ void TrackSelectionController::addTrackPlaylistContextMenu(QMenu* menu) const
     Utils::appendMenuActions(p->tracksPlaylistMenu->menu(), menu);
 }
 
-void TrackSelectionController::executeAction(TrackAction action, ActionOptions options, const QString& playlistName)
+void TrackSelectionController::executeAction(TrackAction action, PlaylistAction::ActionOptions options,
+                                             const QString& playlistName)
 {
     switch(action) {
         case(TrackAction::SendCurrentPlaylist): {
@@ -275,6 +274,6 @@ void TrackSelectionController::executeAction(TrackAction action, ActionOptions o
             break;
     }
 }
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "gui/moc_trackselectioncontroller.cpp"

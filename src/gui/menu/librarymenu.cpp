@@ -28,26 +28,25 @@
 
 #include <QAction>
 
-namespace Fy::Gui {
-LibraryMenu::LibraryMenu(Utils::ActionManager* actionManager, Core::Library::MusicLibrary* library,
-                         Utils::SettingsManager* settings, QObject* parent)
+namespace Fooyin {
+LibraryMenu::LibraryMenu(ActionManager* actionManager, MusicLibrary* library, SettingsManager* settings,
+                         QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
     , m_library{library}
     , m_settings{settings}
 {
-    auto* libraryMenu = m_actionManager->actionContainer(Gui::Constants::Menus::Library);
+    auto* libraryMenu = m_actionManager->actionContainer(Constants::Menus::Library);
 
-    auto* rescanLibrary
-        = new QAction(QIcon::fromTheme(Gui::Constants::Icons::RescanLibrary), tr("&Rescan Library"), this);
-    libraryMenu->addAction(m_actionManager->registerAction(rescanLibrary, Gui::Constants::Actions::Rescan));
-    QObject::connect(rescanLibrary, &QAction::triggered, m_library, &Core::Library::MusicLibrary::reloadAll);
+    auto* rescanLibrary = new QAction(QIcon::fromTheme(Constants::Icons::RescanLibrary), tr("&Rescan Library"), this);
+    libraryMenu->addAction(m_actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
+    QObject::connect(rescanLibrary, &QAction::triggered, m_library, &MusicLibrary::reloadAll);
 
-    auto* openSettings = new QAction(QIcon::fromTheme(Gui::Constants::Icons::Settings), tr("&Settings"), this);
+    auto* openSettings = new QAction(QIcon::fromTheme(Constants::Icons::Settings), tr("&Settings"), this);
     libraryMenu->addAction(actionManager->registerAction(openSettings, "Library.Settings"));
     QObject::connect(openSettings, &QAction::triggered, this,
-                     [this]() { m_settings->settingsDialog()->openAtPage(Gui::Constants::Page::LibraryGeneral); });
+                     [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::LibraryGeneral); });
 }
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "moc_librarymenu.cpp"

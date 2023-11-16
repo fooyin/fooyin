@@ -23,7 +23,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::TagEditor {
+namespace Fooyin::TagEditor {
 TagEditorItem::TagEditorItem()
     : TagEditorItem{u""_s, nullptr, true}
 { }
@@ -95,4 +95,4 @@ void TagEditorItem::setTitle(const QString& title)
 {
     m_name = title;
 }
-} // namespace Fy::TagEditor
+} // namespace Fooyin::TagEditor

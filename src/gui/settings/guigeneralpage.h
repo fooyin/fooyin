@@ -21,26 +21,14 @@
 
 #include <utils/settings/settingspage.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Gui {
+class EditableLayout;
 class LayoutProvider;
 
-namespace Widgets {
-class EditableLayout;
-}
-
-namespace Settings {
-class GuiGeneralPage : public Utils::SettingsPage
+class GuiGeneralPage : public SettingsPage
 {
 public:
-    explicit GuiGeneralPage(LayoutProvider* layoutProvider, Widgets::EditableLayout* editableLayout,
-                            Utils::SettingsManager* settings);
+    explicit GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout, SettingsManager* settings);
 };
-} // namespace Settings
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

@@ -28,7 +28,7 @@ extern "C"
 
 class AVPacket;
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 struct PacketDeleter
 {
     void operator()(AVPacket* packet) const
@@ -56,4 +56,4 @@ public:
 private:
     PacketPtr m_packet;
 };
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

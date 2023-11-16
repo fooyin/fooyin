@@ -40,11 +40,11 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-namespace Fy::Gui::Settings {
-class LibraryGeneralPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class LibraryGeneralPageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings);
+    explicit LibraryGeneralPageWidget(LibraryManager* libraryManager, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -53,8 +53,8 @@ private:
     void addLibrary() const;
     void removeLibrary() const;
 
-    Core::Library::LibraryManager* m_libraryManager;
-    Utils::SettingsManager* m_settings;
+    LibraryManager* m_libraryManager;
+    SettingsManager* m_settings;
 
     LibraryView* m_libraryView;
     LibraryModel* m_model;
@@ -64,8 +64,7 @@ private:
     QLineEdit* m_sortScript;
 };
 
-LibraryGeneralPageWidget::LibraryGeneralPageWidget(Core::Library::LibraryManager* libraryManager,
-                                                   Utils::SettingsManager* settings)
+LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManager, SettingsManager* settings)
     : m_libraryManager{libraryManager}
     , m_settings{settings}
     , m_libraryView{new LibraryView(this)}
@@ -160,8 +159,8 @@ void LibraryGeneralPageWidget::removeLibrary() const
     //    m_libraryList->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
-LibraryGeneralPage::LibraryGeneralPage(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+LibraryGeneralPage::LibraryGeneralPage(LibraryManager* libraryManager, SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryGeneral);
     setName(tr("General"));
@@ -169,4 +168,4 @@ LibraryGeneralPage::LibraryGeneralPage(Core::Library::LibraryManager* libraryMan
     setWidgetCreator([libraryManager, settings] { return new LibraryGeneralPageWidget(libraryManager, settings); });
 }
 
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

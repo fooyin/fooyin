@@ -21,21 +21,13 @@
 
 #include <utils/settings/settingspage.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core::Library {
 class LibraryManager;
-} // namespace Core::Library
 
-namespace Gui::Settings {
-class LibraryGeneralPage : public Utils::SettingsPage
+class LibraryGeneralPage : public SettingsPage
 {
 public:
-    LibraryGeneralPage(Core::Library::LibraryManager* libraryManager, Utils::SettingsManager* settings);
+    LibraryGeneralPage(LibraryManager* libraryManager, SettingsManager* settings);
 };
-} // namespace Gui::Settings
-} // namespace Fy
+} // namespace Fooyin

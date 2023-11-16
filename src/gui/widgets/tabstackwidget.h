@@ -21,13 +21,8 @@
 
 #include <gui/widgetcontainer.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
-}
-
-namespace Gui::Widgets {
 class WidgetProvider;
 
 class TabStackWidget : public WidgetContainer
@@ -35,13 +30,13 @@ class TabStackWidget : public WidgetContainer
     Q_OBJECT
 
 public:
-    TabStackWidget(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    TabStackWidget(ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
     ~TabStackWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString extracted() const;
     QString layoutName() const override;
-    void layoutEditingMenu(Utils::ActionContainer* menu) override;
+    void layoutEditingMenu(ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
     void loadLayout(const QJsonObject& object) override;
 
@@ -56,5 +51,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

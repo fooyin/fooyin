@@ -36,12 +36,12 @@
 
 constexpr auto ShortcutCategory = "KeyboardShortcuts";
 
-namespace Fy::Utils {
+namespace Fooyin {
 struct ActionManager::Private
 {
     ActionManager* self;
 
-    Utils::SettingsManager* settingsManager;
+    SettingsManager* settingsManager;
     QMainWindow* mainWindow{nullptr};
 
     Context currentContext;
@@ -53,7 +53,7 @@ struct ActionManager::Private
     WidgetContextList activeContext;
     std::unordered_map<QWidget*, WidgetContext*> contextWidgets;
 
-    explicit Private(ActionManager* self, Utils::SettingsManager* settingsManager)
+    explicit Private(ActionManager* self, SettingsManager* settingsManager)
         : self{self}
         , settingsManager{settingsManager}
     { }
@@ -173,7 +173,7 @@ struct ActionManager::Private
     }
 };
 
-ActionManager::ActionManager(Utils::SettingsManager* settingsManager, QObject* parent)
+ActionManager::ActionManager(SettingsManager* settingsManager, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this, settingsManager)}
 {
@@ -362,6 +362,6 @@ ActionContainer* ActionManager::actionContainer(const Id& id) const
     }
     return nullptr;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/actions/moc_actionmanager.cpp"

@@ -27,22 +27,21 @@
 
 #include <set>
 
-namespace Fy::Core::Playlist {
+namespace Fooyin {
 using IndexSet = std::set<int>;
-
-enum PlayMode
-{
-    Default   = 0,
-    RepeatAll = 1 << 0,
-    Repeat    = 1 << 1,
-    Shuffle   = 1 << 2,
-};
-
-Q_DECLARE_FLAGS(PlayModes, PlayMode)
 
 class FYCORE_EXPORT Playlist
 {
 public:
+    enum PlayMode
+    {
+        Default   = 0,
+        RepeatAll = 1 << 0,
+        Repeat    = 1 << 1,
+        Shuffle   = 1 << 2,
+    };
+    Q_DECLARE_FLAGS(PlayModes, PlayMode)
+
     Playlist(int id, QString name, int index);
     ~Playlist();
 
@@ -83,6 +82,6 @@ private:
     std::unique_ptr<Private> p;
 };
 using PlaylistList = std::vector<std::unique_ptr<Playlist>>;
-} // namespace Fy::Core::Playlist
+} // namespace Fooyin
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Fy::Core::Playlist::PlayModes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::Playlist::PlayModes)

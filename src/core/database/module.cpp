@@ -27,7 +27,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Core::DB {
+namespace Fooyin {
 Module::Module(QString connectionName)
     : m_connectionName{std::move(connectionName)}
 { }
@@ -84,9 +84,9 @@ QSqlDatabase Module::db() const
     return db;
 }
 
-DB::Query Module::runQuery(const QString& query, const BindingsMap& bindings, const QString& errorText) const
+Query Module::runQuery(const QString& query, const BindingsMap& bindings, const QString& errorText) const
 {
-    DB::Query q(this);
+    Query q(this);
     q.prepareQuery(query);
 
     for(const auto& [key, value] : bindings) {
@@ -100,11 +100,11 @@ DB::Query Module::runQuery(const QString& query, const BindingsMap& bindings, co
     return q;
 }
 
-DB::Query Module::insert(const QString& tableName, const BindingsMap& fieldBindings, const QString& errorMessage)
+Query Module::insert(const QString& tableName, const BindingsMap& fieldBindings, const QString& errorMessage)
 {
     QString query = "INSERT INTO " + tableName;
 
-    DB::Query q(this);
+    Query q(this);
 
     QString fields;
     QString values;
@@ -136,7 +136,7 @@ DB::Query Module::insert(const QString& tableName, const BindingsMap& fieldBindi
 
 void Module::runPragma(const QString& pragma, const QString& value) const
 {
-    DB::Query q(this);
+    Query q(this);
 
     const QString query = "PRAGMA " + pragma + " = " + value;
     q.prepareQuery(query);
@@ -151,7 +151,7 @@ Query Module::update(const QString& tableName, const BindingsMap& fieldBindings,
 {
     QString query = "UPDATE " + tableName + " SET ";
 
-    DB::Query q(this);
+    Query q(this);
 
     QString fields;
     for(const auto& [field, value] : fieldBindings) {
@@ -196,7 +196,7 @@ Query Module::remove(const QString& tableName, const std::vector<std::pair<QStri
     }
     query = query + ");";
 
-    DB::Query q(this);
+    Query q(this);
     q.prepareQuery(query);
 
     if(!q.execQuery()) {
@@ -216,4 +216,4 @@ const Module* Module::module() const
 {
     return this;
 }
-} // namespace Fy::Core::DB
+} // namespace Fooyin

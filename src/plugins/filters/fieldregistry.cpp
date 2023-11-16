@@ -20,7 +20,7 @@
 #include "fieldregistry.h"
 
 namespace {
-void loadDefaults(Fy::Filters::FieldRegistry* registry)
+void loadDefaults(Fooyin::Filters::FieldRegistry* registry)
 {
     registry->addItem({.id = 0, .index = 0, .name = "Genre", .field = "%<genre>%", .sortField = ""});
     registry->addItem({.id = 1, .index = 1, .name = "Album Artist", .field = "%albumartist%", .sortField = ""});
@@ -29,11 +29,11 @@ void loadDefaults(Fy::Filters::FieldRegistry* registry)
 }
 } // namespace
 
-namespace Fy::Filters {
-FieldRegistry::FieldRegistry(Utils::SettingsManager* settings, QObject* parent)
+namespace Fooyin::Filters {
+FieldRegistry::FieldRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{settings, parent}
 {
-    QObject::connect(this, &Utils::RegistryBase::itemChanged, this, [this](int id) {
+    QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto field = itemById(id);
         emit fieldChanged(field);
     });
@@ -47,6 +47,6 @@ void FieldRegistry::loadItems()
         loadDefaults(this);
     }
 }
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters
 
 #include "moc_fieldregistry.cpp"

@@ -21,7 +21,7 @@
 
 #include <core/library/sortingregistry.h>
 
-namespace Fy::Gui::Settings {
+namespace Fooyin {
 SortingItem::SortingItem()
     : SortingItem{{}, nullptr}
 { }
@@ -41,7 +41,7 @@ void SortingItem::changeSort(SortScript sortScript)
     m_sortScript = std::move(sortScript);
 }
 
-SortingModel::SortingModel(Core::Library::SortingRegistry* sortRegistry, QObject* parent)
+SortingModel::SortingModel(SortingRegistry* sortRegistry, QObject* parent)
     : TableModel{parent}
     , m_sortRegistry{sortRegistry}
 { }
@@ -287,4 +287,4 @@ void SortingModel::removeSortScript(int index)
     }
     m_nodes.erase(index);
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

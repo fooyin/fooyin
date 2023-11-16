@@ -28,7 +28,7 @@ class QVBoxLayout;
 class QListView;
 class QPushButton;
 
-namespace Fy::Gui {
+namespace Fooyin {
 class QuickSetupModel;
 
 class QuickSetupDialog : public QDialog
@@ -39,7 +39,7 @@ public:
     explicit QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent = nullptr);
 
 signals:
-    void layoutChanged(const Gui::Layout& layout);
+    void layoutChanged(const Layout& layout);
 
 protected:
     void setupUi();
@@ -53,4 +53,4 @@ private:
     QuickSetupModel* m_model;
     QPushButton* m_accept;
 };
-} // namespace Fy::Gui
+} // namespace Fooyin

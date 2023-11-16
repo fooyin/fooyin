@@ -25,7 +25,7 @@
 
 #include <QWidget>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class SettingsDialogController;
 
 class FYUTILS_EXPORT SettingsPageWidget : public QWidget
@@ -72,4 +72,4 @@ private:
     WidgetCreator m_widgetCreator;
     QWidget* m_widget;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

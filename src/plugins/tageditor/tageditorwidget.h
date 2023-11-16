@@ -26,18 +26,13 @@
 
 #include <QWidget>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-} // namespace Utils
-
-namespace Gui {
 class TrackSelectionController;
-}
 
 namespace TagEditor {
-class TagEditorView : public Utils::ExtendableTableView
+class TagEditorView : public ExtendableTableView
 {
     Q_OBJECT
 
@@ -47,13 +42,13 @@ public:
     [[nodiscard]] int sizeHintForRow(int row) const override;
 };
 
-class TagEditorWidget : public Gui::PropertiesTabWidget
+class TagEditorWidget : public PropertiesTabWidget
 {
     Q_OBJECT
 
 public:
-    explicit TagEditorWidget(Utils::ActionManager* actionManager, Gui::TrackSelectionController* trackSelection,
-                             Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit TagEditorWidget(ActionManager* actionManager, TrackSelectionController* trackSelection,
+                             SettingsManager* settings, QWidget* parent = nullptr);
     ~TagEditorWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -62,7 +57,7 @@ public:
     void apply() override;
 
 signals:
-    void trackMetadataChanged(const Core::TrackList& tracks);
+    void trackMetadataChanged(const TrackList& tracks);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -72,4 +67,4 @@ private:
     std::unique_ptr<Private> p;
 };
 } // namespace TagEditor
-} // namespace Fy
+} // namespace Fooyin

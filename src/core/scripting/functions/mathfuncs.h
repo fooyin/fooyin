@@ -21,7 +21,7 @@
 
 #include <QStringList>
 
-namespace Fy::Core::Scripting {
+namespace Fooyin::Scripting {
 QString add(const QStringList& vec);
 QString sub(const QStringList& vec);
 QString mul(const QStringList& vec);
@@ -29,4 +29,4 @@ QString div(const QStringList& vec);
 QString mod(const QStringList& vec);
 QString min(const QStringList& vec);
 QString max(const QStringList& vec);
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin

@@ -23,7 +23,7 @@
 
 #include <utils/helpers.h>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 class FilterStore
 {
 public:
@@ -43,4 +43,4 @@ public:
 private:
     FilterList m_filters;
 };
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

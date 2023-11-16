@@ -23,8 +23,8 @@
 
 #include <QList>
 
-namespace Fy::TagEditor {
-class TagEditorItem : public Utils::TreeStatusItem<TagEditorItem>
+namespace Fooyin::TagEditor {
+class TagEditorItem : public TreeStatusItem<TagEditorItem>
 {
 public:
     enum Role
@@ -51,4 +51,4 @@ private:
     mutable QString m_value;
     int m_trackCount;
 };
-} // namespace Fy::TagEditor
+} // namespace Fooyin::TagEditor

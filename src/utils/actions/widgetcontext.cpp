@@ -19,7 +19,7 @@
 
 #include <utils/actions/widgetcontext.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 Context::Context(const Id& id)
 {
     append(id);
@@ -99,4 +99,4 @@ QWidget* WidgetContext::widget() const
 {
     return m_widget;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin

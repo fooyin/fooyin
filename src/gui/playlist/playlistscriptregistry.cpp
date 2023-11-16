@@ -26,7 +26,7 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-bool isGroupScript(const Fy::Core::Scripting::ValueList& args)
+bool isGroupScript(const Fooyin::ScriptValueList& args)
 {
     return std::ranges::any_of(std::as_const(args), [](const auto& arg) {
         return arg.value.contains("%gduration%"_L1) || arg.value.contains("%gcount%"_L1)
@@ -35,27 +35,25 @@ bool isGroupScript(const Fy::Core::Scripting::ValueList& args)
 }
 } // namespace
 
-namespace Fy::Gui::Widgets::Playlist {
-using ScriptResult = Core::Scripting::ScriptResult;
-
+namespace Fooyin {
 PlaylistScriptRegistry::PlaylistScriptRegistry()
     : m_currentContainer{nullptr}
 {
-    m_vars.emplace(u"gduration"_s, &Container::duration);
-    m_vars.emplace(u"gcount"_s, &Container::trackCount);
-    m_vars.emplace(u"ggenres"_s, &Container::genres);
-    m_vars.emplace(u"gfiletypes"_s, &Container::filetypes);
+    m_vars.emplace(u"gduration"_s, &PlaylistContainerItem::duration);
+    m_vars.emplace(u"gcount"_s, &PlaylistContainerItem::trackCount);
+    m_vars.emplace(u"ggenres"_s, &PlaylistContainerItem::genres);
+    m_vars.emplace(u"gfiletypes"_s, &PlaylistContainerItem::filetypes);
 }
 
 bool PlaylistScriptRegistry::varExists(const QString& var) const
 {
-    return m_vars.contains(var) || Core::Scripting::Registry::varExists(var);
+    return m_vars.contains(var) || ScriptRegistry::varExists(var);
 }
 
-Core::Scripting::ScriptResult PlaylistScriptRegistry::varValue(const QString& var) const
+ScriptResult PlaylistScriptRegistry::varValue(const QString& var) const
 {
     if(!m_vars.contains(var)) {
-        return Core::Scripting::Registry::varValue(var);
+        return ScriptRegistry::varValue(var);
     }
     if(!m_currentContainer) {
         return {"%"_L1 + var + "%"_L1};
@@ -64,8 +62,7 @@ Core::Scripting::ScriptResult PlaylistScriptRegistry::varValue(const QString& va
     return calculateResult(funcResult);
 }
 
-Core::Scripting::ScriptResult PlaylistScriptRegistry::function(const QString& func,
-                                                               const Core::Scripting::ValueList& args) const
+ScriptResult PlaylistScriptRegistry::function(const QString& func, const ScriptValueList& args) const
 {
     if(!m_currentContainer && isGroupScript(args)) {
         auto tmpResult = QString{u"$%1("_s}.arg(func);
@@ -75,11 +72,11 @@ Core::Scripting::ScriptResult PlaylistScriptRegistry::function(const QString& fu
         tmpResult += ")"_L1;
         return {tmpResult};
     }
-    return Core::Scripting::Registry::function(func, args);
+    return ScriptRegistry::function(func, args);
 }
 
-void PlaylistScriptRegistry::changeCurrentContainer(Container* container)
+void PlaylistScriptRegistry::changeCurrentContainer(PlaylistContainerItem* container)
 {
     m_currentContainer = container;
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

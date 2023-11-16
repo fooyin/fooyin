@@ -19,7 +19,7 @@
 
 #pragma once
 
-namespace Fy::Core::Constants {
+namespace Fooyin::Constants {
 constexpr auto AppName     = "fooyin";
 constexpr auto DisplayName = "Fooyin";
 
@@ -55,4 +55,4 @@ constexpr auto ModifiedTime = "modifiedtime";
 constexpr auto FilePath     = "filepath";
 constexpr auto RelativePath = "relativepath";
 } // namespace MetaData
-} // namespace Fy::Core::Constants
+} // namespace Fooyin::Constants

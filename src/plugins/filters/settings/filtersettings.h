@@ -23,37 +23,36 @@
 
 #include <QObject>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
 
-namespace Filters::Settings {
+namespace Filters {
+namespace Settings {
 Q_NAMESPACE
 enum Filters : uint32_t
 {
-    FilterAltColours      = 1 | Utils::Settings::Bool,
-    FilterHeader          = 2 | Utils::Settings::Bool,
-    FilterScrollBar       = 3 | Utils::Settings::Bool,
-    FilterFields          = 4 | Utils::Settings::ByteArray,
-    FilterAppearance      = 5 | Utils::Settings::Variant,
-    FilterDoubleClick     = 6 | Utils::Settings::Int,
-    FilterMiddleClick     = 7 | Utils::Settings::Int,
-    FilterPlaylistEnabled = 8 | Utils::Settings::Bool,
-    FilterAutoSwitch      = 9 | Utils::Settings::Bool,
-    FilterAutoPlaylist    = 10 | Utils::Settings::String,
+    FilterAltColours      = 1 | SettingsType::Bool,
+    FilterHeader          = 2 | SettingsType::Bool,
+    FilterScrollBar       = 3 | SettingsType::Bool,
+    FilterFields          = 4 | SettingsType::ByteArray,
+    FilterAppearance      = 5 | SettingsType::Variant,
+    FilterDoubleClick     = 6 | SettingsType::Int,
+    FilterMiddleClick     = 7 | SettingsType::Int,
+    FilterPlaylistEnabled = 8 | SettingsType::Bool,
+    FilterAutoSwitch      = 9 | SettingsType::Bool,
+    FilterAutoPlaylist    = 10 | SettingsType::String,
 
 };
 Q_ENUM_NS(Filters)
+} // namespace Settings
 
 class FiltersSettings
 {
 public:
-    explicit FiltersSettings(Utils::SettingsManager* settingsManager);
+    explicit FiltersSettings(SettingsManager* settingsManager);
 
 private:
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 };
-} // namespace Filters::Settings
-} // namespace Fy
+} // namespace Filters
+} // namespace Fooyin

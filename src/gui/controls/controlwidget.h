@@ -23,23 +23,16 @@
 
 #include <QWidget>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Core::Player {
 class PlayerManager;
-}
 
-namespace Gui::Widgets {
 class ControlWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit ControlWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                           QWidget* parent = nullptr);
+    explicit ControlWidget(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
     ~ControlWidget();
 
     [[nodiscard]] QString name() const override;
@@ -48,5 +41,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

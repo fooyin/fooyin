@@ -24,14 +24,10 @@
 
 #include <QWidget>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class ActionContainer;
 class SettingsManager;
-} // namespace Utils
-
-namespace Gui::Widgets {
 class FyWidget;
 
 class EditableLayout : public QWidget
@@ -39,16 +35,15 @@ class EditableLayout : public QWidget
     Q_OBJECT
 
 public:
-    explicit EditableLayout(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                            LayoutProvider* layoutProvider, Utils::SettingsManager* settings,
-                            QWidget* parent = nullptr);
+    explicit EditableLayout(ActionManager* actionManager, WidgetProvider* widgetProvider,
+                            LayoutProvider* layoutProvider, SettingsManager* settings, QWidget* parent = nullptr);
     ~EditableLayout() override;
 
     void initialise();
 
-    Utils::ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const;
-    void setupReplaceWidgetMenu(Utils::ActionContainer* menu, FyWidget* current);
-    void setupContextMenu(FyWidget* widget, Utils::ActionContainer* menu);
+    ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const;
+    void setupReplaceWidgetMenu(ActionContainer* menu, FyWidget* current);
+    void setupContextMenu(FyWidget* widget, ActionContainer* menu);
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
@@ -66,5 +61,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

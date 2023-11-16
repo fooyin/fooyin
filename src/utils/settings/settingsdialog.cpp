@@ -31,7 +31,7 @@
 #include <QStackedLayout>
 #include <QTreeView>
 
-namespace Fy::Utils {
+namespace Fooyin {
 struct SettingsDialog::Private
 {
     SettingsDialog* self;
@@ -248,6 +248,6 @@ void SettingsDialog::reject()
     }
     done(Rejected);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "moc_settingsdialog.cpp"

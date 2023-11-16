@@ -28,7 +28,7 @@ extern "C"
 #include <libavutil/samplefmt.h>
 }
 
-namespace Fy::Core::Engine {
+namespace Fooyin {
 using WriteFunction = std::function<int(uint8_t*, int)>;
 
 struct OutputContext
@@ -109,4 +109,4 @@ public:
     void setPaused(bool pause) override;
     void setVolume(double volume) override;
 };
-} // namespace Fy::Core::Engine
+} // namespace Fooyin

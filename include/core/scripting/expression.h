@@ -21,8 +21,9 @@
 
 #include <QString>
 
-namespace Fy::Core::Scripting {
-enum ExprType : int
+namespace Fooyin {
+namespace Expr {
+enum Type : int
 {
     Literal      = 0,
     Variable     = 1,
@@ -32,6 +33,7 @@ enum ExprType : int
     Conditional  = 5,
     Null         = 6,
 };
+}
 
 struct Expression;
 
@@ -47,7 +49,7 @@ using ExpressionValue = std::variant<QString, FuncValue, ExpressionList>;
 
 struct Expression
 {
-    ExprType type{Null};
+    Expr::Type type{Expr::Null};
     ExpressionValue value{""};
 };
-} // namespace Fy::Core::Scripting
+} // namespace Fooyin

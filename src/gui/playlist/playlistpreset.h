@@ -29,13 +29,11 @@
 #include <QList>
 #include <QVariant>
 
-namespace Fy::Gui::Widgets::Playlist {
-using Script = Core::Scripting::ParsedScript;
-
+namespace Fooyin {
 struct TextBlock
 {
     QString text;
-    Script script;
+    ParsedScript script;
 
     bool fontChanged{false};
     QFont font;
@@ -182,7 +180,7 @@ QDataStream& operator<<(QDataStream& stream, const TrackRow& track);
 QDataStream& operator>>(QDataStream& stream, TrackRow& track);
 QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset);
 QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset);
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin
 
-Q_DECLARE_METATYPE(Fy::Gui::Widgets::Playlist::TextBlock);
-Q_DECLARE_METATYPE(Fy::Gui::Widgets::Playlist::TextBlockList);
+Q_DECLARE_METATYPE(Fooyin::TextBlock);
+Q_DECLARE_METATYPE(Fooyin::TextBlockList);

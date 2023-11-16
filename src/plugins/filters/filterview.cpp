@@ -25,7 +25,7 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 FilterView::FilterView(QWidget* parent)
     : QTreeView(parent)
 {
@@ -78,6 +78,6 @@ void FilterView::keyPressEvent(QKeyEvent* event)
     if(key == Qt::Key_Enter || key == Qt::Key_Return) { }
     QTreeView::keyPressEvent(event);
 }
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters
 
 #include "moc_filterview.cpp"

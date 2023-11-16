@@ -56,7 +56,7 @@ SDL_AudioFormat findFormat(AVSampleFormat format)
 
 void audioCallback(void* userData, uint8_t* stream, int len)
 {
-    auto* outputContext = static_cast<Fy::Core::Engine::OutputContext*>(userData);
+    auto* outputContext = static_cast<Fooyin::OutputContext*>(userData);
 
     if(len % outputContext->sstride) {
         qWarning() << "SDL audio callback not sample aligned";
@@ -68,7 +68,7 @@ void audioCallback(void* userData, uint8_t* stream, int len)
 }
 } // namespace
 
-namespace Fy::Core::Engine {
+namespace Fooyin::Sdl {
 struct SdlOutput::Private
 {
     OutputContext outputContext;
@@ -208,4 +208,4 @@ void SdlOutput::setDevice(const QString& device)
         p->device = device;
     }
 }
-} // namespace Fy::Core::Engine
+} // namespace Fooyin::Sdl

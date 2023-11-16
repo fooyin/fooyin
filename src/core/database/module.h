@@ -23,7 +23,7 @@
 
 #include <map>
 
-namespace Fy::Core::DB {
+namespace Fooyin {
 class Query;
 
 using BindingsMap = std::map<QString, QString>;
@@ -56,4 +56,4 @@ protected:
 private:
     QString m_connectionName;
 };
-} // namespace Fy::Core::DB
+} // namespace Fooyin

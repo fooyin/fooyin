@@ -21,7 +21,7 @@
 
 #include <gui/widgetprovider.h>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent)
     : FyWidget{parent}
     , m_widgetProvider{widgetProvider}
@@ -54,6 +54,6 @@ void WidgetContainer::loadWidgets(const QJsonArray& widgets)
         }
     }
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "gui/moc_widgetcontainer.cpp"

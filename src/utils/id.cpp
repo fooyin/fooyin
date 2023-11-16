@@ -19,7 +19,7 @@
 
 #include <utils/id.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 unsigned int idFromString(const QString& str)
 {
     uint32_t result{0};
@@ -95,4 +95,4 @@ QDataStream& operator>>(QDataStream& stream, Id& id)
 
     return stream;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin

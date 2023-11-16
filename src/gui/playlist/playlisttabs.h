@@ -21,18 +21,10 @@
 
 #include <gui/widgetcontainer.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-} // namespace Utils
-
-namespace Core::Playlist {
 class Playlist;
-} // namespace Core::Playlist
-
-namespace Gui::Widgets::Playlist {
 class PlaylistController;
 
 class PlaylistTabs : public WidgetContainer
@@ -40,20 +32,19 @@ class PlaylistTabs : public WidgetContainer
     Q_OBJECT
 
 public:
-    explicit PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                          PlaylistController* playlistController, Utils::SettingsManager* settings,
-                          QWidget* parent = nullptr);
+    explicit PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
+                          PlaylistController* playlistController, SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistTabs() override;
 
     void setupTabs();
 
-    int addPlaylist(const Core::Playlist::Playlist* playlist);
-    void removePlaylist(const Core::Playlist::Playlist* playlist);
+    int addPlaylist(const Playlist* playlist);
+    void removePlaylist(const Playlist* playlist);
     int addNewTab(const QString& name, const QIcon& icon = {});
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
-    void layoutEditingMenu(Utils::ActionContainer* menu) override;
+    void layoutEditingMenu(ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
     void loadLayout(const QJsonObject& object) override;
 
@@ -73,5 +64,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets::Playlist
-} // namespace Fy
+} // namespace Fooyin

@@ -19,14 +19,14 @@
 
 #pragma once
 
-#include <utils/settings/settingspage.h>
 #include <utils/id.h>
+#include <utils/settings/settingspage.h>
 
 #include <QIcon>
 
 class QTabWidget;
 
-namespace Fy::Utils {
+namespace Fooyin {
 class SettingsPage;
 using PageList = std::vector<SettingsPage*>;
 
@@ -45,10 +45,9 @@ struct SettingsCategory
 
     [[nodiscard]] int findPageById(const Id& idToFind) const
     {
-        auto it = std::ranges::find_if(std::as_const(pages), [idToFind](const SettingsPage* page) {
-            return page->id() == idToFind;
-        });
+        auto it = std::ranges::find_if(std::as_const(pages),
+                                       [idToFind](const SettingsPage* page) { return page->id() == idToFind; });
         return it == pages.end() ? -1 : static_cast<int>(std::distance(pages.begin(), it));
     }
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

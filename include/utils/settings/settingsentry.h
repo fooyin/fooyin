@@ -23,7 +23,7 @@
 
 #include <QVariant>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT SettingsEntry : public QObject
 {
     Q_OBJECT
@@ -58,4 +58,4 @@ private:
     QString m_group;
     bool m_writeToDisk;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

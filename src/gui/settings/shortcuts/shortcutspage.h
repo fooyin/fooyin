@@ -21,18 +21,13 @@
 
 #include <utils/settings/settingspage.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-} // namespace Utils
 
-namespace Gui::Settings {
-class ShortcutsPage : public Utils::SettingsPage
+class ShortcutsPage : public SettingsPage
 {
 public:
-    ShortcutsPage(Utils::ActionManager* actionManager, Utils::SettingsManager* settings);
+    ShortcutsPage(ActionManager* actionManager, SettingsManager* settings);
 };
-} // namespace Gui::Settings
-} // namespace Fy
+} // namespace Fooyin

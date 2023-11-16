@@ -25,7 +25,7 @@
 
 #include <QtPlugin>
 
-namespace Fy::Core::Engine {
+namespace Fooyin {
 using OutputCreator = std::function<std::unique_ptr<AudioOutput>()>;
 
 struct AudioOutputBuilder
@@ -41,6 +41,6 @@ public:
 
     virtual AudioOutputBuilder registerOutput() = 0;
 };
-} // namespace Fy::Core::Engine
+} // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fy::Core::Engine::OutputPlugin, "com.fooyin.plugin.engine.output")
+Q_DECLARE_INTERFACE(Fooyin::OutputPlugin, "com.fooyin.plugin.engine.output")

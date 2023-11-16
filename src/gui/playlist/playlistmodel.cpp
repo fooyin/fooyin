@@ -38,22 +38,22 @@
 
 #include <queue>
 
-namespace Fy::Gui::Widgets::Playlist {
-PlaylistModel::PlaylistModel(Utils::SettingsManager* settings, QObject* parent)
+namespace Fooyin {
+PlaylistModel::PlaylistModel(SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
     , p{std::make_unique<PlaylistModelPrivate>(this, settings)}
 {
-    p->settings->subscribe<Settings::PlaylistAltColours>(this, [this](bool enabled) {
+    p->settings->subscribe<Gui::Settings::PlaylistAltColours>(this, [this](bool enabled) {
         p->altColours = enabled;
         emit dataChanged({}, {}, {Qt::BackgroundRole});
     });
-    p->settings->subscribe<Settings::PlaylistThumbnailSize>(this, [this](int size) {
+    p->settings->subscribe<Gui::Settings::PlaylistThumbnailSize>(this, [this](int size) {
         p->coverSize = {size, size};
         p->coverProvider->clearCache();
         emit dataChanged({}, {}, {PlaylistItem::Role::Cover});
     });
 
-    p->settings->subscribe<Settings::IconTheme>(this, [this]() {
+    p->settings->subscribe<Gui::Settings::IconTheme>(this, [this]() {
         p->playingIcon = QIcon::fromTheme(Constants::Icons::Play).pixmap(20);
         p->pausedIcon  = QIcon::fromTheme(Constants::Icons::Pause).pixmap(20);
         emit dataChanged({}, {}, {Qt::DecorationRole});
@@ -71,8 +71,8 @@ PlaylistModel::PlaylistModel(Utils::SettingsManager* settings, QObject* parent)
     QObject::connect(&p->populator, &PlaylistPopulator::headersUpdated, this,
                      [this](ItemKeyMap data) { p->updateModel(data); });
 
-    QObject::connect(p->coverProvider, &Library::CoverProvider::coverAdded, this,
-                     [this](const Core::Track& track) { p->coverUpdated(track); });
+    QObject::connect(p->coverProvider, &CoverProvider::coverAdded, this,
+                     [this](const Track& track) { p->coverUpdated(track); });
 }
 
 PlaylistModel::~PlaylistModel()
@@ -238,7 +238,7 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
     return p->handleDrop(data, action, row, column, parent);
 }
 
-void PlaylistModel::reset(const PlaylistPreset& preset, Core::Playlist::Playlist* playlist)
+void PlaylistModel::reset(const PlaylistPreset& preset, Playlist* playlist)
 {
     if(!playlist) {
         return;
@@ -289,7 +289,7 @@ void PlaylistModel::removeTracks(const TrackGroups& groups)
     p->removeTracks(rows);
 }
 
-void PlaylistModel::updateHeader(Core::Playlist::Playlist* playlist)
+void PlaylistModel::updateHeader(Playlist* playlist)
 {
     if(playlist) {
         p->headerText = playlist->name() + ": " + QString::number(playlist->trackCount()) + " Tracks";
@@ -309,9 +309,9 @@ TrackGroups PlaylistModel::saveTrackGroups(const QModelIndexList& indexes) const
     const ParentChildIndexMap indexGroups = p->determineIndexGroups(indexes);
 
     for(const auto& group : indexGroups) {
-        const int index = group.front().data(Fy::Gui::Widgets::Playlist::PlaylistItem::Role::Index).toInt();
+        const int index = group.front().data(Fooyin::PlaylistItem::Role::Index).toInt();
         std::ranges::transform(std::as_const(group), std::back_inserter(result[index]), [](const QModelIndex& index) {
-            return index.data(Fy::Gui::Widgets::Playlist::PlaylistItem::Role::ItemData).value<Fy::Core::Track>();
+            return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>();
         });
     }
     return result;
@@ -330,20 +330,20 @@ void PlaylistModel::tracksChanged()
     p->currentPlayingIndex = QPersistentModelIndex{};
 }
 
-void PlaylistModel::currentTrackChanged(const Core::Track& track)
+void PlaylistModel::currentTrackChanged(const Track& track)
 {
     p->currentPlayingTrack = track;
     emit dataChanged({}, {}, {Qt::DecorationRole, PlaylistItem::Role::Playing});
 }
 
-void PlaylistModel::playStateChanged(Core::Player::PlayState state)
+void PlaylistModel::playStateChanged(PlayState state)
 {
     p->currentPlayState = state;
-    if(state == Core::Player::PlayState::Stopped) {
+    if(state == PlayState::Stopped) {
         currentTrackChanged({});
     }
     emit dataChanged({}, {}, {Qt::DecorationRole, PlaylistItem::Role::Playing});
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin
 
 #include "moc_playlistmodel.cpp"

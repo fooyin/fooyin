@@ -23,12 +23,12 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Core::DB {
+namespace Fooyin {
 Library::Library(const QString& connectionName)
     : Module{connectionName}
 { }
 
-bool Library::getAllLibraries(Core::Library::LibraryInfoMap& libraries)
+bool Library::getAllLibraries(LibraryInfoMap& libraries)
 {
     const QString query = u"SELECT LibraryID, Name, Path FROM Libraries;"_s;
 
@@ -45,7 +45,7 @@ bool Library::getAllLibraries(Core::Library::LibraryInfoMap& libraries)
         const QString name = q.value(1).toString();
         const QString path = q.value(2).toString();
 
-        libraries.emplace(id, Core::Library::LibraryInfo{name, path, id});
+        libraries.emplace(id, LibraryInfo{name, path, id});
     }
     return true;
 }
@@ -79,4 +79,4 @@ bool Library::renameLibrary(int id, const QString& name)
                               "Cannot update library " + QString::number(id));
     return !q.hasError();
 }
-} // namespace Fy::Core::DB
+} // namespace Fooyin

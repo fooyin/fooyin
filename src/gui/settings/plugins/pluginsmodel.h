@@ -22,28 +22,25 @@
 #include <utils/tablemodel.h>
 #include <utils/treeitem.h>
 
-namespace Fy {
-namespace Plugins {
+namespace Fooyin {
 class PluginInfo;
 class PluginManager;
-} // namespace Plugins
 
-namespace Gui::Settings {
-class PluginItem : public Utils::TreeItem<PluginItem>
+class PluginItem : public TreeItem<PluginItem>
 {
 public:
-    explicit PluginItem(Plugins::PluginInfo* info = nullptr, PluginItem* parent = nullptr);
+    explicit PluginItem(PluginInfo* info = nullptr, PluginItem* parent = nullptr);
 
-    [[nodiscard]] Plugins::PluginInfo* info() const;
+    [[nodiscard]] PluginInfo* info() const;
 
 private:
-    Plugins::PluginInfo* m_info;
+    PluginInfo* m_info;
 };
 
-class PluginsModel : public Utils::TableModel<PluginItem>
+class PluginsModel : public TableModel<PluginItem>
 {
 public:
-    explicit PluginsModel(Plugins::PluginManager* pluginManager, QObject* parent = nullptr);
+    explicit PluginsModel(PluginManager* pluginManager, QObject* parent = nullptr);
 
     void setupModelData();
 
@@ -55,9 +52,8 @@ public:
 private:
     using PluginNameMap = std::unordered_map<QString, PluginItem>;
 
-    Plugins::PluginManager* m_pluginManager;
+    PluginManager* m_pluginManager;
 
     PluginNameMap m_nodes;
 };
-} // namespace Gui::Settings
-} // namespace Fy
+} // namespace Fooyin

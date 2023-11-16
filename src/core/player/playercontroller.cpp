@@ -23,12 +23,12 @@
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
-namespace Fy::Core::Player {
+namespace Fooyin {
 struct PlayerController::Private
 {
     PlayerController* self;
 
-    Utils::SettingsManager* settings;
+    SettingsManager* settings;
 
     Track currentTrack;
     uint64_t totalDuration{0};
@@ -37,19 +37,19 @@ struct PlayerController::Private
     uint64_t position{0};
     bool counted{false};
 
-    Private(PlayerController* self, Utils::SettingsManager* settings)
+    Private(PlayerController* self, SettingsManager* settings)
         : self{self}
         , settings{settings}
-        , playMode{static_cast<Playlist::PlayModes>(settings->value<Settings::PlayMode>())}
+        , playMode{static_cast<Playlist::PlayModes>(settings->value<Core::Settings::PlayMode>())}
     { }
 };
 
-PlayerController::PlayerController(Utils::SettingsManager* settings, QObject* parent)
+PlayerController::PlayerController(SettingsManager* settings, QObject* parent)
     : PlayerManager{parent}
     , p{std::make_unique<Private>(this, settings)}
 {
-    settings->subscribe<Settings::PlayMode>(this, [this]() {
-        const auto mode = static_cast<Playlist::PlayModes>(p->settings->value<Settings::PlayMode>());
+    settings->subscribe<Core::Settings::PlayMode>(this, [this]() {
+        const auto mode = static_cast<Playlist::PlayModes>(p->settings->value<Core::Settings::PlayMode>());
         if(std::exchange(p->playMode, mode) != mode) {
             emit playModeChanged(mode);
         }
@@ -151,7 +151,7 @@ void PlayerController::changeCurrentTrack(const Track& track)
 
 void PlayerController::setPlayMode(Playlist::PlayModes mode)
 {
-    p->settings->set<Settings::PlayMode>(static_cast<int>(mode));
+    p->settings->set<Core::Settings::PlayMode>(static_cast<int>(mode));
 }
 
 PlayState PlayerController::playState() const
@@ -173,6 +173,6 @@ Track PlayerController::currentTrack() const
 {
     return p->currentTrack;
 }
-} // namespace Fy::Core::Player
+} // namespace Fooyin
 
 #include "moc_playercontroller.cpp"

@@ -19,7 +19,7 @@
 
 #include "ffmpegclock.h"
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 AudioClock::AudioClock()
     : m_paused{true}
 {
@@ -67,4 +67,4 @@ AudioClock::TimePoint AudioClock::timeFromPosition(uint64_t position, bool ignor
     auto pos = m_paused && !ignorePause ? m_position : TrackTime{position};
     return m_timePoint + toClockTime(pos - m_position);
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

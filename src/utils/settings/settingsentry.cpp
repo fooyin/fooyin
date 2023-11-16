@@ -19,7 +19,7 @@
 
 #include <utils/settings/settingsentry.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 SettingsEntry::SettingsEntry(QString name, const QVariant& value, bool writeToDisk, QString group)
     : m_name{std::move(name)}
     , m_value{value}
@@ -75,6 +75,6 @@ bool SettingsEntry::reset()
 {
     return setValue(m_defaultValue);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/settings/moc_settingsentry.cpp"

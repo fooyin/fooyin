@@ -36,7 +36,7 @@ void selectChildren(QAbstractItemModel* model, const QModelIndex& parentIndex, Q
 }
 } // namespace
 
-namespace Fy::Utils {
+namespace Fooyin {
 RecursiveSelectionModel::RecursiveSelectionModel(QAbstractItemModel* model, QObject* parent)
     : QItemSelectionModel{model, parent}
 { }
@@ -60,6 +60,6 @@ void RecursiveSelectionModel::select(const QItemSelection& selection, SelectionF
 
     QItemSelectionModel::select(newSelection, command);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_recursiveselectionmodel.cpp"

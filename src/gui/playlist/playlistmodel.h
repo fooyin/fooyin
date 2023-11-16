@@ -24,33 +24,21 @@
 #include <core/trackfwd.h>
 #include <utils/treemodel.h>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Core {
-namespace Player {
-enum class PlayState;
-} // namespace Player
-
-namespace Playlist {
 class Playlist;
-} // namespace Playlist
-} // namespace Core
-
-namespace Gui::Widgets::Playlist {
+enum class PlayState;
 struct PlaylistPreset;
 class PlaylistModelPrivate;
 
-using TrackGroups = std::map<int, std::vector<Core::Track>>;
+using TrackGroups = std::map<int, std::vector<Track>>;
 
-class PlaylistModel : public Utils::TreeModel<PlaylistItem>
+class PlaylistModel : public TreeModel<PlaylistItem>
 {
     Q_OBJECT
 
 public:
-    PlaylistModel(Utils::SettingsManager* settings, QObject* parent = nullptr);
+    PlaylistModel(SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -70,13 +58,13 @@ public:
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
 
-    void reset(const PlaylistPreset& preset, Core::Playlist::Playlist* playlist);
+    void reset(const PlaylistPreset& preset, Playlist* playlist);
 
     QModelIndex indexAtTrackIndex(int index);
     void insertTracks(const TrackGroups& tracks);
     void removeTracks(const QModelIndexList& indexes);
     void removeTracks(const TrackGroups& groups);
-    void updateHeader(Core::Playlist::Playlist* playlist);
+    void updateHeader(Playlist* playlist);
     void setCurrentPlaylistIsActive(bool active);
 
     TrackGroups saveTrackGroups(const QModelIndexList& indexes) const;
@@ -88,12 +76,11 @@ signals:
     void playlistTracksChanged(int index);
 
 public slots:
-    void currentTrackChanged(const Core::Track& track);
-    void playStateChanged(Core::Player::PlayState state);
+    void currentTrackChanged(const Track& track);
+    void playStateChanged(PlayState state);
 
 private:
     friend PlaylistModelPrivate;
     std::unique_ptr<PlaylistModelPrivate> p;
 };
-} // namespace Gui::Widgets::Playlist
-} // namespace Fy
+} // namespace Fooyin

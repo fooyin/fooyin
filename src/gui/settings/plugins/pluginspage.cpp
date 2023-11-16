@@ -30,23 +30,23 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-namespace Fy::Gui::Settings {
-class PluginPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class PluginPageWidget : public SettingsPageWidget
 {
 public:
-    explicit PluginPageWidget(Plugins::PluginManager* pluginManager);
+    explicit PluginPageWidget(PluginManager* pluginManager);
 
     void apply() override;
     void reset() override;
 
 private:
-    Plugins::PluginManager* m_pluginManager;
+    PluginManager* m_pluginManager;
 
     QTableView* m_pluginList;
     PluginsModel* m_model;
 };
 
-PluginPageWidget::PluginPageWidget(Plugins::PluginManager* pluginManager)
+PluginPageWidget::PluginPageWidget(PluginManager* pluginManager)
     : m_pluginManager{pluginManager}
     , m_pluginList{new QTableView(this)}
     , m_model{new PluginsModel(m_pluginManager)}
@@ -65,12 +65,12 @@ void PluginPageWidget::apply() { }
 
 void PluginPageWidget::reset() { }
 
-PluginPage::PluginPage(Utils::SettingsManager* settings, Plugins::PluginManager* pluginManager)
-    : Utils::SettingsPage{settings->settingsDialog()}
+PluginPage::PluginPage(SettingsManager* settings, PluginManager* pluginManager)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::Plugins);
     setName(tr("General"));
     setCategory({tr("Plugins")});
     setWidgetCreator([pluginManager] { return new PluginPageWidget(pluginManager); });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

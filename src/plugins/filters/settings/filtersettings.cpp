@@ -25,8 +25,8 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Filters::Settings {
-FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
+namespace Fooyin::Filters {
+FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
     m_settings->createSetting<Settings::FilterAltColours>(false, u"Filters"_s);
@@ -42,6 +42,6 @@ FiltersSettings::FiltersSettings(Utils::SettingsManager* settingsManager)
 
     m_settings->loadSettings();
 }
-} // namespace Fy::Filters::Settings
+} // namespace Fooyin::Filters
 
 #include "moc_filtersettings.cpp"

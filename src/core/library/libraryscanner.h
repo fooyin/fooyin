@@ -22,21 +22,17 @@
 #include <core/trackfwd.h>
 #include <utils/worker.h>
 
-namespace Fy::Core {
-namespace DB {
+namespace Fooyin {
 class Database;
-}
-
-namespace Library {
 class LibraryManager;
 struct LibraryInfo;
 
-class LibraryScanner : public Utils::Worker
+class LibraryScanner : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit LibraryScanner(DB::Database* database, QObject* parent = nullptr);
+    explicit LibraryScanner(Database* database, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
     void closeThread() override;
@@ -44,10 +40,10 @@ public:
 
 signals:
     void progressChanged(int percent);
-    void statusChanged(const Fy::Core::Library::LibraryInfo& library);
-    void updatedTracks(const Core::TrackList& tracks);
-    void addedTracks(const Core::TrackList& tracks);
-    void tracksDeleted(const Core::TrackList& tracks);
+    void statusChanged(const LibraryInfo& library);
+    void updatedTracks(const TrackList& tracks);
+    void addedTracks(const TrackList& tracks);
+    void tracksDeleted(const TrackList& tracks);
 
 public slots:
     void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
@@ -57,5 +53,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Library
-} // namespace Fy::Core
+} // namespace Fooyin

@@ -23,7 +23,7 @@
 #include <deque>
 #include <mutex>
 
-namespace Fy::Utils {
+namespace Fooyin {
 template <typename QueueItem>
 class ThreadQueue
 {
@@ -145,4 +145,4 @@ QueueItem ThreadQueue<QueueItem>::ThreadQueue::dequeue()
     m_queue.pop_front();
     return item;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin

@@ -25,16 +25,9 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-namespace Core {
-namespace Player {
 class PlayerManager;
-}
-
-namespace Engine {
 class AudioOutput;
 struct AudioOutputBuilder;
 
@@ -45,8 +38,7 @@ class FYCORE_EXPORT EngineHandler : public QObject
     Q_OBJECT
 
 public:
-    explicit EngineHandler(Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                           QObject* parent = nullptr);
+    explicit EngineHandler(PlayerManager* playerManager, SettingsManager* settings, QObject* parent = nullptr);
     ~EngineHandler() override;
 
     void setup();
@@ -58,13 +50,11 @@ public:
     void addOutput(const AudioOutputBuilder& output);
 
 signals:
-    void outputChanged(Engine::AudioOutput* output);
+    void outputChanged(AudioOutput* output);
     void deviceChanged(const QString& device);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Engine
-} // namespace Core
-} // namespace Fy
+} // namespace Fooyin

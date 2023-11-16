@@ -22,24 +22,22 @@
 #include <core/trackfwd.h>
 #include <gui/fywidget.h>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
 
 namespace Filters {
 struct LibraryFilter;
 
-class FilterWidget : public Gui::Widgets::FyWidget
+class FilterWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit FilterWidget(Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit FilterWidget(SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     void changeFilter(const LibraryFilter& filter);
-    void reset(const Core::TrackList& tracks);
+    void reset(const TrackList& tracks);
 
     void setScrollbarEnabled(bool enabled);
 
@@ -49,9 +47,9 @@ public:
     void saveLayout(QJsonArray& array) override;
     void loadLayout(const QJsonObject& object) override;
 
-    void tracksAdded(const Core::TrackList& tracks);
-    void tracksUpdated(const Core::TrackList& tracks);
-    void tracksRemoved(const Core::TrackList& tracks);
+    void tracksAdded(const TrackList& tracks);
+    void tracksUpdated(const TrackList& tracks);
+    void tracksRemoved(const TrackList& tracks);
 
 signals:
     void doubleClicked(const QString& playlistName);
@@ -71,4 +69,4 @@ private:
     std::unique_ptr<Private> p;
 };
 } // namespace Filters
-} // namespace Fy
+} // namespace Fooyin

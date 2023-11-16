@@ -23,7 +23,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 
-namespace Fy::Utils {
+namespace Fooyin {
 OverlayFilter::OverlayFilter(QWidget* parent)
     : QWidget{parent}
 {
@@ -41,6 +41,6 @@ void OverlayFilter::paintEvent(QPaintEvent* /*event*/)
 
     painter.fillRect(rect(), colour);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_overlayfilter.cpp"

@@ -19,7 +19,7 @@
 
 #pragma once
 
-namespace Fy {
+namespace Fooyin {
 #define VERSION "@PROJECT_VERSION@"
 #define VERSION_MAJOR "@PROJECT_VERSION_MAJOR@"
 #define VERSION_MINOR "@PROJECT_VERSION_MINOR@"

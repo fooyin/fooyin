@@ -21,7 +21,7 @@
 
 #include <QHBoxLayout>
 
-namespace Fy::Utils {
+namespace Fooyin {
 ClickableLabel::ClickableLabel(QWidget* parent)
     : QLabel{parent}
 { }
@@ -43,6 +43,6 @@ void ClickableLabel::leaveEvent(QEvent* event)
     emit mouseLeft();
     QLabel::leaveEvent(event);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_clickablelabel.cpp"

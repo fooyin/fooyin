@@ -26,24 +26,24 @@
 #include <QObject>
 #include <QString>
 
-namespace Fy::Gui::Widgets {
-enum LibraryTreeRole
-{
-    Title = Qt::UserRole,
-    Level,
-    Tracks,
-};
-
-class LibraryTreeItem : public Utils::TreeItem<LibraryTreeItem>
+namespace Fooyin {
+class LibraryTreeItem : public TreeItem<LibraryTreeItem>
 {
 public:
+    enum Role
+    {
+        Title = Qt::UserRole,
+        Level,
+        Tracks,
+    };
+
     LibraryTreeItem();
     explicit LibraryTreeItem(QString title, LibraryTreeItem* parent, int level);
 
     [[nodiscard]] bool pending() const;
     [[nodiscard]] int level() const;
     [[nodiscard]] QString title() const;
-    [[nodiscard]] Core::TrackList tracks() const;
+    [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] QString key() const;
 
@@ -51,9 +51,9 @@ public:
     void setTitle(const QString& title);
     void setKey(const QString& key);
 
-    void addTrack(const Core::Track& track);
-    void addTracks(const Core::TrackList& tracks);
-    void removeTrack(const Core::Track& track);
+    void addTrack(const Track& track);
+    void addTracks(const TrackList& tracks);
+    void removeTrack(const Track& track);
 
     void sortChildren();
 
@@ -62,6 +62,6 @@ private:
     int m_level;
     QString m_key;
     QString m_title;
-    Core::TrackList m_tracks;
+    TrackList m_tracks;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

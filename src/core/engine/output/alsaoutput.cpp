@@ -30,7 +30,7 @@ extern "C"
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Core::Engine {
+namespace Fooyin {
 void checkError(int error, const QString& message)
 {
     if(error < 0) {
@@ -512,4 +512,4 @@ void AlsaOutput::setDevice(const QString& device)
         p->device = device;
     }
 }
-} // namespace Fy::Core::Engine
+} // namespace Fooyin

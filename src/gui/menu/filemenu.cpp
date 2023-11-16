@@ -30,22 +30,22 @@
 #include <QAction>
 #include <QApplication>
 
-namespace Fy::Gui {
+namespace Fooyin {
 
-FileMenu::FileMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, QObject* parent)
+FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
     , m_settings{settings}
 {
-    auto* fileMenu = m_actionManager->actionContainer(Gui::Constants::Menus::File);
+    auto* fileMenu = m_actionManager->actionContainer(Constants::Menus::File);
 
-    auto* quit        = new QAction(QIcon::fromTheme(Gui::Constants::Icons::Quit), tr("E&xit"), this);
-    auto* quitCommand = m_actionManager->registerAction(quit, Gui::Constants::Actions::Exit);
+    auto* quit        = new QAction(QIcon::fromTheme(Constants::Icons::Quit), tr("E&xit"), this);
+    auto* quitCommand = m_actionManager->registerAction(quit, Constants::Actions::Exit);
     quitCommand->setDefaultShortcut(QKeySequence::Quit);
-    fileMenu->addAction(quitCommand, Utils::Actions::Groups::Three);
+    fileMenu->addAction(quitCommand, Actions::Groups::Three);
     QObject::connect(quit, &QAction::triggered, qApp, &QApplication::quit);
 }
 
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "moc_filemenu.cpp"

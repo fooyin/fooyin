@@ -23,7 +23,7 @@
 
 #include <QTabWidget>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class EditableTabBar;
 
 class FYUTILS_EXPORT EditableTabWidget : public QTabWidget
@@ -33,9 +33,9 @@ class FYUTILS_EXPORT EditableTabWidget : public QTabWidget
 public:
     explicit EditableTabWidget(QWidget* parent = nullptr);
 
-    [[nodiscard]] Utils::EditableTabBar* editableTabBar() const;
+    [[nodiscard]] EditableTabBar* editableTabBar() const;
 
 private:
-    Utils::EditableTabBar* m_tabBar;
+    EditableTabBar* m_tabBar;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

@@ -30,23 +30,23 @@
 #include <QGridLayout>
 #include <QLabel>
 
-namespace Fy::Gui::Settings {
-class GeneralPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class GeneralPageWidget : public SettingsPageWidget
 {
 public:
-    explicit GeneralPageWidget(Utils::SettingsManager* settings);
+    explicit GeneralPageWidget(SettingsManager* settings);
 
     void apply() override;
     void reset() override;
 
 private:
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 
     QComboBox* m_startupBehaviour;
     QCheckBox* m_waitForTracks;
 };
 
-GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
+GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_startupBehaviour{new QComboBox(this)}
     , m_waitForTracks{new QCheckBox(tr("Wait for tracks"), this)}
@@ -54,7 +54,7 @@ GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
     auto* startupBehaviourLabel = new QLabel(tr("Startup behaviour: "), this);
 
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
-    m_waitForTracks->setChecked(m_settings->value<Settings::WaitForTracks>());
+    m_waitForTracks->setChecked(m_settings->value<Gui::Settings::WaitForTracks>());
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(startupBehaviourLabel, 0, 0);
@@ -71,24 +71,24 @@ GeneralPageWidget::GeneralPageWidget(Utils::SettingsManager* settings)
     addStartupBehaviour(tr("Show main window maximised"), MainWindow::Maximised);
     addStartupBehaviour(tr("Remember from last run"), MainWindow::RememberLast);
 
-    const int currentBehaviour = m_settings->value<Settings::StartupBehaviour>();
+    const int currentBehaviour = m_settings->value<Gui::Settings::StartupBehaviour>();
     m_startupBehaviour->setCurrentIndex(currentBehaviour);
 }
 
 void GeneralPageWidget::apply()
 {
-    m_settings->set<Settings::StartupBehaviour>(m_startupBehaviour->currentIndex());
-    m_settings->set<Settings::WaitForTracks>(m_waitForTracks->isChecked());
+    m_settings->set<Gui::Settings::StartupBehaviour>(m_startupBehaviour->currentIndex());
+    m_settings->set<Gui::Settings::WaitForTracks>(m_waitForTracks->isChecked());
 }
 
 void GeneralPageWidget::reset()
 {
-    m_settings->reset<Settings::StartupBehaviour>();
-    m_settings->reset<Settings::WaitForTracks>();
+    m_settings->reset<Gui::Settings::StartupBehaviour>();
+    m_settings->reset<Gui::Settings::WaitForTracks>();
 }
 
-GeneralPage::GeneralPage(Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+GeneralPage::GeneralPage(SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::GeneralCore);
     setName(tr("General"));
@@ -96,4 +96,4 @@ GeneralPage::GeneralPage(Utils::SettingsManager* settings)
     setWidgetCreator([settings] { return new GeneralPageWidget(settings); });
 }
 
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

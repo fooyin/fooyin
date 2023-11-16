@@ -32,20 +32,20 @@
 #include <QHBoxLayout>
 #include <QMenu>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct ControlWidget::Private
 {
     ControlWidget* self;
 
-    Core::Player::PlayerManager* playerManager;
-    Utils::SettingsManager* settings;
+    PlayerManager* playerManager;
+    SettingsManager* settings;
 
     PlayerControl* playerControls;
     PlaylistControl* playlistControls;
     VolumeControl* volumeControls;
     ProgressWidget* progress;
 
-    Private(ControlWidget* self, Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings)
+    Private(ControlWidget* self, PlayerManager* playerManager, SettingsManager* settings)
         : self{self}
         , playerManager{playerManager}
         , settings{settings}
@@ -56,8 +56,7 @@ struct ControlWidget::Private
     { }
 };
 
-ControlWidget::ControlWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                             QWidget* parent)
+ControlWidget::ControlWidget(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
@@ -79,6 +78,6 @@ QString ControlWidget::name() const
 {
     return QStringLiteral("Controls");
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_controlwidget.cpp"

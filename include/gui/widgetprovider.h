@@ -27,7 +27,7 @@
 #include <QMenu>
 #include <QObject>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 class FyWidget;
 
 class WidgetProvider : public QObject
@@ -35,13 +35,13 @@ class WidgetProvider : public QObject
     Q_OBJECT
 
 public:
-    explicit WidgetProvider(Utils::ActionManager* actionManager, QObject* parent = nullptr)
+    explicit WidgetProvider(ActionManager* actionManager, QObject* parent = nullptr)
         : QObject{parent}
         , m_actionManager{actionManager}
         , m_widgetFactory{std::make_unique<WidgetFactory>()}
     { }
 
-    Widgets::WidgetFactory* widgetFactory()
+    WidgetFactory* widgetFactory()
     {
         return m_widgetFactory.get();
     }
@@ -53,7 +53,7 @@ public:
     }
 
     template <typename Func>
-    void setupWidgetMenu(Utils::ActionContainer* menu, Func func)
+    void setupWidgetMenu(ActionContainer* menu, Func func)
     {
         if(!menu->isEmpty()) {
             return;
@@ -64,8 +64,8 @@ public:
             auto* parentMenu = menu;
 
             for(const auto& subMenu : widget.second.subMenus) {
-                const Utils::Id id = Utils::Id{menu->id()}.append(subMenu);
-                auto* childMenu    = m_actionManager->actionContainer(id);
+                const Id id     = Id{menu->id()}.append(subMenu);
+                auto* childMenu = m_actionManager->actionContainer(id);
 
                 if(!childMenu) {
                     childMenu = m_actionManager->createMenu(id);
@@ -84,7 +84,7 @@ public:
     }
 
 private:
-    Utils::ActionManager* m_actionManager;
+    ActionManager* m_actionManager;
     std::unique_ptr<WidgetFactory> m_widgetFactory;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

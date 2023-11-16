@@ -31,7 +31,7 @@ class QPixmap;
 class QString;
 class QSize;
 
-namespace Fy::Gui::Library {
+namespace Fooyin {
 class FYCORE_EXPORT CoverProvider : public QObject
 {
     Q_OBJECT
@@ -40,16 +40,16 @@ public:
     explicit CoverProvider(QObject* parent = nullptr);
     ~CoverProvider() override;
 
-    [[nodiscard]] QPixmap trackCover(const Core::Track& track, bool saveToDisk = false) const;
-    [[nodiscard]] QPixmap trackCover(const Core::Track& track, const QSize& size, bool saveToDisk = false) const;
+    [[nodiscard]] QPixmap trackCover(const Track& track, bool saveToDisk = false) const;
+    [[nodiscard]] QPixmap trackCover(const Track& track, const QSize& size, bool saveToDisk = false) const;
 
     void clearCache();
 
 signals:
-    void coverAdded(const Fy::Core::Track& track);
+    void coverAdded(const Fooyin::Track& track);
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Gui::Library
+} // namespace Fooyin

@@ -21,27 +21,27 @@
 
 #include "librarytree/librarytreegroupregistry.h"
 
-namespace Fy::Gui::Settings {
+namespace Fooyin {
 LibraryTreeGroupItem::LibraryTreeGroupItem()
     : LibraryTreeGroupItem{{}, nullptr}
 { }
 
-LibraryTreeGroupItem::LibraryTreeGroupItem(Widgets::LibraryTreeGrouping group, LibraryTreeGroupItem* parent)
+LibraryTreeGroupItem::LibraryTreeGroupItem(LibraryTreeGrouping group, LibraryTreeGroupItem* parent)
     : TreeStatusItem{parent}
     , m_group{std::move(group)}
 { }
 
-Widgets::LibraryTreeGrouping LibraryTreeGroupItem::group() const
+LibraryTreeGrouping LibraryTreeGroupItem::group() const
 {
     return m_group;
 }
 
-void LibraryTreeGroupItem::changeGroup(const Widgets::LibraryTreeGrouping& group)
+void LibraryTreeGroupItem::changeGroup(const LibraryTreeGrouping& group)
 {
     m_group = group;
 }
 
-LibraryTreeGroupModel::LibraryTreeGroupModel(Widgets::LibraryTreeGroupRegistry* groupsRegistry, QObject* parent)
+LibraryTreeGroupModel::LibraryTreeGroupModel(LibraryTreeGroupRegistry* groupsRegistry, QObject* parent)
     : TableModel{parent}
     , m_groupsRegistry{groupsRegistry}
 { }
@@ -69,7 +69,7 @@ void LibraryTreeGroupModel::addNewGroup()
 {
     const int index = static_cast<int>(m_nodes.size());
 
-    Widgets::LibraryTreeGrouping group;
+    LibraryTreeGrouping group;
     group.index = index;
 
     auto* parent = rootItem();
@@ -84,7 +84,7 @@ void LibraryTreeGroupModel::addNewGroup()
     endInsertRows();
 }
 
-void LibraryTreeGroupModel::markForRemoval(const Widgets::LibraryTreeGrouping& group)
+void LibraryTreeGroupModel::markForRemoval(const LibraryTreeGrouping& group)
 {
     LibraryTreeGroupItem* item = &m_nodes.at(group.index);
 
@@ -101,7 +101,7 @@ void LibraryTreeGroupModel::markForRemoval(const Widgets::LibraryTreeGrouping& g
     }
 }
 
-void LibraryTreeGroupModel::markForChange(const Widgets::LibraryTreeGrouping& group)
+void LibraryTreeGroupModel::markForChange(const LibraryTreeGrouping& group)
 {
     LibraryTreeGroupItem* item = &m_nodes.at(group.index);
     item->changeGroup(group);
@@ -118,7 +118,7 @@ void LibraryTreeGroupModel::processQueue()
 
     for(auto& [index, node] : m_nodes) {
         const LibraryTreeGroupItem::ItemStatus status = node.status();
-        const Widgets::LibraryTreeGrouping group      = node.group();
+        const LibraryTreeGrouping group               = node.group();
 
         switch(status) {
             case(LibraryTreeGroupItem::Added): {
@@ -282,4 +282,4 @@ void LibraryTreeGroupModel::removeGroup(int index)
     }
     m_nodes.erase(index);
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

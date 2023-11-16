@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT Worker : public QObject
 {
     Q_OBJECT
@@ -52,4 +52,4 @@ signals:
 private:
     std::atomic<State> m_state;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

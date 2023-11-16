@@ -23,28 +23,20 @@
 
 class QHBoxLayout;
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core::Player {
 class PlayerManager;
-} // namespace Core::Player
 
-namespace Gui::Widgets {
 class PlaylistControl : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                             QWidget* parent = nullptr);
+    explicit PlaylistControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistControl();
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

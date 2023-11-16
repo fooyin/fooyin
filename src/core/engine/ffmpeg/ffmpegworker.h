@@ -22,7 +22,7 @@
 #include <QObject>
 #include <QTimer>
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 class EngineWorker : public QObject
 {
     Q_OBJECT
@@ -56,4 +56,4 @@ private:
     bool m_paused;
     bool m_atEnd;
 };
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

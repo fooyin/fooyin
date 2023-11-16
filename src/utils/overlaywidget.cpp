@@ -23,7 +23,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-namespace Fy::Utils {
+namespace Fooyin {
 OverlayWidget::OverlayWidget(bool button, QWidget* parent)
     : QWidget{parent}
     , m_layout{new QVBoxLayout(this)}
@@ -54,6 +54,6 @@ void OverlayWidget::setButtonText(const QString& text)
         m_button->setText(text);
     }
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "moc_overlaywidget.cpp"

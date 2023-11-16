@@ -21,28 +21,20 @@
 
 #include <QWidget>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core::Player {
 class PlayerManager;
-} // namespace Core::Player
 
-namespace Gui::Widgets {
 class PlayerControl : public QWidget
 {
     Q_OBJECT
 
 public:
-    PlayerControl(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                  QWidget* parent = nullptr);
+    PlayerControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
     ~PlayerControl() override;
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

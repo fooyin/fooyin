@@ -32,18 +32,17 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Gui::Widgets {
-ProgressWidget::ProgressWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                               QWidget* parent)
+namespace Fooyin {
+ProgressWidget::ProgressWidget(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
     , m_playerManager{playerManager}
     , m_settings{settings}
     , m_layout{new QHBoxLayout(this)}
-    , m_slider{new Utils::Slider(Qt::Horizontal, this)}
-    , m_elapsed{new Utils::ClickableLabel(this)}
-    , m_total{new Utils::ClickableLabel(this)}
+    , m_slider{new Slider(Qt::Horizontal, this)}
+    , m_elapsed{new ClickableLabel(this)}
+    , m_total{new ClickableLabel(this)}
     , m_max{0}
-    , m_elapsedTotal{settings->value<Settings::ElapsedTotal>()}
+    , m_elapsedTotal{settings->value<Gui::Settings::ElapsedTotal>()}
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
 
@@ -58,16 +57,13 @@ ProgressWidget::ProgressWidget(Core::Player::PlayerManager* playerManager, Utils
 
     setEnabled(m_playerManager->currentTrack().isValid());
 
-    QObject::connect(m_total, &Utils::ClickableLabel::clicked, this, &ProgressWidget::toggleRemaining);
-    QObject::connect(m_slider, &Utils::Slider::sliderReleased, this, &ProgressWidget::sliderDropped);
+    QObject::connect(m_total, &ClickableLabel::clicked, this, &ProgressWidget::toggleRemaining);
+    QObject::connect(m_slider, &Slider::sliderReleased, this, &ProgressWidget::sliderDropped);
 
-    QObject::connect(m_playerManager, &Core::Player::PlayerManager::playStateChanged, this,
-                     &ProgressWidget::stateChanged);
-    QObject::connect(m_playerManager, &Core::Player::PlayerManager::currentTrackChanged, this,
-                     &ProgressWidget::changeTrack);
-    QObject::connect(m_playerManager, &Core::Player::PlayerManager::positionChanged, this,
-                     &ProgressWidget::setCurrentPosition);
-    QObject::connect(this, &ProgressWidget::movedSlider, m_playerManager, &Core::Player::PlayerManager::changePosition);
+    QObject::connect(m_playerManager, &PlayerManager::playStateChanged, this, &ProgressWidget::stateChanged);
+    QObject::connect(m_playerManager, &PlayerManager::currentTrackChanged, this, &ProgressWidget::changeTrack);
+    QObject::connect(m_playerManager, &PlayerManager::positionChanged, this, &ProgressWidget::setCurrentPosition);
+    QObject::connect(this, &ProgressWidget::movedSlider, m_playerManager, &PlayerManager::changePosition);
 
     changeTrack(m_playerManager->currentTrack());
 }
@@ -80,7 +76,7 @@ void ProgressWidget::reset()
     m_max = 0;
 }
 
-void ProgressWidget::changeTrack(const Core::Track& track)
+void ProgressWidget::changeTrack(const Track& track)
 {
     reset();
     m_max = track.duration();
@@ -112,19 +108,19 @@ void ProgressWidget::updateTime(uint64_t elapsed)
     }
 }
 
-void ProgressWidget::stateChanged(Core::Player::PlayState state)
+void ProgressWidget::stateChanged(PlayState state)
 {
     switch(state) {
-        case(Core::Player::PlayState::Stopped): {
+        case(PlayState::Stopped): {
             reset();
             setEnabled(false);
             break;
         }
-        case(Core::Player::PlayState::Playing): {
+        case(PlayState::Playing): {
             setEnabled(true);
             break;
         }
-        case(Core::Player::PlayState::Paused): {
+        case(PlayState::Paused): {
             return;
         }
     }
@@ -133,11 +129,11 @@ void ProgressWidget::stateChanged(Core::Player::PlayState state)
 void ProgressWidget::toggleRemaining()
 {
     if(m_elapsedTotal) {
-        m_settings->set<Settings::ElapsedTotal>(false);
+        m_settings->set<Gui::Settings::ElapsedTotal>(false);
         m_total->setText(Utils::msToString(m_max));
     }
     else {
-        m_settings->set<Settings::ElapsedTotal>(true);
+        m_settings->set<Gui::Settings::ElapsedTotal>(true);
     }
     m_elapsedTotal = !m_elapsedTotal;
 }
@@ -147,6 +143,6 @@ void ProgressWidget::sliderDropped()
     const auto pos = m_slider->value();
     emit movedSlider(pos);
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_progresswidget.cpp"

@@ -21,21 +21,13 @@
 
 #include <utils/settings/settingspage.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core::Engine {
 class EngineHandler;
-}
 
-namespace Gui::Settings {
-class EnginePage : public Utils::SettingsPage
+class EnginePage : public SettingsPage
 {
 public:
-    explicit EnginePage(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler);
+    explicit EnginePage(SettingsManager* settings, EngineHandler* engineHandler);
 };
-} // namespace Gui::Settings
-} // namespace Fy
+} // namespace Fooyin

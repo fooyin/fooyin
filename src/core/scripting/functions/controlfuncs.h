@@ -21,10 +21,10 @@
 
 #include <core/scripting/scriptvalue.h>
 
-namespace Fy::Core::Scripting {
-ScriptResult cif(const ValueList& vec);
-ScriptResult cif2(const ValueList& vec);
-ScriptResult ifequal(const ValueList& vec);
-ScriptResult ifgreater(const ValueList& vec);
-ScriptResult iflonger(const ValueList& vec);
-}
+namespace Fooyin::Scripting {
+ScriptResult cif(const ScriptValueList& vec);
+ScriptResult cif2(const ScriptValueList& vec);
+ScriptResult ifequal(const ScriptValueList& vec);
+ScriptResult ifgreater(const ScriptValueList& vec);
+ScriptResult iflonger(const ScriptValueList& vec);
+} // namespace Fooyin::Scripting

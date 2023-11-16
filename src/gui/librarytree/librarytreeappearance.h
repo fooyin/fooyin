@@ -25,7 +25,7 @@
 #include <QFont>
 #include <QPalette>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 struct LibraryTreeAppearance
 {
     bool fontChanged{false};
@@ -66,4 +66,4 @@ struct LibraryTreeAppearance
         return stream;
     }
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

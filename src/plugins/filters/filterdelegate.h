@@ -21,7 +21,7 @@
 
 #include <QStyledItemDelegate>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 class FilterDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -31,4 +31,4 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 };
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

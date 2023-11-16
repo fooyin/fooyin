@@ -27,7 +27,7 @@ extern "C"
 class QString;
 class AVFrame;
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin::Utils {
 void printError(int error);
 void printError(const QString& error);
 AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
@@ -36,4 +36,4 @@ AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
 void skipSamples(AVFrame* frame, int samples);
 void fillSilence(uint8_t* dst, int bytes, int format);
 void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, double volume);
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin::Utils

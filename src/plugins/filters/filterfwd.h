@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QPalette>
 
-namespace Fy::Filters {
+namespace Fooyin::Filters {
 struct FilterOptions
 {
     bool fontChanged{false};
@@ -114,8 +114,8 @@ struct LibraryFilter
 {
     FilterField field;
     int index{-1};
-    Core::TrackList tracks;
+    TrackList tracks;
 };
 
 using FilterList = std::vector<LibraryFilter>;
-} // namespace Fy::Filters
+} // namespace Fooyin::Filters

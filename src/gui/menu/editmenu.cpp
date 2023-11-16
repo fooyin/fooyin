@@ -28,20 +28,19 @@
 
 #include <QAction>
 
-namespace Fy::Gui {
-EditMenu::EditMenu(Utils::ActionManager* actionManager, Utils::SettingsManager* settings, QObject* parent)
+namespace Fooyin {
+EditMenu::EditMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
     , m_settings{settings}
 {
-    auto* editMenu = m_actionManager->actionContainer(Gui::Constants::Menus::Edit);
+    auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
-    auto* openSettings    = new QAction(QIcon::fromTheme(Gui::Constants::Icons::Settings), tr("&Settings"), this);
-    auto* settingsCommand = actionManager->registerAction(openSettings, Gui::Constants::Actions::Settings);
-    settingsCommand->setDefaultShortcut(Qt::CTRL | Qt::Key_P);
-    editMenu->addSeparator(Utils::Actions::Groups::Three);
-    editMenu->addAction(settingsCommand, Utils::Actions::Groups::Three);
-    QObject::connect(openSettings, &QAction::triggered, m_settings->settingsDialog(),
-                     &Utils::SettingsDialogController::open);
+    auto* openSettings    = new QAction(QIcon::fromTheme(Constants::Icons::Settings), tr("&Settings"), this);
+    auto* settingsCommand = actionManager->registerAction(openSettings, Constants::Actions::Settings);
+    settingsCommand->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_P});
+    editMenu->addSeparator(Actions::Groups::Three);
+    editMenu->addAction(settingsCommand, Actions::Groups::Three);
+    QObject::connect(openSettings, &QAction::triggered, m_settings->settingsDialog(), &SettingsDialogController::open);
 }
-} // namespace Fy::Gui
+} // namespace Fooyin

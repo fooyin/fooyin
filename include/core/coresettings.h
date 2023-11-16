@@ -25,46 +25,39 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
-
-namespace Core {
-namespace Library {
 class SortingRegistry;
-}
 
-namespace Settings {
+namespace Core::Settings {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 enum Core : uint32_t
 {
-    Version             = 1 | Utils::Settings::String,
-    DatabaseVersion     = 2 | Utils::Settings::String,
-    FirstRun            = 3 | Utils::Settings::Bool,
-    PlayMode            = 4 | Utils::Settings::Int,
-    AutoRefresh         = 5 | Utils::Settings::Bool,
-    LibrarySorting      = 6 | Utils::Settings::ByteArray,
-    LibrarySortScript   = 7 | Utils::Settings::String,
-    ActivePlaylistId    = 8 | Utils::Settings::Int,
-    AudioOutput         = 9 | Utils::Settings::String,
-    OutputVolume        = 10 | Utils::Settings::Double,
-    RewindPreviousTrack = 11 | Utils::Settings::Bool,
+    Version             = 1 | SettingsType::String,
+    DatabaseVersion     = 2 | SettingsType::String,
+    FirstRun            = 3 | SettingsType::Bool,
+    PlayMode            = 4 | SettingsType::Int,
+    AutoRefresh         = 5 | SettingsType::Bool,
+    LibrarySorting      = 6 | SettingsType::ByteArray,
+    LibrarySortScript   = 7 | SettingsType::String,
+    ActivePlaylistId    = 8 | SettingsType::Int,
+    AudioOutput         = 9 | SettingsType::String,
+    OutputVolume        = 10 | SettingsType::Double,
+    RewindPreviousTrack = 11 | SettingsType::Bool,
 };
 Q_ENUM_NS(Core)
+} // namespace Core::Settings
 
 class FYCORE_EXPORT CoreSettings
 {
 public:
-    explicit CoreSettings(Utils::SettingsManager* settingsManager);
+    explicit CoreSettings(SettingsManager* settingsManager);
     ~CoreSettings();
 
-    [[nodiscard]] Library::SortingRegistry* sortingRegistry() const;
+    [[nodiscard]] SortingRegistry* sortingRegistry() const;
 
 private:
-    Utils::SettingsManager* m_settings;
-    Library::SortingRegistry* m_sortingRegistry;
+    SettingsManager* m_settings;
+    SortingRegistry* m_sortingRegistry;
 };
-} // namespace Settings
-} // namespace Core
-} // namespace Fy
+} // namespace Fooyin

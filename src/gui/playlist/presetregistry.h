@@ -26,23 +26,19 @@
 
 #include <QObject>
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-}
 
-namespace Gui::Widgets::Playlist {
-class PresetRegistry : public Utils::ItemRegistry<PlaylistPreset, Settings::PlaylistPresets>
+class PresetRegistry : public ItemRegistry<PlaylistPreset, Gui::Settings::PlaylistPresets>
 {
     Q_OBJECT
 
 public:
-    explicit PresetRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit PresetRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
     void loadItems() override;
 
 signals:
     void presetChanged(const PlaylistPreset& preset);
 };
-} // namespace Gui::Widgets::Playlist
-} // namespace Fy
+} // namespace Fooyin

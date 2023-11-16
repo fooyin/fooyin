@@ -23,31 +23,31 @@
 #include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
-namespace Fy::Gui::Sandbox {
-class ExpressionTreeItem : public Utils::TreeItem<ExpressionTreeItem>
+namespace Fooyin {
+class ExpressionTreeItem : public TreeItem<ExpressionTreeItem>
 {
 public:
     ExpressionTreeItem();
-    explicit ExpressionTreeItem(QString key, QString name, Core::Scripting::Expression expression);
+    explicit ExpressionTreeItem(QString key, QString name, Expression expression);
 
     QString key() const;
-    Core::Scripting::ExprType type() const;
+    Expr::Type type() const;
     QString name() const;
-    Core::Scripting::Expression expression() const;
+    Expression expression() const;
 
 private:
     QString m_key;
     QString m_name;
-    Core::Scripting::Expression m_expression;
+    Expression m_expression;
 };
 
-class ExpressionTreeModel : public Utils::TreeModel<ExpressionTreeItem>
+class ExpressionTreeModel : public TreeModel<ExpressionTreeItem>
 {
 public:
     explicit ExpressionTreeModel(QObject* parent = nullptr);
     ~ExpressionTreeModel() override;
 
-    void populate(const Core::Scripting::ExpressionList& expressions);
+    void populate(const ExpressionList& expressions);
 
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
@@ -55,4 +55,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Gui::Sandbox
+} // namespace Fooyin

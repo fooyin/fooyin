@@ -24,8 +24,8 @@
 
 #include <core/track.h>
 
-namespace Fy::Core::Library {
-LibraryDatabaseManager::LibraryDatabaseManager(DB::Database* database, QObject* parent)
+namespace Fooyin {
+LibraryDatabaseManager::LibraryDatabaseManager(Database* database, QObject* parent)
     : Worker{parent}
     , m_database{database}
     , m_libraryDatabase{database->connectionName()}
@@ -44,6 +44,6 @@ void LibraryDatabaseManager::getAllTracks()
         emit gotTracks(tracks);
     }
 }
-} // namespace Fy::Core::Library
+} // namespace Fooyin
 
 #include "moc_librarydatabasemanager.cpp"

@@ -24,7 +24,7 @@
 #include <QPluginLoader>
 #include <utility>
 
-namespace Fy::Plugins {
+namespace Fooyin {
 PluginInfo::PluginInfo(QString name, const QString& filename, const QJsonObject& allMetadata)
     : m_name{std::move(name)}
     , m_filename{filename}
@@ -177,4 +177,4 @@ QString PluginInfo::url() const
 {
     return m_url;
 }
-} // namespace Fy::Plugins
+} // namespace Fooyin

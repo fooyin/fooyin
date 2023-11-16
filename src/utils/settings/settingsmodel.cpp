@@ -21,7 +21,7 @@
 
 #include <utils/settings/settingspage.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 SettingsItem::SettingsItem()
     : SettingsItem{nullptr, nullptr}
 { }
@@ -134,4 +134,4 @@ QModelIndex SettingsModel::indexForCategory(const Id& categoryId) const
     }
     return {};
 }
-} // namespace Fy::Utils
+} // namespace Fooyin

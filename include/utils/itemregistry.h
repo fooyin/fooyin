@@ -41,7 +41,7 @@ concept ValidRegistry = requires(T t) {
     } -> std::convertible_to<int>;
 };
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT RegistryBase : public QObject
 {
     Q_OBJECT
@@ -68,7 +68,7 @@ class ItemRegistry : public RegistryBase
 public:
     using IndexItemMap = std::map<int, Item>;
 
-    explicit ItemRegistry(Utils::SettingsManager* settings, QObject* parent = nullptr)
+    explicit ItemRegistry(SettingsManager* settings, QObject* parent = nullptr)
         : RegistryBase{parent}
         , m_settings{settings}
     { }
@@ -225,9 +225,9 @@ private:
         return uniqueName;
     }
 
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 template <class T>
 QDataStream& operator<<(QDataStream& stream, const std::map<int, T>& itemMap)

@@ -34,15 +34,15 @@
 
 constexpr auto Placeholder = "Search library...";
 
-namespace Fy::Gui::Widgets {
-SearchWidget::SearchWidget(Utils::ActionManager* actionManager, SearchController* controller,
-                           Utils::SettingsManager* settings, QWidget* parent)
+namespace Fooyin {
+SearchWidget::SearchWidget(ActionManager* actionManager, SearchController* controller, SettingsManager* settings,
+                           QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_controller{controller}
     , m_settings{settings}
     , m_searchBox{new QLineEdit(this)}
-    , m_searchContext{new Utils::WidgetContext(this, Utils::Context{Constants::Context::Search}, this)}
+    , m_searchContext{new WidgetContext(this, Context{Constants::Context::Search}, this)}
 {
     setObjectName("Search Bar");
 
@@ -68,7 +68,7 @@ SearchWidget::SearchWidget(Utils::ActionManager* actionManager, SearchController
     auto* selectAllCommand
         = m_actionManager->registerAction(selectAll, Constants::Actions::SelectAll, m_searchContext->context());
     selectAllCommand->setDefaultShortcut(QKeySequence::SelectAll);
-    editMenu->addAction(selectAllCommand, Utils::Actions::Groups::Two);
+    editMenu->addAction(selectAllCommand, Actions::Groups::Two);
     QObject::connect(selectAll, &QAction::triggered, m_searchBox, &QLineEdit::selectAll);
 }
 
@@ -95,6 +95,6 @@ void SearchWidget::contextMenuEvent(QContextMenuEvent* event)
         QWidget::contextMenuEvent(event);
     }
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_searchwidget.cpp"

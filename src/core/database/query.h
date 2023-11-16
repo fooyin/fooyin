@@ -21,8 +21,9 @@
 
 #include <QSqlQuery>
 
-namespace Fy::Core::DB {
+namespace Fooyin {
 class Module;
+
 class Query : public QSqlQuery
 {
 public:
@@ -47,4 +48,4 @@ private:
     QString m_queryString;
     bool m_success;
 };
-} // namespace Fy::Core::DB
+} // namespace Fooyin

@@ -25,10 +25,10 @@
 #include <utils/treeitem.h>
 #include <utils/utils.h>
 
-namespace Fy::Gui::Widgets::Playlist {
-using Data = std::variant<Track, Container>;
+namespace Fooyin {
+using Data = std::variant<PlaylistTrackItem, PlaylistContainerItem>;
 
-class PlaylistItem : public Utils::TreeItem<PlaylistItem>
+class PlaylistItem : public TreeItem<PlaylistItem>
 {
 public:
     enum ItemType
@@ -85,4 +85,4 @@ private:
     int m_indentation;
     int m_index;
 };
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

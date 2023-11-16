@@ -24,7 +24,7 @@ extern "C"
 #include <libavformat/avformat.h>
 }
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 Stream::Stream(AVStream* stream)
     : m_stream{stream}
 { }
@@ -43,4 +43,4 @@ AVStream* Stream::avStream() const
 {
     return m_stream;
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

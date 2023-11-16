@@ -25,8 +25,8 @@
 
 #include <QMenu>
 
-namespace Fy::Gui {
-MainMenuBar::MainMenuBar(Utils::ActionManager* actionManager, QObject* parent)
+namespace Fooyin {
+MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
     , m_menubar{m_actionManager->createMenuBar(Constants::MenuBar)}
@@ -38,35 +38,35 @@ MainMenuBar::MainMenuBar(Utils::ActionManager* actionManager, QObject* parent)
     m_menubar->appendGroup(Constants::Groups::Library);
     m_menubar->appendGroup(Constants::Groups::Help);
 
-    Utils::ActionContainer* fileMenu = m_actionManager->createMenu(Constants::Menus::File);
+    ActionContainer* fileMenu = m_actionManager->createMenu(Constants::Menus::File);
     m_menubar->addMenu(fileMenu, Constants::Groups::File);
-    fileMenu->menu()->setTitle(Utils::ActionManager::tr("&File"));
+    fileMenu->menu()->setTitle(ActionManager::tr("&File"));
 
-    Utils::ActionContainer* editMenu = m_actionManager->createMenu(Constants::Menus::Edit);
+    ActionContainer* editMenu = m_actionManager->createMenu(Constants::Menus::Edit);
     m_menubar->addMenu(editMenu, Constants::Groups::Edit);
-    editMenu->menu()->setTitle(Utils::ActionManager::tr("&Edit"));
+    editMenu->menu()->setTitle(ActionManager::tr("&Edit"));
 
-    Utils::ActionContainer* viewMenu = m_actionManager->createMenu(Constants::Menus::View);
+    ActionContainer* viewMenu = m_actionManager->createMenu(Constants::Menus::View);
     m_menubar->addMenu(viewMenu, Constants::Groups::View);
-    viewMenu->menu()->setTitle(Utils::ActionManager::tr("&View"));
+    viewMenu->menu()->setTitle(ActionManager::tr("&View"));
 
-    Utils::ActionContainer* playbackMenu = m_actionManager->createMenu(Constants::Menus::Playback);
+    ActionContainer* playbackMenu = m_actionManager->createMenu(Constants::Menus::Playback);
     m_menubar->addMenu(playbackMenu, Constants::Groups::Playback);
-    playbackMenu->menu()->setTitle(Utils::ActionManager::tr("&Playback"));
+    playbackMenu->menu()->setTitle(ActionManager::tr("&Playback"));
 
-    Utils::ActionContainer* libraryMenu = m_actionManager->createMenu(Constants::Menus::Library);
+    ActionContainer* libraryMenu = m_actionManager->createMenu(Constants::Menus::Library);
     m_menubar->addMenu(libraryMenu, Constants::Groups::Library);
-    libraryMenu->menu()->setTitle(Utils::ActionManager::tr("&Library"));
+    libraryMenu->menu()->setTitle(ActionManager::tr("&Library"));
 
-    Utils::ActionContainer* helpMenu = m_actionManager->createMenu(Constants::Menus::Help);
+    ActionContainer* helpMenu = m_actionManager->createMenu(Constants::Menus::Help);
     m_menubar->addMenu(helpMenu, Constants::Groups::Help);
-    helpMenu->menu()->setTitle(Utils::ActionManager::tr("&Help"));
+    helpMenu->menu()->setTitle(ActionManager::tr("&Help"));
 }
 
 QMenuBar* MainMenuBar::menuBar() const
 {
     return m_menubar->menuBar();
 }
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "moc_mainmenubar.cpp"

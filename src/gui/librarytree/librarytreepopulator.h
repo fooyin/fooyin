@@ -25,7 +25,7 @@
 
 #include <utils/worker.h>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 using ItemKeyMap     = std::unordered_map<QString, LibraryTreeItem>;
 using NodeKeyMap     = std::unordered_map<QString, std::vector<QString>>;
 using TrackIdNodeMap = std::unordered_map<int, std::vector<QString>>;
@@ -44,7 +44,7 @@ struct PendingTreeData
     }
 };
 
-class LibraryTreePopulator : public Utils::Worker
+class LibraryTreePopulator : public Worker
 {
     Q_OBJECT
 
@@ -52,7 +52,7 @@ public:
     explicit LibraryTreePopulator(QObject* parent = nullptr);
     ~LibraryTreePopulator() override;
 
-    void run(const QString& grouping, const Core::TrackList& tracks);
+    void run(const QString& grouping, const TrackList& tracks);
 
 signals:
     void populated(PendingTreeData data);
@@ -61,4 +61,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

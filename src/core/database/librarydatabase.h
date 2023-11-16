@@ -23,7 +23,7 @@
 
 #include <core/trackfwd.h>
 
-namespace Fy::Core::DB {
+namespace Fooyin {
 class LibraryDatabase : public Module
 {
 public:
@@ -46,4 +46,4 @@ private:
 
     QString m_connectionName;
 };
-} // namespace Fy::Core::DB
+} // namespace Fooyin

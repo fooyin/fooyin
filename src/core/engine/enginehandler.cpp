@@ -33,7 +33,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Core::Engine {
+namespace Fooyin {
 struct CurrentOutput
 {
     QString name;
@@ -46,8 +46,8 @@ struct EngineHandler::Private
 {
     EngineHandler* self;
 
-    Player::PlayerManager* playerManager;
-    Utils::SettingsManager* settings;
+    PlayerManager* playerManager;
+    SettingsManager* settings;
 
     QThread engineThread;
     AudioEngine* engine;
@@ -55,44 +55,43 @@ struct EngineHandler::Private
     std::map<QString, OutputCreator> outputs;
     CurrentOutput currentOutput;
 
-    Private(EngineHandler* self, Player::PlayerManager* playerManager, Utils::SettingsManager* settings)
+    Private(EngineHandler* self, PlayerManager* playerManager, SettingsManager* settings)
         : self{self}
         , playerManager{playerManager}
         , settings{settings}
-        , engine{new FFmpeg::FFmpegEngine()}
+        , engine{new FFmpegEngine()}
     {
         engine->moveToThread(&engineThread);
         engineThread.start();
 
         QMetaObject::invokeMethod(engine, &AudioEngine::startup);
 
-        QObject::connect(playerManager, &Player::PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
-        QObject::connect(playerManager, &Player::PlayerManager::positionMoved, engine, &AudioEngine::seek);
+        QObject::connect(playerManager, &PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
+        QObject::connect(playerManager, &PlayerManager::positionMoved, engine, &AudioEngine::seek);
         QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
-        QObject::connect(engine, &AudioEngine::positionChanged, playerManager,
-                         &Player::PlayerManager::setCurrentPosition);
-        QObject::connect(engine, &AudioEngine::trackFinished, playerManager, &Player::PlayerManager::next);
+        QObject::connect(engine, &AudioEngine::positionChanged, playerManager, &PlayerManager::setCurrentPosition);
+        QObject::connect(engine, &AudioEngine::trackFinished, playerManager, &PlayerManager::next);
         QObject::connect(self, &EngineHandler::outputChanged, engine, &AudioEngine::setAudioOutput);
         QObject::connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
 
-        updateVolume(settings->value<Settings::OutputVolume>());
+        updateVolume(settings->value<Core::Settings::OutputVolume>());
     }
 
-    void playStateChanged(Player::PlayState state)
+    void playStateChanged(PlayState state)
     {
         QMetaObject::invokeMethod(
             engine,
             [this, state]() {
                 switch(state) {
-                    case(Player::PlayState::Playing): {
+                    case(PlayState::Playing): {
                         engine->play();
                         break;
                     }
-                    case(Player::PlayState::Paused): {
+                    case(PlayState::Paused): {
                         engine->pause();
                         break;
                     }
-                    case(Player::PlayState::Stopped): {
+                    case(PlayState::Stopped): {
                         engine->stop();
                         break;
                     }
@@ -146,22 +145,23 @@ struct EngineHandler::Private
     }
 };
 
-EngineHandler::EngineHandler(Player::PlayerManager* playerManager, Utils::SettingsManager* settings, QObject* parent)
+EngineHandler::EngineHandler(PlayerManager* playerManager, SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
-    QObject::connect(playerManager, &Player::PlayerManager::playStateChanged, this,
-                     [this](Player::PlayState state) { p->playStateChanged(state); });
+    QObject::connect(playerManager, &PlayerManager::playStateChanged, this,
+                     [this](PlayState state) { p->playStateChanged(state); });
 
-    p->settings->subscribe<Settings::AudioOutput>(this, [this](const QString& output) { p->changeOutput(output); });
-    p->settings->subscribe<Settings::OutputVolume>(this, [this](double volume) { p->updateVolume(volume); });
+    p->settings->subscribe<Core::Settings::AudioOutput>(this,
+                                                        [this](const QString& output) { p->changeOutput(output); });
+    p->settings->subscribe<Core::Settings::OutputVolume>(this, [this](double volume) { p->updateVolume(volume); });
 }
 
 EngineHandler::~EngineHandler() = default;
 
 void EngineHandler::setup()
 {
-    p->changeOutput(p->settings->value<Settings::AudioOutput>());
+    p->changeOutput(p->settings->value<Core::Settings::AudioOutput>());
 }
 
 void EngineHandler::shutdown()
@@ -209,6 +209,6 @@ void EngineHandler::addOutput(const AudioOutputBuilder& output)
     }
     p->outputs.emplace(output.name, output.creator);
 }
-} // namespace Fy::Core::Engine
+} // namespace Fooyin
 
 #include "core/engine/moc_enginehandler.cpp"

@@ -37,11 +37,11 @@
 #include <QPushButton>
 #include <QTableView>
 
-namespace Fy::Gui::Settings {
-class LibraryTreePageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class LibraryTreePageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* groupsRegistry, Utils::SettingsManager* settings);
+    explicit LibraryTreePageWidget(LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -50,8 +50,8 @@ private:
     void addGroup() const;
     void removeGroup() const;
 
-    Widgets::LibraryTreeGroupRegistry* m_groupsRegistry;
-    Utils::SettingsManager* m_settings;
+    LibraryTreeGroupRegistry* m_groupsRegistry;
+    SettingsManager* m_settings;
 
     QTableView* m_groupList;
     LibraryTreeGroupModel* m_model;
@@ -64,8 +64,7 @@ private:
     QLineEdit* m_playlistName;
 };
 
-LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* groupsRegistry,
-                                             Utils::SettingsManager* settings)
+LibraryTreePageWidget::LibraryTreePageWidget(LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings)
     : m_groupsRegistry{groupsRegistry}
     , m_settings{settings}
     , m_groupList{new QTableView(this)}
@@ -79,7 +78,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     m_model->populate();
     m_groupList->setModel(m_model);
 
-    auto* delegate = new Utils::MultiLineEditDelegate(this);
+    auto* delegate = new MultiLineEditDelegate(this);
     m_groupList->setItemDelegateForColumn(2, delegate);
 
     // Hide index column
@@ -153,12 +152,12 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
     QObject::connect(addButton, &QPushButton::clicked, this, &LibraryTreePageWidget::addGroup);
     QObject::connect(removeButton, &QPushButton::clicked, this, &LibraryTreePageWidget::removeGroup);
 
-    auto doubleAction = m_settings->value<Settings::LibraryTreeDoubleClick>();
+    auto doubleAction = m_settings->value<Gui::Settings::LibraryTreeDoubleClick>();
     if(doubleActions.contains(doubleAction)) {
         m_doubleClick->setCurrentIndex(doubleActions.at(doubleAction));
     }
 
-    auto middleAction = m_settings->value<Settings::LibraryTreeMiddleClick>();
+    auto middleAction = m_settings->value<Gui::Settings::LibraryTreeMiddleClick>();
     if(middleActions.contains(middleAction)) {
         m_middleClick->setCurrentIndex(middleActions.at(middleAction));
     }
@@ -168,32 +167,32 @@ LibraryTreePageWidget::LibraryTreePageWidget(Widgets::LibraryTreeGroupRegistry* 
         m_autoSwitch->setEnabled(checked);
     });
 
-    m_playlistEnabled->setChecked(m_settings->value<Settings::LibraryTreePlaylistEnabled>());
-    m_autoSwitch->setChecked(m_settings->value<Settings::LibraryTreeAutoSwitch>());
+    m_playlistEnabled->setChecked(m_settings->value<Gui::Settings::LibraryTreePlaylistEnabled>());
+    m_autoSwitch->setChecked(m_settings->value<Gui::Settings::LibraryTreeAutoSwitch>());
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
 
-    m_playlistName->setText(m_settings->value<Settings::LibraryTreeAutoPlaylist>());
+    m_playlistName->setText(m_settings->value<Gui::Settings::LibraryTreeAutoPlaylist>());
 }
 
 void LibraryTreePageWidget::apply()
 {
     m_model->processQueue();
-    m_settings->set<Settings::LibraryTreeDoubleClick>(m_doubleClick->currentData().toInt());
-    m_settings->set<Settings::LibraryTreeMiddleClick>(m_middleClick->currentData().toInt());
-    m_settings->set<Settings::LibraryTreePlaylistEnabled>(m_playlistEnabled->isChecked());
-    m_settings->set<Settings::LibraryTreeAutoSwitch>(m_autoSwitch->isChecked());
-    m_settings->set<Settings::LibraryTreeAutoPlaylist>(m_playlistName->text());
+    m_settings->set<Gui::Settings::LibraryTreeDoubleClick>(m_doubleClick->currentData().toInt());
+    m_settings->set<Gui::Settings::LibraryTreeMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Gui::Settings::LibraryTreePlaylistEnabled>(m_playlistEnabled->isChecked());
+    m_settings->set<Gui::Settings::LibraryTreeAutoSwitch>(m_autoSwitch->isChecked());
+    m_settings->set<Gui::Settings::LibraryTreeAutoPlaylist>(m_playlistName->text());
 }
 
 void LibraryTreePageWidget::reset()
 {
-    m_settings->reset<Settings::LibraryTreeGrouping>();
-    m_settings->reset<Settings::LibraryTreeDoubleClick>();
-    m_settings->reset<Settings::LibraryTreeMiddleClick>();
-    m_settings->reset<Settings::LibraryTreePlaylistEnabled>();
-    m_settings->reset<Settings::LibraryTreeAutoSwitch>();
-    m_settings->reset<Settings::LibraryTreeAutoPlaylist>();
+    m_settings->reset<Gui::Settings::LibraryTreeGrouping>();
+    m_settings->reset<Gui::Settings::LibraryTreeDoubleClick>();
+    m_settings->reset<Gui::Settings::LibraryTreeMiddleClick>();
+    m_settings->reset<Gui::Settings::LibraryTreePlaylistEnabled>();
+    m_settings->reset<Gui::Settings::LibraryTreeAutoSwitch>();
+    m_settings->reset<Gui::Settings::LibraryTreeAutoPlaylist>();
 
     m_groupsRegistry->loadItems();
     m_model->populate();
@@ -213,12 +212,12 @@ void LibraryTreePageWidget::removeGroup() const
     }
 }
 
-LibraryTreePage::LibraryTreePage(Widgets::LibraryTreeGroupRegistry* groupsRegistry, Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+LibraryTreePage::LibraryTreePage(LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryTreeGeneral);
     setName(tr("General"));
     setCategory({tr("Widgets"), tr("Library Tree")});
     setWidgetCreator([groupsRegistry, settings] { return new LibraryTreePageWidget(groupsRegistry, settings); });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

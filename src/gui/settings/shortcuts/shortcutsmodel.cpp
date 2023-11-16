@@ -25,12 +25,12 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-Fy::Utils::ShortcutList removeEmptyKeys(const Fy::Utils::ShortcutList& shortcuts)
+Fooyin::ShortcutList removeEmptyKeys(const Fooyin::ShortcutList& shortcuts)
 {
-    return Fy::Utils::filter(shortcuts, [](const QKeySequence& shortcut) { return !shortcut.isEmpty(); });
+    return Fooyin::Utils::filter(shortcuts, [](const QKeySequence& shortcut) { return !shortcut.isEmpty(); });
 }
 
-QString shortcutsToString(const Fy::Utils::ShortcutList& sequence)
+QString shortcutsToString(const Fooyin::ShortcutList& sequence)
 {
     QStringList keys;
     std::ranges::transform(removeEmptyKeys(sequence), std::back_inserter(keys),
@@ -38,7 +38,7 @@ QString shortcutsToString(const Fy::Utils::ShortcutList& sequence)
     return keys.join("|"_L1);
 }
 
-bool sortShortcutItems(const Fy::Gui::Settings::ShortcutItem* lhs, const Fy::Gui::Settings::ShortcutItem* rhs)
+bool sortShortcutItems(const Fooyin::ShortcutItem* lhs, const Fooyin::ShortcutItem* rhs)
 {
     if(lhs->parent()->parent() && rhs->parent()->parent()) {
         if(lhs->childCount() != rhs->childCount()) {
@@ -53,12 +53,12 @@ bool sortShortcutItems(const Fy::Gui::Settings::ShortcutItem* lhs, const Fy::Gui
 }
 } // namespace
 
-namespace Fy::Gui::Settings {
+namespace Fooyin {
 ShortcutItem::ShortcutItem()
     : ShortcutItem{QStringLiteral(""), nullptr, nullptr}
 { }
 
-ShortcutItem::ShortcutItem(QString title, Utils::Command* command, ShortcutItem* parent)
+ShortcutItem::ShortcutItem(QString title, Command* command, ShortcutItem* parent)
     : TreeStatusItem{parent}
     , m_title{std::move(title)}
     , m_command{command}
@@ -79,12 +79,12 @@ QString ShortcutItem::shortcut() const
     return m_shortcut;
 }
 
-Utils::ShortcutList ShortcutItem::shortcuts() const
+ShortcutList ShortcutItem::shortcuts() const
 {
     return m_shortcuts;
 }
 
-Utils::Command* ShortcutItem::command() const
+Command* ShortcutItem::command() const
 {
     return m_command;
 }
@@ -94,7 +94,7 @@ bool ShortcutItem::isCategory() const
     return !m_command;
 }
 
-void ShortcutItem::updateShortcuts(const Utils::ShortcutList& shortcuts)
+void ShortcutItem::updateShortcuts(const ShortcutList& shortcuts)
 {
     m_shortcuts = shortcuts;
     m_shortcut  = shortcutsToString(m_shortcuts);
@@ -112,7 +112,7 @@ ShortcutsModel::ShortcutsModel(QObject* parent)
     : TreeModel{parent}
 { }
 
-void ShortcutsModel::populate(Utils::ActionManager* actionManager)
+void ShortcutsModel::populate(ActionManager* actionManager)
 {
     beginResetModel();
 
@@ -123,7 +123,7 @@ void ShortcutsModel::populate(Utils::ActionManager* actionManager)
 
     const auto commands = actionManager->commands();
 
-    for(Utils::Command* command : commands) {
+    for(Command* command : commands) {
         if(command->action() && command->action()->isSeparator()) {
             continue;
         }
@@ -153,7 +153,7 @@ void ShortcutsModel::populate(Utils::ActionManager* actionManager)
     endResetModel();
 }
 
-void ShortcutsModel::shortcutChanged(Utils::Command* command, const Utils::ShortcutList& shortcuts)
+void ShortcutsModel::shortcutChanged(Command* command, const ShortcutList& shortcuts)
 {
     if(!command) {
         return;
@@ -173,7 +173,7 @@ void ShortcutsModel::shortcutChanged(Utils::Command* command, const Utils::Short
     }
 }
 
-void ShortcutsModel::shortcutDeleted(Utils::Command* command, const QKeySequence& shortcut)
+void ShortcutsModel::shortcutDeleted(Command* command, const QKeySequence& shortcut)
 {
     if(!command) {
         return;
@@ -185,7 +185,7 @@ void ShortcutsModel::shortcutDeleted(Utils::Command* command, const QKeySequence
 
     auto* item = &m_nodes.at(command->id());
 
-    Utils::ShortcutList currentShortcuts = item->shortcuts();
+    ShortcutList currentShortcuts = item->shortcuts();
 
     if(!currentShortcuts.contains(shortcut)) {
         return;
@@ -243,7 +243,7 @@ QVariant ShortcutsModel::headerData(int section, Qt::Orientation orientation, in
 QVariant ShortcutsModel::data(const QModelIndex& index, int role) const
 {
     if(role != Qt::DisplayRole && role != Qt::FontRole && role != ShortcutItem::IsCategory
-       && role != ShortcutItem::Command) {
+       && role != ShortcutItem::ActionCommand) {
         return {};
     }
 
@@ -261,7 +261,7 @@ QVariant ShortcutsModel::data(const QModelIndex& index, int role) const
         return item->isCategory();
     }
 
-    if(role == ShortcutItem::Command) {
+    if(role == ShortcutItem::ActionCommand) {
         return QVariant::fromValue(item->command());
     }
 
@@ -287,4 +287,4 @@ int ShortcutsModel::columnCount(const QModelIndex& /*parent*/) const
 {
     return 3;
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

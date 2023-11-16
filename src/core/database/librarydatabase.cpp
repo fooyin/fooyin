@@ -27,7 +27,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Core::DB {
+namespace Fooyin {
 QString fetchQueryTracks(const QString& join, const QString& offsetLimit)
 {
     static const QStringList fields = {
@@ -98,7 +98,7 @@ BindingsMap getTrackBindings(const Track& track)
 }
 
 LibraryDatabase::LibraryDatabase(const QString& connectionName)
-    : DB::Module(connectionName)
+    : Module(connectionName)
     , m_connectionName(connectionName)
 { }
 
@@ -274,4 +274,4 @@ int LibraryDatabase::insertTrack(const Track& track)
 
     return (query.hasError()) ? -1 : query.lastInsertId().toInt();
 }
-} // namespace Fy::Core::DB
+} // namespace Fooyin

@@ -21,8 +21,8 @@
 
 #include <utils/expandableinputbox.h>
 
-namespace Fy::Gui::Widgets {
-class CustomisableInput : public Utils::ExpandableInput
+namespace Fooyin {
+class CustomisableInput : public ExpandableInput
 {
     Q_OBJECT
 
@@ -52,4 +52,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

@@ -28,7 +28,7 @@ extern "C"
 
 #include <memory>
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 struct FrameDeleter
 {
     void operator()(AVFrame* frame) const
@@ -73,4 +73,4 @@ private:
 
     QSharedDataPointer<Private> p;
 };
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

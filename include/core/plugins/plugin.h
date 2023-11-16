@@ -23,7 +23,7 @@
 
 #include <QtPlugin>
 
-namespace Fy::Plugins {
+namespace Fooyin {
 /*!
  The Plugin class is an abstract base class that each plugin must implement.
 
@@ -39,6 +39,6 @@ public:
 
     virtual void shutdown() = 0;
 };
-} // namespace Fy::Plugins
+} // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fy::Plugins::Plugin, "com.fooyin.plugin")
+Q_DECLARE_INTERFACE(Fooyin::Plugin, "com.fooyin.plugin")

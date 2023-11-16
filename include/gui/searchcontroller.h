@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-namespace Fy::Gui::Widgets {
+namespace Fooyin {
 class FYGUI_EXPORT SearchController : public QObject
 {
     Q_OBJECT
@@ -38,4 +38,4 @@ signals:
 private:
     QString m_searchText;
 };
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin

@@ -20,15 +20,15 @@
 #include "infomodel.h"
 
 #include <core/player/playermanager.h>
-#include <utils/enumhelper.h>
-#include <utils/utils.h>
 #include <core/track.h>
+#include <utils/enum.h>
+#include <utils/utils.h>
 
 #include <QFileInfo>
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Gui::Widgets::Info {
+namespace Fooyin {
 InfoItem::InfoItem()
     : InfoItem{Header, u""_s, nullptr, ValueType::Concat, {}}
 { }
@@ -157,7 +157,7 @@ struct InfoModel::Private
             parentItem = self->rootItem();
         }
         else {
-            const QString parentKey = Utils::EnumHelper::toString(parent);
+            const QString parentKey = Utils::Enum::toString(parent);
             if(nodes.contains(parentKey)) {
                 parentItem = &nodes.at(parentKey);
             }
@@ -213,7 +213,7 @@ struct InfoModel::Private
         checkAddEntryNode(u"Sample Rate"_s, ItemParent::General);
     }
 
-    void addTrackNodes(int total, const Core::Track& track)
+    void addTrackNodes(int total, const Track& track)
     {
         checkAddEntryNode(u"Artist"_s, ItemParent::Metadata, track.artists());
         checkAddEntryNode(u"Title"_s, ItemParent::Metadata, track.title());
@@ -261,9 +261,9 @@ InfoModel::InfoModel(QObject* parent)
 
 InfoModel::~InfoModel() = default;
 
-void InfoModel::resetModel(const Core::TrackList& tracks, const Core::Track& playingTrack)
+void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
 {
-    Core::TrackList infoTracks{tracks};
+    TrackList infoTracks{tracks};
 
     if(infoTracks.empty()) {
         if(playingTrack.isValid()) {
@@ -283,7 +283,7 @@ void InfoModel::resetModel(const Core::TrackList& tracks, const Core::Track& pla
     if(total > 0) {
         p->checkAddEntryNode(u"Tracks"_s, ItemParent::General, total, InfoItem::ValueType::Total);
 
-        for(const Core::Track& track : infoTracks) {
+        for(const Track& track : infoTracks) {
             p->addTrackNodes(total, track);
         }
     }
@@ -344,6 +344,6 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
 
     return {};
 }
-} // namespace Fy::Gui::Widgets::Info
+} // namespace Fooyin
 
 #include "moc_infomodel.cpp"

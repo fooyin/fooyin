@@ -22,7 +22,7 @@
 #include <QDataStream>
 #include <QString>
 
-namespace Fy::Core::Library::Sorting {
+namespace Fooyin {
 struct SortScript
 {
     int id{-1};
@@ -58,4 +58,4 @@ struct SortScript
         return stream;
     }
 };
-} // namespace Fy::Core::Library::Sorting
+} // namespace Fooyin

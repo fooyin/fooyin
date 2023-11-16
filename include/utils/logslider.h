@@ -23,7 +23,7 @@
 
 #include <utils/slider.h>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT LogSlider : public Slider
 {
     Q_OBJECT
@@ -41,4 +41,4 @@ signals:
 private:
     double m_scale;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

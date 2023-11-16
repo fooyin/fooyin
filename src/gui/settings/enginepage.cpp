@@ -32,11 +32,11 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Gui::Settings {
-class EnginePageWidget : public Utils::SettingsPageWidget
+namespace Fooyin {
+class EnginePageWidget : public SettingsPageWidget
 {
 public:
-    explicit EnginePageWidget(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler);
+    explicit EnginePageWidget(SettingsManager* settings, EngineHandler* engineHandler);
 
     void apply() override;
     void reset() override;
@@ -45,18 +45,18 @@ public:
     void setupDevices(const QString& output);
 
 private:
-    Utils::SettingsManager* m_settings;
-    Core::Engine::EngineHandler* m_engineHandler;
+    SettingsManager* m_settings;
+    EngineHandler* m_engineHandler;
 
-    Utils::ExpandingComboBox* m_outputBox;
-    Utils::ExpandingComboBox* m_deviceBox;
+    ExpandingComboBox* m_outputBox;
+    ExpandingComboBox* m_deviceBox;
 };
 
-EnginePageWidget::EnginePageWidget(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler)
+EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineHandler* engineHandler)
     : m_settings{settings}
     , m_engineHandler{engineHandler}
-    , m_outputBox{new Utils::ExpandingComboBox(this)}
-    , m_deviceBox{new Utils::ExpandingComboBox(this)}
+    , m_outputBox{new ExpandingComboBox(this)}
+    , m_deviceBox{new ExpandingComboBox(this)}
 {
     setupOutputs();
     setupDevices(m_outputBox->currentText());
@@ -143,12 +143,12 @@ void EnginePageWidget::setupDevices(const QString& output)
     m_deviceBox->resizeToFitCurrent();
 }
 
-EnginePage::EnginePage(Utils::SettingsManager* settings, Core::Engine::EngineHandler* engineHandler)
-    : Utils::SettingsPage{settings->settingsDialog()}
+EnginePage::EnginePage(SettingsManager* settings, EngineHandler* engineHandler)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::Engine);
     setName(tr("Engine"));
     setCategory({tr("Engine")});
     setWidgetCreator([settings, engineHandler] { return new EnginePageWidget(settings, engineHandler); });
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

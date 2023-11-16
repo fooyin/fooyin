@@ -23,7 +23,7 @@
 #include <QMetaEnum>
 #include <QString>
 
-namespace Fy::Utils::EnumHelper {
+namespace Fooyin::Utils::Enum {
 template <typename Value>
 concept IsEnum = std::is_enum_v<Value>;
 
@@ -47,4 +47,4 @@ QString toString(E value)
     const int intValue = static_cast<int>(value);
     return QString::fromUtf8(QMetaEnum::fromType<E>().valueToKey(intValue));
 }
-} // namespace Fy::Utils::EnumHelper
+} // namespace Fooyin::Utils::Enum

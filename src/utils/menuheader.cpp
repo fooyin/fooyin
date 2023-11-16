@@ -22,7 +22,7 @@
 #include <QApplication>
 #include <QPainter>
 
-namespace Fy::Utils {
+namespace Fooyin {
 MenuHeader::MenuHeader(QString text, QWidget* parent)
     : QWidget{parent}
     , m_minWidth{0}
@@ -71,6 +71,6 @@ MenuHeaderAction::MenuHeaderAction(const QString& text, QObject* parent)
     // Takes ownership
     setDefaultWidget(header);
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/moc_menuheader.cpp"

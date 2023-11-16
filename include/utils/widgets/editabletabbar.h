@@ -23,7 +23,7 @@
 
 #include <QTabBar>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class PopupLineEdit;
 
 class FYUTILS_EXPORT EditableTabBar : public QTabBar
@@ -45,4 +45,4 @@ protected:
 private:
     PopupLineEdit* m_lineEdit;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

@@ -22,7 +22,7 @@
 #include <QHeaderView>
 #include <QResizeEvent>
 
-namespace Fy::Gui::Settings {
+namespace Fooyin {
 LibraryView::LibraryView(QWidget* parent)
     : QTableView{parent}
 { }
@@ -34,4 +34,4 @@ void LibraryView::resizeEvent(QResizeEvent* event)
     setColumnWidth(2, static_cast<int>(width * 0.55));
     setColumnWidth(3, static_cast<int>(width * 0.15));
 }
-} // namespace Fy::Gui::Settings
+} // namespace Fooyin

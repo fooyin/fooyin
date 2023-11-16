@@ -23,7 +23,7 @@
 
 #include <memory>
 
-namespace Fy::Core::Engine {
+namespace Fooyin::Pipewire {
 class PipeWireOutput : public AudioPullOutput
 {
 public:
@@ -47,4 +47,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Core::Engine
+} // namespace Fooyin::Pipewire

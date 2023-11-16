@@ -26,7 +26,7 @@
 #include <QPointer>
 #include <QWidget>
 
-namespace Fy::Utils {
+namespace Fooyin {
 namespace Constants::Context {
 constexpr auto Global = "Context.Global";
 }
@@ -73,4 +73,4 @@ private:
     Context m_context;
 };
 using WidgetContextList = std::vector<WidgetContext*>;
-} // namespace Fy::Utils
+} // namespace Fooyin

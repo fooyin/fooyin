@@ -38,11 +38,11 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
-namespace Fy::Filters::Settings {
-class FiltersGeneralPageWidget : public Utils::SettingsPageWidget
+namespace Fooyin::Filters {
+class FiltersGeneralPageWidget : public SettingsPageWidget
 {
 public:
-    explicit FiltersGeneralPageWidget(Utils::SettingsManager* settings);
+    explicit FiltersGeneralPageWidget(SettingsManager* settings);
 
     void apply() override;
     void reset() override;
@@ -50,7 +50,7 @@ public:
 private:
     void setValues();
 
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 
     QCheckBox* m_filterHeaders;
     QCheckBox* m_filterScrollBars;
@@ -74,13 +74,13 @@ private:
     QLineEdit* m_playlistName;
 };
 
-FiltersGeneralPageWidget::FiltersGeneralPageWidget(Utils::SettingsManager* settings)
+FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_filterHeaders{new QCheckBox(tr("Show Headers"), this)}
     , m_filterScrollBars{new QCheckBox(tr("Show Scrollbars"), this)}
     , m_altRowColours{new QCheckBox(tr("Alternating Row Colours"), this)}
-    , m_fontButton{new QPushButton(QIcon::fromTheme(Gui::Constants::Icons::Font), tr("Font"), this)}
-    , m_colourButton{new QPushButton(QIcon::fromTheme(Gui::Constants::Icons::TextColour), tr("Colour"), this)}
+    , m_fontButton{new QPushButton(QIcon::fromTheme(::Fooyin::Constants::Icons::Font), tr("Font"), this)}
+    , m_colourButton{new QPushButton(QIcon::fromTheme(::Fooyin::Constants::Icons::TextColour), tr("Colour"), this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
@@ -195,7 +195,7 @@ void FiltersGeneralPageWidget::setValues()
     ActionIndexMap doubleActions;
     ActionIndexMap middleActions;
 
-    auto addTrackAction = [](QComboBox* box, const QString& text, Gui::TrackAction action, ActionIndexMap& actionMap) {
+    auto addTrackAction = [](QComboBox* box, const QString& text, TrackAction action, ActionIndexMap& actionMap) {
         const int actionValue = static_cast<int>(action);
         actionMap.emplace(actionValue, box->count());
         box->addItem(text, actionValue);
@@ -204,17 +204,17 @@ void FiltersGeneralPageWidget::setValues()
     m_doubleClick->clear();
     m_middleClick->clear();
 
-    addTrackAction(m_doubleClick, tr("None"), Gui::TrackAction::None, doubleActions);
-    addTrackAction(m_doubleClick, tr("Add to current playlist"), Gui::TrackAction::AddCurrentPlaylist, doubleActions);
-    addTrackAction(m_doubleClick, tr("Add to active playlist"), Gui::TrackAction::AddActivePlaylist, doubleActions);
-    addTrackAction(m_doubleClick, tr("Send to current playlist"), Gui::TrackAction::SendCurrentPlaylist, doubleActions);
-    addTrackAction(m_doubleClick, tr("Send to new playlist"), Gui::TrackAction::SendNewPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("None"), TrackAction::None, doubleActions);
+    addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, doubleActions);
+    addTrackAction(m_doubleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, doubleActions);
 
-    addTrackAction(m_middleClick, tr("None"), Gui::TrackAction::None, middleActions);
-    addTrackAction(m_middleClick, tr("Add to current playlist"), Gui::TrackAction::AddCurrentPlaylist, middleActions);
-    addTrackAction(m_middleClick, tr("Add to active playlist"), Gui::TrackAction::AddActivePlaylist, middleActions);
-    addTrackAction(m_middleClick, tr("Send to current playlist"), Gui::TrackAction::SendCurrentPlaylist, middleActions);
-    addTrackAction(m_middleClick, tr("Send to new playlist"), Gui::TrackAction::SendNewPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("None"), TrackAction::None, middleActions);
+    addTrackAction(m_middleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, middleActions);
+    addTrackAction(m_middleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, middleActions);
 
     auto doubleAction = m_settings->value<Settings::FilterDoubleClick>();
     if(doubleActions.contains(doubleAction)) {
@@ -250,12 +250,12 @@ void FiltersGeneralPageWidget::setValues()
     m_playlistName->setText(m_settings->value<Settings::FilterAutoPlaylist>());
 }
 
-FiltersGeneralPage::FiltersGeneralPage(Utils::SettingsManager* settings)
-    : Utils::SettingsPage{settings->settingsDialog()}
+FiltersGeneralPage::FiltersGeneralPage(SettingsManager* settings)
+    : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::FiltersGeneral);
     setName(tr("General"));
     setCategory({tr("Plugins"), tr("Filters")});
     setWidgetCreator([settings] { return new FiltersGeneralPageWidget(settings); });
 }
-} // namespace Fy::Filters::Settings
+} // namespace Fooyin::Filters

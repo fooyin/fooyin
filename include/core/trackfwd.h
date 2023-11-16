@@ -21,7 +21,7 @@
 
 #include <vector>
 
-namespace Fy::Core {
+namespace Fooyin {
 class Track;
 using TrackList = std::vector<Track>;
-} // namespace Fy::Core
+} // namespace Fooyin

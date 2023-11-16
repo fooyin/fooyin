@@ -27,7 +27,7 @@ extern "C"
 
 #include <memory>
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 struct CodecContextDeleter
 {
     void operator()(AVCodecContext* context) const
@@ -58,4 +58,4 @@ private:
     CodecContextPtr m_context;
     AVStream* m_stream;
 };
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

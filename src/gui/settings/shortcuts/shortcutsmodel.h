@@ -24,53 +24,49 @@
 #include <utils/treemodel.h>
 #include <utils/treestatusitem.h>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class Command;
-} // namespace Utils
 
-namespace Gui::Settings {
-class ShortcutItem : public Utils::TreeStatusItem<ShortcutItem>
+class ShortcutItem : public TreeStatusItem<ShortcutItem>
 {
 public:
     enum Role
     {
         IsCategory = Qt::UserRole,
-        Command
+        ActionCommand
     };
 
     ShortcutItem();
-    explicit ShortcutItem(QString title, Utils::Command* command, ShortcutItem* parent);
+    explicit ShortcutItem(QString title, Command* command, ShortcutItem* parent);
 
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString shortcut() const;
-    [[nodiscard]] Utils::ShortcutList shortcuts() const;
+    [[nodiscard]] ShortcutList shortcuts() const;
 
-    [[nodiscard]] Utils::Command* command() const;
+    [[nodiscard]] Command* command() const;
 
     [[nodiscard]] bool isCategory() const;
 
-    void updateShortcuts(const Utils::ShortcutList& shortcuts);
+    void updateShortcuts(const ShortcutList& shortcuts);
 
     void sortChildren();
 
 private:
     QString m_title;
     QString m_shortcut;
-    Utils::ShortcutList m_shortcuts;
-    Utils::Command* m_command;
+    ShortcutList m_shortcuts;
+    Command* m_command;
 };
 
-class ShortcutsModel : public Utils::TreeModel<ShortcutItem>
+class ShortcutsModel : public TreeModel<ShortcutItem>
 {
 public:
     explicit ShortcutsModel(QObject* parent = nullptr);
 
-    void populate(Utils::ActionManager* actionManager);
-    void shortcutChanged(Utils::Command* command, const Utils::ShortcutList& shortcuts);
-    void shortcutDeleted(Utils::Command* command, const QKeySequence& shortcut);
+    void populate(ActionManager* actionManager);
+    void shortcutChanged(Command* command, const ShortcutList& shortcuts);
+    void shortcutDeleted(Command* command, const QKeySequence& shortcut);
     void processQueue();
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -78,7 +74,6 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
 private:
-    std::map<Utils::Id, ShortcutItem> m_nodes;
+    std::map<Id, ShortcutItem> m_nodes;
 };
-} // namespace Gui::Settings
-} // namespace Fy
+} // namespace Fooyin

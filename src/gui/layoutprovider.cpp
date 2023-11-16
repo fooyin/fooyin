@@ -39,7 +39,7 @@ bool checkFile(const QFileInfo& file)
         && file.completeSuffix().compare("fyl"_L1, Qt::CaseInsensitive) == 0;
 }
 
-QByteArray layoutToJson(const Fy::Gui::Layout& layout)
+QByteArray layoutToJson(const Fooyin::Layout& layout)
 {
     QJsonObject root;
     QJsonArray array;
@@ -52,7 +52,7 @@ QByteArray layoutToJson(const Fy::Gui::Layout& layout)
 }
 } // namespace
 
-namespace Fy::Gui {
+namespace Fooyin {
 struct LayoutProvider::Private
 {
     LayoutList layouts;
@@ -156,7 +156,7 @@ LayoutList LayoutProvider::layouts() const
 void LayoutProvider::findLayouts()
 {
     QStringList files;
-    QList<QDir> stack{layoutsPath()};
+    QList<QDir> stack{Gui::layoutsPath()};
 
     while(!stack.isEmpty()) {
         const QDir dir = stack.takeFirst();
@@ -235,7 +235,7 @@ void LayoutProvider::importLayout(const QString& path)
     QFile file{path};
     const QFileInfo fileInfo{file};
 
-    if(Utils::File::isSamePath(fileInfo.absolutePath(), layoutsPath())) {
+    if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath())) {
         return;
     }
 
@@ -272,8 +272,8 @@ void LayoutProvider::exportLayout(const Layout& layout, const QString path)
     file.close();
 
     const QFileInfo fileInfo{filepath};
-    if(Utils::File::isSamePath(fileInfo.absolutePath(), layoutsPath()) && !p->layoutExists(layout.name)) {
+    if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath()) && !p->layoutExists(layout.name)) {
         p->layouts.push_back(layout);
     }
 }
-} // namespace Fy::Gui
+} // namespace Fooyin

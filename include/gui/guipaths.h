@@ -23,8 +23,8 @@
 
 class QString;
 
-namespace Fy::Gui {
+namespace Fooyin::Gui {
 FYGUI_EXPORT QString layoutsPath();
 FYGUI_EXPORT QString activeLayoutPath();
 FYGUI_EXPORT QString coverPath();
-} // namespace Fy::Gui
+} // namespace Fooyin::Gui

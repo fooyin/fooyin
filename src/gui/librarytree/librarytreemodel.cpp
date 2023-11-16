@@ -38,12 +38,10 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-using Fy::Gui::Widgets::LibraryTreeItem;
-
-bool cmpItemsReverse(LibraryTreeItem* pItem1, LibraryTreeItem* pItem2)
+bool cmpItemsReverse(Fooyin::LibraryTreeItem* pItem1, Fooyin::LibraryTreeItem* pItem2)
 {
-    LibraryTreeItem* item1{pItem1};
-    LibraryTreeItem* item2{pItem2};
+    Fooyin::LibraryTreeItem* item1{pItem1};
+    Fooyin::LibraryTreeItem* item2{pItem2};
 
     while(item1->parent() != item2->parent()) {
         if(item1->parent() == item2) {
@@ -67,7 +65,7 @@ bool cmpItemsReverse(LibraryTreeItem* pItem1, LibraryTreeItem* pItem2)
 
 struct cmpItems
 {
-    bool operator()(LibraryTreeItem* pItem1, LibraryTreeItem* pItem2) const
+    bool operator()(Fooyin::LibraryTreeItem* pItem1, Fooyin::LibraryTreeItem* pItem2) const
     {
         return cmpItemsReverse(pItem1, pItem2);
     }
@@ -78,12 +76,11 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     QByteArray result;
     QDataStream stream(&result, QIODevice::WriteOnly);
 
-    Fy::Core::TrackList tracks;
+    Fooyin::TrackList tracks;
     tracks.reserve(indexes.size());
 
     for(const QModelIndex& index : indexes) {
-        std::ranges::copy(index.data(Fy::Gui::Widgets::LibraryTreeRole::Tracks).value<Fy::Core::TrackList>(),
-                          std::back_inserter(tracks));
+        std::ranges::copy(index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>(), std::back_inserter(tracks));
     }
 
     stream << tracks;
@@ -92,8 +89,7 @@ QByteArray saveTracks(const QModelIndexList& indexes)
 }
 } // namespace
 
-namespace Fy::Gui::Widgets {
-
+namespace Fooyin {
 struct LibraryTreeModel::Private
 {
     LibraryTreeModel* self;
@@ -137,7 +133,7 @@ struct LibraryTreeModel::Private
             LibraryTreeItem* node = trackNodes.front();
             trackNodes.pop();
             const auto nodeTracks = node->tracks();
-            for(const Core::Track& track : nodeTracks) {
+            for(const Track& track : nodeTracks) {
                 ids.emplace(track.id());
             }
             const auto children = node->children();
@@ -258,7 +254,7 @@ LibraryTreeModel::LibraryTreeModel(QObject* parent)
     QObject::connect(&p->populator, &LibraryTreePopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
 
-    QObject::connect(&p->populator, &Utils::Worker::finished, this, [this]() {
+    QObject::connect(&p->populator, &Worker::finished, this, [this]() {
         p->updateAllNode();
         p->populator.stopThread();
         p->populatorThread.quit();
@@ -317,13 +313,13 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
             const QString& name = item->title();
             return !name.isEmpty() ? name : u"?"_s;
         }
-        case(LibraryTreeRole::Title): {
+        case(LibraryTreeItem::Title): {
             return item->title();
         }
-        case(LibraryTreeRole::Level): {
+        case(LibraryTreeItem::Level): {
             return item->level();
         }
-        case(LibraryTreeRole::Tracks): {
+        case(LibraryTreeItem::Tracks): {
             return QVariant::fromValue(item->tracks());
         }
         case(Qt::SizeHintRole): {
@@ -403,25 +399,25 @@ QMimeData* LibraryTreeModel::mimeData(const QModelIndexList& indexes) const
     return mimeData;
 }
 
-void LibraryTreeModel::addTracks(const Core::TrackList& tracks)
+void LibraryTreeModel::addTracks(const TrackList& tracks)
 {
     p->populatorThread.start();
 
     QMetaObject::invokeMethod(&p->populator, [this, tracks] { p->populator.run(p->grouping, tracks); });
 }
 
-void LibraryTreeModel::updateTracks(const Core::TrackList& tracks)
+void LibraryTreeModel::updateTracks(const TrackList& tracks)
 {
     removeTracks(tracks);
     addTracks(tracks);
 }
 
-void LibraryTreeModel::removeTracks(const Core::TrackList& tracks)
+void LibraryTreeModel::removeTracks(const TrackList& tracks)
 {
     std::set<LibraryTreeItem*, cmpItems> items;
     std::set<LibraryTreeItem*> pendingItems;
 
-    for(const Core::Track& track : tracks) {
+    for(const Track& track : tracks) {
         const int id = track.id();
         if(p->trackParents.contains(id)) {
             const auto trackNodes = p->trackParents[id];
@@ -466,7 +462,7 @@ void LibraryTreeModel::changeGrouping(const LibraryTreeGrouping& grouping)
     p->grouping = grouping.script;
 }
 
-void LibraryTreeModel::reset(const Core::TrackList& tracks)
+void LibraryTreeModel::reset(const TrackList& tracks)
 {
     if(p->populatorThread.isRunning()) {
         p->populator.stopThread();
@@ -479,6 +475,6 @@ void LibraryTreeModel::reset(const Core::TrackList& tracks)
 
     QMetaObject::invokeMethod(&p->populator, [this, tracks] { p->populator.run(p->grouping, tracks); });
 }
-} // namespace Fy::Gui::Widgets
+} // namespace Fooyin
 
 #include "moc_librarytreemodel.cpp"

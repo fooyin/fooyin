@@ -45,18 +45,18 @@
 using namespace Qt::Literals::StringLiterals;
 using namespace std::chrono_literals;
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 struct PlaylistTabs::Private
 {
-    Utils::ActionManager* actionManager;
+    ActionManager* actionManager;
     WidgetProvider* widgetProvider;
-    Core::Playlist::PlaylistManager* playlistHandler;
+    PlaylistManager* playlistHandler;
     PlaylistController* playlistController;
     TrackSelectionController* selectionController;
-    Utils::SettingsManager* settings;
+    SettingsManager* settings;
 
     QVBoxLayout* layout;
-    Utils::EditableTabBar* tabs;
+    EditableTabBar* tabs;
     FyWidget* tabsWidget{nullptr};
 
     int currentTab{-1};
@@ -64,8 +64,8 @@ struct PlaylistTabs::Private
     QBasicTimer hoverTimer;
     int currentHoverIndex{-1};
 
-    Private(PlaylistTabs* self, Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-            PlaylistController* playlistController, Utils::SettingsManager* settings)
+    Private(PlaylistTabs* self, ActionManager* actionManager, WidgetProvider* widgetProvider,
+            PlaylistController* playlistController, SettingsManager* settings)
         : actionManager{actionManager}
         , widgetProvider{widgetProvider}
         , playlistHandler{playlistController->playlistHandler()}
@@ -73,7 +73,7 @@ struct PlaylistTabs::Private
         , selectionController{playlistController->selectionController()}
         , settings{settings}
         , layout{new QVBoxLayout(self)}
-        , tabs{new Utils::EditableTabBar(self)}
+        , tabs{new EditableTabBar(self)}
     {
         layout->addWidget(tabs);
         layout->setContentsMargins(0, 0, 0, 0);
@@ -82,7 +82,7 @@ struct PlaylistTabs::Private
         tabs->setMovable(true);
         tabs->setExpanding(false);
 
-        if(settings->value<Settings::PlaylistTabsSingleHide>()) {
+        if(settings->value<Gui::Settings::PlaylistTabsSingleHide>()) {
             tabs->hide();
         }
     }
@@ -106,7 +106,7 @@ struct PlaylistTabs::Private
         }
     }
 
-    void playlistChanged(const Core::Playlist::Playlist* playlist) const
+    void playlistChanged(const Playlist* playlist) const
     {
         const int count = tabs->count();
 
@@ -117,7 +117,7 @@ struct PlaylistTabs::Private
         }
     }
 
-    void playlistRenamed(const Core::Playlist::Playlist* playlist) const
+    void playlistRenamed(const Playlist* playlist) const
     {
         const int count = tabs->count();
 
@@ -129,8 +129,8 @@ struct PlaylistTabs::Private
     }
 };
 
-PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* widgetProvider,
-                           PlaylistController* playlistController, Utils::SettingsManager* settings, QWidget* parent)
+PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
+                           PlaylistController* playlistController, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
     , p{std::make_unique<Private>(this, actionManager, widgetProvider, playlistController, settings)}
 {
@@ -140,22 +140,21 @@ PlaylistTabs::PlaylistTabs(Utils::ActionManager* actionManager, WidgetProvider* 
 
     setupTabs();
 
-    QObject::connect(p->tabs, &Utils::EditableTabBar::tabTextChanged, this, [this](int index, const QString& text) {
+    QObject::connect(p->tabs, &EditableTabBar::tabTextChanged, this, [this](int index, const QString& text) {
         const int id = p->tabs->tabData(index).toInt();
         p->playlistHandler->renamePlaylist(id, text);
     });
     QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
     QObject::connect(p->tabs, &QTabBar::tabMoved, this, [this](int from, int to) { p->tabMoved(from, to); });
     QObject::connect(p->playlistController, &PlaylistController::currentPlaylistChanged, this,
-                     [this](const Core::Playlist::Playlist* playlist) { p->playlistChanged(playlist); });
-    QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistAdded, this,
-                     &PlaylistTabs::addPlaylist);
-    QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistRemoved, this,
-                     &PlaylistTabs::removePlaylist);
-    QObject::connect(p->playlistHandler, &Core::Playlist::PlaylistManager::playlistRenamed, this,
-                     [this](const Core::Playlist::Playlist* playlist) { p->playlistRenamed(playlist); });
+                     [this](const Playlist* playlist) { p->playlistChanged(playlist); });
+    QObject::connect(p->playlistHandler, &PlaylistManager::playlistAdded, this, &PlaylistTabs::addPlaylist);
+    QObject::connect(p->playlistHandler, &PlaylistManager::playlistRemoved, this, &PlaylistTabs::removePlaylist);
+    QObject::connect(p->playlistHandler, &PlaylistManager::playlistRenamed, this,
+                     [this](const Playlist* playlist) { p->playlistRenamed(playlist); });
 
-    p->settings->subscribe<Settings::PlaylistTabsSingleHide>(this, [this](bool hide) { p->tabs->setVisible(!hide); });
+    p->settings->subscribe<Gui::Settings::PlaylistTabsSingleHide>(this,
+                                                                  [this](bool hide) { p->tabs->setVisible(!hide); });
 }
 
 PlaylistTabs::~PlaylistTabs() = default;
@@ -170,7 +169,7 @@ void PlaylistTabs::setupTabs()
     p->tabs->adjustSize();
 }
 
-int PlaylistTabs::addPlaylist(const Core::Playlist::Playlist* playlist)
+int PlaylistTabs::addPlaylist(const Playlist* playlist)
 {
     const int index = addNewTab(playlist->name());
     if(index >= 0) {
@@ -179,7 +178,7 @@ int PlaylistTabs::addPlaylist(const Core::Playlist::Playlist* playlist)
     return index;
 }
 
-void PlaylistTabs::removePlaylist(const Core::Playlist::Playlist* playlist)
+void PlaylistTabs::removePlaylist(const Playlist* playlist)
 {
     for(int i = 0; i < p->tabs->count(); ++i) {
         if(p->tabs->tabData(i).toInt() == playlist->id()) {
@@ -187,7 +186,7 @@ void PlaylistTabs::removePlaylist(const Core::Playlist::Playlist* playlist)
         }
     }
 
-    if(p->settings->value<Settings::PlaylistTabsSingleHide>() && p->tabs->count() < 2) {
+    if(p->settings->value<Gui::Settings::PlaylistTabsSingleHide>() && p->tabs->count() < 2) {
         p->tabs->hide();
     }
 }
@@ -200,7 +199,7 @@ int PlaylistTabs::addNewTab(const QString& name, const QIcon& icon)
 
     const int index = p->tabs->addTab(icon, name);
 
-    if(p->settings->value<Settings::PlaylistTabsSingleHide>() && p->tabs->count() > 1) {
+    if(p->settings->value<Gui::Settings::PlaylistTabsSingleHide>() && p->tabs->count() > 1) {
         p->tabs->show();
     }
 
@@ -223,7 +222,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         const int id = p->tabs->tabData(index).toInt();
 
         auto* renamePlAction = new QAction(u"Rename Playlist"_s, menu);
-        QObject::connect(renamePlAction, &QAction::triggered, p->tabs, &Utils::EditableTabBar::showEditor);
+        QObject::connect(renamePlAction, &QAction::triggered, p->tabs, &EditableTabBar::showEditor);
 
         auto* removePlAction = new QAction(u"Remove Playlist"_s, menu);
         QObject::connect(removePlAction, &QAction::triggered, this,
@@ -287,7 +286,7 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
     }
 
     if(p->currentHoverIndex < 0) {
-        p->selectionController->executeAction(TrackAction::SendNewPlaylist, ActionOption::Switch);
+        p->selectionController->executeAction(TrackAction::SendNewPlaylist, PlaylistAction::Switch);
     }
     else {
         p->selectionController->executeAction(TrackAction::AddCurrentPlaylist);
@@ -306,7 +305,7 @@ QString PlaylistTabs::layoutName() const
     return u"PlaylistTabs"_s;
 }
 
-void PlaylistTabs::layoutEditingMenu(Utils::ActionContainer* menu)
+void PlaylistTabs::layoutEditingMenu(ActionContainer* menu)
 {
     if(p->tabsWidget) {
         // Can only contain 1 widget
@@ -367,6 +366,6 @@ void PlaylistTabs::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
         p->layout->addWidget(p->tabsWidget);
     }
 }
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin
 
 #include "moc_playlisttabs.cpp"

@@ -24,24 +24,19 @@
 class QHBoxLayout;
 class QLineEdit;
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
 class WidgetContext;
-} // namespace Utils
-
-namespace Gui::Widgets {
 class SearchController;
 
-class SearchWidget : public Gui::Widgets::FyWidget
+class SearchWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit SearchWidget(Utils::ActionManager* actionManager, SearchController* controller,
-                          Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit SearchWidget(ActionManager* actionManager, SearchController* controller, SettingsManager* settings,
+                          QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
 
@@ -50,12 +45,11 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    Utils::ActionManager* m_actionManager;
+    ActionManager* m_actionManager;
     SearchController* m_controller;
-    Utils::SettingsManager* m_settings;
+    SettingsManager* m_settings;
 
     QLineEdit* m_searchBox;
-    Utils::WidgetContext* m_searchContext;
+    WidgetContext* m_searchContext;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin

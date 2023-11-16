@@ -24,7 +24,7 @@
 #include <QHeaderView>
 #include <QMouseEvent>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class FYUTILS_EXPORT HeaderView : public QHeaderView
 {
     Q_OBJECT
@@ -38,4 +38,4 @@ signals:
 protected:
     void mousePressEvent(QMouseEvent* event);
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

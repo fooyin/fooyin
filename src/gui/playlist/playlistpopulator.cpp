@@ -34,7 +34,7 @@ using namespace Qt::Literals::StringLiterals;
 constexpr int InitialBatchSize = 1000;
 constexpr int BatchSize        = 4000;
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 struct PlaylistPopulator::Private
 {
     PlaylistPopulator* self;
@@ -42,19 +42,19 @@ struct PlaylistPopulator::Private
     PlaylistPreset currentPreset;
 
     std::unique_ptr<PlaylistScriptRegistry> registry;
-    Core::Scripting::Parser parser;
+    ScriptParser parser;
 
     QString prevBaseHeaderKey;
     QString prevHeaderKey;
     std::vector<QString> prevBaseSubheaderKey;
     std::vector<QString> prevSubheaderKey;
 
-    std::vector<Container> subheaders;
+    std::vector<PlaylistContainerItem> subheaders;
 
     PlaylistItem root;
     PendingData data;
     ContainerKeyMap headers;
-    Core::TrackList pendingTracks;
+    TrackList pendingTracks;
 
     explicit Private(PlaylistPopulator* self)
         : self{self}
@@ -123,7 +123,7 @@ struct PlaylistPopulator::Private
         }
     }
 
-    void iterateHeader(const Core::Track& track, PlaylistItem*& parent)
+    void iterateHeader(const Track& track, PlaylistItem*& parent)
     {
         HeaderRow row{currentPreset.header};
         if(!row.isValid()) {
@@ -157,7 +157,7 @@ struct PlaylistPopulator::Private
         prevHeaderKey     = key;
 
         if(!headers.contains(key)) {
-            Container header;
+            PlaylistContainerItem header;
             header.setTitle(row.title);
             header.setSubtitle(row.subtitle);
             header.setSideText(row.sideText);
@@ -168,7 +168,7 @@ struct PlaylistPopulator::Private
             auto& headerContainer = std::get<1>(headerItem->data());
             headers.emplace(key, &headerContainer);
         }
-        Container* header = headers.at(key);
+        PlaylistContainerItem* header = headers.at(key);
         header->addTrack(track);
         data.trackParents[track.id()].push_back(key);
 
@@ -176,7 +176,7 @@ struct PlaylistPopulator::Private
         parent           = headerItem;
     }
 
-    void iterateSubheaders(const Core::Track& track, PlaylistItem*& parent)
+    void iterateSubheaders(const Track& track, PlaylistItem*& parent)
     {
         for(auto& subheader : currentPreset.subHeaders) {
             for(auto& block : subheader.leftText) {
@@ -186,7 +186,7 @@ struct PlaylistPopulator::Private
                 block.text = parser.evaluate(block.script, track);
             }
 
-            Container currentContainer;
+            PlaylistContainerItem currentContainer;
             currentContainer.setTitle(subheader.leftText);
             currentContainer.setInfo(subheader.rightText);
             currentContainer.setRowHeight(subheader.rowHeight);
@@ -197,7 +197,7 @@ struct PlaylistPopulator::Private
         prevSubheaderKey.resize(subheaderCount);
         prevBaseSubheaderKey.resize(subheaderCount);
 
-        for(int i{0}; const Container& subheader : subheaders) {
+        for(int i{0}; const auto& subheader : subheaders) {
             const TextBlockList title = subheader.title();
             QString subheaderKey;
             for(const TextBlock& block : title) {
@@ -223,7 +223,7 @@ struct PlaylistPopulator::Private
                 auto& subheaderContainer = std::get<1>(subheaderItem->data());
                 headers.emplace(key, &subheaderContainer);
             }
-            Container* subheaderContainer = headers.at(key);
+            PlaylistContainerItem* subheaderContainer = headers.at(key);
             subheaderContainer->addTrack(track);
             data.trackParents[track.id()].push_back(key);
 
@@ -237,7 +237,7 @@ struct PlaylistPopulator::Private
         subheaders.clear();
     }
 
-    PlaylistItem* iterateTrack(const Core::Track& track)
+    PlaylistItem* iterateTrack(const Track& track)
     {
         PlaylistItem* parent = &root;
 
@@ -260,7 +260,7 @@ struct PlaylistPopulator::Private
         evaluateTrack(currentPreset.track.leftText, trackRow.leftText);
         evaluateTrack(currentPreset.track.rightText, trackRow.rightText);
 
-        Track playlistTrack{trackRow.leftText, trackRow.rightText, track};
+        PlaylistTrackItem playlistTrack{trackRow.leftText, trackRow.rightText, track};
 
         const QString key = Utils::generateHash(parent->key(), track.hash(), QString::number(data.items.size()));
 
@@ -281,7 +281,7 @@ struct PlaylistPopulator::Private
 
         auto tracksBatch = std::ranges::views::take(pendingTracks, size);
 
-        for(const Core::Track& track : tracksBatch) {
+        for(const Track& track : tracksBatch) {
             if(!self->mayRun()) {
                 return;
             }
@@ -300,7 +300,7 @@ struct PlaylistPopulator::Private
         QMetaObject::invokeMethod(self, "populated", Q_ARG(PendingData, data));
 
         auto tracksToKeep = std::ranges::views::drop(pendingTracks, size);
-        Core::TrackList tempTracks;
+        TrackList tempTracks;
         std::ranges::copy(tracksToKeep, std::back_inserter(tempTracks));
         pendingTracks = std::move(tempTracks);
 
@@ -312,7 +312,7 @@ struct PlaylistPopulator::Private
 
     void runTracks()
     {
-        for(const Core::Track& track : pendingTracks) {
+        for(const Track& track : pendingTracks) {
             if(!self->mayRun()) {
                 return;
             }
@@ -331,12 +331,12 @@ struct PlaylistPopulator::Private
         QMetaObject::invokeMethod(self, "populatedTracks", Q_ARG(PendingData, data));
     }
 
-    void runTracksGroup(const std::map<int, std::vector<Core::Track>>& tracks)
+    void runTracksGroup(const std::map<int, std::vector<Track>>& tracks)
     {
         for(const auto& [index, trackGroup] : tracks) {
             std::vector<QString> trackKeys;
 
-            for(const Core::Track& track : trackGroup) {
+            for(const Track& track : trackGroup) {
                 if(!self->mayRun()) {
                     return;
                 }
@@ -361,13 +361,13 @@ struct PlaylistPopulator::Private
 };
 
 PlaylistPopulator::PlaylistPopulator(QObject* parent)
-    : Utils::Worker{parent}
+    : Worker{parent}
     , p{std::make_unique<Private>(this)}
 {
     qRegisterMetaType<PendingData>();
 }
 
-void PlaylistPopulator::run(const PlaylistPreset& preset, const Core::TrackList& tracks)
+void PlaylistPopulator::run(const PlaylistPreset& preset, const TrackList& tracks)
 {
     setState(Running);
 
@@ -382,8 +382,7 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const Core::TrackList&
     setState(Idle);
 }
 
-void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const Core::TrackList& tracks, const QString& parent,
-                                  int row)
+void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const TrackList& tracks, const QString& parent, int row)
 {
     setState(Running);
 
@@ -400,7 +399,7 @@ void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const Core::Trac
     setState(Idle);
 }
 
-void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const std::map<int, std::vector<Core::Track>>& tracks)
+void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const std::map<int, std::vector<Track>>& tracks)
 {
     setState(Running);
 
@@ -421,7 +420,7 @@ void PlaylistPopulator::updateHeaders(const ItemList& headers)
     ItemKeyMap updatedHeaders;
 
     for(const PlaylistItem& item : headers) {
-        Container& header = std::get<1>(item.data());
+        PlaylistContainerItem& header = std::get<1>(item.data());
         header.updateGroupText(&p->parser, p->registry.get());
         updatedHeaders.emplace(item.key(), item);
     }
@@ -432,6 +431,6 @@ void PlaylistPopulator::updateHeaders(const ItemList& headers)
 }
 
 PlaylistPopulator::~PlaylistPopulator() = default;
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin
 
 #include "moc_playlistpopulator.cpp"

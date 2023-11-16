@@ -70,31 +70,31 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Gui {
+namespace Fooyin {
 struct GuiApplication::Private
 {
     GuiApplication* self;
 
-    Utils::SettingsManager* settingsManager;
-    Utils::ActionManager* actionManager;
+    SettingsManager* settingsManager;
+    ActionManager* actionManager;
 
-    Plugins::PluginManager* pluginManager;
-    Core::Engine::EngineHandler* engineHandler;
-    Core::Player::PlayerManager* playerManager;
-    Core::Library::LibraryManager* libraryManager;
-    Core::Library::MusicLibrary* library;
-    Core::Settings::CoreSettings* coreSettings;
-    Core::Playlist::PlaylistManager* playlistHandler;
+    PluginManager* pluginManager;
+    EngineHandler* engineHandler;
+    PlayerManager* playerManager;
+    LibraryManager* libraryManager;
+    MusicLibrary* library;
+    CoreSettings* coreSettings;
+    PlaylistManager* playlistHandler;
 
-    Widgets::WidgetProvider widgetProvider;
-    Settings::GuiSettings guiSettings;
+    WidgetProvider widgetProvider;
+    GuiSettings guiSettings;
     LayoutProvider layoutProvider;
-    std::unique_ptr<Widgets::EditableLayout> editableLayout;
+    std::unique_ptr<EditableLayout> editableLayout;
     std::unique_ptr<MainWindow> mainWindow;
-    Utils::WidgetContext* mainContext;
-    std::unique_ptr<Widgets::Playlist::PlaylistController> playlistController;
+    WidgetContext* mainContext;
+    std::unique_ptr<PlaylistController> playlistController;
     TrackSelectionController selectionController;
-    Widgets::SearchController searchController;
+    SearchController searchController;
 
     FileMenu* fileMenu;
     EditMenu* editMenu;
@@ -105,25 +105,25 @@ struct GuiApplication::Private
 
     PropertiesDialog* propertiesDialog;
 
-    Settings::GeneralPage generalPage;
-    Settings::GuiGeneralPage guiGeneralPage;
-    Settings::LibraryGeneralPage libraryGeneralPage;
-    Settings::LibrarySortingPage librarySortingPage;
-    Settings::ShortcutsPage shortcutsPage;
-    Settings::PlaylistGeneralPage playlistGeneralPage;
-    Settings::PlaylistGuiPage playlistGuiPage;
-    Settings::PlaylistPresetsPage playlistPresetsPage;
-    Settings::EnginePage enginePage;
-    Settings::LibraryTreePage libraryTreePage;
-    Settings::LibraryTreeGuiPage libraryTreeGuiPage;
-    Settings::PluginPage pluginPage;
+    GeneralPage generalPage;
+    GuiGeneralPage guiGeneralPage;
+    LibraryGeneralPage libraryGeneralPage;
+    LibrarySortingPage librarySortingPage;
+    ShortcutsPage shortcutsPage;
+    PlaylistGeneralPage playlistGeneralPage;
+    PlaylistGuiPage playlistGuiPage;
+    PlaylistPresetsPage playlistPresetsPage;
+    EnginePage enginePage;
+    LibraryTreePage libraryTreePage;
+    LibraryTreeGuiPage libraryTreeGuiPage;
+    PluginPage pluginPage;
 
     GuiPluginContext guiPluginContext;
 
-    explicit Private(GuiApplication* self, const Core::CorePluginContext& core)
+    explicit Private(GuiApplication* self, const CorePluginContext& core)
         : self{self}
         , settingsManager{core.settingsManager}
-        , actionManager{new Utils::ActionManager(settingsManager, self)}
+        , actionManager{new ActionManager(settingsManager, self)}
         , pluginManager{core.pluginManager}
         , engineHandler{core.engineHandler}
         , playerManager{core.playerManager}
@@ -133,11 +133,11 @@ struct GuiApplication::Private
         , playlistHandler{core.playlistHandler}
         , widgetProvider{actionManager}
         , guiSettings{settingsManager}
-        , editableLayout{std::make_unique<Widgets::EditableLayout>(actionManager, &widgetProvider, &layoutProvider,
-                                                                   settingsManager)}
+        , editableLayout{std::make_unique<EditableLayout>(actionManager, &widgetProvider, &layoutProvider,
+                                                          settingsManager)}
         , mainWindow{std::make_unique<MainWindow>(actionManager, settingsManager, editableLayout.get())}
-        , mainContext{new Utils::WidgetContext(mainWindow.get(), Utils::Context{"Fooyin.MainWindow"}, self)}
-        , playlistController{std::make_unique<Widgets::Playlist::PlaylistController>(
+        , mainContext{new WidgetContext(mainWindow.get(), Context{"Fooyin.MainWindow"}, self)}
+        , playlistController{std::make_unique<PlaylistController>(
               playlistHandler, playerManager, guiSettings.playlistPresetRegistry(), coreSettings->sortingRegistry(),
               &selectionController, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
@@ -198,101 +198,93 @@ struct GuiApplication::Private
     {
         auto* factory = widgetProvider.widgetFactory();
 
-        factory->registerClass<Widgets::VerticalSplitterWidget>(
+        factory->registerClass<VerticalSplitterWidget>(
             u"SplitterVertical"_s,
             [this]() {
-                auto* splitter = new Widgets::VerticalSplitterWidget(actionManager, &widgetProvider, settingsManager,
-                                                                     mainWindow.get());
+                auto* splitter
+                    = new VerticalSplitterWidget(actionManager, &widgetProvider, settingsManager, mainWindow.get());
                 splitter->showPlaceholder(true);
                 return splitter;
             },
             u"Vertical Splitter"_s, {"Splitters"});
 
-        factory->registerClass<Widgets::HorizontalSplitterWidget>(
+        factory->registerClass<HorizontalSplitterWidget>(
             u"SplitterHorizontal"_s,
             [this]() {
-                auto* splitter = new Widgets::HorizontalSplitterWidget(actionManager, &widgetProvider, settingsManager,
-                                                                       mainWindow.get());
+                auto* splitter
+                    = new HorizontalSplitterWidget(actionManager, &widgetProvider, settingsManager, mainWindow.get());
                 splitter->showPlaceholder(true);
                 return splitter;
             },
             u"Horizontal Splitter"_s, {"Splitters"});
 
-        factory->registerClass<Widgets::Playlist::PlaylistTabs>(
-            u"PlaylistTabs"_s,
-            [this]() {
-                return new Widgets::Playlist::PlaylistTabs(actionManager, &widgetProvider, playlistController.get(),
-                                                           settingsManager, mainWindow.get());
-            },
-            u"Playlist Tabs"_s, {"Splitters"});
+        factory->registerClass<PlaylistTabs>(u"PlaylistTabs"_s,
+                                             [this]() {
+                                                 return new PlaylistTabs(actionManager, &widgetProvider,
+                                                                         playlistController.get(), settingsManager,
+                                                                         mainWindow.get());
+                                             },
+                                             u"Playlist Tabs"_s, {"Splitters"});
 
-        factory->registerClass<Widgets::TabStackWidget>(
-            u"TabStack"_s,
-            [this]() { return new Widgets::TabStackWidget(actionManager, &widgetProvider, mainWindow.get()); },
+        factory->registerClass<TabStackWidget>(
+            u"TabStack"_s, [this]() { return new TabStackWidget(actionManager, &widgetProvider, mainWindow.get()); },
             u"Tab Stack"_s, {"Splitters"});
 
-        factory->registerClass<Widgets::LibraryTreeWidget>(
+        factory->registerClass<LibraryTreeWidget>(
             u"LibraryTree"_s,
             [this]() {
-                return new Widgets::LibraryTreeWidget(library, guiSettings.libraryTreeGroupRegistry(),
-                                                      &selectionController, settingsManager, mainWindow.get());
+                return new LibraryTreeWidget(library, guiSettings.libraryTreeGroupRegistry(), &selectionController,
+                                             settingsManager, mainWindow.get());
             },
             u"Library Tree"_s);
 
-        factory->registerClass<Widgets::ControlWidget>(u"Controls"_s, [this]() {
-            return new Widgets::ControlWidget(playerManager, settingsManager, mainWindow.get());
+        factory->registerClass<ControlWidget>(
+            u"Controls"_s, [this]() { return new ControlWidget(playerManager, settingsManager, mainWindow.get()); });
+
+        factory->registerClass<InfoWidget>(u"Info"_s, [this]() {
+            return new InfoWidget(playerManager, &selectionController, settingsManager, mainWindow.get());
         });
 
-        factory->registerClass<Widgets::Info::InfoWidget>(u"Info"_s, [this]() {
-            return new Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager,
-                                                 mainWindow.get());
+        factory->registerClass<CoverWidget>(
+            u"Artwork"_s, [this]() { return new CoverWidget(playerManager, &selectionController, mainWindow.get()); });
+
+        factory->registerClass<PlaylistWidget>(u"Playlist"_s, [this]() {
+            return new PlaylistWidget(actionManager, playlistController.get(), settingsManager, mainWindow.get());
         });
 
-        factory->registerClass<Widgets::CoverWidget>(u"Artwork"_s, [this]() {
-            return new Widgets::CoverWidget(playerManager, &selectionController, mainWindow.get());
+        factory->registerClass<Spacer>(u"Spacer"_s, [this]() { return new Spacer(mainWindow.get()); });
+
+        factory->registerClass<StatusWidget>(u"Status"_s, [this]() {
+            return new StatusWidget(library, playerManager, settingsManager, mainWindow.get());
         });
 
-        factory->registerClass<Widgets::Playlist::PlaylistWidget>(u"Playlist"_s, [this]() {
-            return new Widgets::Playlist::PlaylistWidget(actionManager, playlistController.get(), settingsManager,
-                                                         mainWindow.get());
-        });
-
-        factory->registerClass<Widgets::Spacer>(u"Spacer"_s,
-                                                [this]() { return new Widgets::Spacer(mainWindow.get()); });
-
-        factory->registerClass<Widgets::StatusWidget>(u"Status"_s, [this]() {
-            return new Widgets::StatusWidget(library, playerManager, settingsManager, mainWindow.get());
-        });
-
-        factory->registerClass<Widgets::SearchWidget>(u"Search"_s, [this]() {
-            return new Widgets::SearchWidget(actionManager, &searchController, settingsManager, mainWindow.get());
+        factory->registerClass<SearchWidget>(u"Search"_s, [this]() {
+            return new SearchWidget(actionManager, &searchController, settingsManager, mainWindow.get());
         });
     }
 
     void createPropertiesTabs()
     {
-        propertiesDialog->addTab(u"Details"_s, [this]() {
-            return new Widgets::Info::InfoWidget(playerManager, &selectionController, settingsManager);
-        });
+        propertiesDialog->addTab(
+            u"Details"_s, [this]() { return new InfoWidget(playerManager, &selectionController, settingsManager); });
     }
 };
 
-GuiApplication::GuiApplication(const Core::CorePluginContext& core)
+GuiApplication::GuiApplication(const CorePluginContext& core)
     : p{std::make_unique<Private>(this, core)}
 {
     QObject::connect(&p->selectionController, &TrackSelectionController::requestPropertiesDialog, p->propertiesDialog,
                      &PropertiesDialog::show);
-    QObject::connect(p->viewMenu, &ViewMenu::openQuickSetup, p->editableLayout.get(),
-                     &Widgets::EditableLayout::showQuickSetup);
+    QObject::connect(p->viewMenu, &ViewMenu::openQuickSetup, p->editableLayout.get(), &EditableLayout::showQuickSetup);
 
     p->layoutProvider.findLayouts();
 
-    QIcon::setThemeName(p->settingsManager->value<Settings::IconTheme>());
+    QIcon::setThemeName(p->settingsManager->value<Gui::Settings::IconTheme>());
 
     p->editableLayout->initialise();
 
-    if(p->libraryManager->hasLibrary() && p->settingsManager->value<Settings::WaitForTracks>()) {
-        connect(p->library, &Core::Library::MusicLibrary::tracksLoaded, p->mainWindow.get(), &MainWindow::open);
+    if(p->libraryManager->hasLibrary() && p->settingsManager->value<Gui::Settings::WaitForTracks>()) {
+        connect(p->library, &MusicLibrary::tracksLoaded, p->mainWindow.get(), &MainWindow::open);
     }
     else {
         p->mainWindow->open();
@@ -309,6 +301,6 @@ void GuiApplication::shutdown()
     p->editableLayout.reset(nullptr);
     p->mainWindow.reset(nullptr);
 }
-} // namespace Fy::Gui
+} // namespace Fooyin
 
 #include "moc_guiapplication.cpp"

@@ -22,7 +22,7 @@
 #include <QResizeEvent>
 #include <QScrollArea>
 
-namespace Fy::Utils {
+namespace Fooyin {
 class ScrollArea : public QScrollArea
 {
     Q_OBJECT
@@ -37,4 +37,4 @@ private:
 
     [[nodiscard]] int scrollBarWidth() const;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

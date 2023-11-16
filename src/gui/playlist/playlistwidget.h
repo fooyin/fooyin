@@ -21,14 +21,9 @@
 
 #include "gui/fywidget.h"
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-} // namespace Utils
-
-namespace Gui::Widgets::Playlist {
 class PlaylistController;
 class PlaylistWidgetPrivate;
 
@@ -37,8 +32,8 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(Utils::ActionManager* actionManager, PlaylistController* playlistController,
-                            Utils::SettingsManager* settings, QWidget* parent = nullptr);
+    explicit PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController,
+                            SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -50,5 +45,4 @@ protected:
 private:
     std::unique_ptr<PlaylistWidgetPrivate> p;
 };
-} // namespace Gui::Widgets::Playlist
-} // namespace Fy
+} // namespace Fooyin

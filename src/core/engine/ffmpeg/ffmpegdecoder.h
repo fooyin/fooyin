@@ -24,7 +24,7 @@
 
 class AVFormatContext;
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 class Codec;
 
 class Decoder : public EngineWorker
@@ -54,4 +54,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

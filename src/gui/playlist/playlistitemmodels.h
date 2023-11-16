@@ -23,15 +23,15 @@
 
 #include <core/track.h>
 
-namespace Fy::Gui::Widgets::Playlist {
+namespace Fooyin {
 class PlaylistScriptRegistry;
 
-class Container
+class PlaylistContainerItem
 {
 public:
-    Container();
+    PlaylistContainerItem();
 
-    [[nodiscard]] Core::TrackList tracks() const;
+    [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] uint64_t duration() const;
 
@@ -44,7 +44,7 @@ public:
     [[nodiscard]] QString genres() const;
     [[nodiscard]] QString filetypes() const;
 
-    void updateGroupText(Core::Scripting::Parser* parser, PlaylistScriptRegistry* registry);
+    void updateGroupText(ScriptParser* parser, PlaylistScriptRegistry* registry);
 
     void setTitle(const TextBlockList& title);
     void setSubtitle(const TextBlockList& subtitle);
@@ -52,12 +52,12 @@ public:
     void setInfo(const TextBlockList& info);
     void setRowHeight(int height);
 
-    void addTrack(const Core::Track& track);
-    void addTracks(const Core::TrackList& tracks);
+    void addTrack(const Track& track);
+    void addTracks(const TrackList& tracks);
     void clearTracks();
 
 private:
-    Core::TrackList m_tracks;
+    TrackList m_tracks;
     uint64_t m_duration;
     QString m_genres;
     QString m_filetypes;
@@ -70,20 +70,20 @@ private:
     int m_rowHeight;
 };
 
-class Track
+class PlaylistTrackItem
 {
 public:
-    Track() = default;
-    Track(TextBlockList left, TextBlockList right, const Core::Track& track);
+    PlaylistTrackItem() = default;
+    PlaylistTrackItem(TextBlockList left, TextBlockList right, const Track& track);
 
     [[nodiscard]] TextBlockList left() const;
     [[nodiscard]] TextBlockList right() const;
-    [[nodiscard]] Core::Track track() const;
+    [[nodiscard]] Track track() const;
 
 private:
     TextBlockList m_left;
     TextBlockList m_right;
 
-    Core::Track m_track;
+    Track m_track;
 };
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

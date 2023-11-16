@@ -25,7 +25,7 @@
 #include <core/library/libraryinfo.h>
 #include <utils/utils.h>
 
-namespace Fy::Core::Library {
+namespace Fooyin {
 bool checkNewPath(const QString& path, const LibraryInfoMap& libraries, int libraryId = -1)
 {
     if(path.isEmpty()) {
@@ -47,19 +47,19 @@ void eraseLibrary(LibraryInfoMap& libraries, int id)
 
 struct LibraryManager::Private
 {
-    DB::Database* database;
-    Utils::SettingsManager* settings;
-    DB::Library libraryConnector;
+    Database* database;
+    SettingsManager* settings;
+    Library libraryConnector;
     LibraryInfoMap libraries;
 
-    explicit Private(DB::Database* database, Utils::SettingsManager* settings)
+    explicit Private(Database* database, SettingsManager* settings)
         : database{database}
         , settings{settings}
         , libraryConnector{database->connectionName()}
     { }
 };
 
-LibraryManager::LibraryManager(DB::Database* database, Utils::SettingsManager* settings, QObject* parent)
+LibraryManager::LibraryManager(Database* database, SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(database, settings)}
 {
@@ -166,6 +166,6 @@ std::optional<LibraryInfo> LibraryManager::libraryInfo(int id) const
     }
     return {};
 }
-} // namespace Fy::Core::Library
+} // namespace Fooyin
 
 #include "core/library/moc_librarymanager.cpp"

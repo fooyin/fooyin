@@ -30,18 +30,18 @@
 
 #include <deque>
 
-namespace Fy::Core::Library {
+namespace Fooyin {
 struct ScanRequest
 {
     LibraryInfo library;
-    Core::TrackList tracks;
+    TrackList tracks;
 };
 
 struct LibraryThreadHandler::Private
 {
     LibraryThreadHandler* self;
 
-    DB::Database* database;
+    Database* database;
 
     QThread* thread;
     LibraryScanner scanner;
@@ -50,7 +50,7 @@ struct LibraryThreadHandler::Private
     std::deque<ScanRequest> scanRequests;
     int currentLibraryRequest{-1};
 
-    Private(LibraryThreadHandler* self, DB::Database* database)
+    Private(LibraryThreadHandler* self, Database* database)
         : self{self}
         , database{database}
         , thread{new QThread(self)}
@@ -89,13 +89,13 @@ struct LibraryThreadHandler::Private
     }
 };
 
-LibraryThreadHandler::LibraryThreadHandler(DB::Database* database, QObject* parent)
+LibraryThreadHandler::LibraryThreadHandler(Database* database, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this, database)}
 {
     QObject::connect(&p->libraryDatabaseManager, &LibraryDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);
-    QObject::connect(&p->scanner, &Utils::Worker::finished, this, [this]() { p->finishScanRequest(); });
+    QObject::connect(&p->scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
     QObject::connect(&p->scanner, &LibraryScanner::progressChanged, this, &LibraryThreadHandler::progressChanged);
     QObject::connect(&p->scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
     QObject::connect(&p->scanner, &LibraryScanner::addedTracks, this, &LibraryThreadHandler::addedTracks);
@@ -131,7 +131,7 @@ void LibraryThreadHandler::libraryRemoved(int id)
         return;
     }
     if(p->currentLibraryRequest == id) {
-        // Scanner will emit finished signal which will remove library from front of queue
+        // ScriptScanner will emit finished signal which will remove library from front of queue
         stopScanner();
     }
     else {
@@ -143,6 +143,6 @@ void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(&p->scanner, "updateTracks", Q_ARG(const TrackList&, tracks));
 }
-} // namespace Fy::Core::Library
+} // namespace Fooyin
 
 #include "moc_librarythreadhandler.cpp"

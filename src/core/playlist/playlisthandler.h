@@ -26,22 +26,10 @@
 
 #include <QObject>
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core {
-namespace DB {
 class Database;
-} // namespace DB
-
-namespace Player {
 class PlayerManager;
-}
-
-namespace Playlist {
 class Playlist;
 
 class FYCORE_EXPORT PlaylistHandler : public PlaylistManager
@@ -49,8 +37,8 @@ class FYCORE_EXPORT PlaylistHandler : public PlaylistManager
     Q_OBJECT
 
 public:
-    explicit PlaylistHandler(DB::Database* database, Player::PlayerManager* playerManager,
-                             Utils::SettingsManager* settings, QObject* parent = nullptr);
+    explicit PlaylistHandler(Database* database, PlayerManager* playerManager, SettingsManager* settings,
+                             QObject* parent = nullptr);
     ~PlaylistHandler() override;
 
     [[nodiscard]] Playlist* playlistById(int id) const override;
@@ -90,6 +78,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Playlist
-} // namespace Core
-} // namespace Fy
+} // namespace Fooyin

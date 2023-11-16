@@ -31,19 +31,17 @@
 constexpr int MaxFrameQueue = 9;
 
 namespace {
-using Fy::Core::Engine::FFmpeg::Frame;
-using Fy::Core::Engine::FFmpeg::FramePtr;
 // Copies input frame's metadata and properties and assigns empty buffers for the data
-Frame copyFrame(const Frame& frame, AVSampleFormat format)
+Fooyin::Frame copyFrame(const Fooyin::Frame& frame, AVSampleFormat format)
 {
-    auto avFrame = FramePtr(av_frame_alloc());
+    auto avFrame = Fooyin::FramePtr(av_frame_alloc());
 
     av_frame_copy_props(avFrame.get(), frame.avFrame());
     avFrame->ch_layout  = frame.avFrame()->ch_layout;
     avFrame->nb_samples = frame.sampleCount();
     avFrame->format     = format;
 
-    Frame newFrame{std::move(avFrame)};
+    Fooyin::Frame newFrame{std::move(avFrame)};
 
     const int err = av_frame_get_buffer(newFrame.avFrame(), 0);
     if(err < 0) {
@@ -67,15 +65,15 @@ void interleaveSamples(uint8_t** in, int channels, uint8_t* out, int frames)
     }
 }
 
-Frame interleave(const Frame& inputFrame)
+Fooyin::Frame interleave(const Fooyin::Frame& inputFrame)
 {
     uint8_t** in                 = inputFrame.avFrame()->data;
     const int channels           = inputFrame.channelCount();
     const int samples            = inputFrame.sampleCount();
-    const auto interleavedFormat = Fy::Core::Engine::FFmpeg::interleaveFormat(inputFrame.format());
+    const auto interleavedFormat = Fooyin::Utils::interleaveFormat(inputFrame.format());
 
-    Frame frame  = copyFrame(inputFrame, interleavedFormat);
-    uint8_t* out = frame.avFrame()->data[0];
+    Fooyin::Frame frame = copyFrame(inputFrame, interleavedFormat);
+    uint8_t* out    = frame.avFrame()->data[0];
 
     switch(inputFrame.format()) {
         case AV_SAMPLE_FMT_FLTP:
@@ -109,7 +107,7 @@ Frame interleave(const Frame& inputFrame)
 }
 } // namespace
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 struct Decoder::Private
 {
     Decoder* decoder;
@@ -248,7 +246,7 @@ void Decoder::doNextStep()
     const int readResult = av_read_frame(p->context, packet.avPacket());
     if(readResult < 0) {
         if(readResult != AVERROR_EOF) {
-            printError(readResult);
+            Utils::printError(readResult);
         }
         else if(!p->draining) {
             p->draining = true;
@@ -272,6 +270,6 @@ void Decoder::doNextStep()
     p->decodeAudio(packet);
     scheduleNextStep(false);
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin
 
 #include "moc_ffmpegdecoder.cpp"

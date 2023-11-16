@@ -19,7 +19,7 @@
 
 #include "ffmpegpacket.h"
 
-namespace Fy::Core::Engine::FFmpeg {
+namespace Fooyin {
 Packet::Packet(PacketPtr packet)
     : m_packet{std::move(packet)}
 { }
@@ -37,4 +37,4 @@ AVPacket* Packet::avPacket() const
 {
     return m_packet.get();
 }
-} // namespace Fy::Core::Engine::FFmpeg
+} // namespace Fooyin

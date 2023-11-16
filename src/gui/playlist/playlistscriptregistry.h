@@ -21,25 +21,25 @@
 
 #include <core/scripting/scriptregistry.h>
 
-namespace Fy::Gui::Widgets::Playlist {
-class Container;
+namespace Fooyin {
+class PlaylistContainerItem;
 
-class PlaylistScriptRegistry : public Core::Scripting::Registry
+class PlaylistScriptRegistry : public ScriptRegistry
 {
 public:
     PlaylistScriptRegistry();
 
     bool varExists(const QString& var) const override;
-    Core::Scripting::ScriptResult varValue(const QString& var) const override;
-    Core::Scripting::ScriptResult function(const QString &func, const Core::Scripting::ValueList &args) const override;
+    ScriptResult varValue(const QString& var) const override;
+    ScriptResult function(const QString& func, const ScriptValueList& args) const override;
 
-    void changeCurrentContainer(Container* container);
+    void changeCurrentContainer(PlaylistContainerItem* container);
 
 private:
-    using ContainerFunc = std::function<FuncRet(const Container&)>;
-    using FuncMap = std::unordered_map<QString, ContainerFunc>;
+    using ContainerFunc = std::function<FuncRet(const PlaylistContainerItem&)>;
+    using FuncMap       = std::unordered_map<QString, ContainerFunc>;
 
-    Container* m_currentContainer;
+    PlaylistContainerItem* m_currentContainer;
     FuncMap m_vars;
 };
-} // namespace Fy::Gui::Widgets::Playlist
+} // namespace Fooyin

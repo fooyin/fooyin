@@ -21,19 +21,10 @@
 
 #include "gui/fywidget.h"
 
-namespace Fy {
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
-} // namespace Utils
-
-namespace Core::Library {
 class MusicLibrary;
-} // namespace Core::Library
-
-namespace Gui {
 class TrackSelectionController;
-
-namespace Widgets {
 class LibraryTreeGroupRegistry;
 class LibraryTreeWidgetPrivate;
 
@@ -42,9 +33,8 @@ class LibraryTreeWidget : public FyWidget
     Q_OBJECT
 
 public:
-    LibraryTreeWidget(Core::Library::MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
-                      TrackSelectionController* trackSelection, Utils::SettingsManager* settings,
-                      QWidget* parent = nullptr);
+    LibraryTreeWidget(MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
+                      TrackSelectionController* trackSelection, SettingsManager* settings, QWidget* parent = nullptr);
 
     QString name() const override;
     QString layoutName() const override;
@@ -58,6 +48,4 @@ protected:
 private:
     std::unique_ptr<LibraryTreeWidgetPrivate> p;
 };
-} // namespace Widgets
-} // namespace Gui
-} // namespace Fy
+} // namespace Fooyin

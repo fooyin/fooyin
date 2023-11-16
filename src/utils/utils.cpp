@@ -34,7 +34,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fy::Utils {
+namespace Fooyin::Utils {
 namespace File {
 QString cleanPath(const QString& path)
 {
@@ -270,4 +270,4 @@ void appendMenuActions(QMenu* originalMenu, QMenu* menu)
     }
 }
 
-} // namespace Fy::Utils
+} // namespace Fooyin::Utils

@@ -22,18 +22,18 @@
 #include <core/engine/outputplugin.h>
 #include <core/plugins/plugin.h>
 
-namespace Fy::Pipewire {
+namespace Fooyin::Pipewire {
 class PipeWirePlugin : public QObject,
-                       public Plugins::Plugin,
-                       public Core::Engine::OutputPlugin
+                       public Plugin,
+                       public OutputPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
-    Q_INTERFACES(Fy::Plugins::Plugin)
-    Q_INTERFACES(Fy::Core::Engine::OutputPlugin)
+    Q_INTERFACES(Fooyin::Plugin)
+    Q_INTERFACES(Fooyin::OutputPlugin)
 
 public:
-    Core::Engine::AudioOutputBuilder registerOutput() override;
+    AudioOutputBuilder registerOutput() override;
     void shutdown() override;
 };
-} // namespace Fy::Pipewire
+} // namespace Fooyin::Pipewire

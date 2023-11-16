@@ -21,7 +21,7 @@
 
 #include <QKeyEvent>
 
-namespace Fy::Utils {
+namespace Fooyin {
 PopupLineEdit::PopupLineEdit(QWidget* parent)
     : PopupLineEdit{QStringLiteral(""), parent}
 { }
@@ -45,6 +45,6 @@ void PopupLineEdit::focusOutEvent(QFocusEvent* event)
 
     emit editingFinished();
 }
-} // namespace Fy::Utils
+} // namespace Fooyin
 
 #include "utils/widgets/moc_popuplineedit.cpp"

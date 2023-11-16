@@ -23,15 +23,15 @@
 
 #include <core/library/libraryinfo.h>
 
-namespace Fy::Core::DB {
+namespace Fooyin {
 class Library : public Module
 {
 public:
     explicit Library(const QString& connectionName);
 
-    bool getAllLibraries(Core::Library::LibraryInfoMap& libraries);
+    bool getAllLibraries(LibraryInfoMap& libraries);
     int insertLibrary(const QString& path, const QString& name);
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
 };
-} // namespace Fy::Core::DB
+} // namespace Fooyin

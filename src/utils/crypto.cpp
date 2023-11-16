@@ -23,7 +23,7 @@
 #include <QRandomGenerator>
 #include <QUuid>
 
-namespace Fy::Utils {
+namespace Fooyin::Utils {
 QString generateRandomHash()
 {
     const QString uniqueId  = QUuid::createUuid().toString();
@@ -36,4 +36,4 @@ QString generateRandomHash()
     QString headerKey = hash.result().toHex();
     return headerKey;
 }
-} // namespace Fy::Utils
+} // namespace Fooyin::Utils

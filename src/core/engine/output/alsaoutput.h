@@ -23,7 +23,7 @@
 
 #include <memory>
 
-namespace Fy::Core::Engine {
+namespace Fooyin {
 class AlsaOutput : public AudioPushOutput
 {
 public:
@@ -50,4 +50,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fy::Core::Engine
+} // namespace Fooyin

@@ -21,7 +21,7 @@
 
 #include <QAbstractItemModel>
 
-namespace Fy::Utils {
+namespace Fooyin {
 template <class Item>
 class TreeModel : public QAbstractItemModel
 {
@@ -108,4 +108,4 @@ protected:
 private:
     mutable Item m_root;
 };
-} // namespace Fy::Utils
+} // namespace Fooyin

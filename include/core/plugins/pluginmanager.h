@@ -21,7 +21,7 @@
 
 #include <core/plugins/plugininfo.h>
 
-namespace Fy::Plugins {
+namespace Fooyin {
 using PluginInfoMap = std::unordered_map<QString, std::unique_ptr<PluginInfo>>;
 
 class FYCORE_EXPORT PluginManager
@@ -51,4 +51,4 @@ public:
 private:
     PluginInfoMap m_plugins;
 };
-} // namespace Fy::Plugins
+} // namespace Fooyin

@@ -23,31 +23,20 @@
 
 class QHBoxLayout;
 
-namespace Fy {
-
-namespace Utils {
+namespace Fooyin {
 class SettingsManager;
 class ClickableLabel;
 class Slider;
-} // namespace Utils
-
-namespace Core {
 class Track;
-
-namespace Player {
 class PlayerManager;
 enum class PlayState;
-} // namespace Player
-} // namespace Core
 
-namespace Gui::Widgets {
 class ProgressWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ProgressWidget(Core::Player::PlayerManager* playerManager, Utils::SettingsManager* settings,
-                            QWidget* parent = nullptr);
+    explicit ProgressWidget(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
 
 signals:
     void movedSlider(int pos);
@@ -55,24 +44,23 @@ signals:
 private:
     void reset();
 
-    void changeTrack(const Core::Track& track);
+    void changeTrack(const Track& track);
 
     void setCurrentPosition(uint64_t ms);
     void updateTime(uint64_t elapsed);
 
-    void stateChanged(Core::Player::PlayState state);
+    void stateChanged(PlayState state);
     void toggleRemaining();
     void sliderDropped();
 
-    Core::Player::PlayerManager* m_playerManager;
-    Utils::SettingsManager* m_settings;
+    PlayerManager* m_playerManager;
+    SettingsManager* m_settings;
 
     QHBoxLayout* m_layout;
-    Utils::Slider* m_slider;
-    Utils::ClickableLabel* m_elapsed;
-    Utils::ClickableLabel* m_total;
+    Slider* m_slider;
+    ClickableLabel* m_elapsed;
+    ClickableLabel* m_total;
     uint64_t m_max;
     bool m_elapsedTotal;
 };
-} // namespace Gui::Widgets
-} // namespace Fy
+} // namespace Fooyin
