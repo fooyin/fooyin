@@ -52,19 +52,33 @@ QModelIndexList removeDuplicates(const QModelIndexList& indexList)
     return uniqueIndices.values();
 }
 
-void optimiseSelection(QAbstractItemModel* model, QModelIndexList& selection)
+QModelIndexList optimiseSelection(QAbstractItemModel* model, const QModelIndexList& selection)
 {
-    QModelIndexList optimisedSelection;
+    std::queue<QModelIndex> stack;
 
     for(const QModelIndex& index : selection) {
-        const QModelIndex parent = index.parent();
+        stack.push(index);
+    }
+
+    QModelIndexList optimisedSelection;
+    QModelIndexList selectedParents;
+
+    while(!stack.empty()) {
+        const QModelIndex current = stack.front();
+        stack.pop();
+        const QModelIndex parent = current.parent();
+
+        if(selection.contains(parent) || selectedParents.contains(parent)) {
+            continue;
+        }
+
         bool allChildrenSelected{true};
 
         if(parent.isValid()) {
             const int rowCount = model->rowCount(parent);
             for(int row{0}; row < rowCount; ++row) {
                 const QModelIndex child = model->index(row, 0, parent);
-                if(!selection.contains(child)) {
+                if(!selection.contains(child) && !selectedParents.contains(child)) {
                     allChildrenSelected = false;
                     break;
                 }
@@ -72,17 +86,15 @@ void optimiseSelection(QAbstractItemModel* model, QModelIndexList& selection)
         }
 
         if(!allChildrenSelected || !parent.isValid()) {
-            optimisedSelection.append(index);
+            optimisedSelection.append(current);
         }
         else if(!optimisedSelection.contains(parent)) {
-            optimisedSelection.append(parent);
+            selectedParents.append(parent);
+            stack.push(parent);
         }
     }
 
-    if(optimisedSelection.size() != selection.size()) {
-        selection = optimisedSelection;
-        optimiseSelection(model, selection);
-    }
+    return optimisedSelection;
 }
 
 QByteArray saveTracks(const QModelIndexList& indexes)
@@ -1049,7 +1061,7 @@ void PlaylistModelPrivate::cleanupHeaders(const QModelIndexList& headers)
 {
     QModelIndexList cleanedHeaders{headers};
 
-    removeEmptyHeaders(cleanedHeaders);
+    //    removeEmptyHeaders(cleanedHeaders);
     mergeHeaders(cleanedHeaders);
     cleanedHeaders = removeDuplicates(cleanedHeaders);
     updateHeaders(cleanedHeaders);
@@ -1286,7 +1298,7 @@ ParentChildRowMap PlaylistModelPrivate::determineRowGroups(const QModelIndexList
     ParentChildRowMap indexGroups;
 
     QModelIndexList sortedIndexes{indexes};
-    optimiseSelection(model, sortedIndexes);
+    sortedIndexes = optimiseSelection(model, sortedIndexes);
 
     std::ranges::sort(sortedIndexes, cmpTrackIndices);
 
