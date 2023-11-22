@@ -23,7 +23,6 @@
 
 #include <core/track.h>
 
-#include <QModelIndexList>
 #include <QUndoCommand>
 
 namespace Fooyin {
@@ -65,13 +64,13 @@ private:
 class MoveTracks : public PlaylistCommand
 {
 public:
-    explicit MoveTracks(PlaylistModel* model, TrackGroups groups, int row);
+    explicit MoveTracks(PlaylistModel* model, MoveOperation operation);
 
     void undo() override;
     void redo() override;
 
 private:
-    TrackGroups m_trackGroups;
-    int m_row;
+    MoveOperation m_operation;
+    MoveOperation m_undoOperation;
 };
 } // namespace Fooyin

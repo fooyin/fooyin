@@ -22,7 +22,6 @@
 #include "playlist/playlisthistory.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
-#include "playlistmodel.h"
 #include "playlistview.h"
 #include "playlistwidget_p.h"
 #include "presetregistry.h"
@@ -38,14 +37,12 @@
 #include <utils/async.h>
 #include <utils/headerview.h>
 #include <utils/recursiveselectionmodel.h>
-#include <utils/settings/settingsdialogcontroller.h>
 
 #include <QActionGroup>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QMenu>
-#include <QScrollBar>
 
 #include <QCoro/QCoroCore>
 
@@ -149,6 +146,8 @@ void PlaylistWidgetPrivate::setupConnections()
 
     QObject::connect(model, &QAbstractItemModel::modelAboutToBeReset, playlistView, &QAbstractItemView::clearSelection);
     QObject::connect(model, &PlaylistModel::playlistTracksChanged, this, &PlaylistWidgetPrivate::playlistTracksChanged);
+    QObject::connect(model, &PlaylistModel::tracksInserted, this, &PlaylistWidgetPrivate::tracksInserted);
+    QObject::connect(model, &PlaylistModel::tracksMoved, this, &PlaylistWidgetPrivate::tracksMoved);
     QObject::connect(model, &QAbstractItemModel::modelReset, this, &PlaylistWidgetPrivate::resetTree);
     QObject::connect(model, &QAbstractItemModel::rowsInserted, this,
                      [this](const QModelIndex& parent, int first, int last) {
@@ -246,7 +245,7 @@ void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
     }
 }
 
-void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist)
+void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist) const
 {
     model->reset(currentPreset, playlist);
     //    playlistView->setFocus(Qt::ActiveWindowFocusReason);
@@ -278,7 +277,7 @@ void PlaylistWidgetPrivate::setScrollbarHidden(bool showScrollBar) const
     playlistView->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 }
 
-void PlaylistWidgetPrivate::selectionChanged()
+void PlaylistWidgetPrivate::selectionChanged() const
 {
     TrackList tracks;
     int firstIndex{-1};
@@ -339,7 +338,13 @@ void PlaylistWidgetPrivate::playlistTracksChanged(int index) const
     }
 }
 
-void PlaylistWidgetPrivate::tracksRemoved()
+void PlaylistWidgetPrivate::tracksInserted(const TrackGroups& tracks) const
+{
+    auto* insertCmd = new InsertTracks(model, tracks);
+    playlistController->addToHistory(insertCmd);
+}
+
+void PlaylistWidgetPrivate::tracksRemoved() const
 {
     const auto selected = playlistView->selectionModel()->selectedIndexes();
 
@@ -365,7 +370,13 @@ void PlaylistWidgetPrivate::tracksRemoved()
     }
 }
 
-void PlaylistWidgetPrivate::playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index)
+void PlaylistWidgetPrivate::tracksMoved(const MoveOperation& operation) const
+{
+    auto* moveCmd = new MoveTracks(model, operation);
+    playlistController->addToHistory(moveCmd);
+}
+
+void PlaylistWidgetPrivate::playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const
 {
     if(playlistController->currentPlaylist() == playlist) {
         auto* insertCmd = new InsertTracks(model, {{index, tracks}});

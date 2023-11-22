@@ -21,8 +21,6 @@
 
 #include "playlistmodel.h"
 
-#include <stack>
-
 namespace Fooyin {
 PlaylistCommand::PlaylistCommand(PlaylistModel* model)
     : QUndoCommand{nullptr}
@@ -59,16 +57,18 @@ void RemoveTracks::redo()
     m_model->removeTracks(m_trackGroups);
 }
 
-MoveTracks::MoveTracks(PlaylistModel* model, TrackGroups groups, int row)
+MoveTracks::MoveTracks(PlaylistModel* model, MoveOperation operation)
     : PlaylistCommand{model}
-    , m_trackGroups{std::move(groups)}
-    , m_row{row}
+    , m_operation{std::move(operation)}
+{ }
+
+void MoveTracks::undo()
 {
-    Q_UNUSED(m_row)
+    m_model->moveTracks(m_undoOperation);
 }
 
-void MoveTracks::undo() { }
-
-void MoveTracks::redo() { }
-
+void MoveTracks::redo()
+{
+    m_undoOperation = m_model->moveTracks(m_operation);
+}
 } // namespace Fooyin

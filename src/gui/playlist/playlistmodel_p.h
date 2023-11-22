@@ -19,11 +19,14 @@
 
 #pragma once
 
+#include "playlistmodel.h"
 #include "playlistpopulator.h"
 
 #include <QModelIndexList>
 #include <QPixmap>
 #include <QThread>
+
+#include <set>
 
 namespace Fooyin {
 class SettingsManager;
@@ -60,33 +63,20 @@ struct cmpIndexes
     }
 };
 
-struct IndexRange
-{
-    int first{0};
-    int last{0};
-
-    [[nodiscard]] int count() const
-    {
-        return last - first + 1;
-    }
-};
-
 struct TrackIndexResult
 {
     QModelIndex index;
     bool endOfPlaylist{false};
 };
 
-using ParentChildIndexMap     = std::vector<std::vector<QModelIndex>>;
-using ParentChildRowMap       = std::vector<std::pair<QModelIndex, std::vector<IndexRange>>>;
-using ParentChildItemGroupMap = std::vector<std::pair<QModelIndex, std::vector<std::vector<PlaylistItem*>>>>;
-using ParentChildItemMap      = std::vector<std::pair<QModelIndex, std::vector<PlaylistItem*>>>;
-
-struct MergeResult
+struct TrackItemResult
 {
-    QModelIndex fullMergeTarget;
-    QModelIndex partMergeTarget;
+    PlaylistItem* item;
+    bool endOfPlaylist{false};
 };
+
+using ModelIndexSet   = std::set<QModelIndex, cmpIndexes>;
+using IndexGroupsList = std::vector<QModelIndexList>;
 
 class PlaylistModelPrivate
 {
@@ -97,46 +87,39 @@ public:
     void populateTracks(PendingData& data);
     void populateTrackGroup(PendingData& data);
     void updateModel(ItemKeyMap& data);
-    void updateHeaders(const QModelIndexList& headers);
-
-    void beginReset();
+    void updateHeaders(const ModelIndexSet& headers);
 
     QVariant trackData(PlaylistItem* item, int role) const;
     QVariant headerData(PlaylistItem* item, int role) const;
     QVariant subheaderData(PlaylistItem* item, int role) const;
 
     PlaylistItem* itemForKey(const QString& key);
-    PlaylistItem* cloneParent(PlaylistItem* parent);
-    MergeResult canBeMerged(PlaylistItem*& currTarget, int& targetRow, std::vector<PlaylistItem*>& sourceParents,
-                            int targetOffset) const;
 
-    bool handleDrop(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent);
-    QModelIndex handleDiffParentDrop(PlaylistItem* source, PlaylistItem* target, int& row,
-                                     QModelIndexList& headersToUpdate);
+    bool prepareDrop(const QMimeData* data, Qt::DropAction action, int row, int column,
+                     const QModelIndex& parent) const;
+    MoveOperation handleDrop(const MoveOperation& operation);
     void handleExternalDrop(const PendingData& data);
     void handleTrackGroup(const PendingData& data);
-    void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData);
+    void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData) const;
 
     bool insertPlaylistRows(const QModelIndex& target, int firstRow, int lastRow,
-                            const std::vector<PlaylistItem*>& children);
+                            const PlaylistItemList& children) const;
     bool movePlaylistRows(const QModelIndex& source, int firstRow, int lastRow, const QModelIndex& target, int row,
-                          const std::vector<PlaylistItem*>& children);
+                          const PlaylistItemList& children) const;
     bool removePlaylistRows(int row, int count, const QModelIndex& parent);
 
-    void cleanupHeaders(const QModelIndexList& headers);
-    void removeEmptyHeaders(QModelIndexList& headers);
-    void mergeHeaders(QModelIndexList& headersToUpdate);
+    void cleanupHeaders(const ModelIndexSet& headers);
+    void removeEmptyHeaders(ModelIndexSet& headers);
+    void mergeHeaders(ModelIndexSet& headersToUpdate);
     void updateTrackIndexes();
     void deleteNodes(PlaylistItem* parent);
 
     void removeTracks(const QModelIndexList& indexes);
     void coverUpdated(const Track& track);
 
-    ParentChildIndexMap determineIndexGroups(const QModelIndexList& indexes);
-    ParentChildRowMap determineRowGroups(const QModelIndexList& indexes);
-    ParentChildItemGroupMap determineItemGroups(PlaylistModel* model, const QModelIndexList& indexes);
-    ParentChildItemMap groupChildren(PlaylistModel* model, const std::vector<PlaylistItem*>& children);
+    static IndexGroupsList determineIndexGroups(const QModelIndexList& indexes);
     TrackIndexResult indexForTrackIndex(int index);
+    TrackItemResult itemForTrackIndex(int index);
 
     PlaylistModel* model;
 

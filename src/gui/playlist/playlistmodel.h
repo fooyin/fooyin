@@ -21,7 +21,6 @@
 
 #include "playlistitem.h"
 
-#include <core/trackfwd.h>
 #include <utils/treemodel.h>
 
 namespace Fooyin {
@@ -31,14 +30,34 @@ enum class PlayState;
 struct PlaylistPreset;
 class PlaylistModelPrivate;
 
-using TrackGroups = std::map<int, std::vector<Track>>;
+using TrackGroups = std::map<int, TrackList>;
+
+struct TrackIndexRange
+{
+    int first{0};
+    int last{0};
+
+    [[nodiscard]] int count() const
+    {
+        return last - first + 1;
+    }
+};
+using TrackIndexRangeList = std::vector<TrackIndexRange>;
+
+struct MoveOperationGroup
+{
+    int index;
+    TrackIndexRangeList tracksToMove;
+};
+
+using MoveOperation = std::vector<MoveOperationGroup>;
 
 class PlaylistModel : public TreeModel<PlaylistItem>
 {
     Q_OBJECT
 
 public:
-    PlaylistModel(SettingsManager* settings, QObject* parent = nullptr);
+    explicit PlaylistModel(SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -58,6 +77,8 @@ public:
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
 
+    MoveOperation moveTracks(const MoveOperation& operation);
+
     void reset(const PlaylistPreset& preset, Playlist* playlist);
 
     QModelIndex indexAtTrackIndex(int index);
@@ -73,6 +94,8 @@ public:
     void tracksChanged();
 
 signals:
+    void tracksInserted(const TrackGroups& groups);
+    void tracksMoved(const MoveOperation& operation);
     void playlistTracksChanged(int index);
 
 public slots:
