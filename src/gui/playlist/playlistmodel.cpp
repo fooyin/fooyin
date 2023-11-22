@@ -235,7 +235,12 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
         return false;
     }
 
-    return p->handleDrop(data, action, row, column, parent);
+    return p->prepareDrop(data, action, row, column, parent);
+}
+
+MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
+{
+    return p->handleDrop(operation);
 }
 
 void PlaylistModel::reset(const PlaylistPreset& preset, Playlist* playlist)
@@ -306,7 +311,7 @@ TrackGroups PlaylistModel::saveTrackGroups(const QModelIndexList& indexes) const
 {
     TrackGroups result;
 
-    const ParentChildIndexMap indexGroups = p->determineIndexGroups(indexes);
+    const IndexGroupsList indexGroups = p->determineIndexGroups(indexes);
 
     for(const auto& group : indexGroups) {
         const int index = group.front().data(Fooyin::PlaylistItem::Role::Index).toInt();

@@ -21,9 +21,7 @@
 
 #include "playlistitemmodels.h"
 
-#include <core/trackfwd.h>
 #include <utils/treeitem.h>
-#include <utils/utils.h>
 
 namespace Fooyin {
 using Data = std::variant<PlaylistTrackItem, PlaylistContainerItem>;
@@ -85,4 +83,5 @@ private:
     int m_indentation;
     int m_index;
 };
+using PlaylistItemList = std::vector<PlaylistItem*>;
 } // namespace Fooyin

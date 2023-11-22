@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "playlistmodel.h"
 #include "playlistpreset.h"
 
 #include <core/player/playermanager.h>
@@ -58,7 +59,7 @@ public:
     void onPresetChanged(const PlaylistPreset& preset);
     void changePreset(const PlaylistPreset& preset);
 
-    void changePlaylist(Playlist* playlist);
+    void changePlaylist(Playlist* playlist) const;
 
     void resetTree() const;
 
@@ -68,10 +69,12 @@ public:
     void setHeaderHidden(bool showHeader) const;
     void setScrollbarHidden(bool showScrollBar) const;
 
-    void selectionChanged();
+    void selectionChanged() const;
     void playlistTracksChanged(int index) const;
-    void tracksRemoved();
-    void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index);
+    void tracksInserted(const TrackGroups& tracks) const;
+    void tracksRemoved() const;
+    void tracksMoved(const MoveOperation& operation) const;
+    void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const;
 
     void customHeaderMenuRequested(QPoint pos);
 
