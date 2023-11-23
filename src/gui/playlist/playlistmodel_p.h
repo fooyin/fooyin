@@ -39,18 +39,23 @@ inline bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2
 {
     QModelIndex item1{index1};
     QModelIndex item2{index2};
+
+    QModelIndexList item1Parents;
+    QModelIndexList item2Parents;
     const QModelIndex root;
 
     while(item1.parent() != item2.parent()) {
         if(item1.parent() != root) {
+            item1Parents.push_back(item1);
             item1 = item1.parent();
         }
         if(item2.parent() != root) {
+            item2Parents.push_back(item2);
             item2 = item2.parent();
         }
     }
     if(item1.row() == item2.row()) {
-        return false;
+        return item1Parents.size() < item2Parents.size();
     }
     return item1.row() < item2.row();
 }
