@@ -29,11 +29,16 @@
 namespace Fooyin::Core {
 QString settingsPath()
 {
-    return Utils::configPath().append(QStringLiteral("/fooyin.conf"));
+    return QDir::cleanPath(Utils::configPath().append(QStringLiteral("/fooyin.conf")));
 }
 
 QString pluginsPath()
 {
     return QDir::cleanPath(QCoreApplication::applicationDirPath() + '/' + RELATIVE_PLUGIN_DIR);
+}
+
+QString userPluginsPath()
+{
+    return QDir::cleanPath(Utils::sharePath("plugins"));
 }
 } // namespace Fooyin::Core

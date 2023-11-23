@@ -29,7 +29,7 @@ class FYCORE_EXPORT PluginManager
 public:
     const PluginInfoMap& allPluginInfo() const;
 
-    void findPlugins(const QString& pluginDir);
+    void findPlugins(const QStringList& pluginDirs);
     void loadPlugins();
 
     template <typename T, typename Function>

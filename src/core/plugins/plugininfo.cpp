@@ -61,7 +61,7 @@ void PluginInfo::load()
     m_plugin = qobject_cast<Plugin*>(m_root);
 
     if(!m_plugin) {
-        m_error = "Plugin " + m_name + " couldn't be loaded";
+        m_error = "Plugin " + m_name + " does not subclass 'Fooyin::Plugin'";
         return;
     }
 

@@ -30,39 +30,43 @@ const PluginInfoMap& PluginManager::allPluginInfo() const
     return m_plugins;
 }
 
-void PluginManager::findPlugins(const QString& pluginDir)
+void PluginManager::findPlugins(const QStringList& pluginDirs)
 {
-    const QDir dir{pluginDir};
-    if(!dir.exists()) {
-        return;
-    }
-
-    const QFileInfoList fileList{dir.entryInfoList()};
-
-    for(const auto& file : fileList) {
-        auto pluginFilename = file.absoluteFilePath();
-
-        if(!QLibrary::isLibrary(pluginFilename)) {
-            continue;
+    for(const QString& pluginDir : pluginDirs) {
+        const QDir dir{pluginDir};
+        if(!dir.exists()) {
+            return;
         }
 
-        auto pluginLoader = std::make_unique<QPluginLoader>(pluginFilename);
-        auto metaData     = pluginLoader->metaData();
+        const QFileInfoList fileList{dir.entryInfoList()};
 
-        if(metaData.isEmpty()) {
-            continue;
+        for(const auto& file : fileList) {
+            auto pluginFilename = file.absoluteFilePath();
+
+            if(!QLibrary::isLibrary(pluginFilename)) {
+                continue;
+            }
+
+            auto pluginLoader = std::make_unique<QPluginLoader>(pluginFilename);
+            auto metaData     = pluginLoader->metaData();
+
+            const QString error = pluginLoader->errorString();
+
+            auto pluginMetadata = metaData.value("MetaData"_L1);
+            auto version        = metaData.value("Version"_L1);
+
+            QString name = pluginMetadata.toObject().value("Name"_L1).toString();
+
+            if(name.isEmpty()) {
+                name = file.fileName();
+            }
+
+            auto* plugin = m_plugins.emplace(name, std::make_unique<PluginInfo>(name, pluginFilename, metaData))
+                               .first->second.get();
+            if(!error.isEmpty()) {
+                plugin->setError(error);
+            }
         }
-
-        auto pluginMetadata = metaData.value("MetaData"_L1);
-        auto version        = metaData.value("Version"_L1);
-
-        auto name = pluginMetadata.toObject().value("Name"_L1);
-
-        if(name.isNull()) {
-            continue;
-        }
-
-        m_plugins.emplace(name.toString(), std::make_unique<PluginInfo>(name.toString(), pluginFilename, metaData));
     }
 }
 
@@ -82,9 +86,6 @@ void PluginManager::loadPlugin(PluginInfo* plugin)
         return;
     }
     plugin->load();
-    if(plugin->hasError()) {
-        qCritical() << plugin->error();
-    }
 }
 
 void PluginManager::unloadPlugins()

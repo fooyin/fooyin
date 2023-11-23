@@ -19,16 +19,22 @@
 
 #include "pluginspage.h"
 
-#include "gui/guiconstants.h"
 #include "pluginsmodel.h"
 
-#include <core/plugins/pluginmanager.h>
-
+#include <core/corepaths.h>
+#include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QApplication>
+#include <QFileDialog>
+#include <QGridLayout>
 #include <QHeaderView>
+#include <QMessageBox>
+#include <QProcess>
+#include <QPushButton>
 #include <QTableView>
-#include <QVBoxLayout>
+
+using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
 class PluginPageWidget : public SettingsPageWidget
@@ -40,16 +46,21 @@ public:
     void reset() override;
 
 private:
+    void installPlugin();
+
     PluginManager* m_pluginManager;
 
     QTableView* m_pluginList;
     PluginsModel* m_model;
+
+    QPushButton* m_installPlugin;
 };
 
 PluginPageWidget::PluginPageWidget(PluginManager* pluginManager)
     : m_pluginManager{pluginManager}
     , m_pluginList{new QTableView(this)}
     , m_model{new PluginsModel(m_pluginManager)}
+    , m_installPlugin{new QPushButton(tr("Install..."), this)}
 {
     m_pluginList->setModel(m_model);
 
@@ -57,13 +68,42 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager)
     m_pluginList->horizontalHeader()->setStretchLastSection(true);
     m_pluginList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(m_pluginList);
+    auto* mainLayout = new QGridLayout(this);
+
+    mainLayout->addWidget(m_pluginList, 0, 0, 1, 2);
+    mainLayout->addWidget(m_installPlugin, 1, 1);
+
+    mainLayout->setColumnStretch(0, 1);
+    mainLayout->setRowStretch(0, 1);
+
+    QObject::connect(m_installPlugin, &QPushButton::pressed, this, &PluginPageWidget::installPlugin);
 }
 
 void PluginPageWidget::apply() { }
 
 void PluginPageWidget::reset() { }
+
+void PluginPageWidget::installPlugin()
+{
+    const QString filename = QFileDialog::getOpenFileName(this, u"Install Plugin"_s, u""_s, u"Fooyin Plugin (*.so)"_s);
+
+    if(filename.isEmpty()) {
+        return;
+    }
+
+    QFile pluginFile{filename};
+    const QFileInfo fileInfo{filename};
+
+    const QString newPlugin = Core::userPluginsPath() + '/' + fileInfo.fileName();
+    pluginFile.copy(newPlugin);
+
+    QMessageBox msg{QMessageBox::Question, tr("Plugin Installed"),
+                    tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
+    if(msg.exec() == QMessageBox::Yes) {
+        QProcess::startDetached(QApplication::applicationFilePath());
+        QApplication::quit();
+    }
+}
 
 PluginPage::PluginPage(SettingsManager* settings, PluginManager* pluginManager)
     : SettingsPage{settings->settingsDialog()}

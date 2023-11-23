@@ -26,4 +26,5 @@ class QString;
 namespace Fooyin::Core {
 FYCORE_EXPORT QString settingsPath();
 FYCORE_EXPORT QString pluginsPath();
+FYCORE_EXPORT QString userPluginsPath();
 } // namespace Fooyin::Core
