@@ -43,7 +43,7 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     auto* quitCommand = m_actionManager->registerAction(quit, Constants::Actions::Exit);
     quitCommand->setDefaultShortcut(QKeySequence::Quit);
     fileMenu->addAction(quitCommand, Actions::Groups::Three);
-    QObject::connect(quit, &QAction::triggered, qApp, &QApplication::quit);
+    QObject::connect(quit, &QAction::triggered, qApp, &QCoreApplication::quit, Qt::QueuedConnection);
 }
 
 } // namespace Fooyin
