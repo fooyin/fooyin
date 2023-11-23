@@ -157,20 +157,18 @@ public:
     void setSort(const QString& sort);
 
 private:
-    FYCORE_EXPORT friend QDataStream& operator<<(QDataStream& stream, const Track& track);
-    FYCORE_EXPORT friend QDataStream& operator>>(QDataStream& stream, Track& track);
-
     struct Private;
     QSharedDataPointer<Private> p;
 };
+using TrackIds     = std::vector<int>;
 using TrackList    = std::vector<Track>;
 using TrackIdMap   = std::unordered_map<int, Track>;
 using TrackPathMap = std::unordered_map<QString, Track>;
-
-size_t qHash(const Track& track);
-FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackList& tracks);
-FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fooyin::TrackList& tracks);
-
-FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const ExtraTags& tags);
-FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, ExtraTags& ExtraTags);
 } // namespace Fooyin
+
+size_t qHash(const Fooyin::Track& track);
+FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& tracks);
+FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fooyin::TrackIds& tracks);
+
+FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::ExtraTags& tags);
+FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fooyin::ExtraTags& ExtraTags);

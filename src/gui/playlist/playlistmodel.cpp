@@ -39,9 +39,9 @@
 #include <queue>
 
 namespace Fooyin {
-PlaylistModel::PlaylistModel(SettingsManager* settings, QObject* parent)
+PlaylistModel::PlaylistModel(MusicLibrary* library, SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<PlaylistModelPrivate>(this, settings)}
+    , p{std::make_unique<PlaylistModelPrivate>(this, library, settings)}
 {
     p->settings->subscribe<Settings::Gui::PlaylistAltColours>(this, [this](bool enabled) {
         p->altColours = enabled;
@@ -198,14 +198,14 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
 
 QStringList PlaylistModel::mimeTypes() const
 {
-    return {Constants::Mime::PlaylistItems, Constants::Mime::TrackList};
+    return {Constants::Mime::PlaylistItems, Constants::Mime::TrackIds};
 }
 
 bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                                     const QModelIndex& parent) const
 {
     if((action == Qt::MoveAction || action == Qt::CopyAction)
-       && (data->hasFormat(Constants::Mime::PlaylistItems) || data->hasFormat(Constants::Mime::TrackList))) {
+       && (data->hasFormat(Constants::Mime::PlaylistItems) || data->hasFormat(Constants::Mime::TrackIds))) {
         return true;
     }
     return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);

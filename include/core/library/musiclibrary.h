@@ -48,6 +48,7 @@ public:
     virtual void rescan()                           = 0;
 
     [[nodiscard]] virtual TrackList tracks() const = 0;
+    [[nodiscard]] virtual TrackList tracksForIds(const TrackIds& ids) const = 0;
 
     virtual void updateTrackMetadata(const TrackList& tracks) = 0;
 

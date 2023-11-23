@@ -19,6 +19,7 @@
 
 #include "playlistmodel_p.h"
 
+#include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <core/playlist/playlist.h>
 #include <gui/coverprovider.h>
@@ -433,26 +434,28 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     QByteArray result;
     QDataStream stream(&result, QIODevice::WriteOnly);
 
-    Fooyin::TrackList tracks;
-    tracks.reserve(indexes.size());
+    Fooyin::TrackIds trackIds;
+    trackIds.reserve(indexes.size());
 
-    std::ranges::transform(indexes, std::back_inserter(tracks), [](const QModelIndex& index) {
-        return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>();
+    std::ranges::transform(indexes, std::back_inserter(trackIds), [](const QModelIndex& index) {
+        return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>().id();
     });
 
-    stream << tracks;
+    stream << trackIds;
 
     return result;
 }
 
-Fooyin::TrackList restoreTracks(QByteArray data)
+Fooyin::TrackList restoreTracks(Fooyin::MusicLibrary* library, QByteArray data)
 {
-    Fooyin::TrackList result;
+    Fooyin::TrackIds ids;
     QDataStream stream(&data, QIODevice::ReadOnly);
 
-    stream >> result;
+    stream >> ids;
 
-    return result;
+    Fooyin::TrackList tracks = library->tracksForIds(ids);
+
+    return tracks;
 }
 
 QByteArray saveIndexes(const QModelIndexList& indexes, Fooyin::Playlist* playlist)
@@ -657,8 +660,9 @@ void updateHeaderChildren(Fooyin::PlaylistItem* header)
 } // namespace
 
 namespace Fooyin {
-PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, SettingsManager* settings)
+PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, MusicLibrary* library, SettingsManager* settings)
     : model{model}
+    , library{library}
     , settings{settings}
     , coverProvider{new CoverProvider(model)}
     , resetting{false}
@@ -920,7 +924,7 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
         return true;
     }
 
-    const TrackList tracks = restoreTracks(data->data(Constants::Mime::TrackList));
+    const TrackList tracks = restoreTracks(library, data->data(Constants::Mime::TrackIds));
     if(tracks.empty()) {
         return false;
     }
@@ -1127,7 +1131,7 @@ void PlaylistModelPrivate::storeMimeData(const QModelIndexList& indexes, QMimeDa
         QModelIndexList sortedIndexes{indexes};
         std::ranges::sort(sortedIndexes, cmpTrackIndices);
         mimeData->setData(Constants::Mime::PlaylistItems, saveIndexes(sortedIndexes, currentPlaylist));
-        mimeData->setData(Constants::Mime::TrackList, saveTracks(sortedIndexes));
+        mimeData->setData(Constants::Mime::TrackIds, saveTracks(sortedIndexes));
     }
 }
 

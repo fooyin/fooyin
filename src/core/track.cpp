@@ -543,115 +543,37 @@ void Track::setSort(const QString& sort)
     p->sort = sort;
 }
 
-size_t qHash(const Track& track)
+} // namespace Fooyin
+
+size_t qHash(const Fooyin::Track& track)
 {
     return qHash(track.filepath());
 }
 
-QDataStream& operator<<(QDataStream& stream, const Track& track)
+QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& trackIds)
 {
-    stream << track.p->libraryId;
-    stream << track.p->enabled;
-    stream << track.p->id;
-    stream << track.p->hash;
-    stream << track.p->filepath;
-    stream << track.p->relativePath;
-    stream << track.p->title;
-    stream << track.p->artists;
-    stream << track.p->album;
-    stream << track.p->albumArtist;
-    stream << track.p->trackNumber;
-    stream << track.p->trackTotal;
-    stream << track.p->discNumber;
-    stream << track.p->discTotal;
-    stream << track.p->genres;
-    stream << track.p->composer;
-    stream << track.p->performer;
-    stream << static_cast<quint64>(track.p->duration);
-    stream << track.p->lyrics;
-    stream << track.p->comment;
-    stream << track.p->date;
-    stream << track.p->year;
-    stream << track.p->coverPath;
-    stream << track.p->extraTags;
-    stream << static_cast<quint64>(track.p->filesize);
-    stream << track.p->bitrate;
-    stream << track.p->sampleRate;
-    stream << track.p->playcount;
-    stream << static_cast<quint64>(track.p->addedTime);
-    stream << static_cast<quint64>(track.p->modifiedTime);
-    stream << track.p->sort;
-    return stream;
-}
-
-QDataStream& operator>>(QDataStream& stream, Track& track)
-{
-    stream >> track.p->libraryId;
-    stream >> track.p->enabled;
-    stream >> track.p->id;
-    stream >> track.p->hash;
-    stream >> track.p->filepath;
-    stream >> track.p->relativePath;
-    stream >> track.p->title;
-    stream >> track.p->artists;
-    stream >> track.p->album;
-    stream >> track.p->albumArtist;
-    stream >> track.p->trackNumber;
-    stream >> track.p->trackTotal;
-    stream >> track.p->discNumber;
-    stream >> track.p->discTotal;
-    stream >> track.p->genres;
-    stream >> track.p->composer;
-    stream >> track.p->performer;
-    quint64 duration;
-    stream >> duration;
-    track.p->duration = duration;
-    stream >> track.p->lyrics;
-    stream >> track.p->comment;
-    stream >> track.p->date;
-    stream >> track.p->year;
-    stream >> track.p->coverPath;
-    stream >> track.p->extraTags;
-    quint64 filesize;
-    stream >> filesize;
-    track.p->filesize = filesize;
-    stream >> track.p->bitrate;
-    stream >> track.p->sampleRate;
-    stream >> track.p->playcount;
-    quint64 addedTime;
-    stream >> addedTime;
-    track.p->addedTime = addedTime;
-    quint64 modifiedTime;
-    stream >> modifiedTime;
-    track.p->modifiedTime = modifiedTime;
-    stream >> track.p->sort;
-    return stream;
-}
-
-QDataStream& operator<<(QDataStream& stream, const TrackList& tracks)
-{
-    stream << static_cast<int>(tracks.size());
-    for(const Fooyin::Track& track : tracks) {
-        stream << track;
+    stream << static_cast<int>(trackIds.size());
+    for(int id : trackIds) {
+        stream << id;
     }
     return stream;
 }
 
-QDataStream& operator>>(QDataStream& stream, TrackList& tracks)
+QDataStream& operator>>(QDataStream& stream, Fooyin::TrackIds& trackIds)
 {
     int size;
     stream >> size;
 
-    tracks.reserve(size);
+    trackIds.reserve(size);
     for(int i{0}; i < size; ++i) {
-        Fooyin::Track track;
-        stream >> track;
-        tracks.push_back(track);
+        int trackId;
+        stream >> trackId;
+        trackIds.push_back(trackId);
     }
     return stream;
 }
 
-QDataStream& operator<<(QDataStream& stream, const ExtraTags& tags)
+QDataStream& operator<<(QDataStream& stream, const Fooyin::ExtraTags& tags)
 {
     stream << static_cast<int>(tags.size());
 
@@ -665,7 +587,7 @@ QDataStream& operator<<(QDataStream& stream, const ExtraTags& tags)
     return stream;
 }
 
-QDataStream& operator>>(QDataStream& stream, ExtraTags& tags)
+QDataStream& operator>>(QDataStream& stream, Fooyin::ExtraTags& tags)
 {
     int size;
     stream >> size;
@@ -682,4 +604,3 @@ QDataStream& operator>>(QDataStream& stream, ExtraTags& tags)
 
     return stream;
 }
-} // namespace Fooyin

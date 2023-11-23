@@ -30,6 +30,7 @@
 
 namespace Fooyin {
 class SettingsManager;
+class MusicLibrary;
 class Playlist;
 class CoverProvider;
 enum class PlayState;
@@ -86,7 +87,7 @@ using IndexGroupsList = std::vector<QModelIndexList>;
 class PlaylistModelPrivate
 {
 public:
-    PlaylistModelPrivate(PlaylistModel* self, SettingsManager* settings);
+    PlaylistModelPrivate(PlaylistModel* self, MusicLibrary* library, SettingsManager* settings);
 
     void populateModel(PendingData& data);
     void populateTracks(PendingData& data);
@@ -128,6 +129,7 @@ public:
 
     PlaylistModel* model;
 
+    MusicLibrary* library;
     SettingsManager* settings;
     CoverProvider* coverProvider;
 

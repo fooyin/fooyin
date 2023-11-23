@@ -122,7 +122,7 @@ constexpr auto Remove          = "Edit.Remove";
 
 namespace Mime {
 constexpr auto PlaylistItems = "application/x-fooyin-playlistitems";
-constexpr auto TrackList     = "application/x-fooyin-tracks";
+constexpr auto TrackIds      = "application/x-fooyin-trackIds";
 } // namespace Mime
 
 namespace Page {

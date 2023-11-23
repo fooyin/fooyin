@@ -99,15 +99,17 @@ Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList&
 
 namespace Fooyin {
 PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager,
-                                             PlaylistController* playlistController, SettingsManager* settings)
+                                             PlaylistController* playlistController, MusicLibrary* library,
+                                             SettingsManager* settings)
     : self{self}
     , actionManager{actionManager}
     , selectionController{playlistController->selectionController()}
+    , library{library}
     , settings{settings}
     , settingsDialog{settings->settingsDialog()}
     , playlistController{playlistController}
     , layout{new QHBoxLayout(self)}
-    , model{new PlaylistModel(settings, self)}
+    , model{new PlaylistModel(library, settings, self)}
     , playlistView{new PlaylistView(self)}
     , header{new HeaderView(Qt::Horizontal, self)}
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
@@ -490,9 +492,9 @@ void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
 }
 
 PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController,
-                               SettingsManager* settings, QWidget* parent)
+                               MusicLibrary* library, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistController, settings)}
+    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistController, library, settings)}
 {
     setObjectName("Playlist");
 }

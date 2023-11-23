@@ -26,13 +26,14 @@ class ActionManager;
 class SettingsManager;
 class PlaylistController;
 class PlaylistWidgetPrivate;
+class MusicLibrary;
 
 class PlaylistWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController,
+    explicit PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController, MusicLibrary* library,
                             SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 

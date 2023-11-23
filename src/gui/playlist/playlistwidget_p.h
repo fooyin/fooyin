@@ -44,6 +44,7 @@ class PlaylistWidget;
 class PlaylistController;
 class PlaylistModel;
 class PlaylistView;
+class MusicLibrary;
 
 class PlaylistWidgetPrivate : public QObject
 {
@@ -51,7 +52,7 @@ class PlaylistWidgetPrivate : public QObject
 
 public:
     PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistController* playlistController,
-                          SettingsManager* settings);
+                          MusicLibrary* library, SettingsManager* settings);
 
     void setupConnections();
     void setupActions();
@@ -92,6 +93,7 @@ public:
 
     ActionManager* actionManager;
     TrackSelectionController* selectionController;
+    MusicLibrary* library;
     SettingsManager* settings;
     SettingsDialogController* settingsDialog;
 

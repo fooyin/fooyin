@@ -249,7 +249,8 @@ struct GuiApplication::Private
             u"Artwork"_s, [this]() { return new CoverWidget(playerManager, &selectionController, mainWindow.get()); });
 
         factory->registerClass<PlaylistWidget>(u"Playlist"_s, [this]() {
-            return new PlaylistWidget(actionManager, playlistController.get(), settingsManager, mainWindow.get());
+            return new PlaylistWidget(actionManager, playlistController.get(), library, settingsManager,
+                                      mainWindow.get());
         });
 
         factory->registerClass<Spacer>(u"Spacer"_s, [this]() { return new Spacer(mainWindow.get()); });

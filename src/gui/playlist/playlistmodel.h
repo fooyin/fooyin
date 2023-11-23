@@ -25,6 +25,7 @@
 
 namespace Fooyin {
 class SettingsManager;
+class MusicLibrary;
 class Playlist;
 enum class PlayState;
 struct PlaylistPreset;
@@ -57,7 +58,7 @@ class PlaylistModel : public TreeModel<PlaylistItem>
     Q_OBJECT
 
 public:
-    explicit PlaylistModel(SettingsManager* settings, QObject* parent = nullptr);
+    explicit PlaylistModel(MusicLibrary* library, SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistModel() override;
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

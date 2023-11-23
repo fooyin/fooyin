@@ -76,14 +76,16 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     QByteArray result;
     QDataStream stream(&result, QIODevice::WriteOnly);
 
-    Fooyin::TrackList tracks;
-    tracks.reserve(indexes.size());
+    Fooyin::TrackIds trackIds;
+    trackIds.reserve(indexes.size());
 
     for(const QModelIndex& index : indexes) {
-        std::ranges::copy(index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>(), std::back_inserter(tracks));
+        const auto tracks = index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>();
+        std::ranges::transform(std::as_const(tracks), std::back_inserter(trackIds),
+                               [](const Fooyin::Track& track) { return track.id(); });
     }
 
-    stream << tracks;
+    stream << trackIds;
 
     return result;
 }
@@ -384,7 +386,7 @@ bool LibraryTreeModel::canFetchMore(const QModelIndex& parent) const
 
 QStringList LibraryTreeModel::mimeTypes() const
 {
-    return {Constants::Mime::TrackList};
+    return {Constants::Mime::TrackIds};
 }
 
 Qt::DropActions LibraryTreeModel::supportedDragActions() const
@@ -395,7 +397,7 @@ Qt::DropActions LibraryTreeModel::supportedDragActions() const
 QMimeData* LibraryTreeModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    mimeData->setData(Constants::Mime::TrackList, saveTracks(indexes));
+    mimeData->setData(Constants::Mime::TrackIds, saveTracks(indexes));
     return mimeData;
 }
 
