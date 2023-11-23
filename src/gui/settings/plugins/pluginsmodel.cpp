@@ -120,7 +120,7 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
     }
 
     if(role == Qt::ToolTipRole) {
-        return item->info()->description();
+        return item->info()->isLoaded() ? item->info()->description() : item->info()->error();
     }
 
     return {};
