@@ -945,7 +945,7 @@ MoveOperation PlaylistModelPrivate::handleDrop(const MoveOperation& operation)
     for(const auto& [index, moveGroups] : moveOpGroups | std::views::reverse) {
         const auto [targetItem, end] = itemForTrackIndex(index);
 
-        int targetRow                  = targetItem->row() + (end ? 1 : 0);
+        const int targetRow            = targetItem->row() + (end ? 1 : 0);
         PlaylistItem* targetParentItem = targetItem->parent();
         QModelIndex targetParent       = model->indexOfItem(targetParentItem);
         const int targetIndex          = targetRow >= targetParentItem->childCount()
@@ -985,13 +985,12 @@ MoveOperation PlaylistModelPrivate::handleDrop(const MoveOperation& operation)
             row = moveRows(model, sourceParent, children, targetParent, row);
             model->endMoveRows();
 
-            headersToCheck.emplace(sourceParent);
-            headersToCheck.emplace(targetParent);
-
             updateTrackIndexes();
             model->rootItem()->resetChildren();
 
             pendingGroups.emplace_back(reverseIndex, children);
+            headersToCheck.emplace(model->indexOfItem(sourceParentItem));
+            headersToCheck.emplace(model->indexOfItem(targetParentItem));
         }
     }
 
