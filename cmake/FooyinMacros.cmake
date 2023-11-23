@@ -25,6 +25,8 @@ function(create_fooyin_plugin name)
         ${ARGN}
     )
 
+    set(CMAKE_AUTOMOC ON)
+
     add_library(${name} MODULE ${LIB_SOURCES})
 
     string(TOLOWER ${name} base_name)
@@ -34,8 +36,6 @@ function(create_fooyin_plugin name)
         PROPERTIES VERSION ${PROJECT_VERSION}
                    EXPORT_NAME ${base_name}
                    OUTPUT_NAME ${base_name}
-                   LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
-                   INSTALL_RPATH ${FOOYIN_PLUGIN_INSTALL_DIR}
     )
 
     target_compile_features(${name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
@@ -47,8 +47,4 @@ function(create_fooyin_plugin name)
                 -Wextra
                 -Wpedantic
     )
-
-    if(NOT CMAKE_SKIP_INSTALL_RULES)
-        install(TARGETS ${name} DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR})
-    endif()
 endfunction()

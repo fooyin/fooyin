@@ -25,3 +25,13 @@ target_link_libraries(
     PRIVATE Fooyin::Core
             ${SDL2_LIBRARIES}
 )
+
+set_target_properties(
+    fooyin_sdl
+    PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
+               INSTALL_RPATH ${FOOYIN_PLUGIN_INSTALL_DIR}
+)
+
+if(NOT CMAKE_SKIP_INSTALL_RULES)
+    install(TARGETS fooyin_sdl DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR})
+endif()
