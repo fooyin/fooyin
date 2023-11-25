@@ -220,9 +220,10 @@ void TagEditorModel::addNewRow()
 {
     TagEditorItem newItem{DefaultFieldText, rootItem(), false};
     newItem.setStatus(TagEditorItem::Added);
-    auto* item = &p->customTags.emplace(DefaultFieldText, newItem).first->second;
 
     const int row = rootItem()->childCount();
+    auto* item    = &p->customTags.emplace(DefaultFieldText + QString::number(row), newItem).first->second;
+
     beginInsertRows({}, row, row);
     rootItem()->appendChild(item);
     endInsertRows();
