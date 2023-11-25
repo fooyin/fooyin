@@ -20,7 +20,7 @@
 #include <core/scripting/scriptscanner.h>
 
 namespace Fooyin {
-bool isLiteral(QChar ch)
+bool isLiteral(const QChar ch)
 {
     switch(ch.cell()) {
         case(ScriptScanner::TokComma):
@@ -57,7 +57,7 @@ ScriptScanner::Token ScriptScanner::scanNext()
 
     const QChar c = advance();
 
-    switch(c.cell()) {
+    switch(c.unicode()) {
         case('('):
             return makeToken(TokLeftParen);
         case(')'):
