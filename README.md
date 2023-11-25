@@ -25,7 +25,7 @@ starting from a blank state or a default layout. _FooScript_ takes this further 
 * [x] Create and manage playlists
 * [x] Plugin system
 * [x] FFmpeg backend
-* [ ] Tag editing
+* [x] Tag editing
 * [ ] Visualisations
 * [ ] Lyrics support
 * [ ] Last.fm integration
