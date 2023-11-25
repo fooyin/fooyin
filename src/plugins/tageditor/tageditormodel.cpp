@@ -230,33 +230,6 @@ void TagEditorModel::addNewRow()
     emit newPendingRow();
 }
 
-void TagEditorModel::removeRow(int row)
-{
-    const QModelIndex& index = this->index(row, 0, {});
-
-    if(!index.isValid()) {
-        return;
-    }
-
-    if(index.data(TagEditorItem::IsDefault).toBool()) {
-        return;
-    }
-
-    auto* item = static_cast<TagEditorItem*>(index.internalPointer());
-    if(item) {
-        if(item->status() == TagEditorItem::Added) {
-            beginRemoveRows({}, row, row);
-            rootItem()->removeChild(row);
-            endRemoveRows();
-            p->customTags.erase(item->name());
-        }
-        else {
-            item->setStatus(TagEditorItem::Removed);
-            emit dataChanged(index, index, {Qt::FontRole});
-        }
-    }
-}
-
 void TagEditorModel::processQueue()
 {
     bool nodeChanged{false};
@@ -461,6 +434,36 @@ Qt::ItemFlags TagEditorModel::flags(const QModelIndex& index) const
     }
 
     return flags;
+}
+
+bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
+{
+    for(int i{row}; i < row + count; ++i) {
+        const QModelIndex& index = this->index(i, 0, {});
+
+        if(!index.isValid()) {
+            return false;
+        }
+
+        if(index.data(TagEditorItem::IsDefault).toBool()) {
+            return false;
+        }
+
+        auto* item = static_cast<TagEditorItem*>(index.internalPointer());
+        if(item) {
+            if(item->status() == TagEditorItem::Added) {
+                beginRemoveRows({}, i, i);
+                rootItem()->removeChild(i);
+                endRemoveRows();
+                p->customTags.erase(item->name());
+            }
+            else {
+                item->setStatus(TagEditorItem::Removed);
+                emit dataChanged(index, index, {Qt::FontRole});
+            }
+        }
+    }
+    return true;
 }
 
 QString TagEditorModel::defaultFieldText() const

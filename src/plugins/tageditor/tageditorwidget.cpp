@@ -55,8 +55,8 @@ void handleNewRow(QTableView* view)
 } // namespace
 
 namespace Fooyin::TagEditor {
-TagEditorView::TagEditorView(QWidget* parent)
-    : ExtendableTableView{parent}
+TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
+    : ExtendableTableView{actionManager, parent}
 { }
 
 int TagEditorView::sizeHintForRow(int row) const
@@ -79,9 +79,6 @@ struct TagEditorWidget::Private
 
     WidgetContext* context;
 
-    QAction* remove;
-    Command* removeCommand;
-
     TagEditorView* view;
     TagEditorModel* model;
 
@@ -92,9 +89,7 @@ struct TagEditorWidget::Private
         , trackSelection{trackSelection}
         , settings{settings}
         , context{new WidgetContext(self, Context{"Context.TagEditor"}, self)}
-        , remove{new QAction(tr("Remove"), self)}
-        , removeCommand{actionManager->registerAction(remove, Constants::Actions::Remove, context->context())}
-        , view{new TagEditorView(self)}
+        , view{new TagEditorView(actionManager, self)}
         , model{new TagEditorModel(settings, self)}
     {
         auto* layout = new QHBoxLayout(self);
@@ -108,7 +103,6 @@ struct TagEditorWidget::Private
         view->verticalHeader()->setVisible(false);
         view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-        removeCommand->setDefaultShortcut(QKeySequence::Delete);
         actionManager->addContextObject(context);
     }
 
@@ -167,13 +161,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TrackSelectionCon
         const bool canRemove           = std::ranges::any_of(std::as_const(selected), [](const QModelIndex& index) {
             return !index.data(TagEditorItem::IsDefault).toBool();
         });
-        p->remove->setEnabled(canRemove);
-    });
-    QObject::connect(p->remove, &QAction::triggered, this, [this]() {
-        const QModelIndexList selected = p->view->selectionModel()->selectedIndexes();
-        for(const QModelIndex& index : selected) {
-            p->model->removeRow(index.row());
-        }
+        p->view->removeAction()->setEnabled(canRemove);
     });
 
     if(trackSelection->hasTracks()) {
@@ -203,15 +191,7 @@ void TagEditorWidget::apply()
     p->model->processQueue();
 }
 
-void TagEditorWidget::contextMenuEvent(QContextMenuEvent* event)
-{
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    menu->addAction(p->removeCommand->action());
-
-    menu->popup(event->globalPos());
-}
+void TagEditorWidget::contextMenuEvent(QContextMenuEvent* /*event*/) { }
 } // namespace Fooyin::TagEditor
 
 #include "moc_tageditorwidget.cpp"

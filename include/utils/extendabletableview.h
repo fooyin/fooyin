@@ -24,24 +24,38 @@
 #include <QTableView>
 
 namespace Fooyin {
+class ActionManager;
+class WidgetContext;
+class Command;
+
 class FYUTILS_EXPORT ExtendableTableView : public QTableView
 {
     Q_OBJECT
 
 public:
-    explicit ExtendableTableView(QWidget* parent = nullptr);
+    explicit ExtendableTableView(ActionManager* actionManager, QWidget* parent = nullptr);
 
     void rowAdded();
+
+    [[nodiscard]] QAction* removeAction() const;
+
+    virtual void addContextActions(QMenu* menu);
 
 signals:
     void newRowClicked();
 
 protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    ActionManager* m_actionManager;
+    WidgetContext* m_context;
+    QAction* m_remove;
+    Command* m_removeCommand;
+
     QRect m_buttonRect;
     bool m_mouseOverButton;
     bool m_pendingRow;

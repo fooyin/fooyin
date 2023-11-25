@@ -19,6 +19,11 @@
 
 #include <utils/extendabletableview.h>
 
+#include <gui/guiconstants.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
+
+#include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QTextEdit>
@@ -26,17 +31,50 @@
 constexpr auto ButtonText = "+ add new";
 
 namespace Fooyin {
-ExtendableTableView::ExtendableTableView(QWidget* parent)
+ExtendableTableView::ExtendableTableView(ActionManager* actionManager, QWidget* parent)
     : QTableView{parent}
+    , m_actionManager{actionManager}
+    , m_context{new WidgetContext(this, Context{"Context.ExtendableTableView"}, this)}
+    , m_remove{new QAction(tr("Remove"), this)}
+    , m_removeCommand{m_actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}
     , m_mouseOverButton{false}
     , m_pendingRow{false}
 {
     setMouseTracking(true);
+
+    m_removeCommand->setDefaultShortcut(QKeySequence::Delete);
+    m_actionManager->addContextObject(m_context);
+
+    QObject::connect(m_remove, &QAction::triggered, this, [this]() {
+        const QModelIndexList selected = selectionModel()->selectedIndexes();
+        for(const QModelIndex& index : selected) {
+            model()->removeRow(index.row());
+        }
+    });
 }
 
 void ExtendableTableView::rowAdded()
 {
     m_pendingRow = false;
+}
+
+QAction* ExtendableTableView::removeAction() const
+{
+    return m_remove;
+}
+
+void ExtendableTableView::addContextActions(QMenu* /*menu*/) { }
+
+void ExtendableTableView::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    addContextActions(menu);
+    menu->addSeparator();
+    menu->addAction(m_removeCommand->action());
+
+    menu->popup(event->globalPos());
 }
 
 void ExtendableTableView::mouseMoveEvent(QMouseEvent* event)
