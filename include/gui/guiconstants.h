@@ -136,6 +136,7 @@ constexpr auto PlaylistInterface     = "Fooyin.Page.Playlist.Interface";
 constexpr auto PlaylistPresets       = "Fooyin.Page.Playlist.Presets";
 constexpr auto LibraryTreeGeneral    = "Fooyin.Page.Widgets.LibraryTree.General";
 constexpr auto LibraryTreeAppearance = "Fooyin.Page.Widgets.LibraryTree.Appearance";
+constexpr auto StatusWidget          = "Fooyin.Page.Widgets.Status";
 constexpr auto Plugins               = "Fooyin.Page.Plugins";
 constexpr auto Shortcuts             = "Fooyin.Page.Shortcuts";
 } // namespace Page

@@ -105,6 +105,7 @@ set(SOURCES
     settings/playlist/playlistpresetspage.cpp
     settings/shortcuts/shortcutsmodel.cpp
     settings/shortcuts/shortcutspage.cpp
+    settings/widgets/statuswidgetpage.cpp
     widgets/dummy.cpp
     widgets/spacer.cpp
     widgets/customisableinput.cpp

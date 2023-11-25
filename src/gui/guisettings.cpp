@@ -64,6 +64,9 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Settings::Gui::CursorFollowsPlayback>(false, u"Playlist"_s);
     m_settings->createSetting<Settings::Gui::PlaybackFollowsCursor>(false, u"Playlist"_s);
     m_settings->createSetting<Settings::Gui::PlaylistTabsSingleHide>(false, u"PlaylistTabs"_s);
+    m_settings->createSetting<Settings::Gui::StatusPlayingScript>(
+        "[$num(%track%,2). ][%title% ($timems(%duration%))][ \u2022 %albumartist%][ \u2022 %album%]",
+        u"StatusWidget"_s);
 
     m_settings->loadSettings();
     m_libraryTreeGroupRegistry->loadItems();

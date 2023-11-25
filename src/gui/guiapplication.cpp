@@ -50,6 +50,7 @@
 #include "settings/playlist/playlistpresetspage.h"
 #include "settings/plugins/pluginspage.h"
 #include "settings/shortcuts/shortcutspage.h"
+#include "settings/widgets/statuswidgetpage.h"
 #include "widgets/spacer.h"
 #include "widgets/tabstackwidget.h"
 
@@ -116,6 +117,7 @@ struct GuiApplication::Private
     EnginePage enginePage;
     LibraryTreePage libraryTreePage;
     LibraryTreeGuiPage libraryTreeGuiPage;
+    StatusWidgetPage statusWidgetPage;
     PluginPage pluginPage;
 
     GuiPluginContext guiPluginContext;
@@ -159,6 +161,7 @@ struct GuiApplication::Private
         , enginePage{settingsManager, engineHandler}
         , libraryTreePage{guiSettings.libraryTreeGroupRegistry(), settingsManager}
         , libraryTreeGuiPage{settingsManager}
+        , statusWidgetPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
         , guiPluginContext{actionManager,     &layoutProvider,  &selectionController,
                            &searchController, propertiesDialog, widgetProvider.widgetFactory(),

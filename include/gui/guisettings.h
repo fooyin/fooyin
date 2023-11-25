@@ -64,6 +64,7 @@ enum Settings : uint32_t
     CursorFollowsPlayback      = 28 | SettingsType::Bool,
     PlaybackFollowsCursor      = 29 | SettingsType::Bool,
     PlaylistTabsSingleHide     = 30 | SettingsType::Bool,
+    StatusPlayingScript        = 31 | SettingsType::String,
 };
 Q_ENUM_NS(Settings)
 } // namespace Settings::Gui

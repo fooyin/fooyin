@@ -21,6 +21,8 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
+#include <core/scripting/scriptparser.h>
+#include <core/scripting/scriptregistry.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -44,6 +46,9 @@ struct StatusWidget::Private
     PlayerManager* playerManager;
     SettingsManager* settings;
 
+    ScriptRegistry scriptRegistry;
+    ScriptParser scriptParser;
+
     ClickableLabel* iconLabel;
     QPixmap icon;
     ClickableLabel* playing;
@@ -53,10 +58,13 @@ struct StatusWidget::Private
         , library{library}
         , playerManager{playerManager}
         , settings{settings}
+        , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
         , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
         , playing{new ClickableLabel(self)}
-    { }
+    {
+        scriptParser.parse(settings->value<Settings::Gui::StatusPlayingScript>());
+    }
 
     void labelClicked() const
     {
@@ -66,17 +74,13 @@ struct StatusWidget::Private
         }
     }
 
-    // TODO: Make scriptable
-    void updatePlayingText() const
+    void updatePlayingText()
     {
-        const Track track         = playerManager->currentTrack();
-        const QString playingText = Utils::addLeadingZero(track.trackNumber(), 2) + ". " + track.title() + "("
-                                  + Utils::msToString(track.duration()) + ")" + " \u2022 " + track.albumArtist()
-                                  + " \u2022 " + track.album();
-        playing->setText(playingText);
+        scriptRegistry.changeCurrentTrack(playerManager->currentTrack());
+        playing->setText(scriptParser.evaluate());
     }
 
-    void stateChanged(PlayState state) const
+    void stateChanged(const PlayState state)
     {
         switch(state) {
             case(PlayState::Stopped):
@@ -131,6 +135,11 @@ StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         p->icon = QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
         p->iconLabel->setPixmap(p->icon);
+    });
+
+    settings->subscribe<Settings::Gui::StatusPlayingScript>(this, [this](const QString& script) {
+        p->scriptParser.parse(script);
+        p->updatePlayingText();
     });
 }
 
