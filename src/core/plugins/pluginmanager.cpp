@@ -25,6 +25,8 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
+PluginManager::PluginManager() = default;
+
 const PluginInfoMap& PluginManager::allPluginInfo() const
 {
     return m_plugins;

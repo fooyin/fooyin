@@ -27,6 +27,8 @@ using PluginInfoMap = std::unordered_map<QString, std::unique_ptr<PluginInfo>>;
 class FYCORE_EXPORT PluginManager
 {
 public:
+    PluginManager();
+
     const PluginInfoMap& allPluginInfo() const;
 
     void findPlugins(const QStringList& pluginDirs);
@@ -49,6 +51,9 @@ public:
     void shutdown();
 
 private:
+    PluginManager(const PluginManager& other) = delete;
+    PluginManager& operator=(const PluginManager& other) = delete;
+
     PluginInfoMap m_plugins;
 };
 } // namespace Fooyin
