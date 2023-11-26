@@ -24,6 +24,7 @@
 #include "sortingmodel.h"
 
 #include <core/coresettings.h>
+#include <utils/multilinedelegate.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHeaderView>
@@ -57,6 +58,7 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     , m_model{new SortingModel(m_sortRegistry, this)}
 {
     m_sortList->setExtendableModel(m_model);
+    m_sortList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));
 
     // Hide index column
     m_sortList->hideColumn(0);
