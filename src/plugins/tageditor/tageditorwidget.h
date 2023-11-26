@@ -39,6 +39,8 @@ class TagEditorView : public ExtendableTableView
 public:
     explicit TagEditorView(ActionManager* actionManager, QWidget* parent = nullptr);
 
+    void handleNewRow() override;
+
     [[nodiscard]] int sizeHintForRow(int row) const override;
 };
 

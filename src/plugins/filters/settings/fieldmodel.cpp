@@ -23,78 +23,89 @@
 
 #include <QFont>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fooyin::Filters {
-FieldItem::FieldItem()
-    : FieldItem{{}, nullptr}
-{ }
-
-FieldItem::FieldItem(FilterField field, FieldItem* parent)
-    : TreeStatusItem{parent}
-    , m_field{std::move(field)}
-{ }
-
-FilterField FieldItem::field() const
+class FieldItem : public TreeStatusItem<FieldItem>
 {
-    return m_field;
-}
+public:
+    FieldItem()
+        : FieldItem{{}, nullptr}
+    { }
 
-void FieldItem::changeField(const FilterField& field)
+    explicit FieldItem(FilterField field, FieldItem* parent)
+        : TreeStatusItem{parent}
+        , m_field{std::move(field)}
+    { }
+
+    [[nodiscard]] FilterField field() const
+    {
+        return m_field;
+    }
+
+    void changeField(const FilterField& field)
+    {
+        m_field = field;
+    }
+
+private:
+    FilterField m_field;
+};
+
+struct FieldModel::Private
 {
-    m_field = field;
-}
+    FieldRegistry* fieldsRegistry;
+    std::map<int, FieldItem> nodes;
+    FieldItem root;
+
+    explicit Private(FieldRegistry* fieldsRegistry)
+        : fieldsRegistry{fieldsRegistry}
+    { }
+
+    void removeField(int index)
+    {
+        if(nodes.contains(index)) {
+            nodes.erase(index);
+        }
+    }
+};
 
 FieldModel::FieldModel(FieldRegistry* fieldsRegistry, QObject* parent)
-    : TableModel{parent}
-    , m_fieldsRegistry{fieldsRegistry}
+    : ExtendableTableModel{parent}
+    , p{std::make_unique<Private>(fieldsRegistry)}
 { }
+
+FieldModel::~FieldModel() = default;
 
 void FieldModel::populate()
 {
     beginResetModel();
-    reset();
+    p->root = {};
+    p->nodes.clear();
 
-    const auto& fields = m_fieldsRegistry->items();
+    const auto& fields = p->fieldsRegistry->items();
 
     for(const auto& [index, field] : fields) {
         if(field.name.isEmpty()) {
             continue;
         }
-        FieldItem* parent = rootItem();
-        FieldItem* child  = &m_nodes.emplace(index, FieldItem{field, parent}).first->second;
-        parent->insertChild(index, child);
+        FieldItem* child = &p->nodes.emplace(index, FieldItem{field, &p->root}).first->second;
+        p->root.insertChild(index, child);
     }
 
     endResetModel();
 }
 
-void FieldModel::addNewField()
+void FieldModel::markForRemoval(int row)
 {
-    const int index = static_cast<int>(m_nodes.size());
-
-    FilterField field;
-    field.index = index;
-
-    FieldItem* parent = rootItem();
-    FieldItem* item   = &m_nodes.emplace(index, FieldItem{field, parent}).first->second;
-
-    item->setStatus(FieldItem::Added);
-
-    const int row = parent->childCount();
-    beginInsertRows({}, row, row);
-    parent->appendChild(item);
-    endInsertRows();
-}
-
-void FieldModel::markForRemoval(const FilterField& field)
-{
-    FieldItem* item = &m_nodes.at(field.index);
+    FieldItem* item = p->root.child(row);
 
     if(item->status() == FieldItem::Added) {
         beginRemoveRows({}, item->row(), item->row());
-        rootItem()->removeChild(item->row());
+        p->root.removeChild(item->row());
         endRemoveRows();
 
-        removeField(field.index);
+        p->removeField(row);
     }
     else {
         item->setStatus(FieldItem::Removed);
@@ -102,30 +113,21 @@ void FieldModel::markForRemoval(const FilterField& field)
     }
 }
 
-void FieldModel::markForChange(const FilterField& field)
-{
-    FieldItem* item = &m_nodes.at(field.index);
-
-    item->changeField(field);
-    const QModelIndex index = indexOfItem(item);
-    emit dataChanged(index, index, {Qt::DisplayRole});
-
-    if(item->status() == FieldItem::None) {
-        item->setStatus(FieldItem::Changed);
-    }
-}
-
 void FieldModel::processQueue()
 {
     std::vector<int> fieldsToRemove;
 
-    for(auto& [index, node] : m_nodes) {
+    for(auto& [index, node] : p->nodes) {
         const FieldItem::ItemStatus status = node.status();
         const FilterField field            = node.field();
 
         switch(status) {
             case(FieldItem::Added): {
-                const FilterField addedField = m_fieldsRegistry->addItem(field);
+                if(field.field.isEmpty()) {
+                    break;
+                }
+
+                const FilterField addedField = p->fieldsRegistry->addItem(field);
                 if(addedField.isValid()) {
                     node.changeField(addedField);
                     node.setStatus(FieldItem::None);
@@ -138,9 +140,9 @@ void FieldModel::processQueue()
                 break;
             }
             case(FieldItem::Removed): {
-                if(m_fieldsRegistry->removeByIndex(field.index)) {
+                if(p->fieldsRegistry->removeByIndex(field.index)) {
                     beginRemoveRows({}, node.row(), node.row());
-                    rootItem()->removeChild(node.row());
+                    p->root.removeChild(node.row());
                     endRemoveRows();
                     fieldsToRemove.push_back(index);
                 }
@@ -150,8 +152,8 @@ void FieldModel::processQueue()
                 break;
             }
             case(FieldItem::Changed): {
-                if(m_fieldsRegistry->changeItem(field)) {
-                    node.changeField(m_fieldsRegistry->itemById(field.id));
+                if(p->fieldsRegistry->changeItem(field)) {
+                    node.changeField(p->fieldsRegistry->itemById(field.id));
                     node.setStatus(FieldItem::None);
 
                     emit dataChanged({}, {});
@@ -166,7 +168,7 @@ void FieldModel::processQueue()
         }
     }
     for(const auto& index : fieldsToRemove) {
-        removeField(index);
+        p->removeField(index);
     }
 }
 
@@ -176,7 +178,7 @@ Qt::ItemFlags FieldModel::flags(const QModelIndex& index) const
         return Qt::NoItemFlags;
     }
 
-    auto flags = TableModel::flags(index);
+    auto flags = ExtendableTableModel::flags(index);
     flags |= Qt::ItemIsEditable;
 
     return flags;
@@ -247,16 +249,20 @@ bool FieldModel::setData(const QModelIndex& index, const QVariant& value, int ro
         return false;
     }
 
-    const auto* item  = static_cast<FieldItem*>(index.internalPointer());
-    const int col     = index.column();
+    auto* item        = static_cast<FieldItem*>(index.internalPointer());
     FilterField field = item->field();
 
-    switch(col) {
+    switch(index.column()) {
         case(1): {
-            if(field.name == value.toString()) {
+            if(value.toString() == "<enter name here>"_L1 || field.name == value.toString()) {
+                if(item->status() == FieldItem::Added) {
+                    emit pendingRowCancelled();
+                }
                 return false;
             }
             field.name = value.toString();
+
+            emit pendingRowAdded();
             break;
         }
         case(2): {
@@ -277,9 +283,30 @@ bool FieldModel::setData(const QModelIndex& index, const QVariant& value, int ro
             break;
     }
 
-    markForChange(field);
+    item->changeField(field);
+    emit dataChanged(index, index, {Qt::DisplayRole});
+
+    if(item->status() == FieldItem::None) {
+        item->setStatus(FieldItem::Changed);
+    }
 
     return true;
+}
+
+QModelIndex FieldModel::index(int row, int column, const QModelIndex& parent) const
+{
+    if(!hasIndex(row, column, parent)) {
+        return {};
+    }
+
+    FieldItem* item = p->root.child(row);
+
+    return createIndex(row, column, item);
+}
+
+int FieldModel::rowCount(const QModelIndex& /*parent*/) const
+{
+    return p->root.childCount();
 }
 
 int FieldModel::columnCount(const QModelIndex& /*parent*/) const
@@ -287,16 +314,56 @@ int FieldModel::columnCount(const QModelIndex& /*parent*/) const
     return 4;
 }
 
-void FieldModel::reset()
+bool FieldModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
 {
-    resetRoot();
-    m_nodes.clear();
+    for(int i{row}; i < row + count; ++i) {
+        const QModelIndex& index = this->index(i, 0, {});
+
+        if(!index.isValid()) {
+            return false;
+        }
+
+        auto* item = static_cast<FieldItem*>(index.internalPointer());
+        if(item) {
+            if(item->status() == FieldItem::Added) {
+                beginRemoveRows({}, i, i);
+                p->root.removeChild(i);
+                endRemoveRows();
+                p->nodes.erase(item->field().index);
+            }
+            else {
+                item->setStatus(FieldItem::Removed);
+                emit dataChanged(index, index, {Qt::FontRole});
+            }
+        }
+    }
+    return true;
 }
 
-void FieldModel::removeField(int index)
+void FieldModel::addPendingRow()
 {
-    if(m_nodes.contains(index)) {
-        m_nodes.erase(index);
-    }
+    const int index = static_cast<int>(p->nodes.size());
+
+    FilterField field;
+    field.index = index;
+
+    FieldItem* item = &p->nodes.emplace(index, FieldItem{field, &p->root}).first->second;
+
+    item->setStatus(FieldItem::Added);
+
+    const int row = p->root.childCount();
+    beginInsertRows({}, row, row);
+    p->root.appendChild(item);
+    endInsertRows();
+
+    emit newPendingRow();
+}
+
+void FieldModel::removePendingRow()
+{
+    const int row = rowCount({}) - 1;
+    beginRemoveRows({}, row, row);
+    p->root.removeChild(row);
+    endRemoveRows();
 }
 } // namespace Fooyin::Filters

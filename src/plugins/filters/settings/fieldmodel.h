@@ -19,51 +19,41 @@
 
 #pragma once
 
-#include "filterfwd.h"
-
+#include <utils/extendabletableview.h>
 #include <utils/tablemodel.h>
 #include <utils/treestatusitem.h>
 
 namespace Fooyin::Filters {
 class FieldRegistry;
+class FieldItem;
 
-class FieldItem : public TreeStatusItem<FieldItem>
+class FieldModel : public ExtendableTableModel
 {
-public:
-    FieldItem();
-    explicit FieldItem(FilterField field, FieldItem* parent);
+    Q_OBJECT
 
-    [[nodiscard]] FilterField field() const;
-    void changeField(const FilterField& field);
-
-private:
-    FilterField m_field;
-};
-
-class FieldModel : public TableModel<FieldItem>
-{
 public:
     explicit FieldModel(FieldRegistry* fieldsRegistry, QObject* parent = nullptr);
+    ~FieldModel() override;
 
     void populate();
-    void addNewField();
-    void markForRemoval(const FilterField& field);
-    void markForChange(const FilterField& field);
+    void markForRemoval(int row);
     void processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
+    [[nodiscard]] bool removeRows(int row, int count, const QModelIndex& parent) override;
+
+    void addPendingRow() override;
+    void removePendingRow() override;
+
 private:
-    void reset();
-    void removeField(int index);
-
-    using FieldItemMap = std::map<int, FieldItem>;
-
-    FieldRegistry* m_fieldsRegistry;
-    FieldItemMap m_nodes;
+    struct Private;
+    std::unique_ptr<Private>p;
 };
 } // namespace Fooyin::Filters

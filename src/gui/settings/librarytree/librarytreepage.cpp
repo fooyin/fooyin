@@ -41,19 +41,17 @@ namespace Fooyin {
 class LibraryTreePageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibraryTreePageWidget(LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings);
+    explicit LibraryTreePageWidget(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
+                                   SettingsManager* settings);
 
     void apply() override;
     void reset() override;
 
 private:
-    void addGroup() const;
-    void removeGroup() const;
-
     LibraryTreeGroupRegistry* m_groupsRegistry;
     SettingsManager* m_settings;
 
-    QTableView* m_groupList;
+    ExtendableTableView* m_groupList;
     LibraryTreeGroupModel* m_model;
 
     QComboBox* m_middleClick;
@@ -64,10 +62,11 @@ private:
     QLineEdit* m_playlistName;
 };
 
-LibraryTreePageWidget::LibraryTreePageWidget(LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings)
+LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
+                                             SettingsManager* settings)
     : m_groupsRegistry{groupsRegistry}
     , m_settings{settings}
-    , m_groupList{new QTableView(this)}
+    , m_groupList{new ExtendableTableView(actionManager, this)}
     , m_model{new LibraryTreeGroupModel(m_groupsRegistry, this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
@@ -75,28 +74,18 @@ LibraryTreePageWidget::LibraryTreePageWidget(LibraryTreeGroupRegistry* groupsReg
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
     , m_playlistName{new QLineEdit(this)}
 {
-    m_model->populate();
-    m_groupList->setModel(m_model);
+    m_groupList->setExtendableModel(m_model);
 
-    auto* delegate = new MultiLineEditDelegate(this);
-    m_groupList->setItemDelegateForColumn(2, delegate);
+    m_groupList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));
 
     // Hide index column
     m_groupList->hideColumn(0);
 
+    m_groupList->setExtendableColumn(1);
     m_groupList->verticalHeader()->hide();
     m_groupList->horizontalHeader()->setStretchLastSection(true);
+    m_groupList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_groupList->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-    auto* buttonsLayout = new QVBoxLayout();
-    buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-
-    auto* addButton    = new QPushButton(tr("Add"), this);
-    auto* removeButton = new QPushButton(tr("Remove"), this);
-
-    buttonsLayout->addWidget(addButton);
-    buttonsLayout->addWidget(removeButton);
-    buttonsLayout->addStretch();
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -123,7 +112,6 @@ LibraryTreePageWidget::LibraryTreePageWidget(LibraryTreeGroupRegistry* groupsReg
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_groupList, 0, 0, 1, 3);
-    mainLayout->addLayout(buttonsLayout, 0, 3);
     mainLayout->addWidget(clickBehaviour, 1, 0);
     mainLayout->addWidget(selectionPlaylist, 1, 1);
 
@@ -149,9 +137,6 @@ LibraryTreePageWidget::LibraryTreePageWidget(LibraryTreeGroupRegistry* groupsReg
     addTrackAction(m_middleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, middleActions);
     addTrackAction(m_middleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, middleActions);
 
-    QObject::connect(addButton, &QPushButton::clicked, this, &LibraryTreePageWidget::addGroup);
-    QObject::connect(removeButton, &QPushButton::clicked, this, &LibraryTreePageWidget::removeGroup);
-
     auto doubleAction = m_settings->value<Settings::Gui::LibraryTreeDoubleClick>();
     if(doubleActions.contains(doubleAction)) {
         m_doubleClick->setCurrentIndex(doubleActions.at(doubleAction));
@@ -173,6 +158,8 @@ LibraryTreePageWidget::LibraryTreePageWidget(LibraryTreeGroupRegistry* groupsReg
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
 
     m_playlistName->setText(m_settings->value<Settings::Gui::LibraryTreeAutoPlaylist>());
+
+    m_model->populate();
 }
 
 void LibraryTreePageWidget::apply()
@@ -198,26 +185,15 @@ void LibraryTreePageWidget::reset()
     m_model->populate();
 }
 
-void LibraryTreePageWidget::addGroup() const
-{
-    m_model->addNewGroup();
-}
-
-void LibraryTreePageWidget::removeGroup() const
-{
-    const auto selectedItems = m_groupList->selectionModel()->selectedRows();
-    for(const auto& selected : selectedItems) {
-        const auto* item = static_cast<LibraryTreeGroupItem*>(selected.internalPointer());
-        m_model->markForRemoval(item->group());
-    }
-}
-
-LibraryTreePage::LibraryTreePage(LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings)
+LibraryTreePage::LibraryTreePage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
+                                 SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryTreeGeneral);
     setName(tr("General"));
     setCategory({tr("Widgets"), tr("Library Tree")});
-    setWidgetCreator([groupsRegistry, settings] { return new LibraryTreePageWidget(groupsRegistry, settings); });
+    setWidgetCreator([actionManager, groupsRegistry, settings] {
+        return new LibraryTreePageWidget(actionManager, groupsRegistry, settings);
+    });
 }
 } // namespace Fooyin

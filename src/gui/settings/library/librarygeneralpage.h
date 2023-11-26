@@ -22,12 +22,13 @@
 #include <utils/settings/settingspage.h>
 
 namespace Fooyin {
+class ActionManager;
 class SettingsManager;
 class LibraryManager;
 
 class LibraryGeneralPage : public SettingsPage
 {
 public:
-    LibraryGeneralPage(LibraryManager* libraryManager, SettingsManager* settings);
+    LibraryGeneralPage(ActionManager* actionManager, LibraryManager* libraryManager, SettingsManager* settings);
 };
 } // namespace Fooyin

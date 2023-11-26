@@ -24,6 +24,7 @@
 #include "fieldregistry.h"
 #include "filtersettings.h"
 
+#include <utils/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHeaderView>
@@ -35,57 +36,44 @@ namespace Fooyin::Filters {
 class FiltersFieldsPageWidget : public SettingsPageWidget
 {
 public:
-    explicit FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry, SettingsManager* settings);
+    explicit FiltersFieldsPageWidget(ActionManager* actionManager, FieldRegistry* fieldsRegistry,
+                                     SettingsManager* settings);
 
     void apply() override;
     void reset() override;
 
 private:
-    void addField() const;
-    void removeField() const;
-
+    ActionManager* m_actionManager;
     FieldRegistry* m_fieldsRegistry;
     SettingsManager* m_settings;
 
-    QTableView* m_fieldList;
+    ExtendableTableView* m_fieldList;
     FieldModel* m_model;
 };
 
-FiltersFieldsPageWidget::FiltersFieldsPageWidget(FieldRegistry* fieldsRegistry, SettingsManager* settings)
-    : m_fieldsRegistry{fieldsRegistry}
+FiltersFieldsPageWidget::FiltersFieldsPageWidget(ActionManager* actionManager, FieldRegistry* fieldsRegistry,
+                                                 SettingsManager* settings)
+    : m_actionManager{actionManager}
+    , m_fieldsRegistry{fieldsRegistry}
     , m_settings{settings}
-    , m_fieldList{new QTableView(this)}
+    , m_fieldList{new ExtendableTableView(m_actionManager, this)}
     , m_model{new FieldModel(m_fieldsRegistry, this)}
 {
-    m_model->populate();
-    m_fieldList->setModel(m_model);
+    m_fieldList->setExtendableModel(m_model);
 
     // Hide index column
     m_fieldList->hideColumn(0);
 
+    m_fieldList->setExtendableColumn(1);
     m_fieldList->verticalHeader()->hide();
     m_fieldList->horizontalHeader()->setStretchLastSection(true);
+    m_fieldList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_fieldList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    auto* buttons       = new QWidget(this);
-    auto* buttonsLayout = new QVBoxLayout(buttons);
-    buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-
-    auto* addButton    = new QPushButton(tr("Add"), this);
-    auto* removeButton = new QPushButton(tr("Remove"), this);
-
-    buttonsLayout->addWidget(addButton);
-    buttonsLayout->addWidget(removeButton);
-
-    auto* fieldLayout = new QHBoxLayout();
-    fieldLayout->addWidget(m_fieldList);
-    fieldLayout->addWidget(buttons);
-
     auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->addLayout(fieldLayout);
+    mainLayout->addWidget(m_fieldList);
 
-    QObject::connect(addButton, &QPushButton::clicked, this, &FiltersFieldsPageWidget::addField);
-    QObject::connect(removeButton, &QPushButton::clicked, this, &FiltersFieldsPageWidget::removeField);
+    m_model->populate();
 }
 
 void FiltersFieldsPageWidget::apply()
@@ -100,26 +88,15 @@ void FiltersFieldsPageWidget::reset()
     m_model->populate();
 }
 
-void FiltersFieldsPageWidget::addField() const
-{
-    m_model->addNewField();
-}
-
-void FiltersFieldsPageWidget::removeField() const
-{
-    const auto selectedItems = m_fieldList->selectionModel()->selectedRows();
-    for(const auto& selected : selectedItems) {
-        const auto* item = static_cast<FieldItem*>(selected.internalPointer());
-        m_model->markForRemoval(item->field());
-    }
-}
-
-FiltersFieldsPage::FiltersFieldsPage(FieldRegistry* fieldsRegistry, SettingsManager* settings)
+FiltersFieldsPage::FiltersFieldsPage(ActionManager* actionManager, FieldRegistry* fieldsRegistry,
+                                     SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::FiltersFields);
     setName(tr("Fields"));
     setCategory({tr("Plugins"), tr("Filters")});
-    setWidgetCreator([fieldsRegistry, settings] { return new FiltersFieldsPageWidget(fieldsRegistry, settings); });
+    setWidgetCreator([actionManager, fieldsRegistry, settings] {
+        return new FiltersFieldsPageWidget(actionManager, fieldsRegistry, settings);
+    });
 }
 } // namespace Fooyin::Filters

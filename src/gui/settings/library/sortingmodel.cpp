@@ -20,80 +20,92 @@
 #include "sortingmodel.h"
 
 #include <core/library/sortingregistry.h>
+#include <utils/treestatusitem.h>
+
+using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
-SortingItem::SortingItem()
-    : SortingItem{{}, nullptr}
-{ }
-
-SortingItem::SortingItem(SortScript sortScript, SortingItem* parent)
-    : TreeStatusItem{parent}
-    , m_sortScript{std::move(sortScript)}
-{ }
-
-SortScript SortingItem::sortScript() const
+class SortingItem : public TreeStatusItem<SortingItem>
 {
-    return m_sortScript;
-}
+public:
+    SortingItem()
+        : SortingItem{{}, nullptr}
+    { }
 
-void SortingItem::changeSort(SortScript sortScript)
+    explicit SortingItem(SortScript sortScript, SortingItem* parent)
+        : TreeStatusItem{parent}
+        , m_sortScript{std::move(sortScript)}
+    { }
+
+    [[nodiscard]] SortScript sortScript() const
+    {
+        return m_sortScript;
+    }
+
+    void changeSort(SortScript sortScript)
+    {
+        m_sortScript = std::move(sortScript);
+    }
+
+private:
+    SortScript m_sortScript;
+};
+
+struct SortingModel::Private
 {
-    m_sortScript = std::move(sortScript);
-}
+    SortingRegistry* sortRegistry;
+    SortingItem root;
+    std::map<int, SortingItem> nodes;
+
+    explicit Private(SortingRegistry* sortRegistry)
+        : sortRegistry{sortRegistry}
+    { }
+
+    void removeSortScript(int index)
+    {
+        if(!nodes.contains(index)) {
+            return;
+        }
+        nodes.erase(index);
+    }
+};
 
 SortingModel::SortingModel(SortingRegistry* sortRegistry, QObject* parent)
-    : TableModel{parent}
-    , m_sortRegistry{sortRegistry}
+    : ExtendableTableModel{parent}
+    , p{std::make_unique<Private>(sortRegistry)}
 { }
+
+SortingModel::~SortingModel() = default;
 
 void SortingModel::populate()
 {
     beginResetModel();
-    reset();
+    p->root = {};
+    p->nodes.clear();
 
-    const auto& sortScripts = m_sortRegistry->items();
+    const auto& sortScripts = p->sortRegistry->items();
 
     for(const auto& [index, sortScript] : sortScripts) {
         if(!sortScript.isValid()) {
             continue;
         }
-        SortingItem* parent = rootItem();
-        SortingItem* child  = &m_nodes.emplace(index, SortingItem{sortScript, parent}).first->second;
-        parent->appendChild(child);
+        SortingItem* child = &p->nodes.emplace(index, SortingItem{sortScript, &p->root}).first->second;
+        p->root.appendChild(child);
     }
 
     endResetModel();
 }
 
-void SortingModel::addNewSortScript()
-{
-    const int index = static_cast<int>(m_nodes.size());
-
-    SortScript sortScript;
-    sortScript.index = index;
-
-    auto* parent = rootItem();
-
-    SortingItem* item = &m_nodes.emplace(index, SortingItem{sortScript, parent}).first->second;
-
-    item->setStatus(SortingItem::Added);
-
-    const int row = parent->childCount();
-    beginInsertRows({}, row, row);
-    parent->appendChild(item);
-    endInsertRows();
-}
-
 void SortingModel::markForRemoval(const SortScript& sortScript)
 {
-    SortingItem* item = &m_nodes.at(sortScript.index);
+    SortingItem* item = &p->nodes.at(sortScript.index);
 
     if(item->status() == SortingItem::Added) {
         beginRemoveRows({}, item->row(), item->row());
-        rootItem()->removeChild(item->row());
+        p->root.removeChild(item->row());
         endRemoveRows();
 
-        removeSortScript(sortScript.index);
+        p->removeSortScript(sortScript.index);
     }
     else {
         item->setStatus(SortingItem::Removed);
@@ -101,28 +113,21 @@ void SortingModel::markForRemoval(const SortScript& sortScript)
     }
 }
 
-void SortingModel::markForChange(const SortScript& sortScript)
-{
-    SortingItem* item = &m_nodes.at(sortScript.index);
-    item->changeSort(sortScript);
-    emit dataChanged({}, {}, {Qt::FontRole});
-
-    if(item->status() == SortingItem::None) {
-        item->setStatus(SortingItem::Changed);
-    }
-}
-
 void SortingModel::processQueue()
 {
     std::vector<SortingItem> sortScriptsToRemove;
 
-    for(auto& [index, node] : m_nodes) {
+    for(auto& [index, node] : p->nodes) {
         const SortingItem::ItemStatus status = node.status();
         const SortScript sortScript          = node.sortScript();
 
         switch(status) {
             case(SortingItem::Added): {
-                const auto addedSort = m_sortRegistry->addItem(sortScript);
+                if(sortScript.script.isEmpty()) {
+                    break;
+                }
+
+                const auto addedSort = p->sortRegistry->addItem(sortScript);
                 if(addedSort.isValid()) {
                     node.changeSort(addedSort);
                     node.setStatus(SortingItem::None);
@@ -135,9 +140,9 @@ void SortingModel::processQueue()
                 break;
             }
             case(SortingItem::Removed): {
-                if(m_sortRegistry->removeByIndex(sortScript.index)) {
+                if(p->sortRegistry->removeByIndex(sortScript.index)) {
                     beginRemoveRows({}, node.row(), node.row());
-                    rootItem()->removeChild(node.row());
+                    p->root.removeChild(node.row());
                     endRemoveRows();
                     sortScriptsToRemove.push_back(node);
                 }
@@ -147,8 +152,8 @@ void SortingModel::processQueue()
                 break;
             }
             case(SortingItem::Changed): {
-                if(m_sortRegistry->changeItem(sortScript)) {
-                    node.changeSort(m_sortRegistry->itemById(sortScript.id));
+                if(p->sortRegistry->changeItem(sortScript)) {
+                    node.changeSort(p->sortRegistry->itemById(sortScript.id));
                     node.setStatus(SortingItem::None);
 
                     emit dataChanged({}, {});
@@ -163,7 +168,7 @@ void SortingModel::processQueue()
         }
     }
     for(const auto& item : sortScriptsToRemove) {
-        removeSortScript(item.sortScript().index);
+        p->removeSortScript(item.sortScript().index);
     }
 }
 
@@ -173,7 +178,7 @@ Qt::ItemFlags SortingModel::flags(const QModelIndex& index) const
         return Qt::NoItemFlags;
     }
 
-    auto flags = TableModel::flags(index);
+    auto flags = ExtendableTableModel::flags(index);
     flags |= Qt::ItemIsEditable;
 
     return flags;
@@ -242,31 +247,57 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
         return false;
     }
 
-    const auto* item = static_cast<SortingItem*>(index.internalPointer());
-    auto group       = item->sortScript();
+    auto* item            = static_cast<SortingItem*>(index.internalPointer());
+    SortScript sortScript = item->sortScript();
 
     switch(index.column()) {
         case(1): {
-            if(group.name == value.toString()) {
+            if(value.toString() == "<enter name here>"_L1 || sortScript.name == value.toString()) {
+                if(item->status() == SortingItem::Added) {
+                    emit pendingRowCancelled();
+                }
                 return false;
             }
-            group.name = value.toString();
+            sortScript.name = value.toString();
+
+            emit pendingRowAdded();
             break;
         }
         case(2): {
-            if(group.script == value.toString()) {
+            if(sortScript.script == value.toString()) {
                 return false;
             }
-            group.script = value.toString();
+            sortScript.script = value.toString();
             break;
         }
         case(0):
             break;
     }
 
-    markForChange(group);
+    item->changeSort(sortScript);
+    emit dataChanged({}, {}, {Qt::FontRole});
+
+    if(item->status() == SortingItem::None) {
+        item->setStatus(SortingItem::Changed);
+    }
 
     return true;
+}
+
+QModelIndex SortingModel::index(int row, int column, const QModelIndex& parent) const
+{
+    if(!hasIndex(row, column, parent)) {
+        return {};
+    }
+
+    SortingItem* item = p->root.child(row);
+
+    return createIndex(row, column, item);
+}
+
+int SortingModel::rowCount(const QModelIndex& /*parent*/) const
+{
+    return p->root.childCount();
 }
 
 int SortingModel::columnCount(const QModelIndex& /*parent*/) const
@@ -274,17 +305,56 @@ int SortingModel::columnCount(const QModelIndex& /*parent*/) const
     return 3;
 }
 
-void SortingModel::reset()
+bool SortingModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
 {
-    resetRoot();
-    m_nodes.clear();
+    for(int i{row}; i < row + count; ++i) {
+        const QModelIndex& index = this->index(i, 0, {});
+
+        if(!index.isValid()) {
+            return false;
+        }
+
+        auto* item = static_cast<SortingItem*>(index.internalPointer());
+        if(item) {
+            if(item->status() == SortingItem::Added) {
+                beginRemoveRows({}, i, i);
+                p->root.removeChild(i);
+                endRemoveRows();
+                p->nodes.erase(item->sortScript().index);
+            }
+            else {
+                item->setStatus(SortingItem::Removed);
+                emit dataChanged(index, index, {Qt::FontRole});
+            }
+        }
+    }
+    return true;
 }
 
-void SortingModel::removeSortScript(int index)
+void SortingModel::addPendingRow()
 {
-    if(!m_nodes.contains(index)) {
-        return;
-    }
-    m_nodes.erase(index);
+    const int index = static_cast<int>(p->nodes.size());
+
+    SortScript sortScript;
+    sortScript.index = index;
+
+    SortingItem* item = &p->nodes.emplace(index, SortingItem{sortScript, &p->root}).first->second;
+
+    item->setStatus(SortingItem::Added);
+
+    const int row = p->root.childCount();
+    beginInsertRows({}, row, row);
+    p->root.appendChild(item);
+    endInsertRows();
+
+    emit newPendingRow();
+}
+
+void SortingModel::removePendingRow()
+{
+    const int row = rowCount({}) - 1;
+    beginRemoveRows({}, row, row);
+    p->root.removeChild(row);
+    endRemoveRows();
 }
 } // namespace Fooyin

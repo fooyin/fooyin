@@ -20,29 +20,18 @@
 #pragma once
 
 #include <core/library/libraryinfo.h>
-#include <utils/tablemodel.h>
-#include <utils/treestatusitem.h>
+#include <utils/extendabletableview.h>
 
 namespace Fooyin {
 class LibraryManager;
 
-class LibraryItem : public TreeStatusItem<LibraryItem>
+class LibraryModel : public ExtendableTableModel
 {
-public:
-    LibraryItem();
-    explicit LibraryItem(LibraryInfo info, LibraryItem* parent);
+    Q_OBJECT
 
-    [[nodiscard]] LibraryInfo info() const;
-    void changeInfo(const LibraryInfo& info);
-
-private:
-    LibraryInfo m_info;
-};
-
-class LibraryModel : public TableModel<LibraryItem>
-{
 public:
     explicit LibraryModel(LibraryManager* libraryManager, QObject* parent = nullptr);
+    ~LibraryModel() override;
 
     void populate();
     void markForAddition(const LibraryInfo& info);
@@ -54,18 +43,17 @@ public:
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
+    [[nodiscard]] bool removeRows(int row, int count, const QModelIndex& parent) override;
+
+    void addPendingRow() override;
+    void removePendingRow() override;
+
 private:
-    void reset();
-    void updateDisplay(const LibraryInfo& info);
-
-    LibraryManager* m_libraryManager;
-
-    using LibraryPathMap  = std::unordered_map<QString, LibraryItem>;
-    using LibraryInfoList = std::vector<LibraryInfo>;
-
-    LibraryPathMap m_nodes;
-    LibraryInfoList m_librariesToAdd;
+    struct Private;
+    std::unique_ptr<Private>p;
 };
 } // namespace Fooyin

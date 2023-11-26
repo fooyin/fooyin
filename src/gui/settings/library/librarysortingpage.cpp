@@ -24,12 +24,10 @@
 #include "sortingmodel.h"
 
 #include <core/coresettings.h>
-
 #include <utils/settings/settingsmanager.h>
 
 #include <QHeaderView>
 #include <QLabel>
-#include <QPushButton>
 #include <QTableView>
 #include <QVBoxLayout>
 
@@ -37,53 +35,42 @@ namespace Fooyin {
 class LibrarySortingPageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibrarySortingPageWidget(SortingRegistry* sortRegistry, SettingsManager* settings);
+    explicit LibrarySortingPageWidget(ActionManager* actionManager, SortingRegistry* sortRegistry,
+                                      SettingsManager* settings);
 
     void apply() override;
     void reset() override;
 
 private:
-    void addSorting() const;
-    void removeSorting() const;
-
     SortingRegistry* m_sortRegistry;
     SettingsManager* m_settings;
 
-    QTableView* m_sortList;
+    ExtendableTableView* m_sortList;
     SortingModel* m_model;
 };
 
-LibrarySortingPageWidget::LibrarySortingPageWidget(SortingRegistry* sortRegistry, SettingsManager* settings)
+LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SortingRegistry* sortRegistry,
+                                                   SettingsManager* settings)
     : m_sortRegistry{sortRegistry}
     , m_settings{settings}
-    , m_sortList{new QTableView(this)}
+    , m_sortList{new ExtendableTableView(actionManager, this)}
     , m_model{new SortingModel(m_sortRegistry, this)}
 {
-    m_model->populate();
-    m_sortList->setModel(m_model);
+    m_sortList->setExtendableModel(m_model);
 
+    // Hide index column
     m_sortList->hideColumn(0);
+
+    m_sortList->setExtendableColumn(1);
     m_sortList->verticalHeader()->hide();
     m_sortList->horizontalHeader()->setStretchLastSection(true);
+    m_sortList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_sortList->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-    auto* buttonsLayout = new QVBoxLayout();
-    buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-
-    auto* addButton    = new QPushButton(tr("Add"), this);
-    auto* removeButton = new QPushButton(tr("Remove"), this);
-
-    buttonsLayout->addWidget(addButton);
-    buttonsLayout->addWidget(removeButton);
-    buttonsLayout->addStretch();
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_sortList, 0, 0, 1, 3);
-    mainLayout->addLayout(buttonsLayout, 0, 3);
-    mainLayout->setColumnStretch(2, 1);
 
-    QObject::connect(addButton, &QPushButton::clicked, this, &LibrarySortingPageWidget::addSorting);
-    QObject::connect(removeButton, &QPushButton::clicked, this, &LibrarySortingPageWidget::removeSorting);
+    m_model->populate();
 }
 
 void LibrarySortingPageWidget::apply()
@@ -98,25 +85,15 @@ void LibrarySortingPageWidget::reset()
     m_model->populate();
 }
 
-void LibrarySortingPageWidget::addSorting() const
-{
-    m_model->addNewSortScript();
-}
-
-void LibrarySortingPageWidget::removeSorting() const
-{
-    const auto selectedIndexes = m_sortList->selectionModel()->selectedRows();
-    for(const auto& index : selectedIndexes) {
-        m_model->markForRemoval(index.data(Qt::UserRole).value<SortScript>());
-    }
-}
-
-LibrarySortingPage::LibrarySortingPage(SortingRegistry* sortRegistry, SettingsManager* settings)
+LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SortingRegistry* sortRegistry,
+                                       SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibrarySorting);
     setName(tr("Sorting"));
     setCategory({tr("Library"), tr("Sorting")});
-    setWidgetCreator([sortRegistry, settings] { return new LibrarySortingPageWidget(sortRegistry, settings); });
+    setWidgetCreator([actionManager, sortRegistry, settings] {
+        return new LibrarySortingPageWidget(actionManager, sortRegistry, settings);
+    });
 }
 } // namespace Fooyin

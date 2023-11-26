@@ -20,43 +20,44 @@
 #include "librarygeneralpage.h"
 
 #include "librarymodel.h"
-#include "libraryview.h"
 
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
-#include <core/library/librarymanager.h>
 #include <gui/guiconstants.h>
+#include <utils/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
-#include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGridLayout>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QLabel>
 #include <QPushButton>
-#include <QSpinBox>
 #include <QTableView>
-#include <QVBoxLayout>
 
 namespace Fooyin {
 class LibraryGeneralPageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibraryGeneralPageWidget(LibraryManager* libraryManager, SettingsManager* settings);
+    explicit LibraryGeneralPageWidget(ActionManager* actionManager, LibraryManager* libraryManager,
+                                      SettingsManager* settings);
 
     void apply() override;
     void reset() override;
 
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+
 private:
+    void resizeTable();
     void addLibrary() const;
-    void removeLibrary() const;
 
     LibraryManager* m_libraryManager;
     SettingsManager* m_settings;
 
-    LibraryView* m_libraryView;
+    ExtendableTableView* m_libraryView;
     LibraryModel* m_model;
 
     QCheckBox* m_autoRefresh;
@@ -64,54 +65,44 @@ private:
     QLineEdit* m_sortScript;
 };
 
-LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManager, SettingsManager* settings)
+LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager, LibraryManager* libraryManager,
+                                                   SettingsManager* settings)
     : m_libraryManager{libraryManager}
     , m_settings{settings}
-    , m_libraryView{new LibraryView(this)}
+    , m_libraryView{new ExtendableTableView(actionManager, this)}
     , m_model{new LibraryModel(m_libraryManager, this)}
     , m_autoRefresh{new QCheckBox(tr("Auto refresh on startup"), this)}
     , m_sortScript{new QLineEdit(this)}
 {
-    m_model->populate();
-    m_libraryView->setModel(m_model);
-
-    m_libraryView->verticalHeader()->hide();
-    m_libraryView->horizontalHeader()->setStretchLastSection(true);
-    m_libraryView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_libraryView->setExtendableModel(m_model);
 
     // Hide Id column
     m_libraryView->hideColumn(0);
 
-    auto* buttons       = new QWidget(this);
-    auto* buttonsLayout = new QVBoxLayout(buttons);
-    buttonsLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-
-    auto* addButton    = new QPushButton(tr("Add"), this);
-    auto* removeButton = new QPushButton(tr("Remove"), this);
-
-    buttonsLayout->addWidget(addButton);
-    buttonsLayout->addWidget(removeButton);
-
-    auto* libraryLayout = new QHBoxLayout();
-    libraryLayout->addWidget(m_libraryView);
-    libraryLayout->addWidget(buttons);
+    m_libraryView->setExtendableColumn(1);
+    m_libraryView->verticalHeader()->hide();
+    m_libraryView->horizontalHeader()->setStretchLastSection(true);
+    m_libraryView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
     m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
 
-    auto* sortScriptLabel  = new QLabel(tr("Sort tracks by:"), this);
-    auto* sortScriptLayout = new QHBoxLayout();
-    sortScriptLayout->addWidget(sortScriptLabel);
-    sortScriptLayout->addWidget(m_sortScript);
+    auto* sortScriptLabel = new QLabel(tr("Sort tracks by:"), this);
+
     m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
 
-    auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->addLayout(libraryLayout);
-    mainLayout->addWidget(m_autoRefresh);
-    mainLayout->addLayout(sortScriptLayout);
+    auto* mainLayout = new QGridLayout(this);
+    mainLayout->addWidget(m_libraryView, 0, 0, 1, 2);
+    mainLayout->addWidget(m_autoRefresh, 1, 0, 1, 2);
+    mainLayout->addWidget(sortScriptLabel, 2, 0);
+    mainLayout->addWidget(m_sortScript, 2, 1);
 
-    QObject::connect(addButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::addLibrary);
-    QObject::connect(removeButton, &QPushButton::clicked, this, &LibraryGeneralPageWidget::removeLibrary);
+    mainLayout->setColumnStretch(1, 1);
+
+    QObject::connect(m_libraryView, &ExtendableTableView::newRowClicked, this, &LibraryGeneralPageWidget::addLibrary);
+
+    m_model->populate();
+    resizeTable();
 }
 
 void LibraryGeneralPageWidget::apply()
@@ -128,44 +119,49 @@ void LibraryGeneralPageWidget::reset()
     m_settings->reset<Settings::Core::LibrarySortScript>();
 }
 
+void LibraryGeneralPageWidget::resizeEvent(QResizeEvent* event)
+{
+    SettingsPageWidget::resizeEvent(event);
+
+    resizeTable();
+}
+
+void LibraryGeneralPageWidget::resizeTable()
+{
+    m_libraryView->setColumnWidth(1, static_cast<int>(m_libraryView->width() * 0.25));
+    m_libraryView->setColumnWidth(2, static_cast<int>(m_libraryView->width() * 0.55));
+    m_libraryView->setColumnWidth(3, static_cast<int>(m_libraryView->width() * 0.20));
+}
+
 void LibraryGeneralPageWidget::addLibrary() const
 {
-    const QString newDir = QFileDialog::getExistingDirectory(m_libraryView, tr("Directory"), QDir::homePath(),
-                                                             QFileDialog::ShowDirsOnly);
+    const QString dir = QFileDialog::getExistingDirectory(m_libraryView, tr("Directory"), QDir::homePath(),
+                                                          QFileDialog::ShowDirsOnly);
 
-    if(newDir.isEmpty()) {
+    if(dir.isEmpty()) {
+        m_model->markForAddition({});
         return;
     }
 
-    const QFileInfo info{newDir};
+    const QFileInfo info{dir};
     const QString name = info.fileName();
 
-    bool success       = false;
-    const QString text = QInputDialog::getText(m_libraryView, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal,
-                                               name, &success);
+    const QString text
+        = QInputDialog::getText(m_libraryView, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal, name);
 
-    if(success && !text.isEmpty()) {
-        m_model->markForAddition({text, newDir});
-    }
+    m_model->markForAddition({text, dir});
 }
 
-void LibraryGeneralPageWidget::removeLibrary() const
-{
-    const auto selectedItems = m_libraryView->selectionModel()->selectedRows();
-    for(const auto& selected : selectedItems) {
-        const auto* item = m_model->itemForIndex(selected);
-        m_model->markForRemoval(item->info());
-    }
-    //    m_libraryList->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-}
-
-LibraryGeneralPage::LibraryGeneralPage(LibraryManager* libraryManager, SettingsManager* settings)
+LibraryGeneralPage::LibraryGeneralPage(ActionManager* actionManager, LibraryManager* libraryManager,
+                                       SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryGeneral);
     setName(tr("General"));
     setCategory({tr("Library")});
-    setWidgetCreator([libraryManager, settings] { return new LibraryGeneralPageWidget(libraryManager, settings); });
+    setWidgetCreator([actionManager, libraryManager, settings] {
+        return new LibraryGeneralPageWidget(actionManager, libraryManager, settings);
+    });
 }
 
 } // namespace Fooyin

@@ -22,6 +22,7 @@
 #include <utils/settings/settingspage.h>
 
 namespace Fooyin {
+class ActionManager;
 class SettingsManager;
 
 namespace Filters {
@@ -30,7 +31,7 @@ class FieldRegistry;
 class FiltersFieldsPage : public SettingsPage
 {
 public:
-    explicit FiltersFieldsPage(FieldRegistry* fieldsRegistry, SettingsManager* settings);
+    explicit FiltersFieldsPage(ActionManager* actionManager, FieldRegistry* fieldsRegistry, SettingsManager* settings);
 };
 } // namespace Filters
 } // namespace Fooyin

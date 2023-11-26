@@ -22,12 +22,13 @@
 #include <utils/settings/settingspage.h>
 
 namespace Fooyin {
+class ActionManager;
 class SettingsManager;
 class LibraryTreeGroupRegistry;
 
 class LibraryTreePage : public SettingsPage
 {
 public:
-    explicit LibraryTreePage(LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings);
+    explicit LibraryTreePage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings);
 };
 } // namespace Fooyin

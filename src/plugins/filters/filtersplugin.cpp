@@ -103,7 +103,8 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
                                             [this]() { return p->filterManager->createFilter(); });
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
-    p->fieldsPage  = std::make_unique<FiltersFieldsPage>(p->filterManager->fieldRegistry(), p->settings);
+    p->fieldsPage
+        = std::make_unique<FiltersFieldsPage>(p->actionManager, p->filterManager->fieldRegistry(), p->settings);
 
     p->registerLayouts();
 }

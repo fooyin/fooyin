@@ -28,6 +28,24 @@ class ActionManager;
 class WidgetContext;
 class Command;
 
+class FYUTILS_EXPORT ExtendableTableModel : public QAbstractItemModel
+{
+    Q_OBJECT
+
+public:
+    explicit ExtendableTableModel(QObject* parent = nullptr);
+
+    [[nodiscard]] QModelIndex parent(const QModelIndex& child) const override;
+
+    virtual void addPendingRow() = 0;
+    virtual void removePendingRow() = 0;
+
+signals:
+    void newPendingRow();
+    void pendingRowAdded();
+    void pendingRowCancelled();
+};
+
 class FYUTILS_EXPORT ExtendableTableView : public QTableView
 {
     Q_OBJECT
@@ -35,6 +53,9 @@ class FYUTILS_EXPORT ExtendableTableView : public QTableView
 public:
     explicit ExtendableTableView(ActionManager* actionManager, QWidget* parent = nullptr);
 
+    void setExtendableModel(ExtendableTableModel* model);
+    void setExtendableColumn(int column);
+    virtual void handleNewRow();
     void rowAdded();
 
     [[nodiscard]] QAction* removeAction() const;
@@ -56,6 +77,7 @@ private:
     QAction* m_remove;
     Command* m_removeCommand;
 
+    int m_column;
     QRect m_buttonRect;
     bool m_mouseOverButton;
     bool m_pendingRow;

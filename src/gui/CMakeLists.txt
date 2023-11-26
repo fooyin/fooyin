@@ -94,7 +94,6 @@ set(SOURCES
     settings/plugins/pluginspage.cpp
     settings/library/librarygeneralpage.cpp
     settings/library/librarymodel.cpp
-    settings/library/libraryview.cpp
     settings/library/librarysortingpage.cpp
     settings/library/sortingmodel.cpp
     settings/librarytree/librarytreepage.cpp

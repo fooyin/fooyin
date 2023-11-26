@@ -20,53 +20,40 @@
 #pragma once
 
 #include <core/library/librarysort.h>
-
-#include <utils/tablemodel.h>
-#include <utils/treestatusitem.h>
+#include <utils/extendabletableview.h>
 
 #include <QObject>
 
 namespace Fooyin {
 class SortingRegistry;
 
-class SortingItem : public TreeStatusItem<SortingItem>
+class SortingModel : public ExtendableTableModel
 {
-public:
-    SortingItem();
-    explicit SortingItem(SortScript sortScript, SortingItem* parent);
+    Q_OBJECT
 
-    [[nodiscard]] SortScript sortScript() const;
-    void changeSort(SortScript sortScript);
-
-private:
-    SortScript m_sortScript;
-};
-
-class SortingModel : public TableModel<SortingItem>
-{
 public:
     explicit SortingModel(SortingRegistry* sortRegistry, QObject* parent = nullptr);
+    ~SortingModel() override;
 
     void populate();
-    void addNewSortScript();
     void markForRemoval(const SortScript& sortScript);
-    void markForChange(const SortScript& sortScript);
     void processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
+    [[nodiscard]] bool removeRows(int row, int count, const QModelIndex& parent) override;
+
+    void addPendingRow() override;
+    void removePendingRow() override;
+
 private:
-    void reset();
-    void removeSortScript(int index);
-
-    using SortIndexMap = std::map<int, SortingItem>;
-
-    SortingRegistry* m_sortRegistry;
-
-    SortIndexMap m_nodes;
+    struct Private;
+    std::unique_ptr<Private>p;
 };
 } // namespace Fooyin

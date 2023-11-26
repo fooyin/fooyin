@@ -24,7 +24,6 @@
 #include "info/infowidget.h"
 #include "library/coverwidget.h"
 #include "library/statuswidget.h"
-#include "librarytree/librarytreegroupregistry.h"
 #include "librarytree/librarytreewidget.h"
 #include "mainwindow.h"
 #include "menu/editmenu.h"
@@ -152,14 +151,14 @@ struct GuiApplication::Private
         , propertiesDialog{new PropertiesDialog(settingsManager, self)}
         , generalPage{settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
-        , libraryGeneralPage{libraryManager, settingsManager}
-        , librarySortingPage{coreSettings->sortingRegistry(), settingsManager}
+        , libraryGeneralPage{actionManager, libraryManager, settingsManager}
+        , librarySortingPage{actionManager, coreSettings->sortingRegistry(), settingsManager}
         , shortcutsPage{actionManager, settingsManager}
         , playlistGeneralPage{settingsManager}
         , playlistGuiPage{settingsManager}
         , playlistPresetsPage{guiSettings.playlistPresetRegistry(), settingsManager}
         , enginePage{settingsManager, engineHandler}
-        , libraryTreePage{guiSettings.libraryTreeGroupRegistry(), settingsManager}
+        , libraryTreePage{actionManager, guiSettings.libraryTreeGroupRegistry(), settingsManager}
         , libraryTreeGuiPage{settingsManager}
         , statusWidgetPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}

@@ -54,6 +54,8 @@ struct TagEditorModel::Private
         {"Track Number", Constants::MetaData::Track},  {"Total Tracks", Constants::MetaData::TrackTotal},
         {"Disc Number", Constants::MetaData::Disc},    {"Total Discs", Constants::MetaData::DiscTotal},
         {"Comment", Constants::MetaData::Comment}};
+
+    TagEditorItem root;
     TagFieldMap tags;
     TagFieldMap customTags;
 
@@ -95,9 +97,8 @@ struct TagEditorModel::Private
                 }
 
                 if(!customTags.contains(field)) {
-                    auto* item
-                        = &customTags.emplace(field, TagEditorItem{field, self->rootItem(), false}).first->second;
-                    self->rootItem()->appendChild(item);
+                    auto* item = &customTags.emplace(field, TagEditorItem{field, &root, false}).first->second;
+                    root.appendChild(item);
                 }
 
                 auto* fieldItem = &customTags.at(field);
@@ -195,40 +196,27 @@ struct TagEditorModel::Private
 };
 
 TagEditorModel::TagEditorModel(SettingsManager* settings, QObject* parent)
-    : TableModel{parent}
+    : ExtendableTableModel{parent}
     , p{std::make_unique<Private>(this, settings)}
 { }
+
+TagEditorModel::~TagEditorModel() = default;
 
 void TagEditorModel::reset(const TrackList& tracks)
 {
     beginResetModel();
-    resetRoot();
+    p->root = {};
     p->reset();
     p->tracks = tracks;
 
     for(const auto& [field, _] : p->fields) {
-        auto* item = &p->tags.emplace(field, TagEditorItem{field, rootItem(), true}).first->second;
-        rootItem()->appendChild(item);
+        auto* item = &p->tags.emplace(field, TagEditorItem{field, &p->root, true}).first->second;
+        p->root.appendChild(item);
     }
 
     p->updateFields();
 
     endResetModel();
-}
-
-void TagEditorModel::addNewRow()
-{
-    TagEditorItem newItem{DefaultFieldText, rootItem(), false};
-    newItem.setStatus(TagEditorItem::Added);
-
-    const int row = rootItem()->childCount();
-    auto* item    = &p->customTags.emplace(DefaultFieldText + QString::number(row), newItem).first->second;
-
-    beginInsertRows({}, row, row);
-    rootItem()->appendChild(item);
-    endInsertRows();
-
-    emit newPendingRow();
 }
 
 void TagEditorModel::processQueue()
@@ -260,7 +248,7 @@ void TagEditorModel::processQueue()
                     p->removeCustomTrackMetadata(node.name());
 
                     beginRemoveRows({}, node.row(), node.row());
-                    rootItem()->removeChild(node.row());
+                    p->root.removeChild(node.row());
                     endRemoveRows();
                     fieldsToRemove.push_back(node.name());
 
@@ -332,11 +320,19 @@ QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, in
     }
 }
 
-TagEditorModel::~TagEditorModel() = default;
-
-int TagEditorModel::columnCount(const QModelIndex& /*parent*/) const
+Qt::ItemFlags TagEditorModel::flags(const QModelIndex& index) const
 {
-    return 2;
+    if(!index.isValid()) {
+        return Qt::NoItemFlags;
+    }
+
+    auto flags = ExtendableTableModel::flags(index);
+
+    if(index.column() != 0 || !index.data(TagEditorItem::IsDefault).toBool()) {
+        flags |= Qt::ItemIsEditable;
+    }
+
+    return flags;
 }
 
 QVariant TagEditorModel::data(const QModelIndex& index, int role) const
@@ -422,19 +418,25 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
     return true;
 }
 
-Qt::ItemFlags TagEditorModel::flags(const QModelIndex& index) const
+QModelIndex TagEditorModel::index(int row, int column, const QModelIndex& parent) const
 {
-    if(!index.isValid()) {
-        return Qt::NoItemFlags;
+    if(!hasIndex(row, column, parent)) {
+        return {};
     }
 
-    auto flags = TableModel::flags(index);
+    TagEditorItem* item = p->root.child(row);
 
-    if(index.column() != 0 || !index.data(TagEditorItem::IsDefault).toBool()) {
-        flags |= Qt::ItemIsEditable;
-    }
+    return createIndex(row, column, item);
+}
 
-    return flags;
+int TagEditorModel::rowCount(const QModelIndex& /*parent*/) const
+{
+    return p->root.childCount();
+}
+
+int TagEditorModel::columnCount(const QModelIndex& /*parent*/) const
+{
+    return 2;
 }
 
 bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
@@ -454,9 +456,9 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
         if(item) {
             if(item->status() == TagEditorItem::Added) {
                 beginRemoveRows({}, i, i);
-                rootItem()->removeChild(i);
+                p->root.removeChild(i);
                 endRemoveRows();
-                p->customTags.erase(item->name());
+                p->customTags.erase(defaultFieldText() + QString::number(row));
             }
             else {
                 item->setStatus(TagEditorItem::Removed);
@@ -467,16 +469,31 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
     return true;
 }
 
-QString TagEditorModel::defaultFieldText() const
+QString TagEditorModel::defaultFieldText()
 {
     return DefaultFieldText;
+}
+
+void TagEditorModel::addPendingRow()
+{
+    TagEditorItem newItem{DefaultFieldText, &p->root, false};
+    newItem.setStatus(TagEditorItem::Added);
+
+    const int row = p->root.childCount();
+    auto* item    = &p->customTags.emplace(DefaultFieldText + QString::number(row), newItem).first->second;
+
+    beginInsertRows({}, row, row);
+    p->root.appendChild(item);
+    endInsertRows();
+
+    emit newPendingRow();
 }
 
 void TagEditorModel::removePendingRow()
 {
     const int row = rowCount({}) - 1;
     beginRemoveRows({}, row, row);
-    rootItem()->removeChild(row);
+    p->root.removeChild(row);
     endRemoveRows();
 }
 } // namespace Fooyin::TagEditor

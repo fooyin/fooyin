@@ -22,6 +22,7 @@
 #include <gui/guiconstants.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
+#include <utils/crypto.h>
 
 #include <QMenu>
 #include <QMouseEvent>
@@ -31,12 +32,23 @@
 constexpr auto ButtonText = "+ add new";
 
 namespace Fooyin {
+ExtendableTableModel::ExtendableTableModel(QObject* parent)
+    : QAbstractItemModel{parent}
+{ }
+
+QModelIndex ExtendableTableModel::parent(const QModelIndex& /*child*/) const
+{
+    return {};
+}
+
 ExtendableTableView::ExtendableTableView(ActionManager* actionManager, QWidget* parent)
     : QTableView{parent}
     , m_actionManager{actionManager}
-    , m_context{new WidgetContext(this, Context{"Context.ExtendableTableView"}, this)}
+    , m_context{new WidgetContext(this, Context{Id{"Context.ExtendableTableView."}.append(Utils::generateRandomHash())},
+                                  this)}
     , m_remove{new QAction(tr("Remove"), this)}
     , m_removeCommand{m_actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}
+    , m_column{0}
     , m_mouseOverButton{false}
     , m_pendingRow{false}
 {
@@ -53,9 +65,40 @@ ExtendableTableView::ExtendableTableView(ActionManager* actionManager, QWidget* 
     });
 }
 
+void ExtendableTableView::setExtendableModel(ExtendableTableModel* model)
+{
+    setModel(model);
+
+    QObject::connect(this, &ExtendableTableView::newRowClicked, model, &ExtendableTableModel::addPendingRow);
+    QObject::connect(model, &ExtendableTableModel::newPendingRow, this, &ExtendableTableView::handleNewRow);
+    QObject::connect(model, &ExtendableTableModel::pendingRowAdded, this, &ExtendableTableView::rowAdded);
+    QObject::connect(
+        model, &ExtendableTableModel::pendingRowCancelled, this,
+        [model, this]() {
+            // We can't remove the row in setData, so we use a queued signal to remove it once setData returns
+            model->removePendingRow();
+            rowAdded();
+        },
+        Qt::QueuedConnection);
+}
+
+void ExtendableTableView::setExtendableColumn(int column)
+{
+    m_column = column;
+}
+
+void ExtendableTableView::handleNewRow()
+{
+    const QModelIndex index = model()->index(model()->rowCount({}) - 1, m_column);
+    if(index.isValid()) {
+        edit(index);
+    }
+}
+
 void ExtendableTableView::rowAdded()
 {
-    m_pendingRow = false;
+    m_pendingRow      = false;
+    m_mouseOverButton = false;
 }
 
 QAction* ExtendableTableView::removeAction() const
@@ -92,8 +135,8 @@ void ExtendableTableView::mouseMoveEvent(QMouseEvent* event)
 void ExtendableTableView::mousePressEvent(QMouseEvent* event)
 {
     if(m_buttonRect.contains(event->pos())) {
-        emit newRowClicked();
         m_pendingRow = true;
+        emit newRowClicked();
     }
 
     QTableView::mousePressEvent(event);
@@ -110,7 +153,7 @@ void ExtendableTableView::paintEvent(QPaintEvent* event)
     QPainter painter{viewport()};
 
     const int lastRow    = model()->rowCount() - 1;
-    const QRect lastRect = visualRect(model()->index(lastRow, 0));
+    const QRect lastRect = visualRect(model()->index(lastRow, m_column));
 
     const QFontMetrics fontMetrics{font()};
 

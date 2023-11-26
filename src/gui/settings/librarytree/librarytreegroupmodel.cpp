@@ -21,79 +21,92 @@
 
 #include "librarytree/librarytreegroupregistry.h"
 
+#include <utils/treestatusitem.h>
+
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fooyin {
-LibraryTreeGroupItem::LibraryTreeGroupItem()
-    : LibraryTreeGroupItem{{}, nullptr}
-{ }
-
-LibraryTreeGroupItem::LibraryTreeGroupItem(LibraryTreeGrouping group, LibraryTreeGroupItem* parent)
-    : TreeStatusItem{parent}
-    , m_group{std::move(group)}
-{ }
-
-LibraryTreeGrouping LibraryTreeGroupItem::group() const
+class LibraryTreeGroupItem : public TreeStatusItem<LibraryTreeGroupItem>
 {
-    return m_group;
-}
+public:
+    LibraryTreeGroupItem()
+        : LibraryTreeGroupItem{{}, nullptr}
+    { }
 
-void LibraryTreeGroupItem::changeGroup(const LibraryTreeGrouping& group)
+    explicit LibraryTreeGroupItem(LibraryTreeGrouping group, LibraryTreeGroupItem* parent)
+        : TreeStatusItem{parent}
+        , m_group{std::move(group)}
+    { }
+
+    [[nodiscard]] LibraryTreeGrouping group() const
+    {
+        return m_group;
+    }
+
+    void changeGroup(const LibraryTreeGrouping& group)
+    {
+        m_group = group;
+    }
+
+private:
+    LibraryTreeGrouping m_group;
+};
+
+struct LibraryTreeGroupModel::Private
 {
-    m_group = group;
-}
+    LibraryTreeGroupRegistry* groupsRegistry;
+    std::map<int, LibraryTreeGroupItem> nodes;
+    LibraryTreeGroupItem root;
+
+    explicit Private(LibraryTreeGroupRegistry* groupsRegistry)
+        : groupsRegistry{groupsRegistry}
+    { }
+
+    void removeGroup(int index)
+    {
+        if(!nodes.contains(index)) {
+            return;
+        }
+        nodes.erase(index);
+    }
+};
 
 LibraryTreeGroupModel::LibraryTreeGroupModel(LibraryTreeGroupRegistry* groupsRegistry, QObject* parent)
-    : TableModel{parent}
-    , m_groupsRegistry{groupsRegistry}
+    : ExtendableTableModel{parent}
+    , p{std::make_unique<Private>(groupsRegistry)}
 { }
+
+LibraryTreeGroupModel::~LibraryTreeGroupModel() = default;
 
 void LibraryTreeGroupModel::populate()
 {
     beginResetModel();
-    reset();
+    p->root = {};
+    p->nodes.clear();
 
-    const auto& groups = m_groupsRegistry->items();
+    const auto& groups = p->groupsRegistry->items();
 
     for(const auto& [index, group] : groups) {
         if(!group.isValid()) {
             continue;
         }
-        LibraryTreeGroupItem* parent = rootItem();
-        LibraryTreeGroupItem* child  = &m_nodes.emplace(index, LibraryTreeGroupItem{group, parent}).first->second;
-        parent->appendChild(child);
+        LibraryTreeGroupItem* child = &p->nodes.emplace(index, LibraryTreeGroupItem{group, &p->root}).first->second;
+        p->root.appendChild(child);
     }
 
     endResetModel();
 }
 
-void LibraryTreeGroupModel::addNewGroup()
-{
-    const int index = static_cast<int>(m_nodes.size());
-
-    LibraryTreeGrouping group;
-    group.index = index;
-
-    auto* parent = rootItem();
-
-    LibraryTreeGroupItem* item = &m_nodes.emplace(index, LibraryTreeGroupItem{group, parent}).first->second;
-
-    item->setStatus(LibraryTreeGroupItem::Added);
-
-    const int row = parent->childCount();
-    beginInsertRows({}, row, row);
-    parent->appendChild(item);
-    endInsertRows();
-}
-
 void LibraryTreeGroupModel::markForRemoval(const LibraryTreeGrouping& group)
 {
-    LibraryTreeGroupItem* item = &m_nodes.at(group.index);
+    LibraryTreeGroupItem* item = &p->nodes.at(group.index);
 
     if(item->status() == LibraryTreeGroupItem::Added) {
         beginRemoveRows({}, item->row(), item->row());
-        rootItem()->removeChild(item->row());
+        p->root.removeChild(item->row());
         endRemoveRows();
 
-        removeGroup(group.index);
+        p->removeGroup(group.index);
     }
     else {
         item->setStatus(LibraryTreeGroupItem::Removed);
@@ -101,28 +114,21 @@ void LibraryTreeGroupModel::markForRemoval(const LibraryTreeGrouping& group)
     }
 }
 
-void LibraryTreeGroupModel::markForChange(const LibraryTreeGrouping& group)
-{
-    LibraryTreeGroupItem* item = &m_nodes.at(group.index);
-    item->changeGroup(group);
-    emit dataChanged({}, {}, {Qt::FontRole});
-
-    if(item->status() == LibraryTreeGroupItem::None) {
-        item->setStatus(LibraryTreeGroupItem::Changed);
-    }
-}
-
 void LibraryTreeGroupModel::processQueue()
 {
     std::vector<LibraryTreeGroupItem> groupsToRemove;
 
-    for(auto& [index, node] : m_nodes) {
+    for(auto& [index, node] : p->nodes) {
         const LibraryTreeGroupItem::ItemStatus status = node.status();
         const LibraryTreeGrouping group               = node.group();
 
         switch(status) {
             case(LibraryTreeGroupItem::Added): {
-                const auto addedField = m_groupsRegistry->addItem(group);
+                if(group.script.isEmpty()) {
+                    break;
+                }
+
+                const auto addedField = p->groupsRegistry->addItem(group);
                 if(addedField.isValid()) {
                     node.changeGroup(addedField);
                     node.setStatus(LibraryTreeGroupItem::None);
@@ -135,9 +141,9 @@ void LibraryTreeGroupModel::processQueue()
                 break;
             }
             case(LibraryTreeGroupItem::Removed): {
-                if(m_groupsRegistry->removeByIndex(group.index)) {
+                if(p->groupsRegistry->removeByIndex(group.index)) {
                     beginRemoveRows({}, node.row(), node.row());
-                    rootItem()->removeChild(node.row());
+                    p->root.removeChild(node.row());
                     endRemoveRows();
                     groupsToRemove.push_back(node);
                 }
@@ -147,8 +153,8 @@ void LibraryTreeGroupModel::processQueue()
                 break;
             }
             case(LibraryTreeGroupItem::Changed): {
-                if(m_groupsRegistry->changeItem(group)) {
-                    node.changeGroup(m_groupsRegistry->itemById(group.id));
+                if(p->groupsRegistry->changeItem(group)) {
+                    node.changeGroup(p->groupsRegistry->itemById(group.id));
                     node.setStatus(LibraryTreeGroupItem::None);
 
                     emit dataChanged({}, {});
@@ -163,7 +169,7 @@ void LibraryTreeGroupModel::processQueue()
         }
     }
     for(const auto& item : groupsToRemove) {
-        removeGroup(item.group().index);
+        p->removeGroup(item.group().index);
     }
 }
 
@@ -173,7 +179,7 @@ Qt::ItemFlags LibraryTreeGroupModel::flags(const QModelIndex& index) const
         return Qt::NoItemFlags;
     }
 
-    auto flags = TableModel::flags(index);
+    auto flags = ExtendableTableModel::flags(index);
     flags |= Qt::ItemIsEditable;
 
     return flags;
@@ -237,15 +243,20 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
         return false;
     }
 
-    const auto* item = static_cast<LibraryTreeGroupItem*>(index.internalPointer());
-    auto group       = item->group();
+    auto* item = static_cast<LibraryTreeGroupItem*>(index.internalPointer());
+    auto group = item->group();
 
     switch(index.column()) {
         case(1): {
-            if(group.name == value.toString()) {
+            if(value.toString() == "<enter name here>"_L1 || group.name == value.toString()) {
+                if(item->status() == LibraryTreeGroupItem::Added) {
+                    emit pendingRowCancelled();
+                }
                 return false;
             }
             group.name = value.toString();
+
+            emit pendingRowAdded();
             break;
         }
         case(2): {
@@ -259,9 +270,30 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
             break;
     }
 
-    markForChange(group);
+    item->changeGroup(group);
+    emit dataChanged({}, {}, {Qt::FontRole});
+
+    if(item->status() == LibraryTreeGroupItem::None) {
+        item->setStatus(LibraryTreeGroupItem::Changed);
+    }
 
     return true;
+}
+
+QModelIndex LibraryTreeGroupModel::index(int row, int column, const QModelIndex& parent) const
+{
+    if(!hasIndex(row, column, parent)) {
+        return {};
+    }
+
+    LibraryTreeGroupItem* item = p->root.child(row);
+
+    return createIndex(row, column, item);
+}
+
+int LibraryTreeGroupModel::rowCount(const QModelIndex& /*parent*/) const
+{
+    return p->root.childCount();
 }
 
 int LibraryTreeGroupModel::columnCount(const QModelIndex& /*parent*/) const
@@ -269,17 +301,56 @@ int LibraryTreeGroupModel::columnCount(const QModelIndex& /*parent*/) const
     return 3;
 }
 
-void LibraryTreeGroupModel::reset()
+bool LibraryTreeGroupModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
 {
-    resetRoot();
-    m_nodes.clear();
+    for(int i{row}; i < row + count; ++i) {
+        const QModelIndex& index = this->index(i, 0, {});
+
+        if(!index.isValid()) {
+            return false;
+        }
+
+        auto* item = static_cast<LibraryTreeGroupItem*>(index.internalPointer());
+        if(item) {
+            if(item->status() == LibraryTreeGroupItem::Added) {
+                beginRemoveRows({}, i, i);
+                p->root.removeChild(i);
+                endRemoveRows();
+                p->nodes.erase(item->group().index);
+            }
+            else {
+                item->setStatus(LibraryTreeGroupItem::Removed);
+                emit dataChanged(index, index, {Qt::FontRole});
+            }
+        }
+    }
+    return true;
 }
 
-void LibraryTreeGroupModel::removeGroup(int index)
+void LibraryTreeGroupModel::addPendingRow()
 {
-    if(!m_nodes.contains(index)) {
-        return;
-    }
-    m_nodes.erase(index);
+    const int index = static_cast<int>(p->nodes.size());
+
+    LibraryTreeGrouping group;
+    group.index = index;
+
+    LibraryTreeGroupItem* item = &p->nodes.emplace(index, LibraryTreeGroupItem{group, &p->root}).first->second;
+
+    item->setStatus(LibraryTreeGroupItem::Added);
+
+    const int row = p->root.childCount();
+    beginInsertRows({}, row, row);
+    p->root.appendChild(item);
+    endInsertRows();
+
+    emit newPendingRow();
+}
+
+void LibraryTreeGroupModel::removePendingRow()
+{
+    const int row = rowCount({}) - 1;
+    beginRemoveRows({}, row, row);
+    p->root.removeChild(row);
+    endRemoveRows();
 }
 } // namespace Fooyin

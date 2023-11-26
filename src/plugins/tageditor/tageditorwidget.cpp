@@ -19,45 +19,33 @@
 
 #include "tageditorwidget.h"
 
+#include "tageditoritem.h"
 #include "tageditormodel.h"
 
-#include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actionmanager.h>
-#include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
-#include <QIODevice>
 #include <QMenu>
 #include <QSettings>
 #include <QTableView>
 
 constexpr auto TagEditorState = "TagEditor/State";
 
-namespace {
-void resizeTable(QTableView* view)
-{
-    view->resizeRowsToContents();
-};
-
-void handleNewRow(QTableView* view)
-{
-    resizeTable(view);
-    const QModelIndex index = view->model()->index(view->model()->rowCount({}) - 1, 0);
-    if(index.isValid()) {
-        view->edit(index);
-    }
-};
-} // namespace
-
 namespace Fooyin::TagEditor {
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{actionManager, parent}
 { }
+
+void TagEditorView::handleNewRow()
+{
+    ExtendableTableView::handleNewRow();
+    resizeRowsToContents();
+}
 
 int TagEditorView::sizeHintForRow(int row) const
 {
@@ -96,7 +84,7 @@ struct TagEditorWidget::Private
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(view);
 
-        view->setModel(model);
+        view->setExtendableModel(model);
 
         view->horizontalHeader()->setStretchLastSection(true);
         view->horizontalHeader()->setSectionsClickable(false);
@@ -138,23 +126,12 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TrackSelectionCon
     const int width = fontMetrics.horizontalAdvance(p->model->defaultFieldText()) + 15;
 
     p->view->setColumnWidth(0, width);
-    resizeTable(p->view);
+    p->view->resizeRowsToContents();
 
     QObject::connect(p->trackSelection, &TrackSelectionController::selectionChanged, this,
                      [this](const TrackList& tracks) { p->model->reset(tracks); });
-    QObject::connect(p->view, &ExtendableTableView::newRowClicked, p->model, &TagEditorModel::addNewRow);
-    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { resizeTable(p->view); });
+    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { p->view->resizeRowsToContents(); });
     QObject::connect(p->model, &TagEditorModel::trackMetadataChanged, this, &TagEditorWidget::trackMetadataChanged);
-    QObject::connect(p->model, &TagEditorModel::newPendingRow, this, [this]() { handleNewRow(p->view); });
-    QObject::connect(p->model, &TagEditorModel::pendingRowAdded, p->view, &ExtendableTableView::rowAdded);
-    QObject::connect(
-        p->model, &TagEditorModel::pendingRowCancelled, this,
-        [this]() {
-            // We can't remove the row in setData, so we use a queued signal to remove it once setData returns
-            p->model->removePendingRow();
-            p->view->rowAdded();
-        },
-        Qt::QueuedConnection);
 
     QObject::connect(p->view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
         const QModelIndexList selected = p->view->selectionModel()->selectedIndexes();
