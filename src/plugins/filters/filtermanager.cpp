@@ -258,6 +258,20 @@ struct FilterManager::Private
             }
         }
     }
+
+    void removeLibraryTracks(int libraryId)
+    {
+        std::vector<LibraryFilter> filtersToUpdate;
+
+        for(const auto& filter : filterStore.activeFilters()) {
+            TrackList cleanedTracks;
+            std::ranges::copy_if(std::as_const(filter.tracks), std::back_inserter(cleanedTracks),
+                                 [libraryId](const Track& track) { return track.libraryId() != libraryId; });
+            filtersToUpdate.emplace_back(filter.field, filter.index, cleanedTracks);
+        }
+
+        std::ranges::for_each(filtersToUpdate, [this](const auto& filter) { filterStore.updateFilter(filter); });
+    }
 };
 
 FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* trackSelection, SettingsManager* settings,
@@ -277,7 +291,10 @@ FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* tr
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, this, tracksChanged);
     QObject::connect(p->library, &MusicLibrary::tracksSorted, this, tracksChanged);
     QObject::connect(p->library, &MusicLibrary::libraryChanged, this, tracksChanged);
-    QObject::connect(p->library, &MusicLibrary::libraryRemoved, this, tracksChanged);
+    QObject::connect(p->library, &MusicLibrary::libraryRemoved, this, [tracksChanged, this](int libraryId) {
+        p->removeLibraryTracks(libraryId);
+        tracksChanged();
+    });
 
     QObject::connect(&p->fieldsRegistry, &FieldRegistry::fieldChanged, this,
                      [this](const Filters::FilterField& field) { p->fieldChanged(field); });
