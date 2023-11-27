@@ -298,12 +298,12 @@ void PlaylistWidgetPrivate::selectionChanged() const
         }
     }
 
+    selectionController->changeSelectedTracks(firstIndex, tracks);
+
     if(tracks.empty()) {
         removeTrackAction->setEnabled(false);
         return;
     }
-
-    selectionController->changeSelectedTracks(firstIndex, tracks);
 
     if(settings->value<Settings::Gui::PlaybackFollowsCursor>()) {
         if(auto* currentPlaylist = playlistController->currentPlaylist()) {
