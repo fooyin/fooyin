@@ -63,7 +63,11 @@ struct PlaylistController::Private
     {
         const int lastId = settings->value<Settings::Gui::LastPlaylistId>();
         if(lastId >= 0) {
-            if(auto* playlist = handler->playlistById(lastId)) {
+            Playlist* playlist = handler->playlistById(lastId);
+            if(!playlist) {
+                playlist = handler->playlistByIndex(0);
+            }
+            if(playlist) {
                 currentPlaylist = playlist;
                 QMetaObject::invokeMethod(self, "currentPlaylistChanged", Q_ARG(Playlist*, playlist));
             }
