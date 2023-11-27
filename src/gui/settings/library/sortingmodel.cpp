@@ -60,14 +60,6 @@ struct SortingModel::Private
     explicit Private(SortingRegistry* sortRegistry)
         : sortRegistry{sortRegistry}
     { }
-
-    void removeSortScript(int index)
-    {
-        if(!nodes.contains(index)) {
-            return;
-        }
-        nodes.erase(index);
-    }
 };
 
 SortingModel::SortingModel(SortingRegistry* sortRegistry, QObject* parent)
@@ -96,23 +88,6 @@ void SortingModel::populate()
     endResetModel();
 }
 
-void SortingModel::markForRemoval(const SortScript& sortScript)
-{
-    SortingItem* item = &p->nodes.at(sortScript.index);
-
-    if(item->status() == SortingItem::Added) {
-        beginRemoveRows({}, item->row(), item->row());
-        p->root.removeChild(item->row());
-        endRemoveRows();
-
-        p->removeSortScript(sortScript.index);
-    }
-    else {
-        item->setStatus(SortingItem::Removed);
-        emit dataChanged({}, {}, {Qt::FontRole});
-    }
-}
-
 void SortingModel::processQueue()
 {
     std::vector<SortingItem> sortScriptsToRemove;
@@ -132,7 +107,7 @@ void SortingModel::processQueue()
                     node.changeSort(addedSort);
                     node.setStatus(SortingItem::None);
 
-                    emit dataChanged({}, {});
+                    emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
                     qWarning() << "Sorting " + sortScript.name + " could not be added";
@@ -156,7 +131,7 @@ void SortingModel::processQueue()
                     node.changeSort(p->sortRegistry->itemById(sortScript.id));
                     node.setStatus(SortingItem::None);
 
-                    emit dataChanged({}, {});
+                    emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
                     qWarning() << "Sorting " + sortScript.name + " could not be changed";
@@ -168,7 +143,7 @@ void SortingModel::processQueue()
         }
     }
     for(const auto& item : sortScriptsToRemove) {
-        p->removeSortScript(item.sortScript().index);
+        p->nodes.erase(item.sortScript().index);
     }
 }
 
@@ -274,12 +249,12 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
             break;
     }
 
-    item->changeSort(sortScript);
-    emit dataChanged({}, {}, {Qt::FontRole});
-
     if(item->status() == SortingItem::None) {
         item->setStatus(SortingItem::Changed);
     }
+
+    item->changeSort(sortScript);
+    emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
 
     return true;
 }
@@ -324,7 +299,7 @@ bool SortingModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
             }
             else {
                 item->setStatus(SortingItem::Removed);
-                emit dataChanged(index, index, {Qt::FontRole});
+                emit dataChanged({}, {}, {Qt::FontRole});
             }
         }
     }

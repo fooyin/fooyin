@@ -36,7 +36,6 @@ public:
     ~FieldModel() override;
 
     void populate();
-    void markForRemoval(int row);
     void processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

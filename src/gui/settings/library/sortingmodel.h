@@ -36,7 +36,6 @@ public:
     ~SortingModel() override;
 
     void populate();
-    void markForRemoval(const SortScript& sortScript);
     void processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

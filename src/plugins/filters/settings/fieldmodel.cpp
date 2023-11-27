@@ -55,19 +55,12 @@ private:
 struct FieldModel::Private
 {
     FieldRegistry* fieldsRegistry;
-    std::map<int, FieldItem> nodes;
     FieldItem root;
+    std::map<int, FieldItem> nodes;
 
     explicit Private(FieldRegistry* fieldsRegistry)
         : fieldsRegistry{fieldsRegistry}
     { }
-
-    void removeField(int index)
-    {
-        if(nodes.contains(index)) {
-            nodes.erase(index);
-        }
-    }
 };
 
 FieldModel::FieldModel(FieldRegistry* fieldsRegistry, QObject* parent)
@@ -94,23 +87,6 @@ void FieldModel::populate()
     }
 
     endResetModel();
-}
-
-void FieldModel::markForRemoval(int row)
-{
-    FieldItem* item = p->root.child(row);
-
-    if(item->status() == FieldItem::Added) {
-        beginRemoveRows({}, item->row(), item->row());
-        p->root.removeChild(item->row());
-        endRemoveRows();
-
-        p->removeField(row);
-    }
-    else {
-        item->setStatus(FieldItem::Removed);
-        emit dataChanged({}, {}, {Qt::FontRole});
-    }
 }
 
 void FieldModel::processQueue()
@@ -168,7 +144,7 @@ void FieldModel::processQueue()
         }
     }
     for(const auto& index : fieldsToRemove) {
-        p->removeField(index);
+        p->nodes.erase(index);
     }
 }
 
@@ -283,12 +259,12 @@ bool FieldModel::setData(const QModelIndex& index, const QVariant& value, int ro
             break;
     }
 
-    item->changeField(field);
-    emit dataChanged(index, index, {Qt::DisplayRole});
-
     if(item->status() == FieldItem::None) {
         item->setStatus(FieldItem::Changed);
     }
+
+    item->changeField(field);
+    emit dataChanged(index, index, {Qt::FontRole, Qt::DisplayRole});
 
     return true;
 }
@@ -333,7 +309,7 @@ bool FieldModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
             }
             else {
                 item->setStatus(FieldItem::Removed);
-                emit dataChanged(index, index, {Qt::FontRole});
+                emit dataChanged({}, {}, {Qt::FontRole});
             }
         }
     }

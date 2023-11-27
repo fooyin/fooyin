@@ -61,14 +61,6 @@ struct LibraryTreeGroupModel::Private
     explicit Private(LibraryTreeGroupRegistry* groupsRegistry)
         : groupsRegistry{groupsRegistry}
     { }
-
-    void removeGroup(int index)
-    {
-        if(!nodes.contains(index)) {
-            return;
-        }
-        nodes.erase(index);
-    }
 };
 
 LibraryTreeGroupModel::LibraryTreeGroupModel(LibraryTreeGroupRegistry* groupsRegistry, QObject* parent)
@@ -95,23 +87,6 @@ void LibraryTreeGroupModel::populate()
     }
 
     endResetModel();
-}
-
-void LibraryTreeGroupModel::markForRemoval(const LibraryTreeGrouping& group)
-{
-    LibraryTreeGroupItem* item = &p->nodes.at(group.index);
-
-    if(item->status() == LibraryTreeGroupItem::Added) {
-        beginRemoveRows({}, item->row(), item->row());
-        p->root.removeChild(item->row());
-        endRemoveRows();
-
-        p->removeGroup(group.index);
-    }
-    else {
-        item->setStatus(LibraryTreeGroupItem::Removed);
-        emit dataChanged({}, {}, {Qt::FontRole});
-    }
 }
 
 void LibraryTreeGroupModel::processQueue()
@@ -169,7 +144,7 @@ void LibraryTreeGroupModel::processQueue()
         }
     }
     for(const auto& item : groupsToRemove) {
-        p->removeGroup(item.group().index);
+        p->nodes.erase(item.group().index);
     }
 }
 
@@ -270,12 +245,12 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
             break;
     }
 
-    item->changeGroup(group);
-    emit dataChanged({}, {}, {Qt::FontRole});
-
     if(item->status() == LibraryTreeGroupItem::None) {
         item->setStatus(LibraryTreeGroupItem::Changed);
     }
+
+    item->changeGroup(group);
+    emit dataChanged({}, {}, {Qt::FontRole, Qt::DisplayRole});
 
     return true;
 }
@@ -320,7 +295,7 @@ bool LibraryTreeGroupModel::removeRows(int row, int count, const QModelIndex& /*
             }
             else {
                 item->setStatus(LibraryTreeGroupItem::Removed);
-                emit dataChanged(index, index, {Qt::FontRole});
+                emit dataChanged({}, {}, {Qt::FontRole});
             }
         }
     }

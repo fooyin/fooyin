@@ -35,8 +35,6 @@ public:
 
     void populate();
     void markForAddition(const LibraryInfo& info);
-    void markForRemoval(const LibraryInfo& info);
-    void markForChange(const LibraryInfo& info);
     void processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

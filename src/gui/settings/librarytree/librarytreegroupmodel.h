@@ -34,7 +34,6 @@ public:
     ~LibraryTreeGroupModel() override;
 
     void populate();
-    void markForRemoval(const LibraryTreeGrouping& group);
     void processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
