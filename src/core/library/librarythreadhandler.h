@@ -26,6 +26,7 @@
 namespace Fooyin {
 class Database;
 struct LibraryInfo;
+struct ScanResult;
 
 class LibraryThreadHandler : public QObject
 {
@@ -45,9 +46,7 @@ public:
 signals:
     void progressChanged(int percent);
     void statusChanged(const LibraryInfo& library);
-
-    void addedTracks(const TrackList& tracks);
-    void updatedTracks(const TrackList& tracks);
+    void scanUpdate(const ScanResult& result);
     void tracksDeleted(const TrackList& tracks);
 
     void gotTracks(const TrackList& result);

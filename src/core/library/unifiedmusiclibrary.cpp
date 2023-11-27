@@ -76,55 +76,65 @@ struct UnifiedMusicLibrary::Private
 
     QCoro::Task<void> loadTracks(TrackList trackToLoad)
     {
-        co_await addTracks(trackToLoad);
+        tracks = co_await addTracks(trackToLoad);
+        tracks = co_await resortTracks(tracks);
         QMetaObject::invokeMethod(self, "tracksLoaded", Q_ARG(const TrackList&, trackToLoad));
     }
 
     QCoro::Task<TrackList> addTracks(TrackList newTracks)
     {
-        tracks.reserve(tracks.size() + newTracks.size());
-
         std::unordered_map<int, QDir> libraryDirs;
         const auto& libraries = libraryManager->allLibraries();
         for(const auto& [id, info] : libraries) {
             libraryDirs.emplace(id, QDir{info.path});
         }
 
-        TrackList presortedTracks
+        TrackList sortedNewTracks
             = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), newTracks);
-        for(Track& track : presortedTracks) {
+
+        for(Track& track : sortedNewTracks) {
             const int libraryId = track.libraryId();
-            if(libraryDirs.contains(libraryId)) {
+            if(libraryId < 0) {
+                track.setRelativePath(track.filepath());
+            }
+            else if(libraryDirs.contains(libraryId)) {
                 track.setRelativePath(libraryDirs.at(libraryId).relativeFilePath(track.filepath()));
             }
         }
-        std::ranges::copy(presortedTracks, std::back_inserter(tracks));
-
-        tracks = co_await resortTracks(tracks);
 
         co_return presortedTracks;
+        sortedNewTracks = co_await resortTracks(sortedNewTracks);
+        co_return sortedNewTracks;
     }
 
-    QCoro::Task<void> newTracks(TrackList newTracks)
-    {
-        TrackList addedTracks = co_await addTracks(newTracks);
-        QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, addedTracks));
-    }
-
-    QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
+    QCoro::Task<TrackList> updateTracks(TrackList tracksToUpdate)
     {
         TrackList updatedTracks
             = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
-        updatedTracks = co_await resortTracks(updatedTracks);
 
         std::ranges::for_each(updatedTracks, [this](Track track) {
             std::ranges::replace_if(
                 tracks, [track](Track libraryTrack) { return libraryTrack.id() == track.id(); }, track);
         });
 
-        tracks = co_await resortTracks(tracks);
+        updatedTracks = co_await resortTracks(updatedTracks);
+        co_return updatedTracks;
+    }
 
-        QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, updatedTracks));
+    QCoro::Task<void> handleScanResult(ScanResult result)
+    {
+        if(!result.addedTracks.empty()) {
+            const TrackList addedTracks = co_await addTracks(result.addedTracks);
+            QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, addedTracks));
+            std::ranges::copy(addedTracks, std::back_inserter(tracks));
+        }
+
+        if(!result.updatedTracks.empty()) {
+            const TrackList updatedTracks = co_await updateTracks(result.updatedTracks);
+            QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, updatedTracks));
+        }
+
+        tracks = co_await resortTracks(tracks);
     }
 
     void removeTracks(const TrackList& tracksToRemove)
@@ -166,10 +176,8 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
 
     connect(&p->threadHandler, &LibraryThreadHandler::statusChanged, this,
             [this](const LibraryInfo& library) { p->libraryStatusChanged(library); });
-    connect(&p->threadHandler, &LibraryThreadHandler::addedTracks, this,
-            [this](const TrackList& tracks) { p->newTracks(tracks); });
-    connect(&p->threadHandler, &LibraryThreadHandler::updatedTracks, this,
-            [this](const TrackList& tracks) { p->updateTracks(tracks); });
+    connect(&p->threadHandler, &LibraryThreadHandler::scanUpdate, this,
+            [this](const ScanResult& result) { p->handleScanResult(result); });
     connect(&p->threadHandler, &LibraryThreadHandler::tracksDeleted, this,
             [this](const TrackList& tracks) { p->removeTracks(tracks); });
 

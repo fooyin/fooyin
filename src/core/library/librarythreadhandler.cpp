@@ -19,7 +19,6 @@
 
 #include "librarythreadhandler.h"
 
-#include "database/database.h"
 #include "libraryscanner.h"
 #include "trackdatabasemanager.h"
 
@@ -98,8 +97,7 @@ LibraryThreadHandler::LibraryThreadHandler(Database* database, QObject* parent)
     QObject::connect(&p->scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
     QObject::connect(&p->scanner, &LibraryScanner::progressChanged, this, &LibraryThreadHandler::progressChanged);
     QObject::connect(&p->scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
-    QObject::connect(&p->scanner, &LibraryScanner::addedTracks, this, &LibraryThreadHandler::addedTracks);
-    QObject::connect(&p->scanner, &LibraryScanner::updatedTracks, this, &LibraryThreadHandler::updatedTracks);
+    QObject::connect(&p->scanner, &LibraryScanner::scanUpdate, this, &LibraryThreadHandler::scanUpdate);
     QObject::connect(&p->scanner, &LibraryScanner::tracksDeleted, this, &LibraryThreadHandler::tracksDeleted);
 }
 

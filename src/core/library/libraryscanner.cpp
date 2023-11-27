@@ -59,7 +59,14 @@ struct LibraryScanner::Private
         }
     }
 
-    QStringList getFiles(QDir& baseDirectory) const
+        for(const QDir& dir : dirs) {
+            files.append(getFilesInDir(dir));
+        }
+
+        return files;
+    }
+
+    [[nodiscard]] QStringList getFilesInDir(const QDir& baseDirectory) const
     {
         QStringList ret;
         QList<QDir> stack{baseDirectory};
@@ -89,12 +96,12 @@ struct LibraryScanner::Private
 
     bool getAndSaveAllFiles(const TrackPathMap& tracks)
     {
-        QDir dir{library.path};
+        const QDir dir{library.path};
 
         TrackList tracksToStore{};
         TrackList tracksToUpdate{};
 
-        const QStringList files = getFiles(dir);
+        const QStringList files = getFilesInDir(dir);
 
         int tracksProcessed{0};
         auto totalTracks = static_cast<double>(files.size());
@@ -129,6 +136,7 @@ struct LibraryScanner::Private
                         // Regenerate hash
                         changedTrack.generateHash();
                         tracksToUpdate.push_back(changedTrack);
+                        ++tracksProcessed;
                         continue;
                     }
                 }
@@ -151,7 +159,8 @@ struct LibraryScanner::Private
 
                 if(tracksToStore.size() >= 250) {
                     storeTracks(tracksToStore);
-                    QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const TrackList&, tracksToStore));
+                    QMetaObject::invokeMethod(self, "scanUpdate",
+                                              Q_ARG(const ScanResult&, (ScanResult{tracksToStore, {}})));
                     tracksToStore.clear();
                 }
             }
@@ -160,15 +169,10 @@ struct LibraryScanner::Private
         storeTracks(tracksToStore);
         storeTracks(tracksToUpdate);
 
-        if(!tracksToStore.empty()) {
-            QMetaObject::invokeMethod(self, "addedTracks", Q_ARG(const TrackList&, tracksToStore));
+        if(!tracksToStore.empty() || !tracksToUpdate.empty()) {
+            QMetaObject::invokeMethod(self, "scanUpdate",
+                                      Q_ARG(const ScanResult&, (ScanResult{tracksToStore, tracksToUpdate})));
         }
-        if(!tracksToUpdate.empty()) {
-            QMetaObject::invokeMethod(self, "updatedTracks", Q_ARG(const TrackList&, tracksToUpdate));
-        }
-
-        tracksToStore.clear();
-        tracksToUpdate.clear();
 
         return true;
     }
@@ -197,7 +201,6 @@ void LibraryScanner::stopThread()
 {
     emit progressChanged(100);
     setState(Idle);
-    setState(State::Idle);
 }
 
 void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tracks)

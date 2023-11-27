@@ -27,6 +27,12 @@ class Database;
 class LibraryManager;
 struct LibraryInfo;
 
+struct ScanResult
+{
+    TrackList addedTracks;
+    TrackList updatedTracks;
+};
+
 class LibraryScanner : public Worker
 {
     Q_OBJECT
@@ -41,8 +47,7 @@ public:
 signals:
     void progressChanged(int percent);
     void statusChanged(const LibraryInfo& library);
-    void updatedTracks(const TrackList& tracks);
-    void addedTracks(const TrackList& tracks);
+    void scanUpdate(const ScanResult& result);
     void tracksDeleted(const TrackList& tracks);
 
 public slots:
