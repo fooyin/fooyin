@@ -292,10 +292,18 @@ QMimeData* FilterModel::mimeData(const QModelIndexList& indexes) const
 
 void FilterModel::addTracks(const TrackList& tracks)
 {
+    TrackList tracksToAdd;
+    std::ranges::copy_if(tracks, std::back_inserter(tracksToAdd),
+                         [this](const Track& track) { return !p->trackParents.contains(track.id()); });
+
+    if(tracksToAdd.empty()) {
+        return;
+    }
+
     p->populatorThread.start();
 
-    QMetaObject::invokeMethod(&p->populator,
-                              [this, tracks] { p->populator.run(p->field.field, p->field.sortField, tracks); });
+    QMetaObject::invokeMethod(
+        &p->populator, [this, tracksToAdd] { p->populator.run(p->field.field, p->field.sortField, tracksToAdd); });
 }
 
 void FilterModel::updateTracks(const TrackList& tracks)

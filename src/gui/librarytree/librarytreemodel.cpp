@@ -403,9 +403,17 @@ QMimeData* LibraryTreeModel::mimeData(const QModelIndexList& indexes) const
 
 void LibraryTreeModel::addTracks(const TrackList& tracks)
 {
+    TrackList tracksToAdd;
+    std::ranges::copy_if(tracks, std::back_inserter(tracksToAdd),
+                         [this](const Track& track) { return !p->trackParents.contains(track.id()); });
+
+    if(tracksToAdd.empty()) {
+        return;
+    }
+
     p->populatorThread.start();
 
-    QMetaObject::invokeMethod(&p->populator, [this, tracks] { p->populator.run(p->grouping, tracks); });
+    QMetaObject::invokeMethod(&p->populator, [this, tracksToAdd] { p->populator.run(p->grouping, tracksToAdd); });
 }
 
 void LibraryTreeModel::updateTracks(const TrackList& tracks)
