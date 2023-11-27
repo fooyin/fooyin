@@ -58,7 +58,7 @@ ExtendableTableView::ExtendableTableView(ActionManager* actionManager, QWidget* 
     m_actionManager->addContextObject(m_context);
 
     QObject::connect(m_remove, &QAction::triggered, this, [this]() {
-        const QModelIndexList selected = selectionModel()->selectedIndexes();
+        const QModelIndexList selected = selectionModel()->selectedRows(m_column);
         for(const QModelIndex& index : selected) {
             model()->removeRow(index.row());
         }
