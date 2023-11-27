@@ -30,8 +30,8 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fooyin {
 GuiSettings::GuiSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
-    , m_libraryTreeGroupRegistry{new LibraryTreeGroupRegistry(m_settings)}
-    , m_playlistPresetRegistry{new PresetRegistry(m_settings)}
+    , m_libraryTreeGroupRegistry{std::make_unique<LibraryTreeGroupRegistry>(m_settings)}
+    , m_playlistPresetRegistry{std::make_unique<PresetRegistry>(m_settings)}
 {
     m_settings->createTempSetting<Settings::Gui::LayoutEditing>(false);
     m_settings->createSetting<Settings::Gui::StartupBehaviour>(2, u"Interface"_s);
@@ -82,11 +82,11 @@ GuiSettings::~GuiSettings()
 
 LibraryTreeGroupRegistry* GuiSettings::libraryTreeGroupRegistry() const
 {
-    return m_libraryTreeGroupRegistry;
+    return m_libraryTreeGroupRegistry.get();
 }
 
 PresetRegistry* GuiSettings::playlistPresetRegistry() const
 {
-    return m_playlistPresetRegistry;
+    return m_playlistPresetRegistry.get();
 }
 } // namespace Fooyin

@@ -80,7 +80,7 @@ public:
 
 private:
     SettingsManager* m_settings;
-    LibraryTreeGroupRegistry* m_libraryTreeGroupRegistry;
-    PresetRegistry* m_playlistPresetRegistry;
+    std::unique_ptr<LibraryTreeGroupRegistry> m_libraryTreeGroupRegistry;
+    std::unique_ptr<PresetRegistry> m_playlistPresetRegistry;
 };
 } // namespace Fooyin

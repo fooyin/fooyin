@@ -31,7 +31,7 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fooyin {
 CoreSettings::CoreSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
-    , m_sortingRegistry{new SortingRegistry(settingsManager)}
+    , m_sortingRegistry{std::make_unique<SortingRegistry>(settingsManager)}
 {
     m_settings->createSetting<Settings::Core::Version>(VERSION);
     m_settings->createSetting<Settings::Core::DatabaseVersion>("0.1.0");
@@ -60,6 +60,6 @@ CoreSettings::~CoreSettings()
 
 SortingRegistry* CoreSettings::sortingRegistry() const
 {
-    return m_sortingRegistry;
+    return m_sortingRegistry.get();
 }
 } // namespace Fooyin

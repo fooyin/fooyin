@@ -58,6 +58,6 @@ public:
 
 private:
     SettingsManager* m_settings;
-    SortingRegistry* m_sortingRegistry;
+    std::unique_ptr<SortingRegistry> m_sortingRegistry;
 };
 } // namespace Fooyin
