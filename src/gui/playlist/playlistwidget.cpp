@@ -113,6 +113,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , playlistView{new PlaylistView(self)}
     , header{new HeaderView(Qt::Horizontal, self)}
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
+    , removeTrackAction{new QAction(tr("Remove"), self)}
 {
     layout->setContentsMargins(0, 0, 0, 0);
 
@@ -226,10 +227,12 @@ void PlaylistWidgetPrivate::setupActions()
         playlistView->selectAll();
     });
 
-    auto* removeRows = new QAction(tr("Remove"), self);
-    auto* removeCmd = actionManager->registerAction(removeRows, Constants::Actions::Remove, playlistContext->context());
+    removeTrackAction = new QAction(tr("Remove"), self);
+    removeTrackAction->setEnabled(false);
+    auto* removeCmd
+        = actionManager->registerAction(removeTrackAction, Constants::Actions::Remove, playlistContext->context());
     removeCmd->setDefaultShortcut(QKeySequence::Delete);
-    QObject::connect(removeRows, &QAction::triggered, this, [this]() { tracksRemoved(); });
+    QObject::connect(removeTrackAction, &QAction::triggered, this, [this]() { tracksRemoved(); });
 }
 
 void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)
@@ -296,6 +299,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
     }
 
     if(tracks.empty()) {
+        removeTrackAction->setEnabled(false);
         return;
     }
 
@@ -314,6 +318,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
             }
         }
     }
+    removeTrackAction->setEnabled(true);
 }
 
 void PlaylistWidgetPrivate::playlistTracksChanged(int index) const

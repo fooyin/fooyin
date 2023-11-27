@@ -27,7 +27,6 @@
 #include <QCoroTask>
 
 #include <QString>
-#include <QUndoStack>
 
 class QHBoxLayout;
 class QMenu;
@@ -107,5 +106,7 @@ public:
     PlaylistPreset currentPreset;
 
     WidgetContext* playlistContext;
+
+    QAction* removeTrackAction;
 };
 } // namespace Fooyin
