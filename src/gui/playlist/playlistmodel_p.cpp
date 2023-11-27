@@ -1243,8 +1243,8 @@ void PlaylistModelPrivate::removeEmptyHeaders(ModelIndexSet& headers)
 
             const int headerRow = headerItem->row();
             removedHeaderKeys.emplace(headerItem->key());
-            removePlaylistRows(headerRow, 1, headerParent);
             headers.erase(header);
+            removePlaylistRows(headerRow, 1, headerParent);
         }
         if(headerParent.isValid()) {
             headersToCheck.push(headerParent);
