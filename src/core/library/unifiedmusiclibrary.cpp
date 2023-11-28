@@ -210,7 +210,7 @@ void UnifiedMusicLibrary::loadLibrary()
 void UnifiedMusicLibrary::reloadAll()
 {
     const LibraryInfoMap& libraries = p->libraryManager->allLibraries();
-    for(const auto& library : libraries | std::views::filter([](const auto& lib) { return lib.second.id >= 0; })) {
+    for(const auto& library : libraries | std::views::filter([](const auto& lib) { return lib.second.id > 0; })) {
         reload(library.second);
     }
 }
@@ -223,7 +223,6 @@ void UnifiedMusicLibrary::reload(const LibraryInfo& library)
 void UnifiedMusicLibrary::rescan()
 {
     p->threadHandler.getAllTracks();
-    ;
 }
 
 ScanRequest* UnifiedMusicLibrary::scanTracks(const TrackList& tracks)
