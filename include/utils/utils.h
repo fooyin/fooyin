@@ -22,6 +22,7 @@
 #include "fyutils_export.h"
 
 #include <QStringList>
+#include <QUrl>
 
 class QPixmap;
 class QString;
