@@ -356,6 +356,8 @@ QCoro::Task<void> PlaylistWidgetPrivate::scanDroppedTracks(TrackList tracks, int
 
     ScanRequest* request = library->scanTracks(tracks);
 
+    progress->show();
+
     QObject::connect(library, &MusicLibrary::scanProgress, progress, [request, progress](int id, int percent) {
         if(id != request->id) {
             return;
