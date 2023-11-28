@@ -30,8 +30,9 @@
 namespace {
 using NativeFunc     = std::function<QString(const QStringList&)>;
 using NativeVoidFunc = std::function<QString()>;
+using NativeBoolFunc = std::function<Fooyin::ScriptResult(const QStringList&)>;
 using NativeCondFunc = std::function<Fooyin::ScriptResult(const Fooyin::ScriptValueList&)>;
-using Func           = std::variant<NativeFunc, NativeVoidFunc, NativeCondFunc>;
+using Func           = std::variant<NativeFunc, NativeVoidFunc, NativeBoolFunc, NativeCondFunc>;
 
 using TrackFunc    = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::Track&)>;
 using TrackSetFunc = std::function<void(Fooyin::Track&, const Fooyin::ScriptRegistry::FuncRet&)>;
@@ -75,6 +76,12 @@ void addDefaultFunctions(std::unordered_map<QString, Func>& funcs)
 
     funcs.emplace("num", Fooyin::Scripting::num);
     funcs.emplace("replace", Fooyin::Scripting::replace);
+    funcs.emplace("chop", Fooyin::Scripting::chop);
+    funcs.emplace("slice", Fooyin::Scripting::slice);
+    funcs.emplace("left", Fooyin::Scripting::left);
+    funcs.emplace("right", Fooyin::Scripting::right);
+    funcs.emplace("strcmp", Fooyin::Scripting::strcmp);
+    funcs.emplace("strcmpi", Fooyin::Scripting::strcmpi);
     funcs.emplace("sep", Fooyin::Scripting::sep);
 
     funcs.emplace("timems", Fooyin::Scripting::msToString);
@@ -212,6 +219,9 @@ ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList
     if(std::holds_alternative<NativeVoidFunc>(function)) {
         const QString value = std::get<NativeVoidFunc>(function)();
         return {.value = value, .cond = !value.isEmpty()};
+    }
+    if(std::holds_alternative<NativeBoolFunc>(function)) {
+        return std::get<NativeBoolFunc>(function)(containerCast<QStringList>(args));
     }
     if(std::holds_alternative<NativeCondFunc>(function)) {
         return std::get<NativeCondFunc>(function)(args);

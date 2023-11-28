@@ -49,6 +49,116 @@ QString replace(const QStringList& vec)
     return origStr.replace(vec[1], vec[2]);
 }
 
+QString slice(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count < 2 || count > 3) {
+        return {};
+    }
+
+    bool posSuccess{false};
+
+    const int pos = vec[1].toInt(&posSuccess);
+
+    if(posSuccess) {
+        if(count == 2) {
+            return vec[0].sliced(pos);
+        }
+        bool numSuccess{false};
+        const int num = vec[2].toInt(&numSuccess);
+        if(numSuccess) {
+            return vec[0].sliced(pos, num);
+        }
+    }
+    return {};
+}
+
+QString chop(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count != 2) {
+        return {};
+    }
+
+    bool numSuccess{false};
+
+    const int num = vec[1].toInt(&numSuccess);
+
+    if(numSuccess) {
+        return vec[0].chopped(num);
+    }
+
+    return {};
+}
+
+QString left(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count != 2) {
+        return {};
+    }
+
+    bool numSuccess{false};
+
+    const int num = vec[1].toInt(&numSuccess);
+
+    if(numSuccess) {
+        const QStringView str = vec[0];
+        if(num >= 0 && num <= str.size()) {
+            return str.first(num).toString();
+        }
+    }
+
+    return {};
+}
+
+QString right(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count != 2) {
+        return {};
+    }
+
+    bool numSuccess{false};
+
+    const int num = vec[1].toInt(&numSuccess);
+
+    if(numSuccess) {
+        const QStringView str = vec[0];
+        if(num >= 0 && num <= str.size()) {
+            return vec[0].last(num);
+        }
+    }
+
+    return {};
+}
+
+ScriptResult strcmp(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count != 2) {
+        return {};
+    }
+
+    return {.cond = QString::compare(vec[0], vec[1], Qt::CaseSensitive) == 0};
+}
+
+ScriptResult strcmpi(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count != 2) {
+        return {};
+    }
+
+    return {.cond = QString::compare(vec[0], vec[1], Qt::CaseInsensitive) == 0};
+}
+
 QString sep()
 {
     return QDir::separator();

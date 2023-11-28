@@ -19,10 +19,18 @@
 
 #pragma once
 
+#include <core/scripting/scriptvalue.h>
+
 #include <QStringList>
 
 namespace Fooyin::Scripting {
 QString num(const QStringList& vec);
 QString replace(const QStringList& vec);
+QString slice(const QStringList& vec);
+QString chop(const QStringList& vec);
+QString left(const QStringList& vec);
+QString right(const QStringList& vec);
+ScriptResult strcmp(const QStringList& vec);
+ScriptResult strcmpi(const QStringList& vec);
 QString sep();
 } // namespace Fooyin
