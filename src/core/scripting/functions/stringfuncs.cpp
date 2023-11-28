@@ -145,7 +145,7 @@ ScriptResult strcmp(const QStringList& vec)
         return {};
     }
 
-    return {.cond = QString::compare(vec[0], vec[1], Qt::CaseSensitive) == 0};
+    return {.value = {}, .cond = QString::compare(vec[0], vec[1], Qt::CaseSensitive) == 0};
 }
 
 ScriptResult strcmpi(const QStringList& vec)
@@ -156,7 +156,7 @@ ScriptResult strcmpi(const QStringList& vec)
         return {};
     }
 
-    return {.cond = QString::compare(vec[0], vec[1], Qt::CaseInsensitive) == 0};
+    return {.value = {}, .cond = QString::compare(vec[0], vec[1], Qt::CaseInsensitive) == 0};
 }
 
 QString sep()
