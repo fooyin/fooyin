@@ -550,12 +550,11 @@ QStringList Track::supportedFileExtensions()
     return supportedExtensions;
 }
 
-} // namespace Fooyin
-
 size_t qHash(const Fooyin::Track& track)
 {
     return qHash(track.filepath());
 }
+} // namespace Fooyin
 
 QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& trackIds)
 {

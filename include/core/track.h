@@ -162,13 +162,14 @@ private:
     struct Private;
     QSharedDataPointer<Private> p;
 };
+size_t qHash(const Fooyin::Track& track);
+
 using TrackIds     = std::vector<int>;
 using TrackList    = std::vector<Track>;
 using TrackIdMap   = std::unordered_map<int, Track>;
 using TrackPathMap = std::unordered_map<QString, Track>;
 } // namespace Fooyin
 
-size_t qHash(const Fooyin::Track& track);
 FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& tracks);
 FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fooyin::TrackIds& tracks);
 
