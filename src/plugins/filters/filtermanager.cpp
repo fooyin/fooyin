@@ -25,7 +25,6 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
-#include <core/playlist/playlistmanager.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/async.h>
 
@@ -280,6 +279,7 @@ FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* tr
     , p{std::make_unique<Private>(this, library, trackSelection, settings)}
 {
     QObject::connect(p->library, &MusicLibrary::tracksAdded, this, &FilterManager::tracksAdded);
+    QObject::connect(p->library, &MusicLibrary::tracksScanned, this, &FilterManager::tracksAdded);
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, this, &FilterManager::tracksUpdated);
     QObject::connect(p->library, &MusicLibrary::tracksDeleted, this, &FilterManager::tracksRemoved);
 

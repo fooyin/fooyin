@@ -27,7 +27,6 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QRandomGenerator>
-#include <QVBoxLayout>
 #include <QWidget>
 
 #include <ranges>
@@ -112,6 +111,56 @@ void openDirectory(const QString& dir)
     const QUrl url = QUrl::fromLocalFile(QDir::toNativeSeparators(dir));
     QDesktopServices::openUrl(url);
 }
+
+QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExtensions)
+{
+    QStringList ret;
+    QList<QDir> stack{baseDirectory};
+
+    while(!stack.isEmpty()) {
+        const QDir dir              = stack.takeFirst();
+        const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        for(const auto& subDir : subDirs) {
+            stack.append(QDir{subDir.absoluteFilePath()});
+        }
+        const QFileInfoList files = dir.entryInfoList(fileExtensions, QDir::Files);
+        for(const auto& file : files) {
+            ret.append(file.absoluteFilePath());
+        }
+    }
+    return ret;
+}
+
+QStringList getFiles(const QStringList& paths, const QStringList& fileExtensions)
+{
+    QStringList files;
+    std::vector<QDir> dirs;
+
+    for(const QString& path : paths) {
+        QFileInfo file{path};
+        if(file.exists() && file.isFile()) {
+            files.push_back(path);
+        }
+        else if(file.isDir()) {
+            dirs.push_back({path});
+        }
+    }
+
+    for(const QDir& dir : dirs) {
+        files.append(getFilesInDir(dir, fileExtensions));
+    }
+
+    return files;
+}
+
+QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions)
+{
+    QStringList paths;
+    std::ranges::transform(std::as_const(urls), std::back_inserter(paths),
+                           [](const QUrl& url) { return url.toLocalFile(); });
+    return getFiles(paths, fileExtensions);
+}
+
 } // namespace File
 
 int randomNumber(int min, int max)

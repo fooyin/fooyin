@@ -30,6 +30,8 @@
 
 #include <QDir>
 
+constexpr auto BatchSize = 250;
+
 namespace Fooyin {
 struct LibraryScanner::Private
 {
@@ -39,6 +41,9 @@ struct LibraryScanner::Private
     TrackDatabase trackDatabase;
     TagReader tagReader;
     TagWriter tagWriter;
+
+    QStringList supportedExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga", "*.m4a",  "*.wav", "*.flac",
+                                    "*.wma", "*.mpc", "*.aiff", "*.ape", "*.webm", "*.mp4"};
 
     Private(LibraryScanner* self, Database* database)
         : self{self}
@@ -53,64 +58,27 @@ struct LibraryScanner::Private
         }
 
         trackDatabase.storeTracks(tracks);
-
-        if(!self->mayRun()) {
-            return;
-        }
     }
 
-        for(const QDir& dir : dirs) {
-            files.append(getFilesInDir(dir));
-        }
-
-        return files;
-    }
-
-    [[nodiscard]] QStringList getFilesInDir(const QDir& baseDirectory) const
-    {
-        QStringList ret;
-        QList<QDir> stack{baseDirectory};
-
-        static const QStringList SupportedExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga", "*.m4a",  "*.wav", "*.flac",
-                                                     "*.wma", "*.mpc", "*.aiff", "*.ape", "*.webm", "*.mp4"};
-
-        while(!stack.isEmpty()) {
-            const QDir dir              = stack.takeFirst();
-            const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-            for(const auto& subDir : subDirs) {
-                if(!self->mayRun()) {
-                    return {};
-                }
-                stack.append(QDir{subDir.absoluteFilePath()});
-            }
-            const QFileInfoList files = dir.entryInfoList(SupportedExtensions, QDir::Files);
-            for(const auto& file : files) {
-                if(!self->mayRun()) {
-                    return {};
-                }
-                ret.append(file.absoluteFilePath());
-            }
-        }
-        return ret;
-    }
-
-    bool getAndSaveAllFiles(const TrackPathMap& tracks)
+    bool getAndSaveAllTracks(const TrackPathMap& tracks)
     {
         const QDir dir{library.path};
 
         TrackList tracksToStore{};
         TrackList tracksToUpdate{};
 
-        const QStringList files = getFilesInDir(dir);
+        const QStringList files = Utils::File::getFilesInDir(dir, supportedExtensions);
 
         int tracksProcessed{0};
-        auto totalTracks = static_cast<double>(files.size());
+        const auto totalTracks = static_cast<double>(files.size());
         int currentProgress{-1};
 
         for(const auto& filepath : files) {
             if(!self->mayRun()) {
                 return false;
             }
+
+            ++tracksProcessed;
 
             const QFileInfo info{filepath};
             const QDateTime lastModifiedTime{info.lastModified()};
@@ -125,18 +93,17 @@ struct LibraryScanner::Private
             if(tracks.contains(filepath)) {
                 const Track& libraryTrack = tracks.at(filepath);
                 if(libraryTrack.id() >= 0) {
-                    if(libraryTrack.modifiedTime() == lastModified) {
-                        totalTracks -= 1;
+                    if(libraryTrack.libraryId() == library.id && libraryTrack.modifiedTime() == lastModified) {
                         continue;
                     }
 
                     Track changedTrack{libraryTrack};
+                    changedTrack.setLibraryId(library.id);
                     fileWasRead = tagReader.readMetaData(changedTrack);
                     if(fileWasRead) {
                         // Regenerate hash
                         changedTrack.generateHash();
                         tracksToUpdate.push_back(changedTrack);
-                        ++tracksProcessed;
                         continue;
                     }
                 }
@@ -150,14 +117,13 @@ struct LibraryScanner::Private
                 track.generateHash();
                 tracksToStore.push_back(track);
 
-                ++tracksProcessed;
                 const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);
                 if(currentProgress != progress) {
                     currentProgress = progress;
                     QMetaObject::invokeMethod(self, "progressChanged", Q_ARG(int, currentProgress));
                 }
 
-                if(tracksToStore.size() >= 250) {
+                if(tracksToStore.size() >= BatchSize) {
                     storeTracks(tracksToStore);
                     QMetaObject::invokeMethod(self, "scanUpdate",
                                               Q_ARG(const ScanResult&, (ScanResult{tracksToStore, {}})));
@@ -205,9 +171,6 @@ void LibraryScanner::stopThread()
 
 void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tracks)
 {
-    if(state() == Running) {
-        return;
-    }
     setState(Running);
 
     p->library = library;
@@ -236,12 +199,71 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         emit tracksDeleted(tracksToDelete);
     }
 
-    p->getAndSaveAllFiles(trackMap);
+    p->getAndSaveAllTracks(trackMap);
 
-    setState(Idle);
-    p->changeLibraryStatus(LibraryInfo::Status::Idle);
+    if(state() == Paused) {
+        p->changeLibraryStatus(LibraryInfo::Status::Pending);
+    }
+    else {
+        p->changeLibraryStatus(LibraryInfo::Status::Idle);
+        setState(Idle);
+        emit finished();
+    }
+}
 
-    emit finished();
+void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList& tracks)
+{
+    setState(Running);
+
+    TrackList tracksScanned;
+    TrackList tracksToStore;
+
+    TrackPathMap trackMap;
+    std::ranges::transform(std::as_const(libraryTracks), std::inserter(trackMap, trackMap.end()),
+                           [](const Track& track) { return std::make_pair(track.filepath(), track); });
+
+    int tracksProcessed{0};
+    const auto totalTracks = static_cast<double>(tracks.size());
+    int currentProgress{-1};
+
+    TrackList tracksToScan{tracks};
+
+    for(Track& track : tracksToScan) {
+        if(!mayRun()) {
+            return;
+        }
+
+        ++tracksProcessed;
+
+        if(trackMap.contains(track.filepath())) {
+            tracksScanned.push_back(trackMap.at(track.filepath()));
+            continue;
+        }
+
+        const bool fileWasRead = p->tagReader.readMetaData(track);
+        if(fileWasRead) {
+            track.generateHash();
+            track.setLibraryId(0);
+            tracksToStore.push_back(track);
+
+            const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);
+            if(currentProgress != progress) {
+                currentProgress = progress;
+                emit progressChanged(currentProgress);
+            }
+        }
+    }
+
+    p->storeTracks(tracksToStore);
+
+    std::ranges::copy(tracksToStore, std::back_inserter(tracksScanned));
+
+    emit scannedTracks(tracksScanned);
+
+    if(state() != Paused) {
+        setState(Idle);
+        emit finished();
+    }
 }
 
 void LibraryScanner::updateTracks(const TrackList& tracks)

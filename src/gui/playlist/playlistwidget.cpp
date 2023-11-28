@@ -26,6 +26,7 @@
 #include "playlistwidget_p.h"
 #include "presetregistry.h"
 
+#include <core/library/musiclibrary.h>
 #include <core/library/sortingregistry.h>
 #include <core/library/tracksort.h>
 #include <core/playlist/playlistmanager.h>
@@ -43,6 +44,7 @@
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QProgressDialog>
 
 #include <QCoro/QCoroCore>
 
@@ -149,6 +151,7 @@ void PlaylistWidgetPrivate::setupConnections()
 
     QObject::connect(model, &QAbstractItemModel::modelAboutToBeReset, playlistView, &QAbstractItemView::clearSelection);
     QObject::connect(model, &PlaylistModel::playlistTracksChanged, this, &PlaylistWidgetPrivate::playlistTracksChanged);
+    QObject::connect(model, &PlaylistModel::filesDropped, this, &PlaylistWidgetPrivate::scanDroppedTracks);
     QObject::connect(model, &PlaylistModel::tracksInserted, this, &PlaylistWidgetPrivate::tracksInserted);
     QObject::connect(model, &PlaylistModel::tracksMoved, this, &PlaylistWidgetPrivate::tracksMoved);
     QObject::connect(model, &QAbstractItemModel::modelReset, this, &PlaylistWidgetPrivate::resetTree);
@@ -343,6 +346,31 @@ void PlaylistWidgetPrivate::playlistTracksChanged(int index) const
         }
         model->updateHeader(playlist);
     }
+}
+
+QCoro::Task<void> PlaylistWidgetPrivate::scanDroppedTracks(TrackList tracks, int index)
+{
+    auto* progress = new QProgressDialog("Reading tracks...", "Abort", 0, 100, self);
+    progress->setAttribute(Qt::WA_DeleteOnClose);
+    progress->setWindowModality(Qt::WindowModal);
+
+    ScanRequest* request = library->scanTracks(tracks);
+
+    QObject::connect(library, &MusicLibrary::scanProgress, progress, [request, progress](int id, int percent) {
+        if(id != request->id) {
+            return;
+        }
+
+        progress->setValue(percent);
+        if(progress->wasCanceled()) {
+            request->cancel();
+            progress->close();
+        }
+    });
+
+    const TrackList scannedTracks = co_await qCoro(library, &MusicLibrary::tracksScanned);
+    auto* insertCmd               = new InsertTracks(model, {{index, scannedTracks}});
+    playlistController->addToHistory(insertCmd);
 }
 
 void PlaylistWidgetPrivate::tracksInserted(const TrackGroups& tracks) const

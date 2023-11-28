@@ -68,9 +68,10 @@ public:
 
     void setHeaderHidden(bool showHeader) const;
     void setScrollbarHidden(bool showScrollBar) const;
-
     void selectionChanged() const;
     void playlistTracksChanged(int index) const;
+
+    QCoro::Task<void> scanDroppedTracks(TrackList tracks, int index);
     void tracksInserted(const TrackGroups& tracks) const;
     void tracksRemoved() const;
     void tracksMoved(const MoveOperation& operation) const;

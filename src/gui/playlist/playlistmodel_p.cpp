@@ -27,6 +27,7 @@
 #include <gui/guisettings.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QIODevice>
 #include <QIcon>
@@ -984,11 +985,20 @@ PlaylistItem* PlaylistModelPrivate::itemForKey(const QString& key)
 bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction action, int row, int /*column*/,
                                        const QModelIndex& parent) const
 {
-    const QByteArray playlistData = data->data(Constants::Mime::PlaylistItems);
-    const bool samePlaylist       = dropOnSamePlaylist(playlistData, currentPlaylist);
-
     const QModelIndex dropIndex = determineDropIndex(model, parent, row);
     const int playlistIndex     = dropIndex.isValid() ? dropIndex.data(PlaylistItem::Index).toInt() : -1;
+
+    if(data->hasUrls()) {
+        const auto urls             = data->urls();
+        const QStringList filepaths = Utils::File::getFiles(urls);
+        TrackList tracks;
+        std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
+        QMetaObject::invokeMethod(model, "filesDropped", Q_ARG(const TrackList&, tracks), Q_ARG(int, playlistIndex));
+        return true;
+    }
+
+    const QByteArray playlistData = data->data(Constants::Mime::PlaylistItems);
+    const bool samePlaylist       = dropOnSamePlaylist(playlistData, currentPlaylist);
 
     if(samePlaylist && action == Qt::MoveAction) {
         const QModelIndexList indexes

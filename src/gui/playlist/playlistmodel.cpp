@@ -205,7 +205,8 @@ bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action
                                     const QModelIndex& parent) const
 {
     if((action == Qt::MoveAction || action == Qt::CopyAction)
-       && (data->hasFormat(Constants::Mime::PlaylistItems) || data->hasFormat(Constants::Mime::TrackIds))) {
+       && (data->hasUrls() || data->hasFormat(Constants::Mime::PlaylistItems)
+           || data->hasFormat(Constants::Mime::TrackIds))) {
         return true;
     }
     return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);

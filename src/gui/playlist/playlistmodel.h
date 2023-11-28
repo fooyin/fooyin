@@ -95,6 +95,7 @@ public:
     void tracksChanged();
 
 signals:
+    void filesDropped(const TrackList& tracks, int index);
     void tracksInserted(const TrackGroups& groups);
     void tracksMoved(const MoveOperation& operation);
     void playlistTracksChanged(int index);
