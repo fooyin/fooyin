@@ -24,11 +24,18 @@
 
 #include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
-#include <core/track.h>
 
 #include <QThread>
 
 #include <deque>
+
+namespace {
+int nextRequestId()
+{
+    static int requestId{0};
+    return requestId++;
+}
+}
 
 namespace Fooyin {
 struct LibraryScanRequest : ScanRequest
@@ -69,11 +76,6 @@ struct LibraryThreadHandler::Private
         });
 
         thread->start();
-    }
-
-    [[nodiscard]] int nextRequestId() const
-    {
-        return static_cast<int>(scanRequests.size());
     }
 
     void scanLibrary(const LibraryScanRequest& request)
