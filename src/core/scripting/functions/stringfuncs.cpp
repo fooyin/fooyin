@@ -41,7 +41,7 @@ QString replace(const QStringList& vec)
 {
     const qsizetype count = vec.size();
 
-    if(count < 3 || count > 3) {
+    if(count != 3) {
         return {};
     }
 

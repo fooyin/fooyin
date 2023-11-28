@@ -53,6 +53,39 @@ TEST_F(ScriptParserTest, Quote)
     EXPECT_EQ("I %am% a $test$.", m_parser.evaluate());
 }
 
+TEST_F(ScriptParserTest, StringTest)
+{
+    m_parser.parse(u"$num(1,2)"_s);
+    EXPECT_EQ("01", m_parser.evaluate());
+
+    m_parser.parse(u"$num(04,2)"_s);
+    EXPECT_EQ("04", m_parser.evaluate());
+
+    m_parser.parse(u"$replace(A replace test,t,c)"_s);
+    EXPECT_EQ("A replace cesc", m_parser.evaluate());
+
+    m_parser.parse(u"$slice(A slice test,8)"_s);
+    EXPECT_EQ("test", m_parser.evaluate());
+
+    m_parser.parse(u"$slice(A slice test,2,5)"_s);
+    EXPECT_EQ("slice", m_parser.evaluate());
+
+    m_parser.parse(u"$chop(A chop test,5)"_s);
+    EXPECT_EQ("A chop", m_parser.evaluate());
+
+    m_parser.parse(u"$left(Left test,1)"_s);
+    EXPECT_EQ("L", m_parser.evaluate());
+
+    m_parser.parse(u"$right(Right test,3)"_s);
+    EXPECT_EQ("est", m_parser.evaluate());
+
+    m_parser.parse(u"$if($strcmpi(cmp,cMp),true,false)"_s);
+    EXPECT_EQ("true", m_parser.evaluate());
+
+    m_parser.parse(u"$if($strcmp(cmp,cMp),true,false)"_s);
+    EXPECT_EQ("false", m_parser.evaluate());
+}
+
 TEST_F(ScriptParserTest, MathTest)
 {
     m_parser.parse(u"$add(1,2)"_s);
@@ -75,6 +108,18 @@ TEST_F(ScriptParserTest, MathTest)
 
     m_parser.parse(u"$max(3,2,3,9,23,100,4)"_s);
     EXPECT_EQ(100, m_parser.evaluate().toInt());
+}
+
+TEST_F(ScriptParserTest, ConditionalTest)
+{
+    m_parser.parse(u"$ifequal(1,1,true,false)"_s);
+    EXPECT_EQ("true", m_parser.evaluate());
+
+    m_parser.parse(u"$ifgreater(23,32,true,false)"_s);
+    EXPECT_EQ("false", m_parser.evaluate());
+
+    m_parser.parse(u"$iflonger(aaa,bb,true,false)"_s);
+    EXPECT_EQ("true", m_parser.evaluate());
 }
 
 TEST_F(ScriptParserTest, MetadataTest)
