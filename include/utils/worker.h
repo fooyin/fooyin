@@ -32,18 +32,19 @@ public:
     enum State
     {
         Idle = 0,
-        Running
+        Running,
+        Paused
     };
 
     explicit Worker(QObject* parent = nullptr);
 
     virtual void stopThread();
+    virtual void pauseThread();
     virtual void closeThread();
 
     [[nodiscard]] State state() const;
     void setState(State state);
 
-    [[nodiscard]] bool isRunning();
     [[nodiscard]] bool mayRun() const;
 
 signals:

@@ -25,28 +25,34 @@
 
 namespace Fooyin {
 class Database;
+class MusicLibrary;
 struct LibraryInfo;
 struct ScanResult;
+struct ScanRequest;
 
 class LibraryThreadHandler : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit LibraryThreadHandler(Database* database, QObject* parent = nullptr);
+    explicit LibraryThreadHandler(Database* database, MusicLibrary* library, QObject* parent = nullptr);
     ~LibraryThreadHandler() override;
 
-    void stopScanner();
-
     void getAllTracks();
-    void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
-    void libraryRemoved(int id);
+
+    void scanLibrary(const LibraryInfo& library);
+    ScanRequest* scanTracks(const TrackList& tracks);
+
     void saveUpdatedTracks(const TrackList& tracks);
+    void cleanupTracks();
+
+    void libraryRemoved(int id);
 
 signals:
-    void progressChanged(int percent);
+    void progressChanged(int id, int percent);
     void statusChanged(const LibraryInfo& library);
     void scanUpdate(const ScanResult& result);
+    void scannedTracks(const TrackList& tracks);
     void tracksDeleted(const TrackList& tracks);
 
     void gotTracks(const TrackList& result);

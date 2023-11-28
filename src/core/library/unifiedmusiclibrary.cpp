@@ -34,7 +34,6 @@
 
 #include <QCoroCore>
 
-#include <chrono>
 #include <ranges>
 #include <vector>
 
@@ -71,7 +70,7 @@ struct UnifiedMusicLibrary::Private
         , libraryManager{libraryManager}
         , database{database}
         , settings{settings}
-        , threadHandler{database}
+        , threadHandler{database, self}
     { }
 
     QCoro::Task<void> loadTracks(TrackList trackToLoad)
@@ -102,7 +101,6 @@ struct UnifiedMusicLibrary::Private
             }
         }
 
-        co_return presortedTracks;
         sortedNewTracks = co_await resortTracks(sortedNewTracks);
         co_return sortedNewTracks;
     }
@@ -135,6 +133,14 @@ struct UnifiedMusicLibrary::Private
         }
 
         tracks = co_await resortTracks(tracks);
+    }
+
+    QCoro::Task<void> scannedTracks(TrackList tracksScanned)
+    {
+        const TrackList addedTracks = co_await addTracks(tracksScanned);
+        std::ranges::copy(addedTracks, std::back_inserter(tracks));
+        tracks = co_await resortTracks(tracks);
+        QMetaObject::invokeMethod(self, "tracksScanned", Q_ARG(const TrackList&, addedTracks));
     }
 
     void removeTracks(const TrackList& tracksToRemove)
@@ -178,6 +184,8 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
             [this](const LibraryInfo& library) { p->libraryStatusChanged(library); });
     connect(&p->threadHandler, &LibraryThreadHandler::scanUpdate, this,
             [this](const ScanResult& result) { p->handleScanResult(result); });
+    connect(&p->threadHandler, &LibraryThreadHandler::scannedTracks, this,
+            [this](const TrackList& tracks) { p->scannedTracks(tracks); });
     connect(&p->threadHandler, &LibraryThreadHandler::tracksDeleted, this,
             [this](const TrackList& tracks) { p->removeTracks(tracks); });
 
@@ -209,13 +217,18 @@ void UnifiedMusicLibrary::reloadAll()
 
 void UnifiedMusicLibrary::reload(const LibraryInfo& library)
 {
-    p->threadHandler.scanLibrary(library, tracks());
+    p->threadHandler.scanLibrary(library);
 }
 
 void UnifiedMusicLibrary::rescan()
 {
     p->threadHandler.getAllTracks();
     ;
+}
+
+ScanRequest* UnifiedMusicLibrary::scanTracks(const TrackList& tracks)
+{
+    return p->threadHandler.scanTracks(tracks);
 }
 
 bool UnifiedMusicLibrary::hasLibrary() const
@@ -274,6 +287,11 @@ void UnifiedMusicLibrary::removeLibrary(int id)
     p->tracks = TrackList{filtered.begin(), filtered.end()};
 
     emit libraryRemoved(id);
+}
+
+void UnifiedMusicLibrary::cleanupTracks()
+{
+    p->threadHandler.cleanupTracks();
 }
 } // namespace Fooyin
 

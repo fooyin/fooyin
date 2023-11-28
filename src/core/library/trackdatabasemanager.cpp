@@ -44,6 +44,11 @@ void TrackDatabaseManager::getAllTracks()
         emit gotTracks(tracks);
     }
 }
+
+void TrackDatabaseManager::cleanupTracks()
+{
+    m_trackDatabase.cleanupTracks();
+}
 } // namespace Fooyin
 
 #include "moc_trackdatabasemanager.cpp"

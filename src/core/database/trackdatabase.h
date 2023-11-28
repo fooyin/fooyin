@@ -40,6 +40,7 @@ public:
     bool updateTrack(const Track& track);
     bool deleteTrack(int id);
     bool deleteTracks(const TrackList& tracks);
+    bool cleanupTracks();
 
 private:
     int insertTrack(const Track& track);

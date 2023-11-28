@@ -125,6 +125,9 @@ bool Database::createDatabase()
     checkInsertIndex(u"PlaylistTracksIndex"_s,
                      u"CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);"_s);
 
+    module()->insert(u"Libraries"_s, {{u"LibraryID"_s, u"0"_s}, {u"Name"_s, u"No Library"_s}, {u"Path"_s, u""_s}},
+                     "Could not insert default library");
+
     return true;
 }
 

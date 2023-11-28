@@ -48,10 +48,12 @@ signals:
     void progressChanged(int percent);
     void statusChanged(const LibraryInfo& library);
     void scanUpdate(const ScanResult& result);
+    void scannedTracks(const TrackList& tracks);
     void tracksDeleted(const TrackList& tracks);
 
 public slots:
     void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
+    void scanTracks(const TrackList& libraryTracks, const TrackList& tracks);
     void updateTracks(const TrackList& tracks);
 
 private:

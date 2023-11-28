@@ -543,6 +543,13 @@ void Track::setSort(const QString& sort)
     p->sort = sort;
 }
 
+QStringList Track::supportedFileExtensions()
+{
+    static const QStringList supportedExtensions = {"*.mp3", "*.ogg", "*.opus", "*.oga", "*.m4a",  "*.wav", "*.flac",
+                                                    "*.wma", "*.mpc", "*.aiff", "*.ape", "*.webm", "*.mp4"};
+    return supportedExtensions;
+}
+
 } // namespace Fooyin
 
 size_t qHash(const Fooyin::Track& track)

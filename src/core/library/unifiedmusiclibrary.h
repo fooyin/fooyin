@@ -42,6 +42,8 @@ public:
     void reload(const LibraryInfo& library) override;
     void rescan() override;
 
+    ScanRequest* scanTracks(const TrackList& tracks) override;
+
     [[nodiscard]] bool hasLibrary() const override;
     [[nodiscard]] bool isEmpty() const override;
 
@@ -51,6 +53,8 @@ public:
     void updateTrackMetadata(const TrackList& tracks) override;
 
     void removeLibrary(int id) override;
+
+    void cleanupTracks();
 
 private:
     struct Private;

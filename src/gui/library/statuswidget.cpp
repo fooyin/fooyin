@@ -37,6 +37,8 @@
 
 constexpr int IconSize = 50;
 
+using namespace std::chrono_literals;
+
 namespace Fooyin {
 struct StatusWidget::Private
 {
@@ -53,6 +55,8 @@ struct StatusWidget::Private
     QPixmap icon;
     ClickableLabel* playing;
 
+    QTimer clearTimer;
+
     Private(StatusWidget* self, MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings)
         : self{self}
         , library{library}
@@ -63,6 +67,9 @@ struct StatusWidget::Private
         , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
         , playing{new ClickableLabel(self)}
     {
+        clearTimer.setInterval(2s);
+        QObject::connect(&clearTimer, &QTimer::timeout, playing, &QLabel::clear);
+
         scriptParser.parse(settings->value<Settings::Gui::StatusPlayingScript>());
     }
 
@@ -95,11 +102,15 @@ struct StatusWidget::Private
         }
     }
 
-    void scanProgressChanged(int progress) const
+    void scanProgressChanged(int progress)
     {
         if(progress == 100) {
-            QTimer::singleShot(2000, playing, &QLabel::clear);
+            clearTimer.start();
         }
+        else {
+            clearTimer.stop();
+        }
+
         const QString scanText = QStringLiteral("Scanning library: ") + QString::number(progress) + QStringLiteral("%");
         playing->setText(scanText);
     }
@@ -130,7 +141,7 @@ StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, 
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
     QObject::connect(library, &MusicLibrary::scanProgress, this,
-                     [this](int progress) { p->scanProgressChanged(progress); });
+                     [this](int /*id*/, int progress) { p->scanProgressChanged(progress); });
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         p->icon = QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize);

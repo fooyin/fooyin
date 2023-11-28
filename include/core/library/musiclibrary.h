@@ -28,6 +28,19 @@
 namespace Fooyin {
 struct LibraryInfo;
 
+struct ScanRequest
+{
+    enum Type : uint8_t
+    {
+        Tracks = 0,
+        Library,
+    };
+
+    Type type;
+    int id{-1};
+    std::function<void()> cancel;
+};
+
 class FYCORE_EXPORT MusicLibrary : public QObject
 {
     Q_OBJECT
@@ -47,7 +60,9 @@ public:
     virtual void reload(const LibraryInfo& library) = 0;
     virtual void rescan()                           = 0;
 
-    [[nodiscard]] virtual TrackList tracks() const = 0;
+    virtual ScanRequest* scanTracks(const TrackList& tracks) = 0;
+
+    [[nodiscard]] virtual TrackList tracks() const                          = 0;
     [[nodiscard]] virtual TrackList tracksForIds(const TrackIds& ids) const = 0;
 
     virtual void updateTrackMetadata(const TrackList& tracks) = 0;
@@ -55,10 +70,11 @@ public:
     virtual void removeLibrary(int id) = 0;
 
 signals:
-    void scanProgress(int percent);
+    void scanProgress(int id, int percent);
 
     void tracksLoaded(const TrackList& tracks);
     void tracksAdded(const TrackList& tracks);
+    void tracksScanned(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
     void tracksDeleted(const TrackList& tracks);
     void tracksSorted(const TrackList& tracks);

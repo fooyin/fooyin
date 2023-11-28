@@ -19,9 +19,6 @@
 
 #include <utils/worker.h>
 
-#include <QAbstractEventDispatcher>
-#include <QThread>
-
 namespace Fooyin {
 Worker::Worker(QObject* parent)
     : QObject{parent}
@@ -31,6 +28,11 @@ Worker::Worker(QObject* parent)
 void Worker::stopThread()
 {
     setState(Idle);
+}
+
+void Worker::pauseThread()
+{
+    setState(Paused);
 }
 
 void Worker::closeThread()
@@ -46,11 +48,6 @@ Worker::State Worker::state() const
 void Worker::setState(State state)
 {
     m_state.store(state, std::memory_order_release);
-}
-
-bool Worker::isRunning()
-{
-    return m_state == Running;
 }
 
 bool Worker::mayRun() const

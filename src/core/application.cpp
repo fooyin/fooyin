@@ -30,7 +30,6 @@
 #include <core/engine/enginehandler.h>
 #include <core/engine/outputplugin.h>
 #include <core/library/librarymanager.h>
-#include <core/library/sortingregistry.h>
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/pluginmanager.h>
 #include <utils/settings/settingsmanager.h>
@@ -44,7 +43,7 @@ struct Application::Private
     PlayerManager* playerManager;
     EngineHandler engine;
     LibraryManager* libraryManager;
-    MusicLibrary* library;
+    UnifiedMusicLibrary* library;
     PlaylistHandler* playlistHandler;
 
     PluginManager pluginManager;
@@ -114,6 +113,7 @@ void Application::shutdown()
     p->engine.shutdown();
     p->playlistHandler->savePlaylists();
     p->pluginManager.shutdown();
+    p->library->cleanupTracks();
     p->database.closeDatabase();
 }
 } // namespace Fooyin

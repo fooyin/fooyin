@@ -266,6 +266,15 @@ bool TrackDatabase::deleteTracks(const TrackList& tracks)
     return (success && (fileCount == static_cast<int>(tracks.size())));
 }
 
+bool TrackDatabase::cleanupTracks()
+{
+    const QString queryText
+        = u"DELETE FROM Tracks WHERE LibraryID = 0 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"_s;
+    const auto q = module()->runQuery(queryText, u"Cannot cleanup tracks"_s);
+
+    return (!q.hasError());
+}
+
 int TrackDatabase::insertTrack(const Track& track)
 {
     auto bindings = getTrackBindings(track);

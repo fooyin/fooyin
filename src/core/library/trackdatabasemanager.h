@@ -36,6 +36,7 @@ public:
     void closeThread() override;
 
     void getAllTracks();
+    void cleanupTracks();
 
 signals:
     void gotTracks(const TrackList& result);
