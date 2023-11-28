@@ -93,7 +93,7 @@ struct UnifiedMusicLibrary::Private
 
         for(Track& track : sortedNewTracks) {
             const int libraryId = track.libraryId();
-            if(libraryId < 0) {
+            if(libraryId < 1) {
                 track.setRelativePath(track.filepath());
             }
             else if(libraryDirs.contains(libraryId)) {
