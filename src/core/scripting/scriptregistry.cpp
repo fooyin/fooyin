@@ -29,8 +29,9 @@
 
 namespace {
 using NativeFunc     = std::function<QString(const QStringList&)>;
+using NativeVoidFunc = std::function<QString()>;
 using NativeCondFunc = std::function<Fooyin::ScriptResult(const Fooyin::ScriptValueList&)>;
-using Func           = std::variant<NativeFunc, NativeCondFunc>;
+using Func           = std::variant<NativeFunc, NativeVoidFunc, NativeCondFunc>;
 
 using TrackFunc    = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::Track&)>;
 using TrackSetFunc = std::function<void(Fooyin::Track&, const Fooyin::ScriptRegistry::FuncRet&)>;
@@ -74,6 +75,7 @@ void addDefaultFunctions(std::unordered_map<QString, Func>& funcs)
 
     funcs.emplace("num", Fooyin::Scripting::num);
     funcs.emplace("replace", Fooyin::Scripting::replace);
+    funcs.emplace("sep", Fooyin::Scripting::sep);
 
     funcs.emplace("timems", Fooyin::Scripting::msToString);
 
@@ -205,11 +207,11 @@ ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList
     auto function = p->funcs.at(func);
     if(std::holds_alternative<NativeFunc>(function)) {
         const QString value = std::get<NativeFunc>(function)(containerCast<QStringList>(args));
-
-        ScriptResult result;
-        result.value = value;
-        result.cond  = !value.isEmpty();
-        return result;
+        return {.value = value, .cond = !value.isEmpty()};
+    }
+    if(std::holds_alternative<NativeVoidFunc>(function)) {
+        const QString value = std::get<NativeVoidFunc>(function)();
+        return {.value = value, .cond = !value.isEmpty()};
     }
     if(std::holds_alternative<NativeCondFunc>(function)) {
         return std::get<NativeCondFunc>(function)(args);

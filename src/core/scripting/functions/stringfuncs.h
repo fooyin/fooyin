@@ -24,4 +24,5 @@
 namespace Fooyin::Scripting {
 QString num(const QStringList& vec);
 QString replace(const QStringList& vec);
+QString sep();
 } // namespace Fooyin

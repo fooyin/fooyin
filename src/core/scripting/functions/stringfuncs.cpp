@@ -21,6 +21,8 @@
 
 #include <utils/utils.h>
 
+#include <QDir>
+
 namespace Fooyin::Scripting {
 QString num(const QStringList& vec)
 {
@@ -47,4 +49,8 @@ QString replace(const QStringList& vec)
     return origStr.replace(vec[1], vec[2]);
 }
 
+QString sep()
+{
+    return QDir::separator();
+}
 } // namespace Fooyin::Scripting
