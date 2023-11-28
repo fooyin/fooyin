@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "fycore_export.h"
+#include "fygui_export.h"
 
 #include <core/track.h>
 
@@ -32,7 +32,7 @@ class QString;
 class QSize;
 
 namespace Fooyin {
-class FYCORE_EXPORT CoverProvider : public QObject
+class FYGUI_EXPORT CoverProvider : public QObject
 {
     Q_OBJECT
 
