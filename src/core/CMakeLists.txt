@@ -59,7 +59,7 @@ set(SOURCES
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegutils.cpp
     engine/output/alsaoutput.cpp
-        library/trackdatabasemanager.cpp
+    library/trackdatabasemanager.cpp
     library/librarymanager.cpp
     library/libraryscanner.cpp
     library/unifiedmusiclibrary.cpp
