@@ -156,6 +156,8 @@ public:
 
     void setSort(const QString& sort);
 
+    static QStringList supportedFileExtensions();
+
 private:
     struct Private;
     QSharedDataPointer<Private> p;

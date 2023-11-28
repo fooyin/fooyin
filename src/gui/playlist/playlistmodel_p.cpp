@@ -990,7 +990,7 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
 
     if(data->hasUrls()) {
         const auto urls             = data->urls();
-        const QStringList filepaths = Utils::File::getFiles(urls);
+        const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
         TrackList tracks;
         std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
         QMetaObject::invokeMethod(model, "filesDropped", Q_ARG(const TrackList&, tracks), Q_ARG(int, playlistIndex));

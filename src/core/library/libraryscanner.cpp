@@ -42,9 +42,6 @@ struct LibraryScanner::Private
     TagReader tagReader;
     TagWriter tagWriter;
 
-    QStringList supportedExtensions{"*.mp3", "*.ogg", "*.opus", "*.oga", "*.m4a",  "*.wav", "*.flac",
-                                    "*.wma", "*.mpc", "*.aiff", "*.ape", "*.webm", "*.mp4"};
-
     Private(LibraryScanner* self, Database* database)
         : self{self}
         , database{database}
@@ -67,7 +64,7 @@ struct LibraryScanner::Private
         TrackList tracksToStore{};
         TrackList tracksToUpdate{};
 
-        const QStringList files = Utils::File::getFilesInDir(dir, supportedExtensions);
+        const QStringList files = Utils::File::getFilesInDir(dir, Track::supportedFileExtensions());
 
         int tracksProcessed{0};
         const auto totalTracks = static_cast<double>(files.size());
