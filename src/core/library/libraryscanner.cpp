@@ -88,8 +88,6 @@ struct LibraryScanner::Private
                 lastModified = static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch());
             }
 
-            bool fileWasRead;
-
             if(tracks.contains(filepath)) {
                 const Track& libraryTrack = tracks.at(filepath);
                 if(libraryTrack.id() >= 0) {
@@ -99,8 +97,8 @@ struct LibraryScanner::Private
 
                     Track changedTrack{libraryTrack};
                     changedTrack.setLibraryId(library.id);
-                    fileWasRead = tagReader.readMetaData(changedTrack);
-                    if(fileWasRead) {
+
+                    if(tagReader.readMetaData(changedTrack)) {
                         // Regenerate hash
                         changedTrack.generateHash();
                         tracksToUpdate.push_back(changedTrack);
@@ -112,8 +110,7 @@ struct LibraryScanner::Private
             Track track{filepath};
             track.setLibraryId(library.id);
 
-            fileWasRead = tagReader.readMetaData(track);
-            if(fileWasRead) {
+            if(tagReader.readMetaData(track)) {
                 track.generateHash();
                 tracksToStore.push_back(track);
 
@@ -226,12 +223,22 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
     const auto totalTracks = static_cast<double>(tracks.size());
     int currentProgress{-1};
 
-    TrackList tracksToScan{tracks};
+    const TrackList tracksToScan{tracks};
 
-    for(Track& track : tracksToScan) {
+    const auto handleFinished = [this]() {
+        if(state() != Paused) {
+            setState(Idle);
+            emit finished();
+        }
+    };
+
+    for(const Track& pendingTrack : tracksToScan) {
         if(!mayRun()) {
+            handleFinished();
             return;
         }
+
+        Track track{pendingTrack};
 
         ++tracksProcessed;
 
@@ -240,8 +247,7 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
             continue;
         }
 
-        const bool fileWasRead = p->tagReader.readMetaData(track);
-        if(fileWasRead) {
+        if(p->tagReader.readMetaData(track)) {
             track.generateHash();
             track.setLibraryId(0);
             tracksToStore.push_back(track);
@@ -260,17 +266,13 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
 
     emit scannedTracks(tracksScanned);
 
-    if(state() != Paused) {
-        setState(Idle);
-        emit finished();
-    }
+    handleFinished();
 }
 
 void LibraryScanner::updateTracks(const TrackList& tracks)
 {
     for(const Track& track : tracks) {
-        const bool saved = p->tagWriter.writeMetaData(track);
-        if(saved) {
+        if(p->tagWriter.writeMetaData(track)) {
             p->trackDatabase.updateTrack(track);
         }
     }
