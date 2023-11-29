@@ -106,13 +106,15 @@ struct PlaylistTabs::Private
         }
     }
 
-    void playlistChanged(const Playlist* playlist) const
+    void playlistChanged(const Playlist* playlist)
     {
         const int count = tabs->count();
+        const int id = playlist->id();
 
         for(int i = 0; i < count; ++i) {
-            if(tabs->tabData(i).toInt() == playlist->id()) {
+            if(tabs->tabData(i).toInt() == id) {
                 tabs->setCurrentIndex(i);
+                currentTab = i;
             }
         }
     }
