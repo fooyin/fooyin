@@ -36,6 +36,7 @@
 
 #include <queue>
 #include <set>
+#include <span>
 #include <stack>
 
 using namespace Qt::Literals::StringLiterals;
