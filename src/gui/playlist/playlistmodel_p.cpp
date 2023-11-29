@@ -261,7 +261,7 @@ Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& ind
         return index.data(PlaylistItem::Index).toInt();
     };
 
-    QModelIndex previousParent;
+    bool previousSplit{false};
 
     auto startOfSequence = sortedIndexes.cbegin();
     while(startOfSequence != sortedIndexes.cend()) {
@@ -273,9 +273,8 @@ Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& ind
             std::advance(endOfSequence, 1);
         }
 
-        const bool shouldSplit = row >= 0 && previousParent.isValid() && startOfSequence->parent() == target
-                              && startOfSequence->parent() != previousParent && row >= startOfSequence->row()
-                              && row <= std::prev(endOfSequence)->row();
+        const bool shouldSplit = row >= 0 && previousSplit && startOfSequence->parent() == target
+                              && row >= startOfSequence->row() && row <= std::prev(endOfSequence)->row();
         if(shouldSplit) {
             const auto range   = std::span{startOfSequence, endOfSequence};
             const auto splitIt = std::ranges::find_if(range, [row](const auto& index) { return index.row() >= row; });
@@ -294,7 +293,9 @@ Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& ind
             indexGroups.emplace_back(getIndex(*startOfSequence), getIndex(*std::prev(endOfSequence)));
         }
 
-        previousParent  = startOfSequence->parent();
+        if(!previousSplit) {
+            previousSplit = startOfSequence->parent() != target;
+        }
         startOfSequence = endOfSequence;
     }
 
