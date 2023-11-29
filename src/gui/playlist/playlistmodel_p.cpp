@@ -117,17 +117,31 @@ struct cmpItemsReverse
 };
 using ItemPtrSet = std::set<Fooyin::PlaylistItem*, cmpItems>;
 
-QModelIndex determineDropIndex(Fooyin::PlaylistModel* model, const QModelIndex& parent, int row)
+int determineDropIndex(Fooyin::PlaylistModel* model, const QModelIndex& parent, int row)
 {
     if(!parent.isValid() && row >= model->rowCount(parent)) {
-        return {};
+        return -1;
+    }
+
+    const auto getPlaylistIndex = [](const QModelIndex& index) {
+        return index.data(Fooyin::PlaylistItem::Index).toInt();
+    };
+
+    if(parent.isValid() && model->hasIndex(row, 0, parent)) {
+        return getPlaylistIndex(model->index(row, 0, parent));
+    }
+
+    if(row == model->rowCount(parent)) {
+        const QModelIndex prevIndex = model->index(row - 1, 0, parent);
+        return getPlaylistIndex(prevIndex) + 1;
     }
 
     QModelIndex current = model->index(row, 0, parent);
-    while(model->rowCount(current) > 0) {
+    while(model->hasChildren(current)) {
         current = model->index(0, 0, current);
     }
-    return current;
+
+    return getPlaylistIndex(current);
 }
 
 Fooyin::PlaylistItem* cloneParent(Fooyin::ItemKeyMap& nodes, Fooyin::PlaylistItem* parent)
@@ -1012,15 +1026,14 @@ PlaylistItem* PlaylistModelPrivate::itemForKey(const QString& key)
 bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction action, int row, int /*column*/,
                                        const QModelIndex& parent) const
 {
-    const QModelIndex dropIndex = determineDropIndex(model, parent, row);
-    const int playlistIndex     = dropIndex.isValid() ? dropIndex.data(PlaylistItem::Index).toInt() : -1;
+    const int dropIndex = determineDropIndex(model, parent, row);
 
     if(data->hasUrls()) {
         const auto urls             = data->urls();
         const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
         TrackList tracks;
         std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-        QMetaObject::invokeMethod(model, "filesDropped", Q_ARG(const TrackList&, tracks), Q_ARG(int, playlistIndex));
+        QMetaObject::invokeMethod(model, "filesDropped", Q_ARG(const TrackList&, tracks), Q_ARG(int, dropIndex));
         return true;
     }
 
@@ -1033,7 +1046,7 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
         const TrackIndexRangeList indexRanges = determineTrackIndexGroups(indexes, parent, row);
 
         MoveOperation operation;
-        operation.emplace_back(playlistIndex, indexRanges);
+        operation.emplace_back(dropIndex, indexRanges);
 
         QMetaObject::invokeMethod(model, "tracksMoved", Q_ARG(const MoveOperation&, {operation}));
 
@@ -1045,7 +1058,7 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
         return false;
     }
 
-    const TrackGroups groups{{playlistIndex, tracks}};
+    const TrackGroups groups{{dropIndex, tracks}};
     QMetaObject::invokeMethod(model, "tracksInserted", Q_ARG(const TrackGroups&, groups));
 
     return true;
@@ -1065,10 +1078,11 @@ MoveOperation PlaylistModelPrivate::handleDrop(const MoveOperation& operation)
     for(const auto& [index, moveGroups] : moveOpGroups | std::views::reverse) {
         const auto [targetItem, end] = itemForTrackIndex(index);
 
-        const int targetRow            = targetItem->row() + (end ? 1 : 0);
-        PlaylistItem* targetParentItem = targetItem->parent();
+        const int targetRow            = end ? model->rowCount({}) : targetItem->row();
+        PlaylistItem* targetParentItem = end ? model->rootItem() : targetItem->parent();
         QModelIndex targetParent       = model->indexOfItem(targetParentItem);
-        const int targetIndex          = targetRow >= targetParentItem->childCount()
+        const int targetIndex          = end ? targetItem->index() + 1
+                                       : targetRow >= targetParentItem->childCount()
                                            ? targetParentItem->childCount()
                                            : targetParentItem->child(targetRow)->index();
 
@@ -1118,7 +1132,7 @@ MoveOperation PlaylistModelPrivate::handleDrop(const MoveOperation& operation)
         QModelIndexList childIndexes;
         std::ranges::transform(children, std::back_inserter(childIndexes),
                                [this](const PlaylistItem* child) { return model->indexOfItem(child); });
-        const TrackIndexRangeList indexRanges = determineTrackIndexGroups(childIndexes, {}, -1);
+        const TrackIndexRangeList indexRanges = determineTrackIndexGroups(childIndexes);
 
         reverseOperation.emplace_back(index, indexRanges);
     }
