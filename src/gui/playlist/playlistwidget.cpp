@@ -351,7 +351,6 @@ void PlaylistWidgetPrivate::playlistTracksChanged(int index) const
 QCoro::Task<void> PlaylistWidgetPrivate::scanDroppedTracks(TrackList tracks, int index)
 {
     auto* progress = new QProgressDialog("Reading tracks...", "Abort", 0, 100, self);
-    progress->setAttribute(Qt::WA_DeleteOnClose);
     progress->setWindowModality(Qt::WindowModal);
 
     ScanRequest* request = library->scanTracks(tracks);
@@ -371,7 +370,10 @@ QCoro::Task<void> PlaylistWidgetPrivate::scanDroppedTracks(TrackList tracks, int
     });
 
     const TrackList scannedTracks = co_await qCoro(library, &MusicLibrary::tracksScanned);
-    auto* insertCmd               = new InsertTracks(model, {{index, scannedTracks}});
+
+    progress->deleteLater();
+
+    auto* insertCmd = new InsertTracks(model, {{index, scannedTracks}});
     playlistController->addToHistory(insertCmd);
 }
 
