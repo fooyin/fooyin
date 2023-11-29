@@ -232,7 +232,8 @@ ParentChildRangesList determineRowGroups(const QModelIndexList& indexes)
     return indexGroups;
 }
 
-Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& indexes)
+Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& indexes, const QModelIndex& target = {},
+                                                      int row = -1)
 {
     using Fooyin::PlaylistItem;
 
@@ -240,6 +241,12 @@ Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& ind
 
     QModelIndexList sortedIndexes{indexes};
     std::ranges::sort(sortedIndexes, cmpTrackIndices);
+
+    const auto getIndex = [](const QModelIndex& index) {
+        return index.data(PlaylistItem::Index).toInt();
+    };
+
+    QModelIndex previousParent;
 
     auto startOfSequence = sortedIndexes.cbegin();
     while(startOfSequence != sortedIndexes.cend()) {
@@ -251,9 +258,28 @@ Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& ind
             std::advance(endOfSequence, 1);
         }
 
-        indexGroups.emplace_back(startOfSequence->data(PlaylistItem::Index).toInt(),
-                                 std::prev(endOfSequence)->data(PlaylistItem::Index).toInt());
+        const bool shouldSplit = row >= 0 && previousParent.isValid() && startOfSequence->parent() == target
+                              && startOfSequence->parent() != previousParent && row >= startOfSequence->row()
+                              && row <= std::prev(endOfSequence)->row();
+        if(shouldSplit) {
+            const auto range   = std::span{startOfSequence, endOfSequence};
+            const auto splitIt = std::ranges::find_if(range, [row](const auto& index) { return index.row() >= row; });
 
+            auto beforeRow = std::ranges::subrange(range.begin(), splitIt);
+            auto afterRow  = std::ranges::subrange(splitIt, range.end());
+
+            if(!beforeRow.empty()) {
+                indexGroups.emplace_back(getIndex(*beforeRow.begin()), getIndex(*std::prev(beforeRow.end())));
+            }
+            if(!afterRow.empty()) {
+                indexGroups.emplace_back(getIndex(*afterRow.begin()), getIndex(*std::prev(afterRow.end())));
+            }
+        }
+        else {
+            indexGroups.emplace_back(getIndex(*startOfSequence), getIndex(*std::prev(endOfSequence)));
+        }
+
+        previousParent  = startOfSequence->parent();
         startOfSequence = endOfSequence;
     }
 
@@ -1003,7 +1029,7 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
     if(samePlaylist && action == Qt::MoveAction) {
         const QModelIndexList indexes
             = restoreIndexes(model, data->data(Constants::Mime::PlaylistItems), currentPlaylist);
-        const TrackIndexRangeList indexRanges = determineTrackIndexGroups(indexes);
+        const TrackIndexRangeList indexRanges = determineTrackIndexGroups(indexes, parent, row);
 
         MoveOperation operation;
         operation.emplace_back(playlistIndex, indexRanges);
@@ -1091,7 +1117,7 @@ MoveOperation PlaylistModelPrivate::handleDrop(const MoveOperation& operation)
         QModelIndexList childIndexes;
         std::ranges::transform(children, std::back_inserter(childIndexes),
                                [this](const PlaylistItem* child) { return model->indexOfItem(child); });
-        const TrackIndexRangeList indexRanges = determineTrackIndexGroups(childIndexes);
+        const TrackIndexRangeList indexRanges = determineTrackIndexGroups(childIndexes, {}, -1);
 
         reverseOperation.emplace_back(index, indexRanges);
     }
