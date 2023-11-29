@@ -72,8 +72,8 @@ struct PlaylistHandler::Private
     SettingsManager* settings;
     PlaylistDatabase playlistConnector;
 
-    PlaylistList playlists;
-    PlaylistList removedPlaylists;
+    std::vector<std::unique_ptr<Playlist>> playlists;
+    std::vector<std::unique_ptr<Playlist>> removedPlaylists;
 
     Playlist* activePlaylist{nullptr};
     Playlist* scheduledPlaylist{nullptr};
@@ -276,9 +276,12 @@ Playlist* PlaylistHandler::playlistByName(const QString& name) const
     return {};
 }
 
-const PlaylistList& PlaylistHandler::playlists() const
+PlaylistList PlaylistHandler::playlists() const
 {
-    return p->playlists;
+    PlaylistList playlists;
+    std::ranges::transform(std::as_const(p->playlists), std::back_inserter(playlists),
+                           [](const auto& playlist) { return playlist.get(); });
+    return playlists;
 }
 
 void PlaylistHandler::createEmptyPlaylist()
@@ -425,7 +428,7 @@ void PlaylistHandler::savePlaylists()
 {
     p->updateIndices();
 
-    p->playlistConnector.saveModifiedPlaylists(p->playlists);
+    p->playlistConnector.saveModifiedPlaylists(playlists());
 
     if(p->activePlaylist) {
         p->settings->set<Settings::Core::ActivePlaylistId>(p->activePlaylist->id());
@@ -451,7 +454,7 @@ void PlaylistHandler::populatePlaylists(const TrackList& tracks)
         idTracks.emplace(track.id(), track);
     }
 
-    p->playlistConnector.getPlaylistTracks(p->playlists, idTracks);
+    p->playlistConnector.getPlaylistTracks(playlists(), idTracks);
 
     const int lastId = p->settings->value<Settings::Core::ActivePlaylistId>();
     if(lastId >= 0) {

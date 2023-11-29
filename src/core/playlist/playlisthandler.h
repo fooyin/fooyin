@@ -44,7 +44,7 @@ public:
     [[nodiscard]] Playlist* playlistById(int id) const override;
     [[nodiscard]] Playlist* playlistByIndex(int index) const override;
     [[nodiscard]] Playlist* playlistByName(const QString& name) const override;
-    [[nodiscard]] const PlaylistList& playlists() const override;
+    [[nodiscard]] PlaylistList playlists() const override;
 
     void createEmptyPlaylist() override;
     Playlist* createPlaylist(const QString& name) override;

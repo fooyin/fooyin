@@ -81,7 +81,7 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-using PlaylistList = std::vector<std::unique_ptr<Playlist>>;
+using PlaylistList = std::vector<Playlist*>;
 } // namespace Fooyin
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::Playlist::PlayModes)

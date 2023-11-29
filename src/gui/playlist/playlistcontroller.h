@@ -52,7 +52,7 @@ public:
     [[nodiscard]] SortingRegistry* sortRegistry() const;
     [[nodiscard]] TrackSelectionController* selectionController() const;
 
-    [[nodiscard]] const PlaylistList& playlists() const;
+    [[nodiscard]] PlaylistList playlists() const;
     [[nodiscard]] Track currentTrack() const;
     [[nodiscard]] PlayState playState() const;
 

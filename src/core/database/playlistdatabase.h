@@ -30,7 +30,7 @@ class PlaylistDatabase : private DatabaseModule
 public:
     explicit PlaylistDatabase(const QString& connectionName);
 
-    bool getAllPlaylists(PlaylistList& playlists);
+    bool getAllPlaylists(std::vector<std::unique_ptr<Playlist>>& playlists);
     bool getPlaylistTracks(const PlaylistList& playlists, const TrackIdMap& tracks);
 
     int insertPlaylist(const QString& name, int index);

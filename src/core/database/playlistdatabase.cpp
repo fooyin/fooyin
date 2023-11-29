@@ -128,7 +128,7 @@ PlaylistDatabase::PlaylistDatabase(const QString& connectionName)
     : DatabaseModule{connectionName}
 { }
 
-bool PlaylistDatabase::getAllPlaylists(PlaylistList& playlists)
+bool PlaylistDatabase::getAllPlaylists(std::vector<std::unique_ptr<Playlist>>& playlists)
 {
     const QString query = u"SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;"_s;
 

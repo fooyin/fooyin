@@ -143,7 +143,7 @@ TrackSelectionController* PlaylistController::selectionController() const
     return p->selectionController;
 }
 
-const PlaylistList& PlaylistController::playlists() const
+PlaylistList PlaylistController::playlists() const
 {
     return p->handler->playlists();
 }

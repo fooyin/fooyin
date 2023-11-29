@@ -109,7 +109,7 @@ struct PlaylistTabs::Private
     void playlistChanged(const Playlist* playlist)
     {
         const int count = tabs->count();
-        const int id = playlist->id();
+        const int id    = playlist->id();
 
         for(int i = 0; i < count; ++i) {
             if(tabs->tabData(i).toInt() == id) {
@@ -165,7 +165,7 @@ void PlaylistTabs::setupTabs()
 {
     const auto& playlists = p->playlistHandler->playlists();
     for(const auto& playlist : playlists) {
-        addPlaylist(playlist.get());
+        addPlaylist(playlist);
     }
     // Workaround for issue where QTabBar is scrolled to the right when initialised, hiding tabs before current.
     p->tabs->adjustSize();
