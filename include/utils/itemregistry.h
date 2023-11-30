@@ -21,7 +21,8 @@
 
 #include "fyutils_export.h"
 
-#include "settings/settingsmanager.h"
+#include <utils/helpers.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QIODevice>
 #include <QObject>
@@ -194,35 +195,11 @@ protected:
     IndexItemMap m_items;
 
 private:
-    enum class FindType
-    {
-        Match,
-        Contains
-    };
-
-    [[nodiscard]] int find(const QString& name, FindType type) const
-    {
-        return static_cast<int>(std::ranges::count_if(std::as_const(m_items), [name, type](const auto& item) {
-            if(type == FindType::Contains) {
-                return item.second.name.contains(name);
-            }
-            return item.second.name == name;
-        }));
-    };
-
     QString findUniqueName(const QString& name)
     {
-        QString uniqueName{name};
-
-        if(uniqueName.isEmpty()) {
-            uniqueName = "New item";
-        }
-
-        if(find(name, FindType::Match)) {
-            const int count = find(name + " (", FindType::Contains) + 1;
-            uniqueName += " (" + QString::number(count) + ")";
-        }
-        return uniqueName;
+        const QString uniqueName{name.isEmpty() ? "New item" : name};
+        return Utils::findUniqueString(uniqueName, std::as_const(m_items),
+                                       [](const auto& item) { return item.second.name; });
     }
 
     SettingsManager* m_settings;

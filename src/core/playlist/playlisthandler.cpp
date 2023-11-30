@@ -135,31 +135,9 @@ struct PlaylistHandler::Private
         }
     }
 
-    [[nodiscard]] int nameCount(const QString& name) const
-    {
-        if(name.isEmpty()) {
-            return -1;
-        }
-        return static_cast<int>(std::ranges::count_if(std::as_const(playlists), [name](const auto& playlist) {
-            return QString::compare(name, playlist->name(), Qt::CaseInsensitive) == 0;
-        }));
-    }
-
     [[nodiscard]] QString findUniqueName(const QString& name) const
     {
-        QString newName{name};
-
-        if(newName.isEmpty()) {
-            newName = QStringLiteral("Playlist");
-        }
-
-        int count{1};
-        while(nameCount(newName) >= 1) {
-            newName = newName + " (" + QString::number(count) + ")";
-            ++count;
-        }
-
-        return newName;
+        return Utils::findUniqueString(name, playlists, [](const auto& playlist) { return playlist->name(); });
     }
 
     [[nodiscard]] int indexFromName(const QString& name) const
@@ -375,7 +353,7 @@ void PlaylistHandler::renamePlaylist(int id, const QString& name)
         qDebug() << "Playlist " + QString::number(id) + " could not be found";
         return;
     }
-    const QString newName = p->findUniqueName(name);
+    const QString newName = p->findUniqueName(name.isEmpty() ? QStringLiteral("Playlist") : name);
     if(!p->playlistConnector.renamePlaylist(playlist->id(), newName)) {
         qDebug() << "Playlist " + QString::number(id) + " could not be renamed to " + name;
         return;

@@ -25,6 +25,8 @@
 #include <utility>
 #include <vector>
 
+#include <QString>
+
 namespace Fooyin::Utils {
 template <typename Ctnr, typename Element>
 int findIndex(const Ctnr& c, const Element& e)
@@ -74,5 +76,31 @@ void move(std::vector<T>& v, size_t from, size_t to)
     else {
         std::rotate(v.begin() + from, v.begin() + from + 1, v.begin() + to + 1);
     }
+}
+
+template <typename T, typename StringExtractor>
+QString findUniqueString(const QString& name, const T& elements, StringExtractor extractor)
+{
+    if(name.isEmpty()) {
+        return {};
+    }
+
+    QString uniqueName{name};
+
+    auto find = [&elements, extractor](const QString& name, bool match) -> int {
+        return static_cast<int>(std::ranges::count_if(elements, [name, extractor, match](const auto& element) {
+            if(!match) {
+                const QString toCompare = extractor(element);
+                return toCompare.contains(name);
+            }
+            return extractor(element).compare(name) == 0;
+            }));
+    };
+
+    if(find(name, true)) {
+        const int count = find(name + " (", false) + 1;
+        uniqueName += " (" + QString::number(count) + ")";
+    }
+    return uniqueName;
 }
 } // namespace Fooyin::Utils
