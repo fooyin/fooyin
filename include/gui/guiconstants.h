@@ -124,7 +124,6 @@ constexpr auto Rename          = "Edit.Rename";
 namespace Mime {
 constexpr auto PlaylistItems         = "application/x-fooyin-playlistitems";
 constexpr auto TrackIds              = "application/x-fooyin-trackIds";
-constexpr auto PlaylistOrganiserItem = "application/x-fooyin-playlistorganiseritem";
 } // namespace Mime
 
 namespace Page {

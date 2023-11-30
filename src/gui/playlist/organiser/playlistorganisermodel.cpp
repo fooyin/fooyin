@@ -27,6 +27,8 @@
 
 #include <stack>
 
+constexpr auto OrganiserItems = "application/x-fooyin-playlistorganiseritems";
+
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
@@ -501,13 +503,13 @@ bool PlaylistOrganiserModel::setData(const QModelIndex& index, const QVariant& v
 
 QStringList PlaylistOrganiserModel::mimeTypes() const
 {
-    return {Constants::Mime::PlaylistOrganiserItem};
+    return {OrganiserItems};
 }
 
 bool PlaylistOrganiserModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                                              const QModelIndex& parent) const
 {
-    if(action == Qt::MoveAction && data->hasFormat(Constants::Mime::PlaylistOrganiserItem)) {
+    if(action == Qt::MoveAction && data->hasFormat(OrganiserItems)) {
         return true;
     }
     return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);
@@ -526,7 +528,7 @@ Qt::DropActions PlaylistOrganiserModel::supportedDragActions() const
 QMimeData* PlaylistOrganiserModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    mimeData->setData(Constants::Mime::PlaylistOrganiserItem, p->saveIndexes(indexes));
+    mimeData->setData(OrganiserItems, p->saveIndexes(indexes));
     return mimeData;
 }
 
@@ -537,7 +539,7 @@ bool PlaylistOrganiserModel::dropMimeData(const QMimeData* data, Qt::DropAction 
         return false;
     }
 
-    const QModelIndexList indexes = p->restoreIndexes(data->data(Constants::Mime::PlaylistOrganiserItem));
+    const QModelIndexList indexes = p->restoreIndexes(data->data(OrganiserItems));
 
     const auto indexGroups = determineTrackIndexGroups(indexes);
 
