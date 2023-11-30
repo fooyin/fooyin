@@ -407,11 +407,11 @@ void PlaylistHandler::removePlaylist(int id)
 
     p->updateIndices();
 
+    emit playlistRemoved(playlist);
+
     if(p->playlists.empty()) {
         createPlaylist(QStringLiteral("Default"), {});
     }
-
-    emit playlistRemoved(playlist);
 }
 
 Playlist* PlaylistHandler::activePlaylist() const
