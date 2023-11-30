@@ -46,7 +46,7 @@ public:
     [[nodiscard]] Playlist* playlistByName(const QString& name) const override;
     [[nodiscard]] PlaylistList playlists() const override;
 
-    void createEmptyPlaylist() override;
+    Playlist* createEmptyPlaylist() override;
     Playlist* createPlaylist(const QString& name) override;
     Playlist* createPlaylist(const QString& name, const TrackList& tracks) override;
     void appendToPlaylist(int id, const TrackList& tracks) override;
