@@ -25,12 +25,14 @@ namespace Fooyin {
 PlaylistOrganiserItem::PlaylistOrganiserItem()
     : TreeItem{nullptr}
     , m_type{Root}
+    , m_playlist{nullptr}
 { }
 
 PlaylistOrganiserItem::PlaylistOrganiserItem(QString title, PlaylistOrganiserItem* parent)
     : TreeItem{parent}
     , m_type{GroupItem}
     , m_title{std::move(title)}
+    , m_playlist{nullptr}
 { }
 
 PlaylistOrganiserItem::PlaylistOrganiserItem(Playlist* playlist, PlaylistOrganiserItem* parent)

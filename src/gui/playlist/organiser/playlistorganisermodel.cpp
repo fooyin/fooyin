@@ -386,7 +386,7 @@ QModelIndex PlaylistOrganiserModel::indexForPlaylist(Playlist* playlist)
     }
 
     const QString key = playlistKey(playlist->name());
-    if(playlist && p->nodes.contains(key)) {
+    if(p->nodes.contains(key)) {
         return indexOfItem(&p->nodes.at(key));
     }
     return {};
