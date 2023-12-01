@@ -113,8 +113,10 @@ public:
     virtual void resetChildren()
     {
         for(Item* child : m_children) {
-            child->resetChildren();
-            child->resetRow();
+            if(child) {
+                child->resetChildren();
+                child->resetRow();
+            }
         }
     }
 

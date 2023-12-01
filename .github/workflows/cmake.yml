@@ -51,6 +51,7 @@ jobs:
         with:
           repository: taglib/taglib
           path: taglib
+          ref: v1.13.1
           submodules: recursive
 
       - name: Install TagLib
