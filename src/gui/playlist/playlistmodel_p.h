@@ -41,7 +41,7 @@ inline bool cmpItemsPlaylistItems(PlaylistItem* pItem1, PlaylistItem* pItem2, bo
     PlaylistItem* item1{pItem1};
     PlaylistItem* item2{pItem2};
 
-    while(item1->parent() != item2->parent()) {
+    while(item1->parent() && item2->parent() && item1->parent() != item2->parent()) {
         if(item1->parent() == item2) {
             return true;
         }
