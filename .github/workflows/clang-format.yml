@@ -1,0 +1,20 @@
+name: Clang Format Checker
+
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: cpp-linter/cpp-linter-action@v2
+      id: linter
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        style: file
+        lines-changed-only: true
+        
+    - name: Fail fast?!
+      if: steps.linter.outputs.checks-failed > 0
+      run: echo "Some files failed the linting checks!"
