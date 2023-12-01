@@ -36,7 +36,48 @@ class CoverProvider;
 enum class PlayState;
 class PlaylistModel;
 
-using PlaylistItemSet = std::set<PlaylistItem*>;
+inline bool cmpItemsPlaylistItems(PlaylistItem* pItem1, PlaylistItem* pItem2, bool reverse = false)
+{
+    PlaylistItem* item1{pItem1};
+    PlaylistItem* item2{pItem2};
+
+    while(item1->parent() != item2->parent()) {
+        if(item1->parent() == item2) {
+            return true;
+        }
+        if(item2->parent() == item1) {
+            return false;
+        }
+        if(item1->parent()->type() != PlaylistItem::Root) {
+            item1 = item1->parent();
+        }
+        if(item2->parent()->type() != PlaylistItem::Root) {
+            item2 = item2->parent();
+        }
+    }
+    if(item1->row() == item2->row()) {
+        return false;
+    }
+    return reverse ? item1->row() > item2->row() : item1->row() < item2->row();
+};
+
+struct cmpItems
+{
+    bool operator()(PlaylistItem* pItem1, PlaylistItem* pItem2) const
+    {
+        return cmpItemsPlaylistItems(pItem1, pItem2);
+    }
+};
+
+struct cmpItemsReverse
+{
+    bool operator()(PlaylistItem* pItem1, PlaylistItem* pItem2) const
+    {
+        return cmpItemsPlaylistItems(pItem1, pItem2, true);
+    }
+};
+
+using ItemPtrSet = std::set<PlaylistItem*, cmpItemsReverse>;
 
 struct TrackIndexResult
 {
@@ -61,7 +102,7 @@ public:
     void populateTracks(PendingData& data);
     void populateTrackGroup(PendingData& data);
     void updateModel(ItemKeyMap& data);
-    void updateHeaders(const PlaylistItemSet& headers);
+    void updateHeaders(const ItemPtrSet& headers);
 
     QVariant trackData(PlaylistItem* item, int role) const;
     QVariant headerData(PlaylistItem* item, int role) const;
@@ -82,9 +123,9 @@ public:
                           const PlaylistItemList& children) const;
     bool removePlaylistRows(int row, int count, const QModelIndex& parent);
 
-    void cleanupHeaders(const PlaylistItemSet& headers);
-    void removeEmptyHeaders(PlaylistItemSet& headers);
-    void mergeHeaders(PlaylistItemSet& headersToUpdate);
+    void cleanupHeaders(const ItemPtrSet& headers);
+    void removeEmptyHeaders(ItemPtrSet& headers);
+    void mergeHeaders(ItemPtrSet& headersToUpdate);
     void updateTrackIndexes();
     void deleteNodes(PlaylistItem* parent);
 
