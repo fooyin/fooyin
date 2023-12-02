@@ -52,20 +52,20 @@ struct FiltersPlugin::Private
     void registerLayouts() const
     {
         layoutProvider->registerLayout(R"({"Obsidian":[{"SplitterVertical":{"Children":["StatusBar","SearchBar",{
-            "SplitterHorizontal":{"Children":[{"FilterWidget":{"Sort":"AscendingOrder","Type":"Album Artist"}},
-            {"FilterWidget":{"Sort":"AscendingOrder","Type":"Album"}},"Playlist",{
-            "SplitterVertical":{"Children":["ArtworkPanel","InfoPanel"],
+            "SplitterHorizontal":{"Children":[{"LibraryFilter":{"Sort":"AscendingOrder","Type":"Album Artist"}},
+            {"LibraryFilter":{"Sort":"AscendingOrder","Type":"Album"}},"Playlist",{
+            "SplitterVertical":{"Children":["ArtworkPanel","SelectionInfo"],
             "State":"AAAA/wAAAAEAAAACAAABcgAAAg4A/////wEAAAACAA=="}}],
             "State":"AAAA/wAAAAEAAAAEAAAA+wAAAVoAAAN6AAABcwD/////AQAAAAEA"}},"ControlBar"],
             "State":"AAAA/wAAAAEAAAAEAAAAGQAAABwAAAOEAAAAFAD/////AQAAAAIA"}}]})");
 
         layoutProvider->registerLayout(
-            R"({"Ember":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"FilterWidget":{"Type":"Genre","Sort":"AscendingOrder"}},
-            {"FilterWidget":{"Type":"Album
-            Artist","Sort":"AscendingOrder"}},{"FilterWidget":{"Type":"Artist","Sort":"AscendingOrder"}},
-            {"FilterWidget":{"Type":"Album","Sort":"AscendingOrder"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
+            R"({"Ember":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"LibraryFilter":{"Type":"Genre","Sort":"AscendingOrder"}},
+            {"LibraryFilter":{"Type":"Album
+            Artist","Sort":"AscendingOrder"}},{"LibraryFilter":{"Type":"Artist","Sort":"AscendingOrder"}},
+            {"LibraryFilter":{"Type":"Album","Sort":"AscendingOrder"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
             {"SplitterHorizontal":{"Children":["ControlBar","SearchBar"],"State":"AAAA/wAAAAEAAAADAAAFfgAAAdIAAAC1AP////8BAAAAAQA="}},
-            {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["ArtworkPanel","InfoPanel"],
+            {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["ArtworkPanel","SelectionInfo"],
             "State":"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAUAP////8BAAAAAgA="}},"Playlist"],"State":"AAAA/wAAAAEAAAADAAABdQAABdsAAAC1AP////8BAAAAAQA="}},
             "StatusBar"],"State":"AAAA/wAAAAEAAAAFAAAA/wAAAB4AAALRAAAAGQAAAAAA/////wEAAAACAA=="}}]})");
     }
@@ -100,7 +100,7 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
                      &FilterManager::searchChanged);
 
     p->factory->registerClass<FilterWidget>(
-        QStringLiteral("FilterWidget"), [this]() { return p->filterManager->createFilter(); }, "Filter Widget");
+        QStringLiteral("LibraryFilter"), [this]() { return p->filterManager->createFilter(); }, "Library Filter");
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
     p->fieldsPage

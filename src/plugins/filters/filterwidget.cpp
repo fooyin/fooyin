@@ -206,12 +206,12 @@ void FilterWidget::customHeaderMenuRequested(QPoint pos)
 
 QString FilterWidget::name() const
 {
-    return u"Filter Widget"_s;
+    return u"Library Filter"_s;
 }
 
 QString FilterWidget::layoutName() const
 {
-    return u"FilterWidget"_s;
+    return u"LibraryFilter"_s;
 }
 
 void FilterWidget::saveLayout(QJsonArray& array)

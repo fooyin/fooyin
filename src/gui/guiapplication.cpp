@@ -246,9 +246,9 @@ struct GuiApplication::Private
             u"Control Bar"_s);
 
         factory->registerClass<InfoWidget>(
-            u"InfoPanel"_s,
+            u"SelectionInfo"_s,
             [this]() { return new InfoWidget(playerManager, &selectionController, settingsManager, mainWindow.get()); },
-            u"Info Panel"_s);
+            u"Selection Info"_s);
 
         factory->registerClass<CoverWidget>(
             u"ArtworkPanel"_s,

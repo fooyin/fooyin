@@ -145,12 +145,12 @@ InfoWidget::~InfoWidget() = default;
 
 QString InfoWidget::name() const
 {
-    return QStringLiteral("Info Panel");
+    return QStringLiteral("Selection Info");
 }
 
 QString InfoWidget::layoutName() const
 {
-    return QStringLiteral("InfoPanel");
+    return QStringLiteral("SelectionInfo");
 }
 
 void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
