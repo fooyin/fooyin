@@ -150,6 +150,7 @@ struct PlaylistOrganiser::Private
         , newPlaylist{new QAction(tr("Create Playlist"))}
         , newPlaylistCmd{actionManager->registerAction(newPlaylist, "PlaylistOrganiser.NewPlaylist", context.context())}
     {
+        organiserTree->setHeaderHidden(true);
         organiserTree->setUniformRowHeights(true);
         organiserTree->setSelectionBehavior(QAbstractItemView::SelectRows);
         organiserTree->setSelectionMode(QAbstractItemView::ExtendedSelection);

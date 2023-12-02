@@ -411,23 +411,6 @@ Qt::ItemFlags PlaylistOrganiserModel::flags(const QModelIndex& index) const
     return defaultFlags;
 }
 
-QVariant PlaylistOrganiserModel::headerData(int /*section*/, Qt::Orientation orientation, int role) const
-{
-    if(orientation == Qt::Orientation::Vertical) {
-        return {};
-    }
-
-    if(role == Qt::TextAlignmentRole) {
-        return (Qt::AlignHCenter);
-    }
-
-    if(role != Qt::DisplayRole) {
-        return {};
-    }
-
-    return "Playlist Organiser";
-}
-
 bool PlaylistOrganiserModel::hasChildren(const QModelIndex& parent) const
 {
     return parent.data(PlaylistOrganiserItem::ItemType).toInt() != PlaylistOrganiserItem::PlaylistItem;
