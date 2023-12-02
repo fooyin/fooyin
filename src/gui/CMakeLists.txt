@@ -80,6 +80,9 @@ set(SOURCES
     playlist/playlistwidget.cpp
     playlist/presetregistry.cpp
     playlist/playlistscriptregistry.cpp
+    playlist/organiser/playlistorganiser.cpp
+    playlist/organiser/playlistorganiseritem.cpp
+    playlist/organiser/playlistorganisermodel.cpp
     quicksetup/quicksetupdialog.cpp
     quicksetup/quicksetupmodel.cpp
     sandbox/expressiontreemodel.cpp

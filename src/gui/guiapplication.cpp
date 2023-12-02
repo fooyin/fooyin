@@ -32,6 +32,7 @@
 #include "menu/librarymenu.h"
 #include "menu/playbackmenu.h"
 #include "menu/viewmenu.h"
+#include "playlist/organiser/playlistorganiser.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlisttabs.h"
 #include "playlist/playlistwidget.h"
@@ -228,6 +229,14 @@ struct GuiApplication::Private
                                                                          mainWindow.get());
                                              },
                                              u"Playlist Tabs"_s, {"Splitters"});
+
+        factory->registerClass<PlaylistOrganiser>(
+            u"PlaylistOrganiser"_s,
+            [this]() {
+                return new PlaylistOrganiser(actionManager, playlistController.get(), settingsManager,
+                                             mainWindow.get());
+            },
+            u"Playlist Organiser"_s);
 
         factory->registerClass<TabStackWidget>(
             u"TabStack"_s, [this]() { return new TabStackWidget(actionManager, &widgetProvider, mainWindow.get()); },

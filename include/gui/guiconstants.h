@@ -118,11 +118,12 @@ constexpr auto Clear           = "Edit.Clear";
 constexpr auto Undo            = "Edit.Undo";
 constexpr auto Redo            = "Edit.Redo";
 constexpr auto Remove          = "Edit.Remove";
+constexpr auto Rename          = "Edit.Rename";
 } // namespace Actions
 
 namespace Mime {
-constexpr auto PlaylistItems = "application/x-fooyin-playlistitems";
-constexpr auto TrackIds      = "application/x-fooyin-trackIds";
+constexpr auto PlaylistItems         = "application/x-fooyin-playlistitems";
+constexpr auto TrackIds              = "application/x-fooyin-trackIds";
 } // namespace Mime
 
 namespace Page {
