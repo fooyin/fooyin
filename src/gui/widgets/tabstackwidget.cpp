@@ -29,6 +29,7 @@
 #include <QContextMenuEvent>
 #include <QInputDialog>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QStyleOptionViewItem>
 #include <QTabBar>
 #include <QVBoxLayout>

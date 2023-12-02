@@ -22,6 +22,7 @@
 #include <gui/widgetprovider.h>
 
 #include <QJsonArray>
+#include <QJsonObject>
 
 namespace Fooyin {
 WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent)
