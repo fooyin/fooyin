@@ -36,6 +36,7 @@ public:
     ~CoverWidget();
 
     [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 protected:
     void resizeEvent(QResizeEvent* event) override;

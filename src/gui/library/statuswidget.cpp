@@ -23,14 +23,11 @@
 #include <core/player/playermanager.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
-#include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
-#include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
 #include <QTimer>
@@ -121,7 +118,7 @@ StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, 
     : FyWidget{parent}
     , p{std::make_unique<Private>(this, library, playerManager, settings)}
 {
-    setObjectName("Status Bar");
+    setObjectName(StatusWidget::name());
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(5, 0, 0, 0);
@@ -158,7 +155,12 @@ StatusWidget::~StatusWidget() = default;
 
 QString StatusWidget::name() const
 {
-    return QStringLiteral("Status");
+    return QStringLiteral("Status Bar");
+}
+
+QString StatusWidget::layoutName() const
+{
+    return QStringLiteral("StatusBar");
 }
 } // namespace Fooyin
 

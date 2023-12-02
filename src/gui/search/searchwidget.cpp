@@ -44,7 +44,7 @@ SearchWidget::SearchWidget(ActionManager* actionManager, SearchController* contr
     , m_searchBox{new QLineEdit(this)}
     , m_searchContext{new WidgetContext(this, Context{Constants::Context::Search}, this)}
 {
-    setObjectName("Search Bar");
+    setObjectName(SearchWidget::name());
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -74,7 +74,12 @@ SearchWidget::SearchWidget(ActionManager* actionManager, SearchController* contr
 
 QString SearchWidget::name() const
 {
-    return QStringLiteral("Search");
+    return QStringLiteral("Search Bar");
+}
+
+QString SearchWidget::layoutName() const
+{
+    return QStringLiteral("SearchBar");
 }
 
 void SearchWidget::keyPressEvent(QKeyEvent* event)

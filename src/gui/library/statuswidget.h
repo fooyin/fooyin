@@ -38,6 +38,7 @@ public:
     ~StatusWidget();
 
     [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 signals:
     void clicked();

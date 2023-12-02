@@ -24,6 +24,8 @@
 namespace Fooyin {
 class Spacer : public FyWidget
 {
+    Q_OBJECT
+
 public:
     explicit Spacer(QWidget* parent = nullptr);
 

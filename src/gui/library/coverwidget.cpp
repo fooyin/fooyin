@@ -76,7 +76,7 @@ CoverWidget::CoverWidget(PlayerManager* playerManager, TrackSelectionController*
     : FyWidget{parent}
     , p{std::make_unique<Private>(this, playerManager, trackSelection)}
 {
-    setObjectName("Artwork");
+    setObjectName(CoverWidget::name());
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -95,7 +95,12 @@ CoverWidget::~CoverWidget() = default;
 
 QString CoverWidget::name() const
 {
-    return QStringLiteral("Artwork");
+    return QStringLiteral("Artwork Panel");
+}
+
+QString CoverWidget::layoutName() const
+{
+    return QStringLiteral("ArtworkPanel");
 }
 
 void CoverWidget::resizeEvent(QResizeEvent* event)

@@ -21,9 +21,6 @@
 
 #include "gui/fywidget.h"
 
-class QHBoxLayout;
-class QLabel;
-
 namespace Fooyin {
 class Dummy : public FyWidget
 {
@@ -32,10 +29,6 @@ class Dummy : public FyWidget
 public:
     explicit Dummy(QWidget* parent = nullptr);
 
-    [[nodiscard]] QString name() const override;
-
-private:
-    QHBoxLayout* m_layout;
-    QLabel* m_label;
+    QString name() const;
 };
 } // namespace Fooyin

@@ -26,7 +26,6 @@
 #include <core/track.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
-#include <utils/actions/actioncontainer.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QContextMenuEvent>
@@ -124,7 +123,7 @@ InfoWidget::InfoWidget(PlayerManager* playerManager, TrackSelectionController* s
     : PropertiesTabWidget{parent}
     , p{std::make_unique<Private>(this, selectionController, playerManager, settings)}
 {
-    setObjectName("Info Panel");
+    setObjectName(InfoWidget::name());
 
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { p->resetModel(); });
@@ -146,7 +145,12 @@ InfoWidget::~InfoWidget() = default;
 
 QString InfoWidget::name() const
 {
-    return QStringLiteral("Info");
+    return QStringLiteral("Selection Info");
+}
+
+QString InfoWidget::layoutName() const
+{
+    return QStringLiteral("SelectionInfo");
 }
 
 void InfoWidget::contextMenuEvent(QContextMenuEvent* event)

@@ -33,6 +33,7 @@
 
 #include <QContextMenuEvent>
 #include <QInputDialog>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QLayout>
 #include <QMenu>

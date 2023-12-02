@@ -21,6 +21,8 @@
 
 #include <gui/widgetprovider.h>
 
+#include <QJsonArray>
+
 namespace Fooyin {
 WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent)
     : FyWidget{parent}

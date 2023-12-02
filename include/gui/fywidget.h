@@ -23,8 +23,6 @@
 
 #include <utils/id.h>
 
-#include <QJsonArray>
-#include <QJsonObject>
 #include <QWidget>
 
 namespace Fooyin {
@@ -39,10 +37,7 @@ public:
 
     [[nodiscard]] Id id() const;
     [[nodiscard]] virtual QString name() const = 0;
-    [[nodiscard]] virtual QString layoutName() const
-    {
-        return name();
-    };
+    [[nodiscard]] virtual QString layoutName() const;
 
     [[nodiscard]] FyWidget* findParent() const;
 

@@ -123,7 +123,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TrackSelectionCon
     setMinimumSize(300, 400);
 
     const QFontMetrics fontMetrics{font()};
-    const int width = fontMetrics.horizontalAdvance(p->model->defaultFieldText()) + 15;
+    const int width = fontMetrics.horizontalAdvance(TagEditorModel::defaultFieldText()) + 15;
 
     p->view->setColumnWidth(0, width);
     p->view->resizeRowsToContents();
