@@ -35,7 +35,8 @@ public:
     explicit PlaylistOrganiserModel(PlaylistManager* playlistManager);
     ~PlaylistOrganiserModel() override;
 
-    void reset();
+    void populate();
+    void populateMissing();
     QByteArray saveModel();
     bool restoreModel(QByteArray data);
 

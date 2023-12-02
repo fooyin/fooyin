@@ -220,7 +220,7 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistManager* playlistManager)
 
 PlaylistOrganiserModel::~PlaylistOrganiserModel() = default;
 
-void PlaylistOrganiserModel::reset()
+void PlaylistOrganiserModel::populate()
 {
     beginResetModel();
     resetRoot();
@@ -229,11 +229,29 @@ void PlaylistOrganiserModel::reset()
     const PlaylistList playlists = p->playlistManager->playlists();
 
     for(const auto& playlist : playlists) {
-        auto* item = &p->nodes.emplace(playlist->name(), PlaylistOrganiserItem{playlist, rootItem()}).first->second;
+        auto* item = &p->nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, rootItem()})
+                          .first->second;
         rootItem()->appendChild(item);
     }
 
     endResetModel();
+}
+
+void PlaylistOrganiserModel::populateMissing()
+{
+    const PlaylistList playlists = p->playlistManager->playlists();
+
+    for(const auto& playlist : playlists) {
+        const QString key = playlistKey(playlist->name());
+        if(!p->nodes.contains(key)) {
+            const int row = rowCount({});
+
+            beginInsertRows({}, row, row);
+            auto* item = &p->nodes.emplace(key, PlaylistOrganiserItem{playlist, rootItem()}).first->second;
+            rootItem()->appendChild(item);
+            endInsertRows();
+        }
+    }
 }
 
 QByteArray PlaylistOrganiserModel::saveModel()

@@ -287,9 +287,10 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
     if(p->model->restoreModel(p->settings->settingsFile()->value(OrganiserModel).toByteArray())) {
         const auto state = p->settings->settingsFile()->value(OrganiserState).toByteArray();
         restoreExpandedState(p->organiserTree, p->model, state);
+        p->model->populateMissing();
     }
     else {
-        p->model->reset();
+        p->model->populate();
     }
     p->selectCurrentPlaylist(p->playlistController->currentPlaylist());
 }
