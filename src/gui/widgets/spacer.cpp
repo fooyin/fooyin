@@ -32,3 +32,5 @@ QString Spacer::name() const
     return QStringLiteral("Spacer");
 }
 } // namespace Fooyin
+
+#include "moc_spacer.cpp"

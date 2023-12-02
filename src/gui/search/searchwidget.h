@@ -39,6 +39,7 @@ public:
                           QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 protected:
     void keyPressEvent(QKeyEvent* event) override;

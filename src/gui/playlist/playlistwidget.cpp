@@ -533,7 +533,7 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistController*
     : FyWidget{parent}
     , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistController, library, settings)}
 {
-    setObjectName("Playlist");
+    setObjectName(PlaylistWidget::name());
 }
 
 PlaylistWidget::~PlaylistWidget() = default;

@@ -29,6 +29,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QMenu>
 #include <QSplitter>

@@ -28,6 +28,7 @@
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QInputDialog>
+#include <QJsonArray>
 #include <QStyleOptionViewItem>
 #include <QTabBar>
 #include <QVBoxLayout>

@@ -181,17 +181,18 @@ struct GuiApplication::Private
         layoutProvider.registerLayout(R"({"Empty":[{"SplitterVertical":{"Children":[],
                                      "State":"AAAA/wAAAAEAAAABAAACLwD/////AQAAAAIA"}}]})");
 
-        layoutProvider.registerLayout(R"({"Simple":[{"SplitterVertical":{"Children":["Status","Playlist","Controls"],
+        layoutProvider.registerLayout(
+            R"({"Simple":[{"SplitterVertical":{"Children":["StatusBar","Playlist","ControlBar"],
                                      "State":"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA"}}]})");
 
-        layoutProvider.registerLayout(R"({"Stone":[{"SplitterVertical":{"Children":["Status","Search",{
+        layoutProvider.registerLayout(R"({"Stone":[{"SplitterVertical":{"Children":["StatusBar","SearchBar",{
             "SplitterHorizontal":{"Children":[{"LibraryTree":{"Grouping":"Artist/Album"}},{
-            "PlaylistTabs":["Playlist"]}],"State":"AAAA/wAAAAEAAAACAAABQgAABggA/////wEAAAABAA=="}},"Controls"],
+            "PlaylistTabs":["Playlist"]}],"State":"AAAA/wAAAAEAAAACAAABQgAABggA/////wEAAAABAA=="}},"ControlBar"],
             "State":"AAAA/wAAAAEAAAAEAAAAGQAAAB4AAAO8AAAAFAD/////AQAAAAIA"}}]})");
 
-        layoutProvider.registerLayout(R"({"Vision":[{"SplitterVertical":{"Children":["Status",{"SplitterHorizontal":{
-                                     "Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////
-                                     8BAAAAAQA="}},{"SplitterHorizontal":{"Children":["Artwork","Playlist"],"State":
+        layoutProvider.registerLayout(R"({"Vision":[{"SplitterVertical":{"Children":["StatusBar",{"SplitterHorizontal":{
+                                     "Children":["ControlBar","SearchBar"],"State":"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////
+                                     8BAAAAAQA="}},{"SplitterHorizontal":{"Children":["ArtworkPanel","Playlist"],"State":
                                      "AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA="}}],"State":"AAAA/
                                      wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA"}}]})");
     }
@@ -241,14 +242,18 @@ struct GuiApplication::Private
             u"Library Tree"_s);
 
         factory->registerClass<ControlWidget>(
-            u"Controls"_s, [this]() { return new ControlWidget(playerManager, settingsManager, mainWindow.get()); });
+            u"ControlBar"_s, [this]() { return new ControlWidget(playerManager, settingsManager, mainWindow.get()); },
+            u"Control Bar"_s);
 
-        factory->registerClass<InfoWidget>(u"Info"_s, [this]() {
-            return new InfoWidget(playerManager, &selectionController, settingsManager, mainWindow.get());
-        });
+        factory->registerClass<InfoWidget>(
+            u"InfoPanel"_s,
+            [this]() { return new InfoWidget(playerManager, &selectionController, settingsManager, mainWindow.get()); },
+            u"Info Panel"_s);
 
         factory->registerClass<CoverWidget>(
-            u"Artwork"_s, [this]() { return new CoverWidget(playerManager, &selectionController, mainWindow.get()); });
+            u"ArtworkPanel"_s,
+            [this]() { return new CoverWidget(playerManager, &selectionController, mainWindow.get()); },
+            u"Artwork Panel"_s);
 
         factory->registerClass<PlaylistWidget>(u"Playlist"_s, [this]() {
             return new PlaylistWidget(actionManager, playlistController.get(), library, settingsManager,
@@ -257,13 +262,15 @@ struct GuiApplication::Private
 
         factory->registerClass<Spacer>(u"Spacer"_s, [this]() { return new Spacer(mainWindow.get()); });
 
-        factory->registerClass<StatusWidget>(u"Status"_s, [this]() {
-            return new StatusWidget(library, playerManager, settingsManager, mainWindow.get());
-        });
+        factory->registerClass<StatusWidget>(
+            u"StatusBar"_s,
+            [this]() { return new StatusWidget(library, playerManager, settingsManager, mainWindow.get()); },
+            u"Status Bar"_s);
 
-        factory->registerClass<SearchWidget>(u"Search"_s, [this]() {
-            return new SearchWidget(actionManager, &searchController, settingsManager, mainWindow.get());
-        });
+        factory->registerClass<SearchWidget>(
+            u"SearchBar"_s,
+            [this]() { return new SearchWidget(actionManager, &searchController, settingsManager, mainWindow.get()); },
+            u"Search Bar"_s);
     }
 
     void createPropertiesTabs()

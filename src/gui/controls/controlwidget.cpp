@@ -60,7 +60,7 @@ ControlWidget::ControlWidget(PlayerManager* playerManager, SettingsManager* sett
     : FyWidget{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
-    setObjectName("Control Bar");
+    setObjectName(ControlWidget::name());
 
     auto* layout = new QHBoxLayout(this);
     layout->addWidget(p->playerControls, 0, Qt::AlignLeft | Qt::AlignVCenter);
@@ -72,12 +72,17 @@ ControlWidget::ControlWidget(PlayerManager* playerManager, SettingsManager* sett
     layout->setSpacing(15);
 }
 
-ControlWidget::~ControlWidget() = default;
-
 QString ControlWidget::name() const
 {
-    return QStringLiteral("Controls");
+    return QStringLiteral("Control Bar");
 }
+
+QString ControlWidget::layoutName() const
+{
+    return QStringLiteral("ControlBar");
+}
+
+ControlWidget::~ControlWidget() = default;
 } // namespace Fooyin
 
 #include "moc_controlwidget.cpp"

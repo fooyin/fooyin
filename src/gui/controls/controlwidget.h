@@ -36,6 +36,7 @@ public:
     ~ControlWidget();
 
     [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 private:
     struct Private;

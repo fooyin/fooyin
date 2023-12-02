@@ -34,8 +34,7 @@ public:
     ~TabStackWidget() override;
 
     [[nodiscard]] QString name() const override;
-    [[nodiscard]] QString extracted() const;
-    QString layoutName() const override;
+    [[nodiscard]] QString layoutName() const override;
     void layoutEditingMenu(ActionContainer* menu) override;
     void saveLayout(QJsonArray& array) override;
     void loadLayout(const QJsonObject& object) override;

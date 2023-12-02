@@ -19,31 +19,29 @@
 
 #include "dummy.h"
 
-#include <QApplication>
 #include <QHBoxLayout>
 #include <QLabel>
 
 namespace Fooyin {
 Dummy::Dummy(QWidget* parent)
     : FyWidget{parent}
-    , m_layout{new QHBoxLayout(this)}
-    , m_label{new QLabel(this)}
 {
     setObjectName(Dummy::name());
 
-    m_layout->setContentsMargins(0, 0, 0, 0);
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
 
-    m_label->setText(tr("Right-Click to add a new widget"));
-    m_label->setAutoFillBackground(true);
+    auto* label = new QLabel(tr("Right-Click to add a new widget"), this);
+    label->setAutoFillBackground(true);
 
-    QPalette palette = QApplication::palette();
-    palette.setColor(m_label->backgroundRole(), palette.base().color());
-    m_label->setPalette(palette);
+    QPalette palette = QWidget::palette();
+    palette.setColor(label->backgroundRole(), palette.base().color());
+    label->setPalette(palette);
 
-    m_label->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    m_label->setAlignment(Qt::AlignCenter);
+    label->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+    label->setAlignment(Qt::AlignCenter);
 
-    m_layout->addWidget(m_label);
+    layout->addWidget(label);
 }
 
 QString Dummy::name() const

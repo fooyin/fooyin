@@ -35,6 +35,7 @@
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QMenu>
 
@@ -198,14 +199,19 @@ void FilterWidget::setScrollbarEnabled(bool enabled)
     p->view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 }
 
-QString FilterWidget::name() const
-{
-    return u"Filter"_s;
-}
-
 void FilterWidget::customHeaderMenuRequested(QPoint pos)
 {
     emit requestHeaderMenu(p->filter, mapToGlobal(pos));
+}
+
+QString FilterWidget::name() const
+{
+    return u"Filter Widget"_s;
+}
+
+QString FilterWidget::layoutName() const
+{
+    return u"FilterWidget"_s;
 }
 
 void FilterWidget::saveLayout(QJsonArray& array)
@@ -215,7 +221,7 @@ void FilterWidget::saveLayout(QJsonArray& array)
     options["Sort"_L1] = Utils::Enum::toString(p->model->sortOrder());
 
     QJsonObject filter;
-    filter[name()] = options;
+    filter[layoutName()] = options;
     array.append(filter);
 }
 

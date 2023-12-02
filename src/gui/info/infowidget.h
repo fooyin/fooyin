@@ -33,9 +33,10 @@ class InfoWidget : public PropertiesTabWidget
 public:
     explicit InfoWidget(PlayerManager* playerManager, TrackSelectionController* selectionController,
                         SettingsManager* settings, QWidget* parent = nullptr);
-    ~InfoWidget();
+    ~InfoWidget() override;
 
     [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

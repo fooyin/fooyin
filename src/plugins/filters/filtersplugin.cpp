@@ -51,23 +51,23 @@ struct FiltersPlugin::Private
 
     void registerLayouts() const
     {
-        layoutProvider->registerLayout(R"({"Obsidian":[{"SplitterVertical":{"Children":["Status","Search",{
-            "SplitterHorizontal":{"Children":[{"Filter":{"Sort":"AscendingOrder","Type":"Album Artist"}},
-            {"Filter":{"Sort":"AscendingOrder","Type":"Album"}},"Playlist",{
-            "SplitterVertical":{"Children":["Artwork","Info"],
+        layoutProvider->registerLayout(R"({"Obsidian":[{"SplitterVertical":{"Children":["StatusBar","SearchBar",{
+            "SplitterHorizontal":{"Children":[{"FilterWidget":{"Sort":"AscendingOrder","Type":"Album Artist"}},
+            {"FilterWidget":{"Sort":"AscendingOrder","Type":"Album"}},"Playlist",{
+            "SplitterVertical":{"Children":["ArtworkPanel","InfoPanel"],
             "State":"AAAA/wAAAAEAAAACAAABcgAAAg4A/////wEAAAACAA=="}}],
-            "State":"AAAA/wAAAAEAAAAEAAAA+wAAAVoAAAN6AAABcwD/////AQAAAAEA"}},"Controls"],
+            "State":"AAAA/wAAAAEAAAAEAAAA+wAAAVoAAAN6AAABcwD/////AQAAAAEA"}},"ControlBar"],
             "State":"AAAA/wAAAAEAAAAEAAAAGQAAABwAAAOEAAAAFAD/////AQAAAAIA"}}]})");
 
         layoutProvider->registerLayout(
-            R"({"Ember":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"Filter":{"Type":"Genre","Sort":"AscendingOrder"}},
-            {"Filter":{"Type":"Album
-            Artist","Sort":"AscendingOrder"}},{"Filter":{"Type":"Artist","Sort":"AscendingOrder"}},
-            {"Filter":{"Type":"Album","Sort":"AscendingOrder"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
-            {"SplitterHorizontal":{"Children":["Controls","Search"],"State":"AAAA/wAAAAEAAAADAAAFfgAAAdIAAAC1AP////8BAAAAAQA="}},
-            {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["Artwork","Info"],
+            R"({"Ember":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"FilterWidget":{"Type":"Genre","Sort":"AscendingOrder"}},
+            {"FilterWidget":{"Type":"Album
+            Artist","Sort":"AscendingOrder"}},{"FilterWidget":{"Type":"Artist","Sort":"AscendingOrder"}},
+            {"FilterWidget":{"Type":"Album","Sort":"AscendingOrder"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
+            {"SplitterHorizontal":{"Children":["ControlBar","SearchBar"],"State":"AAAA/wAAAAEAAAADAAAFfgAAAdIAAAC1AP////8BAAAAAQA="}},
+            {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["ArtworkPanel","InfoPanel"],
             "State":"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAUAP////8BAAAAAgA="}},"Playlist"],"State":"AAAA/wAAAAEAAAADAAABdQAABdsAAAC1AP////8BAAAAAQA="}},
-            "Status"],"State":"AAAA/wAAAAEAAAAFAAAA/wAAAB4AAALRAAAAGQAAAAAA/////wEAAAACAA=="}}]})");
+            "StatusBar"],"State":"AAAA/wAAAAEAAAAFAAAA/wAAAB4AAALRAAAAGQAAAAAA/////wEAAAACAA=="}}]})");
     }
 };
 
@@ -99,8 +99,8 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
     QObject::connect(p->searchController, &SearchController::searchChanged, p->filterManager,
                      &FilterManager::searchChanged);
 
-    p->factory->registerClass<FilterWidget>(QStringLiteral("Filter"),
-                                            [this]() { return p->filterManager->createFilter(); });
+    p->factory->registerClass<FilterWidget>(
+        QStringLiteral("FilterWidget"), [this]() { return p->filterManager->createFilter(); }, "Filter Widget");
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
     p->fieldsPage

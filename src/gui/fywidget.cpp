@@ -19,17 +19,25 @@
 
 #include <gui/fywidget.h>
 
+#include <QJsonArray>
+
 namespace Fooyin {
 FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
-    , m_id{"FyWidget"}
+    , m_id{"FyWidget."}
 {
-    m_id.append(std::bit_cast<uintptr_t>(this));
+    static int id{0};
+    m_id.append(id++);
 }
 
 Id FyWidget::id() const
 {
     return m_id;
+}
+
+QString FyWidget::layoutName() const
+{
+    return name();
 }
 
 FyWidget* FyWidget::findParent() const
