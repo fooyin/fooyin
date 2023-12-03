@@ -242,11 +242,9 @@ void FilterWidget::loadLayout(const QJsonObject& object)
 {
     const QStringList sort = object["Sort"_L1].toString().split("|");
 
-    int column{0};
-    Qt::SortOrder order{Qt::AscendingOrder};
-
     if(!sort.empty()) {
-        column = sort.at(0).toInt();
+        int column = sort.at(0).toInt();
+        Qt::SortOrder order{Qt::AscendingOrder};
         if(sort.size() > 1) {
             order = static_cast<Qt::SortOrder>(sort.at(1).toInt());
         }
