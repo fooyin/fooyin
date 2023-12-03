@@ -26,12 +26,9 @@
 #include "filterview.h"
 #include "settings/filtersettings.h"
 
-#include <core/player/playermanager.h>
-#include <utils/actions/actioncontainer.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -229,8 +226,12 @@ void FilterWidget::saveLayout(QJsonArray& array)
     std::ranges::transform(p->filter.columns, std::back_inserter(columns),
                            [](const auto& column) { return QString::number(column.id); });
 
+    QByteArray state = p->view->header()->saveState();
+    state            = qCompress(state, 9);
+
     options["Columns"_L1] = columns.join("|"_L1);
     options["Sort"_L1]    = QString{"%1|%2"}.arg(p->model->sortColumn()).arg(static_cast<int>(p->model->sortOrder()));
+    options["State"_L1]   = QString::fromUtf8(state.toBase64());
 
     QJsonObject filter;
     filter[layoutName()] = options;
@@ -257,6 +258,10 @@ void FilterWidget::loadLayout(const QJsonObject& object)
     const QStringList columns = columnNames.split("|"_L1);
     ColumnIds ids;
     std::ranges::transform(columns, std::back_inserter(ids), [](const QString& column) { return column.toInt(); });
+
+    auto state = QByteArray::fromBase64(object["State"_L1].toString().toUtf8());
+    state      = qUncompress(state);
+    p->view->header()->restoreState(state);
 
     emit requestColumnsChange(p->filter, ids);
 }
