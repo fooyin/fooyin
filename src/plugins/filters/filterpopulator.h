@@ -48,7 +48,7 @@ public:
     FilterPopulator(QObject* parent = nullptr);
     ~FilterPopulator() override;
 
-    void run(const QString& field, const QString& sort, const TrackList& tracks);
+    void run(const QStringList& columns, const TrackList& tracks);
 
 signals:
     void populated(PendingTreeData data);

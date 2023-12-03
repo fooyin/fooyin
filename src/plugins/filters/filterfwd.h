@@ -70,18 +70,16 @@ struct FilterOptions
     }
 };
 
-struct FilterField
+struct FilterColumn
 {
     int id{-1};
     int index{-1};
     QString name;
     QString field;
-    QString sortField;
 
-    bool operator==(const FilterField& other) const
+    bool operator==(const FilterColumn& other) const
     {
-        return std::tie(id, index, name, field, sortField)
-            == std::tie(other.id, other.index, other.name, other.field, other.sortField);
+        return std::tie(id, index, name, field) == std::tie(other.id, other.index, other.name, other.field);
     }
 
     [[nodiscard]] bool isValid() const
@@ -89,33 +87,39 @@ struct FilterField
         return id >= 0 && !name.isEmpty() && !field.isEmpty();
     }
 
-    friend QDataStream& operator<<(QDataStream& stream, const FilterField& field)
+    friend QDataStream& operator<<(QDataStream& stream, const FilterColumn& field)
     {
         stream << field.id;
         stream << field.index;
         stream << field.name;
         stream << field.field;
-        stream << field.sortField;
         return stream;
     }
 
-    friend QDataStream& operator>>(QDataStream& stream, FilterField& field)
+    friend QDataStream& operator>>(QDataStream& stream, FilterColumn& field)
     {
         stream >> field.id;
         stream >> field.index;
         stream >> field.name;
         stream >> field.field;
-        stream >> field.sortField;
         return stream;
     }
 };
+using FilterColumnList = std::vector<FilterColumn>;
 
 struct LibraryFilter
 {
-    FilterField field;
+    FilterColumnList columns;
+    bool multipleColumns{false};
     int index{-1};
     TrackList tracks;
+
+    bool hasColumn(int id) const
+    {
+        return std::ranges::any_of(columns, [id](const FilterColumn& column) { return column.id == id; });
+    }
 };
 
 using FilterList = std::vector<LibraryFilter>;
+using ColumnIds  = std::vector<int>;
 } // namespace Fooyin::Filters

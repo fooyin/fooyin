@@ -30,8 +30,8 @@ public:
     [[nodiscard]] FilterList filters() const;
 
     LibraryFilter filterByIndex(int index) const;
-
-    LibraryFilter addFilter(const FilterField& field);
+    
+    LibraryFilter addFilter(const FilterColumnList& columns);
     void updateFilter(const LibraryFilter& filter);
     void removeFilter(int index);
 

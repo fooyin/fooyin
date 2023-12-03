@@ -21,8 +21,8 @@
 
 #include "filtermanager.h"
 #include "filterwidget.h"
+#include "settings/filterscolumnpage.h"
 #include "settings/filtersettings.h"
-#include "settings/filtersfieldspage.h"
 #include "settings/filtersgeneralpage.h"
 
 #include <gui/layoutprovider.h>
@@ -47,23 +47,22 @@ struct FiltersPlugin::Private
     std::unique_ptr<FiltersSettings> filterSettings;
 
     std::unique_ptr<FiltersGeneralPage> generalPage;
-    std::unique_ptr<FiltersFieldsPage> fieldsPage;
+    std::unique_ptr<FiltersColumnPage> columnsPage;
 
     void registerLayouts() const
     {
         layoutProvider->registerLayout(R"({"Obsidian":[{"SplitterVertical":{"Children":["StatusBar","SearchBar",{
-            "SplitterHorizontal":{"Children":[{"LibraryFilter":{"Sort":"AscendingOrder","Type":"Album Artist"}},
-            {"LibraryFilter":{"Sort":"AscendingOrder","Type":"Album"}},"Playlist",{
+            "SplitterHorizontal":{"Children":[{"LibraryFilter":{"Columns":"1","Sort":"0|0"}},
+            {"LibraryFilter":{"Columns":"3","Sort":"0|0"}},"Playlist",{
             "SplitterVertical":{"Children":["ArtworkPanel","SelectionInfo"],
             "State":"AAAA/wAAAAEAAAACAAABcgAAAg4A/////wEAAAACAA=="}}],
             "State":"AAAA/wAAAAEAAAAEAAAA+wAAAVoAAAN6AAABcwD/////AQAAAAEA"}},"ControlBar"],
             "State":"AAAA/wAAAAEAAAAEAAAAGQAAABwAAAOEAAAAFAD/////AQAAAAIA"}}]})");
 
         layoutProvider->registerLayout(
-            R"({"Ember":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"LibraryFilter":{"Type":"Genre","Sort":"AscendingOrder"}},
-            {"LibraryFilter":{"Type":"Album
-            Artist","Sort":"AscendingOrder"}},{"LibraryFilter":{"Type":"Artist","Sort":"AscendingOrder"}},
-            {"LibraryFilter":{"Type":"Album","Sort":"AscendingOrder"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
+            R"({"Ember":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"LibraryFilter":{"Columns":"0","Sort":"0|0"}},
+            {"LibraryFilter":{"Columns":"1","Sort":"0|0"}},{"LibraryFilter":{"Columns":"2","Sort":"0|0"}},
+            {"LibraryFilter":{"Columns":"3","Sort":"0|0"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
             {"SplitterHorizontal":{"Children":["ControlBar","SearchBar"],"State":"AAAA/wAAAAEAAAADAAAFfgAAAdIAAAC1AP////8BAAAAAQA="}},
             {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["ArtworkPanel","SelectionInfo"],
             "State":"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAUAP////8BAAAAAgA="}},"Playlist"],"State":"AAAA/wAAAAEAAAADAAABdQAABdsAAAC1AP////8BAAAAAQA="}},
@@ -103,8 +102,8 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
         QStringLiteral("LibraryFilter"), [this]() { return p->filterManager->createFilter(); }, "Library Filter");
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
-    p->fieldsPage
-        = std::make_unique<FiltersFieldsPage>(p->actionManager, p->filterManager->fieldRegistry(), p->settings);
+    p->columnsPage
+        = std::make_unique<FiltersColumnPage>(p->actionManager, p->filterManager->columnRegistry(), p->settings);
 
     p->registerLayouts();
 }

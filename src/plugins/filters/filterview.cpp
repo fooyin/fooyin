@@ -19,11 +19,9 @@
 
 #include "filterview.h"
 
-#include <QActionGroup>
 #include <QHeaderView>
 #include <QMenu>
 #include <QMouseEvent>
-#include <QScrollBar>
 
 namespace Fooyin::Filters {
 FilterView::FilterView(QWidget* parent)
@@ -47,6 +45,7 @@ FilterView::FilterView(QWidget* parent)
     setSortingEnabled(false);
     setUniformRowHeights(true);
 
+    header()->setSortIndicatorShown(true);
     header()->setSectionsClickable(true);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
 }

@@ -19,26 +19,19 @@
 
 #pragma once
 
-#include "filterfwd.h"
-#include "settings/filtersettings.h"
-
-#include <utils/itemregistry.h>
+#include <utils/settings/settingspage.h>
 
 namespace Fooyin {
+class ActionManager;
 class SettingsManager;
 
 namespace Filters {
-class FieldRegistry : public ItemRegistry<FilterField, Settings::Filters::FilterFields>
+class FilterColumnRegistry;
+
+class FiltersColumnPage : public SettingsPage
 {
-    Q_OBJECT
-
 public:
-    explicit FieldRegistry(SettingsManager* settings, QObject* parent = nullptr);
-
-    void loadItems() override;
-
-signals:
-    void fieldChanged(const FilterField& field);
+    explicit FiltersColumnPage(ActionManager* actionManager, FilterColumnRegistry* columnsRegistry, SettingsManager* settings);
 };
 } // namespace Filters
 } // namespace Fooyin

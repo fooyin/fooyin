@@ -26,6 +26,8 @@
 
 #include <utils/crypto.h>
 
+constexpr auto ColumnSeparator = "\036";
+
 namespace Fooyin::Filters {
 struct FilterPopulator::Private
 {
@@ -34,10 +36,8 @@ struct FilterPopulator::Private
     ScriptRegistry registry;
     ScriptParser parser;
 
-    QString currentField;
-    QString currentSort;
-    ParsedScript fieldScript;
-    ParsedScript sortScript;
+    QString currentColumns;
+    ParsedScript script;
 
     FilterItem root;
     PendingTreeData data;
@@ -48,19 +48,20 @@ struct FilterPopulator::Private
         , data{}
     { }
 
-    FilterItem* getOrInsertItem(const QString& title, const QString& sortTitle)
+    FilterItem* getOrInsertItem(const QStringList& columns)
     {
-        if(!data.items.contains(title)) {
-            data.items.emplace(title, FilterItem{title, sortTitle, &root});
+        const QString key = Utils::generateHash(columns.join(""));
+        if(!data.items.contains(key)) {
+            data.items.emplace(key, FilterItem{key, columns, &root});
         }
-        return &data.items.at(title);
+        return &data.items.at(key);
     }
 
-    std::vector<FilterItem*> getOrInsertItems(const QStringList& titles, const QString& sortTitle)
+    std::vector<FilterItem*> getOrInsertItems(const QList<QStringList>& columnSet)
     {
         std::vector<FilterItem*> items;
-        for(const QString& title : titles) {
-            auto* filterItem = getOrInsertItem(title, sortTitle);
+        for(const QStringList& columns : columnSet) {
+            auto* filterItem = getOrInsertItem(columns);
             items.emplace_back(filterItem);
         }
         return items;
@@ -69,27 +70,29 @@ struct FilterPopulator::Private
     void addTrackToNode(const Track& track, FilterItem* node)
     {
         node->addTrack(track);
-        data.trackParents[track.id()].push_back(node->title());
+        data.trackParents[track.id()].push_back(node->key());
     }
 
     void iterateTrack(const Track& track)
     {
-        const QString field = parser.evaluate(fieldScript, track);
-        const QString sort  = parser.evaluate(sortScript, track);
+        const QString columns = parser.evaluate(script, track);
 
-        if(field.isNull()) {
+        if(columns.isNull()) {
             return;
         }
 
-        if(field.contains(Constants::Separator)) {
-            const QStringList values = field.split(Constants::Separator);
-            const auto nodes         = getOrInsertItems(values, sort);
+        if(columns.contains(Constants::Separator)) {
+            const QStringList values = columns.split(Constants::Separator);
+            QList<QStringList> colValues;
+            std::ranges::transform(values, std::back_inserter(colValues),
+                                   [](const QString& col) { return col.split(ColumnSeparator); });
+            const auto nodes = getOrInsertItems(colValues);
             for(FilterItem* node : nodes) {
                 addTrackToNode(track, node);
             }
         }
         else {
-            FilterItem* node = getOrInsertItem(field, sort);
+            FilterItem* node = getOrInsertItem(columns.split(ColumnSeparator));
             addTrackToNode(track, node);
         }
     }
@@ -123,17 +126,15 @@ FilterPopulator::FilterPopulator(QObject* parent)
 
 FilterPopulator::~FilterPopulator() = default;
 
-void FilterPopulator::run(const QString& field, const QString& sort, const TrackList& tracks)
+void FilterPopulator::run(const QStringList& columns, const TrackList& tracks)
 {
     setState(Running);
 
     p->data.clear();
 
-    if(std::exchange(p->currentField, field) != field) {
-        p->fieldScript = p->parser.parse(p->currentField);
-    }
-    if(std::exchange(p->currentSort, sort) != sort) {
-        p->sortScript = p->parser.parse(p->currentSort);
+    const QString newColumns = columns.join(ColumnSeparator);
+    if(std::exchange(p->currentColumns, newColumns) != newColumns) {
+        p->script = p->parser.parse(p->currentColumns);
     }
 
     p->runBatch(tracks);

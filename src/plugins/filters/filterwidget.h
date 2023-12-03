@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "filterfwd.h"
+
 #include <core/trackfwd.h>
 #include <gui/fywidget.h>
 
@@ -58,7 +60,7 @@ signals:
 
     void selectionChanged(const LibraryFilter& filter, const QString& playlistName);
     void filterDeleted(const LibraryFilter& filter);
-    void requestFieldChange(const LibraryFilter& filter, const QString& field);
+    void requestColumnsChange(const LibraryFilter& filter, const ColumnIds& columns);
     void requestHeaderMenu(const LibraryFilter& filter, QPoint pos);
     void requestContextMenu(const LibraryFilter& filter, QPoint pos);
 

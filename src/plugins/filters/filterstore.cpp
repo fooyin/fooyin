@@ -35,10 +35,10 @@ LibraryFilter FilterStore::filterByIndex(int index) const
     return {};
 }
 
-LibraryFilter FilterStore::addFilter(const FilterField& field)
+LibraryFilter FilterStore::addFilter(const FilterColumnList& columns)
 {
     LibraryFilter& filter = m_filters.emplace_back();
-    filter.field          = field;
+    filter.columns        = columns;
     filter.index          = static_cast<int>(m_filters.size() - 1);
     return filter;
 }

@@ -19,30 +19,30 @@
 
 #pragma once
 
+#include "filterfwd.h"
 #include "filteritem.h"
 
-#include <core/trackfwd.h>
-#include <utils/tablemodel.h>
+#include <utils/treemodel.h>
 
 namespace Fooyin::Filters {
 struct FilterOptions;
-struct FilterField;
 
-class FilterModel : public TableModel<FilterItem>
+class FilterModel : public TreeModel<FilterItem>
 {
 public:
-    explicit FilterModel(const FilterField& field, QObject* parent = nullptr);
+    explicit FilterModel(QObject* parent = nullptr);
     ~FilterModel() override;
 
+    [[nodiscard]] int sortColumn() const;
     [[nodiscard]] Qt::SortOrder sortOrder() const;
 
-    void setSortOrder(Qt::SortOrder order);
+    void sortOnColumn(int column, Qt::SortOrder order);
     void setAppearance(const FilterOptions& options);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
-    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
     [[nodiscard]] QStringList mimeTypes() const override;
     [[nodiscard]] Qt::DropActions supportedDragActions() const override;
@@ -54,8 +54,8 @@ public:
     void addTracks(const TrackList& tracks);
     void updateTracks(const TrackList& tracks);
     void removeTracks(const TrackList& tracks);
-
-    void reset(const FilterField& field, const TrackList& tracks);
+    
+    void reset(const FilterColumnList& columns, const TrackList& tracks);
 
 private:
     struct Private;

@@ -22,21 +22,28 @@
 #include <core/track.h>
 
 namespace Fooyin::Filters {
-FilterItem::FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode)
+FilterItem::FilterItem(QString key, QStringList columns, FilterItem* parent)
     : TreeItem{parent}
-    , m_title{std::move(title)}
-    , m_sortTitle{std::move(sortTitle)}
-    , m_isAllNode{isAllNode}
+    , m_key{std::move(key)}
+    , m_columns{std::move(columns)}
 { }
 
-QString FilterItem::title() const
+QString FilterItem::key() const
 {
-    return m_title;
+    return m_key;
 }
 
-QString FilterItem::sortTitle() const
+QStringList FilterItem::columns() const
 {
-    return m_sortTitle;
+    return m_columns;
+}
+
+QString FilterItem::column(int column) const
+{
+    if(column < 0 || column >= m_columns.size()) {
+        return {};
+    }
+    return m_columns.at(column);
 }
 
 TrackList FilterItem::tracks() const
@@ -49,9 +56,9 @@ int FilterItem::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
-void FilterItem::setTitle(const QString& title)
+void FilterItem::setColumns(const QStringList& columns)
 {
-    m_title = title;
+    m_columns = columns;
 }
 
 void FilterItem::addTrack(const Track& track)
@@ -72,28 +79,14 @@ void FilterItem::removeTrack(const Track& track)
     std::erase_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); });
 }
 
-bool FilterItem::isAllNode() const
-{
-    return m_isAllNode;
-}
-
-void FilterItem::sortChildren(Qt::SortOrder order)
+void FilterItem::sortChildren(int column, Qt::SortOrder order)
 {
     std::vector<FilterItem*> sortedChildren{m_children};
-    std::ranges::sort(sortedChildren, [order](const FilterItem* lhs, const FilterItem* rhs) {
+    std::ranges::sort(sortedChildren, [column, order](const FilterItem* lhs, const FilterItem* rhs) {
         if(!lhs || !rhs) {
             return false;
         }
-        if(lhs->m_isAllNode) {
-            return true;
-        }
-        if(rhs->m_isAllNode) {
-            return false;
-        }
-        const auto lTitle = !lhs->m_sortTitle.isEmpty() ? lhs->m_sortTitle : lhs->m_title;
-        const auto rTitle = !rhs->m_sortTitle.isEmpty() ? rhs->m_sortTitle : rhs->m_title;
-
-        const auto cmp = QString::localeAwareCompare(lTitle, rTitle);
+        const auto cmp = QString::localeAwareCompare(lhs->column(column), rhs->column(column));
         if(cmp == 0) {
             return false;
         }
