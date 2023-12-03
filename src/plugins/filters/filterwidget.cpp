@@ -250,6 +250,7 @@ void FilterWidget::loadLayout(const QJsonObject& object)
             order = static_cast<Qt::SortOrder>(sort.at(1).toInt());
         }
         p->model->sortOnColumn(column, order);
+        p->view->header()->setSortIndicator(column, order);
     }
 
     const QString columnNames = object["Columns"_L1].toString();
