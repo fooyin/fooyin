@@ -17,29 +17,29 @@
  *
  */
 
-#include "fieldregistry.h"
+#include "filtercolumnregistry.h"
 
 namespace {
-void loadDefaults(Fooyin::Filters::FieldRegistry* registry)
+void loadDefaults(Fooyin::Filters::FilterColumnRegistry* registry)
 {
-    registry->addItem({.id = 0, .index = 0, .name = "Genre", .field = "%<genre>%", .sortField = ""});
-    registry->addItem({.id = 1, .index = 1, .name = "Album Artist", .field = "%albumartist%", .sortField = ""});
-    registry->addItem({.id = 2, .index = 2, .name = "Artist", .field = "%<artist>%", .sortField = ""});
-    registry->addItem({.id = 3, .index = 3, .name = "Album", .field = "%album%", .sortField = ""});
+    registry->addItem({.id = 0, .index = 0, .name = "Genre", .field = "%<genre>%"});
+    registry->addItem({.id = 1, .index = 1, .name = "Album Artist", .field = "%albumartist%"});
+    registry->addItem({.id = 2, .index = 2, .name = "Artist", .field = "%<artist>%"});
+    registry->addItem({.id = 3, .index = 3, .name = "Album", .field = "%album%"});
 }
 } // namespace
 
 namespace Fooyin::Filters {
-FieldRegistry::FieldRegistry(SettingsManager* settings, QObject* parent)
+FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto field = itemById(id);
-        emit fieldChanged(field);
+        emit columnChanged(field);
     });
 }
 
-void FieldRegistry::loadItems()
+void FilterColumnRegistry::loadItems()
 {
     ItemRegistry::loadItems();
 
@@ -49,4 +49,4 @@ void FieldRegistry::loadItems()
 }
 } // namespace Fooyin::Filters
 
-#include "moc_fieldregistry.cpp"
+#include "moc_filtercolumnregistry.cpp"

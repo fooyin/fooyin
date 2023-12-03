@@ -24,16 +24,16 @@
 #include <utils/treestatusitem.h>
 
 namespace Fooyin::Filters {
-class FieldRegistry;
+class FilterColumnRegistry;
 class FieldItem;
 
-class FieldModel : public ExtendableTableModel
+class FiltersColumnModel : public ExtendableTableModel
 {
     Q_OBJECT
 
 public:
-    explicit FieldModel(FieldRegistry* fieldsRegistry, QObject* parent = nullptr);
-    ~FieldModel() override;
+    explicit FiltersColumnModel(FilterColumnRegistry* columnsRegistry, QObject* parent = nullptr);
+    ~FiltersColumnModel() override;
 
     void populate();
     void processQueue();

@@ -33,7 +33,7 @@ enum Settings : uint32_t
     FilterAltColours      = 1 | SettingsType::Bool,
     FilterHeader          = 2 | SettingsType::Bool,
     FilterScrollBar       = 3 | SettingsType::Bool,
-    FilterFields          = 4 | SettingsType::ByteArray,
+    FilterColumns         = 4 | SettingsType::ByteArray,
     FilterAppearance      = 5 | SettingsType::Variant,
     FilterDoubleClick     = 6 | SettingsType::Int,
     FilterMiddleClick     = 7 | SettingsType::Int,

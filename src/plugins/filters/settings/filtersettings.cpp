@@ -32,7 +32,7 @@ FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Settings::Filters::FilterAltColours>(false, u"Filters"_s);
     m_settings->createSetting<Settings::Filters::FilterHeader>(true, u"Filters"_s);
     m_settings->createSetting<Settings::Filters::FilterScrollBar>(true, u"Filters"_s);
-    m_settings->createSetting<Settings::Filters::FilterFields>(QByteArray{}, u"Filters"_s);
+    m_settings->createSetting<Settings::Filters::FilterColumns>(QByteArray{}, u"Filters"_s);
     m_settings->createSetting<Settings::Filters::FilterAppearance>(QVariant::fromValue(FilterOptions{}), u"Filters"_s);
     m_settings->createSetting<Settings::Filters::FilterDoubleClick>(1, u"Filters"_s);
     m_settings->createSetting<Settings::Filters::FilterMiddleClick>(0, u"Filters"_s);

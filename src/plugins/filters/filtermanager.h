@@ -31,7 +31,7 @@ class MusicLibrary;
 class TrackSelectionController;
 
 namespace Filters {
-class FieldRegistry;
+class FilterColumnRegistry;
 class FilterWidget;
 
 class FilterManager : public QObject
@@ -47,7 +47,7 @@ public:
 
     FilterWidget* createFilter();
 
-    [[nodiscard]] FieldRegistry* fieldRegistry() const;
+    [[nodiscard]] FilterColumnRegistry* columnRegistry() const;
 
 signals:
     void tracksAdded(const TrackList& tracks);

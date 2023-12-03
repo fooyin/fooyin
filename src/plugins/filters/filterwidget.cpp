@@ -49,10 +49,13 @@ Fooyin::TrackList fetchAllTracks(QTreeView* view)
     std::set<int> ids;
     Fooyin::TrackList tracks;
 
-    const int rowCount = view->model()->rowCount({});
+    const QModelIndex parent = view->model()->index(0, 0, {});
+    const int rowCount       = view->model()->rowCount(parent);
+
     for(int row = 0; row < rowCount; ++row) {
-        const QModelIndex index = view->model()->index(row, 0, {});
+        const QModelIndex index = view->model()->index(row, 0, parent);
         const auto indexTracks  = index.data(Fooyin::Filters::FilterItem::Tracks).value<Fooyin::TrackList>();
+
         for(const Fooyin::Track& track : indexTracks) {
             const int id = track.id();
             if(!ids.contains(id)) {
@@ -80,20 +83,16 @@ struct FilterWidget::Private
         : self{self}
         , settings{settings}
         , view{new FilterView(self)}
-        , model{new FilterModel(filter.field, self)}
+        , model{new FilterModel(self)}
     { }
 
     [[nodiscard]] QString playlistNameFromSelection() const
     {
-        QString title;
+        QStringList titles;
         const QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
-        for(const auto& index : selectedIndexes) {
-            if(!title.isEmpty()) {
-                title.append(", ");
-            }
-            title.append(index.data().toString());
-        }
-        return title;
+        std::ranges::transform(selectedIndexes, std::back_inserter(titles),
+                               [](const QModelIndex& index) { return index.data().toString(); });
+        return titles.join(", "_L1);
     }
 
     void selectionChanged()
@@ -101,14 +100,20 @@ struct FilterWidget::Private
         filter.tracks.clear();
 
         const QModelIndexList indexes = view->selectionModel()->selectedIndexes();
-        if(indexes.isEmpty()) {
+        QModelIndexList selectedRows;
+        for(const QModelIndex& index : indexes) {
+            if(index.column() == 0) {
+                selectedRows.push_back(index);
+            }
+        }
+
+        if(selectedRows.empty()) {
             return;
         }
 
         TrackList tracks;
-        for(const auto& index : indexes) {
-            const bool isAllNode = index.data(FilterItem::AllNode).toBool();
-            if(isAllNode) {
+        for(const auto& index : selectedRows) {
+            if(!index.parent().isValid()) {
                 tracks = fetchAllTracks(view);
                 break;
             }
@@ -121,15 +126,12 @@ struct FilterWidget::Private
                                   Q_ARG(QString, playlistNameFromSelection()));
     }
 
-    void changeOrder() const
+    void changeOrder(int column) const
     {
-        const auto sortOrder = model->sortOrder();
-        if(sortOrder == Qt::AscendingOrder) {
-            model->setSortOrder(Qt::DescendingOrder);
-        }
-        else {
-            model->setSortOrder(Qt::AscendingOrder);
-        }
+        const auto sortOrder = model->sortColumn() == column
+                                 ? model->sortOrder() == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder
+                                 : model->sortOrder();
+        model->sortOnColumn(column, sortOrder);
     }
 
     void updateAppearance(const QVariant& optionsVar) const
@@ -167,7 +169,12 @@ FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
     p->settings->subscribe<Settings::Filters::FilterAppearance>(
         this, [this](const QVariant& appearance) { p->updateAppearance(appearance); });
 
-    QObject::connect(p->view->header(), &QHeaderView::sectionClicked, this, [this]() { p->changeOrder(); });
+    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() {
+        p->view->expandAll();
+        p->view->setFirstColumnSpanned(0, {}, true);
+    });
+    QObject::connect(p->view->header(), &QHeaderView::sectionClicked, this,
+                     [this](int column) { p->changeOrder(column); });
     QObject::connect(p->view->header(), &FilterView::customContextMenuRequested, this,
                      &FilterWidget::customHeaderMenuRequested);
     QObject::connect(p->view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
@@ -191,7 +198,7 @@ void FilterWidget::changeFilter(const LibraryFilter& filter)
 
 void FilterWidget::reset(const TrackList& tracks)
 {
-    p->model->reset(p->filter.field, tracks);
+    p->model->reset(p->filter.columns, tracks);
 }
 
 void FilterWidget::setScrollbarEnabled(bool enabled)
@@ -217,8 +224,13 @@ QString FilterWidget::layoutName() const
 void FilterWidget::saveLayout(QJsonArray& array)
 {
     QJsonObject options;
-    options["Type"_L1] = p->filter.field.name;
-    options["Sort"_L1] = Utils::Enum::toString(p->model->sortOrder());
+
+    QStringList columns;
+    std::ranges::transform(p->filter.columns, std::back_inserter(columns),
+                           [](const auto& column) { return QString::number(column.id); });
+
+    options["Columns"_L1] = columns.join("|"_L1);
+    options["Sort"_L1]    = QString{"%1|%2"}.arg(p->model->sortColumn()).arg(static_cast<int>(p->model->sortOrder()));
 
     QJsonObject filter;
     filter[layoutName()] = options;
@@ -227,10 +239,25 @@ void FilterWidget::saveLayout(QJsonArray& array)
 
 void FilterWidget::loadLayout(const QJsonObject& object)
 {
-    if(auto order = Utils::Enum::fromString<Qt::SortOrder>(object["Sort"_L1].toString())) {
-        p->model->setSortOrder(order.value());
+    const QStringList sort = object["Sort"_L1].toString().split("|");
+
+    int column{0};
+    Qt::SortOrder order{Qt::AscendingOrder};
+
+    if(!sort.empty()) {
+        column = sort.at(0).toInt();
+        if(sort.size() > 1) {
+            order = static_cast<Qt::SortOrder>(sort.at(1).toInt());
+        }
+        p->model->sortOnColumn(column, order);
     }
-    emit requestFieldChange(p->filter, object["Type"_L1].toString());
+
+    const QString columnNames = object["Columns"_L1].toString();
+    const QStringList columns = columnNames.split("|"_L1);
+    ColumnIds ids;
+    std::ranges::transform(columns, std::back_inserter(ids), [](const QString& column) { return column.toInt(); });
+
+    emit requestColumnsChange(p->filter, ids);
 }
 
 void FilterWidget::tracksAdded(const TrackList& tracks)

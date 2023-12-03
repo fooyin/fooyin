@@ -22,7 +22,7 @@
 #include <core/trackfwd.h>
 #include <utils/treeitem.h>
 
-#include <QObject>
+#include <QStringList>
 
 namespace Fooyin::Filters {
 class FilterItem;
@@ -32,34 +32,29 @@ class FilterItem : public TreeItem<FilterItem>
 public:
     enum FilterItemRole
     {
-        Title = Qt::UserRole,
-        Tracks,
-        Sorting,
-        AllNode
+        Tracks = Qt::UserRole,
     };
 
     FilterItem() = default;
-    explicit FilterItem(QString title, QString sortTitle, FilterItem* parent, bool isAllNode = false);
+    explicit FilterItem(QString key, QStringList columns, FilterItem* parent);
 
-    [[nodiscard]] QString title() const;
-    [[nodiscard]] QString sortTitle() const;
+    [[nodiscard]] QString key() const;
+    [[nodiscard]] QStringList columns() const;
+    [[nodiscard]] QString column(int column) const;
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
 
-    void setTitle(const QString& title);
+    void setColumns(const QStringList& columns);
 
     void addTrack(const Track& track);
     void addTracks(const TrackList& tracks);
     void removeTrack(const Track& track);
 
-    [[nodiscard]] bool isAllNode() const;
-
-    void sortChildren(Qt::SortOrder order);
+    void sortChildren(int column, Qt::SortOrder order);
 
 private:
-    QString m_title;
-    QString m_sortTitle;
+    QString m_key;
+    QStringList m_columns;
     TrackList m_tracks;
-    bool m_isAllNode;
 };
 } // namespace Fooyin::Filters

@@ -17,11 +17,11 @@
  *
  */
 
-#include "filtersfieldspage.h"
+#include "filterscolumnpage.h"
 
 #include "constants.h"
-#include "fieldmodel.h"
-#include "fieldregistry.h"
+#include "filtercolumnregistry.h"
+#include "filterscolumnmodel.h"
 #include "filtersettings.h"
 
 #include <utils/extendabletableview.h>
@@ -33,10 +33,10 @@
 #include <QVBoxLayout>
 
 namespace Fooyin::Filters {
-class FiltersFieldsPageWidget : public SettingsPageWidget
+class FiltersColumnPageWidget : public SettingsPageWidget
 {
 public:
-    explicit FiltersFieldsPageWidget(ActionManager* actionManager, FieldRegistry* fieldsRegistry,
+    explicit FiltersColumnPageWidget(ActionManager* actionManager, FilterColumnRegistry* columnsRegistry,
                                      SettingsManager* settings);
 
     void apply() override;
@@ -44,59 +44,59 @@ public:
 
 private:
     ActionManager* m_actionManager;
-    FieldRegistry* m_fieldsRegistry;
+    FilterColumnRegistry* m_columnsRegistry;
     SettingsManager* m_settings;
 
-    ExtendableTableView* m_fieldList;
-    FieldModel* m_model;
+    ExtendableTableView* m_columnList;
+    FiltersColumnModel* m_model;
 };
 
-FiltersFieldsPageWidget::FiltersFieldsPageWidget(ActionManager* actionManager, FieldRegistry* fieldsRegistry,
+FiltersColumnPageWidget::FiltersColumnPageWidget(ActionManager* actionManager, FilterColumnRegistry* columnsRegistry,
                                                  SettingsManager* settings)
     : m_actionManager{actionManager}
-    , m_fieldsRegistry{fieldsRegistry}
+    , m_columnsRegistry{columnsRegistry}
     , m_settings{settings}
-    , m_fieldList{new ExtendableTableView(m_actionManager, this)}
-    , m_model{new FieldModel(m_fieldsRegistry, this)}
+    , m_columnList{new ExtendableTableView(m_actionManager, this)}
+    , m_model{new FiltersColumnModel(m_columnsRegistry, this)}
 {
-    m_fieldList->setExtendableModel(m_model);
+    m_columnList->setExtendableModel(m_model);
 
     // Hide index column
-    m_fieldList->hideColumn(0);
+    m_columnList->hideColumn(0);
 
-    m_fieldList->setExtendableColumn(1);
-    m_fieldList->verticalHeader()->hide();
-    m_fieldList->horizontalHeader()->setStretchLastSection(true);
-    m_fieldList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_fieldList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_columnList->setExtendableColumn(1);
+    m_columnList->verticalHeader()->hide();
+    m_columnList->horizontalHeader()->setStretchLastSection(true);
+    m_columnList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    m_columnList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(m_fieldList);
+    mainLayout->addWidget(m_columnList);
 
     m_model->populate();
 }
 
-void FiltersFieldsPageWidget::apply()
+void FiltersColumnPageWidget::apply()
 {
     m_model->processQueue();
 }
 
-void FiltersFieldsPageWidget::reset()
+void FiltersColumnPageWidget::reset()
 {
-    m_settings->reset<Settings::Filters::FilterFields>();
-    m_fieldsRegistry->loadItems();
+    m_settings->reset<Settings::Filters::FilterColumns>();
+    m_columnsRegistry->loadItems();
     m_model->populate();
 }
 
-FiltersFieldsPage::FiltersFieldsPage(ActionManager* actionManager, FieldRegistry* fieldsRegistry,
+FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, FilterColumnRegistry* columnsRegistry,
                                      SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::FiltersFields);
-    setName(tr("Fields"));
+    setName(tr("Columns"));
     setCategory({tr("Plugins"), tr("Filters")});
-    setWidgetCreator([actionManager, fieldsRegistry, settings] {
-        return new FiltersFieldsPageWidget(actionManager, fieldsRegistry, settings);
+    setWidgetCreator([actionManager, columnsRegistry, settings] {
+        return new FiltersColumnPageWidget(actionManager, columnsRegistry, settings);
     });
 }
 } // namespace Fooyin::Filters

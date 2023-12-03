@@ -19,7 +19,7 @@
 
 #include "filtermanager.h"
 
-#include "fieldregistry.h"
+#include "filtercolumnregistry.h"
 #include "filterstore.h"
 #include "filterwidget.h"
 
@@ -72,7 +72,7 @@ struct FilterManager::Private
     TrackAction doubleClickAction;
     TrackAction middleClickAction;
 
-    FieldRegistry fieldsRegistry;
+    FilterColumnRegistry columnRegistry;
     TrackList filteredTracks;
     FilterStore filterStore;
     QString searchFilter;
@@ -85,9 +85,9 @@ struct FilterManager::Private
         , settings{settings}
         , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterDoubleClick>())}
         , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterMiddleClick>())}
-        , fieldsRegistry{settings}
+        , columnRegistry{settings}
     {
-        fieldsRegistry.loadItems();
+        columnRegistry.loadItems();
     }
 
     void handleAction(const TrackAction& action, const QString& playlistName) const
@@ -113,16 +113,18 @@ struct FilterManager::Private
         resetFiltersAfterIndex(filter.index - 1);
     }
 
-    void fieldChanged(const Filters::FilterField& field)
+    void columnChanged(const Filters::FilterColumn& column)
     {
         const FilterList filters = filterStore.filters();
         std::set<int> filtersToReset;
         int resetIndex{-1};
 
         for(const LibraryFilter& filter : filters) {
-            if(filter.field.id == field.id) {
+            if(filter.hasColumn(column.id)) {
                 LibraryFilter updatedFilter{filter};
-                updatedFilter.field = field;
+                std::ranges::replace_if(
+                    updatedFilter.columns,
+                    [&column](const FilterColumn& filterCol) { return filterCol.id == column.id; }, column);
                 filterStore.updateFilter(updatedFilter);
 
                 filtersToReset.emplace(filter.index);
@@ -175,13 +177,9 @@ struct FilterManager::Private
         }
     }
 
-    void changeFilterField(const LibraryFilter& filter, const QString& field)
+    void updateFilter(const LibraryFilter& filter)
     {
-        const FilterField filterField = fieldsRegistry.itemByName(field);
-
-        LibraryFilter updatedFilter{filter};
-        updatedFilter.field = filterField;
-        filterStore.updateFilter(updatedFilter);
+        filterStore.updateFilter(filter);
 
         const int resetIndex = filter.index - 1;
 
@@ -190,12 +188,66 @@ struct FilterManager::Private
 
         for(const auto& [index, filterWidget] : filterWidgets) {
             if(index == filter.index) {
-                filterWidget->changeFilter(updatedFilter);
+                filterWidget->changeFilter(filter);
             }
             if(index > resetIndex) {
                 filterWidget->reset(tracks());
             }
         }
+    }
+
+    void enableMultiColumns(const LibraryFilter& filter, bool enabled)
+    {
+        LibraryFilter updatedFilter{filter};
+        updatedFilter.multipleColumns = enabled;
+
+        for(const auto& [index, filterWidget] : filterWidgets) {
+            if(index == updatedFilter.index) {
+                filterWidget->changeFilter(updatedFilter);
+            }
+        }
+    }
+
+    void addFilterColumn(const LibraryFilter& filter, int column)
+    {
+        const FilterColumn filterColumn = columnRegistry.itemById(column);
+
+        LibraryFilter updatedFilter{filter};
+        updatedFilter.columns.push_back(filterColumn);
+
+        updateFilter(updatedFilter);
+    }
+
+    void changeFilterColumn(const LibraryFilter& filter, int column)
+    {
+        const FilterColumn filterColumn = columnRegistry.itemById(column);
+
+        LibraryFilter updatedFilter{filter};
+        updatedFilter.columns = {filterColumn};
+
+        updateFilter(updatedFilter);
+    }
+
+    void removeFilterColumn(const LibraryFilter& filter, int column)
+    {
+        LibraryFilter updatedFilter{filter};
+        std::erase_if(updatedFilter.columns,
+                      [column](const FilterColumn& filterCol) { return filterCol.id == column; });
+
+        updateFilter(updatedFilter);
+    }
+
+    void changeFilterColumns(const LibraryFilter& filter, const ColumnIds& columns)
+    {
+        FilterColumnList filterColumns;
+        std::ranges::transform(columns, std::back_inserter(filterColumns),
+                               [this](int column) { return columnRegistry.itemById(column); });
+
+        LibraryFilter updatedFilter{filter};
+        updatedFilter.columns         = filterColumns;
+        updatedFilter.multipleColumns = filterColumns.size() > 1;
+
+        updateFilter(updatedFilter);
     }
 
     void filterHeaderMenu(const LibraryFilter& filter, QPoint pos)
@@ -204,21 +256,41 @@ struct FilterManager::Private
         menu->setAttribute(Qt::WA_DeleteOnClose);
 
         auto* filterList = new QActionGroup{menu};
+        filterList->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
-        for(const auto& [filterIndex, registryField] : fieldsRegistry.items()) {
-            const QString name = registryField.name;
-            auto* fieldAction  = new QAction(menu);
-            fieldAction->setText(name);
-            fieldAction->setData(name);
-            fieldAction->setCheckable(true);
-            fieldAction->setChecked(name == filter.field.name);
-            menu->addAction(fieldAction);
-            filterList->addAction(fieldAction);
+        for(const auto& [filterIndex, column] : columnRegistry.items()) {
+            auto* columnAction = new QAction(column.name, menu);
+            columnAction->setData(column.id);
+            columnAction->setCheckable(true);
+            columnAction->setChecked(filter.hasColumn(column.id));
+            columnAction->setEnabled(!filter.hasColumn(column.id) || filter.columns.size() > 1);
+            menu->addAction(columnAction);
+            filterList->addAction(columnAction);
         }
 
         menu->setDefaultAction(filterList->checkedAction());
-        QObject::connect(filterList, &QActionGroup::triggered, self,
-                         [this, &filter](QAction* action) { changeFilterField(filter, action->data().toString()); });
+        QObject::connect(filterList, &QActionGroup::triggered, self, [this, &filter](QAction* action) {
+            if(action->isChecked()) {
+                if(filter.multipleColumns) {
+                    addFilterColumn(filter, action->data().toInt());
+                }
+                else {
+                    changeFilterColumn(filter, action->data().toInt());
+                }
+            }
+            else {
+                removeFilterColumn(filter, action->data().toInt());
+            }
+        });
+
+        menu->addSeparator();
+        auto* multiColAction = new QAction(tr("Multiple Columns"), menu);
+        multiColAction->setCheckable(true);
+        multiColAction->setChecked(filter.multipleColumns);
+        multiColAction->setEnabled(!(filter.columns.size() > 1));
+        QObject::connect(multiColAction, &QAction::triggered, self,
+                         [this, &filter](bool checked) { enableMultiColumns(filter, checked); });
+        menu->addAction(multiColAction);
 
         menu->popup(pos);
     }
@@ -263,10 +335,12 @@ struct FilterManager::Private
         std::vector<LibraryFilter> filtersToUpdate;
 
         for(const auto& filter : filterStore.activeFilters()) {
+            LibraryFilter updatedFilter{filter};
             TrackList cleanedTracks;
             std::ranges::copy_if(std::as_const(filter.tracks), std::back_inserter(cleanedTracks),
                                  [libraryId](const Track& track) { return track.libraryId() != libraryId; });
-            filtersToUpdate.emplace_back(filter.field, filter.index, cleanedTracks);
+            updatedFilter.tracks = cleanedTracks;
+            filtersToUpdate.push_back(updatedFilter);
         }
 
         std::ranges::for_each(filtersToUpdate, [this](const auto& filter) { filterStore.updateFilter(filter); });
@@ -296,8 +370,8 @@ FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* tr
         tracksChanged();
     });
 
-    QObject::connect(&p->fieldsRegistry, &FieldRegistry::fieldChanged, this,
-                     [this](const Filters::FilterField& field) { p->fieldChanged(field); });
+    QObject::connect(&p->columnRegistry, &FilterColumnRegistry::columnChanged, this,
+                     [this](const Filters::FilterColumn& column) { p->columnChanged(column); });
 
     settings->subscribe<Settings::Filters::FilterDoubleClick>(
         this, [this](int action) { p->doubleClickAction = static_cast<TrackAction>(action); });
@@ -311,8 +385,7 @@ FilterWidget* FilterManager::createFilter()
 {
     auto* filter = new FilterWidget(p->settings);
 
-    const FilterField filterField = p->fieldsRegistry.itemByName(QStringLiteral(""));
-    const LibraryFilter libFilter = p->filterStore.addFilter(filterField);
+    const LibraryFilter libFilter = p->filterStore.addFilter({p->columnRegistry.itemByName(QStringLiteral(""))});
 
     filter->changeFilter(libFilter);
 
@@ -323,8 +396,8 @@ FilterWidget* FilterManager::createFilter()
     QObject::connect(filter, &FilterWidget::middleClicked, this,
                      [this](const QString& playlistName) { p->handleAction(p->middleClickAction, playlistName); });
     QObject::connect(
-        filter, &FilterWidget::requestFieldChange, this,
-        [this](const LibraryFilter& filter, const QString& field) { p->changeFilterField(filter, field); });
+        filter, &FilterWidget::requestColumnsChange, this,
+        [this](const LibraryFilter& filter, const ColumnIds& columns) { p->changeFilterColumns(filter, columns); });
     QObject::connect(filter, &FilterWidget::requestHeaderMenu, this,
                      [this](const LibraryFilter& filter, QPoint pos) { p->filterHeaderMenu(filter, pos); });
     QObject::connect(filter, &FilterWidget::requestContextMenu, this,
@@ -347,12 +420,12 @@ FilterWidget* FilterManager::createFilter()
 
 void FilterManager::shutdown()
 {
-    p->fieldsRegistry.saveItems();
+    p->columnRegistry.saveItems();
 };
 
-FieldRegistry* FilterManager::fieldRegistry() const
+FilterColumnRegistry* FilterManager::columnRegistry() const
 {
-    return &p->fieldsRegistry;
+    return &p->columnRegistry;
 }
 
 QCoro::Task<void> FilterManager::searchChanged(QString search)
