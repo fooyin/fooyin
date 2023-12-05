@@ -40,7 +40,6 @@ set(SOURCES
     expandableinputbox.cpp
     expandingcombobox.cpp
     extendabletableview.cpp
-    headerview.cpp
     hovermenu.cpp
     id.cpp
     logslider.cpp
@@ -66,6 +65,7 @@ set(SOURCES
     settings/settingsmodel.cpp
     settings/settingsmanager.cpp
     settings/settingsentry.cpp
+    widgets/autoheaderview.cpp
     widgets/editabletabbar.cpp
     widgets/editabletabwidget.cpp
     widgets/popuplineedit.cpp

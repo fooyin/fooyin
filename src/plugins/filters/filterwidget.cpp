@@ -28,6 +28,7 @@
 
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/widgets/autoheaderview.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
@@ -76,12 +77,25 @@ struct FilterWidget::Private
     FilterView* view;
     FilterModel* model;
 
+    AutoHeaderView* header;
+
     Private(FilterWidget* self, SettingsManager* settings)
         : self{self}
         , settings{settings}
         , view{new FilterView(self)}
         , model{new FilterModel(self)}
-    { }
+        , header{new AutoHeaderView(Qt::Horizontal, self)}
+    {
+        view->setHeader(header);
+        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+        header->setStretchEnabled(true);
+        header->setSortIndicatorShown(true);
+        header->setSectionsMovable(true);
+        header->setFirstSectionMovable(true);
+        header->setSectionsClickable(true);
+        header->setContextMenuPolicy(Qt::CustomContextMenu);
+    }
 
     [[nodiscard]] QString playlistNameFromSelection() const
     {
@@ -123,19 +137,27 @@ struct FilterWidget::Private
                                   Q_ARG(QString, playlistNameFromSelection()));
     }
 
-    void changeOrder(int column) const
-    {
-        const auto sortOrder = model->sortColumn() == column
-                                 ? model->sortOrder() == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder
-                                 : model->sortOrder();
-        model->sortOnColumn(column, sortOrder);
-    }
-
     void updateAppearance(const QVariant& optionsVar) const
     {
         const auto options = optionsVar.value<FilterOptions>();
         model->setAppearance(options);
         QMetaObject::invokeMethod(view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+    }
+
+    void hideHeader(bool hide) const
+    {
+        if(hide) {
+            header->setFixedHeight(0);
+        }
+        else if(header->sizeHint().height() > 0) {
+            header->setFixedHeight(header->sizeHint().height());
+        }
+    }
+
+    void customHeaderMenuRequested(const QPoint& pos) const
+    {
+        QMetaObject::invokeMethod(self, "requestHeaderMenu", Q_ARG(const LibraryFilter&, filter),
+                                  Q_ARG(AutoHeaderView*, header), Q_ARG(const QPoint&, self->mapToGlobal(pos)));
     }
 };
 
@@ -153,27 +175,22 @@ FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
 
     layout->addWidget(p->view);
 
-    p->view->setHeaderHidden(!p->settings->value<Settings::Filters::FilterHeader>());
+    p->hideHeader(!p->settings->value<Settings::Filters::FilterHeader>());
     setScrollbarEnabled(p->settings->value<Settings::Filters::FilterScrollBar>());
     p->view->setAlternatingRowColors(p->settings->value<Settings::Filters::FilterAltColours>());
 
     p->updateAppearance(p->settings->value<Settings::Filters::FilterAppearance>());
 
     p->settings->subscribe<Settings::Filters::FilterAltColours>(p->view, &QAbstractItemView::setAlternatingRowColors);
-    p->settings->subscribe<Settings::Filters::FilterHeader>(
-        this, [this](bool enabled) { p->view->setHeaderHidden(!enabled); });
+    p->settings->subscribe<Settings::Filters::FilterHeader>(this, [this](bool enabled) { p->hideHeader(!enabled); });
     p->settings->subscribe<Settings::Filters::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
     p->settings->subscribe<Settings::Filters::FilterAppearance>(
         this, [this](const QVariant& appearance) { p->updateAppearance(appearance); });
 
-    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() {
-        p->view->expandAll();
-        p->view->setFirstColumnSpanned(0, {}, true);
-    });
-    QObject::connect(p->view->header(), &QHeaderView::sectionClicked, this,
-                     [this](int column) { p->changeOrder(column); });
-    QObject::connect(p->view->header(), &FilterView::customContextMenuRequested, this,
-                     &FilterWidget::customHeaderMenuRequested);
+    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { p->view->expandAll(); });
+    QObject::connect(p->header, &QHeaderView::sortIndicatorChanged, p->model, &FilterModel::sortOnColumn);
+    QObject::connect(p->header, &FilterView::customContextMenuRequested, this,
+                     [this](const QPoint& pos) { p->customHeaderMenuRequested(pos); });
     QObject::connect(p->view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this]() { p->selectionChanged(); });
 
@@ -203,11 +220,6 @@ void FilterWidget::setScrollbarEnabled(bool enabled)
     p->view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 }
 
-void FilterWidget::customHeaderMenuRequested(QPoint pos)
-{
-    emit requestHeaderMenu(p->filter, mapToGlobal(pos));
-}
-
 QString FilterWidget::name() const
 {
     return u"Library Filter"_s;
@@ -226,11 +238,10 @@ void FilterWidget::saveLayout(QJsonArray& array)
     std::ranges::transform(p->filter.columns, std::back_inserter(columns),
                            [](const auto& column) { return QString::number(column.id); });
 
-    QByteArray state = p->view->header()->saveState();
+    QByteArray state = p->header->saveHeaderState();
     state            = qCompress(state, 9);
 
     options["Columns"_L1] = columns.join("|"_L1);
-    options["Sort"_L1]    = QString{"%1|%2"}.arg(p->model->sortColumn()).arg(static_cast<int>(p->model->sortOrder()));
     options["State"_L1]   = QString::fromUtf8(state.toBase64());
 
     QJsonObject filter;
@@ -240,28 +251,28 @@ void FilterWidget::saveLayout(QJsonArray& array)
 
 void FilterWidget::loadLayout(const QJsonObject& object)
 {
-    const QStringList sort = object["Sort"_L1].toString().split("|");
-
-    if(!sort.empty()) {
-        int column = sort.at(0).toInt();
-        Qt::SortOrder order{Qt::AscendingOrder};
-        if(sort.size() > 1) {
-            order = static_cast<Qt::SortOrder>(sort.at(1).toInt());
-        }
-        p->model->sortOnColumn(column, order);
-        p->view->header()->setSortIndicator(column, order);
-    }
-
     const QString columnNames = object["Columns"_L1].toString();
     const QStringList columns = columnNames.split("|"_L1);
     ColumnIds ids;
     std::ranges::transform(columns, std::back_inserter(ids), [](const QString& column) { return column.toInt(); });
 
-    auto state = QByteArray::fromBase64(object["State"_L1].toString().toUtf8());
-    state      = qUncompress(state);
-    p->view->header()->restoreState(state);
-
     emit requestColumnsChange(p->filter, ids);
+
+    auto state = QByteArray::fromBase64(object["State"_L1].toString().toUtf8());
+
+    if(state.isEmpty()) {
+        p->header->restoreHeaderState(state);
+        return;
+    }
+
+    state = qUncompress(state);
+
+    // Workaround to ensure QHeaderView section count is updated before restoring state
+    QMetaObject::invokeMethod(p->model, "headerDataChanged", Q_ARG(Qt::Orientation, Qt::Horizontal), Q_ARG(int, 0),
+                              Q_ARG(int, 0));
+
+    p->header->restoreHeaderState(state);
+    p->model->sortOnColumn(p->header->sortIndicatorSection(), p->header->sortIndicatorOrder());
 }
 
 void FilterWidget::tracksAdded(const TrackList& tracks)

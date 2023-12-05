@@ -36,8 +36,8 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/async.h>
-#include <utils/headerview.h>
 #include <utils/recursiveselectionmodel.h>
+#include <utils/widgets/autoheaderview.h>
 
 #include <QActionGroup>
 #include <QHBoxLayout>
@@ -113,7 +113,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , layout{new QHBoxLayout(self)}
     , model{new PlaylistModel(library, settings, self)}
     , playlistView{new PlaylistView(self)}
-    , header{new HeaderView(Qt::Horizontal, self)}
+    , header{new AutoHeaderView(Qt::Horizontal, self)}
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
     , removeTrackAction{new QAction(tr("Remove"), self)}
 {
@@ -160,7 +160,7 @@ void PlaylistWidgetPrivate::setupConnections()
                          expandTree(playlistView, model, parent, first, last);
                      });
 
-    QObject::connect(header, &HeaderView::leftClicked, this, &PlaylistWidgetPrivate::switchContextMenu);
+    QObject::connect(header, &AutoHeaderView::leftClicked, this, &PlaylistWidgetPrivate::switchContextMenu);
 
     QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this,
                      &PlaylistWidgetPrivate::changePlaylist);

@@ -26,6 +26,7 @@
 
 namespace Fooyin {
 class SettingsManager;
+class AutoHeaderView;
 
 namespace Filters {
 struct LibraryFilter;
@@ -43,8 +44,6 @@ public:
 
     void setScrollbarEnabled(bool enabled);
 
-    void customHeaderMenuRequested(QPoint pos);
-
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void saveLayout(QJsonArray& array) override;
@@ -61,8 +60,8 @@ signals:
     void selectionChanged(const LibraryFilter& filter, const QString& playlistName);
     void filterDeleted(const LibraryFilter& filter);
     void requestColumnsChange(const LibraryFilter& filter, const ColumnIds& columns);
-    void requestHeaderMenu(const LibraryFilter& filter, QPoint pos);
-    void requestContextMenu(const LibraryFilter& filter, QPoint pos);
+    void requestHeaderMenu(const LibraryFilter& filter, AutoHeaderView* header, const QPoint& pos);
+    void requestContextMenu(const LibraryFilter& filter, const QPoint& pos);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

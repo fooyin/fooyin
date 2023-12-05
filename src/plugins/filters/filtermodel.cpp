@@ -109,11 +109,38 @@ struct FilterModel::Private
         resetting = false;
     }
 
+    int uniqueValues(int column)
+    {
+        std::set<QString> columnUniques;
+
+        const auto children = allNode.children();
+
+        for(FilterItem* item : children) {
+            columnUniques.emplace(item->column(column));
+        }
+
+        return static_cast<int>(columnUniques.size());
+    }
+
+    void updateAllNode()
+    {
+        const int columnCount = self->columnCount({});
+
+        QStringList nodeColumns;
+        for(int column{0}; column < columnCount; ++column) {
+            nodeColumns.emplace_back(QString{QStringLiteral("All (%1 %2s)")}
+                                         .arg(uniqueValues(column))
+                                         .arg(columns.at(column).name.toLower()));
+        }
+
+        allNode.setColumns(nodeColumns);
+    }
+
     void populateModel(PendingTreeData& data)
     {
         for(const auto& [key, item] : data.items) {
             if(nodes.contains(key)) {
-                nodes[key].addTracks(item.tracks());
+                nodes.at(key).addTracks(item.tracks());
             }
             else {
                 if(!resetting) {
@@ -132,7 +159,7 @@ struct FilterModel::Private
         trackParents.merge(data.trackParents);
 
         allNode.sortChildren(sortColumn, sortOrder);
-        allNode.setColumns({QString{QStringLiteral("All (%1)")}.arg(std::max(0, allNode.childCount() - 1))});
+        updateAllNode();
     }
 };
 

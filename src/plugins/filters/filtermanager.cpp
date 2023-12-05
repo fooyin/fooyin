@@ -27,6 +27,7 @@
 #include <core/library/tracksort.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/async.h>
+#include <utils/widgets/autoheaderview.h>
 
 #include <QActionGroup>
 #include <QMenu>
@@ -250,7 +251,7 @@ struct FilterManager::Private
         updateFilter(updatedFilter);
     }
 
-    void filterHeaderMenu(const LibraryFilter& filter, QPoint pos)
+    void filterHeaderMenu(const LibraryFilter& filter, AutoHeaderView* header, const QPoint& pos)
     {
         auto* menu = new QMenu();
         menu->setAttribute(Qt::WA_DeleteOnClose);
@@ -292,10 +293,13 @@ struct FilterManager::Private
                          [this, &filter](bool checked) { enableMultiColumns(filter, checked); });
         menu->addAction(multiColAction);
 
+        menu->addSeparator();
+        header->addHeaderContextMenu(menu, pos);
+
         menu->popup(pos);
     }
 
-    void filterContextMenu(const LibraryFilter& /*filter*/, QPoint pos) const
+    void filterContextMenu(const LibraryFilter& /*filter*/, const QPoint& pos) const
     {
         auto* menu = new QMenu();
         menu->setAttribute(Qt::WA_DeleteOnClose);
@@ -399,9 +403,11 @@ FilterWidget* FilterManager::createFilter()
         filter, &FilterWidget::requestColumnsChange, this,
         [this](const LibraryFilter& filter, const ColumnIds& columns) { p->changeFilterColumns(filter, columns); });
     QObject::connect(filter, &FilterWidget::requestHeaderMenu, this,
-                     [this](const LibraryFilter& filter, QPoint pos) { p->filterHeaderMenu(filter, pos); });
+                     [this](const LibraryFilter& filter, AutoHeaderView* header, const QPoint& pos) {
+                         p->filterHeaderMenu(filter, header, pos);
+                     });
     QObject::connect(filter, &FilterWidget::requestContextMenu, this,
-                     [this](const LibraryFilter& filter, QPoint pos) { p->filterContextMenu(filter, pos); });
+                     [this](const LibraryFilter& filter, const QPoint& pos) { p->filterContextMenu(filter, pos); });
     QObject::connect(filter, &FilterWidget::selectionChanged, this,
                      [this](const LibraryFilter& filter, const QString& playlistName) {
                          p->selectionChanged(filter, playlistName);

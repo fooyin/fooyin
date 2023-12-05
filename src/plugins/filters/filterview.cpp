@@ -44,10 +44,6 @@ FilterView::FilterView(QWidget* parent)
     setDropIndicatorShown(true);
     setSortingEnabled(false);
     setUniformRowHeights(true);
-
-    header()->setSortIndicatorShown(true);
-    header()->setSectionsClickable(true);
-    header()->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 void FilterView::mousePressEvent(QMouseEvent* event)

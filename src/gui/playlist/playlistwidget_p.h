@@ -30,12 +30,13 @@
 
 class QHBoxLayout;
 class QMenu;
+class QAction;
 
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
 class SettingsDialogController;
-class HeaderView;
+class AutoHeaderView;
 class WidgetContext;
 class Playlist;
 class TrackSelectionController;
@@ -102,7 +103,7 @@ public:
     QHBoxLayout* layout;
     PlaylistModel* model;
     PlaylistView* playlistView;
-    HeaderView* header;
+    AutoHeaderView* header;
 
     PlaylistPreset currentPreset;
 
