@@ -349,6 +349,20 @@ struct FilterManager::Private
 
         std::ranges::for_each(filtersToUpdate, [this](const auto& filter) { filterStore.updateFilter(filter); });
     }
+
+    void handleTracksAdded(const TrackList& tracks)
+    {
+        bool firstActive{false};
+        for(const auto& [index, filter] : filterWidgets) {
+            if(firstActive) {
+                break;
+            }
+            if(filterStore.filterIsActive(index)) {
+                firstActive = true;
+            }
+            filter->tracksAdded(tracks);
+        }
+    }
 };
 
 FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* trackSelection, SettingsManager* settings,
@@ -356,8 +370,10 @@ FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* tr
     : QObject{parent}
     , p{std::make_unique<Private>(this, library, trackSelection, settings)}
 {
-    QObject::connect(p->library, &MusicLibrary::tracksAdded, this, &FilterManager::tracksAdded);
-    QObject::connect(p->library, &MusicLibrary::tracksScanned, this, &FilterManager::tracksAdded);
+    QObject::connect(p->library, &MusicLibrary::tracksAdded, this,
+                     [this](const TrackList& tracks) { p->handleTracksAdded(tracks); });
+    QObject::connect(p->library, &MusicLibrary::tracksScanned, this,
+                     [this](const TrackList& tracks) { p->handleTracksAdded(tracks); });
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, this, &FilterManager::tracksUpdated);
     QObject::connect(p->library, &MusicLibrary::tracksDeleted, this, &FilterManager::tracksRemoved);
 
@@ -415,7 +431,6 @@ FilterWidget* FilterManager::createFilter()
     QObject::connect(filter, &FilterWidget::filterDeleted, this,
                      [this](const LibraryFilter& filter) { p->deleteFilter(filter); });
 
-    QObject::connect(this, &FilterManager::tracksAdded, filter, &FilterWidget::tracksAdded);
     QObject::connect(this, &FilterManager::tracksUpdated, filter, &FilterWidget::tracksUpdated);
     QObject::connect(this, &FilterManager::tracksRemoved, filter, &FilterWidget::tracksRemoved);
 

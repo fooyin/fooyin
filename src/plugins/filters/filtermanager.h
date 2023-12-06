@@ -50,7 +50,6 @@ public:
     [[nodiscard]] FilterColumnRegistry* columnRegistry() const;
 
 signals:
-    void tracksAdded(const TrackList& tracks);
     void tracksRemoved(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
 

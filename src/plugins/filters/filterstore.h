@@ -36,6 +36,7 @@ public:
     void removeFilter(int index);
 
     [[nodiscard]] bool hasActiveFilters() const;
+    [[nodiscard]] bool filterIsActive(int index) const;
     [[nodiscard]] FilterList activeFilters() const;
 
     void clearActiveFilters(int index);

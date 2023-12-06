@@ -61,6 +61,16 @@ void FilterStore::removeFilter(int index)
 {
     return std::ranges::any_of(std::as_const(m_filters),
                                [](const LibraryFilter& filter) { return !filter.tracks.empty(); });
+}
+
+bool FilterStore::filterIsActive(int index) const
+{
+    const auto currentFilter = std::ranges::find_if(
+        std::as_const(m_filters), [index](const LibraryFilter& filter) { return filter.index == index; });
+    if(currentFilter != m_filters.cend()) {
+        return !currentFilter->tracks.empty();
+    }
+    return false;
 };
 
 FilterList FilterStore::activeFilters() const
