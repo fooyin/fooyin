@@ -241,7 +241,7 @@ bool PlaylistModel::dropMimeData(const QMimeData* data, Qt::DropAction action, i
 
 MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
 {
-    return p->handleDrop(operation);
+    return p->handleMove(operation);
 }
 
 void PlaylistModel::reset(const PlaylistPreset& preset, Playlist* playlist)

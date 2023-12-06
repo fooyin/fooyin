@@ -112,7 +112,7 @@ public:
 
     bool prepareDrop(const QMimeData* data, Qt::DropAction action, int row, int column,
                      const QModelIndex& parent) const;
-    MoveOperation handleDrop(const MoveOperation& operation);
+    MoveOperation handleMove(const MoveOperation& operation);
     void handleExternalDrop(const PendingData& data);
     void handleTrackGroup(const PendingData& data);
     void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData) const;

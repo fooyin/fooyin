@@ -1032,7 +1032,7 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
     return true;
 }
 
-MoveOperation PlaylistModelPrivate::handleDrop(const MoveOperation& operation)
+MoveOperation PlaylistModelPrivate::handleMove(const MoveOperation& operation)
 {
     model->tracksAboutToBeChanged();
 
