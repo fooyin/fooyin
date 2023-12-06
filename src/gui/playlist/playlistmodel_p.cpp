@@ -1014,6 +1014,14 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
             = restoreIndexes(model, data->data(Constants::Mime::PlaylistItems), currentPlaylist);
         const TrackIndexRangeList indexRanges = determineTrackIndexGroups(indexes, parent, row);
 
+        const bool validMove = !std::ranges::all_of(indexRanges, [dropIndex](const auto& range) {
+            return (dropIndex >= range.first && dropIndex <= range.last + 1);
+        });
+
+        if(!validMove) {
+            return false;
+        }
+
         MoveOperation operation;
         operation.emplace_back(dropIndex, indexRanges);
 
