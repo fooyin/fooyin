@@ -535,7 +535,7 @@ void AutoHeaderView::mouseMoveEvent(QMouseEvent* event)
         const int rightBoundary = (orientation() == Qt::Horizontal) ? width() : height();
         const int gripMargin    = style()->pixelMetric(QStyle::PM_HeaderGripMargin) / 2;
 
-        if((pos + gripMargin) > rightBoundary) {
+        if(p->stretchEnabled && (pos + gripMargin) > rightBoundary) {
             return;
         }
     }
