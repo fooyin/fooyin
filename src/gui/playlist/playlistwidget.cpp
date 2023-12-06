@@ -350,6 +350,8 @@ void PlaylistWidgetPrivate::playlistTracksChanged(int index) const
 
 QCoro::Task<void> PlaylistWidgetPrivate::scanDroppedTracks(TrackList tracks, int index)
 {
+    playlistView->setFocus(Qt::ActiveWindowFocusReason);
+
     auto* progress = new QProgressDialog("Reading tracks...", "Abort", 0, 100, self);
     progress->setWindowModality(Qt::WindowModal);
 
@@ -381,6 +383,8 @@ void PlaylistWidgetPrivate::tracksInserted(const TrackGroups& tracks) const
 {
     auto* insertCmd = new InsertTracks(model, tracks);
     playlistController->addToHistory(insertCmd);
+
+    playlistView->setFocus(Qt::ActiveWindowFocusReason);
 }
 
 void PlaylistWidgetPrivate::tracksRemoved() const
@@ -413,6 +417,8 @@ void PlaylistWidgetPrivate::tracksMoved(const MoveOperation& operation) const
 {
     auto* moveCmd = new MoveTracks(model, operation);
     playlistController->addToHistory(moveCmd);
+
+    playlistView->setFocus(Qt::ActiveWindowFocusReason);
 }
 
 void PlaylistWidgetPrivate::playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const
