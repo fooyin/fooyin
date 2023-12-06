@@ -462,7 +462,8 @@ DropTargetResult findDropTarget(Fooyin::PlaylistModelPrivate* self, Fooyin::Play
                 PlaylistItem* newParent = cloneParent(self->nodes, parent);
 
                 PlaylistItemList children;
-                const auto childrenToMove = parent->children() | std::views::drop(row);
+                PlaylistItemList parentChildren = parent->children();
+                const auto childrenToMove       = parentChildren | std::views::drop(row);
                 std::ranges::copy(childrenToMove, std::back_inserter(children));
 
                 const QModelIndex parentIndex = self->model->indexOfItem(parent);
