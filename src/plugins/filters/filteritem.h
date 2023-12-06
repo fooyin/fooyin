@@ -39,8 +39,11 @@ public:
     explicit FilterItem(QString key, QStringList columns, FilterItem* parent);
 
     [[nodiscard]] QString key() const;
+
     [[nodiscard]] QStringList columns() const;
     [[nodiscard]] QString column(int column) const;
+    [[nodiscard]] int columnCount() const;
+
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
 

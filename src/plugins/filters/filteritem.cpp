@@ -21,6 +21,34 @@
 
 #include <core/track.h>
 
+namespace {
+bool sort(int column, Qt::SortOrder order, const Fooyin::Filters::FilterItem* lhs,
+          const Fooyin::Filters::FilterItem* rhs)
+{
+    if(!lhs || !rhs) {
+        return false;
+    }
+
+    const auto cmp = QString::localeAwareCompare(lhs->column(column), rhs->column(column));
+
+    if(cmp == 0) {
+        if(column > 0) {
+            return sort(column - 1, Qt::AscendingOrder, lhs, rhs);
+        }
+        if(column < lhs->columnCount() - 1) {
+            return sort(column + 1, Qt::AscendingOrder, lhs, rhs);
+        }
+        return false;
+    }
+
+    if(order == Qt::AscendingOrder) {
+        return cmp < 0;
+    }
+
+    return cmp > 0;
+}
+} // namespace
+
 namespace Fooyin::Filters {
 FilterItem::FilterItem(QString key, QStringList columns, FilterItem* parent)
     : TreeItem{parent}
@@ -44,6 +72,11 @@ QString FilterItem::column(int column) const
         return {};
     }
     return m_columns.at(column);
+}
+
+int FilterItem::columnCount() const
+{
+    return static_cast<int>(m_columns.size());
 }
 
 TrackList FilterItem::tracks() const
@@ -83,17 +116,7 @@ void FilterItem::sortChildren(int column, Qt::SortOrder order)
 {
     std::vector<FilterItem*> sortedChildren{m_children};
     std::ranges::sort(sortedChildren, [column, order](const FilterItem* lhs, const FilterItem* rhs) {
-        if(!lhs || !rhs) {
-            return false;
-        }
-        const auto cmp = QString::localeAwareCompare(lhs->column(column), rhs->column(column));
-        if(cmp == 0) {
-            return false;
-        }
-        if(order == Qt::AscendingOrder) {
-            return cmp < 0;
-        }
-        return cmp > 0;
+        return sort(column, order, lhs, rhs);
     });
     m_children = sortedChildren;
 }
