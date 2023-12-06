@@ -51,22 +51,25 @@ struct FiltersPlugin::Private
 
     void registerLayouts() const
     {
-        layoutProvider->registerLayout(R"({"Obsidian":[{"SplitterVertical":{"Children":["StatusBar","SearchBar",{
-            "SplitterHorizontal":{"Children":[{"LibraryFilter":{"Columns":"1","Sort":"0|0"}},
-            {"LibraryFilter":{"Columns":"3","Sort":"0|0"}},"Playlist",{
-            "SplitterVertical":{"Children":["ArtworkPanel","SelectionInfo"],
-            "State":"AAAA/wAAAAEAAAACAAABcgAAAg4A/////wEAAAACAA=="}}],
-            "State":"AAAA/wAAAAEAAAAEAAAA+wAAAVoAAAN6AAABcwD/////AQAAAAEA"}},"ControlBar"],
-            "State":"AAAA/wAAAAEAAAAEAAAAGQAAABwAAAOEAAAAFAD/////AQAAAAIA"}}]})");
+        layoutProvider->registerLayout(
+            R"({"Obsidian":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAAGQAAABkAAAOJAAAAFAD/////AQAAAAIA",
+            "Widgets":["StatusBar","SearchBar",{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAA+wAAAVoAAAN6AAABcwD/////AQAAAAEA",
+            "Widgets":[{"LibraryFilter":{"Columns":"1","State":"AAAAJXjaY2BgYGRgYPjJAKFBgNH+A5QBFWAAADDZAi0="}},
+            {"LibraryFilter":{"Columns":"3","State":"AAAAJXjaY2BgYASiCAYwDQaM9h+gDKgAAwAeGgGN"}},"Playlist",
+            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAABcgAAAg4A/////wEAAAACAA==",
+            "Widgets":["ArtworkPanel","SelectionInfo"]}}]}},"ControlBar"]}}]})");
 
         layoutProvider->registerLayout(
-            R"({"Ember":[{"SplitterVertical":{"Children":[{"SplitterHorizontal":{"Children":[{"LibraryFilter":{"Columns":"0","Sort":"0|0"}},
-            {"LibraryFilter":{"Columns":"1","Sort":"0|0"}},{"LibraryFilter":{"Columns":"2","Sort":"0|0"}},
-            {"LibraryFilter":{"Columns":"3","Sort":"0|0"}}],"State":"AAAA/wAAAAEAAAAFAAABAAAAAQAAAAEAAAABAAAAAQAA/////wEAAAABAA=="}},
-            {"SplitterHorizontal":{"Children":["ControlBar","SearchBar"],"State":"AAAA/wAAAAEAAAADAAAFfgAAAdIAAAC1AP////8BAAAAAQA="}},
-            {"SplitterHorizontal":{"Children":[{"SplitterVertical":{"Children":["ArtworkPanel","SelectionInfo"],
-            "State":"AAAA/wAAAAEAAAADAAABzAAAAbcAAAAUAP////8BAAAAAgA="}},"Playlist"],"State":"AAAA/wAAAAEAAAADAAABdQAABdsAAAC1AP////8BAAAAAQA="}},
-            "StatusBar"],"State":"AAAA/wAAAAEAAAAFAAAA/wAAAB4AAALRAAAAGQAAAAAA/////wEAAAACAA=="}}]})");
+            R"({"Ember":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAA+gAAABkAAAKjAAAAGQD/////AQAAAAIA",
+            "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAABAAAAAQAAAAEAAAABAAD/////AQAAAAEA",
+            "Widgets":[{"LibraryFilter":{"Columns":"0","State":"AAAAJXjaY2BgYGRgYHjIAKFBgNH+A5QBFWAAAC4JAhU="}},
+            {"LibraryFilter":{"Columns":"1","State":"AAAAJXjaY2BgYGRgYHjIAKFBgNH+A5QBFWAAAC4JAhU="}},
+            {"LibraryFilter":{"Columns":"2","State":"AAAAJXjaY2BgYGRgYHjIAKFBgNH+A5QBFWAAAC4JAhU="}},
+            {"LibraryFilter":{"Columns":"3","State":"AAAAJXjaY2BgYGRgYHjIAKFBgNH+A5QBFWAAAC4JAhU="}}]}},
+            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAFfgAAAdIA/////wEAAAABAA==",
+            "Widgets":["ControlBar","SearchBar"]}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAABWgAABfAA/////wEAAAABAA==",
+            "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAABzAAAAbcA/////wEAAAACAA==",
+            "Widgets":["ArtworkPanel","SelectionInfo"]}},"Playlist"]}},"StatusBar"]}}]})");
     }
 };
 

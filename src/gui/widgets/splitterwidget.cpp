@@ -305,8 +305,8 @@ void SplitterWidget::saveLayout(QJsonArray& array)
     const QString state = QString::fromUtf8(saveState().toBase64());
 
     QJsonObject options;
-    options["State"_L1]    = state;
-    options["Children"_L1] = children;
+    options["State"_L1]   = state;
+    options["Widgets"_L1] = children;
 
     QJsonObject splitter;
     splitter[layoutName()] = options;
@@ -316,7 +316,7 @@ void SplitterWidget::saveLayout(QJsonArray& array)
 void SplitterWidget::loadLayout(const QJsonObject& object)
 {
     const auto state    = QByteArray::fromBase64(object["State"_L1].toString().toUtf8());
-    const auto children = object["Children"_L1].toArray();
+    const auto children = object["Widgets"_L1].toArray();
 
     WidgetContainer::loadWidgets(children);
 

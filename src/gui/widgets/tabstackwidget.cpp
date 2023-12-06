@@ -130,9 +130,9 @@ void TabStackWidget::saveLayout(QJsonArray& array)
     }
 
     QJsonObject options;
-    options["Children"_L1] = widgets;
-    options["State"_L1]    = state;
     options["Position"_L1] = Utils::Enum::toString(p->tabs->tabPosition());
+    options["State"_L1]    = state;
+    options["Widgets"_L1]  = widgets;
 
     QJsonObject tabStack;
     tabStack[layoutName()] = options;
@@ -146,7 +146,7 @@ void TabStackWidget::loadLayout(const QJsonObject& object)
         p->tabs->setTabPosition(*position);
     }
 
-    const auto widgets = object.value("Children"_L1).toArray();
+    const auto widgets = object.value("Widgets"_L1).toArray();
 
     WidgetContainer::loadWidgets(widgets);
 
