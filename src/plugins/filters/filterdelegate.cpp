@@ -36,15 +36,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const auto rect       = opt.rect;
     const QRect titleRect = QRect(rect.x() + 5, rect.y(), rect.width(), rect.height());
 
-    if((opt.state & QStyle::State_Selected)) {
-        painter->fillRect(rect, opt.palette.highlight());
-    }
-
-    if((opt.state & QStyle::State_MouseOver)) {
-        const QColor selectColour = opt.palette.highlight().color();
-        const QColor hoverCol     = QColor(selectColour.red(), selectColour.green(), selectColour.blue(), 70);
-        painter->fillRect(rect, hoverCol);
-    }
+    opt.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter);
 
     const QString title = index.data(Qt::DisplayRole).toString();
     const auto font     = index.data(Qt::FontRole).value<QFont>();
