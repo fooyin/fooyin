@@ -438,7 +438,7 @@ DropTargetResult findDropTarget(Fooyin::PlaylistModelPrivate* self, Fooyin::Play
                                 }));
 
     // Check right
-    if(canMergeRight) {
+    if(canMergeRight && !dropResult.partMergeTarget.isValid()) {
         dropResult = canBeMerged(self->model, currTarget, targetRow, sourceParents, targetIsRoot ? 0 : 1);
         if(dropResult.fullMergeTarget.isValid()) {
             row = 0;
