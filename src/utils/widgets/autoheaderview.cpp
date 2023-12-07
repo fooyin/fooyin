@@ -257,6 +257,8 @@ AutoHeaderView::AutoHeaderView(Qt::Orientation orientation, QWidget* parent)
     });
 }
 
+AutoHeaderView::~AutoHeaderView() = default;
+
 void AutoHeaderView::resetSections()
 {
     const int sectionCount = count();

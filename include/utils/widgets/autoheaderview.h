@@ -30,6 +30,7 @@ class FYUTILS_EXPORT AutoHeaderView : public QHeaderView
 
 public:
     explicit AutoHeaderView(Qt::Orientation orientation, QWidget* parent = nullptr);
+    ~AutoHeaderView() override;
 
     void resetSections();
 
