@@ -57,10 +57,18 @@ public:
         BaseKey,
     };
 
+    enum class State
+    {
+        None,
+        Update,
+        Delete,
+    };
+
     PlaylistItem();
     PlaylistItem(ItemType type, Data data, PlaylistItem* parentItem);
 
     [[nodiscard]] bool pending() const;
+    [[nodiscard]] State state() const;
     [[nodiscard]] ItemType type() const;
     [[nodiscard]] Data& data() const;
     [[nodiscard]] QString baseKey() const;
@@ -69,13 +77,19 @@ public:
     [[nodiscard]] int index() const;
 
     void setPending(bool pending);
+    void setState(State state);
     void setBaseKey(const QString& key);
     void setKey(const QString& key);
     void setIndentation(int indentation);
     void setIndex(int index);
 
+    void appendChild(PlaylistItem* child) override;
+    void insertChild(int row, PlaylistItem* child) override;
+    void removeChild(int index) override;
+
 private:
     bool m_pending;
+    State m_state;
     ItemType m_type;
     mutable Data m_data;
     QString m_baseKey;

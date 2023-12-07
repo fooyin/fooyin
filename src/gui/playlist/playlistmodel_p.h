@@ -102,7 +102,6 @@ public:
     void populateTracks(PendingData& data);
     void populateTrackGroup(PendingData& data);
     void updateModel(ItemKeyMap& data);
-    void updateHeaders(const ItemPtrSet& headers);
 
     QVariant trackData(PlaylistItem* item, int role) const;
     QVariant headerData(PlaylistItem* item, int role) const;
@@ -123,9 +122,10 @@ public:
                           const PlaylistItemList& children) const;
     bool removePlaylistRows(int row, int count, const QModelIndex& parent);
 
-    void cleanupHeaders(const ItemPtrSet& headers);
-    void removeEmptyHeaders(ItemPtrSet& headers);
-    void mergeHeaders(ItemPtrSet& headersToUpdate);
+    void cleanupHeaders();
+    void removeEmptyHeaders();
+    void mergeHeaders();
+    void updateHeaders();
     void updateTrackIndexes();
     void deleteNodes(PlaylistItem* parent);
 

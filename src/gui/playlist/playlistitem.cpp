@@ -31,6 +31,7 @@ PlaylistItem::PlaylistItem()
 PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
     : TreeItem{parent}
     , m_pending{false}
+    , m_state{State::None}
     , m_type{type}
     , m_data{std::move(data)}
     , m_baseKey{QStringLiteral("0")}
@@ -42,6 +43,11 @@ PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
 bool PlaylistItem::pending() const
 {
     return m_pending;
+}
+
+PlaylistItem::State PlaylistItem::state() const
+{
+    return m_state;
 }
 
 PlaylistItem::ItemType PlaylistItem::type() const
@@ -79,6 +85,11 @@ void PlaylistItem::setPending(bool pending)
     m_pending = pending;
 }
 
+void PlaylistItem::setState(State state)
+{
+    m_state = state;
+}
+
 void PlaylistItem::setBaseKey(const QString& key)
 {
     m_baseKey = key;
@@ -97,5 +108,23 @@ void PlaylistItem::setIndentation(int indentation)
 void PlaylistItem::setIndex(int index)
 {
     m_index = index;
+}
+
+void PlaylistItem::appendChild(PlaylistItem* child)
+{
+    TreeItem::appendChild(child);
+    m_state = State::Update;
+}
+
+void PlaylistItem::insertChild(int row, PlaylistItem* child)
+{
+    TreeItem::insertChild(row, child);
+    m_state = State::Update;
+}
+
+void PlaylistItem::removeChild(int index)
+{
+    TreeItem::removeChild(index);
+    m_state = childCount() == 0 ? State::Delete : State::Update;
 }
 } // namespace Fooyin
