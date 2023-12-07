@@ -36,4 +36,5 @@ QString generateHash(const Args&... args)
 }
 
 FYUTILS_EXPORT QString generateRandomHash();
+FYUTILS_EXPORT QString generateUniqueHash();
 } // namespace Fooyin::Utils

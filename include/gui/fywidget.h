@@ -41,9 +41,12 @@ public:
 
     [[nodiscard]] FyWidget* findParent() const;
 
+    void saveLayout(QJsonArray& layout);
+    void loadLayout(const QJsonObject& layout);
+
     virtual void layoutEditingMenu(ActionContainer* menu);
-    virtual void saveLayout(QJsonArray& array);
-    virtual void loadLayout(const QJsonObject& object);
+    virtual void saveLayoutData(QJsonObject& layout);
+    virtual void loadLayoutData(const QJsonObject& layout);
 
 private:
     Id m_id;

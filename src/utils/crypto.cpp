@@ -36,4 +36,9 @@ QString generateRandomHash()
     QString headerKey = hash.result().toHex();
     return headerKey;
 }
+
+QString generateUniqueHash()
+{
+    return QUuid::createUuid().toString(QUuid::Id128);
+}
 } // namespace Fooyin::Utils

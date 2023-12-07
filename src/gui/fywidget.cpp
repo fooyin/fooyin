@@ -19,16 +19,18 @@
 
 #include <gui/fywidget.h>
 
+#include <utils/crypto.h>
+
 #include <QJsonArray>
+#include <QJsonObject>
+
+using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
 FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
-    , m_id{"FyWidget."}
-{
-    static int id{0};
-    m_id.append(id++);
-}
+    , m_id{Utils::generateUniqueHash()}
+{ }
 
 Id FyWidget::id() const
 {
@@ -49,14 +51,33 @@ FyWidget* FyWidget::findParent() const
     return qobject_cast<FyWidget*>(parent);
 }
 
-void FyWidget::layoutEditingMenu(ActionContainer* /*menu*/) { }
-
-void FyWidget::saveLayout(QJsonArray& array)
+void FyWidget::saveLayout(QJsonArray& layout)
 {
-    array.append(layoutName());
+    QJsonObject widgetData;
+    widgetData["ID"_L1] = m_id.name();
+
+    saveLayoutData(widgetData);
+
+    QJsonObject widgetObject;
+    widgetObject[layoutName()] = widgetData;
+
+    layout.append(widgetObject);
 }
 
-void FyWidget::loadLayout(const QJsonObject& /*object*/) { }
+void FyWidget::loadLayout(const QJsonObject& layout)
+{
+    if(layout.contains("ID"_L1)) {
+        m_id = Id{layout["ID"_L1].toString()};
+    }
+
+    loadLayoutData(layout);
+}
+
+void FyWidget::layoutEditingMenu(ActionContainer* /*menu*/) { }
+
+void FyWidget::saveLayoutData(QJsonObject& /*object*/) { }
+
+void FyWidget::loadLayoutData(const QJsonObject& /*object*/) { }
 } // namespace Fooyin
 
 #include "gui/moc_fywidget.cpp"
