@@ -102,6 +102,10 @@ struct EngineHandler::Private
 
     void changeOutput(const QString& output)
     {
+        if(output.isEmpty()) {
+            return;
+        }
+
         const QStringList newOutput = output.split(u"|"_s);
 
         if(newOutput.empty() || newOutput.size() < 2) {
@@ -113,6 +117,11 @@ struct EngineHandler::Private
 
         if(outputs.empty()) {
             qWarning() << "No Outputs have been registered";
+            return;
+        }
+
+        if(!outputs.contains(newName)) {
+            qWarning() << "Output (" + newName + ") hasn't been registered";
             return;
         }
 
