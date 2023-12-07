@@ -22,6 +22,7 @@
 #include <utils/crypto.h>
 
 #include <QJsonArray>
+#include <QJsonObject>
 
 using namespace Qt::Literals::StringLiterals;
 
