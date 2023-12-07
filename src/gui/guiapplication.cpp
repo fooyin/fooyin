@@ -179,23 +179,22 @@ struct GuiApplication::Private
 
     void registerLayouts()
     {
-        layoutProvider.registerLayout(
-            R"({"Empty":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAABAAACLwD/////AQAAAAIA"}}]})");
+        layoutProvider.registerLayout(R"({"Empty": [{}]})");
 
         layoutProvider.registerLayout(
-            R"({"Simple":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAAGQAAA94AAAAUAAAAAAD/////AQAAAAIA",
-            "Widgets":["StatusBar","Playlist","ControlBar"]}}]})");
+            R"({"Simple":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAGQAAA6kAAAAUAP////8BAAAAAgA=",
+            "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAABYAAABeoA/////wEAAAABAA==",
+            "Widgets":[{"LibraryTree":{"Grouping":"Artist/Album","ID":"8c3bf224ae774bd780cc2ff3ad638081"}},
+            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAABAAAAGwD/////AQAAAAIA",
+            "Widgets":[{"PlaylistTabs":{"Widgets":[{"Playlist":{"ID":"39b31f941a964e2894f6774f204140e3"}}]}}]}}]}},
+            {"ControlBar":{}}]}}]})");
 
         layoutProvider.registerLayout(
-            R"({"Stone":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAAGQAAAB4AAAO8AAAAFAD/////AQAAAAIA",
-            "Widgets":["StatusBar","SearchBar",{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAABQgAABggA/////wEAAAABAA==",
-            "Widgets":[{"LibraryTree":{"Grouping":"Artist/Album"}},{"PlaylistTabs":{"Widgets":["Playlist"]}}]}},"ControlBar"]}}]})");
-
-        layoutProvider.registerLayout(
-            R"({"Vision":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAAGQAAAB4AAAPUAAAAFAD/////AQAAAAIA",
-            "Widgets":["StatusBar",{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAAD1wAAA3kAAAAAAP////8BAAAAAQA=",
-            "Widgets":["ControlBar","SearchBar"]}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAAD2AAAA3gAAAAAAP////8BAAAAAQA=",
-            "Widgets":["ArtworkPanel","Playlist"]}}]}}]})");
+            R"({"Vision":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFAAAA6kAAAAZAP////8BAAAAAgA=",
+            "Widgets":[{"ControlBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAADwgAAA4gA/////wEAAAABAA==",
+            "Widgets":[{"TabStack":{"Position":"West","State":"Artwork\u001fInfo\u001fLibrary Tree\u001fPlaylist Organiser",
+            "Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}},{"LibraryTree":{"Grouping":"Artist/Album"}},{"PlaylistOrganiser":{}}]}},
+            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAABAAAAwAD/////AQAAAAIA","Widgets":[{"Playlist":{}}]}}]}},{"StatusBar":{}}]}}]})");
     }
 
     void registerWidgets()

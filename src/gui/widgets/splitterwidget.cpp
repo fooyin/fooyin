@@ -296,27 +296,23 @@ void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
     menu->addMenu(addMenu);
 }
 
-void SplitterWidget::saveLayout(QJsonArray& array)
+void SplitterWidget::saveLayoutData(QJsonObject& layout)
 {
-    QJsonArray children;
-    for(const auto& widget : p->children) {
-        widget->saveLayout(children);
+    layout["State"_L1] = QString::fromUtf8(saveState().toBase64());
+
+    if(!p->children.empty()) {
+        QJsonArray children;
+        for(const auto& widget : p->children) {
+            widget->saveLayout(children);
+        }
+        layout["Widgets"_L1] = children;
     }
-    const QString state = QString::fromUtf8(saveState().toBase64());
-
-    QJsonObject options;
-    options["State"_L1]   = state;
-    options["Widgets"_L1] = children;
-
-    QJsonObject splitter;
-    splitter[layoutName()] = options;
-    array.append(splitter);
 }
 
-void SplitterWidget::loadLayout(const QJsonObject& object)
+void SplitterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const auto state    = QByteArray::fromBase64(object["State"_L1].toString().toUtf8());
-    const auto children = object["Widgets"_L1].toArray();
+    const auto state    = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
+    const auto children = layout["Widgets"_L1].toArray();
 
     WidgetContainer::loadWidgets(children);
 

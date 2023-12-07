@@ -309,19 +309,14 @@ QString LibraryTreeWidget::layoutName() const
     return u"LibraryTree"_s;
 }
 
-void LibraryTreeWidget::saveLayout(QJsonArray& array)
+void LibraryTreeWidget::saveLayoutData(QJsonObject& layout)
 {
-    QJsonObject options;
-    options["Grouping"_L1] = p->grouping.name;
-
-    QJsonObject tree;
-    tree[layoutName()] = options;
-    array.append(tree);
+    layout["Grouping"_L1] = p->grouping.name;
 }
 
-void LibraryTreeWidget::loadLayout(const QJsonObject& object)
+void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const LibraryTreeGrouping grouping = p->groupsRegistry->itemByName(object["Grouping"_L1].toString());
+    const LibraryTreeGrouping grouping = p->groupsRegistry->itemByName(layout["Grouping"_L1].toString());
     if(grouping.isValid()) {
         p->changeGrouping(grouping);
     }

@@ -114,7 +114,7 @@ void TabStackWidget::layoutEditingMenu(ActionContainer* menu)
     menu->addMenu(addMenu);
 }
 
-void TabStackWidget::saveLayout(QJsonArray& array)
+void TabStackWidget::saveLayoutData(QJsonObject& layout)
 {
     QJsonArray widgets;
     for(FyWidget* widget : p->widgets) {
@@ -129,28 +129,22 @@ void TabStackWidget::saveLayout(QJsonArray& array)
         state.append(p->tabs->tabText(i));
     }
 
-    QJsonObject options;
-    options["Position"_L1] = Utils::Enum::toString(p->tabs->tabPosition());
-    options["State"_L1]    = state;
-    options["Widgets"_L1]  = widgets;
-
-    QJsonObject tabStack;
-    tabStack[layoutName()] = options;
-    array.append(tabStack);
+    layout["Position"_L1] = Utils::Enum::toString(p->tabs->tabPosition());
+    layout["State"_L1]    = state;
+    layout["Widgets"_L1]  = widgets;
 }
 
-void TabStackWidget::loadLayout(const QJsonObject& object)
+void TabStackWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const auto position = Utils::Enum::fromString<QTabWidget::TabPosition>(object.value("Position"_L1).toString());
-    if(position) {
-        p->tabs->setTabPosition(*position);
+    if(const auto position = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value("Position"_L1).toString())) {
+        p->tabs->setTabPosition(position.value());
     }
 
-    const auto widgets = object.value("Widgets"_L1).toArray();
+    const auto widgets = layout.value("Widgets"_L1).toArray();
 
     WidgetContainer::loadWidgets(widgets);
 
-    const auto state         = object.value("State"_L1).toString();
+    const auto state         = layout.value("State"_L1).toString();
     const QStringList titles = state.split(Constants::Separator);
 
     for(int i{0}; const QString& title : titles) {

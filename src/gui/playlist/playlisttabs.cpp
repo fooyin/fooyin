@@ -325,27 +325,21 @@ void PlaylistTabs::layoutEditingMenu(ActionContainer* menu)
     menu->addMenu(addMenu);
 }
 
-void PlaylistTabs::saveLayout(QJsonArray& array)
+void PlaylistTabs::saveLayoutData(QJsonObject& layout)
 {
     if(!p->tabsWidget) {
-        FyWidget::saveLayout(array);
         return;
     }
 
     QJsonArray children;
     p->tabsWidget->saveLayout(children);
 
-    QJsonObject options;
-    options["Widgets"_L1] = children;
-
-    QJsonObject tabsObject;
-    tabsObject[layoutName()] = options;
-    array.append(tabsObject);
+    layout["Widgets"_L1] = children;
 }
 
-void PlaylistTabs::loadLayout(const QJsonObject& object)
+void PlaylistTabs::loadLayoutData(const QJsonObject& layout)
 {
-    const auto children = object["Widgets"_L1].toArray();
+    const auto children = layout["Widgets"_L1].toArray();
 
     WidgetContainer::loadWidgets(children);
 }

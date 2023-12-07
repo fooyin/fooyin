@@ -33,27 +33,20 @@ WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent
 void WidgetContainer::loadWidgets(const QJsonArray& widgets)
 {
     for(const auto& widget : widgets) {
-        const QJsonObject jsonObject = widget.toObject();
-
-        if(!jsonObject.isEmpty()) {
-            const auto widgetName = jsonObject.constBegin().key();
-
-            if(auto* childWidget = m_widgetProvider->createWidget(widgetName)) {
-                addWidget(childWidget);
-                const auto childValue = jsonObject.value(widgetName);
-
-                if(childValue.isObject()) {
-                    childWidget->loadLayout(childValue.toObject());
-                }
-
-                else if(childValue.isArray()) {
-                    childWidget->loadLayout(jsonObject);
-                }
-            }
+        if(!widget.isObject()) {
+            continue;
         }
-        else {
-            auto* childWidget = m_widgetProvider->createWidget(widget.toString());
+        const QJsonObject widgetObject = widget.toObject();
+
+        const auto widgetName = widgetObject.constBegin().key();
+
+        if(auto* childWidget = m_widgetProvider->createWidget(widgetName)) {
             addWidget(childWidget);
+            const auto childValue = widgetObject.value(widgetName);
+
+            if(childValue.isObject()) {
+                childWidget->loadLayout(childValue.toObject());
+            }
         }
     }
 }

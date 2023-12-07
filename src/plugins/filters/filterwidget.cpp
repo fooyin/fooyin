@@ -230,10 +230,8 @@ QString FilterWidget::layoutName() const
     return u"LibraryFilter"_s;
 }
 
-void FilterWidget::saveLayout(QJsonArray& array)
+void FilterWidget::saveLayoutData(QJsonObject& layout)
 {
-    QJsonObject options;
-
     QStringList columns;
     std::ranges::transform(p->filter.columns, std::back_inserter(columns),
                            [](const auto& column) { return QString::number(column.id); });
@@ -241,24 +239,20 @@ void FilterWidget::saveLayout(QJsonArray& array)
     QByteArray state = p->header->saveHeaderState();
     state            = qCompress(state, 9);
 
-    options["Columns"_L1] = columns.join("|"_L1);
-    options["State"_L1]   = QString::fromUtf8(state.toBase64());
-
-    QJsonObject filter;
-    filter[layoutName()] = options;
-    array.append(filter);
+    layout["Columns"_L1] = columns.join("|"_L1);
+    layout["State"_L1]   = QString::fromUtf8(state.toBase64());
 }
 
-void FilterWidget::loadLayout(const QJsonObject& object)
+void FilterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const QString columnNames = object["Columns"_L1].toString();
+    const QString columnNames = layout["Columns"_L1].toString();
     const QStringList columns = columnNames.split("|"_L1);
     ColumnIds ids;
     std::ranges::transform(columns, std::back_inserter(ids), [](const QString& column) { return column.toInt(); });
 
     emit requestColumnsChange(p->filter, ids);
 
-    auto state = QByteArray::fromBase64(object["State"_L1].toString().toUtf8());
+    auto state = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
 
     if(state.isEmpty()) {
         p->header->restoreHeaderState(state);

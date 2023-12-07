@@ -39,8 +39,8 @@ public:
     QString name() const override;
     QString layoutName() const override;
 
-    void saveLayout(QJsonArray& array) override;
-    void loadLayout(const QJsonObject& object) override;
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
