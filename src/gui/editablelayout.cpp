@@ -107,6 +107,16 @@ struct EditableLayout::Private
         box->setContentsMargins(5, 5, 5, 5);
     }
 
+    void setupDefault()
+    {
+        splitter = qobject_cast<SplitterWidget*>(widgetProvider->createWidget(u"SplitterVertical"_s));
+        if(splitter) {
+            splitter->setParent(self);
+            box->addWidget(splitter);
+            settings->set<Settings::Gui::LayoutEditing>(true);
+        }
+    }
+
     void changeEditingState(bool editing)
     {
         layoutEditing = editing;
@@ -132,17 +142,11 @@ EditableLayout::~EditableLayout() = default;
 void EditableLayout::initialise()
 {
     if(!loadLayout()) {
-        p->splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget(u"SplitterVertical"_s));
-        p->splitter->setParent(this);
-        p->box->addWidget(p->splitter);
+        p->setupDefault();
     }
 
     p->settings->subscribe<Settings::Gui::LayoutEditing>(this,
                                                          [this](bool enabled) { p->changeEditingState(enabled); });
-
-    if(p->splitter && p->splitter->childCount() < 1) {
-        p->settings->set<Settings::Gui::LayoutEditing>(true);
-    }
 
     QObject::connect(p->menu->menu(), &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
 }
@@ -235,14 +239,22 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 
 void EditableLayout::changeLayout(const Layout& layout)
 {
-    // Delete all current widgets
-    delete p->splitter;
-    const bool success = loadLayout(layout);
-    if(success && p->splitter->childCount() > 0) {
-        p->settings->set<Settings::Gui::LayoutEditing>(false);
+    auto loadNewLayout = [this, layout]() {
+        if(loadLayout(layout)) {
+            p->settings->set<Settings::Gui::LayoutEditing>(p->splitter->childCount() == 0);
+        }
+        else {
+            p->setupDefault();
+        }
+    };
+
+    if(p->splitter) {
+        // Wait for all current widgets to be deleted
+        QObject::connect(p->splitter, &QObject::destroyed, this, loadNewLayout, Qt::QueuedConnection);
+        p->splitter->deleteLater();
     }
     else {
-        p->settings->set<Settings::Gui::LayoutEditing>(true);
+        loadNewLayout();
     }
 }
 
