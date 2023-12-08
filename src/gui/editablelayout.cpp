@@ -34,7 +34,7 @@
 #include <utils/overlayfilter.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -45,21 +45,6 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-QRect widgetGeometry(Fooyin::FyWidget* widget)
-{
-    const int w = widget->width();
-    const int h = widget->height();
-
-    int x = widget->x();
-    int y = widget->y();
-
-    while((widget = widget->findParent())) {
-        x += widget->x();
-        y += widget->y();
-    }
-    return {x, y, w, h};
-}
-
 Fooyin::FyWidget* splitterChild(QWidget* widget)
 {
     if(!widget) {
@@ -89,7 +74,7 @@ struct EditableLayout::Private
 
     ActionContainer* menu;
     QHBoxLayout* box;
-    OverlayFilter* overlay;
+    QPointer<OverlayFilter> overlay;
     SplitterWidget* splitter{nullptr};
     bool layoutEditing{false};
 
@@ -102,7 +87,6 @@ struct EditableLayout::Private
         , layoutProvider{layoutProvider}
         , menu{actionManager->createMenu(Constants::Menus::Context::Layout)}
         , box{new QHBoxLayout(self)}
-        , overlay{new OverlayFilter(self)}
     {
         box->setContentsMargins(5, 5, 5, 5);
     }
@@ -121,10 +105,79 @@ struct EditableLayout::Private
     {
         layoutEditing = editing;
         if(editing) {
+            overlay = new OverlayFilter(self);
+            overlay->setAttribute(Qt::WA_TransparentForMouseEvents);
+
             qApp->installEventFilter(self);
         }
         else {
             qApp->removeEventFilter(self);
+            overlay->deleteLater();
+        }
+    }
+
+    void showOverlay(FyWidget* widget) const
+    {
+        overlay->setGeometry(widget->widgetGeometry());
+        overlay->raise();
+        overlay->show();
+    }
+
+    void hideOverlay() const
+    {
+        overlay->hide();
+    }
+
+    ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const
+    {
+        const Id id       = parent->id().append(title);
+        auto* newMenu = actionManager->createMenu(id);
+        newMenu->menu()->setTitle(title);
+
+        return newMenu;
+    }
+
+    void setupReplaceWidgetMenu(ActionContainer* menu, FyWidget* current) const
+    {
+        if(!menu->isEmpty()) {
+            return;
+        }
+
+        auto* parent = qobject_cast<WidgetContainer*>(current->findParent());
+        if(!parent) {
+            return;
+        }
+
+        widgetProvider->setupWidgetMenu(
+            menu, [parent, current](FyWidget* newWidget) { parent->replaceWidget(current, newWidget); });
+    }
+
+    void setupContextMenu(FyWidget* widget, ActionContainer* menu) const
+    {
+        if(!widget || !menu) {
+            return;
+        }
+
+        FyWidget* currentWidget = widget;
+        int level               = settings->value<Settings::Gui::EditingMenuLevels>();
+
+        while(level > 0 && currentWidget) {
+            menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));
+            currentWidget->layoutEditingMenu(menu);
+
+            auto* parent = qobject_cast<WidgetContainer*>(currentWidget->findParent());
+            if(parent) {
+                auto* changeMenu = createNewMenu(currentWidget, tr("&Replace"));
+                setupReplaceWidgetMenu(changeMenu, currentWidget);
+                menu->addMenu(changeMenu);
+
+                auto* remove = new QAction(tr("Remove"), menu);
+                QObject::connect(remove, &QAction::triggered, parent,
+                                 [parent, currentWidget] { parent->removeWidget(currentWidget); });
+                menu->addAction(remove);
+            }
+            currentWidget = parent;
+            --level;
         }
     }
 };
@@ -148,60 +201,7 @@ void EditableLayout::initialise()
     p->settings->subscribe<Settings::Gui::LayoutEditing>(this,
                                                          [this](bool enabled) { p->changeEditingState(enabled); });
 
-    QObject::connect(p->menu->menu(), &QMenu::aboutToHide, this, &EditableLayout::hideOverlay);
-}
-
-ActionContainer* EditableLayout::createNewMenu(FyWidget* parent, const QString& title) const
-{
-    auto id       = parent->id().append(title);
-    auto* newMenu = p->actionManager->createMenu(id);
-    newMenu->menu()->setTitle(title);
-
-    return newMenu;
-}
-
-void EditableLayout::setupReplaceWidgetMenu(ActionContainer* menu, FyWidget* current)
-{
-    if(!menu->isEmpty()) {
-        return;
-    }
-
-    auto* parent = qobject_cast<WidgetContainer*>(current->findParent());
-    if(!parent) {
-        return;
-    }
-
-    p->widgetProvider->setupWidgetMenu(
-        menu, [parent, current](FyWidget* newWidget) { parent->replaceWidget(current, newWidget); });
-}
-
-void EditableLayout::setupContextMenu(FyWidget* widget, ActionContainer* menu)
-{
-    if(!widget || !menu) {
-        return;
-    }
-
-    FyWidget* currentWidget = widget;
-    int level               = p->settings->value<Settings::Gui::EditingMenuLevels>();
-
-    while(level > 0 && currentWidget) {
-        menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));
-        currentWidget->layoutEditingMenu(menu);
-
-        auto* parent = qobject_cast<WidgetContainer*>(currentWidget->findParent());
-        if(parent) {
-            auto* changeMenu = createNewMenu(currentWidget, tr("&Replace"));
-            setupReplaceWidgetMenu(changeMenu, currentWidget);
-            menu->addMenu(changeMenu);
-
-            auto* remove = new QAction(tr("Remove"), menu);
-            QObject::connect(remove, &QAction::triggered, parent,
-                             [parent, currentWidget] { parent->removeWidget(currentWidget); });
-            menu->addAction(remove);
-        }
-        currentWidget = parent;
-        --level;
-    }
+    QObject::connect(p->menu->menu(), &QMenu::aboutToHide, this, [this]() { p->hideOverlay(); });
 }
 
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
@@ -210,30 +210,35 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
         return QWidget::eventFilter(watched, event);
     }
 
-    auto* mouseEvent = dynamic_cast<QMouseEvent*>(event);
-    if(mouseEvent->button() != Qt::RightButton || !p->menu->isHidden()) {
-        return QWidget::eventFilter(watched, event);
+    if(event->type() == QEvent::MouseButtonPress) {
+        auto* mouseEvent = static_cast<QMouseEvent*>(event);
+
+        if(!mouseEvent || mouseEvent->button() != Qt::RightButton || !p->menu->isHidden()) {
+            return QWidget::eventFilter(watched, event);
+        }
+
+        p->menu->clear();
+
+        const QPoint pos = mouseEvent->globalPosition().toPoint();
+        QWidget* widget  = qApp->widgetAt(pos);
+        FyWidget* child  = splitterChild(widget);
+
+        if(!child) {
+            return QWidget::eventFilter(watched, event);
+        }
+
+        if(qobject_cast<Dummy*>(child)) {
+            p->setupContextMenu(child->findParent(), p->menu);
+        }
+        else {
+            p->setupContextMenu(child, p->menu);
+        }
+
+        p->showOverlay(child);
+        p->menu->menu()->popup(pos);
     }
 
-    p->menu->clear();
-
-    const QPoint pos = mouseEvent->position().toPoint();
-    QWidget* widget  = parentWidget()->childAt(pos);
-    FyWidget* child  = splitterChild(widget);
-
-    if(!child) {
-        return QWidget::eventFilter(watched, event);
-    }
-
-    if(qobject_cast<Dummy*>(child)) {
-        setupContextMenu(child->findParent(), p->menu);
-    }
-    else {
-        setupContextMenu(child, p->menu);
-    }
-    showOverlay(child);
-    p->menu->menu()->popup(mapToGlobal(pos));
-
+    event->accept();
     return true;
 }
 
@@ -269,7 +274,7 @@ void EditableLayout::saveLayout()
 
     const QByteArray json = QJsonDocument(root).toJson();
 
-    if(auto layout = p->layoutProvider->readLayout(json)) {
+    if(const auto layout = LayoutProvider::readLayout(json)) {
         p->layoutProvider->changeLayout(layout.value());
     }
 }
@@ -296,18 +301,6 @@ bool EditableLayout::loadLayout()
 {
     const Layout layout = p->layoutProvider->currentLayout();
     return loadLayout(layout);
-}
-
-void EditableLayout::showOverlay(FyWidget* widget)
-{
-    p->overlay->setGeometry(widgetGeometry(widget));
-    p->overlay->raise();
-    p->overlay->show();
-}
-
-void EditableLayout::hideOverlay()
-{
-    p->overlay->hide();
 }
 
 void EditableLayout::showQuickSetup()

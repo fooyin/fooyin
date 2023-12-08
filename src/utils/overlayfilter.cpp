@@ -27,19 +27,29 @@ namespace Fooyin {
 OverlayFilter::OverlayFilter(QWidget* parent)
     : QWidget{parent}
 {
-    setAttribute(Qt::WA_TransparentForMouseEvents);
     setAttribute(Qt::WA_NoSystemBackground);
+
+    resetColour();
     hide();
+}
+
+void OverlayFilter::setColour(const QColor& colour)
+{
+    m_colour = colour;
+}
+
+void OverlayFilter::resetColour()
+{
+    static QColor colour = QApplication::palette().color(QPalette::Highlight);
+    colour.setAlpha(80);
+    m_colour = colour;
 }
 
 void OverlayFilter::paintEvent(QPaintEvent* /*event*/)
 {
-    QPainter painter(this);
+    QPainter painter{this};
 
-    QColor colour = QApplication::palette().color(QPalette::Highlight);
-    colour.setAlpha(30);
-
-    painter.fillRect(rect(), colour);
+    painter.fillRect(rect(), m_colour);
 }
 } // namespace Fooyin
 

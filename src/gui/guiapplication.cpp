@@ -66,6 +66,7 @@
 #include <gui/searchcontroller.h>
 #include <gui/splitterwidget.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 

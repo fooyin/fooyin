@@ -19,16 +19,16 @@
 
 #pragma once
 
-#include <gui/layoutprovider.h>
-#include <gui/widgetprovider.h>
-
 #include <QWidget>
 
 namespace Fooyin {
 class ActionManager;
 class ActionContainer;
-class SettingsManager;
 class FyWidget;
+class LayoutProvider;
+class SettingsManager;
+class WidgetProvider;
+struct Layout;
 
 class EditableLayout : public QWidget
 {
@@ -41,19 +41,12 @@ public:
 
     void initialise();
 
-    ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const;
-    void setupReplaceWidgetMenu(ActionContainer* menu, FyWidget* current);
-    void setupContextMenu(FyWidget* widget, ActionContainer* menu);
-
     bool eventFilter(QObject* watched, QEvent* event) override;
 
     void changeLayout(const Layout& layout);
     void saveLayout();
     bool loadLayout(const Layout& layout);
     bool loadLayout();
-
-    void showOverlay(FyWidget* widget);
-    void hideOverlay();
 
     void showQuickSetup();
 

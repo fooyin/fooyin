@@ -51,6 +51,21 @@ FyWidget* FyWidget::findParent() const
     return qobject_cast<FyWidget*>(parent);
 }
 
+QRect FyWidget::widgetGeometry() const
+{
+    int x = this->x();
+    int y = this->y();
+
+    const auto* widget{this};
+
+    while((widget = widget->findParent())) {
+        x += widget->x();
+        y += widget->y();
+    }
+
+    return {x, y, width(), height()};
+}
+
 void FyWidget::saveLayout(QJsonArray& layout)
 {
     QJsonObject widgetData;

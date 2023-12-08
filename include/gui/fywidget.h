@@ -40,6 +40,7 @@ public:
     [[nodiscard]] virtual QString layoutName() const;
 
     [[nodiscard]] FyWidget* findParent() const;
+    [[nodiscard]] QRect widgetGeometry() const;
 
     void saveLayout(QJsonArray& layout);
     void loadLayout(const QJsonObject& layout);

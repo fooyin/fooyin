@@ -21,7 +21,7 @@
 
 #include "fyutils_export.h"
 
-#include <QFrame>
+#include <QWidget>
 
 namespace Fooyin {
 class FYUTILS_EXPORT OverlayFilter : public QWidget
@@ -31,7 +31,13 @@ class FYUTILS_EXPORT OverlayFilter : public QWidget
 public:
     explicit OverlayFilter(QWidget* parent = nullptr);
 
+    void setColour(const QColor& colour);
+    void resetColour();
+
 protected:
     void paintEvent(QPaintEvent* event) override;
+
+private:
+    QColor m_colour;
 };
 } // namespace Fooyin
