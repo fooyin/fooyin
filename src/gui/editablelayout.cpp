@@ -106,7 +106,6 @@ struct EditableLayout::Private
         layoutEditing = editing;
         if(editing) {
             overlay = new OverlayFilter(self);
-            overlay->setAttribute(Qt::WA_TransparentForMouseEvents);
 
             qApp->installEventFilter(self);
         }
@@ -130,7 +129,7 @@ struct EditableLayout::Private
 
     ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const
     {
-        const Id id       = parent->id().append(title);
+        const Id id   = parent->id().append(title);
         auto* newMenu = actionManager->createMenu(id);
         newMenu->menu()->setTitle(title);
 
