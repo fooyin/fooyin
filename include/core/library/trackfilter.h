@@ -23,6 +23,8 @@
 
 #include <core/trackfwd.h>
 
+class QString;
+
 namespace Fooyin::Filter {
 FYCORE_EXPORT Fooyin::TrackList filterTracks(const Fooyin::TrackList& tracks, const QString& search);
 } // namespace Fooyin::Filter
