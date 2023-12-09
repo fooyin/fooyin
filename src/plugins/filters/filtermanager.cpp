@@ -24,6 +24,7 @@
 #include "filterwidget.h"
 
 #include <core/library/musiclibrary.h>
+#include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/async.h>
@@ -35,29 +36,6 @@
 #include <QCoroCore>
 
 #include <set>
-
-namespace {
-bool containsSearch(const QString& text, const QString& search)
-{
-    return text.contains(search, Qt::CaseInsensitive);
-}
-
-// TODO: Support user-defined tags
-bool matchSearch(const Fooyin::Track& track, const QString& search)
-{
-    if(search.isEmpty()) {
-        return true;
-    }
-
-    return containsSearch(track.artist(), search) || containsSearch(track.title(), search)
-        || containsSearch(track.album(), search) || containsSearch(track.albumArtist(), search);
-}
-
-Fooyin::TrackList filterTracks(const Fooyin::TrackList& tracks, const QString& search)
-{
-    return Fooyin::Utils::filter(tracks, [search](const Fooyin::Track& track) { return matchSearch(track, search); });
-}
-} // namespace
 
 namespace Fooyin::Filters {
 struct FilterManager::Private
@@ -369,10 +347,10 @@ struct FilterManager::Private
         const bool reset = searchFilter.length() > search.length();
         searchFilter     = search;
 
-        TrackList tracksToFilter{!reset && !filter.tracks.empty() ? filter.tracks : library->tracks()};
+        TrackList tracksToFilter = !reset && !filter.tracks.empty() ? filter.tracks : library->tracks();
 
-        const auto tracks
-            = co_await Utils::asyncExec([&search, &tracksToFilter]() { return filterTracks(tracksToFilter, search); });
+        const auto tracks = co_await Utils::asyncExec(
+            [&search, &tracksToFilter]() { return Filter::filterTracks(tracksToFilter, search); });
 
         if(filterWidgets.contains(filter.index)) {
             if(auto* widget = filterWidgets.at(filter.index)) {

@@ -65,6 +65,7 @@ set(SOURCES
     library/unifiedmusiclibrary.cpp
     library/librarythreadhandler.cpp
     library/sortingregistry.cpp
+    library/trackfilter.cpp
     library/tracksort.cpp
     playlist/playlist.cpp
     playlist/playlisthandler.cpp
