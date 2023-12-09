@@ -118,7 +118,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Musi
     , settings{settings}
     , layout{new QVBoxLayout(self)}
     , libraryTree{new LibraryTreeView(self)}
-    , model{new LibraryTreeModel(self)} // , proxyModel{new LibraryTreeProxyModel(self)}
+    , model{new LibraryTreeModel(self)}
     , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Gui::LibraryTreeDoubleClick>())}
     , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Gui::LibraryTreeMiddleClick>())}
 {

@@ -52,7 +52,7 @@ OverlayWidget::OverlayWidget(const Options& options, QWidget* parent)
     if(m_options & Option::Button) {
         m_button = new QPushButton(this);
         m_button->setAutoFillBackground(true);
-        QObject::connect(m_button, &QPushButton::pressed, this, &OverlayWidget::buttonClicked);
+        QObject::connect(m_button, &QPushButton::clicked, this, &OverlayWidget::buttonClicked);
         layout->addWidget(m_button);
     }
 
