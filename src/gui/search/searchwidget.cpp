@@ -25,6 +25,7 @@
 #include <utils/actions/actioncontainer.h>
 
 #include <QHBoxLayout>
+#include <QJsonObject>
 #include <QLineEdit>
 #include <QMenu>
 #include <QStyleOptionFrame>
