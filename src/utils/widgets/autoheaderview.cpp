@@ -442,8 +442,8 @@ QByteArray AutoHeaderView::saveHeaderState() const
 
 void AutoHeaderView::restoreHeaderState(const QByteArray& data)
 {
-    int sortOrder{sortIndicatorOrder()};
-    int sortSection{sortIndicatorSection()};
+    Qt::SortOrder sortOrder{Qt::AscendingOrder};
+    int sortSection{0};
 
     if(!data.isEmpty()) {
         SectionIndexes pixelWidths;
@@ -473,7 +473,7 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& data)
         }
     }
 
-    setSortIndicator(sortSection, static_cast<Qt::SortOrder>(sortOrder));
+    setSortIndicator(sortSection, sortOrder);
 
     const int sectionCount = count();
     const int widthCount   = static_cast<int>(p->sectionWidths.size());
