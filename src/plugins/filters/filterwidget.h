@@ -48,6 +48,7 @@ public:
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void finalise() override;
 
     void tracksAdded(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);

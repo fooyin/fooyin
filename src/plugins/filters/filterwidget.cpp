@@ -95,6 +95,8 @@ struct FilterWidget::Private
         header->setFirstSectionMovable(true);
         header->setSectionsClickable(true);
         header->setContextMenuPolicy(Qt::CustomContextMenu);
+
+        header->restoreHeaderState({});
     }
 
     [[nodiscard]] QString playlistNameFromSelection() const
@@ -245,27 +247,34 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
 
 void FilterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const QString columnNames = layout["Columns"_L1].toString();
-    const QStringList columns = columnNames.split("|"_L1);
-    ColumnIds ids;
-    std::ranges::transform(columns, std::back_inserter(ids), [](const QString& column) { return column.toInt(); });
+    if(layout.contains("Columns"_L1)) {
+        const QString columnNames = layout["Columns"_L1].toString();
+        const QStringList columns = columnNames.split("|"_L1);
+        ColumnIds ids;
+        std::ranges::transform(columns, std::back_inserter(ids), [](const QString& column) { return column.toInt(); });
 
-    emit requestColumnsChange(p->filter, ids);
-
-    auto state = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
-
-    if(state.isEmpty()) {
-        p->header->restoreHeaderState(state);
-        return;
+        emit requestColumnsChange(p->filter, ids);
     }
 
-    state = qUncompress(state);
+    if(layout.contains("State"_L1)) {
+        auto state = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
 
-    // Workaround to ensure QHeaderView section count is updated before restoring state
-    QMetaObject::invokeMethod(p->model, "headerDataChanged", Q_ARG(Qt::Orientation, Qt::Horizontal), Q_ARG(int, 0),
-                              Q_ARG(int, 0));
+        if(state.isEmpty()) {
+            return;
+        }
 
-    p->header->restoreHeaderState(state);
+        state = qUncompress(state);
+
+        // Workaround to ensure QHeaderView section count is updated before restoring state
+        QMetaObject::invokeMethod(p->model, "headerDataChanged", Q_ARG(Qt::Orientation, Qt::Horizontal), Q_ARG(int, 0),
+                                  Q_ARG(int, 0));
+
+        p->header->restoreHeaderState(state);
+    }
+}
+
+void FilterWidget::finalise()
+{
     p->model->sortOnColumn(p->header->sortIndicatorSection(), p->header->sortIndicatorOrder());
 }
 
