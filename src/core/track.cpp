@@ -550,7 +550,7 @@ QStringList Track::supportedFileExtensions()
     return supportedExtensions;
 }
 
-size_t qHash(const Fooyin::Track& track)
+size_t qHash(const Track& track)
 {
     return qHash(track.filepath());
 }

@@ -162,7 +162,7 @@ private:
     struct Private;
     QSharedDataPointer<Private> p;
 };
-size_t qHash(const Fooyin::Track& track);
+FYCORE_EXPORT size_t qHash(const Track& track);
 
 using TrackIds     = std::vector<int>;
 using TrackList    = std::vector<Track>;
