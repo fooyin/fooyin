@@ -31,8 +31,8 @@
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/menuheader.h>
-#include <utils/overlayfilter.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/widgets/overlaywidget.h>
 
 #include <QApplication>
 #include <QHBoxLayout>
@@ -74,7 +74,7 @@ struct EditableLayout::Private
 
     ActionContainer* menu;
     QHBoxLayout* box;
-    QPointer<OverlayFilter> overlay;
+    QPointer<OverlayWidget> overlay;
     SplitterWidget* splitter{nullptr};
     bool layoutEditing{false};
 
@@ -106,7 +106,7 @@ struct EditableLayout::Private
     {
         layoutEditing = editing;
         if(editing) {
-            overlay = new OverlayFilter(self);
+            overlay = new OverlayWidget(self);
 
             qApp->installEventFilter(self);
         }

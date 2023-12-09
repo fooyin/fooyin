@@ -45,8 +45,6 @@ set(SOURCES
     logslider.cpp
     menuheader.cpp
     multilinedelegate.cpp
-    overlayfilter.cpp
-    overlaywidget.cpp
     paths.cpp
     recursiveselectionmodel.cpp
     simpletreeview.cpp
@@ -68,6 +66,7 @@ set(SOURCES
     widgets/autoheaderview.cpp
     widgets/editabletabbar.cpp
     widgets/editabletabwidget.cpp
+    widgets/overlaywidget.cpp
     widgets/popuplineedit.cpp
 )
 

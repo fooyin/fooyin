@@ -19,30 +19,48 @@
 
 #pragma once
 
+#include "fyutils_export.h"
+
 #include <QWidget>
 
-class QVBoxLayout;
 class QLabel;
 class QPushButton;
 
 namespace Fooyin {
-class OverlayWidget : public QWidget
+class FYUTILS_EXPORT OverlayWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit OverlayWidget(bool button = false, QWidget* parent = nullptr);
-    ~OverlayWidget() override = default;
+    enum Option
+    {
+        None        = 0x0,
+        Label       = 0x2,
+        Button      = 0x4,
+    };
+    Q_DECLARE_FLAGS(Options, Option)
+
+    explicit OverlayWidget(QWidget* parent = nullptr);
+    explicit OverlayWidget(const Options& options, QWidget* parent = nullptr);
 
     void setText(const QString& text);
     void setButtonText(const QString& text);
 
+    void setColour(const QColor& colour);
+    void resetColour();
+
 signals:
-    void settingsClicked();
+    void buttonClicked();
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
 
 private:
-    QVBoxLayout* m_layout;
+    Options m_options;
+    QColor m_colour;
     QLabel* m_text;
     QPushButton* m_button;
 };
 } // namespace Fooyin
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::OverlayWidget::Options)
