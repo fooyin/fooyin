@@ -131,15 +131,10 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
         return;
     }
 
-    QByteArray widgets;
-    QDataStream stream{&widgets, QDataStream::WriteOnly};
-    stream.setVersion(QDataStream::Qt_6_5);
+    QStringList widgetIds;
+    std::ranges::transform(connectedWidgets, std::back_inserter(widgetIds), [](const Id& id) { return id.name(); });
 
-    stream << connectedWidgets;
-
-    widgets = qCompress(widgets, 9);
-
-    layout["Widgets"_L1] = QString::fromUtf8(widgets.toBase64());
+    layout["Widgets"_L1] = widgetIds.join("|"_L1);
 }
 
 void SearchWidget::loadLayoutData(const QJsonObject& layout)
@@ -148,24 +143,19 @@ void SearchWidget::loadLayoutData(const QJsonObject& layout)
         return;
     }
 
-    auto widgets = QByteArray::fromBase64(layout["Widgets"_L1].toString().toUtf8());
+    const QStringList widgetIds = layout["Widgets"_L1].toString().split("|");
 
-    if(widgets.isEmpty()) {
+    if(widgetIds.isEmpty()) {
         return;
     }
 
-    widgets = qUncompress(widgets);
-
-    QDataStream stream{&widgets, QDataStream::ReadOnly};
-    stream.setVersion(QDataStream::Qt_6_5);
-
     IdSet connectedWidgets;
 
-    stream >> connectedWidgets;
-
-    if(!connectedWidgets.empty()) {
-        p->searchController->setConnectedWidgets(id(), connectedWidgets);
+    for(const QString& id : widgetIds) {
+        connectedWidgets.emplace(id);
     }
+
+    p->searchController->setConnectedWidgets(id(), connectedWidgets);
 }
 } // namespace Fooyin
 
