@@ -292,7 +292,11 @@ void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
 
     auto* addMenu = createNewMenu(p->actionManager, this, tr("&Add"));
 
-    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) { addWidget(newWidget); });
+    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) {
+        addWidget(newWidget);
+        newWidget->finalise();
+    });
+    
     menu->addMenu(addMenu);
 }
 

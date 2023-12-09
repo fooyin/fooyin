@@ -93,6 +93,8 @@ void FyWidget::layoutEditingMenu(ActionContainer* /*menu*/) { }
 void FyWidget::saveLayoutData(QJsonObject& /*object*/) { }
 
 void FyWidget::loadLayoutData(const QJsonObject& /*object*/) { }
+
+void FyWidget::finalise() { }
 } // namespace Fooyin
 
 #include "gui/moc_fywidget.cpp"

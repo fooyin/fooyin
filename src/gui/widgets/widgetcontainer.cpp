@@ -47,6 +47,8 @@ void WidgetContainer::loadWidgets(const QJsonArray& widgets)
             if(childValue.isObject()) {
                 childWidget->loadLayout(childValue.toObject());
             }
+
+            childWidget->finalise();
         }
     }
 }

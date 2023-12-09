@@ -48,6 +48,7 @@ public:
     virtual void layoutEditingMenu(ActionContainer* menu);
     virtual void saveLayoutData(QJsonObject& layout);
     virtual void loadLayoutData(const QJsonObject& layout);
+    virtual void finalise();
 
 private:
     Id m_id;

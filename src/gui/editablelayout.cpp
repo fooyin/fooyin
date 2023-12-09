@@ -96,6 +96,7 @@ struct EditableLayout::Private
         splitter = qobject_cast<SplitterWidget*>(widgetProvider->createWidget(u"SplitterVertical"_s));
         if(splitter) {
             splitter->setParent(self);
+            splitter->finalise();
             box->addWidget(splitter);
             settings->set<Settings::Gui::LayoutEditing>(true);
         }
@@ -289,6 +290,7 @@ bool EditableLayout::loadLayout(const Layout& layout)
         p->splitter               = splitter;
         const QJsonObject options = layout.json.constBegin()->toObject();
         p->splitter->loadLayout(options);
+        p->splitter->finalise();
         p->box->addWidget(p->splitter);
         return true;
     }
