@@ -79,7 +79,7 @@ Id Id::append(uintptr_t addr)
     return Id{m_name.append(QString::number(addr))};
 }
 
-QDataStream& operator<<(QDataStream& stream, Id id)
+QDataStream& operator<<(QDataStream& stream, const Id& id)
 {
     stream << id.name();
 

@@ -55,7 +55,7 @@ public:
     Id append(uintptr_t addr);
 
 private:
-    friend FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, Id id);
+    friend FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const Id& id);
     friend FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, Id& id);
 
     uint32_t m_id;
