@@ -24,6 +24,8 @@
 #include <QMetaType>
 #include <QString>
 
+#include <set>
+
 namespace Fooyin {
 class FYUTILS_EXPORT Id
 {
@@ -61,5 +63,11 @@ private:
     uint32_t m_id;
     QString m_name;
 };
+FYUTILS_EXPORT size_t qHash(const Id& id);
+
 using IdList = std::vector<Id>;
+using IdSet  = std::set<Id>;
+
+FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const IdSet& ids);
+FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, IdSet& ids);
 } // namespace Fooyin

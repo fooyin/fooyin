@@ -95,4 +95,35 @@ QDataStream& operator>>(QDataStream& stream, Id& id)
 
     return stream;
 }
+
+size_t qHash(const Id& id)
+{
+    return Id::IdHash{}(id);
+}
+
+QDataStream& operator<<(QDataStream& stream, const IdSet& ids)
+{
+    stream << static_cast<int>(ids.size());
+
+    for(const auto& id : ids) {
+        stream << id;
+    }
+
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream& stream, IdSet& ids)
+{
+    int size;
+    stream >> size;
+
+    for(int i{0}; i < size; ++i) {
+        Id id;
+        stream >> id;
+
+        ids.emplace(id);
+    }
+
+    return stream;
+}
 } // namespace Fooyin
