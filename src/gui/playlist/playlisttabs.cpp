@@ -366,6 +366,15 @@ void PlaylistTabs::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
         p->layout->addWidget(p->tabsWidget);
     }
 }
+
+WidgetList PlaylistTabs::widgets() const
+{
+    if(!p->tabsWidget) {
+        return {};
+    }
+
+    return {p->tabsWidget};
+}
 } // namespace Fooyin
 
 #include "moc_playlisttabs.cpp"

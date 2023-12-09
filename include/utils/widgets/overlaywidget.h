@@ -46,6 +46,8 @@ public:
     void setText(const QString& text);
     void setButtonText(const QString& text);
 
+    void setButtonEnabled(bool enabled);
+
     void setColour(const QColor& colour);
     void resetColour();
 

@@ -19,15 +19,10 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
-
-class QHBoxLayout;
-class QLineEdit;
+#include <gui/fywidget.h>
 
 namespace Fooyin {
-class ActionManager;
 class SettingsManager;
-class WidgetContext;
 class SearchController;
 
 class SearchWidget : public FyWidget
@@ -35,22 +30,18 @@ class SearchWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit SearchWidget(ActionManager* actionManager, SearchController* controller, SettingsManager* settings,
-                          QWidget* parent = nullptr);
+    explicit SearchWidget(SearchController* controller, SettingsManager* settings, QWidget* parent = nullptr);
+    ~SearchWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
-protected:
-    void keyPressEvent(QKeyEvent* event) override;
-    void contextMenuEvent(QContextMenuEvent* event) override;
+    void layoutEditingMenu(ActionContainer* menu) override;
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
 
 private:
-    ActionManager* m_actionManager;
-    SearchController* m_controller;
-    SettingsManager* m_settings;
-
-    QLineEdit* m_searchBox;
-    WidgetContext* m_searchContext;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

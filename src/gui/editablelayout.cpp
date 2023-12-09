@@ -30,6 +30,7 @@
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/id.h>
 #include <utils/menuheader.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/widgets/overlaywidget.h>
@@ -41,6 +42,8 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QMouseEvent>
+
+#include <stack>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -202,6 +205,72 @@ void EditableLayout::initialise()
                                                          [this](bool enabled) { p->changeEditingState(enabled); });
 
     QObject::connect(p->menu->menu(), &QMenu::aboutToHide, this, [this]() { p->hideOverlay(); });
+}
+
+FyWidget* EditableLayout::findWidget(const Id& id) const
+{
+    if(!p->splitter) {
+        return nullptr;
+    }
+
+    std::stack<FyWidget*> widgetsToCheck;
+    widgetsToCheck.push(p->splitter);
+
+    while(!widgetsToCheck.empty()) {
+        auto* current = widgetsToCheck.top();
+        widgetsToCheck.pop();
+
+        if(!current) {
+            continue;
+        }
+
+        if(current->id() == id) {
+            return current;
+        }
+
+        if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
+            const auto containerWidgets = container->widgets();
+            for(FyWidget* containerWidget : containerWidgets) {
+                widgetsToCheck.push(containerWidget);
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+WidgetList EditableLayout::findWidgetsByFeatures(const FyWidget::Features& features) const
+{
+    if(!p->splitter) {
+        return {};
+    }
+
+    std::vector<FyWidget*> widgets;
+
+    std::stack<FyWidget*> widgetsToCheck;
+    widgetsToCheck.push(p->splitter);
+
+    while(!widgetsToCheck.empty()) {
+        auto* current = widgetsToCheck.top();
+        widgetsToCheck.pop();
+
+        if(!current) {
+            continue;
+        }
+
+        if(current->features() & features) {
+            widgets.push_back(current);
+        }
+
+        if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
+            const auto containerWidgets = container->widgets();
+            for(FyWidget* containerWidget : containerWidgets) {
+                widgetsToCheck.push(containerWidget);
+            }
+        }
+    }
+
+    return widgets;
 }
 
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)

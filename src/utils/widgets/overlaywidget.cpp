@@ -43,11 +43,15 @@ OverlayWidget::OverlayWidget(const Options& options, QWidget* parent)
 
     if(m_options & Option::Label) {
         m_text = new QLabel(this);
+        m_text->setContentsMargins(5, 5, 5, 5);
+        m_text->setWordWrap(true);
+        m_text->setAutoFillBackground(true);
         layout->addWidget(m_text);
     }
 
     if(m_options & Option::Button) {
         m_button = new QPushButton(this);
+        m_button->setAutoFillBackground(true);
         QObject::connect(m_button, &QPushButton::pressed, this, &OverlayWidget::buttonClicked);
         layout->addWidget(m_button);
     }
@@ -68,6 +72,11 @@ void OverlayWidget::setButtonText(const QString& text)
     if(m_button) {
         m_button->setText(text);
     }
+}
+
+void OverlayWidget::setButtonEnabled(bool enabled)
+{
+    m_button->setEnabled(enabled);
 }
 
 void OverlayWidget::setColour(const QColor& colour)

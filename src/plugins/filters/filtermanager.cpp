@@ -363,6 +363,23 @@ struct FilterManager::Private
             filter->tracksAdded(tracks);
         }
     }
+
+    QCoro::Task<void> searchChanged(LibraryFilter filter, QString search)
+    {
+        const bool reset = searchFilter.length() > search.length();
+        searchFilter     = search;
+
+        TrackList tracksToFilter{!reset && !filter.tracks.empty() ? filter.tracks : library->tracks()};
+
+        const auto tracks
+            = co_await Utils::asyncExec([&search, &tracksToFilter]() { return filterTracks(tracksToFilter, search); });
+
+        if(filterWidgets.contains(filter.index)) {
+            if(auto* widget = filterWidgets.at(filter.index)) {
+                widget->reset(tracks);
+            }
+        }
+    }
 };
 
 FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* trackSelection, SettingsManager* settings,
@@ -411,6 +428,8 @@ FilterWidget* FilterManager::createFilter()
 
     p->filterWidgets.emplace(libFilter.index, filter);
 
+    QObject::connect(filter, &FilterWidget::requestSearch, this,
+                     [this](const LibraryFilter& filter, const QString& search) { p->searchChanged(filter, search); });
     QObject::connect(filter, &FilterWidget::doubleClicked, this,
                      [this](const QString& playlistName) { p->handleAction(p->doubleClickAction, playlistName); });
     QObject::connect(filter, &FilterWidget::middleClicked, this,
@@ -447,19 +466,6 @@ void FilterManager::shutdown()
 FilterColumnRegistry* FilterManager::columnRegistry() const
 {
     return &p->columnRegistry;
-}
-
-QCoro::Task<void> FilterManager::searchChanged(QString search)
-{
-    const bool reset = p->searchFilter.length() > search.length();
-    p->searchFilter  = search;
-
-    TrackList tracksToFilter{!reset && !p->filteredTracks.empty() ? p->filteredTracks : p->library->tracks()};
-
-    p->filteredTracks
-        = co_await Utils::asyncExec([&search, &tracksToFilter]() { return filterTracks(tracksToFilter, search); });
-
-    p->resetFiltersAfterIndex(-1);
 }
 } // namespace Fooyin::Filters
 

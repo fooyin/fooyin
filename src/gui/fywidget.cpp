@@ -42,6 +42,21 @@ QString FyWidget::layoutName() const
     return name();
 }
 
+FyWidget::Features FyWidget::features() const
+{
+    return m_features;
+}
+
+void FyWidget::setFeature(Feature feature, bool on)
+{
+    if(on) {
+        m_features |= feature;
+    }
+    else {
+        m_features &= ~feature;
+    }
+}
+
 FyWidget* FyWidget::findParent() const
 {
     QWidget* parent = parentWidget();
@@ -87,6 +102,8 @@ void FyWidget::loadLayout(const QJsonObject& layout)
 
     loadLayoutData(layout);
 }
+
+void FyWidget::searchEvent(const QString& /*search*/) { }
 
 void FyWidget::layoutEditingMenu(ActionContainer* /*menu*/) { }
 

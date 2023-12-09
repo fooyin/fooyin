@@ -52,6 +52,8 @@ public:
     void removeWidget(FyWidget* widget) override;
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
 
+    WidgetList widgets() const override;
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void dragEnterEvent(QDragEnterEvent* event) override;

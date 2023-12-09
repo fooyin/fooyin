@@ -21,21 +21,31 @@
 
 #include "fygui_export.h"
 
+#include <utils/id.h>
+
 #include <QObject>
 
 namespace Fooyin {
+class FyWidget;
+class EditableLayout;
+
 class FYGUI_EXPORT SearchController : public QObject
 {
     Q_OBJECT
 
 public:
-    [[nodiscard]] QString searchText() const;
-    void changeSearch(const QString& search);
+    explicit SearchController(EditableLayout* editableLayout, QObject* parent = nullptr);
+    ~SearchController() override;
 
-signals:
-    void searchChanged(const QString& search);
+    void setupWidgetConnections(const Id& id);
+    IdSet connectedWidgets(const Id& id);
+    void setConnectedWidgets(const Id& id, const IdSet& widgets);
+    void removeConnectedWidgets(const Id& id);
+
+    void changeSearch(const Id& id, const QString& search);
 
 private:
-    QString m_searchText;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

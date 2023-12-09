@@ -39,7 +39,6 @@ struct FiltersPlugin::Private
     MusicLibrary* library;
     PlayerManager* playerManager;
     LayoutProvider* layoutProvider;
-    SearchController* searchController;
     WidgetFactory* factory;
     TrackSelectionController* trackSelection;
 
@@ -101,16 +100,12 @@ void FiltersPlugin::initialise(const CorePluginContext& context)
 
 void FiltersPlugin::initialise(const GuiPluginContext& context)
 {
-    p->actionManager    = context.actionManager;
-    p->layoutProvider   = context.layoutProvider;
-    p->searchController = context.searchController;
-    p->factory          = context.widgetFactory;
-    p->trackSelection   = context.trackSelection;
+    p->actionManager  = context.actionManager;
+    p->layoutProvider = context.layoutProvider;
+    p->factory        = context.widgetFactory;
+    p->trackSelection = context.trackSelection;
 
     p->filterManager = new FilterManager(p->library, p->trackSelection, p->settings, this);
-
-    QObject::connect(p->searchController, &SearchController::searchChanged, p->filterManager,
-                     &FilterManager::searchChanged);
 
     p->factory->registerClass<FilterWidget>(
         QStringLiteral("LibraryFilter"), [this]() { return p->filterManager->createFilter(); }, "Library Filter");

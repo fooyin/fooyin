@@ -44,7 +44,7 @@ struct TabStackWidget::Private
     ActionManager* actionManager;
     WidgetProvider* widgetProvider;
 
-    std::vector<FyWidget*> widgets;
+    WidgetList widgets;
     EditableTabWidget* tabs;
 
     Private(TabStackWidget* self, ActionManager* actionManager, WidgetProvider* widgetProvider)
@@ -181,6 +181,11 @@ void TabStackWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
 
         p->tabs->setCurrentIndex(index);
     }
+}
+
+WidgetList TabStackWidget::widgets() const
+{
+    return p->widgets;
 }
 
 void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)

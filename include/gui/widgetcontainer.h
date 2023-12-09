@@ -35,6 +35,8 @@ public:
     virtual void removeWidget(FyWidget* widget)                          = 0;
     virtual void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) = 0;
 
+    virtual WidgetList widgets() const = 0;
+
     void loadWidgets(const QJsonArray& widgets);
 
 private:

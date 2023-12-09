@@ -169,6 +169,8 @@ FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
 {
     setObjectName(FilterWidget::name());
 
+    setFeature(FyWidget::Search);
+
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
@@ -276,6 +278,11 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
 void FilterWidget::finalise()
 {
     p->model->sortOnColumn(p->header->sortIndicatorSection(), p->header->sortIndicatorOrder());
+}
+
+void FilterWidget::searchEvent(const QString& search)
+{
+    emit requestSearch(p->filter, search);
 }
 
 void FilterWidget::tracksAdded(const TrackList& tracks)

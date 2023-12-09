@@ -33,17 +33,29 @@ class FYGUI_EXPORT FyWidget : public QWidget
     Q_OBJECT
 
 public:
+    enum Feature
+    {
+        None   = 0x0,
+        Search = 0x2,
+    };
+    Q_DECLARE_FLAGS(Features, Feature)
+
     explicit FyWidget(QWidget* parent);
 
     [[nodiscard]] Id id() const;
     [[nodiscard]] virtual QString name() const = 0;
     [[nodiscard]] virtual QString layoutName() const;
 
+    [[nodiscard]] Features features() const;
+    void setFeature(Feature feature, bool on = true);
+
     [[nodiscard]] FyWidget* findParent() const;
     [[nodiscard]] QRect widgetGeometry() const;
 
     void saveLayout(QJsonArray& layout);
     void loadLayout(const QJsonObject& layout);
+
+    virtual void searchEvent(const QString& search);
 
     virtual void layoutEditingMenu(ActionContainer* menu);
     virtual void saveLayoutData(QJsonObject& layout);
@@ -52,5 +64,9 @@ public:
 
 private:
     Id m_id;
+    Features m_features;
 };
+using WidgetList = std::vector<FyWidget*>;
 } // namespace Fooyin
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::FyWidget::Features)

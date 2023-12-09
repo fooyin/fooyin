@@ -19,44 +19,22 @@
 
 #pragma once
 
-#include <gui/fywidget.h>
-
-#include <QWidget>
+#include <QObject>
 
 namespace Fooyin {
-class ActionManager;
-class ActionContainer;
-class LayoutProvider;
-class SettingsManager;
-class WidgetProvider;
-class Id;
-struct Layout;
-
-class EditableLayout : public QWidget
+class WidgetFilter : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit EditableLayout(ActionManager* actionManager, WidgetProvider* widgetProvider,
-                            LayoutProvider* layoutProvider, SettingsManager* settings, QWidget* parent = nullptr);
-    ~EditableLayout() override;
+    explicit WidgetFilter(QObject* parent = nullptr);
 
-    void initialise();
-
-    FyWidget* findWidget(const Id& id) const;
-    WidgetList findWidgetsByFeatures(const FyWidget::Features& features) const;
+    void start();
+    void stop();
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
-    void changeLayout(const Layout& layout);
-    void saveLayout();
-    bool loadLayout(const Layout& layout);
-    bool loadLayout();
-
-    void showQuickSetup();
-
-private:
-    struct Private;
-    std::unique_ptr<Private> p;
+signals:
+    void filterFinished();
 };
 } // namespace Fooyin
