@@ -26,11 +26,11 @@ ScriptResult cif(const ScriptValueList& vec)
     if(size < 2 || size > 3) {
         return {};
     }
-    if(vec[0].cond) {
-        return vec[1];
+    if(vec.at(0).cond) {
+        return vec.at(1);
     }
     if(size > 2) {
-        return vec[2];
+        return vec.at(2);
     }
     return {};
 }
@@ -41,11 +41,11 @@ ScriptResult cif2(const ScriptValueList& vec)
     if(size < 1 || size > 2) {
         return {};
     }
-    if(vec[0].cond) {
-        return vec[0];
+    if(vec.at(0).cond) {
+        return vec.at(0);
     }
     if(size > 1) {
-        return vec[1];
+        return vec.at(1);
     }
     return {};
 }
@@ -56,10 +56,10 @@ ScriptResult ifequal(const ScriptValueList& vec)
     if(size != 4) {
         return {};
     }
-    if(vec[0].value.toDouble() == vec[1].value.toDouble()) {
-        return vec[2];
+    if(vec.at(0).value.toDouble() == vec.at(1).value.toDouble()) {
+        return vec.at(2);
     }
-    return vec[3];
+    return vec.at(3);
 }
 
 ScriptResult ifgreater(const ScriptValueList& vec)
@@ -68,11 +68,11 @@ ScriptResult ifgreater(const ScriptValueList& vec)
     if(size < 3 || size > 4) {
         return {};
     }
-    if(vec[0].value.toDouble() > vec[1].value.toDouble()) {
-        return vec[2];
+    if(vec.at(0).value.toDouble() > vec.at(1).value.toDouble()) {
+        return vec.at(2);
     }
     if(size == 4) {
-        return vec[3];
+        return vec.at(3);
     }
     return {};
 }
@@ -83,9 +83,9 @@ ScriptResult iflonger(const ScriptValueList& vec)
     if(size != 4) {
         return {};
     }
-    if(vec[0].value.size() > vec[1].value.size()) {
-        return vec[2];
+    if(vec.at(0).value.size() > vec.at(1).value.size()) {
+        return vec.at(2);
     }
-    return vec[3];
+    return vec.at(3);
 }
 } // namespace Fooyin::Scripting

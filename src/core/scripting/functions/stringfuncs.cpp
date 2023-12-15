@@ -32,9 +32,9 @@ QString num(const QStringList& vec)
         return {};
     }
     if(count == 1) {
-        return vec[0];
+        return vec.at(0);
     }
-    return Utils::addLeadingZero(vec[0].toInt(), vec[1].toInt());
+    return Utils::addLeadingZero(vec.at(0).toInt(), vec.at(1).toInt());
 }
 
 QString replace(const QStringList& vec)
@@ -45,30 +45,30 @@ QString replace(const QStringList& vec)
         return {};
     }
 
-    QString origStr{vec[0]};
-    return origStr.replace(vec[1], vec[2]);
+    QString origStr{vec.at(0)};
+    return origStr.replace(vec.at(1), vec.at(2));
 }
 
 QString slice(const QStringList& vec)
 {
     const qsizetype count = vec.size();
 
-    if(count < 2 || count > 3) {
+    if(count < 2 || count > 3 || vec.at(0).isEmpty()) {
         return {};
     }
 
     bool posSuccess{false};
 
-    const int pos = vec[1].toInt(&posSuccess);
+    const int pos = vec.at(1).toInt(&posSuccess);
 
     if(posSuccess) {
         if(count == 2) {
-            return vec[0].sliced(pos);
+            return vec.at(0).sliced(pos);
         }
         bool numSuccess{false};
-        const int num = vec[2].toInt(&numSuccess);
+        const int num = vec.at(2).toInt(&numSuccess);
         if(numSuccess) {
-            return vec[0].sliced(pos, num);
+            return vec.at(0).sliced(pos, num);
         }
     }
     return {};
@@ -78,16 +78,16 @@ QString chop(const QStringList& vec)
 {
     const qsizetype count = vec.size();
 
-    if(count != 2) {
+    if(count != 2 || vec.at(0).isEmpty()) {
         return {};
     }
 
     bool numSuccess{false};
 
-    const int num = vec[1].toInt(&numSuccess);
+    const int num = vec.at(1).toInt(&numSuccess);
 
     if(numSuccess) {
-        return vec[0].chopped(num);
+        return vec.at(0).chopped(num);
     }
 
     return {};
@@ -103,10 +103,10 @@ QString left(const QStringList& vec)
 
     bool numSuccess{false};
 
-    const int num = vec[1].toInt(&numSuccess);
+    const int num = vec.at(1).toInt(&numSuccess);
 
     if(numSuccess) {
-        const QStringView str = vec[0];
+        const QStringView str = vec.at(0);
         if(num >= 0 && num <= str.size()) {
             return str.first(num).toString();
         }
@@ -128,9 +128,9 @@ QString right(const QStringList& vec)
     const int num = vec[1].toInt(&numSuccess);
 
     if(numSuccess) {
-        const QStringView str = vec[0];
+        const QStringView str = vec.at(0);
         if(num >= 0 && num <= str.size()) {
-            return vec[0].last(num);
+            return str.last(num).toString();
         }
     }
 
@@ -145,7 +145,7 @@ ScriptResult strcmp(const QStringList& vec)
         return {};
     }
 
-    return {.value = {}, .cond = QString::compare(vec[0], vec[1], Qt::CaseSensitive) == 0};
+    return {.value = {}, .cond = QString::compare(vec.at(0), vec.at(1), Qt::CaseSensitive) == 0};
 }
 
 ScriptResult strcmpi(const QStringList& vec)
@@ -156,7 +156,7 @@ ScriptResult strcmpi(const QStringList& vec)
         return {};
     }
 
-    return {.value = {}, .cond = QString::compare(vec[0], vec[1], Qt::CaseInsensitive) == 0};
+    return {.value = {}, .cond = QString::compare(vec.at(0), vec.at(1), Qt::CaseInsensitive) == 0};
 }
 
 QString sep()

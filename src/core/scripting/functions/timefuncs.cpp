@@ -26,9 +26,9 @@
 namespace Fooyin::Scripting {
 QString msToString(const QStringList& vec)
 {
-    if(vec.size() > 1 || vec[0].isEmpty()) {
+    if(vec.size() > 1 || vec.at(0).isEmpty()) {
         return {};
     }
-    return Utils::msToString(vec[0].toULongLong());
+    return Utils::msToString(vec.at(0).toULongLong());
 }
 } // namespace Fooyin::Scripting
