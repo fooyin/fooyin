@@ -46,7 +46,7 @@ bool contains(const std::vector<Element>& c, const Element& f)
 }
 
 template <typename T, typename Hash, typename Ctnr>
-Ctnr intersection(Ctnr& v1, const Ctnr& v2)
+Ctnr intersection(const Ctnr& v1, const Ctnr& v2)
 {
     Ctnr result;
     std::unordered_set<T, Hash> first{v1.cbegin(), v1.cend()};
