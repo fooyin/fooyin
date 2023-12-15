@@ -321,7 +321,7 @@ struct FilterController::Private
         group.filteredTracks = co_await Utils::asyncExec(
             [&search, &tracksToFilter]() { return Filter::filterTracks(tracksToFilter, search); });
 
-        resetFiltersAfterFilter(filter);
+        filter->reset(tracks(filter->group()));
     }
 };
 
