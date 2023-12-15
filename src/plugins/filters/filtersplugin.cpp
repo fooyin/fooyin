@@ -54,7 +54,8 @@ struct FiltersPlugin::Private
             R"({"Obsidian":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAGQAAA8EAAAAUAP////8BAAAAAgA=",
             "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{
             "State":"AAAA/wAAAAEAAAADAAAB+AAAA5wAAAGyAP////8BAAAAAQA=","Widgets":[{"SplitterVertical":{
-            "State":"AAAA/wAAAAEAAAACAAAAHQAAA6AA/////wEAAAACAA==","Widgets":[{"SearchBar":{}},
+            "State":"AAAA/wAAAAEAAAACAAAAHQAAA6AA/////wEAAAACAA==","Widgets":[{"SearchBar":{
+            "Widgets": "1c827a58f07a4a939b185d9c0285f936|09356ff889694ff7941174448bd67b7a"}},
             {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA5wAAAQ0A/////wEAAAABAA==","Widgets":[
             {"LibraryFilter":{"Columns":"1","ID":"1c827a58f07a4a939b185d9c0285f936",
             "State":"AAAAJXjaY2BgYGRgYHjKAKFBgNH+A5QBFWAAAC6BAhk="}},{"LibraryFilter":{"Columns":"3",
@@ -74,7 +75,8 @@ struct FiltersPlugin::Private
             "State":"AAAAJXjaY2BgYASi8wxgGgwY7T9AGVABBgAsDAIE="}},{"LibraryFilter":{"Columns":"3",
             "ID":"34777508a4ae4ec5939620f235e8ec1a","State":"AAAAJXjaY2BgYASicwxgGgwY7T9AGVABBgAr7gID="}}]}},
             {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAFewAAAc8A/////wEAAAABAA==",
-            "Widgets":[{"ControlBar":{}},{"SearchBar":{"ID":"55a31e58410a45e2a506bf14a30041e4"}}]}},
+            "Widgets":[{"ControlBar":{}},{"SearchBar":{"Widgets": "955f29805de446d7a9b6195a94bfd817|
+            34777508a4ae4ec5939620f235e8ec1a|4fee1a754b3e47ff86f4c711fbf0f0eb|3b20c1db282d4bfe9a95c776e6723608"}}]}},
             {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAABdAAABGgAAAFgAP////8BAAAAAQA=",
             "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAABdAAAAU0A/////wEAAAACAA==",
             "Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}}]}},{"Playlist":{
