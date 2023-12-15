@@ -33,8 +33,8 @@ struct OverlayWidget::Private
 
     QVBoxLayout* layout;
 
-    int xOffset;
-    int yOffset;
+    int xOffset{0};
+    int yOffset{0};
 
     QPushButton* button{nullptr};
     QLabel* label{nullptr};
