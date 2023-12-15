@@ -98,6 +98,7 @@ struct FilterController::Private
         const Id oldGroup = findContainingGroup(widget);
 
         if(groupId == oldGroup) {
+            getFilteredTracks(groupId);
             widget->reset(tracks(groupId));
             return;
         }
@@ -132,6 +133,7 @@ struct FilterController::Private
             recalculateIndexesOfGroup(groupId);
         }
 
+        getFilteredTracks(groupId);
         widget->reset(tracks(groupId));
     }
 
