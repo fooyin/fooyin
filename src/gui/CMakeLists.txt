@@ -41,6 +41,7 @@ set(SOURCES
     guisettings.cpp
     layoutprovider.cpp
     trackselectioncontroller.cpp
+    widgetfilter.cpp
     controls/controlwidget.cpp
     controls/playercontrol.cpp
     controls/playlistcontrol.cpp

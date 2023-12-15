@@ -23,8 +23,6 @@
 
 #include <QObject>
 
-#include <QCoroTask>
-
 namespace Fooyin {
 class SettingsManager;
 class MusicLibrary;
@@ -52,9 +50,6 @@ public:
 signals:
     void tracksRemoved(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
-
-public slots:
-    QCoro::Task<void> searchChanged(QString search);
 
 private:
     struct Private;

@@ -51,6 +51,7 @@ constexpr auto Settings      = "preferences-system";
 constexpr auto RescanLibrary = "view-refresh";
 constexpr auto LayoutEditing = "applications-graphics";
 constexpr auto QuickSetup    = "preferences-desktop";
+constexpr auto Options       = "preferences-other";
 } // namespace Icons
 
 constexpr auto MenuBar = "Fooyin.MenuBar";
@@ -122,8 +123,8 @@ constexpr auto Rename          = "Edit.Rename";
 } // namespace Actions
 
 namespace Mime {
-constexpr auto PlaylistItems         = "application/x-fooyin-playlistitems";
-constexpr auto TrackIds              = "application/x-fooyin-trackIds";
+constexpr auto PlaylistItems = "application/x-fooyin-playlistitems";
+constexpr auto TrackIds      = "application/x-fooyin-trackIds";
 } // namespace Mime
 
 namespace Page {

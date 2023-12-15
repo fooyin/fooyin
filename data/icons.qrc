@@ -59,5 +59,7 @@
         <file>icons/dark/scalable/actions/script-function.svg</file>
         <file>icons/dark/scalable/actions/script-literal.svg</file>
         <file>icons/dark/scalable/actions/script-variable.svg</file>
+        <file>icons/dark/scalable/actions/preferences-other.svg</file>
+        <file>icons/light/scalable/actions/preferences-other.svg</file>
     </qresource>
 </RCC>

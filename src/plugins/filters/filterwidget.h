@@ -50,6 +50,8 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
 
+    void searchEvent(const QString& search) override;
+
     void tracksAdded(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
     void tracksRemoved(const TrackList& tracks);
@@ -63,6 +65,7 @@ signals:
     void requestColumnsChange(const LibraryFilter& filter, const ColumnIds& columns);
     void requestHeaderMenu(const LibraryFilter& filter, AutoHeaderView* header, const QPoint& pos);
     void requestContextMenu(const LibraryFilter& filter, const QPoint& pos);
+    void requestSearch(const LibraryFilter& filter, const QString& search);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

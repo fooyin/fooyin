@@ -27,6 +27,7 @@ class QLabel;
 class QPushButton;
 
 namespace Fooyin {
+
 class FYUTILS_EXPORT OverlayWidget : public QWidget
 {
     Q_OBJECT
@@ -34,32 +35,53 @@ class FYUTILS_EXPORT OverlayWidget : public QWidget
 public:
     enum Option
     {
-        None        = 0x0,
-        Label       = 0x2,
-        Button      = 0x4,
+        None       = 0x0,
+        Label      = 0x1,
+        Button     = 0x2,
+        Resize     = 0x4,
+        Static     = 0x8,
+        Selectable = 0x10,
     };
     Q_DECLARE_FLAGS(Options, Option)
 
     explicit OverlayWidget(QWidget* parent = nullptr);
     explicit OverlayWidget(const Options& options, QWidget* parent = nullptr);
 
-    void setText(const QString& text);
-    void setButtonText(const QString& text);
+    void setOption(Option option, bool on = true);
 
+    QPushButton* button() const;
+    QLabel* label() const;
+
+    void connectOverlay(OverlayWidget* other);
+    void disconnectOverlay(OverlayWidget* other);
+
+    void addWidget(QWidget* widget);
+
+    QColor colour() const;
     void setColour(const QColor& colour);
     void resetColour();
 
+    void select();
+    void deselect();
+
+    bool event(QEvent* event) override;
+    bool eventFilter(QObject* watched, QEvent* event) override;
+
 signals:
-    void buttonClicked();
+    void clicked();
+    void entered();
+    void left();
 
 protected:
+    void showEvent(QShowEvent* event) override;
+    void enterEvent(QEnterEvent* event) override;
+    void leaveEvent(QEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
 
 private:
-    Options m_options;
-    QColor m_colour;
-    QLabel* m_text;
-    QPushButton* m_button;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin
 

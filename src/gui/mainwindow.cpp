@@ -19,22 +19,19 @@
 
 #include "mainwindow.h"
 
-#include "editablelayout.h"
 #include "mainmenubar.h"
 
 #include <core/constants.h>
 #include <core/coresettings.h>
+#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/actions/actionmanager.h>
-#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QMenuBar>
 #include <QSettings>
-#include <QTextEdit>
 #include <QTimer>
 
 constexpr auto MainWindowGeometry = "Interface/Geometry";

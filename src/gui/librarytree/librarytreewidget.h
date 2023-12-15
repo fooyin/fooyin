@@ -42,6 +42,8 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
+    void searchEvent(const QString& search) override;
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 

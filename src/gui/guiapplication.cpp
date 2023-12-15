@@ -20,7 +20,6 @@
 #include "guiapplication.h"
 
 #include "controls/controlwidget.h"
-#include "editablelayout.h"
 #include "info/infowidget.h"
 #include "library/coverwidget.h"
 #include "library/statuswidget.h"
@@ -59,6 +58,7 @@
 #include <core/library/musiclibrary.h>
 #include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
+#include <gui/editablelayout.h>
 #include <gui/layoutprovider.h>
 #include <gui/plugins/guiplugin.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -96,7 +96,7 @@ struct GuiApplication::Private
     WidgetContext* mainContext;
     std::unique_ptr<PlaylistController> playlistController;
     TrackSelectionController selectionController;
-    SearchController searchController;
+    SearchController* searchController;
 
     FileMenu* fileMenu;
     EditMenu* editMenu;
@@ -144,6 +144,7 @@ struct GuiApplication::Private
               playlistHandler, playerManager, guiSettings.playlistPresetRegistry(), coreSettings->sortingRegistry(),
               &selectionController, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
+        , searchController{new SearchController(editableLayout.get(), self)}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
         , editMenu{new EditMenu(actionManager, settingsManager, self)}
         , viewMenu{new ViewMenu(actionManager, &selectionController, settingsManager, self)}
@@ -164,9 +165,9 @@ struct GuiApplication::Private
         , libraryTreeGuiPage{settingsManager}
         , statusWidgetPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
-        , guiPluginContext{actionManager,     &layoutProvider,  &selectionController,
-                           &searchController, propertiesDialog, widgetProvider.widgetFactory(),
-                           &guiSettings}
+        , guiPluginContext{actionManager,        &layoutProvider,  &selectionController,
+                           searchController,     propertiesDialog, widgetProvider.widgetFactory(),
+                           editableLayout.get(), &guiSettings}
     {
         registerLayouts();
         registerWidgets();
@@ -277,8 +278,7 @@ struct GuiApplication::Private
             u"Status Bar"_s);
 
         factory->registerClass<SearchWidget>(
-            u"SearchBar"_s,
-            [this]() { return new SearchWidget(actionManager, &searchController, settingsManager, mainWindow.get()); },
+            u"SearchBar"_s, [this]() { return new SearchWidget(searchController, settingsManager, mainWindow.get()); },
             u"Search Bar"_s);
     }
 

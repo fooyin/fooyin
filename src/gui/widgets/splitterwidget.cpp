@@ -110,7 +110,7 @@ struct SplitterWidget::Private
     WidgetProvider* widgetProvider;
 
     Splitter* splitter;
-    QList<FyWidget*> children;
+    WidgetList children;
     Dummy* dummy{nullptr};
 
     int limit{0};
@@ -158,10 +158,11 @@ struct SplitterWidget::Private
             return;
         }
 
-        FyWidget* oldWidget = children.takeAt(index);
+        FyWidget* oldWidget = children.at(index);
+        children.erase(children.begin() + index);
         oldWidget->deleteLater();
 
-        children.insert(index, widget);
+        children.insert(children.begin() + index, widget);
         splitter->insertWidget(index, widget);
     }
 };
@@ -262,9 +263,14 @@ void SplitterWidget::removeWidget(FyWidget* widget)
     p->widgetCount -= 1;
 
     widget->deleteLater();
-    p->children.remove(index);
+    p->children.erase(p->children.begin() + index);
 
     p->checkShowDummy();
+}
+
+WidgetList SplitterWidget::widgets() const
+{
+    return p->children;
 }
 
 QString SplitterWidget::name() const
@@ -296,7 +302,7 @@ void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
         addWidget(newWidget);
         newWidget->finalise();
     });
-    
+
     menu->addMenu(addMenu);
 }
 

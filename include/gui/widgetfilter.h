@@ -19,27 +19,28 @@
 
 #pragma once
 
-#include <gui/fywidget.h>
+#include "fygui_export.h"
+
+#include <QObject>
 
 namespace Fooyin {
-class WidgetProvider;
-
-class WidgetContainer : public FyWidget
+class FYGUI_EXPORT WidgetFilter : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit WidgetFilter(QObject* parent = nullptr);
 
-    virtual void addWidget(FyWidget* widget)                             = 0;
-    virtual void removeWidget(FyWidget* widget)                          = 0;
-    virtual void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) = 0;
+    void start();
+    void stop();
 
-    virtual WidgetList widgets() const = 0;
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
-    void loadWidgets(const QJsonArray& widgets);
+signals:
+    void filterFinished();
 
 private:
-    WidgetProvider* m_widgetProvider;
+    bool m_active;
+    bool m_overOverlay;
 };
 } // namespace Fooyin

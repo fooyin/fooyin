@@ -19,27 +19,12 @@
 
 #pragma once
 
-#include <gui/fywidget.h>
+#include "fycore_export.h"
 
-namespace Fooyin {
-class WidgetProvider;
+#include <core/trackfwd.h>
 
-class WidgetContainer : public FyWidget
-{
-    Q_OBJECT
+class QString;
 
-public:
-    explicit WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
-
-    virtual void addWidget(FyWidget* widget)                             = 0;
-    virtual void removeWidget(FyWidget* widget)                          = 0;
-    virtual void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) = 0;
-
-    virtual WidgetList widgets() const = 0;
-
-    void loadWidgets(const QJsonArray& widgets);
-
-private:
-    WidgetProvider* m_widgetProvider;
-};
-} // namespace Fooyin
+namespace Fooyin::Filter {
+FYCORE_EXPORT Fooyin::TrackList filterTracks(const Fooyin::TrackList& tracks, const QString& search);
+} // namespace Fooyin::Filter

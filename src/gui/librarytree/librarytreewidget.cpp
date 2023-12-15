@@ -25,6 +25,7 @@
 #include "librarytreeview.h"
 
 #include <core/library/musiclibrary.h>
+#include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
@@ -42,7 +43,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fooyin {
+namespace {
 void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QModelIndexList& bottomIndexes)
 {
     if(!index.isValid()) {
@@ -61,7 +62,9 @@ void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QMode
         getLowestIndexes(treeView, childIndex, bottomIndexes);
     }
 }
+} // namespace
 
+namespace Fooyin {
 class LibraryTreeWidgetPrivate
 {
 public:
@@ -79,6 +82,7 @@ public:
     void setupHeaderContextMenu(const QPoint& pos);
 
     QCoro::Task<void> selectionChanged() const;
+    QCoro::Task<void> searchChanged(QString search);
     [[nodiscard]] QString playlistNameFromSelection() const;
 
     void handleDoubleClick() const;
@@ -99,6 +103,9 @@ public:
 
     TrackAction doubleClickAction;
     TrackAction middleClickAction;
+
+    QString prevSearch;
+    TrackList prevSearchTracks;
 };
 
 LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, MusicLibrary* library,
@@ -117,6 +124,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Musi
 {
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(libraryTree);
+
     libraryTree->setModel(model);
 
     libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
@@ -223,6 +231,26 @@ QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
     co_return;
 }
 
+QCoro::Task<void> LibraryTreeWidgetPrivate::searchChanged(QString search)
+{
+    const bool reset = prevSearch.length() > search.length();
+    prevSearch       = search;
+
+    if(search.isEmpty()) {
+        prevSearchTracks.clear();
+        model->reset(library->tracks());
+        co_return;
+    }
+
+    TrackList tracksToFilter = !reset && !prevSearchTracks.empty() ? prevSearchTracks : library->tracks();
+
+    const auto tracks = co_await Utils::asyncExec(
+        [search, tracksToFilter]() { return Filter::filterTracks(tracksToFilter, search); });
+
+    prevSearchTracks = tracks;
+    model->reset(tracks);
+}
+
 QString LibraryTreeWidgetPrivate::playlistNameFromSelection() const
 {
     QString title;
@@ -258,6 +286,8 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, LibraryTreeGroupRegi
 {
     setObjectName(LibraryTreeWidget::name());
 
+    setFeature(FyWidget::Search);
+
     QObject::connect(p->libraryTree, &LibraryTreeView::doubleClicked, this, [this]() { p->handleDoubleClick(); });
     QObject::connect(p->libraryTree, &LibraryTreeView::middleMouseClicked, this, [this]() { p->handleMiddleClick(); });
     QObject::connect(p->libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
@@ -271,18 +301,14 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, LibraryTreeGroupRegi
                          }
                      });
 
-    auto treeReset = [this]() {
-        p->reset();
-    };
-
-    QObject::connect(library, &MusicLibrary::tracksLoaded, this, treeReset);
+    QObject::connect(library, &MusicLibrary::tracksLoaded, this, [this]() { p->reset(); });
     QObject::connect(library, &MusicLibrary::tracksAdded, p->model, &LibraryTreeModel::addTracks);
     QObject::connect(library, &MusicLibrary::tracksScanned, p->model, &LibraryTreeModel::addTracks);
     QObject::connect(library, &MusicLibrary::tracksUpdated, p->model, &LibraryTreeModel::updateTracks);
     QObject::connect(library, &MusicLibrary::tracksDeleted, p->model, &LibraryTreeModel::removeTracks);
-    QObject::connect(library, &MusicLibrary::tracksSorted, this, treeReset);
-    QObject::connect(library, &MusicLibrary::libraryRemoved, this, treeReset);
-    QObject::connect(library, &MusicLibrary::libraryChanged, this, treeReset);
+    QObject::connect(library, &MusicLibrary::tracksSorted, this, [this]() { p->reset(); });
+    QObject::connect(library, &MusicLibrary::libraryRemoved, this, [this]() { p->reset(); });
+    QObject::connect(library, &MusicLibrary::libraryChanged, this, [this]() { p->reset(); });
 
     settings->subscribe<Settings::Gui::LibraryTreeDoubleClick>(this, [this](int action) {
         p->doubleClickAction = static_cast<TrackAction>(action);
@@ -320,6 +346,11 @@ void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
     if(grouping.isValid()) {
         p->changeGrouping(grouping);
     }
+}
+
+void LibraryTreeWidget::searchEvent(const QString& search)
+{
+    p->searchChanged(search);
 }
 
 void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)

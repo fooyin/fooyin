@@ -52,6 +52,8 @@ public:
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
     void removeWidget(FyWidget* widget) override;
 
+    WidgetList widgets() const override;
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void layoutEditingMenu(ActionContainer* menu) override;
