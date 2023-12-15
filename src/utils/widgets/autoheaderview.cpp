@@ -141,7 +141,12 @@ struct AutoHeaderView::Private
         int totalWidth{0};
 
         for(int section{0}; section < sectionCount; ++section) {
-            const int logical            = self->logicalIndex(section);
+            const int logical = self->logicalIndex(section);
+
+            if(logical < 0 || logical >= sectionCount) {
+                continue;
+            }
+
             const bool visible           = !self->isSectionHidden(logical);
             const double normalisedWidth = sectionWidths.at(logical);
             const int headerWidth        = self->width();
@@ -476,13 +481,15 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& data)
     setSortIndicator(sortSection, sortOrder);
 
     const int sectionCount = count();
-    const int widthCount   = static_cast<int>(p->sectionWidths.size());
-    if(widthCount < sectionCount) {
-        p->sectionWidths.resize(sectionCount);
-    }
+    if(sectionCount > 0) {
+        const int widthCount = static_cast<int>(p->sectionWidths.size());
+        if(widthCount < sectionCount) {
+            p->sectionWidths.resize(sectionCount);
+        }
 
-    if(p->stretchEnabled) {
-        p->updateWidths();
+        if(p->stretchEnabled) {
+            p->updateWidths();
+        }
     }
 }
 
