@@ -45,6 +45,7 @@ struct SearchController::Private
     std::unordered_map<Id, OverlayWidget*, Id::IdHash> overlays;
     QColor connectedColour{Qt::green};
     QColor disconnectedColour{Qt::red};
+    QColor unavailableColour{Qt::gray};
 
     QPointer<QPushButton> clearAll;
     QPointer<QPushButton> finishEditing;
@@ -58,6 +59,7 @@ struct SearchController::Private
     {
         connectedColour.setAlpha(80);
         disconnectedColour.setAlpha(80);
+        unavailableColour.setAlpha(80);
     }
 
     void clearOverlays()
@@ -108,20 +110,18 @@ struct SearchController::Private
         const Id widgetId = widget->id();
 
         const bool connectedToOther = isConnectedToOther(sourceId, widgetId);
-        constexpr auto overlayFlags = OverlayWidget::Button | OverlayWidget::Resize;
+        const auto overlayFlags = OverlayWidget::Resize | (connectedToOther ? OverlayWidget::Label : OverlayWidget::Button);
 
         auto* overlay = overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
 
         if(connectedToOther) {
-            auto* conectedLabel = new QLabel(tr("Connected to another widget"), overlay);
-            overlay->addWidget(conectedLabel);
+            overlay->setText(tr("Unavailable"));
+            overlay->setColour(unavailableColour);
         }
         else {
             const bool connected = connections.contains(sourceId) && connections.at(sourceId).contains(widgetId);
+            overlay->setButtonText(tr(connected ? "Disconnect" : "Connect"));
             overlay->setColour(connected ? connectedColour : disconnectedColour);
-
-            overlay->button()->setText(tr(connected ? "Disconnect" : "Connect"));
-
             QObject::connect(overlay->button(), &QPushButton::clicked, self,
                              [this, sourceId, widget, overlay]() { addOrRemoveConnection(sourceId, widget, overlay); });
         }

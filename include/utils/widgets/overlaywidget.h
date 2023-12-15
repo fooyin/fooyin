@@ -49,6 +49,8 @@ public:
 
     void setOption(Option option, bool on = true);
 
+    void setText(const QString& text);
+    void setButtonText(const QString& text);
     QPushButton* button() const;
     QLabel* label() const;
 

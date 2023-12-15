@@ -116,6 +116,20 @@ void OverlayWidget::setOption(Option option, bool on)
     }
 }
 
+void OverlayWidget::setText(const QString& text)
+{
+    if(p->label) {
+        p->label->setText(text);
+    }
+}
+
+void OverlayWidget::setButtonText(const QString& text)
+{
+    if(p->button) {
+        p->button->setText(text);
+    }
+}
+
 QPushButton* OverlayWidget::button() const
 {
     return p->button;
