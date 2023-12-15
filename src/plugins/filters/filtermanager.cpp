@@ -64,7 +64,7 @@ struct FilterManager::Private
     QPointer<OverlayWidget> controlDialog;
     std::unordered_map<Id, OverlayWidget*, Id::IdHash> overlays;
 
-    WidgetFilter* filter;
+    QPointer<WidgetFilter> filter;
 
     Id selectedGroup;
     QColor ungroupedColour{Qt::red};
@@ -78,18 +78,8 @@ struct FilterManager::Private
         : self{self}
         , controller{controller}
         , editableLayout{editableLayout}
-        , filter{new WidgetFilter(self)}
     {
         ungroupedColour.setAlpha(20);
-
-        QObject::connect(filter, &WidgetFilter::filterFinished, self, [this]() {
-            if(goBack && !goBack->isHidden()) {
-                QMetaObject::invokeMethod(goBack, "clicked", Q_ARG(bool, false));
-            }
-            else {
-                QMetaObject::invokeMethod(finishEditing, "clicked", Q_ARG(bool, false));
-            }
-        });
     }
 
     void enterGroupMode()
@@ -339,8 +329,18 @@ struct FilterManager::Private
         controlDialog->addWidget(finishEditing);
         QObject::connect(finishEditing, &QPushButton::clicked, self, [this]() {
             filter->stop();
+            filter->deleteLater();
             controlDialog->deleteLater();
             clearOverlays();
+        });
+
+        QObject::connect(filter, &WidgetFilter::filterFinished, self, [this]() {
+            if(goBack && !goBack->isHidden()) {
+                QMetaObject::invokeMethod(goBack, "clicked", Q_ARG(bool, false));
+            }
+            else {
+                QMetaObject::invokeMethod(finishEditing, "clicked", Q_ARG(bool, false));
+            }
         });
 
         controlDialog->move(editableLayout->width() - 160, editableLayout->height() - 160);
@@ -356,6 +356,7 @@ FilterManager::~FilterManager() = default;
 
 void FilterManager::setupWidgetConnections()
 {
+    p->filter = new WidgetFilter(this);
     p->filter->start();
 
     p->clearOverlays();
