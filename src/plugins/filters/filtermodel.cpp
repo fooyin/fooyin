@@ -23,6 +23,7 @@
 #include "filteritem.h"
 #include "filterpopulator.h"
 
+#include <core/track.h>
 #include <gui/guiconstants.h>
 
 #include <QColor>

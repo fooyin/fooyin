@@ -28,7 +28,8 @@ project(
 
 create_fooyin_plugin(
     fooyin_filters
-    SOURCES filtercolumnregistry.cpp
+    SOURCES filtercontroller.cpp
+            filtercolumnregistry.cpp
             filtersplugin.cpp
             filterdelegate.cpp
             filteritem.cpp
@@ -37,7 +38,6 @@ create_fooyin_plugin(
             filterpopulator.cpp
             filterview.cpp
             filterwidget.cpp
-            filterstore.cpp
             settings/filterscolumnmodel.cpp
             settings/filtersettings.cpp
             settings/filterscolumnpage.cpp

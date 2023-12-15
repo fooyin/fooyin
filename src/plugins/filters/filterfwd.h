@@ -19,13 +19,10 @@
 
 #pragma once
 
-#include <core/track.h>
-
 #include <QApplication>
 #include <QColor>
 #include <QDataStream>
 #include <QFont>
-#include <QObject>
 #include <QPalette>
 
 namespace Fooyin::Filters {
@@ -106,20 +103,5 @@ struct FilterColumn
     }
 };
 using FilterColumnList = std::vector<FilterColumn>;
-
-struct LibraryFilter
-{
-    FilterColumnList columns;
-    bool multipleColumns{false};
-    int index{-1};
-    TrackList tracks;
-
-    bool hasColumn(int id) const
-    {
-        return std::ranges::any_of(columns, [id](const FilterColumn& column) { return column.id == id; });
-    }
-};
-
-using FilterList = std::vector<LibraryFilter>;
-using ColumnIds  = std::vector<int>;
+using ColumnIds        = std::vector<int>;
 } // namespace Fooyin::Filters
