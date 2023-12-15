@@ -19,9 +19,9 @@
 
 #include "guigeneralpage.h"
 
-#include "editablelayout.h"
 #include "quicksetup/quicksetupdialog.h"
 
+#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guipaths.h>
 #include <gui/guisettings.h>

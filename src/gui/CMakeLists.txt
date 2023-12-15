@@ -41,6 +41,7 @@ set(SOURCES
     guisettings.cpp
     layoutprovider.cpp
     trackselectioncontroller.cpp
+    widgetfilter.cpp
     controls/controlwidget.cpp
     controls/playercontrol.cpp
     controls/playlistcontrol.cpp
@@ -90,7 +91,6 @@ set(SOURCES
     sandbox/scripthighlighter.cpp
     search/searchcontroller.cpp
     search/searchwidget.cpp
-    search/widgetfilter.cpp
     settings/enginepage.cpp
     settings/generalpage.cpp
     settings/guigeneralpage.cpp

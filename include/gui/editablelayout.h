@@ -19,20 +19,21 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <gui/fywidget.h>
 
 #include <QWidget>
 
 namespace Fooyin {
 class ActionManager;
-class ActionContainer;
 class LayoutProvider;
 class SettingsManager;
 class WidgetProvider;
 class Id;
 struct Layout;
 
-class EditableLayout : public QWidget
+class FYGUI_EXPORT EditableLayout : public QWidget
 {
     Q_OBJECT
 
@@ -43,8 +44,8 @@ public:
 
     void initialise();
 
-    FyWidget* findWidget(const Id& id) const;
-    WidgetList findWidgetsByFeatures(const FyWidget::Features& features) const;
+    [[nodiscard]] FyWidget* findWidget(const Id& id) const;
+    [[nodiscard]] WidgetList findWidgetsByFeatures(const FyWidget::Features& features) const;
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 

@@ -20,7 +20,6 @@
 #include "guiapplication.h"
 
 #include "controls/controlwidget.h"
-#include "editablelayout.h"
 #include "info/infowidget.h"
 #include "library/coverwidget.h"
 #include "library/statuswidget.h"
@@ -59,6 +58,7 @@
 #include <core/library/musiclibrary.h>
 #include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
+#include <gui/editablelayout.h>
 #include <gui/layoutprovider.h>
 #include <gui/plugins/guiplugin.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -165,9 +165,9 @@ struct GuiApplication::Private
         , libraryTreeGuiPage{settingsManager}
         , statusWidgetPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
-        , guiPluginContext{actionManager,    &layoutProvider,  &selectionController,
-                           searchController, propertiesDialog, widgetProvider.widgetFactory(),
-                           &guiSettings}
+        , guiPluginContext{actionManager,        &layoutProvider,  &selectionController,
+                           searchController,     propertiesDialog, widgetProvider.widgetFactory(),
+                           editableLayout.get(), &guiSettings}
     {
         registerLayouts();
         registerWidgets();

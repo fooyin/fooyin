@@ -19,10 +19,12 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <QObject>
 
 namespace Fooyin {
-class WidgetFilter : public QObject
+class FYGUI_EXPORT WidgetFilter : public QObject
 {
     Q_OBJECT
 
@@ -36,5 +38,9 @@ public:
 
 signals:
     void filterFinished();
+
+private:
+    bool m_active;
+    bool m_overOverlay;
 };
 } // namespace Fooyin

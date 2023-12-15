@@ -17,7 +17,7 @@
  *
  */
 
-#include "editablelayout.h"
+#include <gui/editablelayout.h>
 
 #include "quicksetup/quicksetupdialog.h"
 #include "widgets/dummy.h"
@@ -382,4 +382,4 @@ void EditableLayout::showQuickSetup()
 }
 } // namespace Fooyin
 
-#include "moc_editablelayout.cpp"
+#include "gui/moc_editablelayout.cpp"

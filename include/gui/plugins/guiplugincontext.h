@@ -29,18 +29,21 @@ class PropertiesDialog;
 class GuiSettings;
 class SearchController;
 class WidgetFactory;
+class EditableLayout;
 
 struct FYGUI_EXPORT GuiPluginContext
 {
     GuiPluginContext(ActionManager* actionManager, LayoutProvider* layoutProvider,
                      TrackSelectionController* trackSelection, SearchController* searchController,
-                     PropertiesDialog* propertiesDialog, WidgetFactory* widgetFactory, GuiSettings* guiSettings)
+                     PropertiesDialog* propertiesDialog, WidgetFactory* widgetFactory, EditableLayout* editableLayout,
+                     GuiSettings* guiSettings)
         : actionManager{actionManager}
         , layoutProvider{layoutProvider}
         , trackSelection{trackSelection}
         , searchController{searchController}
         , propertiesDialog{propertiesDialog}
         , widgetFactory{widgetFactory}
+        , editableLayout{editableLayout}
         , guiSettings{guiSettings}
     { }
 
@@ -50,6 +53,7 @@ struct FYGUI_EXPORT GuiPluginContext
     SearchController* searchController;
     PropertiesDialog* propertiesDialog;
     WidgetFactory* widgetFactory;
+    EditableLayout* editableLayout;
     GuiSettings* guiSettings;
 };
 } // namespace Fooyin

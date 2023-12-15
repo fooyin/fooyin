@@ -27,61 +27,158 @@
 #include <QVBoxLayout>
 
 namespace Fooyin {
+struct OverlayWidget::Private
+{
+    OverlayWidget* self;
+
+    QVBoxLayout* layout;
+
+    int xOffset;
+    int yOffset;
+
+    QPushButton* button{nullptr};
+    QLabel* label{nullptr};
+
+    bool hovered{false};
+    bool selected{false};
+
+    Options options;
+    QColor colour;
+    QColor hoveredColour{Qt::white};
+    QColor selectedColour{Qt::white};
+
+    Private(OverlayWidget* self, const Options& options)
+        : self{self}
+        , layout{new QVBoxLayout(self)}
+        , options{options}
+    {
+        layout->setContentsMargins(5, 5, 5, 5);
+        layout->setAlignment(Qt::AlignCenter);
+
+        hoveredColour.setAlpha(40);
+        selectedColour.setAlpha(100);
+    }
+
+    void handleParentChanged()
+    {
+        if(!self->parent()) {
+            return;
+        }
+
+        xOffset = self->parentWidget()->width() - self->x();
+        yOffset = self->parentWidget()->height() - self->y();
+
+        self->parent()->installEventFilter(self);
+        self->raise();
+    }
+};
+
 OverlayWidget::OverlayWidget(QWidget* parent)
     : OverlayWidget{None, parent}
 { }
 
 OverlayWidget::OverlayWidget(const Options& options, QWidget* parent)
     : QWidget{parent}
-    , m_options{options}
+    , p{std::make_unique<Private>(this, options)}
 {
     setAttribute(Qt::WA_NoSystemBackground);
 
-    auto* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setAlignment(Qt::AlignCenter);
-
-    if(m_options & Option::Label) {
-        m_text = new QLabel(this);
-        m_text->setContentsMargins(5, 5, 5, 5);
-        m_text->setWordWrap(true);
-        m_text->setAutoFillBackground(true);
-        layout->addWidget(m_text);
+    if(options & Option::Label) {
+        p->label = new QLabel(this);
+        p->label->setContentsMargins(5, 5, 5, 5);
+        p->label->setWordWrap(true);
+        p->label->setAlignment(Qt::AlignCenter);
+        p->label->setAutoFillBackground(true);
+        p->layout->addWidget(p->label);
     }
 
-    if(m_options & Option::Button) {
-        m_button = new QPushButton(this);
-        m_button->setAutoFillBackground(true);
-        QObject::connect(m_button, &QPushButton::clicked, this, &OverlayWidget::buttonClicked);
-        layout->addWidget(m_button);
+    if(options & Option::Button) {
+        p->button = new QPushButton(this);
+        p->button->setAutoFillBackground(true);
+        p->layout->addWidget(p->button);
+    }
+
+    if(p->options & Option::Resize || p->options & Option::Static) {
+        p->handleParentChanged();
     }
 
     resetColour();
     hide();
 }
 
-void OverlayWidget::setText(const QString& text)
+void OverlayWidget::setOption(Option option, bool on)
 {
-    if(m_text) {
-        m_text->setText(text);
+    if(on) {
+        p->options |= option;
+    }
+    else {
+        p->options &= ~option;
     }
 }
 
-void OverlayWidget::setButtonText(const QString& text)
+QPushButton* OverlayWidget::button() const
 {
-    if(m_button) {
-        m_button->setText(text);
-    }
+    return p->button;
 }
 
-void OverlayWidget::setButtonEnabled(bool enabled)
+QLabel* OverlayWidget::label() const
 {
-    m_button->setEnabled(enabled);
+    return p->label;
+}
+
+void OverlayWidget::connectOverlay(OverlayWidget* other)
+{
+    if(other == this) {
+        return;
+    }
+
+    static auto connectOverlays = [](OverlayWidget* first, OverlayWidget* second) {
+        QObject::connect(first, &OverlayWidget::clicked, second, [second]() {
+            second->p->selected = true;
+            second->update();
+        });
+        QObject::connect(first, &OverlayWidget::entered, second, [second]() {
+            second->p->hovered = true;
+            second->update();
+        });
+        QObject::connect(first, &OverlayWidget::left, second, [second]() {
+            second->p->hovered = false;
+            second->update();
+        });
+    };
+
+    connectOverlays(this, other);
+    connectOverlays(other, this);
+}
+
+void OverlayWidget::disconnectOverlay(OverlayWidget* other)
+{
+    if(other == this) {
+        return;
+    }
+
+    disconnect(other);
+    other->disconnect(this);
+}
+
+void OverlayWidget::addWidget(QWidget* widget)
+{
+    widget->setParent(this);
+    widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    p->layout->addWidget(widget);
+
+    adjustSize();
+}
+
+QColor OverlayWidget::colour() const
+{
+    return p->colour;
 }
 
 void OverlayWidget::setColour(const QColor& colour)
 {
-    m_colour = colour;
+    p->colour = colour;
     update();
 }
 
@@ -89,14 +186,114 @@ void OverlayWidget::resetColour()
 {
     static QColor colour = QApplication::palette().color(QPalette::Highlight);
     colour.setAlpha(80);
-    m_colour = colour;
+    p->colour = colour;
 }
 
-void OverlayWidget::paintEvent(QPaintEvent* /*event*/)
+void OverlayWidget::select()
 {
+    p->selected = true;
+    update();
+}
+
+void OverlayWidget::deselect()
+{
+    p->selected = false;
+    update();
+}
+
+bool OverlayWidget::event(QEvent* event)
+{
+    if(event->type() == QEvent::ParentAboutToChange) {
+        if(parent()) {
+            parent()->removeEventFilter(this);
+        }
+    }
+    else if(event->type() == QEvent::ParentChange) {
+        p->handleParentChanged();
+    }
+
+    return QWidget::event(event);
+}
+
+bool OverlayWidget::eventFilter(QObject* watched, QEvent* event)
+{
+    if(watched != parent()) {
+        return QWidget::eventFilter(watched, event);
+    }
+
+    if(event->type() == QEvent::Resize) {
+        if(auto* resizeEvent = static_cast<QResizeEvent*>(event)) {
+            if(p->options & Option::Resize) {
+                resize(resizeEvent->size());
+            }
+        }
+        if(p->options & Option::Static) {
+            move(parentWidget()->width() - p->xOffset, parentWidget()->height() - p->yOffset);
+        }
+    }
+    else if(event->type() == QEvent::ChildAdded) {
+        raise();
+    }
+
+    event->accept();
+    return true;
+}
+
+void OverlayWidget::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
+
+    p->xOffset = parentWidget()->width() - x();
+    p->yOffset = parentWidget()->height() - y();
+}
+
+void OverlayWidget::enterEvent(QEnterEvent* event)
+{
+    QWidget::enterEvent(event);
+
+    if(p->options & Selectable) {
+        p->hovered = true;
+        update();
+        emit entered();
+    }
+}
+
+void OverlayWidget::leaveEvent(QEvent* event)
+{
+    QWidget::leaveEvent(event);
+
+    if(p->options & Selectable) {
+        p->hovered = false;
+        update();
+        emit left();
+    }
+}
+
+void OverlayWidget::mousePressEvent(QMouseEvent* event)
+{
+    QWidget::mousePressEvent(event);
+
+    if(p->options & Selectable) {
+        p->selected = true;
+        update();
+        emit clicked();
+    }
+}
+
+void OverlayWidget::paintEvent(QPaintEvent* event)
+{
+    QWidget::paintEvent(event);
+
     QPainter painter{this};
 
-    painter.fillRect(rect(), m_colour);
+    painter.fillRect(rect(), p->colour);
+
+    if(p->options & Selectable) {
+        painter.fillRect(rect(), p->selected ? p->selectedColour : p->hovered ? p->hoveredColour : p->colour);
+    }
+    else {
+        painter.fillRect(rect(), p->colour);
+    }
 }
 } // namespace Fooyin
 

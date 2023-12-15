@@ -17,7 +17,7 @@
  *
  */
 
-#include "widgetfilter.h"
+#include <gui/widgetfilter.h>
 
 #include <gui/fywidget.h>
 #include <utils/widgets/overlaywidget.h>
@@ -30,16 +30,30 @@
 namespace Fooyin {
 WidgetFilter::WidgetFilter(QObject* parent)
     : QObject{parent}
+    , m_active{false}
+    , m_overOverlay{false}
 { }
 
 void WidgetFilter::start()
 {
+    if(m_active) {
+        return;
+    }
+
+    m_active = true;
     qApp->installEventFilter(this);
+    qApp->setOverrideCursor(Qt::ArrowCursor);
 }
 
 void WidgetFilter::stop()
 {
+    if(!m_active) {
+        return;
+    }
+
+    m_active = false;
     qApp->removeEventFilter(this);
+    qApp->restoreOverrideCursor();
 }
 
 bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
@@ -48,10 +62,12 @@ bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
         const auto* mouseEvent = static_cast<QMouseEvent*>(event);
 
         if(!mouseEvent) {
+            m_overOverlay = false;
             return false;
         }
 
         if(event->type() == QEvent::MouseButtonPress && mouseEvent->button() != Qt::LeftButton) {
+            m_overOverlay = false;
             emit filterFinished();
             return false;
         }
@@ -59,7 +75,18 @@ bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
         const QPoint pos = mouseEvent->globalPosition().toPoint();
         auto* widget     = qApp->widgetAt(pos);
 
-        return (widget && (qobject_cast<OverlayWidget*>(widget) || qobject_cast<QPushButton*>(widget)));
+        if(widget && (qobject_cast<OverlayWidget*>(widget) || qobject_cast<QPushButton*>(widget))) {
+            m_overOverlay = true;
+            return true;
+        }
+
+        if(m_overOverlay) {
+            m_overOverlay = false;
+            return true;
+        }
+
+        m_overOverlay = false;
+        return false;
     };
 
     switch(event->type()) {
@@ -77,6 +104,7 @@ bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
             event->accept();
             return true;
         }
+        case(QEvent::MouseButtonDblClick):
         case(QEvent::Wheel): {
             event->accept();
             return true;
@@ -88,4 +116,4 @@ bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
 }
 } // namespace Fooyin
 
-#include "moc_widgetfilter.cpp"
+#include "gui/moc_widgetfilter.cpp"

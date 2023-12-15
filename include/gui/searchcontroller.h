@@ -26,7 +26,6 @@
 #include <QObject>
 
 namespace Fooyin {
-class FyWidget;
 class EditableLayout;
 
 class FYGUI_EXPORT SearchController : public QObject
