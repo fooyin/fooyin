@@ -19,37 +19,23 @@
 
 #pragma once
 
-#include <core/trackfwd.h>
-
 #include <QObject>
 
 namespace Fooyin {
-class SettingsManager;
-class MusicLibrary;
-class TrackSelectionController;
+class EditableLayout;
 
 namespace Filters {
-class FilterColumnRegistry;
-class FilterWidget;
+class FilterController;
 
 class FilterManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit FilterManager(MusicLibrary* library, TrackSelectionController* trackSelection, SettingsManager* settings,
-                           QObject* parent = nullptr);
+    explicit FilterManager(FilterController* controller, EditableLayout* editableLayout, QObject* parent = nullptr);
     ~FilterManager() override;
 
-    void shutdown();
-
-    FilterWidget* createFilter();
-
-    [[nodiscard]] FilterColumnRegistry* columnRegistry() const;
-
-signals:
-    void tracksRemoved(const TrackList& tracks);
-    void tracksUpdated(const TrackList& tracks);
+    void setupWidgetConnections();
 
 private:
     struct Private;

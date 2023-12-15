@@ -29,17 +29,26 @@ class SettingsManager;
 class AutoHeaderView;
 
 namespace Filters {
-struct LibraryFilter;
+class FilterColumnRegistry;
 
 class FilterWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit FilterWidget(SettingsManager* settings, QWidget* parent = nullptr);
+    explicit FilterWidget(FilterColumnRegistry* columnRegistry, SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
-    void changeFilter(const LibraryFilter& filter);
+    [[nodiscard]] Id group() const;
+    [[nodiscard]] int index() const;
+    [[nodiscard]] bool multipleColumns() const;
+    [[nodiscard]] TrackList tracks() const;
+
+    void setGroup(const Id& group);
+    void setIndex(int index);
+    void setTracks(const TrackList& tracks);
+    void clearTracks();
+
     void reset(const TrackList& tracks);
 
     void setScrollbarEnabled(bool enabled);
@@ -60,12 +69,13 @@ signals:
     void doubleClicked(const QString& playlistName);
     void middleClicked(const QString& playlistName);
 
-    void selectionChanged(const LibraryFilter& filter, const QString& playlistName);
-    void filterDeleted(const LibraryFilter& filter);
-    void requestColumnsChange(const LibraryFilter& filter, const ColumnIds& columns);
-    void requestHeaderMenu(const LibraryFilter& filter, AutoHeaderView* header, const QPoint& pos);
-    void requestContextMenu(const LibraryFilter& filter, const QPoint& pos);
-    void requestSearch(const LibraryFilter& filter, const QString& search);
+    void filterDeleted();
+    void filterUpdated();
+    void selectionChanged(const QString& playlistName);
+    void requestHeaderMenu(AutoHeaderView* header, const QPoint& pos);
+    void requestContextMenu(const QPoint& pos);
+    void requestEditConnections();
+    void requestSearch(const QString& search);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

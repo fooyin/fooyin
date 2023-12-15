@@ -19,12 +19,13 @@
 
 #include "filtersplugin.h"
 
-#include "filtermanager.h"
+#include "filtercontroller.h"
 #include "filterwidget.h"
 #include "settings/filterscolumnpage.h"
 #include "settings/filtersettings.h"
 #include "settings/filtersgeneralpage.h"
 
+#include <gui/editablelayout.h>
 #include <gui/layoutprovider.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/searchcontroller.h>
@@ -42,7 +43,7 @@ struct FiltersPlugin::Private
     WidgetFactory* factory;
     TrackSelectionController* trackSelection;
 
-    FilterManager* filterManager;
+    FilterController* filterController;
     std::unique_ptr<FiltersSettings> filterSettings;
 
     std::unique_ptr<FiltersGeneralPage> generalPage;
@@ -107,21 +108,22 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
     p->factory        = context.widgetFactory;
     p->trackSelection = context.trackSelection;
 
-    p->filterManager = new FilterManager(p->library, p->trackSelection, p->settings, this);
+    p->filterController
+        = new FilterController(p->library, p->trackSelection, context.editableLayout, p->settings, this);
 
     p->factory->registerClass<FilterWidget>(
-        QStringLiteral("LibraryFilter"), [this]() { return p->filterManager->createFilter(); }, "Library Filter");
+        QStringLiteral("LibraryFilter"), [this]() { return p->filterController->createFilter(); }, "Library Filter");
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
     p->columnsPage
-        = std::make_unique<FiltersColumnPage>(p->actionManager, p->filterManager->columnRegistry(), p->settings);
+        = std::make_unique<FiltersColumnPage>(p->actionManager, p->filterController->columnRegistry(), p->settings);
 
     p->registerLayouts();
 }
 
 void FiltersPlugin::shutdown()
 {
-    p->filterManager->shutdown();
+    p->filterController->shutdown();
 }
 } // namespace Fooyin::Filters
 

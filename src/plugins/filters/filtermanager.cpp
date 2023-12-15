@@ -19,431 +19,352 @@
 
 #include "filtermanager.h"
 
-#include "filtercolumnregistry.h"
-#include "filterstore.h"
+#include "filtercontroller.h"
 #include "filterwidget.h"
 
 #include <core/library/musiclibrary.h>
-#include <core/library/trackfilter.h>
-#include <core/library/tracksort.h>
-#include <gui/trackselectioncontroller.h>
+#include <gui/editablelayout.h>
+#include <gui/widgetfilter.h>
 #include <utils/async.h>
-#include <utils/widgets/autoheaderview.h>
+#include <utils/crypto.h>
+#include <utils/widgets/overlaywidget.h>
 
-#include <QActionGroup>
-#include <QMenu>
+#include <QGraphicsDropShadowEffect>
+#include <QLabel>
+#include <QPointer>
+#include <QPushButton>
 
-#include <QCoroCore>
+#include <ranges>
 
-#include <set>
+namespace {
+QColor generateRandomUniqueColor(const Fooyin::Id& id)
+{
+    auto uniqueColour = QColor::fromRgb(static_cast<QRgb>(id.id()));
+    uniqueColour.setAlpha(80);
+    return uniqueColour;
+}
+
+void updateOverlayLabel(Fooyin::Filters::FilterWidget* filter, Fooyin::OverlayWidget* overlay)
+{
+    if(!filter || !overlay) {
+        return;
+    }
+
+    overlay->label()->setText(QString::number(filter->index() + 1));
+}
+} // namespace
 
 namespace Fooyin::Filters {
 struct FilterManager::Private
 {
     FilterManager* self;
 
-    MusicLibrary* library;
-    TrackSelectionController* trackSelection;
-    SettingsManager* settings;
+    FilterController* controller;
+    EditableLayout* editableLayout;
+    QPointer<OverlayWidget> controlDialog;
+    std::unordered_map<Id, OverlayWidget*, Id::IdHash> overlays;
 
-    std::map<int, FilterWidget*> filterWidgets;
+    WidgetFilter* filter;
 
-    TrackAction doubleClickAction;
-    TrackAction middleClickAction;
+    Id selectedGroup;
+    QColor ungroupedColour{Qt::red};
 
-    FilterColumnRegistry columnRegistry;
-    TrackList filteredTracks;
-    FilterStore filterStore;
-    QString searchFilter;
+    QPointer<QPushButton> addGroup;
+    QPointer<QPushButton> clearGroups;
+    QPointer<QPushButton> goBack;
+    QPointer<QPushButton> finishEditing;
 
-    Private(FilterManager* self, MusicLibrary* library, TrackSelectionController* trackSelection,
-            SettingsManager* settings)
+    explicit Private(FilterManager* self, FilterController* controller, EditableLayout* editableLayout)
         : self{self}
-        , library{library}
-        , trackSelection{trackSelection}
-        , settings{settings}
-        , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterDoubleClick>())}
-        , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterMiddleClick>())}
-        , columnRegistry{settings}
+        , controller{controller}
+        , editableLayout{editableLayout}
+        , filter{new WidgetFilter(self)}
     {
-        columnRegistry.loadItems();
-    }
+        ungroupedColour.setAlpha(20);
 
-    void handleAction(const TrackAction& action, const QString& playlistName) const
-    {
-        const bool autoSwitch = settings->value<Settings::Filters::FilterAutoSwitch>();
-        trackSelection->executeAction(action, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None, playlistName);
-    }
-
-    void resetFiltersAfterIndex(int resetIndex)
-    {
-        for(const auto& [index, filterWidget] : filterWidgets) {
-            if(index > resetIndex) {
-                filterWidget->reset(tracks());
+        QObject::connect(filter, &WidgetFilter::filterFinished, self, [this]() {
+            if(goBack && !goBack->isHidden()) {
+                QMetaObject::invokeMethod(goBack, "clicked", Q_ARG(bool, false));
             }
+            else {
+                QMetaObject::invokeMethod(finishEditing, "clicked", Q_ARG(bool, false));
+            }
+        });
+    }
+
+    void enterGroupMode()
+    {
+        clearGroups->setText(tr("Clear Group"));
+
+        addGroup->hide();
+        finishEditing->hide();
+        goBack->show();
+    }
+
+    void exitGroupMode()
+    {
+        selectedGroup = {};
+        clearGroups->setText(tr("Clear Groups"));
+
+        goBack->hide();
+        addGroup->show();
+        finishEditing->show();
+
+        controlDialog->adjustSize();
+    }
+
+    void clearOverlays()
+    {
+        for(auto* overlay : overlays | std::views::values) {
+            overlay->deleteLater();
+        }
+        overlays.clear();
+    }
+
+    void hideAndDeselectOverlay(FilterWidget* filter) const
+    {
+        const Id id = filter->id();
+        if(overlays.contains(id)) {
+            auto* overlay = overlays.at(id);
+            overlay->button()->hide();
+            overlay->deselect();
+            overlay->setOption(OverlayWidget::Selectable, !controller->filterIsUngrouped(id));
         }
     }
 
-    void deleteFilter(const LibraryFilter& filter)
+    void updateDialog() const
     {
-        filterWidgets.erase(filter.index);
-        filterStore.removeFilter(filter.index);
-        getFilteredTracks();
-        resetFiltersAfterIndex(filter.index - 1);
+        addGroup->setEnabled(controller->haveUngroupedFilters());
+        clearGroups->setEnabled(!controller->filterGroups().empty());
     }
 
-    void columnChanged(const Filters::FilterColumn& column)
+    void addOrRemoveFilter(FilterWidget* widget, const QColor& colour) const
     {
-        const FilterList filters = filterStore.filters();
-        std::set<int> filtersToReset;
-        int resetIndex{-1};
+        const Id id = widget->id();
 
-        for(const LibraryFilter& filter : filters) {
-            if(filter.hasColumn(column.id)) {
-                LibraryFilter updatedFilter{filter};
-                std::ranges::replace_if(
-                    updatedFilter.columns,
-                    [&column](const FilterColumn& filterCol) { return filterCol.id == column.id; }, column);
-                filterStore.updateFilter(updatedFilter);
-
-                filtersToReset.emplace(filter.index);
-                resetIndex = resetIndex >= 0 ? std::min(resetIndex, filter.index) : filter.index;
-            }
+        if(!overlays.contains(id)) {
+            return;
         }
 
-        for(const auto& [index, filterWidget] : filterWidgets) {
-            if(filtersToReset.contains(index)) {
-                const LibraryFilter filter = filterStore.filterByIndex(index);
-                filterWidget->changeFilter(filter);
-            }
-            if(index >= resetIndex) {
-                filterWidget->reset(tracks());
-            }
-        }
-    }
+        auto* overlay = overlays.at(id);
 
-    QCoro::Task<void> selectionChanged(LibraryFilter filter, QString playlistName)
-    {
-        LibraryFilter updatedFilter{filter};
+        const Id groupId         = widget->group();
+        const bool addingToGroup = controller->filterIsUngrouped(id);
 
-        TrackList sortedTracks
-            = co_await Utils::asyncExec([&updatedFilter]() { return Sorting::sortTracks(updatedFilter.tracks); });
+        if(controller->removeFilter(widget)) {
+            if(addingToGroup) {
+                controller->addFilterToGroup(widget, selectedGroup);
 
-        trackSelection->changeSelectedTracks(sortedTracks, playlistName);
-        updatedFilter.tracks = sortedTracks;
+                overlay->label()->setText(QString::number(widget->index() + 1));
+                overlay->button()->setText(tr("Remove"));
+                overlay->setColour(colour);
+                overlay->select();
 
-        if(settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
-            const QString autoPlaylist = settings->value<Settings::Filters::FilterAutoPlaylist>();
-            const bool autoSwitch      = settings->value<Settings::Filters::FilterAutoSwitch>();
-
-            PlaylistAction::ActionOptions options = PlaylistAction::KeepActive;
-            if(autoSwitch) {
-                options |= PlaylistAction::Switch;
-            }
-            trackSelection->executeAction(TrackAction::SendNewPlaylist, options, autoPlaylist);
-        }
-
-        filterStore.updateFilter(updatedFilter);
-
-        const int resetIndex = filter.index;
-        filterStore.clearActiveFilters(resetIndex);
-        getFilteredTracks();
-
-        for(const auto& [index, filterWidget] : filterWidgets) {
-            if(index > resetIndex) {
-                filterWidget->reset(tracks());
-            }
-        }
-    }
-
-    void updateFilter(const LibraryFilter& filter)
-    {
-        filterStore.updateFilter(filter);
-
-        const int resetIndex = filter.index - 1;
-
-        filterStore.clearActiveFilters(resetIndex);
-        getFilteredTracks();
-
-        for(const auto& [index, filterWidget] : filterWidgets) {
-            if(index == filter.index) {
-                filterWidget->changeFilter(filter);
-            }
-            if(index > resetIndex) {
-                filterWidget->reset(tracks());
-            }
-        }
-    }
-
-    void enableMultiColumns(const LibraryFilter& filter, bool enabled)
-    {
-        LibraryFilter updatedFilter{filter};
-        updatedFilter.multipleColumns = enabled;
-
-        for(const auto& [index, filterWidget] : filterWidgets) {
-            if(index == updatedFilter.index) {
-                filterWidget->changeFilter(updatedFilter);
-            }
-        }
-    }
-
-    void addFilterColumn(const LibraryFilter& filter, int column)
-    {
-        const FilterColumn filterColumn = columnRegistry.itemById(column);
-
-        LibraryFilter updatedFilter{filter};
-        updatedFilter.columns.push_back(filterColumn);
-
-        updateFilter(updatedFilter);
-    }
-
-    void changeFilterColumn(const LibraryFilter& filter, int column)
-    {
-        const FilterColumn filterColumn = columnRegistry.itemById(column);
-
-        LibraryFilter updatedFilter{filter};
-        updatedFilter.columns = {filterColumn};
-
-        updateFilter(updatedFilter);
-    }
-
-    void removeFilterColumn(const LibraryFilter& filter, int column)
-    {
-        LibraryFilter updatedFilter{filter};
-        std::erase_if(updatedFilter.columns,
-                      [column](const FilterColumn& filterCol) { return filterCol.id == column; });
-
-        updateFilter(updatedFilter);
-    }
-
-    void changeFilterColumns(const LibraryFilter& filter, const ColumnIds& columns)
-    {
-        FilterColumnList filterColumns;
-        std::ranges::transform(columns, std::back_inserter(filterColumns),
-                               [this](int column) { return columnRegistry.itemById(column); });
-
-        LibraryFilter updatedFilter{filter};
-        updatedFilter.columns         = filterColumns;
-        updatedFilter.multipleColumns = filterColumns.size() > 1;
-
-        updateFilter(updatedFilter);
-    }
-
-    void filterHeaderMenu(const LibraryFilter& filter, AutoHeaderView* header, const QPoint& pos)
-    {
-        auto* menu = new QMenu();
-        menu->setAttribute(Qt::WA_DeleteOnClose);
-
-        auto* filterList = new QActionGroup{menu};
-        filterList->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
-
-        for(const auto& [filterIndex, column] : columnRegistry.items()) {
-            auto* columnAction = new QAction(column.name, menu);
-            columnAction->setData(column.id);
-            columnAction->setCheckable(true);
-            columnAction->setChecked(filter.hasColumn(column.id));
-            columnAction->setEnabled(!filter.hasColumn(column.id) || filter.columns.size() > 1);
-            menu->addAction(columnAction);
-            filterList->addAction(columnAction);
-        }
-
-        menu->setDefaultAction(filterList->checkedAction());
-        QObject::connect(filterList, &QActionGroup::triggered, self, [this, &filter](QAction* action) {
-            if(action->isChecked()) {
-                if(filter.multipleColumns) {
-                    addFilterColumn(filter, action->data().toInt());
-                }
-                else {
-                    changeFilterColumn(filter, action->data().toInt());
+                if(const auto group = controller->groupById(selectedGroup)) {
+                    for(FilterWidget* filter : group.value().filters) {
+                        if(overlays.contains(filter->id())) {
+                            overlays.at(filter->id())->connectOverlay(overlay);
+                        }
+                    }
                 }
             }
             else {
-                removeFilterColumn(filter, action->data().toInt());
+                controller->addFilterToGroup(widget, {});
+                overlay->label()->setText(tr("Ungrouped"));
+                overlay->button()->setText(tr("Add"));
+                overlay->setColour(ungroupedColour);
+                overlay->setOption(OverlayWidget::Selectable, false);
+
+                if(const auto group = controller->groupById(groupId)) {
+                    for(FilterWidget* filter : group.value().filters) {
+                        if(overlays.contains(filter->id())) {
+                            auto* filterOverlay = overlays.at(filter->id());
+                            overlay->disconnectOverlay(filterOverlay);
+                            updateOverlayLabel(filter, filterOverlay);
+                        }
+                    }
+                }
+            }
+        }
+
+        updateDialog();
+    }
+
+    void setupOverlayButtons(const Id& group, const QColor& colour)
+    {
+        auto setupOverlayButtons = [this, &colour](const Id& id, FilterWidget* widget) {
+            if(!overlays.contains(id)) {
+                return;
+            }
+
+            OverlayWidget* overlay = overlays.at(id);
+
+            overlay->button()->setText(tr(controller->filterIsUngrouped(id) ? "Add" : "Remove"));
+            overlay->button()->show();
+
+            overlay->button()->disconnect(self);
+            QObject::connect(overlay->button(), &QPushButton::clicked, self,
+                             [this, widget, colour]() { addOrRemoveFilter(widget, colour); });
+        };
+
+        if(group.isValid()) {
+            const auto groups        = controller->filterGroups();
+            const auto& groupWidgets = groups.at(group).filters;
+
+            for(FilterWidget* widget : groupWidgets) {
+                setupOverlayButtons(widget->id(), widget);
+            }
+        }
+
+        const auto ungrouped = controller->ungroupedFilters();
+        for(const auto& [id, widget] : ungrouped) {
+            setupOverlayButtons(id, widget);
+        }
+    }
+
+    OverlayWidget* setupWidgetOverlay(FilterWidget* widget, const QColor& colour)
+    {
+        const Id widgetId           = widget->id();
+        constexpr auto overlayFlags = OverlayWidget::Label | OverlayWidget::Button | OverlayWidget::Resize;
+
+        auto* overlay = overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
+
+        overlay->button()->hide();
+        overlay->setColour(colour);
+
+        if(widget->group().isValid()) {
+            overlay->label()->setText(QString::number(widget->index() + 1));
+            overlay->setOption(OverlayWidget::Selectable);
+        }
+        else {
+            overlay->label()->setText(tr("Ungrouped"));
+        }
+
+        QObject::connect(overlay, &OverlayWidget::clicked, self, [this, widget, overlay]() {
+            selectedGroup = widget->group();
+            setupOverlayButtons(selectedGroup, overlay->colour());
+            enterGroupMode();
+        });
+
+        overlay->resize(widget->size());
+        overlay->show();
+
+        return overlay;
+    }
+
+    void setupOverlays()
+    {
+        const auto groups = controller->filterGroups();
+
+        for(const auto& group : groups | std::views::values) {
+            if(!group.filters.empty()) {
+                const QColor groupColour = generateRandomUniqueColor(group.id);
+                std::vector<OverlayWidget*> groupOverlays;
+
+                std::ranges::transform(
+                    group.filters, std::back_inserter(groupOverlays),
+                    [this, &groupColour](FilterWidget* widget) { return setupWidgetOverlay(widget, groupColour); });
+
+                for(auto it1 = groupOverlays.begin(); it1 != groupOverlays.end(); ++it1) {
+                    for(auto it2 = std::next(it1); it2 != groupOverlays.end(); ++it2) {
+                        (*it1)->connectOverlay(*it2);
+                    }
+                }
+            }
+        }
+
+        const auto ungrouped = controller->ungroupedFilters();
+
+        std::ranges::for_each(ungrouped | std::views::values,
+                              [this](FilterWidget* widget) { setupWidgetOverlay(widget, ungroupedColour); });
+    }
+
+    void createControlDialog()
+    {
+        controlDialog = new OverlayWidget(OverlayWidget::Static, editableLayout);
+
+        auto* effect = new QGraphicsDropShadowEffect();
+        effect->setBlurRadius(30);
+        effect->setColor(Qt::black);
+        effect->setOffset(1, 1);
+
+        controlDialog->setGraphicsEffect(effect);
+
+        addGroup = new QPushButton(tr("Add New Group"), controlDialog);
+        controlDialog->addWidget(addGroup);
+        QObject::connect(addGroup, &QPushButton::clicked, self, [this]() {
+            const auto newGroup = Id{Utils::generateUniqueHash()};
+            selectedGroup       = newGroup;
+            setupOverlayButtons({}, generateRandomUniqueColor(newGroup));
+            enterGroupMode();
+        });
+
+        clearGroups = new QPushButton(tr("Clear Groups"), controlDialog);
+        controlDialog->addWidget(clearGroups);
+        QObject::connect(clearGroups, &QPushButton::clicked, self, [this]() {
+            const auto groups = controller->filterGroups();
+
+            if(selectedGroup.isValid()) {
+                const auto filters = groups.at(selectedGroup).filters;
+                std::ranges::for_each(filters,
+                                      [this](FilterWidget* widget) { addOrRemoveFilter(widget, ungroupedColour); });
+            }
+            else {
+                for(const auto& group : groups | std::views::values) {
+                    const auto filters = group.filters;
+                    std::ranges::for_each(filters,
+                                          [this](FilterWidget* widget) { addOrRemoveFilter(widget, ungroupedColour); });
+                }
             }
         });
 
-        menu->addSeparator();
-        auto* multiColAction = new QAction(tr("Multiple Columns"), menu);
-        multiColAction->setCheckable(true);
-        multiColAction->setChecked(filter.multipleColumns);
-        multiColAction->setEnabled(!(filter.columns.size() > 1));
-        QObject::connect(multiColAction, &QAction::triggered, self,
-                         [this, &filter](bool checked) { enableMultiColumns(filter, checked); });
-        menu->addAction(multiColAction);
-
-        menu->addSeparator();
-        header->addHeaderContextMenu(menu, pos);
-
-        menu->popup(pos);
-    }
-
-    void filterContextMenu(const LibraryFilter& /*filter*/, const QPoint& pos) const
-    {
-        auto* menu = new QMenu();
-        menu->setAttribute(Qt::WA_DeleteOnClose);
-
-        trackSelection->addTrackPlaylistContextMenu(menu);
-        trackSelection->addTrackContextMenu(menu);
-
-        menu->popup(pos);
-    }
-
-    [[nodiscard]] bool hasTracks() const
-    {
-        return !filteredTracks.empty() || !searchFilter.isEmpty() || filterStore.hasActiveFilters();
-    }
-
-    [[nodiscard]] TrackList tracks() const
-    {
-        return hasTracks() ? filteredTracks : library->tracks();
-    }
-
-    void getFilteredTracks()
-    {
-        filteredTracks.clear();
-
-        for(auto& filter : filterStore.activeFilters()) {
-            if(filteredTracks.empty()) {
-                std::ranges::copy(filter.tracks, std::back_inserter(filteredTracks));
+        goBack = new QPushButton(tr("Back"), controlDialog);
+        controlDialog->addWidget(goBack);
+        goBack->hide();
+        QObject::connect(goBack, &QPushButton::clicked, self, [this]() {
+            const auto groups = controller->filterGroups();
+            if(selectedGroup.isValid() && groups.contains(selectedGroup)) {
+                const auto& group = groups.at(selectedGroup);
+                std::ranges::for_each(group.filters, [this](FilterWidget* filter) { hideAndDeselectOverlay(filter); });
             }
-            else {
-                filteredTracks = Utils::intersection<Track, Track::TrackHash>(filter.tracks, filteredTracks);
+
+            const auto ungrouped = controller->ungroupedFilters();
+            for(auto* filter : ungrouped | std::views::values) {
+                hideAndDeselectOverlay(filter);
             }
-        }
-    }
+            exitGroupMode();
+        });
 
-    void removeLibraryTracks(int libraryId)
-    {
-        std::vector<LibraryFilter> filtersToUpdate;
+        finishEditing = new QPushButton(tr("Finish"), controlDialog);
+        controlDialog->addWidget(finishEditing);
+        QObject::connect(finishEditing, &QPushButton::clicked, self, [this]() {
+            filter->stop();
+            controlDialog->deleteLater();
+            clearOverlays();
+        });
 
-        for(const auto& filter : filterStore.activeFilters()) {
-            LibraryFilter updatedFilter{filter};
-            TrackList cleanedTracks;
-            std::ranges::copy_if(std::as_const(filter.tracks), std::back_inserter(cleanedTracks),
-                                 [libraryId](const Track& track) { return track.libraryId() != libraryId; });
-            updatedFilter.tracks = cleanedTracks;
-            filtersToUpdate.push_back(updatedFilter);
-        }
-
-        std::ranges::for_each(filtersToUpdate, [this](const auto& filter) { filterStore.updateFilter(filter); });
-    }
-
-    void handleTracksAdded(const TrackList& tracks)
-    {
-        bool firstActive{false};
-        for(const auto& [index, filter] : filterWidgets) {
-            if(firstActive) {
-                break;
-            }
-            if(filterStore.filterIsActive(index)) {
-                firstActive = true;
-            }
-            filter->tracksAdded(tracks);
-        }
-    }
-
-    QCoro::Task<void> searchChanged(LibraryFilter filter, QString search)
-    {
-        const bool reset = searchFilter.length() > search.length();
-        searchFilter     = search;
-
-        TrackList tracksToFilter = !reset && !filter.tracks.empty() ? filter.tracks : library->tracks();
-
-        const auto tracks = co_await Utils::asyncExec(
-            [&search, &tracksToFilter]() { return Filter::filterTracks(tracksToFilter, search); });
-
-        if(filterWidgets.contains(filter.index)) {
-            if(auto* widget = filterWidgets.at(filter.index)) {
-                widget->reset(tracks);
-            }
-        }
+        controlDialog->move(editableLayout->width() - 160, editableLayout->height() - 160);
     }
 };
 
-FilterManager::FilterManager(MusicLibrary* library, TrackSelectionController* trackSelection, SettingsManager* settings,
-                             QObject* parent)
+FilterManager::FilterManager(FilterController* controller, EditableLayout* editableLayout, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, library, trackSelection, settings)}
-{
-    QObject::connect(p->library, &MusicLibrary::tracksAdded, this,
-                     [this](const TrackList& tracks) { p->handleTracksAdded(tracks); });
-    QObject::connect(p->library, &MusicLibrary::tracksScanned, this,
-                     [this](const TrackList& tracks) { p->handleTracksAdded(tracks); });
-    QObject::connect(p->library, &MusicLibrary::tracksUpdated, this, &FilterManager::tracksUpdated);
-    QObject::connect(p->library, &MusicLibrary::tracksDeleted, this, &FilterManager::tracksRemoved);
-
-    const auto tracksChanged = [this]() {
-        p->getFilteredTracks();
-        p->resetFiltersAfterIndex(-1);
-    };
-
-    QObject::connect(p->library, &MusicLibrary::tracksLoaded, this, tracksChanged);
-    QObject::connect(p->library, &MusicLibrary::tracksSorted, this, tracksChanged);
-    QObject::connect(p->library, &MusicLibrary::libraryChanged, this, tracksChanged);
-    QObject::connect(p->library, &MusicLibrary::libraryRemoved, this, [tracksChanged, this](int libraryId) {
-        p->removeLibraryTracks(libraryId);
-        tracksChanged();
-    });
-
-    QObject::connect(&p->columnRegistry, &FilterColumnRegistry::columnChanged, this,
-                     [this](const Filters::FilterColumn& column) { p->columnChanged(column); });
-
-    settings->subscribe<Settings::Filters::FilterDoubleClick>(
-        this, [this](int action) { p->doubleClickAction = static_cast<TrackAction>(action); });
-    settings->subscribe<Settings::Filters::FilterMiddleClick>(
-        this, [this](int action) { p->middleClickAction = static_cast<TrackAction>(action); });
-}
+    , p{std::make_unique<Private>(this, controller, editableLayout)}
+{ }
 
 FilterManager::~FilterManager() = default;
 
-FilterWidget* FilterManager::createFilter()
+void FilterManager::setupWidgetConnections()
 {
-    auto* filter = new FilterWidget(p->settings);
+    p->filter->start();
 
-    const LibraryFilter libFilter = p->filterStore.addFilter({p->columnRegistry.itemByName(QStringLiteral(""))});
+    p->clearOverlays();
+    p->setupOverlays();
 
-    filter->changeFilter(libFilter);
+    p->createControlDialog();
+    p->updateDialog();
 
-    p->filterWidgets.emplace(libFilter.index, filter);
-
-    QObject::connect(filter, &FilterWidget::requestSearch, this,
-                     [this](const LibraryFilter& filter, const QString& search) { p->searchChanged(filter, search); });
-    QObject::connect(filter, &FilterWidget::doubleClicked, this,
-                     [this](const QString& playlistName) { p->handleAction(p->doubleClickAction, playlistName); });
-    QObject::connect(filter, &FilterWidget::middleClicked, this,
-                     [this](const QString& playlistName) { p->handleAction(p->middleClickAction, playlistName); });
-    QObject::connect(
-        filter, &FilterWidget::requestColumnsChange, this,
-        [this](const LibraryFilter& filter, const ColumnIds& columns) { p->changeFilterColumns(filter, columns); });
-    QObject::connect(filter, &FilterWidget::requestHeaderMenu, this,
-                     [this](const LibraryFilter& filter, AutoHeaderView* header, const QPoint& pos) {
-                         p->filterHeaderMenu(filter, header, pos);
-                     });
-    QObject::connect(filter, &FilterWidget::requestContextMenu, this,
-                     [this](const LibraryFilter& filter, const QPoint& pos) { p->filterContextMenu(filter, pos); });
-    QObject::connect(filter, &FilterWidget::selectionChanged, this,
-                     [this](const LibraryFilter& filter, const QString& playlistName) {
-                         p->selectionChanged(filter, playlistName);
-                     });
-    QObject::connect(filter, &FilterWidget::filterDeleted, this,
-                     [this](const LibraryFilter& filter) { p->deleteFilter(filter); });
-
-    QObject::connect(this, &FilterManager::tracksUpdated, filter, &FilterWidget::tracksUpdated);
-    QObject::connect(this, &FilterManager::tracksRemoved, filter, &FilterWidget::tracksRemoved);
-
-    filter->reset(p->tracks());
-
-    return filter;
-}
-
-void FilterManager::shutdown()
-{
-    p->columnRegistry.saveItems();
-};
-
-FilterColumnRegistry* FilterManager::columnRegistry() const
-{
-    return &p->columnRegistry;
+    p->controlDialog->show();
 }
 } // namespace Fooyin::Filters
 
