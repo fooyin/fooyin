@@ -153,7 +153,7 @@ void SearchWidget::loadLayoutData(const QJsonObject& layout)
     IdSet connectedWidgets;
 
     for(const QString& id : widgetIds) {
-        connectedWidgets.emplace(id);
+        connectedWidgets.emplace(id.trimmed());
     }
 
     p->searchController->setConnectedWidgets(id(), connectedWidgets);
