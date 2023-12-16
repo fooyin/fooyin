@@ -20,6 +20,7 @@
 #include "librarytreeguipage.h"
 
 #include "librarytree/librarytreeappearance.h"
+#include "librarytree/librarytreesettings.h"
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -108,9 +109,9 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(SettingsManager* settings)
 
 void LibraryTreeGuiPageWidget::apply()
 {
-    m_settings->set<Settings::Gui::LibraryTreeHeader>(m_showHeader->isChecked());
-    m_settings->set<Settings::Gui::LibraryTreeScrollBar>(m_showScrollbar->isChecked());
-    m_settings->set<Settings::Gui::LibraryTreeAltColours>(m_altColours->isChecked());
+    m_settings->set(LibraryTreeHeader, m_showHeader->isChecked());
+    m_settings->set(LibraryTreeScrollBar, m_showScrollbar->isChecked());
+    m_settings->set(LibraryTreeAltColours, m_altColours->isChecked());
 
     LibraryTreeAppearance options;
     options.fontChanged   = m_fontChanged;
@@ -118,26 +119,26 @@ void LibraryTreeGuiPageWidget::apply()
     options.colourChanged = m_colourChanged;
     options.colour        = m_colour;
     options.rowHeight     = m_rowHeight->value();
-    m_settings->set<Settings::Gui::LibraryTreeAppearance>(QVariant::fromValue(options));
+    m_settings->set(LibraryTreeAppearanceOptions, QVariant::fromValue(options));
 }
 
 void LibraryTreeGuiPageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::LibraryTreeHeader>();
-    m_settings->reset<Settings::Gui::LibraryTreeScrollBar>();
-    m_settings->reset<Settings::Gui::LibraryTreeAltColours>();
-    m_settings->reset<Settings::Gui::LibraryTreeAppearance>();
+    m_settings->reset(LibraryTreeHeader);
+    m_settings->reset(LibraryTreeScrollBar);
+    m_settings->reset(LibraryTreeAltColours);
+    m_settings->reset(LibraryTreeAppearanceOptions);
 
     setup();
 }
 
 void LibraryTreeGuiPageWidget::setup()
 {
-    m_showHeader->setChecked(m_settings->value<Settings::Gui::LibraryTreeHeader>());
-    m_showScrollbar->setChecked(m_settings->value<Settings::Gui::LibraryTreeScrollBar>());
-    m_altColours->setChecked(m_settings->value<Settings::Gui::LibraryTreeAltColours>());
+    m_showHeader->setChecked(m_settings->value(LibraryTreeHeader).toBool());
+    m_showScrollbar->setChecked(m_settings->value(LibraryTreeScrollBar).toBool());
+    m_altColours->setChecked(m_settings->value(LibraryTreeAltColours).toBool());
 
-    const auto options = m_settings->value<Settings::Gui::LibraryTreeAppearance>().value<LibraryTreeAppearance>();
+    const auto options = m_settings->value(LibraryTreeAppearanceOptions).value<LibraryTreeAppearance>();
     m_fontChanged      = options.fontChanged;
     m_font             = options.font;
     m_colourChanged    = options.colourChanged;

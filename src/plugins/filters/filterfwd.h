@@ -105,3 +105,5 @@ struct FilterColumn
 using FilterColumnList = std::vector<FilterColumn>;
 using ColumnIds        = std::vector<int>;
 } // namespace Fooyin::Filters
+
+Q_DECLARE_METATYPE(Fooyin::Filters::FilterOptions)

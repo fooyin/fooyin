@@ -29,6 +29,8 @@ namespace Fooyin::Filters {
 FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
+    qRegisterMetaType<Fooyin::Filters::FilterOptions>("Fooyin::Filters::FilterOptions");
+
     m_settings->createSetting<Settings::Filters::FilterAltColours>(false, u"Filters"_s);
     m_settings->createSetting<Settings::Filters::FilterHeader>(true, u"Filters"_s);
     m_settings->createSetting<Settings::Filters::FilterScrollBar>(true, u"Filters"_s);

@@ -21,6 +21,7 @@
 
 #include "librarytree/librarytreeappearance.h"
 #include "librarytree/librarytreegroupregistry.h"
+#include "librarytree/librarytreesettings.h"
 #include "playlist/presetregistry.h"
 
 #include <utils/settings/settingsmanager.h>
@@ -30,7 +31,6 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fooyin {
 GuiSettings::GuiSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
-    , m_libraryTreeGroupRegistry{std::make_unique<LibraryTreeGroupRegistry>(m_settings)}
     , m_playlistPresetRegistry{std::make_unique<PresetRegistry>(m_settings)}
 {
     m_settings->createTempSetting<Settings::Gui::LayoutEditing>(false);
@@ -48,16 +48,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Settings::Gui::InfoScrollBar>(true, u"Info"_s);
     m_settings->createSetting<Settings::Gui::IconTheme>("light", u"Theme"_s);
     m_settings->createSetting<Settings::Gui::LastPlaylistId>(0, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreeDoubleClick>(1, u"LibraryTree"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreeMiddleClick>(0, u"LibraryTree"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreePlaylistEnabled>(false, u"LibraryTree"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreeAutoSwitch>(true, u"LibraryTree"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreeAutoPlaylist>("Library Selection", u"LibraryTree"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreeHeader>(true, u"LibraryTree"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreeScrollBar>(true, u"LibraryTree"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreeAltColours>(false, u"LibraryTree"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreeAppearance>(QVariant::fromValue(LibraryTreeAppearance{}),
-                                                                    u"LibraryTree"_s);
     m_settings->createSetting<Settings::Gui::PlaylistThumbnailSize>(100, u"Playlist"_s);
     m_settings->createSetting<Settings::Gui::CursorFollowsPlayback>(false, u"Playlist"_s);
     m_settings->createSetting<Settings::Gui::PlaybackFollowsCursor>(false, u"Playlist"_s);
@@ -65,6 +55,20 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Settings::Gui::StatusPlayingScript>(
         "[$num(%track%,2). ][%title% ($timems(%duration%))][ \u2022 %albumartist%][ \u2022 %album%]",
         u"StatusWidget"_s);
+
+    qRegisterMetaType<Fooyin::LibraryTreeAppearance>("Fooyin::LibraryTreeAppearance");
+
+    m_libraryTreeGroupRegistry = std::make_unique<LibraryTreeGroupRegistry>(m_settings);
+
+    m_settings->createSetting(LibraryTreeDoubleClick, 1);
+    m_settings->createSetting(LibraryTreeMiddleClick, 0);
+    m_settings->createSetting(LibraryTreePlaylistEnabled, false);
+    m_settings->createSetting(LibraryTreeAutoSwitch, true);
+    m_settings->createSetting(LibraryTreeAutoPlaylist, "Library Selection");
+    m_settings->createSetting(LibraryTreeHeader, true);
+    m_settings->createSetting(LibraryTreeScrollBar, true);
+    m_settings->createSetting(LibraryTreeAltColours, false);
+    m_settings->createSetting(LibraryTreeAppearanceOptions, QVariant::fromValue(LibraryTreeAppearance{}));
 
     m_libraryTreeGroupRegistry->loadItems();
     m_playlistPresetRegistry->loadItems();

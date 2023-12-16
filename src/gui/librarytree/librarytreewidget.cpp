@@ -22,12 +22,12 @@
 #include "librarytreeappearance.h"
 #include "librarytreegroupregistry.h"
 #include "librarytreemodel.h"
+#include "librarytreesettings.h"
 #include "librarytreeview.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
-#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/async.h>
 
@@ -119,8 +119,8 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Musi
     , layout{new QVBoxLayout(self)}
     , libraryTree{new LibraryTreeView(self)}
     , model{new LibraryTreeModel(self)}
-    , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Gui::LibraryTreeDoubleClick>())}
-    , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Gui::LibraryTreeMiddleClick>())}
+    , doubleClickAction{static_cast<TrackAction>(settings->value(LibraryTreeDoubleClick).toInt())}
+    , middleClickAction{static_cast<TrackAction>(settings->value(LibraryTreeMiddleClick).toInt())}
 {
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(libraryTree);
@@ -128,9 +128,9 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Musi
     libraryTree->setModel(model);
 
     libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
-    libraryTree->setHeaderHidden(!settings->value<Settings::Gui::LibraryTreeHeader>());
-    setScrollbarEnabled(settings->value<Settings::Gui::LibraryTreeScrollBar>());
-    libraryTree->setAlternatingRowColors(settings->value<Settings::Gui::LibraryTreeAltColours>());
+    libraryTree->setHeaderHidden(!settings->value(LibraryTreeHeader).toBool());
+    setScrollbarEnabled(settings->value(LibraryTreeScrollBar).toBool());
+    libraryTree->setAlternatingRowColors(settings->value(LibraryTreeAltColours).toBool());
 
     changeGrouping(groupsRegistry->itemByName(u""_s));
 
@@ -138,7 +138,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Musi
         reset();
     }
 
-    updateAppearance(settings->value<Settings::Gui::LibraryTreeAppearance>());
+    updateAppearance(settings->value(LibraryTreeAppearanceOptions));
 }
 
 void LibraryTreeWidgetPrivate::reset() const
@@ -221,9 +221,9 @@ QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
     const auto sortedTracks = co_await Utils::asyncExec([&tracks]() { return Sorting::sortTracks(tracks); });
     trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
 
-    if(settings->value<Settings::Gui::LibraryTreePlaylistEnabled>()) {
-        const QString playlistName = settings->value<Settings::Gui::LibraryTreeAutoPlaylist>();
-        const bool autoSwitch      = settings->value<Settings::Gui::LibraryTreeAutoSwitch>();
+    if(settings->value(LibraryTreePlaylistEnabled).toBool()) {
+        const QString playlistName = settings->value(LibraryTreeAutoPlaylist).toString();
+        const bool autoSwitch      = settings->value(LibraryTreeAutoSwitch).toBool();
 
         trackSelection->executeAction(TrackAction::SendNewPlaylist,
                                       autoSwitch ? PlaylistAction::Switch : PlaylistAction::None, playlistName);
@@ -266,14 +266,14 @@ QString LibraryTreeWidgetPrivate::playlistNameFromSelection() const
 
 void LibraryTreeWidgetPrivate::handleDoubleClick() const
 {
-    const bool autoSwitch = settings->value<Settings::Gui::LibraryTreeAutoSwitch>();
+    const bool autoSwitch = settings->value(LibraryTreeAutoSwitch).toBool();
     trackSelection->executeAction(doubleClickAction, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None,
                                   playlistNameFromSelection());
 }
 
 void LibraryTreeWidgetPrivate::handleMiddleClick() const
 {
-    const bool autoSwitch = settings->value<Settings::Gui::LibraryTreeAutoSwitch>();
+    const bool autoSwitch = settings->value(LibraryTreeAutoSwitch).toBool();
     trackSelection->executeAction(middleClickAction, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None,
                                   playlistNameFromSelection());
 }
@@ -310,19 +310,20 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, LibraryTreeGroupRegi
     QObject::connect(library, &MusicLibrary::libraryRemoved, this, [this]() { p->reset(); });
     QObject::connect(library, &MusicLibrary::libraryChanged, this, [this]() { p->reset(); });
 
-    settings->subscribe<Settings::Gui::LibraryTreeDoubleClick>(this, [this](int action) {
-        p->doubleClickAction = static_cast<TrackAction>(action);
+    settings->subscribe(LibraryTreeDoubleClick, this, [this](const QVariant& action) {
+        p->doubleClickAction = static_cast<TrackAction>(action.toInt());
         p->libraryTree->setExpandsOnDoubleClick(p->doubleClickAction == TrackAction::Expand);
     });
-    settings->subscribe<Settings::Gui::LibraryTreeMiddleClick>(
-        this, [this](int action) { p->middleClickAction = static_cast<TrackAction>(action); });
-    settings->subscribe<Settings::Gui::LibraryTreeHeader>(
-        this, [this](bool show) { p->libraryTree->setHeaderHidden(!show); });
-    settings->subscribe<Settings::Gui::LibraryTreeScrollBar>(this, [this](bool show) { p->setScrollbarEnabled(show); });
-    settings->subscribe<Settings::Gui::LibraryTreeAltColours>(
-        this, [this](bool enable) { p->libraryTree->setAlternatingRowColors(enable); });
-    settings->subscribe<Settings::Gui::LibraryTreeAppearance>(
-        this, [this](const QVariant& var) { p->updateAppearance(var); });
+    settings->subscribe(LibraryTreeMiddleClick, this, [this](const QVariant& action) {
+        p->middleClickAction = static_cast<TrackAction>(action.toInt());
+    });
+    settings->subscribe(LibraryTreeHeader, this,
+                        [this](const QVariant& show) { p->libraryTree->setHeaderHidden(!show.toBool()); });
+    settings->subscribe(LibraryTreeScrollBar, this,
+                        [this](const QVariant& show) { p->setScrollbarEnabled(show.toBool()); });
+    settings->subscribe(LibraryTreeAltColours, this,
+                        [this](const QVariant& enable) { p->libraryTree->setAlternatingRowColors(enable.toBool()); });
+    settings->subscribe(LibraryTreeAppearanceOptions, this, [this](const QVariant& var) { p->updateAppearance(var); });
 }
 
 QString LibraryTreeWidget::name() const

@@ -67,3 +67,5 @@ struct LibraryTreeAppearance
     }
 };
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::LibraryTreeAppearance)
