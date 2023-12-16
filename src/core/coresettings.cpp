@@ -53,6 +53,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
 CoreSettings::~CoreSettings()
 {
+    m_settings->set<Settings::Core::Version>(VERSION);
     m_sortingRegistry->saveItems();
     m_settings->storeSettings();
 }
