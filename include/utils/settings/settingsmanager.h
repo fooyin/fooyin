@@ -180,8 +180,8 @@ public:
         return success;
     }
 
-    template <typename Func>
-    void subscribe(const QString& key, QObject* receiver, Func&& func)
+    template <typename T, typename Func>
+    void subscribe(const QString& key, T receiver, Func&& func)
     {
         if(m_settings.contains(key)) {
             SettingsEntry* setting = m_settings.at(key);
@@ -189,14 +189,14 @@ public:
         }
     }
 
-    template <auto key, typename Func>
-    void constexpr subscribe(QObject* obj, Func&& func)
+    template <auto key, typename T, typename Func>
+    void constexpr subscribe(T receiver, Func&& func)
     {
-        connectTypeSignals<key>(obj, func);
+        connectTypeSignals<key>(receiver, func);
     }
 
-    template <typename E>
-    void constexpr unsubscribe(E key, QObject* obj)
+    template <typename Enum>
+    void constexpr unsubscribe(Enum key, QObject* obj)
     {
         const auto mapKey = getMapKey(key);
 
@@ -232,10 +232,10 @@ private:
         }
     }
 
-    template <typename E>
-    auto constexpr getMapKey(E key)
+    template <typename Enum>
+    auto constexpr getMapKey(Enum key)
     {
-        const auto meta      = QMetaEnum::fromType<E>();
+        const auto meta      = QMetaEnum::fromType<Enum>();
         const auto enumName  = QString::fromLatin1(meta.name());
         const auto keyString = QString::fromLatin1(meta.valueToKey(key));
         const auto mapKey    = enumName + keyString;
@@ -243,33 +243,33 @@ private:
         return QString::fromUtf8(mapKey.toUtf8());
     }
 
-    template <auto key, typename F>
-    void constexpr connectTypeSignals(QObject* obj, F func)
+    template <auto key, typename T, typename Func>
+    void constexpr connectTypeSignals(T receiver, Func func)
     {
         const auto mapKey = getMapKey(key);
         const auto type   = findType<key>();
 
         if(m_settings.contains(mapKey)) {
             if constexpr(type == Settings::Variant) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, receiver, func);
             }
             else if constexpr(type == Settings::Bool) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedBool, receiver, func);
             }
             else if constexpr(type == Settings::Double) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, receiver, func);
             }
             else if constexpr(type == Settings::Int) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedInt, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedInt, receiver, func);
             }
             else if constexpr(type == Settings::String) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedString, receiver, func);
             }
             else if constexpr(type == Settings::ByteArray) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, receiver, func);
             }
             else {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, receiver, func);
             }
         }
     }
