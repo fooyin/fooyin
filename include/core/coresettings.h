@@ -37,12 +37,11 @@ enum Settings : uint32_t
     FirstRun            = 2 | SettingsType::Bool,
     PlayMode            = 3 | SettingsType::Int,
     AutoRefresh         = 4 | SettingsType::Bool,
-    LibrarySorting      = 5 | SettingsType::ByteArray,
-    LibrarySortScript   = 6 | SettingsType::String,
-    ActivePlaylistId    = 7 | SettingsType::Int,
-    AudioOutput         = 8 | SettingsType::String,
-    OutputVolume        = 9 | SettingsType::Double,
-    RewindPreviousTrack = 10 | SettingsType::Bool,
+    LibrarySortScript   = 5 | SettingsType::String,
+    ActivePlaylistId    = 6 | SettingsType::Int,
+    AudioOutput         = 7 | SettingsType::String,
+    OutputVolume        = 8 | SettingsType::Double,
+    RewindPreviousTrack = 9 | SettingsType::Bool,
 };
 Q_ENUM_NS(Settings)
 } // namespace Settings::Core

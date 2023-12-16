@@ -20,7 +20,6 @@
 #pragma once
 
 #include "filterfwd.h"
-#include "settings/filtersettings.h"
 
 #include <utils/itemregistry.h>
 
@@ -28,7 +27,9 @@ namespace Fooyin {
 class SettingsManager;
 
 namespace Filters {
-class FilterColumnRegistry : public ItemRegistry<FilterColumn, Settings::Filters::FilterColumns>
+constexpr auto FilterColumns = "Filters/FilterColumns";
+
+class FilterColumnRegistry : public ItemRegistry<FilterColumn>
 {
     Q_OBJECT
 

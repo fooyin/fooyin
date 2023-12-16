@@ -34,7 +34,7 @@ void loadDefaults(Fooyin::LibraryTreeGroupRegistry* registry)
 
 namespace Fooyin {
 LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{settings, parent}
+    : ItemRegistry{LibraryTreeGroups, settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto grouping = itemById(id);

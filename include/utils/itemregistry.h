@@ -28,6 +28,7 @@
 #include <QObject>
 
 #include <ranges>
+#include <utility>
 
 template <typename T>
 concept ValidRegistry = requires(T t) {
@@ -58,20 +59,20 @@ signals:
 
 /*!
  * Represents a registry of items ordered by index.
- * Items are saved and loaded to/from a QByteArray which is stored in SettingKey.
+ * Items are saved and loaded to/from a QByteArray which is stored in the passed settingKey.
  * @tparam Item A struct or class with public members: int id, int index, QString name.
- * @tparam SettingKey An enum value for a setting stored in SettingsManager.
  */
-template <typename Item, auto SettingKey>
+template <typename Item>
     requires ValidRegistry<Item>
 class ItemRegistry : public RegistryBase
 {
 public:
     using IndexItemMap = std::map<int, Item>;
 
-    explicit ItemRegistry(SettingsManager* settings, QObject* parent = nullptr)
+    explicit ItemRegistry(QString  settingKey, SettingsManager* settings, QObject* parent = nullptr)
         : RegistryBase{parent}
         , m_settings{settings}
+        , m_settingKey{std::move(settingKey)}
     { }
 
     [[nodiscard]] const IndexItemMap& items() const
@@ -172,14 +173,14 @@ public:
         out << m_items;
         byteArray = qCompress(byteArray, 9);
 
-        m_settings->set<SettingKey>(byteArray);
-    };
+        m_settings->set(m_settingKey, byteArray);
+    }
 
     virtual void loadItems()
     {
         m_items.clear();
 
-        QByteArray byteArray = m_settings->value<SettingKey>();
+        QByteArray byteArray = m_settings->value(m_settingKey).toByteArray();
 
         if(!byteArray.isEmpty()) {
             byteArray = qUncompress(byteArray);
@@ -189,7 +190,7 @@ public:
 
             in >> m_items;
         }
-    };
+    }
 
 protected:
     IndexItemMap m_items;
@@ -203,6 +204,7 @@ private:
     }
 
     SettingsManager* m_settings;
+    QString m_settingKey;
 };
 } // namespace Fooyin
 

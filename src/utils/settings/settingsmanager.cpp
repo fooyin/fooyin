@@ -81,7 +81,10 @@ QVariant SettingsManager::value(const QString& key) const
 
 void SettingsManager::set(const QString& key, const QVariant& value)
 {
-    m_settingsFile->setValue(key, value);
+    if(this->value(key) != value) {
+        m_settingsFile->setValue(key, value);
+        emit settingChanged(key, value);
+    }
 }
 
 void SettingsManager::remove(const QString& key)

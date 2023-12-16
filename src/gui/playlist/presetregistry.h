@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "gui/guisettings.h"
 #include "playlistpreset.h"
 
 #include <utils/itemregistry.h>
@@ -29,7 +28,9 @@
 namespace Fooyin {
 class SettingsManager;
 
-class PresetRegistry : public ItemRegistry<PlaylistPreset, Settings::Gui::PlaylistPresets>
+constexpr auto PlaylistPresets = "LibraryTree/LibraryTreeGroups";
+
+class PresetRegistry : public ItemRegistry<PlaylistPreset>
 {
     Q_OBJECT
 

@@ -21,14 +21,15 @@
 
 #include "fycore_export.h"
 
-#include <core/coresettings.h>
 #include <core/library/librarysort.h>
 #include <utils/itemregistry.h>
 
 namespace Fooyin {
 class SettingsManager;
 
-class FYCORE_EXPORT SortingRegistry : public ItemRegistry<SortScript, Settings::Core::LibrarySorting>
+constexpr auto LibrarySorting = "Library/LibrarySorting";
+
+class FYCORE_EXPORT SortingRegistry : public ItemRegistry<SortScript>
 {
     Q_OBJECT
 

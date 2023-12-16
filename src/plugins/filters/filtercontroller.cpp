@@ -22,6 +22,7 @@
 #include "filtercolumnregistry.h"
 #include "filtermanager.h"
 #include "filterwidget.h"
+#include "settings/filtersettings.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>

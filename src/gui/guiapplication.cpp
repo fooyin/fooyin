@@ -59,6 +59,7 @@
 #include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
 #include <gui/editablelayout.h>
+#include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
 #include <gui/plugins/guiplugin.h>
 #include <gui/plugins/guiplugincontext.h>

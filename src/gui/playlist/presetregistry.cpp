@@ -70,7 +70,7 @@ void loadDefaults(Fooyin::PresetRegistry* registry)
 
 namespace Fooyin {
 PresetRegistry::PresetRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{settings, parent}
+    : ItemRegistry{PlaylistPresets, settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto preset = itemById(id);

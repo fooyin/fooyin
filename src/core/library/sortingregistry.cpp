@@ -32,7 +32,7 @@ void loadDefaults(Fooyin::SortingRegistry* registry)
 
 namespace Fooyin {
 SortingRegistry::SortingRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{settings, parent}
+    : ItemRegistry{LibrarySorting, settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto sort = itemById(id);

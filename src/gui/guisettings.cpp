@@ -41,7 +41,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Settings::Gui::PlaylistAltColours>(true, u"Playlist"_s);
     m_settings->createSetting<Settings::Gui::PlaylistHeader>(true, u"Playlist"_s);
     m_settings->createSetting<Settings::Gui::PlaylistScrollBar>(true, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::PlaylistPresets>(QByteArray{}, u"Playlist"_s);
     m_settings->createSetting<Settings::Gui::CurrentPreset>("Default", u"Playlist"_s);
     m_settings->createSetting<Settings::Gui::ElapsedTotal>(false, u"Player"_s);
     m_settings->createSetting<Settings::Gui::InfoAltColours>(true, u"Info"_s);
@@ -49,7 +48,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Settings::Gui::InfoScrollBar>(true, u"Info"_s);
     m_settings->createSetting<Settings::Gui::IconTheme>("light", u"Theme"_s);
     m_settings->createSetting<Settings::Gui::LastPlaylistId>(0, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::LibraryTreeGrouping>(QByteArray{}, u"LibraryTree"_s);
     m_settings->createSetting<Settings::Gui::LibraryTreeDoubleClick>(1, u"LibraryTree"_s);
     m_settings->createSetting<Settings::Gui::LibraryTreeMiddleClick>(0, u"LibraryTree"_s);
     m_settings->createSetting<Settings::Gui::LibraryTreePlaylistEnabled>(false, u"LibraryTree"_s);

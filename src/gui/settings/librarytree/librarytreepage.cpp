@@ -174,7 +174,7 @@ void LibraryTreePageWidget::apply()
 
 void LibraryTreePageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::LibraryTreeGrouping>();
+    m_settings->set(LibraryTreeGroups, {});
     m_settings->reset<Settings::Gui::LibraryTreeDoubleClick>();
     m_settings->reset<Settings::Gui::LibraryTreeMiddleClick>();
     m_settings->reset<Settings::Gui::LibraryTreePlaylistEnabled>();

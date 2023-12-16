@@ -225,6 +225,9 @@ public:
         }
     }
 
+signals:
+    void settingChanged(const QString& key, const QVariant& value);
+
 private:
     template <auto key>
     void settingChanged(SettingsEntry& setting)

@@ -31,7 +31,7 @@ void loadDefaults(Fooyin::Filters::FilterColumnRegistry* registry)
 
 namespace Fooyin::Filters {
 FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{settings, parent}
+    : ItemRegistry{FilterColumns, settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto field = itemById(id);

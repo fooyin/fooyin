@@ -22,7 +22,6 @@
 #include "constants.h"
 #include "filtercolumnregistry.h"
 #include "filterscolumnmodel.h"
-#include "filtersettings.h"
 
 #include <utils/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>
@@ -83,7 +82,7 @@ void FiltersColumnPageWidget::apply()
 
 void FiltersColumnPageWidget::reset()
 {
-    m_settings->reset<Settings::Filters::FilterColumns>();
+    m_settings->set(FilterColumns, {});
     m_columnsRegistry->loadItems();
     m_model->populate();
 }

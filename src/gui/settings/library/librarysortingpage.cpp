@@ -82,7 +82,7 @@ void LibrarySortingPageWidget::apply()
 
 void LibrarySortingPageWidget::reset()
 {
-    m_settings->reset<Settings::Core::LibrarySorting>();
+    m_settings->set(LibrarySorting, {});
     m_sortRegistry->loadItems();
     m_model->populate();
 }

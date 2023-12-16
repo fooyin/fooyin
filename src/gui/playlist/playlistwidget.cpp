@@ -31,6 +31,7 @@
 #include <core/library/tracksort.h>
 #include <core/playlist/playlistmanager.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>

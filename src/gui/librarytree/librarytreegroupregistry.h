@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "gui/guisettings.h"
 #include "librarytreegroup.h"
 
 #include <utils/itemregistry.h>
@@ -27,7 +26,9 @@
 #include <QObject>
 
 namespace Fooyin {
-class LibraryTreeGroupRegistry : public ItemRegistry<LibraryTreeGrouping, Settings::Gui::LibraryTreeGrouping>
+constexpr auto LibraryTreeGroups = "LibraryTree/LibraryTreeGroups";
+
+class LibraryTreeGroupRegistry : public ItemRegistry<LibraryTreeGrouping>
 {
     Q_OBJECT
 
