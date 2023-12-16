@@ -97,14 +97,14 @@ class PropertiesDialogWidget : public QDialog
 public:
     explicit PropertiesDialogWidget(PropertiesDialog::TabList tabs);
 
-    void saveState(QSettings* settings)
+    void saveState(SettingsManager* settings)
     {
         QByteArray state = saveGeometry();
         state            = qCompress(state, 9);
-        settings->setValue(PropertiesDialogState, state);
+        settings->set(PropertiesDialogState, state);
     }
 
-    void restoreState(QSettings* settings)
+    void restoreState(SettingsManager* settings)
     {
         QByteArray state = settings->value(PropertiesDialogState).toByteArray();
 
@@ -239,13 +239,12 @@ void PropertiesDialog::show()
     auto* dialog = new PropertiesDialogWidget(m_tabs);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
 
-    QObject::connect(dialog, &QDialog::finished, this,
-                     [this, dialog]() { dialog->saveState(m_settings->settingsFile()); });
+    QObject::connect(dialog, &QDialog::finished, this, [this, dialog]() { dialog->saveState(m_settings); });
 
     dialog->resize(600, 700);
     dialog->show();
 
-    dialog->restoreState(m_settings->settingsFile());
+    dialog->restoreState(m_settings);
 }
 } // namespace Fooyin
 

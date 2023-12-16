@@ -77,12 +77,9 @@ struct ActionManager::Private
 
     void loadSetting(const Id& id, Command* command) const
     {
-        QSettings* settings = settingsManager->settingsFile();
-
-        settings->beginGroup(ShortcutCategory);
-
-        if(settings->contains(id.name())) {
-            const QVariant var = settings->value(id.name());
+        const auto key = QString{"%1/%2"}.arg(ShortcutCategory, id.name());
+        if(settingsManager->contains(key)) {
+            const QVariant var = settingsManager->value(key);
             if(QMetaType::Type(var.typeId()) == QMetaType::QStringList) {
                 ShortcutList shortcuts;
                 std::ranges::transform(var.toStringList(), std::back_inserter(shortcuts),
@@ -93,8 +90,6 @@ struct ActionManager::Private
                 command->setShortcut({QKeySequence::fromString(var.toString())});
             }
         }
-
-        settings->endGroup();
     }
 
     void containerDestroyed(QObject* sender)
@@ -207,12 +202,9 @@ void ActionManager::setMainWindow(QMainWindow* mainWindow)
 
 void ActionManager::saveSettings()
 {
-    QSettings* settings = p->settingsManager->settingsFile();
-
-    settings->beginGroup(ShortcutCategory);
-
     for(const auto& [_, command] : p->idCmdMap) {
-        const QString settingsKey           = command->id().name();
+        const auto key = QString{"%1/%2"}.arg(ShortcutCategory, command->id().name());
+
         const ShortcutList commandShortcuts = command->shortcuts();
         const ShortcutList defaultShortcuts = command->defaultShortcuts();
         if(commandShortcuts != defaultShortcuts) {
@@ -220,14 +212,12 @@ void ActionManager::saveSettings()
             QStringList keys;
             std::ranges::transform(commandShortcuts, std::back_inserter(keys),
                                    [](const QKeySequence& k) { return k.toString(); });
-            settings->setValue(settingsKey, keys);
+            p->settingsManager->set(key, keys);
         }
         else {
-            settings->remove(settingsKey);
+            p->settingsManager->remove(key);
         }
     }
-
-    settings->endGroup();
 }
 
 WidgetContext* ActionManager::currentContextObject() const

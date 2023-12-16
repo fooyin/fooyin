@@ -77,7 +77,11 @@ public:
     void loadSettings();
     void storeSettings();
 
-    [[nodiscard]] QSettings* settingsFile() const;
+    QVariant value(const QString& key) const;
+    void set(const QString& key, const QVariant& value);
+    void remove(const QString& key);
+    bool contains(const QString& key) const;
+
     [[nodiscard]] SettingsDialogController* settingsDialog() const;
 
     template <auto key, typename Value>

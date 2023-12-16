@@ -63,7 +63,7 @@ MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, 
 
 MainWindow::~MainWindow()
 {
-    m_settings->settingsFile()->setValue(MainWindowGeometry, saveGeometry());
+    m_settings->set(MainWindowGeometry, saveGeometry());
 }
 
 void MainWindow::open()
@@ -75,7 +75,7 @@ void MainWindow::open()
             break;
         }
         case(RememberLast): {
-            restoreGeometry(m_settings->settingsFile()->value(MainWindowGeometry).toByteArray());
+            restoreGeometry(m_settings->value(MainWindowGeometry).toByteArray());
             show();
             break;
         }

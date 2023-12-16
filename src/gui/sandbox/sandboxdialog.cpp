@@ -140,7 +140,7 @@ struct SandboxDialog::Private
 
     void restoreState()
     {
-        QByteArray byteArray = settings->settingsFile()->value(SandboxState).toByteArray();
+        QByteArray byteArray = settings->value(SandboxState).toByteArray();
 
         if(byteArray.isEmpty()) {
             return;
@@ -184,7 +184,7 @@ struct SandboxDialog::Private
 
         byteArray = qCompress(byteArray, 9);
 
-        settings->settingsFile()->setValue(SandboxState, byteArray);
+        settings->set(SandboxState, byteArray);
     }
 };
 

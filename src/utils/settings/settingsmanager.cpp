@@ -74,9 +74,24 @@ void SettingsManager::storeSettings()
     m_settingsFile->sync();
 }
 
-QSettings* SettingsManager::settingsFile() const
+QVariant SettingsManager::value(const QString& key) const
 {
-    return m_settingsFile;
+    return m_settingsFile->value(key);
+}
+
+void SettingsManager::set(const QString& key, const QVariant& value)
+{
+    m_settingsFile->setValue(key, value);
+}
+
+void SettingsManager::remove(const QString& key)
+{
+    m_settingsFile->remove(key);
+}
+
+bool SettingsManager::contains(const QString& key) const
+{
+    return m_settingsFile->contains(key);
 }
 
 SettingsDialogController* SettingsManager::settingsDialog() const
