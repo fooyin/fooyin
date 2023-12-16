@@ -30,8 +30,6 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-static constexpr auto DatabaseVersion = "0.1.0";
-
 namespace Fooyin {
 Database::Database(SettingsManager* settings)
     : Database{Utils::sharePath(), u"fooyin.db"_s, settings}
@@ -61,10 +59,6 @@ Database::Database(const QString& directory, const QString& filename, SettingsMa
 
 bool Database::update()
 {
-    if(m_settings->value<Settings::Core::DatabaseVersion>() < DatabaseVersion) {
-        m_settings->set<Settings::Core::DatabaseVersion>(DatabaseVersion);
-        return true;
-    }
     return false;
 }
 

@@ -34,7 +34,6 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     , m_sortingRegistry{std::make_unique<SortingRegistry>(settingsManager)}
 {
     m_settings->createSetting<Settings::Core::Version>(VERSION);
-    m_settings->createSetting<Settings::Core::DatabaseVersion>("0.1.0");
     m_settings->createTempSetting<Settings::Core::FirstRun>(true);
     m_settings->createSetting<Settings::Core::PlayMode>(0, u"Player"_s);
     m_settings->createSetting<Settings::Core::AutoRefresh>(false, u"Library"_s);

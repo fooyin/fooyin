@@ -34,16 +34,15 @@ Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 enum Settings : uint32_t
 {
     Version             = 1 | SettingsType::String,
-    DatabaseVersion     = 2 | SettingsType::String,
-    FirstRun            = 3 | SettingsType::Bool,
-    PlayMode            = 4 | SettingsType::Int,
-    AutoRefresh         = 5 | SettingsType::Bool,
-    LibrarySorting      = 6 | SettingsType::ByteArray,
-    LibrarySortScript   = 7 | SettingsType::String,
-    ActivePlaylistId    = 8 | SettingsType::Int,
-    AudioOutput         = 9 | SettingsType::String,
-    OutputVolume        = 10 | SettingsType::Double,
-    RewindPreviousTrack = 11 | SettingsType::Bool,
+    FirstRun            = 2 | SettingsType::Bool,
+    PlayMode            = 3 | SettingsType::Int,
+    AutoRefresh         = 4 | SettingsType::Bool,
+    LibrarySorting      = 5 | SettingsType::ByteArray,
+    LibrarySortScript   = 6 | SettingsType::String,
+    ActivePlaylistId    = 7 | SettingsType::Int,
+    AudioOutput         = 8 | SettingsType::String,
+    OutputVolume        = 9 | SettingsType::Double,
+    RewindPreviousTrack = 10 | SettingsType::Bool,
 };
 Q_ENUM_NS(Settings)
 } // namespace Settings::Core
