@@ -22,7 +22,6 @@
 #include "fyutils_export.h"
 
 #include <utils/settings/settingsentry.h>
-#include <utils/settings/settingtypes.h>
 
 #include <QMetaEnum>
 #include <QReadWriteLock>
@@ -30,6 +29,7 @@
 class QSettings;
 
 namespace Fooyin {
+class SettingsEntry;
 class SettingsDialogController;
 
 template <auto key>
@@ -45,23 +45,23 @@ constexpr int findType()
 }
 
 template <auto key, typename Value>
-concept IsVariant = findType<key>() == SettingsType::Variant;
+concept IsVariant = findType<key>() == Settings::Variant;
 
 template <auto key, typename Value>
-concept IsBool = findType<key>() == SettingsType::Bool && std::same_as<Value, bool>;
+concept IsBool = findType<key>() == Settings::Bool && std::same_as<Value, bool>;
 
 template <auto key, typename Value>
-concept IsDouble = findType<key>() == SettingsType::Double && std::same_as<Value, double>;
+concept IsDouble = findType<key>() == Settings::Double && std::same_as<Value, double>;
 
 template <auto key, typename Value>
-concept IsInt = findType<key>() == SettingsType::Int && std::same_as<Value, int>;
+concept IsInt = findType<key>() == Settings::Int && std::same_as<Value, int>;
 
 template <auto key, typename Value>
 concept IsString
-    = findType<key>() == SettingsType::String && (std::same_as<Value, QString> || std::same_as<Value, const char*>);
+    = findType<key>() == Settings::String && (std::same_as<Value, QString> || std::same_as<Value, const char*>);
 
 template <auto key, typename Value>
-concept IsByteArray = findType<key>() == SettingsType::ByteArray && std::same_as<Value, QByteArray>;
+concept IsByteArray = findType<key>() == Settings::ByteArray && std::same_as<Value, QByteArray>;
 
 template <auto key, typename Value>
 concept ValidValueType = IsVariant<key, Value> || IsBool<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
@@ -74,44 +74,35 @@ class FYUTILS_EXPORT SettingsManager : public QObject
 public:
     explicit SettingsManager(const QString& settingsPath, QObject* parent = nullptr);
 
-    void loadSettings();
+    [[nodiscard]] SettingsDialogController* settingsDialog() const;
+
     void storeSettings();
 
     QVariant value(const QString& key) const;
-    void set(const QString& key, const QVariant& value);
-    void remove(const QString& key);
+    bool set(const QString& key, const QVariant& value);
+    bool reset(const QString& key);
     bool contains(const QString& key) const;
 
-    [[nodiscard]] SettingsDialogController* settingsDialog() const;
+    QVariant fileValue(const QString& key) const;
+    bool fileSet(const QString& key, const QVariant& value);
+    bool fileContains(const QString& key) const;
+    void fileRemove(const QString& key);
+
+    void createSetting(const QString& key, const QVariant& value);
+    void createTempSetting(const QString& key, const QVariant& value);
 
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
     void constexpr createSetting(Value value, const QString& group = {})
     {
-        using Enum           = decltype(key);
-        const auto meta      = QMetaEnum::fromType<Enum>();
-        const auto enumName  = meta.name();
-        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
-        const auto mapKey    = enumName + keyString;
-
-        if(!m_settings.contains(mapKey)) {
-            m_settings.emplace(mapKey, SettingsEntry{keyString, value, true, group});
-        }
+        createNewSetting<key>(value, group, false);
     }
 
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
     void constexpr createTempSetting(const Value& value, const QString& group = {})
     {
-        using Enum           = decltype(key);
-        const auto meta      = QMetaEnum::fromType<Enum>();
-        const auto enumName  = meta.name();
-        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
-        const auto mapKey    = enumName + keyString;
-
-        if(!m_settings.contains(mapKey)) {
-            m_settings.emplace(mapKey, SettingsEntry{keyString, value, false, group});
-        }
+        createNewSetting<key>(value, group, true);
     }
 
     template <auto key>
@@ -121,24 +112,24 @@ public:
 
         m_lock.lockForRead();
 
-        const auto value = m_settings.contains(mapKey) ? m_settings.at(mapKey).value() : -1;
+        const auto value = m_settings.contains(mapKey) ? m_settings.at(mapKey)->value() : -1;
         const auto type  = findType<key>();
 
         m_lock.unlock();
 
-        if constexpr(type == SettingsType::Bool) {
+        if constexpr(type == Settings::Bool) {
             return value.toBool();
         }
-        else if constexpr(type == SettingsType::Double) {
+        else if constexpr(type == Settings::Double) {
             return value.toDouble();
         }
-        else if constexpr(type == SettingsType::Int) {
+        else if constexpr(type == Settings::Int) {
             return value.toInt();
         }
-        else if constexpr(type == SettingsType::String) {
+        else if constexpr(type == Settings::String) {
             return value.toString();
         }
-        else if constexpr(type == SettingsType::ByteArray) {
+        else if constexpr(type == Settings::ByteArray) {
             return value.toByteArray();
         }
         else {
@@ -148,7 +139,7 @@ public:
 
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
-    void set(Value value)
+    bool set(Value value)
     {
         const QString mapKey = getMapKey(key);
 
@@ -156,22 +147,20 @@ public:
 
         if(!m_settings.contains(mapKey)) {
             m_lock.unlock();
-            return;
+            return false;
         }
 
-        SettingsEntry& setting = m_settings.at(mapKey);
+        SettingsEntry* setting = m_settings.at(mapKey);
 
-        const bool success = setting.setValue(value);
+        const bool success = setting->setValue(value);
 
         m_lock.unlock();
 
-        if(success) {
-            settingChanged<key>(setting);
-        }
+        return success;
     }
 
     template <auto key>
-    void reset()
+    bool reset()
     {
         const auto mapKey = getMapKey(key);
 
@@ -179,83 +168,68 @@ public:
 
         if(!m_settings.contains(mapKey)) {
             m_lock.unlock();
-            return;
+            return false;
         }
 
-        SettingsEntry& setting = m_settings.at(mapKey);
+        SettingsEntry* setting = m_settings.at(mapKey);
 
-        const bool success = setting.reset();
+        const bool success = setting->reset();
 
         m_lock.unlock();
 
-        if(success) {
-            settingChanged<key>(setting);
-        }
+        return success;
     }
 
-    template <auto key, typename T>
-    void constexpr subscribe(T* obj, void (T::*func)())
+    template <typename Func>
+    void subscribe(const QString& key, QObject* receiver, Func&& func)
     {
-        const auto mapKey = getMapKey(key);
-
-        if(m_settings.contains(mapKey)) {
-            QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChanged, obj, func);
+        if(m_settings.contains(key)) {
+            SettingsEntry* setting = m_settings.at(key);
+            QObject::connect(setting, &SettingsEntry::settingChangedVariant, receiver, func);
         }
     }
 
-    template <auto key, typename T, typename R>
-    void constexpr subscribe(T* obj, void (T::*func)(R ret))
+    template <auto key, typename Func>
+    void constexpr subscribe(QObject* obj, Func&& func)
     {
         connectTypeSignals<key>(obj, func);
     }
 
-    template <auto key, typename T, typename L>
-    void constexpr subscribe(T* obj, L const& lambda)
-    {
-        connectTypeSignals<key>(obj, lambda);
-    }
-
-    template <typename E, typename T>
-    void constexpr unsubscribe(E key, T* obj)
+    template <typename E>
+    void constexpr unsubscribe(E key, QObject* obj)
     {
         const auto mapKey = getMapKey(key);
 
         if(m_settings.contains(mapKey)) {
-            QObject::disconnect(&m_settings.at(mapKey), nullptr, obj, nullptr);
+            QObject::disconnect(m_settings.at(mapKey), nullptr, obj, nullptr);
         }
     }
 
-signals:
-    void settingChanged(const QString& key, const QVariant& value);
-
 private:
-    template <auto key>
-    void settingChanged(SettingsEntry& setting)
+    template <auto key, typename Value>
+        requires ValidValueType<key, Value>
+    void constexpr createNewSetting(const Value& value, const QString& group, bool isTemporary)
     {
-        const auto type = findType<key>();
+        using Enum           = decltype(key);
+        const auto type      = static_cast<Settings::Type>(findType<key>());
+        const auto meta      = QMetaEnum::fromType<Enum>();
+        const auto enumName  = QString::fromLatin1(meta.name());
+        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
+        const auto mapKey    = enumName + keyString;
 
-        const QVariant settingValue = setting.value();
+        if(m_settings.contains(mapKey)) {
+            qWarning() << "Setting has already been registered: " << keyString;
+            return;
+        }
 
-        if constexpr(type == SettingsType::Variant) {
-            QMetaObject::invokeMethod(&setting, "settingChangedVariant", Q_ARG(QVariant, settingValue));
+        m_settings.emplace(mapKey, new SettingsEntry(group + QStringLiteral("/") + keyString, value, type, this));
+        auto* setting = m_settings.at(mapKey);
+        if(isTemporary) {
+            setting->setIsTemporary(isTemporary);
         }
-        else if constexpr(type == SettingsType::Bool) {
-            QMetaObject::invokeMethod(&setting, "settingChangedBool", Q_ARG(bool, settingValue.toBool()));
+        else {
+            checkLoadSetting(setting);
         }
-        else if constexpr(type == SettingsType::Double) {
-            QMetaObject::invokeMethod(&setting, "settingChangedDouble", Q_ARG(double, settingValue.toDouble()));
-        }
-        else if constexpr(type == SettingsType::Int) {
-            QMetaObject::invokeMethod(&setting, "settingChangedInt", Q_ARG(int, settingValue.toInt()));
-        }
-        else if constexpr(type == SettingsType::String) {
-            QMetaObject::invokeMethod(&setting, "settingChangedString", Q_ARG(QString, settingValue.toString()));
-        }
-        else if constexpr(type == SettingsType::ByteArray) {
-            QMetaObject::invokeMethod(&setting, "settingChangedByteArray",
-                                      Q_ARG(QByteArray, settingValue.toByteArray()));
-        }
-        QMetaObject::invokeMethod(&setting, &SettingsEntry::settingChanged);
     }
 
     template <typename E>
@@ -269,39 +243,41 @@ private:
         return QString::fromUtf8(mapKey.toUtf8());
     }
 
-    template <auto key, typename T, typename F>
-    void constexpr connectTypeSignals(T obj, F func)
+    template <auto key, typename F>
+    void constexpr connectTypeSignals(QObject* obj, F func)
     {
         const auto mapKey = getMapKey(key);
         const auto type   = findType<key>();
 
         if(m_settings.contains(mapKey)) {
-            if constexpr(type == SettingsType::Variant) {
-                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
+            if constexpr(type == Settings::Variant) {
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
             }
-            else if constexpr(type == SettingsType::Bool) {
-                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
+            else if constexpr(type == Settings::Bool) {
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
             }
-            else if constexpr(type == SettingsType::Double) {
-                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, obj, func);
+            else if constexpr(type == Settings::Double) {
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, obj, func);
             }
-            else if constexpr(type == SettingsType::Int) {
-                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedInt, obj, func);
+            else if constexpr(type == Settings::Int) {
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedInt, obj, func);
             }
-            else if constexpr(type == SettingsType::String) {
-                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj, func);
+            else if constexpr(type == Settings::String) {
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj, func);
             }
-            else if constexpr(type == SettingsType::ByteArray) {
-                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, obj, func);
+            else if constexpr(type == Settings::ByteArray) {
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, obj, func);
             }
             else {
-                QObject::connect(&m_settings.at(mapKey), &SettingsEntry::settingChanged, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
             }
         }
     }
 
+    void checkLoadSetting(SettingsEntry* setting) const;
+
     QSettings* m_settingsFile;
-    std::map<QString, SettingsEntry> m_settings;
+    std::map<QString, SettingsEntry*> m_settings;
     QReadWriteLock m_lock;
 
     SettingsDialogController* m_settingsDialog;

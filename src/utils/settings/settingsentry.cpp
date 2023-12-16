@@ -20,26 +20,27 @@
 #include <utils/settings/settingsentry.h>
 
 namespace Fooyin {
-SettingsEntry::SettingsEntry(QString name, const QVariant& value, bool writeToDisk, QString group)
-    : m_name{std::move(name)}
+SettingsEntry::SettingsEntry(QString key, const QVariant& value, QObject* parent)
+    : SettingsEntry{std::move(key), value, Settings::Variant, parent}
+{ }
+
+SettingsEntry::SettingsEntry(QString key, const QVariant& value, Settings::Type type, QObject* parent)
+    : QObject{parent}
+    , m_key{std::move(key)}
+    , m_type{type}
     , m_value{value}
     , m_defaultValue{value}
-    , m_group{std::move(group)}
-    , m_writeToDisk{writeToDisk}
+    , m_isTemporary{false}
 { }
 
-SettingsEntry::SettingsEntry(const SettingsEntry& other)
-    : QObject{} // NOLINT
-    , m_name{other.m_name}
-    , m_value{other.m_value}
-    , m_defaultValue{other.m_defaultValue}
-    , m_group{other.m_group}
-    , m_writeToDisk{other.m_writeToDisk}
-{ }
-
-QString SettingsEntry::name() const
+QString SettingsEntry::key() const
 {
-    return m_name;
+    return m_key;
+}
+
+Settings::Type SettingsEntry::type() const
+{
+    return m_type;
 }
 
 QVariant SettingsEntry::value() const
@@ -52,23 +53,44 @@ QVariant SettingsEntry::defaultValue() const
     return m_defaultValue;
 }
 
-QString SettingsEntry::group() const
+bool SettingsEntry::isTemporary() const
 {
-    return m_group;
-}
-
-bool SettingsEntry::writeToDisk() const
-{
-    return m_writeToDisk;
+    return m_isTemporary;
 }
 
 bool SettingsEntry::setValue(const QVariant& value)
 {
-    if(m_value == value) {
+    if(std::exchange(m_value, value) == value) {
         return false;
     }
-    m_value = value;
+
+    switch(m_type) {
+        case(Settings::Variant):
+            emit settingChangedVariant(m_value);
+            break;
+        case(Settings::Bool):
+            emit settingChangedBool(m_value.toBool());
+            break;
+        case(Settings::Double):
+            emit settingChangedDouble(m_value.toDouble());
+            break;
+        case(Settings::Int):
+            emit settingChangedInt(m_value.toInt());
+            break;
+        case(Settings::String):
+            emit settingChangedString(m_value.toString());
+            break;
+        case(Settings::ByteArray):
+            emit settingChangedByteArray(m_value.toByteArray());
+            break;
+    }
+
     return true;
+}
+
+void SettingsEntry::setIsTemporary(bool isTemporary)
+{
+    m_isTemporary = isTemporary;
 }
 
 bool SettingsEntry::reset()

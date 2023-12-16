@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <utils/settings/settingtypes.h>
+#include <utils/settings/settingsentry.h>
 
 #include <QObject>
 
@@ -30,15 +30,15 @@ namespace Settings::Filters {
 Q_NAMESPACE
 enum Settings : uint32_t
 {
-    FilterAltColours      = 1 | SettingsType::Bool,
-    FilterHeader          = 2 | SettingsType::Bool,
-    FilterScrollBar       = 3 | SettingsType::Bool,
-    FilterAppearance      = 4 | SettingsType::Variant,
-    FilterDoubleClick     = 5 | SettingsType::Int,
-    FilterMiddleClick     = 6 | SettingsType::Int,
-    FilterPlaylistEnabled = 7 | SettingsType::Bool,
-    FilterAutoSwitch      = 8 | SettingsType::Bool,
-    FilterAutoPlaylist    = 9 | SettingsType::String,
+    FilterAltColours      = 1 | Type::Bool,
+    FilterHeader          = 2 | Type::Bool,
+    FilterScrollBar       = 3 | Type::Bool,
+    FilterAppearance      = 4 | Type::Variant,
+    FilterDoubleClick     = 5 | Type::Int,
+    FilterMiddleClick     = 6 | Type::Int,
+    FilterPlaylistEnabled = 7 | Type::Bool,
+    FilterAutoSwitch      = 8 | Type::Bool,
+    FilterAutoPlaylist    = 9 | Type::String,
 
 };
 Q_ENUM_NS(Settings)

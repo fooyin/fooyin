@@ -46,7 +46,6 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->set<Settings::Core::FirstRun>(!Utils::File::exists(Core::settingsPath()));
 
-    m_settings->loadSettings();
     m_sortingRegistry->loadItems();
 }
 

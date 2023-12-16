@@ -21,7 +21,7 @@
 
 #include "fycore_export.h"
 
-#include <utils/settings/settingtypes.h>
+#include <utils/settings/settingsentry.h>
 
 #include <QObject>
 
@@ -33,15 +33,15 @@ namespace Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 enum Settings : uint32_t
 {
-    Version             = 1 | SettingsType::String,
-    FirstRun            = 2 | SettingsType::Bool,
-    PlayMode            = 3 | SettingsType::Int,
-    AutoRefresh         = 4 | SettingsType::Bool,
-    LibrarySortScript   = 5 | SettingsType::String,
-    ActivePlaylistId    = 6 | SettingsType::Int,
-    AudioOutput         = 7 | SettingsType::String,
-    OutputVolume        = 8 | SettingsType::Double,
-    RewindPreviousTrack = 9 | SettingsType::Bool,
+    Version             = 1 | Type::String,
+    FirstRun            = 2 | Type::Bool,
+    PlayMode            = 3 | Type::Int,
+    AutoRefresh         = 4 | Type::Bool,
+    LibrarySortScript   = 5 | Type::String,
+    ActivePlaylistId    = 6 | Type::Int,
+    AudioOutput         = 7 | Type::String,
+    OutputVolume        = 8 | Type::Double,
+    RewindPreviousTrack = 9 | Type::Bool,
 };
 Q_ENUM_NS(Settings)
 } // namespace Settings::Core

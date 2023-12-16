@@ -34,7 +34,7 @@
 
 #include <set>
 
-constexpr auto ShortcutCategory = "KeyboardShortcuts";
+constexpr auto ShortcutCategory = "KeyboardShortcuts/";
 
 namespace Fooyin {
 struct ActionManager::Private
@@ -77,9 +77,10 @@ struct ActionManager::Private
 
     void loadSetting(const Id& id, Command* command) const
     {
-        const auto key = QString{"%1/%2"}.arg(ShortcutCategory, id.name());
-        if(settingsManager->contains(key)) {
-            const QVariant var = settingsManager->value(key);
+        const QString key = ShortcutCategory + id.name();
+
+        if(settingsManager->fileContains(key)) {
+            const QVariant var = settingsManager->fileValue(key);
             if(QMetaType::Type(var.typeId()) == QMetaType::QStringList) {
                 ShortcutList shortcuts;
                 std::ranges::transform(var.toStringList(), std::back_inserter(shortcuts),
@@ -203,7 +204,7 @@ void ActionManager::setMainWindow(QMainWindow* mainWindow)
 void ActionManager::saveSettings()
 {
     for(const auto& [_, command] : p->idCmdMap) {
-        const auto key = QString{"%1/%2"}.arg(ShortcutCategory, command->id().name());
+        const QString key = ShortcutCategory + command->id().name();
 
         const ShortcutList commandShortcuts = command->shortcuts();
         const ShortcutList defaultShortcuts = command->defaultShortcuts();
@@ -212,10 +213,10 @@ void ActionManager::saveSettings()
             QStringList keys;
             std::ranges::transform(commandShortcuts, std::back_inserter(keys),
                                    [](const QKeySequence& k) { return k.toString(); });
-            p->settingsManager->set(key, keys);
+            p->settingsManager->fileSet(key, keys);
         }
         else {
-            p->settingsManager->remove(key);
+            p->settingsManager->fileRemove(key);
         }
     }
 }

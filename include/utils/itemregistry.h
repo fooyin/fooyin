@@ -69,11 +69,13 @@ class ItemRegistry : public RegistryBase
 public:
     using IndexItemMap = std::map<int, Item>;
 
-    explicit ItemRegistry(QString  settingKey, SettingsManager* settings, QObject* parent = nullptr)
+    explicit ItemRegistry(QString settingKey, SettingsManager* settings, QObject* parent = nullptr)
         : RegistryBase{parent}
         , m_settings{settings}
         , m_settingKey{std::move(settingKey)}
-    { }
+    {
+        m_settings->createSetting(m_settingKey, {});
+    }
 
     [[nodiscard]] const IndexItemMap& items() const
     {

@@ -24,38 +24,50 @@
 #include <QVariant>
 
 namespace Fooyin {
+namespace Settings {
+enum Type : uint32_t
+{
+    Variant   = 0 << 28,
+    Bool      = 1 << 28,
+    Int       = 2 << 28,
+    Double    = 3 << 28,
+    String    = 4 << 28,
+    ByteArray = 5 << 28,
+};
+}
+
 class FYUTILS_EXPORT SettingsEntry : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit SettingsEntry(QString name, const QVariant& value, bool writeToDisk, QString group = {});
+    SettingsEntry(QString name, const QVariant& value, QObject* parent = nullptr);
+    SettingsEntry(QString name, const QVariant& value, Settings::Type type, QObject* parent = nullptr);
 
-    SettingsEntry(const SettingsEntry& other);
-
-    [[nodiscard]] QString name() const;
+    [[nodiscard]] QString key() const;
+    [[nodiscard]] Settings::Type type() const;
     [[nodiscard]] QVariant value() const;
     [[nodiscard]] QVariant defaultValue() const;
-    [[nodiscard]] QString group() const;
-    [[nodiscard]] bool writeToDisk() const;
+    [[nodiscard]] bool isTemporary() const;
 
     bool setValue(const QVariant& value);
+    void setIsTemporary(bool isTemporary);
+
     bool reset();
 
 signals:
-    void settingChanged();
-    void settingChangedVariant(QVariant value);
+    void settingChangedVariant(const QVariant& value);
     void settingChangedBool(bool value);
     void settingChangedInt(int value);
     void settingChangedDouble(double value);
-    void settingChangedString(QString value);
-    void settingChangedByteArray(QByteArray value);
+    void settingChangedString(const QString& value);
+    void settingChangedByteArray(const QByteArray& value);
 
 private:
-    QString m_name;
+    QString m_key;
+    Settings::Type m_type;
     QVariant m_value;
     QVariant m_defaultValue;
-    QString m_group;
-    bool m_writeToDisk;
+    bool m_isTemporary;
 };
 } // namespace Fooyin

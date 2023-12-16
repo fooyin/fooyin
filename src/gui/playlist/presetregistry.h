@@ -28,7 +28,7 @@
 namespace Fooyin {
 class SettingsManager;
 
-constexpr auto PlaylistPresets = "LibraryTree/LibraryTreeGroups";
+constexpr auto PlaylistPresets = "Playlist/Presets";
 
 class PresetRegistry : public ItemRegistry<PlaylistPreset>
 {

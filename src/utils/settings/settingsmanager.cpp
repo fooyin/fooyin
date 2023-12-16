@@ -25,13 +25,6 @@
 
 constexpr auto SettingsDialogState = "Interface/SettingsDialogState";
 
-namespace {
-QString getKeyString(const Fooyin::SettingsEntry& setting)
-{
-    return setting.group() + QStringLiteral("/") + setting.name();
-}
-} // namespace
-
 namespace Fooyin {
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
@@ -41,31 +34,20 @@ SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     m_settingsDialog->loadState(m_settingsFile->value(SettingsDialogState).toByteArray());
 }
 
-void SettingsManager::loadSettings()
+SettingsDialogController* SettingsManager::settingsDialog() const
 {
-    for(auto& [key, setting] : m_settings) {
-        if(!setting.writeToDisk()) {
-            continue;
-        }
-        const auto keyString = getKeyString(setting);
-        if(!keyString.isEmpty()) {
-            const auto diskValue = m_settingsFile->value(keyString);
-            if(!diskValue.isNull() && diskValue != setting.value()) {
-                setting.setValue(diskValue);
-            }
-        }
-    }
+    return m_settingsDialog;
 }
 
 void SettingsManager::storeSettings()
 {
     for(const auto& [key, setting] : m_settings) {
-        if(!setting.writeToDisk()) {
+        if(setting->isTemporary()) {
             continue;
         }
-        const auto keyString = getKeyString(setting);
+        const auto keyString = setting->key();
         if(!keyString.isEmpty()) {
-            m_settingsFile->setValue(keyString, setting.value());
+            m_settingsFile->setValue(keyString, setting->value());
         }
     }
 
@@ -76,30 +58,96 @@ void SettingsManager::storeSettings()
 
 QVariant SettingsManager::value(const QString& key) const
 {
-    return m_settingsFile->value(key);
-}
-
-void SettingsManager::set(const QString& key, const QVariant& value)
-{
-    if(this->value(key) != value) {
-        m_settingsFile->setValue(key, value);
-        emit settingChanged(key, value);
+    if(!m_settings.contains(key)) {
+        return {};
     }
+
+    return m_settings.at(key)->value();
 }
 
-void SettingsManager::remove(const QString& key)
+bool SettingsManager::set(const QString& key, const QVariant& value)
 {
-    m_settingsFile->remove(key);
+    if(!m_settings.contains(key)) {
+        return false;
+    }
+
+    return m_settings.at(key)->setValue(value);
+}
+
+bool SettingsManager::reset(const QString& key)
+{
+    if(!m_settings.contains(key)) {
+        return false;
+    }
+
+    return set(key, m_settings.at(key)->defaultValue());
 }
 
 bool SettingsManager::contains(const QString& key) const
 {
+    return m_settings.contains(key);
+}
+
+QVariant SettingsManager::fileValue(const QString& key) const
+{
+    return m_settingsFile->value(key);
+}
+
+bool SettingsManager::fileSet(const QString& key, const QVariant& value)
+{
+    if(fileValue(key) == value) {
+        return false;
+    }
+
+    m_settingsFile->setValue(key, value);
+    return true;
+}
+
+bool SettingsManager::fileContains(const QString& key) const
+{
     return m_settingsFile->contains(key);
 }
 
-SettingsDialogController* SettingsManager::settingsDialog() const
+void SettingsManager::fileRemove(const QString& key)
 {
-    return m_settingsDialog;
+    m_settingsFile->remove(key);
+}
+
+void SettingsManager::createSetting(const QString& key, const QVariant& value)
+{
+    if(m_settings.contains(key)) {
+        qWarning() << "Setting has already been registered: " << key;
+        return;
+    }
+
+    auto* setting = m_settings.emplace(key, new SettingsEntry(key, value, this)).first->second;
+    checkLoadSetting(setting);
+}
+
+void SettingsManager::createTempSetting(const QString& key, const QVariant& value)
+{
+    if(m_settings.contains(key)) {
+        qWarning() << "Setting has already been registered: " << key;
+        return;
+    }
+
+    auto* setting = m_settings.emplace(key, new SettingsEntry(key, value, this)).first->second;
+    setting->setIsTemporary(true);
+}
+
+void SettingsManager::checkLoadSetting(SettingsEntry* setting) const
+{
+    if(setting->isTemporary()) {
+        return;
+    }
+
+    const auto keyString = setting->key();
+    if(!keyString.isEmpty()) {
+        const auto diskValue = m_settingsFile->value(keyString);
+        if(!diskValue.isNull()) {
+            setting->setValue(diskValue);
+        }
+    }
 }
 } // namespace Fooyin
 

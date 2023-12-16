@@ -38,8 +38,6 @@ FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Settings::Filters::FilterPlaylistEnabled>(true, u"Filters"_s);
     m_settings->createSetting<Settings::Filters::FilterAutoSwitch>(true, u"Filters"_s);
     m_settings->createSetting<Settings::Filters::FilterAutoPlaylist>("Filter Results", u"Filters"_s);
-
-    m_settings->loadSettings();
 }
 } // namespace Fooyin::Filters
 

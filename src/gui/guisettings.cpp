@@ -66,7 +66,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         "[$num(%track%,2). ][%title% ($timems(%duration%))][ \u2022 %albumartist%][ \u2022 %album%]",
         u"StatusWidget"_s);
 
-    m_settings->loadSettings();
     m_libraryTreeGroupRegistry->loadItems();
     m_playlistPresetRegistry->loadItems();
 }

@@ -21,7 +21,7 @@
 
 #include "fygui_export.h"
 
-#include <utils/settings/settingtypes.h>
+#include <utils/settings/settingsentry.h>
 
 #include <QObject>
 
@@ -34,35 +34,35 @@ namespace Settings::Gui {
 Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
 enum Settings : uint32_t
 {
-    LayoutEditing              = 1 | SettingsType::Bool,
-    StartupBehaviour           = 2 | SettingsType::Int,
-    WaitForTracks              = 3 | SettingsType::Bool,
-    EditingMenuLevels          = 4 | SettingsType::Int,
-    SplitterHandles            = 5 | SettingsType::Bool,
-    PlaylistAltColours         = 6 | SettingsType::Bool,
-    PlaylistHeader             = 7 | SettingsType::Bool,
-    PlaylistScrollBar          = 8 | SettingsType::Bool,
-    CurrentPreset              = 9 | SettingsType::String,
-    ElapsedTotal               = 10 | SettingsType::Bool,
-    InfoAltColours             = 11 | SettingsType::Bool,
-    InfoHeader                 = 12 | SettingsType::Bool,
-    InfoScrollBar              = 13 | SettingsType::Bool,
-    IconTheme                  = 14 | SettingsType::String,
-    LastPlaylistId             = 15 | SettingsType::Int,
-    LibraryTreeDoubleClick     = 16 | SettingsType::Int,
-    LibraryTreeMiddleClick     = 17 | SettingsType::Int,
-    LibraryTreePlaylistEnabled = 18 | SettingsType::Bool,
-    LibraryTreeAutoSwitch      = 19 | SettingsType::Bool,
-    LibraryTreeAutoPlaylist    = 20 | SettingsType::String,
-    LibraryTreeHeader          = 21 | SettingsType::Bool,
-    LibraryTreeScrollBar       = 22 | SettingsType::Bool,
-    LibraryTreeAltColours      = 23 | SettingsType::Bool,
-    LibraryTreeAppearance      = 24 | SettingsType::Variant,
-    PlaylistThumbnailSize      = 25 | SettingsType::Int,
-    CursorFollowsPlayback      = 26 | SettingsType::Bool,
-    PlaybackFollowsCursor      = 27 | SettingsType::Bool,
-    PlaylistTabsSingleHide     = 28 | SettingsType::Bool,
-    StatusPlayingScript        = 29 | SettingsType::String,
+    LayoutEditing              = 1 | Type::Bool,
+    StartupBehaviour           = 2 | Type::Int,
+    WaitForTracks              = 3 | Type::Bool,
+    EditingMenuLevels          = 4 | Type::Int,
+    SplitterHandles            = 5 | Type::Bool,
+    PlaylistAltColours         = 6 | Type::Bool,
+    PlaylistHeader             = 7 | Type::Bool,
+    PlaylistScrollBar          = 8 | Type::Bool,
+    CurrentPreset              = 9 | Type::String,
+    ElapsedTotal               = 10 | Type::Bool,
+    InfoAltColours             = 11 | Type::Bool,
+    InfoHeader                 = 12 | Type::Bool,
+    InfoScrollBar              = 13 | Type::Bool,
+    IconTheme                  = 14 | Type::String,
+    LastPlaylistId             = 15 | Type::Int,
+    LibraryTreeDoubleClick     = 16 | Type::Int,
+    LibraryTreeMiddleClick     = 17 | Type::Int,
+    LibraryTreePlaylistEnabled = 18 | Type::Bool,
+    LibraryTreeAutoSwitch      = 19 | Type::Bool,
+    LibraryTreeAutoPlaylist    = 20 | Type::String,
+    LibraryTreeHeader          = 21 | Type::Bool,
+    LibraryTreeScrollBar       = 22 | Type::Bool,
+    LibraryTreeAltColours      = 23 | Type::Bool,
+    LibraryTreeAppearance      = 24 | Type::Variant,
+    PlaylistThumbnailSize      = 25 | Type::Int,
+    CursorFollowsPlayback      = 26 | Type::Bool,
+    PlaybackFollowsCursor      = 27 | Type::Bool,
+    PlaylistTabsSingleHide     = 28 | Type::Bool,
+    StatusPlayingScript        = 29 | Type::String,
 };
 Q_ENUM_NS(Settings)
 } // namespace Settings::Gui
