@@ -51,6 +51,8 @@ public:
     explicit GuiSettings(SettingsManager* settingsManager);
     ~GuiSettings();
 
+    void shutdown();
+
     [[nodiscard]] LibraryTreeGroupRegistry* libraryTreeGroupRegistry() const;
     [[nodiscard]] PresetRegistry* playlistPresetRegistry() const;
 

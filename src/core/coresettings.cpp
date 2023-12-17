@@ -51,11 +51,12 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_sortingRegistry->loadItems();
 }
 
-CoreSettings::~CoreSettings()
+CoreSettings::~CoreSettings() = default;
+
+void CoreSettings::shutdown()
 {
     m_settings->set<Settings::Core::Version>(VERSION);
     m_sortingRegistry->saveItems();
-    m_settings->storeSettings();
 }
 
 SortingRegistry* CoreSettings::sortingRegistry() const

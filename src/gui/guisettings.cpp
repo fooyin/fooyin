@@ -79,11 +79,12 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_playlistPresetRegistry->loadItems();
 }
 
-GuiSettings::~GuiSettings()
+GuiSettings::~GuiSettings() = default;
+
+void GuiSettings::shutdown()
 {
     m_libraryTreeGroupRegistry->saveItems();
     m_playlistPresetRegistry->saveItems();
-    m_settings->storeSettings();
 }
 
 LibraryTreeGroupRegistry* GuiSettings::libraryTreeGroupRegistry() const

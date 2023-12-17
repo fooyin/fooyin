@@ -52,6 +52,8 @@ public:
     explicit CoreSettings(SettingsManager* settingsManager);
     ~CoreSettings();
 
+    void shutdown();
+
     [[nodiscard]] SortingRegistry* sortingRegistry() const;
 
 private:

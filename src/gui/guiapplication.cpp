@@ -317,9 +317,10 @@ void GuiApplication::shutdown()
 {
     p->actionManager->saveSettings();
     p->editableLayout->saveLayout();
-    p->playlistController.reset(nullptr);
-    p->editableLayout.reset(nullptr);
-    p->mainWindow.reset(nullptr);
+    p->playlistController.reset();
+    p->editableLayout.reset();
+    p->mainWindow.reset();
+    p->guiSettings.shutdown();
 }
 } // namespace Fooyin
 

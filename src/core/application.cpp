@@ -112,7 +112,9 @@ void Application::shutdown()
 {
     p->engine.shutdown();
     p->playlistHandler->savePlaylists();
+    p->coreSettings.shutdown();
     p->pluginManager.shutdown();
+    p->settingsManager->storeSettings();
     p->library->cleanupTracks();
     p->database.closeDatabase();
 }
