@@ -45,13 +45,14 @@ public:
         }
     }
 
+    bool installPlugin(const QString& filepath);
     void loadPlugin(PluginInfo* plugin);
     void unloadPlugins();
 
     void shutdown();
 
 private:
-    PluginManager(const PluginManager& other) = delete;
+    PluginManager(const PluginManager& other)            = delete;
     PluginManager& operator=(const PluginManager& other) = delete;
 
     PluginInfoMap m_plugins;

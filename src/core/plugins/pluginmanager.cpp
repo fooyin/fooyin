@@ -19,6 +19,8 @@
 
 #include <core/plugins/pluginmanager.h>
 
+#include "corepaths.h"
+
 #include <QDir>
 #include <QLibrary>
 
@@ -80,6 +82,15 @@ void PluginManager::loadPlugins()
             continue;
         }
     }
+}
+
+bool PluginManager::installPlugin(const QString& filepath)
+{
+    QFile pluginFile{filepath};
+    const QFileInfo fileInfo{filepath};
+
+    const QString newPlugin = Core::userPluginsPath() + '/' + fileInfo.fileName();
+    return pluginFile.copy(newPlugin);
 }
 
 void PluginManager::loadPlugin(PluginInfo* plugin)

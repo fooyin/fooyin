@@ -19,9 +19,9 @@
 
 #include <core/coresettings.h>
 
+#include "corepaths.h"
 #include "version.h"
 
-#include <core/corepaths.h>
 #include <core/library/sortingregistry.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>

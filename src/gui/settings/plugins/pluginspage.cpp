@@ -21,7 +21,7 @@
 
 #include "pluginsmodel.h"
 
-#include <core/corepaths.h>
+#include <core/plugins/pluginmanager.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -85,23 +85,19 @@ void PluginPageWidget::reset() { }
 
 void PluginPageWidget::installPlugin()
 {
-    const QString filename = QFileDialog::getOpenFileName(this, u"Install Plugin"_s, u""_s, u"Fooyin Plugin (*.so)"_s);
+    const QString filepath = QFileDialog::getOpenFileName(this, u"Install Plugin"_s, u""_s, u"Fooyin Plugin (*.so)"_s);
 
-    if(filename.isEmpty()) {
+    if(filepath.isEmpty()) {
         return;
     }
 
-    QFile pluginFile{filename};
-    const QFileInfo fileInfo{filename};
-
-    const QString newPlugin = Core::userPluginsPath() + '/' + fileInfo.fileName();
-    pluginFile.copy(newPlugin);
-
-    QMessageBox msg{QMessageBox::Question, tr("Plugin Installed"),
-                    tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
-    if(msg.exec() == QMessageBox::Yes) {
-        QProcess::startDetached(QApplication::applicationFilePath());
-        QCoreApplication::quit();
+    if(m_pluginManager->installPlugin(filepath)) {
+        QMessageBox msg{QMessageBox::Question, tr("Plugin Installed"),
+                        tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
+        if(msg.exec() == QMessageBox::Yes) {
+            QProcess::startDetached(QApplication::applicationFilePath());
+            QCoreApplication::quit();
+        }
     }
 }
 

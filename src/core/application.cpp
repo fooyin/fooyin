@@ -19,13 +19,13 @@
 
 #include "application.h"
 
+#include "corepaths.h"
 #include "database/database.h"
 #include "engine/output/alsaoutput.h"
 #include "library/unifiedmusiclibrary.h"
 #include "player/playercontroller.h"
 #include "playlist/playlisthandler.h"
 
-#include <core/corepaths.h>
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
 #include <core/engine/outputplugin.h>
