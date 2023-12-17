@@ -46,12 +46,12 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
     m_settings->createSetting<Internal::SplitterHandles>(true, u"Interface/SplitterHandles"_s);
     m_settings->createSetting<Internal::ElapsedTotal>(false, u"Player/ElapsedTotal"_s);
-    m_settings->createSetting<Internal::PlaylistAltColours>(true, u"Playlist/AlternatingColours"_s);
-    m_settings->createSetting<Internal::PlaylistHeader>(true, u"Playlist/Header"_s);
-    m_settings->createSetting<Internal::PlaylistScrollBar>(true, u"Playlist/Scrollbar"_s);
-    m_settings->createSetting<Internal::PlaylistCurrentPreset>("Default", u"Playlist/CurrentPreset"_s);
-    m_settings->createSetting<Internal::PlaylistThumbnailSize>(100, u"Playlist/ThumbnailSize"_s);
-    m_settings->createSetting<Internal::PlaylistTabsHide>(false, u"Playlist/HideSingleTab"_s);
+    m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);
+    m_settings->createSetting<Internal::PlaylistHeader>(true, u"PlaylistWidget/Header"_s);
+    m_settings->createSetting<Internal::PlaylistScrollBar>(true, u"PlaylistWidget/Scrollbar"_s);
+    m_settings->createSetting<Internal::PlaylistCurrentPreset>("Default", u"PlaylistWidget/CurrentPreset"_s);
+    m_settings->createSetting<Internal::PlaylistThumbnailSize>(100, u"PlaylistWidget/ThumbnailSize"_s);
+    m_settings->createSetting<Internal::PlaylistTabsHide>(false, u"PlaylistTabs/HideSingleTab"_s);
     m_settings->createSetting<Internal::InfoAltColours>(true, u"InfoPanel/AlternatingColours"_s);
     m_settings->createSetting<Internal::InfoHeader>(true, u"InfoPanel/Header"_s);
     m_settings->createSetting<Internal::InfoScrollBar>(true, u"InfoPanel/Scrollbar"_s);
