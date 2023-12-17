@@ -28,12 +28,11 @@ class PipeWirePlugin : public QObject,
                        public OutputPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
+    Q_PLUGIN_METADATA(IID "com.fooyin.plugin/1.0" FILE "metadata.json")
     Q_INTERFACES(Fooyin::Plugin)
     Q_INTERFACES(Fooyin::OutputPlugin)
 
 public:
     AudioOutputBuilder registerOutput() override;
-    void shutdown() override;
 };
 } // namespace Fooyin::Pipewire

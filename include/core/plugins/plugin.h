@@ -25,20 +25,27 @@
 
 namespace Fooyin {
 /*!
- The Plugin class is an abstract base class that each plugin must implement.
-
- An additional metadata json must also be supplied detailing plugin info
- including dependencies.
-
- Plugins must set their IID to "com.fooyin.plugin".
-*/
+ * An abstract interface for fooyin plugins.
+ *
+ * A plugin must implement this class in order to be recognised as a valid
+ * fooyin plugin. It must also use the same IID as this interface like so:
+ *
+ * @code
+ *     Q_PLUGIN_METADATA(IID "com.fooyin.plugin/1.0" FILE "metadata.json")
+ * @endcode
+ */
 class FYCORE_EXPORT Plugin
 {
 public:
     virtual ~Plugin() = default;
 
-    virtual void shutdown() = 0;
+    /*!
+     * This is called just before fooyin is closed.
+     * Reimplement to handle any needed cleanup, including saving settings.
+     * @note The base class implementation of this function does nothing.
+     */
+    virtual void shutdown(){};
 };
 } // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fooyin::Plugin, "com.fooyin.plugin")
+Q_DECLARE_INTERFACE(Fooyin::Plugin, "com.fooyin.plugin/1.0")

@@ -75,8 +75,6 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
         return tagEditor;
     });
 }
-
-void TagEditorPlugin::shutdown() { }
 } // namespace Fooyin::TagEditor
 
 #include "moc_tageditorplugin.cpp"

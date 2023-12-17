@@ -31,7 +31,7 @@ class FiltersPlugin : public QObject,
                       public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
+    Q_PLUGIN_METADATA(IID "com.fooyin.plugin/1.0" FILE "metadata.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:

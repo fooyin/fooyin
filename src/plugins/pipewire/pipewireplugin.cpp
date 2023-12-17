@@ -28,8 +28,6 @@ AudioOutputBuilder PipeWirePlugin::registerOutput()
                 return std::make_unique<PipeWireOutput>();
             }};
 }
-
-void PipeWirePlugin::shutdown() { }
 } // namespace Fooyin::Pipewire
 
 #include "moc_pipewireplugin.cpp"

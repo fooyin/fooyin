@@ -30,7 +30,7 @@ class TagEditorPlugin : public QObject,
                         public GuiPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.fooyin.plugin" FILE "metadata.json")
+    Q_PLUGIN_METADATA(IID "com.fooyin.plugin/1.0" FILE "metadata.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
@@ -39,7 +39,6 @@ public:
 
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
-    void shutdown() override;
 
 private:
     struct Private;
