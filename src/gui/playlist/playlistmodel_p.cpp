@@ -19,12 +19,13 @@
 
 #include "playlistmodel_p.h"
 
+#include "internalguisettings.h"
+
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <core/playlist/playlist.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
-#include <gui/guisettings.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -756,9 +757,9 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, MusicLibrary* l
     , resetting{false}
     , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
     , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
-    , altColours{settings->value<Settings::Gui::PlaylistAltColours>()}
-    , coverSize{settings->value<Settings::Gui::PlaylistThumbnailSize>(),
-                settings->value<Settings::Gui::PlaylistThumbnailSize>()}
+    , altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
+    , coverSize{settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>(),
+                settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
     , isActivePlaylist{false}
     , currentPlaylist{nullptr}
     , currentPlayState{PlayState::Stopped}

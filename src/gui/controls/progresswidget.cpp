@@ -19,9 +19,10 @@
 
 #include "progresswidget.h"
 
+#include "internalguisettings.h"
+
 #include <core/player/playermanager.h>
 #include <core/track.h>
-#include <gui/guisettings.h>
 #include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/slider.h>
@@ -42,7 +43,7 @@ ProgressWidget::ProgressWidget(PlayerManager* playerManager, SettingsManager* se
     , m_elapsed{new ClickableLabel(this)}
     , m_total{new ClickableLabel(this)}
     , m_max{0}
-    , m_elapsedTotal{settings->value<Settings::Gui::ElapsedTotal>()}
+    , m_elapsedTotal{settings->value<Settings::Gui::Internal::ElapsedTotal>()}
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
 
@@ -129,11 +130,11 @@ void ProgressWidget::stateChanged(PlayState state)
 void ProgressWidget::toggleRemaining()
 {
     if(m_elapsedTotal) {
-        m_settings->set<Settings::Gui::ElapsedTotal>(false);
+        m_settings->set<Settings::Gui::Internal::ElapsedTotal>(false);
         m_total->setText(Utils::msToString(m_max));
     }
     else {
-        m_settings->set<Settings::Gui::ElapsedTotal>(true);
+        m_settings->set<Settings::Gui::Internal::ElapsedTotal>(true);
     }
     m_elapsedTotal = !m_elapsedTotal;
 }

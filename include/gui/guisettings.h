@@ -32,30 +32,17 @@ class PresetRegistry;
 
 namespace Settings::Gui {
 Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
-enum Settings : uint32_t
+enum GuiSettings : uint32_t
 {
-    LayoutEditing          = 1 | Type::Bool,
-    StartupBehaviour       = 2 | Type::Int,
-    WaitForTracks          = 3 | Type::Bool,
-    EditingMenuLevels      = 4 | Type::Int,
-    SplitterHandles        = 5 | Type::Bool,
-    PlaylistAltColours     = 6 | Type::Bool,
-    PlaylistHeader         = 7 | Type::Bool,
-    PlaylistScrollBar      = 8 | Type::Bool,
-    CurrentPreset          = 9 | Type::String,
-    ElapsedTotal           = 10 | Type::Bool,
-    InfoAltColours         = 11 | Type::Bool,
-    InfoHeader             = 12 | Type::Bool,
-    InfoScrollBar          = 13 | Type::Bool,
-    IconTheme              = 14 | Type::String,
-    LastPlaylistId         = 15 | Type::Int,
-    PlaylistThumbnailSize  = 16 | Type::Int,
-    CursorFollowsPlayback  = 17 | Type::Bool,
-    PlaybackFollowsCursor  = 18 | Type::Bool,
-    PlaylistTabsSingleHide = 19 | Type::Bool,
-    StatusPlayingScript    = 20 | Type::String,
+    LayoutEditing         = 1 | Type::Bool,
+    StartupBehaviour      = 2 | Type::Int,
+    WaitForTracks         = 3 | Type::Bool,
+    IconTheme             = 4 | Type::String,
+    LastPlaylistId        = 5 | Type::Int,
+    CursorFollowsPlayback = 6 | Type::Bool,
+    PlaybackFollowsCursor = 7 | Type::Bool,
 };
-Q_ENUM_NS(Settings)
+Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui
 
 class FYGUI_EXPORT GuiSettings

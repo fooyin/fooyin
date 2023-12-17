@@ -19,8 +19,9 @@
 
 #include "statuswidgetpage.h"
 
+#include "internalguisettings.h"
+
 #include <gui/guiconstants.h>
-#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QGridLayout>
@@ -57,18 +58,18 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     layout->setColumnStretch(1, 1);
     layout->setRowStretch(1, 1);
 
-    m_playingScript->setText(m_settings->value<Settings::Gui::StatusPlayingScript>());
+    m_playingScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
 }
 
 void StatusWidgetPageWidget::apply()
 {
-    m_settings->set<Settings::Gui::StatusPlayingScript>(m_playingScript->toPlainText());
+    m_settings->set<Settings::Gui::Internal::StatusPlayingScript>(m_playingScript->toPlainText());
 }
 
 void StatusWidgetPageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::StatusPlayingScript>();
-    m_playingScript->setText(m_settings->value<Settings::Gui::StatusPlayingScript>());
+    m_settings->reset<Settings::Gui::Internal::StatusPlayingScript>();
+    m_playingScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
 }
 
 StatusWidgetPage::StatusWidgetPage(SettingsManager* settings)

@@ -19,6 +19,7 @@
 
 #include "playlistwidget.h"
 
+#include "internalguisettings.h"
 #include "playlist/playlisthistory.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
@@ -101,6 +102,8 @@ Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList&
 } // namespace
 
 namespace Fooyin {
+using namespace Settings::Gui::Internal;
+
 PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager,
                                              PlaylistController* playlistController, MusicLibrary* library,
                                              SettingsManager* settings)
@@ -131,10 +134,10 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
 
     layout->addWidget(playlistView);
 
-    setHeaderHidden(settings->value<Settings::Gui::PlaylistHeader>());
-    setScrollbarHidden(settings->value<Settings::Gui::PlaylistScrollBar>());
+    setHeaderHidden(settings->value<PlaylistHeader>());
+    setScrollbarHidden(settings->value<PlaylistScrollBar>());
 
-    changePreset(playlistController->presetRegistry()->itemByName(settings->value<Settings::Gui::CurrentPreset>()));
+    changePreset(playlistController->presetRegistry()->itemByName(settings->value<PlaylistCurrentPreset>()));
 
     setupConnections();
     setupActions();
@@ -176,9 +179,9 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(playlistController->presetRegistry(), &PresetRegistry::presetChanged, this,
                      &PlaylistWidgetPrivate::onPresetChanged);
 
-    settings->subscribe<Settings::Gui::PlaylistHeader>(this, &PlaylistWidgetPrivate::setHeaderHidden);
-    settings->subscribe<Settings::Gui::PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
-    settings->subscribe<Settings::Gui::CurrentPreset>(this, [this](const QString& presetName) {
+    settings->subscribe<PlaylistHeader>(this, &PlaylistWidgetPrivate::setHeaderHidden);
+    settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
+    settings->subscribe<PlaylistCurrentPreset>(this, [this](const QString& presetName) {
         const auto preset = playlistController->presetRegistry()->itemByName(presetName);
         changePreset(preset);
     });
@@ -446,7 +449,7 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(QPoint pos)
             presetsMenu->setDefaultAction(switchPreset);
         }
         QObject::connect(switchPreset, &QAction::triggered, self,
-                         [this, name]() { settings->set<Settings::Gui::CurrentPreset>(name); });
+                         [this, name]() { settings->set<PlaylistCurrentPreset>(name); });
         presetsMenu->addAction(switchPreset);
         //            }
     }

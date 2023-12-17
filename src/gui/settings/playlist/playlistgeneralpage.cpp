@@ -19,6 +19,8 @@
 
 #include "playlistgeneralpage.h"
 
+#include "internalguisettings.h"
+
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -80,7 +82,7 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
-    m_settings->set<Settings::Gui::PlaylistTabsSingleHide>(m_hideSinglePlaylistTab->isChecked());
+    m_settings->set<Settings::Gui::Internal::PlaylistTabsHide>(m_hideSinglePlaylistTab->isChecked());
 }
 
 void PlaylistGeneralPageWidget::reset()
@@ -88,7 +90,7 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::CursorFollowsPlayback>();
     m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
-    m_settings->reset<Settings::Gui::PlaylistTabsSingleHide>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistTabsHide>();
 
     setValues();
 }
@@ -98,7 +100,7 @@ void PlaylistGeneralPageWidget::setValues()
     m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
-    m_hideSinglePlaylistTab->setChecked(m_settings->value<Settings::Gui::PlaylistTabsSingleHide>());
+    m_hideSinglePlaylistTab->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsHide>());
 }
 
 PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings)

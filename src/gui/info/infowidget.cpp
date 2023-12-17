@@ -21,10 +21,10 @@
 
 #include "infodelegate.h"
 #include "infomodel.h"
+#include "internalguisettings.h"
 
 #include <core/player/playermanager.h>
 #include <core/track.h>
-#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -80,9 +80,9 @@ struct InfoWidget::Private
         spanHeaders();
         view->expandAll();
 
-        setHeaderHidden(settings->value<Settings::Gui::InfoHeader>());
-        setScrollbarHidden(settings->value<Settings::Gui::InfoScrollBar>());
-        setAltRowColors(settings->value<Settings::Gui::InfoAltColours>());
+        setHeaderHidden(settings->value<Settings::Gui::Internal::InfoHeader>());
+        setScrollbarHidden(settings->value<Settings::Gui::Internal::InfoScrollBar>());
+        setAltRowColors(settings->value<Settings::Gui::Internal::InfoAltColours>());
     }
 
     void spanHeaders()
@@ -133,10 +133,11 @@ InfoWidget::InfoWidget(PlayerManager* playerManager, TrackSelectionController* s
         p->view->expandAll();
     });
 
-    p->settings->subscribe<Settings::Gui::InfoHeader>(this, [this](bool enabled) { p->setHeaderHidden(enabled); });
-    p->settings->subscribe<Settings::Gui::InfoScrollBar>(this,
-                                                         [this](bool enabled) { p->setScrollbarHidden(enabled); });
-    p->settings->subscribe<Settings::Gui::InfoAltColours>(this, [this](bool enabled) { p->setAltRowColors(enabled); });
+    using namespace Settings::Gui::Internal;
+
+    p->settings->subscribe<InfoHeader>(this, [this](bool enabled) { p->setHeaderHidden(enabled); });
+    p->settings->subscribe<InfoScrollBar>(this, [this](bool enabled) { p->setScrollbarHidden(enabled); });
+    p->settings->subscribe<InfoAltColours>(this, [this](bool enabled) { p->setAltRowColors(enabled); });
 
     p->resetModel();
 }
@@ -155,6 +156,8 @@ QString InfoWidget::layoutName() const
 
 void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
 {
+    using namespace Settings::Gui::Internal;
+
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -162,20 +165,20 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!p->view->isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this,
-                     [this](bool checked) { p->settings->set<Settings::Gui::InfoHeader>(checked); });
+                     [this](bool checked) { p->settings->set<InfoHeader>(checked); });
 
     auto* showScrollBar = new QAction(QStringLiteral("Show Scrollbar"), menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(p->view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
     QAction::connect(showScrollBar, &QAction::triggered, this,
-                     [this](bool checked) { p->settings->set<Settings::Gui::InfoScrollBar>(checked); });
+                     [this](bool checked) { p->settings->set<InfoScrollBar>(checked); });
     menu->addAction(showScrollBar);
 
     auto* altColours = new QAction(QStringLiteral("Alternate Row Colours"), this);
     altColours->setCheckable(true);
     altColours->setChecked(p->view->alternatingRowColors());
     QAction::connect(altColours, &QAction::triggered, this,
-                     [this](bool checked) { p->settings->set<Settings::Gui::InfoAltColours>(checked); });
+                     [this](bool checked) { p->settings->set<InfoAltColours>(checked); });
 
     menu->addAction(showHeaders);
     menu->addAction(showScrollBar);

@@ -135,6 +135,16 @@ void SettingsManager::createTempSetting(const QString& key, const QVariant& valu
     setting->setIsTemporary(true);
 }
 
+bool SettingsManager::settingExists(const QString& key) const
+{
+    if(m_settings.empty()) {
+        return false;
+    }
+
+    return std::ranges::any_of(std::as_const(m_settings),
+                               [&key](const auto& setting) { return setting.second->key() == key; });
+}
+
 void SettingsManager::checkLoadSetting(SettingsEntry* setting) const
 {
     if(setting->isTemporary()) {

@@ -20,8 +20,8 @@
 #include <gui/splitterwidget.h>
 
 #include "dummy.h"
+#include "internalguisettings.h"
 
-#include <gui/guisettings.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -92,8 +92,8 @@ protected:
     QSplitterHandle* createHandle() override
     {
         auto* handle = new SplitterHandle(orientation(), this);
-        handle->showHandle(m_settings->value<Settings::Gui::SplitterHandles>());
-        m_settings->subscribe<Settings::Gui::SplitterHandles>(handle, &SplitterHandle::showHandle);
+        handle->showHandle(m_settings->value<Settings::Gui::Internal::SplitterHandles>());
+        m_settings->subscribe<Settings::Gui::Internal::SplitterHandles>(handle, &SplitterHandle::showHandle);
         return handle;
     };
 

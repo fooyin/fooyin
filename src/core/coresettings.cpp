@@ -33,18 +33,20 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
     , m_sortingRegistry{std::make_unique<SortingRegistry>(settingsManager)}
 {
-    m_settings->createSetting<Settings::Core::Version>(VERSION);
-    m_settings->createTempSetting<Settings::Core::FirstRun>(true);
-    m_settings->createSetting<Settings::Core::PlayMode>(0, u"Player"_s);
-    m_settings->createSetting<Settings::Core::AutoRefresh>(false, u"Library"_s);
-    m_settings->createSetting<Settings::Core::LibrarySortScript>(
-        "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", u"Library"_s);
-    m_settings->createSetting<Settings::Core::ActivePlaylistId>(0, u"Playlist"_s);
-    m_settings->createSetting<Settings::Core::AudioOutput>("ALSA|default", u"Engine"_s);
-    m_settings->createSetting<Settings::Core::OutputVolume>(1.0, u"Engine"_s);
-    m_settings->createSetting<Settings::Core::RewindPreviousTrack>(false, u"Playlist"_s);
+    using namespace Settings::Core;
 
-    m_settings->set<Settings::Core::FirstRun>(!Utils::File::exists(Core::settingsPath()));
+    m_settings->createTempSetting<FirstRun>(true);
+    m_settings->createSetting<Version>(VERSION, u"Version"_s);
+    m_settings->createSetting<PlayMode>(0, u"Player/PlayMode"_s);
+    m_settings->createSetting<AutoRefresh>(false, u"Library/AutoRefresh"_s);
+    m_settings->createSetting<LibrarySortScript>(
+        "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", u"Library/SortScript"_s);
+    m_settings->createSetting<ActivePlaylistId>(0, u"Playlist/ActivePlaylistId"_s);
+    m_settings->createSetting<AudioOutput>("ALSA|default", u"Engine/AudioOutput"_s);
+    m_settings->createSetting<OutputVolume>(1.0, u"Engine/OutputVolume"_s);
+    m_settings->createSetting<RewindPreviousTrack>(false, u"Playlist/RewindPreviousTrack"_s);
+
+    m_settings->set<FirstRun>(!Utils::File::exists(Core::settingsPath()));
 
     m_sortingRegistry->loadItems();
 }

@@ -19,8 +19,9 @@
 
 #include "playlistguipage.h"
 
+#include "internalguisettings.h"
+
 #include <gui/guiconstants.h>
-#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -76,28 +77,28 @@ PlaylistGuiPageWidget::PlaylistGuiPageWidget(SettingsManager* settings)
 
 void PlaylistGuiPageWidget::apply()
 {
-    m_settings->set<Settings::Gui::PlaylistScrollBar>(m_scrollBars->isChecked());
-    m_settings->set<Settings::Gui::PlaylistHeader>(m_header->isChecked());
-    m_settings->set<Settings::Gui::PlaylistAltColours>(m_altColours->isChecked());
-    m_settings->set<Settings::Gui::PlaylistThumbnailSize>(m_thumbnailSize->value());
+    m_settings->set<Settings::Gui::Internal::PlaylistScrollBar>(m_scrollBars->isChecked());
+    m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
+    m_settings->set<Settings::Gui::Internal::PlaylistAltColours>(m_altColours->isChecked());
+    m_settings->set<Settings::Gui::Internal::PlaylistThumbnailSize>(m_thumbnailSize->value());
 }
 
 void PlaylistGuiPageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::PlaylistScrollBar>();
-    m_settings->reset<Settings::Gui::PlaylistHeader>();
-    m_settings->reset<Settings::Gui::PlaylistAltColours>();
-    m_settings->reset<Settings::Gui::PlaylistThumbnailSize>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistScrollBar>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistAltColours>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistThumbnailSize>();
 
     setValues();
 }
 
 void PlaylistGuiPageWidget::setValues()
 {
-    m_scrollBars->setChecked(m_settings->value<Settings::Gui::PlaylistScrollBar>());
-    m_header->setChecked(m_settings->value<Settings::Gui::PlaylistHeader>());
-    m_altColours->setChecked(m_settings->value<Settings::Gui::PlaylistAltColours>());
-    m_thumbnailSize->setValue(m_settings->value<Settings::Gui::PlaylistThumbnailSize>());
+    m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());
+    m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
+    m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
+    m_thumbnailSize->setValue(m_settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>());
 }
 
 PlaylistGuiPage::PlaylistGuiPage(SettingsManager* settings)

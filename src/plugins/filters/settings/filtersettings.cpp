@@ -29,17 +29,19 @@ namespace Fooyin::Filters {
 FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
+    using namespace Settings::Filters;
+
     qRegisterMetaType<Fooyin::Filters::FilterOptions>("Fooyin::Filters::FilterOptions");
 
-    m_settings->createSetting<Settings::Filters::FilterAltColours>(false, u"Filters"_s);
-    m_settings->createSetting<Settings::Filters::FilterHeader>(true, u"Filters"_s);
-    m_settings->createSetting<Settings::Filters::FilterScrollBar>(true, u"Filters"_s);
-    m_settings->createSetting<Settings::Filters::FilterAppearance>(QVariant::fromValue(FilterOptions{}), u"Filters"_s);
-    m_settings->createSetting<Settings::Filters::FilterDoubleClick>(1, u"Filters"_s);
-    m_settings->createSetting<Settings::Filters::FilterMiddleClick>(0, u"Filters"_s);
-    m_settings->createSetting<Settings::Filters::FilterPlaylistEnabled>(true, u"Filters"_s);
-    m_settings->createSetting<Settings::Filters::FilterAutoSwitch>(true, u"Filters"_s);
-    m_settings->createSetting<Settings::Filters::FilterAutoPlaylist>("Filter Results", u"Filters"_s);
+    m_settings->createSetting<FilterAltColours>(false, u"Filters/AlternatingColours"_s);
+    m_settings->createSetting<FilterHeader>(true, u"Filters/Header"_s);
+    m_settings->createSetting<FilterScrollBar>(true, u"Filters/Scrollbar"_s);
+    m_settings->createSetting<FilterAppearance>(QVariant::fromValue(FilterOptions{}), u"Filters/Appearance"_s);
+    m_settings->createSetting<FilterDoubleClick>(1, u"Filters/DoubleClickBehaviour"_s);
+    m_settings->createSetting<FilterMiddleClick>(0, u"Filters/MiddleClickBehaviour"_s);
+    m_settings->createSetting<FilterPlaylistEnabled>(true, u"Filters/SelectionPlaylistEnabled"_s);
+    m_settings->createSetting<FilterAutoSwitch>(true, u"Filters/AutoSwitchSelectionPlaylist"_s);
+    m_settings->createSetting<FilterAutoPlaylist>("Filter Results", u"Filters/SelectionPlaylistName"_s);
 }
 } // namespace Fooyin::Filters
 

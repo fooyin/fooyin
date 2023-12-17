@@ -19,6 +19,7 @@
 
 #include "guigeneralpage.h"
 
+#include "internalguisettings.h"
 #include "quicksetup/quicksetupdialog.h"
 
 #include <gui/editablelayout.h>
@@ -31,7 +32,6 @@
 #include <QFileDialog>
 #include <QGroupBox>
 #include <QInputDialog>
-#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
@@ -106,7 +106,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     mainLayout->addWidget(iconThemeBox);
     mainLayout->addStretch();
 
-    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::SplitterHandles>());
+    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::Internal::SplitterHandles>());
 
     const QString currentTheme = m_settings->value<Settings::Gui::IconTheme>();
     if(currentTheme == "light"_L1) {
@@ -140,15 +140,15 @@ void GuiGeneralPageWidget::apply()
         m_settings->set<Settings::Gui::IconTheme>(theme);
     }
 
-    m_settings->set<Settings::Gui::SplitterHandles>(m_splitterHandles->isChecked());
+    m_settings->set<Settings::Gui::Internal::SplitterHandles>(m_splitterHandles->isChecked());
 }
 
 void GuiGeneralPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::IconTheme>();
-    m_settings->reset<Settings::Gui::SplitterHandles>();
+    m_settings->reset<Settings::Gui::Internal::SplitterHandles>();
 
-    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::SplitterHandles>());
+    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::Internal::SplitterHandles>());
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

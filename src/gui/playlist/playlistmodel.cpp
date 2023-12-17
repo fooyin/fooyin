@@ -19,6 +19,7 @@
 
 #include "playlistmodel.h"
 
+#include "internalguisettings.h"
 #include "playlistitem.h"
 #include "playlistmodel_p.h"
 #include "playlistpopulator.h"
@@ -43,11 +44,11 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, SettingsManager* settings, Q
     : TreeModel{parent}
     , p{std::make_unique<PlaylistModelPrivate>(this, library, settings)}
 {
-    p->settings->subscribe<Settings::Gui::PlaylistAltColours>(this, [this](bool enabled) {
+    p->settings->subscribe<Settings::Gui::Internal::PlaylistAltColours>(this, [this](bool enabled) {
         p->altColours = enabled;
         emit dataChanged({}, {}, {Qt::BackgroundRole});
     });
-    p->settings->subscribe<Settings::Gui::PlaylistThumbnailSize>(this, [this](int size) {
+    p->settings->subscribe<Settings::Gui::Internal::PlaylistThumbnailSize>(this, [this](int size) {
         p->coverSize = {size, size};
         p->coverProvider->clearCache();
         emit dataChanged({}, {}, {PlaylistItem::Role::Cover});

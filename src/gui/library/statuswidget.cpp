@@ -19,6 +19,8 @@
 
 #include "statuswidget.h"
 
+#include "internalguisettings.h"
+
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <core/scripting/scriptparser.h>
@@ -67,7 +69,7 @@ struct StatusWidget::Private
         clearTimer.setInterval(2s);
         QObject::connect(&clearTimer, &QTimer::timeout, playing, &QLabel::clear);
 
-        scriptParser.parse(settings->value<Settings::Gui::StatusPlayingScript>());
+        scriptParser.parse(settings->value<Settings::Gui::Internal::StatusPlayingScript>());
     }
 
     void labelClicked() const
@@ -145,7 +147,7 @@ StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, 
         p->iconLabel->setPixmap(p->icon);
     });
 
-    settings->subscribe<Settings::Gui::StatusPlayingScript>(this, [this](const QString& script) {
+    settings->subscribe<Settings::Gui::Internal::StatusPlayingScript>(this, [this](const QString& script) {
         p->scriptParser.parse(script);
         p->updatePlayingText();
     });

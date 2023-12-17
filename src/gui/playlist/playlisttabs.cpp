@@ -19,11 +19,11 @@
 
 #include "playlisttabs.h"
 
+#include "internalguisettings.h"
 #include "playlistcontroller.h"
 
 #include <core/playlist/playlistmanager.h>
 #include <gui/guiconstants.h>
-#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
@@ -32,7 +32,6 @@
 #include <utils/widgets/editabletabbar.h>
 
 #include <QContextMenuEvent>
-#include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLayout>
@@ -83,7 +82,7 @@ struct PlaylistTabs::Private
         tabs->setMovable(true);
         tabs->setExpanding(false);
 
-        if(settings->value<Settings::Gui::PlaylistTabsSingleHide>()) {
+        if(settings->value<Settings::Gui::Internal::PlaylistTabsHide>()) {
             tabs->hide();
         }
     }
@@ -156,8 +155,8 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
     QObject::connect(p->playlistHandler, &PlaylistManager::playlistRenamed, this,
                      [this](const Playlist* playlist) { p->playlistRenamed(playlist); });
 
-    p->settings->subscribe<Settings::Gui::PlaylistTabsSingleHide>(this,
-                                                                  [this](bool hide) { p->tabs->setVisible(!hide); });
+    p->settings->subscribe<Settings::Gui::Internal::PlaylistTabsHide>(
+        this, [this](bool hide) { p->tabs->setVisible(!hide); });
 }
 
 PlaylistTabs::~PlaylistTabs() = default;
@@ -189,7 +188,7 @@ void PlaylistTabs::removePlaylist(const Playlist* playlist)
         }
     }
 
-    if(p->settings->value<Settings::Gui::PlaylistTabsSingleHide>() && p->tabs->count() < 2) {
+    if(p->settings->value<Settings::Gui::Internal::PlaylistTabsHide>() && p->tabs->count() < 2) {
         p->tabs->hide();
     }
 }
@@ -202,7 +201,7 @@ int PlaylistTabs::addNewTab(const QString& name, const QIcon& icon)
 
     const int index = p->tabs->addTab(icon, name);
 
-    if(p->settings->value<Settings::Gui::PlaylistTabsSingleHide>() && p->tabs->count() > 1) {
+    if(p->settings->value<Settings::Gui::Internal::PlaylistTabsHide>() && p->tabs->count() > 1) {
         p->tabs->show();
     }
 

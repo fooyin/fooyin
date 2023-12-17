@@ -19,9 +19,9 @@
 
 #include <gui/guisettings.h>
 
+#include "internalguisettings.h"
 #include "librarytree/librarytreeappearance.h"
 #include "librarytree/librarytreegroupregistry.h"
-#include "librarytree/librarytreesettings.h"
 #include "playlist/presetregistry.h"
 
 #include <utils/settings/settingsmanager.h>
@@ -33,42 +33,47 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
     , m_playlistPresetRegistry{std::make_unique<PresetRegistry>(m_settings)}
 {
-    m_settings->createTempSetting<Settings::Gui::LayoutEditing>(false);
-    m_settings->createSetting<Settings::Gui::StartupBehaviour>(2, u"Interface"_s);
-    m_settings->createSetting<Settings::Gui::WaitForTracks>(true, u"Interface"_s);
-    m_settings->createSetting<Settings::Gui::EditingMenuLevels>(2, u"Interface"_s);
-    m_settings->createSetting<Settings::Gui::SplitterHandles>(true, u"Splitters"_s);
-    m_settings->createSetting<Settings::Gui::PlaylistAltColours>(true, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::PlaylistHeader>(true, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::PlaylistScrollBar>(true, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::CurrentPreset>("Default", u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::ElapsedTotal>(false, u"Player"_s);
-    m_settings->createSetting<Settings::Gui::InfoAltColours>(true, u"Info"_s);
-    m_settings->createSetting<Settings::Gui::InfoHeader>(true, u"Info"_s);
-    m_settings->createSetting<Settings::Gui::InfoScrollBar>(true, u"Info"_s);
-    m_settings->createSetting<Settings::Gui::IconTheme>("light", u"Theme"_s);
-    m_settings->createSetting<Settings::Gui::LastPlaylistId>(0, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::PlaylistThumbnailSize>(100, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::CursorFollowsPlayback>(false, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::PlaybackFollowsCursor>(false, u"Playlist"_s);
-    m_settings->createSetting<Settings::Gui::PlaylistTabsSingleHide>(false, u"PlaylistTabs"_s);
-    m_settings->createSetting<Settings::Gui::StatusPlayingScript>(
+    using namespace Settings::Gui;
+
+    m_settings->createTempSetting<LayoutEditing>(false);
+    m_settings->createSetting<StartupBehaviour>(2, u"Interface/StartupBehaviour"_s);
+    m_settings->createSetting<WaitForTracks>(true, u"Interface/WaitForTracks"_s);
+    m_settings->createSetting<IconTheme>("light", u"Theme/IconTheme"_s);
+    m_settings->createSetting<LastPlaylistId>(0, u"Playlist/LastPlaylistId"_s);
+    m_settings->createSetting<CursorFollowsPlayback>(false, u"Playlist/CursorFollowsPlayback"_s);
+    m_settings->createSetting<PlaybackFollowsCursor>(false, u"Playlist/PlaybackFollowsCursor"_s);
+
+    m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
+    m_settings->createSetting<Internal::SplitterHandles>(true, u"Interface/SplitterHandles"_s);
+    m_settings->createSetting<Internal::ElapsedTotal>(false, u"Player/ElapsedTotal"_s);
+    m_settings->createSetting<Internal::PlaylistAltColours>(true, u"Playlist/AlternatingColours"_s);
+    m_settings->createSetting<Internal::PlaylistHeader>(true, u"Playlist/Header"_s);
+    m_settings->createSetting<Internal::PlaylistScrollBar>(true, u"Playlist/Scrollbar"_s);
+    m_settings->createSetting<Internal::PlaylistCurrentPreset>("Default", u"Playlist/CurrentPreset"_s);
+    m_settings->createSetting<Internal::PlaylistThumbnailSize>(100, u"Playlist/ThumbnailSize"_s);
+    m_settings->createSetting<Internal::PlaylistTabsHide>(false, u"Playlist/HideSingleTab"_s);
+    m_settings->createSetting<Internal::InfoAltColours>(true, u"InfoPanel/AlternatingColours"_s);
+    m_settings->createSetting<Internal::InfoHeader>(true, u"InfoPanel/Header"_s);
+    m_settings->createSetting<Internal::InfoScrollBar>(true, u"InfoPanel/Scrollbar"_s);
+    m_settings->createSetting<Internal::StatusPlayingScript>(
         "[$num(%track%,2). ][%title% ($timems(%duration%))][ \u2022 %albumartist%][ \u2022 %album%]",
-        u"StatusWidget"_s);
+        u"StatusWidget/PlayingScript"_s);
 
     qRegisterMetaType<Fooyin::LibraryTreeAppearance>("Fooyin::LibraryTreeAppearance");
 
     m_libraryTreeGroupRegistry = std::make_unique<LibraryTreeGroupRegistry>(m_settings);
 
-    m_settings->createSetting(LibraryTreeDoubleClick, 1);
-    m_settings->createSetting(LibraryTreeMiddleClick, 0);
-    m_settings->createSetting(LibraryTreePlaylistEnabled, false);
-    m_settings->createSetting(LibraryTreeAutoSwitch, true);
-    m_settings->createSetting(LibraryTreeAutoPlaylist, "Library Selection");
-    m_settings->createSetting(LibraryTreeHeader, true);
-    m_settings->createSetting(LibraryTreeScrollBar, true);
-    m_settings->createSetting(LibraryTreeAltColours, false);
-    m_settings->createSetting(LibraryTreeAppearanceOptions, QVariant::fromValue(LibraryTreeAppearance{}));
+    m_settings->createSetting<Internal::LibTreeDoubleClick>(1, u"LibraryTree/DoubleClickBehaviour"_s);
+    m_settings->createSetting<Internal::LibTreeMiddleClick>(0, u"LibraryTree/MiddleClickkBehaviour"_s);
+    m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false, u"LibraryTree/SelectionPlaylistEnabled"_s);
+    m_settings->createSetting<Internal::LibTreeAutoSwitch>(true, u"LibraryTree/SelectionPlaylistAutoSwitch"_s);
+    m_settings->createSetting<Internal::LibTreeAutoPlaylist>("Library Selection",
+                                                             u"LibraryTree/SelectionPlaylistName"_s);
+    m_settings->createSetting<Internal::LibTreeHeader>(true, u"LibraryTree/Header"_s);
+    m_settings->createSetting<Internal::LibTreeScrollBar>(true, u"LibraryTree/Scrollbar"_s);
+    m_settings->createSetting<Internal::LibTreeAltColours>(false, u"LibraryTree/AlternatingColours"_s);
+    m_settings->createSetting<Internal::LibTreeAppearance>(QVariant::fromValue(LibraryTreeAppearance{}),
+                                                           u"LibraryTree/Appearance"_s);
 
     m_libraryTreeGroupRegistry->loadItems();
     m_playlistPresetRegistry->loadItems();

@@ -19,8 +19,8 @@
 
 #include "librarytreepage.h"
 
+#include "internalguisettings.h"
 #include "librarytree/librarytreegroupregistry.h"
-#include "librarytree/librarytreesettings.h"
 #include "librarytreegroupmodel.h"
 
 #include <gui/guiconstants.h>
@@ -137,12 +137,12 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Libra
     addTrackAction(m_middleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, middleActions);
     addTrackAction(m_middleClick, tr("Send to new playlist"), TrackAction::SendNewPlaylist, middleActions);
 
-    auto doubleAction = m_settings->value(LibraryTreeDoubleClick).toInt();
+    auto doubleAction = m_settings->value<Settings::Gui::Internal::LibTreeDoubleClick>();
     if(doubleActions.contains(doubleAction)) {
         m_doubleClick->setCurrentIndex(doubleActions.at(doubleAction));
     }
 
-    auto middleAction = m_settings->value(LibraryTreeMiddleClick).toInt();
+    auto middleAction = m_settings->value<Settings::Gui::Internal::LibTreeMiddleClick>();
     if(middleActions.contains(middleAction)) {
         m_middleClick->setCurrentIndex(middleActions.at(middleAction));
     }
@@ -152,12 +152,12 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Libra
         m_autoSwitch->setEnabled(checked);
     });
 
-    m_playlistEnabled->setChecked(m_settings->value(LibraryTreePlaylistEnabled).toBool());
-    m_autoSwitch->setChecked(m_settings->value(LibraryTreeAutoSwitch).toBool());
+    m_playlistEnabled->setChecked(m_settings->value<Settings::Gui::Internal::LibTreePlaylistEnabled>());
+    m_autoSwitch->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAutoSwitch>());
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
 
-    m_playlistName->setText(m_settings->value(LibraryTreeAutoPlaylist).toString());
+    m_playlistName->setText(m_settings->value<Settings::Gui::Internal::LibTreeAutoPlaylist>());
 
     m_model->populate();
 }
@@ -165,21 +165,21 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Libra
 void LibraryTreePageWidget::apply()
 {
     m_model->processQueue();
-    m_settings->set(LibraryTreeDoubleClick, m_doubleClick->currentData().toInt());
-    m_settings->set(LibraryTreeMiddleClick, m_middleClick->currentData().toInt());
-    m_settings->set(LibraryTreePlaylistEnabled, m_playlistEnabled->isChecked());
-    m_settings->set(LibraryTreeAutoSwitch, m_autoSwitch->isChecked());
-    m_settings->set(LibraryTreeAutoPlaylist, m_playlistName->text());
+    m_settings->set<Settings::Gui::Internal::LibTreeDoubleClick>(m_doubleClick->currentData().toInt());
+    m_settings->set<Settings::Gui::Internal::LibTreeMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Settings::Gui::Internal::LibTreePlaylistEnabled>(m_playlistEnabled->isChecked());
+    m_settings->set<Settings::Gui::Internal::LibTreeAutoSwitch>(m_autoSwitch->isChecked());
+    m_settings->set<Settings::Gui::Internal::LibTreeAutoPlaylist>(m_playlistName->text());
 }
 
 void LibraryTreePageWidget::reset()
 {
     m_settings->set(LibraryTreeGroups, {});
-    m_settings->reset(LibraryTreeDoubleClick);
-    m_settings->reset(LibraryTreeMiddleClick);
-    m_settings->reset(LibraryTreePlaylistEnabled);
-    m_settings->reset(LibraryTreeAutoSwitch);
-    m_settings->reset(LibraryTreeAutoPlaylist);
+    m_settings->reset<Settings::Gui::Internal::LibTreeDoubleClick>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeMiddleClick>();
+    m_settings->reset<Settings::Gui::Internal::LibTreePlaylistEnabled>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeAutoSwitch>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeAutoPlaylist>();
 
     m_groupsRegistry->loadItems();
     m_model->populate();

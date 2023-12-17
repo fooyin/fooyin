@@ -19,6 +19,7 @@
 
 #include <gui/editablelayout.h>
 
+#include "internalguisettings.h"
 #include "quicksetup/quicksetupdialog.h"
 #include "widgets/dummy.h"
 
@@ -162,7 +163,7 @@ struct EditableLayout::Private
         }
 
         FyWidget* currentWidget = widget;
-        int level               = settings->value<Settings::Gui::EditingMenuLevels>();
+        int level               = settings->value<Settings::Gui::Internal::EditingMenuLevels>();
 
         while(level > 0 && currentWidget) {
             menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));

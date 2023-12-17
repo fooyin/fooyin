@@ -93,16 +93,21 @@ public:
 
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
-    void constexpr createSetting(Value value, const QString& group = {})
+    void constexpr createSetting(Value value, const QString& settingKey)
     {
-        createNewSetting<key>(value, group, false);
+        createNewSetting<key>(value, settingKey, false);
     }
 
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
-    void constexpr createTempSetting(const Value& value, const QString& group = {})
+    void constexpr createTempSetting(const Value& value)
     {
-        createNewSetting<key>(value, group, true);
+        using Enum            = decltype(key);
+        const auto meta       = QMetaEnum::fromType<Enum>();
+        const auto keyString  = QString::fromLatin1(meta.valueToKey(key));
+        const auto settingKey = "Temp/" + keyString;
+
+        createNewSetting<key>(value, settingKey, true);
     }
 
     template <auto key>
@@ -208,7 +213,7 @@ public:
 private:
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
-    void constexpr createNewSetting(const Value& value, const QString& group, bool isTemporary)
+    void constexpr createNewSetting(const Value& value, const QString& settingKey, bool isTemporary)
     {
         using Enum           = decltype(key);
         const auto type      = static_cast<Settings::Type>(findType<key>());
@@ -217,12 +222,12 @@ private:
         const auto keyString = QString::fromLatin1(meta.valueToKey(key));
         const auto mapKey    = enumName + keyString;
 
-        if(m_settings.contains(mapKey)) {
+        if(m_settings.contains(mapKey) || settingExists(settingKey)) {
             qWarning() << "Setting has already been registered: " << keyString;
             return;
         }
 
-        m_settings.emplace(mapKey, new SettingsEntry(group + QStringLiteral("/") + keyString, value, type, this));
+        m_settings.emplace(mapKey, new SettingsEntry(settingKey, value, type, this));
         auto* setting = m_settings.at(mapKey);
         if(isTemporary) {
             setting->setIsTemporary(isTemporary);
@@ -274,6 +279,7 @@ private:
         }
     }
 
+    bool settingExists(const QString& key) const;
     void checkLoadSetting(SettingsEntry* setting) const;
 
     QSettings* m_settingsFile;

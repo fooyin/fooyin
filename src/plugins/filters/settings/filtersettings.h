@@ -28,7 +28,7 @@ class SettingsManager;
 
 namespace Settings::Filters {
 Q_NAMESPACE
-enum Settings : uint32_t
+enum FiltersSettings : uint32_t
 {
     FilterAltColours      = 1 | Type::Bool,
     FilterHeader          = 2 | Type::Bool,
@@ -41,7 +41,7 @@ enum Settings : uint32_t
     FilterAutoPlaylist    = 9 | Type::String,
 
 };
-Q_ENUM_NS(Settings)
+Q_ENUM_NS(FiltersSettings)
 } // namespace Settings::Filters
 
 namespace Filters {

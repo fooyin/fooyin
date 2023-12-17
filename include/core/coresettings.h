@@ -31,7 +31,7 @@ class SortingRegistry;
 
 namespace Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
-enum Settings : uint32_t
+enum CoreSettings : uint32_t
 {
     Version             = 1 | Type::String,
     FirstRun            = 2 | Type::Bool,
@@ -43,7 +43,7 @@ enum Settings : uint32_t
     OutputVolume        = 8 | Type::Double,
     RewindPreviousTrack = 9 | Type::Bool,
 };
-Q_ENUM_NS(Settings)
+Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core
 
 class FYCORE_EXPORT CoreSettings
