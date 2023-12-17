@@ -17,7 +17,7 @@
  *
  */
 
-#include <gui/searchcontroller.h>
+#include "searchcontroller.h"
 
 #include <gui/editablelayout.h>
 #include <gui/fywidget.h>
@@ -110,7 +110,8 @@ struct SearchController::Private
         const Id widgetId = widget->id();
 
         const bool connectedToOther = isConnectedToOther(sourceId, widgetId);
-        const auto overlayFlags = OverlayWidget::Resize | (connectedToOther ? OverlayWidget::Label : OverlayWidget::Button);
+        const auto overlayFlags
+            = OverlayWidget::Resize | (connectedToOther ? OverlayWidget::Label : OverlayWidget::Button);
 
         auto* overlay = overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
 
@@ -246,4 +247,4 @@ void SearchController::changeSearch(const Id& id, const QString& search)
 }
 } // namespace Fooyin
 
-#include "gui/moc_searchcontroller.cpp"
+#include "moc_searchcontroller.cpp"

@@ -19,9 +19,10 @@
 
 #include "searchwidget.h"
 
+#include "searchcontroller.h"
+
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <gui/searchcontroller.h>
 #include <utils/actions/actioncontainer.h>
 
 #include <QHBoxLayout>

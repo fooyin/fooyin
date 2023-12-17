@@ -19,12 +19,12 @@
 
 #include "guigeneralpage.h"
 
+#include "guipaths.h"
 #include "internalguisettings.h"
 #include "quicksetup/quicksetupdialog.h"
 
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
-#include <gui/guipaths.h>
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 

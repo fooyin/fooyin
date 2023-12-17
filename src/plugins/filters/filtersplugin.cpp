@@ -28,7 +28,6 @@
 #include <gui/editablelayout.h>
 #include <gui/layoutprovider.h>
 #include <gui/plugins/guiplugincontext.h>
-#include <gui/searchcontroller.h>
 #include <gui/widgetfactory.h>
 #include <utils/actions/actioncontainer.h>
 

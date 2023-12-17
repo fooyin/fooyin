@@ -19,10 +19,11 @@
 
 #include <gui/coverprovider.h>
 
+#include "guipaths.h"
+
 #include <core/tagging/tagreader.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
-#include <gui/guipaths.h>
 #include <utils/async.h>
 #include <utils/crypto.h>
 #include <utils/utils.h>
@@ -89,7 +90,8 @@ QPixmap loadCachedCover(const QString& key)
 
 QString generateCoverKey(const Fooyin::Track& track, const QSize& size)
 {
-    return Fooyin::Utils::generateHash(track.albumHash(), QString::number(size.width()), QString::number(size.height()));
+    return Fooyin::Utils::generateHash(track.albumHash(), QString::number(size.width()),
+                                       QString::number(size.height()));
 }
 } // namespace
 

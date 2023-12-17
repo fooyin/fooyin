@@ -19,7 +19,8 @@
 
 #include <gui/layoutprovider.h>
 
-#include <gui/guipaths.h>
+#include "guipaths.h"
+
 #include <utils/utils.h>
 
 #include <QDir>

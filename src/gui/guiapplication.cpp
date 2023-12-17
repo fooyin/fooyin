@@ -36,6 +36,7 @@
 #include "playlist/playlisttabs.h"
 #include "playlist/playlistwidget.h"
 #include "playlist/presetregistry.h"
+#include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "settings/enginepage.h"
 #include "settings/generalpage.h"
@@ -51,6 +52,7 @@
 #include "settings/shortcuts/shortcutspage.h"
 #include "settings/widgets/statuswidgetpage.h"
 #include "widgets/spacer.h"
+#include "widgets/splitterwidget.h"
 #include "widgets/tabstackwidget.h"
 
 #include <core/coresettings.h>
@@ -64,8 +66,6 @@
 #include <gui/plugins/guiplugin.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/propertiesdialog.h>
-#include <gui/searchcontroller.h>
-#include <gui/splitterwidget.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>

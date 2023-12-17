@@ -17,7 +17,7 @@
  *
  */
 
-#include <gui/guipaths.h>
+#include "guipaths.h"
 
 #include <utils/paths.h>
 

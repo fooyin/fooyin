@@ -17,7 +17,7 @@
  *
  */
 
-#include <gui/splitterwidget.h>
+#include "splitterwidget.h"
 
 #include "dummy.h"
 #include "internalguisettings.h"
@@ -332,5 +332,5 @@ void SplitterWidget::loadLayoutData(const QJsonObject& layout)
 }
 } // namespace Fooyin
 
-#include "gui/moc_splitterwidget.cpp"
+#include "moc_splitterwidget.cpp"
 #include "splitterwidget.moc"

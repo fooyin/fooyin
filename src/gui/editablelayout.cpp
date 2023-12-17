@@ -22,11 +22,11 @@
 #include "internalguisettings.h"
 #include "quicksetup/quicksetupdialog.h"
 #include "widgets/dummy.h"
+#include "widgets/splitterwidget.h"
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
-#include <gui/splitterwidget.h>
 #include <gui/widgetcontainer.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
