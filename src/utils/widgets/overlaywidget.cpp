@@ -77,6 +77,8 @@ OverlayWidget::OverlayWidget(QWidget* parent)
     : OverlayWidget{None, parent}
 { }
 
+OverlayWidget::~OverlayWidget() = default;
+
 OverlayWidget::OverlayWidget(const Options& options, QWidget* parent)
     : QWidget{parent}
     , p{std::make_unique<Private>(this, options)}

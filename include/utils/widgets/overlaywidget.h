@@ -46,6 +46,7 @@ public:
 
     explicit OverlayWidget(QWidget* parent = nullptr);
     explicit OverlayWidget(const Options& options, QWidget* parent = nullptr);
+    ~OverlayWidget() override;
 
     void setOption(Option option, bool on = true);
 
