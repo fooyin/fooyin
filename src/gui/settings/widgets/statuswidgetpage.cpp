@@ -24,6 +24,7 @@
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QTextEdit>
@@ -40,11 +41,13 @@ public:
 private:
     SettingsManager* m_settings;
 
+    QCheckBox* m_showIcon;
     QTextEdit* m_playingScript;
 };
 
 StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     : m_settings{settings}
+    , m_showIcon{new QCheckBox(tr("Show Icon"), this)}
     , m_playingScript{new QTextEdit(this)}
 {
     m_playingScript->setFixedHeight(100);
@@ -52,22 +55,26 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     auto* playingScriptLabel = new QLabel(tr("Playing Script:"), this);
 
     auto* layout = new QGridLayout(this);
-    layout->addWidget(playingScriptLabel, 0, 0, Qt::AlignTop);
-    layout->addWidget(m_playingScript, 0, 1);
+    layout->addWidget(m_showIcon, 0, 0);
+    layout->addWidget(playingScriptLabel, 1, 0, Qt::AlignTop);
+    layout->addWidget(m_playingScript, 1, 1);
 
-    layout->setColumnStretch(1, 1);
-    layout->setRowStretch(1, 1);
+    layout->setColumnStretch(2, 1);
+    layout->setRowStretch(2, 1);
 
+    m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
     m_playingScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
 }
 
 void StatusWidgetPageWidget::apply()
 {
+    m_settings->set<Settings::Gui::Internal::StatusShowIcon>(m_showIcon->isChecked());
     m_settings->set<Settings::Gui::Internal::StatusPlayingScript>(m_playingScript->toPlainText());
 }
 
 void StatusWidgetPageWidget::reset()
 {
+    m_settings->reset<Settings::Gui::Internal::StatusShowIcon>();
     m_settings->reset<Settings::Gui::Internal::StatusPlayingScript>();
     m_playingScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
 }

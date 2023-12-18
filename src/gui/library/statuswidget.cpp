@@ -30,6 +30,7 @@
 #include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
 #include <QTimer>
@@ -52,7 +53,7 @@ struct StatusWidget::Private
 
     ClickableLabel* iconLabel;
     QPixmap icon;
-    ClickableLabel* playing;
+    ClickableLabel* statusText;
 
     QTimer clearTimer;
 
@@ -64,10 +65,10 @@ struct StatusWidget::Private
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
         , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
-        , playing{new ClickableLabel(self)}
+        , statusText{new ClickableLabel(self)}
     {
         clearTimer.setInterval(2s);
-        QObject::connect(&clearTimer, &QTimer::timeout, playing, &QLabel::clear);
+        QObject::connect(&clearTimer, &QTimer::timeout, statusText, &QLabel::clear);
 
         scriptParser.parse(settings->value<Settings::Gui::Internal::StatusPlayingScript>());
     }
@@ -83,14 +84,14 @@ struct StatusWidget::Private
     void updatePlayingText()
     {
         scriptRegistry.changeCurrentTrack(playerManager->currentTrack());
-        playing->setText(scriptParser.evaluate());
+        statusText->setText(scriptParser.evaluate());
     }
 
     void stateChanged(const PlayState state)
     {
         switch(state) {
             case(PlayState::Stopped):
-                playing->setText(tr("Waiting for track..."));
+                statusText->setText(tr("Waiting for track..."));
                 break;
             case(PlayState::Playing): {
                 updatePlayingText();
@@ -111,7 +112,7 @@ struct StatusWidget::Private
         }
 
         const QString scanText = QStringLiteral("Scanning library: ") + QString::number(progress) + QStringLiteral("%");
-        playing->setText(scanText);
+        statusText->setText(scanText);
     }
 };
 
@@ -132,11 +133,11 @@ StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, 
     p->iconLabel->setMaximumWidth(22);
 
     layout->addWidget(p->iconLabel);
-    layout->addWidget(p->playing);
+    layout->addWidget(p->statusText);
 
-    setMinimumHeight(25);
+    p->iconLabel->setHidden(!p->settings->value<Settings::Gui::Internal::StatusShowIcon>());
 
-    QObject::connect(p->playing, &ClickableLabel::clicked, this, [this]() { p->labelClicked(); });
+    QObject::connect(p->statusText, &ClickableLabel::clicked, this, [this]() { p->labelClicked(); });
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
     QObject::connect(library, &MusicLibrary::scanProgress, this,
@@ -147,6 +148,8 @@ StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, 
         p->iconLabel->setPixmap(p->icon);
     });
 
+    settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(this,
+                                                                 [this](bool show) { p->iconLabel->setHidden(!show); });
     settings->subscribe<Settings::Gui::Internal::StatusPlayingScript>(this, [this](const QString& script) {
         p->scriptParser.parse(script);
         p->updatePlayingText();
@@ -163,6 +166,21 @@ QString StatusWidget::name() const
 QString StatusWidget::layoutName() const
 {
     return QStringLiteral("StatusBar");
+}
+
+void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* showIcon = new QAction(tr("Show Icon"), this);
+    showIcon->setCheckable(true);
+    showIcon->setChecked(p->settings->value<Settings::Gui::Internal::StatusShowIcon>());
+    QObject::connect(showIcon, &QAction::triggered, this,
+                     [this](bool checked) { p->settings->set<Settings::Gui::Internal::StatusShowIcon>(checked); });
+    menu->addAction(showIcon);
+
+    menu->popup(event->globalPos());
 }
 } // namespace Fooyin
 

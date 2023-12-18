@@ -33,15 +33,18 @@ class StatusWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit StatusWidget(MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings,
+    StatusWidget(MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings,
                           QWidget* parent = nullptr);
-    ~StatusWidget();
+    ~StatusWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
 signals:
     void clicked();
+
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
     struct Private;
