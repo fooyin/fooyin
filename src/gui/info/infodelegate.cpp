@@ -121,7 +121,6 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     initStyleOption(&opt, index);
 
     QFont font = painter->font();
-    font.setBold(true);
     font.setPixelSize(12);
     painter->setFont(font);
 
