@@ -35,8 +35,9 @@
 
 #include <set>
 
-constexpr auto NoCoverKey   = "|NoCover|";
-constexpr QSize NoCoverSize = {60, 60};
+constexpr auto NoCoverKey    = "|NoCover|";
+constexpr QSize NoCoverSize  = {60, 60};
+constexpr QSize MaxCoverSize = {800, 800};
 
 namespace {
 QString coverThumbnailPath(const QString& key)
@@ -125,9 +126,7 @@ struct CoverProvider::Private
             }
         }
 
-        if(!size.isEmpty()) {
-            cover = Utils::scalePixmap(cover, size);
-        }
+        cover = Utils::scalePixmap(cover, size);
 
         QPixmapCache::insert(key, cover);
 
@@ -153,7 +152,7 @@ CoverProvider::~CoverProvider() = default;
 
 QPixmap CoverProvider::trackCover(const Track& track, bool saveToDisk) const
 {
-    return trackCover(track, {}, saveToDisk);
+    return trackCover(track, MaxCoverSize, saveToDisk);
 }
 
 QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, bool saveToDisk) const
