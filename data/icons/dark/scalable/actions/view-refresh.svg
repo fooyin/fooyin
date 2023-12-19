@@ -1,52 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   width="48"
-   height="48"
-   fill="currentColor"
-   viewBox="0 0 48 48"
-   version="1.1"
-   id="svg4"
-   sodipodi:docname="reload.svg"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs12" />
-  <sodipodi:namedview
-     id="namedview10"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     showgrid="false"
-     inkscape:zoom="10.833024"
-     inkscape:cx="19.292859"
-     inkscape:cy="33.139409"
-     inkscape:window-width="1886"
-     inkscape:window-height="1080"
-     inkscape:window-x="34"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g2304" />
-  <g
-     id="g2304"
-     transform="matrix(1.3333333,0,0,1.3333333,8.0000004,8.0000004)"
-     inkscape:label="g2304">
-    <path
-       d="m 24.925308,-1.2059655 v 8.1019257 h -8.09455"
-       id="path6"
-       style="fill:none;stroke:#b3b3b3;stroke-width:3.58275;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       inkscape:label="path2" />
-    <path
-       d="M 24.406229,15.648091 C 21.921267,25.363659 11.1622,28.351636 3.3900107,21.46355 -4.3821794,14.575464 -1.3050141,1.7925229 8.7491621,-0.79600799 15.061287,-2.4196346 21.595211,0.83572164 24.007387,6.8959602"
-       id="path4"
-       style="fill:none;fill-opacity:1;stroke:#b3b3b3;stroke-width:3.58275;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       inkscape:label="path1"
-       sodipodi:nodetypes="cscc" />
-  </g>
+<svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#b3b3b3" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.58275" transform="matrix(1.3333333 0 0 1.3333333 8 8)">
+        <path d="m24.925308-1.2059655v8.1019257h-8.09455"/>
+        <path d="m24.406229 15.648091c-2.484962 9.715568-13.244029 12.703545-21.0162183 5.815459-7.7721901-6.888086-4.6950248-19.6710271 5.3591514-22.25955799 6.3121249-1.62362661 12.8460489 1.63172963 15.2582249 7.69196819"/>
+    </g>
 </svg>

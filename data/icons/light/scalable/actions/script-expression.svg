@@ -1,44 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   width="48"
-   height="48"
-   fill="currentColor"
-   viewBox="0 0 48 48"
-   version="1.1"
-   id="svg6"
-   sodipodi:docname="script-expression.svg"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs8" />
-  <sodipodi:namedview
-     id="namedview6"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     showgrid="false"
-     inkscape:zoom="6.3111814"
-     inkscape:cx="28.837707"
-     inkscape:cy="34.145746"
-     inkscape:window-width="1880"
-     inkscape:window-height="1020"
-     inkscape:window-x="20"
-     inkscape:window-y="40"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg6" />
-  <path
-     d="m 19.631171,19.348133 m -10.4000021,0 a 10.400002,10.400002 0 1 0 20.8000031,0 10.400002,10.400002 0 1 0 -20.8000031,0"
-     id="path2"
-     style="stroke-width:3.2;stroke:#464546;stroke-opacity:1;fill:none" />
-  <path
-     d="m 20.431171,20.148133 m 0,3.200001 a 3.2000005,3.2000005 0 0 1 3.2,-3.200001 h 11.200002 a 3.2000005,3.2000005 0 0 1 3.2,3.200001 v 11.200001 a 3.2000005,3.2000005 0 0 1 -3.2,3.200001 H 23.631171 a 3.2000005,3.2000005 0 0 1 -3.2,-3.200001 z"
-     id="path3"
-     style="stroke-width:3.2;stroke:#464546;stroke-opacity:1;fill:none" />
+<svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#464546" stroke-width="3.2">
+        <path d="m9.2311689 19.348133a10.400002 10.400002 0 1 0 20.8000031 0 10.400002 10.400002 0 1 0 -20.8000031 0"/>
+        <path d="m20.431171 23.348134a3.2000005 3.2000005 0 0 1 3.2-3.200001h11.200002a3.2000005 3.2000005 0 0 1 3.2 3.200001v11.200001a3.2000005 3.2000005 0 0 1 -3.2 3.200001h-11.200002a3.2000005 3.2000005 0 0 1 -3.2-3.200001z"/>
+    </g>
 </svg>

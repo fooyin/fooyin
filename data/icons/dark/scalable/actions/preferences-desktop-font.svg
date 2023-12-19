@@ -1,60 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   width="48"
-   height="48"
-   fill="currentColor"
-   viewBox="0 0 48 48"
-   version="1.1"
-   id="svg50"
-   sodipodi:docname="preferences-desktop-font.svg"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs8" />
-  <sodipodi:namedview
-     id="namedview6"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     showgrid="false"
-     inkscape:zoom="9.4352857"
-     inkscape:cx="13.937045"
-     inkscape:cy="29.039926"
-     inkscape:window-width="1880"
-     inkscape:window-height="1020"
-     inkscape:window-x="20"
-     inkscape:window-y="40"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg50" />
-  <path
-     d="M 3.3527535,12.59375 V 8.03125 H 33.009003 v 4.5625"
-     id="path256"
-     style="stroke-width:4.5625;stroke:#b3b3b3;stroke-opacity:1;fill:none;fill-opacity:1" />
-  <path
-     d="m 19.321504,8.03125 v 31.9375"
-     id="path258"
-     style="stroke-width:4.5625;stroke:#b3b3b3;stroke-opacity:1;fill:#000000;fill-opacity:1" />
-  <path
-     d="M 23.884003,39.96875 H 14.759004"
-     id="path260"
-     style="stroke-width:4.5625;stroke:#b3b3b3;stroke-opacity:1;fill:#000000;fill-opacity:1" />
-  <path
-     d="M 30.727753,26.28125 V 24 h 13.6875 v 2.28125"
-     id="path262"
-     style="stroke-width:4.5625;stroke:#b3b3b3;stroke-opacity:1;fill:#000000;fill-opacity:1" />
-  <path
-     d="M 37.571502,24 V 39.96875"
-     id="path264"
-     style="stroke-width:4.5625;stroke:#b3b3b3;stroke-opacity:1;fill:#000000;fill-opacity:1" />
-  <path
-     d="m 35.290253,39.96875 h 4.5625"
-     id="path266"
-     style="stroke-width:4.5625;stroke:#b3b3b3;stroke-opacity:1;fill:#000000;fill-opacity:1" />
+<svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#b3b3b3" stroke-width="4.5625">
+        <path d="m3.3527535 12.59375v-4.5625h29.6562495v4.5625" fill="none"/>
+        <path d="m19.321504 8.03125v31.9375"/>
+        <path d="m23.884003 39.96875h-9.124999"/>
+        <path d="m30.727753 26.28125v-2.28125h13.6875v2.28125"/>
+        <path d="m37.571502 24v15.96875"/>
+        <path d="m35.290253 39.96875h4.5625"/>
+    </g>
 </svg>
