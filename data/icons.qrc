@@ -1,20 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/nocover.png</file>
-        <file>images/fooyin.png</file>
-        <file>images/fooyin-small.png</file>
         <file>icons/dark/index.theme</file>
-        <file>icons/dark/scalable/actions/sc-fooyin-round.svg</file>
-        <file>icons/dark/scalable/actions/sc-fooyin.svg</file>
-        <file>icons/light/index.theme</file>
-        <file>icons/light/scalable/actions/sc-fooyin-round.svg</file>
-        <file>icons/light/scalable/actions/sc-fooyin.svg</file>
         <file>icons/dark/scalable/actions/application-exit.svg</file>
         <file>icons/dark/scalable/actions/applications-graphics.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-high.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-low.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-muted.svg</file>
+        <file>icons/dark/scalable/actions/fooyin.svg</file>
+        <file>icons/dark/scalable/actions/format-text-bold.svg</file>
+        <file>icons/dark/scalable/actions/list-add.svg</file>
+        <file>icons/dark/scalable/actions/list-remove.svg</file>
         <file>icons/dark/scalable/actions/media-playback-pause.svg</file>
         <file>icons/dark/scalable/actions/media-playback-start.svg</file>
         <file>icons/dark/scalable/actions/media-playback-stop.svg</file>
@@ -24,14 +20,24 @@
         <file>icons/dark/scalable/actions/media-skip-backward.svg</file>
         <file>icons/dark/scalable/actions/media-skip-forward.svg</file>
         <file>icons/dark/scalable/actions/preferences-desktop.svg</file>
-        <file>icons/dark/scalable/actions/preferences-system.svg</file>
+        <file>icons/dark/scalable/actions/preferences-desktop-font.svg</file>
+        <file>icons/dark/scalable/actions/preferences-other.svg</file>
+        <file>icons/dark/scalable/actions/script-expression.svg</file>
+        <file>icons/dark/scalable/actions/script-function.svg</file>
+        <file>icons/dark/scalable/actions/script-literal.svg</file>
+        <file>icons/dark/scalable/actions/script-variable.svg</file>
         <file>icons/dark/scalable/actions/view-refresh.svg</file>
+        <file>icons/light/index.theme</file>
         <file>icons/light/scalable/actions/application-exit.svg</file>
         <file>icons/light/scalable/actions/applications-graphics.svg</file>
         <file>icons/light/scalable/actions/audio-volume-high.svg</file>
         <file>icons/light/scalable/actions/audio-volume-low.svg</file>
         <file>icons/light/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/light/scalable/actions/audio-volume-muted.svg</file>
+        <file>icons/light/scalable/actions/fooyin.svg</file>
+        <file>icons/light/scalable/actions/format-text-bold.svg</file>
+        <file>icons/light/scalable/actions/list-add.svg</file>
+        <file>icons/light/scalable/actions/list-remove.svg</file>
         <file>icons/light/scalable/actions/media-playback-pause.svg</file>
         <file>icons/light/scalable/actions/media-playback-start.svg</file>
         <file>icons/light/scalable/actions/media-playback-stop.svg</file>
@@ -41,25 +47,13 @@
         <file>icons/light/scalable/actions/media-skip-backward.svg</file>
         <file>icons/light/scalable/actions/media-skip-forward.svg</file>
         <file>icons/light/scalable/actions/preferences-desktop.svg</file>
-        <file>icons/light/scalable/actions/preferences-system.svg</file>
-        <file>icons/light/scalable/actions/view-refresh.svg</file>
-        <file>icons/dark/scalable/actions/preferences-desktop-font.svg</file>
         <file>icons/light/scalable/actions/preferences-desktop-font.svg</file>
-        <file>icons/dark/scalable/actions/list-add.svg</file>
-        <file>icons/light/scalable/actions/list-add.svg</file>
-        <file>icons/dark/scalable/actions/format-text-bold.svg</file>
-        <file>icons/dark/scalable/actions/list-remove.svg</file>
-        <file>icons/light/scalable/actions/format-text-bold.svg</file>
-        <file>icons/light/scalable/actions/list-remove.svg</file>
-        <file>icons/light/scalable/actions/script-variable.svg</file>
-        <file>icons/light/scalable/actions/script-literal.svg</file>
-        <file>icons/light/scalable/actions/script-function.svg</file>
-        <file>icons/light/scalable/actions/script-expression.svg</file>
-        <file>icons/dark/scalable/actions/script-expression.svg</file>
-        <file>icons/dark/scalable/actions/script-function.svg</file>
-        <file>icons/dark/scalable/actions/script-literal.svg</file>
-        <file>icons/dark/scalable/actions/script-variable.svg</file>
-        <file>icons/dark/scalable/actions/preferences-other.svg</file>
         <file>icons/light/scalable/actions/preferences-other.svg</file>
+        <file>icons/light/scalable/actions/script-expression.svg</file>
+        <file>icons/light/scalable/actions/script-function.svg</file>
+        <file>icons/light/scalable/actions/script-literal.svg</file>
+        <file>icons/light/scalable/actions/script-variable.svg</file>
+        <file>icons/light/scalable/actions/view-refresh.svg</file>
+        <file>images/nocover.png</file>
     </qresource>
 </RCC>

@@ -23,7 +23,7 @@ namespace Fooyin::Constants {
 constexpr auto NoCover = "://images/nocover.png";
 
 namespace Icons {
-constexpr auto Fooyin     = "sc-fooyin";
+constexpr auto Fooyin     = "fooyin";
 constexpr auto Play       = "media-playback-start";
 constexpr auto Pause      = "media-playback-pause";
 constexpr auto Stop       = "media-playback-stop";
