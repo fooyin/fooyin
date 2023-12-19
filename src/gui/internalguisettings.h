@@ -23,6 +23,15 @@
 
 namespace Fooyin::Settings::Gui::Internal {
 Q_NAMESPACE
+
+enum class IconThemeOption
+{
+    AutoDetect = 0,
+    System,
+    Light,
+    Dark,
+};
+
 enum GuiInternalSettings : uint32_t
 {
     EditingMenuLevels      = 1 | Type::Int,
@@ -48,6 +57,7 @@ enum GuiInternalSettings : uint32_t
     LibTreeScrollBar       = 21 | Type::Bool,
     LibTreeAltColours      = 22 | Type::Bool,
     LibTreeAppearance      = 23 | Type::Variant,
+    SystemIconTheme        = 24 | Type::String,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Fooyin::Settings::Gui::Internal

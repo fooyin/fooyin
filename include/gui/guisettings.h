@@ -37,7 +37,7 @@ enum GuiSettings : uint32_t
     LayoutEditing         = 1 | Type::Bool,
     StartupBehaviour      = 2 | Type::Int,
     WaitForTracks         = 3 | Type::Bool,
-    IconTheme             = 4 | Type::String,
+    IconTheme             = 4 | Type::Int,
     LastPlaylistId        = 5 | Type::Int,
     CursorFollowsPlayback = 6 | Type::Bool,
     PlaybackFollowsCursor = 7 | Type::Bool,

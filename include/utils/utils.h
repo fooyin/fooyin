@@ -64,4 +64,6 @@ FYUTILS_EXPORT QPixmap scalePixmap(QPixmap& image, const QSize& size);
 FYUTILS_EXPORT QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
 FYUTILS_EXPORT void showMessageBox(const QString& text, const QString& infoText);
 FYUTILS_EXPORT void appendMenuActions(QMenu* originalMenu, QMenu* menu);
+
+FYUTILS_EXPORT bool isDarkMode();
 } // namespace Fooyin::Utils

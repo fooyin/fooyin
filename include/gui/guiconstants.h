@@ -20,7 +20,9 @@
 #pragma once
 
 namespace Fooyin::Constants {
-constexpr auto NoCover = "://images/nocover.png";
+constexpr auto NoCover         = "://images/nocover.png";
+constexpr auto LightIconTheme  = "light";
+constexpr auto DarkIconTheme   = "dark";
 
 namespace Icons {
 constexpr auto Fooyin     = "fooyin";

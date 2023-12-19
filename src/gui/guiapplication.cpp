@@ -21,6 +21,7 @@
 
 #include "controls/controlwidget.h"
 #include "info/infowidget.h"
+#include "internalguisettings.h"
 #include "library/coverwidget.h"
 #include "library/statuswidget.h"
 #include "librarytree/librarytreewidget.h"
@@ -61,6 +62,7 @@
 #include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
 #include <gui/editablelayout.h>
+#include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
 #include <gui/plugins/guiplugin.h>
@@ -70,6 +72,7 @@
 #include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -170,6 +173,7 @@ struct GuiApplication::Private
                            searchController,     propertiesDialog, widgetProvider.widgetFactory(),
                            editableLayout.get(), &guiSettings}
     {
+        restoreIconTheme();
         registerLayouts();
         registerWidgets();
         createPropertiesTabs();
@@ -178,6 +182,27 @@ struct GuiApplication::Private
 
         pluginManager->initialisePlugins<GuiPlugin>(
             [this](GuiPlugin* plugin) { plugin->initialise(guiPluginContext); });
+    }
+
+    void restoreIconTheme()
+    {
+        using namespace Settings::Gui::Internal;
+
+        const auto iconTheme = static_cast<IconThemeOption>(settingsManager->value<Settings::Gui::IconTheme>());
+        switch(iconTheme) {
+            case(IconThemeOption::AutoDetect):
+                QIcon::setThemeName(Utils::isDarkMode() ? Constants::DarkIconTheme : Constants::LightIconTheme);
+                break;
+            case(IconThemeOption::System):
+                QIcon::setThemeName(QIcon::themeName());
+                break;
+            case(IconThemeOption::Light):
+                QIcon::setThemeName(Constants::LightIconTheme);
+                break;
+            case(IconThemeOption::Dark):
+                QIcon::setThemeName(Constants::DarkIconTheme);
+                break;
+        }
     }
 
     void registerLayouts()
@@ -298,8 +323,6 @@ GuiApplication::GuiApplication(const CorePluginContext& core)
     QObject::connect(p->viewMenu, &ViewMenu::openQuickSetup, p->editableLayout.get(), &EditableLayout::showQuickSetup);
 
     p->layoutProvider.findLayouts();
-
-    QIcon::setThemeName(p->settingsManager->value<Settings::Gui::IconTheme>());
 
     p->editableLayout->initialise();
 

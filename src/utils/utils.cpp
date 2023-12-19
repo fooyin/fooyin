@@ -19,6 +19,7 @@
 
 #include <utils/utils.h>
 
+#include <QApplication>
 #include <QDesktopServices>
 #include <QDir>
 #include <QFile>
@@ -317,6 +318,19 @@ void appendMenuActions(QMenu* originalMenu, QMenu* menu)
     for(QAction* action : actions) {
         menu->addAction(action);
     }
+}
+
+bool isDarkMode()
+{
+    const QPalette palette{qApp->palette()};
+
+    const QColor textColour   = palette.color(QPalette::Active, QPalette::Text);
+    const QColor windowColour = palette.color(QPalette::Active, QPalette::Window);
+
+    // Assume dark theme if text is a lighter colour than the window background
+    const bool isDark = textColour.value() > windowColour.value();
+
+    return isDark;
 }
 
 } // namespace Fooyin::Utils

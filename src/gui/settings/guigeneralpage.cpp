@@ -27,6 +27,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -40,6 +41,9 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
+using namespace Settings::Gui;
+using namespace Settings::Gui::Internal;
+
 class GuiGeneralPageWidget : public SettingsPageWidget
 {
 public:
@@ -58,10 +62,10 @@ private:
     EditableLayout* m_editableLayout;
     SettingsManager* m_settings;
 
+    QRadioButton* m_detectIconTheme;
     QRadioButton* m_lightTheme;
     QRadioButton* m_darkTheme;
-    QRadioButton* m_customTheme;
-    QLineEdit* m_customThemeName;
+    QRadioButton* m_systemTheme;
     QCheckBox* m_splitterHandles;
 };
 
@@ -70,14 +74,12 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     : m_layoutProvider{layoutProvider}
     , m_editableLayout{editableLayout}
     , m_settings{settings}
+    , m_detectIconTheme{new QRadioButton(tr("Auto-detect theme"), this)}
     , m_lightTheme{new QRadioButton(tr("Light"), this)}
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
-    , m_customTheme{new QRadioButton(tr("Custom"), this)}
-    , m_customThemeName{new QLineEdit(this)}
+    , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
     , m_splitterHandles{new QCheckBox(tr("Show Splitter Handles"), this)}
 {
-    m_customThemeName->setVisible(false);
-
     auto* splitterBox       = new QGroupBox(tr("Splitters"));
     auto* splitterBoxLayout = new QGridLayout(splitterBox);
     splitterBoxLayout->addWidget(m_splitterHandles, 0, 0, 1, 2);
@@ -90,11 +92,13 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* exportLayoutBtn = new QPushButton(tr("Export Layout"), this);
 
     auto* iconThemeBox       = new QGroupBox(tr("Icon Theme"), this);
-    auto* iconThemeBoxLayout = new QVBoxLayout(iconThemeBox);
-    iconThemeBoxLayout->addWidget(m_lightTheme);
-    iconThemeBoxLayout->addWidget(m_darkTheme);
-    iconThemeBoxLayout->addWidget(m_customTheme);
-    iconThemeBoxLayout->addWidget(m_customThemeName);
+    auto* iconThemeBoxLayout = new QGridLayout(iconThemeBox);
+    iconThemeBoxLayout->addWidget(m_detectIconTheme, 0, 0, 1, 2);
+    iconThemeBoxLayout->addWidget(m_lightTheme, 1, 0);
+    iconThemeBoxLayout->addWidget(m_darkTheme, 1, 1);
+    iconThemeBoxLayout->addWidget(m_systemTheme, 2, 0, 1, 2);
+
+    iconThemeBoxLayout->setColumnStretch(2, 1);
 
     setupBoxLayout->addWidget(quickSetup);
     setupBoxLayout->addWidget(importLayoutBtn);
@@ -106,49 +110,62 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     mainLayout->addWidget(iconThemeBox);
     mainLayout->addStretch();
 
-    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::Internal::SplitterHandles>());
+    m_splitterHandles->setChecked(m_settings->value<SplitterHandles>());
 
-    const QString currentTheme = m_settings->value<Settings::Gui::IconTheme>();
-    if(currentTheme == "light"_L1) {
-        m_lightTheme->setChecked(true);
-    }
-    else if(currentTheme == "dark"_L1) {
-        m_darkTheme->setChecked(true);
-    }
-    else {
-        m_customTheme->setChecked(true);
-        m_customThemeName->setVisible(true);
+    const auto iconTheme = static_cast<Settings::Gui::Internal::IconThemeOption>(m_settings->value<IconTheme>());
+    switch(iconTheme) {
+        case(IconThemeOption::AutoDetect):
+            m_detectIconTheme->setChecked(true);
+            break;
+        case(IconThemeOption::System):
+            m_systemTheme->setChecked(true);
+            break;
+        case(IconThemeOption::Light):
+            m_lightTheme->setChecked(true);
+            break;
+        case(IconThemeOption::Dark):
+            m_darkTheme->setChecked(true);
+            break;
     }
 
     QObject::connect(quickSetup, &QPushButton::clicked, this, &GuiGeneralPageWidget::showQuickSetup);
     QObject::connect(importLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::importLayout);
     QObject::connect(exportLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::exportLayout);
-
-    QObject::connect(m_lightTheme, &QRadioButton::clicked, this, [this]() { m_customThemeName->setVisible(false); });
-    QObject::connect(m_darkTheme, &QRadioButton::clicked, this, [this]() { m_customThemeName->setVisible(false); });
-    QObject::connect(m_customTheme, &QRadioButton::clicked, this, [this]() { m_customThemeName->setVisible(true); });
 }
 
 void GuiGeneralPageWidget::apply()
 {
-    const QString theme = m_customTheme->isChecked() ? m_customThemeName->text()
-                        : m_lightTheme->isChecked()  ? u"light"_s
-                                                     : u"dark"_s;
+    IconThemeOption iconThemeOption;
 
-    if(theme != m_settings->value<Settings::Gui::IconTheme>()) {
-        QIcon::setThemeName(theme);
-        m_settings->set<Settings::Gui::IconTheme>(theme);
+    if(m_detectIconTheme->isChecked()) {
+        iconThemeOption = IconThemeOption::AutoDetect;
+        QIcon::setThemeName(Utils::isDarkMode() ? Constants::DarkIconTheme : Constants::LightIconTheme);
+    }
+    else if(m_lightTheme->isChecked()) {
+        iconThemeOption = IconThemeOption::Light;
+        QIcon::setThemeName(Constants::LightIconTheme);
+    }
+    else if(m_darkTheme->isChecked()) {
+        iconThemeOption = IconThemeOption::Dark;
+        QIcon::setThemeName(Constants::DarkIconTheme);
+    }
+    else {
+        iconThemeOption = IconThemeOption::System;
+        QIcon::setThemeName(m_settings->value<SystemIconTheme>());
     }
 
-    m_settings->set<Settings::Gui::Internal::SplitterHandles>(m_splitterHandles->isChecked());
+    m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
+
+    m_settings->set<SplitterHandles>(m_splitterHandles->isChecked());
 }
 
 void GuiGeneralPageWidget::reset()
 {
+    m_settings->reset<IconTheme>();
     m_settings->reset<Settings::Gui::IconTheme>();
-    m_settings->reset<Settings::Gui::Internal::SplitterHandles>();
+    m_settings->reset<SplitterHandles>();
 
-    m_splitterHandles->setChecked(m_settings->value<Settings::Gui::Internal::SplitterHandles>());
+    m_splitterHandles->setChecked(m_settings->value<SplitterHandles>());
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

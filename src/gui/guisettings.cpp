@@ -26,6 +26,8 @@
 
 #include <utils/settings/settingsmanager.h>
 
+#include <QIcon>
+
 using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
@@ -38,7 +40,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<LayoutEditing>(false);
     m_settings->createSetting<StartupBehaviour>(2, u"Interface/StartupBehaviour"_s);
     m_settings->createSetting<WaitForTracks>(true, u"Interface/WaitForTracks"_s);
-    m_settings->createSetting<IconTheme>("light", u"Theme/IconTheme"_s);
+    m_settings->createSetting<IconTheme>(0, u"Theme/IconTheme"_s);
     m_settings->createSetting<LastPlaylistId>(0, u"Playlist/LastPlaylistId"_s);
     m_settings->createSetting<CursorFollowsPlayback>(false, u"Playlist/CursorFollowsPlayback"_s);
     m_settings->createSetting<PlaybackFollowsCursor>(false, u"Playlist/PlaybackFollowsCursor"_s);
@@ -75,6 +77,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::LibTreeAltColours>(false, u"LibraryTree/AlternatingColours"_s);
     m_settings->createSetting<Internal::LibTreeAppearance>(QVariant::fromValue(LibraryTreeAppearance{}),
                                                            u"LibraryTree/Appearance"_s);
+    m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
 
     m_libraryTreeGroupRegistry->loadItems();
     m_playlistPresetRegistry->loadItems();
