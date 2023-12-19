@@ -52,6 +52,7 @@ public:
 
     bool setValue(const QVariant& value);
     void setIsTemporary(bool isTemporary);
+    void notifySubscribers();
 
     bool reset();
 

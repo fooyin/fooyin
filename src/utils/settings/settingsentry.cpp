@@ -60,10 +60,16 @@ bool SettingsEntry::isTemporary() const
 
 bool SettingsEntry::setValue(const QVariant& value)
 {
-    if(std::exchange(m_value, value) == value) {
-        return false;
-    }
+    return std::exchange(m_value, value) != value;
+}
 
+void SettingsEntry::setIsTemporary(bool isTemporary)
+{
+    m_isTemporary = isTemporary;
+}
+
+void SettingsEntry::notifySubscribers()
+{
     switch(m_type) {
         case(Settings::Variant):
             emit settingChangedVariant(m_value);
@@ -84,13 +90,6 @@ bool SettingsEntry::setValue(const QVariant& value)
             emit settingChangedByteArray(m_value.toByteArray());
             break;
     }
-
-    return true;
-}
-
-void SettingsEntry::setIsTemporary(bool isTemporary)
-{
-    m_isTemporary = isTemporary;
 }
 
 bool SettingsEntry::reset()
