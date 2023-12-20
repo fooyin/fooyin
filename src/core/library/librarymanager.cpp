@@ -23,7 +23,7 @@
 #include "database/librarydatabase.h"
 #include "libraryinfo.h"
 
-#include <utils/utils.h>
+#include <utils/fileutils.h>
 
 namespace Fooyin {
 bool checkNewPath(const QString& path, const LibraryInfoMap& libraries, int libraryId = -1)

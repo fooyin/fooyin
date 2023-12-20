@@ -40,6 +40,7 @@ set(SOURCES
     expandableinputbox.cpp
     expandingcombobox.cpp
     extendabletableview.cpp
+    fileutils.cpp
     hovermenu.cpp
     id.cpp
     logslider.cpp

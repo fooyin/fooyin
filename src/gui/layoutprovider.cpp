@@ -21,7 +21,7 @@
 
 #include "guipaths.h"
 
-#include <utils/utils.h>
+#include <utils/fileutils.h>
 
 #include <QDir>
 #include <QFile>

@@ -27,8 +27,8 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <utils/crypto.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 #include <QIODevice>
 #include <QIcon>

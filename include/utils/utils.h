@@ -35,19 +35,6 @@ class QKeySequence;
 class QDir;
 
 namespace Fooyin::Utils {
-namespace File {
-FYUTILS_EXPORT QString cleanPath(const QString& path);
-FYUTILS_EXPORT bool isSamePath(const QString& filename1, const QString& filename2);
-FYUTILS_EXPORT bool isSubdir(const QString& dir, const QString& parentDir);
-FYUTILS_EXPORT bool exists(const QString& filename);
-FYUTILS_EXPORT QString getParentDirectory(const QString& filename);
-FYUTILS_EXPORT bool createDirectories(const QString& path);
-FYUTILS_EXPORT void openDirectory(const QString& dir);
-FYUTILS_EXPORT QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExtensions = {});
-FYUTILS_EXPORT QStringList getFiles(const QStringList& paths, const QStringList& fileExtensions = {});
-FYUTILS_EXPORT QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions = {});
-} // namespace File
-
 FYUTILS_EXPORT int randomNumber(int min, int max);
 FYUTILS_EXPORT QString msToString(uint64_t ms);
 FYUTILS_EXPORT QString secsToString(uint64_t secs);

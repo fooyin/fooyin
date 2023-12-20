@@ -19,7 +19,7 @@
 
 #include <utils/paths.h>
 
-#include <utils/utils.h>
+#include <utils/fileutils.h>
 
 #include <QApplication>
 #include <QDir>

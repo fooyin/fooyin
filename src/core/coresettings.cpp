@@ -23,8 +23,8 @@
 #include "version.h"
 
 #include <core/library/sortingregistry.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/utils.h>
 
 using namespace Qt::Literals::StringLiterals;
 

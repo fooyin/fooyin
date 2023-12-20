@@ -27,6 +27,7 @@
 #include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 

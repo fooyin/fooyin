@@ -26,6 +26,7 @@
 #include <gui/guiconstants.h>
 #include <utils/async.h>
 #include <utils/crypto.h>
+#include <utils/fileutils.h>
 #include <utils/utils.h>
 
 #include <QCoroCore>

@@ -26,7 +26,7 @@
 #include "tagging/tagwriter.h"
 
 #include <core/track.h>
-#include <utils/utils.h>
+#include <utils/fileutils.h>
 
 #include <QDir>
 
