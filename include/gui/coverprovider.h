@@ -32,6 +32,9 @@ class QString;
 class QSize;
 
 namespace Fooyin {
+/*!
+ * Provides access to track album artwork.
+ */
 class FYGUI_EXPORT CoverProvider : public QObject
 {
     Q_OBJECT
@@ -40,12 +43,33 @@ public:
     explicit CoverProvider(QObject* parent = nullptr);
     ~CoverProvider() override;
 
-    [[nodiscard]] QPixmap trackCover(const Track& track, bool saveToDisk = false) const;
+    /*!
+     * This will return either the front cover picture of the @p track if it's either:
+     * - Non-embedded.
+     * - Exists in QPixmapCache.
+     * Or it will return a QPixmap representing 'no cover' and the cover will be read asynchronously from
+     * the @p track metadata.
+     * Once loaded, the coverAdded signal will be emitted with the same track. It is then up to the caller
+     * to query the cover using this method again.
+     *
+     * @param track the track for which the cover will be found.
+     * @param saveToDisk whether the cover will be saved to the on-disk cache.
+     * @returns the cover if already in the cache or on disk, the 'no cover' cover if not.
+     */
     [[nodiscard]] QPixmap trackCover(const Track& track, const QSize& size, bool saveToDisk = false) const;
 
+    /*!
+     * This is an overloaded function.
+     * Returns the front cover picture of the @p track up to a maximum size (800px).
+     * @see trackCover(const Track&, const QSize&, bool).
+     */
+    [[nodiscard]] QPixmap trackCover(const Track& track, bool saveToDisk = false) const;
+
+    /** Clears the QPixmapCache as well as the on-disk cache. */
     void clearCache();
 
 signals:
+    /** Emitted after a @fn trackCover call if the cover needs to be read from the track metadata. */
     void coverAdded(const Fooyin::Track& track);
 
 private:

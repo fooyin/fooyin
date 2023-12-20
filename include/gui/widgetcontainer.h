@@ -24,6 +24,13 @@
 namespace Fooyin {
 class WidgetProvider;
 
+/*!
+ * Represents a container of FyWidgets.
+ * This should be used as the base class for FyWidgets which can contain/hold other
+ * FyWidgets.
+ * It's recommended to save the child widgets under the 'Widgets' key
+ * when reimplementing @fn saveLayoutData.
+ */
 class WidgetContainer : public FyWidget
 {
     Q_OBJECT
@@ -37,6 +44,9 @@ public:
 
     virtual WidgetList widgets() const = 0;
 
+    /*!
+     * Convenience method to load all widgets in the @p widgets array.
+     */
     void loadWidgets(const QJsonArray& widgets);
 
 private:
