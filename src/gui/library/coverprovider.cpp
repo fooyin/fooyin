@@ -151,11 +151,6 @@ CoverProvider::CoverProvider(QObject* parent)
 
 CoverProvider::~CoverProvider() = default;
 
-QPixmap CoverProvider::trackCover(const Track& track, bool saveToDisk) const
-{
-    return trackCover(track, MaxCoverSize, saveToDisk);
-}
-
 QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, bool saveToDisk) const
 {
     if(!track.hasCover()) {
@@ -175,6 +170,11 @@ QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, bool sa
     }
 
     return loadNoCover();
+}
+
+QPixmap CoverProvider::trackCover(const Track& track, bool saveToDisk) const
+{
+    return trackCover(track, MaxCoverSize, saveToDisk);
 }
 
 void CoverProvider::clearCache()
