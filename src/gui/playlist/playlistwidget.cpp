@@ -19,6 +19,7 @@
 
 #include "playlistwidget.h"
 
+#include "core/library/sortingregistry.h"
 #include "internalguisettings.h"
 #include "playlist/playlisthistory.h"
 #include "playlistcontroller.h"
@@ -28,7 +29,6 @@
 #include "presetregistry.h"
 
 #include <core/library/musiclibrary.h>
-#include <core/library/sortingregistry.h>
 #include <core/library/tracksort.h>
 #include <core/playlist/playlistmanager.h>
 #include <gui/guiconstants.h>

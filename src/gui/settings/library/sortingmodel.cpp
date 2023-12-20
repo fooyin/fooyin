@@ -19,7 +19,8 @@
 
 #include "sortingmodel.h"
 
-#include <core/library/sortingregistry.h>
+#include "core/library/sortingregistry.h"
+
 #include <utils/treestatusitem.h>
 
 using namespace Qt::Literals::StringLiterals;

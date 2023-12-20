@@ -17,7 +17,7 @@
  *
  */
 
-#include <core/library/sortingregistry.h>
+#include "sortingregistry.h"
 
 namespace {
 void loadDefaults(Fooyin::SortingRegistry* registry)

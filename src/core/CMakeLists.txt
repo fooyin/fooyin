@@ -47,7 +47,6 @@ set(SOURCES
     engine/ffmpeg/ffmpegstream.cpp
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegutils.cpp
-    library/sortingregistry.cpp
     library/trackfilter.cpp
     library/tracksort.cpp
     playlist/playlist.cpp
@@ -77,6 +76,7 @@ set(PRIVATE_SOURCES
     library/librarythreadhandler.cpp
     library/libraryinfo.h
     library/librarymanager.cpp
+    library/sortingregistry.cpp
     library/trackdatabasemanager.cpp
     library/unifiedmusiclibrary.cpp
     playlist/playlisthandler.cpp
