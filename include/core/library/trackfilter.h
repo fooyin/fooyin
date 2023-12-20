@@ -26,5 +26,18 @@
 class QString;
 
 namespace Fooyin::Filter {
-FYCORE_EXPORT Fooyin::TrackList filterTracks(const Fooyin::TrackList& tracks, const QString& search);
+/*!
+ * Filters @p tracks using the @p search string
+ *
+ * Tracks are currently filtered on the following fields:
+ * - Title
+ * - Album
+ * - Artist
+ * - Album Artist
+ * @note the search is case-insensitive
+ * @param tracks the tracks to filter
+ * @param search the search string
+ * @returns a new TrackList containing the tracks which match @p search
+ */
+FYCORE_EXPORT TrackList filterTracks(const TrackList& tracks, const QString& search);
 } // namespace Fooyin::Filter

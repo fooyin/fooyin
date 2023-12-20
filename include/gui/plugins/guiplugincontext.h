@@ -31,6 +31,9 @@ class SearchController;
 class WidgetFactory;
 class EditableLayout;
 
+/*!
+ * Passed to gui plugins in GuiPlugin::initialise.
+ */
 struct FYGUI_EXPORT GuiPluginContext
 {
     GuiPluginContext(ActionManager* actionManager, LayoutProvider* layoutProvider,

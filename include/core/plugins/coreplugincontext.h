@@ -31,6 +31,9 @@ class LibraryManager;
 class MusicLibrary;
 class CoreSettings;
 
+/*!
+ * Passed to core plugins in CorePlugin::initialise.
+ */
 struct FYCORE_EXPORT CorePluginContext
 {
     CorePluginContext(PluginManager* pluginManager, EngineHandler* engineHandler, PlayerManager* playerManager,

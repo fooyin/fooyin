@@ -26,11 +26,22 @@
 #include <QtPlugin>
 
 namespace Fooyin {
+/*!
+ * An abstract interface for plugins which require access to
+ * the gui of fooyin, to provide widgets as an example.
+ *
+ * The initialise method must be implemented, through which instances of
+ * gui library classes can be accessed.
+ */
 class FYGUI_EXPORT GuiPlugin
 {
 public:
     virtual ~GuiPlugin() = default;
 
+    /*!
+     * This is called after core plugins have been initialised.
+     * Implement to access instances of gui classes.
+     */
     virtual void initialise(const GuiPluginContext& context) = 0;
 };
 } // namespace Fooyin

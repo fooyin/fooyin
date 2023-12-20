@@ -40,7 +40,7 @@ LibraryMenu::LibraryMenu(ActionManager* actionManager, MusicLibrary* library, Se
 
     auto* rescanLibrary = new QAction(QIcon::fromTheme(Constants::Icons::RescanLibrary), tr("&Rescan Library"), this);
     libraryMenu->addAction(m_actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
-    QObject::connect(rescanLibrary, &QAction::triggered, m_library, &MusicLibrary::reloadAll);
+    QObject::connect(rescanLibrary, &QAction::triggered, m_library, &MusicLibrary::rescanAll);
 
     auto* openSettings = new QAction(QIcon::fromTheme(Constants::Icons::Settings), tr("&Settings"), this);
     libraryMenu->addAction(actionManager->registerAction(openSettings, "Library.Settings"));

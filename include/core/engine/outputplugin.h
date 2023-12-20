@@ -34,11 +34,19 @@ struct AudioOutputBuilder
     OutputCreator creator;
 };
 
+/*!
+ * An abstract interface for plugins which add an audio output.
+ */
 class FYCORE_EXPORT OutputPlugin
 {
 public:
     virtual ~OutputPlugin() = default;
 
+    /*!
+     * This is called after all core plugins have been initialised.
+     * This must return the name of the output and a function which
+     * returns a unique_ptr to an AudioOutput subclass.
+     */
     virtual AudioOutputBuilder registerOutput() = 0;
 };
 } // namespace Fooyin

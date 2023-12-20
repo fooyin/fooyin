@@ -93,18 +93,19 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
 
     const auto id = p->libraryConnector.insertLibrary(path, name);
 
-    if(id >= 0) {
+    if(id > 0) {
         LibraryInfo& info = p->libraries.emplace(id, LibraryInfo{libraryName, path, id}).first->second;
         emit libraryAdded(info);
         info.status = LibraryInfo::Status::Initialised;
         return id;
     }
+
     return -1;
 }
 
 bool LibraryManager::removeLibrary(int id)
 {
-    if(!hasLibrary(id)) {
+    if(!hasLibrary(id || id < 1)) {
         return false;
     }
 

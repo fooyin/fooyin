@@ -44,9 +44,16 @@ public:
     void setup();
     void shutdown();
 
+    /** Returns a list of all output names. */
     [[nodiscard]] OutputNames getAllOutputs() const;
+
+    /** Returns a list of all output devices for the given @p output. */
     [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const;
 
+    /*!
+     * Adds an audio output.
+     * @note output.name must be unique.
+     */
     void addOutput(const AudioOutputBuilder& output);
 
 signals:

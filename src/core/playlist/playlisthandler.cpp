@@ -231,7 +231,7 @@ Playlist* PlaylistHandler::playlistById(int id) const
     if(playlist != p->playlists.cend()) {
         return playlist->get();
     }
-    return {};
+    return nullptr;
 }
 
 Playlist* PlaylistHandler::playlistByIndex(int index) const
@@ -241,7 +241,7 @@ Playlist* PlaylistHandler::playlistByIndex(int index) const
     if(playlist != p->playlists.cend()) {
         return playlist->get();
     }
-    return {};
+    return nullptr;
 }
 
 Playlist* PlaylistHandler::playlistByName(const QString& name) const
@@ -251,7 +251,7 @@ Playlist* PlaylistHandler::playlistByName(const QString& name) const
     if(playlist != p->playlists.cend()) {
         return playlist->get();
     }
-    return {};
+    return nullptr;
 }
 
 PlaylistList PlaylistHandler::playlists() const

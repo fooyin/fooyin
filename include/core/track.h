@@ -29,6 +29,11 @@
 namespace Fooyin {
 using ExtraTags = std::map<QString, QStringList>;
 
+/*!
+ * Represents a music track and it's associated metadata.
+ * Metadata which is not explicitly handled is accessed using Track::extraTags.
+ * @note this class is implicitly shared.
+ */
 class FYCORE_EXPORT Track
 {
 public:

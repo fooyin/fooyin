@@ -45,6 +45,7 @@ public:
     Playlist(int id, QString name, int index);
     ~Playlist();
 
+    /** Returns @c true if this playlist has a valid id, index and name. */
     [[nodiscard]] bool isValid() const;
 
     [[nodiscard]] int id() const;
@@ -56,10 +57,24 @@ public:
 
     [[nodiscard]] int currentTrackIndex() const;
     [[nodiscard]] Track currentTrack() const;
+
+    /** Returns @c true if this playlist's index or name have been changed. */
     [[nodiscard]] bool modified() const;
+    /** Returns @c true if this playlist's tracks have been changed. */
     [[nodiscard]] bool tracksModified() const;
 
+    /*!
+     * Schedules the track to be played after the current track is finished.
+     * @note this will be cancelled if tracks are replaced using @fn replaceTracks.
+     */
     void scheduleNextIndex(int index);
+
+    /*!
+     * Returns the next track to be played based on the @p delta from the current
+     * index and the @p mode.
+     * @note this will return an invalid track if @p mode is 'Default' and
+     * the index +- delta is out of range.
+     */
     Track nextTrack(int delta, PlayModes mode);
 
     void setIndex(int index);
@@ -71,8 +86,11 @@ public:
     void appendTracksSilently(const TrackList& tracks);
     void removeTracks(const IndexSet& indexes);
 
+    /** Removes all tracks, including all shuffle order history */
     void clear();
+    /** Clears the shuffle order history */
     void reset();
+    /** Resets the modified and tracksModified flags. */
     void resetFlags();
 
     void changeCurrentTrack(int index);

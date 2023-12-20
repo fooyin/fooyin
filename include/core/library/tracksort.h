@@ -29,12 +29,43 @@ namespace Fooyin {
 struct ParsedScript;
 
 namespace Sorting {
+/*!
+ * Calculates the sort fields @p tracks using the @p sort script
+ * @param sort the sort script as a string
+ * @param tracks the tracks to calculate
+ * @returns a new TrackList with the calculated sortFields
+ */
 TrackList FYCORE_EXPORT calcSortFields(const QString& sort, const TrackList& tracks);
+
+/*!
+ * Calculates the sort fields of @p tracks using the parsed @p sort script
+ * @param sortScript the parsed sort script
+ * @param tracks the tracks to calculate
+ * @returns a new TrackList with the calculated sortFields
+ */
 TrackList FYCORE_EXPORT calcSortFields(const ParsedScript& sortScript, const TrackList& tracks);
 
+/*!
+ * Sorts @p tracks using their current sort fields
+ * @param tracks the tracks to sort
+ * @returns a new sorted TrackList
+ */
 TrackList FYCORE_EXPORT sortTracks(const TrackList& tracks);
 
+/*!
+ * Calculates the sort fields and then sorts @p tracks
+ * @param sort the sort script as a string
+ * @param tracks the tracks to sort
+ * @returns a new sorted TrackList
+ */
 TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tracks);
+
+/*!
+ * Calculates the sort fields and then sorts @p tracks
+ * @param sortScript the parsed sort script
+ * @param tracks the tracks to sort
+ * @returns a new sorted TrackList
+ */
 TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks);
 } // namespace Sorting
 } // namespace Fooyin

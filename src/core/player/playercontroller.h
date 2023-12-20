@@ -35,7 +35,7 @@ class FYCORE_EXPORT PlayerController : public PlayerManager
 
 public:
     explicit PlayerController(SettingsManager* settings, QObject* parent = nullptr);
-    ~PlayerController();
+    ~PlayerController() override;
 
     [[nodiscard]] PlayState playState() const override;
     [[nodiscard]] Playlist::PlayModes playMode() const override;
@@ -44,7 +44,6 @@ public:
 
     void reset() override;
     void play() override;
-    void wakeUp() override;
     void playPause() override;
     void pause() override;
     void previous() override;

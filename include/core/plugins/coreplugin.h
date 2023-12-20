@@ -26,11 +26,22 @@
 #include <QtPlugin>
 
 namespace Fooyin {
+/*!
+ * An abstract interface for plugins which require access to
+ * the core of fooyin.
+ *
+ * The initialise method must be implemented, through which instances of
+ * core library classes can be accessed.
+ */
 class FYCORE_EXPORT CorePlugin
 {
 public:
     virtual ~CorePlugin() = default;
 
+    /*!
+     * This is called after the core of fooyin has been initialised.
+     * Implement to access instances of core classes.
+     */
     virtual void initialise(const CorePluginContext& context) = 0;
 };
 } // namespace Fooyin

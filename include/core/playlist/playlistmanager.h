@@ -35,29 +35,44 @@ public:
     explicit PlaylistManager(QObject* parent = nullptr)
         : QObject{parent} {};
 
-    [[nodiscard]] virtual Playlist* playlistById(int id) const                = 0;
-    [[nodiscard]] virtual Playlist* playlistByIndex(int index) const          = 0;
+    /** Returns the playlist with the @p id if it exists, otherwise nullptr. */
+    [[nodiscard]] virtual Playlist* playlistById(int id) const = 0;
+    /** Returns the playlist with the @p index if it exists, otherwise nullptr. */
+    [[nodiscard]] virtual Playlist* playlistByIndex(int index) const = 0;
+    /** Returns the playlist with the @p name if it exists, otherwise nullptr. */
     [[nodiscard]] virtual Playlist* playlistByName(const QString& name) const = 0;
-    [[nodiscard]] virtual PlaylistList playlists() const                      = 0;
 
-    virtual Playlist* createEmptyPlaylist()                                        = 0;
-    virtual Playlist* createPlaylist(const QString& name)                          = 0;
+    [[nodiscard]] virtual PlaylistList playlists() const = 0;
+
+    /** Creates and returns an empty playlist with a default name. */
+    virtual Playlist* createEmptyPlaylist() = 0;
+    /** Returns the playlist called @p name if it exists, otherwise creates it. */
+    virtual Playlist* createPlaylist(const QString& name) = 0;
+    /** Returns the playlist called @p name if it exists, otherwise creates it using @p tracks. */
     virtual Playlist* createPlaylist(const QString& name, const TrackList& tracks) = 0;
-    virtual void appendToPlaylist(int id, const TrackList& tracks)                 = 0;
+    /** Adds @p tracks to the end of the playlist with @p id if found. */
+    virtual void appendToPlaylist(int id, const TrackList& tracks) = 0;
 
     virtual void changePlaylistIndex(int id, int index)   = 0;
     virtual void changeActivePlaylist(int id)             = 0;
     virtual void changeActivePlaylist(Playlist* playlist) = 0;
-    virtual void schedulePlaylist(int id)                 = 0;
-    virtual void schedulePlaylist(Playlist* playlist)     = 0;
-    virtual void clearSchedulePlaylist()                  = 0;
+
+    /** Schedules the playlist with @p id to be played once the current track is finished. */
+    virtual void schedulePlaylist(int id) = 0;
+    /** Schedules @p playlist to be played once the current track is finished. */
+    virtual void schedulePlaylist(Playlist* playlist) = 0;
+    /** Clears any scheduled playlist. */
+    virtual void clearSchedulePlaylist() = 0;
 
     virtual void renamePlaylist(int id, const QString& name) = 0;
     virtual void removePlaylist(int id)                      = 0;
 
+    /** Returns the playlist currently being played (nullptr if not playing) */
     [[nodiscard]] virtual Playlist* activePlaylist() const = 0;
-    [[nodiscard]] virtual int playlistCount() const        = 0;
 
+    [[nodiscard]] virtual int playlistCount() const = 0;
+
+    /** Changes the active playlist to @ playlistId and starts playback */
     virtual void startPlayback(int playlistId) = 0;
 
 signals:

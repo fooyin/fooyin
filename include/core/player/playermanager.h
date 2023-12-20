@@ -35,6 +35,9 @@ enum class PlayState
     Stopped,
 };
 
+/*!
+ * Handles track playback
+ */
 class FYCORE_EXPORT PlayerManager : public QObject
 {
     Q_OBJECT
@@ -43,19 +46,35 @@ public:
     explicit PlayerManager(QObject* parent = nullptr)
         : QObject{parent} {};
 
-    [[nodiscard]] virtual PlayState playState() const          = 0;
-    [[nodiscard]] virtual Playlist::PlayModes playMode() const = 0;
-    [[nodiscard]] virtual uint64_t currentPosition() const     = 0;
-    [[nodiscard]] virtual Track currentTrack() const           = 0;
+    /** Returns the current state (playing, paused or stopped). */
+    [[nodiscard]] virtual PlayState playState() const = 0;
 
-    virtual void play()                                 = 0;
-    virtual void wakeUp()                               = 0;
-    virtual void playPause()                            = 0;
-    virtual void pause()                                = 0;
-    virtual void previous()                             = 0;
-    virtual void next()                                 = 0;
-    virtual void stop()                                 = 0;
-    virtual void reset()                                = 0;
+    /** Returns the current playlist mode (shuffle and repeat flags). */
+    [[nodiscard]] virtual Playlist::PlayModes playMode() const = 0;
+
+    /** Returns the current playback position in ms. */
+    [[nodiscard]] virtual uint64_t currentPosition() const = 0;
+
+    /*!
+     * Returns the currently playing track.
+     * @note the track will be invalid if the state is 'Stopped'.
+     */
+    [[nodiscard]] virtual Track currentTrack() const = 0;
+
+    /** Starts playback of the current playlist. */
+    virtual void play() = 0;
+
+    /** Toggles playback. */
+    virtual void playPause() = 0;
+
+    virtual void pause()    = 0;
+    virtual void previous() = 0;
+    virtual void next()     = 0;
+    virtual void stop()     = 0;
+
+    /** Stops playback and clears position and current track. */
+    virtual void reset() = 0;
+
     virtual void setPlayMode(Playlist::PlayModes mode)  = 0;
     virtual void setCurrentPosition(uint64_t ms)        = 0;
     virtual void changePosition(uint64_t ms)            = 0;
@@ -65,7 +84,6 @@ signals:
     void playStateChanged(PlayState state);
     void playModeChanged(Playlist::PlayModes mode);
     void nextTrack();
-    void wakeup();
     void previousTrack();
     void positionChanged(uint64_t ms);
     void positionMoved(uint64_t ms);

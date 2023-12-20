@@ -71,26 +71,18 @@ void PlayerController::play()
     emit playStateChanged(p->playStatus);
 }
 
-void PlayerController::wakeUp()
-{
-    emit wakeup();
-}
-
 void PlayerController::playPause()
 {
     switch(p->playStatus) {
-        case(PlayState::Playing): {
+        case(PlayState::Playing):
             pause();
             break;
-        }
-        case(PlayState::Stopped): {
-            wakeUp();
-            break;
-        }
-        default: {
+        case(PlayState::Paused):
             play();
             break;
-        }
+        case(PlayState::Stopped):
+        default:
+            break;
     }
 }
 

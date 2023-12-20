@@ -19,10 +19,10 @@
 
 #include "playlistcontroller.h"
 
+#include "core/library/sortingregistry.h"
 #include "playlist/playlisthistory.h"
 #include "presetregistry.h"
 
-#include <core/library/sortingregistry.h>
 #include <core/player/playermanager.h>
 #include <core/playlist/playlistmanager.h>
 #include <core/track.h>

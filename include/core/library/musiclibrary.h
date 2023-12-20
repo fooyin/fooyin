@@ -28,6 +28,12 @@
 namespace Fooyin {
 struct LibraryInfo;
 
+/*!
+ * There are two types of scan request:
+ * - Tracks: Scans a TrackList; emits tracksScanned when finished.
+ * - Library: Scans an entire library; emits tracksAdded, tracksUpdated, tracksDeleted.
+ * In-progress requests can be cancelled early using cancel().
+ */
 struct ScanRequest
 {
     enum Type : uint8_t
@@ -41,6 +47,11 @@ struct ScanRequest
     std::function<void()> cancel;
 };
 
+/*!
+ * Represents a music library containing Track objects.
+ * Acts as a unified library view for all tracks in all libraries,
+ * and also holds unmanaged tracks (not associated with a library).
+ */
 class FYCORE_EXPORT MusicLibrary : public QObject
 {
     Q_OBJECT
@@ -50,24 +61,36 @@ public:
         : QObject{parent}
     { }
 
+    /** Returns @c true if a library has been added by the user */
     [[nodiscard]] virtual bool hasLibrary() const = 0;
 
-    virtual void loadLibrary() = 0;
+    /** Loads all tracks from the database */
+    virtual void loadAllTracks() = 0;
 
+    /** Returns @c true if there are no tracks */
     [[nodiscard]] virtual bool isEmpty() const = 0;
 
-    virtual void reloadAll()                        = 0;
-    virtual void reload(const LibraryInfo& library) = 0;
-    virtual void rescan()                           = 0;
+    /** Scans all tracks in all libraries */
+    virtual void rescanAll() = 0;
 
+    /** Scans the tracks in @p library */
+    virtual void rescan(const LibraryInfo& library) = 0;
+
+    /*!
+     * Scans the @p tracks for metadata and adds to library.
+     * @returns a ScanRequest representing a queued scan operation.
+     * @note tracks will be considered unmanaged (not associated with an added library)
+     */
     virtual ScanRequest* scanTracks(const TrackList& tracks) = 0;
 
-    [[nodiscard]] virtual TrackList tracks() const                          = 0;
+    /** Returns all tracks for all libraries */
+    [[nodiscard]] virtual TrackList tracks() const = 0;
+
+    /** Returns a TrackList containing each track (if) found with an id from @p ids  */
     [[nodiscard]] virtual TrackList tracksForIds(const TrackIds& ids) const = 0;
 
+    /** Updates the metdata in the database for @p tracks and writes metdata to files  */
     virtual void updateTrackMetadata(const TrackList& tracks) = 0;
-
-    virtual void removeLibrary(int id) = 0;
 
 signals:
     void scanProgress(int id, int percent);

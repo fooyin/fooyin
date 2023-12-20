@@ -97,7 +97,7 @@ Application::Application(QObject* parent)
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, p->playlistHandler, &PlaylistHandler::tracksUpdated);
     QObject::connect(p->library, &MusicLibrary::tracksDeleted, p->playlistHandler, &PlaylistHandler::tracksRemoved);
 
-    p->library->loadLibrary();
+    p->library->loadAllTracks();
     p->engine.setup();
 }
 

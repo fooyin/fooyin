@@ -37,10 +37,9 @@ public:
                         QObject* parent = nullptr);
     ~UnifiedMusicLibrary() override;
 
-    void loadLibrary() override;
-    void reloadAll() override;
-    void reload(const LibraryInfo& library) override;
-    void rescan() override;
+    void loadAllTracks() override;
+    void rescanAll() override;
+    void rescan(const LibraryInfo& library) override;
 
     ScanRequest* scanTracks(const TrackList& tracks) override;
 
@@ -51,8 +50,6 @@ public:
     [[nodiscard]] TrackList tracksForIds(const TrackIds& ids) const override;
 
     void updateTrackMetadata(const TrackList& tracks) override;
-
-    void removeLibrary(int id) override;
 
     void cleanupTracks();
 

@@ -153,6 +153,19 @@ struct UnifiedMusicLibrary::Private
         QMetaObject::invokeMethod(self, "tracksDeleted", Q_ARG(const TrackList&, tracksToRemove));
     }
 
+    void removeLibrary(int id)
+    {
+        if(id < 1) {
+            return;
+        }
+
+        auto filtered = tracks | std::views::filter([id](const Track& track) { return track.libraryId() != id; });
+
+        tracks = TrackList{filtered.begin(), filtered.end()};
+
+        QMetaObject::invokeMethod(self, "libraryRemoved", Q_ARG(int, id));
+    }
+
     void libraryStatusChanged(const LibraryInfo& library) const
     {
         libraryManager->updateLibraryStatus(library);
@@ -173,9 +186,9 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
     : MusicLibrary{parent}
     , p{std::make_unique<Private>(this, libraryManager, database, settings)}
 {
-    connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::reload);
+    connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
     connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::libraryAdded);
-    connect(p->libraryManager, &LibraryManager::libraryRemoved, this, &MusicLibrary::removeLibrary);
+    connect(p->libraryManager, &LibraryManager::libraryRemoved, this, [this](int id) { p->removeLibrary(id); });
     connect(this, &UnifiedMusicLibrary::libraryRemoved, &p->threadHandler, &LibraryThreadHandler::libraryRemoved);
 
     connect(&p->threadHandler, &LibraryThreadHandler::progressChanged, this, &UnifiedMusicLibrary::scanProgress);
@@ -196,33 +209,28 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
                                                               [this](const QString& sort) { p->changeSort(sort); });
 
     if(p->settings->value<Settings::Core::AutoRefresh>()) {
-        QTimer::singleShot(3s, this, &UnifiedMusicLibrary::reloadAll);
+        QTimer::singleShot(3s, this, &UnifiedMusicLibrary::rescanAll);
     }
 }
 
 UnifiedMusicLibrary::~UnifiedMusicLibrary() = default;
 
-void UnifiedMusicLibrary::loadLibrary()
+void UnifiedMusicLibrary::loadAllTracks()
 {
     p->threadHandler.getAllTracks();
 }
 
-void UnifiedMusicLibrary::reloadAll()
+void UnifiedMusicLibrary::rescanAll()
 {
     const LibraryInfoMap& libraries = p->libraryManager->allLibraries();
     for(const auto& library : libraries | std::views::filter([](const auto& lib) { return lib.second.id > 0; })) {
-        reload(library.second);
+        rescan(library.second);
     }
 }
 
-void UnifiedMusicLibrary::reload(const LibraryInfo& library)
+void UnifiedMusicLibrary::rescan(const LibraryInfo& library)
 {
     p->threadHandler.scanLibrary(library);
-}
-
-void UnifiedMusicLibrary::rescan()
-{
-    p->threadHandler.getAllTracks();
 }
 
 ScanRequest* UnifiedMusicLibrary::scanTracks(const TrackList& tracks)
@@ -277,15 +285,6 @@ void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
     p->threadHandler.saveUpdatedTracks(tracks);
 
     emit tracksUpdated(tracks);
-}
-
-void UnifiedMusicLibrary::removeLibrary(int id)
-{
-    auto filtered = p->tracks | std::views::filter([id](const Track& track) { return track.libraryId() != id; });
-
-    p->tracks = TrackList{filtered.begin(), filtered.end()};
-
-    emit libraryRemoved(id);
 }
 
 void UnifiedMusicLibrary::cleanupTracks()
