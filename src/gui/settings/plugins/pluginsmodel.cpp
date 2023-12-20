@@ -19,7 +19,7 @@
 
 #include "pluginsmodel.h"
 
-#include <core/plugins/pluginmanager.h>
+#include "core/plugins/pluginmanager.h"
 
 #include <utils/enum.h>
 

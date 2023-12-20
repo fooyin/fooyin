@@ -17,7 +17,7 @@
  *
  */
 
-#include <core/plugins/pluginmanager.h>
+#include "pluginmanager.h"
 
 #include "corepaths.h"
 

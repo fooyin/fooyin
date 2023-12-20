@@ -21,8 +21,9 @@
 
 #include "librarymodel.h"
 
+#include "core/library/libraryinfo.h"
+
 #include <core/coresettings.h>
-#include <core/library/libraryinfo.h>
 #include <gui/guiconstants.h>
 #include <utils/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>

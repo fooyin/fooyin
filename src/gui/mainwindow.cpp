@@ -31,7 +31,6 @@
 
 #include <QContextMenuEvent>
 #include <QMenuBar>
-#include <QSettings>
 #include <QTimer>
 
 constexpr auto MainWindowGeometry = "Interface/Geometry";
@@ -40,10 +39,10 @@ namespace Fooyin {
 MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, EditableLayout* editableLayout,
                        QWidget* parent)
     : QMainWindow{parent}
-    , m_actionManager{actionManager}
-    , m_settings{settings}
-    , m_mainMenu{new MainMenuBar(m_actionManager, this)}
-    , m_editableLayout{editableLayout}
+      , m_actionManager{actionManager}
+      , m_settings{settings}
+      , m_mainMenu{new MainMenuBar(m_actionManager, this)}
+      , m_editableLayout{editableLayout}
 {
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
@@ -68,8 +67,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::open()
 {
-    const int startup = m_settings->value<Settings::Gui::StartupBehaviour>();
-    switch(startup) {
+    switch(m_settings->value<Settings::Gui::StartupBehaviour>()) {
         case(Maximised): {
             showMaximized();
             break;

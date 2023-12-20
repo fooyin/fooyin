@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "expression.h"
 #include "fycore_export.h"
+
+#include "expression.h"
 #include "scriptregistry.h"
 
 #include <QObject>

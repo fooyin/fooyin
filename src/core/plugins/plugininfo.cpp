@@ -17,7 +17,7 @@
  *
  */
 
-#include <core/plugins/plugininfo.h>
+#include "plugininfo.h"
 
 #include <core/plugins/plugin.h>
 

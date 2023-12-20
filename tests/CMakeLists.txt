@@ -4,7 +4,12 @@ include(GoogleTest)
 
 function(fooyin_add_test name)
 add_executable(${name} ${ARGN} testutils.cpp)
-    target_link_libraries(${name} PRIVATE Fooyin::Core GTest::gtest_main)
+    target_link_libraries(
+            ${name}
+            PRIVATE Fooyin::Core
+                    Fooyin::CorePrivate
+                    GTest::gtest_main
+    )
     gtest_discover_tests(${name})
 endfunction()
 

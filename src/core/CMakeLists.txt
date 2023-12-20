@@ -28,23 +28,12 @@ project(
 
 set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
-    ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playermanager.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
-    ${CMAKE_SOURCE_DIR}/include/core/plugins/plugininfo.h
 )
 
 set(SOURCES
-    application.cpp
-    corepaths.cpp
-    coresettings.cpp
-    database/database.cpp
-    database/librarydatabase.cpp
-    database/trackdatabase.cpp
-    database/databasemodule.cpp
-    database/playlistdatabase.cpp
-    database/databasequery.cpp
     engine/enginehandler.cpp
     engine/audioengine.cpp
     engine/audiooutput.cpp
@@ -58,20 +47,11 @@ set(SOURCES
     engine/ffmpeg/ffmpegstream.cpp
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegutils.cpp
-    engine/output/alsaoutput.cpp
-    library/trackdatabasemanager.cpp
-    library/librarymanager.cpp
-    library/libraryscanner.cpp
-    library/unifiedmusiclibrary.cpp
-    library/librarythreadhandler.cpp
     library/sortingregistry.cpp
     library/trackfilter.cpp
     library/tracksort.cpp
     playlist/playlist.cpp
-    playlist/playlisthandler.cpp
     player/playercontroller.cpp
-    plugins/plugininfo.cpp
-    plugins/pluginmanager.cpp
     scripting/scriptregistry.cpp
     scripting/scriptparser.cpp
     scripting/scriptscanner.cpp
@@ -79,28 +59,56 @@ set(SOURCES
     scripting/functions/mathfuncs.cpp
     scripting/functions/stringfuncs.cpp
     scripting/functions/timefuncs.cpp
+    track.cpp
+)
+
+set(PRIVATE_SOURCES
+    application.cpp
+    corepaths.cpp
+    coresettings.cpp
+    database/database.cpp
+    database/librarydatabase.cpp
+    database/trackdatabase.cpp
+    database/databasemodule.cpp
+    database/playlistdatabase.cpp
+    database/databasequery.cpp
+    engine/output/alsaoutput.cpp
+    library/libraryscanner.cpp
+    library/librarythreadhandler.cpp
+    library/libraryinfo.h
+    library/librarymanager.cpp
+    library/trackdatabasemanager.cpp
+    library/unifiedmusiclibrary.cpp
+    playlist/playlisthandler.cpp
+    plugins/plugininfo.cpp
+    plugins/pluginmanager.cpp
     tagging/tagreader.cpp
     tagging/tagwriter.cpp
-    track.cpp
 )
 
 create_fooyin_library(
     fooyin_core
     EXPORT_NAME Core
     SOURCES ${HEADERS} ${SOURCES}
+    PRIVATE_SOURCES ${PRIVATE_SOURCES}
 )
 
 target_link_libraries(
     fooyin_core
     PRIVATE fooyin_version
             fooyin_config
-            ${ALSA_LIBRARIES}
     PUBLIC Qt6::Core
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
            QCoro::Core
            Taglib::Taglib
-           ${FFMPEG_LIBRARIES}
            Fooyin::Utils
+)
+
+target_link_libraries(
+    fooyin_core_private
+    PRIVATE fooyin_version
+            ${FFMPEG_LIBRARIES}
+            ${ALSA_LIBRARIES}
 )

@@ -164,7 +164,12 @@ set_target_properties(
 
 add_subdirectory(src)
 
-target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
+target_link_libraries(
+    fooyin_lib
+    PUBLIC Fooyin::Core
+           Fooyin::Gui
+           Fooyin::Utils
+)
 
 target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin_lib PRIVATE QT_USE_QSTRINGBUILDER)
@@ -190,7 +195,6 @@ set(SOURCES src/app/main.cpp)
 qt_add_resources(SOURCES data/icons.qrc)
 
 add_executable(fooyin_exe ${SOURCES})
-
 set_target_properties(
     fooyin_exe
     PROPERTIES OUTPUT_NAME fooyin
@@ -198,7 +202,13 @@ set_target_properties(
                INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_DIR}
 )
 target_compile_features(fooyin_exe PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
-target_link_libraries(fooyin_exe PRIVATE KDAB::kdsingleapplication fooyin_version fooyin_lib)
+target_link_libraries(
+        fooyin_exe
+        PRIVATE KDAB::kdsingleapplication
+                fooyin_version
+                fooyin_lib
+                Fooyin::CorePrivate
+)
 
 # ---- Fooyin data ----
 

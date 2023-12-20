@@ -21,10 +21,10 @@
 
 #include "database/database.h"
 #include "database/trackdatabase.h"
+#include "library/libraryinfo.h"
+#include "tagging/tagreader.h"
+#include "tagging/tagwriter.h"
 
-#include <core/library/libraryinfo.h>
-#include <core/tagging/tagreader.h>
-#include <core/tagging/tagwriter.h>
 #include <core/track.h>
 #include <utils/utils.h>
 

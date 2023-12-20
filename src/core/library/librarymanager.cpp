@@ -21,8 +21,8 @@
 
 #include "database/database.h"
 #include "database/librarydatabase.h"
+#include "libraryinfo.h"
 
-#include <core/library/libraryinfo.h>
 #include <utils/utils.h>
 
 namespace Fooyin {

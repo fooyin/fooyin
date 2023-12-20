@@ -19,10 +19,10 @@
 
 #include "librarythreadhandler.h"
 
+#include "library/libraryinfo.h"
 #include "libraryscanner.h"
 #include "trackdatabasemanager.h"
 
-#include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
 
 #include <QThread>
@@ -35,7 +35,7 @@ int nextRequestId()
     static int requestId{0};
     return requestId++;
 }
-}
+} // namespace
 
 namespace Fooyin {
 struct LibraryScanRequest : ScanRequest

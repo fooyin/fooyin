@@ -26,7 +26,7 @@ function(create_fooyin_library name)
         LIB
         ""
         "EXPORT_NAME"
-        "SOURCES"
+        "SOURCES;PRIVATE_SOURCES"
         ${ARGN}
     )
 
@@ -91,6 +91,41 @@ function(create_fooyin_library name)
                 -Wextra
                 -Wpedantic
     )
+
+    if(LIB_PRIVATE_SOURCES)
+        set(private_name "${name}_private")
+
+        add_library(${private_name} STATIC ${PRIVATE_SOURCES})
+        add_library(Fooyin::${LIB_EXPORT_NAME}Private ALIAS ${private_name})
+
+        target_include_directories(
+            ${private_name}
+            PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+            PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+        )
+
+        set_target_properties(
+            ${private_name}
+            PROPERTIES CXX_VISIBILITY_PRESET hidden
+                       VISIBILITY_INLINES_HIDDEN YES
+                       POSITION_INDEPENDENT_CODE ON
+        )
+        target_compile_features(${private_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
+        target_compile_definitions(${private_name} PRIVATE QT_USE_QSTRINGBUILDER)
+        target_compile_options(
+            ${private_name}
+            PRIVATE -Werror
+                    -Wall
+                    -Wextra
+                    -Wpedantic
+        )
+
+        target_link_libraries(${private_name} PRIVATE ${name})
+
+        if(BUILD_PCH)
+            target_precompile_headers(${private_name} REUSE_FROM fooyin_pch)
+        endif()
+    endif()
 
     if(BUILD_PCH)
         target_precompile_headers(${name} REUSE_FROM fooyin_pch)

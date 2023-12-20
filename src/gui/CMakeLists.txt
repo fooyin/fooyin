@@ -124,4 +124,9 @@ create_fooyin_library(
     SOURCES ${HEADERS} ${SOURCES}
 )
 
-target_link_libraries(fooyin_gui PUBLIC Fooyin::Core Fooyin::Utils)
+target_link_libraries(
+    fooyin_gui
+    PUBLIC Fooyin::Core
+           Fooyin::Utils
+    PRIVATE Fooyin::CorePrivate
+)

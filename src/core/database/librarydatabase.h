@@ -21,7 +21,7 @@
 
 #include "databasemodule.h"
 
-#include <core/library/libraryinfo.h>
+#include "library/libraryinfo.h"
 
 namespace Fooyin {
 class LibraryDatabase : public DatabaseModule

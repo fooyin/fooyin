@@ -20,8 +20,8 @@
 #include "pluginspage.h"
 
 #include "pluginsmodel.h"
+#include "core/plugins/pluginmanager.h"
 
-#include <core/plugins/pluginmanager.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -58,9 +58,9 @@ private:
 
 PluginPageWidget::PluginPageWidget(PluginManager* pluginManager)
     : m_pluginManager{pluginManager}
-    , m_pluginList{new QTableView(this)}
-    , m_model{new PluginsModel(m_pluginManager)}
-    , m_installPlugin{new QPushButton(tr("Install..."), this)}
+      , m_pluginList{new QTableView(this)}
+      , m_model{new PluginsModel(m_pluginManager)}
+      , m_installPlugin{new QPushButton(tr("Install..."), this)}
 {
     m_pluginList->setModel(m_model);
 
@@ -79,9 +79,9 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager)
     QObject::connect(m_installPlugin, &QPushButton::pressed, this, &PluginPageWidget::installPlugin);
 }
 
-void PluginPageWidget::apply() { }
+void PluginPageWidget::apply() {}
 
-void PluginPageWidget::reset() { }
+void PluginPageWidget::reset() {}
 
 void PluginPageWidget::installPlugin()
 {
@@ -107,6 +107,8 @@ PluginPage::PluginPage(SettingsManager* settings, PluginManager* pluginManager)
     setId(Constants::Page::Plugins);
     setName(tr("General"));
     setCategory({tr("Plugins")});
-    setWidgetCreator([pluginManager] { return new PluginPageWidget(pluginManager); });
+    setWidgetCreator([pluginManager] {
+        return new PluginPageWidget(pluginManager);
+    });
 }
 } // namespace Fooyin

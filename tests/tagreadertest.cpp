@@ -19,7 +19,8 @@
 
 #include "testutils.h"
 
-#include <core/tagging/tagreader.h>
+#include "core/tagging/tagreader.h"
+
 #include <core/track.h>
 
 #include <gtest/gtest.h>

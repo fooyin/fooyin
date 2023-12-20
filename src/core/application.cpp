@@ -22,16 +22,16 @@
 #include "corepaths.h"
 #include "database/database.h"
 #include "engine/output/alsaoutput.h"
+#include "library/librarymanager.h"
 #include "library/unifiedmusiclibrary.h"
 #include "player/playercontroller.h"
 #include "playlist/playlisthandler.h"
+#include "plugins/pluginmanager.h"
 
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
 #include <core/engine/outputplugin.h>
-#include <core/library/librarymanager.h>
 #include <core/plugins/coreplugin.h>
-#include <core/plugins/pluginmanager.h>
 #include <utils/settings/settingsmanager.h>
 
 namespace Fooyin {
