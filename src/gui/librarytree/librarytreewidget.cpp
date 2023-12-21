@@ -291,7 +291,7 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, LibraryTreeGroupRegi
     setFeature(FyWidget::Search);
 
     QObject::connect(p->libraryTree, &LibraryTreeView::doubleClicked, this, [this]() { p->handleDoubleClick(); });
-    QObject::connect(p->libraryTree, &LibraryTreeView::middleMouseClicked, this, [this]() { p->handleMiddleClick(); });
+    QObject::connect(p->libraryTree, &LibraryTreeView::middleClicked, this, [this]() { p->handleMiddleClick(); });
     QObject::connect(p->libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this]() { p->selectionChanged(); });
     QObject::connect(p->libraryTree->header(), &QHeaderView::customContextMenuRequested, this,

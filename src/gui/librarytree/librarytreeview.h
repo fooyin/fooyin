@@ -31,7 +31,7 @@ public:
     LibraryTreeView(QWidget* parent = nullptr);
 
 signals:
-    void middleMouseClicked();
+    void middleClicked();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
