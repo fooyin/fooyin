@@ -88,7 +88,7 @@ public:
     [[nodiscard]] QString playlistNameFromSelection() const;
 
     void handleDoubleClick() const;
-    void handleMiddleClick() const;
+    QCoro::Task<void> handleMiddleClick() const;
 
     LibraryTreeWidget* self;
 
@@ -230,7 +230,6 @@ QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
         trackSelection->executeAction(TrackAction::SendNewPlaylist,
                                       autoSwitch ? PlaylistAction::Switch : PlaylistAction::None, playlistName);
     }
-    co_return;
 }
 
 QCoro::Task<void> LibraryTreeWidgetPrivate::searchChanged(QString search)
@@ -273,8 +272,10 @@ void LibraryTreeWidgetPrivate::handleDoubleClick() const
                                   playlistNameFromSelection());
 }
 
-void LibraryTreeWidgetPrivate::handleMiddleClick() const
+QCoro::Task<void> LibraryTreeWidgetPrivate::handleMiddleClick() const
 {
+    co_await qCoro(trackSelection, &TrackSelectionController::selectionChanged);
+
     const bool autoSwitch = settings->value<LibTreeAutoSwitch>();
     trackSelection->executeAction(middleClickAction, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None,
                                   playlistNameFromSelection());
