@@ -55,7 +55,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_cursorFollowsPlayback{new QCheckBox(tr("Cursor follows playback"), this)}
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
-    , m_hideSinglePlaylistTab{new QCheckBox(tr("Hide with only a single playlist"), this)}
+    , m_hideSinglePlaylistTab{new QCheckBox(tr("Hide single playlist tab"), this)}
 {
     auto* layout = new QGridLayout(this);
 
