@@ -26,6 +26,7 @@ void loadDefaults(Fooyin::Filters::FilterColumnRegistry* registry)
     registry->addItem({.id = 1, .index = 1, .name = "Album Artist", .field = "%albumartist%"});
     registry->addItem({.id = 2, .index = 2, .name = "Artist", .field = "%<artist>%"});
     registry->addItem({.id = 3, .index = 3, .name = "Album", .field = "%album%"});
+    registry->addItem({.id = 4, .index = 4, .name = "Date", .field = "%date%"});
 }
 } // namespace
 
