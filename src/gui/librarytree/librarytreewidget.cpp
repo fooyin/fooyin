@@ -62,6 +62,33 @@ void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QMode
         getLowestIndexes(treeView, childIndex, bottomIndexes);
     }
 }
+
+Fooyin::TrackList getSelectedTracks(const QTreeView* treeView, const Fooyin::MusicLibrary* library)
+{
+    const QModelIndexList selectedIndexes = treeView->selectionModel()->selectedIndexes();
+    if(selectedIndexes.empty()) {
+        return {};
+    }
+
+    QModelIndexList trackIndexes;
+    for(const QModelIndex& index : selectedIndexes) {
+        getLowestIndexes(treeView, index, trackIndexes);
+    }
+
+    Fooyin::TrackList tracks;
+    for(const auto& index : trackIndexes) {
+        const int level = index.data(Fooyin::LibraryTreeItem::Level).toInt();
+        if(level < 0) {
+            tracks.clear();
+            tracks = library->tracks();
+            break;
+        }
+        const auto indexTracks = index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>();
+        tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
+    }
+
+    return tracks;
+}
 } // namespace
 
 namespace Fooyin {
@@ -198,26 +225,10 @@ void LibraryTreeWidgetPrivate::setupHeaderContextMenu(const QPoint& pos)
 
 QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
 {
-    const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
-    if(selectedIndexes.empty()) {
+    const TrackList tracks = getSelectedTracks(libraryTree, library);
+
+    if(tracks.empty()) {
         co_return;
-    }
-
-    QModelIndexList trackIndexes;
-    for(const QModelIndex& index : selectedIndexes) {
-        getLowestIndexes(libraryTree, index, trackIndexes);
-    }
-
-    TrackList tracks;
-    for(const auto& index : trackIndexes) {
-        const int level = index.data(LibraryTreeItem::Level).toInt();
-        if(level < 0) {
-            tracks.clear();
-            tracks = library->tracks();
-            break;
-        }
-        const auto indexTracks = index.data(LibraryTreeItem::Tracks).value<TrackList>();
-        tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
     }
 
     const auto sortedTracks = co_await Utils::asyncExec([&tracks]() { return Sorting::sortTracks(tracks); });
@@ -274,7 +285,14 @@ void LibraryTreeWidgetPrivate::handleDoubleClick() const
 
 QCoro::Task<void> LibraryTreeWidgetPrivate::handleMiddleClick() const
 {
-    co_await qCoro(trackSelection, &TrackSelectionController::selectionChanged);
+    const TrackList tracks = getSelectedTracks(libraryTree, library);
+
+    if(tracks.empty()) {
+        co_return;
+    }
+
+    const auto sortedTracks = co_await Utils::asyncExec([&tracks]() { return Sorting::sortTracks(tracks); });
+    trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
 
     const bool autoSwitch = settings->value<LibTreeAutoSwitch>();
     trackSelection->executeAction(middleClickAction, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None,
