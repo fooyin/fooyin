@@ -128,7 +128,7 @@ struct AlsaOutput::Private
         dir = 0;
     }
 
-    bool recoverState(OutputState* state = nullptr)
+    bool recoverState()
     {
         if(!pcmHandle) {
             return false;
@@ -194,16 +194,6 @@ struct AlsaOutput::Private
 
         if(!recovered) {
             qWarning() << "ALSA could not recover";
-        }
-
-        if(state) {
-            auto delay   = snd_pcm_status_get_delay(st);
-            state->delay = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(outputContext.sampleRate);
-            state->freeSamples = static_cast<int>(snd_pcm_status_get_avail(st));
-            state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(bufferSize));
-            // Align to period size
-            state->freeSamples   = static_cast<int>(state->freeSamples / periodSize * periodSize);
-            state->queuedSamples = static_cast<int>(bufferSize) - state->freeSamples;
         }
 
         return recovered;
@@ -423,7 +413,20 @@ int AlsaOutput::bufferSize() const
 OutputState AlsaOutput::currentState()
 {
     OutputState state;
-    p->recoverState(&state);
+
+    snd_pcm_status_t* st;
+    snd_pcm_status_alloca(&st);
+
+    snd_pcm_status(p->pcmHandle.get(), st);
+
+    auto delay        = snd_pcm_status_get_delay(st);
+    state.delay       = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(p->outputContext.sampleRate);
+    state.freeSamples = static_cast<int>(snd_pcm_status_get_avail(st));
+    state.freeSamples = std::clamp(state.freeSamples, 0, static_cast<int>(p->bufferSize));
+    // Align to period size
+    state.freeSamples   = static_cast<int>(state.freeSamples / p->periodSize * p->periodSize);
+    state.queuedSamples = static_cast<int>(p->bufferSize) - state.freeSamples;
+
     return state;
 }
 
