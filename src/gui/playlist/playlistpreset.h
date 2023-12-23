@@ -67,6 +67,9 @@ struct TextBlock
         colourChanged = other.colourChanged;
         colour        = other.colour;
     }
+
+    friend QDataStream& operator<<(QDataStream& stream, const TextBlock& block);
+    friend QDataStream& operator>>(QDataStream& stream, TextBlock& block);
 };
 
 class TextBlockList : public QList<TextBlock>
@@ -109,6 +112,9 @@ struct HeaderRow
     {
         return !title.empty() || !subtitle.empty() || !sideText.empty();
     }
+
+    friend QDataStream& operator<<(QDataStream& stream, const HeaderRow& header);
+    friend QDataStream& operator>>(QDataStream& stream, HeaderRow& header);
 };
 
 struct SubheaderRow
@@ -127,6 +133,9 @@ struct SubheaderRow
     {
         return !leftText.isEmpty();
     }
+
+    friend QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader);
+    friend QDataStream& operator>>(QDataStream& stream, SubheaderRow& subheader);
 };
 using SubheaderRows = QList<SubheaderRow>;
 
@@ -146,6 +155,9 @@ struct TrackRow
     {
         return !leftText.isEmpty() || !rightText.isEmpty();
     }
+
+    friend QDataStream& operator<<(QDataStream& stream, const TrackRow& track);
+    friend QDataStream& operator>>(QDataStream& stream, TrackRow& track);
 };
 
 struct PlaylistPreset
@@ -168,18 +180,10 @@ struct PlaylistPreset
     {
         return id >= 0 && !name.isEmpty();
     };
-};
 
-QDataStream& operator<<(QDataStream& stream, const TextBlock& block);
-QDataStream& operator>>(QDataStream& stream, TextBlock& block);
-QDataStream& operator<<(QDataStream& stream, const HeaderRow& header);
-QDataStream& operator>>(QDataStream& stream, HeaderRow& header);
-QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader);
-QDataStream& operator>>(QDataStream& stream, SubheaderRow& subheader);
-QDataStream& operator<<(QDataStream& stream, const TrackRow& track);
-QDataStream& operator>>(QDataStream& stream, TrackRow& track);
-QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset);
-QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset);
+    friend QDataStream& operator<<(QDataStream& stream, const PlaylistPreset& preset);
+    friend QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset);
+};
 } // namespace Fooyin
 
 Q_DECLARE_METATYPE(Fooyin::TextBlock);
