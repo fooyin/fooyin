@@ -54,7 +54,6 @@ void PlaylistView::setupView()
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::MoveAction);
     setDropIndicatorShown(true);
-    //    setDragDropOverwriteMode(true);
     setIndentation(0);
     setExpandsOnDoubleClick(false);
     setWordWrap(true);
@@ -178,6 +177,28 @@ void PlaylistView::dropEvent(QDropEvent* event)
 }
 
 void PlaylistView::drawBranches(QPainter* /*painter*/, const QRect& /*rect*/, const QModelIndex& /*index*/) const { }
+
+void PlaylistView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    if(model()->hasChildren(index)) {
+        // Span first column of headers/subheaders
+        // Used instead of setFirstColumnSpanned to account for header section moves
+        if(index.column() == 0) {
+            QStyleOptionViewItem opt = option;
+
+            QRect rect = option.rect;
+
+            for(int i{1}; i < model()->columnCount(); ++i) {
+                rect.setRight(rect.right() + columnWidth(i));
+            }
+
+            itemDelegateForIndex(index)->paint(painter, opt, index);
+        }
+    }
+    else {
+        QTreeView::drawRow(painter, option, index);
+    }
+}
 
 void PlaylistView::paintEvent(QPaintEvent* event)
 {

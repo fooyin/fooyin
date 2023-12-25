@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 #include "librarytree/librarytreeappearance.h"
 #include "librarytree/librarytreegroupregistry.h"
+#include "playlist/playlistcolumnregistry.h"
 #include "playlist/presetregistry.h"
 
 #include <utils/settings/settingsmanager.h>
@@ -34,6 +35,7 @@ namespace Fooyin {
 GuiSettings::GuiSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
     , m_playlistPresetRegistry{std::make_unique<PresetRegistry>(m_settings)}
+    , m_playlistColumnRegistry{std::make_unique<PlaylistColumnRegistry>(m_settings)}
 {
     using namespace Settings::Gui;
 
@@ -81,6 +83,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
 
     m_libraryTreeGroupRegistry->loadItems();
     m_playlistPresetRegistry->loadItems();
+    m_playlistColumnRegistry->loadItems();
 }
 
 GuiSettings::~GuiSettings() = default;
@@ -89,6 +92,7 @@ void GuiSettings::shutdown()
 {
     m_libraryTreeGroupRegistry->saveItems();
     m_playlistPresetRegistry->saveItems();
+    m_playlistColumnRegistry->saveItems();
 }
 
 LibraryTreeGroupRegistry* GuiSettings::libraryTreeGroupRegistry() const
@@ -99,5 +103,10 @@ LibraryTreeGroupRegistry* GuiSettings::libraryTreeGroupRegistry() const
 PresetRegistry* GuiSettings::playlistPresetRegistry() const
 {
     return m_playlistPresetRegistry.get();
+}
+
+PlaylistColumnRegistry* GuiSettings::playlistColumnRegistry() const
+{
+    return m_playlistColumnRegistry.get();
 }
 } // namespace Fooyin

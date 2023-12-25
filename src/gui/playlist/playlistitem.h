@@ -55,6 +55,8 @@ public:
         Indentation,
         Index,
         BaseKey,
+        MultiColumnMode,
+        FirstColumn
     };
 
     enum class State

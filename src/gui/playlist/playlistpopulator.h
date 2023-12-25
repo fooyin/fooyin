@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "playlistcolumn.h"
 #include "playlistitem.h"
 #include "playlistitemmodels.h"
 
@@ -66,9 +67,11 @@ public:
     explicit PlaylistPopulator(QObject* parent = nullptr);
     ~PlaylistPopulator() override;
 
-    void run(const PlaylistPreset& preset, const TrackList& tracks);
-    void runTracks(const PlaylistPreset& preset, const TrackList& tracks, const QString& parent, int row);
-    void runTracks(const PlaylistPreset& preset, const std::map<int, std::vector<Track>>& tracks);
+    void run(const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks);
+    void runTracks(const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks,
+                   const QString& parent, int row);
+    void runTracks(const PlaylistPreset& preset, const PlaylistColumnList& columns,
+                   const std::map<int, std::vector<Track>>& tracks);
     void updateHeaders(const ItemList& headers);
 
 signals:

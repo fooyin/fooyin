@@ -763,6 +763,7 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, MusicLibrary* l
     , isActivePlaylist{false}
     , currentPlaylist{nullptr}
     , currentPlayState{PlayState::Stopped}
+    , firstColumn{0}
 {
     populator.moveToThread(&populatorThread);
     populatorThread.start();
@@ -848,7 +849,7 @@ void PlaylistModelPrivate::updateModel(ItemKeyMap& data)
     }
 }
 
-QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
+QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int /*column*/, int role) const
 {
     const auto track = std::get<PlaylistTrackItem>(item->data());
 
@@ -897,8 +898,12 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int role) const
     }
 }
 
-QVariant PlaylistModelPrivate::headerData(PlaylistItem* item, int role) const
+QVariant PlaylistModelPrivate::headerData(PlaylistItem* item, int column, int role) const
 {
+    if(column != 0) {
+        return {};
+    }
+
     const auto& header = std::get<PlaylistContainerItem>(item->data());
 
     switch(role) {
@@ -934,8 +939,12 @@ QVariant PlaylistModelPrivate::headerData(PlaylistItem* item, int role) const
     }
 }
 
-QVariant PlaylistModelPrivate::subheaderData(PlaylistItem* item, int role) const
+QVariant PlaylistModelPrivate::subheaderData(PlaylistItem* item, int column, int role) const
 {
+    if(column != 0) {
+        return {};
+    }
+
     const auto& header = std::get<PlaylistContainerItem>(item->data());
 
     switch(role) {

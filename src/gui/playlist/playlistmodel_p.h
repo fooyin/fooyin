@@ -103,9 +103,9 @@ public:
     void populateTrackGroup(PendingData& data);
     void updateModel(ItemKeyMap& data);
 
-    QVariant trackData(PlaylistItem* item, int role) const;
-    QVariant headerData(PlaylistItem* item, int role) const;
-    QVariant subheaderData(PlaylistItem* item, int role) const;
+    QVariant trackData(PlaylistItem* item, int column, int role) const;
+    QVariant headerData(PlaylistItem* item, int column, int role) const;
+    QVariant subheaderData(PlaylistItem* item, int column, int role) const;
 
     PlaylistItem* itemForKey(const QString& key);
 
@@ -158,10 +158,12 @@ public:
     std::unordered_map<int, QString> trackIndexes;
 
     PlaylistPreset currentPreset;
+    PlaylistColumnList columns;
     bool isActivePlaylist;
     Playlist* currentPlaylist;
     PlayState currentPlayState;
     Track currentPlayingTrack;
     QPersistentModelIndex currentPlayingIndex;
+    int firstColumn;
 };
 } // namespace Fooyin

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "playlistitem.h"
+#include "playlistcolumn.h"
 
 #include <utils/treemodel.h>
 
@@ -68,6 +69,7 @@ public:
     bool canFetchMore(const QModelIndex& parent) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
     [[nodiscard]] QStringList mimeTypes() const override;
     [[nodiscard]] bool canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
@@ -79,8 +81,8 @@ public:
                       const QModelIndex& parent) override;
 
     MoveOperation moveTracks(const MoveOperation& operation);
-
-    void reset(const PlaylistPreset& preset, Playlist* playlist);
+    void changeFirstColumn(int column);
+    void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
     QModelIndex indexAtTrackIndex(int index);
     void insertTracks(const TrackGroups& tracks);

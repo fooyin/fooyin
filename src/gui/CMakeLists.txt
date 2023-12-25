@@ -68,6 +68,7 @@ set(SOURCES
     menu/librarymenu.cpp
     menu/playbackmenu.cpp
     menu/viewmenu.cpp
+    playlist/playlistcolumnregistry.cpp
     playlist/playlistcontroller.cpp
     playlist/playlistview.cpp
     playlist/playlistmodel.cpp
@@ -104,6 +105,8 @@ set(SOURCES
     settings/librarytree/librarytreepage.cpp
     settings/librarytree/librarytreeguipage.cpp
     settings/librarytree/librarytreegroupmodel.cpp
+    settings/playlist/playlistcolumnmodel.cpp
+    settings/playlist/playlistcolumnpage.cpp
     settings/playlist/playlistgeneralpage.cpp
     settings/playlist/playlistguipage.cpp
     settings/playlist/playlistpresetspage.cpp

@@ -40,6 +40,7 @@ struct PlaylistPopulator::Private
     PlaylistPopulator* self;
 
     PlaylistPreset currentPreset;
+    PlaylistColumnList columns;
 
     std::unique_ptr<PlaylistScriptRegistry> registry;
     ScriptParser parser;
@@ -60,7 +61,6 @@ struct PlaylistPopulator::Private
         : self{self}
         , registry{std::make_unique<PlaylistScriptRegistry>()}
         , parser{registry.get()}
-        , data{}
     { }
 
     void reset()
@@ -92,8 +92,18 @@ struct PlaylistPopulator::Private
             parseBlockList(subheader.rightText);
         }
 
-        parseBlockList(currentPreset.track.leftText);
-        parseBlockList(currentPreset.track.rightText);
+        if(!columns.empty()) {
+            TextBlockList columnBlocks;
+            for(const auto& column : columns) {
+                columnBlocks.emplace_back(column.field, 0);
+            }
+            parseBlockList(columnBlocks);
+            currentPreset.track.leftText = columnBlocks;
+        }
+        else {
+            parseBlockList(currentPreset.track.leftText);
+            parseBlockList(currentPreset.track.rightText);
+        }
     }
 
     PlaylistItem* getOrInsertItem(const QString& key, PlaylistItem::ItemType type, const Data& item,
@@ -367,13 +377,14 @@ PlaylistPopulator::PlaylistPopulator(QObject* parent)
     qRegisterMetaType<PendingData>();
 }
 
-void PlaylistPopulator::run(const PlaylistPreset& preset, const TrackList& tracks)
+void PlaylistPopulator::run(const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks)
 {
     setState(Running);
 
     p->reset();
 
     p->currentPreset = preset;
+    p->columns       = columns;
     p->pendingTracks = tracks;
 
     p->updateScripts();
@@ -382,7 +393,8 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const TrackList& track
     setState(Idle);
 }
 
-void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const TrackList& tracks, const QString& parent, int row)
+void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const PlaylistColumnList& columns,
+                                  const TrackList& tracks, const QString& parent, int row)
 {
     setState(Running);
 
@@ -391,6 +403,7 @@ void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const TrackList&
     p->data.parent   = parent;
     p->data.row      = row;
     p->currentPreset = preset;
+    p->columns       = columns;
     p->pendingTracks = tracks;
 
     p->updateScripts();
@@ -399,13 +412,15 @@ void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const TrackList&
     setState(Idle);
 }
 
-void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const std::map<int, std::vector<Track>>& tracks)
+void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const PlaylistColumnList& columns,
+                                  const std::map<int, std::vector<Track>>& tracks)
 {
     setState(Running);
 
     p->reset();
 
     p->currentPreset = preset;
+    p->columns       = columns;
 
     p->updateScripts();
     p->runTracksGroup(tracks);

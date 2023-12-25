@@ -37,6 +37,7 @@ protected:
     void dropEvent(QDropEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void drawBranches(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
+    void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     void paintEvent(QPaintEvent* event) override;
 
     [[nodiscard]] QAbstractItemView::DropIndicatorPosition position(const QPoint& pos, const QRect& rect,

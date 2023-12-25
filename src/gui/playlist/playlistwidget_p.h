@@ -45,6 +45,7 @@ class PlaylistController;
 class PlaylistModel;
 class PlaylistView;
 class MusicLibrary;
+class PlaylistColumnRegistry;
 
 class PlaylistWidgetPrivate : public QObject
 {
@@ -52,7 +53,7 @@ class PlaylistWidgetPrivate : public QObject
 
 public:
     PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistController* playlistController,
-                          MusicLibrary* library, SettingsManager* settings);
+                          PlaylistColumnRegistry* columnRegistry, MusicLibrary* library, SettingsManager* settings);
 
     void setupConnections();
     void setupActions();
@@ -78,6 +79,7 @@ public:
     void tracksMoved(const MoveOperation& operation) const;
     void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const;
 
+    QCoro::Task<void> toggleColumnMode();
     void customHeaderMenuRequested(QPoint pos);
 
     void changeState(PlayState state) const;
@@ -86,7 +88,6 @@ public:
 
     void followCurrentTrack(const Track& track, int index) const;
 
-    void switchContextMenu(int section, QPoint pos);
     QCoro::Task<void> changeSort(QString script);
     void addSortMenu(QMenu* parent);
 
@@ -94,6 +95,7 @@ public:
 
     ActionManager* actionManager;
     TrackSelectionController* selectionController;
+    PlaylistColumnRegistry* columnRegistry;
     MusicLibrary* library;
     SettingsManager* settings;
     SettingsDialogController* settingsDialog;
@@ -106,6 +108,8 @@ public:
     AutoHeaderView* header;
 
     PlaylistPreset currentPreset;
+    bool columnMode;
+    PlaylistColumnList columns;
 
     WidgetContext* playlistContext;
 

@@ -239,12 +239,14 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     const int semiWidth = width / 2;
     const int offset    = 10;
 
-    const auto background = index.data(Qt::BackgroundRole).value<QPalette::ColorRole>();
-    const auto leftSide   = index.data(PlaylistItem::Role::Left).value<TextBlockList>();
-    const auto rightSide  = index.data(PlaylistItem::Role::Right).value<TextBlockList>();
-    const bool isPlaying  = index.data(PlaylistItem::Role::Playing).toBool();
-    const auto pixmap     = index.data(Qt::DecorationRole).value<QPixmap>();
-    int indent            = index.data(PlaylistItem::Role::Indentation).toInt();
+    const auto background  = index.data(Qt::BackgroundRole).value<QPalette::ColorRole>();
+    const bool multiColumn = index.data(PlaylistItem::Role::MultiColumnMode).toBool();
+    const auto leftSide    = index.data(PlaylistItem::Role::Left).value<TextBlockList>();
+    const auto rightSide   = index.data(PlaylistItem::Role::Right).value<TextBlockList>();
+    const bool isPlaying   = index.data(PlaylistItem::Role::Playing).toBool();
+    const auto pixmap      = index.data(Qt::DecorationRole).value<QPixmap>();
+    int indent             = index.data(PlaylistItem::Role::Indentation).toInt();
+    const int firstColumn  = index.data(PlaylistItem::FirstColumn).toInt();
 
     QColor playColour{opt.palette.highlight().color()};
     playColour.setAlpha(90);
@@ -256,15 +258,33 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     painter->fillRect(option.rect, isPlaying ? playColour : option.palette.color(background));
     opt.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter);
 
-    QRect rightRect{(right - semiWidth), y, semiWidth - offset, height};
-    auto [_, totalRightWidth]
-        = drawTextBlocks(painter, opt, rightRect, rightSide | std::views::reverse, Qt::AlignRight, isPlaying);
+    const int column = index.column();
 
-    const int leftWidth = width - totalRightWidth - indent - (offset * 2) - 20;
-    QRect leftRect{(x + offset + indent), y, leftWidth, height};
-    drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignLeft, isPlaying);
+    if(multiColumn) {
+        if(leftSide.empty() || column < 0 || column >= static_cast<int>(leftSide.size())) {
+            return;
+        }
+        QRect columnRect = opt.rect;
+        int columnWidth  = width;
+        if(column == firstColumn) {
+            columnRect.setX(x + offset + indent);
+            columnWidth = columnWidth - offset - indent;
+        }
+        option.widget->style()->drawItemText(
+            painter, columnRect, Qt::AlignVCenter, option.palette, true,
+            painter->fontMetrics().elidedText(leftSide.at(column).text, Qt::ElideRight, columnWidth));
+    }
+    else {
+        QRect rightRect{(right - semiWidth), y, semiWidth - offset, height};
+        auto [_, totalRightWidth]
+            = drawTextBlocks(painter, opt, rightRect, rightSide | std::views::reverse, Qt::AlignRight, isPlaying);
 
-    if(isPlaying) {
+        const int leftWidth = width - totalRightWidth - indent - (offset * 2) - 20;
+        QRect leftRect{(x + offset + indent), y, leftWidth, height};
+        drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignLeft, isPlaying);
+    }
+
+    if(isPlaying && column == firstColumn) {
         const QRect playRect{x + offset, y, 20, height};
         opt.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
     }

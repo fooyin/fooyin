@@ -99,7 +99,7 @@ Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
     return defaultFlags;
 }
 
-QVariant PlaylistModel::headerData(int /*section*/, Qt::Orientation orientation, int role) const
+QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {
         return (Qt::AlignHCenter);
@@ -107,6 +107,12 @@ QVariant PlaylistModel::headerData(int /*section*/, Qt::Orientation orientation,
 
     if(role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical) {
         return {};
+    }
+
+    if(!p->columns.empty()) {
+        if(section >= 0 && section < static_cast<int>(p->columns.size())) {
+            return p->columns.at(section).name;
+        }
     }
 
     return p->headerText;
@@ -134,13 +140,21 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
         return item->baseKey();
     }
 
+    if(role == PlaylistItem::MultiColumnMode) {
+        return !p->columns.empty();
+    }
+
+    if(role == PlaylistItem::FirstColumn) {
+        return p->firstColumn;
+    }
+
     switch(type) {
         case(PlaylistItem::Header):
-            return p->headerData(item, role);
+            return p->headerData(item, index.column(), role);
         case(PlaylistItem::Track):
-            return p->trackData(item, role);
+            return p->trackData(item, index.column(), role);
         case(PlaylistItem::Subheader):
-            return p->subheaderData(item, role);
+            return p->subheaderData(item, index.column(), role);
         case(PlaylistItem::Root):
             return {};
     }
@@ -197,6 +211,14 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     return roles;
 }
 
+int PlaylistModel::columnCount(const QModelIndex& /*parent*/) const
+{
+    if(!p->columns.empty()) {
+        return static_cast<int>(p->columns.size());
+    }
+    return 1;
+}
+
 QStringList PlaylistModel::mimeTypes() const
 {
     return {Constants::Mime::PlaylistItems, Constants::Mime::TrackIds};
@@ -245,8 +267,19 @@ MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
     return p->handleMove(operation);
 }
 
-void PlaylistModel::reset(const PlaylistPreset& preset, Playlist* playlist)
+void PlaylistModel::changeFirstColumn(int column)
 {
+    p->firstColumn = column;
+}
+
+void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist)
+{
+    if(preset.isValid()) {
+        p->currentPreset = preset;
+    }
+
+    p->columns = columns;
+
     if(!playlist) {
         return;
     }
@@ -255,12 +288,11 @@ void PlaylistModel::reset(const PlaylistPreset& preset, Playlist* playlist)
 
     p->resetting       = true;
     p->currentPlaylist = playlist;
-    p->currentPreset   = preset;
 
     updateHeader(playlist);
 
     QMetaObject::invokeMethod(&p->populator,
-                              [this, playlist] { p->populator.run(p->currentPreset, playlist->tracks()); });
+                              [this, playlist] { p->populator.run(p->currentPreset, p->columns, playlist->tracks()); });
 }
 
 QModelIndex PlaylistModel::indexAtTrackIndex(int index)
@@ -270,7 +302,8 @@ QModelIndex PlaylistModel::indexAtTrackIndex(int index)
 
 void PlaylistModel::insertTracks(const TrackGroups& tracks)
 {
-    QMetaObject::invokeMethod(&p->populator, [this, tracks] { p->populator.runTracks(p->currentPreset, tracks); });
+    QMetaObject::invokeMethod(&p->populator,
+                              [this, tracks] { p->populator.runTracks(p->currentPreset, p->columns, tracks); });
 }
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)

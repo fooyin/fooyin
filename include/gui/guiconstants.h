@@ -138,6 +138,7 @@ constexpr auto LibrarySorting        = "Fooyin.Page.Library.Sorting";
 constexpr auto PlaylistGeneral       = "Fooyin.Page.Playlist.General";
 constexpr auto PlaylistInterface     = "Fooyin.Page.Playlist.Interface";
 constexpr auto PlaylistPresets       = "Fooyin.Page.Playlist.Presets";
+constexpr auto PlaylistColumns       = "Fooyin.Page.Playlist.Columns";
 constexpr auto LibraryTreeGeneral    = "Fooyin.Page.Widgets.LibraryTree.General";
 constexpr auto LibraryTreeAppearance = "Fooyin.Page.Widgets.LibraryTree.Appearance";
 constexpr auto StatusWidget          = "Fooyin.Page.Widgets.Status";

@@ -46,6 +46,7 @@
 #include "settings/library/librarysortingpage.h"
 #include "settings/librarytree/librarytreeguipage.h"
 #include "settings/librarytree/librarytreepage.h"
+#include "settings/playlist/playlistcolumnpage.h"
 #include "settings/playlist/playlistgeneralpage.h"
 #include "settings/playlist/playlistguipage.h"
 #include "settings/playlist/playlistpresetspage.h"
@@ -119,6 +120,7 @@ struct GuiApplication::Private
     PlaylistGeneralPage playlistGeneralPage;
     PlaylistGuiPage playlistGuiPage;
     PlaylistPresetsPage playlistPresetsPage;
+    PlaylistColumnPage playlistColumnPage;
     EnginePage enginePage;
     LibraryTreePage libraryTreePage;
     LibraryTreeGuiPage libraryTreeGuiPage;
@@ -164,6 +166,7 @@ struct GuiApplication::Private
         , playlistGeneralPage{settingsManager}
         , playlistGuiPage{settingsManager}
         , playlistPresetsPage{guiSettings.playlistPresetRegistry(), settingsManager}
+        , playlistColumnPage{actionManager, guiSettings.playlistColumnRegistry(), settingsManager}
         , enginePage{settingsManager, engineHandler}
         , libraryTreePage{actionManager, guiSettings.libraryTreeGroupRegistry(), settingsManager}
         , libraryTreeGuiPage{settingsManager}
@@ -292,8 +295,8 @@ struct GuiApplication::Private
             u"Artwork Panel"_s);
 
         factory->registerClass<PlaylistWidget>(u"Playlist"_s, [this]() {
-            return new PlaylistWidget(actionManager, playlistController.get(), library, settingsManager,
-                                      mainWindow.get());
+            return new PlaylistWidget(actionManager, playlistController.get(), guiSettings.playlistColumnRegistry(),
+                                      library, settingsManager, mainWindow.get());
         });
 
         factory->registerClass<Spacer>(u"Spacer"_s, [this]() { return new Spacer(mainWindow.get()); });

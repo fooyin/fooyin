@@ -19,34 +19,17 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
+#include <utils/settings/settingspage.h>
 
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-class PlaylistController;
-class PlaylistWidgetPrivate;
-class MusicLibrary;
 class PlaylistColumnRegistry;
 
-class PlaylistWidget : public FyWidget
+class PlaylistColumnPage : public SettingsPage
 {
-    Q_OBJECT
-
 public:
-    explicit PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController, PlaylistColumnRegistry* columnRegistry, MusicLibrary* library,
-                            SettingsManager* settings, QWidget* parent = nullptr);
-    ~PlaylistWidget() override;
-
-    [[nodiscard]] QString name() const override;
-    void saveLayoutData(QJsonObject& layout) override;
-    void loadLayoutData(const QJsonObject& layout) override;
-
-protected:
-    void contextMenuEvent(QContextMenuEvent* event) override;
-    void keyPressEvent(QKeyEvent* event) override;
-
-private:
-    std::unique_ptr<PlaylistWidgetPrivate> p;
+    PlaylistColumnPage(ActionManager* actionManager, PlaylistColumnRegistry* columnsRegistry,
+                       SettingsManager* settings);
 };
 } // namespace Fooyin
