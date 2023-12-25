@@ -65,6 +65,13 @@ void loadDefaults(Fooyin::PresetRegistry* registry)
         "$if(%albumartist%,%albumartist%,Unknown Artist) ▪ $if(%album%,%album%,Unknown Album)", 16);
 
     registry->addItem(preset);
+
+    preset.name = QStringLiteral("Table");
+
+    preset.header = {};
+    preset.subHeaders.clear();
+
+    registry->addItem(preset);
 }
 } // namespace
 
