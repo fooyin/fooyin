@@ -602,6 +602,15 @@ void AutoHeaderView::mouseReleaseEvent(QMouseEvent* event)
     QHeaderView::mouseReleaseEvent(event);
 }
 
+void AutoHeaderView::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    p->state = SectionState::Resizing;
+
+    QHeaderView::mouseDoubleClickEvent(event);
+
+    p->state = SectionState::None;
+}
+
 void AutoHeaderView::resizeEvent(QResizeEvent* event)
 {
     QHeaderView::resizeEvent(event);
