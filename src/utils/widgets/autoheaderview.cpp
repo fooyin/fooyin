@@ -350,6 +350,7 @@ void AutoHeaderView::setHeaderSectionWidth(int logical, double width)
         return;
     }
 
+    p->sectionWidths.resize(logical + 1);
     p->sectionWidths[logical] = width;
 
     const int sectionCount = count();
@@ -363,6 +364,7 @@ void AutoHeaderView::setHeaderSectionWidth(int logical, double width)
     }
 
     p->normaliseWidths(otherColumns);
+    p->updateWidths();
 }
 
 bool AutoHeaderView::isStretchEnabled() const
