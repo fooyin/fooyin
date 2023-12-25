@@ -249,15 +249,14 @@ AutoHeaderView::AutoHeaderView(Qt::Orientation orientation, QWidget* parent)
     QObject::connect(this, &QHeaderView::sectionResized, this,
                      [this](int section, int /*oldSize*/, int newSize) { p->sectionResized(section, newSize); });
 
-    QObject::connect(this, &QHeaderView::sectionCountChanged, this, [this](int /*oldCount*/, int newCount) {
+    QObject::connect(this, &QHeaderView::sectionCountChanged, this, [this](int oldCount, int newCount) {
         if(p->stretchEnabled && newCount != static_cast<int>(p->sectionWidths.size())) {
-            const int sectionCount = count();
-            for(int section{0}; section < sectionCount; ++section) {
-                if(isSectionHidden(section)) {
-                    showHeaderSection(section);
-                }
+            p->sectionWidths.resize(newCount);
+            for(int section{oldCount}; section < newCount; ++section) {
+                p->sectionWidths[section] = 0.5;
             }
-            resetSections();
+            p->normaliseWidths();
+            p->updateWidths();
         }
     });
 }
