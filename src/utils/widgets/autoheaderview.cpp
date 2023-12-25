@@ -349,20 +349,22 @@ void AutoHeaderView::setHeaderSectionWidth(int logical, double width)
         return;
     }
 
-    p->sectionWidths.resize(logical + 1);
+    if(p->sectionWidths.size() < logical + 1) {
+        p->sectionWidths.resize(logical + 1);
+    }
     p->sectionWidths[logical] = width;
 
     const int sectionCount = count();
 
-    SectionIndexes otherColumns;
+    SectionIndexes rightColumns;
 
     for(int section{0}; section < sectionCount; ++section) {
-        if(!isSectionHidden(section) && section != logical) {
-            otherColumns.push_back(section);
+        if(!isSectionHidden(section) && section >= logical) {
+            rightColumns.push_back(section);
         }
     }
 
-    p->normaliseWidths(otherColumns);
+    p->normaliseWidths(rightColumns);
     p->updateWidths();
 }
 
