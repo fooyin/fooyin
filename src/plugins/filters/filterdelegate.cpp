@@ -19,6 +19,8 @@
 
 #include "filterdelegate.h"
 
+#include "filteritem.h"
+
 #include <QPainter>
 
 namespace Fooyin::Filters {
@@ -33,23 +35,26 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    const auto rect       = opt.rect;
-    const QRect titleRect = QRect(rect.x() + 5, rect.y(), rect.width(), rect.height());
-
-    opt.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter);
-
     const QString title = index.data(Qt::DisplayRole).toString();
     const auto font     = index.data(Qt::FontRole).value<QFont>();
+    const auto colour   = index.data(Qt::ForegroundRole).value<QColor>();
+    const int margin    = index.data(FilterItem::CellMargin).toInt();
+
     if(font.pixelSize() > 0 || font.pointSize() > 0) {
         painter->setFont(font);
     }
-    const auto colour = index.data(Qt::ForegroundRole).value<QColor>();
+
     if(colour.isValid()) {
         painter->setPen(colour);
     }
 
+    const auto rect       = opt.rect;
+    const QRect titleRect = {rect.x() + margin, rect.y(), rect.width() - (2 * margin), rect.height()};
+
+    opt.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter);
+
     opt.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, opt.palette, true,
-                                      painter->fontMetrics().elidedText(title, Qt::ElideRight, rect.width()));
+                                      painter->fontMetrics().elidedText(title, Qt::ElideRight, titleRect.width()));
     painter->restore();
 }
 } // namespace Fooyin::Filters

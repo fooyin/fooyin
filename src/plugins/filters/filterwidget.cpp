@@ -27,8 +27,8 @@
 #include "filterview.h"
 #include "settings/filtersettings.h"
 
-#include <core/track.h>
 #include <core/library/tracksort.h>
+#include <core/track.h>
 #include <utils/async.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>

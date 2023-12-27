@@ -28,6 +28,7 @@
 
 #include <QColor>
 #include <QFont>
+#include <QFontMetrics>
 #include <QIODevice>
 #include <QMimeData>
 #include <QSize>
@@ -35,6 +36,8 @@
 
 #include <set>
 #include <utility>
+
+constexpr auto CellMargin = 5;
 
 namespace {
 QByteArray saveTracks(const QModelIndexList& indexes)
@@ -257,8 +260,19 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         case(FilterItem::Tracks): {
             return QVariant::fromValue(item->tracks());
         }
+        case(FilterItem::CellMargin): {
+            return CellMargin;
+        }
         case(Qt::SizeHintRole): {
-            return QSize{0, p->rowHeight};
+            QString name = item->column(col);
+            name         = !name.isEmpty() ? name : QStringLiteral("?");
+
+            const QFontMetrics fm{p->font};
+            QRect rect = fm.boundingRect(name);
+            rect.setWidth(rect.width() + (2 * CellMargin + 1));
+            rect.setHeight(p->rowHeight);
+
+            return rect.size();
         }
         case(Qt::FontRole): {
             return p->font;
