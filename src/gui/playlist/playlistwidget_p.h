@@ -64,6 +64,7 @@ public:
     void changePlaylist(Playlist* playlist) const;
 
     void resetTree() const;
+    void resetModel() const;
 
     [[nodiscard]] bool isHeaderHidden() const;
     [[nodiscard]] bool isScrollbarHidden() const;
@@ -80,7 +81,7 @@ public:
     void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const;
 
     QCoro::Task<void> toggleColumnMode();
-    void customHeaderMenuRequested(QPoint pos);
+    void customHeaderMenuRequested(const QPoint& pos);
 
     void changeState(PlayState state) const;
 
@@ -89,7 +90,11 @@ public:
     void followCurrentTrack(const Track& track, int index) const;
 
     QCoro::Task<void> changeSort(QString script);
+
     void addSortMenu(QMenu* parent);
+    void addPresetMenu(QMenu* parent);
+    void addPlaylistMenu(QMenu* parent);
+    void addAlignmentMenu(const QPoint& pos, QMenu* parent);
 
     PlaylistWidget* self;
 

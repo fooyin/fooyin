@@ -93,6 +93,8 @@ struct TrackItemResult
 
 using IndexGroupsList = std::vector<QModelIndexList>;
 
+using ColumnAlignments = std::map<int, Qt::Alignment>;
+
 class PlaylistModelPrivate
 {
 public:
@@ -159,11 +161,12 @@ public:
 
     PlaylistPreset currentPreset;
     PlaylistColumnList columns;
+    ColumnAlignments columnAlignments;
+
     bool isActivePlaylist;
     Playlist* currentPlaylist;
     PlayState currentPlayState;
     Track currentPlayingTrack;
     QPersistentModelIndex currentPlayingIndex;
-    int firstColumn;
 };
 } // namespace Fooyin

@@ -23,6 +23,8 @@
 
 #include <QPainter>
 
+constexpr auto CellPadding = 5;
+
 namespace Fooyin {
 struct DrawTextResult
 {
@@ -231,10 +233,11 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 {
     QStyleOptionViewItem opt = option;
 
-    const int x         = opt.rect.x();
-    const int y         = opt.rect.y();
-    const int width     = opt.rect.width();
-    const int height    = opt.rect.height();
+    const QRect rect    = opt.rect;
+    const int x         = rect.x();
+    const int y         = rect.y();
+    const int width     = rect.width();
+    const int height    = rect.height();
     const int right     = x + width;
     const int semiWidth = width / 2;
     const int offset    = 10;
@@ -246,7 +249,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     const bool isPlaying   = index.data(PlaylistItem::Role::Playing).toBool();
     const auto pixmap      = index.data(Qt::DecorationRole).value<QPixmap>();
     int indent             = index.data(PlaylistItem::Role::Indentation).toInt();
-    const int firstColumn  = index.data(PlaylistItem::FirstColumn).toInt();
+    int alignment          = index.data(Qt::TextAlignmentRole).toInt();
 
     QColor playColour{opt.palette.highlight().color()};
     playColour.setAlpha(90);
@@ -264,15 +267,12 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
         if(leftSide.empty() || column < 0 || column >= static_cast<int>(leftSide.size())) {
             return;
         }
-        QRect columnRect = opt.rect;
-        int columnWidth  = width;
-        if(column == firstColumn) {
-            columnRect.setX(x + offset + indent);
-            columnWidth = columnWidth - offset - indent;
-        }
+
+        const QRect cellRect = {rect.x() + CellPadding, rect.top(), rect.width() - (CellPadding * 2), rect.height()};
+
         option.widget->style()->drawItemText(
-            painter, columnRect, Qt::AlignVCenter, option.palette, true,
-            painter->fontMetrics().elidedText(leftSide.at(column).text, Qt::ElideRight, columnWidth));
+            painter, cellRect, Qt::AlignVCenter | alignment, option.palette, true,
+            painter->fontMetrics().elidedText(leftSide.at(column).text, Qt::ElideRight, cellRect.width()));
     }
     else {
         QRect rightRect{(right - semiWidth), y, semiWidth - offset, height};
@@ -282,16 +282,16 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
         const int leftWidth = width - totalRightWidth - indent - (offset * 2) - 20;
         QRect leftRect{(x + offset + indent), y, leftWidth, height};
         drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignLeft, isPlaying);
-    }
 
-    if(isPlaying && column == firstColumn) {
-        const QRect playRect{x + offset, y, 20, height};
-        opt.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
+        if(isPlaying) {
+            const QRect playRect{x + offset, y, 20, height};
+            opt.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
+        }
     }
 }
 
 PlaylistDelegate::PlaylistDelegate(QObject* parent)
-    : QStyledItemDelegate(parent)
+    : QStyledItemDelegate{parent}
 { }
 
 QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& /*option*/, const QModelIndex& index) const

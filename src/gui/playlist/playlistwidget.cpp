@@ -152,7 +152,6 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     setupConnections();
     setupActions();
 
-    model->changeFirstColumn(header->logicalIndex(0));
     model->setCurrentPlaylistIsActive(playlistController->currentIsActive());
 }
 
@@ -174,9 +173,6 @@ void PlaylistWidgetPrivate::setupConnections()
                      [this](const QModelIndex& parent, int first, int last) {
                          expandTree(playlistView, model, parent, first, last);
                      });
-
-    QObject::connect(header, &QHeaderView::sectionMoved, this,
-                     [this]() { model->changeFirstColumn(header->logicalIndex(0)); });
 
     QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this,
                      &PlaylistWidgetPrivate::changePlaylist);
@@ -264,22 +260,24 @@ void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)
 void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
 {
     currentPreset = preset;
-    model->reset(currentPreset, columns, playlistController->currentPlaylist());
+    resetModel();
 }
 
 void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist) const
 {
-    model->reset(currentPreset, columns, playlist);
+    model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, playlist);
     //    playlistView->setFocus(Qt::ActiveWindowFocusReason);
 }
 
 void PlaylistWidgetPrivate::resetTree() const
 {
-    if(columnMode) {
-        // extendHeaders(playlistView, model, {}, model->firstColumn(), true);
-    }
     playlistView->expandAll();
     playlistView->scrollToTop();
+}
+
+void PlaylistWidgetPrivate::resetModel() const
+{
+    model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, playlistController->currentPlaylist());
 }
 
 bool PlaylistWidgetPrivate::isHeaderHidden() const
@@ -449,9 +447,8 @@ void PlaylistWidgetPrivate::playlistTracksAdded(Playlist* playlist, const TrackL
 QCoro::Task<void> PlaylistWidgetPrivate::toggleColumnMode()
 {
     columnMode = !columnMode;
-    columns.clear();
 
-    if(columnMode) {
+    if(columnMode && columns.empty()) {
         columns.push_back(columnRegistry->itemByName("Track"));
         columns.push_back(columnRegistry->itemByName("Title"));
         columns.push_back(columnRegistry->itemByName("Artist"));
@@ -459,7 +456,7 @@ QCoro::Task<void> PlaylistWidgetPrivate::toggleColumnMode()
         columns.push_back(columnRegistry->itemByName("Duration"));
     }
 
-    model->reset(currentPreset, columns, playlistController->currentPlaylist());
+    resetModel();
 
     if(columnMode) {
         co_await qCoro(header, &QHeaderView::sectionCountChanged);
@@ -467,27 +464,10 @@ QCoro::Task<void> PlaylistWidgetPrivate::toggleColumnMode()
     }
 }
 
-void PlaylistWidgetPrivate::customHeaderMenuRequested(QPoint pos)
+void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
 {
     auto* menu = new QMenu(self);
     menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    auto* playlistMenu = new QMenu(tr("Playlists"), menu);
-
-    const auto currentPlaylist = playlistController->currentPlaylist();
-    const auto playlists       = playlistController->playlists();
-
-    for(const auto& playlist : playlists) {
-        if(playlist != currentPlaylist) {
-            auto* switchPl = new QAction(playlist->name(), playlistMenu);
-            const int id   = playlist->id();
-            QObject::connect(switchPl, &QAction::triggered, self,
-                             [this, id]() { playlistController->changeCurrentPlaylist(id); });
-            playlistMenu->addAction(switchPl);
-        }
-    }
-
-    menu->addMenu(playlistMenu);
 
     if(columnMode) {
         auto* filterList = new QActionGroup{menu};
@@ -523,7 +503,10 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(QPoint pos)
             }
         });
 
+        menu->addSeparator();
         header->addHeaderContextMenu(menu, self->mapToGlobal(pos));
+        menu->addSeparator();
+        addAlignmentMenu(pos, menu);
         menu->addSeparator();
     }
 
@@ -533,21 +516,10 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(QPoint pos)
     QObject::connect(columnModeAction, &QAction::triggered, self, [this]() { toggleColumnMode(); });
     menu->addAction(columnModeAction);
 
-    auto* presetsMenu = new QMenu(PlaylistWidget::tr("Presets"), menu);
+    menu->addSeparator();
 
-    const auto& presets = playlistController->presetRegistry()->items();
-
-    for(const auto& [index, preset] : presets) {
-        const QString name = preset.name;
-        auto* switchPreset = new QAction(name, presetsMenu);
-        if(preset == currentPreset) {
-            presetsMenu->setDefaultAction(switchPreset);
-        }
-        QObject::connect(switchPreset, &QAction::triggered, self,
-                         [this, name]() { settings->set<PlaylistCurrentPreset>(name); });
-        presetsMenu->addAction(switchPreset);
-    }
-    menu->addMenu(presetsMenu);
+    addPlaylistMenu(menu);
+    addPresetMenu(menu);
 
     menu->popup(self->mapToGlobal(pos));
 }
@@ -614,6 +586,97 @@ void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
     parent->addMenu(sortMenu);
 }
 
+void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
+{
+    auto* presetsMenu = new QMenu(PlaylistWidget::tr("Presets"), parent);
+
+    const auto& presets = playlistController->presetRegistry()->items();
+
+    for(const auto& [index, preset] : presets) {
+        const QString name = preset.name;
+        auto* switchPreset = new QAction(name, presetsMenu);
+        if(preset == currentPreset) {
+            presetsMenu->setDefaultAction(switchPreset);
+        }
+        QObject::connect(switchPreset, &QAction::triggered, self,
+                         [this, name]() { settings->set<PlaylistCurrentPreset>(name); });
+        presetsMenu->addAction(switchPreset);
+    }
+
+    parent->addMenu(presetsMenu);
+}
+
+void PlaylistWidgetPrivate::addPlaylistMenu(QMenu* parent)
+{
+    auto* playlistMenu = new QMenu(Fooyin::PlaylistWidget::tr("Playlists"), parent);
+
+    const auto currentPlaylist = playlistController->currentPlaylist();
+    const auto playlists       = playlistController->playlists();
+
+    for(const auto& playlist : playlists) {
+        if(playlist != currentPlaylist) {
+            auto* switchPl = new QAction(playlist->name(), playlistMenu);
+            const int id   = playlist->id();
+            QObject::connect(switchPl, &QAction::triggered, playlistMenu,
+                             [this, id]() { playlistController->changeCurrentPlaylist(id); });
+            playlistMenu->addAction(switchPl);
+        }
+    }
+
+    parent->addMenu(playlistMenu);
+}
+
+void PlaylistWidgetPrivate::addAlignmentMenu(const QPoint& pos, QMenu* parent)
+{
+    auto* alignMenu = new QMenu(tr("Alignment"), parent);
+
+    const int logical = header->logicalIndexAt(pos);
+
+    if(logical >= 0) {
+        auto* alignmentGroup = new QActionGroup(alignMenu);
+
+        auto* alignLeft   = new QAction(tr("&Left"), alignMenu);
+        auto* alignCentre = new QAction(tr("&Centre"), alignMenu);
+        auto* alignRight  = new QAction(tr("&Right"), alignMenu);
+
+        alignLeft->setCheckable(true);
+        alignCentre->setCheckable(true);
+        alignRight->setCheckable(true);
+
+        switch(model->columnAlignment(logical)) {
+            case(Qt::AlignLeft):
+                alignLeft->setChecked(true);
+                break;
+            case(Qt::AlignHCenter):
+                alignCentre->setChecked(true);
+                break;
+            case(Qt::AlignRight):
+                alignRight->setChecked(true);
+                break;
+        }
+
+        auto changeAlignment = [this, logical](Qt::Alignment alignment) {
+            model->changeColumnAlignment(logical, alignment);
+        };
+
+        QObject::connect(alignLeft, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignLeft); });
+        QObject::connect(alignCentre, &QAction::triggered, this,
+                         [changeAlignment]() { changeAlignment(Qt::AlignHCenter); });
+        QObject::connect(alignRight, &QAction::triggered, this,
+                         [changeAlignment]() { changeAlignment(Qt::AlignRight); });
+
+        alignmentGroup->addAction(alignLeft);
+        alignmentGroup->addAction(alignCentre);
+        alignmentGroup->addAction(alignRight);
+
+        alignMenu->addAction(alignLeft);
+        alignMenu->addAction(alignCentre);
+        alignMenu->addAction(alignRight);
+
+        parent->addMenu(alignMenu);
+    }
+}
+
 PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController,
                                PlaylistColumnRegistry* columnRegistry, MusicLibrary* library, SettingsManager* settings,
                                QWidget* parent)
@@ -635,8 +698,16 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 {
     if(p->columnMode) {
         QStringList columns;
-        std::ranges::transform(p->columns, std::back_inserter(columns),
-                               [](const auto& column) { return QString::number(column.id); });
+
+        for(int i{0}; const auto& column : p->columns) {
+            const auto alignment = p->model->columnAlignment(i++);
+            QString colStr       = QString::number(column.id);
+
+            if(alignment != Qt::AlignLeft) {
+                colStr += ":"_L1 + QString::number(alignment.toInt());
+            }
+            columns.push_back(colStr);
+        }
 
         layout["Columns"_L1] = columns.join("|"_L1);
     }
@@ -651,14 +722,28 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains("Columns"_L1)) {
         p->columns.clear();
-        const QString columnNames = layout.value("Columns"_L1).toString();
-        const QStringList columns = columnNames.split("|"_L1);
-        std::ranges::transform(columns, std::back_inserter(p->columns),
-                               [this](const QString& column) { return p->columnRegistry->itemById(column.toInt()); });
+
+        const QString columnData    = layout.value("Columns"_L1).toString();
+        const QStringList columnIds = columnData.split("|"_L1);
+
+        for(int i{0}; const auto& columnId : columnIds) {
+            const auto column     = columnId.split(u":"_s);
+            const auto columnItem = p->columnRegistry->itemById(column.at(0).toInt());
+
+            if(columnItem.isValid()) {
+                p->columns.push_back(columnItem);
+
+                if(column.size() > 1) {
+                    p->model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));
+                }
+            }
+            ++i;
+        }
+
         p->columnMode = !p->columns.empty();
     }
 
-    p->model->reset(p->currentPreset, p->columns, p->playlistController->currentPlaylist());
+    p->resetModel();
 
     if(layout.contains("State"_L1)) {
         auto state = QByteArray::fromBase64(layout.value("State"_L1).toString().toUtf8());

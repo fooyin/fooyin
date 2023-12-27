@@ -763,7 +763,6 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, MusicLibrary* l
     , isActivePlaylist{false}
     , currentPlaylist{nullptr}
     , currentPlayState{PlayState::Stopped}
-    , firstColumn{0}
 {
     populator.moveToThread(&populatorThread);
     populatorThread.start();

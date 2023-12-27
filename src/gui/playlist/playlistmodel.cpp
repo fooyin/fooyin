@@ -128,6 +128,10 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 
     const PlaylistItem::ItemType type = item->type();
 
+    if(role == Qt::TextAlignmentRole) {
+        return columnAlignment(index.column()).toInt();
+    }
+
     if(role == PlaylistItem::Type) {
         return type;
     }
@@ -142,10 +146,6 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 
     if(role == PlaylistItem::MultiColumnMode) {
         return !p->columns.empty();
-    }
-
-    if(role == PlaylistItem::FirstColumn) {
-        return p->firstColumn;
     }
 
     switch(type) {
@@ -267,9 +267,17 @@ MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
     return p->handleMove(operation);
 }
 
-void PlaylistModel::changeFirstColumn(int column)
+Qt::Alignment PlaylistModel::columnAlignment(int column) const
 {
-    p->firstColumn = column;
+    if(!p->columnAlignments.contains(column)) {
+        return Qt::AlignLeft;
+    }
+    return p->columnAlignments.at(column);
+}
+
+void PlaylistModel::changeColumnAlignment(int column, Qt::Alignment alignment)
+{
+    p->columnAlignments[column] = alignment;
 }
 
 void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist)

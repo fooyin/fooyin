@@ -81,7 +81,8 @@ public:
                       const QModelIndex& parent) override;
 
     MoveOperation moveTracks(const MoveOperation& operation);
-    void changeFirstColumn(int column);
+    Qt::Alignment columnAlignment(int column) const;
+    void changeColumnAlignment(int column, Qt::Alignment alignment);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
     QModelIndex indexAtTrackIndex(int index);

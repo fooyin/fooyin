@@ -34,8 +34,9 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController, PlaylistColumnRegistry* columnRegistry, MusicLibrary* library,
-                            SettingsManager* settings, QWidget* parent = nullptr);
+    explicit PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController,
+                            PlaylistColumnRegistry* columnRegistry, MusicLibrary* library, SettingsManager* settings,
+                            QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;
