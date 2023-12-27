@@ -56,7 +56,7 @@ public:
         Index,
         BaseKey,
         MultiColumnMode,
-        FirstColumn
+        CellMargin,
     };
 
     enum class State

@@ -30,6 +30,7 @@
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QFontMetrics>
 #include <QIODevice>
 #include <QIcon>
 #include <QMimeData>
@@ -39,6 +40,8 @@
 #include <set>
 #include <span>
 #include <stack>
+
+constexpr auto CellMargin = 5;
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -848,11 +851,17 @@ void PlaylistModelPrivate::updateModel(ItemKeyMap& data)
     }
 }
 
-QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int /*column*/, int role) const
+QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int role) const
 {
     const auto track = std::get<PlaylistTrackItem>(item->data());
 
     switch(role) {
+        case(Qt::DisplayRole): {
+            if(column >= 0 && column < static_cast<int>(track.left().size())) {
+                return track.left().at(column).text;
+            }
+            return {};
+        }
         case(PlaylistItem::Role::Left): {
             return track.left();
         }
@@ -872,6 +881,9 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int /*column*/, int
         case(PlaylistItem::Role::Indentation): {
             return item->indentation();
         }
+        case(PlaylistItem::Role::CellMargin): {
+            return CellMargin;
+        }
         case(Qt::BackgroundRole): {
             if(!altColours) {
                 return QPalette::Base;
@@ -879,6 +891,14 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int /*column*/, int
             return item->row() & 1 ? QPalette::Base : QPalette::AlternateBase;
         }
         case(Qt::SizeHintRole): {
+            if(!columns.empty() && column >= 0 && column < static_cast<int>(track.left().size())) {
+                QFontMetrics fm{track.left().at(column).font};
+                QRect rect = fm.boundingRect(track.left().at(column).text);
+                rect.setWidth(rect.width() + (2 * CellMargin + 1));
+                rect.setHeight(currentPreset.track.rowHeight);
+
+                return rect.size();
+            }
             return QSize{0, currentPreset.track.rowHeight};
         }
         case(Qt::DecorationRole): {
