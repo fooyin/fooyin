@@ -198,6 +198,14 @@ struct AutoHeaderView::Private
 
             if(!sectionToResize.empty()) {
                 state = SectionState::None;
+
+                const int totalWidth     = self->width();
+                const int remainingWidth = static_cast<int>(0.01 * (self->count() - 1 - resizedSection) * totalWidth);
+                if(std::exchange(newSize, std::min(newSize, (totalWidth - remainingWidth))) != newSize) {
+                    self->resizeSection(resizedSection, newSize);
+                }
+                sectionWidths[resizedSection] = static_cast<double>(newSize) / self->width();
+
                 normaliseWidths(sectionToResize);
                 updateWidths(sectionToResize);
                 state = SectionState::Resizing;
