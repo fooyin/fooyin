@@ -23,6 +23,8 @@
 
 #include <core/trackfwd.h>
 
+#include <Qt>
+
 class QString;
 
 namespace Fooyin {
@@ -48,24 +50,29 @@ TrackList FYCORE_EXPORT calcSortFields(const ParsedScript& sortScript, const Tra
 /*!
  * Sorts @p tracks using their current sort fields
  * @param tracks the tracks to sort
+ * @param order the order in which to sort the tracks
  * @returns a new sorted TrackList
  */
-TrackList FYCORE_EXPORT sortTracks(const TrackList& tracks);
+TrackList FYCORE_EXPORT sortTracks(const TrackList& tracks, Qt::SortOrder order = Qt::AscendingOrder);
 
 /*!
  * Calculates the sort fields and then sorts @p tracks
  * @param sort the sort script as a string
  * @param tracks the tracks to sort
+ * @param order the order in which to sort the tracks
  * @returns a new sorted TrackList
  */
-TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tracks);
+TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tracks,
+                                       Qt::SortOrder order = Qt::AscendingOrder);
 
 /*!
  * Calculates the sort fields and then sorts @p tracks
  * @param sortScript the parsed sort script
  * @param tracks the tracks to sort
+ * @param order the order in which to sort the tracks
  * @returns a new sorted TrackList
  */
-TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks);
+TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
+                                       Qt::SortOrder order = Qt::AscendingOrder);
 } // namespace Sorting
 } // namespace Fooyin

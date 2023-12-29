@@ -50,27 +50,30 @@ TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks
     return calcTracks;
 }
 
-TrackList sortTracks(const TrackList& tracks)
+TrackList sortTracks(const TrackList& tracks, Qt::SortOrder order)
 {
     TrackList sortedTracks{tracks};
-    std::ranges::sort(sortedTracks, [](const Track& lhs, const Track& rhs) {
+    std::ranges::sort(sortedTracks, [order](const Track& lhs, const Track& rhs) {
         const auto cmp = QString::localeAwareCompare(lhs.sort(), rhs.sort());
         if(cmp == 0) {
             return false;
         }
-        return cmp < 0;
+        if(order == Qt::AscendingOrder) {
+            return cmp < 0;
+        }
+        return cmp > 0;
     });
     return sortedTracks;
 }
 
-TrackList calcSortTracks(const QString& sort, const TrackList& tracks)
+TrackList calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortOrder order)
 {
-    return calcSortTracks(parseScript(sort), tracks);
+    return calcSortTracks(parseScript(sort), tracks, order);
 }
 
-TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks)
+TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, Qt::SortOrder order)
 {
     const TrackList calcTracks = calcSortFields(sortScript, tracks);
-    return sortTracks(calcTracks);
+    return sortTracks(calcTracks, order);
 }
 } // namespace Fooyin::Sorting
