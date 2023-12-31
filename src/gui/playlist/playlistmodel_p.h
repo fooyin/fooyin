@@ -137,7 +137,7 @@ public:
     void coverUpdated(const Track& track);
 
     static IndexGroupsList determineIndexGroups(const QModelIndexList& indexes);
-    TrackIndexResult indexForTrackIndex(int index);
+    TrackIndexResult indexForTrackIndex(int index) const;
     TrackItemResult itemForTrackIndex(int index);
 
     PlaylistModel* model;

@@ -1543,12 +1543,17 @@ IndexGroupsList PlaylistModelPrivate::determineIndexGroups(const QModelIndexList
     return indexGroups;
 }
 
-TrackIndexResult PlaylistModelPrivate::indexForTrackIndex(int index)
+TrackIndexResult PlaylistModelPrivate::indexForTrackIndex(int index) const
 {
+    while(!trackIndexes.contains(index) && model->canFetchMore({})) {
+        model->fetchMore({});
+    }
+
     if(trackIndexes.contains(index)) {
         const QString key = trackIndexes.at(index);
         if(nodes.contains(key)) {
-            return {model->indexOfItem(&nodes.at(key)), false};
+            auto& item = nodes.at(key);
+            return {model->indexOfItem(&item), false};
         }
     }
 
@@ -1562,6 +1567,10 @@ TrackIndexResult PlaylistModelPrivate::indexForTrackIndex(int index)
 
 TrackItemResult PlaylistModelPrivate::itemForTrackIndex(int index)
 {
+    while(!trackIndexes.contains(index) && model->canFetchMore({})) {
+        model->fetchMore({});
+    }
+
     if(trackIndexes.contains(index)) {
         const QString key = trackIndexes.at(index);
         if(nodes.contains(key)) {
