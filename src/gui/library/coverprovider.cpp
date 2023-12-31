@@ -159,12 +159,12 @@ QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, bool sa
 
     const QString coverKey = generateCoverKey(track, size);
 
-    QPixmap cover = loadCachedCover(coverKey);
-    if(!cover.isNull()) {
-        return cover;
-    }
-
     if(!p->pendingCovers.contains(coverKey)) {
+        QPixmap cover = loadCachedCover(coverKey);
+        if(!cover.isNull()) {
+            return cover;
+        }
+
         p->pendingCovers.emplace(coverKey);
         p->fetchCover(coverKey, track, size, saveToDisk);
     }
