@@ -1299,6 +1299,23 @@ bool PlaylistModelPrivate::removePlaylistRows(int row, int count, const QModelIn
     return true;
 }
 
+void PlaylistModelPrivate::fetchChildren(PlaylistItem* parent, PlaylistItem* child)
+{
+    const QString key = child->key();
+
+    if(pendingNodes.contains(key)) {
+        auto& childRows = pendingNodes.at(key);
+
+        for(const QString& childRow : childRows) {
+            PlaylistItem& childItem = nodes.at(childRow);
+            fetchChildren(child, &childItem);
+        }
+        pendingNodes.erase(key);
+    }
+
+    parent->appendChild(child);
+}
+
 void PlaylistModelPrivate::cleanupHeaders()
 {
     removeEmptyHeaders();

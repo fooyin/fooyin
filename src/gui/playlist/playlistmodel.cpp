@@ -164,18 +164,21 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
 void PlaylistModel::fetchMore(const QModelIndex& parent)
 {
     auto* parentItem = itemForIndex(parent);
-    auto& rows       = p->pendingNodes[parentItem->key()];
+    if(!p->pendingNodes.contains(parentItem->key())) {
+        return;
+    }
+
+    auto& rows = p->pendingNodes.at(parentItem->key());
 
     const int row           = parentItem->childCount();
     const int totalRows     = static_cast<int>(rows.size());
     const int rowCount      = parent.isValid() ? totalRows : std::min(50, totalRows);
-    const auto rowsToInsert = std::ranges::views::take(rows, rowCount);
+    const auto rowsToInsert = std::views::take(rows, rowCount);
 
     beginInsertRows(parent, row, row + rowCount - 1);
     for(const QString& pendingRow : rowsToInsert) {
-        PlaylistItem* child = &p->nodes.at(pendingRow);
-        parentItem->appendChild(child);
-        child->setPending(false);
+        PlaylistItem& child = p->nodes.at(pendingRow);
+        p->fetchChildren(parentItem, &child);
     }
     endInsertRows();
 
@@ -186,7 +189,7 @@ void PlaylistModel::fetchMore(const QModelIndex& parent)
 bool PlaylistModel::canFetchMore(const QModelIndex& parent) const
 {
     auto* item = itemForIndex(parent);
-    return p->pendingNodes.contains(item->key()) && !p->pendingNodes[item->key()].empty();
+    return p->pendingNodes.contains(item->key()) && !p->pendingNodes.at(item->key()).empty();
 }
 
 bool PlaylistModel::hasChildren(const QModelIndex& parent) const

@@ -113,6 +113,7 @@ void PlaylistItem::setIndex(int index)
 void PlaylistItem::appendChild(PlaylistItem* child)
 {
     TreeItem::appendChild(child);
+    child->setPending(false);
     m_state = State::Update;
 }
 

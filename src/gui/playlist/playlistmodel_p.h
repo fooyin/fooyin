@@ -124,6 +124,8 @@ public:
                           const PlaylistItemList& children) const;
     bool removePlaylistRows(int row, int count, const QModelIndex& parent);
 
+    void fetchChildren(PlaylistItem* parentItem, PlaylistItem* child);
+
     void cleanupHeaders();
     void removeEmptyHeaders();
     void mergeHeaders();
