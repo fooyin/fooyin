@@ -46,6 +46,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<LastPlaylistId>(0, u"Playlist/LastPlaylistId"_s);
     m_settings->createSetting<CursorFollowsPlayback>(false, u"Playlist/CursorFollowsPlayback"_s);
     m_settings->createSetting<PlaybackFollowsCursor>(false, u"Playlist/PlaybackFollowsCursor"_s);
+    m_settings->createSetting<RememberPlaylistState>(true, u"Playlist/RememberPlaylistState"_s);
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
     m_settings->createSetting<Internal::SplitterHandles>(true, u"Interface/SplitterHandles"_s);

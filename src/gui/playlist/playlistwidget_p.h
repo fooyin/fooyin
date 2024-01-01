@@ -46,6 +46,7 @@ class PlaylistModel;
 class PlaylistView;
 class MusicLibrary;
 class PlaylistColumnRegistry;
+struct PlaylistViewState;
 
 class PlaylistWidgetPrivate : public QObject
 {
@@ -61,9 +62,11 @@ public:
     void onPresetChanged(const PlaylistPreset& preset);
     void changePreset(const PlaylistPreset& preset);
 
-    void changePlaylist(Playlist* playlist) const;
+    void changePlaylist(Playlist* playlist, bool saveState = true);
 
     void resetTree() const;
+    [[nodiscard]] PlaylistViewState getState() const;
+    void restoreState() const;
     void resetModel() const;
 
     [[nodiscard]] bool isHeaderHidden() const;
@@ -112,6 +115,7 @@ public:
     PlaylistView* playlistView;
     AutoHeaderView* header;
 
+    Playlist* currentPlaylist;
     PlaylistPreset currentPreset;
     bool columnMode;
     PlaylistColumnList columns;

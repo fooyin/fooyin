@@ -47,6 +47,7 @@ private:
     QCheckBox* m_cursorFollowsPlayback;
     QCheckBox* m_playbackFollowsCursor;
     QCheckBox* m_rewindPrevious;
+    QCheckBox* m_rememberPlaylistState;
     QCheckBox* m_hideSinglePlaylistTab;
 };
 
@@ -55,6 +56,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_cursorFollowsPlayback{new QCheckBox(tr("Cursor follows playback"), this)}
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
+    , m_rememberPlaylistState{new QCheckBox(tr("Remember playlist state"), this)}
     , m_hideSinglePlaylistTab{new QCheckBox(tr("Hide single playlist tab"), this)}
 {
     auto* layout = new QGridLayout(this);
@@ -70,9 +72,11 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     layout->addWidget(m_cursorFollowsPlayback, 0, 0, 1, 2);
     layout->addWidget(m_playbackFollowsCursor, 1, 0, 1, 2);
     layout->addWidget(m_rewindPrevious, 2, 0, 1, 2);
-    layout->addWidget(playlistTabs, 3, 0, 1, 2);
-    layout->setColumnStretch(2, 1);
-    layout->setRowStretch(4, 1);
+    layout->addWidget(m_rememberPlaylistState, 3, 0, 1, 2);
+    layout->addWidget(playlistTabs, 4, 0, 1, 2);
+
+    layout->setColumnStretch(layout->columnCount(), 1);
+    layout->setRowStretch(layout->rowCount(), 1);
 
     setValues();
 }
@@ -82,6 +86,7 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
+    m_settings->set<Settings::Gui::RememberPlaylistState>(m_rememberPlaylistState->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistTabsHide>(m_hideSinglePlaylistTab->isChecked());
 }
 
@@ -90,6 +95,7 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::CursorFollowsPlayback>();
     m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
+    m_settings->reset<Settings::Gui::RememberPlaylistState>();
     m_settings->reset<Settings::Gui::Internal::PlaylistTabsHide>();
 
     setValues();
@@ -100,6 +106,7 @@ void PlaylistGeneralPageWidget::setValues()
     m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
+    m_rememberPlaylistState->setChecked(m_settings->value<Settings::Gui::RememberPlaylistState>());
     m_hideSinglePlaylistTab->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsHide>());
 }
 

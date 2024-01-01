@@ -308,7 +308,8 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
 
 QModelIndex PlaylistModel::indexAtTrackIndex(int index)
 {
-    return p->indexForTrackIndex(index).index;
+    const auto result = p->indexForTrackIndex(index);
+    return result.endOfPlaylist ? QModelIndex{} : result.index;
 }
 
 void PlaylistModel::insertTracks(const TrackGroups& tracks)

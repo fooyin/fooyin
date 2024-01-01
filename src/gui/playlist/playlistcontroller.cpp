@@ -20,7 +20,6 @@
 #include "playlistcontroller.h"
 
 #include "core/library/sortingregistry.h"
-#include "playlist/playlisthistory.h"
 #include "presetregistry.h"
 
 #include <core/player/playermanager.h>
@@ -30,6 +29,8 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QUndoStack>
+
+constexpr auto PlaylistStates = "PlaylistWidget/PlaylistStates";
 
 namespace Fooyin {
 struct PlaylistController::Private
@@ -45,7 +46,8 @@ struct PlaylistController::Private
 
     Playlist* currentPlaylist{nullptr};
 
-    std::map<int, QUndoStack> histories;
+    std::unordered_map<int, QUndoStack> histories;
+    std::unordered_map<int, PlaylistViewState> states;
 
     Private(PlaylistController* self, PlaylistManager* handler, PlayerManager* playerManager,
             PresetRegistry* presetRegistry, SortingRegistry* sortRegistry,
@@ -78,6 +80,7 @@ struct PlaylistController::Private
     {
         if(playlist) {
             histories.erase(playlist->id());
+            states.erase(playlist->id());
         }
         if(currentPlaylist == playlist) {
             self->changeCurrentPlaylist(playlist);
@@ -93,6 +96,55 @@ struct PlaylistController::Private
             }
         }
     }
+
+    void saveStates() const
+    {
+        if(states.empty()) {
+            return;
+        }
+
+        QByteArray out;
+        QDataStream stream(&out, QIODevice::WriteOnly);
+        stream.setVersion(QDataStream::Qt_6_5);
+
+        stream << static_cast<qint32>(states.size());
+        for(const auto& [playlistId, state] : states) {
+            stream << playlistId;
+            stream << state.topIndex;
+            stream << state.scrollPos;
+        }
+
+        out = qCompress(out, 9);
+
+        settings->fileSet(PlaylistStates, out);
+    }
+
+    void restoreStates()
+    {
+        QByteArray in = settings->fileValue(PlaylistStates).toByteArray();
+
+        if(in.isEmpty()) {
+            return;
+        }
+
+        in = qUncompress(in);
+
+        QDataStream stream(&in, QIODevice::ReadOnly);
+        stream.setVersion(QDataStream::Qt_6_5);
+
+        qint32 size;
+        stream >> size;
+        states.clear();
+
+        for(qint32 i{0}; i < size; ++i) {
+            int playlistId;
+            stream >> playlistId;
+            PlaylistViewState value;
+            stream >> value.topIndex;
+            stream >> value.scrollPos;
+            states[playlistId] = value;
+        }
+    }
 };
 
 PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* playerManager,
@@ -103,6 +155,8 @@ PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* 
     , p{std::make_unique<Private>(this, handler, playerManager, presetRegistry, sortRegistry, selectionController,
                                   settings)}
 {
+    p->restoreStates();
+
     QObject::connect(handler, &PlaylistManager::playlistsPopulated, this, [this]() { p->restoreLastPlaylist(); });
     QObject::connect(handler, &PlaylistManager::playlistTracksChanged, this,
                      [this](Playlist* playlist) { p->handlePlaylistUpdated(playlist); });
@@ -120,6 +174,7 @@ PlaylistController::~PlaylistController()
 {
     if(p->currentPlaylist) {
         p->settings->set<Settings::Gui::LastPlaylistId>(p->currentPlaylist->id());
+        p->saveStates();
     }
 }
 
@@ -171,6 +226,7 @@ void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
 
     if(std::exchange(p->currentPlaylist, playlist) == playlist) {
         p->histories.erase(playlist->id());
+        p->states.erase(playlist->id());
     }
 
     emit currentPlaylistChanged(playlist);
@@ -189,12 +245,27 @@ void PlaylistController::changePlaylistIndex(int playlistId, int index)
     p->handler->changePlaylistIndex(playlistId, index);
 }
 
+std::optional<PlaylistViewState> PlaylistController::playlistState(int playlistId) const
+{
+    if(!p->states.contains(playlistId)) {
+        return {};
+    }
+    return p->states.at(playlistId);
+}
+
+void PlaylistController::savePlaylistState(int playlistId, const PlaylistViewState& state)
+{
+    p->states[playlistId] = state;
+}
+
 void PlaylistController::addToHistory(QUndoCommand* command)
 {
     if(!p->currentPlaylist) {
         return;
     }
+
     p->histories[p->currentPlaylist->id()].push(command);
+
     emit playlistHistoryChanged();
 }
 

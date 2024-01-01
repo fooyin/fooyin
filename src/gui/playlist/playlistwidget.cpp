@@ -50,6 +50,7 @@
 #include <QKeyEvent>
 #include <QMenu>
 #include <QProgressDialog>
+#include <QScrollBar>
 
 #include <QCoro/QCoroCore>
 
@@ -125,6 +126,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , model{new PlaylistModel(library, settings, self)}
     , playlistView{new PlaylistView(self)}
     , header{new AutoHeaderView(Qt::Horizontal, self)}
+    , currentPlaylist{nullptr}
     , columnMode{false}
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
     , removeTrackAction{new QAction(tr("Remove"), self)}
@@ -174,8 +176,9 @@ void PlaylistWidgetPrivate::setupConnections()
                          expandTree(playlistView, model, parent, first, last);
                      });
 
-    QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this,
-                     &PlaylistWidgetPrivate::changePlaylist);
+    QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this, [this](Playlist* playlist) {
+        changePlaylist(playlist, playlist != currentPlaylist);
+    });
     QObject::connect(playlistController, &PlaylistController::currentTrackChanged, model,
                      &PlaylistModel::currentTrackChanged);
     QObject::connect(playlistController, &PlaylistController::playStateChanged, model,
@@ -263,16 +266,70 @@ void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
     resetModel();
 }
 
-void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist) const
+void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist, bool saveState)
 {
-    model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, playlist);
-    //    playlistView->setFocus(Qt::ActiveWindowFocusReason);
+    if(settings->value<Settings::Gui::RememberPlaylistState>() && currentPlaylist && saveState) {
+        playlistController->savePlaylistState(currentPlaylist->id(), getState());
+    }
+
+    currentPlaylist = playlist;
+
+    playlistView->setUpdatesEnabled(false);
+    model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, currentPlaylist);
 }
 
 void PlaylistWidgetPrivate::resetTree() const
 {
     playlistView->expandAll();
+
+    restoreState();
+}
+
+PlaylistViewState PlaylistWidgetPrivate::getState() const
+{
+    PlaylistViewState state;
+    state.scrollPos = playlistView->verticalScrollBar()->value();
+
+    if(currentPlaylist->trackCount() > 0) {
+        QModelIndex topTrackIndex = playlistView->indexAt({0, 0});
+
+        while(model->hasChildren(topTrackIndex)) {
+            topTrackIndex = playlistView->indexBelow(topTrackIndex);
+        }
+
+        state.topIndex = topTrackIndex.data(PlaylistItem::Index).toInt();
+    }
+
+    return state;
+}
+
+void PlaylistWidgetPrivate::restoreState() const
+{
+    if(settings->value<Settings::Gui::RememberPlaylistState>() && currentPlaylist) {
+        if(auto state = playlistController->playlistState(currentPlaylist->id())) {
+            const QModelIndex modelIndex = model->indexAtTrackIndex(state->topIndex);
+            if(modelIndex.isValid()) {
+                playlistView->scrollTo(modelIndex);
+                playlistView->verticalScrollBar()->setValue(state->scrollPos);
+                playlistView->setUpdatesEnabled(true);
+                return;
+            }
+
+            QMetaObject::invokeMethod(
+                self,
+                [this]() {
+                    if(model->canFetchMore({})) {
+                        model->fetchMore({});
+                    }
+                    restoreState();
+                },
+                Qt::QueuedConnection);
+            return;
+        }
+    }
+
     playlistView->scrollToTop();
+    playlistView->setUpdatesEnabled(true);
 }
 
 void PlaylistWidgetPrivate::resetModel() const
@@ -687,7 +744,12 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistController*
     setObjectName(PlaylistWidget::name());
 }
 
-PlaylistWidget::~PlaylistWidget() = default;
+PlaylistWidget::~PlaylistWidget()
+{
+    if(p->settings->value<Settings::Gui::RememberPlaylistState>() && p->currentPlaylist) {
+        p->playlistController->savePlaylistState(p->currentPlaylist->id(), p->getState());
+    }
+}
 
 QString PlaylistWidget::name() const
 {

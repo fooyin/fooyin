@@ -343,8 +343,8 @@ void GuiApplication::shutdown()
 {
     p->actionManager->saveSettings();
     p->editableLayout->saveLayout();
-    p->playlistController.reset();
     p->editableLayout.reset();
+    p->playlistController.reset();
     p->mainWindow.reset();
     p->guiSettings.shutdown();
 }

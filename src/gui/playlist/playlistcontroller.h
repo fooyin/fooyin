@@ -37,6 +37,12 @@ class PlaylistManager;
 class TrackSelectionController;
 class PresetRegistry;
 
+struct PlaylistViewState
+{
+    int topIndex;
+    int scrollPos{0};
+};
+
 class PlaylistController : public QObject
 {
     Q_OBJECT
@@ -64,6 +70,9 @@ public:
     void changeCurrentPlaylist(Playlist* playlist);
     void changeCurrentPlaylist(int id);
     void changePlaylistIndex(int playlistId, int index);
+
+    std::optional<PlaylistViewState> playlistState(int playlistId) const;
+    void savePlaylistState(int playlistId, const PlaylistViewState& state);
 
     void addToHistory(QUndoCommand* command);
     [[nodiscard]] bool canUndo() const;

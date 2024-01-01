@@ -42,6 +42,7 @@ enum GuiSettings : uint32_t
     LastPlaylistId        = 5 | Type::Int,
     CursorFollowsPlayback = 6 | Type::Bool,
     PlaybackFollowsCursor = 7 | Type::Bool,
+    RememberPlaylistState = 8 | Type::Bool,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Settings::Gui
