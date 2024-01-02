@@ -31,8 +31,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-constexpr int InitialBatchSize = 1000;
-constexpr int BatchSize        = 4000;
+constexpr int TrackPreloadSize = 2000;
 
 namespace Fooyin {
 struct PlaylistPopulator::Private
@@ -317,7 +316,7 @@ struct PlaylistPopulator::Private
         data.nodes.clear();
 
         const auto remaining = static_cast<int>(pendingTracks.size());
-        runBatch(std::min(remaining, BatchSize));
+        runBatch(remaining);
     }
 
     void runTracks()
@@ -388,7 +387,7 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const PlaylistColumnLi
     p->pendingTracks = tracks;
 
     p->updateScripts();
-    p->runBatch(InitialBatchSize);
+    p->runBatch(TrackPreloadSize);
 
     setState(Idle);
 }
