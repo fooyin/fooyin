@@ -40,15 +40,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE
-        "Release"
-        CACHE STRING "" FORCE
-    )
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 endif()
 
-set(FOOYIN_REQUIRED_CXX_FEATURES
-    cxx_std_20
-)
+set(FOOYIN_REQUIRED_CXX_FEATURES cxx_std_20)
 
 fooyin_option(BUILD_SHARED_LIBS "Build fooyin libraries as shared" ON)
 fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
@@ -90,15 +85,15 @@ find_package(
 find_package(KDSingleApplication-qt6 QUIET)
 if(NOT TARGET KDAB::kdsingleapplication)
     include(FetchContent)
-       set(KDSingleApplication_QT6 ON CACHE BOOL INTERNAL)
-       set(KDSingleApplication_EXAMPLES OFF CACHE BOOL INTERNAL)
-        set(KDSingleApplication_STATIC ON CACHE BOOL INTERNAL)
-       FetchContent_Declare(
-           kdsingleapplication
-           GIT_REPOSITORY https://github.com/KDAB/KDSingleApplication.git
-           GIT_TAG        v1.1.0
-       )
-       FetchContent_MakeAvailable(kdsingleapplication)
+    set(KDSingleApplication_QT6 ON CACHE BOOL INTERNAL)
+    set(KDSingleApplication_EXAMPLES OFF CACHE BOOL INTERNAL)
+    set(KDSingleApplication_STATIC ON CACHE BOOL INTERNAL)
+    FetchContent_Declare(
+        kdsingleapplication
+        GIT_REPOSITORY https://github.com/KDAB/KDSingleApplication.git
+        GIT_TAG v1.1.0
+    )
+    FetchContent_MakeAvailable(kdsingleapplication)
 endif()
 
 if(BUILD_CCACHE)
@@ -118,13 +113,13 @@ else()
 endif()
 
 if(BUILD_PCH)
-    file(
-        GENERATE
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp
-        CONTENT "/*dummy pch file*/"
+    file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp
+         CONTENT "/*dummy pch file*/"
     )
     add_library(fooyin_pch STATIC ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp)
-    target_precompile_headers(fooyin_pch PRIVATE ${CMAKE_SOURCE_DIR}/src/app/pch.h)
+    target_precompile_headers(
+        fooyin_pch PRIVATE ${CMAKE_SOURCE_DIR}/src/app/pch.h
+    )
     target_compile_definitions(fooyin_pch PRIVATE QT_USE_QSTRINGBUILDER)
     set_target_properties(
         fooyin_pch
@@ -148,10 +143,14 @@ endif()
 
 configure_file(src/app/version.h.in app/version.h @ONLY)
 add_library(fooyin_version OBJECT)
-target_include_directories(fooyin_version PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>)
+target_include_directories(
+    fooyin_version PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>
+)
 configure_file(src/app/config.h.in app/config.h @ONLY)
 add_library(fooyin_config OBJECT)
-target_include_directories(fooyin_config PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>)
+target_include_directories(
+    fooyin_config PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>
+)
 
 add_library(fooyin_lib OBJECT)
 
@@ -166,12 +165,7 @@ set_target_properties(
 
 add_subdirectory(src)
 
-target_link_libraries(
-    fooyin_lib
-    PUBLIC Fooyin::Core
-           Fooyin::Gui
-           Fooyin::Utils
-)
+target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
 
 target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin_lib PRIVATE QT_USE_QSTRINGBUILDER)
@@ -205,11 +199,11 @@ set_target_properties(
 )
 target_compile_features(fooyin_exe PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_link_libraries(
-        fooyin_exe
-        PRIVATE KDAB::kdsingleapplication
-                fooyin_version
-                fooyin_lib
-                Fooyin::CorePrivate
+    fooyin_exe
+    PRIVATE KDAB::kdsingleapplication
+            fooyin_version
+            fooyin_lib
+            Fooyin::CorePrivate
 )
 
 # ---- Fooyin data ----
@@ -237,10 +231,9 @@ foreach(SIZE ${ICON_SIZE})
     )
 endforeach(SIZE)
 
-install(
-    FILES ${ICON_SRC_PATH}/sc-fooyin.svg
-    DESTINATION ${SHARE_INSTALL_PREFIX}/icons/hicolor/scalable/apps
-    RENAME fooyin.svg
+install(FILES ${ICON_SRC_PATH}/sc-fooyin.svg
+        DESTINATION ${SHARE_INSTALL_PREFIX}/icons/hicolor/scalable/apps
+        RENAME fooyin.svg
 )
 
 # ---- Fooyin install ----
