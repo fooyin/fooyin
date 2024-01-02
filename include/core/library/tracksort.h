@@ -66,6 +66,17 @@ TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tra
                                        Qt::SortOrder order = Qt::AscendingOrder);
 
 /*!
+ * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
+ * @param sort the sort script as a string
+ * @param tracks the tracks to sort
+ * @param indexes the indexes to sort
+ * @param order the order in which to sort the tracks
+ * @returns a new sorted TrackList
+ */
+TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int> indexes,
+                                       Qt::SortOrder order = Qt::AscendingOrder);
+
+/*!
  * Calculates the sort fields and then sorts @p tracks
  * @param sortScript the parsed sort script
  * @param tracks the tracks to sort
@@ -74,5 +85,17 @@ TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tra
  */
 TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
                                        Qt::SortOrder order = Qt::AscendingOrder);
+
+/*!
+ * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
+ * Tracks not under an index in @p indexes retain their position.
+ * @param sortScript the parsed sort script
+ * @param tracks the tracks to sort
+ * @param indexes the indexes to sort
+ * @param order the order in which to sort the tracks
+ * @returns a new sorted TrackList
+ */
+TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
+                                       const std::vector<int> indexes, Qt::SortOrder order = Qt::AscendingOrder);
 } // namespace Sorting
 } // namespace Fooyin

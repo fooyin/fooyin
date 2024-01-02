@@ -177,9 +177,8 @@ void PlaylistWidgetPrivate::setupConnections()
                          expandTree(playlistView, model, parent, first, last);
                      });
 
-    QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this, [this](Playlist* playlist) {
-        changePlaylist(playlist, playlist != currentPlaylist);
-    });
+    QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this,
+                     [this](Playlist* playlist) { changePlaylist(playlist, playlist != currentPlaylist); });
     QObject::connect(playlistController, &PlaylistController::currentTrackChanged, model,
                      &PlaylistModel::currentTrackChanged);
     QObject::connect(playlistController, &PlaylistController::playStateChanged, model,
@@ -621,15 +620,33 @@ void PlaylistWidgetPrivate::followCurrentTrack(const Track& track, int index) co
 
 QCoro::Task<void> PlaylistWidgetPrivate::changeSort(QString script)
 {
-    /* if(playlistView->selectionModel()->hasSelection()) { }
-     else*/
-    if(auto* playlist = playlistController->currentPlaylist()) {
+    if(playlistView->selectionModel()->hasSelection()) {
+        const auto selected = playlistView->selectionModel()->selectedRows();
+
+        std::vector<int> indexesToSort;
+
+        for(const QModelIndex& index : selected) {
+            if(index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+                indexesToSort.push_back(index.data(PlaylistItem::Index).toInt());
+            }
+        }
+
+        std::ranges::sort(indexesToSort);
+
+        if(auto* playlist = playlistController->currentPlaylist()) {
+            const auto sortedTracks = co_await Utils::asyncExec([script, playlist, indexesToSort]() {
+                return Sorting::calcSortTracks(script, playlist->tracks(), indexesToSort);
+            });
+            playlist->replaceTracks(sortedTracks);
+            changePlaylist(playlist);
+        }
+    }
+    else if(auto* playlist = playlistController->currentPlaylist()) {
         const auto sortedTracks = co_await Utils::asyncExec(
-            [&script, &playlist]() { return Sorting::calcSortTracks(script, playlist->tracks()); });
+            [script, playlist]() { return Sorting::calcSortTracks(script, playlist->tracks()); });
         playlist->replaceTracks(sortedTracks);
         changePlaylist(playlist);
     }
-    co_return;
 }
 
 QCoro::Task<void> PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder order)

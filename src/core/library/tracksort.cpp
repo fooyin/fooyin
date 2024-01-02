@@ -22,6 +22,8 @@
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 
+#include <ranges>
+
 namespace {
 Fooyin::ParsedScript parseScript(const QString& sort)
 {
@@ -71,9 +73,39 @@ TrackList calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortO
     return calcSortTracks(parseScript(sort), tracks, order);
 }
 
+TrackList calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int> indexes,
+                         Qt::SortOrder order)
+{
+    return calcSortTracks(parseScript(sort), tracks, indexes, order);
+}
+
 TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, Qt::SortOrder order)
 {
     const TrackList calcTracks = calcSortFields(sortScript, tracks);
     return sortTracks(calcTracks, order);
+}
+
+TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, const std::vector<int> indexes,
+                         Qt::SortOrder order)
+{
+    TrackList sortedTracks{tracks};
+    TrackList tracksToSort;
+
+    auto validIndexes = indexes | std::views::filter([&tracks](int index) {
+                            return (index >= 0 && index < static_cast<int>(tracks.size()));
+                        });
+
+    for(const int index : validIndexes) {
+        tracksToSort.push_back(tracks.at(index));
+    }
+
+    const TrackList calcTracks      = calcSortFields(sortScript, tracksToSort);
+    const TrackList sortedSubTracks = sortTracks(calcTracks, order);
+
+    for(auto i{0}; const int index : validIndexes) {
+        sortedTracks[index] = sortedSubTracks.at(i++);
+    }
+
+    return sortedTracks;
 }
 } // namespace Fooyin::Sorting
