@@ -91,8 +91,8 @@ public:
     void doubleClicked(const QModelIndex& index) const;
 
     void followCurrentTrack(const Track& track, int index) const;
-
-    QCoro::Task<void> changeSort(QString script);
+    
+    QCoro::Task<void> sortTracks(QString script);
     QCoro::Task<void> sortColumn(int column, Qt::SortOrder order);
 
     void addSortMenu(QMenu* parent);
