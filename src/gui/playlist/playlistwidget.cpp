@@ -269,7 +269,11 @@ void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
 void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist, bool saveState)
 {
     if(settings->value<Settings::Gui::RememberPlaylistState>() && currentPlaylist && saveState) {
-        playlistController->savePlaylistState(currentPlaylist->id(), getState());
+        const auto state = getState();
+        // Don't save state if still populating model
+        if(currentPlaylist->trackCount() == 0 || (currentPlaylist->trackCount() > 0 && state.topIndex >= 0)) {
+            playlistController->savePlaylistState(currentPlaylist->id(), state);
+        }
     }
 
     if(!playlist) {
