@@ -28,7 +28,7 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
-QString fetchQueryTracks(const QString& join, const QString& offsetLimit)
+QString fetchQueryTracks()
 {
     static const QStringList fields = {
         u"TrackID"_s,      // 0
@@ -65,7 +65,7 @@ QString fetchQueryTracks(const QString& join, const QString& offsetLimit)
 
     const auto joinedFields = fields.join(", "_L1);
 
-    return QString(u"SELECT %1 FROM TracksView %2 %5;"_s).arg(joinedFields, join.isEmpty() ? ""_L1 : join, offsetLimit);
+    return QString(u"SELECT %1 FROM TracksView;"_s).arg(joinedFields);
 }
 
 BindingsMap getTrackBindings(const Track& track)
@@ -135,25 +135,7 @@ bool TrackDatabase::storeTracks(TrackList& tracks)
 bool TrackDatabase::getAllTracks(TrackList& result)
 {
     DatabaseQuery q{module()};
-    const auto query = fetchQueryTracks({}, {});
-    q.prepareQuery(query);
-
-    return dbFetchTracks(q, result);
-}
-
-bool TrackDatabase::getAllTracks(TrackList& result, int offset, int limit)
-{
-    DatabaseQuery q{module()};
-
-    QString offsetLimit;
-    if(limit > 0) {
-        offsetLimit = offsetLimit + "LIMIT " + QString::number(limit);
-        if(offset > 0) {
-            offsetLimit = offsetLimit + "OFFSET " + QString::number(offset);
-        }
-    }
-
-    const auto query = fetchQueryTracks({}, offsetLimit);
+    const QString query = fetchQueryTracks();
     q.prepareQuery(query);
 
     return dbFetchTracks(q, result);
