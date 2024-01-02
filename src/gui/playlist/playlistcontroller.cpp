@@ -255,7 +255,12 @@ std::optional<PlaylistViewState> PlaylistController::playlistState(int playlistI
 
 void PlaylistController::savePlaylistState(int playlistId, const PlaylistViewState& state)
 {
-    p->states[playlistId] = state;
+    if(state.scrollPos == 0 || state.topIndex < 0) {
+        p->states.erase(playlistId);
+    }
+    else {
+        p->states[playlistId] = state;
+    }
 }
 
 void PlaylistController::addToHistory(QUndoCommand* command)

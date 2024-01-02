@@ -272,6 +272,10 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist, bool saveState)
         playlistController->savePlaylistState(currentPlaylist->id(), getState());
     }
 
+    if(!playlist) {
+        return;
+    }
+
     currentPlaylist = playlist;
 
     playlistView->setUpdatesEnabled(false);
@@ -288,7 +292,6 @@ void PlaylistWidgetPrivate::resetTree() const
 PlaylistViewState PlaylistWidgetPrivate::getState() const
 {
     PlaylistViewState state;
-    state.scrollPos = playlistView->verticalScrollBar()->value();
 
     if(currentPlaylist->trackCount() > 0) {
         QModelIndex topTrackIndex = playlistView->indexAt({0, 0});
@@ -297,7 +300,8 @@ PlaylistViewState PlaylistWidgetPrivate::getState() const
             topTrackIndex = playlistView->indexBelow(topTrackIndex);
         }
 
-        state.topIndex = topTrackIndex.data(PlaylistItem::Index).toInt();
+        state.topIndex  = topTrackIndex.data(PlaylistItem::Index).toInt();
+        state.scrollPos = playlistView->verticalScrollBar()->value();
     }
 
     return state;
@@ -305,7 +309,8 @@ PlaylistViewState PlaylistWidgetPrivate::getState() const
 
 void PlaylistWidgetPrivate::restoreState() const
 {
-    if(settings->value<Settings::Gui::RememberPlaylistState>() && currentPlaylist) {
+    if(settings->value<Settings::Gui::RememberPlaylistState>() && currentPlaylist
+       && currentPlaylist->trackCount() > 0) {
         if(auto state = playlistController->playlistState(currentPlaylist->id())) {
             const QModelIndex modelIndex = model->indexAtTrackIndex(state->topIndex);
             if(modelIndex.isValid()) {

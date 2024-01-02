@@ -39,7 +39,7 @@ class PresetRegistry;
 
 struct PlaylistViewState
 {
-    int topIndex;
+    int topIndex{-1};
     int scrollPos{0};
 };
 
