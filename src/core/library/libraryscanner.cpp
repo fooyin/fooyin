@@ -36,17 +36,32 @@ namespace Fooyin {
 struct LibraryScanner::Private
 {
     LibraryScanner* self;
+
     LibraryInfo library;
     Database* database;
     TrackDatabase trackDatabase;
+
     TagReader tagReader;
     TagWriter tagWriter;
+
+    int tracksProcessed{0};
+    double totalTracks{0};
+    int currentProgress{-1};
 
     Private(LibraryScanner* self, Database* database)
         : self{self}
         , database{database}
         , trackDatabase{database->connectionName()}
     { }
+
+    void reportProgress()
+    {
+        const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);
+        if(currentProgress != progress) {
+            currentProgress = progress;
+            QMetaObject::invokeMethod(self, "progressChanged", Q_ARG(int, currentProgress));
+        }
+    }
 
     void storeTracks(TrackList& tracks)
     {
@@ -66,9 +81,9 @@ struct LibraryScanner::Private
 
         const QStringList files = Utils::File::getFilesInDir(dir, Track::supportedFileExtensions());
 
-        int tracksProcessed{0};
-        const auto totalTracks = static_cast<double>(files.size());
-        int currentProgress{-1};
+        tracksProcessed = 0;
+        totalTracks     = static_cast<double>(files.size());
+        currentProgress = -1;
 
         for(const auto& filepath : files) {
             if(!self->mayRun()) {
@@ -87,11 +102,8 @@ struct LibraryScanner::Private
 
             if(tracks.contains(filepath)) {
                 const Track& libraryTrack = tracks.at(filepath);
-                if(libraryTrack.id() >= 0) {
-                    if(libraryTrack.libraryId() == library.id && libraryTrack.modifiedTime() == lastModified) {
-                        continue;
-                    }
 
+                if(libraryTrack.libraryId() != library.id || libraryTrack.modifiedTime() != lastModified) {
                     Track changedTrack{libraryTrack};
                     changedTrack.setLibraryId(library.id);
 
@@ -99,31 +111,27 @@ struct LibraryScanner::Private
                         // Regenerate hash
                         changedTrack.generateHash();
                         tracksToUpdate.push_back(changedTrack);
-                        continue;
+                    }
+                }
+            }
+            else {
+                Track track{filepath};
+                track.setLibraryId(library.id);
+
+                if(tagReader.readMetaData(track)) {
+                    track.generateHash();
+                    tracksToStore.push_back(track);
+
+                    if(tracksToStore.size() >= BatchSize) {
+                        storeTracks(tracksToStore);
+                        QMetaObject::invokeMethod(self, "scanUpdate",
+                                                  Q_ARG(const ScanResult&, {.addedTracks = tracksToStore}));
+                        tracksToStore.clear();
                     }
                 }
             }
 
-            Track track{filepath};
-            track.setLibraryId(library.id);
-
-            if(tagReader.readMetaData(track)) {
-                track.generateHash();
-                tracksToStore.push_back(track);
-
-                const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);
-                if(currentProgress != progress) {
-                    currentProgress = progress;
-                    QMetaObject::invokeMethod(self, "progressChanged", Q_ARG(int, currentProgress));
-                }
-
-                if(tracksToStore.size() >= BatchSize) {
-                    storeTracks(tracksToStore);
-                    QMetaObject::invokeMethod(self, "scanUpdate",
-                                              Q_ARG(const ScanResult&, (ScanResult{tracksToStore, {}})));
-                    tracksToStore.clear();
-                }
-            }
+            reportProgress();
         }
 
         storeTracks(tracksToStore);
@@ -216,11 +224,9 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
     std::ranges::transform(std::as_const(libraryTracks), std::inserter(trackMap, trackMap.end()),
                            [](const Track& track) { return std::make_pair(track.filepath(), track); });
 
-    int tracksProcessed{0};
-    const auto totalTracks = static_cast<double>(tracks.size());
-    int currentProgress{-1};
-
-    const TrackList tracksToScan{tracks};
+    p->tracksProcessed = 0;
+    p->totalTracks     = static_cast<double>(tracks.size());
+    p->currentProgress = -1;
 
     const auto handleFinished = [this]() {
         if(state() != Paused) {
@@ -229,7 +235,7 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
         }
     };
 
-    for(const Track& pendingTrack : tracksToScan) {
+    for(const Track& pendingTrack : tracks) {
         if(!mayRun()) {
             handleFinished();
             return;
@@ -237,24 +243,18 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
 
         Track track{pendingTrack};
 
-        ++tracksProcessed;
+        ++p->tracksProcessed;
 
         if(trackMap.contains(track.filepath())) {
             tracksScanned.push_back(trackMap.at(track.filepath()));
-            continue;
         }
-
-        if(p->tagReader.readMetaData(track)) {
+        else if(p->tagReader.readMetaData(track)) {
             track.generateHash();
             track.setLibraryId(0);
             tracksToStore.push_back(track);
-
-            const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);
-            if(currentProgress != progress) {
-                currentProgress = progress;
-                emit progressChanged(currentProgress);
-            }
         }
+
+        p->reportProgress();
     }
 
     p->storeTracks(tracksToStore);
