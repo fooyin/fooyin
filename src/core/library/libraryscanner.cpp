@@ -106,6 +106,7 @@ struct LibraryScanner::Private
                 if(libraryTrack.libraryId() != library.id || libraryTrack.modifiedTime() != lastModified) {
                     Track changedTrack{libraryTrack};
                     changedTrack.setLibraryId(library.id);
+                    changedTrack.setRelativePath(dir.relativeFilePath(filepath));
 
                     if(tagReader.readMetaData(changedTrack)) {
                         // Regenerate hash
@@ -117,6 +118,7 @@ struct LibraryScanner::Private
             else {
                 Track track{filepath};
                 track.setLibraryId(library.id);
+                track.setRelativePath(dir.relativeFilePath(filepath));
 
                 if(tagReader.readMetaData(track)) {
                     track.generateHash();

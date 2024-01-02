@@ -59,12 +59,13 @@ QString fetchQueryTracks(const QString& join, const QString& offsetLimit)
         u"Type"_s,         // 25
         u"AddedDate"_s,    // 26
         u"ModifiedDate"_s, // 27
-        u"LibraryID"_s     // 28
+        u"LibraryID"_s,    // 28
+        u"RelativePath"_s  // 29
     };
 
     const auto joinedFields = fields.join(", "_L1);
 
-    return QString(u"SELECT %1 FROM Tracks %2 %5;"_s).arg(joinedFields, join.isEmpty() ? ""_L1 : join, offsetLimit);
+    return QString(u"SELECT %1 FROM TracksView %2 %5;"_s).arg(joinedFields, join.isEmpty() ? ""_L1 : join, offsetLimit);
 }
 
 BindingsMap getTrackBindings(const Track& track)
@@ -203,11 +204,13 @@ bool TrackDatabase::dbFetchTracks(DatabaseQuery& q, TrackList& result) const
         track.setAddedTime(q.value(26).toULongLong());
         track.setModifiedTime(q.value(27).toULongLong());
         track.setLibraryId(q.value(28).toInt());
+        track.setRelativePath(q.value(29).toString());
 
         track.generateHash();
 
         result.push_back(track);
     }
+
     return true;
 }
 

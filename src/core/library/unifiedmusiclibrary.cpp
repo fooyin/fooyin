@@ -82,24 +82,9 @@ struct UnifiedMusicLibrary::Private
 
     QCoro::Task<TrackList> addTracks(TrackList newTracks)
     {
-        std::unordered_map<int, QDir> libraryDirs;
-        const auto& libraries = libraryManager->allLibraries();
-        for(const auto& [id, info] : libraries) {
-            libraryDirs.emplace(id, QDir{info.path});
-        }
-
         TrackList sortedNewTracks
             = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), newTracks);
 
-        for(Track& track : sortedNewTracks) {
-            const int libraryId = track.libraryId();
-            if(libraryId < 1) {
-                track.setRelativePath(track.filepath());
-            }
-            else if(libraryDirs.contains(libraryId)) {
-                track.setRelativePath(libraryDirs.at(libraryId).relativeFilePath(track.filepath()));
-            }
-        }
 
         sortedNewTracks = co_await resortTracks(sortedNewTracks);
         co_return sortedNewTracks;

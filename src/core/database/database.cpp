@@ -115,6 +115,41 @@ bool Database::createDatabase()
                                           "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
                                           "    TrackIndex INTEGER NOT NULL);"_s);
 
+    checkInsertTable(u"TrackView"_s, u"CREATE VIEW TracksView AS "
+                                     "SELECT "
+                                     "    Tracks.TrackID, "
+                                     "    Tracks.FilePath, "
+                                     "    Tracks.Title, "
+                                     "    Tracks.TrackNumber, "
+                                     "    Tracks.TrackTotal, "
+                                     "    Tracks.Artists, "
+                                     "    Tracks.AlbumArtist, "
+                                     "    Tracks.Album, "
+                                     "    Tracks.CoverPath, "
+                                     "    Tracks.DiscNumber, "
+                                     "    Tracks.DiscTotal, "
+                                     "    Tracks.Date, "
+                                     "    Tracks.Year, "
+                                     "    Tracks.Composer, "
+                                     "    Tracks.Performer, "
+                                     "    Tracks.Genres, "
+                                     "    Tracks.Lyrics, "
+                                     "    Tracks.Comment, "
+                                     "    Tracks.Duration, "
+                                     "    Tracks.PlayCount, "
+                                     "    Tracks.Rating, "
+                                     "    Tracks.FileSize, "
+                                     "    Tracks.BitRate, "
+                                     "    Tracks.SampleRate, "
+                                     "    Tracks.ExtraTags, "
+                                     "    Tracks.Type, "
+                                     "    Tracks.AddedDate, "
+                                     "    Tracks.ModifiedDate, "
+                                     "    Tracks.LibraryID, "
+                                     "    SUBSTR(Tracks.FilePath, LENGTH(Libraries.Path) + 2) AS RelativePath "
+                                     "FROM Tracks "
+                                     "JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID;"_s);
+
     checkInsertIndex(u"PlaylistIndex"_s, u"CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);"_s);
     checkInsertIndex(u"PlaylistTracksIndex"_s,
                      u"CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);"_s);
