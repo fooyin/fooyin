@@ -92,6 +92,7 @@ if(NOT TARGET KDAB::kdsingleapplication)
     include(FetchContent)
        set(KDSingleApplication_QT6 ON CACHE BOOL INTERNAL)
        set(KDSingleApplication_EXAMPLES OFF CACHE BOOL INTERNAL)
+        set(KDSingleApplication_STATIC ON CACHE BOOL INTERNAL)
        FetchContent_Declare(
            kdsingleapplication
            GIT_REPOSITORY https://github.com/KDAB/KDSingleApplication.git
