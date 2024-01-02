@@ -88,15 +88,16 @@ find_package(
 )
 
 find_package(KDSingleApplication-qt6 QUIET)
-if(TARGET KDAB::kdsingleapplication)
-    set(KDSINGLEAPPLICATION_LIBRARIES KDAB::kdsingleapplication)
-else()
-    add_subdirectory(3rdparty/kdsingleapplication)
-    set(KDSINGLEAPPLICATION_INCLUDE_DIRS
-        ${CMAKE_SOURCE_DIR}/3rdparty/kdsingleapplication
-    )
-    set(KDSINGLEAPPLICATION_LIBRARIES kdsingleapplication)
-    add_definitions(-DKDSINGLEAPPLICATION_STATIC_BUILD)
+if(NOT TARGET KDAB::kdsingleapplication)
+    include(FetchContent)
+       set(KDSingleApplication_QT6 ON CACHE BOOL INTERNAL)
+       set(KDSingleApplication_EXAMPLES OFF CACHE BOOL INTERNAL)
+       FetchContent_Declare(
+           kdsingleapplication
+           GIT_REPOSITORY https://github.com/KDAB/KDSingleApplication.git
+           GIT_TAG        v1.1.0
+       )
+       FetchContent_MakeAvailable(kdsingleapplication)
 endif()
 
 if(BUILD_CCACHE)
