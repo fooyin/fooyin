@@ -93,6 +93,7 @@ public:
     void followCurrentTrack(const Track& track, int index) const;
 
     QCoro::Task<void> changeSort(QString script);
+    QCoro::Task<void> sortColumn(int column, Qt::SortOrder order);
 
     void addSortMenu(QMenu* parent);
     void addPresetMenu(QMenu* parent);

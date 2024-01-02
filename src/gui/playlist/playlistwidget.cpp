@@ -159,7 +159,8 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
 
 void PlaylistWidgetPrivate::setupConnections()
 {
-    QObject::connect(playlistView->header(), &QHeaderView::customContextMenuRequested, this,
+    QObject::connect(header, &QHeaderView::sortIndicatorChanged, this, &PlaylistWidgetPrivate::sortColumn);
+    QObject::connect(header, &QHeaderView::customContextMenuRequested, this,
                      &PlaylistWidgetPrivate::customHeaderMenuRequested);
     QObject::connect(playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &PlaylistWidgetPrivate::selectionChanged);
@@ -504,6 +505,7 @@ void PlaylistWidgetPrivate::playlistTracksAdded(Playlist* playlist, const TrackL
 QCoro::Task<void> PlaylistWidgetPrivate::toggleColumnMode()
 {
     columnMode = !columnMode;
+    header->setSortIndicatorShown(columnMode);
 
     if(columnMode && columns.empty()) {
         columns.push_back(columnRegistry->itemByName("Track"));
@@ -628,6 +630,21 @@ QCoro::Task<void> PlaylistWidgetPrivate::changeSort(QString script)
         changePlaylist(playlist);
     }
     co_return;
+}
+
+QCoro::Task<void> PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder order)
+{
+    if(column < 0) {
+        co_return;
+    }
+
+    if(auto* playlist = playlistController->currentPlaylist()) {
+        const auto sortedTracks = co_await Utils::asyncExec([this, playlist, column, order]() {
+            return Sorting::calcSortTracks(columns.at(column).field, playlist->tracks(), order);
+        });
+        playlist->replaceTracks(sortedTracks);
+        changePlaylist(playlist);
+    }
 }
 
 void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
@@ -818,6 +835,12 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 
         p->header->restoreHeaderState(state);
     }
+}
+
+void PlaylistWidget::finalise()
+{
+    p->header->setSectionsClickable(p->columnMode);
+    p->header->setSortIndicatorShown(p->columnMode);
 }
 
 void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
