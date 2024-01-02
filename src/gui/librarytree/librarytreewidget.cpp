@@ -157,6 +157,8 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Musi
     libraryTree->setModel(model);
 
     libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
+    libraryTree->setAnimated(true);
+
     libraryTree->setHeaderHidden(!settings->value<LibTreeHeader>());
     setScrollbarEnabled(settings->value<LibTreeScrollBar>());
     libraryTree->setAlternatingRowColors(settings->value<LibTreeAltColours>());
