@@ -20,14 +20,12 @@
 #include <core/track.h>
 
 #include <core/constants.h>
-#include <utils/utils.h>
+#include <utils/crypto.h>
 
 #include <QIODevice>
 #include <QMap>
 
 using namespace Qt::Literals::StringLiterals;
-
-constexpr auto Separator = "|";
 
 namespace Fooyin {
 struct Track::Private : public QSharedData
@@ -98,9 +96,8 @@ Track& Track::operator=(const Track& other) = default;
 
 QString Track::generateHash()
 {
-    p->hash = p->artists.join(","_L1) + Separator + p->album + Separator + p->date + Separator
-            + QString::number(p->discNumber) + Separator + Utils::addLeadingZero(p->trackNumber, 2) + Separator
-            + QString::number(p->duration);
+    p->hash = Utils::generateHash(p->artists.join(","_L1), p->album, QString::number(p->discNumber),
+                                  QString::number(p->trackNumber), p->title, QString::number(p->duration));
     return p->hash;
 }
 
