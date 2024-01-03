@@ -40,7 +40,7 @@ void loadDefaults(Fooyin::PresetRegistry* registry)
     preset.track.rowHeight = 23;
     preset.track.leftText.emplace_back("$num(%track%,2).   ", 13);
     preset.track.leftText.emplace_back("%title%", 13);
-    preset.track.rightText.emplace_back("$ifgreater(%playcount%,0,| %playcount%)   ", 10);
+    preset.track.rightText.emplace_back("$ifgreater(%playcount%,0,%playcount% |)      ", 10);
     preset.track.rightText.emplace_back("$timems(%duration%)", 13);
 
     registry->addItem(preset);
