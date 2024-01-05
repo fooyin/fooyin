@@ -167,5 +167,6 @@ public:
     PlayState currentPlayState;
     Track currentPlayingTrack;
     QPersistentModelIndex currentPlayingIndex;
+    int currentIndex;
 };
 } // namespace Fooyin

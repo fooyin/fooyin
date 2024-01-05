@@ -82,9 +82,6 @@ struct PlaylistController::Private
             histories.erase(playlist->id());
             states.erase(playlist->id());
         }
-        if(currentPlaylist == playlist) {
-            self->changeCurrentPlaylist(playlist);
-        }
     }
 
     void handlePlaylistRemoved(const Playlist* playlist) const

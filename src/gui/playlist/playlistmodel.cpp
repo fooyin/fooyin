@@ -319,9 +319,45 @@ void PlaylistModel::insertTracks(const TrackGroups& tracks)
     }
 }
 
+void PlaylistModel::updateTracks(const std::vector<int>& indexes)
+{
+    TrackGroups groups;
+    QModelIndexList indexesToRemove;
+
+    auto startOfSequence = indexes.cbegin();
+    while(startOfSequence != indexes.cend()) {
+        auto endOfSequence = std::adjacent_find(startOfSequence, indexes.cend(),
+                                                [](const int lhs, const int rhs) { return rhs != lhs + 1; });
+        if(endOfSequence != indexes.cend()) {
+            std::advance(endOfSequence, 1);
+        }
+
+        const int first = *startOfSequence;
+
+        for(auto it = startOfSequence; it != endOfSequence; ++it) {
+            const auto& [index, end] = p->indexForTrackIndex(*it);
+            if(!end) {
+                indexesToRemove.push_back(index);
+                if(auto track = p->currentPlaylist->track(*it)) {
+                    groups[first].push_back(track.value());
+                }
+            }
+        }
+
+        startOfSequence = endOfSequence;
+    }
+
+    p->currentIndex = p->currentPlaylist->currentTrackIndex();
+
+    p->removeTracks(indexesToRemove);
+    insertTracks(groups);
+}
+
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)
 {
+    tracksAboutToBeChanged();
     p->removeTracks(indexes);
+    tracksChanged();
 }
 
 void PlaylistModel::removeTracks(const TrackGroups& groups)
@@ -377,10 +413,12 @@ void PlaylistModel::tracksAboutToBeChanged()
 
 void PlaylistModel::tracksChanged()
 {
-    const int playingIndex
-        = p->currentPlayingIndex.isValid() ? p->currentPlayingIndex.data(PlaylistItem::Index).toInt() : -1;
+    const int playingIndex = p->currentIndex >= 0             ? p->currentIndex
+                           : p->currentPlayingIndex.isValid() ? p->currentPlayingIndex.data(PlaylistItem::Index).toInt()
+                                                              : -1;
     emit playlistTracksChanged(playingIndex);
     p->currentPlayingIndex = QPersistentModelIndex{};
+    p->currentIndex        = -1;
 }
 
 void PlaylistModel::currentTrackChanged(const Track& track)
