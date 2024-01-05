@@ -63,9 +63,6 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, SettingsManager* settings, Q
     QObject::connect(&p->populator, &PlaylistPopulator::populated, this,
                      [this](PendingData data) { p->populateModel(data); });
 
-    QObject::connect(&p->populator, &PlaylistPopulator::populatedTracks, this,
-                     [this](PendingData data) { p->populateTracks(data); });
-
     QObject::connect(&p->populator, &PlaylistPopulator::populatedTrackGroup, this,
                      [this](PendingData data) { p->populateTrackGroup(data); });
 
@@ -302,8 +299,9 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
 
     updateHeader(playlist);
 
-    QMetaObject::invokeMethod(&p->populator,
-                              [this, playlist] { p->populator.run(p->currentPreset, p->columns, playlist->tracks()); });
+    QMetaObject::invokeMethod(&p->populator, [this, playlist] {
+        p->populator.run(p->currentPlaylist->id(), p->currentPreset, p->columns, playlist->tracks());
+    });
 }
 
 QModelIndex PlaylistModel::indexAtTrackIndex(int index)
@@ -314,8 +312,11 @@ QModelIndex PlaylistModel::indexAtTrackIndex(int index)
 
 void PlaylistModel::insertTracks(const TrackGroups& tracks)
 {
-    QMetaObject::invokeMethod(&p->populator,
-                              [this, tracks] { p->populator.runTracks(p->currentPreset, p->columns, tracks); });
+    if(p->currentPlaylist) {
+        QMetaObject::invokeMethod(&p->populator, [this, tracks] {
+            p->populator.runTracks(p->currentPlaylist->id(), p->currentPreset, p->columns, tracks);
+        });
+    }
 }
 
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)

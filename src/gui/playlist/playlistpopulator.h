@@ -38,6 +38,7 @@ using IndexGroupMap   = std::map<int, std::vector<QString>>;
 
 struct PendingData
 {
+    int playlistId{-1};
     ItemKeyMap items;
     NodeKeyMap nodes;
     std::vector<QString> containerOrder;
@@ -50,6 +51,7 @@ struct PendingData
 
     void clear()
     {
+        playlistId = -1;
         items.clear();
         nodes.clear();
         containerOrder.clear();
@@ -67,16 +69,13 @@ public:
     explicit PlaylistPopulator(QObject* parent = nullptr);
     ~PlaylistPopulator() override;
 
-    void run(const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks);
-    void runTracks(const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks,
-                   const QString& parent, int row);
-    void runTracks(const PlaylistPreset& preset, const PlaylistColumnList& columns,
-                   const std::map<int, std::vector<Track>>& tracks);
+    void run(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks);
+    void runTracks(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+                   const std::map<int, TrackList>& tracks);
     void updateHeaders(const ItemList& headers);
 
 signals:
     void populated(PendingData data);
-    void populatedTracks(PendingData data);
     void populatedTrackGroup(PendingData data);
     void headersUpdated(ItemKeyMap headers);
 

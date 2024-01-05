@@ -319,27 +319,6 @@ struct PlaylistPopulator::Private
         runBatch(remaining);
     }
 
-    void runTracks()
-    {
-        for(const Track& track : pendingTracks) {
-            if(!self->mayRun()) {
-                return;
-            }
-            if(!track.enabled()) {
-                continue;
-            }
-            iterateTrack(track);
-        }
-
-        updateContainers();
-
-        if(!self->mayRun()) {
-            return;
-        }
-
-        QMetaObject::invokeMethod(self, "populatedTracks", Q_ARG(PendingData, data));
-    }
-
     void runTracksGroup(const std::map<int, std::vector<Track>>& tracks)
     {
         for(const auto& [index, trackGroup] : tracks) {
@@ -376,15 +355,17 @@ PlaylistPopulator::PlaylistPopulator(QObject* parent)
     qRegisterMetaType<PendingData>();
 }
 
-void PlaylistPopulator::run(const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks)
+void PlaylistPopulator::run(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+                            const TrackList& tracks)
 {
     setState(Running);
 
     p->reset();
 
-    p->currentPreset = preset;
-    p->columns       = columns;
-    p->pendingTracks = tracks;
+    p->data.playlistId = playlistId;
+    p->currentPreset   = preset;
+    p->columns         = columns;
+    p->pendingTracks   = tracks;
 
     p->updateScripts();
     p->runBatch(TrackPreloadSize);
@@ -392,34 +373,16 @@ void PlaylistPopulator::run(const PlaylistPreset& preset, const PlaylistColumnLi
     setState(Idle);
 }
 
-void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const PlaylistColumnList& columns,
-                                  const TrackList& tracks, const QString& parent, int row)
-{
-    setState(Running);
-
-    p->reset();
-
-    p->data.parent   = parent;
-    p->data.row      = row;
-    p->currentPreset = preset;
-    p->columns       = columns;
-    p->pendingTracks = tracks;
-
-    p->updateScripts();
-    p->runTracks();
-
-    setState(Idle);
-}
-
-void PlaylistPopulator::runTracks(const PlaylistPreset& preset, const PlaylistColumnList& columns,
+void PlaylistPopulator::runTracks(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                                   const std::map<int, std::vector<Track>>& tracks)
 {
     setState(Running);
 
     p->reset();
 
-    p->currentPreset = preset;
-    p->columns       = columns;
+    p->data.playlistId = playlistId;
+    p->currentPreset   = preset;
+    p->columns         = columns;
 
     p->updateScripts();
     p->runTracksGroup(tracks);

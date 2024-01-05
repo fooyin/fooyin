@@ -773,11 +773,13 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, MusicLibrary* l
 
 void PlaylistModelPrivate::populateModel(PendingData& data)
 {
+    if(currentPlaylist && currentPlaylist->id() != data.playlistId) {
+        return;
+    }
+
     if(resetting) {
         model->beginResetModel();
         model->resetRoot();
-        // Acts as a cache in case model hasn't been fully cleared
-        oldNodes = std::move(nodes);
         nodes.clear();
         pendingNodes.clear();
         trackParents.clear();
@@ -807,20 +809,12 @@ void PlaylistModelPrivate::populateModel(PendingData& data)
     }
 }
 
-void PlaylistModelPrivate::populateTracks(PendingData& data)
-{
-    model->tracksAboutToBeChanged();
-
-    nodes.merge(data.items);
-    trackParents.merge(data.trackParents);
-
-    handleExternalDrop(data);
-
-    model->tracksChanged();
-}
-
 void PlaylistModelPrivate::populateTrackGroup(PendingData& data)
 {
+    if(currentPlaylist && currentPlaylist->id() != data.playlistId) {
+        return;
+    }
+
     model->tracksAboutToBeChanged();
 
     if(nodes.empty()) {
@@ -1121,52 +1115,6 @@ MoveOperation PlaylistModelPrivate::handleMove(const MoveOperation& operation)
     model->tracksChanged();
 
     return reverseOperation;
-}
-
-void PlaylistModelPrivate::handleExternalDrop(const PendingData& data)
-{
-    auto* parentItem = itemForKey(data.parent);
-    int row          = data.row;
-
-    QModelIndex targetParent{model->indexOfItem(parentItem)};
-
-    std::vector<std::pair<PlaylistItem*, PlaylistItemList>> itemData;
-
-    std::ranges::transform(data.containerOrder, std::inserter(itemData, itemData.end()),
-                           [this, &data](const QString& containerKey) {
-                               PlaylistItem* item = itemForKey(containerKey);
-                               PlaylistItemList children;
-                               std::ranges::transform(data.nodes.at(containerKey), std::back_inserter(children),
-                                                      [this](const QString& child) { return itemForKey(child); });
-                               return std::pair{item, children};
-                           });
-
-    // We only care about the immediate track parents
-    auto containers = std::views::filter(itemData, [](const auto& entry) {
-        return !entry.second.empty() && entry.second.front()->type() == PlaylistItem::Track;
-    });
-
-    for(const auto& [sourceParentItem, children] : containers) {
-        if(!sourceParentItem) {
-            continue;
-        }
-
-        PlaylistItem* targetParentItem = model->itemForIndex(targetParent);
-
-        const auto targetResult = findDropTarget(this, sourceParentItem, targetParentItem, row);
-        targetParent            = targetResult.dropTarget();
-
-        const int total = row + static_cast<int>(children.size()) - 1;
-
-        model->beginInsertRows(targetParent, row, total);
-        row = insertRows(model, nodes, children, targetParent, row);
-        model->endInsertRows();
-    }
-
-    model->rootItem()->resetChildren();
-
-    cleanupHeaders();
-    updateTrackIndexes();
 }
 
 void PlaylistModelPrivate::handleTrackGroup(const PendingData& data)

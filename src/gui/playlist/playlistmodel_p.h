@@ -101,7 +101,6 @@ public:
     PlaylistModelPrivate(PlaylistModel* self, MusicLibrary* library, SettingsManager* settings);
 
     void populateModel(PendingData& data);
-    void populateTracks(PendingData& data);
     void populateTrackGroup(PendingData& data);
     void updateModel(ItemKeyMap& data);
 
@@ -114,7 +113,6 @@ public:
     bool prepareDrop(const QMimeData* data, Qt::DropAction action, int row, int column,
                      const QModelIndex& parent) const;
     MoveOperation handleMove(const MoveOperation& operation);
-    void handleExternalDrop(const PendingData& data);
     void handleTrackGroup(const PendingData& data);
     void storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData) const;
 
@@ -157,7 +155,6 @@ public:
 
     NodeKeyMap pendingNodes;
     ItemKeyMap nodes;
-    ItemKeyMap oldNodes;
     TrackIdNodeMap trackParents;
     std::unordered_map<int, QString> trackIndexes;
 
