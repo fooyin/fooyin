@@ -235,37 +235,42 @@ struct TrackDatabase::Private
             bool changed{false};
             BindingsMap bindings;
 
-            if(track.addedTime() != added) {
-                if(added == 0 || track.addedTime() < added) {
+            const uint64_t trackAdded       = track.addedTime();
+            const uint64_t trackFirstPlayed = track.firstPlayed();
+            const uint64_t trackLastPlayed  = track.lastPlayed();
+            const int trackPlayCount        = track.playCount();
+
+            if(trackAdded != added) {
+                if(added == 0 || (trackAdded > 0 && trackAdded < added)) {
                     changed = true;
-                    bindings.emplace(u"AddedDate"_s, QString::number(track.addedTime()));
+                    bindings.emplace(u"AddedDate"_s, QString::number(trackAdded));
                 }
-                else if(added > 0) {
+                else {
                     track.setAddedTime(added);
                 }
             }
-            if(track.firstPlayed() != firstPlayed) {
-                if(firstPlayed == 0 || track.firstPlayed() < firstPlayed) {
+            if(trackFirstPlayed != firstPlayed) {
+                if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
                     changed = true;
-                    bindings.emplace(u"FirstPlayed"_s, QString::number(track.firstPlayed()));
+                    bindings.emplace(u"FirstPlayed"_s, QString::number(trackFirstPlayed));
                 }
-                else if(firstPlayed > 0) {
+                else {
                     track.setFirstPlayed(firstPlayed);
                 }
             }
-            if(track.lastPlayed() != lastPlayed) {
-                if(track.lastPlayed() > lastPlayed) {
+            if(trackLastPlayed != lastPlayed) {
+                if(trackLastPlayed > lastPlayed) {
                     changed = true;
-                    bindings.emplace(u"LastPlayed"_s, QString::number(track.lastPlayed()));
+                    bindings.emplace(u"LastPlayed"_s, QString::number(trackLastPlayed));
                 }
-                else if(lastPlayed > 0) {
+                else {
                     track.setLastPlayed(lastPlayed);
                 }
             }
-            if(track.playCount() != playCount) {
-                if(track.playCount() > playCount) {
+            if(trackPlayCount != playCount) {
+                if(trackPlayCount > playCount) {
                     changed = true;
-                    bindings.emplace(u"PlayCount"_s, QString::number(track.playCount()));
+                    bindings.emplace(u"PlayCount"_s, QString::number(trackPlayCount));
                 }
                 else {
                     track.setPlayCount(playCount);
