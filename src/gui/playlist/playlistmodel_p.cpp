@@ -766,6 +766,7 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, MusicLibrary* l
     , isActivePlaylist{false}
     , currentPlaylist{nullptr}
     , currentPlayState{PlayState::Stopped}
+    , currentIndex{-1}
 {
     populator.moveToThread(&populatorThread);
     populatorThread.start();
@@ -1427,8 +1428,6 @@ void PlaylistModelPrivate::removeTracks(const QModelIndexList& indexes)
 {
     const ParentChildRangesList indexGroups = determineRowGroups(indexes);
 
-    model->tracksAboutToBeChanged();
-
     for(const auto& [parent, groups] : indexGroups) {
         for(const auto& children : groups | std::views::reverse) {
             removePlaylistRows(children.first, children.count(), parent);
@@ -1437,8 +1436,6 @@ void PlaylistModelPrivate::removeTracks(const QModelIndexList& indexes)
 
     cleanupHeaders();
     updateTrackIndexes();
-
-    model->tracksChanged();
 }
 
 void PlaylistModelPrivate::coverUpdated(const Track& track)

@@ -87,6 +87,7 @@ public:
 
     QModelIndex indexAtTrackIndex(int index);
     void insertTracks(const TrackGroups& tracks);
+    void updateTracks(const std::vector<int>& indexes);
     void removeTracks(const QModelIndexList& indexes);
     void removeTracks(const TrackGroups& groups);
     void updateHeader(Playlist* playlist);

@@ -209,14 +209,4 @@ DatabaseQuery DatabaseModule::remove(const QString& tableName,
 
     return q;
 }
-
-DatabaseModule* DatabaseModule::module()
-{
-    return this;
-}
-
-const DatabaseModule* DatabaseModule::module() const
-{
-    return this;
-}
 } // namespace Fooyin

@@ -88,5 +88,6 @@ signals:
     void positionChanged(uint64_t ms);
     void positionMoved(uint64_t ms);
     void currentTrackChanged(const Track& track);
+    void trackPlayed(const Track& track);
 };
 } // namespace Fooyin

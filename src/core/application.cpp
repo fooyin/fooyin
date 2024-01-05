@@ -92,6 +92,7 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
+    QObject::connect(p->playerManager, &PlayerManager::trackPlayed, p->library, &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
     QObject::connect(p->library, &MusicLibrary::libraryRemoved, p->playlistHandler, &PlaylistHandler::libraryRemoved);
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, p->playlistHandler, &PlaylistHandler::tracksUpdated);

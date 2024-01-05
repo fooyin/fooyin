@@ -69,6 +69,16 @@ bool Database::createDatabase()
         return false;
     }
 
+    checkInsertTable(u"Libraries"_s, u"CREATE TABLE Libraries ("
+                                     "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                     "    Name TEXT NOT NULL UNIQUE,"
+                                     "    Path TEXT NOT NULL UNIQUE);"_s);
+
+    checkInsertTable(u"Playlists"_s, u"CREATE TABLE Playlists ("
+                                     "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                     "    Name TEXT NOT NULL UNIQUE,"
+                                     "    PlaylistIndex INTEGER);"_s);
+
     checkInsertTable(u"Tracks"_s, u"CREATE TABLE Tracks ("
                                   "    TrackID INTEGER PRIMARY KEY AUTOINCREMENT,"
                                   "    FilePath TEXT UNIQUE NOT NULL,"
@@ -82,80 +92,80 @@ bool Database::createDatabase()
                                   "    DiscNumber INTEGER,"
                                   "    DiscTotal INTEGER,"
                                   "    Date TEXT,"
-                                  "    Year INTEGER,"
                                   "    Composer TEXT,"
                                   "    Performer TEXT,"
                                   "    Genres TEXT,"
                                   "    Lyrics TEXT,"
                                   "    Comment TEXT,"
                                   "    Duration INTEGER DEFAULT 0,"
-                                  "    PlayCount INTEGER DEFAULT 0,"
-                                  "    Rating INTEGER DEFAULT 0,"
                                   "    FileSize INTEGER DEFAULT 0,"
                                   "    BitRate INTEGER DEFAULT 0,"
                                   "    SampleRate INTEGER DEFAULT 0,"
                                   "    ExtraTags BLOB,"
                                   "    Type INTEGER DEFAULT 0,"
-                                  "    AddedDate INTEGER,"
                                   "    ModifiedDate INTEGER,"
-                                  "    LibraryID INTEGER REFERENCES Libraries ON DELETE CASCADE);"_s);
+                                  "    LibraryID INTEGER REFERENCES Libraries ON DELETE CASCADE,"
+                                  "    TrackHash TEXT);"_s);
 
-    checkInsertTable(u"Libraries"_s, u"CREATE TABLE Libraries ("
-                                     "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                     "    Name TEXT NOT NULL UNIQUE,"
-                                     "    Path TEXT NOT NULL UNIQUE);"_s);
-
-    checkInsertTable(u"Playlists"_s, u"CREATE TABLE Playlists ("
-                                     "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                     "    Name TEXT NOT NULL UNIQUE,"
-                                     "    PlaylistIndex INTEGER);"_s);
+    checkInsertTable(u"TrackStats"_s, u"CREATE TABLE TrackStats ("
+                                      "    TrackHash TEXT PRIMARY KEY,"
+                                      "    LastSeen INTEGER,"
+                                      "    AddedDate INTEGER,"
+                                      "    FirstPlayed INTEGER,"
+                                      "    LastPlayed INTEGER,"
+                                      "    PlayCount INTEGER DEFAULT 0,"
+                                      "    Rating INTEGER DEFAULT 0);"_s);
 
     checkInsertTable(u"PlaylistTracks"_s, u"CREATE TABLE PlaylistTracks ("
                                           "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
                                           "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
                                           "    TrackIndex INTEGER NOT NULL);"_s);
 
-    checkInsertTable(u"TrackView"_s, u"CREATE VIEW TracksView AS "
-                                     "SELECT "
-                                     "    Tracks.TrackID, "
-                                     "    Tracks.FilePath, "
-                                     "    Tracks.Title, "
-                                     "    Tracks.TrackNumber, "
-                                     "    Tracks.TrackTotal, "
-                                     "    Tracks.Artists, "
-                                     "    Tracks.AlbumArtist, "
-                                     "    Tracks.Album, "
-                                     "    Tracks.CoverPath, "
-                                     "    Tracks.DiscNumber, "
-                                     "    Tracks.DiscTotal, "
-                                     "    Tracks.Date, "
-                                     "    Tracks.Year, "
-                                     "    Tracks.Composer, "
-                                     "    Tracks.Performer, "
-                                     "    Tracks.Genres, "
-                                     "    Tracks.Lyrics, "
-                                     "    Tracks.Comment, "
-                                     "    Tracks.Duration, "
-                                     "    Tracks.PlayCount, "
-                                     "    Tracks.Rating, "
-                                     "    Tracks.FileSize, "
-                                     "    Tracks.BitRate, "
-                                     "    Tracks.SampleRate, "
-                                     "    Tracks.ExtraTags, "
-                                     "    Tracks.Type, "
-                                     "    Tracks.AddedDate, "
-                                     "    Tracks.ModifiedDate, "
-                                     "    Tracks.LibraryID, "
-                                     "    SUBSTR(Tracks.FilePath, LENGTH(Libraries.Path) + 2) AS RelativePath "
-                                     "FROM Tracks "
-                                     "JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID;"_s);
+    checkInsertTable(u"TrackView"_s, u"CREATE VIEW TracksView AS"
+                                     "  SELECT"
+                                     "    Tracks.TrackID,"
+                                     "    Tracks.FilePath,"
+                                     "    SUBSTR(Tracks.FilePath, LENGTH(Libraries.Path) + 2) AS RelativePath,"
+                                     "    Tracks.Title,"
+                                     "    Tracks.TrackNumber,"
+                                     "    Tracks.TrackTotal,"
+                                     "    Tracks.Artists,"
+                                     "    Tracks.AlbumArtist,"
+                                     "    Tracks.Album,"
+                                     "    Tracks.CoverPath,"
+                                     "    Tracks.DiscNumber,"
+                                     "    Tracks.DiscTotal,"
+                                     "    Tracks.Date,"
+                                     "    Tracks.Composer,"
+                                     "    Tracks.Performer,"
+                                     "    Tracks.Genres,"
+                                     "    Tracks.Lyrics,"
+                                     "    Tracks.Comment,"
+                                     "    Tracks.Duration,"
+                                     "    Tracks.FileSize,"
+                                     "    Tracks.BitRate,"
+                                     "    Tracks.SampleRate,"
+                                     "    Tracks.ExtraTags,"
+                                     "    Tracks.Type,"
+                                     "    Tracks.ModifiedDate,"
+                                     "    Tracks.LibraryID,"
+                                     "    Tracks.TrackHash,"
+                                     "    TrackStats.AddedDate,"
+                                     "    TrackStats.FirstPlayed,"
+                                     "    TrackStats.LastPlayed,"
+                                     "    TrackStats.PlayCount,"
+                                     "    TrackStats.Rating"
+                                     "  FROM Tracks"
+                                     "  JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID"
+                                     "  LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;"_s);
 
+    checkInsertIndex(u"TrackIndex"_s, u"CREATE INDEX TrackIndex ON Tracks(TrackHash);"_s);
     checkInsertIndex(u"PlaylistIndex"_s, u"CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);"_s);
     checkInsertIndex(u"PlaylistTracksIndex"_s,
                      u"CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);"_s);
 
-    module()->insert(u"Libraries"_s, {{u"LibraryID"_s, u"0"_s}, {u"Name"_s, u"No Library"_s}, {u"Path"_s, u""_s}},
-                     "Could not insert default library");
+    insert(u"Libraries"_s, {{u"LibraryID"_s, u"0"_s}, {u"Name"_s, u"No Library"_s}, {u"Path"_s, u""_s}},
+           "Could not insert default library");
 
     return true;
 }

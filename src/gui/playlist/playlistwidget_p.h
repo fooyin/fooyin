@@ -66,8 +66,12 @@ public:
 
     void resetTree() const;
     [[nodiscard]] PlaylistViewState getState() const;
+    void saveState() const;
     void restoreState() const;
     void resetModel() const;
+
+    std::vector<int> selectedPlaylistIndexes() const;
+    void restoreSelectedPlaylistIndexes(const std::vector<int>& indexes);
 
     [[nodiscard]] bool isHeaderHidden() const;
     [[nodiscard]] bool isScrollbarHidden() const;
@@ -75,13 +79,14 @@ public:
     void setHeaderHidden(bool showHeader) const;
     void setScrollbarHidden(bool showScrollBar) const;
     void selectionChanged() const;
-    void playlistTracksChanged(int index) const;
+    void trackIndexesChanged(int playingIndex) const;
 
     QCoro::Task<void> scanDroppedTracks(TrackList tracks, int index);
     void tracksInserted(const TrackGroups& tracks) const;
     void tracksRemoved() const;
     void tracksMoved(const MoveOperation& operation) const;
     void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const;
+    void handleTracksChanged(Playlist* playlist, const std::vector<int>& indexes);
 
     QCoro::Task<void> toggleColumnMode();
     void customHeaderMenuRequested(const QPoint& pos);
@@ -91,7 +96,7 @@ public:
     void doubleClicked(const QModelIndex& index) const;
 
     void followCurrentTrack(const Track& track, int index) const;
-    
+
     QCoro::Task<void> sortTracks(QString script);
     QCoro::Task<void> sortColumn(int column, Qt::SortOrder order);
 

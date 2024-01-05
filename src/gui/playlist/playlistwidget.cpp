@@ -167,7 +167,7 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidgetPrivate::doubleClicked);
 
     QObject::connect(model, &QAbstractItemModel::modelAboutToBeReset, playlistView, &QAbstractItemView::clearSelection);
-    QObject::connect(model, &PlaylistModel::playlistTracksChanged, this, &PlaylistWidgetPrivate::playlistTracksChanged);
+    QObject::connect(model, &PlaylistModel::playlistTracksChanged, this, &PlaylistWidgetPrivate::trackIndexesChanged);
     QObject::connect(model, &PlaylistModel::filesDropped, this, &PlaylistWidgetPrivate::scanDroppedTracks);
     QObject::connect(model, &PlaylistModel::tracksInserted, this, &PlaylistWidgetPrivate::tracksInserted);
     QObject::connect(model, &PlaylistModel::tracksMoved, this, &PlaylistWidgetPrivate::tracksMoved);
@@ -177,6 +177,8 @@ void PlaylistWidgetPrivate::setupConnections()
                          expandTree(playlistView, model, parent, first, last);
                      });
 
+    QObject::connect(playlistController->playlistHandler(), &PlaylistManager::playlistTracksChanged, this,
+                     &PlaylistWidgetPrivate::handleTracksChanged);
     QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this,
                      [this](Playlist* playlist) { changePlaylist(playlist, playlist != currentPlaylist); });
     QObject::connect(playlistController, &PlaylistController::currentTrackChanged, model,
@@ -266,14 +268,10 @@ void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
     resetModel();
 }
 
-void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist, bool saveState)
+void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist, bool savePlaylistState)
 {
-    if(settings->value<Settings::Gui::RememberPlaylistState>() && currentPlaylist && saveState) {
-        const auto state = getState();
-        // Don't save state if still populating model
-        if(currentPlaylist->trackCount() == 0 || (currentPlaylist->trackCount() > 0 && state.topIndex >= 0)) {
-            playlistController->savePlaylistState(currentPlaylist->id(), state);
-        }
+    if(settings->value<Settings::Gui::RememberPlaylistState>() && savePlaylistState) {
+        saveState();
     }
 
     if(!playlist) {
@@ -311,6 +309,17 @@ PlaylistViewState PlaylistWidgetPrivate::getState() const
     }
 
     return state;
+}
+
+void PlaylistWidgetPrivate::saveState() const
+{
+    if(currentPlaylist) {
+        const auto state = getState();
+        // Don't save state if still populating model
+        if(currentPlaylist->trackCount() == 0 || (currentPlaylist->trackCount() > 0 && state.topIndex >= 0)) {
+            playlistController->savePlaylistState(currentPlaylist->id(), state);
+        }
+    }
 }
 
 void PlaylistWidgetPrivate::restoreState() const
@@ -355,6 +364,34 @@ void PlaylistWidgetPrivate::restoreState() const
 void PlaylistWidgetPrivate::resetModel() const
 {
     model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, playlistController->currentPlaylist());
+}
+
+std::vector<int> PlaylistWidgetPrivate::selectedPlaylistIndexes() const
+{
+    std::vector<int> selectedPlaylistIndexes;
+
+    const auto selected = playlistView->selectionModel()->selectedRows();
+    for(const QModelIndex& index : selected) {
+        selectedPlaylistIndexes.emplace_back(index.data(PlaylistItem::Index).toInt());
+    }
+
+    return selectedPlaylistIndexes;
+}
+
+void PlaylistWidgetPrivate::restoreSelectedPlaylistIndexes(const std::vector<int>& indexes)
+{
+    if(indexes.empty()) {
+        return;
+    }
+
+    QItemSelection indexesToSelect;
+    for(const int selectedIndex : indexes) {
+        const auto index = model->indexAtTrackIndex(selectedIndex);
+        if(index.isValid()) {
+            indexesToSelect.append({index, index});
+        }
+    }
+    playlistView->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
 }
 
 bool PlaylistWidgetPrivate::isHeaderHidden() const
@@ -416,7 +453,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
     removeTrackAction->setEnabled(true);
 }
 
-void PlaylistWidgetPrivate::playlistTracksChanged(int index) const
+void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
 {
     const TrackList tracks = getAllTracks(model, {QModelIndex{}});
 
@@ -433,8 +470,8 @@ void PlaylistWidgetPrivate::playlistTracksChanged(int index) const
 
     if(auto* playlist = playlistController->currentPlaylist()) {
         playlist->replaceTracks(tracks);
-        if(index >= 0) {
-            playlist->changeCurrentTrack(index);
+        if(playingIndex >= 0) {
+            playlist->changeCurrentTrack(playingIndex);
         }
         model->updateHeader(playlist);
     }
@@ -519,6 +556,30 @@ void PlaylistWidgetPrivate::playlistTracksAdded(Playlist* playlist, const TrackL
         auto* insertCmd = new InsertTracks(model, {{index, tracks}});
         playlistController->addToHistory(insertCmd);
     }
+}
+
+void PlaylistWidgetPrivate::handleTracksChanged(Playlist* playlist, const std::vector<int>& indexes)
+{
+    if(playlist != currentPlaylist) {
+        return;
+    }
+
+    const auto selected = selectedPlaylistIndexes();
+
+    saveState();
+    playlistView->setUpdatesEnabled(false);
+
+    model->updateTracks(indexes);
+
+    QObject::connect(
+        model, &PlaylistModel::playlistTracksChanged, this,
+        [this, selected]() {
+            restoreState();
+            restoreSelectedPlaylistIndexes(selected);
+
+            playlistView->setUpdatesEnabled(true);
+        },
+        Qt::SingleShotConnection);
 }
 
 QCoro::Task<void> PlaylistWidgetPrivate::toggleColumnMode()

@@ -175,8 +175,8 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index)
         return -1;
     }
 
-    auto q = module()->insert(u"Playlists"_s, {{"Name", name}, {u"PlaylistIndex"_s, QString::number(index)}},
-                              QString{u"Cannot insert playlist (name: %1, index: %2)"_s}.arg(name).arg(index));
+    auto q = insert(u"Playlists"_s, {{"Name", name}, {u"PlaylistIndex"_s, QString::number(index)}},
+                    QString{u"Cannot insert playlist (name: %1, index: %2)"_s}.arg(name).arg(index));
 
     return (q.hasError()) ? -1 : q.lastInsertId().toInt();
 }
@@ -202,8 +202,8 @@ bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
 
 bool PlaylistDatabase::removePlaylist(int id)
 {
-    auto q = module()->remove(u"Playlists"_s, {{u"PlaylistID"_s, QString::number(id)}},
-                              "Cannot remove playlist " + QString::number(id));
+    auto q = remove(u"Playlists"_s, {{u"PlaylistID"_s, QString::number(id)}},
+                    "Cannot remove playlist " + QString::number(id));
     return !q.hasError();
 }
 
@@ -213,8 +213,8 @@ bool PlaylistDatabase::renamePlaylist(int id, const QString& name)
         return false;
     }
 
-    auto q = module()->update(u"Playlists"_s, {{u"Name"_s, name}}, {u"PlaylistID"_s, QString::number(id)},
-                              "Cannot update playlist " + QString::number(id));
+    auto q = update(u"Playlists"_s, {{u"Name"_s, name}}, {u"PlaylistID"_s, QString::number(id)},
+                    "Cannot update playlist " + QString::number(id));
     return !q.hasError();
 }
 } // namespace Fooyin

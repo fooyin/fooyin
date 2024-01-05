@@ -113,10 +113,8 @@ void PlayerController::setCurrentPosition(uint64_t ms)
     p->position = ms;
     // TODO: Only increment playCount based on total time listened excluding seeking.
     if(!p->counted && ms >= p->totalDuration / 2) {
-        // TODO: Save playCounts to db.
-        int playCount = p->currentTrack.playCount();
-        p->currentTrack.setPlayCount(++playCount);
         p->counted = true;
+        emit trackPlayed(p->currentTrack);
     }
     emit positionChanged(ms);
 }

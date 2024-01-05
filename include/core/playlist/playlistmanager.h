@@ -79,7 +79,7 @@ signals:
     void playlistsPopulated();
     void playlistAdded(Playlist* playlist);
     void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index);
-    void playlistTracksChanged(Playlist* playlist);
+    void playlistTracksChanged(Playlist* playlist, const std::vector<int>& indexes);
     void playlistRemoved(Playlist* playlist);
     void playlistRenamed(Playlist* playlist);
     void activePlaylistChanged(Playlist* playlist);

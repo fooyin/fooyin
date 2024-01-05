@@ -116,6 +116,14 @@ TrackList Playlist::tracks() const
     return p->tracks;
 }
 
+std::optional<Track> Playlist::track(int index) const
+{
+    if(p->tracks.empty() || index < 0 || index >= trackCount()) {
+        return {};
+    }
+    return p->tracks.at(index);
+}
+
 int Playlist::trackCount() const
 {
     return static_cast<int>(p->tracks.size());

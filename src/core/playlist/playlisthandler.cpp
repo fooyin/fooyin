@@ -37,29 +37,31 @@ enum class CommonOperation
     Remove
 };
 
-bool updateCommonTracks(Fooyin::TrackList& tracks, const Fooyin::TrackList& updatedTracks, CommonOperation operation)
+std::vector<int> updateCommonTracks(Fooyin::TrackList& tracks, const Fooyin::TrackList& updatedTracks,
+                                    CommonOperation operation)
 {
+    std::vector<int> indexes;
+
     Fooyin::TrackList result;
     result.reserve(tracks.size());
-    bool haveCommonTracks{false};
 
-    for(const Fooyin::Track& track : tracks) {
-        auto it = std::ranges::find_if(std::as_const(updatedTracks), [&](const Fooyin::Track& updatedTrack) {
-            return track.id() == updatedTrack.id();
+    for(auto trackIt{tracks.begin()}; trackIt != tracks.end(); ++trackIt) {
+        auto updatedIt = std::ranges::find_if(updatedTracks, [&trackIt](const Fooyin::Track& updatedTrack) {
+            return trackIt->id() == updatedTrack.id();
         });
-        if(it != updatedTracks.end()) {
-            haveCommonTracks = true;
+        if(updatedIt != updatedTracks.end()) {
+            indexes.push_back(std::distance(tracks.begin(), trackIt));
             if(operation == CommonOperation::Update) {
-                result.push_back(*it);
+                result.push_back(*updatedIt);
             }
         }
         else {
-            result.push_back(track);
+            result.push_back(*trackIt);
         }
     }
 
     tracks = result;
-    return haveCommonTracks;
+    return indexes;
 }
 } // namespace
 
@@ -458,10 +460,11 @@ void PlaylistHandler::libraryRemoved(int id)
 void PlaylistHandler::tracksUpdated(const TrackList& tracks)
 {
     for(auto& playlist : p->playlists) {
-        TrackList playlistTracks = playlist->tracks();
-        if(updateCommonTracks(playlistTracks, tracks, CommonOperation::Update)) {
+        TrackList playlistTracks  = playlist->tracks();
+        const auto updatedIndexes = updateCommonTracks(playlistTracks, tracks, CommonOperation::Update);
+        if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);
-            emit playlistTracksChanged(playlist.get());
+            emit playlistTracksChanged(playlist.get(), updatedIndexes);
         }
     }
 }
@@ -469,10 +472,11 @@ void PlaylistHandler::tracksUpdated(const TrackList& tracks)
 void PlaylistHandler::tracksRemoved(const TrackList& tracks)
 {
     for(auto& playlist : p->playlists) {
-        TrackList playlistTracks = playlist->tracks();
-        if(updateCommonTracks(playlistTracks, tracks, CommonOperation::Remove)) {
+        TrackList playlistTracks  = playlist->tracks();
+        const auto updatedIndexes = updateCommonTracks(playlistTracks, tracks, CommonOperation::Remove);
+        if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);
-            emit playlistTracksChanged(playlist.get());
+            emit playlistTracksChanged(playlist.get(), updatedIndexes);
         }
     }
 }

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "database/trackdatabase.h"
+#include "tagging/tagwriter.h"
 
 #include <utils/worker.h>
 
@@ -35,14 +36,19 @@ public:
 
     void closeThread() override;
 
-    void getAllTracks();
-    void cleanupTracks();
-
 signals:
-    void gotTracks(const TrackList& result);
+    void gotTracks(const TrackList& tracks);
+    void updatedTracks(const TrackList& tracks);
+
+public slots:
+    void getAllTracks();
+    void updateTracks(const TrackList& tracks);
+    void updateTrackStats(const Track& track);
+    void cleanupTracks();
 
 private:
     Database* m_database;
     TrackDatabase m_trackDatabase;
+    TagWriter m_tagWriter;
 };
 } // namespace Fooyin
