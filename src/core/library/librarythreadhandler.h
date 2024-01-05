@@ -44,6 +44,7 @@ public:
     ScanRequest* scanTracks(const TrackList& tracks);
 
     void saveUpdatedTracks(const TrackList& tracks);
+    void saveUpdatedTrackStats(const Track& track);
     void cleanupTracks();
 
     void libraryRemoved(int id);
@@ -54,6 +55,7 @@ signals:
     void scanUpdate(const ScanResult& result);
     void scannedTracks(const TrackList& tracks);
     void tracksDeleted(const TrackList& tracks);
+    void tracksUpdated(const TrackList& tracks);
 
     void gotTracks(const TrackList& result);
 

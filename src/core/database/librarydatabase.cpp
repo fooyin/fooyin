@@ -56,16 +56,16 @@ int LibraryDatabase::insertLibrary(const QString& path, const QString& name)
         return -1;
     }
 
-    auto q = module()->insert(u"Libraries"_s, {{"Name", name}, {"Path", path}},
-                              QString{u"Cannot insert library (name: %1, path: %2)"_s}.arg(name, path));
+    auto q = insert(u"Libraries"_s, {{"Name", name}, {"Path", path}},
+                    QString{u"Cannot insert library (name: %1, path: %2)"_s}.arg(name, path));
 
     return (q.hasError()) ? -1 : q.lastInsertId().toInt();
 }
 
 bool LibraryDatabase::removeLibrary(int id)
 {
-    auto q = module()->remove(u"Libraries"_s, {{"LibraryID", QString::number(id)}},
-                              "Cannot remove library " + QString::number(id));
+    auto q
+        = remove(u"Libraries"_s, {{"LibraryID", QString::number(id)}}, "Cannot remove library " + QString::number(id));
     return !q.hasError();
 }
 
@@ -75,8 +75,8 @@ bool LibraryDatabase::renameLibrary(int id, const QString& name)
         return false;
     }
 
-    auto q = module()->update(u"Libraries"_s, {{"Name", name}}, {"LibraryID", QString::number(id)},
-                              "Cannot update library " + QString::number(id));
+    auto q = update(u"Libraries"_s, {{"Name", name}}, {"LibraryID", QString::number(id)},
+                    "Cannot update library " + QString::number(id));
     return !q.hasError();
 }
 } // namespace Fooyin

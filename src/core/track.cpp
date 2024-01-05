@@ -64,6 +64,8 @@ struct Track::Private : public QSharedData
 
     uint64_t addedTime{0};
     uint64_t modifiedTime{0};
+    uint64_t firstPlayed{0};
+    uint64_t lastPlayed{0};
 
     QString sort;
 
@@ -97,7 +99,7 @@ Track& Track::operator=(const Track& other) = default;
 QString Track::generateHash()
 {
     p->hash = Utils::generateHash(p->artists.join(","_L1), p->album, QString::number(p->discNumber),
-                                  QString::number(p->trackNumber), p->title, QString::number(p->duration));
+                                  QString::number(p->trackNumber), p->title);
     return p->hash;
 }
 
@@ -340,6 +342,16 @@ uint64_t Track::modifiedTime() const
     return p->modifiedTime;
 }
 
+uint64_t Track::firstPlayed() const
+{
+    return p->firstPlayed;
+}
+
+uint64_t Track::lastPlayed() const
+{
+    return p->lastPlayed;
+}
+
 QString Track::sort() const
 {
     return p->sort;
@@ -370,6 +382,11 @@ void Track::setType(Type type)
     p->type = type;
 }
 
+void Track::setFilePath(const QString& path)
+{
+    p->filepath = path;
+}
+
 void Track::setRelativePath(const QString& path)
 {
     p->relativePath = path;
@@ -378,16 +395,28 @@ void Track::setRelativePath(const QString& path)
 void Track::setTitle(const QString& title)
 {
     p->title = title;
+
+    if(!p->hash.isEmpty()) {
+        generateHash();
+    }
 }
 
 void Track::setArtists(const QStringList& artists)
 {
     p->artists = artists;
+
+    if(!p->hash.isEmpty()) {
+        generateHash();
+    }
 }
 
 void Track::setAlbum(const QString& title)
 {
     p->album = title;
+
+    if(!p->hash.isEmpty()) {
+        generateHash();
+    }
 }
 
 void Track::setAlbumArtist(const QString& artist)
@@ -398,6 +427,10 @@ void Track::setAlbumArtist(const QString& artist)
 void Track::setTrackNumber(int number)
 {
     p->trackNumber = number;
+
+    if(!p->hash.isEmpty()) {
+        generateHash();
+    }
 }
 
 void Track::setTrackTotal(int total)
@@ -408,6 +441,10 @@ void Track::setTrackTotal(int total)
 void Track::setDiscNumber(int number)
 {
     p->discNumber = number;
+
+    if(!p->hash.isEmpty()) {
+        generateHash();
+    }
 }
 
 void Track::setDiscTotal(int total)
@@ -450,7 +487,12 @@ void Track::setDate(const QString& date)
     p->date = date;
 
     const QStringList dateParts = date.split('-');
-    if(!dateParts.empty()) {
+    if(dateParts.empty()) {
+        if(date.length() == 4) {
+            p->year = p->date.toInt();
+        }
+    }
+    else {
         p->year = dateParts.front().toInt();
     }
 }
@@ -533,6 +575,20 @@ void Track::setAddedTime(uint64_t time)
 void Track::setModifiedTime(uint64_t time)
 {
     p->modifiedTime = time;
+}
+
+void Track::setFirstPlayed(uint64_t time)
+{
+    if(p->firstPlayed == 0) {
+        p->firstPlayed = time;
+    }
+}
+
+void Track::setLastPlayed(uint64_t time)
+{
+    if(time > p->lastPlayed) {
+        p->lastPlayed = time;
+    }
 }
 
 void Track::setSort(const QString& sort)

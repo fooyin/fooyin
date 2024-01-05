@@ -38,10 +38,48 @@ void TrackDatabaseManager::closeThread()
 
 void TrackDatabaseManager::getAllTracks()
 {
-    TrackList tracks;
+    const TrackList tracks = m_trackDatabase.getAllTracks();
 
-    if(m_trackDatabase.getAllTracks(tracks)) {
+    if(!tracks.empty()) {
         emit gotTracks(tracks);
+    }
+}
+
+void TrackDatabaseManager::updateTracks(const TrackList& tracks)
+{
+    TrackList tracksUpdated;
+
+    for(const Track& track : tracks) {
+        if(m_tagWriter.writeMetaData(track) && m_trackDatabase.updateTrack(track)) {
+            Track updatedTrack{track};
+
+            if(m_trackDatabase.updateTrackStats(updatedTrack)) {
+                const TrackList hashTracks = m_trackDatabase.tracksByHash(updatedTrack.hash());
+                std::ranges::copy(hashTracks, std::back_inserter(tracksUpdated));
+            }
+            else {
+                tracksUpdated.push_back(updatedTrack);
+            }
+        }
+    }
+
+    if(!tracksUpdated.empty()) {
+        emit updatedTracks(tracksUpdated);
+    }
+}
+
+void TrackDatabaseManager::updateTrackStats(const Track& track)
+{
+    TrackList tracksUpdated;
+
+    Track updatedTrack{track};
+    if(m_trackDatabase.updateTrackStats(updatedTrack)) {
+        const TrackList hashTracks = m_trackDatabase.tracksByHash(updatedTrack.hash());
+        std::ranges::copy(hashTracks, std::back_inserter(tracksUpdated));
+    }
+
+    if(!tracksUpdated.empty()) {
+        emit updatedTracks(tracksUpdated);
     }
 }
 

@@ -51,8 +51,6 @@ public:
 
 protected:
     void runPragma(const QString& pragma, const QString& value) const;
-    DatabaseModule* module();
-    [[nodiscard]] const DatabaseModule* module() const;
 
 private:
     QString m_connectionName;

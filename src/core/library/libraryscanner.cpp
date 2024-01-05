@@ -23,7 +23,6 @@
 #include "database/trackdatabase.h"
 #include "library/libraryinfo.h"
 #include "tagging/tagreader.h"
-#include "tagging/tagwriter.h"
 
 #include <core/track.h>
 #include <utils/fileutils.h>
@@ -42,7 +41,6 @@ struct LibraryScanner::Private
     TrackDatabase trackDatabase;
 
     TagReader tagReader;
-    TagWriter tagWriter;
 
     int tracksProcessed{0};
     double totalTracks{0};
@@ -266,15 +264,6 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
     emit scannedTracks(tracksScanned);
 
     handleFinished();
-}
-
-void LibraryScanner::updateTracks(const TrackList& tracks)
-{
-    for(const Track& track : tracks) {
-        if(p->tagWriter.writeMetaData(track)) {
-            p->trackDatabase.updateTrack(track);
-        }
-    }
 }
 } // namespace Fooyin
 

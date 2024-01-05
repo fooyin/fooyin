@@ -54,7 +54,6 @@ signals:
 public slots:
     void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
     void scanTracks(const TrackList& libraryTracks, const TrackList& tracks);
-    void updateTracks(const TrackList& tracks);
 
 private:
     struct Private;

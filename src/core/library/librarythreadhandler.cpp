@@ -172,6 +172,8 @@ LibraryThreadHandler::LibraryThreadHandler(Database* database, MusicLibrary* lib
 {
     QObject::connect(&p->trackDatabaseManager, &TrackDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);
+    QObject::connect(&p->trackDatabaseManager, &TrackDatabaseManager::updatedTracks, this,
+                     &LibraryThreadHandler::tracksUpdated);
     QObject::connect(&p->scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
     QObject::connect(&p->scanner, &LibraryScanner::progressChanged, this,
                      [this](int percent) { emit progressChanged(p->currentRequestId, percent); });
@@ -221,7 +223,12 @@ void LibraryThreadHandler::libraryRemoved(int id)
 
 void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(&p->scanner, "updateTracks", Q_ARG(const TrackList&, tracks));
+    QMetaObject::invokeMethod(&p->trackDatabaseManager, "updateTracks", Q_ARG(const TrackList&, tracks));
+}
+
+void LibraryThreadHandler::saveUpdatedTrackStats(const Track& track)
+{
+    QMetaObject::invokeMethod(&p->trackDatabaseManager, "updateTrackStats", Q_ARG(const Track&, track));
 }
 
 void LibraryThreadHandler::cleanupTracks()

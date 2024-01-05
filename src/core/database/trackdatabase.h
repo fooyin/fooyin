@@ -28,22 +28,25 @@ class TrackDatabase : public DatabaseModule
 {
 public:
     explicit TrackDatabase(const QString& connectionName);
+    ~TrackDatabase() override;
 
     bool storeTracks(TrackList& tracksToStore);
 
-    bool getAllTracks(TrackList& result);
-
-    [[nodiscard]] bool dbFetchTracks(DatabaseQuery& q, TrackList& result) const;
-    [[nodiscard]] int dbTrackCount() const;
+    bool reloadTrack(Track& track) const;
+    bool reloadTracks(TrackList& tracks) const;
+    TrackList getAllTracks() const;
+    TrackList tracksByHash(const QString& hash) const;
 
     bool updateTrack(const Track& track);
+    bool updateTrackStats(Track& track);
+
     bool deleteTrack(int id);
     bool deleteTracks(const TrackList& tracks);
-    bool cleanupTracks();
+
+    void cleanupTracks();
 
 private:
-    int insertTrack(const Track& track);
-
-    QString m_connectionName;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

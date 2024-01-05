@@ -117,6 +117,8 @@ public:
 
     [[nodiscard]] uint64_t addedTime() const;
     [[nodiscard]] uint64_t modifiedTime() const;
+    [[nodiscard]] uint64_t firstPlayed() const;
+    [[nodiscard]] uint64_t lastPlayed() const;
 
     [[nodiscard]] QString sort() const;
 
@@ -125,6 +127,7 @@ public:
     void setId(int id);
     void setHash(const QString& hash);
     void setType(Type type);
+    void setFilePath(const QString& path);
     void setRelativePath(const QString& path);
     void setTitle(const QString& title);
     void setArtists(const QStringList& artists);
@@ -158,6 +161,8 @@ public:
 
     void setAddedTime(uint64_t time);
     void setModifiedTime(uint64_t time);
+    void setFirstPlayed(uint64_t time);
+    void setLastPlayed(uint64_t time);
 
     void setSort(const QString& sort);
 

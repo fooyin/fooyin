@@ -29,7 +29,6 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QDir>
 #include <QTimer>
 
 #include <QCoroCore>
@@ -73,65 +72,63 @@ struct UnifiedMusicLibrary::Private
         , threadHandler{database, self}
     { }
 
-    QCoro::Task<void> loadTracks(TrackList trackToLoad)
+    void loadTracks(const TrackList& trackToLoad)
     {
-        tracks = co_await addTracks(trackToLoad);
-        tracks = co_await resortTracks(tracks);
+        addTracks(trackToLoad);
         QMetaObject::invokeMethod(self, "tracksLoaded", Q_ARG(const TrackList&, trackToLoad));
     }
 
-    QCoro::Task<TrackList> addTracks(TrackList newTracks)
+    QCoro::Task<void> addTracks(TrackList newTracks)
     {
-        TrackList sortedNewTracks
+        const TrackList unsortedTracks
             = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), newTracks);
 
+        const TrackList sortedTracks = co_await resortTracks(unsortedTracks);
 
-        sortedNewTracks = co_await resortTracks(sortedNewTracks);
-        co_return sortedNewTracks;
+        std::ranges::copy(sortedTracks, std::back_inserter(tracks));
+        tracks = co_await resortTracks(tracks);
+
+        QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, sortedTracks));
     }
 
-    QCoro::Task<TrackList> updateTracks(TrackList tracksToUpdate)
+    QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
     {
         TrackList updatedTracks
             = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
 
-        std::ranges::for_each(updatedTracks, [this](Track track) {
+        std::ranges::for_each(updatedTracks, [this](const Track& track) {
             std::ranges::replace_if(
-                tracks, [track](Track libraryTrack) { return libraryTrack.id() == track.id(); }, track);
+                tracks, [track](const Track& libraryTrack) { return libraryTrack.id() == track.id(); }, track);
         });
 
+        tracks        = co_await resortTracks(tracks);
         updatedTracks = co_await resortTracks(updatedTracks);
-        co_return updatedTracks;
+
+        QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, updatedTracks));
     }
 
-    QCoro::Task<void> handleScanResult(ScanResult result)
+    void handleScanResult(const ScanResult& result)
     {
         if(!result.addedTracks.empty()) {
-            const TrackList addedTracks = co_await addTracks(result.addedTracks);
-            QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, addedTracks));
-            std::ranges::copy(addedTracks, std::back_inserter(tracks));
+            addTracks(result.addedTracks);
         }
-
         if(!result.updatedTracks.empty()) {
-            const TrackList updatedTracks = co_await updateTracks(result.updatedTracks);
-            QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, updatedTracks));
+            updateTracks(result.updatedTracks);
         }
-
-        tracks = co_await resortTracks(tracks);
     }
 
     QCoro::Task<void> scannedTracks(TrackList tracksScanned)
     {
-        const TrackList addedTracks = co_await addTracks(tracksScanned);
-        std::ranges::copy(addedTracks, std::back_inserter(tracks));
-        tracks = co_await resortTracks(tracks);
-        QMetaObject::invokeMethod(self, "tracksScanned", Q_ARG(const TrackList&, addedTracks));
+        addTracks(tracksScanned);
+        tracks        = co_await resortTracks(tracks);
+        tracksScanned = co_await resortTracks(tracksScanned);
+        QMetaObject::invokeMethod(self, "tracksScanned", Q_ARG(const TrackList&, tracksScanned));
     }
 
     void removeTracks(const TrackList& tracksToRemove)
     {
         std::erase_if(tracks, [&tracksToRemove](const Track& libraryTrack) {
-            return std::ranges::any_of(std::as_const(tracksToRemove),
+            return std::ranges::any_of(tracksToRemove,
                                        [libraryTrack](const Track& track) { return libraryTrack.id() == track.id(); });
         });
 
@@ -186,6 +183,8 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
             [this](const TrackList& tracks) { p->scannedTracks(tracks); });
     connect(&p->threadHandler, &LibraryThreadHandler::tracksDeleted, this,
             [this](const TrackList& tracks) { p->removeTracks(tracks); });
+    connect(&p->threadHandler, &LibraryThreadHandler::tracksUpdated, this,
+            [this](const TrackList& tracks) { p->updateTracks(tracks); });
 
     connect(&p->threadHandler, &LibraryThreadHandler::gotTracks, this,
             [this](const TrackList& tracks) { p->loadTracks(tracks); });
@@ -256,20 +255,25 @@ TrackList UnifiedMusicLibrary::tracksForIds(const TrackIds& ids) const
 
 void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
 {
-    TrackList result{p->tracks};
-
-    for(const Track& track : tracks) {
-        auto it = std::ranges::find_if(
-            result, [track](const Track& originalTrack) { return track.id() == originalTrack.id(); });
-        if(it != tracks.end()) {
-            *it = track;
-        }
-    }
-    p->tracks = result;
-
     p->threadHandler.saveUpdatedTracks(tracks);
+}
 
-    emit tracksUpdated(tracks);
+void UnifiedMusicLibrary::updateTrackStats(const Track& track)
+{
+    p->threadHandler.saveUpdatedTrackStats(track);
+}
+
+void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
+{
+    Track updatedTrack{track};
+
+    const auto dt = QDateTime::currentMSecsSinceEpoch();
+
+    updatedTrack.setFirstPlayed(dt);
+    updatedTrack.setLastPlayed(dt);
+    updatedTrack.setPlayCount(track.playCount() + 1);
+
+    updateTrackStats(updatedTrack);
 }
 
 void UnifiedMusicLibrary::cleanupTracks()
