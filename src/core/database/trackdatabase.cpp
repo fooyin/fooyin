@@ -240,7 +240,7 @@ struct TrackDatabase::Private
                     changed = true;
                     bindings.emplace(u"AddedDate"_s, QString::number(track.addedTime()));
                 }
-                else {
+                else if(added > 0) {
                     track.setAddedTime(added);
                 }
             }
@@ -249,7 +249,7 @@ struct TrackDatabase::Private
                     changed = true;
                     bindings.emplace(u"FirstPlayed"_s, QString::number(track.firstPlayed()));
                 }
-                else {
+                else if(firstPlayed > 0) {
                     track.setFirstPlayed(firstPlayed);
                 }
             }
@@ -258,7 +258,7 @@ struct TrackDatabase::Private
                     changed = true;
                     bindings.emplace(u"LastPlayed"_s, QString::number(track.lastPlayed()));
                 }
-                else {
+                else if(lastPlayed > 0) {
                     track.setLastPlayed(lastPlayed);
                 }
             }
