@@ -53,8 +53,11 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
     opt.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter);
 
+    const auto textPalette = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
+
     opt.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, opt.palette, true,
-                                      painter->fontMetrics().elidedText(title, Qt::ElideRight, titleRect.width()));
+                                      painter->fontMetrics().elidedText(title, Qt::ElideRight, titleRect.width()),
+                                      textPalette);
     painter->restore();
 }
 } // namespace Fooyin::Filters
