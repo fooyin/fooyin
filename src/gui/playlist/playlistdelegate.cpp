@@ -257,9 +257,12 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
         const QRect cellRect = {rect.x() + margin, rect.top(), rect.width() - (2 * margin), rect.height()};
 
+        const auto colour
+            = option.state & QStyle::State_Selected || isPlaying ? QPalette::HighlightedText : QPalette::NoRole;
+
         option.widget->style()->drawItemText(
             painter, cellRect, Qt::AlignVCenter | alignment, option.palette, true,
-            painter->fontMetrics().elidedText(contents, Qt::ElideRight, cellRect.width()));
+            painter->fontMetrics().elidedText(contents, Qt::ElideRight, cellRect.width()), colour);
     }
     else {
         const int indent     = index.data(PlaylistItem::Role::Indentation).toInt() + (isPlaying ? 30 : 0);
