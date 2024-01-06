@@ -17,14 +17,14 @@
  *
  */
 
-#include <gui/guisettings.h>
-
 #include "internalguisettings.h"
+
 #include "librarytree/librarytreeappearance.h"
 #include "librarytree/librarytreegroupregistry.h"
 #include "playlist/playlistcolumnregistry.h"
 #include "playlist/presetregistry.h"
 
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QIcon>

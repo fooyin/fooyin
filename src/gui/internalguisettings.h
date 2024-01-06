@@ -21,7 +21,13 @@
 
 #include <utils/settings/settingsentry.h>
 
-namespace Fooyin::Settings::Gui::Internal {
+namespace Fooyin {
+class SettingsManager;
+class LibraryTreeGroupRegistry;
+class PresetRegistry;
+class PlaylistColumnRegistry;
+
+namespace Settings::Gui::Internal {
 Q_NAMESPACE
 
 enum class IconThemeOption
@@ -60,4 +66,24 @@ enum GuiInternalSettings : uint32_t
     SystemIconTheme        = 24 | Type::String,
 };
 Q_ENUM_NS(GuiInternalSettings)
-} // namespace Fooyin::Settings::Gui::Internal
+} // namespace Settings::Gui::Internal
+
+class GuiSettings
+{
+public:
+    explicit GuiSettings(SettingsManager* settingsManager);
+    ~GuiSettings();
+
+    void shutdown();
+
+    [[nodiscard]] LibraryTreeGroupRegistry* libraryTreeGroupRegistry() const;
+    [[nodiscard]] PresetRegistry* playlistPresetRegistry() const;
+    [[nodiscard]] PlaylistColumnRegistry* playlistColumnRegistry() const;
+
+private:
+    SettingsManager* m_settings;
+    std::unique_ptr<LibraryTreeGroupRegistry> m_libraryTreeGroupRegistry;
+    std::unique_ptr<PresetRegistry> m_playlistPresetRegistry;
+    std::unique_ptr<PlaylistColumnRegistry> m_playlistColumnRegistry;
+};
+} // namespace Fooyin

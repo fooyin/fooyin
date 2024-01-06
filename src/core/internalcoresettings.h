@@ -19,24 +19,34 @@
 
 #pragma once
 
-#include "fygui_export.h"
-
 #include <utils/settings/settingsentry.h>
 
-#include <QObject>
+namespace Fooyin {
+class SettingsManager;
+class SortingRegistry;
 
-namespace Fooyin::Settings::Gui {
-Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
-enum GuiSettings : uint32_t
+namespace Settings::Core::Internal {
+Q_NAMESPACE
+
+enum CoreInternalSettings : uint32_t
 {
-    LayoutEditing         = 1 | Type::Bool,
-    StartupBehaviour      = 2 | Type::Int,
-    WaitForTracks         = 3 | Type::Bool,
-    IconTheme             = 4 | Type::Int,
-    LastPlaylistId        = 5 | Type::Int,
-    CursorFollowsPlayback = 6 | Type::Bool,
-    PlaybackFollowsCursor = 7 | Type::Bool,
-    RememberPlaylistState = 8 | Type::Bool,
+
 };
-Q_ENUM_NS(GuiSettings)
-} // namespace Fooyin::Settings::Gui
+Q_ENUM_NS(CoreInternalSettings)
+} // namespace Settings::Core::Internal
+
+class CoreSettings
+{
+public:
+    explicit CoreSettings(SettingsManager* settingsManager);
+    ~CoreSettings();
+
+    void shutdown();
+
+    [[nodiscard]] SortingRegistry* sortingRegistry() const;
+
+private:
+    SettingsManager* m_settings;
+    std::unique_ptr<SortingRegistry> m_sortingRegistry;
+};
+} // namespace Fooyin

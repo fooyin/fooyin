@@ -22,6 +22,7 @@
 #include "corepaths.h"
 #include "database/database.h"
 #include "engine/output/alsaoutput.h"
+#include "internalcoresettings.h"
 #include "library/librarymanager.h"
 #include "library/unifiedmusiclibrary.h"
 #include "player/playercontroller.h"
@@ -59,7 +60,7 @@ struct Application::Private
         , library{new UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
         , playlistHandler{new PlaylistHandler(&database, playerManager, settingsManager, parent)}
         , corePluginContext{&pluginManager, &engine,         playerManager,   libraryManager,
-                            library,        playlistHandler, settingsManager, &coreSettings}
+                            library,        playlistHandler, settingsManager, coreSettings.sortingRegistry()}
     {
         registerOutputs();
         loadPlugins();

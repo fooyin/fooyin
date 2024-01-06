@@ -38,8 +38,7 @@ set(SOURCES
     mainwindow.cpp
     editablelayout.cpp
     guipaths.cpp
-    guisettings.cpp
-    internalguisettings.h
+    internalguisettings.cpp
     layoutprovider.cpp
     trackselectioncontroller.cpp
     widgetfilter.cpp

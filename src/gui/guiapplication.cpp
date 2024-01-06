@@ -58,6 +58,7 @@
 #include "widgets/tabstackwidget.h"
 
 #include <core/coresettings.h>
+#include <core/internalcoresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/plugins/coreplugincontext.h>
@@ -90,7 +91,7 @@ struct GuiApplication::Private
     PlayerManager* playerManager;
     LibraryManager* libraryManager;
     MusicLibrary* library;
-    CoreSettings* coreSettings;
+    SortingRegistry* sortingRegistry;
     PlaylistManager* playlistHandler;
 
     WidgetProvider widgetProvider;
@@ -138,7 +139,7 @@ struct GuiApplication::Private
         , playerManager{core.playerManager}
         , libraryManager{core.libraryManager}
         , library{core.library}
-        , coreSettings{core.coreSettings}
+        , sortingRegistry{core.sortingRegistry}
         , playlistHandler{core.playlistHandler}
         , widgetProvider{actionManager}
         , guiSettings{settingsManager}
@@ -146,9 +147,9 @@ struct GuiApplication::Private
                                                           settingsManager)}
         , mainWindow{std::make_unique<MainWindow>(actionManager, settingsManager, editableLayout.get())}
         , mainContext{new WidgetContext(mainWindow.get(), Context{"Fooyin.MainWindow"}, self)}
-        , playlistController{std::make_unique<PlaylistController>(
-              playlistHandler, playerManager, guiSettings.playlistPresetRegistry(), coreSettings->sortingRegistry(),
-              &selectionController, settingsManager)}
+        , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerManager,
+                                                                  guiSettings.playlistPresetRegistry(), sortingRegistry,
+                                                                  &selectionController, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
         , searchController{new SearchController(editableLayout.get(), self)}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
@@ -161,7 +162,7 @@ struct GuiApplication::Private
         , generalPage{settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , libraryGeneralPage{actionManager, libraryManager, settingsManager}
-        , librarySortingPage{actionManager, coreSettings->sortingRegistry(), settingsManager}
+        , librarySortingPage{actionManager, sortingRegistry, settingsManager}
         , shortcutsPage{actionManager, settingsManager}
         , playlistGeneralPage{settingsManager}
         , playlistGuiPage{settingsManager}
@@ -172,9 +173,9 @@ struct GuiApplication::Private
         , libraryTreeGuiPage{settingsManager}
         , statusWidgetPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
-        , guiPluginContext{actionManager,        &layoutProvider,  &selectionController,
-                           searchController,     propertiesDialog, widgetProvider.widgetFactory(),
-                           editableLayout.get(), &guiSettings}
+        , guiPluginContext{actionManager,       &layoutProvider,  &selectionController,
+                           searchController,    propertiesDialog, widgetProvider.widgetFactory(),
+                           editableLayout.get()}
     {
         restoreIconTheme();
         registerLayouts();

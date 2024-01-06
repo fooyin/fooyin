@@ -64,7 +64,7 @@ set(SOURCES
 set(PRIVATE_SOURCES
     application.cpp
     corepaths.cpp
-    coresettings.cpp
+    internalcoresettings.cpp
     database/database.cpp
     database/librarydatabase.cpp
     database/trackdatabase.cpp

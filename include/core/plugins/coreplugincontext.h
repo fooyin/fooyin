@@ -29,7 +29,7 @@ class PlayerManager;
 class PlaylistManager;
 class LibraryManager;
 class MusicLibrary;
-class CoreSettings;
+class SortingRegistry;
 
 /*!
  * Passed to core plugins in CorePlugin::initialise.
@@ -38,7 +38,7 @@ struct FYCORE_EXPORT CorePluginContext
 {
     CorePluginContext(PluginManager* pluginManager, EngineHandler* engineHandler, PlayerManager* playerManager,
                       LibraryManager* libraryManager, MusicLibrary* library, PlaylistManager* playlistHandler,
-                      SettingsManager* settingsManager, CoreSettings* coreSettings)
+                      SettingsManager* settingsManager, SortingRegistry* sortingRegistry)
         : pluginManager{pluginManager}
         , playerManager{playerManager}
         , libraryManager{libraryManager}
@@ -46,7 +46,7 @@ struct FYCORE_EXPORT CorePluginContext
         , playlistHandler{playlistHandler}
         , settingsManager{settingsManager}
         , engineHandler{engineHandler}
-        , coreSettings{coreSettings}
+        , sortingRegistry{sortingRegistry}
     { }
 
     PluginManager* pluginManager;
@@ -56,6 +56,6 @@ struct FYCORE_EXPORT CorePluginContext
     PlaylistManager* playlistHandler;
     SettingsManager* settingsManager;
     EngineHandler* engineHandler;
-    CoreSettings* coreSettings;
+    SortingRegistry* sortingRegistry;
 };
 } // namespace Fooyin

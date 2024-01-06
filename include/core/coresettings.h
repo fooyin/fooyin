@@ -25,11 +25,7 @@
 
 #include <QObject>
 
-namespace Fooyin {
-class SettingsManager;
-class SortingRegistry;
-
-namespace Settings::Core {
+namespace Fooyin::Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 enum CoreSettings : uint32_t
 {
@@ -44,20 +40,4 @@ enum CoreSettings : uint32_t
     RewindPreviousTrack = 9 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
-} // namespace Settings::Core
-
-class FYCORE_EXPORT CoreSettings
-{
-public:
-    explicit CoreSettings(SettingsManager* settingsManager);
-    ~CoreSettings();
-
-    void shutdown();
-
-    [[nodiscard]] SortingRegistry* sortingRegistry() const;
-
-private:
-    SettingsManager* m_settings;
-    std::unique_ptr<SortingRegistry> m_sortingRegistry;
-};
-} // namespace Fooyin
+} // namespace Fooyin::Settings::Core

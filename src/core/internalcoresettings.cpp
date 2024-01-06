@@ -17,12 +17,13 @@
  *
  */
 
-#include <core/coresettings.h>
+#include "internalcoresettings.h"
 
 #include "corepaths.h"
 #include "library/sortingregistry.h"
 #include "version.h"
 
+#include <core/coresettings.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
