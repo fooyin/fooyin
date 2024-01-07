@@ -291,8 +291,8 @@ public:
      * @param func the 'slot' for the signal-slot connection.
      * @note this is for string key-based settings.
      */
-    template <typename Func>
-    void subscribe(const QString& key, const QObject* obj, Func&& func)
+    template <typename Obj, typename Func>
+    void subscribe(const QString& key, const Obj* obj, Func&& func)
     {
         if(m_settings.contains(key)) {
             QObject::connect(m_settings.at(key), &SettingsEntry::settingChangedVariant, obj, func);
@@ -306,8 +306,8 @@ public:
      * @param func the 'slot' for the signal-slot connection.
      * @note this is for enum key-based settings.
      */
-    template <auto key, typename Func>
-    void constexpr subscribe(const QObject* obj, Func&& func)
+    template <auto key, typename Obj, typename Func>
+    void constexpr subscribe(const Obj* obj, Func&& func)
     {
         connectTypeSignals<key>(obj, func);
     }
@@ -318,7 +318,8 @@ public:
      * @param obj the object to disconnect from.
      * @note this is for string key-based settings.
      */
-    void unsubscribe(const QString& key, const QObject* obj)
+    template<typename Obj>
+    void unsubscribe(const QString& key, const Obj* obj)
     {
         if(m_settings.contains(key)) {
             QObject::disconnect(m_settings.at(key), nullptr, obj, nullptr);
@@ -331,8 +332,8 @@ public:
      * @param obj the object to disconnect from.
      * @note this is for enum key-based settings.
      */
-    template <auto key>
-    void constexpr unsubscribe(const QObject* obj)
+    template <auto key, typename Obj>
+    void constexpr unsubscribe(const Obj* obj)
     {
         const auto mapKey = getMapKey(key);
 
@@ -379,8 +380,8 @@ private:
         return QString::fromUtf8(mapKey.toUtf8());
     }
 
-    template <auto key, typename Func>
-    void constexpr connectTypeSignals(const QObject* obj, Func func)
+    template <auto key, typename Obj, typename Func>
+    void constexpr connectTypeSignals(const Obj* obj, Func&& func)
     {
         const auto mapKey = getMapKey(key);
         const auto type   = findType<key>();
