@@ -67,6 +67,27 @@ template <auto key, typename Value>
 concept ValidValueType = IsVariant<key, Value> || IsBool<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
                       || IsString<key, Value> || IsByteArray<key, Value>;
 
+/*!
+ * Manages all settings in the application.
+ * Settings can be used in one of three ways:
+ *
+ * - Unregistered: Use fileSet, fileValue to read/write to the settings file directly.
+ * - Registered (string key): Use createSetting to register, and value/set with the same key.
+ * - Registered (enum value key): Use createSetting<key> to register, and value<key>/set<key> with the same key.
+ *
+ * Settings which are registered can be 'subscribed' to using @fn subscribe, after which the passed in function
+ * will be called when the setting value changes. The changed value will be passed to the function as a QVariant
+ * if the setting was registered using a string key, or it will be cast to the associated type in the enum value
+ * (if set).
+ *
+ * In order to create a setting using an enum value, the enum should use uint32_t as it's underlying type, and
+ * Q_ENUM (or Q_ENUM_NS) should be used (so the enum name can be found). Values can be associated with a type to support
+ * compile-time checking of values, and for subscribers to receive the value cast to the correct type.
+ *
+ * @see CoreSettings
+ * @see Settings::Type
+ *
+ */
 class FYUTILS_EXPORT SettingsManager : public QObject
 {
     Q_OBJECT
@@ -76,21 +97,70 @@ public:
 
     [[nodiscard]] SettingsDialogController* settingsDialog() const;
 
+    // Writes all settings to file, overwriting any existing values.
     void storeSettings();
 
+    /*!
+     * Returns the current value of the setting at @p key if it exists, or an empty variant if not.
+     * @note the setting must have been created using @fn createSetting(QString,QVariant).
+     */
     QVariant value(const QString& key) const;
+    /*!
+     * Sets the value of the setting at @p key.
+     * @returns whether the setting was successfully changed.
+     * @note the setting must have been created using @fn createSetting(QString,QVariant).
+     */
     bool set(const QString& key, const QVariant& value);
+    /*!
+     * Resets the value of the setting at @p key to default.
+     * @returns whether the setting was successfully reset.
+     * @note the setting must have been created using @fn createSetting(QString,QVariant).
+     */
     bool reset(const QString& key);
+    /*!
+     * Returns true if a setting at @p key exists.
+     * @note the setting must have been created using @fn createSetting(QString,QVariant).
+     */
     bool contains(const QString& key) const;
 
+    /*!
+     * Returns the value of the setting at @p key from file if it exists, or an empty variant if not.
+     * @note if using with a registered setting, the returned value may be different from the actual current value.
+     */
     QVariant fileValue(const QString& key) const;
+    /*!
+     * Sets the value of the setting at @p key in the settings file.
+     * @note this method is recommended to be used only for unregistered settings, as the value in the settings file
+     * will be overwritten in @fn storeSettings.
+     */
     bool fileSet(const QString& key, const QVariant& value);
+    /*!
+     * Returns true if a setting at @p key exists in the settings file.
+     */
     bool fileContains(const QString& key) const;
+    /*!
+     * Removes the setting at @p key from the settings file.
+     * @note this method is recommended to be used only for unregistered settings, as the value may be re-added in
+     * @fn storeSettings.
+     */
     void fileRemove(const QString& key);
 
+    /*!
+     * Creates a setting at @p key, with the default value @p value.
+     */
     void createSetting(const QString& key, const QVariant& value);
+    /*!
+     * Creates a temporary setting at @p key, with the default value @p value.
+     * @note temporary settings are not saved to the settings file.
+     */
     void createTempSetting(const QString& key, const QVariant& value);
 
+    /*!
+     * Creates a setting with the default value @p value.
+     * @tparam key an enum value representing a setting key.
+     * @tparam Value the default value of the setting.
+     * @note the underlying type of the enum should be uint32_t, and Q_ENUM (or Q_ENUM_NS) should be used.
+     */
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
     void constexpr createSetting(Value value, const QString& settingKey)
@@ -98,6 +168,13 @@ public:
         createNewSetting<key>(value, settingKey, false);
     }
 
+    /*!
+     * Creates a setting with the default value @p value.
+     * @tparam key an enum value representing a setting key.
+     * @tparam Value the default value of the setting.
+     * @note the underlying type of the enum should be uint32_t, and Q_ENUM (or Q_ENUM_NS) should be used.
+     * @note temporary settings are not saved to the settings file.
+     */
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
     void constexpr createTempSetting(const Value& value)
@@ -110,6 +187,11 @@ public:
         createNewSetting<key>(value, settingKey, true);
     }
 
+    /*!
+     * Returns the value of the setting at the given key.
+     * @tparam key an enum value representing a setting key.
+     * @returns the current value of the setting (cast to the setting type or a variant).
+     */
     template <auto key>
     auto value()
     {
@@ -142,6 +224,13 @@ public:
         }
     }
 
+    /*!
+     * Sets the value of the setting at the given key.
+     * @tparam key an enum value representing a setting key.
+     * @tparam Value the value to set.
+     * @returns true if the setting was successfully changed.
+     * @note if the setting is changed, subscribers to this setting will be notified.
+     */
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
     bool set(Value value)
@@ -168,6 +257,12 @@ public:
         return success;
     }
 
+    /*!
+     * Resets the value of the setting at the given key.
+     * @tparam key an enum value representing a setting key.
+     * @returns true if the setting was successfully changed.
+     * @note if the setting is changed, subscribers to this setting will be notified.
+     */
     template <auto key>
     bool reset()
     {
@@ -189,23 +284,55 @@ public:
         return success;
     }
 
-    template <typename T, typename Func>
-    void subscribe(const QString& key, T receiver, Func&& func)
+    /*!
+     * Subscribes to a setting. A Qt signal-slot connection is made using the @p obj and @p func.
+     * The @p func is then called whenever the setting is changed.
+     * @param obj a QObject-derived class (controls connection lifetime).
+     * @param func the 'slot' for the signal-slot connection.
+     * @note this is for string key-based settings.
+     */
+    template <typename Func>
+    void subscribe(const QString& key, QObject* obj, Func&& func)
     {
         if(m_settings.contains(key)) {
-            SettingsEntry* setting = m_settings.at(key);
-            QObject::connect(setting, &SettingsEntry::settingChangedVariant, receiver, func);
+            QObject::connect(m_settings.at(key), &SettingsEntry::settingChangedVariant, obj, func);
         }
     }
 
-    template <auto key, typename T, typename Func>
-    void constexpr subscribe(T receiver, Func&& func)
+    /*!
+     * Subscribes to a setting. A Qt signal-slot connection is made using the @p obj and @p func.
+     * The @p func is then called whenever the setting is changed.
+     * @param obj a QObject-derived class (controls connection lifetime).
+     * @param func the 'slot' for the signal-slot connection.
+     * @note this is for enum key-based settings.
+     */
+    template <auto key, typename Func>
+    void constexpr subscribe(QObject* obj, Func&& func)
     {
-        connectTypeSignals<key>(receiver, func);
+        connectTypeSignals<key>(obj, func);
     }
 
-    template <typename Enum>
-    void constexpr unsubscribe(Enum key, QObject* obj)
+    /*!
+     * Unsubscribes to a setting.
+     * @param key the settings key used in @fn createSetting.
+     * @param obj the object to disconnect from.
+     * @note this is for string key-based settings.
+     */
+    void unsubscribe(const QString& key, QObject* obj)
+    {
+        if(m_settings.contains(key)) {
+            QObject::disconnect(m_settings.at(key), nullptr, obj, nullptr);
+        }
+    }
+
+    /*!
+     * Unsubscribes to a setting.
+     * @tparam key the settings key used in @fn createSetting
+     * @param obj the object to disconnect from.
+     * @note this is for enum key-based settings.
+     */
+    template <auto key>
+    void constexpr unsubscribe(QObject* obj)
     {
         const auto mapKey = getMapKey(key);
 
@@ -252,33 +379,33 @@ private:
         return QString::fromUtf8(mapKey.toUtf8());
     }
 
-    template <auto key, typename T, typename Func>
-    void constexpr connectTypeSignals(T receiver, Func func)
+    template <auto key, typename Func>
+    void constexpr connectTypeSignals(QObject* obj, Func func)
     {
         const auto mapKey = getMapKey(key);
         const auto type   = findType<key>();
 
         if(m_settings.contains(mapKey)) {
             if constexpr(type == Settings::Variant) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, receiver, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
             }
             else if constexpr(type == Settings::Bool) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedBool, receiver, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
             }
             else if constexpr(type == Settings::Double) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, receiver, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, obj, func);
             }
             else if constexpr(type == Settings::Int) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedInt, receiver, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedInt, obj, func);
             }
             else if constexpr(type == Settings::String) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedString, receiver, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj, func);
             }
             else if constexpr(type == Settings::ByteArray) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, receiver, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, obj, func);
             }
             else {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, receiver, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
             }
         }
     }
