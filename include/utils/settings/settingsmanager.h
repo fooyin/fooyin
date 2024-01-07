@@ -292,7 +292,7 @@ public:
      * @note this is for string key-based settings.
      */
     template <typename Func>
-    void subscribe(const QString& key, QObject* obj, Func&& func)
+    void subscribe(const QString& key, const QObject* obj, Func&& func)
     {
         if(m_settings.contains(key)) {
             QObject::connect(m_settings.at(key), &SettingsEntry::settingChangedVariant, obj, func);
@@ -307,7 +307,7 @@ public:
      * @note this is for enum key-based settings.
      */
     template <auto key, typename Func>
-    void constexpr subscribe(QObject* obj, Func&& func)
+    void constexpr subscribe(const QObject* obj, Func&& func)
     {
         connectTypeSignals<key>(obj, func);
     }
@@ -318,7 +318,7 @@ public:
      * @param obj the object to disconnect from.
      * @note this is for string key-based settings.
      */
-    void unsubscribe(const QString& key, QObject* obj)
+    void unsubscribe(const QString& key, const QObject* obj)
     {
         if(m_settings.contains(key)) {
             QObject::disconnect(m_settings.at(key), nullptr, obj, nullptr);
@@ -332,7 +332,7 @@ public:
      * @note this is for enum key-based settings.
      */
     template <auto key>
-    void constexpr unsubscribe(QObject* obj)
+    void constexpr unsubscribe(const QObject* obj)
     {
         const auto mapKey = getMapKey(key);
 
@@ -380,7 +380,7 @@ private:
     }
 
     template <auto key, typename Func>
-    void constexpr connectTypeSignals(QObject* obj, Func func)
+    void constexpr connectTypeSignals(const QObject* obj, Func func)
     {
         const auto mapKey = getMapKey(key);
         const auto type   = findType<key>();
