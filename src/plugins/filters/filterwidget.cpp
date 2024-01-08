@@ -126,19 +126,13 @@ struct FilterWidget::Private
     {
         tracks.clear();
 
-        const QModelIndexList indexes = view->selectionModel()->selectedIndexes();
-        QModelIndexList selectedRows;
-        for(const QModelIndex& index : indexes) {
-            if(index.column() == 0) {
-                selectedRows.push_back(index);
-            }
-        }
+        const QModelIndexList selected = view->selectionModel()->selectedRows();
 
-        if(selectedRows.empty()) {
+        if(selected.empty()) {
             co_return;
         }
 
-        for(const auto& index : selectedRows) {
+        for(const auto& index : selected) {
             if(!index.parent().isValid()) {
                 tracks = fetchAllTracks(view);
                 break;
