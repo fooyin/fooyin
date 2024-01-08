@@ -89,6 +89,8 @@ struct StatusWidget::Private
 
     void stateChanged(const PlayState state)
     {
+        clearTimer.stop();
+
         switch(state) {
             case(PlayState::Stopped):
                 statusText->setText(tr("Waiting for track..."));
