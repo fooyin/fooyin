@@ -378,6 +378,8 @@ void FilterModel::removeTracks(const TrackList& tracks)
             p->nodes.erase(item->key());
         }
     }
+
+    p->updateAllNode();
 }
 
 void FilterModel::reset(const FilterColumnList& columns, const TrackList& tracks)
