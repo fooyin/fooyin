@@ -68,6 +68,7 @@ struct StatusWidget::Private
         , statusText{new ClickableLabel(self)}
     {
         clearTimer.setInterval(2s);
+        clearTimer.setSingleShot(true);
         QObject::connect(&clearTimer, &QTimer::timeout, statusText, &QLabel::clear);
 
         scriptParser.parse(settings->value<Settings::Gui::Internal::StatusPlayingScript>());
@@ -83,19 +84,17 @@ struct StatusWidget::Private
 
     void updatePlayingText()
     {
-        scriptRegistry.changeCurrentTrack(playerManager->currentTrack());
         statusText->setText(scriptParser.evaluate());
     }
 
     void stateChanged(const PlayState state)
     {
-        clearTimer.stop();
-
         switch(state) {
             case(PlayState::Stopped):
                 statusText->setText(tr("Waiting for track..."));
                 break;
             case(PlayState::Playing): {
+                scriptRegistry.changeCurrentTrack(playerManager->currentTrack());
                 updatePlayingText();
                 break;
             }
@@ -142,6 +141,8 @@ StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, 
     QObject::connect(p->statusText, &ClickableLabel::clicked, this, [this]() { p->labelClicked(); });
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
+    QObject::connect(playerManager, &PlayerManager::positionChanged, this,
+                     [this](uint64_t /*pos*/) { p->updatePlayingText(); });
     QObject::connect(library, &MusicLibrary::scanProgress, this,
                      [this](int /*id*/, int progress) { p->scanProgressChanged(progress); });
 
