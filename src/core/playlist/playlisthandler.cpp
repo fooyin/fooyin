@@ -208,7 +208,8 @@ struct PlaylistHandler::Private
         PlaylistInfo info;
 
         info.index = nextValidIndex();
-        info.id    = playlistConnector.insertPlaylist(name, index);
+        info.name  = name;
+        info.id    = playlistConnector.insertPlaylist(name, info.index);
         if(info.id >= 0) {
             auto* playlist = playlists.emplace_back(std::make_unique<FyPlaylist>(info)).get();
             return playlist;
