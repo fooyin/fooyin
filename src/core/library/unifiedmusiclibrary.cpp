@@ -72,13 +72,13 @@ struct UnifiedMusicLibrary::Private
         , threadHandler{database, self}
     { }
 
-    void loadTracks(const TrackList& trackToLoad)
+    QCoro::Task<void> loadTracks(TrackList trackToLoad)
     {
-        addTracks(trackToLoad);
+        co_await addTracks(trackToLoad, false);
         QMetaObject::invokeMethod(self, "tracksLoaded", Q_ARG(const TrackList&, trackToLoad));
     }
 
-    QCoro::Task<void> addTracks(TrackList newTracks)
+    QCoro::Task<void> addTracks(TrackList newTracks, bool notify = true)
     {
         const TrackList unsortedTracks
             = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), newTracks);
@@ -88,7 +88,9 @@ struct UnifiedMusicLibrary::Private
         std::ranges::copy(sortedTracks, std::back_inserter(tracks));
         tracks = co_await resortTracks(tracks);
 
-        QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, sortedTracks));
+        if(notify) {
+            QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, sortedTracks));
+        }
     }
 
     QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
