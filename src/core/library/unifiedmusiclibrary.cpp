@@ -119,9 +119,11 @@ struct UnifiedMusicLibrary::Private
 
     QCoro::Task<void> scannedTracks(TrackList tracksScanned)
     {
-        addTracks(tracksScanned);
-        tracks        = co_await resortTracks(tracks);
+        tracksScanned = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), tracksScanned);
         tracksScanned = co_await resortTracks(tracksScanned);
+
+        addTracks(tracksScanned);
+
         QMetaObject::invokeMethod(self, "tracksScanned", Q_ARG(const TrackList&, tracksScanned));
     }
 
