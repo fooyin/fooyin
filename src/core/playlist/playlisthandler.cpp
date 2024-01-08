@@ -280,7 +280,7 @@ PlaylistList PlaylistHandler::playlists() const
 Playlist* PlaylistHandler::createEmptyPlaylist()
 {
     const QString name = p->findUniqueName(QStringLiteral("Playlist"));
-    return createPlaylist(name, {});
+    return createPlaylist(name);
 }
 
 Playlist* PlaylistHandler::createPlaylist(const QString& name)
