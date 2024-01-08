@@ -340,7 +340,7 @@ bool TrackDatabase::reloadTrack(Track& track) const
     q.bindQueryValue(u"trackId"_s, track.id());
 
     if(!q.execQuery()) {
-        q.error(u"Cannot fetch tracks from database"_s);
+        q.error(u"Cannot reload track from database"_s);
         return false;
     }
 
@@ -353,15 +353,30 @@ bool TrackDatabase::reloadTrack(Track& track) const
 
 bool TrackDatabase::reloadTracks(TrackList& tracks) const
 {
-    bool success{true};
+    DatabaseQuery q{this};
+    const QString query = fetchQueryTracks() + u" WHERE TrackID IN (:trackIds);"_s;
+    q.prepareQuery(query);
 
-    for(auto& track : tracks) {
-        if(!reloadTrack(track)) {
-            success = false;
-        }
+    QStringList trackIds;
+    std::ranges::transform(tracks, std::back_inserter(trackIds),
+                           [](const Track& track) { return QString::number(track.id()); });
+
+    q.bindQueryValue(u"trackIds"_s, trackIds);
+
+    if(!q.execQuery()) {
+        q.error(u"Cannot reload tracks from database"_s);
+        return false;
     }
 
-    return success;
+    tracks.clear();
+
+    while(q.next()) {
+        Track track;
+        readToTrack(q, track);
+        tracks.push_back(std::move(track));
+    }
+
+    return true;
 }
 
 TrackList TrackDatabase::getAllTracks() const
