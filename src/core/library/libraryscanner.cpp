@@ -250,7 +250,6 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
         }
         else if(p->tagReader.readMetaData(track)) {
             track.generateHash();
-            track.setLibraryId(0);
             tracksToStore.push_back(track);
         }
 

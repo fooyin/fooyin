@@ -151,7 +151,7 @@ struct TrackDatabase::Private
     void removeUnmanagedTracks() const
     {
         QString queryText
-            = u"DELETE FROM Tracks WHERE LibraryID = 0 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"_s;
+            = u"DELETE FROM Tracks WHERE LibraryID = -1 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"_s;
         const auto q = self->runQuery(queryText, u"Cannot cleanup tracks"_s);
     }
 
@@ -461,6 +461,33 @@ bool TrackDatabase::deleteTracks(const TrackList& tracks)
     const auto success = db().commit();
 
     return (success && (fileCount == static_cast<int>(tracks.size())));
+}
+
+std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
+{
+    auto selectToRemove = runQuery(
+        u"SELECT TrackID FROM Tracks WHERE LibraryID = :libraryId AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"_s,
+        {{":libraryId", QString::number(libraryId)}}, "Cannot get library tracks for " + QString::number(libraryId));
+
+    if(selectToRemove.hasError()) {
+        return {};
+    }
+
+    std::set<int> tracksToRemove;
+
+    while(selectToRemove.next()) {
+        tracksToRemove.emplace(selectToRemove.value(0).toInt());
+    }
+
+    auto deleteTracks = runQuery(
+        u"DELETE FROM Tracks WHERE LibraryID = :libraryId AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"_s,
+        {{":libraryId", QString::number(libraryId)}}, "Cannot get library tracks for " + QString::number(libraryId));
+
+    auto updateTracks = runQuery(u"UPDATE Tracks SET LibraryID = :nonLibraryId WHERE LibraryID = :libraryId;"_s,
+                                 {{":nonLibraryId", "-1"}, {":libraryId", QString::number(libraryId)}},
+                                 "Cannot get library tracks for " + QString::number(libraryId));
+
+    return tracksToRemove;
 }
 
 void TrackDatabase::cleanupTracks()

@@ -21,6 +21,7 @@
 
 #include "database/database.h"
 #include "database/librarydatabase.h"
+#include "database/trackdatabase.h"
 #include "libraryinfo.h"
 
 #include <utils/fileutils.h>
@@ -50,12 +51,14 @@ struct LibraryManager::Private
     Database* database;
     SettingsManager* settings;
     LibraryDatabase libraryConnector;
+    TrackDatabase trackConnector;
     LibraryInfoMap libraries;
 
     explicit Private(Database* database, SettingsManager* settings)
         : database{database}
         , settings{settings}
         , libraryConnector{database->connectionName()}
+        , trackConnector{database->connectionName()}
     { }
 };
 
@@ -105,13 +108,17 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
 
 bool LibraryManager::removeLibrary(int id)
 {
-    if(!hasLibrary(id || id < 1)) {
+    if(!hasLibrary(id)) {
         return false;
     }
 
     if(p->libraryConnector.removeLibrary(id)) {
         eraseLibrary(p->libraries, id);
-        emit libraryRemoved(id);
+
+        emit removingLibraryTracks(id);
+        const auto tracksRemoved = p->trackConnector.deleteLibraryTracks(id);
+        emit libraryRemoved(id, tracksRemoved);
+
         return true;
     }
     return false;
@@ -142,7 +149,7 @@ void LibraryManager::updateLibraryStatus(const LibraryInfo& library)
 
 bool LibraryManager::hasLibrary() const
 {
-    return p->libraries.size() > 1;
+    return !p->libraries.empty();
 }
 
 bool LibraryManager::hasLibrary(int id) const

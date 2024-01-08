@@ -106,7 +106,6 @@ signals:
     void tracksSorted(const TrackList& tracks);
 
     void libraryAdded();
-    void libraryRemoved(int id);
     void libraryChanged();
 };
 } // namespace Fooyin

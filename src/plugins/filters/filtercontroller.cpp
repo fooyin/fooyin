@@ -343,10 +343,6 @@ FilterController::FilterController(MusicLibrary* library, TrackSelectionControll
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, this, [this]() { p->resetAll(); });
     QObject::connect(p->library, &MusicLibrary::tracksSorted, this, [this]() { p->resetAll(); });
     QObject::connect(p->library, &MusicLibrary::libraryChanged, this, [this]() { p->resetAll(); });
-    QObject::connect(p->library, &MusicLibrary::libraryRemoved, this, [this](int libraryId) {
-        p->removeLibraryTracks(libraryId);
-        p->resetAll();
-    });
 
     settings->subscribe<Settings::Filters::FilterDoubleClick>(
         this, [this](int action) { p->doubleClickAction = static_cast<TrackAction>(action); });

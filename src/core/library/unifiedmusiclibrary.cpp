@@ -135,17 +135,35 @@ struct UnifiedMusicLibrary::Private
         QMetaObject::invokeMethod(self, "tracksDeleted", Q_ARG(const TrackList&, tracksToRemove));
     }
 
-    void removeLibrary(int id)
+    void removeLibrary(int id, const std::set<int>& tracksRemoved)
     {
-        if(id < 1) {
+        if(id < 0) {
             return;
         }
 
-        auto filtered = tracks | std::views::filter([id](const Track& track) { return track.libraryId() != id; });
+        TrackList newTracks;
+        TrackList removedTracks;
+        TrackList updatedTracks;
 
-        tracks = TrackList{filtered.begin(), filtered.end()};
+        for(auto& track : tracks) {
+            if(track.libraryId() == id) {
+                if(tracksRemoved.contains(track.id())) {
+                    removedTracks.push_back(track);
+                    continue;
+                }
+                track.setLibraryId(-1);
+                updatedTracks.push_back(track);
+                newTracks.push_back(track);
+            }
+            newTracks.push_back(track);
+        }
 
-        QMetaObject::invokeMethod(self, "libraryRemoved", Q_ARG(int, id));
+        tracks = newTracks;
+
+        threadHandler.libraryRemoved(id);
+
+        QMetaObject::invokeMethod(self, "tracksDeleted", Q_ARG(const TrackList&, removedTracks));
+        QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, updatedTracks));
     }
 
     void libraryStatusChanged(const LibraryInfo& library) const
@@ -170,8 +188,8 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
 {
     connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
     connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::libraryAdded);
-    connect(p->libraryManager, &LibraryManager::libraryRemoved, this, [this](int id) { p->removeLibrary(id); });
-    connect(this, &UnifiedMusicLibrary::libraryRemoved, &p->threadHandler, &LibraryThreadHandler::libraryRemoved);
+    connect(p->libraryManager, &LibraryManager::libraryRemoved, this,
+            [this](int id, const std::set<int>& tracksRemoved) { p->removeLibrary(id, tracksRemoved); });
 
     connect(&p->threadHandler, &LibraryThreadHandler::progressChanged, this, &UnifiedMusicLibrary::scanProgress);
 

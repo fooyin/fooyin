@@ -65,6 +65,7 @@ public:
     [[nodiscard]] int playlistCount() const override;
 
     void savePlaylists();
+    void savePlaylist(int id);
 
     void startPlayback(int playlistId) override;
 

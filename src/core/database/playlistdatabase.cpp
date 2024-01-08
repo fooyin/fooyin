@@ -86,40 +86,9 @@ bool populatePlaylistTracks(Fooyin::DatabaseModule* module, const auto& playlist
             playlistTracks.push_back(tracks.at(trackId));
         }
     }
+
     playlist->appendTracksSilently(playlistTracks);
     return true;
-}
-
-bool savePlaylist(Fooyin::DatabaseModule* module, const auto& playlist)
-{
-    if(!playlist->modified() && !playlist->tracksModified()) {
-        return true;
-    }
-
-    bool updated{false};
-
-    if(playlist->modified()) {
-        const auto q = module->update(
-            u"Playlists"_s, {{u"Name"_s, playlist->name()}, {u"PlaylistIndex"_s, QString::number(playlist->index())}},
-            {u"PlaylistID"_s, QString::number(playlist->id())},
-            "Cannot update playlist " + QString::number(playlist->id()));
-        updated = !q.hasError();
-
-        if(!updated) {
-            return false;
-        }
-    }
-
-    if(playlist->tracksModified()) {
-        updated = insertPlaylistTracks(module, playlist->id(), playlist->tracks());
-    }
-
-    if(updated) {
-        playlist->resetFlags();
-        return true;
-    }
-
-    return false;
 }
 } // namespace
 
@@ -128,7 +97,7 @@ PlaylistDatabase::PlaylistDatabase(const QString& connectionName)
     : DatabaseModule{connectionName}
 { }
 
-bool PlaylistDatabase::getAllPlaylists(std::vector<std::unique_ptr<Playlist>>& playlists)
+std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
 {
     const QString query = u"SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;"_s;
 
@@ -137,33 +106,26 @@ bool PlaylistDatabase::getAllPlaylists(std::vector<std::unique_ptr<Playlist>>& p
 
     if(!q.execQuery()) {
         q.error(u"Cannot fetch all playlists"_s);
-        return false;
+        return {};
     }
+
+    std::vector<PlaylistInfo> playlists;
 
     while(q.next()) {
         const int id       = q.value(0).toInt();
         const QString name = q.value(1).toString();
         const int index    = q.value(2).toInt();
 
-        playlists.emplace_back(std::make_unique<Playlist>(id, name, index));
+        playlists.emplace_back(id, name, index);
     }
-    return true;
+
+    return playlists;
 }
 
 bool PlaylistDatabase::getPlaylistTracks(const PlaylistList& playlists, const TrackIdMap& tracks)
 {
-    if(!db().transaction()) {
-        qDebug() << "Transaction could not be started";
-        return false;
-    }
-
     for(const auto& playlist : playlists) {
         populatePlaylistTracks(this, playlist, tracks);
-    }
-
-    if(!db().commit()) {
-        qDebug() << "Transaction could not be commited";
-        return false;
     }
 
     return true;
@@ -181,6 +143,38 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index)
     return (q.hasError()) ? -1 : q.lastInsertId().toInt();
 }
 
+bool PlaylistDatabase::savePlaylist(Playlist& playlist)
+{
+    if(!playlist.modified() && !playlist.tracksModified()) {
+        return true;
+    }
+
+    bool updated{false};
+
+    if(playlist.modified()) {
+        const auto q = update(u"Playlists"_s,
+                              {{u"Name"_s, playlist.name()}, {u"PlaylistIndex"_s, QString::number(playlist.index())}},
+                              {u"PlaylistID"_s, QString::number(playlist.id())},
+                              "Cannot update playlist " + QString::number(playlist.id()));
+        updated      = !q.hasError();
+
+        if(!updated) {
+            return false;
+        }
+    }
+
+    if(playlist.tracksModified()) {
+        updated = insertPlaylistTracks(this, playlist.id(), playlist.tracks());
+    }
+
+    if(updated) {
+        playlist.resetFlags();
+        return true;
+    }
+
+    return false;
+}
+
 bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
 {
     if(!db().transaction()) {
@@ -189,7 +183,7 @@ bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
     }
 
     for(const auto& playlist : playlists) {
-        savePlaylist(this, playlist);
+        savePlaylist(*playlist);
     }
 
     if(!db().commit()) {

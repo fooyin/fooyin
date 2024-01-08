@@ -104,7 +104,7 @@ bool Database::createDatabase()
                                   "    ExtraTags BLOB,"
                                   "    Type INTEGER DEFAULT 0,"
                                   "    ModifiedDate INTEGER,"
-                                  "    LibraryID INTEGER REFERENCES Libraries ON DELETE CASCADE,"
+                                  "    LibraryID INTEGER DEFAULT -1,"
                                   "    TrackHash TEXT);"_s);
 
     checkInsertTable(u"TrackStats"_s, u"CREATE TABLE TrackStats ("
@@ -156,16 +156,13 @@ bool Database::createDatabase()
                                      "    TrackStats.PlayCount,"
                                      "    TrackStats.Rating"
                                      "  FROM Tracks"
-                                     "  JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID"
+                                     "  LEFT JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID"
                                      "  LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;"_s);
 
     checkInsertIndex(u"TrackIndex"_s, u"CREATE INDEX TrackIndex ON Tracks(TrackHash);"_s);
     checkInsertIndex(u"PlaylistIndex"_s, u"CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);"_s);
     checkInsertIndex(u"PlaylistTracksIndex"_s,
                      u"CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);"_s);
-
-    insert(u"Libraries"_s, {{u"LibraryID"_s, u"0"_s}, {u"Name"_s, u"No Library"_s}, {u"Path"_s, u""_s}},
-           "Could not insert default library");
 
     return true;
 }

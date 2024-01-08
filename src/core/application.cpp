@@ -95,7 +95,8 @@ Application::Application(QObject* parent)
 {
     QObject::connect(p->playerManager, &PlayerManager::trackPlayed, p->library, &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
-    QObject::connect(p->library, &MusicLibrary::libraryRemoved, p->playlistHandler, &PlaylistHandler::libraryRemoved);
+    QObject::connect(p->libraryManager, &LibraryManager::removingLibraryTracks, p->playlistHandler,
+                     &PlaylistHandler::savePlaylists);
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, p->playlistHandler, &PlaylistHandler::tracksUpdated);
     QObject::connect(p->library, &MusicLibrary::tracksDeleted, p->playlistHandler, &PlaylistHandler::tracksRemoved);
 

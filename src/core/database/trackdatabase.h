@@ -23,6 +23,8 @@
 
 #include <core/trackfwd.h>
 
+#include <set>
+
 namespace Fooyin {
 class TrackDatabase : public DatabaseModule
 {
@@ -42,6 +44,7 @@ public:
 
     bool deleteTrack(int id);
     bool deleteTracks(const TrackList& tracks);
+    std::set<int> deleteLibraryTracks(int libraryId);
 
     void cleanupTracks();
 

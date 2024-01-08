@@ -49,7 +49,6 @@ set(SOURCES
     engine/ffmpeg/ffmpegutils.cpp
     library/trackfilter.cpp
     library/tracksort.cpp
-    playlist/playlist.cpp
     player/playercontroller.cpp
     scripting/scriptregistry.cpp
     scripting/scriptparser.cpp
@@ -79,6 +78,7 @@ set(PRIVATE_SOURCES
     library/sortingregistry.cpp
     library/trackdatabasemanager.cpp
     library/unifiedmusiclibrary.cpp
+    playlist/fyplaylist.cpp
     playlist/playlisthandler.cpp
     plugins/plugininfo.cpp
     plugins/pluginmanager.cpp

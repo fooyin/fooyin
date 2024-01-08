@@ -17,7 +17,7 @@
  *
  */
 
-#include <core/playlist/playlist.h>
+#include "fyplaylist.h"
 
 #include <core/track.h>
 
@@ -25,7 +25,7 @@
 #include <ranges>
 
 namespace Fooyin {
-struct Playlist::Private
+struct FyPlaylist::Private
 {
     int id;
     int index;
@@ -41,10 +41,10 @@ struct Playlist::Private
     bool modified{false};
     bool tracksModified{false};
 
-    Private(int id, QString name, int index)
-        : id{id}
-        , index{index}
-        , name{std::move(name)}
+    explicit Private(const PlaylistInfo& info)
+        : id{info.id}
+        , index{info.index}
+        , name{info.name}
     { }
 
     void createShuffleOrder()
@@ -85,38 +85,38 @@ struct Playlist::Private
     }
 };
 
-Playlist::Playlist(int id, QString name, int index)
-    : p{std::make_unique<Private>(id, std::move(name), index)}
+FyPlaylist::FyPlaylist(const PlaylistInfo& info)
+    : p{std::make_unique<Private>(info)}
 { }
 
-Playlist::~Playlist() = default;
+FyPlaylist::~FyPlaylist() = default;
 
-bool Playlist::isValid() const
+bool FyPlaylist::isValid() const
 {
     return p->id >= 0 && p->index >= 0 && !p->name.isEmpty();
 }
 
-int Playlist::id() const
+int FyPlaylist::id() const
 {
     return p->id;
 }
 
-int Playlist::index() const
+int FyPlaylist::index() const
 {
     return p->index;
 }
 
-QString Playlist::name() const
+QString FyPlaylist::name() const
 {
     return p->name;
 }
 
-TrackList Playlist::tracks() const
+TrackList FyPlaylist::tracks() const
 {
     return p->tracks;
 }
 
-std::optional<Track> Playlist::track(int index) const
+std::optional<Track> FyPlaylist::track(int index) const
 {
     if(p->tracks.empty() || index < 0 || index >= trackCount()) {
         return {};
@@ -124,17 +124,17 @@ std::optional<Track> Playlist::track(int index) const
     return p->tracks.at(index);
 }
 
-int Playlist::trackCount() const
+int FyPlaylist::trackCount() const
 {
     return static_cast<int>(p->tracks.size());
 }
 
-int Playlist::currentTrackIndex() const
+int FyPlaylist::currentTrackIndex() const
 {
     return p->currentTrackIndex;
 }
 
-Track Playlist::currentTrack() const
+Track FyPlaylist::currentTrack() const
 {
     if(p->nextTrackIndex >= 0 && p->nextTrackIndex < trackCount()) {
         return p->tracks.at(p->nextTrackIndex);
@@ -145,24 +145,24 @@ Track Playlist::currentTrack() const
     return {};
 }
 
-bool Playlist::modified() const
+bool FyPlaylist::modified() const
 {
     return p->modified;
 }
 
-bool Playlist::tracksModified() const
+bool FyPlaylist::tracksModified() const
 {
     return p->tracksModified;
 }
 
-void Playlist::scheduleNextIndex(int index)
+void FyPlaylist::scheduleNextIndex(int index)
 {
     if(index >= 0 && index < trackCount()) {
         p->nextTrackIndex = index;
     }
 }
 
-Track Playlist::nextTrack(int delta, PlayModes mode)
+Track FyPlaylist::nextTrack(int delta, PlayModes mode)
 {
     int index = p->currentTrackIndex;
 
@@ -204,21 +204,21 @@ Track Playlist::nextTrack(int delta, PlayModes mode)
     return currentTrack();
 }
 
-void Playlist::setIndex(int index)
+void FyPlaylist::setIndex(int index)
 {
     if(std::exchange(p->index, index) != index) {
         p->modified = true;
     }
 }
 
-void Playlist::setName(const QString& name)
+void FyPlaylist::setName(const QString& name)
 {
     if(std::exchange(p->name, name) != name) {
         p->modified = true;
     }
 }
 
-void Playlist::replaceTracks(const TrackList& tracks)
+void FyPlaylist::replaceTracks(const TrackList& tracks)
 {
     if(std::exchange(p->tracks, tracks) != tracks) {
         p->tracksModified = true;
@@ -227,12 +227,12 @@ void Playlist::replaceTracks(const TrackList& tracks)
     }
 }
 
-void Playlist::replaceTracksSilently(const TrackList& tracks)
+void FyPlaylist::replaceTracksSilently(const TrackList& tracks)
 {
     p->tracks = tracks;
 }
 
-void Playlist::appendTracks(const TrackList& tracks)
+void FyPlaylist::appendTracks(const TrackList& tracks)
 {
     if(tracks.empty()) {
         return;
@@ -243,13 +243,13 @@ void Playlist::appendTracks(const TrackList& tracks)
     p->shuffleOrder.clear();
 }
 
-void Playlist::appendTracksSilently(const TrackList& tracks)
+void FyPlaylist::appendTracksSilently(const TrackList& tracks)
 {
     std::ranges::copy(tracks, std::back_inserter(p->tracks));
     p->shuffleOrder.clear();
 }
 
-void Playlist::removeTracks(const IndexSet& indexes)
+void FyPlaylist::removeTracks(const IndexSet& indexes)
 {
     auto prevHistory = p->shuffleOrder | std::views::take(p->shuffleIndex + 1);
     for(const int index : prevHistory) {
@@ -280,7 +280,7 @@ void Playlist::removeTracks(const IndexSet& indexes)
     p->tracksModified = true;
 }
 
-void Playlist::clear()
+void FyPlaylist::clear()
 {
     if(!p->tracks.empty()) {
         p->tracks.clear();
@@ -289,18 +289,18 @@ void Playlist::clear()
     }
 }
 
-void Playlist::reset()
+void FyPlaylist::reset()
 {
     p->shuffleOrder.clear();
 }
 
-void Playlist::resetFlags()
+void FyPlaylist::resetFlags()
 {
     p->modified       = false;
     p->tracksModified = false;
 }
 
-void Playlist::changeCurrentTrack(int index)
+void FyPlaylist::changeCurrentTrack(int index)
 {
     p->currentTrackIndex = index;
     p->nextTrackIndex    = -1;

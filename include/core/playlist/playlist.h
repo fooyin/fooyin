@@ -42,33 +42,32 @@ public:
     };
     Q_DECLARE_FLAGS(PlayModes, PlayMode)
 
-    Playlist(int id, QString name, int index);
-    ~Playlist();
+    virtual ~Playlist() = default;
 
     /** Returns @c true if this playlist has a valid id, index and name. */
-    [[nodiscard]] bool isValid() const;
+    virtual bool isValid() const = 0;
 
-    [[nodiscard]] int id() const;
-    [[nodiscard]] int index() const;
-    [[nodiscard]] QString name() const;
+    virtual int id() const       = 0;
+    virtual int index() const    = 0;
+    virtual QString name() const = 0;
 
-    [[nodiscard]] TrackList tracks() const;
-    [[nodiscard]] std::optional<Track> track(int index) const;
-    [[nodiscard]] int trackCount() const;
+    virtual TrackList tracks() const                    = 0;
+    virtual std::optional<Track> track(int index) const = 0;
+    virtual int trackCount() const                      = 0;
 
-    [[nodiscard]] int currentTrackIndex() const;
-    [[nodiscard]] Track currentTrack() const;
+    virtual int currentTrackIndex() const = 0;
+    virtual Track currentTrack() const    = 0;
 
     /** Returns @c true if this playlist's index or name have been changed. */
-    [[nodiscard]] bool modified() const;
+    virtual bool modified() const = 0;
     /** Returns @c true if this playlist's tracks have been changed. */
-    [[nodiscard]] bool tracksModified() const;
+    virtual bool tracksModified() const = 0;
 
     /*!
      * Schedules the track to be played after the current track is finished.
      * @note this will be cancelled if tracks are replaced using @fn replaceTracks.
      */
-    void scheduleNextIndex(int index);
+    virtual void scheduleNextIndex(int index) = 0;
 
     /*!
      * Returns the next track to be played based on the @p delta from the current
@@ -76,29 +75,25 @@ public:
      * @note this will return an invalid track if @p mode is 'Default' and
      * the index +- delta is out of range.
      */
-    Track nextTrack(int delta, PlayModes mode);
+    virtual Track nextTrack(int delta, PlayModes mode) = 0;
 
-    void setIndex(int index);
-    void setName(const QString& name);
+    virtual void setIndex(int index)          = 0;
+    virtual void setName(const QString& name) = 0;
 
-    void replaceTracks(const TrackList& tracks);
-    void replaceTracksSilently(const TrackList& tracks);
-    void appendTracks(const TrackList& tracks);
-    void appendTracksSilently(const TrackList& tracks);
-    void removeTracks(const IndexSet& indexes);
+    virtual void replaceTracks(const TrackList& tracks)         = 0;
+    virtual void replaceTracksSilently(const TrackList& tracks) = 0;
+    virtual void appendTracks(const TrackList& tracks)          = 0;
+    virtual void appendTracksSilently(const TrackList& tracks)  = 0;
+    virtual void removeTracks(const IndexSet& indexes)          = 0;
 
     /** Removes all tracks, including all shuffle order history */
-    void clear();
+    virtual void clear() = 0;
     /** Clears the shuffle order history */
-    void reset();
+    virtual void reset() = 0;
     /** Resets the modified and tracksModified flags. */
-    void resetFlags();
+    virtual void resetFlags() = 0;
 
-    void changeCurrentTrack(int index);
-
-private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    virtual void changeCurrentTrack(int index) = 0;
 };
 using PlaylistList = std::vector<Playlist*>;
 } // namespace Fooyin

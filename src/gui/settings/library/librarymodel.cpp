@@ -97,7 +97,7 @@ void LibraryModel::populate()
     const LibraryInfoMap& libraries = p->libraryManager->allLibraries();
 
     for(const auto& [id, library] : libraries) {
-        if(id < 1) {
+        if(id < 0) {
             continue;
         }
         const QString key = library.path;
@@ -176,7 +176,7 @@ void LibraryModel::processQueue()
                 }
 
                 const int id = p->libraryManager->addLibrary(info.path, info.name);
-                if(id >= 1) {
+                if(id >= 0) {
                     if(auto newLibrary = p->libraryManager->libraryInfo(id)) {
                         library.changeInfo(*newLibrary);
                         library.setStatus(LibraryItem::None);
@@ -191,7 +191,7 @@ void LibraryModel::processQueue()
             }
             case(LibraryItem::Removed): {
                 const QString key = info.path;
-                if(info.id < 1 || p->libraryManager->removeLibrary(info.id)) {
+                if(p->libraryManager->removeLibrary(info.id)) {
                     beginRemoveRows({}, library.row(), library.row());
                     p->root.removeChild(library.row());
                     endRemoveRows();

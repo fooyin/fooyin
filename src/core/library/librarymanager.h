@@ -25,6 +25,8 @@
 
 #include <QObject>
 
+#include <set>
+
 namespace Fooyin {
 class SettingsManager;
 class Database;
@@ -54,7 +56,8 @@ public:
 
 signals:
     void libraryAdded(const LibraryInfo& library);
-    void libraryRemoved(int id);
+    void removingLibraryTracks(int id);
+    void libraryRemoved(int id, const std::set<int> tracksRemoved);
     void libraryRenamed(int id, const QString& name);
     void libraryStatusChanged(const LibraryInfo& info);
 

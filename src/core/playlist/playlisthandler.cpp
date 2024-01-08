@@ -74,8 +74,8 @@ struct PlaylistHandler::Private
     SettingsManager* settings;
     PlaylistDatabase playlistConnector;
 
-    std::vector<std::unique_ptr<Playlist>> playlists;
-    std::vector<std::unique_ptr<Playlist>> removedPlaylists;
+    std::vector<std::unique_ptr<FyPlaylist>> playlists;
+    std::vector<std::unique_ptr<FyPlaylist>> removedPlaylists;
 
     Playlist* activePlaylist{nullptr};
     Playlist* scheduledPlaylist{nullptr};
@@ -86,6 +86,14 @@ struct PlaylistHandler::Private
         , settings{settings}
         , playlistConnector{database->connectionName()}
     { }
+
+    void reloadPlaylists()
+    {
+        const auto infos = playlistConnector.getAllPlaylists();
+        for(const auto& info : infos) {
+            playlists.emplace_back(std::make_unique<FyPlaylist>(info));
+        }
+    }
 
     void startNextTrack(const Track& track, int index) const
     {
@@ -192,15 +200,20 @@ struct PlaylistHandler::Private
     Playlist* addNewPlaylist(const QString& name)
     {
         auto index = indexFromName(name);
+
         if(index >= 0) {
             return playlists.at(index).get();
         }
-        index        = nextValidIndex();
-        const int id = playlistConnector.insertPlaylist(name, index);
-        if(id >= 0) {
-            auto* playlist = playlists.emplace_back(std::make_unique<Playlist>(id, name, index)).get();
+
+        PlaylistInfo info;
+
+        info.index = nextValidIndex();
+        info.id    = playlistConnector.insertPlaylist(name, index);
+        if(info.id >= 0) {
+            auto* playlist = playlists.emplace_back(std::make_unique<FyPlaylist>(info)).get();
             return playlist;
         }
+
         return nullptr;
     }
 };
@@ -210,8 +223,7 @@ PlaylistHandler::PlaylistHandler(Database* database, PlayerManager* playerManage
     : PlaylistManager{parent}
     , p{std::make_unique<Private>(this, database, playerManager, settings)}
 {
-    p->playlists.clear();
-    p->playlistConnector.getAllPlaylists(p->playlists);
+    p->reloadPlaylists();
 
     if(p->playlists.empty()) {
         PlaylistHandler::createPlaylist(QStringLiteral("Default"), {});
@@ -328,7 +340,7 @@ void PlaylistHandler::changeActivePlaylist(Playlist* playlist)
 
 void PlaylistHandler::schedulePlaylist(int id)
 {
-    auto playlist = std::ranges::find_if(std::as_const(p->playlists),
+    const auto playlist = std::ranges::find_if(std::as_const(p->playlists),
                                          [id](const auto& playlist) { return playlist->id() == id; });
     if(playlist != p->playlists.cend()) {
         p->scheduledPlaylist = playlist->get();
@@ -413,6 +425,17 @@ void PlaylistHandler::savePlaylists()
     if(p->activePlaylist) {
         p->settings->set<Settings::Core::ActivePlaylistId>(p->activePlaylist->id());
     }
+}
+
+void PlaylistHandler::savePlaylist(int id)
+{
+    if(!p->validId(id)) {
+        return;
+    }
+
+    p->updateIndices();
+
+    p->playlistConnector.savePlaylist(*playlistById(id));
 }
 
 void PlaylistHandler::startPlayback(int playlistId)
