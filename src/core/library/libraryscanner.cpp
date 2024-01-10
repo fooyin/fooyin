@@ -167,6 +167,7 @@ struct LibraryScanner::Private
                         tracksToUpdate.push_back(refoundTrack);
                     }
                     else {
+                        setTrackProps(track);
                         tracksToStore.push_back(track);
                     }
 
