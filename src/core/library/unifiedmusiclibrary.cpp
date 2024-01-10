@@ -201,7 +201,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
                                                               [this](const QString& sort) { p->changeSort(sort); });
 
     if(p->settings->value<Settings::Core::AutoRefresh>()) {
-        QTimer::singleShot(3s, this, &UnifiedMusicLibrary::rescanAll);
+        connect(this, &MusicLibrary::tracksLoaded, this, &MusicLibrary::rescanAll, Qt::SingleShotConnection);
     }
 }
 
