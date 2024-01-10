@@ -84,14 +84,17 @@ struct StatusWidget::Private
 
     void updatePlayingText()
     {
-        statusText->setText(scriptParser.evaluate());
+        const PlayState ps = playerManager->playState();
+        if(ps == PlayState::Playing || ps == PlayState::Paused) {
+            statusText->setText(scriptParser.evaluate());
+        }
     }
 
     void stateChanged(const PlayState state)
     {
         switch(state) {
             case(PlayState::Stopped):
-                statusText->setText(tr("Waiting for track..."));
+                statusText->setText("");
                 break;
             case(PlayState::Playing): {
                 scriptRegistry.changeCurrentTrack(playerManager->currentTrack());
