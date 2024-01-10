@@ -87,9 +87,21 @@ struct PlaylistController::Private
     void handlePlaylistRemoved(const Playlist* playlist) const
     {
         if(currentPlaylist == playlist) {
-            const int nextIndex = playlist->index() <= 1 ? 0 : playlist->index() - 1;
-            if(auto* nextPlaylist = handler->playlistByIndex(nextIndex)) {
-                self->changeCurrentPlaylist(nextPlaylist);
+            if(handler->playlistCount() == 0) {
+                QObject::connect(
+                    handler, &PlaylistManager::playlistAdded, self,
+                    [this](Playlist* playlist) {
+                        if(playlist) {
+                            self->changeCurrentPlaylist(playlist);
+                        }
+                    },
+                    Qt::SingleShotConnection);
+            }
+            else {
+                const int nextIndex = std::max(0, playlist->index() - 1);
+                if(auto* nextPlaylist = handler->playlistByIndex(nextIndex)) {
+                    self->changeCurrentPlaylist(nextPlaylist);
+                }
             }
         }
     }
