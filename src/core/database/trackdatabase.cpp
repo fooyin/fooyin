@@ -432,11 +432,8 @@ TrackList TrackDatabase::tracksByHash(const QString& hash) const
 
 bool TrackDatabase::updateTrack(const Track& track)
 {
-    if(track.id() < 0 || track.libraryId() < 0) {
-        qDebug() << QString{"Cannot update track %1 (TrackID: %2, LibraryID: %3)"}
-                        .arg(track.filepath())
-                        .arg(track.id())
-                        .arg(track.libraryId());
+    if(track.id() < 0) {
+        qDebug() << QString{"Cannot update track %1 (Invalid ID)"}.arg(track.filepath());
         return false;
     }
 
