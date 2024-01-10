@@ -69,7 +69,7 @@ struct UnifiedMusicLibrary::Private
         , libraryManager{libraryManager}
         , database{database}
         , settings{settings}
-        , threadHandler{database, self}
+        , threadHandler{database, self, libraryManager, settings}
     { }
 
     QCoro::Task<void> loadTracks(TrackList trackToLoad)
@@ -95,18 +95,17 @@ struct UnifiedMusicLibrary::Private
 
     QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
     {
-        TrackList updatedTracks
-            = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
+        tracksToUpdate = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
 
-        std::ranges::for_each(updatedTracks, [this](const Track& track) {
+        std::ranges::for_each(tracksToUpdate, [this](const Track& track) {
             std::ranges::replace_if(
                 tracks, [track](const Track& libraryTrack) { return libraryTrack.id() == track.id(); }, track);
         });
 
-        tracks        = co_await resortTracks(tracks);
-        updatedTracks = co_await resortTracks(updatedTracks);
+        tracks         = co_await resortTracks(tracks);
+        tracksToUpdate = co_await resortTracks(tracksToUpdate);
 
-        QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, updatedTracks));
+        QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, tracksToUpdate));
     }
 
     void handleScanResult(const ScanResult& result)
@@ -216,8 +215,8 @@ void UnifiedMusicLibrary::loadAllTracks()
 void UnifiedMusicLibrary::rescanAll()
 {
     const LibraryInfoMap& libraries = p->libraryManager->allLibraries();
-    for(const auto& library : libraries | std::views::filter([](const auto& lib) { return lib.second.id > 0; })) {
-        rescan(library.second);
+    for(const auto& library : libraries | std::views::values) {
+        rescan(library);
     }
 }
 

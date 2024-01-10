@@ -40,7 +40,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<FirstRun>(true);
     m_settings->createSetting<Version>(VERSION, u"Version"_s);
     m_settings->createSetting<PlayMode>(0, u"Player/PlayMode"_s);
-    m_settings->createSetting<AutoRefresh>(false, u"Library/AutoRefresh"_s);
+    m_settings->createSetting<AutoRefresh>(true, u"Library/AutoRefresh"_s);
+    m_settings->createSetting<Internal::MonitorLibraries>(true, u"Library/MonitorLibraries"_s);
     m_settings->createSetting<LibrarySortScript>(
         "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", u"Library/SortScript"_s);
     m_settings->createSetting<ActivePlaylistId>(0, u"Playlist/ActivePlaylistId"_s);

@@ -19,13 +19,14 @@
 
 #pragma once
 
+#include <core/library/libraryinfo.h>
 #include <core/trackfwd.h>
 #include <utils/worker.h>
 
 namespace Fooyin {
 class Database;
 class LibraryManager;
-struct LibraryInfo;
+class SettingsManager;
 
 struct ScanResult
 {
@@ -38,7 +39,7 @@ class LibraryScanner : public Worker
     Q_OBJECT
 
 public:
-    explicit LibraryScanner(Database* database, QObject* parent = nullptr);
+    explicit LibraryScanner(Database* database, SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
     void closeThread() override;
@@ -49,9 +50,12 @@ signals:
     void statusChanged(const LibraryInfo& library);
     void scanUpdate(const ScanResult& result);
     void scannedTracks(const TrackList& tracks);
+    void directoryChanged(const LibraryInfo& library, const QString& dir);
 
 public slots:
+    void setupWatchers(const LibraryInfoMap& libraries, bool enabled);
     void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
+    void scanLibraryDirectory(const LibraryInfo& library, const QString& dir, const TrackList& tracks);
     void scanTracks(const TrackList& libraryTracks, const TrackList& tracks);
 
 private:

@@ -21,6 +21,7 @@
 
 #include "librarymodel.h"
 
+#include "core/internalcoresettings.h"
 #include "core/library/libraryinfo.h"
 
 #include <core/coresettings.h>
@@ -52,6 +53,7 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
+    void setupValues();
     void resizeTable();
     void addLibrary() const;
 
@@ -62,6 +64,7 @@ private:
     LibraryModel* m_model;
 
     QCheckBox* m_autoRefresh;
+    QCheckBox* m_monitorLibraries;
 
     QLineEdit* m_sortScript;
 };
@@ -73,6 +76,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     , m_libraryView{new ExtendableTableView(actionManager, this)}
     , m_model{new LibraryModel(m_libraryManager, this)}
     , m_autoRefresh{new QCheckBox(tr("Auto refresh on startup"), this)}
+    , m_monitorLibraries{new QCheckBox(tr("Monitor libraries"), this)}
     , m_sortScript{new QLineEdit(this)}
 {
     m_libraryView->setExtendableModel(m_model);
@@ -86,17 +90,16 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     m_libraryView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
-    m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
+    m_monitorLibraries->setToolTip(tr("Monitor libraries for external changes."));
 
     auto* sortScriptLabel = new QLabel(tr("Sort tracks by:"), this);
-
-    m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_libraryView, 0, 0, 1, 2);
     mainLayout->addWidget(m_autoRefresh, 1, 0, 1, 2);
-    mainLayout->addWidget(sortScriptLabel, 2, 0);
-    mainLayout->addWidget(m_sortScript, 2, 1);
+    mainLayout->addWidget(m_monitorLibraries, 2, 0, 1, 2);
+    mainLayout->addWidget(sortScriptLabel, 3, 0);
+    mainLayout->addWidget(m_sortScript, 3, 1);
 
     mainLayout->setColumnStretch(1, 1);
 
@@ -104,11 +107,13 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
 
     m_model->populate();
     resizeTable();
+    setupValues();
 }
 
 void LibraryGeneralPageWidget::apply()
 {
     m_settings->set<Settings::Core::AutoRefresh>(m_autoRefresh->isChecked());
+    m_settings->set<Settings::Core::Internal::MonitorLibraries>(m_monitorLibraries->isChecked());
     m_settings->set<Settings::Core::LibrarySortScript>(m_sortScript->text());
 
     m_model->processQueue();
@@ -117,6 +122,7 @@ void LibraryGeneralPageWidget::apply()
 void LibraryGeneralPageWidget::reset()
 {
     m_settings->reset<Settings::Core::AutoRefresh>();
+    m_settings->reset<Settings::Core::Internal::MonitorLibraries>();
     m_settings->reset<Settings::Core::LibrarySortScript>();
 }
 
@@ -125,6 +131,13 @@ void LibraryGeneralPageWidget::resizeEvent(QResizeEvent* event)
     SettingsPageWidget::resizeEvent(event);
 
     resizeTable();
+}
+
+void LibraryGeneralPageWidget::setupValues()
+{
+    m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
+    m_monitorLibraries->setChecked(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
+    m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
 }
 
 void LibraryGeneralPageWidget::resizeTable()

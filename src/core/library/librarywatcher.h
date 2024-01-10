@@ -19,34 +19,21 @@
 
 #pragma once
 
-#include <utils/settings/settingsentry.h>
+#include <QFileSystemWatcher>
 
 namespace Fooyin {
-class SettingsManager;
-class SortingRegistry;
-
-namespace Settings::Core::Internal {
-Q_NAMESPACE
-
-enum CoreInternalSettings : uint32_t
+class LibraryWatcher : public QFileSystemWatcher
 {
-    MonitorLibraries = 0 | Settings::Bool
-};
-Q_ENUM_NS(CoreInternalSettings)
-} // namespace Settings::Core::Internal
+    Q_OBJECT
 
-class CoreSettings
-{
 public:
-    explicit CoreSettings(SettingsManager* settingsManager);
-    ~CoreSettings();
+    explicit LibraryWatcher(QObject* parent = nullptr);
 
-    void shutdown();
-
-    [[nodiscard]] SortingRegistry* sortingRegistry() const;
+signals:
+    void libraryDirChanged(const QString& path);
 
 private:
-    SettingsManager* m_settings;
-    std::unique_ptr<SortingRegistry> m_sortingRegistry;
+    QTimer* m_timer;
+    QString m_dir;
 };
 } // namespace Fooyin

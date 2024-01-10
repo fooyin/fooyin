@@ -19,15 +19,19 @@
 
 #include "librarythreadhandler.h"
 
+#include "internalcoresettings.h"
 #include "library/libraryinfo.h"
+#include "library/librarymanager.h"
 #include "libraryscanner.h"
 #include "trackdatabasemanager.h"
 
 #include <core/library/musiclibrary.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QThread>
 
 #include <deque>
+#include <ranges>
 
 namespace {
 int nextRequestId()
@@ -41,6 +45,7 @@ namespace Fooyin {
 struct LibraryScanRequest : ScanRequest
 {
     LibraryInfo library;
+    QString dir;
     TrackList tracks;
 };
 
@@ -50,6 +55,7 @@ struct LibraryThreadHandler::Private
 
     Database* database;
     MusicLibrary* library;
+    SettingsManager* settings;
 
     QThread* thread;
     LibraryScanner scanner;
@@ -58,12 +64,13 @@ struct LibraryThreadHandler::Private
     std::deque<std::unique_ptr<LibraryScanRequest>> scanRequests;
     int currentRequestId{-1};
 
-    Private(LibraryThreadHandler* self, Database* database, MusicLibrary* library)
+    Private(LibraryThreadHandler* self, Database* database, MusicLibrary* library, SettingsManager* settings)
         : self{self}
         , database{database}
         , library{library}
+        , settings{settings}
         , thread{new QThread(self)}
-        , scanner{database}
+        , scanner{database, settings}
         , trackDatabaseManager{database}
     {
         scanner.moveToThread(thread);
@@ -92,11 +99,18 @@ struct LibraryThreadHandler::Private
                                   Q_ARG(const TrackList&, request.tracks));
     }
 
+    void scanDirectory(const LibraryScanRequest& request)
+    {
+        currentRequestId = request.id;
+        QMetaObject::invokeMethod(&scanner, "scanLibraryDirectory", Q_ARG(const LibraryInfo&, request.library),
+                                  Q_ARG(const QString&, request.dir), Q_ARG(const TrackList&, library->tracks()));
+    }
+
     ScanRequest* addLibraryScanRequest(const LibraryInfo& library)
     {
         auto* request = scanRequests
                             .emplace_back(std::make_unique<LibraryScanRequest>(
-                                ScanRequest{ScanRequest::Library, nextRequestId(), nullptr}, library, TrackList{}))
+                                ScanRequest{ScanRequest::Library, nextRequestId(), nullptr}, library, "", TrackList{}))
                             .get();
         request->cancel = [this, request]() {
             cancelScanRequest(request->id);
@@ -117,7 +131,7 @@ struct LibraryThreadHandler::Private
         LibraryScanRequest* request
             = scanRequests
                   .emplace_front(std::make_unique<LibraryScanRequest>(
-                      ScanRequest{ScanRequest::Tracks, nextRequestId(), nullptr}, LibraryInfo{}, tracks))
+                      ScanRequest{ScanRequest::Tracks, nextRequestId(), nullptr}, LibraryInfo{}, "", tracks))
                   .get();
         request->cancel = [this, request]() {
             cancelScanRequest(request->id);
@@ -125,6 +139,22 @@ struct LibraryThreadHandler::Private
 
         scanTracks(*request);
 
+        return request;
+    }
+
+    ScanRequest* addDirectoryScanRequest(const LibraryInfo& library, const QString& dir)
+    {
+        auto* request = scanRequests
+                            .emplace_back(std::make_unique<LibraryScanRequest>(
+                                ScanRequest{ScanRequest::Library, nextRequestId(), nullptr}, library, dir, TrackList{}))
+                            .get();
+        request->cancel = [this, request]() {
+            cancelScanRequest(request->id);
+        };
+
+        if(scanRequests.size() == 1) {
+            scanDirectory(*request);
+        }
         return request;
     }
 
@@ -136,7 +166,12 @@ struct LibraryThreadHandler::Private
                 scanTracks(request);
                 break;
             case(ScanRequest::Library):
-                scanLibrary(request);
+                if(request.dir.isEmpty()) {
+                    scanLibrary(request);
+                }
+                else {
+                    scanDirectory(request);
+                }
                 break;
         }
     }
@@ -166,9 +201,10 @@ struct LibraryThreadHandler::Private
     }
 };
 
-LibraryThreadHandler::LibraryThreadHandler(Database* database, MusicLibrary* library, QObject* parent)
+LibraryThreadHandler::LibraryThreadHandler(Database* database, MusicLibrary* library, LibraryManager* libraryManager,
+                                           SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, database, library)}
+    , p{std::make_unique<Private>(this, database, library, settings)}
 {
     QObject::connect(&p->trackDatabaseManager, &TrackDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);
@@ -180,6 +216,28 @@ LibraryThreadHandler::LibraryThreadHandler(Database* database, MusicLibrary* lib
     QObject::connect(&p->scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
     QObject::connect(&p->scanner, &LibraryScanner::scanUpdate, this, &LibraryThreadHandler::scanUpdate);
     QObject::connect(&p->scanner, &LibraryScanner::scannedTracks, this, &LibraryThreadHandler::scannedTracks);
+    QObject::connect(
+        &p->scanner, &LibraryScanner::directoryChanged, this,
+        [this](const LibraryInfo& library, const QString& dir) { p->addDirectoryScanRequest(library, dir); });
+
+    auto setupWatchers = [this, libraryManager](bool enabled) {
+        QMetaObject::invokeMethod(&p->scanner, "setupWatchers",
+                                  Q_ARG(const LibraryInfoMap&, libraryManager->allLibraries()), enabled);
+    };
+
+    p->settings->subscribe<Settings::Core::Internal::MonitorLibraries>(
+        this, [this, libraryManager, setupWatchers](bool enabled) {
+            setupWatchers(enabled);
+
+            if(enabled) {
+                const LibraryInfoMap& libraries = libraryManager->allLibraries();
+                for(const auto& library : libraries | std::views::values) {
+                    p->addLibraryScanRequest(library);
+                }
+            }
+        });
+
+    setupWatchers(p->settings->value<Settings::Core::Internal::MonitorLibraries>());
 }
 
 LibraryThreadHandler::~LibraryThreadHandler()

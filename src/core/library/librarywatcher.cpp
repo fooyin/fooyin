@@ -17,39 +17,36 @@
  *
  */
 
-#pragma once
+#include "librarywatcher.h"
 
-#include "fycore_export.h"
+#include <QTimer>
 
-#include <QObject>
+using namespace std::chrono_literals;
 
-#include <map>
+constexpr auto Interval = 15ms;
 
 namespace Fooyin {
-struct FYCORE_EXPORT LibraryInfo
+LibraryWatcher::LibraryWatcher(QObject* parent)
+    : QFileSystemWatcher{parent}
+    , m_timer{new QTimer(this)}
 {
-    Q_GADGET
+    m_timer->setSingleShot(true);
+    m_timer->setInterval(Interval);
 
-public:
-    enum class Status
-    {
-        Idle,
-        Pending,
-        Initialised,
-        Scanning,
-        Monitoring,
-    };
-    Q_ENUM(Status)
+    QObject::connect(this, &QFileSystemWatcher::directoryChanged, this, [this](const QString& path) {
+        if(!m_dir.isEmpty() && path != m_dir) {
+            m_timer->stop();
+            emit libraryDirChanged(m_dir);
+        }
+        m_dir = path;
+        m_timer->start();
+    });
 
-    LibraryInfo() = default;
-    LibraryInfo(QString name, QString path, int id = -1)
-        : name{std::move(name)}
-        , path{std::move(path)}
-        , id{id} {};
-    QString name;
-    QString path;
-    int id{-1};
-    Status status{Status::Idle};
-};
-using LibraryInfoMap = std::map<int, LibraryInfo>;
+    QObject::connect(m_timer, &QTimer::timeout, this, [this]() {
+        emit libraryDirChanged(m_dir);
+        m_dir = {};
+    });
+}
 } // namespace Fooyin
+
+#include "moc_librarywatcher.cpp"

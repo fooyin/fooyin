@@ -144,4 +144,20 @@ QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions)
                            [](const QUrl& url) { return url.toLocalFile(); });
     return getFiles(paths, fileExtensions);
 }
+
+QStringList getAllSubdirectories(const QDir& baseDirectory)
+{
+    QStringList directories;
+
+    const QDir dir{baseDirectory};
+    const QFileInfoList subdirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    for(const auto& subdir : subdirs) {
+        directories.push_back(subdir.absoluteFilePath());
+        const QStringList subdirectories = getAllSubdirectories(subdir.absoluteFilePath());
+        directories.append(subdirectories);
+    }
+
+    return directories;
+}
 } // namespace Fooyin::Utils::File

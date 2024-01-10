@@ -75,6 +75,7 @@ set(PRIVATE_SOURCES
     library/librarythreadhandler.cpp
     library/libraryinfo.h
     library/librarymanager.cpp
+    library/librarywatcher.cpp
     library/sortingregistry.cpp
     library/trackdatabasemanager.cpp
     library/unifiedmusiclibrary.cpp

@@ -36,4 +36,5 @@ FYUTILS_EXPORT void openDirectory(const QString& dir);
 FYUTILS_EXPORT QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getFiles(const QStringList& paths, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions = {});
+FYUTILS_EXPORT QStringList getAllSubdirectories(const QDir& baseDirectory);
 } // namespace Fooyin::Utils::File

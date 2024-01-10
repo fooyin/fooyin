@@ -25,7 +25,9 @@
 
 namespace Fooyin {
 class Database;
+class SettingsManager;
 class MusicLibrary;
+class LibraryManager;
 struct LibraryInfo;
 struct ScanResult;
 struct ScanRequest;
@@ -35,7 +37,8 @@ class LibraryThreadHandler : public QObject
     Q_OBJECT
 
 public:
-    explicit LibraryThreadHandler(Database* database, MusicLibrary* library, QObject* parent = nullptr);
+    explicit LibraryThreadHandler(Database* database, MusicLibrary* library, LibraryManager* libraryManager,
+                                  SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryThreadHandler() override;
 
     void getAllTracks();

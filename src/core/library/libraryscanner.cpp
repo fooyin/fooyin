@@ -21,13 +21,17 @@
 
 #include "database/database.h"
 #include "database/trackdatabase.h"
+#include "internalcoresettings.h"
 #include "library/libraryinfo.h"
+#include "librarywatcher.h"
 #include "tagging/tagreader.h"
 
 #include <core/track.h>
 #include <utils/fileutils.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QDir>
+#include <QFileSystemWatcher>
 
 #include <ranges>
 
@@ -57,8 +61,10 @@ struct LibraryScanner::Private
 {
     LibraryScanner* self;
 
-    LibraryInfo library;
     Database* database;
+    SettingsManager* settings;
+
+    LibraryInfo currentLibrary;
     TrackDatabase trackDatabase;
 
     TagReader tagReader;
@@ -67,11 +73,28 @@ struct LibraryScanner::Private
     double totalTracks{0};
     int currentProgress{-1};
 
-    Private(LibraryScanner* self, Database* database)
+    std::unordered_map<int, LibraryWatcher> watchers;
+
+    Private(LibraryScanner* self, Database* database, SettingsManager* settings)
         : self{self}
         , database{database}
+        , settings{settings}
         , trackDatabase{database->connectionName()}
     { }
+
+    void addWatcher(const Fooyin::LibraryInfo& library)
+    {
+        QStringList dirs = Utils::File::getAllSubdirectories(library.path);
+        dirs.append(library.path);
+
+        watchers[library.id].addPaths(dirs);
+
+        QObject::connect(
+            &watchers.at(library.id), &LibraryWatcher::libraryDirChanged, self, [this, library](const QString& dir) {
+                QMetaObject::invokeMethod(self, "directoryChanged", Q_ARG(const Fooyin::LibraryInfo&, library),
+                                          Q_ARG(const QString&, dir));
+            });
+    }
 
     void reportProgress()
     {
@@ -91,9 +114,9 @@ struct LibraryScanner::Private
         trackDatabase.storeTracks(tracks);
     }
 
-    bool getAndSaveAllTracks(const TrackList& tracks)
+    bool getAndSaveAllTracks(const QString& path, const TrackList& tracks)
     {
-        const QDir dir{library.path};
+        const QDir dir{path};
 
         TrackList tracksToStore;
         TrackList tracksToUpdate;
@@ -134,7 +157,7 @@ struct LibraryScanner::Private
 
             auto setTrackProps = [this, &filepath, &dir](Track& track) {
                 track.setFilePath(filepath);
-                track.setLibraryId(library.id);
+                track.setLibraryId(currentLibrary.id);
                 track.setRelativePath(dir.relativeFilePath(filepath));
                 track.setEnabled(true);
             };
@@ -142,7 +165,7 @@ struct LibraryScanner::Private
             if(trackPaths.contains(filepath)) {
                 const Track& libraryTrack = trackPaths.at(filepath);
 
-                if(libraryTrack.libraryId() != library.id || libraryTrack.modifiedTime() != lastModified) {
+                if(libraryTrack.libraryId() != currentLibrary.id || libraryTrack.modifiedTime() != lastModified) {
                     Track changedTrack{libraryTrack};
                     if(tagReader.readMetaData(changedTrack)) {
                         changedTrack.generateHash();
@@ -204,14 +227,14 @@ struct LibraryScanner::Private
 
     void changeLibraryStatus(LibraryInfo::Status status)
     {
-        library.status = status;
-        QMetaObject::invokeMethod(self, "statusChanged", Q_ARG(const Fooyin::LibraryInfo&, library));
+        currentLibrary.status = status;
+        QMetaObject::invokeMethod(self, "statusChanged", Q_ARG(const Fooyin::LibraryInfo&, currentLibrary));
     }
 };
 
-LibraryScanner::LibraryScanner(Database* database, QObject* parent)
+LibraryScanner::LibraryScanner(Database* database, SettingsManager* settings, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<Private>(this, database)}
+    , p{std::make_unique<Private>(this, database, settings)}
 { }
 
 LibraryScanner::~LibraryScanner() = default;
@@ -228,26 +251,68 @@ void LibraryScanner::stopThread()
     setState(Idle);
 }
 
+void LibraryScanner::setupWatchers(const LibraryInfoMap& libraries, bool enabled)
+{
+    for(const auto& library : libraries | std::views::values) {
+        if(!enabled && library.status == LibraryInfo::Status::Monitoring) {
+            LibraryInfo updatedLibrary{library};
+            updatedLibrary.status = LibraryInfo::Status::Idle;
+            emit statusChanged(updatedLibrary);
+        }
+        else if(!p->watchers.contains(library.id)) {
+            p->addWatcher(library);
+        }
+    }
+
+    if(!enabled) {
+        p->watchers.clear();
+    }
+}
+
 void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tracks)
 {
     setState(Running);
 
-    p->library = library;
+    p->currentLibrary = library;
 
     p->changeLibraryStatus(LibraryInfo::Status::Scanning);
 
-    if(!QFileInfo::exists(p->library.path)) {
-        // Root dir doesn't exist so leave to user to delete
-        return;
+    if(p->currentLibrary.id >= 0 && QFileInfo::exists(p->currentLibrary.path)) {
+        if(p->settings->value<Settings::Core::Internal::MonitorLibraries>() && !p->watchers.contains(library.id)) {
+            p->addWatcher(library);
+        }
+        p->getAndSaveAllTracks(library.path, tracks);
     }
-
-    p->getAndSaveAllTracks(tracks);
 
     if(state() == Paused) {
         p->changeLibraryStatus(LibraryInfo::Status::Pending);
     }
     else {
-        p->changeLibraryStatus(LibraryInfo::Status::Idle);
+        p->changeLibraryStatus(p->settings->value<Settings::Core::Internal::MonitorLibraries>()
+                                   ? LibraryInfo::Status::Monitoring
+                                   : LibraryInfo::Status::Idle);
+        setState(Idle);
+        emit finished();
+    }
+}
+
+void LibraryScanner::scanLibraryDirectory(const LibraryInfo& library, const QString& dir, const TrackList& tracks)
+{
+    setState(Running);
+
+    p->currentLibrary = library;
+
+    p->changeLibraryStatus(LibraryInfo::Status::Scanning);
+
+    p->getAndSaveAllTracks(dir, tracks);
+
+    if(state() == Paused) {
+        p->changeLibraryStatus(LibraryInfo::Status::Pending);
+    }
+    else {
+        p->changeLibraryStatus(p->settings->value<Settings::Core::Internal::MonitorLibraries>()
+                                   ? LibraryInfo::Status::Monitoring
+                                   : LibraryInfo::Status::Idle);
         setState(Idle);
         emit finished();
     }
