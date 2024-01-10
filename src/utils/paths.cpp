@@ -34,7 +34,7 @@ QString operator/(const QString& first, const QString& second)
 
 QString createPath(const QString& path, const QString& appendPath)
 {
-    if(!Utils::File::exists(path)) {
+    if(!QFileInfo::exists(path)) {
         if(!QDir().mkpath(path)) {
             qDebug() << "Cannot create path: " << path;
         }
@@ -42,7 +42,7 @@ QString createPath(const QString& path, const QString& appendPath)
 
     auto fullPath = path / appendPath;
 
-    if(!Utils::File::exists(fullPath)) {
+    if(!QFileInfo::exists(fullPath)) {
         if(!QDir().mkpath(fullPath)) {
             qDebug() << "Cannot create path: " << fullPath;
         }

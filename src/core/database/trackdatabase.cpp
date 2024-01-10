@@ -25,7 +25,7 @@
 #include <core/track.h>
 #include <utils/fileutils.h>
 
-#include <QDateTime>
+#include <QFileInfo>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -136,7 +136,7 @@ void readToTrack(const Fooyin::DatabaseQuery& q, Fooyin::Track& track)
     track.setPlayCount(q.value(30).toInt());
 
     track.generateHash();
-    track.setEnabled(Fooyin::Utils::File::exists(track.filepath()));
+    track.setEnabled(QFileInfo::exists(track.filepath()));
 }
 } // namespace
 
@@ -151,7 +151,7 @@ struct TrackDatabase::Private
 
     void removeUnmanagedTracks() const
     {
-        QString queryText
+        const QString queryText
             = u"DELETE FROM Tracks WHERE LibraryID = -1 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"_s;
         const auto q = self->runQuery(queryText, u"Cannot cleanup tracks"_s);
     }

@@ -26,7 +26,7 @@
 #include <utils/paths.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QFile>
+#include <QFileInfo>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -39,10 +39,10 @@ Database::Database(const QString& directory, const QString& filename, SettingsMa
     : DatabaseModule{directory + "/" + filename}
     , m_settings{settings}
 {
-    if(!Utils::File::exists(directory)) {
+    if(!QFileInfo::exists(directory)) {
         Utils::File::createDirectories(directory);
     }
-    bool success = Utils::File::exists(connectionName());
+    bool success = QFileInfo::exists(connectionName());
 
     if(!success) {
         success = createDatabase();

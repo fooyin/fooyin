@@ -30,7 +30,6 @@ namespace Fooyin::Utils::File {
 FYUTILS_EXPORT QString cleanPath(const QString& path);
 FYUTILS_EXPORT bool isSamePath(const QString& filename1, const QString& filename2);
 FYUTILS_EXPORT bool isSubdir(const QString& dir, const QString& parentDir);
-FYUTILS_EXPORT bool exists(const QString& filename);
 FYUTILS_EXPORT QString getParentDirectory(const QString& filename);
 FYUTILS_EXPORT bool createDirectories(const QString& path);
 FYUTILS_EXPORT void openDirectory(const QString& dir);

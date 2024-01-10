@@ -24,8 +24,9 @@
 #include "version.h"
 
 #include <core/coresettings.h>
-#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
+
+#include <QFileInfo>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -47,7 +48,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<OutputVolume>(1.0, u"Engine/OutputVolume"_s);
     m_settings->createSetting<RewindPreviousTrack>(false, u"Playlist/RewindPreviousTrack"_s);
 
-    m_settings->set<FirstRun>(!Utils::File::exists(Core::settingsPath()));
+    m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 
     m_sortingRegistry->loadItems();
 }

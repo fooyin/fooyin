@@ -26,12 +26,12 @@
 #include <gui/guiconstants.h>
 #include <utils/async.h>
 #include <utils/crypto.h>
-#include <utils/fileutils.h>
 #include <utils/utils.h>
 
 #include <QCoroCore>
 
 #include <QByteArray>
+#include <QFileInfo>
 #include <QPixmapCache>
 
 #include <set>
@@ -79,7 +79,7 @@ QPixmap loadCachedCover(const QString& key)
 
     const QString cachePath = coverThumbnailPath(key);
 
-    if(Fooyin::Utils::File::exists(cachePath)) {
+    if(QFileInfo::exists(cachePath)) {
         cover.load(cachePath);
         if(!cover.isNull()) {
             return cover;
@@ -120,7 +120,7 @@ struct CoverProvider::Private
                 co_return;
             }
         }
-        else if(Fooyin::Utils::File::exists(track.coverPath())) {
+        else if(QFileInfo::exists(track.coverPath())) {
             cover.load(track.coverPath());
             if(cover.isNull()) {
                 co_return;
@@ -133,7 +133,7 @@ struct CoverProvider::Private
 
         if(saveToDisk) {
             const QString cachePath = coverThumbnailPath(key);
-            if(!Utils::File::exists(cachePath)) {
+            if(!QFileInfo::exists(cachePath)) {
                 co_await saveThumbnail(cover, key);
             }
         }

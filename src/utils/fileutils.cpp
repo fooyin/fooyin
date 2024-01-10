@@ -77,11 +77,6 @@ bool isSubdir(const QString& dir, const QString& parentDir)
     return false;
 }
 
-bool exists(const QString& filename)
-{
-    return (!filename.isEmpty()) && QFile::exists(filename);
-}
-
 QString getParentDirectory(const QString& filename)
 {
     const auto cleaned = cleanPath(filename);
