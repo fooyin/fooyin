@@ -21,6 +21,8 @@
 
 #include <QFileSystemWatcher>
 
+class QTimer;
+
 namespace Fooyin {
 class LibraryWatcher : public QFileSystemWatcher
 {
