@@ -103,9 +103,6 @@ struct FilterPopulator::Private
             if(!populator->mayRun()) {
                 return;
             }
-            if(!track.enabled()) {
-                continue;
-            }
             iterateTrack(track);
         }
 

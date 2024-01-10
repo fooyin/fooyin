@@ -42,20 +42,18 @@ uint64_t AudioEngine::position() const
     return m_position;
 }
 
-void AudioEngine::stateChanged(PlaybackState state)
+void AudioEngine::changeState(PlaybackState state)
 {
-    if(state == m_state) {
-        return;
+    if(std::exchange(m_state, state) != state) {
+        emit stateChanged(m_state);
     }
-    m_state = state;
 }
 
-void AudioEngine::trackStatusChanged(TrackStatus status)
+void AudioEngine::changeTrackStatus(TrackStatus status)
 {
-    if(m_status == status) {
-        return;
+    if(std::exchange(m_status, status) != status) {
+        emit trackStatusChanged(m_status);
     }
-    m_status = status;
 }
 
 void AudioEngine::startup() { }

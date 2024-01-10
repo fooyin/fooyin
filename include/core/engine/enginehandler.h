@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <core/engine/audioengine.h>
 #include <core/engine/audiooutput.h>
 
 #include <QObject>
@@ -28,7 +29,6 @@
 namespace Fooyin {
 class SettingsManager;
 class PlayerManager;
-class AudioOutput;
 struct AudioOutputBuilder;
 
 using OutputNames = std::vector<QString>;
@@ -57,6 +57,7 @@ public:
     void addOutput(const AudioOutputBuilder& output);
 
 signals:
+    void trackStatusChanged(TrackStatus status);
     void outputChanged(AudioOutput* output);
     void deviceChanged(const QString& device);
 

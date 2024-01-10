@@ -129,16 +129,6 @@ struct UnifiedMusicLibrary::Private
         QMetaObject::invokeMethod(self, "tracksScanned", Q_ARG(const TrackList&, tracksScanned));
     }
 
-    void removeTracks(const TrackList& tracksToRemove)
-    {
-        std::erase_if(tracks, [&tracksToRemove](const Track& libraryTrack) {
-            return std::ranges::any_of(tracksToRemove,
-                                       [libraryTrack](const Track& track) { return libraryTrack.id() == track.id(); });
-        });
-
-        QMetaObject::invokeMethod(self, "tracksDeleted", Q_ARG(const TrackList&, tracksToRemove));
-    }
-
     void removeLibrary(int id, const std::set<int>& tracksRemoved)
     {
         if(id < 0) {
@@ -203,11 +193,8 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
             [this](const ScanResult& result) { p->handleScanResult(result); });
     connect(&p->threadHandler, &LibraryThreadHandler::scannedTracks, this,
             [this](const TrackList& tracks) { p->scannedTracks(tracks); });
-    connect(&p->threadHandler, &LibraryThreadHandler::tracksDeleted, this,
-            [this](const TrackList& tracks) { p->removeTracks(tracks); });
     connect(&p->threadHandler, &LibraryThreadHandler::tracksUpdated, this,
             [this](const TrackList& tracks) { p->updateTracks(tracks); });
-
     connect(&p->threadHandler, &LibraryThreadHandler::gotTracks, this,
             [this](const TrackList& tracks) { p->loadTracks(tracks); });
 

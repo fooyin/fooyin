@@ -26,6 +26,7 @@
 #include <core/playlist/playlist.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/crypto.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
@@ -758,8 +759,6 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, MusicLibrary* l
     , settings{settings}
     , coverProvider{new CoverProvider(model)}
     , resetting{false}
-    , playingIcon{QIcon::fromTheme(Constants::Icons::Play).pixmap(20)}
-    , pausedIcon{QIcon::fromTheme(Constants::Icons::Pause).pixmap(20)}
     , altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
     , coverSize{settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>(),
                 settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
@@ -768,6 +767,16 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, MusicLibrary* l
     , currentPlayState{PlayState::Stopped}
     , currentIndex{-1}
 {
+    auto updateIcons = [this]() {
+        playingIcon = QIcon::fromTheme(Constants::Icons::Play).pixmap(20);
+        pausedIcon  = QIcon::fromTheme(Constants::Icons::Pause).pixmap(20);
+        missingIcon = QIcon::fromTheme(Constants::Icons::Close).pixmap(15);
+    };
+
+    updateIcons();
+
+    settings->subscribe<Settings::Gui::IconTheme>(model, updateIcons);
+
     populator.moveToThread(&populatorThread);
     populatorThread.start();
 }
@@ -850,6 +859,11 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
 {
     const auto track = std::get<PlaylistTrackItem>(item->data());
 
+    auto isPlaying = [this, &track, item]() {
+        return isActivePlaylist && currentPlayingTrack.id() == track.track().id()
+            && currentPlaylist->currentTrackIndex() == item->index();
+    };
+
     switch(role) {
         case(Qt::DisplayRole): {
             if(column >= 0 && column < static_cast<int>(track.left().size())) {
@@ -864,11 +878,7 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
             return track.right();
         }
         case(PlaylistItem::Role::Playing): {
-            if(isActivePlaylist) {
-                return currentPlayingTrack.id() == track.track().id()
-                    && currentPlaylist->currentTrackIndex() == item->index();
-            }
-            return false;
+            return isPlaying();
         }
         case(PlaylistItem::Role::ItemData): {
             return QVariant::fromValue<Track>(track.track());
@@ -879,6 +889,9 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
         case(PlaylistItem::Role::CellMargin): {
             return CellMargin;
         }
+        case(PlaylistItem::Role::Enabled): {
+            return track.track().enabled();
+        }
         case(Qt::BackgroundRole): {
             if(!altColours) {
                 return QPalette::Base;
@@ -887,7 +900,7 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
         }
         case(Qt::SizeHintRole): {
             if(!columns.empty() && column >= 0 && column < static_cast<int>(track.left().size())) {
-                QFontMetrics fm{track.left().at(column).font};
+                const QFontMetrics fm{track.left().at(column).font};
                 QRect rect = fm.boundingRect(track.left().at(column).text);
                 rect.setWidth(rect.width() + (2 * CellMargin + 1));
                 rect.setHeight(currentPreset.track.rowHeight);
@@ -897,15 +910,22 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
             return QSize{0, currentPreset.track.rowHeight};
         }
         case(Qt::DecorationRole): {
-            switch(currentPlayState) {
-                case(PlayState::Playing):
-                    return playingIcon;
-                case(PlayState::Paused):
-                    return pausedIcon;
-                case(PlayState::Stopped):
-                default:
-                    return {};
+            if(!track.track().enabled()) {
+                return missingIcon;
             }
+
+            if(isPlaying()) {
+                switch(currentPlayState) {
+                    case(PlayState::Playing):
+                        return playingIcon;
+                    case(PlayState::Paused):
+                        return pausedIcon;
+                    case(PlayState::Stopped):
+                        return {};
+                }
+            }
+
+            return {};
         }
         default:
             return {};

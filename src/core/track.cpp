@@ -22,8 +22,8 @@
 #include <core/constants.h>
 #include <utils/crypto.h>
 
+#include <QFileInfo>
 #include <QIODevice>
-#include <QMap>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -37,6 +37,7 @@ struct Track::Private : public QSharedData
     Type type{0};
     QString filepath;
     QString relativePath;
+    QString filename;
     QString title;
     QStringList artists;
     QString album;
@@ -71,7 +72,9 @@ struct Track::Private : public QSharedData
 
     explicit Private(QString filepath = {})
         : filepath{std::move(filepath)}
-    { }
+    {
+        filename = QFileInfo{filepath}.fileName();
+    }
 };
 
 Track::Track()
@@ -177,6 +180,11 @@ QString Track::filepath() const
 QString Track::relativePath() const
 {
     return p->relativePath;
+}
+
+QString Track::filename() const
+{
+    return p->filename;
 }
 
 QString Track::title() const
@@ -385,6 +393,7 @@ void Track::setType(Type type)
 void Track::setFilePath(const QString& path)
 {
     p->filepath = path;
+    p->filename = QFileInfo{path}.fileName();
 }
 
 void Track::setRelativePath(const QString& path)

@@ -83,6 +83,7 @@ public:
     [[nodiscard]] QString typeString() const;
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString relativePath() const;
+    [[nodiscard]] QString filename() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] QStringList artists() const;
     [[nodiscard]] QString artist() const;
@@ -174,10 +175,10 @@ private:
 };
 FYCORE_EXPORT size_t qHash(const Track& track);
 
-using TrackIds     = std::vector<int>;
-using TrackList    = std::vector<Track>;
-using TrackIdMap   = std::unordered_map<int, Track>;
-using TrackPathMap = std::unordered_map<QString, Track>;
+using TrackIds      = std::vector<int>;
+using TrackList     = std::vector<Track>;
+using TrackIdMap    = std::unordered_map<int, Track>;
+using TrackFieldMap = std::unordered_map<QString, Track>;
 } // namespace Fooyin
 
 FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& tracks);

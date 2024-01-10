@@ -29,7 +29,6 @@
 #include "playlist/playlisthandler.h"
 #include "plugins/pluginmanager.h"
 
-#include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
 #include <core/engine/outputplugin.h>
 #include <core/plugins/coreplugin.h>
@@ -98,7 +97,6 @@ Application::Application(QObject* parent)
     QObject::connect(p->libraryManager, &LibraryManager::removingLibraryTracks, p->playlistHandler,
                      &PlaylistHandler::savePlaylists);
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, p->playlistHandler, &PlaylistHandler::tracksUpdated);
-    QObject::connect(p->library, &MusicLibrary::tracksDeleted, p->playlistHandler, &PlaylistHandler::tracksRemoved);
 
     p->library->loadAllTracks();
     p->engine.setup();

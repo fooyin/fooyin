@@ -294,9 +294,6 @@ struct PlaylistPopulator::Private
             if(!self->mayRun()) {
                 return;
             }
-            if(!track.enabled()) {
-                continue;
-            }
             iterateTrack(track);
         }
 
@@ -327,9 +324,6 @@ struct PlaylistPopulator::Private
             for(const Track& track : trackGroup) {
                 if(!self->mayRun()) {
                     return;
-                }
-                if(!track.enabled()) {
-                    continue;
                 }
                 if(const auto* trackItem = iterateTrack(track)) {
                     trackKeys.push_back(trackItem->key());

@@ -57,8 +57,7 @@
 #include "widgets/splitterwidget.h"
 #include "widgets/tabstackwidget.h"
 
-#include <core/coresettings.h>
-#include <core/internalcoresettings.h>
+#include <core/engine/enginehandler.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/plugins/coreplugincontext.h>
@@ -75,6 +74,10 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
+
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QPushButton>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -317,6 +320,28 @@ struct GuiApplication::Private
         propertiesDialog->addTab(
             u"Details"_s, [this]() { return new InfoWidget(playerManager, &selectionController, settingsManager); });
     }
+
+    void showTrackNotFoundMessage(const Track& track) const
+    {
+        QMessageBox message;
+        message.setIcon(QMessageBox::Warning);
+        message.setText("Track Not Found");
+        message.setInformativeText(track.filepath());
+
+        message.addButton(QMessageBox::Ok);
+        QPushButton* stopButton = message.addButton("Stop", QMessageBox::ActionRole);
+        stopButton->setIcon(QIcon::fromTheme(Constants::Icons::Stop));
+        message.setDefaultButton(QMessageBox::Ok);
+
+        message.exec();
+
+        if(message.clickedButton() == stopButton) {
+            playerManager->stop();
+        }
+        else {
+            playerManager->next();
+        }
+    }
 };
 
 GuiApplication::GuiApplication(const CorePluginContext& core)
@@ -325,6 +350,14 @@ GuiApplication::GuiApplication(const CorePluginContext& core)
     QObject::connect(&p->selectionController, &TrackSelectionController::requestPropertiesDialog, p->propertiesDialog,
                      &PropertiesDialog::show);
     QObject::connect(p->viewMenu, &ViewMenu::openQuickSetup, p->editableLayout.get(), &EditableLayout::showQuickSetup);
+    QObject::connect(p->engineHandler, &EngineHandler::trackStatusChanged, this, [this](TrackStatus status) {
+        if(status == InvalidTrack) {
+            const Track track = p->playerManager->currentTrack();
+            if(track.isValid() && !QFileInfo::exists(track.filepath())) {
+                p->showTrackNotFoundMessage(track);
+            }
+        }
+    });
 
     p->layoutProvider.findLayouts();
 

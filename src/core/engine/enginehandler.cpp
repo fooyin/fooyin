@@ -70,11 +70,31 @@ struct EngineHandler::Private
         QObject::connect(playerManager, &PlayerManager::positionMoved, engine, &AudioEngine::seek);
         QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
         QObject::connect(engine, &AudioEngine::positionChanged, playerManager, &PlayerManager::setCurrentPosition);
-        QObject::connect(engine, &AudioEngine::trackFinished, playerManager, &PlayerManager::next);
+        QObject::connect(engine, &AudioEngine::trackStatusChanged, self,
+                         [this](TrackStatus status) { handleTrackStatus(status); });
         QObject::connect(self, &EngineHandler::outputChanged, engine, &AudioEngine::setAudioOutput);
         QObject::connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
 
         updateVolume(settings->value<Settings::Core::OutputVolume>());
+    }
+
+    void handleTrackStatus(TrackStatus status) const
+    {
+        switch(status) {
+            case(TrackStatus::EndOfTrack):
+                playerManager->next();
+                break;
+            case(NoTrack):
+                playerManager->stop();
+                break;
+            case(InvalidTrack):
+            case(LoadingTrack):
+            case(LoadedTrack):
+            case(BufferedTrack):
+                break;
+        }
+
+        QMetaObject::invokeMethod(self, "trackStatusChanged", Q_ARG(TrackStatus, status));
     }
 
     void playStateChanged(PlayState state)

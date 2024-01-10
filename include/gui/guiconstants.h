@@ -20,9 +20,9 @@
 #pragma once
 
 namespace Fooyin::Constants {
-constexpr auto NoCover         = "://images/nocover.png";
-constexpr auto LightIconTheme  = "light";
-constexpr auto DarkIconTheme   = "dark";
+constexpr auto NoCover        = "://images/nocover.png";
+constexpr auto LightIconTheme = "light";
+constexpr auto DarkIconTheme  = "dark";
 
 namespace Icons {
 constexpr auto Fooyin     = "fooyin";
@@ -42,6 +42,7 @@ constexpr auto Font       = "preferences-desktop-font";
 constexpr auto Add        = "list-add";
 constexpr auto Remove     = "list-remove";
 constexpr auto TextColour = "format-text-bold";
+constexpr auto Close      = "window-close";
 
 constexpr auto ScriptExpression = "script-expression";
 constexpr auto ScriptVariable   = "script-variable";

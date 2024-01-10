@@ -68,11 +68,12 @@ public:
     virtual void setAudioOutput(AudioOutput* output)    = 0;
     virtual void setOutputDevice(const QString& device) = 0;
 
-    void stateChanged(PlaybackState state);
-    void trackStatusChanged(TrackStatus status);
+    void changeState(PlaybackState state);
+    void changeTrackStatus(TrackStatus status);
 
 signals:
-    void trackFinished();
+    void stateChanged(PlaybackState state);
+    void trackStatusChanged(TrackStatus status);
     void positionChanged(uint64_t ms);
 
 public slots:

@@ -468,19 +468,6 @@ void PlaylistHandler::populatePlaylists(const TrackList& tracks)
     emit playlistsPopulated();
 }
 
-void PlaylistHandler::libraryRemoved(int id)
-{
-    for(auto& playlist : p->playlists) {
-        TrackList tracks = playlist->tracks();
-        for(Track& track : tracks) {
-            if(track.libraryId() == id) {
-                track.setEnabled(false);
-            }
-        }
-        playlist->replaceTracks(tracks);
-    }
-}
-
 void PlaylistHandler::tracksUpdated(const TrackList& tracks)
 {
     for(auto& playlist : p->playlists) {

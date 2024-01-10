@@ -235,8 +235,7 @@ struct FFmpegEngine::Private
         pauseWorkers(true);
         clock.sync(duration);
 
-        engine->trackStatusChanged(EndOfTrack);
-        emit engine->trackFinished();
+        engine->changeTrackStatus(EndOfTrack);
     }
 
     void pauseOutput(bool pause) const
@@ -315,16 +314,17 @@ void FFmpegEngine::changeTrack(const Track& track)
     emit positionChanged(0);
 
     if(!track.isValid()) {
-        trackStatusChanged(NoTrack);
+        changeTrackStatus(InvalidTrack);
         return;
     }
 
-    trackStatusChanged(LoadingTrack);
+    changeTrackStatus(LoadingTrack);
 
     p->context.reset();
     p->codec.reset();
 
     if(!p->createAVFormatContext(track.filepath())) {
+        changeTrackStatus(InvalidTrack);
         return;
     }
 
@@ -332,10 +332,11 @@ void FFmpegEngine::changeTrack(const Track& track)
     p->clock.sync();
 
     if(!p->createCodec()) {
+        changeTrackStatus(InvalidTrack);
         return;
     }
 
-    trackStatusChanged(LoadedTrack);
+    changeTrackStatus(LoadedTrack);
 }
 
 void FFmpegEngine::setState(PlaybackState state)
@@ -373,8 +374,8 @@ void FFmpegEngine::play()
     }
     setState(PlayingState);
     p->positionTimer()->start();
-    stateChanged(PlayingState);
-    trackStatusChanged(BufferedTrack);
+    changeState(PlayingState);
+    changeTrackStatus(BufferedTrack);
 }
 
 void FFmpegEngine::pause()
@@ -388,8 +389,8 @@ void FFmpegEngine::pause()
     }
     setState(PausedState);
     p->positionTimer()->stop();
-    stateChanged(PausedState);
-    trackStatusChanged(BufferedTrack);
+    changeState(PausedState);
+    changeTrackStatus(BufferedTrack);
 }
 
 void FFmpegEngine::stop()
@@ -397,8 +398,8 @@ void FFmpegEngine::stop()
     setState(StoppedState);
     p->positionTimer()->stop();
     emit positionChanged(0);
-    stateChanged(StoppedState);
-    trackStatusChanged(NoTrack);
+    changeState(StoppedState);
+    changeTrackStatus(NoTrack);
 }
 
 void FFmpegEngine::setVolume(double volume)

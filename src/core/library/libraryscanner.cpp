@@ -29,7 +29,28 @@
 
 #include <QDir>
 
+#include <ranges>
+
 constexpr auto BatchSize = 250;
+
+namespace {
+Fooyin::Track matchMissingTrack(const Fooyin::TrackFieldMap& missingFiles, const Fooyin::TrackFieldMap& missingHashes,
+                                Fooyin::Track& track)
+{
+    const QString filename = track.filename();
+    const QString hash     = track.generateHash();
+
+    if(missingFiles.contains(filename) && missingFiles.at(filename).duration() == track.duration()) {
+        return missingFiles.at(filename);
+    }
+
+    if(missingHashes.contains(hash) && missingHashes.at(hash).duration() == track.duration()) {
+        return missingHashes.at(hash);
+    }
+
+    return {};
+};
+} // namespace
 
 namespace Fooyin {
 struct LibraryScanner::Private
@@ -70,12 +91,25 @@ struct LibraryScanner::Private
         trackDatabase.storeTracks(tracks);
     }
 
-    bool getAndSaveAllTracks(const TrackPathMap& tracks)
+    bool getAndSaveAllTracks(const TrackList& tracks)
     {
         const QDir dir{library.path};
 
-        TrackList tracksToStore{};
-        TrackList tracksToUpdate{};
+        TrackList tracksToStore;
+        TrackList tracksToUpdate;
+
+        TrackFieldMap trackPaths;
+        TrackFieldMap missingFiles;
+        TrackFieldMap missingHashes;
+
+        for(const Track& track : tracks) {
+            trackPaths.emplace(track.filepath(), track);
+
+            if(!QFileInfo::exists(track.filepath())) {
+                missingFiles.emplace(track.filename(), track);
+                missingHashes.emplace(track.hash(), track);
+            }
+        }
 
         const QStringList files = Utils::File::getFilesInDir(dir, Track::supportedFileExtensions());
 
@@ -98,29 +132,43 @@ struct LibraryScanner::Private
                 lastModified = static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch());
             }
 
-            if(tracks.contains(filepath)) {
-                const Track& libraryTrack = tracks.at(filepath);
+            auto setTrackProps = [this, &filepath, &dir](Track& track) {
+                track.setFilePath(filepath);
+                track.setLibraryId(library.id);
+                track.setRelativePath(dir.relativeFilePath(filepath));
+                track.setEnabled(true);
+            };
+
+            if(trackPaths.contains(filepath)) {
+                const Track& libraryTrack = trackPaths.at(filepath);
 
                 if(libraryTrack.libraryId() != library.id || libraryTrack.modifiedTime() != lastModified) {
                     Track changedTrack{libraryTrack};
-                    changedTrack.setLibraryId(library.id);
-                    changedTrack.setRelativePath(dir.relativeFilePath(filepath));
-
                     if(tagReader.readMetaData(changedTrack)) {
-                        // Regenerate hash
                         changedTrack.generateHash();
+                        setTrackProps(changedTrack);
+
                         tracksToUpdate.push_back(changedTrack);
+                        missingHashes.erase(changedTrack.hash());
                     }
                 }
             }
             else {
                 Track track{filepath};
-                track.setLibraryId(library.id);
-                track.setRelativePath(dir.relativeFilePath(filepath));
 
                 if(tagReader.readMetaData(track)) {
-                    track.generateHash();
-                    tracksToStore.push_back(track);
+                    Track refoundTrack = matchMissingTrack(missingFiles, missingHashes, track);
+
+                    if(refoundTrack.isValid()) {
+                        missingHashes.erase(refoundTrack.hash());
+                        missingFiles.erase(refoundTrack.filename());
+
+                        setTrackProps(refoundTrack);
+                        tracksToUpdate.push_back(refoundTrack);
+                    }
+                    else {
+                        tracksToStore.push_back(track);
+                    }
 
                     if(tracksToStore.size() >= BatchSize) {
                         storeTracks(tracksToStore);
@@ -132,6 +180,12 @@ struct LibraryScanner::Private
             }
 
             reportProgress();
+        }
+
+        for(auto& track : missingHashes | std::views::values) {
+            track.setLibraryId(-1);
+            track.setEnabled(false);
+            tracksToUpdate.push_back(track);
         }
 
         storeTracks(tracksToStore);
@@ -179,29 +233,12 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
 
     p->changeLibraryStatus(LibraryInfo::Status::Scanning);
 
-    TrackPathMap trackMap{};
-    TrackList tracksToDelete{};
-
-    if(!Utils::File::exists(p->library.path)) {
+    if(!QFileInfo::exists(p->library.path)) {
         // Root dir doesn't exist so leave to user to delete
         return;
     }
-    for(const Track& track : tracks) {
-        if(!Utils::File::exists(track.filepath())) {
-            tracksToDelete.emplace_back(track);
-        }
-        else {
-            trackMap.emplace(track.filepath(), track);
-        }
-    }
 
-    const bool deletedSuccess = p->trackDatabase.deleteTracks(tracksToDelete);
-
-    if(deletedSuccess && !tracksToDelete.empty()) {
-        emit tracksDeleted(tracksToDelete);
-    }
-
-    p->getAndSaveAllTracks(trackMap);
+    p->getAndSaveAllTracks(tracks);
 
     if(state() == Paused) {
         p->changeLibraryStatus(LibraryInfo::Status::Pending);
@@ -220,8 +257,8 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
     TrackList tracksScanned;
     TrackList tracksToStore;
 
-    TrackPathMap trackMap;
-    std::ranges::transform(std::as_const(libraryTracks), std::inserter(trackMap, trackMap.end()),
+    TrackFieldMap trackMap;
+    std::ranges::transform(libraryTracks, std::inserter(trackMap, trackMap.end()),
                            [](const Track& track) { return std::make_pair(track.filepath(), track); });
 
     p->tracksProcessed = 0;

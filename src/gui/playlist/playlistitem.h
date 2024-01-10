@@ -57,6 +57,7 @@ public:
         BaseKey,
         MultiColumnMode,
         CellMargin,
+        Enabled,
     };
 
     enum class State

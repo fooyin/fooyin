@@ -243,11 +243,17 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     const auto background  = index.data(Qt::BackgroundRole).value<QPalette::ColorRole>();
     const bool multiColumn = index.data(PlaylistItem::Role::MultiColumnMode).toBool();
     const bool isPlaying   = index.data(PlaylistItem::Role::Playing).toBool();
+    const auto enabled     = index.data(PlaylistItem::Role::Enabled).toBool();
 
     QColor playColour{opt.palette.highlight().color()};
     playColour.setAlpha(90);
 
-    painter->fillRect(option.rect, isPlaying ? playColour : option.palette.color(background));
+    QColor disabledColour{Qt::red};
+    disabledColour.setAlpha(50);
+
+    painter->fillRect(option.rect, !enabled    ? disabledColour
+                                   : isPlaying ? playColour
+                                               : option.palette.color(background));
     opt.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter);
 
     if(multiColumn) {
@@ -265,7 +271,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
             painter->fontMetrics().elidedText(contents, Qt::ElideRight, cellRect.width()), colour);
     }
     else {
-        const int indent     = index.data(PlaylistItem::Role::Indentation).toInt() + (isPlaying ? 30 : 0);
+        const int indent     = index.data(PlaylistItem::Role::Indentation).toInt() + (!enabled || isPlaying ? 30 : 0);
         const auto leftSide  = index.data(PlaylistItem::Role::Left).value<TextBlockList>();
         const auto rightSide = index.data(PlaylistItem::Role::Right).value<TextBlockList>();
 
@@ -277,11 +283,10 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
         QRect leftRect{(x + offset + indent), y, leftWidth, height};
         drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignLeft, isPlaying);
 
-        if(isPlaying) {
-            const auto pixmap = index.data(Qt::DecorationRole).value<QPixmap>();
-
+        if(!enabled || isPlaying) {
+            const auto statusIcon = index.data(Qt::DecorationRole).value<QPixmap>();
             const QRect playRect{x + offset, y, 20, height};
-            opt.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, pixmap);
+            opt.widget->style()->drawItemPixmap(painter, playRect, Qt::AlignLeft | Qt::AlignVCenter, statusIcon);
         }
     }
 }

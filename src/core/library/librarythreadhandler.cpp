@@ -180,7 +180,6 @@ LibraryThreadHandler::LibraryThreadHandler(Database* database, MusicLibrary* lib
     QObject::connect(&p->scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
     QObject::connect(&p->scanner, &LibraryScanner::scanUpdate, this, &LibraryThreadHandler::scanUpdate);
     QObject::connect(&p->scanner, &LibraryScanner::scannedTracks, this, &LibraryThreadHandler::scannedTracks);
-    QObject::connect(&p->scanner, &LibraryScanner::tracksDeleted, this, &LibraryThreadHandler::tracksDeleted);
 }
 
 LibraryThreadHandler::~LibraryThreadHandler()

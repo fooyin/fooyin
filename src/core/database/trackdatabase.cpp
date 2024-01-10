@@ -136,6 +136,7 @@ void readToTrack(const Fooyin::DatabaseQuery& q, Fooyin::Track& track)
     track.setPlayCount(q.value(30).toInt());
 
     track.generateHash();
+    track.setEnabled(Fooyin::Utils::File::exists(track.filepath()));
 }
 } // namespace
 

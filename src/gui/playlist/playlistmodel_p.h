@@ -148,6 +148,7 @@ public:
     QString headerText;
     QPixmap playingIcon;
     QPixmap pausedIcon;
+    QPixmap missingIcon;
     bool altColours;
     QSize coverSize;
     QThread populatorThread;

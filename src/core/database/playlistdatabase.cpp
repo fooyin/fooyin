@@ -54,7 +54,7 @@ bool insertPlaylistTracks(Fooyin::DatabaseModule* module, int id, const Fooyin::
     }
 
     for(int i{0}; const auto& track : tracks) {
-        if(track.isValid() && track.enabled()) {
+        if(track.isValid()) {
             if(!insertPlaylistTrack(module, id, track, i++)) {
                 return false;
             }
