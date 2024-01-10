@@ -184,9 +184,11 @@ struct LibraryScanner::Private
         }
 
         for(auto& track : missingHashes | std::views::values) {
-            track.setLibraryId(-1);
-            track.setEnabled(false);
-            tracksToUpdate.push_back(track);
+            if(track.libraryId() >= 0 && track.enabled()) {
+                track.setLibraryId(-1);
+                track.setEnabled(false);
+                tracksToUpdate.push_back(track);
+            }
         }
 
         storeTracks(tracksToStore);
