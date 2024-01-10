@@ -369,11 +369,11 @@ void FilterModel::removeTracks(const TrackList& tracks)
 
     for(FilterItem* item : items) {
         if(item->trackCount() == 0) {
-            FilterItem* parent = item->parent();
-            const int row      = item->row();
-            beginRemoveRows(indexOfItem(parent), row, row);
-            parent->removeChild(row);
-            parent->resetChildren();
+            const QModelIndex parentIndex = indexOfItem(&p->allNode);
+            const int row                 = item->row();
+            beginRemoveRows(parentIndex, row, row);
+            p->allNode.removeChild(row);
+            p->allNode.resetChildren();
             endRemoveRows();
             p->nodes.erase(item->key());
         }
