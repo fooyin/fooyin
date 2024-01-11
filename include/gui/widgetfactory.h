@@ -28,19 +28,34 @@
 namespace Fooyin {
 class FYGUI_EXPORT WidgetFactory
 {
+private:
     using Instantiator = std::function<FyWidget*()>;
 
     struct FactoryWidget
     {
-        QString key;
         QString name;
         Instantiator instantiator;
         QStringList subMenus;
+        int limit{0};
     };
 
-protected:
+    friend class WidgetProvider;
+
     using FactoryWidgets = std::map<QString, FactoryWidget>;
     FactoryWidgets widgets;
+
+    std::optional<FactoryWidget> widget(const QString& key) const
+    {
+        if(!widgets.contains(key)) {
+            return {};
+        }
+        return widgets.at(key);
+    }
+
+    [[nodiscard]] FactoryWidgets registeredWidgets() const
+    {
+        return widgets;
+    }
 
 public:
     template <typename T, typename Factory>
@@ -54,7 +69,6 @@ public:
         }
 
         FactoryWidget fw;
-        fw.key          = key;
         fw.name         = displayName.isEmpty() ? key : displayName;
         fw.instantiator = factory;
 
@@ -72,22 +86,14 @@ public:
         widgets.at(key).subMenus = subMenus;
     }
 
-    [[nodiscard]] FyWidget* make(const QString& key) const
+    void setLimit(const QString& key, int limit)
     {
         if(!widgets.contains(key)) {
-            return nullptr;
+            qDebug() << "Subclass not registered";
+            return;
         }
 
-        auto widget = widgets.at(key);
-        if(!widget.instantiator) {
-            return nullptr;
-        }
-        return widget.instantiator();
-    }
-
-    [[nodiscard]] FactoryWidgets registeredWidgets() const
-    {
-        return widgets;
+        widgets.at(key).limit = limit;
     }
 };
 } // namespace Fooyin

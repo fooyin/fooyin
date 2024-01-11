@@ -46,10 +46,27 @@ public:
         return m_widgetFactory.get();
     }
 
-    FyWidget* createWidget(const QString& widget)
+    FyWidget* createWidget(const QString& key)
     {
-        FyWidget* createdWidget = m_widgetFactory->make(widget);
-        return createdWidget;
+        const auto widget = m_widgetFactory->widget(key);
+
+        if(!widget || !widget->instantiator) {
+            return nullptr;
+        }
+
+        if(widget->limit > 0 && m_widgetCount.contains(key) && m_widgetCount.at(key) >= widget->limit) {
+            return nullptr;
+        }
+
+        m_widgetCount[key]++;
+        auto* newWidget = widget->instantiator();
+        QObject::connect(newWidget, &QObject::destroyed, this, [this, key]() {
+            if(m_widgetCount.contains(key)) {
+                m_widgetCount[key]--;
+            }
+        });
+
+        return newWidget;
     }
 
     template <typename Func>
@@ -60,10 +77,10 @@ public:
         }
 
         const auto widgets = m_widgetFactory->registeredWidgets();
-        for(const auto& widget : widgets) {
+        for(const auto& [key, widget] : widgets) {
             auto* parentMenu = menu;
 
-            for(const auto& subMenu : widget.second.subMenus) {
+            for(const auto& subMenu : widget.subMenus) {
                 const Id id     = Id{menu->id()}.append(subMenu);
                 auto* childMenu = m_actionManager->actionContainer(id);
 
@@ -74,9 +91,12 @@ public:
                 }
                 parentMenu = childMenu;
             }
-            auto* addWidgetAction = new QAction(widget.second.name, parentMenu);
-            QObject::connect(addWidgetAction, &QAction::triggered, this, [this, func, widget] {
-                FyWidget* newWidget = m_widgetFactory->make(widget.first);
+
+            auto* addWidgetAction = new QAction(widget.name, parentMenu);
+            addWidgetAction->setDisabled(widget.limit > 0 && m_widgetCount.contains(key)
+                                         && m_widgetCount.at(key) >= widget.limit);
+            QObject::connect(addWidgetAction, &QAction::triggered, this, [this, func, key] {
+                FyWidget* newWidget = createWidget(key);
                 func(newWidget);
             });
             parentMenu->addAction(addWidgetAction);
@@ -86,5 +106,6 @@ public:
 private:
     ActionManager* m_actionManager;
     std::unique_ptr<WidgetFactory> m_widgetFactory;
+    std::unordered_map<QString, int> m_widgetCount;
 };
 } // namespace Fooyin

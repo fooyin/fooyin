@@ -303,6 +303,7 @@ struct GuiApplication::Private
             return new PlaylistWidget(actionManager, playlistController.get(), library, settingsManager,
                                       mainWindow.get());
         });
+        factory->setLimit(u"Playlist"_s, 1);
 
         factory->registerClass<Spacer>(u"Spacer"_s, [this]() { return new Spacer(mainWindow.get()); });
 
