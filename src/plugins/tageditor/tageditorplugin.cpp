@@ -24,7 +24,7 @@
 #include <core/library/musiclibrary.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/propertiesdialog.h>
-#include <gui/widgetfactory.h>
+#include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
@@ -38,7 +38,7 @@ struct TagEditorPlugin::Private
     MusicLibrary* library;
     TrackSelectionController* trackSelection;
     PropertiesDialog* propertiesDialog;
-    WidgetFactory* factory;
+    WidgetProvider* widgetProvider;
     SettingsManager* settings;
 };
 
@@ -59,9 +59,9 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
     p->actionManager    = context.actionManager;
     p->trackSelection   = context.trackSelection;
     p->propertiesDialog = context.propertiesDialog;
-    p->factory          = context.widgetFactory;
+    p->widgetProvider   = context.widgetProvider;
 
-    //    p->factory->registerClass<TagEditorWidget>(
+    //    p->factory->registerWidget(
     //        "TagEditor",
     //        [this]() {
     //            return new TagEditorWidget(p->trackSelection, p->library, p->settings);

@@ -19,93 +19,63 @@
 
 #pragma once
 
-#include <gui/widgetfactory.h>
-#include <utils/actions/actioncontainer.h>
-#include <utils/actions/actionmanager.h>
+#include "fygui_export.h"
 
-#include <QAction>
-#include <QMenu>
-#include <QObject>
+#include <QString>
+
+#include <functional>
+#include <memory>
 
 namespace Fooyin {
+class ActionManager;
+class ActionContainer;
 class FyWidget;
+class WidgetFactory;
 
-class WidgetProvider : public QObject
+/*!
+ * Handles registration of FyWidgets.
+ */
+class FYGUI_EXPORT WidgetProvider
 {
-    Q_OBJECT
-
 public:
-    explicit WidgetProvider(ActionManager* actionManager, QObject* parent = nullptr)
-        : QObject{parent}
-        , m_actionManager{actionManager}
-        , m_widgetFactory{std::make_unique<WidgetFactory>()}
-    { }
+    explicit WidgetProvider(ActionManager* actionManager);
+    ~WidgetProvider();
 
-    WidgetFactory* widgetFactory()
-    {
-        return m_widgetFactory.get();
-    }
+    /*!
+     * Registers a widget.
+     * FyWidget subclasses must be registered to be used with the layout system.
+     * @param key a unique key to associate with the widget.
+     * @param instantiator a function to instantiate a FyWidget subclass.
+     * @param displayName name to use in layout editing menus.
+     * @returns true if the widget was registered, or false if a widget at @p key already exists.
+     */
+    bool registerWidget(const QString& key, std::function<FyWidget*()> instantiator,
+                        const QString& displayName = QStringLiteral(""));
 
-    FyWidget* createWidget(const QString& key)
-    {
-        const auto widget = m_widgetFactory->widget(key);
+    /*!
+     * Sets the submenus the widget at @p key appears at in add/replace menus when layout editing.
+     * The widget must already be registerd using @fn registerWidget with the same @p key.
+     */
+    void setSubMenus(const QString& key, const QStringList& subMenus);
 
-        if(!widget || !widget->instantiator) {
-            return nullptr;
-        }
+    /** Sets the maximum number of instances which can be created of the widget at @p key. */
+    void setLimit(const QString& key, int limit);
 
-        if(widget->limit > 0 && m_widgetCount.contains(key) && m_widgetCount.at(key) >= widget->limit) {
-            return nullptr;
-        }
+    /*!
+     * Creates the widget associated with the @p key.
+     * @returns the new widget instance, or nullptr if not registered or over the limit for this widget.
+     */
+    FyWidget* createWidget(const QString& key);
 
-        m_widgetCount[key]++;
-        auto* newWidget = widget->instantiator();
-        QObject::connect(newWidget, &QObject::destroyed, this, [this, key]() {
-            if(m_widgetCount.contains(key)) {
-                m_widgetCount[key]--;
-            }
-        });
-
-        return newWidget;
-    }
-
-    template <typename Func>
-    void setupWidgetMenu(ActionContainer* menu, Func func)
-    {
-        if(!menu->isEmpty()) {
-            return;
-        }
-
-        const auto widgets = m_widgetFactory->registeredWidgets();
-        for(const auto& [key, widget] : widgets) {
-            auto* parentMenu = menu;
-
-            for(const auto& subMenu : widget.subMenus) {
-                const Id id     = Id{menu->id()}.append(subMenu);
-                auto* childMenu = m_actionManager->actionContainer(id);
-
-                if(!childMenu) {
-                    childMenu = m_actionManager->createMenu(id);
-                    childMenu->menu()->setTitle(subMenu);
-                    parentMenu->addMenu(childMenu);
-                }
-                parentMenu = childMenu;
-            }
-
-            auto* addWidgetAction = new QAction(widget.name, parentMenu);
-            addWidgetAction->setDisabled(widget.limit > 0 && m_widgetCount.contains(key)
-                                         && m_widgetCount.at(key) >= widget.limit);
-            QObject::connect(addWidgetAction, &QAction::triggered, this, [this, func, key] {
-                FyWidget* newWidget = createWidget(key);
-                func(newWidget);
-            });
-            parentMenu->addAction(addWidgetAction);
-        }
-    }
+    /*!
+     * Fills the passed @p menu with actions to create a new instance of each registered widget.
+     * @param menu the menu to add actions to.
+     * @param func called when an action is triggered, passing the new instance of the widget.
+     */
+    void setupWidgetMenu(ActionContainer* menu, const std::function<void(FyWidget*)>& func);
 
 private:
-    ActionManager* m_actionManager;
-    std::unique_ptr<WidgetFactory> m_widgetFactory;
-    std::unordered_map<QString, int> m_widgetCount;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

@@ -28,7 +28,7 @@
 #include <gui/editablelayout.h>
 #include <gui/layoutprovider.h>
 #include <gui/plugins/guiplugincontext.h>
-#include <gui/widgetfactory.h>
+#include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 
 namespace Fooyin::Filters {
@@ -39,7 +39,7 @@ struct FiltersPlugin::Private
     MusicLibrary* library;
     PlayerManager* playerManager;
     LayoutProvider* layoutProvider;
-    WidgetFactory* factory;
+    WidgetProvider* widgetProvider;
     TrackSelectionController* trackSelection;
 
     FilterController* filterController;
@@ -104,13 +104,13 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
 {
     p->actionManager  = context.actionManager;
     p->layoutProvider = context.layoutProvider;
-    p->factory        = context.widgetFactory;
+    p->widgetProvider = context.widgetProvider;
     p->trackSelection = context.trackSelection;
 
     p->filterController
         = new FilterController(p->library, p->trackSelection, context.editableLayout, p->settings, this);
 
-    p->factory->registerClass<FilterWidget>(
+    p->widgetProvider->registerWidget(
         QStringLiteral("LibraryFilter"), [this]() { return p->filterController->createFilter(); }, "Library Filter");
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);

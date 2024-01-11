@@ -10,7 +10,6 @@ project(
 
 set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
-    ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
 )
 
 set(SOURCES
@@ -24,6 +23,7 @@ set(SOURCES
     layoutprovider.cpp
     trackselectioncontroller.cpp
     widgetfilter.cpp
+    widgetprovider.cpp
     controls/controlwidget.cpp
     controls/playercontrol.cpp
     controls/playlistcontrol.cpp

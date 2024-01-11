@@ -21,6 +21,8 @@
 
 #include <core/constants.h>
 #include <gui/widgetprovider.h>
+#include <utils/actions/actioncontainer.h>
+#include <utils/actions/actionmanager.h>
 #include <utils/enum.h>
 #include <utils/widgets/editabletabbar.h>
 #include <utils/widgets/editabletabwidget.h>
@@ -30,6 +32,7 @@
 #include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QMenu>
 #include <QStyleOptionViewItem>
 #include <QTabBar>
 #include <QVBoxLayout>

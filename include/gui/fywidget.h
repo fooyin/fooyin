@@ -30,11 +30,14 @@ class ActionContainer;
 
 /*!
  * Base class for all widgets in fooyin.
- * Widgets must implement this class to be used within the layout system.
+ * A widget must be a subclass of FyWidget and registered using WidgetProvider::registerWidget
+ * to be used with the layout system.
  * A unique id is generated for each widget instance. This is saved to the layout
  * to be restored on load. Reimplement @fn saveLayoutData and @fn loadLayoutData to
  * save/restore any extra widget data.
  * @note use WidgetContainer instead if your widget can contain other FyWidgets.
+ *
+ * @see WidgetProvider
  */
 class FYGUI_EXPORT FyWidget : public QWidget
 {
