@@ -71,7 +71,14 @@ bool SettingsManager::set(const QString& key, const QVariant& value)
         return false;
     }
 
-    return m_settings.at(key)->setValue(value);
+    if(auto* setting = m_settings.at(key)) {
+        if(setting->setValue(value)) {
+            setting->notifySubscribers();
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool SettingsManager::reset(const QString& key)
