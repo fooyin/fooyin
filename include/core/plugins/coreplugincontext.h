@@ -54,6 +54,5 @@ struct FYCORE_EXPORT CorePluginContext
     PlaylistManager* playlistHandler;
     SettingsManager* settingsManager;
     EngineHandler* engineHandler;
-    SortingRegistry* sortingRegistry;
 };
 } // namespace Fooyin
