@@ -39,6 +39,26 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 {
     auto* fileMenu = m_actionManager->actionContainer(Constants::Menus::File);
 
+    auto* addFiles        = new QAction(tr("Add &Files"), this);
+    auto* addFilesCommand = m_actionManager->registerAction(addFiles, Constants::Actions::AddFiles);
+    fileMenu->addAction(addFilesCommand, Actions::Groups::One);
+    QObject::connect(addFiles, &QAction::triggered, this, &FileMenu::requestAddFiles);
+
+    auto* addFolders        = new QAction(tr("Ad&d Folders"), this);
+    auto* addFoldersCommand = m_actionManager->registerAction(addFolders, Constants::Actions::AddFolders);
+    fileMenu->addAction(addFoldersCommand, Actions::Groups::One);
+    QObject::connect(addFolders, &QAction::triggered, this, &FileMenu::requestAddFolders);
+
+    fileMenu->addSeparator();
+
+    auto* newPlaylist        = new QAction(tr("&New Playlist"), this);
+    auto* newPlaylistCommand = m_actionManager->registerAction(newPlaylist, Constants::Actions::NewPlaylist);
+    newPlaylistCommand->setDefaultShortcut(QKeySequence::New);
+    fileMenu->addAction(newPlaylistCommand, Actions::Groups::Two);
+    QObject::connect(newPlaylist, &QAction::triggered, this, &FileMenu::requestNewPlaylist);
+
+    fileMenu->addSeparator();
+
     auto* quit        = new QAction(QIcon::fromTheme(Constants::Icons::Quit), tr("E&xit"), this);
     auto* quitCommand = m_actionManager->registerAction(quit, Constants::Actions::Exit);
     quitCommand->setDefaultShortcut(QKeySequence::Quit);

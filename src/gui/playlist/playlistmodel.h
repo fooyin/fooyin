@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "playlistitem.h"
 #include "playlistcolumn.h"
+#include "playlistitem.h"
 
 #include <utils/treemodel.h>
 
@@ -99,7 +99,7 @@ public:
     void tracksChanged();
 
 signals:
-    void filesDropped(const TrackList& tracks, int index);
+    void filesDropped(const QList<QUrl>& urls, int index);
     void tracksInserted(const TrackGroups& groups);
     void tracksMoved(const MoveOperation& operation);
     void playlistTracksChanged(int index);

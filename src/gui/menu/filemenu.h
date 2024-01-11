@@ -32,6 +32,11 @@ class FileMenu : public QObject
 public:
     explicit FileMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
 
+signals:
+    void requestAddFiles();
+    void requestAddFolders();
+    void requestNewPlaylist();
+
 private:
     ActionManager* m_actionManager;
     SettingsManager* m_settings;

@@ -36,6 +36,7 @@
 
 #include <QIcon>
 #include <QMimeData>
+#include <QUrl>
 
 #include <queue>
 

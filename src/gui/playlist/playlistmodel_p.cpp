@@ -1016,11 +1016,8 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
     const int dropIndex = determineDropIndex(model, parent, row);
 
     if(data->hasUrls()) {
-        const auto urls             = data->urls();
-        const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-        TrackList tracks;
-        std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-        QMetaObject::invokeMethod(model, "filesDropped", Q_ARG(const TrackList&, tracks), Q_ARG(int, dropIndex));
+        QMetaObject::invokeMethod(model, "filesDropped", Q_ARG(const QList<QUrl>&, data->urls()),
+                                  Q_ARG(int, dropIndex));
         return true;
     }
 

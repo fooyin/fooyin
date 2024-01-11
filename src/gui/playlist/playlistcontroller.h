@@ -25,6 +25,8 @@
 
 #include <QObject>
 
+#include <QCoroTask>
+
 class QUndoCommand;
 
 namespace Fooyin {
@@ -47,7 +49,8 @@ class PlaylistController : public QObject
     Q_OBJECT
 
 public:
-    PlaylistController(PlaylistManager* handler, PlayerManager* playerManager, TrackSelectionController* selectionController, SettingsManager* settings,
+    PlaylistController(PlaylistManager* handler, PlayerManager* playerManager, MusicLibrary* library,
+                       TrackSelectionController* selectionController, SettingsManager* settings,
                        QObject* parent = nullptr);
     ~PlaylistController() override;
 
@@ -75,6 +78,9 @@ public:
     [[nodiscard]] bool canRedo() const;
     void undoPlaylistChanges();
     void redoPlaylistChanges();
+
+    QCoro::Task<void> filesToPlaylist(QList<QUrl> urls);
+    QCoro::Task<TrackList> filesToTracks(QList<QUrl> urls);
 
 signals:
     void currentPlaylistChanged(Playlist* playlist);

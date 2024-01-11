@@ -19,14 +19,20 @@
 
 #include "playlistcontroller.h"
 
+#include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
 #include <core/playlist/playlistmanager.h>
 #include <core/track.h>
 #include <gui/guisettings.h>
+#include <gui/trackselectioncontroller.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QIODevice>
+#include <QProgressDialog>
 #include <QUndoStack>
+
+#include <QCoroCore>
 
 constexpr auto PlaylistStates = "PlaylistWidget/PlaylistStates";
 
@@ -37,6 +43,7 @@ struct PlaylistController::Private
 
     PlaylistManager* handler;
     PlayerManager* playerManager;
+    MusicLibrary* library;
     TrackSelectionController* selectionController;
     SettingsManager* settings;
 
@@ -45,11 +52,12 @@ struct PlaylistController::Private
     std::unordered_map<int, QUndoStack> histories;
     std::unordered_map<int, PlaylistViewState> states;
 
-    Private(PlaylistController* self, PlaylistManager* handler, PlayerManager* playerManager,
+    Private(PlaylistController* self, PlaylistManager* handler, PlayerManager* playerManager, MusicLibrary* library,
             TrackSelectionController* selectionController, SettingsManager* settings)
         : self{self}
         , handler{handler}
         , playerManager{playerManager}
+        , library{library}
         , selectionController{selectionController}
         , settings{settings}
     { }
@@ -97,6 +105,31 @@ struct PlaylistController::Private
                 }
             }
         }
+    }
+
+    QCoro::Task<TrackList> scanTracks(TrackList tracks)
+    {
+        auto* scanDialog = new QProgressDialog("Reading tracks...", "Abort", 0, 100, nullptr);
+        scanDialog->setAttribute(Qt::WA_DeleteOnClose);
+        scanDialog->setWindowModality(Qt::WindowModal);
+
+        ScanRequest* request = library->scanTracks(tracks);
+
+        scanDialog->show();
+
+        QObject::connect(library, &MusicLibrary::scanProgress, scanDialog, [scanDialog, request](int id, int percent) {
+            if(id != request->id) {
+                return;
+            }
+
+            scanDialog->setValue(percent);
+            if(scanDialog->wasCanceled()) {
+                request->cancel();
+                scanDialog->close();
+            }
+        });
+
+        co_return co_await qCoro(library, &MusicLibrary::tracksScanned);
     }
 
     void saveStates() const
@@ -149,11 +182,11 @@ struct PlaylistController::Private
     }
 };
 
-PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* playerManager,
+PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* playerManager, MusicLibrary* library,
                                        TrackSelectionController* selectionController, SettingsManager* settings,
                                        QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, handler, playerManager, selectionController, settings)}
+    , p{std::make_unique<Private>(this, handler, playerManager, library, selectionController, settings)}
 {
     p->restoreStates();
 
@@ -318,6 +351,28 @@ void PlaylistController::redoPlaylistChanges()
         p->histories.at(currentId).redo();
         emit playlistHistoryChanged();
     }
+}
+
+QCoro::Task<void> PlaylistController::filesToPlaylist(QList<QUrl> urls)
+{
+    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
+    TrackList tracks;
+    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
+
+    tracks = co_await p->scanTracks(tracks);
+
+    if(p->currentPlaylist) {
+        p->handler->appendToPlaylist(p->currentPlaylist->id(), tracks);
+    }
+}
+
+QCoro::Task<TrackList> PlaylistController::filesToTracks(QList<QUrl> urls)
+{
+    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
+    TrackList tracks;
+    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
+
+    co_return co_await p->scanTracks(tracks);
 }
 
 void PlaylistController::startPlayback() const

@@ -474,32 +474,11 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
     }
 }
 
-QCoro::Task<void> PlaylistWidgetPrivate::scanDroppedTracks(TrackList tracks, int index)
+QCoro::Task<void> PlaylistWidgetPrivate::scanDroppedTracks(QList<QUrl> urls, int index)
 {
     playlistView->setFocus(Qt::ActiveWindowFocusReason);
 
-    auto* progress = new QProgressDialog("Reading tracks...", "Abort", 0, 100, self);
-    progress->setWindowModality(Qt::WindowModal);
-
-    ScanRequest* request = library->scanTracks(tracks);
-
-    progress->show();
-
-    QObject::connect(library, &MusicLibrary::scanProgress, progress, [request, progress](int id, int percent) {
-        if(id != request->id) {
-            return;
-        }
-
-        progress->setValue(percent);
-        if(progress->wasCanceled()) {
-            request->cancel();
-            progress->close();
-        }
-    });
-
-    const TrackList scannedTracks = co_await qCoro(library, &MusicLibrary::tracksScanned);
-
-    progress->deleteLater();
+    const TrackList scannedTracks = co_await playlistController->filesToTracks(urls);
 
     auto* insertCmd = new InsertTracks(model, {{index, scannedTracks}});
     playlistController->addToHistory(insertCmd);

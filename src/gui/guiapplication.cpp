@@ -59,6 +59,7 @@
 #include <core/engine/enginehandler.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
+#include <core/playlist/playlistmanager.h>
 #include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
 #include <gui/editablelayout.h>
@@ -74,6 +75,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QPushButton>
@@ -147,8 +149,8 @@ struct GuiApplication::Private
                                                           settingsManager)}
         , mainWindow{std::make_unique<MainWindow>(actionManager, settingsManager, editableLayout.get())}
         , mainContext{new WidgetContext(mainWindow.get(), Context{"Fooyin.MainWindow"}, self)}
-        , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerManager, &selectionController,
-                                                                  settingsManager)}
+        , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerManager, library,
+                                                                  &selectionController, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
         , searchController{new SearchController(editableLayout.get(), self)}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
@@ -337,6 +339,30 @@ struct GuiApplication::Private
             playerManager->next();
         }
     }
+
+    void addFiles() const
+    {
+        const auto extensions = QString{"Audio Files (%1)"}.arg(Track::supportedFileExtensions().join(" "_L1));
+
+        const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), u"Add Files"_s, u""_s, extensions);
+
+        if(files.empty()) {
+            return;
+        }
+
+        playlistController->filesToPlaylist(files);
+    }
+
+    void addFolders() const
+    {
+        const auto dirs = QFileDialog::getExistingDirectoryUrl(mainWindow.get(), u"Add Folders"_s, u""_s);
+
+        if(dirs.isEmpty()) {
+            return;
+        }
+
+        playlistController->filesToPlaylist({dirs});
+    }
 };
 
 GuiApplication::GuiApplication(const CorePluginContext& core)
@@ -344,6 +370,10 @@ GuiApplication::GuiApplication(const CorePluginContext& core)
 {
     QObject::connect(&p->selectionController, &TrackSelectionController::requestPropertiesDialog, p->propertiesDialog,
                      &PropertiesDialog::show);
+    QObject::connect(p->fileMenu, &FileMenu::requestNewPlaylist, p->playlistHandler,
+                     &PlaylistManager::createEmptyPlaylist);
+    QObject::connect(p->fileMenu, &FileMenu::requestAddFiles, this, [this]() { p->addFiles(); });
+    QObject::connect(p->fileMenu, &FileMenu::requestAddFolders, this, [this]() { p->addFolders(); });
     QObject::connect(p->viewMenu, &ViewMenu::openQuickSetup, p->editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(p->engineHandler, &EngineHandler::trackStatusChanged, this, [this](TrackStatus status) {
         if(status == InvalidTrack) {
