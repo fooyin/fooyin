@@ -46,11 +46,6 @@ using namespace Qt::Literals::StringLiterals;
 namespace {
 void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QModelIndexList& bottomIndexes)
 {
-    if(!index.isValid()) {
-        getLowestIndexes(treeView, treeView->rootIndex(), bottomIndexes);
-        return;
-    }
-
     const int rowCount = treeView->model()->rowCount(index);
     if(rowCount == 0) {
         bottomIndexes.append(index);
@@ -63,7 +58,7 @@ void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QMode
     }
 }
 
-Fooyin::TrackList getSelectedTracks(const QTreeView* treeView, const Fooyin::MusicLibrary* library)
+Fooyin::TrackList getSelectedTracks(const QTreeView* treeView)
 {
     const QModelIndexList selectedIndexes = treeView->selectionModel()->selectedIndexes();
     if(selectedIndexes.empty()) {
@@ -71,18 +66,19 @@ Fooyin::TrackList getSelectedTracks(const QTreeView* treeView, const Fooyin::Mus
     }
 
     QModelIndexList trackIndexes;
+
     for(const QModelIndex& index : selectedIndexes) {
+        const int level = index.data(Fooyin::LibraryTreeItem::Level).toInt();
+        if(level < 0) {
+            trackIndexes.clear();
+            getLowestIndexes(treeView, {}, trackIndexes);
+            break;
+        }
         getLowestIndexes(treeView, index, trackIndexes);
     }
 
     Fooyin::TrackList tracks;
     for(const auto& index : trackIndexes) {
-        const int level = index.data(Fooyin::LibraryTreeItem::Level).toInt();
-        if(level < 0) {
-            tracks.clear();
-            tracks = library->tracks();
-            break;
-        }
         const auto indexTracks = index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>();
         tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
     }
@@ -226,7 +222,7 @@ void LibraryTreeWidgetPrivate::setupHeaderContextMenu(const QPoint& pos)
 
 QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
 {
-    const TrackList tracks = getSelectedTracks(libraryTree, library);
+    const TrackList tracks = getSelectedTracks(libraryTree);
 
     if(tracks.empty()) {
         co_return;
@@ -286,7 +282,7 @@ void LibraryTreeWidgetPrivate::handleDoubleClick() const
 
 QCoro::Task<void> LibraryTreeWidgetPrivate::handleMiddleClick() const
 {
-    const TrackList tracks = getSelectedTracks(libraryTree, library);
+    const TrackList tracks = getSelectedTracks(libraryTree);
 
     if(tracks.empty()) {
         co_return;
