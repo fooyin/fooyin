@@ -37,16 +37,7 @@ struct FactoryWidget
 };
 } // namespace
 
-/*!
- * Sets the submenus the widget at @p key appears at in add/replace menus when layout editing.
- * FyWidget subclasses must be registered to be used with the layout system.
- * @param key a unique key to associate with the widget.
- * @param instantiator a function to instantiate a FyWidget subclass.
- * @param displayName name to use in layout editing menus.
- * @returns true if the widget was registered, or false if a widget at @p key already exists.
- */
 namespace Fooyin {
-
 struct WidgetProvider::Private
 {
     ActionManager* actionManager;
