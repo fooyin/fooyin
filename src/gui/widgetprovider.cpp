@@ -106,7 +106,7 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
 
     auto& widget = p->widgets.at(key);
 
-    if(!widget.instantiator || p->atLimit(widget)) {
+    if(!widget.instantiator || atLimit(widget)) {
         return nullptr;
     }
 
@@ -145,7 +145,7 @@ void WidgetProvider::setupWidgetMenu(ActionContainer* menu, const std::function<
         }
 
         auto* addWidgetAction = new QAction(widget.name, parentMenu);
-        addWidgetAction->setDisabled(p->atLimit(widget));
+        addWidgetAction->setDisabled(atLimit(widget));
         QObject::connect(addWidgetAction, &QAction::triggered, menu, [this, func, key] {
             FyWidget* newWidget = createWidget(key);
             func(newWidget);
