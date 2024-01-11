@@ -83,6 +83,8 @@ PresetRegistry::PresetRegistry(SettingsManager* settings, QObject* parent)
         const auto preset = itemById(id);
         emit presetChanged(preset);
     });
+
+    PresetRegistry::loadItems();
 }
 
 void PresetRegistry::loadItems()

@@ -41,14 +41,13 @@ namespace Fooyin {
 class LibraryTreePageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibraryTreePageWidget(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
-                                   SettingsManager* settings);
+    explicit LibraryTreePageWidget(ActionManager* actionManager, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
 
 private:
-    LibraryTreeGroupRegistry* m_groupsRegistry;
+    LibraryTreeGroupRegistry m_groupsRegistry;
     SettingsManager* m_settings;
 
     ExtendableTableView* m_groupList;
@@ -62,12 +61,11 @@ private:
     QLineEdit* m_playlistName;
 };
 
-LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
-                                             SettingsManager* settings)
-    : m_groupsRegistry{groupsRegistry}
+LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, SettingsManager* settings)
+    : m_groupsRegistry{settings}
     , m_settings{settings}
     , m_groupList{new ExtendableTableView(actionManager, this)}
-    , m_model{new LibraryTreeGroupModel(m_groupsRegistry, this)}
+    , m_model{new LibraryTreeGroupModel(&m_groupsRegistry, this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
@@ -174,26 +172,22 @@ void LibraryTreePageWidget::apply()
 
 void LibraryTreePageWidget::reset()
 {
-    m_settings->set(LibraryTreeGroups, {});
     m_settings->reset<Settings::Gui::Internal::LibTreeDoubleClick>();
     m_settings->reset<Settings::Gui::Internal::LibTreeMiddleClick>();
     m_settings->reset<Settings::Gui::Internal::LibTreePlaylistEnabled>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoSwitch>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoPlaylist>();
+    m_settings->reset(LibraryTreeGroups);
 
-    m_groupsRegistry->loadItems();
     m_model->populate();
 }
 
-LibraryTreePage::LibraryTreePage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
-                                 SettingsManager* settings)
+LibraryTreePage::LibraryTreePage(ActionManager* actionManager, SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryTreeGeneral);
     setName(tr("General"));
     setCategory({tr("Widgets"), tr("Library Tree")});
-    setWidgetCreator([actionManager, groupsRegistry, settings] {
-        return new LibraryTreePageWidget(actionManager, groupsRegistry, settings);
-    });
+    setWidgetCreator([actionManager, settings] { return new LibraryTreePageWidget(actionManager, settings); });
 }
 } // namespace Fooyin

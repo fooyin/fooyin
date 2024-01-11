@@ -74,10 +74,13 @@ public:
         , m_settings{settings}
         , m_settingKey{std::move(settingKey)}
     {
-        m_settings->createSetting(m_settingKey, {});
+        if(!m_settings->contains(m_settingKey)) {
+            m_settings->createSetting(m_settingKey, {});
+        }
+        m_settings->subscribe(m_settingKey, this, &ItemRegistry::loadItems);
     }
 
-    [[nodiscard]] const IndexItemMap& items() const
+    [[nodiscard]] IndexItemMap items() const
     {
         return m_items;
     }
@@ -100,7 +103,9 @@ public:
         newItem.id    = findValidId();
         newItem.index = static_cast<int>(m_items.size());
 
-        return m_items.emplace(newItem.index, newItem).first->second;
+        m_items.emplace(newItem.index, newItem);
+        saveItems();
+        return m_items.at(newItem.index);
     }
 
     virtual bool changeItem(const Item& item)
@@ -115,8 +120,10 @@ public:
             }
             itemIt->second = changedItem;
             emit itemChanged(changedItem.id);
+            saveItems();
             return true;
         }
+
         return false;
     }
 
@@ -158,7 +165,10 @@ public:
         if(!m_items.contains(index)) {
             return false;
         }
+
         m_items.erase(index);
+        saveItems();
+
         return true;
     }
 
@@ -175,7 +185,9 @@ public:
         out << m_items;
         byteArray = qCompress(byteArray, 9);
 
+        m_settings->unsubscribe(m_settingKey, this);
         m_settings->set(m_settingKey, byteArray);
+        m_settings->subscribe(m_settingKey, this, &ItemRegistry::loadItems);
     }
 
     virtual void loadItems()

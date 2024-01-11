@@ -29,14 +29,13 @@ class SettingsManager;
 class AutoHeaderView;
 
 namespace Filters {
-class FilterColumnRegistry;
 
 class FilterWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit FilterWidget(FilterColumnRegistry* columnRegistry, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit FilterWidget(SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     [[nodiscard]] Id group() const;

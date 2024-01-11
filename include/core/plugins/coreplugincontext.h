@@ -29,7 +29,6 @@ class PlayerManager;
 class PlaylistManager;
 class LibraryManager;
 class MusicLibrary;
-class SortingRegistry;
 
 /*!
  * Passed to core plugins in CorePlugin::initialise.
@@ -38,7 +37,7 @@ struct FYCORE_EXPORT CorePluginContext
 {
     CorePluginContext(PluginManager* pluginManager, EngineHandler* engineHandler, PlayerManager* playerManager,
                       LibraryManager* libraryManager, MusicLibrary* library, PlaylistManager* playlistHandler,
-                      SettingsManager* settingsManager, SortingRegistry* sortingRegistry)
+                      SettingsManager* settingsManager)
         : pluginManager{pluginManager}
         , playerManager{playerManager}
         , libraryManager{libraryManager}
@@ -46,7 +45,6 @@ struct FYCORE_EXPORT CorePluginContext
         , playlistHandler{playlistHandler}
         , settingsManager{settingsManager}
         , engineHandler{engineHandler}
-        , sortingRegistry{sortingRegistry}
     { }
 
     PluginManager* pluginManager;

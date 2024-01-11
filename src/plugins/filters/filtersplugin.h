@@ -40,7 +40,6 @@ public:
 
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
-    void shutdown() override;
 
 private:
     struct Private;

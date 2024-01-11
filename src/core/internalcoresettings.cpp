@@ -20,7 +20,6 @@
 #include "internalcoresettings.h"
 
 #include "corepaths.h"
-#include "library/sortingregistry.h"
 #include "version.h"
 
 #include <core/coresettings.h>
@@ -33,7 +32,6 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fooyin {
 CoreSettings::CoreSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
-    , m_sortingRegistry{std::make_unique<SortingRegistry>(settingsManager)}
 {
     using namespace Settings::Core;
 
@@ -50,20 +48,10 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<RewindPreviousTrack>(false, u"Playlist/RewindPreviousTrack"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
-
-    m_sortingRegistry->loadItems();
 }
-
-CoreSettings::~CoreSettings() = default;
 
 void CoreSettings::shutdown()
 {
     m_settings->set<Settings::Core::Version>(VERSION);
-    m_sortingRegistry->saveItems();
-}
-
-SortingRegistry* CoreSettings::sortingRegistry() const
-{
-    return m_sortingRegistry.get();
 }
 } // namespace Fooyin

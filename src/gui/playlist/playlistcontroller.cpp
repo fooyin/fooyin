@@ -19,15 +19,13 @@
 
 #include "playlistcontroller.h"
 
-#include "core/library/sortingregistry.h"
-#include "presetregistry.h"
-
 #include <core/player/playermanager.h>
 #include <core/playlist/playlistmanager.h>
 #include <core/track.h>
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QIODevice>
 #include <QUndoStack>
 
 constexpr auto PlaylistStates = "PlaylistWidget/PlaylistStates";
@@ -39,8 +37,6 @@ struct PlaylistController::Private
 
     PlaylistManager* handler;
     PlayerManager* playerManager;
-    PresetRegistry* presetRegistry;
-    SortingRegistry* sortRegistry;
     TrackSelectionController* selectionController;
     SettingsManager* settings;
 
@@ -50,13 +46,10 @@ struct PlaylistController::Private
     std::unordered_map<int, PlaylistViewState> states;
 
     Private(PlaylistController* self, PlaylistManager* handler, PlayerManager* playerManager,
-            PresetRegistry* presetRegistry, SortingRegistry* sortRegistry,
             TrackSelectionController* selectionController, SettingsManager* settings)
         : self{self}
         , handler{handler}
         , playerManager{playerManager}
-        , presetRegistry{presetRegistry}
-        , sortRegistry{sortRegistry}
         , selectionController{selectionController}
         , settings{settings}
     { }
@@ -157,12 +150,10 @@ struct PlaylistController::Private
 };
 
 PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* playerManager,
-                                       PresetRegistry* presetRegistry, SortingRegistry* sortRegistry,
                                        TrackSelectionController* selectionController, SettingsManager* settings,
                                        QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, handler, playerManager, presetRegistry, sortRegistry, selectionController,
-                                  settings)}
+    , p{std::make_unique<Private>(this, handler, playerManager, selectionController, settings)}
 {
     p->restoreStates();
 
@@ -190,16 +181,6 @@ PlaylistController::~PlaylistController()
 PlaylistManager* PlaylistController::playlistHandler() const
 {
     return p->handler;
-}
-
-PresetRegistry* PlaylistController::presetRegistry() const
-{
-    return p->presetRegistry;
-}
-
-SortingRegistry* PlaylistController::sortRegistry() const
-{
-    return p->sortRegistry;
 }
 
 TrackSelectionController* PlaylistController::selectionController() const

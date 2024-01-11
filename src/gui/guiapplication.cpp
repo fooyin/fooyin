@@ -36,7 +36,6 @@
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlisttabs.h"
 #include "playlist/playlistwidget.h"
-#include "playlist/presetregistry.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "settings/enginepage.h"
@@ -94,7 +93,6 @@ struct GuiApplication::Private
     PlayerManager* playerManager;
     LibraryManager* libraryManager;
     MusicLibrary* library;
-    SortingRegistry* sortingRegistry;
     PlaylistManager* playlistHandler;
 
     WidgetProvider widgetProvider;
@@ -142,7 +140,6 @@ struct GuiApplication::Private
         , playerManager{core.playerManager}
         , libraryManager{core.libraryManager}
         , library{core.library}
-        , sortingRegistry{core.sortingRegistry}
         , playlistHandler{core.playlistHandler}
         , widgetProvider{actionManager}
         , guiSettings{settingsManager}
@@ -150,9 +147,8 @@ struct GuiApplication::Private
                                                           settingsManager)}
         , mainWindow{std::make_unique<MainWindow>(actionManager, settingsManager, editableLayout.get())}
         , mainContext{new WidgetContext(mainWindow.get(), Context{"Fooyin.MainWindow"}, self)}
-        , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerManager,
-                                                                  guiSettings.playlistPresetRegistry(), sortingRegistry,
-                                                                  &selectionController, settingsManager)}
+        , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerManager, &selectionController,
+                                                                  settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
         , searchController{new SearchController(editableLayout.get(), self)}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
@@ -165,14 +161,14 @@ struct GuiApplication::Private
         , generalPage{settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , libraryGeneralPage{actionManager, libraryManager, settingsManager}
-        , librarySortingPage{actionManager, sortingRegistry, settingsManager}
+        , librarySortingPage{actionManager, settingsManager}
         , shortcutsPage{actionManager, settingsManager}
         , playlistGeneralPage{settingsManager}
         , playlistGuiPage{settingsManager}
-        , playlistPresetsPage{guiSettings.playlistPresetRegistry(), settingsManager}
-        , playlistColumnPage{actionManager, guiSettings.playlistColumnRegistry(), settingsManager}
+        , playlistPresetsPage{settingsManager}
+        , playlistColumnPage{actionManager, settingsManager}
         , enginePage{settingsManager, engineHandler}
-        , libraryTreePage{actionManager, guiSettings.libraryTreeGroupRegistry(), settingsManager}
+        , libraryTreePage{actionManager, settingsManager}
         , libraryTreeGuiPage{settingsManager}
         , statusWidgetPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
@@ -279,8 +275,7 @@ struct GuiApplication::Private
         factory->registerClass<LibraryTreeWidget>(
             u"LibraryTree"_s,
             [this]() {
-                return new LibraryTreeWidget(library, guiSettings.libraryTreeGroupRegistry(), &selectionController,
-                                             settingsManager, mainWindow.get());
+                return new LibraryTreeWidget(library, &selectionController, settingsManager, mainWindow.get());
             },
             u"Library Tree"_s);
 
@@ -299,8 +294,8 @@ struct GuiApplication::Private
             u"Artwork Panel"_s);
 
         factory->registerClass<PlaylistWidget>(u"Playlist"_s, [this]() {
-            return new PlaylistWidget(actionManager, playlistController.get(), guiSettings.playlistColumnRegistry(),
-                                      library, settingsManager, mainWindow.get());
+            return new PlaylistWidget(actionManager, playlistController.get(), library, settingsManager,
+                                      mainWindow.get());
         });
 
         factory->registerClass<Spacer>(u"Spacer"_s, [this]() { return new Spacer(mainWindow.get()); });
@@ -380,7 +375,6 @@ void GuiApplication::shutdown()
     p->editableLayout.reset();
     p->playlistController.reset();
     p->mainWindow.reset();
-    p->guiSettings.shutdown();
 }
 } // namespace Fooyin
 

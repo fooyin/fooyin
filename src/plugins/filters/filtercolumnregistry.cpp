@@ -38,6 +38,8 @@ FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* p
         const auto field = itemById(id);
         emit columnChanged(field);
     });
+
+    ItemRegistry::loadItems();
 }
 
 void FilterColumnRegistry::loadItems()

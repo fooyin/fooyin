@@ -24,12 +24,10 @@
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-class PlaylistColumnRegistry;
 
 class PlaylistColumnPage : public SettingsPage
 {
 public:
-    PlaylistColumnPage(ActionManager* actionManager, PlaylistColumnRegistry* columnsRegistry,
-                       SettingsManager* settings);
+    PlaylistColumnPage(ActionManager* actionManager, SettingsManager* settings);
 };
 } // namespace Fooyin

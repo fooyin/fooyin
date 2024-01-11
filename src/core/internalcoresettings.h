@@ -23,7 +23,6 @@
 
 namespace Fooyin {
 class SettingsManager;
-class SortingRegistry;
 
 namespace Settings::Core::Internal {
 Q_NAMESPACE
@@ -39,14 +38,10 @@ class CoreSettings
 {
 public:
     explicit CoreSettings(SettingsManager* settingsManager);
-    ~CoreSettings();
 
     void shutdown();
 
-    [[nodiscard]] SortingRegistry* sortingRegistry() const;
-
 private:
     SettingsManager* m_settings;
-    std::unique_ptr<SortingRegistry> m_sortingRegistry;
 };
 } // namespace Fooyin

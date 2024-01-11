@@ -40,6 +40,8 @@ LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QO
         const auto grouping = itemById(id);
         emit groupingChanged(grouping);
     });
+
+    LibraryTreeGroupRegistry::loadItems();
 }
 
 void LibraryTreeGroupRegistry::loadItems()

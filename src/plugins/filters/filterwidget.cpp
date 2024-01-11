@@ -77,7 +77,7 @@ struct FilterWidget::Private
 {
     FilterWidget* self;
 
-    FilterColumnRegistry* columnRegistry;
+    FilterColumnRegistry columnRegistry;
     SettingsManager* settings;
 
     FilterView* view;
@@ -90,9 +90,9 @@ struct FilterWidget::Private
     bool multipleColumns{false};
     TrackList tracks;
 
-    Private(FilterWidget* self, FilterColumnRegistry* columnRegistry, SettingsManager* settings)
+    Private(FilterWidget* self, SettingsManager* settings)
         : self{self}
-        , columnRegistry{columnRegistry}
+        , columnRegistry{settings}
         , settings{settings}
         , view{new FilterView(self)}
         , header{new AutoHeaderView(Qt::Horizontal, self)}
@@ -108,7 +108,7 @@ struct FilterWidget::Private
         header->setSectionsClickable(true);
         header->setContextMenuPolicy(Qt::CustomContextMenu);
 
-        columns = {columnRegistry->itemByIndex(0)};
+        columns = {columnRegistry.itemByIndex(0)};
 
         header->restoreHeaderState({});
     }
@@ -171,7 +171,7 @@ struct FilterWidget::Private
         auto* filterList = new QActionGroup{menu};
         filterList->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
-        for(const auto& [filterIndex, column] : columnRegistry->items()) {
+        for(const auto& [filterIndex, column] : columnRegistry.items()) {
             auto* columnAction = new QAction(column.name, menu);
             columnAction->setData(column.id);
             columnAction->setCheckable(true);
@@ -185,7 +185,7 @@ struct FilterWidget::Private
         QObject::connect(filterList, &QActionGroup::triggered, self, [this](QAction* action) {
             const int columnId = action->data().toInt();
             if(action->isChecked()) {
-                const FilterColumn column = columnRegistry->itemById(action->data().toInt());
+                const FilterColumn column = columnRegistry.itemById(action->data().toInt());
                 if(column.isValid()) {
                     if(multipleColumns) {
                         columns.push_back(column);
@@ -239,9 +239,9 @@ struct FilterWidget::Private
     }
 };
 
-FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, SettingsManager* settings, QWidget* parent)
+FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, columnRegistry, settings)}
+    , p{std::make_unique<Private>(this, settings)}
 {
     setObjectName(FilterWidget::name());
 
@@ -267,7 +267,7 @@ FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, SettingsManager
     p->settings->subscribe<Settings::Filters::FilterAppearance>(
         this, [this](const QVariant& appearance) { p->updateAppearance(appearance); });
 
-    QObject::connect(p->columnRegistry, &FilterColumnRegistry::columnChanged, this,
+    QObject::connect(&p->columnRegistry, &FilterColumnRegistry::columnChanged, this,
                      [this](const Filters::FilterColumn& column) { p->columnChanged(column); });
 
     QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { p->view->expandAll(); });
@@ -370,7 +370,7 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
         const QString columnNames = layout.value("Columns"_L1).toString();
         const QStringList columns = columnNames.split("|"_L1);
         std::ranges::transform(columns, std::back_inserter(p->columns),
-                               [this](const QString& column) { return p->columnRegistry->itemById(column.toInt()); });
+                               [this](const QString& column) { return p->columnRegistry.itemById(column.toInt()); });
     }
 
     if(layout.contains("Group"_L1)) {

@@ -24,11 +24,10 @@
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-class LibraryTreeGroupRegistry;
 
 class LibraryTreePage : public SettingsPage
 {
 public:
-    explicit LibraryTreePage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry, SettingsManager* settings);
+    LibraryTreePage(ActionManager* actionManager, SettingsManager* settings);
 };
 } // namespace Fooyin

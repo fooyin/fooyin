@@ -33,28 +33,26 @@ namespace Fooyin {
 class PlaylistColumnPageWidget : public SettingsPageWidget
 {
 public:
-    explicit PlaylistColumnPageWidget(ActionManager* actionManager, PlaylistColumnRegistry* columnsRegistry,
-                                      SettingsManager* settings);
+    explicit PlaylistColumnPageWidget(ActionManager* actionManager, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
 
 private:
     ActionManager* m_actionManager;
-    PlaylistColumnRegistry* m_columnsRegistry;
+    PlaylistColumnRegistry m_columnsRegistry;
     SettingsManager* m_settings;
 
     ExtendableTableView* m_columnList;
     PlaylistColumnModel* m_model;
 };
 
-PlaylistColumnPageWidget::PlaylistColumnPageWidget(ActionManager* actionManager,
-                                                   PlaylistColumnRegistry* columnsRegistry, SettingsManager* settings)
+PlaylistColumnPageWidget::PlaylistColumnPageWidget(ActionManager* actionManager, SettingsManager* settings)
     : m_actionManager{actionManager}
-    , m_columnsRegistry{columnsRegistry}
+    , m_columnsRegistry{settings}
     , m_settings{settings}
     , m_columnList{new ExtendableTableView(m_actionManager, this)}
-    , m_model{new PlaylistColumnModel(m_columnsRegistry, this)}
+    , m_model{new PlaylistColumnModel(&m_columnsRegistry, this)}
 {
     m_columnList->setExtendableModel(m_model);
 
@@ -80,20 +78,16 @@ void PlaylistColumnPageWidget::apply()
 
 void PlaylistColumnPageWidget::reset()
 {
-    m_settings->set(PlaylistColumns, {});
-    m_columnsRegistry->loadItems();
+    m_settings->reset(PlaylistColumns);
     m_model->populate();
 }
 
-PlaylistColumnPage::PlaylistColumnPage(ActionManager* actionManager, PlaylistColumnRegistry* columnsRegistry,
-                                       SettingsManager* settings)
+PlaylistColumnPage::PlaylistColumnPage(ActionManager* actionManager, SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::PlaylistColumns);
     setName(tr("Columns"));
     setCategory({tr("Playlist"), tr("Columns")});
-    setWidgetCreator([actionManager, columnsRegistry, settings] {
-        return new PlaylistColumnPageWidget(actionManager, columnsRegistry, settings);
-    });
+    setWidgetCreator([actionManager, settings] { return new PlaylistColumnPageWidget(actionManager, settings); });
 }
 } // namespace Fooyin

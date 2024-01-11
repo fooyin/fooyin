@@ -36,26 +36,24 @@ namespace Fooyin {
 class LibrarySortingPageWidget : public SettingsPageWidget
 {
 public:
-    explicit LibrarySortingPageWidget(ActionManager* actionManager, SortingRegistry* sortRegistry,
-                                      SettingsManager* settings);
+    explicit LibrarySortingPageWidget(ActionManager* actionManager, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
 
 private:
-    SortingRegistry* m_sortRegistry;
+    SortingRegistry m_sortRegistry;
     SettingsManager* m_settings;
 
     ExtendableTableView* m_sortList;
     SortingModel* m_model;
 };
 
-LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SortingRegistry* sortRegistry,
-                                                   SettingsManager* settings)
-    : m_sortRegistry{sortRegistry}
+LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SettingsManager* settings)
+    : m_sortRegistry{settings}
     , m_settings{settings}
     , m_sortList{new ExtendableTableView(actionManager, this)}
-    , m_model{new SortingModel(m_sortRegistry, this)}
+    , m_model{new SortingModel(&m_sortRegistry, this)}
 {
     m_sortList->setExtendableModel(m_model);
     m_sortList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));
@@ -82,20 +80,16 @@ void LibrarySortingPageWidget::apply()
 
 void LibrarySortingPageWidget::reset()
 {
-    m_settings->set(LibrarySorting, {});
-    m_sortRegistry->loadItems();
+    m_settings->reset(LibrarySorting);
     m_model->populate();
 }
 
-LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SortingRegistry* sortRegistry,
-                                       SettingsManager* settings)
+LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibrarySorting);
     setName(tr("Sorting"));
     setCategory({tr("Library"), tr("Sorting")});
-    setWidgetCreator([actionManager, sortRegistry, settings] {
-        return new LibrarySortingPageWidget(actionManager, sortRegistry, settings);
-    });
+    setWidgetCreator([actionManager, settings] { return new LibrarySortingPageWidget(actionManager, settings); });
 }
 } // namespace Fooyin

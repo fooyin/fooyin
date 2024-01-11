@@ -58,8 +58,8 @@ struct Application::Private
         , libraryManager{new LibraryManager(&database, settingsManager, parent)}
         , library{new UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
         , playlistHandler{new PlaylistHandler(&database, playerManager, settingsManager, parent)}
-        , corePluginContext{&pluginManager, &engine,         playerManager,   libraryManager,
-                            library,        playlistHandler, settingsManager, coreSettings.sortingRegistry()}
+        , corePluginContext{&pluginManager, &engine,         playerManager,  libraryManager,
+                            library,        playlistHandler, settingsManager}
     {
         registerOutputs();
         loadPlugins();

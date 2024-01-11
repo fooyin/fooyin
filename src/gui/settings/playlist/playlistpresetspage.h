@@ -23,11 +23,10 @@
 
 namespace Fooyin {
 class SettingsManager;
-class PresetRegistry;
 
 class PlaylistPresetsPage : public SettingsPage
 {
 public:
-    PlaylistPresetsPage(PresetRegistry* presetRegistry, SettingsManager* settings);
+    explicit PlaylistPresetsPage(SettingsManager* settings);
 };
 } // namespace Fooyin

@@ -19,7 +19,6 @@
 
 #include "filtercontroller.h"
 
-#include "filtercolumnregistry.h"
 #include "filtermanager.h"
 #include "filterwidget.h"
 #include "settings/filtersettings.h"
@@ -31,11 +30,14 @@
 #include <gui/trackselectioncontroller.h>
 #include <utils/async.h>
 #include <utils/crypto.h>
+#include <utils/helpers.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QCoroCore>
 
 #include <QMenu>
 
+#include <ranges>
 #include <set>
 
 using namespace Qt::Literals::StringLiterals;
@@ -51,7 +53,6 @@ struct FilterController::Private
     SettingsManager* settings;
 
     FilterManager* manager;
-    FilterColumnRegistry columnRegistry;
 
     Id defaultId{"Default"};
     FilterGroups groups;
@@ -68,12 +69,9 @@ struct FilterController::Private
         , editableLayout{editableLayout}
         , settings{settings}
         , manager{new FilterManager(self, editableLayout, self)}
-        , columnRegistry{settings}
         , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterDoubleClick>())}
         , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterMiddleClick>())}
-    {
-        columnRegistry.loadItems();
-    }
+    { }
 
     void handleAction(const TrackAction& action, const QString& playlistName) const
     {
@@ -352,14 +350,9 @@ FilterController::FilterController(MusicLibrary* library, TrackSelectionControll
 
 FilterController::~FilterController() = default;
 
-void FilterController::shutdown()
-{
-    p->columnRegistry.saveItems();
-}
-
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget = new FilterWidget(&p->columnRegistry, p->settings);
+    auto* widget = new FilterWidget(p->settings);
 
     auto& group = p->groups[p->defaultId];
     group.id    = p->defaultId;
@@ -387,11 +380,6 @@ FilterWidget* FilterController::createFilter()
     widget->reset(p->tracks(p->defaultId));
 
     return widget;
-}
-
-FilterColumnRegistry* FilterController::columnRegistry() const
-{
-    return &p->columnRegistry;
 }
 
 bool FilterController::haveUngroupedFilters() const

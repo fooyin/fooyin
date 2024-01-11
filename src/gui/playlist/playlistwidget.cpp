@@ -20,18 +20,15 @@
 #include "playlistwidget.h"
 
 #include "internalguisettings.h"
-#include "playlistcolumnregistry.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
 #include "playlisthistory.h"
 #include "playlistview.h"
 #include "playlistwidget_p.h"
-#include "presetregistry.h"
-
-#include "core/library/sortingregistry.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
+#include <core/player/playermanager.h>
 #include <core/playlist/playlistmanager.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -111,17 +108,18 @@ namespace Fooyin {
 using namespace Settings::Gui::Internal;
 
 PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager,
-                                             PlaylistController* playlistController,
-                                             PlaylistColumnRegistry* columnRegistry, MusicLibrary* library,
+                                             PlaylistController* playlistController, MusicLibrary* library,
                                              SettingsManager* settings)
     : self{self}
     , actionManager{actionManager}
     , selectionController{playlistController->selectionController()}
-    , columnRegistry{columnRegistry}
     , library{library}
     , settings{settings}
     , settingsDialog{settings->settingsDialog()}
     , playlistController{playlistController}
+    , columnRegistry{settings}
+    , presetRegistry{settings}
+    , sortRegistry{settings}
     , layout{new QHBoxLayout(self)}
     , model{new PlaylistModel(library, settings, self)}
     , playlistView{new PlaylistView(self)}
@@ -149,7 +147,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     setHeaderHidden(settings->value<PlaylistHeader>());
     setScrollbarHidden(settings->value<PlaylistScrollBar>());
 
-    changePreset(playlistController->presetRegistry()->itemByName(settings->value<PlaylistCurrentPreset>()));
+    changePreset(presetRegistry.itemByName(settings->value<PlaylistCurrentPreset>()));
 
     setupConnections();
     setupActions();
@@ -189,13 +187,12 @@ void PlaylistWidgetPrivate::setupConnections()
                      &PlaylistWidgetPrivate::followCurrentTrack);
     QObject::connect(playlistController->playlistHandler(), &PlaylistManager::playlistTracksAdded, this,
                      &PlaylistWidgetPrivate::playlistTracksAdded);
-    QObject::connect(playlistController->presetRegistry(), &PresetRegistry::presetChanged, this,
-                     &PlaylistWidgetPrivate::onPresetChanged);
+    QObject::connect(&presetRegistry, &PresetRegistry::presetChanged, this, &PlaylistWidgetPrivate::onPresetChanged);
 
     settings->subscribe<PlaylistHeader>(this, &PlaylistWidgetPrivate::setHeaderHidden);
     settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
     settings->subscribe<PlaylistCurrentPreset>(this, [this](const QString& presetName) {
-        const auto preset = playlistController->presetRegistry()->itemByName(presetName);
+        const auto preset = presetRegistry.itemByName(presetName);
         changePreset(preset);
     });
 }
@@ -588,11 +585,11 @@ QCoro::Task<void> PlaylistWidgetPrivate::toggleColumnMode()
     header->setSortIndicatorShown(columnMode);
 
     if(columnMode && columns.empty()) {
-        columns.push_back(columnRegistry->itemByName("Track"));
-        columns.push_back(columnRegistry->itemByName("Title"));
-        columns.push_back(columnRegistry->itemByName("Artist"));
-        columns.push_back(columnRegistry->itemByName("Album"));
-        columns.push_back(columnRegistry->itemByName("Duration"));
+        columns.push_back(columnRegistry.itemByName("Track"));
+        columns.push_back(columnRegistry.itemByName("Title"));
+        columns.push_back(columnRegistry.itemByName("Artist"));
+        columns.push_back(columnRegistry.itemByName("Album"));
+        columns.push_back(columnRegistry.itemByName("Duration"));
     }
 
     resetModel();
@@ -616,7 +613,7 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
             return std::ranges::any_of(columns, [id](const PlaylistColumn& column) { return column.id == id; });
         };
 
-        for(const auto& [filterIndex, column] : columnRegistry->items()) {
+        for(const auto& [filterIndex, column] : columnRegistry.items()) {
             auto* columnAction = new QAction(column.name, menu);
             columnAction->setData(column.id);
             columnAction->setCheckable(true);
@@ -629,7 +626,7 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
         QObject::connect(filterList, &QActionGroup::triggered, self, [this](QAction* action) {
             const int columnId = action->data().toInt();
             if(action->isChecked()) {
-                const PlaylistColumn column = columnRegistry->itemById(action->data().toInt());
+                const PlaylistColumn column = columnRegistry.itemById(action->data().toInt());
                 if(column.isValid()) {
                     columns.push_back(column);
                     changePreset(currentPreset);
@@ -749,7 +746,7 @@ void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
 {
     auto* sortMenu = new QMenu(PlaylistWidget::tr("Sort"), parent);
 
-    const auto& groups = playlistController->sortRegistry()->items();
+    const auto& groups = sortRegistry.items();
     for(const auto& [index, script] : groups) {
         auto* switchSort = new QAction(script.name, sortMenu);
         QObject::connect(switchSort, &QAction::triggered, self, [this, script]() { sortTracks(script.script); });
@@ -762,7 +759,7 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
 {
     auto* presetsMenu = new QMenu(PlaylistWidget::tr("Presets"), parent);
 
-    const auto& presets = playlistController->presetRegistry()->items();
+    const auto& presets = presetRegistry.items();
 
     for(const auto& [index, preset] : presets) {
         const QString name = preset.name;
@@ -850,11 +847,9 @@ void PlaylistWidgetPrivate::addAlignmentMenu(const QPoint& pos, QMenu* parent)
 }
 
 PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController,
-                               PlaylistColumnRegistry* columnRegistry, MusicLibrary* library, SettingsManager* settings,
-                               QWidget* parent)
+                               MusicLibrary* library, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistController, columnRegistry, library,
-                                                settings)}
+    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistController, library, settings)}
 {
     setObjectName(PlaylistWidget::name());
 }
@@ -905,7 +900,7 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 
         for(int i{0}; const auto& columnId : columnIds) {
             const auto column     = columnId.split(u":"_s);
-            const auto columnItem = p->columnRegistry->itemById(column.at(0).toInt());
+            const auto columnItem = p->columnRegistry.itemById(column.at(0).toInt());
 
             if(columnItem.isValid()) {
                 p->columns.push_back(columnItem);

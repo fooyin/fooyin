@@ -114,15 +114,9 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
         QStringLiteral("LibraryFilter"), [this]() { return p->filterController->createFilter(); }, "Library Filter");
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
-    p->columnsPage
-        = std::make_unique<FiltersColumnPage>(p->actionManager, p->filterController->columnRegistry(), p->settings);
+    p->columnsPage = std::make_unique<FiltersColumnPage>(p->actionManager, p->settings);
 
     p->registerLayouts();
-}
-
-void FiltersPlugin::shutdown()
-{
-    p->filterController->shutdown();
 }
 } // namespace Fooyin::Filters
 

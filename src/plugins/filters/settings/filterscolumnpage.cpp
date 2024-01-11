@@ -35,28 +35,26 @@ namespace Fooyin::Filters {
 class FiltersColumnPageWidget : public SettingsPageWidget
 {
 public:
-    explicit FiltersColumnPageWidget(ActionManager* actionManager, FilterColumnRegistry* columnsRegistry,
-                                     SettingsManager* settings);
+    explicit FiltersColumnPageWidget(ActionManager* actionManager, SettingsManager* settings);
 
     void apply() override;
     void reset() override;
 
 private:
     ActionManager* m_actionManager;
-    FilterColumnRegistry* m_columnsRegistry;
+    FilterColumnRegistry m_columnsRegistry;
     SettingsManager* m_settings;
 
     ExtendableTableView* m_columnList;
     FiltersColumnModel* m_model;
 };
 
-FiltersColumnPageWidget::FiltersColumnPageWidget(ActionManager* actionManager, FilterColumnRegistry* columnsRegistry,
-                                                 SettingsManager* settings)
+FiltersColumnPageWidget::FiltersColumnPageWidget(ActionManager* actionManager, SettingsManager* settings)
     : m_actionManager{actionManager}
-    , m_columnsRegistry{columnsRegistry}
+    , m_columnsRegistry{settings}
     , m_settings{settings}
     , m_columnList{new ExtendableTableView(m_actionManager, this)}
-    , m_model{new FiltersColumnModel(m_columnsRegistry, this)}
+    , m_model{new FiltersColumnModel(&m_columnsRegistry, this)}
 {
     m_columnList->setExtendableModel(m_model);
 
@@ -82,20 +80,16 @@ void FiltersColumnPageWidget::apply()
 
 void FiltersColumnPageWidget::reset()
 {
-    m_settings->set(FilterColumns, {});
-    m_columnsRegistry->loadItems();
+    m_settings->reset(FilterColumns);
     m_model->populate();
 }
 
-FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, FilterColumnRegistry* columnsRegistry,
-                                     SettingsManager* settings)
+FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::FiltersFields);
     setName(tr("Columns"));
     setCategory({tr("Plugins"), tr("Filters")});
-    setWidgetCreator([actionManager, columnsRegistry, settings] {
-        return new FiltersColumnPageWidget(actionManager, columnsRegistry, settings);
-    });
+    setWidgetCreator([actionManager, settings] { return new FiltersColumnPageWidget(actionManager, settings); });
 }
 } // namespace Fooyin::Filters

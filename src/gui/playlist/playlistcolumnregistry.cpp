@@ -40,6 +40,8 @@ PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObjec
         const auto column = itemById(id);
         emit columnChanged(column);
     });
+
+    PlaylistColumnRegistry::loadItems();
 }
 
 void PlaylistColumnRegistry::loadItems()

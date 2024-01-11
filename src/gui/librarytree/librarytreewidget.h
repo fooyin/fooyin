@@ -25,7 +25,6 @@ namespace Fooyin {
 class SettingsManager;
 class MusicLibrary;
 class TrackSelectionController;
-class LibraryTreeGroupRegistry;
 class LibraryTreeWidgetPrivate;
 
 class LibraryTreeWidget : public FyWidget
@@ -33,8 +32,8 @@ class LibraryTreeWidget : public FyWidget
     Q_OBJECT
 
 public:
-    LibraryTreeWidget(MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
-                      TrackSelectionController* trackSelection, SettingsManager* settings, QWidget* parent = nullptr);
+    LibraryTreeWidget(MusicLibrary* library, TrackSelectionController* trackSelection, SettingsManager* settings,
+                      QWidget* parent = nullptr);
 
     QString name() const override;
     QString layoutName() const override;

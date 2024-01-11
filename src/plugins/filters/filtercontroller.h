@@ -32,7 +32,6 @@ class TrackSelectionController;
 
 namespace Filters {
 class FilterWidget;
-class FilterColumnRegistry;
 
 struct FilterGroup
 {
@@ -54,11 +53,7 @@ public:
                      SettingsManager* settings, QObject* parent = nullptr);
     ~FilterController() override;
 
-    void shutdown();
-
     FilterWidget* createFilter();
-
-    [[nodiscard]] FilterColumnRegistry* columnRegistry() const;
 
     bool haveUngroupedFilters() const;
     bool filterIsUngrouped(const Id& id) const;

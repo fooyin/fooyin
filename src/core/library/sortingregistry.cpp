@@ -38,6 +38,8 @@ SortingRegistry::SortingRegistry(SettingsManager* settings, QObject* parent)
         const auto sort = itemById(id);
         emit sortChanged(sort);
     });
+
+    SortingRegistry::loadItems();
 }
 
 void SortingRegistry::loadItems()

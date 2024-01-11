@@ -23,9 +23,6 @@
 
 namespace Fooyin {
 class SettingsManager;
-class LibraryTreeGroupRegistry;
-class PresetRegistry;
-class PlaylistColumnRegistry;
 
 namespace Settings::Gui::Internal {
 Q_NAMESPACE
@@ -72,18 +69,8 @@ class GuiSettings
 {
 public:
     explicit GuiSettings(SettingsManager* settingsManager);
-    ~GuiSettings();
-
-    void shutdown();
-
-    [[nodiscard]] LibraryTreeGroupRegistry* libraryTreeGroupRegistry() const;
-    [[nodiscard]] PresetRegistry* playlistPresetRegistry() const;
-    [[nodiscard]] PlaylistColumnRegistry* playlistColumnRegistry() const;
 
 private:
     SettingsManager* m_settings;
-    std::unique_ptr<LibraryTreeGroupRegistry> m_libraryTreeGroupRegistry;
-    std::unique_ptr<PresetRegistry> m_playlistPresetRegistry;
-    std::unique_ptr<PlaylistColumnRegistry> m_playlistColumnRegistry;
 };
 } // namespace Fooyin

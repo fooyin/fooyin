@@ -97,8 +97,8 @@ using namespace Settings::Gui::Internal;
 class LibraryTreeWidgetPrivate
 {
 public:
-    LibraryTreeWidgetPrivate(LibraryTreeWidget* self, MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
-                             TrackSelectionController* trackSelection, SettingsManager* settings);
+    LibraryTreeWidgetPrivate(LibraryTreeWidget* self, MusicLibrary* library, TrackSelectionController* trackSelection,
+                             SettingsManager* settings);
 
     void reset() const;
 
@@ -120,7 +120,7 @@ public:
     LibraryTreeWidget* self;
 
     MusicLibrary* library;
-    LibraryTreeGroupRegistry* groupsRegistry;
+    LibraryTreeGroupRegistry groupsRegistry;
     TrackSelectionController* trackSelection;
     SettingsManager* settings;
 
@@ -138,11 +138,10 @@ public:
 };
 
 LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, MusicLibrary* library,
-                                                   LibraryTreeGroupRegistry* groupsRegistry,
                                                    TrackSelectionController* trackSelection, SettingsManager* settings)
     : self{self}
     , library{library}
-    , groupsRegistry{groupsRegistry}
+    , groupsRegistry{settings}
     , trackSelection{trackSelection}
     , settings{settings}
     , layout{new QVBoxLayout(self)}
@@ -163,7 +162,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Musi
     setScrollbarEnabled(settings->value<LibTreeScrollBar>());
     libraryTree->setAlternatingRowColors(settings->value<LibTreeAltColours>());
 
-    changeGrouping(groupsRegistry->itemByName(u""_s));
+    changeGrouping(groupsRegistry.itemByName(u""_s));
 
     if(!library->isEmpty()) {
         reset();
@@ -191,7 +190,7 @@ void LibraryTreeWidgetPrivate::addGroupMenu(QMenu* parent)
 
     auto* treeGroups = new QActionGroup(groupMenu);
 
-    const auto& groups = groupsRegistry->items();
+    const auto& groups = groupsRegistry.items();
     for(const auto& [_, group] : groups) {
         auto* switchGroup = new QAction(group.name, groupMenu);
         QObject::connect(switchGroup, &QAction::triggered, self, [this, group]() { changeGrouping(group); });
@@ -301,11 +300,10 @@ QCoro::Task<void> LibraryTreeWidgetPrivate::handleMiddleClick() const
                                   playlistNameFromSelection());
 }
 
-LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, LibraryTreeGroupRegistry* groupsRegistry,
-                                     TrackSelectionController* trackSelection, SettingsManager* settings,
-                                     QWidget* parent)
+LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionController* trackSelection,
+                                     SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<LibraryTreeWidgetPrivate>(this, library, groupsRegistry, trackSelection, settings)}
+    , p{std::make_unique<LibraryTreeWidgetPrivate>(this, library, trackSelection, settings)}
 {
     setObjectName(LibraryTreeWidget::name());
 
@@ -317,7 +315,7 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, LibraryTreeGroupRegi
                      [this]() { p->selectionChanged(); });
     QObject::connect(p->libraryTree->header(), &QHeaderView::customContextMenuRequested, this,
                      [this](const QPoint& pos) { p->setupHeaderContextMenu(pos); });
-    QObject::connect(groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, this,
+    QObject::connect(&p->groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, this,
                      [this](const LibraryTreeGrouping& changedGrouping) {
                          if(p->grouping.id == changedGrouping.id) {
                              p->changeGrouping(changedGrouping);
@@ -362,7 +360,7 @@ void LibraryTreeWidget::saveLayoutData(QJsonObject& layout)
 
 void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const LibraryTreeGrouping grouping = p->groupsRegistry->itemByName(layout["Grouping"_L1].toString());
+    const LibraryTreeGrouping grouping = p->groupsRegistry.itemByName(layout["Grouping"_L1].toString());
     if(grouping.isValid()) {
         p->changeGrouping(grouping);
     }

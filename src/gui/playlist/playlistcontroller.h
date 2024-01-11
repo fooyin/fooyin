@@ -35,7 +35,6 @@ enum class PlayState;
 class Playlist;
 class PlaylistManager;
 class TrackSelectionController;
-class PresetRegistry;
 
 struct PlaylistViewState
 {
@@ -48,14 +47,11 @@ class PlaylistController : public QObject
     Q_OBJECT
 
 public:
-    PlaylistController(PlaylistManager* handler, PlayerManager* playerManager, PresetRegistry* presetRegistry,
-                       SortingRegistry* sortRegistry, TrackSelectionController* selectionController,
-                       SettingsManager* settings, QObject* parent = nullptr);
+    PlaylistController(PlaylistManager* handler, PlayerManager* playerManager, TrackSelectionController* selectionController, SettingsManager* settings,
+                       QObject* parent = nullptr);
     ~PlaylistController() override;
 
     [[nodiscard]] PlaylistManager* playlistHandler() const;
-    [[nodiscard]] PresetRegistry* presetRegistry() const;
-    [[nodiscard]] SortingRegistry* sortRegistry() const;
     [[nodiscard]] TrackSelectionController* selectionController() const;
 
     [[nodiscard]] PlaylistList playlists() const;

@@ -19,10 +19,12 @@
 
 #pragma once
 
+#include "playlistcolumnregistry.h"
 #include "playlistmodel.h"
 #include "playlistpreset.h"
+#include "presetregistry.h"
 
-#include <core/player/playermanager.h>
+#include "core/library/sortingregistry.h"
 
 #include <QCoroTask>
 
@@ -45,7 +47,6 @@ class PlaylistController;
 class PlaylistModel;
 class PlaylistView;
 class MusicLibrary;
-class PlaylistColumnRegistry;
 struct PlaylistViewState;
 
 class PlaylistWidgetPrivate : public QObject
@@ -54,7 +55,7 @@ class PlaylistWidgetPrivate : public QObject
 
 public:
     PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistController* playlistController,
-                          PlaylistColumnRegistry* columnRegistry, MusicLibrary* library, SettingsManager* settings);
+                          MusicLibrary* library, SettingsManager* settings);
 
     void setupConnections();
     void setupActions();
@@ -109,12 +110,14 @@ public:
 
     ActionManager* actionManager;
     TrackSelectionController* selectionController;
-    PlaylistColumnRegistry* columnRegistry;
     MusicLibrary* library;
     SettingsManager* settings;
     SettingsDialogController* settingsDialog;
 
     PlaylistController* playlistController;
+    PlaylistColumnRegistry columnRegistry;
+    PresetRegistry presetRegistry;
+    SortingRegistry sortRegistry;
 
     QHBoxLayout* layout;
     PlaylistModel* model;
