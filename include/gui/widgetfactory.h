@@ -26,6 +26,9 @@
 #include <map>
 
 namespace Fooyin {
+template <typename T>
+concept IsWidget = std::is_base_of_v<FyWidget, T>;
+
 class FYGUI_EXPORT WidgetFactory
 {
 private:
@@ -59,10 +62,9 @@ private:
 
 public:
     template <typename T, typename Factory>
+        requires IsWidget<T>
     bool registerClass(const QString& key, Factory factory, const QString& displayName = QStringLiteral(""))
     {
-        static_assert(std::is_base_of<FyWidget, T>::value, "Class must derive from the factory's base class");
-
         if(widgets.contains(key)) {
             qDebug() << "Subclass already registered";
             return false;
