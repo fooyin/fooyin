@@ -45,6 +45,7 @@ public:
     void initialise();
 
     [[nodiscard]] FyWidget* findWidget(const Id& id) const;
+    [[nodiscard]] WidgetList findWidgetsByName(const QString& name) const;
     [[nodiscard]] WidgetList findWidgetsByFeatures(const FyWidget::Features& features) const;
 
     bool eventFilter(QObject* watched, QEvent* event) override;

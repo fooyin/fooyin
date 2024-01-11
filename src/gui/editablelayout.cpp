@@ -184,6 +184,52 @@ struct EditableLayout::Private
             --level;
         }
     }
+
+    template <typename T, typename Predicate>
+    T findWidgets(const Predicate& predicate) const
+    {
+        if(!splitter) {
+            if constexpr(std::is_same_v<T, FyWidget*>) {
+                return nullptr;
+            }
+            return {};
+        }
+
+        T widgets;
+
+        std::stack<FyWidget*> widgetsToCheck;
+        widgetsToCheck.push(splitter);
+
+        while(!widgetsToCheck.empty()) {
+            auto* current = widgetsToCheck.top();
+            widgetsToCheck.pop();
+
+            if(!current) {
+                continue;
+            }
+
+            if(predicate(current)) {
+                if constexpr(std::is_same_v<T, WidgetList>) {
+                    widgets.push_back(current);
+                }
+                else {
+                    return current;
+                }
+            }
+
+            if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
+                const auto containerWidgets = container->widgets();
+                for(FyWidget* containerWidget : containerWidgets) {
+                    widgetsToCheck.push(containerWidget);
+                }
+            }
+        }
+
+        if constexpr(std::is_same_v<T, FyWidget*>) {
+            return nullptr;
+        }
+        return widgets;
+    }
 };
 
 EditableLayout::EditableLayout(ActionManager* actionManager, WidgetProvider* widgetProvider,
@@ -210,68 +256,17 @@ void EditableLayout::initialise()
 
 FyWidget* EditableLayout::findWidget(const Id& id) const
 {
-    if(!p->splitter) {
-        return nullptr;
-    }
+    return p->findWidgets<FyWidget*>([&id](FyWidget* widget) { return widget->id() == id; });
+}
 
-    std::stack<FyWidget*> widgetsToCheck;
-    widgetsToCheck.push(p->splitter);
-
-    while(!widgetsToCheck.empty()) {
-        auto* current = widgetsToCheck.top();
-        widgetsToCheck.pop();
-
-        if(!current) {
-            continue;
-        }
-
-        if(current->id() == id) {
-            return current;
-        }
-
-        if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
-            const auto containerWidgets = container->widgets();
-            for(FyWidget* containerWidget : containerWidgets) {
-                widgetsToCheck.push(containerWidget);
-            }
-        }
-    }
-
-    return nullptr;
+WidgetList EditableLayout::findWidgetsByName(const QString& name) const
+{
+    return p->findWidgets<WidgetList>([&name](FyWidget* widget) { return widget->name() == name; });
 }
 
 WidgetList EditableLayout::findWidgetsByFeatures(const FyWidget::Features& features) const
 {
-    if(!p->splitter) {
-        return {};
-    }
-
-    std::vector<FyWidget*> widgets;
-
-    std::stack<FyWidget*> widgetsToCheck;
-    widgetsToCheck.push(p->splitter);
-
-    while(!widgetsToCheck.empty()) {
-        auto* current = widgetsToCheck.top();
-        widgetsToCheck.pop();
-
-        if(!current) {
-            continue;
-        }
-
-        if(current->features() & features) {
-            widgets.push_back(current);
-        }
-
-        if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
-            const auto containerWidgets = container->widgets();
-            for(FyWidget* containerWidget : containerWidgets) {
-                widgetsToCheck.push(containerWidget);
-            }
-        }
-    }
-
-    return widgets;
+    return p->findWidgets<WidgetList>([&features](FyWidget* widget) { return widget->features() & features; });
 }
 
 bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
