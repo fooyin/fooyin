@@ -44,13 +44,12 @@ protected:
 
 public:
     template <typename T, typename Factory>
-    bool registerClass(const QString& key, Factory factory, const QString& displayName = QStringLiteral(""),
-                       const QStringList& subMenus = {})
+    bool registerClass(const QString& key, Factory factory, const QString& displayName = QStringLiteral(""))
     {
         static_assert(std::is_base_of<FyWidget, T>::value, "Class must derive from the factory's base class");
 
         if(widgets.contains(key)) {
-            qDebug() << ("Subclass already registered");
+            qDebug() << "Subclass already registered";
             return false;
         }
 
@@ -58,10 +57,19 @@ public:
         fw.key          = key;
         fw.name         = displayName.isEmpty() ? key : displayName;
         fw.instantiator = factory;
-        fw.subMenus     = subMenus;
 
         widgets.emplace(key, fw);
         return true;
+    }
+
+    void setSubMenus(const QString& key, const QStringList& subMenus)
+    {
+        if(!widgets.contains(key)) {
+            qDebug() << "Subclass not registered";
+            return;
+        }
+
+        widgets.at(key).subMenus = subMenus;
     }
 
     [[nodiscard]] FyWidget* make(const QString& key) const

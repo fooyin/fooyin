@@ -242,7 +242,8 @@ struct GuiApplication::Private
                 splitter->showPlaceholder(true);
                 return splitter;
             },
-            u"Vertical Splitter"_s, {"Splitters"});
+            u"Vertical Splitter"_s);
+        factory->setSubMenus(u"SplitterVertical"_s, {"Splitters"});
 
         factory->registerClass<HorizontalSplitterWidget>(
             u"SplitterHorizontal"_s,
@@ -252,15 +253,17 @@ struct GuiApplication::Private
                 splitter->showPlaceholder(true);
                 return splitter;
             },
-            u"Horizontal Splitter"_s, {"Splitters"});
+            u"Horizontal Splitter"_s);
+        factory->setSubMenus(u"SplitterHorizontal"_s, {"Splitters"});
 
-        factory->registerClass<PlaylistTabs>(u"PlaylistTabs"_s,
-                                             [this]() {
-                                                 return new PlaylistTabs(actionManager, &widgetProvider,
-                                                                         playlistController.get(), settingsManager,
-                                                                         mainWindow.get());
-                                             },
-                                             u"Playlist Tabs"_s, {"Splitters"});
+        factory->registerClass<PlaylistTabs>(
+            u"PlaylistTabs"_s,
+            [this]() {
+                return new PlaylistTabs(actionManager, &widgetProvider, playlistController.get(), settingsManager,
+                                        mainWindow.get());
+            },
+            u"Playlist Tabs"_s);
+        factory->setSubMenus(u"PlaylistTabs"_s, {"Splitters"});
 
         factory->registerClass<PlaylistOrganiser>(
             u"PlaylistOrganiser"_s,
@@ -272,7 +275,8 @@ struct GuiApplication::Private
 
         factory->registerClass<TabStackWidget>(
             u"TabStack"_s, [this]() { return new TabStackWidget(actionManager, &widgetProvider, mainWindow.get()); },
-            u"Tab Stack"_s, {"Splitters"});
+            u"Tab Stack"_s);
+        factory->setSubMenus(u"TabStack"_s, {"Splitters"});
 
         factory->registerClass<LibraryTreeWidget>(
             u"LibraryTree"_s,
