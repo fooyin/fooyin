@@ -34,7 +34,13 @@ struct FactoryWidget
     std::function<Fooyin::FyWidget*()> instantiator;
     QStringList subMenus;
     int limit{0};
+    int count{0};
 };
+
+bool atLimit(const FactoryWidget& widget)
+{
+    return widget.limit > 0 && widget.count >= widget.limit;
+}
 } // namespace
 
 namespace Fooyin {
@@ -43,16 +49,10 @@ struct WidgetProvider::Private
     ActionManager* actionManager;
 
     std::map<QString, FactoryWidget> widgets;
-    std::unordered_map<QString, int> widgetCount;
 
     explicit Private(ActionManager* actionManager)
         : actionManager{actionManager}
     { }
-
-    bool atLimit(const FactoryWidget& widget)
-    {
-        return widget.limit > 0 && widgetCount.contains(widget.key) && widgetCount.at(widget.key) >= widget.limit;
-    }
 };
 
 WidgetProvider::WidgetProvider(ActionManager* actionManager)
@@ -104,19 +104,19 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
         return nullptr;
     }
 
-    const auto widget = p->widgets.at(key);
+    auto& widget = p->widgets.at(key);
 
     if(!widget.instantiator || p->atLimit(widget)) {
         return nullptr;
     }
 
-    p->widgetCount[key]++;
+    widget.count++;
 
     auto* newWidget = widget.instantiator();
 
     QObject::connect(newWidget, &QObject::destroyed, newWidget, [this, key]() {
-        if(p->widgetCount.contains(key)) {
-            p->widgetCount[key]--;
+        if(p->widgets.contains(key)) {
+            p->widgets.at(key).count--;
         }
     });
 
