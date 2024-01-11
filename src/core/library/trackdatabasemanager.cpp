@@ -39,10 +39,7 @@ void TrackDatabaseManager::closeThread()
 void TrackDatabaseManager::getAllTracks()
 {
     const TrackList tracks = m_trackDatabase.getAllTracks();
-
-    if(!tracks.empty()) {
-        emit gotTracks(tracks);
-    }
+    emit gotTracks(tracks);
 }
 
 void TrackDatabaseManager::updateTracks(const TrackList& tracks)
