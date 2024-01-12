@@ -28,6 +28,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QLabel>
 
 namespace Fooyin {
@@ -51,17 +52,23 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     , m_startupBehaviour{new QComboBox(this)}
     , m_waitForTracks{new QCheckBox(tr("Wait for tracks"), this)}
 {
-    auto* startupBehaviourLabel = new QLabel(tr("Startup behaviour: "), this);
+    auto* startupBehaviourLabel = new QLabel(tr("Behaviour: "), this);
 
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
     m_waitForTracks->setChecked(m_settings->value<Settings::Gui::WaitForTracks>());
 
+    auto* startupGroup       = new QGroupBox(tr("Startup"), this);
+    auto* startupGroupLayout = new QGridLayout(startupGroup);
+
+    startupGroupLayout->addWidget(startupBehaviourLabel, 0, 0);
+    startupGroupLayout->addWidget(m_startupBehaviour, 0, 1);
+    startupGroupLayout->addWidget(m_waitForTracks, 1, 0, 1, 2);
+    startupGroupLayout->setColumnStretch(1, 1);
+
     auto* mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(startupBehaviourLabel, 0, 0);
-    mainLayout->addWidget(m_startupBehaviour, 0, 1);
-    mainLayout->addWidget(m_waitForTracks, 1, 0);
-    mainLayout->setColumnStretch(2, 1);
-    mainLayout->setRowStretch(2, 1);
+    mainLayout->addWidget(startupGroup, 0, 0, 1, 2);
+    mainLayout->setColumnStretch(1, 1);
+    mainLayout->setRowStretch(1, 1);
 
     auto addStartupBehaviour = [this](const QString& text, MainWindow::StartupBehaviour action) {
         m_startupBehaviour->addItem(text, QVariant::fromValue(action));
