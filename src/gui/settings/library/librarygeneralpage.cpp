@@ -124,6 +124,8 @@ void LibraryGeneralPageWidget::reset()
     m_settings->reset<Settings::Core::AutoRefresh>();
     m_settings->reset<Settings::Core::Internal::MonitorLibraries>();
     m_settings->reset<Settings::Core::LibrarySortScript>();
+
+    setupValues();
 }
 
 void LibraryGeneralPageWidget::resizeEvent(QResizeEvent* event)
