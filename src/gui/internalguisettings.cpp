@@ -50,7 +50,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistHeader>(true, u"PlaylistWidget/Header"_s);
     m_settings->createSetting<Internal::PlaylistScrollBar>(true, u"PlaylistWidget/Scrollbar"_s);
     m_settings->createSetting<Internal::PlaylistCurrentPreset>("Default", u"PlaylistWidget/CurrentPreset"_s);
-    m_settings->createSetting<Internal::PlaylistThumbnailSize>(100, u"PlaylistWidget/ThumbnailSize"_s);
+    m_settings->createSetting<Internal::PlaylistThumbnailSize>(60, u"PlaylistWidget/ThumbnailSize"_s);
     m_settings->createSetting<Internal::PlaylistTabsHide>(false, u"PlaylistTabs/HideSingleTab"_s);
     m_settings->createSetting<Internal::InfoAltColours>(true, u"InfoPanel/AlternatingColours"_s);
     m_settings->createSetting<Internal::InfoHeader>(true, u"InfoPanel/Header"_s);
