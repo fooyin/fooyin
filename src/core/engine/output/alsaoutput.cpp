@@ -128,7 +128,7 @@ struct AlsaOutput::Private
         dir = 0;
     }
 
-    bool recoverState()
+    bool recoverState(OutputState* state = nullptr)
     {
         if(!pcmHandle) {
             return false;
@@ -150,7 +150,12 @@ struct AlsaOutput::Private
                 pcmst = snd_pcm_status_get_state(st);
             }
 
-            if(pcmst == SND_PCM_STATE_PREPARED || pcmst == SND_PCM_STATE_RUNNING || pcmst == SND_PCM_STATE_PAUSED) {
+            if(pcmst == SND_PCM_STATE_PREPARED) {
+                snd_pcm_start(pcmHandle.get());
+                continue;
+            }
+
+            if(pcmst == SND_PCM_STATE_RUNNING || pcmst == SND_PCM_STATE_PAUSED) {
                 recovered = true;
                 break;
             }
@@ -194,6 +199,16 @@ struct AlsaOutput::Private
 
         if(!recovered) {
             qWarning() << "ALSA could not recover";
+        }
+
+        if(state) {
+            auto delay   = snd_pcm_status_get_delay(st);
+            state->delay = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(outputContext.sampleRate);
+            state->freeSamples = static_cast<int>(snd_pcm_status_get_avail(st));
+            state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(bufferSize));
+            // Align to period size
+            state->freeSamples   = static_cast<int>(state->freeSamples / periodSize * periodSize);
+            state->queuedSamples = static_cast<int>(bufferSize) - state->freeSamples;
         }
 
         return recovered;
@@ -337,15 +352,27 @@ bool AlsaOutput::init(const OutputContext& oc)
         return handleInitError();
     }
 
+    err = snd_pcm_sw_params_set_silence_threshold(handle, swParams, 0);
+    if(err < 0) {
+        qDebug() << "Unable to set silence threshold: " << snd_strerror(err);
+        return handleInitError();
+    }
+
     err = snd_pcm_sw_params_set_start_threshold(handle, swParams, INT_MAX);
     if(err < 0) {
         qDebug() << "Unable to set start threshold: " << snd_strerror(err);
         return handleInitError();
     }
 
+    err = snd_pcm_sw_params_set_stop_threshold(handle, swParams, INT_MAX);
+    if(err < 0) {
+        qDebug() << "Unable to set stop threshold: " << snd_strerror(err);
+        return handleInitError();
+    }
+
     err = snd_pcm_sw_params(handle, swParams);
     if(err < 0) {
-        qDebug() << "Failed to apply ALSA soctware parameters: " << snd_strerror(err);
+        qDebug() << "Failed to apply ALSA software parameters: " << snd_strerror(err);
         return handleInitError();
     }
 
@@ -414,18 +441,7 @@ OutputState AlsaOutput::currentState()
 {
     OutputState state;
 
-    snd_pcm_status_t* st;
-    snd_pcm_status_alloca(&st);
-
-    snd_pcm_status(p->pcmHandle.get(), st);
-
-    auto delay        = snd_pcm_status_get_delay(st);
-    state.delay       = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(p->outputContext.sampleRate);
-    state.freeSamples = static_cast<int>(snd_pcm_status_get_avail(st));
-    state.freeSamples = std::clamp(state.freeSamples, 0, static_cast<int>(p->bufferSize));
-    // Align to period size
-    state.freeSamples   = static_cast<int>(state.freeSamples / p->periodSize * p->periodSize);
-    state.queuedSamples = static_cast<int>(p->bufferSize) - state.freeSamples;
+    p->recoverState(&state);
 
     return state;
 }
