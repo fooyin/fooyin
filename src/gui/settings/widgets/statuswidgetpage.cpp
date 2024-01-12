@@ -59,7 +59,7 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     layout->addWidget(playingScriptLabel, 1, 0, Qt::AlignTop);
     layout->addWidget(m_playingScript, 1, 1);
 
-    layout->setColumnStretch(2, 1);
+    layout->setColumnStretch(1, 1);
     layout->setRowStretch(2, 1);
 
     m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
