@@ -281,6 +281,10 @@ public:
 
         m_lock.unlock();
 
+        if(success) {
+            setting->notifySubscribers();
+        }
+
         return success;
     }
 
