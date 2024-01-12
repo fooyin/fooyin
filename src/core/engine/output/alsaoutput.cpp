@@ -118,6 +118,7 @@ struct AlsaOutput::Private
     int dir{0};
     QString device{u"default"_s};
     bool deviceLost;
+    bool started{false};
 
     void reset()
     {
@@ -125,7 +126,8 @@ struct AlsaOutput::Private
             snd_pcm_drop(pcmHandle.get());
             pcmHandle.reset();
         }
-        dir = 0;
+        dir     = 0;
+        started = false;
     }
 
     bool recoverState(OutputState* state = nullptr)
@@ -150,14 +152,18 @@ struct AlsaOutput::Private
                 pcmst = snd_pcm_status_get_state(st);
             }
 
-            if(pcmst == SND_PCM_STATE_PREPARED) {
-                snd_pcm_start(pcmHandle.get());
-                continue;
-            }
-
             if(pcmst == SND_PCM_STATE_RUNNING || pcmst == SND_PCM_STATE_PAUSED) {
                 recovered = true;
                 break;
+            }
+
+            if(pcmst == SND_PCM_STATE_PREPARED) {
+                if(!started) {
+                    recovered = true;
+                    break;
+                }
+                snd_pcm_start(pcmHandle.get());
+                continue;
             }
 
             qDebug() << QString{u"(%1) Attempting to recover from state '%2'..."_s}.arg(n + 1).arg(
@@ -409,11 +415,11 @@ void AlsaOutput::reset()
 
 void AlsaOutput::start()
 {
-    if(!p->pcmHandle) {
+    if(!p->pcmHandle || !p->initialised) {
         return;
     }
 
-    p->recoverState();
+    p->started = true;
     snd_pcm_start(p->pcmHandle.get());
 }
 
