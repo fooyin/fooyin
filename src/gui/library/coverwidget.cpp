@@ -50,6 +50,11 @@ struct CoverWidget::Private
         coverLabel->setMinimumSize(100, 100);
     }
 
+    void loadDefaultCover()
+    {
+        cover.load(Fooyin::Constants::NoCover);
+    }
+
     void rescaleCover() const
     {
         const QSize scale = self->size() * 4;
@@ -59,16 +64,17 @@ struct CoverWidget::Private
 
     void reloadCover(const Track& track)
     {
-        if(track.isValid()) {
+        if(track.isValid() && track.hasCover()) {
             cover = coverProvider->trackCover(track);
-            if(!cover.isNull()) {
-                rescaleCover();
+            if(cover.isNull()) {
+                loadDefaultCover();
             }
         }
         else {
-            cover.load(Constants::NoCover);
-            rescaleCover();
+            loadDefaultCover();
         }
+
+        rescaleCover();
     }
 };
 
@@ -108,6 +114,7 @@ void CoverWidget::resizeEvent(QResizeEvent* event)
     if(!p->cover.isNull()) {
         p->rescaleCover();
     }
+
     QWidget::resizeEvent(event);
 }
 } // namespace Fooyin
