@@ -1507,6 +1507,10 @@ IndexGroupsList PlaylistModelPrivate::determineIndexGroups(const QModelIndexList
 
 TrackIndexResult PlaylistModelPrivate::indexForTrackIndex(int index) const
 {
+    while(!trackIndexes.contains(index) && model->canFetchMore({})) {
+        model->fetchMore({});
+    }
+
     if(trackIndexes.contains(index)) {
         const QString key = trackIndexes.at(index);
         if(nodes.contains(key)) {
