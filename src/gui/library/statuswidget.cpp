@@ -21,7 +21,7 @@
 
 #include "internalguisettings.h"
 
-#include <core/library/musiclibrary.h>
+#include <core/track.h>
 #include <core/player/playermanager.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
@@ -44,7 +44,6 @@ struct StatusWidget::Private
 {
     StatusWidget* self;
 
-    MusicLibrary* library;
     PlayerManager* playerManager;
     SettingsManager* settings;
 
@@ -57,9 +56,8 @@ struct StatusWidget::Private
 
     QTimer clearTimer;
 
-    Private(StatusWidget* self, MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings)
+    Private(StatusWidget* self, PlayerManager* playerManager, SettingsManager* settings)
         : self{self}
-        , library{library}
         , playerManager{playerManager}
         , settings{settings}
         , scriptParser{&scriptRegistry}
@@ -105,25 +103,11 @@ struct StatusWidget::Private
                 break;
         }
     }
-
-    void scanProgressChanged(int progress)
-    {
-        if(progress == 100) {
-            clearTimer.start();
-        }
-        else {
-            clearTimer.stop();
-        }
-
-        const QString scanText = QStringLiteral("Scanning library: ") + QString::number(progress) + QStringLiteral("%");
-        statusText->setText(scanText);
-    }
 };
 
-StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings,
-                           QWidget* parent)
+StatusWidget::StatusWidget(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, library, playerManager, settings)}
+    , p{std::make_unique<Private>(this, playerManager, settings)}
 {
     setObjectName(StatusWidget::name());
 
@@ -146,8 +130,6 @@ StatusWidget::StatusWidget(MusicLibrary* library, PlayerManager* playerManager, 
                      [this](PlayState state) { p->stateChanged(state); });
     QObject::connect(playerManager, &PlayerManager::positionChanged, this,
                      [this](uint64_t /*pos*/) { p->updatePlayingText(); });
-    QObject::connect(library, &MusicLibrary::scanProgress, this,
-                     [this](int /*id*/, int progress) { p->scanProgressChanged(progress); });
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         p->icon = QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
@@ -172,6 +154,19 @@ QString StatusWidget::name() const
 QString StatusWidget::layoutName() const
 {
     return QStringLiteral("StatusBar");
+}
+
+void StatusWidget::libraryScanProgress(int /*id*/, int progress)
+{
+    if(progress == 100) {
+        p->clearTimer.start();
+    }
+    else {
+        p->clearTimer.stop();
+    }
+
+    const QString scanText = QStringLiteral("Scanning library: ") + QString::number(progress) + QStringLiteral("%");
+    p->statusText->setText(scanText);
 }
 
 void StatusWidget::contextMenuEvent(QContextMenuEvent* event)

@@ -21,11 +21,8 @@
 
 #include "gui/fywidget.h"
 
-#include <QWidget>
-
 namespace Fooyin {
 class SettingsManager;
-class MusicLibrary;
 class PlayerManager;
 
 class StatusWidget : public FyWidget
@@ -33,8 +30,7 @@ class StatusWidget : public FyWidget
     Q_OBJECT
 
 public:
-    StatusWidget(MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings,
-                          QWidget* parent = nullptr);
+    StatusWidget(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
     ~StatusWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -42,6 +38,9 @@ public:
 
 signals:
     void clicked();
+
+public slots:
+    void libraryScanProgress(int id, int progress);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

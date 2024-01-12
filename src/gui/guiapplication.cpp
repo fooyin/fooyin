@@ -306,7 +306,12 @@ struct GuiApplication::Private
 
         widgetProvider.registerWidget(
             u"StatusBar"_s,
-            [this]() { return new StatusWidget(library, playerManager, settingsManager, mainWindow.get()); },
+            [this]() {
+                auto* statusWidget = new StatusWidget(playerManager, settingsManager, mainWindow.get());
+                QObject::connect(library, &MusicLibrary::scanProgress, statusWidget,
+                                 &StatusWidget::libraryScanProgress);
+                return statusWidget;
+            },
             u"Status Bar"_s);
 
         widgetProvider.registerWidget(
