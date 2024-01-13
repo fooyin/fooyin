@@ -422,7 +422,7 @@ void PlaylistPresetsPageWidget::populatePresets()
     const auto& presets = m_presetRegistry.items();
 
     for(const auto& [index, preset] : presets) {
-        m_presetBox->insertItem(index, preset.name, QVariant::fromValue(preset));
+        m_presetBox->insertItem(index, preset.name, preset.id);
     }
 }
 
@@ -439,7 +439,7 @@ void PlaylistPresetsPageWidget::newPreset()
         preset.name                      = text;
         const PlaylistPreset addedPreset = m_presetRegistry.addItem(preset);
         if(addedPreset.isValid()) {
-            m_presetBox->addItem(addedPreset.name, QVariant::fromValue(addedPreset));
+            m_presetBox->addItem(addedPreset.name, addedPreset.id);
             m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
         }
     }
@@ -447,7 +447,9 @@ void PlaylistPresetsPageWidget::newPreset()
 
 void PlaylistPresetsPageWidget::renamePreset()
 {
-    auto preset = m_presetBox->currentData().value<PlaylistPreset>();
+    const int presetId = m_presetBox->currentData().toInt();
+
+    auto preset = m_presetRegistry.itemById(presetId);
 
     bool success{false};
     const QString text = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name:"), QLineEdit::Normal,
@@ -457,7 +459,6 @@ void PlaylistPresetsPageWidget::renamePreset()
         preset.name = text;
         if(m_presetRegistry.changeItem(preset)) {
             m_presetBox->setItemText(m_presetBox->currentIndex(), preset.name);
-            m_presetBox->setItemData(m_presetBox->currentIndex(), QVariant::fromValue(preset));
         }
     }
 }
@@ -468,7 +469,9 @@ void PlaylistPresetsPageWidget::deletePreset()
         return;
     }
 
-    const auto preset = m_presetBox->currentData().value<PlaylistPreset>();
+    const int presetId = m_presetBox->currentData().toInt();
+
+    auto preset = m_presetRegistry.itemById(presetId);
 
     if(m_presetRegistry.removeByIndex(preset.index)) {
         m_presetBox->removeItem(preset.index);
@@ -477,7 +480,8 @@ void PlaylistPresetsPageWidget::deletePreset()
 
 void PlaylistPresetsPageWidget::updatePreset(bool force)
 {
-    auto preset = m_presetBox->currentData().value<PlaylistPreset>();
+    const int presetId = m_presetBox->currentData().toInt();
+    auto preset        = m_presetRegistry.itemById(presetId);
 
     updateTextBlocks(m_headerTitle->blocks(), preset.header.title);
     updateTextBlocks(m_headerSubtitle->blocks(), preset.header.subtitle);
@@ -501,7 +505,8 @@ void PlaylistPresetsPageWidget::updatePreset(bool force)
 
 void PlaylistPresetsPageWidget::clonePreset()
 {
-    const auto preset = m_presetBox->currentData().value<PlaylistPreset>();
+    const int presetId = m_presetBox->currentData().toInt();
+    auto preset        = m_presetRegistry.itemById(presetId);
 
     PlaylistPreset clonedPreset{preset};
     clonedPreset.name                = tr("Copy of ") + preset.name;
@@ -514,10 +519,13 @@ void PlaylistPresetsPageWidget::clonePreset()
 
 void PlaylistPresetsPageWidget::selectionChanged()
 {
-    const auto preset = m_presetBox->currentData().value<PlaylistPreset>();
+    const int presetId = m_presetBox->currentData().toInt();
+    auto preset        = m_presetRegistry.itemById(presetId);
+
     if(!preset.isValid()) {
         return;
     }
+
     clearBlocks();
     setupPreset(preset);
 }
