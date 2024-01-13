@@ -41,6 +41,8 @@ SettingsDialogController* SettingsManager::settingsDialog() const
 
 void SettingsManager::storeSettings()
 {
+    m_lock.lockForRead();
+
     for(const auto& [key, setting] : m_settings) {
         if(setting->isTemporary()) {
             continue;
@@ -51,48 +53,88 @@ void SettingsManager::storeSettings()
         }
     }
 
-    m_settingsFile->setValue(SettingsDialogState, m_settingsDialog->saveState());
+    const auto dialogState = m_settingsDialog->saveState();
+
+    m_lock.unlock();
+
+    m_settingsFile->setValue(SettingsDialogState, dialogState);
 
     m_settingsFile->sync();
 }
 
 QVariant SettingsManager::value(const QString& key) const
 {
+    m_lock.lockForRead();
+
     if(!m_settings.contains(key)) {
+        m_lock.unlock();
         return {};
     }
 
-    return m_settings.at(key)->value();
+    QVariant settingValue;
+
+    if(auto* setting = m_settings.at(key)) {
+        settingValue = setting->value();
+    }
+
+    m_lock.unlock();
+
+    return settingValue;
 }
 
 bool SettingsManager::set(const QString& key, const QVariant& value)
 {
+    m_lock.lockForWrite();
+
     if(!m_settings.contains(key)) {
+        m_lock.unlock();
         return false;
     }
 
-    if(auto* setting = m_settings.at(key)) {
-        if(setting->setValue(value)) {
-            setting->notifySubscribers();
-            return true;
-        }
+    auto* setting = m_settings.at(key);
+
+    const bool success = setting && setting->setValue(value);
+
+    m_lock.unlock();
+
+    if(success) {
+        setting->notifySubscribers();
     }
 
-    return false;
+    return success;
 }
 
 bool SettingsManager::reset(const QString& key)
 {
+    m_lock.lockForWrite();
+
     if(!m_settings.contains(key)) {
+        m_lock.unlock();
         return false;
     }
 
-    return set(key, m_settings.at(key)->defaultValue());
+    auto* setting = m_settings.at(key);
+
+    const bool success = setting && setting->reset();
+
+    m_lock.unlock();
+
+    if(success) {
+        setting->notifySubscribers();
+    }
+
+    return success;
 }
 
 bool SettingsManager::contains(const QString& key) const
 {
-    return m_settings.contains(key);
+    m_lock.lockForRead();
+
+    const bool hasSetting = m_settings.contains(key);
+
+    m_lock.unlock();
+
+    return hasSetting;
 }
 
 QVariant SettingsManager::fileValue(const QString& key) const
@@ -122,32 +164,38 @@ void SettingsManager::fileRemove(const QString& key)
 
 void SettingsManager::createSetting(const QString& key, const QVariant& value)
 {
+    m_lock.lockForWrite();
+
     if(m_settings.contains(key)) {
         qWarning() << "Setting has already been registered: " << key;
+        m_lock.unlock();
         return;
     }
 
     auto* setting = m_settings.emplace(key, new SettingsEntry(key, value, this)).first->second;
     checkLoadSetting(setting);
+
+    m_lock.unlock();
 }
 
 void SettingsManager::createTempSetting(const QString& key, const QVariant& value)
 {
+    m_lock.lockForWrite();
+
     if(m_settings.contains(key)) {
         qWarning() << "Setting has already been registered: " << key;
+        m_lock.unlock();
         return;
     }
 
     auto* setting = m_settings.emplace(key, new SettingsEntry(key, value, this)).first->second;
     setting->setIsTemporary(true);
+
+    m_lock.unlock();
 }
 
 bool SettingsManager::settingExists(const QString& key) const
 {
-    if(m_settings.empty()) {
-        return false;
-    }
-
     return std::ranges::any_of(std::as_const(m_settings),
                                [&key](const auto& setting) { return setting.second->key() == key; });
 }

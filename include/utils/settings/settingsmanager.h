@@ -193,7 +193,7 @@ public:
      * @returns the current value of the setting (cast to the setting type or a variant).
      */
     template <auto key>
-    auto value()
+    auto value() const
     {
         const auto mapKey = getMapKey(key);
 
@@ -298,9 +298,13 @@ public:
     template <typename Obj, typename Func>
     void subscribe(const QString& key, const Obj* obj, Func&& func)
     {
+        m_lock.lockForRead();
+
         if(m_settings.contains(key)) {
             QObject::connect(m_settings.at(key), &SettingsEntry::settingChangedVariant, obj, func);
         }
+
+        m_lock.unlock();
     }
 
     /*!
@@ -313,82 +317,10 @@ public:
     template <auto key, typename Obj, typename Func>
     void constexpr subscribe(const Obj* obj, Func&& func)
     {
-        connectTypeSignals<key>(obj, func);
-    }
-
-    /*!
-     * Unsubscribes to a setting.
-     * @param key the settings key used in @fn createSetting.
-     * @param obj the object to disconnect from.
-     * @note this is for string key-based settings.
-     */
-    template<typename Obj>
-    void unsubscribe(const QString& key, const Obj* obj)
-    {
-        if(m_settings.contains(key)) {
-            QObject::disconnect(m_settings.at(key), nullptr, obj, nullptr);
-        }
-    }
-
-    /*!
-     * Unsubscribes to a setting.
-     * @tparam key the settings key used in @fn createSetting
-     * @param obj the object to disconnect from.
-     * @note this is for enum key-based settings.
-     */
-    template <auto key, typename Obj>
-    void constexpr unsubscribe(const Obj* obj)
-    {
-        const auto mapKey = getMapKey(key);
-
-        if(m_settings.contains(mapKey)) {
-            QObject::disconnect(m_settings.at(mapKey), nullptr, obj, nullptr);
-        }
-    }
-
-private:
-    template <auto key, typename Value>
-        requires ValidValueType<key, Value>
-    void constexpr createNewSetting(const Value& value, const QString& settingKey, bool isTemporary)
-    {
-        using Enum           = decltype(key);
-        const auto type      = static_cast<Settings::Type>(findType<key>());
-        const auto meta      = QMetaEnum::fromType<Enum>();
-        const auto enumName  = QString::fromLatin1(meta.name());
-        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
-        const auto mapKey    = enumName + keyString;
-
-        if(m_settings.contains(mapKey) || settingExists(settingKey)) {
-            qWarning() << "Setting has already been registered: " << keyString;
-            return;
-        }
-
-        m_settings.emplace(mapKey, new SettingsEntry(settingKey, value, type, this));
-        auto* setting = m_settings.at(mapKey);
-        if(isTemporary) {
-            setting->setIsTemporary(isTemporary);
-        }
-        else {
-            checkLoadSetting(setting);
-        }
-    }
-
-    template <typename Enum>
-    auto constexpr getMapKey(Enum key)
-    {
-        const auto meta      = QMetaEnum::fromType<Enum>();
-        const auto enumName  = QString::fromLatin1(meta.name());
-        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
-        const auto mapKey    = enumName + keyString;
-
-        return QString::fromUtf8(mapKey.toUtf8());
-    }
-
-    template <auto key, typename Obj, typename Func>
-    void constexpr connectTypeSignals(const Obj* obj, Func&& func)
-    {
         const auto mapKey = getMapKey(key);
         const auto type   = findType<key>();
+
+        m_lock.lockForRead();
 
         if(m_settings.contains(mapKey)) {
             if constexpr(type == Settings::Variant) {
@@ -413,6 +345,90 @@ private:
                 QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
             }
         }
+
+        m_lock.unlock();
+    }
+
+    /*!
+     * Unsubscribes to a setting.
+     * @param key the settings key used in @fn createSetting.
+     * @param obj the object to disconnect from.
+     * @note this is for string key-based settings.
+     */
+    template <typename Obj>
+    void unsubscribe(const QString& key, const Obj* obj)
+    {
+        m_lock.lockForRead();
+
+        if(m_settings.contains(key)) {
+            QObject::disconnect(m_settings.at(key), nullptr, obj, nullptr);
+        }
+
+        m_lock.unlock();
+    }
+
+    /*!
+     * Unsubscribes to a setting.
+     * @tparam key the settings key used in @fn createSetting
+     * @param obj the object to disconnect from.
+     * @note this is for enum key-based settings.
+     */
+    template <auto key, typename Obj>
+    void constexpr unsubscribe(const Obj* obj)
+    {
+        const auto mapKey = getMapKey(key);
+
+        m_lock.lockForRead();
+
+        if(m_settings.contains(mapKey)) {
+            QObject::disconnect(m_settings.at(mapKey), nullptr, obj, nullptr);
+        }
+
+        m_lock.unlock();
+    }
+
+private:
+    template <auto key, typename Value>
+        requires ValidValueType<key, Value>
+    void constexpr createNewSetting(const Value& value, const QString& settingKey, bool isTemporary)
+    {
+        using Enum           = decltype(key);
+        const auto type      = static_cast<Settings::Type>(findType<key>());
+        const auto meta      = QMetaEnum::fromType<Enum>();
+        const auto enumName  = QString::fromLatin1(meta.name());
+        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
+        const auto mapKey    = enumName + keyString;
+
+        m_lock.lockForWrite();
+
+        if(m_settings.contains(mapKey) || settingExists(settingKey)) {
+            qWarning() << "Setting has already been registered: " << keyString;
+            m_lock.unlock();
+            return;
+        }
+
+        m_settings.emplace(mapKey, new SettingsEntry(settingKey, value, type, this));
+
+        auto* setting = m_settings.at(mapKey);
+        if(isTemporary) {
+            setting->setIsTemporary(isTemporary);
+        }
+        else {
+            checkLoadSetting(setting);
+        }
+
+        m_lock.unlock();
+    }
+
+    template <typename Enum>
+    auto constexpr getMapKey(Enum key) const
+    {
+        const auto meta      = QMetaEnum::fromType<Enum>();
+        const auto enumName  = QString::fromLatin1(meta.name());
+        const auto keyString = QString::fromLatin1(meta.valueToKey(key));
+        const auto mapKey    = enumName + keyString;
+
+        return QString::fromUtf8(mapKey.toUtf8());
     }
 
     bool settingExists(const QString& key) const;
@@ -420,7 +436,7 @@ private:
 
     QSettings* m_settingsFile;
     std::map<QString, SettingsEntry*> m_settings;
-    QReadWriteLock m_lock;
+    mutable QReadWriteLock m_lock;
 
     SettingsDialogController* m_settingsDialog;
 };
