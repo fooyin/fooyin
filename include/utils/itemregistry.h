@@ -114,13 +114,18 @@ public:
             = std::ranges::find_if(m_items, [item](const auto& regItem) { return regItem.second.id == item.id; });
 
         if(itemIt != m_items.end()) {
+            if(itemIt->second == item) {
+                return false;
+            }
+
             Item changedItem{item};
             if(itemIt->second.name != changedItem.name) {
                 changedItem.name = findUniqueName(changedItem.name);
             }
             itemIt->second = changedItem;
-            emit itemChanged(changedItem.id);
+
             saveItems();
+            emit itemChanged(changedItem.id);
             return true;
         }
 
@@ -179,10 +184,15 @@ public:
         }
 
         QByteArray byteArray;
-        QDataStream out(&byteArray, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_6_5);
+        QDataStream stream(&byteArray, QIODevice::WriteOnly);
+        stream.setVersion(QDataStream::Qt_6_5);
 
-        out << m_items;
+        stream << static_cast<int>(m_items.size());
+        for(const auto& [index, item] : m_items) {
+            stream << index;
+            stream << item;
+        }
+
         byteArray = qCompress(byteArray, 9);
 
         m_settings->unsubscribe(m_settingKey, this);
@@ -192,17 +202,47 @@ public:
 
     virtual void loadItems()
     {
+        IndexItemMap oldItems{m_items};
+        const bool firstLoad = m_items.empty();
         m_items.clear();
 
         QByteArray byteArray = m_settings->value(m_settingKey).toByteArray();
 
-        if(!byteArray.isEmpty()) {
-            byteArray = qUncompress(byteArray);
+        if(byteArray.isEmpty()) {
+            return;
+        }
 
-            QDataStream in(&byteArray, QIODevice::ReadOnly);
-            in.setVersion(QDataStream::Qt_6_5);
+        byteArray = qUncompress(byteArray);
 
-            in >> m_items;
+        QDataStream stream(&byteArray, QIODevice::ReadOnly);
+        stream.setVersion(QDataStream::Qt_6_5);
+
+        std::vector<int> changedItems;
+
+        int size;
+        stream >> size;
+
+        while(size > 0) {
+            --size;
+
+            Item item;
+            int index;
+            stream >> index;
+            stream >> item;
+
+            if(!firstLoad) {
+                auto it = std::ranges::find_if(std::as_const(oldItems),
+                                               [item](const auto& oldItem) { return oldItem.second.id == item.id; });
+                if(it != oldItems.cend() && it->second != item) {
+                    changedItems.emplace_back(item.id);
+                }
+            }
+
+            m_items.emplace(index, item);
+        }
+
+        for(int id : changedItems) {
+            emit itemChanged(id);
         }
     }
 
@@ -221,32 +261,3 @@ private:
     QString m_settingKey;
 };
 } // namespace Fooyin
-
-template <class T>
-QDataStream& operator<<(QDataStream& stream, const std::map<int, T>& itemMap)
-{
-    stream << static_cast<int>(itemMap.size());
-    for(const auto& [index, preset] : itemMap) {
-        stream << index;
-        stream << preset;
-    }
-    return stream;
-}
-
-template <class T>
-QDataStream& operator>>(QDataStream& stream, std::map<int, T>& itemMap)
-{
-    int size;
-    stream >> size;
-
-    while(size > 0) {
-        --size;
-
-        T item;
-        int index;
-        stream >> index;
-        stream >> item;
-        itemMap.emplace(index, item);
-    }
-    return stream;
-}
