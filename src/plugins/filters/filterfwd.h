@@ -43,9 +43,13 @@ struct FilterOptions
     friend QDataStream& operator<<(QDataStream& stream, const FilterOptions& options)
     {
         stream << options.fontChanged;
-        stream << options.font;
+        if(options.fontChanged) {
+            stream << options.font;
+        }
         stream << options.colourChanged;
-        stream << options.colour;
+        if(options.colourChanged) {
+            stream << options.colour;
+        }
         stream << options.rowHeight;
         return stream;
     }
@@ -53,14 +57,12 @@ struct FilterOptions
     friend QDataStream& operator>>(QDataStream& stream, FilterOptions& options)
     {
         stream >> options.fontChanged;
-        stream >> options.font;
-        if(!options.fontChanged) {
-            options.font = QFont{};
+        if(options.fontChanged) {
+            stream >> options.font;
         }
         stream >> options.colourChanged;
-        stream >> options.colour;
-        if(!options.colourChanged) {
-            options.colour = QApplication::palette().text().color();
+        if(options.colourChanged) {
+            stream >> options.colour;
         }
         stream >> options.rowHeight;
         return stream;
