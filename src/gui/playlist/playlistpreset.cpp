@@ -33,7 +33,6 @@ TextBlock::TextBlock(QString text, int fontDelta)
 {
     if(fontDelta != 0) {
         font.setPointSize(font.pointSize() + fontDelta);
-        fontChanged = true;
     }
 }
 
