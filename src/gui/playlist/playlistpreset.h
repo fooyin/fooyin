@@ -42,7 +42,7 @@ struct TextBlock
     QColor colour;
 
     TextBlock();
-    TextBlock(QString text, int fontSize);
+    TextBlock(QString text, int fontDelta = 0);
 
     inline bool operator==(const TextBlock& other) const
     {

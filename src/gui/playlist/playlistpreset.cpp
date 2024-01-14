@@ -27,12 +27,13 @@ TextBlock::TextBlock()
     : TextBlock{QStringLiteral(""), 0}
 { }
 
-TextBlock::TextBlock(QString text, int fontSize)
+TextBlock::TextBlock(QString text, int fontDelta)
     : text{std::move(text)}
     , colour{QApplication::palette().text().color()}
 {
-    if(fontSize > 0 && font.pixelSize() >= 0) {
-        font.setPixelSize(fontSize);
+    if(fontDelta != 0) {
+        font.setPointSize(font.pointSize() + fontDelta);
+        fontChanged = true;
     }
 }
 
