@@ -101,12 +101,12 @@ public:
     {
         QByteArray state = saveGeometry();
         state            = qCompress(state, 9);
-        settings->set(PropertiesDialogState, state);
+        settings->fileSet(PropertiesDialogState, state);
     }
 
     void restoreState(SettingsManager* settings)
     {
-        QByteArray state = settings->value(PropertiesDialogState).toByteArray();
+        QByteArray state = settings->fileValue(PropertiesDialogState).toByteArray();
 
         if(!state.isEmpty()) {
             state = qUncompress(state);

@@ -97,12 +97,12 @@ struct TagEditorWidget::Private
     void saveState() const
     {
         const QByteArray state = view->horizontalHeader()->saveState();
-        settings->set(TagEditorState, state);
+        settings->fileSet(TagEditorState, state);
     }
 
     void restoreState() const
     {
-        const QByteArray state = settings->value(TagEditorState).toByteArray();
+        const QByteArray state = settings->fileValue(TagEditorState).toByteArray();
 
         if(state.isEmpty()) {
             return;

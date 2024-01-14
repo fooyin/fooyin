@@ -31,7 +31,7 @@ SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     , m_settingsFile{new QSettings(settingsPath, QSettings::IniFormat, this)}
     , m_settingsDialog{new SettingsDialogController(this)}
 {
-    m_settingsDialog->loadState(m_settingsFile->value(SettingsDialogState).toByteArray());
+    m_settingsDialog->loadState(fileValue(SettingsDialogState).toByteArray());
 }
 
 SettingsDialogController* SettingsManager::settingsDialog() const

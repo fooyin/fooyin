@@ -39,10 +39,10 @@ namespace Fooyin {
 MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, EditableLayout* editableLayout,
                        QWidget* parent)
     : QMainWindow{parent}
-      , m_actionManager{actionManager}
-      , m_settings{settings}
-      , m_mainMenu{new MainMenuBar(m_actionManager, this)}
-      , m_editableLayout{editableLayout}
+    , m_actionManager{actionManager}
+    , m_settings{settings}
+    , m_mainMenu{new MainMenuBar(m_actionManager, this)}
+    , m_editableLayout{editableLayout}
 {
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
@@ -62,7 +62,7 @@ MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, 
 
 MainWindow::~MainWindow()
 {
-    m_settings->set(MainWindowGeometry, saveGeometry());
+    m_settings->fileSet(MainWindowGeometry, saveGeometry());
 }
 
 void MainWindow::open()
@@ -73,7 +73,7 @@ void MainWindow::open()
             break;
         }
         case(RememberLast): {
-            restoreGeometry(m_settings->value(MainWindowGeometry).toByteArray());
+            restoreGeometry(m_settings->fileValue(MainWindowGeometry).toByteArray());
             show();
             break;
         }
