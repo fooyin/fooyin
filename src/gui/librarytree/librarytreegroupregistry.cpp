@@ -19,19 +19,6 @@
 
 #include "librarytreegroupregistry.h"
 
-namespace {
-void loadDefaults(Fooyin::LibraryTreeGroupRegistry* registry)
-{
-    registry->addItem({.id     = 0,
-                       .index  = 0,
-                       .name   = "Artist/Album",
-                       .script = "$if2(%albumartist%,%artist%)||%album% (%year%)||%disc%.$num(%track%,2). %title%"});
-    registry->addItem(
-        {.id = 1, .index = 1, .name = "Album", .script = "%album% (%year%)||%disc%.$num(%track%,2). %title%"});
-    registry->addItem({.id = 2, .index = 2, .name = "Folder Structure", .script = "$replace(%relativepath%,/,||)"});
-}
-} // namespace
-
 namespace Fooyin {
 LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{LibraryTreeGroups, settings, parent}
@@ -41,16 +28,18 @@ LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QO
         emit groupingChanged(grouping);
     });
 
-    LibraryTreeGroupRegistry::loadItems();
+    loadItems();
 }
 
-void LibraryTreeGroupRegistry::loadItems()
+void LibraryTreeGroupRegistry::loadDefaults()
 {
-    ItemRegistry::loadItems();
-
-    if(m_items.empty()) {
-        loadDefaults(this);
-    }
+    addDefaultItem({.id     = 0,
+                    .index  = 0,
+                    .name   = "Artist/Album",
+                    .script = "$if2(%albumartist%,%artist%)||%album% (%year%)||%disc%.$num(%track%,2). %title%"});
+    addDefaultItem(
+        {.id = 1, .index = 1, .name = "Album", .script = "%album% (%year%)||%disc%.$num(%track%,2). %title%"});
+    addDefaultItem({.id = 2, .index = 2, .name = "Folder Structure", .script = "$replace(%relativepath%,/,||)"});
 }
 } // namespace Fooyin
 

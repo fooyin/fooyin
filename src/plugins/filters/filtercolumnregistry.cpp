@@ -19,17 +19,6 @@
 
 #include "filtercolumnregistry.h"
 
-namespace {
-void loadDefaults(Fooyin::Filters::FilterColumnRegistry* registry)
-{
-    registry->addItem({.id = 0, .index = 0, .name = "Genre", .field = "%<genre>%"});
-    registry->addItem({.id = 1, .index = 1, .name = "Album Artist", .field = "%albumartist%"});
-    registry->addItem({.id = 2, .index = 2, .name = "Artist", .field = "%<artist>%"});
-    registry->addItem({.id = 3, .index = 3, .name = "Album", .field = "%album%"});
-    registry->addItem({.id = 4, .index = 4, .name = "Date", .field = "%date%"});
-}
-} // namespace
-
 namespace Fooyin::Filters {
 FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{FilterColumns, settings, parent}
@@ -39,16 +28,16 @@ FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* p
         emit columnChanged(field);
     });
 
-    ItemRegistry::loadItems();
+    loadItems();
 }
 
-void FilterColumnRegistry::loadItems()
+void FilterColumnRegistry::loadDefaults()
 {
-    ItemRegistry::loadItems();
-
-    if(m_items.empty()) {
-        loadDefaults(this);
-    }
+    addDefaultItem({.id = 0, .index = 0, .name = "Genre", .field = "%<genre>%"});
+    addDefaultItem({.id = 1, .index = 1, .name = "Album Artist", .field = "%albumartist%"});
+    addDefaultItem({.id = 2, .index = 2, .name = "Artist", .field = "%<artist>%"});
+    addDefaultItem({.id = 3, .index = 3, .name = "Album", .field = "%album%"});
+    addDefaultItem({.id = 4, .index = 4, .name = "Date", .field = "%date%"});
 }
 } // namespace Fooyin::Filters
 

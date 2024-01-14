@@ -77,6 +77,7 @@ public:
         if(!m_settings->contains(m_settingKey)) {
             m_settings->createSetting(m_settingKey, {});
         }
+
         m_settings->subscribe(m_settingKey, this, &ItemRegistry::loadItems);
     }
 
@@ -85,30 +86,17 @@ public:
         return m_items;
     }
 
-    virtual Item addItem(const Item& item)
+    [[nodiscard]] bool empty() const
     {
-        auto findValidId = [this]() -> int {
-            if(m_items.empty()) {
-                return 0;
-            }
-
-            auto ids = m_items | std::views::values | std::views::transform([](const Item& item) { return item.id; });
-
-            const int nextId = *std::ranges::max_element(ids) + 1;
-            return nextId;
-        };
-
-        Item newItem{item};
-        newItem.name  = findUniqueName(newItem.name);
-        newItem.id    = findValidId();
-        newItem.index = static_cast<int>(m_items.size());
-
-        m_items.emplace(newItem.index, newItem);
-        saveItems();
-        return m_items.at(newItem.index);
+        return m_items.empty();
     }
 
-    virtual bool changeItem(const Item& item)
+    Item addItem(const Item& item)
+    {
+        return addItem(item, true);
+    }
+
+    bool changeItem(const Item& item)
     {
         auto itemIt
             = std::ranges::find_if(m_items, [item](const auto& regItem) { return regItem.second.id == item.id; });
@@ -165,6 +153,17 @@ public:
         return it->second;
     }
 
+    bool removeById(int id)
+    {
+        if(std::erase_if(m_items, [id](const auto& item) { return item.second.id == id; }) == 0) {
+            return false;
+        }
+
+        saveItems();
+
+        return true;
+    }
+
     bool removeByIndex(int index)
     {
         if(!m_items.contains(index)) {
@@ -177,7 +176,7 @@ public:
         return true;
     }
 
-    virtual void saveItems()
+    void saveItems() const
     {
         if(m_items.empty()) {
             return;
@@ -200,15 +199,15 @@ public:
         m_settings->subscribe(m_settingKey, this, &ItemRegistry::loadItems);
     }
 
-    virtual void loadItems()
+    void loadItems()
     {
         IndexItemMap oldItems{m_items};
-        const bool firstLoad = m_items.empty();
         m_items.clear();
 
         QByteArray byteArray = m_settings->value(m_settingKey).toByteArray();
 
         if(byteArray.isEmpty()) {
+            loadDefaults();
             return;
         }
 
@@ -216,8 +215,6 @@ public:
 
         QDataStream stream(&byteArray, QIODevice::ReadOnly);
         stream.setVersion(QDataStream::Qt_6_5);
-
-        std::vector<int> changedItems;
 
         int size;
         stream >> size;
@@ -230,34 +227,79 @@ public:
             stream >> index;
             stream >> item;
 
-            if(!firstLoad) {
-                auto it = std::ranges::find_if(std::as_const(oldItems),
-                                               [item](const auto& oldItem) { return oldItem.second.id == item.id; });
-                if(it != oldItems.cend() && it->second != item) {
-                    changedItems.emplace_back(item.id);
-                }
-            }
-
             m_items.emplace(index, item);
         }
 
-        for(int id : changedItems) {
-            emit itemChanged(id);
-        }
+        checkChangedItems(oldItems);
+    }
+
+    void reset()
+    {
+        IndexItemMap oldItems{m_items};
+        m_items.clear();
+
+        loadDefaults();
+        saveItems();
+
+        checkChangedItems(oldItems);
     }
 
 protected:
-    IndexItemMap m_items;
+    virtual void loadDefaults(){};
+
+    void addDefaultItem(const Item& item)
+    {
+        addItem(item, false);
+    }
 
 private:
-    QString findUniqueName(const QString& name)
+    [[nodiscard]] QString findUniqueName(const QString& name) const
     {
         const QString uniqueName{name.isEmpty() ? "New item" : name};
         return Utils::findUniqueString(uniqueName, std::as_const(m_items),
                                        [](const auto& item) { return item.second.name; });
     }
 
+    Item addItem(const Item& item, bool save)
+    {
+        auto findValidId = [this]() -> int {
+            if(m_items.empty()) {
+                return 0;
+            }
+
+            auto ids = m_items | std::views::values | std::views::transform([](const Item& item) { return item.id; });
+
+            const int nextId = *std::ranges::max_element(ids) + 1;
+            return nextId;
+        };
+
+        Item newItem{item};
+        newItem.name  = findUniqueName(newItem.name);
+        newItem.id    = findValidId();
+        newItem.index = static_cast<int>(m_items.size());
+
+        m_items.emplace(newItem.index, newItem);
+
+        if(save) {
+            saveItems();
+        }
+
+        return newItem;
+    }
+
+    void checkChangedItems(const IndexItemMap& oldItems)
+    {
+        for(const auto& item : m_items | std::views::values) {
+            auto it
+                = std::ranges::find_if(oldItems, [item](const auto& oldItem) { return oldItem.second.id == item.id; });
+            if(it != oldItems.cend() && it->second != item) {
+                emit itemChanged(it->second.id);
+            }
+        }
+    }
+
     SettingsManager* m_settings;
     QString m_settingKey;
+    IndexItemMap m_items;
 };
 } // namespace Fooyin

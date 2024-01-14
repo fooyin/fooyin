@@ -19,19 +19,6 @@
 
 #include "playlistcolumnregistry.h"
 
-namespace {
-void loadDefaults(Fooyin::PlaylistColumnRegistry* registry)
-{
-    registry->addItem({.id = 0, .index = 0, .name = "Track", .field = "$num(%track%,2)"});
-    registry->addItem({.id = 1, .index = 1, .name = "Title", .field = "%title%"});
-    registry->addItem({.id = 2, .index = 2, .name = "Artist", .field = "%artist%"});
-    registry->addItem({.id = 3, .index = 3, .name = "Album Artist", .field = "%albumartist%"});
-    registry->addItem({.id = 4, .index = 4, .name = "Album", .field = "%album%"});
-    registry->addItem({.id = 5, .index = 5, .name = "Playcount", .field = "%playcount%"});
-    registry->addItem({.id = 6, .index = 6, .name = "Duration", .field = "$timems(%duration%)"});
-}
-} // namespace
-
 namespace Fooyin {
 PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{PlaylistColumns, settings, parent}
@@ -41,15 +28,17 @@ PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObjec
         emit columnChanged(column);
     });
 
-    PlaylistColumnRegistry::loadItems();
+    loadItems();
 }
 
-void PlaylistColumnRegistry::loadItems()
+void PlaylistColumnRegistry::loadDefaults()
 {
-    ItemRegistry::loadItems();
-
-    if(m_items.empty()) {
-        loadDefaults(this);
-    }
+    addDefaultItem({.id = 0, .index = 0, .name = "Track", .field = "$num(%track%,2)"});
+    addDefaultItem({.id = 1, .index = 1, .name = "Title", .field = "%title%"});
+    addDefaultItem({.id = 2, .index = 2, .name = "Artist", .field = "%artist%"});
+    addDefaultItem({.id = 3, .index = 3, .name = "Album Artist", .field = "%albumartist%"});
+    addDefaultItem({.id = 4, .index = 4, .name = "Album", .field = "%album%"});
+    addDefaultItem({.id = 5, .index = 5, .name = "Playcount", .field = "%playcount%"});
+    addDefaultItem({.id = 6, .index = 6, .name = "Duration", .field = "$timems(%duration%)"});
 }
 } // namespace Fooyin

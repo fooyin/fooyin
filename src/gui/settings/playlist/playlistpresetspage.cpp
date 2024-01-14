@@ -23,7 +23,6 @@
 #include "playlist/presetregistry.h"
 
 #include <gui/guiconstants.h>
-#include <gui/guisettings.h>
 #include <gui/widgets/customisableinput.h>
 #include <utils/enum.h>
 #include <utils/expandableinputbox.h>
@@ -33,11 +32,9 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGroupBox>
-#include <QHeaderView>
 #include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
-#include <QMenu>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QTabWidget>
@@ -264,7 +261,6 @@ public:
 
 private:
     PresetRegistry m_presetRegistry;
-    SettingsManager* m_settings;
 
     QComboBox* m_presetBox;
     QTabWidget* m_presetTabs;
@@ -293,7 +289,6 @@ private:
 
 PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
     : m_presetRegistry{settings}
-    , m_settings{settings}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
     , m_headerRowHeight{new QSpinBox(this)}
@@ -410,9 +405,8 @@ void PlaylistPresetsPageWidget::apply()
 
 void PlaylistPresetsPageWidget::reset()
 {
-    m_settings->reset(PlaylistPresets);
+    m_presetRegistry.reset();
     populatePresets();
-    updatePreset(true);
 }
 
 void PlaylistPresetsPageWidget::populatePresets()
@@ -471,10 +465,8 @@ void PlaylistPresetsPageWidget::deletePreset()
 
     const int presetId = m_presetBox->currentData().toInt();
 
-    auto preset = m_presetRegistry.itemById(presetId);
-
-    if(m_presetRegistry.removeByIndex(preset.index)) {
-        m_presetBox->removeItem(preset.index);
+    if(m_presetRegistry.removeById(presetId)) {
+        m_presetBox->removeItem(m_presetBox->currentIndex());
     }
 }
 
@@ -498,7 +490,7 @@ void PlaylistPresetsPageWidget::updatePreset(bool force)
     updateTextBlocks(m_trackRightText->blocks(), preset.track.rightText);
     preset.track.rowHeight = m_trackRowHeight->value();
 
-    if(force || preset != m_presetRegistry.itemByIndex(preset.index)) {
+    if(force || preset != m_presetRegistry.itemById(preset.id)) {
         m_presetRegistry.changeItem(preset);
     }
 }

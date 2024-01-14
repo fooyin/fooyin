@@ -19,17 +19,6 @@
 
 #include "sortingregistry.h"
 
-namespace {
-void loadDefaults(Fooyin::SortingRegistry* registry)
-{
-    registry->addItem({.id = 0, .index = 0, .name = "Album", .script = "%album% - $num(%disc%,2) - $num(%track%,2)"});
-    registry->addItem(
-        {.id = 1, .index = 1, .name = "Artist", .script = "%artist% - %date% - $num(%disc%,2) - $num(%track%,2)"});
-    registry->addItem({.id = 2, .index = 2, .name = "Title", .script = "%title%"});
-    registry->addItem({.id = 3, .index = 3, .name = "Track Number", .script = "$num(%disc%,2) - $num(%track%,2)"});
-}
-} // namespace
-
 namespace Fooyin {
 SortingRegistry::SortingRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{LibrarySorting, settings, parent}
@@ -39,16 +28,16 @@ SortingRegistry::SortingRegistry(SettingsManager* settings, QObject* parent)
         emit sortChanged(sort);
     });
 
-    SortingRegistry::loadItems();
+    loadItems();
 }
 
-void SortingRegistry::loadItems()
+void SortingRegistry::loadDefaults()
 {
-    ItemRegistry::loadItems();
-
-    if(m_items.empty()) {
-        loadDefaults(this);
-    }
+    addDefaultItem({.id = 0, .index = 0, .name = "Album", .script = "%album% - $num(%disc%,2) - $num(%track%,2)"});
+    addDefaultItem(
+        {.id = 1, .index = 1, .name = "Artist", .script = "%artist% - %date% - $num(%disc%,2) - $num(%track%,2)"});
+    addDefaultItem({.id = 2, .index = 2, .name = "Title", .script = "%title%"});
+    addDefaultItem({.id = 3, .index = 3, .name = "Track Number", .script = "$num(%disc%,2) - $num(%track%,2)"});
 }
 } // namespace Fooyin
 

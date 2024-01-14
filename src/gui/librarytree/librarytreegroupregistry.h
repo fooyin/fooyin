@@ -35,9 +35,10 @@ class LibraryTreeGroupRegistry : public ItemRegistry<LibraryTreeGrouping>
 public:
     explicit LibraryTreeGroupRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
-    void loadItems() override;
-
 signals:
     void groupingChanged(const LibraryTreeGrouping& grouping);
+
+protected:
+    void loadDefaults() override;
 };
 } // namespace Fooyin

@@ -35,9 +35,10 @@ class PlaylistColumnRegistry : public ItemRegistry<PlaylistColumn>
 public:
     explicit PlaylistColumnRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
-    void loadItems() override;
-
 signals:
     void columnChanged(const PlaylistColumn& column);
+
+protected:
+    void loadDefaults() override;
 };
 } // namespace Fooyin

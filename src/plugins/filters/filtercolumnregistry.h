@@ -36,10 +36,11 @@ class FilterColumnRegistry : public ItemRegistry<FilterColumn>
 public:
     explicit FilterColumnRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
-    void loadItems() override;
-
 signals:
     void columnChanged(const FilterColumn& field);
+
+protected:
+    void loadDefaults() override;
 };
 } // namespace Filters
 } // namespace Fooyin

@@ -41,7 +41,6 @@ public:
 private:
     ActionManager* m_actionManager;
     PlaylistColumnRegistry m_columnsRegistry;
-    SettingsManager* m_settings;
 
     ExtendableTableView* m_columnList;
     PlaylistColumnModel* m_model;
@@ -50,7 +49,6 @@ private:
 PlaylistColumnPageWidget::PlaylistColumnPageWidget(ActionManager* actionManager, SettingsManager* settings)
     : m_actionManager{actionManager}
     , m_columnsRegistry{settings}
-    , m_settings{settings}
     , m_columnList{new ExtendableTableView(m_actionManager, this)}
     , m_model{new PlaylistColumnModel(&m_columnsRegistry, this)}
 {
@@ -78,7 +76,7 @@ void PlaylistColumnPageWidget::apply()
 
 void PlaylistColumnPageWidget::reset()
 {
-    m_settings->reset(PlaylistColumns);
+    m_columnsRegistry.reset();
     m_model->populate();
 }
 

@@ -19,10 +19,21 @@
 
 #include "presetregistry.h"
 
-namespace {
-void loadDefaults(Fooyin::PresetRegistry* registry)
+namespace Fooyin {
+PresetRegistry::PresetRegistry(SettingsManager* settings, QObject* parent)
+    : ItemRegistry{PlaylistPresets, settings, parent}
 {
-    Fooyin::PlaylistPreset preset;
+    QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
+        const auto preset = itemById(id);
+        emit presetChanged(preset);
+    });
+
+    loadItems();
+}
+
+void PresetRegistry::loadDefaults()
+{
+    PlaylistPreset preset;
 
     preset.name = QStringLiteral("Album - Disc");
 
@@ -43,7 +54,7 @@ void loadDefaults(Fooyin::PresetRegistry* registry)
     preset.track.rightText.emplace_back("$ifgreater(%playcount%,0,%playcount% |)      ", 10);
     preset.track.rightText.emplace_back("$timems(%duration%)", 13);
 
-    registry->addItem(preset);
+    addDefaultItem(preset);
 
     preset.subHeaders.clear();
 
@@ -53,7 +64,7 @@ void loadDefaults(Fooyin::PresetRegistry* registry)
     preset.header.subtitle.emplace_back("$if(%album%,%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)",
                                         14);
 
-    registry->addItem(preset);
+    addDefaultItem(preset);
 
     preset.name = QStringLiteral("Simple Header");
 
@@ -64,36 +75,14 @@ void loadDefaults(Fooyin::PresetRegistry* registry)
     preset.header.title.emplace_back(
         "$if(%albumartist%,%albumartist%,Unknown Artist) ▪ $if(%album%,%album%,Unknown Album)", 16);
 
-    registry->addItem(preset);
+    addDefaultItem(preset);
 
     preset.name = QStringLiteral("Table");
 
     preset.header = {};
     preset.subHeaders.clear();
 
-    registry->addItem(preset);
-}
-} // namespace
-
-namespace Fooyin {
-PresetRegistry::PresetRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{PlaylistPresets, settings, parent}
-{
-    QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
-        const auto preset = itemById(id);
-        emit presetChanged(preset);
-    });
-
-    PresetRegistry::loadItems();
-}
-
-void PresetRegistry::loadItems()
-{
-    ItemRegistry::loadItems();
-
-    if(m_items.empty()) {
-        loadDefaults(this);
-    }
+    addDefaultItem(preset);
 }
 } // namespace Fooyin
 

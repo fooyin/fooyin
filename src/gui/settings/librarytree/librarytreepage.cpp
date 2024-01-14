@@ -177,8 +177,8 @@ void LibraryTreePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreePlaylistEnabled>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoSwitch>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoPlaylist>();
-    m_settings->reset(LibraryTreeGroups);
 
+    m_groupsRegistry.reset();
     m_model->populate();
 }
 

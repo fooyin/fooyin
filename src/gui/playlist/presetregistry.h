@@ -37,9 +37,10 @@ class PresetRegistry : public ItemRegistry<PlaylistPreset>
 public:
     explicit PresetRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
-    void loadItems() override;
-
 signals:
     void presetChanged(const PlaylistPreset& preset);
+
+protected:
+    void loadDefaults() override;
 };
 } // namespace Fooyin
