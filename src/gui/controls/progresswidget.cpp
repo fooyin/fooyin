@@ -47,11 +47,6 @@ ProgressWidget::ProgressWidget(PlayerManager* playerManager, SettingsManager* se
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
 
-    m_slider->setFocusPolicy(Qt::NoFocus);
-
-    m_elapsed->setText(u"00:00"_s);
-    m_total->setText(m_elapsedTotal ? u"-00:00"_s : u"00:00"_s);
-
     m_layout->addWidget(m_elapsed, 0, Qt::AlignVCenter | Qt::AlignLeft);
     m_layout->addWidget(m_slider, 0, Qt::AlignVCenter);
     m_layout->addWidget(m_total, 0, Qt::AlignVCenter | Qt::AlignLeft);
@@ -80,10 +75,13 @@ void ProgressWidget::reset()
 void ProgressWidget::changeTrack(const Track& track)
 {
     reset();
-    m_max = track.duration();
-    m_slider->setMaximum(static_cast<int>(m_max));
-    const QString totalText = m_elapsedTotal ? u"-"_s : u""_s + Utils::msToString(m_max);
-    m_total->setText(totalText);
+
+    if(track.isValid()) {
+        m_max = track.duration();
+        m_slider->setMaximum(static_cast<int>(m_max));
+        const QString totalText = m_elapsedTotal ? u"-"_s : u""_s + Utils::msToString(m_max);
+        m_total->setText(totalText);
+    }
 }
 
 void ProgressWidget::setCurrentPosition(uint64_t ms)
