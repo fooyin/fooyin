@@ -184,7 +184,7 @@ struct SandboxDialog::Private
 
         byteArray = qCompress(byteArray, 9);
 
-        settings->set(SandboxState, byteArray);
+        settings->fileSet(SandboxState, byteArray);
     }
 };
 
