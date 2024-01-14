@@ -40,9 +40,13 @@ QDataStream& operator<<(QDataStream& stream, const TextBlock& block)
 {
     stream << block.text;
     stream << block.fontChanged;
-    stream << block.font;
+    if(block.fontChanged) {
+        stream << block.font;
+    }
     stream << block.colourChanged;
-    stream << block.colour;
+    if(block.colourChanged) {
+        stream << block.colour;
+    }
     return stream;
 }
 
@@ -50,14 +54,12 @@ QDataStream& operator>>(QDataStream& stream, TextBlock& block)
 {
     stream >> block.text;
     stream >> block.fontChanged;
-    stream >> block.font;
-    if(!block.fontChanged) {
-        block.font = QFont{};
+    if(block.fontChanged) {
+        stream >> block.font;
     }
     stream >> block.colourChanged;
-    stream >> block.colour;
-    if(!block.colourChanged) {
-        block.colour = QApplication::palette().text().color();
+    if(block.colourChanged) {
+        stream >> block.colour;
     }
     return stream;
 }
