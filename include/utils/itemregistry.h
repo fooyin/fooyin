@@ -208,26 +208,26 @@ public:
 
         if(byteArray.isEmpty()) {
             loadDefaults();
-            return;
         }
+        else {
+            byteArray = qUncompress(byteArray);
 
-        byteArray = qUncompress(byteArray);
+            QDataStream stream(&byteArray, QIODevice::ReadOnly);
+            stream.setVersion(QDataStream::Qt_6_5);
 
-        QDataStream stream(&byteArray, QIODevice::ReadOnly);
-        stream.setVersion(QDataStream::Qt_6_5);
+            int size;
+            stream >> size;
 
-        int size;
-        stream >> size;
+            while(size > 0) {
+                --size;
 
-        while(size > 0) {
-            --size;
+                Item item;
+                int index;
+                stream >> index;
+                stream >> item;
 
-            Item item;
-            int index;
-            stream >> index;
-            stream >> item;
-
-            m_items.emplace(index, item);
+                m_items.emplace(index, item);
+            }
         }
 
         checkChangedItems(oldItems);
@@ -235,13 +235,7 @@ public:
 
     void reset()
     {
-        IndexItemMap oldItems{m_items};
-        m_items.clear();
-
-        loadDefaults();
-        saveItems();
-
-        checkChangedItems(oldItems);
+        m_settings->reset(m_settingKey);
     }
 
 protected:
