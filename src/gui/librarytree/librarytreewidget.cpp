@@ -186,7 +186,7 @@ void LibraryTreeWidgetPrivate::addGroupMenu(QMenu* parent)
 
     auto* treeGroups = new QActionGroup(groupMenu);
 
-    const auto& groups = groupsRegistry.items();
+    const auto groups = groupsRegistry.items();
     for(const auto& group : groups) {
         auto* switchGroup = new QAction(group.name, groupMenu);
         QObject::connect(switchGroup, &QAction::triggered, self, [this, group]() { changeGrouping(group); });
