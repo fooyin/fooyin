@@ -88,8 +88,8 @@ jobs:
           cmake -S . -B ./build -G Ninja
           -DCMAKE_BUILD_TYPE=${{matrix.type}}
           -DBUILD_TESTING=${{env.BUILD_TESTS}}
-          -DCMAKE_C_COMPILER_LAUNCHER=ccache
-          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+#          -DCMAKE_C_COMPILER_LAUNCHER=ccache
+#          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build Project
         run: cmake --build ./build
