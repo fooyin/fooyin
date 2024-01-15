@@ -5,7 +5,7 @@
 <p align="center" style="font-size: 18px;">
 <strong>Fooyin - A customisable music player</strong>
 <br />
-<a href="https://github.com/ludouzi/fooyin/actions/workflows/cmake.yml"><img src="https://github.com/ludouzi/fooyin/actions/workflows/cmake.yml/badge.svg" alt="Build status"></a>
+<a href="https://github.com/ludouzi/fooyin/actions/workflows/build.yml"><img src="https://github.com/ludouzi/fooyin/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
 </p>
 
 ## What is Fooyin?
