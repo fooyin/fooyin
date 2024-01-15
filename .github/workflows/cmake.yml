@@ -75,10 +75,10 @@ jobs:
           cmake --build qcoro/build
           sudo cmake --install qcoro/build
 
-      - name: CCache
-        uses: hendrikmuhs/ccache-action@v1.1
-        with:
-          key: ${{matrix.os}}-${{matrix.type}}
+      # - name: CCache
+      #   uses: hendrikmuhs/ccache-action@v1.1
+      #   with:
+      #     key: ${{matrix.os}}-${{matrix.type}}
 
       - name: Create build directory
         run: mkdir build
