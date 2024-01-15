@@ -78,11 +78,11 @@ void SortingModel::populate()
 
     const auto& sortScripts = p->sortRegistry->items();
 
-    for(const auto& [index, sortScript] : sortScripts) {
+    for(const auto& sortScript : sortScripts) {
         if(!sortScript.isValid()) {
             continue;
         }
-        SortingItem* child = &p->nodes.emplace(index, SortingItem{sortScript, &p->root}).first->second;
+        SortingItem* child = &p->nodes.emplace(sortScript.index, SortingItem{sortScript, &p->root}).first->second;
         p->root.appendChild(child);
     }
 
@@ -155,7 +155,11 @@ Qt::ItemFlags SortingModel::flags(const QModelIndex& index) const
     }
 
     auto flags = ExtendableTableModel::flags(index);
-    flags |= Qt::ItemIsEditable;
+
+    auto* item = static_cast<SortingItem*>(index.internalPointer());
+    if(item && !item->sortScript().isDefault) {
+        flags |= Qt::ItemIsEditable;
+    }
 
     return flags;
 }

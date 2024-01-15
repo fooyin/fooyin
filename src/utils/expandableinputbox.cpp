@@ -34,6 +34,7 @@ struct ExpandableInput::Private
 {
     Attributes attributes;
     QLineEdit* editBlock{nullptr};
+    bool readOnly{false};
 
     explicit Private(Attributes attributes)
         : attributes{attributes}
@@ -83,8 +84,15 @@ QLineEdit* ExpandableInput::widget() const
     return nullptr;
 }
 
+bool ExpandableInput::readOnly() const
+{
+    return p->readOnly;
+}
+
 void ExpandableInput::setReadOnly(bool readOnly)
 {
+    p->readOnly = readOnly;
+
     if(p->editBlock) {
         p->editBlock->setReadOnly(readOnly);
     }
@@ -119,6 +127,7 @@ struct ExpandableInputBox::Private
     ExpandableInputList blocks;
 
     int maxBlocks{8};
+    bool readOnly{false};
 
     std::function<ExpandableInput*(QWidget*)> widget{nullptr};
     std::function<QWidget*(ExpandableInput*)> sideWidget{nullptr};
@@ -151,8 +160,8 @@ struct ExpandableInputBox::Private
 
     void updateButtonState() const
     {
-        addBlock->setEnabled(static_cast<int>(blocks.size()) < maxBlocks);
-        deleteBlock->setVisible(blocks.size() > 1);
+        addBlock->setEnabled(!readOnly && static_cast<int>(blocks.size()) < maxBlocks);
+        deleteBlock->setEnabled(!readOnly && blocks.size() > 1);
     }
 };
 
@@ -180,6 +189,7 @@ void ExpandableInputBox::addEmptyBlock()
     else {
         block = new ExpandableInput(p->attributes, this);
     }
+    block->setReadOnly(p->readOnly);
 
     const int row = static_cast<int>(p->blocks.size());
 
@@ -201,6 +211,7 @@ void ExpandableInputBox::addInput(ExpandableInput* input)
     const int row = static_cast<int>(p->blocks.size());
 
     input->setAttributes(p->attributes);
+    input->setReadOnly(p->readOnly);
     p->blockLayout->addWidget(input, row, 0);
 
     if(p->sideWidget) {
@@ -227,6 +238,18 @@ int ExpandableInputBox::blockCount() const
 void ExpandableInputBox::setMaximum(int max)
 {
     p->maxBlocks = max;
+}
+
+bool ExpandableInputBox::readOnly() const
+{
+    return p->readOnly;
+}
+
+void ExpandableInputBox::setReadOnly(bool readOnly)
+{
+    p->readOnly = readOnly;
+
+    p->updateButtonState();
 }
 
 void ExpandableInputBox::addBoxWidget(QWidget* widget)

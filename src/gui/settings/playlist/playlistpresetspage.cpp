@@ -41,11 +41,11 @@
 #include <QVBoxLayout>
 
 namespace {
-void setupInputBox(const Fooyin::TextBlock& preset, Fooyin::CustomisableInput* block)
+void setupInputBox(const Fooyin::TextBlock& preset, Fooyin::CustomisableInput* input)
 {
-    block->setText(preset.text);
-    block->setFont(preset.font);
-    block->setColour(preset.colour);
+    input->setText(preset.text);
+    input->setFont(preset.font);
+    input->setColour(preset.colour);
 
     Fooyin::CustomisableInput::State state;
     if(preset.colourChanged) {
@@ -54,16 +54,17 @@ void setupInputBox(const Fooyin::TextBlock& preset, Fooyin::CustomisableInput* b
     if(preset.fontChanged) {
         state |= Fooyin::CustomisableInput::FontChanged;
     }
-    block->setState(state);
+
+    input->setState(state);
 }
 
-void updateTextBlock(const Fooyin::CustomisableInput* presetInput, Fooyin::TextBlock& textBlock)
+void updateTextBlock(const Fooyin::CustomisableInput* input, Fooyin::TextBlock& textBlock)
 {
-    textBlock.text   = presetInput->text();
-    textBlock.font   = presetInput->font();
-    textBlock.colour = presetInput->colour();
+    textBlock.text   = input->text();
+    textBlock.font   = input->font();
+    textBlock.colour = input->colour();
 
-    auto state = presetInput->state();
+    auto state = input->state();
 
     textBlock.fontChanged   = state & Fooyin::CustomisableInput::FontChanged;
     textBlock.colourChanged = state & Fooyin::CustomisableInput::ColourChanged;
@@ -75,7 +76,7 @@ void updateTextBlocks(const Fooyin::ExpandableInputList& presetInputs, Fooyin::T
 
     for(const auto& input : presetInputs) {
         if(!input->text().isEmpty()) {
-            if(auto presetInput = qobject_cast<Fooyin::CustomisableInput*>(input)) {
+            if(auto* presetInput = qobject_cast<Fooyin::CustomisableInput*>(input)) {
                 Fooyin::TextBlock block;
                 updateTextBlock(presetInput, block);
                 textBlocks.emplace_back(block);
@@ -84,21 +85,20 @@ void updateTextBlocks(const Fooyin::ExpandableInputList& presetInputs, Fooyin::T
     }
 }
 
-void createPresetInput(const Fooyin::TextBlock& block, Fooyin::ExpandableInputBox* box, QWidget* parent)
-{
-    auto* input = new Fooyin::CustomisableInput(parent);
-    setupInputBox(block, input);
-    box->addInput(input);
-}
-
 void createPresetInputs(const Fooyin::TextBlockList& blocks, Fooyin::ExpandableInputBox* box, QWidget* parent)
 {
+    auto createInput = [](const Fooyin::TextBlock& block, Fooyin::ExpandableInputBox* box, QWidget* parent) {
+        auto* input = new Fooyin::CustomisableInput(parent);
+        setupInputBox(block, input);
+        box->addInput(input);
+    };
+
     if(blocks.empty()) {
-        createPresetInput({}, box, parent);
+        createInput({}, box, parent);
     }
     else {
         for(const auto& block : blocks) {
-            createPresetInput(block, box, parent);
+            createInput(block, box, parent);
         }
     }
 }
@@ -163,10 +163,20 @@ public:
         return m_rowHeight->value();
     }
 
+    void setReadOnly(bool readOnly) override
+    {
+        ExpandableInput::setReadOnly(readOnly);
+
+        m_rowHeight->setReadOnly(readOnly);
+        m_leftBox->setReadOnly(readOnly);
+        m_rightBox->setReadOnly(readOnly);
+    }
+
 private:
     void addInput(const TextBlock& preset, ExpandableInputBox* box)
     {
         auto* block = new CustomisableInput(this);
+        block->setReadOnly(readOnly());
         block->setText(preset.text);
         block->setFont(preset.font);
         block->setColour(preset.colour);
@@ -196,6 +206,7 @@ void createGroupPresetInputs(const SubheaderRow& subheader, ExpandableInputBox* 
     }
 
     auto* input = new ExpandableGroupBox(subheader.rowHeight, parent);
+    box->addInput(input);
 
     if(subheader.leftText.empty()) {
         input->addLeftInput({});
@@ -214,8 +225,6 @@ void createGroupPresetInputs(const SubheaderRow& subheader, ExpandableInputBox* 
             input->addRightInput(block);
         }
     }
-
-    box->addInput(input);
 }
 
 void updateGroupTextBlocks(const ExpandableInputList& presetInputs, SubheaderRows& textBlocks)
@@ -223,7 +232,7 @@ void updateGroupTextBlocks(const ExpandableInputList& presetInputs, SubheaderRow
     textBlocks.clear();
 
     for(const auto& input : presetInputs) {
-        if(auto presetInput = qobject_cast<ExpandableGroupBox*>(input)) {
+        if(auto* presetInput = qobject_cast<ExpandableGroupBox*>(input)) {
             SubheaderRow block;
 
             auto leftBlocks  = presetInput->leftBlocks();
@@ -251,7 +260,7 @@ public:
     void newPreset();
     void renamePreset();
     void deletePreset();
-    void updatePreset(bool force = false);
+    void updatePreset();
     void clonePreset();
 
     void selectionChanged();
@@ -323,7 +332,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
     m_headerInfo     = new ExpandableInputBox(tr("Info: "), inputAttributes, this);
 
     m_headerTitle->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
-    m_headerSideText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
+    m_headerSubtitle->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
     m_headerSideText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
     m_headerInfo->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
 
@@ -348,7 +357,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
 
     m_subHeaders = new ExpandableInputBox(tr("Subheaders: "), inputAttributes, this);
     m_subHeaders->setInputWidget([](QWidget* parent) {
-        SubheaderRow subheader;
+        const SubheaderRow subheader;
         auto* groupBox = new ExpandableGroupBox(subheader.rowHeight, parent);
         groupBox->addLeftInput({});
         groupBox->addRightInput({});
@@ -415,8 +424,8 @@ void PlaylistPresetsPageWidget::populatePresets()
 
     const auto& presets = m_presetRegistry.items();
 
-    for(const auto& [index, preset] : presets) {
-        m_presetBox->insertItem(index, preset.name, preset.id);
+    for(const auto& preset : presets) {
+        m_presetBox->insertItem(preset.index, preset.name, preset.id);
     }
 }
 
@@ -470,7 +479,7 @@ void PlaylistPresetsPageWidget::deletePreset()
     }
 }
 
-void PlaylistPresetsPageWidget::updatePreset(bool force)
+void PlaylistPresetsPageWidget::updatePreset()
 {
     const int presetId = m_presetBox->currentData().toInt();
     auto preset        = m_presetRegistry.itemById(presetId);
@@ -490,9 +499,7 @@ void PlaylistPresetsPageWidget::updatePreset(bool force)
     updateTextBlocks(m_trackRightText->blocks(), preset.track.rightText);
     preset.track.rowHeight = m_trackRowHeight->value();
 
-    if(force || preset != m_presetRegistry.itemById(preset.id)) {
-        m_presetRegistry.changeItem(preset);
-    }
+    m_presetRegistry.changeItem(preset);
 }
 
 void PlaylistPresetsPageWidget::clonePreset()
@@ -502,9 +509,10 @@ void PlaylistPresetsPageWidget::clonePreset()
 
     PlaylistPreset clonedPreset{preset};
     clonedPreset.name                = tr("Copy of ") + preset.name;
+    clonedPreset.isDefault           = false;
     const PlaylistPreset addedPreset = m_presetRegistry.addItem(clonedPreset);
     if(addedPreset.isValid()) {
-        m_presetBox->addItem(addedPreset.name, QVariant::fromValue(addedPreset));
+        m_presetBox->addItem(addedPreset.name, addedPreset.id);
         m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
     }
 }
@@ -524,16 +532,24 @@ void PlaylistPresetsPageWidget::selectionChanged()
 
 void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
 {
+    m_headerTitle->setReadOnly(preset.isDefault);
+    m_headerSubtitle->setReadOnly(preset.isDefault);
+    m_headerSideText->setReadOnly(preset.isDefault);
+    m_headerInfo->setReadOnly(preset.isDefault);
+
     createPresetInputs(preset.header.title, m_headerTitle, this);
     createPresetInputs(preset.header.subtitle, m_headerSubtitle, this);
     createPresetInputs(preset.header.sideText, m_headerSideText, this);
     createPresetInputs(preset.header.info, m_headerInfo, this);
 
     m_headerRowHeight->setValue(preset.header.rowHeight);
+    m_headerRowHeight->setReadOnly(preset.isDefault);
 
     m_simpleHeader->setChecked(preset.header.simple);
     m_showCover->setChecked(preset.header.showCover);
     m_showCover->setEnabled(!preset.header.simple);
+
+    m_subHeaders->setReadOnly(preset.isDefault);
 
     for(const auto& subheader : preset.subHeaders) {
         createGroupPresetInputs(subheader, m_subHeaders, this);
@@ -542,9 +558,13 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_headerSubtitle->setEnabled(!preset.header.simple);
     m_headerInfo->setEnabled(!preset.header.simple);
 
+    m_trackLeftText->setReadOnly(preset.isDefault);
+    m_trackRightText->setReadOnly(preset.isDefault);
+
     createPresetInputs(preset.track.leftText, m_trackLeftText, this);
     createPresetInputs(preset.track.rightText, m_trackRightText, this);
     m_trackRowHeight->setValue(preset.track.rowHeight);
+    m_trackRowHeight->setReadOnly(preset.isDefault);
 }
 
 void PlaylistPresetsPageWidget::clearBlocks()

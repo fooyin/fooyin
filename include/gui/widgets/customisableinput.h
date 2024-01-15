@@ -38,13 +38,17 @@ public:
     explicit CustomisableInput(Attributes attributes, QWidget* parent = nullptr);
     ~CustomisableInput() override;
 
+    [[nodiscard]] QString text() const override;
     [[nodiscard]] QFont font() const;
     [[nodiscard]] QColor colour() const;
     [[nodiscard]] State state() const;
 
+    void setText(const QString& text) override;
     void setFont(const QFont& font);
     void setColour(const QColor& colour);
     void setState(State state);
+
+    void setReadOnly(bool readOnly) override;
 
     void resetState();
 

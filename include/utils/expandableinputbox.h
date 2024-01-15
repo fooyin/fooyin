@@ -47,6 +47,7 @@ public:
     [[nodiscard]] virtual QString text() const;
     [[nodiscard]] QLineEdit* widget() const;
 
+    [[nodiscard]] bool readOnly() const;
     virtual void setReadOnly(bool readOnly);
 
     virtual void setAttributes(Attributes attributes);
@@ -77,6 +78,9 @@ public:
     [[nodiscard]] int blockCount() const;
 
     void setMaximum(int max);
+
+    [[nodiscard]] bool readOnly() const;
+    void setReadOnly(bool readOnly);
 
     void addBoxWidget(QWidget* widget);
     void setInputWidget(std::function<ExpandableInput*(QWidget*)> widget);

@@ -78,12 +78,12 @@ void FiltersColumnModel::populate()
 
     const auto& columns = p->columnsRegistry->items();
 
-    for(const auto& [index, column] : columns) {
+    for(const auto& column : columns) {
         if(column.name.isEmpty()) {
             continue;
         }
-        ColumnItem* child = &p->nodes.emplace(index, ColumnItem{column, &p->root}).first->second;
-        p->root.insertChild(index, child);
+        ColumnItem* child = &p->nodes.emplace(column.index, ColumnItem{column, &p->root}).first->second;
+        p->root.insertChild(column.index, child);
     }
 
     endResetModel();
@@ -155,7 +155,11 @@ Qt::ItemFlags FiltersColumnModel::flags(const QModelIndex& index) const
     }
 
     auto flags = ExtendableTableModel::flags(index);
-    flags |= Qt::ItemIsEditable;
+
+    auto* item = static_cast<ColumnItem*>(index.internalPointer());
+    if(item && !item->column().isDefault) {
+        flags |= Qt::ItemIsEditable;
+    }
 
     return flags;
 }

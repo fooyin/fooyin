@@ -77,7 +77,7 @@ void PresetRegistry::loadDefaults()
 
     addDefaultItem(preset);
 
-    preset.name = QStringLiteral("Table");
+    preset.name = QStringLiteral("Track Table");
 
     preset.header = {};
     preset.subHeaders.clear();

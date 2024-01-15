@@ -31,9 +31,7 @@ TextBlock::TextBlock(QString text, int fontDelta)
     : text{std::move(text)}
     , colour{QApplication::palette().text().color()}
 {
-    if(fontDelta != 0) {
-        font.setPointSize(font.pointSize() + fontDelta);
-    }
+    font.setPointSize(font.pointSize() + fontDelta);
 }
 
 QDataStream& operator<<(QDataStream& stream, const TextBlock& block)

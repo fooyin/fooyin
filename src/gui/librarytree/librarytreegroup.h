@@ -27,6 +27,7 @@ struct LibraryTreeGrouping
 {
     int id{-1};
     int index{-1};
+    bool isDefault{false};
     QString name;
     QString script;
 

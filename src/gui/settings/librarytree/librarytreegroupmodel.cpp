@@ -78,11 +78,12 @@ void LibraryTreeGroupModel::populate()
 
     const auto& groups = p->groupsRegistry->items();
 
-    for(const auto& [index, group] : groups) {
+    for(const auto& group : groups) {
         if(!group.isValid()) {
             continue;
         }
-        LibraryTreeGroupItem* child = &p->nodes.emplace(index, LibraryTreeGroupItem{group, &p->root}).first->second;
+        LibraryTreeGroupItem* child
+            = &p->nodes.emplace(group.index, LibraryTreeGroupItem{group, &p->root}).first->second;
         p->root.appendChild(child);
     }
 
@@ -155,7 +156,11 @@ Qt::ItemFlags LibraryTreeGroupModel::flags(const QModelIndex& index) const
     }
 
     auto flags = ExtendableTableModel::flags(index);
-    flags |= Qt::ItemIsEditable;
+
+    auto* item = static_cast<LibraryTreeGroupItem*>(index.internalPointer());
+    if(item && !item->group().isDefault) {
+        flags |= Qt::ItemIsEditable;
+    }
 
     return flags;
 }

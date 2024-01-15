@@ -592,7 +592,7 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
             return std::ranges::any_of(columns, [id](const PlaylistColumn& column) { return column.id == id; });
         };
 
-        for(const auto& [filterIndex, column] : columnRegistry.items()) {
+        for(const auto& column : columnRegistry.items()) {
             auto* columnAction = new QAction(column.name, menu);
             columnAction->setData(column.id);
             columnAction->setCheckable(true);
@@ -726,7 +726,7 @@ void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
     auto* sortMenu = new QMenu(PlaylistWidget::tr("Sort"), parent);
 
     const auto& groups = sortRegistry.items();
-    for(const auto& [index, script] : groups) {
+    for(const auto& script : groups) {
         auto* switchSort = new QAction(script.name, sortMenu);
         QObject::connect(switchSort, &QAction::triggered, self, [this, script]() { sortTracks(script.script); });
         sortMenu->addAction(switchSort);
@@ -740,7 +740,7 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
 
     const auto& presets = presetRegistry.items();
 
-    for(const auto& [index, preset] : presets) {
+    for(const auto& preset : presets) {
         const QString name = preset.name;
         auto* switchPreset = new QAction(name, presetsMenu);
         if(preset == currentPreset) {

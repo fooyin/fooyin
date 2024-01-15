@@ -171,7 +171,7 @@ struct FilterWidget::Private
         auto* filterList = new QActionGroup{menu};
         filterList->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
-        for(const auto& [filterIndex, column] : columnRegistry.items()) {
+        for(const auto& column : columnRegistry.items()) {
             auto* columnAction = new QAction(column.name, menu);
             columnAction->setData(column.id);
             columnAction->setCheckable(true);
