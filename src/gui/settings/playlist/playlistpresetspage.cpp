@@ -484,6 +484,10 @@ void PlaylistPresetsPageWidget::updatePreset()
     const int presetId = m_presetBox->currentData().toInt();
     auto preset        = m_presetRegistry.itemById(presetId);
 
+    if(preset.isDefault) {
+        return;
+    }
+
     updateTextBlocks(m_headerTitle->blocks(), preset.header.title);
     updateTextBlocks(m_headerSubtitle->blocks(), preset.header.subtitle);
     updateTextBlocks(m_headerSideText->blocks(), preset.header.sideText);
@@ -532,6 +536,10 @@ void PlaylistPresetsPageWidget::selectionChanged()
 
 void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
 {
+    m_renamePreset->setDisabled(preset.isDefault);
+    m_deletePreset->setDisabled(preset.isDefault);
+    m_updatePreset->setDisabled(preset.isDefault);
+
     m_headerTitle->setReadOnly(preset.isDefault);
     m_headerSubtitle->setReadOnly(preset.isDefault);
     m_headerSideText->setReadOnly(preset.isDefault);
