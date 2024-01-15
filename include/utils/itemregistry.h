@@ -41,6 +41,9 @@ concept ValidRegistry = requires(T t) {
     {
         t.index
     } -> std::convertible_to<int>;
+    {
+        t.isDefault
+    } -> std::convertible_to<bool>;
 };
 
 namespace Fooyin {
@@ -67,7 +70,7 @@ template <typename Item>
 class ItemRegistry : public RegistryBase
 {
 public:
-    using IndexItemMap = std::map<int, Item>;
+    using ItemList = std::vector<Item>;
 
     explicit ItemRegistry(QString settingKey, SettingsManager* settings, QObject* parent = nullptr)
         : RegistryBase{parent}
@@ -81,7 +84,7 @@ public:
         m_settings->subscribe(m_settingKey, this, &ItemRegistry::loadItems);
     }
 
-    [[nodiscard]] IndexItemMap items() const
+    [[nodiscard]] ItemList items() const
     {
         return m_items;
     }
@@ -98,19 +101,18 @@ public:
 
     bool changeItem(const Item& item)
     {
-        auto itemIt
-            = std::ranges::find_if(m_items, [item](const auto& regItem) { return regItem.second.id == item.id; });
+        auto itemIt = std::ranges::find_if(m_items, [item](const auto& regItem) { return regItem.id == item.id; });
 
         if(itemIt != m_items.end()) {
-            if(itemIt->second == item) {
+            if(itemIt->isDefault || *itemIt == item) {
                 return false;
             }
 
             Item changedItem{item};
-            if(itemIt->second.name != changedItem.name) {
+            if(itemIt->name != changedItem.name) {
                 changedItem.name = findUniqueName(changedItem.name);
             }
-            itemIt->second = changedItem;
+            *itemIt = changedItem;
 
             saveItems();
             emit itemChanged(changedItem.id);
@@ -125,19 +127,23 @@ public:
         if(m_items.empty()) {
             return {};
         }
-        auto it = std::ranges::find_if(std::as_const(m_items), [id](const auto& item) { return item.second.id == id; });
+        auto it = std::ranges::find_if(m_items, [id](const auto& item) { return item.id == id; });
         if(it == m_items.end()) {
             return m_items.at(0);
         }
-        return it->second;
+        return *it;
     }
 
     Item itemByIndex(int index) const
     {
-        if(!m_items.contains(index)) {
+        if(m_items.empty()) {
             return {};
         }
-        return m_items.at(index);
+        auto it = std::ranges::find_if(m_items, [index](const auto& item) { return item.index == index; });
+        if(it == m_items.end()) {
+            return m_items.at(0);
+        }
+        return *it;
     }
 
     Item itemByName(const QString& name) const
@@ -145,34 +151,30 @@ public:
         if(m_items.empty()) {
             return {};
         }
-        auto it = std::ranges::find_if(std::as_const(m_items),
-                                       [name](const auto& item) { return item.second.name == name; });
+        auto it = std::ranges::find_if(m_items, [name](const auto& item) { return item.name == name; });
         if(it == m_items.end()) {
             return m_items.at(0);
         }
-        return it->second;
+        return *it;
     }
 
     bool removeById(int id)
     {
-        if(std::erase_if(m_items, [id](const auto& item) { return item.second.id == id; }) == 0) {
+        if(std::erase_if(m_items, [id](const auto& item) { return !item.isDefault && item.id == id; }) == 0) {
             return false;
         }
 
         saveItems();
-
         return true;
     }
 
     bool removeByIndex(int index)
     {
-        if(!m_items.contains(index)) {
+        if(std::erase_if(m_items, [index](const auto& item) { return !item.isDefault && item.index == index; }) == 0) {
             return false;
         }
 
-        m_items.erase(index);
         saveItems();
-
         return true;
     }
 
@@ -186,9 +188,10 @@ public:
         QDataStream stream(&byteArray, QIODevice::WriteOnly);
         stream.setVersion(QDataStream::Qt_6_5);
 
-        stream << static_cast<int>(m_items.size());
-        for(const auto& [index, item] : m_items) {
-            stream << index;
+        const int customCount = std::ranges::count_if(m_items, [](const auto& item) { return !item.isDefault; });
+        stream << customCount;
+
+        for(const auto& item : m_items | std::views::filter([](const auto& item) { return !item.isDefault; })) {
             stream << item;
         }
 
@@ -201,15 +204,13 @@ public:
 
     void loadItems()
     {
-        IndexItemMap oldItems{m_items};
+        ItemList oldItems{m_items};
         m_items.clear();
+        loadDefaults();
 
         QByteArray byteArray = m_settings->value(m_settingKey).toByteArray();
 
-        if(byteArray.isEmpty()) {
-            loadDefaults();
-        }
-        else {
+        if(!byteArray.isEmpty()) {
             byteArray = qUncompress(byteArray);
 
             QDataStream stream(&byteArray, QIODevice::ReadOnly);
@@ -222,11 +223,9 @@ public:
                 --size;
 
                 Item item;
-                int index;
-                stream >> index;
                 stream >> item;
 
-                m_items.emplace(index, item);
+                m_items.push_back(item);
             }
         }
 
@@ -243,15 +242,16 @@ protected:
 
     void addDefaultItem(const Item& item)
     {
-        addItem(item, false);
+        Item defaultItem{item};
+        defaultItem.isDefault = true;
+        addItem(defaultItem, false);
     }
 
 private:
     [[nodiscard]] QString findUniqueName(const QString& name) const
     {
         const QString uniqueName{name.isEmpty() ? "New item" : name};
-        return Utils::findUniqueString(uniqueName, std::as_const(m_items),
-                                       [](const auto& item) { return item.second.name; });
+        return Utils::findUniqueString(uniqueName, m_items, [](const auto& item) { return item.name; });
     }
 
     Item addItem(const Item& item, bool save)
@@ -261,7 +261,7 @@ private:
                 return 0;
             }
 
-            auto ids = m_items | std::views::values | std::views::transform([](const Item& item) { return item.id; });
+            auto ids = m_items | std::views::transform([](const auto& item) { return item.id; });
 
             const int nextId = *std::ranges::max_element(ids) + 1;
             return nextId;
@@ -272,7 +272,7 @@ private:
         newItem.id    = findValidId();
         newItem.index = static_cast<int>(m_items.size());
 
-        m_items.emplace(newItem.index, newItem);
+        m_items.push_back(newItem);
 
         if(save) {
             saveItems();
@@ -281,19 +281,19 @@ private:
         return newItem;
     }
 
-    void checkChangedItems(const IndexItemMap& oldItems)
+    void checkChangedItems(const ItemList& oldItems)
     {
-        for(const auto& item : m_items | std::views::values) {
-            auto it
-                = std::ranges::find_if(oldItems, [item](const auto& oldItem) { return oldItem.second.id == item.id; });
-            if(it != oldItems.cend() && it->second != item) {
-                emit itemChanged(it->second.id);
+        for(const auto& item : m_items) {
+            auto it = std::ranges::find_if(
+                oldItems, [item](const auto& oldItem) { return !oldItem.isDefault && oldItem.id == item.id; });
+            if(it != oldItems.cend() && *it != item) {
+                emit itemChanged(it->id);
             }
         }
     }
 
     SettingsManager* m_settings;
     QString m_settingKey;
-    IndexItemMap m_items;
+    ItemList m_items;
 };
 } // namespace Fooyin
