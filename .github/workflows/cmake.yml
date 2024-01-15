@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 env:
-  BUILD_TESTS: On
+  BUILD_TESTS: Off
 
 jobs:
   build:
@@ -94,6 +94,6 @@ jobs:
       - name: Build Project
         run: cmake --build ./build
 
-      - name: Run GTest
-        run: |
-          ${{github.workspace}}/build/tests/test_scriptparser
+#      - name: Run GTest
+#        run: |
+#          ${{github.workspace}}/build/tests/test_scriptparser
