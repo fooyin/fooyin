@@ -60,9 +60,6 @@ jobs:
           cmake --build taglib/build
           sudo cmake --install taglib/build
 
-      - name: Install GTest
-        run: cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
-
       - name: Checkout QCoro
         uses: actions/checkout@v4
         with:
@@ -75,11 +72,6 @@ jobs:
           cmake --build qcoro/build
           sudo cmake --install qcoro/build
 
-      # - name: CCache
-      #   uses: hendrikmuhs/ccache-action@v1.1
-      #   with:
-      #     key: ${{matrix.os}}-${{matrix.type}}
-
       - name: Create build directory
         run: mkdir build
 
@@ -88,12 +80,6 @@ jobs:
           cmake -S . -B ./build -G Ninja
           -DCMAKE_BUILD_TYPE=${{matrix.type}}
           -DBUILD_TESTING=${{env.BUILD_TESTS}}
-#          -DCMAKE_C_COMPILER_LAUNCHER=ccache
-#          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build Project
         run: cmake --build ./build
-
-#      - name: Run GTest
-#        run: |
-#          ${{github.workspace}}/build/tests/test_scriptparser
