@@ -66,7 +66,6 @@ struct StatusWidget::Private
         , iconLabel{new ClickableLabel(self)}
         , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
         , statusText{new ClickableLabel(self)}
-        , selectionText{new ClickableLabel(self)}
     {
         clearTimer.setInterval(2s);
         clearTimer.setSingleShot(true);
