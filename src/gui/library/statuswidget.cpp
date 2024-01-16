@@ -61,7 +61,6 @@ struct StatusWidget::Private
     Private(StatusWidget* self, PlayerManager* playerManager, SettingsManager* settings)
         : self{self}
         , playerManager{playerManager}
-        , selectionController{selectionController}
         , settings{settings}
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
