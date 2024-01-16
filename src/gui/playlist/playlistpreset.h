@@ -36,6 +36,7 @@ struct TextBlock
     ParsedScript script;
 
     bool fontChanged{false};
+    int fontDelta{0};
     QFont font;
 
     bool colourChanged{false};
