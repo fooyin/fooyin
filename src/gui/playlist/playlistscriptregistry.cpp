@@ -19,64 +19,26 @@
 
 #include "playlistscriptregistry.h"
 
-#include "playlistitemmodels.h"
-
 #include <core/constants.h>
 
 using namespace Qt::Literals::StringLiterals;
 
-namespace {
-bool isGroupScript(const Fooyin::ScriptValueList& args)
-{
-    return std::ranges::any_of(std::as_const(args), [](const auto& arg) {
-        return arg.value.contains("%gduration%"_L1) || arg.value.contains("%gcount%"_L1)
-            || arg.value.contains("%ggenres%"_L1);
-    });
-}
-} // namespace
-
 namespace Fooyin {
-PlaylistScriptRegistry::PlaylistScriptRegistry()
-    : m_currentContainer{nullptr}
+bool PlaylistScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    m_vars.emplace(u"gduration"_s, &PlaylistContainerItem::duration);
-    m_vars.emplace(u"gcount"_s, &PlaylistContainerItem::trackCount);
-    m_vars.emplace(u"ggenres"_s, &PlaylistContainerItem::genres);
-    m_vars.emplace(u"gfiletypes"_s, &PlaylistContainerItem::filetypes);
-}
-
-bool PlaylistScriptRegistry::varExists(const QString& var) const
-{
-    return m_vars.contains(var) || ScriptRegistry::varExists(var);
-}
-
-ScriptResult PlaylistScriptRegistry::varValue(const QString& var) const
-{
-    if(!m_vars.contains(var)) {
-        return ScriptRegistry::varValue(var);
+    if(isListVariable(var)) {
+        return true;
     }
-    if(!m_currentContainer) {
-        return {"%"_L1 + var + "%"_L1};
-    }
-    const FuncRet funcResult = m_vars.at(var)(*m_currentContainer);
-    return calculateResult(funcResult);
+
+    return ScriptRegistry::isVariable(var, track);
 }
 
-ScriptResult PlaylistScriptRegistry::function(const QString& func, const ScriptValueList& args) const
+ScriptResult PlaylistScriptRegistry::value(const QString& var, const Track& track) const
 {
-    if(!m_currentContainer && isGroupScript(args)) {
-        auto tmpResult = QString{u"$%1("_s}.arg(func);
-        for(int i{0}; const auto& arg : args) {
-            tmpResult += i++ > 0 ? "," + arg.value : arg.value;
-        }
-        tmpResult += ")"_L1;
-        return {tmpResult};
+    if(isListVariable(var)) {
+        return {.value = u"|Loading|"_s, .cond = true};
     }
-    return ScriptRegistry::function(func, args);
-}
 
-void PlaylistScriptRegistry::changeCurrentContainer(PlaylistContainerItem* container)
-{
-    m_currentContainer = container;
+    return ScriptRegistry::value(var, track);
 }
 } // namespace Fooyin

@@ -121,8 +121,7 @@ struct TagEditorModel::Private
             }
 
             for(const auto& [field, var] : fields) {
-                scriptRegistry.changeCurrentTrack(track);
-                const auto result = scriptRegistry.varValue(var);
+                const auto result = scriptRegistry.value(var, track);
                 if(result.cond) {
                     if(result.value.contains(Constants::Separator)) {
                         tags[field].addTrackValue(result.value.split(Constants::Separator));
@@ -149,14 +148,14 @@ struct TagEditorModel::Private
 
         for(Track& track : tracks) {
             if(metadata == Constants::MetaData::Artist || metadata == Constants::MetaData::Genre) {
-                scriptRegistry.setVar(metadata, value.toString().split(QStringLiteral("; ")), track);
+                scriptRegistry.setValue(metadata, value.toString().split(QStringLiteral("; ")), track);
             }
             else if(metadata == Constants::MetaData::Track || metadata == Constants::MetaData::TrackTotal
                     || metadata == Constants::MetaData::Disc || metadata == Constants::MetaData::DiscTotal) {
-                scriptRegistry.setVar(metadata, value.toInt(), track);
+                scriptRegistry.setValue(metadata, value.toInt(), track);
             }
             else {
-                scriptRegistry.setVar(metadata, value.toString(), track);
+                scriptRegistry.setValue(metadata, value.toString(), track);
             }
         }
     }

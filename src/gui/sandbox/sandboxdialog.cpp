@@ -101,8 +101,11 @@ struct SandboxDialog::Private
             return;
         }
 
+        ParsedScript script;
+        script.expressions = {expression};
+
         const auto track  = trackSelection->selectedTracks().front();
-        const auto result = parser.evaluate(expression, track);
+        const auto result = parser.evaluate(script, track);
 
         results->setText(result);
     }

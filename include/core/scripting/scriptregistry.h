@@ -35,14 +35,15 @@ public:
     ScriptRegistry();
     virtual ~ScriptRegistry();
 
-    virtual bool varExists(const QString& var) const;
-    virtual bool funcExists(const QString& func) const;
+    virtual bool isVariable(const QString& var, const Track& track) const;
+    virtual bool isVariable(const QString& var, const TrackList& tracks) const;
+    virtual bool isFunction(const QString& func) const;
 
-    virtual ScriptResult varValue(const QString& var) const;
-    virtual void setVar(const QString& var, const FuncRet& value, Track& track);
+    virtual ScriptResult value(const QString& var, const Track& track) const;
+    virtual ScriptResult value(const QString& var, const TrackList& tracks) const;
     virtual ScriptResult function(const QString& func, const ScriptValueList& args) const;
 
-    void changeCurrentTrack(const Track& track);
+    virtual void setValue(const QString& var, const FuncRet& value, Track& track);
 
 protected:
     template <typename NewCntr, typename Cntr>
@@ -51,6 +52,7 @@ protected:
         return NewCntr(from.cbegin(), from.cend());
     }
 
+    bool isListVariable(const QString& var) const;
     static ScriptResult calculateResult(FuncRet funcRet);
 
 private:

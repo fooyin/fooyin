@@ -19,13 +19,12 @@
 
 #pragma once
 
-#include <core/scripting/scriptregistry.h>
+#include <core/trackfwd.h>
 
-namespace Fooyin {
-class PlaylistScriptRegistry : public ScriptRegistry
-{
-public:
-    bool isVariable(const QString& var, const Track& track) const override;
-    ScriptResult value(const QString& var, const Track& track) const override;
-};
+#include <QString>
+
+namespace Fooyin::Scripting {
+int trackCount(const TrackList& tracks);
+QString playtime(const TrackList& tracks);
+QString genres(const TrackList& tracks);
 } // namespace Fooyin

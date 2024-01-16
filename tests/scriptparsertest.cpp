@@ -34,127 +34,99 @@ protected:
 
 TEST_F(ScriptParserTest, BasicLiteral)
 {
-    m_parser.parse(u"I am a test."_s);
-    EXPECT_EQ("I am a test.", m_parser.evaluate());
+    const auto script = m_parser.parse(u"I am a test."_s);
+    EXPECT_EQ("I am a test.", m_parser.evaluate(script));
 }
 
 TEST_F(ScriptParserTest, EscapeComment)
 {
-    m_parser.parse(uR"("I am a \% test.")"_s);
-    EXPECT_EQ("I am a % test.", m_parser.evaluate());
+    const auto script1 = m_parser.parse(uR"("I am a \% test.")"_s);
+    EXPECT_EQ("I am a % test.", m_parser.evaluate(script1));
 
-    m_parser.parse(uR"("I am an \"escape test.")"_s);
-    EXPECT_EQ("I am an \"escape test.", m_parser.evaluate());
+    const auto script2 = m_parser.parse(uR"("I am an \"escape test.")"_s);
+    EXPECT_EQ("I am an \"escape test.", m_parser.evaluate(script2));
 }
 
 TEST_F(ScriptParserTest, Quote)
 {
-    m_parser.parse(uR"("I %am% a $test$.")"_s);
-    EXPECT_EQ("I %am% a $test$.", m_parser.evaluate());
+    const auto script = m_parser.parse(uR"("I %am% a $test$.")"_s);
+    EXPECT_EQ("I %am% a $test$.", m_parser.evaluate(script));
 }
 
 TEST_F(ScriptParserTest, StringTest)
 {
-    m_parser.parse(u"$num(1,2)"_s);
-    EXPECT_EQ("01", m_parser.evaluate());
-
-    m_parser.parse(u"$num(04,2)"_s);
-    EXPECT_EQ("04", m_parser.evaluate());
-
-    m_parser.parse(u"$replace(A replace test,t,c)"_s);
-    EXPECT_EQ("A replace cesc", m_parser.evaluate());
-
-    m_parser.parse(u"$slice(A slice test,8)"_s);
-    EXPECT_EQ("test", m_parser.evaluate());
-
-    m_parser.parse(u"$slice(A slice test,2,5)"_s);
-    EXPECT_EQ("slice", m_parser.evaluate());
-
-    m_parser.parse(u"$chop(A chop test,5)"_s);
-    EXPECT_EQ("A chop", m_parser.evaluate());
-
-    m_parser.parse(u"$left(Left test,1)"_s);
-    EXPECT_EQ("L", m_parser.evaluate());
-
-    m_parser.parse(u"$right(Right test,3)"_s);
-    EXPECT_EQ("est", m_parser.evaluate());
-
-    m_parser.parse(u"$if($strcmpi(cmp,cMp),true,false)"_s);
-    EXPECT_EQ("true", m_parser.evaluate());
-
-    m_parser.parse(u"$if($strcmp(cmp,cMp),true,false)"_s);
-    EXPECT_EQ("false", m_parser.evaluate());
+    EXPECT_EQ("01", m_parser.evaluate(u"$num(1,2)"_s));
+    EXPECT_EQ("04", m_parser.evaluate(u"$num(04,2)"_s));
+    EXPECT_EQ("A replace cesc", m_parser.evaluate(u"$replace(A replace test,t,c)"_s));
+    EXPECT_EQ("test", m_parser.evaluate(u"$slice(A slice test,8)"_s));
+    EXPECT_EQ("slice", m_parser.evaluate(u"$slice(A slice test,2,5)"_s));
+    EXPECT_EQ("A chop", m_parser.evaluate(u"$chop(A chop test,5)"_s));
+    EXPECT_EQ("L", m_parser.evaluate(u"$left(Left test,1)"_s));
+    EXPECT_EQ("est", m_parser.evaluate(u"$right(Right test,3)"_s));
+    EXPECT_EQ("true", m_parser.evaluate(u"$if($strcmpi(cmp,cMp),true,false)"_s));
+    EXPECT_EQ("false", m_parser.evaluate(u"$if($strcmp(cmp,cMp),true,false)"_s));
 }
 
 TEST_F(ScriptParserTest, MathTest)
 {
-    m_parser.parse(u"$add(1,2)"_s);
-    EXPECT_EQ(3, m_parser.evaluate().toInt());
-
-    m_parser.parse(u"$sub(10,8)"_s);
-    EXPECT_EQ(2, m_parser.evaluate().toInt());
-
-    m_parser.parse(u"$mul(3,33)"_s);
-    EXPECT_EQ(99, m_parser.evaluate().toInt());
-
-    m_parser.parse(u"$div(33,3)"_s);
-    EXPECT_EQ(11, m_parser.evaluate().toInt());
-
-    m_parser.parse(u"$mod(10,3)"_s);
-    EXPECT_EQ(1, m_parser.evaluate().toInt());
-
-    m_parser.parse(u"$min(3,2,3,9,23,100,4)"_s);
-    EXPECT_EQ(2, m_parser.evaluate().toInt());
-
-    m_parser.parse(u"$max(3,2,3,9,23,100,4)"_s);
-    EXPECT_EQ(100, m_parser.evaluate().toInt());
+    EXPECT_EQ(3, m_parser.evaluate(u"$add(1,2)"_s).toInt());
+    EXPECT_EQ(2, m_parser.evaluate(u"$sub(10,8)"_s).toInt());
+    EXPECT_EQ(99, m_parser.evaluate(u"$mul(3,33)"_s).toInt());
+    EXPECT_EQ(11, m_parser.evaluate(u"$div(33,3)"_s).toInt());
+    EXPECT_EQ(1, m_parser.evaluate(u"$mod(10,3)"_s).toInt());
+    EXPECT_EQ(2, m_parser.evaluate(u"$min(3,2,3,9,23,100,4)"_s).toInt());
+    EXPECT_EQ(100, m_parser.evaluate(u"$max(3,2,3,9,23,100,4)"_s).toInt());
 }
 
 TEST_F(ScriptParserTest, ConditionalTest)
 {
-    m_parser.parse(u"$ifequal(1,1,true,false)"_s);
-    EXPECT_EQ("true", m_parser.evaluate());
-
-    m_parser.parse(u"$ifgreater(23,32,true,false)"_s);
-    EXPECT_EQ("false", m_parser.evaluate());
-
-    m_parser.parse(u"$iflonger(aaa,bb,true,false)"_s);
-    EXPECT_EQ("true", m_parser.evaluate());
+    EXPECT_EQ("true", m_parser.evaluate(u"$ifequal(1,1,true,false)"_s));
+    EXPECT_EQ("false", m_parser.evaluate(u"$ifgreater(23,32,true,false)"_s));
+    EXPECT_EQ("true", m_parser.evaluate(u"$iflonger(aaa,bb,true,false)"_s));
 }
 
 TEST_F(ScriptParserTest, MetadataTest)
 {
     Track track;
     track.setTitle(u"A Test"_s);
-    m_parser.setMetadata(track);
 
-    m_parser.parse(u"%title%"_s);
-    EXPECT_EQ("A Test", m_parser.evaluate());
-
-    m_parser.parse(u"%title%[ - %album%]"_s);
-    EXPECT_EQ("A Test", m_parser.evaluate());
+    EXPECT_EQ("A Test", m_parser.evaluate(u"%title%"_s, track));
+    EXPECT_EQ("A Test", m_parser.evaluate(u"%title%[ - %album%]"_s, track));
 
     track.setAlbum(u"A Test Album"_s);
-    m_parser.setMetadata(track);
-    EXPECT_EQ("A Test - A Test Album", m_parser.evaluate());
+
+    EXPECT_EQ("A Test - A Test Album", m_parser.evaluate(u"%title%[ - %album%]"_s, track));
 
     track.setGenres({"Pop", "Rock"});
-    m_parser.setMetadata(track);
-    m_parser.parse(u"%genre%"_s);
-    EXPECT_EQ("Pop, Rock", m_parser.evaluate());
 
-    m_parser.parse(u"%<genre>%"_s);
-    EXPECT_EQ("Pop\037Rock", m_parser.evaluate());
+    EXPECT_EQ("Pop, Rock", m_parser.evaluate(u"%genre%"_s, track));
+    EXPECT_EQ("Pop\037Rock", m_parser.evaluate(u"%<genre>%"_s, track));
 
     track.setArtists({"Me", "You"});
-    m_parser.setMetadata(track);
-    m_parser.parse(u"%genre% - %artist%"_s);
-    EXPECT_EQ("Pop, Rock - Me, You", m_parser.evaluate());
 
-    m_parser.parse(u"%<genre>% - %<artist>%"_s);
-    EXPECT_EQ("Pop - Me\037Rock - Me\037Pop - You\037Rock - You", m_parser.evaluate());
+    EXPECT_EQ("Pop, Rock - Me, You", m_parser.evaluate(u"%genre% - %artist%"_s, track));
+    EXPECT_EQ("Pop - Me\037Rock - Me\037Pop - You\037Rock - You",
+              m_parser.evaluate(u"%<genre>% - %<artist>%"_s, track));
 
-    m_parser.parse(u"[%disc% - %track%]"_s);
-    EXPECT_EQ("", m_parser.evaluate());
+    EXPECT_EQ("", m_parser.evaluate(u"[%disc% - %track%]"_s, track));
+}
+
+TEST_F(ScriptParserTest, TrackListTest)
+{
+    TrackList tracks;
+
+    Track track1;
+    track1.setGenres({"Pop"});
+    track1.setDuration(2000);
+    tracks.push_back(track1);
+
+    Track track2;
+    track2.setGenres({"Rock"});
+    track2.setDuration(3000);
+    tracks.push_back(track2);
+
+    EXPECT_EQ("2", m_parser.evaluate(u"%trackcount%"_s, tracks));
+    EXPECT_EQ("00:05", m_parser.evaluate(u"%playtime%"_s, tracks));
+    EXPECT_EQ("Pop / Rock", m_parser.evaluate(u"%genres%"_s, tracks));
 }
 } // namespace Fooyin::Testing

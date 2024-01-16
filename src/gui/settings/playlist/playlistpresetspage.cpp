@@ -43,7 +43,7 @@
 namespace {
 void setupInputBox(const Fooyin::TextBlock& preset, Fooyin::CustomisableInput* input)
 {
-    input->setText(preset.text);
+    input->setText(preset.script);
     input->setFont(preset.font);
     input->setColour(preset.colour);
 
@@ -60,7 +60,7 @@ void setupInputBox(const Fooyin::TextBlock& preset, Fooyin::CustomisableInput* i
 
 void updateTextBlock(const Fooyin::CustomisableInput* input, Fooyin::TextBlock& textBlock)
 {
-    textBlock.text   = input->text();
+    textBlock.script = input->text();
     textBlock.font   = input->font();
     textBlock.colour = input->colour();
 
@@ -177,7 +177,7 @@ private:
     {
         auto* block = new CustomisableInput(this);
         block->setReadOnly(readOnly());
-        block->setText(preset.text);
+        block->setText(preset.script);
         block->setFont(preset.font);
         block->setColour(preset.colour);
 

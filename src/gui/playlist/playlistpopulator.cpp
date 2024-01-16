@@ -70,38 +70,16 @@ struct PlaylistPopulator::Private
         prevSubheaderKey.clear();
         prevBaseHeaderKey = {};
         prevHeaderKey     = {};
-        registry->changeCurrentContainer(nullptr);
     }
 
     void updateScripts()
     {
-        auto parseBlockList = [this](TextBlockList& blocks) {
-            for(TextBlock& block : blocks) {
-                block.script = parser.parse(block.text);
-            }
-        };
-
-        parseBlockList(currentPreset.header.title);
-        parseBlockList(currentPreset.header.subtitle);
-        parseBlockList(currentPreset.header.sideText);
-        parseBlockList(currentPreset.header.info);
-
-        for(auto& subheader : currentPreset.subHeaders) {
-            parseBlockList(subheader.leftText);
-            parseBlockList(subheader.rightText);
-        }
-
         if(!columns.empty()) {
             TextBlockList columnBlocks;
             for(const auto& column : columns) {
-                columnBlocks.emplace_back(column.field, 0);
+                columnBlocks.emplace_back(column.field);
             }
-            parseBlockList(columnBlocks);
             currentPreset.track.leftText = columnBlocks;
-        }
-        else {
-            parseBlockList(currentPreset.track.leftText);
-            parseBlockList(currentPreset.track.rightText);
         }
     }
 
@@ -128,7 +106,7 @@ struct PlaylistPopulator::Private
     void updateContainers()
     {
         for(const auto& [key, container] : headers) {
-            container->updateGroupText(&parser, registry.get());
+            container->updateGroupText(&parser);
         }
     }
 
@@ -153,11 +131,14 @@ struct PlaylistPopulator::Private
             return key;
         };
 
-        const QString titleKey    = evaluateBlocks(currentPreset.header.title, row.title);
-        const QString subtitleKey = evaluateBlocks(currentPreset.header.subtitle, row.subtitle);
-        const QString sideKey     = evaluateBlocks(currentPreset.header.sideText, row.sideText);
+        auto generateHeaderKey = [this, &row, &evaluateBlocks]() {
+            return Utils::generateHash(evaluateBlocks(currentPreset.header.title, row.title),
+                                       evaluateBlocks(currentPreset.header.subtitle, row.subtitle),
+                                       evaluateBlocks(currentPreset.header.sideText, row.sideText),
+                                       evaluateBlocks(currentPreset.header.info, row.info));
+        };
 
-        const QString baseKey = Utils::generateHash(titleKey, subtitleKey, sideKey);
+        const QString baseKey = generateHeaderKey();
         QString key           = Utils::generateRandomHash();
         if(!prevHeaderKey.isEmpty() && prevBaseHeaderKey == baseKey) {
             key = prevHeaderKey;
@@ -197,7 +178,7 @@ struct PlaylistPopulator::Private
 
             PlaylistContainerItem currentContainer;
             currentContainer.setTitle(subheader.leftText);
-            currentContainer.setInfo(subheader.rightText);
+            currentContainer.setSubtitle(subheader.rightText);
             currentContainer.setRowHeight(subheader.rowHeight);
             subheaders.push_back(currentContainer);
         }
@@ -206,12 +187,19 @@ struct PlaylistPopulator::Private
         prevSubheaderKey.resize(subheaderCount);
         prevBaseSubheaderKey.resize(subheaderCount);
 
-        for(int i{0}; const auto& subheader : subheaders) {
-            const TextBlockList title = subheader.title();
+        auto generateSubheaderKey = [](const PlaylistContainerItem& subheader) {
             QString subheaderKey;
-            for(const TextBlock& block : title) {
+            for(const TextBlock& block : subheader.title()) {
                 subheaderKey += block.text;
             }
+            for(const TextBlock& block : subheader.subtitle()) {
+                subheaderKey += block.text;
+            }
+            return subheaderKey;
+        };
+
+        for(int i{0}; const auto& subheader : subheaders) {
+            const QString subheaderKey = generateSubheaderKey(subheader);
 
             if(subheaderKey.isEmpty()) {
                 prevBaseSubheaderKey[i] = {};
@@ -392,7 +380,7 @@ void PlaylistPopulator::updateHeaders(const ItemList& headers)
 
     for(const PlaylistItem& item : headers) {
         PlaylistContainerItem& header = std::get<1>(item.data());
-        header.updateGroupText(&p->parser, p->registry.get());
+        header.updateGroupText(&p->parser);
         updatedHeaders.emplace(item.key(), item);
     }
 

@@ -39,6 +39,7 @@ set(SOURCES
     scripting/functions/mathfuncs.cpp
     scripting/functions/stringfuncs.cpp
     scripting/functions/timefuncs.cpp
+    scripting/functions/tracklistfuncs.cpp
     track.cpp
 )
 

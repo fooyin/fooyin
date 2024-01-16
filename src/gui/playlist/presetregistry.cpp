@@ -38,15 +38,15 @@ void PresetRegistry::loadDefaults()
     preset.name = QStringLiteral("Album - Disc");
 
     preset.header.rowHeight = 76;
-    preset.header.title.emplace_back("$if(%albumartist%,%albumartist%,Unknown Artist)", 2);
-    preset.header.subtitle.emplace_back("$if(%album%,%album%,Unknown Album)", 1);
+    preset.header.title.emplace_back("$if2(%albumartist%,Unknown Artist)", 2);
+    preset.header.subtitle.emplace_back("$if2(%album%,Unknown Album)", 1);
     preset.header.sideText.emplace_back("%year%", 1);
-    preset.header.info.emplace_back(
-        "$if(%ggenres%,%ggenres% | )$ifgreater(%gcount%,1,%gcount% Tracks,%gcount% Track) | $timems(%gduration%)", -1);
+    preset.header.info.emplace_back("[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%",
+                                    -1);
     Fooyin::SubheaderRow subheader;
     subheader.rowHeight = 19;
     subheader.leftText.emplace_back("$ifgreater(%disctotal%,1,Disc #%disc%)", 1);
-    subheader.rightText.emplace_back("$timems(%gduration%)", 1);
+    subheader.rightText.emplace_back("$ifgreater(%disctotal%,1,%playtime%)", 1);
     preset.subHeaders.push_back(subheader);
     preset.track.rowHeight = 24;
     preset.track.leftText.emplace_back("$num(%track%,2).   ");
@@ -61,8 +61,7 @@ void PresetRegistry::loadDefaults()
     preset.name = QStringLiteral("Split Discs");
 
     preset.header.subtitle.clear();
-    preset.header.subtitle.emplace_back("$if(%album%,%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)",
-                                        1);
+    preset.header.subtitle.emplace_back("$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)", 1);
 
     addDefaultItem(preset);
 
@@ -72,8 +71,7 @@ void PresetRegistry::loadDefaults()
     preset.header.rowHeight = 30;
     preset.header.title.clear();
     preset.header.subtitle.clear();
-    preset.header.title.emplace_back(
-        "$if(%albumartist%,%albumartist%,Unknown Artist) ▪ $if(%album%,%album%,Unknown Album)", 2);
+    preset.header.title.emplace_back("$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)", 2);
 
     addDefaultItem(preset);
 

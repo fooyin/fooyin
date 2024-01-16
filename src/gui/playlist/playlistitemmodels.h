@@ -33,7 +33,6 @@ public:
 
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
-    [[nodiscard]] uint64_t duration() const;
 
     [[nodiscard]] TextBlockList title() const;
     [[nodiscard]] TextBlockList subtitle() const;
@@ -41,10 +40,7 @@ public:
     [[nodiscard]] TextBlockList info() const;
     [[nodiscard]] int rowHeight() const;
 
-    [[nodiscard]] QString genres() const;
-    [[nodiscard]] QString filetypes() const;
-
-    void updateGroupText(ScriptParser* parser, PlaylistScriptRegistry* registry);
+    void updateGroupText(ScriptParser* parser);
 
     void setTitle(const TextBlockList& title);
     void setSubtitle(const TextBlockList& subtitle);
@@ -58,9 +54,6 @@ public:
 
 private:
     TrackList m_tracks;
-    uint64_t m_duration;
-    QString m_genres;
-    QString m_filetypes;
 
     TextBlockList m_title;
     TextBlockList m_subtitle;

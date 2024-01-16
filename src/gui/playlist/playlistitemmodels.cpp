@@ -19,14 +19,11 @@
 
 #include "playlistitemmodels.h"
 
-#include "playlistscriptregistry.h"
-
 using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
 PlaylistContainerItem::PlaylistContainerItem()
-    : m_duration{0}
-    , m_rowHeight{-1}
+    : m_rowHeight{-1}
 { }
 
 TrackList PlaylistContainerItem::tracks() const
@@ -37,11 +34,6 @@ TrackList PlaylistContainerItem::tracks() const
 int PlaylistContainerItem::trackCount() const
 {
     return static_cast<int>(m_tracks.size());
-}
-
-uint64_t PlaylistContainerItem::duration() const
-{
-    return m_duration;
 }
 
 TextBlockList PlaylistContainerItem::title() const
@@ -69,53 +61,27 @@ int PlaylistContainerItem::rowHeight() const
     return m_rowHeight;
 }
 
-QString PlaylistContainerItem::genres() const
-{
-    return m_genres;
-}
-
-QString PlaylistContainerItem::filetypes() const
-{
-    return m_filetypes;
-}
-
-void PlaylistContainerItem::updateGroupText(ScriptParser* parser, PlaylistScriptRegistry* registry)
+void PlaylistContainerItem::updateGroupText(ScriptParser* parser)
 {
     if(m_tracks.empty()) {
         return;
     }
 
-    if(!parser || !registry) {
+    if(!parser) {
         return;
     }
 
-    // Update duration
-    m_duration = std::accumulate(m_tracks.cbegin(), m_tracks.cend(), 0,
-                                 [](int sum, const Track& track) { return sum + track.duration(); });
+    auto evaluateBlocks = [this, parser](TextBlockList& blocks) {
+        std::erase_if(blocks, [parser, this](TextBlock& block) {
+            block.text = parser->evaluate(block.script, m_tracks);
+            return block.text.isNull();
+        });
+    };
 
-    // Update genres, types
-    QStringList uniqueGenres;
-    QStringList uniqueTypes;
-    for(const auto& track : m_tracks) {
-        const auto trackGenres = track.genres();
-        std::ranges::copy_if(trackGenres, std::back_inserter(uniqueGenres),
-                             [&uniqueGenres](const QString& genre) { return !uniqueGenres.contains(genre); });
-        if(!uniqueTypes.contains(track.typeString())) {
-            uniqueTypes.push_back(track.typeString());
-        }
-    }
-    m_genres    = uniqueGenres.join(" / "_L1);
-    m_filetypes = uniqueTypes.join(" / "_L1);
-
-    registry->changeCurrentContainer(this);
-
-    const Track& track = m_tracks.front();
-    for(TextBlock& block : m_subtitle) {
-        block.text = parser->evaluate(block.script, track);
-    }
-    for(TextBlock& block : m_info) {
-        block.text = parser->evaluate(block.script, track);
-    }
+    evaluateBlocks(m_title);
+    evaluateBlocks(m_subtitle);
+    evaluateBlocks(m_info);
+    evaluateBlocks(m_sideText);
 }
 
 void PlaylistContainerItem::setTitle(const TextBlockList& title)

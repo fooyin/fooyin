@@ -54,33 +54,19 @@ public:
     virtual ~ScriptParser();
 
     ParsedScript parse(const QString& input);
+    ParsedScript parse(const QString& input, const Track& track);
+    ParsedScript parse(const QString& input, const TrackList& tracks);
 
-    QString evaluate();
-    QString evaluate(const Expression& input, const Track& track);
-    QString evaluate(const ParsedScript& input, const Track& track);
+    QString evaluate(const QString& input);
     QString evaluate(const ParsedScript& input);
 
-    void setMetadata(const Track& track);
+    QString evaluate(const QString& input, const Track& track);
+    QString evaluate(const ParsedScript& input, const Track& track);
 
-protected:
-    ScriptResult evalExpression(const Expression& exp) const;
+    QString evaluate(const QString& input, const TrackList& tracks);
+    QString evaluate(const ParsedScript& input, const TrackList& tracks);
 
-    ScriptResult evalLiteral(const Expression& exp) const;
-    ScriptResult evalVariable(const Expression& exp) const;
-    ScriptResult evalVariableList(const Expression& exp) const;
-    ScriptResult evalFunction(const Expression& exp) const;
-    ScriptResult evalFunctionArg(const Expression& exp) const;
-    ScriptResult evalConditional(const Expression& exp) const;
-
-    Expression expression();
-    Expression literal() const;
-    Expression quote();
-    Expression variable();
-    Expression function();
-    Expression functionArgs();
-    Expression conditional();
-
-    const ParsedScript& lastParsedScript() const;
+    void clearCache();
 
 private:
     struct Private;

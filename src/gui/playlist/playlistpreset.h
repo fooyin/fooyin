@@ -33,7 +33,7 @@ namespace Fooyin {
 struct TextBlock
 {
     QString text;
-    ParsedScript script;
+    QString script;
 
     bool fontChanged{false};
     int fontDelta{0};
@@ -43,20 +43,20 @@ struct TextBlock
     QColor colour;
 
     TextBlock();
-    TextBlock(QString text, int fontDelta = 0);
+    explicit TextBlock(QString script, int fontDelta = 0);
 
     inline bool operator==(const TextBlock& other) const
     {
-        return std::tie(text, fontChanged, font, colourChanged, colour)
-            == std::tie(other.text, other.fontChanged, other.font, other.colourChanged, other.colour);
+        return std::tie(text, script, fontChanged, font, colourChanged, colour)
+            == std::tie(other.text, other.script, other.fontChanged, other.font, other.colourChanged, other.colour);
     };
 
-    inline operator QVariant() const
+    operator QVariant() const
     {
         return QVariant::fromValue(*this);
     }
 
-    [[nodiscard]] inline bool isValid() const
+    [[nodiscard]] bool isValid() const
     {
         return !text.isEmpty();
     }
@@ -73,22 +73,20 @@ struct TextBlock
     friend QDataStream& operator>>(QDataStream& stream, TextBlock& block);
 };
 
-class TextBlockList : public QList<TextBlock>
+class TextBlockList : public std::vector<TextBlock>
 {
 public:
     TextBlockList()
-        : QList<TextBlock>{}
+        : std::vector<TextBlock>{}
     { }
-
-    explicit TextBlockList(const TextBlock& block)
-    {
-        this->append(block);
-    }
 
     inline operator QVariant() const
     {
         return QVariant::fromValue(*this);
     }
+
+    friend QDataStream& operator<<(QDataStream& stream, const TextBlockList& blocks);
+    friend QDataStream& operator>>(QDataStream& stream, TextBlockList& blocks);
 };
 
 struct HeaderRow
@@ -111,7 +109,7 @@ struct HeaderRow
 
     [[nodiscard]] inline bool isValid() const
     {
-        return !title.empty() || !subtitle.empty() || !sideText.empty();
+        return !title.empty() || !subtitle.empty() || !sideText.empty() || !info.empty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const HeaderRow& header);
@@ -132,7 +130,7 @@ struct SubheaderRow
 
     [[nodiscard]] inline bool isValid() const
     {
-        return !leftText.isEmpty();
+        return !leftText.empty() || !rightText.empty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader);
@@ -154,7 +152,7 @@ struct TrackRow
 
     [[nodiscard]] inline bool isValid() const
     {
-        return !leftText.isEmpty() || !rightText.isEmpty();
+        return !leftText.empty() || !rightText.empty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const TrackRow& track);

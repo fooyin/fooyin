@@ -194,15 +194,11 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const
     const int semiWidth = width / 2;
     const int offset    = 10;
 
-    const auto title  = index.data(PlaylistItem::Role::Title).value<TextBlockList>();
-    const auto info   = index.data(PlaylistItem::Role::Subtitle).value<TextBlockList>();
-    const auto indent = index.data(PlaylistItem::Role::Indentation).toInt();
+    const auto title    = index.data(PlaylistItem::Role::Title).value<TextBlockList>();
+    const auto subtitle = index.data(PlaylistItem::Role::Subtitle).value<TextBlockList>();
+    const auto indent   = index.data(PlaylistItem::Role::Indentation).toInt();
 
     option.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
-
-    if(title.empty()) {
-        return;
-    }
 
     QPen linePen = painter->pen();
     linePen.setWidth(1);
@@ -212,15 +208,20 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const
 
     QRect rightRect{(right - semiWidth), y, semiWidth - offset, height};
     auto [rightBound, totalRightWidth]
-        = drawTextBlocks(painter, option, rightRect, info | std::views::reverse, Qt::AlignRight);
+        = drawTextBlocks(painter, option, rightRect, subtitle | std::views::reverse, Qt::AlignRight);
 
     const int leftWidth = width - totalRightWidth - (offset * 2) - 20;
     QRect titleRect{(x + offset + indent), y, leftWidth, height};
     auto [titleBound, _] = drawTextBlocks(painter, option, titleRect, title, Qt::AlignLeft);
 
-    if(info.empty()) {
+    if(title.empty()) {
+        titleBound = {(x + 5), y, 5, height};
+    }
+
+    if(subtitle.empty()) {
         rightBound = {(right - 5), y, 5, height};
     }
+
     painter->setPen(linePen);
     const QLineF titleLine((titleBound.x() + titleBound.width() + 5), (titleBound.y() + (titleBound.height() / 2)),
                            (rightBound.x() - 5), (rightBound.y()) + (rightBound.height() / 2));

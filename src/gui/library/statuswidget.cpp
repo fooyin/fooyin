@@ -21,10 +21,10 @@
 
 #include "internalguisettings.h"
 
-#include <core/track.h>
 #include <core/player/playermanager.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
+#include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/clickablelabel.h>
@@ -54,22 +54,32 @@ struct StatusWidget::Private
     QPixmap icon;
     ClickableLabel* statusText;
 
+    QString playingScript;
+
     QTimer clearTimer;
 
     Private(StatusWidget* self, PlayerManager* playerManager, SettingsManager* settings)
         : self{self}
         , playerManager{playerManager}
+        , selectionController{selectionController}
         , settings{settings}
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
         , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
         , statusText{new ClickableLabel(self)}
+        , selectionText{new ClickableLabel(self)}
     {
         clearTimer.setInterval(2s);
         clearTimer.setSingleShot(true);
         QObject::connect(&clearTimer, &QTimer::timeout, statusText, &QLabel::clear);
 
-        scriptParser.parse(settings->value<Settings::Gui::Internal::StatusPlayingScript>());
+        updateScripts();
+        updatePlayingText();
+    }
+
+    void updateScripts()
+    {
+        playingScript = settings->value<Settings::Gui::Internal::StatusPlayingScript>();
     }
 
     void labelClicked() const
@@ -84,7 +94,7 @@ struct StatusWidget::Private
     {
         const PlayState ps = playerManager->playState();
         if(ps == PlayState::Playing || ps == PlayState::Paused) {
-            statusText->setText(scriptParser.evaluate());
+            statusText->setText(scriptParser.evaluate(playingScript, playerManager->currentTrack()));
         }
     }
 
@@ -95,7 +105,6 @@ struct StatusWidget::Private
                 statusText->setText("");
                 break;
             case(PlayState::Playing): {
-                scriptRegistry.changeCurrentTrack(playerManager->currentTrack());
                 updatePlayingText();
                 break;
             }
@@ -139,7 +148,7 @@ StatusWidget::StatusWidget(PlayerManager* playerManager, SettingsManager* settin
     settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(this,
                                                                  [this](bool show) { p->iconLabel->setHidden(!show); });
     settings->subscribe<Settings::Gui::Internal::StatusPlayingScript>(this, [this](const QString& script) {
-        p->scriptParser.parse(script);
+        p->playingScript = script;
         p->updatePlayingText();
     });
 }

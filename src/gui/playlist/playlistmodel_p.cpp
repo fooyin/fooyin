@@ -986,7 +986,7 @@ QVariant PlaylistModelPrivate::subheaderData(PlaylistItem* item, int column, int
             return header.title();
         }
         case(PlaylistItem::Role::Subtitle): {
-            return header.info();
+            return header.subtitle();
         }
         case(PlaylistItem::Role::Indentation): {
             return item->indentation();

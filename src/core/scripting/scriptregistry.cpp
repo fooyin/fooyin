@@ -23,6 +23,7 @@
 #include "functions/mathfuncs.h"
 #include "functions/stringfuncs.h"
 #include "functions/timefuncs.h"
+#include "functions/tracklistfuncs.h"
 
 #include <core/constants.h>
 #include <core/track.h>
@@ -34,8 +35,9 @@ using NativeBoolFunc = std::function<Fooyin::ScriptResult(const QStringList&)>;
 using NativeCondFunc = std::function<Fooyin::ScriptResult(const Fooyin::ScriptValueList&)>;
 using Func           = std::variant<NativeFunc, NativeVoidFunc, NativeBoolFunc, NativeCondFunc>;
 
-using TrackFunc    = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::Track&)>;
-using TrackSetFunc = std::function<void(Fooyin::Track&, const Fooyin::ScriptRegistry::FuncRet&)>;
+using TrackFunc     = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::Track&)>;
+using TrackSetFunc  = std::function<void(Fooyin::Track&, const Fooyin::ScriptRegistry::FuncRet&)>;
+using TrackListFunc = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::TrackList&)>;
 
 template <typename FuncType>
 auto generateSetFunc(FuncType func)
@@ -91,6 +93,13 @@ void addDefaultFunctions(std::unordered_map<QString, Func>& funcs)
     funcs.emplace("ifgreater", Fooyin::Scripting::ifgreater);
     funcs.emplace("iflonger", Fooyin::Scripting::iflonger);
     funcs.emplace("ifequal", Fooyin::Scripting::ifequal);
+}
+
+void addDefaultListFuncs(std::unordered_map<QString, TrackListFunc>& funcs)
+{
+    funcs.emplace("trackcount", Fooyin::Scripting::trackCount);
+    funcs.emplace("playtime", Fooyin::Scripting::playtime);
+    funcs.emplace("genres", Fooyin::Scripting::genres);
 }
 
 void addDefaultMetadata(std::unordered_map<QString, TrackFunc>& metadata,
@@ -155,16 +164,16 @@ void addDefaultMetadata(std::unordered_map<QString, TrackFunc>& metadata,
 namespace Fooyin {
 struct ScriptRegistry::Private
 {
-    Track currentTrack;
-
     std::unordered_map<QString, TrackFunc> metadata;
     std::unordered_map<QString, TrackSetFunc> setMetadata;
+    std::unordered_map<QString, TrackListFunc> listProperties;
     std::unordered_map<QString, Func> funcs;
 
     Private()
     {
         addDefaultFunctions(funcs);
         addDefaultMetadata(metadata, setMetadata);
+        addDefaultListFuncs(listProperties);
     }
 };
 
@@ -174,35 +183,55 @@ ScriptRegistry::ScriptRegistry()
 
 ScriptRegistry::~ScriptRegistry() = default;
 
-bool ScriptRegistry::varExists(const QString& var) const
+bool ScriptRegistry::isVariable(const QString& var, const Track& /*track*/) const
 {
+    // TODO: Check custom track metadata
     return p->metadata.contains(var);
 }
 
-bool ScriptRegistry::funcExists(const QString& func) const
+bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) const
+{
+    if(!isListVariable(var)) {
+        return !tracks.empty() && isVariable(var, tracks.front());
+    }
+
+    return true;
+}
+
+bool ScriptRegistry::isFunction(const QString& func) const
 {
     return p->funcs.contains(func);
 }
 
-ScriptResult ScriptRegistry::varValue(const QString& var) const
+ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
 {
-    if(var.isEmpty() || !varExists(var)) {
+    if(var.isEmpty() || !isVariable(var, track)) {
         return {};
     }
 
-    auto funcResult = p->metadata.at(var)(p->currentTrack);
-    return calculateResult(funcResult);
+    if(p->metadata.contains(var)) {
+        return calculateResult(p->metadata.at(var)(track));
+    }
+
+    // return calculateResult(p->listProperties.at(var)({track}));
+    return {};
 }
 
-void ScriptRegistry::setVar(const QString& var, const FuncRet& value, Track& track)
+ScriptResult ScriptRegistry::value(const QString& var, const TrackList& tracks) const
 {
-    if(var.isEmpty()) {
-        return;
+    if(var.isEmpty() || !isVariable(var, tracks)) {
+        return {};
     }
 
-    if(varExists(var)) {
-        p->setMetadata.at(var)(track, value);
+    if(p->listProperties.contains(var)) {
+        return calculateResult(p->listProperties.at(var)(tracks));
     }
+
+    if(!tracks.empty()) {
+        return calculateResult(p->metadata.at(var)(tracks.front()));
+    }
+
+    return {};
 }
 
 ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args) const
@@ -229,9 +258,20 @@ ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList
     return {};
 }
 
-void ScriptRegistry::changeCurrentTrack(const Track& track)
+void ScriptRegistry::setValue(const QString& var, const FuncRet& value, Track& track)
 {
-    p->currentTrack = track;
+    if(var.isEmpty()) {
+        return;
+    }
+
+    if(isVariable(var, track)) {
+        p->setMetadata.at(var)(track, value);
+    }
+}
+
+bool ScriptRegistry::isListVariable(const QString& var) const
+{
+    return p->listProperties.contains(var);
 }
 
 ScriptResult ScriptRegistry::calculateResult(ScriptRegistry::FuncRet funcRet)

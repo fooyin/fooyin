@@ -24,11 +24,11 @@
 
 namespace Fooyin {
 TextBlock::TextBlock()
-    : TextBlock{QStringLiteral(""), 0}
+    : TextBlock{QStringLiteral("")}
 { }
 
-TextBlock::TextBlock(QString text, int fontDelta)
-    : text{std::move(text)}
+TextBlock::TextBlock(QString script, int fontDelta)
+    : script{std::move(script)}
     , fontDelta{fontDelta}
     , colour{QApplication::palette().text().color()}
 {
@@ -37,7 +37,7 @@ TextBlock::TextBlock(QString text, int fontDelta)
 
 QDataStream& operator<<(QDataStream& stream, const TextBlock& block)
 {
-    stream << block.text;
+    stream << block.script;
     stream << block.fontChanged;
     stream << block.fontDelta;
     if(block.fontChanged) {
@@ -52,7 +52,7 @@ QDataStream& operator<<(QDataStream& stream, const TextBlock& block)
 
 QDataStream& operator>>(QDataStream& stream, TextBlock& block)
 {
-    stream >> block.text;
+    stream >> block.script;
     stream >> block.fontChanged;
     stream >> block.fontDelta;
     if(block.fontChanged) {
@@ -65,6 +65,34 @@ QDataStream& operator>>(QDataStream& stream, TextBlock& block)
     if(block.colourChanged) {
         stream >> block.colour;
     }
+    return stream;
+}
+
+QDataStream& operator<<(QDataStream& stream, const TextBlockList& blocks)
+{
+    stream << static_cast<int>(blocks.size());
+
+    for(const auto& block : blocks) {
+        stream << block;
+    }
+
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream& stream, TextBlockList& blocks)
+{
+    int size;
+    stream >> size;
+
+    while(size > 0) {
+        --size;
+
+        TextBlock block;
+        stream >> block;
+
+        blocks.push_back(block);
+    }
+
     return stream;
 }
 
