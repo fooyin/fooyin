@@ -19,18 +19,21 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
+#include <core/trackfwd.h>
+#include <gui/fywidget.h>
 
 namespace Fooyin {
 class SettingsManager;
 class PlayerManager;
+class TrackSelectionController;
 
 class StatusWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    StatusWidget(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
+    StatusWidget(PlayerManager* playerManager, TrackSelectionController* selectionController, SettingsManager* settings,
+                 QWidget* parent = nullptr);
     ~StatusWidget() override;
 
     [[nodiscard]] QString name() const override;

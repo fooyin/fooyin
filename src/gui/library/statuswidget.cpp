@@ -27,6 +27,7 @@
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/trackselectioncontroller.h>
 #include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -45,6 +46,7 @@ struct StatusWidget::Private
     StatusWidget* self;
 
     PlayerManager* playerManager;
+    TrackSelectionController* selectionController;
     SettingsManager* settings;
 
     ScriptRegistry scriptRegistry;
@@ -53,19 +55,24 @@ struct StatusWidget::Private
     ClickableLabel* iconLabel;
     QPixmap icon;
     ClickableLabel* statusText;
+    ClickableLabel* selectionText;
 
     QString playingScript;
+    QString selectionScript;
 
     QTimer clearTimer;
 
-    Private(StatusWidget* self, PlayerManager* playerManager, SettingsManager* settings)
+    Private(StatusWidget* self, PlayerManager* playerManager, TrackSelectionController* selectionController,
+            SettingsManager* settings)
         : self{self}
         , playerManager{playerManager}
+        , selectionController{selectionController}
         , settings{settings}
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
         , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
         , statusText{new ClickableLabel(self)}
+        , selectionText{new ClickableLabel(self)}
     {
         clearTimer.setInterval(2s);
         clearTimer.setSingleShot(true);
@@ -77,7 +84,8 @@ struct StatusWidget::Private
 
     void updateScripts()
     {
-        playingScript = settings->value<Settings::Gui::Internal::StatusPlayingScript>();
+        playingScript   = settings->value<Settings::Gui::Internal::StatusPlayingScript>();
+        selectionScript = settings->value<Settings::Gui::Internal::StatusSelectionScript>();
     }
 
     void labelClicked() const
@@ -96,6 +104,11 @@ struct StatusWidget::Private
         }
     }
 
+    void updateSelectionText()
+    {
+        selectionText->setText(scriptParser.evaluate(selectionScript, selectionController->selectedTracks()));
+    }
+
     void stateChanged(const PlayState state)
     {
         switch(state) {
@@ -112,14 +125,15 @@ struct StatusWidget::Private
     }
 };
 
-StatusWidget::StatusWidget(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
+StatusWidget::StatusWidget(PlayerManager* playerManager, TrackSelectionController* selectionController,
+                           SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerManager, settings)}
+    , p{std::make_unique<Private>(this, playerManager, selectionController, settings)}
 {
     setObjectName(StatusWidget::name());
 
     auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins(5, 0, 0, 0);
+    layout->setContentsMargins(5, 0, 5, 0);
 
     p->iconLabel->setPixmap(p->icon);
     p->iconLabel->setScaledContents(true);
@@ -129,14 +143,19 @@ StatusWidget::StatusWidget(PlayerManager* playerManager, SettingsManager* settin
 
     layout->addWidget(p->iconLabel);
     layout->addWidget(p->statusText);
+    layout->addStretch();
+    layout->addWidget(p->selectionText);
 
     p->iconLabel->setHidden(!p->settings->value<Settings::Gui::Internal::StatusShowIcon>());
+    p->selectionText->setHidden(!p->settings->value<Settings::Gui::Internal::StatusShowSelection>());
 
     QObject::connect(p->statusText, &ClickableLabel::clicked, this, [this]() { p->labelClicked(); });
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
     QObject::connect(playerManager, &PlayerManager::positionChanged, this,
                      [this](uint64_t /*pos*/) { p->updatePlayingText(); });
+    QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
+                     [this]() { p->updateSelectionText(); });
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         p->icon = QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
@@ -145,9 +164,15 @@ StatusWidget::StatusWidget(PlayerManager* playerManager, SettingsManager* settin
 
     settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(this,
                                                                  [this](bool show) { p->iconLabel->setHidden(!show); });
+    settings->subscribe<Settings::Gui::Internal::StatusShowSelection>(
+        this, [this](bool show) { p->selectionText->setHidden(!show); });
     settings->subscribe<Settings::Gui::Internal::StatusPlayingScript>(this, [this](const QString& script) {
         p->playingScript = script;
         p->updatePlayingText();
+    });
+    settings->subscribe<Settings::Gui::Internal::StatusSelectionScript>(this, [this](const QString& script) {
+        p->selectionScript = script;
+        p->updateSelectionText();
     });
 }
 
@@ -187,6 +212,13 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(showIcon, &QAction::triggered, this,
                      [this](bool checked) { p->settings->set<Settings::Gui::Internal::StatusShowIcon>(checked); });
     menu->addAction(showIcon);
+
+    auto* showSelection = new QAction(tr("Show Track Selection"), this);
+    showSelection->setCheckable(true);
+    showSelection->setChecked(p->settings->value<Settings::Gui::Internal::StatusShowSelection>());
+    QObject::connect(showSelection, &QAction::triggered, this,
+                     [this](bool checked) { p->settings->set<Settings::Gui::Internal::StatusShowSelection>(checked); });
+    menu->addAction(showSelection);
 
     menu->popup(event->globalPos());
 }

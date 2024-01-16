@@ -26,6 +26,7 @@
 
 #include <QCheckBox>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QLabel>
 #include <QTextEdit>
 
@@ -39,44 +40,77 @@ public:
     void reset() override;
 
 private:
+    void applyValues();
+
     SettingsManager* m_settings;
 
     QCheckBox* m_showIcon;
+    QCheckBox* m_showSelection;
     QTextEdit* m_playingScript;
+    QTextEdit* m_selectionScript;
 };
 
 StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_showIcon{new QCheckBox(tr("Show Icon"), this)}
+    , m_showSelection{new QCheckBox(tr("Show Track Selection"), this)}
     , m_playingScript{new QTextEdit(this)}
+    , m_selectionScript{new QTextEdit(this)}
 {
     m_playingScript->setFixedHeight(100);
+    m_selectionScript->setFixedHeight(100);
 
-    auto* playingScriptLabel = new QLabel(tr("Playing Script:"), this);
+    auto* playingScriptLabel   = new QLabel(tr("Playing Track:"), this);
+    auto* selectionScriptLabel = new QLabel(tr("Track Selection:"), this);
+
+    auto* appearance       = new QGroupBox(tr("Appearance"), this);
+    auto* appearanceLayout = new QGridLayout(appearance);
+
+    appearanceLayout->addWidget(m_showIcon, 0, 0);
+    appearanceLayout->addWidget(m_showSelection, 1, 0);
+
+    auto* scripts       = new QGroupBox(tr("Scripts"), this);
+    auto* scriptsLayout = new QGridLayout(scripts);
+
+    scriptsLayout->addWidget(playingScriptLabel, 0, 0);
+    scriptsLayout->addWidget(m_playingScript, 1, 0);
+    scriptsLayout->addWidget(selectionScriptLabel, 2, 0);
+    scriptsLayout->addWidget(m_selectionScript, 3, 0);
 
     auto* layout = new QGridLayout(this);
-    layout->addWidget(m_showIcon, 0, 0);
-    layout->addWidget(playingScriptLabel, 1, 0, Qt::AlignTop);
-    layout->addWidget(m_playingScript, 1, 1);
+    layout->addWidget(appearance, 0, 0);
+    layout->addWidget(scripts, 1, 0);
 
-    layout->setColumnStretch(1, 1);
+    layout->setColumnStretch(0, 1);
     layout->setRowStretch(2, 1);
 
-    m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
-    m_playingScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
+    applyValues();
 }
 
 void StatusWidgetPageWidget::apply()
 {
     m_settings->set<Settings::Gui::Internal::StatusShowIcon>(m_showIcon->isChecked());
+    m_settings->set<Settings::Gui::Internal::StatusShowSelection>(m_showSelection->isChecked());
     m_settings->set<Settings::Gui::Internal::StatusPlayingScript>(m_playingScript->toPlainText());
+    m_settings->set<Settings::Gui::Internal::StatusSelectionScript>(m_selectionScript->toPlainText());
 }
 
 void StatusWidgetPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::Internal::StatusShowIcon>();
+    m_settings->reset<Settings::Gui::Internal::StatusShowSelection>();
     m_settings->reset<Settings::Gui::Internal::StatusPlayingScript>();
-    m_playingScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
+    m_settings->reset<Settings::Gui::Internal::StatusSelectionScript>();
+
+    applyValues();
+}
+
+void StatusWidgetPageWidget::applyValues()
+{
+    m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
+    m_showSelection->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
+    m_playingScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
+    m_selectionScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
 }
 
 StatusWidgetPage::StatusWidgetPage(SettingsManager* settings)
