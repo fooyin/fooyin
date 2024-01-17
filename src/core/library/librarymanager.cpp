@@ -25,6 +25,7 @@
 #include "libraryinfo.h"
 
 #include <utils/fileutils.h>
+#include <utils/helpers.h>
 
 namespace Fooyin {
 bool checkNewPath(const QString& path, const LibraryInfoMap& libraries, int libraryId = -1)
@@ -60,6 +61,12 @@ struct LibraryManager::Private
         , libraryConnector{database->connectionName()}
         , trackConnector{database->connectionName()}
     { }
+
+    [[nodiscard]] QString findUniqueName(const QString& name) const
+    {
+        const QString uniqueName{name.isEmpty() ? "New Library" : name};
+        return Utils::findUniqueString(uniqueName, libraries, [](const auto& item) { return item.second.name; });
+    }
 };
 
 LibraryManager::LibraryManager(Database* database, SettingsManager* settings, QObject* parent)
@@ -88,13 +95,9 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
         return -1;
     }
 
-    QString libraryName = name;
+    const QString libraryName = p->findUniqueName(name);
 
-    if(libraryName.isEmpty()) {
-        libraryName = "Library " + QString::number(p->libraries.size());
-    }
-
-    const auto id = p->libraryConnector.insertLibrary(path, name);
+    const auto id = p->libraryConnector.insertLibrary(path, libraryName);
 
     if(id > 0) {
         LibraryInfo& info = p->libraries.emplace(id, LibraryInfo{libraryName, path, id}).first->second;
@@ -130,9 +133,11 @@ bool LibraryManager::renameLibrary(int id, const QString& name)
         return false;
     }
 
-    if(p->libraryConnector.renameLibrary(id, name)) {
-        p->libraries.at(id).name = name;
-        emit libraryRenamed(id, name);
+    const QString libraryName = p->findUniqueName(name);
+
+    if(p->libraryConnector.renameLibrary(id, libraryName)) {
+        p->libraries.at(id).name = libraryName;
+        emit libraryRenamed(id, libraryName);
         return true;
     }
     return false;
