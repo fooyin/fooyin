@@ -41,12 +41,6 @@ TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{actionManager, parent}
 { }
 
-void TagEditorView::handleNewRow()
-{
-    ExtendableTableView::handleNewRow();
-    resizeRowsToContents();
-}
-
 int TagEditorView::sizeHintForRow(int row) const
 {
     if(!model()->hasIndex(row, 0, {})) {
@@ -118,7 +112,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TrackSelectionCon
     , p{std::make_unique<Private>(this, actionManager, trackSelection, settings)}
 {
     setObjectName(TagEditorWidget::name());
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::Dialog);
+    setWindowFlags(Qt::Dialog);
     resize(600, 720);
     setMinimumSize(300, 400);
 

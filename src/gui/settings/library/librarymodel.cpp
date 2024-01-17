@@ -153,8 +153,6 @@ void LibraryModel::markForAddition(const LibraryInfo& info)
     beginInsertRows({}, row, row);
     p->root.appendChild(item);
     endInsertRows();
-
-    emit pendingRowAdded();
 }
 
 void LibraryModel::processQueue()
@@ -362,7 +360,10 @@ bool LibraryModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
     return true;
 }
 
-void LibraryModel::addPendingRow() { }
+void LibraryModel::addPendingRow()
+{
+    emit requestAddLibrary();
+}
 
 void LibraryModel::removePendingRow() { }
 } // namespace Fooyin

@@ -235,8 +235,6 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
                 return false;
             }
             group.name = value.toString();
-
-            emit pendingRowAdded();
             break;
         }
         case(2): {
@@ -322,8 +320,6 @@ void LibraryTreeGroupModel::addPendingRow()
     beginInsertRows({}, row, row);
     p->root.appendChild(item);
     endInsertRows();
-
-    emit newPendingRow();
 }
 
 void LibraryTreeGroupModel::removePendingRow()

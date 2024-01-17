@@ -25,24 +25,21 @@
 
 namespace Fooyin {
 class ActionManager;
-class WidgetContext;
-class Command;
+class Context;
 
-class FYUTILS_EXPORT ExtendableTableModel : public QAbstractItemModel
+class FYUTILS_EXPORT ExtendableTableModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    explicit ExtendableTableModel(QObject* parent = nullptr);
+    explicit ExtendableTableModel(QObject* parent = nullptr)
+        : QAbstractTableModel{parent}
+    { }
 
-    [[nodiscard]] QModelIndex parent(const QModelIndex& child) const override;
-
-    virtual void addPendingRow() = 0;
+    virtual void addPendingRow()    = 0;
     virtual void removePendingRow() = 0;
 
 signals:
-    void newPendingRow();
-    void pendingRowAdded();
     void pendingRowCancelled();
 };
 
@@ -51,35 +48,40 @@ class FYUTILS_EXPORT ExtendableTableView : public QTableView
     Q_OBJECT
 
 public:
+    enum Tool
+    {
+        None = 0x0,
+        Move = 0x1,
+    };
+    Q_DECLARE_FLAGS(Tools, Tool)
+
     explicit ExtendableTableView(ActionManager* actionManager, QWidget* parent = nullptr);
+    ExtendableTableView(ActionManager* actionManager, const Tools& tools, QWidget* parent = nullptr);
+    ~ExtendableTableView() override;
+
+    void setTools(const Tools& tools);
+    void setToolButtonStyle(Qt::ToolButtonStyle style);
+    void addCustomTool(QWidget* widget);
 
     void setExtendableModel(ExtendableTableModel* model);
     void setExtendableColumn(int column);
-    virtual void handleNewRow();
-    void rowAdded();
 
+    [[nodiscard]] QAction* addAction() const;
     [[nodiscard]] QAction* removeAction() const;
+    [[nodiscard]] QAction* moveUpAction() const;
+    [[nodiscard]] QAction* moveDownAction() const;
 
+    Context context() const;
     virtual void addContextActions(QMenu* menu);
 
-signals:
-    void newRowClicked();
+    void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-    void paintEvent(QPaintEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
-    ActionManager* m_actionManager;
-    WidgetContext* m_context;
-    QAction* m_remove;
-    Command* m_removeCommand;
-
-    int m_column;
-    QRect m_buttonRect;
-    bool m_mouseOverButton;
-    bool m_pendingRow;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

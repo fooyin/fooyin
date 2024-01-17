@@ -103,7 +103,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
 
     mainLayout->setColumnStretch(1, 1);
 
-    QObject::connect(m_libraryView, &ExtendableTableView::newRowClicked, this, &LibraryGeneralPageWidget::addLibrary);
+    QObject::connect(m_model, &LibraryModel::requestAddLibrary, this, &LibraryGeneralPageWidget::addLibrary);
 
     m_model->populate();
     resizeTable();

@@ -239,8 +239,6 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
                 return false;
             }
             sortScript.name = value.toString();
-
-            emit pendingRowAdded();
             break;
         }
         case(2): {
@@ -326,8 +324,6 @@ void SortingModel::addPendingRow()
     beginInsertRows({}, row, row);
     p->root.appendChild(item);
     endInsertRows();
-
-    emit newPendingRow();
 }
 
 void SortingModel::removePendingRow()

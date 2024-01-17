@@ -235,8 +235,6 @@ bool PlaylistColumnModel::setData(const QModelIndex& index, const QVariant& valu
                 return false;
             }
             column.name = value.toString();
-
-            emit pendingRowAdded();
             break;
         }
         case(2): {
@@ -298,7 +296,7 @@ bool PlaylistColumnModel::removeRows(int row, int count, const QModelIndex& /*pa
                 endRemoveRows();
                 p->nodes.erase(item->column().index);
             }
-            else {
+            else if(!item->column().isDefault) {
                 item->setStatus(ColumnItem::Removed);
                 emit dataChanged({}, {}, {Qt::FontRole});
             }
@@ -322,8 +320,6 @@ void PlaylistColumnModel::addPendingRow()
     beginInsertRows({}, row, row);
     p->root.appendChild(item);
     endInsertRows();
-
-    emit newPendingRow();
 }
 
 void PlaylistColumnModel::removePendingRow()

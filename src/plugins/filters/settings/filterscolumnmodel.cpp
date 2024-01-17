@@ -236,8 +236,6 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
                 return false;
             }
             column.name = value.toString();
-
-            emit pendingRowAdded();
             break;
         }
         case(2): {
@@ -323,8 +321,6 @@ void FiltersColumnModel::addPendingRow()
     beginInsertRows({}, row, row);
     p->root.appendChild(item);
     endInsertRows();
-
-    emit newPendingRow();
 }
 
 void FiltersColumnModel::removePendingRow()

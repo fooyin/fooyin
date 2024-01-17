@@ -394,8 +394,6 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
 
             const QString name = value.toString().toUpper();
             item->setTitle(name);
-
-            emit pendingRowAdded();
             break;
         }
         case(1):
@@ -461,7 +459,7 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
             }
             else {
                 item->setStatus(TagEditorItem::Removed);
-                emit dataChanged(index, index, {Qt::FontRole});
+                emit dataChanged({}, {}, {Qt::FontRole});
             }
         }
     }
@@ -484,8 +482,6 @@ void TagEditorModel::addPendingRow()
     beginInsertRows({}, row, row);
     p->root.appendChild(item);
     endInsertRows();
-
-    emit newPendingRow();
 }
 
 void TagEditorModel::removePendingRow()

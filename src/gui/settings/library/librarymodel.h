@@ -50,6 +50,9 @@ public:
     void addPendingRow() override;
     void removePendingRow() override;
 
+signals:
+    void requestAddLibrary();
+
 private:
     struct Private;
     std::unique_ptr<Private>p;
