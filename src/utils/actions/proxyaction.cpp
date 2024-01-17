@@ -75,6 +75,7 @@ struct ProxyAction::Private
         }
         if(initialise || self->hasAttribute(UpdateText)) {
             self->setText(updateAction->text());
+            self->setIconText(updateAction->text());
             toolTip = updateAction->toolTip();
             updateToolTipWithShortcut();
             self->setStatusTip(updateAction->statusTip());
