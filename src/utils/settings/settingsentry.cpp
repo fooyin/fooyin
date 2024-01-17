@@ -31,6 +31,7 @@ SettingsEntry::SettingsEntry(QString key, const QVariant& value, Settings::Type 
     , m_value{value}
     , m_defaultValue{value}
     , m_isTemporary{false}
+    , m_wasChanged{false}
 { }
 
 QString SettingsEntry::key() const
@@ -58,7 +59,21 @@ bool SettingsEntry::isTemporary() const
     return m_isTemporary;
 }
 
+bool SettingsEntry::wasChanged() const
+{
+    return m_wasChanged;
+}
+
 bool SettingsEntry::setValue(const QVariant& value)
+{
+    if(std::exchange(m_value, value) != value) {
+        m_wasChanged = true;
+        return true;
+    }
+    return false;
+}
+
+bool SettingsEntry::setValueSilently(const QVariant& value)
 {
     return std::exchange(m_value, value) != value;
 }

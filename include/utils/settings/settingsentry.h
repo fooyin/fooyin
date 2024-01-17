@@ -49,8 +49,10 @@ public:
     [[nodiscard]] QVariant value() const;
     [[nodiscard]] QVariant defaultValue() const;
     [[nodiscard]] bool isTemporary() const;
+    [[nodiscard]] bool wasChanged() const;
 
     bool setValue(const QVariant& value);
+    bool setValueSilently(const QVariant& value);
     void setIsTemporary(bool isTemporary);
     void notifySubscribers();
 
@@ -70,5 +72,6 @@ private:
     QVariant m_value;
     QVariant m_defaultValue;
     bool m_isTemporary;
+    bool m_wasChanged;
 };
 } // namespace Fooyin

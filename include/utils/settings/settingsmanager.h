@@ -97,8 +97,10 @@ public:
 
     [[nodiscard]] SettingsDialogController* settingsDialog() const;
 
-    // Writes all settings to file, overwriting any existing values.
+    // Writes only changed settings to file, overwriting any existing values.
     void storeSettings();
+    // Writes all settings to file, overwriting any existing values.
+    void storeAllSettings();
 
     /*!
      * Returns the current value of the setting at @p key if it exists, or an empty variant if not.
@@ -433,6 +435,7 @@ private:
 
     bool settingExists(const QString& key) const;
     void checkLoadSetting(SettingsEntry* setting) const;
+    void saveSettings(bool onlyChanged);
 
     QSettings* m_settingsFile;
     std::map<QString, SettingsEntry*> m_settings;

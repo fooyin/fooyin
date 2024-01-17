@@ -41,25 +41,12 @@ SettingsDialogController* SettingsManager::settingsDialog() const
 
 void SettingsManager::storeSettings()
 {
-    m_lock.lockForRead();
+    saveSettings(true);
+}
 
-    for(const auto& [key, setting] : m_settings) {
-        if(setting->isTemporary()) {
-            continue;
-        }
-        const auto keyString = setting->key();
-        if(!keyString.isEmpty()) {
-            m_settingsFile->setValue(keyString, setting->value());
-        }
-    }
-
-    const auto dialogState = m_settingsDialog->saveState();
-
-    m_lock.unlock();
-
-    m_settingsFile->setValue(SettingsDialogState, dialogState);
-
-    m_settingsFile->sync();
+void SettingsManager::storeAllSettings()
+{
+    saveSettings(false);
 }
 
 QVariant SettingsManager::value(const QString& key) const
@@ -210,9 +197,31 @@ void SettingsManager::checkLoadSetting(SettingsEntry* setting) const
     if(!keyString.isEmpty()) {
         const auto diskValue = m_settingsFile->value(keyString);
         if(!diskValue.isNull()) {
-            setting->setValue(diskValue);
+            setting->setValueSilently(diskValue);
         }
     }
+}
+
+void SettingsManager::saveSettings(bool onlyChanged)
+{
+    m_lock.lockForRead();
+
+    for(const auto& [key, setting] : m_settings) {
+        if((!onlyChanged || setting->wasChanged()) && !setting->isTemporary()) {
+            const auto keyString = setting->key();
+            if(!keyString.isEmpty()) {
+                m_settingsFile->setValue(keyString, setting->value());
+            }
+        }
+    }
+
+    const auto dialogState = m_settingsDialog->saveState();
+
+    m_lock.unlock();
+
+    fileSet(SettingsDialogState, dialogState);
+
+    m_settingsFile->sync();
 }
 } // namespace Fooyin
 
