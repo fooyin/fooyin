@@ -25,6 +25,7 @@
 #include <utility>
 #include <vector>
 
+#include <QRegularExpression>
 #include <QString>
 
 namespace Fooyin::Utils {
@@ -79,7 +80,7 @@ void move(std::vector<T>& v, size_t from, size_t to)
 }
 
 template <typename T, typename StringExtractor>
-QString findUniqueString(const QString& name, const T& elements, StringExtractor extractor)
+QString findUniqueString(const QString& name, const T& elements, StringExtractor&& extractor)
 {
     if(name.isEmpty()) {
         return {};
@@ -87,20 +88,18 @@ QString findUniqueString(const QString& name, const T& elements, StringExtractor
 
     QString uniqueName{name};
 
-    auto find = [&elements, extractor](const QString& name, bool match) -> int {
-        return static_cast<int>(std::ranges::count_if(elements, [name, extractor, match](const auto& element) {
-            if(!match) {
-                const QString toCompare = extractor(element);
-                return toCompare.contains(name);
-            }
-            return extractor(element).compare(name) == 0;
-            }));
+    auto findCount = [&elements, extractor](const QString& name) -> int {
+        const QString regexName    = QRegularExpression::escape(name);
+        const QString regexPattern = QString{R"(^%1\s*(\(\d+\))?\s*$)"}.arg(regexName);
+        const QRegularExpression pattern{regexPattern};
+
+        return static_cast<int>(std::ranges::count_if(elements, [&pattern, extractor](const auto& element) {
+            return pattern.match(extractor(element)).hasMatch();
+        }));
     };
 
-    if(find(name, true)) {
-        const int count = find(name + " (", false) + 1;
-        uniqueName += " (" + QString::number(count) + ")";
-    }
-    return uniqueName;
+    const int count = findCount(name);
+
+    return count > 0 ? name + " (" + QString::number(count) + ")" : name;
 }
 } // namespace Fooyin::Utils
