@@ -52,8 +52,9 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     fileMenu->addSeparator();
 
     auto* newPlaylist        = new QAction(tr("&New Playlist"), this);
-    auto* newPlaylistCommand = m_actionManager->registerAction(newPlaylist, Constants::Actions::NewPlaylist);
+    auto* newPlaylistCommand = m_actionManager->registerAction(newPlaylist, Constants::Actions::New);
     newPlaylistCommand->setDefaultShortcut(QKeySequence::New);
+    newPlaylistCommand->setAttribute(ProxyAction::UpdateText);
     fileMenu->addAction(newPlaylistCommand, Actions::Groups::Two);
     QObject::connect(newPlaylist, &QAction::triggered, this, &FileMenu::requestNewPlaylist);
 
