@@ -162,10 +162,7 @@ void LibraryGeneralPageWidget::addLibrary() const
     const QFileInfo info{dir};
     const QString name = info.fileName();
 
-    const QString text
-        = QInputDialog::getText(m_libraryView, tr("Add Library"), tr("Library Name:"), QLineEdit::Normal, name);
-
-    m_model->markForAddition({text, dir});
+    m_model->markForAddition({name, dir});
 }
 
 LibraryGeneralPage::LibraryGeneralPage(ActionManager* actionManager, LibraryManager* libraryManager,
