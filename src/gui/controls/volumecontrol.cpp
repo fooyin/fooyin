@@ -22,27 +22,28 @@
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <utils/comboicon.h>
+#include <gui/widgets/toolbutton.h>
 #include <utils/hovermenu.h>
 #include <utils/logslider.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QToolButton>
 
 #include <chrono>
 
 using namespace std::chrono_literals;
 
 constexpr double MinVolume = 0.01;
-constexpr QSize LabelSize  = {20, 20};
+constexpr QSize IconSize   = {20, 20};
 
 namespace Fooyin {
 struct VolumeControl::Private
 {
     VolumeControl* self;
     SettingsManager* settings;
-    ComboIcon* volumeIcon;
+    ToolButton* volumeIcon;
     HoverMenu* volumeMenu;
     LogSlider* volumeSlider;
 
@@ -51,18 +52,24 @@ struct VolumeControl::Private
     Private(VolumeControl* self, SettingsManager* settings)
         : self{self}
         , settings{settings}
-        , volumeIcon{new ComboIcon(Constants::Icons::VolumeMute, self)}
+        , volumeIcon{new ToolButton(self)}
         , volumeMenu{new HoverMenu(self)}
         , volumeSlider{new LogSlider(Qt::Vertical, self)}
     {
         auto* volumeLayout = new QVBoxLayout(volumeMenu);
         volumeLayout->addWidget(volumeSlider);
 
+        volumeIcon->setAutoRaise(true);
+        volumeIcon->setIconSize(IconSize);
+        volumeIcon->setMaximumSize(IconSize);
+
         volumeSlider->setMinimumHeight(100);
         volumeSlider->setRange(MinVolume, 1.0);
         volumeSlider->setNaturalValue(settings->value<Settings::Core::OutputVolume>());
 
         volumeMenu->hide();
+
+        updateDisplay(settings->value<Settings::Core::OutputVolume>());
     }
 
     void showVolumeMenu() const
@@ -117,16 +124,16 @@ struct VolumeControl::Private
         }
 
         if(volume <= 1.0 && volume >= 0.40) {
-            volumeIcon->setIcon(Constants::Icons::VolumeHigh);
+            volumeIcon->setIcon(QIcon::fromTheme(Constants::Icons::VolumeHigh));
         }
         else if(volume < 0.40 && volume >= 0.20) {
-            volumeIcon->setIcon(Constants::Icons::VolumeMed);
+            volumeIcon->setIcon(QIcon::fromTheme(Constants::Icons::VolumeMed));
         }
         else if(volume < 0.20 && volume >= MinVolume) {
-            volumeIcon->setIcon(Constants::Icons::VolumeLow);
+            volumeIcon->setIcon(QIcon::fromTheme(Constants::Icons::VolumeLow));
         }
         else {
-            volumeIcon->setIcon(Constants::Icons::VolumeMute);
+            volumeIcon->setIcon(QIcon::fromTheme(Constants::Icons::VolumeMute));
         }
     }
 };
@@ -140,24 +147,17 @@ VolumeControl::VolumeControl(SettingsManager* settings, QWidget* parent)
     layout->setSizeConstraint(QLayout::SetFixedSize);
     layout->setSpacing(10);
 
-    p->volumeIcon->addIcon(Constants::Icons::VolumeLow);
-    p->volumeIcon->addIcon(Constants::Icons::VolumeMed);
-    p->volumeIcon->addIcon(Constants::Icons::VolumeHigh);
-
     layout->addWidget(p->volumeIcon, 0, Qt::AlignRight | Qt::AlignVCenter);
 
-    p->volumeIcon->setMaximumSize(LabelSize);
-
-    p->updateDisplay(settings->value<Settings::Core::OutputVolume>());
-
-    QObject::connect(p->volumeIcon, &ComboIcon::entered, this, [this]() { p->showVolumeMenu(); });
-    QObject::connect(p->volumeIcon, &ComboIcon::clicked, this, [this]() { p->mute(); });
+    QObject::connect(p->volumeIcon, &ToolButton::entered, this, [this]() { p->showVolumeMenu(); });
+    QObject::connect(p->volumeIcon, &QToolButton::clicked, this, [this]() { p->mute(); });
 
     QObject::connect(p->volumeSlider, &LogSlider::logValueChanged, this,
                      [this](double volume) { p->volumeChanged(volume); });
 
     settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateDisplay(volume); });
-    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->volumeIcon->updateIcons(); });
+    settings->subscribe<Settings::Gui::IconTheme>(
+        this, [this]() { p->updateDisplay(p->settings->value<Settings::Core::OutputVolume>()); });
 }
 
 VolumeControl::~VolumeControl() = default;

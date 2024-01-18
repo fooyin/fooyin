@@ -22,10 +22,11 @@
 #include <core/player/playermanager.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <utils/comboicon.h>
+#include <gui/widgets/toolbutton.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
+#include <QToolButton>
 
 constexpr QSize IconSize = {20, 20};
 
@@ -37,25 +38,48 @@ struct PlayerControl::Private
     PlayerManager* playerManager;
     SettingsManager* settings;
 
-    ComboIcon* stop;
-    ComboIcon* prev;
-    ComboIcon* playPause;
-    ComboIcon* next;
+    ToolButton* stop;
+    ToolButton* prev;
+    ToolButton* playPause;
+    ToolButton* next;
 
     Private(PlayerControl* self, PlayerManager* playerManager, SettingsManager* settings)
         : self{self}
         , playerManager{playerManager}
         , settings{settings}
-        , stop{new ComboIcon(Constants::Icons::Stop, ComboIcon::HasDisabledIcon, self)}
-        , prev{new ComboIcon(Constants::Icons::Prev, ComboIcon::HasDisabledIcon, self)}
-        , playPause{new ComboIcon(Constants::Icons::Play, ComboIcon::HasDisabledIcon, self)}
-        , next{new ComboIcon(Constants::Icons::Next, ComboIcon::HasDisabledIcon, self)}
+        , stop{new ToolButton(self)}
+        , prev{new ToolButton(self)}
+        , playPause{new ToolButton(self)}
+        , next{new ToolButton(self)}
     {
-        QObject::connect(stop, &ComboIcon::clicked, playerManager, &PlayerManager::stop);
-        QObject::connect(prev, &ComboIcon::clicked, playerManager, &PlayerManager::previous);
-        QObject::connect(playPause, &ComboIcon::clicked, playerManager, &PlayerManager::playPause);
-        QObject::connect(next, &ComboIcon::clicked, playerManager, &PlayerManager::next);
+        QObject::connect(stop, &QToolButton::clicked, playerManager, &PlayerManager::stop);
+        QObject::connect(prev, &QToolButton::clicked, playerManager, &PlayerManager::previous);
+        QObject::connect(playPause, &QToolButton::clicked, playerManager, &PlayerManager::playPause);
+        QObject::connect(next, &QToolButton::clicked, playerManager, &PlayerManager::next);
 
+        stop->setIconSize(IconSize);
+        prev->setIconSize(IconSize);
+        playPause->setIconSize(IconSize);
+        next->setIconSize(IconSize);
+
+        stop->setMaximumSize(IconSize);
+        prev->setMaximumSize(IconSize);
+        playPause->setMaximumSize(IconSize);
+        next->setMaximumSize(IconSize);
+
+        stop->setAutoRaise(true);
+        prev->setAutoRaise(true);
+        playPause->setAutoRaise(true);
+        next->setAutoRaise(true);
+
+        updateIcons();
+    }
+
+    void updateIcons() const
+    {
+        stop->setIcon(QIcon::fromTheme(Constants::Icons::Stop));
+        prev->setIcon(QIcon::fromTheme(Constants::Icons::Prev));
+        next->setIcon(QIcon::fromTheme(Constants::Icons::Next));
         stateChanged(playerManager->playState());
     }
 
@@ -63,15 +87,15 @@ struct PlayerControl::Private
     {
         switch(state) {
             case(PlayState::Stopped): {
-                playPause->setIcon(Constants::Icons::Play);
+                playPause->setIcon(QIcon::fromTheme(Constants::Icons::Play));
                 break;
             }
             case(PlayState::Playing): {
-                playPause->setIcon(Constants::Icons::Pause);
+                playPause->setIcon(QIcon::fromTheme(Constants::Icons::Pause));
                 break;
             }
             case(PlayState::Paused): {
-                playPause->setIcon(Constants::Icons::Play);
+                playPause->setIcon(QIcon::fromTheme(Constants::Icons::Play));
                 break;
             }
         }
@@ -87,13 +111,6 @@ PlayerControl::PlayerControl(PlayerManager* playerManager, SettingsManager* sett
     layout->setSpacing(10);
     layout->setContentsMargins(10, 0, 0, 0);
 
-    p->playPause->addIcon(Constants::Icons::Pause);
-
-    p->stop->setMaximumSize(IconSize);
-    p->prev->setMaximumSize(IconSize);
-    p->playPause->setMaximumSize(IconSize);
-    p->next->setMaximumSize(IconSize);
-
     layout->addWidget(p->stop, 0, Qt::AlignVCenter);
     layout->addWidget(p->prev, 0, Qt::AlignVCenter);
     layout->addWidget(p->playPause, 0, Qt::AlignVCenter);
@@ -102,12 +119,7 @@ PlayerControl::PlayerControl(PlayerManager* playerManager, SettingsManager* sett
     QObject::connect(p->playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
 
-    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
-        p->stop->updateIcons();
-        p->prev->updateIcons();
-        p->playPause->updateIcons();
-        p->next->updateIcons();
-    });
+    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->updateIcons(); });
 }
 
 PlayerControl::~PlayerControl() = default;

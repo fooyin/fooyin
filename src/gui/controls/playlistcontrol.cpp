@@ -23,29 +23,103 @@
 #include <core/player/playermanager.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <utils/comboicon.h>
+#include <gui/widgets/toolbutton.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
+#include <QActionGroup>
 #include <QHBoxLayout>
+#include <QMenu>
+#include <QToolButton>
 
 constexpr QSize IconSize = {20, 20};
 
 namespace Fooyin {
 struct PlaylistControl::Private
 {
+    PlaylistControl* self;
+
     PlayerManager* playerManager;
     SettingsManager* settings;
 
-    ComboIcon* repeat;
-    ComboIcon* shuffle;
+    ToolButton* repeat;
+    ToolButton* shuffle;
+
+    QIcon repeatActiveIcon;
+    QIcon shuffleActiveIcon;
 
     Private(PlaylistControl* self, PlayerManager* playerManager, SettingsManager* settings)
-        : playerManager{playerManager}
+        : self{self}
+        , playerManager{playerManager}
         , settings{settings}
-        , repeat{new ComboIcon(Constants::Icons::RepeatAll, ComboIcon::HasActiveIcon, self)}
-        , shuffle{new ComboIcon(Constants::Icons::Shuffle, ComboIcon::HasActiveIcon, self)}
-    { }
+        , repeat{new ToolButton(self)}
+        , shuffle{new ToolButton(self)}
+        , repeatActiveIcon{Utils::changePixmapColour(QIcon::fromTheme(Constants::Icons::Repeat).pixmap({128, 128}),
+                                                     self->palette().highlight().color())}
+        , shuffleActiveIcon{Utils::changePixmapColour(QIcon::fromTheme(Constants::Icons::Shuffle).pixmap({128, 128}),
+                                                      self->palette().highlight().color())}
+    {
+        repeat->setPopupMode(QToolButton::InstantPopup);
+
+        repeat->setAutoRaise(true);
+        shuffle->setAutoRaise(true);
+
+        repeat->setIconSize(IconSize);
+        shuffle->setIconSize(IconSize);
+
+        repeat->setMaximumSize(IconSize);
+        shuffle->setMaximumSize(IconSize);
+
+        setMode(playerManager->playMode());
+
+        setupMenus();
+    }
+
+    void setupMenus()
+    {
+        auto* menu = new QMenu(self);
+
+        auto* repeatGroup = new QActionGroup(menu);
+
+        auto* defaultAction  = new QAction(tr("Default"), repeatGroup);
+        auto* repeatPlaylist = new QAction(tr("Repeat playlist"), repeatGroup);
+        auto* repeatTrack    = new QAction(tr("Repeat track"), repeatGroup);
+
+        defaultAction->setCheckable(true);
+        repeatPlaylist->setCheckable(true);
+        repeatTrack->setCheckable(true);
+
+        auto playMode = playerManager->playMode();
+
+        if(playMode & Playlist::RepeatAll) {
+            repeatPlaylist->setChecked(true);
+        }
+        else if(playMode & Playlist::Repeat) {
+            repeatTrack->setChecked(true);
+        }
+        else {
+            defaultAction->setChecked(true);
+        }
+
+        QObject::connect(defaultAction, &QAction::triggered, self, [this, playMode]() {
+            playerManager->setPlayMode(playMode & ~Playlist::Repeat & ~Playlist::RepeatAll);
+        });
+
+        QObject::connect(repeatPlaylist, &QAction::triggered, self, [this, playMode]() {
+            playerManager->setPlayMode((playMode & ~Playlist::Repeat) | Playlist::RepeatAll);
+        });
+
+        QObject::connect(repeatTrack, &QAction::triggered, self, [this, playMode]() {
+            playerManager->setPlayMode((playMode & ~Playlist::RepeatAll) | Playlist::Repeat);
+        });
+
+        menu->addAction(defaultAction);
+        menu->addAction(repeatPlaylist);
+        menu->addAction(repeatTrack);
+
+        repeat->setMenu(menu);
+    }
 
     void repeatClicked() const
     {
@@ -81,21 +155,18 @@ struct PlaylistControl::Private
 
     void setMode(Playlist::PlayModes mode) const
     {
-        if(mode & Playlist::Repeat) {
-            repeat->setIcon(Constants::Icons::Repeat, true);
-        }
-        else if(mode & Playlist::RepeatAll) {
-            repeat->setIcon(Constants::Icons::RepeatAll, true);
+        if(mode & Playlist::Repeat || mode & Playlist::RepeatAll) {
+            repeat->setIcon(repeatActiveIcon);
         }
         else {
-            repeat->setIcon(Constants::Icons::RepeatAll, false);
+            repeat->setIcon(QIcon::fromTheme(Constants::Icons::Repeat));
         }
 
         if(mode & Playlist::Shuffle) {
-            shuffle->setIcon(Constants::Icons::Shuffle, true);
+            shuffle->setIcon(shuffleActiveIcon);
         }
         else {
-            shuffle->setIcon(Constants::Icons::Shuffle, false);
+            shuffle->setIcon(QIcon::fromTheme(Constants::Icons::Shuffle));
         }
     }
 };
@@ -110,25 +181,14 @@ PlaylistControl::PlaylistControl(PlayerManager* playerManager, SettingsManager* 
     layout->setSpacing(10);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    p->repeat->addIcon(Constants::Icons::Repeat);
-
-    p->repeat->setMaximumSize(IconSize);
-    p->shuffle->setMaximumSize(IconSize);
-
     layout->addWidget(p->repeat, 0, Qt::AlignVCenter);
     layout->addWidget(p->shuffle, 0, Qt::AlignVCenter);
 
-    p->setMode(p->playerManager->playMode());
-
-    QObject::connect(p->repeat, &ComboIcon::clicked, this, [this]() { p->repeatClicked(); });
-    QObject::connect(p->shuffle, &ComboIcon::clicked, this, [this]() { p->shuffleClicked(); });
+    QObject::connect(p->shuffle, &QToolButton::clicked, this, [this]() { p->shuffleClicked(); });
     QObject::connect(playerManager, &PlayerManager::playModeChanged, this,
                      [this](Playlist::PlayModes mode) { p->setMode(mode); });
 
-    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
-        p->repeat->updateIcons();
-        p->shuffle->updateIcons();
-    });
+    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->setMode(p->playerManager->playMode()); });
 }
 
 PlaylistControl::~PlaylistControl() = default;

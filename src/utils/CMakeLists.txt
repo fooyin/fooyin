@@ -17,7 +17,6 @@ set(HEADERS
 
 set(SOURCES
     clickablelabel.cpp
-    comboicon.cpp
     crypto.cpp
     expandableinputbox.cpp
     expandingcombobox.cpp

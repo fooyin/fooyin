@@ -99,6 +99,7 @@ set(SOURCES
     widgets/customisableinput.cpp
     widgets/splitterwidget.cpp
     widgets/tabstackwidget.cpp
+    widgets/toolbutton.cpp
     widgets/widgetcontainer.cpp
 )
 
