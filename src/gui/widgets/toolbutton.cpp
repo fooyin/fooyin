@@ -25,7 +25,24 @@
 namespace Fooyin {
 ToolButton::ToolButton(QWidget* parent)
     : QToolButton{parent}
+    , m_padding{0}
+    , m_minimumSize{10}
 { }
+
+void ToolButton::setStretchEnabled(bool enabled)
+{
+    setSizePolicy(enabled ? QSizePolicy::Expanding : QSizePolicy::Preferred, QSizePolicy::Preferred);
+}
+
+void ToolButton::setPadding(int padding)
+{
+    m_padding = padding;
+}
+
+void ToolButton::setMinimumSize(int size)
+{
+    m_minimumSize = size;
+}
 
 void ToolButton::enterEvent(QEnterEvent* event)
 {
@@ -38,8 +55,14 @@ void ToolButton::paintEvent(QPaintEvent* /*event*/)
     QStylePainter painter{this};
     QStyleOptionToolButton opt;
     initStyleOption(&opt);
+
     // Remove menu indicator
     opt.features &= ~QStyleOptionToolButton::HasMenu;
+
+    const QRect& rect = opt.rect;
+    const int maxSize = std::max(std::min(rect.height(), rect.width()) - (2 * m_padding), m_minimumSize);
+    opt.iconSize      = {maxSize, maxSize};
+
     painter.drawComplexControl(QStyle::CC_ToolButton, opt);
 }
 } // namespace Fooyin

@@ -29,11 +29,19 @@ class ToolButton : public QToolButton
 public:
     explicit ToolButton(QWidget* parent = nullptr);
 
+    void setStretchEnabled(bool enabled);
+    void setPadding(int padding);
+    void setMinimumSize(int size);
+
 signals:
     void entered();
 
 protected:
     void enterEvent(QEnterEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
+
+private:
+    int m_padding;
+    int m_minimumSize;
 };
 } // namespace Fooyin
