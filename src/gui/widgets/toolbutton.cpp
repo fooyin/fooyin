@@ -27,6 +27,7 @@ ToolButton::ToolButton(QWidget* parent)
     : QToolButton{parent}
     , m_padding{0}
     , m_minimumSize{10}
+    , m_maximumSize{20}
 { }
 
 void ToolButton::setStretchEnabled(bool enabled)
@@ -34,14 +35,19 @@ void ToolButton::setStretchEnabled(bool enabled)
     setSizePolicy(enabled ? QSizePolicy::Expanding : QSizePolicy::Preferred, QSizePolicy::Preferred);
 }
 
-void ToolButton::setPadding(int padding)
+void ToolButton::setIconPadding(int padding)
 {
     m_padding = padding;
 }
 
-void ToolButton::setMinimumSize(int size)
+void ToolButton::setMinimumIconSize(int size)
 {
     m_minimumSize = size;
+}
+
+void ToolButton::setMaximumIconSize(int size)
+{
+    m_maximumSize = size;
 }
 
 void ToolButton::enterEvent(QEnterEvent* event)
@@ -59,9 +65,10 @@ void ToolButton::paintEvent(QPaintEvent* /*event*/)
     // Remove menu indicator
     opt.features &= ~QStyleOptionToolButton::HasMenu;
 
-    const QRect& rect = opt.rect;
-    const int maxSize = std::max(std::min(rect.height(), rect.width()) - (2 * m_padding), m_minimumSize);
-    opt.iconSize      = {maxSize, maxSize};
+    const QRect& rect  = opt.rect;
+    const int baseSize = std::min(rect.height(), rect.width()) - (2 * m_padding);
+    const int maxSize  = std::clamp(baseSize, m_minimumSize, m_maximumSize);
+    opt.iconSize       = {maxSize, maxSize};
 
     painter.drawComplexControl(QStyle::CC_ToolButton, opt);
 }
