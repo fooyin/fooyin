@@ -79,7 +79,7 @@ struct EditableLayout::Private
     ActionContainer* menu;
     QHBoxLayout* box;
     QPointer<OverlayWidget> overlay;
-    SplitterWidget* splitter{nullptr};
+    QPointer<SplitterWidget> splitter;
     bool layoutEditing{false};
 
     Private(EditableLayout* self, ActionManager* actionManager, WidgetProvider* widgetProvider,
@@ -309,22 +309,13 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 
 void EditableLayout::changeLayout(const Layout& layout)
 {
-    auto loadNewLayout = [this, layout]() {
-        if(loadLayout(layout)) {
-            p->settings->set<Settings::Gui::LayoutEditing>(p->splitter->childCount() == 0);
-        }
-        else {
-            p->setupDefault();
-        }
-    };
+    delete p->splitter;
 
-    if(p->splitter) {
-        // Wait for all current widgets to be deleted
-        QObject::connect(p->splitter, &QObject::destroyed, this, loadNewLayout, Qt::QueuedConnection);
-        p->splitter->deleteLater();
+    if(loadLayout(layout)) {
+        p->settings->set<Settings::Gui::LayoutEditing>(p->splitter->childCount() == 0);
     }
     else {
-        loadNewLayout();
+        p->setupDefault();
     }
 }
 
