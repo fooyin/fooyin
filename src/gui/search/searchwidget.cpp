@@ -24,6 +24,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
 #include <QJsonObject>
@@ -101,6 +102,9 @@ SearchWidget::SearchWidget(SearchController* controller, SettingsManager* settin
     auto* selectReceiver = new QAction(QIcon::fromTheme(Constants::Icons::Options), tr("Options"), this);
     QObject::connect(selectReceiver, &QAction::triggered, this, [this]() { p->showOptionsMenu(); });
     p->searchBox->addAction(selectReceiver, QLineEdit::TrailingPosition);
+
+    settings->subscribe<Settings::Gui::IconTheme>(
+        this, [selectReceiver]() { selectReceiver->setIcon(QIcon::fromTheme(Constants::Icons::Options)); });
 }
 
 SearchWidget::~SearchWidget()
