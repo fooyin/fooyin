@@ -19,7 +19,10 @@
 
 #include "guiapplication.h"
 
-#include "controls/controlwidget.h"
+#include "controls/playercontrol.h"
+#include "controls/playlistcontrol.h"
+#include "controls/seekbar.h"
+#include "controls/volumecontrol.h"
 #include "info/infowidget.h"
 #include "internalguisettings.h"
 #include "library/coverwidget.h"
@@ -214,19 +217,23 @@ struct GuiApplication::Private
         layoutProvider.registerLayout(R"({"Empty": [{}]})");
 
         layoutProvider.registerLayout(
-            R"({"Simple":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAGQAAA6kAAAAUAP////8BAAAAAgA=",
+            R"({"Simple":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFgAAA6YAAAAXAP////8BAAAAAgA=",
             "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAABYAAABeoA/////wEAAAABAA==",
             "Widgets":[{"LibraryTree":{"Grouping":"Artist/Album","ID":"8c3bf224ae774bd780cc2ff3ad638081"}},
             {"SplitterVertical":{"State":"AAAA/wAAAAEAAAABAAAAGwD/////AQAAAAIA",
-            "Widgets":[{"PlaylistTabs":{"Widgets":[{"Playlist":{"ID":"39b31f941a964e2894f6774f204140e3"}}]}}]}}]}},
-            {"ControlBar":{}}]}}]})");
+            "Widgets":[{"PlaylistTabs":{"Widgets":[{"Playlist":{}}]}}]}}]}},
+            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAcgAAAswAAAA2AAAAGAD/////AQAAAAEA",
+            "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
 
         layoutProvider.registerLayout(
-            R"({"Vision":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFAAAA6kAAAAZAP////8BAAAAAgA=",
-            "Widgets":[{"ControlBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAADwgAAA4gA/////wEAAAABAA==",
-            "Widgets":[{"TabStack":{"Position":"West","State":"Artwork\u001fInfo\u001fLibrary Tree\u001fPlaylist Organiser",
-            "Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}},{"LibraryTree":{"Grouping":"Artist/Album"}},{"PlaylistOrganiser":{}}]}},
-            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAABAAAAwAD/////AQAAAAIA","Widgets":[{"Playlist":{}}]}}]}},{"StatusBar":{}}]}}]})");
+            R"({"Vision":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHAAAA6EAAAAWAP////8BAAAAAgA=",
+            "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAiQAABk8AAABHAAAAIwD/////AQAAAAEA",
+            "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
+            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAADuwAAA48A/////wEAAAABAA==","Widgets":[{"TabStack":{
+            "Position":"West","State":"Artwork\u001fInfo\u001fLibrary Tree\u001fPlaylist Organiser",
+            "Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}},{"LibraryTree":{"Grouping":"Artist/Album"}},
+            {"PlaylistOrganiser":{}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAABAAAAwAD/////AQAAAAIA",
+            "Widgets":[{"Playlist":{}}]}}]}},{"StatusBar":{}}]}}]})");
     }
 
     void registerWidgets()
@@ -283,8 +290,26 @@ struct GuiApplication::Private
             u"Library Tree"_s);
 
         widgetProvider.registerWidget(
-            u"ControlBar"_s, [this]() { return new ControlWidget(playerManager, settingsManager, mainWindow.get()); },
-            u"Control Bar"_s);
+            u"PlayerControls"_s,
+            [this]() { return new PlayerControl(playerManager, settingsManager, mainWindow.get()); },
+            u"Player Controls"_s);
+        widgetProvider.setSubMenus(u"PlayerControls"_s, {"Controls"});
+
+        widgetProvider.registerWidget(
+            u"PlaylistControls"_s,
+            [this]() { return new PlaylistControl(playerManager, settingsManager, mainWindow.get()); },
+            u"Playlist Controls"_s);
+        widgetProvider.setSubMenus(u"PlaylistControls"_s, {"Controls"});
+
+        widgetProvider.registerWidget(
+            u"VolumeControls"_s, [this]() { return new VolumeControl(settingsManager, mainWindow.get()); },
+            u"Volume Controls"_s);
+        widgetProvider.setSubMenus(u"VolumeControls"_s, {"Controls"});
+
+        widgetProvider.registerWidget(
+            u"SeekBar"_s, [this]() { return new SeekBar(playerManager, settingsManager, mainWindow.get()); },
+            u"SeekBar"_s);
+        widgetProvider.setSubMenus(u"SeekBar"_s, {"Controls"});
 
         widgetProvider.registerWidget(
             u"SelectionInfo"_s,

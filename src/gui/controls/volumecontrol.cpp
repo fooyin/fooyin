@@ -36,7 +36,6 @@
 using namespace std::chrono_literals;
 
 constexpr double MinVolume = 0.01;
-constexpr QSize IconSize   = {20, 20};
 
 namespace Fooyin {
 struct VolumeControl::Private
@@ -60,8 +59,6 @@ struct VolumeControl::Private
         volumeLayout->addWidget(volumeSlider);
 
         volumeIcon->setAutoRaise(true);
-        volumeIcon->setIconSize(IconSize);
-        volumeIcon->setMaximumSize(IconSize);
 
         volumeSlider->setMinimumHeight(100);
         volumeSlider->setRange(MinVolume, 1.0);
@@ -139,15 +136,13 @@ struct VolumeControl::Private
 };
 
 VolumeControl::VolumeControl(SettingsManager* settings, QWidget* parent)
-    : QWidget{parent}
+    : FyWidget{parent}
     , p{std::make_unique<Private>(this, settings)}
 {
     auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins(0, 0, 5, 0);
-    layout->setSizeConstraint(QLayout::SetFixedSize);
-    layout->setSpacing(10);
+    layout->setContentsMargins(0, 0, 0, 0);
 
-    layout->addWidget(p->volumeIcon, 0, Qt::AlignRight | Qt::AlignVCenter);
+    layout->addWidget(p->volumeIcon);
 
     QObject::connect(p->volumeIcon, &ToolButton::entered, this, [this]() { p->showVolumeMenu(); });
     QObject::connect(p->volumeIcon, &QToolButton::clicked, this, [this]() { p->mute(); });
@@ -161,6 +156,16 @@ VolumeControl::VolumeControl(SettingsManager* settings, QWidget* parent)
 }
 
 VolumeControl::~VolumeControl() = default;
+
+QString VolumeControl::name() const
+{
+    return QStringLiteral("Volume Controls");
+}
+
+QString VolumeControl::layoutName() const
+{
+    return QStringLiteral("VolumeControls");
+}
 } // namespace Fooyin
 
 #include "moc_volumecontrol.cpp"

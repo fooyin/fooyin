@@ -51,37 +51,31 @@ struct FiltersPlugin::Private
     void registerLayouts() const
     {
         layoutProvider->registerLayout(
-            R"({"Obsidian":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAGQAAA8EAAAAUAP////8BAAAAAgA=",
-            "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{
-            "State":"AAAA/wAAAAEAAAADAAAB+AAAA5wAAAGyAP////8BAAAAAQA=","Widgets":[{"SplitterVertical":{
-            "State":"AAAA/wAAAAEAAAACAAAAHQAAA6AA/////wEAAAACAA==","Widgets":[{"SearchBar":{
-            "Widgets": "1c827a58f07a4a939b185d9c0285f936|09356ff889694ff7941174448bd67b7a"}},
-            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAA5wAAAQ0A/////wEAAAABAA==","Widgets":[
-            {"LibraryFilter":{"Columns":"1","ID":"1c827a58f07a4a939b185d9c0285f936",
-            "State":"AAAAJXjaY2BgYGRgYHjKAKFBgNH+A5QBFWAAAC6BAhk="}},{"LibraryFilter":{"Columns":"3",
-            "ID":"09356ff889694ff7941174448bd67b7a","State":"AAAAJXjaY2BgYAQibgYwDQaM9h+gDKgAAwAVFAFA"}}]}}]}},
-            {"PlaylistTabs":{"ID":"63546e1b2731459eb8dc448086c3ac6a","Widgets":[
-            {"Playlist":{"ID":"943e9ac526414587baa7de36937a8b89"}}]}},
-            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHQAAAbEAAAHTAP////8BAAAAAgA=",
-            "Widgets":[{"Spacer":{}},{"ArtworkPanel":{}},{"SelectionInfo":{}}]}}]}},{"ControlBar":{}}]}}]})");
+            R"({"Obsidian":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFgAAA8EAAAAUAP////8BAAAAAgA=",
+            "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAAB+AAAA5wAAAGyAP////8BAAAAAQA=",
+            "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAHQAAA6AA/////wEAAAACAA==","Widgets":[{"SearchBar":{
+            "Widgets":"1c827a58f07a4a939b185d9c0285f936|09356ff889694ff7941174448bd67b7a"}},{"SplitterHorizontal":{
+            "State":"AAAA/wAAAAEAAAACAAAA5wAAAQ0A/////wEAAAABAA==","Widgets":[{"LibraryFilter":{
+            "Columns":"1","Group":"Default","ID":"1c827a58f07a4a939b185d9c0285f936","Index":0}},{"LibraryFilter":{
+            "Columns":"3","Group":"Default","ID":"09356ff889694ff7941174448bd67b7a","Index":1}}]}}]}},{"PlaylistTabs":{
+            "Widgets":[{"Playlist":{}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHQAAAbEAAAHTAP////8BAAAAAgA=",
+            "Widgets":[{"Spacer":{}},{"ArtworkPanel":{}},{"SelectionInfo":{}}]}}]}},{"SplitterHorizontal":{
+            "State":"AAAA/wAAAAEAAAAEAAAAcgAABoIAAAA2AAAAGAD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},{"SeekBar":{}},
+            {"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
 
         layoutProvider->registerLayout(
-            R"({"Ember":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAA3AAAABoAAALMAAAAGQD/////AQAAAAIA",
+            R"({"Ember":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAA2QAAABoAAALGAAAAFgD/////AQAAAAIA",
             "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAABAAAAAQAAAAEAAAABAAD/////AQAAAAEA",
-            "Widgets":[{"LibraryFilter":{"Columns":"0","ID":"955f29805de446d7a9b6195a94bfd817",
-            "State":"AAAAJXjaY2BgYASi8wxgGgwY7T9AGVABBgAsDAIE="}},{"LibraryFilter":{"Columns":"1",
-            "ID":"4fee1a754b3e47ff86f4c711fbf0f0eb","State":"AAAAJXjaY2BgYASicwxgGgwY7T9AGVABBgAr7gID="}},
-            {"LibraryFilter":{"Columns":"2","ID":"3b20c1db282d4bfe9a95c776e6723608",
-            "State":"AAAAJXjaY2BgYASi8wxgGgwY7T9AGVABBgAsDAIE="}},{"LibraryFilter":{"Columns":"3",
-            "ID":"34777508a4ae4ec5939620f235e8ec1a","State":"AAAAJXjaY2BgYASicwxgGgwY7T9AGVABBgAr7gID="}}]}},
-            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAAFewAAAc8A/////wEAAAABAA==",
-            "Widgets":[{"ControlBar":{}},{"SearchBar":{"Widgets": "955f29805de446d7a9b6195a94bfd817|
-            34777508a4ae4ec5939620f235e8ec1a|4fee1a754b3e47ff86f4c711fbf0f0eb|3b20c1db282d4bfe9a95c776e6723608"}}]}},
-            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAABdAAABGgAAAFgAP////8BAAAAAQA=",
-            "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAABdAAAAU0A/////wEAAAACAA==",
-            "Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}}]}},{"Playlist":{
-            "ID":"3eb9c89184844b5a97c2dabb05aac1c0"}},{"PlaylistOrganiser":{
-            "ID":"1a202fbca60f4a838b456663cebd1c67"}}]}},{"StatusBar":{}}]}}]})");
+            "Widgets":[{"LibraryFilter":{"Columns":"0","Group":"Default","ID":"955f29805de446d7a9b6195a94bfd817","Index":0}},
+            {"LibraryFilter":{"Columns":"1","Group":"Default","ID":"4fee1a754b3e47ff86f4c711fbf0f0eb","Index":1}},
+            {"LibraryFilter":{"Columns":"2","Group":"Default","ID":"3b20c1db282d4bfe9a95c776e6723608","Index":2}},
+            {"LibraryFilter":{"Columns":"3","Group":"Default","ID":"34777508a4ae4ec5939620f235e8ec1a","Index":3}}]}},
+            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAFAAAAcgAABRoAAAA2AAAAGAAAAWQA/////wEAAAABAA==",
+            "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}},{"SearchBar":{
+            "Widgets":"955f29805de446d7a9b6195a94bfd817|34777508a4ae4ec5939620f235e8ec1a|4fee1a754b3e47ff86f4c711fbf0f0eb|
+            3b20c1db282d4bfe9a95c776e6723608"}}]}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAABdAAABGgAAAFgAP////8BAAAAAQA=",
+            "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAABdAAAAU0A/////wEAAAACAA==","Widgets":[{"ArtworkPanel":{}},
+            {"SelectionInfo":{}}]}},{"Playlist":{}},{"PlaylistOrganiser":{}}]}},{"StatusBar":{}}]}}]})");
     }
 };
 

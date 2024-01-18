@@ -33,8 +33,6 @@
 #include <QMenu>
 #include <QToolButton>
 
-constexpr QSize IconSize = {20, 20};
-
 namespace Fooyin {
 struct PlaylistControl::Private
 {
@@ -64,12 +62,6 @@ struct PlaylistControl::Private
 
         repeat->setAutoRaise(true);
         shuffle->setAutoRaise(true);
-
-        repeat->setIconSize(IconSize);
-        shuffle->setIconSize(IconSize);
-
-        repeat->setMaximumSize(IconSize);
-        shuffle->setMaximumSize(IconSize);
 
         setMode(playerManager->playMode());
 
@@ -172,17 +164,15 @@ struct PlaylistControl::Private
 };
 
 PlaylistControl::PlaylistControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
-    : QWidget{parent}
+    : FyWidget{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 
 {
     auto* layout = new QHBoxLayout(this);
-    layout->setSizeConstraint(QLayout::SetFixedSize);
-    layout->setSpacing(10);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    layout->addWidget(p->repeat, 0, Qt::AlignVCenter);
-    layout->addWidget(p->shuffle, 0, Qt::AlignVCenter);
+    layout->addWidget(p->repeat);
+    layout->addWidget(p->shuffle);
 
     QObject::connect(p->shuffle, &QToolButton::clicked, this, [this]() { p->shuffleClicked(); });
     QObject::connect(playerManager, &PlayerManager::playModeChanged, this,
@@ -192,6 +182,16 @@ PlaylistControl::PlaylistControl(PlayerManager* playerManager, SettingsManager* 
 }
 
 PlaylistControl::~PlaylistControl() = default;
+
+QString PlaylistControl::name() const
+{
+    return QStringLiteral("Playlist Controls");
+}
+
+QString PlaylistControl::layoutName() const
+{
+    return QStringLiteral("PlaylistControls");
+}
 } // namespace Fooyin
 
 #include "moc_playlistcontrol.cpp"

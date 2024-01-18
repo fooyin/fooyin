@@ -24,10 +24,9 @@ set(SOURCES
     trackselectioncontroller.cpp
     widgetfilter.cpp
     widgetprovider.cpp
-    controls/controlwidget.cpp
     controls/playercontrol.cpp
     controls/playlistcontrol.cpp
-    controls/progresswidget.cpp
+    controls/seekbar.cpp
     controls/volumecontrol.cpp
     dialog/propertiesdialog.cpp
     info/infodelegate.cpp

@@ -19,48 +19,24 @@
 
 #pragma once
 
-#include <QWidget>
-
-class QHBoxLayout;
+#include <gui/fywidget.h>
 
 namespace Fooyin {
 class SettingsManager;
-class ClickableLabel;
-class Slider;
-class Track;
 class PlayerManager;
-enum class PlayState;
 
-class ProgressWidget : public QWidget
+class SeekBar : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit ProgressWidget(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
+    SeekBar(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
+    ~SeekBar() override;
 
-signals:
-    void movedSlider(int pos);
+    QString name() const override;
 
 private:
-    void reset();
-
-    void changeTrack(const Track& track);
-
-    void setCurrentPosition(uint64_t ms);
-    void updateTime(uint64_t elapsed);
-
-    void stateChanged(PlayState state);
-    void toggleRemaining();
-    void sliderDropped();
-
-    PlayerManager* m_playerManager;
-    SettingsManager* m_settings;
-
-    QHBoxLayout* m_layout;
-    Slider* m_slider;
-    ClickableLabel* m_elapsed;
-    ClickableLabel* m_total;
-    uint64_t m_max;
-    bool m_elapsedTotal;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

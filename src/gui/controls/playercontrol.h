@@ -19,19 +19,22 @@
 
 #pragma once
 
-#include <QWidget>
+#include <gui/fywidget.h>
 
 namespace Fooyin {
 class SettingsManager;
 class PlayerManager;
 
-class PlayerControl : public QWidget
+class PlayerControl : public FyWidget
 {
     Q_OBJECT
 
 public:
     PlayerControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
     ~PlayerControl() override;
+
+    QString name() const override;
+    QString layoutName() const override;
 
 private:
     struct Private;

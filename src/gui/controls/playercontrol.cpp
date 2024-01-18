@@ -28,8 +28,6 @@
 #include <QHBoxLayout>
 #include <QToolButton>
 
-constexpr QSize IconSize = {20, 20};
-
 namespace Fooyin {
 struct PlayerControl::Private
 {
@@ -56,16 +54,6 @@ struct PlayerControl::Private
         QObject::connect(prev, &QToolButton::clicked, playerManager, &PlayerManager::previous);
         QObject::connect(playPause, &QToolButton::clicked, playerManager, &PlayerManager::playPause);
         QObject::connect(next, &QToolButton::clicked, playerManager, &PlayerManager::next);
-
-        stop->setIconSize(IconSize);
-        prev->setIconSize(IconSize);
-        playPause->setIconSize(IconSize);
-        next->setIconSize(IconSize);
-
-        stop->setMaximumSize(IconSize);
-        prev->setMaximumSize(IconSize);
-        playPause->setMaximumSize(IconSize);
-        next->setMaximumSize(IconSize);
 
         stop->setAutoRaise(true);
         prev->setAutoRaise(true);
@@ -103,18 +91,16 @@ struct PlayerControl::Private
 };
 
 PlayerControl::PlayerControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
-    : QWidget{parent}
+    : FyWidget{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
     auto* layout = new QHBoxLayout(this);
-    layout->setSizeConstraint(QLayout::SetFixedSize);
-    layout->setSpacing(10);
-    layout->setContentsMargins(10, 0, 0, 0);
+    layout->setContentsMargins(0, 0, 0, 0);
 
-    layout->addWidget(p->stop, 0, Qt::AlignVCenter);
-    layout->addWidget(p->prev, 0, Qt::AlignVCenter);
-    layout->addWidget(p->playPause, 0, Qt::AlignVCenter);
-    layout->addWidget(p->next, 0, Qt::AlignVCenter);
+    layout->addWidget(p->stop);
+    layout->addWidget(p->prev);
+    layout->addWidget(p->playPause);
+    layout->addWidget(p->next);
 
     QObject::connect(p->playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
@@ -123,6 +109,17 @@ PlayerControl::PlayerControl(PlayerManager* playerManager, SettingsManager* sett
 }
 
 PlayerControl::~PlayerControl() = default;
+
+QString PlayerControl::name() const
+{
+    return QStringLiteral("Player Controls");
+}
+
+QString PlayerControl::layoutName() const
+{
+    return QStringLiteral("PlayerControls");
+}
+
 } // namespace Fooyin
 
 #include "moc_playercontrol.cpp"

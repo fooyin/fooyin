@@ -19,18 +19,21 @@
 
 #pragma once
 
-#include <QWidget>
+#include <gui/fywidget.h>
 
 namespace Fooyin {
 class SettingsManager;
 
-class VolumeControl : public QWidget
+class VolumeControl : public FyWidget
 {
     Q_OBJECT
 
 public:
     explicit VolumeControl(SettingsManager* settings, QWidget* parent = nullptr);
     ~VolumeControl() override;
+
+    QString name() const override;
+    QString layoutName() const override;
 
 private:
     struct Private;

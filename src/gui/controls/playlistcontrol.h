@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <QWidget>
+#include <gui/fywidget.h>
 
 class QHBoxLayout;
 
@@ -27,13 +27,16 @@ namespace Fooyin {
 class SettingsManager;
 class PlayerManager;
 
-class PlaylistControl : public QWidget
+class PlaylistControl : public FyWidget
 {
     Q_OBJECT
 
 public:
     explicit PlaylistControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
-    ~PlaylistControl();
+    ~PlaylistControl() override;
+
+    QString name() const override;
+    QString layoutName() const override;
 
 private:
     struct Private;
