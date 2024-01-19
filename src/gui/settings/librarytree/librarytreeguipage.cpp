@@ -67,7 +67,7 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(SettingsManager* settings)
     , m_showScrollbar{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_altColours{new QCheckBox(tr("Alternating Row Colours"), this)}
     , m_fontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), tr("Font"), this)}
-    , m_colourButton{new QPushButton(QIcon::fromTheme(Constants::Icons::TextColour), tr("Colour"), this)}
+    , m_colourButton{new QPushButton(this)}
     , m_rowHeight{new QSpinBox(this)}
 {
     auto* layout = new QGridLayout(this);
@@ -142,6 +142,13 @@ void LibraryTreeGuiPageWidget::setup()
     m_colourChanged    = options.colourChanged;
     m_colour           = options.colour;
     m_rowHeight->setValue(options.rowHeight);
+
+    m_fontButton->setText(QString{"%1 (%2)"}.arg(m_font.family()).arg(m_font.pointSize()));
+
+    QPixmap px(20, 20);
+    px.fill(m_colour);
+    m_colourButton->setIcon(px);
+    m_colourButton->setText(m_colour.name());
 }
 
 LibraryTreeGuiPage::LibraryTreeGuiPage(SettingsManager* settings)

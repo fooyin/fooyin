@@ -79,8 +79,8 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     , m_filterHeaders{new QCheckBox(tr("Show Headers"), this)}
     , m_filterScrollBars{new QCheckBox(tr("Show Scrollbars"), this)}
     , m_altRowColours{new QCheckBox(tr("Alternating Row Colours"), this)}
-    , m_fontButton{new QPushButton(QIcon::fromTheme(::Fooyin::Constants::Icons::Font), tr("Font"), this)}
-    , m_colourButton{new QPushButton(QIcon::fromTheme(::Fooyin::Constants::Icons::TextColour), tr("Colour"), this)}
+    , m_fontButton{new QPushButton(QIcon::fromTheme(Fooyin::Constants::Icons::Font), "", this)}
+    , m_colourButton{new QPushButton(this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
@@ -241,6 +241,13 @@ void FiltersGeneralPageWidget::setValues()
     m_colourChanged    = options.colourChanged;
     m_colour           = options.colour;
     m_rowHeight->setValue(options.rowHeight);
+
+    m_fontButton->setText(QString{"%1 (%2)"}.arg(m_font.family()).arg(m_font.pointSize()));
+
+    QPixmap px(20, 20);
+    px.fill(m_colour);
+    m_colourButton->setIcon(px);
+    m_colourButton->setText(m_colour.name());
 
     m_playlistEnabled->setChecked(m_settings->value<Settings::Filters::FilterPlaylistEnabled>());
     m_autoSwitch->setChecked(m_settings->value<Settings::Filters::FilterAutoSwitch>());

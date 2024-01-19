@@ -132,6 +132,7 @@ void CustomisableInput::setColour(const QColor& colour)
     QPixmap px(20, 20);
     px.fill(colour);
     p->colourButton->setIcon(px);
+    p->colourButton->setText(colour.name());
 }
 
 void CustomisableInput::setState(State state)
