@@ -19,6 +19,8 @@
 
 #include <gui/widgets/customisableinput.h>
 
+#include <gui/guiconstants.h>
+
 #include <QApplication>
 #include <QColorDialog>
 #include <QFontDialog>
@@ -33,6 +35,7 @@ struct CustomisableInput::Private
     CustomisableInput* self;
 
     QLineEdit* input;
+    QPushButton* optionsButton;
     QPushButton* fontButton;
     QPushButton* colourButton;
     QFont font;
@@ -42,6 +45,7 @@ struct CustomisableInput::Private
     explicit Private(CustomisableInput* self)
         : self{self}
         , input{new QLineEdit(self)}
+        , optionsButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "", self)}
         , fontButton{new QPushButton(self)}
         , colourButton{new QPushButton(self)}
     {
@@ -49,8 +53,18 @@ struct CustomisableInput::Private
         layout->setContentsMargins(0, 0, 0, 0);
 
         layout->addWidget(input);
+        layout->addWidget(optionsButton);
         layout->addWidget(fontButton);
         layout->addWidget(colourButton);
+
+        fontButton->hide();
+        colourButton->hide();
+    }
+
+    void toggleOptions() const
+    {
+        fontButton->setHidden(!fontButton->isHidden());
+        colourButton->setHidden(!colourButton->isHidden());
     }
 
     void showFontDialog()
@@ -85,6 +99,7 @@ CustomisableInput::CustomisableInput(Attributes attributes, QWidget* parent)
     setFont(p->font);
     setColour(QApplication::palette().text().color());
 
+    QObject::connect(p->optionsButton, &QPushButton::pressed, this, [this]() { p->toggleOptions(); });
     QObject::connect(p->fontButton, &QPushButton::pressed, this, [this]() { p->showFontDialog(); });
     QObject::connect(p->colourButton, &QPushButton::pressed, this, [this]() { p->showColourDialog(); });
 
