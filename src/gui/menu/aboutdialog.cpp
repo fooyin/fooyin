@@ -38,14 +38,11 @@ namespace {
 QString compilerVersion()
 {
 #if defined(Q_CC_CLANG)
-    QString platformSpecific;
-#if defined(Q_CC_MSVC)
-    platformSpecific = QLatin1String(" (clang-cl)");
-#endif
-    return QStringLiteral("Clang ") + QString::number(__clang_major__) + QChar('.') + QString::number(__clang_minor__)
-         + platformSpecific;
+    return QStringLiteral("Clang ") + QString::number(__clang_major__) + QChar('.') + QString::number(__clang_minor__);
 #elif defined(Q_CC_GNU)
-    return QLatin1String("GCC ") + QLatin1String(__VERSION__);
+    return QStringLiteral("GCC ") + QLatin1String(__VERSION__);
+#elif defined(Q_CC_MSVC)
+    return QStringLiteral("MSVC ") + QString::number(_MSC_VER);
 #endif
     return QStringLiteral("<unknown compiler>");
 }
