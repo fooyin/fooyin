@@ -134,10 +134,6 @@ struct PlaylistController::Private
 
     void saveStates() const
     {
-        if(states.empty()) {
-            return;
-        }
-
         QByteArray out;
         QDataStream stream(&out, QIODevice::WriteOnly);
         stream.setVersion(QDataStream::Qt_6_5);
