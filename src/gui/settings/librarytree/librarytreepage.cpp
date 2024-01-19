@@ -85,14 +85,18 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     m_groupList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_groupList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    QObject::connect(m_groupList->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
+    auto updateButtonState = [this]() {
         const auto selection = m_groupList->selectionModel()->selectedIndexes();
         if(auto* remove = m_groupList->removeAction()) {
             remove->setDisabled(std::ranges::all_of(selection, [](const QModelIndex& index) {
                 return index.data(Qt::UserRole).value<LibraryTreeGrouping>().isDefault;
             }));
         }
-    });
+    };
+
+    updateButtonState();
+
+    QObject::connect(m_groupList->selectionModel(), &QItemSelectionModel::selectionChanged, this, updateButtonState);
 
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
