@@ -70,6 +70,15 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_sortList, 0, 0, 1, 3);
 
+    QObject::connect(m_sortList->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
+        const auto selection = m_sortList->selectionModel()->selectedIndexes();
+        if(auto* remove = m_sortList->removeAction()) {
+            remove->setDisabled(std::ranges::all_of(selection, [](const QModelIndex& index) {
+                return index.data(Qt::UserRole).value<SortScript>().isDefault;
+            }));
+        }
+    });
+
     m_model->populate();
 }
 

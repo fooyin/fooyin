@@ -188,10 +188,6 @@ QVariant LibraryTreeGroupModel::headerData(int section, Qt::Orientation orientat
 
 QVariant LibraryTreeGroupModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::FontRole) {
-        return {};
-    }
-
     if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
@@ -202,18 +198,25 @@ QVariant LibraryTreeGroupModel::data(const QModelIndex& index, int role) const
         return item->font();
     }
 
-    switch(index.column()) {
-        case(0):
-            return item->group().index;
-        case(1): {
-            const QString& name = item->group().name;
-            return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
-        }
-        case(2): {
-            const QString& field = item->group().script;
-            return !field.isEmpty() ? field : QStringLiteral("<enter grouping here>");
+    if(role == Qt::UserRole) {
+        return QVariant::fromValue(item->group());
+    }
+
+    if(role == Qt::DisplayRole || role == Qt::EditRole) {
+        switch(index.column()) {
+            case(0):
+                return item->group().index;
+            case(1): {
+                const QString& name = item->group().name;
+                return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
+            }
+            case(2): {
+                const QString& field = item->group().script;
+                return !field.isEmpty() ? field : QStringLiteral("<enter grouping here>");
+            }
         }
     }
+
     return {};
 }
 
@@ -296,7 +299,7 @@ bool LibraryTreeGroupModel::removeRows(int row, int count, const QModelIndex& /*
                 endRemoveRows();
                 p->nodes.erase(item->group().index);
             }
-            else {
+            else if(!item->group().isDefault) {
                 item->setStatus(LibraryTreeGroupItem::Removed);
                 emit dataChanged({}, {}, {Qt::FontRole});
             }

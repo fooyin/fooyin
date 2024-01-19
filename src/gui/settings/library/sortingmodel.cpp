@@ -187,10 +187,6 @@ QVariant SortingModel::headerData(int section, Qt::Orientation orientation, int 
 
 QVariant SortingModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::FontRole && role != Qt::UserRole) {
-        return {};
-    }
-
     if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
@@ -205,16 +201,18 @@ QVariant SortingModel::data(const QModelIndex& index, int role) const
         return QVariant::fromValue(item->sortScript());
     }
 
-    switch(index.column()) {
-        case(0):
-            return item->sortScript().index;
-        case(1): {
-            const QString& name = item->sortScript().name;
-            return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
-        }
-        case(2): {
-            const QString& field = item->sortScript().script;
-            return !field.isEmpty() ? field : QStringLiteral("<enter sort script here>");
+    if(role == Qt::DisplayRole || role == Qt::EditRole) {
+        switch(index.column()) {
+            case(0):
+                return item->sortScript().index;
+            case(1): {
+                const QString& name = item->sortScript().name;
+                return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
+            }
+            case(2): {
+                const QString& field = item->sortScript().script;
+                return !field.isEmpty() ? field : QStringLiteral("<enter sort script here>");
+            }
         }
     }
 
@@ -300,7 +298,7 @@ bool SortingModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
                 endRemoveRows();
                 p->nodes.erase(item->sortScript().index);
             }
-            else {
+            else if(!item->sortScript().isDefault) {
                 item->setStatus(SortingItem::Removed);
                 emit dataChanged({}, {}, {Qt::FontRole});
             }

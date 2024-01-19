@@ -188,10 +188,6 @@ QVariant PlaylistColumnModel::headerData(int section, Qt::Orientation orientatio
 
 QVariant PlaylistColumnModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::FontRole) {
-        return {};
-    }
-
     if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
@@ -202,18 +198,25 @@ QVariant PlaylistColumnModel::data(const QModelIndex& index, int role) const
         return item->font();
     }
 
-    switch(index.column()) {
-        case(0):
-            return item->column().index;
-        case(1): {
-            const QString& name = item->column().name;
-            return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
-        }
-        case(2): {
-            const QString& field = item->column().field;
-            return !field.isEmpty() ? field : QStringLiteral("<enter field here>");
+    if(role == Qt::UserRole) {
+        return QVariant::fromValue(item->column());
+    }
+
+    if(role == Qt::DisplayRole || role == Qt::EditRole) {
+        switch(index.column()) {
+            case(0):
+                return item->column().index;
+            case(1): {
+                const QString& name = item->column().name;
+                return !name.isEmpty() ? name : QStringLiteral("<enter name here>");
+            }
+            case(2): {
+                const QString& field = item->column().field;
+                return !field.isEmpty() ? field : QStringLiteral("<enter field here>");
+            }
         }
     }
+
     return {};
 }
 

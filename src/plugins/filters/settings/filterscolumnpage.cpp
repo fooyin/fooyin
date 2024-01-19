@@ -67,6 +67,15 @@ FiltersColumnPageWidget::FiltersColumnPageWidget(ActionManager* actionManager, S
     m_columnList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_columnList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+    QObject::connect(m_columnList->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
+        const auto selection = m_columnList->selectionModel()->selectedIndexes();
+        if(auto* remove = m_columnList->removeAction()) {
+            remove->setDisabled(std::ranges::all_of(selection, [](const QModelIndex& index) {
+                return index.data(Qt::UserRole).value<FilterColumn>().isDefault;
+            }));
+        }
+    });
+
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(m_columnList);
 
