@@ -401,7 +401,7 @@ TrackList TrackDatabase::getAllTracks() const
     while(q.next()) {
         Track track;
         readToTrack(q, track);
-        tracks.push_back(track);
+        tracks.push_back(std::move(track));
     }
 
     return tracks;
