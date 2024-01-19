@@ -51,10 +51,10 @@ public:
     [[nodiscard]] QString name() const;
     [[nodiscard]] QStringList category() const;
 
-    virtual QWidget* widget();
-    virtual void apply();
-    virtual void finish();
-    virtual void reset();
+    QWidget* widget();
+    void apply();
+    void finish();
+    void reset();
 
 protected:
     void setId(const Id& id);
