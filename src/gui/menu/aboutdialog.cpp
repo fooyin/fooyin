@@ -56,7 +56,7 @@ QString copyright()
                    "You should have received a copy of the GNU General Public License along with this program.  If "
                    "not, see "
                    "%5"}
-        .arg("2023", "Luke Taylor", Fooyin::Constants::DisplayName,
+        .arg("2024", "Luke Taylor", Fooyin::Constants::DisplayName,
              "<a href=\"https://github.com/ludouzi/fooyin\">GitHub</a>.",
              "<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>.");
 }
