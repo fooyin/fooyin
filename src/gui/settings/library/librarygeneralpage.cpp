@@ -49,12 +49,8 @@ public:
     void apply() override;
     void reset() override;
 
-protected:
-    void resizeEvent(QResizeEvent* event) override;
-
 private:
     void setupValues();
-    void resizeTable();
     void addLibrary() const;
 
     LibraryManager* m_libraryManager;
@@ -86,7 +82,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
 
     m_libraryView->setExtendableColumn(1);
     m_libraryView->verticalHeader()->hide();
-    m_libraryView->horizontalHeader()->setStretchLastSection(true);
+    m_libraryView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_libraryView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
@@ -106,7 +102,6 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     QObject::connect(m_model, &LibraryModel::requestAddLibrary, this, &LibraryGeneralPageWidget::addLibrary);
 
     m_model->populate();
-    resizeTable();
     setupValues();
 }
 
@@ -128,25 +123,11 @@ void LibraryGeneralPageWidget::reset()
     setupValues();
 }
 
-void LibraryGeneralPageWidget::resizeEvent(QResizeEvent* event)
-{
-    SettingsPageWidget::resizeEvent(event);
-
-    resizeTable();
-}
-
 void LibraryGeneralPageWidget::setupValues()
 {
     m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
     m_monitorLibraries->setChecked(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
     m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
-}
-
-void LibraryGeneralPageWidget::resizeTable()
-{
-    m_libraryView->setColumnWidth(1, static_cast<int>(m_libraryView->width() * 0.25));
-    m_libraryView->setColumnWidth(2, static_cast<int>(m_libraryView->width() * 0.55));
-    m_libraryView->setColumnWidth(3, static_cast<int>(m_libraryView->width() * 0.20));
 }
 
 void LibraryGeneralPageWidget::addLibrary() const
