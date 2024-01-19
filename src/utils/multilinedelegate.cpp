@@ -27,21 +27,6 @@ MultiLineEditDelegate::MultiLineEditDelegate(QWidget* parent)
     : QStyledItemDelegate{parent}
 { }
 
-void MultiLineEditDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    if(index.data(Qt::EditRole).isValid()) {
-        QStyledItemDelegate::paint(painter, option, index);
-    }
-    else {
-        // When not in editing mode, display regular text
-        QStyleOptionViewItem opt = option;
-        initStyleOption(&opt, index);
-        QTextOption textOption;
-        textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-        painter->drawText(opt.rect, index.data().toString(), textOption);
-    }
-}
-
 void MultiLineEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
     auto* textEdit = qobject_cast<QTextEdit*>(editor);

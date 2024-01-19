@@ -31,7 +31,6 @@ class FYUTILS_EXPORT MultiLineEditDelegate : public QStyledItemDelegate
 public:
     explicit MultiLineEditDelegate(QWidget* parent);
 
-    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
     QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                           const QModelIndex& /*index*/) const override;
