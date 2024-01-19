@@ -100,7 +100,6 @@ struct SettingsDialog::Private
         message.setText("Are you sure?");
         message.setInformativeText(tr("This will reset all settings to default."));
 
-        message.addButton(QMessageBox::Ok);
         message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         message.setDefaultButton(QMessageBox::No);
 
