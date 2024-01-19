@@ -46,7 +46,6 @@ QWidget* MultiLineEditDelegate::createEditor(QWidget* parent, const QStyleOption
     editor->setTabChangesFocus(true);
     editor->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     editor->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    editor->setWordWrapMode(QTextOption::WordWrap);
     const QSize size = {option.rect.width(), 150};
     editor->setFixedSize(size);
     return editor;
