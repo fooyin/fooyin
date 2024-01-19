@@ -34,6 +34,7 @@
 #include <QGroupBox>
 #include <QInputDialog>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QVBoxLayout>
@@ -184,7 +185,21 @@ void GuiGeneralPageWidget::importLayout()
         return;
     }
 
-    m_layoutProvider->importLayout(layoutFile);
+    if(const auto layout = m_layoutProvider->importLayout(layoutFile)) {
+        QMessageBox message;
+        message.setIcon(QMessageBox::Warning);
+        message.setText("Replace existing layout?");
+        message.setInformativeText(tr("Unless exported, the current layout will be lost."));
+
+        message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        message.setDefaultButton(QMessageBox::No);
+
+        const int buttonClicked = message.exec();
+
+        if(buttonClicked == QMessageBox::Yes) {
+            m_editableLayout->changeLayout(layout.value());
+        }
+    }
 }
 
 void GuiGeneralPageWidget::exportLayout()

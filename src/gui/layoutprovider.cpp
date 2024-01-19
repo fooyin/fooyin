@@ -23,8 +23,6 @@
 
 #include <utils/fileutils.h>
 
-#include <QDir>
-#include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QJsonArray>
@@ -60,13 +58,12 @@ struct LayoutProvider::Private
     Layout currentLayout;
     QFile layoutFile{Gui::activeLayoutPath()};
 
-    bool layoutExists(const QString& name)
+    bool layoutExists(const QString& name) const
     {
-        return std::ranges::any_of(std::as_const(layouts),
-                                   [name](const Layout& layout) { return layout.name == name; });
+        return std::ranges::any_of(layouts, [name](const Layout& layout) { return layout.name == name; });
     }
 
-    std::optional<Layout> addLayout(const QByteArray& json)
+    std::optional<Layout> addLayout(const QByteArray& json, bool import = false)
     {
         auto layout = LayoutProvider::readLayout(json);
         if(!layout) {
@@ -74,7 +71,13 @@ struct LayoutProvider::Private
             return {};
         }
 
-        if(layoutExists(layout->name)) {
+        const auto existingLayout = std::ranges::find_if(
+            std::as_const(layouts), [layout](const Layout& existing) { return existing.name == layout->name; });
+
+        if(existingLayout != layouts.cend()) {
+            if(import) {
+                return *existingLayout;
+            }
             qInfo() << "A layout with the same name (" << layout->name << ") already exists";
             return {};
         }
@@ -231,31 +234,32 @@ std::optional<Layout> LayoutProvider::readLayout(const QByteArray& json)
     return Layout{name, layout.first().toObject()};
 }
 
-void LayoutProvider::importLayout(const QString& path)
+std::optional<Layout> LayoutProvider::importLayout(const QString& path)
 {
     QFile file{path};
     const QFileInfo fileInfo{file};
 
-    if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath())) {
-        return;
-    }
-
     if(!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Could not open layout for reading: " << path;
-        return;
+        return {};
     }
 
     const QByteArray json = file.readAll();
     file.close();
 
-    if(!json.isEmpty()) {
+    if(json.isEmpty()) {
+        return {};
+    }
+
+    if(!Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath())) {
         const QString newFile = Gui::layoutsPath() + fileInfo.fileName();
         file.copy(newFile);
-        p->addLayout(json);
     }
+
+    return p->addLayout(json, true);
 }
 
-void LayoutProvider::exportLayout(const Layout& layout, const QString path)
+bool LayoutProvider::exportLayout(const Layout& layout, const QString& path)
 {
     QString filepath{path};
     if(!filepath.contains(".fyl"_L1)) {
@@ -264,7 +268,7 @@ void LayoutProvider::exportLayout(const Layout& layout, const QString path)
 
     QFile file{filepath};
     if(!file.open(QIODevice::WriteOnly)) {
-        return;
+        return false;
     }
 
     const QByteArray json = layoutToJson(layout);
@@ -276,5 +280,7 @@ void LayoutProvider::exportLayout(const Layout& layout, const QString path)
     if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath()) && !p->layoutExists(layout.name)) {
         p->layouts.push_back(layout);
     }
+
+    return true;
 }
 } // namespace Fooyin

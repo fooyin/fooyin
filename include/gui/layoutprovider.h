@@ -55,8 +55,8 @@ public:
 
     static std::optional<Layout> readLayout(const QByteArray& json);
 
-    void importLayout(const QString& path);
-    void exportLayout(const Layout& layout, const QString path);
+    std::optional<Layout> importLayout(const QString& path);
+    bool exportLayout(const Layout& layout, const QString& path);
 
 private:
     struct Private;
