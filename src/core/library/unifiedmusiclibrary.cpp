@@ -29,8 +29,6 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QTimer>
-
 #include <QCoroCore>
 
 #include <ranges>
@@ -39,10 +37,10 @@
 using namespace std::chrono_literals;
 
 namespace {
-QCoro::Task<Fooyin::TrackList> recalSortFields(QString sort, Fooyin::TrackList tracks)
+QCoro::Task<Fooyin::TrackList> recalSortTracks(QString sort, Fooyin::TrackList tracks)
 {
     co_return co_await Fooyin::Utils::asyncExec(
-        [&sort, &tracks]() { return Fooyin::Sorting::calcSortFields(sort, tracks); });
+        [&sort, &tracks]() { return Fooyin::Sorting::calcSortTracks(sort, tracks); });
 }
 
 QCoro::Task<Fooyin::TrackList> resortTracks(Fooyin::TrackList tracks)
@@ -74,28 +72,26 @@ struct UnifiedMusicLibrary::Private
 
     QCoro::Task<void> loadTracks(TrackList trackToLoad)
     {
-        co_await addTracks(trackToLoad, false);
-        QMetaObject::invokeMethod(self, "tracksLoaded", Q_ARG(const TrackList&, trackToLoad));
+        TrackList sortedTracks
+            = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), trackToLoad);
+        tracks = std::move(sortedTracks);
+        QMetaObject::invokeMethod(self, "tracksLoaded", Q_ARG(const TrackList&, tracks));
     }
 
-    QCoro::Task<void> addTracks(TrackList newTracks, bool notify = true)
+    QCoro::Task<void> addTracks(TrackList newTracks)
     {
-        const TrackList unsortedTracks
-            = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), newTracks);
-
-        const TrackList sortedTracks = co_await resortTracks(unsortedTracks);
+        const TrackList sortedTracks
+            = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), newTracks);
 
         std::ranges::copy(sortedTracks, std::back_inserter(tracks));
         tracks = co_await resortTracks(tracks);
 
-        if(notify) {
-            QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, sortedTracks));
-        }
+        QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, sortedTracks));
     }
 
     QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
     {
-        tracksToUpdate = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
+        tracksToUpdate = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
 
         std::ranges::for_each(tracksToUpdate, [this](const Track& track) {
             std::ranges::replace_if(
@@ -120,8 +116,7 @@ struct UnifiedMusicLibrary::Private
 
     QCoro::Task<void> scannedTracks(TrackList tracksScanned)
     {
-        tracksScanned = co_await recalSortFields(settings->value<Settings::Core::LibrarySortScript>(), tracksScanned);
-        tracksScanned = co_await resortTracks(tracksScanned);
+        tracksScanned = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksScanned);
 
         addTracks(tracksScanned);
 
@@ -166,9 +161,8 @@ struct UnifiedMusicLibrary::Private
 
     QCoro::Task<void> changeSort(QString sort)
     {
-        const TrackList recalTracks  = co_await recalSortFields(sort, tracks);
-        const TrackList sortedTracks = co_await resortTracks(recalTracks);
-        tracks                       = sortedTracks;
+        TrackList sortedTracks = co_await recalSortTracks(sort, tracks);
+        tracks                 = std::move(sortedTracks);
 
         QMetaObject::invokeMethod(self, "tracksSorted", Q_ARG(const TrackList&, tracks));
     }
