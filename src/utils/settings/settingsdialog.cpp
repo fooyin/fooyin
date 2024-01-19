@@ -26,8 +26,8 @@
 #include <utils/settings/settingspage.h>
 
 #include <QDialogButtonBox>
+#include <QMessageBox>
 #include <QPushButton>
-#include <QSize>
 #include <QStackedLayout>
 #include <QTreeView>
 
@@ -52,7 +52,8 @@ struct SettingsDialog::Private
         , model{new SettingsModel(self)}
         , categoryTree{new SimpleTreeView(self)}
         , stackedLayout{new QStackedLayout()}
-        , buttonBox{new QDialogButtonBox(QDialogButtonBox::Reset | QDialogButtonBox::Ok | QDialogButtonBox::Apply
+        , buttonBox{new QDialogButtonBox(QDialogButtonBox::RestoreDefaults | QDialogButtonBox::Reset
+                                             | QDialogButtonBox::Ok | QDialogButtonBox::Apply
                                              | QDialogButtonBox::Cancel,
                                          self)}
         , pages{std::move(pageList)}
@@ -67,6 +68,8 @@ struct SettingsDialog::Private
         categoryTree->expandAll();
 
         buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+        buttonBox->button(QDialogButtonBox::RestoreDefaults)->setText(tr("Reset Page"));
+        buttonBox->button(QDialogButtonBox::Reset)->setText(tr("Reset All"));
 
         auto* mainGridLayout = new QGridLayout(self);
         mainGridLayout->addWidget(categoryTree, 0, 0);
@@ -87,6 +90,26 @@ struct SettingsDialog::Private
     {
         if(auto* page = findPage(currentPage)) {
             page->reset();
+        }
+    }
+
+    void resetAll()
+    {
+        QMessageBox message;
+        message.setIcon(QMessageBox::Warning);
+        message.setText("Are you sure?");
+        message.setInformativeText(tr("This will reset all settings to default."));
+
+        message.addButton(QMessageBox::Ok);
+        message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        message.setDefaultButton(QMessageBox::No);
+
+        const int buttonClicked = message.exec();
+
+        if(buttonClicked == QMessageBox::Yes) {
+            for(auto* page : pages) {
+                page->reset();
+            }
         }
     }
 
@@ -186,6 +209,8 @@ SettingsDialog::SettingsDialog(const PageList& pages, QWidget* parent)
     QObject::connect(p->buttonBox->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this,
                      [this]() { p->apply(); });
     QObject::connect(p->buttonBox->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this,
+                     [this]() { p->resetAll(); });
+    QObject::connect(p->buttonBox->button(QDialogButtonBox::RestoreDefaults), &QAbstractButton::clicked, this,
                      [this]() { p->reset(); });
     QObject::connect(p->buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::accept);
     QObject::connect(p->buttonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
