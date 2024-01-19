@@ -29,8 +29,7 @@ MultiLineEditDelegate::MultiLineEditDelegate(QWidget* parent)
 
 void MultiLineEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
-    auto* textEdit = qobject_cast<QTextEdit*>(editor);
-    if(textEdit) {
+    if(const auto* textEdit = qobject_cast<QTextEdit*>(editor)) {
         model->setData(index, textEdit->toPlainText(), Qt::EditRole);
     }
     else {
@@ -49,6 +48,17 @@ QWidget* MultiLineEditDelegate::createEditor(QWidget* parent, const QStyleOption
     const QSize size = {option.rect.width(), 150};
     editor->setFixedSize(size);
     return editor;
+}
+
+void MultiLineEditDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
+{
+    if(auto* textEdit = qobject_cast<QTextEdit*>(editor)) {
+        textEdit->setText(index.data().toString());
+        textEdit->selectAll();
+    }
+    else {
+        QStyledItemDelegate::setEditorData(editor, index);
+    }
 }
 } // namespace Fooyin
 
