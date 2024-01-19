@@ -304,7 +304,7 @@ struct PlaylistPopulator::Private
         runBatch(remaining);
     }
 
-    void runTracksGroup(const std::map<int, std::vector<Track>>& tracks)
+    void runTracksGroup(const std::map<int, TrackList>& tracks)
     {
         for(const auto& [index, trackGroup] : tracks) {
             std::vector<QString> trackKeys;
@@ -356,7 +356,7 @@ void PlaylistPopulator::run(int playlistId, const PlaylistPreset& preset, const 
 }
 
 void PlaylistPopulator::runTracks(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
-                                  const std::map<int, std::vector<Track>>& tracks)
+                                  const std::map<int, TrackList>& tracks)
 {
     setState(Running);
 
