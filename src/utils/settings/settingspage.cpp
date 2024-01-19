@@ -53,11 +53,10 @@ void SettingsPage::setWidgetCreator(const WidgetCreator& widgetCreator)
 
 QWidget* SettingsPage::widget()
 {
-    if(!m_widget) {
-        if(m_widgetCreator) {
-            m_widget = m_widgetCreator();
-        }
+    if(!m_widget && m_widgetCreator) {
+        m_widget = m_widgetCreator();
     }
+
     return m_widget;
 }
 
@@ -83,7 +82,7 @@ void SettingsPage::finish()
 
 void SettingsPage::reset()
 {
-    if(m_widget) {
+    if(widget()) {
         if(auto* pageWidget = qobject_cast<SettingsPageWidget*>(m_widget)) {
             pageWidget->reset();
         }
