@@ -102,4 +102,26 @@ QString findUniqueString(const QString& name, const T& elements, StringExtractor
 
     return count > 0 ? name + " (" + QString::number(count) + ")" : name;
 }
+
+template <typename T>
+class asRange
+{
+public:
+    explicit asRange(T& data)
+        : m_data{data}
+    { }
+
+    auto begin()
+    {
+        return m_data.keyValueBegin();
+    }
+
+    auto end()
+    {
+        return m_data.keyValueEnd();
+    }
+
+private:
+    T& m_data;
+};
 } // namespace Fooyin::Utils

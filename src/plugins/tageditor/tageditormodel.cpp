@@ -24,6 +24,7 @@
 #include <core/constants.h>
 #include <core/scripting/scriptregistry.h>
 #include <gui/trackselectioncontroller.h>
+#include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
 constexpr auto DefaultFieldText = "<input field name>";
@@ -91,7 +92,7 @@ struct TagEditorModel::Private
         for(const Track& track : tracks) {
             const auto trackTags = track.extraTags();
 
-            for(const auto& [field, values] : trackTags) {
+            for(const auto& [field, values] : Utils::asRange(trackTags)) {
                 if(values.empty()) {
                     continue;
                 }

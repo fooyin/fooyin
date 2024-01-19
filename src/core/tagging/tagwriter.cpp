@@ -22,6 +22,7 @@
 #include "tagdefs.h"
 
 #include <core/track.h>
+#include <utils/helpers.h>
 
 #include <taglib/aifffile.h>
 #include <taglib/apefile.h>
@@ -229,14 +230,17 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
                Fooyin::Tag::Lyrics,      Fooyin::Tag::Date,       Fooyin::Tag::Rating};
 
         const auto customTags = track.extraTags();
-        for(const auto& [tag, values] : customTags) {
+        for(const auto& [tag, values] : Fooyin::Utils::asRange(customTags)) {
             const TagLib::String name = convertString(tag);
             if(!baseTags.contains(name)) {
-                if(values.empty()) {
-                    oldProperties.erase(name);
-                }
                 oldProperties.replace(name, convertStringList(values));
             }
+        }
+
+        const auto removedTags = track.removedTags();
+        for(const auto& tag : removedTags) {
+            const TagLib::String name = convertString(tag);
+            oldProperties.erase(name);
         }
     }
 }
@@ -364,19 +368,23 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track)
            Fooyin::Tag::DiscNumber};
 
     const auto customTags = track.extraTags();
-    for(const auto& [tag, values] : customTags) {
+    for(const auto& [tag, values] : Fooyin::Utils::asRange(customTags)) {
         if(!baseMp4Tags.contains(tag)) {
             TagLib::String tagName = findMp4Tag(tag);
             if(tagName.isEmpty()) {
                 tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
             }
-            if(values.empty()) {
-                mp4Tags->removeItem(tagName);
-            }
-            else {
-                mp4Tags->setItem(tagName, convertStringList(values));
-            }
+            mp4Tags->setItem(tagName, convertStringList(values));
         }
+    }
+
+    const auto removedTags = track.removedTags();
+    for(const auto& tag : removedTags) {
+        TagLib::String name = convertString(tag);
+        if(name.isEmpty()) {
+            name = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
+        }
+        mp4Tags->removeItem(name);
     }
 }
 

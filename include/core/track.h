@@ -24,10 +24,8 @@
 #include <QList>
 #include <QSharedDataPointer>
 
-#include <map>
-
 namespace Fooyin {
-using ExtraTags = std::map<QString, QStringList>;
+using ExtraTags = QMap<QString, QStringList>;
 
 /*!
  * Represents a music track and it's associated metadata.
@@ -108,6 +106,7 @@ public:
 
     [[nodiscard]] QStringList extraTag(const QString& tag) const;
     [[nodiscard]] ExtraTags extraTags() const;
+    [[nodiscard]] QStringList removedTags() const;
     [[nodiscard]] QByteArray serialiseExtrasTags() const;
 
     [[nodiscard]] uint64_t fileSize() const;
@@ -183,6 +182,3 @@ using TrackFieldMap = std::unordered_map<QString, Track>;
 
 FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& tracks);
 FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fooyin::TrackIds& tracks);
-
-FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::ExtraTags& tags);
-FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fooyin::ExtraTags& ExtraTags);

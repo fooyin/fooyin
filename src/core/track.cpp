@@ -56,6 +56,7 @@ struct Track::Private : public QSharedData
     int year{-1};
     QString coverPath;
     ExtraTags extraTags;
+    QStringList removedTags;
 
     uint64_t filesize{0};
     int bitrate{0};
@@ -70,10 +71,10 @@ struct Track::Private : public QSharedData
 
     QString sort;
 
-    explicit Private(QString filepath = {})
+    explicit Private(QString filepath)
         : filepath{std::move(filepath)}
     {
-        filename = QFileInfo{filepath}.fileName();
+        filename = QFileInfo{this->filepath}.fileName();
     }
 };
 
@@ -295,7 +296,7 @@ bool Track::hasEmbeddedCover() const
 QStringList Track::extraTag(const QString& tag) const
 {
     if(p->extraTags.contains(tag)) {
-        return p->extraTags.at(tag);
+        return p->extraTags.value(tag);
     }
     return {};
 }
@@ -305,19 +306,24 @@ ExtraTags Track::extraTags() const
     return p->extraTags;
 }
 
+QStringList Track::removedTags() const
+{
+    return p->removedTags;
+}
+
 QByteArray Track::serialiseExtrasTags() const
 {
     if(p->extraTags.empty()) {
         return {};
     }
 
-    QByteArray tags;
-    QDataStream out(&tags, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_6_5);
+    QByteArray out;
+    QDataStream stream(&out, QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_6_5);
 
-    out << p->extraTags;
+    stream << p->extraTags;
 
-    return tags;
+    return out;
 }
 
 uint64_t Track::fileSize() const
@@ -527,7 +533,8 @@ void Track::addExtraTag(const QString& tag, const QString& value)
 void Track::removeExtraTag(const QString& tag)
 {
     if(p->extraTags.contains(tag)) {
-        p->extraTags[tag] = {};
+        p->removedTags.append(tag);
+        p->extraTags.remove(tag);
     }
 }
 
@@ -536,7 +543,13 @@ void Track::replaceExtraTag(const QString& tag, const QString& value)
     if(tag.isEmpty() || value.isEmpty()) {
         return;
     }
-    p->extraTags[tag] = {value};
+
+    if(value.isEmpty()) {
+        removeExtraTag(tag);
+    }
+    else {
+        p->extraTags[tag] = {value};
+    }
 }
 
 void Track::clearExtraTags()
@@ -546,14 +559,15 @@ void Track::clearExtraTags()
 
 void Track::storeExtraTags(const QByteArray& tags)
 {
-    if(!tags.isEmpty()) {
-        QByteArray tagsArray{tags};
-
-        QDataStream in(&tagsArray, QIODevice::ReadOnly);
-        in.setVersion(QDataStream::Qt_6_5);
-
-        in >> p->extraTags;
+    if(tags.isEmpty()) {
+        return;
     }
+
+    QByteArray in{tags};
+    QDataStream stream(&in, QIODevice::ReadOnly);
+    stream.setVersion(QDataStream::Qt_6_5);
+
+    stream >> p->extraTags;
 }
 
 void Track::setFileSize(uint64_t fileSize)
@@ -621,7 +635,8 @@ size_t qHash(const Track& track)
 QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& trackIds)
 {
     stream << static_cast<int>(trackIds.size());
-    for(int id : trackIds) {
+
+    for(const int id : trackIds) {
         stream << id;
     }
     return stream;
@@ -633,42 +648,13 @@ QDataStream& operator>>(QDataStream& stream, Fooyin::TrackIds& trackIds)
     stream >> size;
 
     trackIds.reserve(size);
-    for(int i{0}; i < size; ++i) {
+
+    while(size > 0) {
+        --size;
+
         int trackId;
         stream >> trackId;
         trackIds.push_back(trackId);
     }
-    return stream;
-}
-
-QDataStream& operator<<(QDataStream& stream, const Fooyin::ExtraTags& tags)
-{
-    stream << static_cast<int>(tags.size());
-
-    for(const auto& [field, values] : tags) {
-        if(!values.isEmpty()) {
-            stream << field;
-            stream << values;
-        }
-    }
-
-    return stream;
-}
-
-QDataStream& operator>>(QDataStream& stream, Fooyin::ExtraTags& tags)
-{
-    int size;
-    stream >> size;
-
-    for(int i{0}; i < size; ++i) {
-        QString field;
-        stream >> field;
-
-        QStringList values;
-        stream >> values;
-
-        tags.emplace(field, values);
-    }
-
     return stream;
 }
