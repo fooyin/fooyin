@@ -88,7 +88,6 @@ set(SOURCES
     settings/playlist/playlistcolumnmodel.cpp
     settings/playlist/playlistcolumnpage.cpp
     settings/playlist/playlistgeneralpage.cpp
-    settings/playlist/playlistguipage.cpp
     settings/playlist/playlistpresetspage.cpp
     settings/shortcuts/shortcutsmodel.cpp
     settings/shortcuts/shortcutspage.cpp

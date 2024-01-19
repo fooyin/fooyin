@@ -50,7 +50,6 @@
 #include "settings/librarytree/librarytreepage.h"
 #include "settings/playlist/playlistcolumnpage.h"
 #include "settings/playlist/playlistgeneralpage.h"
-#include "settings/playlist/playlistguipage.h"
 #include "settings/playlist/playlistpresetspage.h"
 #include "settings/plugins/pluginspage.h"
 #include "settings/shortcuts/shortcutspage.h"
@@ -125,7 +124,6 @@ struct GuiApplication::Private
     LibrarySortingPage librarySortingPage;
     ShortcutsPage shortcutsPage;
     PlaylistGeneralPage playlistGeneralPage;
-    PlaylistGuiPage playlistGuiPage;
     PlaylistPresetsPage playlistPresetsPage;
     PlaylistColumnPage playlistColumnPage;
     EnginePage enginePage;
@@ -169,7 +167,6 @@ struct GuiApplication::Private
         , librarySortingPage{actionManager, settingsManager}
         , shortcutsPage{actionManager, settingsManager}
         , playlistGeneralPage{settingsManager}
-        , playlistGuiPage{settingsManager}
         , playlistPresetsPage{settingsManager}
         , playlistColumnPage{actionManager, settingsManager}
         , enginePage{settingsManager, engineHandler}
