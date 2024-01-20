@@ -8,11 +8,8 @@ project(
     LANGUAGES CXX
 )
 
-set(HEADERS
-    ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
-)
-
 set(SOURCES
+    ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
     fywidget.cpp
     guiapplication.cpp
     mainmenubar.cpp
@@ -104,7 +101,7 @@ set(SOURCES
 create_fooyin_library(
     fooyin_gui
     EXPORT_NAME Gui
-    SOURCES ${HEADERS} ${SOURCES}
+    SOURCES ${SOURCES}
 )
 
 target_link_libraries(
