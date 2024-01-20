@@ -77,7 +77,6 @@ public:
     [[nodiscard]] bool isHeaderHidden() const;
     [[nodiscard]] bool isScrollbarHidden() const;
 
-    void setHeaderHidden(bool showHeader) const;
     void setScrollbarHidden(bool showScrollBar) const;
     void selectionChanged() const;
     void trackIndexesChanged(int playingIndex) const;
