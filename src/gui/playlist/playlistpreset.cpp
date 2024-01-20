@@ -29,7 +29,6 @@ TextBlock::TextBlock()
 
 TextBlock::TextBlock(QString script, int fontDelta)
     : script{std::move(script)}
-    , fontDelta{fontDelta}
     , colour{QApplication::palette().text().color()}
 {
     font.setPointSize(font.pointSize() + fontDelta);
@@ -39,7 +38,6 @@ QDataStream& operator<<(QDataStream& stream, const TextBlock& block)
 {
     stream << block.script;
     stream << block.fontChanged;
-    stream << block.fontDelta;
     if(block.fontChanged) {
         stream << block.font;
     }
@@ -54,12 +52,8 @@ QDataStream& operator>>(QDataStream& stream, TextBlock& block)
 {
     stream >> block.script;
     stream >> block.fontChanged;
-    stream >> block.fontDelta;
     if(block.fontChanged) {
         stream >> block.font;
-    }
-    else {
-        block.font.setPointSize(block.font.pointSize() + block.fontDelta);
     }
     stream >> block.colourChanged;
     if(block.colourChanged) {

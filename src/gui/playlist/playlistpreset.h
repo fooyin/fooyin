@@ -36,7 +36,6 @@ struct TextBlock
     QString script;
 
     bool fontChanged{false};
-    int fontDelta{0};
     QFont font;
 
     bool colourChanged{false};
@@ -96,7 +95,7 @@ struct HeaderRow
     TextBlockList sideText;
     TextBlockList info;
 
-    int rowHeight{73};
+    int rowHeight{76};
     bool showCover{true};
     bool simple{false};
 
@@ -121,7 +120,7 @@ struct SubheaderRow
     TextBlockList leftText;
     TextBlockList rightText;
 
-    int rowHeight{22};
+    int rowHeight{25};
 
     inline bool operator==(const SubheaderRow& other) const
     {
@@ -143,7 +142,7 @@ struct TrackRow
     TextBlockList leftText;
     TextBlockList rightText;
 
-    int rowHeight{22};
+    int rowHeight{25};
 
     inline bool operator==(const TrackRow& other) const
     {

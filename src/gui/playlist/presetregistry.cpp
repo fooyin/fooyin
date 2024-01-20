@@ -37,18 +37,21 @@ void PresetRegistry::loadDefaults()
 
     preset.name = QStringLiteral("Album - Disc");
 
-    preset.header.rowHeight = 76;
-    preset.header.title.emplace_back("$if2(%albumartist%,Unknown Artist)", 2);
+    TextBlock titleBlock{"$if2(%albumartist%,Unknown Artist)", 2};
+    titleBlock.font.setBold(true);
+    preset.header.title.emplace_back(titleBlock);
     preset.header.subtitle.emplace_back("$if2(%album%,Unknown Album)", 1);
-    preset.header.sideText.emplace_back("%year%", 1);
+    TextBlock sideBlock{"%year%", 1};
+    sideBlock.font.setBold(true);
+    preset.header.sideText.emplace_back(sideBlock);
     preset.header.info.emplace_back("[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%",
                                     -1);
+
     Fooyin::SubheaderRow subheader;
-    subheader.rowHeight = 19;
-    subheader.leftText.emplace_back("$ifgreater(%disctotal%,1,Disc #%disc%)", 1);
-    subheader.rightText.emplace_back("$ifgreater(%disctotal%,1,%playtime%)", 1);
+    subheader.leftText.emplace_back("$ifgreater(%disctotal%,1,Disc #%disc%)");
+    subheader.rightText.emplace_back("$ifgreater(%disctotal%,1,%playtime%)");
     preset.subHeaders.push_back(subheader);
-    preset.track.rowHeight = 24;
+
     preset.track.leftText.emplace_back("$num(%track%,2).   ");
     preset.track.leftText.emplace_back("%title%");
     preset.track.rightText.emplace_back("$ifgreater(%playcount%,0,%playcount% |)      ");
@@ -67,8 +70,7 @@ void PresetRegistry::loadDefaults()
 
     preset.name = QStringLiteral("Simple Header");
 
-    preset.header.simple    = true;
-    preset.header.rowHeight = 30;
+    preset.header.simple = true;
     preset.header.title.clear();
     preset.header.subtitle.clear();
     preset.header.title.emplace_back("$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)", 2);
