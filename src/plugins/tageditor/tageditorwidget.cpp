@@ -27,13 +27,16 @@
 #include <utils/actions/widgetcontext.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QCheckBox>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QMenu>
+#include <QMessageBox>
 #include <QTableView>
 
-constexpr auto TagEditorState = "TagEditor/State";
+constexpr auto TagEditorState        = "TagEditor/State";
+constexpr auto TagEditorDontAskAgain = "TagEditor/DontAskAgain";
 
 namespace Fooyin::TagEditor {
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
@@ -156,7 +159,34 @@ QString TagEditorWidget::layoutName() const
 
 void TagEditorWidget::apply()
 {
-    p->model->processQueue();
+    if(!p->model->tagsHaveChanged()) {
+        return;
+    }
+
+    if(p->settings->fileValue(TagEditorDontAskAgain).toBool()) {
+        p->model->processQueue();
+        return;
+    }
+
+    QMessageBox message;
+    message.setIcon(QMessageBox::Warning);
+    message.setText("Are you sure?");
+    message.setInformativeText(tr("Metadata in the associated files will be overwritten."));
+
+    auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &message);
+    message.setCheckBox(dontAskAgain);
+
+    message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    message.setDefaultButton(QMessageBox::No);
+
+    const int buttonClicked = message.exec();
+
+    if(buttonClicked == QMessageBox::Yes) {
+        if(dontAskAgain->isChecked()) {
+            p->settings->fileSet(TagEditorDontAskAgain, true);
+        }
+        p->model->processQueue();
+    }
 }
 
 void TagEditorWidget::contextMenuEvent(QContextMenuEvent* /*event*/) { }

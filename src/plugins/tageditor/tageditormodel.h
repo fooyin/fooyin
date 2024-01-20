@@ -49,6 +49,7 @@ public:
     [[nodiscard]] bool removeRows(int row, int count,  const QModelIndex &parent) override;
 
     [[nodiscard]] static QString defaultFieldText();
+    [[nodiscard]] bool tagsHaveChanged() const;
 
     void addPendingRow() override;
     void removePendingRow() override;

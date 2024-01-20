@@ -28,7 +28,7 @@
 #include <utils/settings/settingsmanager.h>
 
 constexpr auto DefaultFieldText = "<input field name>";
-constexpr auto TrackLimit = 40;
+constexpr auto TrackLimit       = 40;
 
 namespace Fooyin::TagEditor {
 using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
@@ -466,6 +466,11 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
 QString TagEditorModel::defaultFieldText()
 {
     return DefaultFieldText;
+}
+
+bool TagEditorModel::tagsHaveChanged() const
+{
+    return std::ranges::any_of(p->tags, [](const auto& tag) { return tag.second.status() != TagEditorItem::None; });
 }
 
 void TagEditorModel::addPendingRow()
