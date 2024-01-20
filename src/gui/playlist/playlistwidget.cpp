@@ -58,12 +58,7 @@ using namespace Qt::Literals::StringLiterals;
 namespace {
 void hideHeader(QHeaderView* header, bool hide)
 {
-    if(hide) {
-        header->setFixedHeight(0);
-    }
-    else if(header->sizeHint().height() > 0) {
-        header->setFixedHeight(header->sizeHint().height());
-    }
+    header->setFixedHeight(hide ? 0 : QWIDGETSIZE_MAX);
 }
 
 void expandTree(QTreeView* view, QAbstractItemModel* model, const QModelIndex& parent, int first, int last)
