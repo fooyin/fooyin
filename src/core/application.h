@@ -37,6 +37,6 @@ public:
 
 private:
     struct Private;
-    std::unique_ptr<Application::Private> p;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin
