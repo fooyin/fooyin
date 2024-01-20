@@ -275,9 +275,10 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist, bool savePlaylist
         return;
     }
 
-    currentPlaylist = playlist;
+    if(std::exchange(currentPlaylist, playlist)) {
+        playlistView->setUpdatesEnabled(false);
+    }
 
-    playlistView->setUpdatesEnabled(false);
     model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, currentPlaylist);
 }
 
@@ -758,8 +759,8 @@ void PlaylistWidgetPrivate::addPlaylistMenu(QMenu* parent)
 {
     auto* playlistMenu = new QMenu(Fooyin::PlaylistWidget::tr("Playlists"), parent);
 
-    const auto currentPlaylist = playlistController->currentPlaylist();
-    const auto playlists       = playlistController->playlists();
+    const auto* currentPlaylist = playlistController->currentPlaylist();
+    const auto playlists        = playlistController->playlists();
 
     for(const auto& playlist : playlists) {
         if(playlist != currentPlaylist) {
@@ -857,6 +858,7 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
             if(alignment != Qt::AlignLeft) {
                 colStr += ":"_L1 + QString::number(alignment.toInt());
             }
+
             columns.push_back(colStr);
         }
 
