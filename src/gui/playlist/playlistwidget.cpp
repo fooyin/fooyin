@@ -56,11 +56,6 @@
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
-void hideHeader(QHeaderView* header, bool hide)
-{
-    header->setFixedHeight(hide ? 0 : QWIDGETSIZE_MAX);
-}
-
 void expandTree(QTreeView* view, QAbstractItemModel* model, const QModelIndex& parent, int first, int last)
 {
     while(first <= last) {
@@ -149,7 +144,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
 
     layout->addWidget(playlistView);
 
-    hideHeader(header, !settings->value<PlaylistHeader>());
+    setHeaderHidden(!settings->value<PlaylistHeader>());
     setScrollbarHidden(settings->value<PlaylistScrollBar>());
 
     changePreset(presetRegistry.itemByName(settings->value<PlaylistCurrentPreset>()));
@@ -194,7 +189,7 @@ void PlaylistWidgetPrivate::setupConnections()
                      &PlaylistWidgetPrivate::playlistTracksAdded);
     QObject::connect(&presetRegistry, &PresetRegistry::presetChanged, this, &PlaylistWidgetPrivate::onPresetChanged);
 
-    settings->subscribe<PlaylistHeader>(this, [this](bool hidden) { hideHeader(header, !hidden); });
+    settings->subscribe<PlaylistHeader>(this, [this](bool show) { setHeaderHidden(!show); });
     settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
     settings->subscribe<PlaylistCurrentPreset>(this, [this](const QString& presetName) {
         const auto preset = presetRegistry.itemByName(presetName);
@@ -405,6 +400,12 @@ bool PlaylistWidgetPrivate::isHeaderHidden() const
 bool PlaylistWidgetPrivate::isScrollbarHidden() const
 {
     return playlistView->verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff;
+}
+
+void PlaylistWidgetPrivate::setHeaderHidden(bool hide) const
+{
+    header->setFixedHeight(hide ? 0 : QWIDGETSIZE_MAX);
+    header->adjustSize();
 }
 
 void PlaylistWidgetPrivate::setScrollbarHidden(bool showScrollBar) const

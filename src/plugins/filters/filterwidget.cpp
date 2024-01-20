@@ -155,12 +155,8 @@ struct FilterWidget::Private
 
     void hideHeader(bool hide) const
     {
-        if(hide) {
-            header->setFixedHeight(0);
-        }
-        else if(header->sizeHint().height() > 0) {
-            header->setFixedHeight(header->sizeHint().height());
-        }
+        header->setFixedHeight(hide ? 0 : QWIDGETSIZE_MAX);
+        header->adjustSize();
     }
 
     void filterHeaderMenu(const QPoint& pos)
