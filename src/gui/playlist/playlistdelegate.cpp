@@ -85,14 +85,14 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
 
     option.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
 
-    const int coverSize        = 58;
     const int coverMargin      = 10;
+    const int coverSize        = height - (2 * coverMargin);
     const int coverFrameWidth  = 2;
     const int coverFrameOffset = coverFrameWidth / 2;
 
     const int lineMargin = 8;
 
-    const QRect coverRect{x + coverMargin, y + coverMargin, coverSize, height - 2 * coverMargin};
+    const QRect coverRect{x + coverMargin, y + coverMargin, coverSize, coverSize};
     const auto coverFrameRect = showCover
                                   ? QRect{coverRect.x() - coverFrameOffset, coverRect.y() - coverFrameOffset,
                                           coverRect.width() + coverFrameWidth, coverRect.height() + coverFrameWidth}
@@ -128,7 +128,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     const QLineF rightLine((subtitleBound.x() + subtitleBound.width() + offset),
                            (subtitleBound.y() + (subtitleBound.height() / 2)), (rightBound.x() - offset),
                            (rightBound.y()) + (rightBound.height() / 2));
-    const QLineF headerLine(x + coverSize + 2 * coverMargin, (y + height) - lineMargin, (x + width) - offset,
+    const QLineF headerLine(x + coverRect.width() + 2 * coverMargin, (y + height) - lineMargin, (x + width) - offset,
                             (y + height) - lineMargin);
     if(!subtitle.empty() && !side.empty() && width > 160) {
         painter->drawLine(rightLine);
