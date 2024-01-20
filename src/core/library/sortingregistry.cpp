@@ -41,4 +41,4 @@ void SortingRegistry::loadDefaults()
 }
 } // namespace Fooyin
 
-#include "core/library/moc_sortingregistry.cpp"
+#include "moc_sortingregistry.cpp"

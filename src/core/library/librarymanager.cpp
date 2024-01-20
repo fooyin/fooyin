@@ -181,4 +181,4 @@ std::optional<LibraryInfo> LibraryManager::libraryInfo(int id) const
 }
 } // namespace Fooyin
 
-#include "core/library/moc_librarymanager.cpp"
+#include "moc_librarymanager.cpp"

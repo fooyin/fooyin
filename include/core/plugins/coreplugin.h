@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/plugins/coreplugincontext.h>
 
 #include <QtPlugin>
@@ -33,7 +31,7 @@ namespace Fooyin {
  * The initialise method must be implemented, through which instances of
  * core library classes can be accessed.
  */
-class FYCORE_EXPORT CorePlugin
+class CorePlugin
 {
 public:
     virtual ~CorePlugin() = default;

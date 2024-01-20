@@ -21,7 +21,7 @@
 
 #include "audioengine.h"
 
-#include <core/engine/audiooutput.h>
+#include <core/engine/enginecontroller.h>
 
 #include <QObject>
 
@@ -32,7 +32,7 @@ struct AudioOutputBuilder;
 
 using OutputNames = std::vector<QString>;
 
-class EngineHandler : public QObject
+class EngineHandler : public EngineController
 {
     Q_OBJECT
 
@@ -44,21 +44,19 @@ public:
     void shutdown();
 
     /** Returns a list of all output names. */
-    [[nodiscard]] OutputNames getAllOutputs() const;
+    [[nodiscard]] OutputNames getAllOutputs() const override;
 
     /** Returns a list of all output devices for the given @p output. */
-    [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const;
+    [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const override;
 
     /*!
      * Adds an audio output.
      * @note output.name must be unique.
      */
-    void addOutput(const AudioOutputBuilder& output);
+    void addOutput(const AudioOutputBuilder& output) override;
 
 signals:
     void trackStatusChanged(TrackStatus status);
-    void outputChanged(AudioOutput* output);
-    void deviceChanged(const QString& device);
 
 private:
     struct Private;

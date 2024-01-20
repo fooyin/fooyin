@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 namespace Fooyin {
 class PluginManager;
 class SettingsManager;
@@ -33,7 +31,7 @@ class MusicLibrary;
 /*!
  * Passed to core plugins in CorePlugin::initialise.
  */
-struct FYCORE_EXPORT CorePluginContext
+struct CorePluginContext
 {
     CorePluginContext(PluginManager* pluginManager, EngineHandler* engineHandler, PlayerManager* playerManager,
                       LibraryManager* libraryManager, MusicLibrary* library, PlaylistManager* playlistHandler,

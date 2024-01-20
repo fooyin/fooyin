@@ -19,34 +19,40 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/engine/audiooutput.h>
 
-#include <QtPlugin>
+#include <QObject>
 
 namespace Fooyin {
-using OutputCreator = std::function<std::unique_ptr<AudioOutput>()>;
+struct AudioOutputBuilder;
 
-struct AudioOutputBuilder
-{
-    QString name;
-    OutputCreator creator;
-};
+using OutputNames = std::vector<QString>;
 
-/*!
- * An abstract interface for plugins which add an audio output.
- */
-class OutputPlugin
+class FYCORE_EXPORT EngineController : public QObject
 {
+    Q_OBJECT
+
 public:
-    virtual ~OutputPlugin() = default;
+    explicit EngineController(QObject* parent = nullptr)
+        : QObject{parent}
+    { }
+
+    /** Returns a list of all output names. */
+    [[nodiscard]] virtual OutputNames getAllOutputs() const = 0;
+
+    /** Returns a list of all output devices for the given @p output. */
+    [[nodiscard]] virtual OutputDevices getOutputDevices(const QString& output) const = 0;
 
     /*!
-     * This is called after all core plugins have been initialised.
-     * This must return the name of the output and a function which
-     * returns a unique_ptr to an AudioOutput subclass.
+     * Adds an audio output.
+     * @note output.name must be unique.
      */
-    virtual AudioOutputBuilder registerOutput() = 0;
+    virtual void addOutput(const AudioOutputBuilder& output) = 0;
+
+signals:
+    void outputChanged(AudioOutput* output);
+    void deviceChanged(const QString& device);
 };
 } // namespace Fooyin
-
-Q_DECLARE_INTERFACE(Fooyin::OutputPlugin, "com.fooyin.plugin.engine.output")

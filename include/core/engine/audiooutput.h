@@ -70,7 +70,7 @@ using OutputDevices = std::vector<OutputDevice>;
  * - Push based: audio is pushed to the driver at regular intervals.
  * - Pull based: a callback is used to write audio to a buffer.
  */
-class FYCORE_EXPORT AudioOutput
+class AudioOutput
 {
 public:
     virtual ~AudioOutput() = default;

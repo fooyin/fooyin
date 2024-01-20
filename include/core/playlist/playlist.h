@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/trackfwd.h>
 
 #include <QObject>
@@ -30,7 +28,7 @@
 namespace Fooyin {
 using IndexSet = std::set<int>;
 
-class FYCORE_EXPORT Playlist
+class Playlist
 {
 public:
     enum PlayMode

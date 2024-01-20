@@ -175,7 +175,7 @@ struct EngineHandler::Private
 };
 
 EngineHandler::EngineHandler(PlayerManager* playerManager, SettingsManager* settings, QObject* parent)
-    : QObject{parent}
+    : EngineController{parent}
     , p{std::make_unique<Private>(this, playerManager, settings)}
 {
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this,

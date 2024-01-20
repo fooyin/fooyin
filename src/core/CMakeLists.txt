@@ -8,14 +8,13 @@ project(
     LANGUAGES CXX
 )
 
-set(HEADERS
+set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playermanager.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
-)
-
-set(SOURCES
+    track.cpp
     engine/audiooutput.cpp
     library/trackfilter.cpp
     library/tracksort.cpp
@@ -27,7 +26,6 @@ set(SOURCES
     scripting/functions/stringfuncs.cpp
     scripting/functions/timefuncs.cpp
     scripting/functions/tracklistfuncs.cpp
-    track.cpp
 )
 
 set(PRIVATE_SOURCES
@@ -73,7 +71,7 @@ set(PRIVATE_SOURCES
 create_fooyin_library(
     fooyin_core
     EXPORT_NAME Core
-    SOURCES ${HEADERS} ${SOURCES}
+    SOURCES ${SOURCES}
     PRIVATE_SOURCES ${PRIVATE_SOURCES}
 )
 

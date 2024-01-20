@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <QtPlugin>
 
 namespace Fooyin {
@@ -34,7 +32,7 @@ namespace Fooyin {
  *     Q_PLUGIN_METADATA(IID "com.fooyin.plugin/1.0" FILE "metadata.json")
  * @endcode
  */
-class FYCORE_EXPORT Plugin
+class Plugin
 {
 public:
     virtual ~Plugin() = default;
