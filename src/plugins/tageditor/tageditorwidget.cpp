@@ -31,7 +31,6 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QMenu>
-#include <QSettings>
 #include <QTableView>
 
 constexpr auto TagEditorState = "TagEditor/State";
@@ -120,11 +119,9 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TrackSelectionCon
     const int width = fontMetrics.horizontalAdvance(TagEditorModel::defaultFieldText()) + 15;
 
     p->view->setColumnWidth(0, width);
-    p->view->resizeRowsToContents();
 
     QObject::connect(p->trackSelection, &TrackSelectionController::selectionChanged, this,
                      [this](const TrackList& tracks) { p->model->reset(tracks); });
-    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { p->view->resizeRowsToContents(); });
     QObject::connect(p->model, &TagEditorModel::trackMetadataChanged, this, &TagEditorWidget::trackMetadataChanged);
 
     QObject::connect(p->view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
