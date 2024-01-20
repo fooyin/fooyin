@@ -28,6 +28,7 @@
 #include <utils/settings/settingsmanager.h>
 
 constexpr auto DefaultFieldText = "<input field name>";
+constexpr auto TrackLimit = 40;
 
 namespace Fooyin::TagEditor {
 using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
@@ -116,11 +117,7 @@ struct TagEditorModel::Private
             return;
         }
 
-        for(int count{0}; const auto& track : tracks) {
-            if(count > 40) {
-                break;
-            }
-
+        for(const auto& track : tracks | std::views::take(TrackLimit)) {
             for(const auto& [field, var] : fields) {
                 const auto result = scriptRegistry.value(var, track);
                 if(result.cond) {
@@ -135,7 +132,6 @@ struct TagEditorModel::Private
                     tags[field].addTrackValue(QStringLiteral(""));
                 }
             }
-            ++count;
         }
     }
 
