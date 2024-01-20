@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fygui_export.h"
-
 #include <gui/widgetcontainer.h>
 
 namespace Fooyin {
@@ -28,7 +26,7 @@ class ActionManager;
 class SettingsManager;
 class WidgetProvider;
 
-class FYGUI_EXPORT SplitterWidget : public WidgetContainer
+class SplitterWidget : public WidgetContainer
 {
     Q_OBJECT
 
@@ -65,7 +63,7 @@ private:
     std::unique_ptr<Private> p;
 };
 
-class FYGUI_EXPORT VerticalSplitterWidget : public SplitterWidget
+class VerticalSplitterWidget : public SplitterWidget
 {
 public:
     explicit VerticalSplitterWidget(ActionManager* actionManager, WidgetProvider* widgetFactory,
@@ -76,7 +74,7 @@ public:
     }
 };
 
-class FYGUI_EXPORT HorizontalSplitterWidget : public SplitterWidget
+class HorizontalSplitterWidget : public SplitterWidget
 {
 public:
     explicit HorizontalSplitterWidget(ActionManager* actionManager, WidgetProvider* widgetFactory,

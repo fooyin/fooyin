@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/library/librarysort.h>
 #include <utils/itemregistry.h>
 
@@ -29,7 +27,7 @@ class SettingsManager;
 
 constexpr auto LibrarySorting = "Library/LibrarySorting";
 
-class FYCORE_EXPORT SortingRegistry : public ItemRegistry<SortScript>
+class SortingRegistry : public ItemRegistry<SortScript>
 {
     Q_OBJECT
 

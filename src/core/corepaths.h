@@ -19,12 +19,10 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 class QString;
 
 namespace Fooyin::Core {
-FYCORE_EXPORT QString settingsPath();
-FYCORE_EXPORT QString pluginsPath();
-FYCORE_EXPORT QString userPluginsPath();
+QString settingsPath();
+QString pluginsPath();
+QString userPluginsPath();
 } // namespace Fooyin::Core

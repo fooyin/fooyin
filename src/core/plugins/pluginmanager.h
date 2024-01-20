@@ -24,7 +24,7 @@
 namespace Fooyin {
 using PluginInfoMap = std::unordered_map<QString, std::unique_ptr<PluginInfo>>;
 
-class FYCORE_EXPORT PluginManager
+class PluginManager
 {
 public:
     PluginManager();

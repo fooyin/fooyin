@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/library/libraryinfo.h>
 
 #include <QObject>
@@ -31,7 +29,7 @@ namespace Fooyin {
 class SettingsManager;
 class Database;
 
-class FYCORE_EXPORT LibraryManager : public QObject
+class LibraryManager : public QObject
 {
     Q_OBJECT
 

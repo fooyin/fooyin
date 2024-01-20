@@ -19,14 +19,12 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <QObject>
 
 #include <map>
 
 namespace Fooyin {
-struct FYCORE_EXPORT LibraryInfo
+struct LibraryInfo
 {
     Q_GADGET
 

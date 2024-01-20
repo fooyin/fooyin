@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/player/playermanager.h>
 
 #include <QObject>
@@ -29,7 +27,7 @@ namespace Fooyin {
 class SettingsManager;
 class Track;
 
-class FYCORE_EXPORT PlayerController : public PlayerManager
+class PlayerController : public PlayerManager
 {
     Q_OBJECT
 

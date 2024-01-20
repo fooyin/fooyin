@@ -19,14 +19,12 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/trackfwd.h>
 
 #include <memory>
 
 namespace Fooyin {
-class FYCORE_EXPORT TagWriter
+class TagWriter
 {
 public:
     TagWriter();

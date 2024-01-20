@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/playlist/playlistmanager.h>
 #include <core/trackfwd.h>
 
@@ -32,7 +30,7 @@ class Database;
 class PlayerManager;
 class Playlist;
 
-class FYCORE_EXPORT PlaylistHandler : public PlaylistManager
+class PlaylistHandler : public PlaylistManager
 {
     Q_OBJECT
 

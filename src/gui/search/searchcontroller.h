@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fygui_export.h"
-
 #include <utils/id.h>
 
 #include <QObject>
@@ -28,7 +26,7 @@
 namespace Fooyin {
 class EditableLayout;
 
-class FYGUI_EXPORT SearchController : public QObject
+class SearchController : public QObject
 {
     Q_OBJECT
 

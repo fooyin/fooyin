@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <QJsonObject>
 #include <QPluginLoader>
 #include <QString>
@@ -28,7 +26,7 @@
 namespace Fooyin {
 class Plugin;
 
-class FYCORE_EXPORT PluginInfo
+class PluginInfo
 {
     Q_GADGET
 
