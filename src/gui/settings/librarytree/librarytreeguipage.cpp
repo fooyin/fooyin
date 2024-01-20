@@ -38,6 +38,7 @@ class LibraryTreeGuiPageWidget : public SettingsPageWidget
 public:
     explicit LibraryTreeGuiPageWidget(SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
@@ -101,8 +102,27 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(SettingsManager* settings)
             m_colour        = chosenColour;
         }
     });
+}
 
-    setup();
+void LibraryTreeGuiPageWidget::load()
+{
+    m_showHeader->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeHeader>());
+    m_showScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeScrollBar>());
+    m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAltColours>());
+
+    const auto options = m_settings->value<Settings::Gui::Internal::LibTreeAppearance>().value<LibraryTreeAppearance>();
+    m_fontChanged      = options.fontChanged;
+    m_font             = options.font;
+    m_colourChanged    = options.colourChanged;
+    m_colour           = options.colour;
+    m_rowHeight->setValue(options.rowHeight);
+
+    m_fontButton->setText(QString{"%1 (%2)"}.arg(m_font.family()).arg(m_font.pointSize()));
+
+    QPixmap px(20, 20);
+    px.fill(m_colour);
+    m_colourButton->setIcon(px);
+    m_colourButton->setText(m_colour.name());
 }
 
 void LibraryTreeGuiPageWidget::apply()
@@ -126,29 +146,6 @@ void LibraryTreeGuiPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreeScrollBar>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAltColours>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAppearance>();
-
-    setup();
-}
-
-void LibraryTreeGuiPageWidget::setup()
-{
-    m_showHeader->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeHeader>());
-    m_showScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeScrollBar>());
-    m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAltColours>());
-
-    const auto options = m_settings->value<Settings::Gui::Internal::LibTreeAppearance>().value<LibraryTreeAppearance>();
-    m_fontChanged      = options.fontChanged;
-    m_font             = options.font;
-    m_colourChanged    = options.colourChanged;
-    m_colour           = options.colour;
-    m_rowHeight->setValue(options.rowHeight);
-
-    m_fontButton->setText(QString{"%1 (%2)"}.arg(m_font.family()).arg(m_font.pointSize()));
-
-    QPixmap px(20, 20);
-    px.fill(m_colour);
-    m_colourButton->setIcon(px);
-    m_colourButton->setText(m_colour.name());
 }
 
 LibraryTreeGuiPage::LibraryTreeGuiPage(SettingsManager* settings)

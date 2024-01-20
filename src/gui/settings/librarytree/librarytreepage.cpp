@@ -43,6 +43,7 @@ class LibraryTreePageWidget : public SettingsPageWidget
 public:
     explicit LibraryTreePageWidget(ActionManager* actionManager, SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
@@ -169,18 +170,22 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
 
     m_playlistName->setText(m_settings->value<Settings::Gui::Internal::LibTreeAutoPlaylist>());
+}
 
+void LibraryTreePageWidget::load()
+{
     m_model->populate();
 }
 
 void LibraryTreePageWidget::apply()
 {
-    m_model->processQueue();
     m_settings->set<Settings::Gui::Internal::LibTreeDoubleClick>(m_doubleClick->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::LibTreeMiddleClick>(m_middleClick->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::LibTreePlaylistEnabled>(m_playlistEnabled->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAutoSwitch>(m_autoSwitch->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAutoPlaylist>(m_playlistName->text());
+
+    m_model->processQueue();
 }
 
 void LibraryTreePageWidget::reset()
@@ -192,7 +197,6 @@ void LibraryTreePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoPlaylist>();
 
     m_groupsRegistry.reset();
-    m_model->populate();
 }
 
 LibraryTreePage::LibraryTreePage(ActionManager* actionManager, SettingsManager* settings)

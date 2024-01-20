@@ -36,12 +36,11 @@ class StatusWidgetPageWidget : public SettingsPageWidget
 public:
     explicit StatusWidgetPageWidget(SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
 private:
-    void applyValues();
-
     SettingsManager* m_settings;
 
     QCheckBox* m_showIcon;
@@ -83,8 +82,14 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
 
     layout->setColumnStretch(0, 1);
     layout->setRowStretch(2, 1);
+}
 
-    applyValues();
+void StatusWidgetPageWidget::load()
+{
+    m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
+    m_showSelection->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
+    m_playingScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
+    m_selectionScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
 }
 
 void StatusWidgetPageWidget::apply()
@@ -101,16 +106,6 @@ void StatusWidgetPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::StatusShowSelection>();
     m_settings->reset<Settings::Gui::Internal::StatusPlayingScript>();
     m_settings->reset<Settings::Gui::Internal::StatusSelectionScript>();
-
-    applyValues();
-}
-
-void StatusWidgetPageWidget::applyValues()
-{
-    m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
-    m_showSelection->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
-    m_playingScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
-    m_selectionScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
 }
 
 StatusWidgetPage::StatusWidgetPage(SettingsManager* settings)

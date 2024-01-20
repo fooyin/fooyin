@@ -51,6 +51,7 @@ public:
     explicit GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
                                   SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
@@ -111,6 +112,13 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     mainLayout->addWidget(iconThemeBox);
     mainLayout->addStretch();
 
+    QObject::connect(quickSetup, &QPushButton::clicked, this, &GuiGeneralPageWidget::showQuickSetup);
+    QObject::connect(importLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::importLayout);
+    QObject::connect(exportLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::exportLayout);
+}
+
+void GuiGeneralPageWidget::load()
+{
     m_splitterHandles->setChecked(m_settings->value<SplitterHandles>());
 
     const auto iconTheme = static_cast<Settings::Gui::Internal::IconThemeOption>(m_settings->value<IconTheme>());
@@ -128,10 +136,6 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
             m_darkTheme->setChecked(true);
             break;
     }
-
-    QObject::connect(quickSetup, &QPushButton::clicked, this, &GuiGeneralPageWidget::showQuickSetup);
-    QObject::connect(importLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::importLayout);
-    QObject::connect(exportLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::exportLayout);
 }
 
 void GuiGeneralPageWidget::apply()
@@ -165,8 +169,6 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<IconTheme>();
     m_settings->reset<Settings::Gui::IconTheme>();
     m_settings->reset<SplitterHandles>();
-
-    m_splitterHandles->setChecked(m_settings->value<SplitterHandles>());
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

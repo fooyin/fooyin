@@ -22,20 +22,27 @@
 #include "settingsdialog.h"
 
 #include <utils/id.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QIODevice>
 
 namespace Fooyin {
 struct SettingsDialogController::Private
 {
+    SettingsManager* settings;
+
     QByteArray geometry;
     PageList pages;
     Id lastOpenPage;
+
+    Private(SettingsManager* settings)
+        : settings{settings}
+    { }
 };
 
-SettingsDialogController::SettingsDialogController(QObject* parent)
-    : QObject{parent}
-    , p{std::make_unique<Private>()}
+SettingsDialogController::SettingsDialogController(SettingsManager* settings)
+    : QObject{settings}
+    , p{std::make_unique<Private>(settings)}
 { }
 
 SettingsDialogController::~SettingsDialogController() = default;
@@ -53,6 +60,8 @@ void SettingsDialogController::openAtPage(const Id& page)
         p->lastOpenPage = settingsDialog->currentPage();
         settingsDialog->deleteLater();
     });
+    QObject::connect(settingsDialog, &SettingsDialog::resettingAll, this,
+                     [this]() { p->settings->resetAllSettings(); });
 
     if(p->geometry.isEmpty()) {
         settingsDialog->resize(750, 450);

@@ -35,6 +35,7 @@ class PlaylistColumnPageWidget : public SettingsPageWidget
 public:
     explicit PlaylistColumnPageWidget(ActionManager* actionManager, SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
@@ -78,7 +79,10 @@ PlaylistColumnPageWidget::PlaylistColumnPageWidget(ActionManager* actionManager,
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(m_columnList);
+}
 
+void PlaylistColumnPageWidget::load()
+{
     m_model->populate();
 }
 
@@ -90,7 +94,6 @@ void PlaylistColumnPageWidget::apply()
 void PlaylistColumnPageWidget::reset()
 {
     m_columnsRegistry.reset();
-    m_model->populate();
 }
 
 PlaylistColumnPage::PlaylistColumnPage(ActionManager* actionManager, SettingsManager* settings)

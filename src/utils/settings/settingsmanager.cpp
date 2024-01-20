@@ -23,6 +23,8 @@
 
 #include <QSettings>
 
+#include <ranges>
+
 constexpr auto SettingsDialogState = "Interface/SettingsDialogState";
 
 namespace Fooyin {
@@ -47,6 +49,16 @@ void SettingsManager::storeSettings()
 void SettingsManager::storeAllSettings()
 {
     saveSettings(false);
+}
+
+void SettingsManager::resetAllSettings()
+{
+    m_settingsFile->clear();
+    for(const auto& setting : m_settings | std::views::values) {
+        if(setting->reset()) {
+            setting->notifySubscribers();
+        }
+    }
 }
 
 QVariant SettingsManager::value(const QString& key) const

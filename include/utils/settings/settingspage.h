@@ -33,6 +33,7 @@ class FYUTILS_EXPORT SettingsPageWidget : public QWidget
     Q_OBJECT
 
 public:
+    virtual void load()  = 0;
     virtual void apply() = 0;
     virtual void finish() { }
     virtual void reset() = 0;
@@ -52,6 +53,8 @@ public:
     [[nodiscard]] QStringList category() const;
 
     QWidget* widget();
+
+    void load();
     void apply();
     void finish();
     void reset();

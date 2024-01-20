@@ -60,6 +60,15 @@ QWidget* SettingsPage::widget()
     return m_widget;
 }
 
+void SettingsPage::load()
+{
+    if(m_widget) {
+        if(auto* pageWidget = qobject_cast<SettingsPageWidget*>(m_widget)) {
+            pageWidget->load();
+        }
+    }
+}
+
 void SettingsPage::apply()
 {
     if(m_widget) {

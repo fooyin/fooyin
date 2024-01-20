@@ -38,6 +38,7 @@ class LibrarySortingPageWidget : public SettingsPageWidget
 public:
     explicit LibrarySortingPageWidget(ActionManager* actionManager, SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
@@ -82,7 +83,10 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     updateButtonState();
 
     QObject::connect(m_sortList->selectionModel(), &QItemSelectionModel::selectionChanged, this, updateButtonState);
+}
 
+void LibrarySortingPageWidget::load()
+{
     m_model->populate();
 }
 
@@ -94,7 +98,6 @@ void LibrarySortingPageWidget::apply()
 void LibrarySortingPageWidget::reset()
 {
     m_settings->reset(LibrarySorting);
-    m_model->populate();
 }
 
 LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SettingsManager* settings)

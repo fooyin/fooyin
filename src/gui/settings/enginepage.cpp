@@ -38,6 +38,7 @@ class EnginePageWidget : public SettingsPageWidget
 public:
     explicit EnginePageWidget(SettingsManager* settings, EngineHandler* engineHandler);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
@@ -58,9 +59,6 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineHandler* eng
     , m_outputBox{new ExpandingComboBox(this)}
     , m_deviceBox{new ExpandingComboBox(this)}
 {
-    setupOutputs();
-    setupDevices(m_outputBox->currentText());
-
     auto* outputLabel = new QLabel(tr("Output:"), this);
     auto* deviceLabel = new QLabel(tr("Device:"), this);
 
@@ -74,6 +72,12 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineHandler* eng
     mainLayout->setRowStretch(2, 1);
 
     QObject::connect(m_outputBox, &QComboBox::currentTextChanged, this, &EnginePageWidget::setupDevices);
+}
+
+void EnginePageWidget::load()
+{
+    setupOutputs();
+    setupDevices(m_outputBox->currentText());
 }
 
 void EnginePageWidget::apply()

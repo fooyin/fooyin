@@ -44,12 +44,11 @@ class FiltersGeneralPageWidget : public SettingsPageWidget
 public:
     explicit FiltersGeneralPageWidget(SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
 private:
-    void setValues();
-
     SettingsManager* m_settings;
 
     QCheckBox* m_filterHeaders;
@@ -149,47 +148,9 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
             m_colour        = chosenColour;
         }
     });
-
-    setValues();
 }
 
-void FiltersGeneralPageWidget::apply()
-{
-    m_settings->set<Settings::Filters::FilterHeader>(m_filterHeaders->isChecked());
-    m_settings->set<Settings::Filters::FilterScrollBar>(m_filterScrollBars->isChecked());
-    m_settings->set<Settings::Filters::FilterAltColours>(m_altRowColours->isChecked());
-
-    FilterOptions options;
-    options.fontChanged   = m_fontChanged;
-    options.font          = m_font;
-    options.colourChanged = m_colourChanged;
-    options.colour        = m_colour;
-    options.rowHeight     = m_rowHeight->value();
-    m_settings->set<Settings::Filters::FilterAppearance>(QVariant::fromValue(options));
-
-    m_settings->set<Settings::Filters::FilterDoubleClick>(m_doubleClick->currentData().toInt());
-    m_settings->set<Settings::Filters::FilterMiddleClick>(m_middleClick->currentData().toInt());
-    m_settings->set<Settings::Filters::FilterPlaylistEnabled>(m_playlistEnabled->isChecked());
-    m_settings->set<Settings::Filters::FilterAutoSwitch>(m_autoSwitch->isChecked());
-    m_settings->set<Settings::Filters::FilterAutoPlaylist>(m_playlistName->text());
-}
-
-void FiltersGeneralPageWidget::reset()
-{
-    m_settings->reset<Settings::Filters::FilterHeader>();
-    m_settings->reset<Settings::Filters::FilterScrollBar>();
-    m_settings->reset<Settings::Filters::FilterAltColours>();
-    m_settings->reset<Settings::Filters::FilterAppearance>();
-    m_settings->reset<Settings::Filters::FilterDoubleClick>();
-    m_settings->reset<Settings::Filters::FilterMiddleClick>();
-    m_settings->reset<Settings::Filters::FilterPlaylistEnabled>();
-    m_settings->reset<Settings::Filters::FilterAutoSwitch>();
-    m_settings->reset<Settings::Filters::FilterAutoPlaylist>();
-
-    setValues();
-}
-
-void FiltersGeneralPageWidget::setValues()
+void FiltersGeneralPageWidget::load()
 {
     using ActionIndexMap = std::map<int, int>;
     ActionIndexMap doubleActions;
@@ -255,6 +216,40 @@ void FiltersGeneralPageWidget::setValues()
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
 
     m_playlistName->setText(m_settings->value<Settings::Filters::FilterAutoPlaylist>());
+}
+
+void FiltersGeneralPageWidget::apply()
+{
+    m_settings->set<Settings::Filters::FilterHeader>(m_filterHeaders->isChecked());
+    m_settings->set<Settings::Filters::FilterScrollBar>(m_filterScrollBars->isChecked());
+    m_settings->set<Settings::Filters::FilterAltColours>(m_altRowColours->isChecked());
+
+    FilterOptions options;
+    options.fontChanged   = m_fontChanged;
+    options.font          = m_font;
+    options.colourChanged = m_colourChanged;
+    options.colour        = m_colour;
+    options.rowHeight     = m_rowHeight->value();
+    m_settings->set<Settings::Filters::FilterAppearance>(QVariant::fromValue(options));
+
+    m_settings->set<Settings::Filters::FilterDoubleClick>(m_doubleClick->currentData().toInt());
+    m_settings->set<Settings::Filters::FilterMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Settings::Filters::FilterPlaylistEnabled>(m_playlistEnabled->isChecked());
+    m_settings->set<Settings::Filters::FilterAutoSwitch>(m_autoSwitch->isChecked());
+    m_settings->set<Settings::Filters::FilterAutoPlaylist>(m_playlistName->text());
+}
+
+void FiltersGeneralPageWidget::reset()
+{
+    m_settings->reset<Settings::Filters::FilterHeader>();
+    m_settings->reset<Settings::Filters::FilterScrollBar>();
+    m_settings->reset<Settings::Filters::FilterAltColours>();
+    m_settings->reset<Settings::Filters::FilterAppearance>();
+    m_settings->reset<Settings::Filters::FilterDoubleClick>();
+    m_settings->reset<Settings::Filters::FilterMiddleClick>();
+    m_settings->reset<Settings::Filters::FilterPlaylistEnabled>();
+    m_settings->reset<Settings::Filters::FilterAutoSwitch>();
+    m_settings->reset<Settings::Filters::FilterAutoPlaylist>();
 }
 
 FiltersGeneralPage::FiltersGeneralPage(SettingsManager* settings)

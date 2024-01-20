@@ -37,6 +37,7 @@ class GeneralPageWidget : public SettingsPageWidget
 public:
     explicit GeneralPageWidget(SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
@@ -77,9 +78,11 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     addStartupBehaviour(tr("Show main window"), MainWindow::Normal);
     addStartupBehaviour(tr("Show main window maximised"), MainWindow::Maximised);
     addStartupBehaviour(tr("Remember from last run"), MainWindow::RememberLast);
+}
 
-    const int currentBehaviour = m_settings->value<Settings::Gui::StartupBehaviour>();
-    m_startupBehaviour->setCurrentIndex(currentBehaviour);
+void GeneralPageWidget::load()
+{
+    m_startupBehaviour->setCurrentIndex(m_settings->value<Settings::Gui::StartupBehaviour>());
 }
 
 void GeneralPageWidget::apply()

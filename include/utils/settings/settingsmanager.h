@@ -101,6 +101,8 @@ public:
     void storeSettings();
     // Writes all settings to file, overwriting any existing values.
     void storeAllSettings();
+    // Resets all settings to their default values.
+    void resetAllSettings();
 
     /*!
      * Returns the current value of the setting at @p key if it exists, or an empty variant if not.

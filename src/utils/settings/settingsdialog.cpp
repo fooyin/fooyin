@@ -90,6 +90,7 @@ struct SettingsDialog::Private
     {
         if(auto* page = findPage(currentPage)) {
             page->reset();
+            page->load();
         }
     }
 
@@ -106,8 +107,9 @@ struct SettingsDialog::Private
         const int buttonClicked = message.exec();
 
         if(buttonClicked == QMessageBox::Yes) {
+            QMetaObject::invokeMethod(self, &SettingsDialog::resettingAll);
             for(auto* page : pages) {
-                page->reset();
+                page->load();
             }
         }
     }
@@ -149,6 +151,8 @@ struct SettingsDialog::Private
                 auto* scrollArea = new ScrollArea(tabWidget);
                 scrollArea->setWidget(widget);
                 tabWidget->addTab(scrollArea, page->name());
+
+                page->load();
             }
         };
 

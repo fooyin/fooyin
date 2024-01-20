@@ -38,12 +38,11 @@ class PlaylistGeneralPageWidget : public SettingsPageWidget
 public:
     explicit PlaylistGeneralPageWidget(SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
 private:
-    void setValues();
-
     SettingsManager* m_settings;
 
     QCheckBox* m_cursorFollowsPlayback;
@@ -112,8 +111,21 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     layout->setColumnStretch(0, 1);
     layout->setColumnStretch(1, 1);
     layout->setRowStretch(layout->rowCount(), 1);
+}
 
-    setValues();
+void PlaylistGeneralPageWidget::load()
+{
+    m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
+    m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
+    m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
+    m_rememberPlaylistState->setChecked(m_settings->value<Settings::Gui::RememberPlaylistState>());
+
+    m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());
+    m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
+    m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
+    m_thumbnailSize->setValue(m_settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>());
+
+    m_hideSinglePlaylistTab->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsHide>());
 }
 
 void PlaylistGeneralPageWidget::apply()
@@ -122,11 +134,13 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
     m_settings->set<Settings::Gui::RememberPlaylistState>(m_rememberPlaylistState->isChecked());
-    m_settings->set<Settings::Gui::Internal::PlaylistTabsHide>(m_hideSinglePlaylistTab->isChecked());
+
     m_settings->set<Settings::Gui::Internal::PlaylistScrollBar>(m_scrollBars->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistAltColours>(m_altColours->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistThumbnailSize>(m_thumbnailSize->value());
+
+    m_settings->set<Settings::Gui::Internal::PlaylistTabsHide>(m_hideSinglePlaylistTab->isChecked());
 }
 
 void PlaylistGeneralPageWidget::reset()
@@ -135,26 +149,13 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->reset<Settings::Gui::RememberPlaylistState>();
-    m_settings->reset<Settings::Gui::Internal::PlaylistTabsHide>();
+
     m_settings->reset<Settings::Gui::Internal::PlaylistScrollBar>();
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
     m_settings->reset<Settings::Gui::Internal::PlaylistAltColours>();
     m_settings->reset<Settings::Gui::Internal::PlaylistThumbnailSize>();
 
-    setValues();
-}
-
-void PlaylistGeneralPageWidget::setValues()
-{
-    m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
-    m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
-    m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
-    m_rememberPlaylistState->setChecked(m_settings->value<Settings::Gui::RememberPlaylistState>());
-    m_hideSinglePlaylistTab->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsHide>());
-    m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());
-    m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
-    m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
-    m_thumbnailSize->setValue(m_settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>());
+    m_settings->reset<Settings::Gui::Internal::PlaylistTabsHide>();
 }
 
 PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings)

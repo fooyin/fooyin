@@ -74,6 +74,7 @@ class ShortcutsPageWidget : public SettingsPageWidget
 public:
     explicit ShortcutsPageWidget(ActionManager* actionManager);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
@@ -111,8 +112,6 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
 
     QObject::connect(m_model, &QAbstractItemModel::modelReset, m_shortcutTable, &QTreeView::expandAll);
 
-    m_model->populate(m_actionManager);
-
     auto* groupLayout = new QVBoxLayout(m_shortcutBox);
 
     m_inputBox->setMaximum(3);
@@ -136,6 +135,11 @@ ShortcutsPageWidget::ShortcutsPageWidget(ActionManager* actionManager)
     m_shortcutBox->setDisabled(true);
 }
 
+void ShortcutsPageWidget::load()
+{
+    m_model->populate(m_actionManager);
+}
+
 void ShortcutsPageWidget::apply()
 {
     m_model->processQueue();
@@ -145,17 +149,8 @@ void ShortcutsPageWidget::reset()
 {
     const auto commands = m_actionManager->commands();
     for(Command* command : commands) {
-        m_model->shortcutChanged(command, command->defaultShortcuts());
+        command->setShortcut(command->defaultShortcuts());
     }
-
-    const auto selected = m_shortcutTable->selectionModel()->selectedIndexes();
-    if(!selected.empty()) {
-        const QModelIndex index = selected.front();
-        auto* command           = index.data(ShortcutItem::ActionCommand).value<Command*>();
-        updateCurrentShortcuts(command->defaultShortcuts());
-    }
-
-    apply();
 }
 
 void ShortcutsPageWidget::updateCurrentShortcuts(const ShortcutList& shortcuts)

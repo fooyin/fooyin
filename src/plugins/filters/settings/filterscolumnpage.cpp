@@ -37,6 +37,7 @@ class FiltersColumnPageWidget : public SettingsPageWidget
 public:
     explicit FiltersColumnPageWidget(ActionManager* actionManager, SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
@@ -82,7 +83,10 @@ FiltersColumnPageWidget::FiltersColumnPageWidget(ActionManager* actionManager, S
 
     auto* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(m_columnList);
+}
 
+void FiltersColumnPageWidget::load()
+{
     m_model->populate();
 }
 
@@ -94,7 +98,6 @@ void FiltersColumnPageWidget::apply()
 void FiltersColumnPageWidget::reset()
 {
     m_settings->reset(FilterColumns);
-    m_model->populate();
 }
 
 FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, SettingsManager* settings)

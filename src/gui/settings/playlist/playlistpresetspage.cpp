@@ -252,11 +252,11 @@ class PlaylistPresetsPageWidget : public SettingsPageWidget
 public:
     explicit PlaylistPresetsPageWidget(SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
-    void populatePresets();
-
+private:
     void newPreset();
     void renamePreset();
     void deletePreset();
@@ -268,7 +268,6 @@ public:
 
     void clearBlocks();
 
-private:
     PresetRegistry m_presetRegistry;
 
     QComboBox* m_presetBox;
@@ -403,8 +402,17 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
         m_headerSubtitle->setEnabled(!checked);
         m_headerInfo->setEnabled(!checked);
     });
+}
 
-    populatePresets();
+void PlaylistPresetsPageWidget::load()
+{
+    m_presetBox->clear();
+
+    const auto& presets = m_presetRegistry.items();
+
+    for(const auto& preset : presets) {
+        m_presetBox->insertItem(preset.index, preset.name, preset.id);
+    }
 }
 
 void PlaylistPresetsPageWidget::apply()
@@ -415,18 +423,6 @@ void PlaylistPresetsPageWidget::apply()
 void PlaylistPresetsPageWidget::reset()
 {
     m_presetRegistry.reset();
-    populatePresets();
-}
-
-void PlaylistPresetsPageWidget::populatePresets()
-{
-    m_presetBox->clear();
-
-    const auto& presets = m_presetRegistry.items();
-
-    for(const auto& preset : presets) {
-        m_presetBox->insertItem(preset.index, preset.name, preset.id);
-    }
 }
 
 void PlaylistPresetsPageWidget::newPreset()

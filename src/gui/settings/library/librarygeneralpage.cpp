@@ -46,11 +46,11 @@ public:
     explicit LibraryGeneralPageWidget(ActionManager* actionManager, LibraryManager* libraryManager,
                                       SettingsManager* settings);
 
+    void load() override;
     void apply() override;
     void reset() override;
 
 private:
-    void setupValues();
     void addLibrary() const;
 
     LibraryManager* m_libraryManager;
@@ -100,9 +100,15 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     mainLayout->setColumnStretch(1, 1);
 
     QObject::connect(m_model, &LibraryModel::requestAddLibrary, this, &LibraryGeneralPageWidget::addLibrary);
+}
+
+void LibraryGeneralPageWidget::load()
+{
+    m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
+    m_monitorLibraries->setChecked(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
+    m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
 
     m_model->populate();
-    setupValues();
 }
 
 void LibraryGeneralPageWidget::apply()
@@ -119,15 +125,6 @@ void LibraryGeneralPageWidget::reset()
     m_settings->reset<Settings::Core::AutoRefresh>();
     m_settings->reset<Settings::Core::Internal::MonitorLibraries>();
     m_settings->reset<Settings::Core::LibrarySortScript>();
-
-    setupValues();
-}
-
-void LibraryGeneralPageWidget::setupValues()
-{
-    m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
-    m_monitorLibraries->setChecked(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
-    m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
 }
 
 void LibraryGeneralPageWidget::addLibrary() const

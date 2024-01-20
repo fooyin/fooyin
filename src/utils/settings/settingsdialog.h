@@ -43,6 +43,9 @@ public:
     void accept() override;
     void reject() override;
 
+signals:
+    void resettingAll();
+
 private:
     struct Private;
     std::unique_ptr<Private> p;
