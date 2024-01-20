@@ -19,9 +19,8 @@
 
 #pragma once
 
-#include "fycore_export.h"
+#include "audioengine.h"
 
-#include <core/engine/audioengine.h>
 #include <core/engine/audiooutput.h>
 
 #include <QObject>
@@ -33,7 +32,7 @@ struct AudioOutputBuilder;
 
 using OutputNames = std::vector<QString>;
 
-class FYCORE_EXPORT EngineHandler : public QObject
+class EngineHandler : public QObject
 {
     Q_OBJECT
 

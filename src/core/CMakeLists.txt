@@ -16,19 +16,7 @@ set(HEADERS
 )
 
 set(SOURCES
-    engine/enginehandler.cpp
-    engine/audioengine.cpp
     engine/audiooutput.cpp
-    engine/ffmpeg/ffmpegclock.cpp
-    engine/ffmpeg/ffmpegrenderer.cpp
-    engine/ffmpeg/ffmpegworker.cpp
-    engine/ffmpeg/ffmpegcodec.cpp
-    engine/ffmpeg/ffmpegdecoder.cpp
-    engine/ffmpeg/ffmpegengine.cpp
-    engine/ffmpeg/ffmpegpacket.cpp
-    engine/ffmpeg/ffmpegstream.cpp
-    engine/ffmpeg/ffmpegframe.cpp
-    engine/ffmpeg/ffmpegutils.cpp
     library/trackfilter.cpp
     library/tracksort.cpp
     scripting/scriptregistry.cpp
@@ -52,6 +40,18 @@ set(PRIVATE_SOURCES
     database/databasemodule.cpp
     database/playlistdatabase.cpp
     database/databasequery.cpp
+    engine/enginehandler.cpp
+    engine/audioengine.cpp
+    engine/ffmpeg/ffmpegclock.cpp
+    engine/ffmpeg/ffmpegrenderer.cpp
+    engine/ffmpeg/ffmpegworker.cpp
+    engine/ffmpeg/ffmpegcodec.cpp
+    engine/ffmpeg/ffmpegdecoder.cpp
+    engine/ffmpeg/ffmpegengine.cpp
+    engine/ffmpeg/ffmpegpacket.cpp
+    engine/ffmpeg/ffmpegstream.cpp
+    engine/ffmpeg/ffmpegframe.cpp
+    engine/ffmpeg/ffmpegutils.cpp
     engine/output/alsaoutput.cpp
     library/libraryscanner.cpp
     library/librarythreadhandler.cpp

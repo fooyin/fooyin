@@ -17,12 +17,12 @@
  *
  */
 
-#include <core/engine/enginehandler.h>
+#include "enginehandler.h"
 
+#include "audioengine.h"
 #include "engine/ffmpeg/ffmpegengine.h"
 
 #include <core/coresettings.h>
-#include <core/engine/audioengine.h>
 #include <core/engine/outputplugin.h>
 #include <core/track.h>
 
@@ -240,4 +240,4 @@ void EngineHandler::addOutput(const AudioOutputBuilder& output)
 }
 } // namespace Fooyin
 
-#include "core/engine/moc_enginehandler.cpp"
+#include "moc_enginehandler.cpp"

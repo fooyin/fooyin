@@ -17,7 +17,7 @@
  *
  */
 
-#include <core/engine/audioengine.h>
+#include "audioengine.h"
 
 namespace Fooyin {
 AudioEngine::AudioEngine(QObject* parent)
@@ -61,4 +61,4 @@ void AudioEngine::startup() { }
 void AudioEngine::shutdown() { }
 } // namespace Fooyin
 
-#include "core/engine/moc_audioengine.cpp"
+#include "moc_audioengine.cpp"
