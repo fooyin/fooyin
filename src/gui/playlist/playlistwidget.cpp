@@ -147,7 +147,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     setHeaderHidden(!settings->value<PlaylistHeader>());
     setScrollbarHidden(settings->value<PlaylistScrollBar>());
 
-    changePreset(presetRegistry.itemByName(settings->value<PlaylistCurrentPreset>()));
+    changePreset(presetRegistry.itemById(settings->value<PlaylistCurrentPreset>()));
 
     setupConnections();
     setupActions();
@@ -191,10 +191,8 @@ void PlaylistWidgetPrivate::setupConnections()
 
     settings->subscribe<PlaylistHeader>(this, [this](bool show) { setHeaderHidden(!show); });
     settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
-    settings->subscribe<PlaylistCurrentPreset>(this, [this](const QString& presetName) {
-        const auto preset = presetRegistry.itemByName(presetName);
-        changePreset(preset);
-    });
+    settings->subscribe<PlaylistCurrentPreset>(
+        this, [this](int presetId) { changePreset(presetRegistry.itemById(presetId)); });
 }
 
 void PlaylistWidgetPrivate::setupActions()
@@ -743,13 +741,15 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
     const auto& presets = presetRegistry.items();
 
     for(const auto& preset : presets) {
-        const QString name = preset.name;
-        auto* switchPreset = new QAction(name, presetsMenu);
+        auto* switchPreset = new QAction(preset.name, presetsMenu);
         if(preset == currentPreset) {
             presetsMenu->setDefaultAction(switchPreset);
         }
+
+        const int presetId = preset.id;
         QObject::connect(switchPreset, &QAction::triggered, self,
-                         [this, name]() { settings->set<PlaylistCurrentPreset>(name); });
+                         [this, presetId]() { settings->set<PlaylistCurrentPreset>(presetId); });
+
         presetsMenu->addAction(switchPreset);
     }
 

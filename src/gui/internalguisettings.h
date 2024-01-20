@@ -42,7 +42,7 @@ enum GuiInternalSettings : uint32_t
     PlaylistAltColours     = 3 | Type::Bool,
     PlaylistHeader         = 4 | Type::Bool,
     PlaylistScrollBar      = 5 | Type::Bool,
-    PlaylistCurrentPreset  = 6 | Type::String,
+    PlaylistCurrentPreset  = 6 | Type::Int,
     PlaylistThumbnailSize  = 7 | Type::Int,
     PlaylistTabsHide       = 8 | Type::Bool,
     ElapsedTotal           = 9 | Type::Bool,
