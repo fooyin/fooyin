@@ -19,12 +19,12 @@
 
 #include "playlistpresetspage.h"
 
+#include "internalguisettings.h"
 #include "playlist/playlistpreset.h"
 #include "playlist/presetregistry.h"
 
 #include <gui/guiconstants.h>
 #include <gui/widgets/customisableinput.h>
-#include <utils/enum.h>
 #include <utils/expandableinputbox.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -268,6 +268,8 @@ private:
 
     void clearBlocks();
 
+    SettingsManager* m_settings;
+
     PresetRegistry m_presetRegistry;
 
     QComboBox* m_presetBox;
@@ -296,7 +298,8 @@ private:
 };
 
 PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
-    : m_presetRegistry{settings}
+    : m_settings{settings}
+    , m_presetRegistry{settings}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
     , m_headerRowHeight{new QSpinBox(this)}
@@ -408,10 +411,14 @@ void PlaylistPresetsPageWidget::load()
 {
     m_presetBox->clear();
 
-    const auto& presets = m_presetRegistry.items();
+    const int currentPreset = m_settings->value<Settings::Gui::Internal::PlaylistCurrentPreset>();
+    const auto presets      = m_presetRegistry.items();
 
     for(const auto& preset : presets) {
         m_presetBox->insertItem(preset.index, preset.name, preset.id);
+        if(preset.id == currentPreset) {
+            m_presetBox->setCurrentIndex(preset.index);
+        }
     }
 }
 
