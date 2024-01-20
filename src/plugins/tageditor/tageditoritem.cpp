@@ -21,7 +21,18 @@
 
 #include <utils/helpers.h>
 
+constexpr auto CharLimit = 2000;
+
 using namespace Qt::Literals::StringLiterals;
+
+namespace {
+bool withinCharLimit(const QStringList& strings)
+{
+    const int currentLength = std::accumulate(strings.cbegin(), strings.cend(), 0,
+                                              [](int sum, const QString& str) { return sum + str.length(); });
+    return currentLength <= CharLimit;
+}
+} // namespace
 
 namespace Fooyin::TagEditor {
 TagEditorItem::TagEditorItem()
@@ -67,8 +78,11 @@ void TagEditorItem::addTrackValue(const QString& value)
     if(m_values.contains(value)) {
         return;
     }
-    m_values.append(value);
-    m_values.sort();
+
+    if(m_trackCount == 0 || withinCharLimit(m_values)) {
+        m_values.append(value);
+        m_values.sort();
+    }
 
     m_trackCount++;
 }
@@ -77,11 +91,15 @@ void TagEditorItem::addTrackValue(const QStringList& values)
 {
     for(const auto& trackValue : values) {
         if(m_values.contains(trackValue)) {
-            return;
+            continue;
         }
-        m_values.append(trackValue);
-        m_values.sort();
+
+        if(m_trackCount == 0 || withinCharLimit(m_values)) {
+            m_values.append(trackValue);
+            m_values.sort();
+        }
     }
+
     m_trackCount++;
 }
 
