@@ -120,7 +120,6 @@ void addDefaultMetadata(std::unordered_map<QString, TrackFunc>& metadata,
     metadata[MetaData::Composer]     = &Track::composer;
     metadata[MetaData::Performer]    = &Track::performer;
     metadata[MetaData::Duration]     = &Track::duration;
-    metadata[MetaData::Lyrics]       = &Track::lyrics;
     metadata[MetaData::Comment]      = &Track::comment;
     metadata[MetaData::Date]         = &Track::date;
     metadata[MetaData::Year]         = &Track::year;
@@ -147,7 +146,6 @@ void addDefaultMetadata(std::unordered_map<QString, TrackFunc>& metadata,
     setMetadata[MetaData::Composer]     = generateSetFunc(&Track::setComposer);
     setMetadata[MetaData::Performer]    = generateSetFunc(&Track::setPerformer);
     setMetadata[MetaData::Duration]     = generateSetFunc(&Track::setDuration);
-    setMetadata[MetaData::Lyrics]       = generateSetFunc(&Track::setLyrics);
     setMetadata[MetaData::Comment]      = generateSetFunc(&Track::setComment);
     setMetadata[MetaData::Date]         = generateSetFunc(&Track::setDate);
     setMetadata[MetaData::Year]         = generateSetFunc(&Track::setYear);

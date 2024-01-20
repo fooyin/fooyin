@@ -49,22 +49,21 @@ QString fetchQueryTracks()
         u"Composer"_s,     // 13
         u"Performer"_s,    // 14
         u"Genres"_s,       // 15
-        u"Lyrics"_s,       // 16
-        u"Comment"_s,      // 17
-        u"Duration"_s,     // 18
-        u"FileSize"_s,     // 19
-        u"BitRate"_s,      // 20
-        u"SampleRate"_s,   // 21
-        u"ExtraTags"_s,    // 22
-        u"Type"_s,         // 23
-        u"ModifiedDate"_s, // 24
-        u"LibraryID"_s,    // 25
-        u"TrackHash"_s,    // 26
-        u"AddedDate"_s,    // 27
-        u"FirstPlayed"_s,  // 28
-        u"LastPlayed"_s,   // 29
-        u"PlayCount"_s,    // 30
-        u"Rating"_s,       // 31
+        u"Comment"_s,      // 16
+        u"Duration"_s,     // 17
+        u"FileSize"_s,     // 18
+        u"BitRate"_s,      // 19
+        u"SampleRate"_s,   // 20
+        u"ExtraTags"_s,    // 21
+        u"Type"_s,         // 22
+        u"ModifiedDate"_s, // 23
+        u"LibraryID"_s,    // 24
+        u"TrackHash"_s,    // 25
+        u"AddedDate"_s,    // 26
+        u"FirstPlayed"_s,  // 27
+        u"LastPlayed"_s,   // 28
+        u"PlayCount"_s,    // 29
+        u"Rating"_s,       // 30
     };
 
     const QString joinedFields = fields.join(", "_L1);
@@ -88,7 +87,6 @@ Fooyin::BindingsMap trackBindings(const Fooyin::Track& track)
             {u"Composer"_s, track.composer()},
             {u"Performer"_s, track.performer()},
             {u"Genres"_s, track.genres().join(Fooyin::Constants::Separator)},
-            {u"Lyrics"_s, track.lyrics()},
             {u"Comment"_s, track.comment()},
             {u"Duration"_s, QString::number(track.duration())},
             {u"FileSize"_s, QString::number(track.fileSize())},
@@ -119,21 +117,20 @@ void readToTrack(const Fooyin::DatabaseQuery& q, Fooyin::Track& track)
     track.setComposer(q.value(13).toString());
     track.setPerformer(q.value(14).toString());
     track.setGenres(q.value(15).toString().split(Fooyin::Constants::Separator, Qt::SkipEmptyParts));
-    track.setLyrics(q.value(16).toString());
-    track.setComment(q.value(17).toString());
-    track.setDuration(q.value(18).toULongLong());
-    track.setFileSize(q.value(19).toInt());
-    track.setBitrate(q.value(20).toInt());
-    track.setSampleRate(q.value(21).toInt());
-    track.storeExtraTags(q.value(22).toByteArray());
-    track.setType(static_cast<Fooyin::Track::Type>(q.value(23).toInt()));
-    track.setModifiedTime(q.value(24).toULongLong());
-    track.setLibraryId(q.value(25).toInt());
-    track.setHash(q.value(26).toString());
-    track.setAddedTime(q.value(27).toULongLong());
-    track.setFirstPlayed(q.value(28).toULongLong());
-    track.setLastPlayed(q.value(29).toULongLong());
-    track.setPlayCount(q.value(30).toInt());
+    track.setComment(q.value(16).toString());
+    track.setDuration(q.value(17).toULongLong());
+    track.setFileSize(q.value(18).toInt());
+    track.setBitrate(q.value(19).toInt());
+    track.setSampleRate(q.value(20).toInt());
+    track.storeExtraTags(q.value(21).toByteArray());
+    track.setType(static_cast<Fooyin::Track::Type>(q.value(22).toInt()));
+    track.setModifiedTime(q.value(23).toULongLong());
+    track.setLibraryId(q.value(24).toInt());
+    track.setHash(q.value(25).toString());
+    track.setAddedTime(q.value(26).toULongLong());
+    track.setFirstPlayed(q.value(27).toULongLong());
+    track.setLastPlayed(q.value(28).toULongLong());
+    track.setPlayCount(q.value(29).toInt());
 
     track.generateHash();
     track.setEnabled(QFileInfo::exists(track.filepath()));

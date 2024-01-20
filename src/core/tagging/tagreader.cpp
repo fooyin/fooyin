@@ -68,7 +68,6 @@ constexpr std::array supportedMp4Tags{
     std::pair(Fooyin::Mp4::Composer, Fooyin::Tag::Composer),
     std::pair(Fooyin::Mp4::Performer, Fooyin::Tag::Performer),
     std::pair(Fooyin::Mp4::Comment, Fooyin::Tag::Comment),
-    std::pair(Fooyin::Mp4::Lyrics, Fooyin::Tag::Lyrics),
     std::pair(Fooyin::Mp4::Date, Fooyin::Tag::Date),
     std::pair(Fooyin::Mp4::Rating, Fooyin::Tag::Rating),
     std::pair(Fooyin::Mp4::TrackNumber, Fooyin::Tag::TrackNumber),
@@ -261,9 +260,6 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
     if(props.contains(Fooyin::Tag::Comment)) {
         track.setComment(convertString(props[Fooyin::Tag::Comment].toString()));
     }
-    if(props.contains(Fooyin::Tag::Lyrics)) {
-        track.setLyrics(convertString(props[Fooyin::Tag::Lyrics].toString()));
-    }
     if(props.contains(Fooyin::Tag::Date)) {
         track.setDate(convertString(props[Fooyin::Tag::Date].toString()));
     }
@@ -276,7 +272,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
             = {Fooyin::Tag::Title,       Fooyin::Tag::Artist,     Fooyin::Tag::Album,      Fooyin::Tag::AlbumArtist,
                Fooyin::Tag::TrackNumber, Fooyin::Tag::TrackTotal, Fooyin::Tag::DiscNumber, Fooyin::Tag::DiscTotal,
                Fooyin::Tag::Genre,       Fooyin::Tag::Composer,   Fooyin::Tag::Performer,  Fooyin::Tag::Comment,
-               Fooyin::Tag::Lyrics,      Fooyin::Tag::Date,       Fooyin::Tag::Rating};
+               Fooyin::Tag::Date,        Fooyin::Tag::Rating};
 
         track.clearExtraTags();
 
@@ -466,10 +462,10 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track& track, bool ski
 
     if(!skipExtra) {
         static const std::set<TagLib::String> baseMp4Tags
-            = {Fooyin::Mp4::Title,       Fooyin::Mp4::Artist,    Fooyin::Mp4::Album,     Fooyin::Mp4::AlbumArtist,
-               Fooyin::Mp4::Genre,       Fooyin::Mp4::Composer,  Fooyin::Mp4::Performer, Fooyin::Mp4::PerformerAlt,
-               Fooyin::Mp4::Comment,     Fooyin::Mp4::Lyrics,    Fooyin::Mp4::Date,      Fooyin::Mp4::Rating,
-               Fooyin::Mp4::TrackNumber, Fooyin::Mp4::DiscNumber};
+            = {Fooyin::Mp4::Title,     Fooyin::Mp4::Artist,   Fooyin::Mp4::Album,     Fooyin::Mp4::AlbumArtist,
+               Fooyin::Mp4::Genre,     Fooyin::Mp4::Composer, Fooyin::Mp4::Performer, Fooyin::Mp4::PerformerAlt,
+               Fooyin::Mp4::Comment,   Fooyin::Mp4::Date,     Fooyin::Mp4::Rating,    Fooyin::Mp4::TrackNumber,
+               Fooyin::Mp4::DiscNumber};
 
         track.clearExtraTags();
 

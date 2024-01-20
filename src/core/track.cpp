@@ -50,7 +50,6 @@ struct Track::Private : public QSharedData
     QString composer;
     QString performer;
     uint64_t duration{0};
-    QString lyrics;
     QString comment;
     QString date;
     int year{-1};
@@ -256,11 +255,6 @@ QString Track::performer() const
 uint64_t Track::duration() const
 {
     return p->duration;
-}
-
-QString Track::lyrics() const
-{
-    return p->lyrics;
 }
 
 QString Track::comment() const
@@ -485,11 +479,6 @@ void Track::setPerformer(const QString& performer)
 void Track::setDuration(uint64_t duration)
 {
     p->duration = duration;
-}
-
-void Track::setLyrics(const QString& lyrics)
-{
-    p->lyrics = lyrics;
 }
 
 void Track::setComment(const QString& comment)

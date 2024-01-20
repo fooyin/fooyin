@@ -63,7 +63,6 @@ constexpr std::array supportedMp4Tags{
     std::pair(Fooyin::Tag::Composer, Fooyin::Mp4::Composer),
     std::pair(Fooyin::Tag::Performer, Fooyin::Mp4::Performer),
     std::pair(Fooyin::Tag::Comment, Fooyin::Mp4::Comment),
-    std::pair(Fooyin::Tag::Lyrics, Fooyin::Mp4::Lyrics),
     std::pair(Fooyin::Tag::Date, Fooyin::Mp4::Date),
     std::pair(Fooyin::Tag::Rating, Fooyin::Mp4::Rating),
     std::pair(Fooyin::Tag::TrackNumber, Fooyin::Mp4::TrackNumber),
@@ -214,10 +213,6 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
         oldProperties.replace(Fooyin::Tag::Comment, convertString(track.comment()));
     }
 
-    if(!track.lyrics().isEmpty()) {
-        oldProperties.replace(Fooyin::Tag::Lyrics, convertString(track.lyrics()));
-    }
-
     if(!track.date().isEmpty()) {
         oldProperties.replace(Fooyin::Tag::Date, convertString(track.date()));
     }
@@ -227,7 +222,7 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
             = {Fooyin::Tag::Title,       Fooyin::Tag::Artist,     Fooyin::Tag::Album,      Fooyin::Tag::AlbumArtist,
                Fooyin::Tag::TrackNumber, Fooyin::Tag::TrackTotal, Fooyin::Tag::DiscNumber, Fooyin::Tag::DiscTotal,
                Fooyin::Tag::Genre,       Fooyin::Tag::Composer,   Fooyin::Tag::Performer,  Fooyin::Tag::Comment,
-               Fooyin::Tag::Lyrics,      Fooyin::Tag::Date,       Fooyin::Tag::Rating};
+               Fooyin::Tag::Date,        Fooyin::Tag::Rating};
 
         const auto customTags = track.extraTags();
         for(const auto& [tag, values] : Fooyin::Utils::asRange(customTags)) {
@@ -362,10 +357,9 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track)
     mp4Tags->setItem(Fooyin::Mp4::PerformerAlt, TagLib::StringList{convertString(track.performer())});
 
     static const std::set<QString> baseMp4Tags
-        = {Fooyin::Tag::Title,     Fooyin::Tag::Artist,   Fooyin::Tag::Album,     Fooyin::Tag::AlbumArtist,
-           Fooyin::Tag::Genre,     Fooyin::Tag::Composer, Fooyin::Tag::Performer, Fooyin::Tag::Comment,
-           Fooyin::Tag::Lyrics,    Fooyin::Tag::Date,     Fooyin::Tag::Rating,    Fooyin::Tag::TrackNumber,
-           Fooyin::Tag::DiscNumber};
+        = {Fooyin::Tag::Title, Fooyin::Tag::Artist,   Fooyin::Tag::Album,       Fooyin::Tag::AlbumArtist,
+           Fooyin::Tag::Genre, Fooyin::Tag::Composer, Fooyin::Tag::Performer,   Fooyin::Tag::Comment,
+           Fooyin::Tag::Date,  Fooyin::Tag::Rating,   Fooyin::Tag::TrackNumber, Fooyin::Tag::DiscNumber};
 
     const auto customTags = track.extraTags();
     for(const auto& [tag, values] : Fooyin::Utils::asRange(customTags)) {
