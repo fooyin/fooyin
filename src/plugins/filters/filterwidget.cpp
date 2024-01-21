@@ -132,16 +132,20 @@ struct FilterWidget::Private
             co_return;
         }
 
+        TrackList selectedTracks;
+
         for(const auto& index : selected) {
             if(!index.parent().isValid()) {
-                tracks = fetchAllTracks(view);
+                selectedTracks = fetchAllTracks(view);
                 break;
             }
             const auto newTracks = index.data(FilterItem::Tracks).value<TrackList>();
-            std::ranges::copy(newTracks, std::back_inserter(tracks));
+            std::ranges::copy(newTracks, std::back_inserter(selectedTracks));
         }
 
-        tracks = co_await Utils::asyncExec([this]() { return Sorting::sortTracks(tracks); });
+        selectedTracks = co_await Utils::asyncExec([selectedTracks]() { return Sorting::sortTracks(selectedTracks); });
+
+        tracks = selectedTracks;
 
         QMetaObject::invokeMethod(self, "selectionChanged", Q_ARG(QString, playlistNameFromSelection()));
     }
