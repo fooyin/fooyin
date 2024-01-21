@@ -22,7 +22,6 @@
 #include "mainmenubar.h"
 
 #include <core/constants.h>
-#include <core/coresettings.h>
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -36,13 +35,10 @@
 constexpr auto MainWindowGeometry = "Interface/Geometry";
 
 namespace Fooyin {
-MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, EditableLayout* editableLayout,
-                       QWidget* parent)
+MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, SettingsManager* settings, QWidget* parent)
     : QMainWindow{parent}
-    , m_actionManager{actionManager}
+    , m_mainMenu{menubar}
     , m_settings{settings}
-    , m_mainMenu{new MainMenuBar(m_actionManager, this)}
-    , m_editableLayout{editableLayout}
 {
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
@@ -51,13 +47,6 @@ MainWindow::MainWindow(ActionManager* actionManager, SettingsManager* settings, 
 
     resize(1280, 720);
     setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
-
-    setCentralWidget(m_editableLayout);
-
-    if(m_settings->value<Settings::Core::FirstRun>()) {
-        // Delay showing until size of parent widget (this) is set.
-        QTimer::singleShot(1000, m_editableLayout, &EditableLayout::showQuickSetup);
-    }
 }
 
 MainWindow::~MainWindow()

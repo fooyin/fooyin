@@ -28,6 +28,7 @@
 #include "library/coverwidget.h"
 #include "library/statuswidget.h"
 #include "librarytree/librarytreewidget.h"
+#include "mainmenubar.h"
 #include "mainwindow.h"
 #include "menu/editmenu.h"
 #include "menu/filemenu.h"
@@ -58,6 +59,7 @@
 #include "widgets/splitterwidget.h"
 #include "widgets/tabstackwidget.h"
 
+#include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
@@ -103,6 +105,7 @@ struct GuiApplication::Private
     GuiSettings guiSettings;
     LayoutProvider layoutProvider;
     std::unique_ptr<EditableLayout> editableLayout;
+    std::unique_ptr<MainMenuBar> menubar;
     std::unique_ptr<MainWindow> mainWindow;
     WidgetContext* mainContext;
     std::unique_ptr<PlaylistController> playlistController;
@@ -148,7 +151,8 @@ struct GuiApplication::Private
         , guiSettings{settingsManager}
         , editableLayout{std::make_unique<EditableLayout>(actionManager, &widgetProvider, &layoutProvider,
                                                           settingsManager)}
-        , mainWindow{std::make_unique<MainWindow>(actionManager, settingsManager, editableLayout.get())}
+        , menubar{std::make_unique<MainMenuBar>(actionManager)}
+        , mainWindow{std::make_unique<MainWindow>(actionManager, menubar.get(), settingsManager)}
         , mainContext{new WidgetContext(mainWindow.get(), Context{"Fooyin.MainWindow"}, self)}
         , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerManager, library,
                                                                   &selectionController, settingsManager)}
@@ -186,6 +190,24 @@ struct GuiApplication::Private
 
         pluginManager->initialisePlugins<GuiPlugin>(
             [this](GuiPlugin* plugin) { plugin->initialise(guiPluginContext); });
+
+        layoutProvider.findLayouts();
+        editableLayout->initialise();
+        mainWindow->setCentralWidget(editableLayout.get());
+
+        auto openMainWindow = [this]() {
+            mainWindow->open();
+            if(settingsManager->value<Settings::Core::FirstRun>()) {
+                QMetaObject::invokeMethod(editableLayout.get(), &EditableLayout::showQuickSetup, Qt::QueuedConnection);
+            }
+        };
+
+        if(libraryManager->hasLibrary() && settingsManager->value<Settings::Gui::WaitForTracks>()) {
+            connect(library, &MusicLibrary::tracksLoaded, openMainWindow);
+        }
+        else {
+            openMainWindow();
+        }
     }
 
     void restoreIconTheme()
@@ -413,17 +435,6 @@ GuiApplication::GuiApplication(const CorePluginContext& core)
             }
         }
     });
-
-    p->layoutProvider.findLayouts();
-
-    p->editableLayout->initialise();
-
-    if(p->libraryManager->hasLibrary() && p->settingsManager->value<Settings::Gui::WaitForTracks>()) {
-        connect(p->library, &MusicLibrary::tracksLoaded, p->mainWindow.get(), &MainWindow::open);
-    }
-    else {
-        p->mainWindow->open();
-    }
 }
 
 GuiApplication::~GuiApplication() = default;

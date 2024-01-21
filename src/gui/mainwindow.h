@@ -25,7 +25,6 @@ namespace Fooyin {
 class ActionManager;
 class SettingsManager;
 class MainMenuBar;
-class EditableLayout;
 
 class MainWindow : public QMainWindow
 {
@@ -40,7 +39,7 @@ public:
     };
     Q_ENUM(StartupBehaviour)
 
-    explicit MainWindow(ActionManager* actionManager, SettingsManager* settings, EditableLayout* editableLayout,
+    explicit MainWindow(ActionManager* actionManager, MainMenuBar* menubar, SettingsManager* settings,
                         QWidget* parent = nullptr);
 
     ~MainWindow() override;
@@ -54,11 +53,7 @@ protected:
     void closeEvent(QCloseEvent* event) override;
 
 private:
-    ActionManager* m_actionManager;
-    SettingsManager* m_settings;
-
     MainMenuBar* m_mainMenu;
-
-    EditableLayout* m_editableLayout;
+    SettingsManager* m_settings;
 };
 } // namespace Fooyin
