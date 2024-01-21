@@ -545,7 +545,15 @@ void PlaylistWidgetPrivate::handleTracksChanged(Playlist* playlist, const std::v
     saveState();
     playlistView->setUpdatesEnabled(false);
 
-    model->updateTracks(indexes);
+    const auto changedTrackCount = static_cast<int>(indexes.size());
+    // It's faster to just reset if we're going to be updating more than half the playlist
+    // or we're updating a large number of tracks
+    if(changedTrackCount > 500 || changedTrackCount > (playlist->trackCount() / 2)) {
+        model->reset(currentPreset, columns, playlist);
+    }
+    else {
+        model->updateTracks(indexes);
+    }
 
     QObject::connect(
         model, &PlaylistModel::playlistTracksChanged, this,
