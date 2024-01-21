@@ -39,7 +39,8 @@
 
 using namespace std::chrono_literals;
 
-constexpr auto SandboxState = "Interface/ScriptSandboxState";
+constexpr auto SandboxState  = "Interface/ScriptSandboxState";
+constexpr auto DefaultScript = "%track%. %title%";
 
 namespace Fooyin {
 struct SandboxDialog::Private
@@ -162,6 +163,10 @@ struct SandboxDialog::Private
         in >> mainSplitterState;
         in >> documentSplitterState;
         in >> editorText;
+
+        if(editorText.isEmpty()) {
+            editorText = DefaultScript;
+        }
 
         self->restoreGeometry(dialogGeometry);
         mainSplitter->restoreState(mainSplitterState);
