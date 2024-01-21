@@ -38,6 +38,10 @@ MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
     m_menubar->appendGroup(Constants::Groups::Library);
     m_menubar->appendGroup(Constants::Groups::Help);
 
+    m_menubar->appendGroup(Actions::Groups::One);
+    m_menubar->appendGroup(Actions::Groups::Two);
+    m_menubar->appendGroup(Actions::Groups::Three);
+
     ActionContainer* fileMenu = m_actionManager->createMenu(Constants::Menus::File);
     m_menubar->addMenu(fileMenu, Constants::Groups::File);
     fileMenu->menu()->setTitle(ActionManager::tr("&File"));

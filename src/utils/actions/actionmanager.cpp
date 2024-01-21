@@ -313,10 +313,6 @@ ActionContainer* ActionManager::createMenuBar(const Id& id)
     QObject::connect(container, &MenuContainer::requestUpdate, this,
                      [this](MenuContainer* container) { p->scheduleContainerUpdate(container); });
 
-    container->appendGroup(Actions::Groups::One);
-    container->appendGroup(Actions::Groups::Two);
-    container->appendGroup(Actions::Groups::Three);
-
     return container;
 }
 
