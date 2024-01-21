@@ -19,12 +19,17 @@
 
 #include "scripthighlighter.h"
 
+#include <utils/utils.h>
+
 namespace Fooyin {
 ScriptHighlighter::ScriptHighlighter(QTextDocument* parent)
     : QSyntaxHighlighter{parent}
 {
-    m_varFormat.setForeground(Qt::cyan);
-    m_keywordFormat.setForeground(Qt::blue);
+    const bool isDarkMode = Utils::isDarkMode();
+
+    // TODO: Make colours user configurable
+    m_varFormat.setForeground(isDarkMode ? Qt::cyan : Qt::darkCyan);
+    m_keywordFormat.setForeground(isDarkMode ? Qt::blue : Qt::darkBlue);
     m_errorFormat.setBackground(Qt::red);
 }
 
