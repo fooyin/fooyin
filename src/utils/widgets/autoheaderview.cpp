@@ -21,6 +21,7 @@
 
 #include <utils/helpers.h>
 
+#include <QActionGroup>
 #include <QApplication>
 #include <QIODevice>
 #include <QMenu>
@@ -426,6 +427,63 @@ void AutoHeaderView::addHeaderContextMenu(QMenu* menu, const QPoint& pos)
     showMenu->setEnabled(hiddenCount > 0);
 
     menu->addMenu(showMenu);
+}
+
+void AutoHeaderView::addHeaderAlignmentMenu(QMenu* menu, const QPoint& pos)
+{
+    auto* alignMenu = new QMenu(tr("Alignment"), menu);
+
+    const int logical = logicalIndexAt(mapFromGlobal(pos));
+
+    if(logical < 0 || logical >= count()) {
+        return;
+    }
+
+    auto* alignmentGroup = new QActionGroup(alignMenu);
+
+    auto* alignLeft   = new QAction(tr("&Left"), alignMenu);
+    auto* alignCentre = new QAction(tr("&Centre"), alignMenu);
+    auto* alignRight  = new QAction(tr("&Right"), alignMenu);
+
+    alignLeft->setCheckable(true);
+    alignCentre->setCheckable(true);
+    alignRight->setCheckable(true);
+
+    const QModelIndex index = model()->index(0, logical);
+    const auto alignment    = model()->data(index, Qt::TextAlignmentRole).value<Qt::Alignment>();
+
+    switch(alignment) {
+        case(Qt::AlignLeft):
+            alignLeft->setChecked(true);
+            break;
+        case(Qt::AlignHCenter):
+            alignCentre->setChecked(true);
+            break;
+        case(Qt::AlignRight):
+            alignRight->setChecked(true);
+            break;
+        default:
+            break;
+    }
+
+    auto changeAlignment = [this, index](Qt::Alignment alignment) {
+        model()->setData(index, alignment.toInt(), Qt::TextAlignmentRole);
+    };
+
+    QObject::connect(alignLeft, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignLeft); });
+    QObject::connect(alignCentre, &QAction::triggered, this,
+                     [changeAlignment]() { changeAlignment(Qt::AlignHCenter); });
+    QObject::connect(alignRight, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignRight); });
+
+    alignmentGroup->addAction(alignLeft);
+    alignmentGroup->addAction(alignCentre);
+    alignmentGroup->addAction(alignRight);
+
+    alignMenu->addAction(alignLeft);
+    alignMenu->addAction(alignCentre);
+    alignMenu->addAction(alignRight);
+
+    menu->addMenu(alignMenu);
 }
 
 QByteArray AutoHeaderView::saveHeaderState() const

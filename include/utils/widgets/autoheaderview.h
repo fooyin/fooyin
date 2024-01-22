@@ -44,6 +44,7 @@ public:
     void setStretchEnabled(bool enabled);
 
     void addHeaderContextMenu(QMenu* menu, const QPoint& pos = {});
+    void addHeaderAlignmentMenu(QMenu* menu, const QPoint& pos = {});
 
     [[nodiscard]] QByteArray saveHeaderState() const;
     void restoreHeaderState(const QByteArray& data);

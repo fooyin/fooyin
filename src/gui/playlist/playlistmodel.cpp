@@ -159,6 +159,23 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
+bool PlaylistModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+    if(role != Qt::TextAlignmentRole) {
+        return false;
+    }
+
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return {};
+    }
+
+    p->columnAlignments[index.column()] = value.value<Qt::Alignment>();
+
+    emit dataChanged({}, {}, {Qt::TextAlignmentRole});
+
+    return true;
+}
+
 void PlaylistModel::fetchMore(const QModelIndex& parent)
 {
     auto* parentItem = itemForIndex(parent);

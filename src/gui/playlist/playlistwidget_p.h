@@ -104,7 +104,6 @@ public:
     void addSortMenu(QMenu* parent);
     void addPresetMenu(QMenu* parent);
     void addPlaylistMenu(QMenu* parent);
-    void addAlignmentMenu(const QPoint& pos, QMenu* parent);
 
     PlaylistWidget* self;
 

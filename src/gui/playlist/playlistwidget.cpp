@@ -629,7 +629,7 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
         menu->addSeparator();
         header->addHeaderContextMenu(menu, self->mapToGlobal(pos));
         menu->addSeparator();
-        addAlignmentMenu(pos, menu);
+        header->addHeaderAlignmentMenu(menu, self->mapToGlobal(pos));
         menu->addSeparator();
     }
 
@@ -782,57 +782,6 @@ void PlaylistWidgetPrivate::addPlaylistMenu(QMenu* parent)
     }
 
     parent->addMenu(playlistMenu);
-}
-
-void PlaylistWidgetPrivate::addAlignmentMenu(const QPoint& pos, QMenu* parent)
-{
-    auto* alignMenu = new QMenu(tr("Alignment"), parent);
-
-    const int logical = header->logicalIndexAt(pos);
-
-    if(logical >= 0) {
-        auto* alignmentGroup = new QActionGroup(alignMenu);
-
-        auto* alignLeft   = new QAction(tr("&Left"), alignMenu);
-        auto* alignCentre = new QAction(tr("&Centre"), alignMenu);
-        auto* alignRight  = new QAction(tr("&Right"), alignMenu);
-
-        alignLeft->setCheckable(true);
-        alignCentre->setCheckable(true);
-        alignRight->setCheckable(true);
-
-        switch(model->columnAlignment(logical)) {
-            case(Qt::AlignLeft):
-                alignLeft->setChecked(true);
-                break;
-            case(Qt::AlignHCenter):
-                alignCentre->setChecked(true);
-                break;
-            case(Qt::AlignRight):
-                alignRight->setChecked(true);
-                break;
-        }
-
-        auto changeAlignment = [this, logical](Qt::Alignment alignment) {
-            model->changeColumnAlignment(logical, alignment);
-        };
-
-        QObject::connect(alignLeft, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignLeft); });
-        QObject::connect(alignCentre, &QAction::triggered, this,
-                         [changeAlignment]() { changeAlignment(Qt::AlignHCenter); });
-        QObject::connect(alignRight, &QAction::triggered, this,
-                         [changeAlignment]() { changeAlignment(Qt::AlignRight); });
-
-        alignmentGroup->addAction(alignLeft);
-        alignmentGroup->addAction(alignCentre);
-        alignmentGroup->addAction(alignRight);
-
-        alignMenu->addAction(alignLeft);
-        alignMenu->addAction(alignCentre);
-        alignMenu->addAction(alignRight);
-
-        parent->addMenu(alignMenu);
-    }
 }
 
 PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController,
