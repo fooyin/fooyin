@@ -213,6 +213,8 @@ struct FilterWidget::Private
 
         menu->addSeparator();
         header->addHeaderContextMenu(menu, self->mapToGlobal(pos));
+        menu->addSeparator();
+        header->addHeaderAlignmentMenu(menu, self->mapToGlobal(pos));
 
         menu->addSeparator();
         auto* manageConnections = new QAction(tr("Manage Groups"), menu);
@@ -351,26 +353,49 @@ QString FilterWidget::layoutName() const
 void FilterWidget::saveLayoutData(QJsonObject& layout)
 {
     QStringList columns;
-    std::ranges::transform(p->columns, std::back_inserter(columns),
-                           [](const auto& column) { return QString::number(column.id); });
+
+    for(int i{0}; const auto& column : p->columns) {
+        const auto alignment = p->model->columnAlignment(i++);
+        QString colStr       = QString::number(column.id);
+
+        if(alignment != Qt::AlignLeft) {
+            colStr += ":"_L1 + QString::number(alignment.toInt());
+        }
+
+        columns.push_back(colStr);
+    }
+
+    layout["Columns"_L1] = columns.join("|"_L1);
 
     QByteArray state = p->header->saveHeaderState();
     state            = qCompress(state, 9);
 
-    layout["Columns"_L1] = columns.join("|"_L1);
-    layout["Group"_L1]   = p->group.name();
-    layout["Index"_L1]   = p->index;
-    layout["State"_L1]   = QString::fromUtf8(state.toBase64());
+    layout["Group"_L1] = p->group.name();
+    layout["Index"_L1] = p->index;
+    layout["State"_L1] = QString::fromUtf8(state.toBase64());
 }
 
 void FilterWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains("Columns"_L1)) {
         p->columns.clear();
-        const QString columnNames = layout.value("Columns"_L1).toString();
-        const QStringList columns = columnNames.split("|"_L1);
-        std::ranges::transform(columns, std::back_inserter(p->columns),
-                               [this](const QString& column) { return p->columnRegistry.itemById(column.toInt()); });
+
+        const QString columnData    = layout.value("Columns"_L1).toString();
+        const QStringList columnIds = columnData.split("|"_L1);
+
+        for(int i{0}; const auto& columnId : columnIds) {
+            const auto column     = columnId.split(u":"_s);
+            const auto columnItem = p->columnRegistry.itemById(column.at(0).toInt());
+
+            if(columnItem.isValid()) {
+                p->columns.push_back(columnItem);
+
+                if(column.size() > 1) {
+                    p->model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));
+                }
+            }
+            ++i;
+        }
     }
 
     if(layout.contains("Group"_L1)) {

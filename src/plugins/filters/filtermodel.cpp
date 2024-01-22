@@ -78,6 +78,9 @@ struct FilterModel::Private
     int sortColumn{0};
     Qt::SortOrder sortOrder{Qt::AscendingOrder};
 
+    using ColumnAlignments = std::map<int, Qt::Alignment>;
+    ColumnAlignments columnAlignments;
+
     int rowHeight{0};
     QFont font;
     QColor colour;
@@ -280,10 +283,30 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         case(Qt::ForegroundRole): {
             return p->colour;
         }
+        case(Qt::TextAlignmentRole): {
+            return columnAlignment(col).toInt();
+        }
         default: {
             return {};
         }
     }
+}
+
+bool FilterModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+    if(role != Qt::TextAlignmentRole) {
+        return false;
+    }
+
+    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
+        return {};
+    }
+
+    p->columnAlignments[index.column()] = value.value<Qt::Alignment>();
+
+    emit dataChanged({}, {}, {Qt::TextAlignmentRole});
+
+    return true;
 }
 
 int FilterModel::columnCount(const QModelIndex& /*parent*/) const
@@ -306,6 +329,19 @@ QMimeData* FilterModel::mimeData(const QModelIndexList& indexes) const
     auto* mimeData = new QMimeData();
     mimeData->setData(Constants::Mime::TrackIds, saveTracks(indexes));
     return mimeData;
+}
+
+Qt::Alignment FilterModel::columnAlignment(int column) const
+{
+    if(!p->columnAlignments.contains(column)) {
+        return Qt::AlignLeft;
+    }
+    return p->columnAlignments.at(column);
+}
+
+void FilterModel::changeColumnAlignment(int column, Qt::Alignment alignment)
+{
+    p->columnAlignments[column] = alignment;
 }
 
 // QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,

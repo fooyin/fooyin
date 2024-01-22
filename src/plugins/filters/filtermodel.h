@@ -42,11 +42,15 @@ public:
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
     [[nodiscard]] QStringList mimeTypes() const override;
     [[nodiscard]] Qt::DropActions supportedDragActions() const override;
     [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
+
+    Qt::Alignment columnAlignment(int column) const;
+    void changeColumnAlignment(int column, Qt::Alignment alignment);
 
     //    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
     //                                        Qt::MatchFlags flags) const override;
@@ -54,7 +58,7 @@ public:
     void addTracks(const TrackList& tracks);
     void updateTracks(const TrackList& tracks);
     void removeTracks(const TrackList& tracks);
-    
+
     void reset(const FilterColumnList& columns, const TrackList& tracks);
 
 private:

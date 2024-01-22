@@ -38,6 +38,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const QString title = index.data(Qt::DisplayRole).toString();
     const auto font     = index.data(Qt::FontRole).value<QFont>();
     const auto colour   = index.data(Qt::ForegroundRole).value<QColor>();
+    const int alignment = index.data(Qt::TextAlignmentRole).toInt();
     const int margin    = index.data(FilterItem::CellMargin).toInt();
 
     if(font.pixelSize() > 0 || font.pointSize() > 0) {
@@ -55,7 +56,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
     const auto textPalette = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
 
-    opt.widget->style()->drawItemText(painter, titleRect, Qt::AlignLeft | Qt::AlignVCenter, opt.palette, true,
+    opt.widget->style()->drawItemText(painter, titleRect, Qt::AlignVCenter | alignment, opt.palette, true,
                                       painter->fontMetrics().elidedText(title, Qt::ElideRight, titleRect.width()),
                                       textPalette);
     painter->restore();
