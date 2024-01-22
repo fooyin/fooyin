@@ -110,12 +110,13 @@ struct PlaylistHandler::Private
         }
 
         if(!activePlaylist) {
+            playerManager->stop();
             return;
         }
 
         const Track nextTrack = activePlaylist->nextTrack(delta, playerManager->playMode());
 
-        if(!nextTrack.isValid()) {
+        if(!nextTrack.isValid() || !activePlaylist) {
             playerManager->stop();
             return;
         }
@@ -342,7 +343,7 @@ void PlaylistHandler::changeActivePlaylist(Playlist* playlist)
 void PlaylistHandler::schedulePlaylist(int id)
 {
     const auto playlist = std::ranges::find_if(std::as_const(p->playlists),
-                                         [id](const auto& playlist) { return playlist->id() == id; });
+                                               [id](const auto& playlist) { return playlist->id() == id; });
     if(playlist != p->playlists.cend()) {
         p->scheduledPlaylist = playlist->get();
     }
