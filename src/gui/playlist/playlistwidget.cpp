@@ -865,6 +865,10 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 
         state = qUncompress(state);
 
+        // Workaround to ensure QHeaderView section count is updated before restoring state
+        QMetaObject::invokeMethod(p->model, "headerDataChanged", Q_ARG(Qt::Orientation, Qt::Horizontal), Q_ARG(int, 0),
+                                  Q_ARG(int, 0));
+
         p->header->restoreHeaderState(state);
     }
 }
