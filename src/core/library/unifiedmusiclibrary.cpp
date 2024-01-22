@@ -174,7 +174,6 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
     , p{std::make_unique<Private>(this, libraryManager, database, settings)}
 {
     connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
-    connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::libraryAdded);
     connect(p->libraryManager, &LibraryManager::libraryRemoved, this,
             [this](int id, const std::set<int>& tracksRemoved) { p->removeLibrary(id, tracksRemoved); });
 
