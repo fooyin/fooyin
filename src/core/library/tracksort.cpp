@@ -73,7 +73,7 @@ TrackList calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortO
     return calcSortTracks(parseScript(sort), tracks, order);
 }
 
-TrackList calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int> indexes,
+TrackList calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int>& indexes,
                          Qt::SortOrder order)
 {
     return calcSortTracks(parseScript(sort), tracks, indexes, order);
@@ -85,7 +85,7 @@ TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks
     return sortTracks(calcTracks, order);
 }
 
-TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, const std::vector<int> indexes,
+TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, const std::vector<int>& indexes,
                          Qt::SortOrder order)
 {
     TrackList sortedTracks{tracks};

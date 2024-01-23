@@ -73,7 +73,7 @@ TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tra
  * @param order the order in which to sort the tracks
  * @returns a new sorted TrackList
  */
-TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int> indexes,
+TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int>& indexes,
                                        Qt::SortOrder order = Qt::AscendingOrder);
 
 /*!
@@ -96,6 +96,6 @@ TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const Tra
  * @returns a new sorted TrackList
  */
 TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
-                                       const std::vector<int> indexes, Qt::SortOrder order = Qt::AscendingOrder);
+                                       const std::vector<int>& indexes, Qt::SortOrder order = Qt::AscendingOrder);
 } // namespace Sorting
 } // namespace Fooyin
