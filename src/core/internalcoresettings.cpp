@@ -27,6 +27,8 @@
 
 #include <QFileInfo>
 
+constexpr auto VersionSetting = "Version";
+
 using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
@@ -53,6 +55,6 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
 void CoreSettings::shutdown()
 {
-    m_settings->set<Settings::Core::Version>(VERSION);
+    m_settings->fileSet(VersionSetting, VERSION);
 }
 } // namespace Fooyin

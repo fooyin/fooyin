@@ -1,6 +1,6 @@
 {
     "Name" : "SDL2",
-    "Version" : "0.1.0",
+    "Version" : "0.2.0",
     "Vendor" : "Fooyin",
     "Copyright" : "Copyright 2022-2024, Luke Taylor <LukeT1@proton.me>",
     "License" : "Fooyin is free software: you can redistribute it and/or modify

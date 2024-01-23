@@ -8,7 +8,7 @@ endif()
 
 project(
     fooyin_sdl
-    VERSION 0.1.0
+    VERSION 0.2.0
     DESCRIPTION "SDL2 plugin for fooyin"
     HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
     LANGUAGES CXX
