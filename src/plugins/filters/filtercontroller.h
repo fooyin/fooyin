@@ -38,7 +38,6 @@ struct FilterGroup
     Id id;
     std::vector<FilterWidget*> filters;
     TrackList filteredTracks;
-    QString searchFilter;
 };
 
 using FilterGroups     = std::unordered_map<Id, FilterGroup, Id::IdHash>;

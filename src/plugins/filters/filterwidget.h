@@ -41,12 +41,15 @@ public:
     [[nodiscard]] Id group() const;
     [[nodiscard]] int index() const;
     [[nodiscard]] bool multipleColumns() const;
+    [[nodiscard]] bool isActive() const;
     [[nodiscard]] TrackList tracks() const;
+    [[nodiscard]] TrackList filteredTracks() const;
+    [[nodiscard]] QString searchFilter() const;
 
     void setGroup(const Id& group);
     void setIndex(int index);
-    void setTracks(const TrackList& tracks);
-    void clearTracks();
+    void setFilteredTracks(const TrackList& tracks);
+    void clearFilteredTracks();
 
     void reset(const TrackList& tracks);
 

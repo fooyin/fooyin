@@ -27,6 +27,7 @@
 #include "filterview.h"
 #include "settings/filtersettings.h"
 
+#include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
 #include <core/track.h>
 #include <utils/async.h>
@@ -89,6 +90,10 @@ struct FilterWidget::Private
     FilterColumnList columns;
     bool multipleColumns{false};
     TrackList tracks;
+    TrackList filteredTracks;
+
+    QString searchStr;
+    bool searching{false};
 
     Private(FilterWidget* self, SettingsManager* settings)
         : self{self}
@@ -124,7 +129,11 @@ struct FilterWidget::Private
 
     QCoro::Task<void> selectionChanged()
     {
-        tracks.clear();
+        if(searching) {
+            co_return;
+        }
+
+        filteredTracks.clear();
 
         const QModelIndexList selected = view->selectionModel()->selectedRows();
 
@@ -145,7 +154,7 @@ struct FilterWidget::Private
 
         selectedTracks = co_await Utils::asyncExec([selectedTracks]() { return Sorting::sortTracks(selectedTracks); });
 
-        tracks = selectedTracks;
+        filteredTracks = selectedTracks;
 
         QMetaObject::invokeMethod(self, "selectionChanged", Q_ARG(QString, playlistNameFromSelection()));
     }
@@ -305,9 +314,24 @@ bool FilterWidget::multipleColumns() const
     return p->multipleColumns;
 }
 
+bool FilterWidget::isActive() const
+{
+    return !p->filteredTracks.empty();
+}
+
 TrackList FilterWidget::tracks() const
 {
     return p->tracks;
+}
+
+TrackList FilterWidget::filteredTracks() const
+{
+    return p->filteredTracks;
+}
+
+QString FilterWidget::searchFilter() const
+{
+    return p->searchStr;
 }
 
 void FilterWidget::setGroup(const Id& group)
@@ -320,18 +344,19 @@ void FilterWidget::setIndex(int index)
     p->index = index;
 }
 
-void FilterWidget::setTracks(const TrackList& tracks)
+void FilterWidget::setFilteredTracks(const TrackList& tracks)
 {
-    p->tracks = tracks;
+    p->filteredTracks = tracks;
 }
 
-void FilterWidget::clearTracks()
+void FilterWidget::clearFilteredTracks()
 {
-    p->tracks.clear();
+    p->filteredTracks.clear();
 }
 
 void FilterWidget::reset(const TrackList& tracks)
 {
+    p->tracks = tracks;
     p->model->reset(p->columns, tracks);
 }
 
@@ -432,7 +457,9 @@ void FilterWidget::finalise()
 
 void FilterWidget::searchEvent(const QString& search)
 {
+    p->filteredTracks.clear();
     emit requestSearch(search);
+    p->searchStr = search;
 }
 
 void FilterWidget::tracksAdded(const TrackList& tracks)

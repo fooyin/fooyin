@@ -155,11 +155,7 @@ struct FilterController::Private
 
         const FilterGroup& group = groups.at(groupId);
 
-        if(!group.filteredTracks.empty() || !group.searchFilter.isEmpty() /* || filterStore.hasActiveFilters()*/) {
-            return group.filteredTracks;
-        }
-
-        return library->tracks();
+        return group.filteredTracks.empty() ? library->tracks() : group.filteredTracks;
     }
 
     void recalculateIndexesOfGroup(const Id& group)
@@ -217,15 +213,15 @@ struct FilterController::Private
         group.filteredTracks.clear();
 
         auto activeFilters
-            = group.filters | std::views::filter([](FilterWidget* widget) { return !widget->tracks().empty(); });
+            = group.filters | std::views::filter([](FilterWidget* widget) { return widget->isActive(); });
 
         for(auto& filter : activeFilters) {
             if(group.filteredTracks.empty()) {
-                std::ranges::copy(filter->tracks(), std::back_inserter(group.filteredTracks));
+                std::ranges::copy(filter->filteredTracks(), std::back_inserter(group.filteredTracks));
             }
             else {
                 group.filteredTracks
-                    = Utils::intersection<Track, Track::TrackHash>(filter->tracks(), group.filteredTracks);
+                    = Utils::intersection<Track, Track::TrackHash>(filter->filteredTracks(), group.filteredTracks);
             }
         }
     }
@@ -238,14 +234,14 @@ struct FilterController::Private
 
         for(const auto& filter : groups.at(group).filters) {
             if(filter->index() > index) {
-                filter->clearTracks();
+                filter->clearFilteredTracks();
             }
         }
     }
 
     void selectionChanged(FilterWidget* filter, const QString& playlistName)
     {
-        trackSelection->changeSelectedTracks(filter->tracks(), playlistName);
+        trackSelection->changeSelectedTracks(filter->filteredTracks(), playlistName);
 
         if(settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
             const QString autoPlaylist = settings->value<Settings::Filters::FilterAutoPlaylist>();
@@ -281,7 +277,7 @@ struct FilterController::Private
                 TrackList cleanedTracks;
                 std::ranges::copy_if(filterWidget->tracks(), std::back_inserter(cleanedTracks),
                                      [libraryId](const Track& track) { return track.libraryId() != libraryId; });
-                filterWidget->setTracks(cleanedTracks);
+                filterWidget->setFilteredTracks(cleanedTracks);
             }
         }
     }
@@ -314,15 +310,12 @@ struct FilterController::Private
 
         FilterGroup& group = groups.at(groupId);
 
-        const bool reset   = group.searchFilter.length() > search.length();
-        group.searchFilter = search;
-
-        TrackList tracksToFilter = !reset && !filter->tracks().empty() ? filter->tracks() : library->tracks();
-
-        group.filteredTracks = co_await Utils::asyncExec(
+        const bool reset         = !group.filteredTracks.empty() || filter->searchFilter().length() > search.length();
+        TrackList tracksToFilter = reset ? library->tracks() : filter->tracks();
+        TrackList filteredTracks = co_await Utils::asyncExec(
             [&search, &tracksToFilter]() { return Filter::filterTracks(tracksToFilter, search); });
 
-        filter->reset(tracks(filter->group()));
+        filter->reset(filteredTracks);
     }
 };
 
