@@ -107,7 +107,10 @@ struct LibraryTreePopulator::Private
             if(!populator->mayRun()) {
                 return;
             }
-            iterateTrack(track);
+
+            if(track.enabled() && track.libraryId() >= 0) {
+                iterateTrack(track);
+            }
         }
 
         if(!populator->mayRun()) {
