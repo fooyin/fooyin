@@ -1,5 +1,5 @@
 <p align="center">
-<img src="data/icons/sc-fooyin.svg" width="15%" alt="Fooyin logo">
+<img src="data/icons/sc-fooyin.svg" width="18%" alt="Fooyin logo">
 </p>
 
 <p align="center" style="font-size: 18px;">
@@ -19,6 +19,13 @@ starting from a blank state or a preset layout. A few such layouts can be seen b
  ![1](https://github.com/ludouzi/fooyin/assets/45490980/7b22ba0c-bf83-48e3-aae0-b15bf85d7346) | ![2](https://github.com/ludouzi/fooyin/assets/45490980/fe205504-a0a2-4837-8801-2ecf4499186a) 
 ----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------
  ![3](https://github.com/ludouzi/fooyin/assets/45490980/0bf52cc7-d902-41c2-a179-1e3b5b01799a) | ![4](https://github.com/ludouzi/fooyin/assets/45490980/1481c0d5-2f04-45d2-a4ec-3657aec0f27a) 
+
+<details>
+<summary>Building a layout from scratch</summary>
+ 
+https://github.com/ludouzi/fooyin/assets/45490980/e6fbce19-2c95-4a2c-b832-32b37cb41db9
+
+</details>
 
 Fooyin also includes a plugin system, with support for adding new widgets, features and more.
 
