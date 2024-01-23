@@ -104,7 +104,7 @@ struct UnifiedMusicLibrary::Private
         QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, tracksToUpdate));
     }
 
-    QCoro::Task<void> handleScanResult(const ScanResult& result)
+    QCoro::Task<void> handleScanResult(ScanResult result)
     {
         if(!result.addedTracks.empty()) {
             co_await addTracks(result.addedTracks);

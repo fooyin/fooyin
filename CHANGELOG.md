@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.1](https://github.com/ludouzi/fooyin/releases/tag/v0.2.0) (2024-01-23)
+
+* Fix crash when a library scan detects new and changed tracks
+
 ## [0.2.0](https://github.com/ludouzi/fooyin/releases/tag/v0.2.0) (2024-01-23)
 
 ### Features
