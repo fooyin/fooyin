@@ -272,7 +272,7 @@ struct FilterController::Private
         for(const auto& [_, group] : groups) {
             for(const auto& filterWidget : group.filters) {
                 TrackList cleanedTracks;
-                std::ranges::copy_if(filterWidget->tracks(), std::back_inserter(cleanedTracks),
+                std::ranges::copy_if(filterWidget->filteredTracks(), std::back_inserter(cleanedTracks),
                                      [libraryId](const Track& track) { return track.libraryId() != libraryId; });
                 filterWidget->setFilteredTracks(cleanedTracks);
             }
@@ -288,7 +288,7 @@ struct FilterController::Private
                     break;
                 }
 
-                if(!filterWidget->tracks().empty()) {
+                if(!filterWidget->filteredTracks().empty()) {
                     firstActive = true;
                 }
 
