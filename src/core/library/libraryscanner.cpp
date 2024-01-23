@@ -170,7 +170,8 @@ struct LibraryScanner::Private
             if(trackPaths.contains(filepath)) {
                 const Track& libraryTrack = trackPaths.at(filepath);
 
-                if(libraryTrack.libraryId() != currentLibrary.id || libraryTrack.modifiedTime() != lastModified) {
+                if(!libraryTrack.enabled() || libraryTrack.libraryId() != currentLibrary.id
+                   || libraryTrack.modifiedTime() != lastModified) {
                     Track changedTrack{libraryTrack};
                     if(tagReader.readMetaData(changedTrack)) {
                         changedTrack.generateHash();
@@ -178,6 +179,7 @@ struct LibraryScanner::Private
 
                         tracksToUpdate.push_back(changedTrack);
                         missingHashes.erase(changedTrack.hash());
+                        missingFiles.erase(changedTrack.filename());
                     }
                 }
             }
