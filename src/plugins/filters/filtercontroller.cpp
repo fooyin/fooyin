@@ -171,11 +171,8 @@ struct FilterController::Private
 
     void resetAll()
     {
-        for(const auto& group : groups | std::views::keys) {
-            getFilteredTracks(group);
-        }
-
-        for(const auto& [id, group] : groups) {
+        for(auto& [id, group] : groups) {
+            group.filteredTracks.clear();
             for(const auto& filterWidget : group.filters) {
                 filterWidget->reset(tracks(id));
             }
