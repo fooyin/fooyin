@@ -38,6 +38,7 @@ enum CoreSettings : uint32_t
     AudioOutput         = 7 | Type::String,
     OutputVolume        = 8 | Type::Double,
     RewindPreviousTrack = 9 | Type::Bool,
+    GaplessPlayback     = 10 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Fooyin::Settings::Core

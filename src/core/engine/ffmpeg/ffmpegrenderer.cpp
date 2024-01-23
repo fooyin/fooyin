@@ -19,7 +19,6 @@
 
 #include "ffmpegrenderer.h"
 
-#include "ffmpegcodec.h"
 #include "ffmpegframe.h"
 #include "ffmpegutils.h"
 
@@ -35,8 +34,6 @@ struct Renderer::Private
 {
     Renderer* renderer;
 
-    Codec* codec{nullptr};
-
     AudioOutput* audioOutput{nullptr};
     OutputContext outputContext;
 
@@ -46,33 +43,12 @@ struct Renderer::Private
     std::vector<uint8_t> tempBuffer;
     int totalSamplesWritten{0};
 
-    double volume{1.0};
-
     explicit Private(Renderer* renderer)
         : renderer{renderer}
     {
         outputContext.writeAudioToBuffer = [this](uint8_t* data, int samples) {
             return writeAudioToBuffer(data, samples);
         };
-    }
-
-    bool updateOutput()
-    {
-        if(!audioOutput) {
-            return false;
-        }
-
-        if(!codec || !codec->context()) {
-            return false;
-        }
-
-        outputContext.format        = Utils::interleaveFormat(codec->context()->sample_fmt);
-        outputContext.sampleRate    = codec->context()->sample_rate;
-        outputContext.channelLayout = codec->context()->ch_layout;
-        outputContext.sstride = av_get_bytes_per_sample(outputContext.format) * outputContext.channelLayout.nb_channels;
-        outputContext.volume  = volume;
-
-        return audioOutput->init(outputContext);
     }
 
     int writeAudioSamples(int samples)
@@ -117,7 +93,7 @@ struct Renderer::Private
 
         if(!audioOutput->canHandleVolume()) {
             Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride,
-                                         volume);
+                                         outputContext.volume);
         }
 
         samplesWritten = audioOutput->write(tempBuffer.data(), samplesWritten);
@@ -133,7 +109,7 @@ struct Renderer::Private
 
         if(!audioOutput->canHandleVolume()) {
             Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride,
-                                         volume);
+                                         outputContext.volume);
         }
 
         std::copy_n(tempBuffer.data(), samples * outputContext.sstride, data);
@@ -152,12 +128,12 @@ Renderer::Renderer(QObject* parent)
 
 Renderer::~Renderer() = default;
 
-void Renderer::run(Codec* codec, AudioOutput* output)
+void Renderer::run(const OutputContext& context, AudioOutput* output)
 {
-    p->codec       = codec;
-    p->audioOutput = output;
+    p->outputContext = context;
+    p->audioOutput   = output;
     setPaused(false);
-    p->updateOutput();
+    p->audioOutput->init(p->outputContext);
     scheduleNextStep();
 }
 
@@ -179,10 +155,6 @@ void Renderer::kill()
 {
     EngineWorker::kill();
 
-    if(p->audioOutput && p->audioOutput->initialised()) {
-        p->audioOutput->uninit();
-    }
-
     p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
     p->frameQueue.clear();
@@ -201,8 +173,12 @@ void Renderer::updateOutput(AudioOutput* output)
             prevOutput->uninit();
         }
     }
+
     p->bufferPrefilled = false;
-    p->updateOutput();
+
+    if(!isPaused()) {
+        p->audioOutput->init(p->outputContext);
+    }
 }
 
 void Renderer::updateDevice(const QString& device)
@@ -222,7 +198,7 @@ void Renderer::updateDevice(const QString& device)
 
 void Renderer::updateVolume(double volume)
 {
-    p->volume = volume;
+    p->outputContext.volume = volume;
     if(p->audioOutput) {
         p->audioOutput->setVolume(volume);
     }

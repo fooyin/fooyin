@@ -46,6 +46,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<AudioOutput>("ALSA|default", u"Engine/AudioOutput"_s);
     m_settings->createSetting<OutputVolume>(1.0, u"Engine/OutputVolume"_s);
     m_settings->createSetting<RewindPreviousTrack>(false, u"Playlist/RewindPreviousTrack"_s);
+    m_settings->createSetting<GaplessPlayback>(true, u"Engine/GaplessPlayback"_s);
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }

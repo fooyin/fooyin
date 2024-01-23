@@ -40,6 +40,13 @@ struct OutputContext
     double volume{1.0};
 
     WriteFunction writeAudioToBuffer;
+
+    bool operator==(const OutputContext& other)
+    {
+        return std::tie(sampleRate, channelLayout.nb_channels, channelLayout.order, format, sstride)
+            == std::tie(other.sampleRate, other.channelLayout.nb_channels, other.channelLayout.order, other.format,
+                        other.sstride);
+    }
 };
 
 struct OutputState

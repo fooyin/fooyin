@@ -24,6 +24,7 @@
 class AVFormatContext;
 
 namespace Fooyin {
+class SettingsManager;
 class Codec;
 
 class FFmpegEngine : public AudioEngine
@@ -31,7 +32,7 @@ class FFmpegEngine : public AudioEngine
     Q_OBJECT
 
 public:
-    explicit FFmpegEngine(QObject* parent = nullptr);
+    explicit FFmpegEngine(SettingsManager* settings, QObject* parent = nullptr);
     ~FFmpegEngine() override;
 
     void seek(uint64_t pos) override;

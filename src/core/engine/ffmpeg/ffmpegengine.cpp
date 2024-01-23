@@ -26,8 +26,10 @@
 #include "ffmpegstream.h"
 #include "ffmpegutils.h"
 
+#include <core/coresettings.h>
 #include <core/engine/audiooutput.h>
 #include <core/track.h>
+#include <utils/settings/settingsmanager.h>
 
 extern "C"
 {
@@ -60,6 +62,8 @@ struct FFmpegEngine::Private
 {
     FFmpegEngine* engine;
 
+    SettingsManager* settings;
+
     AudioClock clock;
     QTimer* positionUpdateTimer{nullptr};
     uint64_t lastPos{0};
@@ -68,18 +72,21 @@ struct FFmpegEngine::Private
     FormatContextPtr context;
     Stream stream;
     bool isSeekable{false};
+    double volume{1.0};
 
     PlaybackState state{StoppedState};
 
     AudioOutput* audioOutput{nullptr};
+    std::optional<OutputContext> outputContext;
 
     Decoder* decoder{nullptr};
     Renderer* renderer{nullptr};
 
     std::optional<Codec> codec;
 
-    explicit Private(FFmpegEngine* engine)
+    explicit Private(FFmpegEngine* engine, SettingsManager* settings)
         : engine{engine}
+        , settings{settings}
     { }
 
     QTimer* positionTimer()
@@ -179,6 +186,29 @@ struct FFmpegEngine::Private
         }
     }
 
+    std::optional<OutputContext> updateOutputContext()
+    {
+        const auto prevContext = outputContext;
+
+        if(!audioOutput || !codec || !codec->context()) {
+            outputContext = {};
+            return prevContext;
+        }
+
+        OutputContext updatedContext;
+
+        updatedContext.format        = Utils::interleaveFormat(codec->context()->sample_fmt);
+        updatedContext.sampleRate    = codec->context()->sample_rate;
+        updatedContext.channelLayout = codec->context()->ch_layout;
+        updatedContext.sstride
+            = av_get_bytes_per_sample(updatedContext.format) * updatedContext.channelLayout.nb_channels;
+        updatedContext.volume = volume;
+
+        outputContext = updatedContext;
+
+        return prevContext;
+    }
+
     void updatePosition()
     {
         const uint64_t pos = engine->currentPosition();
@@ -200,10 +230,14 @@ struct FFmpegEngine::Private
 
     void startPlayback()
     {
+        if(!decoder || !renderer) {
+            return;
+        }
+
         QMetaObject::invokeMethod(
             decoder,
             [this] {
-                if(decoder && context && codec) {
+                if(context && codec) {
                     decoder->run(context.get(), &codec.value());
                 }
             },
@@ -212,8 +246,8 @@ struct FFmpegEngine::Private
         QMetaObject::invokeMethod(
             renderer,
             [this] {
-                if(renderer && context && codec) {
-                    renderer->run(&codec.value(), audioOutput);
+                if(outputContext) {
+                    renderer->run(outputContext.value(), audioOutput);
                 }
             },
             Qt::QueuedConnection);
@@ -270,9 +304,9 @@ struct FFmpegEngine::Private
     }
 };
 
-FFmpegEngine::FFmpegEngine(QObject* parent)
+FFmpegEngine::FFmpegEngine(SettingsManager* settings, QObject* parent)
     : AudioEngine{parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<Private>(this, settings)}
 { }
 
 FFmpegEngine::~FFmpegEngine() = default;
@@ -334,6 +368,19 @@ void FFmpegEngine::changeTrack(const Track& track)
     if(!p->createCodec()) {
         changeTrackStatus(InvalidTrack);
         return;
+    }
+
+    const auto prevContext = p->updateOutputContext();
+
+    if(p->audioOutput->initialised()) {
+        if(p->settings->value<Settings::Core::GaplessPlayback>()) {
+            if(!prevContext || (p->outputContext && p->outputContext.value() != prevContext.value())) {
+                p->audioOutput->uninit();
+            }
+        }
+        else {
+            p->audioOutput->uninit();
+        }
     }
 
     changeTrackStatus(LoadedTrack);
@@ -404,6 +451,7 @@ void FFmpegEngine::stop()
 
 void FFmpegEngine::setVolume(double volume)
 {
+    p->volume = volume;
     if(p->renderer) {
         p->renderer->updateVolume(volume);
     }

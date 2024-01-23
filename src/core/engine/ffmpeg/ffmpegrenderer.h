@@ -25,6 +25,7 @@
 namespace Fooyin {
 class AudioOutput;
 class Codec;
+struct OutputContext;
 
 class Renderer : public EngineWorker
 {
@@ -34,7 +35,7 @@ public:
     Renderer(QObject* parent = nullptr);
     ~Renderer() override;
 
-    void run(Codec* codec, AudioOutput* output);
+    void run(const OutputContext& context, AudioOutput* output);
     void reset() override;
     void kill() override;
 

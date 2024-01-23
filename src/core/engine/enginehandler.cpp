@@ -59,7 +59,7 @@ struct EngineHandler::Private
         : self{self}
         , playerManager{playerManager}
         , settings{settings}
-        , engine{new FFmpegEngine()}
+        , engine{new FFmpegEngine(settings)}
     {
         engine->moveToThread(&engineThread);
         engineThread.start();

@@ -25,7 +25,7 @@ namespace Fooyin {
 EngineWorker::EngineWorker(QObject* parent)
     : QObject{parent}
     , m_timer{nullptr}
-    , m_paused{false}
+    , m_paused{true}
     , m_atEnd{false}
 { }
 

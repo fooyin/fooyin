@@ -25,8 +25,10 @@
 #include <utils/expandingcombobox.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QLabel>
 #include <QListView>
 
@@ -51,6 +53,8 @@ private:
 
     ExpandingComboBox* m_outputBox;
     ExpandingComboBox* m_deviceBox;
+
+    QCheckBox* m_gaplessPlayback;
 };
 
 EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineHandler* engineHandler)
@@ -58,18 +62,28 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineHandler* eng
     , m_engineHandler{engineHandler}
     , m_outputBox{new ExpandingComboBox(this)}
     , m_deviceBox{new ExpandingComboBox(this)}
+    , m_gaplessPlayback{new QCheckBox(tr("Gapless Playback"), this)}
 {
     auto* outputLabel = new QLabel(tr("Output:"), this);
     auto* deviceLabel = new QLabel(tr("Device:"), this);
+
+    auto* generalBox    = new QGroupBox(tr("General"), this);
+    auto* generalLayout = new QVBoxLayout(generalBox);
+
+    m_gaplessPlayback->setToolTip(
+        tr("Try to play consecutive tracks with no silence or disruption at the point of file change"));
+
+    generalLayout->addWidget(m_gaplessPlayback);
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(outputLabel, 0, 0);
     mainLayout->addWidget(m_outputBox, 0, 1);
     mainLayout->addWidget(deviceLabel, 1, 0);
     mainLayout->addWidget(m_deviceBox, 1, 1);
+    mainLayout->addWidget(generalBox, 2, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
-    mainLayout->setRowStretch(2, 1);
+    mainLayout->setRowStretch(3, 1);
 
     QObject::connect(m_outputBox, &QComboBox::currentTextChanged, this, &EnginePageWidget::setupDevices);
 }
@@ -78,19 +92,20 @@ void EnginePageWidget::load()
 {
     setupOutputs();
     setupDevices(m_outputBox->currentText());
+    m_gaplessPlayback->setChecked(m_settings->value<Settings::Core::GaplessPlayback>());
 }
 
 void EnginePageWidget::apply()
 {
     const QString output = m_outputBox->currentText() + u"|"_s + m_deviceBox->currentData().toString();
     m_settings->set<Settings::Core::AudioOutput>(output);
+    m_settings->set<Settings::Core::GaplessPlayback>(m_gaplessPlayback->isChecked());
 }
 
 void EnginePageWidget::reset()
 {
     m_settings->reset<Settings::Core::AudioOutput>();
-    setupOutputs();
-    setupDevices(m_outputBox->currentText());
+    m_settings->reset<Settings::Core::GaplessPlayback>();
 }
 
 void EnginePageWidget::setupOutputs()
