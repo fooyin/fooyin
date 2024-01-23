@@ -84,16 +84,21 @@ struct LibraryScanner::Private
 
     void addWatcher(const Fooyin::LibraryInfo& library)
     {
-        QStringList dirs = Utils::File::getAllSubdirectories(library.path);
-        dirs.append(library.path);
+        auto watchPaths = [this, library](const QString& path) {
+            QStringList dirs = Utils::File::getAllSubdirectories(path);
+            dirs.append(path);
+            watchers[library.id].addPaths(dirs);
+        };
 
-        watchers[library.id].addPaths(dirs);
+        watchPaths(library.path);
 
-        QObject::connect(
-            &watchers.at(library.id), &LibraryWatcher::libraryDirChanged, self, [this, library](const QString& dir) {
-                QMetaObject::invokeMethod(self, "directoryChanged", Q_ARG(const Fooyin::LibraryInfo&, library),
-                                          Q_ARG(const QString&, dir));
-            });
+        QObject::connect(&watchers.at(library.id), &LibraryWatcher::libraryDirChanged, self,
+                         [this, watchPaths, library](const QString& dir) {
+                             watchPaths(dir);
+                             QMetaObject::invokeMethod(self, "directoryChanged",
+                                                       Q_ARG(const Fooyin::LibraryInfo&, library),
+                                                       Q_ARG(const QString&, dir));
+                         });
     }
 
     void reportProgress()
