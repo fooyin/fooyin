@@ -213,8 +213,8 @@ struct LibraryScanner::Private
             reportProgress();
         }
 
-        for(auto& track : missingHashes | std::views::values) {
-            if(track.libraryId() >= 0 && track.enabled()) {
+        for(auto& track : missingFiles | std::views::values) {
+            if(track.libraryId() >= 0 || track.enabled()) {
                 track.setLibraryId(-1);
                 track.setEnabled(false);
                 tracksToUpdate.push_back(track);
