@@ -89,7 +89,7 @@ struct TrackSelectionController::Private
 
         sendNew = new QAction(tr("Send to new playlist"), tracksPlaylistMenu);
         QObject::connect(sendNew, &QAction::triggered, tracksPlaylistMenu,
-                         [this]() { sendToNewPlaylist({}, selectionTitle); });
+                         [this]() { sendToNewPlaylist(PlaylistAction::Switch, selectionTitle); });
         tracksPlaylistMenu->addAction(actionManager->registerAction(sendNew, "TrackSelection.SendNewPlaylist"));
 
         tracksPlaylistMenu->addSeparator();
