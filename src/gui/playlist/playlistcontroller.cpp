@@ -85,8 +85,15 @@ struct PlaylistController::Private
         }
     }
 
-    void handlePlaylistRemoved(const Playlist* playlist) const
+    void handlePlaylistRemoved(const Playlist* playlist)
     {
+        if(!playlist) {
+            return;
+        }
+
+        histories.erase(playlist->id());
+        states.erase(playlist->id());
+
         if(currentPlaylist == playlist) {
             if(handler->playlistCount() == 0) {
                 QObject::connect(
