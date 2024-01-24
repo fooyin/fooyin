@@ -18,11 +18,11 @@ Audio playback is handled using FFmpeg and ALSA as the primary output driver.
 There is also support for PipeWire and SDL2 through additional plugins, with more planned in the future.
 
 A *layout editing mode* enables the entire user interface to be customised,
-starting from a blank slate or a preset layout. A few such layouts can be seen below:
+starting from a blank slate or a preset layout.
 
- ![1](https://github.com/ludouzi/fooyin/assets/45490980/7b22ba0c-bf83-48e3-aae0-b15bf85d7346) | ![2](https://github.com/ludouzi/fooyin/assets/45490980/fe205504-a0a2-4837-8801-2ecf4499186a) 
+ ![1](https://github.com/ludouzi/fooyin/assets/45490980/94d610d8-4878-4c7a-8607-d2dd7936a8a1) | ![2](https://github.com/ludouzi/fooyin/assets/45490980/d82f619c-f43f-40d6-b9dc-54cdf88e3e11) 
 ----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------
- ![3](https://github.com/ludouzi/fooyin/assets/45490980/0bf52cc7-d902-41c2-a179-1e3b5b01799a) | ![4](https://github.com/ludouzi/fooyin/assets/45490980/1481c0d5-2f04-45d2-a4ec-3657aec0f27a) 
+ ![3](https://github.com/ludouzi/fooyin/assets/45490980/f95f4b76-113e-4f9b-9055-376e4575b033) | ![4](https://github.com/ludouzi/fooyin/assets/45490980/4774d1ef-1618-4a02-8e26-2ef24cb2d039) 
 
 <details>
 <summary>Building a layout from scratch</summary>
