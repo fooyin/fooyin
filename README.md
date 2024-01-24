@@ -1,20 +1,24 @@
 <p align="center">
-<img src="data/icons/sc-fooyin.svg" width="18%" alt="Fooyin logo">
+<img src="data/icons/sc-fooyin.svg" width="20%" alt="Fooyin logo">
 </p>
 
 <p align="center" style="font-size: 18px;">
 <strong>Fooyin - A customisable music player</strong>
 <br />
 <a href="https://github.com/ludouzi/fooyin/actions/workflows/build.yml"><img src="https://github.com/ludouzi/fooyin/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
+<a href="https://app.codacy.com/gh/ludouzi/fooyin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade"><img src="https://app.codacy.com/project/badge/Grade/ae0c3e9825d849b0b64697e59e4dfea6" alt="Code quality"></a>
 </p>
 
 ## What is Fooyin?
 
-Fooyin is a customisable music player for linux.
+Fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local music
+collection. It's extendable through the use of plugins and scriptable using *FooScript*.
 
-Fooyin features a *layout editing mode*
-in which the entire user interface can be customised,
-starting from a blank state or a preset layout. A few such layouts can be seen below:
+Audio playback is handled using FFmpeg and ALSA as the primary output driver.
+There is also support for PipeWire and SDL2 through additional plugins, with more planned in the future.
+
+A *layout editing mode* enables the entire user interface to be customised,
+starting from a blank slate or a preset layout. A few such layouts can be seen below:
 
  ![1](https://github.com/ludouzi/fooyin/assets/45490980/7b22ba0c-bf83-48e3-aae0-b15bf85d7346) | ![2](https://github.com/ludouzi/fooyin/assets/45490980/fe205504-a0a2-4837-8801-2ecf4499186a) 
 ----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------
@@ -22,28 +26,23 @@ starting from a blank state or a preset layout. A few such layouts can be seen b
 
 <details>
 <summary>Building a layout from scratch</summary>
- 
+
 https://github.com/ludouzi/fooyin/assets/45490980/e6fbce19-2c95-4a2c-b832-32b37cb41db9
 
 </details>
 
-Fooyin also includes a plugin system, with support for adding new widgets, features and more.
-
-Audio playback is handled using FFmpeg and ALSA as the primary output driver.
-There is also support for PipeWire and SDL2 through additional plugins, with more planned in the future.
+Fooyin is currently only supported on linux, though other platforms will be added at a later date.
 
 ## Features
 
-* [x] Fully customisable layout
-* [x] Filter and search collection
+* [x] Customisable layout
+* [x] Filter and search music collection
 * [x] Create and manage playlists
-* [x] Plugin system
-* [x] FFmpeg backend
+* [x] Extendable through plugins
 * [x] Tag editing
 * [ ] Visualisations
 * [ ] Lyrics support
-* [ ] Last.fm integration
-* [ ] Discogs integration
+* [ ] Last.fm and Discogs integration
 
 ## Building from source
 
@@ -81,20 +80,3 @@ Fooyin can then be built using:
 ```
 cmake --build build/
 ```
-
-## License
-
-Fooyin is Copyright (C) 2022-2023 by Luke Taylor.
-
-Fooyin is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Fooyin is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Fooyin. If not, see <http://www.gnu.org/licenses/>.
