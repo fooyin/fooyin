@@ -124,7 +124,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , model{new PlaylistModel(library, settings, self)}
     , playlistView{new PlaylistView(self)}
     , header{new AutoHeaderView(Qt::Horizontal, self)}
-    , currentPlaylist{nullptr}
+    , currentPlaylist{playlistController->currentPlaylist()}
     , columnMode{false}
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
     , removeTrackAction{new QAction(tr("Remove"), self)}
@@ -427,12 +427,12 @@ void PlaylistWidgetPrivate::selectionChanged() const
         }
     }
 
+    selectionController->changeSelectedTracks(playlistContext, firstIndex, tracks);
+
     if(tracks.empty()) {
         removeTrackAction->setEnabled(false);
         return;
     }
-
-    selectionController->changeSelectedTracks(firstIndex, tracks);
 
     if(settings->value<Settings::Gui::PlaybackFollowsCursor>()) {
         if(auto* currentPlaylist = playlistController->currentPlaylist()) {
@@ -459,7 +459,7 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
         if(!selected.empty()) {
             const int firstIndex           = selected.front().data(PlaylistItem::Role::Index).toInt();
             const TrackList selectedTracks = getAllTracks(model, selected);
-            selectionController->changeSelectedTracks(firstIndex, selectedTracks);
+            selectionController->changeSelectedTracks(playlistContext, firstIndex, selectedTracks);
         }
     }
 

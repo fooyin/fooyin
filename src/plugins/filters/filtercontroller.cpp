@@ -238,7 +238,7 @@ struct FilterController::Private
 
     void selectionChanged(FilterWidget* filter, const QString& playlistName)
     {
-        trackSelection->changeSelectedTracks(filter->filteredTracks(), playlistName);
+        trackSelection->changeSelectedTracks(filter->widgetContext(), filter->filteredTracks(), playlistName);
 
         if(settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
             const QString autoPlaylist = settings->value<Settings::Filters::FilterAutoPlaylist>();

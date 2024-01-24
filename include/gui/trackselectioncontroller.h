@@ -31,6 +31,7 @@ namespace Fooyin {
 class ActionManager;
 class SettingsManager;
 class PlaylistController;
+class WidgetContext;
 
 enum class TrackAction
 {
@@ -65,8 +66,8 @@ public:
     [[nodiscard]] bool hasTracks() const;
 
     [[nodiscard]] TrackList selectedTracks() const;
-    void changeSelectedTracks(int index, const TrackList& tracks, const QString& title = {});
-    void changeSelectedTracks(const TrackList& tracks, const QString& title = {});
+    void changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks, const QString& title = {});
+    void changeSelectedTracks(WidgetContext* context, const TrackList& tracks, const QString& title = {});
 
     void addTrackContextMenu(QMenu* menu) const;
     void addTrackPlaylistContextMenu(QMenu* menu) const;

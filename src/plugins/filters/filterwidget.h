@@ -19,14 +19,13 @@
 
 #pragma once
 
-#include "filterfwd.h"
-
 #include <core/trackfwd.h>
 #include <gui/fywidget.h>
 
 namespace Fooyin {
 class SettingsManager;
 class AutoHeaderView;
+class WidgetContext;
 
 namespace Filters {
 
@@ -45,6 +44,7 @@ public:
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] TrackList filteredTracks() const;
     [[nodiscard]] QString searchFilter() const;
+    [[nodiscard]] WidgetContext* widgetContext() const;
 
     void setGroup(const Id& group);
     void setIndex(int index);

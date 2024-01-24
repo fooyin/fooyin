@@ -30,6 +30,8 @@
 #include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
 #include <core/track.h>
+#include <gui/guiconstants.h>
+#include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
@@ -92,6 +94,8 @@ struct FilterWidget::Private
     TrackList tracks;
     TrackList filteredTracks;
 
+    WidgetContext* widgetContext;
+
     QString searchStr;
     bool searching{false};
 
@@ -102,6 +106,7 @@ struct FilterWidget::Private
         , view{new FilterView(self)}
         , header{new AutoHeaderView(Qt::Horizontal, self)}
         , model{new FilterModel(self)}
+        , widgetContext{new WidgetContext(self, Context{Id{"Fooyin.Context.FilterWidget."}.append(self->id())}, self)}
     {
         view->setHeader(header);
         view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -332,6 +337,11 @@ TrackList FilterWidget::filteredTracks() const
 QString FilterWidget::searchFilter() const
 {
     return p->searchStr;
+}
+
+WidgetContext* FilterWidget::widgetContext() const
+{
+    return p->widgetContext;
 }
 
 void FilterWidget::setGroup(const Id& group)

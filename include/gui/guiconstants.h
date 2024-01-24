@@ -98,7 +98,6 @@ constexpr auto PlaylistAddTo = "Fooyin.Group.Playlist.AddTo";
 namespace Context {
 constexpr auto Playlist    = "Fooyin.Context.Playlist";
 constexpr auto Search      = "Fooyin.Context.Search";
-constexpr auto LibraryTree = "Fooyin.Context.LibraryTree";
 } // namespace Context
 
 namespace Actions {

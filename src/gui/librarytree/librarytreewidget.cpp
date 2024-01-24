@@ -28,7 +28,9 @@
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
+#include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
+#include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
 
 #include <QActionGroup>
@@ -126,6 +128,8 @@ public:
     LibraryTreeView* libraryTree;
     LibraryTreeModel* model;
 
+    WidgetContext* widgetContext;
+
     TrackAction doubleClickAction;
     TrackAction middleClickAction;
 
@@ -143,6 +147,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Musi
     , layout{new QVBoxLayout(self)}
     , libraryTree{new LibraryTreeView(self)}
     , model{new LibraryTreeModel(self)}
+    , widgetContext{new WidgetContext(self, Context{Id{"Fooyin.Context.LibraryTree."}.append(self->id())}, self)}
     , doubleClickAction{static_cast<TrackAction>(settings->value<LibTreeDoubleClick>())}
     , middleClickAction{static_cast<TrackAction>(settings->value<LibTreeMiddleClick>())}
 {
@@ -229,7 +234,7 @@ QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
     }
 
     const auto sortedTracks = co_await Utils::asyncExec([&tracks]() { return Sorting::sortTracks(tracks); });
-    trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
+    trackSelection->changeSelectedTracks(widgetContext, sortedTracks, playlistNameFromSelection());
 
     if(settings->value<LibTreePlaylistEnabled>()) {
         const QString playlistName = settings->value<LibTreeAutoPlaylist>();
@@ -289,7 +294,7 @@ QCoro::Task<void> LibraryTreeWidgetPrivate::handleMiddleClick() const
     }
 
     const auto sortedTracks = co_await Utils::asyncExec([&tracks]() { return Sorting::sortTracks(tracks); });
-    trackSelection->changeSelectedTracks(sortedTracks, playlistNameFromSelection());
+    trackSelection->changeSelectedTracks(widgetContext, sortedTracks, playlistNameFromSelection());
 
     const bool autoSwitch = settings->value<LibTreeAutoSwitch>();
     trackSelection->executeAction(middleClickAction, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None,
