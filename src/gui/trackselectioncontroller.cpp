@@ -331,11 +331,13 @@ void TrackSelectionController::changeSelectedTracks(WidgetContext* context, int 
                                                     const QString& title)
 {
     if(p->addContextObject(context)) {
-        p->activeContext = context;
-
         auto& selection      = p->contextSelection[context];
         selection.firstIndex = index;
         selection.name       = title;
+
+        if(!tracks.empty()) {
+            p->activeContext = context;
+        }
 
         if(std::exchange(selection.tracks, tracks) == tracks) {
             return;
