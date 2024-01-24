@@ -121,12 +121,12 @@ QStringList getFiles(const QStringList& paths, const QStringList& fileExtensions
     std::vector<QDir> dirs;
 
     for(const QString& path : paths) {
-        QFileInfo file{path};
-        if(file.exists() && file.isFile()) {
+        const QFileInfo file{path};
+        if(file.exists() && file.isFile() && QDir::match(fileExtensions, file.fileName())) {
             files.push_back(path);
         }
         else if(file.isDir()) {
-            dirs.push_back({path});
+            dirs.emplace_back(path);
         }
     }
 
@@ -145,11 +145,10 @@ QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions)
     return getFiles(paths, fileExtensions);
 }
 
-QStringList getAllSubdirectories(const QDir& baseDirectory)
+QStringList getAllSubdirectories(const QDir& dir)
 {
     QStringList directories;
 
-    const QDir dir{baseDirectory};
     const QFileInfoList subdirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
 
     for(const auto& subdir : subdirs) {

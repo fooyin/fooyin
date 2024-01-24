@@ -352,6 +352,10 @@ void PlaylistController::redoPlaylistChanges()
 QCoro::Task<void> PlaylistController::filesToPlaylist(QList<QUrl> urls)
 {
     const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
+    if(filepaths.empty()) {
+        co_return;
+    }
+
     TrackList tracks;
     std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 
@@ -365,6 +369,10 @@ QCoro::Task<void> PlaylistController::filesToPlaylist(QList<QUrl> urls)
 QCoro::Task<TrackList> PlaylistController::filesToTracks(QList<QUrl> urls)
 {
     const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
+    if(filepaths.empty()) {
+        co_return {};
+    }
+
     TrackList tracks;
     std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 

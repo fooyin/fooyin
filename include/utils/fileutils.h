@@ -31,10 +31,12 @@ FYUTILS_EXPORT QString cleanPath(const QString& path);
 FYUTILS_EXPORT bool isSamePath(const QString& filename1, const QString& filename2);
 FYUTILS_EXPORT bool isSubdir(const QString& dir, const QString& parentDir);
 FYUTILS_EXPORT QString getParentDirectory(const QString& filename);
+
 FYUTILS_EXPORT bool createDirectories(const QString& path);
 FYUTILS_EXPORT void openDirectory(const QString& dir);
+
 FYUTILS_EXPORT QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getFiles(const QStringList& paths, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions = {});
-FYUTILS_EXPORT QStringList getAllSubdirectories(const QDir& baseDirectory);
+FYUTILS_EXPORT QStringList getAllSubdirectories(const QDir& dir);
 } // namespace Fooyin::Utils::File
