@@ -77,7 +77,6 @@ struct TrackSelectionController::Private
 
         addCurrent = new QAction(tr("Add to current playlist"), tracksPlaylistMenu);
         QObject::connect(addCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() { addToCurrentPlaylist(); });
-        QObject::connect(addCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() { addToCurrentPlaylist(); });
         tracksPlaylistMenu->addAction(actionManager->registerAction(addCurrent, "TrackSelection.AddCurrentPlaylist"));
 
         addActive = new QAction(tr("Add to active playlist"), tracksPlaylistMenu);
