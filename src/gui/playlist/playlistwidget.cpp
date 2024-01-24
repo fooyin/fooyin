@@ -540,7 +540,7 @@ void PlaylistWidgetPrivate::handleTracksChanged(Playlist* playlist, const std::v
         return;
     }
 
-    const auto selected = selectedPlaylistIndexes();
+    std::vector<int> selected;
 
     saveState();
     playlistView->setUpdatesEnabled(false);
@@ -552,6 +552,7 @@ void PlaylistWidgetPrivate::handleTracksChanged(Playlist* playlist, const std::v
         model->reset(currentPreset, columns, playlist);
     }
     else {
+        selected = selectedPlaylistIndexes();
         model->updateTracks(indexes);
     }
 
