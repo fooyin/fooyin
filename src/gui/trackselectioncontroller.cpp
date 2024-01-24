@@ -188,8 +188,7 @@ struct TrackSelectionController::Private
                 if(widgetContext) {
                     activeContext = widgetContext;
                     updateActionState();
-                    QMetaObject::invokeMethod(self, "selectionChanged",
-                                              Q_ARG(const TrackList&, contextSelection[activeContext].tracks));
+                    QMetaObject::invokeMethod(self, &TrackSelectionController::selectionChanged);
                     return;
                 }
                 focusedWidget = focusedWidget->parentWidget();
@@ -344,7 +343,7 @@ void TrackSelectionController::changeSelectedTracks(WidgetContext* context, int 
         }
 
         p->updateActionState();
-        emit selectionChanged(tracks);
+        emit selectionChanged();
     }
 }
 

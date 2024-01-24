@@ -75,7 +75,7 @@ public:
                        const QString& playlistName = {});
 
 signals:
-    void selectionChanged(const TrackList& tracks);
+    void selectionChanged();
     void requestPropertiesDialog();
 
 private:
