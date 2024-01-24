@@ -253,10 +253,11 @@ void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
     if(std::exchange(p->currentPlaylist, playlist) == playlist) {
         p->histories.erase(playlist->id());
         p->states.erase(playlist->id());
+        emit playlistHistoryChanged();
+        return;
     }
 
     emit currentPlaylistChanged(playlist);
-    emit playlistHistoryChanged();
 }
 
 void PlaylistController::changeCurrentPlaylist(int id)
