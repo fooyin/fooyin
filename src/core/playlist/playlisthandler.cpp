@@ -303,6 +303,11 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
         if(isNew) {
             emit playlistAdded(playlist);
         }
+        else {
+            std::vector<int> changedIndexes(tracks.size());
+            std::iota(changedIndexes.begin(), changedIndexes.end(), 0);
+            emit playlistTracksChanged(playlist, changedIndexes);
+        }
     }
     return playlist;
 }
