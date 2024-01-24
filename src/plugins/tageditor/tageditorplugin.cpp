@@ -24,6 +24,7 @@
 #include <core/library/musiclibrary.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/propertiesdialog.h>
+#include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -69,7 +70,7 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
     //        "Tag Editor");
 
     p->propertiesDialog->insertTab(0, QStringLiteral("Metadata"), [this]() {
-        auto* tagEditor = new TagEditorWidget(p->actionManager, p->trackSelection, p->settings);
+        auto* tagEditor = new TagEditorWidget(p->trackSelection->selectedTracks(), p->actionManager, p->settings);
         QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, p->library,
                          &MusicLibrary::updateTrackMetadata);
         return tagEditor;

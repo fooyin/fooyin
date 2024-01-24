@@ -29,7 +29,6 @@
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-class TrackSelectionController;
 
 namespace TagEditor {
 class TagEditorView : public ExtendableTableView
@@ -47,8 +46,8 @@ class TagEditorWidget : public PropertiesTabWidget
     Q_OBJECT
 
 public:
-    explicit TagEditorWidget(ActionManager* actionManager, TrackSelectionController* trackSelection,
-                             SettingsManager* settings, QWidget* parent = nullptr);
+    explicit TagEditorWidget(const TrackList& tracks, ActionManager* actionManager, SettingsManager* settings,
+                             QWidget* parent = nullptr);
     ~TagEditorWidget() override;
 
     [[nodiscard]] QString name() const override;

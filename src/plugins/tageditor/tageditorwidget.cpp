@@ -22,7 +22,6 @@
 #include "tageditoritem.h"
 #include "tageditormodel.h"
 
-#include <gui/trackselectioncontroller.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/settings/settingsmanager.h>
@@ -58,7 +57,6 @@ struct TagEditorWidget::Private
     TagEditorWidget* self;
 
     ActionManager* actionManager;
-    TrackSelectionController* trackSelection;
     SettingsManager* settings;
 
     WidgetContext* context;
@@ -66,11 +64,9 @@ struct TagEditorWidget::Private
     TagEditorView* view;
     TagEditorModel* model;
 
-    Private(TagEditorWidget* self, ActionManager* actionManager, TrackSelectionController* trackSelection,
-            SettingsManager* settings)
+    Private(TagEditorWidget* self, ActionManager* actionManager, SettingsManager* settings)
         : self{self}
         , actionManager{actionManager}
-        , trackSelection{trackSelection}
         , settings{settings}
         , context{new WidgetContext(self, Context{"Context.TagEditor"}, self)}
         , view{new TagEditorView(actionManager, self)}
@@ -108,10 +104,10 @@ struct TagEditorWidget::Private
     };
 };
 
-TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TrackSelectionController* trackSelection,
-                                 SettingsManager* settings, QWidget* parent)
+TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionManager, SettingsManager* settings,
+                                 QWidget* parent)
     : PropertiesTabWidget{parent}
-    , p{std::make_unique<Private>(this, actionManager, trackSelection, settings)}
+    , p{std::make_unique<Private>(this, actionManager, settings)}
 {
     setObjectName(TagEditorWidget::name());
     setWindowFlags(Qt::Dialog);
@@ -123,10 +119,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TrackSelectionCon
 
     p->view->setColumnWidth(0, width);
 
-    QObject::connect(p->trackSelection, &TrackSelectionController::selectionChanged, this,
-                     [this](const TrackList& tracks) { p->model->reset(tracks); });
     QObject::connect(p->model, &TagEditorModel::trackMetadataChanged, this, &TagEditorWidget::trackMetadataChanged);
-
     QObject::connect(p->view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
         const QModelIndexList selected = p->view->selectionModel()->selectedIndexes();
         const bool canRemove           = std::ranges::any_of(std::as_const(selected), [](const QModelIndex& index) {
@@ -135,9 +128,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, TrackSelectionCon
         p->view->removeAction()->setEnabled(canRemove);
     });
 
-    if(trackSelection->hasTracks()) {
-        p->model->reset(trackSelection->selectedTracks());
-    }
+    p->model->reset(tracks);
 
     p->restoreState();
 }
