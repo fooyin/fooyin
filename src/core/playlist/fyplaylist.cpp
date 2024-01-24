@@ -239,7 +239,7 @@ void FyPlaylist::appendTracks(const TrackList& tracks)
     }
 
     std::ranges::copy(tracks, std::back_inserter(p->tracks));
-    p->modified = true;
+    p->tracksModified = true;
     p->shuffleOrder.clear();
 }
 
