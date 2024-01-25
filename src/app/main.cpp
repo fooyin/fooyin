@@ -25,6 +25,7 @@
 #include <kdsingleapplication.h>
 
 #include <QApplication>
+#include <QCommandLineParser>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -43,6 +44,12 @@ int main(int argc, char** argv)
         qInfo() << "fooyin already running";
         return 0;
     }
+
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addVersionOption();
+
+    parser.process(app);
 
     Fooyin::Application coreApp;
     Fooyin::GuiApplication guiApp{coreApp.context()};
