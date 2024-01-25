@@ -27,6 +27,34 @@ extern "C"
 
 #include <QDebug>
 
+namespace {
+Fooyin::AudioFormat::SampleFormat sampleFormat(AVSampleFormat format)
+{
+    switch(format) {
+        case(AV_SAMPLE_FMT_NONE):
+        case(AV_SAMPLE_FMT_U8):
+        case(AV_SAMPLE_FMT_U8P):
+            return Fooyin::AudioFormat::UInt8;
+        case(AV_SAMPLE_FMT_S16):
+        case(AV_SAMPLE_FMT_S16P):
+            return Fooyin::AudioFormat::Int16;
+        case(AV_SAMPLE_FMT_S32):
+        case(AV_SAMPLE_FMT_S32P):
+            return Fooyin::AudioFormat::Int32;
+        case(AV_SAMPLE_FMT_FLT):
+        case(AV_SAMPLE_FMT_FLTP):
+            return Fooyin::AudioFormat::Float;
+        case(AV_SAMPLE_FMT_DBL):
+        case(AV_SAMPLE_FMT_DBLP):
+        case(AV_SAMPLE_FMT_S64):
+        case(AV_SAMPLE_FMT_S64P):
+            return Fooyin::AudioFormat::Double;
+        default:
+            return Fooyin::AudioFormat::Unknown;
+    }
+}
+} // namespace
+
 namespace Fooyin::Utils {
 void printError(int error)
 {
@@ -68,32 +96,25 @@ AVSampleFormat interleaveFormat(AVSampleFormat planarFormat)
     }
 }
 
-void skipSamples(AVFrame* frame, int samples)
+AudioFormat audioFormatFromCodec(AVCodecParameters* codec)
 {
-    if(av_frame_make_writable(frame) < 0) {
-        return;
-    }
+    AudioFormat format;
 
-    uint8_t** fdata   = frame->data;
-    const auto format = static_cast<AVSampleFormat>(frame->format);
-    const int stride  = av_get_bytes_per_sample(format) * frame->ch_layout.nb_channels;
-    const int size    = (frame->nb_samples - samples) * stride;
+    const auto sampleFmt = sampleFormat(static_cast<AVSampleFormat>(codec->format));
+    format.setSampleFormat(sampleFmt);
+    format.setSampleRate(codec->sample_rate);
+    format.setChannelCount(codec->ch_layout.nb_channels);
 
-    memmove(fdata[0], fdata[0] + static_cast<int>(samples * stride), size);
-
-    frame->nb_samples -= samples;
-    if(frame->pts > 0) {
-        frame->pts += samples / frame->sample_rate;
-    }
+    return format;
 }
 
-void fillSilence(uint8_t* dst, int bytes, int format)
+void fillSilence(uint8_t* dst, int bytes, const AudioFormat& format)
 {
-    const bool unsignedFormat = format == AV_SAMPLE_FMT_U8 || format == AV_SAMPLE_FMT_U8P;
+    const bool unsignedFormat = format.sampleFormat() == AudioFormat::UInt8;
     memset(dst, unsignedFormat ? 0x80 : 0, bytes);
 }
 
-void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, double volume)
+void adjustVolumeOfSamples(uint8_t* data, const AudioFormat& format, int bytes, double volume)
 {
     if(volume == 1.0) {
         return;
@@ -104,7 +125,7 @@ void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, doub
         return;
     }
 
-    const int bps  = av_get_bytes_per_sample(format) * 8;
+    const int bps  = format.bytesPerSample() * 8;
     const auto vol = static_cast<float>(volume);
 
     switch(bps) {
@@ -139,7 +160,7 @@ void adjustVolumeOfSamples(uint8_t* data, AVSampleFormat format, int bytes, doub
         }
         case(32): {
             const int count = bytes / 4;
-            if(format == AV_SAMPLE_FMT_FLT) {
+            if(format.sampleFormat() == AudioFormat::Float) {
                 auto* adjustedData = std::bit_cast<float*>(data);
                 for(int i = 0; i < count; ++i) {
                     adjustedData[i] = adjustedData[i] * vol;

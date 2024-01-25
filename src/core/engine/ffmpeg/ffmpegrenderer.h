@@ -19,13 +19,13 @@
 
 #pragma once
 
-#include "ffmpegframe.h"
 #include "ffmpegworker.h"
 
 namespace Fooyin {
 class AudioOutput;
 class Codec;
 struct OutputContext;
+class FFmpegAudioBuffer;
 
 class Renderer : public EngineWorker
 {
@@ -45,10 +45,10 @@ public:
     void updateVolume(double volume);
 
 public slots:
-    void render(Frame frame);
+    void render(const FFmpegAudioBuffer& buffer);
 
 signals:
-    void frameProcessed(Frame frame);
+    void audioBufferProcessed(const FFmpegAudioBuffer& buffer);
 
 private:
     bool canDoNextStep() const override;

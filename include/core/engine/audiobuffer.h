@@ -21,24 +21,20 @@
 
 #include <core/engine/audioformat.h>
 
-extern "C"
-{
-#include <libavutil/samplefmt.h>
-}
-
-class QString;
-class AVFrame;
-class AVCodecParameters;
+#include <cstdint>
 
 namespace Fooyin {
-class FFmpegAudioBuffer;
+class AudioBuffer
+{
+public:
+    virtual ~AudioBuffer() { }
 
-namespace Utils {
-void printError(int error);
-void printError(const QString& error);
-AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
-AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
-void fillSilence(uint8_t* dst, int bytes, const AudioFormat& format);
-void adjustVolumeOfSamples(uint8_t* data, const AudioFormat& format, int bytes, double volume);
-} // namespace Utils
+    virtual AudioFormat format() const = 0;
+    virtual int frameCount() const     = 0;
+    virtual uint64_t startTime() const = 0;
+    virtual uint64_t duration() const  = 0;
+
+    virtual uint8_t* constData() const = 0;
+    virtual uint8_t* data()            = 0;
+};
 } // namespace Fooyin

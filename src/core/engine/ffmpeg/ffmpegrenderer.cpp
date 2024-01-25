@@ -19,7 +19,7 @@
 
 #include "ffmpegrenderer.h"
 
-#include "ffmpegframe.h"
+#include "ffmpegaudiobuffer.h"
 #include "ffmpegutils.h"
 
 #include <core/engine/audiooutput.h>
@@ -32,53 +32,65 @@
 namespace Fooyin {
 struct Renderer::Private
 {
-    Renderer* renderer;
+    Renderer* self;
 
     AudioOutput* audioOutput{nullptr};
     OutputContext outputContext;
 
     bool bufferPrefilled{false};
 
-    ThreadQueue<Frame> frameQueue{false};
+    ThreadQueue<FFmpegAudioBuffer> bufferQueue{false};
     std::vector<uint8_t> tempBuffer;
     int totalSamplesWritten{0};
+    int currentBufferOffset{0};
 
     explicit Private(Renderer* renderer)
-        : renderer{renderer}
+        : self{renderer}
     {
         outputContext.writeAudioToBuffer = [this](uint8_t* data, int samples) {
             return writeAudioToBuffer(data, samples);
         };
     }
 
+    void updateContext(const OutputContext& context)
+    {
+        outputContext.channelLayout = context.channelLayout;
+        outputContext.format        = context.format;
+        outputContext.volume        = context.volume;
+    }
+
     int writeAudioSamples(int samples)
     {
         int samplesBuffered = 0;
 
-        const int sstride = outputContext.sstride;
+        const int sstride = outputContext.format.bytesPerFrame();
         tempBuffer.reserve(static_cast<int>(samples * sstride));
 
-        while(!renderer->isPaused() && !frameQueue.empty() && samplesBuffered < samples) {
-            const Frame& frame = frameQueue.front();
+        while(!self->isPaused() && !bufferQueue.empty() && samplesBuffered < samples) {
+            const FFmpegAudioBuffer& buffer = bufferQueue.front();
 
-            if(!frame.isValid()) {
-                renderer->setAtEnd(true);
+            if(!buffer.isValid()) {
+                currentBufferOffset = 0;
+                self->setAtEnd(true);
                 return samplesBuffered;
             }
 
-            if(frame.avFrame()->nb_samples <= 0) {
-                emit renderer->frameProcessed(frame);
-                frameQueue.dequeue();
+            const int bytesLeft = buffer.byteCount() - currentBufferOffset;
+
+            if(bytesLeft <= 0) {
+                currentBufferOffset = 0;
+                QMetaObject::invokeMethod(self, "audioBufferProcessed", Q_ARG(const FFmpegAudioBuffer&, buffer));
+                bufferQueue.dequeue();
                 continue;
             }
 
-            uint8_t** fdata       = frame.avFrame()->data;
-            const int sampleCount = std::min(frame.sampleCount(), samples - samplesBuffered);
+            const uint8_t* fdata  = buffer.constData() + currentBufferOffset;
+            const int sampleCount = std::min(bytesLeft / sstride, samples - samplesBuffered);
 
-            std::copy_n(fdata[0], sampleCount * sstride, std::back_inserter(tempBuffer));
+            std::copy_n(fdata, sampleCount * sstride, std::back_inserter(tempBuffer));
 
             samplesBuffered += sampleCount;
-            Utils::skipSamples(frame.avFrame(), sampleCount);
+            currentBufferOffset += sampleCount * sstride;
         }
 
         Utils::fillSilence(tempBuffer.data() + static_cast<int>(samplesBuffered * sstride),
@@ -92,8 +104,8 @@ struct Renderer::Private
         int samplesWritten = writeAudioSamples(samples);
 
         if(!audioOutput->canHandleVolume()) {
-            Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride,
-                                         outputContext.volume);
+            Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format,
+                                         samples * outputContext.format.bytesPerFrame(), outputContext.volume);
         }
 
         samplesWritten = audioOutput->write(tempBuffer.data(), samplesWritten);
@@ -105,14 +117,20 @@ struct Renderer::Private
 
     int writeAudioToBuffer(uint8_t* data, int samples)
     {
+        if(self->isPaused()) {
+            return 0;
+        }
+
         const int samplesWritten = writeAudioSamples(samples);
 
+        const int sstride = outputContext.format.bytesPerFrame();
+
         if(!audioOutput->canHandleVolume()) {
-            Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * outputContext.sstride,
+            Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * sstride,
                                          outputContext.volume);
         }
 
-        std::copy_n(tempBuffer.data(), samples * outputContext.sstride, data);
+        std::copy_n(tempBuffer.data(), samples * sstride, data);
 
         tempBuffer.clear();
         return samplesWritten;
@@ -130,8 +148,8 @@ Renderer::~Renderer() = default;
 
 void Renderer::run(const OutputContext& context, AudioOutput* output)
 {
-    p->outputContext = context;
-    p->audioOutput   = output;
+    p->updateContext(context);
+    p->audioOutput = output;
     setPaused(false);
     p->audioOutput->init(p->outputContext);
     scheduleNextStep();
@@ -147,7 +165,7 @@ void Renderer::reset()
 
     p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
-    p->frameQueue.clear();
+    p->bufferQueue.clear();
     p->tempBuffer.clear();
 }
 
@@ -157,7 +175,7 @@ void Renderer::kill()
 
     p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
-    p->frameQueue.clear();
+    p->bufferQueue.clear();
     p->tempBuffer.clear();
 }
 
@@ -204,24 +222,24 @@ void Renderer::updateVolume(double volume)
     }
 }
 
-void Renderer::render(Frame frame)
+void Renderer::render(const FFmpegAudioBuffer& frame)
 {
-    p->frameQueue.enqueue(std::move(frame));
+    p->bufferQueue.enqueue(frame);
 
-    if(p->frameQueue.size() == 1) {
+    if(p->bufferQueue.size() == 1) {
         scheduleNextStep();
     }
 }
 
 bool Renderer::canDoNextStep() const
 {
-    return !p->frameQueue.empty() && EngineWorker::canDoNextStep();
+    return !p->bufferQueue.empty() && EngineWorker::canDoNextStep();
 }
 
 int Renderer::timerInterval() const
 {
-    return static_cast<int>(((p->audioOutput->bufferSize() / static_cast<double>(p->outputContext.sampleRate)) * 0.25)
-                            * 1000);
+    return static_cast<int>(
+        ((p->audioOutput->bufferSize() / static_cast<double>(p->outputContext.format.sampleRate())) * 0.25) * 1000);
 }
 
 void Renderer::doNextStep()
