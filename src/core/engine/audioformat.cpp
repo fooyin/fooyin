@@ -17,7 +17,6 @@
  *
  */
 
-#include <bits/chrono.h>
 #include <core/engine/audioformat.h>
 
 namespace Fooyin {
