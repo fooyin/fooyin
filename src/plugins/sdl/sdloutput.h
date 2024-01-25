@@ -26,7 +26,7 @@
 #include <QString>
 
 namespace Fooyin::Sdl {
-class SdlOutput : public AudioPullOutput
+class SdlOutput : public AudioPushOutput
 {
 public:
     SdlOutput();
@@ -40,8 +40,11 @@ public:
     [[nodiscard]] bool initialised() const override;
     [[nodiscard]] QString device() const override;
     [[nodiscard]] bool canHandleVolume() const override;
+    int bufferSize() const override;
+    OutputState currentState() override;
     [[nodiscard]] OutputDevices getAllDevices() const override;
 
+    int write(const uint8_t* data, int samples) override;
     void setPaused(bool pause) override;
     void setDevice(const QString& device) override;
 

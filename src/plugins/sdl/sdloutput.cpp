@@ -25,7 +25,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-constexpr auto BufferSize = 1024;
+constexpr auto BufferSize = 2048;
 
 namespace {
 SDL_AudioFormat findFormat(Fooyin::AudioFormat::SampleFormat format)
@@ -43,21 +43,6 @@ SDL_AudioFormat findFormat(Fooyin::AudioFormat::SampleFormat format)
         default:
             return AUDIO_S16;
     }
-}
-
-void audioCallback(void* userData, uint8_t* stream, int len)
-{
-    auto* outputContext = static_cast<Fooyin::OutputContext*>(userData);
-
-    const int sstride = outputContext->format.bytesPerFrame();
-
-    if(len % sstride) {
-        qWarning() << "SDL audio callback not sample aligned";
-    }
-
-    const int samples = len / sstride;
-
-    outputContext->writeAudioToBuffer(stream, samples);
 }
 } // namespace
 
@@ -95,7 +80,7 @@ bool SdlOutput::init(const OutputContext& oc)
     p->desiredSpec.format   = findFormat(oc.format.sampleFormat());
     p->desiredSpec.channels = oc.channelLayout.nb_channels;
     p->desiredSpec.samples  = BufferSize;
-    p->desiredSpec.callback = audioCallback;
+    p->desiredSpec.callback = nullptr;
     p->desiredSpec.userdata = &p->outputContext;
 
     if(p->device == "default"_L1) {
@@ -161,6 +146,21 @@ bool SdlOutput::canHandleVolume() const
     return false;
 }
 
+int SdlOutput::bufferSize() const
+{
+    return BufferSize;
+}
+
+OutputState SdlOutput::currentState()
+{
+    OutputState state;
+
+    state.queuedSamples = static_cast<int>(SDL_GetQueuedAudioSize(p->audioDeviceId) / p->outputContext.format.bytesPerFrame());
+    state.freeSamples   = BufferSize - state.queuedSamples;
+
+    return state;
+}
+
 OutputDevices SdlOutput::getAllDevices() const
 {
     OutputDevices devices;
@@ -186,6 +186,15 @@ OutputDevices SdlOutput::getAllDevices() const
     }
 
     return devices;
+}
+
+int SdlOutput::write(const uint8_t* data, int samples)
+{
+    if(SDL_QueueAudio(p->audioDeviceId, data, samples * p->outputContext.format.bytesPerFrame()) == 0) {
+        return samples;
+    }
+
+    return 0;
 }
 
 void SdlOutput::setPaused(bool pause)
