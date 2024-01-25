@@ -28,27 +28,18 @@ using namespace Qt::Literals::StringLiterals;
 constexpr auto BufferSize = 1024;
 
 namespace {
-SDL_AudioFormat findFormat(AVSampleFormat format)
+SDL_AudioFormat findFormat(Fooyin::AudioFormat::SampleFormat format)
 {
     switch(format) {
-        case(AV_SAMPLE_FMT_U8):
-        case(AV_SAMPLE_FMT_U8P):
+        case(Fooyin::AudioFormat::UInt8):
             return AUDIO_U8;
-        case(AV_SAMPLE_FMT_S16):
-        case(AV_SAMPLE_FMT_S16P):
+        case(Fooyin::AudioFormat::Int16):
             return AUDIO_S16SYS;
-        case(AV_SAMPLE_FMT_S32):
-        case(AV_SAMPLE_FMT_S32P):
+        case(Fooyin::AudioFormat::Int32):
             return AUDIO_S32SYS;
-        case(AV_SAMPLE_FMT_FLT):
-        case(AV_SAMPLE_FMT_FLTP):
+        case(Fooyin::AudioFormat::Float):
             return AUDIO_F32SYS;
-        case(AV_SAMPLE_FMT_DBL):
-        case(AV_SAMPLE_FMT_DBLP):
-        case(AV_SAMPLE_FMT_S64):
-        case(AV_SAMPLE_FMT_S64P):
-        case(AV_SAMPLE_FMT_NB):
-        case(AV_SAMPLE_FMT_NONE):
+        case(Fooyin::AudioFormat::Double):
         default:
             return AUDIO_S16;
     }
@@ -58,11 +49,13 @@ void audioCallback(void* userData, uint8_t* stream, int len)
 {
     auto* outputContext = static_cast<Fooyin::OutputContext*>(userData);
 
-    if(len % outputContext->sstride) {
+    const int sstride = outputContext->format.bytesPerFrame();
+
+    if(len % sstride) {
         qWarning() << "SDL audio callback not sample aligned";
     }
 
-    const int samples = len / outputContext->sstride;
+    const int samples = len / sstride;
 
     outputContext->writeAudioToBuffer(stream, samples);
 }
@@ -98,8 +91,8 @@ bool SdlOutput::init(const OutputContext& oc)
 
     SDL_Init(SDL_INIT_AUDIO);
 
-    p->desiredSpec.freq     = oc.sampleRate;
-    p->desiredSpec.format   = findFormat(oc.format);
+    p->desiredSpec.freq     = oc.format.sampleRate();
+    p->desiredSpec.format   = findFormat(oc.format.sampleFormat());
     p->desiredSpec.channels = oc.channelLayout.nb_channels;
     p->desiredSpec.samples  = BufferSize;
     p->desiredSpec.callback = audioCallback;
@@ -118,8 +111,6 @@ bool SdlOutput::init(const OutputContext& oc)
         qDebug() << "SDL Error opening audio device: " << SDL_GetError();
         return false;
     }
-
-    p->outputContext.sampleRate = p->obtainedSpec.freq;
 
     p->initialised = true;
     return true;

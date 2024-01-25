@@ -19,6 +19,7 @@
 
 #include "ffmpegengine.h"
 
+#include "ffmpegaudiobuffer.h"
 #include "ffmpegclock.h"
 #include "ffmpegcodec.h"
 #include "ffmpegdecoder.h"
@@ -44,7 +45,6 @@ extern "C"
 using namespace std::chrono_literals;
 using namespace Qt::Literals::StringLiterals;
 
-namespace Fooyin {
 struct FormatContextDeleter
 {
     void operator()(AVFormatContext* context) const
@@ -58,6 +58,88 @@ struct FormatContextDeleter
 
 using FormatContextPtr = std::unique_ptr<AVFormatContext, FormatContextDeleter>;
 
+FormatContextPtr createAVFormatContext(const QString& track)
+{
+    FormatContextPtr formatContext;
+    AVFormatContext* avContext{nullptr};
+
+    const int ret = avformat_open_input(&avContext, track.toUtf8().constData(), nullptr, nullptr);
+    if(ret < 0) {
+        if(ret == AVERROR(EACCES)) {
+            qWarning() << "Invalid format: " << track;
+        }
+        else if(ret == AVERROR(EINVAL)) {
+            qWarning() << "Access denied: " << track;
+        }
+        return nullptr;
+    }
+
+    if(avformat_find_stream_info(avContext, nullptr) < 0) {
+        avformat_close_input(&avContext);
+        Fooyin::Utils::printError(u"Could not find stream info"_s);
+        return nullptr;
+    }
+
+    //        av_dump_format(avContext, 0, data, 0);
+
+    formatContext.reset(avContext);
+
+    return formatContext;
+}
+
+std::optional<Fooyin::Stream> findStream(const FormatContextPtr& formatContext)
+{
+    for(unsigned int i = 0; i < formatContext->nb_streams; ++i) {
+        AVStream* avStream = formatContext->streams[i];
+        const auto type    = avStream->codecpar->codec_type;
+
+        if(type == AVMEDIA_TYPE_AUDIO) {
+            return Fooyin::Stream{avStream};
+            break;
+        }
+    }
+
+    return {};
+}
+
+std::optional<Fooyin::Codec> createCodec(AVStream* avStream)
+{
+    if(!avStream) {
+        return {};
+    }
+
+    const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
+    if(!avCodec) {
+        Fooyin::Utils::printError(u"Could not find a decoder for stream"_s);
+        return {};
+    }
+
+    Fooyin::CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
+    if(!avCodecContext) {
+        Fooyin::Utils::printError(u"Could not allocate context"_s);
+        return {};
+    }
+
+    if(avCodecContext->codec_type != AVMEDIA_TYPE_AUDIO) {
+        return {};
+    }
+
+    if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
+        Fooyin::Utils::printError(u"Could not obtain codec parameters"_s);
+        return {};
+    }
+
+    avCodecContext.get()->pkt_timebase = avStream->time_base;
+
+    if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
+        Fooyin::Utils::printError(u"Could not initialise codec context"_s);
+        return {};
+    }
+
+    return Fooyin::Codec{std::move(avCodecContext), avStream};
+}
+
+namespace Fooyin {
 struct FFmpegEngine::Private
 {
     FFmpegEngine* engine;
@@ -83,6 +165,7 @@ struct FFmpegEngine::Private
     Renderer* renderer{nullptr};
 
     std::optional<Codec> codec;
+    AudioFormat audioFormat;
 
     explicit Private(FFmpegEngine* engine, SettingsManager* settings)
         : engine{engine}
@@ -100,95 +183,9 @@ struct FFmpegEngine::Private
         return positionUpdateTimer;
     }
 
-    bool createAVFormatContext(const QString& track)
-    {
-        AVFormatContext* avContext{nullptr};
-
-        const int ret = avformat_open_input(&avContext, track.toUtf8().constData(), nullptr, nullptr);
-        if(ret < 0) {
-            if(ret == AVERROR(EACCES)) {
-                qWarning() << "Invalid format: " << track;
-            }
-            else if(ret == AVERROR(EINVAL)) {
-                qWarning() << "Access denied: " << track;
-            }
-            return false;
-        }
-
-        if(avformat_find_stream_info(avContext, nullptr) < 0) {
-            avformat_close_input(&avContext);
-            Utils::printError(u"Could not find stream info"_s);
-            return false;
-        }
-
-        //        av_dump_format(avContext, 0, data, 0);
-
-        isSeekable = !(avContext->ctx_flags & AVFMTCTX_UNSEEKABLE);
-        context.reset(avContext);
-
-        updateStream();
-
-        return true;
-    }
-
-    void createCodec(AVStream* avStream)
-    {
-        if(!avStream) {
-            return;
-        }
-
-        const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
-        if(!avCodec) {
-            Utils::printError(u"Could not find a decoder for stream"_s);
-            return;
-        }
-
-        CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
-        if(!avCodecContext) {
-            Utils::printError(u"Could not allocate context"_s);
-            return;
-        }
-
-        if(avCodecContext->codec_type != AVMEDIA_TYPE_AUDIO) {
-            return;
-        }
-
-        if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
-            Utils::printError(u"Could not obtain codec parameters"_s);
-            return;
-        }
-
-        avCodecContext.get()->pkt_timebase = avStream->time_base;
-
-        if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
-            Utils::printError(u"Could not initialise codec context"_s);
-            return;
-        }
-
-        codec = Codec{std::move(avCodecContext), avStream};
-    }
-
-    void updateStream()
-    {
-        if(!context) {
-            return;
-        }
-        for(unsigned int i = 0; i < context->nb_streams; ++i) {
-            AVStream* avStream = context->streams[i];
-            const auto type    = avStream->codecpar->codec_type;
-
-            if(type != AVMEDIA_TYPE_AUDIO) {
-                continue;
-            }
-
-            stream   = Stream{avStream};
-            duration = stream.duration();
-        }
-    }
-
     std::optional<OutputContext> updateOutputContext()
     {
-        const auto prevContext = outputContext;
+        auto prevContext = outputContext;
 
         if(!audioOutput || !codec || !codec->context()) {
             outputContext = {};
@@ -197,12 +194,9 @@ struct FFmpegEngine::Private
 
         OutputContext updatedContext;
 
-        updatedContext.format        = Utils::interleaveFormat(codec->context()->sample_fmt);
-        updatedContext.sampleRate    = codec->context()->sample_rate;
+        updatedContext.format        = audioFormat;
         updatedContext.channelLayout = codec->context()->ch_layout;
-        updatedContext.sstride
-            = av_get_bytes_per_sample(updatedContext.format) * updatedContext.channelLayout.nb_channels;
-        updatedContext.volume = volume;
+        updatedContext.volume        = volume;
 
         outputContext = updatedContext;
 
@@ -217,15 +211,34 @@ struct FFmpegEngine::Private
         }
     }
 
-    bool createCodec()
+    bool openTrack(const QString& filepath)
     {
-        if(!codec) {
-            createCodec(stream.avStream());
-            if(!codec) {
-                return false;
-            }
+        context.reset();
+        codec.reset();
+
+        context = createAVFormatContext(filepath);
+
+        if(!context) {
+            return false;
         }
-        return true;
+
+        isSeekable = !(context->ctx_flags & AVFMTCTX_UNSEEKABLE);
+
+        auto audioStream = findStream(context);
+
+        if(!audioStream) {
+            return false;
+        }
+
+        stream      = audioStream.value();
+        audioFormat = Utils::audioFormatFromCodec(stream.avStream()->codecpar);
+
+        clock.setPaused(true);
+        clock.sync();
+
+        codec = createCodec(stream.avStream());
+
+        return !!codec;
     }
 
     void startPlayback()
@@ -238,7 +251,7 @@ struct FFmpegEngine::Private
             decoder,
             [this] {
                 if(context && codec) {
-                    decoder->run(context.get(), &codec.value());
+                    decoder->run(context.get(), &codec.value(), audioFormat);
                 }
             },
             Qt::QueuedConnection);
@@ -354,18 +367,7 @@ void FFmpegEngine::changeTrack(const Track& track)
 
     changeTrackStatus(LoadingTrack);
 
-    p->context.reset();
-    p->codec.reset();
-
-    if(!p->createAVFormatContext(track.filepath())) {
-        changeTrackStatus(InvalidTrack);
-        return;
-    }
-
-    p->clock.setPaused(true);
-    p->clock.sync();
-
-    if(!p->createCodec()) {
+    if(!p->openTrack(track.filepath())) {
         changeTrackStatus(InvalidTrack);
         return;
     }
@@ -504,10 +506,10 @@ void FFmpegEngine::startup()
     p->decoder  = new Decoder(this);
     p->renderer = new Renderer(this);
 
-    QObject::connect(p->decoder, &Decoder::requestHandleFrame, p->renderer, &Renderer::render);
-    QObject::connect(p->renderer, &Renderer::frameProcessed, p->decoder, &Decoder::onFrameProcessed);
-    QObject::connect(p->renderer, &Renderer::frameProcessed, p->engine, [this](const Frame& frame) {
-        const uint64_t pos = frame.ptsMs();
+    QObject::connect(p->decoder, &Decoder::audioBufferDecoded, p->renderer, &Renderer::render);
+    QObject::connect(p->renderer, &Renderer::audioBufferProcessed, p->decoder, &Decoder::onBufferProcessed);
+    QObject::connect(p->renderer, &Renderer::audioBufferProcessed, p->engine, [this](const FFmpegAudioBuffer& buffer) {
+        const uint64_t pos = buffer.startTime();
         if(pos > p->clock.currentPosition()) {
             p->clock.sync(pos);
         }
@@ -518,6 +520,8 @@ void FFmpegEngine::startup()
 void FFmpegEngine::shutdown()
 {
     p->killWorkers();
+
+    p->audioOutput->uninit();
 
     if(p->positionUpdateTimer) {
         p->positionUpdateTimer->deleteLater();

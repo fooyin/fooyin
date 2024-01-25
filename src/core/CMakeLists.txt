@@ -15,6 +15,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/player/playermanager.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
     track.cpp
+    engine/audioformat.cpp
     engine/audiooutput.cpp
     library/trackfilter.cpp
     library/tracksort.cpp
@@ -40,6 +41,7 @@ set(PRIVATE_SOURCES
     database/databasequery.cpp
     engine/enginehandler.cpp
     engine/audioengine.cpp
+    engine/ffmpeg/ffmpegaudiobuffer.cpp
     engine/ffmpeg/ffmpegclock.cpp
     engine/ffmpeg/ffmpegrenderer.cpp
     engine/ffmpeg/ffmpegworker.cpp

@@ -19,13 +19,14 @@
 
 #pragma once
 
-#include "ffmpegframe.h"
 #include "ffmpegworker.h"
 
 class AVFormatContext;
 
 namespace Fooyin {
+class AudioFormat;
 class Codec;
+class FFmpegAudioBuffer;
 
 class Decoder : public EngineWorker
 {
@@ -35,15 +36,15 @@ public:
     explicit Decoder(QObject* parent = nullptr);
     ~Decoder() override;
 
-    void run(AVFormatContext* context, Codec* codec);
+    void run(AVFormatContext* context, Codec* codec, const AudioFormat& format);
     void reset() override;
     void kill() override;
 
 public slots:
-    void onFrameProcessed();
+    void onBufferProcessed();
 
 signals:
-    void requestHandleFrame(Frame frame);
+    void audioBufferDecoded(const FFmpegAudioBuffer& buffer);
 
 protected:
     bool canDoNextStep() const override;

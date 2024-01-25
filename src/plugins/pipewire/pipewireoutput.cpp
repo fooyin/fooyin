@@ -45,28 +45,19 @@ extern "C"
 constexpr auto DefaultDevice = "default";
 
 namespace {
-spa_audio_format findSpaFormat(AVSampleFormat format)
+spa_audio_format findSpaFormat(const Fooyin::AudioFormat::SampleFormat& format)
 {
     switch(format) {
-        case(AV_SAMPLE_FMT_U8):
-        case(AV_SAMPLE_FMT_U8P):
+        case(Fooyin::AudioFormat::UInt8):
             return SPA_AUDIO_FORMAT_U8;
-        case(AV_SAMPLE_FMT_S16):
-        case(AV_SAMPLE_FMT_S16P):
+        case(Fooyin::AudioFormat::Int16):
             return SPA_AUDIO_FORMAT_S16;
-        case(AV_SAMPLE_FMT_S32):
-        case(AV_SAMPLE_FMT_S32P):
+        case(Fooyin::AudioFormat::Int32):
             return SPA_AUDIO_FORMAT_S32;
-        case(AV_SAMPLE_FMT_FLT):
-        case(AV_SAMPLE_FMT_FLTP):
+        case(Fooyin::AudioFormat::Float):
             return SPA_AUDIO_FORMAT_F32;
-        case(AV_SAMPLE_FMT_DBL):
-        case(AV_SAMPLE_FMT_DBLP):
+        case(Fooyin::AudioFormat::Double):
             return SPA_AUDIO_FORMAT_F64;
-        case(AV_SAMPLE_FMT_NONE):
-        case(AV_SAMPLE_FMT_S64):
-        case(AV_SAMPLE_FMT_S64P):
-        case(AV_SAMPLE_FMT_NB):
         default:
             return SPA_AUDIO_FORMAT_UNKNOWN;
     }
@@ -224,13 +215,13 @@ void onParamChanged(void* userdata, uint32_t id, const struct spa_pod* param)
         return;
     }
 
-    const int bufferSize
-        = pc->bufferSize * findSpaFormat(pc->outputContext.format) * pc->outputContext.channelLayout.nb_channels;
+    const int bufferSize = pc->bufferSize * findSpaFormat(pc->outputContext.format.sampleFormat())
+                         * pc->outputContext.format.channelCount();
 
     params[0] = static_cast<const spa_pod*>(spa_pod_builder_add_object(
         &b, SPA_TYPE_OBJECT_ParamBuffers, SPA_PARAM_Buffers, SPA_PARAM_BUFFERS_blocks, SPA_POD_Int(1),
         SPA_PARAM_BUFFERS_size, SPA_POD_CHOICE_RANGE_Int(bufferSize, 0, INT32_MAX), SPA_PARAM_BUFFERS_stride,
-        SPA_POD_Int(pc->outputContext.sstride)));
+        SPA_POD_Int(pc->outputContext.format.bytesPerFrame())));
 
     if(!params[0]) {
         qWarning() << "PW: Could not build parameter pod";
@@ -270,7 +261,7 @@ void onProcess(void* userData)
 
     spa_buffer* buf = b->buffer;
 
-    const int sstride   = pc->outputContext.sstride;
+    const int sstride   = pc->outputContext.format.bytesPerFrame();
     uint64_t frameCount = buf->datas[0].maxsize / pc->outputContext.channelLayout.nb_channels / sstride;
     if(b->requested != 0) {
         frameCount = std::min(b->requested, frameCount);
@@ -282,7 +273,7 @@ void onProcess(void* userData)
     b->size                     = samples;
     buf->datas[0].chunk->size   = samples * sstride;
     buf->datas[0].chunk->offset = 0;
-    buf->datas[0].chunk->stride = pc->outputContext.sstride;
+    buf->datas[0].chunk->stride = sstride;
 
     pw_stream_queue_buffer(pc->stream.get(), b);
 }
@@ -425,7 +416,7 @@ struct PipeWireOutput::Private
         pw_properties_setf(props, PW_KEY_APP_ICON_NAME, Constants::AppName);
         pw_properties_setf(props, PW_KEY_APP_NAME, Constants::AppName);
         pw_properties_setf(props, PW_KEY_NODE_ALWAYS_PROCESS, "true");
-        pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", pc.outputContext.sampleRate);
+        pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", pc.outputContext.format.sampleRate());
 
         if(device != DefaultDevice) {
             pw_properties_setf(props, PW_KEY_TARGET_OBJECT, "%s", device.toUtf8().constData());
@@ -441,7 +432,7 @@ struct PipeWireOutput::Private
 
         pw_stream_add_listener(pc.stream.get(), &pc.streamListener, &streamEvents, &pc);
 
-        const spa_audio_format spaFormat = findSpaFormat(pc.outputContext.format);
+        const spa_audio_format spaFormat = findSpaFormat(pc.outputContext.format.sampleFormat());
         if(spaFormat == SPA_AUDIO_FORMAT_UNKNOWN) {
             qWarning() << "PW: Unknown audio format";
             pw_thread_loop_unlock(pc.loop.get());
@@ -455,7 +446,7 @@ struct PipeWireOutput::Private
         spa_audio_info_raw audioInfo = {
             .format   = spaFormat,
             .flags    = SPA_AUDIO_FLAG_NONE,
-            .rate     = static_cast<uint32_t>(pc.outputContext.sampleRate),
+            .rate     = static_cast<uint32_t>(pc.outputContext.format.sampleRate()),
             .channels = static_cast<uint32_t>(pc.outputContext.channelLayout.nb_channels),
         };
 

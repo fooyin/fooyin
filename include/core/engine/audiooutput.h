@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <core/engine/audioformat.h>
+
 #include "fycore_export.h"
 
 #include <QString>
@@ -33,19 +35,16 @@ using WriteFunction = std::function<int(uint8_t*, int)>;
 
 struct OutputContext
 {
-    int sampleRate;
+    AudioFormat format;
     AVChannelLayout channelLayout;
-    AVSampleFormat format;
-    int sstride; // Size of a sample
     double volume{1.0};
 
     WriteFunction writeAudioToBuffer;
 
     bool operator==(const OutputContext& other)
     {
-        return std::tie(sampleRate, channelLayout.nb_channels, channelLayout.order, format, sstride)
-            == std::tie(other.sampleRate, other.channelLayout.nb_channels, other.channelLayout.order, other.format,
-                        other.sstride);
+        return std::tie(channelLayout.nb_channels, channelLayout.order, format)
+            == std::tie(other.channelLayout.nb_channels, other.channelLayout.order, other.format);
     }
 };
 

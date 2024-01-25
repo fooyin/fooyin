@@ -64,28 +64,19 @@ bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwPa
     return isSupported;
 }
 
-snd_pcm_format_t findAlsaFormat(AVSampleFormat format)
+snd_pcm_format_t findAlsaFormat(AudioFormat::SampleFormat format)
 {
     switch(format) {
-        case(AV_SAMPLE_FMT_U8):
-        case(AV_SAMPLE_FMT_U8P):
+        case(AudioFormat::UInt8):
             return SND_PCM_FORMAT_U8;
-        case(AV_SAMPLE_FMT_S16):
-        case(AV_SAMPLE_FMT_S16P):
+        case(AudioFormat::Int16):
             return SND_PCM_FORMAT_S16;
-        case(AV_SAMPLE_FMT_S32):
-        case(AV_SAMPLE_FMT_S32P):
+        case(AudioFormat::Int32):
             return SND_PCM_FORMAT_S32;
-        case(AV_SAMPLE_FMT_FLT):
-        case(AV_SAMPLE_FMT_FLTP):
+        case(AudioFormat::Float):
             return SND_PCM_FORMAT_FLOAT;
-        case(AV_SAMPLE_FMT_DBL):
-        case(AV_SAMPLE_FMT_DBLP):
+        case(AudioFormat::Double):
             return SND_PCM_FORMAT_FLOAT64;
-        case(AV_SAMPLE_FMT_NONE):
-        case(AV_SAMPLE_FMT_S64):
-        case(AV_SAMPLE_FMT_S64P):
-        case(AV_SAMPLE_FMT_NB):
         default:
             return SND_PCM_FORMAT_UNKNOWN;
     }
@@ -208,8 +199,9 @@ struct AlsaOutput::Private
         }
 
         if(state) {
-            auto delay   = snd_pcm_status_get_delay(st);
-            state->delay = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(outputContext.sampleRate);
+            auto delay = snd_pcm_status_get_delay(st);
+            state->delay
+                = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(outputContext.format.sampleRate());
             state->freeSamples = static_cast<int>(snd_pcm_status_get_avail(st));
             state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(bufferSize));
             // Align to period size
@@ -272,7 +264,7 @@ bool AlsaOutput::init(const OutputContext& oc)
         return handleInitError();
     }
 
-    const snd_pcm_format_t format = findAlsaFormat(oc.format);
+    const snd_pcm_format_t format = findAlsaFormat(oc.format.sampleFormat());
     if(format < 0) {
         qWarning() << "Format not supported by ALSA";
         return handleInitError();
@@ -289,7 +281,7 @@ bool AlsaOutput::init(const OutputContext& oc)
         return handleInitError();
     }
 
-    uint32_t sampleRate = oc.sampleRate;
+    uint32_t sampleRate = oc.format.sampleRate();
 
     err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &sampleRate, &p->dir);
     if(err < 0) {

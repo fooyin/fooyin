@@ -19,6 +19,7 @@
 
 #include "ffmpegdecoder.h"
 
+#include "ffmpegaudiobuffer.h"
 #include "ffmpegcodec.h"
 #include "ffmpegframe.h"
 #include "ffmpegpacket.h"
@@ -73,7 +74,7 @@ Fooyin::Frame interleave(const Fooyin::Frame& inputFrame)
     const auto interleavedFormat = Fooyin::Utils::interleaveFormat(inputFrame.format());
 
     Fooyin::Frame frame = copyFrame(inputFrame, interleavedFormat);
-    uint8_t* out    = frame.avFrame()->data[0];
+    uint8_t* out        = frame.avFrame()->data[0];
 
     switch(inputFrame.format()) {
         case AV_SAMPLE_FMT_FLTP:
@@ -113,6 +114,7 @@ struct Decoder::Private
     Decoder* decoder;
     AVFormatContext* context{nullptr};
     Codec* codec{nullptr};
+    AudioFormat audioFormat;
 
     int pendingFrameCount{0};
     bool draining{false};
@@ -143,12 +145,12 @@ struct Decoder::Private
         }
     }
 
-    bool checkCodecContext() const
+    [[nodiscard]] bool checkCodecContext() const
     {
         return context && codec && codec->context();
     }
 
-    int sendAVPacket(const Packet& packet) const
+    [[nodiscard]] int sendAVPacket(const Packet& packet) const
     {
         if(checkCodecContext() && !decoder->isPaused()) {
             return avcodec_send_packet(codec->context(), !packet.isValid() || draining ? nullptr : packet.avPacket());
@@ -182,8 +184,14 @@ struct Decoder::Private
         if(av_sample_fmt_is_planar(frame.format())) {
             frame = interleave(frame);
         }
+
         ++pendingFrameCount;
-        emit decoder->requestHandleFrame(frame);
+
+        auto data = QByteArray{std::bit_cast<const char*>(frame.avFrame()->data[0]),
+                               static_cast<qsizetype>(audioFormat.bytesPerFrame() * frame.sampleCount())};
+        const FFmpegAudioBuffer buffer{data, audioFormat, frame.ptsMs()};
+
+        QMetaObject::invokeMethod(decoder, "audioBufferDecoded", Q_ARG(const FFmpegAudioBuffer&, buffer));
     }
 };
 
@@ -196,10 +204,12 @@ Decoder::Decoder(QObject* parent)
 
 Decoder::~Decoder() = default;
 
-void Decoder::run(AVFormatContext* context, Codec* codec)
+void Decoder::run(AVFormatContext* context, Codec* codec, const AudioFormat& format)
 {
-    p->context = context;
-    p->codec   = codec;
+    p->context     = context;
+    p->codec       = codec;
+    p->audioFormat = format;
+
     setPaused(false);
     scheduleNextStep();
 }
@@ -220,7 +230,7 @@ void Decoder::kill()
     p->codec             = nullptr;
 }
 
-void Decoder::onFrameProcessed()
+void Decoder::onBufferProcessed()
 {
     --p->pendingFrameCount;
     scheduleNextStep(false);
@@ -255,7 +265,7 @@ void Decoder::doNextStep()
             return;
         }
 
-        emit requestHandleFrame({});
+        emit audioBufferDecoded({});
         p->decoder->setAtEnd(true);
         return;
     }
