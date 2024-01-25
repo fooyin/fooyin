@@ -233,9 +233,6 @@ struct FFmpegEngine::Private
         stream      = audioStream.value();
         audioFormat = Utils::audioFormatFromCodec(stream.avStream()->codecpar);
 
-        clock.setPaused(true);
-        clock.sync();
-
         codec = createCodec(stream.avStream());
 
         return !!codec;
@@ -359,6 +356,9 @@ void FFmpegEngine::changeTrack(const Track& track)
     p->killWorkers();
 
     emit positionChanged(0);
+
+    p->clock.setPaused(true);
+    p->clock.sync();
 
     if(!track.isValid()) {
         changeTrackStatus(InvalidTrack);
