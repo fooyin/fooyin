@@ -157,9 +157,6 @@ struct AlsaOutput::Private
                 continue;
             }
 
-            qDebug() << QString{u"(%1) Attempting to recover from state '%2'..."_s}.arg(n + 1).arg(
-                snd_pcm_state_name(pcmst));
-
             switch(pcmst) {
                 // Underrun
                 case SND_PCM_STATE_DRAINING:
