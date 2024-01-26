@@ -254,7 +254,9 @@ void LibraryScanner::closeThread()
 
 void LibraryScanner::stopThread()
 {
-    emit progressChanged(100);
+    if(state() == Running) {
+        emit progressChanged(100);
+    }
     setState(Idle);
 }
 
