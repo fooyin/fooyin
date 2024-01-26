@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.1](https://github.com/ludouzi/fooyin/releases/tag/v0.3.1) (2024-01-26)
+
+### Changes
+
+* Rewrite library scan request handling
+* Return a ScanRequest for MusicLibrary::rescan
+
+### Fixes
+
+* Only report library scan progress on stopping thread if we're actually running
+* Remove leftover debug message
+
 ## [0.3.0](https://github.com/ludouzi/fooyin/releases/tag/v0.3.0) (2024-01-26)
 
 ### Features
