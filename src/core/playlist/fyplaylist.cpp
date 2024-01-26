@@ -32,7 +32,7 @@ struct FyPlaylist::Private
     QString name;
     TrackList tracks;
 
-    int currentTrackIndex{-1};
+    int currentTrackIndex{0};
     int nextTrackIndex{-1};
 
     int shuffleIndex{-1};
