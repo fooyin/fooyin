@@ -170,7 +170,7 @@ endif()
 
 # ---- Fooyin executable ----
 
-set(SOURCES src/app/main.cpp)
+set(SOURCES src/app/main.cpp src/app/commandline.cpp)
 
 qt_add_resources(SOURCES data/icons.qrc)
 

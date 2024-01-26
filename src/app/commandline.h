@@ -19,27 +19,24 @@
 
 #pragma once
 
-#include "fygui_export.h"
+#include <QList>
+#include <QUrl>
 
-#include <QObject>
-
-namespace Fooyin {
-struct CorePluginContext;
-
-class FYGUI_EXPORT GuiApplication : public QObject
+class CommandLine
 {
-    Q_OBJECT
-
 public:
-    GuiApplication(const CorePluginContext& core);
-    ~GuiApplication() override;
+    explicit CommandLine(int argc = 0, char** argv = nullptr);
 
-    void shutdown();
+    bool parse();
 
-    void openFiles(const QList<QUrl>& files);
+    [[nodiscard]] bool empty() const;
+    [[nodiscard]] QList<QUrl> files() const;
+
+    [[nodiscard]] QByteArray saveOptions() const;
+    void loadOptions(const QByteArray& options);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    int m_argc;
+    char** m_argv;
+    QList<QUrl> m_files;
 };
-} // namespace Fooyin

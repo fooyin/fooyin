@@ -47,6 +47,7 @@ struct PlaylistController::Private
     TrackSelectionController* selectionController;
     SettingsManager* settings;
 
+    bool loaded{false};
     Playlist* currentPlaylist{nullptr};
 
     std::unordered_map<int, QUndoStack> histories;
@@ -75,6 +76,8 @@ struct PlaylistController::Private
                 QMetaObject::invokeMethod(self, "currentPlaylistChanged", Q_ARG(Playlist*, playlist));
             }
         }
+        loaded = true;
+        QMetaObject::invokeMethod(self, &PlaylistController::playlistsLoaded);
     }
 
     void handlePlaylistUpdated(Playlist* playlist)
@@ -224,6 +227,11 @@ TrackSelectionController* PlaylistController::selectionController() const
     return p->selectionController;
 }
 
+bool PlaylistController::playlistsHaveLoaded() const
+{
+    return p->loaded;
+}
+
 PlaylistList PlaylistController::playlists() const
 {
     return p->handler->playlists();
@@ -357,7 +365,7 @@ void PlaylistController::redoPlaylistChanges()
     }
 }
 
-QCoro::Task<void> PlaylistController::filesToPlaylist(QList<QUrl> urls)
+QCoro::Task<void> PlaylistController::filesToCurrentPlaylist(QList<QUrl> urls)
 {
     const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
     if(filepaths.empty()) {
@@ -371,6 +379,34 @@ QCoro::Task<void> PlaylistController::filesToPlaylist(QList<QUrl> urls)
 
     if(p->currentPlaylist) {
         p->handler->appendToPlaylist(p->currentPlaylist->id(), tracks);
+    }
+}
+
+QCoro::Task<void> PlaylistController::filesToNewPlaylist(QString playlistName, QList<QUrl> urls)
+{
+    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
+    if(filepaths.empty()) {
+        co_return;
+    }
+
+    TrackList tracks;
+    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
+
+    tracks = co_await p->scanTracks(tracks);
+
+    Playlist* playlist = p->handler->playlistByName(playlistName);
+    if(playlist) {
+        const int indexToPlay = playlist->trackCount();
+        p->handler->appendToPlaylist(playlist->id(), tracks);
+        playlist->changeCurrentTrack(indexToPlay);
+    }
+    else {
+        playlist = p->handler->createPlaylist(playlistName, tracks);
+    }
+
+    if(playlist) {
+        changeCurrentPlaylist(playlist);
+        p->handler->startPlayback(playlist->id());
     }
 }
 

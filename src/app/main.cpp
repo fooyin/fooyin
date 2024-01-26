@@ -19,13 +19,14 @@
 
 #include "version.h"
 
+#include "commandline.h"
+
 #include <core/application.h>
 #include <gui/guiapplication.h>
 
 #include <kdsingleapplication.h>
 
 #include <QApplication>
-#include <QCommandLineParser>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -36,23 +37,55 @@ int main(int argc, char** argv)
     QCoreApplication::setApplicationName(u"fooyin"_s);
     QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
 
-    const QApplication app{argc, argv};
+    CommandLine commandLine{argc, argv};
 
-    // Prevent additional instances
-    const KDSingleApplication instance{QCoreApplication::applicationName()};
-    if(!instance.isPrimaryInstance()) {
-        qInfo() << "fooyin already running";
+    auto checkInstance = [&commandLine](KDSingleApplication& instance) {
+        if(!instance.isPrimaryInstance()) {
+            if(commandLine.empty()) {
+                qInfo() << "fooyin already running";
+            }
+            else {
+                instance.sendMessage(commandLine.saveOptions());
+            }
+            return false;
+        }
+        return true;
+    };
+
+    {
+        const QCoreApplication app{argc, argv};
+        KDSingleApplication instance{QCoreApplication::applicationName(),
+                                     KDSingleApplication::Option::IncludeUsernameInSocketName};
+        if(!commandLine.parse()) {
+            return 1;
+        }
+        if(!checkInstance(instance)) {
+            return 0;
+        }
+    }
+
+    const QApplication app{argc, argv};
+    KDSingleApplication instance{QCoreApplication::applicationName(),
+                                 KDSingleApplication::Option::IncludeUsernameInSocketName};
+    if(!checkInstance(instance)) {
         return 0;
     }
 
-    QCommandLineParser parser;
-    parser.addHelpOption();
-    parser.addVersionOption();
-
-    parser.process(app);
-
+    // Startup
     Fooyin::Application coreApp;
     Fooyin::GuiApplication guiApp{coreApp.context()};
+
+    if(!commandLine.empty()) {
+        guiApp.openFiles(commandLine.files());
+    }
+
+    QObject::connect(&instance, &KDSingleApplication::messageReceived, &guiApp, [&guiApp](const QByteArray& options) {
+        CommandLine command;
+        command.loadOptions(options);
+        if(!command.empty()) {
+            guiApp.openFiles(command.files());
+        }
+    });
 
     QObject::connect(&app, &QCoreApplication::aboutToQuit, &coreApp, [&coreApp, &guiApp]() {
         guiApp.shutdown();

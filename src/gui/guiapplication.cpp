@@ -402,7 +402,7 @@ struct GuiApplication::Private
             return;
         }
 
-        playlistController->filesToPlaylist(files);
+        playlistController->filesToCurrentPlaylist(files);
     }
 
     void addFolders() const
@@ -413,7 +413,13 @@ struct GuiApplication::Private
             return;
         }
 
-        playlistController->filesToPlaylist({dirs});
+        playlistController->filesToCurrentPlaylist({dirs});
+    }
+
+    void openFiles(const QList<QUrl>& urls) const
+    {
+        qDebug() << urls;
+        playlistController->filesToNewPlaylist("Default", urls);
     }
 };
 
@@ -446,6 +452,18 @@ void GuiApplication::shutdown()
     p->editableLayout.reset();
     p->playlistController.reset();
     p->mainWindow.reset();
+}
+
+void GuiApplication::openFiles(const QList<QUrl>& files)
+{
+    if(p->playlistController->playlistsHaveLoaded()) {
+        p->openFiles(files);
+        return;
+    }
+
+    QObject::connect(
+        p->playlistController.get(), &PlaylistController::playlistsLoaded, this,
+        [this, files]() { p->openFiles(files); }, Qt::SingleShotConnection);
 }
 } // namespace Fooyin
 

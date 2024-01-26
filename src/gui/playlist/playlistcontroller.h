@@ -57,6 +57,7 @@ public:
     [[nodiscard]] PlaylistManager* playlistHandler() const;
     [[nodiscard]] TrackSelectionController* selectionController() const;
 
+    [[nodiscard]] bool playlistsHaveLoaded() const;
     [[nodiscard]] PlaylistList playlists() const;
     [[nodiscard]] Track currentTrack() const;
     [[nodiscard]] PlayState playState() const;
@@ -79,10 +80,12 @@ public:
     void undoPlaylistChanges();
     void redoPlaylistChanges();
 
-    QCoro::Task<void> filesToPlaylist(QList<QUrl> urls);
+    QCoro::Task<void> filesToCurrentPlaylist(QList<QUrl> urls);
+    QCoro::Task<void> filesToNewPlaylist(QString playlistName, QList<QUrl> urls);
     QCoro::Task<TrackList> filesToTracks(QList<QUrl> urls);
 
 signals:
+    void playlistsLoaded();
     void currentPlaylistChanged(Playlist* playlist);
     void currentTrackChanged(const Track& track);
     void playStateChanged(PlayState state);
