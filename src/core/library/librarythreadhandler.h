@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "library/libraryinfo.h"
+
 #include <core/trackfwd.h>
 
 #include <QObject>
@@ -27,8 +29,6 @@ namespace Fooyin {
 class Database;
 class SettingsManager;
 class MusicLibrary;
-class LibraryManager;
-struct LibraryInfo;
 struct ScanResult;
 struct ScanRequest;
 
@@ -37,14 +37,16 @@ class LibraryThreadHandler : public QObject
     Q_OBJECT
 
 public:
-    explicit LibraryThreadHandler(Database* database, MusicLibrary* library, LibraryManager* libraryManager,
-                                  SettingsManager* settings, QObject* parent = nullptr);
+    explicit LibraryThreadHandler(Database* database, MusicLibrary* library, SettingsManager* settings,
+                                  QObject* parent = nullptr);
     ~LibraryThreadHandler() override;
 
     void getAllTracks();
 
-    void scanLibrary(const LibraryInfo& library);
-    ScanRequest* scanTracks(const TrackList& tracks);
+    void setupWatchers(const LibraryInfoMap& libraries, bool enabled);
+
+    ScanRequest scanLibrary(const LibraryInfo& library);
+    ScanRequest scanTracks(const TrackList& tracks);
 
     void saveUpdatedTracks(const TrackList& tracks);
     void saveUpdatedTrackStats(const Track& track);
@@ -54,9 +56,9 @@ public:
 
 signals:
     void progressChanged(int id, int percent);
+    void scannedTracks(int id, const TrackList& tracks);
     void statusChanged(const LibraryInfo& library);
     void scanUpdate(const ScanResult& result);
-    void scannedTracks(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
 
     void gotTracks(const TrackList& result);

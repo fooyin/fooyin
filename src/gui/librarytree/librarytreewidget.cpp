@@ -325,7 +325,8 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionContro
 
     QObject::connect(library, &MusicLibrary::tracksLoaded, this, [this]() { p->reset(); });
     QObject::connect(library, &MusicLibrary::tracksAdded, p->model, &LibraryTreeModel::addTracks);
-    QObject::connect(library, &MusicLibrary::tracksScanned, p->model, &LibraryTreeModel::addTracks);
+    QObject::connect(library, &MusicLibrary::tracksScanned, p->model,
+                     [this](int /*id*/, const TrackList& tracks) { p->model->addTracks(tracks); });
     QObject::connect(library, &MusicLibrary::tracksUpdated, p->model, &LibraryTreeModel::updateTracks);
     QObject::connect(library, &MusicLibrary::tracksDeleted, p->model, &LibraryTreeModel::removeTracks);
     QObject::connect(library, &MusicLibrary::tracksSorted, this, [this]() { p->reset(); });

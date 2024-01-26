@@ -19,6 +19,7 @@
 
 #include "unifiedmusiclibrary.h"
 
+#include "internalcoresettings.h"
 #include "library/libraryinfo.h"
 #include "library/librarymanager.h"
 #include "librarythreadhandler.h"
@@ -67,7 +68,7 @@ struct UnifiedMusicLibrary::Private
         , libraryManager{libraryManager}
         , database{database}
         , settings{settings}
-        , threadHandler{database, self, libraryManager, settings}
+        , threadHandler{database, self, settings}
     { }
 
     QCoro::Task<void> loadTracks(TrackList trackToLoad)
@@ -114,13 +115,13 @@ struct UnifiedMusicLibrary::Private
         }
     }
 
-    QCoro::Task<void> scannedTracks(TrackList tracksScanned)
+    QCoro::Task<void> scannedTracks(int id, TrackList tracksScanned)
     {
         tracksScanned = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksScanned);
 
         addTracks(tracksScanned);
 
-        QMetaObject::invokeMethod(self, "tracksScanned", Q_ARG(const TrackList&, tracksScanned));
+        QMetaObject::invokeMethod(self, "tracksScanned", Q_ARG(int, id), Q_ARG(const TrackList&, tracksScanned));
     }
 
     void removeLibrary(int id, const std::set<int>& tracksRemoved)
@@ -184,7 +185,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
     connect(&p->threadHandler, &LibraryThreadHandler::scanUpdate, this,
             [this](const ScanResult& result) { p->handleScanResult(result); });
     connect(&p->threadHandler, &LibraryThreadHandler::scannedTracks, this,
-            [this](const TrackList& tracks) { p->scannedTracks(tracks); });
+            [this](int id, const TrackList& tracks) { p->scannedTracks(id, tracks); });
     connect(&p->threadHandler, &LibraryThreadHandler::tracksUpdated, this,
             [this](const TrackList& tracks) { p->updateTracks(tracks); });
     connect(&p->threadHandler, &LibraryThreadHandler::gotTracks, this,
@@ -193,9 +194,21 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Databas
     p->settings->subscribe<Settings::Core::LibrarySortScript>(this,
                                                               [this](const QString& sort) { p->changeSort(sort); });
 
-    if(p->settings->value<Settings::Core::AutoRefresh>()) {
-        connect(this, &MusicLibrary::tracksLoaded, this, &MusicLibrary::rescanAll, Qt::SingleShotConnection);
-    }
+    connect(this, &MusicLibrary::tracksLoaded, this, [this]() {
+        QMetaObject::invokeMethod(
+            this,
+            [this]() {
+                p->threadHandler.setupWatchers(p->libraryManager->allLibraries(),
+                                               p->settings->value<Settings::Core::Internal::MonitorLibraries>());
+                if(p->settings->value<Settings::Core::AutoRefresh>()) {
+                    rescanAll();
+                }
+            },
+            Qt::QueuedConnection);
+    });
+
+    p->settings->subscribe<Settings::Core::Internal::MonitorLibraries>(
+        this, [this](bool enabled) { p->threadHandler.setupWatchers(p->libraryManager->allLibraries(), enabled); });
 }
 
 UnifiedMusicLibrary::~UnifiedMusicLibrary() = default;
@@ -213,12 +226,12 @@ void UnifiedMusicLibrary::rescanAll()
     }
 }
 
-void UnifiedMusicLibrary::rescan(const LibraryInfo& library)
+ScanRequest UnifiedMusicLibrary::rescan(const LibraryInfo& library)
 {
-    p->threadHandler.scanLibrary(library);
+    return p->threadHandler.scanLibrary(library);
 }
 
-ScanRequest* UnifiedMusicLibrary::scanTracks(const TrackList& tracks)
+ScanRequest UnifiedMusicLibrary::scanTracks(const TrackList& tracks)
 {
     return p->threadHandler.scanTracks(tracks);
 }

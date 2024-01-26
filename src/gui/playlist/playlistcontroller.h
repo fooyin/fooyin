@@ -25,8 +25,6 @@
 
 #include <QObject>
 
-#include <QCoroTask>
-
 class QUndoCommand;
 
 namespace Fooyin {
@@ -80,9 +78,9 @@ public:
     void undoPlaylistChanges();
     void redoPlaylistChanges();
 
-    QCoro::Task<void> filesToCurrentPlaylist(QList<QUrl> urls);
-    QCoro::Task<void> filesToNewPlaylist(QString playlistName, QList<QUrl> urls);
-    QCoro::Task<TrackList> filesToTracks(QList<QUrl> urls);
+    void filesToCurrentPlaylist(const QList<QUrl>& urls);
+    void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls);
+    void filesToTracks(const QList<QUrl>& urls, std::function<void(const TrackList&)> func);
 
 signals:
     void playlistsLoaded();

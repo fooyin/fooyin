@@ -82,7 +82,7 @@ public:
     void selectionChanged() const;
     void trackIndexesChanged(int playingIndex) const;
 
-    QCoro::Task<void> scanDroppedTracks(QList<QUrl> urls, int index);
+    void scanDroppedTracks(const QList<QUrl>& urls, int index);
     void tracksInserted(const TrackGroups& tracks) const;
     void tracksRemoved() const;
     void tracksMoved(const MoveOperation& operation) const;

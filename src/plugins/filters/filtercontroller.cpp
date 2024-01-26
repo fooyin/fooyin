@@ -324,7 +324,7 @@ FilterController::FilterController(MusicLibrary* library, TrackSelectionControll
     QObject::connect(p->library, &MusicLibrary::tracksAdded, this,
                      [this](const TrackList& tracks) { p->handleTracksAdded(tracks); });
     QObject::connect(p->library, &MusicLibrary::tracksScanned, this,
-                     [this](const TrackList& tracks) { p->handleTracksAdded(tracks); });
+                     [this](int /*id*/, const TrackList& tracks) { p->handleTracksAdded(tracks); });
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, this, &FilterController::tracksUpdated);
     QObject::connect(p->library, &MusicLibrary::tracksDeleted, this, &FilterController::tracksRemoved);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, this, [this]() { p->resetAll(); });

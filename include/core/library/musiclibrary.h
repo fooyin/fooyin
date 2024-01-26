@@ -74,14 +74,14 @@ public:
     virtual void rescanAll() = 0;
 
     /** Scans the tracks in @p library */
-    virtual void rescan(const LibraryInfo& library) = 0;
+    virtual ScanRequest rescan(const LibraryInfo& library) = 0;
 
     /*!
      * Scans the @p tracks for metadata and adds to library.
      * @returns a ScanRequest representing a queued scan operation.
      * @note tracks will be considered unmanaged (not associated with an added library)
      */
-    virtual ScanRequest* scanTracks(const TrackList& tracks) = 0;
+    virtual ScanRequest scanTracks(const TrackList& tracks) = 0;
 
     /** Returns all tracks for all libraries */
     [[nodiscard]] virtual TrackList tracks() const = 0;
@@ -97,10 +97,10 @@ public:
 
 signals:
     void scanProgress(int id, int percent);
+    void tracksScanned(int id, const TrackList& tracks);
 
     void tracksLoaded(const TrackList& tracks);
     void tracksAdded(const TrackList& tracks);
-    void tracksScanned(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
     void tracksDeleted(const TrackList& tracks);
     void tracksSorted(const TrackList& tracks);

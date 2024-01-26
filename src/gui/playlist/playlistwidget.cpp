@@ -474,14 +474,14 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
     }
 }
 
-QCoro::Task<void> PlaylistWidgetPrivate::scanDroppedTracks(QList<QUrl> urls, int index)
+void PlaylistWidgetPrivate::scanDroppedTracks(const QList<QUrl>& urls, int index)
 {
     playlistView->setFocus(Qt::ActiveWindowFocusReason);
 
-    const TrackList scannedTracks = co_await playlistController->filesToTracks(urls);
-
-    auto* insertCmd = new InsertTracks(model, {{index, scannedTracks}});
-    playlistController->addToHistory(insertCmd);
+    playlistController->filesToTracks(urls, [this, index](const TrackList& tracks) {
+        auto* insertCmd = new InsertTracks(model, {{index, tracks}});
+        playlistController->addToHistory(insertCmd);
+    });
 }
 
 void PlaylistWidgetPrivate::tracksInserted(const TrackGroups& tracks) const

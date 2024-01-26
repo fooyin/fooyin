@@ -38,10 +38,10 @@ public:
     ~UnifiedMusicLibrary() override;
 
     void loadAllTracks() override;
-    void rescanAll() override;
-    void rescan(const LibraryInfo& library) override;
 
-    ScanRequest* scanTracks(const TrackList& tracks) override;
+    void rescanAll() override;
+    ScanRequest rescan(const LibraryInfo& library) override;
+    ScanRequest scanTracks(const TrackList& tracks) override;
 
     [[nodiscard]] bool hasLibrary() const override;
     [[nodiscard]] bool isEmpty() const override;

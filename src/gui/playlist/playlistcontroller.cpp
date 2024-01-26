@@ -24,15 +24,12 @@
 #include <core/playlist/playlistmanager.h>
 #include <core/track.h>
 #include <gui/guisettings.h>
-#include <gui/trackselectioncontroller.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QIODevice>
 #include <QProgressDialog>
 #include <QUndoStack>
-
-#include <QCoroCore>
 
 constexpr auto PlaylistStates = "PlaylistWidget/PlaylistStates";
 
@@ -117,29 +114,34 @@ struct PlaylistController::Private
         }
     }
 
-    QCoro::Task<TrackList> scanTracks(TrackList tracks)
+    template <typename Func>
+    void scanTracks(const TrackList& tracks, Func&& func) const
     {
         auto* scanDialog = new QProgressDialog("Reading tracks...", "Abort", 0, 100, nullptr);
         scanDialog->setAttribute(Qt::WA_DeleteOnClose);
         scanDialog->setWindowModality(Qt::WindowModal);
 
-        ScanRequest* request = library->scanTracks(tracks);
-
-        scanDialog->show();
+        const ScanRequest request = library->scanTracks(tracks);
 
         QObject::connect(library, &MusicLibrary::scanProgress, scanDialog, [scanDialog, request](int id, int percent) {
-            if(id != request->id) {
+            if(id != request.id) {
                 return;
             }
 
-            scanDialog->setValue(percent);
             if(scanDialog->wasCanceled()) {
-                request->cancel();
+                request.cancel();
                 scanDialog->close();
             }
+
+            scanDialog->setValue(percent);
         });
 
-        co_return co_await qCoro(library, &MusicLibrary::tracksScanned);
+        QObject::connect(library, &MusicLibrary::tracksScanned, scanDialog,
+                         [request, func](int id, const TrackList& scannedTracks) {
+                             if(id == request.id) {
+                                 func(scannedTracks);
+                             }
+                         });
     }
 
     void saveStates() const
@@ -365,62 +367,64 @@ void PlaylistController::redoPlaylistChanges()
     }
 }
 
-QCoro::Task<void> PlaylistController::filesToCurrentPlaylist(QList<QUrl> urls)
+void PlaylistController::filesToCurrentPlaylist(const QList<QUrl>& urls)
 {
     const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
     if(filepaths.empty()) {
-        co_return;
+        return;
     }
 
     TrackList tracks;
     std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 
-    tracks = co_await p->scanTracks(tracks);
-
-    if(p->currentPlaylist) {
-        p->handler->appendToPlaylist(p->currentPlaylist->id(), tracks);
-    }
+    p->scanTracks(tracks, [this](const TrackList& tracks) {
+        if(p->currentPlaylist) {
+            p->handler->appendToPlaylist(p->currentPlaylist->id(), tracks);
+        }
+    });
 }
 
-QCoro::Task<void> PlaylistController::filesToNewPlaylist(QString playlistName, QList<QUrl> urls)
+void PlaylistController::filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls)
 {
     const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
     if(filepaths.empty()) {
-        co_return;
+        return;
     }
 
     TrackList tracks;
     std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 
-    tracks = co_await p->scanTracks(tracks);
+    auto handleScanResult = [this, playlistName](const TrackList& tracks) {
+        Playlist* playlist = p->handler->playlistByName(playlistName);
+        if(playlist) {
+            const int indexToPlay = playlist->trackCount();
+            p->handler->appendToPlaylist(playlist->id(), tracks);
+            playlist->changeCurrentTrack(indexToPlay);
+        }
+        else {
+            playlist = p->handler->createPlaylist(playlistName, tracks);
+        }
 
-    Playlist* playlist = p->handler->playlistByName(playlistName);
-    if(playlist) {
-        const int indexToPlay = playlist->trackCount();
-        p->handler->appendToPlaylist(playlist->id(), tracks);
-        playlist->changeCurrentTrack(indexToPlay);
-    }
-    else {
-        playlist = p->handler->createPlaylist(playlistName, tracks);
-    }
+        if(playlist) {
+            changeCurrentPlaylist(playlist);
+            p->handler->startPlayback(playlist->id());
+        }
+    };
 
-    if(playlist) {
-        changeCurrentPlaylist(playlist);
-        p->handler->startPlayback(playlist->id());
-    }
+    p->scanTracks(tracks, handleScanResult);
 }
 
-QCoro::Task<TrackList> PlaylistController::filesToTracks(QList<QUrl> urls)
+void PlaylistController::filesToTracks(const QList<QUrl>& urls, std::function<void(const TrackList&)> func)
 {
     const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
     if(filepaths.empty()) {
-        co_return {};
+        return;
     }
 
     TrackList tracks;
     std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 
-    co_return co_await p->scanTracks(tracks);
+    p->scanTracks(tracks, func);
 }
 
 void PlaylistController::startPlayback() const
