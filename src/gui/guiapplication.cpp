@@ -418,7 +418,6 @@ struct GuiApplication::Private
 
     void openFiles(const QList<QUrl>& urls) const
     {
-        qDebug() << urls;
         playlistController->filesToNewPlaylist("Default", urls);
     }
 };
