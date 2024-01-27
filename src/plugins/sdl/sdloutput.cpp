@@ -155,8 +155,9 @@ OutputState SdlOutput::currentState()
 {
     OutputState state;
 
-    state.queuedSamples = static_cast<int>(SDL_GetQueuedAudioSize(p->audioDeviceId) / p->outputContext.format.bytesPerFrame());
-    state.freeSamples   = BufferSize - state.queuedSamples;
+    state.queuedSamples
+        = static_cast<int>(SDL_GetQueuedAudioSize(p->audioDeviceId) / p->outputContext.format.bytesPerFrame());
+    state.freeSamples = BufferSize - state.queuedSamples;
 
     return state;
 }
@@ -188,10 +189,10 @@ OutputDevices SdlOutput::getAllDevices() const
     return devices;
 }
 
-int SdlOutput::write(const uint8_t* data, int samples)
+int SdlOutput::write(const AudioBuffer& buffer)
 {
-    if(SDL_QueueAudio(p->audioDeviceId, data, samples * p->outputContext.format.bytesPerFrame()) == 0) {
-        return samples;
+    if(SDL_QueueAudio(p->audioDeviceId, buffer.constData().data(), buffer.byteCount()) == 0) {
+        return buffer.sampleCount();
     }
 
     return 0;

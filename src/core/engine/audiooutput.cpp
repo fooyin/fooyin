@@ -46,7 +46,7 @@ int AudioPullOutput::bufferSize() const
     return 0;
 }
 
-int AudioPullOutput::write(const uint8_t* /*data*/, int /*samples*/)
+int AudioPullOutput::write(const AudioBuffer& /*buffer*/)
 {
     return 0;
 }

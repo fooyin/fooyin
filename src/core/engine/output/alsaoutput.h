@@ -42,7 +42,7 @@ public:
     OutputState currentState() override;
     [[nodiscard]] OutputDevices getAllDevices() const override;
 
-    int write(const uint8_t* data, int samples) override;
+    int write(const AudioBuffer& buffer) override;
     void setPaused(bool pause) override;
     void setDevice(const QString& device) override;
 

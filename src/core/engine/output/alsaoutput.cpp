@@ -482,20 +482,23 @@ OutputDevices AlsaOutput::getAllDevices() const
     return devices;
 }
 
-int AlsaOutput::write(const uint8_t* data, int samples)
+int AlsaOutput::write(const AudioBuffer& buffer)
 {
     if(!p->pcmHandle || !p->recoverState()) {
         return 0;
     }
 
+    const int frameCount = buffer.frameCount();
+
     snd_pcm_sframes_t err{0};
-    err = snd_pcm_writei(p->pcmHandle.get(), data, samples);
+    err = snd_pcm_writei(p->pcmHandle.get(), buffer.constData().data(), frameCount);
     if(err < 0) {
         qWarning() << "ALSA write error";
         return 0;
     }
-    if(err != samples) {
-        qWarning() << QString{u"Unexpected partial write (%1 of %2 frames)"_s}.arg(static_cast<int>(err)).arg(samples);
+    if(err != frameCount) {
+        qWarning()
+            << QString{u"Unexpected partial write (%1 of %2 frames)"_s}.arg(static_cast<int>(err)).arg(frameCount);
     }
     return static_cast<int>(err);
 }

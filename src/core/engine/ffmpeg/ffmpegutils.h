@@ -27,18 +27,16 @@ extern "C"
 }
 
 class QString;
-class AVFrame;
 class AVCodecParameters;
 
 namespace Fooyin {
-class FFmpegAudioBuffer;
+class AudioBuffer;
 
 namespace Utils {
 void printError(int error);
 void printError(const QString& error);
 AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
 AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
-void fillSilence(uint8_t* dst, int bytes, const AudioFormat& format);
-void adjustVolumeOfSamples(uint8_t* data, const AudioFormat& format, int bytes, double volume);
+void adjustVolumeOfSamples(AudioBuffer& buffer, double volume);
 } // namespace Utils
 } // namespace Fooyin

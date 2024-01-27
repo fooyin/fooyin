@@ -19,16 +19,17 @@
 
 #pragma once
 
-#include <core/engine/audioformat.h>
-
 #include "fycore_export.h"
 
-#include <QString>
+#include <core/engine/audiobuffer.h>
+#include <core/engine/audioformat.h>
+
 extern "C"
 {
 #include <libavutil/channel_layout.h>
-#include <libavutil/samplefmt.h>
 }
+
+#include <QString>
 
 namespace Fooyin {
 using WriteFunction = std::function<int(uint8_t*, int)>;
@@ -107,12 +108,12 @@ public:
     virtual OutputDevices getAllDevices() const = 0;
 
     /*!
-     * Writes the audio @p data containing the @p samples count to the audio driver buffer.
+     * Writes the audio data contained in the @p buffer count to the audio driver buffer.
      * @note for push-based drivers, this may be called before @fn start to prefill the buffer.
      * @returns the number of samples written.
      */
-    virtual int write(const uint8_t* data, int samples) = 0;
-    virtual void setPaused(bool pause)                  = 0;
+    virtual int write(const AudioBuffer& buffer) = 0;
+    virtual void setPaused(bool pause)           = 0;
 
     /*!
      * Set's the volume of the audio driver.
@@ -141,7 +142,7 @@ public:
     OutputState currentState() override;
     int bufferSize() const override;
 
-    int write(const uint8_t* data, int samples) override;
+    int write(const AudioBuffer& buffer) override;
     void setPaused(bool pause) override;
     void setVolume(double volume) override;
 };

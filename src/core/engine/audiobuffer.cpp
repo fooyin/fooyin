@@ -25,21 +25,66 @@ namespace Fooyin {
 struct AudioBuffer::Private : public QSharedData
 {
 public:
-    QByteArray data;
+    std::vector<uint8_t> data;
     AudioFormat format;
     uint64_t startTime;
 
-    Private(QByteArray data, AudioFormat format, uint64_t startTime)
-        : data{std::move(data)}
-        , format{format}
+    Private(std::span<const uint8_t> data, AudioFormat format, uint64_t startTime)
+        : format{format}
         , startTime{startTime}
-    { }
+    {
+        this->data.assign(data.begin(), data.end());
+    }
+
+    void fillSilence()
+    {
+        const bool unsignedFormat = format.sampleFormat() == Fooyin::AudioFormat::UInt8;
+        std::ranges::fill(data, unsignedFormat ? 0x80 : 0);
+    }
+
+    void fillRemainingWithSilence()
+    {
+        const bool unsignedFormat = format.sampleFormat() == Fooyin::AudioFormat::UInt8;
+        std::fill(data.begin() + data.size(), data.begin() + data.capacity(), unsignedFormat ? 0x80 : 0);
+    }
 };
 
 AudioBuffer::AudioBuffer() = default;
 
-AudioBuffer::AudioBuffer(QByteArray data, AudioFormat format, uint64_t startTime)
-    : p{new Private(std::move(data), format, startTime)}
+AudioBuffer::AudioBuffer(std::span<const uint8_t> data, AudioFormat format, uint64_t startTime)
+    : p{new Private(data, format, startTime)}
+{ }
+
+void AudioBuffer::reserve(size_t size)
+{
+    if(!!p) {
+        p->data.reserve(size);
+    }
+}
+
+void AudioBuffer::append(std::span<const uint8_t> data)
+{
+    if(!!p) {
+        p->data.insert(p->data.end(), data.begin(), data.end());
+    }
+}
+
+void AudioBuffer::clear()
+{
+    if(!!p) {
+        p->data.clear();
+    }
+}
+
+void AudioBuffer::reset()
+{
+    if(!!p) {
+        p.reset();
+    }
+}
+
+AudioBuffer::AudioBuffer(const uint8_t* data, int size, AudioFormat format, uint64_t startTime)
+    : AudioBuffer{std::span<const uint8_t>(data, size), format, startTime}
 { }
 
 AudioBuffer::~AudioBuffer() = default;
@@ -89,13 +134,27 @@ uint64_t AudioBuffer::duration() const
     return format().durationForFrames(frameCount());
 }
 
-uint8_t* AudioBuffer::constData() const
+std::span<const uint8_t> AudioBuffer::constData() const
 {
-    return std::bit_cast<uint8_t*>(p->data.constData());
+    return p->data;
 }
 
 uint8_t* AudioBuffer::data()
 {
-    return std::bit_cast<uint8_t*>(p->data.data());
+    return p->data.data();
+}
+
+void AudioBuffer::fillSilence()
+{
+    if(!!p) {
+        p->fillSilence();
+    }
+}
+
+void AudioBuffer::fillRemainingWithSilence()
+{
+    if(!!p) {
+        p->fillRemainingWithSilence();
+    }
 }
 } // namespace Fooyin

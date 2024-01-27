@@ -19,6 +19,8 @@
 
 #include "ffmpegutils.h"
 
+#include <core/engine/audiobuffer.h>
+
 extern "C"
 {
 #include <libavcodec/avcodec.h>
@@ -108,25 +110,21 @@ AudioFormat audioFormatFromCodec(AVCodecParameters* codec)
     return format;
 }
 
-void fillSilence(uint8_t* dst, int bytes, const AudioFormat& format)
-{
-    const bool unsignedFormat = format.sampleFormat() == AudioFormat::UInt8;
-    memset(dst, unsignedFormat ? 0x80 : 0, bytes);
-}
-
-void adjustVolumeOfSamples(uint8_t* data, const AudioFormat& format, int bytes, double volume)
+void adjustVolumeOfSamples(AudioBuffer& buffer, double volume)
 {
     if(volume == 1.0) {
         return;
     }
 
     if(volume == 0.0) {
-        fillSilence(data, bytes, format);
+        buffer.fillSilence();
         return;
     }
 
-    const int bps  = format.bytesPerSample() * 8;
-    const auto vol = static_cast<float>(volume);
+    auto* data      = buffer.data();
+    const int bytes = buffer.byteCount();
+    const int bps   = buffer.format().bytesPerSample() * 8;
+    const auto vol  = static_cast<float>(volume);
 
     switch(bps) {
         case(8): {
@@ -160,7 +158,7 @@ void adjustVolumeOfSamples(uint8_t* data, const AudioFormat& format, int bytes, 
         }
         case(32): {
             const int count = bytes / 4;
-            if(format.sampleFormat() == AudioFormat::Float) {
+            if(buffer.format().sampleFormat() == AudioFormat::Float) {
                 auto* adjustedData = std::bit_cast<float*>(data);
                 for(int i = 0; i < count; ++i) {
                     adjustedData[i] = adjustedData[i] * vol;

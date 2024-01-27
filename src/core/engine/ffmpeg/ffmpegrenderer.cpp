@@ -40,7 +40,7 @@ struct Renderer::Private
     bool bufferPrefilled{false};
 
     ThreadQueue<AudioBuffer> bufferQueue{false};
-    std::vector<uint8_t> tempBuffer;
+    AudioBuffer tempBuffer;
     int totalSamplesWritten{0};
     int currentBufferOffset{0};
 
@@ -61,10 +61,11 @@ struct Renderer::Private
 
     int writeAudioSamples(int samples)
     {
-        int samplesBuffered = 0;
+        tempBuffer.clear();
+
+        int samplesBuffered{0};
 
         const int sstride = outputContext.format.bytesPerFrame();
-        tempBuffer.reserve(static_cast<int>(samples * sstride));
 
         while(!self->isPaused() && !bufferQueue.empty() && samplesBuffered < samples) {
             const AudioBuffer& buffer = bufferQueue.front();
@@ -84,17 +85,22 @@ struct Renderer::Private
                 continue;
             }
 
-            const uint8_t* fdata  = buffer.constData() + currentBufferOffset;
             const int sampleCount = std::min(bytesLeft / sstride, samples - samplesBuffered);
+            const auto fdata      = buffer.constData().subspan(currentBufferOffset, sampleCount * sstride);
 
-            std::copy_n(fdata, sampleCount * sstride, std::back_inserter(tempBuffer));
+            if(!tempBuffer.isValid()) {
+                tempBuffer = {fdata, buffer.format(), buffer.startTime()};
+                tempBuffer.reserve(static_cast<int>(samples * sstride));
+            }
+            else {
+                tempBuffer.append(fdata);
+            }
 
             samplesBuffered += sampleCount;
             currentBufferOffset += sampleCount * sstride;
         }
 
-        Utils::fillSilence(tempBuffer.data() + static_cast<int>(samplesBuffered * sstride),
-                           (samples - samplesBuffered) * sstride, outputContext.format);
+        tempBuffer.fillRemainingWithSilence();
 
         return samplesBuffered;
     }
@@ -104,14 +110,12 @@ struct Renderer::Private
         int samplesWritten = writeAudioSamples(samples);
 
         if(!audioOutput->canHandleVolume()) {
-            Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format,
-                                         samples * outputContext.format.bytesPerFrame(), outputContext.volume);
+            Utils::adjustVolumeOfSamples(tempBuffer, outputContext.volume);
         }
 
-        samplesWritten = audioOutput->write(tempBuffer.data(), samplesWritten);
+        samplesWritten = audioOutput->write(tempBuffer);
         totalSamplesWritten += samplesWritten;
 
-        tempBuffer.clear();
         return samplesWritten;
     }
 
@@ -121,18 +125,17 @@ struct Renderer::Private
             return 0;
         }
 
-        const int samplesWritten = writeAudioSamples(samples);
+        tempBuffer.clear();
 
-        const int sstride = outputContext.format.bytesPerFrame();
+        const int samplesWritten = writeAudioSamples(samples);
+        const int sstride        = outputContext.format.bytesPerFrame();
 
         if(!audioOutput->canHandleVolume()) {
-            Utils::adjustVolumeOfSamples(tempBuffer.data(), outputContext.format, samples * sstride,
-                                         outputContext.volume);
+            Utils::adjustVolumeOfSamples(tempBuffer, outputContext.volume);
         }
 
-        std::copy_n(tempBuffer.data(), samples * sstride, data);
+        std::copy_n(tempBuffer.constData().data(), samples * sstride, data);
 
-        tempBuffer.clear();
         return samplesWritten;
     }
 };
@@ -166,7 +169,7 @@ void Renderer::reset()
     p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
     p->bufferQueue.clear();
-    p->tempBuffer.clear();
+    p->tempBuffer.reset();
 }
 
 void Renderer::kill()
@@ -176,7 +179,7 @@ void Renderer::kill()
     p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
     p->bufferQueue.clear();
-    p->tempBuffer.clear();
+    p->tempBuffer.reset();
 }
 
 void Renderer::pauseOutput(bool isPaused)

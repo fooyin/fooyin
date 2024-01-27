@@ -25,17 +25,25 @@
 
 #include <QExplicitlySharedDataPointer>
 
+#include <span>
+
 namespace Fooyin {
 class FYCORE_EXPORT AudioBuffer
 {
 public:
     AudioBuffer();
-    AudioBuffer(QByteArray data, AudioFormat format, uint64_t startTime);
+    AudioBuffer(std::span<const uint8_t> data, AudioFormat format, uint64_t startTime);
+    AudioBuffer(const uint8_t* data, int size, AudioFormat format, uint64_t startTime);
     ~AudioBuffer();
 
     AudioBuffer(const AudioBuffer& other);
     AudioBuffer& operator=(const AudioBuffer& other);
     AudioBuffer(AudioBuffer&& other) noexcept;
+
+    void reserve(size_t size);
+    void append(std::span<const uint8_t> data);
+    void clear();
+    void reset();
 
     bool isValid() const;
     void detach();
@@ -47,11 +55,15 @@ public:
     uint64_t startTime() const;
     uint64_t duration() const;
 
-    uint8_t* constData() const;
+    std::span<const uint8_t> constData() const;
     uint8_t* data();
+
+    void fillSilence();
+    void fillRemainingWithSilence();
 
 private:
     struct Private;
     QExplicitlySharedDataPointer<Private> p;
 };
+using AudioData = std::vector<AudioBuffer>;
 } // namespace Fooyin
