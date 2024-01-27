@@ -19,9 +19,9 @@
 
 #include "ffmpegrenderer.h"
 
-#include "ffmpegaudiobuffer.h"
 #include "ffmpegutils.h"
 
+#include <core/engine/audiobuffer.h>
 #include <core/engine/audiooutput.h>
 #include <utils/threadqueue.h>
 
@@ -39,7 +39,7 @@ struct Renderer::Private
 
     bool bufferPrefilled{false};
 
-    ThreadQueue<FFmpegAudioBuffer> bufferQueue{false};
+    ThreadQueue<AudioBuffer> bufferQueue{false};
     std::vector<uint8_t> tempBuffer;
     int totalSamplesWritten{0};
     int currentBufferOffset{0};
@@ -67,7 +67,7 @@ struct Renderer::Private
         tempBuffer.reserve(static_cast<int>(samples * sstride));
 
         while(!self->isPaused() && !bufferQueue.empty() && samplesBuffered < samples) {
-            const FFmpegAudioBuffer& buffer = bufferQueue.front();
+            const AudioBuffer& buffer = bufferQueue.front();
 
             if(!buffer.isValid()) {
                 currentBufferOffset = 0;
@@ -79,7 +79,7 @@ struct Renderer::Private
 
             if(bytesLeft <= 0) {
                 currentBufferOffset = 0;
-                QMetaObject::invokeMethod(self, "audioBufferProcessed", Q_ARG(const FFmpegAudioBuffer&, buffer));
+                QMetaObject::invokeMethod(self, "audioBufferProcessed", Q_ARG(const AudioBuffer&, buffer));
                 bufferQueue.dequeue();
                 continue;
             }
@@ -222,7 +222,7 @@ void Renderer::updateVolume(double volume)
     }
 }
 
-void Renderer::render(const FFmpegAudioBuffer& frame)
+void Renderer::render(const AudioBuffer& frame)
 {
     p->bufferQueue.enqueue(frame);
 

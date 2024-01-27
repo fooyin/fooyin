@@ -19,7 +19,6 @@
 
 #include "ffmpegengine.h"
 
-#include "ffmpegaudiobuffer.h"
 #include "ffmpegclock.h"
 #include "ffmpegcodec.h"
 #include "ffmpegdecoder.h"
@@ -28,6 +27,7 @@
 #include "ffmpegutils.h"
 
 #include <core/coresettings.h>
+#include <core/engine/audiobuffer.h>
 #include <core/engine/audiooutput.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
@@ -508,7 +508,7 @@ void FFmpegEngine::startup()
 
     QObject::connect(p->decoder, &Decoder::audioBufferDecoded, p->renderer, &Renderer::render);
     QObject::connect(p->renderer, &Renderer::audioBufferProcessed, p->decoder, &Decoder::onBufferProcessed);
-    QObject::connect(p->renderer, &Renderer::audioBufferProcessed, p->engine, [this](const FFmpegAudioBuffer& buffer) {
+    QObject::connect(p->renderer, &Renderer::audioBufferProcessed, p->engine, [this](const AudioBuffer& buffer) {
         const uint64_t pos = buffer.startTime();
         if(pos > p->clock.currentPosition()) {
             p->clock.sync(pos);

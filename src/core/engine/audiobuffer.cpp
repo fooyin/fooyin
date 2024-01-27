@@ -17,84 +17,84 @@
  *
  */
 
-#include "ffmpegaudiobuffer.h"
+#include <core/engine/audiobuffer.h>
 
 #include <utility>
 
 namespace Fooyin {
-class FFmpegAudioBufferPrivate : public QSharedData
+struct AudioBuffer::Private : public QSharedData
 {
 public:
     QByteArray data;
     AudioFormat format;
     uint64_t startTime;
 
-    FFmpegAudioBufferPrivate(QByteArray data, AudioFormat format, uint64_t startTime)
+    Private(QByteArray data, AudioFormat format, uint64_t startTime)
         : data{std::move(data)}
         , format{format}
         , startTime{startTime}
     { }
 };
 
-FFmpegAudioBuffer::FFmpegAudioBuffer() = default;
+AudioBuffer::AudioBuffer() = default;
 
-FFmpegAudioBuffer::FFmpegAudioBuffer(QByteArray data, AudioFormat format, uint64_t startTime)
-    : p{new FFmpegAudioBufferPrivate(std::move(data), format, startTime)}
+AudioBuffer::AudioBuffer(QByteArray data, AudioFormat format, uint64_t startTime)
+    : p{new Private(std::move(data), format, startTime)}
 { }
 
-FFmpegAudioBuffer::~FFmpegAudioBuffer() = default;
+AudioBuffer::~AudioBuffer() = default;
 
-FFmpegAudioBuffer::FFmpegAudioBuffer(FFmpegAudioBuffer&& other) noexcept = default;
-FFmpegAudioBuffer::FFmpegAudioBuffer(const FFmpegAudioBuffer& other)     = default;
+AudioBuffer::AudioBuffer(AudioBuffer&& other) noexcept = default;
+AudioBuffer::AudioBuffer(const AudioBuffer& other)     = default;
 
-FFmpegAudioBuffer& FFmpegAudioBuffer::operator=(const FFmpegAudioBuffer& other) = default;
+AudioBuffer& AudioBuffer::operator=(const AudioBuffer& other) = default;
 
-bool FFmpegAudioBuffer::isValid() const
+bool AudioBuffer::isValid() const
 {
     return !!p;
 }
 
-void FFmpegAudioBuffer::detach()
+void AudioBuffer::detach()
 {
-    p = new FFmpegAudioBufferPrivate(*p);
+    p = new Private(*p);
 }
 
-AudioFormat FFmpegAudioBuffer::format() const
+AudioFormat AudioBuffer::format() const
 {
     return !!p ? p->format : AudioFormat{};
 }
 
-int FFmpegAudioBuffer::frameCount() const
+int AudioBuffer::frameCount() const
 {
     return !!p ? p->format.framesForBytes(byteCount()) : 0;
 }
 
-int FFmpegAudioBuffer::sampleCount() const
+int AudioBuffer::sampleCount() const
 {
     return frameCount() * format().channelCount();
 }
 
-int FFmpegAudioBuffer::byteCount() const
+int AudioBuffer::byteCount() const
 {
     return !!p ? static_cast<int>(p->data.size()) : 0;
 }
 
-uint64_t FFmpegAudioBuffer::startTime() const
+uint64_t AudioBuffer::startTime() const
 {
     return !!p ? p->startTime : -1;
 }
 
-uint64_t FFmpegAudioBuffer::duration() const
+uint64_t AudioBuffer::duration() const
 {
     return format().durationForFrames(frameCount());
 }
 
-uint8_t* FFmpegAudioBuffer::constData() const
+uint8_t* AudioBuffer::constData() const
 {
     return std::bit_cast<uint8_t*>(p->data.constData());
 }
 
-uint8_t* FFmpegAudioBuffer::data()
+uint8_t* AudioBuffer::data()
 {
     return std::bit_cast<uint8_t*>(p->data.data());
 }

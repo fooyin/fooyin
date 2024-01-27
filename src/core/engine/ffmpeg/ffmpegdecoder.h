@@ -26,7 +26,7 @@ class AVFormatContext;
 namespace Fooyin {
 class AudioFormat;
 class Codec;
-class FFmpegAudioBuffer;
+class AudioBuffer;
 
 class Decoder : public EngineWorker
 {
@@ -44,7 +44,7 @@ public slots:
     void onBufferProcessed();
 
 signals:
-    void audioBufferDecoded(const FFmpegAudioBuffer& buffer);
+    void audioBufferDecoded(const AudioBuffer& buffer);
 
 protected:
     bool canDoNextStep() const override;

@@ -19,11 +19,12 @@
 
 #include "ffmpegdecoder.h"
 
-#include "ffmpegaudiobuffer.h"
 #include "ffmpegcodec.h"
 #include "ffmpegframe.h"
 #include "ffmpegpacket.h"
 #include "ffmpegutils.h"
+
+#include <core/engine/audiobuffer.h>
 
 #include <QDebug>
 
@@ -189,9 +190,9 @@ struct Decoder::Private
 
         auto data = QByteArray{std::bit_cast<const char*>(frame.avFrame()->data[0]),
                                static_cast<qsizetype>(audioFormat.bytesPerFrame() * frame.sampleCount())};
-        const FFmpegAudioBuffer buffer{data, audioFormat, frame.ptsMs()};
+        const AudioBuffer buffer{std::move(data), audioFormat, frame.ptsMs()};
 
-        QMetaObject::invokeMethod(decoder, "audioBufferDecoded", Q_ARG(const FFmpegAudioBuffer&, buffer));
+        QMetaObject::invokeMethod(decoder, "audioBufferDecoded", Q_ARG(const AudioBuffer&, buffer));
     }
 };
 

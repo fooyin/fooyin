@@ -22,10 +22,10 @@
 #include "ffmpegworker.h"
 
 namespace Fooyin {
+class AudioBuffer;
 class AudioOutput;
 class Codec;
 struct OutputContext;
-class FFmpegAudioBuffer;
 
 class Renderer : public EngineWorker
 {
@@ -45,10 +45,10 @@ public:
     void updateVolume(double volume);
 
 public slots:
-    void render(const FFmpegAudioBuffer& buffer);
+    void render(const AudioBuffer& buffer);
 
 signals:
-    void audioBufferProcessed(const FFmpegAudioBuffer& buffer);
+    void audioBufferProcessed(const AudioBuffer& buffer);
 
 private:
     bool canDoNextStep() const override;

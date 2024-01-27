@@ -19,22 +19,39 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/engine/audioformat.h>
 
-#include <cstdint>
+#include <QExplicitlySharedDataPointer>
 
 namespace Fooyin {
-class AudioBuffer
+class FYCORE_EXPORT AudioBuffer
 {
 public:
-    virtual ~AudioBuffer() { }
+    AudioBuffer();
+    AudioBuffer(QByteArray data, AudioFormat format, uint64_t startTime);
+    ~AudioBuffer();
 
-    virtual AudioFormat format() const = 0;
-    virtual int frameCount() const     = 0;
-    virtual uint64_t startTime() const = 0;
-    virtual uint64_t duration() const  = 0;
+    AudioBuffer(const AudioBuffer& other);
+    AudioBuffer& operator=(const AudioBuffer& other);
+    AudioBuffer(AudioBuffer&& other) noexcept;
 
-    virtual uint8_t* constData() const = 0;
-    virtual uint8_t* data()            = 0;
+    bool isValid() const;
+    void detach();
+
+    AudioFormat format() const;
+    int frameCount() const;
+    int sampleCount() const;
+    int byteCount() const;
+    uint64_t startTime() const;
+    uint64_t duration() const;
+
+    uint8_t* constData() const;
+    uint8_t* data();
+
+private:
+    struct Private;
+    QExplicitlySharedDataPointer<Private> p;
 };
 } // namespace Fooyin
