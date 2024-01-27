@@ -108,7 +108,7 @@ public:
     virtual OutputDevices getAllDevices() const = 0;
 
     /*!
-     * Writes the audio data contained in the @p buffer count to the audio driver buffer.
+     * Writes the audio data contained in the @p buffer to the audio driver.
      * @note for push-based drivers, this may be called before @fn start to prefill the buffer.
      * @returns the number of samples written.
      */
