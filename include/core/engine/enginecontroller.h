@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <core/engine/audioengine.h>
 #include <core/engine/audiooutput.h>
 
 #include <QObject>
@@ -54,5 +55,6 @@ public:
 signals:
     void outputChanged(AudioOutput* output);
     void deviceChanged(const QString& device);
+    void trackStatusChanged(TrackStatus status);
 };
 } // namespace Fooyin

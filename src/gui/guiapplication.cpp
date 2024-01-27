@@ -95,7 +95,7 @@ struct GuiApplication::Private
     ActionManager* actionManager;
 
     PluginManager* pluginManager;
-    EngineHandler* engineHandler;
+    EngineController* engine;
     PlayerManager* playerManager;
     LibraryManager* libraryManager;
     MusicLibrary* library;
@@ -142,7 +142,7 @@ struct GuiApplication::Private
         , settingsManager{core.settingsManager}
         , actionManager{new ActionManager(settingsManager, self)}
         , pluginManager{core.pluginManager}
-        , engineHandler{core.engineHandler}
+        , engine{core.engine}
         , playerManager{core.playerManager}
         , libraryManager{core.libraryManager}
         , library{core.library}
@@ -173,7 +173,7 @@ struct GuiApplication::Private
         , playlistGeneralPage{settingsManager}
         , playlistPresetsPage{settingsManager}
         , playlistColumnPage{actionManager, settingsManager}
-        , enginePage{settingsManager, engineHandler}
+        , enginePage{settingsManager, engine}
         , libraryTreePage{actionManager, settingsManager}
         , libraryTreeGuiPage{settingsManager}
         , statusWidgetPage{settingsManager}
@@ -432,7 +432,7 @@ GuiApplication::GuiApplication(const CorePluginContext& core)
     QObject::connect(p->fileMenu, &FileMenu::requestAddFiles, this, [this]() { p->addFiles(); });
     QObject::connect(p->fileMenu, &FileMenu::requestAddFolders, this, [this]() { p->addFolders(); });
     QObject::connect(p->viewMenu, &ViewMenu::openQuickSetup, p->editableLayout.get(), &EditableLayout::showQuickSetup);
-    QObject::connect(p->engineHandler, &EngineHandler::trackStatusChanged, this, [this](TrackStatus status) {
+    QObject::connect(p->engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
         if(status == InvalidTrack) {
             const Track track = p->playerManager->currentTrack();
             if(track.isValid() && !QFileInfo::exists(track.filepath())) {

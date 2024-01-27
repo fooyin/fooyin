@@ -19,13 +19,10 @@
 
 #pragma once
 
-#include "engine/audioengine.h"
-
-class AVFormatContext;
+#include <core/engine/audioengine.h>
 
 namespace Fooyin {
 class SettingsManager;
-class Codec;
 
 class FFmpegEngine : public AudioEngine
 {

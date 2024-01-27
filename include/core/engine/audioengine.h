@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <QObject>
 
 namespace Fooyin {
@@ -42,7 +44,7 @@ enum TrackStatus
     InvalidTrack
 };
 
-class AudioEngine : public QObject
+class FYCORE_EXPORT AudioEngine : public QObject
 {
     Q_OBJECT
 

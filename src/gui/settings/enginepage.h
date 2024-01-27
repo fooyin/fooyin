@@ -23,11 +23,11 @@
 
 namespace Fooyin {
 class SettingsManager;
-class EngineHandler;
+class EngineController;
 
 class EnginePage : public SettingsPage
 {
 public:
-    explicit EnginePage(SettingsManager* settings, EngineHandler* engineHandler);
+    explicit EnginePage(SettingsManager* settings, EngineController* engineHandler);
 };
 } // namespace Fooyin

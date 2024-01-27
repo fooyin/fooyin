@@ -38,7 +38,7 @@ namespace Fooyin {
 class EnginePageWidget : public SettingsPageWidget
 {
 public:
-    explicit EnginePageWidget(SettingsManager* settings, EngineHandler* engineHandler);
+    explicit EnginePageWidget(SettingsManager* settings, EngineController* engine);
 
     void load() override;
     void apply() override;
@@ -49,7 +49,7 @@ public:
 
 private:
     SettingsManager* m_settings;
-    EngineHandler* m_engineHandler;
+    EngineController* m_engine;
 
     ExpandingComboBox* m_outputBox;
     ExpandingComboBox* m_deviceBox;
@@ -57,9 +57,9 @@ private:
     QCheckBox* m_gaplessPlayback;
 };
 
-EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineHandler* engineHandler)
+EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* engine)
     : m_settings{settings}
-    , m_engineHandler{engineHandler}
+    , m_engine{engine}
     , m_outputBox{new ExpandingComboBox(this)}
     , m_deviceBox{new ExpandingComboBox(this)}
     , m_gaplessPlayback{new QCheckBox(tr("Gapless Playback"), this)}
@@ -113,7 +113,7 @@ void EnginePageWidget::setupOutputs()
     const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(u"|"_s);
 
     const QString outName = !currentOutput.empty() ? currentOutput.at(0) : u""_s;
-    const auto outputs    = m_engineHandler->getAllOutputs();
+    const auto outputs    = m_engine->getAllOutputs();
 
     m_outputBox->clear();
 
@@ -144,7 +144,7 @@ void EnginePageWidget::setupDevices(const QString& output)
     }
 
     const QString currentDevice = currentOutput.size() > 1 ? currentOutput.at(1) : u""_s;
-    const auto outputDevices    = m_engineHandler->getOutputDevices(output);
+    const auto outputDevices    = m_engine->getOutputDevices(output);
 
     for(const auto& [name, desc] : outputDevices) {
         m_deviceBox->addItem(desc, name);
@@ -162,12 +162,12 @@ void EnginePageWidget::setupDevices(const QString& output)
     m_deviceBox->resizeToFitCurrent();
 }
 
-EnginePage::EnginePage(SettingsManager* settings, EngineHandler* engineHandler)
+EnginePage::EnginePage(SettingsManager* settings, EngineController* engine)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::Engine);
     setName(tr("Engine"));
     setCategory({tr("Engine")});
-    setWidgetCreator([settings, engineHandler] { return new EnginePageWidget(settings, engineHandler); });
+    setWidgetCreator([settings, engine] { return new EnginePageWidget(settings, engine); });
 }
 } // namespace Fooyin

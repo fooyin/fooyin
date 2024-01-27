@@ -22,7 +22,7 @@
 namespace Fooyin {
 class PluginManager;
 class SettingsManager;
-class EngineHandler;
+class EngineController;
 class PlayerManager;
 class PlaylistManager;
 class LibraryManager;
@@ -33,7 +33,7 @@ class MusicLibrary;
  */
 struct CorePluginContext
 {
-    CorePluginContext(PluginManager* pluginManager, EngineHandler* engineHandler, PlayerManager* playerManager,
+    CorePluginContext(PluginManager* pluginManager, EngineController* engine, PlayerManager* playerManager,
                       LibraryManager* libraryManager, MusicLibrary* library, PlaylistManager* playlistHandler,
                       SettingsManager* settingsManager)
         : pluginManager{pluginManager}
@@ -42,7 +42,7 @@ struct CorePluginContext
         , library{library}
         , playlistHandler{playlistHandler}
         , settingsManager{settingsManager}
-        , engineHandler{engineHandler}
+        , engine{engine}
     { }
 
     PluginManager* pluginManager;
@@ -51,6 +51,6 @@ struct CorePluginContext
     MusicLibrary* library;
     PlaylistManager* playlistHandler;
     SettingsManager* settingsManager;
-    EngineHandler* engineHandler;
+    EngineController* engine;
 };
 } // namespace Fooyin
