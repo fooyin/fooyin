@@ -59,44 +59,43 @@ AudioBuffer::AudioBuffer(std::span<const std::byte> data, AudioFormat format, ui
     : p{new Private(data, format, startTime)}
 { }
 
-void AudioBuffer::reserve(size_t size)
-{
-    if(!!p) {
-        p->data.reserve(size);
-    }
-}
-
-void AudioBuffer::append(std::span<const std::byte> data)
-{
-    if(!!p) {
-        p->data.insert(p->data.end(), data.begin(), data.end());
-    }
-}
-
-void AudioBuffer::clear()
-{
-    if(!!p) {
-        p->data.clear();
-    }
-}
-
-void AudioBuffer::reset()
-{
-    if(!!p) {
-        p.reset();
-    }
-}
-
 AudioBuffer::AudioBuffer(const uint8_t* data, int size, AudioFormat format, uint64_t startTime)
     : AudioBuffer{{std::bit_cast<const std::byte*>(data), static_cast<std::size_t>(size)}, format, startTime}
 { }
 
 AudioBuffer::~AudioBuffer() = default;
 
-AudioBuffer::AudioBuffer(AudioBuffer&& other) noexcept = default;
-AudioBuffer::AudioBuffer(const AudioBuffer& other)     = default;
-
+AudioBuffer::AudioBuffer(const AudioBuffer& other)            = default;
 AudioBuffer& AudioBuffer::operator=(const AudioBuffer& other) = default;
+AudioBuffer::AudioBuffer(AudioBuffer&& other) noexcept        = default;
+
+void AudioBuffer::reserve(size_t size)
+{
+    if(isValid()) {
+        p->data.reserve(size);
+    }
+}
+
+void AudioBuffer::append(std::span<const std::byte> data)
+{
+    if(isValid()) {
+        p->data.insert(p->data.end(), data.begin(), data.end());
+    }
+}
+
+void AudioBuffer::clear()
+{
+    if(isValid()) {
+        p->data.clear();
+    }
+}
+
+void AudioBuffer::reset()
+{
+    if(isValid()) {
+        p.reset();
+    }
+}
 
 bool AudioBuffer::isValid() const
 {
@@ -110,12 +109,15 @@ void AudioBuffer::detach()
 
 AudioFormat AudioBuffer::format() const
 {
-    return !!p ? p->format : AudioFormat{};
+    if(isValid()) {
+        return p->format;
+    }
+    return {};
 }
 
 int AudioBuffer::frameCount() const
 {
-    return !!p ? p->format.framesForBytes(byteCount()) : 0;
+    return isValid() ? p->format.framesForBytes(byteCount()) : 0;
 }
 
 int AudioBuffer::sampleCount() const
@@ -125,12 +127,12 @@ int AudioBuffer::sampleCount() const
 
 int AudioBuffer::byteCount() const
 {
-    return !!p ? static_cast<int>(p->data.size()) : 0;
+    return isValid() ? static_cast<int>(p->data.size()) : 0;
 }
 
 uint64_t AudioBuffer::startTime() const
 {
-    return !!p ? p->startTime : -1;
+    return isValid() ? p->startTime : -1;
 }
 
 uint64_t AudioBuffer::duration() const
@@ -140,36 +142,45 @@ uint64_t AudioBuffer::duration() const
 
 std::span<const std::byte> AudioBuffer::constData() const
 {
-    return p->data;
+    if(isValid()) {
+        return p->data;
+    }
+    return {};
 }
 
 const std::byte* AudioBuffer::data() const
 {
-    return p->data.data();
+    if(isValid()) {
+        return p->data.data();
+    }
+    return {};
 }
 
 std::byte* AudioBuffer::data()
 {
-    return p->data.data();
+    if(isValid()) {
+        return p->data.data();
+    }
+    return {};
 }
 
 void AudioBuffer::fillSilence()
 {
-    if(!!p) {
+    if(isValid()) {
         p->fillSilence();
     }
 }
 
 void AudioBuffer::fillRemainingWithSilence()
 {
-    if(!!p) {
+    if(isValid()) {
         p->fillRemainingWithSilence();
     }
 }
 
 void AudioBuffer::adjustVolumeOfSamples(double volume)
 {
-    if(volume == 1.0) {
+    if(!isValid() || volume == 1.0) {
         return;
     }
 
