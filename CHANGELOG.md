@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.2](https://github.com/ludouzi/fooyin/releases/tag/v0.3.2) (2024-01-29)
+
+### Changes
+
+* Move AudioEngine to public API
+* Improve AudioBuffer implementation
+* Support TagLib 2.0 ([#38](https://github.com/ludouzi/fooyin/issues/38))
+
+
 ## [0.3.1](https://github.com/ludouzi/fooyin/releases/tag/v0.3.1) (2024-01-26)
 
 ### Changes
@@ -11,6 +20,7 @@
 
 * Only report library scan progress on stopping thread if we're actually running
 * Remove leftover debug message
+
 
 ## [0.3.0](https://github.com/ludouzi/fooyin/releases/tag/v0.3.0) (2024-01-26)
 

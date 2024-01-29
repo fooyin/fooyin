@@ -7,7 +7,7 @@ include(CheckBuildDir)
 
 project(
     fooyin
-    VERSION 0.3.1
+    VERSION 0.3.2
     DESCRIPTION "A customisable music player"
     HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
     LANGUAGES CXX
