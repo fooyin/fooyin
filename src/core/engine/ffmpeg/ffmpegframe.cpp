@@ -22,9 +22,26 @@
 #include <QDebug>
 
 namespace Fooyin {
+struct Frame::Private : QSharedData
+{
+    FramePtr frame{nullptr};
+
+    explicit Private(FramePtr frame)
+        : frame{std::move(frame)}
+    { }
+};
+
+Frame::Frame() = default;
+
 Frame::Frame(FramePtr frame)
     : p{new Private(std::move(frame))}
 { }
+
+Frame::Frame(const Frame& other)            = default;
+Frame& Frame::operator=(const Frame& other) = default;
+Frame::Frame(Frame&& other) noexcept        = default;
+
+Frame::~Frame() = default;
 
 bool Frame::isValid() const
 {

@@ -43,8 +43,13 @@ using FramePtr = std::unique_ptr<AVFrame, FrameDeleter>;
 class Frame
 {
 public:
-    Frame() = default;
+    Frame();
     explicit Frame(FramePtr frame);
+    ~Frame();
+
+    Frame(const Frame& other);
+    Frame& operator=(const Frame& other);
+    Frame(Frame&& other) noexcept;
 
     [[nodiscard]] bool isValid() const;
 
@@ -62,15 +67,7 @@ public:
     [[nodiscard]] uint64_t end() const;
 
 private:
-    struct Private : QSharedData
-    {
-        FramePtr frame{nullptr};
-
-        explicit Private(FramePtr frame)
-            : frame{std::move(frame)}
-        { }
-    };
-
+    struct Private;
     QSharedDataPointer<Private> p;
 };
 } // namespace Fooyin
