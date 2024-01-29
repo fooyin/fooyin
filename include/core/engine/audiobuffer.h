@@ -32,7 +32,7 @@ class FYCORE_EXPORT AudioBuffer
 {
 public:
     AudioBuffer();
-    AudioBuffer(std::span<const uint8_t> data, AudioFormat format, uint64_t startTime);
+    AudioBuffer(std::span<const std::byte> data, AudioFormat format, uint64_t startTime);
     AudioBuffer(const uint8_t* data, int size, AudioFormat format, uint64_t startTime);
     ~AudioBuffer();
 
@@ -41,7 +41,7 @@ public:
     AudioBuffer(AudioBuffer&& other) noexcept;
 
     void reserve(size_t size);
-    void append(std::span<const uint8_t> data);
+    void append(std::span<const std::byte> data);
     void clear();
     void reset();
 
@@ -55,11 +55,13 @@ public:
     uint64_t startTime() const;
     uint64_t duration() const;
 
-    std::span<const uint8_t> constData() const;
-    uint8_t* data();
+    std::span<const std::byte> constData() const;
+    const std::byte* data() const;
+    std::byte* data();
 
     void fillSilence();
     void fillRemainingWithSilence();
+    void adjustVolumeOfSamples(double volume);
 
 private:
     struct Private;

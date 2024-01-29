@@ -110,7 +110,7 @@ struct Renderer::Private
         int samplesWritten = writeAudioSamples(samples);
 
         if(!audioOutput->canHandleVolume()) {
-            Utils::adjustVolumeOfSamples(tempBuffer, outputContext.volume);
+            tempBuffer.adjustVolumeOfSamples(outputContext.volume);
         }
 
         samplesWritten = audioOutput->write(tempBuffer);
@@ -131,10 +131,10 @@ struct Renderer::Private
         const int sstride        = outputContext.format.bytesPerFrame();
 
         if(!audioOutput->canHandleVolume()) {
-            Utils::adjustVolumeOfSamples(tempBuffer, outputContext.volume);
+            tempBuffer.adjustVolumeOfSamples(outputContext.volume);
         }
 
-        std::copy_n(tempBuffer.constData().data(), samples * sstride, data);
+        std::copy_n(std::bit_cast<uint8_t*>(tempBuffer.constData().data()), samples * sstride, data);
 
         return samplesWritten;
     }

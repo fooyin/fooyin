@@ -37,6 +37,5 @@ void printError(int error);
 void printError(const QString& error);
 AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
 AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
-void adjustVolumeOfSamples(AudioBuffer& buffer, double volume);
 } // namespace Utils
 } // namespace Fooyin

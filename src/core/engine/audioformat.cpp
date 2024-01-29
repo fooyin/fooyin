@@ -137,7 +137,7 @@ int AudioFormat::bytesPerSample() const
         case(Int32):
         case(Float):
             return 4;
-        case Double:
+        case(Double):
             return 8;
     }
 
