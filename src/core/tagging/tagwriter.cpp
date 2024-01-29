@@ -70,7 +70,8 @@ constexpr std::array supportedMp4Tags{
     std::pair("COMPILATION", "cpil"),
     std::pair("BPM", "tmpo"),
     std::pair("COPYRIGHT", "cprt"),
-    std::pair("ENCODEDBY", "\251too"),
+    std::pair("ENCODING", "\251too"),
+    std::pair("ENCODEDBY", "\251enc"),
     std::pair("GROUPING", "\251grp"),
     std::pair("ALBUMSORT", "soal"),
     std::pair("ALBUMARTISTSORT", "soaa"),
@@ -105,7 +106,7 @@ constexpr std::array supportedMp4Tags{
     std::pair("RELEASESTATUS", "----:com.apple.iTunes:MusicBrainz Album Status"),
     std::pair("RELEASETYPE", "----:com.apple.iTunes:MusicBrainz Album Type"),
     std::pair("ARTISTS", "----:com.apple.iTunes:ARTISTS"),
-    std::pair("ORIGINALDATE", "----:com.apple.iTunes:originaldate"),
+    std::pair("ORIGINALDATE", "----:com.apple.iTunes:ORIGINALDATE"),
     std::pair("ASIN", "----:com.apple.iTunes:ASIN"),
     std::pair("LABEL", "----:com.apple.iTunes:LABEL"),
     std::pair("LYRICIST", "----:com.apple.iTunes:LYRICIST"),
@@ -449,13 +450,18 @@ bool TagWriter::writeMetaData(const Track& track)
     };
 
     QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
+    const auto style = TagLib::AudioProperties::Average;
 
     if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
         // Workaround for opus files with ogg suffix returning incorrect type
         mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
     }
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
-        TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false);
+#if(TAGLIB_MAJOR_VERSION >= 2)
+        TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
+#else
+        TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
+#endif
         if(file.isValid()) {
             writeProperties(file, track);
             if(file.hasID3v2Tag()) {
@@ -525,7 +531,11 @@ bool TagWriter::writeMetaData(const Track& track)
         }
     }
     else if(mimeType == "audio/flac"_L1) {
-        TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false);
+#if(TAGLIB_MAJOR_VERSION >= 2)
+        TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
+#else
+        TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
+#endif
         if(file.isValid()) {
             writeProperties(file, track);
             if(file.hasXiphComment()) {

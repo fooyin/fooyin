@@ -75,7 +75,8 @@ constexpr std::array supportedMp4Tags{
     std::pair("cpil", "COMPILATION"),
     std::pair("tmpo", "BPM"),
     std::pair("cprt", "COPYRIGHT"),
-    std::pair("\251too", "ENCODEDBY"),
+    std::pair("\251too", "ENCODING"),
+    std::pair("\251enc", "ENCODEDBY"),
     std::pair("\251grp", "GROUPING"),
     std::pair("soal", "ALBUMSORT"),
     std::pair("soaa", "ALBUMARTISTSORT"),
@@ -110,7 +111,7 @@ constexpr std::array supportedMp4Tags{
     std::pair("----:com.apple.iTunes:MusicBrainz Album Status", "RELEASESTATUS"),
     std::pair("----:com.apple.iTunes:MusicBrainz Album Type", "RELEASETYPE"),
     std::pair("----:com.apple.iTunes:ARTISTS", "ARTISTS"),
-    std::pair("----:com.apple.iTunes:originaldate", "ORIGINALDATE"),
+    std::pair("----:com.apple.iTunes:ORIGINALDATE", "ORIGINALDATE"),
     std::pair("----:com.apple.iTunes:ASIN", "ASIN"),
     std::pair("----:com.apple.iTunes:LABEL", "LABEL"),
     std::pair("----:com.apple.iTunes:LYRICIST", "LYRICIST"),
@@ -676,7 +677,11 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
     }
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
-        TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
+#if(TAGLIB_MAJOR_VERSION >= 2)
+        TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
+#else
+        TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
+#endif
         if(file.isValid()) {
             readProperties(file, track);
             if(file.hasID3v2Tag()) {
@@ -701,7 +706,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
             readProperties(file, track);
             if(file.hasID3v2Tag()) {
                 readId3Tags(file.ID3v2Tag(), track);
-                handleCover(readId3Cover(file.tag()), track);
+                handleCover(readId3Cover(file.ID3v2Tag()), track);
             }
         }
     }
@@ -746,7 +751,11 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         }
     }
     else if(mimeType == "audio/flac"_L1) {
-        TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
+#if(TAGLIB_MAJOR_VERSION >= 2)
+        TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
+#else
+        TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
+#endif
         if(file.isValid()) {
             readProperties(file, track);
             if(file.hasXiphComment()) {
@@ -810,13 +819,18 @@ QByteArray TagReader::readCover(const Track& track)
     }
 
     QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
+    const auto style = TagLib::AudioProperties::Average;
 
     if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
         // Workaround for opus files with ogg suffix returning incorrect type
         mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
     }
     if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
-        TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true);
+#if(TAGLIB_MAJOR_VERSION >= 2)
+        TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
+#else
+        TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
+#endif
         if(file.isValid() && file.hasID3v2Tag()) {
             return readId3Cover(file.ID3v2Tag());
         }
@@ -830,7 +844,7 @@ QByteArray TagReader::readCover(const Track& track)
     else if(mimeType == "audio/vnd.wave"_L1 || mimeType == "audio/wav"_L1 || mimeType == "audio/x-wav"_L1) {
         const TagLib::RIFF::WAV::File file(&stream, true);
         if(file.isValid() && file.hasID3v2Tag()) {
-            return readId3Cover(file.tag());
+            return readId3Cover(file.ID3v2Tag());
         }
     }
     else if(mimeType == "audio/x-musepack"_L1) {
@@ -858,7 +872,11 @@ QByteArray TagReader::readCover(const Track& track)
         }
     }
     else if(mimeType == "audio/flac"_L1) {
-        TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true);
+#if(TAGLIB_MAJOR_VERSION >= 2)
+        TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
+#else
+        TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
+#endif
         if(file.isValid()) {
             return readFlacCover(file.pictureList());
         }
