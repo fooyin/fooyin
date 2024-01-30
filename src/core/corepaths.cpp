@@ -34,7 +34,7 @@ QString settingsPath()
 
 QString pluginsPath()
 {
-    return QDir::cleanPath(QCoreApplication::applicationDirPath() + '/' + RELATIVE_PLUGIN_DIR);
+    return QDir::cleanPath(QCoreApplication::applicationDirPath() + '/' + RELATIVE_PLUGIN_PATH);
 }
 
 QString userPluginsPath()

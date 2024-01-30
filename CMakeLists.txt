@@ -178,8 +178,9 @@ add_executable(fooyin_exe ${SOURCES})
 set_target_properties(
     fooyin_exe
     PROPERTIES OUTPUT_NAME fooyin
+               BUILD_RPATH "${FOOYIN_RPATH}/${FOOYIN_RELATIVE_LIB_PATH};${CMAKE_BUILD_RPATH}"
+               INSTALL_RPATH "${FOOYIN_RPATH}/${FOOYIN_RELATIVE_LIB_PATH};${CMAKE_INSTALL_RPATH}"
                RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
-               INSTALL_RPATH ${FOOYIN_LIBRARY_INSTALL_DIR}
 )
 target_compile_features(fooyin_exe PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_link_libraries(

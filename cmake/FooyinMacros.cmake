@@ -13,11 +13,23 @@ function(create_fooyin_plugin name)
 
     string(TOLOWER ${name} base_name)
 
+    target_include_directories(
+        ${name}
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
     set_target_properties(
         ${name}
         PROPERTIES VERSION ${PROJECT_VERSION}
+                   CXX_VISIBILITY_PRESET hidden
+                   VISIBILITY_INLINES_HIDDEN YES
                    EXPORT_NAME ${base_name}
                    OUTPUT_NAME ${base_name}
+                   BUILD_RPATH "${FOOYIN_PLUGIN_RPATH};${CMAKE_BUILD_RPATH}"
+                   INSTALL_RPATH "${FOOYIN_PLUGIN_RPATH};${CMAKE_INSTALL_RPATH}"
+                   RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
+                   LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
+                   ARCHIVE_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
     )
 
     target_compile_features(${name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
@@ -29,4 +41,8 @@ function(create_fooyin_plugin name)
                 -Wextra
                 -Wpedantic
     )
+
+    if(NOT CMAKE_SKIP_INSTALL_RULES)
+        install(TARGETS ${name} DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR})
+    endif()
 endfunction()

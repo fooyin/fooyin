@@ -25,13 +25,3 @@ target_link_libraries(
     PRIVATE Fooyin::Core
             PipeWire::PipeWire
 )
-
-set_target_properties(
-    fooyin_pipewire
-    PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
-               INSTALL_RPATH ${FOOYIN_PLUGIN_INSTALL_DIR}
-)
-
-if(NOT CMAKE_SKIP_INSTALL_RULES)
-    install(TARGETS fooyin_pipewire DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR})
-endif()
