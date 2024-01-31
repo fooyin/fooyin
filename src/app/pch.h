@@ -48,12 +48,9 @@
 #include <QTimer>
 #include <QVariant>
 #include <QWidget>
-#include <qglobal.h>
 
-#include <algorithm>
 #include <chrono>
 #include <memory>
-#include <type_traits>
 #include <utility>
 
 #endif
