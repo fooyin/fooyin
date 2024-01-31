@@ -218,4 +218,15 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     include(FooyinInstall)
 endif()
 
+# ---- Fooyin uninstall ----
+
+configure_file(
+    "${CMAKE_SOURCE_DIR}/cmake/FooyinUninstall.cmake.in"
+    "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake" @ONLY
+)
+add_custom_target(
+    uninstall "${CMAKE_COMMAND}" -P
+              "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+)
+
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
