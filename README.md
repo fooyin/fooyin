@@ -46,37 +46,4 @@ Fooyin is currently only supported on linux, though other platforms will be adde
 
 ## Building from source
 
-In order to build Fooyin from source, a C++20-compatible compiler is needed along with Git and CMake already
-installed. Fooyin is also dependent on a number of other libraries, of which the following are required:
-
-* [Qt6](https://www.qt.io) (6.5+)
-* [QCoro](https://github.com/danvratil/qcoro) (0.9.0+)
-* [TagLib](https://taglib.org) (1.12+)
-* [FFmpeg](https://ffmpeg.org) (6.0+)
-* [ALSA](https://alsa-project.org)
-
-The following libraries are optional, but will add extra audio outputs:
-
-* [SDL2](https://www.libsdl.org)
-* [PipeWire](https://pipewire.org)
-
-### Command line setup
-
-First clone the remote repository on to your machine:
-
-```
-git clone git@github.com:ludouzi/fooyin.git
-```
-
-Then enter the newly created fooyin directory and invoke CMake, providing a build directory:
-
-```
-cd fooyin
-cmake -B build/ -S . 
-```
-
-Fooyin can then be built using:
-
-```
-cmake --build build/
-```
+[See installation notes](INSTALL.md)
