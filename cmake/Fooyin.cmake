@@ -81,7 +81,7 @@ function(create_fooyin_library name)
 
     set_target_properties(
         ${name}
-        PROPERTIES VERSION "${PROJECT_VERSION}"
+        PROPERTIES VERSION "${PROJECT_VERSION_MAJOR}.0.0"
                    CXX_VISIBILITY_PRESET hidden
                    VISIBILITY_INLINES_HIDDEN YES
                    EXPORT_NAME ${LIB_EXPORT_NAME}
