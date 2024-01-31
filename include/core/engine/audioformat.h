@@ -41,8 +41,8 @@ public:
 
     AudioFormat();
 
-    bool operator==(const AudioFormat& other);
-    bool operator!=(const AudioFormat& other);
+    bool operator==(const AudioFormat& other) const;
+    bool operator!=(const AudioFormat& other) const;
 
     bool isValid() const;
 

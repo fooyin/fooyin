@@ -26,13 +26,13 @@ AudioFormat::AudioFormat()
     , m_sampleRate{0}
 { }
 
-bool AudioFormat::operator==(const AudioFormat& other)
+bool AudioFormat::operator==(const AudioFormat& other) const
 {
     return std::tie(m_sampleFormat, m_channelCount, m_sampleRate)
         == std::tie(other.m_sampleFormat, other.m_channelCount, other.m_sampleRate);
 }
 
-bool AudioFormat::operator!=(const AudioFormat& other)
+bool AudioFormat::operator!=(const AudioFormat& other) const
 {
     return !(*this == other);
 }
