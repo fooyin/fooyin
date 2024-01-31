@@ -16,6 +16,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
     track.cpp
     engine/audiobuffer.cpp
+    engine/audiodecoder.cpp
     engine/audioengine.cpp
     engine/audioformat.cpp
     engine/audiooutput.cpp

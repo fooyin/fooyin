@@ -95,13 +95,7 @@ function(create_fooyin_library name)
 
     target_compile_features(${name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
     target_compile_definitions(${name} PRIVATE QT_USE_QSTRINGBUILDER)
-    target_compile_options(
-        ${name}
-        PRIVATE -Werror
-                -Wall
-                -Wextra
-                -Wpedantic
-    )
+    target_compile_options(${name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 
     if(LIB_PRIVATE_SOURCES)
         set(private_name "${name}_private")
@@ -123,13 +117,7 @@ function(create_fooyin_library name)
         )
         target_compile_features(${private_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
         target_compile_definitions(${private_name} PRIVATE QT_USE_QSTRINGBUILDER)
-        target_compile_options(
-            ${private_name}
-            PRIVATE -Werror
-                    -Wall
-                    -Wextra
-                    -Wpedantic
-        )
+        target_compile_options(${name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 
         target_link_libraries(${private_name} PRIVATE ${name})
 

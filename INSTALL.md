@@ -41,6 +41,7 @@ The following options can be passed to CMake to customise the build:
 * `DBUILD_PLUGINS` - Build the plugins included with fooyin (ON by default).
 * `DBUILD_CCACHE` - Build using CCache if found (ON by default).
 * `DBUILD_PCH` - Build with precompiled header support (OFF by default).
+* `DBUILD_WERROR` - Build with -Werror (OFF by default).
 
 ### Additional notes
 

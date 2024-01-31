@@ -34,13 +34,7 @@ function(create_fooyin_plugin name)
 
     target_compile_features(${name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
     target_compile_definitions(${name} PRIVATE QT_USE_QSTRINGBUILDER)
-    target_compile_options(
-        ${name}
-        PRIVATE -Werror
-                -Wall
-                -Wextra
-                -Wpedantic
-    )
+    target_compile_options(${name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 
     if(NOT CMAKE_SKIP_INSTALL_RULES)
         install(TARGETS ${name} DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR})

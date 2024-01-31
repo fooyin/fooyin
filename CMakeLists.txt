@@ -15,7 +15,6 @@ project(
 
 include(CheckLevel)
 include(Fooyin)
-include(FooyinMacros)
 
 include(GenerateExportHeader)
 include(FeatureSummary)
@@ -34,6 +33,33 @@ fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
 fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
+fooyin_option(BUILD_WERROR "Build with -Werror" OFF)
+
+list(
+    APPEND
+    FOOYIN_COMPILE_OPTIONS
+    -Wall
+    -Wextra
+    -Wpedantic
+    -Wunused
+    -Wshadow
+    -Wundef
+    -Wuninitialized
+    -Wredundant-decls
+    -Wcast-align
+    -Winit-self
+    -Wmissing-include-dirs
+    -Wstrict-overflow=2
+    -Wunused-parameter
+    -Wdisabled-optimization
+    -Woverloaded-virtual
+    -Wold-style-cast
+)
+if(BUILD_WERROR)
+    list(APPEND FOOYIN_COMPILE_OPTIONS -Werror)
+endif()
+
+# ---- Dependencies ----
 
 find_package(
     Qt6 REQUIRED
@@ -112,14 +138,8 @@ if(BUILD_PCH)
                    VISIBILITY_INLINES_HIDDEN YES
     )
     target_link_libraries(fooyin_pch PRIVATE Qt::Core Qt::Gui Qt::Widgets)
-    target_compile_features(fooyin_pch PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
-    target_compile_options(
-        fooyin_pch
-        PRIVATE -Werror
-                -Wall
-                -Wextra
-                -Wpedantic
-    )
+    target_compile_features(fooyin_pch PRIVATE ${FOOYIN_REQUIRED_CXX_FEATURES})
+    target_compile_options(fooyin_pch PRIVATE ${FOOYIN_COMPILE_OPTIONS})
     if(CMAKE_VERSION GREATER_EQUAL 3.19)
         set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
     endif()
@@ -147,19 +167,14 @@ set_target_properties(
     fooyin_lib PROPERTIES VERSION "${PROJECT_VERSION}" EXPORT_NAME Fooyin
 )
 
+include(FooyinMacros)
 add_subdirectory(src)
 
 target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
 
 target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin_lib PRIVATE QT_USE_QSTRINGBUILDER)
-target_compile_options(
-    fooyin_lib
-    PUBLIC -Werror
-           -Wall
-           -Wextra
-           -Wpedantic
-)
+target_compile_options(fooyin_lib PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 
 # ---- Fooyin testing ----
 
@@ -177,12 +192,16 @@ qt_add_resources(SOURCES data/icons.qrc)
 add_executable(fooyin_exe ${SOURCES})
 set_target_properties(
     fooyin_exe
-    PROPERTIES OUTPUT_NAME fooyin
-               BUILD_RPATH "${FOOYIN_RPATH}/${FOOYIN_RELATIVE_LIB_PATH};${CMAKE_BUILD_RPATH}"
-               INSTALL_RPATH "${FOOYIN_RPATH}/${FOOYIN_RELATIVE_LIB_PATH};${CMAKE_INSTALL_RPATH}"
-               RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
+    PROPERTIES
+        OUTPUT_NAME fooyin
+        BUILD_RPATH
+        "${FOOYIN_RPATH}/${FOOYIN_RELATIVE_LIB_PATH};${CMAKE_BUILD_RPATH}"
+        INSTALL_RPATH
+        "${FOOYIN_RPATH}/${FOOYIN_RELATIVE_LIB_PATH};${CMAKE_INSTALL_RPATH}"
+        RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
 )
 target_compile_features(fooyin_exe PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
+target_compile_options(fooyin_exe PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 target_link_libraries(
     fooyin_exe
     PRIVATE KDAB::kdsingleapplication
