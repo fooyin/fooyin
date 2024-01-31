@@ -1,4 +1,4 @@
-create_fooyin_plugin(
+create_fooyin_plugin_internal(
     tageditor
     DEPENDS Fooyin::Gui
     SOURCES tageditoritem.cpp

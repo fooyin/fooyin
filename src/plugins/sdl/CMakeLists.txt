@@ -4,7 +4,7 @@ if(NOT SDL2_FOUND)
     return()
 endif()
 
-create_fooyin_plugin(
+create_fooyin_plugin_internal(
     sdl
     DEPENDS Fooyin::Core
             ${SDL2_LIBRARIES}

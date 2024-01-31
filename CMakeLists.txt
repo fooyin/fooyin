@@ -13,6 +13,8 @@ project(
     LANGUAGES CXX
 )
 
+set(FOOYIN_PLUGIN_VERSION "0.3")
+
 include(CheckLevel)
 include(Fooyin)
 
@@ -167,7 +169,7 @@ set_target_properties(
     fooyin_lib PROPERTIES VERSION "${PROJECT_VERSION}" EXPORT_NAME Fooyin
 )
 
-include(FooyinMacros)
+include(FooyinMacrosInternal)
 add_subdirectory(src)
 
 target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
