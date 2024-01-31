@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/menuheader.h>
+#include "menuheader.h"
 
 #include <QApplication>
 #include <QPainter>
@@ -73,4 +73,4 @@ MenuHeaderAction::MenuHeaderAction(const QString& text, QObject* parent)
 }
 } // namespace Fooyin
 
-#include "utils/moc_menuheader.cpp"
+#include "moc_menuheader.cpp"

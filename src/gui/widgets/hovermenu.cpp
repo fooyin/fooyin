@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/hovermenu.h>
+#include "hovermenu.h"
 
 #include <chrono>
 
@@ -56,4 +56,4 @@ void HoverMenu::leaveEvent(QEvent* event)
 }
 } // namespace Fooyin
 
-#include "utils/moc_hovermenu.cpp"
+#include "moc_hovermenu.cpp"

@@ -22,9 +22,9 @@
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/hovermenu.h>
+#include <gui/widgets/logslider.h>
 #include <gui/widgets/toolbutton.h>
-#include <utils/hovermenu.h>
-#include <utils/logslider.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>

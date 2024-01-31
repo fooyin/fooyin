@@ -19,13 +19,11 @@
 
 #pragma once
 
-#include "fyutils_export.h"
-
 #include <QWidget>
 #include <QWidgetAction>
 
 namespace Fooyin {
-class FYUTILS_EXPORT MenuHeader : public QWidget
+class MenuHeader : public QWidget
 {
     Q_OBJECT
 
@@ -45,7 +43,7 @@ private:
     int m_margin;
 };
 
-class FYUTILS_EXPORT MenuHeaderAction : public QWidgetAction
+class MenuHeaderAction : public QWidgetAction
 {
     Q_OBJECT
 

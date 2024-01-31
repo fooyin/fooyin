@@ -92,6 +92,9 @@ set(SOURCES
     widgets/dummy.cpp
     widgets/spacer.cpp
     widgets/customisableinput.cpp
+    widgets/hovermenu.cpp
+    widgets/logslider.cpp
+    widgets/menuheader.cpp
     widgets/splitterwidget.cpp
     widgets/tabstackwidget.cpp
     widgets/toolbutton.cpp

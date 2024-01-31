@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/logslider.h>
+#include "logslider.h"
 
 #include <cmath>
 
@@ -49,4 +49,4 @@ void LogSlider::setNaturalValue(double value)
 }
 } // namespace Fooyin
 
-#include "utils/moc_logslider.cpp"
+#include "moc_logslider.cpp"

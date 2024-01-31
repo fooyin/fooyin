@@ -19,26 +19,24 @@
 
 #pragma once
 
-#include "fyutils_export.h"
-
-#include <QTimer>
-#include <QWidget>
+#include <utils/slider.h>
 
 namespace Fooyin {
-class FYUTILS_EXPORT HoverMenu : public QWidget
+class LogSlider : public Slider
 {
     Q_OBJECT
 
 public:
-    explicit HoverMenu(QWidget* parent = nullptr);
-    ~HoverMenu() override = default;
+    explicit LogSlider(Qt::Orientation type, QWidget* parent = nullptr);
 
-    void start(std::chrono::milliseconds ms);
+    void setRange(double min, double max);
+    void setScale(double scale);
+    void setNaturalValue(double value);
 
-protected:
-    void leaveEvent(QEvent* event) override;
+signals:
+    void logValueChanged(double value);
 
 private:
-    QTimer m_timer;
+    double m_scale;
 };
 } // namespace Fooyin

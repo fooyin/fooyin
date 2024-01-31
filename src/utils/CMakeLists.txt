@@ -22,10 +22,7 @@ set(SOURCES
     expandingcombobox.cpp
     extendabletableview.cpp
     fileutils.cpp
-    hovermenu.cpp
     id.cpp
-    logslider.cpp
-    menuheader.cpp
     multilinedelegate.cpp
     paths.cpp
     recursiveselectionmodel.cpp
