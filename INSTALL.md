@@ -45,5 +45,5 @@ The following options can be passed to CMake to customise the build:
 ### Additional notes
 
 * To build a debug version pass `-DCMAKE_BUILD_TYPE=Debug` to CMake.
-* Plugins are expected to be found under `CMAKE_INSTALL_PREFIX/CMAKE_INSTALL_LIBDIR/fooyin/plugins` relative to `CMAKE_INSTALL_BINDIR`.
+* Plugins are expected to be found under `CMAKE_INSTALL_LIBDIR/fooyin/plugins` relative to `CMAKE_INSTALL_BINDIR`.
 
