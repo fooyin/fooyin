@@ -35,6 +35,7 @@ extern "C"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #endif
 
 #ifdef __clang__
@@ -262,7 +263,7 @@ void onProcess(void* userData)
     spa_buffer* buf = b->buffer;
 
     const int sstride   = pc->outputContext.format.bytesPerFrame();
-    uint64_t frameCount = buf->datas[0].maxsize / pc->outputContext.channelLayout.nb_channels / sstride;
+    uint64_t frameCount = buf->datas[0].maxsize / pc->outputContext.format.channelCount() / sstride;
     if(b->requested != 0) {
         frameCount = std::min(b->requested, frameCount);
     }
@@ -447,10 +448,10 @@ struct PipeWireOutput::Private
             .format   = spaFormat,
             .flags    = SPA_AUDIO_FLAG_NONE,
             .rate     = static_cast<uint32_t>(pc.outputContext.format.sampleRate()),
-            .channels = static_cast<uint32_t>(pc.outputContext.channelLayout.nb_channels),
+            .channels = static_cast<uint32_t>(pc.outputContext.format.channelCount()),
         };
 
-        updateChannelMap(&audioInfo, pc.outputContext.channelLayout.nb_channels);
+        updateChannelMap(&audioInfo, pc.outputContext.format.channelCount());
 
         params[0] = spa_format_audio_raw_build(&b, SPA_PARAM_EnumFormat, &audioInfo);
 

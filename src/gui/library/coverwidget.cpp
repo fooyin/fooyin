@@ -40,10 +40,10 @@ struct CoverWidget::Private
     QLabel* coverLabel;
     QPixmap cover;
 
-    Private(CoverWidget* self, PlayerManager* playerManager, TrackSelectionController* trackSelection)
-        : self{self}
-        , playerManager{playerManager}
-        , trackSelection{trackSelection}
+    Private(CoverWidget* self_, PlayerManager* playerManager_, TrackSelectionController* trackSelection_)
+        : self{self_}
+        , playerManager{playerManager_}
+        , trackSelection{trackSelection_}
         , coverProvider{new CoverProvider(self)}
         , coverLabel{new QLabel(self)}
     {

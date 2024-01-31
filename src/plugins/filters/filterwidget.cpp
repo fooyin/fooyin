@@ -99,10 +99,10 @@ struct FilterWidget::Private
     QString searchStr;
     bool searching{false};
 
-    Private(FilterWidget* self, SettingsManager* settings)
-        : self{self}
-        , columnRegistry{settings}
-        , settings{settings}
+    Private(FilterWidget* self_, SettingsManager* settings_)
+        : self{self_}
+        , columnRegistry{settings_}
+        , settings{settings_}
         , view{new FilterView(self)}
         , header{new AutoHeaderView(Qt::Horizontal, self)}
         , model{new FilterModel(self)}
@@ -128,7 +128,7 @@ struct FilterWidget::Private
         QStringList titles;
         const QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
         std::ranges::transform(selectedIndexes, std::back_inserter(titles),
-                               [](const QModelIndex& index) { return index.data().toString(); });
+                               [](const QModelIndex& selectedIndex) { return selectedIndex.data().toString(); });
         return titles.join(", "_L1);
     }
 
@@ -148,12 +148,12 @@ struct FilterWidget::Private
 
         TrackList selectedTracks;
 
-        for(const auto& index : selected) {
-            if(!index.parent().isValid()) {
+        for(const auto& selectedIndex : selected) {
+            if(!selectedIndex.parent().isValid()) {
                 selectedTracks = fetchAllTracks(view);
                 break;
             }
-            const auto newTracks = index.data(FilterItem::Tracks).value<TrackList>();
+            const auto newTracks = selectedIndex.data(FilterItem::Tracks).value<TrackList>();
             std::ranges::copy(newTracks, std::back_inserter(selectedTracks));
         }
 

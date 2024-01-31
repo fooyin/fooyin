@@ -61,9 +61,9 @@ struct TagEditorModel::Private
     TagFieldMap tags;
     TagFieldMap customTags;
 
-    explicit Private(TagEditorModel* self, SettingsManager* settings)
-        : self{self}
-        , settings{settings}
+    explicit Private(TagEditorModel* self_, SettingsManager* settings_)
+        : self{self_}
+        , settings{settings_}
     { }
 
     bool isDefaultField(const QString& name) const

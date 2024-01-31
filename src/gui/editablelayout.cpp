@@ -76,20 +76,20 @@ struct EditableLayout::Private
     WidgetProvider* widgetProvider;
     LayoutProvider* layoutProvider;
 
-    ActionContainer* menu;
+    ActionContainer* editingMenu;
     QHBoxLayout* box;
     QPointer<OverlayWidget> overlay;
     QPointer<SplitterWidget> splitter;
     bool layoutEditing{false};
 
-    Private(EditableLayout* self, ActionManager* actionManager, WidgetProvider* widgetProvider,
-            LayoutProvider* layoutProvider, SettingsManager* settings)
-        : self{self}
-        , actionManager{actionManager}
-        , settings{settings}
-        , widgetProvider{widgetProvider}
-        , layoutProvider{layoutProvider}
-        , menu{actionManager->createMenu(Constants::Menus::Context::Layout)}
+    Private(EditableLayout* self_, ActionManager* actionManager_, WidgetProvider* widgetProvider_,
+            LayoutProvider* layoutProvider_, SettingsManager* settings_)
+        : self{self_}
+        , actionManager{actionManager_}
+        , settings{settings_}
+        , widgetProvider{widgetProvider_}
+        , layoutProvider{layoutProvider_}
+        , editingMenu{actionManager->createMenu(Constants::Menus::Context::Layout)}
         , box{new QHBoxLayout(self)}
     {
         box->setContentsMargins(5, 5, 5, 5);
@@ -251,7 +251,7 @@ void EditableLayout::initialise()
     p->settings->subscribe<Settings::Gui::LayoutEditing>(this,
                                                          [this](bool enabled) { p->changeEditingState(enabled); });
 
-    QObject::connect(p->menu->menu(), &QMenu::aboutToHide, this, [this]() { p->hideOverlay(); });
+    QObject::connect(p->editingMenu->menu(), &QMenu::aboutToHide, this, [this]() { p->hideOverlay(); });
 }
 
 FyWidget* EditableLayout::findWidget(const Id& id) const
@@ -278,11 +278,11 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
     if(event->type() == QEvent::MouseButtonPress) {
         auto* mouseEvent = static_cast<QMouseEvent*>(event);
 
-        if(!mouseEvent || mouseEvent->button() != Qt::RightButton || !p->menu->isHidden()) {
+        if(!mouseEvent || mouseEvent->button() != Qt::RightButton || !p->editingMenu->isHidden()) {
             return QWidget::eventFilter(watched, event);
         }
 
-        p->menu->clear();
+        p->editingMenu->clear();
 
         const QPoint pos = mouseEvent->globalPosition().toPoint();
         QWidget* widget  = qApp->widgetAt(pos);
@@ -293,14 +293,14 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
         }
 
         if(qobject_cast<Dummy*>(child)) {
-            p->setupContextMenu(child->findParent(), p->menu);
+            p->setupContextMenu(child->findParent(), p->editingMenu);
         }
         else {
-            p->setupContextMenu(child, p->menu);
+            p->setupContextMenu(child, p->editingMenu);
         }
 
         p->showOverlay(child);
-        p->menu->menu()->popup(pos);
+        p->editingMenu->menu()->popup(pos);
     }
 
     event->accept();

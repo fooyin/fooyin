@@ -64,7 +64,7 @@ struct FilterManager::Private
     QPointer<OverlayWidget> controlDialog;
     std::unordered_map<Id, OverlayWidget*, Id::IdHash> overlays;
 
-    QPointer<WidgetFilter> filter;
+    QPointer<WidgetFilter> widgetFilter;
 
     Id selectedGroup;
     QColor ungroupedColour{Qt::red};
@@ -74,10 +74,10 @@ struct FilterManager::Private
     QPointer<QPushButton> goBack;
     QPointer<QPushButton> finishEditing;
 
-    explicit Private(FilterManager* self, FilterController* controller, EditableLayout* editableLayout)
-        : self{self}
-        , controller{controller}
-        , editableLayout{editableLayout}
+    explicit Private(FilterManager* self_, FilterController* controller_, EditableLayout* editableLayout_)
+        : self{self_}
+        , controller{controller_}
+        , editableLayout{editableLayout_}
     {
         ungroupedColour.setAlpha(20);
     }
@@ -328,13 +328,13 @@ struct FilterManager::Private
         finishEditing = new QPushButton(tr("Finish"), controlDialog);
         controlDialog->addWidget(finishEditing);
         QObject::connect(finishEditing, &QPushButton::clicked, self, [this]() {
-            filter->stop();
-            filter->deleteLater();
+            widgetFilter->stop();
+            widgetFilter->deleteLater();
             controlDialog->deleteLater();
             clearOverlays();
         });
 
-        QObject::connect(filter, &WidgetFilter::filterFinished, self, [this]() {
+        QObject::connect(widgetFilter, &WidgetFilter::filterFinished, self, [this]() {
             if(goBack && !goBack->isHidden()) {
                 QMetaObject::invokeMethod(goBack, "clicked", Q_ARG(bool, false));
             }
@@ -356,8 +356,8 @@ FilterManager::~FilterManager() = default;
 
 void FilterManager::setupWidgetConnections()
 {
-    p->filter = new WidgetFilter(this);
-    p->filter->start();
+    p->widgetFilter = new WidgetFilter(this);
+    p->widgetFilter->start();
 
     p->clearOverlays();
     p->setupOverlays();

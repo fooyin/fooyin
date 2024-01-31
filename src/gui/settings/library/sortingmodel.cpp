@@ -58,8 +58,8 @@ struct SortingModel::Private
     SortingItem root;
     std::map<int, SortingItem> nodes;
 
-    explicit Private(SortingRegistry* sortRegistry)
-        : sortRegistry{sortRegistry}
+    explicit Private(SortingRegistry* sortRegistry_)
+        : sortRegistry{sortRegistry_}
     { }
 };
 

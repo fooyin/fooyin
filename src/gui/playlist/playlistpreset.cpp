@@ -27,8 +27,8 @@ TextBlock::TextBlock()
     : TextBlock{QStringLiteral("")}
 { }
 
-TextBlock::TextBlock(QString script, int fontDelta)
-    : script{std::move(script)}
+TextBlock::TextBlock(QString script_, int fontDelta)
+    : script{std::move(script_)}
     , colour{QApplication::palette().text().color()}
 {
     font.setPointSize(font.pointSize() + fontDelta);

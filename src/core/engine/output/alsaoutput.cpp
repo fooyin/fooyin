@@ -286,7 +286,7 @@ bool AlsaOutput::init(const OutputContext& oc)
         return handleInitError();
     }
 
-    uint32_t channelCount = oc.channelLayout.nb_channels;
+    uint32_t channelCount = oc.format.channelCount();
 
     err = snd_pcm_hw_params_set_channels_near(handle, hwParams, &channelCount);
     if(err < 0) {

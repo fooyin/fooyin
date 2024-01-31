@@ -64,10 +64,10 @@ struct TagEditorWidget::Private
     TagEditorView* view;
     TagEditorModel* model;
 
-    Private(TagEditorWidget* self, ActionManager* actionManager, SettingsManager* settings)
-        : self{self}
-        , actionManager{actionManager}
-        , settings{settings}
+    Private(TagEditorWidget* self_, ActionManager* actionManager_, SettingsManager* settings_)
+        : self{self_}
+        , actionManager{actionManager_}
+        , settings{settings_}
         , context{new WidgetContext(self, Context{"Context.TagEditor"}, self)}
         , view{new TagEditorView(actionManager, self)}
         , model{new TagEditorModel(settings, self)}

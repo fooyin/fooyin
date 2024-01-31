@@ -112,10 +112,10 @@ struct ExtendableTableView::Private
 
     int column{0};
 
-    Private(ExtendableTableView* self, ActionManager* actionManager, const Tools& tools)
-        : self{self}
-        , actionManager{actionManager}
-        , tools{tools}
+    Private(ExtendableTableView* self_, ActionManager* actionManager_, const Tools& tools_)
+        : self{self_}
+        , actionManager{actionManager_}
+        , tools{tools_}
         , context{new WidgetContext(
               self, Context{Id{"Context.ExtendableTableView."}.append(Utils::generateRandomHash())}, self)}
         , toolArea{new ExtendableToolArea(self)}

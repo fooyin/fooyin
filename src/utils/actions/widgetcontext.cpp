@@ -32,52 +32,52 @@ Context::Context(const IdList& ids)
 
 bool Context::operator==(const Context& context) const
 {
-    return ids == context.ids;
+    return m_ids == context.m_ids;
 }
 
 int Context::size() const
 {
-    return static_cast<int>(ids.size());
+    return static_cast<int>(m_ids.size());
 }
 
 bool Context::empty() const
 {
-    return ids.empty();
+    return m_ids.empty();
 }
 
 bool Context::contains(const Id& id) const
 {
-    return std::ranges::find(std::as_const(ids), id) != ids.cend();
+    return std::ranges::find(m_ids, id) != m_ids.cend();
 }
 
 IdList::const_iterator Context::begin() const
 {
-    return ids.cbegin();
+    return m_ids.cbegin();
 }
 
 IdList::const_iterator Context::end() const
 {
-    return ids.cend();
+    return m_ids.cend();
 }
 
 void Context::append(const Id& id)
 {
-    ids.push_back(id);
+    m_ids.push_back(id);
 }
 
 void Context::append(const Context& context)
 {
-    std::ranges::copy(context.ids, std::back_inserter(ids));
+    std::ranges::copy(context.m_ids, std::back_inserter(m_ids));
 }
 
 void Context::prepend(const Id& id)
 {
-    ids.insert(ids.begin(), id);
+    m_ids.insert(m_ids.begin(), id);
 }
 
 void Context::erase(const Id& id)
 {
-    std::erase(ids, id);
+    std::erase(m_ids, id);
 }
 
 WidgetContext::WidgetContext(QWidget* widget, QObject* parent)

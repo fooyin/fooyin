@@ -25,6 +25,9 @@ namespace Fooyin {
 class PlaylistScriptRegistry : public ScriptRegistry
 {
 public:
+    using ScriptRegistry::isVariable;
+    using ScriptRegistry::value;
+
     bool isVariable(const QString& var, const Track& track) const override;
     ScriptResult value(const QString& var, const Track& track) const override;
 };

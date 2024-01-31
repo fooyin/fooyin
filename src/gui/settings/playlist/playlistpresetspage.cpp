@@ -87,18 +87,18 @@ void updateTextBlocks(const Fooyin::ExpandableInputList& presetInputs, Fooyin::T
 
 void createPresetInputs(const Fooyin::TextBlockList& blocks, Fooyin::ExpandableInputBox* box, QWidget* parent)
 {
-    auto createInput = [](const Fooyin::TextBlock& block, Fooyin::ExpandableInputBox* box, QWidget* parent) {
+    auto createInput = [box, parent](const Fooyin::TextBlock& block) {
         auto* input = new Fooyin::CustomisableInput(parent);
         setupInputBox(block, input);
         box->addInput(input);
     };
 
     if(blocks.empty()) {
-        createInput({}, box, parent);
+        createInput({});
     }
     else {
         for(const auto& block : blocks) {
-            createInput(block, box, parent);
+            createInput(block);
         }
     }
 }
@@ -125,8 +125,8 @@ public:
 
         m_rowHeight->setValue(rowHeight);
 
-        m_leftBox->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
-        m_rightBox->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
+        m_leftBox->setInputWidget([](QWidget* widget) { return new CustomisableInput(widget); });
+        m_rightBox->setInputWidget([](QWidget* widget) { return new CustomisableInput(widget); });
 
         auto* rowHeightLabel = new QLabel(tr("Row height: "), this);
 

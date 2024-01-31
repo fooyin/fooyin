@@ -50,14 +50,14 @@ struct PlaylistController::Private
     std::unordered_map<int, QUndoStack> histories;
     std::unordered_map<int, PlaylistViewState> states;
 
-    Private(PlaylistController* self, PlaylistManager* handler, PlayerManager* playerManager, MusicLibrary* library,
-            TrackSelectionController* selectionController, SettingsManager* settings)
-        : self{self}
-        , handler{handler}
-        , playerManager{playerManager}
-        , library{library}
-        , selectionController{selectionController}
-        , settings{settings}
+    Private(PlaylistController* self_, PlaylistManager* handler_, PlayerManager* playerManager_, MusicLibrary* library_,
+            TrackSelectionController* selectionController_, SettingsManager* settings_)
+        : self{self_}
+        , handler{handler_}
+        , playerManager{playerManager_}
+        , library{library_}
+        , selectionController{selectionController_}
+        , settings{settings_}
     { }
 
     void restoreLastPlaylist()
@@ -95,21 +95,23 @@ struct PlaylistController::Private
         states.erase(playlist->id());
 
         if(currentPlaylist == playlist) {
-            if(handler->playlistCount() == 0) {
-                QObject::connect(
-                    handler, &PlaylistManager::playlistAdded, self,
-                    [this](Playlist* playlist) {
-                        if(playlist) {
-                            self->changeCurrentPlaylist(playlist);
-                        }
-                    },
-                    Qt::SingleShotConnection);
-            }
-            else {
-                const int nextIndex = std::max(0, playlist->index() - 1);
-                if(auto* nextPlaylist = handler->playlistByIndex(nextIndex)) {
-                    self->changeCurrentPlaylist(nextPlaylist);
-                }
+            return;
+        }
+
+        if(handler->playlistCount() == 0) {
+            QObject::connect(
+                handler, &PlaylistManager::playlistAdded, self,
+                [this](Playlist* newPlaylist) {
+                    if(newPlaylist) {
+                        self->changeCurrentPlaylist(newPlaylist);
+                    }
+                },
+                Qt::SingleShotConnection);
+        }
+        else {
+            const int nextIndex = std::max(0, playlist->index() - 1);
+            if(auto* nextPlaylist = handler->playlistByIndex(nextIndex)) {
+                self->changeCurrentPlaylist(nextPlaylist);
             }
         }
     }
@@ -377,9 +379,9 @@ void PlaylistController::filesToCurrentPlaylist(const QList<QUrl>& urls)
     TrackList tracks;
     std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 
-    p->scanTracks(tracks, [this](const TrackList& tracks) {
+    p->scanTracks(tracks, [this](const TrackList& scannedTracks) {
         if(p->currentPlaylist) {
-            p->handler->appendToPlaylist(p->currentPlaylist->id(), tracks);
+            p->handler->appendToPlaylist(p->currentPlaylist->id(), scannedTracks);
         }
     });
 }
@@ -394,15 +396,15 @@ void PlaylistController::filesToNewPlaylist(const QString& playlistName, const Q
     TrackList tracks;
     std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 
-    auto handleScanResult = [this, playlistName](const TrackList& tracks) {
+    auto handleScanResult = [this, playlistName](const TrackList& scannedTracks) {
         Playlist* playlist = p->handler->playlistByName(playlistName);
         if(playlist) {
             const int indexToPlay = playlist->trackCount();
-            p->handler->appendToPlaylist(playlist->id(), tracks);
+            p->handler->appendToPlaylist(playlist->id(), scannedTracks);
             playlist->changeCurrentTrack(indexToPlay);
         }
         else {
-            playlist = p->handler->createPlaylist(playlistName, tracks);
+            playlist = p->handler->createPlaylist(playlistName, scannedTracks);
         }
 
         if(playlist) {

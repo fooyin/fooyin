@@ -36,8 +36,8 @@ struct ExpandableInput::Private
     QLineEdit* editBlock{nullptr};
     bool readOnly{false};
 
-    explicit Private(Attributes attributes)
-        : attributes{attributes}
+    explicit Private(Attributes attributes_)
+        : attributes{attributes_}
     { }
 };
 
@@ -133,9 +133,9 @@ struct ExpandableInputBox::Private
     std::function<QWidget*(ExpandableInput*)> sideWidget{nullptr};
     std::vector<QWidget*> createdSideWidgets;
 
-    Private(ExpandableInputBox* self, const QString& title, ExpandableInput::Attributes attributes)
-        : self{self}
-        , attributes{attributes}
+    Private(ExpandableInputBox* self_, const QString& title_, ExpandableInput::Attributes attributes_)
+        : self{self_}
+        , attributes{attributes_}
         , widgetLayout{new QHBoxLayout()}
         , blockLayout{new QGridLayout()}
         , addBlock{new QPushButton(QIcon::fromTheme(AddIcon), "", self)}
@@ -147,7 +147,7 @@ struct ExpandableInputBox::Private
         addBlock->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         deleteBlock->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-        auto* titleLabel = new QLabel(title, self);
+        auto* titleLabel = new QLabel(title_, self);
 
         layout->addWidget(titleLabel, 0, 0);
         layout->addLayout(widgetLayout, 0, 1);

@@ -753,10 +753,10 @@ void updateHeaderChildren(Fooyin::PlaylistItem* header)
 } // namespace
 
 namespace Fooyin {
-PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model, MusicLibrary* library, SettingsManager* settings)
-    : model{model}
-    , library{library}
-    , settings{settings}
+PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model_, MusicLibrary* library_, SettingsManager* settings_)
+    : model{model_}
+    , library{library_}
+    , settings{settings_}
     , coverProvider{new CoverProvider(model)}
     , resetting{false}
     , altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
@@ -1402,7 +1402,7 @@ void PlaylistModelPrivate::updateTrackIndexes()
 {
     std::stack<PlaylistItem*> trackNodes;
     trackNodes.push(model->rootItem());
-    int currentIndex{0};
+    int index{0};
 
     trackIndexes.clear();
 
@@ -1415,8 +1415,8 @@ void PlaylistModelPrivate::updateTrackIndexes()
         }
 
         if(node->type() == PlaylistItem::Track) {
-            trackIndexes.emplace(currentIndex, node->key());
-            node->setIndex(currentIndex++);
+            trackIndexes.emplace(index, node->key());
+            node->setIndex(index++);
         }
 
         const auto children = node->children();

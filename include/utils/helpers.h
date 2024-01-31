@@ -88,8 +88,8 @@ QString findUniqueString(const QString& name, const T& elements, StringExtractor
 
     QString uniqueName{name};
 
-    auto findCount = [&elements, extractor](const QString& name) -> int {
-        const QString regexName    = QRegularExpression::escape(name);
+    auto findCount = [&elements, extractor](const QString& str) -> int {
+        const QString regexName    = QRegularExpression::escape(str);
         const QString regexPattern = QString{R"(^%1\s*(\(\d+\))?\s*$)"}.arg(regexName);
         const QRegularExpression pattern{regexPattern};
 

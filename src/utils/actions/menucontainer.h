@@ -31,8 +31,8 @@ class MenuContainer : public ActionContainer
 public:
     struct Group
     {
-        explicit Group(const Id& id)
-            : id{id}
+        explicit Group(const Id& id_)
+            : id{id_}
         { }
         Id id;
         std::vector<QObject*> items;

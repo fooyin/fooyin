@@ -113,8 +113,8 @@ struct LibraryTreeModel::Private
     QFont font;
     QColor colour;
 
-    explicit Private(LibraryTreeModel* self)
-        : self{self}
+    explicit Private(LibraryTreeModel* self_)
+        : self{self_}
     {
         populator.moveToThread(&populatorThread);
     }

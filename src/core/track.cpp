@@ -70,8 +70,8 @@ struct Track::Private : public QSharedData
 
     QString sort;
 
-    explicit Private(QString filepath)
-        : filepath{std::move(filepath)}
+    explicit Private(QString filepath_)
+        : filepath{std::move(filepath_)}
     {
         filename = QFileInfo{this->filepath}.fileName();
     }

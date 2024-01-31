@@ -59,11 +59,10 @@ struct ScriptParser::Private
 
     QString currentInput;
     std::unordered_map<QString, ParsedScript> parsedScripts;
-    QStringList result;
+    QStringList currentResult;
 
-    explicit Private(ScriptRegistry* registry)
-        : scanner{}
-        , registry{registry}
+    explicit Private(ScriptRegistry* registry_)
+        : registry{registry_}
     { }
 
     void advance()
@@ -430,7 +429,7 @@ struct ScriptParser::Private
             return {};
         }
 
-        result.clear();
+        currentResult.clear();
 
         const ExpressionList expressions = input.expressions;
         for(const auto& expr : expressions) {
@@ -441,31 +440,31 @@ struct ScriptParser::Private
             }
 
             if(evalExpr.value.contains(Constants::Separator)) {
-                const QStringList evalList = evalStringList(evalExpr, result);
+                const QStringList evalList = evalStringList(evalExpr, currentResult);
                 if(!evalList.empty()) {
-                    result = evalList;
+                    currentResult = evalList;
                 }
             }
             else {
-                if(result.empty()) {
-                    result.push_back(evalExpr.value);
+                if(currentResult.empty()) {
+                    currentResult.push_back(evalExpr.value);
                 }
                 else {
-                    std::ranges::transform(result, result.begin(), [&](const QString& retValue) -> QString {
-                        return retValue + evalExpr.value;
-                    });
+                    std::ranges::transform(
+                        currentResult, currentResult.begin(),
+                        [&](const QString& retValue) -> QString { return retValue + evalExpr.value; });
                 }
             }
         }
 
-        if(result.size() == 1) {
+        if(currentResult.size() == 1) {
             // Calling join on a QStringList with a single empty string will return a null QString, so return the first
             // result.
-            return result.constFirst();
+            return currentResult.constFirst();
         }
 
-        if(result.size() > 1) {
-            return result.join(Constants::Separator);
+        if(currentResult.size() > 1) {
+            return currentResult.join(Constants::Separator);
         }
 
         return {};

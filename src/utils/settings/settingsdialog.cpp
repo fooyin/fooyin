@@ -47,8 +47,8 @@ struct SettingsDialog::Private
     Id currentCategory;
     Id currentPage;
 
-    Private(SettingsDialog* self, PageList pageList)
-        : self{self}
+    Private(SettingsDialog* self_, PageList pageList_)
+        : self{self_}
         , model{new SettingsModel(self)}
         , categoryTree{new SimpleTreeView(self)}
         , stackedLayout{new QStackedLayout()}
@@ -56,7 +56,7 @@ struct SettingsDialog::Private
                                              | QDialogButtonBox::Ok | QDialogButtonBox::Apply
                                              | QDialogButtonBox::Cancel,
                                          self)}
-        , pages{std::move(pageList)}
+        , pages{std::move(pageList_)}
     {
         stackedLayout->setContentsMargins(0, 0, 0, 0);
 

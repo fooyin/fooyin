@@ -54,7 +54,7 @@ public:
     void erase(const Id& id);
 
 private:
-    IdList ids;
+    IdList m_ids;
 };
 
 class FYUTILS_EXPORT WidgetContext : public QObject

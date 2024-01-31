@@ -47,10 +47,10 @@ struct SeekBar::Private
     uint64_t max{0};
     bool elapsedTotal;
 
-    Private(SeekBar* self, PlayerManager* playerManager, SettingsManager* settings)
-        : self{self}
-        , playerManager{playerManager}
-        , settings{settings}
+    Private(SeekBar* self_, PlayerManager* playerManager_, SettingsManager* settings_)
+        : self{self_}
+        , playerManager{playerManager_}
+        , settings{settings_}
         , slider{new Slider(Qt::Horizontal, self)}
         , elapsed{new ClickableLabel(self)}
         , total{new ClickableLabel(self)}

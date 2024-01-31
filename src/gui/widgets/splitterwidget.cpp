@@ -118,12 +118,12 @@ struct SplitterWidget::Private
     int widgetCount{0};
     int baseWidgetCount{0};
 
-    Private(SplitterWidget* self, ActionManager* actionManager, WidgetProvider* widgetProvider,
-            SettingsManager* settings)
-        : self{self}
-        , settings{settings}
-        , actionManager{actionManager}
-        , widgetProvider{widgetProvider}
+    Private(SplitterWidget* self_, ActionManager* actionManager_, WidgetProvider* widgetProvider_,
+            SettingsManager* settings_)
+        : self{self_}
+        , settings{settings_}
+        , actionManager{actionManager_}
+        , widgetProvider{widgetProvider_}
         , splitter{new Splitter(Qt::Vertical, settings, self)}
     { }
 

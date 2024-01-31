@@ -31,7 +31,7 @@ constexpr int BatchSize        = 4000;
 namespace Fooyin {
 struct LibraryTreePopulator::Private
 {
-    LibraryTreePopulator* populator;
+    LibraryTreePopulator* self;
 
     ScriptRegistry registry;
     ScriptParser parser;
@@ -43,8 +43,8 @@ struct LibraryTreePopulator::Private
     PendingTreeData data;
     TrackList pendingTracks;
 
-    explicit Private(LibraryTreePopulator* populator)
-        : populator{populator}
+    explicit Private(LibraryTreePopulator* self_)
+        : self{self_}
         , parser{&registry}
         , data{}
     { }
@@ -104,7 +104,7 @@ struct LibraryTreePopulator::Private
         auto tracksBatch = std::ranges::views::take(pendingTracks, size);
 
         for(const Track& track : tracksBatch) {
-            if(!populator->mayRun()) {
+            if(!self->mayRun()) {
                 return;
             }
 
@@ -113,11 +113,11 @@ struct LibraryTreePopulator::Private
             }
         }
 
-        if(!populator->mayRun()) {
+        if(!self->mayRun()) {
             return;
         }
 
-        emit populator->populated(data);
+        emit self->populated(data);
 
         auto tracksToKeep = std::ranges::views::drop(pendingTracks, size);
         TrackList tempTracks;
@@ -130,7 +130,7 @@ struct LibraryTreePopulator::Private
         runBatch(std::min(remaining, BatchSize));
 
         if(remaining == 0) {
-            emit populator->finished();
+            emit self->finished();
         }
     }
 };

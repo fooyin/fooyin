@@ -53,9 +53,9 @@ struct SearchController::Private
     std::unordered_map<Id, FyWidget*, Id::IdHash> searchableWidgets;
     std::unordered_map<Id, std::set<Id>, Id::IdHash> connections;
 
-    explicit Private(SearchController* self, EditableLayout* editableLayout)
-        : self{self}
-        , editableLayout{editableLayout}
+    explicit Private(SearchController* self_, EditableLayout* editableLayout_)
+        : self{self_}
+        , editableLayout{editableLayout_}
     {
         connectedColour.setAlpha(80);
         disconnectedColour.setAlpha(80);

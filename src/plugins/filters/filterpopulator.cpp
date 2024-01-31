@@ -31,7 +31,7 @@ constexpr auto ColumnSeparator = "\036";
 namespace Fooyin::Filters {
 struct FilterPopulator::Private
 {
-    FilterPopulator* populator;
+    FilterPopulator* self;
 
     ScriptRegistry registry;
     ScriptParser parser;
@@ -42,8 +42,8 @@ struct FilterPopulator::Private
     FilterItem root;
     PendingTreeData data;
 
-    explicit Private(FilterPopulator* populator)
-        : populator{populator}
+    explicit Private(FilterPopulator* self_)
+        : self{self_}
         , parser{&registry}
         , data{}
     { }
@@ -100,7 +100,7 @@ struct FilterPopulator::Private
     void runBatch(const TrackList& tracks)
     {
         for(const Track& track : tracks) {
-            if(!populator->mayRun()) {
+            if(!self->mayRun()) {
                 return;
             }
 
@@ -109,11 +109,11 @@ struct FilterPopulator::Private
             }
         }
 
-        if(!populator->mayRun()) {
+        if(!self->mayRun()) {
             return;
         }
 
-        QMetaObject::invokeMethod(populator, "populated", Q_ARG(PendingTreeData, data));
+        QMetaObject::invokeMethod(self, "populated", Q_ARG(PendingTreeData, data));
 
         data.clear();
     }

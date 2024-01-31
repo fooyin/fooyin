@@ -40,10 +40,10 @@ struct MenuContainer::Private
     Id id;
     DisabledBehavior disabledBehavior{Disable};
 
-    Private(MenuContainer* self, const Id& id, ActionManager* manager)
-        : self{self}
-        , manager{manager}
-        , id{id}
+    Private(MenuContainer* self_, const Id& id_, ActionManager* manager_)
+        : self{self_}
+        , manager{manager_}
+        , id{id_}
     { }
 
     void itemDestroyed(QObject* sender) const
@@ -154,12 +154,12 @@ void MenuContainer::appendGroup(const Id& group)
     groups.emplace_back(group);
 }
 
-void MenuContainer::insertGroup(const Id& beforeGroup, const Id& group)
+void MenuContainer::insertGroup(const Id& beforeGroup, const Id& newGroup)
 {
     auto groupIt
         = std::ranges::find_if(std::as_const(groups), [&](const auto& group) { return (group.id == beforeGroup); });
     if(groupIt != groups.cend()) {
-        groups.insert(groupIt, Group{group});
+        groups.insert(groupIt, Group{newGroup});
     }
 }
 

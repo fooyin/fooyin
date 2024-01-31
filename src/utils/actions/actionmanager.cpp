@@ -53,9 +53,9 @@ struct ActionManager::Private
     WidgetContextList activeContext;
     std::unordered_map<QWidget*, WidgetContext*> contextWidgets;
 
-    explicit Private(ActionManager* self, SettingsManager* settingsManager)
-        : self{self}
-        , settingsManager{settingsManager}
+    explicit Private(ActionManager* self_, SettingsManager* settingsManager_)
+        : self{self_}
+        , settingsManager{settingsManager_}
     { }
 
     ActionCommand* overridableAction(const Id& id)
@@ -278,18 +278,17 @@ ActionContainer* ActionManager::createMenu(const Id& id)
         return p->idContainerMap.at(id).get();
     }
 
-    auto* container
-        = p->idContainerMap.emplace(id, std::make_unique<MenuActionContainer>(id, this)).first->second.get();
+    auto* menu = p->idContainerMap.emplace(id, std::make_unique<MenuActionContainer>(id, this)).first->second.get();
 
-    QObject::connect(container, &QObject::destroyed, this, [this](QObject* sender) { p->containerDestroyed(sender); });
-    QObject::connect(container, &MenuContainer::requestUpdate, this,
+    QObject::connect(menu, &QObject::destroyed, this, [this](QObject* sender) { p->containerDestroyed(sender); });
+    QObject::connect(menu, &MenuContainer::requestUpdate, this,
                      [this](MenuContainer* container) { p->scheduleContainerUpdate(container); });
 
-    container->appendGroup(Actions::Groups::One);
-    container->appendGroup(Actions::Groups::Two);
-    container->appendGroup(Actions::Groups::Three);
+    menu->appendGroup(Actions::Groups::One);
+    menu->appendGroup(Actions::Groups::Two);
+    menu->appendGroup(Actions::Groups::Three);
 
-    return container;
+    return menu;
 }
 
 ActionContainer* ActionManager::createMenuBar(const Id& id)
@@ -307,13 +306,13 @@ ActionContainer* ActionManager::createMenuBar(const Id& id)
         p->idContainerMap.emplace(id, std::move(container));
     }
 
-    auto* container = p->idContainerMap.at(id).get();
+    auto* menuBar = p->idContainerMap.at(id).get();
 
-    QObject::connect(container, &QObject::destroyed, this, [this](QObject* sender) { p->containerDestroyed(sender); });
-    QObject::connect(container, &MenuContainer::requestUpdate, this,
+    QObject::connect(menuBar, &QObject::destroyed, this, [this](QObject* sender) { p->containerDestroyed(sender); });
+    QObject::connect(menuBar, &MenuContainer::requestUpdate, this,
                      [this](MenuContainer* container) { p->scheduleContainerUpdate(container); });
 
-    return container;
+    return menuBar;
 }
 
 Command* ActionManager::registerAction(QAction* action, const Id& id, const Context& context)

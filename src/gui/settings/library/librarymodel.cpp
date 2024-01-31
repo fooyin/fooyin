@@ -62,9 +62,9 @@ struct LibraryModel::Private
     std::unordered_map<QString, LibraryItem> nodes;
     std::vector<LibraryInfo> librariesToAdd;
 
-    Private(LibraryModel* self, LibraryManager* libraryManager)
-        : self{self}
-        , libraryManager{libraryManager}
+    Private(LibraryModel* self_, LibraryManager* libraryManager_)
+        : self{self_}
+        , libraryManager{libraryManager_}
     { }
 
     void updateDisplay(const LibraryInfo& info)

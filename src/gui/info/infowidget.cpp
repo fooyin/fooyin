@@ -46,12 +46,12 @@ struct InfoWidget::Private
     QTreeView* view;
     InfoModel* model;
 
-    Private(InfoWidget* self, TrackSelectionController* selectionController, PlayerManager* playerManager,
-            SettingsManager* settings)
-        : self{self}
-        , selectionController{selectionController}
-        , playerManager{playerManager}
-        , settings{settings}
+    Private(InfoWidget* self_, TrackSelectionController* selectionController_, PlayerManager* playerManager_,
+            SettingsManager* settings_)
+        : self{self_}
+        , selectionController{selectionController_}
+        , playerManager{playerManager_}
+        , settings{settings_}
         , view{new QTreeView(self)}
         , model{new InfoModel(self)}
     {

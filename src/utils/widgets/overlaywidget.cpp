@@ -47,10 +47,10 @@ struct OverlayWidget::Private
     QColor hoveredColour{Qt::white};
     QColor selectedColour{Qt::white};
 
-    Private(OverlayWidget* self, const Options& options)
-        : self{self}
+    Private(OverlayWidget* self_, const Options& options_)
+        : self{self_}
         , layout{new QVBoxLayout(self)}
-        , options{options}
+        , options{options_}
     {
         layout->setContentsMargins(5, 5, 5, 5);
         layout->setAlignment(Qt::AlignCenter);

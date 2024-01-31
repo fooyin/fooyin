@@ -49,13 +49,13 @@ struct AutoHeaderView::Private
 
     SectionState state{NoState};
     int firstPos{-1};
-    int target{-1};
-    int section{-1};
+    int mouseTarget{-1};
+    int mouseSection{-1};
     int firstPressed{-1};
     bool moving{false};
 
-    explicit Private(AutoHeaderView* self)
-        : self{self}
+    explicit Private(AutoHeaderView* self_)
+        : self{self_}
     { }
 
     void calculateSectionWidths()
@@ -449,10 +449,10 @@ void AutoHeaderView::addHeaderAlignmentMenu(QMenu* menu, const QPoint& pos)
     alignCentre->setCheckable(true);
     alignRight->setCheckable(true);
 
-    const QModelIndex index = model()->index(0, logical);
-    const auto alignment    = model()->data(index, Qt::TextAlignmentRole).value<Qt::Alignment>();
+    const QModelIndex index     = model()->index(0, logical);
+    const auto currentAlignment = model()->data(index, Qt::TextAlignmentRole).value<Qt::Alignment>();
 
-    switch(alignment) {
+    switch(currentAlignment) {
         case(Qt::AlignLeft):
             alignLeft->setChecked(true);
             break;
@@ -514,16 +514,16 @@ QByteArray AutoHeaderView::saveHeaderState() const
     return result;
 }
 
-void AutoHeaderView::restoreHeaderState(const QByteArray& data)
+void AutoHeaderView::restoreHeaderState(const QByteArray& state)
 {
     Qt::SortOrder sortOrder{Qt::AscendingOrder};
     int sortSection{0};
 
-    if(!data.isEmpty()) {
+    if(!state.isEmpty()) {
         SectionIndexes pixelWidths;
         SectionIndexes logicalIndexes;
 
-        QDataStream stream{data};
+        QDataStream stream{state};
         stream.setVersion(QDataStream::Qt_6_5);
 
         stream >> pixelWidths;
@@ -576,8 +576,8 @@ void AutoHeaderView::mousePressEvent(QMouseEvent* event)
 
     if(handleIndex == -1) {
         p->firstPressed = logicalIndexAt(pos);
-        p->target       = -1;
-        p->section      = p->firstPressed;
+        p->mouseTarget  = -1;
+        p->mouseSection = p->firstPressed;
         if(p->firstPressed >= 0) {
             p->state = SectionState::Moving;
         }
@@ -621,11 +621,11 @@ void AutoHeaderView::mouseMoveEvent(QMouseEvent* event)
         if(std::abs(pos - p->firstPos) >= QApplication::startDragDistance()) {
             const int visual = visualIndexAt(pos);
             if(visual >= 0) {
-                const int moving = visualIndex(p->section);
+                const int moving = visualIndex(p->mouseSection);
                 if(visual == moving) {
-                    p->target = p->section;
+                    p->mouseTarget = p->mouseSection;
                 }
-                p->moving = (p->section >= 0 && p->target >= 0);
+                p->moving = (p->mouseSection >= 0 && p->mouseTarget >= 0);
             }
         }
     }

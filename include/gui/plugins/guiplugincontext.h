@@ -35,16 +35,17 @@ class EditableLayout;
  */
 struct FYGUI_EXPORT GuiPluginContext
 {
-    GuiPluginContext(ActionManager* actionManager, LayoutProvider* layoutProvider,
-                     TrackSelectionController* trackSelection, SearchController* searchController,
-                     PropertiesDialog* propertiesDialog, WidgetProvider* widgetProvider, EditableLayout* editableLayout)
-        : actionManager{actionManager}
-        , layoutProvider{layoutProvider}
-        , trackSelection{trackSelection}
-        , searchController{searchController}
-        , propertiesDialog{propertiesDialog}
-        , widgetProvider{widgetProvider}
-        , editableLayout{editableLayout}
+    GuiPluginContext(ActionManager* actionManager_, LayoutProvider* layoutProvider_,
+                     TrackSelectionController* trackSelection_, SearchController* searchController_,
+                     PropertiesDialog* propertiesDialog_, WidgetProvider* widgetProvider_,
+                     EditableLayout* editableLayout_)
+        : actionManager{actionManager_}
+        , layoutProvider{layoutProvider_}
+        , trackSelection{trackSelection_}
+        , searchController{searchController_}
+        , propertiesDialog{propertiesDialog_}
+        , widgetProvider{widgetProvider_}
+        , editableLayout{editableLayout_}
     { }
 
     ActionManager* actionManager;

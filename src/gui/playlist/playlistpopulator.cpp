@@ -56,8 +56,8 @@ struct PlaylistPopulator::Private
     ContainerKeyMap headers;
     TrackList pendingTracks;
 
-    explicit Private(PlaylistPopulator* self)
-        : self{self}
+    explicit Private(PlaylistPopulator* self_)
+        : self{self_}
         , registry{std::make_unique<PlaylistScriptRegistry>()}
         , parser{registry.get()}
     { }

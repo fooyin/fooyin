@@ -107,16 +107,16 @@ Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList&
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
 
-PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager,
-                                             PlaylistController* playlistController, MusicLibrary* library,
-                                             SettingsManager* settings)
-    : self{self}
-    , actionManager{actionManager}
-    , selectionController{playlistController->selectionController()}
-    , library{library}
-    , settings{settings}
+PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManager* actionManager_,
+                                             PlaylistController* playlistController_, MusicLibrary* library_,
+                                             SettingsManager* settings_)
+    : self{self_}
+    , actionManager{actionManager_}
+    , selectionController{playlistController_->selectionController()}
+    , library{library_}
+    , settings{settings_}
     , settingsDialog{settings->settingsDialog()}
-    , playlistController{playlistController}
+    , playlistController{playlistController_}
     , columnRegistry{settings}
     , presetRegistry{settings}
     , sortRegistry{settings}
@@ -435,15 +435,15 @@ void PlaylistWidgetPrivate::selectionChanged() const
     }
 
     if(settings->value<Settings::Gui::PlaybackFollowsCursor>()) {
-        if(auto* currentPlaylist = playlistController->currentPlaylist()) {
-            if(currentPlaylist->currentTrackIndex() != firstIndex) {
+        if(auto* playlist = playlistController->currentPlaylist()) {
+            if(playlist->currentTrackIndex() != firstIndex) {
                 if(playlistController->playState() != PlayState::Playing) {
-                    currentPlaylist->changeCurrentTrack(firstIndex);
+                    playlist->changeCurrentTrack(firstIndex);
                 }
                 else {
-                    currentPlaylist->scheduleNextIndex(firstIndex);
+                    playlist->scheduleNextIndex(firstIndex);
                 }
-                playlistController->playlistHandler()->schedulePlaylist(currentPlaylist);
+                playlistController->playlistHandler()->schedulePlaylist(playlist);
             }
         }
     }
@@ -769,11 +769,11 @@ void PlaylistWidgetPrivate::addPlaylistMenu(QMenu* parent)
 {
     auto* playlistMenu = new QMenu(Fooyin::PlaylistWidget::tr("Playlists"), parent);
 
-    const auto* currentPlaylist = playlistController->currentPlaylist();
-    const auto playlists        = playlistController->playlists();
+    const auto* currPlaylist = playlistController->currentPlaylist();
+    const auto playlists     = playlistController->playlists();
 
     for(const auto& playlist : playlists) {
-        if(playlist != currentPlaylist) {
+        if(playlist != currPlaylist) {
             auto* switchPl = new QAction(playlist->name(), playlistMenu);
             const int id   = playlist->id();
             QObject::connect(switchPl, &QAction::triggered, playlistMenu,

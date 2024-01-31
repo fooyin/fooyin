@@ -47,10 +47,10 @@ struct PlaylistControl::Private
     QIcon repeatActiveIcon;
     QIcon shuffleActiveIcon;
 
-    Private(PlaylistControl* self, PlayerManager* playerManager, SettingsManager* settings)
-        : self{self}
-        , playerManager{playerManager}
-        , settings{settings}
+    Private(PlaylistControl* self_, PlayerManager* playerManager_, SettingsManager* settings_)
+        : self{self_}
+        , playerManager{playerManager_}
+        , settings{settings_}
         , repeat{new ToolButton(self)}
         , shuffle{new ToolButton(self)}
         , repeatActiveIcon{Utils::changePixmapColour(QIcon::fromTheme(Constants::Icons::Repeat).pixmap({128, 128}),

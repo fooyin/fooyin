@@ -137,13 +137,14 @@ public:
     TrackList prevSearchTracks;
 };
 
-LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, MusicLibrary* library,
-                                                   TrackSelectionController* trackSelection, SettingsManager* settings)
-    : self{self}
-    , library{library}
-    , groupsRegistry{settings}
-    , trackSelection{trackSelection}
-    , settings{settings}
+LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self_, MusicLibrary* library_,
+                                                   TrackSelectionController* trackSelection_,
+                                                   SettingsManager* settings_)
+    : self{self_}
+    , library{library_}
+    , groupsRegistry{settings_}
+    , trackSelection{trackSelection_}
+    , settings{settings_}
     , layout{new QVBoxLayout(self)}
     , libraryTree{new LibraryTreeView(self)}
     , model{new LibraryTreeModel(self)}

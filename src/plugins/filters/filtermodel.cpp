@@ -85,8 +85,8 @@ struct FilterModel::Private
     QFont font;
     QColor colour;
 
-    explicit Private(FilterModel* self)
-        : self{self}
+    explicit Private(FilterModel* self_)
+        : self{self_}
     {
         populator.moveToThread(&populatorThread);
     }

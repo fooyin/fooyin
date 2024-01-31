@@ -114,9 +114,9 @@ struct PlaylistOrganiserModel::Private
 
     std::unordered_map<QString, PlaylistOrganiserItem> nodes;
 
-    explicit Private(PlaylistOrganiserModel* self, PlaylistManager* playlistManager)
-        : self{self}
-        , playlistManager{playlistManager}
+    explicit Private(PlaylistOrganiserModel* self_, PlaylistManager* playlistManager_)
+        : self{self_}
+        , playlistManager{playlistManager_}
     { }
 
     QByteArray saveIndexes(const QModelIndexList& indexes) const

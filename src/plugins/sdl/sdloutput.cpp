@@ -78,7 +78,7 @@ bool SdlOutput::init(const OutputContext& oc)
 
     p->desiredSpec.freq     = oc.format.sampleRate();
     p->desiredSpec.format   = findFormat(oc.format.sampleFormat());
-    p->desiredSpec.channels = oc.channelLayout.nb_channels;
+    p->desiredSpec.channels = oc.format.channelCount();
     p->desiredSpec.samples  = BufferSize;
     p->desiredSpec.callback = nullptr;
     p->desiredSpec.userdata = &p->outputContext;

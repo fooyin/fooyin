@@ -69,12 +69,12 @@ struct TrackSelectionController::Private
     QAction* openFolder;
     QAction* openProperties;
 
-    Private(TrackSelectionController* self, ActionManager* actionManager, SettingsManager* settings,
-            PlaylistController* playlistController)
-        : self{self}
-        , actionManager{actionManager}
-        , settings{settings}
-        , playlistController{playlistController}
+    Private(TrackSelectionController* self_, ActionManager* actionManager_, SettingsManager* settings_,
+            PlaylistController* playlistController_)
+        : self{self_}
+        , actionManager{actionManager_}
+        , settings{settings_}
+        , playlistController{playlistController_}
         , playlistHandler{playlistController->playlistHandler()}
         , tracksMenu{actionManager->createMenu(Constants::Menus::Context::TrackSelection)}
         , tracksPlaylistMenu{actionManager->createMenu(Constants::Menus::Context::TracksPlaylist)}
@@ -96,7 +96,7 @@ struct TrackSelectionController::Private
         tracksPlaylistMenu->addAction(actionManager->registerAction(sendCurrent, "TrackSelection.SendCurrentPlaylist"));
 
         sendNew = new QAction(tr("Send to new playlist"), tracksPlaylistMenu);
-        QObject::connect(sendNew, &QAction::triggered, tracksPlaylistMenu, [this, self]() {
+        QObject::connect(sendNew, &QAction::triggered, tracksPlaylistMenu, [this]() {
             if(self->hasTracks()) {
                 const auto& selection = contextSelection.at(activeContext);
                 sendToNewPlaylist(PlaylistAction::Switch, selection.name);
@@ -109,7 +109,7 @@ struct TrackSelectionController::Private
         // Tracks menu
         tracksMenu->addSeparator();
 
-        QObject::connect(openFolder, &QAction::triggered, tracksMenu, [this, self]() {
+        QObject::connect(openFolder, &QAction::triggered, tracksMenu, [this]() {
             if(self->hasTracks()) {
                 const auto& selection = contextSelection.at(activeContext);
                 const QString dir     = QFileInfo{selection.tracks.front().filepath()}.absolutePath();
@@ -121,7 +121,7 @@ struct TrackSelectionController::Private
         tracksMenu->addSeparator();
 
         openProperties = new QAction(tr("Properties"), tracksMenu);
-        QObject::connect(openProperties, &QAction::triggered, self, [self]() {
+        QObject::connect(openProperties, &QAction::triggered, self, [this]() {
             QMetaObject::invokeMethod(self, &TrackSelectionController::requestPropertiesDialog);
         });
         tracksMenu->addAction(actionManager->registerAction(openProperties, "TrackSelection.OpenProperties"));

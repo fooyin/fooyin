@@ -59,8 +59,8 @@ struct PlaylistColumnModel::Private
     ColumnItem root;
     std::map<int, ColumnItem> nodes;
 
-    explicit Private(PlaylistColumnRegistry* columnsRegistry)
-        : columnsRegistry{columnsRegistry}
+    explicit Private(PlaylistColumnRegistry* columnsRegistry_)
+        : columnsRegistry{columnsRegistry_}
     { }
 };
 

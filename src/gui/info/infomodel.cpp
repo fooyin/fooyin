@@ -130,8 +130,8 @@ struct InfoModel::Private
 
     std::unordered_map<QString, InfoItem> nodes;
 
-    Private(InfoModel* self)
-        : self{self}
+    Private(InfoModel* self_)
+        : self{self_}
     { }
 
     void reset()

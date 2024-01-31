@@ -35,8 +35,8 @@ struct ProxyAction::Private
     Attributes attributes;
     bool updating{false};
 
-    explicit Private(ProxyAction* self)
-        : self{self}
+    explicit Private(ProxyAction* self_)
+        : self{self_}
     { }
 
     void updateToolTipWithShortcut()

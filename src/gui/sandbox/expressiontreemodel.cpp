@@ -89,27 +89,27 @@ struct ExpressionTreeModel::Private
     {
         QString name;
 
-        if(const auto* value = std::get_if<QString>(&expression.value)) {
-            name = *value;
+        if(const auto* val = std::get_if<QString>(&expression.value)) {
+            name = *val;
             insertNode(generateKey(parent->key(), name), name, expression, parent);
         }
 
-        else if(const auto* value = std::get_if<FuncValue>(&expression.value)) {
-            name       = value->name;
+        else if(const auto* funcVal = std::get_if<FuncValue>(&expression.value)) {
+            name       = funcVal->name;
             auto* node = insertNode(generateKey(parent->key(), name), name, expression, parent);
 
-            for(const auto& argExpr : value->args) {
+            for(const auto& argExpr : funcVal->args) {
                 iterateExpression(argExpr, node);
             }
         }
 
-        else if(const auto* value = std::get_if<ExpressionList>(&expression.value)) {
+        else if(const auto* listVal = std::get_if<ExpressionList>(&expression.value)) {
             if(expression.type == Expr::Conditional) {
                 name   = ConditionalName;
                 parent = insertNode(generateKey(parent->key(), name), name, expression, parent);
             }
 
-            for(const auto& listExpr : *value) {
+            for(const auto& listExpr : *listVal) {
                 iterateExpression(listExpr, parent);
             }
         }

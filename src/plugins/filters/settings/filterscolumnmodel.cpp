@@ -58,8 +58,8 @@ struct FiltersColumnModel::Private
     ColumnItem root;
     std::map<int, ColumnItem> nodes;
 
-    explicit Private(FilterColumnRegistry* columnsRegistry)
-        : columnsRegistry{columnsRegistry}
+    explicit Private(FilterColumnRegistry* columnsRegistry_)
+        : columnsRegistry{columnsRegistry_}
     { }
 };
 

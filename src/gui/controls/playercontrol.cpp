@@ -41,10 +41,10 @@ struct PlayerControl::Private
     ToolButton* playPause;
     ToolButton* next;
 
-    Private(PlayerControl* self, PlayerManager* playerManager, SettingsManager* settings)
-        : self{self}
-        , playerManager{playerManager}
-        , settings{settings}
+    Private(PlayerControl* self_, PlayerManager* playerManager_, SettingsManager* settings_)
+        : self{self_}
+        , playerManager{playerManager_}
+        , settings{settings_}
         , stop{new ToolButton(self)}
         , prev{new ToolButton(self)}
         , playPause{new ToolButton(self)}

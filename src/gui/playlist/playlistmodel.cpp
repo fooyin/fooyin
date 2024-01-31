@@ -417,8 +417,8 @@ TrackGroups PlaylistModel::saveTrackGroups(const QModelIndexList& indexes) const
 
     for(const auto& group : indexGroups) {
         const int index = group.front().data(Fooyin::PlaylistItem::Role::Index).toInt();
-        std::ranges::transform(std::as_const(group), std::back_inserter(result[index]), [](const QModelIndex& index) {
-            return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>();
+        std::ranges::transform(group, std::back_inserter(result[index]), [](const QModelIndex& trackIndex) {
+            return trackIndex.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>();
         });
     }
     return result;

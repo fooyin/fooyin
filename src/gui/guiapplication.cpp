@@ -137,8 +137,8 @@ struct GuiApplication::Private
 
     GuiPluginContext guiPluginContext;
 
-    explicit Private(GuiApplication* self, const CorePluginContext& core)
-        : self{self}
+    explicit Private(GuiApplication* self_, const CorePluginContext& core)
+        : self{self_}
         , settingsManager{core.settingsManager}
         , actionManager{new ActionManager(settingsManager, self)}
         , pluginManager{core.pluginManager}

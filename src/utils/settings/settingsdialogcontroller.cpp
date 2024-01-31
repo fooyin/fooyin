@@ -35,8 +35,8 @@ struct SettingsDialogController::Private
     PageList pages;
     Id lastOpenPage;
 
-    Private(SettingsManager* settings)
-        : settings{settings}
+    Private(SettingsManager* settings_)
+        : settings{settings_}
     { }
 };
 

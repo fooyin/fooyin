@@ -188,10 +188,10 @@ public:
         QDataStream stream(&byteArray, QIODevice::WriteOnly);
         stream.setVersion(QDataStream::Qt_6_5);
 
-        const int customCount = std::ranges::count_if(m_items, [](const auto& item) { return !item.isDefault; });
+        const int customCount = std::ranges::count_if(m_items, [](const auto& regItem) { return !regItem.isDefault; });
         stream << customCount;
 
-        for(const auto& item : m_items | std::views::filter([](const auto& item) { return !item.isDefault; })) {
+        for(const auto& item : m_items | std::views::filter([](const auto& regItem) { return !regItem.isDefault; })) {
             stream << item;
         }
 
@@ -261,7 +261,7 @@ private:
                 return 0;
             }
 
-            auto ids = m_items | std::views::transform([](const auto& item) { return item.id; });
+            auto ids = m_items | std::views::transform([](const auto& regItem) { return regItem.id; });
 
             const int nextId = *std::ranges::max_element(ids) + 1;
             return nextId;

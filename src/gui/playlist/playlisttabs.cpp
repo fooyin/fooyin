@@ -50,8 +50,8 @@ struct PlaylistTabs::Private
 {
     ActionManager* actionManager;
     WidgetProvider* widgetProvider;
-    PlaylistManager* playlistHandler;
     PlaylistController* playlistController;
+    PlaylistManager* playlistHandler;
     TrackSelectionController* selectionController;
     SettingsManager* settings;
 
@@ -64,16 +64,16 @@ struct PlaylistTabs::Private
     QBasicTimer hoverTimer;
     int currentHoverIndex{-1};
 
-    Private(PlaylistTabs* self, ActionManager* actionManager, WidgetProvider* widgetProvider,
-            PlaylistController* playlistController, SettingsManager* settings)
-        : actionManager{actionManager}
-        , widgetProvider{widgetProvider}
+    Private(PlaylistTabs* self_, ActionManager* actionManager_, WidgetProvider* widgetProvider_,
+            PlaylistController* playlistController_, SettingsManager* settings_)
+        : actionManager{actionManager_}
+        , widgetProvider{widgetProvider_}
+        , playlistController{playlistController_}
         , playlistHandler{playlistController->playlistHandler()}
-        , playlistController{playlistController}
         , selectionController{playlistController->selectionController()}
-        , settings{settings}
-        , layout{new QVBoxLayout(self)}
-        , tabs{new EditableTabBar(self)}
+        , settings{settings_}
+        , layout{new QVBoxLayout(self_)}
+        , tabs{new EditableTabBar(self_)}
     {
         layout->addWidget(tabs);
         layout->setContentsMargins(0, 0, 0, 0);

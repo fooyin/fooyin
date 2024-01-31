@@ -48,9 +48,9 @@ struct VolumeControl::Private
 
     double prevValue{-1.0};
 
-    Private(VolumeControl* self, SettingsManager* settings)
-        : self{self}
-        , settings{settings}
+    Private(VolumeControl* self_, SettingsManager* settings_)
+        : self{self_}
+        , settings{settings_}
         , volumeIcon{new ToolButton(self)}
         , volumeMenu{new HoverMenu(self)}
         , volumeSlider{new LogSlider(Qt::Vertical, self)}

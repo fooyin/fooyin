@@ -132,12 +132,12 @@ struct PlaylistOrganiser::Private
     int currentPlaylistId{-1};
     bool creatingPlaylist{false};
 
-    Private(PlaylistOrganiser* self, ActionManager* actionManager, PlaylistController* playlistController,
-            SettingsManager* settings)
-        : self{self}
-        , actionManager{actionManager}
-        , settings{settings}
-        , playlistController{playlistController}
+    Private(PlaylistOrganiser* self_, ActionManager* actionManager_, PlaylistController* playlistController_,
+            SettingsManager* settings_)
+        : self{self_}
+        , actionManager{actionManager_}
+        , settings{settings_}
+        , playlistController{playlistController_}
         , organiserTree{new QTreeView(self)}
         , model{new PlaylistOrganiserModel(playlistController->playlistHandler())}
         , context{self, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateRandomHash())}}
@@ -263,9 +263,9 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
                              p->organiserTree->expand(target);
                          }
                      });
-    QObject::connect(p->model, &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex& parent) {
-        if(parent.isValid()) {
-            p->organiserTree->expand(parent);
+    QObject::connect(p->model, &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex& index) {
+        if(index.isValid()) {
+            p->organiserTree->expand(index);
         }
     });
     QObject::connect(p->organiserTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,

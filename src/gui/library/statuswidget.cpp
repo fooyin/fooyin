@@ -62,12 +62,12 @@ struct StatusWidget::Private
 
     QTimer clearTimer;
 
-    Private(StatusWidget* self, PlayerManager* playerManager, TrackSelectionController* selectionController,
-            SettingsManager* settings)
-        : self{self}
-        , playerManager{playerManager}
-        , selectionController{selectionController}
-        , settings{settings}
+    Private(StatusWidget* self_, PlayerManager* playerManager_, TrackSelectionController* selectionController_,
+            SettingsManager* settings_)
+        : self{self_}
+        , playerManager{playerManager_}
+        , selectionController{selectionController_}
+        , settings{settings_}
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
         , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}

@@ -32,9 +32,9 @@ public:
     AudioFormat format;
     uint64_t startTime;
 
-    Private(std::span<const std::byte> data, AudioFormat format, uint64_t startTime)
-        : format{format}
-        , startTime{startTime}
+    Private(std::span<const std::byte> data_, AudioFormat format_, uint64_t startTime_)
+        : format{format_}
+        , startTime{startTime_}
     {
         this->data.assign(data.begin(), data.end());
     }

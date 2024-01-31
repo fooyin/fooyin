@@ -46,10 +46,10 @@ struct SearchWidget::Private
 
     QLineEdit* searchBox;
 
-    Private(SearchWidget* self, SearchController* controller, SettingsManager* settings)
-        : self{self}
-        , searchController{controller}
-        , settings{settings}
+    Private(SearchWidget* self_, SearchController* controller_, SettingsManager* settings_)
+        : self{self_}
+        , searchController{controller_}
+        , settings{settings_}
         , searchBox{new QLineEdit(self)}
     {
         auto* layout = new QHBoxLayout(self);

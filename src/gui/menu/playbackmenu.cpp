@@ -50,10 +50,10 @@ struct PlaybackMenu::Private
     QIcon playIcon;
     QIcon pauseIcon;
 
-    Private(PlaybackMenu* self, ActionManager* actionManager, PlayerManager* playerManager)
-        : self{self}
-        , actionManager{actionManager}
-        , playerManager{playerManager}
+    Private(PlaybackMenu* self_, ActionManager* actionManager_, PlayerManager* playerManager_)
+        : self{self_}
+        , actionManager{actionManager_}
+        , playerManager{playerManager_}
         , playIcon{QIcon::fromTheme(Constants::Icons::Play)}
         , pauseIcon{QIcon::fromTheme(Constants::Icons::Pause)}
     { }

@@ -67,10 +67,10 @@ struct SandboxDialog::Private
 
     ParsedScript currentScript;
 
-    explicit Private(SandboxDialog* self, TrackSelectionController* trackSelection, SettingsManager* settings)
-        : self{self}
-        , trackSelection{trackSelection}
-        , settings{settings}
+    explicit Private(SandboxDialog* self_, TrackSelectionController* trackSelection_, SettingsManager* settings_)
+        : self{self_}
+        , trackSelection{trackSelection_}
+        , settings{settings_}
         , mainSplitter{new QSplitter(Qt::Horizontal, self)}
         , documentSplitter{new QSplitter(Qt::Vertical, self)}
         , editor{new QPlainTextEdit(self)}

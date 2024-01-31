@@ -42,8 +42,8 @@ struct CustomisableInput::Private
     QColor colour;
     State state;
 
-    explicit Private(CustomisableInput* self)
-        : self{self}
+    explicit Private(CustomisableInput* self_)
+        : self{self_}
         , input{new QLineEdit(self)}
         , optionsButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "", self)}
         , fontButton{new QPushButton(self)}

@@ -61,13 +61,13 @@ struct FilterController::Private
     TrackAction doubleClickAction;
     TrackAction middleClickAction;
 
-    explicit Private(FilterController* self, MusicLibrary* library, TrackSelectionController* trackSelection,
-                     EditableLayout* editableLayout, SettingsManager* settings)
-        : self{self}
-        , library{library}
-        , trackSelection{trackSelection}
-        , editableLayout{editableLayout}
-        , settings{settings}
+    explicit Private(FilterController* self_, MusicLibrary* library_, TrackSelectionController* trackSelection_,
+                     EditableLayout* editableLayout_, SettingsManager* settings_)
+        : self{self_}
+        , library{library_}
+        , trackSelection{trackSelection_}
+        , editableLayout{editableLayout_}
+        , settings{settings_}
         , manager{new FilterManager(self, editableLayout, self)}
         , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterDoubleClick>())}
         , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterMiddleClick>())}

@@ -50,8 +50,8 @@ struct WidgetProvider::Private
 
     std::map<QString, FactoryWidget> widgets;
 
-    explicit Private(ActionManager* actionManager)
-        : actionManager{actionManager}
+    explicit Private(ActionManager* actionManager_)
+        : actionManager{actionManager_}
     { }
 };
 

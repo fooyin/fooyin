@@ -50,10 +50,10 @@ struct TabStackWidget::Private
     WidgetList widgets;
     EditableTabWidget* tabs;
 
-    Private(TabStackWidget* self, ActionManager* actionManager, WidgetProvider* widgetProvider)
-        : self{self}
-        , actionManager{actionManager}
-        , widgetProvider{widgetProvider}
+    Private(TabStackWidget* self_, ActionManager* actionManager_, WidgetProvider* widgetProvider_)
+        : self{self_}
+        , actionManager{actionManager_}
+        , widgetProvider{widgetProvider_}
         , tabs{new EditableTabWidget(self)}
     { }
 

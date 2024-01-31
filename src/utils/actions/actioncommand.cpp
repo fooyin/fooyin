@@ -45,9 +45,9 @@ struct ActionCommand::Private
 
     bool active{false};
 
-    Private(ActionCommand* self, const Id& id)
-        : self{self}
-        , id{id}
+    Private(ActionCommand* self_, const Id& id_)
+        : self{self_}
+        , id{id_}
         , action{new ProxyAction(self)}
     {
         action->setShortcutVisibleInToolTip(true);

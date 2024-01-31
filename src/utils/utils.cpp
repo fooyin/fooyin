@@ -21,11 +21,11 @@
 
 #include <QApplication>
 #include <QLabel>
-#include <QTime>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPixmap>
 #include <QRandomGenerator>
+#include <QTime>
 #include <QWidget>
 
 #include <ranges>
@@ -143,9 +143,9 @@ void setMinimumWidth(QLabel* label, const QString& text)
     label->setMinimumWidth(width);
 }
 
-QString capitalise(const QString& s)
+QString capitalise(const QString& str)
 {
-    QStringList parts = s.split(' ', Qt::SkipEmptyParts);
+    QStringList parts = str.split(' ', Qt::SkipEmptyParts);
 
     for(auto& part : parts) {
         part.replace(0, 1, part[0].toUpper());

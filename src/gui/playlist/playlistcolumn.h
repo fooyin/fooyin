@@ -41,21 +41,21 @@ struct PlaylistColumn
         return id >= 0 && !name.isEmpty() && !field.isEmpty();
     }
 
-    friend QDataStream& operator<<(QDataStream& stream, const PlaylistColumn& field)
+    friend QDataStream& operator<<(QDataStream& stream, const PlaylistColumn& column)
     {
-        stream << field.id;
-        stream << field.index;
-        stream << field.name;
-        stream << field.field;
+        stream << column.id;
+        stream << column.index;
+        stream << column.name;
+        stream << column.field;
         return stream;
     }
 
-    friend QDataStream& operator>>(QDataStream& stream, PlaylistColumn& field)
+    friend QDataStream& operator>>(QDataStream& stream, PlaylistColumn& column)
     {
-        stream >> field.id;
-        stream >> field.index;
-        stream >> field.name;
-        stream >> field.field;
+        stream >> column.id;
+        stream >> column.index;
+        stream >> column.name;
+        stream >> column.field;
         return stream;
     }
 };

@@ -108,8 +108,8 @@ struct CoverProvider::Private
     TagReader tagReader;
     std::set<QString> pendingCovers;
 
-    explicit Private(CoverProvider* self)
-        : self{self}
+    explicit Private(CoverProvider* self_)
+        : self{self_}
     { }
 
     QCoro::Task<void> fetchCover(QString key, Fooyin::Track track, QSize size, bool saveToDisk)

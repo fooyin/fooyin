@@ -58,8 +58,8 @@ struct LibraryTreeGroupModel::Private
     std::map<int, LibraryTreeGroupItem> nodes;
     LibraryTreeGroupItem root;
 
-    explicit Private(LibraryTreeGroupRegistry* groupsRegistry)
-        : groupsRegistry{groupsRegistry}
+    explicit Private(LibraryTreeGroupRegistry* groupsRegistry_)
+        : groupsRegistry{groupsRegistry_}
     { }
 };
 

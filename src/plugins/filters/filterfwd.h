@@ -87,21 +87,21 @@ struct FilterColumn
         return id >= 0 && !name.isEmpty() && !field.isEmpty();
     }
 
-    friend QDataStream& operator<<(QDataStream& stream, const FilterColumn& field)
+    friend QDataStream& operator<<(QDataStream& stream, const FilterColumn& column)
     {
-        stream << field.id;
-        stream << field.index;
-        stream << field.name;
-        stream << field.field;
+        stream << column.id;
+        stream << column.index;
+        stream << column.name;
+        stream << column.field;
         return stream;
     }
 
-    friend QDataStream& operator>>(QDataStream& stream, FilterColumn& field)
+    friend QDataStream& operator>>(QDataStream& stream, FilterColumn& column)
     {
-        stream >> field.id;
-        stream >> field.index;
-        stream >> field.name;
-        stream >> field.field;
+        stream >> column.id;
+        stream >> column.index;
+        stream >> column.name;
+        stream >> column.field;
         return stream;
     }
 };
