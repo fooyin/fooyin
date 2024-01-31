@@ -32,18 +32,18 @@ cmake --build . --target install
 ```
 
 The installation directory defaults to `/usr/local`.
-This can be changed by passing the option `-DCMAKE_INSTALL_PREFIX=/install/path` to CMake.
+This can be changed by passing the option `-DCMAKE_INSTALL_PREFIX=/install/path`.
 
 The following options can be passed to CMake to customise the build:
 
-* `DBUILD_SHARED_LIBS` - whether to build fooyin's libraries as shared (ON by default).
-* `DBUILD_TESTING` - whether to build tests (OFF by default).
-* `DBUILD_PLUGINS` - whether to build the plugins included with fooyin (ON by default).
+* `DBUILD_SHARED_LIBS` - Build fooyin's libraries as shared (ON by default).
+* `DBUILD_TESTING` - Build tests (OFF by default).
+* `DBUILD_PLUGINS` - Build the plugins included with fooyin (ON by default).
 * `DBUILD_CCACHE` - Build using CCache if found (ON by default).
 * `DBUILD_PCH` - Build with precompiled header support (OFF by default).
 
 ### Additional notes
 
-* To build a debug version pass `-DCMAKE_BUILD_TYPE=Debug` to cmake.
+* To build a debug version pass `-DCMAKE_BUILD_TYPE=Debug` to CMake.
 * Plugins are expected to be found under `CMAKE_INSTALL_PREFIX/CMAKE_INSTALL_LIBDIR/fooyin/plugins` relative to `CMAKE_INSTALL_BINDIR`.
 
