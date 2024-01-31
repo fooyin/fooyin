@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright , Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,37 +17,6 @@
  *
  */
 
-#include "ffmpegstream.h"
+#include <core/engine/audiodecoder.h>
 
-extern "C"
-{
-#include <libavformat/avformat.h>
-}
-
-namespace Fooyin {
-Stream::Stream() = default;
-
-Stream::Stream(AVStream* stream)
-    : m_stream{stream}
-{ }
-
-bool Stream::isValid() const
-{
-    return !!m_stream;
-}
-
-int Stream::index() const
-{
-    return m_stream->index;
-}
-
-uint64_t Stream::duration() const
-{
-    return av_rescale_q(m_stream->duration, m_stream->time_base, {1, 1000});
-}
-
-AVStream* Stream::avStream() const
-{
-    return m_stream;
-}
-} // namespace Fooyin
+#include "core/engine/moc_audiodecoder.cpp"

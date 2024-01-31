@@ -42,6 +42,7 @@ using CodecContextPtr = std::unique_ptr<AVCodecContext, CodecContextDeleter>;
 class Codec
 {
 public:
+    Codec();
     Codec(CodecContextPtr context, AVStream* stream);
 
     Codec(Codec&& other) noexcept;
@@ -49,6 +50,8 @@ public:
 
     Codec(const Codec& other)            = delete;
     Codec& operator=(const Codec& other) = delete;
+
+    [[nodiscard]] bool isValid() const;
 
     [[nodiscard]] AVCodecContext* context() const;
     [[nodiscard]] AVStream* stream() const;

@@ -22,7 +22,6 @@
 #include "fycore_export.h"
 
 #include <cstdint>
-#include <tuple>
 
 namespace Fooyin {
 // TODO: Handle channel layout
@@ -35,6 +34,7 @@ public:
         UInt8,
         Int16,
         Int32,
+        Int64,
         Float,
         Double,
     };

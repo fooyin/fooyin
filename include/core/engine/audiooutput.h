@@ -37,15 +37,13 @@ using WriteFunction = std::function<int(uint8_t*, int)>;
 struct OutputContext
 {
     AudioFormat format;
-    AVChannelLayout channelLayout;
     double volume{1.0};
 
     WriteFunction writeAudioToBuffer;
 
     bool operator==(const OutputContext& other)
     {
-        return std::tie(channelLayout.nb_channels, channelLayout.order, format)
-            == std::tie(other.channelLayout.nb_channels, other.channelLayout.order, other.format);
+        return std::tie(format) == std::tie(other.format);
     }
 };
 

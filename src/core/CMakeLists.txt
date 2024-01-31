@@ -6,6 +6,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
     track.cpp
     engine/audiobuffer.cpp
+    engine/audiodecoder.cpp
     engine/audioengine.cpp
     engine/audioformat.cpp
     engine/audiooutput.cpp
@@ -34,7 +35,6 @@ set(PRIVATE_SOURCES
     engine/enginehandler.cpp
     engine/ffmpeg/ffmpegclock.cpp
     engine/ffmpeg/ffmpegrenderer.cpp
-    engine/ffmpeg/ffmpegworker.cpp
     engine/ffmpeg/ffmpegcodec.cpp
     engine/ffmpeg/ffmpegdecoder.cpp
     engine/ffmpeg/ffmpegengine.cpp

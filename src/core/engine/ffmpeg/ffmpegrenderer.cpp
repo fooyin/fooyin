@@ -28,9 +28,9 @@
 #include <utility>
 
 namespace Fooyin {
-struct Renderer::Private
+struct FFmpegRenderer::Private
 {
-    Renderer* self;
+    FFmpegRenderer* self;
 
     AudioOutput* audioOutput{nullptr};
     OutputContext outputContext;
@@ -43,19 +43,53 @@ struct Renderer::Private
     int totalSamplesWritten{0};
     int currentBufferOffset{0};
 
-    explicit Private(Renderer* renderer)
+    bool isRunning{false};
+
+    QTimer timer;
+    bool paused{true};
+
+    explicit Private(FFmpegRenderer* renderer)
         : self{renderer}
     {
         outputContext.writeAudioToBuffer = [this](uint8_t* data, int samples) {
             return writeAudioToBuffer(data, samples);
         };
+
+        QObject::connect(&timer, &QTimer::timeout, self, [this]() { writeNext(); });
+    }
+
+    void updateInterval()
+    {
+        const auto interval = static_cast<int>(
+            ((audioOutput->bufferSize() / static_cast<double>(outputContext.format.sampleRate())) * 0.25) * 1000);
+        timer.setInterval(interval);
     }
 
     void updateContext(const OutputContext& context)
     {
-        outputContext.channelLayout = context.channelLayout;
-        outputContext.format        = context.format;
-        outputContext.volume        = context.volume;
+        outputContext.format = context.format;
+        outputContext.volume = context.volume;
+    }
+
+    void writeNext()
+    {
+        if(!isRunning || bufferQueue.empty()) {
+            return;
+        }
+
+        if(audioOutput->type() == OutputType::Push) {
+            const int samples = audioOutput->currentState().freeSamples;
+            if((samples == 0 && totalSamplesWritten > 0) || (samples > 0 && renderAudio(samples) == samples)) {
+                if(!bufferPrefilled) {
+                    bufferPrefilled = true;
+                    audioOutput->start();
+                }
+            }
+        }
+        else if(!bufferPrefilled) {
+            bufferPrefilled = true;
+            audioOutput->start();
+        }
     }
 
     int writeAudioSamples(int samples)
@@ -66,12 +100,13 @@ struct Renderer::Private
 
         const int sstride = outputContext.format.bytesPerFrame();
 
-        while(!self->isPaused() && !bufferQueue.empty() && samplesBuffered < samples) {
+        while(isRunning && !bufferQueue.empty() && samplesBuffered < samples) {
             const AudioBuffer& buffer = bufferQueue.front();
 
             if(!buffer.isValid()) {
                 currentBufferOffset = 0;
-                self->setAtEnd(true);
+                bufferQueue.dequeue();
+                emit self->finished();
                 return samplesBuffered;
             }
 
@@ -79,13 +114,13 @@ struct Renderer::Private
 
             if(bytesLeft <= 0) {
                 currentBufferOffset = 0;
-                QMetaObject::invokeMethod(self, "audioBufferProcessed", Q_ARG(const AudioBuffer&, buffer));
                 bufferQueue.dequeue();
                 continue;
             }
 
             const int sampleCount = std::min(bytesLeft / sstride, samples - samplesBuffered);
-            const auto fdata      = buffer.constData().subspan(currentBufferOffset, sampleCount * sstride);
+            const int bytes       = sampleCount * sstride;
+            const auto fdata      = buffer.constData().subspan(currentBufferOffset, static_cast<size_t>(bytes));
 
             if(!tempBuffer.isValid()) {
                 tempBuffer = {fdata, buffer.format(), buffer.startTime()};
@@ -101,6 +136,14 @@ struct Renderer::Private
 
         tempBuffer.fillRemainingWithSilence();
 
+        if(!tempBuffer.isValid()) {
+            return 0;
+        }
+
+        auto buffer = tempBuffer;
+        buffer.detach();
+        QMetaObject::invokeMethod(self, "audioBufferProcessed", Q_ARG(const AudioBuffer&, buffer));
+
         return samplesBuffered;
     }
 
@@ -108,7 +151,9 @@ struct Renderer::Private
     {
         const std::lock_guard<std::mutex> lock(bufferMutex);
 
-        int samplesWritten = writeAudioSamples(samples);
+        if(writeAudioSamples(samples) == 0) {
+            return 0;
+        }
 
         if(!audioOutput->canHandleVolume()) {
             tempBuffer.adjustVolumeOfSamples(outputContext.volume);
@@ -118,7 +163,7 @@ struct Renderer::Private
             return 0;
         }
 
-        samplesWritten = audioOutput->write(tempBuffer);
+        const int samplesWritten = audioOutput->write(tempBuffer);
         totalSamplesWritten += samplesWritten;
 
         return samplesWritten;
@@ -126,7 +171,7 @@ struct Renderer::Private
 
     int writeAudioToBuffer(uint8_t* data, int samples)
     {
-        if(self->isPaused()) {
+        if(!isRunning) {
             return 0;
         }
 
@@ -149,54 +194,71 @@ struct Renderer::Private
     }
 };
 
-Renderer::Renderer(QObject* parent)
-    : EngineWorker{parent}
+FFmpegRenderer::FFmpegRenderer(QObject* parent)
+    : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
     setObjectName("Renderer");
 }
 
-Renderer::~Renderer() = default;
+FFmpegRenderer::~FFmpegRenderer() = default;
 
-void Renderer::run(const OutputContext& context, AudioOutput* output)
+void FFmpegRenderer::init(const OutputContext& context)
 {
-    p->updateContext(context);
-    p->audioOutput = output;
-    setPaused(false);
-    p->audioOutput->init(p->outputContext);
-    scheduleNextStep();
-}
-
-void Renderer::reset()
-{
-    EngineWorker::reset();
-
-    if(p->audioOutput) {
-        p->audioOutput->reset();
+    if(p->outputContext != context) {
+        p->updateContext(context);
     }
 
-    p->bufferPrefilled     = false;
-    p->totalSamplesWritten = 0;
-    p->bufferQueue.clear();
-    p->tempBuffer.reset();
+    if(p->audioOutput) {
+        if(p->audioOutput->initialised()) {
+            p->audioOutput->uninit();
+        }
+        p->audioOutput->init(p->outputContext);
+    }
 }
 
-void Renderer::kill()
+void FFmpegRenderer::start()
 {
-    EngineWorker::kill();
+    if(std::exchange(p->isRunning, true)) {
+        return;
+    }
 
+    p->updateInterval();
+    p->timer.start();
+}
+
+void FFmpegRenderer::stop()
+{
+    p->isRunning = false;
+
+    p->timer.stop();
     p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
     p->bufferQueue.clear();
     p->tempBuffer.reset();
 }
 
-void Renderer::pauseOutput(bool isPaused)
+void FFmpegRenderer::pause(bool paused)
+{
+    p->isRunning = paused;
+}
+
+int FFmpegRenderer::queuedBuffers() const
+{
+    return static_cast<int>(p->bufferQueue.size());
+}
+
+void FFmpegRenderer::queueBuffer(const AudioBuffer& buffer)
+{
+    p->bufferQueue.enqueue(buffer);
+}
+
+void FFmpegRenderer::pauseOutput(bool isPaused)
 {
     p->audioOutput->setPaused(isPaused);
 }
 
-void Renderer::updateOutput(AudioOutput* output)
+void FFmpegRenderer::updateOutput(AudioOutput* output)
 {
     if(AudioOutput* prevOutput = std::exchange(p->audioOutput, output)) {
         if(prevOutput->initialised()) {
@@ -206,12 +268,12 @@ void Renderer::updateOutput(AudioOutput* output)
 
     p->bufferPrefilled = false;
 
-    if(!isPaused()) {
+    if(p->isRunning) {
         p->audioOutput->init(p->outputContext);
     }
 }
 
-void Renderer::updateDevice(const QString& device)
+void FFmpegRenderer::updateDevice(const QString& device)
 {
     if(p->audioOutput) {
         if(p->audioOutput->initialised()) {
@@ -226,54 +288,12 @@ void Renderer::updateDevice(const QString& device)
     }
 }
 
-void Renderer::updateVolume(double volume)
+void FFmpegRenderer::updateVolume(double volume)
 {
     p->outputContext.volume = volume;
     if(p->audioOutput) {
         p->audioOutput->setVolume(volume);
     }
-}
-
-void Renderer::render(const AudioBuffer& frame)
-{
-    p->bufferQueue.enqueue(frame);
-
-    if(p->bufferQueue.size() == 1) {
-        scheduleNextStep();
-    }
-}
-
-bool Renderer::canDoNextStep() const
-{
-    return !p->bufferQueue.empty() && EngineWorker::canDoNextStep();
-}
-
-int Renderer::timerInterval() const
-{
-    return static_cast<int>(
-        ((p->audioOutput->bufferSize() / static_cast<double>(p->outputContext.format.sampleRate())) * 0.25) * 1000);
-}
-
-void Renderer::doNextStep()
-{
-    if(isPaused()) {
-        return;
-    }
-
-    if(p->audioOutput->type() == OutputType::Push) {
-        const int samples = p->audioOutput->currentState().freeSamples;
-        if((samples == 0 && p->totalSamplesWritten > 0) || (samples > 0 && p->renderAudio(samples) == samples)) {
-            if(!p->bufferPrefilled) {
-                p->bufferPrefilled = true;
-                p->audioOutput->start();
-            }
-        }
-    }
-    else if(!p->bufferPrefilled) {
-        p->bufferPrefilled = true;
-        p->audioOutput->start();
-    }
-    scheduleNextStep(false);
 }
 } // namespace Fooyin
 

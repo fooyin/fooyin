@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright , Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,41 +19,44 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
+#include <core/engine/audiobuffer.h>
+
 #include <QObject>
 
 namespace Fooyin {
-class AudioBuffer;
-class AudioOutput;
-struct OutputContext;
-
-class FFmpegRenderer : public QObject
+class FYCORE_EXPORT AudioDecoder : public QObject
 {
     Q_OBJECT
 
 public:
-    FFmpegRenderer(QObject* parent = nullptr);
-    ~FFmpegRenderer() override;
+    enum Error
+    {
+        NoError,
+        ResourceError,
+        FormatError,
+        AccessDeniedError,
+        NotSupportedError
+    };
 
-    void init(const OutputContext& context);
-    void start();
-    void stop();
-    void pause(bool paused);
+    explicit AudioDecoder(QObject* parent = nullptr)
+        : QObject{parent}
+    { }
 
-    int queuedBuffers() const;
+    virtual bool init(const QString& source) = 0;
+    virtual void start()                     = 0;
+    virtual void stop()                      = 0;
 
-    void queueBuffer(const AudioBuffer& buffer);
+    virtual void seek(uint64_t pos) = 0;
 
-    void pauseOutput(bool isPaused);
-    void updateOutput(AudioOutput* output);
-    void updateDevice(const QString& device);
-    void updateVolume(double volume);
+    virtual AudioBuffer readBuffer() = 0;
+
+    virtual AudioFormat format() const = 0;
+    virtual Error error() const        = 0;
 
 signals:
-    void audioBufferProcessed(const AudioBuffer& buffer);
+    void bufferReady();
     void finished();
-
-private:
-    struct Private;
-    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

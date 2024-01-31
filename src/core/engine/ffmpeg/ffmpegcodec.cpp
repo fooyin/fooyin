@@ -20,6 +20,8 @@
 #include "ffmpegcodec.h"
 
 namespace Fooyin {
+Codec::Codec() = default;
+
 Codec::Codec(CodecContextPtr context, AVStream* stream)
     : m_context{std::move(context)}
     , m_stream{stream}
@@ -37,6 +39,11 @@ Codec& Codec::operator=(Codec&& other) noexcept
     return *this;
 }
 
+bool Codec::isValid() const
+{
+    return m_context && m_stream;
+}
+
 AVCodecContext* Codec::context() const
 {
     return m_context.get();
@@ -49,6 +56,6 @@ AVStream* Codec::stream() const
 
 int Codec::streamIndex() const
 {
-    return m_stream->index;
+    return m_stream ? m_stream->index : -1;
 }
 } // namespace Fooyin
