@@ -19,8 +19,6 @@
 
 #include "ffmpegrenderer.h"
 
-#include "ffmpegutils.h"
-
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audiooutput.h>
 #include <utils/threadqueue.h>
@@ -39,6 +37,7 @@ struct Renderer::Private
 
     bool bufferPrefilled{false};
 
+    std::mutex bufferMutex;
     ThreadQueue<AudioBuffer> bufferQueue{false};
     AudioBuffer tempBuffer;
     int totalSamplesWritten{0};
@@ -107,10 +106,16 @@ struct Renderer::Private
 
     int renderAudio(int samples)
     {
+        const std::lock_guard<std::mutex> lock(bufferMutex);
+
         int samplesWritten = writeAudioSamples(samples);
 
         if(!audioOutput->canHandleVolume()) {
             tempBuffer.adjustVolumeOfSamples(outputContext.volume);
+        }
+
+        if(!tempBuffer.isValid()) {
+            return 0;
         }
 
         samplesWritten = audioOutput->write(tempBuffer);
@@ -125,13 +130,17 @@ struct Renderer::Private
             return 0;
         }
 
-        tempBuffer.clear();
+        const std::lock_guard<std::mutex> lock(bufferMutex);
 
         const int samplesWritten = writeAudioSamples(samples);
-        const int sstride        = outputContext.format.bytesPerFrame();
+        const int sstride        = tempBuffer.format.bytesPerFrame();
 
         if(!audioOutput->canHandleVolume()) {
             tempBuffer.adjustVolumeOfSamples(outputContext.volume);
+        }
+
+        if(!tempBuffer.isValid()) {
+            return 0;
         }
 
         std::copy_n(std::bit_cast<uint8_t*>(tempBuffer.constData().data()), samples * sstride, data);

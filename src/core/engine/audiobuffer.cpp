@@ -36,7 +36,7 @@ public:
         : format{format_}
         , startTime{startTime_}
     {
-        this->data.assign(data.begin(), data.end());
+        data.assign(data_.begin(), data_.end());
     }
 
     void fillSilence()
