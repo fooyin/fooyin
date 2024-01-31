@@ -76,12 +76,13 @@ function(create_fooyin_library name)
     )
 
     target_include_directories(
-        ${name} SYSTEM PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>
+        ${name} SYSTEM PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/export>
     )
 
     set_target_properties(
         ${name}
-        PROPERTIES VERSION "${PROJECT_VERSION_MAJOR}.0.0"
+        PROPERTIES VERSION ${PROJECT_VERSION}
+                   SOVERSION "${PROJECT_VERSION_MAJOR}.0.0"
                    CXX_VISIBILITY_PRESET hidden
                    VISIBILITY_INLINES_HIDDEN YES
                    EXPORT_NAME ${LIB_EXPORT_NAME}

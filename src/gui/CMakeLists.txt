@@ -1,13 +1,3 @@
-cmake_minimum_required(VERSION 3.14)
-
-project(
-    fooyin_gui
-    VERSION 0.3.0
-    DESCRIPTION "Gui library for fooyin"
-    HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
-    LANGUAGES CXX
-)
-
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
     fywidget.cpp

@@ -1,13 +1,3 @@
-cmake_minimum_required(VERSION 3.14)
-
-project(
-    fooyin_core
-    VERSION 0.3.0
-    DESCRIPTION "Core library for fooyin"
-    HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
-    LANGUAGES CXX
-)
-
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
@@ -16,6 +6,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
     track.cpp
     engine/audiobuffer.cpp
+    engine/audiodecoder.cpp
     engine/audioengine.cpp
     engine/audioformat.cpp
     engine/audiooutput.cpp

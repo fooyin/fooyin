@@ -1,13 +1,3 @@
-cmake_minimum_required(VERSION 3.14)
-
-project(
-    fooyin_utils
-    VERSION 0.3.0
-    DESCRIPTION "fooyin_utils library for fooyin"
-    HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
-    LANGUAGES CXX
-)
-
 set(HEADERS
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
