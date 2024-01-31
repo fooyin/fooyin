@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.3](https://github.com/ludouzi/fooyin/releases/tag/v0.3.3) (2024-01-31)
+
+### Changes
+
+* Simplify plugin CMake setup
+
+### Fixes
+
+* Fix plugin/library rpath issues
+
+
 ## [0.3.2](https://github.com/ludouzi/fooyin/releases/tag/v0.3.2) (2024-01-29)
 
 ### Changes
