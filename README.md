@@ -46,4 +46,6 @@ Fooyin is currently only supported on linux, though other platforms will be adde
 
 ## Building from source
 
-[See installation notes](INSTALL.md)
+[See build notes](BUILD.md)
+
+See [BUILD.md](BUILD.md) for details.
