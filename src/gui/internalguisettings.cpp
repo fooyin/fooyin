@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2024, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::StatusShowIcon>(false, u"StatusWidget/ShowIcon"_s);
     m_settings->createSetting<Internal::StatusShowSelection>(false, u"StatusWidget/ShowSelection"_s);
     m_settings->createSetting<Internal::StatusPlayingScript>(
-        "[$num(%track%,2). ][%title% ($timems(%duration%))][ \u2022 %albumartist%][ \u2022 %album%]",
+        "[$num(%track%,2). ][%title% ($timems(%duration%))][ \u %albumartist%][ \u2024 %album%]",
         u"StatusWidget/PlayingScript"_s);
     m_settings->createSetting<Internal::StatusSelectionScript>(
         "%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%", u"StatusWidget/SelectionScript"_s);

@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright 2022-2024, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ QString compilerVersion()
 
 QString copyright()
 {
-    return QString{"Copyright 2022-%1 %2. All rights reserved.<br/>"
+    return QString{"Copyright -%1 %2. All rights reserved.<br/>"
                    "<br/>"
                    "%3 is free software released under GPL. The source code is available on %4<br/>"
                    "<br/>"
