@@ -49,15 +49,14 @@ QString compilerVersion()
 
 QString copyright()
 {
-    return QString{"Copyright -%1 %2. All rights reserved.<br/>"
+    return QString{"Copyright © 2024, Luke Taylor. All rights reserved.<br/>"
                    "<br/>"
-                   "%3 is free software released under GPL. The source code is available on %4<br/>"
+                   "%1 is free software released under GPL. The source code is available on %2<br/>"
                    "<br/>"
                    "You should have received a copy of the GNU General Public License along with this program.  If "
                    "not, see "
-                   "%5"}
-        .arg("2024", "Luke Taylor", Fooyin::Constants::DisplayName,
-             "<a href=\"https://github.com/ludouzi/fooyin\">GitHub</a>.",
+                   "%3"}
+        .arg(Fooyin::Constants::DisplayName, "<a href=\"https://github.com/ludouzi/fooyin\">GitHub</a>.",
              "<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>.");
 }
 
