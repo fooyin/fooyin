@@ -1,15 +1,6 @@
-cmake_minimum_required(VERSION 3.14)
-
-project(
-    fooyin_filters
-    VERSION 0.3.0
-    DESCRIPTION "Filters plugin for fooyin"
-    HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
-    LANGUAGES CXX
-)
-
 create_fooyin_plugin(
-    fooyin_filters
+    filters
+    DEPENDS Fooyin::Gui
     SOURCES filtercontroller.cpp
             filtercolumnregistry.cpp
             filtersplugin.cpp
@@ -24,9 +15,4 @@ create_fooyin_plugin(
             settings/filtersettings.cpp
             settings/filterscolumnpage.cpp
             settings/filtersgeneralpage.cpp
-)
-
-target_link_libraries(
-    fooyin_filters
-    PRIVATE Fooyin::Gui
 )
