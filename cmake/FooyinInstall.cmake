@@ -1,3 +1,45 @@
+# ---- Fooyin data ----
+
+install(
+    FILES "${CMAKE_SOURCE_DIR}/COPYING"
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/licenses/fooyin
+    RENAME LICENSE
+)
+
+install(
+    FILES "${CMAKE_SOURCE_DIR}/README.md"
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/fooyin
+    RENAME README
+)
+
+install(FILES ${CMAKE_SOURCE_DIR}/dist/fooyin.desktop
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+)
+set(ICON_SRC_PATH ${CMAKE_SOURCE_DIR}/data/icons)
+set(ICON_SIZE
+    16
+    22
+    32
+    48
+    64
+    128
+    256
+    512
+)
+foreach(SIZE ${ICON_SIZE})
+    install(
+        FILES ${ICON_SRC_PATH}/${SIZE}-fooyin.png
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps
+        RENAME fooyin.png
+    )
+endforeach(SIZE)
+
+install(
+    FILES ${ICON_SRC_PATH}/sc-fooyin.svg
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps
+    RENAME fooyin.svg
+)
+
 # ---- Fooyin executable ----
 
 install(TARGETS fooyin_exe RUNTIME COMPONENT fooyin_runtime)

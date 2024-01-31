@@ -191,36 +191,6 @@ target_link_libraries(
             Fooyin::CorePrivate
 )
 
-# ---- Fooyin data ----
-
-set(SHARE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/share)
-install(FILES ${CMAKE_SOURCE_DIR}/dist/fooyin.desktop
-        DESTINATION ${SHARE_INSTALL_PREFIX}/applications
-)
-set(ICON_SRC_PATH ${CMAKE_SOURCE_DIR}/data/icons)
-set(ICON_SIZE
-    16
-    22
-    32
-    48
-    64
-    128
-    256
-    512
-)
-foreach(SIZE ${ICON_SIZE})
-    install(
-        FILES ${ICON_SRC_PATH}/${SIZE}-fooyin.png
-        DESTINATION ${SHARE_INSTALL_PREFIX}/icons/hicolor/${SIZE}x${SIZE}/apps
-        RENAME fooyin.png
-    )
-endforeach(SIZE)
-
-install(FILES ${ICON_SRC_PATH}/sc-fooyin.svg
-        DESTINATION ${SHARE_INSTALL_PREFIX}/icons/hicolor/scalable/apps
-        RENAME fooyin.svg
-)
-
 # ---- Fooyin install ----
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
