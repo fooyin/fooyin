@@ -10,7 +10,7 @@ function(create_fooyin_plugin base_name)
     set(CMAKE_AUTOMOC ON)
 
     string(TOLOWER ${base_name} name)
-    set(plugin_name "fooyin_${name}")
+    set(plugin_name "fyplugin_${name}")
 
     # Configure json file:
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${name}.json.in")
@@ -37,6 +37,7 @@ function(create_fooyin_plugin base_name)
         PROPERTIES VERSION ${LIB_VERSION}
                    CXX_VISIBILITY_PRESET hidden
                    VISIBILITY_INLINES_HIDDEN YES
+                   PREFIX ""
                    EXPORT_NAME ${name}
                    OUTPUT_NAME ${plugin_name}
                    BUILD_RPATH "${FOOYIN_PLUGIN_RPATH};${CMAKE_BUILD_RPATH}"
