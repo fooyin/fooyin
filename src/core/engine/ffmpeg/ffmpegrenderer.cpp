@@ -104,9 +104,13 @@ struct FFmpegRenderer::Private
             const AudioBuffer& buffer = bufferQueue.front();
 
             if(!buffer.isValid()) {
+                // End of file
                 currentBufferOffset = 0;
                 bufferQueue.dequeue();
-                emit self->finished();
+
+                self->stop();
+                QMetaObject::invokeMethod(self, &FFmpegRenderer::finished);
+
                 return samplesBuffered;
             }
 
