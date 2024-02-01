@@ -49,7 +49,7 @@ public:
     void updateVolume(double volume);
 
 signals:
-    void audioBufferProcessed(const AudioBuffer& buffer);
+    void bufferProcessed(const AudioBuffer& buffer);
     void finished();
 
 private:

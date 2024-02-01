@@ -118,6 +118,7 @@ struct FFmpegRenderer::Private
 
             if(bytesLeft <= 0) {
                 currentBufferOffset = 0;
+                QMetaObject::invokeMethod(self, "bufferProcessed", Q_ARG(const AudioBuffer&, buffer));
                 bufferQueue.dequeue();
                 continue;
             }
@@ -143,10 +144,6 @@ struct FFmpegRenderer::Private
         if(!tempBuffer.isValid()) {
             return 0;
         }
-
-        auto buffer = tempBuffer;
-        buffer.detach();
-        QMetaObject::invokeMethod(self, "audioBufferProcessed", Q_ARG(const AudioBuffer&, buffer));
 
         return samplesBuffered;
     }
