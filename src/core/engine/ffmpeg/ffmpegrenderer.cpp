@@ -46,7 +46,6 @@ struct FFmpegRenderer::Private
     bool isRunning{false};
 
     QTimer timer;
-    bool paused{true};
 
     explicit Private(FFmpegRenderer* renderer)
         : self{renderer}
