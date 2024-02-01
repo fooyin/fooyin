@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.3.4](https://github.com/ludouzi/fooyin/releases/tag/v0.3.4) (2024-01-31)
+
+### Changes
+
+* Remove HoverMenu, LogSlider and MenuHeader from public API
+
+### Fixes
+
+* Fix crashes using PipeWire output
+
+### Packaging
+
+* Further improve plugin CMake setup
+* Correctly pass vars to CMakeMacros for plugin development
+* Install license, readme to data dir
+* Add a CMake uninstall target
+* Overhaul build instructions; see [BUILD.md](https://github.com/ludouzi/fooyin/blob/master/BUILD.md)
+
 ## [0.3.3](https://github.com/ludouzi/fooyin/releases/tag/v0.3.3) (2024-01-31)
 
 ### Changes
