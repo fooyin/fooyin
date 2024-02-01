@@ -21,6 +21,4 @@
 
 namespace Fooyin {
 #define RELATIVE_PLUGIN_PATH "@FOOYIN_RELATIVE_PLUGIN_PATH@"
-
-#cmakedefine SDL2_FOUND
 }
