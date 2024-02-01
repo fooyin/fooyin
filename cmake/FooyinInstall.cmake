@@ -73,8 +73,7 @@ configure_package_config_file(
     "${CMAKE_CURRENT_LIST_DIR}/FooyinConfig.cmake.in"
     "${PROJECT_BINARY_DIR}/FooyinConfig.cmake"
     INSTALL_DESTINATION ${FOOYIN_INSTALL_CMAKEDIR}
-    PATH_VARS FOOYIN_PLUGIN_RPATH
-              FOOYIN_PLUGIN_INSTALL_DIR
+    PATH_VARS FOOYIN_PLUGIN_RPATH FOOYIN_PLUGIN_INSTALL_DIR
 )
 
 install(

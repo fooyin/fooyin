@@ -1,23 +1,56 @@
 if(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
-  message(FATAL_ERROR "Cannot find install manifest: @CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+    message(FATAL_ERROR "Cannot find install manifest: @CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
 endif()
+
+macro(remove_empty_dirs)
+    list(REMOVE_DUPLICATES DIRS)
+    unset(PARENT_DIRS)
+    foreach(dir IN LISTS DIRS)
+        if(EXISTS $ENV{DESTDIR}${dir})
+            file(GLOB res $ENV{DESTDIR}${dir}/*)
+            list(LENGTH res len)
+            if(len EQUAL 0)
+                message(STATUS "Removing empty dir: ${dir}")
+                execute_process(
+                    COMMAND ${CMAKE_COMMAND} -E remove_directory $ENV{DESTDIR}${dir}
+                    OUTPUT_VARIABLE rm_out
+                    RESULT_VARIABLE rm_retval
+                )
+                if(NOT "${rm_retval}" STREQUAL 0)
+                    message(FATAL_ERROR "Failed to remove directory: $ENV{DESTDIR}${dir}")
+                endif()
+                get_filename_component(parent_dir $ENV{DESTDIR}${dir} DIRECTORY)
+                list(APPEND PARENT_DIRS ${parent_dir})
+            endif()
+        endif()
+    endforeach()
+    list(LENGTH PARENT_DIRS parent_len)
+    if(parent_len GREATER 0)
+        set(DIRS ${PARENT_DIRS})
+        remove_empty_dirs()
+    endif()
+endmacro()
 
 file(READ "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt" files)
 string(REGEX REPLACE "\n" ";" files "${files}")
-
 foreach(file ${files})
-  message(STATUS "Uninstalling $ENV{DESTDIR}${file}")
-  if(IS_SYMLINK "$ENV{DESTDIR}${file}" OR EXISTS "$ENV{DESTDIR}${file}")
-  execute_process(
-      COMMAND ${CMAKE_COMMAND} -E remove "$ENV{DESTDIR}${file}"
-      OUTPUT_VARIABLE rm_out
-      RESULT_VARIABLE rm_retval
-  )
-    if(NOT "${rm_retval}" STREQUAL 0)
-      message(FATAL_ERROR "Unable to remove $ENV{DESTDIR}${file}")
-    endif(NOT "${rm_retval}" STREQUAL 0)
-
-  else(IS_SYMLINK "$ENV{DESTDIR}${file}" OR EXISTS "$ENV{DESTDIR}${file}")
-    message(STATUS "File $ENV{DESTDIR}${file} does not exist.")
-  endif(IS_SYMLINK "$ENV{DESTDIR}${file}" OR EXISTS "$ENV{DESTDIR}${file}")
+    message(STATUS "Uninstalling $ENV{DESTDIR}${file}")
+    if(IS_SYMLINK "$ENV{DESTDIR}${file}" OR EXISTS "$ENV{DESTDIR}${file}")
+        get_filename_component(dir $ENV{DESTDIR}${file} DIRECTORY)
+        list(APPEND DIRS $ENV{DESTDIR}${dir})
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E remove "$ENV{DESTDIR}${file}"
+            OUTPUT_VARIABLE rm_out
+            RESULT_VARIABLE rm_retval
+        )
+        if(NOT "${rm_retval}" STREQUAL 0)
+            message(FATAL_ERROR "Unable to remove $ENV{DESTDIR}${file}")
+        endif()
+    else()
+        message(STATUS "File $ENV{DESTDIR}${file} does not exist.")
+    endif()
 endforeach(file)
+
+if(DIRS)
+    remove_empty_dirs()
+endif()
