@@ -1,6 +1,6 @@
 {
     "Name" : "Filters",
-    "Version" : "${PROJECT_VERSION}",
+    "Version" : "${FOOYIN_VERSION}",
     "Vendor" : "Fooyin",
     "Copyright" : "Copyright © 2023, Luke Taylor <LukeT1@proton.me>",
     "License" : "Fooyin is free software: you can redistribute it and/or modify
