@@ -133,7 +133,7 @@ struct Renderer::Private
         const std::lock_guard<std::mutex> lock(bufferMutex);
 
         const int samplesWritten = writeAudioSamples(samples);
-        const int sstride        = tempBuffer.format.bytesPerFrame();
+        const int sstride        = tempBuffer.format().bytesPerFrame();
 
         if(!audioOutput->canHandleVolume()) {
             tempBuffer.adjustVolumeOfSamples(outputContext.volume);

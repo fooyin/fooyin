@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/ludouzi/fooyin/releases/tag/v0.3.5) (2024-02-01)
+
+### Fixes
+
+* Fix function call in AudioRenderer
+
+
 ## [0.3.4](https://github.com/ludouzi/fooyin/releases/tag/v0.3.4) (2024-01-31)
 
 ### Changes
