@@ -19,6 +19,8 @@
 
 #include <core/engine/audioformat.h>
 
+#include <tuple>
+
 namespace Fooyin {
 AudioFormat::AudioFormat()
     : m_sampleFormat{Unknown}
