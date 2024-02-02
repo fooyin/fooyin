@@ -1,4 +1,4 @@
-# Installing Fooyin
+# Building Fooyin
 
 ## Requirements
 
@@ -26,6 +26,8 @@ Open a terminal and run the following commands.
 Adapt the instructions to suit your CMake generator.
 
 ```bash
+git clone https://github.com/ludouzi/fooyin.git
+
 cmake -G Ninja ../path/to/fooyin
 cmake --build .
 cmake --build . --target install
@@ -46,5 +48,3 @@ The following options can be passed to CMake to customise the build:
 ### Additional notes
 
 * To build a debug version pass `-DCMAKE_BUILD_TYPE=Debug` to CMake.
-* Plugins are expected to be found under `CMAKE_INSTALL_LIBDIR/fooyin/plugins` relative to `CMAKE_INSTALL_BINDIR`.
-
