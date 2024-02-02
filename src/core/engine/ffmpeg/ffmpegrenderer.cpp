@@ -45,23 +45,24 @@ struct FFmpegRenderer::Private
 
     bool isRunning{false};
 
-    QTimer timer;
+    QTimer* writeTimer;
 
-    explicit Private(FFmpegRenderer* renderer)
-        : self{renderer}
+    explicit Private(FFmpegRenderer* self_)
+        : self{self_}
+        , writeTimer{new QTimer(self)}
     {
+        QObject::connect(writeTimer, &QTimer::timeout, self, [this]() { writeNext(); });
+
         outputContext.writeAudioToBuffer = [this](uint8_t* data, int samples) {
             return writeAudioToBuffer(data, samples);
         };
-
-        QObject::connect(&timer, &QTimer::timeout, self, [this]() { writeNext(); });
     }
 
-    void updateInterval()
+    void updateInterval() const
     {
         const auto interval = static_cast<int>(
             ((audioOutput->bufferSize() / static_cast<double>(outputContext.format.sampleRate())) * 0.25) * 1000);
-        timer.setInterval(interval);
+        writeTimer->setInterval(interval);
     }
 
     void updateContext(const OutputContext& context)
@@ -221,14 +222,14 @@ void FFmpegRenderer::start()
         return;
     }
 
-    p->timer.start();
+    p->writeTimer->start();
 }
 
 void FFmpegRenderer::stop()
 {
     p->isRunning = false;
+    p->writeTimer->stop();
 
-    p->timer.stop();
     p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
     p->bufferQueue.clear();

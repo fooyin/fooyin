@@ -47,10 +47,6 @@ public:
     void setAudioOutput(AudioOutput* output) override;
     void setOutputDevice(const QString& device) override;
 
-public slots:
-    void startup() override;
-    void shutdown() override;
-
 private:
     struct Private;
     std::unique_ptr<Private> p;

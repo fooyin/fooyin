@@ -55,10 +55,6 @@ void AudioEngine::changeTrackStatus(TrackStatus status)
         emit trackStatusChanged(m_status);
     }
 }
-
-void AudioEngine::startup() { }
-
-void AudioEngine::shutdown() { }
 } // namespace Fooyin
 
 #include "core/engine/moc_audioengine.cpp"

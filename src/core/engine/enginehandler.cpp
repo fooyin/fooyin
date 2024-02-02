@@ -63,8 +63,6 @@ struct EngineHandler::Private
         engine->moveToThread(&engineThread);
         engineThread.start();
 
-        QMetaObject::invokeMethod(engine, &AudioEngine::startup);
-
         QObject::connect(playerManager, &PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
         QObject::connect(playerManager, &PlayerManager::positionMoved, engine, &AudioEngine::seek);
         QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
@@ -185,19 +183,15 @@ EngineHandler::EngineHandler(PlayerManager* playerManager, SettingsManager* sett
     p->settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateVolume(volume); });
 }
 
-EngineHandler::~EngineHandler() = default;
+EngineHandler::~EngineHandler()
+{
+    p->engineThread.quit();
+    p->engineThread.wait();
+}
 
 void EngineHandler::setup()
 {
     p->changeOutput(p->settings->value<Settings::Core::AudioOutput>());
-}
-
-void EngineHandler::shutdown()
-{
-    QMetaObject::invokeMethod(p->engine, &AudioEngine::shutdown);
-
-    p->engineThread.quit();
-    p->engineThread.wait();
 }
 
 OutputNames EngineHandler::getAllOutputs() const

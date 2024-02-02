@@ -43,7 +43,7 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fooyin {
 struct FFmpegEngine::Private
 {
-    FFmpegEngine* engine;
+    FFmpegEngine* self;
 
     SettingsManager* settings;
 
@@ -59,32 +59,50 @@ struct FFmpegEngine::Private
     AudioOutput* audioOutput{nullptr};
     AudioFormat format;
 
-    FFmpegDecoder* decoder{nullptr};
-    FFmpegRenderer* renderer{nullptr};
+    FFmpegDecoder* decoder;
+    FFmpegRenderer* renderer;
 
-    QTimer* bufferTimer{nullptr};
+    QTimer* bufferTimer;
 
-    explicit Private(FFmpegEngine* engine, SettingsManager* settings)
-        : engine{engine}
+    explicit Private(FFmpegEngine* self_, SettingsManager* settings)
+        : self{self_}
         , settings{settings}
-    { }
+        , decoder{new FFmpegDecoder(self)}
+        , renderer{new FFmpegRenderer(self)}
+        , bufferTimer{new QTimer(self)}
+    {
+        QObject::connect(decoder, &FFmpegDecoder::finished, self, [this]() {
+            bufferTimer->stop();
+            renderer->queueBuffer({});
+        });
+        QObject::connect(renderer, &FFmpegRenderer::finished, self, [this]() { onRendererFinished(); });
+
+        QObject::connect(bufferTimer, &QTimer::timeout, self, [this]() {
+            if(renderer->queuedBuffers() < 15) {
+                const auto buffer = decoder->readBuffer();
+                if(buffer.isValid()) {
+                    renderer->queueBuffer(buffer);
+                }
+            }
+        });
+    }
 
     QTimer* positionTimer()
     {
         if(!positionUpdateTimer) {
-            positionUpdateTimer = new QTimer(engine);
+            positionUpdateTimer = new QTimer(self);
             positionUpdateTimer->setInterval(50ms);
             positionUpdateTimer->setTimerType(Qt::PreciseTimer);
-            QObject::connect(positionUpdateTimer, &QTimer::timeout, engine, [this]() { updatePosition(); });
+            QObject::connect(positionUpdateTimer, &QTimer::timeout, self, [this]() { updatePosition(); });
         }
         return positionUpdateTimer;
     }
 
     void updatePosition()
     {
-        const uint64_t pos = engine->currentPosition();
+        const uint64_t pos = self->currentPosition();
         if(std::exchange(lastPos, pos) != pos) {
-            emit engine->positionChanged(pos);
+            QMetaObject::invokeMethod(self, "positionChanged", Q_ARG(uint64_t, pos));
         }
     }
 
@@ -99,12 +117,8 @@ struct FFmpegEngine::Private
         renderer->init({.format = format, .volume = volume});
     }
 
-    void startPlayback() const
+    void startPlayback()
     {
-        if(!decoder || !renderer) {
-            return;
-        }
-
         decoder->start();
         bufferTimer->start();
         renderer->start();
@@ -119,10 +133,10 @@ struct FFmpegEngine::Private
         clock.setPaused(true);
         clock.sync(duration);
 
-        engine->changeTrackStatus(EndOfTrack);
+        self->changeTrackStatus(EndOfTrack);
     }
 
-    void pauseOutput(bool pause) const
+    void pauseOutput(bool pause)
     {
         if(pause) {
             bufferTimer->stop();
@@ -140,12 +154,8 @@ struct FFmpegEngine::Private
         bufferTimer->stop();
         clock.setPaused(true);
 
-        if(decoder) {
-            decoder->stop();
-        }
-        if(renderer) {
-            renderer->stop();
-        }
+        decoder->stop();
+        renderer->stop();
     }
 };
 
@@ -154,8 +164,16 @@ FFmpegEngine::FFmpegEngine(SettingsManager* settings, QObject* parent)
     , p{std::make_unique<Private>(this, settings)}
 { }
 
-FFmpegEngine::~FFmpegEngine() = default;
+FFmpegEngine::~FFmpegEngine()
+{
+    p->killWorkers();
 
+    p->audioOutput->uninit();
+
+    if(p->positionUpdateTimer) {
+        p->positionUpdateTimer->deleteLater();
+    }
+}
 void FFmpegEngine::seek(uint64_t pos)
 {
     if(!p->decoder->isSeekable()) {
@@ -202,8 +220,6 @@ void FFmpegEngine::changeTrack(const Track& track)
     }
 
     p->updateFormat(p->decoder->format());
-
-    p->decoder->start();
 
     changeTrackStatus(LoadedTrack);
 }
@@ -273,9 +289,7 @@ void FFmpegEngine::stop()
 void FFmpegEngine::setVolume(double volume)
 {
     p->volume = volume;
-    if(p->renderer) {
-        p->renderer->updateVolume(volume);
-    }
+    p->renderer->updateVolume(volume);
 }
 
 void FFmpegEngine::setAudioOutput(AudioOutput* output)
@@ -293,9 +307,7 @@ void FFmpegEngine::setAudioOutput(AudioOutput* output)
         p->bufferTimer->stop();
     }
 
-    if(p->renderer) {
-        p->renderer->updateOutput(p->audioOutput);
-    }
+    p->renderer->updateOutput(p->audioOutput);
 
     if(playing) {
         p->clock.setPaused(false);
@@ -318,49 +330,11 @@ void FFmpegEngine::setOutputDevice(const QString& device)
         p->bufferTimer->stop();
     }
 
-    if(p->renderer) {
-        p->renderer->updateDevice(device);
-    }
+    p->renderer->updateDevice(device);
 
     if(playing) {
         p->clock.setPaused(false);
         p->startPlayback();
-    }
-}
-
-void FFmpegEngine::startup()
-{
-    p->decoder  = new FFmpegDecoder(this);
-    p->renderer = new FFmpegRenderer(this);
-
-    p->bufferTimer = new QTimer(this);
-    p->bufferTimer->setInterval(5ms);
-
-    QObject::connect(p->bufferTimer, &QTimer::timeout, this, [this]() {
-        if(p->renderer->queuedBuffers() < 15) {
-            const auto buffer = p->decoder->readBuffer();
-            if(buffer.isValid()) {
-                p->renderer->queueBuffer(buffer);
-            }
-        }
-    });
-
-    QObject::connect(p->decoder, &FFmpegDecoder::finished, this, [this]() {
-        p->bufferTimer->stop();
-        p->renderer->queueBuffer({});
-    });
-
-    QObject::connect(p->renderer, &FFmpegRenderer::finished, this, [this]() { p->onRendererFinished(); });
-}
-
-void FFmpegEngine::shutdown()
-{
-    p->killWorkers();
-
-    p->audioOutput->uninit();
-
-    if(p->positionUpdateTimer) {
-        p->positionUpdateTimer->deleteLater();
     }
 }
 } // namespace Fooyin
