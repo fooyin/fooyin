@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.6](https://github.com/ludouzi/fooyin/releases/tag/v0.3.6) (2024-02-02)
+
+### Changes
+
+* Implement AudioDecoder as a separate, self-contained object to handle all file decoding
+* Improve plugin naming scheme (fyplugin_name)
+
+### Fixes
+
+* Make creation and passing of AudioOutput to AudioEngine thread-safe
+* Add additional safety checks to pipewire output
+
+
 ## [0.3.5](https://github.com/ludouzi/fooyin/releases/tag/v0.3.5) (2024-02-01)
 
 ### Fixes
