@@ -21,21 +21,11 @@
 
 #include <core/engine/audioformat.h>
 
-extern "C"
-{
-#include <libavutil/samplefmt.h>
-}
-
 class QString;
 class AVCodecParameters;
 
-namespace Fooyin {
-class AudioBuffer;
-
-namespace Utils {
+namespace Fooyin::Utils {
 void printError(int error);
 void printError(const QString& error);
-AVSampleFormat interleaveFormat(AVSampleFormat planarFormat);
 AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
-} // namespace Utils
-} // namespace Fooyin
+} // namespace Fooyin::Utils

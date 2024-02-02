@@ -19,6 +19,8 @@
 
 #include <core/engine/audioformat.h>
 
+#include <tuple>
+
 namespace Fooyin {
 AudioFormat::AudioFormat()
     : m_sampleFormat{Unknown}
@@ -138,7 +140,9 @@ int AudioFormat::bytesPerSample() const
         case(Float):
             return 4;
         case(Double):
+        case(Int64):
             return 8;
+            break;
     }
 
     return 0;

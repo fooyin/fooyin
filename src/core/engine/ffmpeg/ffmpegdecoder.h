@@ -19,37 +19,32 @@
 
 #pragma once
 
-#include "ffmpegworker.h"
-
-class AVFormatContext;
+#include <core/engine/audiodecoder.h>
 
 namespace Fooyin {
 class AudioFormat;
-class Codec;
 class AudioBuffer;
 
-class Decoder : public EngineWorker
+class FFmpegDecoder : public AudioDecoder
 {
     Q_OBJECT
 
 public:
-    explicit Decoder(QObject* parent = nullptr);
-    ~Decoder() override;
+    explicit FFmpegDecoder(QObject* parent = nullptr);
+    ~FFmpegDecoder() override;
 
-    void run(AVFormatContext* context, Codec* codec, const AudioFormat& format);
-    void reset() override;
-    void kill() override;
+    bool init(const QString& source) override;
 
-public slots:
-    void onBufferProcessed();
+    void start() override;
+    void stop() override;
 
-signals:
-    void audioBufferDecoded(const AudioBuffer& buffer);
+    AudioFormat format() const override;
+    bool isSeekable() const;
+    void seek(uint64_t pos) override;
 
-protected:
-    bool canDoNextStep() const override;
-    int timerInterval() const override;
-    void doNextStep() override;
+    AudioBuffer readBuffer() override;
+
+    Error error() const override;
 
 private:
     struct Private;

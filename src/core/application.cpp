@@ -111,7 +111,6 @@ CorePluginContext Application::context() const
 
 void Application::shutdown()
 {
-    p->engine.shutdown();
     p->playlistHandler->savePlaylists();
     p->coreSettings.shutdown();
     p->pluginManager.shutdown();

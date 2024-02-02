@@ -22,111 +22,222 @@
 #include "ffmpegcodec.h"
 #include "ffmpegframe.h"
 #include "ffmpegpacket.h"
+#include "ffmpegstream.h"
 #include "ffmpegutils.h"
 
 #include <core/engine/audiobuffer.h>
+#include <utils/worker.h>
 
 #include <QDebug>
 
 #include <bit>
+#include <chrono>
+#include <queue>
 
-constexpr int MaxFrameQueue = 9;
+using namespace std::chrono_literals;
+using namespace Qt::Literals::StringLiterals;
 
 namespace {
-// Copies input frame's metadata and properties and assigns empty buffers for the data
-Fooyin::Frame copyFrame(const Fooyin::Frame& frame, AVSampleFormat format)
-{
-    auto avFrame = Fooyin::FramePtr(av_frame_alloc());
-
-    av_frame_copy_props(avFrame.get(), frame.avFrame());
-    avFrame->ch_layout  = frame.avFrame()->ch_layout;
-    avFrame->nb_samples = frame.sampleCount();
-    avFrame->format     = format;
-
-    Fooyin::Frame newFrame{std::move(avFrame)};
-
-    const int err = av_frame_get_buffer(newFrame.avFrame(), 0);
-    if(err < 0) {
-        qWarning() << "Buffer could not be allocated for frame";
-        return {};
-    }
-    return newFrame;
-}
-
 template <typename T>
-void interleaveSamples(uint8_t** in, int channels, uint8_t* out, int frames)
+void interleaveSamples(uint8_t** in, Fooyin::AudioBuffer& buffer)
 {
-    for(int ch = 0; ch < channels; ++ch) {
+    const auto* out    = buffer.data();
+    const auto format  = buffer.format();
+    const int channels = format.channelCount();
+    const int frames   = buffer.frameCount();
+
+    for(int ch{0}; ch < channels; ++ch) {
         const auto* pSamples = std::bit_cast<const T*>(in[ch]);
         auto* iSamples       = std::bit_cast<T*>(out) + ch;
         auto end             = pSamples + frames;
         while(pSamples < end) {
-            *iSamples = *pSamples++;
+            std::memmove(iSamples, pSamples, format.bytesPerSample());
+            pSamples++;
             iSamples += channels;
         }
     }
 }
 
-Fooyin::Frame interleave(const Fooyin::Frame& inputFrame)
+void interleave(uint8_t** in, Fooyin::AudioBuffer& buffer)
 {
-    uint8_t** in                 = inputFrame.avFrame()->data;
-    const int channels           = inputFrame.channelCount();
-    const int samples            = inputFrame.sampleCount();
-    const auto interleavedFormat = Fooyin::Utils::interleaveFormat(inputFrame.format());
+    if(!buffer.isValid()) {
+        return;
+    }
 
-    Fooyin::Frame frame = copyFrame(inputFrame, interleavedFormat);
-    uint8_t* out        = frame.avFrame()->data[0];
+    const auto format = buffer.format();
 
-    switch(inputFrame.format()) {
-        case AV_SAMPLE_FMT_FLTP:
-            interleaveSamples<float>(in, channels, out, samples);
+    switch(format.sampleFormat()) {
+        case(Fooyin::AudioFormat::UInt8):
+            interleaveSamples<uint8_t>(in, buffer);
             break;
-        case AV_SAMPLE_FMT_U8P:
-            interleaveSamples<int8_t>(in, channels, out, samples);
+        case(Fooyin::AudioFormat::Int16):
+            interleaveSamples<int16_t>(in, buffer);
             break;
-        case AV_SAMPLE_FMT_S16P:
-            interleaveSamples<int16_t>(in, channels, out, samples);
+        case(Fooyin::AudioFormat::Int32):
+            interleaveSamples<int32_t>(in, buffer);
             break;
-        case AV_SAMPLE_FMT_S32P:
-            interleaveSamples<int32_t>(in, channels, out, samples);
+        case(Fooyin::AudioFormat::Int64):
+            interleaveSamples<int64_t>(in, buffer);
             break;
-        case AV_SAMPLE_FMT_S64P:
-        case AV_SAMPLE_FMT_DBLP:
-            interleaveSamples<int64_t>(in, channels, out, samples);
+        case(Fooyin::AudioFormat::Float):
+            interleaveSamples<float>(in, buffer);
             break;
-        case AV_SAMPLE_FMT_NONE:
-        case AV_SAMPLE_FMT_U8:
-        case AV_SAMPLE_FMT_S16:
-        case AV_SAMPLE_FMT_S32:
-        case AV_SAMPLE_FMT_FLT:
-        case AV_SAMPLE_FMT_DBL:
-        case AV_SAMPLE_FMT_S64:
-        case AV_SAMPLE_FMT_NB:
+        case(Fooyin::AudioFormat::Double):
+            interleaveSamples<double>(in, buffer);
+            break;
+        case(Fooyin::AudioFormat::Unknown):
             break;
     }
-    frame.avFrame()->format = interleavedFormat;
-    return frame;
 }
+
+struct FormatContextDeleter
+{
+    void operator()(AVFormatContext* context) const
+    {
+        if(context) {
+            avformat_close_input(&context);
+            avformat_free_context(context);
+        }
+    }
+};
+using FormatContextPtr = std::unique_ptr<AVFormatContext, FormatContextDeleter>;
 } // namespace
 
 namespace Fooyin {
-struct Decoder::Private
+struct FFmpegDecoder::Private
 {
-    Decoder* decoder;
-    AVFormatContext* context{nullptr};
-    Codec* codec{nullptr};
+    FFmpegDecoder* self;
+
+    FormatContextPtr context;
+    Stream stream;
+    Codec codec;
     AudioFormat audioFormat;
 
-    int pendingFrameCount{0};
+    Error error{NoError};
+    bool isSeekable{false};
     bool draining{false};
+    bool isDecoding{false};
 
-    explicit Private(Decoder* decoder)
-        : decoder{decoder}
+    AudioBuffer buffer;
+    uint64_t currentPts{0};
+
+    explicit Private(FFmpegDecoder* self)
+        : self{self}
     { }
+
+    bool setup(const QString& source)
+    {
+        error = Error::NoError;
+
+        if(!createAVFormatContext(source)) {
+            return false;
+        }
+
+        isSeekable = !(context->ctx_flags & AVFMTCTX_UNSEEKABLE);
+
+        if(!findStream(context)) {
+            return false;
+        }
+
+        audioFormat = Utils::audioFormatFromCodec(stream.avStream()->codecpar);
+
+        return createCodec(stream.avStream());
+    }
+
+    bool createAVFormatContext(const QString& source)
+    {
+        AVFormatContext* avContext{nullptr};
+
+        const int ret = avformat_open_input(&avContext, source.toUtf8().constData(), nullptr, nullptr);
+        if(ret < 0) {
+            if(ret == AVERROR(EACCES)) {
+                Utils::printError(u"Access denied: "_s + source);
+                error = Error::AccessDeniedError;
+            }
+            else if(ret == AVERROR(EINVAL)) {
+                Utils::printError(u"Invalid format: "_s + source);
+                error = Error::FormatError;
+            }
+            return false;
+        }
+
+        if(avformat_find_stream_info(avContext, nullptr) < 0) {
+            Utils::printError(u"Could not find stream info"_s);
+            avformat_close_input(&avContext);
+            error = Error::ResourceError;
+            return false;
+        }
+
+        //        av_dump_format(avContext, 0, data, 0);
+
+        context.reset(avContext);
+
+        return true;
+    }
+
+    bool findStream(const FormatContextPtr& formatContext)
+    {
+        for(unsigned int i = 0; i < formatContext->nb_streams; ++i) {
+            AVStream* avStream = formatContext->streams[i];
+            const auto type    = avStream->codecpar->codec_type;
+
+            if(type == AVMEDIA_TYPE_AUDIO) {
+                stream = Fooyin::Stream{avStream};
+                return true;
+            }
+        }
+
+        error = Error::ResourceError;
+
+        return false;
+    }
+
+    bool createCodec(AVStream* avStream)
+    {
+        if(!avStream) {
+            return false;
+        }
+
+        const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
+        if(!avCodec) {
+            Utils::printError(u"Could not find a decoder for stream"_s);
+            error = Error::ResourceError;
+            return false;
+        }
+
+        Fooyin::CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
+        if(!avCodecContext) {
+            Utils::printError(u"Could not allocate context"_s);
+            error = Error::ResourceError;
+            return false;
+        }
+
+        if(avCodecContext->codec_type != AVMEDIA_TYPE_AUDIO) {
+            return false;
+        }
+
+        if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
+            Utils::printError(u"Could not obtain codec parameters"_s);
+            error = Error::ResourceError;
+            return {};
+        }
+
+        avCodecContext.get()->pkt_timebase = avStream->time_base;
+
+        if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
+            Utils::printError(u"Could not initialise codec context"_s);
+            error = Error::ResourceError;
+            return {};
+        }
+
+        codec = {std::move(avCodecContext), avStream};
+
+        return true;
+    }
 
     void decodeAudio(const Packet& packet)
     {
-        if(decoder->isPaused()) {
+        if(!isDecoding) {
             return;
         }
 
@@ -146,31 +257,28 @@ struct Decoder::Private
         }
     }
 
-    [[nodiscard]] bool checkCodecContext() const
+    [[nodiscard]] bool hasError() const
     {
-        return context && codec && codec->context();
+        return error != Error::NoError;
     }
 
     [[nodiscard]] int sendAVPacket(const Packet& packet) const
     {
-        if(checkCodecContext() && !decoder->isPaused()) {
-            return avcodec_send_packet(codec->context(), !packet.isValid() || draining ? nullptr : packet.avPacket());
+        if(hasError() || !isDecoding) {
+            return -1;
         }
-        return -1;
+
+        return avcodec_send_packet(codec.context(), !packet.isValid() || draining ? nullptr : packet.avPacket());
     }
 
     void receiveAVFrames()
     {
-        if(decoder->isPaused()) {
-            return;
-        }
-
-        if(!checkCodecContext()) {
+        if(hasError() || !isDecoding) {
             return;
         }
 
         auto avFrame     = FramePtr(av_frame_alloc());
-        const int result = avcodec_receive_frame(codec->context(), avFrame.get());
+        const int result = avcodec_receive_frame(codec.context(), avFrame.get());
 
         if(result == AVERROR_EOF || result == AVERROR(EAGAIN)) {
             return;
@@ -179,106 +287,143 @@ struct Decoder::Private
             qWarning() << "Error receiving decoded frame";
             return;
         }
-        avFrame->time_base = context->streams[codec->streamIndex()]->time_base;
-        Frame frame{std::move(avFrame)};
+        avFrame->time_base = context->streams[codec.streamIndex()]->time_base;
+        const Frame frame{std::move(avFrame)};
+
+        currentPts = frame.ptsMs();
+
+        const auto sampleCount = audioFormat.bytesPerFrame() * frame.sampleCount();
 
         if(av_sample_fmt_is_planar(frame.format())) {
-            frame = interleave(frame);
+            buffer = {audioFormat, frame.ptsMs()};
+            buffer.resize(static_cast<size_t>(sampleCount));
+            interleave(frame.avFrame()->data, buffer);
+        }
+        else {
+            buffer = {frame.avFrame()->data[0], static_cast<size_t>(sampleCount), audioFormat, frame.ptsMs()};
         }
 
-        ++pendingFrameCount;
+        QMetaObject::invokeMethod(self, &FFmpegDecoder::bufferReady);
+    }
 
-        const AudioBuffer buffer{frame.avFrame()->data[0], audioFormat.bytesPerFrame() * frame.sampleCount(),
-                                 audioFormat, frame.ptsMs()};
+    void readNext()
+    {
+        if(!isDecoding) {
+            return;
+        }
 
-        QMetaObject::invokeMethod(decoder, "audioBufferDecoded", Q_ARG(const AudioBuffer&, buffer));
+        const Packet packet(PacketPtr{av_packet_alloc()});
+        const int readResult = av_read_frame(context.get(), packet.avPacket());
+        if(readResult < 0) {
+            if(readResult != AVERROR_EOF) {
+                Utils::printError(readResult);
+            }
+            else if(!draining) {
+                draining = true;
+                decodeAudio(packet);
+                return;
+            }
+
+            self->stop();
+            QMetaObject::invokeMethod(self, &FFmpegDecoder::finished);
+            return;
+        }
+
+        if(packet.avPacket()->stream_index != codec.streamIndex()) {
+            readNext();
+            return;
+        }
+
+        packet.avPacket()->time_base = codec.stream()->time_base;
+
+        decodeAudio(packet);
+    }
+
+    void seek(uint64_t pos) const
+    {
+        if(!isDecoding || !isSeekable || hasError()) {
+            return;
+        }
+
+        const int64_t timestamp = av_rescale_q(static_cast<int64_t>(pos), {1, 1000}, stream.avStream()->time_base);
+
+        const int flags = pos < currentPts ? AVSEEK_FLAG_BACKWARD : 0;
+        if(av_seek_frame(context.get(), stream.index(), timestamp, flags) < 0) {
+            qWarning() << "Could not seek to position: " << pos;
+            return;
+        }
+
+        avcodec_flush_buffers(codec.context());
     }
 };
 
-Decoder::Decoder(QObject* parent)
-    : EngineWorker{parent}
+FFmpegDecoder::FFmpegDecoder(QObject* parent)
+    : AudioDecoder{parent}
     , p{std::make_unique<Private>(this)}
 {
     setObjectName("Decoder");
 }
 
-Decoder::~Decoder() = default;
+FFmpegDecoder::~FFmpegDecoder() = default;
 
-void Decoder::run(AVFormatContext* context, Codec* codec, const AudioFormat& format)
+bool FFmpegDecoder::init(const QString& source)
 {
-    p->context     = context;
-    p->codec       = codec;
-    p->audioFormat = format;
-
-    setPaused(false);
-    scheduleNextStep();
+    return p->setup(source);
 }
 
-void Decoder::reset()
+void FFmpegDecoder::start()
 {
-    EngineWorker::reset();
-    p->pendingFrameCount = 0;
-    p->draining          = false;
-}
-
-void Decoder::kill()
-{
-    EngineWorker::kill();
-    p->pendingFrameCount = 0;
-    p->draining          = false;
-    p->context           = nullptr;
-    p->codec             = nullptr;
-}
-
-void Decoder::onBufferProcessed()
-{
-    --p->pendingFrameCount;
-    scheduleNextStep(false);
-}
-
-bool Decoder::canDoNextStep() const
-{
-    return p->pendingFrameCount < MaxFrameQueue && EngineWorker::canDoNextStep();
-}
-
-int Decoder::timerInterval() const
-{
-    return 5;
-}
-
-void Decoder::doNextStep()
-{
-    if(isPaused() || !p->checkCodecContext()) {
+    if(p->hasError()) {
         return;
     }
 
-    const Packet packet(PacketPtr{av_packet_alloc()});
-    const int readResult = av_read_frame(p->context, packet.avPacket());
-    if(readResult < 0) {
-        if(readResult != AVERROR_EOF) {
-            Utils::printError(readResult);
-        }
-        else if(!p->draining) {
-            p->draining = true;
-            p->decodeAudio(packet);
-            scheduleNextStep(false);
-            return;
-        }
+    if(!std::exchange(p->isDecoding, true)) {
+        p->readNext();
+    }
+}
 
-        emit audioBufferDecoded({});
-        p->decoder->setAtEnd(true);
-        return;
+void FFmpegDecoder::stop()
+{
+    p->isDecoding = false;
+    p->draining   = false;
+
+    p->context.reset();
+    p->stream = {};
+    p->codec  = {};
+    p->buffer = {};
+}
+
+AudioFormat FFmpegDecoder::format() const
+{
+    return p->audioFormat;
+}
+
+bool FFmpegDecoder::isSeekable() const
+{
+    return p->isSeekable;
+}
+
+void FFmpegDecoder::seek(uint64_t pos)
+{
+    p->seek(pos);
+    p->readNext();
+}
+
+AudioBuffer FFmpegDecoder::readBuffer()
+{
+    if(!p->isDecoding || p->hasError()) {
+        return {};
     }
 
-    if(packet.avPacket()->stream_index != p->codec->streamIndex()) {
-        scheduleNextStep(false);
-        return;
-    }
+    QMetaObject::invokeMethod(
+        this, [this]() { p->readNext(); }, Qt::QueuedConnection);
 
-    packet.avPacket()->time_base = p->codec->stream()->time_base;
+    return std::exchange(p->buffer, {});
+}
 
-    p->decodeAudio(packet);
-    scheduleNextStep(false);
+AudioDecoder::Error FFmpegDecoder::error() const
+{
+    return p->error;
 }
 } // namespace Fooyin
 

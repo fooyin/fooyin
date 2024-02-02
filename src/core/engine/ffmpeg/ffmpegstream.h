@@ -29,7 +29,10 @@ namespace Fooyin {
 class Stream
 {
 public:
-    explicit Stream(AVStream* stream = nullptr);
+    Stream();
+    explicit Stream(AVStream* stream);
+
+    [[nodiscard]] bool isValid() const;
 
     [[nodiscard]] AVStream* avStream() const;
     [[nodiscard]] int index() const;

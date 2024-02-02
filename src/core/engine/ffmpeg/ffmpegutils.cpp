@@ -48,9 +48,10 @@ Fooyin::AudioFormat::SampleFormat sampleFormat(AVSampleFormat format)
             return Fooyin::AudioFormat::Float;
         case(AV_SAMPLE_FMT_DBL):
         case(AV_SAMPLE_FMT_DBLP):
+            return Fooyin::AudioFormat::Double;
         case(AV_SAMPLE_FMT_S64):
         case(AV_SAMPLE_FMT_S64P):
-            return Fooyin::AudioFormat::Double;
+            return Fooyin::AudioFormat::Int64;
         default:
             return Fooyin::AudioFormat::Unknown;
     }
@@ -62,40 +63,12 @@ void printError(int error)
 {
     char errStr[1024];
     av_strerror(error, errStr, 1024);
-    qDebug() << "[FFmpeg] " << errStr;
+    qWarning() << "[FFmpeg] " << errStr;
 }
 
 void printError(const QString& error)
 {
-    qDebug() << "[FFmpeg] " << error;
-}
-
-AVSampleFormat interleaveFormat(AVSampleFormat planarFormat)
-{
-    switch(planarFormat) {
-        case(AV_SAMPLE_FMT_U8P):
-            return AV_SAMPLE_FMT_U8;
-        case(AV_SAMPLE_FMT_S16P):
-            return AV_SAMPLE_FMT_S16;
-        case(AV_SAMPLE_FMT_S32P):
-            return AV_SAMPLE_FMT_S32;
-        case(AV_SAMPLE_FMT_FLTP):
-            return AV_SAMPLE_FMT_FLT;
-        case(AV_SAMPLE_FMT_DBLP):
-            return AV_SAMPLE_FMT_DBL;
-        case(AV_SAMPLE_FMT_S64P):
-            return AV_SAMPLE_FMT_S64;
-        case(AV_SAMPLE_FMT_NONE):
-        case(AV_SAMPLE_FMT_U8):
-        case(AV_SAMPLE_FMT_S16):
-        case(AV_SAMPLE_FMT_S32):
-        case(AV_SAMPLE_FMT_FLT):
-        case(AV_SAMPLE_FMT_DBL):
-        case(AV_SAMPLE_FMT_S64):
-        case(AV_SAMPLE_FMT_NB):
-        default:
-            return planarFormat;
-    }
+    qWarning() << "[FFmpeg] " << error;
 }
 
 AudioFormat audioFormatFromCodec(AVCodecParameters* codec)

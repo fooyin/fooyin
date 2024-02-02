@@ -19,6 +19,7 @@
 
 #include "enginehandler.h"
 
+#include "engine/ffmpeg/ffmpegdecoder.h"
 #include "engine/ffmpeg/ffmpegengine.h"
 
 #include <core/coresettings.h>
@@ -62,8 +63,6 @@ struct EngineHandler::Private
     {
         engine->moveToThread(&engineThread);
         engineThread.start();
-
-        QMetaObject::invokeMethod(engine, &AudioEngine::startup);
 
         QObject::connect(playerManager, &PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
         QObject::connect(playerManager, &PlayerManager::positionMoved, engine, &AudioEngine::seek);
@@ -185,19 +184,15 @@ EngineHandler::EngineHandler(PlayerManager* playerManager, SettingsManager* sett
     p->settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateVolume(volume); });
 }
 
-EngineHandler::~EngineHandler() = default;
+EngineHandler::~EngineHandler()
+{
+    p->engineThread.quit();
+    p->engineThread.wait();
+}
 
 void EngineHandler::setup()
 {
     p->changeOutput(p->settings->value<Settings::Core::AudioOutput>());
-}
-
-void EngineHandler::shutdown()
-{
-    QMetaObject::invokeMethod(p->engine, &AudioEngine::shutdown);
-
-    p->engineThread.quit();
-    p->engineThread.wait();
 }
 
 OutputNames EngineHandler::getAllOutputs() const
@@ -236,6 +231,11 @@ void EngineHandler::addOutput(const AudioOutputBuilder& output)
         return;
     }
     p->outputs.emplace(output.name, output.creator);
+}
+
+std::unique_ptr<AudioDecoder> EngineHandler::createDecoder()
+{
+    return std::make_unique<FFmpegDecoder>();
 }
 } // namespace Fooyin
 

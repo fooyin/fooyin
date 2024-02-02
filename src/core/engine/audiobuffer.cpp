@@ -39,6 +39,14 @@ public:
         data.assign(data_.begin(), data_.end());
     }
 
+    Private(const uint8_t* data_, size_t size, AudioFormat format_, uint64_t startTime_)
+        : format{format_}
+        , startTime{startTime_}
+    {
+        data.resize(size);
+        std::memmove(data.data(), data_, size);
+    }
+
     void fillSilence()
     {
         const bool unsignedFormat = format.sampleFormat() == Fooyin::AudioFormat::UInt8;
@@ -59,8 +67,12 @@ AudioBuffer::AudioBuffer(std::span<const std::byte> data, AudioFormat format, ui
     : p{new Private(data, format, startTime)}
 { }
 
-AudioBuffer::AudioBuffer(const uint8_t* data, int size, AudioFormat format, uint64_t startTime)
-    : AudioBuffer{{std::bit_cast<const std::byte*>(data), static_cast<std::size_t>(size)}, format, startTime}
+AudioBuffer::AudioBuffer(AudioFormat format, uint64_t startTime)
+    : AudioBuffer{{}, format, startTime}
+{ }
+
+AudioBuffer::AudioBuffer(const uint8_t* data, size_t size, AudioFormat format, uint64_t startTime)
+    : p{new Private(data, size, format, startTime)}
 { }
 
 AudioBuffer::~AudioBuffer() = default;
@@ -73,6 +85,13 @@ void AudioBuffer::reserve(size_t size)
 {
     if(isValid()) {
         p->data.reserve(size);
+    }
+}
+
+void AudioBuffer::resize(size_t size)
+{
+    if(isValid()) {
+        p->data.resize(size);
     }
 }
 
@@ -104,7 +123,9 @@ bool AudioBuffer::isValid() const
 
 void AudioBuffer::detach()
 {
-    p = new Private(*p);
+    if(isValid()) {
+        p = new Private(*p);
+    }
 }
 
 AudioFormat AudioBuffer::format() const
@@ -195,9 +216,9 @@ void AudioBuffer::adjustVolumeOfSamples(double volume)
 
     switch(format().sampleFormat()) {
         case(AudioFormat::SampleFormat::UInt8): {
-            auto* samples = std::bit_cast<int8_t*>(data());
+            auto* samples = std::bit_cast<uint8_t*>(data());
             for(int i{0}; i < bytes; ++i) {
-                samples[i] = static_cast<int8_t>(static_cast<float>(samples[i]) * vol);
+                samples[i] = static_cast<uint8_t>(static_cast<float>(samples[i]) * vol);
             }
             break;
         }
@@ -226,6 +247,14 @@ void AudioBuffer::adjustVolumeOfSamples(double volume)
                 samples[offset1] = static_cast<uint8_t>(newSample & 0x0000FF);
                 samples[offset2] = static_cast<uint8_t>((newSample & 0x00FF00) >> 8);
                 samples[offset3] = static_cast<uint8_t>((newSample & 0xFF0000) >> 16);
+            }
+            break;
+        }
+        case(AudioFormat::SampleFormat::Int64): {
+            auto* samples   = std::bit_cast<int64_t*>(data());
+            const int count = bytes / bps;
+            for(int i{0}; i < count; ++i) {
+                samples[i] = static_cast<int64_t>(static_cast<double>(samples[i]) * volume);
             }
             break;
         }
