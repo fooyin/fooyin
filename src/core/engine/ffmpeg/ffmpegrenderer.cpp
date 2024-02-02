@@ -106,10 +106,7 @@ struct FFmpegRenderer::Private
                 // End of file
                 currentBufferOffset = 0;
                 bufferQueue.dequeue();
-
-                self->stop();
                 QMetaObject::invokeMethod(self, &FFmpegRenderer::finished);
-
                 return samplesBuffered;
             }
 
