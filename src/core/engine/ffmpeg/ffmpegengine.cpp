@@ -287,12 +287,18 @@ void FFmpegEngine::setAudioOutput(AudioOutput* output)
     const bool playing = state() == PlayingState || state() == PausedState;
 
     p->clock.setPaused(playing);
+    p->renderer->pause(playing);
+
+    if(playing) {
+        p->bufferTimer->stop();
+    }
 
     if(p->renderer) {
         p->renderer->updateOutput(p->audioOutput);
     }
 
     if(playing) {
+        p->clock.setPaused(false);
         p->startPlayback();
     }
 }
@@ -306,12 +312,18 @@ void FFmpegEngine::setOutputDevice(const QString& device)
     const bool playing = state() == PlayingState || state() == PausedState;
 
     p->clock.setPaused(playing);
+    p->renderer->pause(playing);
+
+    if(playing) {
+        p->bufferTimer->stop();
+    }
 
     if(p->renderer) {
         p->renderer->updateDevice(device);
     }
 
     if(playing) {
+        p->clock.setPaused(false);
         p->startPlayback();
     }
 }
