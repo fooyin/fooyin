@@ -517,11 +517,17 @@ bool PipeWireOutput::init(const OutputContext& oc)
 
 void PipeWireOutput::uninit()
 {
-    p->uninit();
+    if(p->pc.initialised) {
+        p->uninit();
+    }
 }
 
 void PipeWireOutput::reset()
 {
+    if(!p->pc.initialised || !p->pc.core) {
+        return;
+    }
+
     pw_thread_loop_lock(p->pc.loop.get());
     pw_stream_set_active(p->pc.stream.get(), false);
     pw_stream_flush(p->pc.stream.get(), false);
@@ -530,6 +536,10 @@ void PipeWireOutput::reset()
 
 void PipeWireOutput::start()
 {
+    if(!p->pc.initialised || !p->pc.core) {
+        return;
+    }
+
     pw_thread_loop_lock(p->pc.loop.get());
     pw_stream_set_active(p->pc.stream.get(), true);
     pw_thread_loop_unlock(p->pc.loop.get());
