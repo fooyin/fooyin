@@ -21,11 +21,12 @@
 
 #include "fycore_export.h"
 
+#include <core/engine/outputplugin.h>
+
 #include <QObject>
 
 namespace Fooyin {
 class Track;
-class AudioOutput;
 
 enum PlaybackState
 {
@@ -65,8 +66,8 @@ public:
 
     virtual void setVolume(double volume) = 0;
 
-    virtual void setAudioOutput(AudioOutput* output)    = 0;
-    virtual void setOutputDevice(const QString& device) = 0;
+    virtual void setAudioOutput(const OutputCreator& output) = 0;
+    virtual void setOutputDevice(const QString& device)      = 0;
 
     void changeState(PlaybackState state);
     void changeTrackStatus(TrackStatus status);

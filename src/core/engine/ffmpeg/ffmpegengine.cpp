@@ -56,7 +56,7 @@ struct FFmpegEngine::Private
 
     PlaybackState state{StoppedState};
 
-    AudioOutput* audioOutput{nullptr};
+    std::unique_ptr<AudioOutput> audioOutput;
     AudioFormat format;
 
     FFmpegDecoder* decoder;
@@ -295,12 +295,8 @@ void FFmpegEngine::setVolume(double volume)
     p->renderer->updateVolume(volume);
 }
 
-void FFmpegEngine::setAudioOutput(AudioOutput* output)
+void FFmpegEngine::setAudioOutput(const OutputCreator& output)
 {
-    if(std::exchange(p->audioOutput, output) == output) {
-        return;
-    }
-
     const bool playing = state() == PlayingState || state() == PausedState;
 
     p->clock.setPaused(playing);
@@ -310,7 +306,13 @@ void FFmpegEngine::setAudioOutput(AudioOutput* output)
         p->bufferTimer->stop();
     }
 
-    p->renderer->updateOutput(p->audioOutput);
+    if(p->audioOutput && p->audioOutput->initialised()) {
+        p->audioOutput->uninit();
+    }
+
+    p->audioOutput = output();
+
+    p->renderer->updateOutput(p->audioOutput.get());
 
     if(playing) {
         p->clock.setPaused(false);

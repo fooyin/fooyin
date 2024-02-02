@@ -32,6 +32,7 @@ public:
     explicit FFmpegEngine(SettingsManager* settings, QObject* parent = nullptr);
     ~FFmpegEngine() override;
 
+public slots:
     void seek(uint64_t pos) override;
     [[nodiscard]] uint64_t currentPosition() const;
 
@@ -44,7 +45,7 @@ public:
 
     void setVolume(double volume) override;
 
-    void setAudioOutput(AudioOutput* output) override;
+    void setAudioOutput(const OutputCreator& output) override;
     void setOutputDevice(const QString& device) override;
 
 private:

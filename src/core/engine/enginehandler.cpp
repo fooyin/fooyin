@@ -37,9 +37,7 @@ namespace Fooyin {
 struct CurrentOutput
 {
     QString name;
-    std::unique_ptr<AudioOutput> output;
     QString device;
-    std::unique_ptr<AudioOutput> prevOutput;
 };
 
 struct EngineHandler::Private
@@ -70,8 +68,6 @@ struct EngineHandler::Private
         QObject::connect(engine, &AudioEngine::positionChanged, playerManager, &PlayerManager::setCurrentPosition);
         QObject::connect(engine, &AudioEngine::trackStatusChanged, self,
                          [this](TrackStatus status) { handleTrackStatus(status); });
-        QObject::connect(self, &EngineHandler::outputChanged, engine, &AudioEngine::setAudioOutput);
-        QObject::connect(self, &EngineHandler::deviceChanged, engine, &AudioEngine::setOutputDevice);
 
         updateVolume(settings->value<Settings::Core::OutputVolume>());
     }
@@ -143,25 +139,14 @@ struct EngineHandler::Private
             return;
         }
 
-        const auto changeCurrentOutput = [this, newName, device]() {
-            currentOutput = {newName, outputs.at(newName)(), device, std::move(currentOutput.output)};
-            currentOutput.output->setDevice(device);
-            emit self->outputChanged(currentOutput.output.get());
-        };
-
-        if(!currentOutput.output) {
-            changeCurrentOutput();
-        }
-        else if(currentOutput.name != newName) {
-            if(!outputs.contains(newName)) {
-                qDebug() << "Output not found: " << newName;
-                return;
-            }
-            changeCurrentOutput();
+        if(currentOutput.name != newName) {
+            currentOutput = {newName, device};
+            QMetaObject::invokeMethod(self, "outputChanged", Q_ARG(const QString&, newName));
+            QMetaObject::invokeMethod(self, "deviceChanged", Q_ARG(const QString&, device));
         }
         else if(currentOutput.device != device) {
             currentOutput.device = device;
-            emit self->deviceChanged(device);
+            QMetaObject::invokeMethod(self, "deviceChanged", Q_ARG(const QString&, device));
         }
     }
 
@@ -178,6 +163,14 @@ EngineHandler::EngineHandler(PlayerManager* playerManager, SettingsManager* sett
 {
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->playStateChanged(state); });
+
+    QObject::connect(this, &EngineHandler::outputChanged, this, [this](const QString& output) {
+        if(p->outputs.contains(output)) {
+            const auto& outputCreator = p->outputs.at(output);
+            QMetaObject::invokeMethod(p->engine, "setAudioOutput", Q_ARG(const OutputCreator&, outputCreator));
+        }
+    });
+    QObject::connect(this, &EngineHandler::deviceChanged, p->engine, &AudioEngine::setOutputDevice);
 
     p->settings->subscribe<Settings::Core::AudioOutput>(this,
                                                         [this](const QString& output) { p->changeOutput(output); });
@@ -211,10 +204,6 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
     if(!p->outputs.contains(output)) {
         qDebug() << "Output not found: " << output;
         return {};
-    }
-
-    if(p->currentOutput.name == output) {
-        return p->currentOutput.output->getAllDevices();
     }
 
     if(auto out = p->outputs.at(output)()) {

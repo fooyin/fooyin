@@ -261,11 +261,7 @@ void FFmpegRenderer::pauseOutput(bool isPaused)
 
 void FFmpegRenderer::updateOutput(AudioOutput* output)
 {
-    if(AudioOutput* prevOutput = std::exchange(p->audioOutput, output)) {
-        if(prevOutput->initialised()) {
-            prevOutput->uninit();
-        }
-    }
+    p->audioOutput = output;
 
     p->bufferPrefilled = false;
 
@@ -276,17 +272,20 @@ void FFmpegRenderer::updateOutput(AudioOutput* output)
 
 void FFmpegRenderer::updateDevice(const QString& device)
 {
-    if(p->audioOutput) {
-        if(p->audioOutput->initialised()) {
-            p->audioOutput->setDevice(device);
-            p->audioOutput->uninit();
-            p->audioOutput->init(p->outputContext);
-            p->bufferPrefilled = false;
-        }
-        else {
-            p->audioOutput->setDevice(device);
-        }
+    if(!p->audioOutput) {
+        return;
     }
+
+    if(p->audioOutput->initialised()) {
+        p->audioOutput->uninit();
+        p->audioOutput->setDevice(device);
+        p->audioOutput->init(p->outputContext);
+    }
+    else {
+        p->audioOutput->setDevice(device);
+    }
+
+    p->bufferPrefilled = false;
 }
 
 void FFmpegRenderer::updateVolume(double volume)
