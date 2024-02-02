@@ -201,19 +201,22 @@ FFmpegRenderer::FFmpegRenderer(QObject* parent)
 
 FFmpegRenderer::~FFmpegRenderer() = default;
 
-void FFmpegRenderer::init(const OutputContext& context)
+bool FFmpegRenderer::init(const OutputContext& context)
 {
     if(p->outputContext != context) {
         p->updateContext(context);
         p->updateInterval();
     }
 
-    if(p->audioOutput) {
-        if(p->audioOutput->initialised()) {
-            p->audioOutput->uninit();
-        }
-        p->audioOutput->init(p->outputContext);
+    if(!p->audioOutput) {
+        return false;
     }
+
+    if(p->audioOutput->initialised()) {
+        p->audioOutput->uninit();
+    }
+
+    return p->audioOutput->init(p->outputContext);
 }
 
 void FFmpegRenderer::start()

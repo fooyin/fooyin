@@ -106,15 +106,15 @@ struct FFmpegEngine::Private
         }
     }
 
-    void updateFormat(const AudioFormat& nextFormat)
+    bool updateFormat(const AudioFormat& nextFormat)
     {
         const auto prevFormat = std::exchange(format, nextFormat);
 
         if(audioOutput->initialised() && settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format) {
-            return;
+            return true;
         }
 
-        renderer->init({.format = format, .volume = volume});
+        return renderer->init({.format = format, .volume = volume});
     }
 
     void startPlayback()
@@ -219,7 +219,10 @@ void FFmpegEngine::changeTrack(const Track& track)
         return;
     }
 
-    p->updateFormat(p->decoder->format());
+    if(!p->updateFormat(p->decoder->format())) {
+        changeTrackStatus(NoTrack);
+        return;
+    }
 
     changeTrackStatus(LoadedTrack);
 }
@@ -248,7 +251,7 @@ void FFmpegEngine::setState(PlaybackState state)
 
 void FFmpegEngine::play()
 {
-    if(!p->audioOutput || trackStatus() == NoTrack) {
+    if(!p->audioOutput || trackStatus() == NoTrack || trackStatus() == InvalidTrack) {
         return;
     }
 
@@ -264,7 +267,7 @@ void FFmpegEngine::play()
 
 void FFmpegEngine::pause()
 {
-    if(trackStatus() == NoTrack) {
+    if(trackStatus() == NoTrack || trackStatus() == InvalidTrack) {
         return;
     }
 

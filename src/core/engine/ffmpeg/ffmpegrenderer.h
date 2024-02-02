@@ -34,7 +34,7 @@ public:
     FFmpegRenderer(QObject* parent = nullptr);
     ~FFmpegRenderer() override;
 
-    void init(const OutputContext& context);
+    bool init(const OutputContext& context);
     void start();
     void stop();
     void pause(bool paused);
