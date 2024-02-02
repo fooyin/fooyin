@@ -4,7 +4,7 @@
 
 ### Changes
 
-* Implement AudioDecoder as a separate, self-contained object to handle all file decoding
+* Implement AudioDecoder as a separate, self-contained object to handle all file decoding ([#39](https://github.com/ludouzi/fooyin/pull/39))
 * Improve plugin naming scheme (fyplugin_name)
 
 ### Fixes
