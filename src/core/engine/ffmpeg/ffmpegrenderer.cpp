@@ -204,6 +204,7 @@ void FFmpegRenderer::init(const OutputContext& context)
 {
     if(p->outputContext != context) {
         p->updateContext(context);
+        p->updateInterval();
     }
 
     if(p->audioOutput) {
@@ -220,7 +221,6 @@ void FFmpegRenderer::start()
         return;
     }
 
-    p->updateInterval();
     p->timer.start();
 }
 
