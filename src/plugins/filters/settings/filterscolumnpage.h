@@ -28,6 +28,8 @@ class SettingsManager;
 namespace Filters {
 class FiltersColumnPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     FiltersColumnPage(ActionManager* actionManager, SettingsManager* settings);
 };

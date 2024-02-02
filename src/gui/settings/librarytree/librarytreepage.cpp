@@ -40,6 +40,8 @@
 namespace Fooyin {
 class LibraryTreePageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit LibraryTreePageWidget(ActionManager* actionManager, SettingsManager* settings);
 
@@ -208,3 +210,6 @@ LibraryTreePage::LibraryTreePage(ActionManager* actionManager, SettingsManager* 
     setWidgetCreator([actionManager, settings] { return new LibraryTreePageWidget(actionManager, settings); });
 }
 } // namespace Fooyin
+
+#include "librarytreepage.moc"
+#include "moc_librarytreepage.cpp"

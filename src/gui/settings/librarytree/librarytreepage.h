@@ -27,6 +27,8 @@ class SettingsManager;
 
 class LibraryTreePage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     LibraryTreePage(ActionManager* actionManager, SettingsManager* settings);
 };

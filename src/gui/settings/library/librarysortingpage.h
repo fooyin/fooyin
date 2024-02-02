@@ -27,6 +27,8 @@ class SettingsManager;
 
 class LibrarySortingPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     LibrarySortingPage(ActionManager* actionManager, SettingsManager* settings);
 };

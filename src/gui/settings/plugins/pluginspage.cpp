@@ -39,6 +39,8 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fooyin {
 class PluginPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit PluginPageWidget(PluginManager* pluginManager);
 
@@ -113,3 +115,6 @@ PluginPage::PluginPage(SettingsManager* settings, PluginManager* pluginManager)
     setWidgetCreator([pluginManager] { return new PluginPageWidget(pluginManager); });
 }
 } // namespace Fooyin
+
+#include "moc_pluginspage.cpp"
+#include "pluginspage.moc"

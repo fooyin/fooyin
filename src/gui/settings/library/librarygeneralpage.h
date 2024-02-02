@@ -28,6 +28,8 @@ class LibraryManager;
 
 class LibraryGeneralPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     LibraryGeneralPage(ActionManager* actionManager, LibraryManager* libraryManager, SettingsManager* settings);
 };

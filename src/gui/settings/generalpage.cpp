@@ -34,6 +34,8 @@
 namespace Fooyin {
 class GeneralPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit GeneralPageWidget(SettingsManager* settings);
 
@@ -107,3 +109,6 @@ GeneralPage::GeneralPage(SettingsManager* settings)
 }
 
 } // namespace Fooyin
+
+#include "generalpage.moc"
+#include "moc_generalpage.cpp"

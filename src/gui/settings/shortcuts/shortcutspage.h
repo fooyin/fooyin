@@ -27,6 +27,8 @@ class SettingsManager;
 
 class ShortcutsPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     ShortcutsPage(ActionManager* actionManager, SettingsManager* settings);
 };

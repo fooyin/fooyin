@@ -26,6 +26,8 @@ class SettingsManager;
 
 class StatusWidgetPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     explicit StatusWidgetPage(SettingsManager* settings);
 };

@@ -27,6 +27,8 @@ class EngineController;
 
 class EnginePage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     explicit EnginePage(SettingsManager* settings, EngineController* engineHandler);
 };

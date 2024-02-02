@@ -32,6 +32,8 @@
 namespace Fooyin {
 class PlaylistColumnPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit PlaylistColumnPageWidget(ActionManager* actionManager, SettingsManager* settings);
 
@@ -105,3 +107,6 @@ PlaylistColumnPage::PlaylistColumnPage(ActionManager* actionManager, SettingsMan
     setWidgetCreator([actionManager, settings] { return new PlaylistColumnPageWidget(actionManager, settings); });
 }
 } // namespace Fooyin
+
+#include "moc_playlistcolumnpage.cpp"
+#include "playlistcolumnpage.moc"

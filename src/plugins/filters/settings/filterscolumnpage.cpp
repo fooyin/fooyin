@@ -34,6 +34,8 @@
 namespace Fooyin::Filters {
 class FiltersColumnPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit FiltersColumnPageWidget(ActionManager* actionManager, SettingsManager* settings);
 
@@ -109,3 +111,6 @@ FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, SettingsManag
     setWidgetCreator([actionManager, settings] { return new FiltersColumnPageWidget(actionManager, settings); });
 }
 } // namespace Fooyin::Filters
+
+#include "filterscolumnpage.moc"
+#include "moc_filterscolumnpage.cpp"

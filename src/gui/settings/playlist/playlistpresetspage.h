@@ -26,6 +26,8 @@ class SettingsManager;
 
 class PlaylistPresetsPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     explicit PlaylistPresetsPage(SettingsManager* settings);
 };

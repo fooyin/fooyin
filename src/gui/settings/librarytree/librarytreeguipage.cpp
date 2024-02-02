@@ -35,6 +35,8 @@
 namespace Fooyin {
 class LibraryTreeGuiPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit LibraryTreeGuiPageWidget(SettingsManager* settings);
 
@@ -157,3 +159,6 @@ LibraryTreeGuiPage::LibraryTreeGuiPage(SettingsManager* settings)
     setWidgetCreator([settings] { return new LibraryTreeGuiPageWidget(settings); });
 }
 } // namespace Fooyin
+
+#include "librarytreeguipage.moc"
+#include "moc_librarytreeguipage.cpp"

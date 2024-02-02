@@ -42,6 +42,8 @@
 namespace Fooyin {
 class LibraryGeneralPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit LibraryGeneralPageWidget(ActionManager* actionManager, LibraryManager* libraryManager,
                                       SettingsManager* settings);
@@ -156,3 +158,6 @@ LibraryGeneralPage::LibraryGeneralPage(ActionManager* actionManager, LibraryMana
 }
 
 } // namespace Fooyin
+
+#include "librarygeneralpage.moc"
+#include "moc_librarygeneralpage.cpp"

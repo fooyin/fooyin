@@ -47,6 +47,8 @@ using namespace Settings::Gui::Internal;
 
 class GuiGeneralPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
                                   SettingsManager* settings);
@@ -233,3 +235,6 @@ GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* e
     });
 }
 } // namespace Fooyin
+
+#include "guigeneralpage.moc"
+#include "moc_guigeneralpage.cpp"

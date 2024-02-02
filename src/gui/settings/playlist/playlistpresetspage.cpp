@@ -249,6 +249,8 @@ void updateGroupTextBlocks(const ExpandableInputList& presetInputs, SubheaderRow
 
 class PlaylistPresetsPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit PlaylistPresetsPageWidget(SettingsManager* settings);
 
@@ -599,4 +601,5 @@ PlaylistPresetsPage::PlaylistPresetsPage(SettingsManager* settings)
 }
 } // namespace Fooyin
 
+#include "moc_playlistpresetspage.cpp"
 #include "playlistpresetspage.moc"

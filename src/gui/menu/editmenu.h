@@ -27,6 +27,8 @@ class SettingsManager;
 
 class EditMenu : public QObject
 {
+    Q_OBJECT
+
 public:
     explicit EditMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
 

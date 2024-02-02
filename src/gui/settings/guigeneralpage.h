@@ -28,6 +28,8 @@ class LayoutProvider;
 
 class GuiGeneralPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     explicit GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout, SettingsManager* settings);
 };

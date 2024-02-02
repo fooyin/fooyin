@@ -26,6 +26,8 @@ class SettingsManager;
 
 class LibraryTreeGuiPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     explicit LibraryTreeGuiPage(SettingsManager* settings);
 };

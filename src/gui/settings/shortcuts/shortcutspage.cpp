@@ -71,6 +71,8 @@ private:
 
 class ShortcutsPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit ShortcutsPageWidget(ActionManager* actionManager);
 
@@ -254,4 +256,5 @@ ShortcutsPage::ShortcutsPage(ActionManager* actionManager, SettingsManager* sett
 }
 } // namespace Fooyin
 
+#include "moc_shortcutspage.cpp"
 #include "shortcutspage.moc"

@@ -27,6 +27,8 @@ class SettingsManager;
 namespace Filters {
 class FiltersGeneralPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     explicit FiltersGeneralPage(SettingsManager* settings);
 };

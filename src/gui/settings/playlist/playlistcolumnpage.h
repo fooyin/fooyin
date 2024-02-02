@@ -27,6 +27,8 @@ class SettingsManager;
 
 class PlaylistColumnPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     PlaylistColumnPage(ActionManager* actionManager, SettingsManager* settings);
 };

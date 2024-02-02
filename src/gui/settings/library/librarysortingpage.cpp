@@ -109,3 +109,5 @@ LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SettingsMan
     setWidgetCreator([actionManager, settings] { return new LibrarySortingPageWidget(actionManager, settings); });
 }
 } // namespace Fooyin
+
+#include "moc_librarysortingpage.cpp"

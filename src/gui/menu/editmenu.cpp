@@ -44,3 +44,5 @@ EditMenu::EditMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     QObject::connect(openSettings, &QAction::triggered, m_settings->settingsDialog(), &SettingsDialogController::open);
 }
 } // namespace Fooyin
+
+#include "moc_editmenu.cpp"

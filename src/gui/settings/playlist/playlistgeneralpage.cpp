@@ -35,6 +35,8 @@
 namespace Fooyin {
 class PlaylistGeneralPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit PlaylistGeneralPageWidget(SettingsManager* settings);
 
@@ -167,3 +169,6 @@ PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings)
     setWidgetCreator([settings] { return new PlaylistGeneralPageWidget(settings); });
 }
 } // namespace Fooyin
+
+#include "moc_playlistgeneralpage.cpp"
+#include "playlistgeneralpage.moc"

@@ -33,6 +33,8 @@
 namespace Fooyin {
 class StatusWidgetPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit StatusWidgetPageWidget(SettingsManager* settings);
 
@@ -117,3 +119,6 @@ StatusWidgetPage::StatusWidgetPage(SettingsManager* settings)
     setWidgetCreator([settings] { return new StatusWidgetPageWidget(settings); });
 }
 } // namespace Fooyin
+
+#include "moc_statuswidgetpage.cpp"
+#include "statuswidgetpage.moc"

@@ -37,6 +37,8 @@ using namespace Qt::Literals::StringLiterals;
 namespace Fooyin {
 class EnginePageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit EnginePageWidget(SettingsManager* settings, EngineController* engine);
 
@@ -171,3 +173,6 @@ EnginePage::EnginePage(SettingsManager* settings, EngineController* engine)
     setWidgetCreator([settings, engine] { return new EnginePageWidget(settings, engine); });
 }
 } // namespace Fooyin
+
+#include "enginepage.moc"
+#include "moc_enginepage.cpp"

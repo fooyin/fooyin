@@ -41,6 +41,8 @@
 namespace Fooyin::Filters {
 class FiltersGeneralPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit FiltersGeneralPageWidget(SettingsManager* settings);
 
@@ -261,3 +263,6 @@ FiltersGeneralPage::FiltersGeneralPage(SettingsManager* settings)
     setWidgetCreator([settings] { return new FiltersGeneralPageWidget(settings); });
 }
 } // namespace Fooyin::Filters
+
+#include "filtersgeneralpage.moc"
+#include "moc_filtersgeneralpage.cpp"

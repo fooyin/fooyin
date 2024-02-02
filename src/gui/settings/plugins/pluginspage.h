@@ -27,6 +27,8 @@ class SettingsManager;
 
 class PluginPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
     PluginPage(SettingsManager* settings, PluginManager* pluginManager);
 };
