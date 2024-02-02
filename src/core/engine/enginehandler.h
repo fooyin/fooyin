@@ -44,6 +44,8 @@ public:
     [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const override;
     void addOutput(const AudioOutputBuilder& output) override;
 
+    std::unique_ptr<AudioDecoder> createDecoder() override;
+
 private:
     struct Private;
     std::unique_ptr<Private> p;

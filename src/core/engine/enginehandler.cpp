@@ -19,6 +19,7 @@
 
 #include "enginehandler.h"
 
+#include "engine/ffmpeg/ffmpegdecoder.h"
 #include "engine/ffmpeg/ffmpegengine.h"
 
 #include <core/coresettings.h>
@@ -230,6 +231,11 @@ void EngineHandler::addOutput(const AudioOutputBuilder& output)
         return;
     }
     p->outputs.emplace(output.name, output.creator);
+}
+
+std::unique_ptr<AudioDecoder> EngineHandler::createDecoder()
+{
+    return std::make_unique<FFmpegDecoder>();
 }
 } // namespace Fooyin
 
