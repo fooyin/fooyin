@@ -79,7 +79,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     , m_waitForTracks{new QCheckBox(tr("Wait for tracks"), this)}
     , m_language{new QComboBox(this)}
 {
-    auto* startupBehaviourLabel = new QLabel(tr("Behaviour: "), this);
+    auto* startupBehaviourLabel = new QLabel(tr("Behaviour") + ":", this);
 
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
     m_waitForTracks->setChecked(m_settings->value<Settings::Gui::WaitForTracks>());

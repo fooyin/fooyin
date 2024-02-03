@@ -210,7 +210,7 @@ void GuiGeneralPageWidget::exportLayout()
 {
     bool success{false};
     const QString name
-        = QInputDialog::getText(this, tr("Export layout"), tr("Layout Name:"), QLineEdit::Normal, u""_s, &success);
+        = QInputDialog::getText(this, tr("Export layout"), tr("Layout Name") + ":", QLineEdit::Normal, u""_s, &success);
 
     if(success && !name.isEmpty()) {
         const QString saveFile = QFileDialog::getSaveFileName(this, u"Save Layout"_s, Gui::layoutsPath() + name,

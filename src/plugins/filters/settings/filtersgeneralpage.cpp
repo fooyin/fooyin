@@ -92,7 +92,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
-    auto* rowHeightLabel = new QLabel(tr("Row Height: "), this);
+    auto* rowHeightLabel = new QLabel(tr("Row Height") + ":", this);
 
     appearanceLayout->addWidget(m_filterHeaders, 0, 0, 1, 2);
     appearanceLayout->addWidget(m_filterScrollBars, 1, 0, 1, 2);
@@ -106,8 +106,8 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    auto* doubleClickLabel = new QLabel(tr("Double-click: "), this);
-    auto* middleClickLabel = new QLabel(tr("Middle-click: "), this);
+    auto* doubleClickLabel = new QLabel(tr("Double-click") + ":", this);
+    auto* middleClickLabel = new QLabel(tr("Middle-click") + ":", this);
 
     clickBehaviourLayout->addWidget(doubleClickLabel, 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
@@ -118,7 +118,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    auto* playlistNameLabel = new QLabel(tr("Name: "), this);
+    auto* playlistNameLabel = new QLabel(tr("Name") + ":", this);
 
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);

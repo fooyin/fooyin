@@ -114,8 +114,8 @@ public:
         : ExpandableInput{ExpandableInput::CustomWidget, parent}
         , m_groupBox{new QGroupBox(this)}
         , m_rowHeight{new QSpinBox(this)}
-        , m_leftBox{new ExpandableInputBox(tr("Left-aligned text: "), ExpandableInput::CustomWidget, this)}
-        , m_rightBox{new ExpandableInputBox(tr("Right-aligned text: "), ExpandableInput::CustomWidget, this)}
+        , m_leftBox{new ExpandableInputBox(tr("Left-aligned text") + ":", ExpandableInput::CustomWidget, this)}
+        , m_rightBox{new ExpandableInputBox(tr("Right-aligned text") + ":", ExpandableInput::CustomWidget, this)}
     {
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
@@ -128,7 +128,7 @@ public:
         m_leftBox->setInputWidget([](QWidget* widget) { return new CustomisableInput(widget); });
         m_rightBox->setInputWidget([](QWidget* widget) { return new CustomisableInput(widget); });
 
-        auto* rowHeightLabel = new QLabel(tr("Row height: "), this);
+        auto* rowHeightLabel = new QLabel(tr("Row height") + ":", this);
 
         groupLayout->addWidget(rowHeightLabel, 0, 0);
         groupLayout->addWidget(m_rowHeight, 0, 1);
@@ -330,17 +330,17 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
 
     const auto inputAttributes = ExpandableInput::CustomWidget;
 
-    m_headerTitle    = new ExpandableInputBox(tr("Title: "), inputAttributes, this);
-    m_headerSubtitle = new ExpandableInputBox(tr("Subtitle: "), inputAttributes, this);
-    m_headerSideText = new ExpandableInputBox(tr("Side text: "), inputAttributes, this);
-    m_headerInfo     = new ExpandableInputBox(tr("Info: "), inputAttributes, this);
+    m_headerTitle    = new ExpandableInputBox(tr("Title") + ":", inputAttributes, this);
+    m_headerSubtitle = new ExpandableInputBox(tr("Subtitle") + ":", inputAttributes, this);
+    m_headerSideText = new ExpandableInputBox(tr("Side text") + ":", inputAttributes, this);
+    m_headerInfo     = new ExpandableInputBox(tr("Info") + ":", inputAttributes, this);
 
     m_headerTitle->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
     m_headerSubtitle->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
     m_headerSideText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
     m_headerInfo->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
 
-    auto* headerRowHeight = new QLabel(tr("Row height: "), this);
+    auto* headerRowHeight = new QLabel(tr("Row height") + ":", this);
 
     headerLayout->addWidget(headerRowHeight, 0, 0);
     headerLayout->addWidget(m_headerRowHeight, 0, 1);
@@ -359,7 +359,7 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
     auto* subheaderWidget = new QWidget();
     auto* subheaderLayout = new QGridLayout(subheaderWidget);
 
-    m_subHeaders = new ExpandableInputBox(tr("Subheaders: "), inputAttributes, this);
+    m_subHeaders = new ExpandableInputBox(tr("Subheaders") + ":", inputAttributes, this);
     m_subHeaders->setInputWidget([](QWidget* parent) {
         const SubheaderRow subheader;
         auto* groupBox = new ExpandableGroupBox(subheader.rowHeight, parent);
@@ -377,11 +377,11 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
 
     subheaderLayout->setRowStretch(subheaderLayout->rowCount(), 1);
 
-    auto* trackRowHeight = new QLabel(tr("Row height: "), this);
+    auto* trackRowHeight = new QLabel(tr("Row height") + ":", this);
 
-    m_trackLeftText = new ExpandableInputBox(tr("Left-aligned text: "), inputAttributes, this);
+    m_trackLeftText = new ExpandableInputBox(tr("Left-aligned text") + ":", inputAttributes, this);
     m_trackLeftText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
-    m_trackRightText = new ExpandableInputBox(tr("Right-aligned text: "), inputAttributes, this);
+    m_trackRightText = new ExpandableInputBox(tr("Right-aligned text") + ":", inputAttributes, this);
     m_trackRightText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
 
     trackLayout->addWidget(trackRowHeight, 0, 0);
@@ -440,8 +440,8 @@ void PlaylistPresetsPageWidget::newPreset()
     preset.name = tr("New preset");
 
     bool success{false};
-    const QString text
-        = QInputDialog::getText(this, tr("Add Preset"), tr("Preset Name:"), QLineEdit::Normal, preset.name, &success);
+    const QString text = QInputDialog::getText(this, tr("Add Preset"), tr("Preset Name") + ":", QLineEdit::Normal,
+                                               preset.name, &success);
 
     if(success && !text.isEmpty()) {
         preset.name                      = text;
@@ -460,7 +460,7 @@ void PlaylistPresetsPageWidget::renamePreset()
     auto preset = m_presetRegistry.itemById(presetId);
 
     bool success{false};
-    const QString text = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name:"), QLineEdit::Normal,
+    const QString text = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name") + ":", QLineEdit::Normal,
                                                preset.name, &success);
 
     if(success && !text.isEmpty()) {
@@ -517,7 +517,7 @@ void PlaylistPresetsPageWidget::clonePreset()
     auto preset        = m_presetRegistry.itemById(presetId);
 
     PlaylistPreset clonedPreset{preset};
-    clonedPreset.name                = tr("Copy of ") + preset.name;
+    clonedPreset.name                = tr("Copy of %1").arg(preset.name);
     clonedPreset.isDefault           = false;
     const PlaylistPreset addedPreset = m_presetRegistry.addItem(clonedPreset);
     if(addedPreset.isValid()) {
