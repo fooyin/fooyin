@@ -163,17 +163,17 @@
     <name>Fooyin::ExpandableGroupBox</name>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="117"/>
-        <source>Left-aligned text: </source>
+        <source>Left-aligned text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="118"/>
-        <source>Right-aligned text: </source>
+        <source>Right-aligned text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="131"/>
-        <source>Row height: </source>
+        <source>Row height</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -350,23 +350,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="95"/>
-        <source>Row Height: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="106"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="109"/>
-        <source>Double-click: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="110"/>
-        <source>Middle-click: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -375,8 +360,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="95"/>
+        <source>Row Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="109"/>
+        <source>Double-click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="110"/>
+        <source>Middle-click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="121"/>
-        <source>Name: </source>
+        <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -423,8 +423,8 @@
 <context>
     <name>Fooyin::GeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="106"/>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="107"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="185"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="186"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
@@ -432,37 +432,42 @@
 <context>
     <name>Fooyin::GeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="56"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="79"/>
         <source>Wait for tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="58"/>
-        <source>Behaviour: </source>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="82"/>
+        <source>Behaviour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="60"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="84"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="63"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="87"/>
         <source>Startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="80"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="95"/>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="109"/>
         <source>Show main window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="81"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="110"/>
         <source>Show main window maximised</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="82"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="111"/>
         <source>Remember from last run</source>
         <translation type="unfinished"></translation>
     </message>
@@ -544,7 +549,7 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="213"/>
-        <source>Layout Name:</source>
+        <source>Layout Name</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -593,7 +598,7 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="93"/>
-        <source>Sort tracks by:</source>
+        <source>Sort tracks by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -671,7 +676,7 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreeguipage.cpp" line="78"/>
-        <source>Row Height:</source>
+        <source>Row Height</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -721,23 +726,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="107"/>
-        <source>Double-click: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="108"/>
-        <source>Middle-click: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="110"/>
         <source>Library Selection Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="107"/>
+        <source>Double-click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="108"/>
+        <source>Middle-click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="113"/>
-        <source>Name: </source>
+        <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -815,12 +820,12 @@
     </message>
     <message>
         <location filename="../../src/gui/menu/playbackmenu.cpp" line="157"/>
-        <source>&amp;Repeat</source>
+        <source>&amp;Repeat Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menu/playbackmenu.cpp" line="162"/>
-        <source>Repeat &amp;All</source>
+        <source>Repeat &amp;Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -933,7 +938,7 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="94"/>
-        <source>Thumbnail Size:</source>
+        <source>Thumbnail Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1018,28 +1023,49 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="333"/>
-        <source>Title: </source>
+        <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="334"/>
-        <source>Subtitle: </source>
+        <source>Subtitle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="335"/>
-        <source>Side text: </source>
+        <source>Side text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="336"/>
-        <source>Info: </source>
+        <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="343"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="380"/>
-        <source>Row height: </source>
+        <source>Row height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="382"/>
+        <source>Left-aligned text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="384"/>
+        <source>Right-aligned text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="443"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="463"/>
+        <source>Preset Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="520"/>
+        <source>Copy of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1049,22 +1075,8 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="362"/>
-        <source>Subheaders: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="373"/>
         <source>Subheaders</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="382"/>
-        <source>Left-aligned text: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="384"/>
-        <source>Right-aligned text: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1078,24 +1090,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="444"/>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="443"/>
         <source>Add Preset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="444"/>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="463"/>
-        <source>Preset Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="463"/>
         <source>Rename Preset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="520"/>
-        <source>Copy of </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1281,10 +1282,6 @@
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="136"/>
-        <source>Settings: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="208"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
@@ -1370,12 +1367,12 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="64"/>
-        <source>Playing Track:</source>
+        <source>Playing Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
-        <source>Track Selection:</source>
+        <source>Track Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1484,7 +1481,7 @@
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="232"/>
-        <source> (Playback)</source>
+        <source>Playback</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
