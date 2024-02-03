@@ -1,0 +1,9 @@
+[main]
+host = https://app.transifex.com
+
+[o:fooyin:p:fooyin:r:fooyin1-0]
+file_filter            = data/translations/fooyin_<lang>.ts
+source_file            = data/translations/fooyin.ts
+source_lang            = en_GB
+type                   = TS
+minimum_perc           = 0
