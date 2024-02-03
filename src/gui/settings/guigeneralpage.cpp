@@ -108,11 +108,13 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     setupBoxLayout->addWidget(importLayoutBtn);
     setupBoxLayout->addWidget(exportLayoutBtn);
 
-    auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(setupBox);
-    mainLayout->addWidget(splitterBox);
-    mainLayout->addWidget(iconThemeBox);
-    mainLayout->addStretch();
+    auto* mainLayout = new QGridLayout(this);
+    mainLayout->addWidget(setupBox, 0, 0, 1, 2);
+    mainLayout->addWidget(splitterBox, 1, 0, 1, 2);
+    mainLayout->addWidget(iconThemeBox, 2, 0, 1, 2);
+
+    mainLayout->setColumnStretch(1, 1);
+    mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     QObject::connect(quickSetup, &QPushButton::clicked, this, &GuiGeneralPageWidget::showQuickSetup);
     QObject::connect(importLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::importLayout);
@@ -162,14 +164,12 @@ void GuiGeneralPageWidget::apply()
     }
 
     m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
-
     m_settings->set<SplitterHandles>(m_splitterHandles->isChecked());
 }
 
 void GuiGeneralPageWidget::reset()
 {
     m_settings->reset<IconTheme>();
-    m_settings->reset<Settings::Gui::IconTheme>();
     m_settings->reset<SplitterHandles>();
 }
 
