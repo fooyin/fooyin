@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.18)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
@@ -37,6 +37,7 @@ include(FooyinMacrosInternal)
 
 fooyin_option(BUILD_SHARED_LIBS "Build fooyin libraries as shared" ON)
 fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
+fooyin_option(BUILD_TRANSLATION "Build translation files" ON)
 fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
@@ -76,6 +77,7 @@ find_package(
                Sql
                Concurrent
                Network
+               LinguistTools
 )
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
@@ -209,6 +211,44 @@ target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin_lib PRIVATE QT_USE_QSTRINGBUILDER)
 target_compile_options(fooyin_lib PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 
+# ---- Fooyin translations ----
+
+if(BUILD_TRANSLATION)
+    set(translation_dir
+        "${PROJECT_SOURCE_DIR}/data/translations"
+        CACHE PATH "Path to the *.ts translation files"
+    )
+
+    file(GLOB_RECURSE ts_files ${translation_dir}/*.ts)
+    #Exclude the translation source
+    list(REMOVE_ITEM ts_files ${translation_dir}/fooyin.ts)
+
+    set_source_files_properties(
+        ${ts_files} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/data"
+    )
+
+    qt_add_lrelease(
+        fooyin_lib
+        TS_FILES
+        ${ts_files}
+        NO_GLOBAL_TARGET
+        QM_FILES_OUTPUT_VARIABLE
+        qm_files
+    )
+
+    set(translations_qrc ${CMAKE_CURRENT_BINARY_DIR}/data/translations.qrc)
+    file(WRITE ${translations_qrc} "<RCC><qresource prefix=\"translations\">\n")
+    foreach(qm_file ${qm_files})
+        get_filename_component(qm_name ${qm_file} NAME)
+        file(APPEND ${translations_qrc} "<file>${qm_name}</file>\n")
+    endforeach()
+    file(APPEND ${translations_qrc} "</qresource></RCC>")
+
+    qt_add_resources(TRANSLATIONS ${translations_qrc})
+else()
+    set(TRANSLATIONS)
+endif()
+
 # ---- Fooyin testing ----
 
 if(BUILD_TESTING)
@@ -222,7 +262,7 @@ set(SOURCES src/app/main.cpp src/app/commandline.cpp)
 
 qt_add_resources(SOURCES data/icons.qrc)
 
-add_executable(fooyin_exe ${SOURCES})
+add_executable(fooyin_exe ${SOURCES} ${TRANSLATIONS})
 set_target_properties(
     fooyin_exe
     PROPERTIES
