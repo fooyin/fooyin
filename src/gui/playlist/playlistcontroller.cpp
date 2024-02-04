@@ -150,7 +150,7 @@ struct PlaylistController::Private
     {
         QByteArray out;
         QDataStream stream(&out, QIODevice::WriteOnly);
-        stream.setVersion(QDataStream::Qt_6_5);
+        stream.setVersion(QDataStream::Qt_6_4);
 
         stream << static_cast<qint32>(states.size());
         for(const auto& [playlistId, state] : states) {
@@ -175,7 +175,7 @@ struct PlaylistController::Private
         in = qUncompress(in);
 
         QDataStream stream(&in, QIODevice::ReadOnly);
-        stream.setVersion(QDataStream::Qt_6_5);
+        stream.setVersion(QDataStream::Qt_6_4);
 
         qint32 size;
         stream >> size;

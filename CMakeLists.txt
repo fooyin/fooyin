@@ -78,6 +78,7 @@ find_package(
                Concurrent
                Network
                LinguistTools
+               Svg
 )
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
@@ -85,6 +86,7 @@ set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Concurrent PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Network PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Svg PROPERTIES TYPE REQUIRED)
 
 find_package(QCoro6 REQUIRED COMPONENTS Core)
 qcoro_enable_coroutines()
@@ -307,4 +309,6 @@ add_custom_target(
               "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
 )
 
-feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+include(FooyinSummary)
+fooyin_print_summary()
+feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)

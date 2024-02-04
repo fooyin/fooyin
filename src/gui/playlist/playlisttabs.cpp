@@ -40,7 +40,9 @@
 #include <QTabBar>
 #include <QTimer>
 
+#if(QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
 #include <chrono>
+#endif
 
 using namespace Qt::Literals::StringLiterals;
 using namespace std::chrono_literals;
@@ -254,7 +256,11 @@ void PlaylistTabs::dragMoveEvent(QDragMoveEvent* event)
         event->accept(p->tabs->tabRect(p->currentHoverIndex));
 
         if(!p->hoverTimer.isActive()) {
+#if(QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
             p->hoverTimer.start(1s, this);
+#else
+            p->hoverTimer.start(1000, this);
+#endif
         }
     }
     else {

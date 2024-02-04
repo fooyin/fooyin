@@ -89,6 +89,7 @@ TEST_F(TagReaderTest, AiffRead)
     EXPECT_EQ(track.performer(), "Fooyin");
     EXPECT_EQ(track.composer(), "Fooyin");
     EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_GT(track.duration(), 0);
 
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());
@@ -117,6 +118,7 @@ TEST_F(TagReaderTest, FlacRead)
     EXPECT_EQ(track.performer(), "Fooyin");
     EXPECT_EQ(track.composer(), "Fooyin");
     EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_GT(track.duration(), 0);
 
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());
@@ -144,6 +146,7 @@ TEST_F(TagReaderTest, M4aRead)
     EXPECT_EQ(track.genre(), "Testing");
     EXPECT_EQ(track.composer(), "Fooyin");
     EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_GT(track.duration(), 0);
 
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());
@@ -172,6 +175,7 @@ TEST_F(TagReaderTest, Mp3Read)
     EXPECT_EQ(track.performer(), "Fooyin");
     EXPECT_EQ(track.composer(), "Fooyin");
     EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_GT(track.duration(), 0);
 
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());
@@ -200,6 +204,7 @@ TEST_F(TagReaderTest, OggRead)
     EXPECT_EQ(track.performer(), "Fooyin");
     EXPECT_EQ(track.composer(), "Fooyin");
     EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_GT(track.duration(), 0);
 
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());
@@ -228,6 +233,7 @@ TEST_F(TagReaderTest, OpusRead)
     EXPECT_EQ(track.performer(), "Fooyin");
     EXPECT_EQ(track.composer(), "Fooyin");
     EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_GT(track.duration(), 0);
 
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());
@@ -256,6 +262,7 @@ TEST_F(TagReaderTest, WavRead)
     EXPECT_EQ(track.performer(), "Fooyin");
     EXPECT_EQ(track.composer(), "Fooyin");
     EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_GT(track.duration(), 0);
 
     const auto testTag = track.extraTag(u"TEST"_s);
     ASSERT_TRUE(!testTag.isEmpty());

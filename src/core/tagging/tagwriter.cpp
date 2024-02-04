@@ -375,11 +375,11 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track)
 
     const auto removedTags = track.removedTags();
     for(const auto& tag : removedTags) {
-        TagLib::String name = convertString(tag);
-        if(name.isEmpty()) {
-            name = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
+        TagLib::String tagName = findMp4Tag(tag);
+        if(tagName.isEmpty()) {
+            tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
         }
-        mp4Tags->removeItem(name);
+        mp4Tags->removeItem(tagName);
     }
 }
 

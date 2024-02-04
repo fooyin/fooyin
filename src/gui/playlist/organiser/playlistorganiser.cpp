@@ -48,7 +48,7 @@ QByteArray saveExpandedState(QTreeView* view, QAbstractItemModel* model)
 {
     QByteArray data;
     QDataStream stream{&data, QIODeviceBase::WriteOnly};
-    stream.setVersion(QDataStream::Qt_6_5);
+    stream.setVersion(QDataStream::Qt_6_4);
 
     std::stack<QModelIndex> indexesToSave;
     indexesToSave.emplace();
@@ -82,7 +82,7 @@ void restoreExpandedState(QTreeView* view, QAbstractItemModel* model, QByteArray
     data = qUncompress(data);
 
     QDataStream stream{&data, QIODeviceBase::ReadOnly};
-    stream.setVersion(QDataStream::Qt_6_5);
+    stream.setVersion(QDataStream::Qt_6_4);
 
     std::stack<QModelIndex> indexesToSave;
     indexesToSave.emplace();

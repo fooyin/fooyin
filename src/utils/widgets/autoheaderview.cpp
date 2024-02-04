@@ -490,7 +490,7 @@ QByteArray AutoHeaderView::saveHeaderState() const
 {
     QByteArray result;
     QDataStream stream(&result, QIODevice::WriteOnly);
-    stream.setVersion(QDataStream::Qt_6_5);
+    stream.setVersion(QDataStream::Qt_6_4);
 
     const int sectionCount = count();
     SectionIndexes pixelWidths(sectionCount);
@@ -524,7 +524,7 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
         SectionIndexes logicalIndexes;
 
         QDataStream stream{state};
-        stream.setVersion(QDataStream::Qt_6_5);
+        stream.setVersion(QDataStream::Qt_6_4);
 
         stream >> pixelWidths;
         stream >> logicalIndexes;

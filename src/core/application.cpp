@@ -74,8 +74,15 @@ struct Application::Private
         , corePluginContext{&pluginManager, &engine,         playerManager,  libraryManager,
                             library,        playlistHandler, settingsManager}
     {
+        registerTypes();
         registerOutputs();
         loadPlugins();
+    }
+
+    void registerTypes()
+    {
+        qRegisterMetaType<OutputCreator>("OutputCreator");
+        qRegisterMetaType<LibraryInfoMap>("LibraryInfoMap");
     }
 
     void registerOutputs()
