@@ -22,6 +22,7 @@
 #include <core/coresettings.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QCoreApplication>
 #include <QLibraryInfo>
 #include <QTranslator>
 
