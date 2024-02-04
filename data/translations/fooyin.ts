@@ -140,12 +140,12 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="69"/>
-        <source>Output:</source>
+        <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="70"/>
-        <source>Device:</source>
+        <source>Device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
