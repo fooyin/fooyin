@@ -31,7 +31,11 @@ class Translations : public QObject
 public:
     explicit Translations(SettingsManager* settings);
 
+    void initialiseTranslations();
+
 private:
     bool installTranslations(const QLocale& locale, const QString& translation, const QString& path, bool warn);
+
+    SettingsManager* m_settings;
 };
 } // namespace Fooyin

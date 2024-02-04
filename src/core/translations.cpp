@@ -29,8 +29,14 @@ using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
 Translations::Translations(SettingsManager* settings)
+    : m_settings{settings}
 {
-    const QString customLanguage = settings->value<Settings::Core::Language>();
+    initialiseTranslations();
+}
+
+void Translations::initialiseTranslations()
+{
+    const QString customLanguage = m_settings->value<Settings::Core::Language>();
 
     if(!customLanguage.isEmpty()) {
         const QLocale customLocale = QLocale{customLanguage};
