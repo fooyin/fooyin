@@ -260,4 +260,6 @@ add_custom_target(
               "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
 )
 
-feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+include(FooyinSummary)
+fooyin_print_summary()
+feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
