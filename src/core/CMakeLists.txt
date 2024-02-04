@@ -26,6 +26,7 @@ set(PRIVATE_SOURCES
     application.cpp
     corepaths.cpp
     internalcoresettings.cpp
+    translations.cpp
     database/database.cpp
     database/librarydatabase.cpp
     database/trackdatabase.cpp

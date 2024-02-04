@@ -4,7 +4,7 @@
 
 To build Fooyin you will need *at least*:
 
-- CMake (3.16+)
+- CMake (3.18+)
 - a C++ compiler with C++20 and coroutine support
 
 The following libraries are required:
@@ -39,8 +39,9 @@ This can be changed by passing the option `-DCMAKE_INSTALL_PREFIX=/install/path`
 The following options can be passed to CMake to customise the build:
 
 * `DBUILD_SHARED_LIBS` - Build fooyin's libraries as shared (ON by default)
-* `DBUILD_TESTING` - Build tests (OFF by default)
 * `DBUILD_PLUGINS` - Build the plugins included with fooyin (ON by default)
+* `DBUILD_TRANSLATIONS` - Build translation files (ON by default)
+* `DBUILD_TESTING` - Build tests (OFF by default)
 * `DBUILD_CCACHE` - Build using CCache if found (ON by default)
 * `DBUILD_PCH` - Build with precompiled header support (OFF by default)
 * `DBUILD_WERROR` - Build with -Werror (OFF by default)

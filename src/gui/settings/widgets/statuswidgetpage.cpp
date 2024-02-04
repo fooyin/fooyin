@@ -61,8 +61,8 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     m_playingScript->setFixedHeight(100);
     m_selectionScript->setFixedHeight(100);
 
-    auto* playingScriptLabel   = new QLabel(tr("Playing Track:"), this);
-    auto* selectionScriptLabel = new QLabel(tr("Track Selection:"), this);
+    auto* playingScriptLabel   = new QLabel(tr("Playing Track") + ":", this);
+    auto* selectionScriptLabel = new QLabel(tr("Track Selection") + ":", this);
 
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);

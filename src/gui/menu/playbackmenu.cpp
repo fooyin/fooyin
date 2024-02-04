@@ -154,12 +154,12 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerManager* playerMa
     orderMenu->addAction(actionManager->registerAction(p->defaultPlayback, Constants::Actions::PlaybackDefault));
     QObject::connect(p->defaultPlayback, &QAction::triggered, this, [this]() { p->setPlayMode(Playlist::Default); });
 
-    p->repeat = new QAction(tr("&Repeat"), this);
+    p->repeat = new QAction(tr("&Repeat Track"), this);
     p->repeat->setCheckable(true);
     orderMenu->addAction(p->actionManager->registerAction(p->repeat, Constants::Actions::Repeat));
     QObject::connect(p->repeat, &QAction::triggered, this, [this]() { p->setPlayMode(Playlist::PlayMode::Repeat); });
 
-    p->repeatAll = new QAction(tr("Repeat &All"), this);
+    p->repeatAll = new QAction(tr("Repeat &Playlist"), this);
     p->repeatAll->setCheckable(true);
     orderMenu->addAction(actionManager->registerAction(p->repeatAll, Constants::Actions::RepeatAll));
     QObject::connect(p->repeatAll, &QAction::triggered, this,

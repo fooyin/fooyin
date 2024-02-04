@@ -229,7 +229,7 @@ struct TrackSelectionController::Private
                 handleActions(playlist, options);
                 return;
             }
-            const QString keepActiveName = newName + tr(" (Playback)");
+            const QString keepActiveName = newName + " (" + tr("Playback") + ")";
 
             if(auto* keepActivePlaylist = playlistHandler->playlistByName(keepActiveName)) {
                 keepActivePlaylist->changeCurrentTrack(activePlaylist->currentTrackIndex());

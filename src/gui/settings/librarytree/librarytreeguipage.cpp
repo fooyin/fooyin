@@ -75,7 +75,7 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(SettingsManager* settings)
 {
     auto* layout = new QGridLayout(this);
 
-    auto* rowHeightLabel = new QLabel(tr("Row Height:"), this);
+    auto* rowHeightLabel = new QLabel(tr("Row Height") + ":", this);
 
     layout->addWidget(m_showHeader, 0, 0, 1, 2);
     layout->addWidget(m_showScrollbar, 1, 0, 1, 2);

@@ -91,7 +91,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
-    auto* rowHeightLabel = new QLabel(tr("Thumbnail Size:"), this);
+    auto* rowHeightLabel = new QLabel(tr("Thumbnail Size") + ":", this);
 
     appearanceLayout->addWidget(m_scrollBars, 0, 0, 1, 2);
     appearanceLayout->addWidget(m_header, 1, 0, 1, 2);

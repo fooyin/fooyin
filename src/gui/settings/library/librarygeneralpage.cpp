@@ -90,7 +90,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
     m_monitorLibraries->setToolTip(tr("Monitor libraries for external changes."));
 
-    auto* sortScriptLabel = new QLabel(tr("Sort tracks by:"), this);
+    auto* sortScriptLabel = new QLabel(tr("Sort tracks by") + ":", this);
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_libraryView, 0, 0, 1, 2);

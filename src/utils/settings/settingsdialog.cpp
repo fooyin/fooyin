@@ -133,7 +133,7 @@ struct SettingsDialog::Private
         }
         stackedLayout->setCurrentIndex(category->index);
 
-        self->setWindowTitle(tr("Settings: ") + category->name);
+        self->setWindowTitle(tr("Settings") + ": " + category->name);
     }
 
     void checkCategoryWidget(SettingsCategory* category)

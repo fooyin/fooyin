@@ -28,17 +28,26 @@
 #include "player/playercontroller.h"
 #include "playlist/playlisthandler.h"
 #include "plugins/pluginmanager.h"
+#include "translations.h"
 
+#include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
 #include <core/engine/outputplugin.h>
 #include <core/plugins/coreplugin.h>
 #include <utils/settings/settingsmanager.h>
+
+#include <QCoreApplication>
+#include <QLibraryInfo>
+#include <QTranslator>
+
+using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
 struct Application::Private
 {
     SettingsManager* settingsManager;
     CoreSettings coreSettings;
+    Translations translations;
     Database database;
     PlayerManager* playerManager;
     EngineHandler engine;
@@ -49,9 +58,13 @@ struct Application::Private
     PluginManager pluginManager;
     CorePluginContext corePluginContext;
 
+    QTranslator qtTranslator;
+    QTranslator fyTranslator;
+
     explicit Private(QObject* parent)
         : settingsManager{new SettingsManager(Core::settingsPath(), parent)}
         , coreSettings{settingsManager}
+        , translations{settingsManager}
         , database{settingsManager}
         , playerManager{new PlayerController(settingsManager, parent)}
         , engine{playerManager, settingsManager}
