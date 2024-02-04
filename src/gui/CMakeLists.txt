@@ -102,4 +102,5 @@ target_link_libraries(
     PUBLIC Fooyin::Core
            Fooyin::Utils
     PRIVATE Fooyin::CorePrivate
+            Qt::Svg
 )

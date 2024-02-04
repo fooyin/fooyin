@@ -76,6 +76,7 @@ find_package(
                Sql
                Concurrent
                Network
+               Svg
 )
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Widgets PROPERTIES TYPE REQUIRED)
@@ -83,6 +84,7 @@ set_package_properties(Qt6Gui PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Sql PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Concurrent PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Network PROPERTIES TYPE REQUIRED)
+set_package_properties(Qt6Svg PROPERTIES TYPE REQUIRED)
 
 find_package(QCoro6 REQUIRED COMPONENTS Core)
 qcoro_enable_coroutines()
