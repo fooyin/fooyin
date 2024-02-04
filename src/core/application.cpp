@@ -28,6 +28,7 @@
 #include "player/playercontroller.h"
 #include "playlist/playlisthandler.h"
 #include "plugins/pluginmanager.h"
+#include "translations.h"
 
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
@@ -46,6 +47,7 @@ struct Application::Private
 {
     SettingsManager* settingsManager;
     CoreSettings coreSettings;
+    Translations translations;
     Database database;
     PlayerManager* playerManager;
     EngineHandler engine;
@@ -62,6 +64,7 @@ struct Application::Private
     explicit Private(QObject* parent)
         : settingsManager{new SettingsManager(Core::settingsPath(), parent)}
         , coreSettings{settingsManager}
+        , translations{settingsManager}
         , database{settingsManager}
         , playerManager{new PlayerController(settingsManager, parent)}
         , engine{playerManager, settingsManager}
@@ -71,25 +74,8 @@ struct Application::Private
         , corePluginContext{&pluginManager, &engine,         playerManager,  libraryManager,
                             library,        playlistHandler, settingsManager}
     {
-        loadTranslations();
         registerOutputs();
         loadPlugins();
-    }
-
-    void loadTranslations()
-    {
-        QString language = settingsManager->value<Settings::Core::Language>();
-        if(language.isEmpty()) {
-            language = QLocale::system().name();
-        }
-
-        if(qtTranslator.load("qt"_L1 + "_"_L1 + language, QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
-            QCoreApplication::installTranslator(&qtTranslator);
-        }
-
-        if(fyTranslator.load("fooyin"_L1 + "_"_L1 + language, "://translations"_L1)) {
-            QCoreApplication::installTranslator(&fyTranslator);
-        }
     }
 
     void registerOutputs()
