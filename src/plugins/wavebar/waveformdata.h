@@ -19,34 +19,29 @@
 
 #pragma once
 
-#include <core/engine/audiobuffer.h>
+#include <core/engine/audioformat.h>
 
-namespace Fooyin {
-class AudioDecoder
+#include <vector>
+
+namespace Fooyin::WaveBar {
+template <typename T>
+struct WaveformData
 {
-public:
-    enum Error
+    AudioFormat format;
+    uint64_t duration{0};
+
+    struct ChannelData
     {
-        NoError,
-        ResourceError,
-        FormatError,
-        AccessDeniedError,
-        NotSupportedError
+        std::vector<T> max;
+        std::vector<T> min;
+        std::vector<T> rms;
     };
 
-    virtual ~AudioDecoder() = default;
+    std::vector<ChannelData> channelData;
 
-    virtual bool init(const QString& source) = 0;
-    virtual void start()                     = 0;
-    virtual void stop()                      = 0;
-
-    virtual bool isSeekable() const = 0;
-    virtual void seek(uint64_t pos) = 0;
-
-    virtual AudioBuffer readBuffer()             = 0;
-    virtual AudioBuffer readBuffer(size_t bytes) = 0;
-
-    virtual AudioFormat format() const = 0;
-    virtual Error error() const        = 0;
+    [[nodiscard]] bool empty() const
+    {
+        return !format.isValid() && channelData.empty();
+    }
 };
-} // namespace Fooyin
+} // namespace Fooyin::WaveBar

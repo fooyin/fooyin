@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,34 +19,29 @@
 
 #pragma once
 
-#include <core/engine/audiodecoder.h>
+#include <core/plugins/coreplugin.h>
+#include <core/plugins/plugin.h>
+#include <gui/plugins/guiplugin.h>
 
-namespace Fooyin {
-class AudioFormat;
-class AudioBuffer;
-
-class FFmpegDecoder : public AudioDecoder
+namespace Fooyin::WaveBar {
+class WaveBarPlugin : public QObject,
+                      public Plugin,
+                      public CorePlugin,
+                      public GuiPlugin
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.fooyin.plugin/1.0" FILE "wavebar.json")
+    Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
+
 public:
-    FFmpegDecoder();
-    ~FFmpegDecoder() override;
+    WaveBarPlugin();
+    ~WaveBarPlugin() override;
 
-    bool init(const QString& source) override;
-
-    void start() override;
-    void stop() override;
-
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] bool isSeekable() const override;
-    void seek(uint64_t pos) override;
-
-    AudioBuffer readBuffer() override;
-    AudioBuffer readBuffer(size_t bytes) override;
-
-    [[nodiscard]] Error error() const override;
+    void initialise(const CorePluginContext& context) override;
+    void initialise(const GuiPluginContext& context) override;
 
 private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fooyin
+} // namespace Fooyin::WaveBar
