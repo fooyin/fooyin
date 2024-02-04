@@ -85,8 +85,12 @@ bool Translations::installTranslations(const QLocale& locale, const QString& tra
 
     qDebug() << "Loaded" << translation << "translations for locale" << locale.name() << "from" << path;
 
-    qApp->installTranslator(translator);
-    return true;
+    if(auto* app = QCoreApplication::instance()) {
+        app->installTranslator(translator);
+        return true;
+    }
+
+    return false;
 }
 
 } // namespace Fooyin
