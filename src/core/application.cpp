@@ -30,15 +30,10 @@
 #include "plugins/pluginmanager.h"
 #include "translations.h"
 
-#include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
 #include <core/engine/outputplugin.h>
 #include <core/plugins/coreplugin.h>
 #include <utils/settings/settingsmanager.h>
-
-#include <QCoreApplication>
-#include <QLibraryInfo>
-#include <QTranslator>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -57,9 +52,6 @@ struct Application::Private
 
     PluginManager pluginManager;
     CorePluginContext corePluginContext;
-
-    QTranslator qtTranslator;
-    QTranslator fyTranslator;
 
     explicit Private(QObject* parent)
         : settingsManager{new SettingsManager(Core::settingsPath(), parent)}
