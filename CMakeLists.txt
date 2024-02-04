@@ -37,7 +37,7 @@ include(FooyinMacrosInternal)
 
 fooyin_option(BUILD_SHARED_LIBS "Build fooyin libraries as shared" ON)
 fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
-fooyin_option(BUILD_TRANSLATION "Build translation files" ON)
+fooyin_option(BUILD_TRANSLATIONS "Build translation files" ON)
 fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
@@ -213,7 +213,7 @@ target_compile_options(fooyin_lib PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 
 # ---- Fooyin translations ----
 
-if(BUILD_TRANSLATION)
+if(BUILD_TRANSLATIONS)
     set(translation_dir
         "${PROJECT_SOURCE_DIR}/data/translations"
         CACHE PATH "Path to the *.ts translation files"
