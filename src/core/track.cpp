@@ -313,7 +313,7 @@ QByteArray Track::serialiseExtrasTags() const
 
     QByteArray out;
     QDataStream stream(&out, QIODevice::WriteOnly);
-    stream.setVersion(QDataStream::Qt_6_5);
+    stream.setVersion(QDataStream::Qt_6_4);
 
     stream << p->extraTags;
 
@@ -554,7 +554,7 @@ void Track::storeExtraTags(const QByteArray& tags)
 
     QByteArray in{tags};
     QDataStream stream(&in, QIODevice::ReadOnly);
-    stream.setVersion(QDataStream::Qt_6_5);
+    stream.setVersion(QDataStream::Qt_6_4);
 
     stream >> p->extraTags;
 }

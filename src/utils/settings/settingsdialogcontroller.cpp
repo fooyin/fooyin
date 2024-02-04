@@ -85,7 +85,7 @@ QByteArray SettingsDialogController::saveState() const
 {
     QByteArray state;
     QDataStream stream(&state, QIODevice::WriteOnly);
-    stream.setVersion(QDataStream::Qt_6_5);
+    stream.setVersion(QDataStream::Qt_6_4);
 
     stream << p->geometry;
     stream << p->lastOpenPage;
@@ -99,7 +99,7 @@ void SettingsDialogController::loadState(const QByteArray& state)
         QByteArray stateData{state};
 
         QDataStream stream(&stateData, QIODevice::ReadOnly);
-        stream.setVersion(QDataStream::Qt_6_5);
+        stream.setVersion(QDataStream::Qt_6_4);
 
         stream >> p->geometry;
         stream >> p->lastOpenPage;
