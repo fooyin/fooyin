@@ -137,7 +137,7 @@ void GeneralPageWidget::reset()
 void GeneralPageWidget::loadLanguage()
 {
     m_languageMap.clear();
-    m_languageMap["English (en_GB)"] = "en_GB";
+    m_languageMap["British English (en_GB)"] = "en_GB";
 
     QDir translationDir{u"://translations"_s};
     QStringList translations = translationDir.entryList(QStringList{} << u"*.qm"_s);
