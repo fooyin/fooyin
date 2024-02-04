@@ -219,8 +219,15 @@ if(BUILD_TRANSLATION)
         CACHE PATH "Path to the *.ts translation files"
     )
 
+    # Detect new .ts files
+    set_property(
+            DIRECTORY
+            APPEND
+            PROPERTY CMAKE_CONFIGURE_DEPENDS ${translation_dir}
+    )
+
     file(GLOB_RECURSE ts_files ${translation_dir}/*.ts)
-    #Exclude the translation source
+    # Exclude the translation source
     list(REMOVE_ITEM ts_files ${translation_dir}/fooyin.ts)
 
     set_source_files_properties(
