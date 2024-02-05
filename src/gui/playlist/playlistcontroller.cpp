@@ -94,7 +94,7 @@ struct PlaylistController::Private
         histories.erase(playlist->id());
         states.erase(playlist->id());
 
-        if(currentPlaylist == playlist) {
+        if(currentPlaylist != playlist) {
             return;
         }
 
