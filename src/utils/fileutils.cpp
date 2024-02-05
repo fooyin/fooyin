@@ -92,8 +92,7 @@ bool createDirectories(const QString& path)
 
 void openDirectory(const QString& dir)
 {
-    const QUrl url = QUrl::fromLocalFile(QDir::toNativeSeparators(dir));
-    QDesktopServices::openUrl(url);
+    QDesktopServices::openUrl(QUrl::fromLocalFile(dir));
 }
 
 QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExtensions)
