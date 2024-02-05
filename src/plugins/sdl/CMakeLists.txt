@@ -1,4 +1,4 @@
-find_package(SDL2)
+find_package(SDL2 QUIET)
 
 if(NOT SDL2_FOUND)
     return()

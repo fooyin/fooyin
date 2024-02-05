@@ -1,4 +1,4 @@
-find_package(PipeWire)
+find_package(PipeWire QUIET)
 
 if(NOT PIPEWIRE_FOUND)
     return()
