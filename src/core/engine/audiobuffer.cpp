@@ -59,6 +59,19 @@ public:
         std::fill(data.begin() + data.size(), data.begin() + data.capacity(),
                   unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
+
+    template <typename T>
+    void adjustVolume(const double volume)
+    {
+        const auto bytes = static_cast<int>(data.size());
+        const int bps    = format.bytesPerSample();
+        const int count  = bytes / bps;
+
+        auto* samples = std::bit_cast<T>(data.data());
+        for(int i{0}; i < count; ++i) {
+            samples[i] = static_cast<float>(samples[i]) * volume;
+        }
+    }
 };
 
 AudioBuffer::AudioBuffer() = default;
@@ -210,70 +223,25 @@ void AudioBuffer::adjustVolumeOfSamples(double volume)
         return;
     }
 
-    const int bytes = byteCount();
-    const int bps   = format().bytesPerSample();
-    const auto vol  = static_cast<float>(volume);
-
     switch(format().sampleFormat()) {
-        case(AudioFormat::SampleFormat::UInt8): {
-            auto* samples = std::bit_cast<uint8_t*>(data());
-            for(int i{0}; i < bytes; ++i) {
-                samples[i] = static_cast<uint8_t>(static_cast<float>(samples[i]) * vol);
-            }
+        case(AudioFormat::SampleFormat::UInt8):
+            p->adjustVolume<uint8_t*>(volume);
             break;
-        }
-        case(AudioFormat::SampleFormat::Int16): {
-            auto* samples   = std::bit_cast<int16_t*>(data());
-            const int count = bytes / bps;
-            for(int i{0}; i < count; ++i) {
-                samples[i] = static_cast<int16_t>(static_cast<float>(samples[i]) * vol);
-            }
+        case(AudioFormat::SampleFormat::Int16):
+            p->adjustVolume<int16_t*>(volume);
             break;
-        }
-        case(AudioFormat::SampleFormat::Int32): {
-            auto* samples   = std::bit_cast<int32_t*>(data());
-            const int count = bytes / bps;
-            for(int i{0}; i < count; ++i) {
-                const auto offset1 = static_cast<int>(i * bps);
-                const auto offset2 = offset1 + 1;
-                const auto offset3 = offset1 + 2;
-
-                const int32_t sample
-                    = (static_cast<int8_t>(samples[offset1]) | static_cast<int8_t>(samples[offset2] << 8)
-                       | static_cast<int8_t>(samples[offset3] << 16));
-
-                const auto newSample = static_cast<int32_t>(static_cast<float>(sample) * vol);
-
-                samples[offset1] = static_cast<uint8_t>(newSample & 0x0000FF);
-                samples[offset2] = static_cast<uint8_t>((newSample & 0x00FF00) >> 8);
-                samples[offset3] = static_cast<uint8_t>((newSample & 0xFF0000) >> 16);
-            }
+        case(AudioFormat::SampleFormat::Int32):
+            p->adjustVolume<int32_t*>(volume);
             break;
-        }
-        case(AudioFormat::SampleFormat::Int64): {
-            auto* samples   = std::bit_cast<int64_t*>(data());
-            const int count = bytes / bps;
-            for(int i{0}; i < count; ++i) {
-                samples[i] = static_cast<int64_t>(static_cast<double>(samples[i]) * volume);
-            }
+        case(AudioFormat::SampleFormat::Int64):
+            p->adjustVolume<int64_t*>(volume);
             break;
-        }
-        case(AudioFormat::SampleFormat::Float): {
-            const int count = bytes / bps;
-            auto* samples   = std::bit_cast<float*>(data());
-            for(int i{0}; i < count; ++i) {
-                samples[i] = samples[i] * vol;
-            }
+        case(AudioFormat::SampleFormat::Float):
+            p->adjustVolume<float*>(volume);
             break;
-        }
-        case(AudioFormat::SampleFormat::Double): {
-            const int count = bytes / bps;
-            auto* samples   = std::bit_cast<double*>(data());
-            for(int i{0}; i < count; ++i) {
-                samples[i] = static_cast<double>(static_cast<float>(samples[i]) * vol);
-            }
+        case(AudioFormat::SampleFormat::Double):
+            p->adjustVolume<double*>(volume);
             break;
-        }
         default:
             qDebug() << "Unable to adjust volume of unsupported format";
     }
