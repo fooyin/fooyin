@@ -89,7 +89,11 @@ uint64_t Frame::durationMs() const
     if(!p->frame) {
         return 0;
     }
+#if LIBAVUTIL_VERSION_MAJOR < 58
+    return av_rescale_q(p->frame->pkt_duration, p->frame->time_base, {1, 1000});
+#else
     return av_rescale_q(p->frame->duration, p->frame->time_base, {1, 1000});
+#endif
 }
 
 uint64_t Frame::end() const
@@ -97,6 +101,10 @@ uint64_t Frame::end() const
     if(!p->frame) {
         return 0;
     }
+#if LIBAVUTIL_VERSION_MAJOR < 58
+    return p->frame->pts + p->frame->pkt_duration;
+#else
     return p->frame->pts + p->frame->duration;
+#endif
 }
 } // namespace Fooyin

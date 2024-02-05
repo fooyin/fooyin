@@ -12,7 +12,7 @@ The following libraries are required:
 * [Qt6](https://www.qt.io) (6.4+)
 * [QCoro](https://github.com/danvratil/qcoro) (0.9.0+)
 * [TagLib](https://taglib.org) (1.12+)
-* [FFmpeg](https://ffmpeg.org) (6.0+)
+* [FFmpeg](https://ffmpeg.org) (5.1+)
 * [ALSA](https://alsa-project.org)
 
 The following libraries are optional, but will add extra audio outputs:
@@ -22,7 +22,7 @@ The following libraries are optional, but will add extra audio outputs:
 
 Platform-specific requirements are listed below.
 
-### Ubuntu
+### Ubuntu/Debian
 
 ```
 sudo apt update
