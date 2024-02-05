@@ -37,6 +37,8 @@ extern "C"
 
 #include <QTimer>
 
+constexpr auto BufferQueueSize = 15;
+
 using namespace std::chrono_literals;
 using namespace Qt::Literals::StringLiterals;
 
@@ -71,6 +73,8 @@ struct FFmpegEngine::Private
         , renderer{new FFmpegRenderer(self)}
         , bufferTimer{new QTimer(self)}
     {
+        bufferTimer->setInterval(5ms);
+
         QObject::connect(decoder, &FFmpegDecoder::finished, self, [this]() {
             bufferTimer->stop();
             renderer->queueBuffer({});
@@ -78,7 +82,7 @@ struct FFmpegEngine::Private
         QObject::connect(renderer, &FFmpegRenderer::finished, self, [this]() { onRendererFinished(); });
 
         QObject::connect(bufferTimer, &QTimer::timeout, self, [this]() {
-            if(renderer->queuedBuffers() < 15) {
+            if(renderer->queuedBuffers() < BufferQueueSize) {
                 const auto buffer = decoder->readBuffer();
                 if(buffer.isValid()) {
                     renderer->queueBuffer(buffer);
