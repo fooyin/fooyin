@@ -22,12 +22,12 @@ The following libraries are optional, but will add extra audio outputs:
 
 Platform-specific requirements are listed below.
 
-### Ubuntu/Debian
+### Debian/Ubuntu
 
 ```
 sudo apt update
 sudo apt install \
-    build-essential pkg-config ninja-build \
+    build-essential pkg-config ninja-build libxkbcommon-dev \
     libasound2-dev qcoro-qt6-dev libtag1-dev \
     qt6-base-dev qt6-svg-dev qt6-tools-dev \
     libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev
