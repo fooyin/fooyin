@@ -20,17 +20,42 @@ The following libraries are optional, but will add extra audio outputs:
 * [SDL2](https://www.libsdl.org)
 * [PipeWire](https://pipewire.org)
 
+Platform-specific requirements are listed below.
+
+### Ubuntu
+
+```
+sudo apt update
+sudo apt install \
+    build-essential pkg-config ninja-build \
+    libasound2-dev qcoro-qt6-dev libtag1-dev \
+    qt6-base-dev qt6-svg-dev qt6-tools-dev \
+    libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev
+```
+
+### Arch Linux
+
+```
+sudo pacman -Syu
+sudo pacman -S --needed \
+  base-devel pkgconf ninja alsa-lib \
+  qt6-base qt6-svg qt6-tools \
+  qcoro-qt6 taglib ffmpeg
+```
+
 ## Building
 
 Open a terminal and run the following commands.
 Adapt the instructions to suit your CMake generator.
 
-```bash
+```
 git clone https://github.com/ludouzi/fooyin.git
 
-cmake -G Ninja ../path/to/fooyin
-cmake --build .
-cmake --build . --target install
+cd fooyin
+mkdir build && cd build
+cmake ..
+make -j$(nproc)
+sudo make install
 ```
 
 The installation directory defaults to `/usr/local`.
