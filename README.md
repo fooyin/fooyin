@@ -36,6 +36,7 @@ Fooyin is currently only supported on linux, though other platforms will be adde
 ## Features
 
 * [x] Customisable layout
+* [x] Gapless playback
 * [x] Filter and search music collection
 * [x] Create and manage playlists
 * [x] Extendable through plugins
