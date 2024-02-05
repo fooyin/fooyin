@@ -264,10 +264,13 @@ void FyPlaylist::removeTracks(const IndexSet& indexes)
         if(index <= p->currentTrackIndex) {
             adjustedTrackIndex = std::max(adjustedTrackIndex - 1, 0);
         }
-        p->tracks.erase(p->tracks.begin() + index);
-        std::erase_if(p->shuffleOrder, [index](int num) { return num == index; });
-        std::ranges::transform(p->shuffleOrder, p->shuffleOrder.begin(),
-                               [index](int num) { return num > index ? num - 1 : num; });
+
+        if(index >= 0 && index < static_cast<int>(p->tracks.size())) {
+            p->tracks.erase(p->tracks.begin() + index);
+            std::erase_if(p->shuffleOrder, [index](int num) { return num == index; });
+            std::ranges::transform(p->shuffleOrder, p->shuffleOrder.begin(),
+                                   [index](int num) { return num > index ? num - 1 : num; });
+        }
     }
 
     std::erase_if(p->shuffleOrder, [](int num) { return num < 0; });
