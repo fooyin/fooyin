@@ -73,6 +73,7 @@ struct Application::Private
 
     void registerTypes()
     {
+        qRegisterMetaType<TrackList>("TrackList");
         qRegisterMetaType<OutputCreator>("OutputCreator");
         qRegisterMetaType<LibraryInfoMap>("LibraryInfoMap");
     }
