@@ -147,6 +147,7 @@ struct SandboxDialog::Private
         QByteArray byteArray = settings->fileValue(SandboxState).toByteArray();
 
         if(byteArray.isEmpty()) {
+            editor->setPlainText(DefaultScript);
             return;
         }
 
