@@ -71,10 +71,11 @@ struct Application::Private
         loadPlugins();
     }
 
-    void registerTypes()
+    static void registerTypes()
     {
         qRegisterMetaType<TrackList>("TrackList");
         qRegisterMetaType<OutputCreator>("OutputCreator");
+        qRegisterMetaType<LibraryInfo>("LibraryInfo");
         qRegisterMetaType<LibraryInfoMap>("LibraryInfoMap");
     }
 
