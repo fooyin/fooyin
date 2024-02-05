@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.7](https://github.com/ludouzi/fooyin/releases/tag/v0.3.7) (2024-02-05)
+
+### Features
+
+* Add support for changing language (English and Chinese for now) ([#40](https://github.com/ludouzi/fooyin/pull/40))
+
+### Fixes
+
+* Fix reading audio properties using older TagLib versions ([#41](https://github.com/ludouzi/fooyin/issues/41))
+* Fix removing custom tags from mp4 tags
+* Fix library and track scan requests not running
+* Improve ability to find installed FFmpeg libraries
+* Fix high CPU usage when playing tracks (~10% -> ~1%)
+* Fix playlist not switching when a playlist is removed
+* Fix occasional crash when removing tracks from a playlist
+
 ## [0.3.6](https://github.com/ludouzi/fooyin/releases/tag/v0.3.6) (2024-02-02)
 
 ### Changes
