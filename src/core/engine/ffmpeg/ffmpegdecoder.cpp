@@ -324,7 +324,6 @@ struct FFmpegDecoder::Private
                 return;
             }
 
-            self->stop();
             QMetaObject::invokeMethod(self, &FFmpegDecoder::finished);
             return;
         }
