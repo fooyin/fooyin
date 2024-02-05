@@ -27,10 +27,8 @@ class AudioBuffer;
 
 class FFmpegDecoder : public AudioDecoder
 {
-    Q_OBJECT
-
 public:
-    explicit FFmpegDecoder(QObject* parent = nullptr);
+    FFmpegDecoder();
     ~FFmpegDecoder() override;
 
     bool init(const QString& source) override;

@@ -61,7 +61,7 @@ struct FFmpegEngine::Private
     std::unique_ptr<AudioOutput> audioOutput;
     AudioFormat format;
 
-    FFmpegDecoder* decoder;
+    FFmpegDecoder decoder;
     FFmpegRenderer* renderer;
 
     QTimer* bufferTimer;
@@ -69,23 +69,22 @@ struct FFmpegEngine::Private
     explicit Private(FFmpegEngine* self_, SettingsManager* settings)
         : self{self_}
         , settings{settings}
-        , decoder{new FFmpegDecoder(self)}
         , renderer{new FFmpegRenderer(self)}
         , bufferTimer{new QTimer(self)}
     {
         bufferTimer->setInterval(5ms);
 
-        QObject::connect(decoder, &FFmpegDecoder::finished, self, [this]() {
-            bufferTimer->stop();
-            renderer->queueBuffer({});
-        });
         QObject::connect(renderer, &FFmpegRenderer::finished, self, [this]() { onRendererFinished(); });
 
         QObject::connect(bufferTimer, &QTimer::timeout, self, [this]() {
             if(renderer->queuedBuffers() < BufferQueueSize) {
-                const auto buffer = decoder->readBuffer();
+                const auto buffer = decoder.readBuffer();
                 if(buffer.isValid()) {
                     renderer->queueBuffer(buffer);
+                }
+                else {
+                    bufferTimer->stop();
+                    renderer->queueBuffer({});
                 }
             }
         });
@@ -123,7 +122,7 @@ struct FFmpegEngine::Private
 
     void startPlayback()
     {
-        decoder->start();
+        decoder.start();
         bufferTimer->start();
         renderer->start();
     }
@@ -158,7 +157,7 @@ struct FFmpegEngine::Private
         bufferTimer->stop();
         clock.setPaused(true);
 
-        decoder->stop();
+        decoder.stop();
         renderer->stop();
     }
 };
@@ -180,7 +179,7 @@ FFmpegEngine::~FFmpegEngine()
 }
 void FFmpegEngine::seek(uint64_t pos)
 {
-    if(!p->decoder->isSeekable()) {
+    if(!p->decoder.isSeekable()) {
         return;
     }
 
@@ -189,7 +188,7 @@ void FFmpegEngine::seek(uint64_t pos)
     p->renderer->stop();
     p->audioOutput->reset();
 
-    p->decoder->seek(pos);
+    p->decoder.seek(pos);
     p->clock.sync(pos);
 
     p->clock.setPaused(false);
@@ -218,12 +217,12 @@ void FFmpegEngine::changeTrack(const Track& track)
 
     changeTrackStatus(LoadingTrack);
 
-    if(!p->decoder->init(track.filepath())) {
+    if(!p->decoder.init(track.filepath())) {
         changeTrackStatus(InvalidTrack);
         return;
     }
 
-    if(!p->updateFormat(p->decoder->format())) {
+    if(!p->updateFormat(p->decoder.format())) {
         changeTrackStatus(NoTrack);
         return;
     }

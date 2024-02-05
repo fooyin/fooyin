@@ -19,17 +19,11 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/engine/audiobuffer.h>
 
-#include <QObject>
-
 namespace Fooyin {
-class FYCORE_EXPORT AudioDecoder : public QObject
+class AudioDecoder
 {
-    Q_OBJECT
-
 public:
     enum Error
     {
@@ -40,9 +34,7 @@ public:
         NotSupportedError
     };
 
-    explicit AudioDecoder(QObject* parent = nullptr)
-        : QObject{parent}
-    { }
+    virtual ~AudioDecoder() = default;
 
     virtual bool init(const QString& source) = 0;
     virtual void start()                     = 0;
@@ -54,9 +46,5 @@ public:
 
     virtual AudioFormat format() const = 0;
     virtual Error error() const        = 0;
-
-signals:
-    void bufferReady();
-    void finished();
 };
 } // namespace Fooyin

@@ -302,8 +302,6 @@ struct FFmpegDecoder::Private
         else {
             buffer = {frame.avFrame()->data[0], static_cast<size_t>(sampleCount), audioFormat, frame.ptsMs()};
         }
-
-        QMetaObject::invokeMethod(self, &FFmpegDecoder::bufferReady);
     }
 
     void readNext()
@@ -323,8 +321,6 @@ struct FFmpegDecoder::Private
                 decodeAudio(packet);
                 return;
             }
-
-            QMetaObject::invokeMethod(self, &FFmpegDecoder::finished);
             return;
         }
 
@@ -356,12 +352,9 @@ struct FFmpegDecoder::Private
     }
 };
 
-FFmpegDecoder::FFmpegDecoder(QObject* parent)
-    : AudioDecoder{parent}
-    , p{std::make_unique<Private>(this)}
-{
-    setObjectName("Decoder");
-}
+FFmpegDecoder::FFmpegDecoder()
+    : p{std::make_unique<Private>(this)}
+{ }
 
 FFmpegDecoder::~FFmpegDecoder() = default;
 
@@ -409,7 +402,7 @@ AudioBuffer FFmpegDecoder::readBuffer()
 
     p->readNext();
 
-    return p->buffer;
+    return std::exchange(p->buffer, {});
 }
 
 AudioDecoder::Error FFmpegDecoder::error() const
