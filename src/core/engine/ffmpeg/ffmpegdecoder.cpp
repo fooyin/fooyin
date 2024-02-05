@@ -372,13 +372,7 @@ bool FFmpegDecoder::init(const QString& source)
 
 void FFmpegDecoder::start()
 {
-    if(p->hasError()) {
-        return;
-    }
-
-    if(!std::exchange(p->isDecoding, true)) {
-        p->readNext();
-    }
+    p->isDecoding = true;
 }
 
 void FFmpegDecoder::stop()
@@ -405,7 +399,6 @@ bool FFmpegDecoder::isSeekable() const
 void FFmpegDecoder::seek(uint64_t pos)
 {
     p->seek(pos);
-    p->readNext();
 }
 
 AudioBuffer FFmpegDecoder::readBuffer()
@@ -414,10 +407,9 @@ AudioBuffer FFmpegDecoder::readBuffer()
         return {};
     }
 
-    QMetaObject::invokeMethod(
-        this, [this]() { p->readNext(); }, Qt::QueuedConnection);
+    p->readNext();
 
-    return std::exchange(p->buffer, {});
+    return p->buffer;
 }
 
 AudioDecoder::Error FFmpegDecoder::error() const
