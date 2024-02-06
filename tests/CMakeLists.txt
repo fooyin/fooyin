@@ -4,6 +4,7 @@ include(GoogleTest)
 
 function(fooyin_add_test name)
 add_executable(${name} ${ARGN} testutils.cpp)
+    fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
     target_link_libraries(
             ${name}
             PRIVATE Fooyin::Core

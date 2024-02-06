@@ -6,6 +6,12 @@ function(fooyin_option option description)
     add_feature_info("Option ${option}" ${option} "${description}")
 endfunction()
 
+macro(fooyin_convert_to_relative_path path)
+    if(IS_ABSOLUTE "${${path}}")
+        file(RELATIVE_PATH ${path} "${CMAKE_INSTALL_PREFIX}" "${${path}}")
+    endif()
+endmacro()
+
 function(create_fooyin_library name)
     cmake_parse_arguments(
             LIB
@@ -39,9 +45,9 @@ function(create_fooyin_library name)
     endif()
 
     set(${base_name}_paths
-            "$<INSTALL_PREFIX>/${FOOYIN_INCLUDE_DIR}/.."
-            "$<INSTALL_PREFIX>/${FOOYIN_INCLUDE_DIR}"
-            "$<INSTALL_PREFIX>/${FOOYIN_INCLUDE_DIR}/${base_name}"
+            "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}/.."
+            "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}"
+            "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}/${base_name}"
     )
 
     target_include_directories(
@@ -64,12 +70,9 @@ function(create_fooyin_library name)
                        VISIBILITY_INLINES_HIDDEN YES
                        EXPORT_NAME ${LIB_EXPORT_NAME}
                        OUTPUT_NAME ${name}
-                       BUILD_RPATH "${FOOYIN_LIBRARY_RPATH};${CMAKE_BUILD_RPATH}"
-                       INSTALL_RPATH "${FOOYIN_LIBRARY_RPATH};${CMAKE_INSTALL_RPATH}"
-                       RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_LIBRARY_OUTPUT_DIR}
-                       LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_LIBRARY_OUTPUT_DIR}
-                       ARCHIVE_OUTPUT_DIRECTORY ${FOOYIN_LIBRARY_OUTPUT_DIR}
     )
+
+    fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
 
     target_compile_features(${name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
     target_compile_definitions(${name} PRIVATE QT_USE_QSTRINGBUILDER)
@@ -111,15 +114,14 @@ function(create_fooyin_library name)
     if(NOT CMAKE_SKIP_INSTALL_RULES)
         install(
                 DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/export/"
-                DESTINATION "${FOOYIN_INCLUDE_INSTALL_DIR}/${base_name}"
+                DESTINATION "${INCLUDE_INSTALL_DIR}/${base_name}"
                 COMPONENT fooyin_development
         )
 
         install(
                 TARGETS ${name}
                 EXPORT FooyinTargets
-                LIBRARY DESTINATION ${FOOYIN_LIBRARY_DIR}
-                COMPONENT fooyin_development
+                ${INSTALL_TARGETS_DEFAULT_ARGS}
         )
     endif()
 endfunction()
@@ -133,9 +135,9 @@ function(create_fooyin_plugin_internal base_name)
 
     set_target_properties(
         ${plugin_name}
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
-                   LIBRARY_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
-                   ARCHIVE_OUTPUT_DIRECTORY ${FOOYIN_PLUGIN_OUTPUT_DIR}
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
+                   LIBRARY_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
+                   ARCHIVE_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
     )
 
     target_compile_features(${plugin_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})

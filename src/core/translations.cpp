@@ -19,6 +19,8 @@
 
 #include "translations.h"
 
+#include "config.h"
+
 #include <core/coresettings.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -62,7 +64,7 @@ void Translations::initialiseTranslations()
     const bool foundQt
         = installTranslations(locale, u"qt"_s, QLibraryInfo::path(QLibraryInfo::TranslationsPath), false);
 
-    const QString translationsPath = u"://translations"_s;
+    const QString translationsPath = QCoreApplication::applicationDirPath() + '/' + RELATIVE_TRANSLATION_PATH;
 
     if(!foundQt) {
         installTranslations(locale, u"qt"_s, translationsPath, true);

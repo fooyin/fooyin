@@ -1,3 +1,13 @@
+function(fooyin_set_rpath target prefix)
+    get_filename_component(path "${CMAKE_INSTALL_PREFIX}/${prefix}" ABSOLUTE)
+    file(RELATIVE_PATH relative ${path} "${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}")
+    set(rpath "\$ORIGIN/${relative}")
+    if(CMAKE_INSTALL_RPATH)
+        list(APPEND rpath ${CMAKE_INSTALL_RPATH})
+    endif()
+    set_target_properties(${target} PROPERTIES INSTALL_RPATH "${rpath}")
+endfunction()
+
 function(create_fooyin_plugin base_name)
     cmake_parse_arguments(
         LIB
@@ -40,9 +50,9 @@ function(create_fooyin_plugin base_name)
                    PREFIX ""
                    EXPORT_NAME ${name}
                    OUTPUT_NAME ${plugin_name}
-                   BUILD_RPATH "${FOOYIN_PLUGIN_RPATH};${CMAKE_BUILD_RPATH}"
-                   INSTALL_RPATH "${FOOYIN_PLUGIN_RPATH};${CMAKE_INSTALL_RPATH}"
     )
+
+    fooyin_set_rpath(${plugin_name} ${FOOYIN_PLUGIN_INSTALL_DIR})
 
     target_compile_definitions(${plugin_name} PRIVATE QT_USE_QSTRINGBUILDER)
 

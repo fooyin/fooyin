@@ -33,7 +33,6 @@ using namespace Qt::Literals::StringLiterals;
 int main(int argc, char** argv)
 {
     Q_INIT_RESOURCE(icons);
-    Q_INIT_RESOURCE(translations);
 
     QCoreApplication::setApplicationName(u"fooyin"_s);
     QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
