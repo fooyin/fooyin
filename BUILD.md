@@ -45,15 +45,15 @@ sudo pacman -S --needed \
 
 ## Building
 
-Using a terminal, switch to the directory where fooyin will be checked out
-Clone the fooyin repository: `git clone https://github.com/ludouzi/fooyin.git`
+1. Using a terminal, switch to the directory where fooyin will be checked out
+2. Clone the fooyin repository: `git clone https://github.com/ludouzi/fooyin.git`
 3. Switch into the directory: `cd fooyin`
 4. Run CMake to generate a build environment:
 
 ```
 cmake -S . -G Ninja -B <BUILD_DIRECTORY>
 ```
-And then build fooyin:
+5. And then build fooyin:
 
 ```
 cmake --build <BUILD_DIRECTORY>
@@ -61,7 +61,7 @@ cmake --build <BUILD_DIRECTORY>
 * Optionally add `-j$(nproc)` to build faster
 
 A *Release* build is built by default. This can be changed by passing either 
-`Debug`, `Release`, `RelWithDebInfo`, or `MinSizeRel` to `-DCMAKE_BUILD_TYPE`
+`Debug`, `RelWithDebInfo`, or `MinSizeRel` to `-DCMAKE_BUILD_TYPE`
 
 The following options can be passed to CMake to customise the build:
 
