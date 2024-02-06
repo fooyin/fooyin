@@ -53,11 +53,13 @@ sudo pacman -S --needed \
 ```
 cmake -S . -G Ninja -B <BUILD_DIRECTORY>
 ```
+
 5. And then build fooyin:
 
 ```
 cmake --build <BUILD_DIRECTORY>
 ```
+
 * Optionally add `-j$(nproc)` to build faster
 
 A *Release* build is built by default. This can be changed by passing either 
@@ -84,6 +86,7 @@ cmake --install <BUILD_DIRECTORY>
 This will install fooyin to `/usr/local` by default.
 To install to a custom location, either pass it to `-DCMAKE_INSTALL_PREFIX`, or 
 use the prefix switch:
+
 ```
 cmake --install <BUILD_DIRECTORY> --prefix <INSTALL_DIRECTORY>
 ```
