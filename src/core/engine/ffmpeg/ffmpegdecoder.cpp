@@ -410,5 +410,3 @@ AudioDecoder::Error FFmpegDecoder::error() const
     return p->error;
 }
 } // namespace Fooyin
-
-#include "moc_ffmpegdecoder.cpp"
