@@ -26,6 +26,17 @@ include(FeatureSummary)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
+
+if(NOT DEFINED CMAKE_SKIP_BUILD_RPATH)
+    set(CMAKE_SKIP_BUILD_RPATH OFF)
+endif()
+if(NOT DEFINED CMAKE_BUILD_WITH_INSTALL_RPATH)
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)
+endif()
+if(NOT DEFINED CMAKE_INSTALL_RPATH_USE_LINK_PATH)
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
@@ -129,28 +140,48 @@ endif()
 
 include(GNUInstallDirs)
 
-set(FOOYIN_BIN_DIR ${CMAKE_INSTALL_BINDIR})
-set(FOOYIN_LIBRARY_DIR "${CMAKE_INSTALL_LIBDIR}/fooyin")
-set(FOOYIN_PLUGIN_DIR "${CMAKE_INSTALL_LIBDIR}/fooyin/plugins")
-set(FOOYIN_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}/fooyin")
+set(BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
+fooyin_convert_to_relative_path(BIN_INSTALL_DIR)
 
-set(FOOYIN_BIN_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${FOOYIN_BIN_DIR})
-set(FOOYIN_LIBRARY_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${FOOYIN_LIBRARY_DIR})
-set(FOOYIN_PLUGIN_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${FOOYIN_PLUGIN_DIR})
-set(FOOYIN_INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${FOOYIN_INCLUDE_DIR})
+set(LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/fooyin")
+fooyin_convert_to_relative_path(LIB_INSTALL_DIR)
 
-set(FOOYIN_BINARY_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_BIN_DIR})
-set(FOOYIN_LIBRARY_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_LIBRARY_DIR})
-set(FOOYIN_PLUGIN_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_PLUGIN_DIR})
-set(FOOYIN_INCLUDE_OUTPUT_DIR ${PROJECT_BINARY_DIR}/${FOOYIN_INCLUDE_DIR})
+set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/fooyin")
+set(CMAKECONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/fooyin")
 
-file(RELATIVE_PATH FOOYIN_RELATIVE_LIB_PATH "/${FOOYIN_BIN_DIR}" "/${FOOYIN_LIBRARY_DIR}")
-file(RELATIVE_PATH FOOYIN_RELATIVE_PLUGIN_PATH "/${FOOYIN_BIN_DIR}" "/${FOOYIN_PLUGIN_DIR}")
-file(RELATIVE_PATH FOOYIN_PLUGIN_TO_LIB "/${FOOYIN_PLUGIN_DIR}" "/${FOOYIN_LIBRARY_DIR}")
+set(DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}")
+fooyin_convert_to_relative_path(DATAROOTDIR)
 
-set(FOOYIN_RPATH "\$ORIGIN")
-set(FOOYIN_LIBRARY_RPATH "\$ORIGIN")
-set(FOOYIN_PLUGIN_RPATH "\$ORIGIN;\$ORIGIN/${FOOYIN_PLUGIN_TO_LIB}")
+set(XDG_APPS_INSTALL_DIR "${DATAROOTDIR}/applications")
+set(ICON_INSTALL_DIR "${DATAROOTDIR}/icons")
+
+set(DOC_INSTALL_DIR "${DATAROOTDIR}/doc/fooyin/")
+set(TRANSLATION_INSTALL_DIR "${DATAROOTDIR}/fooyin/translations")
+file(RELATIVE_PATH FOOYIN_RELATIVE_TRANSLATION_PATH "/${BIN_INSTALL_DIR}" "/${TRANSLATION_INSTALL_DIR}")
+
+set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
+file(RELATIVE_PATH FOOYIN_RELATIVE_PLUGIN_PATH "/${BIN_INSTALL_DIR}" "/${FOOYIN_PLUGIN_INSTALL_DIR}")
+
+set(INSTALL_TARGETS_DEFAULT_ARGS
+    RUNTIME
+    DESTINATION
+    ${BIN_INSTALL_DIR}
+    LIBRARY
+    DESTINATION
+    ${LIB_INSTALL_DIR}
+    ARCHIVE
+    DESTINATION
+    ${LIB_INSTALL_DIR}
+    COMPONENT
+    fooyin_development
+)
+
+if(NOT FOOYIN_OUTPUT_PREFIX)
+    set(FOOYIN_OUTPUT_PREFIX ${PROJECT_BINARY_DIR})
+endif()
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}/${BIN_INSTALL_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}/${LIB_INSTALL_DIR}")
+set(FOOYIN_PLUGIN_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}/${FOOYIN_PLUGIN_INSTALL_DIR}")
 
 # ---- Fooyin library ----
 
@@ -183,12 +214,12 @@ if(BUILD_PCH)
     endif()
 endif()
 
-configure_file(src/app/version.h.in app/version.h @ONLY)
+configure_file(src/app/version.h.in app/version.h)
 add_library(fooyin_version OBJECT)
 target_include_directories(
     fooyin_version PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>
 )
-configure_file(src/app/config.h.in app/config.h @ONLY)
+configure_file(src/app/config.h.in app/config.h)
 add_library(fooyin_config OBJECT)
 target_include_directories(
     fooyin_config PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/app>
@@ -245,17 +276,9 @@ if(BUILD_TRANSLATIONS)
         qm_files
     )
 
-    set(translations_qrc ${CMAKE_CURRENT_BINARY_DIR}/data/translations.qrc)
-    file(WRITE ${translations_qrc} "<RCC><qresource prefix=\"translations\">\n")
-    foreach(qm_file ${qm_files})
-        get_filename_component(qm_name ${qm_file} NAME)
-        file(APPEND ${translations_qrc} "<file>${qm_name}</file>\n")
-    endforeach()
-    file(APPEND ${translations_qrc} "</qresource></RCC>")
-
-    qt_add_resources(TRANSLATIONS ${translations_qrc})
-else()
-    set(TRANSLATIONS)
+    if(NOT CMAKE_SKIP_INSTALL_RULES)
+        install(FILES ${qm_files} DESTINATION ${TRANSLATION_INSTALL_DIR})
+    endif()
 endif()
 
 # ---- Fooyin testing ----
@@ -271,21 +294,17 @@ set(SOURCES src/app/main.cpp src/app/commandline.cpp)
 
 qt_add_resources(SOURCES data/icons.qrc)
 
-add_executable(fooyin_exe ${SOURCES} ${TRANSLATIONS})
+add_executable(fooyin ${SOURCES} ${TRANSLATIONS})
 set_target_properties(
-    fooyin_exe
+    fooyin
     PROPERTIES
-        OUTPUT_NAME fooyin
-        BUILD_RPATH
-        "${FOOYIN_RPATH}/${FOOYIN_RELATIVE_LIB_PATH};${CMAKE_BUILD_RPATH}"
-        INSTALL_RPATH
-        "${FOOYIN_RPATH}/${FOOYIN_RELATIVE_LIB_PATH};${CMAKE_INSTALL_RPATH}"
-        RUNTIME_OUTPUT_DIRECTORY ${FOOYIN_BINARY_OUTPUT_DIR}
+        RUNTIME_OUTPUT_DIRECTORY ${BIN_INSTALL_DIR}
 )
-target_compile_features(fooyin_exe PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
-target_compile_options(fooyin_exe PRIVATE ${FOOYIN_COMPILE_OPTIONS})
+fooyin_set_rpath(fooyin ${BIN_INSTALL_DIR})
+target_compile_features(fooyin PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
+target_compile_options(fooyin PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 target_link_libraries(
-    fooyin_exe
+    fooyin
     PRIVATE KDAB::kdsingleapplication
             fooyin_version
             fooyin_lib

@@ -27,8 +27,8 @@ Platform-specific requirements are listed below.
 ```
 sudo apt update
 sudo apt install \
-    build-essential pkg-config ninja-build libxkbcommon-dev \
-    libasound2-dev qcoro-qt6-dev libtag1-dev \
+    g++ git cmake pkg-config ninja-build libasound2-dev \
+    qcoro-qt6-dev libtag1-dev \
     qt6-base-dev qt6-svg-dev qt6-tools-dev \
     libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev
 ```
@@ -38,39 +38,61 @@ sudo apt install \
 ```
 sudo pacman -Syu
 sudo pacman -S --needed \
-  base-devel pkgconf ninja alsa-lib \
+  gcc git cmake pkgconf ninja alsa-lib \
   qt6-base qt6-svg qt6-tools \
   qcoro-qt6 taglib ffmpeg
 ```
 
 ## Building
 
-Open a terminal and run the following commands.
-Adapt the instructions to suit your CMake generator.
+1. Using a terminal, switch to the directory where fooyin will be checked out
+2. Clone the fooyin repository: `git clone https://github.com/ludouzi/fooyin.git`
+3. Switch into the directory: `cd fooyin`
+4. Run CMake to generate a build environment:
 
 ```
-git clone https://github.com/ludouzi/fooyin.git
-
-cd fooyin
-mkdir build && cd build
-cmake ..
-make -j$(nproc)
-sudo make install
+cmake -S . -G Ninja -B <BUILD_DIRECTORY>
 ```
 
-The installation directory defaults to `/usr/local`.
-This can be changed by passing the option `-DCMAKE_INSTALL_PREFIX=/install/path`.
+5. And then build fooyin:
+
+```
+cmake --build <BUILD_DIRECTORY>
+```
+
+* Optionally add `-j$(nproc)` to build faster
+
+A *Release* build is built by default. This can be changed by passing either 
+`Debug`, `RelWithDebInfo`, or `MinSizeRel` to `-DCMAKE_BUILD_TYPE`
 
 The following options can be passed to CMake to customise the build:
 
-* `DBUILD_SHARED_LIBS` - Build fooyin's libraries as shared (ON by default)
-* `DBUILD_PLUGINS` - Build the plugins included with fooyin (ON by default)
-* `DBUILD_TRANSLATIONS` - Build translation files (ON by default)
-* `DBUILD_TESTING` - Build tests (OFF by default)
-* `DBUILD_CCACHE` - Build using CCache if found (ON by default)
-* `DBUILD_PCH` - Build with precompiled header support (OFF by default)
-* `DBUILD_WERROR` - Build with -Werror (OFF by default)
+* `-DBUILD_SHARED_LIBS` - Build fooyin's libraries as shared (ON by default)
+* `-DBUILD_TESTING` - Build tests (OFF by default)
+* `-DBUILD_PLUGINS` - Build the plugins included with fooyin (ON by default)
+* `-DBUILD_TRANSLATIONS` - Build translation files (ON by default)
+* `-DBUILD_CCACHE` - Build using CCache if found (ON by default)
+* `-DBUILD_PCH` - Build with precompiled header support (OFF by default)
+* `-DBUILD_WERROR` - Build with -Werror (OFF by default)
 
-### Additional notes
+## Installing
 
-* To build a debug version pass `-DCMAKE_BUILD_TYPE=Debug` to CMake.
+Once built, fooyin can be installed using the following:
+
+```
+cmake --install <BUILD_DIRECTORY>
+```
+
+This will install fooyin to `/usr/local` by default.
+To install to a custom location, either pass it to `-DCMAKE_INSTALL_PREFIX`, or 
+use the prefix switch:
+
+```
+cmake --install <BUILD_DIRECTORY> --prefix <INSTALL_DIRECTORY>
+```
+
+### Notes for package maintainers
+
+* Fooyin uses relative paths for linking against and finding it's shared libraries and plugins. 
+These must be preserved for fooyin to run correctly. If you want to change the install location, 
+use `CMAKE_INSTALL_PREFIX` as mentioned above.

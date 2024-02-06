@@ -25,4 +25,5 @@ namespace Fooyin::Core {
 QString settingsPath();
 QString pluginsPath();
 QString userPluginsPath();
+QString translationsPath();
 } // namespace Fooyin::Core

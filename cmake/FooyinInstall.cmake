@@ -2,18 +2,18 @@
 
 install(
     FILES "${CMAKE_SOURCE_DIR}/COPYING"
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/licenses/fooyin
+    DESTINATION ${DOC_INSTALL_DIR}
     RENAME LICENSE
 )
 
 install(
     FILES "${CMAKE_SOURCE_DIR}/README.md"
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/fooyin
+    DESTINATION ${DOC_INSTALL_DIR}
     RENAME README
 )
 
 install(FILES ${CMAKE_SOURCE_DIR}/dist/fooyin.desktop
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+        DESTINATION ${XDG_APPS_INSTALL_DIR}
 )
 set(ICON_SRC_PATH ${CMAKE_SOURCE_DIR}/data/icons)
 set(ICON_SIZE
@@ -29,20 +29,22 @@ set(ICON_SIZE
 foreach(SIZE ${ICON_SIZE})
     install(
         FILES ${ICON_SRC_PATH}/${SIZE}-fooyin.png
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps
+        DESTINATION ${ICON_INSTALL_DIR}/hicolor/${SIZE}x${SIZE}/apps
         RENAME fooyin.png
     )
 endforeach(SIZE)
 
 install(
     FILES ${ICON_SRC_PATH}/sc-fooyin.svg
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps
+    DESTINATION ${ICON_INSTALL_DIR}/hicolor/scalable/apps
     RENAME fooyin.svg
 )
 
+install(FILES ${TRANSLATIONS} DESTINATION ${TRANSLATION_INSTALL_DIR})
+
 # ---- Fooyin executable ----
 
-install(TARGETS fooyin_exe RUNTIME COMPONENT fooyin_runtime)
+install(TARGETS fooyin RUNTIME COMPONENT fooyin_runtime)
 
 # ---- Fooyin config ----
 
@@ -55,7 +57,7 @@ install(
     LIBRARY COMPONENT fooyin_runtime NAMELINK_COMPONENT fooyin_development
     ARCHIVE COMPONENT fooyin_development
     INCLUDES
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    DESTINATION "${INCLUDE_INSTALL_DIR}"
 )
 
 write_basic_package_version_file(
@@ -63,52 +65,46 @@ write_basic_package_version_file(
     COMPATIBILITY SameMajorVersion
 )
 
-set(FOOYIN_INSTALL_CMAKEDIR
-    "${CMAKE_INSTALL_LIBDIR}/cmake/fooyin"
-    CACHE PATH "CMake package config location relative to the install prefix"
-)
-mark_as_advanced(FOOYIN_INSTALL_CMAKEDIR)
-
 configure_package_config_file(
     "${CMAKE_CURRENT_LIST_DIR}/FooyinConfig.cmake.in"
     "${PROJECT_BINARY_DIR}/FooyinConfig.cmake"
-    INSTALL_DESTINATION ${FOOYIN_INSTALL_CMAKEDIR}
-    PATH_VARS FOOYIN_PLUGIN_RPATH FOOYIN_PLUGIN_INSTALL_DIR
+    INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
+    PATH_VARS FOOYIN_PLUGIN_INSTALL_DIR
 )
 
 install(
     FILES "${PROJECT_BINARY_DIR}/FooyinConfig.cmake"
-    DESTINATION "${FOOYIN_INSTALL_CMAKEDIR}"
+    DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
     COMPONENT fooyin_development
 )
 
 install(
     FILES "${PROJECT_BINARY_DIR}/FooyinConfigVersion.cmake"
-    DESTINATION "${FOOYIN_INSTALL_CMAKEDIR}"
+    DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
     COMPONENT fooyin_development
 )
 
 install(
     FILES "${CMAKE_CURRENT_LIST_DIR}/FooyinMacros.cmake"
-    DESTINATION "${FOOYIN_INSTALL_CMAKEDIR}"
+    DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
     COMPONENT fooyin_development
 )
 
 install(
     EXPORT FooyinTargets
-    DESTINATION "${FOOYIN_INSTALL_CMAKEDIR}"
+    DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
     NAMESPACE Fooyin::
     COMPONENT fooyin_development
 )
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/modules/"
-        DESTINATION ${FOOYIN_INSTALL_CMAKEDIR}/modules
+        DESTINATION ${CMAKECONFIG_INSTALL_DIR}/modules
 )
 
 # ---- Fooyin public headers ----
 
 install(
     DIRECTORY "${CMAKE_SOURCE_DIR}/include/"
-    DESTINATION ${FOOYIN_INCLUDE_INSTALL_DIR}
+    DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT fooyin_development
 )
