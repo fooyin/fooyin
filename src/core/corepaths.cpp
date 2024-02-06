@@ -26,6 +26,8 @@
 #include <QCoreApplication>
 #include <QDir>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace Fooyin::Core {
 QString settingsPath()
 {
@@ -41,4 +43,19 @@ QString userPluginsPath()
 {
     return QDir::cleanPath(Utils::sharePath("plugins"));
 }
+
+QString translationsPath()
+{
+    QDir appDir = QCoreApplication::applicationDirPath();
+
+    if(appDir.cd(RELATIVE_TRANSLATION_PATH)) {
+        return appDir.absolutePath() + u"/_s" + RELATIVE_TRANSLATION_PATH;
+    }
+
+    if(appDir.cd(u"../data"_s)) {
+        return appDir.absolutePath() + u"/../data"_s;
+    }
+
+    return {};
+} // namespace
 } // namespace Fooyin::Core

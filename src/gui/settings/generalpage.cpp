@@ -19,6 +19,7 @@
 
 #include "generalpage.h"
 
+#include "core/corepaths.h"
 #include "mainwindow.h"
 
 #include <core/coresettings.h>
@@ -139,7 +140,7 @@ void GeneralPageWidget::loadLanguage()
     m_languageMap.clear();
     m_languageMap["British English (en_GB)"] = "en_GB";
 
-    QDir translationDir{u"://translations"_s};
+    QDir translationDir{Core::translationsPath()};
     QStringList translations = translationDir.entryList(QStringList{} << u"*.qm"_s);
     static QRegularExpression translationExpr(u"^fooyin_(.*).qm$"_s);
 
