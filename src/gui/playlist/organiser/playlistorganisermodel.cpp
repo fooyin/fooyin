@@ -258,7 +258,7 @@ QByteArray PlaylistOrganiserModel::saveModel()
 {
     QByteArray data;
     QDataStream stream{&data, QIODeviceBase::WriteOnly};
-    stream.setVersion(QDataStream::Qt_6_4);
+    stream.setVersion(QDataStream::Qt_6_0);
 
     std::stack<PlaylistOrganiserItem*> itemsToSave;
     itemsToSave.push(rootItem());
@@ -299,7 +299,7 @@ bool PlaylistOrganiserModel::restoreModel(QByteArray data)
     data = qUncompress(data);
 
     QDataStream stream{&data, QIODeviceBase::ReadOnly};
-    stream.setVersion(QDataStream::Qt_6_4);
+    stream.setVersion(QDataStream::Qt_6_0);
 
     beginResetModel();
     resetRoot();

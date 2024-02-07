@@ -186,7 +186,7 @@ public:
 
         QByteArray byteArray;
         QDataStream stream(&byteArray, QIODevice::WriteOnly);
-        stream.setVersion(QDataStream::Qt_6_4);
+        stream.setVersion(QDataStream::Qt_6_0);
 
         const int customCount = std::ranges::count_if(m_items, [](const auto& regItem) { return !regItem.isDefault; });
         stream << customCount;
@@ -214,7 +214,7 @@ public:
             byteArray = qUncompress(byteArray);
 
             QDataStream stream(&byteArray, QIODevice::ReadOnly);
-            stream.setVersion(QDataStream::Qt_6_4);
+            stream.setVersion(QDataStream::Qt_6_0);
 
             int size;
             stream >> size;
