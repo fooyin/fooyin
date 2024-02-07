@@ -114,19 +114,7 @@ find_package(
                SWRESAMPLE
 )
 
-find_package(KDSingleApplication-qt6 QUIET)
-if(NOT TARGET KDAB::kdsingleapplication)
-    include(FetchContent)
-    set(KDSingleApplication_QT6 ON CACHE BOOL INTERNAL)
-    set(KDSingleApplication_EXAMPLES OFF CACHE BOOL INTERNAL)
-    set(KDSingleApplication_STATIC ON CACHE BOOL INTERNAL)
-    FetchContent_Declare(
-        kdsingleapplication
-        GIT_REPOSITORY https://github.com/KDAB/KDSingleApplication.git
-        GIT_TAG v1.1.0
-    )
-    FetchContent_MakeAvailable(kdsingleapplication)
-endif()
+include(3rdparty/3rdparty.cmake)
 
 if(BUILD_CCACHE)
     find_program(CCACHE_EXECUTABLE ccache)

@@ -40,13 +40,13 @@ sudo pacman -Syu
 sudo pacman -S --needed \
   gcc git cmake pkgconf ninja alsa-lib \
   qt6-base qt6-svg qt6-tools \
-  qcoro-qt6 taglib ffmpeg
+  kdsingleapplication qcoro-qt6 taglib ffmpeg
 ```
 
 ## Building
 
 1. Using a terminal, switch to the directory where fooyin will be checked out
-2. Clone the fooyin repository: `git clone https://github.com/ludouzi/fooyin.git`
+2. Clone the fooyin repository: `git clone --recursive https://github.com/ludouzi/fooyin.git`
 3. Switch into the directory: `cd fooyin`
 4. Run CMake to generate a build environment:
 
