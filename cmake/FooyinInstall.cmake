@@ -1,19 +1,25 @@
 # ---- Fooyin data ----
 
+set(README_FILE "${CMAKE_SOURCE_DIR}/README.md")
+set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/COPYING")
+
 install(
-    FILES "${CMAKE_SOURCE_DIR}/COPYING"
+    FILES ${LICENSE_FILE}
     DESTINATION ${DOC_INSTALL_DIR}
     RENAME LICENSE
+    COMPONENT fooyin
 )
 
 install(
-    FILES "${CMAKE_SOURCE_DIR}/README.md"
+    FILES ${README_FILE}
     DESTINATION ${DOC_INSTALL_DIR}
     RENAME README
+    COMPONENT fooyin
 )
 
 install(FILES ${CMAKE_SOURCE_DIR}/dist/fooyin.desktop
         DESTINATION ${XDG_APPS_INSTALL_DIR}
+        COMPONENT fooyin
 )
 set(ICON_SRC_PATH ${CMAKE_SOURCE_DIR}/data/icons)
 set(ICON_SIZE
@@ -31,6 +37,7 @@ foreach(SIZE ${ICON_SIZE})
         FILES ${ICON_SRC_PATH}/${SIZE}-fooyin.png
         DESTINATION ${ICON_INSTALL_DIR}/hicolor/${SIZE}x${SIZE}/apps
         RENAME fooyin.png
+        COMPONENT fooyin
     )
 endforeach(SIZE)
 
@@ -38,13 +45,14 @@ install(
     FILES ${ICON_SRC_PATH}/sc-fooyin.svg
     DESTINATION ${ICON_INSTALL_DIR}/hicolor/scalable/apps
     RENAME fooyin.svg
+    COMPONENT fooyin
 )
 
 install(FILES ${TRANSLATIONS} DESTINATION ${TRANSLATION_INSTALL_DIR})
 
 # ---- Fooyin executable ----
 
-install(TARGETS fooyin RUNTIME COMPONENT fooyin_runtime)
+install(TARGETS fooyin RUNTIME COMPONENT fooyin)
 
 # ---- Fooyin config ----
 
@@ -53,8 +61,8 @@ set(package Fooyin)
 install(
     TARGETS fooyin_lib fooyin_version fooyin_config
     EXPORT FooyinTargets
-    RUNTIME COMPONENT fooyin_runtime
-    LIBRARY COMPONENT fooyin_runtime NAMELINK_COMPONENT fooyin_development
+    RUNTIME COMPONENT fooyin
+    LIBRARY COMPONENT fooyin NAMELINK_COMPONENT fooyin_development
     ARCHIVE COMPONENT fooyin_development
     INCLUDES
     DESTINATION "${INCLUDE_INSTALL_DIR}"

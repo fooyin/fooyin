@@ -166,14 +166,18 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
     RUNTIME
     DESTINATION
     ${BIN_INSTALL_DIR}
+    COMPONENT
+    fooyin
     LIBRARY
     DESTINATION
     ${LIB_INSTALL_DIR}
+    COMPONENT
+    fooyin
     ARCHIVE
     DESTINATION
     ${LIB_INSTALL_DIR}
     COMPONENT
-    fooyin_development
+    fooyin
 )
 
 if(NOT FOOYIN_OUTPUT_PREFIX)
