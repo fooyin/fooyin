@@ -26,8 +26,6 @@
 
 #include <QIcon>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 GuiSettings::GuiSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
@@ -35,47 +33,47 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     using namespace Settings::Gui;
 
     m_settings->createTempSetting<LayoutEditing>(false);
-    m_settings->createSetting<StartupBehaviour>(2, u"Interface/StartupBehaviour"_s);
-    m_settings->createSetting<WaitForTracks>(true, u"Interface/WaitForTracks"_s);
-    m_settings->createSetting<IconTheme>(0, u"Theme/IconTheme"_s);
-    m_settings->createSetting<LastPlaylistId>(0, u"Playlist/LastPlaylistId"_s);
-    m_settings->createSetting<CursorFollowsPlayback>(false, u"Playlist/CursorFollowsPlayback"_s);
-    m_settings->createSetting<PlaybackFollowsCursor>(false, u"Playlist/PlaybackFollowsCursor"_s);
-    m_settings->createSetting<RememberPlaylistState>(true, u"Playlist/RememberPlaylistState"_s);
+    m_settings->createSetting<StartupBehaviour>(2, QStringLiteral("Interface/StartupBehaviour"));
+    m_settings->createSetting<WaitForTracks>(true, QStringLiteral("Interface/WaitForTracks"));
+    m_settings->createSetting<IconTheme>(0, QStringLiteral("Theme/IconTheme"));
+    m_settings->createSetting<LastPlaylistId>(0, QStringLiteral("Playlist/LastPlaylistId"));
+    m_settings->createSetting<CursorFollowsPlayback>(false, QStringLiteral("Playlist/CursorFollowsPlayback"));
+    m_settings->createSetting<PlaybackFollowsCursor>(false, QStringLiteral("Playlist/PlaybackFollowsCursor"));
+    m_settings->createSetting<RememberPlaylistState>(true, QStringLiteral("Playlist/RememberPlaylistState"));
 
-    m_settings->createSetting<Internal::EditingMenuLevels>(2, u"Interface/EditingMenuLevels"_s);
-    m_settings->createSetting<Internal::SplitterHandles>(true, u"Interface/SplitterHandles"_s);
-    m_settings->createSetting<Internal::ElapsedTotal>(false, u"Player/ElapsedTotal"_s);
-    m_settings->createSetting<Internal::PlaylistAltColours>(true, u"PlaylistWidget/AlternatingColours"_s);
-    m_settings->createSetting<Internal::PlaylistHeader>(true, u"PlaylistWidget/Header"_s);
-    m_settings->createSetting<Internal::PlaylistScrollBar>(true, u"PlaylistWidget/Scrollbar"_s);
-    m_settings->createSetting<Internal::PlaylistCurrentPreset>(0, u"PlaylistWidget/CurrentPreset"_s);
-    m_settings->createSetting<Internal::PlaylistThumbnailSize>(60, u"PlaylistWidget/ThumbnailSize"_s);
-    m_settings->createSetting<Internal::PlaylistTabsHide>(false, u"PlaylistTabs/HideSingleTab"_s);
-    m_settings->createSetting<Internal::InfoAltColours>(true, u"InfoPanel/AlternatingColours"_s);
-    m_settings->createSetting<Internal::InfoHeader>(true, u"InfoPanel/Header"_s);
-    m_settings->createSetting<Internal::InfoScrollBar>(true, u"InfoPanel/Scrollbar"_s);
-    m_settings->createSetting<Internal::StatusShowIcon>(false, u"StatusWidget/ShowIcon"_s);
-    m_settings->createSetting<Internal::StatusShowSelection>(false, u"StatusWidget/ShowSelection"_s);
+    m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
+    m_settings->createSetting<Internal::SplitterHandles>(true, QStringLiteral("Interface/SplitterHandles"));
+    m_settings->createSetting<Internal::ElapsedTotal>(false, QStringLiteral("Player/ElapsedTotal"));
+    m_settings->createSetting<Internal::PlaylistAltColours>(true, QStringLiteral("PlaylistWidget/AlternatingColours"));
+    m_settings->createSetting<Internal::PlaylistHeader>(true, QStringLiteral("PlaylistWidget/Header"));
+    m_settings->createSetting<Internal::PlaylistScrollBar>(true, QStringLiteral("PlaylistWidget/Scrollbar"));
+    m_settings->createSetting<Internal::PlaylistCurrentPreset>(0, QStringLiteral("PlaylistWidget/CurrentPreset"));
+    m_settings->createSetting<Internal::PlaylistThumbnailSize>(60, QStringLiteral("PlaylistWidget/ThumbnailSize"));
+    m_settings->createSetting<Internal::PlaylistTabsHide>(false, QStringLiteral("PlaylistTabs/HideSingleTab"));
+    m_settings->createSetting<Internal::InfoAltColours>(true, QStringLiteral("InfoPanel/AlternatingColours"));
+    m_settings->createSetting<Internal::InfoHeader>(true, QStringLiteral("InfoPanel/Header"));
+    m_settings->createSetting<Internal::InfoScrollBar>(true, QStringLiteral("InfoPanel/Scrollbar"));
+    m_settings->createSetting<Internal::StatusShowIcon>(false, QStringLiteral("StatusWidget/ShowIcon"));
+    m_settings->createSetting<Internal::StatusShowSelection>(false, QStringLiteral("StatusWidget/ShowSelection"));
     m_settings->createSetting<Internal::StatusPlayingScript>(
         "[$num(%track%,2). ][%title% ($timems(%duration%))][ \u2022 %albumartist%][ \u2022 %album%]",
-        u"StatusWidget/PlayingScript"_s);
+        QStringLiteral("StatusWidget/PlayingScript"));
     m_settings->createSetting<Internal::StatusSelectionScript>(
-        "%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%", u"StatusWidget/SelectionScript"_s);
+        "%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%", QStringLiteral("StatusWidget/SelectionScript"));
 
     qRegisterMetaType<Fooyin::LibraryTreeAppearance>("Fooyin::LibraryTreeAppearance");
 
-    m_settings->createSetting<Internal::LibTreeDoubleClick>(1, u"LibraryTree/DoubleClickBehaviour"_s);
-    m_settings->createSetting<Internal::LibTreeMiddleClick>(0, u"LibraryTree/MiddleClickkBehaviour"_s);
-    m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false, u"LibraryTree/SelectionPlaylistEnabled"_s);
-    m_settings->createSetting<Internal::LibTreeAutoSwitch>(true, u"LibraryTree/SelectionPlaylistAutoSwitch"_s);
+    m_settings->createSetting<Internal::LibTreeDoubleClick>(1, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
+    m_settings->createSetting<Internal::LibTreeMiddleClick>(0, QStringLiteral("LibraryTree/MiddleClickkBehaviour"));
+    m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false, QStringLiteral("LibraryTree/SelectionPlaylistEnabled"));
+    m_settings->createSetting<Internal::LibTreeAutoSwitch>(true, QStringLiteral("LibraryTree/SelectionPlaylistAutoSwitch"));
     m_settings->createSetting<Internal::LibTreeAutoPlaylist>("Library Selection",
-                                                             u"LibraryTree/SelectionPlaylistName"_s);
-    m_settings->createSetting<Internal::LibTreeHeader>(true, u"LibraryTree/Header"_s);
-    m_settings->createSetting<Internal::LibTreeScrollBar>(true, u"LibraryTree/Scrollbar"_s);
-    m_settings->createSetting<Internal::LibTreeAltColours>(false, u"LibraryTree/AlternatingColours"_s);
+                                                             QStringLiteral("LibraryTree/SelectionPlaylistName"));
+    m_settings->createSetting<Internal::LibTreeHeader>(true, QStringLiteral("LibraryTree/Header"));
+    m_settings->createSetting<Internal::LibTreeScrollBar>(true, QStringLiteral("LibraryTree/Scrollbar"));
+    m_settings->createSetting<Internal::LibTreeAltColours>(false, QStringLiteral("LibraryTree/AlternatingColours"));
     m_settings->createSetting<Internal::LibTreeAppearance>(QVariant::fromValue(LibraryTreeAppearance{}),
-                                                           u"LibraryTree/Appearance"_s);
+                                                           QStringLiteral("LibraryTree/Appearance"));
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
 }
 } // namespace Fooyin

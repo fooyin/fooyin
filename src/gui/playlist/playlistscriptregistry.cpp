@@ -19,10 +19,6 @@
 
 #include "playlistscriptregistry.h"
 
-#include <core/constants.h>
-
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 bool PlaylistScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
@@ -36,7 +32,7 @@ bool PlaylistScriptRegistry::isVariable(const QString& var, const Track& track) 
 ScriptResult PlaylistScriptRegistry::value(const QString& var, const Track& track) const
 {
     if(isListVariable(var)) {
-        return {.value = u"|Loading|"_s, .cond = true};
+        return {.value = QStringLiteral("|Loading|"), .cond = true};
     }
 
     return ScriptRegistry::value(var, track);

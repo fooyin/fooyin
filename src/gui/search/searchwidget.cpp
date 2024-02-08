@@ -34,8 +34,6 @@
 
 constexpr auto Placeholder = "Search library...";
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 struct SearchWidget::Private
 {
@@ -114,12 +112,12 @@ SearchWidget::~SearchWidget()
 
 QString SearchWidget::name() const
 {
-    return u"Search Bar"_s;
+    return QStringLiteral("Search Bar");
 }
 
 QString SearchWidget::layoutName() const
 {
-    return u"SearchBar"_s;
+    return QStringLiteral("SearchBar");
 }
 
 void SearchWidget::layoutEditingMenu(ActionContainer* menu)
@@ -140,16 +138,16 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
     QStringList widgetIds;
     std::ranges::transform(connectedWidgets, std::back_inserter(widgetIds), [](const Id& id) { return id.name(); });
 
-    layout["Widgets"_L1] = widgetIds.join("|"_L1);
+    layout[QStringLiteral("Widgets")] = widgetIds.join(QStringLiteral("|"));
 }
 
 void SearchWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(!layout.contains("Widgets"_L1)) {
+    if(!layout.contains(QStringLiteral("Widgets"))) {
         return;
     }
 
-    const QStringList widgetIds = layout["Widgets"_L1].toString().split("|");
+    const QStringList widgetIds = layout[QStringLiteral("Widgets")].toString().split("|");
 
     if(widgetIds.isEmpty()) {
         return;

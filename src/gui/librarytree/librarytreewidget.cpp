@@ -44,8 +44,6 @@
 
 #include <set>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 QModelIndexList filterAncestors(const QModelIndexList& indexes)
 {
@@ -195,7 +193,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self_, Mus
     setScrollbarEnabled(settings->value<LibTreeScrollBar>());
     libraryTree->setAlternatingRowColors(settings->value<LibTreeAltColours>());
 
-    changeGrouping(groupsRegistry.itemByName(u""_s));
+    changeGrouping(groupsRegistry.itemByName(QStringLiteral("")));
 
     if(!library->isEmpty()) {
         reset();
@@ -219,7 +217,7 @@ void LibraryTreeWidgetPrivate::changeGrouping(const LibraryTreeGrouping& newGrou
 
 void LibraryTreeWidgetPrivate::addGroupMenu(QMenu* parent)
 {
-    auto* groupMenu = new QMenu(u"Grouping"_s, parent);
+    auto* groupMenu = new QMenu(QStringLiteral("Grouping"), parent);
 
     auto* treeGroups = new QActionGroup(groupMenu);
 
@@ -374,22 +372,22 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionContro
 
 QString LibraryTreeWidget::name() const
 {
-    return u"Library Tree"_s;
+    return QStringLiteral("Library Tree");
 }
 
 QString LibraryTreeWidget::layoutName() const
 {
-    return u"LibraryTree"_s;
+    return QStringLiteral("LibraryTree");
 }
 
 void LibraryTreeWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout["Grouping"_L1] = p->grouping.name;
+    layout[QStringLiteral("Grouping")] = p->grouping.name;
 }
 
 void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const LibraryTreeGrouping grouping = p->groupsRegistry.itemByName(layout["Grouping"_L1].toString());
+    const LibraryTreeGrouping grouping = p->groupsRegistry.itemByName(layout[QStringLiteral("Grouping")].toString());
     if(grouping.isValid()) {
         p->changeGrouping(grouping);
     }

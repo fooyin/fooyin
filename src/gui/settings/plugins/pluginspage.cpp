@@ -34,8 +34,6 @@
 #include <QPushButton>
 #include <QTableView>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 class PluginPageWidget : public SettingsPageWidget
 {
@@ -90,7 +88,8 @@ void PluginPageWidget::reset() { }
 
 void PluginPageWidget::installPlugin()
 {
-    const QString filepath = QFileDialog::getOpenFileName(this, u"Install Plugin"_s, u""_s, u"Fooyin Plugin (*.so)"_s);
+    const QString filepath = QFileDialog::getOpenFileName(this, QStringLiteral("Install Plugin"), QStringLiteral(""),
+                                                          QStringLiteral("Fooyin Plugin (*.so)"));
 
     if(filepath.isEmpty()) {
         return;

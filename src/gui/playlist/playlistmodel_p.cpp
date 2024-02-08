@@ -44,8 +44,6 @@
 
 constexpr auto CellMargin = 5;
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
 {
@@ -800,7 +798,7 @@ void PlaylistModelPrivate::populateModel(PendingData& data)
 
     if(resetting) {
         for(const auto& [parentKey, rows] : data.nodes) {
-            auto* parent = parentKey == "0"_L1 ? model->itemForIndex({}) : &nodes.at(parentKey);
+            auto* parent = parentKey == QStringLiteral("0") ? model->itemForIndex({}) : &nodes.at(parentKey);
 
             for(const QString& row : rows) {
                 PlaylistItem* child = &nodes.at(row);
@@ -1001,7 +999,7 @@ QVariant PlaylistModelPrivate::subheaderData(PlaylistItem* item, int column, int
 
 PlaylistItem* PlaylistModelPrivate::itemForKey(const QString& key)
 {
-    if(key == "0"_L1) {
+    if(key == QStringLiteral("0")) {
         return model->rootItem();
     }
     if(nodes.contains(key)) {

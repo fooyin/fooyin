@@ -25,8 +25,6 @@
 #include <QSqlError>
 #include <QThread>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 DatabaseModule::DatabaseModule(QString connectionName)
     : m_connectionName{std::move(connectionName)}
@@ -50,7 +48,7 @@ DatabaseQuery DatabaseModule::runQuery(const QString& query, const std::pair<QSt
 
 QSqlDatabase DatabaseModule::db() const
 {
-    if(!QSqlDatabase::isDriverAvailable(u"QSQLITE"_s)) {
+    if(!QSqlDatabase::isDriverAvailable(QStringLiteral("QSQLITE"))) {
         return {};
     }
 
@@ -61,14 +59,14 @@ QSqlDatabase DatabaseModule::db() const
         threadId = 0;
     }
 
-    const auto threadConnectionName = QString(u"%1-%2"_s).arg(m_connectionName).arg(threadId);
+    const auto threadConnectionName = QString(QStringLiteral("%1-%2")).arg(m_connectionName).arg(threadId);
 
     const QStringList connections = QSqlDatabase::connectionNames();
     if(connections.contains(threadConnectionName)) {
         return QSqlDatabase::database(threadConnectionName);
     }
 
-    QSqlDatabase db = QSqlDatabase::addDatabase(u"QSQLITE"_s, threadConnectionName);
+    QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), threadConnectionName);
     db.setDatabaseName(m_connectionName);
 
     if(!db.open()) {
@@ -79,7 +77,7 @@ QSqlDatabase DatabaseModule::db() const
         qDebug() << er.databaseText();
     }
 
-    runPragma(u"foreign_keys"_s, u"ON"_s);
+    runPragma(QStringLiteral("foreign_keys"), QStringLiteral("ON"));
 
     return db;
 }

@@ -25,7 +25,6 @@
 
 #include <QDebug>
 
-using namespace Qt::Literals::StringLiterals;
 using TokenType = Fooyin::ScriptScanner::TokenType;
 
 namespace {
@@ -108,7 +107,7 @@ struct ScriptParser::Private
         QString errorMsg = "[" + QString::number(token.position) + "] Error";
 
         if(token.type == TokenType::TokEos) {
-            errorMsg += u" at end of string"_s;
+            errorMsg += QStringLiteral(" at end of string");
         }
         else {
             errorMsg += ": '" + token.value.toString() + "'";
@@ -165,7 +164,7 @@ struct ScriptParser::Private
 
         if(result.value.contains(Constants::Separator)) {
             // TODO: Support custom separators
-            result.value = result.value.replace(Constants::Separator, ", "_L1);
+            result.value = result.value.replace(Constants::Separator, QStringLiteral(", "));
         }
         return result;
     }
@@ -308,7 +307,7 @@ struct ScriptParser::Private
         }
 
         expr.value = val;
-        consume(TokenType::TokQuote, uR"(Expected '"' after expression)"_s);
+        consume(TokenType::TokQuote, R"(Expected '"' after expression)");
         return expr;
     }
 
@@ -323,7 +322,7 @@ struct ScriptParser::Private
             advance();
             expr.type = Expr::VariableList;
             value     = QString{previous.value.toString()}.toLower();
-            consume(TokenType::TokRightAngle, u"Expected '>' after expression"_s);
+            consume(TokenType::TokRightAngle, QStringLiteral("Expected '>' after expression"));
         }
         else {
             expr.type = Expr::Variable;
@@ -331,11 +330,11 @@ struct ScriptParser::Private
         }
 
         if(!registry->isVariable(value, tracks)) {
-            error(u"Variable not found"_s);
+            error(QStringLiteral("Variable not found"));
         }
 
         expr.value = value;
-        consume(TokenType::TokVar, u"Expected '%' after expression"_s);
+        consume(TokenType::TokVar, QStringLiteral("Expected '%' after expression"));
         return expr;
     }
 
@@ -344,7 +343,7 @@ struct ScriptParser::Private
         advance();
 
         if(previous.type != TokenType::TokLiteral) {
-            error(u"Expected function name"_s);
+            error(QStringLiteral("Expected function name"));
         }
 
         Expression expr{Expr::Function};
@@ -352,10 +351,10 @@ struct ScriptParser::Private
         funcExpr.name = QString{previous.value.toString()}.toLower();
 
         if(!registry->isFunction(funcExpr.name)) {
-            error(u"Function not found"_s);
+            error(QStringLiteral("Function not found"));
         }
 
-        consume(TokenType::TokLeftParen, u"Expected '(' after function call"_s);
+        consume(TokenType::TokLeftParen, QStringLiteral("Expected '(' after function call"));
 
         if(!currentToken(TokenType::TokRightParen)) {
             funcExpr.args.emplace_back(functionArgs(tracks));
@@ -365,7 +364,7 @@ struct ScriptParser::Private
         }
 
         expr.value = funcExpr;
-        consume(TokenType::TokRightParen, u"Expected ')' after function call"_s);
+        consume(TokenType::TokRightParen, QStringLiteral("Expected ')' after function call"));
         return expr;
     }
 
@@ -393,7 +392,7 @@ struct ScriptParser::Private
         }
 
         expr.value = condExpr;
-        consume(TokenType::TokRightSquare, u"Expected ']' after expression"_s);
+        consume(TokenType::TokRightSquare, QStringLiteral("Expected ']' after expression"));
         return expr;
     }
 
@@ -418,7 +417,7 @@ struct ScriptParser::Private
             script.expressions.emplace_back(expression(tracks));
         }
 
-        consume(TokenType::TokEos, u"Expected end of expression"_s);
+        consume(TokenType::TokEos, QStringLiteral("Expected end of expression"));
 
         return script;
     }

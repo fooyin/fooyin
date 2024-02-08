@@ -23,8 +23,6 @@
 
 constexpr auto CharLimit = 2000;
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 bool withinCharLimit(const QStringList& strings)
 {
@@ -36,7 +34,7 @@ bool withinCharLimit(const QStringList& strings)
 
 namespace Fooyin::TagEditor {
 TagEditorItem::TagEditorItem()
-    : TagEditorItem{u""_s, nullptr, true}
+    : TagEditorItem{QStringLiteral(""), nullptr, true}
 { }
 
 TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent, bool isDefault)
@@ -57,9 +55,9 @@ QString TagEditorItem::value() const
         QString values;
 
         QStringList nonEmptyValues{m_values};
-        nonEmptyValues.removeAll(u""_s);
+        nonEmptyValues.removeAll(QStringLiteral(""));
 
-        values = nonEmptyValues.join("; "_L1);
+        values = nonEmptyValues.join(QStringLiteral("; "));
         if(m_trackCount > 1 && m_values.size() > 1) {
             values.prepend("<<multiple items>> ");
         }

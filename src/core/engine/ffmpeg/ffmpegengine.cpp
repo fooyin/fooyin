@@ -40,7 +40,6 @@ extern "C"
 constexpr auto BufferQueueSize = 15;
 
 using namespace std::chrono_literals;
-using namespace Qt::Literals::StringLiterals;
 
 namespace Fooyin {
 struct FFmpegEngine::Private

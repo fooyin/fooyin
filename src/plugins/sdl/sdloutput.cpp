@@ -23,8 +23,6 @@
 
 #include <QDebug>
 
-using namespace Qt::Literals::StringLiterals;
-
 constexpr auto BufferSize = 2048;
 
 namespace {
@@ -57,7 +55,7 @@ struct SdlOutput::Private
     SDL_AudioSpec obtainedSpec;
     SDL_AudioDeviceID audioDeviceId;
 
-    QString device{u"default"_s};
+    QString device{QStringLiteral("default")};
 };
 
 SdlOutput::SdlOutput()
@@ -83,7 +81,7 @@ bool SdlOutput::init(const OutputContext& oc)
     p->desiredSpec.callback = nullptr;
     p->desiredSpec.userdata = &p->outputContext;
 
-    if(p->device == "default"_L1) {
+    if(p->device == QStringLiteral("default")) {
         p->audioDeviceId
             = SDL_OpenAudioDevice(nullptr, 0, &p->desiredSpec, &p->obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
     }

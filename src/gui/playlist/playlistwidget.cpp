@@ -53,8 +53,6 @@
 
 #include <stack>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 void expandTree(QTreeView* view, QAbstractItemModel* model, const QModelIndex& parent, int first, int last)
 {
@@ -815,31 +813,31 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
             QString colStr       = QString::number(column.id);
 
             if(alignment != Qt::AlignLeft) {
-                colStr += ":"_L1 + QString::number(alignment.toInt());
+                colStr += QStringLiteral(":") + QString::number(alignment.toInt());
             }
 
             columns.push_back(colStr);
         }
 
-        layout["Columns"_L1] = columns.join("|"_L1);
+        layout[QStringLiteral("Columns")] = columns.join(QStringLiteral("|"));
     }
 
     QByteArray state = p->header->saveHeaderState();
     state            = qCompress(state, 9);
 
-    layout["State"_L1] = QString::fromUtf8(state.toBase64());
+    layout[QStringLiteral("State")] = QString::fromUtf8(state.toBase64());
 }
 
 void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains("Columns"_L1)) {
+    if(layout.contains(QStringLiteral("Columns"))) {
         p->columns.clear();
 
-        const QString columnData    = layout.value("Columns"_L1).toString();
-        const QStringList columnIds = columnData.split("|"_L1);
+        const QString columnData    = layout.value(QStringLiteral("Columns")).toString();
+        const QStringList columnIds = columnData.split(QStringLiteral("|"));
 
         for(int i{0}; const auto& columnId : columnIds) {
-            const auto column     = columnId.split(u":"_s);
+            const auto column     = columnId.split(QStringLiteral(":"));
             const auto columnItem = p->columnRegistry.itemById(column.at(0).toInt());
 
             if(columnItem.isValid()) {
@@ -857,8 +855,8 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 
     p->resetModel();
 
-    if(layout.contains("State"_L1)) {
-        auto state = QByteArray::fromBase64(layout.value("State"_L1).toString().toUtf8());
+    if(layout.contains(QStringLiteral("State"))) {
+        auto state = QByteArray::fromBase64(layout.value(QStringLiteral("State")).toString().toUtf8());
 
         if(state.isEmpty()) {
             return;

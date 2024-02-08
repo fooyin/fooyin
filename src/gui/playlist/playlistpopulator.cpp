@@ -29,8 +29,6 @@
 
 #include <ranges>
 
-using namespace Qt::Literals::StringLiterals;
-
 constexpr int TrackPreloadSize = 2000;
 
 namespace Fooyin {

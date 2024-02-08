@@ -23,8 +23,6 @@
 
 #include <utils/settings/settingsmanager.h>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin::Filters {
 FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
@@ -33,15 +31,15 @@ FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
 
     qRegisterMetaType<Fooyin::Filters::FilterOptions>("Fooyin::Filters::FilterOptions");
 
-    m_settings->createSetting<FilterAltColours>(false, u"Filters/AlternatingColours"_s);
-    m_settings->createSetting<FilterHeader>(true, u"Filters/Header"_s);
-    m_settings->createSetting<FilterScrollBar>(true, u"Filters/Scrollbar"_s);
-    m_settings->createSetting<FilterAppearance>(QVariant::fromValue(FilterOptions{}), u"Filters/Appearance"_s);
-    m_settings->createSetting<FilterDoubleClick>(1, u"Filters/DoubleClickBehaviour"_s);
-    m_settings->createSetting<FilterMiddleClick>(0, u"Filters/MiddleClickBehaviour"_s);
-    m_settings->createSetting<FilterPlaylistEnabled>(true, u"Filters/SelectionPlaylistEnabled"_s);
-    m_settings->createSetting<FilterAutoSwitch>(true, u"Filters/AutoSwitchSelectionPlaylist"_s);
-    m_settings->createSetting<FilterAutoPlaylist>("Filter Results", u"Filters/SelectionPlaylistName"_s);
+    m_settings->createSetting<FilterAltColours>(false, QStringLiteral("Filters/AlternatingColours"));
+    m_settings->createSetting<FilterHeader>(true, QStringLiteral("Filters/Header"));
+    m_settings->createSetting<FilterScrollBar>(true, QStringLiteral("Filters/Scrollbar"));
+    m_settings->createSetting<FilterAppearance>(QVariant::fromValue(FilterOptions{}), QStringLiteral("Filters/Appearance"));
+    m_settings->createSetting<FilterDoubleClick>(1, QStringLiteral("Filters/DoubleClickBehaviour"));
+    m_settings->createSetting<FilterMiddleClick>(0, QStringLiteral("Filters/MiddleClickBehaviour"));
+    m_settings->createSetting<FilterPlaylistEnabled>(true, QStringLiteral("Filters/SelectionPlaylistEnabled"));
+    m_settings->createSetting<FilterAutoSwitch>(true, QStringLiteral("Filters/AutoSwitchSelectionPlaylist"));
+    m_settings->createSetting<FilterAutoPlaylist>("Filter Results", QStringLiteral("Filters/SelectionPlaylistName"));
 }
 } // namespace Fooyin::Filters
 

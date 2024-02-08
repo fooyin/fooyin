@@ -24,8 +24,6 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 FyWidget::FyWidget(QWidget* parent)
     : QWidget{parent}
@@ -84,7 +82,7 @@ QRect FyWidget::widgetGeometry() const
 void FyWidget::saveLayout(QJsonArray& layout)
 {
     QJsonObject widgetData;
-    widgetData["ID"_L1] = m_id.name();
+    widgetData[QStringLiteral("ID")] = m_id.name();
 
     saveLayoutData(widgetData);
 
@@ -96,8 +94,8 @@ void FyWidget::saveLayout(QJsonArray& layout)
 
 void FyWidget::loadLayout(const QJsonObject& layout)
 {
-    if(layout.contains("ID"_L1)) {
-        m_id = Id{layout["ID"_L1].toString()};
+    if(layout.contains(QStringLiteral("ID"))) {
+        m_id = Id{layout[QStringLiteral("ID")].toString()};
     }
 
     loadLayoutData(layout);

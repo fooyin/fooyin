@@ -34,8 +34,6 @@
 #include <QMenu>
 #include <QSplitter>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 Fooyin::ActionContainer* createNewMenu(Fooyin::ActionManager* actionManager, Fooyin::FyWidget* parent,
                                        const QString& title)
@@ -275,12 +273,12 @@ WidgetList SplitterWidget::widgets() const
 
 QString SplitterWidget::name() const
 {
-    return Utils::Enum::toString(p->splitter->orientation()) + u" Splitter"_s;
+    return Utils::Enum::toString(p->splitter->orientation()) + QStringLiteral(" Splitter");
 }
 
 QString SplitterWidget::layoutName() const
 {
-    return u"Splitter"_s + Utils::Enum::toString(p->splitter->orientation());
+    return QStringLiteral("Splitter") + Utils::Enum::toString(p->splitter->orientation());
 }
 
 void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
@@ -288,7 +286,7 @@ void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
     auto* changeSplitter = new QAction(tr("Change Splitter"), this);
     QObject::connect(changeSplitter, &QAction::triggered, this, [this] {
         setOrientation(p->splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
-        setObjectName(Utils::Enum::toString(p->splitter->orientation()) + u" Splitter"_s);
+        setObjectName(Utils::Enum::toString(p->splitter->orientation()) + QStringLiteral(" Splitter"));
     });
     menu->addAction(changeSplitter);
 
@@ -308,21 +306,21 @@ void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
 
 void SplitterWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout["State"_L1] = QString::fromUtf8(saveState().toBase64());
+    layout[QStringLiteral("State")] = QString::fromUtf8(saveState().toBase64());
 
     if(!p->children.empty()) {
         QJsonArray children;
         for(const auto& widget : p->children) {
             widget->saveLayout(children);
         }
-        layout["Widgets"_L1] = children;
+        layout[QStringLiteral("Widgets")] = children;
     }
 }
 
 void SplitterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const auto state    = QByteArray::fromBase64(layout["State"_L1].toString().toUtf8());
-    const auto children = layout["Widgets"_L1].toArray();
+    const auto state    = QByteArray::fromBase64(layout[QStringLiteral("State")].toString().toUtf8());
+    const auto children = layout[QStringLiteral("Widgets")].toArray();
 
     WidgetContainer::loadWidgets(children);
 

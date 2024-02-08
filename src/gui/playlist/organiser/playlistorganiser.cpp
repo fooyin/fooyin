@@ -41,8 +41,6 @@
 constexpr auto OrganiserModel = "PlaylistOrganiser/Model";
 constexpr auto OrganiserState = "PlaylistOrganiser/State";
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 QByteArray saveExpandedState(QTreeView* view, QAbstractItemModel* model)
 {
@@ -303,12 +301,12 @@ PlaylistOrganiser::~PlaylistOrganiser()
 
 QString PlaylistOrganiser::name() const
 {
-    return u"Playlist Organiser"_s;
+    return QStringLiteral("Playlist Organiser");
 }
 
 QString PlaylistOrganiser::layoutName() const
 {
-    return u"PlaylistOrganiser"_s;
+    return QStringLiteral("PlaylistOrganiser");
 }
 
 void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)

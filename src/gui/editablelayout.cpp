@@ -46,8 +46,6 @@
 
 #include <stack>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 Fooyin::FyWidget* splitterChild(QWidget* widget)
 {
@@ -97,7 +95,7 @@ struct EditableLayout::Private
 
     void setupDefault()
     {
-        splitter = qobject_cast<SplitterWidget*>(widgetProvider->createWidget(u"SplitterVertical"_s));
+        splitter = qobject_cast<SplitterWidget*>(widgetProvider->createWidget(QStringLiteral("SplitterVertical")));
         if(splitter) {
             splitter->setParent(self);
             splitter->finalise();
@@ -326,7 +324,7 @@ void EditableLayout::saveLayout()
 
     p->splitter->saveLayout(array);
 
-    root["Default"_L1] = array;
+    root[QStringLiteral("Default")] = array;
 
     const QByteArray json = QJsonDocument(root).toJson();
 

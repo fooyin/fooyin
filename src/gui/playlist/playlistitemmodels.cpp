@@ -19,8 +19,6 @@
 
 #include "playlistitemmodels.h"
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 PlaylistContainerItem::PlaylistContainerItem()
     : m_rowHeight{-1}

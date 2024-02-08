@@ -48,8 +48,6 @@
 
 #include <set>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 Fooyin::TrackList fetchAllTracks(QTreeView* view)
 {
@@ -129,7 +127,7 @@ struct FilterWidget::Private
         const QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
         std::ranges::transform(selectedIndexes, std::back_inserter(titles),
                                [](const QModelIndex& selectedIndex) { return selectedIndex.data().toString(); });
-        return titles.join(", "_L1);
+        return titles.join(QStringLiteral(", "));
     }
 
     QCoro::Task<void> selectionChanged()
@@ -377,12 +375,12 @@ void FilterWidget::setScrollbarEnabled(bool enabled)
 
 QString FilterWidget::name() const
 {
-    return u"Library Filter"_s;
+    return QStringLiteral("Library Filter");
 }
 
 QString FilterWidget::layoutName() const
 {
-    return u"LibraryFilter"_s;
+    return QStringLiteral("LibraryFilter");
 }
 
 void FilterWidget::saveLayoutData(QJsonObject& layout)
@@ -394,32 +392,32 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
         QString colStr       = QString::number(column.id);
 
         if(alignment != Qt::AlignLeft) {
-            colStr += ":"_L1 + QString::number(alignment.toInt());
+            colStr += QStringLiteral(":") + QString::number(alignment.toInt());
         }
 
         columns.push_back(colStr);
     }
 
-    layout["Columns"_L1] = columns.join("|"_L1);
+    layout[QStringLiteral("Columns")] = columns.join(QStringLiteral("|"));
 
     QByteArray state = p->header->saveHeaderState();
     state            = qCompress(state, 9);
 
-    layout["Group"_L1] = p->group.name();
-    layout["Index"_L1] = p->index;
-    layout["State"_L1] = QString::fromUtf8(state.toBase64());
+    layout[QStringLiteral("Group")] = p->group.name();
+    layout[QStringLiteral("Index")] = p->index;
+    layout[QStringLiteral("State")] = QString::fromUtf8(state.toBase64());
 }
 
 void FilterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains("Columns"_L1)) {
+    if(layout.contains(QStringLiteral("Columns"))) {
         p->columns.clear();
 
-        const QString columnData    = layout.value("Columns"_L1).toString();
-        const QStringList columnIds = columnData.split("|"_L1);
+        const QString columnData    = layout.value(QStringLiteral("Columns")).toString();
+        const QStringList columnIds = columnData.split(QStringLiteral("|"));
 
         for(int i{0}; const auto& columnId : columnIds) {
-            const auto column     = columnId.split(u":"_s);
+            const auto column     = columnId.split(QStringLiteral(":"));
             const auto columnItem = p->columnRegistry.itemById(column.at(0).toInt());
 
             if(columnItem.isValid()) {
@@ -433,18 +431,18 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
         }
     }
 
-    if(layout.contains("Group"_L1)) {
-        p->group = Id{layout.value("Group"_L1).toString()};
+    if(layout.contains(QStringLiteral("Group"))) {
+        p->group = Id{layout.value(QStringLiteral("Group")).toString()};
     }
 
-    if(layout.contains("Index"_L1)) {
-        p->index = layout.value("Index"_L1).toInt();
+    if(layout.contains(QStringLiteral("Index"))) {
+        p->index = layout.value(QStringLiteral("Index")).toInt();
     }
 
     emit filterUpdated();
 
-    if(layout.contains("State"_L1)) {
-        auto state = QByteArray::fromBase64(layout.value("State"_L1).toString().toUtf8());
+    if(layout.contains(QStringLiteral("State"))) {
+        auto state = QByteArray::fromBase64(layout.value(QStringLiteral("State")).toString().toUtf8());
 
         if(state.isEmpty()) {
             return;

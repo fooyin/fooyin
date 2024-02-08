@@ -24,8 +24,6 @@
 #include <QDir>
 #include <QLibrary>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 PluginManager::PluginManager() = default;
 
@@ -56,10 +54,10 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
 
             const QString error = pluginLoader->errorString();
 
-            auto pluginMetadata = metaData.value("MetaData"_L1);
-            auto version        = metaData.value("Version"_L1);
+            auto pluginMetadata = metaData.value(QStringLiteral("MetaData"));
+            auto version        = metaData.value(QStringLiteral("Version"));
 
-            QString name = pluginMetadata.toObject().value("Name"_L1).toString();
+            QString name = pluginMetadata.toObject().value(QStringLiteral("Name")).toString();
 
             if(name.isEmpty()) {
                 name = file.fileName();

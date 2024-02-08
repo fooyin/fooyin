@@ -28,8 +28,6 @@
 #include <QLibraryInfo>
 #include <QTranslator>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 Translations::Translations(SettingsManager* settings)
     : m_settings{settings}
@@ -44,7 +42,7 @@ void Translations::initialiseTranslations()
     if(!customLanguage.isEmpty()) {
         const QLocale customLocale = QLocale{customLanguage};
         // Returns the 'C' locale if not valid
-        if(customLanguage.compare(u"C"_s, Qt::CaseInsensitive) != 0 && customLocale.language() == QLocale::C) {
+        if(customLanguage.compare(QStringLiteral("C"), Qt::CaseInsensitive) != 0 && customLocale.language() == QLocale::C) {
             qWarning() << "Custom locale (" << customLanguage << ") not found, using 'C' locale.";
         }
         QLocale::setDefault(customLocale);
@@ -62,7 +60,7 @@ void Translations::initialiseTranslations()
     }
 
     const bool foundQt
-        = installTranslations(locale, u"qt"_s, QLibraryInfo::path(QLibraryInfo::TranslationsPath), false);
+        = installTranslations(locale, QStringLiteral("qt"), QLibraryInfo::path(QLibraryInfo::TranslationsPath), false);
 
     const QString translationsPath = Core::translationsPath();
     if(translationsPath.isEmpty()) {
@@ -70,17 +68,17 @@ void Translations::initialiseTranslations()
     }
 
     if(!foundQt) {
-        installTranslations(locale, u"qt"_s, translationsPath, true);
+        installTranslations(locale, QStringLiteral("qt"), translationsPath, true);
     }
 
-    installTranslations(locale, u"fooyin"_s, translationsPath, true);
+    installTranslations(locale, QStringLiteral("fooyin"), translationsPath, true);
 }
 
 bool Translations::installTranslations(const QLocale& locale, const QString& translation, const QString& path,
                                        bool warn)
 {
     auto* translator = new QTranslator(this);
-    if(!translator->load(locale, translation, u"_"_s, path)) {
+    if(!translator->load(locale, translation, QStringLiteral("_"), path)) {
         if(warn) {
             qWarning() << "Failed to load" << translation << "translations for locale" << locale.name() << "from"
                        << path;

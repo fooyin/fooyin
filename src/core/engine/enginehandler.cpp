@@ -31,8 +31,6 @@
 
 #include <QThread>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 struct CurrentOutput
 {
@@ -120,7 +118,7 @@ struct EngineHandler::Private
             return;
         }
 
-        const QStringList newOutput = output.split(u"|"_s);
+        const QStringList newOutput = output.split(QStringLiteral("|"));
 
         if(newOutput.empty() || newOutput.size() < 2) {
             return;

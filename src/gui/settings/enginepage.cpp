@@ -32,8 +32,6 @@
 #include <QLabel>
 #include <QListView>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 class EnginePageWidget : public SettingsPageWidget
 {
@@ -99,7 +97,7 @@ void EnginePageWidget::load()
 
 void EnginePageWidget::apply()
 {
-    const QString output = m_outputBox->currentText() + u"|"_s + m_deviceBox->currentData().toString();
+    const QString output = m_outputBox->currentText() + QStringLiteral("|") + m_deviceBox->currentData().toString();
     m_settings->set<Settings::Core::AudioOutput>(output);
     m_settings->set<Settings::Core::GaplessPlayback>(m_gaplessPlayback->isChecked());
 }
@@ -112,9 +110,9 @@ void EnginePageWidget::reset()
 
 void EnginePageWidget::setupOutputs()
 {
-    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(u"|"_s);
+    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(QStringLiteral("|"));
 
-    const QString outName = !currentOutput.empty() ? currentOutput.at(0) : u""_s;
+    const QString outName = !currentOutput.empty() ? currentOutput.at(0) : QStringLiteral("");
     const auto outputs    = m_engine->getAllOutputs();
 
     m_outputBox->clear();
@@ -139,13 +137,13 @@ void EnginePageWidget::setupDevices(const QString& output)
 
     m_deviceBox->clear();
 
-    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(u"|"_s);
+    const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(QStringLiteral("|"));
 
     if(currentOutput.empty()) {
         return;
     }
 
-    const QString currentDevice = currentOutput.size() > 1 ? currentOutput.at(1) : u""_s;
+    const QString currentDevice = currentOutput.size() > 1 ? currentOutput.at(1) : QStringLiteral("");
     const auto outputDevices    = m_engine->getOutputDevices(output);
 
     for(const auto& [name, desc] : outputDevices) {

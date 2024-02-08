@@ -29,13 +29,11 @@
 #include <QJsonDocument>
 #include <QString>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 bool checkFile(const QFileInfo& file)
 {
     return file.exists() && file.isFile() && file.isReadable()
-        && file.completeSuffix().compare("fyl"_L1, Qt::CaseInsensitive) == 0;
+        && file.completeSuffix().compare(QStringLiteral("fyl"), Qt::CaseInsensitive) == 0;
 }
 
 QByteArray layoutToJson(const Fooyin::Layout& layout)
@@ -262,8 +260,8 @@ std::optional<Layout> LayoutProvider::importLayout(const QString& path)
 bool LayoutProvider::exportLayout(const Layout& layout, const QString& path)
 {
     QString filepath{path};
-    if(!filepath.contains(".fyl"_L1)) {
-        filepath += u".fyl"_s;
+    if(!filepath.contains(QStringLiteral(".fyl"))) {
+        filepath += QStringLiteral(".fyl");
     }
 
     QFile file{filepath};

@@ -28,11 +28,9 @@
 
 #include <QFileInfo>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 Database::Database(SettingsManager* settings)
-    : Database{Utils::sharePath(), u"fooyin.db"_s, settings}
+    : Database{Utils::sharePath(), QStringLiteral("fooyin.db"), settings}
 { }
 
 Database::Database(const QString& directory, const QString& filename, SettingsManager* settings)
@@ -69,98 +67,101 @@ bool Database::createDatabase()
         return false;
     }
 
-    checkInsertTable(u"Libraries"_s, u"CREATE TABLE Libraries ("
-                                     "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                     "    Name TEXT NOT NULL UNIQUE,"
-                                     "    Path TEXT NOT NULL UNIQUE);"_s);
+    checkInsertTable(QStringLiteral("Libraries"), QStringLiteral("CREATE TABLE Libraries ("
+                                                                 "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                                                 "    Name TEXT NOT NULL UNIQUE,"
+                                                                 "    Path TEXT NOT NULL UNIQUE);"));
 
-    checkInsertTable(u"Playlists"_s, u"CREATE TABLE Playlists ("
-                                     "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                     "    Name TEXT NOT NULL UNIQUE,"
-                                     "    PlaylistIndex INTEGER);"_s);
+    checkInsertTable(QStringLiteral("Playlists"), QStringLiteral("CREATE TABLE Playlists ("
+                                                                 "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                                                 "    Name TEXT NOT NULL UNIQUE,"
+                                                                 "    PlaylistIndex INTEGER);"));
 
-    checkInsertTable(u"Tracks"_s, u"CREATE TABLE Tracks ("
-                                  "    TrackID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                  "    FilePath TEXT UNIQUE NOT NULL,"
-                                  "    Title TEXT,"
-                                  "    TrackNumber INTEGER,"
-                                  "    TrackTotal INTEGER,"
-                                  "    Artists TEXT,"
-                                  "    AlbumArtist TEXT,"
-                                  "    Album TEXT,"
-                                  "    CoverPath TEXT,"
-                                  "    DiscNumber INTEGER,"
-                                  "    DiscTotal INTEGER,"
-                                  "    Date TEXT,"
-                                  "    Composer TEXT,"
-                                  "    Performer TEXT,"
-                                  "    Genres TEXT,"
-                                  "    Comment TEXT,"
-                                  "    Duration INTEGER DEFAULT 0,"
-                                  "    FileSize INTEGER DEFAULT 0,"
-                                  "    BitRate INTEGER DEFAULT 0,"
-                                  "    SampleRate INTEGER DEFAULT 0,"
-                                  "    ExtraTags BLOB,"
-                                  "    Type INTEGER DEFAULT 0,"
-                                  "    ModifiedDate INTEGER,"
-                                  "    LibraryID INTEGER DEFAULT -1,"
-                                  "    TrackHash TEXT);"_s);
+    checkInsertTable(QStringLiteral("Tracks"), QStringLiteral("CREATE TABLE Tracks ("
+                                                              "    TrackID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                                              "    FilePath TEXT UNIQUE NOT NULL,"
+                                                              "    Title TEXT,"
+                                                              "    TrackNumber INTEGER,"
+                                                              "    TrackTotal INTEGER,"
+                                                              "    Artists TEXT,"
+                                                              "    AlbumArtist TEXT,"
+                                                              "    Album TEXT,"
+                                                              "    CoverPath TEXT,"
+                                                              "    DiscNumber INTEGER,"
+                                                              "    DiscTotal INTEGER,"
+                                                              "    Date TEXT,"
+                                                              "    Composer TEXT,"
+                                                              "    Performer TEXT,"
+                                                              "    Genres TEXT,"
+                                                              "    Comment TEXT,"
+                                                              "    Duration INTEGER DEFAULT 0,"
+                                                              "    FileSize INTEGER DEFAULT 0,"
+                                                              "    BitRate INTEGER DEFAULT 0,"
+                                                              "    SampleRate INTEGER DEFAULT 0,"
+                                                              "    ExtraTags BLOB,"
+                                                              "    Type INTEGER DEFAULT 0,"
+                                                              "    ModifiedDate INTEGER,"
+                                                              "    LibraryID INTEGER DEFAULT -1,"
+                                                              "    TrackHash TEXT);"));
 
-    checkInsertTable(u"TrackStats"_s, u"CREATE TABLE TrackStats ("
-                                      "    TrackHash TEXT PRIMARY KEY,"
-                                      "    LastSeen INTEGER,"
-                                      "    AddedDate INTEGER,"
-                                      "    FirstPlayed INTEGER,"
-                                      "    LastPlayed INTEGER,"
-                                      "    PlayCount INTEGER DEFAULT 0,"
-                                      "    Rating INTEGER DEFAULT 0);"_s);
+    checkInsertTable(QStringLiteral("TrackStats"), QStringLiteral("CREATE TABLE TrackStats ("
+                                                                  "    TrackHash TEXT PRIMARY KEY,"
+                                                                  "    LastSeen INTEGER,"
+                                                                  "    AddedDate INTEGER,"
+                                                                  "    FirstPlayed INTEGER,"
+                                                                  "    LastPlayed INTEGER,"
+                                                                  "    PlayCount INTEGER DEFAULT 0,"
+                                                                  "    Rating INTEGER DEFAULT 0);"));
 
-    checkInsertTable(u"PlaylistTracks"_s, u"CREATE TABLE PlaylistTracks ("
-                                          "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
-                                          "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
-                                          "    TrackIndex INTEGER NOT NULL);"_s);
+    checkInsertTable(QStringLiteral("PlaylistTracks"),
+                     QStringLiteral("CREATE TABLE PlaylistTracks ("
+                                    "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
+                                    "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
+                                    "    TrackIndex INTEGER NOT NULL);"));
 
-    checkInsertTable(u"TrackView"_s, u"CREATE VIEW TracksView AS"
-                                     "  SELECT"
-                                     "    Tracks.TrackID,"
-                                     "    Tracks.FilePath,"
-                                     "    SUBSTR(Tracks.FilePath, LENGTH(Libraries.Path) + 2) AS RelativePath,"
-                                     "    Tracks.Title,"
-                                     "    Tracks.TrackNumber,"
-                                     "    Tracks.TrackTotal,"
-                                     "    Tracks.Artists,"
-                                     "    Tracks.AlbumArtist,"
-                                     "    Tracks.Album,"
-                                     "    Tracks.CoverPath,"
-                                     "    Tracks.DiscNumber,"
-                                     "    Tracks.DiscTotal,"
-                                     "    Tracks.Date,"
-                                     "    Tracks.Composer,"
-                                     "    Tracks.Performer,"
-                                     "    Tracks.Genres,"
-                                     "    Tracks.Comment,"
-                                     "    Tracks.Duration,"
-                                     "    Tracks.FileSize,"
-                                     "    Tracks.BitRate,"
-                                     "    Tracks.SampleRate,"
-                                     "    Tracks.ExtraTags,"
-                                     "    Tracks.Type,"
-                                     "    Tracks.ModifiedDate,"
-                                     "    Tracks.LibraryID,"
-                                     "    Tracks.TrackHash,"
-                                     "    TrackStats.AddedDate,"
-                                     "    TrackStats.FirstPlayed,"
-                                     "    TrackStats.LastPlayed,"
-                                     "    TrackStats.PlayCount,"
-                                     "    TrackStats.Rating"
-                                     "  FROM Tracks"
-                                     "  LEFT JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID"
-                                     "  LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;"_s);
+    checkInsertTable(QStringLiteral("TrackView"),
+                     QStringLiteral("CREATE VIEW TracksView AS"
+                                    "  SELECT"
+                                    "    Tracks.TrackID,"
+                                    "    Tracks.FilePath,"
+                                    "    SUBSTR(Tracks.FilePath, LENGTH(Libraries.Path) + 2) AS RelativePath,"
+                                    "    Tracks.Title,"
+                                    "    Tracks.TrackNumber,"
+                                    "    Tracks.TrackTotal,"
+                                    "    Tracks.Artists,"
+                                    "    Tracks.AlbumArtist,"
+                                    "    Tracks.Album,"
+                                    "    Tracks.CoverPath,"
+                                    "    Tracks.DiscNumber,"
+                                    "    Tracks.DiscTotal,"
+                                    "    Tracks.Date,"
+                                    "    Tracks.Composer,"
+                                    "    Tracks.Performer,"
+                                    "    Tracks.Genres,"
+                                    "    Tracks.Comment,"
+                                    "    Tracks.Duration,"
+                                    "    Tracks.FileSize,"
+                                    "    Tracks.BitRate,"
+                                    "    Tracks.SampleRate,"
+                                    "    Tracks.ExtraTags,"
+                                    "    Tracks.Type,"
+                                    "    Tracks.ModifiedDate,"
+                                    "    Tracks.LibraryID,"
+                                    "    Tracks.TrackHash,"
+                                    "    TrackStats.AddedDate,"
+                                    "    TrackStats.FirstPlayed,"
+                                    "    TrackStats.LastPlayed,"
+                                    "    TrackStats.PlayCount,"
+                                    "    TrackStats.Rating"
+                                    "  FROM Tracks"
+                                    "  LEFT JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID"
+                                    "  LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;"));
 
-    checkInsertIndex(u"TrackIndex"_s, u"CREATE INDEX TrackIndex ON Tracks(TrackHash);"_s);
-    checkInsertIndex(u"PlaylistIndex"_s, u"CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);"_s);
-    checkInsertIndex(u"PlaylistTracksIndex"_s,
-                     u"CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);"_s);
+    checkInsertIndex(QStringLiteral("TrackIndex"), QStringLiteral("CREATE INDEX TrackIndex ON Tracks(TrackHash);"));
+    checkInsertIndex(QStringLiteral("PlaylistIndex"),
+                     QStringLiteral("CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);"));
+    checkInsertIndex(QStringLiteral("PlaylistTracksIndex"),
+                     QStringLiteral("CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);"));
 
     return true;
 }
@@ -172,7 +173,7 @@ bool Database::isInitialized()
 
 bool Database::closeDatabase()
 {
-    if(!QSqlDatabase::isDriverAvailable(u"QSQLITE"_s)) {
+    if(!QSqlDatabase::isDriverAvailable(QStringLiteral("QSQLITE"))) {
         return false;
     }
 

@@ -35,8 +35,6 @@
 #include <ranges>
 #include <set>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 bool cmpItemsReverse(Fooyin::LibraryTreeItem* pItem1, Fooyin::LibraryTreeItem* pItem2)
 {
@@ -129,7 +127,7 @@ struct LibraryTreeModel::Private
 
     void updateAllNode()
     {
-        allNode.setTitle(QString{u"All Music (%1)"_s}.arg(totalTrackCount()));
+        allNode.setTitle(QString{QStringLiteral("All Music (%1)")}.arg(totalTrackCount()));
     }
 
     void batchFinished(PendingTreeData data)
@@ -191,9 +189,9 @@ struct LibraryTreeModel::Private
         std::set<QModelIndex> nodesToCheck;
 
         for(const auto& [parentKey, rows] : data.nodes) {
-            auto* parent = parentKey == "0"_L1       ? self->rootItem()
-                         : nodes.contains(parentKey) ? &nodes.at(parentKey)
-                                                     : nullptr;
+            auto* parent = parentKey == QStringLiteral("0") ? self->rootItem()
+                         : nodes.contains(parentKey)        ? &nodes.at(parentKey)
+                                                            : nullptr;
             if(!parent) {
                 continue;
             }
@@ -237,7 +235,7 @@ struct LibraryTreeModel::Private
 
         if(resetting) {
             for(const auto& [parentKey, rows] : data.nodes) {
-                auto* parent = parentKey == "0"_L1 ? self->rootItem() : &nodes.at(parentKey);
+                auto* parent = parentKey == QStringLiteral("0") ? self->rootItem() : &nodes.at(parentKey);
 
                 for(const QString& row : rows) {
                     LibraryTreeItem* child = &nodes.at(row);
@@ -260,7 +258,7 @@ struct LibraryTreeModel::Private
         pendingNodes.clear();
         addedNodes.clear();
 
-        allNode = LibraryTreeItem{u"All Music"_s, self->rootItem(), -1};
+        allNode = LibraryTreeItem{QStringLiteral("All Music"), self->rootItem(), -1};
         self->rootItem()->appendChild(&allNode);
     }
 };
@@ -329,7 +327,7 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
     switch(role) {
         case(Qt::DisplayRole): {
             const QString& name = item->title();
-            return !name.isEmpty() ? name : u"?"_s;
+            return !name.isEmpty() ? name : QStringLiteral("?");
         }
         case(LibraryTreeItem::Title): {
             return item->title();

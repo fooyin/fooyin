@@ -44,7 +44,6 @@
 #include <chrono>
 #endif
 
-using namespace Qt::Literals::StringLiterals;
 using namespace std::chrono_literals;
 
 namespace Fooyin {
@@ -215,7 +214,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* createPlaylist = new QAction(u"Add New Playlist"_s, menu);
+    auto* createPlaylist = new QAction(QStringLiteral("Add New Playlist"), menu);
     QObject::connect(createPlaylist, &QAction::triggered, this,
                      [this]() { p->playlistHandler->createEmptyPlaylist(); });
     menu->addAction(createPlaylist);
@@ -225,10 +224,10 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     if(index >= 0) {
         const int id = p->tabs->tabData(index).toInt();
 
-        auto* renamePlAction = new QAction(u"Rename Playlist"_s, menu);
+        auto* renamePlAction = new QAction(QStringLiteral("Rename Playlist"), menu);
         QObject::connect(renamePlAction, &QAction::triggered, p->tabs, &EditableTabBar::showEditor);
 
-        auto* removePlAction = new QAction(u"Remove Playlist"_s, menu);
+        auto* removePlAction = new QAction(QStringLiteral("Remove Playlist"), menu);
         QObject::connect(removePlAction, &QAction::triggered, this,
                          [this, id]() { p->playlistHandler->removePlaylist(id); });
 
@@ -305,12 +304,12 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
 
 QString PlaylistTabs::name() const
 {
-    return u"Playlist Tabs"_s;
+    return QStringLiteral("Playlist Tabs");
 }
 
 QString PlaylistTabs::layoutName() const
 {
-    return u"PlaylistTabs"_s;
+    return QStringLiteral("PlaylistTabs");
 }
 
 void PlaylistTabs::layoutEditingMenu(ActionContainer* menu)
@@ -339,12 +338,12 @@ void PlaylistTabs::saveLayoutData(QJsonObject& layout)
     QJsonArray children;
     p->tabsWidget->saveLayout(children);
 
-    layout["Widgets"_L1] = children;
+    layout[QStringLiteral("Widgets")] = children;
 }
 
 void PlaylistTabs::loadLayoutData(const QJsonObject& layout)
 {
-    const auto children = layout["Widgets"_L1].toArray();
+    const auto children = layout[QStringLiteral("Widgets")].toArray();
 
     WidgetContainer::loadWidgets(children);
 }

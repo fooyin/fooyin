@@ -24,8 +24,6 @@
 
 #include <utils/treestatusitem.h>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 class ColumnItem : public TreeStatusItem<ColumnItem>
 {
@@ -231,7 +229,7 @@ bool PlaylistColumnModel::setData(const QModelIndex& index, const QVariant& valu
 
     switch(index.column()) {
         case(1): {
-            if(value.toString() == "<enter name here>"_L1 || column.name == value.toString()) {
+            if(value.toString() == QStringLiteral("<enter name here>") || column.name == value.toString()) {
                 if(item->status() == ColumnItem::Added) {
                     emit pendingRowCancelled();
                 }

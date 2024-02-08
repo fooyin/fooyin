@@ -29,8 +29,6 @@
 
 constexpr auto VersionSetting = "Version";
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 CoreSettings::CoreSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
@@ -38,18 +36,19 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     using namespace Settings::Core;
 
     m_settings->createTempSetting<FirstRun>(true);
-    m_settings->createSetting<Version>(VERSION, u"Version"_s);
-    m_settings->createSetting<PlayMode>(0, u"Player/PlayMode"_s);
-    m_settings->createSetting<AutoRefresh>(true, u"Library/AutoRefresh"_s);
-    m_settings->createSetting<Internal::MonitorLibraries>(true, u"Library/MonitorLibraries"_s);
+    m_settings->createSetting<Version>(VERSION, QStringLiteral("Version"));
+    m_settings->createSetting<PlayMode>(0, QStringLiteral("Player/PlayMode"));
+    m_settings->createSetting<AutoRefresh>(true, QStringLiteral("Library/AutoRefresh"));
+    m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
     m_settings->createSetting<LibrarySortScript>(
-        "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%", u"Library/SortScript"_s);
-    m_settings->createSetting<ActivePlaylistId>(0, u"Playlist/ActivePlaylistId"_s);
-    m_settings->createSetting<AudioOutput>("ALSA|default", u"Engine/AudioOutput"_s);
-    m_settings->createSetting<OutputVolume>(1.0, u"Engine/OutputVolume"_s);
-    m_settings->createSetting<RewindPreviousTrack>(false, u"Playlist/RewindPreviousTrack"_s);
-    m_settings->createSetting<GaplessPlayback>(true, u"Engine/GaplessPlayback"_s);
-    m_settings->createSetting<Language>(u""_s, u"Language"_s);
+        "%albumartist% - %year% - %album% - $num(%disc%,2) - $num(%track%,2) - %title%",
+        QStringLiteral("Library/SortScript"));
+    m_settings->createSetting<ActivePlaylistId>(0, QStringLiteral("Playlist/ActivePlaylistId"));
+    m_settings->createSetting<AudioOutput>("ALSA|default", QStringLiteral("Engine/AudioOutput"));
+    m_settings->createSetting<OutputVolume>(1.0, QStringLiteral("Engine/OutputVolume"));
+    m_settings->createSetting<RewindPreviousTrack>(false, QStringLiteral("Playlist/RewindPreviousTrack"));
+    m_settings->createSetting<GaplessPlayback>(true, QStringLiteral("Engine/GaplessPlayback"));
+    m_settings->createSetting<Language>(QStringLiteral(""), QStringLiteral("Language"));
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }

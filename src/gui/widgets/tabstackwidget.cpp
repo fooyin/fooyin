@@ -37,8 +37,6 @@
 #include <QTabBar>
 #include <QVBoxLayout>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 struct TabStackWidget::Private
 {
@@ -132,22 +130,22 @@ void TabStackWidget::saveLayoutData(QJsonObject& layout)
         state.append(p->tabs->tabText(i));
     }
 
-    layout["Position"_L1] = Utils::Enum::toString(p->tabs->tabPosition());
-    layout["State"_L1]    = state;
-    layout["Widgets"_L1]  = widgets;
+    layout[QStringLiteral("Position")] = Utils::Enum::toString(p->tabs->tabPosition());
+    layout[QStringLiteral("State")]    = state;
+    layout[QStringLiteral("Widgets")]  = widgets;
 }
 
 void TabStackWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(const auto position = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value("Position"_L1).toString())) {
+    if(const auto position = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value(QStringLiteral("Position")).toString())) {
         p->tabs->setTabPosition(position.value());
     }
 
-    const auto widgets = layout.value("Widgets"_L1).toArray();
+    const auto widgets = layout.value(QStringLiteral("Widgets")).toArray();
 
     WidgetContainer::loadWidgets(widgets);
 
-    const auto state         = layout.value("State"_L1).toString();
+    const auto state         = layout.value(QStringLiteral("State")).toString();
     const QStringList titles = state.split(Constants::Separator);
 
     for(int i{0}; const QString& title : titles) {

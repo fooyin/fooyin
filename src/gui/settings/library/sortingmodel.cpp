@@ -23,8 +23,6 @@
 
 #include <utils/treestatusitem.h>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 class SortingItem : public TreeStatusItem<SortingItem>
 {
@@ -230,7 +228,7 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
 
     switch(index.column()) {
         case(1): {
-            if(value.toString() == "<enter name here>"_L1 || sortScript.name == value.toString()) {
+            if(value.toString() == QStringLiteral("<enter name here>") || sortScript.name == value.toString()) {
                 if(item->status() == SortingItem::Added) {
                     emit pendingRowCancelled();
                 }

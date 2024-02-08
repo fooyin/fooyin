@@ -21,8 +21,6 @@
 
 #include "databasequery.h"
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 bool insertPlaylistTrack(Fooyin::DatabaseModule* module, int playlistId, const Fooyin::Track& track, int index)
 {
@@ -31,11 +29,11 @@ bool insertPlaylistTrack(Fooyin::DatabaseModule* module, int playlistId, const F
     }
 
     auto q = module->insert(
-        u"PlaylistTracks"_s,
-        {{u"PlaylistID"_s, QString::number(playlistId)},
-         {u"TrackID"_s, QString::number(track.id())},
-         {u"TrackIndex"_s, QString::number(index)}},
-        QString{u"Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)"_s}.arg(playlistId).arg(track.id()));
+        QStringLiteral("PlaylistTracks"),
+        {{QStringLiteral("PlaylistID"), QString::number(playlistId)},
+         {QStringLiteral("TrackID"), QString::number(track.id())},
+         {QStringLiteral("TrackIndex"), QString::number(index)}},
+        QString{QStringLiteral("Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)")}.arg(playlistId).arg(track.id()));
 
     return !q.hasError();
 }
@@ -46,8 +44,8 @@ bool insertPlaylistTracks(Fooyin::DatabaseModule* module, int id, const Fooyin::
         return false;
     }
 
-    auto delTracksQuery = module->remove(u"PlaylistTracks"_s, {{u"PlaylistID"_s, QString::number(id)}},
-                                         QString{u"Cannot remove old playlist %1 tracks"_s}.arg(id));
+    auto delTracksQuery = module->remove(QStringLiteral("PlaylistTracks"), {{QStringLiteral("PlaylistID"), QString::number(id)}},
+                                         QString{QStringLiteral("Cannot remove old playlist %1 tracks")}.arg(id));
 
     if(delTracksQuery.hasError()) {
         return false;
@@ -67,14 +65,14 @@ bool insertPlaylistTracks(Fooyin::DatabaseModule* module, int id, const Fooyin::
 bool populatePlaylistTracks(Fooyin::DatabaseModule* module, const auto& playlist, const Fooyin::TrackIdMap& tracks)
 {
     const static QString query
-        = u"SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;"_s;
+        = QStringLiteral("SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;");
 
     Fooyin::DatabaseQuery q{module};
     q.prepareQuery(query);
-    q.bindQueryValue(u":playlistId"_s, playlist->id());
+    q.bindQueryValue(QStringLiteral(":playlistId"), playlist->id());
 
     if(!q.execQuery()) {
-        q.error(u"Cannot fetch playlist tracks"_s);
+        q.error(QStringLiteral("Cannot fetch playlist tracks"));
         return false;
     }
 
@@ -99,13 +97,13 @@ PlaylistDatabase::PlaylistDatabase(const QString& connectionName)
 
 std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
 {
-    const QString query = u"SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;"_s;
+    const QString query = QStringLiteral("SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;");
 
     DatabaseQuery q{this};
     q.prepareQuery(query);
 
     if(!q.execQuery()) {
-        q.error(u"Cannot fetch all playlists"_s);
+        q.error(QStringLiteral("Cannot fetch all playlists"));
         return {};
     }
 
@@ -137,8 +135,8 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index)
         return -1;
     }
 
-    auto q = insert(u"Playlists"_s, {{"Name", name}, {u"PlaylistIndex"_s, QString::number(index)}},
-                    QString{u"Cannot insert playlist (name: %1, index: %2)"_s}.arg(name).arg(index));
+    auto q = insert(QStringLiteral("Playlists"), {{"Name", name}, {QStringLiteral("PlaylistIndex"), QString::number(index)}},
+                    QString{QStringLiteral("Cannot insert playlist (name: %1, index: %2)")}.arg(name).arg(index));
 
     return (q.hasError()) ? -1 : q.lastInsertId().toInt();
 }
@@ -152,9 +150,9 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
     bool updated{false};
 
     if(playlist.modified()) {
-        const auto q = update(u"Playlists"_s,
-                              {{u"Name"_s, playlist.name()}, {u"PlaylistIndex"_s, QString::number(playlist.index())}},
-                              {u"PlaylistID"_s, QString::number(playlist.id())},
+        const auto q = update(QStringLiteral("Playlists"),
+                              {{QStringLiteral("Name"), playlist.name()}, {QStringLiteral("PlaylistIndex"), QString::number(playlist.index())}},
+                              {QStringLiteral("PlaylistID"), QString::number(playlist.id())},
                               "Cannot update playlist " + QString::number(playlist.id()));
         updated      = !q.hasError();
 
@@ -196,7 +194,7 @@ bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
 
 bool PlaylistDatabase::removePlaylist(int id)
 {
-    auto q = remove(u"Playlists"_s, {{u"PlaylistID"_s, QString::number(id)}},
+    auto q = remove(QStringLiteral("Playlists"), {{QStringLiteral("PlaylistID"), QString::number(id)}},
                     "Cannot remove playlist " + QString::number(id));
     return !q.hasError();
 }
@@ -207,7 +205,7 @@ bool PlaylistDatabase::renamePlaylist(int id, const QString& name)
         return false;
     }
 
-    auto q = update(u"Playlists"_s, {{u"Name"_s, name}}, {u"PlaylistID"_s, QString::number(id)},
+    auto q = update(QStringLiteral("Playlists"), {{QStringLiteral("Name"), name}}, {QStringLiteral("PlaylistID"), QString::number(id)},
                     "Cannot update playlist " + QString::number(id));
     return !q.hasError();
 }

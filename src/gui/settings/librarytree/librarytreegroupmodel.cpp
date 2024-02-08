@@ -23,8 +23,6 @@
 
 #include <utils/treestatusitem.h>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 class LibraryTreeGroupItem : public TreeStatusItem<LibraryTreeGroupItem>
 {
@@ -231,7 +229,7 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
 
     switch(index.column()) {
         case(1): {
-            if(value.toString() == "<enter name here>"_L1 || group.name == value.toString()) {
+            if(value.toString() == QStringLiteral("<enter name here>") || group.name == value.toString()) {
                 if(item->status() == LibraryTreeGroupItem::Added) {
                     emit pendingRowCancelled();
                 }

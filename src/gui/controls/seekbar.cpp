@@ -31,8 +31,6 @@
 #include <QHBoxLayout>
 #include <QSlider>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 struct SeekBar::Private
 {
@@ -59,8 +57,8 @@ struct SeekBar::Private
 
     void reset()
     {
-        elapsed->setText(u"00:00"_s);
-        total->setText(elapsedTotal ? u"-00:00"_s : u"00:00"_s);
+        elapsed->setText(QStringLiteral("00:00"));
+        total->setText(elapsedTotal ? QStringLiteral("-00:00") : QStringLiteral("00:00"));
         slider->setValue(0);
         max = 0;
     }
@@ -72,7 +70,7 @@ struct SeekBar::Private
         if(track.isValid()) {
             max = track.duration();
             slider->setMaximum(static_cast<int>(max));
-            const QString totalText = elapsedTotal ? u"-"_s : u""_s + Utils::msToString(max);
+            const QString totalText = elapsedTotal ? QStringLiteral("-") : QStringLiteral("") + Utils::msToString(max);
             total->setText(totalText);
         }
     }
@@ -167,7 +165,7 @@ Fooyin::SeekBar::~SeekBar() = default;
 
 QString SeekBar::name() const
 {
-    return u"SeekBar"_s;
+    return QStringLiteral("SeekBar");
 }
 } // namespace Fooyin
 

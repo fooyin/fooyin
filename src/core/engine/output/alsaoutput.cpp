@@ -28,8 +28,6 @@ extern "C"
 
 #include <QDebug>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 void checkError(int error, const QString& message)
 {
@@ -58,7 +56,7 @@ bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwPa
 
     if(!isSupported) {
         qInfo() << "Format not supported: " << snd_pcm_format_name(requestedFormat);
-        qInfo() << "Supported Formats: " << supportedFormats.join(", "_L1);
+        qInfo() << "Supported Formats: " << supportedFormats.join(QStringLiteral(", "));
     }
 
     return isSupported;
@@ -107,7 +105,7 @@ struct AlsaOutput::Private
     snd_pcm_uframes_t periodSize{0};
     bool pausable{true};
     int dir{0};
-    QString device{u"default"_s};
+    QString device{QStringLiteral("default")};
     bool deviceLost;
     bool started{false};
 
@@ -162,7 +160,7 @@ struct AlsaOutput::Private
                 case SND_PCM_STATE_DRAINING:
                 case SND_PCM_STATE_XRUN:
                     err = snd_pcm_prepare(pcmHandle.get());
-                    checkError(err, u"ALSA prepare error"_s);
+                    checkError(err, QStringLiteral("ALSA prepare error"));
                     continue;
                 // Hardware suspend
                 case SND_PCM_STATE_SUSPENDED:
@@ -394,10 +392,10 @@ void AlsaOutput::reset()
     }
 
     int err = snd_pcm_drop(p->pcmHandle.get());
-    checkError(err, u"ALSA drop error"_s);
+    checkError(err, QStringLiteral("ALSA drop error"));
 
     err = snd_pcm_prepare(p->pcmHandle.get());
-    checkError(err, u"ALSA prepare error"_s);
+    checkError(err, QStringLiteral("ALSA prepare error"));
 
     p->recoverState();
 }
@@ -498,7 +496,7 @@ int AlsaOutput::write(const AudioBuffer& buffer)
     }
     if(err != frameCount) {
         qWarning()
-            << QString{u"Unexpected partial write (%1 of %2 frames)"_s}.arg(static_cast<int>(err)).arg(frameCount);
+            << QString{QStringLiteral("Unexpected partial write (%1 of %2 frames)")}.arg(static_cast<int>(err)).arg(frameCount);
     }
     return static_cast<int>(err);
 }
@@ -515,11 +513,11 @@ void AlsaOutput::setPaused(bool pause)
     const auto state = snd_pcm_state(p->pcmHandle.get());
     if(state == SND_PCM_STATE_RUNNING && pause) {
         err = snd_pcm_pause(p->pcmHandle.get(), 1);
-        checkError(err, u"Couldn't pause ALSA device"_s);
+        checkError(err, QStringLiteral("Couldn't pause ALSA device"));
     }
     else if(state == SND_PCM_STATE_PAUSED && !pause) {
         err = snd_pcm_pause(p->pcmHandle.get(), 0);
-        checkError(err, u"Couldn't unpause ALSA device"_s);
+        checkError(err, QStringLiteral("Couldn't unpause ALSA device"));
     }
 }
 

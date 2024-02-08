@@ -38,8 +38,6 @@
 
 constexpr auto SystemLanguage = "Use System Default";
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 struct SortLanguages
 {
@@ -93,7 +91,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     startupGroupLayout->addWidget(m_waitForTracks, 1, 0, 1, 2);
     startupGroupLayout->setColumnStretch(1, 1);
 
-    auto* languageLabel = new QLabel(tr("Language") + u":"_s, this);
+    auto* languageLabel = new QLabel(tr("Language") + QStringLiteral(":"), this);
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(languageLabel, 0, 0);
@@ -141,8 +139,8 @@ void GeneralPageWidget::loadLanguage()
     m_languageMap["British English (en_GB)"] = "en_GB";
 
     QDir translationDir{Core::translationsPath()};
-    QStringList translations = translationDir.entryList(QStringList{} << u"*.qm"_s);
-    static QRegularExpression translationExpr(u"^fooyin_(.*).qm$"_s);
+    QStringList translations = translationDir.entryList(QStringList{} << QStringLiteral("*.qm"));
+    static QRegularExpression translationExpr(QStringLiteral("^fooyin_(.*).qm$"));
 
     for(const QString& translation : translations) {
         QRegularExpressionMatch translationMatch = translationExpr.match(translation);

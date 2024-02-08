@@ -26,8 +26,6 @@
 #include <QCoreApplication>
 #include <QDir>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin::Core {
 QString settingsPath()
 {
@@ -52,7 +50,7 @@ QString translationsPath()
         return appDir.absolutePath();
     }
 
-    if(appDir.cd(u"../data"_s)) {
+    if(appDir.cd(QStringLiteral("../data"))) {
         return appDir.absolutePath();
     }
 

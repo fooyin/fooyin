@@ -39,8 +39,6 @@
 #include <QRadioButton>
 #include <QVBoxLayout>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 using namespace Settings::Gui;
 using namespace Settings::Gui::Internal;
@@ -183,7 +181,8 @@ void GuiGeneralPageWidget::showQuickSetup()
 
 void GuiGeneralPageWidget::importLayout()
 {
-    const QString layoutFile = QFileDialog::getOpenFileName(this, u"Open Layout"_s, u""_s, u"Fooyin Layout (*.fyl)"_s);
+    const QString layoutFile = QFileDialog::getOpenFileName(this, QStringLiteral("Open Layout"), QStringLiteral(""),
+                                                            QStringLiteral("Fooyin Layout (*.fyl)"));
 
     if(layoutFile.isEmpty()) {
         return;
@@ -209,12 +208,12 @@ void GuiGeneralPageWidget::importLayout()
 void GuiGeneralPageWidget::exportLayout()
 {
     bool success{false};
-    const QString name
-        = QInputDialog::getText(this, tr("Export layout"), tr("Layout Name") + ":", QLineEdit::Normal, u""_s, &success);
+    const QString name = QInputDialog::getText(this, tr("Export layout"), tr("Layout Name") + ":", QLineEdit::Normal,
+                                               QStringLiteral(""), &success);
 
     if(success && !name.isEmpty()) {
-        const QString saveFile = QFileDialog::getSaveFileName(this, u"Save Layout"_s, Gui::layoutsPath() + name,
-                                                              u"Fooyin Layout (*.fyl)"_s);
+        const QString saveFile = QFileDialog::getSaveFileName(
+            this, QStringLiteral("Save Layout"), Gui::layoutsPath() + name, QStringLiteral("Fooyin Layout (*.fyl)"));
         if(!saveFile.isEmpty()) {
             Layout layout = m_layoutProvider->currentLayout();
             layout.name   = name;

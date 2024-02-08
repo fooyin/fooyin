@@ -51,8 +51,6 @@
 
 #include <set>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 constexpr std::array supportedMp4Tags{
     std::pair(Fooyin::Tag::Title, Fooyin::Mp4::Title),
@@ -193,7 +191,7 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
         const auto discNums = TStringToQString(oldProperties[Fooyin::Tag::DiscNumber].toString()).split('/');
         QString discNumber  = QString::number(track.discNumber());
         if(discNums.size() > 1) {
-            discNumber += u"/"_s + QString::number(track.discTotal());
+            discNumber += QStringLiteral("/") + QString::number(track.discTotal());
         }
         oldProperties.replace(Fooyin::Tag::DiscNumber, convertString(discNumber));
     }
@@ -309,13 +307,13 @@ TagLib::String prefixMp4FreeFormName(const QString& name, const TagLib::MP4::Ite
         return {};
     }
 
-    if(name.startsWith("----"_L1) || (name.length() == 4 && name[0] == '\251'_L1)) {
+    if(name.startsWith(QStringLiteral("----")) || (name.length() == 4 && name[0] == QStringLiteral("\251"))) {
         return {};
     }
 
     TagLib::String tagKey = convertString(name);
 
-    if(name[0] == ':'_L1) {
+    if(name[0] == QStringLiteral(":")) {
         tagKey = tagKey.substr(1);
     }
 
@@ -452,11 +450,12 @@ bool TagWriter::writeMetaData(const Track& track)
     QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
     const auto style = TagLib::AudioProperties::Average;
 
-    if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
+    if(mimeType == QStringLiteral("audio/ogg") || mimeType == QStringLiteral("audio/x-vorbis+ogg")) {
         // Workaround for opus files with ogg suffix returning incorrect type
         mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
     }
-    if(mimeType == "audio/mpeg"_L1 || mimeType == "audio/mpeg3"_L1 || mimeType == "audio/x-mpeg"_L1) {
+    if(mimeType == QStringLiteral("audio/mpeg") || mimeType == QStringLiteral("audio/mpeg3")
+       || mimeType == QStringLiteral("audio/x-mpeg")) {
 #if(TAGLIB_MAJOR_VERSION >= 2)
         TagLib::MPEG::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
@@ -470,7 +469,7 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/x-aiff"_L1 || mimeType == "audio/x-aifc"_L1) {
+    else if(mimeType == QStringLiteral("audio/x-aiff") || mimeType == QStringLiteral("audio/x-aifc")) {
         TagLib::RIFF::AIFF::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
@@ -480,7 +479,8 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/vnd.wave"_L1 || mimeType == "audio/wav"_L1 || mimeType == "audio/x-wav"_L1) {
+    else if(mimeType == QStringLiteral("audio/vnd.wave") || mimeType == QStringLiteral("audio/wav")
+            || mimeType == QStringLiteral("audio/x-wav")) {
         TagLib::RIFF::WAV::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
@@ -490,7 +490,7 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/x-musepack"_L1) {
+    else if(mimeType == QStringLiteral("audio/x-musepack")) {
         TagLib::MPC::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
@@ -500,7 +500,7 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/x-ape"_L1) {
+    else if(mimeType == QStringLiteral("audio/x-ape")) {
         TagLib::APE::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
@@ -510,7 +510,7 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/x-wavpack"_L1) {
+    else if(mimeType == QStringLiteral("audio/x-wavpack")) {
         TagLib::WavPack::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
@@ -520,7 +520,7 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/mp4"_L1) {
+    else if(mimeType == QStringLiteral("audio/mp4")) {
         TagLib::MP4::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track, true);
@@ -530,7 +530,7 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/flac"_L1) {
+    else if(mimeType == QStringLiteral("audio/flac")) {
 #if(TAGLIB_MAJOR_VERSION >= 2)
         TagLib::FLAC::File file(&stream, true, style, TagLib::ID3v2::FrameFactory::instance());
 #else
@@ -544,7 +544,7 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/ogg"_L1 || mimeType == "audio/x-vorbis+ogg"_L1) {
+    else if(mimeType == QStringLiteral("audio/ogg") || mimeType == QStringLiteral("audio/x-vorbis+ogg")) {
         TagLib::Ogg::Vorbis::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
@@ -554,7 +554,7 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/opus"_L1 || mimeType == "audio/x-opus+ogg"_L1) {
+    else if(mimeType == QStringLiteral("audio/opus") || mimeType == QStringLiteral("audio/x-opus+ogg")) {
         TagLib::Ogg::Opus::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);
@@ -562,7 +562,7 @@ bool TagWriter::writeMetaData(const Track& track)
             file.save();
         }
     }
-    else if(mimeType == "audio/x-ms-wma"_L1) {
+    else if(mimeType == QStringLiteral("audio/x-ms-wma")) {
         TagLib::ASF::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file, track);

@@ -29,8 +29,6 @@
 
 constexpr auto OrganiserItems = "application/x-fooyin-playlistorganiseritems";
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
 {
@@ -317,7 +315,7 @@ bool PlaylistOrganiserModel::restoreModel(QByteArray data)
 QModelIndex PlaylistOrganiserModel::createGroup(const QModelIndex& parent)
 {
     auto* parentItem    = itemForIndex(parent);
-    const QString title = p->findUniqueName(u"New Group"_s);
+    const QString title = p->findUniqueName(QStringLiteral("New Group"));
     auto* item          = &p->nodes.emplace(groupKey(title), PlaylistOrganiserItem{title, parentItem}).first->second;
 
     const int row = parentItem->childCount();

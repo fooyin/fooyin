@@ -35,8 +35,6 @@
 #include <core/plugins/coreplugin.h>
 #include <utils/settings/settingsmanager.h>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 struct Application::Private
 {

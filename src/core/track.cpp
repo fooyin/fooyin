@@ -25,8 +25,6 @@
 #include <QFileInfo>
 #include <QIODevice>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 struct Track::Private : public QSharedData
 {
@@ -78,7 +76,7 @@ struct Track::Private : public QSharedData
 };
 
 Track::Track()
-    : Track{u""_s}
+    : Track{QStringLiteral("")}
 { }
 
 Track::Track(QString filepath)
@@ -101,7 +99,7 @@ Track& Track::operator=(const Track& other) = default;
 
 QString Track::generateHash()
 {
-    p->hash = Utils::generateHash(p->artists.join(","_L1), p->album, QString::number(p->discNumber),
+    p->hash = Utils::generateHash(p->artists.join(QStringLiteral(",")), p->album, QString::number(p->discNumber),
                                   QString::number(p->trackNumber), p->title);
     return p->hash;
 }
@@ -133,7 +131,8 @@ QString Track::hash() const
 
 QString Track::albumHash() const
 {
-    return u"%1|%2|%3"_s.arg(p->date, !p->albumArtist.isEmpty() ? p->albumArtist : p->artists.join(""_L1), p->album);
+    return QStringLiteral("%1|%2|%3")
+        .arg(p->date, !p->albumArtist.isEmpty() ? p->albumArtist : p->artists.join(QStringLiteral("")), p->album);
 }
 
 Track::Type Track::type() const
@@ -145,30 +144,30 @@ QString Track::typeString() const
 {
     switch(p->type) {
         case(Type::MPEG):
-            return u"MPEG"_s;
+            return QStringLiteral("MPEG");
         case(Type::AIFF):
-            return u"AIFF"_s;
+            return QStringLiteral("AIFF");
         case(Type::WAV):
-            return u"WAV"_s;
+            return QStringLiteral("WAV");
         case(Type::MPC):
-            return u"MPC"_s;
+            return QStringLiteral("MPC");
         case(Type::APE):
-            return u"APE"_s;
+            return QStringLiteral("APE");
         case(Type::WavPack):
-            return u"WavPack"_s;
+            return QStringLiteral("WavPack");
         case(Type::MP4):
-            return u"MP4"_s;
+            return QStringLiteral("MP4");
         case(Type::FLAC):
-            return u"FLAC"_s;
+            return QStringLiteral("FLAC");
         case(Type::OggOpus):
-            return u"OggOpus"_s;
+            return QStringLiteral("OggOpus");
         case(Type::OggVorbis):
-            return u"OggVorbis"_s;
+            return QStringLiteral("OggVorbis");
         case(Type::ASF):
-            return u"ASF"_s;
+            return QStringLiteral("ASF");
         case(Type::Unknown):
         default:
-            return u"Unknown"_s;
+            return QStringLiteral("Unknown");
     }
 }
 

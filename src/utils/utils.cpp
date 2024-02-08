@@ -30,8 +30,6 @@
 
 #include <ranges>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin::Utils {
 int randomNumber(int min, int max)
 {
@@ -58,16 +56,16 @@ QString msToString(uint64_t ms)
     QString formattedTime;
 
     if(weeks > 0) {
-        formattedTime = formattedTime + QString::number(weeks) + u"wk "_s;
+        formattedTime = formattedTime + QString::number(weeks) + QStringLiteral("wk ");
     }
     if(days > 0) {
-        formattedTime = formattedTime + QString::number(days) + u"d "_s;
+        formattedTime = formattedTime + QString::number(days) + QStringLiteral("d ");
     }
     if(hours > 0) {
-        formattedTime = formattedTime + addLeadingZero(static_cast<int>(hours), 2) + u":"_s;
+        formattedTime = formattedTime + addLeadingZero(static_cast<int>(hours), 2) + QStringLiteral(":");
     }
 
-    formattedTime = formattedTime + addLeadingZero(static_cast<int>(minutes), 2) + u":"_s
+    formattedTime = formattedTime + addLeadingZero(static_cast<int>(minutes), 2) + QStringLiteral(":")
                   + addLeadingZero(static_cast<int>(seconds), 2);
     return formattedTime;
 }
@@ -77,19 +75,19 @@ QString secsToString(uint64_t secs)
     const int seconds = static_cast<int>(secs);
     const QTime t(0, 0, 0);
     auto time = t.addSecs(seconds);
-    return time.toString(time.hour() == 0 ? u"mm:ss"_s : u"hh:mm:ss"_s);
+    return time.toString(time.hour() == 0 ? QStringLiteral("mm:ss") : QStringLiteral("hh:mm:ss"));
 }
 
 uint64_t currentDateToInt()
 {
-    const auto str = QDateTime::currentDateTimeUtc().toString(u"yyyyMMddHHmmss"_s);
+    const auto str = QDateTime::currentDateTimeUtc().toString(QStringLiteral("yyyyMMddHHmmss"));
     return static_cast<uint64_t>(str.toULongLong());
 }
 
 QString formatTimeMs(uint64_t time)
 {
     const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(time));
-    QString formattedDateTime = dateTime.toString(u"yyyy-MM-dd HH:mm:ss"_s);
+    QString formattedDateTime = dateTime.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
     return formattedDateTime;
 }
 
@@ -120,7 +118,7 @@ QString formatFileSize(uint64_t bytes)
 
 QString addLeadingZero(int number, int leadingCount)
 {
-    return QString{u"%1"_s}.arg(number, leadingCount, 10, QChar('0'));
+    return QString{QStringLiteral("%1")}.arg(number, leadingCount, 10, QChar('0'));
 }
 
 QString appendShortcut(const QString& str, const QKeySequence& shortcut)
@@ -151,7 +149,7 @@ QString capitalise(const QString& str)
         part.replace(0, 1, part[0].toUpper());
     }
 
-    return parts.join(" "_L1);
+    return parts.join(QStringLiteral(" "));
 }
 
 QPixmap scalePixmap(QPixmap& image, const QSize& size)

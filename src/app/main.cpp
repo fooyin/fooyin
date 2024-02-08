@@ -28,13 +28,11 @@
 
 #include <QApplication>
 
-using namespace Qt::Literals::StringLiterals;
-
 int main(int argc, char** argv)
 {
     Q_INIT_RESOURCE(icons);
 
-    QCoreApplication::setApplicationName(u"fooyin"_s);
+    QCoreApplication::setApplicationName(QStringLiteral("fooyin"));
     QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
 
     CommandLine commandLine{argc, argv};

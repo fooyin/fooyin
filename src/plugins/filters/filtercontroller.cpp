@@ -40,8 +40,6 @@
 #include <ranges>
 #include <set>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin::Filters {
 struct FilterController::Private
 {

@@ -23,8 +23,6 @@
 
 #include <QSqlError>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 DatabaseQuery::DatabaseQuery(const DatabaseModule* module)
     : QSqlQuery{module->db()}
@@ -41,12 +39,12 @@ bool DatabaseQuery::prepareQuery(const QString& query)
 
 void DatabaseQuery::bindQueryValue(const QString& placeholder, const QVariant& val, QSql::ParamType paramType)
 {
-    const QString replaceString = u"'"_s + val.toString() + u"'"_s;
+    const QString replaceString = QStringLiteral("'") + val.toString() + QStringLiteral("'");
 
-    m_queryString.replace(placeholder + " "_L1, replaceString + " "_L1);
-    m_queryString.replace(placeholder + ","_L1, replaceString + ","_L1);
-    m_queryString.replace(placeholder + ";"_L1, replaceString + ";"_L1);
-    m_queryString.replace(placeholder + ")"_L1, replaceString + ")"_L1);
+    m_queryString.replace(placeholder + QStringLiteral(" "), replaceString + QStringLiteral(" "));
+    m_queryString.replace(placeholder + QStringLiteral(","), replaceString + QStringLiteral(","));
+    m_queryString.replace(placeholder + QStringLiteral(";"), replaceString + QStringLiteral(";"));
+    m_queryString.replace(placeholder + QStringLiteral(")"), replaceString + QStringLiteral(")"));
 
     QSqlQuery::bindValue(placeholder, val, paramType);
 }

@@ -31,8 +31,6 @@
 
 #include <set>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin {
 struct SearchController::Private
 {

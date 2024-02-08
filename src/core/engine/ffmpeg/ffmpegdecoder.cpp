@@ -35,7 +35,6 @@
 #include <queue>
 
 using namespace std::chrono_literals;
-using namespace Qt::Literals::StringLiterals;
 
 namespace {
 template <typename T>
@@ -151,18 +150,18 @@ struct FFmpegDecoder::Private
         const int ret = avformat_open_input(&avContext, source.toUtf8().constData(), nullptr, nullptr);
         if(ret < 0) {
             if(ret == AVERROR(EACCES)) {
-                Utils::printError(u"Access denied: "_s + source);
+                Utils::printError(QStringLiteral("Access denied: ") + source);
                 error = Error::AccessDeniedError;
             }
             else if(ret == AVERROR(EINVAL)) {
-                Utils::printError(u"Invalid format: "_s + source);
+                Utils::printError(QStringLiteral("Invalid format: ") + source);
                 error = Error::FormatError;
             }
             return false;
         }
 
         if(avformat_find_stream_info(avContext, nullptr) < 0) {
-            Utils::printError(u"Could not find stream info"_s);
+            Utils::printError(QStringLiteral("Could not find stream info"));
             avformat_close_input(&avContext);
             error = Error::ResourceError;
             return false;
@@ -200,14 +199,14 @@ struct FFmpegDecoder::Private
 
         const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
         if(!avCodec) {
-            Utils::printError(u"Could not find a decoder for stream"_s);
+            Utils::printError(QStringLiteral("Could not find a decoder for stream"));
             error = Error::ResourceError;
             return false;
         }
 
         Fooyin::CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
         if(!avCodecContext) {
-            Utils::printError(u"Could not allocate context"_s);
+            Utils::printError(QStringLiteral("Could not allocate context"));
             error = Error::ResourceError;
             return false;
         }
@@ -217,7 +216,7 @@ struct FFmpegDecoder::Private
         }
 
         if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
-            Utils::printError(u"Could not obtain codec parameters"_s);
+            Utils::printError(QStringLiteral("Could not obtain codec parameters"));
             error = Error::ResourceError;
             return {};
         }
@@ -225,7 +224,7 @@ struct FFmpegDecoder::Private
         avCodecContext.get()->pkt_timebase = avStream->time_base;
 
         if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
-            Utils::printError(u"Could not initialise codec context"_s);
+            Utils::printError(QStringLiteral("Could not initialise codec context"));
             error = Error::ResourceError;
             return {};
         }

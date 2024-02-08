@@ -30,8 +30,6 @@
 #include <QPushButton>
 #include <QSysInfo>
 
-using namespace Qt::Literals::StringLiterals;
-
 constexpr int IconSize = 256;
 
 namespace {
@@ -62,7 +60,7 @@ QString copyright()
 
 QString qtVersion()
 {
-    return QString{u"Based on Qt %1 (%2, %3)"_s}.arg(qVersion(), compilerVersion(), QSysInfo::buildCpuArchitecture());
+    return QString{QStringLiteral("Based on Qt %1 (%2, %3)")}.arg(qVersion(), compilerVersion(), QSysInfo::buildCpuArchitecture());
 }
 
 QString description()
