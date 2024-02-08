@@ -70,25 +70,6 @@ struct cmpItems
         return cmpItemsReverse(pItem1, pItem2);
     }
 };
-
-QByteArray saveTracks(const QModelIndexList& indexes)
-{
-    QByteArray result;
-    QDataStream stream(&result, QIODevice::WriteOnly);
-
-    Fooyin::TrackIds trackIds;
-    trackIds.reserve(indexes.size());
-
-    for(const QModelIndex& index : indexes) {
-        const auto tracks = index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>();
-        std::ranges::transform(std::as_const(tracks), std::back_inserter(trackIds),
-                               [](const Fooyin::Track& track) { return track.id(); });
-    }
-
-    stream << trackIds;
-
-    return result;
-}
 } // namespace
 
 namespace Fooyin {
@@ -168,6 +149,41 @@ struct LibraryTreeModel::Private
         while(self->canFetchMore({})) {
             self->fetchMore({});
         }
+    }
+
+    void traverseTree(const QModelIndex& index, Fooyin::TrackIds& trackIds)
+    {
+        if(!index.isValid()) {
+            return;
+        }
+
+        const auto childCount = index.model()->rowCount(index);
+        if(childCount == 0) {
+            const auto tracks = index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>();
+            std::ranges::transform(std::as_const(tracks), std::back_inserter(trackIds),
+                                   [](const Fooyin::Track& track) { return track.id(); });
+        }
+        else {
+            for(int i{0}; i < childCount; ++i) {
+                traverseTree(self->index(i, 0, index), trackIds);
+            }
+        }
+    }
+
+    QByteArray saveTracks(const QModelIndexList& indexes)
+    {
+        QByteArray result;
+        QDataStream stream(&result, QIODevice::WriteOnly);
+
+        Fooyin::TrackIds trackIds;
+
+        for(const QModelIndex& index : indexes) {
+            traverseTree(index, trackIds);
+        }
+
+        stream << trackIds;
+
+        return result;
     }
 
     void updatePendingNodes(const PendingTreeData& data)
@@ -397,7 +413,7 @@ Qt::DropActions LibraryTreeModel::supportedDragActions() const
 QMimeData* LibraryTreeModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    mimeData->setData(Constants::Mime::TrackIds, saveTracks(indexes));
+    mimeData->setData(Constants::Mime::TrackIds, p->saveTracks(indexes));
     return mimeData;
 }
 
