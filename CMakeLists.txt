@@ -28,6 +28,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 
+# Enable setting options with SET cmake command
+# Needed for some 3rdparty libs
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+
 if(NOT DEFINED CMAKE_SKIP_BUILD_RPATH)
     set(CMAKE_SKIP_BUILD_RPATH OFF)
 endif()
