@@ -49,11 +49,11 @@ QString translationsPath()
     QDir appDir = QCoreApplication::applicationDirPath();
 
     if(appDir.cd(RELATIVE_TRANSLATION_PATH)) {
-        return appDir.absolutePath() + u"/_s" + RELATIVE_TRANSLATION_PATH;
+        return appDir.absolutePath();
     }
 
     if(appDir.cd(u"../data"_s)) {
-        return appDir.absolutePath() + u"/../data"_s;
+        return appDir.absolutePath();
     }
 
     return {};
