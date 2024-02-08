@@ -89,8 +89,8 @@ struct LibraryTreePopulator::Private
 
                 if(level == lowestLevel) {
                     node->addTrack(track);
-                    data.trackParents[track.id()].push_back(node->key());
                 }
+                data.trackParents[track.id()].push_back(node->key());
 
                 parent = node;
                 ++level;
