@@ -37,7 +37,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/widgets/autoheaderview.h>
 
-#include <QCoroCore>
+#include <QCoro/QCoroCore>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>

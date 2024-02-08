@@ -26,7 +26,7 @@
 
 #include "core/library/sortingregistry.h"
 
-#include <QCoroTask>
+#include <QCoro/QCoroTask>
 
 #include <QString>
 

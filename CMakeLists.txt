@@ -99,9 +99,6 @@ set_package_properties(Qt6Concurrent PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Network PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Svg PROPERTIES TYPE REQUIRED)
 
-find_package(QCoro6 REQUIRED COMPONENTS Core)
-qcoro_enable_coroutines()
-
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(ALSA REQUIRED)
 
@@ -322,4 +319,3 @@ add_custom_target(
 
 include(FooyinSummary)
 fooyin_print_summary()
-feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)

@@ -28,7 +28,7 @@
 #include <utils/crypto.h>
 #include <utils/utils.h>
 
-#include <QCoroCore>
+#include <QCoro/QCoroCore>
 
 #include <QByteArray>
 #include <QFileInfo>

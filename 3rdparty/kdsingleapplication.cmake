@@ -6,26 +6,20 @@ endif()
 
 message(STATUS "Using 3rd-party KDSingleApplication")
 
-set(SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/kdsingleapplication/src/kdsingleapplication.h"
-    "${CMAKE_CURRENT_LIST_DIR}/kdsingleapplication/src/kdsingleapplication.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/kdsingleapplication/src/kdsingleapplication_localsocket_p.h"
-    "${CMAKE_CURRENT_LIST_DIR}/kdsingleapplication/src/kdsingleapplication_localsocket.cpp"
-)
-
-add_library(kdsingleapplication STATIC ${SOURCES})
-add_library(KDAB::kdsingleapplication ALIAS kdsingleapplication)
-
-target_compile_definitions(
-    kdsingleapplication PRIVATE -DKDSINGLEAPPLICATION_STATIC_BUILD
-)
-
-target_include_directories(
-    kdsingleapplication PUBLIC "${CMAKE_CURRENT_LIST_DIR}/kdsingleapplication/src"
-)
-
-target_link_libraries(
+include(FetchContent)
+FetchContent_Declare(
     kdsingleapplication
-    PUBLIC Qt6::Core
-    PRIVATE Qt6::Network
+    GIT_REPOSITORY https://github.com/KDAB/KDSingleApplication.git
+    GIT_TAG v1.1.0
 )
+FetchContent_GetProperties(kdsingleapplication)
+if(NOT kdsingleapplication_POPULATED)
+    FetchContent_Populate(kdsingleapplication)
+    set(KDSingleApplication_STATIC ON)
+    set(KDSingleApplication_QT6 ON)
+    set(KDSingleApplication_EXAMPLES OFF)
+    add_subdirectory(
+        ${kdsingleapplication_SOURCE_DIR} ${kdsingleapplication_BINARY_DIR}
+        EXCLUDE_FROM_ALL
+    )
+endif()

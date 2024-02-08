@@ -33,7 +33,7 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QCoroCore>
+#include <QCoro/QCoroCore>
 
 #include <QMenu>
 
