@@ -87,6 +87,7 @@ struct LibraryTreeModel::Private
     ItemKeyMap nodes;
     TrackIdNodeMap trackParents;
     std::unordered_set<QString> addedNodes;
+    int trackCount{0};
 
     int rowHeight{0};
     QFont font;
@@ -104,30 +105,9 @@ struct LibraryTreeModel::Private
         self->rootItem()->resetChildren();
     }
 
-    int totalTrackCount() const
-    {
-        std::set<int> ids;
-        std::queue<LibraryTreeItem*> trackNodes;
-        trackNodes.emplace(self->rootItem());
-
-        while(!trackNodes.empty()) {
-            LibraryTreeItem* node = trackNodes.front();
-            trackNodes.pop();
-            const auto nodeTracks = node->tracks();
-            for(const Track& track : nodeTracks) {
-                ids.emplace(track.id());
-            }
-            const auto children = node->children();
-            for(LibraryTreeItem* child : children) {
-                trackNodes.emplace(child);
-            }
-        }
-        return static_cast<int>(ids.size());
-    }
-
     void updateAllNode()
     {
-        allNode.setTitle(QString{QStringLiteral("All Music (%1)")}.arg(totalTrackCount()));
+        allNode.setTitle(QString{QStringLiteral("All Music (%1)")}.arg(trackCount));
     }
 
     void batchFinished(PendingTreeData data)
@@ -425,6 +405,7 @@ void LibraryTreeModel::addTracks(const TrackList& tracks)
         return;
     }
 
+    p->trackCount += static_cast<int>(tracks.size());
     p->populatorThread.start();
 
     QMetaObject::invokeMethod(&p->populator, [this, tracksToAdd] { p->populator.run(p->grouping, tracksToAdd); });
@@ -478,6 +459,7 @@ void LibraryTreeModel::removeTracks(const TrackList& tracks)
         }
     }
 
+    p->trackCount -= static_cast<int>(tracks.size());
     p->updateAllNode();
 }
 
@@ -495,7 +477,8 @@ void LibraryTreeModel::reset(const TrackList& tracks)
         p->populatorThread.start();
     }
 
-    p->resetting = true;
+    p->resetting  = true;
+    p->trackCount = static_cast<int>(tracks.size());
 
     QMetaObject::invokeMethod(&p->populator, [this, tracks] { p->populator.run(p->grouping, tracks); });
 }
