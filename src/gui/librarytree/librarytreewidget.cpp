@@ -28,7 +28,6 @@
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
-#include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
@@ -43,11 +42,41 @@
 
 #include <QCoro/QCoroCore>
 
+#include <set>
+
 using namespace Qt::Literals::StringLiterals;
 
 namespace {
+QModelIndexList filterAncestors(const QModelIndexList& indexes)
+{
+    const std::set<QModelIndex> indexSet(indexes.cbegin(), indexes.cend());
+    QModelIndexList filteredIndexes;
+
+    for(const QModelIndex& index : indexes) {
+        QModelIndex parent = index.parent();
+        bool keepAncestor{true};
+        while(parent.isValid()) {
+            if(indexSet.contains(parent)) {
+                keepAncestor = false;
+                break;
+            }
+            parent = parent.parent();
+        }
+
+        if(keepAncestor) {
+            filteredIndexes.append(index);
+        }
+    }
+
+    return filteredIndexes;
+}
+
 void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QModelIndexList& bottomIndexes)
 {
+    while(treeView->model()->canFetchMore(index)) {
+        treeView->model()->fetchMore(index);
+    }
+
     const int rowCount = treeView->model()->rowCount(index);
     if(rowCount == 0) {
         bottomIndexes.append(index);
@@ -62,14 +91,16 @@ void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QMode
 
 Fooyin::TrackList getSelectedTracks(const QTreeView* treeView)
 {
-    const QModelIndexList selectedIndexes = treeView->selectionModel()->selectedIndexes();
+    const QModelIndexList selectedIndexes = treeView->selectionModel()->selectedRows();
     if(selectedIndexes.empty()) {
         return {};
     }
 
+    const QModelIndexList filteredIndexes = filterAncestors(selectedIndexes);
+
     QModelIndexList trackIndexes;
 
-    for(const QModelIndex& index : selectedIndexes) {
+    for(const QModelIndex& index : filteredIndexes) {
         const int level = index.data(Fooyin::LibraryTreeItem::Level).toInt();
         if(level < 0) {
             trackIndexes.clear();
@@ -230,11 +261,7 @@ QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
 {
     const TrackList tracks = getSelectedTracks(libraryTree);
 
-    if(tracks.empty()) {
-        co_return;
-    }
-
-    const auto sortedTracks = co_await Utils::asyncExec([&tracks]() { return Sorting::sortTracks(tracks); });
+    const auto sortedTracks = co_await Utils::asyncExec([tracks]() { return Sorting::sortTracks(tracks); });
     trackSelection->changeSelectedTracks(widgetContext, sortedTracks, playlistNameFromSelection());
 
     if(settings->value<LibTreePlaylistEnabled>()) {

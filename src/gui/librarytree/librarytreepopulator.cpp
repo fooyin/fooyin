@@ -79,15 +79,18 @@ struct LibraryTreePopulator::Private
                 continue;
             }
             const QStringList items = value.split(QStringLiteral("||"));
+            const int lowestLevel   = static_cast<int>(items.size()) - 1;
 
-            int level{0};
-            for(const QString& item : items) {
+            for(int level{0}; const QString& item : items) {
                 const QString title = item.trimmed();
                 const QString key   = Utils::generateHash(parent->key(), title);
 
                 auto* node = getOrInsertItem(key, parent, title, level);
-                node->addTrack(track);
-                data.trackParents[track.id()].push_back(node->key());
+
+                if(level == lowestLevel) {
+                    node->addTrack(track);
+                    data.trackParents[track.id()].push_back(node->key());
+                }
 
                 parent = node;
                 ++level;
