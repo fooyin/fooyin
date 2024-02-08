@@ -40,8 +40,6 @@
 #include <QTreeView>
 #include <QVBoxLayout>
 
-#include <QCoro/QCoroCore>
-
 #include <set>
 
 namespace {
@@ -137,12 +135,12 @@ public:
 
     void setupHeaderContextMenu(const QPoint& pos);
 
-    QCoro::Task<void> selectionChanged() const;
-    QCoro::Task<void> searchChanged(QString search);
+    void selectionChanged() const;
+    void searchChanged(QString search);
     [[nodiscard]] QString playlistNameFromSelection() const;
 
     void handleDoubleClick() const;
-    QCoro::Task<void> handleMiddleClick() const;
+    void handleMiddleClick() const;
 
     LibraryTreeWidget* self;
 
@@ -255,12 +253,10 @@ void LibraryTreeWidgetPrivate::setupHeaderContextMenu(const QPoint& pos)
     menu->popup(self->mapToGlobal(pos));
 }
 
-QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
+void LibraryTreeWidgetPrivate::selectionChanged() const
 {
     const TrackList tracks = getSelectedTracks(libraryTree);
-
-    const auto sortedTracks = co_await Utils::asyncExec([tracks]() { return Sorting::sortTracks(tracks); });
-    trackSelection->changeSelectedTracks(widgetContext, sortedTracks, playlistNameFromSelection());
+    trackSelection->changeSelectedTracks(widgetContext, tracks, playlistNameFromSelection());
 
     if(settings->value<LibTreePlaylistEnabled>()) {
         const QString playlistName = settings->value<LibTreeAutoPlaylist>();
@@ -271,7 +267,7 @@ QCoro::Task<void> LibraryTreeWidgetPrivate::selectionChanged() const
     }
 }
 
-QCoro::Task<void> LibraryTreeWidgetPrivate::searchChanged(QString search)
+void LibraryTreeWidgetPrivate::searchChanged(QString search)
 {
     const bool reset = prevSearch.length() > search.length();
     prevSearch       = search;
@@ -279,13 +275,12 @@ QCoro::Task<void> LibraryTreeWidgetPrivate::searchChanged(QString search)
     if(search.isEmpty()) {
         prevSearchTracks.clear();
         model->reset(library->tracks());
-        co_return;
+        return;
     }
 
     TrackList tracksToFilter = !reset && !prevSearchTracks.empty() ? prevSearchTracks : library->tracks();
 
-    const auto tracks = co_await Utils::asyncExec(
-        [search, tracksToFilter]() { return Filter::filterTracks(tracksToFilter, search); });
+    const auto tracks = Filter::filterTracks(tracksToFilter, search);
 
     prevSearchTracks = tracks;
     model->reset(tracks);
@@ -311,16 +306,15 @@ void LibraryTreeWidgetPrivate::handleDoubleClick() const
                                   playlistNameFromSelection());
 }
 
-QCoro::Task<void> LibraryTreeWidgetPrivate::handleMiddleClick() const
+void LibraryTreeWidgetPrivate::handleMiddleClick() const
 {
     const TrackList tracks = getSelectedTracks(libraryTree);
 
     if(tracks.empty()) {
-        co_return;
+        return;
     }
 
-    const auto sortedTracks = co_await Utils::asyncExec([&tracks]() { return Sorting::sortTracks(tracks); });
-    trackSelection->changeSelectedTracks(widgetContext, sortedTracks, playlistNameFromSelection());
+    trackSelection->changeSelectedTracks(widgetContext, tracks, playlistNameFromSelection());
 
     const bool autoSwitch = settings->value<LibTreeAutoSwitch>();
     trackSelection->executeAction(middleClickAction, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None,
