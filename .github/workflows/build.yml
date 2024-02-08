@@ -60,18 +60,6 @@ jobs:
           cmake --build taglib/build
           sudo cmake --install taglib/build
 
-      - name: Checkout QCoro
-        uses: actions/checkout@v4
-        with:
-          repository: danvratil/qcoro
-          path: qcoro
-
-      - name: Install QCoro
-        run: |
-          cmake -B qcoro/build -S qcoro -DBUILD_TESTING=OFF -DQCORO_BUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OM -DUSE_QT_VERSION=6 -DQCORO_WITH_QTWEBSOCKETS=OFF -DQCORO_DISABLE_DEPRECATED_TASK_H=ON
-          cmake --build qcoro/build
-          sudo cmake --install qcoro/build
-
       - name: Create build directory
         run: mkdir build
 
