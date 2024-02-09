@@ -227,7 +227,7 @@ void PlaylistWidgetPrivate::setupActions()
     QObject::connect(clear, &QAction::triggered, this, [this]() {
         if(auto* playlist = playlistController->currentPlaylist()) {
             playlist->clear();
-            model->reset(currentPreset, columns, playlist);
+            model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, playlist);
         }
     });
 
@@ -555,7 +555,7 @@ void PlaylistWidgetPrivate::handleTracksChanged(Playlist* playlist, const std::v
     // It's faster to just reset if we're going to be updating more than half the playlist
     // or we're updating a large number of tracks
     if(changedTrackCount > 500 || changedTrackCount > (playlist->trackCount() / 2)) {
-        model->reset(currentPreset, columns, playlist);
+        model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, playlist);
     }
     else {
         selected = selectedPlaylistIndexes();
