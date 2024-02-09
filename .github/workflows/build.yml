@@ -26,8 +26,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update -qq
-          sudo apt install -y g++ git cmake pkg-config ninja-build libasound2-dev libtag1-dev \
-          qt6-base-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
+          sudo apt install -y g++ git cmake pkg-config ninja-build libasound2-dev libtag1-dev libglu1-mesa-dev \
+          qt6-base-dev libqt6widgets6 libqt6gui6 libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
           libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev
 
       - name: Configure project
