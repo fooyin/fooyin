@@ -26,48 +26,15 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update -qq
-          sudo apt install -y build-essential libasound2-dev libcppunit-dev libgtest-dev libsdl2-dev pkg-config wget
-
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3.3.0
-        with:
-          version: '6.5.*'
-          cache: true
-
-      - name: Get latest CMake and Ninja
-        uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: latestrc
-          ninjaVersion: latest
-
-      - name: Download and install FFmpeg
-        run: |
-          wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl-shared.tar.xz -O ffmpeg.tar.xz
-          tar -xf ffmpeg.tar.xz
-          sudo cp -r ffmpeg-master-latest-linux64-lgpl-shared/* /usr/local
-
-      - name: Checkout TagLib
-        uses: actions/checkout@v4
-        with:
-          repository: taglib/taglib
-          path: taglib
-          ref: v1.13.1
-          submodules: recursive
-
-      - name: Install TagLib
-        run: |
-          cmake -B taglib/build -S taglib -DBUILD_TESTING=OFF -DWITH_ZLIB=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-          cmake --build taglib/build
-          sudo cmake --install taglib/build
-
-      - name: Create build directory
-        run: mkdir build
+          sudo apt install -y g++ git cmake pkg-config ninja-build libasound2-dev libtag1-dev \
+          qt6-base-dev qt6-svg-dev qt6-tools-dev \
+          libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev
 
       - name: Configure project
         run: >
-          cmake -S . -B ./build -G Ninja
+          cmake -S . -B build -G Ninja
           -DCMAKE_BUILD_TYPE=${{matrix.type}}
           -DBUILD_TESTING=${{env.BUILD_TESTS}}
 
       - name: Build Project
-        run: cmake --build ./build
+        run: cmake --build build
