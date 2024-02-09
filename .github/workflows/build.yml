@@ -1,4 +1,4 @@
-name: Build
+name: Linux build
 
 on:
   push:
@@ -10,64 +10,49 @@ env:
   BUILD_TESTS: Off
 
 jobs:
-  build:
-    runs-on: ${{matrix.os}}
-    name: Build ${{matrix.type}} on ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        type: [ 'Release' ]
-        os: [ 'ubuntu-22.04' ]
+  archlinux:
+    name: Arch Linux
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Install dependencies
+      - name: Install git
         run: |
-          sudo apt update -qq
-          sudo apt install -y build-essential libasound2-dev libcppunit-dev libgtest-dev libsdl2-dev pkg-config wget
+          pacman -Syy --noconfirm
+          pacman -S git --noconfirm
 
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3.3.0
-        with:
-          version: '6.5.*'
-          cache: true
-
-      - name: Get latest CMake and Ninja
-        uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: latestrc
-          ninjaVersion: latest
-
-      - name: Download and install FFmpeg
-        run: |
-          wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl-shared.tar.xz -O ffmpeg.tar.xz
-          tar -xf ffmpeg.tar.xz
-          sudo cp -r ffmpeg-master-latest-linux64-lgpl-shared/* /usr/local
-
-      - name: Checkout TagLib
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          repository: taglib/taglib
-          path: taglib
-          ref: v1.13.1
-          submodules: recursive
 
-      - name: Install TagLib
+      - name: Dependencies
         run: |
-          cmake -B taglib/build -S taglib -DBUILD_TESTING=OFF -DWITH_ZLIB=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-          cmake --build taglib/build
-          sudo cmake --install taglib/build
+          ./ci/archlinux-depends.sh
 
-      - name: Create build directory
-        run: mkdir build
+      - name: Build
+        run: |
+          ./ci/archlinux-build.sh
 
-      - name: Configure project
-        run: >
-          cmake -S . -B ./build -G Ninja
-          -DCMAKE_BUILD_TYPE=${{matrix.type}}
-          -DBUILD_TESTING=${{env.BUILD_TESTS}}
+  ubuntu:
+    name: Ubuntu
+    runs-on: ubuntu-latest
 
-      - name: Build Project
-        run: cmake --build ./build
+    container:
+      image: ubuntu:latest
+
+    steps:
+      - name: Install git
+        run: |
+          apt-get update -qq
+          apt-get install -qq --force-yes git
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependencies
+        run: |
+          ./ci/ubuntu-depends.sh
+
+      - name: Build
+        run: |
+          ./ci/ubuntu-build.sh

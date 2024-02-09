@@ -9,10 +9,10 @@ To build Fooyin you will need *at least*:
 
 The following libraries are required:
 
-* [Qt6](https://www.qt.io) (6.4+)
+* [Qt6](https://www.qt.io) (6.2+)
 * [QCoro](https://github.com/danvratil/qcoro) (0.9.0+)
-* [TagLib](https://taglib.org) (1.12+)
-* [FFmpeg](https://ffmpeg.org) (5.1+)
+* [TagLib](https://taglib.org) (1.11.1+)
+* [FFmpeg](https://ffmpeg.org) (4.4+)
 * [ALSA](https://alsa-project.org)
 
 The following libraries are optional, but will add extra audio outputs:
@@ -27,9 +27,8 @@ Platform-specific requirements are listed below.
 ```
 sudo apt update
 sudo apt install \
-    g++ git cmake pkg-config ninja-build libasound2-dev \
-    qcoro-qt6-dev libtag1-dev \
-    qt6-base-dev qt6-svg-dev qt6-tools-dev \
+    g++ git cmake pkg-config ninja-build libasound2-dev libtag1-dev libglu1-mesa-dev \
+    qt6-base-dev libqt6widgets6 libqt6gui6 libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
     libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev
 ```
 
@@ -38,9 +37,9 @@ sudo apt install \
 ```
 sudo pacman -Syu
 sudo pacman -S --needed \
-  gcc git cmake pkgconf ninja alsa-lib \
-  qt6-base qt6-svg qt6-tools \
-  kdsingleapplication qcoro-qt6 taglib ffmpeg
+    gcc git cmake pkgconf ninja alsa-lib \
+    qt6-base qt6-svg qt6-tools \
+    kdsingleapplication qcoro-qt6 taglib ffmpeg
 ```
 
 ## Building
