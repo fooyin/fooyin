@@ -6,6 +6,6 @@ cd build
 cmake .. \
   -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
-  -DBUILD_PCH=1
+  -DBUILD_PCH=ON
 
 cmake --build .
