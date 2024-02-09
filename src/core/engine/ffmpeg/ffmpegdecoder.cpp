@@ -330,8 +330,6 @@ struct FFmpegDecoder::Private
             return;
         }
 
-        packet.avPacket()->time_base = codec.stream()->time_base;
-
         decodeAudio(packet);
     }
 
