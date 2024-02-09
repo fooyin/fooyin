@@ -32,6 +32,7 @@
 #include <utils/widgets/editabletabbar.h>
 
 #include <QContextMenuEvent>
+#include <QIcon>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLayout>
@@ -195,6 +196,11 @@ void PlaylistTabs::removePlaylist(const Playlist* playlist)
     if(p->settings->value<Settings::Gui::Internal::PlaylistTabsHide>() && p->tabs->count() < 2) {
         p->tabs->hide();
     }
+}
+
+int PlaylistTabs::addNewTab(const QString& name)
+{
+    return addNewTab(name, {});
 }
 
 int PlaylistTabs::addNewTab(const QString& name, const QIcon& icon)

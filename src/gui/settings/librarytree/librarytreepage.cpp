@@ -27,6 +27,7 @@
 #include <gui/trackselectioncontroller.h>
 #include <utils/multilinedelegate.h>
 
+#include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>

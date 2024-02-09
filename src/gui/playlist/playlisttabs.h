@@ -21,6 +21,8 @@
 
 #include <gui/widgetcontainer.h>
 
+class QIcon;
+
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
@@ -40,7 +42,8 @@ public:
 
     int addPlaylist(const Playlist* playlist);
     void removePlaylist(const Playlist* playlist);
-    int addNewTab(const QString& name, const QIcon& icon = {});
+    int addNewTab(const QString& name);
+    int addNewTab(const QString& name, const QIcon& icon);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

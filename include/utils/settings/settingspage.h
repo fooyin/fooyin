@@ -23,6 +23,7 @@
 
 #include "utils/id.h"
 
+#include <QIcon>
 #include <QWidget>
 
 namespace Fooyin {

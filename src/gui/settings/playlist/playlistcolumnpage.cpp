@@ -26,6 +26,7 @@
 #include <utils/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QAction>
 #include <QHeaderView>
 #include <QVBoxLayout>
 
