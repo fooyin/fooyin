@@ -193,10 +193,6 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self_, Mus
 
     changeGrouping(groupsRegistry.itemByName(QStringLiteral("")));
 
-    if(!library->isEmpty()) {
-        reset();
-    }
-
     updateAppearance(settings->value<LibTreeAppearance>());
 }
 
