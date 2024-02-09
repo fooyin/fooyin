@@ -79,7 +79,6 @@ struct LibraryTreePopulator::Private
                 continue;
             }
             const QStringList items = value.split(QStringLiteral("||"));
-            const int lowestLevel   = static_cast<int>(items.size()) - 1;
 
             for(int level{0}; const QString& item : items) {
                 const QString title = item.trimmed();
@@ -87,9 +86,7 @@ struct LibraryTreePopulator::Private
 
                 auto* node = getOrInsertItem(key, parent, title, level);
 
-                if(level == lowestLevel) {
-                    node->addTrack(track);
-                }
+                node->addTrack(track);
                 data.trackParents[track.id()].push_back(node->key());
 
                 parent = node;
