@@ -113,6 +113,7 @@ struct FFmpegDecoder::Private
     AudioFormat audioFormat;
 
     Error error{NoError};
+    AVRational timeBase;
     bool isSeekable{false};
     bool draining{false};
     bool isDecoding{false};
@@ -181,7 +182,8 @@ struct FFmpegDecoder::Private
             const auto type    = avStream->codecpar->codec_type;
 
             if(type == AVMEDIA_TYPE_AUDIO) {
-                stream = Fooyin::Stream{avStream};
+                timeBase = avStream->time_base;
+                stream   = Fooyin::Stream{avStream};
                 return true;
             }
         }
@@ -221,7 +223,7 @@ struct FFmpegDecoder::Private
             return {};
         }
 
-        avCodecContext.get()->pkt_timebase = avStream->time_base;
+        avCodecContext.get()->pkt_timebase = timeBase;
 
         if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
             Utils::printError(QStringLiteral("Could not initialise codec context"));
@@ -286,8 +288,8 @@ struct FFmpegDecoder::Private
             qWarning() << "Error receiving decoded frame";
             return;
         }
-        avFrame->time_base = context->streams[codec.streamIndex()]->time_base;
-        const Frame frame{std::move(avFrame)};
+
+        const Frame frame{std::move(avFrame), timeBase};
 
         currentPts = frame.ptsMs();
 

@@ -25,16 +25,18 @@ namespace Fooyin {
 struct Frame::Private : QSharedData
 {
     FramePtr frame{nullptr};
+    AVRational timeBase;
 
-    explicit Private(FramePtr frame)
-        : frame{std::move(frame)}
+    explicit Private(FramePtr frame_, AVRational timeBase_)
+        : frame{std::move(frame_)}
+        , timeBase{std::move(timeBase_)}
     { }
 };
 
 Frame::Frame() = default;
 
-Frame::Frame(FramePtr frame)
-    : p{new Private(std::move(frame))}
+Frame::Frame(FramePtr frame, AVRational timeBase)
+    : p{new Private(std::move(frame), std::move(timeBase))}
 { }
 
 Frame::Frame(const Frame& other)            = default;
@@ -50,22 +52,30 @@ bool Frame::isValid() const
 
 AVFrame* Frame::avFrame() const
 {
-    return p->frame ? p->frame.get() : nullptr;
+    return isValid() ? p->frame.get() : nullptr;
 }
 
 int Frame::channelCount() const
 {
-    return p->frame ? p->frame->ch_layout.nb_channels : 0;
+    if(!isValid()) {
+        return AV_SAMPLE_FMT_NONE;
+    }
+
+#if LIBAVUTIL_VERSION_MAJOR < 57
+    return p->frame->channels;
+#else
+    return p->frame->ch_layout.nb_channels;
+#endif
 }
 
 int Frame::sampleRate() const
 {
-    return p->frame ? p->frame->sample_rate : 0;
+    return isValid() ? p->frame->sample_rate : 0;
 }
 
 AVSampleFormat Frame::format() const
 {
-    if(!p->frame) {
+    if(!isValid()) {
         return AV_SAMPLE_FMT_NONE;
     }
     return static_cast<AVSampleFormat>(p->frame->format);
@@ -73,32 +83,32 @@ AVSampleFormat Frame::format() const
 
 int Frame::sampleCount() const
 {
-    return p->frame ? p->frame->nb_samples : 0;
+    return isValid() ? p->frame->nb_samples : 0;
 }
 
 uint64_t Frame::ptsMs() const
 {
-    if(!p->frame || p->frame->pts < 0) {
+    if(!isValid() || p->frame->pts < 0) {
         return 0;
     }
-    return av_rescale_q(p->frame->pts, p->frame->time_base, {1, 1000});
+    return av_rescale_q(p->frame->pts, p->timeBase, {1, 1000});
 }
 
 uint64_t Frame::durationMs() const
 {
-    if(!p->frame) {
+    if(!isValid()) {
         return 0;
     }
 #if LIBAVUTIL_VERSION_MAJOR < 58
-    return av_rescale_q(p->frame->pkt_duration, p->frame->time_base, {1, 1000});
+    return av_rescale_q(p->frame->pkt_duration, p->timeBase, {1, 1000});
 #else
-    return av_rescale_q(p->frame->duration, p->frame->time_base, {1, 1000});
+    return av_rescale_q(p->frame->duration, p->timeBase, {1, 1000});
 #endif
 }
 
 uint64_t Frame::end() const
 {
-    if(!p->frame) {
+    if(!isValid()) {
         return 0;
     }
 #if LIBAVUTIL_VERSION_MAJOR < 58

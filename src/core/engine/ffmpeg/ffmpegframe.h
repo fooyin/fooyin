@@ -44,7 +44,7 @@ class Frame
 {
 public:
     Frame();
-    explicit Frame(FramePtr frame);
+    explicit Frame(FramePtr frame, AVRational timeBase);
     ~Frame();
 
     Frame(const Frame& other);

@@ -78,7 +78,11 @@ AudioFormat audioFormatFromCodec(AVCodecParameters* codec)
     const auto sampleFmt = sampleFormat(static_cast<AVSampleFormat>(codec->format));
     format.setSampleFormat(sampleFmt);
     format.setSampleRate(codec->sample_rate);
+#if LIBAVUTIL_VERSION_MAJOR < 57
+    format.setChannelCount(codec->channels);
+#else
     format.setChannelCount(codec->ch_layout.nb_channels);
+#endif
 
     return format;
 }
