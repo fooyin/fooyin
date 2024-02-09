@@ -43,7 +43,7 @@ public:
 
     [[nodiscard]] QStringList columns() const;
     [[nodiscard]] QString column(int column) const;
-    [[nodiscard]] int columnCount() const;
+    [[nodiscard]] int columnCount() const override;
 
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
@@ -53,6 +53,7 @@ public:
     void addTrack(const Track& track);
     void addTracks(const TrackList& tracks);
     void removeTrack(const Track& track);
+    void sortTracks();
 
     void sortChildren(int column, Qt::SortOrder order);
 

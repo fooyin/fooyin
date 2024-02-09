@@ -19,6 +19,7 @@
 
 #include "filteritem.h"
 
+#include <core/library/tracksort.h>
 #include <core/track.h>
 
 namespace {
@@ -112,6 +113,11 @@ void FilterItem::removeTrack(const Track& track)
     std::erase_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); });
 }
 
+void FilterItem::sortTracks()
+{
+    m_tracks = Sorting::sortTracks(m_tracks);
+}
+
 void FilterItem::sortChildren(int column, Qt::SortOrder order)
 {
     std::vector<FilterItem*> sortedChildren{m_children};
@@ -119,5 +125,9 @@ void FilterItem::sortChildren(int column, Qt::SortOrder order)
         return sort(column, order, lhs, rhs);
     });
     m_children = sortedChildren;
+
+    for(const auto& child : m_children) {
+        child->sortTracks();
+    }
 }
 } // namespace Fooyin::Filters

@@ -19,6 +19,8 @@
 
 #include "librarytreeitem.h"
 
+#include <core/library/tracksort.h>
+
 namespace Fooyin {
 LibraryTreeItem::LibraryTreeItem()
     : LibraryTreeItem{QStringLiteral(""), nullptr, -1}
@@ -95,6 +97,11 @@ void LibraryTreeItem::removeTrack(const Track& track)
     std::erase_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); });
 }
 
+void LibraryTreeItem::sortTracks()
+{
+    m_tracks = Sorting::sortTracks(m_tracks);
+}
+
 void LibraryTreeItem::sortChildren()
 {
     std::vector<LibraryTreeItem*> sortedChildren{m_children};
@@ -115,6 +122,7 @@ void LibraryTreeItem::sortChildren()
 
     for(auto& child : m_children) {
         child->sortChildren();
+        child->sortTracks();
     }
 }
 } // namespace Fooyin
