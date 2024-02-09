@@ -213,7 +213,7 @@ struct PlaylistOrganiser::Private
         if(std::exchange(currentPlaylistId, playlistId) != playlistId) {
             const QModelIndex index = model->indexForPlaylist(playlist);
             if(index.isValid()) {
-                organiserTree->selectionModel()->setCurrentIndex(index, QItemSelectionModel::SelectCurrent);
+                organiserTree->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
             }
         }
     }
