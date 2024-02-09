@@ -1,3 +1,3 @@
 #!/bin/bash
 
-SUDO=$(command -v sudo || true)
+export SUDO=$(command -v sudo || true)

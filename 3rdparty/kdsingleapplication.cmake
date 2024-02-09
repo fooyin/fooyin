@@ -14,10 +14,10 @@ FetchContent_Declare(
 )
 FetchContent_GetProperties(kdsingleapplication)
 if(NOT kdsingleapplication_POPULATED)
-    FetchContent_Populate(kdsingleapplication)
     set(KDSingleApplication_STATIC ON)
     set(KDSingleApplication_QT6 ON)
     set(KDSingleApplication_EXAMPLES OFF)
+    FetchContent_Populate(kdsingleapplication)
     add_subdirectory(
         ${kdsingleapplication_SOURCE_DIR} ${kdsingleapplication_BINARY_DIR}
         EXCLUDE_FROM_ALL
