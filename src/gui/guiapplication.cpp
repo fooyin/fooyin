@@ -179,6 +179,7 @@ struct GuiApplication::Private
         , guiPluginContext{actionManager,    &layoutProvider, &selectionController, searchController,
                            propertiesDialog, &widgetProvider, editableLayout.get()}
     {
+        setupConnections();
         restoreIconTheme();
         registerLayouts();
         registerWidgets();
@@ -206,6 +207,12 @@ struct GuiApplication::Private
         else {
             openMainWindow();
         }
+    }
+
+    void setupConnections()
+    {
+        QObject::connect(&selectionController, &TrackSelectionController::actionExecuted, playlistController.get(),
+                         &PlaylistController::handleTrackSelectionAction);
     }
 
     void restoreIconTheme()

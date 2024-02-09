@@ -24,6 +24,7 @@
 #include <core/playlist/playlistmanager.h>
 #include <core/track.h>
 #include <gui/guisettings.h>
+#include <gui/trackselectioncontroller.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -75,6 +76,14 @@ struct PlaylistController::Private
         }
         loaded = true;
         QMetaObject::invokeMethod(self, &PlaylistController::playlistsLoaded);
+    }
+
+    void handlePlaylistAdded(Playlist* playlist)
+    {
+        if(playlist) {
+            histories.erase(playlist->id());
+            states.erase(playlist->id());
+        }
     }
 
     void handlePlaylistUpdated(Playlist* playlist)
@@ -201,6 +210,8 @@ PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* 
     p->restoreStates();
 
     QObject::connect(handler, &PlaylistManager::playlistsPopulated, this, [this]() { p->restoreLastPlaylist(); });
+    QObject::connect(handler, &PlaylistManager::playlistAdded, this,
+                     [this](Playlist* playlist) { p->handlePlaylistAdded(playlist); });
     QObject::connect(handler, &PlaylistManager::playlistTracksChanged, this,
                      [this](Playlist* playlist) { p->handlePlaylistUpdated(playlist); });
     QObject::connect(handler, &PlaylistManager::playlistRemoved, this,
@@ -432,6 +443,16 @@ void PlaylistController::filesToTracks(const QList<QUrl>& urls, std::function<vo
     std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 
     p->scanTracks(tracks, func);
+}
+
+void PlaylistController::handleTrackSelectionAction(TrackAction action)
+{
+    if(action == TrackAction::SendCurrentPlaylist) {
+        if(p->currentPlaylist) {
+            p->histories.erase(p->currentPlaylist->id());
+            p->states.erase(p->currentPlaylist->id());
+        }
+    }
 }
 
 void PlaylistController::startPlayback() const

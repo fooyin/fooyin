@@ -32,6 +32,7 @@ class SettingsManager;
 class SortingRegistry;
 class PlayerManager;
 enum class PlayState;
+enum class TrackAction;
 class Playlist;
 class PlaylistManager;
 class TrackSelectionController;
@@ -89,6 +90,9 @@ signals:
     void currentTrackChanged(const Track& track);
     void playStateChanged(PlayState state);
     void playlistHistoryChanged();
+
+public slots:
+    void handleTrackSelectionAction(TrackAction action);
 
 private:
     struct Private;

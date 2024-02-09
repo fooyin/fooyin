@@ -75,6 +75,7 @@ public:
                        const QString& playlistName = {});
 
 signals:
+    void actionExecuted(TrackAction action);
     void selectionChanged();
     void requestPropertiesDialog();
 
