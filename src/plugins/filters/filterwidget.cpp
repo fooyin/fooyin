@@ -37,8 +37,6 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/widgets/autoheaderview.h>
 
-#include <QCoro/QCoroCore>
-
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
@@ -130,10 +128,10 @@ struct FilterWidget::Private
         return titles.join(QStringLiteral(", "));
     }
 
-    QCoro::Task<void> selectionChanged()
+    void selectionChanged()
     {
         if(searching) {
-            co_return;
+            return;
         }
 
         filteredTracks.clear();
@@ -141,7 +139,7 @@ struct FilterWidget::Private
         const QModelIndexList selected = view->selectionModel()->selectedRows();
 
         if(selected.empty()) {
-            co_return;
+            return;
         }
 
         TrackList selectedTracks;
@@ -154,8 +152,6 @@ struct FilterWidget::Private
             const auto newTracks = selectedIndex.data(FilterItem::Tracks).value<TrackList>();
             std::ranges::copy(newTracks, std::back_inserter(selectedTracks));
         }
-
-        selectedTracks = co_await Utils::asyncExec([selectedTracks]() { return Sorting::sortTracks(selectedTracks); });
 
         filteredTracks = selectedTracks;
 
