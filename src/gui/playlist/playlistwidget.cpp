@@ -151,6 +151,9 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
     setupActions();
 
     model->setCurrentPlaylistIsActive(playlistController->currentIsActive());
+
+    model->currentTrackChanged(playlistController->currentTrack());
+    model->playStateChanged(playlistController->playState());
 }
 
 void PlaylistWidgetPrivate::setupConnections()
