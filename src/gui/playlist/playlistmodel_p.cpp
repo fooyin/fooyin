@@ -20,6 +20,7 @@
 #include "playlistmodel_p.h"
 
 #include "internalguisettings.h"
+#include "playlistscriptregistry.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
@@ -908,18 +909,20 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
             return QSize{0, currentPreset.track.rowHeight};
         }
         case(Qt::DecorationRole): {
-            if(!track.track().enabled()) {
-                return missingIcon;
-            }
+            if(columns.empty() || columns.at(column).field == PlayingIcon) {
+                if(!track.track().enabled()) {
+                    return missingIcon;
+                }
 
-            if(isPlaying()) {
-                switch(currentPlayState) {
-                    case(PlayState::Playing):
-                        return playingIcon;
-                    case(PlayState::Paused):
-                        return pausedIcon;
-                    case(PlayState::Stopped):
-                        return {};
+                if(isPlaying()) {
+                    switch(currentPlayState) {
+                        case(PlayState::Playing):
+                            return playingIcon;
+                        case(PlayState::Paused):
+                            return pausedIcon;
+                        case(PlayState::Stopped):
+                            return {};
+                    }
                 }
             }
 

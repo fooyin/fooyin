@@ -22,6 +22,8 @@
 #include <core/scripting/scriptregistry.h>
 
 namespace Fooyin {
+constexpr auto PlayingIcon = "%playingicon%";
+
 class PlaylistScriptRegistry : public ScriptRegistry
 {
 public:

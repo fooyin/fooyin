@@ -259,17 +259,23 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
     if(multiColumn) {
         const QString contents = index.data(Qt::DisplayRole).toString();
+        const auto statusIcon  = index.data(Qt::DecorationRole).value<QPixmap>();
         const int alignment    = index.data(Qt::TextAlignmentRole).toInt();
         const int margin       = index.data(PlaylistItem::Role::CellMargin).toInt();
 
         const QRect cellRect = {rect.x() + margin, rect.top(), rect.width() - (2 * margin), rect.height()};
 
-        const auto colour
-            = option.state & QStyle::State_Selected || isPlaying ? QPalette::HighlightedText : QPalette::NoRole;
+        if(statusIcon.isNull()) {
+            const auto colour
+                = option.state & QStyle::State_Selected || isPlaying ? QPalette::HighlightedText : QPalette::NoRole;
 
-        option.widget->style()->drawItemText(
-            painter, cellRect, Qt::AlignVCenter | alignment, option.palette, true,
-            painter->fontMetrics().elidedText(contents, Qt::ElideRight, cellRect.width()), colour);
+            option.widget->style()->drawItemText(
+                painter, cellRect, Qt::AlignVCenter | alignment, option.palette, true,
+                painter->fontMetrics().elidedText(contents, Qt::ElideRight, cellRect.width()), colour);
+        }
+        else {
+            opt.widget->style()->drawItemPixmap(painter, cellRect, Qt::AlignLeft | Qt::AlignVCenter, statusIcon);
+        }
     }
     else {
         const int indent     = index.data(PlaylistItem::Role::Indentation).toInt() + (!enabled || isPlaying ? 30 : 0);

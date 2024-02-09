@@ -19,6 +19,8 @@
 
 #include "playlistcolumnregistry.h"
 
+#include "playlistscriptregistry.h"
+
 namespace Fooyin {
 PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{PlaylistColumns, settings, parent}
@@ -40,5 +42,6 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 4, .index = 4, .name = "Album", .field = "%album%"});
     addDefaultItem({.id = 5, .index = 5, .name = "Playcount", .field = "%playcount%"});
     addDefaultItem({.id = 6, .index = 6, .name = "Duration", .field = "$timems(%duration%)"});
+    addDefaultItem({.id = 7, .index = 7, .name = "Playing", .field = PlayingIcon});
 }
 } // namespace Fooyin
