@@ -64,6 +64,7 @@ public:
 
     [[nodiscard]] bool currentIsActive() const;
     [[nodiscard]] Playlist* currentPlaylist() const;
+    [[nodiscard]] int currentPlaylistId() const;
 
     void changeCurrentPlaylist(Playlist* playlist);
     void changeCurrentPlaylist(int id);

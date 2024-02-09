@@ -256,6 +256,11 @@ Playlist* PlaylistController::currentPlaylist() const
     return p->currentPlaylist;
 }
 
+int PlaylistController::currentPlaylistId() const
+{
+    return p->currentPlaylist ? p->currentPlaylist->id() : -1;
+}
+
 void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
 {
     if(!playlist) {

@@ -177,6 +177,9 @@ int PlaylistTabs::addPlaylist(const Playlist* playlist)
     const int index = addNewTab(playlist->name());
     if(index >= 0) {
         p->tabs->setTabData(index, playlist->id());
+        if(playlist->id() == p->playlistController->currentPlaylistId()) {
+            p->tabs->setCurrentIndex(index);
+        }
     }
     return index;
 }
