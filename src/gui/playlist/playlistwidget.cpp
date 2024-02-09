@@ -381,11 +381,16 @@ void PlaylistWidgetPrivate::restoreSelectedPlaylistIndexes(const std::vector<int
         return;
     }
 
+    const int columnCount = static_cast<int>(columns.size());
+
     QItemSelection indexesToSelect;
+    indexesToSelect.reserve(indexes.size());
+
     for(const int selectedIndex : indexes) {
-        const auto index = model->indexAtTrackIndex(selectedIndex);
+        const QModelIndex index = model->indexAtTrackIndex(selectedIndex);
         if(index.isValid()) {
-            indexesToSelect.append({index, index});
+            const QModelIndex last = index.siblingAtColumn(columnCount - 1);
+            indexesToSelect.append({index, last.isValid() ? last : index});
         }
     }
     playlistView->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
