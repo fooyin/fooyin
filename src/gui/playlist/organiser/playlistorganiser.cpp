@@ -32,7 +32,6 @@
 
 #include <QContextMenuEvent>
 #include <QMenu>
-#include <QSettings>
 #include <QTreeView>
 #include <QVBoxLayout>
 
@@ -269,18 +268,22 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
     QObject::connect(p->organiserTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this]() { p->selectionChanged(); });
 
-    QObject::connect(p->playlistController->playlistHandler(), &PlaylistManager::playlistAdded, this,
-                     [this](Playlist* playlist) {
-                         if(!p->creatingPlaylist) {
-                             p->model->playlistAdded(playlist);
-                         }
-                     });
+    QObject::connect(
+        p->playlistController->playlistHandler(), &PlaylistManager::playlistAdded, this, [this](Playlist* playlist) {
+            if(!p->creatingPlaylist) {
+                QMetaObject::invokeMethod(
+                    p->model, [this, playlist]() { p->model->playlistAdded(playlist); }, Qt::QueuedConnection);
+            }
+        });
     QObject::connect(p->playlistController->playlistHandler(), &PlaylistManager::playlistRemoved, p->model,
                      &PlaylistOrganiserModel::playlistRemoved);
     QObject::connect(p->playlistController->playlistHandler(), &PlaylistManager::playlistRenamed, p->model,
                      &PlaylistOrganiserModel::playlistRenamed);
-    QObject::connect(p->playlistController, &PlaylistController::currentPlaylistChanged, this,
-                     [this](Playlist* playlist) { p->selectCurrentPlaylist(playlist); });
+    QObject::connect(
+        p->playlistController, &PlaylistController::currentPlaylistChanged, this, [this](Playlist* playlist) {
+            QMetaObject::invokeMethod(
+                p->model, [this, playlist]() { p->selectCurrentPlaylist(playlist); }, Qt::QueuedConnection);
+        });
 
     if(p->model->restoreModel(p->settings->fileValue(OrganiserModel).toByteArray())) {
         const auto state = p->settings->fileValue(OrganiserState).toByteArray();
