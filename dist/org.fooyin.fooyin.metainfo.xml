@@ -26,6 +26,12 @@
     <content_rating type="oars-1.1" />
     <url type="homepage">https://github.com/ludouzi/fooyin</url>
     <url type="bugtracker">https://github.com/ludouzi/fooyin/issues</url>
+    <screenshots>
+        <screenshot type="default">
+            <image>https://github.com/ludouzi/fooyin/blob/master/data/images/ember.png</image>
+            <caption>Ember layout</caption>
+        </screenshot>
+    </screenshots>
     <releases>
         <release version="0.3.9" date="2024-02-10"/>
     </releases>
