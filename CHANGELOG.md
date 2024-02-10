@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.8](https://github.com/ludouzi/fooyin/releases/tag/v0.3.8) (2024-02-10)
+
+### Changes
+
+* General build system improvements
+* Add support for building on Ubuntu 22.04 ([#49](https://github.com/ludouzi/fooyin/pull/49))
+* Filters: Disable filter selection playlist by default
+* PlaylistOrganiser: Clear selection when changing current playlist
+
+### Fixes
+
+* LibraryTree: Fix duplicate tracks when switching layouts ([#44](https://github.com/ludouzi/fooyin/issues/44))
+* Library: Correctly sort tracks with large track numbers ([#46](https://github.com/ludouzi/fooyin/issues/46))
+* PlaylistOrganiser: Resolve crash when removing all playlists ([#48](https://github.com/ludouzi/fooyin/issues/48))
+* PlaylistWidget: Restore state on initialisation to keep playing icon active ([#50](https://github.com/ludouzi/fooyin/issues/50))
+* PlaylistWidget: Reset state/history when using send to new/current playlist
+* PlaylistTabs: Correctly restore index to current playlist on initialisation
+* Translations: Return correct translation path
+* Track: Fix passing track-related containers in queued signals
+* ScriptSandbox: Fix setting default state
+* AudioDecoder: Fix crashes when decoding files in quick succession
+
+
 ## [0.3.7](https://github.com/ludouzi/fooyin/releases/tag/v0.3.7) (2024-02-05)
 
 ### Features

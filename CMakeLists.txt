@@ -8,7 +8,7 @@ include(CheckLevel)
 
 project(
     fooyin
-    VERSION 0.3.7
+    VERSION 0.3.8
     DESCRIPTION "A customisable music player"
     HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
     LANGUAGES CXX
@@ -30,7 +30,7 @@ set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 
 # Enable setting options with SET cmake command
 # Needed for some 3rdparty libs
-set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+cmake_policy(SET CMP0077 NEW)
 
 if(NOT DEFINED CMAKE_SKIP_BUILD_RPATH)
     set(CMAKE_SKIP_BUILD_RPATH OFF)
