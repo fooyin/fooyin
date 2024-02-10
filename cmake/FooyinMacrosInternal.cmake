@@ -112,11 +112,13 @@ function(create_fooyin_library name)
     endif()
 
     if(NOT CMAKE_SKIP_INSTALL_RULES)
-        install(
-                DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/export/"
-                DESTINATION "${INCLUDE_INSTALL_DIR}/${base_name}"
-                COMPONENT fooyin_development
-        )
+        if(INSTALL_HEADERS)
+            install(
+                    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/export/"
+                    DESTINATION "${INCLUDE_INSTALL_DIR}/${base_name}"
+                    COMPONENT fooyin_development
+            )
+        endif()
 
         install(
                 TARGETS ${name}

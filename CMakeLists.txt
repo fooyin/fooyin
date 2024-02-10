@@ -57,6 +57,7 @@ fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
 fooyin_option(BUILD_WERROR "Build with -Werror" OFF)
+fooyin_option(INSTALL_HEADERS "Install public development headers" OFF)
 fooyin_option(FOOYIN_DEPLOY "Deploy fooyin packages" OFF)
 
 list(
