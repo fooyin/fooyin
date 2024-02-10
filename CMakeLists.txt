@@ -8,7 +8,7 @@ include(CheckLevel)
 
 project(
     fooyin
-    VERSION 0.3.8
+    VERSION 0.3.9
     DESCRIPTION "A customisable music player"
     HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
     LANGUAGES CXX
@@ -30,7 +30,7 @@ set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 
 # Enable setting options with SET cmake command
 # Needed for some 3rdparty libs
-cmake_policy(SET CMP0077 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 if(NOT DEFINED CMAKE_SKIP_BUILD_RPATH)
     set(CMAKE_SKIP_BUILD_RPATH OFF)
@@ -57,6 +57,7 @@ fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
 fooyin_option(BUILD_WERROR "Build with -Werror" OFF)
+fooyin_option(FOOYIN_DEPLOY "Deploy fooyin packages" OFF)
 
 list(
     APPEND
@@ -320,6 +321,10 @@ add_custom_target(
     uninstall "${CMAKE_COMMAND}" -P
               "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
 )
+
+if(FOOYIN_DEPLOY)
+    include(FooyinDeployment)
+endif()
 
 include(FooyinSummary)
 fooyin_print_summary()

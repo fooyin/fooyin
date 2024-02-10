@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.9](https://github.com/ludouzi/fooyin/releases/tag/v0.3.9) (2024-02-10)
+
+### Fixes
+
+* Build system fixes
+
 ## [0.3.8](https://github.com/ludouzi/fooyin/releases/tag/v0.3.8) (2024-02-10)
 
 ### Changes
