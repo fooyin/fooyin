@@ -185,12 +185,22 @@ struct SearchController::Private
 
         createControlDialog(sourceId);
 
-        std::ranges::for_each(widgets, [this, &sourceId](FyWidget* widget) {
+        for(FyWidget* widget : widgets) {
+            const Id widgetId = widget->id();
+            if(!searchableWidgets.contains(widgetId)) {
+                QObject::connect(widget, &QObject::destroyed, self, [this, widgetId]() { removeWidget(widgetId); });
+            }
             searchableWidgets.emplace(widget->id(), widget);
             setupWidgetOverlay(sourceId, widget);
-        });
+        }
 
         controlDialog->show();
+    }
+
+    void removeWidget(const Id& widgetId)
+    {
+        searchableWidgets.erase(widgetId);
+        connections.erase(widgetId);
     }
 };
 
@@ -238,6 +248,7 @@ void SearchController::changeSearch(const Id& id, const QString& search)
             }
         }
         else if(auto* widget = p->editableLayout->findWidget(widgetId)) {
+            QObject::connect(widget, &QObject::destroyed, this, [this, widgetId]() { p->removeWidget(widgetId); });
             p->searchableWidgets.emplace(widgetId, widget);
             widget->searchEvent(search);
         }
