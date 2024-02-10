@@ -40,18 +40,18 @@ namespace {
 template <typename T>
 void interleaveSamples(uint8_t** in, Fooyin::AudioBuffer& buffer)
 {
-    const auto* out    = buffer.data();
     const auto format  = buffer.format();
     const int channels = format.channelCount();
     const int frames   = buffer.frameCount();
+    const int bps      = format.bytesPerSample();
+    auto* out          = std::bit_cast<T*>(buffer.data());
 
     for(int ch{0}; ch < channels; ++ch) {
         const auto* pSamples = std::bit_cast<const T*>(in[ch]);
-        auto* iSamples       = std::bit_cast<T*>(out) + ch;
+        auto* iSamples       = out + ch;
         auto end             = pSamples + frames;
         while(pSamples < end) {
-            std::memmove(iSamples, pSamples, format.bytesPerSample());
-            pSamples++;
+            std::memmove(iSamples, pSamples++, bps);
             iSamples += channels;
         }
     }
