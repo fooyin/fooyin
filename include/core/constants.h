@@ -21,7 +21,7 @@
 
 namespace Fooyin::Constants {
 constexpr auto AppName     = "fooyin";
-constexpr auto DisplayName = "Fooyin";
+constexpr auto DisplayName = "fooyin";
 
 constexpr auto Separator = "\037"; // ASCII Code 31 - ␟
 
