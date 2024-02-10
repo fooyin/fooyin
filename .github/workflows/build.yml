@@ -36,10 +36,12 @@ jobs:
   ubuntu:
     name: Ubuntu
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        ubuntu_version: [ 'jammy', 'mantic', 'noble' ]
     container:
-      image: ubuntu:latest
-
+      image: ubuntu:${{matrix.ubuntu_version}}
     steps:
       - name: Install git
         run: |
