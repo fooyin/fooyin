@@ -144,6 +144,7 @@ set(DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}")
 fooyin_convert_to_relative_path(DATAROOTDIR)
 
 set(XDG_APPS_INSTALL_DIR "${DATAROOTDIR}/applications")
+set(APPDATA_INSTALL_DIR "${DATAROOTDIR}/metainfo")
 set(ICON_INSTALL_DIR "${DATAROOTDIR}/icons")
 
 set(DOC_INSTALL_DIR "${DATAROOTDIR}/doc/fooyin/")
@@ -323,9 +324,9 @@ add_custom_target(
               "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
 )
 
-if(FOOYIN_DEPLOY)
-    include(FooyinDeployment)
-endif()
+#if(FOOYIN_DEPLOY)
+#    include(FooyinDeployment)
+#endif()
 
 include(FooyinSummary)
 fooyin_print_summary()

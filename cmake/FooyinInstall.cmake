@@ -1,7 +1,7 @@
 # ---- Fooyin data ----
 
-set(README_FILE "${CMAKE_SOURCE_DIR}/README.md")
-set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/COPYING")
+set(README_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(LICENSE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 
 install(
     FILES ${LICENSE_FILE}
@@ -17,11 +17,16 @@ install(
     COMPONENT fooyin
 )
 
-install(FILES ${CMAKE_SOURCE_DIR}/dist/fooyin.desktop
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/org.fooyin.fooyin.desktop
         DESTINATION ${XDG_APPS_INSTALL_DIR}
         COMPONENT fooyin
 )
-set(ICON_SRC_PATH ${CMAKE_SOURCE_DIR}/data/icons)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/org.fooyin.fooyin.metainfo.xml
+        DESTINATION ${APPDATA_INSTALL_DIR}
+        COMPONENT fooyin
+)
+
+set(ICON_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/data/icons)
 set(ICON_SIZE
     16
     22
@@ -113,7 +118,7 @@ if(INSTALL_HEADERS)
     # ---- Fooyin public headers ----
 
     install(
-        DIRECTORY "${CMAKE_SOURCE_DIR}/include/"
+        DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
         DESTINATION ${INCLUDE_INSTALL_DIR}
         COMPONENT fooyin_development
     )
