@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.10](https://github.com/ludouzi/fooyin/releases/tag/v0.3.10) (2024-02-10)
+
+### Changes
+* General build system improvements
+
+### Fixes
+* StatusWidget: Fix flickering when playing a track with an ongoing library scan ([#47](https://github.com/ludouzi/fooyin/pull/47))
+
+
 ## [0.3.9](https://github.com/ludouzi/fooyin/releases/tag/v0.3.9) (2024-02-10)
 
 ### Fixes
