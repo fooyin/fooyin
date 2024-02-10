@@ -104,6 +104,21 @@ struct StatusWidget::Private
         }
     }
 
+    void updateScanText(int progress)
+    {
+        QString scanText   = QStringLiteral("Scanning library: ") + QString::number(progress) + QStringLiteral("%");
+        const PlayState ps = playerManager->playState();
+        if(ps == PlayState::Stopped) {
+            statusText->setText(scanText);
+            if(progress == 100) {
+                clearTimer.start();
+            }
+            else {
+                clearTimer.stop();
+            }
+        }
+    }
+
     void updateSelectionText()
     {
         selectionText->setText(scriptParser.evaluate(selectionScript, selectionController->selectedTracks()));
@@ -190,15 +205,7 @@ QString StatusWidget::layoutName() const
 
 void StatusWidget::libraryScanProgress(int /*id*/, int progress)
 {
-    if(progress == 100) {
-        p->clearTimer.start();
-    }
-    else {
-        p->clearTimer.stop();
-    }
-
-    const QString scanText = QStringLiteral("Scanning library: ") + QString::number(progress) + QStringLiteral("%");
-    p->statusText->setText(scanText);
+    p->updateScanText(progress);
 }
 
 void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
