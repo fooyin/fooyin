@@ -1164,7 +1164,7 @@ void PlaylistModelPrivate::handleTrackGroup(const PendingData& data)
     }
 
     for(const auto& [index, childGroups] : itemData) {
-        for(const auto& [sourceParentKey, children] : childGroups) {
+        for(const auto& [sourceParentKey, children] : childGroups | std::views::reverse) {
             auto* sourceParentItem = itemForKey(sourceParentKey);
             if(!sourceParentItem) {
                 continue;
