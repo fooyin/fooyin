@@ -104,8 +104,13 @@ void PlayerController::next()
 
 void PlayerController::stop()
 {
+    const bool wasPlaying = p->playStatus != PlayState::Stopped;
+
     reset();
-    emit playStateChanged(p->playStatus);
+
+    if(wasPlaying) {
+        emit playStateChanged(p->playStatus);
+    }
 }
 
 void PlayerController::setCurrentPosition(uint64_t ms)
