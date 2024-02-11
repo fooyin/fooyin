@@ -1,0 +1,5 @@
+fooyin (${FOOYIN_VERSION}-${RELEASE_CODENAME}) ${RELEASE_CODENAME}; urgency=low
+
+  * Version ${FOOYIN_VERSION}
+
+ -- Luke Taylor <luket1@proton.me>  ${RELEASE_DATE}

@@ -2,12 +2,10 @@
 
 export FOOYIN_DIR=$PWD
 
-mkdir -p /build
-cd /build
-
-cmake "$FOOYIN_DIR" \
+cmake -S "$FOOYIN_DIR" \
   -G Ninja \
+  -B build \
   -DCMAKE_BUILD_TYPE=Release \
-  -DBUILD_PCH=1
+  -DBUILD_PCH=ON
 
-cmake --build .
+cmake --build build
