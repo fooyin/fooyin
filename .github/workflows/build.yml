@@ -33,6 +33,31 @@ jobs:
         run: |
           ./ci/archlinux-build.sh
 
+  fedora:
+    name: Fedora
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        fedora_version: [ '38', '39', '40' ]
+    container:
+      image: fedora:${{matrix.fedora_version}}
+    steps:
+      - name: Install git
+        run: |
+          dnf -y install git
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependencies
+        run: |
+          ./ci/fedora-depends.sh
+
+      - name: Build
+        run: |
+          ./ci/fedora-build.sh
+
   debian:
     name: Debian
     runs-on: ubuntu-latest
