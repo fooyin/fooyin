@@ -27,9 +27,10 @@ Platform-specific requirements are listed below.
 ```
 sudo apt update
 sudo apt install \
-    g++ git cmake pkg-config ninja-build libasound2-dev libtag1-dev libglu1-mesa-dev \
-    qt6-base-dev libqt6widgets6 libqt6gui6 libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
-    libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev
+    g++, git, cmake, pkg-config, ninja-build, libglu1-mesa-dev, \
+    libasound2-dev, libtag1-dev \
+    qt6-base-dev, libqt6svg6-dev, qt6-tools-dev, qt6-tools-dev-tools, qt6-l10n-tools, \
+    libavcodec-dev, libavfilter-dev, libavformat-dev, libavutil-dev, libswresample-dev \
 ```
 
 ### Arch Linux
@@ -73,7 +74,6 @@ The following options can be passed to CMake to customise the build:
 * `-DBUILD_CCACHE` - Build using CCache if found (ON by default)
 * `-DBUILD_PCH` - Build with precompiled header support (OFF by default)
 * `-DBUILD_WERROR` - Build with -Werror (OFF by default)
-* `-DINSTALL_FHS` - Install in Linux distros /usr hierarchy (ON by default)
 * `-DINSTALL_HEADERS` - Install development files (OFF by default)
 
 ## Installing
