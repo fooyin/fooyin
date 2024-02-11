@@ -86,3 +86,9 @@ target_link_libraries(
             ${FFMPEG_LIBRARIES}
             ${ALSA_LIBRARIES}
 )
+
+target_include_directories(
+    fooyin_core_private
+    PRIVATE ${FFMPEG_INCLUDE_DIRS}
+            ${ALSA_INCLUDE_DIRS}
+)
