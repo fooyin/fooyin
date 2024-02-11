@@ -95,5 +95,4 @@ cmake --install <BUILD_DIRECTORY> --prefix <INSTALL_DIRECTORY>
 ### Notes for package maintainers
 
 * The install script above will handle installation of all files needed by fooyin following the typical Linux FHS.
-For non-standard installations outside of this hierarchy, turn off `INSTALL_FHS` and point `CMAKE_INSTALL_PREFIX` to
-the desired location.
+For non-standard installations outside of this hierarchy, turn off `INSTALL_FHS`.
