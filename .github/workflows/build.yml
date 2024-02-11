@@ -33,6 +33,38 @@ jobs:
         run: |
           ./ci/archlinux-build.sh
 
+  debian:
+    name: Debian
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        debian_version: [ 'bookworm' ]
+    container:
+      image: debian:${{matrix.debian_version}}
+    steps:
+      - name: Install git
+        run: |
+          apt-get update -qq
+          apt-get install -qq --force-yes git
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependencies
+        run: |
+          ./ci/ubuntu-depends.sh
+
+      - name: Build
+        run: |
+          ./ci/ubuntu-build.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian_${{matrix.debian_version}}
+          path: deb
+
   ubuntu:
     name: Ubuntu
     runs-on: ubuntu-latest
@@ -58,3 +90,9 @@ jobs:
       - name: Build
         run: |
           ./ci/ubuntu-build.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu_${{matrix.ubuntu_version}}
+          path: deb
