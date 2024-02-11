@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 include(CheckBuildDir)
 include(CheckLevel)
@@ -154,14 +154,9 @@ set(APPDATA_INSTALL_DIR "${DATAROOTDIR}/metainfo")
 set(ICON_INSTALL_DIR "${DATAROOTDIR}/icons")
 
 set(DOC_INSTALL_DIR "${DATAROOTDIR}/doc/fooyin/")
+set(TRANSLATION_INSTALL_DIR "${DATAROOTDIR}/fooyin/translations")
 
-if(INSTALL_FHS)
-  set(TRANSLATION_INSTALL_DIR "${DATAROOTDIR}/fooyin/translations")
-else()
-  set(TRANSLATION_INSTALL_DIR "translations")
-endif()
-
-file(RELATIVE_PATH FOOYIN_RELATIVE_TRANSLATION_PATH "/${BIN_INSTALL_DIR}" "/${TRANSLATION_INSTALL_DIR}")
+set(FOOYIN_TRANSLATION_PATH "${CMAKE_INSTALL_PREFIX}/${TRANSLATION_INSTALL_DIR}")
 
 set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
 file(RELATIVE_PATH FOOYIN_RELATIVE_PLUGIN_PATH "/${BIN_INSTALL_DIR}" "/${FOOYIN_PLUGIN_INSTALL_DIR}")
@@ -205,7 +200,7 @@ if(BUILD_PCH)
     )
     add_library(fooyin_pch STATIC ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp)
     target_precompile_headers(
-        fooyin_pch PRIVATE ${CMAKE_SOURCE_DIR}/src/app/pch.h
+        fooyin_pch PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/app/pch.h
     )
     target_compile_definitions(fooyin_pch PRIVATE QT_USE_QSTRINGBUILDER)
     set_target_properties(
@@ -236,8 +231,8 @@ target_include_directories(
 add_library(fooyin_lib OBJECT)
 
 target_include_directories(
-    fooyin_lib PUBLIC "$<BUILD_INTERFACE:${PROJECT_CURRENT_SOURCE_DIR}/src>"
-                      "$<BUILD_INTERFACE:${PROJECT_CURRENT_SOURCE_DIR}/src/app>"
+    fooyin_lib PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+                      "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/app>"
 )
 
 set_target_properties(
@@ -323,7 +318,7 @@ endif()
 # ---- Fooyin uninstall ----
 
 configure_file(
-    "${CMAKE_SOURCE_DIR}/cmake/FooyinUninstall.cmake.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/FooyinUninstall.cmake.in"
     "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake" @ONLY
 )
 add_custom_target(

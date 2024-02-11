@@ -44,12 +44,12 @@ QString userPluginsPath()
 
 QString translationsPath()
 {
-    QDir appDir = QCoreApplication::applicationDirPath();
-
-    if(appDir.cd(RELATIVE_TRANSLATION_PATH)) {
-        return appDir.absolutePath();
+    QDir translations{FOOYIN_TRANSLATION_PATH};
+    if(translations.exists()) {
+        return translations.absolutePath();
     }
 
+    QDir appDir = QCoreApplication::applicationDirPath();
     if(appDir.cd(QStringLiteral("../data"))) {
         return appDir.absolutePath();
     }
