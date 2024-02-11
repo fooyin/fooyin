@@ -39,6 +39,7 @@ public:
     void setHeaderSectionHidden(int logical, bool hidden);
 
     void setHeaderSectionWidth(int logical, double width);
+    void setHeaderSectionWidths(const std::map<int , double>& widths);
 
     [[nodiscard]] bool isStretchEnabled() const;
     void setStretchEnabled(bool enabled);

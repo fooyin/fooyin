@@ -573,25 +573,28 @@ void PlaylistWidgetPrivate::handleTracksChanged(Playlist* playlist, const std::v
         Qt::SingleShotConnection);
 }
 
-QCoro::Task<void> PlaylistWidgetPrivate::toggleColumnMode()
+void PlaylistWidgetPrivate::toggleColumnMode()
 {
     columnMode = !columnMode;
-    header->setSortIndicatorShown(columnMode);
+    self->finalise();
 
     if(columnMode && columns.empty()) {
+        columns.push_back(columnRegistry.itemByName("Playing"));
         columns.push_back(columnRegistry.itemByName("Track"));
         columns.push_back(columnRegistry.itemByName("Title"));
         columns.push_back(columnRegistry.itemByName("Artist"));
         columns.push_back(columnRegistry.itemByName("Album"));
         columns.push_back(columnRegistry.itemByName("Duration"));
+
+        QObject::connect(
+            header, &QHeaderView::sectionCountChanged, self,
+            [this]() {
+                header->setHeaderSectionWidths({{0, 0.03}, {1, 0.05}, {2, 0.35}, {3, 0.25}, {4, 0.25}, {5, 0.07}});
+            },
+            Qt::SingleShotConnection);
     }
 
     resetModel();
-
-    if(columnMode) {
-        co_await qCoro(header, &QHeaderView::sectionCountChanged);
-        header->resetSections();
-    }
 }
 
 void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)

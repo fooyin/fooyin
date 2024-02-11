@@ -89,7 +89,7 @@ public:
     void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const;
     void handleTracksChanged(Playlist* playlist, const std::vector<int>& indexes);
 
-    QCoro::Task<void> toggleColumnMode();
+    void toggleColumnMode();
     void customHeaderMenuRequested(const QPoint& pos);
 
     void changeState(PlayState state) const;

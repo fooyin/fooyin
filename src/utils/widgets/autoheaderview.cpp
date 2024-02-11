@@ -358,9 +358,7 @@ void AutoHeaderView::setHeaderSectionWidth(int logical, double width)
         return;
     }
 
-    if(p->sectionWidths.size() < logical + 1) {
-        p->sectionWidths.resize(logical + 1);
-    }
+    p->sectionWidths.resize(logical + 1);
     p->sectionWidths[logical] = width;
 
     const int sectionCount = count();
@@ -374,6 +372,23 @@ void AutoHeaderView::setHeaderSectionWidth(int logical, double width)
     }
 
     p->normaliseWidths(rightColumns);
+    p->updateWidths();
+}
+
+void AutoHeaderView::setHeaderSectionWidths(const std::map<int, double>& widths)
+{
+    if(!p->stretchEnabled) {
+        return;
+    }
+
+    for(const auto& [logical, width] : widths) {
+        if(!isSectionHidden(logical)) {
+            p->sectionWidths.resize(logical + 1);
+            p->sectionWidths[logical] = width;
+        }
+    }
+
+    p->normaliseWidths();
     p->updateWidths();
 }
 
