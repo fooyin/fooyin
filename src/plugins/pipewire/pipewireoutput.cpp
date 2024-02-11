@@ -26,11 +26,6 @@
 #include <spa/param/props.h>
 #include <spa/utils/result.h>
 
-extern "C"
-{
-#include <libavcodec/avcodec.h>
-}
-
 #include <QDebug>
 
 #ifdef __GNUC__
