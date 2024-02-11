@@ -27,10 +27,10 @@ Platform-specific requirements are listed below.
 ```
 sudo apt update
 sudo apt install \
-    g++, git, cmake, pkg-config, ninja-build, libglu1-mesa-dev, \
-    libasound2-dev, libtag1-dev \
-    qt6-base-dev, libqt6svg6-dev, qt6-tools-dev, qt6-tools-dev-tools, qt6-l10n-tools, \
-    libavcodec-dev, libavfilter-dev, libavformat-dev, libavutil-dev, libswresample-dev \
+    g++ git cmake pkg-config ninja-build libglu1-mesa-dev \
+    libasound2-dev libtag1-dev \
+    qt6-base-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
+    libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev libswresample-dev \
 ```
 
 ### Arch Linux
