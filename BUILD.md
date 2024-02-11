@@ -73,6 +73,7 @@ The following options can be passed to CMake to customise the build:
 * `-DBUILD_CCACHE` - Build using CCache if found (ON by default)
 * `-DBUILD_PCH` - Build with precompiled header support (OFF by default)
 * `-DBUILD_WERROR` - Build with -Werror (OFF by default)
+* `-DINSTALL_FHS` - Install in Linux distros /usr hierarchy (ON by default)
 * `-DINSTALL_HEADERS` - Install development files (OFF by default)
 
 ## Installing
@@ -93,6 +94,6 @@ cmake --install <BUILD_DIRECTORY> --prefix <INSTALL_DIRECTORY>
 
 ### Notes for package maintainers
 
-* Fooyin uses relative paths for linking against and finding it's shared libraries and plugins. 
-These must be preserved for fooyin to run correctly. If you want to change the install location, 
-use `CMAKE_INSTALL_PREFIX` as mentioned above.
+* The install script above will handle installation of all files needed by fooyin following the typical Linux FHS.
+For non-standard installations outside of this hierarchy, turn off `INSTALL_FHS` and point `CMAKE_INSTALL_PREFIX` to
+the desired location.

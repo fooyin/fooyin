@@ -51,12 +51,13 @@ set(FOOYIN_REQUIRED_CXX_FEATURES cxx_std_20)
 include(FooyinMacrosInternal)
 
 fooyin_option(BUILD_SHARED_LIBS "Build fooyin libraries as shared" ON)
+fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
 fooyin_option(BUILD_TRANSLATIONS "Build translation files" ON)
-fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
 fooyin_option(BUILD_WERROR "Build with -Werror" OFF)
+fooyin_option(INSTALL_FHS "Install in Linux distros /usr hierarchy" ON)
 fooyin_option(INSTALL_HEADERS "Install public development headers" OFF)
 fooyin_option(FOOYIN_DEPLOY "Deploy fooyin packages" OFF)
 
@@ -131,10 +132,15 @@ endif()
 
 include(GNUInstallDirs)
 
-set(BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
-fooyin_convert_to_relative_path(BIN_INSTALL_DIR)
+if(INSTALL_FHS)
+  set(BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
+  set(LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/fooyin")
+else()
+  set(BIN_INSTALL_DIR .)
+  set(LIB_INSTALL_DIR .)
+endif()
 
-set(LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/fooyin")
+fooyin_convert_to_relative_path(BIN_INSTALL_DIR)
 fooyin_convert_to_relative_path(LIB_INSTALL_DIR)
 
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/fooyin")
@@ -148,7 +154,13 @@ set(APPDATA_INSTALL_DIR "${DATAROOTDIR}/metainfo")
 set(ICON_INSTALL_DIR "${DATAROOTDIR}/icons")
 
 set(DOC_INSTALL_DIR "${DATAROOTDIR}/doc/fooyin/")
-set(TRANSLATION_INSTALL_DIR "${DATAROOTDIR}/fooyin/translations")
+
+if(INSTALL_FHS)
+  set(TRANSLATION_INSTALL_DIR "${DATAROOTDIR}/fooyin/translations")
+else()
+  set(TRANSLATION_INSTALL_DIR "translations")
+endif()
+
 file(RELATIVE_PATH FOOYIN_RELATIVE_TRANSLATION_PATH "/${BIN_INSTALL_DIR}" "/${TRANSLATION_INSTALL_DIR}")
 
 set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
@@ -173,7 +185,7 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
 )
 
 if(NOT FOOYIN_OUTPUT_PREFIX)
-    set(FOOYIN_OUTPUT_PREFIX ${PROJECT_BINARY_DIR})
+    set(FOOYIN_OUTPUT_PREFIX "${PROJECT_BINARY_DIR}/run")
 endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}/${BIN_INSTALL_DIR}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}/${LIB_INSTALL_DIR}")
@@ -224,8 +236,8 @@ target_include_directories(
 add_library(fooyin_lib OBJECT)
 
 target_include_directories(
-    fooyin_lib PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
-                      "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/app>"
+    fooyin_lib PUBLIC "$<BUILD_INTERFACE:${PROJECT_CURRENT_SOURCE_DIR}/src>"
+                      "$<BUILD_INTERFACE:${PROJECT_CURRENT_SOURCE_DIR}/src/app>"
 )
 
 set_target_properties(
@@ -244,7 +256,7 @@ target_compile_options(fooyin_lib PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 
 if(BUILD_TRANSLATIONS)
     set(translation_dir
-        "${PROJECT_SOURCE_DIR}/data/translations"
+        "${PROJECT_CURRENT_SOURCE_DIR}/data/translations"
         CACHE PATH "Path to the *.ts translation files"
     )
 
@@ -291,11 +303,6 @@ set(SOURCES src/app/main.cpp src/app/commandline.cpp)
 qt_add_resources(SOURCES data/icons.qrc)
 
 add_executable(fooyin ${SOURCES} ${TRANSLATIONS})
-set_target_properties(
-    fooyin
-    PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${BIN_INSTALL_DIR}
-)
 fooyin_set_rpath(fooyin ${BIN_INSTALL_DIR})
 target_compile_features(fooyin PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_options(fooyin PRIVATE ${FOOYIN_COMPILE_OPTIONS})
@@ -324,9 +331,9 @@ add_custom_target(
               "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
 )
 
-#if(FOOYIN_DEPLOY)
-#    include(FooyinDeployment)
-#endif()
+if(FOOYIN_DEPLOY)
+   include(FooyinDeployment)
+endif()
 
 include(FooyinSummary)
 fooyin_print_summary()
