@@ -24,11 +24,6 @@
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audioformat.h>
 
-extern "C"
-{
-#include <libavutil/channel_layout.h>
-}
-
 #include <QString>
 
 namespace Fooyin {
