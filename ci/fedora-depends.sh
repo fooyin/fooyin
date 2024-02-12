@@ -5,6 +5,11 @@ dnf -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-releas
 dnf -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
 dnf -y --allowerasing install \
+     @development-tools \
+     redhat-lsb-core \
+     rpmdevtools \
+     tar \
+     desktop-file-utils \
      cmake ninja-build \
      glib2-devel \
      libxkbcommon-x11-devel \

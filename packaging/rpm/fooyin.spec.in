@@ -1,0 +1,111 @@
+Name:           fooyin
+Version:        @FOOYIN_VERSION@
+%if %{defined suse_version}
+Release:        1.@RPM_DISTRO@
+%else
+Release:        1%{?dist}
+%endif
+Summary:        A customisable music player
+Source0:        %{name}-%{version}.tar.xz
+Url:            https://github.com/ludouzi/fooyin
+Group:          Multimedia/Sound/Players
+License:        GPL-3.0
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+Packager:       Luke Taylor <luket1@proton.me>
+
+BuildRequires:  pkgconfig
+BuildRequires:  cmake
+BuildRequires:  ninja-build
+BuildRequires:  pkgconfig(glib-2.0)
+BuildRequires:  pkgconfig(alsa)
+
+%if %{defined fedora}
+BuildRequires:  desktop-file-utils
+%endif
+
+%if %{defined suse_version}
+BuildRequires:  update-desktop-files
+%endif
+
+BuildRequires:  cmake(Qt6Core)
+BuildRequires:  cmake(Qt6Gui)
+BuildRequires:  cmake(Qt6Widgets)
+BuildRequires:  cmake(Qt6Concurrent)
+BuildRequires:  cmake(Qt6Network)
+BuildRequires:  cmake(Qt6Sql)
+BuildRequires:  cmake(Qt6LinguistTools)
+BuildRequires:  ffmpeg-devel
+BuildRequires:  pkgconfig(taglib)
+BuildRequires:  qcoro-qt6-devel
+BuildRequires:  kdsingleapplication-qt6-devel
+BuildRequires:  pipewire-devel
+
+%if %{defined suse_version}
+Requires:  qt6-sql-sqlite
+%endif
+
+%description
+Fooyin is a music player built around customisation.
+It offers a growing list of widgets to manage and play your local music collection.
+It's extendable through the use of plugins and scriptable using FooScript.
+
+Features:
+  - Customisable layout
+  - Gapless playback
+  - Filter and search music collection
+  - Create and manage playlists
+  - Extendable through plugins
+  - Tag editing
+
+%define debug_package %{nil}
+%global __debug_install_post %{nil}
+
+%prep
+%autosetup
+
+%build
+if [ -z "$RPM_BUILD_NCPUS" ] ; then
+    RPM_BUILD_NCPUS=$(egrep -c "^cpu[0-9]+" /proc/stat 2>/dev/null || echo 0 :)
+    if [ $RPM_BUILD_NCPUS -eq 0 ] ; then
+        RPM_BUILD_NCPUS=1
+    fi
+    if [ $RPM_BUILD_NCPUS -gt 8 ] ; then
+        RPM_BUILD_NCPUS=8
+    fi
+fi
+
+%cmake . -B build -G Ninja \
+	-DCMAKE_BUILD_TYPE=Release
+%ninja_build -C build
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
+
+%install
+%ninja_install -C build
+
+%if %{defined suse_version}
+%suse_update_desktop_file AudioVideo Audio Player
+%endif
+
+%clean
+%__rm -rf "%{buildroot}"
+
+%files
+%defattr(-,root,root)
+%doc %{_docdir}/%{name}/README
+%license %{_docdir}/%{name}/LICENSE
+%dir %{_datadir}/%{name}/
+%dir %{_datadir}/%{name}/translations
+%{_datadir}/%{name}/translations/fooyin_*.qm
+%{_datadir}/applications/org.fooyin.fooyin.desktop
+%{_datadir}/metainfo/org.fooyin.fooyin.metainfo.xml
+%{_datadir}/icons/hicolor/*/apps/*.png
+%{_datadir}/icons/hicolor/scalable/apps/*.svg
+%{_bindir}/%{name}
+%dir %{_libdir}/%{name}/
+%{_libdir}/%{name}/*.so*
+%{_libdir}/%{name}/plugins/*.so*
+
+%changelog
+%autochangelog

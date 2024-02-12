@@ -59,6 +59,13 @@ jobs:
         run: |
           ./ci/fedora-build.sh
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fedora-${{matrix.fedora_version}}
+          path: |
+            /github/home/rpmbuild/RPMS/x86_64/*.rpm
+
   debian:
     name: Debian
     runs-on: ubuntu-latest
@@ -88,7 +95,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: debian_${{matrix.debian_version}}
+          name: debian-${{matrix.debian_version}}
           path: deb
 
   ubuntu:
@@ -120,5 +127,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu_${{matrix.ubuntu_version}}
+          name: ubuntu-${{matrix.ubuntu_version}}
           path: deb
