@@ -13,13 +13,11 @@ License:        GPL-3.0
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Packager:       Luke Taylor <luket1@proton.me>
 
+BuildRequires:  pkgconfig
 BuildRequires:  cmake
 BuildRequires:  ninja-build
-BuildRequires:  git
-BuildRequires:  glib2-devel
-BuildRequires:  libxkbcommon-x11-devel
-BuildRequires:  libxkbcommon-devel
-BuildRequires:  alsa-lib-devel
+BuildRequires:  pkgconfig(glib-2.0)
+BuildRequires:  pkgconfig(alsa)
 
 %if %{defined fedora}
 BuildRequires:  desktop-file-utils
@@ -29,11 +27,15 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  update-desktop-files
 %endif
 
-BuildRequires:  qt6-qtbase-devel
-BuildRequires:  qt6-qtsvg-devel
-BuildRequires:  qt6-qttools-devel
+BuildRequires:  cmake(Qt6Core)
+BuildRequires:  cmake(Qt6Gui)
+BuildRequires:  cmake(Qt6Widgets)
+BuildRequires:  cmake(Qt6Concurrent)
+BuildRequires:  cmake(Qt6Network)
+BuildRequires:  cmake(Qt6Sql)
+BuildRequires:  cmake(Qt6LinguistTools)
 BuildRequires:  ffmpeg-devel
-BuildRequires:  taglib-devel
+BuildRequires:  pkgconfig(taglib)
 BuildRequires:  qcoro-qt6-devel
 BuildRequires:  kdsingleapplication-qt6-devel
 BuildRequires:  pipewire-devel
