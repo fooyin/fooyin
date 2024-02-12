@@ -2,9 +2,10 @@ name: Linux build
 
 on:
   push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
+    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
 
 env:
   BUILD_TESTS: Off
