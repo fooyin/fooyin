@@ -77,7 +77,7 @@ jobs:
     steps:
       - name: Install git
         run: |
-          dnf -y install git
+          zypper -n install git
 
       - name: Checkout
         uses: actions/checkout@v4
