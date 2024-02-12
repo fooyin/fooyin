@@ -65,38 +65,6 @@ jobs:
           path: |
             /github/home/rpmbuild/RPMS/x86_64/*.rpm
 
-  opensuse:
-    name: openSUSE
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        opensuse_version: [ 'tumbleweed', 'leap:15.4', 'leap:15.5' ]
-    container:
-      image: opensuse/${{matrix.opensuse_version}}
-    steps:
-      - name: Install git
-        run: |
-          zypper -n install git
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Dependencies
-        run: |
-          ./ci/suse-depends.sh
-
-      - name: Build
-        run: |
-          ./ci/suse-build.sh
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: fedora-${{matrix.opensuse_version}}
-          path: |
-            /github/home/rpmbuild/RPMS/x86_64/*.rpm
-
   debian:
     name: Debian
     runs-on: ubuntu-latest
