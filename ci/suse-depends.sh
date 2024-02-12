@@ -10,7 +10,7 @@ $SUDO zypper -n install \
    gcc \
    tar \
    alsa-devel \
-   taglib-devel \
+   libtag-devel \
    qt6-base-devel  \
    qt6-gui-devel \
    qt6-widgets-devel \
