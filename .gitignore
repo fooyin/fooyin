@@ -40,6 +40,9 @@ debug_toolchain.cmake
 # generated files
 CMakeLists.txt.user*
 fooyin_version.h
+packagetar.sh
+changelog
+fooyin.spec
 
 # Vim temporary files
 .*.swp
