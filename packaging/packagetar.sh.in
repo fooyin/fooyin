@@ -3,12 +3,14 @@
 name=fooyin
 version="@FOOYIN_VERSION@"
 root=$(cd "${0%/*}/.." && echo $PWD/${0##*/})
-root=`dirname "$root"`
+root=$(dirname "$root")
+rootnoslash=$(echo "$root" | sed "s/^\///")
 
 echo "Creating $name-$version.tar.xz..."
 
 rm -f "$name-$version.tar.xz"
 tar -cJf $name-$version.tar.xz \
+    --transform "s,^$rootnoslash,$name-$version," --exclude-vcs \
     --exclude=".directory" \
     --exclude="*.tar" \
     --exclude="*.tar.*" \
