@@ -1,0 +1,26 @@
+#!/bin/bash
+
+name=fooyin
+version="@FOOYIN_VERSION@"
+root=$(cd "${0%/*}/.." && echo $PWD/${0##*/})
+root=`dirname "$root"`
+
+echo "Creating $name-$version.tar.xz..."
+
+rm -f "$name-$version.tar.xz"
+tar -cJf $name-$version.tar.xz \
+    --exclude=".directory" \
+    --exclude="*.tar" \
+    --exclude="*.tar.*" \
+    --exclude="*.bz" \
+    --exclude="*.bz2" \
+    --exclude="*.xz" \
+    --exclude="*.spec" \
+    --exclude=".vscode" \
+    --exclude=".idea" \
+    --exclude="$root/CMakeLists.txt.user" \
+    --exclude="$root/build*" \
+    --exclude="$root/cmake-build-*" \
+    --exclude="$root/packaging/debian/changelog" \
+    --exclude="$root/packaging/maketarball.sh" \
+    "$root"

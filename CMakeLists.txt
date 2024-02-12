@@ -251,7 +251,7 @@ target_compile_options(fooyin_lib PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 
 if(BUILD_TRANSLATIONS)
     set(translation_dir
-        "${PROJECT_CURRENT_SOURCE_DIR}/data/translations"
+        "${PROJECT_SOURCE_DIR}/data/translations"
         CACHE PATH "Path to the *.ts translation files"
     )
 

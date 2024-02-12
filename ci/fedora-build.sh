@@ -6,6 +6,7 @@ cmake -S "$FOOYIN_DIR" \
   -G Ninja \
   -B build \
   -DCMAKE_BUILD_TYPE=Release \
-  -DBUILD_PCH=ON
+  -DBUILD_PCH=ON \
+  -DFOOYIN_DEPLOY=ON
 
-cmake --build build
+cmake --build build --target rpm
