@@ -213,6 +213,24 @@ struct GuiApplication::Private
     {
         QObject::connect(&selectionController, &TrackSelectionController::actionExecuted, playlistController.get(),
                          &PlaylistController::handleTrackSelectionAction);
+        QObject::connect(&selectionController, &TrackSelectionController::requestPropertiesDialog, propertiesDialog,
+                         &PropertiesDialog::show);
+        QObject::connect(fileMenu, &FileMenu::requestNewPlaylist, self, [this]() {
+            if(auto* playlist = playlistHandler->createEmptyPlaylist()) {
+                playlistController->changeCurrentPlaylist(playlist);
+            }
+        });
+        QObject::connect(fileMenu, &FileMenu::requestAddFiles, self, [this]() { addFiles(); });
+        QObject::connect(fileMenu, &FileMenu::requestAddFolders, self, [this]() { addFolders(); });
+        QObject::connect(viewMenu, &ViewMenu::openQuickSetup, editableLayout.get(), &EditableLayout::showQuickSetup);
+        QObject::connect(engine, &EngineController::trackStatusChanged, self, [this](TrackStatus status) {
+            if(status == InvalidTrack) {
+                const Track track = playerManager->currentTrack();
+                if(track.isValid() && !QFileInfo::exists(track.filepath())) {
+                    showTrackNotFoundMessage(track);
+                }
+            }
+        });
     }
 
     void restoreIconTheme()
@@ -436,23 +454,7 @@ struct GuiApplication::Private
 
 GuiApplication::GuiApplication(const CorePluginContext& core)
     : p{std::make_unique<Private>(this, core)}
-{
-    QObject::connect(&p->selectionController, &TrackSelectionController::requestPropertiesDialog, p->propertiesDialog,
-                     &PropertiesDialog::show);
-    QObject::connect(p->fileMenu, &FileMenu::requestNewPlaylist, p->playlistHandler,
-                     &PlaylistManager::createEmptyPlaylist);
-    QObject::connect(p->fileMenu, &FileMenu::requestAddFiles, this, [this]() { p->addFiles(); });
-    QObject::connect(p->fileMenu, &FileMenu::requestAddFolders, this, [this]() { p->addFolders(); });
-    QObject::connect(p->viewMenu, &ViewMenu::openQuickSetup, p->editableLayout.get(), &EditableLayout::showQuickSetup);
-    QObject::connect(p->engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
-        if(status == InvalidTrack) {
-            const Track track = p->playerManager->currentTrack();
-            if(track.isValid() && !QFileInfo::exists(track.filepath())) {
-                p->showTrackNotFoundMessage(track);
-            }
-        }
-    });
-}
+{ }
 
 GuiApplication::~GuiApplication() = default;
 
