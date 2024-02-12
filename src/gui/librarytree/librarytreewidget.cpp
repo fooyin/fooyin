@@ -85,7 +85,7 @@ void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QMode
     }
 }
 
-Fooyin::TrackList getSelectedTracks(const QTreeView* treeView)
+Fooyin::TrackList getSelectedTracks(const QTreeView* treeView, Fooyin::MusicLibrary* library)
 {
     const QModelIndexList selectedIndexes = treeView->selectionModel()->selectedRows();
     if(selectedIndexes.empty()) {
@@ -94,19 +94,19 @@ Fooyin::TrackList getSelectedTracks(const QTreeView* treeView)
 
     const QModelIndexList filteredIndexes = filterAncestors(selectedIndexes);
 
+    Fooyin::TrackList tracks;
     QModelIndexList trackIndexes;
 
     for(const QModelIndex& index : filteredIndexes) {
         const int level = index.data(Fooyin::LibraryTreeItem::Level).toInt();
         if(level < 0) {
             trackIndexes.clear();
-            getLowestIndexes(treeView, {}, trackIndexes);
+            tracks = library->tracks();
             break;
         }
         getLowestIndexes(treeView, index, trackIndexes);
     }
 
-    Fooyin::TrackList tracks;
     for(const auto& index : trackIndexes) {
         const auto indexTracks = index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>();
         tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
@@ -251,7 +251,7 @@ void LibraryTreeWidgetPrivate::setupHeaderContextMenu(const QPoint& pos)
 
 void LibraryTreeWidgetPrivate::selectionChanged() const
 {
-    const TrackList tracks = getSelectedTracks(libraryTree);
+    const TrackList tracks = getSelectedTracks(libraryTree, library);
     trackSelection->changeSelectedTracks(widgetContext, tracks, playlistNameFromSelection());
 
     if(settings->value<LibTreePlaylistEnabled>()) {
@@ -304,7 +304,7 @@ void LibraryTreeWidgetPrivate::handleDoubleClick() const
 
 void LibraryTreeWidgetPrivate::handleMiddleClick() const
 {
-    const TrackList tracks = getSelectedTracks(libraryTree);
+    const TrackList tracks = getSelectedTracks(libraryTree, library);
 
     if(tracks.empty()) {
         return;
