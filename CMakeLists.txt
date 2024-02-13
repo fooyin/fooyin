@@ -59,7 +59,6 @@ fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
 fooyin_option(BUILD_WERROR "Build with -Werror" OFF)
 fooyin_option(INSTALL_FHS "Install in Linux distros /usr hierarchy" ON)
 fooyin_option(INSTALL_HEADERS "Install public development headers" OFF)
-fooyin_option(FOOYIN_DEPLOY "Deploy fooyin packages" OFF)
 
 list(
     APPEND
@@ -326,9 +325,7 @@ add_custom_target(
               "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
 )
 
-if(FOOYIN_DEPLOY)
-   include(FooyinDeployment)
-endif()
+include(FooyinPackaging)
 
 include(FooyinSummary)
 fooyin_print_summary()

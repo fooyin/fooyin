@@ -1,0 +1,35 @@
+Source: fooyin
+Section: @CPACK_DEBIAN_PACKAGE_SECTION@
+Priority: @CPACK_DEBIAN_PACKAGE_PRIORITY@
+Maintainer: @CPACK_PACKAGE_CONTACT@
+Build-Depends: debhelper (>= 10),
+               g++,
+               git,
+               cmake,
+               pkg-config,
+               ninja-build,
+               libglu1-mesa-dev,
+               libasound2-dev,
+               libtag1-dev,
+               qt6-base-dev,
+               libqt6svg6-dev,
+               qt6-tools-dev,
+               qt6-tools-dev-tools,
+               qt6-l10n-tools,
+               libavcodec-dev,
+               libavfilter-dev,
+               libavformat-dev,
+               libavutil-dev,
+               libswresample-dev
+Standards-Version: 4.6.2.0
+Rules-Requires-Root: no
+Homepage: @CPACK_DEBIAN_PACKAGE_HOMEPAGE@
+Vcs-Browser: https://github.com/ludouzi/fooyin
+Vcs-Git: https://github.com/ludouzi/fooyin.git
+
+Package: fooyin
+Section: @CPACK_DEBIAN_PACKAGE_SECTION@
+Architecture: linux-any
+Depends: ${misc:Depends}, ${shlibs:Depends}, @CPACK_DEBIAN_PACKAGE_DEPENDS@
+Homepage: @CPACK_DEBIAN_PACKAGE_HOMEPAGE@
+Description: @CPACK_DEBIAN_PACKAGE_DESCRIPTION_MERGED@

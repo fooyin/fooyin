@@ -5,9 +5,9 @@ cmake -S . \
   -B build \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_PCH=ON \
-  -DBUILD_WERROR=ON \
-  -DFOOYIN_DEPLOY=ON
+  -DBUILD_WERROR=ON
 
-cmake --build build --target deb
+cmake --build build
+cpack -G DEB
 mkdir deb
-mv ../*.deb deb
+mv build/*.deb deb

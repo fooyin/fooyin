@@ -1,0 +1,5 @@
+fooyin (${CPACK_PACKAGE_VERSION}-${DIST_RELEASE}) ${DIST_RELEASE}; urgency=low
+
+  * Version ${CPACK_PACKAGE_VERSION}
+
+ -- Luke Taylor <luket1@proton.me>  ${DEB_DATE}
