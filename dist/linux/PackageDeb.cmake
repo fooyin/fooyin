@@ -3,11 +3,6 @@ if(NOT DEBHELPER)
     message(FATAL_ERROR "debhelper not found, required for cpack -G DEB")
 endif()
 
-find_program(DEBCHANGE debchange)
-if(NOT DEBCHANGE)
-    message(FATAL_ERROR "debchange not found, required for cpack -G DEB")
-endif()
-
 file(COPY ${CPACK_DEBIAN_SOURCE_DIR}/dist/linux/debian
      DESTINATION ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
 )
@@ -21,18 +16,6 @@ configure_file(
 )
 file(REMOVE
      ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}/debian/changelog.in
-)
-
-execute_process(
-    COMMAND
-        ${DEBCHANGE} -v
-        "${CPACK_DEBIAN_PACKAGE_VERSION}-${CPACK_DEBIAN_PACKAGE_RELEASE}" -M
-        "Build of ${CPACK_DEBIAN_PACKAGE_VERSION}"
-    WORKING_DIRECTORY ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
-)
-execute_process(
-    COMMAND ${DEBCHANGE} -r -M "Build of ${CPACK_DEBIAN_PACKAGE_VERSION}"
-    WORKING_DIRECTORY ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
 )
 
 function(dh_run command)
