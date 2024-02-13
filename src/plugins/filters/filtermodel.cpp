@@ -382,6 +382,14 @@ void FilterModel::addTracks(const TrackList& tracks)
 
 void FilterModel::updateTracks(const TrackList& tracks)
 {
+    TrackList tracksToUpdate;
+    std::ranges::copy_if(tracks, std::back_inserter(tracksToUpdate),
+                         [this](const Track& track) { return p->trackParents.contains(track.id()); });
+
+    if(tracksToUpdate.empty()) {
+        return;
+    }
+
     removeTracks(tracks);
     addTracks(tracks);
 }
