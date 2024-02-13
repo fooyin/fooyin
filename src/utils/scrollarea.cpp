@@ -23,7 +23,8 @@ namespace Fooyin {
 ScrollArea::ScrollArea(QWidget* parent)
     : QScrollArea{parent}
 {
-    setFrameStyle(QFrame::Plain | QFrame::NoFrame);
+    setFrameShape(QFrame::NoFrame);
+    setFrameShadow(QFrame::Plain);
     setWidgetResizable(true);
     setAutoFillBackground(true);
 }

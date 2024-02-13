@@ -38,7 +38,8 @@ Dummy::Dummy(QWidget* parent)
     palette.setColor(label->backgroundRole(), palette.base().color());
     label->setPalette(palette);
 
-    label->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+    label->setFrameShape(QFrame::StyledPanel);
+    label->setFrameShadow(QFrame::Sunken);
     label->setAlignment(Qt::AlignCenter);
 
     layout->addWidget(label);
