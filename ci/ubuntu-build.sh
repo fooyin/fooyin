@@ -8,6 +8,7 @@ cmake -S . \
   -DBUILD_WERROR=ON
 
 cmake --build build
+cd build
 cpack -G DEB
-mkdir deb
-mv build/*.deb deb
+mkdir ../deb
+mv *.deb ../deb
