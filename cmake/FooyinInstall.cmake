@@ -17,11 +17,11 @@ install(
     COMPONENT fooyin
 )
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/org.fooyin.fooyin.desktop
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/linux/org.fooyin.fooyin.desktop
         DESTINATION ${XDG_APPS_INSTALL_DIR}
         COMPONENT fooyin
 )
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/org.fooyin.fooyin.metainfo.xml
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/linux/org.fooyin.fooyin.metainfo.xml
         DESTINATION ${APPDATA_INSTALL_DIR}
         COMPONENT fooyin
 )
