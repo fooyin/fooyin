@@ -190,9 +190,11 @@ void FFmpegEngine::seek(uint64_t pos)
     p->decoder.seek(pos);
     p->clock.sync(pos);
 
-    p->clock.setPaused(false);
-    p->bufferTimer->start();
-    p->renderer->start();
+    if(state() == PlayingState) {
+        p->clock.setPaused(false);
+        p->bufferTimer->start();
+        p->renderer->start();
+    }
 }
 
 uint64_t FFmpegEngine::currentPosition() const
