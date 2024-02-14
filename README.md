@@ -37,14 +37,15 @@ Fooyin is currently only supported on linux, though other platforms will be adde
 
 * [x] Customisable layout
 * [x] Gapless playback
-* [x] Filter and search music collection
+* [x] Filter library on any field(s)
 * [x] Create and manage playlists
 * [x] Extendable through plugins
 * [x] Tag editing
-* [ ] Visualisations
-* [ ] Lyrics support
-* [ ] Last.fm and Discogs integration
 
 ## Building from source
 
 See [BUILD.md](BUILD.md) for details.
+
+## Roadmap
+
+See [ROADMAP.md](https://github.com/ludouzi/fooyin/ROADMAP.md/) to learn about fooyin's planned features.
