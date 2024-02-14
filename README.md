@@ -48,4 +48,4 @@ See [BUILD.md](BUILD.md) for details.
 
 ## Roadmap
 
-See [ROADMAP.md](https://github.com/ludouzi/fooyin/ROADMAP.md/) to learn about fooyin's planned features.
+See [ROADMAP.md](ROADMAP.md) to learn about fooyin's planned features.
