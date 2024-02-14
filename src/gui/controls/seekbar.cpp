@@ -157,6 +157,8 @@ SeekBar::SeekBar(PlayerManager* playerManager, SettingsManager* settings, QWidge
                      [this](const Track& track) { p->trackChanged(track); });
     QObject::connect(p->playerManager, &PlayerManager::positionChanged, this,
                      [this](uint64_t pos) { p->setCurrentPosition(pos); });
+    QObject::connect(p->playerManager, &PlayerManager::positionMoved, this,
+                     [this](uint64_t pos) { p->setCurrentPosition(pos); });
 
     p->trackChanged(p->playerManager->currentTrack());
 }
