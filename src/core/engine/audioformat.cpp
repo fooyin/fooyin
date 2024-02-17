@@ -19,11 +19,12 @@
 
 #include <core/engine/audioformat.h>
 
+#include <bit>
 #include <tuple>
 
 namespace Fooyin {
 AudioFormat::AudioFormat()
-    : m_sampleFormat{Unknown}
+    : m_sampleFormat{SampleFormat::Unknown}
     , m_channelCount{0}
     , m_sampleRate{0}
 { }
@@ -41,7 +42,7 @@ bool AudioFormat::operator!=(const AudioFormat& other) const
 
 bool AudioFormat::isValid() const
 {
-    return m_sampleRate > 0 && m_channelCount > 0 && m_sampleFormat != Unknown;
+    return m_sampleRate > 0 && m_channelCount > 0 && m_sampleFormat != SampleFormat::Unknown;
 }
 
 int AudioFormat::sampleRate() const
@@ -54,7 +55,7 @@ int AudioFormat::channelCount() const
     return m_channelCount;
 }
 
-AudioFormat::SampleFormat AudioFormat::sampleFormat() const
+SampleFormat AudioFormat::sampleFormat() const
 {
     return m_sampleFormat;
 }
@@ -130,21 +131,18 @@ int AudioFormat::bytesPerFrame() const
 int AudioFormat::bytesPerSample() const
 {
     switch(m_sampleFormat) {
-        case(Unknown):
-            return 0;
-        case(UInt8):
+        case(SampleFormat::U8):
             return 1;
-        case(Int16):
+        case(SampleFormat::S16):
             return 2;
-        case(Int32):
-        case(Float):
+        case(SampleFormat::S24):
+            // Stored in low three bytes of 32bit int
+        case(SampleFormat::S32):
+        case(SampleFormat::Float):
             return 4;
-        case(Double):
-        case(Int64):
-            return 8;
-            break;
+        case(SampleFormat::Unknown):
+        default:
+            return 0;
     }
-
-    return 0;
 }
 } // namespace Fooyin

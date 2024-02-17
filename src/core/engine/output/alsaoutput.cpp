@@ -28,7 +28,7 @@ extern "C"
 
 #include <QDebug>
 
-namespace Fooyin {
+namespace {
 void checkError(int error, const QString& message)
 {
     if(error < 0) {
@@ -62,19 +62,19 @@ bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwPa
     return isSupported;
 }
 
-snd_pcm_format_t findAlsaFormat(AudioFormat::SampleFormat format)
+snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
 {
     switch(format) {
-        case(AudioFormat::UInt8):
+        case(Fooyin::SampleFormat::U8):
             return SND_PCM_FORMAT_U8;
-        case(AudioFormat::Int16):
+        case(Fooyin::SampleFormat::S16):
             return SND_PCM_FORMAT_S16;
-        case(AudioFormat::Int32):
+        case(Fooyin::SampleFormat::S24):
+        case(Fooyin::SampleFormat::S32):
             return SND_PCM_FORMAT_S32;
-        case(AudioFormat::Float):
+        case(Fooyin::SampleFormat::Float):
             return SND_PCM_FORMAT_FLOAT;
-        case(AudioFormat::Double):
-            return SND_PCM_FORMAT_FLOAT64;
+        case(Fooyin::SampleFormat::Unknown):
         default:
             return SND_PCM_FORMAT_UNKNOWN;
     }
@@ -91,7 +91,9 @@ struct PcmHandleDeleter
 };
 
 using PcmHandleUPtr = std::unique_ptr<snd_pcm_t, PcmHandleDeleter>;
+} // namespace
 
+namespace Fooyin {
 struct AlsaOutput::Private
 {
     OutputContext outputContext;
@@ -495,8 +497,9 @@ int AlsaOutput::write(const AudioBuffer& buffer)
         return 0;
     }
     if(err != frameCount) {
-        qWarning()
-            << QString{QStringLiteral("Unexpected partial write (%1 of %2 frames)")}.arg(static_cast<int>(err)).arg(frameCount);
+        qWarning() << QString{QStringLiteral("Unexpected partial write (%1 of %2 frames)")}
+                          .arg(static_cast<int>(err))
+                          .arg(frameCount);
     }
     return static_cast<int>(err);
 }

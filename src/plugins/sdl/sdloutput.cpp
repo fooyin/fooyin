@@ -26,18 +26,19 @@
 constexpr auto BufferSize = 2048;
 
 namespace {
-SDL_AudioFormat findFormat(Fooyin::AudioFormat::SampleFormat format)
+SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
 {
     switch(format) {
-        case(Fooyin::AudioFormat::UInt8):
+        case(Fooyin::SampleFormat::U8):
             return AUDIO_U8;
-        case(Fooyin::AudioFormat::Int16):
+        case(Fooyin::SampleFormat::S16):
             return AUDIO_S16SYS;
-        case(Fooyin::AudioFormat::Int32):
+        case(Fooyin::SampleFormat::S24):
+        case(Fooyin::SampleFormat::S32):
             return AUDIO_S32SYS;
-        case(Fooyin::AudioFormat::Float):
+        case(Fooyin::SampleFormat::Float):
             return AUDIO_F32SYS;
-        case(Fooyin::AudioFormat::Double):
+        case(Fooyin::SampleFormat::Unknown):
         default:
             return AUDIO_S16;
     }

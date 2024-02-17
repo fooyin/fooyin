@@ -29,30 +29,24 @@ extern "C"
 #include <QDebug>
 
 namespace {
-Fooyin::AudioFormat::SampleFormat sampleFormat(AVSampleFormat format)
+Fooyin::SampleFormat sampleFormat(AVSampleFormat format, int bps)
 {
     switch(format) {
         case(AV_SAMPLE_FMT_NONE):
         case(AV_SAMPLE_FMT_U8):
         case(AV_SAMPLE_FMT_U8P):
-            return Fooyin::AudioFormat::UInt8;
+            return Fooyin::SampleFormat::U8;
         case(AV_SAMPLE_FMT_S16):
         case(AV_SAMPLE_FMT_S16P):
-            return Fooyin::AudioFormat::Int16;
+            return Fooyin::SampleFormat::S16;
         case(AV_SAMPLE_FMT_S32):
         case(AV_SAMPLE_FMT_S32P):
-            return Fooyin::AudioFormat::Int32;
+            return bps == 24 ? Fooyin::SampleFormat::S24 : Fooyin::SampleFormat::S32;
         case(AV_SAMPLE_FMT_FLT):
         case(AV_SAMPLE_FMT_FLTP):
-            return Fooyin::AudioFormat::Float;
-        case(AV_SAMPLE_FMT_DBL):
-        case(AV_SAMPLE_FMT_DBLP):
-            return Fooyin::AudioFormat::Double;
-        case(AV_SAMPLE_FMT_S64):
-        case(AV_SAMPLE_FMT_S64P):
-            return Fooyin::AudioFormat::Int64;
+            return Fooyin::SampleFormat::Float;
         default:
-            return Fooyin::AudioFormat::Unknown;
+            return Fooyin::SampleFormat::Unknown;
     }
 }
 } // namespace
@@ -74,7 +68,7 @@ AudioFormat audioFormatFromCodec(AVCodecParameters* codec)
 {
     AudioFormat format;
 
-    const auto sampleFmt = sampleFormat(static_cast<AVSampleFormat>(codec->format));
+    const auto sampleFmt = sampleFormat(static_cast<AVSampleFormat>(codec->format), codec->bits_per_raw_sample);
     format.setSampleFormat(sampleFmt);
     format.setSampleRate(codec->sample_rate);
 #if OLD_CHANNEL_LAYOUT

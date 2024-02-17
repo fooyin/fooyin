@@ -66,25 +66,21 @@ void interleave(uint8_t** in, Fooyin::AudioBuffer& buffer)
     const auto format = buffer.format();
 
     switch(format.sampleFormat()) {
-        case(Fooyin::AudioFormat::UInt8):
+        case(Fooyin::SampleFormat::U8):
             interleaveSamples<uint8_t>(in, buffer);
             break;
-        case(Fooyin::AudioFormat::Int16):
+        case(Fooyin::SampleFormat::S16):
             interleaveSamples<int16_t>(in, buffer);
             break;
-        case(Fooyin::AudioFormat::Int32):
+        case(Fooyin::SampleFormat::S24):
+        case(Fooyin::SampleFormat::S32):
             interleaveSamples<int32_t>(in, buffer);
             break;
-        case(Fooyin::AudioFormat::Int64):
-            interleaveSamples<int64_t>(in, buffer);
-            break;
-        case(Fooyin::AudioFormat::Float):
+        case(Fooyin::SampleFormat::Float):
             interleaveSamples<float>(in, buffer);
             break;
-        case(Fooyin::AudioFormat::Double):
-            interleaveSamples<double>(in, buffer);
-            break;
-        case(Fooyin::AudioFormat::Unknown):
+        case(Fooyin::SampleFormat::Unknown):
+        default:
             break;
     }
 }

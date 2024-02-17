@@ -41,19 +41,19 @@
 constexpr auto DefaultDevice = "default";
 
 namespace {
-spa_audio_format findSpaFormat(const Fooyin::AudioFormat::SampleFormat& format)
+spa_audio_format findSpaFormat(const Fooyin::SampleFormat& format)
 {
     switch(format) {
-        case(Fooyin::AudioFormat::UInt8):
+        case(Fooyin::SampleFormat::U8):
             return SPA_AUDIO_FORMAT_U8;
-        case(Fooyin::AudioFormat::Int16):
+        case(Fooyin::SampleFormat::S16):
             return SPA_AUDIO_FORMAT_S16;
-        case(Fooyin::AudioFormat::Int32):
+        case(Fooyin::SampleFormat::S24):
+        case(Fooyin::SampleFormat::S32):
             return SPA_AUDIO_FORMAT_S32;
-        case(Fooyin::AudioFormat::Float):
+        case(Fooyin::SampleFormat::Float):
             return SPA_AUDIO_FORMAT_F32;
-        case(Fooyin::AudioFormat::Double):
-            return SPA_AUDIO_FORMAT_F64;
+        case(Fooyin::SampleFormat::Unknown):
         default:
             return SPA_AUDIO_FORMAT_UNKNOWN;
     }

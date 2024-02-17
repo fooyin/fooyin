@@ -25,9 +25,8 @@
 #include <utility>
 
 namespace Fooyin {
-struct AudioBuffer::Private : public QSharedData
+struct AudioBuffer::Private : QSharedData
 {
-public:
     std::vector<std::byte> data;
     AudioFormat format;
     uint64_t startTime;
@@ -49,13 +48,13 @@ public:
 
     void fillSilence()
     {
-        const bool unsignedFormat = format.sampleFormat() == Fooyin::AudioFormat::UInt8;
+        const bool unsignedFormat = format.sampleFormat() == SampleFormat::U8;
         std::ranges::fill(data, unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
 
     void fillRemainingWithSilence()
     {
-        const bool unsignedFormat = format.sampleFormat() == Fooyin::AudioFormat::UInt8;
+        const bool unsignedFormat = format.sampleFormat() == SampleFormat::U8;
         std::fill(data.begin() + data.size(), data.begin() + data.capacity(),
                   unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
@@ -67,7 +66,7 @@ public:
         const int bps    = format.bytesPerSample();
         const int count  = bytes / bps;
 
-        auto* samples = std::bit_cast<T>(data.data());
+        auto* samples = std::bit_cast<T*>(data.data());
         for(int i{0}; i < count; ++i) {
             samples[i] = static_cast<float>(samples[i]) * volume;
         }
@@ -224,24 +223,20 @@ void AudioBuffer::adjustVolumeOfSamples(double volume)
     }
 
     switch(format().sampleFormat()) {
-        case(AudioFormat::SampleFormat::UInt8):
-            p->adjustVolume<uint8_t*>(volume);
+        case(SampleFormat::U8):
+            p->adjustVolume<uint8_t>(volume);
             break;
-        case(AudioFormat::SampleFormat::Int16):
-            p->adjustVolume<int16_t*>(volume);
+        case(SampleFormat::S16):
+            p->adjustVolume<int16_t>(volume);
             break;
-        case(AudioFormat::SampleFormat::Int32):
-            p->adjustVolume<int32_t*>(volume);
+        case(SampleFormat::S24):
+        case(SampleFormat::S32):
+            p->adjustVolume<int32_t>(volume);
             break;
-        case(AudioFormat::SampleFormat::Int64):
-            p->adjustVolume<int64_t*>(volume);
+        case(SampleFormat::Float):
+            p->adjustVolume<float>(volume);
             break;
-        case(AudioFormat::SampleFormat::Float):
-            p->adjustVolume<float*>(volume);
-            break;
-        case(AudioFormat::SampleFormat::Double):
-            p->adjustVolume<double*>(volume);
-            break;
+        case(SampleFormat::Unknown):
         default:
             qDebug() << "Unable to adjust volume of unsupported format";
     }

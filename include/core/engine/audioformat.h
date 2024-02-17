@@ -24,21 +24,20 @@
 #include <cstdint>
 
 namespace Fooyin {
+enum class SampleFormat
+{
+    Unknown,
+    U8,
+    S16,
+    S24,
+    S32,
+    Float,
+};
+
 // TODO: Handle channel layout
 class FYCORE_EXPORT AudioFormat
 {
 public:
-    enum SampleFormat : uint16_t
-    {
-        Unknown,
-        UInt8,
-        Int16,
-        Int32,
-        Int64,
-        Float,
-        Double,
-    };
-
     AudioFormat();
 
     bool operator==(const AudioFormat& other) const;
