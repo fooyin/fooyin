@@ -1,17 +1,17 @@
 <p align="center">
-<img src="data/icons/sc-fooyin.svg" width="20%" alt="Fooyin logo">
+<img src="data/icons/sc-fooyin.svg" width="20%" alt="fooyin logo">
 </p>
 
 <p align="center" style="font-size: 18px;">
-<strong>Fooyin - A customisable music player</strong>
+<strong>fooyin - A customisable music player</strong>
 <br />
 <a href="https://github.com/ludouzi/fooyin/actions/workflows/build.yml"><img src="https://github.com/ludouzi/fooyin/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
 <a href="https://app.codacy.com/gh/ludouzi/fooyin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade"><img src="https://app.codacy.com/project/badge/Grade/ae0c3e9825d849b0b64697e59e4dfea6" alt="Code quality"></a>
 </p>
 
-## What is Fooyin?
+## What is fooyin?
 
-Fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local music
+fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local music
 collection. It's extendable through the use of plugins and scriptable using *FooScript*.
 
 Audio playback is handled using FFmpeg and ALSA as the primary output driver.
@@ -31,7 +31,7 @@ https://github.com/ludouzi/fooyin/assets/45490980/e6fbce19-2c95-4a2c-b832-32b37c
 
 </details>
 
-Fooyin is currently only supported on linux, though other platforms will be added at a later date.
+Only Linux is supported at present, though other platforms will be added at a later date.
 
 ## Features
 
