@@ -17,10 +17,8 @@ Build-Depends: debhelper (>= 10),
                qt6-tools-dev-tools,
                qt6-l10n-tools,
                libavcodec-dev,
-               libavfilter-dev,
                libavformat-dev,
-               libavutil-dev,
-               libswresample-dev
+               libavutil-dev
 Standards-Version: 4.6.2.0
 Rules-Requires-Root: no
 Homepage: @CPACK_DEBIAN_PACKAGE_HOMEPAGE@
