@@ -21,8 +21,16 @@
 
 #include <core/engine/audioformat.h>
 
+extern "C"
+{
+#include <libavcodec/avcodec.h>
+}
+
 class QString;
 class AVCodecParameters;
+
+#define OLD_CHANNEL_LAYOUT (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(59, 24, 100))
+#define OLD_FRAME (LIBAVUTIL_VERSION_MAJOR < 58)
 
 namespace Fooyin::Utils {
 void printError(int error);

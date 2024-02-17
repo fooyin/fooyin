@@ -19,6 +19,8 @@
 
 #include "ffmpegframe.h"
 
+#include "ffmpegutils.h"
+
 #include <QDebug>
 
 namespace Fooyin {
@@ -61,7 +63,7 @@ int Frame::channelCount() const
         return AV_SAMPLE_FMT_NONE;
     }
 
-#if LIBAVUTIL_VERSION_MAJOR < 57
+#if OLD_CHANNEL_LAYOUT
     return p->frame->channels;
 #else
     return p->frame->ch_layout.nb_channels;
@@ -99,7 +101,7 @@ uint64_t Frame::durationMs() const
     if(!isValid()) {
         return 0;
     }
-#if LIBAVUTIL_VERSION_MAJOR < 58
+#if OLD_FRAME
     return av_rescale_q(p->frame->pkt_duration, p->timeBase, {1, 1000});
 #else
     return av_rescale_q(p->frame->duration, p->timeBase, {1, 1000});
@@ -111,7 +113,7 @@ uint64_t Frame::end() const
     if(!isValid()) {
         return 0;
     }
-#if LIBAVUTIL_VERSION_MAJOR < 58
+#if OLD_FRAME
     return p->frame->pts + p->frame->pkt_duration;
 #else
     return p->frame->pts + p->frame->duration;

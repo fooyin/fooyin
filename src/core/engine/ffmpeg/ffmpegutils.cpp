@@ -23,7 +23,6 @@
 
 extern "C"
 {
-#include <libavcodec/avcodec.h>
 #include <libavutil/frame.h>
 }
 
@@ -78,7 +77,7 @@ AudioFormat audioFormatFromCodec(AVCodecParameters* codec)
     const auto sampleFmt = sampleFormat(static_cast<AVSampleFormat>(codec->format));
     format.setSampleFormat(sampleFmt);
     format.setSampleRate(codec->sample_rate);
-#if LIBAVUTIL_VERSION_MAJOR < 57
+#if OLD_CHANNEL_LAYOUT
     format.setChannelCount(codec->channels);
 #else
     format.setChannelCount(codec->ch_layout.nb_channels);
