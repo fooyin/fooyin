@@ -22,11 +22,6 @@
 #include <core/engine/audiobuffer.h>
 #include <utils/math.h>
 
-extern "C"
-{
-#include <libavutil/samplefmt.h>
-}
-
 #include <cfenv>
 
 namespace {
