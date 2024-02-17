@@ -24,9 +24,13 @@
 
 namespace Fooyin {
 AudioFormat::AudioFormat()
-    : m_sampleFormat{SampleFormat::Unknown}
-    , m_channelCount{0}
-    , m_sampleRate{0}
+    : AudioFormat{SampleFormat::Unknown, 0, 0}
+{ }
+
+AudioFormat::AudioFormat(SampleFormat format, int sampleRate, int channelCount)
+    : m_sampleFormat{format}
+    , m_channelCount{channelCount}
+    , m_sampleRate{sampleRate}
 { }
 
 bool AudioFormat::operator==(const AudioFormat& other) const

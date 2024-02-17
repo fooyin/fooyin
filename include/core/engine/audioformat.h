@@ -39,6 +39,7 @@ class FYCORE_EXPORT AudioFormat
 {
 public:
     AudioFormat();
+    AudioFormat(SampleFormat format, int sampleRate, int channelCount);
 
     bool operator==(const AudioFormat& other) const;
     bool operator!=(const AudioFormat& other) const;
