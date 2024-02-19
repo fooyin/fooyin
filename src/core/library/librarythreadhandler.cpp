@@ -102,7 +102,7 @@ struct LibraryThreadHandler::Private
                                   Q_ARG(const QString&, request.dir), Q_ARG(const TrackList&, library->tracks()));
     }
 
-    ScanRequest addLibraryScanRequest(const LibraryInfo& library)
+    ScanRequest addLibraryScanRequest(const LibraryInfo& libraryInfo)
     {
         const int id = nextRequestId();
 
@@ -110,7 +110,7 @@ struct LibraryThreadHandler::Private
                                 cancelScanRequest(id);
                             }};
 
-        scanRequests.emplace_back(id, ScanRequest::Library, library, "", TrackList{});
+        scanRequests.emplace_back(id, ScanRequest::Library, libraryInfo, "", TrackList{});
 
         if(scanRequests.size() == 1) {
             execNextRequest();
@@ -142,7 +142,7 @@ struct LibraryThreadHandler::Private
         return request;
     }
 
-    ScanRequest addDirectoryScanRequest(const LibraryInfo& library, const QString& dir)
+    ScanRequest addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QString& dir)
     {
         const int id = nextRequestId();
 
@@ -150,7 +150,7 @@ struct LibraryThreadHandler::Private
                                 cancelScanRequest(id);
                             }};
 
-        scanRequests.emplace_back(id, ScanRequest::Library, library, dir, TrackList{});
+        scanRequests.emplace_back(id, ScanRequest::Library, libraryInfo, dir, TrackList{});
 
         if(scanRequests.size() == 1) {
             execNextRequest();
@@ -161,8 +161,8 @@ struct LibraryThreadHandler::Private
 
     std::optional<LibraryScanRequest> currentRequest() const
     {
-        const auto requestIt = std::ranges::find_if(scanRequests,
-                                              [this](const auto& request) { return request.id == currentRequestId; });
+        const auto requestIt = std::ranges::find_if(
+            scanRequests, [this](const auto& request) { return request.id == currentRequestId; });
         if(requestIt != scanRequests.cend()) {
             return *requestIt;
         }
