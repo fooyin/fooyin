@@ -34,6 +34,12 @@
 #include <chrono>
 #include <queue>
 
+#if defined(__GNUG__)
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#elif defined(__clang__)
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif
+
 using namespace std::chrono_literals;
 
 namespace {
