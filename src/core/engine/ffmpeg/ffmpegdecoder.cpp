@@ -35,7 +35,7 @@
 #include <queue>
 
 #if defined(__GNUG__)
-#pragma clang diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #elif defined(__clang__)
 #pragma clang diagnostic ignored "-Wold-style-cast"
 #endif
