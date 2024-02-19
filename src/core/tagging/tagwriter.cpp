@@ -441,7 +441,7 @@ bool TagWriter::writeMetaData(const Track& track)
         return false;
     }
 
-    const auto writeProperties = [](TagLib::File& file, const Track& track, bool skipExtra = false) {
+    const auto writeProperties = [&track](TagLib::File& file, bool skipExtra = false) {
         auto savedProperties = file.properties();
         writeGenericProperties(savedProperties, track, skipExtra);
         file.setProperties(savedProperties);
@@ -462,7 +462,7 @@ bool TagWriter::writeMetaData(const Track& track)
         TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
 #endif
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             if(file.hasID3v2Tag()) {
                 writeID3v2Tags(file.ID3v2Tag(), track);
             }
@@ -472,7 +472,7 @@ bool TagWriter::writeMetaData(const Track& track)
     else if(mimeType == QStringLiteral("audio/x-aiff") || mimeType == QStringLiteral("audio/x-aifc")) {
         TagLib::RIFF::AIFF::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             if(file.hasID3v2Tag()) {
                 writeID3v2Tags(file.tag(), track);
             }
@@ -483,7 +483,7 @@ bool TagWriter::writeMetaData(const Track& track)
             || mimeType == QStringLiteral("audio/x-wav")) {
         TagLib::RIFF::WAV::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             if(file.hasID3v2Tag()) {
                 writeID3v2Tags(file.ID3v2Tag(), track);
             }
@@ -493,7 +493,7 @@ bool TagWriter::writeMetaData(const Track& track)
     else if(mimeType == QStringLiteral("audio/x-musepack")) {
         TagLib::MPC::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             if(file.hasAPETag()) {
                 writeApeTags(file.APETag(), track);
             }
@@ -503,7 +503,7 @@ bool TagWriter::writeMetaData(const Track& track)
     else if(mimeType == QStringLiteral("audio/x-ape")) {
         TagLib::APE::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             if(file.hasAPETag()) {
                 writeApeTags(file.APETag(), track);
             }
@@ -513,7 +513,7 @@ bool TagWriter::writeMetaData(const Track& track)
     else if(mimeType == QStringLiteral("audio/x-wavpack")) {
         TagLib::WavPack::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             if(file.hasAPETag()) {
                 writeApeTags(file.APETag(), track);
             }
@@ -523,7 +523,7 @@ bool TagWriter::writeMetaData(const Track& track)
     else if(mimeType == QStringLiteral("audio/mp4")) {
         TagLib::MP4::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file, track, true);
+            writeProperties(file, true);
             if(file.hasMP4Tag()) {
                 writeMp4Tags(file.tag(), track);
             }
@@ -537,7 +537,7 @@ bool TagWriter::writeMetaData(const Track& track)
         TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), false, style);
 #endif
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             if(file.hasXiphComment()) {
                 writeXiphComment(file.xiphComment(), track);
             }
@@ -547,7 +547,7 @@ bool TagWriter::writeMetaData(const Track& track)
     else if(mimeType == QStringLiteral("audio/ogg") || mimeType == QStringLiteral("audio/x-vorbis+ogg")) {
         TagLib::Ogg::Vorbis::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             if(file.tag()) {
                 writeXiphComment(file.tag(), track);
             }
@@ -557,7 +557,7 @@ bool TagWriter::writeMetaData(const Track& track)
     else if(mimeType == QStringLiteral("audio/opus") || mimeType == QStringLiteral("audio/x-opus+ogg")) {
         TagLib::Ogg::Opus::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             writeXiphComment(file.tag(), track);
             file.save();
         }
@@ -565,7 +565,7 @@ bool TagWriter::writeMetaData(const Track& track)
     else if(mimeType == QStringLiteral("audio/x-ms-wma")) {
         TagLib::ASF::File file(&stream, false);
         if(file.isValid()) {
-            writeProperties(file, track);
+            writeProperties(file);
             if(file.tag()) {
                 writeAsfTags(file.tag(), track);
             }

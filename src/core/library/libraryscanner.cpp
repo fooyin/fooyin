@@ -75,10 +75,10 @@ struct LibraryScanner::Private
 
     std::unordered_map<int, LibraryWatcher> watchers;
 
-    Private(LibraryScanner* self, Database* database, SettingsManager* settings)
-        : self{self}
-        , database{database}
-        , settings{settings}
+    Private(LibraryScanner* self_, Database* database_, SettingsManager* settings_)
+        : self{self_}
+        , database{database_}
+        , settings{settings_}
         , trackDatabase{database->connectionName()}
     { }
 

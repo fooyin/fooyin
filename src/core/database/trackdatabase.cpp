@@ -140,14 +140,14 @@ struct TrackDatabase::Private
 {
     TrackDatabase* self;
 
-    explicit Private(TrackDatabase* self)
-        : self{self}
+    explicit Private(TrackDatabase* self_)
+        : self{self_}
     { }
 
     void removeUnmanagedTracks() const
     {
-        const QString queryText
-            = QStringLiteral("DELETE FROM Tracks WHERE LibraryID = -1 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);");
+        const QString queryText = QStringLiteral(
+            "DELETE FROM Tracks WHERE LibraryID = -1 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);");
         const auto q = self->runQuery(queryText, QStringLiteral("Cannot cleanup tracks"));
     }
 
@@ -156,9 +156,9 @@ struct TrackDatabase::Private
         const QString queryText
             = "UPDATE TrackStats SET LastSeen = :lastSeen WHERE LastSeen IS NULL AND TrackHash NOT IN "
               "(SELECT TrackHash FROM Tracks);";
-        const auto q
-            = self->runQuery(queryText, {{QStringLiteral(":lastSeen"), QString::number(QDateTime::currentMSecsSinceEpoch())}},
-                             QStringLiteral("Error updating LastSeen"));
+        const auto q = self->runQuery(
+            queryText, {{QStringLiteral(":lastSeen"), QString::number(QDateTime::currentMSecsSinceEpoch())}},
+            QStringLiteral("Error updating LastSeen"));
     }
 
     void deleteExpiredStats() const
@@ -166,15 +166,17 @@ struct TrackDatabase::Private
         const QString queryText
             = "DELETE FROM TrackStats WHERE LastSeen IS NOT NULL AND LastSeen <= :clearInterval AND "
               "TrackHash NOT IN (SELECT TrackHash FROM Tracks);";
-        const auto q = self->runQuery(
-            queryText,
-            {{QStringLiteral(":clearInterval"), QString::number(QDateTime::currentDateTime().addDays(-28).toMSecsSinceEpoch())}},
-            QStringLiteral("Error deleting expired track stats"));
+        const auto q
+            = self->runQuery(queryText,
+                             {{QStringLiteral(":clearInterval"),
+                               QString::number(QDateTime::currentDateTime().addDays(-28).toMSecsSinceEpoch())}},
+                             QStringLiteral("Error deleting expired track stats"));
     }
 
     int trackCount() const
     {
-        auto q = self->runQuery(QStringLiteral("SELECT COUNT(*) FROM Tracks"), QStringLiteral("Cannot fetch track count"));
+        auto q
+            = self->runQuery(QStringLiteral("SELECT COUNT(*) FROM Tracks"), QStringLiteral("Cannot fetch track count"));
 
         if(!q.hasError() && q.next()) {
             return q.value(0).toInt();
@@ -274,8 +276,9 @@ struct TrackDatabase::Private
             }
 
             if(changed) {
-                const auto q = self->update(QStringLiteral("TrackStats"), bindings, {QStringLiteral("TrackHash"), track.hash()},
-                                            QStringLiteral("Cannot update stats for track ") + track.filepath());
+                const auto q
+                    = self->update(QStringLiteral("TrackStats"), bindings, {QStringLiteral("TrackHash"), track.hash()},
+                                   QStringLiteral("Cannot update stats for track ") + track.filepath());
                 return !q.hasError();
             }
 
@@ -288,7 +291,8 @@ struct TrackDatabase::Private
                                       {QStringLiteral("LastPlayed"), QString::number(track.lastPlayed())},
                                       {QStringLiteral("PlayCount"), QString::number(track.playCount())}};
 
-        const auto q = self->insert(QStringLiteral("TrackStats"), bindings, QStringLiteral("Cannot insert stats for track ") + track.filepath());
+        const auto q = self->insert(QStringLiteral("TrackStats"), bindings,
+                                    QStringLiteral("Cannot insert stats for track ") + track.filepath());
         return !q.hasError();
     }
 };
@@ -473,9 +477,10 @@ bool TrackDatabase::deleteTracks(const TrackList& tracks)
 
 std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
 {
-    auto selectToRemove = runQuery(
-        QStringLiteral("SELECT TrackID FROM Tracks WHERE LibraryID = :libraryId AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"),
-        {{":libraryId", QString::number(libraryId)}}, "Cannot get library tracks for " + QString::number(libraryId));
+    auto selectToRemove = runQuery(QStringLiteral("SELECT TrackID FROM Tracks WHERE LibraryID = :libraryId AND TrackID "
+                                                  "NOT IN (SELECT TrackID FROM PlaylistTracks);"),
+                                   {{":libraryId", QString::number(libraryId)}},
+                                   "Cannot get library tracks for " + QString::number(libraryId));
 
     if(selectToRemove.hasError()) {
         return {};
@@ -488,12 +493,14 @@ std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
     }
 
     auto deleteTracks = runQuery(
-        QStringLiteral("DELETE FROM Tracks WHERE LibraryID = :libraryId AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"),
+        QStringLiteral(
+            "DELETE FROM Tracks WHERE LibraryID = :libraryId AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"),
         {{":libraryId", QString::number(libraryId)}}, "Cannot get library tracks for " + QString::number(libraryId));
 
-    auto updateTracks = runQuery(QStringLiteral("UPDATE Tracks SET LibraryID = :nonLibraryId WHERE LibraryID = :libraryId;"),
-                                 {{":nonLibraryId", "-1"}, {":libraryId", QString::number(libraryId)}},
-                                 "Cannot get library tracks for " + QString::number(libraryId));
+    auto updateTracks
+        = runQuery(QStringLiteral("UPDATE Tracks SET LibraryID = :nonLibraryId WHERE LibraryID = :libraryId;"),
+                   {{":nonLibraryId", "-1"}, {":libraryId", QString::number(libraryId)}},
+                   "Cannot get library tracks for " + QString::number(libraryId));
 
     return tracksToRemove;
 }

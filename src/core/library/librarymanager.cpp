@@ -55,9 +55,9 @@ struct LibraryManager::Private
     TrackDatabase trackConnector;
     LibraryInfoMap libraries;
 
-    explicit Private(Database* database, SettingsManager* settings)
-        : database{database}
-        , settings{settings}
+    explicit Private(Database* database_, SettingsManager* settings_)
+        : database{database_}
+        , settings{settings_}
         , libraryConnector{database->connectionName()}
         , trackConnector{database->connectionName()}
     { }

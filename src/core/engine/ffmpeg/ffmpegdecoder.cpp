@@ -117,8 +117,8 @@ struct FFmpegDecoder::Private
     AudioBuffer buffer;
     uint64_t currentPts{0};
 
-    explicit Private(FFmpegDecoder* self)
-        : self{self}
+    explicit Private(FFmpegDecoder* self_)
+        : self{self_}
     { }
 
     bool setup(const QString& source)

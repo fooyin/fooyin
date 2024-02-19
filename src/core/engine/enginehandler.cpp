@@ -51,10 +51,10 @@ struct EngineHandler::Private
     std::map<QString, OutputCreator> outputs;
     CurrentOutput currentOutput;
 
-    Private(EngineHandler* self, PlayerManager* playerManager, SettingsManager* settings)
-        : self{self}
-        , playerManager{playerManager}
-        , settings{settings}
+    Private(EngineHandler* self_, PlayerManager* playerManager_, SettingsManager* settings_)
+        : self{self_}
+        , playerManager{playerManager_}
+        , settings{settings_}
         , engine{new FFmpegEngine(settings)}
     {
         engine->moveToThread(&engineThread);

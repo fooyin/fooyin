@@ -37,9 +37,9 @@ struct PlayerController::Private
     uint64_t position{0};
     bool counted{false};
 
-    Private(PlayerController* self, SettingsManager* settings)
-        : self{self}
-        , settings{settings}
+    Private(PlayerController* self_, SettingsManager* settings_)
+        : self{self_}
+        , settings{settings_}
         , playMode{static_cast<Playlist::PlayModes>(settings->value<Settings::Core::PlayMode>())}
     { }
 };

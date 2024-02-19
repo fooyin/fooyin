@@ -65,9 +65,9 @@ struct FFmpegEngine::Private
 
     QTimer* bufferTimer;
 
-    explicit Private(FFmpegEngine* self_, SettingsManager* settings)
+    explicit Private(FFmpegEngine* self_, SettingsManager* settings_)
         : self{self_}
-        , settings{settings}
+        , settings{settings_}
         , renderer{new FFmpegRenderer(self)}
         , bufferTimer{new QTimer(self)}
     {
@@ -116,7 +116,7 @@ struct FFmpegEngine::Private
             return true;
         }
 
-        return renderer->init({.format = format, .volume = volume});
+        return renderer->init({.format = format, .volume = volume, .writeAudioToBuffer = nullptr});
     }
 
     void startPlayback()

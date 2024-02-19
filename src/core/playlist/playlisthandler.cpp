@@ -80,10 +80,10 @@ struct PlaylistHandler::Private
     Playlist* activePlaylist{nullptr};
     Playlist* scheduledPlaylist{nullptr};
 
-    Private(PlaylistHandler* self, Database* database, PlayerManager* playerManager, SettingsManager* settings)
-        : self{self}
-        , playerManager{playerManager}
-        , settings{settings}
+    Private(PlaylistHandler* self_, Database* database, PlayerManager* playerManager_, SettingsManager* settings_)
+        : self{self_}
+        , playerManager{playerManager_}
+        , settings{settings_}
         , playlistConnector{database->connectionName()}
     { }
 
@@ -242,8 +242,7 @@ PlaylistHandler::~PlaylistHandler()
 
 Playlist* PlaylistHandler::playlistById(int id) const
 {
-    auto playlist = std::ranges::find_if(std::as_const(p->playlists),
-                                         [id](const auto& playlist) { return playlist->id() == id; });
+    auto playlist = std::ranges::find_if(std::as_const(p->playlists), [id](const auto& pl) { return pl->id() == id; });
     if(playlist != p->playlists.cend()) {
         return playlist->get();
     }
@@ -252,8 +251,8 @@ Playlist* PlaylistHandler::playlistById(int id) const
 
 Playlist* PlaylistHandler::playlistByIndex(int index) const
 {
-    auto playlist = std::ranges::find_if(std::as_const(p->playlists),
-                                         [index](const auto& playlist) { return playlist->index() == index; });
+    auto playlist
+        = std::ranges::find_if(std::as_const(p->playlists), [index](const auto& pl) { return pl->index() == index; });
     if(playlist != p->playlists.cend()) {
         return playlist->get();
     }
@@ -262,8 +261,8 @@ Playlist* PlaylistHandler::playlistByIndex(int index) const
 
 Playlist* PlaylistHandler::playlistByName(const QString& name) const
 {
-    auto playlist = std::ranges::find_if(std::as_const(p->playlists),
-                                         [name](const auto& playlist) { return playlist->name() == name; });
+    auto playlist
+        = std::ranges::find_if(std::as_const(p->playlists), [name](const auto& pl) { return pl->name() == name; });
     if(playlist != p->playlists.cend()) {
         return playlist->get();
     }
@@ -331,8 +330,7 @@ void PlaylistHandler::changePlaylistIndex(int id, int index)
 
 void PlaylistHandler::changeActivePlaylist(int id)
 {
-    auto playlist = std::ranges::find_if(std::as_const(p->playlists),
-                                         [id](const auto& playlist) { return playlist->id() == id; });
+    auto playlist = std::ranges::find_if(std::as_const(p->playlists), [id](const auto& pl) { return pl->id() == id; });
     if(playlist != p->playlists.cend()) {
         p->activePlaylist = playlist->get();
         emit activePlaylistChanged(playlist->get());
@@ -347,8 +345,8 @@ void PlaylistHandler::changeActivePlaylist(Playlist* playlist)
 
 void PlaylistHandler::schedulePlaylist(int id)
 {
-    const auto playlist = std::ranges::find_if(std::as_const(p->playlists),
-                                               [id](const auto& playlist) { return playlist->id() == id; });
+    const auto playlist
+        = std::ranges::find_if(std::as_const(p->playlists), [id](const auto& pl) { return pl->id() == id; });
     if(playlist != p->playlists.cend()) {
         p->scheduledPlaylist = playlist->get();
     }

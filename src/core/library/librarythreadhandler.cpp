@@ -64,11 +64,11 @@ struct LibraryThreadHandler::Private
     std::deque<LibraryScanRequest> scanRequests;
     int currentRequestId{-1};
 
-    Private(LibraryThreadHandler* self, Database* database, MusicLibrary* library, SettingsManager* settings)
-        : self{self}
-        , database{database}
-        , library{library}
-        , settings{settings}
+    Private(LibraryThreadHandler* self_, Database* database_, MusicLibrary* library_, SettingsManager* settings_)
+        : self{self_}
+        , database{database_}
+        , library{library_}
+        , settings{settings_}
         , scanner{database, settings}
         , trackDatabaseManager{database}
     {
@@ -196,7 +196,8 @@ struct LibraryThreadHandler::Private
     void finishScanRequest()
     {
         if(const auto request = currentRequest()) {
-            std::erase_if(scanRequests, [this](const auto& request) { return request.id == currentRequestId; });
+            std::erase_if(scanRequests,
+                          [this](const auto& pendingRequest) { return pendingRequest.id == currentRequestId; });
 
             if(request->type == ScanRequest::Tracks) {
                 // Next request (if any) will be started after tracksScanned is emitted from MusicLibrary
@@ -238,7 +239,7 @@ LibraryThreadHandler::LibraryThreadHandler(Database* database, MusicLibrary* lib
     QObject::connect(&p->scanner, &LibraryScanner::scanUpdate, this, &LibraryThreadHandler::scanUpdate);
     QObject::connect(
         &p->scanner, &LibraryScanner::directoryChanged, this,
-        [this](const LibraryInfo& library, const QString& dir) { p->addDirectoryScanRequest(library, dir); });
+        [this](const LibraryInfo& libraryInfo, const QString& dir) { p->addDirectoryScanRequest(libraryInfo, dir); });
 }
 
 LibraryThreadHandler::~LibraryThreadHandler()
@@ -282,7 +283,7 @@ void LibraryThreadHandler::libraryRemoved(int id)
         p->scanner.stopThread();
     }
     else {
-        std::erase_if(p->scanRequests, [id](const auto& request) { return request.library.id == id; });
+        std::erase_if(p->scanRequests, [id](const auto& pendingRequest) { return pendingRequest.library.id == id; });
     }
 }
 

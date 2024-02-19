@@ -63,11 +63,12 @@ struct UnifiedMusicLibrary::Private
 
     TrackList tracks;
 
-    Private(UnifiedMusicLibrary* self, LibraryManager* libraryManager, Database* database, SettingsManager* settings)
-        : self{self}
-        , libraryManager{libraryManager}
-        , database{database}
-        , settings{settings}
+    Private(UnifiedMusicLibrary* self_, LibraryManager* libraryManager_, Database* database_,
+            SettingsManager* settings_)
+        : self{self_}
+        , libraryManager{libraryManager_}
+        , database{database_}
+        , settings{settings_}
         , threadHandler{database, self, settings}
     { }
 
