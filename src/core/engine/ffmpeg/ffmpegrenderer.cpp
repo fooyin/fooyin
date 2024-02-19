@@ -89,6 +89,7 @@ struct FFmpegRenderer::Private
         else if(!bufferPrefilled) {
             bufferPrefilled = true;
             audioOutput->start();
+            writeTimer->stop();
         }
     }
 
@@ -173,7 +174,7 @@ struct FFmpegRenderer::Private
             return 0;
         }
 
-        const std::lock_guard<std::mutex> lock(bufferMutex);
+        // const std::lock_guard<std::mutex> lock(bufferMutex);
 
         const int samplesWritten = writeAudioSamples(samples);
         const int sstride        = tempBuffer.format().bytesPerFrame();
