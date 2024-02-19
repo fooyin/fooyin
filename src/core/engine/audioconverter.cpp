@@ -31,87 +31,90 @@ template <typename InputType, typename OutputType, typename Func>
 void convert(const Fooyin::AudioFormat& inputFormat, const std::byte* input, const Fooyin::AudioFormat& outputFormat,
              std::byte* output, int sampleCount, const ChannelMap& channelMap, Func&& conversionFunc)
 {
-    const auto* in = std::bit_cast<const InputType*>(input);
-    auto* out      = std::bit_cast<OutputType*>(output);
+    const int inBps  = inputFormat.bytesPerSample();
+    const int outBps = outputFormat.bytesPerSample();
 
     const int inChannels  = inputFormat.channelCount();
     const int outChannels = outputFormat.channelCount();
 
-    for(int sample{0}; sample < sampleCount; ++sample) {
-        for(int channel{0}; channel < outChannels; ++channel) {
-            if(channelMap.at(channel) < 0) {
+    for(int i{0}; i < sampleCount; ++i) {
+        for(int ch{0}; ch < outChannels; ++ch) {
+            if(channelMap.at(ch) < 0) {
                 continue;
             }
-            const auto* inSample = in + channelMap.at(channel);
-            auto* outSample      = out + channel;
-            conversionFunc(inSample, outSample);
+
+            InputType inSample;
+            const auto inOffset = (i * inChannels + channelMap.at(ch)) * inBps;
+            std::memcpy(&inSample, input + inOffset, inBps);
+
+            OutputType outSample = conversionFunc(inSample);
+            const auto outOffset = (i * outChannels + channelMap.at(ch)) * outBps;
+            std::memcpy(output + outOffset, &outSample, outBps);
         }
-        in += inChannels;
-        out += outChannels;
     }
 }
 
-void convertU8ToU8(const uint8_t* inSample, uint8_t* outSample)
+uint8_t convertU8ToU8(const uint8_t inSample)
 {
-    *outSample = *inSample;
+    return inSample;
 }
 
-void convertU8ToS16(const uint8_t* inSample, int16_t* outSample)
+int16_t convertU8ToS16(const uint8_t inSample)
 {
-    *outSample = static_cast<int16_t>(*inSample ^ 0x80) << 8;
+    return static_cast<int16_t>((inSample ^ 0x80) << 8);
 }
 
-void convertU8ToS32(const uint8_t* inSample, int32_t* outSample)
+int32_t convertU8ToS32(const uint8_t inSample)
 {
-    *outSample = (*inSample ^ 0x80) << 24;
+    return inSample ^ 0x80 << 24;
 }
 
-void convertU8ToFloat(const uint8_t* inSample, float* outSample)
+float convertU8ToFloat(const uint8_t inSample)
 {
-    *outSample = static_cast<float>(*inSample) / 0x80 - 1.0F;
+    return static_cast<float>(inSample) / 0x80 - 1.0F;
 }
 
-void convertS16ToS16(const int16_t* inSample, int16_t* outSample)
+int16_t convertS16ToS16(const int16_t inSample)
 {
-    *outSample = *inSample;
+    return inSample;
 }
 
-void convertS16ToU8(const int16_t* inSample, uint8_t* outSample)
+uint8_t convertS16ToU8(const int16_t inSample)
 {
-    *outSample = static_cast<uint8_t>(*inSample >> 8 ^ 0x80);
+    return static_cast<uint8_t>(inSample >> 8 ^ 0x80);
 }
 
-void convertS16ToS32(const int16_t* inSample, int32_t* outSample)
+int32_t convertS16ToS32(const int16_t inSample)
 {
-    *outSample = *inSample << 16;
+    return inSample << 16;
 }
 
-void convertS16ToFloat(const int16_t* inSample, float* outSample)
+float convertS16ToFloat(const int16_t inSample)
 {
-    *outSample = static_cast<float>(*inSample) / static_cast<float>(std::numeric_limits<int16_t>::max());
+    return static_cast<float>(inSample) / static_cast<float>(std::numeric_limits<int16_t>::max());
 }
 
-void convertS32ToU8(const int32_t* inSample, uint8_t* outSample)
+uint8_t convertS32ToU8(const int32_t inSample)
 {
-    *outSample = static_cast<int8_t>(*inSample >> 24 ^ 0x80);
+    return static_cast<int8_t>(inSample >> 24 ^ 0x80);
 }
 
-void convertS32ToS16(const int32_t* inSample, int16_t* outSample)
+int16_t convertS32ToS16(const int32_t inSample)
 {
-    *outSample = *inSample >> 16;
+    return static_cast<int16_t>(inSample >> 16);
 }
 
-void convertS32ToS32(const int32_t* inSample, int32_t* outSample)
+int32_t convertS32ToS32(const int32_t inSample)
 {
-    *outSample = *inSample;
+    return inSample;
 }
 
-void convertS32ToFloat(const int32_t* inSample, float* outSample)
+float convertS32ToFloat(const int32_t inSample)
 {
-    *outSample = static_cast<float>(*inSample) / static_cast<float>(std::numeric_limits<int32_t>::max());
+    return static_cast<float>(inSample) / static_cast<float>(std::numeric_limits<int32_t>::max());
 }
 
-void convertFloatToU8(const float* inSample, uint8_t* outSample)
+uint8_t convertFloatToU8(const float inSample)
 {
     const int prevRoundingMode = std::fegetround();
     std::fesetround(FE_TONEAREST);
@@ -119,14 +122,15 @@ void convertFloatToU8(const float* inSample, uint8_t* outSample)
     static constexpr auto minS8 = static_cast<int>(std::numeric_limits<int8_t>::min());
     static constexpr auto maxS8 = static_cast<int>(std::numeric_limits<int8_t>::max());
 
-    int intSample = Fooyin::Math::fltToInt(*inSample * 0x80);
+    int intSample = Fooyin::Math::fltToInt(inSample * 0x80);
     intSample     = std::clamp(intSample, minS8, maxS8);
-    *outSample    = static_cast<uint8_t>(intSample ^ 0x80);
 
     std::fesetround(prevRoundingMode);
+
+    return static_cast<uint8_t>(intSample ^ 0x80);
 }
 
-void convertFloatToS16(const float* inSample, int16_t* outSample)
+int16_t convertFloatToS16(const float inSample)
 {
     const int prevRoundingMode = std::fegetround();
     std::fesetround(FE_TONEAREST);
@@ -134,14 +138,15 @@ void convertFloatToS16(const float* inSample, int16_t* outSample)
     static constexpr auto minS16 = static_cast<int>(std::numeric_limits<int16_t>::min());
     static constexpr auto maxS16 = static_cast<int>(std::numeric_limits<int16_t>::max());
 
-    int intSample = Fooyin::Math::fltToInt(*inSample * 0x8000);
+    int intSample = Fooyin::Math::fltToInt(inSample * 0x8000);
     intSample     = std::clamp(intSample, minS16, maxS16);
-    *outSample    = static_cast<int16_t>(intSample);
 
     std::fesetround(prevRoundingMode);
+
+    return static_cast<int16_t>(intSample);
 }
 
-void convertFloatToS32(const float* inSample, int32_t* outSample)
+int32_t convertFloatToS32(const float inSample)
 {
     const int prevRoundingMode = std::fegetround();
     std::fesetround(FE_TONEAREST);
@@ -149,16 +154,17 @@ void convertFloatToS32(const float* inSample, int32_t* outSample)
     static constexpr int minS32 = std::numeric_limits<int32_t>::min();
     static constexpr int maxS32 = std::numeric_limits<int32_t>::max();
 
-    int intSample = Fooyin::Math::fltToInt(*inSample * 0x80000000);
+    int intSample = Fooyin::Math::fltToInt(inSample * 0x80000000);
     intSample     = std::clamp(intSample, minS32, maxS32);
-    *outSample    = intSample;
 
     std::fesetround(prevRoundingMode);
+
+    return intSample;
 }
 
-void convertFloatToFloat(const float* inSample, float* outSample)
+float convertFloatToFloat(const float inSample)
 {
-    *outSample = *inSample;
+    return inSample;
 }
 
 bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, const Fooyin::AudioFormat& outFormat,

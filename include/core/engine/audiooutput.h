@@ -27,7 +27,7 @@
 #include <QString>
 
 namespace Fooyin {
-using WriteFunction = std::function<int(uint8_t*, int)>;
+using WriteFunction = std::function<int(std::byte*, int)>;
 
 struct OutputContext
 {

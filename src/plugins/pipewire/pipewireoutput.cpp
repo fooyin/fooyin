@@ -263,7 +263,7 @@ void onProcess(void* userData)
         frameCount = std::min(b->requested, frameCount);
     }
 
-    const int samples = pc->outputContext.writeAudioToBuffer(std::bit_cast<uint8_t*>(buf->datas[0].data),
+    const int samples = pc->outputContext.writeAudioToBuffer(static_cast<std::byte*>(buf->datas[0].data),
                                                              static_cast<int>(frameCount));
 
     b->size                     = samples;

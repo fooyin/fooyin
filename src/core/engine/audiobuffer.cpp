@@ -27,7 +27,7 @@
 namespace Fooyin {
 struct AudioBuffer::Private : QSharedData
 {
-    std::vector<std::byte> data;
+    std::vector<std::byte> buffer;
     AudioFormat format;
     uint64_t startTime;
 
@@ -35,40 +35,41 @@ struct AudioBuffer::Private : QSharedData
         : format{format_}
         , startTime{startTime_}
     {
-        data.assign(data_.begin(), data_.end());
+        buffer.assign(data_.begin(), data_.end());
     }
 
     Private(const uint8_t* data_, size_t size, AudioFormat format_, uint64_t startTime_)
         : format{format_}
         , startTime{startTime_}
     {
-        data.resize(size);
-        std::memmove(data.data(), data_, size);
+        buffer.resize(size);
+        std::memmove(buffer.data(), data_, size);
     }
 
     void fillSilence()
     {
         const bool unsignedFormat = format.sampleFormat() == SampleFormat::U8;
-        std::ranges::fill(data, unsignedFormat ? std::byte{0x80} : std::byte{0});
+        std::ranges::fill(buffer, unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
 
     void fillRemainingWithSilence()
     {
         const bool unsignedFormat = format.sampleFormat() == SampleFormat::U8;
-        std::fill(data.begin() + data.size(), data.begin() + data.capacity(),
+        std::fill(buffer.begin() + buffer.size(), buffer.begin() + buffer.capacity(),
                   unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
 
     template <typename T>
     void adjustVolume(const double volume)
     {
-        const auto bytes = static_cast<int>(data.size());
+        const auto bytes = static_cast<int>(buffer.size());
         const int bps    = format.bytesPerSample();
-        const int count  = bytes / bps;
 
-        auto* samples = std::bit_cast<T*>(data.data());
-        for(int i{0}; i < count; ++i) {
-            samples[i] = static_cast<float>(samples[i]) * volume;
+        for(int i{0}; i < bytes; i += bps) {
+            T sample;
+            std::memcpy(&sample, buffer.data() + i, bps);
+            sample *= volume;
+            std::memcpy(buffer.data() + i, &sample, bps);
         }
     }
 };
@@ -96,28 +97,28 @@ AudioBuffer::AudioBuffer(AudioBuffer&& other) noexcept        = default;
 void AudioBuffer::reserve(size_t size)
 {
     if(isValid()) {
-        p->data.reserve(size);
+        p->buffer.reserve(size);
     }
 }
 
 void AudioBuffer::resize(size_t size)
 {
     if(isValid()) {
-        p->data.resize(size);
+        p->buffer.resize(size);
     }
 }
 
 void AudioBuffer::append(std::span<const std::byte> data)
 {
     if(isValid()) {
-        p->data.insert(p->data.end(), data.begin(), data.end());
+        p->buffer.insert(p->buffer.end(), data.begin(), data.end());
     }
 }
 
 void AudioBuffer::clear()
 {
     if(isValid()) {
-        p->data.clear();
+        p->buffer.clear();
     }
 }
 
@@ -160,7 +161,7 @@ int AudioBuffer::sampleCount() const
 
 int AudioBuffer::byteCount() const
 {
-    return isValid() ? static_cast<int>(p->data.size()) : 0;
+    return isValid() ? static_cast<int>(p->buffer.size()) : 0;
 }
 
 uint64_t AudioBuffer::startTime() const
@@ -176,7 +177,7 @@ uint64_t AudioBuffer::duration() const
 std::span<const std::byte> AudioBuffer::constData() const
 {
     if(isValid()) {
-        return p->data;
+        return p->buffer;
     }
     return {};
 }
@@ -184,7 +185,7 @@ std::span<const std::byte> AudioBuffer::constData() const
 const std::byte* AudioBuffer::data() const
 {
     if(isValid()) {
-        return p->data.data();
+        return p->buffer.data();
     }
     return {};
 }
@@ -192,7 +193,7 @@ const std::byte* AudioBuffer::data() const
 std::byte* AudioBuffer::data()
 {
     if(isValid()) {
-        return p->data.data();
+        return p->buffer.data();
     }
     return {};
 }

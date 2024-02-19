@@ -53,7 +53,7 @@ struct FFmpegRenderer::Private
     {
         QObject::connect(writeTimer, &QTimer::timeout, self, [this]() { writeNext(); });
 
-        outputContext.writeAudioToBuffer = [this](uint8_t* data, int samples) {
+        outputContext.writeAudioToBuffer = [this](std::byte* data, int samples) {
             return writeAudioToBuffer(data, samples);
         };
     }
@@ -167,7 +167,7 @@ struct FFmpegRenderer::Private
         return samplesWritten;
     }
 
-    int writeAudioToBuffer(uint8_t* data, int samples)
+    int writeAudioToBuffer(std::byte* data, int samples)
     {
         if(!isRunning) {
             return 0;
@@ -186,7 +186,7 @@ struct FFmpegRenderer::Private
             return 0;
         }
 
-        std::copy_n(std::bit_cast<uint8_t*>(tempBuffer.constData().data()), samples * sstride, data);
+        std::memcpy(data, tempBuffer.constData().data(), samples * sstride);
 
         return samplesWritten;
     }
