@@ -26,13 +26,13 @@
 #include <QString>
 
 namespace Fooyin::Sdl {
-class SdlOutput : public AudioPushOutput
+class SdlOutput : public AudioOutput
 {
 public:
     SdlOutput();
     ~SdlOutput() override;
 
-    bool init(const OutputContext& oc) override;
+    bool init(const AudioFormat& format) override;
     void uninit() override;
     void reset() override;
     void start() override;

@@ -73,6 +73,8 @@ struct FFmpegEngine::Private
     {
         bufferTimer->setInterval(5ms);
 
+        QObject::connect(renderer, &FFmpegRenderer::bufferProcessed, self,
+                         [this](const AudioBuffer& buffer) { clock.sync(buffer.startTime()); });
         QObject::connect(renderer, &FFmpegRenderer::finished, self, [this]() { onRendererFinished(); });
 
         QObject::connect(bufferTimer, &QTimer::timeout, self, [this]() {
@@ -116,7 +118,7 @@ struct FFmpegEngine::Private
             return true;
         }
 
-        return renderer->init({.format = format, .volume = volume, .writeAudioToBuffer = nullptr});
+        return renderer->init(format);
     }
 
     void startPlayback()

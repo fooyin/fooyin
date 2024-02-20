@@ -48,7 +48,7 @@ SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
 namespace Fooyin::Sdl {
 struct SdlOutput::Private
 {
-    OutputContext outputContext;
+    AudioFormat format;
 
     bool initialised{false};
 
@@ -65,22 +65,21 @@ SdlOutput::SdlOutput()
 
 SdlOutput::~SdlOutput() = default;
 
-bool SdlOutput::init(const OutputContext& oc)
+bool SdlOutput::init(const AudioFormat& format)
 {
     if(SDL_WasInit(SDL_INIT_AUDIO)) {
         return false;
     }
 
-    p->outputContext = oc;
+    p->format = format;
 
     SDL_Init(SDL_INIT_AUDIO);
 
-    p->desiredSpec.freq     = oc.format.sampleRate();
-    p->desiredSpec.format   = findFormat(oc.format.sampleFormat());
-    p->desiredSpec.channels = oc.format.channelCount();
+    p->desiredSpec.freq     = format.sampleRate();
+    p->desiredSpec.format   = findFormat(format.sampleFormat());
+    p->desiredSpec.channels = format.channelCount();
     p->desiredSpec.samples  = BufferSize;
     p->desiredSpec.callback = nullptr;
-    p->desiredSpec.userdata = &p->outputContext;
 
     if(p->device == QStringLiteral("default")) {
         p->audioDeviceId
@@ -154,9 +153,8 @@ OutputState SdlOutput::currentState()
 {
     OutputState state;
 
-    state.queuedSamples
-        = static_cast<int>(SDL_GetQueuedAudioSize(p->audioDeviceId) / p->outputContext.format.bytesPerFrame());
-    state.freeSamples = BufferSize - state.queuedSamples;
+    state.queuedSamples = static_cast<int>(SDL_GetQueuedAudioSize(p->audioDeviceId) / p->format.bytesPerFrame());
+    state.freeSamples   = BufferSize - state.queuedSamples;
 
     return state;
 }

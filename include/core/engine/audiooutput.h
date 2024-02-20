@@ -19,40 +19,17 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audioformat.h>
 
 #include <QString>
 
 namespace Fooyin {
-using WriteFunction = std::function<int(std::byte*, int)>;
-
-struct OutputContext
-{
-    AudioFormat format;
-    double volume{1.0};
-
-    WriteFunction writeAudioToBuffer;
-
-    bool operator==(const OutputContext& other)
-    {
-        return std::tie(format) == std::tie(other.format);
-    }
-};
-
 struct OutputState
 {
     int freeSamples{0};
     int queuedSamples{0};
     double delay{0.0};
-};
-
-enum class OutputType
-{
-    Push,
-    Pull
 };
 
 struct OutputDevice
@@ -65,10 +42,6 @@ using OutputDevices = std::vector<OutputDevice>;
 
 /*!
  * An abstract interface for an audio output driver.
- *
- * There are two types of audio driver supported:
- * - Push based: audio is pushed to the driver at regular intervals.
- * - Pull based: a callback is used to write audio to a buffer.
  */
 class AudioOutput
 {
@@ -76,15 +49,13 @@ public:
     virtual ~AudioOutput() = default;
 
     /** Initialises the output with the given @p oc context. */
-    virtual bool init(const OutputContext& oc) = 0;
+    virtual bool init(const AudioFormat& format) = 0;
     /** Resets the output to the state before @fn init was called. */
     virtual void uninit() = 0;
     /** Resets the output to the state after @fn init was called. */
     virtual void reset() = 0;
     /** Starts playback. */
     virtual void start() = 0;
-
-    virtual OutputType type() const = 0;
 
     /** Returns @c true if the driver was successfully initialised in @fn init. */
     virtual bool initialised() const = 0;
@@ -102,7 +73,7 @@ public:
 
     /*!
      * Writes the audio data contained in the @p buffer to the audio driver.
-     * @note for push-based drivers, this may be called before @fn start to prefill the buffer.
+     * @note this may be called before @fn start to prefill the buffer.
      * @returns the number of samples written.
      */
     virtual int write(const AudioBuffer& buffer) = 0;
@@ -112,31 +83,8 @@ public:
      * Set's the volume of the audio driver.
      * @note this will only be called if @fn canHandleVolume returns true.
      */
-    virtual void setVolume(double volume) = 0;
+    virtual void setVolume(double /*volume*/){};
 
     virtual void setDevice(const QString& device) = 0;
-};
-
-class FYCORE_EXPORT AudioPushOutput : public AudioOutput
-{
-public:
-    OutputType type() const override;
-
-    void setPaused(bool pause) override;
-    void setVolume(double volume) override;
-};
-
-class FYCORE_EXPORT AudioPullOutput : public AudioOutput
-{
-public:
-    void reset() override;
-
-    OutputType type() const override;
-    OutputState currentState() override;
-    int bufferSize() const override;
-
-    int write(const AudioBuffer& buffer) override;
-    void setPaused(bool pause) override;
-    void setVolume(double volume) override;
 };
 } // namespace Fooyin

@@ -23,18 +23,18 @@
 
 namespace Fooyin {
 class AudioBuffer;
+class AudioFormat;
 class AudioOutput;
-struct OutputContext;
 
 class FFmpegRenderer : public QObject
 {
     Q_OBJECT
 
 public:
-    FFmpegRenderer(QObject* parent = nullptr);
+    explicit FFmpegRenderer(QObject* parent = nullptr);
     ~FFmpegRenderer() override;
 
-    bool init(const OutputContext& context);
+    bool init(const AudioFormat& format);
     void start();
     void stop();
     void pause(bool paused);

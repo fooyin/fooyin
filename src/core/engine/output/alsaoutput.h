@@ -24,13 +24,13 @@
 #include <memory>
 
 namespace Fooyin {
-class AlsaOutput : public AudioPushOutput
+class AlsaOutput : public AudioOutput
 {
 public:
     AlsaOutput();
     ~AlsaOutput() override;
 
-    bool init(const OutputContext& oc) override;
+    bool init(const AudioFormat& format) override;
     void uninit() override;
     void reset() override;
     void start() override;

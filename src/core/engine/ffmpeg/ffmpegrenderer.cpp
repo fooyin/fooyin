@@ -33,11 +33,11 @@ struct FFmpegRenderer::Private
     FFmpegRenderer* self;
 
     AudioOutput* audioOutput{nullptr};
-    OutputContext outputContext;
+    AudioFormat format;
+    double volume{0.0};
 
     bool bufferPrefilled{false};
 
-    std::mutex bufferMutex;
     ThreadQueue<AudioBuffer> bufferQueue{false};
     AudioBuffer tempBuffer;
     int totalSamplesWritten{0};
@@ -52,23 +52,13 @@ struct FFmpegRenderer::Private
         , writeTimer{new QTimer(self)}
     {
         QObject::connect(writeTimer, &QTimer::timeout, self, [this]() { writeNext(); });
-
-        outputContext.writeAudioToBuffer = [this](std::byte* data, int samples) {
-            return writeAudioToBuffer(data, samples);
-        };
     }
 
     void updateInterval() const
     {
-        const auto interval = static_cast<int>(
-            ((audioOutput->bufferSize() / static_cast<double>(outputContext.format.sampleRate())) * 0.25) * 1000);
+        const auto interval
+            = static_cast<int>(((audioOutput->bufferSize() / static_cast<double>(format.sampleRate())) * 0.25) * 1000);
         writeTimer->setInterval(interval);
-    }
-
-    void updateContext(const OutputContext& context)
-    {
-        outputContext.format = context.format;
-        outputContext.volume = context.volume;
     }
 
     void writeNext()
@@ -77,19 +67,13 @@ struct FFmpegRenderer::Private
             return;
         }
 
-        if(audioOutput->type() == OutputType::Push) {
-            const int samples = audioOutput->currentState().freeSamples;
-            if((samples == 0 && totalSamplesWritten > 0) || (samples > 0 && renderAudio(samples) == samples)) {
-                if(!bufferPrefilled) {
-                    bufferPrefilled = true;
-                    audioOutput->start();
-                }
+        const int samples = audioOutput->currentState().freeSamples;
+
+        if((samples == 0 && totalSamplesWritten > 0) || (samples > 0 && renderAudio(samples) == samples)) {
+            if(!bufferPrefilled) {
+                bufferPrefilled = true;
+                audioOutput->start();
             }
-        }
-        else if(!bufferPrefilled) {
-            bufferPrefilled = true;
-            audioOutput->start();
-            writeTimer->stop();
         }
     }
 
@@ -99,7 +83,7 @@ struct FFmpegRenderer::Private
 
         int samplesBuffered{0};
 
-        const int sstride = outputContext.format.bytesPerFrame();
+        const int sstride = format.bytesPerFrame();
 
         while(isRunning && !bufferQueue.empty() && samplesBuffered < samples) {
             const AudioBuffer& buffer = bufferQueue.front();
@@ -148,14 +132,12 @@ struct FFmpegRenderer::Private
 
     int renderAudio(int samples)
     {
-        const std::lock_guard<std::mutex> lock(bufferMutex);
-
         if(writeAudioSamples(samples) == 0) {
             return 0;
         }
 
         if(!audioOutput->canHandleVolume()) {
-            tempBuffer.adjustVolumeOfSamples(outputContext.volume);
+            tempBuffer.adjustVolumeOfSamples(volume);
         }
 
         if(!tempBuffer.isValid()) {
@@ -164,30 +146,6 @@ struct FFmpegRenderer::Private
 
         const int samplesWritten = audioOutput->write(tempBuffer);
         totalSamplesWritten += samplesWritten;
-
-        return samplesWritten;
-    }
-
-    int writeAudioToBuffer(std::byte* data, int samples)
-    {
-        if(!isRunning) {
-            return 0;
-        }
-
-        const std::lock_guard<std::mutex> lock(bufferMutex);
-
-        const int samplesWritten = writeAudioSamples(samples);
-        const int sstride        = tempBuffer.format().bytesPerFrame();
-
-        if(!audioOutput->canHandleVolume()) {
-            tempBuffer.adjustVolumeOfSamples(outputContext.volume);
-        }
-
-        if(!tempBuffer.isValid()) {
-            return 0;
-        }
-
-        std::memcpy(data, tempBuffer.constData().data(), samples * sstride);
 
         return samplesWritten;
     }
@@ -202,10 +160,9 @@ FFmpegRenderer::FFmpegRenderer(QObject* parent)
 
 FFmpegRenderer::~FFmpegRenderer() = default;
 
-bool FFmpegRenderer::init(const OutputContext& context)
+bool FFmpegRenderer::init(const AudioFormat& format)
 {
-    if(p->outputContext != context) {
-        p->updateContext(context);
+    if(std::exchange(p->format, format) != format) {
         p->updateInterval();
     }
 
@@ -217,7 +174,12 @@ bool FFmpegRenderer::init(const OutputContext& context)
         p->audioOutput->uninit();
     }
 
-    return p->audioOutput->init(p->outputContext);
+    if(p->audioOutput->init(p->format)) {
+        p->audioOutput->setVolume(p->volume);
+        return true;
+    }
+
+    return false;
 }
 
 void FFmpegRenderer::start()
@@ -267,7 +229,7 @@ void FFmpegRenderer::updateOutput(AudioOutput* output)
     p->bufferPrefilled = false;
 
     if(p->isRunning) {
-        p->audioOutput->init(p->outputContext);
+        p->audioOutput->init(p->format);
     }
 }
 
@@ -280,7 +242,7 @@ void FFmpegRenderer::updateDevice(const QString& device)
     if(p->audioOutput->initialised()) {
         p->audioOutput->uninit();
         p->audioOutput->setDevice(device);
-        p->audioOutput->init(p->outputContext);
+        p->audioOutput->init(p->format);
     }
     else {
         p->audioOutput->setDevice(device);
@@ -291,7 +253,7 @@ void FFmpegRenderer::updateDevice(const QString& device)
 
 void FFmpegRenderer::updateVolume(double volume)
 {
-    p->outputContext.volume = volume;
+    p->volume = volume;
     if(p->audioOutput) {
         p->audioOutput->setVolume(volume);
     }

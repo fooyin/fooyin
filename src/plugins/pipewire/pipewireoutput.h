@@ -21,16 +21,18 @@
 
 #include "core/engine/audiooutput.h"
 
+#include <pipewire/stream.h>
+
 #include <memory>
 
 namespace Fooyin::Pipewire {
-class PipeWireOutput : public AudioPullOutput
+class PipeWireOutput : public AudioOutput
 {
 public:
     PipeWireOutput();
     ~PipeWireOutput() override;
 
-    bool init(const OutputContext& oc) override;
+    bool init(const AudioFormat& format) override;
     void uninit() override;
     void reset() override;
     void start() override;
@@ -39,6 +41,11 @@ public:
     [[nodiscard]] QString device() const override;
     [[nodiscard]] bool canHandleVolume() const override;
     [[nodiscard]] OutputDevices getAllDevices() const override;
+
+    OutputState currentState() override;
+    int bufferSize() const override;
+    int write(const AudioBuffer& buffer) override;
+    void setPaused(bool pause) override;
 
     void setVolume(double volume) override;
     void setDevice(const QString& device) override;

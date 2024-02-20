@@ -8,7 +8,6 @@ set(SOURCES
     engine/audiobuffer.cpp
     engine/audioengine.cpp
     engine/audioformat.cpp
-    engine/audiooutput.cpp
     engine/audioconverter.cpp
     library/trackfilter.cpp
     library/tracksort.cpp
