@@ -57,8 +57,15 @@ fooyin_option(BUILD_TRANSLATIONS "Build translation files" ON)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
 fooyin_option(BUILD_WERROR "Build with -Werror" OFF)
+fooyin_option(BUILD_ASAN "Enable AddressSanitizer" OFF)
 fooyin_option(INSTALL_FHS "Install in Linux distros /usr hierarchy" ON)
 fooyin_option(INSTALL_HEADERS "Install public development headers" OFF)
+
+set(FOOYIN_LINK_OPTIONS)
+
+if(BUILD_ASAN)
+    list(APPEND FOOYIN_LINK_OPTIONS -fsanitize=address,undefined)
+endif()
 
 list(
     APPEND
@@ -82,6 +89,9 @@ list(
 )
 if(BUILD_WERROR)
     list(APPEND FOOYIN_COMPILE_OPTIONS -Werror)
+endif()
+if(BUILD_ASAN)
+    list(APPEND FOOYIN_COMPILE_OPTIONS -fsanitize=address,undefined)
 endif()
 
 # ---- Dependencies ----
@@ -209,6 +219,7 @@ if(BUILD_PCH)
     target_link_libraries(fooyin_pch PRIVATE Qt::Core Qt::Gui Qt::Widgets)
     target_compile_features(fooyin_pch PRIVATE ${FOOYIN_REQUIRED_CXX_FEATURES})
     target_compile_options(fooyin_pch PRIVATE ${FOOYIN_COMPILE_OPTIONS})
+    target_link_options(fooyin_pch INTERFACE ${FOOYIN_LINK_OPTIONS})
     if(CMAKE_VERSION GREATER_EQUAL 3.19)
         set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
     endif()
@@ -243,6 +254,7 @@ target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
 target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin_lib PRIVATE QT_USE_QSTRINGBUILDER)
 target_compile_options(fooyin_lib PRIVATE ${FOOYIN_COMPILE_OPTIONS})
+target_link_options(fooyin_lib INTERFACE ${FOOYIN_LINK_OPTIONS})
 
 # ---- Fooyin translations ----
 
@@ -298,6 +310,7 @@ add_executable(fooyin ${SOURCES} ${TRANSLATIONS})
 fooyin_set_rpath(fooyin ${BIN_INSTALL_DIR})
 target_compile_features(fooyin PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_options(fooyin PRIVATE ${FOOYIN_COMPILE_OPTIONS})
+target_link_options(fooyin INTERFACE ${FOOYIN_LINK_OPTIONS})
 target_link_libraries(
     fooyin
     PRIVATE KDAB::kdsingleapplication

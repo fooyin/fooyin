@@ -77,6 +77,7 @@ function(create_fooyin_library name)
     target_compile_features(${name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
     target_compile_definitions(${name} PRIVATE QT_USE_QSTRINGBUILDER)
     target_compile_options(${name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
+    target_link_options(${name} INTERFACE ${FOOYIN_LINK_OPTIONS})
 
     if(LIB_PRIVATE_SOURCES)
         set(private_name "${name}_private")
@@ -99,6 +100,7 @@ function(create_fooyin_library name)
         target_compile_features(${private_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
         target_compile_definitions(${private_name} PRIVATE QT_USE_QSTRINGBUILDER)
         target_compile_options(${private_name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
+        target_link_options(${private_name} INTERFACE ${FOOYIN_LINK_OPTIONS})
 
         target_link_libraries(${private_name} PRIVATE ${name})
 
@@ -144,4 +146,5 @@ function(create_fooyin_plugin_internal base_name)
 
     target_compile_features(${plugin_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
     target_compile_options(${plugin_name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
+    target_link_options(${plugin_name} INTERFACE ${FOOYIN_LINK_OPTIONS})
 endfunction()

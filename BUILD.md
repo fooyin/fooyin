@@ -74,6 +74,7 @@ The following options can be passed to CMake to customise the build:
 * `-DBUILD_CCACHE` - Build using CCache if found (ON by default)
 * `-DBUILD_PCH` - Build with precompiled header support (OFF by default)
 * `-DBUILD_WERROR` - Build with -Werror (OFF by default)
+* `-DBUILD_ASAN` - Enable AddressSanitizer (OFF by default)
 * `-DINSTALL_FHS` - Install in Linux distros /usr hierarchy (ON by default)
 * `-DINSTALL_HEADERS` - Install development files (OFF by default)
 
