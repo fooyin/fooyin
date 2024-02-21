@@ -36,7 +36,7 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* pare
     , m_model{new QuickSetupModel(layoutProvider, parent)}
     , m_accept{new QPushButton(tr("OK"), this)}
 {
-    setObjectName(u"Quick Setup");
+    setObjectName(QStringLiteral("Quick Setup"));
     setWindowTitle(tr("Quick Setup"));
 
     setupUi();

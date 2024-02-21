@@ -82,7 +82,7 @@ public:
         : QSplitter{type, parent}
         , m_settings{settings}
     {
-        setObjectName(u"Splitter");
+        setObjectName(QStringLiteral("Splitter"));
         setChildrenCollapsible(false);
     }
 
