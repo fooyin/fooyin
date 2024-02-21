@@ -94,6 +94,7 @@ struct FilterWidget::Private
 
     QString searchStr;
     bool searching{false};
+    bool updating{false};
 
     Private(FilterWidget* self_, SettingsManager* settings_)
         : self{self_}
@@ -130,7 +131,7 @@ struct FilterWidget::Private
 
     void selectionChanged()
     {
-        if(searching) {
+        if(searching || updating) {
             return;
         }
 
@@ -473,7 +474,45 @@ void FilterWidget::tracksAdded(const TrackList& tracks)
 
 void FilterWidget::tracksUpdated(const TrackList& tracks)
 {
+    if(tracks.empty()) {
+        return;
+    }
+
+    p->updating = true;
+
+    p->view->setUpdatesEnabled(false);
+
+    const QModelIndexList selectedRows = p->view->selectionModel()->selectedRows();
+
+    QStringList selected;
+    for(const QModelIndex& index : selectedRows) {
+        selected.emplace_back(index.data(Qt::DisplayRole).toString());
+    }
+
     p->model->updateTracks(tracks);
+
+    QObject::connect(
+        p->model, &FilterModel::modelUpdated, this,
+        [this, selected]() {
+            const QModelIndexList selectedIndexes = p->model->indexesForValues(selected);
+
+            QItemSelection indexesToSelect;
+            indexesToSelect.reserve(selectedIndexes.size());
+
+            const int columnCount = static_cast<int>(p->columns.size());
+
+            for(const QModelIndex& index : selectedIndexes) {
+                if(index.isValid()) {
+                    const QModelIndex last = index.siblingAtColumn(columnCount - 1);
+                    indexesToSelect.append({index, last.isValid() ? last : index});
+                }
+            }
+
+            p->view->selectionModel()->select(indexesToSelect, QItemSelectionModel::Select);
+            p->view->setUpdatesEnabled(true);
+            p->updating = false;
+        },
+        Qt::SingleShotConnection);
 }
 
 void FilterWidget::tracksRemoved(const TrackList& tracks)

@@ -114,6 +114,8 @@ struct FilterModel::Private
             self->endResetModel();
         }
         resetting = false;
+
+        QMetaObject::invokeMethod(self, &FilterModel::modelUpdated);
     }
 
     int uniqueValues(int column)
@@ -344,23 +346,19 @@ void FilterModel::changeColumnAlignment(int column, Qt::Alignment alignment)
     p->columnAlignments[column] = alignment;
 }
 
-// QModelIndexList FilterModel::match(const QModelIndex& start, int role, const QVariant& value, int hits,
-//                                    Qt::MatchFlags flags) const
-//{
-//     if(role != Qt::DisplayRole) {
-//         return QAbstractItemModel::match(start, role, value, hits, flags);
-//     }
+QModelIndexList FilterModel::indexesForValues(const QStringList& values, int column) const
+{
+    QModelIndexList indexes;
 
-//    QModelIndexList indexes{};
-//    for(int i = 0; i < rowCount(start); ++i) {
-//        const auto child = index(i, 0, start);
-//        const auto data  = child.data(role);
-//        if(data.toInt() == value.toInt()) {
-//            indexes.append(child);
-//        }
-//    }
-//    return indexes;
-//}
+    const auto rows = p->allNode.children();
+    for(const auto& child : rows) {
+        if(values.contains(child->column(column))) {
+            indexes.append(indexOfItem(child));
+        }
+    }
+
+    return indexes;
+}
 
 void FilterModel::addTracks(const TrackList& tracks)
 {

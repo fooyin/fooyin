@@ -22,6 +22,7 @@
 #include "filterfwd.h"
 #include "filteritem.h"
 
+#include <core/track.h>
 #include <utils/treemodel.h>
 
 namespace Fooyin::Filters {
@@ -29,6 +30,8 @@ struct FilterOptions;
 
 class FilterModel : public TreeModel<FilterItem>
 {
+    Q_OBJECT
+
 public:
     explicit FilterModel(QObject* parent = nullptr);
     ~FilterModel() override;
@@ -51,15 +54,17 @@ public:
 
     Qt::Alignment columnAlignment(int column) const;
     void changeColumnAlignment(int column, Qt::Alignment alignment);
-
-    //    [[nodiscard]] QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits,
-    //                                        Qt::MatchFlags flags) const override;
+    
+    [[nodiscard]] QModelIndexList indexesForValues(const QStringList& values, int column = 0) const;
 
     void addTracks(const TrackList& tracks);
     void updateTracks(const TrackList& tracks);
     void removeTracks(const TrackList& tracks);
 
     void reset(const FilterColumnList& columns, const TrackList& tracks);
+
+signals:
+    void modelUpdated();
 
 private:
     struct Private;
