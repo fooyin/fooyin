@@ -24,15 +24,16 @@
 #include <QStringList>
 #include <QUrl>
 
-class QPixmap;
-class QString;
-class QLabel;
-class QWidget;
-class QMenu;
-class QSize;
 class QColor;
-class QKeySequence;
 class QDir;
+class QIcon;
+class QKeySequence;
+class QLabel;
+class QMenu;
+class QPixmap;
+class QSize;
+class QString;
+class QWidget;
 
 namespace Fooyin::Utils {
 FYUTILS_EXPORT int randomNumber(int min, int max);

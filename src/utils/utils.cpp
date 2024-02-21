@@ -20,6 +20,7 @@
 #include <utils/utils.h>
 
 #include <QApplication>
+#include <QIcon>
 #include <QLabel>
 #include <QMenu>
 #include <QMessageBox>
