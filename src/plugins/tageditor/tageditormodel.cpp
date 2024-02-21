@@ -149,14 +149,14 @@ struct TagEditorModel::Private
         const QString metadata = findField(name);
 
         for(Track& track : tracks) {
-            if(metadata == QLatin1StringView{Constants::MetaData::Artist}
-               || metadata == QLatin1StringView{Constants::MetaData::Genre}) {
+            if(metadata == QLatin1String{Constants::MetaData::Artist}
+               || metadata == QLatin1String{Constants::MetaData::Genre}) {
                 scriptRegistry.setValue(metadata, value.toString().split(QStringLiteral("; ")), track);
             }
-            else if(metadata == QLatin1StringView{Constants::MetaData::Track}
-                    || metadata == QLatin1StringView{Constants::MetaData::TrackTotal}
-                    || metadata == QLatin1StringView{Constants::MetaData::Disc}
-                    || metadata == QLatin1StringView{Constants::MetaData::DiscTotal}) {
+            else if(metadata == QLatin1String{Constants::MetaData::Track}
+                    || metadata == QLatin1String{Constants::MetaData::TrackTotal}
+                    || metadata == QLatin1String{Constants::MetaData::Disc}
+                    || metadata == QLatin1String{Constants::MetaData::DiscTotal}) {
                 scriptRegistry.setValue(metadata, value.toInt(), track);
             }
             else {
