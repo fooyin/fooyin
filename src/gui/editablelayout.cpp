@@ -235,7 +235,7 @@ EditableLayout::EditableLayout(ActionManager* actionManager, WidgetProvider* wid
     : QWidget{parent}
     , p{std::make_unique<Private>(this, actionManager, widgetProvider, layoutProvider, settings)}
 {
-    setObjectName("EditableLayout");
+    setObjectName(u"EditableLayout");
 }
 
 EditableLayout::~EditableLayout() = default;

@@ -36,7 +36,7 @@ namespace Fooyin {
 PlaylistView::PlaylistView(QWidget* parent)
     : QTreeView{parent}
 {
-    setObjectName("PlaylistView");
+    setObjectName(u"PlaylistView");
     setupView();
 
     QObject::connect(&m_autoScrollTimer, &QTimer::timeout, this, &PlaylistView::doAutoScroll);

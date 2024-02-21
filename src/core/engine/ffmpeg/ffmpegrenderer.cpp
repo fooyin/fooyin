@@ -155,7 +155,7 @@ FFmpegRenderer::FFmpegRenderer(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
-    setObjectName("Renderer");
+    setObjectName(u"Renderer");
 }
 
 FFmpegRenderer::~FFmpegRenderer() = default;

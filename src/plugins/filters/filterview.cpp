@@ -27,7 +27,7 @@ namespace Fooyin::Filters {
 FilterView::FilterView(QWidget* parent)
     : QTreeView(parent)
 {
-    setObjectName("FilterView");
+    setObjectName(u"FilterView");
 
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
