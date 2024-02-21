@@ -26,8 +26,6 @@
 #include <QObject>
 
 namespace Fooyin {
-constexpr auto LibraryTreeGroups = "LibraryTree/LibraryTreeGroups";
-
 class LibraryTreeGroupRegistry : public ItemRegistry<LibraryTreeGrouping>
 {
     Q_OBJECT

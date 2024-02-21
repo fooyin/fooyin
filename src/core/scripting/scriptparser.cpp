@@ -31,7 +31,7 @@ namespace {
 QStringList evalStringList(const Fooyin::ScriptResult& evalExpr, const QStringList& result)
 {
     QStringList listResult;
-    const QStringList values = evalExpr.value.split(Fooyin::Constants::Separator);
+    const QStringList values = evalExpr.value.split(QStringLiteral("\037"));
     const bool isEmpty       = result.empty();
 
     for(const QString& value : values) {
@@ -104,16 +104,16 @@ struct ScriptParser::Private
 
     void errorAt(const ScriptScanner::Token& token, const QString& message)
     {
-        QString errorMsg = "[" + QString::number(token.position) + "] Error";
+        QString errorMsg = QStringLiteral("[%1] Error").arg(token.position);
 
         if(token.type == TokenType::TokEos) {
             errorMsg += QStringLiteral(" at end of string");
         }
         else {
-            errorMsg += ": '" + token.value.toString() + "'";
+            errorMsg += QStringLiteral(": '") + token.value.toString() + QStringLiteral("'");
         }
 
-        errorMsg += " (" + message + ")";
+        errorMsg += QString::fromLatin1(" (%1)").arg(message);
 
         ScriptError currentError;
         currentError.value    = token.value.toString();
@@ -162,9 +162,8 @@ struct ScriptParser::Private
         const QString var   = std::get<QString>(exp.value);
         ScriptResult result = registry->value(var, tracks);
 
-        if(result.value.contains(Constants::Separator)) {
-            // TODO: Support custom separators
-            result.value = result.value.replace(Constants::Separator, QStringLiteral(", "));
+        if(result.value.contains(u"\037")) {
+            result.value = result.value.replace(QStringLiteral("\037"), QStringLiteral(", "));
         }
         return result;
     }
@@ -195,12 +194,12 @@ struct ScriptParser::Private
             if(!subExpr.cond) {
                 allPassed = false;
             }
-            if(subExpr.value.contains(Constants::Separator)) {
+            if(subExpr.value.contains(u"\037")) {
                 QStringList newResult;
-                const auto values = subExpr.value.split(Constants::Separator);
+                const auto values = subExpr.value.split(QStringLiteral("\037"));
                 std::ranges::transform(values, std::back_inserter(newResult),
                                        [&](const auto& value) { return result.value + value; });
-                result.value = newResult.join(Constants::Separator);
+                result.value = newResult.join(u"\037");
             }
             else {
                 result.value = result.value + subExpr.value;
@@ -224,12 +223,12 @@ struct ScriptParser::Private
             if(subArg.type != Expr::Literal) {
                 if(!subExpr.cond || subExpr.value.isEmpty()) {
                     // No need to evaluate rest
-                    result.value = {};
-                    result.cond  = false;
+                    result.value.clear();
+                    result.cond = false;
                     return result;
                 }
             }
-            if(subExpr.value.contains(Constants::Separator)) {
+            if(subExpr.value.contains(u"\037")) {
                 const QStringList evalList = evalStringList(subExpr, exprResult);
                 if(!evalList.empty()) {
                     exprResult = evalList;
@@ -250,7 +249,7 @@ struct ScriptParser::Private
             result.value = exprResult.constFirst();
         }
         else if(exprResult.size() > 1) {
-            result.value = exprResult.join(Constants::Separator);
+            result.value = exprResult.join(u"\037");
         }
         return result;
     }
@@ -307,7 +306,7 @@ struct ScriptParser::Private
         }
 
         expr.value = val;
-        consume(TokenType::TokQuote, R"(Expected '"' after expression)");
+        consume(TokenType::TokQuote, QString::fromUtf8(R"(Expected '"' after expression)"));
         return expr;
     }
 
@@ -438,7 +437,7 @@ struct ScriptParser::Private
                 continue;
             }
 
-            if(evalExpr.value.contains(Constants::Separator)) {
+            if(evalExpr.value.contains(u"\037")) {
                 const QStringList evalList = evalStringList(evalExpr, currentResult);
                 if(!evalList.empty()) {
                     currentResult = evalList;
@@ -463,7 +462,7 @@ struct ScriptParser::Private
         }
 
         if(currentResult.size() > 1) {
-            return currentResult.join(Constants::Separator);
+            return currentResult.join(u"\037");
         }
 
         return {};

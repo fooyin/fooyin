@@ -27,8 +27,6 @@ namespace Fooyin {
 class SettingsManager;
 
 namespace Filters {
-constexpr auto FilterColumns = "Filters/FilterColumns";
-
 class FilterColumnRegistry : public ItemRegistry<FilterColumn>
 {
     Q_OBJECT

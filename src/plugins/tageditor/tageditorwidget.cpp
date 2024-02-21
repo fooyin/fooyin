@@ -34,9 +34,6 @@
 #include <QMessageBox>
 #include <QTableView>
 
-constexpr auto TagEditorState        = "TagEditor/State";
-constexpr auto TagEditorDontAskAgain = "TagEditor/DontAskAgain";
-
 namespace Fooyin::TagEditor {
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{actionManager, parent}
@@ -89,12 +86,12 @@ struct TagEditorWidget::Private
     void saveState() const
     {
         const QByteArray state = view->horizontalHeader()->saveState();
-        settings->fileSet(TagEditorState, state);
+        settings->fileSet(QStringLiteral("TagEditor/State"), state);
     }
 
     void restoreState() const
     {
-        const QByteArray state = settings->fileValue(TagEditorState).toByteArray();
+        const QByteArray state = settings->fileValue(QStringLiteral("TagEditor/State")).toByteArray();
 
         if(state.isEmpty()) {
             return;
@@ -154,14 +151,14 @@ void TagEditorWidget::apply()
         return;
     }
 
-    if(p->settings->fileValue(TagEditorDontAskAgain).toBool()) {
+    if(p->settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
         p->model->processQueue();
         return;
     }
 
     QMessageBox message;
     message.setIcon(QMessageBox::Warning);
-    message.setText("Are you sure?");
+    message.setText(QStringLiteral("Are you sure?"));
     message.setInformativeText(tr("Metadata in the associated files will be overwritten."));
 
     auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &message);
@@ -174,7 +171,7 @@ void TagEditorWidget::apply()
 
     if(buttonClicked == QMessageBox::Yes) {
         if(dontAskAgain->isChecked()) {
-            p->settings->fileSet(TagEditorDontAskAgain, true);
+            p->settings->fileSet(QStringLiteral("TagEditor/DontAskAgain"), true);
         }
         p->model->processQueue();
     }

@@ -22,17 +22,13 @@
 
 #include <gui/propertiesdialog.h>
 
-#include <QAbstractButton>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QPushButton>
-#include <QSettings>
 #include <QTabWidget>
 
 #include <ranges>
-
-constexpr auto PropertiesDialogState = "Interface/PropertiesDialogState";
 
 namespace Fooyin {
 PropertiesTab::PropertiesTab(QString title, WidgetBuilder widgetBuilder, int index)
@@ -101,12 +97,12 @@ public:
     {
         QByteArray state = saveGeometry();
         state            = qCompress(state, 9);
-        settings->fileSet(PropertiesDialogState, state);
+        settings->fileSet(QStringLiteral("Interface/PropertiesDialogState"), state);
     }
 
     void restoreState(SettingsManager* settings)
     {
-        QByteArray state = settings->fileValue(PropertiesDialogState).toByteArray();
+        QByteArray state = settings->fileValue(QStringLiteral("Interface/PropertiesDialogState")).toByteArray();
 
         if(!state.isEmpty()) {
             state = qUncompress(state);

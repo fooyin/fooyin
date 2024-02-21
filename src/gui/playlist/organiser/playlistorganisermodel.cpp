@@ -92,13 +92,13 @@ TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& indexes)
 
 QString groupKey(const QString& title)
 {
-    static const QString prefix = "Group.";
+    static const QString prefix = QStringLiteral("Group.");
     return prefix + title;
 }
 
 QString playlistKey(const QString& name)
 {
-    static const QString prefix = "Playlist.";
+    static const QString prefix = QStringLiteral("Playlist.");
     return prefix + name;
 }
 } // namespace
@@ -459,7 +459,7 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
     }
     if(type == PlaylistOrganiserItem::GroupItem) {
         if(role == Qt::DisplayRole) {
-            return QString{"%1 [%2]"}.arg(item->title()).arg(item->childCount());
+            return QString{QStringLiteral("%1 [%2]")}.arg(item->title()).arg(item->childCount());
         }
         return item->title();
     }
@@ -502,13 +502,13 @@ bool PlaylistOrganiserModel::setData(const QModelIndex& index, const QVariant& v
 
 QStringList PlaylistOrganiserModel::mimeTypes() const
 {
-    return {OrganiserItems};
+    return {QString::fromLatin1(OrganiserItems)};
 }
 
 bool PlaylistOrganiserModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                                              const QModelIndex& parent) const
 {
-    if(action == Qt::MoveAction && data->hasFormat(OrganiserItems)) {
+    if(action == Qt::MoveAction && data->hasFormat(QString::fromLatin1(OrganiserItems))) {
         return true;
     }
     return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);
@@ -527,7 +527,7 @@ Qt::DropActions PlaylistOrganiserModel::supportedDragActions() const
 QMimeData* PlaylistOrganiserModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    mimeData->setData(OrganiserItems, p->saveIndexes(indexes));
+    mimeData->setData(QString::fromLatin1(OrganiserItems), p->saveIndexes(indexes));
     return mimeData;
 }
 
@@ -538,7 +538,7 @@ bool PlaylistOrganiserModel::dropMimeData(const QMimeData* data, Qt::DropAction 
         return false;
     }
 
-    const QModelIndexList indexes = p->restoreIndexes(data->data(OrganiserItems));
+    const QModelIndexList indexes = p->restoreIndexes(data->data(QString::fromLatin1(OrganiserItems)));
 
     const auto indexGroups = determineTrackIndexGroups(indexes);
 

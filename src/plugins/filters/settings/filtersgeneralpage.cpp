@@ -26,6 +26,7 @@
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QCheckBox>
 #include <QColorDialog>
@@ -80,7 +81,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     , m_filterHeaders{new QCheckBox(tr("Show Headers"), this)}
     , m_filterScrollBars{new QCheckBox(tr("Show Scrollbars"), this)}
     , m_altRowColours{new QCheckBox(tr("Alternating Row Colours"), this)}
-    , m_fontButton{new QPushButton(QIcon::fromTheme(Fooyin::Constants::Icons::Font), "", this)}
+    , m_fontButton{new QPushButton(Utils::iconFromTheme(Fooyin::Constants::Icons::Font), QStringLiteral(""), this)}
     , m_colourButton{new QPushButton(this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_middleClick{new QComboBox(this)}
@@ -92,7 +93,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
-    auto* rowHeightLabel = new QLabel(tr("Row Height") + ":", this);
+    auto* rowHeightLabel = new QLabel(tr("Row Height") + QStringLiteral(":"), this);
 
     appearanceLayout->addWidget(m_filterHeaders, 0, 0, 1, 2);
     appearanceLayout->addWidget(m_filterScrollBars, 1, 0, 1, 2);
@@ -106,8 +107,8 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    auto* doubleClickLabel = new QLabel(tr("Double-click") + ":", this);
-    auto* middleClickLabel = new QLabel(tr("Middle-click") + ":", this);
+    auto* doubleClickLabel = new QLabel(tr("Double-click") + QStringLiteral(":"), this);
+    auto* middleClickLabel = new QLabel(tr("Middle-click") + QStringLiteral(":"), this);
 
     clickBehaviourLayout->addWidget(doubleClickLabel, 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
@@ -118,7 +119,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    auto* playlistNameLabel = new QLabel(tr("Name") + ":", this);
+    auto* playlistNameLabel = new QLabel(tr("Name") + QStringLiteral(":"), this);
 
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
@@ -205,7 +206,7 @@ void FiltersGeneralPageWidget::load()
     m_colour           = options.colour;
     m_rowHeight->setValue(options.rowHeight);
 
-    m_fontButton->setText(QString{"%1 (%2)"}.arg(m_font.family()).arg(m_font.pointSize()));
+    m_fontButton->setText(QString{QStringLiteral("%1 (%2)")}.arg(m_font.family()).arg(m_font.pointSize()));
 
     QPixmap px(20, 20);
     px.fill(m_colour);

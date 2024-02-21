@@ -90,7 +90,7 @@ QString findUniqueString(const QString& name, const T& elements, StringExtractor
 
     auto findCount = [&elements, extractor](const QString& str) -> int {
         const QString regexName    = QRegularExpression::escape(str);
-        const QString regexPattern = QString{R"(^%1\s*(\(\d+\))?\s*$)"}.arg(regexName);
+        const QString regexPattern = QString::fromUtf8(R"(^%1\s*(\(\d+\))?\s*$)").arg(regexName);
         const QRegularExpression pattern{regexPattern};
 
         return static_cast<int>(std::ranges::count_if(elements, [&pattern, extractor](const auto& element) {
@@ -100,7 +100,7 @@ QString findUniqueString(const QString& name, const T& elements, StringExtractor
 
     const int count = findCount(name);
 
-    return count > 0 ? name + " (" + QString::number(count) + ")" : name;
+    return count > 0 ? QString{QStringLiteral("%1 (%2)")}.arg(name).arg(count) : name;
 }
 
 template <typename T>

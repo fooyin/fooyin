@@ -44,7 +44,7 @@ LibraryWatcher::LibraryWatcher(QObject* parent)
 
     QObject::connect(m_timer, &QTimer::timeout, this, [this]() {
         emit libraryDirChanged(m_dir);
-        m_dir = {};
+        m_dir.clear();
     });
 }
 } // namespace Fooyin

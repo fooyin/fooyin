@@ -24,6 +24,7 @@
 #include <gui/guisettings.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QHBoxLayout>
 #include <QToolButton>
@@ -65,9 +66,9 @@ struct PlayerControl::Private
 
     void updateIcons() const
     {
-        stop->setIcon(QIcon::fromTheme(Constants::Icons::Stop));
-        prev->setIcon(QIcon::fromTheme(Constants::Icons::Prev));
-        next->setIcon(QIcon::fromTheme(Constants::Icons::Next));
+        stop->setIcon(Utils::iconFromTheme(Constants::Icons::Stop));
+        prev->setIcon(Utils::iconFromTheme(Constants::Icons::Prev));
+        next->setIcon(Utils::iconFromTheme(Constants::Icons::Next));
         stateChanged(playerManager->playState());
     }
 
@@ -75,15 +76,15 @@ struct PlayerControl::Private
     {
         switch(state) {
             case(PlayState::Stopped): {
-                playPause->setIcon(QIcon::fromTheme(Constants::Icons::Play));
+                playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
                 break;
             }
             case(PlayState::Playing): {
-                playPause->setIcon(QIcon::fromTheme(Constants::Icons::Pause));
+                playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Pause));
                 break;
             }
             case(PlayState::Paused): {
-                playPause->setIcon(QIcon::fromTheme(Constants::Icons::Play));
+                playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
                 break;
             }
         }

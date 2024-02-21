@@ -93,7 +93,8 @@ QString formatTimeMs(uint64_t time)
 
 QString formatFileSize(uint64_t bytes)
 {
-    static const QStringList units = {"bytes", "KB", "MB", "GB", "TB"};
+    static const QStringList units = {QStringLiteral("bytes"), QStringLiteral("KB"), QStringLiteral("MB"),
+                                      QStringLiteral("GB"), QStringLiteral("TB")};
     auto size                      = static_cast<double>(bytes);
     int unitIndex{0};
 
@@ -102,29 +103,28 @@ QString formatFileSize(uint64_t bytes)
         ++unitIndex;
     }
 
-    const QString sizeString  = QString::number(size, 'f', 1);
-    const QString& unitString = units[unitIndex];
-    QString formattedSize     = sizeString + " " + unitString;
-
-    if(unitIndex == 0) {
-        return formattedSize;
+    if(unitIndex >= units.size()) {
+        return {};
     }
 
-    const QString bytesString = QString::number(bytes);
-    formattedSize             = formattedSize + " (" + bytesString + " bytes)";
+    if(unitIndex == 0) {
+        return QString{QStringLiteral("%1 %2")}.arg(QString::number(size, 'f', 1), units.at(unitIndex));
+    }
 
-    return formattedSize;
+    return QString{QStringLiteral("%1 %2 (%3 bytes)")}
+        .arg(QString::number(size, 'f', 1), units.at(unitIndex))
+        .arg(bytes);
 }
 
 QString addLeadingZero(int number, int leadingCount)
 {
-    return QString{QStringLiteral("%1")}.arg(number, leadingCount, 10, QChar('0'));
+    return QString{QStringLiteral("%1")}.arg(number, leadingCount, 10, QChar::fromLatin1('0'));
 }
 
 QString appendShortcut(const QString& str, const QKeySequence& shortcut)
 {
     QString string = str;
-    string.remove('&');
+    string.remove(QChar::fromLatin1('&'));
     return QString::fromLatin1("<div style=\"white-space:pre\">%1 "
                                "<span style=\"color: gray; font-size: small\">%2</span></div>")
         .arg(string, shortcut.toString(QKeySequence::NativeText));
@@ -143,7 +143,7 @@ void setMinimumWidth(QLabel* label, const QString& text)
 
 QString capitalise(const QString& str)
 {
-    QStringList parts = str.split(' ', Qt::SkipEmptyParts);
+    QStringList parts = str.split(QChar::fromLatin1(' '), Qt::SkipEmptyParts);
 
     for(auto& part : parts) {
         part.replace(0, 1, part[0].toUpper());
@@ -198,5 +198,15 @@ bool isDarkMode()
     const bool isDark = textColour.value() > windowColour.value();
 
     return isDark;
+}
+
+QIcon iconFromTheme(const QString& icon)
+{
+    return QIcon::fromTheme(icon);
+}
+
+QIcon iconFromTheme(const char* icon)
+{
+    return iconFromTheme(QString::fromLatin1(icon));
 }
 } // namespace Fooyin::Utils

@@ -47,22 +47,22 @@ QString baseOperation(const QStringList& vec, const QChar op)
 }
 QString add(const QStringList& vec)
 {
-    return baseOperation(vec, '+');
+    return baseOperation(vec, QChar::fromLatin1('+'));
 }
 
 QString sub(const QStringList& vec)
 {
-    return baseOperation(vec, '-');
+    return baseOperation(vec, QChar::fromLatin1('-'));
 }
 
 QString mul(const QStringList& vec)
 {
-    return baseOperation(vec, '*');
+    return baseOperation(vec, QChar::fromLatin1('*'));
 }
 
 QString div(const QStringList& vec)
 {
-    return baseOperation(vec, '/');
+    return baseOperation(vec, QChar::fromLatin1('/'));
 }
 
 QString min(const QStringList& vec)

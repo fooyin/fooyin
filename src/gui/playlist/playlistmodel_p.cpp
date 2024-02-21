@@ -31,6 +31,7 @@
 #include <utils/crypto.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QFontMetrics>
 #include <QIODevice>
@@ -767,9 +768,9 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model_, MusicLibrary* 
     , currentIndex{-1}
 {
     auto updateIcons = [this]() {
-        playingIcon = QIcon::fromTheme(Constants::Icons::Play).pixmap(20);
-        pausedIcon  = QIcon::fromTheme(Constants::Icons::Pause).pixmap(20);
-        missingIcon = QIcon::fromTheme(Constants::Icons::Close).pixmap(15);
+        playingIcon = Utils::iconFromTheme(Constants::Icons::Play).pixmap(20);
+        pausedIcon  = Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20);
+        missingIcon = Utils::iconFromTheme(Constants::Icons::Close).pixmap(15);
     };
 
     updateIcons();
@@ -909,7 +910,7 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
             return QSize{0, currentPreset.track.rowHeight};
         }
         case(Qt::DecorationRole): {
-            if(columns.empty() || columns.at(column).field == PlayingIcon) {
+            if(columns.empty() || columns.at(column).field == QString::fromLatin1(PlayingIcon)) {
                 if(!track.track().enabled()) {
                     return missingIcon;
                 }
@@ -1022,12 +1023,12 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
         return true;
     }
 
-    const QByteArray playlistData = data->data(Constants::Mime::PlaylistItems);
+    const QByteArray playlistData = data->data(QString::fromLatin1(Constants::Mime::PlaylistItems));
     const bool samePlaylist       = dropOnSamePlaylist(playlistData, currentPlaylist);
 
     if(samePlaylist && action == Qt::MoveAction) {
         const QModelIndexList indexes
-            = restoreIndexes(model, data->data(Constants::Mime::PlaylistItems), currentPlaylist);
+            = restoreIndexes(model, data->data(QString::fromLatin1(Constants::Mime::PlaylistItems)), currentPlaylist);
         const TrackIndexRangeList indexRanges = determineTrackIndexGroups(indexes, parent, row);
 
         const bool validMove = !std::ranges::all_of(indexRanges, [dropIndex](const auto& range) {
@@ -1046,7 +1047,7 @@ bool PlaylistModelPrivate::prepareDrop(const QMimeData* data, Qt::DropAction act
         return true;
     }
 
-    const TrackList tracks = restoreTracks(library, data->data(Constants::Mime::TrackIds));
+    const TrackList tracks = restoreTracks(library, data->data(QString::fromLatin1(Constants::Mime::TrackIds)));
     if(tracks.empty()) {
         return false;
     }
@@ -1200,8 +1201,9 @@ void PlaylistModelPrivate::storeMimeData(const QModelIndexList& indexes, QMimeDa
     if(mimeData) {
         QModelIndexList sortedIndexes{indexes};
         std::ranges::sort(sortedIndexes, cmpTrackIndices);
-        mimeData->setData(Constants::Mime::PlaylistItems, saveIndexes(sortedIndexes, currentPlaylist));
-        mimeData->setData(Constants::Mime::TrackIds, saveTracks(sortedIndexes));
+        mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
+                          saveIndexes(sortedIndexes, currentPlaylist));
+        mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
     }
 }
 

@@ -25,15 +25,13 @@
 
 #include <ranges>
 
-constexpr auto SettingsDialogState = "Interface/SettingsDialogState";
-
 namespace Fooyin {
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
     , m_settingsFile{new QSettings(settingsPath, QSettings::IniFormat, this)}
     , m_settingsDialog{new SettingsDialogController(this)}
 {
-    m_settingsDialog->loadState(fileValue(SettingsDialogState).toByteArray());
+    m_settingsDialog->loadState(fileValue(QStringLiteral("Interface/SettingsDialogState")).toByteArray());
 }
 
 SettingsDialogController* SettingsManager::settingsDialog() const
@@ -231,7 +229,7 @@ void SettingsManager::saveSettings(bool onlyChanged)
 
     m_lock.unlock();
 
-    fileSet(SettingsDialogState, dialogState);
+    fileSet(QStringLiteral("Interface/SettingsDialogState"), dialogState);
 
     m_settingsFile->sync();
 }

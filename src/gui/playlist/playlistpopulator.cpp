@@ -66,8 +66,8 @@ struct PlaylistPopulator::Private
         headers.clear();
         prevBaseSubheaderKey.clear();
         prevSubheaderKey.clear();
-        prevBaseHeaderKey = {};
-        prevHeaderKey     = {};
+        prevBaseHeaderKey.clear();
+        prevHeaderKey.clear();
     }
 
     void updateScripts()
@@ -200,8 +200,8 @@ struct PlaylistPopulator::Private
             const QString subheaderKey = generateSubheaderKey(subheader);
 
             if(subheaderKey.isEmpty()) {
-                prevBaseSubheaderKey[i] = {};
-                prevSubheaderKey[i]     = {};
+                prevBaseSubheaderKey[i].clear();
+                prevSubheaderKey[i].clear();
                 continue;
             }
 

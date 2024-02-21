@@ -369,12 +369,12 @@ void PlaylistHandler::renamePlaylist(int id, const QString& name)
     }
     auto* playlist = playlistById(id);
     if(!playlist) {
-        qDebug() << "Playlist " + QString::number(id) + " could not be found";
+        qDebug() << QString{QStringLiteral("Playlist %1 could not be found")}.arg(id);
         return;
     }
     const QString newName = p->findUniqueName(name.isEmpty() ? QStringLiteral("Playlist") : name);
     if(!p->playlistConnector.renamePlaylist(playlist->id(), newName)) {
-        qDebug() << "Playlist " + QString::number(id) + " could not be renamed to " + name;
+        qDebug() << QString{QStringLiteral("Playlist %1 could not be renamed to %2")}.arg(id).arg(name);
         return;
     }
     playlist->setName(newName);

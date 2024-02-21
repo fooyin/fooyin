@@ -133,7 +133,7 @@ constexpr std::array supportedMp4Tags{
 TagLib::String findMp4Tag(const QString& tag)
 {
     for(const auto& [key, value] : supportedMp4Tags) {
-        if(tag == key) {
+        if(tag == QString::fromLatin1(key)) {
             return value;
         }
     }
@@ -179,17 +179,19 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
     }
 
     if(track.trackNumber() >= 0) {
-        const auto trackNums = TStringToQString(oldProperties[Fooyin::Tag::TrackNumber].toString()).split('/');
-        QString trackNumber  = QString::number(track.trackNumber());
+        const auto trackNums
+            = TStringToQString(oldProperties[Fooyin::Tag::TrackNumber].toString()).split(QStringLiteral("/"));
+        QString trackNumber = QString::number(track.trackNumber());
         if(trackNums.size() > 1) {
-            trackNumber += "/" + QString::number(track.trackTotal());
+            trackNumber += QStringLiteral("/") + QString::number(track.trackTotal());
         }
         oldProperties.replace(Fooyin::Tag::TrackNumber, convertString(trackNumber));
     }
 
     if(track.discNumber() >= 0) {
-        const auto discNums = TStringToQString(oldProperties[Fooyin::Tag::DiscNumber].toString()).split('/');
-        QString discNumber  = QString::number(track.discNumber());
+        const auto discNums
+            = TStringToQString(oldProperties[Fooyin::Tag::DiscNumber].toString()).split(QStringLiteral("/"));
+        QString discNumber = QString::number(track.discNumber());
         if(discNums.size() > 1) {
             discNumber += QStringLiteral("/") + QString::number(track.discTotal());
         }
@@ -246,7 +248,7 @@ QString getTrackNumber(const Fooyin::Track& track)
         trackNumber += QString::number(track.trackNumber());
     }
     if(track.trackTotal() > 0) {
-        trackNumber += "/" + QString::number(track.trackTotal());
+        trackNumber += QStringLiteral("/") + QString::number(track.trackTotal());
     }
     return trackNumber;
 }
@@ -258,7 +260,7 @@ QString getDiscNumber(const Fooyin::Track& track)
         discNumber += QString::number(track.discNumber());
     }
     if(track.discTotal() > 0) {
-        discNumber += "/" + QString::number(track.discTotal());
+        discNumber += QStringLiteral("/") + QString::number(track.discTotal());
     }
     return discNumber;
 }
@@ -356,9 +358,12 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track)
     mp4Tags->setItem(Fooyin::Mp4::PerformerAlt, TagLib::StringList{convertString(track.performer())});
 
     static const std::set<QString> baseMp4Tags
-        = {Fooyin::Tag::Title, Fooyin::Tag::Artist,   Fooyin::Tag::Album,       Fooyin::Tag::AlbumArtist,
-           Fooyin::Tag::Genre, Fooyin::Tag::Composer, Fooyin::Tag::Performer,   Fooyin::Tag::Comment,
-           Fooyin::Tag::Date,  Fooyin::Tag::Rating,   Fooyin::Tag::TrackNumber, Fooyin::Tag::DiscNumber};
+        = {QString::fromLatin1(Fooyin::Tag::Title),       QString::fromLatin1(Fooyin::Tag::Artist),
+           QString::fromLatin1(Fooyin::Tag::Album),       QString::fromLatin1(Fooyin::Tag::AlbumArtist),
+           QString::fromLatin1(Fooyin::Tag::Genre),       QString::fromLatin1(Fooyin::Tag::Composer),
+           QString::fromLatin1(Fooyin::Tag::Performer),   QString::fromLatin1(Fooyin::Tag::Comment),
+           QString::fromLatin1(Fooyin::Tag::Date),        QString::fromLatin1(Fooyin::Tag::Rating),
+           QString::fromLatin1(Fooyin::Tag::TrackNumber), QString::fromLatin1(Fooyin::Tag::DiscNumber)};
 
     const auto customTags = track.extraTags();
     for(const auto& [tag, values] : Fooyin::Utils::asRange(customTags)) {

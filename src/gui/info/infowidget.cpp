@@ -85,34 +85,36 @@ struct InfoWidget::Private
         setAltRowColors(settings->value<Settings::Gui::Internal::InfoAltColours>());
     }
 
-    void spanHeaders()
+    void spanHeaders() const
     {
         const int rowCount = model->rowCount({});
 
-        for(int i = 0; i < rowCount; ++i) {
-            auto type = model->index(i, 0, {}).data(InfoItem::Type).value<InfoItem::ItemType>();
+        for(int row{0}; row < rowCount; ++row) {
+            const auto index = model->index(row, 0, {});
+            const auto type  = index.data(InfoItem::Type).value<InfoItem::ItemType>();
             if(type == InfoItem::Header) {
-                view->setFirstColumnSpanned(i, {}, true);
+                view->setFirstColumnSpanned(row, {}, true);
+                view->expand(index);
             }
         }
     }
 
-    void setHeaderHidden(bool showHeader)
+    void setHeaderHidden(bool showHeader) const
     {
         view->setHeaderHidden(!showHeader);
     }
 
-    void setScrollbarHidden(bool showScrollBar)
+    void setScrollbarHidden(bool showScrollBar) const
     {
         view->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
     }
 
-    void setAltRowColors(bool altColours)
+    void setAltRowColors(bool altColours) const
     {
         view->setAlternatingRowColors(altColours);
     }
 
-    void resetModel()
+    void resetModel() const
     {
         model->resetModel(selectionController->selectedTracks(), playerManager->currentTrack());
     }
@@ -128,10 +130,7 @@ InfoWidget::InfoWidget(PlayerManager* playerManager, TrackSelectionController* s
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { p->resetModel(); });
 
-    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() {
-        p->spanHeaders();
-        p->view->expandAll();
-    });
+    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { p->spanHeaders(); });
 
     using namespace Settings::Gui::Internal;
 

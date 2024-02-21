@@ -24,7 +24,7 @@
 namespace Fooyin::Pipewire {
 AudioOutputBuilder PipeWirePlugin::registerOutput()
 {
-    return {.name = "PipeWire", .creator = []() {
+    return {.name = QStringLiteral("PipeWire"), .creator = []() {
                 return std::make_unique<PipeWireOutput>();
             }};
 }

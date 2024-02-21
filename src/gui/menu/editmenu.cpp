@@ -25,6 +25,7 @@
 #include <utils/actions/command.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QAction>
 
@@ -36,7 +37,7 @@ EditMenu::EditMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 {
     auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
-    auto* openSettings    = new QAction(QIcon::fromTheme(Constants::Icons::Settings), tr("&Settings"), this);
+    auto* openSettings    = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Settings"), this);
     auto* settingsCommand = actionManager->registerAction(openSettings, Constants::Actions::Settings);
     settingsCommand->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_P});
     editMenu->addSeparator(Actions::Groups::Three);

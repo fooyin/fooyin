@@ -125,7 +125,7 @@ void TabStackWidget::saveLayoutData(QJsonObject& layout)
     QString state;
     for(int i{0}; i < p->tabs->count(); ++i) {
         if(!state.isEmpty()) {
-            state.append(Constants::Separator);
+            state.append(u"\037");
         }
         state.append(p->tabs->tabText(i));
     }
@@ -137,7 +137,8 @@ void TabStackWidget::saveLayoutData(QJsonObject& layout)
 
 void TabStackWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(const auto position = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value(QStringLiteral("Position")).toString())) {
+    if(const auto position
+       = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value(QStringLiteral("Position")).toString())) {
         p->tabs->setTabPosition(position.value());
     }
 
@@ -146,7 +147,7 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
     WidgetContainer::loadWidgets(widgets);
 
     const auto state         = layout.value(QStringLiteral("State")).toString();
-    const QStringList titles = state.split(Constants::Separator);
+    const QStringList titles = state.split(QStringLiteral("\037"));
 
     for(int i{0}; const QString& title : titles) {
         if(i < p->tabs->count()) {

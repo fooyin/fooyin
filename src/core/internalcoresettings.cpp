@@ -27,8 +27,6 @@
 
 #include <QFileInfo>
 
-constexpr auto VersionSetting = "Version";
-
 namespace Fooyin {
 CoreSettings::CoreSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
@@ -36,15 +34,15 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     using namespace Settings::Core;
 
     m_settings->createTempSetting<FirstRun>(true);
-    m_settings->createSetting<Version>(VERSION, QStringLiteral("Version"));
+    m_settings->createSetting<Version>(QString::fromLatin1(VERSION), QStringLiteral("Version"));
     m_settings->createSetting<PlayMode>(0, QStringLiteral("Player/PlayMode"));
     m_settings->createSetting<AutoRefresh>(true, QStringLiteral("Library/AutoRefresh"));
     m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
     m_settings->createSetting<LibrarySortScript>(
-        "%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%",
+        QStringLiteral("%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"),
         QStringLiteral("Library/SortScript"));
     m_settings->createSetting<ActivePlaylistId>(0, QStringLiteral("Playlist/ActivePlaylistId"));
-    m_settings->createSetting<AudioOutput>("ALSA|default", QStringLiteral("Engine/AudioOutput"));
+    m_settings->createSetting<AudioOutput>(QStringLiteral("ALSA|default"), QStringLiteral("Engine/AudioOutput"));
     m_settings->createSetting<OutputVolume>(1.0, QStringLiteral("Engine/OutputVolume"));
     m_settings->createSetting<RewindPreviousTrack>(false, QStringLiteral("Playlist/RewindPreviousTrack"));
     m_settings->createSetting<GaplessPlayback>(true, QStringLiteral("Engine/GaplessPlayback"));
@@ -55,6 +53,6 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
 void CoreSettings::shutdown()
 {
-    m_settings->fileSet(VersionSetting, VERSION);
+    m_settings->fileSet(QStringLiteral("Version"), QString::fromLatin1(VERSION));
 }
 } // namespace Fooyin

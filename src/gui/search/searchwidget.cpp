@@ -25,14 +25,13 @@
 #include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QLineEdit>
 #include <QMenu>
 #include <QStyleOptionFrame>
-
-constexpr auto Placeholder = "Search library...";
 
 namespace Fooyin {
 struct SearchWidget::Private
@@ -43,19 +42,21 @@ struct SearchWidget::Private
     SettingsManager* settings;
 
     QLineEdit* searchBox;
+    QString placeholder;
 
     Private(SearchWidget* self_, SearchController* controller_, SettingsManager* settings_)
         : self{self_}
         , searchController{controller_}
         , settings{settings_}
         , searchBox{new QLineEdit(self)}
+        , placeholder{QStringLiteral("Search library...")}
     {
         auto* layout = new QHBoxLayout(self);
         layout->setContentsMargins(0, 0, 0, 0);
 
         layout->addWidget(searchBox);
 
-        searchBox->setPlaceholderText(Placeholder);
+        searchBox->setPlaceholderText(placeholder);
         searchBox->setClearButtonEnabled(true);
     }
 
@@ -97,12 +98,12 @@ SearchWidget::SearchWidget(SearchController* controller, SettingsManager* settin
     QObject::connect(p->searchBox, &QLineEdit::textChanged, this,
                      [this](const QString& search) { p->searchController->changeSearch(id(), search); });
 
-    auto* selectReceiver = new QAction(QIcon::fromTheme(Constants::Icons::Options), tr("Options"), this);
+    auto* selectReceiver = new QAction(Utils::iconFromTheme(Constants::Icons::Options), tr("Options"), this);
     QObject::connect(selectReceiver, &QAction::triggered, this, [this]() { p->showOptionsMenu(); });
     p->searchBox->addAction(selectReceiver, QLineEdit::TrailingPosition);
 
     settings->subscribe<Settings::Gui::IconTheme>(
-        this, [selectReceiver]() { selectReceiver->setIcon(QIcon::fromTheme(Constants::Icons::Options)); });
+        this, [selectReceiver]() { selectReceiver->setIcon(Utils::iconFromTheme(Constants::Icons::Options)); });
 }
 
 SearchWidget::~SearchWidget()
@@ -147,7 +148,7 @@ void SearchWidget::loadLayoutData(const QJsonObject& layout)
         return;
     }
 
-    const QStringList widgetIds = layout[QStringLiteral("Widgets")].toString().split("|");
+    const QStringList widgetIds = layout[QStringLiteral("Widgets")].toString().split(QStringLiteral("|"));
 
     if(widgetIds.isEmpty()) {
         return;

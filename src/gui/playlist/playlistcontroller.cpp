@@ -32,8 +32,6 @@
 #include <QProgressDialog>
 #include <QUndoStack>
 
-constexpr auto PlaylistStates = "PlaylistWidget/PlaylistStates";
-
 namespace Fooyin {
 struct PlaylistController::Private
 {
@@ -128,7 +126,8 @@ struct PlaylistController::Private
     template <typename Func>
     void scanTracks(const TrackList& tracks, Func&& func) const
     {
-        auto* scanDialog = new QProgressDialog("Reading tracks...", "Abort", 0, 100, nullptr);
+        auto* scanDialog
+            = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100, nullptr);
         scanDialog->setAttribute(Qt::WA_DeleteOnClose);
         scanDialog->setWindowModality(Qt::WindowModal);
 
@@ -170,12 +169,12 @@ struct PlaylistController::Private
 
         out = qCompress(out, 9);
 
-        settings->fileSet(PlaylistStates, out);
+        settings->fileSet(QStringLiteral("PlaylistWidget/PlaylistStates"), out);
     }
 
     void restoreStates()
     {
-        QByteArray in = settings->fileValue(PlaylistStates).toByteArray();
+        QByteArray in = settings->fileValue(QStringLiteral("PlaylistWidget/PlaylistStates")).toByteArray();
 
         if(in.isEmpty()) {
             return;
@@ -432,7 +431,7 @@ void PlaylistController::filesToNewPlaylist(const QString& playlistName, const Q
     p->scanTracks(tracks, handleScanResult);
 }
 
-void PlaylistController::filesToTracks(const QList<QUrl>& urls, std::function<void(const TrackList&)> func)
+void PlaylistController::filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func)
 {
     const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
     if(filepaths.empty()) {

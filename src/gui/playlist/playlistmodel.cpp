@@ -33,6 +33,7 @@
 #include <gui/guisettings.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QIcon>
 #include <QMimeData>
@@ -56,8 +57,8 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, SettingsManager* settings, Q
     });
 
     p->settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
-        p->playingIcon = QIcon::fromTheme(Constants::Icons::Play).pixmap(20);
-        p->pausedIcon  = QIcon::fromTheme(Constants::Icons::Pause).pixmap(20);
+        p->playingIcon = Utils::iconFromTheme(Constants::Icons::Play).pixmap(20);
+        p->pausedIcon  = Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20);
         emit dataChanged({}, {}, {Qt::DecorationRole});
     });
 
@@ -239,15 +240,15 @@ int PlaylistModel::columnCount(const QModelIndex& /*parent*/) const
 
 QStringList PlaylistModel::mimeTypes() const
 {
-    return {Constants::Mime::PlaylistItems, Constants::Mime::TrackIds};
+    return {QString::fromLatin1(Constants::Mime::PlaylistItems), QString::fromLatin1(Constants::Mime::TrackIds)};
 }
 
 bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                                     const QModelIndex& parent) const
 {
     if((action == Qt::MoveAction || action == Qt::CopyAction)
-       && (data->hasUrls() || data->hasFormat(Constants::Mime::PlaylistItems)
-           || data->hasFormat(Constants::Mime::TrackIds))) {
+       && (data->hasUrls() || data->hasFormat(QString::fromLatin1(Constants::Mime::PlaylistItems))
+           || data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds)))) {
         return true;
     }
     return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);
@@ -399,7 +400,7 @@ void PlaylistModel::removeTracks(const TrackGroups& groups)
 void PlaylistModel::updateHeader(Playlist* playlist)
 {
     if(playlist) {
-        p->headerText = playlist->name() + ": " + QString::number(playlist->trackCount()) + " Tracks";
+        p->headerText = QString{QStringLiteral("%1: %2 Tracks")}.arg(playlist->name()).arg(playlist->trackCount());
     }
 }
 

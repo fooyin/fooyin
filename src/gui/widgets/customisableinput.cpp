@@ -20,6 +20,7 @@
 #include <gui/widgets/customisableinput.h>
 
 #include <gui/guiconstants.h>
+#include <utils/utils.h>
 
 #include <QApplication>
 #include <QColorDialog>
@@ -45,7 +46,7 @@ struct CustomisableInput::Private
     explicit Private(CustomisableInput* self_)
         : self{self_}
         , input{new QLineEdit(self)}
-        , optionsButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), "", self)}
+        , optionsButton{new QPushButton(Utils::iconFromTheme(Constants::Icons::Font), QStringLiteral(""), self)}
         , fontButton{new QPushButton(self)}
         , colourButton{new QPushButton(self)}
     {
@@ -137,7 +138,7 @@ void CustomisableInput::setFont(const QFont& font)
 {
     p->font = font;
 
-    p->fontButton->setText(QString{"%1 (%2)"}.arg(font.family()).arg(font.pointSize()));
+    p->fontButton->setText(QString{QStringLiteral("%1 (%2)")}.arg(font.family()).arg(font.pointSize()));
 }
 
 void CustomisableInput::setColour(const QColor& colour)

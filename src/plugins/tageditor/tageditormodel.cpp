@@ -27,8 +27,7 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
-constexpr auto DefaultFieldText = "<input field name>";
-constexpr auto TrackLimit       = 40;
+constexpr auto TrackLimit = 40;
 
 namespace Fooyin::TagEditor {
 using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
@@ -49,13 +48,19 @@ struct TagEditorModel::Private
     TrackList tracks;
 
     std::vector<EditorPair> fields{
-        {"Artist Name", Constants::MetaData::Artist},  {"Track Title", Constants::MetaData::Title},
-        {"Album Title", Constants::MetaData::Album},   {"Date", Constants::MetaData::Date},
-        {"Genre", Constants::MetaData::Genre},         {"Composer", Constants::MetaData::Composer},
-        {"Performer", Constants::MetaData::Performer}, {"Album Artist", Constants::MetaData::AlbumArtist},
-        {"Track Number", Constants::MetaData::Track},  {"Total Tracks", Constants::MetaData::TrackTotal},
-        {"Disc Number", Constants::MetaData::Disc},    {"Total Discs", Constants::MetaData::DiscTotal},
-        {"Comment", Constants::MetaData::Comment}};
+        {QStringLiteral("Artist Name"), QString::fromLatin1(Constants::MetaData::Artist)},
+        {QStringLiteral("Track Title"), QString::fromLatin1(Constants::MetaData::Title)},
+        {QStringLiteral("Album Title"), QString::fromLatin1(Constants::MetaData::Album)},
+        {QStringLiteral("Date"), QString::fromLatin1(Constants::MetaData::Date)},
+        {QStringLiteral("Genre"), QString::fromLatin1(Constants::MetaData::Genre)},
+        {QStringLiteral("Composer"), QString::fromLatin1(Constants::MetaData::Composer)},
+        {QStringLiteral("Performer"), QString::fromLatin1(Constants::MetaData::Performer)},
+        {QStringLiteral("Album Artist"), QString::fromLatin1(Constants::MetaData::AlbumArtist)},
+        {QStringLiteral("Track Number"), QString::fromLatin1(Constants::MetaData::Track)},
+        {QStringLiteral("Total Tracks"), QString::fromLatin1(Constants::MetaData::TrackTotal)},
+        {QStringLiteral("Disc Number"), QString::fromLatin1(Constants::MetaData::Disc)},
+        {QStringLiteral("Total Discs"), QString::fromLatin1(Constants::MetaData::DiscTotal)},
+        {QStringLiteral("Comment"), QString::fromLatin1(Constants::MetaData::Comment)}};
 
     TagEditorItem root;
     TagFieldMap tags;
@@ -121,8 +126,8 @@ struct TagEditorModel::Private
             for(const auto& [field, var] : fields) {
                 const auto result = scriptRegistry.value(var, track);
                 if(result.cond) {
-                    if(result.value.contains(Constants::Separator)) {
-                        tags[field].addTrackValue(result.value.split(Constants::Separator));
+                    if(result.value.contains(u"\037")) {
+                        tags[field].addTrackValue(result.value.split(QStringLiteral("\037")));
                     }
                     else {
                         tags[field].addTrackValue(result.value);
@@ -144,11 +149,14 @@ struct TagEditorModel::Private
         const QString metadata = findField(name);
 
         for(Track& track : tracks) {
-            if(metadata == Constants::MetaData::Artist || metadata == Constants::MetaData::Genre) {
+            if(metadata == QLatin1StringView{Constants::MetaData::Artist}
+               || metadata == QLatin1StringView{Constants::MetaData::Genre}) {
                 scriptRegistry.setValue(metadata, value.toString().split(QStringLiteral("; ")), track);
             }
-            else if(metadata == Constants::MetaData::Track || metadata == Constants::MetaData::TrackTotal
-                    || metadata == Constants::MetaData::Disc || metadata == Constants::MetaData::DiscTotal) {
+            else if(metadata == QLatin1StringView{Constants::MetaData::Track}
+                    || metadata == QLatin1StringView{Constants::MetaData::TrackTotal}
+                    || metadata == QLatin1StringView{Constants::MetaData::Disc}
+                    || metadata == QLatin1StringView{Constants::MetaData::DiscTotal}) {
                 scriptRegistry.setValue(metadata, value.toInt(), track);
             }
             else {
@@ -308,9 +316,9 @@ QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, in
 
     switch(section) {
         case(0):
-            return "Name";
+            return QStringLiteral("Name");
         case(1):
-            return "Value";
+            return QStringLiteral("Value");
         default:
             return {};
     }
@@ -465,7 +473,7 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
 
 QString TagEditorModel::defaultFieldText()
 {
-    return DefaultFieldText;
+    return QStringLiteral("<input field name>");
 }
 
 bool TagEditorModel::tagsHaveChanged() const
@@ -475,11 +483,11 @@ bool TagEditorModel::tagsHaveChanged() const
 
 void TagEditorModel::addPendingRow()
 {
-    TagEditorItem newItem{DefaultFieldText, &p->root, false};
+    TagEditorItem newItem{defaultFieldText(), &p->root, false};
     newItem.setStatus(TagEditorItem::Added);
 
     const int row = p->root.childCount();
-    auto* item    = &p->customTags.emplace(DefaultFieldText + QString::number(row), newItem).first->second;
+    auto* item    = &p->customTags.emplace(defaultFieldText() + QString::number(row), newItem).first->second;
 
     beginInsertRows({}, row, row);
     p->root.appendChild(item);

@@ -78,7 +78,7 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     , m_waitForTracks{new QCheckBox(tr("Wait for tracks"), this)}
     , m_language{new QComboBox(this)}
 {
-    auto* startupBehaviourLabel = new QLabel(tr("Behaviour") + ":", this);
+    auto* startupBehaviourLabel = new QLabel(tr("Behaviour") + QStringLiteral(":"), this);
 
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
     m_waitForTracks->setChecked(m_settings->value<Settings::Gui::WaitForTracks>());
@@ -136,7 +136,7 @@ void GeneralPageWidget::reset()
 void GeneralPageWidget::loadLanguage()
 {
     m_languageMap.clear();
-    m_languageMap["British English (en_GB)"] = "en_GB";
+    m_languageMap[QStringLiteral("British English (en_GB)")] = QStringLiteral("en_GB");
 
     QDir translationDir{Core::translationsPath()};
     QStringList translations = translationDir.entryList(QStringList{} << QStringLiteral("*.qm"));
@@ -155,11 +155,11 @@ void GeneralPageWidget::loadLanguage()
             language = nativeName;
         }
 
-        const auto name     = QString{"%1 (%2)"}.arg(language, code);
+        const auto name     = QString{QStringLiteral("%1 (%2)")}.arg(language, code);
         m_languageMap[name] = code;
     }
 
-    m_language->addItem(SystemLanguage);
+    m_language->addItem(QString::fromLatin1(SystemLanguage));
 
     for(const QString& language : m_languageMap | std::views::keys) {
         m_language->addItem(language);

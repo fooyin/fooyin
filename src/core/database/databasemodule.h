@@ -38,8 +38,6 @@ public:
     [[nodiscard]] QString connectionName() const;
 
     [[nodiscard]] DatabaseQuery runQuery(const QString& query, const QString& errorText) const;
-    [[nodiscard]] DatabaseQuery runQuery(const QString& query, const std::pair<QString, QString>& bindings,
-                                         const QString& errorText) const;
     [[nodiscard]] DatabaseQuery runQuery(const QString& query, const BindingsMap& bindings,
                                          const QString& errorText) const;
 

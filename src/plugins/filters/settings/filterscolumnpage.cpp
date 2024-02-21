@@ -47,7 +47,6 @@ public:
 private:
     ActionManager* m_actionManager;
     FilterColumnRegistry m_columnsRegistry;
-    SettingsManager* m_settings;
 
     ExtendableTableView* m_columnList;
     FiltersColumnModel* m_model;
@@ -56,7 +55,6 @@ private:
 FiltersColumnPageWidget::FiltersColumnPageWidget(ActionManager* actionManager, SettingsManager* settings)
     : m_actionManager{actionManager}
     , m_columnsRegistry{settings}
-    , m_settings{settings}
     , m_columnList{new ExtendableTableView(m_actionManager, this)}
     , m_model{new FiltersColumnModel(&m_columnsRegistry, this)}
 {
@@ -100,7 +98,7 @@ void FiltersColumnPageWidget::apply()
 
 void FiltersColumnPageWidget::reset()
 {
-    m_settings->reset(FilterColumns);
+    m_columnsRegistry.reset();
 }
 
 FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, SettingsManager* settings)

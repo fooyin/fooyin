@@ -52,7 +52,7 @@ struct CoverWidget::Private
 
     void loadDefaultCover()
     {
-        cover.load(Fooyin::Constants::NoCover);
+        cover.load(QString::fromLatin1(Fooyin::Constants::NoCover));
     }
 
     void rescaleCover() const

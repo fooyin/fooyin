@@ -24,7 +24,7 @@
 namespace Fooyin::Sdl {
 AudioOutputBuilder SdlPlugin::registerOutput()
 {
-    return {.name = "SDL2", .creator = []() {
+    return {.name = QStringLiteral("SDL2"), .creator = []() {
                 return std::make_unique<SdlOutput>();
             }};
 }

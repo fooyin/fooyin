@@ -34,17 +34,18 @@ QString settingsPath()
 
 QString pluginsPath()
 {
-    return QDir::cleanPath(QCoreApplication::applicationDirPath() + '/' + RELATIVE_PLUGIN_PATH);
+    return QDir::cleanPath(QCoreApplication::applicationDirPath() + QStringLiteral("/")
+                           + QString::fromLatin1(RELATIVE_PLUGIN_PATH));
 }
 
 QString userPluginsPath()
 {
-    return QDir::cleanPath(Utils::sharePath("plugins"));
+    return QDir::cleanPath(Utils::sharePath(QStringLiteral("plugins")));
 }
 
 QString translationsPath()
 {
-    QDir translations{FOOYIN_TRANSLATION_PATH};
+    QDir translations{QString::fromLatin1(FOOYIN_TRANSLATION_PATH)};
     if(translations.exists()) {
         return translations.absolutePath();
     }

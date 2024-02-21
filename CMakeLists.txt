@@ -94,6 +94,18 @@ if(BUILD_ASAN)
     list(APPEND FOOYIN_COMPILE_OPTIONS -fsanitize=address,undefined)
 endif()
 
+list(
+    APPEND
+    FOOYIN_COMPILE_DEFINITIONS
+    QT_USE_QSTRINGBUILDER
+    QT_DISABLE_DEPRECATED_BEFORE=0x060200
+    QT_NO_CAST_FROM_ASCII
+    QT_NO_CAST_TO_ASCII
+    QT_NO_CAST_FROM_BYTEARRAY
+    QT_NO_NARROWING_CONVERSIONS_IN_CONNECT
+    QT_STRICT_ITERATORS
+)
+
 # ---- Dependencies ----
 
 find_package(
@@ -209,7 +221,6 @@ if(BUILD_PCH)
     target_precompile_headers(
         fooyin_pch PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/app/pch.h
     )
-    target_compile_definitions(fooyin_pch PRIVATE QT_USE_QSTRINGBUILDER)
     set_target_properties(
         fooyin_pch
         PROPERTIES POSITION_INDEPENDENT_CODE ON
@@ -218,6 +229,7 @@ if(BUILD_PCH)
     )
     target_link_libraries(fooyin_pch PRIVATE Qt::Core Qt::Gui Qt::Widgets)
     target_compile_features(fooyin_pch PRIVATE ${FOOYIN_REQUIRED_CXX_FEATURES})
+    target_compile_definitions(fooyin_pch PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
     target_compile_options(fooyin_pch PRIVATE ${FOOYIN_COMPILE_OPTIONS})
     target_link_options(fooyin_pch INTERFACE ${FOOYIN_LINK_OPTIONS})
     if(CMAKE_VERSION GREATER_EQUAL 3.19)
@@ -252,7 +264,7 @@ add_subdirectory(src)
 target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
 
 target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
-target_compile_definitions(fooyin_lib PRIVATE QT_USE_QSTRINGBUILDER)
+target_compile_definitions(fooyin_lib PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
 target_compile_options(fooyin_lib PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 target_link_options(fooyin_lib INTERFACE ${FOOYIN_LINK_OPTIONS})
 
@@ -309,6 +321,7 @@ qt_add_resources(SOURCES data/icons.qrc)
 add_executable(fooyin ${SOURCES} ${TRANSLATIONS})
 fooyin_set_rpath(fooyin ${BIN_INSTALL_DIR})
 target_compile_features(fooyin PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
+target_compile_definitions(fooyin PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
 target_compile_options(fooyin PRIVATE ${FOOYIN_COMPILE_OPTIONS})
 target_link_options(fooyin INTERFACE ${FOOYIN_LINK_OPTIONS})
 target_link_libraries(

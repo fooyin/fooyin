@@ -126,7 +126,7 @@ void LibraryModel::markForAddition(const LibraryInfo& info)
 
     if(!isQueued) {
         if(exists) {
-            qInfo() << "Library at " + info.path + " already exists!";
+            qInfo() << QString{QStringLiteral("Library at %1 already exists!")}.arg(info.path);
             return;
         }
         // New library
@@ -183,7 +183,7 @@ void LibraryModel::processQueue()
                     }
                 }
                 else {
-                    qWarning() << "Library " + info.name + " could not be added";
+                    qWarning() << QString{QStringLiteral("Library %1 could not be added")}.arg(info.name);
                 }
                 break;
             }
@@ -196,7 +196,7 @@ void LibraryModel::processQueue()
                     librariesToRemove.push_back(key);
                 }
                 else {
-                    qWarning() << "Library " + info.name + " could not be removed";
+                    qWarning() << QString{QStringLiteral("Library %1 could not be removed")}.arg(info.name);
                 }
                 break;
             }
@@ -207,7 +207,7 @@ void LibraryModel::processQueue()
                     emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
-                    qWarning() << "Library " + info.name + " could not be renamed";
+                    qWarning() << QString{QStringLiteral("Library %1 could not be renamed")}.arg(info.name);
                 }
                 break;
             }

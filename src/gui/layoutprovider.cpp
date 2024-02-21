@@ -165,7 +165,7 @@ void LayoutProvider::findLayouts()
         for(const auto& subDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
             stack.append(QDir{subDir.absoluteFilePath()});
         }
-        for(const auto& file : dir.entryInfoList({"*.fyl"}, QDir::Files)) {
+        for(const auto& file : dir.entryInfoList({QStringLiteral("*.fyl")}, QDir::Files)) {
             files.append(file.absoluteFilePath());
         }
     }

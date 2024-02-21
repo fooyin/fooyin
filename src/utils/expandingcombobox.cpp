@@ -34,7 +34,7 @@ void ExpandingComboBox::resizeToFitCurrent()
 
     int maxWidth{0};
 
-    const QStringList lines = currentText().split('\n');
+    const QStringList lines = currentText().split(QStringLiteral("\n"));
 
     for(const QString& line : lines) {
         maxWidth = std::max(maxWidth, fontMetrics.horizontalAdvance(line));

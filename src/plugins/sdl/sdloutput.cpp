@@ -86,8 +86,8 @@ bool SdlOutput::init(const AudioFormat& format)
             = SDL_OpenAudioDevice(nullptr, 0, &p->desiredSpec, &p->obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
     }
     else {
-        p->audioDeviceId = SDL_OpenAudioDevice(p->device.toLocal8Bit(), 0, &p->desiredSpec, &p->obtainedSpec,
-                                               SDL_AUDIO_ALLOW_ANY_CHANGE);
+        p->audioDeviceId = SDL_OpenAudioDevice(p->device.toLocal8Bit().constData(), 0, &p->desiredSpec,
+                                               &p->obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
     }
 
     if(p->audioDeviceId == 0) {
@@ -169,11 +169,11 @@ OutputDevices SdlOutput::getAllDevices() const
         SDL_Init(SDL_INIT_AUDIO);
     }
 
-    devices.emplace_back("default", "Default");
+    devices.emplace_back(QStringLiteral("default"), QStringLiteral("Default"));
 
     const int num = SDL_GetNumAudioDevices(0);
     for(int i = 0; i < num; ++i) {
-        const QString devName = SDL_GetAudioDeviceName(i, 0);
+        const QString devName = QString::fromLatin1(SDL_GetAudioDeviceName(i, 0));
         if(!devName.isNull()) {
             devices.emplace_back(devName, devName);
         }

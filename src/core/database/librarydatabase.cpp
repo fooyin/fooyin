@@ -54,7 +54,7 @@ int LibraryDatabase::insertLibrary(const QString& path, const QString& name)
         return -1;
     }
 
-    auto q = insert(QStringLiteral("Libraries"), {{"Name", name}, {"Path", path}},
+    auto q = insert(QStringLiteral("Libraries"), {{QStringLiteral("Name"), name}, {QStringLiteral("Path"), path}},
                     QString{QStringLiteral("Cannot insert library (name: %1, path: %2)")}.arg(name, path));
 
     return (q.hasError()) ? -1 : q.lastInsertId().toInt();
@@ -62,8 +62,8 @@ int LibraryDatabase::insertLibrary(const QString& path, const QString& name)
 
 bool LibraryDatabase::removeLibrary(int id)
 {
-    auto q
-        = remove(QStringLiteral("Libraries"), {{"LibraryID", QString::number(id)}}, "Cannot remove library " + QString::number(id));
+    auto q = remove(QStringLiteral("Libraries"), {{QStringLiteral("LibraryID"), QString::number(id)}},
+                    QStringLiteral("Cannot remove library ") + QString::number(id));
     return !q.hasError();
 }
 
@@ -73,8 +73,9 @@ bool LibraryDatabase::renameLibrary(int id, const QString& name)
         return false;
     }
 
-    auto q = update(QStringLiteral("Libraries"), {{"Name", name}}, {"LibraryID", QString::number(id)},
-                    "Cannot update library " + QString::number(id));
+    auto q = update(QStringLiteral("Libraries"), {{QStringLiteral("Name"), name}},
+                    {QStringLiteral("LibraryID"), QString::number(id)},
+                    QStringLiteral("Cannot update library ") + QString::number(id));
     return !q.hasError();
 }
 } // namespace Fooyin

@@ -87,7 +87,7 @@ bool PluginManager::installPlugin(const QString& filepath)
     QFile pluginFile{filepath};
     const QFileInfo fileInfo{filepath};
 
-    const QString newPlugin = Core::userPluginsPath() + '/' + fileInfo.fileName();
+    const QString newPlugin = Core::userPluginsPath() + QStringLiteral("/") + fileInfo.fileName();
     return pluginFile.copy(newPlugin);
 }
 

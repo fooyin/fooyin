@@ -40,7 +40,8 @@ FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     m_settings->createSetting<FilterMiddleClick>(0, QStringLiteral("Filters/MiddleClickBehaviour"));
     m_settings->createSetting<FilterPlaylistEnabled>(false, QStringLiteral("Filters/SelectionPlaylistEnabled"));
     m_settings->createSetting<FilterAutoSwitch>(true, QStringLiteral("Filters/AutoSwitchSelectionPlaylist"));
-    m_settings->createSetting<FilterAutoPlaylist>("Filter Results", QStringLiteral("Filters/SelectionPlaylistName"));
+    m_settings->createSetting<FilterAutoPlaylist>(QStringLiteral("Filter Results"),
+                                                  QStringLiteral("Filters/SelectionPlaylistName"));
 }
 } // namespace Fooyin::Filters
 

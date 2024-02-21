@@ -32,7 +32,7 @@ namespace {
 void checkError(int error, const QString& message)
 {
     if(error < 0) {
-        qWarning() << "[ " + QString{snd_strerror(error)} + "]: " + message;
+        qWarning() << QString{QStringLiteral("ALSA: [%1] %2")}.arg(QString::fromLatin1(snd_strerror(error)), message);
     }
 }
 
@@ -50,7 +50,7 @@ bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwPa
 
     for(int format = 0; format <= SND_PCM_FORMAT_LAST; ++format) {
         if(snd_pcm_format_mask_test(mask, snd_pcm_format_t(format))) {
-            supportedFormats.emplace_back(snd_pcm_format_name(snd_pcm_format_t(format)));
+            supportedFormats.emplace_back(QString::fromLatin1(snd_pcm_format_name(snd_pcm_format_t(format))));
         }
     }
 
@@ -176,7 +176,8 @@ struct AlsaOutput::Private
                         qWarning() << "ALSA resume not supported. Trying prepare...";
                         err = snd_pcm_prepare(pcmHandle.get());
                     }
-                    checkError(err, "ALSA could not be resumed: " + QString{snd_strerror(err)});
+                    checkError(err,
+                               QStringLiteral("ALSA could not be resumed: ") + QString::fromLatin1(snd_strerror(err)));
                     continue;
                 // Device lost
                 case SND_PCM_STATE_DISCONNECTED:
@@ -196,7 +197,7 @@ struct AlsaOutput::Private
         }
 
         if(state) {
-            const auto delay         = snd_pcm_status_get_delay(st);
+            const auto delay   = snd_pcm_status_get_delay(st);
             state->delay       = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(format.sampleRate());
             state->freeSamples = static_cast<int>(snd_pcm_status_get_avail(st));
             state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(bufferSize));
@@ -229,7 +230,7 @@ bool AlsaOutput::init(const AudioFormat& format)
     int err{-1};
     {
         snd_pcm_t* rawHandle;
-        err = snd_pcm_open(&rawHandle, p->device.toLocal8Bit(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+        err = snd_pcm_open(&rawHandle, p->device.toLocal8Bit().constData(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
         if(err < 0) {
             qDebug() << "Failed to open ALSA device: " << snd_strerror(err);
             return false;
@@ -458,10 +459,10 @@ OutputDevices AlsaOutput::getAllDevices() const
         if(devName && desc) {
             if(!io || strcmp(io, "Output") == 0) {
                 if(strcmp(devName, "default") == 0) {
-                    devices.insert(devices.begin(), {devName, desc});
+                    devices.insert(devices.begin(), {QString::fromLatin1(devName), QString::fromLatin1(desc)});
                 }
                 else {
-                    devices.emplace_back(devName, desc);
+                    devices.emplace_back(QString::fromLatin1(devName), QString::fromLatin1(desc));
                 }
             }
         }

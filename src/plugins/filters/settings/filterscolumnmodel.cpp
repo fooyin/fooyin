@@ -109,7 +109,7 @@ void FiltersColumnModel::processQueue()
                     emit dataChanged({}, {});
                 }
                 else {
-                    qWarning() << "Column " + column.name + " could not be added";
+                    qWarning() << QString{QStringLiteral("Column %1 could not be added")}.arg(column.name);
                 }
                 break;
             }
@@ -121,7 +121,7 @@ void FiltersColumnModel::processQueue()
                     columnsToRemove.push_back(index);
                 }
                 else {
-                    qWarning() << "Column " + column.name + " could not be removed";
+                    qWarning() << QString{QStringLiteral("Column %1 could not be removed")}.arg(column.name);
                 }
                 break;
             }
@@ -133,7 +133,7 @@ void FiltersColumnModel::processQueue()
                     emit dataChanged({}, {});
                 }
                 else {
-                    qWarning() << "Column " + column.name + " could not be changed";
+                    qWarning() << QString{QStringLiteral("Column %1 could not be changed")}.arg(column.name);
                 }
                 break;
             }
@@ -174,13 +174,13 @@ QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation
 
     switch(section) {
         case(0):
-            return "Index";
+            return QStringLiteral("Index");
         case(1):
-            return "Name";
+            return QStringLiteral("Name");
         case(2):
-            return "Field";
+            return QStringLiteral("Field");
         case(3):
-            return "Sort Field";
+            return QStringLiteral("Sort Field");
     }
     return {};
 }

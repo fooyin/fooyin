@@ -36,7 +36,6 @@
 
 #include <set>
 
-constexpr auto NoCoverKey    = "|NoCover|";
 constexpr QSize MaxCoverSize = {800, 800};
 
 namespace {
@@ -47,7 +46,7 @@ QString generateCoverKey(const QString& hash, const QSize& size)
 
 QString coverThumbnailPath(const QString& key)
 {
-    return Fooyin::Gui::coverPath() + key + ".jpg";
+    return Fooyin::Gui::coverPath() + key + QStringLiteral(".jpg");
 }
 
 QCoro::Task<void> saveThumbnail(QPixmap cover, QString key)
@@ -61,7 +60,7 @@ QCoro::Task<void> saveThumbnail(QPixmap cover, QString key)
 
 QPixmap loadNoCover(const QSize& size)
 {
-    const QString key = generateCoverKey(NoCoverKey, size);
+    const QString key = generateCoverKey(QStringLiteral("|NoCover|"), size);
 
     QPixmap cover;
 
@@ -69,7 +68,7 @@ QPixmap loadNoCover(const QSize& size)
         return cover;
     }
 
-    if(cover.load(Fooyin::Constants::NoCover)) {
+    if(cover.load(QString::fromLatin1(Fooyin::Constants::NoCover))) {
         cover = Fooyin::Utils::scalePixmap(cover, size);
         QPixmapCache::insert(key, cover);
         return cover;

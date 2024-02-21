@@ -25,8 +25,6 @@
 namespace Fooyin {
 class SettingsManager;
 
-constexpr auto LibrarySorting = "Library/LibrarySorting";
-
 class SortingRegistry : public ItemRegistry<SortScript>
 {
     Q_OBJECT

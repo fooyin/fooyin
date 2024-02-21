@@ -28,7 +28,7 @@ class TreeModel : public QAbstractItemModel
 public:
     explicit TreeModel(QObject* parent = nullptr)
         : QAbstractItemModel{parent}
-        , m_root{}
+        , m_root{std::make_unique<Item>()}
     { }
 
     ~TreeModel() override = default;
@@ -56,7 +56,7 @@ public:
         auto* childItem  = static_cast<Item*>(index.internalPointer());
         Item* parentItem = childItem->parent();
 
-        if(parentItem == &m_root) {
+        if(parentItem == m_root.get()) {
             return {};
         }
 
@@ -97,15 +97,15 @@ public:
 protected:
     [[nodiscard]] Item* rootItem() const
     {
-        return &m_root;
+        return m_root.get();
     }
 
     virtual void resetRoot()
     {
-        m_root = Item{};
+        m_root = std::make_unique<Item>();
     }
 
 private:
-    mutable Item m_root;
+    std::unique_ptr<Item> m_root;
 };
 } // namespace Fooyin

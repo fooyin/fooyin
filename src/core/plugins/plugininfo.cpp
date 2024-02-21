@@ -28,14 +28,14 @@ namespace Fooyin {
 PluginInfo::PluginInfo(QString name, const QString& filename, const QJsonObject& allMetadata)
     : m_name{std::move(name)}
     , m_filename{filename}
-    , m_metadata{allMetadata.value("MetaData").toObject()}
-    , m_version{m_metadata.value("Version").toString()}
-    , m_vendor{m_metadata.value("Vendor").toString()}
-    , m_copyright{m_metadata.value("Copyright").toString()}
-    , m_license{m_metadata.value("License").toString()}
-    , m_category{m_metadata.value("Category").toString()}
-    , m_description{m_metadata.value("Description").toString()}
-    , m_url{m_metadata.value("Url").toString()}
+    , m_metadata{allMetadata.value(QStringLiteral("MetaData")).toObject()}
+    , m_version{m_metadata.value(QStringLiteral("Version")).toString()}
+    , m_vendor{m_metadata.value(QStringLiteral("Vendor")).toString()}
+    , m_copyright{m_metadata.value(QStringLiteral("Copyright")).toString()}
+    , m_license{m_metadata.value(QStringLiteral("License")).toString()}
+    , m_category{m_metadata.value(QStringLiteral("Category")).toString()}
+    , m_description{m_metadata.value(QStringLiteral("Description")).toString()}
+    , m_url{m_metadata.value(QStringLiteral("Url")).toString()}
     , m_isRequired{false}
     , m_isLoaded{false}
     , m_isDisabled{false}
@@ -53,7 +53,7 @@ void PluginInfo::load()
     }
 
     if(!m_loader.load()) {
-        m_error = "Plugin " + m_name + " couldn't be loaded: " + m_error;
+        m_error = QString{QStringLiteral("Plugin (%1) couldn't be loaded: ")}.arg(m_name, m_error);
         return;
     }
 
@@ -61,7 +61,7 @@ void PluginInfo::load()
     m_plugin = qobject_cast<Plugin*>(m_root);
 
     if(!m_plugin) {
-        m_error = "Plugin " + m_name + " does not subclass 'Fooyin::Plugin'";
+        m_error = QString{QStringLiteral("Plugin (%1) does not subclass 'Fooyin::Plugin'")}.arg(m_name);
         return;
     }
 
@@ -155,7 +155,7 @@ QString PluginInfo::vendor() const
 
 QString PluginInfo::identifier() const
 {
-    return (m_vendor + "." + m_name).toLower();
+    return (m_vendor + QStringLiteral(".") + m_name).toLower();
 }
 
 QString PluginInfo::category() const

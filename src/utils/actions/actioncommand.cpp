@@ -192,7 +192,7 @@ QString ActionCommand::description() const
     }
     if(const QAction* act = action()) {
         QString text = act->text();
-        text.remove('&');
+        text.remove(QStringLiteral("&"));
 
         if(!text.isEmpty()) {
             return text;

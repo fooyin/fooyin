@@ -75,7 +75,7 @@ function(create_fooyin_library name)
     fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
 
     target_compile_features(${name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
-    target_compile_definitions(${name} PRIVATE QT_USE_QSTRINGBUILDER)
+    target_compile_definitions(${name} PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
     target_compile_options(${name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
     target_link_options(${name} INTERFACE ${FOOYIN_LINK_OPTIONS})
 
@@ -98,7 +98,7 @@ function(create_fooyin_library name)
                 POSITION_INDEPENDENT_CODE ON
         )
         target_compile_features(${private_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
-        target_compile_definitions(${private_name} PRIVATE QT_USE_QSTRINGBUILDER)
+        target_compile_definitions(${private_name} PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
         target_compile_options(${private_name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
         target_link_options(${private_name} INTERFACE ${FOOYIN_LINK_OPTIONS})
 
@@ -145,6 +145,7 @@ function(create_fooyin_plugin_internal base_name)
     )
 
     target_compile_features(${plugin_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
+    target_compile_definitions(${plugin_name} PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
     target_compile_options(${plugin_name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
     target_link_options(${plugin_name} INTERFACE ${FOOYIN_LINK_OPTIONS})
 endfunction()

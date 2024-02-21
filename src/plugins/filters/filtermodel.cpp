@@ -316,7 +316,7 @@ int FilterModel::columnCount(const QModelIndex& /*parent*/) const
 
 QStringList FilterModel::mimeTypes() const
 {
-    return {Constants::Mime::TrackIds};
+    return {QString::fromLatin1(Constants::Mime::TrackIds)};
 }
 
 Qt::DropActions FilterModel::supportedDragActions() const
@@ -327,7 +327,7 @@ Qt::DropActions FilterModel::supportedDragActions() const
 QMimeData* FilterModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    mimeData->setData(Constants::Mime::TrackIds, saveTracks(indexes));
+    mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(indexes));
     return mimeData;
 }
 

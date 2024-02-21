@@ -25,6 +25,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QAction>
 
@@ -38,11 +39,12 @@ LibraryMenu::LibraryMenu(ActionManager* actionManager, MusicLibrary* library, Se
 {
     auto* libraryMenu = m_actionManager->actionContainer(Constants::Menus::Library);
 
-    auto* rescanLibrary = new QAction(QIcon::fromTheme(Constants::Icons::RescanLibrary), tr("&Rescan Library"), this);
+    auto* rescanLibrary
+        = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Rescan Library"), this);
     libraryMenu->addAction(m_actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
     QObject::connect(rescanLibrary, &QAction::triggered, m_library, &MusicLibrary::rescanAll);
 
-    auto* openSettings = new QAction(QIcon::fromTheme(Constants::Icons::Settings), tr("&Settings"), this);
+    auto* openSettings = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Settings"), this);
     libraryMenu->addAction(actionManager->registerAction(openSettings, "Library.Settings"));
     QObject::connect(openSettings, &QAction::triggered, this,
                      [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::LibraryGeneral); });

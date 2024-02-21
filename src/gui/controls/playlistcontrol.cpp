@@ -53,10 +53,10 @@ struct PlaylistControl::Private
         , settings{settings_}
         , repeat{new ToolButton(self)}
         , shuffle{new ToolButton(self)}
-        , repeatActiveIcon{Utils::changePixmapColour(QIcon::fromTheme(Constants::Icons::Repeat).pixmap({128, 128}),
+        , repeatActiveIcon{Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Repeat).pixmap({128, 128}),
                                                      self->palette().highlight().color())}
-        , shuffleActiveIcon{Utils::changePixmapColour(QIcon::fromTheme(Constants::Icons::Shuffle).pixmap({128, 128}),
-                                                      self->palette().highlight().color())}
+        , shuffleActiveIcon{Utils::changePixmapColour(
+              Utils::iconFromTheme(Constants::Icons::Shuffle).pixmap({128, 128}), self->palette().highlight().color())}
     {
         repeat->setPopupMode(QToolButton::InstantPopup);
 
@@ -151,14 +151,14 @@ struct PlaylistControl::Private
             repeat->setIcon(repeatActiveIcon);
         }
         else {
-            repeat->setIcon(QIcon::fromTheme(Constants::Icons::Repeat));
+            repeat->setIcon(Utils::iconFromTheme(Constants::Icons::Repeat));
         }
 
         if(mode & Playlist::Shuffle) {
             shuffle->setIcon(shuffleActiveIcon);
         }
         else {
-            shuffle->setIcon(QIcon::fromTheme(Constants::Icons::Shuffle));
+            shuffle->setIcon(Utils::iconFromTheme(Constants::Icons::Shuffle));
         }
     }
 };

@@ -250,7 +250,7 @@ protected:
 private:
     [[nodiscard]] QString findUniqueName(const QString& name) const
     {
-        const QString uniqueName{name.isEmpty() ? "New item" : name};
+        const QString uniqueName{name.isEmpty() ? QStringLiteral("New item") : name};
         return Utils::findUniqueString(uniqueName, m_items, [](const auto& item) { return item.name; });
     }
 

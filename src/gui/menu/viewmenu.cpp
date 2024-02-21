@@ -27,6 +27,7 @@
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QAction>
 #include <QIcon>
@@ -41,8 +42,8 @@ ViewMenu::ViewMenu(ActionManager* actionManager, TrackSelectionController* track
 {
     auto* viewMenu = m_actionManager->actionContainer(Constants::Menus::View);
 
-    const QIcon layoutEditingIcon = QIcon::fromTheme(Constants::Icons::LayoutEditing);
-    m_layoutEditing               = new QAction(layoutEditingIcon, tr("Layout &Editing Mode"), this);
+    m_layoutEditing
+        = new QAction(Utils::iconFromTheme(Constants::Icons::LayoutEditing), tr("Layout &Editing Mode"), this);
     viewMenu->addAction(m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing));
     QObject::connect(m_layoutEditing, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<Settings::Gui::LayoutEditing>(checked); });
@@ -50,8 +51,7 @@ ViewMenu::ViewMenu(ActionManager* actionManager, TrackSelectionController* track
     m_layoutEditing->setCheckable(true);
     m_layoutEditing->setChecked(m_settings->value<Settings::Gui::LayoutEditing>());
 
-    const QIcon quickSetupIcon = QIcon::fromTheme(Constants::Icons::QuickSetup);
-    m_openQuickSetup           = new QAction(quickSetupIcon, tr("&Quick Setup"), this);
+    m_openQuickSetup = new QAction(Utils::iconFromTheme(Constants::Icons::QuickSetup), tr("&Quick Setup"), this);
     viewMenu->addAction(m_actionManager->registerAction(m_openQuickSetup, Constants::Actions::QuickSetup));
     QObject::connect(m_openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
 

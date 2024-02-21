@@ -23,6 +23,7 @@
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/utils.h>
 
 #include <QAction>
 #include <QActionGroup>
@@ -54,8 +55,8 @@ struct PlaybackMenu::Private
         : self{self_}
         , actionManager{actionManager_}
         , playerManager{playerManager_}
-        , playIcon{QIcon::fromTheme(Constants::Icons::Play)}
-        , pauseIcon{QIcon::fromTheme(Constants::Icons::Pause)}
+        , playIcon{Utils::iconFromTheme(Constants::Icons::Play)}
+        , pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)}
     { }
 
     void updatePlayPause(PlayState state) const
@@ -120,16 +121,12 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerManager* playerMa
 {
     auto* playbackMenu = p->actionManager->actionContainer(Constants::Menus::Playback);
 
-    const auto stopIcon = QIcon::fromTheme(Constants::Icons::Stop);
-    const auto prevIcon = QIcon::fromTheme(Constants::Icons::Prev);
-    const auto nextIcon = QIcon::fromTheme(Constants::Icons::Next);
-
     QObject::connect(p->playerManager, &PlayerManager::playStateChanged, this,
                      [this](PlayState state) { p->updatePlayPause(state); });
     QObject::connect(p->playerManager, &PlayerManager::playModeChanged, this,
                      [this](Playlist::PlayModes mode) { p->updatePlayMode(mode); });
 
-    p->stop = new QAction(stopIcon, tr("&Stop"), this);
+    p->stop = new QAction(Utils::iconFromTheme(Constants::Icons::Stop), tr("&Stop"), this);
     playbackMenu->addAction(actionManager->registerAction(p->stop, Constants::Actions::Stop));
     QObject::connect(p->stop, &QAction::triggered, playerManager, &PlayerManager::stop);
 
@@ -137,11 +134,11 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerManager* playerMa
     playbackMenu->addAction(actionManager->registerAction(p->playPause, Constants::Actions::PlayPause));
     QObject::connect(p->playPause, &QAction::triggered, playerManager, &PlayerManager::playPause);
 
-    p->next = new QAction(nextIcon, tr("&Next"), this);
+    p->next = new QAction(Utils::iconFromTheme(Constants::Icons::Next), tr("&Next"), this);
     playbackMenu->addAction(actionManager->registerAction(p->next, Constants::Actions::Next));
     QObject::connect(p->next, &QAction::triggered, playerManager, &PlayerManager::next);
 
-    p->previous = new QAction(prevIcon, tr("Pre&vious"), this);
+    p->previous = new QAction(Utils::iconFromTheme(Constants::Icons::Prev), tr("Pre&vious"), this);
     playbackMenu->addAction(actionManager->registerAction(p->previous, Constants::Actions::Previous));
     QObject::connect(p->previous, &QAction::triggered, playerManager, &PlayerManager::previous);
 

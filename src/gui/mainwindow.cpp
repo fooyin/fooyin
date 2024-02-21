@@ -27,6 +27,7 @@
 #include <gui/guisettings.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QContextMenuEvent>
 #include <QMenuBar>
@@ -43,15 +44,15 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
 
-    setWindowTitle(Constants::AppName);
+    setWindowTitle(QStringLiteral("fooyin"));
 
     resize(1280, 720);
-    setWindowIcon(QIcon::fromTheme(Constants::Icons::Fooyin));
+    setWindowIcon(Utils::iconFromTheme(Constants::Icons::Fooyin));
 }
 
 MainWindow::~MainWindow()
 {
-    m_settings->fileSet(MainWindowGeometry, saveGeometry());
+    m_settings->fileSet(QString::fromLatin1(MainWindowGeometry), saveGeometry());
 }
 
 void MainWindow::open()
@@ -62,7 +63,7 @@ void MainWindow::open()
             break;
         }
         case(RememberLast): {
-            restoreGeometry(m_settings->fileValue(MainWindowGeometry).toByteArray());
+            restoreGeometry(m_settings->fileValue(QString::fromLatin1(MainWindowGeometry)).toByteArray());
             show();
             break;
         }

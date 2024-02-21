@@ -198,7 +198,7 @@ QStringList Track::artists() const
 
 QString Track::artist() const
 {
-    return p->artists.join(Constants::Separator);
+    return p->artists.join(u"\037");
 }
 
 QString Track::album() const
@@ -238,7 +238,7 @@ QStringList Track::genres() const
 
 QString Track::genre() const
 {
-    return p->genres.join(Constants::Separator);
+    return p->genres.join(u"\037");
 }
 
 QString Track::composer() const
@@ -283,7 +283,7 @@ bool Track::hasCover() const
 
 bool Track::hasEmbeddedCover() const
 {
-    return p->coverPath == Constants::EmbeddedCover;
+    return p->coverPath == u"|Embedded|";
 }
 
 QStringList Track::extraTag(const QString& tag) const
@@ -489,7 +489,7 @@ void Track::setDate(const QString& date)
 {
     p->date = date;
 
-    const QStringList dateParts = date.split('-');
+    const QStringList dateParts = date.split(QChar::fromLatin1('-'));
     if(dateParts.empty()) {
         if(date.length() == 4) {
             p->year = p->date.toInt();
@@ -609,8 +609,12 @@ void Track::setSort(const QString& sort)
 
 QStringList Track::supportedFileExtensions()
 {
-    static const QStringList supportedExtensions = {"*.mp3", "*.ogg", "*.opus", "*.oga", "*.m4a",  "*.wav", "*.flac",
-                                                    "*.wma", "*.mpc", "*.aiff", "*.ape", "*.webm", "*.mp4"};
+    static const QStringList supportedExtensions
+        = {QString::fromLatin1("*.mp3"),  QString::fromLatin1("*.ogg"), QString::fromLatin1("*.opus"),
+           QString::fromLatin1("*.oga"),  QString::fromLatin1("*.m4a"), QString::fromLatin1("*.wav"),
+           QString::fromLatin1("*.flac"), QString::fromLatin1("*.wma"), QString::fromLatin1("*.mpc"),
+           QString::fromLatin1("*.aiff"), QString::fromLatin1("*.ape"), QString::fromLatin1("*.webm"),
+           QString::fromLatin1("*.mp4")};
     return supportedExtensions;
 }
 

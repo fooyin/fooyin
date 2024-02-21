@@ -34,7 +34,7 @@ Database::Database(SettingsManager* settings)
 { }
 
 Database::Database(const QString& directory, const QString& filename, SettingsManager* settings)
-    : DatabaseModule{directory + "/" + filename}
+    : DatabaseModule{directory + QStringLiteral("/") + filename}
     , m_settings{settings}
 {
     if(!QFileInfo::exists(directory)) {
@@ -220,7 +220,7 @@ void Database::rollback()
 bool Database::checkInsertTable(const QString& tableName, const QString& createString)
 {
     DatabaseQuery q(this);
-    const QString queryText = "SELECT * FROM " + tableName + ";";
+    const QString queryText = QStringLiteral("SELECT * FROM ") + tableName + QStringLiteral(";");
     q.prepareQuery(queryText);
 
     if(!q.execQuery()) {
@@ -228,7 +228,7 @@ bool Database::checkInsertTable(const QString& tableName, const QString& createS
         q2.prepareQuery(createString);
 
         if(!q2.execQuery()) {
-            q.error("Cannot create table " + tableName);
+            q.error(QStringLiteral("Cannot create table ") + tableName);
             return false;
         }
     }
@@ -241,7 +241,7 @@ bool Database::checkInsertIndex(const QString& indexName, const QString& createS
     q.prepareQuery(createString);
 
     if(!q.execQuery()) {
-        q.error("Cannot create index " + indexName);
+        q.error(QStringLiteral("Cannot create index ") + indexName);
         return false;
     }
     return true;

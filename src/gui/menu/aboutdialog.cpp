@@ -19,9 +19,9 @@
 
 #include "aboutdialog.h"
 
-#include "gui/guiconstants.h"
-
 #include <core/constants.h>
+#include <gui/guiconstants.h>
+#include <utils/utils.h>
 
 #include <QApplication>
 #include <QDialogButtonBox>
@@ -36,7 +36,8 @@ namespace {
 QString compilerVersion()
 {
 #if defined(Q_CC_CLANG)
-    return QStringLiteral("Clang ") + QString::number(__clang_major__) + QChar('.') + QString::number(__clang_minor__);
+    return QStringLiteral("Clang ") + QString::number(__clang_major__) + QStringLiteral(".")
+         + QString::number(__clang_minor__);
 #elif defined(Q_CC_GNU)
     return QStringLiteral("GCC ") + QLatin1String(__VERSION__);
 #elif defined(Q_CC_MSVC)
@@ -47,29 +48,31 @@ QString compilerVersion()
 
 QString copyright()
 {
-    return QString{"Copyright © 2024, Luke Taylor. All rights reserved.<br/>"
-                   "<br/>"
-                   "%1 is free software released under GPL. The source code is available on %2<br/>"
-                   "<br/>"
-                   "You should have received a copy of the GNU General Public License along with this program.  If "
-                   "not, see "
-                   "%3"}
-        .arg(Fooyin::Constants::DisplayName, "<a href=\"https://github.com/ludouzi/fooyin\">GitHub</a>.",
-             "<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>.");
+    return QString{
+        QStringLiteral("Copyright © 2024, Luke Taylor. All rights reserved.<br/>"
+                       "<br/>"
+                       "%1 is free software released under GPL. The source code is available on %2<br/>"
+                       "<br/>"
+                       "You should have received a copy of the GNU General Public License along with this program.  If "
+                       "not, see "
+                       "%3")}
+        .arg(u"fooyin", u"<a href=\"https://github.com/ludouzi/fooyin\">GitHub</a>.",
+             u"<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a>.");
 }
 
 QString qtVersion()
 {
-    return QString{QStringLiteral("Based on Qt %1 (%2, %3)")}.arg(qVersion(), compilerVersion(), QSysInfo::buildCpuArchitecture());
+    return QString{QStringLiteral("Based on Qt %1 (%2, %3)")}.arg(QString::fromLatin1(QT_VERSION_STR),
+                                                                  compilerVersion(), QSysInfo::buildCpuArchitecture());
 }
 
 QString description()
 {
-    return QString{"<h3>%1</h3>"
-                   "Version: %2<br/>"
-                   "%3<br/>"
-                   "<br/>"}
-        .arg(Fooyin::Constants::DisplayName, QCoreApplication::applicationVersion(), qtVersion());
+    return QString{QStringLiteral("<h3>%1</h3>"
+                                  "Version: %2<br/>"
+                                  "%3<br/>"
+                                  "<br/>")}
+        .arg(u"fooyin", QCoreApplication::applicationVersion(), qtVersion());
 }
 } // namespace
 
@@ -77,7 +80,7 @@ namespace Fooyin {
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog{parent}
 {
-    setWindowTitle(tr("About %1").arg(Constants::DisplayName));
+    setWindowTitle(tr("About %1").arg(u"fooyin"));
     auto* layout = new QGridLayout(this);
     layout->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -92,7 +95,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 
     auto* logo = new QLabel(this);
-    logo->setPixmap(QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
+    logo->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
 
     layout->addWidget(logo, 0, 0);
     layout->addWidget(aboutLabel, 0, 1);

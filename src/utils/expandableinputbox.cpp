@@ -19,6 +19,8 @@
 
 #include <utils/expandableinputbox.h>
 
+#include <utils/utils.h>
+
 #include <QApplication>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -138,8 +140,8 @@ struct ExpandableInputBox::Private
         , attributes{attributes_}
         , widgetLayout{new QHBoxLayout()}
         , blockLayout{new QGridLayout()}
-        , addBlock{new QPushButton(QIcon::fromTheme(AddIcon), "", self)}
-        , deleteBlock{new QPushButton(QIcon::fromTheme(RemoveIcon), "", self)}
+        , addBlock{new QPushButton(Utils::iconFromTheme(AddIcon), QStringLiteral(""), self)}
+        , deleteBlock{new QPushButton(Utils::iconFromTheme(RemoveIcon), QStringLiteral(""), self)}
     {
         auto* layout = new QGridLayout(self);
         layout->setContentsMargins(0, 0, 0, 0);

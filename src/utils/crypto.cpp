@@ -33,7 +33,7 @@ QString generateRandomHash()
     hash.addData(uniqueId.toUtf8());
     hash.addData(timestamp.toUtf8());
 
-    QString headerKey = hash.result().toHex();
+    QString headerKey = QString::fromUtf8(hash.result().toHex());
     return headerKey;
 }
 

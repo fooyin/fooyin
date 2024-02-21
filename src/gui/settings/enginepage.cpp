@@ -64,8 +64,8 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* 
     , m_deviceBox{new ExpandingComboBox(this)}
     , m_gaplessPlayback{new QCheckBox(tr("Gapless Playback"), this)}
 {
-    auto* outputLabel = new QLabel(tr("Output") + ":", this);
-    auto* deviceLabel = new QLabel(tr("Device") + ":", this);
+    auto* outputLabel = new QLabel(tr("Output") + QStringLiteral(":"), this);
+    auto* deviceLabel = new QLabel(tr("Device") + QStringLiteral(":"), this);
 
     auto* generalBox    = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QVBoxLayout(generalBox);

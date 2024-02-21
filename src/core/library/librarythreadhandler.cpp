@@ -110,7 +110,7 @@ struct LibraryThreadHandler::Private
                                 cancelScanRequest(id);
                             }};
 
-        scanRequests.emplace_back(id, ScanRequest::Library, libraryInfo, "", TrackList{});
+        scanRequests.emplace_back(id, ScanRequest::Library, libraryInfo, QStringLiteral(""), TrackList{});
 
         if(scanRequests.size() == 1) {
             execNextRequest();
@@ -127,7 +127,7 @@ struct LibraryThreadHandler::Private
                                 cancelScanRequest(id);
                             }};
 
-        scanRequests.emplace_front(id, ScanRequest::Tracks, LibraryInfo{}, "", tracks);
+        scanRequests.emplace_front(id, ScanRequest::Tracks, LibraryInfo{}, QStringLiteral(""), tracks);
 
         // Track scans take precedence
         const auto currRequest = currentRequest();

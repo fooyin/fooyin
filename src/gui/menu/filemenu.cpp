@@ -26,6 +26,7 @@
 #include <utils/actions/command.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QAction>
 #include <QApplication>
@@ -60,7 +61,7 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 
     fileMenu->addSeparator();
 
-    auto* quit        = new QAction(QIcon::fromTheme(Constants::Icons::Quit), tr("E&xit"), this);
+    auto* quit        = new QAction(Utils::iconFromTheme(Constants::Icons::Quit), tr("E&xit"), this);
     auto* quitCommand = m_actionManager->registerAction(quit, Constants::Actions::Exit);
     quitCommand->setDefaultShortcut(QKeySequence::Quit);
     fileMenu->addAction(quitCommand, Actions::Groups::Three);

@@ -139,7 +139,7 @@ QString findMp4Tag(const TagLib::String& tag)
 {
     for(const auto& [key, value] : supportedMp4Tags) {
         if(tag == key) {
-            return value;
+            return QString::fromUtf8(value);
         }
     }
     return {};
@@ -607,13 +607,14 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags)
 
 QString coverInDirectory(const QString& directory)
 {
-    static const QStringList CoverFileTypes{"*.jpg", "*.jpeg", "*.png", "*.gif", "*.tiff", "*.bmp"};
+    static const QStringList CoverFileTypes{QStringLiteral("*.jpg"), QStringLiteral("*.jpeg"), QStringLiteral("*.png"),
+                                            QStringLiteral("*.gif"), QStringLiteral("*.tiff"), QStringLiteral("*.bmp")};
 
     const QDir baseDirectory{directory};
     const QStringList fileList = baseDirectory.entryList(CoverFileTypes, QDir::Files);
     if(!fileList.isEmpty()) {
         // Use first image found as album cover
-        return baseDirectory.absolutePath() + "/" + fileList.constFirst();
+        return baseDirectory.absolutePath() + QStringLiteral("/") + fileList.constFirst();
     }
     return {};
 }
@@ -623,7 +624,7 @@ void handleCover(const QByteArray& cover, Fooyin::Track& track)
     QString coverPath = coverInDirectory(track.filepath());
 
     if(!cover.isEmpty()) {
-        coverPath = Fooyin::Constants::EmbeddedCover;
+        coverPath = QStringLiteral("|Embedded|");
     }
 
     track.setCoverPath(coverPath);

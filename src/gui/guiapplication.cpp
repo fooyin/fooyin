@@ -240,16 +240,17 @@ struct GuiApplication::Private
         const auto iconTheme = static_cast<IconThemeOption>(settingsManager->value<Settings::Gui::IconTheme>());
         switch(iconTheme) {
             case(IconThemeOption::AutoDetect):
-                QIcon::setThemeName(Utils::isDarkMode() ? Constants::DarkIconTheme : Constants::LightIconTheme);
+                QIcon::setThemeName(Utils::isDarkMode() ? QString::fromLatin1(Constants::DarkIconTheme)
+                                                        : QString::fromLatin1(Constants::LightIconTheme));
                 break;
             case(IconThemeOption::System):
                 QIcon::setThemeName(QIcon::themeName());
                 break;
             case(IconThemeOption::Light):
-                QIcon::setThemeName(Constants::LightIconTheme);
+                QIcon::setThemeName(QString::fromLatin1(Constants::LightIconTheme));
                 break;
             case(IconThemeOption::Dark):
-                QIcon::setThemeName(Constants::DarkIconTheme);
+                QIcon::setThemeName(QString::fromLatin1(Constants::DarkIconTheme));
                 break;
         }
     }
@@ -289,7 +290,7 @@ struct GuiApplication::Private
                 return splitter;
             },
             QStringLiteral("Vertical Splitter"));
-        widgetProvider.setSubMenus(QStringLiteral("SplitterVertical"), {"Splitters"});
+        widgetProvider.setSubMenus(QStringLiteral("SplitterVertical"), {QStringLiteral("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("SplitterHorizontal"),
@@ -300,7 +301,7 @@ struct GuiApplication::Private
                 return splitter;
             },
             QStringLiteral("Horizontal Splitter"));
-        widgetProvider.setSubMenus(QStringLiteral("SplitterHorizontal"), {"Splitters"});
+        widgetProvider.setSubMenus(QStringLiteral("SplitterHorizontal"), {QStringLiteral("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistTabs"),
@@ -309,7 +310,7 @@ struct GuiApplication::Private
                                         mainWindow.get());
             },
             QStringLiteral("Playlist Tabs"));
-        widgetProvider.setSubMenus(QStringLiteral("PlaylistTabs"), {"Splitters"});
+        widgetProvider.setSubMenus(QStringLiteral("PlaylistTabs"), {QStringLiteral("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistOrganiser"),
@@ -323,7 +324,7 @@ struct GuiApplication::Private
             QStringLiteral("TabStack"),
             [this]() { return new TabStackWidget(actionManager, &widgetProvider, mainWindow.get()); },
             QStringLiteral("Tab Stack"));
-        widgetProvider.setSubMenus(QStringLiteral("TabStack"), {"Splitters"});
+        widgetProvider.setSubMenus(QStringLiteral("TabStack"), {QStringLiteral("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("LibraryTree"),
@@ -336,24 +337,24 @@ struct GuiApplication::Private
             QStringLiteral("PlayerControls"),
             [this]() { return new PlayerControl(playerManager, settingsManager, mainWindow.get()); },
             QStringLiteral("Player Controls"));
-        widgetProvider.setSubMenus(QStringLiteral("PlayerControls"), {"Controls"});
+        widgetProvider.setSubMenus(QStringLiteral("PlayerControls"), {QStringLiteral("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistControls"),
             [this]() { return new PlaylistControl(playerManager, settingsManager, mainWindow.get()); },
             QStringLiteral("Playlist Controls"));
-        widgetProvider.setSubMenus(QStringLiteral("PlaylistControls"), {"Controls"});
+        widgetProvider.setSubMenus(QStringLiteral("PlaylistControls"), {QStringLiteral("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("VolumeControls"), [this]() { return new VolumeControl(settingsManager, mainWindow.get()); },
             QStringLiteral("Volume Controls"));
-        widgetProvider.setSubMenus(QStringLiteral("VolumeControls"), {"Controls"});
+        widgetProvider.setSubMenus(QStringLiteral("VolumeControls"), {QStringLiteral("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("SeekBar"),
             [this]() { return new SeekBar(playerManager, settingsManager, mainWindow.get()); },
             QStringLiteral("SeekBar"));
-        widgetProvider.setSubMenus(QStringLiteral("SeekBar"), {"Controls"});
+        widgetProvider.setSubMenus(QStringLiteral("SeekBar"), {QStringLiteral("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("SelectionInfo"),
@@ -401,12 +402,12 @@ struct GuiApplication::Private
     {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
-        message.setText("Track Not Found");
+        message.setText(QStringLiteral("Track Not Found"));
         message.setInformativeText(track.filepath());
 
         message.addButton(QMessageBox::Ok);
-        QPushButton* stopButton = message.addButton("Stop", QMessageBox::ActionRole);
-        stopButton->setIcon(QIcon::fromTheme(Constants::Icons::Stop));
+        QPushButton* stopButton = message.addButton(QStringLiteral("Stop"), QMessageBox::ActionRole);
+        stopButton->setIcon(Utils::iconFromTheme(Constants::Icons::Stop));
         message.setDefaultButton(QMessageBox::Ok);
 
         message.exec();
@@ -421,8 +422,8 @@ struct GuiApplication::Private
 
     void addFiles() const
     {
-        const auto extensions
-            = QString{"Audio Files (%1)"}.arg(Track::supportedFileExtensions().join(QStringLiteral(" ")));
+        const auto extensions = QString{QStringLiteral("Audio Files (%1)")}.arg(
+            Track::supportedFileExtensions().join(QStringLiteral(" ")));
 
         const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), QStringLiteral("Add Files"),
                                                         QStringLiteral(""), extensions);
@@ -448,7 +449,7 @@ struct GuiApplication::Private
 
     void openFiles(const QList<QUrl>& urls) const
     {
-        playlistController->filesToNewPlaylist("Default", urls);
+        playlistController->filesToNewPlaylist(QStringLiteral("Default"), urls);
     }
 };
 

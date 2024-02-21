@@ -35,8 +35,8 @@ Id::Id(const QString& str)
 { }
 
 Id::Id(const char* const str)
-    : m_id{idFromString(str)}
-    , m_name{str}
+    : m_id{idFromString(QString::fromLatin1(str))}
+    , m_name{QString::fromLatin1(str)}
 { }
 
 bool Id::isValid() const
@@ -66,7 +66,7 @@ Id Id::append(const QString& str)
 
 Id Id::append(const char* const str)
 {
-    return append(QString{str});
+    return append(QString::fromLatin1(str));
 }
 
 Id Id::append(int num)

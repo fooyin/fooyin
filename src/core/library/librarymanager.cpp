@@ -64,7 +64,7 @@ struct LibraryManager::Private
 
     [[nodiscard]] QString findUniqueName(const QString& name) const
     {
-        const QString uniqueName{name.isEmpty() ? "New Library" : name};
+        const QString uniqueName{name.isEmpty() ? QStringLiteral("New Library") : name};
         return Utils::findUniqueString(uniqueName, libraries, [](const auto& item) { return item.second.name; });
     }
 };

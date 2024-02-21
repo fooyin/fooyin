@@ -26,8 +26,6 @@
 namespace Fooyin {
 class SettingsManager;
 
-constexpr auto PlaylistColumns = "PlaylistWidget/PlaylistColumns";
-
 class PlaylistColumnRegistry : public ItemRegistry<PlaylistColumn>
 {
     Q_OBJECT

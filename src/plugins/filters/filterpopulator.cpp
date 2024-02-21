@@ -26,8 +26,6 @@
 
 #include <utils/crypto.h>
 
-constexpr auto ColumnSeparator = "\036";
-
 namespace Fooyin::Filters {
 struct FilterPopulator::Private
 {
@@ -45,12 +43,11 @@ struct FilterPopulator::Private
     explicit Private(FilterPopulator* self_)
         : self{self_}
         , parser{&registry}
-        , data{}
     { }
 
     FilterItem* getOrInsertItem(const QStringList& columns)
     {
-        const QString key = Utils::generateHash(columns.join(""));
+        const QString key = Utils::generateHash(columns.join(QStringLiteral("")));
         if(!data.items.contains(key)) {
             data.items.emplace(key, FilterItem{key, columns, &root});
         }
@@ -81,18 +78,18 @@ struct FilterPopulator::Private
             return;
         }
 
-        if(columns.contains(Constants::Separator)) {
-            const QStringList values = columns.split(Constants::Separator);
+        if(columns.contains(u"\037")) {
+            const QStringList values = columns.split(QStringLiteral("\037"));
             QList<QStringList> colValues;
             std::ranges::transform(values, std::back_inserter(colValues),
-                                   [](const QString& col) { return col.split(ColumnSeparator); });
+                                   [](const QString& col) { return col.split(QStringLiteral("\036")); });
             const auto nodes = getOrInsertItems(colValues);
             for(FilterItem* node : nodes) {
                 addTrackToNode(track, node);
             }
         }
         else {
-            FilterItem* node = getOrInsertItem(columns.split(ColumnSeparator));
+            FilterItem* node = getOrInsertItem(columns.split(QStringLiteral("\036")));
             addTrackToNode(track, node);
         }
     }
@@ -132,7 +129,7 @@ void FilterPopulator::run(const QStringList& columns, const TrackList& tracks)
 
     p->data.clear();
 
-    const QString newColumns = columns.join(ColumnSeparator);
+    const QString newColumns = columns.join(u"\036");
     if(std::exchange(p->currentColumns, newColumns) != newColumns) {
         p->script = p->parser.parse(p->currentColumns);
     }

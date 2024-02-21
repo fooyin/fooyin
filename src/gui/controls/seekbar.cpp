@@ -89,7 +89,7 @@ struct SeekBar::Private
 
         if(elapsedTotal) {
             const int remaining = static_cast<int>(max - time);
-            total->setText("-" + Utils::msToString(remaining < 0 ? 0 : remaining));
+            total->setText(QStringLiteral("-") + Utils::msToString(remaining < 0 ? 0 : remaining));
         }
         else {
             if(!slider->isEnabled()) {

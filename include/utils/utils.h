@@ -52,4 +52,6 @@ FYUTILS_EXPORT void showMessageBox(const QString& text, const QString& infoText)
 FYUTILS_EXPORT void appendMenuActions(QMenu* originalMenu, QMenu* menu);
 
 FYUTILS_EXPORT bool isDarkMode();
+FYUTILS_EXPORT QIcon iconFromTheme(const QString& icon);
+FYUTILS_EXPORT QIcon iconFromTheme(const char* icon);
 } // namespace Fooyin::Utils

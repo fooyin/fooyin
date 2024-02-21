@@ -250,7 +250,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
 void PlaylistTabs::dragEnterEvent(QDragEnterEvent* event)
 {
-    if(event->mimeData()->hasUrls() || event->mimeData()->hasFormat(Constants::Mime::TrackIds)) {
+    if(event->mimeData()->hasUrls() || event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
         event->acceptProposedAction();
     }
 }
@@ -296,7 +296,7 @@ void PlaylistTabs::timerEvent(QTimerEvent* event)
 
 void PlaylistTabs::dropEvent(QDropEvent* event)
 {
-    if(!event->mimeData()->hasFormat(Constants::Mime::TrackIds)) {
+    if(!event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
         event->ignore();
         return;
     }

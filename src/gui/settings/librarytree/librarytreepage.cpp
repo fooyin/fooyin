@@ -105,13 +105,13 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    auto* doubleClickLabel = new QLabel(tr("Double-click") + ":", this);
-    auto* middleClickLabel = new QLabel(tr("Middle-click") + ":", this);
+    auto* doubleClickLabel = new QLabel(tr("Double-click") + QStringLiteral(":"), this);
+    auto* middleClickLabel = new QLabel(tr("Middle-click") + QStringLiteral(":"), this);
 
     auto* selectionPlaylist       = new QGroupBox(tr("Library Selection Playlist"), this);
     auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
 
-    auto* playlistNameLabel = new QLabel(tr("Name") + ":", this);
+    auto* playlistNameLabel = new QLabel(tr("Name") + QStringLiteral(":"), this);
 
     clickBehaviourLayout->addWidget(doubleClickLabel, 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);

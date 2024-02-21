@@ -31,7 +31,7 @@ QString generateHash(const Args&... args)
     QCryptographicHash hash{QCryptographicHash::Md5};
     (hash.addData(args.toUtf8()), ...);
 
-    QString headerKey = hash.result().toHex();
+    QString headerKey = QString::fromUtf8(hash.result().toHex());
     return headerKey;
 }
 

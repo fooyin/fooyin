@@ -22,7 +22,7 @@
 namespace Fooyin {
 bool isLiteral(const QChar ch)
 {
-    switch(ch.cell()) {
+    switch(ch.unicode()) {
         case(ScriptScanner::TokComma):
         case(ScriptScanner::TokQuote):
         case(ScriptScanner::TokLeftParen):
@@ -105,7 +105,7 @@ ScriptScanner::Token ScriptScanner::literal()
 
 bool ScriptScanner::isAtEnd() const
 {
-    return *m_current == '\0';
+    return *m_current == QChar::fromLatin1('\0');
 }
 
 QChar ScriptScanner::advance()

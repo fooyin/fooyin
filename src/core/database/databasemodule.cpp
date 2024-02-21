@@ -40,12 +40,6 @@ DatabaseQuery DatabaseModule::runQuery(const QString& query, const QString& erro
     return runQuery(query, BindingsMap{}, errorText);
 }
 
-DatabaseQuery DatabaseModule::runQuery(const QString& query, const std::pair<QString, QString>& bindings,
-                                       const QString& errorText) const
-{
-    return runQuery(query, {{bindings.first, bindings.second}}, errorText);
-}
-
 QSqlDatabase DatabaseModule::db() const
 {
     if(!QSqlDatabase::isDriverAvailable(QStringLiteral("QSQLITE"))) {
@@ -102,7 +96,7 @@ DatabaseQuery DatabaseModule::runQuery(const QString& query, const BindingsMap& 
 DatabaseQuery DatabaseModule::insert(const QString& tableName, const BindingsMap& fieldBindings,
                                      const QString& errorMessage)
 {
-    QString query = "INSERT INTO " + tableName;
+    QString query = QStringLiteral("INSERT INTO ") + tableName;
 
     DatabaseQuery q(this);
 
@@ -110,21 +104,20 @@ DatabaseQuery DatabaseModule::insert(const QString& tableName, const BindingsMap
     QString values;
     for(const auto& [field, _] : fieldBindings) {
         if(!fields.isEmpty()) {
-            fields = fields + ", ";
+            fields += QStringLiteral(", ");
         }
         fields = fields + field;
         if(!values.isEmpty()) {
-            values = values + ", ";
+            values += QStringLiteral(", ");
         }
-        values = values + ":" + field;
+        values += QStringLiteral(":") + field;
     }
-    query = query + "( " + fields + ")";
-    query = query + "VALUES ( " + values + ");";
+    query += QString{QStringLiteral("(%1) VALUES (%2)")}.arg(fields, values);
 
     q.prepareQuery(query);
 
     for(const auto& [field, value] : fieldBindings) {
-        q.bindQueryValue(":" + field, value);
+        q.bindQueryValue(QStringLiteral(":") + field, value);
     }
 
     if(!q.execQuery()) {
@@ -138,40 +131,39 @@ void DatabaseModule::runPragma(const QString& pragma, const QString& value) cons
 {
     DatabaseQuery q(this);
 
-    const QString query = "PRAGMA " + pragma + " = " + value;
+    const auto query = QString{QStringLiteral("PRAGMA %1 = %2")}.arg(pragma, value);
     q.prepareQuery(query);
 
     if(!q.execQuery()) {
-        q.error("Could not set pragma '" + pragma + "' to '" + value + "'");
+        q.error(QString{QStringLiteral("Could not set pragma '%1' to '%2'")}.arg(pragma, value));
     }
 }
 
 DatabaseQuery DatabaseModule::update(const QString& tableName, const BindingsMap& fieldBindings,
                                      const std::pair<QString, QString>& whereBinding, const QString& errorMessage)
 {
-    QString query = "UPDATE " + tableName + " SET ";
+    auto query = QString{QStringLiteral("UPDATE %1 SET ")}.arg(tableName);
 
     DatabaseQuery q(this);
 
     QString fields;
     for(const auto& [field, value] : fieldBindings) {
         if(!fields.isEmpty()) {
-            fields = fields + ", ";
+            fields += QStringLiteral(", ");
         }
-        fields = fields + field + " = :" + field;
+        fields += field + QStringLiteral(" = :") + field;
     }
-    query = query + fields;
+    query += fields;
 
-    query = query + " WHERE ";
-    query = query + whereBinding.first + " = :W" + whereBinding.first + ";";
+    query += QString{QStringLiteral(" WHERE %1 = :W%1;")}.arg(whereBinding.first);
 
     q.prepareQuery(query);
 
     for(const auto& [field, value] : fieldBindings) {
-        q.bindQueryValue(":" + field, value);
+        q.bindQueryValue(QStringLiteral(":") + field, value);
     }
 
-    q.bindQueryValue(":W" + whereBinding.first, whereBinding.second);
+    q.bindQueryValue(QStringLiteral(":W") + whereBinding.first, whereBinding.second);
 
     if(!q.execQuery() || q.numRowsAffected() == 0) {
         q.setError(true);
@@ -185,17 +177,17 @@ DatabaseQuery DatabaseModule::remove(const QString& tableName,
                                      const std::vector<std::pair<QString, QString>>& whereBinding,
                                      const QString& errorMessage)
 {
-    QString query = "DELETE FROM " + tableName + " WHERE (";
+    auto query = QString{QStringLiteral("DELETE FROM %1 WHERE (")}.arg(tableName);
 
     bool firstIteration{true};
     for(const auto& [field, binding] : whereBinding) {
         if(!firstIteration) {
-            query = query + " AND ";
+            query += QStringLiteral(" AND ");
         }
-        query          = query + field + " = " + binding;
+        query += field + QStringLiteral(" = ") + binding;
         firstIteration = false;
     }
-    query = query + ");";
+    query += QStringLiteral(");");
 
     DatabaseQuery q(this);
     q.prepareQuery(query);

@@ -105,7 +105,8 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
         = new FilterController(p->library, p->trackSelection, context.editableLayout, p->settings, this);
 
     p->widgetProvider->registerWidget(
-        QStringLiteral("LibraryFilter"), [this]() { return p->filterController->createFilter(); }, "Library Filter");
+        QStringLiteral("LibraryFilter"), [this]() { return p->filterController->createFilter(); },
+        QStringLiteral("Library Filter"));
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
     p->columnsPage = std::make_unique<FiltersColumnPage>(p->actionManager, p->settings);

@@ -30,6 +30,7 @@
 #include <gui/trackselectioncontroller.h>
 #include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
@@ -70,7 +71,7 @@ struct StatusWidget::Private
         , settings{settings_}
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
-        , icon{QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
+        , icon{Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
         , statusText{new ClickableLabel(self)}
         , selectionText{new ClickableLabel(self)}
     {
@@ -128,7 +129,7 @@ struct StatusWidget::Private
     {
         switch(state) {
             case(PlayState::Stopped):
-                statusText->setText("");
+                statusText->setText(QStringLiteral(""));
                 break;
             case(PlayState::Playing): {
                 updatePlayingText();
@@ -173,7 +174,7 @@ StatusWidget::StatusWidget(PlayerManager* playerManager, TrackSelectionControlle
                      [this]() { p->updateSelectionText(); });
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
-        p->icon = QIcon::fromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
+        p->icon = Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
         p->iconLabel->setPixmap(p->icon);
     });
 

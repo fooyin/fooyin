@@ -122,8 +122,8 @@ public:
 private:
     friend Item;
 
-    Item* m_parent;                // Not owned
+    Item* m_parent{nullptr};       // Not owned
     std::vector<Item*> m_children; // Not owned
-    mutable int m_row;
+    mutable int m_row{-1};
 };
 } // namespace Fooyin

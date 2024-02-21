@@ -146,15 +146,16 @@ void GuiGeneralPageWidget::apply()
 
     if(m_detectIconTheme->isChecked()) {
         iconThemeOption = IconThemeOption::AutoDetect;
-        QIcon::setThemeName(Utils::isDarkMode() ? Constants::DarkIconTheme : Constants::LightIconTheme);
+        QIcon::setThemeName(Utils::isDarkMode() ? QString::fromLatin1(Constants::DarkIconTheme)
+                                                : QString::fromLatin1(Constants::LightIconTheme));
     }
     else if(m_lightTheme->isChecked()) {
         iconThemeOption = IconThemeOption::Light;
-        QIcon::setThemeName(Constants::LightIconTheme);
+        QIcon::setThemeName(QString::fromLatin1(Constants::LightIconTheme));
     }
     else if(m_darkTheme->isChecked()) {
         iconThemeOption = IconThemeOption::Dark;
-        QIcon::setThemeName(Constants::DarkIconTheme);
+        QIcon::setThemeName(QString::fromLatin1(Constants::DarkIconTheme));
     }
     else {
         iconThemeOption = IconThemeOption::System;
@@ -191,7 +192,7 @@ void GuiGeneralPageWidget::importLayout()
     if(const auto layout = m_layoutProvider->importLayout(layoutFile)) {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
-        message.setText("Replace existing layout?");
+        message.setText(QStringLiteral("Replace existing layout?"));
         message.setInformativeText(tr("Unless exported, the current layout will be lost."));
 
         message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -208,8 +209,8 @@ void GuiGeneralPageWidget::importLayout()
 void GuiGeneralPageWidget::exportLayout()
 {
     bool success{false};
-    const QString name = QInputDialog::getText(this, tr("Export layout"), tr("Layout Name") + ":", QLineEdit::Normal,
-                                               QStringLiteral(""), &success);
+    const QString name = QInputDialog::getText(this, tr("Export layout"), tr("Layout Name") + QStringLiteral(":"),
+                                               QLineEdit::Normal, QStringLiteral(""), &success);
 
     if(success && !name.isEmpty()) {
         const QString saveFile = QFileDialog::getSaveFileName(
@@ -228,7 +229,7 @@ GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* e
 {
     setId(Constants::Page::InterfaceGeneral);
     setName(tr("General"));
-    setCategory({"Interface"});
+    setCategory({tr("Interface")});
     setWidgetCreator([layoutProvider, editableLayout, settings] {
         return new GuiGeneralPageWidget(layoutProvider, editableLayout, settings);
     });

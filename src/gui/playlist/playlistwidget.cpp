@@ -579,12 +579,12 @@ void PlaylistWidgetPrivate::toggleColumnMode()
     self->finalise();
 
     if(columnMode && columns.empty()) {
-        columns.push_back(columnRegistry.itemByName("Playing"));
-        columns.push_back(columnRegistry.itemByName("Track"));
-        columns.push_back(columnRegistry.itemByName("Title"));
-        columns.push_back(columnRegistry.itemByName("Artist"));
-        columns.push_back(columnRegistry.itemByName("Album"));
-        columns.push_back(columnRegistry.itemByName("Duration"));
+        columns.push_back(columnRegistry.itemByName(QStringLiteral("Playing")));
+        columns.push_back(columnRegistry.itemByName(QStringLiteral("Track")));
+        columns.push_back(columnRegistry.itemByName(QStringLiteral("Title")));
+        columns.push_back(columnRegistry.itemByName(QStringLiteral("Artist")));
+        columns.push_back(columnRegistry.itemByName(QStringLiteral("Album")));
+        columns.push_back(columnRegistry.itemByName(QStringLiteral("Duration")));
 
         QObject::connect(
             header, &QHeaderView::sectionCountChanged, self,

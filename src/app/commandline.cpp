@@ -35,17 +35,17 @@ CommandLine::CommandLine(int argc, char** argv)
 
 bool CommandLine::parse()
 {
-    static const option cmdOptions[]
+    static constexpr option cmdOptions[]
         = {{"help", no_argument, nullptr, 'h'}, {"version", no_argument, nullptr, 'v'}, {nullptr, 0, nullptr, 0}};
 
-    static const QString help = "%1: fooyin [%2] [%3]\n"
-                                "\n"
-                                "%4:\n"
-                                "  -h, --help      %5\n"
-                                "  -v, --version   %6\n"
-                                "\n"
-                                "%7:\n"
-                                "  urls            %8\n";
+    static const auto help = QStringLiteral("%1: fooyin [%2] [%3]\n"
+                                               "\n"
+                                               "%4:\n"
+                                               "  -h, --help      %5\n"
+                                               "  -v, --version   %6\n"
+                                               "\n"
+                                               "%7:\n"
+                                               "  urls            %8\n");
 
     for(;;) {
         const int c = getopt_long(m_argc, m_argv, "hv", cmdOptions, nullptr);
@@ -59,12 +59,13 @@ bool CommandLine::parse()
                     QObject::tr("Usage"), QObject::tr("options"), QObject::tr("urls"), QObject::tr("Options"),
                     QObject::tr("Displays help on command line options"), QObject::tr("Displays version information"),
                     QObject::tr("Arguments"), QObject::tr("Files to open"));
-                std::cout << helpText.toLocal8Bit().constData() << std::endl;
+                std::cout << helpText.toLocal8Bit().constData() << '\n';
                 return false;
             }
             case('v'): {
-                const auto version = QString("%1 %2").arg("fooyin", VERSION);
-                std::cout << version.toLocal8Bit().constData() << std::endl;
+                const auto version
+                    = QString(QStringLiteral("%1 %2")).arg(QStringLiteral("fooyin"), QString::fromLatin1(VERSION));
+                std::cout << version.toLocal8Bit().constData() << '\n';
                 std::exit(0);
             }
             default:

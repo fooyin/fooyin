@@ -288,7 +288,7 @@ QString LibraryTreeWidgetPrivate::playlistNameFromSelection() const
     const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
     for(const auto& index : selectedIndexes) {
         if(!title.isEmpty()) {
-            title.append(", ");
+            title.append(QStringLiteral(", "));
         }
         title.append(index.data().toString());
     }

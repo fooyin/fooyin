@@ -83,7 +83,7 @@ struct Application::Private
 
     void registerOutputs()
     {
-        engine.addOutput({.name = "ALSA", .creator = []() {
+        engine.addOutput({.name = QStringLiteral("ALSA"), .creator = []() {
                               return std::make_unique<AlsaOutput>();
                           }});
     }

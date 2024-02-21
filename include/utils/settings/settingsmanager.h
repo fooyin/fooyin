@@ -185,10 +185,10 @@ public:
     {
         using Enum            = decltype(key);
         const auto meta       = QMetaEnum::fromType<Enum>();
-        const auto keyString  = QString::fromLatin1(meta.valueToKey(key));
-        const auto settingKey = "Temp/" + keyString;
+        const auto keyString  = meta.valueToKey(key);
+        const auto settingKey = std::string{"Temp/"} + keyString;
 
-        createNewSetting<key>(value, settingKey, true);
+        createNewSetting<key>(value, QString::fromLatin1(settingKey), true);
     }
 
     /*!

@@ -23,7 +23,6 @@
 #include "gui/guiconstants.h"
 #include "sortingmodel.h"
 
-#include <core/coresettings.h>
 #include <utils/multilinedelegate.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -45,7 +44,6 @@ public:
 
 private:
     SortingRegistry m_sortRegistry;
-    SettingsManager* m_settings;
 
     ExtendableTableView* m_sortList;
     SortingModel* m_model;
@@ -53,7 +51,6 @@ private:
 
 LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SettingsManager* settings)
     : m_sortRegistry{settings}
-    , m_settings{settings}
     , m_sortList{new ExtendableTableView(actionManager, this)}
     , m_model{new SortingModel(&m_sortRegistry, this)}
 {
@@ -98,7 +95,7 @@ void LibrarySortingPageWidget::apply()
 
 void LibrarySortingPageWidget::reset()
 {
-    m_settings->reset(LibrarySorting);
+    m_sortRegistry.reset();
 }
 
 LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SettingsManager* settings)

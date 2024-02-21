@@ -98,7 +98,7 @@ struct SettingsDialog::Private
     {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
-        message.setText("Are you sure?");
+        message.setText(QString::fromLatin1("Are you sure?"));
         message.setInformativeText(tr("This will reset all settings to default."));
 
         message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -133,7 +133,7 @@ struct SettingsDialog::Private
         }
         stackedLayout->setCurrentIndex(category->index);
 
-        self->setWindowTitle(tr("Settings") + ": " + category->name);
+        self->setWindowTitle(tr("Settings") + QString::fromLatin1(": ") + category->name);
     }
 
     void checkCategoryWidget(SettingsCategory* category)

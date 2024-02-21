@@ -285,8 +285,8 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
                 p->model, [this, playlist]() { p->selectCurrentPlaylist(playlist); }, Qt::QueuedConnection);
         });
 
-    if(p->model->restoreModel(p->settings->fileValue(OrganiserModel).toByteArray())) {
-        const auto state = p->settings->fileValue(OrganiserState).toByteArray();
+    if(p->model->restoreModel(p->settings->fileValue(QString::fromLatin1(OrganiserModel)).toByteArray())) {
+        const auto state = p->settings->fileValue(QString::fromLatin1(OrganiserState)).toByteArray();
         restoreExpandedState(p->organiserTree, p->model, state);
         p->model->populateMissing();
     }
@@ -298,8 +298,8 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
 
 PlaylistOrganiser::~PlaylistOrganiser()
 {
-    p->settings->fileSet(OrganiserModel, p->model->saveModel());
-    p->settings->fileSet(OrganiserState, saveExpandedState(p->organiserTree, p->model));
+    p->settings->fileSet(QString::fromLatin1(OrganiserModel), p->model->saveModel());
+    p->settings->fileSet(QString::fromLatin1(OrganiserState), saveExpandedState(p->organiserTree, p->model));
 }
 
 QString PlaylistOrganiser::name() const

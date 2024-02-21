@@ -30,11 +30,8 @@
 #include <QIODevice>
 #include <QMainWindow>
 #include <QMenuBar>
-#include <QSettings>
 
 #include <set>
-
-constexpr auto ShortcutCategory = "KeyboardShortcuts/";
 
 namespace Fooyin {
 struct ActionManager::Private
@@ -77,7 +74,7 @@ struct ActionManager::Private
 
     void loadSetting(const Id& id, Command* command) const
     {
-        const QString key = ShortcutCategory + id.name();
+        const QString key = QStringLiteral("KeyboardShortcuts/") + id.name();
 
         if(settingsManager->fileContains(key)) {
             const QVariant var = settingsManager->fileValue(key);
@@ -204,7 +201,7 @@ void ActionManager::setMainWindow(QMainWindow* mainWindow)
 void ActionManager::saveSettings()
 {
     for(const auto& [_, command] : p->idCmdMap) {
-        const QString key = ShortcutCategory + command->id().name();
+        const QString key = QStringLiteral("KeyboardShortcuts/") + command->id().name();
 
         const ShortcutList commandShortcuts = command->shortcuts();
         const ShortcutList defaultShortcuts = command->defaultShortcuts();

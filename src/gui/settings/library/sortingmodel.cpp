@@ -109,7 +109,7 @@ void SortingModel::processQueue()
                     emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
-                    qWarning() << "Sorting " + sortScript.name + " could not be added";
+                    qWarning() << QString{QStringLiteral("Sorting %1 could not be added")}.arg(sortScript.name);
                 }
                 break;
             }
@@ -121,7 +121,7 @@ void SortingModel::processQueue()
                     sortScriptsToRemove.push_back(node);
                 }
                 else {
-                    qWarning() << "Sorting " + sortScript.name + " could not be removed";
+                    qWarning() << QString{QStringLiteral("Sorting %1 could not be removed")}.arg(sortScript.name);
                 }
                 break;
             }
@@ -133,7 +133,7 @@ void SortingModel::processQueue()
                     emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
-                    qWarning() << "Sorting " + sortScript.name + " could not be changed";
+                    qWarning() << QString{QStringLiteral("Sorting %1 could not be changed")}.arg(sortScript.name);
                 }
                 break;
             }
@@ -174,11 +174,11 @@ QVariant SortingModel::headerData(int section, Qt::Orientation orientation, int 
 
     switch(section) {
         case(0):
-            return "Index";
+            return QStringLiteral("Index");
         case(1):
-            return "Name";
+            return QStringLiteral("Name");
         case(2):
-            return "Sort Script";
+            return QStringLiteral("Sort Script");
     }
     return {};
 }

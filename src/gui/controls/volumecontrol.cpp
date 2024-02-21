@@ -26,6 +26,7 @@
 #include <gui/widgets/logslider.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -121,16 +122,16 @@ struct VolumeControl::Private
         }
 
         if(volume <= 1.0 && volume >= 0.40) {
-            volumeIcon->setIcon(QIcon::fromTheme(Constants::Icons::VolumeHigh));
+            volumeIcon->setIcon(Utils::iconFromTheme(Constants::Icons::VolumeHigh));
         }
         else if(volume < 0.40 && volume >= 0.20) {
-            volumeIcon->setIcon(QIcon::fromTheme(Constants::Icons::VolumeMed));
+            volumeIcon->setIcon(Utils::iconFromTheme(Constants::Icons::VolumeMed));
         }
         else if(volume < 0.20 && volume >= MinVolume) {
-            volumeIcon->setIcon(QIcon::fromTheme(Constants::Icons::VolumeLow));
+            volumeIcon->setIcon(Utils::iconFromTheme(Constants::Icons::VolumeLow));
         }
         else {
-            volumeIcon->setIcon(QIcon::fromTheme(Constants::Icons::VolumeMute));
+            volumeIcon->setIcon(Utils::iconFromTheme(Constants::Icons::VolumeMute));
         }
     }
 };

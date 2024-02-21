@@ -29,7 +29,6 @@
 #include <QApplication>
 #include <QGridLayout>
 #include <QPlainTextEdit>
-#include <QSettings>
 #include <QSplitter>
 #include <QTextEdit>
 #include <QTimer>
@@ -38,9 +37,6 @@
 #include <chrono>
 
 using namespace std::chrono_literals;
-
-constexpr auto SandboxState  = "Interface/ScriptSandboxState";
-constexpr auto DefaultScript = "%track%. %title%";
 
 namespace Fooyin {
 struct SandboxDialog::Private
@@ -144,10 +140,12 @@ struct SandboxDialog::Private
 
     void restoreState()
     {
-        QByteArray byteArray = settings->fileValue(SandboxState).toByteArray();
+        QByteArray byteArray = settings->fileValue(QStringLiteral("Interface/ScriptSandboxState")).toByteArray();
+
+        static auto defaultScript = QStringLiteral("%track%. %title%");
 
         if(byteArray.isEmpty()) {
-            editor->setPlainText(DefaultScript);
+            editor->setPlainText(defaultScript);
             return;
         }
 
@@ -166,7 +164,7 @@ struct SandboxDialog::Private
         in >> editorText;
 
         if(editorText.isEmpty()) {
-            editorText = DefaultScript;
+            editorText = defaultScript;
         }
 
         self->restoreGeometry(dialogGeometry);
@@ -193,7 +191,7 @@ struct SandboxDialog::Private
 
         byteArray = qCompress(byteArray, 9);
 
-        settings->fileSet(SandboxState, byteArray);
+        settings->fileSet(QStringLiteral("Interface/ScriptSandboxState"), byteArray);
     }
 };
 

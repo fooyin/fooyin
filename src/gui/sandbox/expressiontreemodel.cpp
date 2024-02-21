@@ -21,12 +21,10 @@
 
 #include <gui/guiconstants.h>
 #include <utils/crypto.h>
+#include <utils/utils.h>
 
 #include <QIcon>
 #include <utility>
-
-constexpr auto FullName        = " ... ";
-constexpr auto ConditionalName = "[ ... ]";
 
 namespace Fooyin {
 ExpressionTreeItem::ExpressionTreeItem()
@@ -63,10 +61,10 @@ struct ExpressionTreeModel::Private
 {
     std::unordered_map<QString, ExpressionTreeItem> nodes;
 
-    QIcon iconExpression{QIcon::fromTheme(Constants::Icons::ScriptExpression)};
-    QIcon iconLiteral{QIcon::fromTheme(Constants::Icons::ScriptLiteral)};
-    QIcon iconVariable{QIcon::fromTheme(Constants::Icons::ScriptVariable)};
-    QIcon iconFunction{QIcon::fromTheme(Constants::Icons::ScriptFunction)};
+    QIcon iconExpression{Utils::iconFromTheme(Constants::Icons::ScriptExpression)};
+    QIcon iconLiteral{Utils::iconFromTheme(Constants::Icons::ScriptLiteral)};
+    QIcon iconVariable{Utils::iconFromTheme(Constants::Icons::ScriptVariable)};
+    QIcon iconFunction{Utils::iconFromTheme(Constants::Icons::ScriptFunction)};
 
     ExpressionTreeItem* insertNode(const QString& key, const QString& name, const Expression& expression,
                                    ExpressionTreeItem* parent)
@@ -105,7 +103,7 @@ struct ExpressionTreeModel::Private
 
         else if(const auto* listVal = std::get_if<ExpressionList>(&expression.value)) {
             if(expression.type == Expr::Conditional) {
-                name   = ConditionalName;
+                name   = QStringLiteral("[ ... ]");
                 parent = insertNode(generateKey(parent->key(), name), name, expression, parent);
             }
 
@@ -134,7 +132,8 @@ void ExpressionTreeModel::populate(const ExpressionList& expressions)
 
     if(expressions.size() > 1) {
         Expression const fullExpression{Expr::FunctionArg, expressions};
-        parent = p->insertNode(p->generateKey(parent->key(), FullName), FullName, fullExpression, parent);
+        parent = p->insertNode(p->generateKey(parent->key(), QStringLiteral(" ... ")), QStringLiteral(" ... "),
+                               fullExpression, parent);
     }
 
     for(const auto& expression : expressions) {

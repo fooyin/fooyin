@@ -82,7 +82,7 @@ public:
 
     void filesToCurrentPlaylist(const QList<QUrl>& urls);
     void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls);
-    void filesToTracks(const QList<QUrl>& urls, std::function<void(const TrackList&)> func);
+    void filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func);
 
 signals:
     void playlistsLoaded();

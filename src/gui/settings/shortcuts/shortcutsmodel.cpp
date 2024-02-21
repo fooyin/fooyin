@@ -126,7 +126,7 @@ void ShortcutsModel::populate(ActionManager* actionManager)
             continue;
         }
 
-        const auto parts      = command->id().name().split('.');
+        const auto parts      = command->id().name().split(QStringLiteral("."));
         const auto categories = parts | std::views::take(parts.size() - 1);
 
         ShortcutItem* parent = rootItem();
@@ -229,11 +229,11 @@ QVariant ShortcutsModel::headerData(int section, Qt::Orientation orientation, in
 
     switch(section) {
         case(0):
-            return "Action";
+            return QStringLiteral("Action");
         case(1):
-            return "Id";
+            return QStringLiteral("Id");
         case(2):
-            return "Shortcut";
+            return QStringLiteral("Shortcut");
     }
     return {};
 }

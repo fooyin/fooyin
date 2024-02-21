@@ -23,7 +23,7 @@
 
 namespace Fooyin {
 PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{PlaylistColumns, settings, parent}
+    : ItemRegistry{QStringLiteral("PlaylistWidget/PlaylistColumns"), settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto column = itemById(id);
@@ -35,13 +35,15 @@ PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObjec
 
 void PlaylistColumnRegistry::loadDefaults()
 {
-    addDefaultItem({.id = 0, .index = 0, .name = "Track", .field = "$num(%track%,2)"});
-    addDefaultItem({.id = 1, .index = 1, .name = "Title", .field = "%title%"});
-    addDefaultItem({.id = 2, .index = 2, .name = "Artist", .field = "%artist%"});
-    addDefaultItem({.id = 3, .index = 3, .name = "Album Artist", .field = "%albumartist%"});
-    addDefaultItem({.id = 4, .index = 4, .name = "Album", .field = "%album%"});
-    addDefaultItem({.id = 5, .index = 5, .name = "Playcount", .field = "%playcount%"});
-    addDefaultItem({.id = 6, .index = 6, .name = "Duration", .field = "$timems(%duration%)"});
-    addDefaultItem({.id = 7, .index = 7, .name = "Playing", .field = PlayingIcon});
+    addDefaultItem({.id = 0, .index = 0, .name = QStringLiteral("Track"), .field = QStringLiteral("$num(%track%,2)")});
+    addDefaultItem({.id = 1, .index = 1, .name = QStringLiteral("Title"), .field = QStringLiteral("%title%")});
+    addDefaultItem({.id = 2, .index = 2, .name = QStringLiteral("Artist"), .field = QStringLiteral("%artist%")});
+    addDefaultItem(
+        {.id = 3, .index = 3, .name = QStringLiteral("Album Artist"), .field = QStringLiteral("%albumartist%")});
+    addDefaultItem({.id = 4, .index = 4, .name = QStringLiteral("Album"), .field = QStringLiteral("%album%")});
+    addDefaultItem({.id = 5, .index = 5, .name = QStringLiteral("Playcount"), .field = QStringLiteral("%playcount%")});
+    addDefaultItem(
+        {.id = 6, .index = 6, .name = QStringLiteral("Duration"), .field = QStringLiteral("$timems(%duration%)")});
+    addDefaultItem({.id = 7, .index = 7, .name = QStringLiteral("Playing"), .field = QString::fromLatin1(PlayingIcon)});
 }
 } // namespace Fooyin

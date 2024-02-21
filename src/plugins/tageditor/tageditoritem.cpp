@@ -59,7 +59,7 @@ QString TagEditorItem::value() const
 
         values = nonEmptyValues.join(QStringLiteral("; "));
         if(m_trackCount > 1 && m_values.size() > 1) {
-            values.prepend("<<multiple items>> ");
+            values.prepend(QStringLiteral("<<multiple items>> "));
         }
         m_value = values;
     }
@@ -104,7 +104,7 @@ void TagEditorItem::addTrackValue(const QStringList& values)
 void TagEditorItem::setValue(const QStringList& values)
 {
     m_values = values;
-    m_value  = {};
+    m_value.clear();
 }
 
 void TagEditorItem::setTitle(const QString& title)

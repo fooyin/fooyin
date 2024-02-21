@@ -23,6 +23,7 @@
 #include "librarytree/librarytreeappearance.h"
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QCheckBox>
 #include <QColorDialog>
@@ -69,13 +70,13 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(SettingsManager* settings)
     , m_showHeader{new QCheckBox(tr("Show Header"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_altColours{new QCheckBox(tr("Alternating Row Colours"), this)}
-    , m_fontButton{new QPushButton(QIcon::fromTheme(Constants::Icons::Font), tr("Font"), this)}
+    , m_fontButton{new QPushButton(Utils::iconFromTheme(Constants::Icons::Font), tr("Font"), this)}
     , m_colourButton{new QPushButton(this)}
     , m_rowHeight{new QSpinBox(this)}
 {
     auto* layout = new QGridLayout(this);
 
-    auto* rowHeightLabel = new QLabel(tr("Row Height") + ":", this);
+    auto* rowHeightLabel = new QLabel(tr("Row Height") + QStringLiteral(":"), this);
 
     layout->addWidget(m_showHeader, 0, 0, 1, 2);
     layout->addWidget(m_showScrollbar, 1, 0, 1, 2);
@@ -119,7 +120,7 @@ void LibraryTreeGuiPageWidget::load()
     m_colour           = options.colour;
     m_rowHeight->setValue(options.rowHeight);
 
-    m_fontButton->setText(QString{"%1 (%2)"}.arg(m_font.family()).arg(m_font.pointSize()));
+    m_fontButton->setText(QString{QStringLiteral("%1 (%2)")}.arg(m_font.family()).arg(m_font.pointSize()));
 
     QPixmap px(20, 20);
     px.fill(m_colour);

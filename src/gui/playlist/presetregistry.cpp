@@ -21,7 +21,7 @@
 
 namespace Fooyin {
 PresetRegistry::PresetRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{PlaylistPresets, settings, parent}
+    : ItemRegistry{QStringLiteral("PlaylistWidget/Presets"), settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto preset = itemById(id);
@@ -37,25 +37,25 @@ void PresetRegistry::loadDefaults()
 
     preset.name = QStringLiteral("Album - Disc");
 
-    TextBlock titleBlock{"$if2(%albumartist%,Unknown Artist)", 2};
+    TextBlock titleBlock{QStringLiteral("$if2(%albumartist%,Unknown Artist)"), 2};
     titleBlock.font.setBold(true);
     preset.header.title.emplace_back(titleBlock);
-    preset.header.subtitle.emplace_back("$if2(%album%,Unknown Album)", 1);
-    TextBlock sideBlock{"%year%", 1};
+    preset.header.subtitle.emplace_back(QStringLiteral("$if2(%album%,Unknown Album)"), 1);
+    TextBlock sideBlock{QStringLiteral("%year%"), 1};
     sideBlock.font.setBold(true);
     preset.header.sideText.emplace_back(sideBlock);
-    preset.header.info.emplace_back("[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%",
-                                    -1);
+    preset.header.info.emplace_back(
+        QStringLiteral("[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%"), -1);
 
     Fooyin::SubheaderRow subheader;
-    subheader.leftText.emplace_back("$ifgreater(%disctotal%,1,Disc #%disc%)");
-    subheader.rightText.emplace_back("$ifgreater(%disctotal%,1,%playtime%)");
+    subheader.leftText.emplace_back(QStringLiteral("$ifgreater(%disctotal%,1,Disc #%disc%)"));
+    subheader.rightText.emplace_back(QStringLiteral("$ifgreater(%disctotal%,1,%playtime%)"));
     preset.subHeaders.push_back(subheader);
 
-    preset.track.leftText.emplace_back("$num(%track%,2).   ");
-    preset.track.leftText.emplace_back("%title%");
-    preset.track.rightText.emplace_back("$ifgreater(%playcount%,0,%playcount% |)      ");
-    preset.track.rightText.emplace_back("$timems(%duration%)");
+    preset.track.leftText.emplace_back(QStringLiteral("$num(%track%,2).   "));
+    preset.track.leftText.emplace_back(QStringLiteral("%title%"));
+    preset.track.rightText.emplace_back(QStringLiteral("$ifgreater(%playcount%,0,%playcount% |)      "));
+    preset.track.rightText.emplace_back(QStringLiteral("$timems(%duration%)"));
 
     addDefaultItem(preset);
 
@@ -64,7 +64,8 @@ void PresetRegistry::loadDefaults()
     preset.name = QStringLiteral("Split Discs");
 
     preset.header.subtitle.clear();
-    preset.header.subtitle.emplace_back("$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)", 1);
+    preset.header.subtitle.emplace_back(
+        QStringLiteral("$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)"), 1);
 
     addDefaultItem(preset);
 
@@ -73,7 +74,8 @@ void PresetRegistry::loadDefaults()
     preset.header.simple = true;
     preset.header.title.clear();
     preset.header.subtitle.clear();
-    preset.header.title.emplace_back("$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)", 2);
+    preset.header.title.emplace_back(QStringLiteral("$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)"),
+                                     2);
 
     addDefaultItem(preset);
 

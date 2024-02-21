@@ -56,18 +56,21 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::StatusShowIcon>(false, QStringLiteral("StatusWidget/ShowIcon"));
     m_settings->createSetting<Internal::StatusShowSelection>(false, QStringLiteral("StatusWidget/ShowSelection"));
     m_settings->createSetting<Internal::StatusPlayingScript>(
-        "[$num(%track%,2). ][%title% ($timems(%duration%))][ \u2022 %albumartist%][ \u2022 %album%]",
+        QStringLiteral("[$num(%track%,2). ][%title% ($timems(%duration%))][ \u2022 %albumartist%][ \u2022 %album%]"),
         QStringLiteral("StatusWidget/PlayingScript"));
     m_settings->createSetting<Internal::StatusSelectionScript>(
-        "%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%", QStringLiteral("StatusWidget/SelectionScript"));
+        QStringLiteral("%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%"),
+        QStringLiteral("StatusWidget/SelectionScript"));
 
     qRegisterMetaType<Fooyin::LibraryTreeAppearance>("Fooyin::LibraryTreeAppearance");
 
     m_settings->createSetting<Internal::LibTreeDoubleClick>(1, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
     m_settings->createSetting<Internal::LibTreeMiddleClick>(0, QStringLiteral("LibraryTree/MiddleClickkBehaviour"));
-    m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false, QStringLiteral("LibraryTree/SelectionPlaylistEnabled"));
-    m_settings->createSetting<Internal::LibTreeAutoSwitch>(true, QStringLiteral("LibraryTree/SelectionPlaylistAutoSwitch"));
-    m_settings->createSetting<Internal::LibTreeAutoPlaylist>("Library Selection",
+    m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false,
+                                                                QStringLiteral("LibraryTree/SelectionPlaylistEnabled"));
+    m_settings->createSetting<Internal::LibTreeAutoSwitch>(true,
+                                                           QStringLiteral("LibraryTree/SelectionPlaylistAutoSwitch"));
+    m_settings->createSetting<Internal::LibTreeAutoPlaylist>(QStringLiteral("Library Selection"),
                                                              QStringLiteral("LibraryTree/SelectionPlaylistName"));
     m_settings->createSetting<Internal::LibTreeHeader>(true, QStringLiteral("LibraryTree/Header"));
     m_settings->createSetting<Internal::LibTreeScrollBar>(true, QStringLiteral("LibraryTree/Scrollbar"));

@@ -73,7 +73,7 @@ struct LibraryTreePopulator::Private
             return;
         }
 
-        const QStringList values = field.split(Constants::Separator, Qt::SkipEmptyParts);
+        const QStringList values = field.split(QStringLiteral("\037"), Qt::SkipEmptyParts);
         for(const QString& value : values) {
             if(value.isNull()) {
                 continue;

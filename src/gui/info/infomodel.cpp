@@ -128,7 +128,7 @@ struct InfoModel::Private
 
     std::unordered_map<QString, InfoItem> nodes;
 
-    Private(InfoModel* self_)
+    explicit Private(InfoModel* self_)
         : self{self_}
     { }
 
@@ -270,7 +270,7 @@ void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
 
     if(infoTracks.empty()) {
         if(playingTrack.isValid()) {
-            infoTracks.push_back(std::move(playingTrack));
+            infoTracks.push_back(playingTrack);
         }
     }
 
@@ -309,9 +309,9 @@ QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int rol
 
     switch(section) {
         case(0):
-            return "Name";
+            return QStringLiteral("Name");
         case(1):
-            return "Value";
+            return QStringLiteral("Value");
     }
     return {};
 }

@@ -293,7 +293,7 @@ QVariant LibraryTreeModel::headerData(int /*section*/, Qt::Orientation orientati
         return {};
     }
 
-    return "Library Tree";
+    return QStringLiteral("Library Tree");
 }
 
 QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
@@ -380,7 +380,7 @@ bool LibraryTreeModel::canFetchMore(const QModelIndex& parent) const
 
 QStringList LibraryTreeModel::mimeTypes() const
 {
-    return {Constants::Mime::TrackIds};
+    return {QString::fromLatin1(Constants::Mime::TrackIds)};
 }
 
 Qt::DropActions LibraryTreeModel::supportedDragActions() const
@@ -391,7 +391,7 @@ Qt::DropActions LibraryTreeModel::supportedDragActions() const
 QMimeData* LibraryTreeModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    mimeData->setData(Constants::Mime::TrackIds, p->saveTracks(indexes));
+    mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), p->saveTracks(indexes));
     return mimeData;
 }
 

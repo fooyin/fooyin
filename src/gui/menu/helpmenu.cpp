@@ -20,10 +20,11 @@
 #include "helpmenu.h"
 
 #include "aboutdialog.h"
-#include "gui/guiconstants.h"
 
+#include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/utils.h>
 
 #include <QAction>
 #include <QIcon>
@@ -44,8 +45,7 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
 {
     auto* helpMenu = m_actionManager->actionContainer(Constants::Menus::Help);
 
-    const auto aboutIcon = QIcon::fromTheme(Constants::Icons::Fooyin);
-    m_about              = new QAction(aboutIcon, tr("&About"), this);
+    m_about = new QAction(Utils::iconFromTheme(Constants::Icons::Fooyin), tr("&About"), this);
     helpMenu->addAction(m_actionManager->registerAction(m_about, Constants::Actions::About), Actions::Groups::Three);
     QObject::connect(m_about, &QAction::triggered, this, showAboutDialog);
 }

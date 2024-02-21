@@ -258,7 +258,7 @@ struct PipeWireOutput::Private
     std::mutex bufferMutex;
 
     bool initialised{false};
-    int bufferSize{2048};
+    int bufferSize{4096};
 
     OutputDevices sinks;
 
@@ -353,13 +353,13 @@ struct PipeWireOutput::Private
 
         pw_properties_setf(props, PW_KEY_MEDIA_CATEGORY, "Playback");
         pw_properties_setf(props, PW_KEY_MEDIA_ROLE, "Music");
-        pw_properties_setf(props, PW_KEY_APP_ID, Constants::AppName);
-        pw_properties_setf(props, PW_KEY_APP_ICON_NAME, Constants::AppName);
-        pw_properties_setf(props, PW_KEY_APP_NAME, Constants::AppName);
+        pw_properties_setf(props, PW_KEY_APP_ID, "fooyin");
+        pw_properties_setf(props, PW_KEY_APP_ICON_NAME, "fooyin");
+        pw_properties_setf(props, PW_KEY_APP_NAME, "fooyin");
         pw_properties_setf(props, PW_KEY_NODE_ALWAYS_PROCESS, "true");
         pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", format.sampleRate());
 
-        if(device != DefaultDevice) {
+        if(device != QString::fromLatin1(DefaultDevice)) {
             pw_properties_setf(props, PW_KEY_TARGET_OBJECT, "%s", device.toUtf8().constData());
         }
 
@@ -515,7 +515,7 @@ struct PipeWireOutput::Private
         const char* name = spa_dict_lookup(props, PW_KEY_NODE_NAME);
         const char* desc = spa_dict_lookup(props, PW_KEY_NODE_DESCRIPTION);
 
-        self->sinks.emplace_back(name, desc);
+        self->sinks.emplace_back(QString::fromLatin1(name), QString::fromLatin1(desc));
     }
 
     static void onProcess(void* userData)
@@ -634,7 +634,7 @@ OutputDevices PipeWireOutput::getAllDevices() const
 {
     OutputDevices devices;
 
-    devices.emplace_back(DefaultDevice, "Default");
+    devices.emplace_back(QString::fromLatin1(DefaultDevice), QStringLiteral("Default"));
 
     if(!p->initialised) {
         pw_init(nullptr, nullptr);

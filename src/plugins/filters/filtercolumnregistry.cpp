@@ -21,7 +21,7 @@
 
 namespace Fooyin::Filters {
 FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* parent)
-    : ItemRegistry{FilterColumns, settings, parent}
+    : ItemRegistry{QStringLiteral("Filters/FilterColumns"), settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
         const auto field = itemById(id);
@@ -33,11 +33,12 @@ FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* p
 
 void FilterColumnRegistry::loadDefaults()
 {
-    addDefaultItem({.id = 0, .index = 0, .name = "Genre", .field = "%<genre>%"});
-    addDefaultItem({.id = 1, .index = 1, .name = "Album Artist", .field = "%albumartist%"});
-    addDefaultItem({.id = 2, .index = 2, .name = "Artist", .field = "%<artist>%"});
-    addDefaultItem({.id = 3, .index = 3, .name = "Album", .field = "%album%"});
-    addDefaultItem({.id = 4, .index = 4, .name = "Date", .field = "%date%"});
+    addDefaultItem({.id = 0, .index = 0, .name = QStringLiteral("Genre"), .field = QStringLiteral("%<genre>%")});
+    addDefaultItem(
+        {.id = 1, .index = 1, .name = QStringLiteral("Album Artist"), .field = QStringLiteral("%albumartist%")});
+    addDefaultItem({.id = 2, .index = 2, .name = QStringLiteral("Artist"), .field = QStringLiteral("%<artist>%")});
+    addDefaultItem({.id = 3, .index = 3, .name = QStringLiteral("Album"), .field = QStringLiteral("%album%")});
+    addDefaultItem({.id = 4, .index = 4, .name = QStringLiteral("Date"), .field = QStringLiteral("%date%")});
 }
 } // namespace Fooyin::Filters
 

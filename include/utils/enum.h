@@ -32,7 +32,7 @@ template <typename E>
 std::optional<E> fromString(const QString& text)
 {
     bool ok;
-    auto result = static_cast<E>(QMetaEnum::fromType<E>().keyToValue(text.toUtf8(), &ok));
+    auto result = static_cast<E>(QMetaEnum::fromType<E>().keyToValue(text.toUtf8().constData(), &ok));
     if(!ok) {
         qDebug() << "Failed to convert enum " << text;
         return {};

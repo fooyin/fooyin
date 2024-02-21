@@ -23,6 +23,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/crypto.h>
+#include <utils/utils.h>
 
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -119,8 +120,8 @@ struct ExtendableTableView::Private
         , context{new WidgetContext(
               self, Context{Id{"Context.ExtendableTableView."}.append(Utils::generateRandomHash())}, self)}
         , toolArea{new ExtendableToolArea(self)}
-        , add{new QAction(QIcon::fromTheme(Constants::Icons::Add), tr("Add"), self)}
-        , remove{new QAction(QIcon::fromTheme(Constants::Icons::Remove), tr("Remove"), self)}
+        , add{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Add"), self)}
+        , remove{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove"), self)}
         , addCommand{actionManager->registerAction(add, Constants::Actions::New, context->context())}
         , removeCommand{actionManager->registerAction(remove, Constants::Actions::Remove, context->context())}
         , addButton{new QToolButton(self)}
@@ -159,7 +160,7 @@ struct ExtendableTableView::Private
     {
         if(tools & Move) {
             if(!moveUp) {
-                moveUp = new QAction(QIcon::fromTheme(Constants::Icons::Up), tr("Move Up"), self);
+                moveUp = new QAction(Utils::iconFromTheme(Constants::Icons::Up), tr("Move Up"), self);
                 QObject::connect(moveUp, &QAction::triggered, self, [this]() { handleMoveUp(); });
 
                 moveUpButton = new QToolButton(self);
@@ -167,7 +168,7 @@ struct ExtendableTableView::Private
                 toolArea->addTool(moveUpButton);
             }
             if(!moveDown) {
-                moveDown = new QAction(QIcon::fromTheme(Constants::Icons::Down), tr("Move Down"), self);
+                moveDown = new QAction(Utils::iconFromTheme(Constants::Icons::Down), tr("Move Down"), self);
                 QObject::connect(moveDown, &QAction::triggered, self, [this]() { handleMoveDown(); });
 
                 moveDownButton = new QToolButton(self);

@@ -36,20 +36,19 @@ enum Type : int
 }
 
 struct Expression;
+using ExpressionList = std::vector<Expression>;
 
 struct FuncValue
 {
     QString name;
-    std::vector<Expression> args;
+    ExpressionList args;
 };
-
-using ExpressionList = std::vector<Expression>;
 
 using ExpressionValue = std::variant<QString, FuncValue, ExpressionList>;
 
 struct Expression
 {
     Expr::Type type{Expr::Null};
-    ExpressionValue value{""};
+    ExpressionValue value{QStringLiteral("")};
 };
 } // namespace Fooyin

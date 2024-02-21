@@ -20,13 +20,6 @@
 #pragma once
 
 namespace Fooyin::Constants {
-constexpr auto AppName     = "fooyin";
-constexpr auto DisplayName = "fooyin";
-
-constexpr auto Separator = "\037"; // ASCII Code 31 - ␟
-
-constexpr auto EmbeddedCover = "|Embedded|";
-
 namespace MetaData {
 constexpr auto Title        = "title";
 constexpr auto Artist       = "artist";
