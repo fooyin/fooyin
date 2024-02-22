@@ -34,6 +34,7 @@
 #include <queue>
 #include <ranges>
 #include <set>
+#include <stack>
 
 namespace {
 bool cmpItemsReverse(Fooyin::LibraryTreeItem* pItem1, Fooyin::LibraryTreeItem* pItem2)
@@ -127,6 +128,8 @@ struct LibraryTreeModel::Private
         while(self->canFetchMore({})) {
             self->fetchMore({});
         }
+
+        QMetaObject::invokeMethod(self, &LibraryTreeModel::modelUpdated);
     }
 
     void traverseTree(const QModelIndex& index, Fooyin::TrackIds& trackIds)
@@ -395,6 +398,54 @@ QMimeData* LibraryTreeModel::mimeData(const QModelIndexList& indexes) const
     return mimeData;
 }
 
+QModelIndexList LibraryTreeModel::findIndexes(const QStringList& values) const
+{
+    QModelIndexList indexes;
+
+    std::stack<LibraryTreeItem*> stack;
+    stack.emplace(rootItem());
+
+    while(!stack.empty()) {
+        auto* item = stack.top();
+        stack.pop();
+
+        const auto children = item->children();
+        for(auto* child : children) {
+            if(values.contains(child->title()) && !child->pending()) {
+                indexes.append(indexOfItem(child));
+            }
+            stack.push(child);
+        }
+    }
+
+    return indexes;
+}
+
+QModelIndexList LibraryTreeModel::indexesForTracks(const TrackList& tracks) const
+{
+    if(tracks.empty()) {
+        return {};
+    }
+
+    QModelIndexList parents;
+
+    for(const Track& track : tracks) {
+        const int id = track.id();
+        if(!p->trackParents.contains(id)) {
+            continue;
+        }
+
+        const auto trackNodes = p->trackParents[id];
+        for(const QString& node : trackNodes) {
+            if(p->nodes.contains(node) && !p->nodes[node].pending()) {
+                parents.emplace_back(indexOfItem(&p->nodes[node]));
+            }
+        }
+    }
+
+    return parents;
+}
+
 void LibraryTreeModel::addTracks(const TrackList& tracks)
 {
     TrackList tracksToAdd;
@@ -413,6 +464,14 @@ void LibraryTreeModel::addTracks(const TrackList& tracks)
 
 void LibraryTreeModel::updateTracks(const TrackList& tracks)
 {
+    TrackList tracksToUpdate;
+    std::ranges::copy_if(tracks, std::back_inserter(tracksToUpdate),
+                         [this](const Track& track) { return p->trackParents.contains(track.id()); });
+
+    if(tracksToUpdate.empty()) {
+        return;
+    }
+
     removeTracks(tracks);
     addTracks(tracks);
 }
@@ -424,9 +483,13 @@ void LibraryTreeModel::removeTracks(const TrackList& tracks)
 
     for(const Track& track : tracks) {
         const int id = track.id();
-        if(p->trackParents.contains(id)) {
-            const auto trackNodes = p->trackParents[id];
-            for(const QString& node : trackNodes) {
+        if(!p->trackParents.contains(id)) {
+            continue;
+        }
+
+        const auto trackNodes = p->trackParents[id];
+        for(const QString& node : trackNodes) {
+            if(p->nodes.contains(node)) {
                 LibraryTreeItem* item = &p->nodes[node];
                 item->removeTrack(track);
                 if(item->pending()) {
@@ -436,8 +499,8 @@ void LibraryTreeModel::removeTracks(const TrackList& tracks)
                     items.emplace(item);
                 }
             }
-            p->trackParents.erase(id);
         }
+        p->trackParents.erase(id);
     }
 
     for(const LibraryTreeItem* item : pendingItems) {

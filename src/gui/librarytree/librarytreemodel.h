@@ -49,12 +49,18 @@ public:
     [[nodiscard]] Qt::DropActions supportedDragActions() const override;
     [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
+    [[nodiscard]] QModelIndexList findIndexes(const QStringList& values) const;
+    [[nodiscard]] QModelIndexList indexesForTracks(const TrackList& tracks) const;
+
     void addTracks(const TrackList& tracks);
     void updateTracks(const TrackList& tracks);
     void removeTracks(const TrackList& tracks);
 
     void changeGrouping(const LibraryTreeGrouping& grouping);
     void reset(const TrackList& tracks);
+
+signals:
+    void modelUpdated();
 
 private:
     struct Private;

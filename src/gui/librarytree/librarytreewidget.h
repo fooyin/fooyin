@@ -25,7 +25,6 @@ namespace Fooyin {
 class SettingsManager;
 class MusicLibrary;
 class TrackSelectionController;
-class LibraryTreeWidgetPrivate;
 
 class LibraryTreeWidget : public FyWidget
 {
@@ -47,6 +46,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    std::unique_ptr<LibraryTreeWidgetPrivate> p;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin
