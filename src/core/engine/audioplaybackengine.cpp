@@ -117,18 +117,22 @@ struct AudioPlaybackEngine::Private
         }
     }
 
-    void changeState(PlaybackState newState)
+    PlaybackState changeState(PlaybackState newState)
     {
-        if(std::exchange(state, newState) != state) {
+        auto prevState = std::exchange(state, newState);
+        if(prevState != state) {
             QMetaObject::invokeMethod(self, "stateChanged", Q_ARG(PlaybackState, state));
         }
+        return prevState;
     }
 
-    void changeTrackStatus(TrackStatus newStatus)
+    TrackStatus changeTrackStatus(TrackStatus newStatus)
     {
-        if(std::exchange(status, newStatus) != status) {
+        auto prevStatus = std::exchange(status, newStatus);
+        if(prevStatus != status) {
             QMetaObject::invokeMethod(self, "trackStatusChanged", Q_ARG(TrackStatus, status));
         }
+        return prevStatus;
     }
 
     void updatePosition()
@@ -158,7 +162,7 @@ struct AudioPlaybackEngine::Private
 
     void onRendererFinished()
     {
-        if(std::exchange(state, StoppedState) == StoppedState) {
+        if(changeState(StoppedState) == StoppedState) {
             return;
         }
 
@@ -277,11 +281,9 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
 void AudioPlaybackEngine::setState(PlaybackState state)
 {
-    p->changeState(state);
+    const auto prevState = p->changeState(state);
 
     p->clock.setPaused(state != PlayingState);
-
-    auto prevState = std::exchange(p->state, state);
 
     if(state == StoppedState) {
         p->stopWorkers();
