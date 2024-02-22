@@ -37,7 +37,6 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Version>(QString::fromLatin1(VERSION), QStringLiteral("Version"));
     m_settings->createSetting<PlayMode>(0, QStringLiteral("Player/PlayMode"));
     m_settings->createSetting<AutoRefresh>(true, QStringLiteral("Library/AutoRefresh"));
-    m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
     m_settings->createSetting<LibrarySortScript>(
         QStringLiteral("%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"),
         QStringLiteral("Library/SortScript"));
@@ -48,6 +47,9 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<GaplessPlayback>(true, QStringLiteral("Engine/GaplessPlayback"));
     m_settings->createSetting<Language>(QStringLiteral(""), QStringLiteral("Language"));
     m_settings->createSetting<BufferLength>(4000, QStringLiteral("Engine/BufferLength"));
+
+    m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
+    m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }

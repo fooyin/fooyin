@@ -22,6 +22,7 @@
 #include <gui/fywidget.h>
 
 namespace Fooyin {
+class ActionManager;
 class SettingsManager;
 class PlayerManager;
 
@@ -30,7 +31,8 @@ class PlayerControl : public FyWidget
     Q_OBJECT
 
 public:
-    PlayerControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
+    PlayerControl(ActionManager* actionManager, PlayerManager* playerManager, SettingsManager* settings,
+                  QWidget* parent = nullptr);
     ~PlayerControl() override;
 
     QString name() const override;

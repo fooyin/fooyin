@@ -29,7 +29,8 @@ Q_NAMESPACE
 
 enum CoreInternalSettings : uint32_t
 {
-    MonitorLibraries = 0 | Settings::Bool
+    MonitorLibraries = 0 | Settings::Bool,
+    MuteVolume       = 1 | Settings::Double,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

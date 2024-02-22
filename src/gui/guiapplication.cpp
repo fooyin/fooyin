@@ -23,6 +23,7 @@
 #include "controls/playlistcontrol.h"
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
+#include "core/internalcoresettings.h"
 #include "info/infowidget.h"
 #include "internalguisettings.h"
 #include "library/coverwidget.h"
@@ -180,6 +181,7 @@ struct GuiApplication::Private
                            propertiesDialog, &widgetProvider, editableLayout.get()}
     {
         setupConnections();
+        registerActions();
         restoreIconTheme();
         registerLayouts();
         registerWidgets();
@@ -229,6 +231,24 @@ struct GuiApplication::Private
                 if(track.isValid() && !QFileInfo::exists(track.filepath())) {
                     showTrackNotFoundMessage(track);
                 }
+            }
+        });
+    }
+
+    void registerActions()
+    {
+        auto* muteAction
+            = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeMute), tr("Mute"), mainWindow.get());
+        actionManager->registerAction(muteAction, Constants::Actions::Mute);
+        QObject::connect(muteAction, &QAction::triggered, mainWindow.get(), [this]() {
+            const double volume = settingsManager->value<Settings::Core::OutputVolume>();
+            if(volume > 0.0) {
+                settingsManager->set<Settings::Core::Internal::MuteVolume>(volume);
+                settingsManager->set<Settings::Core::OutputVolume>(0.0);
+            }
+            else {
+                settingsManager->set<Settings::Core::OutputVolume>(
+                    settingsManager->value<Settings::Core::Internal::MuteVolume>());
             }
         });
     }
@@ -335,7 +355,7 @@ struct GuiApplication::Private
 
         widgetProvider.registerWidget(
             QStringLiteral("PlayerControls"),
-            [this]() { return new PlayerControl(playerManager, settingsManager, mainWindow.get()); },
+            [this]() { return new PlayerControl(actionManager, playerManager, settingsManager, mainWindow.get()); },
             QStringLiteral("Player Controls"));
         widgetProvider.setSubMenus(QStringLiteral("PlayerControls"), {QStringLiteral("Controls")});
 
@@ -346,7 +366,8 @@ struct GuiApplication::Private
         widgetProvider.setSubMenus(QStringLiteral("PlaylistControls"), {QStringLiteral("Controls")});
 
         widgetProvider.registerWidget(
-            QStringLiteral("VolumeControls"), [this]() { return new VolumeControl(settingsManager, mainWindow.get()); },
+            QStringLiteral("VolumeControls"),
+            [this]() { return new VolumeControl(actionManager, settingsManager, mainWindow.get()); },
             QStringLiteral("Volume Controls"));
         widgetProvider.setSubMenus(QStringLiteral("VolumeControls"), {QStringLiteral("Controls")});
 

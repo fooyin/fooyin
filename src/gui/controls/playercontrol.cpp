@@ -23,6 +23,8 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/toolbutton.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -34,6 +36,7 @@ struct PlayerControl::Private
 {
     PlayerControl* self;
 
+    ActionManager* actionManager;
     PlayerManager* playerManager;
     SettingsManager* settings;
 
@@ -42,8 +45,10 @@ struct PlayerControl::Private
     ToolButton* playPause;
     ToolButton* next;
 
-    Private(PlayerControl* self_, PlayerManager* playerManager_, SettingsManager* settings_)
+    Private(PlayerControl* self_, ActionManager* actionManager_, PlayerManager* playerManager_,
+            SettingsManager* settings_)
         : self{self_}
+        , actionManager{actionManager_}
         , playerManager{playerManager_}
         , settings{settings_}
         , stop{new ToolButton(self)}
@@ -55,6 +60,19 @@ struct PlayerControl::Private
         QObject::connect(prev, &QToolButton::clicked, playerManager, &PlayerManager::previous);
         QObject::connect(playPause, &QToolButton::clicked, playerManager, &PlayerManager::playPause);
         QObject::connect(next, &QToolButton::clicked, playerManager, &PlayerManager::next);
+
+        if(auto* stopCmd = actionManager->command(Constants::Actions::Stop)) {
+            stop->setDefaultAction(stopCmd->action());
+        }
+        if(auto* prevCmd = actionManager->command(Constants::Actions::Previous)) {
+            prev->setDefaultAction(prevCmd->action());
+        }
+        if(auto* playCmd = actionManager->command(Constants::Actions::PlayPause)) {
+            playPause->setDefaultAction(playCmd->action());
+        }
+        if(auto* nextCmd = actionManager->command(Constants::Actions::Next)) {
+            next->setDefaultAction(nextCmd->action());
+        }
 
         stop->setAutoRaise(true);
         prev->setAutoRaise(true);
@@ -91,9 +109,10 @@ struct PlayerControl::Private
     }
 };
 
-PlayerControl::PlayerControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
+PlayerControl::PlayerControl(ActionManager* actionManager, PlayerManager* playerManager, SettingsManager* settings,
+                             QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerManager, settings)}
+    , p{std::make_unique<Private>(this, actionManager, playerManager, settings)}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);

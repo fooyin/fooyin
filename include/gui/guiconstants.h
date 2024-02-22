@@ -96,8 +96,8 @@ constexpr auto PlaylistAddTo = "Fooyin.Group.Playlist.AddTo";
 } // namespace Groups
 
 namespace Context {
-constexpr auto Playlist    = "Fooyin.Context.Playlist";
-constexpr auto Search      = "Fooyin.Context.Search";
+constexpr auto Playlist = "Fooyin.Context.Playlist";
+constexpr auto Search   = "Fooyin.Context.Search";
 } // namespace Context
 
 namespace Actions {
@@ -125,6 +125,7 @@ constexpr auto Undo            = "Edit.Undo";
 constexpr auto Redo            = "Edit.Redo";
 constexpr auto Remove          = "Edit.Remove";
 constexpr auto Rename          = "Edit.Rename";
+constexpr auto Mute            = "Volume.Mute";
 } // namespace Actions
 
 namespace Mime {

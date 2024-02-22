@@ -22,6 +22,7 @@
 #include <gui/fywidget.h>
 
 namespace Fooyin {
+class ActionManager;
 class SettingsManager;
 
 class VolumeControl : public FyWidget
@@ -29,7 +30,7 @@ class VolumeControl : public FyWidget
     Q_OBJECT
 
 public:
-    explicit VolumeControl(SettingsManager* settings, QWidget* parent = nullptr);
+    explicit VolumeControl(ActionManager* actionManager, SettingsManager* settings, QWidget* parent = nullptr);
     ~VolumeControl() override;
 
     QString name() const override;

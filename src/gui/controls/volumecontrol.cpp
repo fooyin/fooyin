@@ -25,6 +25,8 @@
 #include <gui/widgets/hovermenu.h>
 #include <gui/widgets/logslider.h>
 #include <gui/widgets/toolbutton.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -42,15 +44,17 @@ namespace Fooyin {
 struct VolumeControl::Private
 {
     VolumeControl* self;
+
+    ActionManager* actionManager;
     SettingsManager* settings;
+
     ToolButton* volumeIcon;
     HoverMenu* volumeMenu;
     LogSlider* volumeSlider;
 
-    double prevValue{-1.0};
-
-    Private(VolumeControl* self_, SettingsManager* settings_)
+    Private(VolumeControl* self_, ActionManager* actionManager_, SettingsManager* settings_)
         : self{self_}
+        , actionManager{actionManager_}
         , settings{settings_}
         , volumeIcon{new ToolButton(self)}
         , volumeMenu{new HoverMenu(self)}
@@ -58,6 +62,10 @@ struct VolumeControl::Private
     {
         auto* volumeLayout = new QVBoxLayout(volumeMenu);
         volumeLayout->addWidget(volumeSlider);
+
+        if(auto* muteCmd = actionManager->command(Constants::Actions::Mute)) {
+            volumeIcon->setDefaultAction(muteCmd->action());
+        }
 
         volumeIcon->setAutoRaise(true);
 
@@ -100,21 +108,6 @@ struct VolumeControl::Private
         settings->set<Settings::Core::OutputVolume>(volume);
     }
 
-    void mute()
-    {
-        const double volume = settings->value<Settings::Core::OutputVolume>();
-
-        if(volume != 0) {
-            prevValue = volume;
-            volumeSlider->setNaturalValue(0.0);
-            settings->set<Settings::Core::OutputVolume>(0.0);
-        }
-        else {
-            settings->set<Settings::Core::OutputVolume>(prevValue < 0 ? 1 : prevValue);
-            volumeSlider->setNaturalValue(prevValue < 0 ? 1 : prevValue);
-        }
-    }
-
     void updateDisplay(double volume) const
     {
         if(!volumeIcon) {
@@ -136,9 +129,9 @@ struct VolumeControl::Private
     }
 };
 
-VolumeControl::VolumeControl(SettingsManager* settings, QWidget* parent)
+VolumeControl::VolumeControl(ActionManager* actionManager, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, settings)}
+    , p{std::make_unique<Private>(this, actionManager, settings)}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -146,7 +139,6 @@ VolumeControl::VolumeControl(SettingsManager* settings, QWidget* parent)
     layout->addWidget(p->volumeIcon);
 
     QObject::connect(p->volumeIcon, &ToolButton::entered, this, [this]() { p->showVolumeMenu(); });
-    QObject::connect(p->volumeIcon, &QToolButton::clicked, this, [this]() { p->mute(); });
 
     QObject::connect(p->volumeSlider, &LogSlider::logValueChanged, this,
                      [this](double volume) { p->volumeChanged(volume); });

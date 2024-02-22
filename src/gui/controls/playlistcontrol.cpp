@@ -24,6 +24,8 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/toolbutton.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -59,6 +61,14 @@ struct PlaylistControl::Private
               Utils::iconFromTheme(Constants::Icons::Shuffle).pixmap({128, 128}), self->palette().highlight().color())}
     {
         repeat->setPopupMode(QToolButton::InstantPopup);
+
+        auto* repeatAction = new QAction(self);
+        repeatAction->setToolTip(QStringLiteral("Repeat"));
+        repeat->setDefaultAction(repeatAction);
+
+        auto* shuffleAction = new QAction(self);
+        shuffleAction->setToolTip(QStringLiteral("Shuffle"));
+        shuffle->setDefaultAction(shuffleAction);
 
         repeat->setAutoRaise(true);
         shuffle->setAutoRaise(true);
