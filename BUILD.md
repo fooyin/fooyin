@@ -94,6 +94,14 @@ use the prefix switch:
 cmake --install <BUILD_DIRECTORY> --prefix <INSTALL_DIRECTORY>
 ```
 
+## Uninstalling
+
+To uninstall fooyin, simply pass the uninstall target to CMake like so:
+
+```
+cmake --build <BUILD_DIRECTORY> --target uninstall
+```
+
 ### Notes for package maintainers
 
 * The install script above will handle installation of all files needed by fooyin following the typical Linux FHS.
