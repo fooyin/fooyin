@@ -48,7 +48,7 @@ class AudioOutput
 public:
     virtual ~AudioOutput() = default;
 
-    /** Initialises the output with the given @p oc context. */
+    /** Initialises the output with the given @p format. */
     virtual bool init(const AudioFormat& format) = 0;
     /** Resets the output to the state before @fn init was called. */
     virtual void uninit() = 0;
