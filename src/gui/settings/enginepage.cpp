@@ -31,6 +31,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QListView>
+#include <QSpinBox>
 
 namespace Fooyin {
 class EnginePageWidget : public SettingsPageWidget
@@ -55,6 +56,7 @@ private:
     ExpandingComboBox* m_deviceBox;
 
     QCheckBox* m_gaplessPlayback;
+    QSpinBox* m_bufferSize;
 };
 
 EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* engine)
@@ -63,17 +65,30 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* 
     , m_outputBox{new ExpandingComboBox(this)}
     , m_deviceBox{new ExpandingComboBox(this)}
     , m_gaplessPlayback{new QCheckBox(tr("Gapless Playback"), this)}
+    , m_bufferSize{new QSpinBox(this)}
 {
     auto* outputLabel = new QLabel(tr("Output") + QStringLiteral(":"), this);
     auto* deviceLabel = new QLabel(tr("Device") + QStringLiteral(":"), this);
 
     auto* generalBox    = new QGroupBox(tr("General"), this);
-    auto* generalLayout = new QVBoxLayout(generalBox);
+    auto* generalLayout = new QGridLayout(generalBox);
 
     m_gaplessPlayback->setToolTip(
         tr("Try to play consecutive tracks with no silence or disruption at the point of file change"));
 
-    generalLayout->addWidget(m_gaplessPlayback);
+    generalLayout->addWidget(m_gaplessPlayback, 0, 0, 1, 3);
+
+    auto* bufferLabel = new QLabel(tr("Buffer length") + QStringLiteral(":"), this);
+
+    m_bufferSize->setSuffix(QStringLiteral(" ms"));
+    m_bufferSize->setSingleStep(100);
+    m_bufferSize->setMinimum(50);
+    m_bufferSize->setMaximum(30000);
+
+    generalLayout->addWidget(bufferLabel, 1, 0);
+    generalLayout->addWidget(m_bufferSize, 1, 1);
+
+    generalLayout->setColumnStretch(2, 1);
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(outputLabel, 0, 0);
@@ -93,6 +108,7 @@ void EnginePageWidget::load()
     setupOutputs();
     setupDevices(m_outputBox->currentText());
     m_gaplessPlayback->setChecked(m_settings->value<Settings::Core::GaplessPlayback>());
+    m_bufferSize->setValue(m_settings->value<Settings::Core::BufferLength>());
 }
 
 void EnginePageWidget::apply()
@@ -100,12 +116,14 @@ void EnginePageWidget::apply()
     const QString output = m_outputBox->currentText() + QStringLiteral("|") + m_deviceBox->currentData().toString();
     m_settings->set<Settings::Core::AudioOutput>(output);
     m_settings->set<Settings::Core::GaplessPlayback>(m_gaplessPlayback->isChecked());
+    m_settings->set<Settings::Core::BufferLength>(m_bufferSize->value());
 }
 
 void EnginePageWidget::reset()
 {
     m_settings->reset<Settings::Core::AudioOutput>();
     m_settings->reset<Settings::Core::GaplessPlayback>();
+    m_settings->reset<Settings::Core::BufferLength>();
 }
 
 void EnginePageWidget::setupOutputs()

@@ -47,6 +47,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<RewindPreviousTrack>(false, QStringLiteral("Playlist/RewindPreviousTrack"));
     m_settings->createSetting<GaplessPlayback>(true, QStringLiteral("Engine/GaplessPlayback"));
     m_settings->createSetting<Language>(QStringLiteral(""), QStringLiteral("Language"));
+    m_settings->createSetting<BufferLength>(4000, QStringLiteral("Engine/BufferLength"));
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }

@@ -40,6 +40,7 @@ enum CoreSettings : uint32_t
     RewindPreviousTrack = 9 | Type::Bool,
     GaplessPlayback     = 10 | Type::Bool,
     Language            = 11 | Type::String,
+    BufferLength        = 12 | Type::Int,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Fooyin::Settings::Core
