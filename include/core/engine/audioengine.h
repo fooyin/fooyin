@@ -23,8 +23,6 @@
 
 #include <core/engine/outputplugin.h>
 
-#include <QObject>
-
 namespace Fooyin {
 class Track;
 
@@ -50,15 +48,18 @@ class FYCORE_EXPORT AudioEngine : public QObject
     Q_OBJECT
 
 public:
-    explicit AudioEngine(QObject* parent = nullptr);
+    explicit AudioEngine(QObject* parent = nullptr)
+        : QObject{parent}
+    { }
 
-    [[nodiscard]] virtual PlaybackState state() const;
-    [[nodiscard]] virtual TrackStatus trackStatus() const;
-    [[nodiscard]] virtual uint64_t position() const;
+    virtual PlaybackState state() const     = 0;
+    virtual TrackStatus trackStatus() const = 0;
+    virtual uint64_t position() const       = 0;
 
-    virtual void seek(uint64_t position) = 0;
+    virtual void seek(uint64_t pos) = 0;
 
     virtual void changeTrack(const Track& track) = 0;
+    virtual void setState(PlaybackState state)   = 0;
 
     virtual void play()  = 0;
     virtual void pause() = 0;
@@ -69,17 +70,9 @@ public:
     virtual void setAudioOutput(const OutputCreator& output) = 0;
     virtual void setOutputDevice(const QString& device)      = 0;
 
-    void changeState(PlaybackState state);
-    void changeTrackStatus(TrackStatus status);
-
 signals:
     void stateChanged(PlaybackState state);
     void trackStatusChanged(TrackStatus status);
     void positionChanged(uint64_t ms);
-
-private:
-    TrackStatus m_status;
-    PlaybackState m_state;
-    uint64_t m_position;
 };
 } // namespace Fooyin

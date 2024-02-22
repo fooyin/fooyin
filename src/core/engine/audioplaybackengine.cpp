@@ -17,14 +17,15 @@
  *
  */
 
-#include "ffmpegengine.h"
+#include "audioplaybackengine.h"
 
-#include "ffmpegclock.h"
-#include "ffmpegdecoder.h"
-#include "ffmpegrenderer.h"
+#include "audioclock.h"
+#include "audiorenderer.h"
+#include "engine/ffmpeg/ffmpegdecoder.h"
 
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
+#include <core/engine/audiodecoder.h>
 #include <core/engine/audiooutput.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
@@ -40,15 +41,18 @@ extern "C"
 using namespace std::chrono_literals;
 
 namespace Fooyin {
-struct FFmpegEngine::Private
+struct AudioPlaybackEngine::Private
 {
-    FFmpegEngine* self;
+    AudioEngine* self;
 
     SettingsManager* settings;
 
     AudioClock clock;
     QTimer* positionUpdateTimer{nullptr};
-    uint64_t lastPos{0};
+
+    TrackStatus status;
+    PlaybackState state{StoppedState};
+    uint64_t lastPosition{0};
 
     uint64_t totalBufferTime{0};
     uint64_t bufferLength;
@@ -56,32 +60,31 @@ struct FFmpegEngine::Private
     uint64_t duration{0};
     double volume{1.0};
 
-    PlaybackState state{StoppedState};
-
     std::unique_ptr<AudioOutput> audioOutput;
     AudioFormat format;
 
-    FFmpegDecoder decoder;
-    FFmpegRenderer* renderer;
+    std::unique_ptr<AudioDecoder> decoder;
+    AudioRenderer* renderer;
 
     QTimer* bufferTimer;
 
-    explicit Private(FFmpegEngine* self_, SettingsManager* settings_)
+    explicit Private(AudioEngine* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
         , bufferLength{static_cast<uint64_t>(settings->value<Settings::Core::BufferLength>())}
-        , renderer{new FFmpegRenderer(self)}
+        , decoder{std::make_unique<FFmpegDecoder>()}
+        , renderer{new AudioRenderer(self)}
         , bufferTimer{new QTimer(self)}
     {
         bufferTimer->setInterval(5ms);
 
         settings->subscribe<Settings::Core::BufferLength>(self, [this](int length) { bufferLength = length; });
 
-        QObject::connect(renderer, &FFmpegRenderer::bufferProcessed, self, [this](const AudioBuffer& buffer) {
+        QObject::connect(renderer, &AudioRenderer::bufferProcessed, self, [this](const AudioBuffer& buffer) {
             totalBufferTime -= buffer.duration();
             clock.sync(buffer.startTime());
         });
-        QObject::connect(renderer, &FFmpegRenderer::finished, self, [this]() { onRendererFinished(); });
+        QObject::connect(renderer, &AudioRenderer::finished, self, [this]() { onRendererFinished(); });
 
         QObject::connect(bufferTimer, &QTimer::timeout, self, [this]() { readNextBuffer(); });
     }
@@ -103,7 +106,7 @@ struct FFmpegEngine::Private
             return;
         }
 
-        const auto buffer = decoder.readBuffer();
+        const auto buffer = decoder->readBuffer();
         if(buffer.isValid()) {
             totalBufferTime += buffer.duration();
             renderer->queueBuffer(buffer);
@@ -114,11 +117,24 @@ struct FFmpegEngine::Private
         }
     }
 
+    void changeState(PlaybackState newState)
+    {
+        if(std::exchange(state, newState) != state) {
+            QMetaObject::invokeMethod(self, "stateChanged", Q_ARG(PlaybackState, state));
+        }
+    }
+
+    void changeTrackStatus(TrackStatus newStatus)
+    {
+        if(std::exchange(status, newStatus) != status) {
+            QMetaObject::invokeMethod(self, "trackStatusChanged", Q_ARG(TrackStatus, status));
+        }
+    }
+
     void updatePosition()
     {
-        const uint64_t pos = self->currentPosition();
-        if(std::exchange(lastPos, pos) != pos) {
-            QMetaObject::invokeMethod(self, "positionChanged", Q_ARG(uint64_t, pos));
+        if(std::exchange(lastPosition, clock.currentPosition()) != lastPosition) {
+            QMetaObject::invokeMethod(self, "positionChanged", Q_ARG(uint64_t, lastPosition));
         }
     }
 
@@ -135,7 +151,7 @@ struct FFmpegEngine::Private
 
     void startPlayback()
     {
-        decoder.start();
+        decoder->start();
         bufferTimer->start();
         renderer->start();
     }
@@ -149,7 +165,7 @@ struct FFmpegEngine::Private
         clock.setPaused(true);
         clock.sync(duration);
 
-        self->changeTrackStatus(EndOfTrack);
+        changeTrackStatus(EndOfTrack);
     }
 
     void pauseOutput(bool pause)
@@ -176,16 +192,16 @@ struct FFmpegEngine::Private
     void stopWorkers()
     {
         resetWorkers();
-        decoder.stop();
+        decoder->stop();
     }
 };
 
-FFmpegEngine::FFmpegEngine(SettingsManager* settings, QObject* parent)
+AudioPlaybackEngine::AudioPlaybackEngine(SettingsManager* settings, QObject* parent)
     : AudioEngine{parent}
     , p{std::make_unique<Private>(this, settings)}
 { }
 
-FFmpegEngine::~FFmpegEngine()
+AudioPlaybackEngine::~AudioPlaybackEngine()
 {
     p->stopWorkers();
 
@@ -195,16 +211,32 @@ FFmpegEngine::~FFmpegEngine()
         p->positionUpdateTimer->deleteLater();
     }
 }
-void FFmpegEngine::seek(uint64_t pos)
+
+PlaybackState AudioPlaybackEngine::state() const
 {
-    if(!p->decoder.isSeekable()) {
+    return p->state;
+}
+
+TrackStatus AudioPlaybackEngine::trackStatus() const
+{
+    return p->status;
+}
+
+uint64_t AudioPlaybackEngine::position() const
+{
+    return p->lastPosition;
+}
+
+void AudioPlaybackEngine::seek(uint64_t pos)
+{
+    if(!p->decoder->isSeekable()) {
         return;
     }
 
     p->resetWorkers();
     p->audioOutput->reset();
 
-    p->decoder.seek(pos);
+    p->decoder->seek(pos);
     p->clock.sync(pos);
 
     if(state() == PlayingState) {
@@ -214,12 +246,7 @@ void FFmpegEngine::seek(uint64_t pos)
     }
 }
 
-uint64_t FFmpegEngine::currentPosition() const
-{
-    return p->clock.currentPosition();
-}
-
-void FFmpegEngine::changeTrack(const Track& track)
+void AudioPlaybackEngine::changeTrack(const Track& track)
 {
     p->stopWorkers();
 
@@ -229,28 +256,28 @@ void FFmpegEngine::changeTrack(const Track& track)
     p->clock.sync();
 
     if(!track.isValid()) {
-        changeTrackStatus(InvalidTrack);
+        p->changeTrackStatus(InvalidTrack);
         return;
     }
 
-    changeTrackStatus(LoadingTrack);
+    p->changeTrackStatus(LoadingTrack);
 
-    if(!p->decoder.init(track.filepath())) {
-        changeTrackStatus(InvalidTrack);
+    if(!p->decoder->init(track.filepath())) {
+        p->changeTrackStatus(InvalidTrack);
         return;
     }
 
-    if(!p->updateFormat(p->decoder.format())) {
-        changeTrackStatus(NoTrack);
+    if(!p->updateFormat(p->decoder->format())) {
+        p->changeTrackStatus(NoTrack);
         return;
     }
 
-    changeTrackStatus(LoadedTrack);
+    p->changeTrackStatus(LoadedTrack);
 }
 
-void FFmpegEngine::setState(PlaybackState state)
+void AudioPlaybackEngine::setState(PlaybackState state)
 {
-    changeState(state);
+    p->changeState(state);
 
     p->clock.setPaused(state != PlayingState);
 
@@ -270,7 +297,7 @@ void FFmpegEngine::setState(PlaybackState state)
     }
 }
 
-void FFmpegEngine::play()
+void AudioPlaybackEngine::play()
 {
     if(!p->audioOutput || trackStatus() == NoTrack || trackStatus() == InvalidTrack) {
         return;
@@ -282,11 +309,11 @@ void FFmpegEngine::play()
     }
 
     setState(PlayingState);
-    changeTrackStatus(BufferedTrack);
+    p->changeTrackStatus(BufferedTrack);
     p->positionTimer()->start();
 }
 
-void FFmpegEngine::pause()
+void AudioPlaybackEngine::pause()
 {
     if(trackStatus() == NoTrack || trackStatus() == InvalidTrack) {
         return;
@@ -299,24 +326,24 @@ void FFmpegEngine::pause()
 
     setState(PausedState);
     p->positionTimer()->stop();
-    changeTrackStatus(BufferedTrack);
+    p->changeTrackStatus(BufferedTrack);
 }
 
-void FFmpegEngine::stop()
+void AudioPlaybackEngine::stop()
 {
     setState(StoppedState);
     p->positionTimer()->stop();
-    changeTrackStatus(NoTrack);
+    p->changeTrackStatus(NoTrack);
     emit positionChanged(0);
 }
 
-void FFmpegEngine::setVolume(double volume)
+void AudioPlaybackEngine::setVolume(double volume)
 {
     p->volume = volume;
     p->renderer->updateVolume(volume);
 }
 
-void FFmpegEngine::setAudioOutput(const OutputCreator& output)
+void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output)
 {
     const bool playing = state() == PlayingState || state() == PausedState;
 
@@ -341,7 +368,7 @@ void FFmpegEngine::setAudioOutput(const OutputCreator& output)
     }
 }
 
-void FFmpegEngine::setOutputDevice(const QString& device)
+void AudioPlaybackEngine::setOutputDevice(const QString& device)
 {
     if(device.isEmpty()) {
         return;
@@ -365,4 +392,4 @@ void FFmpegEngine::setOutputDevice(const QString& device)
 }
 } // namespace Fooyin
 
-#include "moc_ffmpegengine.cpp"
+#include "moc_audioplaybackengine.cpp"

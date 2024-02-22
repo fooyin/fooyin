@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,20 +24,23 @@
 namespace Fooyin {
 class SettingsManager;
 
-class FFmpegEngine : public AudioEngine
+class AudioPlaybackEngine : public AudioEngine
 {
     Q_OBJECT
 
 public:
-    explicit FFmpegEngine(SettingsManager* settings, QObject* parent = nullptr);
-    ~FFmpegEngine() override;
+    explicit AudioPlaybackEngine(SettingsManager* settings, QObject* parent = nullptr);
+    ~AudioPlaybackEngine() override;
 
 public slots:
+    [[nodiscard]] PlaybackState state() const override;
+    [[nodiscard]] TrackStatus trackStatus() const override;
+    [[nodiscard]] uint64_t position() const override;
+
     void seek(uint64_t pos) override;
-    [[nodiscard]] uint64_t currentPosition() const;
 
     void changeTrack(const Track& track) override;
-    void setState(PlaybackState state);
+    void setState(PlaybackState state) override;
 
     void play() override;
     void pause() override;

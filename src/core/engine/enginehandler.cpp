@@ -19,10 +19,11 @@
 
 #include "enginehandler.h"
 
+#include "audioplaybackengine.h"
 #include "engine/ffmpeg/ffmpegdecoder.h"
-#include "engine/ffmpeg/ffmpegengine.h"
 
 #include <core/coresettings.h>
+#include <core/engine/audioengine.h>
 #include <core/engine/outputplugin.h>
 #include <core/track.h>
 
@@ -55,7 +56,7 @@ struct EngineHandler::Private
         : self{self_}
         , playerManager{playerManager_}
         , settings{settings_}
-        , engine{new FFmpegEngine(settings)}
+        , engine{new AudioPlaybackEngine(settings)}
     {
         engine->moveToThread(&engineThread);
         engineThread.start();

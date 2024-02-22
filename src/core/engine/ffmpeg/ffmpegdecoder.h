@@ -37,7 +37,7 @@ public:
     void stop() override;
 
     AudioFormat format() const override;
-    bool isSeekable() const;
+    bool isSeekable() const override;
     void seek(uint64_t pos) override;
 
     AudioBuffer readBuffer() override;

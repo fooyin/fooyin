@@ -40,6 +40,7 @@ public:
     virtual void start()                     = 0;
     virtual void stop()                      = 0;
 
+    virtual bool isSeekable() const = 0;
     virtual void seek(uint64_t pos) = 0;
 
     virtual AudioBuffer readBuffer() = 0;

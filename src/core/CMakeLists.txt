@@ -1,12 +1,12 @@
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audioengine.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playermanager.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
     track.cpp
     engine/audiobuffer.cpp
-    engine/audioengine.cpp
     engine/audioformat.cpp
     engine/audioconverter.cpp
     library/trackfilter.cpp
@@ -32,12 +32,12 @@ set(PRIVATE_SOURCES
     database/databasemodule.cpp
     database/playlistdatabase.cpp
     database/databasequery.cpp
+    engine/audioclock.cpp
+    engine/audioplaybackengine.cpp
+    engine/audiorenderer.cpp
     engine/enginehandler.cpp
-    engine/ffmpeg/ffmpegclock.cpp
-    engine/ffmpeg/ffmpegrenderer.cpp
     engine/ffmpeg/ffmpegcodec.cpp
     engine/ffmpeg/ffmpegdecoder.cpp
-    engine/ffmpeg/ffmpegengine.cpp
     engine/ffmpeg/ffmpegpacket.cpp
     engine/ffmpeg/ffmpegstream.cpp
     engine/ffmpeg/ffmpegframe.cpp

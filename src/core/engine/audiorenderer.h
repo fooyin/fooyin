@@ -26,13 +26,13 @@ class AudioBuffer;
 class AudioFormat;
 class AudioOutput;
 
-class FFmpegRenderer : public QObject
+class AudioRenderer : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit FFmpegRenderer(QObject* parent = nullptr);
-    ~FFmpegRenderer() override;
+    explicit AudioRenderer(QObject* parent = nullptr);
+    ~AudioRenderer() override;
 
     bool init(const AudioFormat& format);
     void start();

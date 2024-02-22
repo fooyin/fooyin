@@ -17,7 +17,7 @@
  *
  */
 
-#include "ffmpegrenderer.h"
+#include "audiorenderer.h"
 
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audiooutput.h>
@@ -28,9 +28,9 @@
 #include <utility>
 
 namespace Fooyin {
-struct FFmpegRenderer::Private
+struct AudioRenderer::Private
 {
-    FFmpegRenderer* self;
+    AudioRenderer* self;
 
     AudioOutput* audioOutput{nullptr};
     AudioFormat format;
@@ -48,7 +48,7 @@ struct FFmpegRenderer::Private
 
     QTimer* writeTimer;
 
-    explicit Private(FFmpegRenderer* self_)
+    explicit Private(AudioRenderer* self_)
         : self{self_}
         , writeTimer{new QTimer(self)}
     {
@@ -105,7 +105,7 @@ struct FFmpegRenderer::Private
                 // End of file
                 currentBufferOffset = 0;
                 bufferQueue.dequeue();
-                QMetaObject::invokeMethod(self, &FFmpegRenderer::finished);
+                QMetaObject::invokeMethod(self, &AudioRenderer::finished);
                 return samplesBuffered;
             }
 
@@ -164,16 +164,16 @@ struct FFmpegRenderer::Private
     }
 };
 
-FFmpegRenderer::FFmpegRenderer(QObject* parent)
+AudioRenderer::AudioRenderer(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
     setObjectName(QStringLiteral("Renderer"));
 }
 
-FFmpegRenderer::~FFmpegRenderer() = default;
+AudioRenderer::~AudioRenderer() = default;
 
-bool FFmpegRenderer::init(const AudioFormat& format)
+bool AudioRenderer::init(const AudioFormat& format)
 {
     p->format = format;
 
@@ -188,7 +188,7 @@ bool FFmpegRenderer::init(const AudioFormat& format)
     return p->initOutput();
 }
 
-void FFmpegRenderer::start()
+void AudioRenderer::start()
 {
     if(std::exchange(p->isRunning, true)) {
         return;
@@ -197,7 +197,7 @@ void FFmpegRenderer::start()
     p->writeTimer->start();
 }
 
-void FFmpegRenderer::stop()
+void AudioRenderer::stop()
 {
     p->isRunning = false;
     p->writeTimer->stop();
@@ -208,27 +208,27 @@ void FFmpegRenderer::stop()
     p->tempBuffer.reset();
 }
 
-void FFmpegRenderer::pause(bool paused)
+void AudioRenderer::pause(bool paused)
 {
     p->isRunning = paused;
 }
 
-int FFmpegRenderer::queuedBuffers() const
+int AudioRenderer::queuedBuffers() const
 {
     return static_cast<int>(p->bufferQueue.size());
 }
 
-void FFmpegRenderer::queueBuffer(const AudioBuffer& buffer)
+void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
 {
     p->bufferQueue.enqueue(buffer);
 }
 
-void FFmpegRenderer::pauseOutput(bool isPaused)
+void AudioRenderer::pauseOutput(bool isPaused)
 {
     p->audioOutput->setPaused(isPaused);
 }
 
-void FFmpegRenderer::updateOutput(AudioOutput* output)
+void AudioRenderer::updateOutput(AudioOutput* output)
 {
     p->audioOutput = output;
 
@@ -239,7 +239,7 @@ void FFmpegRenderer::updateOutput(AudioOutput* output)
     }
 }
 
-void FFmpegRenderer::updateDevice(const QString& device)
+void AudioRenderer::updateDevice(const QString& device)
 {
     if(!p->audioOutput) {
         return;
@@ -257,7 +257,7 @@ void FFmpegRenderer::updateDevice(const QString& device)
     p->bufferPrefilled = false;
 }
 
-void FFmpegRenderer::updateVolume(double volume)
+void AudioRenderer::updateVolume(double volume)
 {
     p->volume = volume;
     if(p->audioOutput) {
@@ -266,4 +266,4 @@ void FFmpegRenderer::updateVolume(double volume)
 }
 } // namespace Fooyin
 
-#include "moc_ffmpegrenderer.cpp"
+#include "moc_audiorenderer.cpp"

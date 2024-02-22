@@ -17,7 +17,7 @@
  *
  */
 
-#include "ffmpegclock.h"
+#include "audioclock.h"
 
 namespace Fooyin {
 AudioClock::AudioClock()
