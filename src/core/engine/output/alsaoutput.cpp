@@ -141,8 +141,8 @@ struct AlsaOutput::Private
     bool initialised{false};
 
     PcmHandleUPtr pcmHandle{nullptr};
-    snd_pcm_uframes_t bufferSize{2048};
-    snd_pcm_uframes_t periodSize{0};
+    snd_pcm_uframes_t bufferSize{8192};
+    snd_pcm_uframes_t periodSize{1024};
     bool pausable{true};
     QString device{QStringLiteral("default")};
     bool deviceLost;
@@ -226,15 +226,6 @@ struct AlsaOutput::Private
             return false;
         }
 
-        err = snd_pcm_hw_params_get_period_size_min(hwParams, &periodSize, nullptr);
-        if(checkError(err, QStringLiteral("Unable to get min period size"))) {
-            return false;
-        }
-
-        if(periodSize == 0) {
-            periodSize = bufferSize / 4;
-        }
-
         err = snd_pcm_hw_params_set_period_size_near(handle, hwParams, &periodSize, nullptr);
         if(checkError(err, QStringLiteral("Failed to set period size"))) {
             return false;
@@ -288,37 +279,37 @@ struct AlsaOutput::Private
         return !checkError(snd_pcm_prepare(pcmHandle.get()), QStringLiteral("Prepare error"));
     }
 
-    bool recoverState(OutputState* state = nullptr)
+    bool attemptRecovery(snd_pcm_status_t* status)
     {
-        if(!pcmHandle) {
+        if(!status) {
             return false;
         }
 
-        snd_pcm_status_t* st;
-        snd_pcm_status_alloca(&st);
-
-        bool recovered        = false;
-        snd_pcm_state_t pcmst = SND_PCM_STATE_DISCONNECTED;
+        bool autoRecoverAttempted{false};
+        snd_pcm_state_t pcmst{SND_PCM_STATE_DISCONNECTED};
 
         // Give ALSA a number of chances to recover
         for(int n = 0; n < 5; ++n) {
-            int err = snd_pcm_status(pcmHandle.get(), st);
-            if(err == -EPIPE) {
+            int err = snd_pcm_status(pcmHandle.get(), status);
+            if(err == -EPIPE || err == -EINTR || err == -ESTRPIPE) {
+                if(!autoRecoverAttempted) {
+                    autoRecoverAttempted = true;
+                    snd_pcm_recover(pcmHandle.get(), err, 1);
+                    continue;
+                }
                 pcmst = SND_PCM_STATE_XRUN;
             }
             else {
-                pcmst = snd_pcm_status_get_state(st);
+                pcmst = snd_pcm_status_get_state(status);
             }
 
             if(pcmst == SND_PCM_STATE_RUNNING || pcmst == SND_PCM_STATE_PAUSED) {
-                recovered = true;
-                break;
+                return true;
             }
 
             if(pcmst == SND_PCM_STATE_PREPARED) {
                 if(!started) {
-                    recovered = true;
-                    break;
+                    return true;
                 }
                 snd_pcm_start(pcmHandle.get());
                 continue;
@@ -356,15 +347,28 @@ struct AlsaOutput::Private
                     }
             }
         }
+        return false;
+    }
+
+    bool recoverState(OutputState* state = nullptr)
+    {
+        if(!pcmHandle) {
+            return false;
+        }
+
+        snd_pcm_status_t* status;
+        snd_pcm_status_alloca(&status);
+
+        const bool recovered = attemptRecovery(status);
 
         if(!recovered) {
             printError(QStringLiteral("Could not recover"));
         }
 
         if(state) {
-            const auto delay   = snd_pcm_status_get_delay(st);
+            const auto delay   = snd_pcm_status_get_delay(status);
             state->delay       = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(format.sampleRate());
-            state->freeSamples = static_cast<int>(snd_pcm_status_get_avail(st));
+            state->freeSamples = static_cast<int>(snd_pcm_status_get_avail(status));
             state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(bufferSize));
             // Align to period size
             state->freeSamples   = static_cast<int>(state->freeSamples / periodSize * periodSize);
