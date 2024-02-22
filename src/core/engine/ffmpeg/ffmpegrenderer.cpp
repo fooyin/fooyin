@@ -55,9 +55,22 @@ struct FFmpegRenderer::Private
         QObject::connect(writeTimer, &QTimer::timeout, self, [this]() { writeNext(); });
     }
 
+    bool initOutput()
+    {
+        if(!audioOutput->init(format)) {
+            return false;
+        }
+
+        audioOutput->setVolume(volume);
+        bufferSize = audioOutput->bufferSize();
+        updateInterval();
+
+        return true;
+    }
+
     void updateInterval() const
     {
-        const auto interval = static_cast<int>(((bufferSize / static_cast<double>(format.sampleRate())) * 0.25) * 1000);
+        const auto interval = static_cast<int>(static_cast<double>(bufferSize) / format.sampleRate() * 1000 * 0.25);
         writeTimer->setInterval(interval);
     }
 
@@ -162,9 +175,7 @@ FFmpegRenderer::~FFmpegRenderer() = default;
 
 bool FFmpegRenderer::init(const AudioFormat& format)
 {
-    if(std::exchange(p->format, format) != format) {
-        p->updateInterval();
-    }
+    p->format = format;
 
     if(!p->audioOutput) {
         return false;
@@ -174,13 +185,7 @@ bool FFmpegRenderer::init(const AudioFormat& format)
         p->audioOutput->uninit();
     }
 
-    if(p->audioOutput->init(p->format)) {
-        p->bufferSize = p->audioOutput->bufferSize();
-        p->audioOutput->setVolume(p->volume);
-        return true;
-    }
-
-    return false;
+    return p->initOutput();
 }
 
 void FFmpegRenderer::start()
@@ -230,8 +235,7 @@ void FFmpegRenderer::updateOutput(AudioOutput* output)
     p->bufferPrefilled = false;
 
     if(p->isRunning) {
-        p->audioOutput->init(p->format);
-        p->bufferSize = p->audioOutput->bufferSize();
+        p->initOutput();
     }
 }
 
@@ -244,8 +248,7 @@ void FFmpegRenderer::updateDevice(const QString& device)
     if(p->audioOutput->initialised()) {
         p->audioOutput->uninit();
         p->audioOutput->setDevice(device);
-        p->audioOutput->init(p->format);
-        p->bufferSize = p->audioOutput->bufferSize();
+        p->initOutput();
     }
     else {
         p->audioOutput->setDevice(device);
