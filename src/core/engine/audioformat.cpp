@@ -90,7 +90,7 @@ uint64_t AudioFormat::durationForBytes(int byteCount) const
         return 0;
     }
 
-    return static_cast<uint64_t>((1000LL * (byteCount / bytesPerFrame())) / sampleRate());
+    return static_cast<uint64_t>(1000 * (byteCount / bytesPerFrame()) / sampleRate());
 }
 
 int AudioFormat::bytesForFrames(int frameCount) const
@@ -115,7 +115,7 @@ int AudioFormat::framesForDuration(uint64_t ms) const
         return 0;
     }
 
-    return static_cast<int>(((ms * sampleRate()) / 1000LL));
+    return static_cast<int>(ms * sampleRate() / 1000);
 }
 
 uint64_t AudioFormat::durationForFrames(int frameCount) const
@@ -124,7 +124,7 @@ uint64_t AudioFormat::durationForFrames(int frameCount) const
         return 0;
     }
 
-    return (frameCount * 1000LL) / sampleRate();
+    return frameCount * 1000 / sampleRate();
 }
 
 int AudioFormat::bytesPerFrame() const
