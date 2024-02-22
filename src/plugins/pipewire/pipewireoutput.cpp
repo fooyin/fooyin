@@ -242,6 +242,7 @@ struct PipeWireOutput::Private
     std::deque<AudioBufferContext> buffers;
 
     AudioFormat format;
+    int bufferSize{4096};
 
     PwCoreUPtr core;
     PwContextUPtr context;
@@ -258,7 +259,6 @@ struct PipeWireOutput::Private
     std::mutex bufferMutex;
 
     bool initialised{false};
-    int bufferSize{4096};
 
     OutputDevices sinks;
 
@@ -396,11 +396,10 @@ struct PipeWireOutput::Private
         updateChannelMap(&audioInfo, format.channelCount());
 
         params[0] = spa_format_audio_raw_build(&b, SPA_PARAM_EnumFormat, &audioInfo);
-        params[1] = static_cast<spa_pod*>(
-            spa_pod_builder_add_object(&b, SPA_TYPE_OBJECT_ParamBuffers, SPA_PARAM_Buffers, SPA_PARAM_BUFFERS_buffers,
-                                       SPA_POD_Int(DefaultBufferCount), SPA_PARAM_BUFFERS_size,
-                                       SPA_POD_Int(bufferSize * format.bytesPerSample() * format.channelCount()),
-                                       SPA_PARAM_BUFFERS_stride, SPA_POD_Int(format.bytesPerFrame())));
+        params[1] = static_cast<spa_pod*>(spa_pod_builder_add_object(
+            &b, SPA_TYPE_OBJECT_ParamBuffers, SPA_PARAM_Buffers, SPA_PARAM_BUFFERS_buffers,
+            SPA_POD_Int(DefaultBufferCount), SPA_PARAM_BUFFERS_size, SPA_POD_Int(bufferSize * format.bytesPerFrame()),
+            SPA_PARAM_BUFFERS_stride, SPA_POD_Int(format.bytesPerFrame())));
 
         auto flags = static_cast<pw_stream_flags>(PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_INACTIVE
                                                   | PW_STREAM_FLAG_MAP_BUFFERS | PW_STREAM_FLAG_RT_PROCESS);

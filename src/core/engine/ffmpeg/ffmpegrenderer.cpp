@@ -35,6 +35,7 @@ struct FFmpegRenderer::Private
     AudioOutput* audioOutput{nullptr};
     AudioFormat format;
     double volume{0.0};
+    int bufferSize{0};
 
     bool bufferPrefilled{false};
 
@@ -56,8 +57,7 @@ struct FFmpegRenderer::Private
 
     void updateInterval() const
     {
-        const auto interval
-            = static_cast<int>(((audioOutput->bufferSize() / static_cast<double>(format.sampleRate())) * 0.25) * 1000);
+        const auto interval = static_cast<int>(((bufferSize / static_cast<double>(format.sampleRate())) * 0.25) * 1000);
         writeTimer->setInterval(interval);
     }
 
@@ -175,6 +175,7 @@ bool FFmpegRenderer::init(const AudioFormat& format)
     }
 
     if(p->audioOutput->init(p->format)) {
+        p->bufferSize = p->audioOutput->bufferSize();
         p->audioOutput->setVolume(p->volume);
         return true;
     }
@@ -230,6 +231,7 @@ void FFmpegRenderer::updateOutput(AudioOutput* output)
 
     if(p->isRunning) {
         p->audioOutput->init(p->format);
+        p->bufferSize = p->audioOutput->bufferSize();
     }
 }
 
@@ -243,6 +245,7 @@ void FFmpegRenderer::updateDevice(const QString& device)
         p->audioOutput->uninit();
         p->audioOutput->setDevice(device);
         p->audioOutput->init(p->format);
+        p->bufferSize = p->audioOutput->bufferSize();
     }
     else {
         p->audioOutput->setDevice(device);

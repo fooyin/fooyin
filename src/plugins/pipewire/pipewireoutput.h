@@ -21,8 +21,6 @@
 
 #include "core/engine/audiooutput.h"
 
-#include <pipewire/stream.h>
-
 #include <memory>
 
 namespace Fooyin::Pipewire {

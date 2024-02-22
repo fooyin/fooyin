@@ -23,8 +23,6 @@
 
 #include <QDebug>
 
-constexpr auto BufferSize = 2048;
-
 namespace {
 SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
 {
@@ -49,7 +47,7 @@ namespace Fooyin::Sdl {
 struct SdlOutput::Private
 {
     AudioFormat format;
-
+    int bufferSize{2048};
     bool initialised{false};
 
     SDL_AudioSpec desiredSpec;
@@ -78,7 +76,7 @@ bool SdlOutput::init(const AudioFormat& format)
     p->desiredSpec.freq     = format.sampleRate();
     p->desiredSpec.format   = findFormat(format.sampleFormat());
     p->desiredSpec.channels = format.channelCount();
-    p->desiredSpec.samples  = BufferSize;
+    p->desiredSpec.samples  = p->bufferSize;
     p->desiredSpec.callback = nullptr;
 
     if(p->device == QStringLiteral("default")) {
@@ -146,7 +144,7 @@ bool SdlOutput::canHandleVolume() const
 
 int SdlOutput::bufferSize() const
 {
-    return BufferSize;
+    return p->bufferSize;
 }
 
 OutputState SdlOutput::currentState()
@@ -154,7 +152,7 @@ OutputState SdlOutput::currentState()
     OutputState state;
 
     state.queuedSamples = static_cast<int>(SDL_GetQueuedAudioSize(p->audioDeviceId) / p->format.bytesPerFrame());
-    state.freeSamples   = BufferSize - state.queuedSamples;
+    state.freeSamples   = p->bufferSize - state.queuedSamples;
 
     return state;
 }
