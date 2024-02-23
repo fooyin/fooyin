@@ -61,7 +61,7 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager)
     : m_pluginManager{pluginManager}
     , m_pluginList{new QTableView(this)}
     , m_model{new PluginsModel(m_pluginManager)}
-    , m_installPlugin{new QPushButton(tr("Install..."), this)}
+    , m_installPlugin{new QPushButton(tr("Install…"), this)}
 {
     m_pluginList->setModel(m_model);
 
