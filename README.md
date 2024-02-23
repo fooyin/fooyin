@@ -46,6 +46,11 @@ Only Linux is supported at present, though other platforms will be added at a la
 
 See [BUILD.md](BUILD.md) for details.
 
+## Translations
+
+You can contribute to translations on [Hosted Weblate](https://hosted.weblate.org/projects/fooyin/),
+an open source and web-based translation platform.
+
 ## Roadmap
 
 See [ROADMAP.md](ROADMAP.md) to learn about fooyin's planned features.
