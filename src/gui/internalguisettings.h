@@ -64,6 +64,7 @@ enum GuiInternalSettings : uint32_t
     LibTreeAppearance      = 25 | Type::Variant,
     SystemIconTheme        = 26 | Type::String,
     SeekBarLabels          = 27 | Type::Bool,
+    DirBrowserPath   = 28 | Type::String,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

@@ -39,6 +39,10 @@ set(SOURCES
     dialog/aboutdialog.cpp
     dialog/aboutdialog.h
     dialog/propertiesdialog.cpp
+    dirbrowser/dirbrowser.cpp
+    dirbrowser/dirbrowser.h
+    dirbrowser/dirproxymodel.cpp
+    dirbrowser/dirproxymodel.h
     info/infodelegate.cpp
     info/infodelegate.h
     info/infomodel.cpp

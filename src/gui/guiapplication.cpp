@@ -24,6 +24,7 @@
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
 #include "core/internalcoresettings.h"
+#include "dirbrowser/dirbrowser.h"
 #include "info/infowidget.h"
 #include "internalguisettings.h"
 #include "librarytree/librarytreewidget.h"
@@ -411,6 +412,15 @@ struct GuiApplication::Private
             QStringLiteral("SearchBar"),
             [this]() { return new SearchWidget(searchController, settingsManager, mainWindow.get()); },
             QStringLiteral("Search Bar"));
+
+        widgetProvider.registerWidget(
+            QStringLiteral("DirectoryBrowser"),
+            [this]() {
+                return new DirBrowser(&selectionController, playlistController.get(), settingsManager,
+                                            mainWindow.get());
+            },
+            QStringLiteral("Directory Browser"));
+        widgetProvider.setLimit(QStringLiteral("DirectoryBrowser"), 1);
     }
 
     void createPropertiesTabs()
