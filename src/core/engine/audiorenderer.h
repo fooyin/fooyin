@@ -39,11 +39,8 @@ public:
     void stop();
     void pause(bool paused);
 
-    int queuedBuffers() const;
-
     void queueBuffer(const AudioBuffer& buffer);
 
-    void pauseOutput(bool isPaused);
     void updateOutput(AudioOutput* output);
     void updateDevice(const QString& device);
     void updateVolume(double volume);
