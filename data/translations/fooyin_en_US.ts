@@ -57,7 +57,7 @@
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="427"/>
         <source>Hide %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Hide %1</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="450"/>
@@ -161,7 +161,7 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="81"/>
         <source>Buffer length</source>
-        <translation type="unfinished"></translation>
+        <translation>Buffer length</translation>
     </message>
 </context>
 <context>
@@ -482,7 +482,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="242"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Mute</translation>
     </message>
 </context>
 <context>
@@ -495,7 +495,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="232"/>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Interface</translation>
     </message>
 </context>
 <context>
@@ -1204,7 +1204,7 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="64"/>
         <source>Install…</source>
-        <translation type="unfinished"></translation>
+        <translation>Install…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="99"/>
@@ -1277,7 +1277,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="105"/>
         <source>Change Placeholder Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Change Placeholder Text</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="109"/>

@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/gui/menu/aboutdialog.cpp" line="83"/>
         <source>About %1</source>
-        <translation>关于 %1</translation>
+        <translation>关于%1</translation>
     </message>
 </context>
 <context>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="427"/>
         <source>Hide %1</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏 %1</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="450"/>
@@ -161,7 +161,7 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="81"/>
         <source>Buffer length</source>
-        <translation type="unfinished"></translation>
+        <translation>缓冲时长</translation>
     </message>
 </context>
 <context>
@@ -449,7 +449,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="83"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation>延迟打开fooyin，直到所有轨道加载完成。</translation>
+        <translation>延迟打开fooyin，直到所有轨道加载完成</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="86"/>
@@ -482,7 +482,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="242"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>静音</translation>
     </message>
 </context>
 <context>
@@ -495,7 +495,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="232"/>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>界面</translation>
     </message>
 </context>
 <context>
@@ -630,7 +630,7 @@
     <message>
         <location filename="../../src/gui/menu/librarymenu.cpp" line="43"/>
         <source>&amp;Rescan Library</source>
-        <translation>重新扫描媒体库(&amp;R) </translation>
+        <translation>重新扫描媒体库(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menu/librarymenu.cpp" line="47"/>
@@ -834,7 +834,7 @@
     <message>
         <location filename="../../src/gui/menu/playbackmenu.cpp" line="149"/>
         <source>&amp;Default</source>
-        <translation>默认(&amp;D) </translation>
+        <translation>默认(&amp;D)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menu/playbackmenu.cpp" line="154"/>
@@ -1204,7 +1204,7 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="64"/>
         <source>Install…</source>
-        <translation type="unfinished"></translation>
+        <translation>安装…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="99"/>
@@ -1277,7 +1277,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="105"/>
         <source>Change Placeholder Text</source>
-        <translation type="unfinished"></translation>
+        <translation>更改占位符文本</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="109"/>
