@@ -1,23 +1,27 @@
 # Fooyin Roadmap
 
-This document lists the planned features for fooyin - more may be added at any time.
+This document outlines the upcoming features for fooyin - they are listed in no particular order.
 
-## General
+## New Features
 
 * CUE support
 * Playback queue
-* Custom tag support in scripts
-* Query language for filtering
-* Extended playlist support - importing/exporting
-* Album artwork - downloading, saving to metadata
-* Lyrics support - downloading, embedded/LRC
-* Last.fm integration - syncing statistics
-* Discogs integration - searching for metadata
+* Query-based language for searching/filtering
+* Album artwork features - downloading and storing in metadata
+* Lyric support - embedded and LRC (including enhanced LRC)
+* Audio conversion
+* Renaming/Copying/Moving files on disk
+* Integrate Last.fm for statistic synchronisation
+* Integrate Discogs for metadata searching
+
+## Enhancements
+* Support custom tags within scripts
+* Enhance playlist functionality - import/export options
+* Add album cover mode to Filters
 
 ## Widgets
 
 * Directory browser
-* Filters - cover art view
 * Waveform seekbar
-* Musical spectrum
+* Msical spectrum
 * VU meter
