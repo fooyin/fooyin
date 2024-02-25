@@ -14,7 +14,7 @@
 fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local music
 collection. It's extendable through the use of plugins and scriptable using *FooScript*.
 
-Audio playback is handled using FFmpeg and ALSA as the primary output driver.
+Audio playback is handled using a custom backend, with ALSA used as the primary output driver.
 There is also support for PipeWire and SDL2 through additional plugins, with more planned in the future.
 
 A *layout editing mode* enables the entire user interface to be customised,
@@ -42,6 +42,10 @@ Only Linux is supported at present, though other platforms will be added at a la
 * [x] Extendable through plugins
 * [x] Tag editing
 
+### Roadmap
+
+See [ROADMAP.md](ROADMAP.md) to learn about fooyin's planned features.
+
 ## Building from source
 
 See [BUILD.md](BUILD.md) for details.
@@ -50,7 +54,3 @@ See [BUILD.md](BUILD.md) for details.
 
 You can contribute to translations on [Hosted Weblate](https://hosted.weblate.org/projects/fooyin/),
 an open source and web-based translation platform.
-
-## Roadmap
-
-See [ROADMAP.md](ROADMAP.md) to learn about fooyin's planned features.
