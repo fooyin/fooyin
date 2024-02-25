@@ -233,27 +233,27 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="36"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Genre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="37"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Album Artist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="38"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Album</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Date</translation>
     </message>
 </context>
 <context>
@@ -306,12 +306,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="141"/>
         <source>All (%1 %2s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">All (%1 %2s)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="244"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filter</translation>
     </message>
 </context>
 <context>
@@ -332,7 +332,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="177"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Index</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="179"/>
@@ -342,12 +342,12 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="181"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Field</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="183"/>
         <source>Sort Field</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sort Field</translation>
     </message>
 </context>
 <context>
@@ -649,7 +649,7 @@
         <location filename="../../src/gui/info/infomodel.cpp" line="196"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="216"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artist</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="197"/>
@@ -661,115 +661,115 @@
         <location filename="../../src/gui/info/infomodel.cpp" line="198"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="218"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="199"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="219"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Date</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="200"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="220"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Genre</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="201"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="221"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Album Artist</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="202"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="222"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Track Number</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="203"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="226"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">File Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="204"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="228"/>
         <source>Folder Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Folder Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="205"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="232"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">File Path</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="206"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">File Size</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="207"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="238"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Last Modified</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="208"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="242"/>
         <source>Added</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Added</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="209"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="245"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Duration</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="210"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="211"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="252"/>
         <source>Sample Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sample Rate</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="226"/>
         <source>File Names</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">File Names</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="228"/>
         <source>Folder Names</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Folder Names</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
         <source>Total Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Total Size</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
         <source>Avg. Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Avg. Bitrate</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="277"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="278"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Location</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="279"/>
@@ -846,7 +846,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="250"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="252"/>
@@ -856,12 +856,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="254"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Path</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="256"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Status</translation>
     </message>
 </context>
 <context>
@@ -883,17 +883,17 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="39"/>
         <source>Artist/Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artist/Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="43"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="47"/>
         <source>Folder Structure</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Folder Structure</translation>
     </message>
 </context>
 <context>
@@ -1109,7 +1109,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="178"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Index</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="180"/>
@@ -1119,7 +1119,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="182"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Field</translation>
     </message>
 </context>
 <context>
@@ -1141,7 +1141,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="38"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Track</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="39"/>
@@ -1151,27 +1151,27 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="40"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="41"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Album Artist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="42"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="43"/>
         <source>Playcount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Playcount</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="44"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Duration</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
