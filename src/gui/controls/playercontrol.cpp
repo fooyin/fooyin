@@ -56,11 +56,6 @@ struct PlayerControl::Private
         , playPause{new ToolButton(self)}
         , next{new ToolButton(self)}
     {
-        QObject::connect(stop, &QToolButton::clicked, playerManager, &PlayerManager::stop);
-        QObject::connect(prev, &QToolButton::clicked, playerManager, &PlayerManager::previous);
-        QObject::connect(playPause, &QToolButton::clicked, playerManager, &PlayerManager::playPause);
-        QObject::connect(next, &QToolButton::clicked, playerManager, &PlayerManager::next);
-
         if(auto* stopCmd = actionManager->command(Constants::Actions::Stop)) {
             stop->setDefaultAction(stopCmd->action());
         }
