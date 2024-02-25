@@ -17,11 +17,11 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 ## Enhancements
 * Support custom tags within scripts
 * Enhance playlist functionality - import/export options
-* Add album cover mode to Filters
+* Add album cover mode to filter widget
 
 ## Widgets
 
 * Directory browser
 * Waveform seekbar
-* Msical spectrum
+* Musical spectrum
 * VU meter
