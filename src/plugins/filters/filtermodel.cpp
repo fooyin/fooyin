@@ -137,9 +137,8 @@ struct FilterModel::Private
 
         QStringList nodeColumns;
         for(int column{0}; column < columnCount; ++column) {
-            nodeColumns.emplace_back(QString{QStringLiteral("All (%1 %2s)")}
-                                         .arg(uniqueValues(column))
-                                         .arg(columns.at(column).name.toLower()));
+            nodeColumns.emplace_back(
+                QString{tr("All (%1 %2s)")}.arg(uniqueValues(column)).arg(columns.at(column).name.toLower()));
         }
 
         allNode.setColumns(nodeColumns);
@@ -242,7 +241,7 @@ QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int r
     }
 
     if(section < 0 || section >= static_cast<int>(p->columns.size())) {
-        return QStringLiteral("Filter");
+        return tr("Filter");
     }
 
     return p->columns.at(section).name;

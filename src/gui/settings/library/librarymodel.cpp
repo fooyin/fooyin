@@ -247,13 +247,13 @@ QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int 
 
     switch(section) {
         case(0):
-            return QStringLiteral("ID");
+            return tr("ID");
         case(1):
-            return QStringLiteral("Name");
+            return tr("Name");
         case(2):
-            return QStringLiteral("Path");
+            return tr("Path");
         case(3):
-            return QStringLiteral("Status");
+            return tr("Status");
     }
     return {};
 }

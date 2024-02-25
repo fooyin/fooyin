@@ -229,6 +229,34 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::Filters::FilterColumnRegistry</name>
+    <message>
+        <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="36"/>
+        <source>Genre</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="37"/>
+        <source>Album Artist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="38"/>
+        <source>Artist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
+        <source>Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Filters::FilterManager</name>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="87"/>
@@ -274,6 +302,19 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::Filters::FilterModel</name>
+    <message>
+        <location filename="../../src/plugins/filters/filtermodel.cpp" line="141"/>
+        <source>All (%1 %2s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filtermodel.cpp" line="244"/>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::Filters::FilterWidget</name>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="215"/>
@@ -284,6 +325,29 @@
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="229"/>
         <source>Manage Groups</source>
         <translation>Manage Groups</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Filters::FiltersColumnModel</name>
+    <message>
+        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="177"/>
+        <source>Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="179"/>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="181"/>
+        <source>Field</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="183"/>
+        <source>Sort Field</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -580,6 +644,145 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::InfoModel</name>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="196"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="216"/>
+        <source>Artist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="197"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="217"/>
+        <source>Title</source>
+        <translation type="unfinished">Title</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="198"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="218"/>
+        <source>Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="199"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="219"/>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="200"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="220"/>
+        <source>Genre</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="201"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="221"/>
+        <source>Album Artist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="202"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="222"/>
+        <source>Track Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="203"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="226"/>
+        <source>File Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="204"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="228"/>
+        <source>Folder Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="205"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="232"/>
+        <source>File Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="206"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
+        <source>File Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="207"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="238"/>
+        <source>Last Modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="208"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="242"/>
+        <source>Added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="209"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="245"/>
+        <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="210"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
+        <source>Bitrate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="211"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="252"/>
+        <source>Sample Rate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="226"/>
+        <source>File Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="228"/>
+        <source>Folder Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
+        <source>Total Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
+        <source>Avg. Bitrate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="277"/>
+        <source>Metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="278"/>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="279"/>
+        <source>General</source>
+        <translation type="unfinished">General</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/info/infomodel.cpp" line="284"/>
+        <source>Tracks</source>
+        <translation type="unfinished">Tracks</translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::LibraryGeneralPage</name>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="153"/>
@@ -639,6 +842,29 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::LibraryModel</name>
+    <message>
+        <location filename="../../src/gui/settings/library/librarymodel.cpp" line="250"/>
+        <source>ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/library/librarymodel.cpp" line="252"/>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/library/librarymodel.cpp" line="254"/>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/library/librarymodel.cpp" line="256"/>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::LibrarySortingPage</name>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="105"/>
@@ -650,6 +876,24 @@
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="106"/>
         <source>Library</source>
         <translation>Library</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::LibraryTreeGroupRegistry</name>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="39"/>
+        <source>Artist/Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="43"/>
+        <source>Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="47"/>
+        <source>Folder Structure</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -706,6 +950,14 @@
         <location filename="../../src/gui/settings/librarytree/librarytreeguipage.cpp" line="102"/>
         <source>Select Colour</source>
         <translation>Select Color</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::LibraryTreeModel</name>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="299"/>
+        <source>Library Tree</source>
+        <translation type="unfinished">Library Tree</translation>
     </message>
 </context>
 <context>
@@ -853,6 +1105,24 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::PlaylistColumnModel</name>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="178"/>
+        <source>Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="180"/>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="182"/>
+        <source>Field</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::PlaylistColumnPage</name>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="106"/>
@@ -864,6 +1134,49 @@
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="107"/>
         <source>Playlist</source>
         <translation>Playlist</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::PlaylistColumnRegistry</name>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="38"/>
+        <source>Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="39"/>
+        <source>Title</source>
+        <translation type="unfinished">Title</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="40"/>
+        <source>Artist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="41"/>
+        <source>Album Artist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="42"/>
+        <source>Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="43"/>
+        <source>Playcount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="44"/>
+        <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
+        <source>Playing</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1330,6 +1643,24 @@
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="122"/>
         <source>Reset</source>
         <translation>Reset</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::SortingModel</name>
+    <message>
+        <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="177"/>
+        <source>Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="179"/>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="181"/>
+        <source>Sort Script</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

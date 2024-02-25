@@ -193,66 +193,63 @@ struct InfoModel::Private
 
     void addTrackNodes()
     {
-        checkAddEntryNode(QStringLiteral("Artist"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Title"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Album"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Date"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Genre"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Album Artist"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Track Number"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("File Name"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("Folder Name"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("File Path"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("File Size"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("Last Modified"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("Added"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("Duration"), ItemParent::General);
-        checkAddEntryNode(QStringLiteral("Bitrate"), ItemParent::General);
-        checkAddEntryNode(QStringLiteral("Sample Rate"), ItemParent::General);
+        checkAddEntryNode(tr("Artist"), ItemParent::Metadata);
+        checkAddEntryNode(tr("Title"), ItemParent::Metadata);
+        checkAddEntryNode(tr("Album"), ItemParent::Metadata);
+        checkAddEntryNode(tr("Date"), ItemParent::Metadata);
+        checkAddEntryNode(tr("Genre"), ItemParent::Metadata);
+        checkAddEntryNode(tr("Album Artist"), ItemParent::Metadata);
+        checkAddEntryNode(tr("Track Number"), ItemParent::Metadata);
+        checkAddEntryNode(tr("File Name"), ItemParent::Location);
+        checkAddEntryNode(tr("Folder Name"), ItemParent::Location);
+        checkAddEntryNode(tr("File Path"), ItemParent::Location);
+        checkAddEntryNode(tr("File Size"), ItemParent::Location);
+        checkAddEntryNode(tr("Last Modified"), ItemParent::Location);
+        checkAddEntryNode(tr("Added"), ItemParent::Location);
+        checkAddEntryNode(tr("Duration"), ItemParent::General);
+        checkAddEntryNode(tr("Bitrate"), ItemParent::General);
+        checkAddEntryNode(tr("Sample Rate"), ItemParent::General);
     }
 
     void addTrackNodes(int total, const Track& track)
     {
-        checkAddEntryNode(QStringLiteral("Artist"), ItemParent::Metadata, track.artists());
-        checkAddEntryNode(QStringLiteral("Title"), ItemParent::Metadata, track.title());
-        checkAddEntryNode(QStringLiteral("Album"), ItemParent::Metadata, track.album());
-        checkAddEntryNode(QStringLiteral("Date"), ItemParent::Metadata, track.date());
-        checkAddEntryNode(QStringLiteral("Genre"), ItemParent::Metadata, track.genres());
-        checkAddEntryNode(QStringLiteral("Album Artist"), ItemParent::Metadata, track.albumArtist());
-        checkAddEntryNode(QStringLiteral("Track Number"), ItemParent::Metadata, track.trackNumber());
+        checkAddEntryNode(tr("Artist"), ItemParent::Metadata, track.artists());
+        checkAddEntryNode(tr("Title"), ItemParent::Metadata, track.title());
+        checkAddEntryNode(tr("Album"), ItemParent::Metadata, track.album());
+        checkAddEntryNode(tr("Date"), ItemParent::Metadata, track.date());
+        checkAddEntryNode(tr("Genre"), ItemParent::Metadata, track.genres());
+        checkAddEntryNode(tr("Album Artist"), ItemParent::Metadata, track.albumArtist());
+        checkAddEntryNode(tr("Track Number"), ItemParent::Metadata, track.trackNumber());
 
         const QFileInfo file{track.filepath()};
 
-        checkAddEntryNode(total > 1 ? QStringLiteral("File Names") : QStringLiteral("File Name"), ItemParent::Location,
-                          file.fileName());
+        checkAddEntryNode(total > 1 ? tr("File Names") : tr("File Name"), ItemParent::Location, file.fileName());
 
-        checkAddEntryNode(total > 1 ? QStringLiteral("Folder Names") : QStringLiteral("Folder Name"),
-                          ItemParent::Location, file.absolutePath());
+        checkAddEntryNode(total > 1 ? tr("Folder Names") : tr("Folder Name"), ItemParent::Location,
+                          file.absolutePath());
 
         if(total == 1) {
-            checkAddEntryNode(QStringLiteral("File Path"), ItemParent::Location, track.filepath());
+            checkAddEntryNode(tr("File Path"), ItemParent::Location, track.filepath());
         }
 
-        checkAddEntryNode(total > 1 ? QStringLiteral("Total Size") : QStringLiteral("File Size"), ItemParent::Location,
-                          track.fileSize(), InfoItem::Total, Utils::formatFileSize);
+        checkAddEntryNode(total > 1 ? tr("Total Size") : tr("File Size"), ItemParent::Location, track.fileSize(),
+                          InfoItem::Total, Utils::formatFileSize);
 
-        checkAddEntryNode(QStringLiteral("Last Modified"), ItemParent::Location, track.modifiedTime(), InfoItem::Max,
+        checkAddEntryNode(tr("Last Modified"), ItemParent::Location, track.modifiedTime(), InfoItem::Max,
                           Utils::formatTimeMs);
 
         if(total == 1) {
-            checkAddEntryNode(QStringLiteral("Added"), ItemParent::Location, track.addedTime(), InfoItem::Max,
-                              Utils::formatTimeMs);
+            checkAddEntryNode(tr("Added"), ItemParent::Location, track.addedTime(), InfoItem::Max, Utils::formatTimeMs);
         }
 
-        checkAddEntryNode(QStringLiteral("Duration"), ItemParent::General, track.duration(), InfoItem::ValueType::Total,
+        checkAddEntryNode(tr("Duration"), ItemParent::General, track.duration(), InfoItem::ValueType::Total,
                           Utils::msToString);
 
-        checkAddEntryNode(total > 1 ? QStringLiteral("Avg. Bitrate") : QStringLiteral("Bitrate"), ItemParent::General,
-                          track.bitrate(), InfoItem::Average, [](uint64_t bitrate) -> QString {
-                              return QString::number(bitrate) + QStringLiteral("kbps");
-                          });
+        checkAddEntryNode(
+            total > 1 ? tr("Avg. Bitrate") : tr("Bitrate"), ItemParent::General, track.bitrate(), InfoItem::Average,
+            [](uint64_t bitrate) -> QString { return QString::number(bitrate) + QStringLiteral("kbps"); });
 
-        checkAddEntryNode(QStringLiteral("Sample Rate"), ItemParent::General,
+        checkAddEntryNode(tr("Sample Rate"), ItemParent::General,
                           QString::number(track.sampleRate()) + QStringLiteral(" Hz"));
     }
 };
@@ -277,14 +274,14 @@ void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
     beginResetModel();
     p->reset();
 
-    p->getOrAddNode(QStringLiteral("Metadata"), ItemParent::Root, InfoItem::Header);
-    p->getOrAddNode(QStringLiteral("Location"), ItemParent::Root, InfoItem::Header);
-    p->getOrAddNode(QStringLiteral("General"), ItemParent::Root, InfoItem::Header);
+    p->getOrAddNode(tr("Metadata"), ItemParent::Root, InfoItem::Header);
+    p->getOrAddNode(tr("Location"), ItemParent::Root, InfoItem::Header);
+    p->getOrAddNode(tr("General"), ItemParent::Root, InfoItem::Header);
 
     const int total = static_cast<int>(infoTracks.size());
 
     if(total > 0) {
-        p->checkAddEntryNode(QStringLiteral("Tracks"), ItemParent::General, total, InfoItem::ValueType::Total);
+        p->checkAddEntryNode(tr("Tracks"), ItemParent::General, total, InfoItem::ValueType::Total);
 
         for(const Track& track : infoTracks) {
             p->addTrackNodes(total, track);

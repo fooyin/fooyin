@@ -174,11 +174,11 @@ QVariant SortingModel::headerData(int section, Qt::Orientation orientation, int 
 
     switch(section) {
         case(0):
-            return QStringLiteral("Index");
+            return tr("Index");
         case(1):
-            return QStringLiteral("Name");
+            return tr("Name");
         case(2):
-            return QStringLiteral("Sort Script");
+            return tr("Sort Script");
     }
     return {};
 }

@@ -296,7 +296,7 @@ QVariant LibraryTreeModel::headerData(int /*section*/, Qt::Orientation orientati
         return {};
     }
 
-    return QStringLiteral("Library Tree");
+    return tr("Library Tree");
 }
 
 QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const

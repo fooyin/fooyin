@@ -36,15 +36,15 @@ void LibraryTreeGroupRegistry::loadDefaults()
     addDefaultItem(
         {.id     = 0,
          .index  = 0,
-         .name   = QStringLiteral("Artist/Album"),
+         .name   = tr("Artist/Album"),
          .script = QStringLiteral("$if2(%albumartist%,%artist%)||%album% (%year%)||%disc%.$num(%track%,2). %title%")});
     addDefaultItem({.id     = 1,
                     .index  = 1,
-                    .name   = QStringLiteral("Album"),
+                    .name   = tr("Album"),
                     .script = QStringLiteral("%album% (%year%)||%disc%.$num(%track%,2). %title%")});
     addDefaultItem({.id     = 2,
                     .index  = 2,
-                    .name   = QStringLiteral("Folder Structure"),
+                    .name   = tr("Folder Structure"),
                     .script = QStringLiteral("$replace(%relativepath%,/,||)")});
 }
 } // namespace Fooyin

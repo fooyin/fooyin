@@ -35,15 +35,13 @@ PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObjec
 
 void PlaylistColumnRegistry::loadDefaults()
 {
-    addDefaultItem({.id = 0, .index = 0, .name = QStringLiteral("Track"), .field = QStringLiteral("$num(%track%,2)")});
-    addDefaultItem({.id = 1, .index = 1, .name = QStringLiteral("Title"), .field = QStringLiteral("%title%")});
-    addDefaultItem({.id = 2, .index = 2, .name = QStringLiteral("Artist"), .field = QStringLiteral("%artist%")});
-    addDefaultItem(
-        {.id = 3, .index = 3, .name = QStringLiteral("Album Artist"), .field = QStringLiteral("%albumartist%")});
-    addDefaultItem({.id = 4, .index = 4, .name = QStringLiteral("Album"), .field = QStringLiteral("%album%")});
-    addDefaultItem({.id = 5, .index = 5, .name = QStringLiteral("Playcount"), .field = QStringLiteral("%playcount%")});
-    addDefaultItem(
-        {.id = 6, .index = 6, .name = QStringLiteral("Duration"), .field = QStringLiteral("$timems(%duration%)")});
-    addDefaultItem({.id = 7, .index = 7, .name = QStringLiteral("Playing"), .field = QString::fromLatin1(PlayingIcon)});
+    addDefaultItem({.id = 0, .index = 0, .name = tr("Track"), .field = QStringLiteral("$num(%track%,2)")});
+    addDefaultItem({.id = 1, .index = 1, .name = tr("Title"), .field = QStringLiteral("%title%")});
+    addDefaultItem({.id = 2, .index = 2, .name = tr("Artist"), .field = QStringLiteral("%artist%")});
+    addDefaultItem({.id = 3, .index = 3, .name = tr("Album Artist"), .field = QStringLiteral("%albumartist%")});
+    addDefaultItem({.id = 4, .index = 4, .name = tr("Album"), .field = QStringLiteral("%album%")});
+    addDefaultItem({.id = 5, .index = 5, .name = tr("Playcount"), .field = QStringLiteral("%playcount%")});
+    addDefaultItem({.id = 6, .index = 6, .name = tr("Duration"), .field = QStringLiteral("$timems(%duration%)")});
+    addDefaultItem({.id = 7, .index = 7, .name = tr("Playing"), .field = QString::fromLatin1(PlayingIcon)});
 }
 } // namespace Fooyin
