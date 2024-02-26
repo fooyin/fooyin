@@ -175,7 +175,11 @@ set(ICON_INSTALL_DIR "${DATAROOTDIR}/icons")
 set(DOC_INSTALL_DIR "${DATAROOTDIR}/doc/fooyin/")
 set(TRANSLATION_INSTALL_DIR "${DATAROOTDIR}/fooyin/translations")
 
-set(FOOYIN_TRANSLATION_PATH "${CMAKE_INSTALL_PREFIX}/${TRANSLATION_INSTALL_DIR}")
+if(INSTALL_FHS)
+    set(FOOYIN_TRANSLATION_PATH "${CMAKE_INSTALL_PREFIX}/${TRANSLATION_INSTALL_DIR}")
+else()
+    set(FOOYIN_TRANSLATION_PATH "://translations")
+endif()
 
 set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
 file(RELATIVE_PATH FOOYIN_RELATIVE_PLUGIN_PATH "/${BIN_INSTALL_DIR}" "/${FOOYIN_PLUGIN_INSTALL_DIR}")
@@ -300,7 +304,17 @@ if(BUILD_TRANSLATIONS)
         qm_files
     )
 
-    if(NOT CMAKE_SKIP_INSTALL_RULES)
+    if(NOT INSTALL_FHS)
+        set(translations_qrc ${CMAKE_CURRENT_BINARY_DIR}/data/translations.qrc)
+        file(WRITE ${translations_qrc} "<RCC><qresource prefix=\"translations\">\n")
+        foreach(qm_file ${qm_files})
+            get_filename_component(qm_name ${qm_file} NAME)
+            file(APPEND ${translations_qrc} "<file>${qm_name}</file>\n")
+        endforeach()
+        file(APPEND ${translations_qrc} "</qresource></RCC>")
+
+        qt_add_resources(SOURCES ${translations_qrc})
+    elseif(NOT CMAKE_SKIP_INSTALL_RULES)
         install(FILES ${qm_files} DESTINATION ${TRANSLATION_INSTALL_DIR})
     endif()
 endif()
@@ -314,7 +328,7 @@ endif()
 
 # ---- Fooyin executable ----
 
-set(SOURCES src/app/main.cpp src/app/commandline.cpp)
+set(SOURCES ${SOURCES} src/app/main.cpp src/app/commandline.cpp)
 
 qt_add_resources(SOURCES data/icons.qrc)
 

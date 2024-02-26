@@ -42,13 +42,14 @@ void Translations::initialiseTranslations()
     if(!customLanguage.isEmpty()) {
         const QLocale customLocale = QLocale{customLanguage};
         // Returns the 'C' locale if not valid
-        if(customLanguage.compare(QStringLiteral("C"), Qt::CaseInsensitive) != 0 && customLocale.language() == QLocale::C) {
+        if(customLanguage.compare(QStringLiteral("C"), Qt::CaseInsensitive) != 0
+           && customLocale.language() == QLocale::C) {
             qWarning() << "Custom locale (" << customLanguage << ") not found, using 'C' locale.";
         }
         QLocale::setDefault(customLocale);
     }
 
-    QLocale locale;
+    const QLocale locale;
 
     if(locale.language() == QLocale::C) {
         return;
@@ -89,12 +90,7 @@ bool Translations::installTranslations(const QLocale& locale, const QString& tra
 
     qDebug() << "Loaded" << translation << "translations for locale" << locale.name() << "from" << path;
 
-    if(auto* app = QCoreApplication::instance()) {
-        app->installTranslator(translator);
-        return true;
-    }
-
-    return false;
+    return QCoreApplication::installTranslator(translator);
 }
 
 } // namespace Fooyin
