@@ -28,7 +28,9 @@
 #include <utils/slider.h>
 #include <utils/utils.h>
 
+#include <QContextMenuEvent>
 #include <QHBoxLayout>
+#include <QMenu>
 #include <QSlider>
 
 namespace Fooyin {
@@ -52,8 +54,15 @@ struct SeekBar::Private
         , slider{new Slider(Qt::Horizontal, self)}
         , elapsed{new ClickableLabel(self)}
         , total{new ClickableLabel(self)}
-        , elapsedTotal{settings->value<Settings::Gui::Internal::ElapsedTotal>()}
-    { }
+    {
+        toggleElapsedTotal(settings->value<Settings::Gui::Internal::SeekBarElapsedTotal>());
+        toggleLabels(settings->value<Settings::Gui::Internal::SeekBarLabels>());
+
+        settings->subscribe<Settings::Gui::Internal::SeekBarLabels>(self,
+                                                                    [this](bool enabled) { toggleLabels(enabled); });
+        settings->subscribe<Settings::Gui::Internal::SeekBarElapsedTotal>(
+            self, [this](bool enabled) { toggleElapsedTotal(enabled); });
+    }
 
     void reset()
     {
@@ -75,7 +84,7 @@ struct SeekBar::Private
         }
     }
 
-    void setCurrentPosition(uint64_t pos)
+    void setCurrentPosition(uint64_t pos) const
     {
         if(!slider->isSliderDown()) {
             slider->setValue(static_cast<int>(pos));
@@ -83,7 +92,7 @@ struct SeekBar::Private
         }
     }
 
-    void updateLabels(uint64_t time)
+    void updateLabels(uint64_t time) const
     {
         elapsed->setText(Utils::msToString(time));
 
@@ -103,11 +112,11 @@ struct SeekBar::Private
         switch(state) {
             case(PlayState::Stopped): {
                 reset();
-                self->setEnabled(false);
+                slider->setEnabled(false);
                 break;
             }
             case(PlayState::Playing): {
-                self->setEnabled(true);
+                slider->setEnabled(true);
                 break;
             }
             case(PlayState::Paused): {
@@ -116,19 +125,22 @@ struct SeekBar::Private
         }
     }
 
-    void toggleRemaining()
+    void toggleLabels(bool enabled) const
     {
-        if(elapsedTotal) {
-            settings->set<Settings::Gui::Internal::ElapsedTotal>(false);
-            total->setText(Utils::msToString(max));
-        }
-        else {
-            settings->set<Settings::Gui::Internal::ElapsedTotal>(true);
-        }
-        elapsedTotal = !elapsedTotal;
+        elapsed->setHidden(!enabled);
+        total->setHidden(!enabled);
     }
 
-    void sliderDropped()
+    void toggleElapsedTotal(bool enabled)
+    {
+        elapsedTotal = enabled;
+
+        if(!elapsedTotal) {
+            total->setText(Utils::msToString(max));
+        }
+    }
+
+    void sliderDropped() const
     {
         const auto pos = static_cast<uint64_t>(slider->value());
         playerManager->changePosition(pos);
@@ -146,9 +158,10 @@ SeekBar::SeekBar(PlayerManager* playerManager, SettingsManager* settings, QWidge
     layout->addWidget(p->slider, 0, Qt::AlignVCenter);
     layout->addWidget(p->total, 0, Qt::AlignVCenter | Qt::AlignLeft);
 
-    setEnabled(p->playerManager->currentTrack().isValid());
+    p->slider->setEnabled(p->playerManager->currentTrack().isValid());
 
-    QObject::connect(p->total, &ClickableLabel::clicked, this, [this]() { p->toggleRemaining(); });
+    QObject::connect(p->total, &ClickableLabel::clicked, this,
+                     [this]() { p->settings->set<Settings::Gui::Internal::SeekBarElapsedTotal>(!p->elapsedTotal); });
     QObject::connect(p->slider, &Slider::sliderReleased, this, [this]() { p->sliderDropped(); });
 
     QObject::connect(p->playerManager, &PlayerManager::playStateChanged, this,
@@ -168,6 +181,28 @@ Fooyin::SeekBar::~SeekBar() = default;
 QString SeekBar::name() const
 {
     return QStringLiteral("SeekBar");
+}
+
+void SeekBar::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* showLabels = new QAction(tr("Show Labels"), this);
+    showLabels->setCheckable(true);
+    showLabels->setChecked(p->settings->value<Settings::Gui::Internal::SeekBarLabels>());
+    QObject::connect(showLabels, &QAction::triggered, this,
+                     [this](bool checked) { p->settings->set<Settings::Gui::Internal::SeekBarLabels>(checked); });
+    menu->addAction(showLabels);
+
+    auto* showElapsed = new QAction(tr("Show Elapsed Total"), this);
+    showElapsed->setCheckable(true);
+    showElapsed->setChecked(p->settings->value<Settings::Gui::Internal::SeekBarElapsedTotal>());
+    QObject::connect(showElapsed, &QAction::triggered, this,
+                     [this](bool checked) { p->settings->set<Settings::Gui::Internal::SeekBarElapsedTotal>(checked); });
+    menu->addAction(showElapsed);
+
+    menu->popup(event->globalPos());
 }
 } // namespace Fooyin
 

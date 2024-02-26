@@ -35,6 +35,9 @@ public:
 
     QString name() const override;
 
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
+
 private:
     struct Private;
     std::unique_ptr<Private> p;

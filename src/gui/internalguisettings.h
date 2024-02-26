@@ -45,7 +45,7 @@ enum GuiInternalSettings : uint32_t
     PlaylistCurrentPreset  = 6 | Type::Int,
     PlaylistThumbnailSize  = 7 | Type::Int,
     PlaylistTabsHide       = 8 | Type::Bool,
-    ElapsedTotal           = 9 | Type::Bool,
+    SeekBarElapsedTotal    = 9 | Type::Bool,
     InfoAltColours         = 10 | Type::Bool,
     InfoHeader             = 11 | Type::Bool,
     InfoScrollBar          = 12 | Type::Bool,
@@ -63,6 +63,7 @@ enum GuiInternalSettings : uint32_t
     LibTreeAltColours      = 24 | Type::Bool,
     LibTreeAppearance      = 25 | Type::Variant,
     SystemIconTheme        = 26 | Type::String,
+    SeekBarLabels          = 27 | Type::Bool,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
