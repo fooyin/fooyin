@@ -99,8 +99,8 @@ void PluginPageWidget::installPlugin()
         QMessageBox msg{QMessageBox::Question, tr("Plugin Installed"),
                         tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() == QMessageBox::Yes) {
-            QProcess::startDetached(QApplication::applicationFilePath());
             QCoreApplication::quit();
+            QProcess::startDetached(QApplication::applicationFilePath(), {QStringLiteral("-s")});
         }
     }
 }

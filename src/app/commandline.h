@@ -31,6 +31,7 @@ public:
 
     [[nodiscard]] bool empty() const;
     [[nodiscard]] QList<QUrl> files() const;
+    [[nodiscard]] bool skipSingleApp() const;
 
     [[nodiscard]] QByteArray saveOptions() const;
     void loadOptions(const QByteArray& options);
@@ -39,4 +40,5 @@ private:
     int m_argc;
     char** m_argv;
     QList<QUrl> m_files;
+    bool m_skipSingle;
 };

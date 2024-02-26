@@ -27,12 +27,15 @@
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
+#include <QMessageBox>
+#include <QProcess>
 
 #include <ranges>
 
@@ -122,8 +125,17 @@ void GeneralPageWidget::apply()
     m_settings->set<Settings::Gui::WaitForTracks>(m_waitForTracks->isChecked());
 
     const QString currentLanguage = m_language->currentText();
-    m_settings->set<Settings::Core::Language>(
-        m_languageMap.contains(currentLanguage) ? m_languageMap.at(currentLanguage) : QString{});
+    const auto chosenLanguage = m_languageMap.contains(currentLanguage) ? m_languageMap.at(currentLanguage) : QString{};
+
+    if(chosenLanguage != m_settings->value<Settings::Core::Language>()) {
+        m_settings->set<Settings::Core::Language>(chosenLanguage);
+        QMessageBox msg{QMessageBox::Question, tr("Language changed"),
+                        tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
+        if(msg.exec() == QMessageBox::Yes) {
+            QCoreApplication::quit();
+            QProcess::startDetached(QApplication::applicationFilePath(), {QStringLiteral("-s")});
+        }
+    }
 }
 
 void GeneralPageWidget::reset()
@@ -138,12 +150,12 @@ void GeneralPageWidget::loadLanguage()
     m_languageMap.clear();
     m_languageMap[QStringLiteral("British English (en_GB)")] = QStringLiteral("en_GB");
 
-    QDir translationDir{Core::translationsPath()};
-    QStringList translations = translationDir.entryList(QStringList{} << QStringLiteral("*.qm"));
-    static QRegularExpression translationExpr(QStringLiteral("^fooyin_(.*).qm$"));
+    const QDir translationDir{Core::translationsPath()};
+    const QStringList translations = translationDir.entryList(QStringList{} << QStringLiteral("*.qm"));
+    static const QRegularExpression translationExpr(QStringLiteral("^fooyin_(.*).qm$"));
 
     for(const QString& translation : translations) {
-        QRegularExpressionMatch translationMatch = translationExpr.match(translation);
+        const QRegularExpressionMatch translationMatch = translationExpr.match(translation);
         if(!translationMatch.hasMatch()) {
             continue;
         }

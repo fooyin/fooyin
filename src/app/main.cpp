@@ -38,16 +38,18 @@ int main(int argc, char** argv)
     CommandLine commandLine{argc, argv};
 
     auto checkInstance = [&commandLine](KDSingleApplication& instance) {
-        if(!instance.isPrimaryInstance()) {
-            if(commandLine.empty()) {
-                qInfo() << "fooyin already running";
-            }
-            else {
-                instance.sendMessage(commandLine.saveOptions());
-            }
-            return false;
+        if(instance.isPrimaryInstance()) {
+            return true;
         }
-        return true;
+
+        if(commandLine.empty()) {
+            qInfo() << "fooyin already running";
+        }
+        else {
+            instance.sendMessage(commandLine.saveOptions());
+        }
+
+        return commandLine.skipSingleApp();
     };
 
     {

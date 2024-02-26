@@ -31,24 +31,27 @@
 CommandLine::CommandLine(int argc, char** argv)
     : m_argc{argc}
     , m_argv{argv}
+    , m_skipSingle{false}
 { }
 
 bool CommandLine::parse()
 {
-    static constexpr option cmdOptions[]
-        = {{"help", no_argument, nullptr, 'h'}, {"version", no_argument, nullptr, 'v'}, {nullptr, 0, nullptr, 0}};
+    static constexpr option cmdOptions[] = {{"help", no_argument, nullptr, 'h'},
+                                            {"version", no_argument, nullptr, 'v'},
+                                            {"skip", no_argument, nullptr, 's'},
+                                            {nullptr, 0, nullptr, 0}};
 
     static const auto help = QStringLiteral("%1: fooyin [%2] [%3]\n"
-                                               "\n"
-                                               "%4:\n"
-                                               "  -h, --help      %5\n"
-                                               "  -v, --version   %6\n"
-                                               "\n"
-                                               "%7:\n"
-                                               "  urls            %8\n");
+                                            "\n"
+                                            "%4:\n"
+                                            "  -h, --help      %5\n"
+                                            "  -v, --version   %6\n"
+                                            "\n"
+                                            "%7:\n"
+                                            "  urls            %8\n");
 
     for(;;) {
-        const int c = getopt_long(m_argc, m_argv, "hv", cmdOptions, nullptr);
+        const int c = getopt_long(m_argc, m_argv, "hvs", cmdOptions, nullptr);
         if(c == -1) {
             break;
         }
@@ -68,6 +71,10 @@ bool CommandLine::parse()
                 std::cout << version.toLocal8Bit().constData() << '\n';
                 std::exit(0);
             }
+            case('s'): {
+                m_skipSingle = true;
+                break;
+            }
             default:
                 return false;
         }
@@ -85,12 +92,17 @@ bool CommandLine::parse()
 
 bool CommandLine::empty() const
 {
-    return m_files.empty();
+    return m_files.empty() && !m_skipSingle;
 }
 
 QList<QUrl> CommandLine::files() const
 {
     return m_files;
+}
+
+bool CommandLine::skipSingleApp() const
+{
+    return m_skipSingle;
 }
 
 QByteArray CommandLine::saveOptions() const
@@ -99,6 +111,7 @@ QByteArray CommandLine::saveOptions() const
     QDataStream stream(&out, QDataStream::WriteOnly);
 
     stream << m_files;
+    stream << m_skipSingle;
 
     return out;
 }
@@ -109,4 +122,5 @@ void CommandLine::loadOptions(const QByteArray& options)
     QDataStream stream(&in, QDataStream::ReadOnly);
 
     stream >> m_files;
+    stream >> m_skipSingle;
 }
