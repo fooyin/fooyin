@@ -5,6 +5,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 ## New Features
 
 * CUE support
+* ReplayGain support
 * Playback queue
 * Query-based language for searching/filtering
 * Album artwork features - downloading and storing in metadata
