@@ -83,6 +83,5 @@ signals:
     void playlistRemoved(Playlist* playlist);
     void playlistRenamed(Playlist* playlist);
     void activePlaylistChanged(Playlist* playlist);
-    void activeTrackChanged(const Track& track, int index);
 };
 } // namespace Fooyin

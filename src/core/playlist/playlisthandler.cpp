@@ -97,8 +97,11 @@ struct PlaylistHandler::Private
 
     void startNextTrack(const Track& track, int index) const
     {
-        playerManager->changeCurrentTrack(track);
-        QMetaObject::invokeMethod(self, "activeTrackChanged", Q_ARG(const Track&, track), Q_ARG(int, index));
+        if(!activePlaylist) {
+            return;
+        }
+
+        playerManager->changeCurrentTrack({track, activePlaylist->id(), index});
         playerManager->play();
     }
 

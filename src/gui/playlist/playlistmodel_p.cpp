@@ -762,7 +762,6 @@ PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model_, MusicLibrary* 
     , altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
     , coverSize{settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>(),
                 settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
-    , isActivePlaylist{false}
     , currentPlaylist{nullptr}
     , currentPlayState{PlayState::Stopped}
     , currentIndex{-1}
@@ -860,8 +859,8 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
     const auto track = std::get<PlaylistTrackItem>(item->data());
 
     auto isPlaying = [this, &track, item]() {
-        return isActivePlaylist && currentPlayingTrack.id() == track.track().id()
-            && currentPlaylist->currentTrackIndex() == item->index();
+        return currentPlaylist && currentTrack.playlistId == currentPlaylist->id()
+            && currentTrack.track.id() == track.track().id() && currentTrack.indexInPlaylist == item->index();
     };
 
     switch(role) {

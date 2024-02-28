@@ -30,6 +30,7 @@ class MusicLibrary;
 class Playlist;
 enum class PlayState;
 struct PlaylistPreset;
+struct PlaylistTrack;
 class PlaylistModelPrivate;
 
 using TrackGroups = std::map<int, TrackList>;
@@ -92,7 +93,6 @@ public:
     void removeTracks(const QModelIndexList& indexes);
     void removeTracks(const TrackGroups& groups);
     void updateHeader(Playlist* playlist);
-    void setCurrentPlaylistIsActive(bool active);
 
     TrackGroups saveTrackGroups(const QModelIndexList& indexes) const;
 
@@ -106,7 +106,7 @@ signals:
     void playlistTracksChanged(int index);
 
 public slots:
-    void currentTrackChanged(const Track& track);
+    void currentTrackChanged(const PlaylistTrack& track);
     void playStateChanged(PlayState state);
 
 private:

@@ -19,6 +19,8 @@
 
 #include "playercontroller.h"
 
+#include <core/player/playbackqueue.h>
+
 #include <core/coresettings.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
@@ -30,12 +32,14 @@ struct PlayerController::Private
 
     SettingsManager* settings;
 
-    Track currentTrack;
+    PlaylistTrack currentTrack;
     uint64_t totalDuration{0};
     PlayState playStatus{PlayState::Stopped};
     Playlist::PlayModes playMode;
     uint64_t position{0};
     bool counted{false};
+
+    PlaybackQueue queue;
 
     Private(PlayerController* self_, SettingsManager* settings_)
         : self{self_}
@@ -67,8 +71,13 @@ void PlayerController::reset()
 
 void PlayerController::play()
 {
-    p->playStatus = PlayState::Playing;
-    emit playStateChanged(p->playStatus);
+    if(!p->currentTrack.isValid() && !p->queue.empty()) {
+        changeCurrentTrack(p->queue.nextTrack());
+    }
+    if(p->currentTrack.isValid()) {
+        p->playStatus = PlayState::Playing;
+        emit playStateChanged(p->playStatus);
+    }
 }
 
 void PlayerController::playPause()
@@ -78,9 +87,9 @@ void PlayerController::playPause()
             pause();
             break;
         case(PlayState::Paused):
+        case(PlayState::Stopped):
             play();
             break;
-        case(PlayState::Stopped):
         default:
             break;
     }
@@ -99,7 +108,13 @@ void PlayerController::previous()
 
 void PlayerController::next()
 {
-    emit nextTrack();
+    if(p->queue.empty()) {
+        emit nextTrack();
+    }
+    else {
+        changeCurrentTrack(p->queue.nextTrack());
+        play();
+    }
 }
 
 void PlayerController::stop()
@@ -119,7 +134,9 @@ void PlayerController::setCurrentPosition(uint64_t ms)
     // TODO: Only increment playCount based on total time listened excluding seeking.
     if(!p->counted && ms >= p->totalDuration / 2) {
         p->counted = true;
-        emit trackPlayed(p->currentTrack);
+        if(p->currentTrack.isValid()) {
+            emit trackPlayed(p->currentTrack.track);
+        }
     }
     emit positionChanged(ms);
 }
@@ -136,12 +153,23 @@ void PlayerController::changePosition(uint64_t ms)
 
 void PlayerController::changeCurrentTrack(const Track& track)
 {
+    changeCurrentTrack(PlaylistTrack{track});
+}
+
+void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
+{
     p->currentTrack  = track;
-    p->totalDuration = track.duration();
+    p->totalDuration = p->currentTrack.track.duration();
     p->position      = 0;
     p->counted       = false;
 
-    emit currentTrackChanged(p->currentTrack);
+    emit currentTrackChanged(p->currentTrack.track);
+    emit playlistTrackChanged(p->currentTrack);
+}
+
+PlaybackQueue PlayerController::playbackQueue() const
+{
+    return p->queue;
 }
 
 void PlayerController::setPlayMode(Playlist::PlayModes mode)
@@ -166,7 +194,32 @@ uint64_t PlayerController::currentPosition() const
 
 Track PlayerController::currentTrack() const
 {
+    return p->currentTrack.track;
+}
+
+PlaylistTrack PlayerController::currentPlaylistTrack() const
+{
     return p->currentTrack;
+}
+
+void PlayerController::queueTrack(const Track& track)
+{
+    p->queue.addTrack(track);
+}
+
+void PlayerController::queueTrack(const PlaylistTrack& track)
+{
+    p->queue.addTrack(track);
+}
+
+void PlayerController::queueTracks(const TrackList& tracks)
+{
+    p->queue.addTracks(tracks);
+}
+
+void PlayerController::queueTracks(const QueueTracks& tracks)
+{
+    p->queue.addTracks(tracks);
 }
 } // namespace Fooyin
 

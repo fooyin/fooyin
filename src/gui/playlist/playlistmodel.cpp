@@ -404,12 +404,6 @@ void PlaylistModel::updateHeader(Playlist* playlist)
     }
 }
 
-void PlaylistModel::setCurrentPlaylistIsActive(bool active)
-{
-    p->isActivePlaylist = active;
-    emit dataChanged({}, {}, {PlaylistItem::Role::Playing});
-}
-
 TrackGroups PlaylistModel::saveTrackGroups(const QModelIndexList& indexes) const
 {
     TrackGroups result;
@@ -440,9 +434,9 @@ void PlaylistModel::tracksChanged()
     p->currentIndex        = -1;
 }
 
-void PlaylistModel::currentTrackChanged(const Track& track)
+void PlaylistModel::currentTrackChanged(const PlaylistTrack& track)
 {
-    p->currentPlayingTrack = track;
+    p->currentTrack = track;
     emit dataChanged({}, {}, {Qt::DecorationRole, PlaylistItem::Role::Playing});
 }
 

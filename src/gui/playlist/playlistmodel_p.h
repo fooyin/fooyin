@@ -22,6 +22,8 @@
 #include "playlistmodel.h"
 #include "playlistpopulator.h"
 
+#include <core/player/playerdefs.h>
+
 #include <QModelIndexList>
 #include <QPixmap>
 #include <QThread>
@@ -163,10 +165,9 @@ public:
     PlaylistColumnList columns;
     ColumnAlignments columnAlignments;
 
-    bool isActivePlaylist;
     Playlist* currentPlaylist;
     PlayState currentPlayState;
-    Track currentPlayingTrack;
+    PlaylistTrack currentTrack;
     QPersistentModelIndex currentPlayingIndex;
     int currentIndex;
 };

@@ -39,18 +39,29 @@ public:
     [[nodiscard]] Playlist::PlayModes playMode() const override;
     [[nodiscard]] uint64_t currentPosition() const override;
     [[nodiscard]] Track currentTrack() const override;
+    [[nodiscard]] PlaylistTrack currentPlaylistTrack() const override;
 
     void reset() override;
+
     void play() override;
     void playPause() override;
     void pause() override;
     void previous() override;
     void next() override;
     void stop() override;
+
+    void setPlayMode(Playlist::PlayModes mode) override;
     void setCurrentPosition(uint64_t ms) override;
     void changePosition(uint64_t ms) override;
     void changeCurrentTrack(const Track& track) override;
-    void setPlayMode(Playlist::PlayModes mode) override;
+    void changeCurrentTrack(const PlaylistTrack& track) override;
+
+    PlaybackQueue playbackQueue() const;
+
+    void queueTrack(const Track& track) override;
+    void queueTrack(const PlaylistTrack& track) override;
+    void queueTracks(const TrackList& tracks) override;
+    void queueTracks(const QueueTracks& tracks) override;
 
 private:
     struct Private;

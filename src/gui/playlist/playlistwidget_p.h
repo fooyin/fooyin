@@ -48,6 +48,7 @@ class PlaylistModel;
 class PlaylistView;
 class MusicLibrary;
 struct PlaylistViewState;
+struct PlaylistTrack;
 
 class PlaylistWidgetPrivate : public QObject
 {
@@ -81,6 +82,7 @@ public:
     void setScrollbarHidden(bool showScrollBar) const;
     void selectionChanged() const;
     void trackIndexesChanged(int playingIndex) const;
+    void queueSelectedTracks();
 
     void scanDroppedTracks(const QList<QUrl>& urls, int index);
     void tracksInserted(const TrackGroups& tracks) const;
@@ -88,6 +90,7 @@ public:
     void tracksMoved(const MoveOperation& operation) const;
     void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const;
     void handleTracksChanged(Playlist* playlist, const std::vector<int>& indexes);
+    void handlePlayingTrackChanged(const PlaylistTrack& track);
 
     void toggleColumnMode();
     void customHeaderMenuRequested(const QPoint& pos);

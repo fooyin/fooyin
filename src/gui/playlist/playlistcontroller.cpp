@@ -218,7 +218,7 @@ PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* 
     QObject::connect(handler, &PlaylistManager::playlistRenamed, this,
                      [this](Playlist* playlist) { p->handlePlaylistUpdated(playlist); });
 
-    QObject::connect(playerManager, &PlayerManager::currentTrackChanged, this,
+    QObject::connect(playerManager, &PlayerManager::playlistTrackChanged, this,
                      &PlaylistController::currentTrackChanged);
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this, &PlaylistController::playStateChanged);
 }
@@ -229,6 +229,11 @@ PlaylistController::~PlaylistController()
         p->settings->set<Settings::Gui::LastPlaylistId>(p->currentPlaylist->id());
         p->saveStates();
     }
+}
+
+PlayerManager* PlaylistController::playerManager() const
+{
+    return p->playerManager;
 }
 
 PlaylistManager* PlaylistController::playlistHandler() const
@@ -251,9 +256,9 @@ PlaylistList PlaylistController::playlists() const
     return p->handler->playlists();
 }
 
-Track PlaylistController::currentTrack() const
+PlaylistTrack PlaylistController::currentTrack() const
 {
-    return p->playerManager->currentTrack();
+    return p->playerManager->currentPlaylistTrack();
 }
 
 PlayState PlaylistController::playState() const

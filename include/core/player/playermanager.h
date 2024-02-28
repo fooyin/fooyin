@@ -21,20 +21,13 @@
 
 #include "fycore_export.h"
 
+#include <core/player/playbackqueue.h>
+#include <core/player/playerdefs.h>
 #include <core/playlist/playlist.h>
 
 #include <QObject>
 
 namespace Fooyin {
-class Track;
-
-enum class PlayState
-{
-    Playing = 0,
-    Paused,
-    Stopped,
-};
-
 /*!
  * Handles track playback
  */
@@ -60,6 +53,11 @@ public:
      * @note the track will be invalid if the state is 'Stopped'.
      */
     [[nodiscard]] virtual Track currentTrack() const = 0;
+    /*!
+     * Returns the currently playing playlist track.
+     * @note the track will be invalid if the state is 'Stopped'.
+     */
+    [[nodiscard]] virtual PlaylistTrack currentPlaylistTrack() const = 0;
 
     /** Starts playback of the current playlist. */
     virtual void play() = 0;
@@ -75,10 +73,17 @@ public:
     /** Stops playback and clears position and current track. */
     virtual void reset() = 0;
 
-    virtual void setPlayMode(Playlist::PlayModes mode)  = 0;
-    virtual void setCurrentPosition(uint64_t ms)        = 0;
-    virtual void changePosition(uint64_t ms)            = 0;
-    virtual void changeCurrentTrack(const Track& track) = 0;
+    virtual void setPlayMode(Playlist::PlayModes mode)          = 0;
+    virtual void setCurrentPosition(uint64_t ms)                = 0;
+    virtual void changePosition(uint64_t ms)                    = 0;
+    virtual void changeCurrentTrack(const Track& track)         = 0;
+    virtual void changeCurrentTrack(const PlaylistTrack& track) = 0;
+
+    /** Queues the @p track to be played at the end of the current track. */
+    virtual void queueTrack(const Track& track)         = 0;
+    virtual void queueTrack(const PlaylistTrack& track) = 0;
+    virtual void queueTracks(const TrackList& tracks)   = 0;
+    virtual void queueTracks(const QueueTracks& tracks) = 0;
 
 signals:
     void playStateChanged(PlayState state);
@@ -88,6 +93,7 @@ signals:
     void positionChanged(uint64_t ms);
     void positionMoved(uint64_t ms);
     void currentTrackChanged(const Track& track);
+    void playlistTrackChanged(const PlaylistTrack& track);
     void trackPlayed(const Track& track);
 };
 } // namespace Fooyin

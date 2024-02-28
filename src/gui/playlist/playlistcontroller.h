@@ -36,6 +36,7 @@ enum class TrackAction;
 class Playlist;
 class PlaylistManager;
 class TrackSelectionController;
+struct PlaylistTrack;
 
 struct PlaylistViewState
 {
@@ -53,12 +54,13 @@ public:
                        QObject* parent = nullptr);
     ~PlaylistController() override;
 
+    [[nodiscard]] PlayerManager* playerManager() const;
     [[nodiscard]] PlaylistManager* playlistHandler() const;
     [[nodiscard]] TrackSelectionController* selectionController() const;
 
     [[nodiscard]] bool playlistsHaveLoaded() const;
     [[nodiscard]] PlaylistList playlists() const;
-    [[nodiscard]] Track currentTrack() const;
+    [[nodiscard]] PlaylistTrack currentTrack() const;
     [[nodiscard]] PlayState playState() const;
 
     void startPlayback() const;
@@ -87,7 +89,7 @@ public:
 signals:
     void playlistsLoaded();
     void currentPlaylistChanged(Playlist* playlist);
-    void currentTrackChanged(const Track& track);
+    void currentTrackChanged(const PlaylistTrack& track);
     void playStateChanged(PlayState state);
     void playlistHistoryChanged();
 

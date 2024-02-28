@@ -11,6 +11,7 @@ set(SOURCES
     engine/audioconverter.cpp
     library/trackfilter.cpp
     library/tracksort.cpp
+    player/playbackqueue.cpp
     scripting/scriptregistry.cpp
     scripting/scriptparser.cpp
     scripting/scriptscanner.cpp
