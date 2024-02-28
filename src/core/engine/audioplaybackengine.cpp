@@ -50,7 +50,7 @@ struct AudioPlaybackEngine::Private
     AudioClock clock;
     QTimer* positionUpdateTimer{nullptr};
 
-    TrackStatus status;
+    TrackStatus status{NoTrack};
     PlaybackState state{StoppedState};
     uint64_t lastPosition{0};
 
