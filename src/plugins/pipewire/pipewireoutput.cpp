@@ -239,6 +239,9 @@ struct PipeWireOutput::Private
 {
     QString device;
     bool muted{false};
+    float volume{1.0};
+    bool pendingVolumeChange{false};
+
     std::deque<AudioBufferContext> buffers;
 
     AudioFormat format;
@@ -567,10 +570,6 @@ PipeWireOutput::~PipeWireOutput() = default;
 
 bool PipeWireOutput::init(const AudioFormat& format)
 {
-    if(p->initialised) {
-        return false;
-    }
-
     p->format = format;
 
     if(!p->initCore() || !p->initStream()) {
@@ -578,22 +577,21 @@ bool PipeWireOutput::init(const AudioFormat& format)
         return false;
     }
 
+    if(p->pendingVolumeChange) {
+        p->pendingVolumeChange = false;
+        setVolume(p->volume);
+    }
+
     return true;
 }
 
 void PipeWireOutput::uninit()
 {
-    if(p->initialised) {
-        p->uninit();
-    }
+    p->uninit();
 }
 
 void PipeWireOutput::reset()
 {
-    if(!p->initialised) {
-        return;
-    }
-
     pw_thread_loop_lock(p->loop.get());
     {
         const std::lock_guard<std::mutex> lock(p->bufferMutex);
@@ -605,10 +603,6 @@ void PipeWireOutput::reset()
 
 void PipeWireOutput::start()
 {
-    if(!p->initialised) {
-        return;
-    }
-
     pw_thread_loop_lock(p->loop.get());
     pw_stream_set_active(p->stream.get(), true);
     pw_thread_loop_unlock(p->loop.get());
@@ -674,10 +668,6 @@ int PipeWireOutput::bufferSize() const
 
 int PipeWireOutput::write(const AudioBuffer& buffer)
 {
-    if(!initialised()) {
-        return 0;
-    }
-
     const std::lock_guard<std::mutex> lock(p->bufferMutex);
 
     if(p->buffers.size() >= DefaultBufferCount) {
@@ -691,16 +681,17 @@ int PipeWireOutput::write(const AudioBuffer& buffer)
 
 void PipeWireOutput::setPaused(bool pause)
 {
-    if(p->loop && p->stream) {
-        pw_thread_loop_lock(p->loop.get());
-        pw_stream_set_active(p->stream.get(), !pause);
-        pw_thread_loop_unlock(p->loop.get());
-    }
+    pw_thread_loop_lock(p->loop.get());
+    pw_stream_set_active(p->stream.get(), !pause);
+    pw_thread_loop_unlock(p->loop.get());
 }
 
 void PipeWireOutput::setVolume(double volume)
 {
-    if(!initialised()) {
+    p->volume = static_cast<float>(volume);
+
+    if(!p->initialised) {
+        p->pendingVolumeChange = true;
         return;
     }
 

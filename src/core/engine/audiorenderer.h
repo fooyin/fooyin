@@ -19,12 +19,13 @@
 
 #pragma once
 
+#include <core/engine/audiooutput.h>
+
 #include <QObject>
 
 namespace Fooyin {
 class AudioBuffer;
 class AudioFormat;
-class AudioOutput;
 
 class AudioRenderer : public QObject
 {
@@ -37,11 +38,12 @@ public:
     bool init(const AudioFormat& format);
     void start();
     void stop();
+    void reset();
     void pause(bool paused);
 
     void queueBuffer(const AudioBuffer& buffer);
 
-    void updateOutput(AudioOutput* output);
+    void updateOutput(const OutputCreator& output);
     void updateDevice(const QString& device);
     void updateVolume(double volume);
 

@@ -24,8 +24,6 @@
 #include <QtPlugin>
 
 namespace Fooyin {
-using OutputCreator = std::function<std::unique_ptr<AudioOutput>()>;
-
 struct AudioOutputBuilder
 {
     QString name;

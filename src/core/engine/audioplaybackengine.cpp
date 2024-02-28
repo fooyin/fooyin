@@ -60,7 +60,6 @@ struct AudioPlaybackEngine::Private
     uint64_t duration{0};
     double volume{1.0};
 
-    std::unique_ptr<AudioOutput> audioOutput;
     AudioFormat format;
 
     std::unique_ptr<AudioDecoder> decoder;
@@ -146,14 +145,19 @@ struct AudioPlaybackEngine::Private
     {
         const auto prevFormat = std::exchange(format, nextFormat);
 
-        if(audioOutput->initialised() && settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format) {
+        if(settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format) {
             return true;
         }
 
-        return renderer->init(format);
+        if(!renderer->init(format)) {
+            format = {};
+            return false;
+        }
+
+        return true;
     }
 
-    void startPlayback()
+    void startPlayback() const
     {
         decoder->start();
         bufferTimer->start();
@@ -172,7 +176,7 @@ struct AudioPlaybackEngine::Private
         changeTrackStatus(EndOfTrack);
     }
 
-    void pauseOutput(bool pause)
+    void pauseOutput(bool pause) const
     {
         if(pause) {
             bufferTimer->stop();
@@ -181,7 +185,6 @@ struct AudioPlaybackEngine::Private
             bufferTimer->start();
         }
 
-        audioOutput->setPaused(pause);
         renderer->pause(pause);
     }
 
@@ -189,14 +192,17 @@ struct AudioPlaybackEngine::Private
     {
         bufferTimer->stop();
         clock.setPaused(true);
-        renderer->stop();
+        renderer->reset();
         totalBufferTime = 0;
     }
 
     void stopWorkers()
     {
-        resetWorkers();
+        bufferTimer->stop();
+        clock.setPaused(true);
+        renderer->stop();
         decoder->stop();
+        totalBufferTime = 0;
     }
 };
 
@@ -208,8 +214,6 @@ AudioPlaybackEngine::AudioPlaybackEngine(SettingsManager* settings, QObject* par
 AudioPlaybackEngine::~AudioPlaybackEngine()
 {
     p->stopWorkers();
-
-    p->audioOutput->uninit();
 
     if(p->positionUpdateTimer) {
         p->positionUpdateTimer->deleteLater();
@@ -238,7 +242,6 @@ void AudioPlaybackEngine::seek(uint64_t pos)
     }
 
     p->resetWorkers();
-    p->audioOutput->reset();
 
     p->decoder->seek(pos);
     p->clock.sync(pos);
@@ -301,7 +304,7 @@ void AudioPlaybackEngine::setState(PlaybackState state)
 
 void AudioPlaybackEngine::play()
 {
-    if(!p->audioOutput || trackStatus() == NoTrack || trackStatus() == InvalidTrack) {
+    if(trackStatus() == NoTrack || trackStatus() == InvalidTrack) {
         return;
     }
 
@@ -347,7 +350,7 @@ void AudioPlaybackEngine::setVolume(double volume)
 
 void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output)
 {
-    const bool playing = state() == PlayingState || state() == PausedState;
+    const bool playing = (state() == PlayingState || state() == PausedState);
 
     p->clock.setPaused(playing);
     p->renderer->pause(playing);
@@ -356,15 +359,13 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output)
         p->bufferTimer->stop();
     }
 
-    if(p->audioOutput && p->audioOutput->initialised()) {
-        p->audioOutput->uninit();
-    }
-
-    p->audioOutput = output();
-
-    p->renderer->updateOutput(p->audioOutput.get());
+    p->renderer->updateOutput(output);
 
     if(playing) {
+        if(!p->renderer->init(p->format)) {
+            p->changeTrackStatus(NoTrack);
+            return;
+        }
         p->clock.setPaused(false);
         p->startPlayback();
     }
@@ -388,6 +389,10 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
     p->renderer->updateDevice(device);
 
     if(playing) {
+        if(!p->renderer->init(p->format)) {
+            p->changeTrackStatus(NoTrack);
+            return;
+        }
         p->clock.setPaused(false);
         p->startPlayback();
     }

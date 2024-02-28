@@ -50,11 +50,17 @@ public:
 
     /** Initialises the output with the given @p format. */
     virtual bool init(const AudioFormat& format) = 0;
-    /** Resets the output to the state before @fn init was called. */
+    /*! Resets the output to the state before @fn init was called.
+     *  @note this will only be called if @fn initialised returns @c true.
+     */
     virtual void uninit() = 0;
-    /** Resets the output to the state after @fn init was called. */
+    /*! Resets the output to the state after @fn init was called.
+     *  @note this will only be called if @fn initialised returns @c true.
+     */
     virtual void reset() = 0;
-    /** Starts playback. */
+    /*! Starts playback.
+     *  @note this will only be called if @fn initialised returns @c true.
+     */
     virtual void start() = 0;
 
     /** Returns @c true if the driver was successfully initialised in @fn init. */
@@ -67,12 +73,25 @@ public:
      */
     virtual bool canHandleVolume() const = 0;
 
+    /*! Returns the current state of the output.
+     *  @note this will only be called if @fn initialised returns @c true.
+     *
+     *  @see OutputState
+     */
     virtual OutputState currentState()          = 0;
+    /*! Returns the size of the audio driver buffer.
+     *  @note this will only be called if @fn initialised returns @c true.
+     */
     virtual int bufferSize() const              = 0;
+    /*! Returns a list of all device names and descriptions for this driver.
+     *  @note this may be called on multiple instances, so don't rely on a
+     *  single initialised state.
+     */
     virtual OutputDevices getAllDevices() const = 0;
 
     /*!
      * Writes the audio data contained in the @p buffer to the audio driver.
+     * @note this will only be called if @fn initialised returns @c true.
      * @note this may be called before @fn start to prefill the buffer.
      * @returns the number of samples written.
      */
@@ -81,10 +100,16 @@ public:
 
     /*!
      * Set's the volume of the audio driver.
-     * @note this will only be called if @fn canHandleVolume returns true.
+     * @note this will only be called if @fn canHandleVolume returns @c true.
+     * @note this may be called regardless of the current initialised state.
      */
     virtual void setVolume(double /*volume*/){};
 
+    /*!
+     * Set's the device for this driver.
+     * @note this may be called regardless of the current initialised state.
+     */
     virtual void setDevice(const QString& device) = 0;
 };
+using OutputCreator = std::function<std::unique_ptr<AudioOutput>()>;
 } // namespace Fooyin

@@ -65,10 +65,6 @@ SdlOutput::~SdlOutput() = default;
 
 bool SdlOutput::init(const AudioFormat& format)
 {
-    if(SDL_WasInit(SDL_INIT_AUDIO)) {
-        return false;
-    }
-
     p->format = format;
 
     SDL_Init(SDL_INIT_AUDIO);
@@ -89,7 +85,7 @@ bool SdlOutput::init(const AudioFormat& format)
     }
 
     if(p->audioDeviceId == 0) {
-        qDebug() << "SDL Error opening audio device: " << SDL_GetError();
+        qDebug() << "[SDL] Error opening audio device: " << SDL_GetError();
         return false;
     }
 
@@ -99,9 +95,6 @@ bool SdlOutput::init(const AudioFormat& format)
 
 void SdlOutput::uninit()
 {
-    if(!SDL_WasInit(SDL_INIT_AUDIO)) {
-        return;
-    }
     SDL_CloseAudioDevice(p->audioDeviceId);
     SDL_Quit();
 
@@ -110,18 +103,12 @@ void SdlOutput::uninit()
 
 void SdlOutput::reset()
 {
-    if(!SDL_WasInit(SDL_INIT_AUDIO)) {
-        return;
-    }
     SDL_PauseAudioDevice(p->audioDeviceId, 1);
     SDL_ClearQueuedAudio(p->audioDeviceId);
 }
 
 void SdlOutput::start()
 {
-    if(!SDL_WasInit(SDL_INIT_AUDIO)) {
-        return;
-    }
     if(SDL_GetAudioStatus() != SDL_AUDIO_PLAYING) {
         SDL_PauseAudioDevice(p->audioDeviceId, 0);
     }

@@ -32,7 +32,7 @@ struct AudioRenderer::Private
 {
     AudioRenderer* self;
 
-    AudioOutput* audioOutput{nullptr};
+    std::unique_ptr<AudioOutput> audioOutput;
     AudioFormat format;
     double volume{0.0};
     int bufferSize{0};
@@ -79,7 +79,7 @@ struct AudioRenderer::Private
 
     void writeNext()
     {
-        if(!isRunning || bufferQueue.empty()) {
+        if(!isRunning || bufferQueue.empty() || !audioOutput->initialised()) {
             return;
         }
 
@@ -174,7 +174,12 @@ AudioRenderer::AudioRenderer(QObject* parent)
     setObjectName(QStringLiteral("Renderer"));
 }
 
-AudioRenderer::~AudioRenderer() = default;
+AudioRenderer::~AudioRenderer()
+{
+    if(p->audioOutput && p->audioOutput->initialised()) {
+        p->audioOutput->uninit();
+    }
+}
 
 bool AudioRenderer::init(const AudioFormat& format)
 {
@@ -212,11 +217,28 @@ void AudioRenderer::stop()
     p->tempBuffer.reset();
 }
 
+void AudioRenderer::reset()
+{
+    if(p->audioOutput && p->audioOutput->initialised()) {
+        p->audioOutput->reset();
+    }
+
+    p->bufferPrefilled     = false;
+    p->totalSamplesWritten = 0;
+    p->bufferQueue.clear();
+    p->tempBuffer.reset();
+}
+
 void AudioRenderer::pause(bool paused)
 {
     if(!p->initialised) {
         return;
     }
+
+    if(p->audioOutput && p->audioOutput->initialised()) {
+        p->audioOutput->setPaused(paused);
+    }
+
     p->isRunning = !paused;
 }
 
@@ -225,15 +247,19 @@ void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
     p->bufferQueue.enqueue(buffer);
 }
 
-void AudioRenderer::updateOutput(AudioOutput* output)
+void AudioRenderer::updateOutput(const OutputCreator& output)
 {
-    p->audioOutput = output;
-
-    p->bufferPrefilled = false;
-
-    if(p->isRunning) {
-        p->initOutput();
+    auto newOutput = output();
+    if(newOutput == p->audioOutput) {
+        return;
     }
+
+    if(p->audioOutput && p->audioOutput->initialised()) {
+        p->audioOutput->uninit();
+    }
+
+    p->audioOutput     = std::move(newOutput);
+    p->bufferPrefilled = false;
 }
 
 void AudioRenderer::updateDevice(const QString& device)
@@ -242,22 +268,22 @@ void AudioRenderer::updateDevice(const QString& device)
         return;
     }
 
+    p->bufferPrefilled = false;
+
     if(p->audioOutput->initialised()) {
         p->audioOutput->uninit();
         p->audioOutput->setDevice(device);
-        p->initOutput();
     }
     else {
         p->audioOutput->setDevice(device);
     }
-
-    p->bufferPrefilled = false;
 }
 
 void AudioRenderer::updateVolume(double volume)
 {
     p->volume = volume;
-    if(p->audioOutput) {
+
+    if(p->audioOutput && p->audioOutput->canHandleVolume()) {
         p->audioOutput->setVolume(volume);
     }
 }

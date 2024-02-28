@@ -390,10 +390,6 @@ AlsaOutput::~AlsaOutput()
 
 bool AlsaOutput::init(const AudioFormat& format)
 {
-    if(p->initialised) {
-        return false;
-    }
-
     p->format = format;
 
     if(!p->initAlsa()) {
@@ -413,10 +409,6 @@ void AlsaOutput::uninit()
 
 void AlsaOutput::reset()
 {
-    if(!p->pcmHandle || !p->initialised) {
-        return;
-    }
-
     checkError(snd_pcm_drop(p->pcmHandle.get()), QStringLiteral("ALSA drop error"));
     checkError(snd_pcm_prepare(p->pcmHandle.get()), QStringLiteral("ALSA prepare error"));
 
@@ -425,10 +417,6 @@ void AlsaOutput::reset()
 
 void AlsaOutput::start()
 {
-    if(!p->pcmHandle || !p->initialised) {
-        return;
-    }
-
     p->started = true;
     snd_pcm_start(p->pcmHandle.get());
 }
@@ -514,7 +502,7 @@ int AlsaOutput::write(const AudioBuffer& buffer)
 
 void AlsaOutput::setPaused(bool pause)
 {
-    if(!p->pausable || !initialised()) {
+    if(!p->pausable) {
         return;
     }
 
