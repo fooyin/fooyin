@@ -39,6 +39,7 @@ debug_toolchain.cmake
 
 # generated files
 CMakeLists.txt.user*
+compile_commands.json
 fooyin_version.h
 packagetar.sh
 changelog
