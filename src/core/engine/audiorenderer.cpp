@@ -44,7 +44,6 @@ struct AudioRenderer::Private
     int totalSamplesWritten{0};
     int currentBufferOffset{0};
 
-    bool initialised{false};
     bool isRunning{false};
 
     QTimer* writeTimer;
@@ -65,8 +64,6 @@ struct AudioRenderer::Private
         audioOutput->setVolume(volume);
         bufferSize = audioOutput->bufferSize();
         updateInterval();
-
-        initialised = true;
 
         return true;
     }
@@ -207,8 +204,7 @@ void AudioRenderer::start()
 
 void AudioRenderer::stop()
 {
-    p->isRunning   = false;
-    p->initialised = false;
+    p->isRunning = false;
     p->writeTimer->stop();
 
     p->bufferPrefilled     = false;
@@ -231,10 +227,6 @@ void AudioRenderer::reset()
 
 void AudioRenderer::pause(bool paused)
 {
-    if(!p->initialised) {
-        return;
-    }
-
     if(p->audioOutput && p->audioOutput->initialised()) {
         p->audioOutput->setPaused(paused);
     }

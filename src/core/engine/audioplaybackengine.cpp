@@ -145,7 +145,8 @@ struct AudioPlaybackEngine::Private
     {
         const auto prevFormat = std::exchange(format, nextFormat);
 
-        if(settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format) {
+        if(settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format
+           && state != PlaybackState::PausedState) {
             return true;
         }
 
@@ -292,10 +293,10 @@ void AudioPlaybackEngine::setState(PlaybackState state)
         p->stopWorkers();
     }
     else if(state == PlayingState) {
+        p->startPlayback();
         if(prevState == PausedState) {
             p->pauseOutput(false);
         }
-        p->startPlayback();
     }
     else if(state == PausedState) {
         p->pauseOutput(true);
