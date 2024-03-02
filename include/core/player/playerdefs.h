@@ -39,5 +39,21 @@ struct PlaylistTrack
     {
         return track.isValid();
     }
+
+    bool operator==(const PlaylistTrack& other) const
+    {
+        return std::tie(track, playlistId, indexInPlaylist)
+            == std::tie(other.track, other.playlistId, other.indexInPlaylist);
+    }
+
+    bool operator!=(const PlaylistTrack& other) const
+    {
+        return !(*this == other);
+    }
+
+    bool operator<(const PlaylistTrack& other) const
+    {
+        return std::tie(playlistId, indexInPlaylist) < std::tie(other.playlistId, other.indexInPlaylist);
+    }
 };
 } // namespace Fooyin

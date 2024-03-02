@@ -21,6 +21,7 @@
 
 #include "playlist/playlistcontroller.h"
 
+#include <core/player/playermanager.h>
 #include <core/playlist/playlistmanager.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
@@ -60,12 +61,15 @@ struct TrackSelectionController::Private
     WidgetContext* activeContext;
 
     ActionContainer* tracksMenu{nullptr};
+    ActionContainer* tracksQueueMenu{nullptr};
     ActionContainer* tracksPlaylistMenu{nullptr};
 
     QAction* addCurrent;
     QAction* addActive;
     QAction* sendCurrent;
     QAction* sendNew;
+    QAction* addToQueue;
+    QAction* removeFromQueue;
     QAction* openFolder;
     QAction* openProperties;
 
@@ -77,25 +81,29 @@ struct TrackSelectionController::Private
         , playlistController{playlistController_}
         , playlistHandler{playlistController->playlistHandler()}
         , tracksMenu{actionManager->createMenu(Constants::Menus::Context::TrackSelection)}
+        , tracksQueueMenu{actionManager->createMenu(Constants::Menus::Context::TrackSelection)}
         , tracksPlaylistMenu{actionManager->createMenu(Constants::Menus::Context::TracksPlaylist)}
+        , addCurrent{new QAction(tr("Add to current playlist"), tracksPlaylistMenu)}
+        , addActive{new QAction(tr("Add to active playlist"), tracksPlaylistMenu)}
+        , sendCurrent{new QAction(tr("Send to current playlist"), tracksPlaylistMenu)}
+        , sendNew{new QAction(tr("Send to new playlist"), tracksPlaylistMenu)}
+        , addToQueue{new QAction(tr("Add to Playback Queue"), tracksMenu)}
+        , removeFromQueue{new QAction(tr("Remove from Playback Queue"), tracksMenu)}
         , openFolder{new QAction(tr("Open Containing Folder"), tracksMenu)}
+        , openProperties{new QAction(tr("Properties"), tracksMenu)}
     {
         // Playlist menu
         tracksPlaylistMenu->addSeparator();
 
-        addCurrent = new QAction(tr("Add to current playlist"), tracksPlaylistMenu);
         QObject::connect(addCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() { addToCurrentPlaylist(); });
         tracksPlaylistMenu->addAction(actionManager->registerAction(addCurrent, "TrackSelection.AddCurrentPlaylist"));
 
-        addActive = new QAction(tr("Add to active playlist"), tracksPlaylistMenu);
         QObject::connect(addActive, &QAction::triggered, tracksPlaylistMenu, [this]() { addToActivePlaylist(); });
         tracksPlaylistMenu->addAction(actionManager->registerAction(addActive, "TrackSelection.AddActivePlaylist"));
 
-        sendCurrent = new QAction(tr("Send to current playlist"), tracksPlaylistMenu);
         QObject::connect(sendCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() { sendToCurrentPlaylist(); });
         tracksPlaylistMenu->addAction(actionManager->registerAction(sendCurrent, "TrackSelection.SendCurrentPlaylist"));
 
-        sendNew = new QAction(tr("Send to new playlist"), tracksPlaylistMenu);
         QObject::connect(sendNew, &QAction::triggered, tracksPlaylistMenu, [this]() {
             if(self->hasTracks()) {
                 const auto& selection = contextSelection.at(activeContext);
@@ -109,6 +117,22 @@ struct TrackSelectionController::Private
         // Tracks menu
         tracksMenu->addSeparator();
 
+        QObject::connect(addToQueue, &QAction::triggered, tracksQueueMenu, [this]() {
+            if(self->hasTracks()) {
+                const auto& selection = contextSelection.at(activeContext);
+                playlistController->playerManager()->queueTracks(selection.tracks);
+            }
+        });
+        tracksQueueMenu->addAction(actionManager->registerAction(addToQueue, Constants::Actions::AddToQueue));
+
+        QObject::connect(removeFromQueue, &QAction::triggered, tracksQueueMenu, [this]() {
+            if(self->hasTracks()) {
+                const auto& selection = contextSelection.at(activeContext);
+                playlistController->playerManager()->dequeueTracks(selection.tracks);
+            }
+        });
+        tracksQueueMenu->addAction(actionManager->registerAction(removeFromQueue, Constants::Actions::RemoveFromQueue));
+
         QObject::connect(openFolder, &QAction::triggered, tracksMenu, [this]() {
             if(self->hasTracks()) {
                 const auto& selection = contextSelection.at(activeContext);
@@ -120,7 +144,6 @@ struct TrackSelectionController::Private
 
         tracksMenu->addSeparator();
 
-        openProperties = new QAction(tr("Properties"), tracksMenu);
         QObject::connect(openProperties, &QAction::triggered, self, [this]() {
             QMetaObject::invokeMethod(self, &TrackSelectionController::requestPropertiesDialog);
         });
@@ -301,6 +324,7 @@ struct TrackSelectionController::Private
         sendNew->setEnabled(haveTracks);
         openFolder->setEnabled(haveTracks && allTracksInSameFolder());
         openProperties->setEnabled(haveTracks);
+        addToQueue->setEnabled(haveTracks);
     }
 };
 
@@ -360,6 +384,11 @@ void TrackSelectionController::changeSelectedTracks(WidgetContext* context, cons
 void TrackSelectionController::addTrackContextMenu(QMenu* menu) const
 {
     Utils::appendMenuActions(p->tracksMenu->menu(), menu);
+}
+
+void TrackSelectionController::addTrackQueueContextMenu(QMenu* menu) const
+{
+    Utils::appendMenuActions(p->tracksQueueMenu->menu(), menu);
 }
 
 void TrackSelectionController::addTrackPlaylistContextMenu(QMenu* menu) const

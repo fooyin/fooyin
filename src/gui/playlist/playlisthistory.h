@@ -31,45 +31,49 @@ class Playlist;
 class PlaylistCommand : public QUndoCommand
 {
 public:
-    explicit PlaylistCommand(PlaylistModel* model);
+    explicit PlaylistCommand(PlaylistModel* model, int playlistId);
 
 protected:
     PlaylistModel* m_model;
+    int m_playlistId;
 };
 
 class InsertTracks : public PlaylistCommand
 {
 public:
-    InsertTracks(PlaylistModel* model, TrackGroups groups);
+    InsertTracks(PlayerManager* playerManager, PlaylistModel* model, int playlistId, TrackGroups groups);
 
     void undo() override;
     void redo() override;
 
 private:
+    PlayerManager* m_playerManager;
     TrackGroups m_trackGroups;
 };
 
 class RemoveTracks : public PlaylistCommand
 {
 public:
-    RemoveTracks(PlaylistModel* model, TrackGroups groups);
+    RemoveTracks(PlayerManager* playerManager, PlaylistModel* model, int playlistId, TrackGroups groups);
 
     void undo() override;
     void redo() override;
 
 private:
+    PlayerManager* m_playerManager;
     TrackGroups m_trackGroups;
 };
 
 class MoveTracks : public PlaylistCommand
 {
 public:
-    explicit MoveTracks(PlaylistModel* model, MoveOperation operation);
+    explicit MoveTracks(PlayerManager* playerManager, PlaylistModel* model, int playlistId, MoveOperation operation);
 
     void undo() override;
     void redo() override;
 
 private:
+    PlayerManager* m_playerManager;
     MoveOperation m_operation;
     MoveOperation m_undoOperation;
 };

@@ -56,12 +56,20 @@ public:
     void changeCurrentTrack(const Track& track) override;
     void changeCurrentTrack(const PlaylistTrack& track) override;
 
-    PlaybackQueue playbackQueue() const;
+    PlaybackQueue playbackQueue() const override;
 
     void queueTrack(const Track& track) override;
     void queueTrack(const PlaylistTrack& track) override;
     void queueTracks(const TrackList& tracks) override;
     void queueTracks(const QueueTracks& tracks) override;
+
+    void dequeueTrack(const Track& track) override;
+    void dequeueTrack(const PlaylistTrack& track) override;
+    void dequeueTracks(const TrackList& tracks) override;
+    void dequeueTracks(const QueueTracks& tracks) override;
+
+    void replaceTracks(const QueueTracks& tracks) override;
+    void clearPlaylistQueue(int playlistId) override;
 
 private:
     struct Private;

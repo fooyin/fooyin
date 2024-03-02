@@ -126,6 +126,8 @@ constexpr auto Redo            = "Edit.Redo";
 constexpr auto Remove          = "Edit.Remove";
 constexpr auto Rename          = "Edit.Rename";
 constexpr auto Mute            = "Volume.Mute";
+constexpr auto AddToQueue      = "Playback.AddToQueue";
+constexpr auto RemoveFromQueue = "Playback.RemoveFromQueue";
 } // namespace Actions
 
 namespace Mime {

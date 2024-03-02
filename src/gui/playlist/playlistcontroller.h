@@ -21,6 +21,7 @@
 
 #include "playlist/playlistmodel.h"
 
+#include <core/player/playbackqueue.h>
 #include <core/playlist/playlist.h>
 
 #include <QObject>
@@ -89,9 +90,10 @@ public:
 signals:
     void playlistsLoaded();
     void currentPlaylistChanged(Playlist* playlist);
-    void currentTrackChanged(const PlaylistTrack& track);
     void playStateChanged(PlayState state);
     void playlistHistoryChanged();
+    void currentTrackChanged(const PlaylistTrack& track);
+    void tracksDequeued(const QueueTracks& tracks);
 
 public slots:
     void handleTrackSelectionAction(TrackAction action);

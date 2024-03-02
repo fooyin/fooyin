@@ -64,6 +64,11 @@ void PlaylistView::setupView()
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
+void PlaylistView::focusInEvent(QFocusEvent* /*event*/)
+{
+    // Prevent call to update() causing flickering when adding to playback queue
+}
+
 void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 {
     const QPoint pos        = event->position().toPoint();

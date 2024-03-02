@@ -48,6 +48,20 @@ int PlaybackQueue::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
+PlaylistIndexes PlaybackQueue::indexesForPlaylist(int id) const
+{
+    PlaylistIndexes indexes;
+
+    for(auto i{0}; const auto& track : m_tracks) {
+        if(track.playlistId == id) {
+            indexes[track.indexInPlaylist].emplace(i);
+        }
+        ++i;
+    }
+
+    return indexes;
+}
+
 PlaylistTrack PlaybackQueue::nextTrack()
 {
     if(m_tracks.empty()) {
@@ -59,40 +73,38 @@ PlaylistTrack PlaybackQueue::nextTrack()
     return track;
 }
 
-void PlaybackQueue::addTrack(const PlaylistTrack& track)
-{
-    m_tracks.emplace_back(track);
-}
-
-void PlaybackQueue::addTrack(const Track& track)
-{
-    m_tracks.emplace_back(track);
-}
-
 void PlaybackQueue::addTracks(const QueueTracks& tracks)
 {
     m_tracks.insert(m_tracks.end(), tracks.cbegin(), tracks.cend());
 }
 
-void PlaybackQueue::addTracks(const TrackList& tracks)
+QueueTracks PlaybackQueue::removeTracks(const QueueTracks& tracks)
 {
-    for(const Track& track : tracks) {
-        addTrack(track);
-    }
+    QueueTracks removedTracks;
+
+    std::set<PlaylistTrack> tracksToRemove{tracks.cbegin(), tracks.cend()};
+
+    auto matchingTrack = [&tracksToRemove](const PlaylistTrack& track) {
+        return tracksToRemove.contains(track);
+    };
+
+    std::ranges::copy_if(m_tracks, std::back_inserter(removedTracks), matchingTrack);
+    std::erase_if(m_tracks, matchingTrack);
+
+    return removedTracks;
 }
 
-void PlaybackQueue::removeTrack(int index)
+QueueTracks PlaybackQueue::removePlaylistTracks(int playlistId)
 {
-    if(index >= 0 && index < trackCount()) {
-        m_tracks.erase(m_tracks.begin() + index);
-    }
-}
+    QueueTracks removedTracks;
 
-void PlaybackQueue::removeTracks(const IndexSet& indexes)
-{
-    for(const int index : indexes | std::views::reverse) {
-        removeTrack(index);
-    }
+    auto it = std::remove_if(m_tracks.begin(), m_tracks.end(),
+                             [playlistId](const PlaylistTrack& track) { return track.playlistId == playlistId; });
+
+    removedTracks.insert(removedTracks.end(), std::make_move_iterator(it), std::make_move_iterator(m_tracks.end()));
+    m_tracks.erase(it, m_tracks.end());
+
+    return removedTracks;
 }
 
 void PlaybackQueue::clear()

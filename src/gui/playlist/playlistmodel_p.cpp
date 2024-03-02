@@ -753,15 +753,18 @@ void updateHeaderChildren(Fooyin::PlaylistItem* header)
 } // namespace
 
 namespace Fooyin {
-PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model_, MusicLibrary* library_, SettingsManager* settings_)
+PlaylistModelPrivate::PlaylistModelPrivate(PlaylistModel* model_, MusicLibrary* library_, PlayerManager* playerManager_,
+                                           SettingsManager* settings_)
     : model{model_}
     , library{library_}
+    , playerManager{playerManager_}
     , settings{settings_}
     , coverProvider{new CoverProvider(model)}
     , resetting{false}
     , altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
     , coverSize{settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>(),
                 settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
+    , populator{playerManager}
     , currentPlaylist{nullptr}
     , currentPlayState{PlayState::Stopped}
     , currentIndex{-1}
@@ -835,6 +838,11 @@ void PlaylistModelPrivate::populateTrackGroup(PendingData& data)
 
     nodes.merge(data.items);
     trackParents.merge(data.trackParents);
+
+    if(!indexesToRemove.empty()) {
+        removeTracks(indexesToRemove);
+        indexesToRemove.clear();
+    }
 
     handleTrackGroup(data);
 
@@ -1138,8 +1146,6 @@ MoveOperation PlaylistModelPrivate::handleMove(const MoveOperation& operation)
 
 void PlaylistModelPrivate::handleTrackGroup(const PendingData& data)
 {
-    ItemPtrSet headersToCheck;
-
     updateTrackIndexes();
 
     auto cmpParentKeys = [data](const QString& key1, const QString& key2) {

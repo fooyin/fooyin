@@ -33,6 +33,7 @@ public:
     void setupView();
 
 protected:
+    void focusInEvent(QFocusEvent* event) override;
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;

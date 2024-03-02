@@ -115,17 +115,20 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
     , settings{settings_}
     , settingsDialog{settings->settingsDialog()}
     , playlistController{playlistController_}
+    , playerManager{playlistController->playerManager()}
     , columnRegistry{settings}
     , presetRegistry{settings}
     , sortRegistry{settings}
     , layout{new QHBoxLayout(self)}
-    , model{new PlaylistModel(library, settings, self)}
+    , model{new PlaylistModel(library, playerManager, settings, self)}
     , playlistView{new PlaylistView(self)}
     , header{new AutoHeaderView(Qt::Horizontal, self)}
     , currentPlaylist{playlistController->currentPlaylist()}
     , columnMode{false}
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
     , removeTrackAction{new QAction(tr("Remove"), self)}
+    , addToQueueAction{new QAction(tr("Add to Playback Queue"), self)}
+    , removeFromQueueAction{new QAction(tr("Remove from Playback Queue"), self)}
 {
     layout->setContentsMargins(0, 0, 0, 0);
 
@@ -176,6 +179,11 @@ void PlaylistWidgetPrivate::setupConnections()
 
     QObject::connect(playlistController->playlistHandler(), &PlaylistManager::playlistTracksChanged, this,
                      &PlaylistWidgetPrivate::handleTracksChanged);
+    QObject::connect(playerManager, &PlayerManager::tracksQueued, this, &PlaylistWidgetPrivate::handleTracksQueued);
+    QObject::connect(playerManager, &PlayerManager::trackQueueChanged, this,
+                     &PlaylistWidgetPrivate::handleQueueTracksChanged);
+    QObject::connect(playlistController, &PlaylistController::tracksDequeued, this,
+                     &PlaylistWidgetPrivate::handleTracksDequeued);
     QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this,
                      [this](Playlist* playlist) { changePlaylist(playlist, playlist != currentPlaylist); });
     QObject::connect(playlistController, &PlaylistController::currentTrackChanged, this,
@@ -221,9 +229,9 @@ void PlaylistWidgetPrivate::setupActions()
     auto* clear = new QAction(PlaylistWidget::tr("&Clear"), self);
     editMenu->addAction(actionManager->registerAction(clear, Constants::Actions::Clear, playlistContext->context()));
     QObject::connect(clear, &QAction::triggered, this, [this]() {
-        if(auto* playlist = playlistController->currentPlaylist()) {
-            playlist->clear();
-            model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, playlist);
+        if(currentPlaylist) {
+            currentPlaylist->clear();
+            model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, currentPlaylist);
         }
     });
 
@@ -239,12 +247,20 @@ void PlaylistWidgetPrivate::setupActions()
         playlistView->selectAll();
     });
 
-    removeTrackAction = new QAction(tr("Remove"), self);
     removeTrackAction->setEnabled(false);
     auto* removeCmd
         = actionManager->registerAction(removeTrackAction, Constants::Actions::Remove, playlistContext->context());
     removeCmd->setDefaultShortcut(QKeySequence::Delete);
     QObject::connect(removeTrackAction, &QAction::triggered, this, [this]() { tracksRemoved(); });
+
+    addToQueueAction->setEnabled(false);
+    actionManager->registerAction(addToQueueAction, Constants::Actions::AddToQueue, playlistContext->context());
+    QObject::connect(addToQueueAction, &QAction::triggered, this, [this]() { queueSelectedTracks(); });
+
+    removeFromQueueAction->setVisible(false);
+    actionManager->registerAction(removeFromQueueAction, Constants::Actions::RemoveFromQueue,
+                                  playlistContext->context());
+    QObject::connect(removeFromQueueAction, &QAction::triggered, this, [this]() { dequeueSelectedTracks(); });
 }
 
 void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)
@@ -271,7 +287,7 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist, bool savePlaylist
     }
 
     if(std::exchange(currentPlaylist, playlist)) {
-        playlistView->setUpdatesEnabled(false);
+        self->setUpdatesEnabled(false);
     }
 
     model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, currentPlaylist);
@@ -280,12 +296,15 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist, bool savePlaylist
 void PlaylistWidgetPrivate::resetTree() const
 {
     playlistView->expandAll();
-
     restoreState();
 }
 
 PlaylistViewState PlaylistWidgetPrivate::getState() const
 {
+    if(!currentPlaylist) {
+        return {};
+    }
+
     PlaylistViewState state;
 
     if(currentPlaylist->trackCount() > 0) {
@@ -306,20 +325,26 @@ PlaylistViewState PlaylistWidgetPrivate::getState() const
 
 void PlaylistWidgetPrivate::saveState() const
 {
-    if(currentPlaylist) {
-        const auto state = getState();
-        // Don't save state if still populating model
-        if(currentPlaylist->trackCount() == 0 || (currentPlaylist->trackCount() > 0 && state.topIndex >= 0)) {
-            playlistController->savePlaylistState(currentPlaylist->id(), state);
-        }
+    if(!currentPlaylist) {
+        return;
+    }
+
+    const auto state = getState();
+    // Don't save state if still populating model
+    if(currentPlaylist->trackCount() == 0 || (currentPlaylist->trackCount() > 0 && state.topIndex >= 0)) {
+        playlistController->savePlaylistState(currentPlaylist->id(), state);
     }
 }
 
 void PlaylistWidgetPrivate::restoreState() const
 {
+    if(!currentPlaylist) {
+        return;
+    }
+
     auto restoreDefaultState = [this]() {
         playlistView->scrollToTop();
-        playlistView->setUpdatesEnabled(true);
+        self->setUpdatesEnabled(true);
     };
 
     if(!settings->value<Settings::Gui::RememberPlaylistState>() || !currentPlaylist
@@ -339,7 +364,7 @@ void PlaylistWidgetPrivate::restoreState() const
     if(modelIndex.isValid()) {
         playlistView->scrollTo(modelIndex);
         playlistView->verticalScrollBar()->setValue(state->scrollPos);
-        playlistView->setUpdatesEnabled(true);
+        self->setUpdatesEnabled(true);
         return;
     }
 
@@ -356,7 +381,9 @@ void PlaylistWidgetPrivate::restoreState() const
 
 void PlaylistWidgetPrivate::resetModel() const
 {
-    model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, playlistController->currentPlaylist());
+    if(currentPlaylist) {
+        model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, currentPlaylist);
+    }
 }
 
 std::vector<int> PlaylistWidgetPrivate::selectedPlaylistIndexes() const
@@ -389,6 +416,7 @@ void PlaylistWidgetPrivate::restoreSelectedPlaylistIndexes(const std::vector<int
             indexesToSelect.append({index, last.isValid() ? last : index});
         }
     }
+
     playlistView->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
 }
 
@@ -415,7 +443,12 @@ void PlaylistWidgetPrivate::setScrollbarHidden(bool showScrollBar) const
 
 void PlaylistWidgetPrivate::selectionChanged() const
 {
+    if(!currentPlaylist) {
+        return;
+    }
+
     TrackList tracks;
+    std::set<int> trackIndexes;
     int firstIndex{-1};
 
     const QModelIndexList indexes = playlistView->selectionModel()->selectedIndexes();
@@ -425,7 +458,8 @@ void PlaylistWidgetPrivate::selectionChanged() const
         if(type == PlaylistItem::Track) {
             tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<Track>());
             const int trackIndex = index.data(PlaylistItem::Role::Index).toInt();
-            firstIndex           = firstIndex >= 0 ? std::min(firstIndex, trackIndex) : trackIndex;
+            trackIndexes.emplace(trackIndex);
+            firstIndex = firstIndex >= 0 ? std::min(firstIndex, trackIndex) : trackIndex;
         }
     }
 
@@ -433,27 +467,40 @@ void PlaylistWidgetPrivate::selectionChanged() const
 
     if(tracks.empty()) {
         removeTrackAction->setEnabled(false);
+        addToQueueAction->setEnabled(false);
+        removeFromQueueAction->setVisible(false);
         return;
     }
 
     if(settings->value<Settings::Gui::PlaybackFollowsCursor>()) {
-        if(auto* playlist = playlistController->currentPlaylist()) {
-            if(playlist->currentTrackIndex() != firstIndex) {
-                if(playlistController->playState() != PlayState::Playing) {
-                    playlist->changeCurrentTrack(firstIndex);
-                }
-                else {
-                    playlist->scheduleNextIndex(firstIndex);
-                }
-                playlistController->playlistHandler()->schedulePlaylist(playlist);
+        if(currentPlaylist->currentTrackIndex() != firstIndex) {
+            if(playlistController->playState() != PlayState::Playing) {
+                currentPlaylist->changeCurrentTrack(firstIndex);
             }
+            else {
+                currentPlaylist->scheduleNextIndex(firstIndex);
+            }
+            playlistController->playlistHandler()->schedulePlaylist(currentPlaylist);
         }
     }
+
     removeTrackAction->setEnabled(true);
+    addToQueueAction->setEnabled(true);
+
+    if(currentPlaylist) {
+        const auto queuedTracks = playerManager->playbackQueue().indexesForPlaylist(currentPlaylist->id());
+        const bool canDeque     = std::ranges::any_of(
+            queuedTracks, [&trackIndexes](const auto& track) { return trackIndexes.contains(track.first); });
+        removeFromQueueAction->setVisible(canDeque);
+    }
 }
 
 void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
 {
+    if(!currentPlaylist) {
+        return;
+    }
+
     const TrackList tracks = getAllTracks(model, {QModelIndex{}});
 
     if(!tracks.empty()) {
@@ -467,17 +514,19 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
 
     playlistController->playlistHandler()->clearSchedulePlaylist();
 
-    if(auto* playlist = playlistController->currentPlaylist()) {
-        playlist->replaceTracks(tracks);
-        if(playingIndex >= 0) {
-            playlist->changeCurrentTrack(playingIndex);
-        }
-        model->updateHeader(playlist);
+    currentPlaylist->replaceTracks(tracks);
+    if(playingIndex >= 0) {
+        currentPlaylist->changeCurrentTrack(playingIndex);
     }
+    model->updateHeader(currentPlaylist);
 }
 
 void PlaylistWidgetPrivate::queueSelectedTracks()
 {
+    if(!currentPlaylist) {
+        return;
+    }
+
     const auto selected = playlistView->selectionModel()->selectedRows();
 
     int playlistId{-1};
@@ -496,22 +545,57 @@ void PlaylistWidgetPrivate::queueSelectedTracks()
         }
     }
 
-    playlistController->playerManager()->queueTracks(tracks);
+    playerManager->queueTracks(tracks);
+}
+
+void PlaylistWidgetPrivate::dequeueSelectedTracks()
+{
+    if(!currentPlaylist) {
+        return;
+    }
+
+    const auto selected = playlistView->selectionModel()->selectedRows();
+
+    int playlistId{-1};
+    if(currentPlaylist) {
+        playlistId = currentPlaylist->id();
+    }
+
+    QueueTracks tracks;
+
+    for(const QModelIndex& index : selected) {
+        if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+            auto track = index.data(PlaylistItem::ItemData).value<Track>();
+            if(track.isValid()) {
+                tracks.emplace_back(track, playlistId, index.data(PlaylistItem::Index).toInt());
+            }
+        }
+    }
+
+    playerManager->dequeueTracks(tracks);
 }
 
 void PlaylistWidgetPrivate::scanDroppedTracks(const QList<QUrl>& urls, int index)
 {
+    if(!currentPlaylist) {
+        return;
+    }
+
     playlistView->setFocus(Qt::ActiveWindowFocusReason);
 
     playlistController->filesToTracks(urls, [this, index](const TrackList& tracks) {
-        auto* insertCmd = new InsertTracks(model, {{index, tracks}});
+        auto* insertCmd = new InsertTracks(playerManager, model, currentPlaylist->id(), {{index, tracks}});
         playlistController->addToHistory(insertCmd);
     });
 }
 
 void PlaylistWidgetPrivate::tracksInserted(const TrackGroups& tracks) const
 {
-    auto* insertCmd = new InsertTracks(model, tracks);
+    if(!currentPlaylist) {
+        return;
+    }
+
+    auto* insertCmd = new InsertTracks(playerManager, model, currentPlaylist->id(), tracks);
     playlistController->addToHistory(insertCmd);
 
     playlistView->setFocus(Qt::ActiveWindowFocusReason);
@@ -519,6 +603,10 @@ void PlaylistWidgetPrivate::tracksInserted(const TrackGroups& tracks) const
 
 void PlaylistWidgetPrivate::tracksRemoved() const
 {
+    if(!currentPlaylist) {
+        return;
+    }
+
     const auto selected = playlistView->selectionModel()->selectedIndexes();
 
     QModelIndexList trackSelection;
@@ -533,19 +621,20 @@ void PlaylistWidgetPrivate::tracksRemoved() const
 
     playlistController->playlistHandler()->clearSchedulePlaylist();
 
-    if(auto* playlist = playlistController->currentPlaylist()) {
-        playlist->removeTracks(indexes);
-
-        auto* delCmd = new RemoveTracks(model, model->saveTrackGroups(trackSelection));
-        playlistController->addToHistory(delCmd);
-
-        model->updateHeader(playlist);
-    }
+    currentPlaylist->removeTracks(indexes);
+    auto* delCmd
+        = new RemoveTracks(playerManager, model, currentPlaylist->id(), model->saveTrackGroups(trackSelection));
+    playlistController->addToHistory(delCmd);
+    model->updateHeader(currentPlaylist);
 }
 
 void PlaylistWidgetPrivate::tracksMoved(const MoveOperation& operation) const
 {
-    auto* moveCmd = new MoveTracks(model, operation);
+    if(!currentPlaylist) {
+        return;
+    }
+
+    auto* moveCmd = new MoveTracks(playerManager, model, currentPlaylist->id(), operation);
     playlistController->addToHistory(moveCmd);
 
     playlistView->setFocus(Qt::ActiveWindowFocusReason);
@@ -553,8 +642,12 @@ void PlaylistWidgetPrivate::tracksMoved(const MoveOperation& operation) const
 
 void PlaylistWidgetPrivate::playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const
 {
-    if(playlistController->currentPlaylist() == playlist) {
-        auto* insertCmd = new InsertTracks(model, {{index, tracks}});
+    if(!currentPlaylist) {
+        return;
+    }
+
+    if(currentPlaylist == playlist) {
+        auto* insertCmd = new InsertTracks(playerManager, model, currentPlaylist->id(), {{index, tracks}});
         playlistController->addToHistory(insertCmd);
     }
 }
@@ -568,7 +661,7 @@ void PlaylistWidgetPrivate::handleTracksChanged(Playlist* playlist, const std::v
     std::vector<int> selected;
 
     saveState();
-    playlistView->setUpdatesEnabled(false);
+    self->setUpdatesEnabled(false);
 
     const auto changedTrackCount = static_cast<int>(indexes.size());
     // It's faster to just reset if we're going to be updating more than half the playlist
@@ -586,14 +679,85 @@ void PlaylistWidgetPrivate::handleTracksChanged(Playlist* playlist, const std::v
         [this, selected]() {
             restoreState();
             restoreSelectedPlaylistIndexes(selected);
-
-            playlistView->setUpdatesEnabled(true);
         },
         Qt::SingleShotConnection);
 }
 
+void PlaylistWidgetPrivate::handleTracksQueued(const QueueTracks& tracks)
+{
+    if(!currentPlaylist) {
+        return;
+    }
+
+    std::set<int> uniqueIndexes;
+
+    for(const auto& track : tracks) {
+        if(track.playlistId == currentPlaylist->id()) {
+            uniqueIndexes.emplace(track.indexInPlaylist);
+        }
+    }
+
+    std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
+
+    handleTracksChanged(currentPlaylist, indexes);
+}
+
+void PlaylistWidgetPrivate::handleTracksDequeued(const QueueTracks& tracks)
+{
+    if(!currentPlaylist) {
+        return;
+    }
+
+    std::set<int> uniqueIndexes;
+
+    for(const auto& track : tracks) {
+        if(track.playlistId == currentPlaylist->id()) {
+            uniqueIndexes.emplace(track.indexInPlaylist);
+        }
+    }
+
+    const auto queuedTracks = playerManager->playbackQueue().indexesForPlaylist(currentPlaylist->id());
+    for(const auto& trackIndex : queuedTracks | std::views::keys) {
+        uniqueIndexes.emplace(trackIndex);
+    }
+
+    std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
+
+    handleTracksChanged(currentPlaylist, indexes);
+}
+
+void PlaylistWidgetPrivate::handleQueueTracksChanged(const QueueTracks& removed, const QueueTracks& added)
+{
+    if(!currentPlaylist) {
+        return;
+    }
+
+    const int playlistId = currentPlaylist->id();
+
+    std::set<int> uniqueIndexes;
+
+    auto gatherIndexes = [&uniqueIndexes, playlistId](const QueueTracks& tracks) {
+        for(const auto& track : tracks) {
+            if(track.playlistId == playlistId) {
+                uniqueIndexes.emplace(track.indexInPlaylist);
+            }
+        }
+    };
+
+    gatherIndexes(removed);
+    gatherIndexes(added);
+
+    std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
+
+    handleTracksChanged(currentPlaylist, indexes);
+}
+
 void PlaylistWidgetPrivate::handlePlayingTrackChanged(const PlaylistTrack& track)
 {
+    if(!currentPlaylist) {
+        return;
+    }
+
     model->currentTrackChanged(track);
 
     if(currentPlaylist && track.playlistId == currentPlaylist->id()) {
@@ -722,48 +886,48 @@ void PlaylistWidgetPrivate::followCurrentTrack(const Track& track, int index) co
 
 QCoro::Task<void> PlaylistWidgetPrivate::sortTracks(QString script)
 {
-    if(auto* playlist = playlistController->currentPlaylist()) {
-        if(playlistView->selectionModel()->hasSelection()) {
-            const auto selected = playlistView->selectionModel()->selectedRows();
+    if(!currentPlaylist) {
+        co_return;
+    }
 
-            std::vector<int> indexesToSort;
+    if(playlistView->selectionModel()->hasSelection()) {
+        const auto selected = playlistView->selectionModel()->selectedRows();
 
-            for(const QModelIndex& index : selected) {
-                if(index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
-                    indexesToSort.push_back(index.data(PlaylistItem::Index).toInt());
-                }
+        std::vector<int> indexesToSort;
+
+        for(const QModelIndex& index : selected) {
+            if(index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+                indexesToSort.push_back(index.data(PlaylistItem::Index).toInt());
             }
-
-            std::ranges::sort(indexesToSort);
-
-            const auto sortedTracks = co_await Utils::asyncExec([script, playlist, indexesToSort]() {
-                return Sorting::calcSortTracks(script, playlist->tracks(), indexesToSort);
-            });
-            playlist->replaceTracks(sortedTracks);
-            changePlaylist(playlist);
         }
-        else {
-            const auto sortedTracks = co_await Utils::asyncExec(
-                [script, playlist]() { return Sorting::calcSortTracks(script, playlist->tracks()); });
-            playlist->replaceTracks(sortedTracks);
-            changePlaylist(playlist);
-        }
+
+        std::ranges::sort(indexesToSort);
+
+        const auto sortedTracks = co_await Utils::asyncExec([this, script, indexesToSort]() {
+            return Sorting::calcSortTracks(script, currentPlaylist->tracks(), indexesToSort);
+        });
+        currentPlaylist->replaceTracks(sortedTracks);
+        changePlaylist(currentPlaylist);
+    }
+    else {
+        const auto sortedTracks = co_await Utils::asyncExec(
+            [this, script]() { return Sorting::calcSortTracks(script, currentPlaylist->tracks()); });
+        currentPlaylist->replaceTracks(sortedTracks);
+        changePlaylist(currentPlaylist);
     }
 }
 
 QCoro::Task<void> PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder order)
 {
-    if(column < 0) {
+    if(!currentPlaylist || column < 0) {
         co_return;
     }
 
-    if(auto* playlist = playlistController->currentPlaylist()) {
-        const auto sortedTracks = co_await Utils::asyncExec([this, playlist, column, order]() {
-            return Sorting::calcSortTracks(columns.at(column).field, playlist->tracks(), order);
-        });
-        playlist->replaceTracks(sortedTracks);
-        changePlaylist(playlist);
-    }
+    const auto sortedTracks = co_await Utils::asyncExec([this, column, order]() {
+        return Sorting::calcSortTracks(columns.at(column).field, currentPlaylist->tracks(), order);
+    });
+    currentPlaylist->replaceTracks(sortedTracks);
+    changePlaylist(currentPlaylist);
 }
 
 void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
@@ -803,13 +967,16 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
 
 void PlaylistWidgetPrivate::addPlaylistMenu(QMenu* parent)
 {
+    if(!currentPlaylist) {
+        return;
+    }
+
     auto* playlistMenu = new QMenu(Fooyin::PlaylistWidget::tr("Playlists"), parent);
 
-    const auto* currPlaylist = playlistController->currentPlaylist();
-    const auto playlists     = playlistController->playlists();
+    const auto playlists = playlistController->playlists();
 
     for(const auto& playlist : playlists) {
-        if(playlist != currPlaylist) {
+        if(playlist != currentPlaylist) {
             auto* switchPl = new QAction(playlist->name(), playlistMenu);
             const int id   = playlist->id();
             QObject::connect(switchPl, &QAction::triggered, playlistMenu,
@@ -831,6 +998,10 @@ PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistController*
 
 PlaylistWidget::~PlaylistWidget()
 {
+    if(!p->currentPlaylist) {
+        return;
+    }
+
     if(p->settings->value<Settings::Gui::RememberPlaylistState>() && p->currentPlaylist) {
         p->playlistController->savePlaylistState(p->currentPlaylist->id(), p->getState());
     }
@@ -921,10 +1092,6 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* addQueueCmd = new QAction(tr("Add to Playback Queue"), this);
-    QObject::connect(addQueueCmd, &QAction::triggered, this, [this]() { p->queueSelectedTracks(); });
-    menu->addAction(addQueueCmd);
-
     if(auto* removeCmd = p->actionManager->command(Constants::Actions::Remove)) {
         menu->addAction(removeCmd->action());
     }
@@ -932,6 +1099,15 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addSeparator();
 
     p->addSortMenu(menu);
+
+    if(auto* addQueueCmd = p->actionManager->command(Constants::Actions::AddToQueue)) {
+        menu->addAction(addQueueCmd->action());
+    }
+
+    if(auto* removeQueueCmd = p->actionManager->command(Constants::Actions::RemoveFromQueue)) {
+        menu->addAction(removeQueueCmd->action());
+    }
+
     p->selectionController->addTrackContextMenu(menu);
 
     menu->popup(event->globalPos());

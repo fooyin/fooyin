@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <core/player/playerdefs.h>
+#include <core/player/playermanager.h>
 #include <core/scripting/scriptregistry.h>
 
 namespace Fooyin {
@@ -27,10 +29,20 @@ constexpr auto PlayingIcon = "%playingicon%";
 class PlaylistScriptRegistry : public ScriptRegistry
 {
 public:
+    PlaylistScriptRegistry();
+    ~PlaylistScriptRegistry() override;
+
     using ScriptRegistry::isVariable;
     using ScriptRegistry::value;
 
+    void setup(int playlistId, const PlaybackQueue& queue);
+    void setTrackIndex(int index);
+
     bool isVariable(const QString& var, const Track& track) const override;
     ScriptResult value(const QString& var, const Track& track) const override;
+
+private:
+    struct Private;
+    std::unique_ptr<Private>p;
 };
 } // namespace Fooyin

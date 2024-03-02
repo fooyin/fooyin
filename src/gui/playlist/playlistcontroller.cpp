@@ -45,6 +45,7 @@ struct PlaylistController::Private
 
     bool loaded{false};
     Playlist* currentPlaylist{nullptr};
+    bool clearingQueue{false};
 
     std::unordered_map<int, QUndoStack> histories;
     std::unordered_map<int, PlaylistViewState> states;
@@ -89,6 +90,9 @@ struct PlaylistController::Private
         if(playlist) {
             histories.erase(playlist->id());
             states.erase(playlist->id());
+            clearingQueue = true;
+            playerManager->clearPlaylistQueue(playlist->id());
+            clearingQueue = false;
         }
     }
 
@@ -220,6 +224,11 @@ PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* 
 
     QObject::connect(playerManager, &PlayerManager::playlistTrackChanged, this,
                      &PlaylistController::currentTrackChanged);
+    QObject::connect(playerManager, &PlayerManager::tracksDequeued, this, [this](const QueueTracks& tracks) {
+        if(!p->clearingQueue) {
+            emit tracksDequeued(tracks);
+        }
+    });
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this, &PlaylistController::playStateChanged);
 }
 

@@ -37,7 +37,8 @@ class FYCORE_EXPORT PlayerManager : public QObject
 
 public:
     explicit PlayerManager(QObject* parent = nullptr)
-        : QObject{parent} {};
+        : QObject{parent}
+    { }
 
     /** Returns the current state (playing, paused or stopped). */
     [[nodiscard]] virtual PlayState playState() const = 0;
@@ -79,21 +80,38 @@ public:
     virtual void changeCurrentTrack(const Track& track)         = 0;
     virtual void changeCurrentTrack(const PlaylistTrack& track) = 0;
 
+    [[nodiscard]] virtual PlaybackQueue playbackQueue() const = 0;
+
     /** Queues the @p track to be played at the end of the current track. */
     virtual void queueTrack(const Track& track)         = 0;
     virtual void queueTrack(const PlaylistTrack& track) = 0;
     virtual void queueTracks(const TrackList& tracks)   = 0;
     virtual void queueTracks(const QueueTracks& tracks) = 0;
 
+    virtual void dequeueTrack(const Track& track)         = 0;
+    virtual void dequeueTrack(const PlaylistTrack& track) = 0;
+    virtual void dequeueTracks(const TrackList& tracks)   = 0;
+    virtual void dequeueTracks(const QueueTracks& tracks) = 0;
+
+    virtual void replaceTracks(const QueueTracks& tracks) = 0;
+    virtual void clearPlaylistQueue(int playlistId)       = 0;
+
 signals:
     void playStateChanged(PlayState state);
     void playModeChanged(Playlist::PlayModes mode);
+
     void nextTrack();
     void previousTrack();
+
     void positionChanged(uint64_t ms);
     void positionMoved(uint64_t ms);
+
     void currentTrackChanged(const Track& track);
     void playlistTrackChanged(const PlaylistTrack& track);
     void trackPlayed(const Track& track);
+
+    void tracksQueued(const QueueTracks& tracks);
+    void tracksDequeued(const QueueTracks& tracks);
+    void trackQueueChanged(const QueueTracks& removed, const QueueTracks& added);
 };
 } // namespace Fooyin

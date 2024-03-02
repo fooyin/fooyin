@@ -100,7 +100,7 @@ using ColumnAlignments = std::map<int, Qt::Alignment>;
 class PlaylistModelPrivate
 {
 public:
-    PlaylistModelPrivate(PlaylistModel* self, MusicLibrary* library, SettingsManager* settings);
+    PlaylistModelPrivate(PlaylistModel* self, MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings);
 
     void populateModel(PendingData& data);
     void populateTrackGroup(PendingData& data);
@@ -143,6 +143,7 @@ public:
     PlaylistModel* model;
 
     MusicLibrary* library;
+    PlayerManager* playerManager;
     SettingsManager* settings;
     CoverProvider* coverProvider;
 
@@ -170,5 +171,6 @@ public:
     PlaylistTrack currentTrack;
     QPersistentModelIndex currentPlayingIndex;
     int currentIndex;
+    QModelIndexList indexesToRemove;
 };
 } // namespace Fooyin

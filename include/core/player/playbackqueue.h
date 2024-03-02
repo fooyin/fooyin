@@ -24,11 +24,13 @@
 #include <core/player/playerdefs.h>
 #include <core/track.h>
 
+#include <map>
 #include <set>
 
 namespace Fooyin {
-using IndexSet    = std::set<int>;
-using QueueTracks = std::vector<PlaylistTrack>;
+using IndexSet        = std::set<int>;
+using PlaylistIndexes = std::map<int, IndexSet>;
+using QueueTracks     = std::vector<PlaylistTrack>;
 
 class FYCORE_EXPORT PlaybackQueue
 {
@@ -40,16 +42,13 @@ public:
     [[nodiscard]] QueueTracks tracks() const;
     [[nodiscard]] PlaylistTrack track(int index) const;
     [[nodiscard]] int trackCount() const;
+    [[nodiscard]] PlaylistIndexes indexesForPlaylist(int id) const;
 
     PlaylistTrack nextTrack();
 
-    void addTrack(const PlaylistTrack& track);
-    void addTrack(const Track& track);
     void addTracks(const QueueTracks& tracks);
-    void addTracks(const TrackList& tracks);
-
-    void removeTrack(int index);
-    void removeTracks(const IndexSet& indexes);
+    QueueTracks removeTracks(const QueueTracks& tracks);
+    QueueTracks removePlaylistTracks(int playlistId);
 
     void clear();
 

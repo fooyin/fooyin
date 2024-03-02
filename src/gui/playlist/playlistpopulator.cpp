@@ -35,6 +35,7 @@ namespace Fooyin {
 struct PlaylistPopulator::Private
 {
     PlaylistPopulator* self;
+    PlayerManager* playerManager;
 
     PlaylistPreset currentPreset;
     PlaylistColumnList columns;
@@ -54,8 +55,9 @@ struct PlaylistPopulator::Private
     ContainerKeyMap headers;
     TrackList pendingTracks;
 
-    explicit Private(PlaylistPopulator* self_)
+    explicit Private(PlaylistPopulator* self_, PlayerManager* playerManager_)
         : self{self_}
+        , playerManager{playerManager_}
         , registry{std::make_unique<PlaylistScriptRegistry>()}
         , parser{registry.get()}
     { }
@@ -232,7 +234,7 @@ struct PlaylistPopulator::Private
         subheaders.clear();
     }
 
-    PlaylistItem* iterateTrack(const Track& track)
+    PlaylistItem* iterateTrack(const Track& track, int index)
     {
         PlaylistItem* parent = &root;
 
@@ -251,6 +253,8 @@ struct PlaylistPopulator::Private
             }
         };
 
+        registry->setTrackIndex(index);
+
         TrackRow trackRow;
         evaluateTrack(currentPreset.track.leftText, trackRow.leftText);
         evaluateTrack(currentPreset.track.rightText, trackRow.rightText);
@@ -268,7 +272,7 @@ struct PlaylistPopulator::Private
         return trackItem;
     }
 
-    void runBatch(int size)
+    void runBatch(int size, int index)
     {
         if(size <= 0) {
             return;
@@ -280,7 +284,7 @@ struct PlaylistPopulator::Private
             if(!self->mayRun()) {
                 return;
             }
-            iterateTrack(track);
+            iterateTrack(track, index++);
         }
 
         updateContainers();
@@ -299,7 +303,7 @@ struct PlaylistPopulator::Private
         data.nodes.clear();
 
         const auto remaining = static_cast<int>(pendingTracks.size());
-        runBatch(remaining);
+        runBatch(remaining, index);
     }
 
     void runTracksGroup(const std::map<int, TrackList>& tracks)
@@ -307,11 +311,13 @@ struct PlaylistPopulator::Private
         for(const auto& [index, trackGroup] : tracks) {
             std::vector<QString> trackKeys;
 
+            int trackIndex{index};
+
             for(const Track& track : trackGroup) {
                 if(!self->mayRun()) {
                     return;
                 }
-                if(const auto* trackItem = iterateTrack(track)) {
+                if(const auto* trackItem = iterateTrack(track, trackIndex++)) {
                     trackKeys.push_back(trackItem->key());
                 }
             }
@@ -328,9 +334,9 @@ struct PlaylistPopulator::Private
     }
 };
 
-PlaylistPopulator::PlaylistPopulator(QObject* parent)
+PlaylistPopulator::PlaylistPopulator(PlayerManager* playerManager, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<Private>(this, playerManager)}
 {
     qRegisterMetaType<PendingData>();
 }
@@ -346,9 +352,10 @@ void PlaylistPopulator::run(int playlistId, const PlaylistPreset& preset, const 
     p->currentPreset   = preset;
     p->columns         = columns;
     p->pendingTracks   = tracks;
+    p->registry->setup(playlistId, p->playerManager->playbackQueue());
 
     p->updateScripts();
-    p->runBatch(TrackPreloadSize);
+    p->runBatch(TrackPreloadSize, 0);
 
     setState(Idle);
 }
@@ -363,6 +370,7 @@ void PlaylistPopulator::runTracks(int playlistId, const PlaylistPreset& preset, 
     p->data.playlistId = playlistId;
     p->currentPreset   = preset;
     p->columns         = columns;
+    p->registry->setup(playlistId, p->playerManager->playbackQueue());
 
     p->updateScripts();
     p->runTracksGroup(tracks);

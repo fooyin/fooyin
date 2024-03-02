@@ -42,9 +42,10 @@
 #include <queue>
 
 namespace Fooyin {
-PlaylistModel::PlaylistModel(MusicLibrary* library, SettingsManager* settings, QObject* parent)
+PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings,
+                             QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<PlaylistModelPrivate>(this, library, settings)}
+    , p{std::make_unique<PlaylistModelPrivate>(this, library, playerManager, settings)}
 {
     p->settings->subscribe<Settings::Gui::Internal::PlaylistAltColours>(this, [this](bool enabled) {
         p->altColours = enabled;
@@ -341,7 +342,6 @@ void PlaylistModel::insertTracks(const TrackGroups& tracks)
 void PlaylistModel::updateTracks(const std::vector<int>& indexes)
 {
     TrackGroups groups;
-    QModelIndexList indexesToRemove;
 
     auto startOfSequence = indexes.cbegin();
     while(startOfSequence != indexes.cend()) {
@@ -356,7 +356,7 @@ void PlaylistModel::updateTracks(const std::vector<int>& indexes)
         for(auto it = startOfSequence; it != endOfSequence; ++it) {
             const auto& [index, end] = p->indexForTrackIndex(*it);
             if(!end) {
-                indexesToRemove.push_back(index);
+                p->indexesToRemove.push_back(index);
                 if(auto track = p->currentPlaylist->track(*it)) {
                     groups[first].push_back(track.value());
                 }
@@ -368,7 +368,6 @@ void PlaylistModel::updateTracks(const std::vector<int>& indexes)
 
     p->currentIndex = p->currentPlaylist->currentTrackIndex();
 
-    p->removeTracks(indexesToRemove);
     insertTracks(groups);
 }
 

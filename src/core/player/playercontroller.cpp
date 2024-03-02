@@ -73,7 +73,9 @@ void PlayerController::play()
 {
     if(!p->currentTrack.isValid() && !p->queue.empty()) {
         changeCurrentTrack(p->queue.nextTrack());
+        emit tracksDequeued({p->currentTrack});
     }
+
     if(p->currentTrack.isValid()) {
         p->playStatus = PlayState::Playing;
         emit playStateChanged(p->playStatus);
@@ -112,7 +114,7 @@ void PlayerController::next()
         emit nextTrack();
     }
     else {
-        changeCurrentTrack(p->queue.nextTrack());
+        p->currentTrack = {};
         play();
     }
 }
@@ -204,22 +206,80 @@ PlaylistTrack PlayerController::currentPlaylistTrack() const
 
 void PlayerController::queueTrack(const Track& track)
 {
-    p->queue.addTrack(track);
+    queueTrack(PlaylistTrack{track});
 }
 
 void PlayerController::queueTrack(const PlaylistTrack& track)
 {
-    p->queue.addTrack(track);
+    queueTracks({track});
 }
 
 void PlayerController::queueTracks(const TrackList& tracks)
 {
-    p->queue.addTracks(tracks);
+    QueueTracks tracksToQueue;
+    for(const Track& track : tracks) {
+        tracksToQueue.emplace_back(track);
+    }
+
+    queueTracks(tracksToQueue);
 }
 
 void PlayerController::queueTracks(const QueueTracks& tracks)
 {
     p->queue.addTracks(tracks);
+    emit tracksQueued(tracks);
+}
+
+void PlayerController::dequeueTrack(const Track& track)
+{
+    dequeueTrack(PlaylistTrack{track});
+}
+
+void PlayerController::dequeueTrack(const PlaylistTrack& track)
+{
+    dequeueTracks({track});
+}
+
+void PlayerController::dequeueTracks(const TrackList& tracks)
+{
+    QueueTracks tracksToDequeue;
+    for(const Track& track : tracks) {
+        tracksToDequeue.emplace_back(track);
+    }
+
+    dequeueTracks(tracksToDequeue);
+}
+
+void PlayerController::dequeueTracks(const QueueTracks& tracks)
+{
+    const auto removedTracks = p->queue.removeTracks(tracks);
+    if(!removedTracks.empty()) {
+        emit tracksDequeued(removedTracks);
+    }
+}
+
+void PlayerController::replaceTracks(const QueueTracks& tracks)
+{
+    QueueTracks removed;
+
+    const auto currentTracks = p->queue.tracks();
+    const std::set<PlaylistTrack> newTracks{tracks.cbegin(), tracks.cend()};
+
+    std::ranges::copy_if(currentTracks, std::back_inserter(removed),
+                         [&newTracks](const PlaylistTrack& oldTrack) { return !newTracks.contains(oldTrack); });
+
+    p->queue.clear();
+    p->queue.addTracks(tracks);
+
+    emit trackQueueChanged(removed, tracks);
+}
+
+void PlayerController::clearPlaylistQueue(int playlistId)
+{
+    const auto removedTracks = p->queue.removePlaylistTracks(playlistId);
+    if(!removedTracks.empty()) {
+        emit tracksDequeued(removedTracks);
+    }
 }
 } // namespace Fooyin
 

@@ -70,6 +70,7 @@ public:
     void changeSelectedTracks(WidgetContext* context, const TrackList& tracks, const QString& title = {});
 
     void addTrackContextMenu(QMenu* menu) const;
+    void addTrackQueueContextMenu(QMenu* menu) const;
     void addTrackPlaylistContextMenu(QMenu* menu) const;
     void executeAction(TrackAction action, PlaylistAction::ActionOptions options = {},
                        const QString& playlistName = {});

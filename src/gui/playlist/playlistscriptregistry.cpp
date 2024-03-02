@@ -20,9 +20,82 @@
 #include "playlistscriptregistry.h"
 
 namespace Fooyin {
+struct PlaylistScriptRegistry::Private
+{
+    PlaylistIndexes playlistQueue;
+
+    int playlistId{0};
+    int trackIndex{0};
+
+    using QueueVar = std::function<QString()>;
+    std::unordered_map<QString, QueueVar> vars;
+
+    Private()
+    {
+        addVars();
+    }
+
+    void addVars()
+    {
+        vars.emplace(QStringLiteral("queueindex"), [this]() { return queueIndex(); });
+        vars.emplace(QStringLiteral("queueindexes"), [this]() { return queueIndexes(); });
+        vars.emplace(QStringLiteral("playingicon"), [this]() { return playingQueue(); });
+    }
+
+    QString playingQueue()
+    {
+        const QString indexes = queueIndexes();
+        return indexes.isEmpty() ? QString{} : QString{QStringLiteral("[%1]")}.arg(indexes);
+    }
+
+    QString queueIndex()
+    {
+        if(!playlistQueue.contains(trackIndex)) {
+            return {};
+        }
+
+        return QString::number(*playlistQueue.at(trackIndex).begin());
+    }
+
+    QString queueIndexes()
+    {
+        if(!playlistQueue.contains(trackIndex)) {
+            return {};
+        }
+
+        const auto& indexes = playlistQueue.at(trackIndex);
+
+        QStringList str;
+        str.reserve(indexes.size());
+
+        for(const int index : indexes) {
+            str.append(QString::number(index + 1));
+        }
+
+        return str.join(QStringLiteral(", "));
+    }
+};
+
+PlaylistScriptRegistry::PlaylistScriptRegistry()
+    : p{std::make_unique<Private>()}
+{ }
+
+PlaylistScriptRegistry::~PlaylistScriptRegistry() = default;
+
+void PlaylistScriptRegistry::setup(int playlistId, const PlaybackQueue& queue)
+{
+    p->playlistQueue = queue.indexesForPlaylist(playlistId);
+    p->playlistId    = playlistId;
+}
+
+void PlaylistScriptRegistry::setTrackIndex(int index)
+{
+    p->trackIndex = index;
+}
+
 bool PlaylistScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    if(isListVariable(var)) {
+    if(isListVariable(var) || p->vars.contains(var)) {
         return true;
     }
 
@@ -33,6 +106,13 @@ ScriptResult PlaylistScriptRegistry::value(const QString& var, const Track& trac
 {
     if(isListVariable(var)) {
         return {.value = QStringLiteral("|Loading|"), .cond = true};
+    }
+
+    if(p->vars.contains(var)) {
+        ScriptResult result;
+        result.value = p->vars.at(var)();
+        result.cond  = !result.value.isEmpty();
+        return result;
     }
 
     return ScriptRegistry::value(var, track);

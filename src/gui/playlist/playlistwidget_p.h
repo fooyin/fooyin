@@ -24,6 +24,7 @@
 #include "playlistpreset.h"
 #include "presetregistry.h"
 
+#include <core/player/playbackqueue.h>
 #include "core/library/sortingregistry.h"
 
 #include <QCoro/QCoroTask>
@@ -77,19 +78,24 @@ public:
 
     [[nodiscard]] bool isHeaderHidden() const;
     [[nodiscard]] bool isScrollbarHidden() const;
-
     void setHeaderHidden(bool hide) const;
     void setScrollbarHidden(bool showScrollBar) const;
+
     void selectionChanged() const;
     void trackIndexesChanged(int playingIndex) const;
     void queueSelectedTracks();
+    void dequeueSelectedTracks();
 
     void scanDroppedTracks(const QList<QUrl>& urls, int index);
     void tracksInserted(const TrackGroups& tracks) const;
     void tracksRemoved() const;
     void tracksMoved(const MoveOperation& operation) const;
+
     void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const;
     void handleTracksChanged(Playlist* playlist, const std::vector<int>& indexes);
+    void handleTracksQueued(const QueueTracks& tracks);
+    void handleTracksDequeued(const QueueTracks& tracks);
+    void handleQueueTracksChanged(const QueueTracks& removed, const QueueTracks& tracks);
     void handlePlayingTrackChanged(const PlaylistTrack& track);
 
     void toggleColumnMode();
@@ -117,6 +123,7 @@ public:
     SettingsDialogController* settingsDialog;
 
     PlaylistController* playlistController;
+    PlayerManager* playerManager;
     PlaylistColumnRegistry columnRegistry;
     PresetRegistry presetRegistry;
     SortingRegistry sortRegistry;
@@ -134,5 +141,7 @@ public:
     WidgetContext* playlistContext;
 
     QAction* removeTrackAction;
+    QAction* addToQueueAction;
+    QAction* removeFromQueueAction;
 };
 } // namespace Fooyin
