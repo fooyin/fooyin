@@ -268,7 +268,17 @@ Qt::DropActions PlaylistModel::supportedDropActions() const
 QMimeData* PlaylistModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    p->storeMimeData(indexes, mimeData);
+
+    QModelIndexList filteredIndexes;
+
+    for(const QModelIndex& index : indexes) {
+        if(index.column() == 0) {
+            filteredIndexes.append(index);
+        }
+    }
+
+    p->storeMimeData(filteredIndexes, mimeData);
+
     return mimeData;
 }
 
