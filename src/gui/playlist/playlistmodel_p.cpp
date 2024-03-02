@@ -829,6 +829,11 @@ void PlaylistModelPrivate::populateTrackGroup(PendingData& data)
 
     model->tracksAboutToBeChanged();
 
+    if(!indexesToRemove.empty()) {
+        removeTracks(indexesToRemove);
+        indexesToRemove.clear();
+    }
+
     if(nodes.empty()) {
         resetting = true;
         populateModel(data);
@@ -838,11 +843,6 @@ void PlaylistModelPrivate::populateTrackGroup(PendingData& data)
 
     nodes.merge(data.items);
     trackParents.merge(data.trackParents);
-
-    if(!indexesToRemove.empty()) {
-        removeTracks(indexesToRemove);
-        indexesToRemove.clear();
-    }
 
     handleTrackGroup(data);
 
@@ -1198,7 +1198,6 @@ void PlaylistModelPrivate::handleTrackGroup(const PendingData& data)
     model->rootItem()->resetChildren();
 
     cleanupHeaders();
-    updateTrackIndexes();
 }
 
 void PlaylistModelPrivate::storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData) const
@@ -1436,17 +1435,16 @@ void PlaylistModelPrivate::updateTrackIndexes()
 
 void PlaylistModelPrivate::deleteNodes(PlaylistItem* node)
 {
-    if(node) {
-        const int count = node->childCount();
-        if(count > 0) {
-            for(int row{0}; row < count; ++row) {
-                if(PlaylistItem* child = node->child(row)) {
-                    deleteNodes(child);
-                }
-            }
-        }
-        nodes.erase(node->key());
+    if(!node) {
+        return;
     }
+
+    const auto children = node->children();
+    for(PlaylistItem* child : children) {
+        deleteNodes(child);
+    }
+
+    nodes.erase(node->key());
 }
 
 void PlaylistModelPrivate::removeTracks(const QModelIndexList& indexes)
