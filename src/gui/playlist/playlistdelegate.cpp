@@ -274,7 +274,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
                 painter->fontMetrics().elidedText(contents, Qt::ElideRight, cellRect.width()), colour);
         }
         else {
-            opt.widget->style()->drawItemPixmap(painter, cellRect, Qt::AlignLeft | Qt::AlignVCenter, statusIcon);
+            opt.widget->style()->drawItemPixmap(painter, cellRect, Qt::AlignVCenter | alignment, statusIcon);
         }
     }
     else {
