@@ -392,6 +392,14 @@ void AutoHeaderView::setHeaderSectionWidths(const std::map<int, double>& widths)
     p->updateWidths();
 }
 
+void AutoHeaderView::setHeaderSectionAlignment(int logical, Qt::Alignment alignment)
+{
+    const QModelIndex index = model()->index(0, logical);
+    if(index.isValid()) {
+        model()->setData(index, alignment.toInt(), Qt::TextAlignmentRole);
+    }
+}
+
 bool AutoHeaderView::isStretchEnabled() const
 {
     return p->stretchEnabled;

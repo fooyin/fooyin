@@ -35,6 +35,15 @@ void PresetRegistry::loadDefaults()
 {
     PlaylistPreset preset;
 
+    preset.name = QStringLiteral("Track Table");
+
+    preset.track.leftText.emplace_back(QStringLiteral("$num(%track%,2).   "));
+    preset.track.leftText.emplace_back(QStringLiteral("%title%"));
+    preset.track.rightText.emplace_back(QStringLiteral("$ifgreater(%playcount%,0,%playcount% |)      "));
+    preset.track.rightText.emplace_back(QStringLiteral("$timems(%duration%)"));
+
+    addDefaultItem(preset);
+
     preset.name = QStringLiteral("Album - Disc");
 
     TextBlock titleBlock{QStringLiteral("$if2(%albumartist%,Unknown Artist)"), 2};
@@ -51,11 +60,6 @@ void PresetRegistry::loadDefaults()
     subheader.leftText.emplace_back(QStringLiteral("$ifgreater(%disctotal%,1,Disc #%disc%)"));
     subheader.rightText.emplace_back(QStringLiteral("$ifgreater(%disctotal%,1,%playtime%)"));
     preset.subHeaders.push_back(subheader);
-
-    preset.track.leftText.emplace_back(QStringLiteral("$num(%track%,2).   "));
-    preset.track.leftText.emplace_back(QStringLiteral("%title%"));
-    preset.track.rightText.emplace_back(QStringLiteral("$ifgreater(%playcount%,0,%playcount% |)      "));
-    preset.track.rightText.emplace_back(QStringLiteral("$timems(%duration%)"));
 
     addDefaultItem(preset);
 
@@ -76,13 +80,6 @@ void PresetRegistry::loadDefaults()
     preset.header.subtitle.clear();
     preset.header.title.emplace_back(QStringLiteral("$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)"),
                                      2);
-
-    addDefaultItem(preset);
-
-    preset.name = QStringLiteral("Track Table");
-
-    preset.header = {};
-    preset.subHeaders.clear();
 
     addDefaultItem(preset);
 }

@@ -98,7 +98,7 @@ public:
     void handleQueueTracksChanged(const QueueTracks& removed, const QueueTracks& tracks);
     void handlePlayingTrackChanged(const PlaylistTrack& track);
 
-    void toggleColumnMode();
+    void setSingleMode(bool enabled);
     void customHeaderMenuRequested(const QPoint& pos);
 
     void changeState(PlayState state) const;
@@ -135,8 +135,9 @@ public:
 
     Playlist* currentPlaylist;
     PlaylistPreset currentPreset;
-    bool columnMode;
+    bool singleMode;
     PlaylistColumnList columns;
+    QByteArray headerState;
 
     WidgetContext* playlistContext;
 

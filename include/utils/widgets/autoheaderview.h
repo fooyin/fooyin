@@ -40,6 +40,7 @@ public:
 
     void setHeaderSectionWidth(int logical, double width);
     void setHeaderSectionWidths(const std::map<int , double>& widths);
+    void setHeaderSectionAlignment(int logical, Qt::Alignment alignment);
 
     [[nodiscard]] bool isStretchEnabled() const;
     void setStretchEnabled(bool enabled);

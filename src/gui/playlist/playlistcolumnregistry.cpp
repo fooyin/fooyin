@@ -35,9 +35,10 @@ PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObjec
 
 void PlaylistColumnRegistry::loadDefaults()
 {
-    addDefaultItem({.id = 0, .index = 0, .name = tr("Track"), .field = QStringLiteral("$num(%track%,2)")});
+    addDefaultItem({.id = 0, .index = 0, .name = tr("Track"), .field = QStringLiteral("[%disc%.]$num(%track%,2)")});
     addDefaultItem({.id = 1, .index = 1, .name = tr("Title"), .field = QStringLiteral("%title%")});
     addDefaultItem({.id = 2, .index = 2, .name = tr("Artist"), .field = QStringLiteral("%artist%")});
+    addDefaultItem({.id = 2, .index = 2, .name = tr("Artist/Album"), .field = QStringLiteral("%artist% - %album%")});
     addDefaultItem({.id = 3, .index = 3, .name = tr("Album Artist"), .field = QStringLiteral("%albumartist%")});
     addDefaultItem({.id = 4, .index = 4, .name = tr("Album"), .field = QStringLiteral("%album%")});
     addDefaultItem({.id = 5, .index = 5, .name = tr("Playcount"), .field = QStringLiteral("%playcount%")});

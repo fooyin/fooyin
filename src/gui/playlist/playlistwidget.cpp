@@ -124,7 +124,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
     , playlistView{new PlaylistView(self)}
     , header{new AutoHeaderView(Qt::Horizontal, self)}
     , currentPlaylist{playlistController->currentPlaylist()}
-    , columnMode{false}
+    , singleMode{false}
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
     , removeTrackAction{new QAction(tr("Remove"), self)}
     , addToQueueAction{new QAction(tr("Add to Playback Queue"), self)}
@@ -231,7 +231,7 @@ void PlaylistWidgetPrivate::setupActions()
     QObject::connect(clear, &QAction::triggered, this, [this]() {
         if(currentPlaylist) {
             currentPlaylist->clear();
-            model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, currentPlaylist);
+            resetModel();
         }
     });
 
@@ -290,7 +290,7 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* playlist, bool savePlaylist
         self->setUpdatesEnabled(false);
     }
 
-    model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, currentPlaylist);
+    resetModel();
 }
 
 void PlaylistWidgetPrivate::resetTree() const
@@ -382,7 +382,7 @@ void PlaylistWidgetPrivate::restoreState() const
 void PlaylistWidgetPrivate::resetModel() const
 {
     if(currentPlaylist) {
-        model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, currentPlaylist);
+        model->reset(currentPreset, singleMode ? PlaylistColumnList{} : columns, currentPlaylist);
     }
 }
 
@@ -667,7 +667,7 @@ void PlaylistWidgetPrivate::handleTracksChanged(Playlist* playlist, const std::v
     // It's faster to just reset if we're going to be updating more than half the playlist
     // or we're updating a large number of tracks
     if(changedTrackCount > 500 || changedTrackCount > (playlist->trackCount() / 2)) {
-        model->reset(currentPreset, columnMode ? columns : PlaylistColumnList{}, playlist);
+        resetModel();
     }
     else {
         selected = selectedPlaylistIndexes();
@@ -765,25 +765,46 @@ void PlaylistWidgetPrivate::handlePlayingTrackChanged(const PlaylistTrack& track
     }
 }
 
-void PlaylistWidgetPrivate::toggleColumnMode()
+void PlaylistWidgetPrivate::setSingleMode(bool enabled)
 {
-    columnMode = !columnMode;
-    self->finalise();
+    if(std::exchange(singleMode, enabled) != singleMode && singleMode) {
+        headerState = header->saveHeaderState();
+    }
 
-    if(columnMode && columns.empty()) {
-        columns.push_back(columnRegistry.itemByName(QStringLiteral("Playing")));
-        columns.push_back(columnRegistry.itemByName(QStringLiteral("Track")));
-        columns.push_back(columnRegistry.itemByName(QStringLiteral("Title")));
-        columns.push_back(columnRegistry.itemByName(QStringLiteral("Artist")));
-        columns.push_back(columnRegistry.itemByName(QStringLiteral("Album")));
-        columns.push_back(columnRegistry.itemByName(QStringLiteral("Duration")));
+    header->setSectionsClickable(!singleMode);
+    header->setSortIndicatorShown(!singleMode);
 
-        QObject::connect(
-            header, &QHeaderView::sectionCountChanged, self,
-            [this]() {
-                header->setHeaderSectionWidths({{0, 0.03}, {1, 0.05}, {2, 0.35}, {3, 0.25}, {4, 0.25}, {5, 0.07}});
-            },
-            Qt::SingleShotConnection);
+    if(!singleMode) {
+        if(columns.empty()) {
+            columns.push_back(columnRegistry.itemByName(QStringLiteral("Playing")));
+            columns.push_back(columnRegistry.itemByName(QStringLiteral("Artist/Album")));
+            columns.push_back(columnRegistry.itemByName(QStringLiteral("Track")));
+            columns.push_back(columnRegistry.itemByName(QStringLiteral("Title")));
+            columns.push_back(columnRegistry.itemByName(QStringLiteral("Duration")));
+        }
+
+        auto formatColumns = [this]() {
+            header->setHeaderSectionWidths({{0, 0.06}, {1, 0.30}, {2, 0.08}, {3, 0.46}, {4, 0.10}});
+            header->setHeaderSectionAlignment(0, Qt::AlignCenter);
+            header->setHeaderSectionAlignment(4, Qt::AlignRight);
+        };
+
+        if(std::cmp_equal(header->count(), columns.size())) {
+            formatColumns();
+        }
+        else {
+            QObject::connect(
+                model, &QAbstractItemModel::modelReset, self,
+                [this, formatColumns]() {
+                    if(!headerState.isEmpty()) {
+                        header->restoreHeaderState(headerState);
+                    }
+                    else {
+                        formatColumns();
+                    }
+                },
+                Qt::SingleShotConnection);
+        }
     }
 
     resetModel();
@@ -794,7 +815,7 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
     auto* menu = new QMenu(self);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    if(columnMode) {
+    if(!singleMode) {
         auto* filterList = new QActionGroup{menu};
         filterList->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
@@ -833,12 +854,20 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
         menu->addSeparator();
         header->addHeaderAlignmentMenu(menu, self->mapToGlobal(pos));
         menu->addSeparator();
+
+        auto* resetAction = new QAction(tr("Reset columns to default"), menu);
+        QObject::connect(resetAction, &QAction::triggered, self, [this]() {
+            columns.clear();
+            headerState.clear();
+            setSingleMode(false);
+        });
+        menu->addAction(resetAction);
     }
 
-    auto* columnModeAction = new QAction(tr("Multi-column Mode"), menu);
+    auto* columnModeAction = new QAction(tr("Single-column mode"), menu);
     columnModeAction->setCheckable(true);
-    columnModeAction->setChecked(columnMode);
-    QObject::connect(columnModeAction, &QAction::triggered, self, [this]() { toggleColumnMode(); });
+    columnModeAction->setChecked(singleMode);
+    QObject::connect(columnModeAction, &QAction::triggered, self, [this]() { setSingleMode(!singleMode); });
     menu->addAction(columnModeAction);
 
     menu->addSeparator();
@@ -1014,7 +1043,9 @@ QString PlaylistWidget::name() const
 
 void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 {
-    if(p->columnMode) {
+    layout[QStringLiteral("SingleMode")] = p->singleMode;
+
+    if(!p->columns.empty()) {
         QStringList columns;
 
         for(int i{0}; const auto& column : p->columns) {
@@ -1031,14 +1062,19 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
         layout[QStringLiteral("Columns")] = columns.join(QStringLiteral("|"));
     }
 
-    QByteArray state = p->header->saveHeaderState();
-    state            = qCompress(state, 9);
-
-    layout[QStringLiteral("State")] = QString::fromUtf8(state.toBase64());
+    if(!p->singleMode || !p->headerState.isEmpty()) {
+        QByteArray state = !p->headerState.isEmpty() ? p->headerState : p->header->saveHeaderState();
+        state            = qCompress(state, 9);
+        layout[QStringLiteral("HeaderState")] = QString::fromUtf8(state.toBase64());
+    }
 }
 
 void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 {
+    if(layout.contains(QStringLiteral("SingleMode"))) {
+        p->singleMode = layout.value(QStringLiteral("SingleMode")).toBool();
+    }
+
     if(layout.contains(QStringLiteral("Columns"))) {
         p->columns.clear();
 
@@ -1058,33 +1094,38 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
             }
             ++i;
         }
-
-        p->columnMode = !p->columns.empty();
     }
 
     p->resetModel();
 
-    if(layout.contains(QStringLiteral("State"))) {
-        auto state = QByteArray::fromBase64(layout.value(QStringLiteral("State")).toString().toUtf8());
+    if(layout.contains(QStringLiteral("HeaderState"))) {
+        auto state = QByteArray::fromBase64(layout.value(QStringLiteral("HeaderState")).toString().toUtf8());
 
         if(state.isEmpty()) {
             return;
         }
 
-        state = qUncompress(state);
+        p->headerState = qUncompress(state);
+    }
 
+    if(!p->singleMode) {
         // Workaround to ensure QHeaderView section count is updated before restoring state
         QMetaObject::invokeMethod(p->model, "headerDataChanged", Q_ARG(Qt::Orientation, Qt::Horizontal), Q_ARG(int, 0),
                                   Q_ARG(int, 0));
 
-        p->header->restoreHeaderState(state);
+        p->header->restoreHeaderState(p->headerState);
     }
 }
 
 void PlaylistWidget::finalise()
 {
-    p->header->setSectionsClickable(p->columnMode);
-    p->header->setSortIndicatorShown(p->columnMode);
+    if(!p->singleMode && p->columns.empty()) {
+        p->headerState.clear();
+        p->setSingleMode(false);
+    }
+
+    p->header->setSectionsClickable(!p->singleMode);
+    p->header->setSortIndicatorShown(!p->singleMode);
 }
 
 void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
