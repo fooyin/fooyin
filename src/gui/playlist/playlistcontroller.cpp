@@ -85,11 +85,12 @@ struct PlaylistController::Private
         }
     }
 
-    void handlePlaylistUpdated(Playlist* playlist)
+    void handlePlaylistUpdated(Playlist* playlist, const std::vector<int>& indexes)
     {
-        if(playlist) {
+        if(playlist && std::cmp_equal(indexes.size(), playlist->trackCount())) {
             histories.erase(playlist->id());
             states.erase(playlist->id());
+
             clearingQueue = true;
             playerManager->clearPlaylistQueue(playlist->id());
             clearingQueue = false;
@@ -215,12 +216,11 @@ PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* 
     QObject::connect(handler, &PlaylistManager::playlistsPopulated, this, [this]() { p->restoreLastPlaylist(); });
     QObject::connect(handler, &PlaylistManager::playlistAdded, this,
                      [this](Playlist* playlist) { p->handlePlaylistAdded(playlist); });
-    QObject::connect(handler, &PlaylistManager::playlistTracksChanged, this,
-                     [this](Playlist* playlist) { p->handlePlaylistUpdated(playlist); });
+    QObject::connect(
+        handler, &PlaylistManager::playlistTracksChanged, this,
+        [this](Playlist* playlist, const std::vector<int>& indexes) { p->handlePlaylistUpdated(playlist, indexes); });
     QObject::connect(handler, &PlaylistManager::playlistRemoved, this,
                      [this](const Playlist* playlist) { p->handlePlaylistRemoved(playlist); });
-    QObject::connect(handler, &PlaylistManager::playlistRenamed, this,
-                     [this](Playlist* playlist) { p->handlePlaylistUpdated(playlist); });
 
     QObject::connect(playerManager, &PlayerManager::playlistTrackChanged, this,
                      &PlaylistController::currentTrackChanged);
