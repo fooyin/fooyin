@@ -29,8 +29,7 @@ class PlaylistView : public QTreeView
 
 public:
     explicit PlaylistView(QWidget* parent = nullptr);
-
-    void setupView();
+    ~PlaylistView() override;
 
 protected:
     void focusInEvent(QFocusEvent* event) override;
@@ -41,21 +40,8 @@ protected:
     void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     void paintEvent(QPaintEvent* event) override;
 
-    [[nodiscard]] QAbstractItemView::DropIndicatorPosition position(const QPoint& pos, const QRect& rect,
-                                                                    const QModelIndex& index) const;
-    [[nodiscard]] bool isIndexDropEnabled(const QModelIndex& index) const;
-
-    [[nodiscard]] bool shouldAutoScroll(const QPoint& pos) const;
-    void startAutoScroll();
-    void stopAutoScroll();
-    void doAutoScroll();
-
-    bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
-
 private:
-    QRect dropIndicatorRect;
-    QAbstractItemView::DropIndicatorPosition dropIndicatorPos;
-    QTimer m_autoScrollTimer;
-    int m_autoScrollCount;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin
