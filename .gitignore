@@ -52,6 +52,7 @@ fooyin.spec
 # ---------------------
 
 .cache/
+.cmake/
 .moc/
 .obj/
 .pch/
@@ -62,5 +63,7 @@ fooyin.spec
 /build*/
 /lib/
 debug/
+Debug/
 release/
+Release/
 tmp/
