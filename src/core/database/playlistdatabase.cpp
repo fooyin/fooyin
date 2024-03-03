@@ -24,10 +24,6 @@
 namespace {
 bool insertPlaylistTrack(Fooyin::DatabaseModule* module, int playlistId, const Fooyin::Track& track, int index)
 {
-    if(playlistId < 0 || !track.isValid()) {
-        return false;
-    }
-
     auto q = module->insert(QStringLiteral("PlaylistTracks"),
                             {{QStringLiteral("PlaylistID"), QString::number(playlistId)},
                              {QStringLiteral("TrackID"), QString::number(track.id())},
@@ -54,7 +50,7 @@ bool insertPlaylistTracks(Fooyin::DatabaseModule* module, int id, const Fooyin::
     }
 
     for(int i{0}; const auto& track : tracks) {
-        if(track.isValid()) {
+        if(track.isValid() && track.isInDatabase()) {
             if(!insertPlaylistTrack(module, id, track, i++)) {
                 return false;
             }

@@ -71,7 +71,9 @@ public:
     QString generateHash();
 
     [[nodiscard]] bool isValid() const;
-    [[nodiscard]] bool enabled() const;
+    [[nodiscard]] bool isEnabled() const;
+    [[nodiscard]] bool isInLibrary() const;
+    [[nodiscard]] bool isInDatabase() const;
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] int id() const;
@@ -122,7 +124,7 @@ public:
     [[nodiscard]] QString sort() const;
 
     void setLibraryId(int id);
-    void setEnabled(bool enabled);
+    void setIsEnabled(bool enabled);
     void setId(int id);
     void setHash(const QString& hash);
     void setType(Type type);

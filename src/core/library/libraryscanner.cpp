@@ -164,13 +164,13 @@ struct LibraryScanner::Private
                 track.setFilePath(filepath);
                 track.setLibraryId(currentLibrary.id);
                 track.setRelativePath(dir.relativeFilePath(filepath));
-                track.setEnabled(true);
+                track.setIsEnabled(true);
             };
 
             if(trackPaths.contains(filepath)) {
                 const Track& libraryTrack = trackPaths.at(filepath);
 
-                if(!libraryTrack.enabled() || libraryTrack.libraryId() != currentLibrary.id
+                if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != currentLibrary.id
                    || libraryTrack.modifiedTime() != lastModified) {
                     Track changedTrack{libraryTrack};
                     if(tagReader.readMetaData(changedTrack)) {
@@ -189,7 +189,7 @@ struct LibraryScanner::Private
                 if(tagReader.readMetaData(track)) {
                     Track refoundTrack = matchMissingTrack(missingFiles, missingHashes, track);
 
-                    if(refoundTrack.isValid()) {
+                    if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
                         missingHashes.erase(refoundTrack.hash());
                         missingFiles.erase(refoundTrack.filename());
 
@@ -214,9 +214,9 @@ struct LibraryScanner::Private
         }
 
         for(auto& track : missingFiles | std::views::values) {
-            if(track.libraryId() >= 0 || track.enabled()) {
+            if(track.isInLibrary() || track.isEnabled()) {
                 track.setLibraryId(-1);
-                track.setEnabled(false);
+                track.setIsEnabled(false);
                 tracksToUpdate.push_back(track);
             }
         }

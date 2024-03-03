@@ -70,7 +70,7 @@ void TrackDatabaseManager::updateTrackStats(const Track& track)
     TrackList tracksUpdated;
 
     Track updatedTrack{track};
-    if(m_trackDatabase.updateTrackStats(updatedTrack)) {
+    if(!track.isInDatabase() || m_trackDatabase.updateTrackStats(updatedTrack)) {
         const TrackList hashTracks = m_trackDatabase.tracksByHash(updatedTrack.hash());
         std::ranges::copy(hashTracks, std::back_inserter(tracksUpdated));
     }

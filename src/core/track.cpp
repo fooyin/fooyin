@@ -106,12 +106,22 @@ QString Track::generateHash()
 
 bool Track::isValid() const
 {
-    return p->id >= 0 && !p->filepath.isEmpty();
+    return !p->filepath.isEmpty();
 }
 
-bool Track::enabled() const
+bool Track::isEnabled() const
 {
     return p->enabled;
+}
+
+bool Track::isInLibrary() const
+{
+    return p->libraryId >= 0;
+}
+
+bool Track::isInDatabase() const
+{
+    return p->id >= 0;
 }
 
 int Track::libraryId() const
@@ -369,7 +379,7 @@ void Track::setLibraryId(int id)
     p->libraryId = id;
 }
 
-void Track::setEnabled(bool enabled)
+void Track::setIsEnabled(bool enabled)
 {
     p->enabled = enabled;
 }

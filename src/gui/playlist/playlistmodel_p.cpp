@@ -897,7 +897,7 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
             return CellMargin;
         }
         case(PlaylistItem::Role::Enabled): {
-            return track.track().enabled();
+            return track.track().isEnabled();
         }
         case(Qt::BackgroundRole): {
             if(!altColours) {
@@ -918,7 +918,7 @@ QVariant PlaylistModelPrivate::trackData(PlaylistItem* item, int column, int rol
         }
         case(Qt::DecorationRole): {
             if(columns.empty() || columns.at(column).field == QString::fromLatin1(PlayingIcon)) {
-                if(!track.track().enabled()) {
+                if(!track.track().isEnabled()) {
                     return missingIcon;
                 }
 

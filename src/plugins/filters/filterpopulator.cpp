@@ -100,8 +100,8 @@ struct FilterPopulator::Private
             if(!self->mayRun()) {
                 return;
             }
-
-            if(track.enabled() && track.libraryId() >= 0) {
+            
+            if(track.isEnabled() && track.isInLibrary()) {
                 iterateTrack(track);
             }
         }
