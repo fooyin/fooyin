@@ -784,7 +784,7 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
         }
 
         auto formatColumns = [this]() {
-            header->setHeaderSectionWidths({{0, 0.06}, {1, 0.30}, {2, 0.08}, {3, 0.46}, {4, 0.10}});
+            header->setHeaderSectionWidths({{0, 0.06}, {1, 0.38}, {2, 0.08}, {3, 0.38}, {4, 0.10}});
             header->setHeaderSectionAlignment(0, Qt::AlignCenter);
             header->setHeaderSectionAlignment(4, Qt::AlignRight);
         };
