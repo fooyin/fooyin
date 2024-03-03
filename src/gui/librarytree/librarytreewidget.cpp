@@ -301,7 +301,22 @@ struct LibraryTreeWidget::Private
                                       playlistNameFromSelection());
     }
 
-    void tracksUpdated(const TrackList& tracks)
+    void handleTracksAdded(const TrackList& tracks) const
+    {
+        if(tracks.empty()) {
+            return;
+        }
+
+        if(!prevSearch.isEmpty()) {
+            const auto filteredTracks = Filter::filterTracks(tracks, prevSearch);
+            model->addTracks(filteredTracks);
+        }
+        else {
+            model->addTracks(tracks);
+        }
+    }
+
+    void handleTracksUpdated(const TrackList& tracks)
     {
         if(tracks.empty()) {
             return;
@@ -402,11 +417,12 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionContro
                      });
 
     QObject::connect(library, &MusicLibrary::tracksLoaded, this, [this]() { p->reset(); });
-    QObject::connect(library, &MusicLibrary::tracksAdded, p->model, &LibraryTreeModel::addTracks);
+    QObject::connect(library, &MusicLibrary::tracksAdded, this,
+                     [this](const TrackList& tracks) { p->handleTracksAdded(tracks); });
     QObject::connect(library, &MusicLibrary::tracksScanned, p->model,
-                     [this](int /*id*/, const TrackList& tracks) { p->model->addTracks(tracks); });
+                     [this](int /*id*/, const TrackList& tracks) { p->handleTracksAdded(tracks); });
     QObject::connect(library, &MusicLibrary::tracksUpdated, this,
-                     [this](const TrackList& tracks) { p->tracksUpdated(tracks); });
+                     [this](const TrackList& tracks) { p->handleTracksUpdated(tracks); });
     QObject::connect(library, &MusicLibrary::tracksDeleted, p->model, &LibraryTreeModel::removeTracks);
     QObject::connect(library, &MusicLibrary::tracksSorted, this, [this]() { p->reset(); });
 

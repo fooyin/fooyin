@@ -291,7 +291,7 @@ struct FilterController::Private
                 }
 
                 if(!filterWidget->searchFilter().isEmpty()) {
-                    TrackList filteredTracks = Filter::filterTracks(tracks, filterWidget->searchFilter());
+                    const TrackList filteredTracks = Filter::filterTracks(tracks, filterWidget->searchFilter());
                     filterWidget->tracksAdded(filteredTracks);
                 }
                 else {
