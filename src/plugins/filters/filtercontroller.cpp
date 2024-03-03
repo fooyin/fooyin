@@ -290,7 +290,13 @@ struct FilterController::Private
                     firstActive = true;
                 }
 
-                filterWidget->tracksAdded(tracks);
+                if(!filterWidget->searchFilter().isEmpty()) {
+                    TrackList filteredTracks = Filter::filterTracks(tracks, filterWidget->searchFilter());
+                    filterWidget->tracksAdded(filteredTracks);
+                }
+                else {
+                    filterWidget->tracksAdded(tracks);
+                }
             }
         }
     }
